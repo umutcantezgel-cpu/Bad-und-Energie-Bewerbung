@@ -3,7 +3,7 @@
  * Designed for Next.js App Router with dual-resolution support:
  * 1. Client-side NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
  * 2. Server-side GOOGLE_MAPS_API_KEY (via /api/maps/config)
- * 3. Graceful fallback to standalone vector topology map when no key is set.
+ * 3. Graceful fallback to standalone vector topology map when no key is set or on auth failure.
  */
 
 declare global {
@@ -11,11 +11,36 @@ declare global {
     google?: typeof google;
     __googleMapsLoaderPromise?: Promise<boolean>;
     __googleMapsLoadedCallback?: () => void;
+    gm_authFailure?: () => void;
   }
 }
 
 let cachedApiKey: string | null = null;
 let cachedMapId: string | null = null;
+let hasAuthError = false;
+const authErrorListeners: Array<() => void> = [];
+
+export function onGoogleMapsAuthError(callback: () => void): () => void {
+  if (hasAuthError) {
+    callback();
+    return () => {};
+  }
+  authErrorListeners.push(callback);
+  return () => {
+    const idx = authErrorListeners.indexOf(callback);
+    if (idx !== -1) {
+      authErrorListeners.splice(idx, 1);
+    }
+  };
+}
+
+export function hasGoogleMapsAuthError(): boolean {
+  return hasAuthError;
+}
+
+export function resetGoogleMapsAuthError(): void {
+  hasAuthError = false;
+}
 
 export function getGoogleMapsApiKey(): string {
   if (cachedApiKey !== null) {
@@ -78,6 +103,27 @@ export async function loadGoogleMapsScript(): Promise<boolean> {
     return false;
   }
 
+  if (hasAuthError) {
+    return false;
+  }
+
+  // Hook global gm_authFailure early to intercept domain/key/quota errors
+  const previousAuthFailure = window.gm_authFailure;
+  window.gm_authFailure = () => {
+    console.warn('[Google Maps Loader] gm_authFailure erkannt: Fallback auf Vektor-Topologie aktiviert.');
+    hasAuthError = true;
+    authErrorListeners.forEach((listener) => {
+      try {
+        listener();
+      } catch (err) {
+        console.warn('[Google Maps Loader] Auth listener error:', err);
+      }
+    });
+    if (typeof previousAuthFailure === 'function') {
+      previousAuthFailure();
+    }
+  };
+
   // Already loaded
   if (window.google?.maps?.Map) {
     return true;
@@ -116,7 +162,30 @@ export async function loadGoogleMapsScript(): Promise<boolean> {
 
     script.onerror = (err) => {
       console.warn('[Google Maps Loader] Script konnte nicht geladen werden:', err);
+      hasAuthError = true;
+      authErrorListeners.forEach((listener) => {
+        try {
+          listener();
+        } catch (e) {
+          console.warn('[Google Maps Loader] Auth listener error:', e);
+        }
+      });
       resolve(false);
+    };
+
+    // Safety timeout in case callback never fires (e.g. network throttled or hung)
+    const timeoutTimer = setTimeout(() => {
+      if (!window.google?.maps?.Map) {
+        console.warn('[Google Maps Loader] Script-Lade-Timeout nach 8 Sekunden. Fallback aktiv.');
+        resolve(false);
+      }
+    }, 8000);
+
+    // Clear timeout on successful callback
+    const originalCallback = window.__googleMapsLoadedCallback;
+    window.__googleMapsLoadedCallback = () => {
+      clearTimeout(timeoutTimer);
+      originalCallback?.();
     };
 
     document.head.appendChild(script);

@@ -29,7 +29,13 @@ import {
   MAX_SERVICE_RADIUS_KM,
   GMP_ATTRIBUTION_IDS,
 } from '@/lib/maps/google-maps-config';
-import { loadGoogleMapsScript, resolveGoogleMapsApiKey, hasGoogleMapsKey } from '@/lib/maps/google-maps-loader';
+import {
+  loadGoogleMapsScript,
+  resolveGoogleMapsApiKey,
+  hasGoogleMapsKey,
+  onGoogleMapsAuthError,
+  hasGoogleMapsAuthError,
+} from '@/lib/maps/google-maps-loader';
 
 export interface InteractiveMapProps {
   className?: string;
@@ -50,6 +56,7 @@ export function InteractiveMap({
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
   const [isGoogleMapsReady, setIsGoogleMapsReady] = useState<boolean>(false);
+  const [isAuthError, setIsAuthError] = useState<boolean>(hasGoogleMapsAuthError());
   const [hasResolvedKey, setHasResolvedKey] = useState<boolean>(hasGoogleMapsKey());
   const [commuteOriginId, setCommuteOriginId] = useState<string>('loc-giessen');
 
@@ -58,6 +65,20 @@ export function InteractiveMap({
   const googleMapInstance = useRef<google.maps.Map | null>(null);
   const googleCircleInstance = useRef<google.maps.Circle | null>(null);
   const googleMarkersRef = useRef<google.maps.Marker[]>([]);
+
+  // Intercept Google Maps authentication/domain restriction errors gracefully
+  useEffect(() => {
+    const unsubscribe = onGoogleMapsAuthError(() => {
+      setIsAuthError(true);
+      setIsGoogleMapsReady(false);
+      if (googleMapInstance.current) {
+        googleMapInstance.current = null;
+      }
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   // Resolve API key asynchronously (handles both NEXT_PUBLIC_ and server-side GOOGLE_MAPS_API_KEY)
   useEffect(() => {
@@ -106,7 +127,7 @@ export function InteractiveMap({
 
   // Initialize live Google Maps instance when key is resolved and ready
   useEffect(() => {
-    if (!hasResolvedKey || !mapElementRef.current) return;
+    if (!hasResolvedKey || !mapElementRef.current || isAuthError) return;
 
     let isMounted = true;
 
@@ -129,6 +150,10 @@ export function InteractiveMap({
         googleMapInstance.current = map;
         applyThemeToGoogleMap(map, mapTheme);
         updateGoogleMapsCircle(map, radiusKm * 1000, mapTheme);
+
+        // Reset any existing markers
+        googleMarkersRef.current.forEach((m) => m.setMap(null));
+        googleMarkersRef.current = [];
 
         // Add Markers
         MAP_POIS.forEach((poi) => {
@@ -167,7 +192,9 @@ export function InteractiveMap({
 
         setIsGoogleMapsReady(true);
       } catch (err) {
-        console.warn('[Google Maps Init]', err);
+        console.warn('[Google Maps Init Exception]', err);
+        setIsAuthError(true);
+        setIsGoogleMapsReady(false);
       }
     });
 
@@ -176,20 +203,22 @@ export function InteractiveMap({
       googleMarkersRef.current.forEach((m) => m.setMap(null));
       googleMarkersRef.current = [];
     };
-  }, [hasResolvedKey, applyThemeToGoogleMap, mapTheme, radiusKm, updateGoogleMapsCircle]);
+  }, [hasResolvedKey, isAuthError, applyThemeToGoogleMap, mapTheme, radiusKm, updateGoogleMapsCircle]);
 
   // Sync theme changes with live Google Map
   useEffect(() => {
-    if (googleMapInstance.current && isGoogleMapsReady) {
+    if (googleMapInstance.current && isGoogleMapsReady && !isAuthError) {
       applyThemeToGoogleMap(googleMapInstance.current, mapTheme);
       updateGoogleMapsCircle(googleMapInstance.current, radiusKm * 1000, mapTheme);
     }
-  }, [mapTheme, radiusKm, isGoogleMapsReady, applyThemeToGoogleMap, updateGoogleMapsCircle]);
+  }, [mapTheme, radiusKm, isGoogleMapsReady, isAuthError, applyThemeToGoogleMap, updateGoogleMapsCircle]);
+
+  const isLiveGoogleMapActive = hasResolvedKey && isGoogleMapsReady && !isAuthError;
 
   // Reset View to HQ
   const handleResetToHq = () => {
     setSelectedPoi(MAP_POIS[0]);
-    if (googleMapInstance.current && window.google?.maps) {
+    if (isLiveGoogleMapActive && googleMapInstance.current && window.google?.maps) {
       googleMapInstance.current.setZoom(11);
       googleMapInstance.current.panTo(HEADQUARTERS_COORDINATES);
     }
@@ -198,7 +227,7 @@ export function InteractiveMap({
   // Select POI and pan
   const handleSelectPoi = (poi: MapPOI) => {
     setSelectedPoi(poi);
-    if (googleMapInstance.current && window.google?.maps) {
+    if (isLiveGoogleMapActive && googleMapInstance.current && window.google?.maps) {
       googleMapInstance.current.panTo(poi.coordinates);
       googleMapInstance.current.setZoom(12);
     }
@@ -216,9 +245,6 @@ export function InteractiveMap({
       setIsFullscreen(false);
     }
   };
-
-  // Commute Calculation
-  const selectedCommutePoi = MAP_POIS.find((p) => p.id === commuteOriginId) || MAP_POIS[1];
 
   return (
     <div
@@ -242,18 +268,22 @@ export function InteractiveMap({
               <div className="text-xs sm:text-base font-extrabold text-[#0A1E3A] tracking-tight">
                 Einsatzgebiet &amp; Standorte Mittelhessen
               </div>
-              {hasResolvedKey ? (
+              {isLiveGoogleMapActive ? (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-[10px] font-bold text-emerald-700">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   Google Maps Live
                 </span>
               ) : (
                 <span
-                  title="Google Maps API-Key in Vercel oder .env hinterlegen (NEXT_PUBLIC_GOOGLE_MAPS_API_KEY)"
+                  title={
+                    isAuthError
+                      ? 'Domain-/Referrer-Schutz aktiv. Lokale Vorschau nutzt den interaktiven Vektor-Modus.'
+                      : 'Interaktiver Vektor-Modus mit Mittelhessen-Flussläufen, POIs & Pendlerrechner'
+                  }
                   className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sky-50 border border-sky-200 text-[10px] font-bold text-[#0369a1]"
                 >
                   <Sparkles className="w-3 h-3 text-[#0369a1]" />
-                  Vektor-Modus aktiv
+                  {isAuthError ? 'Lokale Vorschau (Vektor)' : 'Vektor-Modus aktiv'}
                 </span>
               )}
             </div>
@@ -303,8 +333,8 @@ export function InteractiveMap({
         {/* Right: Quick Action Buttons & Radius Controls */}
         <div className="flex items-center gap-2">
           {/* Radius Switcher */}
-          <div className="hidden sm:flex items-center gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs">
-            <span className="text-[10px] font-mono font-bold text-slate-700 px-1.5 uppercase">Radius:</span>
+          <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs">
+            <span className="hidden sm:inline text-[10px] font-mono font-bold text-slate-700 px-1.5 uppercase">Radius:</span>
             {[15, 25, 35].map((km) => (
               <button
                 key={km}
@@ -360,13 +390,18 @@ export function InteractiveMap({
           MAP CANVAS (LIVE GOOGLE MAP OR HIGH-FIDELITY VECTOR TOPOLOGY)
          ========================================================================= */}
       <div className="relative flex-1 w-full overflow-hidden bg-slate-50">
-        {/* LIVE GOOGLE MAPS CONTAINER (Activated when API Key is present) */}
-        {hasResolvedKey && (
-          <div ref={mapElementRef} className="absolute inset-0 w-full h-full z-0" />
+        {/* LIVE GOOGLE MAPS CONTAINER (Activated when API Key is present and authorized) */}
+        {hasResolvedKey && !isAuthError && (
+          <div
+            ref={mapElementRef}
+            className={`absolute inset-0 w-full h-full z-0 transition-opacity duration-300 ${
+              isLiveGoogleMapActive ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+            }`}
+          />
         )}
 
-        {/* HIGH-FIDELITY INTERACTIVE VECTOR TOPOLOGY MAP (Fallback when no key is configured) */}
-        {(!hasResolvedKey || !isGoogleMapsReady) && (
+        {/* HIGH-FIDELITY INTERACTIVE VECTOR TOPOLOGY MAP (Fallback when no key is configured or auth fails) */}
+        {!isLiveGoogleMapActive && (
           <div
             className={`absolute inset-0 w-full h-full z-0 transition-colors duration-500 ${
               mapTheme === 'midnight'
@@ -424,7 +459,7 @@ export function InteractiveMap({
               />
             </svg>
 
-            {/* Dynamic Geofence Pulse Rings centered on Wetzlar (Coordinates ~50%, 50%) */}
+            {/* Dynamic Geofence Pulse Rings centered on Wetzlar */}
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
               {/* Radar pulse wave */}
               <div
@@ -555,7 +590,7 @@ export function InteractiveMap({
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-slate-500 font-medium">Entfernung Werkstatt:</span>
                     <span className="font-mono font-bold text-slate-800">
-                      {selectedPoi.distanceKm === 0 ? 'Firmensitz' : `${selectedPoi.distanceKm} km`}
+                      {selectedPoi.distanceKm === 0 ? 'Firmensitz Wetzlar' : `${selectedPoi.distanceKm} km`}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-xs">
