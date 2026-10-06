@@ -1,36 +1,39 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { motion, AnimatePresence } from 'motion/react';
 import {
   ShieldCheck,
-  Wrench,
   MessageSquare,
   PhoneCall,
   ArrowUpRight,
   Sparkles,
-  Phone,
   Clock,
   ArrowRight,
-  Menu,
-  X,
-  Car,
-  ChevronRight,
-  CheckCircle2,
-  FileSpreadsheet,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
+import { MotionHamburgerIcon } from '@/components/navigation/MotionHamburgerIcon';
+import { MobileMenuDrawer } from '@/components/navigation/MobileMenuDrawer';
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [headerHeight, setHeaderHeight] = useState(98);
+  const headerRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
+
   const whatsappUrl = buildWhatsAppUrl(
     'Hallo Herr Demir, ich interessiere mich für eine Stelle als SHK Fachkraft bei Bad und Energie.'
   );
+
+  // Auto-close mobile menu on browser back/forward navigation
+  useEffect(() => {
+    const handlePopState = () => setMobileMenuOpen(false);
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Scroll detection for dynamic sticky compression & enhanced backdrop blur
   useEffect(() => {
@@ -46,6 +49,18 @@ export function Header() {
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Dynamically measure header height for pixel-perfect mobile drawer positioning
+  useEffect(() => {
+    const updateHeight = () => {
+      if (headerRef.current) {
+        setHeaderHeight(headerRef.current.offsetHeight);
+      }
+    };
+    updateHeight();
+    window.addEventListener('resize', updateHeight);
+    return () => window.removeEventListener('resize', updateHeight);
+  }, [isScrolled]);
 
   const navItems = [
     {
@@ -80,13 +95,13 @@ export function Header() {
 
   const openRoles = [
     {
-      title: 'Anlagenmechaniker für Sanitär Heizung und Klimatechnik m w d',
+      title: 'Anlagenmechaniker für Sanitär Heizung und Klimatechnik (m/w/d)',
       type: 'Vollzeitbeschäftigung • Attraktive & übertarifliche Vergütung',
-      tag: 'Wetzlar und Lahn Dill Kreis',
+      tag: 'Wetzlar & Lahn-Dill-Kreis',
       href: '/bewerbung',
     },
     {
-      title: 'Kundendiensttechniker für Wärmepumpen m w d',
+      title: 'Kundendiensttechniker für Wärmepumpen (m/w/d)',
       type: 'Buderus, Bosch, NIBE (7 Jahre Garantie), Alpha Innotec & Viessmann • Eigenes Servicefahrzeug',
       tag: 'Regionale Einsätze vor Ort',
       href: '/bewerbung',
@@ -100,7 +115,7 @@ export function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full transition-all duration-300">
+    <header ref={headerRef} className="sticky top-0 z-50 w-full transition-all duration-300">
       {/* Skip-to-content accessibility link (WAI-ARIA) */}
       <a
         href="#main-content"
@@ -109,21 +124,27 @@ export function Header() {
         Direkt zum Inhalt springen
       </a>
 
-      {/* 1. TOP UTILITY TRUST-BAR (Vollständiger oberer Bereich über die gesamte Breite) */}
-      <div className="w-full bg-slate-100/90 text-slate-700 border-b border-slate-200/80 text-[11px] font-medium tracking-wide">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 min-h-[34px] flex items-center justify-between gap-3 sm:gap-6">
+      {/* 1. TOP UTILITY TRUST-BAR (Optimiertes einzeiliges Mobil-Layout & sanfte Scroll-Kompression) */}
+      <div
+        className={`w-full bg-slate-100/95 text-slate-700 border-b border-slate-200/80 text-[11px] font-medium tracking-wide transition-all duration-300 ease-in-out ${
+          isScrolled
+            ? 'max-h-0 sm:max-h-12 opacity-0 sm:opacity-100 overflow-hidden sm:overflow-visible border-b-0 sm:border-b py-0 sm:py-1.5'
+            : 'max-h-16 opacity-100 py-1.5'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 min-h-[30px] sm:min-h-[34px] flex items-center justify-between gap-2 sm:gap-6">
           {/* Linke Seite: Meisterbetrieb-Qualitätssiegel, Region & Live Stellenstatus */}
-          <div className="flex items-center gap-3 sm:gap-4 flex-wrap sm:flex-nowrap min-w-0">
-            {/* 100 Jahre Meisterbetrieb & Wetzlar und Mittelhessen ausgeschrieben */}
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#0A1E3A] text-white text-[10px] font-bold tracking-tight shadow-2xs">
-                <ShieldCheck className="w-3 h-3 text-sky-400" strokeWidth={2} />
-                <span>100 Jahre Meisterbetrieb (1926–2026)</span>
-              </span>
-              <span className="font-semibold text-slate-800 text-[11px]">
-                Wetzlar und Mittelhessen
-              </span>
-            </div>
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0 min-w-0">
+            {/* 100 Jahre Meisterbetrieb Badge */}
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#0A1E3A] text-white text-[10px] font-bold tracking-tight shadow-2xs shrink-0">
+              <ShieldCheck className="w-3 h-3 text-sky-400" strokeWidth={2} />
+              <span className="hidden xs:inline">100 Jahre Meisterbetrieb (1926–2026)</span>
+              <span className="xs:hidden">100 J. Meisterbetrieb</span>
+            </span>
+
+            <span className="font-semibold text-slate-800 text-[11px] truncate">
+              Wetzlar &amp; Mittelhessen
+            </span>
 
             <div className="h-3.5 w-px bg-slate-300 hidden md:block" />
 
@@ -137,7 +158,7 @@ export function Header() {
                 Aktuell 3 offene Stellenangebote
               </span>
               <span className="text-slate-500 hidden lg:inline">
-                (Wetzlar und Lahn Dill Kreis • Umkreis maximal 35 km)
+                (Wetzlar &amp; Lahn-Dill-Kreis • Max. 35 km)
               </span>
             </div>
 
@@ -147,25 +168,25 @@ export function Header() {
             <div className="hidden xl:flex items-center gap-1.5 text-slate-600 truncate">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" strokeWidth={1.5} />
               <span className="truncate">
-                100 Prozent vertrauliche Kontaktaufnahme, kein Anruf beim aktuellen Arbeitgeber
+                100% vertrauliche Kontaktaufnahme ohne Arbeitgeber-Rückfrage
               </span>
             </div>
           </div>
 
           {/* Rechte Seite: WhatsApp Direktlinie & Wechsel zur Kunden-Website */}
-          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* WhatsApp Direct Line */}
             <a
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-300 transition-colors"
-              title="Direkter WhatsApp Chat mit Geschäftsführer Diplomingenieur Sabri Demir"
+              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-950 border border-emerald-300 transition-colors cursor-pointer"
+              title="Direkter WhatsApp Chat mit Dipl.-Ing. Sabri Demir"
             >
-              <MessageSquare className="w-3 h-3 text-emerald-600" strokeWidth={1.5} />
-              <span className="font-bold">WhatsApp:</span>
-              <span className="text-emerald-800 hidden md:inline">Direkt mit Sabri Demir schreiben</span>
-              <span className="text-emerald-800 md:hidden">Sabri Demir</span>
+              <MessageSquare className="w-3 h-3 text-emerald-600 shrink-0" strokeWidth={1.5} />
+              <span className="font-bold text-[10px] sm:text-[11px]">WhatsApp:</span>
+              <span className="text-emerald-800 font-medium hidden md:inline">Direkt mit Sabri Demir schreiben</span>
+              <span className="text-emerald-800 font-medium md:hidden text-[10px] sm:text-[11px]">Sabri Demir</span>
             </a>
 
             <div className="h-3.5 w-px bg-slate-300 hidden md:block" />
@@ -175,9 +196,9 @@ export function Header() {
               href="https://bad-energie.de"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:inline-flex items-center gap-1 text-slate-500 hover:text-[#0A1E3A] transition-colors group"
+              className="hidden md:inline-flex items-center gap-1 text-slate-500 hover:text-[#0A1E3A] transition-colors group text-[11px]"
             >
-              <span>Zur Kunden Website für Bad und Heizung</span>
+              <span>Zur Kunden-Website</span>
               <ArrowUpRight
                 className="w-3 h-3 text-slate-400 group-hover:text-[#0A1E3A] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
                 strokeWidth={1.5}
@@ -289,195 +310,31 @@ export function Header() {
                 </div>
               </Link>
 
-              {/* Mobile Menu Trigger Hamburger */}
+              {/* Mobile Menu Trigger Hamburger with Motion SVG Design */}
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden p-2 rounded-xl text-slate-800 hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
+                className="lg:hidden p-2 rounded-xl text-slate-800 hover:bg-slate-100 transition-all focus:outline-none focus:ring-2 focus:ring-[#0284C7] active:scale-95 cursor-pointer"
                 aria-expanded={mobileMenuOpen}
                 aria-controls="mobile-drawer"
                 aria-label={mobileMenuOpen ? 'Menü schließen' : 'Menü öffnen'}
               >
-                {mobileMenuOpen ? (
-                  <X className="w-6 h-6 text-slate-900" strokeWidth={1.5} />
-                ) : (
-                  <Menu className="w-6 h-6 text-slate-900" strokeWidth={1.5} />
-                )}
+                <MotionHamburgerIcon isOpen={mobileMenuOpen} className="w-6 h-6 text-slate-900" />
               </button>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* 3. MOBILE NAVIGATION EXPERIENCE (Tailored for Handwerker on Smartphones) */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            id="mobile-drawer"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="lg:hidden overflow-hidden bg-white/95 backdrop-blur-2xl border-b border-slate-200/90 shadow-2xl"
-          >
-            <div className="max-w-7xl mx-auto px-4 py-5 space-y-5">
-              {/* Quick-Access Conversion Buttons for Handwerker on Smartphone */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                {/* 1. WhatsApp Chat Direct */}
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 font-bold text-xs shadow-2xs hover:bg-emerald-100 transition-colors"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-2xs">
-                      <MessageSquare className="w-4 h-4" strokeWidth={1.5} />
-                    </div>
-                    <div>
-                      <span className="block text-xs font-extrabold text-emerald-950">
-                        WhatsApp Chat
-                      </span>
-                      <span className="block text-[10px] text-emerald-700 font-normal">
-                        Direkt mit Sabri Demir
-                      </span>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-emerald-600" strokeWidth={1.5} />
-                </a>
-
-                {/* 2. Direct Phone Call */}
-                <a
-                  href="tel:0644142956"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-3 rounded-2xl bg-slate-100/90 border border-slate-200 text-[#0A1E3A] font-bold text-xs shadow-2xs hover:bg-slate-200/70 transition-colors"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-[#0A1E3A] text-white flex items-center justify-center shrink-0 shadow-2xs">
-                      <PhoneCall className="w-4 h-4" strokeWidth={1.5} />
-                    </div>
-                    <div>
-                      <span className="block text-xs font-extrabold text-slate-900">
-                        Direkt anrufen
-                      </span>
-                      <span className="block text-[10px] text-slate-500 font-normal">
-                        (06441) 42956 Wetzlar
-                      </span>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500" strokeWidth={1.5} />
-                </a>
-
-                {/* 3. Expressbewerbung ohne Lebenslauf */}
-                <Link
-                  href="/#express-funnel"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-[#C51E1E] to-[#DC2626] text-white font-bold text-xs shadow-sm hover:opacity-95 transition-opacity"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-white/20 text-white flex items-center justify-center shrink-0">
-                      <Sparkles className="w-4 h-4" strokeWidth={1.5} />
-                    </div>
-                    <div>
-                      <span className="block text-xs font-extrabold text-white">
-                        Expressbewerbung
-                      </span>
-                      <span className="block text-[10px] text-red-100 font-normal">
-                        Ohne Lebenslauf in 60 Sekunden
-                      </span>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-white" strokeWidth={1.5} />
-                </Link>
-              </div>
-
-              {/* Clean List of Current Roles */}
-              <div className="space-y-2 pt-1">
-                <div className="flex items-center justify-between px-1">
-                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-500">
-                    Aktuell offene Stellen (3)
-                  </span>
-                  <span className="text-[10px] font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full font-semibold border border-emerald-200">
-                    Wetzlar und Lahn Dill
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 gap-2">
-                  {openRoles.map((role) => (
-                    <Link
-                      key={role.title}
-                      href={role.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-slate-100/80 hover:border-[#0284C7] transition-all flex items-center justify-between group"
-                    >
-                      <div className="space-y-0.5">
-                        <div className="text-xs font-bold text-slate-900 group-hover:text-[#0284C7] transition-colors">
-                          {role.title}
-                        </div>
-                        <div className="text-[11px] text-slate-500 flex items-center gap-2">
-                          <span>{role.type}</span>
-                          <span>•</span>
-                          <span className="text-emerald-700 font-medium">{role.tag}</span>
-                        </div>
-                      </div>
-                      <ChevronRight
-                        className="w-4 h-4 text-slate-400 group-hover:text-[#0284C7] group-hover:translate-x-0.5 transition-transform"
-                        strokeWidth={1.5}
-                      />
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-              {/* Menu Navigation Links */}
-              <div className="space-y-1 pt-1 border-t border-slate-200/80">
-                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400 px-1 block mb-2">
-                  Bereiche &amp; Einblicke
-                </span>
-                {navItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-800 hover:bg-slate-100 hover:text-[#0A1E3A] transition-colors"
-                  >
-                    <span>{item.label}</span>
-                    <div className="flex items-center gap-2">
-                      {item.badge && (
-                        <span
-                          className={`text-[10px] font-mono font-bold px-1.5 py-0.2 rounded-full ${item.badgeClass}`}
-                        >
-                          {item.badge}
-                        </span>
-                      )}
-                      {item.sub && (
-                        <span className="text-[10px] font-normal text-slate-500">
-                          {item.sub}
-                        </span>
-                      )}
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-400" strokeWidth={1.5} />
-                    </div>
-                  </Link>
-                ))}
-              </div>
-
-              {/* Reassurance & Discretion Banner - Light Luxury Style */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 text-slate-800 flex items-start gap-3 shadow-2xs">
-                <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" strokeWidth={1.5} />
-                <div className="text-xs leading-relaxed space-y-1">
-                  <div className="font-bold text-[#0A1E3A]">
-                    Bewerbung in unter 60 Sekunden · Kein Anschreiben und kein Lebenslauf nötig.
-                  </div>
-                  <div className="text-[11px] text-slate-600">
-                    Streng vertrauliche Behandlung nach Paragraph 26 Bundesdatenschutzgesetz (§ 26 BDSG). Keine Kontaktaufnahme mit Ihrem derzeitigen Arbeitgeber.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* 3. MOBILE FULL-SHEET DRAWER (Motion SVG Design, Body-Scroll-Lock & Safe-Area) */}
+      <MobileMenuDrawer
+        isOpen={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        whatsappUrl={whatsappUrl}
+        headerHeight={headerHeight}
+        navItems={navItems}
+        openRoles={openRoles}
+      />
     </header>
   );
 }
