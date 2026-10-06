@@ -719,9 +719,9 @@ export default function HomePage() {
                 <span className="text-xs font-sans font-semibold text-[#0369a1] uppercase tracking-wider block mb-1">
                   Mittelhessen · Maximal 35 km Radius · Garantiert keine Fernmontage
                 </span>
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-[#0A1E3A] tracking-tight">
+                <div className="text-2xl sm:text-3xl font-extrabold text-[#0A1E3A] tracking-tight">
                   Interaktive Standort- &amp; Einsatzgebietskarte
-                </h3>
+                </div>
                 <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
                   Erkunde unser Einsatzgebiet im Lahn-Dill-Kreis und berechne Deine persönliche Fahrzeit zur Werkstatt in Wetzlar. Bei uns bist Du jeden Tag pünktlich zum Feierabend zu Hause.
                 </p>
@@ -864,9 +864,9 @@ export default function HomePage() {
               <span className="px-3.5 py-1 rounded-full text-xs font-sans font-semibold uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200 inline-block">
                 100% Unverbindlich · Kein Risiko · Keine Verpflichtung
               </span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0A1E3A] tracking-tight">
+              <p className="text-2xl sm:text-3xl font-extrabold text-[#0A1E3A] tracking-tight">
                 Bereit für ein faires Angebot mit echter handwerklicher Wertschätzung?
-              </h2>
+              </p>
               <p className="text-sm sm:text-base text-slate-600 max-w-xl mx-auto leading-relaxed">
                 Nutze jetzt unsere Expressbewerbung in unter 60 Sekunden oder das 4 Wege Bewerberportal und lass uns ganz ungezwungen herausfinden, ob wir zueinander passen.
               </p>

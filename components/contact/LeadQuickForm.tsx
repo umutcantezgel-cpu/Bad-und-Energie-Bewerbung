@@ -92,7 +92,7 @@ export function LeadQuickForm({
         <div className="inline-flex p-3 rounded-full bg-emerald-100 text-emerald-700 mb-4">
           <CheckCircle className="w-8 h-8" />
         </div>
-        <h3 className="text-xl font-bold text-slate-900 mb-2">Vielen Dank für Ihre Nachricht!</h3>
+        <div className="text-xl font-bold text-slate-900 mb-2">Vielen Dank für Ihre Nachricht!</div>
         <p className="text-slate-600 text-sm max-w-md mx-auto leading-relaxed">
           Ihre Angaben wurden sicher übermittelt. Eine Bestätigung ist unterwegs an Ihre E Mail Adresse. Meister Demir meldet sich verlässlich innerhalb von 24 Stunden bei Ihnen.
         </p>
@@ -109,7 +109,7 @@ export function LeadQuickForm({
 
   return (
     <form onSubmit={handleSubmit} className={`${containerClasses} ${className}`}>
-      {heading && <h3 className="text-xl font-bold text-slate-900 mb-1">{heading}</h3>}
+      {heading && <div className="text-xl font-bold text-slate-900 mb-1">{heading}</div>}
       {subheading && <p className="text-sm text-slate-600 mb-6">{subheading}</p>}
 
       {/* Honeypot */}

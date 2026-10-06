@@ -8,9 +8,9 @@ export function DirectContactCard({ className = '' }: { className?: string }) {
       <span className="text-[11px] font-mono font-bold text-[#0369a1] uppercase tracking-wider block mb-1">
         Direkter Ansprechpartner
       </span>
-      <h3 className="text-xl font-black text-[#0A1E3A]">
+      <div className="text-xl font-black text-[#0A1E3A]">
         Meisterkontakt in Wetzlar
-      </h3>
+      </div>
       <p className="mt-1 text-xs text-slate-600 leading-relaxed">
         Spreche direkt mit Geschäftsführer Diplomingenieur Sabri Demir ohne Warteschleifen.
       </p>
