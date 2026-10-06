@@ -77,12 +77,12 @@ export function CookieConsent() {
   const consentMeta = React.useMemo(() => {
     if (parsedConsent) {
       return {
-        id: parsedConsent.consentId || 'CONSENT-WETZLAR-8459-2026',
+        id: parsedConsent.consentId || 'CONSENT-WETZLAR-2449-2026',
         time: parsedConsent.timestamp || '2026-10-01 04:10:50 UTC',
       };
     }
     return {
-      id: 'CONSENT-WETZLAR-8459-2026',
+      id: 'CONSENT-WETZLAR-2449-2026',
       time: '2026-10-01 04:10:50 UTC',
     };
   }, [parsedConsent]);

@@ -87,7 +87,7 @@ export function Header() {
     },
     {
       title: 'Kundendiensttechniker für Wärmepumpen m w d',
-      type: 'Buderus, Bosch & NIBE Werkszertifizierung • Eigenes Servicefahrzeug',
+      type: 'Buderus, Bosch, NIBE (7 Jahre Garantie), Alpha Innotec & Viessmann • Eigenes Servicefahrzeug',
       tag: 'Regionale Einsätze vor Ort',
       href: '/bewerbung',
     },

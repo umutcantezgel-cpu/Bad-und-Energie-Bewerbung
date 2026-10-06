@@ -301,7 +301,7 @@ const structuredData = {
       '@id': 'https://karriere.bad-energie.de/#job-kundendienst',
       title: 'Kundendiensttechniker SHK / Servicemonteur (m/w/d)',
       description:
-        'Wartung, Inbetriebnahme und Diagnose modernster Wärmepumpensysteme (Buderus, Bosch, NIBE, Viessmann) und Instandhaltung von Liegenschaften des Lahn-Dill-Kreises. Voll ausgestattetes Servicefahrzeug, iPad und Smartphone auch zur privaten Nutzung.',
+        'Wartung, Inbetriebnahme und Diagnose modernster Wärmepumpensysteme (Buderus, Bosch, NIBE, Alpha Innotec, Viessmann) und Instandhaltung von Liegenschaften des Lahn-Dill-Kreises. Voll ausgestattetes Servicefahrzeug, iPad und Smartphone auch zur privaten Nutzung.',
       identifier: {
         '@type': 'PropertyValue',
         name: 'Bad & Energie GmbH',

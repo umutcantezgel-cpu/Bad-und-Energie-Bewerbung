@@ -24,7 +24,7 @@ export const ROLE_CONFIGS: Record<CraftRole, RolePackageConfig> = {
     tier: 'Spezialist Klimatechnik & Diagnose',
     description: 'Wartung, Inbetriebnahme und Diagnose mit eigenem Servicefahrzeug',
     vehicle: 'Persönliches Servicefahrzeug mit Tankkarte & 1:1 Privatnutzung ab Wohnort',
-    tools: 'Buderus & Bosch Digital-Messtechnik, Hilti Koffer & Firmen-iPad',
+    tools: 'Buderus, Bosch, NIBE, Alpha Innotec & Viessmann Digital-Messtechnik, Hilti Koffer & Firmen-iPad',
     compensationTier: 'Höchste Facharbeiter-Einstufung mit Qualitätsprämien',
   },
   helfer: {
@@ -75,7 +75,7 @@ export const CRAFT_ADDONS = {
   heatPumpCert: {
     label: 'Wärmepumpenschein oder Kälteschein',
     benefitBadge: 'Wärmepumpen-Zertifikat freigeschaltet',
-    perk: 'Zusätzliche Spezialisten-Zulage & Buderus, Bosch & NIBE Werkszertifizierungen',
+    perk: 'Zusätzliche Spezialisten-Zulage & Werkszertifizierungen (Buderus, Bosch, NIBE, Alpha Innotec, Viessmann)',
   },
   driversLicenseBE: {
     label: 'Führerschein Klasse BE (Anhänger)',

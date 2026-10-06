@@ -61,7 +61,7 @@ export const initialDossierState: CandidateDossier = {
   startDate: 'In 1 Monat (Kündigungsfrist)',
   salaryExpectation: 'Vollzeit • Freitags ab 13:30 Uhr Wochenende • Unbefristet',
   skills: [
-    'Wärmepumpen (Buderus, Bosch, NIBE, Alpha Innotec)',
+    'Wärmepumpen (Buderus, Bosch, NIBE, Alpha Innotec, Viessmann)',
     'Badsanierung & Vorwandinstallation',
     'Gas Brennwert und Heizungsmodernisierung',
     'Führerschein Klasse B (PKW)',

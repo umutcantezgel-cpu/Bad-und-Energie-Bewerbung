@@ -182,7 +182,7 @@ export function Footer() {
                     Kundendiensttechniker für Wärmepumpensysteme m w d
                   </span>
                   <span className="block text-[11px] text-slate-400 font-mono">
-                    Wärmepumpen (Buderus, Bosch, NIBE, Viessmann) · Wetzlar
+                    Wärmepumpen (Buderus, Bosch, NIBE, Alpha Innotec, Viessmann) · Wetzlar
                   </span>
                 </Link>
               </li>

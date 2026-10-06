@@ -39,7 +39,7 @@ const initialFunnelData: FunnelData = {
   role: 'Anlagenmechaniker SHK m w d',
   status: 'In fester Anstellung',
   skills: [
-    'Wärmepumpen (Buderus, Bosch, NIBE, Alpha Innotec)',
+    'Wärmepumpen (Buderus, Bosch, NIBE, Alpha Innotec, Viessmann)',
     'Moderne Badsanierung und Vorwandtechnik',
     'Führerschein Klasse B PKW',
   ],
@@ -271,7 +271,7 @@ export function HeroExpressFunnel() {
                   {
                     id: 'Kundendiensttechniker Wärmepumpe m w d',
                     title: 'Kundendiensttechniker Wärmepumpe',
-                    subtitle: 'Wartung, Inbetriebnahme Buderus, Bosch, NIBE, Viessmann',
+                    subtitle: 'Wartung, Inbetriebnahme Buderus, Bosch, NIBE, Alpha Innotec, Viessmann',
                     icon: <Zap className="w-5 h-5 text-[#C51E1E]" strokeWidth={1.5} />,
                   },
                   {
@@ -383,7 +383,7 @@ export function HeroExpressFunnel() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[
-                  'Wärmepumpen (Buderus, Bosch, NIBE, Alpha Innotec)',
+                  'Wärmepumpen (Buderus, Bosch, NIBE, Alpha Innotec, Viessmann)',
                   'Moderne Badsanierung und Vorwandtechnik',
                   'Gasbrennwert und Heizungsmodernisierung',
                   'Führerschein Klasse B oder BE Transporter',

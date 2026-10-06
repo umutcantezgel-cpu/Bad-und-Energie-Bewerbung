@@ -419,7 +419,7 @@ export default function HomePage() {
                 <div className="space-y-2 pt-2 text-xs text-slate-700 min-h-[6.5rem]">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
-                    <span>Werkszertifizierungen bei Buderus, Bosch &amp; NIBE (7 Jahre Garantie) bezahlt</span>
+                    <span>Werkszertifizierungen (Buderus, Bosch, NIBE mit 7 Jahren Garantie, Alpha Innotec &amp; Viessmann) bezahlt</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
@@ -655,7 +655,7 @@ export default function HomePage() {
                   Bosch Messtechnik
                 </div>
                 <p className="text-xs text-slate-600 leading-relaxed min-h-[4rem]">
-                  Digitale Abgasmessgeräte, Spülkompressoren und Kältemittel Füllstationen für moderne Wärmepumpen (Buderus Logatherm, Bosch Compress, NIBE &amp; Viessmann).
+                  Digitale Abgasmessgeräte, Spülkompressoren und Kältemittel Füllstationen für moderne Wärmepumpen (Buderus Logatherm, Bosch Compress, NIBE, Alpha Innotec &amp; Viessmann).
                 </p>
               </div>
               <div className="pt-3 text-[11px] font-sans font-medium text-slate-500 border-t border-slate-100">
