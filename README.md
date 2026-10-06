@@ -236,14 +236,59 @@ bun run dev
 
 Die Anwendung ist nun unter `http://localhost:3000` erreichbar.
 
-### Qualitäts- und Build-Befehle:
+### Verzeichnisstruktur (Modulare Codebase-Architektur):
+
+```text
+Bad-und-Energie-Bewerbung/
+├── app/                  # Next.js 16 App Router (Seiten, Metadata & API-Handler)
+│   ├── api/              # Edge API-Endpunkte (bewerbung, contact, indexnow, maps/config)
+│   ├── bewerbung/        # 4-Wege-Bewerberportal (Quiz, Express, Vault, Print)
+│   ├── datenschutz/      # DSGVO-Datenschutzerklärung
+│   └── impressum/        # Rechtliches Impressum (§ 5 DDG / HRB 2449)
+├── components/           # Modulare React 19 UI-Komponenten
+│   ├── analytics/        # WebVitals & Performance-Tracking
+│   ├── contact/          # WhatsApp, Ansprechpartner & Lead-Formulare
+│   ├── layout/           # Grid, Container, Section & Stack Primitives
+│   ├── maps/             # Dual-Engine Interactive Map (Google Maps & Vektor)
+│   ├── navigation/       # Motion SVG Hamburger & Sheet Drawer
+│   ├── pricing/          # Gehaltsrechner Mittelhessen
+│   ├── reviews/          # Google Reviews & Kinetic Carousel
+│   ├── seo/              # AI-Answer-Box & Structured Data
+│   ├── trust/            # Prozess-Schritte & Trust-Banner
+│   ├── ui/               # Atomare UI-Komponenten (Buttons, Badges, Modals)
+│   └── views/            # 4 Bewerbungs-Ansichten (Quiz, Form, Vault, PrintA4)
+├── docs/                 # Entwickler-Dokumentation & archivierte Prompts
+│   └── prompts/          # Historische Master-Prompts (Phasen 18–21)
+├── hooks/                # Zentrale React Hooks (useIsMobile, useReducedMotion)
+├── lib/                  # Geschäftslogik, APIs, SEO & Typen
+│   ├── data/             # Unternehmensdaten, Standorte & Partner-Säulen
+│   ├── email/            # Resend E-Mail Pipeline & Vorlagen
+│   ├── maps/             # Google Maps Konfiguration & Resilienter Loader
+│   ├── seo/              # Schema.org Generatoren, Site-Config & IndexNow
+│   ├── store/            # Client-State (Cookie Consent & Storage Gate)
+│   ├── tokens/           # Spacing- und Design-Tokens
+│   └── utils/            # Utilities (cn, Haptik, Sanitize, WhatsApp)
+├── public/               # Statische Assets (Logos, Icons, WebP-Bilder)
+└── scripts/qa/           # Automatisierte QA- & Linked-Data-Tests
+```
+
+### Qualitäts- und Entwickler-Befehle:
 
 ```bash
 # Linter prüfen (0 Fehler, 0 Warnungen)
 bun run lint
 
+# TypeScript Typ-Prüfung ohne Build
+bun run type-check
+
+# JSON-LD Linked Data Graph Integrity Check
+bun run test:graph
+
 # Turbopack Produktions-Build
 bun run build
+
+# Vollständiger Qualitäts-Audit (Lint + TypeCheck + Build)
+bun run audit
 
 # Produktions-Server lokal starten
 bun run start

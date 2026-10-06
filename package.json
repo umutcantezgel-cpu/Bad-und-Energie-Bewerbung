@@ -7,7 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "clean": "next clean"
+    "clean": "next clean",
+    "type-check": "tsc --noEmit",
+    "test:graph": "node scripts/qa/check-graph.mjs",
+    "test:redirects": "node scripts/qa/check-redirects.mjs",
+    "audit": "bun run lint && bun run type-check && bun run build"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
