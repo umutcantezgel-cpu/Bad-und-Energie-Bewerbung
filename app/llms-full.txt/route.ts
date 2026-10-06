@@ -32,7 +32,7 @@ ${servicesData.map((s: ServiceItem) => `- ${s.title}: ${s.shortDescription}`).jo
 - Auszubildende zum Anlagenmechaniker SHK (m w d)
 
 ## 4. Attraktive Vergütung und Arbeitgebervorteile
-- Gehaltsspanne: 3600 bis 4800 Euro Monatsgehalt je nach Qualifikation
+- Vergütung: Überdurchschnittlicher Lohn deutlich über Handwerkstarif je nach Qualifikation
 - Festanstellung mit unbefristetem Arbeitsvertrag
 - 30 Tage bezahlter Erholungsurlaub
 - Freitags ab 13:30 Uhr bezahlter Feierabend ins Wochenende

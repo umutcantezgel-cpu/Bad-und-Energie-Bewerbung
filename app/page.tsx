@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Clock,
-  Euro,
+  Award,
   Car,
   Smartphone,
   Flame,
@@ -36,14 +36,14 @@ import { RotatingText } from '@/components/ui/RotatingText';
 export const metadata = {
   title: 'Jobs Wetzlar | Heizungsbauer & Monteure | Bad & Energie',
   description:
-    'SHK Handwerker Jobs in Wetzlar: Bis zu 4.800 € Gehalt, 30 Tage Urlaub, freitags ab 13:30 Uhr frei & Firmenwagen. Jetzt in 60 Sek. bewerben bei Bad & Energie!',
+    'SHK Handwerker Jobs in Wetzlar: Top Vergütung, 30 Tage Urlaub, freitags ab 13:30 Uhr frei & Firmenwagen. Jetzt in 60 Sek. bewerben bei Bad & Energie!',
   alternates: {
     canonical: 'https://karriere.bad-energie.de',
   },
   openGraph: {
     title: 'Jobs Wetzlar | Heizungsbauer & Monteure | Bad & Energie',
     description:
-      'SHK Handwerker Jobs in Wetzlar: Bis zu 4.800 € Gehalt, 30 Tage Urlaub, freitags ab 13:30 Uhr frei & Firmenwagen. Jetzt in 60 Sek. bewerben bei Bad & Energie!',
+      'SHK Handwerker Jobs in Wetzlar: Top Vergütung, 30 Tage Urlaub, freitags ab 13:30 Uhr frei & Firmenwagen. Jetzt in 60 Sek. bewerben bei Bad & Energie!',
     url: 'https://karriere.bad-energie.de',
     siteName: 'Bad und Energie GmbH Lahn Dill',
     locale: 'de_DE',
@@ -62,7 +62,7 @@ export default function HomePage() {
     {
       title: '30 Tage Urlaub und Top Vergütung',
       desc: 'Volle 30 Arbeitstage für echte Erholung. Dazu eine Vergütung deutlich über dem regionalen Handwerkstarif, pünktlichste Auszahlung sowie Urlaubs und Weihnachtsgeld.',
-      icon: <Euro className="w-6 h-6 text-[#059669]" strokeWidth={1.5} />,
+      icon: <Award className="w-6 h-6 text-[#059669]" strokeWidth={1.5} />,
       accent: 'border-emerald-100',
     },
     {
@@ -313,8 +313,8 @@ export default function HomePage() {
                   <span className="px-2.5 py-1 rounded-md text-[10px] font-sans font-semibold uppercase bg-sky-50 text-sky-800 border border-sky-200">
                     Stelle 01 · Vollzeit
                   </span>
-                  <span className="text-xs font-sans font-bold text-emerald-700 tabular-nums">
-                    3.800 € bis 4.800 €
+                  <span className="text-xs font-sans font-bold text-emerald-700">
+                    Über Tarif · Nach Qualifikation
                   </span>
                 </div>
 
@@ -363,8 +363,8 @@ export default function HomePage() {
                   <span className="px-2.5 py-1 rounded-md text-[10px] font-sans font-semibold uppercase bg-emerald-50 text-emerald-800 border border-emerald-200">
                     Stelle 02 · Spezialist
                   </span>
-                  <span className="text-xs font-sans font-bold text-emerald-700 tabular-nums">
-                    4.200 € bis 5.000 €
+                  <span className="text-xs font-sans font-bold text-emerald-700">
+                    Über Tarif · Top Facharbeiterlohn
                   </span>
                 </div>
 
@@ -413,8 +413,8 @@ export default function HomePage() {
                   <span className="px-2.5 py-1 rounded-md text-[10px] font-sans font-semibold uppercase bg-amber-50 text-amber-800 border border-amber-200">
                     Stelle 03 · Start August 2026
                   </span>
-                  <span className="text-xs font-sans font-bold text-emerald-700 tabular-nums">
-                    1.100 € bis 1.400 €
+                  <span className="text-xs font-sans font-bold text-emerald-700">
+                    Attraktive Vergütung · Übernahme
                   </span>
                 </div>
 
@@ -459,18 +459,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* GEHALTSRECHNER SECTION (#gehalt) */}
-      <section id="gehalt" className="py-20 sm:py-24 border-t border-white/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* VORTEILS- & AUSSTATTUNGS-CHECK SECTION (#karriere-paket & #gehalt) */}
+      <section id="karriere-paket" className="py-20 sm:py-24 border-t border-white/60 scroll-mt-20">
+        <div id="gehalt" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-14">
-            <span className="text-xs font-sans font-semibold uppercase tracking-wider text-[#059669] block mb-2">
-              Transparente Entlohnung ohne Tabus
+            <span className="text-xs font-sans font-semibold uppercase tracking-wider text-[#0284C7] block mb-2">
+              Dein Karriere-Paket &amp; Ausstattungs-Check
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0A1E3A] tracking-tight">
-              Was verdienst Du bei Bad und Energie?
+              Welche Vorteile schaltest Du bei Bad &amp; Energie frei?
             </h2>
             <p className="text-slate-600 mt-3 text-sm sm:text-base leading-relaxed">
-              Berechne Deinen persönlichen Monatslohn inklusive Zulagen, 30 Tagen Urlaub und Hilti Vollausstattung ganz unverbindlich.
+              Wähle Deine Fachrichtung und Praxiserfahrung – entdecke sofort Dein persönliches Mitarbeiter-Paket mit Hilti Vollausstattung, Firmenwagen und Urlaubsanspruch.
             </p>
           </div>
           <SalaryCalculator />

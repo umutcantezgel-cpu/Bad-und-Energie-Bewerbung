@@ -58,7 +58,7 @@ export const companyData: CompanyData = {
     longitude: 8.49842,
   },
   benefits: [
-    'Bis zu 4800 Euro Gehalt plus Urlaubs und Weihnachtsgeld',
+    'Überdurchschnittliche Vergütung deutlich über Handwerkstarif plus Urlaubs- und Weihnachtsgeld',
     '30 Tage garantierter Erholungsurlaub',
     'Freitags ab 13:30 Uhr Feierabend',
     'Hilti Vollausstattung im persönlichen Werkzeugkoffer',

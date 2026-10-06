@@ -144,7 +144,6 @@ export function getLocalBusinessNode() {
     hasMap: SITE_CONFIG.contact.googleMapsUrl,
     address: HQ_ADDRESS,
     geo: HQ_GEO,
-    priceRange: SITE_CONFIG.priceRange,
     foundingDate: SITE_CONFIG.foundingDate,
   };
 }

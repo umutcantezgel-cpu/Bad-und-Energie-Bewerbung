@@ -39,7 +39,7 @@ export const initialDossierState: CandidateDossier = {
   currentStatus: 'employed',
   experience: '4 Jahre Praxis',
   startDate: 'In 1 Monat (Kündigungsfrist)',
-  salaryExpectation: '3.900 € / Monat + Zulagen',
+  salaryExpectation: 'Vollzeit • Freitags ab 13:30 Uhr Wochenende • Unbefristet',
   skills: [
     'Wärmepumpen (Luft und Wasser Bosch & Brötje)',
     'Badsanierung & Vorwandinstallation',
@@ -86,7 +86,7 @@ export const formBuilderSchema = z.object({
   position: z.string().min(1, 'Bitte Position auswählen'),
   experience: z.string().min(1, 'Bitte Erfahrung angeben'),
   startDate: z.string().min(1, 'Bitte Starttermin angeben'),
-  salaryExpectation: z.string().min(1, 'Bitte Gehaltswunsch angeben'),
+  salaryExpectation: z.string().optional(),
   notes: z.string().optional(),
   contactPreference: z.enum(['whatsapp', 'phone', 'email']),
   discretionGuaranteed: z.boolean(),

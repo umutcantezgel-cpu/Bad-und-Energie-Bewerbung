@@ -19,7 +19,7 @@ ${SITE_CONFIG.companyName} ist ein traditionsreicher Meisterbetrieb seit 1926 in
 - Innung: ${SITE_CONFIG.innung}
 
 ## Arbeitskonditionen und Arbeitgebervorteile
-- Gehalt: Bis zu 4800 Euro Monatslohn plus Urlaubs und Weihnachtsgeld
+- Vergütung: Überdurchschnittlicher Lohn deutlich über Handwerkstarif plus Urlaubs- und Weihnachtsgeld
 - Arbeitszeiten: Montag bis Donnerstag von 07:00 bis 16:45 Uhr, Freitag von 07:00 bis 13:30 Uhr
 - Wochenende: Freitags ab 13:30 Uhr bezahlt ins Wochenende
 - Urlaub: 30 Tage garantierter Erholungsurlaub

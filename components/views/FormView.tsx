@@ -68,7 +68,7 @@ export function FormView({
       position: values.position,
       experience: values.experience,
       startDate: values.startDate,
-      salaryExpectation: values.salaryExpectation,
+      salaryExpectation: values.salaryExpectation || '',
       notes: values.notes || '',
       contactPreference: values.contactPreference,
       discretionGuaranteed: values.discretionGuaranteed,
@@ -247,21 +247,18 @@ export function FormView({
                 htmlFor="field-salaryExpectation"
                 className="block text-xs font-mono font-bold text-slate-700 uppercase tracking-wider mb-1.5"
               >
-                Gehaltsvorstellung Brutto *
+                Wunschkonditionen &amp; Arbeitsmodell (optional)
               </label>
               <input
                 id="field-salaryExpectation"
                 type="text"
-                placeholder="z.B. 3900 Euro pro Monat"
+                placeholder="z.B. Vollzeit (Freitag 13:30 Uhr frei), eigener Transporter"
                 {...register('salaryExpectation', {
                   onChange: (e) =>
                     onUpdateDossier((prev) => ({ ...prev, salaryExpectation: e.target.value })),
                 })}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0284C7] focus:border-[#0284C7] outline-none"
               />
-              {errors.salaryExpectation && (
-                <p className="text-red-600 text-[11px] mt-1">{errors.salaryExpectation.message}</p>
-              )}
             </div>
           </div>
         </div>

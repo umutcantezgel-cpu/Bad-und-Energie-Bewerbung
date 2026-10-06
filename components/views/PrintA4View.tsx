@@ -29,7 +29,7 @@ export function PrintA4View({ dossier }: PrintA4ViewProps) {
       `Wohnort: ${dossier.location}\n` +
       `Praxiserfahrung: ${dossier.experience}\n` +
       `Frühester Start: ${dossier.startDate}\n` +
-      `Gehaltsvorstellung: ${dossier.salaryExpectation}\n\n` +
+      `Konditionen: ${dossier.salaryExpectation || 'Vollzeit (Freitags ab 13:30 Uhr frei)'}\n\n` +
       `Ich freue mich über ein unverbindliches Kennenlernen in Wetzlar!`
     );
     window.open(`https://wa.me/49644142956?text=${text}`, '_blank');
@@ -210,13 +210,13 @@ export function PrintA4View({ dossier }: PrintA4ViewProps) {
 
               <div>
                 <span className="text-[10px] font-mono font-bold uppercase text-slate-400 block">
-                  Gehaltsvorstellung
+                  Konditionen &amp; Vergütung
                 </span>
-                <span className="font-semibold text-[#0A1E3A] block text-[11px] font-mono mt-0.5">
-                  {dossier.salaryExpectation}
+                <span className="font-semibold text-[#0A1E3A] block text-[11px] font-mono mt-0.5 truncate">
+                  {dossier.salaryExpectation || 'Nach Qualifikation'}
                 </span>
                 <span className="text-[#059669] text-[10px] font-medium block">
-                  Verhandlungsbasis
+                  Über Tarif + Sonderzahlungen
                 </span>
               </div>
             </div>

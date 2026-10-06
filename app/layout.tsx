@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
   title: 'Jobs Wetzlar | Heizungsbauer & Monteure | Bad & Energie',
   description:
-    'SHK Handwerker Jobs in Wetzlar: Bis zu 4.800 € Gehalt, 30 Tage Urlaub, freitags ab 13:30 Uhr frei & Firmenwagen. Jetzt in 60 Sek. bewerben bei Bad & Energie!',
+    'SHK Handwerker Jobs in Wetzlar: Top Vergütung, 30 Tage Urlaub, freitags ab 13:30 Uhr frei & Firmenwagen. Jetzt in 60 Sek. bewerben bei Bad & Energie!',
   keywords: [
     'Jobs Wetzlar',
     'Heizungsbauer Jobs Wetzlar',
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Jobs Wetzlar | Heizungsbauer & Monteure | Bad & Energie',
     description:
-      'SHK Handwerker Jobs in Wetzlar: Bis zu 4.800 € Gehalt, 30 Tage Urlaub, freitags ab 13:30 Uhr frei & Firmenwagen. Jetzt in 60 Sek. bewerben bei Bad & Energie!',
+      'SHK Handwerker Jobs in Wetzlar: Top Vergütung, 30 Tage Urlaub, freitags ab 13:30 Uhr frei & Firmenwagen. Jetzt in 60 Sek. bewerben bei Bad & Energie!',
     url: appUrl,
     siteName: 'Bad und Energie GmbH Lahn Dill',
     locale: 'de_DE',
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Jobs Wetzlar | Heizungsbauer & Monteure | Bad & Energie',
     description:
-      'SHK Handwerker Jobs in Wetzlar: Bis zu 4.800 € Gehalt, 30 Tage Urlaub, freitags ab 13:30 Uhr frei & Firmenwagen. Jetzt in 60 Sek. bewerben bei Bad & Energie!',
+      'SHK Handwerker Jobs in Wetzlar: Top Vergütung, 30 Tage Urlaub, freitags ab 13:30 Uhr frei & Firmenwagen. Jetzt in 60 Sek. bewerben bei Bad & Energie!',
     images: [logoUrl],
   },
   robots: {
@@ -229,7 +229,6 @@ const structuredData = {
         name: 'Diplomingenieur Sabri Demir',
       },
       foundingDate: '1926',
-      priceRange: '€€',
       openingHoursSpecification: [
         {
           '@type': 'OpeningHoursSpecification',
@@ -279,16 +278,6 @@ const structuredData = {
           addressCountry: 'DE',
         },
       },
-      baseSalary: {
-        '@type': 'MonetaryAmount',
-        currency: 'EUR',
-        value: {
-          '@type': 'QuantitativeValue',
-          unitText: 'MONTH',
-          minValue: 3600,
-          maxValue: 4800,
-        },
-      },
     },
     {
       '@type': 'JobPosting',
@@ -313,16 +302,6 @@ const structuredData = {
           addressLocality: 'Wetzlar',
           postalCode: '35578',
           addressCountry: 'DE',
-        },
-      },
-      baseSalary: {
-        '@type': 'MonetaryAmount',
-        currency: 'EUR',
-        value: {
-          '@type': 'QuantitativeValue',
-          unitText: 'MONTH',
-          minValue: 3800,
-          maxValue: 5000,
         },
       },
     },
@@ -354,16 +333,6 @@ const structuredData = {
           postalCode: '35578',
           addressRegion: 'Hessen',
           addressCountry: 'DE',
-        },
-      },
-      baseSalary: {
-        '@type': 'MonetaryAmount',
-        currency: 'EUR',
-        value: {
-          '@type': 'QuantitativeValue',
-          unitText: 'MONTH',
-          minValue: 950,
-          maxValue: 1300,
         },
       },
     },

@@ -193,7 +193,7 @@ export function VaultView({ dossier, onUpdateDossier, onSwitchView }: VaultViewP
           </p>
           <div className="text-[11px] text-[#059669] flex items-center gap-1 font-semibold">
             <CheckCircle2 className="w-3.5 h-3.5" strokeWidth={1.5} />
-            <span>Wird beim Gehalt berücksichtigt</span>
+            <span>Fließt in Deine Einstufung &amp; Boni ein</span>
           </div>
         </div>
       </div>

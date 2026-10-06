@@ -24,7 +24,6 @@ export const SITE_CONFIG = {
 
   // Founding & Business Attributes
   foundingDate: '1926',
-  priceRange: '€€',
   currenciesAccepted: 'EUR',
   paymentAccepted: 'Überweisung, Rechnung',
   vatID: 'DE301642296',

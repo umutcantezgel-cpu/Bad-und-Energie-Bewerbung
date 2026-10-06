@@ -293,7 +293,7 @@ export default function BewerbungHubPage() {
                     tabId: 'form' as const,
                     badge: 'Schritt 3',
                     title: 'Online Bewerbungsformular',
-                    desc: 'Erfasse persönliche Daten, Praxisschwerpunkte, Gehaltsvorstellung und Wunschtermin ganz entspannt online.',
+                    desc: 'Erfasse persönliche Daten, Praxisschwerpunkte, Wunschkonditionen und Wunschtermin ganz entspannt online.',
                     cta: 'Formular bearbeiten',
                     color: 'text-[#0A1E3A]',
                     icon: <FileSpreadsheet className="w-6 h-6 text-[#0A1E3A]" strokeWidth={1.5} />,

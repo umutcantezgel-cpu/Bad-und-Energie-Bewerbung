@@ -19,7 +19,6 @@ import {
   Car,
   ChevronRight,
   CheckCircle2,
-  Euro,
   FileSpreadsheet,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
@@ -63,7 +62,7 @@ export function Header() {
     },
     {
       href: '/#benefits',
-      label: 'Vorteile und Gehalt',
+      label: 'Vorteile & Benefits',
       sub: '30 Tage Urlaub • Freitag ab 13:30 Uhr frei',
     },
     {
@@ -82,7 +81,7 @@ export function Header() {
   const openRoles = [
     {
       title: 'Anlagenmechaniker für Sanitär Heizung und Klimatechnik m w d',
-      type: 'Vollzeitbeschäftigung • 3.800 € bis 4.800 € Bruttogehalt',
+      type: 'Vollzeitbeschäftigung • Attraktive & übertarifliche Vergütung',
       tag: 'Wetzlar und Lahn Dill Kreis',
       href: '/bewerbung',
     },

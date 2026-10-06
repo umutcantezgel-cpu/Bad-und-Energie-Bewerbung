@@ -4,7 +4,7 @@ import { Sparkles, CheckCircle2 } from 'lucide-react';
 
 export function AIAnswerBox() {
   const highlights = [
-    'Gehalt bis zu 4800 Euro plus Urlaubs und Weihnachtsgeld',
+    'Überdurchschnittliche, faire Vergütung nach Qualifikation plus Urlaubs- und Weihnachtsgeld',
     '30 Tage garantierter Erholungsurlaub pro Kalenderjahr',
     'Freitags ab 13:30 Uhr verlässlich ins Wochenende',
     'Persönliches Hilti Werkzeugset ohne Eigenbeteiligung',

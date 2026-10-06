@@ -75,7 +75,7 @@ export const servicesData: ServiceItem[] = [
     fullDescription: 'Seit 1926 bilden wir erfolgreich den handwerklichen Nachwuchs in Wetzlar aus. Azubis erhalten ab Tag 1 ein eigenes Hilti Werkzeugset, volle Fahrtkostenübernahme und eine garantierte Festanstellung.',
     features: [
       'Eigenes Hilti Azubi Werkzeugset geschenkt',
-      'Überdurchschnittliche Ausbildungsvergütung ab 950 Euro',
+      'Überdurchschnittliche Ausbildungsvergütung über Tarif',
       'Fahrtkostenzuschuss zur Berufsschule',
       '100 Prozent Übernahmegarantie nach Gesellenprüfung',
     ],

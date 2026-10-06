@@ -5,7 +5,7 @@ import { motion } from 'motion/react';
 import {
   CheckCircle2,
   AlertCircle,
-  Euro,
+  Clock,
   Calendar,
   Wrench,
   UserCheck,
@@ -156,17 +156,6 @@ export function ProgressGauge({
     });
   }
 
-  if (!isSalaryValid) {
-    computedMissingFields.push({
-      id: 'salaryExpectation',
-      fieldId: 'salaryExpectation',
-      label: 'Gehaltsvorstellung bestätigen',
-      helper: 'Monatlicher Bruttowunsch in Euro oder Stundenlohn',
-      category: 'conditions',
-      icon: Euro,
-    });
-  }
-
   if (!isStartDateValid) {
     computedMissingFields.push({
       id: 'startDate',
@@ -187,20 +176,19 @@ export function ProgressGauge({
   const qualPoints = (isExperienceValid ? 1 : 0) + (isPositionValid ? 1 : 0) + (hasSkills ? 1 : 0);
   const qualPercent = Math.round((qualPoints / 3) * 100);
 
-  const condPoints = (isSalaryValid ? 1 : 0) + (isStartDateValid ? 1 : 0);
-  const condPercent = Math.round((condPoints / 2) * 100);
+  const condPoints = isStartDateValid ? 1 : 0;
+  const condPercent = Math.round((condPoints / 1) * 100);
 
   const docPercent = hasFiles ? 100 : 0;
 
   // Total weighted score
-  const totalMandatoryPoints = 9;
+  const totalMandatoryPoints = 8;
   const earnedPoints =
     (isNameValid ? 1 : 0) +
     (isPhoneValid ? 1 : 0) +
     (isLocationValid ? 1 : 0) +
     (isExperienceValid ? 1 : 0) +
     (isPositionValid ? 1 : 0) +
-    (isSalaryValid ? 1 : 0) +
     (isStartDateValid ? 1 : 0) +
     (hasSkills ? 1 : 0) +
     (hasFiles ? 1 : 0);
@@ -222,9 +210,8 @@ export function ProgressGauge({
       (isPhoneValid ? 1 : 0) +
       (isLocationValid ? 1 : 0) +
       (isExperienceValid ? 1 : 0) +
-      (isSalaryValid ? 1 : 0) +
       (isStartDateValid ? 1 : 0)) /
-      6) *
+      5) *
       100
   );
 
@@ -330,19 +317,17 @@ export function ProgressGauge({
     },
     {
       id: 'conditions',
-      label: 'Konditionen und Gehalt',
+      label: 'Konditionen & Starttermin',
       percentage: condPercent,
       completed: condPoints,
-      total: 2,
+      total: 1,
       statusText:
         condPercent === 100
-          ? 'Gehaltswunsch und Verfügbarkeit klar'
-          : !isSalaryValid
-            ? 'Wunschgehalt im Formular eintragen'
-            : 'Starttermin auswählen',
+          ? 'Frühester Starttermin hinterlegt'
+          : 'Starttermin auswählen',
       targetTab: 'form',
-      targetFieldId: !isSalaryValid ? 'salaryExpectation' : 'startDate',
-      icon: Euro,
+      targetFieldId: 'startDate',
+      icon: Clock,
     },
   ];
 
@@ -715,7 +700,7 @@ export function ProgressGauge({
                 Alle Pflichtangaben für Geschäftsführer Sabri Demir liegen vollständig vor.
               </div>
               <p className="text-xs text-emerald-800 leading-relaxed">
-                Deine Kontaktdaten, Gehaltserwartung und Verfügbarkeit sind verifiziert und
+                Deine Kontaktdaten, Rahmenbedingungen und Verfügbarkeit sind verifiziert und
                 übertragen sich automatisch auf das offizielle DINA4 Bewerberdossier.
               </p>
             </div>
@@ -771,13 +756,10 @@ export function BewerberCheckliste({
   const isNameMissing = !dossier.fullName || dossier.fullName.trim().length < 3;
   const isPhoneMissing = !dossier.phone || dossier.phone.trim().length < 6;
   const isLocationMissing = !dossier.location || dossier.location.trim().length < 2;
-  const isSalaryMissing =
-    !dossier.salaryExpectation || dossier.salaryExpectation.trim().length < 3;
   const isStartDateMissing = !dossier.startDate || dossier.startDate.trim().length < 2;
 
   // 2. Evaluate overall dossier criteria
   const hasDocuments = Boolean(dossier.files && dossier.files.length > 0);
-  const hasSalary = !isSalaryMissing;
   const hasStartDate = !isStartDateMissing;
   const hasSkills = Boolean(dossier.skills && dossier.skills.length >= 3);
   const hasContactInfo = !isNameMissing && !isPhoneMissing && !isLocationMissing;
@@ -801,16 +783,16 @@ export function BewerberCheckliste({
       icon: UploadCloud,
     },
     {
-      id: 'salary',
+      id: 'conditions',
       category: 'konditionen' as const,
-      title: 'Gehaltsvorstellung bestätigen',
-      requirement: 'Monatliche Brutto-Vergütung oder Zielgehalt angeben',
-      isComplete: hasSalary,
-      valueDisplay: hasSalary ? dossier.salaryExpectation : undefined,
+      title: 'Wunschkonditionen & Arbeitszeitmodell',
+      requirement: 'Vollzeit, Feierabendregelung und optionale Wünsche',
+      isComplete: true,
+      valueDisplay: dossier.salaryExpectation || 'Vollzeit (Freitags ab 13:30 Uhr frei)',
       targetTab: 'form' as const,
       targetFieldId: 'salaryExpectation',
-      ctaText: 'Gehalt angeben',
-      icon: Euro,
+      ctaText: 'Konditionen anpassen',
+      icon: Clock,
     },
     {
       id: 'startDate',
