@@ -4,16 +4,16 @@ const appUrl = process.env.APP_URL || 'https://karriere.bad-energie.de';
 const logoUrl = `${appUrl}/images/bad-energie-lahn-dill-logo.webp`;
 
 export const metadata: Metadata = {
-  title: 'Bewerbung SHK Handwerk Wetzlar | Bad & Energie',
+  title: 'Bewerbung & Dokumenten-Upload | SHK Karriereportal',
   description:
-    'Diskrete 60-Sekunden-Bewerbung als SHK Monteur & Techniker in Wetzlar. Ohne Anschreiben & ohne Lebenslauf. Rückmeldung garantiert innerhalb von 24h!',
+    'Online-Bewerbungsportal für SHK Monteure & Handwerker: 4-Schritte-Fragebogen, Express-Upload für Lebenslauf & PDF-Dossier. Schnell, diskret & unkompliziert.',
   alternates: {
     canonical: `${appUrl}/bewerbung`,
   },
   openGraph: {
-    title: 'Bewerbung SHK Handwerk Wetzlar | Bad & Energie',
+    title: 'Bewerbung & Dokumenten-Upload | SHK Karriereportal',
     description:
-      'Diskrete 60-Sekunden-Bewerbung als SHK Monteur & Techniker in Wetzlar. Ohne Anschreiben & ohne Lebenslauf. Rückmeldung garantiert innerhalb von 24h!',
+      'Online-Bewerbungsportal für SHK Monteure & Handwerker: 4-Schritte-Fragebogen, Express-Upload für Lebenslauf & PDF-Dossier. Schnell, diskret & unkompliziert.',
     url: `${appUrl}/bewerbung`,
     siteName: 'Bad und Energie GmbH Lahn Dill',
     locale: 'de_DE',
@@ -23,16 +23,16 @@ export const metadata: Metadata = {
         url: logoUrl,
         width: 1200,
         height: 630,
-        alt: 'Bewerbung bei Bad und Energie GmbH Lahn Dill in Wetzlar',
+        alt: 'Bewerbung im SHK Karriereportal',
         type: 'image/webp',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Bewerbung SHK Handwerk Wetzlar | Bad & Energie',
+    title: 'Bewerbung & Dokumenten-Upload | SHK Karriereportal',
     description:
-      'Diskrete 60-Sekunden-Bewerbung als SHK Monteur & Techniker in Wetzlar. Ohne Anschreiben & ohne Lebenslauf. Rückmeldung garantiert innerhalb von 24h!',
+      'Online-Bewerbungsportal für SHK Monteure & Handwerker: 4-Schritte-Fragebogen, Express-Upload für Lebenslauf & PDF-Dossier. Schnell, diskret & unkompliziert.',
     images: [logoUrl],
   },
 };

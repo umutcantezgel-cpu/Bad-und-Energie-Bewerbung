@@ -63,7 +63,7 @@ export default function DatenschutzPage() {
 
           <div className="flex items-center gap-6 text-xs text-slate-300 font-mono">
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" strokeWidth={1.5} />
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" strokeWidth={1.5} />
               Auditierte Verschlüsselung (TLS 1.3)
             </span>
             <span className="hidden md:inline text-slate-600">|</span>
@@ -119,7 +119,7 @@ export default function DatenschutzPage() {
                 <span className="text-[10px] font-mono font-bold uppercase text-[#C51E1E]">
                   Schriftarten
                 </span>
-                <CheckCircle2 className="w-4 h-4 text-[#059669]" strokeWidth={1.5} />
+                <CheckCircle2 className="w-4 h-4 text-[#047857]" strokeWidth={1.5} />
               </div>
               <div className="text-base font-bold text-[#0A1E3A]">100% Lokale Fonts</div>
               <div className="text-xs text-slate-500 mt-1">
@@ -340,7 +340,7 @@ export default function DatenschutzPage() {
                       Die Verarbeitung ist für die Erfüllung eines Vertrags, dessen Vertragspartei die betroffene Person ist, oder zur Durchführung vorvertraglicher Maßnahmen erforderlich (z.B. Sanitärangebote, Heizungswartung, Aufmaß).
                     </p>
                   </div>
-                  <div className="mt-4 pt-2 border-t border-slate-100 font-mono text-[10px] uppercase text-[#059669] font-bold">
+                  <div className="mt-4 pt-2 border-t border-slate-100 font-mono text-[10px] uppercase text-[#047857] font-bold">
                     Kerngeschäft Handwerk
                   </div>
                 </div>
@@ -572,12 +572,12 @@ export default function DatenschutzPage() {
               <div className="border border-slate-200 rounded-3xl p-5 bg-white space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#059669]" strokeWidth={1.5} />
+                    <CheckCircle2 className="w-4 h-4 text-[#047857]" strokeWidth={1.5} />
                     <h3 className="text-sm font-bold text-[#0A1E3A]">
                       Lokales Hosting von Schriftarten ohne US Transfer
                     </h3>
                   </div>
-                  <span className="px-2 py-0.5 bg-emerald-50 text-[#059669] font-mono text-[10px] uppercase font-bold rounded">
+                  <span className="px-2 py-0.5 bg-emerald-50 text-[#047857] font-mono text-[10px] uppercase font-bold rounded">
                     Kein US Transfer
                   </span>
                 </div>

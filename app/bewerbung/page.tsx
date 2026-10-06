@@ -195,7 +195,7 @@ export default function BewerbungHubPage() {
               })}
             </div>
 
-            <div className="hidden sm:flex items-center gap-2 text-xs font-semibold text-[#059669] glass-pill px-3 py-1.5 rounded-full">
+            <div className="hidden sm:flex items-center gap-2 text-xs font-semibold text-[#047857] glass-pill px-3 py-1.5 rounded-full">
               <ShieldCheck className="w-4 h-4" strokeWidth={1.5} />
               <span>Paragraph 26 BDSG geschützt</span>
             </div>
@@ -241,14 +241,14 @@ export default function BewerbungHubPage() {
               <div className="bg-[#0A1E3A] text-white rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-xl">
                 <div className="max-w-3xl space-y-4">
                   <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-sky-300 text-xs font-semibold">
-                    <span className="w-2 h-2 rounded-full bg-[#0284C7]" />
+                    <span className="w-2 h-2 rounded-full bg-[#0369a1]" />
                     Karriere und Bewerbung in Wetzlar und Umgebung
                   </span>
                   <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
-                    Vier einfache Wege zu Deinem Job bei Bad und Energie in Wetzlar
+                    Vier einfache Wege zu Deinem neuen SHK Arbeitsplatz
                   </h1>
                   <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-                    Vier einfache Wege führen Dich direkt zu Deinem neuen Job bei Bad und Energie in Wetzlar: Ob per schneller Express-Bewerbung ohne Lebenslauf, direktem Dokumentenupload oder strukturiertem Formular – finde in wenigen Minuten Deinen zukunftssicheren Platz in unserem Meisterteam.
+                    Vier einfache Wege führen Dich direkt zu Deinem neuen SHK Arbeitsplatz: Ob per schneller Express-Bewerbung ohne Lebenslauf, direktem Dokumentenupload oder strukturiertem Formular – finde in wenigen Minuten Deinen zukunftssicheren Platz in unserem Meisterteam.
                   </p>
 
                   {/* 2-Wege Entscheidungsbox */}
@@ -342,8 +342,8 @@ export default function BewerbungHubPage() {
                     title: 'Unterlagen und Zeugnisse',
                     desc: 'Lade vorhandene Zeugnisse, Gesellenbriefe oder Zertifikate ganz einfach und sicher hoch.',
                     cta: 'Unterlagen hochladen',
-                    color: 'text-[#059669]',
-                    icon: <UploadCloud className="w-6 h-6 text-[#059669]" strokeWidth={1.5} />,
+                    color: 'text-[#047857]',
+                    icon: <UploadCloud className="w-6 h-6 text-[#047857]" strokeWidth={1.5} />,
                   },
                   {
                     tabId: 'form' as const,

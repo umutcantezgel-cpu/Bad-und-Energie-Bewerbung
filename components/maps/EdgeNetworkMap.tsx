@@ -189,7 +189,7 @@ export function EdgeNetworkMap({
       {/* Floating Selected Route Info Bar */}
       <div className="relative z-10 bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/90 p-3 sm:p-3.5 shadow-md flex items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-sky-50 text-[#0284C7] flex items-center justify-center shrink-0 border border-sky-100">
+          <div className="w-8 h-8 rounded-xl bg-sky-50 text-[#0369a1] flex items-center justify-center shrink-0 border border-sky-100">
             <Car className="w-4 h-4" strokeWidth={1.5} />
           </div>
           <div>
@@ -203,7 +203,7 @@ export function EdgeNetworkMap({
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <span className="font-extrabold text-[#059669] text-sm">
+          <span className="font-extrabold text-[#047857] text-sm">
             {selectedNode.driveTime}
           </span>
           <span className="text-[10px] text-slate-400 font-medium hidden sm:inline">
@@ -215,8 +215,8 @@ export function EdgeNetworkMap({
       {/* Footer Metrics */}
       <div className="relative z-10 flex items-center justify-between text-xs text-slate-500 border-t border-slate-200/80 pt-2.5 mt-2">
         <span>Feste Kundendiensttouren im Lahn Dill Kreis</span>
-        <span className="flex items-center gap-1.5 font-bold text-[#059669]">
-          <span className="w-2 h-2 rounded-full bg-[#059669] animate-pulse" />
+        <span className="flex items-center gap-1.5 font-bold text-[#047857]">
+          <span className="w-2 h-2 rounded-full bg-[#047857] animate-pulse" />
           Pünktlicher Feierabend garantiert
         </span>
       </div>

@@ -24,50 +24,10 @@ import { Logo } from '@/components/Logo';
 import { TrustStrip } from '@/components/trust/TrustStrip';
 import { ProcessSteps } from '@/components/trust/ProcessSteps';
 
-const SalaryCalculator = dynamic(
-  () => import('@/components/pricing/SalaryCalculator').then((mod) => mod.SalaryCalculator),
-  {
-    loading: () => (
-      <div className="p-12 text-center text-slate-500 font-sans text-xs">
-        Vorteils-Paket wird vorbereitet...
-      </div>
-    ),
-  }
-);
-
-const InteractiveMap = dynamic(
-  () => import('@/components/maps/InteractiveMap').then((mod) => mod.InteractiveMap),
-  {
-    loading: () => (
-      <div className="h-[640px] bg-slate-100/80 rounded-3xl animate-pulse flex flex-col items-center justify-center text-slate-400 text-xs gap-2">
-        <div className="w-8 h-8 rounded-full border-2 border-sky-500 border-t-transparent animate-spin" />
-        <span>Standortkarte &amp; Einsatzgebiet werden geladen...</span>
-      </div>
-    ),
-  }
-);
-
-const ReviewCarousel = dynamic(
-  () => import('@/components/reviews/ReviewCarousel').then((mod) => mod.ReviewCarousel),
-  {
-    loading: () => (
-      <div className="p-8 text-center text-slate-500 font-sans text-xs">
-        Mitarbeiterbewertungen werden geladen...
-      </div>
-    ),
-  }
-);
-
-const AIAnswerBox = dynamic(
-  () => import('@/components/seo/AIAnswerBox').then((mod) => mod.AIAnswerBox),
-  {
-    loading: () => (
-      <div className="p-6 text-center text-slate-500 font-sans text-xs">
-        Häufige Fragen &amp; Antworten werden geladen...
-      </div>
-    ),
-  }
-);
+import { SalaryCalculatorClientWrapper as SalaryCalculator } from '@/components/pricing/SalaryCalculatorClientWrapper';
+import { InteractiveMapClientWrapper as InteractiveMap } from '@/components/maps/InteractiveMapClientWrapper';
+import { ReviewCarousel } from '@/components/reviews/ReviewCarousel';
+import { AIAnswerBox } from '@/components/seo/AIAnswerBox';
 
 import { GoogleReviewsBadge } from '@/components/reviews/GoogleReviewsBadge';
 import { DirectContactCard } from '@/components/contact/DirectContactCard';
@@ -196,7 +156,7 @@ export default function HomePage() {
               </h1>
 
               <p className="text-sm sm:text-lg text-slate-600 max-w-2xl leading-relaxed text-pretty">
-                Attraktive Jobs in Wetzlar für erfahrene Heizungsbauer und engagierte Monteure: Erlebe ehrliches Handwerk, erstklassigen Lohn und pünktlich Feierabend im familiären Meisterteam. Bewerbung in unter <strong className="text-[#0A1E3A]">60 Sekunden</strong> – ohne Anschreiben, ohne Lebenslauf, mit garantierter persönlicher Rückmeldung binnen 24 Stunden.
+                Attraktive Jobs in Wetzlar für erfahrene Heizungsbauer und engagierte Monteure: Ehrliches Handwerk, erstklassiger Lohn und pünktlich Feierabend im Meisterteam – erlebe genau das bei Bad &amp; Energie. Bewerbung in unter <strong className="text-[#0A1E3A]">60 Sekunden</strong> – ohne Anschreiben, ohne Lebenslauf, mit garantierter persönlicher Rückmeldung binnen 24 Stunden.
               </p>
 
               {/* 4 Quantitative USP Badges - Symmetrical 2x2 Mobile / 4-Col Desktop Grid */}
@@ -307,7 +267,7 @@ export default function HomePage() {
                       <div className="text-[10px] text-slate-500 uppercase tracking-wider">Projekte</div>
                     </div>
                     <div className="p-3 rounded-xl bg-white border border-slate-200/90 shadow-2xs">
-                      <div className="text-base font-extrabold text-[#059669]">100%</div>
+                      <div className="text-base font-extrabold text-[#047857]">100%</div>
                       <div className="text-[10px] text-slate-500 uppercase tracking-wider">Innungsbetrieb</div>
                     </div>
                   </div>
@@ -402,7 +362,7 @@ export default function HomePage() {
                 href="#express-funnel"
                 className="w-full py-3.5 px-4 rounded-2xl bg-[#C51E1E] hover:bg-[#B01717] text-white text-xs font-bold text-center transition-all flex items-center justify-center gap-2 shadow-sm apple-press"
               >
-                <span>In 60 Sekunden ohne Lebenslauf bewerben</span>
+                <span>Als Anlagenmechaniker in 60 Sekunden bewerben</span>
                 <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />
               </a>
             </div>
@@ -452,7 +412,7 @@ export default function HomePage() {
                 href="#express-funnel"
                 className="w-full py-3.5 px-4 rounded-2xl bg-[#C51E1E] hover:bg-[#B01717] text-white text-xs font-bold text-center transition-all flex items-center justify-center gap-2 shadow-sm apple-press"
               >
-                <span>In 60 Sekunden ohne Lebenslauf bewerben</span>
+                <span>Als Kundendiensttechniker direkt bewerben</span>
                 <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />
               </a>
             </div>
@@ -502,7 +462,7 @@ export default function HomePage() {
                 href="#express-funnel"
                 className="w-full py-3.5 px-4 rounded-2xl bg-[#C51E1E] hover:bg-[#B01717] text-white text-xs font-bold text-center transition-all flex items-center justify-center gap-2 shadow-sm apple-press"
               >
-                <span>Bewerbung für Ausbildung starten</span>
+                <span>Bewerbung als Auszubildender starten</span>
                 <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />
               </a>
             </div>

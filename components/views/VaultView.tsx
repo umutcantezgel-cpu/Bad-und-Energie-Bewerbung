@@ -575,7 +575,7 @@ export function VaultView({ dossier, onUpdateDossier, onSwitchView }: VaultViewP
             <p className="text-[11px] text-slate-500 mb-2">
               Abschlussprüfung SHK oder Facharbeiterzertifikat
             </p>
-            <div className="text-[11px] text-[#059669] flex items-center gap-1 font-semibold">
+            <div className="text-[11px] text-[#047857] flex items-center gap-1 font-semibold">
               <CheckCircle2 className="w-3.5 h-3.5" strokeWidth={1.5} />
               <span>Optional (auch ohne Nachweis möglich)</span>
             </div>
@@ -589,7 +589,7 @@ export function VaultView({ dossier, onUpdateDossier, onSwitchView }: VaultViewP
             <p className="text-[11px] text-slate-500 mb-2">
               Für Kundendienst und Werkstatttransporter
             </p>
-            <div className="text-[11px] text-[#0284C7] flex items-center gap-1 font-semibold">
+            <div className="text-[11px] text-[#0369a1] flex items-center gap-1 font-semibold">
               <CheckCircle2 className="w-3.5 h-3.5" strokeWidth={1.5} />
               <span>Wichtig für Montagefahrzeuge</span>
             </div>
@@ -603,7 +603,7 @@ export function VaultView({ dossier, onUpdateDossier, onSwitchView }: VaultViewP
             <p className="text-[11px] text-slate-500 mb-2">
               Wärmepumpenschein, Kälteschein, DGUV
             </p>
-            <div className="text-[11px] text-[#059669] flex items-center gap-1 font-semibold">
+            <div className="text-[11px] text-[#047857] flex items-center gap-1 font-semibold">
               <CheckCircle2 className="w-3.5 h-3.5" strokeWidth={1.5} />
               <span>Fließt in Einstufung &amp; Boni ein</span>
             </div>
@@ -616,8 +616,8 @@ export function VaultView({ dossier, onUpdateDossier, onSwitchView }: VaultViewP
             <h4 className="text-sm font-bold text-slate-900">
               Alle hochgeladenen Dokumente ({dossier.files.length})
             </h4>
-            <span className="text-[11px] text-slate-400 font-mono flex items-center gap-1">
-              <Shield className="w-3 h-3 text-[#059669]" strokeWidth={1.5} />
+            <span className="text-[11px] text-slate-500 font-mono flex items-center gap-1">
+              <Shield className="w-3 h-3 text-[#047857]" strokeWidth={1.5} />
               TLS 256 Bit verschlüsselt
             </span>
           </div>

@@ -99,8 +99,8 @@ export function Logo({
           width={662}
           height={121}
           priority={priority}
-          sizes="(max-width: 640px) 160px, (max-width: 1024px) 200px, 260px"
-          quality={85}
+          sizes="(max-width: 640px) 140px, (max-width: 1024px) 180px, 240px"
+          quality={75}
           itemProp="logo"
           decoding={priority ? 'sync' : 'async'}
           className={`${sizeClasses[size]} object-contain`}

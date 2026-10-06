@@ -330,7 +330,7 @@ ${prev.fullName || 'Alexander Koch'}`;
           <div className="space-y-6">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
-                <span className="inline-flex items-center gap-1.5 text-[#059669] text-xs font-bold">
+                <span className="inline-flex items-center gap-1.5 text-[#047857] text-xs font-bold">
                   <CheckCircle className="w-4 h-4" strokeWidth={1.5} />
                   Profil erfolgreich generiert
                 </span>
@@ -341,7 +341,7 @@ ${prev.fullName || 'Alexander Koch'}`;
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="text-xs text-[#0284C7] hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs text-[#0369a1] hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5" strokeWidth={1.5} />
                 <span>Neu konfigurieren</span>

@@ -337,11 +337,11 @@ export function FormView({
             })}
             rows={3}
             placeholder="Besondere Werkzeugerfahrung, Kälteschein, bevorzugte Arbeitsbereiche..."
-            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0284C7] focus:border-[#0284C7] outline-none"
+            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-[#0369a1] focus:border-[#0369a1] outline-none"
           />
 
           <div className="mt-4 p-4 rounded-2xl bg-amber-50/70 border border-amber-200 flex items-start gap-3">
-            <Shield className="w-5 h-5 text-[#059669] shrink-0 mt-0.5" strokeWidth={1.5} />
+            <Shield className="w-5 h-5 text-[#047857] shrink-0 mt-0.5" strokeWidth={1.5} />
             <div className="text-xs text-slate-600 leading-relaxed">
               <strong className="text-slate-900 block font-semibold">
                 100% vertrauliche Behandlung nach § 26 BDSG garantiert

@@ -322,7 +322,7 @@ function KineticCarouselLane({
             className="inline-flex items-center gap-1 px-3 py-2 rounded-2xl bg-white border border-slate-200 text-slate-700 text-xs font-bold shadow-2xs hover:bg-slate-50 active:scale-[0.97] transition-all cursor-pointer"
             title="Geschwindigkeit anpassen"
           >
-            <Gauge className="w-3.5 h-3.5 text-[#059669]" />
+            <Gauge className="w-3.5 h-3.5 text-[#047857]" />
             <span>{currentSpeedLevel}x Tempo</span>
           </button>
 

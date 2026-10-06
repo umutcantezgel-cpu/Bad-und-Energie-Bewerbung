@@ -61,7 +61,7 @@ export function LocalDominanceMap({
               key={idx}
               className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/95 border border-slate-200/90 text-[11px] font-semibold text-slate-800 shadow-xs backdrop-blur-sm w-fit"
             >
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#059669] shrink-0" strokeWidth={1.5} />
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#047857] shrink-0" strokeWidth={1.5} />
               <span>{badge}</span>
             </div>
           ))}
@@ -133,12 +133,12 @@ export function LocalDominanceMap({
       {/* Bottom Footer Info */}
       <div className="relative z-20 p-4 sm:p-5 pt-0 flex items-center justify-between text-xs">
         <div className="flex items-center gap-1.5 text-slate-500 font-medium">
-          <Navigation2 className="w-3.5 h-3.5 text-[#0284C7]" />
+          <Navigation2 className="w-3.5 h-3.5 text-[#0369a1]" />
           <span>Feste Kundendiensttouren im Lahn Dill Kreis</span>
         </div>
 
         <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/95 border border-slate-200 text-xs font-mono font-bold text-slate-800 shadow-xs">
-          <ShieldCheck className="w-3.5 h-3.5 text-[#059669]" />
+          <ShieldCheck className="w-3.5 h-3.5 text-[#047857]" />
           <span>Max. {activeRadius} km Radius · Keine Fernmontage</span>
         </div>
       </div>

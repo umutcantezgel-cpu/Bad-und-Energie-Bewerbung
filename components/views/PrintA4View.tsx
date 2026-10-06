@@ -186,8 +186,8 @@ export function PrintA4View({ dossier, onUpdateDossier, onSwitchView }: PrintA4V
       {/* Controls Bar (Hidden during print) */}
       <div className="no-print glass-panel p-5 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs text-[#059669] font-bold mb-1">
-            <span className="w-2 h-2 rounded-full bg-[#059669]" />
+          <div className="flex items-center gap-2 text-xs text-[#047857] font-bold mb-1">
+            <span className="w-2 h-2 rounded-full bg-[#047857]" />
             Bewerbungsmappe vollständig als 2-seitiges PDF kompiliert
           </div>
           <h2 className="text-xl font-extrabold text-[#0A1E3A]">
@@ -216,7 +216,7 @@ export function PrintA4View({ dossier, onUpdateDossier, onSwitchView }: PrintA4V
             className="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
             title="Bewerbungsfoto hochladen oder austauschen"
           >
-            <Camera className="w-3.5 h-3.5 text-[#0284C7]" strokeWidth={1.5} />
+            <Camera className="w-3.5 h-3.5 text-[#0369a1]" strokeWidth={1.5} />
             <span>{dossier.photoUrl ? 'Foto ändern' : 'Foto hochladen'}</span>
           </button>
 
@@ -233,7 +233,7 @@ export function PrintA4View({ dossier, onUpdateDossier, onSwitchView }: PrintA4V
           <button
             type="button"
             onClick={handleWhatsAppSend}
-            className="px-4 py-2.5 rounded-xl bg-[#059669] hover:bg-[#047857] text-white text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shadow-xs"
+            className="px-4 py-2.5 rounded-xl bg-[#047857] hover:bg-[#035e44] text-white text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shadow-xs"
           >
             <MessageSquare className="w-3.5 h-3.5" strokeWidth={1.5} />
             <span>Per WhatsApp senden</span>
@@ -336,7 +336,7 @@ export function PrintA4View({ dossier, onUpdateDossier, onSwitchView }: PrintA4V
                   <span className="font-semibold text-[#0A1E3A] block text-[11px] font-mono mt-0.5 truncate">
                     {dossier.salaryExpectation || 'Nach Vereinbarung'}
                   </span>
-                  <span className="text-[#059669] text-[10px] font-medium block">
+                  <span className="text-[#047857] text-[10px] font-medium block">
                     Über Tarif + Sonderzahlungen
                   </span>
                 </div>
@@ -344,7 +344,7 @@ export function PrintA4View({ dossier, onUpdateDossier, onSwitchView }: PrintA4V
 
               {/* Betreffzeile */}
               <div className="pt-1">
-                <span className="text-[10px] font-mono font-bold text-[#0284C7] uppercase tracking-wider block">
+                <span className="text-[10px] font-mono font-bold text-[#0369a1] uppercase tracking-wider block">
                   Bewerbung um die Fachposition:
                 </span>
                 <h2 className="text-base font-extrabold text-[#0A1E3A] mt-0.5">
@@ -401,8 +401,8 @@ export function PrintA4View({ dossier, onUpdateDossier, onSwitchView }: PrintA4V
                 <p className="text-[10px] text-slate-400 mt-0.5">Wetzlar, den {dossier.createdAt || '01.10.2026'}</p>
               </div>
 
-              <div className="text-right text-[10px] text-slate-400 font-mono">
-                <p className="text-[#059669] font-bold">Seite 1 von 2 (Bewerbungsschreiben)</p>
+              <div className="text-right text-[10px] text-slate-500 font-mono">
+                <p className="text-[#047857] font-bold">Seite 1 von 2 (Bewerbungsschreiben)</p>
                 <p>Vertraulich nach § 26 BDSG</p>
               </div>
             </div>
@@ -514,13 +514,13 @@ export function PrintA4View({ dossier, onUpdateDossier, onSwitchView }: PrintA4V
               {/* Sektion: Handwerkliche Ausbildung & Qualifikationen */}
               <div>
                 <h3 className="text-xs font-mono font-bold text-slate-900 uppercase tracking-wider mb-2.5 pb-1 border-b border-slate-100 flex items-center gap-2">
-                  <GraduationCap className="w-3.5 h-3.5 text-[#059669]" />
+                  <GraduationCap className="w-3.5 h-3.5 text-[#047857]" />
                   <span>Ausbildung &amp; Abschlüsse</span>
                 </h3>
                 <div className="space-y-2 pl-1">
                   {educationStations.map((edu, idx) => (
                     <div key={idx} className="relative pl-5 border-l-2 border-slate-200 pb-1">
-                      <div className="absolute -left-[5px] top-1 w-2 h-2 rounded-full bg-[#059669]" />
+                      <div className="absolute -left-[5px] top-1 w-2 h-2 rounded-full bg-[#047857]" />
                       <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                         <span className="font-bold text-slate-900 text-xs">{edu.degree}</span>
                         <span className="text-[10px] font-mono text-slate-500">{edu.period}</span>
@@ -549,7 +549,7 @@ export function PrintA4View({ dossier, onUpdateDossier, onSwitchView }: PrintA4V
 
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="text-[10px] font-mono font-bold uppercase text-slate-500 block mb-1.5 flex items-center gap-1.5">
-                    <Award className="w-3 h-3 text-[#059669]" />
+                    <Award className="w-3 h-3 text-[#047857]" />
                     <span>Equipment &amp; Mobilität</span>
                   </span>
                   <div className="space-y-1 text-[10px] text-slate-700">
@@ -580,7 +580,7 @@ export function PrintA4View({ dossier, onUpdateDossier, onSwitchView }: PrintA4V
                     {dossier.files.map((f) => (
                       <div key={f.id} className="p-1.5 bg-slate-50 border border-slate-200 rounded flex items-center justify-between">
                         <span className="truncate pr-1 text-slate-800 font-medium">{f.name}</span>
-                        <span className="text-[#059669] font-mono text-[9px] shrink-0">✓ verifiziert</span>
+                        <span className="text-[#047857] font-mono text-[9px] shrink-0">✓ verifiziert</span>
                       </div>
                     ))}
                   </div>
@@ -597,8 +597,8 @@ export function PrintA4View({ dossier, onUpdateDossier, onSwitchView }: PrintA4V
                 </div>
               </div>
 
-              <div className="text-right text-[10px] text-slate-400 font-mono">
-                <p className="text-[#059669] font-bold">Seite 2 von 2 (Lebenslauf)</p>
+              <div className="text-right text-[10px] text-slate-500 font-mono">
+                <p className="text-[#047857] font-bold">Seite 2 von 2 (Lebenslauf)</p>
                 <p>Bad &amp; Energie GmbH Lahn Dill</p>
               </div>
             </div>

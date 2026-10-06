@@ -250,9 +250,9 @@ export function InteractiveMap({
               ) : (
                 <span
                   title="Google Maps API-Key in Vercel oder .env hinterlegen (NEXT_PUBLIC_GOOGLE_MAPS_API_KEY)"
-                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sky-50 border border-sky-200 text-[10px] font-bold text-[#0284C7]"
+                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sky-50 border border-sky-200 text-[10px] font-bold text-[#0369a1]"
                 >
-                  <Sparkles className="w-3 h-3 text-[#0284C7]" />
+                  <Sparkles className="w-3 h-3 text-[#0369a1]" />
                   Vektor-Modus aktiv
                 </span>
               )}
@@ -523,7 +523,7 @@ export function InteractiveMap({
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-2 border-b border-slate-100 pb-3">
                   <div>
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sky-50 text-[#0284C7] border border-sky-200 text-[10px] font-bold uppercase tracking-wider">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sky-50 text-[#0369a1] border border-sky-200 text-[10px] font-bold uppercase tracking-wider">
                       {selectedPoi.badge}
                     </span>
                     <h3 className="text-base sm:text-lg font-black text-[#0A1E3A] tracking-tight mt-1.5">
@@ -560,7 +560,7 @@ export function InteractiveMap({
                   </div>
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-slate-500 font-medium">Fahrzeit ab Wetzlar:</span>
-                    <span className="font-mono font-bold text-[#059669]">
+                    <span className="font-mono font-bold text-[#047857]">
                       {selectedPoi.commuteMinutes === 0
                         ? '0 Minuten'
                         : `ca. ${selectedPoi.commuteMinutes} Minuten`}
@@ -585,7 +585,7 @@ export function InteractiveMap({
                       const matched = MAP_POIS.find((p) => p.id === e.target.value);
                       if (matched) handleSelectPoi(matched);
                     }}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs font-semibold text-slate-800 cursor-pointer outline-none focus:ring-2 focus:ring-[#0284C7]"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs font-semibold text-slate-800 cursor-pointer outline-none focus:ring-2 focus:ring-[#0369a1]"
                   >
                     {MAP_POIS.slice(1).map((poi) => (
                       <option key={poi.id} value={poi.id}>
@@ -599,7 +599,7 @@ export function InteractiveMap({
               {/* Bottom Actions & Trust Guarantee */}
               <div className="pt-4 border-t border-slate-100 space-y-3 mt-4">
                 <div className="flex items-center gap-2 text-[11px] text-slate-600 font-medium">
-                  <ShieldCheck className="w-4 h-4 text-[#059669] shrink-0" />
+                  <ShieldCheck className="w-4 h-4 text-[#047857] shrink-0" />
                   <span>Garantiert keine Fernmontage · Pünktlicher Feierabend</span>
                 </div>
 
@@ -626,7 +626,7 @@ export function InteractiveMap({
               onClick={() => setIsSidebarOpen(true)}
               className="p-3 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-xl text-[#0A1E3A] hover:bg-white flex items-center gap-2 text-xs font-bold transition-all cursor-pointer"
             >
-              <Info className="w-4 h-4 text-[#0284C7]" />
+              <Info className="w-4 h-4 text-[#0369a1]" />
               <span>Standortdetails &amp; Pendlerrechner</span>
               <ChevronLeft className="w-4 h-4" />
             </button>

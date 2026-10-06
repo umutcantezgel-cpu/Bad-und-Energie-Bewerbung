@@ -233,12 +233,12 @@ export default function ImpressumPage() {
             <p>
               Die Europäische Kommission stellt eine Plattform zur Online Streitbeilegung OS bereit, die Sie unter{' '}
               <a
-                href="https://ec.europa.eu/consumers/odr/"
+                href="https://consumer-redress.ec.europa.eu/site-relocation_en"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#0369a1] underline font-medium"
               >
-                https://ec.europa.eu/consumers/odr/
+                https://consumer-redress.ec.europa.eu/site-relocation_en
               </a>{' '}
               finden. Wir sind grundsätzlich bereit, an Streitbeilegungsverfahren vor einer anerkannten Verbraucherschlichtungsstelle teilzunehmen.
             </p>

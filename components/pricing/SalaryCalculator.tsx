@@ -107,7 +107,7 @@ export function SalaryCalculator() {
                         >
                           {item.label}
                         </span>
-                        <span className="text-[10px] text-slate-400 block truncate">
+                        <span className="text-[10px] text-slate-600 block truncate">
                           {ROLE_CONFIGS[item.id].tier}
                         </span>
                       </div>
@@ -143,7 +143,7 @@ export function SalaryCalculator() {
                       <span className="text-[11px] font-bold block leading-snug">{data.badge}</span>
                       <span
                         className={`text-[9px] block mt-0.5 ${
-                          isSelected ? 'text-slate-300' : 'text-slate-400'
+                          isSelected ? 'text-slate-200' : 'text-slate-600'
                         }`}
                       >
                         {lvl === 'junior' && '1-2 Jahre'}
@@ -289,7 +289,7 @@ export function SalaryCalculator() {
               <span>Dieses Vorteils-Paket sichern (In 60 Sek.)</span>
               <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
             </a>
-            <p className="text-[10px] text-slate-400 text-center font-sans">
+            <p className="text-[10px] text-slate-600 text-center font-sans">
               100% vertraulich · Ohne Anschreiben · Ohne Lebenslauf
             </p>
           </div>

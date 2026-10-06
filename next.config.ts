@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   turbopack: {},
   // Allow access to remote images.
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'https',
