@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { Logo } from '@/components/Logo';
-import confetti from 'canvas-confetti';
 
 interface FunnelData {
   role: string;
@@ -168,11 +167,14 @@ export function HeroExpressFunnel() {
 
     setIsSubmitted(true);
     try {
-      confetti({
-        particleCount: 120,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#0284C7', '#059669', '#C51E1E', '#0A1E3A'],
+      import('canvas-confetti').then((mod) => {
+        const confettiFn = mod.default || mod;
+        confettiFn({
+          particleCount: 120,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#0369a1', '#047857', '#C51E1E', '#0A1E3A'],
+        });
       });
     } catch {
       // ignore

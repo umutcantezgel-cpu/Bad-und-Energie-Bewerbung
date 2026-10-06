@@ -242,13 +242,13 @@ export default function BewerbungHubPage() {
                 <div className="max-w-3xl space-y-4">
                   <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-sky-300 text-xs font-semibold">
                     <span className="w-2 h-2 rounded-full bg-[#0369a1]" />
-                    Karriere und Bewerbung in Wetzlar und Umgebung
+                    Bewerbung &amp; Dokumenten-Upload · SHK Karriereportal
                   </span>
                   <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
                     Vier einfache Wege zu Deinem neuen SHK Arbeitsplatz
                   </h1>
                   <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-                    Vier einfache Wege führen Dich direkt zu Deinem neuen SHK Arbeitsplatz: Ob per schneller Express-Bewerbung ohne Lebenslauf, direktem Dokumentenupload oder strukturiertem Formular – finde in wenigen Minuten Deinen zukunftssicheren Platz in unserem Meisterteam.
+                    Willkommen im SHK Karriereportal: Deine Bewerbung &amp; Dokumenten-Upload gelingen hier in unter zwei Minuten. Vier einfache Wege führen Dich direkt zu Deinem neuen SHK Arbeitsplatz – ob per schneller Express-Bewerbung ohne Lebenslauf, direktem Dokumenten-Upload oder strukturiertem Formular im Meisterteam von Bad &amp; Energie.
                   </p>
 
                   {/* 2-Wege Entscheidungsbox */}

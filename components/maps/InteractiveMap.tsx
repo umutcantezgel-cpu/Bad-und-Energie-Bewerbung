@@ -239,9 +239,9 @@ export function InteractiveMap({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h4 className="text-xs sm:text-base font-extrabold text-[#0A1E3A] tracking-tight">
+              <div className="text-xs sm:text-base font-extrabold text-[#0A1E3A] tracking-tight">
                 Einsatzgebiet &amp; Standorte Mittelhessen
-              </h4>
+              </div>
               {hasResolvedKey ? (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-[10px] font-bold text-emerald-700">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -304,7 +304,7 @@ export function InteractiveMap({
         <div className="flex items-center gap-2">
           {/* Radius Switcher */}
           <div className="hidden sm:flex items-center gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs">
-            <span className="text-[10px] font-mono font-bold text-slate-500 px-1.5 uppercase">Radius:</span>
+            <span className="text-[10px] font-mono font-bold text-slate-700 px-1.5 uppercase">Radius:</span>
             {[15, 25, 35].map((km) => (
               <button
                 key={km}
@@ -313,7 +313,7 @@ export function InteractiveMap({
                 className={`px-2 py-0.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   radiusKm === km
                     ? 'bg-[#0A1E3A] text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    : 'text-slate-700 hover:text-slate-950'
                 }`}
               >
                 {km} km
@@ -526,9 +526,9 @@ export function InteractiveMap({
                     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sky-50 text-[#0369a1] border border-sky-200 text-[10px] font-bold uppercase tracking-wider">
                       {selectedPoi.badge}
                     </span>
-                    <h3 className="text-base sm:text-lg font-black text-[#0A1E3A] tracking-tight mt-1.5">
+                    <div className="text-base sm:text-lg font-black text-[#0A1E3A] tracking-tight mt-1.5">
                       {selectedPoi.name}
-                    </h3>
+                    </div>
                   </div>
                   <button
                     type="button"

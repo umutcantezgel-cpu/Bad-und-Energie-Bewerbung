@@ -32,10 +32,6 @@ import { AIAnswerBox } from '@/components/seo/AIAnswerBox';
 import { GoogleReviewsBadge } from '@/components/reviews/GoogleReviewsBadge';
 import { DirectContactCard } from '@/components/contact/DirectContactCard';
 import { LeadQuickForm } from '@/components/contact/LeadQuickForm';
-import { SpotlightCard } from '@/components/ui/SpotlightCard';
-import { TiltCard } from '@/components/ui/TiltCard';
-import { GradientText } from '@/components/ui/GradientText';
-import { RotatingText } from '@/components/ui/RotatingText';
 
 export const metadata = {
   title: 'Jobs Wetzlar | Heizungsbauer & Monteure | Bad & Energie',

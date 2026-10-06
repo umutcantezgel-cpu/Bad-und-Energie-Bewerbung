@@ -281,7 +281,7 @@ export function FloatingWhatsAppWidget() {
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerCancel}
-        className={`relative flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#059669] text-white shadow-xl shadow-emerald-900/25 transition-shadow border-2 border-white ring-4 ring-emerald-500/15 ${
+        className={`relative flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#047857] text-white shadow-xl shadow-emerald-900/25 transition-shadow border-2 border-white ring-4 ring-emerald-500/15 ${
           isDragging
             ? 'cursor-grabbing scale-105 shadow-2xl ring-emerald-500/30'
             : 'cursor-grab hover:scale-105 active:scale-95'

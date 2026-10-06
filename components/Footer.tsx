@@ -85,10 +85,10 @@ export function Footer() {
                 href={footerWhatsAppUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-950/40 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-[#047857] hover:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-950/40 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                 title="WhatsApp Chat direkt mit Sabri Demir"
               >
-                <MessageSquare className="w-4 h-4 text-emerald-100" strokeWidth={1.5} />
+                <MessageSquare className="w-4 h-4 text-emerald-50" strokeWidth={1.5} />
                 <span>WhatsApp Direktkontakt</span>
               </a>
 

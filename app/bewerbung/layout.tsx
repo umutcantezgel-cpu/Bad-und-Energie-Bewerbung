@@ -6,14 +6,14 @@ const logoUrl = `${appUrl}/images/bad-energie-lahn-dill-logo.webp`;
 export const metadata: Metadata = {
   title: 'Bewerbung & Dokumenten-Upload | SHK Karriereportal',
   description:
-    'Online-Bewerbungsportal für SHK Monteure & Handwerker: 4-Schritte-Fragebogen, Express-Upload für Lebenslauf & PDF-Dossier. Schnell, diskret & unkompliziert.',
+    'SHK Bewerbungsportal: 4-Schritte-Fragebogen, Express-Upload für Lebenslauf & PDF-Dossier. Schnell, diskret & unkompliziert bei Bad & Energie.',
   alternates: {
     canonical: `${appUrl}/bewerbung`,
   },
   openGraph: {
     title: 'Bewerbung & Dokumenten-Upload | SHK Karriereportal',
     description:
-      'Online-Bewerbungsportal für SHK Monteure & Handwerker: 4-Schritte-Fragebogen, Express-Upload für Lebenslauf & PDF-Dossier. Schnell, diskret & unkompliziert.',
+      'SHK Bewerbungsportal: 4-Schritte-Fragebogen, Express-Upload für Lebenslauf & PDF-Dossier. Schnell, diskret & unkompliziert bei Bad & Energie.',
     url: `${appUrl}/bewerbung`,
     siteName: 'Bad und Energie GmbH Lahn Dill',
     locale: 'de_DE',
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Bewerbung & Dokumenten-Upload | SHK Karriereportal',
     description:
-      'Online-Bewerbungsportal für SHK Monteure & Handwerker: 4-Schritte-Fragebogen, Express-Upload für Lebenslauf & PDF-Dossier. Schnell, diskret & unkompliziert.',
+      'SHK Bewerbungsportal: 4-Schritte-Fragebogen, Express-Upload für Lebenslauf & PDF-Dossier. Schnell, diskret & unkompliziert bei Bad & Energie.',
     images: [logoUrl],
   },
 };
