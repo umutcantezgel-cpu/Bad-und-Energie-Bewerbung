@@ -54,23 +54,25 @@ export function FloatingWhatsAppWidget() {
 
   // Initialize position from sessionStorage or defaults
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    try {
-      const saved = sessionStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && (parsed.dockSide === 'left' || parsed.dockSide === 'right')) {
-          setDockSide(parsed.dockSide);
-          setPosition(getDefaultPosition(parsed.dockSide, parsed.yRatio || 0.8));
-          return;
+    const timer = setTimeout(() => {
+      try {
+        const saved = sessionStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && (parsed.dockSide === 'left' || parsed.dockSide === 'right')) {
+            setDockSide(parsed.dockSide);
+            setPosition(getDefaultPosition(parsed.dockSide, parsed.yRatio || 0.8));
+            return;
+          }
         }
+      } catch {
+        // Ignore storage errors
       }
-    } catch {
-      // Ignore storage errors
-    }
 
-    setPosition(getDefaultPosition('right', 0.8));
+      setPosition(getDefaultPosition('right', 0.8));
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [getDefaultPosition]);
 
   // Window resize handler to keep docked position relative to screen width/height
