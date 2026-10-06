@@ -10,14 +10,14 @@ const logoUrl = `${appUrl}/images/bad-energie-lahn-dill-logo.webp`;
 export const metadata: Metadata = {
   title: 'Impressum & Kontakt | Bad & Energie GmbH Lahn Dill Wetzlar',
   description:
-    'Gesetzliche Anbieterkennzeichnung nach § 5 DDG und Handwerksordnung der Bad und Energie GmbH Lahn Dill in Wetzlar. Geschäftsführer Dipl.-Ing. Sabri Demir.',
+    'Gesetzliche Anbieterkennzeichnung nach § 5 DDG & HwO der Bad und Energie GmbH Lahn Dill in Wetzlar. Leitung: Dipl.-Ing. Sabri Demir.',
   alternates: {
     canonical: `${appUrl}/impressum`,
   },
   openGraph: {
     title: 'Impressum & Kontakt | Bad & Energie GmbH Lahn Dill Wetzlar',
     description:
-      'Gesetzliche Anbieterkennzeichnung nach § 5 DDG und Handwerksordnung der Bad und Energie GmbH Lahn Dill in Wetzlar. Geschäftsführer Dipl.-Ing. Sabri Demir.',
+      'Gesetzliche Anbieterkennzeichnung nach § 5 DDG & HwO der Bad und Energie GmbH Lahn Dill in Wetzlar. Leitung: Dipl.-Ing. Sabri Demir.',
     url: `${appUrl}/impressum`,
     siteName: 'Bad und Energie GmbH Lahn Dill',
     locale: 'de_DE',
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Impressum & Kontakt | Bad & Energie GmbH Lahn Dill Wetzlar',
     description:
-      'Gesetzliche Anbieterkennzeichnung nach § 5 DDG und Handwerksordnung der Bad und Energie GmbH Lahn Dill in Wetzlar. Geschäftsführer Dipl.-Ing. Sabri Demir.',
+      'Gesetzliche Anbieterkennzeichnung nach § 5 DDG & HwO der Bad und Energie GmbH Lahn Dill in Wetzlar. Leitung: Dipl.-Ing. Sabri Demir.',
     images: [logoUrl],
   },
 };
@@ -103,7 +103,7 @@ export default function ImpressumPage() {
             Gesetzliche Offenlegung nach Paragraph 5 DDG und Handwerksordnung
           </span>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-[#0A1E3A] uppercase tracking-tight">
-            Impressum
+            Impressum &amp; Rechtliche Angaben • Bad &amp; Energie GmbH
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 mt-2">
             Angaben und rechtliche Unternehmensinformationen der Bad und Energie GmbH Lahn Dill.
@@ -121,14 +121,14 @@ export default function ImpressumPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-slate-100">
             <div className="space-y-3">
-              <span className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider block">
+              <span className="text-xs font-mono font-bold text-slate-600 uppercase tracking-wider block">
                 Betrieb und Anschrift
               </span>
               <h2 className="text-base font-bold text-[#0A1E3A]">
                 Bad und Energie GmbH Lahn Dill
               </h2>
               <p className="text-xs text-slate-600 leading-relaxed flex items-start gap-2">
-                <MapPin className="w-4 h-4 text-[#0284C7] shrink-0 mt-0.5" strokeWidth={1.5} />
+                <MapPin className="w-4 h-4 text-[#0369a1] shrink-0 mt-0.5" strokeWidth={1.5} />
                 <span>
                   Siegmund Hiepe Str. 20<br />
                   35578 Wetzlar<br />
@@ -138,23 +138,23 @@ export default function ImpressumPage() {
             </div>
 
             <div className="space-y-3">
-              <span className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider block">
+              <span className="text-xs font-mono font-bold text-slate-600 uppercase tracking-wider block">
                 Direktkontakt
               </span>
               <div className="text-xs font-mono space-y-1.5 text-slate-700">
                 <p className="flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5 text-[#0284C7]" strokeWidth={1.5} />
+                  <Phone className="w-3.5 h-3.5 text-[#0369a1]" strokeWidth={1.5} />
                   <span>Telefon: <strong>06441 42956</strong></span>
                 </p>
                 <p className="flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5 text-slate-400" strokeWidth={1.5} />
+                  <Phone className="w-3.5 h-3.5 text-slate-500" strokeWidth={1.5} />
                   <span>Telefax: <strong>06441 48781</strong></span>
                 </p>
                 <p className="flex items-center gap-2">
-                  <Mail className="w-3.5 h-3.5 text-[#0284C7]" strokeWidth={1.5} />
+                  <Mail className="w-3.5 h-3.5 text-[#0369a1]" strokeWidth={1.5} />
                   <span>E Mail: <a href="mailto:info@bad-energie.de" className="text-[#C51E1E] hover:underline">info@bad-energie.de</a></span>
                 </p>
-                <p className="text-slate-500 pt-1">
+                <p className="text-slate-600 pt-1">
                   Website: <a href="https://bad-energie.de" target="_blank" rel="noopener noreferrer" className="hover:underline">https://bad-energie.de</a>
                 </p>
               </div>
@@ -233,12 +233,12 @@ export default function ImpressumPage() {
             <p>
               Die Europäische Kommission stellt eine Plattform zur Online Streitbeilegung OS bereit, die Sie unter{' '}
               <a
-                href="https://ec.europa.eu/consumers/odr"
+                href="https://ec.europa.eu/consumers/odr/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#0284C7] underline"
+                className="text-[#0369a1] underline font-medium"
               >
-                https://ec.europa.eu/consumers/odr
+                https://ec.europa.eu/consumers/odr/
               </a>{' '}
               finden. Wir sind grundsätzlich bereit, an Streitbeilegungsverfahren vor einer anerkannten Verbraucherschlichtungsstelle teilzunehmen.
             </p>

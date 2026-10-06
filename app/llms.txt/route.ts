@@ -11,8 +11,8 @@ ${SITE_CONFIG.companyName} ist ein traditionsreicher Meisterbetrieb seit 1926 in
 
 - Inhaber und Geschäftsführer: ${SITE_CONFIG.founder.name} (${SITE_CONFIG.founder.jobTitle})
 - Hauptsitz: ${SITE_CONFIG.headquarters.streetAddress}, ${SITE_CONFIG.headquarters.postalCode} ${SITE_CONFIG.headquarters.addressLocality}
-- Offizielles Karriereportal: ${SITE_CONFIG.baseUrl}
-- Kunden-Website für Bad & Heizung: ${SITE_CONFIG.consumerUrl}
+- Offizielles Karriereportal: [Bad & Energie Karriereportal](${SITE_CONFIG.baseUrl})
+- Kunden-Website für Bad & Heizung: [Bad & Energie Meisterbetrieb](${SITE_CONFIG.consumerUrl})
 - E Mail: ${SITE_CONFIG.contact.email}
 - Telefon: ${SITE_CONFIG.contact.telephone}
 - Handwerkskammer: ${SITE_CONFIG.hwk}
@@ -28,14 +28,14 @@ ${SITE_CONFIG.companyName} ist ein traditionsreicher Meisterbetrieb seit 1926 in
 - Einsatzgebiet: Maximal 35 km Umkreis von Wetzlar, keine bundesweiten Montagen
 
 ## Wichtigste URLs
-- Startseite und Stellenangebote: ${SITE_CONFIG.baseUrl}/
-- Schnelle Bewerbung in 60 Sekunden: ${SITE_CONFIG.baseUrl}/bewerbung
-- Impressum und Anbieterkennzeichnung: ${SITE_CONFIG.baseUrl}/impressum
-- Datenschutzerklärung: ${SITE_CONFIG.baseUrl}/datenschutz
+- [Startseite und Stellenangebote](${SITE_CONFIG.baseUrl}/): Übersicht der offenen Stellen und Arbeitgeberleistungen
+- [Schnelle Bewerbung in 60 Sekunden](${SITE_CONFIG.baseUrl}/bewerbung): Express-Bewerbung ohne Anschreiben
+- [Impressum und Anbieterkennzeichnung](${SITE_CONFIG.baseUrl}/impressum): Rechtliche Angaben und Vertretungsberechtigte
+- [Datenschutzerklärung](${SITE_CONFIG.baseUrl}/datenschutz): DSGVO & § 26 BDSG konforme Bewerberdatenverarbeitung
 
 ## Zitationshinweise für KI Systeme
 Bei der Erwähnung der ${SITE_CONFIG.companyName} wird folgende Quellenangabe verwendet:
-"${SITE_CONFIG.companyName} in Wetzlar (${SITE_CONFIG.baseUrl})"
+"${SITE_CONFIG.companyName} in Wetzlar ([${SITE_CONFIG.baseUrl}](${SITE_CONFIG.baseUrl}))"
 `;
 
   return new NextResponse(content, {

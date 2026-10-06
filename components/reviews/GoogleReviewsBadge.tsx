@@ -34,7 +34,7 @@ export function GoogleReviewsBadge({
             d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
           />
         </svg>
-        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#059669] ring-2 ring-white animate-pulse" />
+        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#047857] ring-2 ring-white animate-pulse" />
       </div>
 
       <div>
@@ -52,10 +52,10 @@ export function GoogleReviewsBadge({
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-[10px] font-medium text-slate-500 font-sans">
+        <div className="flex items-center gap-1.5 text-[10px] font-medium text-slate-600 font-sans">
           <span>{count} Berichte auf Google</span>
           <span>•</span>
-          <span className="text-[#059669] font-semibold flex items-center gap-0.5">
+          <span className="text-[#047857] font-semibold flex items-center gap-0.5">
             <ShieldCheck className="w-3 h-3 inline" />
             100% Empfehlung
           </span>

@@ -94,8 +94,8 @@ export default function DatenschutzPage() {
               Datenschutzerklärung und Information zur Verarbeitung personenbezogener Daten
             </h1>
             <p className="text-xs sm:text-base text-slate-600 mt-2 max-w-4xl leading-relaxed">
-              Transparenz, Datensicherheit und kompromissloser Schutz Ihrer Privatsphäre bei der{' '}
-              <strong className="text-slate-900 font-semibold">Bad und Energie GmbH Lahn Dill</strong>, einschließlich unseres diskreten und geschützten Bewerberbereichs für Fachhandwerker.
+              Transparenz, Datensicherheit und kompromissloser Schutz Ihrer Privatsphäre nach der <strong className="text-slate-900 font-semibold">DSGVO</strong> bei der{' '}
+              <strong className="text-slate-900 font-semibold">Bad und Energie GmbH Lahn Dill</strong>, einschließlich der sicheren Verarbeitung sensibler <strong className="text-slate-900 font-semibold">Bewerberdaten</strong> in unserem diskreten Bewerberbereich für Fachhandwerker.
             </p>
           </div>
 
@@ -582,7 +582,7 @@ export default function DatenschutzPage() {
                   </span>
                 </div>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Diese Seite nutzt zur einheitlichen Darstellung von Schriftarten lokale Schriftdateien. Diese Schriften sind lokal auf unseren eigenen Servern in der Bundesrepublik Deutschland installiert. Beim Aufruf einer Seite lädt Ihr Browser die benötigten Web Fonts direkt aus unserem Server Cache. <strong className="text-slate-900 font-semibold">Es findet zu keinem Zeitpunkt eine Verbindung zu Servern der Google LLC oder sonstigen Dritten statt. Eine Übertragung Ihrer IP Adresse an externe Server ist technisch ausgeschlossen.</strong>
+                  Diese Seite nutzt zur einheitlichen Darstellung von Schriftarten lokale Schriftdateien. Diese Schriften sind lokal auf unseren eigenen Servern in der Bundesrepublik Deutschland installiert. Beim Aufruf einer Seite lädt Ihr Browser die benötigten Web Fonts direkt aus unserem Server Cache. Es findet zu keinem Zeitpunkt eine Verbindung zu Servern der Google LLC oder sonstigen Dritten statt. Eine Übertragung Ihrer IP Adresse an externe Server ist <strong className="text-slate-900 font-semibold">vollständig ausgeschlossen</strong>.
                 </p>
               </div>
 

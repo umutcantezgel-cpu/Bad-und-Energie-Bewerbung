@@ -5,7 +5,7 @@ export function buildWhatsAppUrl(
   phone: string = SITE_CONFIG.contact.telephoneLink
 ): string {
   const cleanPhone = phone.replace(/[^0-9]/g, '');
-  return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+  return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
 }
 
 export function whatsAppMessageFor(pathname: string): string {

@@ -33,13 +33,13 @@ export function ProcessSteps() {
   return (
     <div className="space-y-8">
       <div className="text-center max-w-2xl mx-auto">
-        <span className="text-[11px] font-sans font-semibold text-[#0284C7] uppercase tracking-wider block mb-1">
+        <span className="text-[11px] font-sans font-semibold text-[#0369a1] uppercase tracking-wider block mb-1">
           Einfach und ohne Bürokratie
         </span>
         <h3 className="text-2xl sm:text-3xl font-black text-[#0A1E3A]">
           In 3 Schritten zu Deinem neuen Handwerker Job
         </h3>
-        <p className="text-xs sm:text-sm text-slate-500 mt-2">
+        <p className="text-xs sm:text-sm text-slate-600 mt-2">
           Wir respektieren Deine Zeit und Deine aktuelle Anstellung. Dein Wechsel zu Bad und Energie bleibt absolut vertraulich.
         </p>
       </div>
@@ -62,7 +62,7 @@ export function ProcessSteps() {
                   </span>
                 </div>
 
-                <div className="w-11 h-11 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center mb-4">
+                <div className="w-11 h-11 rounded-2xl bg-sky-50 text-[#0369a1] flex items-center justify-center mb-4">
                   <IconComp className="w-5 h-5" strokeWidth={1.5} />
                 </div>
 
@@ -75,7 +75,7 @@ export function ProcessSteps() {
                 </p>
               </div>
 
-              <div className="pt-6 mt-4 border-t border-slate-100 text-[11px] font-semibold text-[#059669] flex items-center gap-1.5">
+              <div className="pt-6 mt-4 border-t border-slate-100 text-[11px] font-semibold text-[#047857] flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 shrink-0" />
                 <span>Garantierter Schritt</span>
               </div>

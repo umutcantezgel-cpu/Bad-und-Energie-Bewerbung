@@ -196,10 +196,10 @@ export function HeroExpressFunnel() {
             </h2>
           </div>
           <div className="text-right shrink-0">
-            <span className="text-[11px] uppercase tracking-wider text-slate-400 font-mono block">
+            <span className="text-[11px] uppercase tracking-wider text-slate-300 font-mono block">
               Fortschritt
             </span>
-            <span className="text-base sm:text-lg font-bold text-[#0284C7] font-mono tabular-nums">
+            <span className="text-base sm:text-lg font-bold text-sky-300 font-mono tabular-nums">
               Schritt {currentStep} von {totalSteps}
             </span>
           </div>
@@ -208,7 +208,7 @@ export function HeroExpressFunnel() {
         {/* Dynamic Progress Bar */}
         <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-[#C51E1E] via-red-500 to-[#0284C7]"
+            className="h-full bg-gradient-to-r from-[#C51E1E] via-red-500 to-[#0369a1]"
             initial={{ width: '25%' }}
             animate={{ width: `${progressPercent}%` }}
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
@@ -217,19 +217,19 @@ export function HeroExpressFunnel() {
 
         {/* Step Tabs indicator */}
         <div className="grid grid-cols-4 gap-1 sm:gap-2 mt-3 text-[10px] sm:text-[11px] text-center font-medium">
-          <span className={currentStep === 1 ? 'text-[#0284C7] font-bold' : currentStep > 1 ? 'text-[#059669]' : 'text-slate-400'}>
+          <span className={currentStep === 1 ? 'text-sky-300 font-bold' : currentStep > 1 ? 'text-emerald-400' : 'text-slate-300'}>
             <span className="hidden sm:inline">1. Position</span>
             <span className="sm:hidden">1. Rolle</span>
           </span>
-          <span className={currentStep === 2 ? 'text-[#0284C7] font-bold' : currentStep > 2 ? 'text-[#059669]' : 'text-slate-400'}>
+          <span className={currentStep === 2 ? 'text-sky-300 font-bold' : currentStep > 2 ? 'text-emerald-400' : 'text-slate-300'}>
             <span className="hidden sm:inline">2. Kenntnisse</span>
             <span className="sm:hidden">2. Skills</span>
           </span>
-          <span className={currentStep === 3 ? 'text-[#0284C7] font-bold' : currentStep > 3 ? 'text-[#059669]' : 'text-slate-400'}>
+          <span className={currentStep === 3 ? 'text-sky-300 font-bold' : currentStep > 3 ? 'text-emerald-400' : 'text-slate-300'}>
             <span className="hidden sm:inline">3. Konditionen</span>
             <span className="sm:hidden">3. Details</span>
           </span>
-          <span className={currentStep === 4 ? 'text-[#0284C7] font-bold' : 'text-slate-400'}>
+          <span className={currentStep === 4 ? 'text-sky-300 font-bold' : 'text-slate-300'}>
             <span className="hidden sm:inline">4. Kontakt</span>
             <span className="sm:hidden">4. Kontakt</span>
           </span>
@@ -264,7 +264,7 @@ export function HeroExpressFunnel() {
                     id: 'Anlagenmechaniker SHK m w d',
                     title: 'Anlagenmechaniker SHK m w d',
                     subtitle: 'Heizungsbau, moderne Wärmepumpen und Badsanierungen',
-                    icon: <Wrench className="w-5 h-5 text-[#0284C7]" strokeWidth={1.5} />,
+                    icon: <Wrench className="w-5 h-5 text-[#0369a1]" strokeWidth={1.5} />,
                   },
                   {
                     id: 'Kundendiensttechniker Wärmepumpe m w d',
@@ -276,7 +276,7 @@ export function HeroExpressFunnel() {
                     id: 'Auszubildender SHK 2026 m w d',
                     title: 'Auszubildender SHK Start 2026',
                     subtitle: 'Zukunftssicherer Ausbildungsplatz mit Meisterbegleitung',
-                    icon: <GraduationCap className="w-5 h-5 text-[#059669]" strokeWidth={1.5} />,
+                    icon: <GraduationCap className="w-5 h-5 text-[#047857]" strokeWidth={1.5} />,
                   },
                   {
                     id: 'Quereinsteiger und Montagehelfer',
@@ -292,7 +292,7 @@ export function HeroExpressFunnel() {
                       onClick={() => handleRoleSelect(item.id)}
                       className={`p-5 rounded-2xl border-2 cursor-pointer transition-all flex flex-col justify-between select-none ${
                         isSelected
-                          ? 'border-[#0284C7] bg-sky-50/50 shadow-sm'
+                          ? 'border-[#0369a1] bg-sky-50/50 shadow-sm'
                           : 'border-slate-200 hover:border-slate-300 bg-white'
                       }`}
                     >
@@ -300,7 +300,7 @@ export function HeroExpressFunnel() {
                         <div className="p-2.5 rounded-xl bg-slate-100">{item.icon}</div>
                         <div
                           className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                            isSelected ? 'border-[#0284C7] bg-[#0284C7]' : 'border-slate-300'
+                            isSelected ? 'border-[#0369a1] bg-[#0369a1]' : 'border-slate-300'
                           }`}
                         >
                           {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
@@ -395,13 +395,13 @@ export function HeroExpressFunnel() {
                       onClick={() => toggleSkill(sk)}
                       className={`p-3.5 rounded-xl border flex items-center gap-3 cursor-pointer transition-all select-none ${
                         isChecked
-                          ? 'border-[#0284C7] bg-sky-50/60 font-semibold text-[#0A1E3A]'
+                          ? 'border-[#0369a1] bg-sky-50/60 font-semibold text-[#0A1E3A]'
                           : 'border-slate-200 bg-slate-50 hover:bg-white text-slate-700'
                       }`}
                     >
                       <div
                         className={`w-4 h-4 rounded flex items-center justify-center border ${
-                          isChecked ? 'bg-[#0284C7] border-[#0284C7] text-white' : 'border-slate-300'
+                          isChecked ? 'bg-[#0369a1] border-[#0369a1] text-white' : 'border-slate-300'
                         }`}
                       >
                         {isChecked && <CheckCircle className="w-3.5 h-3.5" strokeWidth={2} />}
@@ -484,12 +484,12 @@ export function HeroExpressFunnel() {
                   {
                     title: 'Geregelte Arbeitszeiten freitags ab 13:30 Uhr ins Wochenende',
                     desc: 'Keine sinnlosen Dauerüberstunden, verlässlicher Feierabend bei der Familie.',
-                    icon: <Clock className="w-4 h-4 text-[#0284C7]" strokeWidth={1.5} />,
+                    icon: <Clock className="w-4 h-4 text-[#0369a1]" strokeWidth={1.5} />,
                   },
                   {
                     title: 'Überdurchschnittlicher Lohn und Wertschätzung',
                     desc: 'Bezahlung über regionalem Handwerkstarif sowie Urlaubsgeld und Weihnachtsgeld.',
-                    icon: <FileCheck className="w-4 h-4 text-[#059669]" strokeWidth={1.5} />,
+                    icon: <FileCheck className="w-4 h-4 text-[#047857]" strokeWidth={1.5} />,
                   },
                   {
                     title: 'Eigener Firmenwagen und Hilti Werkzeug',
@@ -509,7 +509,7 @@ export function HeroExpressFunnel() {
                       onClick={() => toggleBenefit(item.title)}
                       className={`p-4 rounded-xl border flex items-start gap-3 cursor-pointer transition-all select-none ${
                         isChecked
-                          ? 'border-[#0284C7] bg-sky-50/50'
+                          ? 'border-[#0369a1] bg-sky-50/50'
                           : 'border-slate-200 bg-white hover:border-slate-300'
                       }`}
                     >
@@ -587,13 +587,13 @@ export function HeroExpressFunnel() {
               className="space-y-6"
             >
               <div>
-                <span className="text-xs font-mono font-semibold text-[#059669] uppercase tracking-wider block mb-1">
+                <span className="text-xs font-mono font-semibold text-[#047857] uppercase tracking-wider block mb-1">
                   Schnelle Diskretionsgarantie
                 </span>
                 <h3 className="text-lg sm:text-xl font-bold text-slate-900">
                   Wie dürfen wir Dich unverbindlich kontaktieren?
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                <p className="text-xs sm:text-sm text-slate-600 mt-1">
                   Kein Lebenslauf nötig. Sabri Demir meldet sich werktags innerhalb von 24 Stunden diskret bei Dir.
                 </p>
               </div>
@@ -615,7 +615,7 @@ export function HeroExpressFunnel() {
                     value={data.name}
                     onChange={(e) => setData({ ...data, name: e.target.value })}
                     placeholder="z.B. Alexander Koch"
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#0284C7] focus:border-[#0284C7] outline-none"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#0369a1] focus:border-[#0369a1] outline-none"
                   />
                 </div>
 
@@ -629,7 +629,7 @@ export function HeroExpressFunnel() {
                     value={data.phone}
                     onChange={(e) => setData({ ...data, phone: e.target.value })}
                     placeholder="z.B. 0170 8892341"
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#0284C7] focus:border-[#0284C7] outline-none"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#0369a1] focus:border-[#0369a1] outline-none"
                   />
                 </div>
 
@@ -642,7 +642,7 @@ export function HeroExpressFunnel() {
                     value={data.location}
                     onChange={(e) => setData({ ...data, location: e.target.value })}
                     placeholder="z.B. 35578 Wetzlar"
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#0284C7] focus:border-[#0284C7] outline-none"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#0369a1] focus:border-[#0369a1] outline-none"
                   />
                 </div>
 
@@ -655,7 +655,7 @@ export function HeroExpressFunnel() {
                     value={data.email}
                     onChange={(e) => setData({ ...data, email: e.target.value })}
                     placeholder="z.B. alexander.koch@beispiel.de"
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#0284C7] focus:border-[#0284C7] outline-none"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#0369a1] focus:border-[#0369a1] outline-none"
                   />
                 </div>
 
@@ -666,7 +666,7 @@ export function HeroExpressFunnel() {
                   <select
                     value={data.prefContact}
                     onChange={(e) => setData({ ...data, prefContact: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#0284C7] focus:border-[#0284C7] outline-none bg-white cursor-pointer"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-[#0369a1] focus:border-[#0369a1] outline-none bg-white cursor-pointer"
                   >
                     <option value="whatsapp">WhatsApp kurz und unkompliziert</option>
                     <option value="phone">Telefonat nach Feierabend</option>
@@ -703,15 +703,15 @@ export function HeroExpressFunnel() {
 
                 <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] text-slate-600 font-medium">
                   <span className="inline-flex items-center gap-1">
-                    <CheckCircle className="w-3.5 h-3.5 text-[#059669]" strokeWidth={1.5} />
+                    <CheckCircle className="w-3.5 h-3.5 text-[#047857]" strokeWidth={1.5} />
                     100% kostenlos
                   </span>
                   <span className="inline-flex items-center gap-1">
-                    <CheckCircle className="w-3.5 h-3.5 text-[#059669]" strokeWidth={1.5} />
+                    <CheckCircle className="w-3.5 h-3.5 text-[#047857]" strokeWidth={1.5} />
                     Kein Anschreiben erforderlich
                   </span>
                   <span className="inline-flex items-center gap-1">
-                    <CheckCircle className="w-3.5 h-3.5 text-[#059669]" strokeWidth={1.5} />
+                    <CheckCircle className="w-3.5 h-3.5 text-[#047857]" strokeWidth={1.5} />
                     DSGVO und § 26 BDSG geschützt
                   </span>
                 </div>
@@ -742,7 +742,7 @@ export function HeroExpressFunnel() {
                 <Logo variant="default" framing="card" size="sm" withLink={false} />
               </div>
 
-              <div className="w-16 h-16 rounded-full bg-emerald-100 text-[#059669] mx-auto flex items-center justify-center">
+              <div className="w-16 h-16 rounded-full bg-emerald-100 text-[#047857] mx-auto flex items-center justify-center">
                 <CheckCircle className="w-10 h-10" strokeWidth={1.5} />
               </div>
 

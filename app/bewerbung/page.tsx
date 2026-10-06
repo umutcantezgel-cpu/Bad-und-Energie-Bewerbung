@@ -248,7 +248,7 @@ export default function BewerbungHubPage() {
                     Vier einfache Wege zu Deinem Job bei Bad und Energie in Wetzlar
                   </h1>
                   <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-                    Ob per kurzer Schnellbewerbung ohne Lebenslauf, direktem Dokumentenupload oder strukturiertem Formular: Finde in wenigen Minuten Deinen Platz in unserem Team in Wetzlar.
+                    Vier einfache Wege führen Dich direkt zu Deinem neuen Job bei Bad und Energie in Wetzlar: Ob per schneller Express-Bewerbung ohne Lebenslauf, direktem Dokumentenupload oder strukturiertem Formular – finde in wenigen Minuten Deinen zukunftssicheren Platz in unserem Meisterteam.
                   </p>
 
                   {/* 2-Wege Entscheidungsbox */}

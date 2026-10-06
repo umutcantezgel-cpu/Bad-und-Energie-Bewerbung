@@ -51,13 +51,13 @@ export function SalaryCalculator() {
         <div className="w-full lg:w-[58%] p-5 sm:p-8 lg:p-10 border-b lg:border-b-0 lg:border-r border-slate-100 bg-[#F8FAFC]/40">
           <div className="space-y-6">
             <div>
-              <span className="text-[11px] font-sans font-bold text-[#0284C7] uppercase tracking-wider block mb-1">
+              <span className="text-[11px] font-sans font-bold text-[#0369a1] uppercase tracking-wider block mb-1">
                 Interaktiver Vorteils- &amp; Ausstattungs-Check
               </span>
               <h3 className="text-xl sm:text-2xl font-black text-[#0A1E3A]">
                 Stelle Dein persönliches Mitarbeiter-Paket zusammen
               </h3>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-slate-600 mt-1">
                 Wähle Deine Fachrichtung und Praxis: Sieh sofort, welche Ausstattung, Freiheiten und Garantien Du bei Bad &amp; Energie freischaltest.
               </p>
             </div>
@@ -184,7 +184,7 @@ export function SalaryCalculator() {
                           <div
                             className={`w-4 h-4 rounded-md border flex items-center justify-center shrink-0 ${
                               active
-                                ? 'bg-[#059669] border-[#059669] text-white'
+                                ? 'bg-[#047857] border-[#047857] text-white'
                                 : 'border-slate-300 bg-white'
                             }`}
                           >
@@ -195,7 +195,7 @@ export function SalaryCalculator() {
                             <span className="text-[10px] text-slate-500">{data.perk}</span>
                           </div>
                         </div>
-                        <span className="text-[10px] font-sans font-bold text-[#059669] shrink-0 ml-2">
+                        <span className="text-[10px] font-sans font-bold text-[#047857] shrink-0 ml-2">
                           {active ? 'Freigeschaltet' : '+ Hinzufügen'}
                         </span>
                       </div>
@@ -211,7 +211,7 @@ export function SalaryCalculator() {
         <div className="w-full lg:w-[42%] p-5 sm:p-8 lg:p-10 bg-white flex flex-col justify-between space-y-6">
           <div className="space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <span className="text-xs font-sans font-bold uppercase tracking-wider text-slate-400">
+              <span className="text-xs font-sans font-bold uppercase tracking-wider text-slate-500">
                 Dein Mitarbeiter-Paket
               </span>
               <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold font-sans">
@@ -221,7 +221,7 @@ export function SalaryCalculator() {
 
             {/* Classification & Tier Headline */}
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 text-[#0284C7] text-[11px] font-bold border border-sky-100">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 text-[#0369a1] text-[11px] font-bold border border-sky-100">
                 <Award className="w-3.5 h-3.5" strokeWidth={1.5} />
                 <span>{selectedRole.tier}</span>
               </div>
@@ -236,12 +236,12 @@ export function SalaryCalculator() {
             {/* Concrete Unlocked Perks List */}
             <div className="p-4 rounded-2xl bg-slate-50/90 border border-slate-200/80 space-y-3 text-xs text-slate-700">
               <div className="flex items-center gap-2 text-slate-900 font-bold border-b border-slate-200/60 pb-2">
-                <ShieldCheck className="w-4 h-4 text-[#059669]" strokeWidth={1.5} />
+                <ShieldCheck className="w-4 h-4 text-[#047857]" strokeWidth={1.5} />
                 <span>Freigeschaltete Arbeitsplatz-Vorteile:</span>
               </div>
               <ul className="space-y-2 text-[11px] text-slate-700">
                 <li className="flex items-start gap-2">
-                  <Car className="w-3.5 h-3.5 text-[#0284C7] shrink-0 mt-0.5" strokeWidth={1.5} />
+                  <Car className="w-3.5 h-3.5 text-[#0369a1] shrink-0 mt-0.5" strokeWidth={1.5} />
                   <span><strong>Mobilität:</strong> {selectedRole.vehicle}</span>
                 </li>
                 <li className="flex items-start gap-2">

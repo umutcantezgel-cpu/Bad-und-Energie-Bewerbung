@@ -88,7 +88,7 @@ export function PrintA4View({ dossier, onUpdateDossier, onSwitchView }: PrintA4V
       `Konditionen: ${dossier.salaryExpectation || 'Vollzeit (Freitags ab 13:30 Uhr frei)'}\n\n` +
       `Ich freue mich über ein unverbindliches Kennenlernen in Wetzlar!`
     );
-    window.open(`https://wa.me/49644142956?text=${text}`, '_blank');
+    window.open(`https://api.whatsapp.com/send?phone=49644142956&text=${text}`, '_blank');
   };
 
   const handleSubmitDirect = () => {

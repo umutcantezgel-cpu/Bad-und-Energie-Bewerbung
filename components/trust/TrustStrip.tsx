@@ -27,7 +27,7 @@ export function TrustStrip() {
               key={idx}
               className="flex items-center gap-2.5 shrink-0 px-4 sm:px-6"
             >
-              <div className="w-7 h-7 rounded-xl bg-sky-50 text-[#0284C7] flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-xl bg-sky-50 text-[#0369a1] flex items-center justify-center shrink-0">
                 <item.icon className="w-4 h-4" strokeWidth={1.5} />
               </div>
               <span className="font-semibold text-xs text-slate-800 whitespace-nowrap">

@@ -4,14 +4,14 @@ const appUrl = process.env.APP_URL || 'https://karriere.bad-energie.de';
 const logoUrl = `${appUrl}/images/bad-energie-lahn-dill-logo.webp`;
 
 export const metadata: Metadata = {
-  title: 'Bewerbung Handwerk Wetzlar | Ohne Lebenslauf | Bad & Energie',
+  title: 'Bewerbung SHK Handwerk Wetzlar | Bad & Energie',
   description:
     'Diskrete 60-Sekunden-Bewerbung als SHK Monteur & Techniker in Wetzlar. Ohne Anschreiben & ohne Lebenslauf. Rückmeldung garantiert innerhalb von 24h!',
   alternates: {
     canonical: `${appUrl}/bewerbung`,
   },
   openGraph: {
-    title: 'Bewerbung Handwerk Wetzlar | Ohne Lebenslauf | Bad & Energie',
+    title: 'Bewerbung SHK Handwerk Wetzlar | Bad & Energie',
     description:
       'Diskrete 60-Sekunden-Bewerbung als SHK Monteur & Techniker in Wetzlar. Ohne Anschreiben & ohne Lebenslauf. Rückmeldung garantiert innerhalb von 24h!',
     url: `${appUrl}/bewerbung`,
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Bewerbung Handwerk Wetzlar | Ohne Lebenslauf | Bad & Energie',
+    title: 'Bewerbung SHK Handwerk Wetzlar | Bad & Energie',
     description:
       'Diskrete 60-Sekunden-Bewerbung als SHK Monteur & Techniker in Wetzlar. Ohne Anschreiben & ohne Lebenslauf. Rückmeldung garantiert innerhalb von 24h!',
     images: [logoUrl],

@@ -31,7 +31,7 @@ export function QuizView({ dossier, onUpdateDossier, onSwitchView }: QuizViewPro
       id: 'Anlagenmechaniker SHK m w d Heizung und Sanitärtechnik',
       title: 'Anlagenmechaniker SHK m w d',
       desc: 'Heizungsneubau, Wärmepumpen und Badsanierungen',
-      icon: <Wrench className="w-5 h-5 text-[#0284C7]" strokeWidth={1.5} />,
+      icon: <Wrench className="w-5 h-5 text-[#0369a1]" strokeWidth={1.5} />,
     },
     {
       id: 'Kundendienstmonteur SHK m w d Wärmepumpentechnik',
@@ -43,7 +43,7 @@ export function QuizView({ dossier, onUpdateDossier, onSwitchView }: QuizViewPro
       id: 'Auszubildender zum Anlagenmechaniker SHK Start 2026',
       title: 'Auszubildender SHK Start 2026',
       desc: 'Zukunftssicherer Ausbildungsplatz mit Meisterbegleitung',
-      icon: <GraduationCap className="w-5 h-5 text-[#059669]" strokeWidth={1.5} />,
+      icon: <GraduationCap className="w-5 h-5 text-[#047857]" strokeWidth={1.5} />,
     },
     {
       id: 'Montagehelfer und Quereinsteiger m w d',
@@ -144,11 +144,11 @@ ${prev.fullName || 'Alexander Koch'}`;
             {step === 3 && 'Schritt 3 von 4: Handwerklicher Arbeitsstil und Werte'}
             {step === 4 && 'Schritt 4 von 4: Generiertes Profil und Anschreiben'}
           </span>
-          <span className="text-[#0284C7] font-mono tabular-nums">{progressPercent}%</span>
+          <span className="text-[#0369a1] font-mono tabular-nums">{progressPercent}%</span>
         </div>
         <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-[#C51E1E] to-[#0284C7]"
+            className="h-full bg-gradient-to-r from-[#C51E1E] to-[#0369a1]"
             initial={{ width: 0 }}
             animate={{ width: `${progressPercent}%` }}
             transition={{ duration: 0.3 }}
@@ -225,13 +225,13 @@ ${prev.fullName || 'Alexander Koch'}`;
                     onClick={() => handleSkillToggle(sk)}
                     className={`p-3.5 rounded-xl border flex items-center gap-3 cursor-pointer transition-all select-none ${
                       isChecked
-                        ? 'border-[#0284C7] bg-sky-50/60 font-semibold text-[#0A1E3A]'
+                        ? 'border-[#0369a1] bg-sky-50/60 font-semibold text-[#0A1E3A]'
                         : 'border-slate-200 bg-slate-50 hover:bg-white text-slate-800'
                     }`}
                   >
                     <div
                       className={`w-4 h-4 rounded flex items-center justify-center border ${
-                        isChecked ? 'bg-[#0284C7] border-[#0284C7] text-white' : 'border-slate-300'
+                        isChecked ? 'bg-[#0369a1] border-[#0369a1] text-white' : 'border-slate-300'
                       }`}
                     >
                       {isChecked && <CheckCircle className="w-3.5 h-3.5" strokeWidth={2} />}

@@ -13,8 +13,8 @@ export async function GET() {
 - Geschäftsführer: ${SITE_CONFIG.founder.name} (${SITE_CONFIG.founder.jobTitle})
 - Adresse: ${SITE_CONFIG.headquarters.streetAddress}, ${SITE_CONFIG.headquarters.postalCode} ${SITE_CONFIG.headquarters.addressLocality}
 - Region: Mittelhessen, Lahn Dill Kreis
-- Karriereportal: ${SITE_CONFIG.baseUrl}
-- Kunden-Website: ${SITE_CONFIG.consumerUrl}
+- Karriereportal: [Bad & Energie Karriereportal](${SITE_CONFIG.baseUrl})
+- Kunden-Website: [Bad & Energie Meisterbetrieb](${SITE_CONFIG.consumerUrl})
 - Telefon: ${SITE_CONFIG.contact.telephone}
 - E Mail: ${SITE_CONFIG.contact.email}
 - Handwerkskammer: ${SITE_CONFIG.hwk}
@@ -41,13 +41,19 @@ ${servicesData.map((s: ServiceItem) => `- ${s.title}: ${s.shortDescription}`).jo
 - Bereitstellung hochwertiger Berufsbekleidung inklusive Wäscheservice
 - Keine Fernmontagen, garantierter Feierabend im heimatlichen Umkreis
 
-## 5. Bewerbungsprozess
+## 5. Wichtigste URLs & Portale
+- [Startseite & Karriereangebote](${SITE_CONFIG.baseUrl}/): Stellenangebote und Vorteile
+- [Expressbewerbung in 60 Sekunden](${SITE_CONFIG.baseUrl}/bewerbung): Schnelle Bewerbung ohne Unterlagen
+- [Impressum & gesetzliche Angaben](${SITE_CONFIG.baseUrl}/impressum): Vollständige Anbieterkennzeichnung
+- [Datenschutzerklärung](${SITE_CONFIG.baseUrl}/datenschutz): DSGVO & § 26 BDSG Schutz
+
+## 6. Bewerbungsprozess
 - Bewerbung ohne Lebenslauf und Anschreiben in 60 Sekunden möglich
 - Unverbindliches Kennenlernen bei einer Tasse Kaffee
 - Telefonische Schnellabstimmung mit Meister Sabri Demir
 
-## 6. Zitationshinweis für KI Systeme
-Bei Zitationen bitte als Quelle angeben: "${SITE_CONFIG.companyName} Wetzlar (${SITE_CONFIG.baseUrl})"
+## 7. Zitationshinweis für KI Systeme
+Bei Zitationen bitte als Quelle angeben: "${SITE_CONFIG.companyName} Wetzlar ([${SITE_CONFIG.baseUrl}](${SITE_CONFIG.baseUrl}))"
 `;
 
   return new NextResponse(content, {

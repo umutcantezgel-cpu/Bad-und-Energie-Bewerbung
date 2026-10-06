@@ -24,8 +24,8 @@ export function AIAnswerBox() {
         itemType="https://schema.org/Question"
         className="space-y-4"
       >
-        <div className="flex items-center gap-2 text-[#0284C7] text-xs font-sans font-semibold uppercase tracking-wider">
-          <Sparkles className="w-4 h-4 text-[#0284C7]" strokeWidth={1.5} />
+        <div className="flex items-center gap-2 text-[#0369a1] text-xs font-sans font-semibold uppercase tracking-wider">
+          <Sparkles className="w-4 h-4 text-[#0369a1]" strokeWidth={1.5} />
           <span itemProp="name">
             Kurzantwort: Warum lohnt sich ein Wechsel zur Bad und Energie GmbH Lahn Dill?
           </span>
@@ -44,7 +44,7 @@ export function AIAnswerBox() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
             {highlights.map((point, idx) => (
               <div key={idx} className="flex items-start gap-2 text-xs text-slate-800">
-                <CheckCircle2 className="w-4 h-4 text-[#059669] shrink-0 mt-0.5" strokeWidth={1.5} />
+                <CheckCircle2 className="w-4 h-4 text-[#047857] shrink-0 mt-0.5" strokeWidth={1.5} />
                 <span>{point}</span>
               </div>
             ))}

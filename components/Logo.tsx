@@ -99,8 +99,8 @@ export function Logo({
           width={662}
           height={121}
           priority={priority}
-          sizes="(max-width: 640px) 190px, (max-width: 1024px) 240px, 320px"
-          quality={100}
+          sizes="(max-width: 640px) 160px, (max-width: 1024px) 200px, 260px"
+          quality={85}
           itemProp="logo"
           decoding={priority ? 'sync' : 'async'}
           className={`${sizeClasses[size]} object-contain`}
@@ -112,7 +112,7 @@ export function Logo({
         <div className="hidden sm:flex flex-col justify-center text-left leading-tight pl-0.5 border-l border-slate-200/70 ml-1">
           {withGeoBadge && (
             <span className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase font-bold tracking-wider text-slate-700">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#0284C7]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#0369a1]" />
               Wetzlar und Lahn Dill • Seit 1926
             </span>
           )}
@@ -130,7 +130,7 @@ export function Logo({
     return (
       <Link
         href="/"
-        className="inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] rounded-2xl transition-all duration-150 hover:opacity-98 active:scale-[0.99] group"
+        className="inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0369a1] rounded-2xl transition-all duration-150 hover:opacity-98 active:scale-[0.99] group"
         aria-label="Bad und Energie GmbH Lahn Dill Zur Startseite des Karriereportals Wetzlar"
       >
         {imageElement}

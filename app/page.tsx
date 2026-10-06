@@ -18,15 +18,58 @@ import {
   UploadCloud,
 } from 'lucide-react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { HeroExpressFunnel } from '@/components/HeroExpressFunnel';
 import { Logo } from '@/components/Logo';
 import { TrustStrip } from '@/components/trust/TrustStrip';
 import { ProcessSteps } from '@/components/trust/ProcessSteps';
-import { SalaryCalculator } from '@/components/pricing/SalaryCalculator';
-import { InteractiveMap } from '@/components/maps/InteractiveMap';
+
+const SalaryCalculator = dynamic(
+  () => import('@/components/pricing/SalaryCalculator').then((mod) => mod.SalaryCalculator),
+  {
+    loading: () => (
+      <div className="p-12 text-center text-slate-500 font-sans text-xs">
+        Vorteils-Paket wird vorbereitet...
+      </div>
+    ),
+  }
+);
+
+const InteractiveMap = dynamic(
+  () => import('@/components/maps/InteractiveMap').then((mod) => mod.InteractiveMap),
+  {
+    loading: () => (
+      <div className="h-[640px] bg-slate-100/80 rounded-3xl animate-pulse flex flex-col items-center justify-center text-slate-400 text-xs gap-2">
+        <div className="w-8 h-8 rounded-full border-2 border-sky-500 border-t-transparent animate-spin" />
+        <span>Standortkarte &amp; Einsatzgebiet werden geladen...</span>
+      </div>
+    ),
+  }
+);
+
+const ReviewCarousel = dynamic(
+  () => import('@/components/reviews/ReviewCarousel').then((mod) => mod.ReviewCarousel),
+  {
+    loading: () => (
+      <div className="p-8 text-center text-slate-500 font-sans text-xs">
+        Mitarbeiterbewertungen werden geladen...
+      </div>
+    ),
+  }
+);
+
+const AIAnswerBox = dynamic(
+  () => import('@/components/seo/AIAnswerBox').then((mod) => mod.AIAnswerBox),
+  {
+    loading: () => (
+      <div className="p-6 text-center text-slate-500 font-sans text-xs">
+        Häufige Fragen &amp; Antworten werden geladen...
+      </div>
+    ),
+  }
+);
+
 import { GoogleReviewsBadge } from '@/components/reviews/GoogleReviewsBadge';
-import { ReviewCarousel } from '@/components/reviews/ReviewCarousel';
-import { AIAnswerBox } from '@/components/seo/AIAnswerBox';
 import { DirectContactCard } from '@/components/contact/DirectContactCard';
 import { LeadQuickForm } from '@/components/contact/LeadQuickForm';
 import { SpotlightCard } from '@/components/ui/SpotlightCard';
@@ -57,13 +100,13 @@ export default function HomePage() {
     {
       title: 'Früher Feierabend am Freitag',
       desc: 'Montag bis Donnerstag von 07:00 bis 16:45 Uhr und freitags bereits ab 13:30 Uhr direkt ins verdiente Wochenende. Keine unbezahlten Überstunden.',
-      icon: <Clock className="w-6 h-6 text-[#0284C7]" strokeWidth={1.5} />,
+      icon: <Clock className="w-6 h-6 text-[#0369a1]" strokeWidth={1.5} />,
       accent: 'border-blue-100',
     },
     {
       title: '30 Tage Urlaub und Top Vergütung',
       desc: 'Volle 30 Arbeitstage für echte Erholung. Dazu eine Vergütung deutlich über dem regionalen Handwerkstarif, pünktlichste Auszahlung sowie Urlaubs und Weihnachtsgeld.',
-      icon: <Award className="w-6 h-6 text-[#059669]" strokeWidth={1.5} />,
+      icon: <Award className="w-6 h-6 text-[#047857]" strokeWidth={1.5} />,
       accent: 'border-emerald-100',
     },
     {
@@ -75,7 +118,7 @@ export default function HomePage() {
     {
       title: 'Eigenes iPad und Smartphone',
       desc: 'Digitale Auftragsabwicklung ohne Zettelwirtschaft. Dein Firmen Smartphone und Tablet darfst Du selbstverständlich auch für private Zwecke nutzen.',
-      icon: <Smartphone className="w-6 h-6 text-[#0284C7]" strokeWidth={1.5} />,
+      icon: <Smartphone className="w-6 h-6 text-[#0369a1]" strokeWidth={1.5} />,
       accent: 'border-blue-100',
     },
     {
@@ -133,7 +176,7 @@ export default function HomePage() {
       {/* HERO SECTION - LIGHT LUXURY PORCELAIN CANVAS & GOLDEN RATIO ARCHITECTURE */}
       <section className="relative overflow-hidden bg-gradient-to-b from-white via-[#F8FAFC] to-[#F1F5F9] text-slate-900 pt-10 pb-24 sm:pt-16 sm:pb-32 border-b border-slate-200/80">
         {/* Ambient atmospheric light halos */}
-        <div className="absolute -top-32 -right-32 w-96 h-96 bg-[#0284C7]/8 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-[#0369a1]/8 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 -left-20 w-80 h-80 bg-[#C51E1E]/5 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -147,44 +190,44 @@ export default function HomePage() {
 
               <h1 className="text-2xl xs:text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#0A1E3A] leading-[1.14] text-balance">
                 Ehrliches Handwerk. Erstklassiger Lohn.{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C51E1E] via-[#0A1E3A] to-[#0284C7] block mt-1.5 sm:mt-2">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C51E1E] via-[#0A1E3A] to-[#0369a1] block mt-1.5 sm:mt-2">
                   Pünktlich Feierabend im Meisterteam.
                 </span>
               </h1>
 
               <p className="text-sm sm:text-lg text-slate-600 max-w-2xl leading-relaxed text-pretty">
-                Bewerbung in unter <strong className="text-[#0A1E3A]">60 Sekunden</strong>. Vollständig ohne Anschreiben und ohne Lebenslauf. Echtes Handwerk auf Augenhöhe mit garantierter persönlicher Rückmeldung innerhalb von 24 Stunden.
+                Attraktive Jobs in Wetzlar für erfahrene Heizungsbauer und engagierte Monteure: Erlebe ehrliches Handwerk, erstklassigen Lohn und pünktlich Feierabend im familiären Meisterteam. Bewerbung in unter <strong className="text-[#0A1E3A]">60 Sekunden</strong> – ohne Anschreiben, ohne Lebenslauf, mit garantierter persönlicher Rückmeldung binnen 24 Stunden.
               </p>
 
               {/* 4 Quantitative USP Badges - Symmetrical 2x2 Mobile / 4-Col Desktop Grid */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 pt-2">
-                <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-[#0284C7]/60 transition-colors h-full flex flex-col justify-between">
+                <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-[#0369a1]/60 transition-colors h-full flex flex-col justify-between">
                   <div>
                     <span className="text-[10px] text-slate-500 block font-sans font-semibold uppercase tracking-wider">Wochenendstart</span>
                     <strong className="text-[#0A1E3A] text-xs sm:text-sm font-bold block mt-0.5 leading-snug">Freitags ab 13:30 Uhr</strong>
                   </div>
-                  <span className="text-[10px] text-emerald-700 font-medium block mt-2">Pünktlicher Feierabend</span>
+                  <span className="text-[10px] text-emerald-800 font-medium block mt-2">Pünktlicher Feierabend</span>
                 </div>
-                <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-[#0284C7]/60 transition-colors h-full flex flex-col justify-between">
+                <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-[#0369a1]/60 transition-colors h-full flex flex-col justify-between">
                   <div>
                     <span className="text-[10px] text-slate-500 block font-sans font-semibold uppercase tracking-wider">Erholungsurlaub</span>
                     <strong className="text-[#0A1E3A] text-xs sm:text-sm font-bold block mt-0.5 leading-snug">30 Tage garantiert</strong>
                   </div>
                   <span className="text-[10px] text-slate-500 font-medium block mt-2">Plus Urlaubsgeld</span>
                 </div>
-                <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-[#0284C7]/60 transition-colors h-full flex flex-col justify-between">
+                <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-[#0369a1]/60 transition-colors h-full flex flex-col justify-between">
                   <div>
                     <span className="text-[10px] text-slate-500 block font-sans font-semibold uppercase tracking-wider">Ausstattung</span>
-                    <strong className="text-[#0A1E3A] text-xs sm:text-sm font-bold block mt-0.5 leading-snug">Hilti & Firmenwagen</strong>
+                    <strong className="text-[#0A1E3A] text-xs sm:text-sm font-bold block mt-0.5 leading-snug">Hilti &amp; Firmenwagen</strong>
                   </div>
                   <span className="text-[10px] text-slate-500 font-medium block mt-2">Ab Wohnort nutzbar</span>
                 </div>
-                <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-[#0284C7]/60 transition-colors h-full flex flex-col justify-between">
+                <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-[#0369a1]/60 transition-colors h-full flex flex-col justify-between">
                   <div>
                     <span className="text-[10px] text-slate-500 block font-sans font-semibold uppercase tracking-wider">Rückmeldung</span>
                     <strong className="text-[#0A1E3A] text-xs sm:text-sm font-bold block mt-0.5 leading-snug">Binnen 24 Stunden</strong>
                   </div>
-                  <span className="text-[10px] text-emerald-700 font-medium block mt-2">100 Prozent diskret</span>
+                  <span className="text-[10px] text-emerald-800 font-medium block mt-2">100 Prozent diskret</span>
                 </div>
               </div>
 
@@ -210,7 +253,7 @@ export default function HomePage() {
                   href="/bewerbung"
                   className="px-5 py-3 rounded-full text-xs sm:text-sm font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all flex items-center justify-center gap-2 text-center"
                 >
-                  <Sparkles className="w-4 h-4 text-[#0284C7]" strokeWidth={1.5} />
+                  <Sparkles className="w-4 h-4 text-[#0369a1]" strokeWidth={1.5} />
                   <span>Bewerberportal</span>
                 </Link>
               </div>
@@ -306,10 +349,10 @@ export default function HomePage() {
 
             <Link
               href="/bewerbung"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-slate-200 text-xs font-bold text-[#0A1E3A] shadow-2xs hover:border-[#0284C7] apple-press transition-all self-start sm:self-auto"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-slate-200 text-xs font-bold text-[#0A1E3A] shadow-2xs hover:border-[#0369a1] apple-press transition-all self-start sm:self-auto"
             >
               <span>Zum 4 Wege Bewerberportal</span>
-              <ArrowRight className="w-3.5 h-3.5 text-[#0284C7]" strokeWidth={1.5} />
+              <ArrowRight className="w-3.5 h-3.5 text-[#0369a1]" strokeWidth={1.5} />
             </Link>
           </div>
 
@@ -321,7 +364,7 @@ export default function HomePage() {
                   <span className="px-2.5 py-1 rounded-md text-[10px] font-sans font-semibold uppercase bg-sky-50 text-sky-800 border border-sky-200">
                     Stelle 01 · Vollzeit
                   </span>
-                  <span className="text-xs font-sans font-bold text-emerald-700">
+                  <span className="text-xs font-sans font-bold text-emerald-800">
                     Über Tarif · Nach Qualifikation
                   </span>
                 </div>
@@ -341,16 +384,16 @@ export default function HomePage() {
 
                 <div className="space-y-2 pt-2 text-xs text-slate-700 min-h-[6.5rem]">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={1.5} />
-                    <span>Keine Fernmontagen · Jeden Nachmittag pünktlich zu Hause</span>
+                    <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
+                    <span>Lokale Baustellen im Umkreis · Fester Feierabend bei der Familie</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={1.5} />
-                    <span>30 Tage garantierter Erholungsurlaub plus Weihnachtsgeld</span>
+                    <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
+                    <span>30 Arbeitstage bezahlte Erholung · Zuverlässiges Urlaubs- &amp; Weihnachtsgeld</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={1.5} />
-                    <span>Persönliches Servicefahrzeug ab eigenem Wohnort möglich</span>
+                    <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
+                    <span>Eigener Transporter mit Sortimo-Ausbau · Direkte Fahrt ab Haustür</span>
                   </div>
                 </div>
               </div>
@@ -371,7 +414,7 @@ export default function HomePage() {
                   <span className="px-2.5 py-1 rounded-md text-[10px] font-sans font-semibold uppercase bg-emerald-50 text-emerald-800 border border-emerald-200">
                     Stelle 02 · Spezialist
                   </span>
-                  <span className="text-xs font-sans font-bold text-emerald-700">
+                  <span className="text-xs font-sans font-bold text-emerald-800">
                     Über Tarif · Top Facharbeiterlohn
                   </span>
                 </div>
@@ -391,16 +434,16 @@ export default function HomePage() {
 
                 <div className="space-y-2 pt-2 text-xs text-slate-700 min-h-[6.5rem]">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={1.5} />
-                    <span>Voll bezahlte Werkszertifizierungen bei Bosch &amp; Brötje</span>
+                    <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
+                    <span>Werkszertifizierungen bei Bosch &amp; Brötje komplett bezahlt</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={1.5} />
-                    <span>Firmen Tablet und Smartphone auch für private Nutzung freigeschaltet</span>
+                    <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
+                    <span>Dienst-iPad &amp; Smartphone uneingeschränkt auch privat nutzbar</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={1.5} />
-                    <span>Kein Notdienst Zwang am Wochenende</span>
+                    <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
+                    <span>Freie Wochenenden · Keine Notdienstverpflichtung samstags/sonntags</span>
                   </div>
                 </div>
               </div>
@@ -441,15 +484,15 @@ export default function HomePage() {
 
                 <div className="space-y-2 pt-2 text-xs text-slate-700 min-h-[6.5rem]">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={1.5} />
+                    <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
                     <span>Eigenes persönliches Azubi Werkzeugset von Hilti</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={1.5} />
+                    <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
                     <span>Zuschuss zum Führerschein und Fahrtkostenzuschuss</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={1.5} />
+                    <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
                     <span>Garantierte Festübernahme nach erfolgreicher Gesellenprüfung</span>
                   </div>
                 </div>
@@ -471,7 +514,7 @@ export default function HomePage() {
       <section id="karriere-paket" className="py-20 sm:py-24 border-t border-white/60 scroll-mt-20">
         <div id="gehalt" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-14">
-            <span className="text-xs font-sans font-semibold uppercase tracking-wider text-[#0284C7] block mb-2">
+            <span className="text-xs font-sans font-semibold uppercase tracking-wider text-[#0369a1] block mb-2">
               Dein Karriere-Paket &amp; Ausstattungs-Check
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0A1E3A] tracking-tight">
@@ -523,7 +566,7 @@ export default function HomePage() {
       <section id="ausstattung" className="py-24 sm:py-28 border-t border-white/60 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs font-sans font-semibold uppercase tracking-wider text-[#0284C7] block mb-2">
+            <span className="text-xs font-sans font-semibold uppercase tracking-wider text-[#0369a1] block mb-2">
               Keine Kompromisse beim Equipment
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0A1E3A] tracking-tight">
@@ -554,8 +597,8 @@ export default function HomePage() {
 
             <div className="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200/90 shadow-[0_4px_20px_rgba(10,30,58,0.03)] hover:shadow-[0_16px_36px_rgba(10,30,58,0.07)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-full space-y-4">
               <div className="space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-sky-50 text-[#0284C7] border border-sky-100 flex items-center justify-center font-bold shadow-2xs">
-                  <Car className="w-6 h-6 text-[#0284C7]" strokeWidth={1.5} />
+                <div className="w-12 h-12 rounded-2xl bg-sky-50 text-[#0369a1] border border-sky-100 flex items-center justify-center font-bold shadow-2xs">
+                  <Car className="w-6 h-6 text-[#0369a1]" strokeWidth={1.5} />
                 </div>
                 <h3 className="text-base font-bold text-slate-900 min-h-[2.5rem] flex items-center">
                   Sortimo Servicefahrzeug
@@ -644,7 +687,7 @@ export default function HomePage() {
       <section id="einsatzgebiet" className="py-20 border-t border-white/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <span className="text-xs font-sans font-semibold uppercase tracking-wider text-[#0284C7] block mb-2">
+            <span className="text-xs font-sans font-semibold uppercase tracking-wider text-[#0369a1] block mb-2">
               Lokale Einsätze ohne Fernmontage
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0A1E3A] tracking-tight">
@@ -681,8 +724,8 @@ export default function HomePage() {
                   Siegmund Hiepe Str. 20, 35578 Wetzlar
                 </p>
               </div>
-              <div className="flex items-center gap-2 text-xs font-semibold text-[#059669] bg-emerald-50/80 px-3 py-1.5 rounded-lg border border-emerald-200">
-                <span className="w-2 h-2 rounded-full bg-[#059669]" />
+              <div className="flex items-center gap-2 text-xs font-semibold text-[#047857] bg-emerald-50/80 px-3 py-1.5 rounded-lg border border-emerald-200">
+                <span className="w-2 h-2 rounded-full bg-[#047857]" />
                 <span>Optimal angebunden via B49 &amp; A45</span>
               </div>
             </div>
@@ -713,7 +756,7 @@ export default function HomePage() {
           <div className="max-w-7xl mx-auto mt-14">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
               <div>
-                <span className="text-xs font-sans font-semibold text-[#0284C7] uppercase tracking-wider block mb-1">
+                <span className="text-xs font-sans font-semibold text-[#0369a1] uppercase tracking-wider block mb-1">
                   Mittelhessen · Maximal 35 km Radius · Garantiert keine Fernmontage
                 </span>
                 <h3 className="text-2xl sm:text-3xl font-extrabold text-[#0A1E3A] tracking-tight">
@@ -739,21 +782,21 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
               <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
                 <div className="flex items-center gap-2 text-xs font-bold text-[#0A1E3A] mb-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#0284C7]" />
+                  <span className="w-2 h-2 rounded-full bg-[#0369a1]" />
                   <span>35 km Einsatzgrenze</span>
                 </div>
-                <p className="text-xs text-slate-500 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   Keine Hotelübernachtungen, keine Fernbaustellen. Alle Kunden und Projekte befinden sich in Wetzlar, Gießen und direktem Umland.
                 </p>
               </div>
 
               <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
                 <div className="flex items-center gap-2 text-xs font-bold text-[#0A1E3A] mb-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#059669]" />
+                  <span className="w-2 h-2 rounded-full bg-[#047857]" />
                   <span>Fahrtzeit &amp; Fuhrpark</span>
                 </div>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Ausgestattetes Servicefahrzeug zur Privatnutzung möglich. Direkte Anfahrt von Deinem Wohnort zur Baustelle nach Absprache.
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Moderner Werkstattwagen mit Tankkarte. Nach Absprache feste Mitnahme für den direkten Arbeitsweg.
                 </p>
               </div>
 
@@ -762,8 +805,8 @@ export default function HomePage() {
                   <span className="w-2 h-2 rounded-full bg-[#C51E1E]" />
                   <span>Pünktlicher Feierabend</span>
                 </div>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Montag bis Donnerstag von 07:00 bis 16:45 Uhr und freitags ab 13:30 Uhr bezahlt ins Wochenende ohne Wochenend-Notdienstzwang.
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Feste Arbeitszeiten unter der Woche und freitags ab 13:30 Uhr bezahlter Übergang ins freie Wochenende.
                 </p>
               </div>
             </div>
@@ -776,7 +819,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12">
             <div>
-              <span className="text-xs font-sans font-semibold uppercase tracking-wider text-[#0284C7] block mb-2">
+              <span className="text-xs font-sans font-semibold uppercase tracking-wider text-[#0369a1] block mb-2">
                 Authentische Einblicke
               </span>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0A1E3A] tracking-tight">
@@ -844,7 +887,7 @@ export default function HomePage() {
               >
                 <summary className="flex items-center justify-between cursor-pointer font-bold text-slate-900 text-sm sm:text-base">
                   <span>{faq.q}</span>
-                  <span className="ml-4 shrink-0 transition group-open:-rotate-180 text-[#0284C7]">
+                  <span className="ml-4 shrink-0 transition group-open:-rotate-180 text-[#0369a1]">
                     <ChevronDown className="w-5 h-5" strokeWidth={1.5} />
                   </span>
                 </summary>
@@ -881,7 +924,7 @@ export default function HomePage() {
                   href="/bewerbung"
                   className="px-6 py-3 rounded-full font-bold text-xs sm:text-sm text-[#0A1E3A] bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs transition-all flex items-center gap-2"
                 >
-                  <Sparkles className="w-4 h-4 text-[#0284C7]" strokeWidth={1.5} />
+                  <Sparkles className="w-4 h-4 text-[#0369a1]" strokeWidth={1.5} />
                   <span>Zum 4 Wege Bewerberportal</span>
                 </Link>
               </div>
