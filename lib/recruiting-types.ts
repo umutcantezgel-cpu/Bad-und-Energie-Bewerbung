@@ -1,13 +1,29 @@
 import { z } from 'zod';
 
+export interface CareerStation {
+  period: string;
+  role: string;
+  company: string;
+  location?: string;
+  tasks: string[];
+}
+
+export interface EducationStation {
+  period: string;
+  degree: string;
+  institution: string;
+  location?: string;
+}
+
 export interface VaultFile {
   id: string;
   name: string;
   size: number;
   type: string;
-  category: 'geselle' | 'license' | 'cert' | 'other';
+  category: 'resume' | 'photo' | 'coverletter' | 'geselle' | 'license' | 'cert' | 'other';
   uploadedAt: string;
   status: 'ready' | 'uploading' | 'verified';
+  previewUrl?: string;
 }
 
 export interface CandidateDossier {
@@ -28,6 +44,10 @@ export interface CandidateDossier {
   contactPreference: 'whatsapp' | 'phone' | 'email';
   createdAt: string;
   files: VaultFile[];
+  photoUrl?: string;
+  hasUploadedResume?: boolean;
+  careerStations?: CareerStation[];
+  educationStations?: EducationStation[];
 }
 
 export const initialDossierState: CandidateDossier = {
@@ -74,6 +94,46 @@ Alexander Koch`,
       category: 'geselle',
       uploadedAt: '01.03.2026',
       status: 'verified',
+    },
+  ],
+  photoUrl: '',
+  hasUploadedResume: false,
+  careerStations: [
+    {
+      period: '2022 – heute',
+      role: 'Geselle Anlagenmechaniker SHK',
+      company: 'SHK Meisterbetrieb Mittelhessen',
+      location: 'Wetzlar & Gießen',
+      tasks: [
+        'Montage und Modernisierung von Wärmepumpen (Bosch & Brötje)',
+        'Selbstständige Badsanierung und Vorwandinstallation (Geberit/Viega)',
+        'Kundenbetreuung und Inbetriebnahme vor Ort',
+      ],
+    },
+    {
+      period: '2019 – 2022',
+      role: 'Ausbildung zum Anlagenmechaniker SHK',
+      company: 'Ausbildungsbetrieb Lahn-Dill',
+      location: 'Wetzlar',
+      tasks: [
+        'Rohrleitungsbau, Pressverbindungen und Heizkörpermontage',
+        'Grundlagen der Gas-, Wasser- und Klimatechnik',
+        'Abschluss der Gesellenprüfung mit Auszeichnung',
+      ],
+    },
+  ],
+  educationStations: [
+    {
+      period: '2019 – 2022',
+      degree: 'Gesellenbrief Anlagenmechaniker für Sanitär-, Heizungs- und Klimatechnik',
+      institution: 'Handwerkskammer Wiesbaden / Theodor-Heuss-Schule Wetzlar',
+      location: 'Wetzlar',
+    },
+    {
+      period: '2013 – 2019',
+      degree: 'Realschulabschluss (Mittlere Reife)',
+      institution: 'Gesamtschule Wetzlar',
+      location: 'Wetzlar',
     },
   ],
 };

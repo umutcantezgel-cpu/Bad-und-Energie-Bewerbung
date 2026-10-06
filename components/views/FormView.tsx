@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Shield, ArrowRight } from 'lucide-react';
+import { Shield, ArrowRight, Camera, User } from 'lucide-react';
 import { CandidateDossier, formBuilderSchema, FormBuilderValues } from '@/lib/recruiting-types';
 
 interface FormViewProps {
@@ -57,6 +57,18 @@ export function FormView({
       return () => clearTimeout(timer);
     }
   }, [initialFocusField]);
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64 = event.target?.result as string;
+        onUpdateDossier((prev) => ({ ...prev, photoUrl: base64 }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const onSubmit = (values: FormBuilderValues) => {
     onUpdateDossier((prev) => ({
@@ -182,6 +194,49 @@ export function FormView({
               {errors.location && (
                 <p className="text-red-600 text-[11px] mt-1">{errors.location.message}</p>
               )}
+            </div>
+
+            {/* Bewerbungsfoto Mini Picker */}
+            <div className="sm:col-span-2 p-3.5 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-14 rounded-xl bg-white border border-slate-300 overflow-hidden flex items-center justify-center shrink-0 shadow-2xs">
+                  {dossier.photoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={dossier.photoUrl} alt="Foto" className="w-full h-full object-cover" />
+                  ) : (
+                    <User className="w-6 h-6 text-slate-300" strokeWidth={1.5} />
+                  )}
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-slate-900">
+                    Bewerbungsfoto für tabellarischen Lebenslauf
+                  </div>
+                  <div className="text-[11px] text-slate-500">
+                    {dossier.photoUrl ? 'Foto geladen und im DINA4 Dossier aktiv' : 'Optional · Format 3:4'}
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <label className="px-3 py-1.5 rounded-xl bg-white border border-slate-300 hover:border-[#0A1E3A] text-slate-700 text-xs font-semibold cursor-pointer shadow-2xs flex items-center gap-1.5">
+                  <Camera className="w-3.5 h-3.5 text-[#0284C7]" strokeWidth={1.5} />
+                  <span>{dossier.photoUrl ? 'Foto ändern' : 'Foto wählen'}</span>
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    onChange={handlePhotoUpload}
+                  />
+                </label>
+                {dossier.photoUrl && (
+                  <button
+                    type="button"
+                    onClick={() => onUpdateDossier((prev) => ({ ...prev, photoUrl: '' }))}
+                    className="text-[11px] text-slate-400 hover:text-red-600 px-2 py-1 cursor-pointer"
+                  >
+                    Entfernen
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

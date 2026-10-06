@@ -82,13 +82,28 @@ export default function BewerbungHubPage() {
     }
   };
 
-  // Sync from localStorage
+  // Sync from localStorage and handle URL search parameters
   useEffect(() => {
     const timer = setTimeout(() => {
       try {
         const saved = localStorage.getItem('bad_energie_dossier');
         if (saved) {
           setDossier(JSON.parse(saved));
+        }
+      } catch {
+        // ignore
+      }
+
+      try {
+        if (typeof window !== 'undefined') {
+          const params = new URLSearchParams(window.location.search);
+          const tab = params.get('tab');
+          const direct = params.get('direct');
+          if (tab === 'vault' || direct === 'true' || tab === 'direct') {
+            setActiveTab('vault');
+          } else if (tab === 'quiz' || tab === 'form' || tab === 'dossier') {
+            setActiveTab(tab);
+          }
         }
       } catch {
         // ignore
@@ -235,6 +250,47 @@ export default function BewerbungHubPage() {
                   <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
                     Ob per kurzer Schnellbewerbung ohne Lebenslauf, direktem Dokumentenupload oder strukturiertem Formular: Finde in wenigen Minuten Deinen Platz in unserem Team in Wetzlar.
                   </p>
+
+                  {/* 2-Wege Entscheidungsbox */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('vault')}
+                      className="p-4 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20 text-left transition-all cursor-pointer group"
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider font-mono">
+                          Weg A · Unter 30 Sekunden
+                        </span>
+                        <UploadCloud className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
+                      </div>
+                      <div className="text-sm font-bold text-white mb-0.5">
+                        Bereits Lebenslauf vorhanden?
+                      </div>
+                      <p className="text-xs text-slate-300">
+                        Direkt PDF &amp; Foto hochladen – kein Fragebogen nötig.
+                      </p>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('quiz')}
+                      className="p-4 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20 text-left transition-all cursor-pointer group"
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-[11px] font-bold text-sky-400 uppercase tracking-wider font-mono">
+                          Weg B · Interaktiv
+                        </span>
+                        <Sparkles className="w-4 h-4 text-sky-400 group-hover:scale-110 transition-transform" />
+                      </div>
+                      <div className="text-sm font-bold text-white mb-0.5">
+                        Kein Lebenslauf zur Hand?
+                      </div>
+                      <p className="text-xs text-slate-300">
+                        4 kurze Fragen – fertiges DINA4 Dossier wird automatisch erstellt.
+                      </p>
+                    </button>
+                  </div>
 
                   <div className="pt-2 flex flex-wrap gap-3 text-xs">
                     <button
@@ -437,6 +493,7 @@ export default function BewerbungHubPage() {
               <PrintA4View
                 dossier={dossier}
                 onSwitchView={(v) => setActiveTab(v)}
+                onUpdateDossier={updateDossier}
               />
             </motion.div>
           )}

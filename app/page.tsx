@@ -15,6 +15,7 @@ import {
   Shield,
   PhoneCall,
   CheckCircle,
+  UploadCloud,
 } from 'lucide-react';
 import Link from 'next/link';
 import { HeroExpressFunnel } from '@/components/HeroExpressFunnel';
@@ -199,11 +200,18 @@ export default function HomePage() {
                   </div>
                 </a>
                 <Link
+                  href="/bewerbung?tab=vault"
+                  className="px-5 py-3 rounded-full text-xs sm:text-sm font-bold bg-white hover:bg-slate-50 text-[#0A1E3A] border border-slate-200/90 shadow-2xs apple-press transition-all flex items-center justify-center gap-2 text-center"
+                >
+                  <UploadCloud className="w-4 h-4 text-emerald-600" strokeWidth={1.5} />
+                  <span>Lebenslauf direkt hochladen</span>
+                </Link>
+                <Link
                   href="/bewerbung"
-                  className="px-6 py-3 rounded-full text-sm font-bold bg-white hover:bg-slate-50 text-[#0A1E3A] border border-slate-200/90 shadow-2xs apple-press transition-all flex items-center justify-center gap-2 text-center"
+                  className="px-5 py-3 rounded-full text-xs sm:text-sm font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all flex items-center justify-center gap-2 text-center"
                 >
                   <Sparkles className="w-4 h-4 text-[#0284C7]" strokeWidth={1.5} />
-                  <span>Bewerberportal (4 Wege)</span>
+                  <span>Bewerberportal</span>
                 </Link>
               </div>
             </div>
