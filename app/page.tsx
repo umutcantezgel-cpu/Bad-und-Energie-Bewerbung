@@ -34,16 +34,16 @@ import { GradientText } from '@/components/ui/GradientText';
 import { RotatingText } from '@/components/ui/RotatingText';
 
 export const metadata = {
-  title: 'Jobs Wetzlar | Heizungsbauer und SHK Monteure bei Bad und Energie Lahn Dill',
+  title: 'Jobs Wetzlar | Heizungsbauer & Monteure | Bad & Energie',
   description:
-    'Offene Stellen für Anlagenmechaniker, Heizungsbauer und Kundendienst in Wetzlar. 30 Tage Urlaub, freitags ab 13:30 Uhr Wochenende, top Hilti Werkzeug und übertarifliche Bezahlung.',
+    'SHK Handwerker Jobs in Wetzlar: Bis zu 4.800 € Gehalt, 30 Tage Urlaub, freitags ab 13:30 Uhr frei & Firmenwagen. Jetzt in 60 Sek. bewerben bei Bad & Energie!',
   alternates: {
     canonical: 'https://karriere.bad-energie.de',
   },
   openGraph: {
-    title: 'Jobs Wetzlar | Heizungsbauer und SHK Monteure bei Bad und Energie Lahn Dill',
+    title: 'Jobs Wetzlar | Heizungsbauer & Monteure | Bad & Energie',
     description:
-      'Offene Stellen für Anlagenmechaniker, Heizungsbauer und Kundendienst in Wetzlar. 30 Tage Urlaub, freitags ab 13:30 Uhr Wochenende, top Hilti Werkzeug und übertarifliche Bezahlung.',
+      'SHK Handwerker Jobs in Wetzlar: Bis zu 4.800 € Gehalt, 30 Tage Urlaub, freitags ab 13:30 Uhr frei & Firmenwagen. Jetzt in 60 Sek. bewerben bei Bad & Energie!',
     url: 'https://karriere.bad-energie.de',
     siteName: 'Bad und Energie GmbH Lahn Dill',
     locale: 'de_DE',
