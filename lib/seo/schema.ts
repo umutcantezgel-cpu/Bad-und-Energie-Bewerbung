@@ -81,6 +81,8 @@ export function getOrganizationNode() {
     url: SITE_CONFIG.consumerUrl,
     logo: LOGO_URL,
     sameAs: [SITE_CONFIG.consumerUrl],
+    address: HQ_ADDRESS,
+    geo: HQ_GEO,
     founder: {
       '@id': FOUNDER_ID,
     },

@@ -99,6 +99,19 @@ const structuredData = {
       url: 'https://bad-energie.de',
       logo: logoUrl,
       sameAs: ['https://bad-energie.de'],
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Siegmund-Hiepe-Str. 20',
+        addressLocality: 'Wetzlar',
+        postalCode: '35578',
+        addressRegion: 'Hessen',
+        addressCountry: 'DE',
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: 50.56499,
+        longitude: 8.49842,
+      },
       founder: {
         '@id': 'https://karriere.bad-energie.de/#founder',
       },
