@@ -553,7 +553,7 @@ export default function HomePage() {
                   <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-6 shadow-2xs">
                     {item.icon}
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-2">{item.title}</h3>
+                  <div className="text-lg font-bold text-slate-900 mb-2">{item.title}</div>
                   <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">{item.desc}</p>
                 </div>
               </div>
@@ -583,9 +583,9 @@ export default function HomePage() {
                 <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#C51E1E] border border-red-100 flex items-center justify-center font-bold shadow-2xs">
                   <Wrench className="w-6 h-6 text-[#C51E1E]" strokeWidth={1.5} />
                 </div>
-                <h3 className="text-base font-bold text-slate-900 min-h-[2.5rem] flex items-center">
+                <div className="text-base font-bold text-slate-900 min-h-[2.5rem] flex items-center">
                   Hilti 22V Akku Flotte
-                </h3>
+                </div>
                 <p className="text-xs text-slate-600 leading-relaxed min-h-[4rem]">
                   Persönlicher Akku Bohrhammer, Säbelsäge und elektrohydraulische Presszangen (Viega &amp; Geberit). Kein Leihen, kein Warten.
                 </p>
@@ -600,9 +600,9 @@ export default function HomePage() {
                 <div className="w-12 h-12 rounded-2xl bg-sky-50 text-[#0369a1] border border-sky-100 flex items-center justify-center font-bold shadow-2xs">
                   <Car className="w-6 h-6 text-[#0369a1]" strokeWidth={1.5} />
                 </div>
-                <h3 className="text-base font-bold text-slate-900 min-h-[2.5rem] flex items-center">
+                <div className="text-base font-bold text-slate-900 min-h-[2.5rem] flex items-center">
                   Sortimo Servicefahrzeug
-                </h3>
+                </div>
                 <p className="text-xs text-slate-600 leading-relaxed min-h-[4rem]">
                   Moderner Transporter mit ergonomischer Sortimo Fahrzeugeinrichtung. Nach Absprache feste Mitnahme nach Hause für direkte Baustellenanfahrt.
                 </p>
@@ -617,9 +617,9 @@ export default function HomePage() {
                 <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center font-bold shadow-2xs">
                   <Flame className="w-6 h-6 text-amber-600" strokeWidth={1.5} />
                 </div>
-                <h3 className="text-base font-bold text-slate-900 min-h-[2.5rem] flex items-center">
+                <div className="text-base font-bold text-slate-900 min-h-[2.5rem] flex items-center">
                   Bosch Messtechnik
-                </h3>
+                </div>
                 <p className="text-xs text-slate-600 leading-relaxed min-h-[4rem]">
                   Digitale Abgasmessgeräte, Spülkompressoren und Kältemittel Füllstationen für moderne Wärmepumpen (Bosch Compress 7400i &amp; Brötje).
                 </p>
@@ -634,9 +634,9 @@ export default function HomePage() {
                 <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center font-bold shadow-2xs">
                   <Smartphone className="w-6 h-6 text-emerald-600" strokeWidth={1.5} />
                 </div>
-                <h3 className="text-base font-bold text-slate-900 min-h-[2.5rem] flex items-center">
+                <div className="text-base font-bold text-slate-900 min-h-[2.5rem] flex items-center">
                   iPad &amp; Smartphone
-                </h3>
+                </div>
                 <p className="text-xs text-slate-600 leading-relaxed min-h-[4rem]">
                   Digitale Auftragsabwicklung ohne lästige Zettel. Dein Dienst Smartphone und Tablet darfst Du uneingeschränkt auch privat nutzen.
                 </p>
@@ -717,9 +717,9 @@ export default function HomePage() {
           <div className="glass-panel p-6 sm:p-10 max-w-4xl mx-auto">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-200/60">
               <div>
-                <h3 className="text-base font-bold text-slate-900">
+                <div className="text-base font-bold text-slate-900">
                   Zentrale Werkstatt &amp; Logistiklager
-                </h3>
+                </div>
                 <p className="text-xs text-slate-500 mt-0.5">
                   Siegmund Hiepe Str. 20, 35578 Wetzlar
                 </p>
@@ -904,9 +904,9 @@ export default function HomePage() {
               <span className="px-3.5 py-1 rounded-full text-xs font-sans font-semibold uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200 inline-block">
                 100% Unverbindlich · Kein Risiko · Keine Verpflichtung
               </span>
-              <h3 className="text-2xl sm:text-3xl font-extrabold text-[#0A1E3A] tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0A1E3A] tracking-tight">
                 Bereit für ein faires Angebot mit echter handwerklicher Wertschätzung?
-              </h3>
+              </h2>
               <p className="text-sm sm:text-base text-slate-600 max-w-xl mx-auto leading-relaxed">
                 Nutze jetzt unsere Expressbewerbung in unter 60 Sekunden oder das 4 Wege Bewerberportal und lass uns ganz ungezwungen herausfinden, ob wir zueinander passen.
               </p>
