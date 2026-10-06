@@ -282,7 +282,7 @@ const structuredData = {
       hiringOrganization: {
         '@type': 'Organization',
         name: 'Bad & Energie GmbH',
-        sameAs: 'https://bad-energie.de',
+        sameAs: ['https://bad-energie.de'],
         logo: logoUrl,
       },
       jobLocation: {
@@ -314,7 +314,7 @@ const structuredData = {
       hiringOrganization: {
         '@type': 'Organization',
         name: 'Bad & Energie GmbH',
-        sameAs: 'https://bad-energie.de',
+        sameAs: ['https://bad-energie.de'],
         logo: logoUrl,
       },
       jobLocation: {
@@ -346,7 +346,7 @@ const structuredData = {
       hiringOrganization: {
         '@type': 'Organization',
         name: 'Bad & Energie GmbH',
-        sameAs: 'https://bad-energie.de',
+        sameAs: ['https://bad-energie.de'],
         logo: logoUrl,
       },
       jobLocation: {
@@ -382,7 +382,7 @@ const structuredData = {
       hiringOrganization: {
         '@type': 'Organization',
         name: 'Bad & Energie GmbH',
-        sameAs: 'https://bad-energie.de',
+        sameAs: ['https://bad-energie.de'],
         logo: logoUrl,
       },
       jobLocation: {

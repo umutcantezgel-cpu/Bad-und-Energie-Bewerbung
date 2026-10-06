@@ -5,8 +5,9 @@ import { ShieldCheck, Award, Clock, Wrench, Truck, HeartHandshake } from 'lucide
 
 export function TrustStrip() {
   const items = [
-    { icon: Award, text: 'Innungs Meisterbetrieb seit 1926' },
-    { icon: ShieldCheck, text: 'Handwerkskammer Wiesbaden eingetragen' },
+    { icon: Award, text: '100 Jahre Meisterbetrieb (1926–2026)' },
+    { icon: ShieldCheck, text: '5 Partner-Säulen: Buderus, Bosch, NIBE, Alpha Innotec, Viessmann' },
+    { icon: Award, text: 'Fachbetriebspartner des Lahn-Dill-Kreises' },
     { icon: Clock, text: 'Freitags ab 13:30 Uhr ins Wochenende' },
     { icon: Wrench, text: 'Persönliche Hilti Werkzeugausstattung' },
     { icon: Truck, text: 'Servicefahrzeug mit Privatnutzung' },

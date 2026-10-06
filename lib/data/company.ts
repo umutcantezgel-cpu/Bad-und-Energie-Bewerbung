@@ -26,6 +26,8 @@ export interface CompanyData {
     latitude: number;
     longitude: number;
   };
+  milestone2026: string;
+  partnerPillars: string[];
   benefits: string[];
 }
 
@@ -57,6 +59,15 @@ export const companyData: CompanyData = {
     latitude: 50.56499,
     longitude: 8.49842,
   },
+  milestone2026:
+    'Meilenstein 2026: Durch das stetige Wachstum unseres Betriebes war ein Umzug in eine neue und größere Betriebsstätte unausweichlich. Der Hauptstandort wurde in die Siegmund-Hiepe-Str. 20 in Wetzlar verlagert für ein moderneres Büro und ein größeres Lager. Die Bad & Energie GmbH hat sich zum führenden Spezialisten für Wärmepumpen in der Region etabliert. Zusätzlich besteht die Partnerschaft als Fachbetrieb für den Lahn-Dill-Kreis zur Betreuung und Instandhaltung öffentlicher Einrichtungen. Zurzeit sind 15 Mitarbeiter im Betrieb tätig und arbeiten stetig daran, die Heizungen und Bäder der Kunden zu modernisieren. Dabei gilt: ‚Schöner Wohnen mit Top-Qualität‘.',
+  partnerPillars: [
+    'Buderus & Bosch Partnerbetrieb (Partnerurkunde 2026, 14,8 km Werksnähe zum Buderus-Stammwerk Lollar)',
+    'NIBE Effizienzpartner (Berechtigung zur Vergabe von 7 Jahren Herstellergarantie)',
+    'Alpha Innotec zertifizierter Inbetriebnahme-Partner',
+    'Viessmann Fachbetrieb',
+    'Fachbetriebspartner des Lahn-Dill-Kreises für öffentliche Liegenschaften',
+  ],
   benefits: [
     'Überdurchschnittliche Vergütung deutlich über Handwerkstarif plus Urlaubs- und Weihnachtsgeld',
     '30 Tage garantierter Erholungsurlaub',

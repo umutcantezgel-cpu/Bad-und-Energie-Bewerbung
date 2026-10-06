@@ -251,9 +251,11 @@ export default function HomePage() {
                       <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={1.5} />
                       <span className="font-medium">Zertifizierter Fachpartner für Buderus, Bosch, NIBE, Alpha Innotec &amp; Viessmann</span>
                     </div>
-                    <div className="flex items-center gap-2.5">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={1.5} />
-                      <span className="font-medium">Meilenstein 2026: Siegmund-Hiepe-Str. 20 (Wetzlar) · Modernes Büro, großes Lager &amp; 15 Mitarbeiter</span>
+                    <div className="flex items-start gap-2.5 pt-1 border-t border-slate-200/60">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" strokeWidth={1.5} />
+                      <span className="text-[11px] leading-relaxed">
+                        <strong>Meilenstein 2026:</strong> Neuer Hauptstandort Siegmund-Hiepe-Str. 20 (Wetzlar) mit modernem Büro, großem Lager &amp; 15 Mitarbeitern. Führender Wärmepumpen-Spezialist &amp; Fachbetrieb des Lahn-Dill-Kreises.
+                      </span>
                     </div>
                   </div>
 
@@ -759,6 +761,17 @@ export default function HomePage() {
                   Buderus, Bosch Home Comfort, NIBE, Alpha Innotec, Viessmann, VIGOUR, Kermi &amp; Keuco.
                 </p>
               </div>
+            </div>
+
+            {/* Offizielle Meilenstein 2026 Story Box */}
+            <div className="mt-8 p-6 sm:p-7 rounded-2xl bg-sky-50/70 border border-sky-200/90 text-xs sm:text-sm text-slate-700 leading-relaxed space-y-2.5">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#0369a1] uppercase tracking-wider">
+                <Award className="w-4 h-4 text-[#0369a1]" strokeWidth={1.5} />
+                <span>Offizieller Meilenstein 2026 &amp; Standortverlagerung Wetzlar</span>
+              </div>
+              <p className="text-slate-700 leading-relaxed">
+                „Meilenstein 2026: Durch das stetige Wachstum unseres Betriebes war ein Umzug in eine neue und größere Betriebsstätte unausweichlich. Der Hauptstandort wurde in die <strong>Siegmund-Hiepe-Str. 20 in Wetzlar</strong> verlagert für ein moderneres Büro und ein größeres Lager. Die Bad &amp; Energie GmbH hat sich zum führenden Spezialisten für Wärmepumpen in der Region etabliert. Zusätzlich besteht die Partnerschaft als Fachbetrieb für den Lahn-Dill-Kreis zur Betreuung und Instandhaltung öffentlicher Einrichtungen. Zurzeit sind <strong>15 Mitarbeiter</strong> im Betrieb tätig und arbeiten stetig daran, die Heizungen und Bäder der Kunden zu modernisieren. Dabei gilt: <em>‚Schöner Wohnen mit Top-Qualität‘</em>.“
+              </p>
             </div>
           </div>
 
