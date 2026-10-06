@@ -3,16 +3,15 @@ import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { CookieConsent } from '@/components/CookieConsent';
-import { QuickApplySidebar } from '@/components/QuickApplySidebar';
-import { FloatingWhatsAppWidget } from '@/components/contact/FloatingWhatsAppWidget';
-import { BackToTop } from '@/components/ui/BackToTop';
 import { WebVitalsReporter } from '@/components/analytics/WebVitalsReporter';
+import { LayoutClientWidgets } from '@/components/layout/LayoutClientWidgets';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-sans',
+  adjustFontFallback: true,
+  preload: true,
 });
 
 const appUrl = process.env.APP_URL || 'https://karriere.bad-energie.de';
@@ -463,11 +462,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body suppressHydrationWarning className={`min-h-screen flex flex-col font-sans ${plusJakartaSans.variable}`}>
         <Header />
         <main id="main-content" className="flex-1">{children}</main>
-        <QuickApplySidebar />
         <Footer />
-        <CookieConsent />
-        <FloatingWhatsAppWidget />
-        <BackToTop />
+        <LayoutClientWidgets />
         <WebVitalsReporter />
       </body>
     </html>

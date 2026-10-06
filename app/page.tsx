@@ -19,7 +19,29 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { HeroExpressFunnel } from '@/components/HeroExpressFunnel';
+
+const HeroExpressFunnel = dynamic(
+  () => import('@/components/HeroExpressFunnel').then((mod) => mod.HeroExpressFunnel),
+  {
+    loading: () => (
+      <div className="w-full glass-panel-elevated overflow-hidden text-slate-800 relative rounded-3xl min-h-[460px] border border-slate-200/80 shadow-xl bg-white">
+        <div className="p-4 sm:p-8 bg-[#0A1E3A] text-white border-b border-slate-800">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-950/70 border border-red-800/60 rounded-full text-xs font-semibold text-red-300 mb-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#C51E1E]" />
+            120 Sekunden Expressbewerbung ohne Anschreiben
+          </div>
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
+            Finde heraus, ob Bad und Energie GmbH zu Dir passt
+          </h2>
+        </div>
+        <div className="p-6 sm:p-8 flex flex-col items-center justify-center min-h-[300px] text-center">
+          <div className="w-8 h-8 rounded-full border-2 border-[#C51E1E] border-t-transparent animate-spin mb-3" />
+          <p className="text-xs text-slate-500 font-sans">Expressbewerbung lädt...</p>
+        </div>
+      </div>
+    ),
+  }
+);
 import { Logo } from '@/components/Logo';
 import { TrustStrip } from '@/components/trust/TrustStrip';
 import { ProcessSteps } from '@/components/trust/ProcessSteps';
@@ -151,8 +173,8 @@ export default function HomePage() {
                 </span>
               </h1>
 
-              <p className="text-sm sm:text-lg text-slate-600 max-w-2xl leading-relaxed text-pretty">
-                Attraktive Jobs in Wetzlar für erfahrene Heizungsbauer und engagierte Monteure: Ehrliches Handwerk, erstklassiger Lohn und pünktlich Feierabend im Meisterteam – erlebe genau das bei Bad &amp; Energie. Bewerbung in unter <strong className="text-[#0A1E3A]">60 Sekunden</strong> – ohne Anschreiben, ohne Lebenslauf, mit garantierter persönlicher Rückmeldung binnen 24 Stunden.
+              <p className="text-sm sm:text-lg text-slate-600 max-w-2xl leading-relaxed">
+                Attraktive Jobs in Wetzlar für erfahrene Heizungsbauer und engagierte Monteure: Ehrliches Handwerk, erstklassiger Lohn und pünktlich Feierabend im Meisterteam – erlebe genau das bei Bad &amp; Energie. Bewerbung in unter <strong className="text-[#0A1E3A] whitespace-nowrap">60 Sekunden</strong> – ohne Anschreiben, ohne Lebenslauf, mit garantierter persönlicher Rückmeldung binnen 24 Stunden.
               </p>
 
               {/* 4 Quantitative USP Badges - Symmetrical 2x2 Mobile / 4-Col Desktop Grid */}
