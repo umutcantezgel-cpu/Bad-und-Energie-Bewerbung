@@ -42,9 +42,11 @@ export function getResendClient(): {
       apiKey.length > 5
   );
 
+  // DMARC-Schutz: Fallback auf onboarding@resend.dev, falls keine eigene Domain in Resend verifiziert ist,
+  // um DMARC sp=quarantine Konflikte auf bad-energie.de zuverlässig zu verhindern.
   const fromEmail =
     process.env.RESEND_FROM_EMAIL?.trim() ||
-    'Bad und Energie Karriere <bewerbung@karriere.bad-energie.de>';
+    'Bad und Energie Karriere <onboarding@resend.dev>';
 
   const toEmail =
     process.env.CONTACT_NOTIFICATION_EMAIL?.trim() ||

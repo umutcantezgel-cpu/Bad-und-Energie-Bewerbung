@@ -84,7 +84,7 @@ export function Logo({
       <meta itemProp="telephone" content="+49-6441-42956" />
       <meta itemProp="email" content="info@bad-energie.de" />
       <div itemProp="address" itemScope itemType="https://schema.org/PostalAddress" className="hidden">
-        <span itemProp="streetAddress">Siegmund Hiepe Str. 20</span>
+        <span itemProp="streetAddress">Siegmund-Hiepe-Str. 20</span>
         <span itemProp="postalCode">35578</span>
         <span itemProp="addressLocality">Wetzlar</span>
         <span itemProp="addressRegion">Hessen</span>

@@ -451,7 +451,7 @@ export function CookieConsent() {
                         </span>
                       </div>
                       <p className="text-xs text-slate-500 leading-relaxed">
-                        Ermöglicht interaktive Inhalte wie die Anfahrtskarte zu unserem Meisterbetrieb in der Siegmund Hiepe Str. 20 (Google Maps) und Videotouren der Sanierungsausstellung.
+                        Ermöglicht interaktive Inhalte wie die Anfahrtskarte zu unserem Meisterbetrieb in der Siegmund-Hiepe-Str. 20 (Google Maps) und Videotouren der Sanierungsausstellung.
                       </p>
                     </div>
 

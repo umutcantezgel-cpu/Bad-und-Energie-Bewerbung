@@ -31,9 +31,23 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/'],
       },
       {
+        // Aggressive SEO-Scraper & Data-Miner hart aussperren
+        userAgent: [
+          'SemrushBot',
+          'PetalBot',
+          'DotBot',
+          'MJ12bot',
+          'BLEXBot',
+          'DataForSeoBot',
+          'MegaIndex',
+          'Bytespider',
+        ],
+        disallow: '/',
+      },
+      {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/'],
+        disallow: ['/api/', '/admin/', '/danke/'],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,

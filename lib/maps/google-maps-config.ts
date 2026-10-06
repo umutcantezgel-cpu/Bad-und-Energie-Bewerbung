@@ -37,7 +37,7 @@ export const MAP_POIS: MapPOI[] = [
     name: 'Firmensitz & Meisterbüro Wetzlar',
     type: 'headquarters',
     coordinates: HEADQUARTERS_COORDINATES,
-    address: 'Siegmund Hiepe Str. 20, 35578 Wetzlar',
+    address: 'Siegmund-Hiepe-Str. 20, 35578 Wetzlar',
     distanceKm: 0,
     commuteMinutes: 0,
     description: 'Zentrale Verwaltung, Werkstatt, Schulungsräume und Startpunkt aller Kundendienstfahrzeuge.',

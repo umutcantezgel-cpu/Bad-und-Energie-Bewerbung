@@ -36,7 +36,7 @@ export function QuizView({ dossier, onUpdateDossier, onSwitchView }: QuizViewPro
     {
       id: 'Kundendienstmonteur SHK m w d Wärmepumpentechnik',
       title: 'Kundendienstmonteur SHK m w d',
-      desc: 'Wartung, Inbetriebnahme Bosch und Brötje, Fehlerdiagnose',
+      desc: 'Wartung, Inbetriebnahme Buderus, Bosch, NIBE, Viessmann',
       icon: <Zap className="w-5 h-5 text-[#C51E1E]" strokeWidth={1.5} />,
     },
     {
@@ -54,7 +54,7 @@ export function QuizView({ dossier, onUpdateDossier, onSwitchView }: QuizViewPro
   ];
 
   const skillOptions = [
-    'Wärmepumpen Luft Wasser Bosch und Brötje',
+    'Wärmepumpen Luft/Wasser (Buderus, Bosch, NIBE, Alpha Innotec)',
     'Badsanierung und Vorwandinstallation',
     'Gasbrennwert und Heizungsmodernisierung',
     'Trinkwasserhygiene und Filtertechnik CONEL',

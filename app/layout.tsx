@@ -175,7 +175,7 @@ const structuredData = {
       hasMap: 'https://maps.google.com/?q=Bad+und+Energie+GmbH+Lahn+Dill+Wetzlar',
       address: {
         '@type': 'PostalAddress',
-        streetAddress: 'Siegmund Hiepe Str. 20',
+        streetAddress: 'Siegmund-Hiepe-Str. 20',
         addressLocality: 'Wetzlar',
         postalCode: '35578',
         addressRegion: 'Hessen',
@@ -250,20 +250,25 @@ const structuredData = {
       name: 'Bad und Energie GmbH Lahn Dill',
       logo: logoUrl,
       url: 'https://bad-energie.de',
-      slogan: 'Meisterbetrieb seit 1926 für SHK, Wärmepumpen und moderne Badarchitektur in Wetzlar',
+      slogan: '100 Jahre Meisterbetrieb (1926–2026) für SHK, Wärmepumpen und moderne Badarchitektur in Wetzlar',
     },
     {
       '@type': 'JobPosting',
       '@id': 'https://karriere.bad-energie.de/#job-anlagenmechaniker',
-      title: 'Anlagenmechaniker SHK m w d | Heizung und Sanitärtechnik',
+      title: 'Anlagenmechaniker SHK für Wärmepumpen & Heizungstechnik (m/w/d)',
       description:
-        'Als Anlagenmechaniker SHK bei der Bad und Energie GmbH Lahn Dill montierst und modernisierst Du innovative Wärmepumpen und Sanitäranlagen in Wetzlar und Umgebung. Profitiere von 30 Tagen Urlaub, freitags ab 13:30 Uhr Wochenende, eigenem Hilti Werkzeug und überdurchschnittlicher Vergütung.',
+        'Als Anlagenmechaniker SHK bei der Bad & Energie GmbH montierst und modernisierst Du regenerative Wärmepumpensysteme (Buderus, Bosch, NIBE, Alpha Innotec, Viessmann) und exklusive Bäder in Wetzlar und Umgebung. Profitiere von 30 Tagen Urlaub, freitags ab 13:30 Uhr Wochenende, eigenem Hilti Werkzeug und überdurchschnittlicher Vergütung ohne Bereitschaftszwang.',
+      identifier: {
+        '@type': 'PropertyValue',
+        name: 'Bad & Energie GmbH',
+        value: 'SHK-WP-2026-01',
+      },
       datePosted: '2026-03-01',
-      validThrough: '2026-12-31',
+      validThrough: '2027-10-06T00:00:00',
       employmentType: 'FULL_TIME',
       hiringOrganization: {
         '@type': 'Organization',
-        name: 'Bad und Energie GmbH Lahn Dill',
+        name: 'Bad & Energie GmbH',
         sameAs: 'https://bad-energie.de',
         logo: logoUrl,
       },
@@ -271,7 +276,7 @@ const structuredData = {
         '@type': 'Place',
         address: {
           '@type': 'PostalAddress',
-          streetAddress: 'Siegmund Hiepe Str. 20',
+          streetAddress: 'Siegmund-Hiepe-Str. 20',
           addressLocality: 'Wetzlar',
           postalCode: '35578',
           addressRegion: 'Hessen',
@@ -282,15 +287,20 @@ const structuredData = {
     {
       '@type': 'JobPosting',
       '@id': 'https://karriere.bad-energie.de/#job-kundendienst',
-      title: 'Kundendienstmonteur und Servicetechniker Wärmepumpe m w d',
+      title: 'Kundendiensttechniker SHK / Servicemonteur (m/w/d)',
       description:
-        'Wartung, Inbetriebnahme und Diagnose moderner Wärmepumpensysteme von Bosch und Brötje im regionalen Einsatzgebiet Wetzlar und Gießen. Firmenwagen mit Hilti Werkzeug, iPad und Smartphone zur privaten Nutzung.',
+        'Wartung, Inbetriebnahme und Diagnose modernster Wärmepumpensysteme (Buderus, Bosch, NIBE, Viessmann) und Instandhaltung von Liegenschaften des Lahn-Dill-Kreises. Voll ausgestattetes Servicefahrzeug, iPad und Smartphone auch zur privaten Nutzung.',
+      identifier: {
+        '@type': 'PropertyValue',
+        name: 'Bad & Energie GmbH',
+        value: 'SHK-KD-2026-02',
+      },
       datePosted: '2026-03-01',
-      validThrough: '2026-12-31',
+      validThrough: '2027-10-06T00:00:00',
       employmentType: 'FULL_TIME',
       hiringOrganization: {
         '@type': 'Organization',
-        name: 'Bad und Energie GmbH Lahn Dill',
+        name: 'Bad & Energie GmbH',
         sameAs: 'https://bad-energie.de',
         logo: logoUrl,
       },
@@ -298,9 +308,42 @@ const structuredData = {
         '@type': 'Place',
         address: {
           '@type': 'PostalAddress',
-          streetAddress: 'Siegmund Hiepe Str. 20',
+          streetAddress: 'Siegmund-Hiepe-Str. 20',
           addressLocality: 'Wetzlar',
           postalCode: '35578',
+          addressRegion: 'Hessen',
+          addressCountry: 'DE',
+        },
+      },
+    },
+    {
+      '@type': 'JobPosting',
+      '@id': 'https://karriere.bad-energie.de/#job-obermonteur',
+      title: 'Obermonteur / Projektleiter SHK & Badsanierung (m/w/d)',
+      description:
+        'Projektleitung anspruchsvoller Badsanierungen und Heizungsmodernisierungen im 35 km Radius. Eigenverantwortliche Baustellenabwicklung, kollegiale Führung, modernstes Werkzeug und übertarifliche Spitzenvergütung.',
+      identifier: {
+        '@type': 'PropertyValue',
+        name: 'Bad & Energie GmbH',
+        value: 'SHK-PL-2026-03',
+      },
+      datePosted: '2026-03-01',
+      validThrough: '2027-10-06T00:00:00',
+      employmentType: 'FULL_TIME',
+      hiringOrganization: {
+        '@type': 'Organization',
+        name: 'Bad & Energie GmbH',
+        sameAs: 'https://bad-energie.de',
+        logo: logoUrl,
+      },
+      jobLocation: {
+        '@type': 'Place',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'Siegmund-Hiepe-Str. 20',
+          addressLocality: 'Wetzlar',
+          postalCode: '35578',
+          addressRegion: 'Hessen',
           addressCountry: 'DE',
         },
       },
@@ -308,11 +351,16 @@ const structuredData = {
     {
       '@type': 'JobPosting',
       '@id': 'https://karriere.bad-energie.de/#job-azubi',
-      title: 'Ausbildung zum Anlagenmechaniker SHK m w d 2026',
+      title: 'Auszubildender zum Anlagenmechaniker SHK 2026 (m/w/d)',
       description:
-        'Starte Deine handwerkliche Zukunft mit einer fundierten Ausbildung zum Anlagenmechaniker für Sanitär Heizung und Klimatechnik bei der Bad und Energie GmbH Lahn Dill in Wetzlar ab August 2026. Eigenes Hilti Azubi Werkzeugset, Fahrtkostenzuschuss und garantierte Übernahme nach erfolgreicher Gesellenprüfung.',
+        'Starte Deine handwerkliche Zukunft mit 100 Jahren Ausbildungstradition bei Bad & Energie GmbH in Wetzlar ab August 2026. Eigenes Hilti Azubi-Werkzeugset, Fahrtkostenzuschuss und Meisterbegleitung durch Dipl.-Ing. Sabri Demir mit garantierter Übernahme.',
+      identifier: {
+        '@type': 'PropertyValue',
+        name: 'Bad & Energie GmbH',
+        value: 'SHK-AZ-2026-04',
+      },
       datePosted: '2026-03-01',
-      validThrough: '2026-12-31',
+      validThrough: '2027-10-06T00:00:00',
       employmentType: 'FULL_TIME',
       educationRequirements: {
         '@type': 'EducationalOccupationalCredential',
@@ -320,7 +368,7 @@ const structuredData = {
       },
       hiringOrganization: {
         '@type': 'Organization',
-        name: 'Bad und Energie GmbH Lahn Dill',
+        name: 'Bad & Energie GmbH',
         sameAs: 'https://bad-energie.de',
         logo: logoUrl,
       },
@@ -328,7 +376,7 @@ const structuredData = {
         '@type': 'Place',
         address: {
           '@type': 'PostalAddress',
-          streetAddress: 'Siegmund Hiepe Str. 20',
+          streetAddress: 'Siegmund-Hiepe-Str. 20',
           addressLocality: 'Wetzlar',
           postalCode: '35578',
           addressRegion: 'Hessen',
@@ -364,7 +412,7 @@ const structuredData = {
           name: 'Welche Heizsysteme und Sanitäranlagen montieren wir hauptsächlich?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Unser Schwerpunkt liegt auf modernen Wärmepumpen von Bosch und Brötje, Gas Brennwertgeräten, Fußbodenheizungen und schlüsselfertigen Badsanierungen in enger Partnerschaft mit ELEMENTS, VIGOUR, Kermi und Geberit.',
+            text: 'Unser Schwerpunkt liegt auf modernen Wärmepumpen von Buderus, Bosch, NIBE, Alpha Innotec und Viessmann sowie schlüsselfertigen Badsanierungen in enger Partnerschaft mit ELEMENTS, VIGOUR, Kermi und Geberit.',
           },
         },
         {

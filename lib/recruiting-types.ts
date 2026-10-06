@@ -61,7 +61,7 @@ export const initialDossierState: CandidateDossier = {
   startDate: 'In 1 Monat (Kündigungsfrist)',
   salaryExpectation: 'Vollzeit • Freitags ab 13:30 Uhr Wochenende • Unbefristet',
   skills: [
-    'Wärmepumpen (Luft und Wasser Bosch & Brötje)',
+    'Wärmepumpen (Buderus, Bosch, NIBE, Alpha Innotec)',
     'Badsanierung & Vorwandinstallation',
     'Gas Brennwert und Heizungsmodernisierung',
     'Führerschein Klasse B (PKW)',
@@ -105,7 +105,7 @@ Alexander Koch`,
       company: 'SHK Meisterbetrieb Mittelhessen',
       location: 'Wetzlar & Gießen',
       tasks: [
-        'Montage und Modernisierung von Wärmepumpen (Bosch & Brötje)',
+        'Montage und Modernisierung von Wärmepumpen (Buderus & Bosch)',
         'Selbstständige Badsanierung und Vorwandinstallation (Geberit/Viega)',
         'Kundenbetreuung und Inbetriebnahme vor Ort',
       ],

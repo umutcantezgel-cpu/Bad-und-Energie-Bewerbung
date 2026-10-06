@@ -266,12 +266,12 @@ export default function DatenschutzPage() {
                     </span>
                     <h3 className="text-base font-bold text-[#0A1E3A]">Bad und Energie GmbH Lahn Dill</h3>
                     <p className="text-xs text-slate-600 leading-relaxed">
-                      Siegmund Hiepe Str. 20<br />
+                      Siegmund-Hiepe-Str. 20<br />
                       35578 Wetzlar im Lahn Dill Kreis
                     </p>
                     <p className="text-[11px] text-slate-500 font-mono pt-1">
                       Handelsregister: Amtsgericht Wetzlar<br />
-                      Registernummer: HRB 8459<br />
+                      Registernummer: HRB 2449<br />
                       USt-IdNr.: DE 346 648 448
                     </p>
                   </div>

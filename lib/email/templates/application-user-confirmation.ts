@@ -82,7 +82,7 @@ export function renderApplicationUserConfirmationEmail(data: ApplicationUserConf
               Werkstattkaffee & Kennenlernen in Wetzlar
             </div>
             <div style="font-size: 13px; color: #475569; line-height: 1.5;">
-              Besuchen Sie unsere Werkstatt in der Siegmund Hiepe Straße. Lernen Sie die Kollegen, Fahrzeuge und Werkzeuge kennen.
+              Besuchen Sie unsere Werkstatt in der Siegmund-Hiepe-Str. 20. Lernen Sie die Kollegen, Fahrzeuge und Werkzeuge kennen.
             </div>
           </td>
         </tr>

@@ -13,7 +13,7 @@ export interface LocalDominanceMapProps {
 
 export function LocalDominanceMap({
   className = '',
-  centerCity = 'Wetzlar Siegmund Hiepe Str.',
+  centerCity = 'Wetzlar Siegmund-Hiepe-Str.',
   defaultRadiusKm = 35,
   topRankings = ['Meisterbetrieb seit 1926', 'Innung SHK Lahn Dill', 'Maximal 35 km Einsatzgebiet'],
 }: LocalDominanceMapProps) {

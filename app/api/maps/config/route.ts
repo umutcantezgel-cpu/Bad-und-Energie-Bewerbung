@@ -1,8 +1,15 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const referer = request.headers.get('referer') || '';
+  const isAllowedReferer = referer.includes('bad-energie.de') || process.env.NODE_ENV !== 'production';
+
+  if (!isAllowedReferer) {
+    return NextResponse.json({ error: 'Nicht autorisiert' }, { status: 403 });
+  }
+
   const apiKey =
     process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY?.trim() ||
     process.env.GOOGLE_MAPS_API_KEY?.trim() ||
@@ -27,7 +34,7 @@ export async function GET() {
     },
     {
       headers: {
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+        'Cache-Control': 'private, no-cache, no-store',
       },
     }
   );

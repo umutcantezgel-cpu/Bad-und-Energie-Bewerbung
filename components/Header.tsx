@@ -87,7 +87,7 @@ export function Header() {
     },
     {
       title: 'Kundendiensttechniker für Wärmepumpen m w d',
-      type: 'Bosch und Brötje Werkszertifizierung • Eigenes Servicefahrzeug',
+      type: 'Buderus, Bosch & NIBE Werkszertifizierung • Eigenes Servicefahrzeug',
       tag: 'Regionale Einsätze vor Ort',
       href: '/bewerbung',
     },
@@ -114,11 +114,11 @@ export function Header() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 min-h-[34px] flex items-center justify-between gap-3 sm:gap-6">
           {/* Linke Seite: Meisterbetrieb-Qualitätssiegel, Region & Live Stellenstatus */}
           <div className="flex items-center gap-3 sm:gap-4 flex-wrap sm:flex-nowrap min-w-0">
-            {/* Meisterbetrieb seit 1926 & Wetzlar und Mittelhessen ausgeschrieben */}
+            {/* 100 Jahre Meisterbetrieb & Wetzlar und Mittelhessen ausgeschrieben */}
             <div className="flex items-center gap-2 shrink-0">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#0A1E3A] text-white text-[10px] font-bold tracking-tight shadow-2xs">
                 <ShieldCheck className="w-3 h-3 text-sky-400" strokeWidth={2} />
-                <span>Meisterbetrieb seit 1926</span>
+                <span>100 Jahre Meisterbetrieb (1926–2026)</span>
               </span>
               <span className="font-semibold text-slate-800 text-[11px]">
                 Wetzlar und Mittelhessen

@@ -16,10 +16,10 @@ export const SITE_CONFIG = {
   legalName: 'Bad und Energie GmbH Lahn Dill',
   alternateNames: ['Bad und Energie', 'Bad und Energie Wetzlar', 'Bad und Energie GmbH'],
   slogan: {
-    de: 'Meisterbetrieb seit 1926 für SHK, Wärmepumpen und moderne Badarchitektur in Wetzlar',
+    de: '100 Jahre Meisterbetrieb (1926–2026) für SHK, Wärmepumpen und moderne Badarchitektur in Wetzlar',
   },
   description: {
-    de: 'Offizielles Karriereportal der Bad und Energie GmbH Lahn Dill seit 1926. Offene Stellenangebote, übertarifliche Vergütung und erstklassige Arbeitsbedingungen für Anlagenmechaniker SHK, Heizungsbauer und Kundendienst in Wetzlar.',
+    de: 'Offizielles Karriereportal der Bad und Energie GmbH Lahn Dill – 100 Jahre Meisterbetrieb (1926–2026). Offene Stellenangebote, übertarifliche Vergütung und erstklassige Arbeitsbedingungen für Anlagenmechaniker SHK, Heizungsbauer und Kundendienst in Wetzlar.',
   },
 
   // Founding & Business Attributes
@@ -27,7 +27,7 @@ export const SITE_CONFIG = {
   currenciesAccepted: 'EUR',
   paymentAccepted: 'Überweisung, Rechnung',
   vatID: 'DE301642296',
-  handelsregister: 'HRB 8459 Amtsgericht Wetzlar',
+  handelsregister: 'HRB 2449 Amtsgericht Wetzlar',
   hwk: 'Handwerkskammer Wiesbaden',
   innung: 'Innung Sanitär Heizung und Klimatechnik Lahn Dill',
 
@@ -50,7 +50,7 @@ export const SITE_CONFIG = {
 
   // Echte physische Unternehmens-Adresse (HQ)
   headquarters: {
-    streetAddress: 'Siegmund Hiepe Str. 20',
+    streetAddress: 'Siegmund-Hiepe-Str. 20',
     postalCode: '35578',
     addressLocality: 'Wetzlar',
     addressRegion: 'Hessen',
@@ -80,13 +80,14 @@ export const SITE_CONFIG = {
 
   // Wissens- und Leistungsspektrum der Organisation
   knowsAbout: [
-    'Wärmepumpen von Bosch und Brötje',
-    'Komplettbadsanierung',
-    'Kundendienst Haustechnik',
-    'Gas Brennwertmodernisierung',
-    'Fußbodenheizung',
-    'Rohrleitungsbau',
-    'Handwerkerausbildung',
+    'Wärmepumpensysteme von Buderus und Bosch (14,8 km Werksnähe Lollar)',
+    'NIBE Effizienzpartner mit 7 Jahren Herstellergarantie',
+    'Alpha Innotec zertifizierter Inbetriebnahme-Partner',
+    'Viessmann Fachbetrieb',
+    'Fachbetrieb für den Lahn-Dill-Kreis (öffentliche Liegenschaften)',
+    'Komplettbadsanierung und barrierefreie Bäder',
+    'Gebäudeenergieberatung durch Dipl.-Ing. Sabri Demir',
+    'Ausbildung zum Anlagenmechaniker SHK seit 1926',
   ],
 
   // Regionale Einsatzgebiete (max. 35 km Radius, keine Fernmontagen)

@@ -126,7 +126,7 @@ export function Footer() {
                   Bad &amp; Energie GmbH Lahn Dill
                 </strong>
                 <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                  Meisterbetrieb für Badarchitektur, Wärmepumpen &amp; Haustechnik seit 1926.
+                  100 Jahre Meisterbetrieb (1926–2026) für Badarchitektur, Wärmepumpen &amp; Haustechnik.
                 </p>
               </div>
             </div>
@@ -182,7 +182,7 @@ export function Footer() {
                     Kundendiensttechniker für Wärmepumpensysteme m w d
                   </span>
                   <span className="block text-[11px] text-slate-400 font-mono">
-                    Wärmepumpen von Bosch und Brötje · Wetzlar
+                    Wärmepumpen (Buderus, Bosch, NIBE, Viessmann) · Wetzlar
                   </span>
                 </Link>
               </li>
@@ -274,7 +274,7 @@ export function Footer() {
               <div className="flex items-start gap-2.5 text-slate-300">
                 <MapPin className="w-4 h-4 text-[#0284C7] shrink-0 mt-0.5" strokeWidth={1.5} />
                 <span>
-                  Siegmund Hiepe Str. 20
+                  Siegmund-Hiepe-Str. 20
                   <br />
                   35578 Wetzlar (Hessen)
                 </span>
@@ -326,7 +326,7 @@ export function Footer() {
           <div className="space-y-1 text-center lg:text-left">
             <p>© 2026 Bad und Energie GmbH Lahn Dill. Alle Rechte vorbehalten.</p>
             <p className="text-[11px] text-slate-400 font-mono">
-              Amtsgericht Wetzlar HRB 8459 • USt ID DE 346 648 448 • Geschäftsführer: Diplomingenieur Sabri Demir
+              Amtsgericht Wetzlar HRB 2449 • USt ID DE 346 648 448 • Geschäftsführer: Diplomingenieur Sabri Demir
             </p>
           </div>
 

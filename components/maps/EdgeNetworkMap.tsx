@@ -15,7 +15,7 @@ export interface RegionalNode {
 
 const REGIONAL_NODES: RegionalNode[] = [
   {
-    name: 'Wetzlar Siegmund Hiepe Str.',
+    name: 'Wetzlar Siegmund-Hiepe-Str.',
     xPercent: 48,
     yPercent: 48,
     isHub: true,

@@ -79,13 +79,13 @@ export default function HomePage() {
     },
     {
       title: 'Zukunftssicher mit modernen Wärmepumpen',
-      desc: 'Regelmäßige bezahlte Werkszertifizierungen für moderne Wärmepumpen von Bosch und Brötje sowie smarte Hybridsysteme.',
+      desc: 'Regelmäßige bezahlte Werkszertifizierungen für moderne Wärmepumpen von Buderus, Bosch, NIBE, Alpha Innotec und Viessmann.',
       icon: <Flame className="w-6 h-6 text-amber-500" strokeWidth={1.5} />,
       accent: 'border-amber-100',
     },
     {
       title: 'Familiäres Meisterteam auf Augenhöhe',
-      desc: 'Traditionsbetrieb seit 1926. Bei uns bist Du keine Nummer, sondern geschätzter Kollege. Regelmäßige Teamevents und Sommergrillen im Lahn Dill Kreis.',
+      desc: '100 Jahre Meisterbetrieb (1926–2026). Bei uns bist Du keine Nummer, sondern geschätzter Kollege. Regelmäßige Teamevents und Sommergrillen im Lahn Dill Kreis.',
       icon: <Users className="w-6 h-6 text-purple-600" strokeWidth={1.5} />,
       accent: 'border-purple-100',
     },
@@ -115,7 +115,7 @@ export default function HomePage() {
     },
     {
       q: 'Welche Heizsysteme und Sanitäranlagen montieren wir hauptsächlich?',
-      a: 'Unser Schwerpunkt liegt auf modernen Wärmepumpen von Bosch und Brötje, Gas Brennwertgeräten, Fußbodenheizungen und schlüsselfertigen Badsanierungen in enger Partnerschaft mit ELEMENTS, VIGOUR, Kermi und Geberit.',
+      a: 'Unser Schwerpunkt liegt auf modernen Wärmepumpen von Buderus, Bosch, NIBE, Alpha Innotec und Viessmann, Fußbodenheizungen und schlüsselfertigen Badsanierungen in enger Partnerschaft mit ELEMENTS, VIGOUR, Kermi und Geberit.',
     },
     {
       q: 'Darf das Firmenfahrzeug mit nach Hause genommen werden?',
@@ -141,7 +141,7 @@ export default function HomePage() {
             <div className="space-y-6 lg:space-y-7">
               <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/95 border border-slate-200/90 shadow-2xs text-xs font-semibold text-[#0A1E3A]">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Meisterbetrieb seit 1926 • Offene Stellenangebote in Wetzlar</span>
+                <span>100 Jahre Meisterbetrieb (1926–2026) • Offene Stellenangebote in Wetzlar</span>
               </div>
 
               <h1 className="text-2xl xs:text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#0A1E3A] leading-[1.14] text-balance">
@@ -249,18 +249,22 @@ export default function HomePage() {
                     </div>
                     <div className="flex items-center gap-2.5">
                       <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={1.5} />
-                      <span className="font-medium">Zertifizierter Fachpartner für Bosch und Brötje Wärmepumpen</span>
+                      <span className="font-medium">Zertifizierter Fachpartner für Buderus, Bosch, NIBE, Alpha Innotec &amp; Viessmann</span>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={1.5} />
+                      <span className="font-medium">Meilenstein 2026: Siegmund-Hiepe-Str. 20 (Wetzlar) · Modernes Büro, großes Lager &amp; 15 Mitarbeiter</span>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-3 gap-2.5 pt-1 text-center font-sans tabular-nums">
                     <div className="p-3 rounded-xl bg-white border border-slate-200/90 shadow-2xs">
-                      <div className="text-base font-extrabold text-[#0A1E3A]">1926</div>
-                      <div className="text-[10px] text-slate-500 uppercase tracking-wider">Gegründet</div>
+                      <div className="text-base font-extrabold text-[#0A1E3A]">100 J.</div>
+                      <div className="text-[10px] text-slate-500 uppercase tracking-wider">1926–2026</div>
                     </div>
                     <div className="p-3 rounded-xl bg-white border border-slate-200/90 shadow-2xs">
-                      <div className="text-base font-extrabold text-[#0A1E3A]">&gt; 3.000</div>
-                      <div className="text-[10px] text-slate-500 uppercase tracking-wider">Projekte</div>
+                      <div className="text-base font-extrabold text-[#0A1E3A]">15</div>
+                      <div className="text-[10px] text-slate-500 uppercase tracking-wider">Mitarbeiter</div>
                     </div>
                     <div className="p-3 rounded-xl bg-white border border-slate-200/90 shadow-2xs">
                       <div className="text-base font-extrabold text-[#047857]">100%</div>
@@ -312,7 +316,7 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch">
             {/* Position 1: Anlagenmechaniker SHK */}
             <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(10,30,58,0.04)] hover:shadow-[0_16px_40px_rgba(10,30,58,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-full space-y-6">
               <div className="space-y-4">
@@ -327,21 +331,21 @@ export default function HomePage() {
 
                 <div className="min-h-[5.5rem] flex flex-col justify-center">
                   <h3 className="text-lg font-bold text-slate-900 leading-snug">
-                    Anlagenmechaniker für Sanitär Heizung und Klimatechnik m w d
+                    Anlagenmechaniker SHK für Wärmepumpen &amp; Heizungstechnik m w d
                   </h3>
                   <p className="text-xs font-sans text-slate-500 mt-1">
-                    Moderne Heizungstechnik &amp; hochwertige Badsanierung
+                    Buderus, Bosch, NIBE, Alpha Innotec, Viessmann &amp; Badarchitektur
                   </p>
                 </div>
 
                 <p className="text-xs text-slate-600 leading-relaxed min-h-[3.25rem]">
-                  Montage moderner Heizungs- und Sanitärsysteme im regionalen Umkreis Wetzlar und Gießen. Fester Transporter mit Hilti Ausrüstung und Sortimo Regalsystem.
+                  Montage moderner Wärmepumpensysteme und exklusiver Bäder im regionalen Umkreis Wetzlar und Gießen (max. 35 km). Fester Transporter mit Hilti Flotte und Sortimo Regalsystem.
                 </p>
 
                 <div className="space-y-2 pt-2 text-xs text-slate-700 min-h-[6.5rem]">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
-                    <span>Lokale Baustellen im Umkreis · Fester Feierabend bei der Familie</span>
+                    <span>Lokale Baustellen im 35 km Umkreis · Fester Feierabend bei der Familie</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
@@ -377,21 +381,21 @@ export default function HomePage() {
 
                 <div className="min-h-[5.5rem] flex flex-col justify-center">
                   <h3 className="text-lg font-bold text-slate-900 leading-snug">
-                    Kundendiensttechniker für Wärmepumpensysteme m w d
+                    Kundendiensttechniker SHK / Servicemonteur m w d
                   </h3>
                   <p className="text-xs font-sans text-slate-500 mt-1">
-                    Wärmepumpen (Bosch Home Comfort &amp; Brötje)
+                    Wartung, Diagnose &amp; Liegenschaften Lahn-Dill-Kreis
                   </p>
                 </div>
 
                 <p className="text-xs text-slate-600 leading-relaxed min-h-[3.25rem]">
-                  Inbetriebnahme, Wartung und hydraulischer Abgleich modernster Wärmepumpensysteme. Eigenes Firmen Tablet und Smartphone für papierlose digitale Auftragsbearbeitung.
+                  Inbetriebnahme, Wartung und hydraulischer Abgleich modernster Wärmepumpensysteme sowie Betreuung öffentlicher Liegenschaften. Eigenes Servicefahrzeug, iPad und Smartphone.
                 </p>
 
                 <div className="space-y-2 pt-2 text-xs text-slate-700 min-h-[6.5rem]">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
-                    <span>Werkszertifizierungen bei Bosch &amp; Brötje komplett bezahlt</span>
+                    <span>Werkszertifizierungen bei Buderus, Bosch &amp; NIBE (7 Jahre Garantie) bezahlt</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
@@ -399,7 +403,7 @@ export default function HomePage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
-                    <span>Freie Wochenenden · Keine Notdienstverpflichtung samstags/sonntags</span>
+                    <span>Freie Wochenenden · Keine Notdienstverpflichtung samstags &amp; sonntags</span>
                   </div>
                 </div>
               </div>
@@ -413,12 +417,62 @@ export default function HomePage() {
               </a>
             </div>
 
-            {/* Position 3: Azubi 2026 */}
+            {/* Position 3: Obermonteur / Projektleiter SHK */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(10,30,58,0.04)] hover:shadow-[0_16px_40px_rgba(10,30,58,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-full space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                  <span className="px-2.5 py-1 rounded-md text-[10px] font-sans font-semibold uppercase bg-purple-50 text-purple-800 border border-purple-200">
+                    Stelle 03 · Führungskraft
+                  </span>
+                  <span className="text-xs font-sans font-bold text-emerald-800">
+                    Über Tarif · Führungszulage
+                  </span>
+                </div>
+
+                <div className="min-h-[5.5rem] flex flex-col justify-center">
+                  <h3 className="text-lg font-bold text-slate-900 leading-snug">
+                    Obermonteur / Projektleiter SHK &amp; Badsanierung m w d
+                  </h3>
+                  <p className="text-xs font-sans text-slate-500 mt-1">
+                    Baustellenleitung, Komplettbäder &amp; regenerative Großanlagen
+                  </p>
+                </div>
+
+                <p className="text-xs text-slate-600 leading-relaxed min-h-[3.25rem]">
+                  Eigenverantwortliche Leitung anspruchsvoller Badsanierungen und moderner Heizungsprojekte im Lahn-Dill-Kreis. Direkte Abstimmung mit Dipl.-Ing. Sabri Demir auf Augenhöhe.
+                </p>
+
+                <div className="space-y-2 pt-2 text-xs text-slate-700 min-h-[6.5rem]">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
+                    <span>Hohe Eigenverantwortung &amp; modernste digitale Baustellendokumentation</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
+                    <span>Erstklassiges Firmenfahrzeug mit 1%-Privatnutzung und Tankkarte</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
+                    <span>Freitags pünktlich ab 13:30 Uhr bezahlt ins freie Wochenende</span>
+                  </div>
+                </div>
+              </div>
+
+              <a
+                href="#express-funnel"
+                className="w-full py-3.5 px-4 rounded-2xl bg-[#C51E1E] hover:bg-[#B01717] text-white text-xs font-bold text-center transition-all flex items-center justify-center gap-2 shadow-sm apple-press"
+              >
+                <span>Als Obermonteur / Projektleiter bewerben</span>
+                <ArrowRight className="w-3.5 h-3.5" strokeWidth={1.5} />
+              </a>
+            </div>
+
+            {/* Position 4: Azubi 2026 */}
             <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-[0_4px_24px_rgba(10,30,58,0.04)] hover:shadow-[0_16px_40px_rgba(10,30,58,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-full space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                   <span className="px-2.5 py-1 rounded-md text-[10px] font-sans font-semibold uppercase bg-amber-50 text-amber-800 border border-amber-200">
-                    Stelle 03 · Start August 2026
+                    Stelle 04 · Start August 2026
                   </span>
                   <span className="text-xs font-sans font-bold text-emerald-700">
                     Attraktive Vergütung · Übernahme
@@ -427,10 +481,10 @@ export default function HomePage() {
 
                 <div className="min-h-[5.5rem] flex flex-col justify-center">
                   <h3 className="text-lg font-bold text-slate-900 leading-snug">
-                    Ausbildung zum Anlagenmechaniker für Sanitär Heizung und Klimatechnik m w d
+                    Ausbildung zum Anlagenmechaniker SHK 2026 m w d
                   </h3>
                   <p className="text-xs font-sans text-slate-500 mt-1">
-                    Ausbildungsstart August 2026 mit garantierter Übernahme
+                    100 Jahre Ausbildungstradition mit Meisterbetreuung
                   </p>
                 </div>
 
@@ -441,11 +495,11 @@ export default function HomePage() {
                 <div className="space-y-2 pt-2 text-xs text-slate-700 min-h-[6.5rem]">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
-                    <span>Eigenes persönliches Azubi Werkzeugset von Hilti</span>
+                    <span>Eigenes persönliches Azubi Werkzeugset von Hilti ab Tag 1 geschenkt</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
-                    <span>Zuschuss zum Führerschein und Fahrtkostenzuschuss</span>
+                    <span>Zuschuss zum Führerschein und Fahrtkostenzuschuss zur Berufsschule</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-[#047857] shrink-0" strokeWidth={1.5} />
@@ -577,7 +631,7 @@ export default function HomePage() {
                   Bosch Messtechnik
                 </div>
                 <p className="text-xs text-slate-600 leading-relaxed min-h-[4rem]">
-                  Digitale Abgasmessgeräte, Spülkompressoren und Kältemittel Füllstationen für moderne Wärmepumpen (Bosch Compress 7400i &amp; Brötje).
+                  Digitale Abgasmessgeräte, Spülkompressoren und Kältemittel Füllstationen für moderne Wärmepumpen (Buderus Logatherm, Bosch Compress, NIBE &amp; Viessmann).
                 </p>
               </div>
               <div className="pt-3 text-[11px] font-sans font-medium text-slate-500 border-t border-slate-100">
@@ -677,7 +731,7 @@ export default function HomePage() {
                   Zentrale Werkstatt &amp; Logistiklager
                 </div>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Siegmund Hiepe Str. 20, 35578 Wetzlar
+                  Siegmund-Hiepe-Str. 20, 35578 Wetzlar
                 </p>
               </div>
               <div className="flex items-center gap-2 text-xs font-semibold text-[#047857] bg-emerald-50/80 px-3 py-1.5 rounded-lg border border-emerald-200">
@@ -702,7 +756,7 @@ export default function HomePage() {
               <div>
                 <strong className="block text-[#0A1E3A] font-bold mb-1">Qualitätsprodukte</strong>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  Bosch Home Comfort, Brötje, Viessmann, VIGOUR, Kermi &amp; Keuco.
+                  Buderus, Bosch Home Comfort, NIBE, Alpha Innotec, Viessmann, VIGOUR, Kermi &amp; Keuco.
                 </p>
               </div>
             </div>

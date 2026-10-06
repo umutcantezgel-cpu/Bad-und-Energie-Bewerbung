@@ -22,7 +22,7 @@ export const regionalLocations: RegionalLocation[] = [
     latitude: 50.56499,
     longitude: 8.49842,
     isCoreZone: true,
-    character: 'Firmensitz Siegmund Hiepe Str. 20 und historische Altstadt',
+    character: 'Firmensitz Siegmund-Hiepe-Str. 20 und historische Altstadt',
   },
   {
     id: 'loc-hermannstein',

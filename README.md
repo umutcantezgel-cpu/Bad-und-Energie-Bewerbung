@@ -304,5 +304,5 @@ Das Portal ist für **Vercel** optimiert:
 
 ---
 
-© 1926–2026 **Bad und Energie GmbH Lahn Dill** · Siegmund Hiepe Str. 20 · 35578 Wetzlar  
+© 1926–2026 **Bad und Energie GmbH Lahn Dill** · Siegmund-Hiepe-Str. 20 · 35578 Wetzlar  
 Geschäftsführer: Diplomingenieur Sabri Demir · Innungsmeisterbetrieb für Sanitär, Heizung und Klimatechnik.

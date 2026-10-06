@@ -32,9 +32,9 @@ export interface CompanyData {
 export const companyData: CompanyData = {
   name: 'Bad und Energie GmbH Lahn Dill',
   legalName: 'Bad und Energie GmbH Lahn Dill',
-  tagline: 'Meisterbetrieb für Badarchitektur, Wärmepumpen und Haustechnik seit 1926 in Wetzlar',
+  tagline: '100 Jahre Meisterbetrieb (1926–2026) für Badarchitektur, Wärmepumpen und Haustechnik in Wetzlar',
   foundingYear: 1926,
-  street: 'Siegmund Hiepe Str. 20',
+  street: 'Siegmund-Hiepe-Str. 20',
   postalCode: '35578',
   city: 'Wetzlar',
   state: 'Hessen',
@@ -47,7 +47,7 @@ export const companyData: CompanyData = {
   email: 'info@bad-energie.de',
   hwk: 'Handwerkskammer Wiesbaden',
   innung: 'Innung Sanitär Heizung und Klimatechnik Lahn Dill',
-  handelsregister: 'HRB 8459 Amtsgericht Wetzlar',
+  handelsregister: 'HRB 2449 Amtsgericht Wetzlar',
   openingHours: {
     weekdays: 'Montag bis Donnerstag von 07:00 bis 16:45 Uhr',
     friday: 'Freitag von 07:00 bis 13:30 Uhr',

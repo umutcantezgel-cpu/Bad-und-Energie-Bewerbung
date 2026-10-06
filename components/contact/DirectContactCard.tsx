@@ -81,7 +81,7 @@ export function DirectContactCard({ className = '' }: { className?: string }) {
           <div>
             <div className="text-[10px] font-mono text-slate-600 uppercase font-bold">Werkstatt und Büro</div>
             <div className="text-[11px] font-medium text-slate-700">
-              Siegmund Hiepe Str. 20, 35578 Wetzlar
+              Siegmund-Hiepe-Str. 20, 35578 Wetzlar
             </div>
           </div>
         </div>

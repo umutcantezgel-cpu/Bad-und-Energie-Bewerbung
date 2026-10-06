@@ -413,7 +413,7 @@ export default function BewerbungHubPage() {
                   <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 p-5 rounded-2xl border border-slate-200 text-xs">
                     <div>
                       <strong className="block font-bold text-slate-900 mb-1">Betriebsstandort</strong>
-                      <p className="text-slate-500">Siegmund Hiepe Str. 20, 35578 Wetzlar nahe B49 und A45</p>
+                      <p className="text-slate-500">Siegmund-Hiepe-Str. 20, 35578 Wetzlar nahe B49 und A45</p>
                     </div>
                     <div>
                       <strong className="block font-bold text-slate-900 mb-1">Arbeitszeiten</strong>
@@ -421,7 +421,7 @@ export default function BewerbungHubPage() {
                     </div>
                     <div>
                       <strong className="block font-bold text-slate-900 mb-1">Systempartner</strong>
-                      <p className="text-slate-500">Bosch Home Comfort, Brötje, ELEMENTS Badausstellungen</p>
+                      <p className="text-slate-500">Buderus, Bosch, NIBE, Alpha Innotec, Viessmann &amp; ELEMENTS</p>
                     </div>
                   </div>
                 </div>

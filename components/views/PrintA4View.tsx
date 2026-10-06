@@ -269,7 +269,7 @@ export function PrintA4View({ dossier, onUpdateDossier, onSwitchView }: PrintA4V
                     priority={true}
                   />
                   <div className="text-[10px] text-slate-500 font-mono tracking-tight mt-2">
-                    Bad und Energie GmbH Lahn Dill • Siegmund Hiepe Str. 20 • 35578 Wetzlar
+                    Bad und Energie GmbH Lahn Dill • Siegmund-Hiepe-Str. 20 • 35578 Wetzlar
                   </div>
                 </div>
 
@@ -281,7 +281,7 @@ export function PrintA4View({ dossier, onUpdateDossier, onSwitchView }: PrintA4V
                     Datum: {dossier.createdAt || '01.10.2026'}
                   </div>
                   <div className="text-[10px] text-slate-400 font-mono">
-                    Meisterbetrieb seit 1926
+                    100 Jahre Meisterbetrieb (1926–2026)
                   </div>
                 </div>
               </div>

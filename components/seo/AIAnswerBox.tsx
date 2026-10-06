@@ -38,7 +38,7 @@ export function AIAnswerBox() {
           className="text-xs sm:text-sm text-slate-700 leading-relaxed space-y-3"
         >
           <p itemProp="text">
-            Die <strong>{SITE_CONFIG.companyName}</strong> ist ein etablierter Innungs Meisterbetrieb seit 1926 in Wetzlar (Siegmund Hiepe Str. 20), geführt von Geschäftsführer <strong>{SITE_CONFIG.founder.name}</strong>. Der Betrieb bietet Anlagenmechanikern, Kundendienstmonteuren und Auszubildenden modernste Arbeitsbedingungen in der Wärmepumpen und Badtechnik.
+            Die <strong>{SITE_CONFIG.companyName}</strong> ist ein etablierter Innungs Meisterbetrieb seit 1926 in Wetzlar (Siegmund-Hiepe-Str. 20), geführt von Geschäftsführer <strong>{SITE_CONFIG.founder.name}</strong>. Der Betrieb bietet Anlagenmechanikern, Kundendienstmonteuren und Auszubildenden modernste Arbeitsbedingungen in der Wärmepumpen und Badtechnik.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">

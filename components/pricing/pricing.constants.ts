@@ -24,7 +24,7 @@ export const ROLE_CONFIGS: Record<CraftRole, RolePackageConfig> = {
     tier: 'Spezialist Klimatechnik & Diagnose',
     description: 'Wartung, Inbetriebnahme und Diagnose mit eigenem Servicefahrzeug',
     vehicle: 'Persönliches Servicefahrzeug mit Tankkarte & 1:1 Privatnutzung ab Wohnort',
-    tools: 'Bosch/Brötje Digital-Messtechnik, Hilti Koffer & Firmen-iPad',
+    tools: 'Buderus & Bosch Digital-Messtechnik, Hilti Koffer & Firmen-iPad',
     compensationTier: 'Höchste Facharbeiter-Einstufung mit Qualitätsprämien',
   },
   helfer: {
@@ -75,7 +75,7 @@ export const CRAFT_ADDONS = {
   heatPumpCert: {
     label: 'Wärmepumpenschein oder Kälteschein',
     benefitBadge: 'Wärmepumpen-Zertifikat freigeschaltet',
-    perk: 'Zusätzliche Spezialisten-Zulage & Bosch Werkszertifizierungen',
+    perk: 'Zusätzliche Spezialisten-Zulage & Buderus, Bosch & NIBE Werkszertifizierungen',
   },
   driversLicenseBE: {
     label: 'Führerschein Klasse BE (Anhänger)',
@@ -90,7 +90,7 @@ export const CRAFT_ADDONS = {
 };
 
 export const COMPENSATION_GUARANTEES = [
-  'Unbefristeter Arbeitsvertrag beim Meisterbetrieb seit 1926',
+  'Unbefristeter Arbeitsvertrag beim Meisterbetrieb (100 Jahre Firmenjubiläum)',
   'Pünktlichste Gehaltszahlung am 1. Werktag des Monats garantiert',
   'Garantiertes Urlaubs- und Weihnachtsgeld als feste Jahressonderzahlung',
   '30 Tage bezahlter Erholungsurlaub pro Kalenderjahr',

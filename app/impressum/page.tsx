@@ -115,7 +115,7 @@ export default function ImpressumPage() {
           <div className="mb-4 pb-4 border-b border-slate-100 flex items-center justify-between">
             <Logo variant="default" framing="card" size="md" withLink={false} />
             <span className="hidden sm:inline-block px-2.5 py-1 bg-slate-100 text-slate-700 font-mono text-[10px] uppercase font-bold rounded">
-              Meisterbetrieb seit 1926
+              100 Jahre Meisterbetrieb (1926–2026)
             </span>
           </div>
 
@@ -130,7 +130,7 @@ export default function ImpressumPage() {
               <p className="text-xs text-slate-600 leading-relaxed flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-[#0369a1] shrink-0 mt-0.5" strokeWidth={1.5} />
                 <span>
-                  Siegmund Hiepe Str. 20<br />
+                  Siegmund-Hiepe-Str. 20<br />
                   35578 Wetzlar<br />
                   Deutschland
                 </span>
@@ -169,7 +169,7 @@ export default function ImpressumPage() {
               </h2>
               <p className="text-slate-700 leading-relaxed font-mono">
                 Registergericht: Amtsgericht Wetzlar<br />
-                Registernummer: <strong>HRB 8459</strong>
+                Registernummer: <strong>HRB 2449</strong>
               </p>
               <p className="text-slate-500 pt-1">
                 Umsatzsteuer-Identifikationsnummer gemäß § 27 a UStG:<br />
@@ -186,7 +186,7 @@ export default function ImpressumPage() {
               </p>
               <p className="text-slate-500 text-[11px] leading-relaxed">
                 Verantwortlicher für den Inhalt nach § 18 Abs. 2 MStV:<br />
-                Sabri Demir, Siegmund Hiepe Str. 20, 35578 Wetzlar
+                Sabri Demir, Siegmund-Hiepe-Str. 20, 35578 Wetzlar
               </p>
             </div>
           </div>
