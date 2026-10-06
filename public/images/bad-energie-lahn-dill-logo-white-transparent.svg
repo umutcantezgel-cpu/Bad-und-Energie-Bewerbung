@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 662 121" fill="none" width="662" height="121">
+  <defs>
+    <linearGradient id="dropGradWhite" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="60%" stop-color="#0284C7"/>
+      <stop offset="100%" stop-color="#0369A1"/>
+    </linearGradient>
+    <linearGradient id="flameGradWhite" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#C51E1E"/>
+      <stop offset="50%" stop-color="#E11D48"/>
+      <stop offset="100%" stop-color="#FB7185"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Signet: Hydro & Thermal Interlocking Emblem -->
+  <g transform="translate(10, 10)">
+    <circle cx="50" cy="50" r="48" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-dasharray="3 3"/>
+    <path d="M 42 16 C 42 16 18 50 18 68 C 18 84 30 96 46 96 C 62 96 74 84 74 68 C 74 52 56 28 48 18 Z" fill="url(#dropGradWhite)"/>
+    <path d="M 52 30 C 52 30 68 48 68 64 C 68 76 60 84 50 84 C 44 84 39 80 38 76 C 40 75 42 72 42 68 C 42 60 36 54 36 48 C 42 42 48 34 52 30 Z" fill="url(#flameGradWhite)"/>
+    <circle cx="48" cy="62" r="3.5" fill="#FFFFFF" opacity="0.95"/>
+  </g>
+
+  <!-- Brand Typography -->
+  <text x="126" y="70" fill="#FFFFFF" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="52" letter-spacing="0.04em">BAD</text>
+  <text x="256" y="70" fill="#E11D48" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="50">&amp;</text>
+  <text x="308" y="70" fill="#FFFFFF" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="52" letter-spacing="0.04em">ENERGIE</text>
+
+  <!-- GMBH Badge -->
+  <rect x="556" y="34" width="68" height="24" rx="6" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+  <text x="590" y="50.5" fill="#CBD5E1" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="11.5" letter-spacing="0.12em" text-anchor="middle">GMBH</text>
+
+  <!-- Hairline Rule -->
+  <line x1="126" y1="85" x2="636" y2="85" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
+
+  <!-- Subtitle -->
+  <text x="126" y="104" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-weight="600" font-size="13" letter-spacing="0.16em">MEISTERBETRIEB SEIT 1926 • WETZLAR &amp; LAHN-DILL</text>
+</svg>

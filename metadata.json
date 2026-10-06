@@ -1,0 +1,6 @@
+{
+  "name": "Bad & Energie GmbH Lahn-Dill – Karriere & Recruiting-Portal",
+  "description": "Offizielles Karriereportal & Express-Bewerbungs-Hub der Bad & Energie GmbH Lahn-Dill in Wetzlar. Meisterbetrieb seit 1926 für SHK, Wärmepumpen und moderne Badarchitektur.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

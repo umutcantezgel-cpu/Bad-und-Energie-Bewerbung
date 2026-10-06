@@ -1,0 +1,11 @@
+node_modules/
+.next/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+ms-reusable-components/
+coday-seo-toolkit/
+*.tsbuildinfo
+
