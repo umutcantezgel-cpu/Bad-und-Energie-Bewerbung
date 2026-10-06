@@ -39,7 +39,7 @@ export function QuickApplySidebar() {
             onClick={() => setIsCollapsed(false)}
             className="group flex items-center gap-2 py-4 px-2.5 bg-white/95 hover:bg-white backdrop-blur-2xl border-l-2 border-t border-b border-[#C51E1E]/80 shadow-[0_8px_32px_rgba(10,30,58,0.12)] rounded-l-2xl text-slate-800 transition-all cursor-pointer hover:shadow-xl"
             title="Expressbewerbung und WhatsApp öffnen"
-            aria-label="Schnellbewerbung Leiste ausklappen"
+            aria-label="Schnellbewerbung • WhatsApp öffnen"
           >
             <div className="flex flex-col items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />

@@ -4,16 +4,16 @@ const appUrl = process.env.APP_URL || 'https://karriere.bad-energie.de';
 const logoUrl = `${appUrl}/images/bad-energie-lahn-dill-logo.webp`;
 
 export const metadata: Metadata = {
-  title: 'Bewerbung Handwerk Wetzlar | In 60 Sekunden ohne Lebenslauf bei Bad und Energie',
+  title: 'Bewerbung Handwerk Wetzlar | Ohne Lebenslauf | Bad & Energie',
   description:
-    'Schnell und diskret bewerben als Anlagenmechaniker SHK oder Kundendiensttechniker in Wetzlar. Ohne Anschreiben und ohne Lebenslauf. Rückmeldung innerhalb von 24 Stunden.',
+    'Diskrete 60-Sekunden-Bewerbung als SHK Monteur & Techniker in Wetzlar. Ohne Anschreiben & ohne Lebenslauf. Rückmeldung garantiert innerhalb von 24h!',
   alternates: {
     canonical: `${appUrl}/bewerbung`,
   },
   openGraph: {
-    title: 'Bewerbung Handwerk Wetzlar | In 60 Sekunden ohne Lebenslauf bei Bad und Energie',
+    title: 'Bewerbung Handwerk Wetzlar | Ohne Lebenslauf | Bad & Energie',
     description:
-      'Schnell und diskret bewerben als Anlagenmechaniker SHK oder Kundendiensttechniker in Wetzlar. Ohne Anschreiben und ohne Lebenslauf. 100% vertraulich nach § 26 BDSG.',
+      'Diskrete 60-Sekunden-Bewerbung als SHK Monteur & Techniker in Wetzlar. Ohne Anschreiben & ohne Lebenslauf. Rückmeldung garantiert innerhalb von 24h!',
     url: `${appUrl}/bewerbung`,
     siteName: 'Bad und Energie GmbH Lahn Dill',
     locale: 'de_DE',
@@ -30,9 +30,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Bewerbung Handwerk Wetzlar | In 60 Sekunden ohne Lebenslauf bei Bad und Energie',
+    title: 'Bewerbung Handwerk Wetzlar | Ohne Lebenslauf | Bad & Energie',
     description:
-      'Schnell und diskret bewerben als Anlagenmechaniker SHK oder Kundendiensttechniker in Wetzlar. Ohne Anschreiben und ohne Lebenslauf.',
+      'Diskrete 60-Sekunden-Bewerbung als SHK Monteur & Techniker in Wetzlar. Ohne Anschreiben & ohne Lebenslauf. Rückmeldung garantiert innerhalb von 24h!',
     images: [logoUrl],
   },
 };

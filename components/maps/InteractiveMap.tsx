@@ -570,10 +570,15 @@ export function InteractiveMap({
 
                 {/* Commute Calculator for Candidate */}
                 <div className="pt-2 border-t border-slate-100 space-y-2">
-                  <label className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-500 block">
+                  <label
+                    htmlFor="commute-origin-select"
+                    className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-500 block"
+                  >
                     Pendlerrechner: Dein Wohnort
                   </label>
                   <select
+                    id="commute-origin-select"
+                    aria-label="Pendlerrechner: Dein Wohnort"
                     value={commuteOriginId}
                     onChange={(e) => {
                       setCommuteOriginId(e.target.value);

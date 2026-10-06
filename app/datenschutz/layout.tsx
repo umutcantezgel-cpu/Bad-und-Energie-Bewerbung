@@ -4,16 +4,16 @@ const appUrl = process.env.APP_URL || 'https://karriere.bad-energie.de';
 const logoUrl = `${appUrl}/images/bad-energie-lahn-dill-logo.webp`;
 
 export const metadata: Metadata = {
-  title: 'Datenschutzerklärung und Bewerberdaten | Bad und Energie Wetzlar',
+  title: 'Datenschutz & Bewerberdaten DSGVO | Bad & Energie Wetzlar',
   description:
-    'Datenschutzerklärung nach DSGVO und Paragraph 26 BDSG für Bewerber und Besucher bei Bad und Energie GmbH Lahn Dill in Wetzlar.',
+    'Datenschutzerklärung und Informationen zur Verarbeitung von Bewerberdaten nach DSGVO und § 26 BDSG der Bad & Energie GmbH Lahn Dill in Wetzlar.',
   alternates: {
     canonical: `${appUrl}/datenschutz`,
   },
   openGraph: {
-    title: 'Datenschutzerklärung und Bewerberdaten | Bad und Energie Wetzlar',
+    title: 'Datenschutz & Bewerberdaten DSGVO | Bad & Energie Wetzlar',
     description:
-      'Datenschutzerklärung nach DSGVO und Paragraph 26 BDSG für Bewerber und Besucher bei Bad und Energie GmbH Lahn Dill in Wetzlar.',
+      'Datenschutzerklärung und Informationen zur Verarbeitung von Bewerberdaten nach DSGVO und § 26 BDSG der Bad & Energie GmbH Lahn Dill in Wetzlar.',
     url: `${appUrl}/datenschutz`,
     siteName: 'Bad und Energie GmbH Lahn Dill',
     locale: 'de_DE',
@@ -30,8 +30,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Datenschutzerklärung und Bewerberdaten | Bad und Energie Wetzlar',
-    description: 'Datenschutzerklärung nach DSGVO und Paragraph 26 BDSG für Bewerber.',
+    title: 'Datenschutz & Bewerberdaten DSGVO | Bad & Energie Wetzlar',
+    description:
+      'Datenschutzerklärung und Informationen zur Verarbeitung von Bewerberdaten nach DSGVO und § 26 BDSG der Bad & Energie GmbH Lahn Dill in Wetzlar.',
     images: [logoUrl],
   },
 };

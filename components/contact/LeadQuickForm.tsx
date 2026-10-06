@@ -127,10 +127,14 @@ export function LeadQuickForm({
 
       <div className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+          <label
+            htmlFor="quickform-name"
+            className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5"
+          >
             Vollständiger Name *
           </label>
           <input
+            id="quickform-name"
             type="text"
             required
             value={formData.name}
@@ -142,10 +146,14 @@ export function LeadQuickForm({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+            <label
+              htmlFor="quickform-email"
+              className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5"
+            >
               E Mail Adresse *
             </label>
             <input
+              id="quickform-email"
               type="email"
               required
               value={formData.email}
@@ -155,10 +163,14 @@ export function LeadQuickForm({
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+            <label
+              htmlFor="quickform-phone"
+              className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5"
+            >
               Telefonnummer
             </label>
             <input
+              id="quickform-phone"
               type="tel"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -169,10 +181,14 @@ export function LeadQuickForm({
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+          <label
+            htmlFor="quickform-message"
+            className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5"
+          >
             Ihre Nachricht oder Qualifikation
           </label>
           <textarea
+            id="quickform-message"
             rows={3}
             value={formData.message}
             onChange={(e) => setFormData({ ...formData, message: e.target.value })}

@@ -20,9 +20,9 @@ const logoUrl = `${appUrl}/images/bad-energie-lahn-dill-logo.webp`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
-  title: 'Jobs Wetzlar | Heizungsbauer und SHK Monteure bei Bad und Energie Lahn Dill',
+  title: 'Jobs Wetzlar | Heizungsbauer & Monteure | Bad & Energie',
   description:
-    'Finde Deinen neuen Handwerker Job in Wetzlar: Bis zu 4800 Euro Gehalt, 30 Tage Urlaub, freitags ab 13:30 Uhr frei und Firmenwagen zur Privatnutzung. Jetzt in 60 Sekunden bewerben bei Bad und Energie Lahn Dill.',
+    'SHK Handwerker Jobs in Wetzlar: Bis zu 4.800 € Gehalt, 30 Tage Urlaub, freitags ab 13:30 Uhr frei & Firmenwagen. Jetzt in 60 Sek. bewerben bei Bad & Energie!',
   keywords: [
     'Jobs Wetzlar',
     'Heizungsbauer Jobs Wetzlar',
@@ -44,9 +44,9 @@ export const metadata: Metadata = {
     canonical: appUrl,
   },
   openGraph: {
-    title: 'Jobs Wetzlar | Heizungsbauer und SHK Monteure bei Bad und Energie Lahn Dill',
+    title: 'Jobs Wetzlar | Heizungsbauer & Monteure | Bad & Energie',
     description:
-      'Finde Deinen neuen Handwerker Job in Wetzlar: Bis zu 4800 Euro Gehalt, 30 Tage Urlaub, freitags ab 13:30 Uhr frei und Firmenwagen zur Privatnutzung. Jetzt in 60 Sekunden bewerben bei Bad und Energie Lahn Dill.',
+      'SHK Handwerker Jobs in Wetzlar: Bis zu 4.800 € Gehalt, 30 Tage Urlaub, freitags ab 13:30 Uhr frei & Firmenwagen. Jetzt in 60 Sek. bewerben bei Bad & Energie!',
     url: appUrl,
     siteName: 'Bad und Energie GmbH Lahn Dill',
     locale: 'de_DE',
@@ -63,9 +63,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Jobs Wetzlar | Heizungsbauer und SHK Monteure bei Bad und Energie Lahn Dill',
+    title: 'Jobs Wetzlar | Heizungsbauer & Monteure | Bad & Energie',
     description:
-      'Finde Deinen neuen Handwerker Job in Wetzlar: Bis zu 4800 Euro Gehalt, 30 Tage Urlaub, freitags ab 13:30 Uhr frei und Firmenwagen zur Privatnutzung. Jetzt in 60 Sekunden bewerben bei Bad und Energie Lahn Dill.',
+      'SHK Handwerker Jobs in Wetzlar: Bis zu 4.800 € Gehalt, 30 Tage Urlaub, freitags ab 13:30 Uhr frei & Firmenwagen. Jetzt in 60 Sek. bewerben bei Bad & Energie!',
     images: [logoUrl],
   },
   robots: {

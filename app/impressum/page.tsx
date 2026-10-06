@@ -8,16 +8,16 @@ const appUrl = process.env.APP_URL || 'https://karriere.bad-energie.de';
 const logoUrl = `${appUrl}/images/bad-energie-lahn-dill-logo.webp`;
 
 export const metadata: Metadata = {
-  title: 'Impressum und Kontakt | Bad und Energie GmbH Lahn Dill in Wetzlar',
+  title: 'Impressum & Kontakt | Bad & Energie GmbH Lahn Dill Wetzlar',
   description:
-    'Gesetzliche Anbieterkennzeichnung nach Paragraph 5 DDG und Handwerksordnung der Bad und Energie GmbH Lahn Dill in Wetzlar. Geschäftsführer Diplomingenieur Sabri Demir.',
+    'Gesetzliche Anbieterkennzeichnung nach § 5 DDG und Handwerksordnung der Bad und Energie GmbH Lahn Dill in Wetzlar. Geschäftsführer Dipl.-Ing. Sabri Demir.',
   alternates: {
     canonical: `${appUrl}/impressum`,
   },
   openGraph: {
-    title: 'Impressum und Kontakt | Bad und Energie GmbH Lahn Dill in Wetzlar',
+    title: 'Impressum & Kontakt | Bad & Energie GmbH Lahn Dill Wetzlar',
     description:
-      'Gesetzliche Anbieterkennzeichnung nach Paragraph 5 DDG und Handwerksordnung der Bad und Energie GmbH Lahn Dill in Wetzlar.',
+      'Gesetzliche Anbieterkennzeichnung nach § 5 DDG und Handwerksordnung der Bad und Energie GmbH Lahn Dill in Wetzlar. Geschäftsführer Dipl.-Ing. Sabri Demir.',
     url: `${appUrl}/impressum`,
     siteName: 'Bad und Energie GmbH Lahn Dill',
     locale: 'de_DE',
@@ -34,8 +34,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Impressum und Kontakt | Bad und Energie GmbH Lahn Dill',
-    description: 'Gesetzliche Anbieterkennzeichnung nach Paragraph 5 DDG und Handwerksordnung.',
+    title: 'Impressum & Kontakt | Bad & Energie GmbH Lahn Dill Wetzlar',
+    description:
+      'Gesetzliche Anbieterkennzeichnung nach § 5 DDG und Handwerksordnung der Bad und Energie GmbH Lahn Dill in Wetzlar. Geschäftsführer Dipl.-Ing. Sabri Demir.',
     images: [logoUrl],
   },
 };
