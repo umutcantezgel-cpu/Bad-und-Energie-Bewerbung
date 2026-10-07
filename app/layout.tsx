@@ -278,6 +278,32 @@ const structuredData = {
       datePosted: '2026-03-01',
       validThrough: '2027-10-06T00:00:00',
       employmentType: 'FULL_TIME',
+      baseSalary: {
+        '@type': 'MonetaryAmount',
+        currency: 'EUR',
+        value: {
+          '@type': 'QuantitativeValue',
+          minValue: 3600,
+          maxValue: 4600,
+          unitText: 'MONTH',
+        },
+      },
+      educationRequirements: {
+        '@type': 'EducationalOccupationalCredential',
+        credentialCategory: 'professional certificate',
+      },
+      experienceRequirements: {
+        '@type': 'OccupationalExperienceRequirements',
+        monthsOfExperience: 12,
+      },
+      jobBenefits: [
+        '30 Tage Erholungsurlaub',
+        'Freitags ab 13:30 Uhr bezahlt ins Wochenende',
+        'Fester Firmenwagen mit Sortimo-Ausbau & Privatnutzung',
+        '100% persönliche Hilti 22V Akku-Flotte',
+        'Übertarifliche Bezahlung plus Urlaubs- und Weihnachtsgeld',
+        'Keine Fernmontagen (maximal 35 km Umkreis von Wetzlar)',
+      ],
       hiringOrganization: {
         '@type': 'Organization',
         name: 'Bad & Energie GmbH',
@@ -310,6 +336,32 @@ const structuredData = {
       datePosted: '2026-03-01',
       validThrough: '2027-10-06T00:00:00',
       employmentType: 'FULL_TIME',
+      baseSalary: {
+        '@type': 'MonetaryAmount',
+        currency: 'EUR',
+        value: {
+          '@type': 'QuantitativeValue',
+          minValue: 3800,
+          maxValue: 4900,
+          unitText: 'MONTH',
+        },
+      },
+      educationRequirements: {
+        '@type': 'EducationalOccupationalCredential',
+        credentialCategory: 'professional certificate',
+      },
+      experienceRequirements: {
+        '@type': 'OccupationalExperienceRequirements',
+        monthsOfExperience: 24,
+      },
+      jobBenefits: [
+        '30 Tage Erholungsurlaub',
+        'Freitags ab 13:30 Uhr bezahlt ins Wochenende',
+        'Persönliches Servicefahrzeug mit Tankkarte & Privatnutzung ab Wohnort',
+        'Firmen-iPad & Smartphone zur freien privaten Nutzung',
+        'Hersteller-Zertifizierungen (Buderus, Bosch, NIBE, Alpha Innotec, Viessmann)',
+        'Kein Wochenend-Notdienstzwang',
+      ],
       hiringOrganization: {
         '@type': 'Organization',
         name: 'Bad & Energie GmbH',
@@ -342,6 +394,32 @@ const structuredData = {
       datePosted: '2026-03-01',
       validThrough: '2027-10-06T00:00:00',
       employmentType: 'FULL_TIME',
+      baseSalary: {
+        '@type': 'MonetaryAmount',
+        currency: 'EUR',
+        value: {
+          '@type': 'QuantitativeValue',
+          minValue: 4400,
+          maxValue: 5600,
+          unitText: 'MONTH',
+        },
+      },
+      educationRequirements: {
+        '@type': 'EducationalOccupationalCredential',
+        credentialCategory: 'professional certificate',
+      },
+      experienceRequirements: {
+        '@type': 'OccupationalExperienceRequirements',
+        monthsOfExperience: 36,
+      },
+      jobBenefits: [
+        '30 Tage Erholungsurlaub',
+        'Freitags ab 13:30 Uhr bezahlt ins Wochenende',
+        'Spitzenvergütung mit Erfolgsprämien',
+        'Eigenes Projektleitungs-Fahrzeug mit Tankkarte',
+        'Freie Baustellenorganisation ohne Mikromanagement',
+        'Direkter Draht zur Geschäftsführung (Sabri Demir)',
+      ],
       hiringOrganization: {
         '@type': 'Organization',
         name: 'Bad & Energie GmbH',
@@ -374,10 +452,31 @@ const structuredData = {
       datePosted: '2026-03-01',
       validThrough: '2027-10-06T00:00:00',
       employmentType: 'FULL_TIME',
+      baseSalary: {
+        '@type': 'MonetaryAmount',
+        currency: 'EUR',
+        value: {
+          '@type': 'QuantitativeValue',
+          minValue: 1050,
+          maxValue: 1400,
+          unitText: 'MONTH',
+        },
+      },
       educationRequirements: {
         '@type': 'EducationalOccupationalCredential',
-        credentialCategory: 'Hauptschulabschluss oder Realschulabschluss',
+        credentialCategory: 'high school',
       },
+      experienceRequirements: {
+        '@type': 'OccupationalExperienceRequirements',
+        monthsOfExperience: 0,
+      },
+      jobBenefits: [
+        'Eigenes Hilti Azubi-Werkzeugset geschenkt ab Tag 1',
+        'Überdurchschnittliche Ausbildungsvergütung plus Prämien',
+        'Fahrtkostenzuschuss zur Berufsschule & Führerscheinzuschuss',
+        'Feste Übernahmegarantie nach erfolgreicher Gesellenprüfung',
+        '30 Tage Urlaub & Freitags ab 13:30 Uhr frei',
+      ],
       hiringOrganization: {
         '@type': 'Organization',
         name: 'Bad & Energie GmbH',
