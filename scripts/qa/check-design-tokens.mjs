@@ -27,21 +27,9 @@ const LEGACY = [
   'components/navigation/',
   'components/trust/',
   'components/pricing/',
-  'components/maps/',
-  'components/reviews/',
   'components/contact/',
   'components/seo/',
-  'components/analytics/',
   'components/layout/LayoutClientWidgets.tsx',
-  'app/page.tsx',
-  'app/bewerbung/',
-  'app/datenschutz/',
-  'app/impressum/',
-  'app/not-found.tsx',
-  'app/error.tsx',
-  'app/global-error.tsx',
-  'app/layout.tsx',
-  'lib/email/templates/',
 ];
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');

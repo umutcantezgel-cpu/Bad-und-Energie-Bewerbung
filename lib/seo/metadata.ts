@@ -15,8 +15,16 @@ export function generatePageMetadata(opts: {
   path: string;
   type?: 'money' | 'legal' | 'default';
   keywords?: string[];
+  /** noindex,follow – e.g. thank-you page, ad landing pages, tools. */
+  noindex?: boolean;
+  /**
+   * Absolute or root-relative image. When omitted, the file-based
+   * `opengraph-image` of the route segment (or app/opengraph-image) is used.
+   */
+  ogImage?: { url: string; width: number; height: number; alt: string };
 }): Metadata {
   const canonicalUrl = getCleanCanonicalUrl(opts.path);
+  const indexable = opts.type !== 'legal' && !opts.noindex;
 
   return {
     title: opts.title,
@@ -32,27 +40,19 @@ export function generatePageMetadata(opts: {
       siteName: SITE_CONFIG.companyName,
       locale: 'de_DE',
       type: 'website',
-      images: [
-        {
-          url: LOGO_URL,
-          width: 1200,
-          height: 630,
-          alt: `${SITE_CONFIG.companyName} • Meisterbetrieb Wetzlar`,
-          type: 'image/webp',
-        },
-      ],
+      ...(opts.ogImage ? { images: [opts.ogImage] } : {}),
     },
     twitter: {
       card: 'summary_large_image',
       title: opts.title,
       description: opts.description,
-      images: [LOGO_URL],
+      ...(opts.ogImage ? { images: [opts.ogImage.url] } : {}),
     },
     robots: {
-      index: opts.type !== 'legal',
+      index: indexable,
       follow: true,
       googleBot: {
-        index: opts.type !== 'legal',
+        index: indexable,
         follow: true,
         'max-video-preview': -1,
         'max-image-preview': 'large',
