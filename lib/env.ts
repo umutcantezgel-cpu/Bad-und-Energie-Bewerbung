@@ -180,14 +180,10 @@ export function checkServerEnv(): { ok: boolean; missing: ServerEnvName[]; inval
 }
 
 /**
- * Start-Check aus instrumentation.ts (ROADMAP §3.2): auf Vercel Production bricht eine
- * unvollständige Konfiguration den Serverstart ab. Anderswo (z. B. lokal `next start`) wird nur
- * protokolliert; die Bewerbungs-API antwortet dann mit 503 (ROADMAP §14.4).
- */
-/**
- * Reports incomplete configuration once per server start. It deliberately never
- * throws: a missing mail secret must not take the whole career site offline.
- * The form APIs answer 503 instead and the UI falls back to phone/WhatsApp.
+ * Start-Check aus instrumentation.ts (ROADMAP §3.2): meldet eine unvollständige Konfiguration
+ * einmal pro Serverstart und wirft bewusst nie, auch nicht auf Vercel Production. Ein fehlendes
+ * Mail-Geheimnis darf nicht die ganze Karriereseite abschalten: Die Formular-APIs antworten mit
+ * 503, und die UI bietet Telefon und WhatsApp an (ROADMAP §14.4).
  */
 export function reportServerEnv(): { ok: boolean } {
   const { ok, missing, invalid } = checkServerEnv();

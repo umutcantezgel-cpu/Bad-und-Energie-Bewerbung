@@ -20,7 +20,7 @@ Alle Stellen liegen als TypeScript im Repo (`lib/jobs/data/*.ts`, eine Datei je 
    - `seo.metaTitle` ≤ 60 Zeichen, `seo.metaDescription` ≤ 155 Zeichen.
    - `datePosted`, `validThrough` (mindestens 14 Tage in der Zukunft) und `updatedAt`. Nennt ein Text ein Jahr („Ausbildung 2026“), darf `validThrough` nicht nach dem Ende dieses Jahres liegen. Das prüft das Schema.
    - `channels`: wo die Stelle erscheinen soll (`googleJobs`, `indeedFeed`, `genericFeed`, `ba`).
-3. Die ID in `JOB_IDS` in `lib/jobs/schema.ts` ergänzen.
+3. Die ID in `JOB_IDS` in `lib/jobs/ids.ts` ergänzen.
 4. Die Stelle in `ALL_JOBS` in `lib/jobs/registry.ts` eintragen. Die Reihenfolge dort ist die Anzeigereihenfolge.
 5. Den Slug in `lib/jobs/slugs.lock.json` eintragen.
 6. Tests laufen lassen: `bun run test`, dann den PR öffnen.

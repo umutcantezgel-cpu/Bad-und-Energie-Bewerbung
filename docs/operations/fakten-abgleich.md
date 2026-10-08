@@ -1,6 +1,6 @@
 # Fakten-Abgleich (Owner-Liste)
 
-Stand: 2026-10-08 · Schritt 1.1 der Roadmap
+Stand: 2026-10-08 · Schritt 1.1 der Roadmap, ergänzt nach dem Text-Review (B22–B26, D)
 
 Beim Zusammenführen von Stellen und Fakten in `lib/jobs/**` und `lib/content/**` sind abweichende Formulierungen aufgefallen. Regel: Es wird nichts erfunden. Bei Widersprüchen gilt die vorsichtigste bzw. neueste Formulierung (Fakten-Fixes: HRB 2449, 1926–2026, 5 Partner-Säulen, Siegmund-Hiepe-Str. 20, 15 Mitarbeiter).
 
@@ -16,7 +16,7 @@ Diese Fakten sind in `facts.ts` mit `pending` markiert. Der Test lässt sie nur 
 | A2 | Firmenfahrzeug mit 1-%-Privatnutzung | `app/page.tsx` (Karte 03, Obermonteur) | nur Obermonteur (`privateCarOnePercent`) | Gilt das nur für Obermonteure oder für alle Fahrzeuge? |
 | A3 | Gehalt am 1. Werktag | `pricing.constants.ts`, `SalaryCalculator.tsx` | nirgends (`payFirstWorkday`) | Bestätigen, dann auf allen Fachkraft-Stellen nutzbar. |
 | A4 | Rückmeldung binnen 24 Stunden | Hero, HeroExpressFunnel, VaultView, PrintA4View, LeadQuickForm | „Wir melden uns schnellstmöglich“ (`quickResponse`) | Soll „24 Stunden“ wieder versprochen werden? |
-| A5 | Titel Sabri Demir | `team.ts` „Geschäftsführer und Meister“, `site-config.ts`/Layout „Geschäftsführer und Diplomingenieur“, Hero „Inhaber und Werkstattleitung“, diverse „Meister Sabri Demir“ | „Geschäftsführer und Meister“ (aus `team.ts`) | Welcher Titel ist richtig? |
+| A5 | Titel Sabri Demir | `team.ts` „Geschäftsführer und Meister“, `site-config.ts`/Layout „Geschäftsführer und Diplomingenieur“, Hero „Inhaber und Werkstattleitung“, diverse „Meister Sabri Demir“ | „Geschäftsführer und Meister“ (aus `team.ts`): Ansprechpartner auf den Stellenseiten, `llms.txt`. Fakt `directLine`: „Geschäftsführer Sabri Demir“. Impressum: „Diplomingenieur Sabri Demir“ (Geschäftsführung, wie bisher). Das zusätzliche „Dipl.-Ing. Sabri Demir“ im Obermonteur-Intro ist entfallen (stand doppelt neben `directLine`). | Welcher Titel ist richtig, und soll er überall gleich lauten (auch im Impressum)? |
 
 ## B. Widersprüche zwischen Quellen
 
@@ -43,6 +43,11 @@ Diese Fakten sind in `facts.ts` mit `pending` markiert. Der Test lässt sie nur 
 | B19 | Logo im Schema | Layout: `bad-energie-lahn-dill-logo.webp` · `lib/seo/schema.ts`: `…-transparent.webp` | wie Layout | – |
 | B20 | Lehrjahr Jonas Weber | `lib/data/team.ts`: „Auszubildender 2. Lehrjahr“, „Seit August 2024 im Betrieb“ (ab August 2026 rechnerisch 3. Lehrjahr) | „Auszubildender“, „Seit August 2024 im Betrieb“ (`lib/content/team.ts`) | Aktuelles Lehrjahr? Bleibt es beim Zitat auf der Ausbildungsseite? |
 | B21 | Betriebszugehörigkeit | `lib/data/team.ts`: Koch „6 Jahre im Betrieb“, Becker „4 Jahre im Betrieb“, ohne Stichtag | nicht angezeigt (`lib/content/team.ts`) | Seit wann sind beide im Betrieb (Monat/Jahr)? Dann als „Seit … im Betrieb“. |
+| B22 | Weitere Teamstimmen | `lib/data/reviews.data.ts` `teamRecruitingReviews`: Michael S., Christian W., Tim K., Dennis M. („Mitarbeiter Stimme“). Aussagen u. a. „Das beste und menschlichste Arbeitsklima in ganz Mittelhessen“, „hält sein Wort bei Gehalt und Zulagen“, „wurde sofort unbefristet übernommen“ (Übernahme ist A1), Rolle „Quereinsteiger SHK Montage“ | **nicht angezeigt.** Der Filter „Team“ im Bewertungs-Karussell zeigt nur die freigegebenen Zitate von Koch, Becker und Weber (`components/reviews/data.ts`); das Zitat von Sabri Demir steht direkt darüber | Sind diese vier Personen echt, und sind ihre Zitate freigegeben? Dann `TEAM_REVIEW_IDS` bzw. die Datenquelle erweitern. |
+| B23 | Wochenendarbeit | FAQ „Fernmontage“ (alte Startseite und FAQPage): „Du bist jeden Nachmittag pünktlich zu Hause. Wochenendarbeit ist ausgeschlossen.“ · `company.ts`/Fakt `noWeekendOnCall`: „Keine Notdienstpflicht am Wochenende“ · Einsatzgebiet: „jeden Abend pünktlich zu Hause“ | abgeschwächt auf den Fakt: „Du bist jeden Abend pünktlich zu Hause, und am Wochenende hast du frei.“ | Ist Wochenendarbeit wirklich ausgeschlossen (dann darf die FAQ das wieder sagen), oder gibt es Ausnahmen (z. B. Notfälle)? |
+| B24 | Name der Innung | `lib/data/company.ts` und `site-config.ts`: „Innung Sanitär Heizung und Klimatechnik Lahn Dill“ · `README.md@393df01`: „Innung Sanitär-, Heizungs- und Klimatechnik Lahn-Dill“ | Schreibweise aus der README (Footer, E-Mail-Fußzeile, `llms-full.txt`) | Wie lautet der offizielle Name der Innung genau? |
+| B25 | Google-Bewertungen | `reviews.data.ts` `googleOverviewStats`: 5,0 und 24 Bewertungen, ohne Datum und ohne Profil-Link (ROADMAP §13) | Bewertungszeile **ausgeblendet**, bis `asOf: 'JJJJ-MM'` gesetzt ist; dann erscheint sie mit „Stand: …“. Die 10 zitierten Google-Bewertungen bleiben im Karussell | Bitte aktuelle Zahlen, Monat der Abfrage und den Link zum Google-Profil nennen. |
+| B26 | Team-Größe im Text | Meilenstein 2026: „Zurzeit sind 15 Mitarbeiter im Betrieb tätig“ · Startseite: „15 Leute“ | Fakt `employees15`, im Text „15 Leuten“ (ROADMAP §5.6 „15 Leute“); die Zahl kommt nur noch aus `facts.ts` | Stimmt die Zahl noch? Bei Änderung nur `employees15.value` anpassen. |
 
 ## C. Stellentitel und Texte
 
@@ -60,3 +65,11 @@ Diese Fakten sind in `facts.ts` mit `pending` markiert. Der Test lässt sie nur 
 - **Gehaltsspannen** stammen aus den bisherigen JobPostings: 3.600–4.600 €, 3.800–4.900 €, 4.400–5.600 € und 1.050–1.400 € (Ausbildung, über alle Lehrjahre?). Sie sind jetzt sichtbar (Owner-Entscheidung). Bitte bestätigen, dass sie aktuell sind.
 - **Startdatum:** Für Fachkräfte nennt keine Quelle einen Start. Im Registry steht deshalb „nach Absprache“. Soll dort „ab sofort“ stehen?
 - **BERUFENET-ID:** `ba.berufenetId` ist leer. Die ID bitte bei der BA nachschlagen und nicht schätzen.
+
+## D. Texte im Bewerbungsflow (bitte freigeben)
+
+| # | Frage | Optionen (IDs bleiben gleich) | Anmerkung |
+|---|---|---|---|
+| D1 | Fachkräfte: „Was trifft auf dich zu?“ | „Geselle, unter 2 Jahren“ · „Geselle, 2–5 Jahre“ · „Geselle, über 5 Jahre“ · „Meister oder Techniker“ · „Andere Ausbildung“ | Wie ROADMAP §6. „oder Quereinstieg“ entfällt, Quereinstieg hat ein eigenes Fragenset. |
+| D2 | Quereinstieg: „Was machst du aktuell?“ | „Im Handwerk (anderes Gewerk)“ · „In einer anderen Branche“ · „Gerade etwas anderes“ | Neu formuliert (Flow-Review); bitte bestätigen. |
+| D3 | Datenschutz-Hinweis über „Bewerbung absenden“ | „Wir verarbeiten deine Angaben für deine Bewerbung (Art. 6 Abs. 1 lit. b DSGVO). Mehr dazu in den Datenschutzhinweisen.“ | ROADMAP §6: Hinweis statt Checkbox; DSB-Bestätigung steht aus (siehe `datenschutz-aenderungen.md` §5). |
