@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import { isTrustedSiteRequest } from '@/lib/security/origin';
+import { jsonError } from '@/lib/security/request';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: NextRequest) {
-  const referer = request.headers.get('referer') || '';
-  const isAllowedReferer = referer.includes('bad-energie.de') || process.env.NODE_ENV !== 'production';
-
-  if (!isAllowedReferer) {
-    return NextResponse.json({ error: 'Nicht autorisiert' }, { status: 403 });
+export async function GET(request: Request) {
+  // proxy.ts prüft dasselbe; hier zusätzlich, falls sich der Matcher einmal ändert.
+  if (process.env.NODE_ENV === 'production' && !isTrustedSiteRequest(request.headers)) {
+    return jsonError(403, 'FORBIDDEN');
   }
 
   const apiKey =
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     process.env.GOOGLE_MAPS_MAP_ID?.trim() ||
     '';
 
-  // Sanitize placeholder values
+  // Platzhalter aus .env.example gelten als nicht gesetzt.
   const sanitizedKey =
     !apiKey || apiKey === 'MY_GOOGLE_MAPS_API_KEY' || apiKey.startsWith('AIzaSy_placeholder')
       ? ''

@@ -1,34 +1,60 @@
 import type {NextConfig} from 'next';
 
+const isDev = process.env.NODE_ENV === 'development';
+
+// Report-Only bis Phase 3, danach scharf. Meldungen gehen an /api/csp-report (report-to, ältere
+// Browser report-uri). Google-Maps-Hosts nach Googles „Content Security Policy for Maps JavaScript
+// API“ (Allowlist-Variante); deren 'unsafe-eval' fehlt bewusst, die Meldungen zeigen vor Phase 3,
+// ob die 2-Klick-Karte es braucht. `unsafe-eval` nur lokal, weil React Refresh im Dev-Server eval nutzt.
+const CSP_REPORT_PATH = '/api/csp-report';
+const CSP_REPORT_GROUP = 'csp-endpoint';
+
+const GOOGLE_MAPS = {
+  script: 'https://*.googleapis.com https://*.gstatic.com https://*.google.com https://*.ggpht.com https://*.googleusercontent.com blob:',
+  img: 'https://*.googleapis.com https://*.gstatic.com https://*.google.com https://*.googleusercontent.com https://*.ggpht.com',
+  connect: 'https://*.googleapis.com https://*.google.com https://*.gstatic.com data: blob:',
+  frame: 'https://*.google.com',
+};
+
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} ${GOOGLE_MAPS.script}`,
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  `img-src 'self' data: blob: ${GOOGLE_MAPS.img}`,
+  "font-src 'self' data: https://fonts.gstatic.com",
+  `connect-src 'self' ${GOOGLE_MAPS.connect} https://*.supabase.co`,
+  `frame-src ${GOOGLE_MAPS.frame}`,
+  "worker-src 'self' blob:",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'self'",
+  `report-uri ${CSP_REPORT_PATH}`,
+  `report-to ${CSP_REPORT_GROUP}`,
+].join('; ');
+
+// Einzige Quelle für Security-Header (proxy.ts setzt keine).
+const securityHeaders = [
+  {key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload'},
+  {key: 'X-Content-Type-Options', value: 'nosniff'},
+  {key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin'},
+  // Kein `interest-cohort`: FLoC ist eingestellt, Chrome meldet das Feature als Konsolenfehler.
+  {key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=()'},
+  {key: 'Cross-Origin-Opener-Policy', value: 'same-origin'},
+  {key: 'X-Frame-Options', value: 'SAMEORIGIN'},
+  {key: 'X-DNS-Prefetch-Control', value: 'on'},
+  {key: 'Content-Security-Policy-Report-Only', value: contentSecurityPolicy},
+  {key: 'Reporting-Endpoints', value: `${CSP_REPORT_GROUP}="${CSP_REPORT_PATH}"`},
+];
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   typescript: {
     ignoreBuildErrors: false,
   },
   turbopack: {},
-  // Allow access to remote images.
   images: {
     formats: ['image/avif', 'image/webp'],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'bad-energie.de',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'lh3.googleusercontent.com',
-        port: '',
-        pathname: '/**',
-      },
-    ],
   },
   output: 'standalone',
   poweredByHeader: false,
@@ -45,49 +71,14 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains; preload',
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'SAMEORIGIN',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-          {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=(self), payment=(), usb=()',
-          },
-          {
-            key: 'Cross-Origin-Opener-Policy',
-            value: 'same-origin',
-          },
-          {
-            key: 'X-DNS-Prefetch-Control',
-            value: 'on',
-          },
-        ],
+        source: '/:path*',
+        headers: securityHeaders,
+      },
+      {
+        source: '/api/:path*',
+        headers: [{key: 'X-Robots-Tag', value: 'noindex'}],
       },
     ];
-  },
-  webpack: (config, {dev}) => {
-    // HMR is disabled in AI Studio via DISABLE_HMR env var.
-    // Do not modify—file watching is disabled to prevent flickering during agent edits.
-    if (dev && process.env.DISABLE_HMR === 'true') {
-      config.watchOptions = {
-        ignored: /.*/,
-      };
-    }
-    return config;
   },
 };
 

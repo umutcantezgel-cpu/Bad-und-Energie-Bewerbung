@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { guardErrorResponse, guardJsonPost, RATE_LIMITS } from '@/lib/security';
 import { dispatchApplicationRequest } from '@/lib/email';
 import { escapeHTML, sanitizeInput } from '@/lib/utils/sanitize';
 
@@ -33,7 +34,9 @@ const applicationSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const guard = await guardJsonPost(request, { scope: 'application', rateLimit: RATE_LIMITS.applicationSubmit });
+    if (!guard.ok) return guardErrorResponse(guard);
+    const body = guard.data;
 
     const parsed = applicationSchema.safeParse(body);
     if (!parsed.success) {
@@ -102,14 +105,15 @@ export async function POST(request: NextRequest) {
           error:
             'Die Bewerbung konnte serverseitig nicht übermittelt werden. Bitte rufen Sie uns direkt an unter 06441 42956 oder schreiben Sie uns via WhatsApp.',
         },
-        { status: 500 }
+        // 503 = Versand nicht konfiguriert (ROADMAP §14.4), sonst Zustellfehler
+        { status: result.teamNotification.error === 'not_configured' ? 503 : 500 }
       );
     }
 
     return NextResponse.json({
       success: true,
       message:
-        'Vielen Dank! Ihre Bewerbung ist erfolgreich bei uns eingegangen. Wir melden uns verlässlich binnen 24 Stunden bei Ihnen.',
+        'Vielen Dank! Ihre Bewerbung ist erfolgreich bei uns eingegangen. Wir melden uns schnellstmöglich bei Ihnen.',
       simulated: result.simulated,
     });
   } catch (err: unknown) {

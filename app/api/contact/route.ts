@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { guardErrorResponse, guardJsonPost, RATE_LIMITS } from '@/lib/security';
 import { dispatchContactRequest } from '@/lib/email';
 import { escapeHTML, sanitizeInput } from '@/lib/utils/sanitize';
 
@@ -24,7 +25,9 @@ const contactSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const guard = await guardJsonPost(request, { scope: 'contact', rateLimit: RATE_LIMITS.applicationSubmit });
+    if (!guard.ok) return guardErrorResponse(guard);
+    const body = guard.data;
 
     // 1. Zod Validation
     const parsed = contactSchema.safeParse(body);
@@ -85,14 +88,13 @@ export async function POST(request: NextRequest) {
           error:
             'Die Anfrage konnte nicht übermittelt werden. Bitte rufen Sie uns direkt an unter 06441 42956 oder schreiben Sie per WhatsApp.',
         },
-        { status: 500 }
+        { status: result.teamNotification.error === 'not_configured' ? 503 : 500 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      message:
-        'Vielen Dank! Ihre Nachricht ist sicher bei uns eingegangen. Meister Sabri Demir meldet sich verlässlich innerhalb von 24 Stunden bei Ihnen.',
+      message: 'Vielen Dank! Ihre Nachricht ist sicher bei uns eingegangen. Wir melden uns schnellstmöglich bei Ihnen.',
       simulated: result.simulated,
     });
   } catch (err: unknown) {
