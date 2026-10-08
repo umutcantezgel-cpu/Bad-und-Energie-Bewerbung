@@ -50,6 +50,16 @@ describe('MappeTool (server render)', () => {
     expect(html).toContain('value="initiativ"');
   });
 
+  it('scrolls the rounded preview frame itself, with the heading outside the scroller', () => {
+    const match = /<section[^>]*aria-labelledby="mappe-vorschau-title"[^>]*>/.exec(html);
+    const section = match?.[0] ?? '';
+    expect(section).toContain('lg:overflow-y-auto');
+    expect(section).toMatch(/\brounded-lg\b/);
+    expect(section).toContain('tabindex="0"');
+    // The heading comes before the scroll container, so it is never clipped or scrolled away.
+    expect(html.indexOf('id="mappe-vorschau-title"')).toBeLessThan(match?.index ?? -1);
+  });
+
   it('labels the reorder controls only once entries exist', () => {
     expect(html).not.toContain('nach oben verschieben');
     expect(html).toContain('Berufserfahrung hinzufügen');

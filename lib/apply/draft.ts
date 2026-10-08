@@ -1,18 +1,19 @@
-import { z } from 'zod';
 import {
-  applicationAnswersSchema,
-  applicationJobIdSchema,
-  contactChannelSchema,
+  CONTACT_LIMITS,
   STORAGE_KEYS,
-  type ApplicationAnswers,
+  isApplicationJobId,
+  isContactChannel,
   type ApplicationJobId,
   type ContactChannel,
-} from '@/lib/applications/schema';
+} from '@/lib/applications/constants';
+import type { ApplicationAnswers } from '@/lib/applications/schema';
+import { isAnswerKey, isValidAnswer } from './questions';
 import { getSessionStorage, readItem, removeItem, writeItem, type StorageLike } from './storage';
 
 /**
  * Entwurf des Bewerbungsflows in sessionStorage (ROADMAP §6, TDDDG §25(2) Nr. 2):
  * 24 Stunden gültig, beim erfolgreichen Absenden gelöscht, nie in localStorage.
+ * Ohne zod geprüft (kleines Browser-Bundle); einzelne ungültige Felder werden repariert.
  */
 
 export const DRAFT_VERSION = 1;
@@ -29,20 +30,19 @@ export interface ApplyDraft {
   phone: string;
   email: string;
   contactChannel: ContactChannel;
+  /**
+   * Erste Eingabe (ms, Uhr des Browsers). Bleibt über Reloads und den Umweg über die Mappe
+   * erhalten; daraus wird beim Absenden die Ausfülldauer (Spam-Hinweis, keine Ablehnung).
+   */
+  firstInteractionAt?: number;
+  /** Idempotency-Key des ersten Absendeversuchs: Nach einem Reload gilt er weiter (keine Doppel-Bewerbung). */
+  idempotencyKey?: string;
 }
 
-export type DraftContent = Omit<ApplyDraft, 'v' | 'savedAt'>;
+type OptionalDraftField = 'firstInteractionAt' | 'idempotencyKey';
+export type DraftContent = Omit<ApplyDraft, 'v' | 'savedAt' | OptionalDraftField> & Partial<Pick<ApplyDraft, OptionalDraftField>>;
 
-const draftSchema = z.object({
-  v: z.literal(DRAFT_VERSION),
-  savedAt: z.number().finite(),
-  jobId: applicationJobIdSchema.nullable().catch(null),
-  answers: applicationAnswersSchema.catch({}),
-  name: z.string().max(100).catch(''),
-  phone: z.string().max(40).catch(''),
-  email: z.string().max(254).catch(''),
-  contactChannel: contactChannelSchema.catch('whatsapp'),
-});
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export function createDraft(content: DraftContent, now: number): ApplyDraft {
   return {
@@ -54,7 +54,25 @@ export function createDraft(content: DraftContent, now: number): ApplyDraft {
     phone: content.phone,
     email: content.email,
     contactChannel: content.contactChannel,
+    ...(content.firstInteractionAt !== undefined ? { firstInteractionAt: content.firstInteractionAt } : {}),
+    ...(content.idempotencyKey ? { idempotencyKey: content.idempotencyKey } : {}),
   };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+const text = (value: unknown, max: number): string => (typeof value === 'string' && value.length <= max ? value : '');
+
+/** Nur bekannte Fragen mit gültiger Option; der Flow gleicht sie danach mit dem Fragenset der Stelle ab. */
+function draftAnswers(value: unknown): ApplicationAnswers {
+  const answers: Record<string, string> = {};
+  if (!isRecord(value)) return answers;
+  for (const [key, answer] of Object.entries(value)) {
+    if (isAnswerKey(key) && isValidAnswer(key, answer)) answers[key] = answer;
+  }
+  return answers as ApplicationAnswers;
 }
 
 export function serializeDraft(draft: ApplyDraft): string {
@@ -70,11 +88,26 @@ export function parseDraft(raw: string | null | undefined, now: number): ApplyDr
   } catch {
     return null;
   }
-  const result = draftSchema.safeParse(value);
-  if (!result.success) return null;
-  const draft = result.data as ApplyDraft;
-  if (now - draft.savedAt > DRAFT_TTL_MS || draft.savedAt - now > MAX_CLOCK_SKEW_MS) return null;
-  return draft;
+  if (!isRecord(value) || value.v !== DRAFT_VERSION) return null;
+  const savedAt = value.savedAt;
+  if (typeof savedAt !== 'number' || !Number.isFinite(savedAt)) return null;
+  if (now - savedAt > DRAFT_TTL_MS || savedAt - now > MAX_CLOCK_SKEW_MS) return null;
+
+  const first = value.firstInteractionAt;
+  const key = value.idempotencyKey;
+  return createDraft(
+    {
+      jobId: isApplicationJobId(value.jobId) ? value.jobId : null,
+      answers: draftAnswers(value.answers),
+      name: text(value.name, CONTACT_LIMITS.name),
+      phone: text(value.phone, CONTACT_LIMITS.phone),
+      email: text(value.email, CONTACT_LIMITS.email),
+      contactChannel: isContactChannel(value.contactChannel) ? value.contactChannel : 'whatsapp',
+      firstInteractionAt: typeof first === 'number' && Number.isFinite(first) && first > 0 && first <= savedAt ? first : undefined,
+      idempotencyKey: typeof key === 'string' && UUID_PATTERN.test(key) ? key : undefined,
+    },
+    savedAt,
+  );
 }
 
 /** Nichts gewählt und nichts getippt: kein Entwurf nötig. */

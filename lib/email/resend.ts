@@ -2,21 +2,21 @@ import 'server-only';
 import { createHash, randomUUID } from 'node:crypto';
 import { Resend } from 'resend';
 
+import { applicationContent } from '@/lib/applications/fingerprint';
 import type { NormalizedFollowUp, ReferencedApplication } from '@/lib/applications/types';
 import { emailSimulationAllowed, getEmailConfig } from '@/lib/env';
 import {
   renderApplicationConfirmationEmail,
   renderApplicationFollowUpEmail,
   renderApplicationTeamEmail,
-  renderContactLeadNotificationEmail,
-  renderContactUserConfirmationEmail,
-  type ContactLeadData,
 } from './templates';
 
 export interface EmailDispatchResult {
   success: boolean;
   id?: string;
   simulated?: boolean;
+  /** Resend kannte den Idempotency-Key schon: Die Mail ging bereits mit einer früheren Anfrage raus. */
+  duplicate?: boolean;
   /** Fehlercode, z. B. 'not_configured', 'no_recipient' oder ein Resend-Code wie 'validation_error'. */
   error?: string;
 }
@@ -52,6 +52,8 @@ export interface DispatchOptions {
    * Basis-Schlüssel, z. B. `bewerbung:<uuid>`. Je Mail wird `:<art>:<Inhalts-Hash>` angehängt:
    * Gleicher Inhalt wird von Resend 24 h lang nur einmal versendet, geänderter Inhalt
    * (z. B. korrigierte Telefonnummer nach einem Fehler) bekommt einen eigenen Schlüssel.
+   * Bei Bewerbungen zählen nur die Angaben, nicht Eingangszeit oder Ausfülldauer
+   * (applicationFingerprint), damit Wiederholungen auf einer anderen Instanz denselben Key haben.
    */
   idempotencyKey?: string;
 }
@@ -119,6 +121,12 @@ export async function sendEmail({
     );
 
     if (error) {
+      // Gleicher Key, anderer Inhalt: Bei unseren Keys (Hash der Angaben) unterscheidet sich nur
+      // z. B. die Eingangszeit. Die Mail wurde also schon zugestellt.
+      if (idempotencyKey && error.name === 'invalid_idempotent_request') {
+        console.info('[email] bereits versendet (Idempotency-Key bekannt)');
+        return { success: true, duplicate: true, simulated: false };
+      }
       console.error(`[email] Resend-Fehler: ${error.name} (HTTP ${error.statusCode ?? '–'})`);
       return { success: false, error: error.name || 'send_failed', simulated: false };
     }
@@ -149,7 +157,28 @@ export function idempotencyFor(
   return `${options.idempotencyKey.slice(0, 200)}:${kind}:${digest}`;
 }
 
+/** Schlüssel aus einem eigenen, stabilen Fingerabdruck statt aus dem gerenderten Mail-Inhalt. */
+export function stableIdempotencyKey(
+  options: DispatchOptions | undefined,
+  kind: string,
+  fingerprint: unknown
+): string | undefined {
+  if (!options?.idempotencyKey) return undefined;
+  const digest = createHash('sha256').update(JSON.stringify(fingerprint)).digest('hex').slice(0, 16);
+  return `${options.idempotencyKey.slice(0, 200)}:${kind}:${digest}`;
+}
+
+/**
+ * Nummer plus alle Angaben einer Bewerbung (applicationContent), ohne Eingangszeit, Ausfülldauer
+ * und Spam-Markierung: Diese ändern sich bei jeder Wiederholung, die Bewerbung selbst nicht.
+ */
+export function applicationFingerprint(app: ReferencedApplication): unknown {
+  return [app.reference, ...applicationContent(app)];
+}
+
 const NO_RECIPIENT: EmailDispatchResult = { success: false, error: 'no_recipient' };
+/** Keine Eingangsbestätigung bei Spamverdacht: Die Adresse ist ungeprüft und könnte fremd sein. */
+const SKIPPED_SPAM: EmailDispatchResult = { success: false, error: 'skipped_suspected_spam' };
 
 /** Resend-Tag-Wert: nur [A-Za-z0-9_-], höchstens 256 Zeichen. */
 function tagValue(value: string): string {
@@ -158,7 +187,8 @@ function tagValue(value: string): string {
 
 /**
  * Bewerbung: Benachrichtigung ans Team (Reply-To = Bewerber-E-Mail, falls vorhanden) plus
- * Eingangsbestätigung, aber nur wenn eine E-Mail angegeben wurde. Erfolg = Team-Mail angenommen.
+ * Eingangsbestätigung, aber nur wenn eine E-Mail angegeben wurde und kein Spamverdacht besteht
+ * (die Adresse ist ungeprüft). Erfolg = Team-Mail angenommen.
  */
 export async function dispatchApplicationEmails(
   app: ReferencedApplication,
@@ -172,8 +202,9 @@ export async function dispatchApplicationEmails(
     { name: 'channel', value: tagValue(app.channel) },
   ];
 
-  const confirmation = app.email ? renderApplicationConfirmationEmail(app) : null;
+  const confirmation = app.email && !app.suspectedSpam ? renderApplicationConfirmationEmail(app) : null;
   const confirmationMail = confirmation && app.email ? { to: app.email, ...confirmation } : null;
+  const fingerprint = applicationFingerprint(app);
 
   const [teamRes, userRes] = await Promise.allSettled([
     sendEmail({
@@ -184,16 +215,16 @@ export async function dispatchApplicationEmails(
         ...tags,
         ...(app.suspectedSpam ? [{ name: 'spam', value: 'suspected' }] : []),
       ],
-      idempotencyKey: idempotencyFor(options, 'team', teamMail),
+      idempotencyKey: stableIdempotencyKey(options, 'team', [teamMail.to, fingerprint]),
     }),
     confirmationMail
       ? sendEmail({
           ...confirmationMail,
           replyTo: config.toEmail,
           tags: [{ name: 'category', value: 'application_confirmation' }, ...tags],
-          idempotencyKey: idempotencyFor(options, 'user', confirmationMail),
+          idempotencyKey: stableIdempotencyKey(options, 'user', [confirmationMail.to, fingerprint]),
         })
-      : Promise.resolve({ ...NO_RECIPIENT }),
+      : Promise.resolve(app.email && app.suspectedSpam ? { ...SKIPPED_SPAM } : { ...NO_RECIPIENT }),
   ]);
 
   const teamNotification = settle(teamRes);
@@ -223,47 +254,4 @@ export async function dispatchApplicationFollowUpEmail(
   } catch {
     return { success: false, error: 'send_failed' };
   }
-}
-
-/** Kontaktanfrage (Altlast, die Kontakt-API entfällt mit dem Aufräumschritt). */
-export async function dispatchContactRequest(
-  data: ContactLeadData,
-  options?: DispatchOptions
-): Promise<DualDispatchResult> {
-  const config = getResendClient();
-
-  const leadMail = { to: config.toEmail, ...renderContactLeadNotificationEmail(data) };
-  const confirmation = renderContactUserConfirmationEmail({
-    name: data.name,
-    email: data.email,
-    subject: data.subject,
-  });
-  const confirmationMail = data.email ? { to: data.email, ...confirmation } : null;
-
-  const [teamRes, userRes] = await Promise.allSettled([
-    sendEmail({
-      ...leadMail,
-      replyTo: data.email || undefined,
-      tags: [{ name: 'category', value: 'contact_team' }],
-      idempotencyKey: idempotencyFor(options, 'team', leadMail),
-    }),
-    confirmationMail
-      ? sendEmail({
-          ...confirmationMail,
-          replyTo: config.toEmail,
-          tags: [{ name: 'category', value: 'contact_confirmation' }],
-          idempotencyKey: idempotencyFor(options, 'user', confirmationMail),
-        })
-      : Promise.resolve({ ...NO_RECIPIENT }),
-  ]);
-
-  const teamNotification = settle(teamRes);
-  const userConfirmation = settle(userRes);
-
-  return {
-    success: teamNotification.success,
-    teamNotification,
-    userConfirmation,
-    simulated: Boolean(teamNotification.simulated || userConfirmation.simulated),
-  };
 }

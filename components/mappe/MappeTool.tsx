@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui';
-import { applicationJobIdSchema, type ApplicationJobId } from '@/lib/applications/schema';
+import { jobIdFromParam, paramForJob } from '@/lib/apply/params';
+import { readSubmitted, removeLegacyDossier, type SubmittedApplication } from '@/lib/apply/storage';
 import {
   createEmptyEditorState,
   fromMappe,
@@ -11,7 +12,6 @@ import {
   letterSubject,
   mappeEditorReducer,
   resolveCoverLetter,
-  selectedJob,
   serializeMappe,
   type MappeContext,
   type MappeEditorState,
@@ -19,17 +19,13 @@ import {
 import { sendMappeFollowUp } from '@/lib/mappe/follow-up';
 import { formatLetterDate } from '@/lib/mappe/format';
 import {
-  getLocalStorage,
   getSessionStorage,
   hasHandoverMappe,
   readDraft,
   readHandoverMappe,
-  readSubmitted,
   removeHandoverMappe,
-  removeLegacyDossier,
   writeDraft,
   writeHandoverMappe,
-  type SubmittedApplication,
 } from '@/lib/mappe/storage';
 import type { MappeJobOption, MappeRecipient } from '@/lib/mappe/types';
 import { cn } from '@/lib/utils/cn';
@@ -53,11 +49,6 @@ export interface MappeToolProps {
 const SAVE_DELAY_MS = 300;
 const APPLY_PATH = '/bewerbung';
 
-function toJobId(value: string | null | undefined): ApplicationJobId | undefined {
-  const parsed = applicationJobIdSchema.safeParse(value);
-  return parsed.success ? parsed.data : undefined;
-}
-
 /** Initial editor state from this tab: draft → handed-over mappe → empty; job from ?stelle= or the sent application. */
 function restoreState(jobs: readonly MappeJobOption[], submitted: SubmittedApplication | null): MappeEditorState {
   const session = getSessionStorage();
@@ -65,9 +56,14 @@ function restoreState(jobs: readonly MappeJobOption[], submitted: SubmittedAppli
   const handover = draft ? null : readHandoverMappe(session);
   const state = draft ?? (handover ? fromMappe(handover) : createEmptyEditorState());
   if (state.jobId) return state;
-  const slug = new URLSearchParams(window.location.search).get('stelle');
-  const fromSlug = slug ? jobs.find((job) => job.slug === slug)?.id : undefined;
-  return { ...state, jobId: fromSlug ?? toJobId(submitted?.jobId) ?? '' };
+  const fromParam = jobIdFromParam(new URLSearchParams(window.location.search).get('stelle') ?? undefined, jobs);
+  return { ...state, jobId: fromParam ?? submitted?.jobId ?? '' };
+}
+
+/** Flow with the job chosen here preselected (slug for published and funnel_only jobs, „initiativ“). */
+function applyHref(jobId: MappeEditorState['jobId'], jobs: readonly MappeJobOption[]): string {
+  const param = jobId ? paramForJob(jobId, jobs) : null;
+  return param ? `${APPLY_PATH}?stelle=${encodeURIComponent(param)}` : APPLY_PATH;
 }
 
 /**
@@ -98,7 +94,7 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
 
   // Restore once per mount: storage is client-only, so the static HTML renders the empty editor.
   useEffect(() => {
-    removeLegacyDossier(getLocalStorage());
+    removeLegacyDossier();
     const sent = readSubmitted(getSessionStorage());
     const restored = restoreState(jobs, sent);
     restoredRef.current = restored;
@@ -184,8 +180,7 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
         return;
       }
       setFeedback({ kind: 'none' });
-      const job = selectedJob(state, jobs);
-      router.push(job?.published ? `${APPLY_PATH}?stelle=${encodeURIComponent(job.slug)}` : APPLY_PATH);
+      router.push(applyHref(state.jobId, jobs));
       return;
     }
 
@@ -253,15 +248,27 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
           saveStatus={saveStatus}
           contact={contact}
         />
-        <section
-          aria-labelledby="mappe-vorschau-title"
-          tabIndex={0}
-          className="flex min-h-0 flex-col gap-4 rounded-lg lg:overflow-y-auto print:overflow-visible"
-        >
-          <h2 id="mappe-vorschau-title" className="text-title-3 text-ink print-hidden">
-            Vorschau
-          </h2>
-          <div className="rounded-lg bg-surface-2 p-3 sm:p-4 print:rounded-none print:bg-transparent print:p-0">
+        <div className="flex min-h-0 flex-col gap-4 print:block">
+          <div className="flex flex-col gap-1 print-hidden">
+            <h2 id="mappe-vorschau-title" className="text-title-3 text-ink">
+              Vorschau
+            </h2>
+            <p className="hidden text-footnote text-ink-muted lg:block">
+              Zwei Seiten: Anschreiben und Lebenslauf. Scroll in der Vorschau nach unten.
+            </p>
+          </div>
+          {/*
+            On lg the framed area itself scrolls inside the sticky column, so the rounded frame and its
+            padding stay visible at both ends (a scroller around the frame cut it off flat).
+          */}
+          <section
+            aria-labelledby="mappe-vorschau-title"
+            tabIndex={0}
+            className={
+              'min-h-0 rounded-lg bg-surface-2 p-3 sm:p-4 lg:overflow-y-auto lg:overscroll-contain ' +
+              'print:overflow-visible print:rounded-none print:bg-transparent print:p-0'
+            }
+          >
             <MappePreview
               person={state.person}
               subject={subject}
@@ -273,8 +280,8 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
               photoUrl={photoUrl}
               today={today}
             />
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
 
       <p aria-live="polite" className="sr-only">

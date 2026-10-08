@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { STORAGE_KEYS, applicationFollowUpSchema, mappeSchema } from '@/lib/applications/schema';
+import { readSubmitted, removeLegacyDossier } from '@/lib/apply/storage';
 import { getMappeJobOptions, getMappeRecipient } from '../context';
 import {
   createEmptyEditorState,
@@ -19,8 +20,6 @@ import {
   MAPPE_DRAFT_TTL_MS,
   readDraft,
   readHandoverMappe,
-  readSubmitted,
-  removeLegacyDossier,
   writeDraft,
   writeHandoverMappe,
 } from '../storage';
@@ -199,7 +198,9 @@ describe('storage', () => {
     expect(writeDraft(throwing, filledState())).toBe(false);
     expect(readDraft(throwing)).toBeNull();
     expect(readSubmitted(throwing)).toBeNull();
-    expect(() => removeLegacyDossier(throwing)).not.toThrow();
+    vi.stubGlobal('window', { localStorage: throwing });
+    expect(() => removeLegacyDossier()).not.toThrow();
+    vi.unstubAllGlobals();
   });
 
   it('hands the mappe over under STORAGE_KEYS.mappe and reads the submitted application', () => {
@@ -217,42 +218,71 @@ describe('storage', () => {
     expect(writeHandoverMappe(storage, mappe)).toBe(true);
     expect(readHandoverMappe(storage)).toEqual(mappeSchema.parse(mappe));
     expect(readSubmitted(storage)).toMatchObject({ reference: 'BE-26-AB12', followUpToken: 'tok', firstName: 'Max' });
-    removeLegacyDossier(storage);
+    vi.stubGlobal('window', { localStorage: storage });
+    removeLegacyDossier();
+    vi.unstubAllGlobals();
     expect(storage.data.has(STORAGE_KEYS.legacyDossier)).toBe(false);
     expect(readSubmitted(memoryStorage({ [STORAGE_KEYS.submitted]: '{"reference":""}' }))).toBeNull();
   });
 });
 
-describe('sendMappeFollowUp', () => {
+describe('sendMappeFollowUp (shared submit helper)', () => {
   const mappe = toMappe(filledState(), context);
+  const input = { reference: 'BE-26-AB12', token: 'tok', mappe };
   const json = (status: number, body: unknown) =>
     vi.fn(async () => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } }));
 
   it('posts JSON to the follow-up endpoint and reports success only on { ok: true }', async () => {
     const fetchImpl = json(200, { ok: true });
-    await expect(sendMappeFollowUp({ reference: 'BE-26-AB12', token: 'tok', mappe }, fetchImpl)).resolves.toEqual({ ok: true });
+    await expect(sendMappeFollowUp(input, { fetch: fetchImpl, online: true })).resolves.toEqual({ ok: true });
     const [url, init] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
     expect(url).toBe('/api/bewerbung/ergaenzung');
     expect(init.method).toBe('POST');
+    expect(init.signal).toBeInstanceOf(AbortSignal);
     expect(new Headers(init.headers).get('Content-Type')).toBe('application/json');
     expect(applicationFollowUpSchema.parse(JSON.parse(String(init.body)))).toMatchObject({ reference: 'BE-26-AB12', token: 'tok' });
 
-    const fake = await sendMappeFollowUp({ reference: 'BE-26-AB12', token: 'tok', mappe }, json(200, { ok: false }));
+    const fake = await sendMappeFollowUp(input, { fetch: json(200, { ok: false }), online: true });
     expect(fake.ok).toBe(false);
   });
 
-  it('passes the server message through and adds a retry hint', async () => {
-    const result = await sendMappeFollowUp(
-      { reference: 'BE-26-AB12', token: 'tok', mappe },
-      json(429, { ok: false, code: 'RATE_LIMITED', message: 'Zu viele Anfragen.', retryAfterSec: 300 }),
-    );
-    expect(result).toEqual({ ok: false, code: 'RATE_LIMITED', message: 'Zu viele Anfragen. Versuch es in 5 Minuten noch einmal.' });
+  it('passes the German server message through by code, with the right next step', async () => {
+    const expired = await sendMappeFollowUp(input, {
+      fetch: json(403, { ok: false, code: 'INVALID_TOKEN', message: 'Der Link zum Ergänzen ist abgelaufen.' }),
+      online: true,
+    });
+    expect(expired).toMatchObject({ ok: false, message: 'Der Link zum Ergänzen ist abgelaufen.', action: 'none' });
+
+    const tooLarge = await sendMappeFollowUp(input, {
+      fetch: json(413, { ok: false, code: 'PAYLOAD_TOO_LARGE', message: 'Bitte kürze deine Nachricht.' }),
+      online: true,
+    });
+    expect(tooLarge).toMatchObject({ message: 'Die Mappe ist zu groß. Bitte kürze das Anschreiben oder die Aufgaben.', action: 'none' });
+
+    const limited = await sendMappeFollowUp(input, {
+      fetch: json(429, { ok: false, code: 'RATE_LIMITED', message: 'Zu viele Anfragen.', retryAfterSec: 300 }),
+      online: true,
+    });
+    expect(limited).toMatchObject({ message: expect.stringContaining('in 5 Minuten'), action: 'retry' });
   });
 
-  it('turns network failures and non-JSON errors into honest messages', async () => {
-    const offline = await sendMappeFollowUp({ reference: 'R', token: 't', mappe }, vi.fn(async () => Promise.reject(new TypeError('offline'))));
-    expect(offline).toMatchObject({ ok: false, code: 'NETWORK' });
-    const html = await sendMappeFollowUp({ reference: 'R', token: 't', mappe }, vi.fn(async () => new Response('<html>', { status: 503 })));
-    expect(html).toMatchObject({ ok: false, code: 'SERVICE_UNAVAILABLE' });
+  it('detects offline, network errors, non-JSON errors and stalled connections', async () => {
+    const neverCalled = vi.fn();
+    const offline = await sendMappeFollowUp(input, { fetch: neverCalled, online: false });
+    expect(offline).toMatchObject({ ok: false, action: 'retry', failure: { kind: 'offline' } });
+    expect(neverCalled).not.toHaveBeenCalled();
+
+    const network = await sendMappeFollowUp(input, { fetch: vi.fn(async () => Promise.reject(new TypeError('failed'))), online: true });
+    expect(network).toMatchObject({ ok: false, failure: { kind: 'network' } });
+
+    const html = await sendMappeFollowUp(input, { fetch: vi.fn(async () => new Response('<html>', { status: 503 })), online: true });
+    expect(html).toMatchObject({ ok: false, action: 'retry', message: expect.stringContaining('Server antwortet gerade nicht') });
+
+    const stalled = vi.fn(
+      (_url: string, init?: RequestInit) =>
+        new Promise<Response>((_resolve, reject) => init?.signal?.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')))),
+    );
+    const timeout = await sendMappeFollowUp(input, { fetch: stalled as unknown as typeof fetch, online: true, timeoutMs: 10 });
+    expect(timeout).toMatchObject({ ok: false, failure: { kind: 'timeout' } });
   });
 });

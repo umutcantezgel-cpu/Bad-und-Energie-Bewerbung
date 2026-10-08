@@ -54,7 +54,9 @@ export function SkillsSection({ step, skills, onToggle, onAdd }: SkillsSectionPr
               pressed={pressed}
               disabled={!pressed && full}
               onClick={() => onToggle(skill)}
-              className="max-w-full shrink py-2 text-left"
+              // Long skills wrap: rounded-lg instead of a pill keeps two-line chips calm, and on
+              // phones every chip takes the full width, so the list reads as one even column.
+              className="max-w-full shrink rounded-lg py-2 text-left max-sm:w-full"
             >
               {skill}
             </Chip>
@@ -67,6 +69,7 @@ export function SkillsSection({ step, skills, onToggle, onAdd }: SkillsSectionPr
           <div className="flex gap-3">
             <Input
               name="schwerpunkt"
+              className="min-w-0 flex-1"
               autoComplete="off"
               maxLength={MAPPE_LIMITS.skill}
               value={custom}
@@ -75,9 +78,10 @@ export function SkillsSection({ step, skills, onToggle, onAdd }: SkillsSectionPr
                 if (error) setError(null);
               }}
             />
-            <Button type="submit" variant="secondary" size="lg" disabled={full}>
+            {/* Icon only on phones, so the text field keeps most of the row; the name stays „Hinzufügen“. */}
+            <Button type="submit" variant="secondary" size="lg" disabled={full} className="max-sm:w-13 max-sm:px-0">
               <Plus aria-hidden="true" strokeWidth={1.75} className="size-5" />
-              Hinzufügen
+              <span className="max-sm:sr-only">Hinzufügen</span>
             </Button>
           </div>
         </Field>

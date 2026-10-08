@@ -48,14 +48,22 @@ export function MappeActions({
 }: MappeActionsProps) {
   const primaryLabel = mode === 'followUp' ? 'Mappe nachreichen' : 'Mit dieser Mappe bewerben';
   const primaryHint =
-    mode === 'followUp'
-      ? reference
-        ? `Wird an deine Bewerbung ${reference} angehängt.`
-        : 'Wird an deine Bewerbung angehängt.'
-      : 'Im nächsten Schritt schickst du deine Bewerbung ab. Die Mappe wird angehängt.';
+    mode === 'followUp' ? (
+      reference ? (
+        <>
+          Wird an deine Bewerbung <span className="whitespace-nowrap">{reference}</span> angehängt.
+        </>
+      ) : (
+        'Wird an deine Bewerbung angehängt.'
+      )
+    ) : (
+      'Im nächsten Schritt schickst du deine Bewerbung ab. Die Mappe wird angehängt.'
+    );
 
   return (
-    <div className={cn('flex flex-col gap-5 rounded-lg bg-surface-2 p-5 sm:p-6 print-hidden', className)}>
+    // No flex gap: the live regions below stay in the DOM while empty (so they announce reliably)
+    // and must not add space then. Only children with content get the 20px step.
+    <div className={cn('flex flex-col rounded-lg bg-surface-2 p-5 *:not-first:not-empty:mt-5 sm:p-6 print-hidden', className)}>
       <div className="flex flex-col gap-2">
         <Button size="lg" loading={busy} onClick={onPrimary} fullWidth className="sm:w-auto sm:self-start">
           {primaryLabel}
@@ -77,7 +85,7 @@ export function MappeActions({
             <CircleCheck aria-hidden="true" strokeWidth={2} className="mt-0.5 size-5 shrink-0 text-success" />
             <span>
               Deine Mappe ist angekommen und gehört jetzt zu deiner Bewerbung{' '}
-              <span className="tabular-nums">{feedback.reference}</span>.
+              <span className="whitespace-nowrap">{feedback.reference}</span>.
             </span>
           </p>
         )}

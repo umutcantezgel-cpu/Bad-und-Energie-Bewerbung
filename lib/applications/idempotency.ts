@@ -1,8 +1,9 @@
 /**
  * Begrenzter LRU-Speicher mit Ablaufzeit für Idempotenz (Phase 1, im Arbeitsspeicher).
- * Gilt nur pro Server-Instanz; Wiederholungen, die auf einer anderen Instanz landen, fängt
- * zusätzlich der Idempotency-Key von Resend ab (siehe lib/email/resend.ts). Phase 2 speichert
- * den Schlüssel in der Datenbank (`applications.idempotency_key`).
+ * Gilt nur pro Server-Instanz. Für Wiederholungen auf einer anderen Instanz sorgen die aus dem
+ * Key abgeleitete Bewerbungsnummer (lib/applications/reference.ts) und Resend-Keys ohne
+ * Eingangszeit (lib/email/resend.ts), siehe EmailSink. Phase 2 speichert den Schlüssel in der
+ * Datenbank (`applications.idempotency_key`).
  */
 
 export const IDEMPOTENCY_TTL_MS = 24 * 60 * 60 * 1000;

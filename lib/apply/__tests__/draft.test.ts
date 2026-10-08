@@ -70,6 +70,25 @@ describe('serialize and parse', () => {
     expect(parseDraft(null, NOW)).toBeNull();
   });
 
+  it('keeps the first interaction and the idempotency key across reloads', () => {
+    const key = '3b241101-e2bb-4255-8caf-4136c566a962';
+    const raw = serializeDraft(createDraft({ ...content, firstInteractionAt: NOW - 90_000, idempotencyKey: key }, NOW));
+    expect(parseDraft(raw, NOW + 1000)).toMatchObject({ firstInteractionAt: NOW - 90_000, idempotencyKey: key });
+  });
+
+  it('drops an implausible first interaction or a malformed key, but keeps the draft', () => {
+    const raw = JSON.stringify({ ...createDraft(content, NOW), firstInteractionAt: NOW + 60_000, idempotencyKey: 'nope' });
+    const draft = parseDraft(raw, NOW);
+    expect(draft).toMatchObject({ name: 'Max Muster' });
+    expect(draft).not.toHaveProperty('firstInteractionAt');
+    expect(draft).not.toHaveProperty('idempotencyKey');
+  });
+
+  it('keeps only valid option ids as answers', () => {
+    const raw = JSON.stringify({ ...createDraft(content, NOW), answers: { qualification: 'erfunden', start: 'sofort', foo: 'bar' } });
+    expect(parseDraft(raw, NOW)?.answers).toEqual({ start: 'sofort' });
+  });
+
   it('repairs single invalid fields instead of dropping the whole draft', () => {
     const raw = JSON.stringify({ ...createDraft(content, NOW), jobId: 'gibt-es-nicht', contactChannel: 'fax', answers: { foo: 1 } });
     expect(parseDraft(raw, NOW)).toMatchObject({ jobId: null, contactChannel: 'whatsapp', answers: {}, name: 'Max Muster' });

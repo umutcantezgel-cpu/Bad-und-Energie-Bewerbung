@@ -1,15 +1,12 @@
 import {
-  attributionSchema,
+  HONEYPOT_FIELD,
   PRIVACY_NOTICE_VERSION,
   type ApiErrorCode,
-  type ApplicationAnswers,
-  type ApplicationFollowUp,
-  type ApplicationInput,
   type ApplicationJobId,
-  type Attribution,
   type ContactChannel,
-  type Mappe,
-} from '@/lib/applications/schema';
+} from '@/lib/applications/constants';
+import type { ApplicationAnswers, ApplicationFollowUp, ApplicationInput, Attribution, Mappe } from '@/lib/applications/schema';
+import { ATTRIBUTION_KEYS, ATTRIBUTION_LIMITS } from '@/lib/attribution/sanitize';
 
 /**
  * Ehrliches Absenden (ROADMAP §6, C8): Es zählt nur eine Antwort 200 mit `ok: true`.
@@ -77,12 +74,10 @@ export function firstNameOf(name: string): string {
   return name.trim().split(/\s+/)[0] ?? '';
 }
 
-const ATTRIBUTION_KEYS = Object.keys(attributionSchema.shape) as (keyof Attribution)[];
-
 /**
  * Attribution aus dem Store, ergänzt um den Funnel des Einstiegs (Prop schlägt Store).
- * Nur bekannte, gültige Felder: Das Schema ist strict, ein fremdes Feld würde sonst die ganze
- * Bewerbung ablehnen lassen.
+ * Nur bekannte, gültige Felder (getrimmt, innerhalb der Höchstlänge des Schemas): Das Schema
+ * ist strict, ein fremdes Feld würde sonst die ganze Bewerbung ablehnen lassen.
  */
 export function mergeAttribution(base: Partial<Record<string, unknown>> | null | undefined, funnel?: string | null): Attribution {
   const result: Attribution = {};
@@ -91,9 +86,9 @@ export function mergeAttribution(base: Partial<Record<string, unknown>> | null |
   if (value) source.funnel = value;
   for (const key of ATTRIBUTION_KEYS) {
     const raw = source[key];
-    if (typeof raw !== 'string' || raw.trim() === '') continue;
-    const parsed = attributionSchema.shape[key].safeParse(raw);
-    if (parsed.success && parsed.data) result[key] = parsed.data;
+    if (typeof raw !== 'string') continue;
+    const value = raw.trim();
+    if (value && value.length <= ATTRIBUTION_LIMITS[key]) result[key] = value;
   }
   return result;
 }
@@ -105,11 +100,21 @@ export interface PayloadInput {
   phone: string;
   email?: string;
   contactChannel: ContactChannel;
-  website?: string;
+  /** Inhalt des Honeypot-Felds; nur gesendet, wenn etwas drinsteht. */
+  honeypot?: string;
   mappe?: Mappe | null;
   attribution?: Attribution;
   idempotencyKey: string;
-  startedAt?: number;
+  /** Erste Eingabe im Flow (ms, Uhr des Browsers); daraus wird die Ausfülldauer. */
+  firstInteractionAt?: number | null;
+  /** Zeitpunkt des Absendens (Tests). */
+  now?: number;
+}
+
+/** Ausfülldauer in ms (erste Eingabe bis Absenden) oder undefined, wenn unbekannt. */
+export function fillDurationOf(firstInteractionAt: number | null | undefined, now: number = Date.now()): number | undefined {
+  if (typeof firstInteractionAt !== 'number' || !Number.isFinite(firstInteractionAt) || firstInteractionAt <= 0) return undefined;
+  return Math.max(0, Math.round(now - firstInteractionAt));
 }
 
 export function buildApplicationPayload(input: PayloadInput): ApplicationInput {
@@ -126,8 +131,9 @@ export function buildApplicationPayload(input: PayloadInput): ApplicationInput {
   };
   if (email) payload.email = email;
   if (input.mappe) payload.mappe = input.mappe;
-  if (typeof input.startedAt === 'number' && input.startedAt > 0) payload.startedAt = Math.floor(input.startedAt);
-  if (input.website) payload.website = input.website;
+  const fillDurationMs = fillDurationOf(input.firstInteractionAt, input.now);
+  if (fillDurationMs !== undefined) payload.fillDurationMs = fillDurationMs;
+  if (input.honeypot) payload[HONEYPOT_FIELD] = input.honeypot;
   return payload;
 }
 

@@ -1,8 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 import { applicationInputSchema, PRIVACY_NOTICE_VERSION } from '@/lib/applications/schema';
+import { describeFailure } from '../failure';
 import {
   buildApplicationPayload,
   createIdempotencyKey,
+  fillDurationOf,
   firstNameOf,
   formatRetryAfter,
   interpretApplicationResponse,
@@ -23,8 +25,20 @@ const payload = buildApplicationPayload({
   contactChannel: 'whatsapp',
   attribution: { utmSource: 'indeed', funnel: 'bewerbung' },
   idempotencyKey: KEY,
-  startedAt: 1_759_910_400_000,
+  firstInteractionAt: 1_759_910_400_000,
+  now: 1_759_910_442_500,
 });
+
+function baseInput() {
+  return {
+    jobId: 'initiativ' as const,
+    answers: {},
+    name: 'Max Muster',
+    phone: '0151 2345678',
+    contactChannel: 'whatsapp' as const,
+    idempotencyKey: KEY,
+  };
+}
 
 function jsonResponse(status: number, body: unknown, headers: Record<string, string> = {}) {
   return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', ...headers } });
@@ -35,8 +49,24 @@ describe('payload', () => {
     expect(applicationInputSchema.safeParse(payload).success).toBe(true);
     expect(payload).toMatchObject({ name: 'Max Muster', privacyNoticeVersion: PRIVACY_NOTICE_VERSION, idempotencyKey: KEY });
     expect(payload).not.toHaveProperty('email');
-    expect(payload).not.toHaveProperty('website');
+    expect(payload).not.toHaveProperty('contactTimeHint');
+    expect(payload).not.toHaveProperty('startedAt');
     expect(payload).not.toHaveProperty('mappe');
+  });
+
+  it('sends the fill duration measured on the client instead of a timestamp', () => {
+    expect(payload.fillDurationMs).toBe(42_500);
+    expect(fillDurationOf(1000, 400)).toBe(0); // Uhr zurückgestellt: nie negativ
+    expect(fillDurationOf(null, 5000)).toBeUndefined();
+    expect(fillDurationOf(0, 5000)).toBeUndefined();
+    const withoutStart = buildApplicationPayload({ ...baseInput(), firstInteractionAt: null });
+    expect(withoutStart).not.toHaveProperty('fillDurationMs');
+  });
+
+  it('passes a filled honeypot on under its own field name', () => {
+    const hit = buildApplicationPayload({ ...baseInput(), honeypot: 'bot' });
+    expect(hit.contactTimeHint).toBe('bot');
+    expect(applicationInputSchema.parse(hit).contactTimeHint).toBe('bot');
   });
 
   it('merges the funnel into the attribution and drops empty values', () => {
@@ -77,7 +107,7 @@ describe('response interpretation', () => {
     const result = interpretApplicationResponse(400, {
       ok: false,
       code: 'VALIDATION_FAILED',
-      message: 'Bitte prüfe deine Angaben.',
+      message: 'Bitte prüf deine Angaben.',
       fieldErrors: { phone: ['Bitte gib eine gültige Telefonnummer an.'], jobId: ['Ungültig'], 'answers.start': ['x'] },
     });
     expect(result).toMatchObject({
@@ -187,5 +217,48 @@ describe('submitApplication (mocked fetch)', () => {
       kind: 'server',
       code: 'INVALID_TOKEN',
     });
+  });
+});
+
+describe('describeFailure', () => {
+  const failure = (status: number, body: unknown) => interpretApplicationResponse(status, body) as Exclude<
+    ReturnType<typeof interpretApplicationResponse>,
+    { ok: true }
+  >;
+
+  it('shows the German server message by code and offers retry only where it can help', () => {
+    const expired = 'Der Link zum Ergänzen ist abgelaufen. Schick uns deine Angaben bitte per WhatsApp oder E-Mail und nenn deine Bewerbungsnummer.';
+    expect(describeFailure(failure(403, { ok: false, code: 'INVALID_TOKEN', message: expired }))).toEqual({ detail: expired, action: 'none' });
+    expect(describeFailure(failure(403, { ok: false, code: 'CSRF_FAILED', message: 'Bitte lade die Seite neu.' }))).toEqual({
+      detail: 'Bitte lade die Seite neu.',
+      action: 'reload',
+    });
+    expect(describeFailure(failure(413, { ok: false, code: 'PAYLOAD_TOO_LARGE', message: 'Zu lang.' }))).toEqual({ detail: 'Zu lang.', action: 'none' });
+    expect(describeFailure(failure(415, { ok: false, code: 'UNSUPPORTED_MEDIA_TYPE', message: 'Neu laden.' })).action).toBe('reload');
+    expect(describeFailure(failure(400, { ok: false, code: 'INVALID_JSON', message: 'Neu laden.' })).action).toBe('reload');
+    expect(describeFailure(failure(503, { ok: false, code: 'SERVICE_UNAVAILABLE', message: 'Ruf uns an.' }))).toEqual({
+      detail: 'Ruf uns an.',
+      action: 'retry',
+    });
+    expect(describeFailure(failure(500, { ok: false, code: 'INTERNAL', message: 'Noch einmal.' })).action).toBe('retry');
+  });
+
+  it('falls back to its own text when the server sends no message, and to the generic text without a code', () => {
+    expect(describeFailure(failure(403, { ok: false, code: 'INVALID_TOKEN' })).detail).toMatch(/keiner Bewerbung zuordnen/);
+    expect(describeFailure(failure(502, null))).toEqual({
+      detail: 'Unser Server antwortet gerade nicht. Sende deine Angaben gleich noch einmal oder melde dich direkt bei uns.',
+      action: 'retry',
+    });
+  });
+
+  it('prefers context overrides (e.g. the Mappe) over the server text', () => {
+    const tooLarge = failure(413, { ok: false, code: 'PAYLOAD_TOO_LARGE', message: 'Bitte kürze deine Nachricht.' });
+    expect(describeFailure(tooLarge, { PAYLOAD_TOO_LARGE: 'Die Mappe ist zu groß.' }).detail).toBe('Die Mappe ist zu groß.');
+  });
+
+  it('keeps network, offline and rate-limit texts', () => {
+    expect(describeFailure({ ok: false, kind: 'offline', fieldErrors: {}, otherErrors: {} })).toMatchObject({ action: 'retry' });
+    expect(describeFailure({ ok: false, kind: 'timeout', fieldErrors: {}, otherErrors: {} }).detail).toMatch(/Verbindung ist abgebrochen/);
+    expect(describeFailure(failure(429, { ok: false, code: 'RATE_LIMITED', message: 'x', retryAfterSec: 120 })).detail).toMatch(/in 2 Minuten/);
   });
 });

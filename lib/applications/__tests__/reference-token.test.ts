@@ -6,6 +6,7 @@ import {
   normalizeReference,
   REFERENCE_ALPHABET,
   REFERENCE_PATTERN,
+  referenceForKey,
   referenceYear,
 } from '@/lib/applications/reference';
 import {
@@ -21,6 +22,33 @@ const DAY = 24 * 60 * 60 * 1000;
 
 afterEach(() => {
   vi.unstubAllEnvs();
+});
+
+describe('referenceForKey', () => {
+  const KEY = '7f9c1b9e-3c0f-4d5e-9a51-1c2b3d4e5f60';
+
+  it('derives the same reference from the same key and secret (any instance)', () => {
+    const reference = referenceForKey(KEY, NOW, SECRET);
+    expect(reference).toMatch(/^BE-26-[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{6}$/);
+    expect(referenceForKey(KEY, new Date('2026-10-08T23:59:00Z'), SECRET)).toBe(reference);
+    expect(referenceForKey(KEY, NOW, 'another-secret-with-at-least-32-chars!!')).not.toBe(reference);
+    expect(referenceForKey('11111111-1111-4111-8111-111111111111', NOW, SECRET)).not.toBe(reference);
+  });
+
+  it('spreads keys over the alphabet without collisions in practice', () => {
+    const keys = Array.from({ length: 2000 }, (_, i) => `00000000-0000-4000-8000-${String(i).padStart(12, '0')}`);
+    const references = keys.map((key) => referenceForKey(key, NOW, SECRET));
+    expect(new Set(references).size).toBe(2000);
+    const used = new Set(references.flatMap((reference) => reference.slice(6).split('')));
+    expect(used.size).toBe(REFERENCE_ALPHABET.length);
+  });
+
+  it('uses APPLICATION_TOKEN_SECRET by default and fails without it in production', () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('VERCEL_ENV', 'production');
+    vi.stubEnv('APPLICATION_TOKEN_SECRET', '');
+    expect(() => referenceForKey(KEY, NOW)).toThrow(EnvError);
+  });
 });
 
 describe('createReference', () => {

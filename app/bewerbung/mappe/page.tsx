@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { Container } from '@/components/layout';
 import { MappeTool } from '@/components/mappe';
-import { ContactOptions } from '@/components/site';
-import { PageHeader } from '@/components/ui';
+import { ContactOptions } from '@/components/site/ContactOptions';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { getFact } from '@/lib/content';
 import { getMappeJobOptions, getMappeRecipient, getMappeWhatsAppMessage } from '@/lib/mappe/context';
 import { generatePageMetadata } from '@/lib/seo/metadata';
@@ -15,7 +15,10 @@ export const metadata: Metadata = generatePageMetadata({
   noindex: true,
 });
 
-/** Optional tool outside the application path (roadmap §6). Static: drafts live in the browser tab. */
+/**
+ * Optional tool outside the application path (roadmap §6). Static (drafts live in the browser tab),
+ * regenerated hourly through the root layout's `revalidate`, so expired jobs drop out of the list.
+ */
 export default function BewerbungsmappePage() {
   const noCvNeeded = getFact('noCvNeeded');
 
@@ -28,7 +31,7 @@ export default function BewerbungsmappePage() {
       />
       <MappeTool
         className="mt-12"
-        jobs={getMappeJobOptions()}
+        jobs={getMappeJobOptions(new Date())}
         recipient={getMappeRecipient()}
         contact={<ContactOptions variant="inline" whatsappMessage={getMappeWhatsAppMessage()} />}
       />

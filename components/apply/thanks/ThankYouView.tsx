@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Check, Mail, MessageCircle, UserPlus } from 'lucide-react';
+import { OpeningHoursText } from '@/components/site/OpeningHoursText';
 import { Button } from '@/components/ui/Button';
 import { TextLink } from '@/components/ui/TextLink';
 import { formatBerlinDateTime, isWithinOpeningHours } from '@/lib/apply/office-hours';
@@ -27,7 +28,7 @@ interface TimelineItem {
   id: string;
   title: string;
   text?: string;
-  note?: string;
+  note?: ReactNode;
   done?: boolean;
 }
 
@@ -69,7 +70,12 @@ export function ThankYouView({ jobs, processSteps, company, quickResponse, noCvN
       text: quickResponse,
       note: officeOpen
         ? undefined
-        : `Gerade ist unser Büro nicht besetzt. Wir melden uns zu den Öffnungszeiten: ${company.openingHoursShort}.`,
+        : (
+            <>
+              Gerade ist unser Büro nicht besetzt. Wir melden uns zu den Öffnungszeiten:{' '}
+              <OpeningHoursText text={company.openingHoursShort} />.
+            </>
+          ),
     },
     ...steps.filter((step) => step.id !== 'bewerben').map((step) => ({ id: step.id, title: step.title, text: step.text })),
   ];
@@ -82,16 +88,18 @@ export function ThankYouView({ jobs, processSteps, company, quickResponse, noCvN
         <p className="text-lead text-ink-muted">Deine Bewerbung ist da.</p>
       </header>
 
-      <dl className="grid gap-x-6 gap-y-3 rounded-lg bg-surface-2 p-6 sm:grid-cols-[auto_1fr]">
+      {/* One column on phones: tight label/value pairs (gap-y-1), a larger step between pairs (dt mt-3). */}
+      <dl className="grid gap-x-6 gap-y-1 rounded-lg bg-surface-2 p-6 sm:grid-cols-[auto_1fr] sm:gap-y-3">
         <dt className="text-callout text-ink-muted">Bewerbungsnummer</dt>
-        <dd className="text-body font-semibold tabular-nums text-ink">{record.reference}</dd>
+        {/* No tabular-nums: Inter's tnum widens the hyphens in „BE-26-K7M4QX“. */}
+        <dd className="text-body font-semibold text-ink">{record.reference}</dd>
         {job && (
           <>
-            <dt className="text-callout text-ink-muted">Stelle</dt>
+            <dt className="mt-3 text-callout text-ink-muted sm:mt-0">Stelle</dt>
             <dd className="text-body text-ink">{job.label}</dd>
           </>
         )}
-        <dt className="text-callout text-ink-muted">Eingegangen</dt>
+        <dt className="mt-3 text-callout text-ink-muted sm:mt-0">Eingegangen</dt>
         <dd className="text-body tabular-nums text-ink">{formatBerlinDateTime(new Date(record.submittedAt))}</dd>
       </dl>
 
@@ -136,7 +144,7 @@ export function ThankYouView({ jobs, processSteps, company, quickResponse, noCvN
           Unterlagen schicken
         </h2>
         <p className="max-w-prose text-body text-ink-muted">
-          {noCvNeeded} Wenn du Zeugnisse oder einen Lebenslauf zur Hand hast, kannst du sie per WhatsApp oder E-Mail nachreichen.
+          {noCvNeeded} Wenn du Zeugnisse oder einen Lebenslauf zur Hand hast, kannst du sie per WhatsApp oder E‑Mail nachreichen.
           Nenn dabei deine Bewerbungsnummer.
         </p>
         <div className="flex flex-wrap gap-3">

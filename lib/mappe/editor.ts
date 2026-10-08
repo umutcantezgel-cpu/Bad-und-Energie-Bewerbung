@@ -1,11 +1,6 @@
-import { z } from 'zod';
-import {
-  INITIATIVE_JOB_ID,
-  applicationJobIdSchema,
-  mappeSchema,
-  type ApplicationJobId,
-  type Mappe,
-} from '@/lib/applications/schema';
+import { INITIATIVE_JOB_ID, isApplicationJobId, type ApplicationJobId } from '@/lib/applications/constants';
+import { parseMappeData } from '@/lib/applications/mappe-data';
+import type { Mappe } from '@/lib/applications/schema';
 import { MAPPE_LIMITS, WORK_STYLE_IDS, getWorkStyle, workStyleIdFromValue, type WorkStyleId } from './options';
 import {
   createStationId,
@@ -187,12 +182,11 @@ export function toMappe(state: MappeEditorState, context: MappeContext): Mappe {
 
 export type SerializeResult = { ok: true; mappe: Mappe } | { ok: false; message: string };
 
-/** Mappe bauen und gegen mappeSchema prüfen, bevor sie gespeichert oder gesendet wird. */
+/** Mappe bauen und mit den Regeln von mappeSchema prüfen (ohne zod), bevor sie gespeichert oder gesendet wird. */
 export function serializeMappe(state: MappeEditorState, context: MappeContext): SerializeResult {
-  const parsed = mappeSchema.safeParse(toMappe(state, context));
-  if (parsed.success) return { ok: true, mappe: parsed.data };
-  const issue = parsed.error.issues[0];
-  return { ok: false, message: describeIssue(issue?.path ?? []) };
+  const parsed = parseMappeData(toMappe(state, context));
+  if (parsed.ok) return { ok: true, mappe: parsed.mappe };
+  return { ok: false, message: describeIssue(parsed.path) };
 }
 
 const SECTION_LABELS: Record<string, string> = {
@@ -233,51 +227,83 @@ export function fromMappe(mappe: Mappe, jobId: ApplicationJobId | '' = ''): Mapp
   };
 }
 
-/* Wiederherstellung aus sessionStorage: tolerant, ungültige Teile fallen auf leer zurück. */
+/* Wiederherstellung aus sessionStorage: tolerant, ungültige Teile fallen auf leer zurück (ohne zod). */
 
-const text = (max: number) => z.string().max(max).catch('');
-const stationId = z.string().min(1).max(64);
 /** Bis zu 8 Aufgaben à 200 Zeichen plus Zeilenumbrüche; der Rest wird beim Senden abgeschnitten. */
-const TASKS_TEXT_MAX = MAPPE_LIMITS.tasksPerStation * (MAPPE_LIMITS.task + 1) * 2;
+export const TASKS_TEXT_MAX = MAPPE_LIMITS.tasksPerStation * (MAPPE_LIMITS.task + 1) * 2;
 
-export const editorStateSchema = z.object({
-  person: z
-    .object({
-      name: text(MAPPE_LIMITS.name),
-      phone: text(MAPPE_LIMITS.phone),
-      email: text(MAPPE_LIMITS.email),
-      location: text(MAPPE_LIMITS.location),
-    })
-    .catch({ ...EMPTY_PERSON }),
-  jobId: z.union([applicationJobIdSchema, z.literal('')]).catch(''),
-  skills: z.array(z.string().min(1).max(MAPPE_LIMITS.skill)).max(MAPPE_LIMITS.skills).catch([]),
-  workStyleId: z.enum(WORK_STYLE_IDS).nullable().catch(null),
-  customLetter: z.string().max(MAPPE_LIMITS.coverLetter).nullable().catch(null),
-  careerStations: z
-    .array(
-      z.object({
-        id: stationId,
-        period: text(MAPPE_LIMITS.period),
-        role: text(MAPPE_LIMITS.role),
-        company: text(MAPPE_LIMITS.company),
-        location: text(MAPPE_LIMITS.location),
-        tasks: text(TASKS_TEXT_MAX),
-      }),
-    )
-    .max(MAPPE_LIMITS.careerStations)
-    .catch([]),
-  educationStations: z
-    .array(
-      z.object({
-        id: stationId,
-        period: text(MAPPE_LIMITS.period),
-        degree: text(MAPPE_LIMITS.degree),
-        institution: text(MAPPE_LIMITS.institution),
-        location: text(MAPPE_LIMITS.location),
-      }),
-    )
-    .max(MAPPE_LIMITS.educationStations)
-    .catch([]),
-}) satisfies z.ZodType<MappeEditorState>;
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
 
-export { TASKS_TEXT_MAX };
+/** Text bis `max` Zeichen, sonst leer. */
+function text(value: unknown, max: number): string {
+  return typeof value === 'string' && value.length <= max ? value : '';
+}
+
+function isStationId(value: unknown): value is string {
+  return typeof value === 'string' && value.length >= 1 && value.length <= 64;
+}
+
+/** Liste bis `max` Einträge, in der jeder Eintrag gültig ist; sonst leer (wie zuvor `.catch([])`). */
+function strictList<T>(value: unknown, max: number, item: (entry: unknown) => T | null): T[] {
+  if (!Array.isArray(value) || value.length > max) return [];
+  const items: T[] = [];
+  for (const entry of value) {
+    const parsed = item(entry);
+    if (parsed === null) return [];
+    items.push(parsed);
+  }
+  return items;
+}
+
+function careerDraft(value: unknown): CareerStationDraft | null {
+  if (!isRecord(value) || !isStationId(value.id)) return null;
+  return {
+    id: value.id,
+    period: text(value.period, MAPPE_LIMITS.period),
+    role: text(value.role, MAPPE_LIMITS.role),
+    company: text(value.company, MAPPE_LIMITS.company),
+    location: text(value.location, MAPPE_LIMITS.location),
+    tasks: text(value.tasks, TASKS_TEXT_MAX),
+  };
+}
+
+function educationDraft(value: unknown): EducationStationDraft | null {
+  if (!isRecord(value) || !isStationId(value.id)) return null;
+  return {
+    id: value.id,
+    period: text(value.period, MAPPE_LIMITS.period),
+    degree: text(value.degree, MAPPE_LIMITS.degree),
+    institution: text(value.institution, MAPPE_LIMITS.institution),
+    location: text(value.location, MAPPE_LIMITS.location),
+  };
+}
+
+/** Gespeicherter Editor-Stand → gültiger Stand; einzelne ungültige Teile werden leer, statt alles zu verwerfen. */
+export function parseEditorState(value: unknown): MappeEditorState | null {
+  if (!isRecord(value)) return null;
+  const person = isRecord(value.person)
+    ? {
+        name: text(value.person.name, MAPPE_LIMITS.name),
+        phone: text(value.person.phone, MAPPE_LIMITS.phone),
+        email: text(value.person.email, MAPPE_LIMITS.email),
+        location: text(value.person.location, MAPPE_LIMITS.location),
+      }
+    : { ...EMPTY_PERSON };
+  const workStyleId = (WORK_STYLE_IDS as readonly unknown[]).includes(value.workStyleId) ? (value.workStyleId as WorkStyleId) : null;
+  const customLetter =
+    typeof value.customLetter === 'string' && value.customLetter.length <= MAPPE_LIMITS.coverLetter ? value.customLetter : null;
+
+  return {
+    person,
+    jobId: isApplicationJobId(value.jobId) ? value.jobId : '',
+    skills: strictList(value.skills, MAPPE_LIMITS.skills, (skill) =>
+      typeof skill === 'string' && skill.length >= 1 && skill.length <= MAPPE_LIMITS.skill ? skill : null,
+    ),
+    workStyleId,
+    customLetter,
+    careerStations: strictList(value.careerStations, MAPPE_LIMITS.careerStations, careerDraft),
+    educationStations: strictList(value.educationStations, MAPPE_LIMITS.educationStations, educationDraft),
+  };
+}

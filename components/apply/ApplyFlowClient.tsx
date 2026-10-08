@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useId, useReducer, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, type SubmitErrorHandler } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/Button';
 import { StepHeader } from '@/components/ui/StepHeader';
 import { Tag } from '@/components/ui/Tag';
 import { getAttribution } from '@/lib/attribution/store';
-import { applicationInputSchema, type ApplicationJobId, type Mappe } from '@/lib/applications/schema';
-import { contactFormSchema, EMPTY_CONTACT, type ContactFormInput, type ContactFormValues } from '@/lib/apply/contact-schema';
+import type { ApplicationJobId } from '@/lib/applications/constants';
+import type { Mappe } from '@/lib/applications/schema';
+import { contactResolver, EMPTY_CONTACT, type ContactFormInput, type ContactFormValues } from '@/lib/apply/contact-schema';
 import { clearDraft, loadDraft, saveDraft } from '@/lib/apply/draft';
 import {
   CONTACT_STEP,
@@ -34,7 +34,6 @@ import {
   buildApplicationPayload,
   createIdempotencyKey,
   firstNameOf,
-  mapFieldErrors,
   mergeAttribution,
   submitApplication,
   type SubmitFailure,
@@ -108,7 +107,7 @@ export function ApplyFlowClient({
   const [advancing, setAdvancing] = useState(false);
 
   const form = useForm<ContactFormInput, unknown, ContactFormValues>({
-    resolver: zodResolver(contactFormSchema),
+    resolver: contactResolver,
     mode: 'onTouched',
     defaultValues: EMPTY_CONTACT,
   });
@@ -120,8 +119,11 @@ export function ApplyFlowClient({
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const historyDepth = useRef(0);
-  const startedAt = useRef(0);
+  /** Erste Eingabe (auch aus dem Entwurf): Grundlage der Ausfülldauer für den Spam-Hinweis. */
+  const firstInteractionAt = useRef<number | null>(null);
+  /** Bleibt über Reloads im Entwurf, damit ein erneutes Senden dieselbe Bewerbung bleibt. */
   const idempotencyKey = useRef<string | null>(null);
+  const honeypotRef = useRef<HTMLInputElement>(null);
   const inFlight = useRef(false);
   const finished = useRef(false);
 
@@ -180,11 +182,11 @@ export function ApplyFlowClient({
   // Entwurf (sessionStorage, 24 h)
   // ---------------------------------------------------------------------------
 
-  const persistDraft = useCallback(() => {
+  const writeDraft = useCallback(() => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = null;
+    if (finished.current) return;
     const current = stateRef.current;
-    if (finished.current || !current.dirty) return;
     const values = form.getValues();
     saveDraft(
       {
@@ -194,10 +196,26 @@ export function ApplyFlowClient({
         phone: values.phone ?? '',
         email: values.email ?? '',
         contactChannel: values.contactChannel ?? 'whatsapp',
+        firstInteractionAt: firstInteractionAt.current ?? undefined,
+        idempotencyKey: idempotencyKey.current ?? undefined,
       },
       Date.now(),
     );
   }, [form]);
+
+  const persistDraft = useCallback(() => {
+    if (!stateRef.current.dirty) {
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+      saveTimer.current = null;
+      return;
+    }
+    writeDraft();
+  }, [writeDraft]);
+
+  /** Erste Auswahl oder Eingabe merken; ein wiederhergestellter Entwurf zählt nicht als neuer Start. */
+  const markInteraction = useCallback(() => {
+    firstInteractionAt.current ??= Date.now();
+  }, []);
 
   const scheduleDraft = useCallback(() => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
@@ -206,10 +224,14 @@ export function ApplyFlowClient({
 
   // Beim Laden: alten localStorage-Eintrag löschen, Entwurf und Mappe lesen, Schritt aus ?schritt=.
   useEffect(() => {
-    startedAt.current = Date.now();
     removeLegacyDossier();
 
     const draft = loadDraft(Date.now());
+    if (draft) {
+      // Ältere Entwürfe ohne Zeitpunkt: gespeichert heißt, es wurde spätestens dann schon ausgefüllt.
+      firstInteractionAt.current = draft.firstInteractionAt ?? draft.savedAt;
+      idempotencyKey.current = draft.idempotencyKey ?? null;
+    }
     // Vorauswahl (Prop oder ?stelle=) schlägt den Entwurf; eine inzwischen nicht mehr wählbare Stelle fällt weg.
     const draftJobId = draft?.jobId && options.some((option) => option.id === draft.jobId) ? draft.jobId : null;
     const jobId = initialJobId ?? draftJobId;
@@ -230,7 +252,6 @@ export function ApplyFlowClient({
         phone: draft.phone,
         email: draft.email,
         contactChannel: draft.contactChannel,
-        website: '',
       });
     }
     patchSession({ ready: true, mappe: readMappe() });
@@ -254,12 +275,13 @@ export function ApplyFlowClient({
       form.subscribe({
         formState: { values: true },
         callback: ({ name }) => {
-          if (!name || name === 'website') return; // reset() beim Wiederherstellen zählt nicht als Eingabe
+          if (!name) return; // reset() beim Wiederherstellen zählt nicht als Eingabe
+          markInteraction();
           dispatch({ type: 'touch' });
           scheduleDraft();
         },
       }),
-    [form, scheduleDraft],
+    [form, scheduleDraft, markInteraction],
   );
 
   // Ausstehenden Entwurf sichern, wenn die Seite verlassen wird; Timer aufräumen.
@@ -329,6 +351,7 @@ export function ApplyFlowClient({
   };
 
   const handleSelectJob = (option: FlowJobOption) => {
+    markInteraction();
     const action = { type: 'selectJob', jobId: option.id, questionSet: option.questionSet } as const;
     const next = flowReducer(state, action);
     dispatch(action);
@@ -336,6 +359,7 @@ export function ApplyFlowClient({
   };
 
   const handleAnswer = (key: AnswerKey, value: string) => {
+    markInteraction();
     const action = { type: 'answer', key, value } as const;
     const next = flowReducer(state, action);
     dispatch(action);
@@ -387,7 +411,18 @@ export function ApplyFlowClient({
       return;
     }
 
-    idempotencyKey.current ??= createIdempotencyKey();
+    // Kontaktfelder prüft der Resolver; fehlt noch eine Antwort (z. B. nach einem Stellenwechsel), dorthin.
+    const open = resolveStep(current, CONTACT_STEP);
+    if (open !== CONTACT_STEP) {
+      goToStep(open, 'push');
+      return;
+    }
+
+    if (!idempotencyKey.current) {
+      idempotencyKey.current = createIdempotencyKey();
+      // Sofort in den Entwurf: Geht die Antwort verloren und lädt die Person neu, bleibt es dieselbe Bewerbung.
+      writeDraft();
+    }
     const payload = buildApplicationPayload({
       jobId: current.jobId,
       answers: current.answers,
@@ -395,25 +430,12 @@ export function ApplyFlowClient({
       phone: values.phone,
       email: values.email,
       contactChannel: values.contactChannel,
-      website: values.website,
+      honeypot: honeypotRef.current?.value ?? '',
       mappe: session.includeMappe ? session.mappe : null,
       attribution: mergeAttribution(getAttribution(), funnel),
       idempotencyKey: idempotencyKey.current,
-      startedAt: startedAt.current,
+      firstInteractionAt: firstInteractionAt.current,
     });
-
-    // Gleicher Vertrag wie die API: Was hier durchfällt, würde der Server auch ablehnen.
-    const check = applicationInputSchema.safeParse(payload);
-    if (!check.success) {
-      const issues: Record<string, string[]> = {};
-      for (const issue of check.error.issues) (issues[String(issue.path[0])] ??= []).push(issue.message);
-      const { fieldErrors, otherErrors } = mapFieldErrors(issues);
-      if (focusFieldErrors(fieldErrors)) return;
-      if (otherErrors.jobId || otherErrors.answers) {
-        goToStep(resolveStep(current, CONTACT_STEP), 'push');
-        return;
-      }
-    }
 
     inFlight.current = true;
     setSubmit({ status: 'submitting' });
@@ -433,8 +455,11 @@ export function ApplyFlowClient({
         submittedAt: new Date().toISOString(),
       });
       if (stored) {
-        // replace: Ein Reload der Danke-Seite schickt nichts erneut.
-        router.replace(THANK_YOU_PATH);
+        // page: replace, damit Zurück nicht in den abgeschickten Flow führt (die Schritte haben eigene
+        // Einträge). Eingebettet: push, damit Zurück wieder auf der Stellenseite landet. Ein erneutes
+        // Senden ist in beiden Fällen ausgeschlossen (Entwurf gelöscht, finished gesetzt).
+        if (isPage) router.replace(THANK_YOU_PATH);
+        else router.push(THANK_YOU_PATH);
       } else {
         focusPending.current = true;
         setSubmit({ status: 'done', reference: result.reference, firstName });
@@ -451,10 +476,6 @@ export function ApplyFlowClient({
   const onInvalid: SubmitErrorHandler<ContactFormInput> = () => {
     // react-hook-form fokussiert das erste fehlerhafte Feld; ein altes Fehlerpanel passt nicht mehr.
     if (submit.status === 'error') setSubmit({ status: 'idle' });
-  };
-
-  const retry = () => {
-    void form.handleSubmit(onValid, onInvalid)();
   };
 
   // ---------------------------------------------------------------------------
@@ -504,7 +525,7 @@ export function ApplyFlowClient({
         failure={submit.status === 'error' ? submit.failure : null}
         onValid={onValid}
         onInvalid={onInvalid}
-        onRetry={retry}
+        honeypotRef={honeypotRef}
         phoneHref={contact.phoneHref}
         application={{ jobLabel, questionSet: state.questionSet, answers: state.answers }}
         mappe={{

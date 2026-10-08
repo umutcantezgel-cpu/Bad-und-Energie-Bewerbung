@@ -37,7 +37,13 @@ describe('question sets', () => {
 
   it('quereinstieg: background, licence B, then start', () => {
     expect(ids('quereinstieg')).toEqual(['background', 'licenseB', 'start']);
-    expect(optionIds('background')).toEqual(['handwerk', 'andere-branche']);
+    expect(optionIds('background')).toEqual(['handwerk', 'andere-branche', 'etwas-anderes']);
+    // Unterscheidbare Texte: nicht zweimal „andere Branche“.
+    expect(getQuestion('background')?.options.map((option) => option.label)).toEqual([
+      'Im Handwerk (anderes Gewerk)',
+      'In einer anderen Branche',
+      'Gerade etwas anderes',
+    ]);
     expect(getQuestion('licenseB')?.title).toBe('Hast du einen Führerschein Klasse B?');
     expect(optionIds('licenseB')).toEqual(['yes', 'no']);
   });
@@ -86,7 +92,7 @@ describe('answers', () => {
 
   it('describes answers in set order', () => {
     expect(describeAnswers('quereinstieg', { start: 'spaeter', licenseB: 'yes', background: 'handwerk' })).toEqual([
-      { key: 'background', label: 'Aktuell', value: 'Handwerk, andere Branche' },
+      { key: 'background', label: 'Aktuell', value: 'Im Handwerk (anderes Gewerk)' },
       { key: 'licenseB', label: 'Führerschein Klasse B', value: 'Ja' },
       { key: 'start', label: 'Start', value: 'Später / weiß ich noch nicht' },
     ]);

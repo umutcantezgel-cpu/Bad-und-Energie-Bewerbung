@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/Button';
 import { Field } from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
-import { applicationFollowUpSchema, type ApplicationFollowUp } from '@/lib/applications/schema';
+import type { ApplicationFollowUp } from '@/lib/applications/schema';
+import { describeFailure } from '@/lib/apply/failure';
 import { submitFollowUp, type SubmitFailure } from '@/lib/apply/submit';
 import { buildFollowUpMessage } from '@/lib/apply/whatsapp-message';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
@@ -37,6 +38,7 @@ export function FollowUpForm({ reference, followUpToken, phoneHref }: FollowUpFo
   const postalRef = useRef<HTMLInputElement>(null);
   const startRef = useRef<HTMLInputElement>(null);
   const successRef = useRef<HTMLParagraphElement>(null);
+  const submitAreaRef = useRef<HTMLDivElement>(null);
 
   const update = (key: keyof Values) => (event: { target: { value: string } }) => {
     const value = event.target.value;
@@ -64,23 +66,23 @@ export function FollowUpForm({ reference, followUpToken, phoneHref }: FollowUpFo
     }
     setErrors({});
 
+    // Längen begrenzen die Eingabefelder (maxLength); der Server prüft mit applicationFollowUpSchema.
     const payload: ApplicationFollowUp = { reference, token: followUpToken };
     if (startDate) payload.startDate = startDate;
     if (postalCode) payload.postalCode = postalCode;
     if (message) payload.message = message;
-    const checked = applicationFollowUpSchema.safeParse(payload);
-    if (!checked.success) {
-      setErrors({ form: 'Bitte prüfe deine Angaben.' });
-      return;
-    }
 
     setStatus({ kind: 'sending' });
-    const result = await submitFollowUp(checked.data);
+    const result = await submitFollowUp(payload);
     if (result.ok) {
       setStatus({ kind: 'sent' });
       requestAnimationFrame(() => successRef.current?.focus());
     } else {
       setStatus({ kind: 'error', failure: result });
+      requestAnimationFrame(() => {
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        submitAreaRef.current?.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+      });
     }
   };
 
@@ -99,12 +101,14 @@ export function FollowUpForm({ reference, followUpToken, phoneHref }: FollowUpFo
   }
 
   const sending = status.kind === 'sending';
+  // Ein einziger Weg zum erneuten Senden: der Button heißt dann „Erneut senden“, wenn es helfen kann.
+  const canRetry = status.kind === 'error' && describeFailure(status.failure).action === 'retry';
   const whatsappHref = buildWhatsAppUrl(buildFollowUpMessage({ reference, kind: 'extras', ...values }));
 
   return (
     <form noValidate onSubmit={onSubmit} className="flex flex-col gap-5">
       <Field label="Frühester Starttermin">
-        <Input ref={startRef} type="date" value={values.startDate} onChange={update('startDate')} />
+        <Input ref={startRef} type="date" maxLength={100} value={values.startDate} onChange={update('startDate')} />
       </Field>
       <Field label="Postleitzahl" error={errors.postalCode}>
         <Input
@@ -126,23 +130,25 @@ export function FollowUpForm({ reference, followUpToken, phoneHref }: FollowUpFo
           {errors.form}
         </p>
       )}
-      {status.kind === 'error' && (
-        <SubmitErrorPanel failure={status.failure} onRetry={() => void send()} phoneHref={phoneHref} whatsappHref={whatsappHref} />
-      )}
-
-      <Button
-        type="submit"
-        variant="secondary"
-        size="lg"
-        className="self-start"
-        aria-busy={sending || undefined}
-        onClick={sending ? (event) => event.preventDefault() : undefined}
-      >
-        {sending && (
-          <span aria-hidden="true" className="size-4 animate-spin rounded-full border-2 border-current border-r-transparent" />
+      {/* Fehlerpanel unter dem Button, damit der Button beim Fehler nicht verrutscht (wie im Flow). */}
+      <div ref={submitAreaRef} className="flex scroll-mb-4 flex-col gap-4">
+        <Button
+          type="submit"
+          variant="secondary"
+          size="lg"
+          className="self-start"
+          aria-busy={sending || undefined}
+          onClick={sending ? (event) => event.preventDefault() : undefined}
+        >
+          {sending && (
+            <span aria-hidden="true" className="size-4 animate-spin rounded-full border-2 border-current border-r-transparent" />
+          )}
+          {sending ? 'Wird gesendet…' : canRetry ? 'Erneut senden' : 'Ergänzung senden'}
+        </Button>
+        {status.kind === 'error' && (
+          <SubmitErrorPanel failure={status.failure} phoneHref={phoneHref} whatsappHref={whatsappHref} />
         )}
-        {sending ? 'Wird gesendet…' : 'Ergänzung senden'}
-      </Button>
+      </div>
     </form>
   );
 }

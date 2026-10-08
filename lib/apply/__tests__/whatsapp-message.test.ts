@@ -38,7 +38,7 @@ describe('shortcut message', () => {
       answers: { background: 'handwerk', licenseB: undefined, start: 'gibt-es-nicht' },
       name: null,
     });
-    expect(text).toContain('Aktuell: Handwerk, andere Branche');
+    expect(text).toContain('Aktuell: Im Handwerk (anderes Gewerk)');
     expect(text).not.toContain('Start');
     expect(text).not.toContain('Stelle');
     noGaps(text);
@@ -95,5 +95,15 @@ describe('follow-up message', () => {
       'Hallo',
     ]);
     noGaps(buildFollowUpMessage({ reference: null, startDate: undefined }));
+  });
+});
+
+describe('site-wide WhatsApp text', () => {
+  it('is neutral outside the flow: no job title, fits pupils and skilled workers alike', async () => {
+    const { DEFAULT_WHATSAPP_MESSAGE, whatsAppMessageFor } = await import('@/lib/utils/whatsapp-utils');
+    expect(whatsAppMessageFor('/')).toBe(DEFAULT_WHATSAPP_MESSAGE);
+    expect(whatsAppMessageFor('/jobs/ausbildung-anlagenmechaniker-shk-wetzlar')).toBe(DEFAULT_WHATSAPP_MESSAGE);
+    expect(DEFAULT_WHATSAPP_MESSAGE).not.toMatch(/Anlagenmechaniker|Kundendienst|ich bin/);
+    expect(whatsAppMessageFor('/bewerbung')).toContain('Bewerbungsschritten');
   });
 });

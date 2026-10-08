@@ -1,28 +1,54 @@
 import { z } from 'zod';
 
-import { JOB_IDS } from '@/lib/jobs/ids';
+import { isValidAnswer } from '@/lib/apply/questions';
+import { isPlausiblePhone } from '@/lib/apply/phone';
+import {
+  APPLICATION_JOB_IDS,
+  CONTACT_CHANNELS,
+  CONTACT_LIMITS,
+  CONTACT_MESSAGES,
+  EMAIL_PATTERN,
+  HONEYPOT_FIELD,
+  MAPPE_SCHEMA_LIMITS as MAPPE,
+  PRIVACY_NOTICE_VERSIONS,
+  type ApiErrorCode,
+} from './constants';
 
 /**
  * Shared contract between the application flow (client), the Bewerbungsmappe
  * tool and the intake API. Changing a field here changes all three.
+ *
+ * Server only in practice: client modules import types from here with `import type` and
+ * constants from ./constants, so zod stays out of the browser bundle
+ * (scripts/qa/check-client-imports.mjs).
  */
 
-export const INITIATIVE_JOB_ID = 'initiativ' as const;
-export const applicationJobIdSchema = z.enum([...JOB_IDS, INITIATIVE_JOB_ID] as const);
-export type ApplicationJobId = z.infer<typeof applicationJobIdSchema>;
+export * from './constants';
 
-export const CONTACT_CHANNELS = ['whatsapp', 'phone', 'email'] as const;
+export const applicationJobIdSchema = z.enum(APPLICATION_JOB_IDS);
 export const contactChannelSchema = z.enum(CONTACT_CHANNELS);
-export type ContactChannel = z.infer<typeof contactChannelSchema>;
 
-/** Answer keys per question set; values are the option ids defined in lib/apply/questions.ts. */
+const INVALID_ANSWER = 'Diese Angabe ist ungültig.';
+
+/** Option id of one question (lib/apply/questions.ts); anything else is rejected. */
+const answerSchema = (key: 'qualification' | 'schoolStatus' | 'background' | 'start'): z.ZodOptional<z.ZodString> =>
+  z
+    .string()
+    .max(60)
+    .refine((value) => isValidAnswer(key, value), { message: INVALID_ANSWER })
+    .optional();
+
+/**
+ * Answer keys per question set; values are the option ids defined in lib/apply/questions.ts.
+ * Answers outside the job's question set are dropped in normalizeApplication.
+ */
 export const applicationAnswersSchema = z
   .object({
-    qualification: z.string().max(60).optional(),
-    schoolStatus: z.string().max(60).optional(),
-    background: z.string().max(60).optional(),
+    qualification: answerSchema('qualification'),
+    schoolStatus: answerSchema('schoolStatus'),
+    background: answerSchema('background'),
     licenseB: z.enum(['yes', 'no']).optional(),
-    start: z.string().max(60).optional(),
+    start: answerSchema('start'),
   })
   .strict();
 export type ApplicationAnswers = z.infer<typeof applicationAnswersSchema>;
@@ -45,58 +71,74 @@ export const attributionSchema = z
 export type Attribution = z.infer<typeof attributionSchema>;
 
 export const careerStationSchema = z.object({
-  period: trimmed(60),
-  role: trimmed(120),
-  company: trimmed(120),
-  location: trimmed(120).optional(),
-  tasks: z.array(trimmed(200)).max(8).default([]),
+  period: trimmed(MAPPE.period),
+  role: trimmed(MAPPE.role),
+  company: trimmed(MAPPE.company),
+  location: trimmed(MAPPE.location).optional(),
+  tasks: z.array(trimmed(MAPPE.task)).max(MAPPE.tasks).default([]),
 });
 export const educationStationSchema = z.object({
-  period: trimmed(60),
-  degree: trimmed(160),
-  institution: trimmed(160),
-  location: trimmed(120).optional(),
+  period: trimmed(MAPPE.period),
+  degree: trimmed(MAPPE.degree),
+  institution: trimmed(MAPPE.institution),
+  location: trimmed(MAPPE.location).optional(),
 });
 
-/** Structured Bewerbungsmappe (no photo: photos never leave the browser in Phase 1). */
+/**
+ * Structured Bewerbungsmappe (no photo: photos never leave the browser in Phase 1).
+ * Browser code checks the same rules without zod: lib/applications/mappe-data.ts.
+ */
 export const mappeSchema = z.object({
-  coverLetter: trimmed(6000).default(''),
-  skills: z.array(trimmed(120)).max(12).default([]),
-  workStyle: trimmed(300).optional(),
-  careerStations: z.array(careerStationSchema).max(12).default([]),
-  educationStations: z.array(educationStationSchema).max(8).default([]),
+  coverLetter: trimmed(MAPPE.coverLetter).default(''),
+  skills: z.array(trimmed(MAPPE.skill)).max(MAPPE.skills).default([]),
+  workStyle: trimmed(MAPPE.workStyle).optional(),
+  careerStations: z.array(careerStationSchema).max(MAPPE.careerStations).default([]),
+  educationStations: z.array(educationStationSchema).max(MAPPE.educationStations).default([]),
 });
 export type Mappe = z.infer<typeof mappeSchema>;
 
-const phoneSchema = trimmed(40).regex(/^[+()\d\s/-]{6,}$/, 'Bitte gib eine gültige Telefonnummer an.');
+/** Same rule as the flow (lib/apply/phone.ts): allowed characters and 6–15 digits. */
+const phoneSchema = trimmed(CONTACT_LIMITS.phone).refine(isPlausiblePhone, { message: CONTACT_MESSAGES.phone });
 
 export const applicationInputSchema = z
   .object({
     jobId: applicationJobIdSchema,
     answers: applicationAnswersSchema.default({}),
-    name: trimmed(100).min(2, 'Bitte gib deinen Namen an.'),
+    name: trimmed(CONTACT_LIMITS.name).min(CONTACT_LIMITS.nameMin, CONTACT_MESSAGES.name),
     phone: phoneSchema,
     // Getrimmt wie die übrigen Textfelder: Leerzeichen aus der Autofill-Eingabe sind kein Fehler.
     email: z
       .string()
       .trim()
-      .pipe(z.union([z.literal(''), z.email('Bitte gib eine gültige E-Mail-Adresse an.').max(254)]))
+      .pipe(
+        z.union([
+          z.literal(''),
+          z.email({ pattern: EMAIL_PATTERN, error: CONTACT_MESSAGES.email }).max(CONTACT_LIMITS.email, CONTACT_MESSAGES.email),
+        ]),
+      )
       .optional(),
     contactChannel: contactChannelSchema.default('whatsapp'),
     mappe: mappeSchema.optional(),
     attribution: attributionSchema.default({}),
-    privacyNoticeVersion: trimmed(40),
+    // Nur bekannte Fassungen: Team-Mail und Datensatz zeigen, welchen Hinweis die Person gesehen hat.
+    privacyNoticeVersion: z.enum(PRIVACY_NOTICE_VERSIONS),
     idempotencyKey: z.uuid(),
-    startedAt: z.number().int().nonnegative().optional(),
-    /** Honeypot: must stay empty. */
-    website: z.string().max(200).optional(),
+    /**
+     * Ausfülldauer laut Client in ms (erste Eingabe bis Absenden, über Reloads im Entwurf
+     * gemerkt). Nur ein Spam-Hinweis: Ungültige Werte fallen weg, statt die Bewerbung abzulehnen.
+     */
+    fillDurationMs: z.number().nonnegative().optional().catch(undefined),
+    /** Honeypot: must stay empty. A filled value marks the application as suspected spam. */
+    [HONEYPOT_FIELD]: z.string().max(200).optional().catch('honeypot'),
   })
   .superRefine((value, ctx) => {
     if (value.contactChannel === 'email' && !value.email) {
-      ctx.addIssue({ code: 'custom', path: ['email'], message: 'Bitte gib deine E-Mail-Adresse an.' });
+      ctx.addIssue({ code: 'custom', path: ['email'], message: CONTACT_MESSAGES.emailRequired });
     }
   });
 export type ApplicationInput = z.infer<typeof applicationInputSchema>;
+/** Payload as the client sends it (before defaults). */
+export type ApplicationInputPayload = z.input<typeof applicationInputSchema>;
 
 /** Optional extras sent from the thank-you page or the Mappe tool after submitting. */
 export const applicationFollowUpSchema = z
@@ -111,30 +153,6 @@ export const applicationFollowUpSchema = z
   .strict();
 export type ApplicationFollowUp = z.infer<typeof applicationFollowUpSchema>;
 
-export const API_ERROR_CODES = [
-  'VALIDATION_FAILED',
-  'CSRF_FAILED',
-  'RATE_LIMITED',
-  'PAYLOAD_TOO_LARGE',
-  'UNSUPPORTED_MEDIA_TYPE',
-  'INVALID_JSON',
-  'INVALID_TOKEN',
-  'SERVICE_UNAVAILABLE',
-  'INTERNAL',
-] as const;
-export type ApiErrorCode = (typeof API_ERROR_CODES)[number];
-
 export type ApplicationSubmitResponse =
   | { ok: true; reference: string; followUpToken: string; firstName: string }
   | { ok: false; code: ApiErrorCode; message: string; fieldErrors?: Record<string, string[]>; retryAfterSec?: number };
-
-/** Client-side storage keys (sessionStorage only; never localStorage for personal data). */
-export const STORAGE_KEYS = {
-  draft: 'be:apply-draft:v1',
-  submitted: 'be:application:v1',
-  mappe: 'be:mappe:v1',
-  /** Pre-redesign localStorage key with personal data; deleted on load. */
-  legacyDossier: 'bad_energie_dossier',
-} as const;
-
-export const PRIVACY_NOTICE_VERSION = '2026-10';

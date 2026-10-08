@@ -28,8 +28,7 @@ function valid(overrides: Record<string, unknown> = {}) {
     attribution: { utmSource: 'indeed', utmMedium: 'jobboard', landingPath: '/jobs/anlagenmechaniker-shk-wetzlar' },
     privacyNoticeVersion: '2026-10',
     idempotencyKey: uuid(),
-    startedAt: Date.now() - 30_000,
-    website: '',
+    fillDurationMs: 30_000,
     ...overrides,
   };
 }
@@ -110,20 +109,59 @@ describe('POST /api/bewerbung', () => {
     expect(dispatchApplicationEmails).toHaveBeenCalledTimes(1);
   });
 
-  it('fakes success for the honeypot and sends nothing', async () => {
-    const res = await post(valid({ website: 'https://spam.example' }));
+  it('delivers a honeypot hit to the team as suspected spam instead of dropping it', async () => {
+    const res = await post(valid({ contactTimeHint: 'https://spam.example', email: 'max@example.org' }));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toMatchObject({ ok: true, firstName: 'Max' });
-    expect(body.reference).toMatch(/^BE-\d{2}-/);
-    expect(typeof body.followUpToken).toBe('string');
+    expect(verifyFollowUpToken(body.reference, body.followUpToken, new Date(), getSecret('APPLICATION_TOKEN_SECRET'))).toMatchObject({ ok: true });
+    expect(sentApplication()).toMatchObject({ reference: body.reference, suspectedSpam: true, spamSignals: ['honeypot'] });
+  });
+
+  it('ignores the old "website" field (autofill must not turn a real application into spam)', async () => {
+    await post(valid({ website: 'https://max-muster.example' }));
+    expect(sentApplication().suspectedSpam).toBe(false);
+  });
+
+  it('accepts but flags forms filled in under 3 seconds (client-measured duration)', async () => {
+    const res = await post(valid({ fillDurationMs: 800 }));
+    expect(res.status).toBe(200);
+    expect(sentApplication()).toMatchObject({ suspectedSpam: true, spamSignals: ['fast'], fillDurationMs: 800 });
+  });
+
+  it('does not flag a restored draft submitted right away (duration from the first interaction)', async () => {
+    await post(valid({ fillDurationMs: 5 * 60_000 }));
+    expect(sentApplication().suspectedSpam).toBe(false);
+  });
+
+  it('ignores an invalid duration instead of rejecting the application', async () => {
+    const res = await post(valid({ fillDurationMs: 'bald' }));
+    expect(res.status).toBe(200);
+    expect(sentApplication()).not.toHaveProperty('fillDurationMs');
+  });
+
+  it('derives the reference from the idempotency key (same number on every instance)', async () => {
+    const payload = valid();
+    const first = await (await post(payload)).json();
+    const { setApplicationSinkForTests } = await import('@/lib/applications/sink');
+    setApplicationSinkForTests(null); // neue Instanz, leerer Idempotenz-Speicher
+    const second = await (await post(payload)).json();
+    expect(second.reference).toBe(first.reference);
+  });
+
+  it('rejects phone numbers without 6 digits and invented answers', async () => {
+    const body = await (await post(valid({ phone: '------', answers: { qualification: 'frei erfundener Text' } }))).json();
+    expect(body.code).toBe('VALIDATION_FAILED');
+    expect(body.fieldErrors).toEqual({
+      phone: ['Bitte gib eine gültige Telefonnummer an.'],
+      'answers.qualification': ['Diese Angabe ist ungültig.'],
+    });
     expect(dispatchApplicationEmails).not.toHaveBeenCalled();
   });
 
-  it('accepts but flags forms filled in under 3 seconds', async () => {
-    const res = await post(valid({ startedAt: Date.now() - 800 }));
-    expect(res.status).toBe(200);
-    expect(sentApplication().suspectedSpam).toBe(true);
+  it("drops answers that do not belong to the job's question set", async () => {
+    await post(valid({ answers: { qualification: 'geselle-2-5', start: 'sofort', schoolStatus: 'schule-laeuft' } }));
+    expect(sentApplication().answers).toEqual({ qualification: 'geselle-2-5', start: 'sofort' });
   });
 
   it('maps validation errors per field with German messages', async () => {

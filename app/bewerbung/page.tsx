@@ -3,9 +3,10 @@ import { ShieldCheck } from 'lucide-react';
 import { ApplyFlow } from '@/components/apply';
 import { Container, Section } from '@/components/layout';
 import { JsonLd } from '@/components/seo/JsonLd';
-import { ContactOptions, WEBSITE_ID } from '@/components/site';
+import { ContactOptions } from '@/components/site/ContactOptions';
+import { WEBSITE_ID } from '@/components/site/site-jsonld';
 import { jobIdFromParam, legacyRedirectTarget, type SearchParamsRecord } from '@/lib/apply/params';
-import { DISCRETION_PROMISE } from '@/lib/content/process';
+import { getDiscretionPromise } from '@/lib/content/process';
 import { FACTS } from '@/lib/content/facts';
 import { getFunnelOptions, getJobById } from '@/lib/jobs/registry';
 import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
@@ -25,9 +26,12 @@ export const metadata = generatePageMetadata({
   keywords: ['Bewerbung SHK Wetzlar', 'Bewerben ohne Lebenslauf', 'Anlagenmechaniker Bewerbung', 'Handwerk Jobs Wetzlar'],
 });
 
-/** `?stelle=` → Stellen-ID (aktueller Slug, alter Slug aus redirectFrom, Job-ID oder „initiativ“). */
+/**
+ * `?stelle=` → Stellen-ID (aktueller Slug, alter Slug aus redirectFrom, Job-ID oder „initiativ“).
+ * Abgelaufene Stellen (validThrough) werden nicht mehr vorausgewählt.
+ */
 function preselectedJob(params: SearchParamsRecord) {
-  const options = getFunnelOptions().map((option) => ({
+  const options = getFunnelOptions(new Date()).map((option) => ({
     id: option.id,
     slug: option.slug,
     legacySlugs: getJobById(option.id)?.redirectFrom ?? [],
@@ -44,6 +48,9 @@ export default async function BewerbungPage({ searchParams }: { searchParams: Pr
 
   const url = getCleanCanonicalUrl(PATH);
   const initialJobId = preselectedJob(params);
+  // Vorausgewählte Ausbildung: meist noch Schule, also kein Arbeitgeber und keine Diskretionszusage.
+  const preselected = initialJobId ? getJobById(initialJobId) : undefined;
+  const discretion = getDiscretionPromise(preselected?.apply.questionSet);
 
   return (
     <>
@@ -69,12 +76,14 @@ export default async function BewerbungPage({ searchParams }: { searchParams: Pr
       <Section tone="subtle" spacing="compact" aria-labelledby="bewerbung-kontakt">
         <Container size="prose" className="flex flex-col gap-5">
           <h2 id="bewerbung-kontakt" className="text-title-3 text-ink">
-            Lieber erst sprechen?
+            Lieber direkt sprechen?
           </h2>
-          <p className="flex max-w-prose gap-3 text-body text-ink">
-            <ShieldCheck aria-hidden="true" strokeWidth={1.75} className="mt-0.5 size-5 shrink-0 text-ink-muted" />
-            {DISCRETION_PROMISE}
-          </p>
+          {discretion && (
+            <p className="flex max-w-prose gap-3 text-body text-ink">
+              <ShieldCheck aria-hidden="true" strokeWidth={1.75} className="mt-0.5 size-5 shrink-0 text-ink-muted" />
+              {discretion}
+            </p>
+          )}
           <ContactOptions variant="inline" whatsappMessage={whatsAppMessageFor(PATH)} />
         </Container>
       </Section>

@@ -2,18 +2,19 @@ import 'server-only';
 import { createHash } from 'node:crypto';
 import { parsePhoneNumberFromString, type CountryCode } from 'libphonenumber-js';
 
-import { INITIATIVE_QUESTION_SET } from '@/lib/apply/questions';
+import { INITIATIVE_QUESTION_SET, sanitizeAnswers } from '@/lib/apply/questions';
 import { deriveChannel } from '@/lib/attribution/channel';
 import { sanitizeAttribution } from '@/lib/attribution/sanitize';
 import { getJobById } from '@/lib/jobs/registry';
 import {
+  HONEYPOT_FIELD,
   INITIATIVE_JOB_ID,
   type ApplicationFollowUp,
   type ApplicationInput,
   type ApplicationJobId,
   type Mappe,
 } from './schema';
-import type { ApplicationJobInfo, NormalizedApplication, NormalizedFollowUp, NormalizedPhone } from './types';
+import type { ApplicationJobInfo, NormalizedApplication, NormalizedFollowUp, NormalizedPhone, SpamSignal } from './types';
 
 /** Unterhalb dieser Ausfülldauer wird die Bewerbung als Spamverdacht markiert (nicht abgelehnt). */
 export const MIN_FILL_DURATION_MS = 3000;
@@ -102,16 +103,22 @@ export function normalizeApplication(input: ApplicationInput, options: Normalize
   const attribution = sanitizeAttribution(input.attribution);
   const mappe = compactMappe(input.mappe);
 
-  // startedAt ist die Uhr des Clients: Abweichungen sind möglich, daher nur ein Hinweis, kein Ausschluss.
-  const elapsed = typeof input.startedAt === 'number' && input.startedAt > 0 ? now.getTime() - input.startedAt : undefined;
-  const fillDurationMs = elapsed !== undefined && elapsed >= 0 ? elapsed : undefined;
-  const suspectedSpam = fillDurationMs !== undefined && fillDurationMs < (options.minFillDurationMs ?? MIN_FILL_DURATION_MS);
+  const job = resolveJobInfo(input.jobId);
+
+  // Dauer misst der Client mit seiner eigenen Uhr (erste Eingabe bis Absenden): keine Uhrenabweichung
+  // zwischen Client und Server. Nur ein Hinweis, kein Ausschluss.
+  const duration = input.fillDurationMs;
+  const fillDurationMs = typeof duration === 'number' && Number.isFinite(duration) && duration >= 0 ? Math.round(duration) : undefined;
+  const spamSignals: SpamSignal[] = [];
+  if (input[HONEYPOT_FIELD]?.trim()) spamSignals.push('honeypot');
+  if (fillDurationMs !== undefined && fillDurationMs < (options.minFillDurationMs ?? MIN_FILL_DURATION_MS)) spamSignals.push('fast');
 
   return {
     idempotencyKey: input.idempotencyKey,
     submittedAt: now,
-    job: resolveJobInfo(input.jobId),
-    answers: { ...input.answers },
+    job,
+    // Nur Antworten aus dem Fragenset der Stelle (z. B. keine Ausbildungsfrage bei Fachkräften).
+    answers: sanitizeAnswers(job.questionSet, input.answers),
     name,
     firstName: firstNameOf(name),
     phone: normalizePhone(input.phone),
@@ -121,7 +128,8 @@ export function normalizeApplication(input: ApplicationInput, options: Normalize
     attribution,
     channel: deriveChannel(attribution),
     privacyNoticeVersion: input.privacyNoticeVersion,
-    suspectedSpam,
+    suspectedSpam: spamSignals.length > 0,
+    spamSignals,
     ...(fillDurationMs !== undefined ? { fillDurationMs } : {}),
   };
 }

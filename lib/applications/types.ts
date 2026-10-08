@@ -1,12 +1,7 @@
 import type { AcquisitionChannel } from '@/lib/attribution/channel';
 import type { JobStatus, QuestionSet } from '@/lib/jobs/schema';
-import type {
-  ApplicationAnswers,
-  ApplicationJobId,
-  Attribution,
-  ContactChannel,
-  Mappe,
-} from './schema';
+import type { ApplicationJobId, ContactChannel } from './constants';
+import type { ApplicationAnswers, Attribution, Mappe } from './schema';
 
 /**
  * Serverseitige Form einer Bewerbung nach Prüfung und Normalisierung. Grundlage für
@@ -40,6 +35,9 @@ export interface ApplicationJobInfo {
   status?: JobStatus;
 }
 
+/** Warum eine Bewerbung als Spamverdacht markiert ist: Honeypot gefüllt bzw. unter 3 Sekunden ausgefüllt. */
+export type SpamSignal = 'honeypot' | 'fast';
+
 export interface NormalizedApplication {
   idempotencyKey: string;
   submittedAt: Date;
@@ -56,9 +54,13 @@ export interface NormalizedApplication {
   attribution: Attribution;
   channel: AcquisitionChannel;
   privacyNoticeVersion: string;
-  /** Formular in weniger als 3 Sekunden ausgefüllt: wird angenommen, aber markiert. */
+  /**
+   * Spamverdacht (Honeypot gefüllt oder in weniger als 3 Sekunden ausgefüllt): wird zugestellt,
+   * aber markiert, und es geht keine Eingangsbestätigung an die angegebene Adresse.
+   */
   suspectedSpam: boolean;
-  /** Ausfülldauer laut Client (ms), falls plausibel. */
+  spamSignals: SpamSignal[];
+  /** Ausfülldauer laut Client (ms, erste Eingabe bis Absenden), falls plausibel. */
   fillDurationMs?: number;
 }
 

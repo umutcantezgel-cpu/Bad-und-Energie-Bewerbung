@@ -3,7 +3,7 @@ import type { MappeRecipient } from './types';
 
 /**
  * Anschreiben-Vorlage. Wortlaut aus der bisherigen Arbeitsstil-Logik
- * (components/views/QuizView.tsx, handleStyleChange); geändert wurde nur, was dort
+ * (components/views/QuizView.tsx@393df01, handleStyleChange); geändert wurde nur, was dort
  * falsch oder erfunden war: kein Platzhaltername, keine leeren Aufzählungen,
  * passende Formulierung für Ausbildung und Initiativbewerbung.
  */

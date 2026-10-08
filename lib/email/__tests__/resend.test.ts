@@ -39,6 +39,7 @@ const application: ReferencedApplication = {
   channel: 'indeed',
   privacyNoticeVersion: '2026-10',
   suspectedSpam: false,
+  spamSignals: [],
 };
 
 function stubEnv(vars: Record<string, string | undefined>) {
@@ -159,6 +160,21 @@ describe('sendEmail with Resend configured', () => {
     expect(loggedText()).not.toContain(RECIPIENT);
   });
 
+  it('treats a known idempotency key with a different body as already sent', async () => {
+    send.mockResolvedValue({
+      data: null,
+      error: { name: 'invalid_idempotent_request', statusCode: 409, message: 'Same idempotency key used with a different request payload' },
+      headers: null,
+    });
+    expect(await sendEmail({ ...message, idempotencyKey: 'bewerbung:k:team:abc' })).toEqual({
+      success: true,
+      duplicate: true,
+      simulated: false,
+    });
+    // Ohne eigenen Key ist es ein echter Fehler.
+    expect(await sendEmail(message)).toMatchObject({ success: false, error: 'invalid_idempotent_request' });
+  });
+
   it('maps thrown errors to send_failed', async () => {
     send.mockRejectedValue(new Error(`socket closed for ${RECIPIENT}`));
     expect(await sendEmail(message)).toEqual({ success: false, error: 'send_failed', simulated: false });
@@ -199,20 +215,41 @@ describe('dispatchApplicationEmails', () => {
     expect(loggedText()).not.toContain(RECIPIENT);
   });
 
-  it('uses the same Resend key for identical retries and a new one for changed content', async () => {
+  it('uses the same Resend key for retries (also with another receive time) and a new one for changed content', async () => {
     stubEnv({ NODE_ENV: 'production', RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER });
     send.mockResolvedValue({ data: { id: 'email_x' }, error: null, headers: null });
 
-    await dispatchApplicationEmails({ ...application, email: undefined }, { idempotencyKey: 'k' });
-    await dispatchApplicationEmails({ ...application, email: undefined }, { idempotencyKey: 'k' });
+    const app = { ...application, email: undefined };
+    await dispatchApplicationEmails(app, { idempotencyKey: 'k' });
+    await dispatchApplicationEmails(app, { idempotencyKey: 'k' });
+    // Wiederholung auf einer anderen Instanz: andere Eingangszeit und Ausfülldauer, gleiche Angaben.
     await dispatchApplicationEmails(
-      { ...application, email: undefined, phone: { ...application.phone, display: '01512 3456780' } },
+      { ...app, submittedAt: new Date('2026-10-08T12:00:40Z'), fillDurationMs: 70_000 },
+      { idempotencyKey: 'k' }
+    );
+    await dispatchApplicationEmails(
+      { ...app, phone: { ...application.phone, raw: '0151 23456780', display: '01512 3456780' } },
       { idempotencyKey: 'k' }
     );
 
     const keys = send.mock.calls.map((call) => call[1].idempotencyKey);
-    expect(keys[0]).toBe(keys[1]);
-    expect(keys[2]).not.toBe(keys[0]);
+    expect(keys[0]).toMatch(/^k:team:[0-9a-f]{16}$/);
+    expect(keys[1]).toBe(keys[0]);
+    expect(keys[2]).toBe(keys[0]);
+    expect(keys[3]).not.toBe(keys[0]);
+  });
+
+  it('sends no confirmation to the (unverified) address when spam is suspected', async () => {
+    stubEnv({ NODE_ENV: 'production', RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER });
+    send.mockResolvedValue({ data: { id: 'email_team' }, error: null, headers: null });
+
+    const result = await dispatchApplicationEmails({ ...application, suspectedSpam: true, spamSignals: ['honeypot'] });
+
+    expect(result.success).toBe(true);
+    expect(result.userConfirmation).toEqual({ success: false, error: 'skipped_suspected_spam' });
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send.mock.calls[0][0]).toMatchObject({ to: ['info@bad-energie.de'] });
+    expect(send.mock.calls[0][0].subject).toMatch(/^\[Spamverdacht\] /);
   });
 
   it('sends only the team mail without an applicant email', async () => {

@@ -1,4 +1,4 @@
-import { INITIATIVE_JOB_ID, type ApplicationJobId } from '@/lib/applications/schema';
+import { INITIATIVE_JOB_ID, type ApplicationJobId } from '@/lib/applications/constants';
 
 /**
  * URL-Parameter von /bewerbung: `?stelle=<slug>` wählt die Stelle vor, alte `?tab=`-Links

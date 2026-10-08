@@ -11,7 +11,8 @@ import type { ApplyFlowProps } from './types';
  * der Stellen nicht im Browser-Bundle landen.
  */
 export function ApplyFlow({ initialJobId, ...props }: ApplyFlowProps) {
-  const options = getFlowJobOptions();
+  // Nur Stellen, die jetzt live sind (validThrough), wie Stellenseite und Sitemap.
+  const options = getFlowJobOptions(new Date());
   const preselected = initialJobId && options.some((option) => option.id === initialJobId) ? initialJobId : undefined;
   return (
     <ApplyFlowClient

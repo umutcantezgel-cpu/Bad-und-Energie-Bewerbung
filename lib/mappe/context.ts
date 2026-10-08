@@ -7,14 +7,17 @@ import type { MappeJobOption, MappeRecipient } from './types';
  * Werkzeug gibt. So landen Registry und Stammdaten nicht im Client-Bundle.
  */
 
-/** Stellen wie im Bewerbungsflow: veröffentlichte plus funnel_only, feste Reihenfolge. */
-export function getMappeJobOptions(): MappeJobOption[] {
-  return getFunnelOptions().map((option) => ({
+/**
+ * Stellen wie im Bewerbungsflow: veröffentlichte plus funnel_only, feste Reihenfolge; mit `now`
+ * ohne abgelaufene Stellen. Der Slug wählt die Stelle im Flow vor (`/bewerbung?stelle=`,
+ * lib/apply/params.ts), auch bei funnel_only.
+ */
+export function getMappeJobOptions(now?: Date): MappeJobOption[] {
+  return getFunnelOptions(now).map((option) => ({
     id: option.id,
     slug: option.slug,
     title: option.title,
     category: option.category,
-    published: option.status === 'published',
   }));
 }
 

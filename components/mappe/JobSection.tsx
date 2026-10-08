@@ -3,7 +3,7 @@
 import type { ComponentPropsWithRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Field, controlClasses, controlStyle, useFieldControl } from '@/components/ui';
-import { INITIATIVE_JOB_ID, applicationJobIdSchema, type ApplicationJobId } from '@/lib/applications/schema';
+import { INITIATIVE_JOB_ID, isApplicationJobId, type ApplicationJobId } from '@/lib/applications/constants';
 import type { MappeJobOption } from '@/lib/mappe/types';
 import { cn } from '@/lib/utils/cn';
 import { EditorSection } from './EditorSection';
@@ -43,8 +43,8 @@ export function JobSection({ step, jobs, value, onChange }: JobSectionProps) {
           name="stelle"
           value={value}
           onChange={(event) => {
-            const parsed = applicationJobIdSchema.safeParse(event.target.value);
-            onChange(parsed.success ? parsed.data : '');
+            const value = event.target.value;
+            onChange(isApplicationJobId(value) ? value : '');
           }}
         >
           <option value="">Bitte wählen</option>

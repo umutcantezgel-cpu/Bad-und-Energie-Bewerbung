@@ -86,15 +86,43 @@ describe('normalizeApplication', () => {
     expect(app).not.toHaveProperty('mappe');
   });
 
-  it('flags forms filled in under 3 seconds as suspected spam, but not clock skew', () => {
-    expect(normalizeApplication(input({ startedAt: NOW.getTime() - 1500 }), { now: NOW })).toMatchObject({
+  it('flags forms filled in under 3 seconds (client-measured duration) as suspected spam', () => {
+    expect(normalizeApplication(input({ fillDurationMs: 1500 }), { now: NOW })).toMatchObject({
       suspectedSpam: true,
+      spamSignals: ['fast'],
       fillDurationMs: 1500,
     });
-    expect(normalizeApplication(input({ startedAt: NOW.getTime() - 45_000 }), { now: NOW }).suspectedSpam).toBe(false);
-    const future = normalizeApplication(input({ startedAt: NOW.getTime() + 60_000 }), { now: NOW });
-    expect(future.suspectedSpam).toBe(false);
-    expect(future).not.toHaveProperty('fillDurationMs');
+    expect(normalizeApplication(input({ fillDurationMs: 45_000 }), { now: NOW })).toMatchObject({
+      suspectedSpam: false,
+      spamSignals: [],
+      fillDurationMs: 45_000,
+    });
+  });
+
+  it('does not flag without a duration and drops invalid durations instead of rejecting', () => {
+    const none = normalizeApplication(input(), { now: NOW });
+    expect(none.suspectedSpam).toBe(false);
+    expect(none).not.toHaveProperty('fillDurationMs');
+
+    const parsed = applicationInputSchema.parse({ ...input(), fillDurationMs: -5 });
+    expect(parsed.fillDurationMs).toBeUndefined();
+    expect(applicationInputSchema.parse({ ...input(), fillDurationMs: 'schnell' }).fillDurationMs).toBeUndefined();
+    expect(normalizeApplication(input({ fillDurationMs: 2999.6 })).fillDurationMs).toBe(3000);
+  });
+
+  it('marks a filled honeypot as suspected spam instead of dropping the application', () => {
+    const app = normalizeApplication(input({ contactTimeHint: 'https://spam.example', fillDurationMs: 60_000 }), { now: NOW });
+    expect(app).toMatchObject({ suspectedSpam: true, spamSignals: ['honeypot'] });
+    expect(normalizeApplication(input({ contactTimeHint: '   ' })).suspectedSpam).toBe(false);
+    // Kein String (Bot): als Treffer gewertet, nicht abgelehnt.
+    expect(normalizeApplication(applicationInputSchema.parse({ ...input(), contactTimeHint: 42 })).spamSignals).toEqual(['honeypot']);
+  });
+
+  it("keeps only answers of the job's question set", () => {
+    const app = normalizeApplication(
+      input({ answers: { qualification: 'geselle-2-5', start: 'sofort', schoolStatus: 'schule-laeuft', licenseB: 'yes' } }),
+    );
+    expect(app.answers).toEqual({ qualification: 'geselle-2-5', start: 'sofort' });
   });
 
   it('drops an empty email and an empty Mappe', () => {

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { jobIdFromParam, paramForJob } from '@/lib/apply/params';
+import { getFunnelOptions } from '@/lib/jobs/registry';
 import { getMappeJobOptions, getMappeRecipient } from '../context';
 import { SKILL_OPTIONS, WORK_STYLES } from '../options';
 import { buildCoverLetter, buildSubject, roleForText, type LetterJob } from '../template';
@@ -17,10 +19,18 @@ describe('getMappeRecipient', () => {
 });
 
 describe('getMappeJobOptions', () => {
-  it('offers the flow options and marks only published jobs for ?stelle=', () => {
+  it('offers the flow options and hands every one (also funnel_only and initiativ) over via ?stelle=', () => {
     expect(jobs.length).toBeGreaterThanOrEqual(4);
-    expect(jobs.find((job) => job.id === 'quereinsteiger-montagehelfer')?.published).toBe(false);
-    expect(jobs.find((job) => job.id === 'anlagenmechaniker-shk')?.published).toBe(true);
+    expect(jobs.some((job) => job.id === 'quereinsteiger-montagehelfer')).toBe(true);
+    // So liest /bewerbung den Parameter (app/bewerbung/page.tsx).
+    const flowOptions = getFunnelOptions().map((option) => ({ id: option.id, slug: option.slug }));
+    for (const job of jobs) {
+      const param = paramForJob(job.id, jobs);
+      expect(param).toBe(job.slug);
+      expect(jobIdFromParam(param ?? undefined, flowOptions)).toBe(job.id);
+    }
+    expect(paramForJob('initiativ', jobs)).toBe('initiativ');
+    expect(jobIdFromParam('initiativ', flowOptions)).toBe('initiativ');
   });
 });
 

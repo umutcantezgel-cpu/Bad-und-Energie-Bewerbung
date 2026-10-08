@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { NormalizedFollowUp, ReferencedApplication } from '@/lib/applications/types';
 import {
   cleanSubject,
+  greetingName,
   renderApplicationConfirmationEmail,
   renderApplicationFollowUpEmail,
   renderApplicationTeamEmail,
@@ -32,6 +33,7 @@ const base: ReferencedApplication = {
   channel: 'direct',
   privacyNoticeVersion: '2026-10',
   suspectedSpam: false,
+  spamSignals: [],
 };
 
 const full: ReferencedApplication = {
@@ -91,10 +93,27 @@ describe('team notification', () => {
   });
 
   it('flags suspected spam in subject and body', () => {
-    const mail = renderApplicationTeamEmail({ ...base, suspectedSpam: true, fillDurationMs: 1200 });
+    const mail = renderApplicationTeamEmail({ ...base, suspectedSpam: true, spamSignals: ['fast'], fillDurationMs: 1200 });
     expect(mail.subject).toBe('[Spamverdacht] Neue Bewerbung BE-26-K7M4QX: Anlagenmechaniker SHK – Max');
-    expect(mail.text).toContain('Spamverdacht');
+    expect(mail.text).toContain('Spamverdacht: Das Formular wurde in 1,2 Sekunden ausgefüllt. Bitte kurz prüfen, bevor du antwortest.');
     expect(mail.html).toContain('Spamverdacht');
+  });
+
+  it('names the honeypot as reason and says that no confirmation went out', () => {
+    const mail = renderApplicationTeamEmail({ ...full, suspectedSpam: true, spamSignals: ['honeypot'] });
+    expect(mail.subject).toMatch(/^\[Spamverdacht\] /);
+    expect(mail.text).toContain('Ein für Menschen unsichtbares Feld wurde ausgefüllt');
+    expect(mail.text).toContain('An die angegebene E-Mail-Adresse ging keine Eingangsbestätigung.');
+    expect(mail.text).not.toContain('Sekunden ausgefüllt');
+  });
+
+  it('labels the Quereinstieg answers distinctly', () => {
+    const quereinstieg = { ...base.job, id: 'quereinsteiger-montagehelfer' as const, questionSet: 'quereinstieg' as const };
+    const text = (background: string) =>
+      renderApplicationTeamEmail({ ...base, job: quereinstieg, answers: { background, licenseB: 'yes', start: 'sofort' } }).text;
+    expect(text('handwerk')).toContain('Aktuell: Im Handwerk (anderes Gewerk)');
+    expect(text('andere-branche')).toContain('Aktuell: In einer anderen Branche');
+    expect(text('etwas-anderes')).toContain('Aktuell: Gerade etwas anderes');
   });
 
   it('renders answers as labels, contact links, Mappe, source and Berlin time', () => {
@@ -169,12 +188,45 @@ describe('applicant confirmation', () => {
       job: { ...full.job, id: 'ausbildung-anlagenmechaniker-shk', questionSet: 'ausbildung' },
     });
     expect(mail.text).toContain('Start mit eigenem Werkzeug');
+    // Schülerinnen und Schüler haben keinen Arbeitgeber: keine Diskretionszusage, kein „Feierabend“-Treffen.
+    expect(mail.text).not.toContain('derzeitigen Arbeitgeber');
+    expect(mail.text).toContain('über die Ausbildung und deine Fragen');
+  });
+
+  it('keeps the discretion promise for skilled workers', () => {
+    expect(renderApplicationConfirmationEmail(full).text).toContain('derzeitigen Arbeitgeber');
   });
 
   it('escapes the first name', () => {
     const mail = renderApplicationConfirmationEmail(hostile);
     expect(mail.html).not.toContain('<script');
     expectClean(mail.html);
+  });
+
+  it('never echoes a URL or other free text as the name (unverified address)', () => {
+    const mail = renderApplicationConfirmationEmail({ ...full, name: 'https://evil.example/gewinn Bot', firstName: 'https://evil.example/gewinn' });
+    expect(mail.text).toContain('Danke für deine Bewerbung.');
+    expect(mail.text).not.toContain('evil');
+    expect(mail.html).not.toContain('evil');
+    expect(renderApplicationConfirmationEmail(hostile).text).not.toContain('script');
+  });
+
+  it.each([
+    ['Max', 'Max'],
+    ['Anna-Lena', 'Anna-Lena'],
+    ["O'Brien", "O'Brien"],
+    ['Çağla', 'Çağla'],
+    ['José María', 'José María'],
+    ['evil.example', null],
+    ['www', null],
+    ['Httpsgewinn', null],
+    ['Max1', null],
+    ['Max:', null],
+    ['-Max', null],
+    ['x'.repeat(41), null],
+    ['', null],
+  ])('greetingName(%j) → %j', (input, expected) => {
+    expect(greetingName(input)).toBe(expected);
   });
 });
 

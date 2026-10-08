@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode, type Ref } from 'react';
 import { useController, useFormState, useWatch, type SubmitErrorHandler, type SubmitHandler, type UseFormReturn } from 'react-hook-form';
 import { FileText, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -8,9 +8,11 @@ import { Field } from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
 import { SegmentedControl, type SegmentedOption } from '@/components/ui/SegmentedControl';
 import { TextLink } from '@/components/ui/TextLink';
-import type { ApplicationAnswers, ContactChannel } from '@/lib/applications/schema';
+import { HONEYPOT_FIELD, type ContactChannel } from '@/lib/applications/constants';
+import type { ApplicationAnswers } from '@/lib/applications/schema';
 import { CONTACT_MAX_LENGTH, type ContactFormInput, type ContactFormValues } from '@/lib/apply/contact-schema';
 import { suggestEmail } from '@/lib/apply/email-suggest';
+import { describeFailure, type FailureOverrides } from '@/lib/apply/failure';
 import type { QuestionSetId } from '@/lib/apply/questions';
 import type { SubmitFailure } from '@/lib/apply/submit';
 import { buildApplicationMessage } from '@/lib/apply/whatsapp-message';
@@ -25,6 +27,12 @@ const CHANNEL_OPTIONS: readonly SegmentedOption<ContactChannel>[] = [
 
 export type ContactForm = UseFormReturn<ContactFormInput, unknown, ContactFormValues>;
 
+/** Im Flow ist meist die Bewerbungsmappe der Grund für eine zu große Anfrage. */
+const FAILURE_OVERRIDES: FailureOverrides = {
+  PAYLOAD_TOO_LARGE:
+    'Deine Bewerbung ist zu lang, meist wegen der Bewerbungsmappe. Entferne die Mappe oder schick uns die Bewerbung per WhatsApp.',
+};
+
 export interface ContactStepProps {
   form: ContactForm;
   heading: ReactNode;
@@ -35,7 +43,8 @@ export interface ContactStepProps {
   failure: SubmitFailure | null;
   onValid: SubmitHandler<ContactFormValues>;
   onInvalid?: SubmitErrorHandler<ContactFormInput>;
-  onRetry: () => void;
+  /** Honeypot-Feld (nicht Teil des Formularzustands); der Flow liest es beim Absenden. */
+  honeypotRef: Ref<HTMLInputElement>;
   phoneHref: string;
   /** Für den WhatsApp-Rückfallweg mit der kompletten Bewerbung. */
   application: { jobLabel: string | null; questionSet: QuestionSetId; answers: ApplicationAnswers };
@@ -53,7 +62,7 @@ export function ContactStep({
   failure,
   onValid,
   onInvalid,
-  onRetry,
+  honeypotRef,
   phoneHref,
   application,
   mappe,
@@ -81,6 +90,18 @@ export function ContactStep({
       contactChannel: channel,
     }),
   );
+
+  // Ein einziger Weg zum erneuten Senden: der Absenden-Button heißt dann „Erneut senden“.
+  const canRetry = failure !== null && describeFailure(failure, FAILURE_OVERRIDES).action === 'retry';
+
+  // Das Fehlerpanel steht unter dem Absenden-Button, damit der Button (mit Fokus) beim Fehler nicht
+  // unter dem Finger wegrutscht; Button und Panel werden zusammen in den sichtbaren Bereich geholt.
+  const submitAreaRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!failure) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    submitAreaRef.current?.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+  }, [failure]);
 
   const nameField = register('name');
   const phoneField = register('phone');
@@ -190,19 +211,33 @@ export function ContactStep({
           </div>
         )}
 
-        {/* Honeypot: für Menschen unsichtbar und nicht erreichbar, Bots füllen ihn aus. */}
+        {/*
+          Honeypot: für Menschen unsichtbar und nicht erreichbar, Bots füllen ihn aus. Name und Label
+          kennt kein Autofill-Profil; autocomplete="off" plus die Ignore-Attribute der gängigen
+          Passwortmanager. Ein Treffer wird nicht verworfen, sondern als Spamverdacht zugestellt.
+        */}
         <div aria-hidden="true" className="sr-only">
-          <label htmlFor={`${id}-website`}>Website</label>
-          <input id={`${id}-website`} type="text" tabIndex={-1} autoComplete="off" {...register('website')} />
+          <label htmlFor={`${id}-${HONEYPOT_FIELD}`}>Hinweis zur Rückrufzeit</label>
+          <input
+            ref={honeypotRef}
+            id={`${id}-${HONEYPOT_FIELD}`}
+            name="contact_time_hint"
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            data-1p-ignore=""
+            data-lpignore="true"
+            data-bwignore="true"
+            data-form-type="other"
+            defaultValue=""
+          />
         </div>
 
-        {failure && (
-          <SubmitErrorPanel failure={failure} onRetry={onRetry} phoneHref={phoneHref} whatsappHref={whatsappHref} />
-        )}
-
-        <div className="flex flex-col gap-3">
+        <div ref={submitAreaRef} className="flex scroll-mb-4 flex-col gap-3">
+          {/* Hinweis statt Checkbox, mit Rechtsgrundlage (ROADMAP §6; DSB-Bestätigung steht aus). */}
           <p className="text-footnote text-ink-muted">
-            Wie wir deine Angaben verarbeiten, steht in den <TextLink href="/datenschutz#bewerberdaten">Datenschutzhinweisen</TextLink>.
+            Wir verarbeiten deine Angaben für deine Bewerbung (Art. 6 Abs. 1 lit. b DSGVO). Mehr dazu in den{' '}
+            <TextLink href="/datenschutz#bewerberdaten">Datenschutzhinweisen</TextLink>.
           </p>
           <Button
             type="submit"
@@ -217,11 +252,20 @@ export function ContactStep({
                 className="size-4 animate-spin rounded-full border-2 border-current border-r-transparent"
               />
             )}
-            {submitting ? 'Wird gesendet…' : 'Bewerbung absenden'}
+            {submitting ? 'Wird gesendet…' : canRetry ? 'Erneut senden' : 'Bewerbung absenden'}
           </Button>
           <p role="status" className="sr-only">
             {submitting ? 'Wird gesendet…' : ''}
           </p>
+          {failure && (
+            <SubmitErrorPanel
+              failure={failure}
+              phoneHref={phoneHref}
+              whatsappHref={whatsappHref}
+              overrides={FAILURE_OVERRIDES}
+              className="mt-1"
+            />
+          )}
         </div>
       </form>
     </div>

@@ -1,8 +1,5 @@
-import { randomBytes } from 'node:crypto';
-
 import { germanIssueMessage, apiError, apiSuccess, guardFailureResponse, validationFailedResponse } from '@/lib/applications/http';
-import { firstNameOf, normalizeApplication } from '@/lib/applications/normalize';
-import { createReference } from '@/lib/applications/reference';
+import { normalizeApplication } from '@/lib/applications/normalize';
 import { applicationInputSchema, type ApplicationSubmitResponse } from '@/lib/applications/schema';
 import { getApplicationSink } from '@/lib/applications/sink';
 import { assertFollowUpTokenSecret, createFollowUpToken } from '@/lib/applications/token';
@@ -11,32 +8,16 @@ import { guardJsonPost, RATE_LIMITS } from '@/lib/security';
 
 /**
  * POST /api/bewerbung (Vertrag C8). Reihenfolge:
- * Eingangskontrolle (CSRF, Rate-Limit, Content-Type, Body-Cap) → Honeypot → Schema →
- * Normalisierung (Stelle aus dem Registry, Telefon E.164, Kanal) → Sink (E-Mail) → Token.
- * Erfolg nur, wenn die Team-Mail angenommen wurde. Logs enthalten keine personenbezogenen Daten.
+ * Eingangskontrolle (CSRF, Rate-Limit, Content-Type, Body-Cap) → Schema → Normalisierung
+ * (Stelle aus dem Registry, Antworten aus deren Fragenset, Telefon E.164, Kanal, Spamverdacht)
+ * → Sink (E-Mail) → Token. Erfolg nur, wenn die Team-Mail angenommen wurde.
+ *
+ * Honeypot und Mindestdauer lehnen nichts ab (ein Autofill könnte den Honeypot füllen): Die
+ * Bewerbung geht als „[Spamverdacht]“ ans Team, aber ohne Eingangsbestätigung an die
+ * ungeprüfte Adresse. Logs enthalten keine personenbezogenen Daten.
  */
 
 type SuccessBody = Extract<ApplicationSubmitResponse, { ok: true }>;
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-function isHoneypotHit(body: unknown): boolean {
-  return isRecord(body) && typeof body.website === 'string' && body.website.trim() !== '';
-}
-
-/** Für Bots: sieht aus wie ein Erfolg, es wird aber nichts versendet oder gespeichert. */
-function decoyResponse(body: unknown, now: Date) {
-  const name = isRecord(body) && typeof body.name === 'string' ? body.name : '';
-  const issued = Math.floor(now.getTime() / 1000).toString(36);
-  return apiSuccess<SuccessBody>({
-    ok: true,
-    reference: createReference(now),
-    followUpToken: `${issued}.${randomBytes(32).toString('base64url')}`,
-    firstName: firstNameOf(name).slice(0, 50),
-  });
-}
 
 export async function POST(request: Request) {
   try {
@@ -44,11 +25,6 @@ export async function POST(request: Request) {
     if (!guard.ok) return guardFailureResponse(guard);
 
     const now = new Date();
-    if (isHoneypotHit(guard.data)) {
-      console.warn('[bewerbung] Honeypot ausgelöst, nichts versendet');
-      return decoyResponse(guard.data, now);
-    }
-
     const parsed = applicationInputSchema.safeParse(guard.data, { error: germanIssueMessage });
     if (!parsed.success) return validationFailedResponse(parsed.error);
 
@@ -62,7 +38,10 @@ export async function POST(request: Request) {
       return apiError(result.reason === 'not_configured' ? 'SERVICE_UNAVAILABLE' : 'INTERNAL');
     }
 
-    const flags = [application.suspectedSpam && 'Spamverdacht', result.duplicate && 'Wiederholung'].filter(Boolean);
+    const flags = [
+      application.suspectedSpam && `Spamverdacht: ${application.spamSignals.join('+')}`,
+      result.duplicate && 'Wiederholung',
+    ].filter(Boolean);
     console.info(
       `[bewerbung] eingegangen ${result.reference} (${application.job.id}, ${application.channel}${flags.length ? `, ${flags.join(', ')}` : ''})`,
     );

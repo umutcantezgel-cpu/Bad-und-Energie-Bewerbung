@@ -18,7 +18,11 @@ const NOT_CONFIGURED = {
 };
 const FAILED = { ...NOT_CONFIGURED, teamNotification: { success: false, error: 'send_failed' } };
 
-function application(key = '7f9c1b9e-3c0f-4d5e-9a51-1c2b3d4e5f60', now = new Date('2026-10-08T10:00:00Z')) {
+function application(
+  key = '7f9c1b9e-3c0f-4d5e-9a51-1c2b3d4e5f60',
+  now = new Date('2026-10-08T10:00:00Z'),
+  overrides: { name?: string; phone?: string } = {},
+) {
   return normalizeApplication(
     applicationInputSchema.parse({
       jobId: 'initiativ',
@@ -26,6 +30,7 @@ function application(key = '7f9c1b9e-3c0f-4d5e-9a51-1c2b3d4e5f60', now = new Dat
       phone: '0151 23456789',
       privacyNoticeVersion: '2026-10',
       idempotencyKey: key,
+      ...overrides,
     }),
     { now },
   );
@@ -71,6 +76,35 @@ describe('EmailSink.submit', () => {
     expect(dispatchApplicationEmails).toHaveBeenCalledTimes(1);
   });
 
+  it('delivers changed details again under the same reference (lost response, then corrected)', async () => {
+    dispatchApplicationEmails.mockResolvedValue(OK);
+    const sink = new EmailSink();
+    const first = await sink.submit(application());
+    const corrected = await sink.submit(application(undefined, new Date('2026-10-08T10:02:00Z'), { name: 'Moritz Muster' }));
+    const repeated = await sink.submit(application(undefined, new Date('2026-10-08T10:03:00Z'), { name: 'Moritz Muster' }));
+
+    expect(corrected).toEqual({ ok: true, reference: first.ok ? first.reference : '' });
+    expect(repeated).toMatchObject({ ok: true, duplicate: true });
+    expect(dispatchApplicationEmails).toHaveBeenCalledTimes(2);
+    const [firstCall, secondCall] = dispatchApplicationEmails.mock.calls;
+    expect(secondCall[0]).toMatchObject({ name: 'Moritz Muster', reference: firstCall[0].reference });
+    expect(secondCall[0].submittedAt).toEqual(firstCall[0].submittedAt);
+  });
+
+  it('does not share an in-flight delivery with a request that has different details', async () => {
+    let resolve: (value: typeof OK) => void = () => {};
+    dispatchApplicationEmails.mockReturnValueOnce(new Promise((r) => (resolve = r))).mockResolvedValueOnce(OK);
+    const sink = new EmailSink();
+    const a = sink.submit(application());
+    const b = sink.submit(application(undefined, undefined, { phone: '0151 98765432' }));
+    resolve(OK);
+    const [ra, rb] = await Promise.all([a, b]);
+
+    expect(ra.ok && rb.ok && ra.reference === rb.reference).toBe(true);
+    expect(dispatchApplicationEmails).toHaveBeenCalledTimes(2);
+    expect(dispatchApplicationEmails.mock.calls[1][0].phone.raw).toBe('0151 98765432');
+  });
+
   it('reuses reference and timestamp when retrying after a failure', async () => {
     dispatchApplicationEmails.mockResolvedValueOnce(FAILED).mockResolvedValueOnce(OK);
     const sink = new EmailSink();
@@ -87,6 +121,31 @@ describe('EmailSink.submit', () => {
   it('maps a missing mail configuration to not_configured', async () => {
     dispatchApplicationEmails.mockResolvedValue(NOT_CONFIGURED);
     await expect(new EmailSink().submit(application())).resolves.toEqual({ ok: false, reason: 'not_configured' });
+  });
+
+  it('derives the same reference on another instance for the same key (retry after a lost response)', async () => {
+    dispatchApplicationEmails.mockResolvedValue(OK);
+    const instanceA = new EmailSink();
+    const instanceB = new EmailSink();
+    const first = await instanceA.submit(application());
+    const retry = await instanceB.submit(application(undefined, new Date('2026-10-08T10:00:30Z')));
+
+    expect(first.ok && retry.ok && retry.reference).toBe(first.ok && first.reference);
+    expect(first.ok && first.reference).toMatch(/^BE-26-[23456789A-HJKMNP-Z]{6}$/);
+    // Beide Instanzen geben Resend denselben Basis-Key; der Rest des Keys hängt nicht an der Eingangszeit.
+    expect(dispatchApplicationEmails.mock.calls.map((call) => call[1])).toEqual([
+      { idempotencyKey: 'bewerbung:7f9c1b9e-3c0f-4d5e-9a51-1c2b3d4e5f60' },
+      { idempotencyKey: 'bewerbung:7f9c1b9e-3c0f-4d5e-9a51-1c2b3d4e5f60' },
+    ]);
+  });
+
+  it('reports a delivery Resend already knew (other instance) as a duplicate', async () => {
+    dispatchApplicationEmails.mockResolvedValue({ ...OK, teamNotification: { success: true, duplicate: true } });
+    await expect(new EmailSink({ createReference: () => 'BE-26-AAAAAA' }).submit(application())).resolves.toEqual({
+      ok: true,
+      reference: 'BE-26-AAAAAA',
+      duplicate: true,
+    });
   });
 
   it('gives different keys different references', async () => {

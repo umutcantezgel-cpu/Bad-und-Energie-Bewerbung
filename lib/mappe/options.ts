@@ -1,9 +1,10 @@
 /**
  * Auswahlmöglichkeiten der Bewerbungsmappe (ROADMAP §6). Übernommen aus dem bisherigen
- * Profilfragebogen (components/views/QuizView.tsx: skillOptions, styleOptions); die
+ * Profilfragebogen (components/views/QuizView.tsx@393df01: skillOptions, styleOptions); die
  * Formulierungen beschreiben den Bewerber, nicht den Betrieb, und sind deshalb keine Fakten.
- * Client-sicher: keine Imports.
+ * Client-sicher: importiert nur die zod-freien Grenzen aus lib/applications/constants.ts.
  */
+import { CONTACT_LIMITS, MAPPE_SCHEMA_LIMITS as SCHEMA_LIMITS } from '@/lib/applications/constants';
 
 /** Praktische Schwerpunkte zum Antippen (Wortlaut wie im bisherigen Fragebogen). */
 export const SKILL_OPTIONS = [
@@ -67,22 +68,22 @@ export function workStyleIdFromValue(value: string | undefined): WorkStyleId | n
  * prüft, dass beide übereinstimmen. Persönliche Angaben gehören nicht zur gesendeten Mappe.
  */
 export const MAPPE_LIMITS = Object.freeze({
-  coverLetter: 6000,
-  skills: 12,
-  skill: 120,
-  workStyle: 300,
-  careerStations: 12,
-  educationStations: 8,
-  tasksPerStation: 8,
-  task: 200,
-  period: 60,
-  role: 120,
-  company: 120,
-  degree: 160,
-  institution: 160,
-  location: 120,
+  coverLetter: SCHEMA_LIMITS.coverLetter,
+  skills: SCHEMA_LIMITS.skills,
+  skill: SCHEMA_LIMITS.skill,
+  workStyle: SCHEMA_LIMITS.workStyle,
+  careerStations: SCHEMA_LIMITS.careerStations,
+  educationStations: SCHEMA_LIMITS.educationStations,
+  tasksPerStation: SCHEMA_LIMITS.tasks,
+  task: SCHEMA_LIMITS.task,
+  period: SCHEMA_LIMITS.period,
+  role: SCHEMA_LIMITS.role,
+  company: SCHEMA_LIMITS.company,
+  degree: SCHEMA_LIMITS.degree,
+  institution: SCHEMA_LIMITS.institution,
+  location: SCHEMA_LIMITS.location,
   // nur lokal (Vorschau und Druck)
-  name: 100,
-  phone: 40,
-  email: 254,
+  name: CONTACT_LIMITS.name,
+  phone: CONTACT_LIMITS.phone,
+  email: CONTACT_LIMITS.email,
 });

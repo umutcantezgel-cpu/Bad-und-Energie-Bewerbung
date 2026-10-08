@@ -1,10 +1,12 @@
-import type { ApplicationAnswers, ApplicationJobId } from '@/lib/applications/schema';
+import type { ApplicationJobId } from '@/lib/applications/constants';
+import type { ApplicationAnswers } from '@/lib/applications/schema';
 import type { QuestionSet } from '@/lib/jobs/schema';
 
 /**
  * Fragen des Bewerbungsflows (ROADMAP §6), je Fragenset der Stelle (`job.apply.questionSet`).
  * Die Options-IDs landen in `answers` und damit in E-Mail und ATS: nie umbenennen, nur ergänzen.
- * Rein und ohne Datenimporte, damit der Flow im Client-Bundle klein bleibt.
+ * Rein und ohne Datenimporte, damit der Flow im Client-Bundle klein bleibt. Der Server prüft
+ * Antworten mit denselben Optionen (lib/applications/schema.ts, normalizeApplication).
  */
 
 export type QuestionSetId = QuestionSet;
@@ -37,11 +39,12 @@ const QUALIFICATION: ApplyQuestion<'qualification'> = {
   title: 'Was trifft auf dich zu?',
   summaryLabel: 'Qualifikation',
   options: [
-    { id: 'geselle-unter-2', label: 'Geselle, unter 2 Jahre Berufserfahrung' },
+    // Berufserfahrung als Geselle, gleich gebaut (ROADMAP §6). Quereinstieg hat ein eigenes Fragenset.
+    { id: 'geselle-unter-2', label: 'Geselle, unter 2 Jahren' },
     { id: 'geselle-2-5', label: 'Geselle, 2–5 Jahre' },
     { id: 'geselle-ueber-5', label: 'Geselle, über 5 Jahre' },
     { id: 'meister-techniker', label: 'Meister oder Techniker' },
-    { id: 'andere-ausbildung', label: 'Andere Ausbildung oder Quereinstieg' },
+    { id: 'andere-ausbildung', label: 'Andere Ausbildung' },
   ],
 };
 
@@ -75,8 +78,10 @@ const BACKGROUND: ApplyQuestion<'background'> = {
   title: 'Was machst du aktuell?',
   summaryLabel: 'Aktuell',
   options: [
-    { id: 'handwerk', label: 'Handwerk, andere Branche' },
-    { id: 'andere-branche', label: 'Andere Branche' },
+    { id: 'handwerk', label: 'Im Handwerk (anderes Gewerk)' },
+    { id: 'andere-branche', label: 'In einer anderen Branche' },
+    // Ohne Job, Schule, Studium, Elternzeit …: neutral, ohne nachzufragen.
+    { id: 'etwas-anderes', label: 'Gerade etwas anderes' },
   ],
 };
 

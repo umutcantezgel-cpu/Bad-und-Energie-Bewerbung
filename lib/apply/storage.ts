@@ -1,10 +1,12 @@
-import { z } from 'zod';
-import { applicationJobIdSchema, mappeSchema, STORAGE_KEYS, type ApplicationJobId, type Mappe } from '@/lib/applications/schema';
+import { STORAGE_KEYS, isApplicationJobId, type ApplicationJobId } from '@/lib/applications/constants';
+import { parseMappeData } from '@/lib/applications/mappe-data';
+import type { Mappe } from '@/lib/applications/schema';
 
 /**
- * Browser-Speicher für den Bewerbungsflow (C7). Nur sessionStorage; jeder Zugriff ist in
- * try/catch, weil Safari im privaten Modus, eingebettete WebViews und strikte Einstellungen werfen.
- * Ohne Speicher funktioniert alles weiter, nur ohne Entwurf.
+ * Browser-Speicher für den Bewerbungsflow, die Danke-Seite und das Mappe-Werkzeug (C7). Nur
+ * sessionStorage; jeder Zugriff ist in try/catch, weil Safari im privaten Modus, eingebettete
+ * WebViews und strikte Einstellungen werfen. Ohne Speicher funktioniert alles weiter, nur ohne
+ * Entwurf. Ohne zod geprüft (kleines Browser-Bundle).
  */
 
 export type StorageLike = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
@@ -76,24 +78,30 @@ export interface SubmittedApplication {
   submittedAt: string;
 }
 
-const submittedSchema = z.object({
-  reference: z.string().trim().min(1).max(20),
-  followUpToken: z.string().trim().min(1).max(128),
-  firstName: z.string().trim().max(100).catch(''),
-  jobId: applicationJobIdSchema,
-  submittedAt: z.union([z.string(), z.number()]).transform((value, ctx) => {
-    const time = typeof value === 'number' ? value : Date.parse(value);
-    if (!Number.isFinite(time)) {
-      ctx.addIssue({ code: 'custom', message: 'submittedAt' });
-      return z.NEVER;
-    }
-    return new Date(time).toISOString();
-  }),
-});
+function boundedText(value: unknown, max: number): string | null {
+  if (typeof value !== 'string') return null;
+  const text = value.trim();
+  return text.length > 0 && text.length <= max ? text : null;
+}
 
 export function parseSubmitted(raw: string | null | undefined): SubmittedApplication | null {
-  const result = submittedSchema.safeParse(parseJson(raw));
-  return result.success ? result.data : null;
+  const value = parseJson(raw);
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const record = value as Record<string, unknown>;
+  const reference = boundedText(record.reference, 20);
+  const followUpToken = boundedText(record.followUpToken, 128);
+  if (!reference || !followUpToken || !isApplicationJobId(record.jobId)) return null;
+  const time =
+    typeof record.submittedAt === 'number' ? record.submittedAt : typeof record.submittedAt === 'string' ? Date.parse(record.submittedAt) : NaN;
+  // Date kann nur ±8.64e15 ms darstellen; alles darüber würde toISOString() werfen lassen.
+  if (!Number.isFinite(time) || Math.abs(time) > 8.64e15) return null;
+  return {
+    reference,
+    followUpToken,
+    firstName: boundedText(record.firstName, 100) ?? '',
+    jobId: record.jobId,
+    submittedAt: new Date(time).toISOString(),
+  };
 }
 
 export function readSubmitted(storage: StorageLike | null = getSessionStorage()): SubmittedApplication | null {
@@ -126,8 +134,8 @@ export function parseMappe(raw: string | null | undefined): Mappe | null {
   const record = value as Record<string, unknown>;
   for (const candidate of [value, record.mappe, record.data]) {
     if (!candidate || typeof candidate !== 'object') continue;
-    const result = mappeSchema.safeParse(candidate);
-    if (result.success && hasMappeContent(result.data)) return result.data;
+    const result = parseMappeData(candidate);
+    if (result.ok && hasMappeContent(result.mappe)) return result.mappe;
   }
   return null;
 }

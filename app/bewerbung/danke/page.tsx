@@ -2,7 +2,7 @@ import { getFlowJobOptions } from '@/components/apply/options';
 import { ThankYouView } from '@/components/apply/thanks/ThankYouView';
 import type { ThankYouCompany, ThankYouJobs } from '@/components/apply/thanks/types';
 import { Container } from '@/components/layout';
-import { ContactOptions } from '@/components/site';
+import { ContactOptions } from '@/components/site/ContactOptions';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
 import { getProcessSteps } from '@/lib/content/process';

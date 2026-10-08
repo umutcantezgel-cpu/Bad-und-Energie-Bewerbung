@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { COMPANY } from '@/lib/content/company';
-import { STORAGE_KEYS } from '@/lib/applications/schema';
+import { applicationInputSchema, STORAGE_KEYS } from '@/lib/applications/schema';
 import { getFunnelOptions } from '@/lib/jobs/registry';
-import { contactFormSchema, CONTACT_MESSAGES } from '../contact-schema';
+import { CONTACT_MESSAGES, contactResolver, validateContact } from '../contact-schema';
 import { editDistance, suggestEmail } from '../email-suggest';
 import { formatBerlinDateTime, isWithinOpeningHours } from '../office-hours';
 import { carryOverQuery, jobIdFromParam, legacyRedirectTarget, paramForJob } from '../params';
@@ -45,26 +45,68 @@ describe('phone', () => {
   });
 });
 
-describe('contact form schema', () => {
-  const base = { name: 'Max Muster', phone: '0151 2345678', email: '', contactChannel: 'whatsapp' as const, website: '' };
+describe('contact validation (without zod)', () => {
+  const base = { name: 'Max Muster', phone: '0151 2345678', email: '', contactChannel: 'whatsapp' as const };
 
-  it('accepts name + phone without e-mail', () => {
-    expect(contactFormSchema.safeParse(base).success).toBe(true);
+  it('accepts name + phone without e-mail and returns trimmed values', () => {
+    expect(validateContact({ ...base, name: ' Max Muster ', phone: ' 0151.234.5678 ' })).toEqual({
+      ok: true,
+      values: { name: 'Max Muster', phone: '0151 234 5678', email: '', contactChannel: 'whatsapp' },
+    });
   });
 
   it('requires an e-mail address for the e-mail channel', () => {
-    const result = contactFormSchema.safeParse({ ...base, contactChannel: 'email' });
-    expect(result.success).toBe(false);
-    expect(result.error?.issues.find((issue) => issue.path[0] === 'email')?.message).toBe(CONTACT_MESSAGES.emailRequired);
+    expect(validateContact({ ...base, contactChannel: 'email' })).toEqual({ ok: false, errors: { email: CONTACT_MESSAGES.emailRequired } });
   });
 
   it('uses German messages for name, phone and e-mail', () => {
-    const result = contactFormSchema.safeParse({ ...base, name: ' ', phone: '12', email: 'max@' });
-    const messages = Object.fromEntries(result.error?.issues.map((issue) => [issue.path[0], issue.message]) ?? []);
-    expect(messages).toEqual({
-      name: 'Bitte gib deinen Namen an.',
-      phone: CONTACT_MESSAGES.phone,
-      email: CONTACT_MESSAGES.email,
+    expect(validateContact({ ...base, name: ' ', phone: '12', email: 'max@' })).toEqual({
+      ok: false,
+      errors: { name: 'Bitte gib deinen Namen an.', phone: CONTACT_MESSAGES.phone, email: CONTACT_MESSAGES.email },
+    });
+    expect(validateContact({ ...base, phone: '------' })).toMatchObject({ errors: { phone: CONTACT_MESSAGES.phone } });
+  });
+
+  // Client und Server müssen gleich entscheiden und dieselbe Meldung zeigen.
+  it.each([
+    { name: 'M' },
+    { name: 'x'.repeat(101) },
+    { phone: '------' },
+    { phone: '12345' },
+    { phone: '0151 2345678 9999 1234' },
+    { phone: '0151.234.5678' },
+    { email: 'max@example' },
+    { email: 'max..muster@example.de' },
+    { email: 'max@example.de' },
+    { email: ' max@example.de ' },
+    { email: `${'x'.repeat(250)}@example.de` },
+    { contactChannel: 'email' as const, email: '' },
+    { contactChannel: 'email' as const, email: 'max@example.de' },
+  ])('matches the server schema for %j', (patch) => {
+    const values = { ...base, ...patch };
+    const client = validateContact(values);
+    const server = applicationInputSchema.safeParse({
+      jobId: 'initiativ',
+      privacyNoticeVersion: '2026-10',
+      idempotencyKey: '3b241101-e2bb-4255-8caf-4136c566a962',
+      ...(client.ok ? client.values : values),
+    });
+    expect(client.ok).toBe(server.success);
+    if (!client.ok && !server.success) {
+      const serverErrors = Object.fromEntries(server.error.issues.map((issue) => [issue.path[0], issue.message]));
+      for (const [field, message] of Object.entries(client.errors)) {
+        if (field === 'name' && message.startsWith('Bitte kürze')) continue; // Server: germanIssueMessage (gleicher Text über die Route)
+        expect(serverErrors[field]).toBe(message);
+      }
+    }
+  });
+
+  it('works as a react-hook-form resolver', async () => {
+    const options = { fields: {}, shouldUseNativeValidation: false };
+    await expect(Promise.resolve(contactResolver(base, undefined, options))).resolves.toMatchObject({ values: base, errors: {} });
+    await expect(Promise.resolve(contactResolver({ ...base, phone: 'abc' }, undefined, options))).resolves.toEqual({
+      values: {},
+      errors: { phone: { type: 'validate', message: CONTACT_MESSAGES.phone } },
     });
   });
 });

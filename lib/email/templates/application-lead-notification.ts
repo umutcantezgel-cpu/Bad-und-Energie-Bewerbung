@@ -46,12 +46,24 @@ export function renderApplicationTeamEmail(app: ReferencedApplication): Rendered
   const inactive = job.status ? INACTIVE_STATUS_LABEL[job.status] : undefined;
   const answers = answerRows(job.questionSet, app.answers);
   const fillSeconds = app.fillDurationMs !== undefined ? formatSeconds(app.fillDurationMs) : undefined;
+  const spamNotes = (app.spamSignals ?? []).map((signal) =>
+    signal === 'honeypot'
+      ? 'Ein für Menschen unsichtbares Feld wurde ausgefüllt (typisch für Bots).'
+      : `Das Formular wurde in ${fillSeconds ?? 'weniger als 3'} Sekunden ausgefüllt.`,
+  );
 
   const blocks: EmailBlockInput[] = [
     app.suspectedSpam && {
       type: 'note',
       tone: 'danger',
-      text: `Spamverdacht: Das Formular wurde in ${fillSeconds ?? 'weniger als 3'} Sekunden ausgefüllt. Bitte kurz prüfen, bevor du antwortest.`,
+      text: [
+        'Spamverdacht:',
+        ...spamNotes,
+        'Bitte kurz prüfen, bevor du antwortest.',
+        app.email ? 'An die angegebene E-Mail-Adresse ging keine Eingangsbestätigung.' : '',
+      ]
+        .filter(Boolean)
+        .join(' '),
     },
     { type: 'title', text: `Neue Bewerbung ${app.reference}` },
     {
