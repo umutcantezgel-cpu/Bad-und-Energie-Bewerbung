@@ -1,39 +1,78 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import { useEffect, type CSSProperties } from 'react';
+import { SITE_CONFIG } from '@/lib/seo/site-config';
+import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
 
-export default function GlobalError({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
+/*
+ * Replaces the root layout when it fails, so globals.css, Inter and the design tokens are not
+ * available. Inline styles with CSS system colors (Canvas/CanvasText) follow light and dark mode.
+ */
+
+const PHONE = { display: SITE_CONFIG.contact.telephone, href: `tel:${SITE_CONFIG.contact.telephoneLink}` };
+const WHATSAPP_HREF = buildWhatsAppUrl(
+  'Guten Tag Herr Demir, auf der Karriereseite ist ein technischer Fehler aufgetreten. Ich melde mich deshalb direkt.',
+);
+
+const styles = {
+  html: { colorScheme: 'light dark' },
+  body: {
+    margin: 0,
+    minHeight: '100dvh',
+    display: 'flex',
+    alignItems: 'center',
+    background: 'Canvas',
+    color: 'CanvasText',
+    fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+    fontSize: 17,
+    lineHeight: 1.55,
+    WebkitFontSmoothing: 'antialiased',
+  },
+  main: { width: '100%', maxWidth: '40rem', margin: '0 auto', padding: '64px 20px' },
+  title: { fontSize: 32, lineHeight: 1.15, fontWeight: 600, letterSpacing: '-0.02em', margin: '0 0 16px' },
+  text: { margin: '0 0 32px', opacity: 0.75 },
+  actions: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 24 },
+  button: {
+    minHeight: 48,
+    padding: '0 24px',
+    border: 0,
+    borderRadius: 9999,
+    background: 'CanvasText',
+    color: 'Canvas',
+    font: 'inherit',
+    fontWeight: 600,
+    cursor: 'pointer',
+  },
+  link: { color: 'inherit', fontWeight: 500, textUnderlineOffset: 4, minHeight: 44, display: 'inline-flex', alignItems: 'center' },
+} satisfies Record<string, CSSProperties>;
+
+export default function GlobalError({ error, retry }: { error: Error & { digest?: string }; retry: () => void }) {
   useEffect(() => {
-    console.error('Root Global Error:', error);
+    console.error(error);
   }, [error]);
 
   return (
-    <html lang="de">
-      <body className="min-h-screen flex items-center justify-center bg-slate-50 font-sans p-4">
-        <div className="max-w-md w-full bg-white p-8 rounded-2xl border border-slate-200 shadow-lg text-center">
-          <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold text-xl">
-            !
-          </div>
-          <h1 className="text-xl font-bold text-slate-900 mb-2">
-            Systemfehler | Bad &amp; Energie Lahn Dill
-          </h1>
-          <p className="text-xs text-slate-600 mb-6">
-            Ein kritischer Systemfehler ist aufgetreten. Bitte lade die Seite neu oder rufe uns direkt an (06441 42956).
+    <html lang="de" style={styles.html}>
+      <body style={styles.body}>
+        <title>Fehler | Bad & Energie Karriere</title>
+        <main style={styles.main}>
+          <h1 style={styles.title}>Da ist etwas schiefgelaufen.</h1>
+          <p style={styles.text}>
+            Bitte lade die Seite neu. Wenn es weiter hakt, ruf uns an oder schreib per WhatsApp.
+            {error.digest ? ` Fehlernummer: ${error.digest}` : ''}
           </p>
-          <button
-            type="button"
-            onClick={() => reset()}
-            className="w-full py-2.5 px-4 rounded-xl bg-[#0A1E3A] text-white text-xs font-bold hover:bg-[#132B50] transition-colors cursor-pointer"
-          >
-            Seite neu laden
-          </button>
-        </div>
+          <div style={styles.actions}>
+            <button type="button" style={styles.button} onClick={() => retry()}>
+              Erneut versuchen
+            </button>
+            <a href={PHONE.href} style={styles.link}>
+              {PHONE.display}
+            </a>
+            <a href={WHATSAPP_HREF} target="_blank" rel="noopener noreferrer" style={styles.link}>
+              WhatsApp
+            </a>
+          </div>
+        </main>
       </body>
     </html>
   );

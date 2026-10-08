@@ -11,6 +11,11 @@ export function validateTitleLength(title: string): boolean {
 
 export function generatePageMetadata(opts: {
   title: string;
+  /**
+   * Use `title` as is, without the root layout's template ('%s | Bad & Energie Karriere'),
+   * e.g. for the home page or titles that already carry the brand.
+   */
+  absoluteTitle?: boolean;
   description: string;
   path: string;
   type?: 'money' | 'legal' | 'default';
@@ -27,7 +32,7 @@ export function generatePageMetadata(opts: {
   const indexable = opts.type !== 'legal' && !opts.noindex;
 
   return {
-    title: opts.title,
+    title: opts.absoluteTitle ? { absolute: opts.title } : opts.title,
     description: opts.description,
     keywords: opts.keywords,
     alternates: {

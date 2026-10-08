@@ -28,7 +28,9 @@ const LEGACY = [
   'components/trust/',
   'components/pricing/',
   'components/contact/',
-  'components/seo/',
+  'components/seo/AIAnswerBox.tsx',
+  'components/seo/SeoImage.tsx',
+  'components/seo/index.ts',
   'components/layout/LayoutClientWidgets.tsx',
 ];
 
