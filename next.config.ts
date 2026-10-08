@@ -58,7 +58,6 @@ const nextConfig: NextConfig = {
   },
   output: 'standalone',
   poweredByHeader: false,
-  transpilePackages: ['motion'],
   async headers() {
     return [
       {
