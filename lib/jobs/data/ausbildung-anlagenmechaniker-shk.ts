@@ -1,7 +1,7 @@
 import { HQ_LOCATION } from '../employer';
 import { defineJob } from '../schema';
 
-// Quellen: JobPosting SHK-AZ-2026-04 (app/layout.tsx), Stellenkarte 04 (app/page.tsx),
+// Quellen (Stand 393df01): JobPosting SHK-AZ-2026-04 (app/layout.tsx), Stellenkarte 04 (app/page.tsx),
 // servicesData 'ausbildung' (lib/data/services.ts), ROLE_CONFIGS.azubi (pricing.constants.ts).
 // Owner-Entscheidung: „Ausbildung 2026 – Einstieg noch möglich“, Start nach Absprache.
 // Titel ohne Jahr (Google: keine Daten im JobPosting-Titel); „2026“ steht in metaTitle, h1 und Texten,
@@ -28,9 +28,10 @@ export const ausbildungAnlagenmechanikerShk = defineJob({
       'Azubi Anlagenmechaniker Lahn-Dill',
     ],
   },
-  summary: 'Ausbildung 2026, Einstieg noch möglich: In 3,5 Jahren wirst du Anlagenmechaniker SHK, mit eigenem Hilti-Werkzeugset ab Tag 1.',
+  summary: 'Ausbildung 2026: Einstieg noch möglich. In 3,5 Jahren wirst du Anlagenmechaniker SHK, mit eigenem Hilti-Werkzeugset ab Tag 1.',
+  // „Einstieg 2026“ steht schon in der h1; „von Anfang an mit“ im Vorteil `mentoring` und in Ablauf-Schritt 3.
   intro:
-    'Ausbildung 2026: Der Einstieg ist noch möglich. In 3,5 Jahren wirst du bei uns Anlagenmechaniker für Sanitär-, Heizungs- und Klimatechnik. Du lernst von erfahrenen Meistern und Gesellen und arbeitest von Anfang an mit, an Wärmepumpen, Klimatechnik und modernen Bädern.',
+    'In 3,5 Jahren wirst du bei uns Anlagenmechaniker für Sanitär-, Heizungs- und Klimatechnik, an Wärmepumpen und modernen Bädern.',
   tasks: [
     'Montage und Inbetriebnahme von Wärmepumpen und Heizungen',
     'Installation moderner Bäder und Sanitärtechnik',

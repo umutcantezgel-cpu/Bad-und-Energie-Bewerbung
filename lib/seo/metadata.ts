@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { SITE_CONFIG } from './site-config';
 import { getCleanCanonicalUrl } from './canonical-links';
+import { DEFAULT_OG_IMAGE, type OgImage } from './og-image';
 
 export const BASE_URL = SITE_CONFIG.baseUrl;
 export const LOGO_URL = `${BASE_URL}/images/bad-energie-lahn-dill-logo-transparent.webp`;
@@ -23,13 +24,22 @@ export function generatePageMetadata(opts: {
   /** noindex,follow – e.g. thank-you page, ad landing pages, tools. */
   noindex?: boolean;
   /**
-   * Absolute or root-relative image. When omitted, the file-based
-   * `opengraph-image` of the route segment (or app/opengraph-image) is used.
+   * Share image (og:image and twitter:image).
+   * - omitted: the root image app/opengraph-image (DEFAULT_OG_IMAGE). Next merges metadata only one
+   *   level deep: a page that sets `openGraph` replaces the layout's object, so without an explicit
+   *   image it would share none.
+   * - 'file': the page's own segment has an opengraph-image file. No images are set here, because
+   *   explicit images take precedence over file-based ones. The default for '/', whose segment holds
+   *   app/opengraph-image.
+   * - an image: used as is, e.g. jobOgImage() for job pages.
    */
-  ogImage?: { url: string; width: number; height: number; alt: string };
+  ogImage?: OgImage | 'file';
 }): Metadata {
   const canonicalUrl = getCleanCanonicalUrl(opts.path);
   const indexable = opts.type !== 'legal' && !opts.noindex;
+  const image = opts.ogImage ?? (opts.path === '/' ? 'file' : DEFAULT_OG_IMAGE);
+  // Key left out entirely for 'file': Next checks hasOwnProperty('images') before using the file.
+  const images = () => (image === 'file' ? {} : { images: [{ ...image }] });
 
   return {
     title: opts.absoluteTitle ? { absolute: opts.title } : opts.title,
@@ -45,13 +55,13 @@ export function generatePageMetadata(opts: {
       siteName: SITE_CONFIG.companyName,
       locale: 'de_DE',
       type: 'website',
-      ...(opts.ogImage ? { images: [opts.ogImage] } : {}),
+      ...images(),
     },
     twitter: {
       card: 'summary_large_image',
       title: opts.title,
       description: opts.description,
-      ...(opts.ogImage ? { images: [opts.ogImage.url] } : {}),
+      ...images(),
     },
     robots: {
       index: indexable,

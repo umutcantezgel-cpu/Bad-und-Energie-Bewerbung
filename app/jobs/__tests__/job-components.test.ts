@@ -6,13 +6,23 @@ import { describe, expect, it } from 'vitest';
 import { JobCard } from '@/components/jobs/JobCard';
 import { SalaryCard } from '@/components/jobs/SalaryCard';
 import { getMoreJobs } from '@/components/jobs/MoreJobs';
-import { lowerFirst, pageTitle, splitLabel, withSoftHyphens } from '@/components/jobs/text';
+import { bindSeparators, lowerFirst, pageTitle, splitLabel, withSoftHyphens } from '@/components/jobs/text';
 import { formatSalaryAmount, jobPath } from '@/lib/jobs/format';
 import { ALL_JOBS, getActiveJobs, getJobById } from '@/lib/jobs/registry';
 
 const SHY = '­';
 const am = getJobById('anlagenmechaniker-shk')!;
 const azubi = getJobById('ausbildung-anlagenmechaniker-shk')!;
+
+describe('bindSeparators', () => {
+  it('glues a spaced slash or dash to the word before it', () => {
+    expect(bindSeparators('Kundendiensttechniker SHK / Servicemonteur (m/w/d)')).toBe(
+      'Kundendiensttechniker SHK\u00A0/ Servicemonteur (m/w/d)',
+    );
+    expect(bindSeparators('Anlagenmechaniker SHK – Einstieg 2026')).toBe('Anlagenmechaniker SHK\u00A0– Einstieg 2026');
+    expect(bindSeparators('3.600–4.600 € (m/w/d)')).toBe('3.600–4.600 € (m/w/d)');
+  });
+});
 
 describe('withSoftHyphens', () => {
   it('carries the soft hyphens of titleShy over to seo.h1', () => {

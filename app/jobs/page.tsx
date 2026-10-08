@@ -1,61 +1,59 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Container, Section } from '@/components/layout';
-import { JobCard, pageTitle } from '@/components/jobs';
-import { lowerFirst } from '@/components/jobs/text';
-import { ContactOptions } from '@/components/site';
-import { Breadcrumbs, Button, PageHeader, TextLink } from '@/components/ui';
+// Direct module imports: the barrels re-export client components this page does not use.
+import { Container } from '@/components/layout/Container';
+import { Section } from '@/components/layout/Section';
+import { JobCard } from '@/components/jobs/JobCard';
+import { lowerFirst, pageTitle } from '@/components/jobs/text';
+import { ContactOptions } from '@/components/site/ContactOptions';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { Button } from '@/components/ui/Button';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { TextLink } from '@/components/ui/TextLink';
 import { INITIATIVE_APPLY_PATH } from '@/lib/apply/params';
-import { FACTS, REGION } from '@/lib/content';
+import { BREADCRUMB_HOME, BREADCRUMB_JOBS, FACTS, REGION } from '@/lib/content';
 import { applyPath } from '@/lib/jobs/format';
-import { serializeJsonLd } from '@/lib/jobs/jsonld';
-import { getActiveJobs, getFunnelOptions, getJobById, isJobLive } from '@/lib/jobs/registry';
+import { buildJobsBreadcrumbJsonLd, serializeJsonLd } from '@/lib/jobs/jsonld';
+import { getActiveJobs, getFunnelOptions, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
+import { jobsHubDescription } from '@/lib/seo/descriptions';
 import { generatePageMetadata } from '@/lib/seo/metadata';
-import { SITE_CONFIG } from '@/lib/seo/site-config';
 
 /** Hourly, like the feeds: expired jobs leave the list without a deploy. */
 export const revalidate = 3600;
 
 const TITLE = 'Stellenangebote SHK Wetzlar & Gießen – alle offenen Jobs';
-// ≤ 155 Zeichen; nennt die veröffentlichten Stellen. Beim Schließen einer Stelle mitpflegen.
-const DESCRIPTION =
-  'Offene SHK-Jobs in Wetzlar & Gießen: Anlagenmechaniker, Kundendienst, Obermonteur, Ausbildung. 30 Tage Urlaub, freitags ab 13:30 frei. In 60 Sek. bewerben.';
 
-export const metadata: Metadata = {
-  ...generatePageMetadata({
-    title: TITLE,
-    description: DESCRIPTION,
-    path: '/jobs',
-    keywords: [
-      'Stellenangebote SHK Wetzlar',
-      'SHK Jobs Wetzlar',
-      'SHK Jobs Gießen',
-      'Heizungsbauer Jobs Wetzlar',
-      ...getActiveJobs().map((job) => job.seo.primaryKeyword),
-    ],
-  }),
-  title: pageTitle(TITLE),
-};
+/** Live jobs at render time: expired ones leave the list (and the description) with the next revalidation. */
+function liveJobs(now: Date): Job[] {
+  return getActiveJobs().filter((job) => isJobLive(job, now));
+}
 
-const LEAD = `${FACTS.founded1926.short} in Wetzlar: ${FACTS.vacation30.short}, ${lowerFirst(FACTS.friday1330.short)} und ${lowerFirst(FACTS.noFarAssembly.short)}.`;
-
-function breadcrumbJsonLd() {
-  const base = SITE_CONFIG.baseUrl.replace(/\/+$/, '');
+/** Per request, not at module level: the description names the jobs that are live right now. */
+export function generateMetadata(): Metadata {
+  const jobs = liveJobs(new Date());
   return {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    '@id': `${base}/jobs#breadcrumb`,
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Startseite', item: base },
-      { '@type': 'ListItem', position: 2, name: 'Stellen', item: `${base}/jobs` },
-    ],
+    ...generatePageMetadata({
+      title: TITLE,
+      description: jobsHubDescription(jobs),
+      path: '/jobs',
+      keywords: [
+        'Stellenangebote SHK Wetzlar',
+        'SHK Jobs Wetzlar',
+        'SHK Jobs Gießen',
+        'Heizungsbauer Jobs Wetzlar',
+        ...jobs.map((job) => job.seo.primaryKeyword),
+      ],
+    }),
+    title: pageTitle(TITLE),
   };
 }
 
+/** „Keine Fernmontage“ steht in der Einsatzgebiet-Überschrift weiter unten, deshalb nicht auch hier. */
+const LEAD = `${FACTS.founded1926.short} in Wetzlar: ${FACTS.vacation30.short} und ${lowerFirst(FACTS.friday1330.short)}.`;
+
 /** Hub for all open positions. No JobPosting markup here: Google allows it on the job pages only. */
 export default function JobsPage() {
-  const now = new Date();
-  const jobs = getActiveJobs().filter((job) => isJobLive(job, now));
+  const jobs = liveJobs(new Date());
   const funnelOnly = getFunnelOptions()
     .filter((option) => option.status === 'funnel_only')
     .map((option) => getJobById(option.id))
@@ -63,11 +61,11 @@ export default function JobsPage() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbJsonLd()) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(buildJobsBreadcrumbJsonLd()) }} />
 
       <Container className="flex flex-col gap-10 pt-8 pb-section-sm lg:pt-12">
         <PageHeader
-          before={<Breadcrumbs items={[{ label: 'Start', href: '/' }, { label: 'Stellen' }]} />}
+          before={<Breadcrumbs items={[BREADCRUMB_HOME, { label: BREADCRUMB_JOBS.label }]} />}
           title="Offene Stellen in Wetzlar und Umgebung"
           lead={LEAD}
         />

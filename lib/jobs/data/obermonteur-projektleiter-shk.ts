@@ -1,8 +1,9 @@
 import { HQ_LOCATION } from '../employer';
 import { defineJob } from '../schema';
 
-// Quellen: JobPosting SHK-PL-2026-03 (app/layout.tsx), Stellenkarte 03 (app/page.tsx),
+// Quellen (Stand 393df01): JobPosting SHK-PL-2026-03 (app/layout.tsx), Stellenkarte 03 (app/page.tsx),
 // EXPERIENCE_MODIFIERS senior/meister (pricing.constants.ts). Im Gehaltsrechner gab es keine eigene Rolle.
+// Die direkte Abstimmung mit Sabri Demir steht im Vorteil `directLine`, nicht zusätzlich im Intro.
 export const obermonteurProjektleiterShk = defineJob({
   id: 'obermonteur-projektleiter-shk',
   referenceCode: 'SHK-PL-2026-03',
@@ -27,7 +28,7 @@ export const obermonteurProjektleiterShk = defineJob({
   },
   summary: 'Du leitest Badsanierungen und Heizungsprojekte eigenverantwortlich, in direkter Abstimmung mit Sabri Demir.',
   intro:
-    'Als Obermonteur oder Projektleiter führst du anspruchsvolle Badsanierungen und Heizungsmodernisierungen im Lahn-Dill-Kreis eigenverantwortlich. Du organisierst deine Baustellen frei, führst dein Team kollegial und stimmst dich direkt mit Dipl.-Ing. Sabri Demir ab.',
+    'Als Obermonteur oder Projektleiter führst du anspruchsvolle Badsanierungen und Heizungsmodernisierungen im Lahn-Dill-Kreis eigenverantwortlich. Du organisierst deine Baustellen frei und führst dein Team kollegial.',
   tasks: [
     'Eigenverantwortliche Leitung von Badsanierungen und Heizungsmodernisierungen im 35-km-Radius',
     'Baustellenleitung für Komplettbäder und regenerative Großanlagen',

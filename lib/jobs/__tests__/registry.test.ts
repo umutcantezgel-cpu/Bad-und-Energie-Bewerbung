@@ -81,6 +81,15 @@ describe('Job-Registry', () => {
     expect(options.find((o) => o.id === 'obermonteur-projektleiter-shk')?.questionSet).toBe('fachkraft');
   });
 
+  it('getFunnelOptions(now) lässt abgelaufene veröffentlichte Stellen weg, funnel_only bleibt', () => {
+    const ausbildung = getJobById('ausbildung-anlagenmechaniker-shk')!;
+    const afterExpiry = new Date(Date.parse(ausbildung.validThrough!) + 1000);
+    const ids = getFunnelOptions(afterExpiry).map((o) => o.id);
+    expect(ids).not.toContain('ausbildung-anlagenmechaniker-shk');
+    expect(ids).toContain('quereinsteiger-montagehelfer');
+    expect(getFunnelOptions(TEST_DATE).map((o) => o.id)).toEqual([...JOB_IDS]);
+  });
+
   it('findet Stellen über Slug und ID', () => {
     expect(getJobBySlug('anlagenmechaniker-shk-wetzlar')?.id).toBe('anlagenmechaniker-shk');
     expect(getJobBySlug('gibt-es-nicht')).toBeUndefined();
@@ -166,6 +175,28 @@ describe('Job-Registry', () => {
     expect(azubi.employment).toMatchObject({ kind: 'ausbildung', start: 'nach-absprache', durationMonths: 42 });
     expect(azubi.validThrough).toBe('2026-12-31T23:59:59+01:00');
     expect(getChannelJobs([azubi], 'googleJobs', new Date('2027-01-01T00:00:00+01:00'))).toEqual([]);
+  });
+
+  it('Ausbildung: Wortlaut der Owner-Entscheidung, Intro wiederholt die h1 nicht', () => {
+    const azubi = getJobById('ausbildung-anlagenmechaniker-shk')!;
+    expect(azubi.summary).toMatch(/^Ausbildung 2026: Einstieg noch möglich\. /);
+    expect(azubi.intro).not.toMatch(/2026|Einstieg|von Anfang an/);
+  });
+
+  it('Texte ohne Dopplungen auf derselben Seite', () => {
+    // Obermonteur: die direkte Abstimmung steht im Vorteil directLine, nicht noch einmal mit anderem Titel im Intro.
+    const obermonteur = getJobById('obermonteur-projektleiter-shk')!;
+    expect(obermonteur.benefitFactIds).toContain('directLine');
+    expect(obermonteur.intro).not.toMatch(/Demir|Dipl/);
+    // Kundendienst: Markenliste und iPad stehen schon in Intro, Vorteilen und Aufgaben, nicht auch im Paket.
+    const kundendienst = getJobById('kundendiensttechniker-shk')!;
+    const paket = kundendienst.packageExtras.map((extra) => extra.text).join(' ');
+    expect(paket).not.toMatch(/Buderus|iPad/);
+    // Typografie: „22-V“ mit Bindestrichen, nie „22V“.
+    for (const job of ALL_JOBS) {
+      expect(job.packageExtras.map((extra) => extra.text).join(' '), job.id).not.toMatch(/\d+V\b/);
+    }
+    expect(FACTS.hilti.long).not.toMatch(/\d+V\b/);
   });
 
   it('kein Stellentitel nennt ein Jahr (Google-Richtlinie, auch für Feeds)', () => {

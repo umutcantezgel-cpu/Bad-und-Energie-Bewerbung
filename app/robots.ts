@@ -2,11 +2,13 @@ import type { MetadataRoute } from 'next';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 
 /**
- * Not for crawling: APIs, the recruiter area (Phase 2) and the noindex steps after an
- * application. A crawler obeys only its most specific group, so every allowing group
- * repeats the same list. Feeds, sitemap and llms*.txt stay open.
+ * Not for crawling: APIs and the recruiter area (Phase 2). A crawler obeys only its most specific
+ * group, so every allowing group repeats the same list. Feeds, sitemap and llms*.txt stay open.
+ * Pages that must stay out of the index (/bewerbung/danke, /bewerbung/mappe, legal pages, closed
+ * jobs) carry `noindex` instead and must not be listed here: a crawler blocked by robots.txt never
+ * sees the noindex, and a linked URL can still be indexed without content.
  */
-const PRIVATE_PATHS = ['/api/', '/admin/', '/bewerbung/danke', '/bewerbung/mappe'];
+const PRIVATE_PATHS = ['/api/', '/admin/'];
 
 export default function robots(): MetadataRoute.Robots {
   const baseUrl = SITE_CONFIG.baseUrl.replace(/\/+$/, '');

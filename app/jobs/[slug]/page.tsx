@@ -3,26 +3,31 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { ApplyFlow } from '@/components/apply';
-import {
-  ApplyAnchorButton,
-  JobFaq,
-  JobHeader,
-  JobProcess,
-  JobQuote,
-  JobSections,
-  MoreJobs,
-  SalaryCard,
-  pageTitle,
-} from '@/components/jobs';
-import { Container } from '@/components/layout';
-import { ContactOptions } from '@/components/site';
-import { Breadcrumbs, Button, TextLink } from '@/components/ui';
+// Direct module imports instead of the barrels: a barrel would register every client component it
+// re-exports (Sheet, Field, MobileNav …) for this page.
+import { ApplyAnchorButton } from '@/components/jobs/ApplyAnchorButton';
+import { JobFaq } from '@/components/jobs/JobFaq';
+import { JobHeader } from '@/components/jobs/JobHeader';
+import { JobProcess } from '@/components/jobs/JobProcess';
+import { JobQuote } from '@/components/jobs/JobQuote';
+import { JobSections } from '@/components/jobs/JobSections';
+import { MoreJobs } from '@/components/jobs/MoreJobs';
+import { SalaryCard } from '@/components/jobs/SalaryCard';
+import { pageTitle } from '@/components/jobs/text';
+import { Container } from '@/components/layout/Container';
+import { ContactOptions } from '@/components/site/ContactOptions';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { Button } from '@/components/ui/Button';
+import { TextLink } from '@/components/ui/TextLink';
 import { INITIATIVE_APPLY_PATH } from '@/lib/apply/params';
-import { COMPANY, getTeamQuote } from '@/lib/content';
-import { applyPath, getJobSections, jobPath } from '@/lib/jobs/format';
+import { WHATSAPP_GREETING } from '@/lib/apply/whatsapp-message';
+import { BREADCRUMB_HOME, BREADCRUMB_JOBS, COMPANY, FACTS, getTeamQuote } from '@/lib/content';
+import { applyPath, jobPath } from '@/lib/jobs/format';
 import { buildBreadcrumbJsonLd, buildJobPostingJsonLd, serializeJsonLd } from '@/lib/jobs/jsonld';
 import { ALL_JOBS, getJobByLegacySlug, getJobBySlug, getJobPageSlugs, isJobLive, type Job } from '@/lib/jobs/registry';
+import { fitDescription } from '@/lib/seo/descriptions';
 import { generatePageMetadata } from '@/lib/seo/metadata';
+import { jobOgImage } from '@/lib/seo/og-image';
 
 type Params = Promise<{ slug: string }>;
 
@@ -57,8 +62,15 @@ function resolveJob(slug: string): Job {
   notFound();
 }
 
+const isAusbildung = (job: Job) => job.category === 'ausbildung';
+
+/** „Ausbildung zum Anlagenmechaniker SHK (m/w/d)“ → „Ausbildung zum Anlagenmechaniker SHK“. */
+const withoutGenderTag = (title: string) => title.replace(/\s*\(m\/w\/d\)\s*$/, '');
+
+/** „… für die Stelle als Kundendiensttechniker.“ bzw. „… für die Ausbildung zum Anlagenmechaniker SHK.“ */
 function whatsappMessage(job: Job): string {
-  return `Guten Tag Herr Demir, ich interessiere mich für die Stelle als ${job.shortTitle}.`;
+  const subject = isAusbildung(job) ? `die ${withoutGenderTag(job.title)}` : `die Stelle als ${job.shortTitle}`;
+  return `${WHATSAPP_GREETING} ich interessiere mich für ${subject}.`;
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
@@ -71,9 +83,13 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     return {
       ...generatePageMetadata({
         title,
-        description: `Die Stelle ${job.title} bei ${COMPANY.shortName} in ${job.location.city} ist besetzt. Hier findest du die offenen Stellen.`,
+        description: fitDescription(
+          `Die Stelle ${job.title} bei ${COMPANY.shortName} in ${job.location.city} ist besetzt. Hier findest du die offenen Stellen.`,
+          `Die Stelle ${job.shortTitle} bei ${COMPANY.shortName} ist besetzt. Hier findest du die offenen Stellen.`,
+        ),
         path: jobPath(job),
         noindex: true,
+        ogImage: jobOgImage(job, false),
       }),
       title: pageTitle(title),
     };
@@ -85,6 +101,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       description: job.seo.metaDescription,
       path: jobPath(job),
       keywords: [job.seo.primaryKeyword, ...job.seo.secondaryKeywords],
+      ogImage: jobOgImage(job, true),
     }),
     title: pageTitle(job.seo.metaTitle),
   };
@@ -99,7 +116,7 @@ export default async function JobPage({ params }: { params: Params }) {
 function OpenJob({ job }: { job: Job }) {
   const jsonLd = [buildJobPostingJsonLd(job), buildBreadcrumbJsonLd(job)].filter((node) => node !== null);
   const quote = job.teamQuoteId ? getTeamQuote(job.teamQuoteId) : undefined;
-  const applyText = getJobSections(job).find((section) => section.id === 'bewerben')?.text;
+  const contactPerson = { name: COMPANY.managingDirector.name, role: COMPANY.managingDirector.title };
 
   return (
     <>
@@ -113,12 +130,16 @@ function OpenJob({ job }: { job: Job }) {
             {quote && <JobQuote quote={quote} />}
             <JobProcess audience={job.apply.questionSet} />
 
+            {/*
+              „60 Sekunden“ is the title of process step 1 right above, so the heading does not repeat it.
+              „Kein Lebenslauf“ stands once, next to the flow (at most twice per page with the FAQ).
+            */}
             <section id="bewerben" aria-labelledby="bewerben-titel" className="flex flex-col gap-6">
               <div className="flex flex-col gap-2">
                 <h2 id="bewerben-titel" className="text-title-2 text-ink">
-                  In 60 Sekunden bewerben
+                  Jetzt bewerben
                 </h2>
-                {applyText && <p className="max-w-prose text-body text-ink-muted">{applyText}</p>}
+                <p className="max-w-prose text-body text-ink-muted">{FACTS.noCvNeeded.long}</p>
               </div>
               <Suspense fallback={<ApplyFallback job={job} />}>
                 <ApplyFlow initialJobId={job.id} variant="embedded" funnel="job_page" />
@@ -131,7 +152,7 @@ function OpenJob({ job }: { job: Job }) {
                   Lieber direkt sprechen?
                 </h2>
                 <p className="text-body text-ink-muted">
-                  {COMPANY.managingDirector.name}, {COMPANY.managingDirector.title}
+                  {contactPerson.name}, {contactPerson.role}
                 </p>
               </div>
               <ContactOptions variant="inline" whatsappMessage={whatsappMessage(job)} />
@@ -147,7 +168,7 @@ function OpenJob({ job }: { job: Job }) {
                 size="compact"
                 action={<ApplyAnchorButton>Jetzt bewerben</ApplyAnchorButton>}
               />
-              <ContactOptions variant="card" whatsappMessage={whatsappMessage(job)} />
+              <ContactOptions variant="card" person={contactPerson} whatsappMessage={whatsappMessage(job)} />
             </div>
           </aside>
         </div>
@@ -162,7 +183,9 @@ function OpenJob({ job }: { job: Job }) {
 function ApplyFallback({ job }: { job: Job }) {
   return (
     <p className="text-body text-ink-muted">
-      <TextLink href={applyPath(job)}>Bewerbung als {job.shortTitle} öffnen</TextLink>
+      <TextLink href={applyPath(job)}>
+        {isAusbildung(job) ? 'Bewerbung für die Ausbildung öffnen' : `Bewerbung als ${job.shortTitle} öffnen`}
+      </TextLink>
     </p>
   );
 }
@@ -173,12 +196,12 @@ function ClosedJob({ job }: { job: Job }) {
     <>
       <Container className="flex flex-col gap-6 pt-8 pb-section-sm lg:pt-12">
         <Breadcrumbs
-          items={[{ label: 'Start', href: '/' }, { label: 'Stellen', href: '/jobs' }, { label: job.shortTitle }]}
+          items={[BREADCRUMB_HOME, BREADCRUMB_JOBS, { label: job.shortTitle }]}
         />
         <h1 className="text-title-1 text-ink">Diese Stelle ist besetzt</h1>
         <p className="max-w-prose text-lead text-ink-muted">
-          Die Stelle {job.title} ist nicht mehr ausgeschrieben. Schau dir die offenen Stellen an oder bewirb dich
-          initiativ.
+          {isAusbildung(job) ? `Die ${job.title}` : `Die Stelle ${job.title}`} ist nicht mehr ausgeschrieben. Schau dir
+          die offenen Stellen an oder bewirb dich initiativ.
         </p>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
           <Button asChild size="lg">

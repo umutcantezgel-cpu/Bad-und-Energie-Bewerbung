@@ -1,4 +1,5 @@
 import { companyData } from '@/lib/data/company';
+import { FACTS } from './facts';
 import { regionalLocations } from '@/lib/data/locations';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 
@@ -58,7 +59,7 @@ export const REGION = Object.freeze({
   /** Meilenstein 2026 aus lib/data/company.ts, auf zwei Sätze gekürzt. */
   milestone: Object.freeze({
     year: 2026,
-    text: '2026 ist der Hauptstandort in die Siegmund-Hiepe-Str. 20 in Wetzlar umgezogen, für ein moderneres Büro und ein größeres Lager. Hier modernisieren 15 Mitarbeiter die Heizungen und Bäder der Kunden, als Wärmepumpen-Spezialist und Fachbetrieb des Lahn-Dill-Kreises.',
+    text: `2026 sind wir in die ${companyData.street} umgezogen: moderneres Büro, größeres Lager. Als Wärmepumpen-Spezialist und Fachbetrieb des Lahn-Dill-Kreises modernisieren wir mit ${FACTS.employees15.value} Leuten Heizungen und Bäder.`,
   }),
 });
 

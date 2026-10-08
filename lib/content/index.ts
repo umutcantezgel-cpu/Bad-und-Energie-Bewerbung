@@ -1,3 +1,4 @@
+export * from './breadcrumbs';
 export * from './facts';
 export * from './faq';
 export * from './process';

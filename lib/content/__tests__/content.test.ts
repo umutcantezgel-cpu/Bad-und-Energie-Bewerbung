@@ -4,6 +4,7 @@ import { regionalLocations } from '@/lib/data/locations';
 import { teamData } from '@/lib/data/team';
 import {
   COMPANY,
+  DISCRETION_PROMISE,
   FACTS,
   FACT_IDS,
   FAQ_ITEMS,
@@ -13,7 +14,9 @@ import {
   TEAM_QUOTES,
   TEAM_QUOTE_IDS,
   getFact,
+  getDiscretionPromise,
   getFaqItems,
+  getProcessIntro,
   getProcessSteps,
   isFactActive,
   isFactId,
@@ -98,9 +101,33 @@ describe('FAQ', () => {
   it('drei FAQ je Fragenset', () => {
     for (const ids of Object.values(JOB_FAQ_IDS)) expect(getFaqItems(ids)).toHaveLength(3);
   });
+
+  it('Fachkräfte-Stellen ohne Lebenslauf-Frage (steht auf der Stellenseite schon über dem Flow)', () => {
+    expect(JOB_FAQ_IDS.fachkraft).not.toContain('lebenslauf');
+  });
+
+  it('Wochenende so stark wie der Fakt noWeekendOnCall, nicht stärker', () => {
+    const answer = FAQ_ITEMS.find((f) => f.id === 'fernmontage')?.answer ?? '';
+    expect(answer).toContain('jeden Abend');
+    expect(answer).not.toMatch(/ausgeschlossen|Nachmittag/);
+  });
 });
 
 describe('Ablauf', () => {
+  it('Schritt 1 wiederholt „kein Lebenslauf“ nicht', () => {
+    expect(PROCESS_STEPS[0].text).not.toMatch(/Lebenslauf|Anschreiben/);
+  });
+
+  it('Ausbildung: Kennenlernen ohne Diskretion und ohne Anstellung', () => {
+    const meet = getProcessSteps('ausbildung')[1];
+    expect(meet.text).not.toMatch(/diskret|Feierabend|Lohn/);
+    expect(getProcessIntro('ausbildung').text).not.toContain('Anstellung');
+    expect(getDiscretionPromise('ausbildung')).toBeNull();
+    expect(getDiscretionPromise('fachkraft')).toBe(DISCRETION_PROMISE);
+    expect(getDiscretionPromise('quereinstieg')).toBe(DISCRETION_PROMISE);
+    expect(getProcessSteps('fachkraft')[1].text).toContain('diskret');
+  });
+
   it('drei Schritte, Start je Zielgruppe', () => {
     expect(PROCESS_STEPS.map((s) => s.number)).toEqual([1, 2, 3]);
     expect(getProcessSteps('ausbildung')[2].text).toContain('Azubi-Werkzeugset');
@@ -124,7 +151,7 @@ describe('REGION', () => {
   it('Meilenstein hat genau zwei Sätze', () => {
     expect(REGION.milestone.text.split(/(?<=\.)\s+(?=[A-ZÄÖÜ])/)).toHaveLength(2);
     expect(REGION.milestone.text).toContain('Siegmund-Hiepe-Str. 20');
-    expect(REGION.milestone.text).toContain('15 Mitarbeiter');
+    expect(REGION.milestone.text).toContain(`${FACTS.employees15.value} Leuten`);
   });
 });
 

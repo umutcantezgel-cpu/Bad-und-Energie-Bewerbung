@@ -77,10 +77,15 @@ export function getJobPageSlugs(): string[] {
   return ALL_JOBS.filter((job) => job.status === 'published' || job.status === 'archived').map((job) => job.slug);
 }
 
-/** Auswahl im Bewerbungsflow: veröffentlichte Stellen plus funnel_only. */
-export function getFunnelOptions(): FunnelOption[] {
+/**
+ * Auswahl im Bewerbungsflow: veröffentlichte Stellen plus funnel_only. Mit `now` fallen
+ * veröffentlichte Stellen weg, deren validThrough abgelaufen ist (wie Stellenseite, Sitemap und
+ * Startseite, siehe isJobLive); ohne `now` alle, etwa für Beschriftungen bereits gesendeter Bewerbungen.
+ */
+export function getFunnelOptions(now?: Date): FunnelOption[] {
   return ALL_JOBS.filter(
-    (job): job is Job & { status: FunnelOption['status'] } => job.status === 'published' || job.status === 'funnel_only',
+    (job): job is Job & { status: FunnelOption['status'] } =>
+      job.status === 'funnel_only' || (job.status === 'published' && (!now || isJobLive(job, now))),
   ).map((job) => ({
     id: job.id,
     slug: job.slug,

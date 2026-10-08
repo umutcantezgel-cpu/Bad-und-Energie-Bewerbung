@@ -67,6 +67,20 @@ const KIND_LABEL: Record<Job['employment']['kind'], string> = {
   ausbildung: 'Ausbildung',
 };
 
+/** Kurzname je Stellenart für Aufzählungen in Meta-Texten („Anlagenmechaniker, Kundendienst, …“). */
+export const JOB_CATEGORY_LABEL: Readonly<Record<Job['category'], string>> = Object.freeze({
+  anlagenmechaniker: 'Anlagenmechaniker',
+  kundendienst: 'Kundendienst',
+  projektleitung: 'Obermonteur',
+  ausbildung: 'Ausbildung',
+  helfer: 'Quereinstieg',
+});
+
+/** Kurznamen der Stellenarten in Reihenfolge der Stellen, ohne Dopplungen. */
+export function jobCategoryLabels(jobs: readonly Pick<Job, 'category'>[]): string[] {
+  return [...new Set(jobs.map((job) => JOB_CATEGORY_LABEL[job.category]))];
+}
+
 /** 'Vollzeit · Unbefristet' bzw. 'Ausbildung · 3,5 Jahre'. */
 export function employmentLabel(job: Pick<Job, 'employment'>): string {
   const { kind, permanent, durationMonths } = job.employment;

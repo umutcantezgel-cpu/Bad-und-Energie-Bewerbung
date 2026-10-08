@@ -1,7 +1,7 @@
 import { HQ_LOCATION } from '../employer';
 import { defineJob } from '../schema';
 
-// Quellen: JobPosting SHK-KD-2026-02 (app/layout.tsx), Stellenkarte 02 (app/page.tsx),
+// Quellen (Stand 393df01): JobPosting SHK-KD-2026-02 (app/layout.tsx), Stellenkarte 02 (app/page.tsx),
 // servicesData 'kundendienst' (lib/data/services.ts), ROLE_CONFIGS.kundendienst (pricing.constants.ts).
 export const kundendiensttechnikerShk = defineJob({
   id: 'kundendiensttechniker-shk',
@@ -52,10 +52,8 @@ export const kundendiensttechnikerShk = defineJob({
   ],
   packageExtras: [
     { label: 'Fahrzeug', text: 'Persönliches Servicefahrzeug mit Tankkarte und Privatnutzung ab Wohnort' },
-    {
-      label: 'Werkzeug',
-      text: 'Digitale Messtechnik für Buderus, Bosch, NIBE, Alpha Innotec und Viessmann, Hilti-Koffer und Firmen-iPad',
-    },
+    // Marken stehen schon im Intro und im Vorteil paidCertifications, das iPad in Aufgaben und Vorteilen.
+    { label: 'Werkzeug', text: 'Digitale Messtechnik, Hilti-Koffer' },
     { label: 'Vergütung', text: 'Höchste Facharbeiter-Einstufung mit Qualitätsprämien' },
   ],
   employment: { kind: 'vollzeit', permanent: true, start: 'nach-absprache' },

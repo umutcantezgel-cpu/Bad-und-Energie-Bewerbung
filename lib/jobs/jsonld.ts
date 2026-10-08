@@ -1,5 +1,6 @@
+import { BREADCRUMB_HOME, BREADCRUMB_JOBS } from '@/lib/content/breadcrumbs';
 import { FACTS } from '@/lib/content/facts';
-import { SITE_CONFIG } from '@/lib/seo/site-config';
+import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
 import { EMPLOYER } from './employer';
 import { jobUrl, toHtmlDescription } from './format';
 import type { Job } from './schema';
@@ -135,19 +136,34 @@ export function buildJobPostingJsonLd(job: Job): JobPostingJsonLd | null {
   return toJobPostingNode(job);
 }
 
-export function buildBreadcrumbJsonLd(job: Job): BreadcrumbJsonLd {
-  const base = SITE_CONFIG.baseUrl.replace(/\/+$/, '');
-  const url = jobUrl(job);
+/**
+ * BreadcrumbList mit denselben Labels wie die sichtbaren Breadcrumbs und den Canonical-URLs;
+ * die letzte Stufe ist die Seite selbst.
+ */
+function breadcrumbList(trail: readonly { name: string; url: string }[]): BreadcrumbJsonLd {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
-    '@id': `${url}#breadcrumb`,
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Startseite', item: base },
-      { '@type': 'ListItem', position: 2, name: 'Stellen', item: `${base}/jobs` },
-      { '@type': 'ListItem', position: 3, name: job.shortTitle, item: url },
-    ],
+    '@id': `${trail[trail.length - 1].url}#breadcrumb`,
+    itemListElement: trail.map((step, i) => ({ '@type': 'ListItem', position: i + 1, name: step.name, item: step.url })),
   };
+}
+
+/** Start › Stellen (für /jobs). */
+export function buildJobsBreadcrumbJsonLd(): BreadcrumbJsonLd {
+  return breadcrumbList([
+    { name: BREADCRUMB_HOME.label, url: getCleanCanonicalUrl(BREADCRUMB_HOME.href) },
+    { name: BREADCRUMB_JOBS.label, url: getCleanCanonicalUrl(BREADCRUMB_JOBS.href) },
+  ]);
+}
+
+/** Start › Stellen › Stelle (für /jobs/[slug]). */
+export function buildBreadcrumbJsonLd(job: Job): BreadcrumbJsonLd {
+  return breadcrumbList([
+    { name: BREADCRUMB_HOME.label, url: getCleanCanonicalUrl(BREADCRUMB_HOME.href) },
+    { name: BREADCRUMB_JOBS.label, url: getCleanCanonicalUrl(BREADCRUMB_JOBS.href) },
+    { name: job.shortTitle, url: jobUrl(job) },
+  ]);
 }
 
 /** JSON für <script type="application/ld+json">, mit escaptem „<“ gegen </script>-Ausbruch. */

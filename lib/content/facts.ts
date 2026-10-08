@@ -104,7 +104,7 @@ const RAW_FACTS = {
   },
   hilti: {
     short: 'Persönliche Hilti-Ausstattung',
-    long: 'Deine persönliche Hilti 22V Akku-Flotte mit Bohrhammer, Säbelsäge und Presszangen für Viega und Geberit. Kein Leihen, kein Warten.',
+    long: 'Deine persönliche Hilti-22-V-Akku-Flotte mit Bohrhammer, Säbelsäge und Presszangen für Viega und Geberit. Kein Leihen, kein Warten.',
     source: 'app/page.tsx@393df01',
   },
   vehicle: {
@@ -149,7 +149,8 @@ const RAW_FACTS = {
   },
   directLine: {
     short: 'Direkter Draht zu Sabri Demir',
-    long: 'Kurze Wege: Du stimmst dich direkt und auf Augenhöhe mit Geschäftsführer Sabri Demir ab.',
+    // Ohne „auf Augenhöhe“: steht wörtlich im Zitat von Sabri Demir, das mit diesem Fakt zusammen erscheint.
+    long: 'Kurze Wege: Du stimmst dich direkt mit Geschäftsführer Sabri Demir ab.',
     source: 'app/layout.tsx@393df01',
   },
   partners5: {

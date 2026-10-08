@@ -7,6 +7,8 @@
  * ==============================================================================
  */
 
+import { CONTACT_PHONE, WHATSAPP_NUMBER } from '@/lib/data/contact';
+
 export const SITE_CONFIG = {
   baseUrl: process.env.APP_URL || 'https://karriere.bad-energie.de',
   consumerUrl: 'https://bad-energie.de',
@@ -29,15 +31,15 @@ export const SITE_CONFIG = {
   vatID: 'DE301642296',
   handelsregister: 'HRB 2449 Amtsgericht Wetzlar',
   hwk: 'Handwerkskammer Wiesbaden',
-  innung: 'Innung Sanitär Heizung und Klimatechnik Lahn Dill',
+  innung: 'Innung Sanitär-, Heizungs- und Klimatechnik Lahn-Dill',
 
   // Contact Channels
   contact: {
     email: 'info@bad-energie.de',
-    telephone: '06441 42956',
-    telephoneLink: '+49644142956',
+    telephone: CONTACT_PHONE.display,
+    telephoneLink: CONTACT_PHONE.e164,
     telefax: '06441 48781',
-    whatsapp: '+49644142956',
+    whatsapp: WHATSAPP_NUMBER,
     openingHours: {
       days: ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag'],
       opens: '07:00',

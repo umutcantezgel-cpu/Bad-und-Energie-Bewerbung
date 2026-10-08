@@ -3,7 +3,7 @@ import { jobUrl } from '../format';
 import { buildBreadcrumbJsonLd, buildJobPostingJsonLd, serializeJsonLd } from '../jsonld';
 import { ALL_JOBS, getActiveJobs, getJobById } from '../registry';
 
-// Organization-@id aus dem globalen Graphen in app/layout.tsx bzw. lib/seo/schema.ts.
+// Organization-@id aus dem globalen Graphen (components/site/site-jsonld.ts).
 const GLOBAL_ORG_ID = 'https://bad-energie.de/#organization';
 
 describe('buildJobPostingJsonLd', () => {

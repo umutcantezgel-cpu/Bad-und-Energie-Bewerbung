@@ -44,8 +44,17 @@ describe('robots', () => {
 
   it('keeps the private paths out of every allowing group', () => {
     for (const rule of rules.filter((r) => r.allow)) {
-      expect(rule.disallow).toEqual(expect.arrayContaining(['/api/', '/bewerbung/danke', '/bewerbung/mappe']));
-      expect(rule.disallow).not.toContain('/feeds/');
+      expect(rule.disallow).toEqual(['/api/', '/admin/']);
+    }
+  });
+
+  // noindex only works if the crawler may fetch the page; a blocked but linked URL can still be indexed.
+  it('does not block the noindex pages', () => {
+    for (const rule of rules) {
+      const disallow = [rule.disallow ?? []].flat();
+      for (const noindexPath of ['/bewerbung/danke', '/bewerbung/mappe', '/datenschutz', '/impressum', '/jobs/']) {
+        expect(disallow.some((prefix) => prefix !== '/' && noindexPath.startsWith(prefix))).toBe(false);
+      }
     }
   });
 

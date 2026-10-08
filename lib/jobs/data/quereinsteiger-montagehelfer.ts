@@ -2,7 +2,7 @@ import { HQ_LOCATION } from '../employer';
 import { defineJob } from '../schema';
 
 // funnel_only: im Bewerbungsflow wählbar, aber ohne Seite, Schema und Feed (ROADMAP §3.1).
-// Kein Gehalt, weil keine Quelle eines nennt. Quellen: HeroExpressFunnel, QuizView,
+// Kein Gehalt, weil keine Quelle eines nennt. Quellen (Stand 393df01): HeroExpressFunnel, QuizView,
 // ROLE_CONFIGS.helfer (pricing.constants.ts), Footer.
 export const quereinsteigerMontagehelfer = defineJob({
   id: 'quereinsteiger-montagehelfer',

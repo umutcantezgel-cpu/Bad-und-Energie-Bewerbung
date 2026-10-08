@@ -1,7 +1,7 @@
 import { HQ_LOCATION } from '../employer';
 import { defineJob } from '../schema';
 
-// Quellen: JobPosting SHK-WP-2026-01 (app/layout.tsx), Stellenkarte 01 (app/page.tsx),
+// Quellen (Stand 393df01): JobPosting SHK-WP-2026-01 (app/layout.tsx), Stellenkarte 01 (app/page.tsx),
 // ROLE_CONFIGS.anlagenmechaniker (components/pricing/pricing.constants.ts).
 export const anlagenmechanikerShk = defineJob({
   id: 'anlagenmechaniker-shk',
@@ -52,7 +52,7 @@ export const anlagenmechanikerShk = defineJob({
   ],
   packageExtras: [
     { label: 'Fahrzeug', text: 'Fester Transporter mit Sortimo-Regalsystem, Mitnahme nach Hause möglich' },
-    { label: 'Werkzeug', text: 'Persönliche Hilti 22V Akku-Flotte und Pressbacken für Viega und Geberit' },
+    { label: 'Werkzeug', text: 'Persönliche Hilti-22-V-Akku-Flotte und Pressbacken für Viega und Geberit' },
     { label: 'Vergütung', text: 'Facharbeitervergütung deutlich über Handwerkstarif' },
   ],
   employment: { kind: 'vollzeit', permanent: true, start: 'nach-absprache' },

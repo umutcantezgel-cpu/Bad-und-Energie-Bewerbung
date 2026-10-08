@@ -48,14 +48,19 @@ export const FAQ_ITEMS: readonly FaqItem[] = Object.freeze([
     id: 'fernmontage',
     question: 'Gibt es Fernmontagen oder Wochenendarbeit?',
     answer:
-      'Nein. Unsere Baustellen liegen ausnahmslos in Wetzlar, Gießen und dem Lahn-Dill-Kreis. Du bist jeden Nachmittag pünktlich zu Hause, Wochenendarbeit ist ausgeschlossen. Freitags ist ab 13:30 Uhr Wochenende.',
+      // Wie noFarAssembly und noWeekendOnCall: „jeden Abend“, „am Wochenende frei“ (fakten-abgleich.md B23).
+      'Nein. Unsere Baustellen liegen ausnahmslos in Wetzlar, Gießen und dem Lahn-Dill-Kreis. Du bist jeden Abend pünktlich zu Hause, und am Wochenende hast du frei. Freitags ist ab 13:30 Uhr Wochenende.',
     factIds: ['noFarAssembly', 'noWeekendOnCall', 'friday1330'],
   },
 ] satisfies FaqItem[]);
 
-/** Je drei passende Fragen für die Stellenseiten, nach Fragenset des Flows. */
+/**
+ * Je drei passende Fragen für die Stellenseiten, nach Fragenset des Flows. Fachkräfte ohne
+ * „lebenslauf“: Die Stellenseite sagt das schon direkt über dem Flow (Fakt noCvNeeded), und
+ * Fernmontage ist für Wechselwillige die wichtigere Frage.
+ */
 export const JOB_FAQ_IDS: Readonly<Record<'fachkraft' | 'ausbildung' | 'quereinstieg', readonly FaqId[]>> = Object.freeze({
-  fachkraft: ['diskreter-wechsel', 'lebenslauf', 'firmenfahrzeug'],
+  fachkraft: ['diskreter-wechsel', 'firmenfahrzeug', 'fernmontage'],
   ausbildung: ['lebenslauf', 'heizsysteme', 'fernmontage'],
   quereinstieg: ['lebenslauf', 'fernmontage', 'heizsysteme'],
 });
