@@ -201,7 +201,7 @@ Eine realistische marktwirtschaftliche Bewertung des Projekts nach anerkannten S
 Um die E-Mail-Reputation und Domain-Autorität der Unternehmens-Hauptdomain (`bad-energie.de`) vor Angriffen zu schützen, fungiert die Karriere-Subdomain (`karriere.bad-energie.de`) als aktives Schutzschild:
 
 1. **DMARC-Konformität:**
-   Da `bad-energie.de` eine strikte DMARC-Quarantine-Richtlinie (`p=quarantine; sp=quarantine`) besitzt, sendet das Portal alle ausgehenden Mails isoliert über sichere Resend-Absender (`onboarding@resend.dev` oder verifizierte Karriere-Subdomain). Dadurch wird vermieden, dass Mails als Spam deklariert werden.
+   Da `bad-energie.de` eine strikte DMARC-Quarantine-Richtlinie (`p=quarantine; sp=quarantine`) besitzt, sendet das Portal alle ausgehenden Mails isoliert über den verifizierten Resend-Absender aus `RESEND_FROM_EMAIL` (Karriere-Subdomain, kein Fallback auf `onboarding@resend.dev`). Dadurch wird vermieden, dass Mails als Spam deklariert werden.
 2. **API-Schutz:**
    Der Endpunkt `/api/maps/config` verlangt eine Prüfung auf den Referer `bad-energie.de` und liefert `Cache-Control: private, no-cache, no-store`.
 3. **Bad-Bot Abwehr:**

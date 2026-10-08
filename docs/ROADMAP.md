@@ -149,7 +149,7 @@
 
 **`lib/env.ts`**
 - zod-Validierung der Umgebungsvariablen.
-- In Production bricht der Start ab, wenn `RESEND_API_KEY` oder `RESEND_FROM_EMAIL` fehlt.
+- Fehlt in Production Pflicht-Konfiguration (`RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `IP_HASH_SALT`, `APPLICATION_TOKEN_SECRET`), protokolliert `instrumentation.ts` das beim Start. Die Seite bleibt online, die Formular-APIs antworten ehrlich mit 503.
 
 ---
 
@@ -543,6 +543,8 @@ Beispiel-Description für Anlagenmechaniker:
 - Einzelaussagen bestätigen: „Übernahmegarantie“, „1 %-Privatnutzung“, „Gehalt am 1. Werktag“. Bis dahin nur dort verwenden, wo sie bereits sichtbar stehen.
 - Ist WhatsApp Business auf 06441 42956 aktiv? Wer bekommt Cockpit-Zugänge (Phase 2)? Gibt es eine Empfehlungsprämie (Phase 4)? Soll eine BA-Kooperation beantragt werden (Phase 5)?
 - „100 Jahre“-Badge ab 2027 → „Seit 1926“. Das Ablaufdatum wird im Code hinterlegt.
+- Logo als Vektordatei (Text in Pfaden) und eine helle Variante für dunkle Flächen. Die SVGs in `public/images` zeigen ein anderes Signet mit Systemschrift. Standard: Raster-WebP, in Dark Mode und Inverse-Band als weiße Silhouette per CSS-Filter (`components/brand/Logo.tsx`).
+- Teamangaben mit Stichtag (Lehrjahr Weber, Betriebszugehörigkeit Koch/Becker, siehe `docs/operations/fakten-abgleich.md` B20/B21). Standard: nur zeitlose Angaben.
 - Kosten: Supabase Pro ca. 25 $/Monat, Vercel Pro, optional Ad-Budget.
 
 ---

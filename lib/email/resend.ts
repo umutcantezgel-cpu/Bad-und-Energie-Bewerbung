@@ -1,13 +1,13 @@
+import 'server-only';
+import { randomUUID } from 'node:crypto';
 import { Resend } from 'resend';
-import { SITE_CONFIG } from '@/lib/seo/site-config';
+import { getEmailConfig, emailSimulationAllowed } from '@/lib/env';
 import {
   ContactLeadData,
   renderContactLeadNotificationEmail,
-  ContactUserConfirmationData,
   renderContactUserConfirmationEmail,
   ApplicationLeadData,
   renderApplicationLeadNotificationEmail,
-  ApplicationUserConfirmationData,
   renderApplicationUserConfirmationEmail,
 } from './templates';
 
@@ -15,6 +15,7 @@ export interface EmailDispatchResult {
   success: boolean;
   id?: string;
   simulated?: boolean;
+  /** Fehlercode, z. B. 'not_configured', 'no_recipient' oder ein Resend-Code wie 'validation_error'. */
   error?: string;
 }
 
@@ -25,47 +26,51 @@ export interface DualDispatchResult {
   simulated: boolean;
 }
 
-/**
- * Resend Client Configuration Helper
- */
+/** Resend-Tags: Name und Wert nur ASCII-Buchstaben, Ziffern, `_` und `-`. */
+export interface EmailTag {
+  name: string;
+  value: string;
+}
+
+export interface SendEmailOptions {
+  to: string | string[];
+  subject: string;
+  html: string;
+  replyTo?: string;
+  from?: string;
+  tags?: EmailTag[];
+  /** Wird als `Idempotency-Key` an Resend durchgereicht (sichere Wiederholungen). */
+  idempotencyKey?: string;
+}
+
+export interface DispatchOptions {
+  /** Basis-Schlüssel, z. B. die Bewerbungsnummer; je Mail wird `:team` bzw. `:user` angehängt. */
+  idempotencyKey?: string;
+}
+
 export function getResendClient(): {
   client: Resend | null;
-  fromEmail: string;
+  fromEmail?: string;
   toEmail: string;
   isConfigured: boolean;
+  forceSimulation: boolean;
 } {
-  const apiKey = process.env.RESEND_API_KEY?.trim();
-  const isConfigured = Boolean(
-    apiKey &&
-      apiKey !== 'MY_RESEND_API_KEY' &&
-      !apiKey.startsWith('re_placeholder') &&
-      apiKey.length > 5
-  );
-
-  // DMARC-Schutz: Fallback auf onboarding@resend.dev, falls keine eigene Domain in Resend verifiziert ist,
-  // um DMARC sp=quarantine Konflikte auf bad-energie.de zuverlässig zu verhindern.
-  const fromEmail =
-    process.env.RESEND_FROM_EMAIL?.trim() ||
-    'Bad und Energie Karriere <onboarding@resend.dev>';
-
-  const toEmail =
-    process.env.CONTACT_NOTIFICATION_EMAIL?.trim() ||
-    process.env.RESEND_TO_EMAIL?.trim() ||
-    SITE_CONFIG.contact.email ||
-    'info@bad-energie.de';
-
-  const client = isConfigured && apiKey ? new Resend(apiKey) : null;
+  const config = getEmailConfig();
+  const isConfigured = config.missing.length === 0;
 
   return {
-    client,
-    fromEmail,
-    toEmail,
+    client: config.apiKey ? new Resend(config.apiKey) : null,
+    fromEmail: config.from,
+    toEmail: config.notificationTo,
     isConfigured,
+    forceSimulation: config.forceSimulation,
   };
 }
 
 /**
- * Send a single transactional email via Resend with Graceful Simulation Fallback
+ * Sendet eine Mail über Resend. Erfolg wird nur gemeldet, wenn Resend die Mail angenommen hat
+ * oder Simulation ausdrücklich erlaubt ist (lokal/E2E, nie auf Vercel Production).
+ * Logs enthalten nur IDs und Fehlercodes, keine Adressen oder Inhalte.
  */
 export async function sendEmail({
   to,
@@ -73,69 +78,63 @@ export async function sendEmail({
   html,
   replyTo,
   from,
-}: {
-  to: string | string[];
-  subject: string;
-  html: string;
-  replyTo?: string;
-  from?: string;
-}): Promise<EmailDispatchResult> {
+  tags,
+  idempotencyKey,
+}: SendEmailOptions): Promise<EmailDispatchResult> {
   const config = getResendClient();
   const sender = from || config.fromEmail;
-  const recipients = Array.isArray(to) ? to : [to];
 
-  if (!config.isConfigured || !config.client) {
-    console.info(
-      `[Resend Simulation Mode] E Mail an ${recipients.join(', ')} | Betreff: "${subject}"`
-    );
-    return {
-      success: true,
-      id: `sim_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
-      simulated: true,
-    };
+  if (config.forceSimulation || !config.client || !sender) {
+    if (emailSimulationAllowed()) {
+      const id = `sim_${randomUUID()}`;
+      console.info(`[email] simuliert (${id})`);
+      return { success: true, id, simulated: true };
+    }
+
+    console.error('[email] nicht versendet: Versand nicht konfiguriert');
+    return { success: false, error: 'not_configured', simulated: false };
   }
 
   try {
-    const { data, error } = await config.client.emails.send({
-      from: sender,
-      to: recipients,
-      subject,
-      html,
-      replyTo: replyTo || undefined,
-    });
+    const { data, error } = await config.client.emails.send(
+      {
+        from: sender,
+        to: Array.isArray(to) ? to : [to],
+        subject,
+        html,
+        replyTo: replyTo || undefined,
+        tags: tags?.length ? tags : undefined,
+      },
+      idempotencyKey ? { idempotencyKey } : undefined
+    );
 
     if (error) {
-      console.error('[Resend API Error]', error);
-      return {
-        success: false,
-        error: error.message || 'Resend API returned an error',
-        simulated: false,
-      };
+      console.error(`[email] Resend-Fehler: ${error.name} (HTTP ${error.statusCode ?? '–'})`);
+      return { success: false, error: error.name || 'send_failed', simulated: false };
     }
 
-    console.info(`[Resend Live Dispatch] Erfolgreich gesendet (${data?.id}) von "${sender}" an "${recipients.join(', ')}"`);
-
-    return {
-      success: true,
-      id: data?.id,
-      simulated: false,
-    };
+    console.info(`[email] gesendet (${data?.id})`);
+    return { success: true, id: data?.id, simulated: false };
   } catch (err: unknown) {
-    const errorMessage = err instanceof Error ? err.message : 'Unknown Resend dispatch error';
-    console.error('[Resend Network Exception]', errorMessage);
-    return {
-      success: false,
-      error: errorMessage,
-      simulated: false,
-    };
+    console.error(`[email] Versand fehlgeschlagen: ${err instanceof Error ? err.name : 'unknown'}`);
+    return { success: false, error: 'send_failed', simulated: false };
   }
 }
 
-/**
- * Dispatches both internal lead notification and user receipt confirmation for contact inquiries
- */
+function settle(result: PromiseSettledResult<EmailDispatchResult>): EmailDispatchResult {
+  return result.status === 'fulfilled' ? result.value : { success: false, error: 'send_failed' };
+}
+
+function idempotencyFor(options: DispatchOptions | undefined, suffix: 'team' | 'user') {
+  return options?.idempotencyKey ? `${options.idempotencyKey}:${suffix}` : undefined;
+}
+
+const NO_RECIPIENT: EmailDispatchResult = { success: false, error: 'no_recipient' };
+
+/** Kontaktanfrage: Benachrichtigung ans Team plus Eingangsbestätigung an den Absender. */
 export async function dispatchContactRequest(
-  data: ContactLeadData
+  data: ContactLeadData,
+  options?: DispatchOptions
 ): Promise<DualDispatchResult> {
   const config = getResendClient();
 
@@ -147,47 +146,41 @@ export async function dispatchContactRequest(
   });
 
   const [teamRes, userRes] = await Promise.allSettled([
-    // 1. Team Notification to Meister Demir
     sendEmail({
       to: config.toEmail,
       subject: leadMail.subject,
       html: leadMail.html,
-      replyTo: data.email,
+      replyTo: data.email || undefined,
+      tags: [{ name: 'category', value: 'contact_team' }],
+      idempotencyKey: idempotencyFor(options, 'team'),
     }),
-    // 2. Receipt confirmation to the inquirer
-    sendEmail({
-      to: data.email,
-      subject: confirmationMail.subject,
-      html: confirmationMail.html,
-      replyTo: config.toEmail,
-    }),
+    data.email
+      ? sendEmail({
+          to: data.email,
+          subject: confirmationMail.subject,
+          html: confirmationMail.html,
+          replyTo: config.toEmail,
+          tags: [{ name: 'category', value: 'contact_confirmation' }],
+          idempotencyKey: idempotencyFor(options, 'user'),
+        })
+      : Promise.resolve({ ...NO_RECIPIENT }),
   ]);
 
-  const teamNotification: EmailDispatchResult =
-    teamRes.status === 'fulfilled'
-      ? teamRes.value
-      : { success: false, error: String(teamRes.reason) };
-
-  const userConfirmation: EmailDispatchResult =
-    userRes.status === 'fulfilled'
-      ? userRes.value
-      : { success: false, error: String(userRes.reason) };
-
-  const overallSuccess = teamNotification.success;
+  const teamNotification = settle(teamRes);
+  const userConfirmation = settle(userRes);
 
   return {
-    success: overallSuccess,
+    success: teamNotification.success,
     teamNotification,
     userConfirmation,
     simulated: Boolean(teamNotification.simulated || userConfirmation.simulated),
   };
 }
 
-/**
- * Dispatches both internal dossier notification and candidate receipt confirmation for applications
- */
+/** Bewerbung: Dossier ans Team plus Eingangsbestätigung an die Bewerberin bzw. den Bewerber. */
 export async function dispatchApplicationRequest(
-  data: ApplicationLeadData
+  data: ApplicationLeadData,
+  options?: DispatchOptions
 ): Promise<DualDispatchResult> {
   const config = getResendClient();
 
@@ -199,31 +192,28 @@ export async function dispatchApplicationRequest(
   });
 
   const [teamRes, userRes] = await Promise.allSettled([
-    // 1. Detailed candidate dossier to Meister Demir
     sendEmail({
       to: config.toEmail,
       subject: appMail.subject,
       html: appMail.html,
-      replyTo: data.email,
+      replyTo: data.email || undefined,
+      tags: [{ name: 'category', value: 'application_team' }],
+      idempotencyKey: idempotencyFor(options, 'team'),
     }),
-    // 2. Step-by-step roadmap confirmation to the applicant
-    sendEmail({
-      to: data.email,
-      subject: userConfMail.subject,
-      html: userConfMail.html,
-      replyTo: config.toEmail,
-    }),
+    data.email
+      ? sendEmail({
+          to: data.email,
+          subject: userConfMail.subject,
+          html: userConfMail.html,
+          replyTo: config.toEmail,
+          tags: [{ name: 'category', value: 'application_confirmation' }],
+          idempotencyKey: idempotencyFor(options, 'user'),
+        })
+      : Promise.resolve({ ...NO_RECIPIENT }),
   ]);
 
-  const teamNotification: EmailDispatchResult =
-    teamRes.status === 'fulfilled'
-      ? teamRes.value
-      : { success: false, error: String(teamRes.reason) };
-
-  const userConfirmation: EmailDispatchResult =
-    userRes.status === 'fulfilled'
-      ? userRes.value
-      : { success: false, error: String(userRes.reason) };
+  const teamNotification = settle(teamRes);
+  const userConfirmation = settle(userRes);
 
   return {
     success: teamNotification.success,
