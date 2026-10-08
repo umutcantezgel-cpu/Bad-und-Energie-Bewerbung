@@ -1,18 +1,25 @@
-import { MetadataRoute } from 'next';
+import type { MetadataRoute } from 'next';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 
+/**
+ * Not for crawling: APIs, the recruiter area (Phase 2) and the noindex steps after an
+ * application. A crawler obeys only its most specific group, so every allowing group
+ * repeats the same list. Feeds, sitemap and llms*.txt stay open.
+ */
+const PRIVATE_PATHS = ['/api/', '/admin/', '/bewerbung/danke', '/bewerbung/mappe'];
+
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = SITE_CONFIG.baseUrl;
+  const baseUrl = SITE_CONFIG.baseUrl.replace(/\/+$/, '');
 
   return {
     rules: [
       {
         userAgent: ['Googlebot', 'Bingbot', 'DuckDuckBot'],
         allow: '/',
-        disallow: ['/api/'],
-        crawlDelay: 0,
+        disallow: PRIVATE_PATHS,
       },
       {
+        // AI search and answer engines may read the career pages (incl. llms.txt).
         userAgent: [
           'GPTBot',
           'ChatGPT-User',
@@ -28,26 +35,20 @@ export default function robots(): MetadataRoute.Robots {
           'YouBot',
         ],
         allow: '/',
-        disallow: ['/api/'],
+        disallow: PRIVATE_PATHS,
       },
       {
-        // Aggressive SEO-Scraper & Data-Miner hart aussperren
-        userAgent: [
-          'SemrushBot',
-          'PetalBot',
-          'DotBot',
-          'MJ12bot',
-          'BLEXBot',
-          'DataForSeoBot',
-          'MegaIndex',
-          'Bytespider',
-        ],
+        // SEO scrapers and data miners. The same list (without Bytespider) is hard-blocked in proxy.ts.
+        // Bytespider (ByteDance) stays a polite request only: proxy.ts lets it through, so a TikTok-related
+        // fetch can never fail with 403. The career pages gain nothing from it in Phase 1; before the TikTok
+        // campaigns in Phase 3 (/lp/), check TikTok's ad review in the Ads Manager and drop it here if needed.
+        userAgent: ['SemrushBot', 'PetalBot', 'DotBot', 'MJ12bot', 'BLEXBot', 'DataForSeoBot', 'MegaIndex', 'Bytespider'],
         disallow: '/',
       },
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/admin/', '/danke/'],
+        disallow: PRIVATE_PATHS,
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
