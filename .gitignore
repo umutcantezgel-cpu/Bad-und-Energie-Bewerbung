@@ -9,3 +9,11 @@ ms-reusable-components/
 coday-seo-toolkit/
 *.tsbuildinfo
 
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Lighthouse CI
+.lighthouseci/
