@@ -1,89 +1,9 @@
-import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
 
-const appUrl = process.env.APP_URL || 'https://karriere.bad-energie.de';
-const logoUrl = `${appUrl}/images/bad-energie-lahn-dill-logo.webp`;
-
-export const metadata: Metadata = {
-  title: 'Datenschutz & Bewerberdaten DSGVO | Bad & Energie Wetzlar',
-  description:
-    'Datenschutzerklärung und Informationen zur Verarbeitung von Bewerberdaten nach DSGVO und § 26 BDSG der Bad & Energie GmbH Lahn Dill in Wetzlar.',
-  alternates: {
-    canonical: `${appUrl}/datenschutz`,
-  },
-  openGraph: {
-    title: 'Datenschutz & Bewerberdaten DSGVO | Bad & Energie Wetzlar',
-    description:
-      'Datenschutzerklärung und Informationen zur Verarbeitung von Bewerberdaten nach DSGVO und § 26 BDSG der Bad & Energie GmbH Lahn Dill in Wetzlar.',
-    url: `${appUrl}/datenschutz`,
-    siteName: 'Bad und Energie GmbH Lahn Dill',
-    locale: 'de_DE',
-    type: 'website',
-    images: [
-      {
-        url: logoUrl,
-        width: 1200,
-        height: 630,
-        alt: 'Datenschutzerklärung der Bad und Energie GmbH Lahn Dill in Wetzlar',
-        type: 'image/webp',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Datenschutz & Bewerberdaten DSGVO | Bad & Energie Wetzlar',
-    description:
-      'Datenschutzerklärung und Informationen zur Verarbeitung von Bewerberdaten nach DSGVO und § 26 BDSG der Bad & Energie GmbH Lahn Dill in Wetzlar.',
-    images: [logoUrl],
-  },
-};
-
-const datenschutzSchema = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'WebPage',
-      '@id': `${appUrl}/datenschutz/#webpage`,
-      url: `${appUrl}/datenschutz`,
-      name: 'Datenschutzerklärung und Bewerberdaten | Bad und Energie Wetzlar',
-      description:
-        'Rechtliche Aufklärung über Art Umfang und Zweck der Erhebung und Verwendung personenbezogener Daten sowie Bewerberdaten nach Paragraph 26 BDSG.',
-      isPartOf: {
-        '@id': `${appUrl}/#website`,
-      },
-      breadcrumb: {
-        '@id': `${appUrl}/datenschutz/#breadcrumb`,
-      },
-      inLanguage: 'de-DE',
-    },
-    {
-      '@type': 'BreadcrumbList',
-      '@id': `${appUrl}/datenschutz/#breadcrumb`,
-      itemListElement: [
-        {
-          '@type': 'ListItem',
-          position: 1,
-          name: 'Karriereportal',
-          item: appUrl,
-        },
-        {
-          '@type': 'ListItem',
-          position: 2,
-          name: 'Datenschutz',
-          item: `${appUrl}/datenschutz`,
-        },
-      ],
-    },
-  ],
-};
-
-export default function DatenschutzLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(datenschutzSchema) }}
-      />
-      {children}
-    </>
-  );
+/**
+ * Pass-through. Metadata and content now live in page.tsx (Server Component). Kept so the
+ * generated route types in .next/types stay valid until the cleanup step removes this file.
+ */
+export default function DatenschutzLayout({ children }: { children: ReactNode }) {
+  return children;
 }

@@ -1,268 +1,197 @@
-import React from 'react';
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { Scale, Phone, Mail, MapPin, Building2, Shield, ArrowLeft } from 'lucide-react';
-import { Logo } from '@/components/Logo';
+import type { ReactNode } from 'react';
+import {
+  CHAMBER,
+  LEGAL_ENTITY,
+  LegalDocument,
+  LegalFacts,
+  LegalSection,
+  displayUrl,
+  mailtoHref,
+  type LegalFact,
+} from '@/components/legal';
+import { TextLink } from '@/components/ui';
+import { generatePageMetadata } from '@/lib/seo/metadata';
 
-const appUrl = process.env.APP_URL || 'https://karriere.bad-energie.de';
-const logoUrl = `${appUrl}/images/bad-energie-lahn-dill-logo.webp`;
+/*
+ * Impressum: Inhalt wie bisher, nur neu gegliedert. Offene Punkte (USt-IdNr., TMG-Verweise,
+ * OS-Plattform) stehen in docs/operations/datenschutz-aenderungen.md.
+ */
 
-export const metadata: Metadata = {
-  title: 'Impressum & Kontakt | Bad & Energie GmbH Lahn Dill Wetzlar',
+export const metadata: Metadata = generatePageMetadata({
+  title: 'Impressum',
   description:
-    'Gesetzliche Anbieterkennzeichnung nach § 5 DDG & HwO der Bad und Energie GmbH Lahn Dill in Wetzlar. Leitung: Dipl.-Ing. Sabri Demir.',
-  alternates: {
-    canonical: `${appUrl}/impressum`,
-  },
-  openGraph: {
-    title: 'Impressum & Kontakt | Bad & Energie GmbH Lahn Dill Wetzlar',
-    description:
-      'Gesetzliche Anbieterkennzeichnung nach § 5 DDG & HwO der Bad und Energie GmbH Lahn Dill in Wetzlar. Leitung: Dipl.-Ing. Sabri Demir.',
-    url: `${appUrl}/impressum`,
-    siteName: 'Bad und Energie GmbH Lahn Dill',
-    locale: 'de_DE',
-    type: 'website',
-    images: [
-      {
-        url: logoUrl,
-        width: 1200,
-        height: 630,
-        alt: 'Impressum der Bad und Energie GmbH Lahn Dill in Wetzlar',
-        type: 'image/webp',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Impressum & Kontakt | Bad & Energie GmbH Lahn Dill Wetzlar',
-    description:
-      'Gesetzliche Anbieterkennzeichnung nach § 5 DDG & HwO der Bad und Energie GmbH Lahn Dill in Wetzlar. Leitung: Dipl.-Ing. Sabri Demir.',
-    images: [logoUrl],
-  },
+    'Anbieterkennzeichnung nach § 5 DDG und Handwerksordnung der Bad und Energie GmbH Lahn Dill in Wetzlar: Kontakt, Handelsregister und Handwerkskammer.',
+  path: '/impressum',
+  type: 'legal',
+});
+
+type SectionId = 'anbieter' | 'kontakt' | 'register' | 'verantwortlich' | 'kammer' | 'streitbeilegung' | 'haftung';
+
+const SECTIONS: Record<SectionId, { title: string; toc?: string }> = {
+  anbieter: { title: 'Anbieter' },
+  kontakt: { title: 'Kontakt' },
+  register: { title: 'Registereintrag und Umsatzsteuer', toc: 'Register und Umsatzsteuer' },
+  verantwortlich: { title: 'Verantwortlich für den Inhalt' },
+  kammer: { title: 'Zuständige Handwerkskammer und Aufsichtsbehörde', toc: 'Handwerkskammer' },
+  streitbeilegung: { title: 'Verbraucherstreitbeilegung und Universalschlichtungsstelle', toc: 'Streitbeilegung' },
+  haftung: { title: 'Haftung für Inhalte und Links', toc: 'Haftung' },
 };
 
-const impressumSchema = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'WebPage',
-      '@id': `${appUrl}/impressum/#webpage`,
-      url: `${appUrl}/impressum`,
-      name: 'Impressum und Kontakt | Bad und Energie GmbH Lahn Dill in Wetzlar',
-      description:
-        'Gesetzliche Offenlegung und Anbieterkennzeichnung nach Paragraph 5 DDG und Handwerksordnung.',
-      isPartOf: {
-        '@id': `${appUrl}/#website`,
-      },
-      breadcrumb: {
-        '@id': `${appUrl}/impressum/#breadcrumb`,
-      },
-      inLanguage: 'de-DE',
-    },
-    {
-      '@type': 'BreadcrumbList',
-      '@id': `${appUrl}/impressum/#breadcrumb`,
-      itemListElement: [
-        {
-          '@type': 'ListItem',
-          position: 1,
-          name: 'Karriereportal',
-          item: appUrl,
-        },
-        {
-          '@type': 'ListItem',
-          position: 2,
-          name: 'Impressum',
-          item: `${appUrl}/impressum`,
-        },
-      ],
-    },
-  ],
-};
+const TOC = (Object.keys(SECTIONS) as SectionId[]).map((id) => ({ id, label: SECTIONS[id].toc ?? SECTIONS[id].title }));
+
+function Chapter({ id, children }: { id: SectionId; children: ReactNode }) {
+  return (
+    <LegalSection id={id} title={SECTIONS[id].title}>
+      {children}
+    </LegalSection>
+  );
+}
+
+const PROVIDER: readonly LegalFact[] = [
+  { label: 'Unternehmen', value: LEGAL_ENTITY.name },
+  {
+    label: 'Anschrift',
+    value: (
+      <>
+        {LEGAL_ENTITY.street}
+        <br />
+        {LEGAL_ENTITY.postalCodeCity}
+        <br />
+        {LEGAL_ENTITY.country}
+      </>
+    ),
+  },
+  { label: 'Geschäftsführung', value: LEGAL_ENTITY.managingDirector },
+];
+
+const CONTACT: readonly LegalFact[] = [
+  {
+    label: 'Telefon',
+    value: (
+      <TextLink href={LEGAL_ENTITY.phone.href} standalone>
+        {LEGAL_ENTITY.phone.display}
+      </TextLink>
+    ),
+  },
+  { label: 'Telefax', value: LEGAL_ENTITY.fax },
+  {
+    label: 'E-Mail',
+    value: (
+      <TextLink href={LEGAL_ENTITY.emailHref} standalone>
+        {LEGAL_ENTITY.email}
+      </TextLink>
+    ),
+  },
+  {
+    label: 'Website',
+    value: (
+      <TextLink href={LEGAL_ENTITY.website} standalone>
+        {displayUrl(LEGAL_ENTITY.website)}
+      </TextLink>
+    ),
+  },
+];
+
+const REGISTER: readonly LegalFact[] = [
+  { label: 'Registergericht', value: LEGAL_ENTITY.registerCourt },
+  { label: 'Registernummer', value: LEGAL_ENTITY.registerNumber },
+  { label: 'USt-IdNr. gemäß § 27 a UStG', value: LEGAL_ENTITY.vatId },
+];
+
+const CHAMBER_FACTS: readonly LegalFact[] = [
+  { label: 'Kammer', value: CHAMBER.name },
+  {
+    label: 'Anschrift',
+    value: (
+      <>
+        {CHAMBER.street}
+        <br />
+        {CHAMBER.postalCodeCity}
+      </>
+    ),
+  },
+  {
+    label: 'Telefon',
+    value: (
+      <TextLink href={CHAMBER.phone.href} standalone>
+        {CHAMBER.phone.display}
+      </TextLink>
+    ),
+  },
+  {
+    label: 'E-Mail',
+    value: (
+      <TextLink href={mailtoHref(CHAMBER.email)} standalone>
+        {CHAMBER.email}
+      </TextLink>
+    ),
+  },
+  {
+    label: 'Website',
+    value: (
+      <TextLink href={CHAMBER.url} standalone>
+        {displayUrl(CHAMBER.url)}
+      </TextLink>
+    ),
+  },
+];
+
+const OS_PLATFORM_URL = 'https://consumer-redress.ec.europa.eu/site-relocation_en';
 
 export default function ImpressumPage() {
   return (
-    <div className="min-h-screen bg-[#F8FAFC] py-12 sm:py-16">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(impressumSchema) }}
-      />
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-mono text-slate-500">
-          <Link href="/" className="hover:text-[#0A1E3A] transition-colors">
-            Startseite
-          </Link>
-          <span>/</span>
-          <span className="text-slate-900 font-semibold">Impressum</span>
-        </nav>
+    <LegalDocument
+      title="Impressum"
+      breadcrumb="Impressum"
+      lead={`Angaben nach § 5 DDG und Handwerksordnung für die ${LEGAL_ENTITY.name}.`}
+      toc={TOC}
+    >
+      <Chapter id="anbieter">
+        <LegalFacts items={PROVIDER} />
+      </Chapter>
 
-        {/* Header */}
-        <div className="border-l-4 border-[#C51E1E] pl-5 py-1">
-          <span className="text-xs font-mono font-bold text-[#C51E1E] uppercase tracking-wider block mb-1">
-            Gesetzliche Offenlegung nach Paragraph 5 DDG und Handwerksordnung
-          </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#0A1E3A] uppercase tracking-tight">
-            Impressum &amp; Rechtliche Angaben • Bad &amp; Energie GmbH
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-600 mt-2">
-            Angaben und rechtliche Unternehmensinformationen der Bad und Energie GmbH Lahn Dill.
-          </p>
-        </div>
+      <Chapter id="kontakt">
+        <LegalFacts items={CONTACT} />
+      </Chapter>
 
-        {/* Corporate Profile Card */}
-        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
-          <div className="mb-4 pb-4 border-b border-slate-100 flex items-center justify-between">
-            <Logo variant="default" framing="card" size="md" withLink={false} />
-            <span className="hidden sm:inline-block px-2.5 py-1 bg-slate-100 text-slate-700 font-mono text-[10px] uppercase font-bold rounded">
-              100 Jahre Meisterbetrieb (1926–2026)
-            </span>
-          </div>
+      <Chapter id="register">
+        <LegalFacts items={REGISTER} />
+      </Chapter>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-slate-100">
-            <div className="space-y-3">
-              <span className="text-xs font-mono font-bold text-slate-600 uppercase tracking-wider block">
-                Betrieb und Anschrift
-              </span>
-              <h2 className="text-base font-bold text-[#0A1E3A]">
-                Bad und Energie GmbH Lahn Dill
-              </h2>
-              <p className="text-xs text-slate-600 leading-relaxed flex items-start gap-2">
-                <MapPin className="w-4 h-4 text-[#0369a1] shrink-0 mt-0.5" strokeWidth={1.5} />
-                <span>
-                  Siegmund-Hiepe-Str. 20<br />
-                  35578 Wetzlar<br />
-                  Deutschland
-                </span>
-              </p>
-            </div>
+      <Chapter id="verantwortlich">
+        <p>
+          Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV: {LEGAL_ENTITY.contentResponsible},{' '}
+          {LEGAL_ENTITY.street}, {LEGAL_ENTITY.postalCodeCity}
+        </p>
+      </Chapter>
 
-            <div className="space-y-3">
-              <span className="text-xs font-mono font-bold text-slate-600 uppercase tracking-wider block">
-                Direktkontakt
-              </span>
-              <div className="text-xs font-mono space-y-1.5 text-slate-700">
-                <p className="flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5 text-[#0369a1]" strokeWidth={1.5} />
-                  <span>Telefon: <strong>06441 42956</strong></span>
-                </p>
-                <p className="flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5 text-slate-500" strokeWidth={1.5} />
-                  <span>Telefax: <strong>06441 48781</strong></span>
-                </p>
-                <p className="flex items-center gap-2">
-                  <Mail className="w-3.5 h-3.5 text-[#0369a1]" strokeWidth={1.5} />
-                  <span>E Mail: <a href="mailto:info@bad-energie.de" className="text-[#C51E1E] hover:underline">info@bad-energie.de</a></span>
-                </p>
-                <p className="text-slate-600 pt-1">
-                  Website: <a href="https://bad-energie.de" target="_blank" rel="noopener noreferrer" className="hover:underline">https://bad-energie.de</a>
-                </p>
-              </div>
-            </div>
-          </div>
+      <Chapter id="kammer">
+        <LegalFacts items={CHAMBER_FACTS} />
+        <p>
+          Berufsbezeichnung: {CHAMBER.profession}. Berufsrechtliche Regelungen: {CHAMBER.rules}.
+        </p>
+      </Chapter>
 
-          {/* Registration Details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-slate-100 text-xs">
-            <div className="space-y-2">
-              <h2 className="font-mono font-bold text-slate-400 uppercase tracking-wider block">
-                Handelsregister
-              </h2>
-              <p className="text-slate-700 leading-relaxed font-mono">
-                Registergericht: Amtsgericht Wetzlar<br />
-                Registernummer: <strong>HRB 2449</strong>
-              </p>
-              <p className="text-slate-500 pt-1">
-                Umsatzsteuer-Identifikationsnummer gemäß § 27 a UStG:<br />
-                <strong className="text-slate-900 font-mono">DE 346 648 448</strong>
-              </p>
-            </div>
+      <Chapter id="streitbeilegung">
+        <p>
+          Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit, die du unter{' '}
+          <a href={OS_PLATFORM_URL} className="break-all">
+            {OS_PLATFORM_URL}
+          </a>{' '}
+          findest. Wir sind grundsätzlich bereit, an Streitbeilegungsverfahren vor einer anerkannten
+          Verbraucherschlichtungsstelle teilzunehmen.
+        </p>
+      </Chapter>
 
-            <div className="space-y-2">
-              <h2 className="font-mono font-bold text-slate-400 uppercase tracking-wider block">
-                Geschäftsführung
-              </h2>
-              <p className="text-slate-900 font-semibold">
-                Diplomingenieur Sabri Demir
-              </p>
-              <p className="text-slate-500 text-[11px] leading-relaxed">
-                Verantwortlicher für den Inhalt nach § 18 Abs. 2 MStV:<br />
-                Sabri Demir, Siegmund-Hiepe-Str. 20, 35578 Wetzlar
-              </p>
-            </div>
-          </div>
-
-          {/* Kammer & Aufsichtsbehörde */}
-          <div className="space-y-3 pb-6 border-b border-slate-100 text-xs">
-            <h2 className="font-mono font-bold text-slate-400 uppercase tracking-wider block">
-              Zuständige Handwerkskammer und Aufsichtsbehörde
-            </h2>
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <strong className="text-slate-900 block font-bold">
-                  Handwerkskammer Wiesbaden
-                </strong>
-                <p className="text-slate-600 mt-0.5">
-                  Bierstadter Straße 45, 65189 Wiesbaden
-                </p>
-                <p className="text-slate-500 font-mono text-[11px]">
-                  Telefon: 0611 1360 • E Mail: info@hwk-wiesbaden.de
-                </p>
-              </div>
-              <a
-                href="https://www.hwk-wiesbaden.de"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-3 py-1.5 bg-[#0A1E3A] hover:bg-[#132B50] text-white rounded-lg text-xs font-semibold whitespace-nowrap cursor-pointer"
-              >
-                Kammerportal öffnen
-              </a>
-            </div>
-            <p className="text-slate-500 text-[11px]">
-              Berufsbezeichnung: Meisterbetrieb des SHK Handwerks, Installateur und Heizungsbauer, verliehen in der Bundesrepublik Deutschland. Berufsrechtliche Regelungen: Handwerksordnung HwO.
-            </p>
-          </div>
-
-          {/* Verbraucherschlichtung & Haftung */}
-          <div className="space-y-4 text-xs text-slate-600 leading-relaxed">
-            <h2 className="font-mono font-bold text-slate-400 uppercase tracking-wider block">
-              Rechtliche Hinweise und Streitbeilegung
-            </h2>
-            <h3 className="font-bold text-slate-900 text-sm">
-              Verbraucherstreitbeilegung und Universalschlichtungsstelle
-            </h3>
-            <p>
-              Die Europäische Kommission stellt eine Plattform zur Online Streitbeilegung OS bereit, die Sie unter{' '}
-              <a
-                href="https://consumer-redress.ec.europa.eu/site-relocation_en"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#0369a1] underline font-medium"
-              >
-                https://consumer-redress.ec.europa.eu/site-relocation_en
-              </a>{' '}
-              finden. Wir sind grundsätzlich bereit, an Streitbeilegungsverfahren vor einer anerkannten Verbraucherschlichtungsstelle teilzunehmen.
-            </p>
-
-            <h3 className="font-bold text-slate-900 text-sm pt-2">
-              Haftung für Inhalte und Links
-            </h3>
-            <p>
-              Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen. Bei Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.
-            </p>
-          </div>
-        </div>
-
-        {/* Back navigation */}
-        <div className="pt-2">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-[#0A1E3A] hover:text-[#C51E1E] transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
-            <span>Zurück zur Startseite</span>
-          </Link>
-        </div>
-      </div>
-    </div>
+      <Chapter id="haftung">
+        <p>
+          Als Diensteanbieter sind wir gemäß § 7 Abs. 1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen
+          Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir jedoch nicht verpflichtet, übermittelte oder gespeicherte
+          fremde Informationen zu überwachen. Bei Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese
+          Inhalte umgehend entfernen.
+        </p>
+      </Chapter>
+    </LegalDocument>
   );
 }
