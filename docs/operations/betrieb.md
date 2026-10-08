@@ -6,7 +6,7 @@ Diese Anleitung richtet sich an alle, die die Website live schalten und Bewerbun
 
 ## Inhalt
 
-1. [Sofort: Resend-Key rotieren](#1-sofort-resend-key-rotieren)
+1. [Resend-Key rotiert (erledigt)](#1-resend-key-rotiert-erledigt)
 2. [Go-live-Checkliste](#2-go-live-checkliste)
 3. [Monitoring und Fehler](#3-monitoring-und-fehler)
 4. [Bewerbungs-E-Mails lesen](#4-bewerbungs-e-mails-lesen)
@@ -15,7 +15,7 @@ Diese Anleitung richtet sich an alle, die die Website live schalten und Bewerbun
 
 ---
 
-## 1. Sofort: Resend-Key rotieren
+## 1. Resend-Key rotiert (erledigt)
 
 Commit `9717265` hat einen echten Resend-Key in `.env.example` veröffentlicht. Er steht für immer im öffentlichen Git-Verlauf und gilt als kompromittiert (ROADMAP §9.1, §13).
 
@@ -24,7 +24,7 @@ Commit `9717265` hat einen echten Resend-Key in `.env.example` veröffentlicht. 
 3. Den neuen Key nur in Vercel eintragen (`RESEND_API_KEY`, Environment Production, als „Sensitive“), nie ins Repo oder in Chats.
 4. In Resend unter **Emails** bzw. **Logs** prüfen, ob seit der Veröffentlichung fremde Mails über das Konto verschickt wurden. Auffälligkeiten festhalten und mit der oder dem DSB klären.
 5. Neu deployen (siehe 2.6).
-6. Hier festhalten: **Alter Key widerrufen am:** _offen_ · **neuer Key in Production seit:** _offen_ · **geprüft von:** _offen_. Solange das offen ist, ist der Key als aktiv zu behandeln. Die Ausnahme für den alten Key in `.gitleaks.toml` gilt nur unter dieser Voraussetzung.
+6. Festgehalten: **Alter Key widerrufen am:** 2026-10-08 · **neuer Key in Vercel (`RESEND_API_KEY`) seit:** 2026-10-08 · **Resend-Logs geprüft:** keine fremden Mails · **bestätigt von:** Owner. Damit ist die Ausnahme für den alten Key in `.gitleaks.toml` gedeckt; der Key steht weiterhin im Git-Verlauf, ist aber wertlos.
 
 ## 2. Go-live-Checkliste
 

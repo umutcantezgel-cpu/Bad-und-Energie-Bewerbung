@@ -223,6 +223,6 @@ Plan und Entscheidungen: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 Bis zur Klärung gilt jeweils der sichere Standard ([ROADMAP §13](docs/ROADMAP.md#13-offene-owner-punkte-blockieren-phase-1-nicht-bis-zur-klärung-gilt-jeweils-der-sichere-standard)).
 
-- **Sofort:** Den Resend-Key aus dem öffentlichen Git-Verlauf widerrufen und rotieren ([`betrieb.md`](docs/operations/betrieb.md#1-sofort-resend-key-rotieren)).
+- **Erledigt (2026-10-08):** Der im Git-Verlauf veröffentlichte Resend-Key ist widerrufen und ersetzt ([`betrieb.md`](docs/operations/betrieb.md#1-resend-key-rotiert-erledigt)).
 - **Fakten bestätigen:** [`docs/operations/fakten-abgleich.md`](docs/operations/fakten-abgleich.md) – offene Aussagen, Widersprüche zwischen Quellen, Stellentitel und Texte im Flow.
 - **Datenschutz prüfen:** [`docs/operations/datenschutz-aenderungen.md`](docs/operations/datenschutz-aenderungen.md) – jede inhaltliche Änderung der Datenschutzerklärung und des Impressums zur Prüfung durch die oder den DSB.

@@ -27,13 +27,13 @@ paths = [
 
 # Historischer Resend-API-Key: Commit 9717265 hat einen echten Key in .env.example
 # veröffentlicht. Er steht für immer im öffentlichen Git-Verlauf und gilt als
-# kompromittiert. Er MUSS im Resend-Dashboard widerrufen und rotiert werden; das Datum
-# steht in docs/operations/betrieb.md, Abschnitt 1, Schritt 6. Ohne diesen Eintrag ist der
-# Key als aktiv zu behandeln und diese Ausnahme nicht gedeckt.
+# kompromittiert. Er wurde am 2026-10-08 im Resend-Dashboard widerrufen und ersetzt
+# (docs/operations/betrieb.md, Abschnitt 1, Schritt 6). Die Ausnahme bleibt, weil der
+# widerrufene Key weiter im Git-Verlauf steht.
 # Die Ausnahme gilt nur, wenn Commit UND Datei UND Zeile zusammenpassen; ein neuer
 # Key in .env.example oder in einem anderen Commit schlägt weiterhin an.
 [[rules.allowlists]]
-description = "Historischer, zu rotierender Resend-Key (Commit 9717265, .env.example)"
+description = "Historischer Resend-Key, widerrufen am 2026-10-08 (Commit 9717265, .env.example)"
 condition = "AND"
 commits = ["9717265716d22a82c9c09ee0fdfb7ff3f0d5b5e1"]
 paths = ['''^\.env\.example$''']
