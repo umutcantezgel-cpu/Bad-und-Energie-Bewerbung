@@ -17,7 +17,7 @@ export function renderContactUserConfirmationEmail(data: ContactUserConfirmation
   const contentHtml = `
     <!-- Confirmation Banner -->
     <div style="margin-bottom: 24px;">
-      <span style="display: inline-block; padding: 6px 14px; border-radius: 9999px; background-color: #ecfdf5; color: #059669; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid #a7f3d0;">
+      <span style="display: inline-block; padding: 6px 14px; border-radius: 9999px; background-color: #ecfdf5; color: #059669; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; border: 1px solid #a7f3d0;">
         Eingangsbestätigung
       </span>
     </div>
@@ -37,7 +37,7 @@ export function renderContactUserConfirmationEmail(data: ContactUserConfirmation
     <!-- Discretion & Trust Box -->
     <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px; margin-bottom: 28px;">
       <div style="display: flex; align-items: center; margin-bottom: 10px;">
-        <span style="font-weight: 700; font-size: 13px; color: #0A1E3A; text-transform: uppercase; letter-spacing: 0.03em;">
+        <span style="font-weight: 700; font-size: 13px; color: #0A1E3A; letter-spacing: 0.03em;">
           Unser Versprechen an Sie
         </span>
       </div>
@@ -62,7 +62,7 @@ export function renderContactUserConfirmationEmail(data: ContactUserConfirmation
 
     <!-- Direct Contact Options -->
     <div style="background-color: #f0f9ff; border: 1px solid #bae6fd; border-radius: 16px; padding: 20px; margin-bottom: 28px;">
-      <p style="margin: 0 0 8px 0; font-size: 13px; font-weight: 700; color: #0369a1; text-transform: uppercase; letter-spacing: 0.03em;">
+      <p style="margin: 0 0 8px 0; font-size: 13px; font-weight: 700; color: #0369a1; letter-spacing: 0.03em;">
         Dringende Rückfrage oder sofortiges Kennenlernen?
       </p>
       <p style="margin: 0 0 14px 0; font-size: 14px; color: #0c4a6e;">

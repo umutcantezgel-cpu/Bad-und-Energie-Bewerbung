@@ -2,19 +2,14 @@ import { z } from 'zod';
 import { FACT_IDS, FACTS } from '@/lib/content/facts';
 import { TEAM_QUOTE_IDS } from '@/lib/content/team';
 
+import { JOB_IDS, type JobId } from './ids';
+
 /**
  * Job-Domänenmodell (ROADMAP §3.2). Jede Stelle wird in lib/jobs/data/*.ts mit
  * defineJob() angelegt und beim Laden des Moduls validiert.
- * Neue Stelle: ID hier ergänzen, Datei anlegen, in registry.ts eintragen.
+ * Neue Stelle: ID in lib/jobs/ids.ts ergänzen, Datei anlegen, in registry.ts eintragen.
  */
-export const JOB_IDS = [
-  'anlagenmechaniker-shk',
-  'kundendiensttechniker-shk',
-  'obermonteur-projektleiter-shk',
-  'ausbildung-anlagenmechaniker-shk',
-  'quereinsteiger-montagehelfer',
-] as const;
-export type JobId = (typeof JOB_IDS)[number];
+export { JOB_IDS, type JobId };
 
 const SOFT_HYPHEN = /\u00AD/g;
 const HAS_YEAR = /\b(?:19|20)\d{2}\b/;

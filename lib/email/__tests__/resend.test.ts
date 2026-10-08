@@ -8,7 +8,8 @@ vi.mock('resend', () => ({
   },
 }));
 
-import { dispatchApplicationRequest, sendEmail } from '@/lib/email/resend';
+import type { ReferencedApplication } from '@/lib/applications/types';
+import { dispatchApplicationEmails, dispatchApplicationFollowUpEmail, sendEmail } from '@/lib/email/resend';
 
 const REAL_KEY = 're_Ab3dEf9h_KlMnOpQrStUvWx';
 const SENDER = 'Bad und Energie Karriere <bewerbung@karriere.bad-energie.de>';
@@ -16,11 +17,28 @@ const RECIPIENT = 'bewerberin@example.org';
 
 const message = { to: RECIPIENT, subject: 'Betreff', html: '<p>Inhalt</p>' };
 
-const application = {
-  fullName: 'Erika Beispiel',
+const application: ReferencedApplication = {
+  reference: 'BE-26-K7M4QX',
+  idempotencyKey: '7f9c1b9e-3c0f-4d5e-9a51-1c2b3d4e5f60',
+  submittedAt: new Date('2026-10-08T12:00:00Z'),
+  job: {
+    id: 'anlagenmechaniker-shk',
+    title: 'Anlagenmechaniker SHK für Wärmepumpen & Heizungstechnik (m/w/d)',
+    shortTitle: 'Anlagenmechaniker SHK',
+    referenceCode: 'SHK-WP-2026-01',
+    questionSet: 'fachkraft',
+    status: 'published',
+  },
+  answers: { qualification: 'geselle-2-5', start: 'sofort' },
+  name: 'Erika Beispiel',
+  firstName: 'Erika',
+  phone: { raw: '0151 23456789', e164: '+4915123456789', display: '01512 3456789', valid: true, country: 'DE' },
   email: RECIPIENT,
-  phone: '+49 151 00000000',
-  position: 'Anlagenmechaniker SHK',
+  contactChannel: 'whatsapp',
+  attribution: { utmSource: 'indeed', utmMedium: 'jobboard' },
+  channel: 'indeed',
+  privacyNoticeVersion: '2026-10',
+  suspectedSpam: false,
 };
 
 function stubEnv(vars: Record<string, string | undefined>) {
@@ -148,25 +166,91 @@ describe('sendEmail with Resend configured', () => {
   });
 });
 
-describe('dispatchApplicationRequest', () => {
+describe('dispatchApplicationEmails', () => {
   it('fails honestly when email is not configured in production', async () => {
     stubEnv({ NODE_ENV: 'production' });
-    const result = await dispatchApplicationRequest(application);
+    const result = await dispatchApplicationEmails(application);
     expect(result.success).toBe(false);
     expect(result.simulated).toBe(false);
     expect(result.teamNotification.error).toBe('not_configured');
   });
 
-  it('sends the team mail and skips the confirmation without an applicant email', async () => {
+  it('sends team mail and confirmation with text alternatives and content-bound idempotency keys', async () => {
+    stubEnv({ NODE_ENV: 'production', RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER });
+    send.mockResolvedValue({ data: { id: 'email_x' }, error: null, headers: null });
+
+    const result = await dispatchApplicationEmails(application, { idempotencyKey: 'bewerbung:abc' });
+
+    expect(result.success).toBe(true);
+    expect(send).toHaveBeenCalledTimes(2);
+    const [teamPayload, teamOptions] = send.mock.calls[0];
+    expect(teamPayload).toMatchObject({
+      to: ['info@bad-energie.de'],
+      replyTo: RECIPIENT,
+      subject: 'Neue Bewerbung BE-26-K7M4QX: Anlagenmechaniker SHK – Erika',
+    });
+    expect(teamPayload.text).toContain('BE-26-K7M4QX');
+    expect(teamOptions.idempotencyKey).toMatch(/^bewerbung:abc:team:[0-9a-f]{16}$/);
+
+    const [userPayload, userOptions] = send.mock.calls[1];
+    expect(userPayload).toMatchObject({ to: [RECIPIENT], replyTo: 'info@bad-energie.de' });
+    expect(userPayload.subject).toContain('BE-26-K7M4QX');
+    expect(userOptions.idempotencyKey).toMatch(/^bewerbung:abc:user:[0-9a-f]{16}$/);
+    expect(loggedText()).not.toContain(RECIPIENT);
+  });
+
+  it('uses the same Resend key for identical retries and a new one for changed content', async () => {
+    stubEnv({ NODE_ENV: 'production', RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER });
+    send.mockResolvedValue({ data: { id: 'email_x' }, error: null, headers: null });
+
+    await dispatchApplicationEmails({ ...application, email: undefined }, { idempotencyKey: 'k' });
+    await dispatchApplicationEmails({ ...application, email: undefined }, { idempotencyKey: 'k' });
+    await dispatchApplicationEmails(
+      { ...application, email: undefined, phone: { ...application.phone, display: '01512 3456780' } },
+      { idempotencyKey: 'k' }
+    );
+
+    const keys = send.mock.calls.map((call) => call[1].idempotencyKey);
+    expect(keys[0]).toBe(keys[1]);
+    expect(keys[2]).not.toBe(keys[0]);
+  });
+
+  it('sends only the team mail without an applicant email', async () => {
     stubEnv({ NODE_ENV: 'production', RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER });
     send.mockResolvedValue({ data: { id: 'email_team' }, error: null, headers: null });
 
-    const result = await dispatchApplicationRequest({ ...application, email: '' }, { idempotencyKey: 'BE-26-0002' });
+    const result = await dispatchApplicationEmails({ ...application, email: undefined });
 
     expect(result.success).toBe(true);
     expect(result.userConfirmation).toEqual({ success: false, error: 'no_recipient' });
     expect(send).toHaveBeenCalledTimes(1);
     expect(send.mock.calls[0][0]).toMatchObject({ to: ['info@bad-energie.de'], replyTo: undefined });
-    expect(send.mock.calls[0][1]).toEqual({ idempotencyKey: 'BE-26-0002:team' });
+  });
+
+  it('reports a failed team mail even if the confirmation went out', async () => {
+    stubEnv({ NODE_ENV: 'production', RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER });
+    send
+      .mockResolvedValueOnce({ data: null, error: { name: 'application_error', statusCode: 500, message: 'x' }, headers: null })
+      .mockResolvedValueOnce({ data: { id: 'email_user' }, error: null, headers: null });
+
+    const result = await dispatchApplicationEmails(application);
+    expect(result.success).toBe(false);
+    expect(result.teamNotification.error).toBe('application_error');
+  });
+});
+
+describe('dispatchApplicationFollowUpEmail', () => {
+  it('sends one team mail with the reference in the subject', async () => {
+    stubEnv({ NODE_ENV: 'production', RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER });
+    send.mockResolvedValue({ data: { id: 'email_f' }, error: null, headers: null });
+
+    const result = await dispatchApplicationFollowUpEmail(
+      { reference: 'BE-26-K7M4QX', idempotencyKey: 'hash', receivedAt: new Date(), postalCode: '35578' },
+      { idempotencyKey: 'ergaenzung:hash' }
+    );
+
+    expect(result.success).toBe(true);
+    expect(send.mock.calls[0][0]).toMatchObject({ to: ['info@bad-energie.de'], subject: 'Ergänzung zu BE-26-K7M4QX' });
+    expect(send.mock.calls[0][1].idempotencyKey).toMatch(/^ergaenzung:hash:follow-up:[0-9a-f]{16}$/);
   });
 });

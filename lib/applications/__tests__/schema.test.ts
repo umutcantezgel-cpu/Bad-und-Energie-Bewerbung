@@ -21,6 +21,9 @@ describe('applicationInputSchema', () => {
     expect(applicationInputSchema.safeParse({ ...base, contactChannel: 'email' }).success).toBe(false);
     expect(applicationInputSchema.safeParse({ ...base, contactChannel: 'email', email: 'max@example.de' }).success).toBe(true);
     expect(applicationInputSchema.safeParse({ ...base, email: '' }).success).toBe(true);
+    const padded = applicationInputSchema.safeParse({ ...base, contactChannel: 'email', email: ' max@example.de ' });
+    expect(padded.success && padded.data.email).toBe('max@example.de');
+    expect(applicationInputSchema.safeParse({ ...base, email: 'kein-at' }).success).toBe(false);
   });
 
   it('accepts every registry job plus the initiative option', () => {

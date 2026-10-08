@@ -1,209 +1,127 @@
-import { emailLayout } from './layout';
-import { SITE_CONFIG } from '@/lib/seo/site-config';
+import type { ReferencedApplication } from '@/lib/applications/types';
+import { CONTACT_CHANNEL_LABEL } from '@/lib/apply/whatsapp-message';
+import { channelLabel } from '@/lib/attribution/channel';
+import { answerRows, mappeBlocks, phoneRow, telHref, whatsAppHref } from './application-parts';
+import { formatBerlinDateTime, renderEmail, type EmailBlockInput, type RenderedEmail } from './layout';
 
-export interface ApplicationLeadData {
-  fullName: string;
-  email: string;
-  phone: string;
-  location?: string;
-  position: string;
-  experience?: string;
-  startDate?: string;
-  salaryExpectation?: string;
-  skills?: string[];
-  notes?: string;
-  contactPreference?: string;
-  discretionGuaranteed?: boolean;
-  submittedAt?: string;
+/**
+ * Team-Benachrichtigung zu einer neuen Bewerbung (Phase 1: das Postfach ist das ATS).
+ * Betreff: „Neue Bewerbung BE-26-K7M4QX: Anlagenmechaniker SHK – Max“, bei Spamverdacht mit
+ * vorangestelltem „[Spamverdacht]“. Alle Angaben der Bewerberin bzw. des Bewerbers werden escaped.
+ */
+
+export const SPAM_SUBJECT_PREFIX = '[Spamverdacht]';
+
+const INACTIVE_STATUS_LABEL: Record<string, string> = {
+  draft: 'Entwurf',
+  archived: 'besetzt/archiviert',
+};
+
+const SECONDS = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 });
+
+/** „1,5“ unter 10 Sekunden, sonst ganze Sekunden. */
+function formatSeconds(ms: number): string {
+  const seconds = Math.max(0, ms) / 1000;
+  return seconds < 10 ? SECONDS.format(Math.round(seconds * 10) / 10) : String(Math.round(seconds));
 }
 
-export function renderApplicationLeadNotificationEmail(app: ApplicationLeadData): {
-  subject: string;
-  html: string;
-} {
-  const timestamp =
-    app.submittedAt ||
-    new Date().toLocaleString('de-DE', {
-      timeZone: 'Europe/Berlin',
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+export function applicationTeamSubject(app: ReferencedApplication): string {
+  const base = `Neue Bewerbung ${app.reference}: ${app.job.shortTitle} – ${app.firstName}`;
+  return app.suspectedSpam ? `${SPAM_SUBJECT_PREFIX} ${base}` : base;
+}
 
-  const emailSubject = `Neue Expressbewerbung: ${app.fullName} für ${app.position}`;
-  const preheader = `Bewerbung von ${app.fullName} (${app.position}) für den Standort Wetzlar.`;
+function primaryAction(app: ReferencedApplication): { href: string; label: string } | null {
+  const whatsapp = whatsAppHref(app.phone);
+  const tel = telHref(app.phone);
+  if (app.contactChannel === 'email' && app.email) return { href: `mailto:${app.email}`, label: 'E-Mail schreiben' };
+  if (app.contactChannel === 'whatsapp' && whatsapp) return { href: whatsapp, label: 'Per WhatsApp antworten' };
+  if (tel) return { href: tel, label: 'Anrufen' };
+  return null;
+}
 
-  const phoneClean = app.phone.replace(/[^0-9+]/g, '');
-  const whatsappUrl = phoneClean
-    ? `https://wa.me/${phoneClean.startsWith('0') ? '49' + phoneClean.slice(1) : phoneClean.replace('+', '')}`
-    : '';
+export function renderApplicationTeamEmail(app: ReferencedApplication): RenderedEmail {
+  const { job, attribution } = app;
+  const isInitiative = !job.referenceCode;
+  const action = primaryAction(app);
+  const inactive = job.status ? INACTIVE_STATUS_LABEL[job.status] : undefined;
+  const answers = answerRows(job.questionSet, app.answers);
+  const fillSeconds = app.fillDurationMs !== undefined ? formatSeconds(app.fillDurationMs) : undefined;
 
-  const skillsList =
-    app.skills && app.skills.length > 0
-      ? app.skills
-          .map(
-            (s) =>
-              `<span style="display: inline-block; background-color: #f1f5f9; color: #0A1E3A; font-weight: 600; font-size: 12px; padding: 4px 10px; border-radius: 6px; margin: 3px 4px 3px 0; border: 1px solid #cbd5e1;">${s}</span>`
-          )
-          .join('')
-      : '<span style="color: #94a3b8; font-style: italic;">Keine spezifischen Fähigkeiten ausgewählt</span>';
+  const blocks: EmailBlockInput[] = [
+    app.suspectedSpam && {
+      type: 'note',
+      tone: 'danger',
+      text: `Spamverdacht: Das Formular wurde in ${fillSeconds ?? 'weniger als 3'} Sekunden ausgefüllt. Bitte kurz prüfen, bevor du antwortest.`,
+    },
+    { type: 'title', text: `Neue Bewerbung ${app.reference}` },
+    {
+      type: 'paragraph',
+      text: isInitiative ? `${app.name} hat sich initiativ beworben.` : `${app.name} hat sich auf „${job.title}“ beworben.`,
+    },
+    action && { type: 'button', href: action.href, label: action.label },
 
-  const contentHtml = `
-    <!-- Top Alert Badge -->
-    <div style="margin-bottom: 24px;">
-      <span style="display: inline-block; padding: 6px 14px; border-radius: 9999px; background-color: #fef2f2; color: #C51E1E; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid #fecaca;">
-        🔥 Neue Bewerbung · Hohe Priorität
-      </span>
-    </div>
+    { type: 'heading', text: 'Kontakt' },
+    {
+      type: 'rows',
+      rows: [
+        { label: 'Name', value: app.name },
+        phoneRow(app.phone),
+        { label: 'E-Mail', value: app.email, href: app.email ? `mailto:${app.email}` : undefined },
+        { label: 'Am liebsten per', value: CONTACT_CHANNEL_LABEL[app.contactChannel] },
+      ],
+    },
 
-    <h2 style="margin: 0 0 10px 0; font-size: 22px; font-weight: 800; color: #0A1E3A; letter-spacing: -0.02em;">
-      Bewerberdossier eingegangen
-    </h2>
-    <p style="margin: 0 0 24px 0; color: #475569; font-size: 14px;">
-      Ein neuer Fachhandwerker hat sich über das Karriereportal für das Team in Wetzlar beworben:
-    </p>
+    { type: 'heading', text: 'Stelle' },
+    {
+      type: 'rows',
+      rows: [
+        { label: 'Stelle', value: job.title },
+        { label: 'Referenz', value: job.referenceCode },
+      ],
+    },
+    Boolean(inactive) && {
+      type: 'note',
+      text: `Hinweis: Diese Stelle ist im Registry als „${inactive}“ markiert und derzeit nicht ausgeschrieben.`,
+    },
 
-    <!-- Structured Candidate Dossier Table -->
-    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; background-color: #f8fafc; margin-bottom: 24px;">
-      <tr>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; width: 160px; font-weight: 700; font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">
-          Kandidat
-        </td>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-weight: 800; font-size: 16px; color: #0A1E3A;">
-          ${app.fullName}
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">
-          Angestrebte Stelle
-        </td>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 14px; color: #0284C7;">
-          ${app.position}
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">
-          Telefonnummer
-        </td>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-size: 14px;">
-          <a href="tel:${phoneClean}" style="color: #0284C7; font-weight: 700; text-decoration: none;">${app.phone}</a>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">
-          E Mail Adresse
-        </td>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-size: 14px;">
-          <a href="mailto:${app.email}" style="color: #0284C7; text-decoration: none; font-weight: 600;">${app.email}</a>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">
-          Wohnort
-        </td>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #1e293b;">
-          ${app.location || 'Wetzlar und Umgebung'}
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">
-          Berufserfahrung
-        </td>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #1e293b; font-weight: 600;">
-          ${app.experience || 'Nicht spezifiziert'}
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">
-          Frühester Starttermin
-        </td>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #1e293b;">
-          ${app.startDate || 'Flexibel nach Absprache'}
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">
-          Gehaltswunsch
-        </td>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #059669; font-weight: 700;">
-          ${app.salaryExpectation || 'Nach Haustarif / Verhandlung'}
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 14px 18px; font-weight: 700; font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">
-          Wunsch Kontaktweg
-        </td>
-        <td style="padding: 14px 18px; font-size: 13px; color: #1e293b;">
-          Bevorzugt: <strong style="color: #0A1E3A;">${app.contactPreference || 'Telefon / WhatsApp'}</strong> · 
-          Diskretion: <strong style="color: #059669;">${app.discretionGuaranteed ? 'Streng vertraulich (Ja)' : 'Standard'}</strong>
-        </td>
-      </tr>
-    </table>
+    answers.length > 0 && { type: 'heading', text: 'Angaben' },
+    answers.length > 0 && { type: 'rows', rows: answers },
 
-    <!-- Skills Box -->
-    <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; margin-bottom: 24px;">
-      <div style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px;">
-        Erfasste Kompetenzen und Schwerpunkte
-      </div>
-      <div>
-        ${skillsList}
-      </div>
-    </div>
+    ...mappeBlocks(app.mappe),
 
-    ${
-      app.notes
-        ? `<div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; margin-bottom: 28px;">
-            <div style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px;">
-              Zusätzliche Notizen des Bewerbers
-            </div>
-            <div style="white-space: pre-wrap; font-size: 14px; line-height: 1.6; color: #0f172a;">
-              ${app.notes}
-            </div>
-          </div>`
-        : ''
-    }
+    { type: 'heading', text: 'Quelle' },
+    {
+      type: 'rows',
+      rows: [
+        { label: 'Kanal', value: channelLabel(app.channel) },
+        { label: 'utm_source', value: attribution.utmSource },
+        { label: 'utm_medium', value: attribution.utmMedium },
+        { label: 'utm_campaign', value: attribution.utmCampaign },
+        { label: 'utm_content', value: attribution.utmContent },
+        { label: 'utm_term', value: attribution.utmTerm },
+        { label: 'Empfehlungscode', value: attribution.ref },
+        { label: 'Verweisende Seite', value: attribution.referrerHost },
+        { label: 'Einstiegsseite', value: attribution.landingPath },
+        { label: 'Einstieg', value: attribution.funnel },
+      ],
+    },
 
-    <!-- Action Buttons -->
-    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-      <tr>
-        <td align="left">
-          <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-            <tr>
-              <td style="padding-right: 12px; padding-bottom: 10px;">
-                <a href="tel:${phoneClean}" class="btn-primary" style="display: inline-block; padding: 13px 22px; background-color: #0A1E3A; color: #ffffff !important; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 14px;">
-                  Bewerber anrufen
-                </a>
-              </td>
-              ${
-                whatsappUrl
-                  ? `<td style="padding-right: 12px; padding-bottom: 10px;">
-                      <a href="${whatsappUrl}" class="btn-emerald" style="display: inline-block; padding: 13px 22px; background-color: #059669; color: #ffffff !important; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 14px;">
-                        Per WhatsApp kontaktieren
-                      </a>
-                    </td>`
-                  : ''
-              }
-              <td style="padding-bottom: 10px;">
-                <a href="mailto:${app.email}?subject=Ihre Bewerbung als ${encodeURIComponent(app.position)} bei Bad und Energie GmbH Lahn Dill" class="btn-accent" style="display: inline-block; padding: 13px 22px; background-color: #0284C7; color: #ffffff !important; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 14px;">
-                  E Mail schreiben
-                </a>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  `;
+    { type: 'heading', text: 'Eingang' },
+    {
+      type: 'rows',
+      rows: [
+        { label: 'Bewerbungsnummer', value: app.reference },
+        { label: 'Eingegangen', value: formatBerlinDateTime(app.submittedAt) },
+        { label: 'Ausfülldauer', value: fillSeconds !== undefined ? `${fillSeconds} Sekunden` : undefined },
+        { label: 'Datenschutzhinweis', value: `Version ${app.privacyNoticeVersion}` },
+      ],
+    },
+  ];
 
-  return {
-    subject: emailSubject,
-    html: emailLayout({
-      title: emailSubject,
-      preheader,
-      badge: 'Recruiting Dossier · Wetzlar',
-      contentHtml,
-    }),
-  };
+  return renderEmail({
+    subject: applicationTeamSubject(app),
+    preheader: `${job.shortTitle} · ${channelLabel(app.channel)} · am liebsten per ${CONTACT_CHANNEL_LABEL[app.contactChannel]}`,
+    eyebrow: 'Team-Benachrichtigung',
+    blocks,
+  });
 }

@@ -38,7 +38,7 @@ export function renderContactLeadNotificationEmail(lead: ContactLeadData): {
   const contentHtml = `
     <!-- Status Badge -->
     <div style="margin-bottom: 24px;">
-      <span style="display: inline-block; padding: 6px 14px; border-radius: 9999px; background-color: #eff6ff; color: #0284c7; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid #bfdbfe;">
+      <span style="display: inline-block; padding: 6px 14px; border-radius: 9999px; background-color: #eff6ff; color: #0284c7; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; border: 1px solid #bfdbfe;">
         Posteingang Karriereportal Wetzlar
       </span>
     </div>
@@ -53,7 +53,7 @@ export function renderContactLeadNotificationEmail(lead: ContactLeadData): {
     <!-- Structured Data Table -->
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; background-color: #f8fafc; margin-bottom: 24px;">
       <tr>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; width: 140px; font-weight: 700; font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">
+        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; width: 140px; font-weight: 700; font-size: 13px; color: #64748b; letter-spacing: 0.03em;">
           Name
         </td>
         <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 15px; color: #0A1E3A;">
@@ -61,7 +61,7 @@ export function renderContactLeadNotificationEmail(lead: ContactLeadData): {
         </td>
       </tr>
       <tr>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">
+        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 13px; color: #64748b; letter-spacing: 0.03em;">
           E Mail
         </td>
         <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-size: 14px;">
@@ -71,7 +71,7 @@ export function renderContactLeadNotificationEmail(lead: ContactLeadData): {
         </td>
       </tr>
       <tr>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">
+        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 13px; color: #64748b; letter-spacing: 0.03em;">
           Telefon
         </td>
         <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-size: 14px;">
@@ -83,7 +83,7 @@ export function renderContactLeadNotificationEmail(lead: ContactLeadData): {
         </td>
       </tr>
       <tr>
-        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">
+        <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 13px; color: #64748b; letter-spacing: 0.03em;">
           Betreff
         </td>
         <td style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #1e293b; font-weight: 600;">
@@ -91,7 +91,7 @@ export function renderContactLeadNotificationEmail(lead: ContactLeadData): {
         </td>
       </tr>
       <tr>
-        <td style="padding: 14px 18px; font-weight: 700; font-size: 13px; color: #64748b; text-transform: uppercase; letter-spacing: 0.03em;">
+        <td style="padding: 14px 18px; font-weight: 700; font-size: 13px; color: #64748b; letter-spacing: 0.03em;">
           Eingangszeit
         </td>
         <td style="padding: 14px 18px; font-size: 13px; color: #64748b;">
@@ -102,7 +102,7 @@ export function renderContactLeadNotificationEmail(lead: ContactLeadData): {
 
     <!-- Message Content Box -->
     <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; margin-bottom: 28px;">
-      <div style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px;">
+      <div style="font-size: 12px; font-weight: 700; color: #64748b; letter-spacing: 0.04em; margin-bottom: 8px;">
         Nachricht oder Qualifikation
       </div>
       <div style="white-space: pre-wrap; font-size: 14px; line-height: 1.6; color: #0f172a;">

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { JOB_IDS } from '@/lib/jobs/schema';
+import { JOB_IDS } from '@/lib/jobs/ids';
 
 /**
  * Shared contract between the application flow (client), the Bewerbungsmappe
@@ -76,7 +76,12 @@ export const applicationInputSchema = z
     answers: applicationAnswersSchema.default({}),
     name: trimmed(100).min(2, 'Bitte gib deinen Namen an.'),
     phone: phoneSchema,
-    email: z.union([z.literal(''), z.email('Bitte gib eine gültige E-Mail-Adresse an.').max(254)]).optional(),
+    // Getrimmt wie die übrigen Textfelder: Leerzeichen aus der Autofill-Eingabe sind kein Fehler.
+    email: z
+      .string()
+      .trim()
+      .pipe(z.union([z.literal(''), z.email('Bitte gib eine gültige E-Mail-Adresse an.').max(254)]))
+      .optional(),
     contactChannel: contactChannelSchema.default('whatsapp'),
     mappe: mappeSchema.optional(),
     attribution: attributionSchema.default({}),

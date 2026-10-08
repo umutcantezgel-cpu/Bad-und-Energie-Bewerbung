@@ -1,14 +1,16 @@
 import 'server-only';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { Resend } from 'resend';
-import { getEmailConfig, emailSimulationAllowed } from '@/lib/env';
+
+import type { NormalizedFollowUp, ReferencedApplication } from '@/lib/applications/types';
+import { emailSimulationAllowed, getEmailConfig } from '@/lib/env';
 import {
-  ContactLeadData,
+  renderApplicationConfirmationEmail,
+  renderApplicationFollowUpEmail,
+  renderApplicationTeamEmail,
   renderContactLeadNotificationEmail,
   renderContactUserConfirmationEmail,
-  ApplicationLeadData,
-  renderApplicationLeadNotificationEmail,
-  renderApplicationUserConfirmationEmail,
+  type ContactLeadData,
 } from './templates';
 
 export interface EmailDispatchResult {
@@ -36,6 +38,8 @@ export interface SendEmailOptions {
   to: string | string[];
   subject: string;
   html: string;
+  /** Textfassung (multipart/alternative). */
+  text?: string;
   replyTo?: string;
   from?: string;
   tags?: EmailTag[];
@@ -44,7 +48,11 @@ export interface SendEmailOptions {
 }
 
 export interface DispatchOptions {
-  /** Basis-Schlüssel, z. B. die Bewerbungsnummer; je Mail wird `:team` bzw. `:user` angehängt. */
+  /**
+   * Basis-Schlüssel, z. B. `bewerbung:<uuid>`. Je Mail wird `:<art>:<Inhalts-Hash>` angehängt:
+   * Gleicher Inhalt wird von Resend 24 h lang nur einmal versendet, geänderter Inhalt
+   * (z. B. korrigierte Telefonnummer nach einem Fehler) bekommt einen eigenen Schlüssel.
+   */
   idempotencyKey?: string;
 }
 
@@ -76,6 +84,7 @@ export async function sendEmail({
   to,
   subject,
   html,
+  text,
   replyTo,
   from,
   tags,
@@ -102,6 +111,7 @@ export async function sendEmail({
         to: Array.isArray(to) ? to : [to],
         subject,
         html,
+        ...(text ? { text } : {}),
         replyTo: replyTo || undefined,
         tags: tags?.length ? tags : undefined,
       },
@@ -125,43 +135,63 @@ function settle(result: PromiseSettledResult<EmailDispatchResult>): EmailDispatc
   return result.status === 'fulfilled' ? result.value : { success: false, error: 'send_failed' };
 }
 
-function idempotencyFor(options: DispatchOptions | undefined, suffix: 'team' | 'user') {
-  return options?.idempotencyKey ? `${options.idempotencyKey}:${suffix}` : undefined;
+/** Resend erlaubt Schlüssel bis 256 Zeichen; der Hash bindet den Schlüssel an Empfänger und Inhalt. */
+export function idempotencyFor(
+  options: DispatchOptions | undefined,
+  kind: string,
+  mail: { to: string | string[]; subject: string; html: string; text?: string }
+): string | undefined {
+  if (!options?.idempotencyKey) return undefined;
+  const digest = createHash('sha256')
+    .update(JSON.stringify([mail.to, mail.subject, mail.html, mail.text ?? '']))
+    .digest('hex')
+    .slice(0, 16);
+  return `${options.idempotencyKey.slice(0, 200)}:${kind}:${digest}`;
 }
 
 const NO_RECIPIENT: EmailDispatchResult = { success: false, error: 'no_recipient' };
 
-/** Kontaktanfrage: Benachrichtigung ans Team plus Eingangsbestätigung an den Absender. */
-export async function dispatchContactRequest(
-  data: ContactLeadData,
+/** Resend-Tag-Wert: nur [A-Za-z0-9_-], höchstens 256 Zeichen. */
+function tagValue(value: string): string {
+  return value.replace(/[^A-Za-z0-9_-]/g, '_').slice(0, 256) || 'none';
+}
+
+/**
+ * Bewerbung: Benachrichtigung ans Team (Reply-To = Bewerber-E-Mail, falls vorhanden) plus
+ * Eingangsbestätigung, aber nur wenn eine E-Mail angegeben wurde. Erfolg = Team-Mail angenommen.
+ */
+export async function dispatchApplicationEmails(
+  app: ReferencedApplication,
   options?: DispatchOptions
 ): Promise<DualDispatchResult> {
   const config = getResendClient();
+  const team = renderApplicationTeamEmail(app);
+  const teamMail = { to: config.toEmail, ...team };
+  const tags: EmailTag[] = [
+    { name: 'job', value: tagValue(app.job.id) },
+    { name: 'channel', value: tagValue(app.channel) },
+  ];
 
-  const leadMail = renderContactLeadNotificationEmail(data);
-  const confirmationMail = renderContactUserConfirmationEmail({
-    name: data.name,
-    email: data.email,
-    subject: data.subject,
-  });
+  const confirmation = app.email ? renderApplicationConfirmationEmail(app) : null;
+  const confirmationMail = confirmation && app.email ? { to: app.email, ...confirmation } : null;
 
   const [teamRes, userRes] = await Promise.allSettled([
     sendEmail({
-      to: config.toEmail,
-      subject: leadMail.subject,
-      html: leadMail.html,
-      replyTo: data.email || undefined,
-      tags: [{ name: 'category', value: 'contact_team' }],
-      idempotencyKey: idempotencyFor(options, 'team'),
+      ...teamMail,
+      replyTo: app.email || undefined,
+      tags: [
+        { name: 'category', value: 'application_team' },
+        ...tags,
+        ...(app.suspectedSpam ? [{ name: 'spam', value: 'suspected' }] : []),
+      ],
+      idempotencyKey: idempotencyFor(options, 'team', teamMail),
     }),
-    data.email
+    confirmationMail
       ? sendEmail({
-          to: data.email,
-          subject: confirmationMail.subject,
-          html: confirmationMail.html,
+          ...confirmationMail,
           replyTo: config.toEmail,
-          tags: [{ name: 'category', value: 'contact_confirmation' }],
-          idempotencyKey: idempotencyFor(options, 'user'),
+          tags: [{ name: 'category', value: 'application_confirmation' }, ...tags],
+          idempotencyKey: idempotencyFor(options, 'user', confirmationMail),
         })
       : Promise.resolve({ ...NO_RECIPIENT }),
   ]);
@@ -177,37 +207,52 @@ export async function dispatchContactRequest(
   };
 }
 
-/** Bewerbung: Dossier ans Team plus Eingangsbestätigung an die Bewerberin bzw. den Bewerber. */
-export async function dispatchApplicationRequest(
-  data: ApplicationLeadData,
+/** Ergänzung zu einer Bewerbung: eine Mail ans Team mit der Bewerbungsnummer im Betreff. */
+export async function dispatchApplicationFollowUpEmail(
+  followUp: NormalizedFollowUp,
+  options?: DispatchOptions
+): Promise<EmailDispatchResult> {
+  const config = getResendClient();
+  const mail = { to: config.toEmail, ...renderApplicationFollowUpEmail(followUp) };
+  try {
+    return await sendEmail({
+      ...mail,
+      tags: [{ name: 'category', value: 'application_follow_up' }],
+      idempotencyKey: idempotencyFor(options, 'follow-up', mail),
+    });
+  } catch {
+    return { success: false, error: 'send_failed' };
+  }
+}
+
+/** Kontaktanfrage (Altlast, die Kontakt-API entfällt mit dem Aufräumschritt). */
+export async function dispatchContactRequest(
+  data: ContactLeadData,
   options?: DispatchOptions
 ): Promise<DualDispatchResult> {
   const config = getResendClient();
 
-  const appMail = renderApplicationLeadNotificationEmail(data);
-  const userConfMail = renderApplicationUserConfirmationEmail({
-    fullName: data.fullName,
+  const leadMail = { to: config.toEmail, ...renderContactLeadNotificationEmail(data) };
+  const confirmation = renderContactUserConfirmationEmail({
+    name: data.name,
     email: data.email,
-    position: data.position,
+    subject: data.subject,
   });
+  const confirmationMail = data.email ? { to: data.email, ...confirmation } : null;
 
   const [teamRes, userRes] = await Promise.allSettled([
     sendEmail({
-      to: config.toEmail,
-      subject: appMail.subject,
-      html: appMail.html,
+      ...leadMail,
       replyTo: data.email || undefined,
-      tags: [{ name: 'category', value: 'application_team' }],
-      idempotencyKey: idempotencyFor(options, 'team'),
+      tags: [{ name: 'category', value: 'contact_team' }],
+      idempotencyKey: idempotencyFor(options, 'team', leadMail),
     }),
-    data.email
+    confirmationMail
       ? sendEmail({
-          to: data.email,
-          subject: userConfMail.subject,
-          html: userConfMail.html,
+          ...confirmationMail,
           replyTo: config.toEmail,
-          tags: [{ name: 'category', value: 'application_confirmation' }],
-          idempotencyKey: idempotencyFor(options, 'user'),
+          tags: [{ name: 'category', value: 'contact_confirmation' }],
+          idempotencyKey: idempotencyFor(options, 'user', confirmationMail),
         })
       : Promise.resolve({ ...NO_RECIPIENT }),
   ]);
