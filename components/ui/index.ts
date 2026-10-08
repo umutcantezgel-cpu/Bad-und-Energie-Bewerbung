@@ -1,4 +1,3 @@
-// BackToTop is deprecated and intentionally not re-exported.
 export * from './Breadcrumbs';
 export * from './Button';
 export * from './Card';
@@ -21,4 +20,3 @@ export * from './Tag';
 export * from './TextLink';
 export * from './Textarea';
 export * from './Toast';
-export * from './VisuallyHidden';

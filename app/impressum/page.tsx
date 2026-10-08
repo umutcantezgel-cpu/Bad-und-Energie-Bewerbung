@@ -4,18 +4,20 @@ import {
   CHAMBER,
   LEGAL_ENTITY,
   LegalDocument,
+  LegalFactLink,
   LegalFacts,
   LegalSection,
   displayUrl,
   mailtoHref,
   type LegalFact,
 } from '@/components/legal';
-import { TextLink } from '@/components/ui';
+import { TextLink } from '@/components/ui/TextLink';
 import { generatePageMetadata } from '@/lib/seo/metadata';
 
 /*
- * Impressum: Inhalt wie bisher, nur neu gegliedert. Offene Punkte (USt-IdNr., TMG-Verweise,
- * OS-Plattform) stehen in docs/operations/datenschutz-aenderungen.md.
+ * Impressum: Inhalt wie bisher, nur neu gegliedert. TMG-Verweise auf das DDG umgestellt, Satz zur
+ * eingestellten OS-Plattform entfernt. Offene Punkte (USt-IdNr., § 36 VSBG) stehen in
+ * docs/operations/datenschutz-aenderungen.md.
  */
 
 export const metadata: Metadata = generatePageMetadata({
@@ -69,26 +71,26 @@ const CONTACT: readonly LegalFact[] = [
   {
     label: 'Telefon',
     value: (
-      <TextLink href={LEGAL_ENTITY.phone.href} standalone>
+      <LegalFactLink href={LEGAL_ENTITY.phone.href}>
         {LEGAL_ENTITY.phone.display}
-      </TextLink>
+      </LegalFactLink>
     ),
   },
   { label: 'Telefax', value: LEGAL_ENTITY.fax },
   {
     label: 'E-Mail',
     value: (
-      <TextLink href={LEGAL_ENTITY.emailHref} standalone>
+      <LegalFactLink href={LEGAL_ENTITY.emailHref}>
         {LEGAL_ENTITY.email}
-      </TextLink>
+      </LegalFactLink>
     ),
   },
   {
     label: 'Website',
     value: (
-      <TextLink href={LEGAL_ENTITY.website} standalone>
+      <LegalFactLink href={LEGAL_ENTITY.website}>
         {displayUrl(LEGAL_ENTITY.website)}
-      </TextLink>
+      </LegalFactLink>
     ),
   },
 ];
@@ -114,30 +116,28 @@ const CHAMBER_FACTS: readonly LegalFact[] = [
   {
     label: 'Telefon',
     value: (
-      <TextLink href={CHAMBER.phone.href} standalone>
+      <LegalFactLink href={CHAMBER.phone.href}>
         {CHAMBER.phone.display}
-      </TextLink>
+      </LegalFactLink>
     ),
   },
   {
     label: 'E-Mail',
     value: (
-      <TextLink href={mailtoHref(CHAMBER.email)} standalone>
+      <LegalFactLink href={mailtoHref(CHAMBER.email)}>
         {CHAMBER.email}
-      </TextLink>
+      </LegalFactLink>
     ),
   },
   {
     label: 'Website',
     value: (
-      <TextLink href={CHAMBER.url} standalone>
+      <LegalFactLink href={CHAMBER.url}>
         {displayUrl(CHAMBER.url)}
-      </TextLink>
+      </LegalFactLink>
     ),
   },
 ];
-
-const OS_PLATFORM_URL = 'https://consumer-redress.ec.europa.eu/site-relocation_en';
 
 export default function ImpressumPage() {
   return (
@@ -174,20 +174,17 @@ export default function ImpressumPage() {
       </Chapter>
 
       <Chapter id="streitbeilegung">
+        {/* Die EU-Plattform zur Online-Streitbeilegung wurde im Juli 2025 eingestellt; der Hinweis darauf entfällt. */}
         <p>
-          Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit, die du unter{' '}
-          <a href={OS_PLATFORM_URL} className="break-all">
-            {OS_PLATFORM_URL}
-          </a>{' '}
-          findest. Wir sind grundsätzlich bereit, an Streitbeilegungsverfahren vor einer anerkannten
-          Verbraucherschlichtungsstelle teilzunehmen.
+          Wir sind grundsätzlich bereit, an Streitbeilegungsverfahren vor einer anerkannten Verbraucherschlichtungsstelle
+          teilzunehmen.
         </p>
       </Chapter>
 
       <Chapter id="haftung">
         <p>
-          Als Diensteanbieter sind wir gemäß § 7 Abs. 1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen
-          Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir jedoch nicht verpflichtet, übermittelte oder gespeicherte
+          Als Diensteanbieter sind wir gemäß § 7 Abs. 1 DDG für eigene Inhalte auf diesen Seiten nach den allgemeinen
+          Gesetzen verantwortlich. Nach §§ 8 bis 10 DDG sind wir jedoch nicht verpflichtet, übermittelte oder gespeicherte
           fremde Informationen zu überwachen. Bei Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese
           Inhalte umgehend entfernen.
         </p>

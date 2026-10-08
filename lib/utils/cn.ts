@@ -12,6 +12,7 @@ const twMerge = extendTailwindMerge({
         'surface',
         'surface-2',
         'surface-3',
+        'surface-raised',
         'ink',
         'ink-muted',
         'line',

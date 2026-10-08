@@ -22,6 +22,16 @@ export function withSoftHyphens(text: string, titleShy: string): string {
   return result;
 }
 
+const NBSP = '\u00A0';
+
+/**
+ * Keeps a spaced slash or dash at the end of a line instead of starting the next one:
+ * „Kundendiensttechniker SHK / Servicemonteur“ breaks after „/“, never before it.
+ */
+export function bindSeparators(text: string): string {
+  return text.replace(/ ([/–]) /g, `${NBSP}$1 `);
+}
+
 /** „Gehalt: 3.600–4.600 € / Monat“ → { label: 'Gehalt', value: '3.600–4.600 € / Monat' }. */
 export function splitLabel(item: string): { label: string; value: string } | null {
   const index = item.indexOf(': ');

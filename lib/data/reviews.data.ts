@@ -18,6 +18,8 @@ export interface GoogleReview {
   };
 }
 
+// Stand der Zahlen offen (ROADMAP §13). Die Bewertungszeile erscheint erst mit `asOf: 'JJJJ-MM'`
+// (Monat, in dem die Zahlen im Google-Profil abgelesen wurden), optional `profileUrl` (https).
 export const googleOverviewStats = {
   averageRating: 5.0,
   totalReviews: 24,
@@ -208,7 +210,8 @@ export const googleCustomerReviews: GoogleReview[] = [
   },
 ];
 
-// Spur 2: Echte Stimmen aus dem Handwerkerteam für Bewerber
+// Spur 2: Stimmen aus dem Handwerkerteam. NICHT freigegeben: ROADMAP §1 bestätigt nur die vier Zitate
+// aus lib/data/team.ts. Bis zur Owner-Bestätigung nirgends anzeigen (docs/operations/fakten-abgleich.md B22).
 export const teamRecruitingReviews: GoogleReview[] = [
   {
     id: 'team-michael',

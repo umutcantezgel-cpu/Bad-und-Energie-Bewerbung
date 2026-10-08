@@ -5,6 +5,7 @@ import {
   applyLabelFor,
   focusModeExitLabel,
   getStickyApplyAction,
+  hasStickyApplyBar,
   isCurrentNavItem,
   isFocusMode,
   isKeyboardOpen,
@@ -91,6 +92,15 @@ describe('getStickyApplyAction', () => {
     }
   });
 
+  it('falls back to /bewerbung when the page has no embedded flow (labels older than the page)', () => {
+    const job = getActiveJobs()[0];
+    expect(getStickyApplyAction(jobPath(job), labels, false)).toEqual({
+      href: '/bewerbung',
+      label: 'Jetzt bewerben',
+      inPageFlow: false,
+    });
+  });
+
   it('jumps to the embedded flow on every published job page', () => {
     for (const job of getActiveJobs()) {
       const action = getStickyApplyAction(jobPath(job), labels);
@@ -104,6 +114,15 @@ describe('getStickyApplyAction', () => {
 
   it('hide selector covers the flow anchor and marked CTAs', () => {
     expect(STICKY_BAR_HIDE_SELECTOR).toBe('#bewerben, [data-primary-cta]');
+  });
+});
+
+describe('hasStickyApplyBar', () => {
+  it('matches where getStickyApplyAction renders the bar (the footer reserves its height there only)', () => {
+    for (const path of ['/', '/jobs', '/datenschutz', '/jobs/anlagenmechaniker-shk-wetzlar', '/bewerbung', '/bewerbung/mappe']) {
+      expect(hasStickyApplyBar(path)).toBe(getStickyApplyAction(path, labels) !== null);
+    }
+    expect(hasStickyApplyBar('/bewerbung/danke')).toBe(false);
   });
 });
 

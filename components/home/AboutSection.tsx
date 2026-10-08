@@ -7,9 +7,11 @@ import { FACTS } from '@/lib/content/facts';
 import { TEAM_QUOTES } from '@/lib/content/team';
 import { SectionHeader } from './SectionHeader';
 
-const ABOUT_STATS = [FACTS.employees15, FACTS.partners5] as const;
-
-/** #ueber-uns: company facts, the managing director's quote and the review carousel. */
+/**
+ * #ueber-uns: company facts, the managing director's quote and the review carousel.
+ * Title as in ROADMAP §5.6. The team size and the founding year stand in the title, so there is
+ * no extra „15“ tile and the lead adds only the direct line to Sabri Demir.
+ */
 export function AboutSection() {
   const quote = TEAM_QUOTES.demir;
   const partners = FACTS.partners5.list ?? [];
@@ -19,8 +21,9 @@ export function AboutSection() {
       <Container>
         <SectionHeader
           id="ueber-uns-title"
-          title={`Seit ${COMPANY.foundingYear}. Ein Meisterbetrieb.`}
-          lead={`${FACTS.founded1926.long} ${FACTS.directLine.long}`}
+          // Non-breaking spaces keep each short sentence on one line („Ein“ never ends a line).
+          title={`${FACTS.employees15.value}\u00A0Leute. Ein\u00A0Meisterbetrieb. Seit\u00A0${COMPANY.foundingYear}.`}
+          lead={FACTS.directLine.long}
         />
 
         <div className="mt-12 grid gap-12 lg:grid-cols-12 lg:gap-16">
@@ -43,16 +46,11 @@ export function AboutSection() {
           </figure>
 
           <div className="flex flex-col gap-8 lg:col-span-5">
-            <ul className="grid grid-cols-2 gap-6">
-              {ABOUT_STATS.map((fact) => (
-                <li key={fact.id}>
-                  <StatTile value={fact.value} label={fact.label} />
-                </li>
-              ))}
-            </ul>
+            <StatTile value={FACTS.partners5.value} label={FACTS.partners5.label} />
             <div>
-              <h3 className="text-body font-semibold text-ink">{FACTS.partners5.label}</h3>
-              <ul className="mt-3 divide-y divide-line border-t border-line">
+              {/* The „5 Partner-Säulen“ tile above already names the list; the heading is for screen readers. */}
+              <h3 className="sr-only">{FACTS.partners5.label}</h3>
+              <ul className="divide-y divide-line border-t border-line">
                 {partners.map((partner) => (
                   <li key={partner} className="py-3 text-callout text-ink-muted">
                     {partner}

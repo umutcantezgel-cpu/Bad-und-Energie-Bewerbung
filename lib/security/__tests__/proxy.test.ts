@@ -23,6 +23,20 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
+describe('proxy: Prozent-Kodierung', () => {
+  it('beantwortet kaputte Kodierung mit 400 statt 500', () => {
+    const response = proxy(request('/jobs/%ZZ'));
+    expect(response.status).toBe(400);
+    expect(response.headers.get('cache-control')).toBe('no-store');
+    expect(proxy(request('/%E0%A4%A')).status).toBe(400);
+  });
+
+  it('lässt gültige Kodierung durch', () => {
+    expect(passes(proxy(request('/jobs/%C3%A4')))).toBe(true);
+    expect(passes(proxy(request('/jobs/kundendiensttechniker-shk')))).toBe(true);
+  });
+});
+
 describe('proxy: User-Agent', () => {
   it.each([
     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.7390.37 Safari/537.36',

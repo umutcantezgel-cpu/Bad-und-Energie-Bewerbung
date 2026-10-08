@@ -1,37 +1,13 @@
 import type { ComponentPropsWithRef } from 'react';
 import { Slot } from '@radix-ui/react-slot';
-import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils/cn';
+import { iconButtonVariants, type IconButtonVariantProps } from './variants';
 
-export const iconButtonVariants = cva(
-  [
-    'inline-flex shrink-0 select-none items-center justify-center rounded-full',
-    'transition duration-fast ease-standard active:scale-98',
-    'disabled:pointer-events-none disabled:opacity-50',
-  ],
-  {
-    variants: {
-      variant: {
-        ghost: 'text-ink hover:bg-surface-2',
-        secondary: 'bg-surface-3 text-ink hover:bg-line',
-        outline: 'border border-line-strong text-ink hover:bg-surface-2',
-        primary: 'bg-accent text-on-accent hover:bg-accent-hover',
-      },
-      size: {
-        md: 'size-11',
-        lg: 'size-13',
-      },
-    },
-    defaultVariants: {
-      variant: 'ghost',
-      size: 'md',
-    },
-  },
-);
+export { iconButtonVariants, type IconButtonVariantProps } from './variants';
 
 export interface IconButtonProps
   extends Omit<ComponentPropsWithRef<'button'>, 'aria-label'>,
-    VariantProps<typeof iconButtonVariants> {
+    IconButtonVariantProps {
   /** Required: icon-only controls have no visible text. */
   'aria-label': string;
   /** Renders the single child (e.g. a tel: link) with icon button styles. */

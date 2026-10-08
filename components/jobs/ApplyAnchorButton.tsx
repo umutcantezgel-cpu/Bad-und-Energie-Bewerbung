@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState, type ReactNode } from 'react';
-import { Button } from '@/components/ui/Button';
-import { cn } from '@/lib/utils/cn';
+import { buttonVariants } from '@/components/ui/variants';
 
 export interface ApplyAnchorButtonProps {
   /** Id of the embedded flow section. */
@@ -11,10 +10,13 @@ export interface ApplyAnchorButtonProps {
   className?: string;
 }
 
+const BUTTON_CLASS = buttonVariants({ size: 'lg', fullWidth: true });
+
 /**
- * Primary „Jetzt bewerben“ in the desktop aside. It jumps to the embedded flow and hides
- * itself while that section is on screen, so a viewport never shows two primary actions.
- * Without JS (or IntersectionObserver) it simply stays visible.
+ * Primary „Jetzt bewerben“ in the desktop aside. It jumps to the embedded flow and folds away
+ * while that section is on screen, so a viewport never shows two primary actions and the
+ * salary card closes up instead of keeping an empty slot. Brings its own top spacing (pt-5),
+ * so nothing is left behind when it is folded. Without JS (or IntersectionObserver) it stays.
  */
 export function ApplyAnchorButton({ targetId = 'bewerben', children, className }: ApplyAnchorButtonProps) {
   const [flowVisible, setFlowVisible] = useState(false);
@@ -28,8 +30,19 @@ export function ApplyAnchorButton({ targetId = 'bewerben', children, className }
   }, [targetId]);
 
   return (
-    <Button asChild size="lg" fullWidth className={cn(flowVisible && 'invisible', className)}>
-      <a href={`#${targetId}`}>{children}</a>
-    </Button>
+    <div
+      inert={flowVisible}
+      data-folded={flowVisible || undefined}
+      className={`grid grid-rows-[1fr] transition-[grid-template-rows,opacity] duration-step ease-standard data-folded:grid-rows-[0fr] data-folded:opacity-0 ${className ?? ''}`}
+    >
+      {/* -m-1 p-1 leaves room for the focus ring inside the clipping box. */}
+      <div className="-m-1 min-h-0 overflow-hidden p-1">
+        <div className="pt-5">
+          <a href={`#${targetId}`} className={BUTTON_CLASS}>
+            {children}
+          </a>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -8,4 +8,4 @@ export * from './AboutSection';
 export * from './FaqSection';
 export * from './CtaBand';
 export * from './SectionHeader';
-export { HOME_DESCRIPTION, HOME_KEYWORDS, HOME_TITLE } from './content';
+export { HOME_DESCRIPTION, HOME_KEYWORDS, HOME_TITLE, homeDescription } from './content';

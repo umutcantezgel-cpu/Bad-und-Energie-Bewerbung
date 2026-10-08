@@ -1,4 +1,4 @@
-import { DISCRETION_PROMISE, PROCESS_INTRO, getProcessSteps, type ProcessAudience } from '@/lib/content';
+import { getDiscretionPromise, getProcessIntro, getProcessSteps, type ProcessAudience } from '@/lib/content';
 import { cn } from '@/lib/utils/cn';
 
 export interface JobProcessProps {
@@ -9,13 +9,15 @@ export interface JobProcessProps {
 /** Compact three-step process for a job page; step 3 depends on the question set. */
 export function JobProcess({ audience, className }: JobProcessProps) {
   const steps = getProcessSteps(audience);
+  const intro = getProcessIntro(audience);
+  const discretion = getDiscretionPromise(audience);
   return (
     <section aria-labelledby="stelle-ablauf" className={cn('flex flex-col gap-6', className)}>
       <div className="flex flex-col gap-2">
         <h2 id="stelle-ablauf" className="text-title-3 text-ink">
-          {PROCESS_INTRO.title}
+          {intro.title}
         </h2>
-        <p className="max-w-prose text-body text-ink-muted">{PROCESS_INTRO.text}</p>
+        <p className="max-w-prose text-body text-ink-muted">{intro.text}</p>
       </div>
       <ol className="flex flex-col gap-6">
         {steps.map((step) => (
@@ -36,7 +38,7 @@ export function JobProcess({ audience, className }: JobProcessProps) {
           </li>
         ))}
       </ol>
-      {audience === 'fachkraft' && <p className="max-w-prose text-callout text-ink-muted">{DISCRETION_PROMISE}</p>}
+      {discretion && <p className="max-w-prose text-callout text-ink-muted">{discretion}</p>}
     </section>
   );
 }

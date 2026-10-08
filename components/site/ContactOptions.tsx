@@ -3,12 +3,15 @@ import { Mail, MessageCircle, Phone } from 'lucide-react';
 import { COMPANY } from '@/lib/content/company';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
 import { cn } from '@/lib/utils/cn';
+import { OpeningHoursText } from './OpeningHoursText';
 
 export interface ContactOptionsProps {
   /** `card`: stacked rows on surface-2 (sidebars, thank-you page). `inline`: one row of links (CTA band, error pages). */
   variant?: 'card' | 'inline';
   /** Prefilled WhatsApp text; defaults to the general message from buildWhatsAppUrl(). */
   whatsappMessage?: string;
+  /** `card` only: names the contact person above the channels, e.g. on job pages (ROADMAP §5). */
+  person?: { name: string; role: string };
   className?: string;
 }
 
@@ -42,9 +45,13 @@ const NEW_TAB_HINT = ' (öffnet in neuem Tab)';
  * Phone, WhatsApp and e-mail with the opening hours. Always the same order on every page
  * (WCAG 3.2.6 Consistent Help). Server-safe: no hooks, no client JS.
  */
-export function ContactOptions({ variant = 'card', whatsappMessage, className }: ContactOptionsProps) {
+export function ContactOptions({ variant = 'card', whatsappMessage, person, className }: ContactOptionsProps) {
   const items = channels(whatsappMessage);
-  const hours = <p className="text-footnote text-ink-muted">Öffnungszeiten: {COMPANY.openingHours.short}</p>;
+  const hours = (
+    <p className="text-footnote text-ink-muted">
+      Öffnungszeiten: <OpeningHoursText text={COMPANY.openingHours.short} />
+    </p>
+  );
 
   if (variant === 'inline') {
     return (
@@ -72,6 +79,13 @@ export function ContactOptions({ variant = 'card', whatsappMessage, className }:
 
   return (
     <div className={cn('flex flex-col gap-4 rounded-lg bg-surface-2 p-6', className)}>
+      {person && (
+        <p className="flex flex-col">
+          <span className="text-footnote text-ink-muted">Dein Ansprechpartner</span>
+          <span className="text-body font-semibold text-ink">{person.name}</span>
+          <span className="text-callout text-ink-muted">{person.role}</span>
+        </p>
+      )}
       <ul className="flex flex-col divide-y divide-line">
         {items.map(({ id, href, label, value, Icon, external }) => (
           <li key={id}>

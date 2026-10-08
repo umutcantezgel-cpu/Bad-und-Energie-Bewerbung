@@ -19,6 +19,11 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
+// Footer and sticky apply bar read the job registry (isJobLive): regenerate every page at least
+// hourly, so a job past its validThrough disappears from them without a deploy. The lowest
+// `revalidate` of layout and page wins (pages with their own 3600 are unaffected).
+export const revalidate = 3600;
+
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#FFFFFF' },
@@ -72,6 +77,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="de" className={inter.variable}>
       <body className="flex min-h-dvh flex-col">
+        {/* Context and live regions only; the toast UI loads with the first toast (Mappe undo). */}
         <ToastProvider>
           <SkipLink href="#main" />
           <SiteHeader />

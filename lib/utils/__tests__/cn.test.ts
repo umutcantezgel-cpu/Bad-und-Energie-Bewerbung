@@ -15,6 +15,7 @@ describe('cn', () => {
   it('lets the last semantic color win', () => {
     expect(cn('text-ink', 'text-ink-muted')).toBe('text-ink-muted');
     expect(cn('bg-surface', 'bg-surface-2')).toBe('bg-surface-2');
+    expect(cn('bg-surface-2 hover:bg-surface-3', 'bg-surface-raised hover:bg-line')).toBe('bg-surface-raised hover:bg-line');
     expect(cn('bg-accent', 'hover:bg-accent-hover', 'bg-surface')).toBe('hover:bg-accent-hover bg-surface');
     expect(cn('border-line', 'border-line-strong')).toBe('border-line-strong');
   });

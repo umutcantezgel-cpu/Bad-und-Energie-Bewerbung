@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { formatRating, isExternalHref, joinIds, starFills, stepProgress } from '../helpers';
 import { buttonVariants } from '../Button';
+import { buttonVariants as rawButtonVariants } from '../variants';
 import { cn } from '@/lib/utils/cn';
 
 describe('isExternalHref', () => {
@@ -66,5 +67,24 @@ describe('buttonVariants', () => {
     expect(merged).toEqual(expect.arrayContaining(['text-ink', 'text-callout', 'px-0']));
     expect(merged).not.toContain('text-body');
     expect(merged).not.toContain('px-6');
+  });
+
+  it('wrap: grows with the label instead of clipping it (minimum height, normal white-space)', () => {
+    const classes = buttonVariants({ size: 'lg', wrap: true }).split(' ');
+    expect(classes).toEqual(expect.arrayContaining(['min-h-13', 'whitespace-normal', 'px-4']));
+    expect(classes).not.toContain('h-13');
+    expect(classes).not.toContain('whitespace-nowrap');
+    expect(classes).not.toContain('px-6');
+  });
+
+  it('has no conflicting utilities without cn(), so shell client components can skip tailwind-merge', () => {
+    for (const size of ['sm', 'md', 'lg', 'xl'] as const) {
+      for (const wrap of [false, true]) {
+        for (const variant of ['primary', 'secondary', 'outline', 'ghost', 'contrast'] as const) {
+          const raw = rawButtonVariants({ variant, size, wrap });
+          expect(cn(raw).split(' ').sort()).toEqual(raw.split(' ').filter(Boolean).sort());
+        }
+      }
+    }
   });
 });

@@ -1,5 +1,5 @@
 import { ArrowRight } from 'lucide-react';
-import { Card, CardLink } from '@/components/ui';
+import { Card, CardLink } from '@/components/ui/Card';
 import { formatSalaryRange, jobMetaTags, jobPath, locationLabel } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
@@ -24,14 +24,15 @@ export function JobCard({ job, headingLevel = 'h3', className }: JobCardProps) {
         <span className="font-normal text-ink-muted">(m/w/d)</span>
       </Heading>
       <p className="max-w-prose text-body text-ink-muted">{job.summary}</p>
-      <div className="mt-auto flex flex-wrap items-end justify-between gap-x-6 gap-y-2 pt-2">
+      {/* „Zur Stelle“ has its own row, so every card ends the same way, whatever the meta width. */}
+      <div className="mt-auto flex flex-col gap-3 pt-2">
         <p className="flex flex-col text-callout">
           <span className="text-ink-muted">
             {kind} · {locationLabel(job)}
           </span>
           {salary && <span className="font-medium tabular-nums text-ink">{salary}</span>}
         </p>
-        <span aria-hidden="true" className="inline-flex items-center gap-1 text-callout font-medium text-ink">
+        <span aria-hidden="true" className="inline-flex items-center gap-1 self-start text-callout font-medium text-ink">
           Zur Stelle
           <ArrowRight strokeWidth={1.75} className="size-4" />
         </span>

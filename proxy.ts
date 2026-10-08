@@ -6,8 +6,25 @@ import { isTrustedSiteRequest } from '@/lib/security/origin';
 // (Jobbörsen-Aggregatoren, Feed-Reader) und HeadlessChrome (Ad-Review-Bots, Playwright-CI).
 const BLOCKED_SEO_SCRAPERS = /\b(?:SemrushBot|MJ12bot|DotBot|BLEXBot|DataForSeoBot|PetalBot|MegaIndex)/i;
 
+/** Kaputte Prozent-Kodierung (z. B. /jobs/%ZZ) ließe Next mit dynamicParams=false einen 500 werfen. */
+function hasMalformedEncoding(pathname: string): boolean {
+  try {
+    decodeURIComponent(pathname);
+    return false;
+  } catch {
+    return true;
+  }
+}
+
 // Security-Header kommen ausschließlich aus next.config.ts.
 export function proxy(request: NextRequest) {
+  if (hasMalformedEncoding(request.nextUrl.pathname)) {
+    return new NextResponse('Ungültige Adresse.', {
+      status: 400,
+      headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' },
+    });
+  }
+
   if (BLOCKED_SEO_SCRAPERS.test(request.headers.get('user-agent') ?? '')) {
     return new NextResponse('Zugriff verweigert.', {
       status: 403,

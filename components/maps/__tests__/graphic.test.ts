@@ -2,7 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { REGION } from '@/lib/content/region';
 import { boxesOverlap } from '@/lib/maps/labels';
 import { createRadiusProjection, haversineKm } from '@/lib/maps/projection';
-import { CENTER_LABEL_ID, GRAPHIC_PADDING, GRAPHIC_SIZE, graphicLabels, radiusNote } from '../graphic';
+import {
+  CENTER_DOT_RADIUS,
+  CENTER_LABEL_ID,
+  GRAPHIC_PADDING,
+  GRAPHIC_SIZE,
+  graphicLabels,
+  radiusLineBoxes,
+  radiusNote,
+} from '../graphic';
 import type { RegionMapData } from '../types';
 
 const center = { lat: REGION.center.latitude, lng: REGION.center.longitude };
@@ -45,4 +53,44 @@ describe('graphicLabels', () => {
   it('notes the radius from REGION', () => {
     expect(radiusNote(data).text).toBe(`${REGION.radiusKm} km`);
   });
+});
+
+describe('graphicLabels spacing', () => {
+  const lineBoxes = radiusLineBoxes(data);
+
+  it('keeps the centre label clear of the centre dot (radius 6 + stroke + 4 units of air)', () => {
+    const center = graphicLabels(data, null).find((l) => l.id === CENTER_LABEL_ID)!;
+    const clearance = CENTER_DOT_RADIUS + 1 + 4;
+    const dx = Math.max(center.box.x0 - data.origin.x, data.origin.x - center.box.x1, 0);
+    const dy = Math.max(center.box.y0 - data.origin.y, data.origin.y - center.box.y1, 0);
+    expect(Math.max(dx, dy)).toBeGreaterThanOrEqual(clearance);
+  });
+
+  it.each([null, ...REGION.locations.filter((l) => l.id !== 'loc-wetzlar-mitte').map((l) => l.id)])(
+    'always names the centre (selected: %s)',
+    (id) => {
+      expect(graphicLabels(data, id).map((l) => l.id)).toContain(CENTER_LABEL_ID);
+    },
+  );
+
+  it.each([null, ...REGION.locations.filter((l) => l.id !== 'loc-wetzlar-mitte').map((l) => l.id)])(
+    'no label sits on the dashed radius line (selected: %s)',
+    (id) => {
+      for (const label of graphicLabels(data, id)) {
+        for (const box of lineBoxes) expect(boxesOverlap(label.box, box)).toBe(false);
+      }
+    },
+  );
+
+  it.each(REGION.locations.filter((l) => l.id !== 'loc-wetzlar-mitte').map((l) => l.id))(
+    'the selected label %s does not cover other dots',
+    (id) => {
+      const [label] = graphicLabels(data, id);
+      for (const place of data.places) {
+        if (place.id === id || place.atCenter) continue;
+        const dot = { x0: place.x - 3, y0: place.y - 3, x1: place.x + 3, y1: place.y + 3 };
+        expect(boxesOverlap(label.box, dot)).toBe(false);
+      }
+    },
+  );
 });

@@ -2,6 +2,8 @@
 /**
  * WCAG 2.2 contrast check for the semantic color roles in app/styles/theme.css.
  * Resolves the cascade for light, dark and the inverse band in both modes,
+ * checks that the inverse band stands apart from the page surfaces and that raised cards are
+ * lighter than the surface-2 sections they sit on,
  * prints a table and exits 1 if any pair is below its minimum.
  *
  * Usage: node scripts/qa/check-contrast.mjs
@@ -15,8 +17,15 @@ const THEME_FILE = path.join(ROOT, 'app/styles/theme.css');
 
 const TEXT = 4.5; // 1.4.3 body text
 const UI = 3; // 1.4.11 non-text (focus ring, control borders)
+/**
+ * Minimum luminance ratio between the inverse band's surface and the page surfaces it sits
+ * between (surface, surface-2) in the same mode. Not a WCAG rule: it keeps the closing band
+ * from merging with the FAQ and the footer (it did in dark mode when both were #121826).
+ */
+const SEPARATION = 1.1;
+const SEPARATED_FROM = ['surface', 'surface-2'];
 
-const SURFACES = ['surface', 'surface-2', 'surface-3'];
+const SURFACES = ['surface', 'surface-2', 'surface-3', 'surface-raised'];
 const TEXT_ROLES = ['ink', 'ink-muted', 'danger', 'success'];
 // Focus ring and control borders sit on every surface (inputs inside cards, segmented tracks).
 const UI_ROLES = ['focus', 'line-strong'];
@@ -173,6 +182,47 @@ for (const mode of MODES) {
   }
 }
 
+for (const dark of [false, true]) {
+  const env = { dark };
+  const page = resolveScope(rules, ROOT_SELECTOR, env);
+  const inverse = resolveScope(rules, INVERSE_SELECTOR, env, page);
+  const band = resolveValue('var(--surface)', inverse, theme);
+  for (const role of SEPARATED_FROM) {
+    const pageValue = resolveValue(`var(--${role})`, page, theme);
+    const ratio = contrast(parseColor(band), parseColor(pageValue));
+    const pass = ratio >= SEPARATION;
+    if (!pass) failures++;
+    rows.push([
+      `separation ${dark ? 'dark' : 'light'}`,
+      `inverse surface / ${role}`,
+      `${band} vs ${pageValue}`,
+      ratio.toFixed(2),
+      `${SEPARATION}`,
+      pass ? 'ok' : 'FAIL',
+    ]);
+  }
+}
+
+// Elevation: cards on a surface-2 section use surface-raised and must be lighter than the section in
+// every mode (in dark mode `surface` is darker than surface-2 and made cards look cut out).
+for (const mode of MODES) {
+  const env = { dark: mode.dark };
+  const rootVars = resolveScope(rules, ROOT_SELECTOR, env);
+  const vars = mode.selector === ROOT_SELECTOR ? rootVars : resolveScope(rules, mode.selector, env, rootVars);
+  const raised = resolveValue('var(--surface-raised)', vars, theme);
+  const section = resolveValue('var(--surface-2)', vars, theme);
+  const pass = luminance(parseColor(raised)) > luminance(parseColor(section));
+  if (!pass) failures++;
+  rows.push([
+    `elevation ${mode.name}`,
+    'surface-raised / surface-2',
+    `${raised} vs ${section}`,
+    contrast(parseColor(raised), parseColor(section)).toFixed(2),
+    'lighter',
+    pass ? 'ok' : 'FAIL',
+  ]);
+}
+
 const header = ['mode', 'pair', 'values', 'ratio', 'min', 'result'];
 const widths = header.map((h, i) => Math.max(h.length, ...rows.map((r) => r[i].length)));
 const line = (cells) => cells.map((c, i) => (i === 3 || i === 4 ? c.padStart(widths[i]) : c.padEnd(widths[i]))).join('  ').trimEnd();
@@ -187,4 +237,4 @@ if (failures > 0) {
   console.error(`${failures} pair(s) below the WCAG minimum.`);
   process.exit(1);
 }
-console.log(`All ${rows.length} pairs pass (text ≥ ${TEXT}, UI ≥ ${UI}).`);
+console.log(`All ${rows.length} pairs pass (text ≥ ${TEXT}, UI ≥ ${UI}, band separation ≥ ${SEPARATION}, raised cards lighter than surface-2).`);

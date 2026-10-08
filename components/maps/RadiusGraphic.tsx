@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils/cn';
-import { CENTER_LABEL_ID, SELECTED_RING_RADIUS, graphicLabels, radiusNote } from './graphic';
+import { CENTER_DOT_RADIUS, CENTER_LABEL_ID, SELECTED_RING_RADIUS, graphicLabels, radiusNote } from './graphic';
 import type { RegionMapData } from './types';
 
 export interface RadiusGraphicProps {
@@ -90,7 +90,7 @@ export function RadiusGraphic({ data, selectedId, titleId, descId, className }: 
           vectorEffect="non-scaling-stroke"
         />
       )}
-      <circle cx={origin.x} cy={origin.y} r={6} className="fill-ink stroke-surface-2" strokeWidth={2} />
+      <circle cx={origin.x} cy={origin.y} r={CENTER_DOT_RADIUS} className="fill-ink stroke-surface-2" strokeWidth={2} />
 
       {labels.map((label) => {
         const emphasized = label.id === CENTER_LABEL_ID || label.id === selected?.id;

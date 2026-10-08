@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import {
   LEGAL_ENTITY,
   LegalDocument,
+  LegalFactLink,
   LegalFacts,
   LegalSection,
   SUPERVISORY_AUTHORITY,
@@ -11,7 +12,7 @@ import {
   mailtoHref,
   type LegalFact,
 } from '@/components/legal';
-import { TextLink } from '@/components/ui';
+import { TextLink } from '@/components/ui/TextLink';
 import { PRIVACY_NOTICE_VERSION } from '@/lib/applications/schema';
 import { DISCRETION_PROMISE } from '@/lib/content';
 import { MAPS_CONSENT_KEY } from '@/lib/maps/consent';
@@ -21,7 +22,8 @@ import { generatePageMetadata } from '@/lib/seo/metadata';
  * Datenschutzerklärung (Stand: PRIVACY_NOTICE_VERSION). Jede inhaltliche Änderung gegenüber der
  * Vorversion steht in docs/operations/datenschutz-aenderungen.md und ist dort zur Prüfung durch
  * den Datenschutzbeauftragten markiert. Bei neuen Änderungen: Liste ergänzen und
- * PRIVACY_NOTICE_VERSION in lib/applications/schema.ts anheben (wird mit jeder Bewerbung gespeichert).
+ * die neue Fassung an PRIVACY_NOTICE_VERSIONS in lib/applications/constants.ts anhängen (wird mit
+ * jeder Bewerbung gespeichert; der Server nimmt nur dort gelistete Fassungen an).
  */
 
 export const metadata: Metadata = generatePageMetadata({
@@ -88,18 +90,18 @@ const CONTROLLER: readonly LegalFact[] = [
   {
     label: 'Telefon',
     value: (
-      <TextLink href={LEGAL_ENTITY.phone.href} standalone>
+      <LegalFactLink href={LEGAL_ENTITY.phone.href}>
         {LEGAL_ENTITY.phone.display}
-      </TextLink>
+      </LegalFactLink>
     ),
   },
   { label: 'Telefax', value: LEGAL_ENTITY.fax },
   {
     label: 'E-Mail',
     value: (
-      <TextLink href={LEGAL_ENTITY.emailHref} standalone>
+      <LegalFactLink href={LEGAL_ENTITY.emailHref}>
         {LEGAL_ENTITY.email}
-      </TextLink>
+      </LegalFactLink>
     ),
   },
   { label: 'Handelsregister', value: `${LEGAL_ENTITY.registerCourt}, ${LEGAL_ENTITY.registerNumber}` },
@@ -113,26 +115,26 @@ const AUTHORITY: readonly LegalFact[] = [
   {
     label: 'Telefon',
     value: (
-      <TextLink href={SUPERVISORY_AUTHORITY.phone.href} standalone>
+      <LegalFactLink href={SUPERVISORY_AUTHORITY.phone.href}>
         {SUPERVISORY_AUTHORITY.phone.display}
-      </TextLink>
+      </LegalFactLink>
     ),
   },
   { label: 'Telefax', value: SUPERVISORY_AUTHORITY.fax },
   {
     label: 'E-Mail',
     value: (
-      <TextLink href={mailtoHref(SUPERVISORY_AUTHORITY.email)} standalone>
+      <LegalFactLink href={mailtoHref(SUPERVISORY_AUTHORITY.email)}>
         {SUPERVISORY_AUTHORITY.email}
-      </TextLink>
+      </LegalFactLink>
     ),
   },
   {
     label: 'Website',
     value: (
-      <TextLink href={SUPERVISORY_AUTHORITY.url} standalone>
+      <LegalFactLink href={SUPERVISORY_AUTHORITY.url}>
         {displayUrl(SUPERVISORY_AUTHORITY.url)}
-      </TextLink>
+      </LegalFactLink>
     ),
   },
 ];
@@ -246,8 +248,17 @@ export default function DatenschutzPage() {
           Damit niemand unsere Formulare massenhaft missbraucht, zählen wir, wie oft aus einem Netz Formulare abgeschickt
           werden. Dafür wird deine IP-Adresse mit einem täglich wechselnden geheimen Schlüssel in einen Prüfwert (Hash)
           umgerechnet. Gezählt wird nur dieser Wert, nur im Arbeitsspeicher des Servers, und der Zähler läuft nach
-          spätestens 24 Stunden ab. Außerdem enthält das Bewerbungsformular ein für Menschen unsichtbares Feld, an dem wir
-          automatische Einsendungen erkennen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO.
+          spätestens 24 Stunden ab. Außerdem enthält das Bewerbungsformular ein für Menschen unsichtbares Feld, und wir
+          messen, wie lange das Ausfüllen gedauert hat. Ist das Feld ausgefüllt oder ging es auffällig schnell, markieren
+          wir die Bewerbung als möglichen Spam. Sie erreicht unser Team trotzdem, eine Eingangsbestätigung per E-Mail
+          verschicken wir dann aber nicht. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO.
+        </p>
+        <h3>Sicherheitsmeldungen des Browsers</h3>
+        <p>
+          Verstößt ein Inhalt auf unserer Website gegen unsere Sicherheitsregeln (Content Security Policy), kann dein
+          Browser uns automatisch eine Meldung schicken. Davon speichern wir nur die betroffene Seite ohne Parameter, die
+          verletzte Regel und die Herkunft des Inhalts in den Server-Logdateien. Das hilft uns, Fehler und Angriffe zu
+          erkennen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO.
         </p>
         <h3>SSL- und TLS-Verschlüsselung</h3>
         <p>
@@ -293,8 +304,9 @@ export default function DatenschutzPage() {
             die Herkunft deiner Bewerbung, also Quelle und Kampagne (siehe <a href="#herkunft">Herkunftsmessung</a>)
           </li>
           <li>
-            technische Angaben: Zeitpunkt, Bewerbungsnummer und die Fassung dieses Datenschutzhinweises, die dir
-            angezeigt wurde (derzeit {PRIVACY_NOTICE_VERSION})
+            technische Angaben: Zeitpunkt, Bewerbungsnummer, wie lange das Ausfüllen gedauert hat, ob die Bewerbung als
+            möglicher Spam markiert wurde (siehe <a href="#datenerfassung">Schutz vor Missbrauch</a>) und die Fassung
+            dieses Datenschutzhinweises, die dir angezeigt wurde (derzeit {PRIVACY_NOTICE_VERSION})
           </li>
         </ul>
         <p>
@@ -330,7 +342,8 @@ export default function DatenschutzPage() {
         <h3>Wer deine Bewerbung erhält</h3>
         <p>
           Deine Bewerbung geht per E-Mail an unser Team in Wetzlar. Sie lesen nur die Personen, die an der Auswahl
-          beteiligt sind. Hast du eine E-Mail-Adresse angegeben, bekommst du eine Eingangsbestätigung. Wir verkaufen deine
+          beteiligt sind. Hast du eine E-Mail-Adresse angegeben, bekommst du eine Eingangsbestätigung, außer die Bewerbung
+          wurde als möglicher Spam markiert. Wir verkaufen deine
           Daten nicht und geben sie nicht an Dritte weiter. Technisch beteiligt sind nur unsere Auftragsverarbeiter:
         </p>
         <ul>

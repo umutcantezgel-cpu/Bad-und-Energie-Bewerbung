@@ -1,5 +1,6 @@
-import { Container, Section } from '@/components/layout';
-import { TextLink } from '@/components/ui';
+import { Container } from '@/components/layout/Container';
+import { Section } from '@/components/layout/Section';
+import { TextLink } from '@/components/ui/TextLink';
 import { INITIATIVE_APPLY_PATH } from '@/lib/apply/params';
 import { getActiveJobs, isJobLive, type Job } from '@/lib/jobs/registry';
 import { JobCard } from './JobCard';
@@ -39,7 +40,7 @@ export function MoreJobs({ currentJob, title = 'Weitere Stellen', now, className
           <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {jobs.map((job) => (
               <li key={job.id}>
-                <JobCard job={job} headingLevel="h3" className="bg-surface" />
+                <JobCard job={job} headingLevel="h3" className="bg-surface-raised hover:bg-line" />
               </li>
             ))}
           </ul>

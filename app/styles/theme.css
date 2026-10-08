@@ -9,7 +9,8 @@
  */
 
 @theme {
-  /* --color-*: initial; enable after legacy cleanup */
+  /* No Tailwind default palette (and no white/black): only the colors below exist. */
+  --color-*: initial;
 
   /* Neutral grays with a slight navy tint (hue ~255) */
   --color-gray-0: #FFFFFF;
@@ -110,6 +111,7 @@
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
   --color-surface-3: var(--surface-3);
+  --color-surface-raised: var(--surface-raised);
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
   --color-line: var(--line);
@@ -139,6 +141,8 @@
     --surface: #FFFFFF;
     --surface-2: #F5F6F8;
     --surface-3: #ECEEF2;
+    /* Cards on a surface-2 section: lighter than the section in both modes, so they read as raised. */
+    --surface-raised: #FFFFFF;
     --ink: #0A1E3A;
     --ink-muted: #5F6878;
     --line: #E3E6EB;
@@ -158,6 +162,7 @@
       --surface: #0B0F17;
       --surface-2: #121826;
       --surface-3: #1A2131;
+      --surface-raised: #1A2131;
       --ink: #F2F4F7;
       --ink-muted: #A3ACBA;
       --line: #232B3A;
@@ -181,6 +186,7 @@
       --surface: #0A1E3A;
       --surface-2: #11284B;
       --surface-3: #18315A;
+      --surface-raised: #18315A;
       --ink: #FFFFFF;
       --ink-muted: #B3BDCC;
       --line: #22385A;
@@ -196,16 +202,19 @@
     }
   }
 
-  /* Inverse band in dark mode: one step above the page surface */
+  /* Inverse band in dark mode: a deep navy that differs from both page surfaces, so the
+     closing band keeps its identity between the FAQ (surface-2) and the footer (surface-2).
+     scripts/qa/check-contrast.mjs checks that separation. */
   @media screen and (prefers-color-scheme: dark) {
     [data-tone="inverse"] {
-      --surface: #121826;
-      --surface-2: #1A2131;
-      --surface-3: #232B3A;
+      --surface: #0F2547;
+      --surface-2: #152D55;
+      --surface-3: #1B3663;
+      --surface-raised: #1B3663;
       --ink: #F2F4F7;
-      --ink-muted: #A3ACBA;
-      --line: #2A3344;
-      --line-strong: #6B7587;
+      --ink-muted: #B3BDCC;
+      --line: #26416D;
+      --line-strong: #7E8CA3;
       --accent: #C51E1E;
       --accent-hover: #D93636;
       --on-accent: #FFFFFF;

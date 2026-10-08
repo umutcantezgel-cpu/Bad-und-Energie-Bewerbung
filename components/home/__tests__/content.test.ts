@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { BENEFIT_FACT_IDS, CTA, HERO, HERO_STATS, HOME_DESCRIPTION, HOME_TITLE, buildFaqPageJsonLd } from '../content';
+import { BENEFIT_FACT_IDS, CTA, HERO, HERO_STATS, HOME_DESCRIPTION, HOME_TITLE, buildFaqPageJsonLd, homeDescription } from '../content';
 import { FACTS } from '@/lib/content/facts';
 import { FAQ_ITEMS } from '@/lib/content/faq';
+import { getActiveJobs } from '@/lib/jobs/registry';
 
 const words = (text: string) => text.trim().split(/\s+/).length;
 
@@ -11,15 +12,33 @@ describe('home copy', () => {
     expect(HOME_TITLE.length).toBeLessThanOrEqual(60);
   });
 
-  it('description stays within 155 characters and names facts verbatim', () => {
-    expect(HOME_DESCRIPTION.length).toBeLessThanOrEqual(155);
-    expect(HOME_DESCRIPTION).toContain(FACTS.vacation30.short);
-    expect(HOME_DESCRIPTION).toContain('13:30');
-    expect(HOME_DESCRIPTION).toContain('keine Fernmontage');
+  it('description stays within 155 characters, names the live job types and facts verbatim', () => {
+    const description = homeDescription(getActiveJobs());
+    expect(description.length).toBeLessThanOrEqual(155);
+    expect(description).toContain(FACTS.vacation30.short);
+    expect(description).toContain('13:30');
+    expect(description).toContain('Anlagenmechaniker, Kundendienst, Obermonteur & Ausbildung');
   });
 
-  it('hero lead has at most 30 words', () => {
+  it('layout fallback description names no job, so it cannot outlive a validThrough', () => {
+    expect(HOME_DESCRIPTION).toBe(homeDescription([]));
+    expect(HOME_DESCRIPTION).not.toMatch(/Kundendienst|Obermonteur|Ausbildung/);
+  });
+
+  it('description keeps „keine Fernmontage“ while it fits and drops the list before overflowing', () => {
+    const fewer = homeDescription([{ category: 'anlagenmechaniker' }, { category: 'ausbildung' }]);
+    expect(fewer).toBe(
+      'SHK-Jobs in Wetzlar: Anlagenmechaniker & Ausbildung. 30 Tage Urlaub, freitags ab 13:30 frei, keine Fernmontage. In 60 Sek. bewerben.',
+    );
+    expect(homeDescription([])).toBe('SHK-Jobs in Wetzlar. 30 Tage Urlaub, freitags ab 13:30 frei, keine Fernmontage. In 60 Sek. bewerben.');
+    const categories = ['anlagenmechaniker', 'kundendienst', 'projektleitung', 'ausbildung', 'helfer'] as const;
+    const many = homeDescription(categories.map((category) => ({ category })));
+    expect(many.length).toBeLessThanOrEqual(155);
+  });
+
+  it('hero lead has at most 30 words and leaves the region to the figures below', () => {
     expect(words(HERO.lead)).toBeLessThanOrEqual(30);
+    expect(HERO.lead).not.toContain('Lahn-Dill-Kreis');
   });
 
   it('hero H1 follows roadmap §10', () => {
@@ -46,9 +65,10 @@ describe('home copy', () => {
     }
   });
 
-  it('closing band is built from facts', () => {
-    expect(CTA.lead).toContain(FACTS.noCvNeeded.long);
-    expect(CTA.lead).toContain(FACTS.quickResponse.long);
+  it('closing band adds only the reply promise („60 Sekunden“ and „kein Lebenslauf“ stand above)', () => {
+    expect(CTA.title).toBe('Bewirb dich bei uns.');
+    expect(CTA.lead).toBe(FACTS.quickResponse.long);
+    expect(`${CTA.title} ${CTA.lead}`).not.toMatch(/Lebenslauf|Sekunden/);
   });
 });
 

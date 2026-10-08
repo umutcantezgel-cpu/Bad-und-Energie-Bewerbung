@@ -3,6 +3,14 @@
 
 @plugin "@tailwindcss/typography";
 
+/* Utilities come from the app only. Docs, QA scripts and tests name banned classes
+   (uppercase, font-mono …) as text, which would otherwise end up in the CSS. */
+@source not "../docs";
+@source not "../scripts";
+@source not "../supabase";
+@source not "../**/__tests__";
+@source not "../README.md";
+
 @layer base {
   html {
     font-family: var(--font-sans);
@@ -15,9 +23,9 @@
     scroll-padding-top: 72px;
   }
 
-  /* …and the sticky apply bar below lg */
+  /* …and the sticky apply bar below lg, on pages that render it (not in focus mode) */
   @media (width < 64rem) {
-    html {
+    html:has([data-sticky-apply-bar]) {
       scroll-padding-bottom: 96px;
     }
   }

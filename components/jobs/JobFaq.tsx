@@ -1,4 +1,4 @@
-import { Disclosure } from '@/components/ui';
+import { Disclosure } from '@/components/ui/Disclosure';
 import { JOB_FAQ_IDS, getFaqItems } from '@/lib/content';
 import type { Job } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';

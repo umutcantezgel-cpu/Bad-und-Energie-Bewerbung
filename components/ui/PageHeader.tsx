@@ -14,6 +14,8 @@ export interface PageHeaderProps {
   size?: 'display' | 'title';
   align?: 'start' | 'center';
   titleId?: string;
+  /** Extra classes for the h1, e.g. a smaller size on phones for long single-word titles. */
+  titleClassName?: string;
   className?: string;
 }
 
@@ -27,13 +29,18 @@ export function PageHeader({
   size = 'title',
   align = 'start',
   titleId,
+  titleClassName,
   className,
 }: PageHeaderProps) {
   return (
     <header className={cn('flex flex-col gap-4', align === 'center' && 'items-center text-center', className)}>
       {before}
       {eyebrow && <p className="text-callout font-medium text-ink-muted">{eyebrow}</p>}
-      <h1 id={titleId} className={cn('max-w-4xl text-ink', size === 'display' ? 'text-display' : 'text-title-1')}>
+      {/* wrap-break-word: a word wider than the column breaks instead of scrolling the page. */}
+      <h1
+        id={titleId}
+        className={cn('max-w-4xl text-ink wrap-break-word', size === 'display' ? 'text-display' : 'text-title-1', titleClassName)}
+      >
         {title}
       </h1>
       {lead && <p className="max-w-prose text-lead text-ink-muted">{lead}</p>}

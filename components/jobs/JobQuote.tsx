@@ -1,4 +1,4 @@
-import { Card } from '@/components/ui';
+import { Card } from '@/components/ui/Card';
 import type { TeamQuote } from '@/lib/content';
 import { cn } from '@/lib/utils/cn';
 

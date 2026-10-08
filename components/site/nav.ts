@@ -40,6 +40,14 @@ export function isFocusMode(pathname: string | null | undefined): boolean {
   return path === APPLY_PATH || path.startsWith(`${APPLY_PATH}/`);
 }
 
+/**
+ * The mobile sticky apply bar renders on every page outside focus mode. The footer reserves
+ * its height only then, so focus-mode pages end without an empty strip.
+ */
+export function hasStickyApplyBar(pathname: string | null | undefined): boolean {
+  return !isFocusMode(pathname);
+}
+
 /** Exit link in focus mode: „Abbrechen“ inside the flow, „Zur Startseite“ on the thank-you page and the Mappe tool. */
 export function focusModeExitLabel(pathname: string | null | undefined): string {
   return normalize(pathname) === APPLY_PATH ? 'Abbrechen' : 'Zur Startseite';
@@ -63,6 +71,9 @@ export function applyLabelFor(job: { shortTitle: string; category: string }): st
   return job.category === 'ausbildung' ? 'Für die Ausbildung bewerben' : `Als ${job.shortTitle} bewerben`;
 }
 
+/** Sticky bar label everywhere else, and on job pages whenever „Als … bewerben“ does not fit on one line. */
+export const SHORT_APPLY_LABEL = 'Jetzt bewerben';
+
 export interface StickyApplyAction {
   href: string;
   label: string;
@@ -72,17 +83,21 @@ export interface StickyApplyAction {
 
 /**
  * What the sticky apply bar shows for a path, or null when it is hidden (focus mode).
- * `jobLabels` maps the slugs of published job pages to their button label.
+ * `jobLabels` maps the slugs of published job pages to their button label. They come from the
+ * root layout, which client navigation does not re-render, so they can be older than the page:
+ * `flowOnPage` (measured in the browser: is #bewerben in the DOM?) has the last word, and a
+ * closed job page gets the plain link to /bewerbung instead of a dead anchor.
  */
 export function getStickyApplyAction(
   pathname: string | null | undefined,
   jobLabels: Readonly<Record<string, string>>,
+  flowOnPage = true,
 ): StickyApplyAction | null {
-  if (isFocusMode(pathname)) return null;
+  if (!hasStickyApplyBar(pathname)) return null;
   const slug = jobSlugFromPath(pathname);
   const label = slug !== null && Object.prototype.hasOwnProperty.call(jobLabels, slug) ? jobLabels[slug] : null;
-  if (label) return { href: `#${FLOW_ANCHOR_ID}`, label, inPageFlow: true };
-  return { href: APPLY_PATH, label: 'Jetzt bewerben', inPageFlow: false };
+  if (label && flowOnPage) return { href: `#${FLOW_ANCHOR_ID}`, label, inPageFlow: true };
+  return { href: APPLY_PATH, label: SHORT_APPLY_LABEL, inPageFlow: false };
 }
 
 /** Minimum shrink of the visual viewport (px) that counts as an on-screen keyboard. */

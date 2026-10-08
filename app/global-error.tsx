@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, type CSSProperties } from 'react';
-import { SITE_CONFIG } from '@/lib/seo/site-config';
+import { CONTACT_PHONE as PHONE } from '@/lib/data/contact';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
 
 /*
@@ -9,7 +9,6 @@ import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
  * available. Inline styles with CSS system colors (Canvas/CanvasText) follow light and dark mode.
  */
 
-const PHONE = { display: SITE_CONFIG.contact.telephone, href: `tel:${SITE_CONFIG.contact.telephoneLink}` };
 const WHATSAPP_HREF = buildWhatsAppUrl(
   'Guten Tag Herr Demir, auf der Karriereseite ist ein technischer Fehler aufgetreten. Ich melde mich deshalb direkt.',
 );

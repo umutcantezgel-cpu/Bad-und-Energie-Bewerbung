@@ -11,28 +11,12 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 /**
- * Files due for deletion or rewrite in Phase 1. They are skipped and listed,
- * so remove each entry once its replacement lands.
+ * Files due for deletion or rewrite. They are skipped and listed, so remove each
+ * entry once its replacement lands. Empty since the Phase 1 legacy cleanup.
+ * Entries are paths relative to the repo root; a trailing slash covers a folder.
+ * @type {string[]}
  */
-const LEGACY = [
-  'components/HeroExpressFunnel.tsx',
-  'components/BewerberCheckliste.tsx',
-  'components/QuickApplySidebar.tsx',
-  'components/Navigation.tsx',
-  'components/Header.tsx',
-  'components/Footer.tsx',
-  'components/Logo.tsx',
-  'components/CookieConsent.tsx',
-  'components/views/',
-  'components/navigation/',
-  'components/trust/',
-  'components/pricing/',
-  'components/contact/',
-  'components/seo/AIAnswerBox.tsx',
-  'components/seo/SeoImage.tsx',
-  'components/seo/index.ts',
-  'components/layout/LayoutClientWidgets.tsx',
-];
+const LEGACY = [];
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const SCAN_DIRS = ['app', 'components', 'lib'];
@@ -111,6 +95,13 @@ const RULES = [
     find: (line) => indices(line, /\buppercase\b/g),
     hint: 'Sentence case only; no all-caps eyebrows.',
   },
+  {
+    id: 'glass',
+    find: (line) => indices(line, /(?<![\w-])backdrop-(?:blur|saturate|filter)/g),
+    /** The sticky header is the only glass surface (roadmap §4, §5). */
+    allowIn: ['components/site/HeaderBar.tsx'],
+    hint: 'No glass or blur; only the sticky header may use backdrop-blur.',
+  },
 ];
 
 function indices(text, re) {
@@ -149,6 +140,7 @@ function check(file) {
   lines.forEach((line, i) => {
     if (isCommentOnly(line) || /\/[/*]\s*design-allow\b/.test(line)) return;
     for (const rule of RULES) {
+      if (rule.allowIn?.includes(file)) continue;
       const seen = new Set();
       for (const index of rule.find(line)) {
         const token = tokenAt(line, index);

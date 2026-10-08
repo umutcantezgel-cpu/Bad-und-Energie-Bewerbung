@@ -131,7 +131,11 @@ export function ReviewScroller({ items, initialFilter, className }: ReviewScroll
         tabIndex={0}
         aria-label="Stimmen von Kunden und Team"
         className={cn(
+          // Phones and tablets: the row bleeds to the viewport edge, so the next card peeks in.
+          // From lg the container no longer spans the viewport, so exactly three cards fill it
+          // instead of a sliver clipped in mid-page.
           '-mx-gutter mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain px-gutter pb-1 scroll-px-gutter',
+          'lg:mx-0 lg:px-0 lg:scroll-px-0',
           '[scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
         )}
       >
@@ -141,13 +145,29 @@ export function ReviewScroller({ items, initialFilter, className }: ReviewScroll
             className="flex shrink-0 basis-5/6 snap-start sm:basis-[calc(50%-0.5rem)] lg:basis-[calc((100%-2rem)/3)]"
           >
             <figure className="flex w-full flex-col gap-5 rounded-lg bg-surface-2 p-6">
-              {item.rating !== undefined && <Rating value={item.rating} size="sm" />}
+              {/* Same slot height in every card, so the quotes of a row start on one line. Team voices
+                  have no stars; their source takes the slot instead of repeating in the caption. */}
+              <div className="flex min-h-5 items-center">
+                {item.rating !== undefined ? (
+                  <Rating value={item.rating} size="sm" />
+                ) : (
+                  <p className="text-footnote text-ink-muted">{item.source}</p>
+                )}
+              </div>
               <blockquote className="flex-1 text-body text-ink">
                 <p>„{item.quote}“</p>
               </blockquote>
               <figcaption className="text-callout">
                 <span className="block font-semibold text-ink">{item.name}</span>
-                <span className="block text-ink-muted">{`${item.role} · ${item.source}`}</span>
+                <span className="block text-ink-muted">
+                  {item.rating !== undefined ? (
+                    <>
+                      {item.role} · <span className="whitespace-nowrap">{item.source}</span>
+                    </>
+                  ) : (
+                    item.role
+                  )}
+                </span>
               </figcaption>
             </figure>
           </li>

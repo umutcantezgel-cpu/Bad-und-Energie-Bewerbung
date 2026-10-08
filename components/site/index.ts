@@ -1,5 +1,6 @@
 // Site shell (C3). SiteHeader, SiteFooter, StickyApplyBar and ContactOptions are server-safe;
-// their client parts (HeaderBar, MobileNav, StickyApplyBarClient) receive plain props only.
+// their client parts (HeaderBar, MobileNav, StickyApplyBarClient, FooterSwitch) receive plain
+// props only (strings built on the server), so SITE_CONFIG and tailwind-merge stay out of them.
 export * from './ContactOptions';
 export * from './SiteFooter';
 export * from './SiteHeader';
@@ -12,7 +13,9 @@ export {
   PRIMARY_CTA_ATTR,
   STICKY_BAR_HIDE_SELECTOR,
   applyLabelFor,
+  SHORT_APPLY_LABEL,
   focusModeExitLabel,
+  hasStickyApplyBar,
   isFocusMode,
   type NavItem,
 } from './nav';

@@ -48,7 +48,7 @@ export const companyData: CompanyData = {
   },
   email: 'info@bad-energie.de',
   hwk: 'Handwerkskammer Wiesbaden',
-  innung: 'Innung Sanitär Heizung und Klimatechnik Lahn Dill',
+  innung: 'Innung Sanitär-, Heizungs- und Klimatechnik Lahn-Dill',
   handelsregister: 'HRB 2449 Amtsgericht Wetzlar',
   openingHours: {
     weekdays: 'Montag bis Donnerstag von 07:00 bis 16:45 Uhr',
