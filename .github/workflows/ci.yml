@@ -1,0 +1,163 @@
+# CI für karriere.bad-energie.de (ROADMAP §9 „Tests und CI“).
+#
+# quality: Lint, Typen, Unit-Tests, Design-Guard, Kontrast, Build, Graph-Check, Playwright,
+#          Lighthouse CI. Jeder Schritt ruft ein Skript aus package.json auf.
+# secrets: gitleaks auf den neuen Commits jedes Pushs bzw. Pull Requests.
+#
+# Bewusst minimale Rechte: Der Workflow liest nur den Code. Actions sind auf
+# Major-Versionen gepinnt, Dependabot (.github/dependabot.yml) hält sie aktuell.
+
+name: CI
+
+on:
+  push:
+  pull_request:
+  # Manuell gestartet scannt gitleaks den gesamten Git-Verlauf.
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  quality:
+    name: Qualität (Lint, Tests, Build, E2E)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Gleiche Node-Hauptversion wie lokal (Next.js 16 braucht >= 20.9).
+      - name: Node einrichten
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Bun-Version aus dem "packageManager"-Feld in package.json (wie lokal und bei Dependabot).
+      - name: Bun einrichten
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - name: Bun-Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      - name: Abhängigkeiten installieren
+        run: bun install --frozen-lockfile
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Typen prüfen
+        run: bun run type-check
+
+      - name: Unit-Tests (Vitest)
+        run: bun run test
+
+      - name: Design-Guard
+        run: bun run check:design
+
+      - name: Kontrast (WCAG 2.2 AA)
+        run: bun run check:contrast
+
+      - name: Keine Server-Bibliotheken im Browser
+        run: bun run check:client-imports
+
+      - name: Next.js-Build-Cache
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: next-${{ runner.os }}-${{ hashFiles('bun.lock') }}-${{ hashFiles('app/**', 'components/**', 'lib/**', 'public/**', 'next.config.ts', 'proxy.ts') }}
+          restore-keys: next-${{ runner.os }}-${{ hashFiles('bun.lock') }}-
+
+      # Der Build braucht keine Secrets: Ohne Resend-Key und HMAC-Geheimnisse
+      # antworten die Formular-APIs zur Laufzeit ehrlich mit 503 (lib/env.ts).
+      - name: Build
+        run: bun run build
+
+      - name: Graph-Check (JSON-LD)
+        run: bun run test:graph
+
+      # E2E läuft gegen den Production-Build (playwright.config.ts startet `next start` auf
+      # Port 3400). Die Simulation verschickt keine E-Mails, ALLOW_DEV_SECRETS erlaubt den
+      # festen Dev-Wert der HMAC-Geheimnisse.
+      - name: Playwright-Browser installieren
+        run: bunx playwright install --with-deps chromium
+
+      - name: E2E (Playwright + axe)
+        id: e2e
+        run: bun run e2e
+        env:
+          EMAIL_SIMULATION: "true"
+          ALLOW_DEV_SECRETS: "true"
+          APP_URL: http://localhost:3400
+
+      - name: Playwright-Bericht hochladen
+        if: failure() && steps.e2e.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      # Lighthouse mobil (ROADMAP §2, §9), Konfiguration in lighthouserc.json: Barrierefreiheit,
+      # Best Practices und SEO = 100 sowie CLS ≤ 0,02 sind harte Grenzen. Die Performance-Ziele
+      # (≥ 95, Flow ≥ 90) warnen nur, weil Messungen auf geteilten Runnern schwanken.
+      - name: Lighthouse CI (mobil)
+        id: lighthouse
+        run: bun run lighthouse
+        env:
+          EMAIL_SIMULATION: "true"
+          ALLOW_DEV_SECRETS: "true"
+          APP_URL: http://localhost:3410
+
+      - name: Lighthouse-Berichte hochladen
+        if: always() && (steps.lighthouse.outcome == 'success' || steps.lighthouse.outcome == 'failure')
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/reports/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  secrets:
+    name: Secret-Scan (gitleaks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      # Liest die Commit-Liste eines Pull Requests.
+      pull-requests: read
+    steps:
+      - name: Checkout (ganzer Verlauf)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Regeln und eng gefasste Ausnahmen stehen in .gitleaks.toml. Der Resend-Key
+      # aus Commit 9717265 liegt für immer im öffentlichen Verlauf und ist dort nur
+      # deshalb ausgenommen: Er MUSS im Resend-Dashboard widerrufen und rotiert sein.
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Nur für Repos einer Organisation nötig, nicht für persönliche Konten.
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+          # PR-Kommentare bräuchten Schreibrechte; Funde stehen in der Job-Zusammenfassung.
+          GITLEAKS_ENABLE_COMMENTS: "false"
