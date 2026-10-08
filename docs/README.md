@@ -4,3 +4,4 @@ Dieses Verzeichnis enthält die Dokumentation und historischen Entwicklungs-Prom
 
 - `docs/prompts/`: Enthält die archivierten Master-Prompts (Phasen 18 bis 21) zur Entstehungsgeschichte, Domain-Security-Architektur und Faktenbereinigung.
 - Hauptdokumentation: Siehe die vollständige [README.md](../README.md) im Projekt-Hauptverzeichnis.
+- `docs/ROADMAP.md`: Masterplan von der Microsite zur Recruiting-Plattform (Phasen 1–5, Entscheidungen, Zielwerte).
