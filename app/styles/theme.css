@@ -1,0 +1,219 @@
+/*
+ * Design tokens (roadmap §4). Three tiers:
+ *   1. @theme          primitives, type scale, space, radii, shadows, motion
+ *   2. :root + scopes  semantic roles (light, dark, inverse band)
+ *   3. @theme inline   roles → utilities (bg-surface, text-ink, border-line …)
+ * Components use the semantic utilities only; scripts/qa/check-design-tokens.mjs
+ * rejects raw palette classes. scripts/qa/check-contrast.mjs parses this file,
+ * so keep role values as plain hex.
+ */
+
+@theme {
+  /* --color-*: initial; enable after legacy cleanup */
+
+  /* Neutral grays with a slight navy tint (hue ~255) */
+  --color-gray-0: #FFFFFF;
+  --color-gray-25: #FAFBFC;
+  --color-gray-50: #F5F6F8;
+  --color-gray-100: #ECEEF2;
+  --color-gray-200: #E3E6EB;
+  --color-gray-300: #CDD2DA;
+  --color-gray-400: #A3ABB8;
+  --color-gray-500: #7D8696;
+  --color-gray-600: #5F6878;
+  --color-gray-700: #4A5363;
+  --color-gray-800: #2E3645;
+  --color-gray-900: #121826;
+  --color-gray-950: #0B0F17;
+
+  /* Brand: navy = ink, crimson = primary action fill only,
+     hydro = focus rings only, eco = success only */
+  --color-navy-900: #0A1E3A;
+  --color-crimson-600: #C51E1E;
+  --color-crimson-700: #A8191A;
+  --color-crimson-800: #8F1516;
+  --color-hydro-300: #6CB8F0;
+  --color-hydro-600: #0369A1;
+  --color-eco-300: #4ADE9B;
+  --color-eco-700: #047857;
+
+  /* Type scale: size / line-height / tracking / weight. Weights 400–700 only.
+     display 39–72px, numeral 48–104px (roadmap §4); both reach their maximum at 1280 / 1504px. */
+  --text-footnote: 0.8125rem;
+  --text-footnote--line-height: 1.4;
+  --text-callout: 0.9375rem;
+  --text-callout--line-height: 1.45;
+  --text-body: clamp(1rem, 0.95rem + 0.25vw, 1.0625rem);
+  --text-body--line-height: 1.55;
+  --text-lead: clamp(1.125rem, 1.04rem + 0.4vw, 1.3125rem);
+  --text-lead--line-height: 1.45;
+  --text-title-3: clamp(1.25rem, 1.16rem + 0.45vw, 1.5rem);
+  --text-title-3--line-height: 1.3;
+  --text-title-3--letter-spacing: -0.01em;
+  --text-title-3--font-weight: 600;
+  --text-title-2: clamp(1.5rem, 1.29rem + 1.05vw, 2.125rem);
+  --text-title-2--line-height: 1.2;
+  --text-title-2--letter-spacing: -0.015em;
+  --text-title-2--font-weight: 600;
+  --text-title-1: clamp(1.875rem, 1.45rem + 2.1vw, 3rem);
+  --text-title-1--line-height: 1.1;
+  --text-title-1--letter-spacing: -0.02em;
+  --text-title-1--font-weight: 600;
+  --text-display: clamp(2.4375rem, 1.5rem + 3.75vw, 4.5rem);
+  --text-display--line-height: 1.04;
+  --text-display--letter-spacing: -0.03em;
+  --text-display--font-weight: 700;
+  --text-numeral: clamp(3rem, 1.8rem + 5vw, 6.5rem);
+  --text-numeral--line-height: 1;
+  --text-numeral--letter-spacing: -0.04em;
+  --text-numeral--font-weight: 600;
+
+  /* Space (8-pt grid on the 0.25rem base) and layout */
+  --spacing: 0.25rem;
+  --spacing-gutter: clamp(1.25rem, 0.8rem + 2.2vw, 2.5rem);
+  --spacing-section: clamp(4rem, 2.8rem + 6vw, 8rem);
+  --spacing-section-sm: clamp(3rem, 2.4rem + 3vw, 5rem);
+  --container-prose: 40rem;
+  --container-content: 68rem;
+  --container-wide: 80rem;
+  /* Tailwind ships a static max-w-prose (65ch); the theme key takes precedence. */
+  --max-width-prose: 40rem;
+
+  --radius-*: initial;
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  /* Cards sit on surface-2 instead of floating on shadows; three shadows only. */
+  --shadow-*: initial;
+  --shadow-xs: 0 1px 2px rgb(10 30 58 / 0.06);
+  --shadow-sm: 0 1px 2px rgb(10 30 58 / 0.04), 0 4px 12px rgb(10 30 58 / 0.05);
+  --shadow-lg: 0 8px 40px rgb(10 30 58 / 0.12);
+}
+
+/* Motion is emitted unconditionally so inline styles and JS can read it (mirrored in lib/tokens). */
+@theme static {
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --transition-duration-fast: 150ms;
+  --transition-duration-step: 220ms;
+  --transition-duration-sheet: 280ms;
+}
+
+/* var() fallback keeps the system stack if the next/font variable is missing. */
+@theme inline {
+  --font-sans: var(--font-inter, ui-sans-serif), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-on-accent: var(--on-accent);
+  --color-focus: var(--focus);
+  --color-success: var(--success);
+  --color-success-subtle: var(--success-subtle);
+  --color-danger: var(--danger);
+  --color-danger-subtle: var(--danger-subtle);
+}
+
+@utility text-numeral {
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Semantic roles. Dark mode and the inverse band are screen-only, so print
+ * always gets ink on white paper.
+ */
+@layer base {
+  :root {
+    color-scheme: light dark;
+
+    --surface: #FFFFFF;
+    --surface-2: #F5F6F8;
+    --surface-3: #ECEEF2;
+    --ink: #0A1E3A;
+    --ink-muted: #5F6878;
+    --line: #E3E6EB;
+    --line-strong: #7D8696;
+    --accent: #C51E1E;
+    --accent-hover: #A8191A;
+    --on-accent: #FFFFFF;
+    --focus: #0369A1;
+    --success: #047857;
+    --success-subtle: #E8F5EF;
+    --danger: #B42318;
+    --danger-subtle: #FDECEA;
+  }
+
+  @media screen and (prefers-color-scheme: dark) {
+    :root {
+      --surface: #0B0F17;
+      --surface-2: #121826;
+      --surface-3: #1A2131;
+      --ink: #F2F4F7;
+      --ink-muted: #A3ACBA;
+      --line: #232B3A;
+      --line-strong: #6B7587;
+      --accent: #C51E1E;
+      --accent-hover: #D93636;
+      --on-accent: #FFFFFF;
+      --focus: #6CB8F0;
+      --success: #4ADE9B;
+      --success-subtle: #0F2A1F;
+      --danger: #FF8A80;
+      --danger-subtle: #2C1513;
+    }
+  }
+
+  /* Inverse band (closing CTA): navy in light mode */
+  @media screen {
+    [data-tone="inverse"] {
+      color-scheme: dark;
+
+      --surface: #0A1E3A;
+      --surface-2: #11284B;
+      --surface-3: #18315A;
+      --ink: #FFFFFF;
+      --ink-muted: #B3BDCC;
+      --line: #22385A;
+      --line-strong: #7E8CA3;
+      --accent: #C51E1E;
+      --accent-hover: #D93636;
+      --on-accent: #FFFFFF;
+      --focus: #6CB8F0;
+      --success: #4ADE9B;
+      --success-subtle: #0F2A1F;
+      --danger: #FF8A80;
+      --danger-subtle: #2C1513;
+    }
+  }
+
+  /* Inverse band in dark mode: one step above the page surface */
+  @media screen and (prefers-color-scheme: dark) {
+    [data-tone="inverse"] {
+      --surface: #121826;
+      --surface-2: #1A2131;
+      --surface-3: #232B3A;
+      --ink: #F2F4F7;
+      --ink-muted: #A3ACBA;
+      --line: #2A3344;
+      --line-strong: #6B7587;
+      --accent: #C51E1E;
+      --accent-hover: #D93636;
+      --on-accent: #FFFFFF;
+      --focus: #6CB8F0;
+      --success: #4ADE9B;
+      --success-subtle: #0F2A1F;
+      --danger: #FF8A80;
+      --danger-subtle: #2C1513;
+    }
+  }
+}

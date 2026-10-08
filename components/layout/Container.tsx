@@ -1,40 +1,21 @@
-import React, { createElement, ElementType, ReactNode } from 'react';
-import { cn } from '@/lib/utils';
+import type { ComponentPropsWithRef } from 'react';
+import { cn } from '@/lib/utils/cn';
 
-export type ContainerSize = 'narrow' | 'default' | 'wide' | 'full';
+export type ContainerSize = 'prose' | 'content' | 'wide';
 
-export interface ContainerProps {
-  children: ReactNode;
+const SIZE: Record<ContainerSize, string> = {
+  prose: 'max-w-prose',
+  content: 'max-w-content',
+  wide: 'max-w-wide',
+};
+
+export interface ContainerProps extends ComponentPropsWithRef<'div'> {
+  /** prose 40rem · content 68rem · wide 80rem (content area, gutters excluded). */
   size?: ContainerSize;
-  as?: ElementType;
-  className?: string;
-  padding?: boolean;
+  as?: 'div' | 'header' | 'footer' | 'main' | 'nav';
 }
 
-export function Container({
-  children,
-  size = 'default',
-  as: Component = 'div',
-  className,
-  padding = true,
-}: ContainerProps) {
-  const sizeClass = {
-    narrow: 'max-w-3xl',
-    default: 'max-w-6xl',
-    wide: 'max-w-7xl',
-    full: 'w-full',
-  }[size];
-
-  return createElement(
-    Component,
-    {
-      className: cn(
-        'mx-auto w-full',
-        sizeClass,
-        padding && 'px-4 sm:px-6 lg:px-8',
-        className
-      ),
-    },
-    children
-  );
+/** Centered column with the fluid side gutter. */
+export function Container({ size = 'content', as: Component = 'div', className, ...props }: ContainerProps) {
+  return <Component className={cn('mx-auto box-content px-gutter', SIZE[size], className)} {...props} />;
 }

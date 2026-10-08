@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/qa/check-design-tokens.mjs && node scripts/qa/check-contrast.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -11,6 +12,8 @@
     "type-check": "tsc --noEmit",
     "test:graph": "node scripts/qa/check-graph.mjs",
     "test:redirects": "node scripts/qa/check-redirects.mjs",
+    "check:design": "node scripts/qa/check-design-tokens.mjs",
+    "check:contrast": "node scripts/qa/check-contrast.mjs",
     "audit": "bun run lint && bun run type-check && bun run build",
     "test": "vitest run",
     "test:watch": "vitest",

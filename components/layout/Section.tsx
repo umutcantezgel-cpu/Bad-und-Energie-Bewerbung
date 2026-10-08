@@ -1,30 +1,29 @@
-import React, { forwardRef } from 'react';
-import { cn } from '@/lib/utils';
+import type { ComponentPropsWithRef } from 'react';
+import { cn } from '@/lib/utils/cn';
 
-export interface SectionProps extends React.HTMLAttributes<HTMLElement> {
-  as?: React.ElementType;
-  paddingY?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+export type SectionTone = 'default' | 'subtle' | 'inverse';
+
+export interface SectionProps extends ComponentPropsWithRef<'section'> {
+  /** `subtle` = surface-2; `inverse` = navy band (data-tone="inverse", light and dark). */
+  tone?: SectionTone;
+  spacing?: 'default' | 'compact';
 }
 
-const paddingMap = {
-  none: 'py-0',
-  sm: 'py-8 sm:py-10',
-  md: 'py-12 sm:py-16',
-  lg: 'py-16 sm:py-20',
-  xl: 'py-20 sm:py-28',
-};
-
-export const Section = forwardRef<HTMLElement, SectionProps>(
-  ({ className, as: Component = 'section', paddingY = 'md', children, ...props }, ref) => {
-    return (
-      <Component
-        ref={ref}
-        className={cn('relative w-full', paddingMap[paddingY], className)}
-        {...props}
-      >
-        {children}
-      </Component>
-    );
-  }
-);
-Section.displayName = 'Section';
+/**
+ * Page band with vertical rhythm. Pair with <Container> and pass
+ * `aria-labelledby` (the heading id) so the section becomes a named region.
+ */
+export function Section({ tone = 'default', spacing = 'default', className, ...props }: SectionProps) {
+  return (
+    <section
+      data-tone={tone === 'inverse' ? 'inverse' : undefined}
+      className={cn(
+        spacing === 'compact' ? 'py-section-sm' : 'py-section',
+        tone === 'subtle' && 'bg-surface-2',
+        tone === 'inverse' && 'bg-surface text-ink',
+        className,
+      )}
+      {...props}
+    />
+  );
+}
