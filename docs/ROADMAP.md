@@ -2,7 +2,7 @@
 
 > Von der Karriere-Microsite zur Plattform, die aktiv Bewerber findet und das Bewerben so einfach wie möglich macht. Ruhiges, typografisches Apple-Design.
 >
-> **Status:** freigegeben am 2026-10-08 · Phase 1 in Umsetzung.
+> **Status:** freigegeben am 2026-10-08 · Phase 1 abgeschlossen (PR nach `main`, Merge nach Freigabe) · Phase 2 in Vorbereitung (siehe §8.1).
 
 ---
 
@@ -334,6 +334,34 @@ Ersetzt HeroExpressFunnel, QuizView, VaultView, FormView und BewerberCheckliste.
 
 ## 8. Säule E: ATS auf Supabase (Phase 2)
 
+### 8.1 Stand und Aufteilung (Abstimmung vom 2026-10-08)
+
+Zwei Claude-Sessions arbeiten parallel am selben Repo. Mit dem Owner abgestimmt:
+
+**Entscheidungen des Owners**
+- Supabase **Free zum Testen**, **Pro vor dem Go-live**. Das Testprojekt existiert bereits: `karriere-bad-energie`, Ref `ymynacgwkqycjcervixg`, Frankfurt (`eu-central-1`).
+- **Abweichung von der ursprünglichen Planung:** Die Stellen kommen schon in Phase 2 aus der Datenbank (Tabelle `job_postings` + Editor im Cockpit), nicht erst in Phase 5.
+- **Abweichung:** E-Mails laufen über Supabase Edge Functions mit Outbox und Retry. Die Löschfristen setzt `pg_cron` um, nicht ein Vercel-Cron.
+- Pflicht-MFA (TOTP) für das Cockpit gibt es schon in Phase 2.
+- Am Ende bleibt nur `main` als Branch.
+
+**Wer macht was**
+
+| Bereich | Zuständig |
+|---|---|
+| Phase 1, öffentliche Seiten, Flow, Mappe, Design-System, `lib/jobs/**`, `lib/content/**`, `lib/attribution/**`, Feeds, SEO, Rechtstexte, `ci.yml`, Phase 3/4 | Session „Enterprise Recruiting Plattform Plan“ (Branch `claude/bold-pasteur-9gu316`) |
+| Phase 2: `supabase/**`, `lib/supabase/**`, Supabase-Sink, Supabase-Rate-Limit, `lib/uploads/**`, `app/admin/**`, `app/api/admin/**`, Upload-API, `db.yml` | Session „Supabase-Vollintegration“ (Branch `claude/optimistic-turing-etjnl3`) |
+| Schreibzugriff auf das Supabase-Projekt (nur aus Migrationsdateien im Repo) | ausschließlich Session „Supabase-Vollintegration“ |
+| Gemeinsame Verträge `lib/applications/{sink,schema,types,constants}.ts`, `lib/jobs/schema.ts`, `lib/security/rate-limit.ts`, `lib/env.ts` (nur ergänzen), `proxy.ts` | Änderung nur nach Absprache |
+
+**Phase 2 in Scheiben** (jeweils ein PR nach `main`, aufbauend auf dem Phase-1-PR)
+- **2a Fundament:** Schema und RLS (kein anon-Zugriff, RPCs nur für `service_role`), Outbox, Rate-Limit-Zähler, pgTAP.
+- **2b Intake:** `SupabaseSink`, umschaltbar über `APPLICATION_SINK=email|supabase` (Preview mit Supabase, Production bleibt bis zum Pro-Kauf beim E-Mail-Versand). Dazu der DB-Rate-Limiter und signierte Uploads.
+- **2c Mail und Fristen:** Edge Functions für Versand und Webhook, `pg_cron` für die Löschfristen. Die Not-E-Mail bei DB-Ausfall bleibt.
+- **2d Cockpit `/admin`:** E-Mail-OTP und TOTP, Realtime-Eingang, signierte Datei-URLs, Quellen-Report, DSGVO-Export und -Löschung.
+- **2e Stellen aus der DB:** asynchrone Registry-Getter mit `cache()` und Tag-Revalidierung, Build-Snapshot als Fallback, Editor im Cockpit, Revalidate und IndexNow per Trigger.
+
+
 **Infrastruktur**
 - Supabase Frankfurt (Pro, sonst pausiert das Projekt nach 7 Tagen Inaktivität).
 - `vercel.json` mit `regions: ["fra1"]`.
@@ -462,7 +490,7 @@ Beispiel-Description für Anlagenmechaniker:
 
 ---
 
-## 12. Phase 1: Umsetzungsreihenfolge (je Schritt ein Commit auf `claude/bold-pasteur-9gu316`)
+## 12. Phase 1: Umsetzungsreihenfolge (je Schritt ein Commit auf `claude/bold-pasteur-9gu316`) – abgeschlossen
 
 **1.0 Roadmap und Hotfixes**
 - `docs/ROADMAP.md` (dieser Plan).
