@@ -1,4 +1,4 @@
-STATUS · Phase P2/A2 (gemeinsam) · Welle 0/0 · Erfüllt 1/14 · Ausbau 0/11 · Ausnahmen 0 · Elemente 0/61 · Slop hart 51 · Jury 4,9 · Wow – · Lighthouse mobil 94 · axe 0 · Puffer 100 % · Nächster Schritt: Messbasis ergänzen (390/430, Wow-Ausgangswert), Steigerungsanalyse, drei Steigerungsvarianten B+A
+STATUS · Phase R3 · Welle R3/R7 · Erfüllt 1/14 · Ausbau 0/11 · Ausnahmen 0 · Elemente 2/61 · Slop hart 51 · Jury 4,9 · Wow – · Lighthouse mobil 94 · axe 0 · Puffer 100 % · Nächster Schritt: Welle R3 Startseite (HOME-01…05, PERF-01)
 
 # Status · Rückführung und Veredelung
 
@@ -55,3 +55,5 @@ STATUS · Phase P2/A2 (gemeinsam) · Welle 0/0 · Erfüllt 1/14 · Ausbau 0/11 �
 - 2026-10-09 12:09 CEST · Neustart des Workers nach Sitzungslimit; Server neu gestartet; Lighthouse-Basis (LCP mobil 2,63–3,08 s über Budget) und Gegenprobe 2 (280/282, 2 Kann-Nachträge) übernommen.
 - 2026-10-09 14:55 CEST · P1-Phasentor bestanden: Z-01 erfüllt (Nachprüfung 3 Runden, Runde 3 ohne Muss/Soll-Lücke; Delta-Gegenprüfung 30 Korrekturen übernommen, E-017); 165 Pässe, 61 zu bauen (Muss 20 · Soll 35 · Kann 6), 9 zurückgestellt (5,5 %). Farben vom Auftraggeber bestätigt (E-016); Bilder ab jetzt immer im Chat (E-015). Stilkacheln A/B/C Runde 1: Jury 7,6–7,9.
 - 2026-10-09 17:45 CEST · Folgeauftrag „Ausbau auf Showcase-Niveau“ eingegangen und nach Rückfrage mit Lauf 1 zusammengelegt (E-018); Richtungswunsch B Runde 1 + A-Präzision (E-019); ab jetzt nur Opus und Haiku, Merge nach main nur auf ausdrückliches Wort (E-020). Stilkachel-Jury Runde 2 und Überarbeitung C entfallen (Sitzungslimit, durch E-019 überholt). Server nach Container-Neustart neu gestartet.
+
+- 2026-10-10 00:25 CEST · FREIGABE E-021 (volle Autonomie bis zum Merge); R1 Basis, R3-ORCH (Anker-Aliase) und R2 Fundament abgenommen (7f0c8fe, E-022: CSP ohne Hash, LCP-Rückschritt → R3-PERF-01). Welle R3 Startseite gestartet.
