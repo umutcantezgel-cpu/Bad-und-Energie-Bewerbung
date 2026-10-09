@@ -7,7 +7,7 @@ create extension if not exists plpgsql_check with schema extensions;
 select plan(1);
 
 select is_empty(
-  $$ select p.oid::regprocedure::text, t.tgrelid::regclass::text, c.level, c.message
+  $$ select p.oid::regprocedure::text, t.tgrelid::regclass::text, c.level, c.lineno, c.message, c.query
        from pg_trigger t
        join pg_proc p on p.oid = t.tgfoid
        join pg_namespace n on n.oid = p.pronamespace

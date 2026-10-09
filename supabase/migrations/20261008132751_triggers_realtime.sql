@@ -123,7 +123,7 @@ as $$
 declare
   v_actor uuid := (select auth.uid());
   v_actor_staff uuid;
-  v_fields text[] := '{}';
+  v_fields text[] := array[]::text[];
 begin
   select s.user_id into v_actor_staff from public.staff s where s.user_id = v_actor;
 
