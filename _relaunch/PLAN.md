@@ -7,7 +7,7 @@ Version 0.1 · Entwurf vor Richtungswahl und vor L0. Version 1.0 entsteht nach d
 | Seiten der Grundmenge | 12: `/`, `/jobs`, 4 × `/jobs/[slug]`, `/bewerbung`, `/bewerbung/danke`, `/bewerbung/mappe`, `/datenschutz`, `/impressum`, 404 | P0, `werkzeuge/lib/browser.mjs` |
 | Vorlagen | 8: Startseite · Stellenliste · Stellenseite (4 Seiten) · Bewerbungsflow · Danke · Mappe · Rechtstext (2 Seiten) · Fehlerseite | `app/**` |
 | Erzählseiten / Arbeitsseiten | 3 Vorlagen (Start, Stellenseite, 404) / 5 Vorlagen | KERN K-002 |
-| Element-Pässe | 163 (+ Z-01-Nachträge) · zu bauen 59: Muss 19 · Soll 33 · Kann 7 · zurückgestellt 9 (5,5 %) | VERLUSTLISTE.md |
+| Element-Pässe | 165 · zu bauen 61: Muss 20 · Soll 35 · Kann 6 · zurückgestellt 9 (5,5 %) | VERLUSTLISTE.md |
 | Doppelpässe (Leitpass → Querverweis) | E-START-002 ← E-SHELL-001 · E-START-052 ← E-SEO-021 · E-BEW-004 ← E-START-017 · E-START-019 ← E-BEW-022 · E-START-015 ← E-BEW-009 · E-BEW-012 ← E-START-007 (Upload-Teil), E-BEW-027 (`vault`) | gegenpruefung-p1.md Q1 |
 | Komponenten im Umbau | 27 `components/ui/*`, 13 `components/site/*`, 10 `components/home/*`, 11 `components/jobs/*`, 15 `components/apply/**`, 12 `components/mappe/*`, 6 `components/maps/*`, 5 `components/reviews/*`, 5 `components/legal/*`, Logo (nur Darstellung, G8) | Bestand |
 | SVG | Icon-Familie ≈ 30 Glyphen (ersetzt 26 lucide-Icons in 35 Dateien) · Illustrationen: Einstiegsmotiv, Einsatzgebiet (Radius, Lahn/Dill, A45/B49), Fehlerseite, Fortschrittsring, Siegel „1926–2026“, Ladeanzeige · Trenner/Muster aus dem Formsystem | Bestand, Pässe |
@@ -29,7 +29,7 @@ Regeln: höchstens 5 Pakete je Welle, nie dieselbe Datei in zwei gleichzeitigen 
 | 3.1 | P3-SVG-01 Formsystem und Icons der Startseite | Sonnet | `components/icons/**` (außer `Icon.tsx`-API) | – | Z-10 |
 | 3.1 | P3-HOME-01 Einstieg, Vertrauenszeile, Signaturmoment 1 | Sonnet | `components/home/Hero.tsx`, `components/home/TrustLine.tsx` (neu), Tests | E-START-002 (Leit), E-START-010, E-START-011, E-START-021, E-START-013 (Startseite) | Z-02, Z-04, Z-08, Z-09 |
 | 3.1 | P3-HOME-02 Stellen und Vorteile mit Konfigurator | Sonnet | `components/home/JobList.tsx`, `components/home/BenefitGrid.tsx`, `components/home/BenefitConfigurator.tsx` (neu), Tests | E-START-024 (Leit für 016), E-START-025, E-START-026 | Z-02, Z-03 |
-| 3.1 | P3-HOME-03 Einsatzgebiet | Sonnet | `components/home/RegionSection.tsx`, `components/maps/**`, Tests | E-START-032 (Leit), 029, 030, 033, 036, 040, E-SHELL-021; Kann 035, 037, 038 | Z-02, Z-03, Z-09, Z-10 |
+| 3.1 | P3-HOME-03 Einsatzgebiet | Sonnet | `components/home/RegionSection.tsx`, `components/maps/**`, Tests | E-START-032 (Leit), 029, 030, 033, 036, 038 (Soll seit E-017; 7 Lagebeschreibungen, 3 nach M-016), 040, E-SHELL-021; Kann 035, 037 | Z-02, Z-03, Z-09, Z-10 |
 | 3.1 | P3-HOME-04 Stimmen, Betrieb, Kontakt | Sonnet | `components/reviews/**`, `components/home/AboutSection.tsx`, `components/home/CtaBand.tsx`, Tests | E-START-043, 046, 031, 048, 051 | Z-02, Z-09 |
 | 3.2 | P3-HOME-05 Ablauf, FAQ, Abschnittsköpfe, Anker | Sonnet | `components/home/ProcessTimeline.tsx`, `FaqSection.tsx`, `SectionHeader.tsx`, `app/page.tsx` (Anker-Aliase) | E-START-052 (Leit für E-SEO-021) | Z-02, Z-06, Z-07 (S-12) |
 | 3.2 | P3-SHELL-00 Kopf und Fuß, Darstellung | Sonnet | `components/site/HeaderBar.tsx`, `SiteHeader.tsx`, `SiteFooter.tsx`, `FooterSwitch.tsx`, `ContactOptions.tsx` | (nur Gestaltung; Mechanik P4) | Z-08 |
@@ -51,11 +51,11 @@ Regeln: höchstens 5 Pakete je Welle, nie dieselbe Datei in zwei gleichzeitigen 
 |---|---|---|---|---|---|
 | 5.1 | P5-APPLY-01 Bewerbungsflow (nur Darstellung, Logik nach G9) | Sonnet | `components/apply/{ApplyFlow,ApplyFlowClient,ContactStep,FlowShortcuts,SubmitErrorPanel,steps,options}.tsx`, Tests | E-BEW-004 (Leit für E-START-017), E-BEW-001, E-START-013 (Flow) | Z-02, Z-04 |
 | 5.1 | P5-BEW-01 Bewerbungsseite und Parameter | Sonnet | `app/bewerbung/page.tsx`, `app/bewerbung/layout.tsx`, `lib/apply/params.ts`, Tests | E-BEW-027, E-BEW-008, Z-01-Nachträge (Ladezustände) | Z-02, Z-03, Z-06 |
-| 5.1 | P5-SEO-01 Strukturierte Daten | Sonnet | `components/site/site-jsonld.ts`, `lib/jobs/jsonld.ts`, `lib/seo/*` (außer `og-*`), Tests | E-SEO-006, E-SEO-009, Z-01-Nachträge (LocalBusiness-Beschreibung, JobPosting-Beschreibungen und -Benefits, areaServed, FAQPage) | Z-02, Z-06 |
+| 5.1 | P5-SEO-01 Strukturierte Daten | Sonnet | `components/site/site-jsonld.ts`, `lib/jobs/jsonld.ts`, `lib/seo/*` (außer `og-*`), Tests | E-SEO-006, E-SEO-009 (LocalBusiness-Beschreibung, areaServed, hasMap), E-SEO-014 (`app/llms.txt/content.ts`, `app/llms.txt/route.ts`) | Z-02, Z-06 |
 | 5.1 | P5-RECHT-01 Rechtsseiten (Darstellung; Inhalt unantastbar) | Sonnet | `components/legal/**`, `app/impressum/page.tsx`, `app/datenschutz/{page,layout}.tsx` | E-RECHT-005 (Wortlaut bleibt, M-015), E-RECHT-013 | Z-02, Z-11 |
 | 5.1 | P5-MAIL-01 E-Mail-Fußzeile | Haiku | `lib/email/templates/layout.ts`, Test | E-BEW-025 | Z-02, Z-03 |
 | 5.2 | P5-JOBS-01 Stellenliste | Sonnet | `app/jobs/page.tsx`, `components/jobs/JobCard.tsx` | – | Z-07, Z-08 |
-| 5.2 | P5-JOBS-02 Stellenseite (Erzählseite) | Sonnet | `app/jobs/[slug]/page.tsx`, `components/jobs/*` außer `JobCard.tsx` | (Signaturmoment 3, falls gewählt) | Z-07, Z-08, Z-09 |
+| 5.2 | P5-JOBS-02 Stellenseite (Erzählseite) | Sonnet | `app/jobs/[slug]/page.tsx`, `components/jobs/*` außer `JobCard.tsx`, `lib/jobs/data/anlagenmechaniker-shk.ts` | E-SEO-010 (Fakt `noWeekendOnCall` in den Benefits); Signaturmoment 3, falls gewählt | Z-07, Z-08, Z-09 |
 | 5.2 | P5-UPLOAD-01 Unterlagen-Schnittstelle (eigener Adapter, ehrlich deaktiviert, E-012) | Sonnet | `lib/apply/upload/*` (neu), `components/apply/UploadPanel.tsx` (neu), Tests | E-BEW-012 (Leit; mit E-START-007, E-BEW-027 `vault`) | Z-02, Z-03 |
 | 5.2 | P5-THANKS-01 Danke-Seite und Erfolgsmoment | Sonnet | `app/bewerbung/danke/page.tsx`, `components/apply/thanks/**` | E-START-020, E-START-015 (Leit), E-BEW-015, Kann E-START-019 (Leit) | Z-02, Z-09 |
 | 5.2 | P5-MAPPE-01 Mappe | Sonnet | `app/bewerbung/mappe/page.tsx`, `components/mappe/**` | E-BEW-006, E-BEW-020 (+ Einbindung E-BEW-007) | Z-02, Z-03 |

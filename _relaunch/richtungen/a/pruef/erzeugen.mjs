@@ -81,7 +81,7 @@ const ROLLEN = [
   ['Rot tief', '--rot-tief', 'Muffe am Knopf, in beiden Modi gleich.'],
   ['Fokus', '--fokus', 'Fokusring 3&nbsp;px mit 3&nbsp;px Abstand.'],
   ['Plakette', '--plakette', 'Nur dunkel: helle Fläche unter dem unveränderten Logo, Schutzzone ein Viertel der Logohöhe, Rand in Linie stark.'],
-  ['Fluss', '--fluss', 'Keine eigene Rolle: hell auf der Vorlauf-Linie (hell: Papier, dunkel: Tinte), nur Rückmeldung.'],
+  ['Fluss', '--fluss', 'Keine eigene Rolle: hell auf der Vorlauf-Linie (hell: Papier, dunkel: Weiß), nur Rückmeldung.'],
 ];
 const PAARE = [
   ['Tinte auf Papier', '--tinte', '--papier', 'Fließtext, Überschriften, Beschriftungen', 'T'],
@@ -160,24 +160,13 @@ function genOrte() {
 
 /* ───────── Lageplan: drei Ausschnitte (folgen dem Radius) ───────── */
 const HALB = { 15: 21, 25: 28, 35: 37.5 }; // halbe Kantenlänge in km je Ausschnitt
-// Beschriftungsrichtung je Ort (nach Messung in pruef/pruefen.mjs, kein Überlapp bei 288 px Planbreite)
-const RICHTUNG = {
-  'wetzlar-kernstadt': 'w',
-  hermannstein: 'ne',
-  nauborn: 'se',
-  garbenheim: 'ne',
-  dutenhofen: 'ne',
-  steindorf: 'sw',
-  asslar: 'nw',
-  braunfels: 'w',
-  giessen: 'e',
-  herborn: 'w',
-};
+// Beschriftungsrichtung je Ausschnitt und Ort (Ergebnis von pruef/richtungen.mjs, gemessen bei Planbreiten von 286 bis 672 px)
+const RICHTUNG = {"15": {"wetzlar-kernstadt": "w", "garbenheim": "se", "hermannstein": "ne2", "steindorf": "w", "nauborn": "e", "asslar": "w", "dutenhofen": "se", "braunfels": "se", "giessen": "e", "herborn": "e"}, "25": {"wetzlar-kernstadt": "ne", "garbenheim": "se", "hermannstein": "sw", "steindorf": "nw", "nauborn": "e", "asslar": "w", "dutenhofen": "se", "braunfels": "w", "giessen": "e", "herborn": "w"}, "35": {"wetzlar-kernstadt": "w", "garbenheim": "se", "hermannstein": "ne2", "steindorf": "se", "nauborn": "e", "asslar": "ne", "dutenhofen": "se", "braunfels": "w", "giessen": "e", "herborn": "w"}};
 const f1 = (n) => String(Math.round(n * 10) / 10);
 
 function genPlan() {
   const out = [];
-  out.push('<svg class="pl" viewBox="0 0 640 640" role="img" aria-labelledby="pl-t pl-d" focusable="false"><title id="pl-t">Lageplan: Einsatzgebiet maximal 35&#160;km um Wetzlar</title><desc id="pl-d">Schematischer Plan mit dem Betrieb in Wetzlar in der Mitte. Der Ausschnitt folgt dem gewählten Radius von 15, 25 oder 35 Kilometern. Ringe und Raster sind Luftlinie, ein Feld sind 5 Kilometer. Außerhalb von 35 Kilometern ist die Fläche schraffiert: dort montieren wir nicht. Zehn Orte liegen im Umkreis; ihre Entfernung und Fahrzeit stehen in der Liste.</desc>');
+  out.push('<svg class="pl" viewBox="0 0 640 640" role="img" aria-labelledby="pl-t pl-d" focusable="false"><title id="pl-t">Lageplan: Einsatzgebiet maximal 35&#160;km um Wetzlar</title><desc id="pl-d">Schematischer Plan mit dem Betrieb in Wetzlar in der Mitte. Der Ausschnitt folgt dem gewählten Radius von 15, 25 oder 35&#160;Kilometern. Ringe und Raster sind Luftlinie, ein Feld sind 5&#160;Kilometer. Außerhalb von 35&#160;Kilometern ist die Fläche schraffiert: dort montieren wir nicht. Zehn Orte liegen im Umkreis; ihre Entfernung und Fahrzeit stehen in der Liste.</desc>');
   for (const r of [15, 25, 35]) {
     const k = 320 / HALB[r];
     const c = 320;
@@ -237,18 +226,17 @@ function genPlan() {
       const sel = o.slug === STANDARD;
       const fern = o.km >= 14;
       const mitte = o.slug === MITTE;
-      const cls = ['pl-l', mitte ? 'pl-l--fest' : fern ? 'pl-l--fern' : 'pl-l--kern', `d-${RICHTUNG[o.slug]}`, sel ? 'is-sel' : ''].filter(Boolean).join(' ');
-      items.push(`<li class="${cls}" data-ort="${o.slug}" style="--e:${f1(o.e)};--n:${f1(o.n)}">${mitte ? 'Betrieb Wetzlar' : o.name}</li>`);
+      const cls = ['pl-l', mitte ? 'pl-l--fest' : fern ? 'pl-l--fern' : 'pl-l--kern', `d-${RICHTUNG[r][o.slug]}`, sel ? 'is-sel' : '', o.km > r ? 'is-out' : ''].filter(Boolean).join(' ');
+      items.push(`<li class="${cls}" data-ort="${o.slug}"${!mitte && !fern ? ' data-motion="ort-marke"' : ''} style="--e:${f1(o.e)};--n:${f1(o.n)}">${mitte ? 'Betrieb' : o.name}</li>`);
     }
     for (const rr of [15, 25, 35]) {
-      const e = rr * Math.SQRT1_2;
-      if (!innen(e, e, 1.5)) continue;
-      items.push(`<li class="pl-r" style="--e:${f1(e)};--n:${f1(e)}">${rr}&nbsp;km</li>`);
+      if (!innen(0, rr, 1.5)) continue;
+      items.push(`<li class="pl-r" style="--e:0;--n:${rr}">${rr}&nbsp;km</li>`);
     }
     const fx = (36 + 5 * k + 10) / 6.4; // Prozent
     items.push(`<li class="pl-s" style="--x:${f1(fx)}">1&nbsp;Feld = 5&nbsp;km</li>`);
     items.push(`<li class="pl-n">N</li>`);
-    out.push(`<ul class="pl-t pl-t${r}" aria-hidden="true" style="--kp:${(Math.round(kp * 1000) / 1000)}%">${items.join('')}</ul>`);
+    out.push(`<ul class="pl-t pl-t${r}" data-motion="radius-wahl" aria-hidden="true" style="--kp:${(Math.round(kp * 1000) / 1000)}%">${items.join('')}</ul>`);
   }
   return out.join('');
 }

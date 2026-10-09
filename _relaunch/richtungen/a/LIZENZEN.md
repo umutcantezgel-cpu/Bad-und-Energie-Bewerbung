@@ -11,7 +11,9 @@ Summe der Schriftdateien: 239,5 KB (Budget 250 KB, K-013).
 
 Die Dateien wurden unverändert aus den Fontsource-Paketen kopiert (keine Subsetting- oder Konvertierungsschritte durch den Lauf). Reservierte Schriftnamen werden nicht verwendet; die lokalen Ersatzschriften „Archivo Ersatz“ und „Martian Ersatz“ in `index.html` sind eigene `@font-face`-Regeln über Systemschriften (Arial, Liberation Sans, Courier New, Liberation Mono) mit angeglichenen Metriken und enthalten keine Schriftdaten.
 
-Das Logo (`logo.png`) ist die unveränderte Datei `public/images/bad-energie-lahn-dill-logo-transparent.png` der Plattform und gehört dem Auftraggeber; es wird weder umgefärbt noch gefiltert (dunkel auf einer hellen Plakette).
+Das Logo (`logo.png`) ist die unveränderte Datei `public/images/bad-energie-lahn-dill-logo-transparent.png` der Plattform und gehört dem Auftraggeber; es wird weder umgefärbt noch gefiltert. Im Dunkelmodus steht es auf einer hellen Plakette (Schutzzone ein Viertel der Logohöhe, Haarlinie, Passmarken), hell frei auf dem Papier.
+
+Icons, Giebelzeichen und alle übrigen SVG-Zeichnungen dieser Kachel sind eigene Zeichnungen ohne Fremdvorlage. Die vier Piktogramme des Giebelzeichens (Flamme, Tropfen, Sonne, Luft) greifen die Motive des Logos als Linienzeichnung auf; das Logo selbst wird dafür nicht verändert oder nachgezeichnet. Die Skripte in `pruef/` (Erzeugung der Tabellen, Prüfungen, Bildschirmfotos) liegen nur lokal und werden nicht ausgeliefert; sie enthalten keine Schriftdaten.
 
 Nicht verwendet: Inter, Space Grotesk, Playfair Display, Fotos, Stock- oder KI-Bilder, externe Skripte, Stile oder Dienste.
 

@@ -1,4 +1,4 @@
-STATUS · Phase P0 · Welle 0/0 · Erfüllt 0/14 · Ausnahmen 0 · Elemente 0/? · Slop hart ? · Jury ? · Lighthouse mobil ? · axe ? · Puffer 100 % · Nächster Schritt: Messbasis des Ausgangsstands (P0 Schritt 3–5)
+STATUS · Phase P2 · Welle 0/0 · Erfüllt 1/14 · Ausnahmen 0 · Elemente 0/61 · Slop hart 51 · Jury 4,9 · Lighthouse mobil 94 · axe 0 · Puffer 100 % · Nächster Schritt: Stilkacheln Runde 2 auswerten, Richtung wählen, KERN v1, Plan L0, Freigabe-Halt
 
 # Status · Rückführung und Veredelung
 
@@ -43,3 +43,4 @@ STATUS · Phase P0 · Welle 0/0 · Erfüllt 0/14 · Ausnahmen 0 · Elemente 0/? 
 - 2026-10-09 09:14 CEST · P0 gestartet, Sicherung erstellt, Basis hergestellt (a83269d).
 - 2026-10-09 09:54 CEST · P0-MESS-01/-02, P0-SLOP-02, P1-KUND-01…03 abgenommen; Jury Start 5,2 · Stellen 4,5 · Stellenseite 5,0; Slop weich 35 (E-010).
 - 2026-10-09 12:09 CEST · Neustart des Workers nach Sitzungslimit; Server neu gestartet; Lighthouse-Basis (LCP mobil 2,63–3,08 s über Budget) und Gegenprobe 2 (280/282, 2 Kann-Nachträge) übernommen.
+- 2026-10-09 14:55 CEST · P1-Phasentor bestanden: Z-01 erfüllt (Nachprüfung 3 Runden, Runde 3 ohne Muss/Soll-Lücke; Delta-Gegenprüfung 30 Korrekturen übernommen, E-017); 165 Pässe, 61 zu bauen (Muss 20 · Soll 35 · Kann 6), 9 zurückgestellt (5,5 %). Farben vom Auftraggeber bestätigt (E-016); Bilder ab jetzt immer im Chat (E-015). Stilkacheln A/B/C Runde 1: Jury 7,6–7,9.

@@ -1,6 +1,6 @@
 {
   "url": "http://localhost:3702/",
-  "erstellt": "2026-10-09T12:28:50.116Z",
+  "erstellt": "2026-10-09T12:39:15.223Z",
   "aufnahmen": [
     {
       "ansicht": "m375",
@@ -365,20 +365,7 @@
       },
       "fehler": [],
       "fremdanfragen": [],
-      "dateien": [
-        "m320-light-reduziert__01.webp",
-        "m320-light-reduziert__02.webp",
-        "m320-light-reduziert__03.webp",
-        "m320-light-reduziert__04.webp",
-        "m320-light-reduziert__05.webp",
-        "m320-light-reduziert__06.webp",
-        "m320-light-reduziert__07.webp",
-        "m320-light-reduziert__08.webp",
-        "m320-light-reduziert__09.webp",
-        "m320-light-reduziert__10.webp",
-        "m320-light-reduziert__11.webp",
-        "m320-light-reduziert__12.webp"
-      ]
+      "dateien": []
     },
     {
       "ansicht": "m320",
@@ -419,24 +406,11 @@
       },
       "fehler": [],
       "fremdanfragen": [],
-      "dateien": [
-        "m320-dark-reduziert__01.webp",
-        "m320-dark-reduziert__02.webp",
-        "m320-dark-reduziert__03.webp",
-        "m320-dark-reduziert__04.webp",
-        "m320-dark-reduziert__05.webp",
-        "m320-dark-reduziert__06.webp",
-        "m320-dark-reduziert__07.webp",
-        "m320-dark-reduziert__08.webp",
-        "m320-dark-reduziert__09.webp",
-        "m320-dark-reduziert__10.webp",
-        "m320-dark-reduziert__11.webp",
-        "m320-dark-reduziert__12.webp"
-      ]
+      "dateien": []
     }
   ],
   "ergaenzung": {
-    "erzeugt": "2026-10-09T12:31:35.974Z",
+    "erzeugt": "2026-10-09T12:41:51.137Z",
     "hinweis": "kachel-fotos.mjs schneidet höchstens 12 Ausschnitte und misst erst ab 375 px; diese Ergänzung nimmt 320 px als Ansicht (m320, derselbe Überlaufbericht) und Elementfotos je Abschnitt auf (Dateien el-*).",
     "elementfotos": [
       {
