@@ -1,23 +1,23 @@
 # SVG-Prüfung · P0-SLOP-01
 
-Erstellt 2026-10-09T07:27:45.264Z · Basis http://localhost:3500
-Messbedingungen: d1440 hell · Bewegung no-preference · networkidle + scrollThrough + 400 ms · svgo 4.0.0, multipass
+Erstellt 2026-10-09T07:55:30.428Z · Basis http://localhost:3500
+Messbedingungen: d1440 hell · Bewegung no-preference · networkidle + scrollThrough (mit scroll-behavior: auto) + 400 ms · svgo 4.0.0, multipass
 
 ## Zählung
 
 | Messgröße | Wert |
 | --- | --- |
-| Inline-SVG gesamt (sichtbar) | 42 (38) |
-| je Seite | start: 42 |
-| Quelle | lucide: 31 · eigen: 11 |
+| Inline-SVG gesamt (sichtbar) | 215 (177) |
+| je Seite | start: 42 · stellen: 11 · stelle-anlagenmechaniker: 31 · stelle-kundendienst: 31 · stelle-obermonteur: 32 · stelle-ausbildung: 27 · bewerbung: 12 · bewerbung-danke: 3 · bewerbung-mappe: 15 · datenschutz: 4 · impressum: 4 · fehler-404: 3 |
+| Quelle | lucide: 204 · eigen: 11 |
 | ohne viewBox | 0 |
-| Zugänglichkeit | dekorativ: 31 · bedeutungstragend: 11 |
+| Zugänglichkeit | dekorativ: 204 · bedeutungstragend: 11 |
 | Zugänglichkeit nicht in Ordnung (fehlt/fehlerhaft) | 0 |
-| viewBox-Maße der Icons | 24x24: 31 |
-| stroke-width-Attribute (alle SVG) | 1: 1 · 2: 1 · 4: 1 · 1.75: 28 · 1.5: 10 · 2.25: 3 |
-| stroke-width berechnet (Icons, Einheiten der viewBox) | 1.75: 28 · 2.25: 3 |
-| stroke-width effektiv in px (Icons) | 1.46: 12 · 1.75: 10 · 1.17: 6 · 2.25: 2 · 1.5: 1 |
-| verschiedene Strichstärken berechnet / effektiv (Icons) | 2 / 5 |
+| viewBox-Maße der Icons | 24x24: 204 |
+| stroke-width-Attribute (alle SVG) | 1: 1 · 2: 32 · 4: 1 · 1.75: 137 · 2.5: 27 · 1.5: 10 · 2.25: 9 |
+| stroke-width berechnet (Icons, Einheiten der viewBox) | 2: 31 · 1.75: 137 · 2.5: 27 · 2.25: 9 |
+| stroke-width effektiv in px (Icons) | 1.46: 58 · 1.67: 58 · 1.17: 41 · 1.75: 38 · 2.25: 8 · 1.5: 1 |
+| verschiedene Strichstärken berechnet / effektiv (Icons) | 4 / 6 |
 | SVG mit festen Farbwerten | 0 |
 | Icon-Budget (≤ 1,5 KB roh) überschritten | 0 |
 | Illustrations-Budget (≤ 40 KB gzip) überschritten | 0 |
@@ -31,6 +31,17 @@ Messbedingungen: d1440 hell · Bewegung no-preference · networkidle + scrollThr
 | Seite | Status | inline-SVG | lucide | eigen | ohne viewBox | a11y nicht ok | doppelte IDs |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | / | 200 | 42 | 31 | 11 | 0 | 0 | 0 |
+| /jobs | 200 | 11 | 11 | 0 | 0 | 0 | 0 |
+| /jobs/anlagenmechaniker-shk-wetzlar | 200 | 31 | 31 | 0 | 0 | 0 | 0 |
+| /jobs/kundendiensttechniker-waermepumpe-wetzlar | 200 | 31 | 31 | 0 | 0 | 0 | 0 |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | 200 | 32 | 32 | 0 | 0 | 0 | 0 |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | 200 | 27 | 27 | 0 | 0 | 0 | 0 |
+| /bewerbung | 200 | 12 | 12 | 0 | 0 | 0 | 0 |
+| /bewerbung/danke | 200 | 3 | 3 | 0 | 0 | 0 | 0 |
+| /bewerbung/mappe | 200 | 15 | 15 | 0 | 0 | 0 | 0 |
+| /datenschutz | 200 | 4 | 4 | 0 | 0 | 0 | 0 |
+| /impressum | 200 | 4 | 4 | 0 | 0 | 0 | 0 |
+| /gibt-es-nicht-404 | 404 | 3 | 3 | 0 | 0 | 0 | 0 |
 
 ## Zugänglichkeit: fehlt oder fehlerhaft (0)
 
@@ -72,16 +83,20 @@ Keine.
 | start | `li.flex.shrink-0:nth-of-type(12) > figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg.shrink-0` | 0 0 132 24 | 897 | 423 | bedeutungstragend |
 | start | `li.flex.shrink-0:nth-of-type(13) > figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg.shrink-0` | 0 0 132 24 | 897 | 423 | bedeutungstragend |
 
-## Icon-Inventar im DOM (19 verschiedene)
+## Icon-Inventar im DOM (23 verschiedene)
 
 | Quelle | Icon | Anzahl | Seiten | stroke-width | viewBox |
 | --- | --- | --- | --- | --- | --- |
-| lucide | `lucide-chevron-down` | 6 | 1 | 1.75 | 0 0 24 24 |
-| lucide | `lucide-arrow-right` | 4 | 1 | 1.75 | 0 0 24 24 |
-| lucide | `lucide-check` | 3 | 1 | 2.25 | 0 0 24 24 |
-| lucide | `lucide-phone` | 2 | 1 | 1.75 | 0 0 24 24 |
-| lucide | `lucide-message-circle` | 2 | 1 | 1.75 | 0 0 24 24 |
-| lucide | `lucide-menu` | 1 | 1 | 1.75 | 0 0 24 24 |
+| lucide | `lucide-check` | 67 | 7 | 2.25 / 2 / 2.5 | 0 0 24 24 |
+| lucide | `lucide-message-circle` | 26 | 11 | 1.75 | 0 0 24 24 |
+| lucide | `lucide-phone` | 21 | 11 | 1.75 | 0 0 24 24 |
+| lucide | `lucide-arrow-right` | 20 | 6 | 1.75 | 0 0 24 24 |
+| lucide | `lucide-chevron-down` | 19 | 6 | 1.75 | 0 0 24 24 |
+| lucide | `lucide-chevron-right` | 12 | 8 | 1.75 | 0 0 24 24 |
+| lucide | `lucide-mail` | 12 | 8 | 1.75 | 0 0 24 24 |
+| lucide | `lucide-menu` | 9 | 9 | 1.75 | 0 0 24 24 |
+| lucide | `lucide-plus` | 3 | 1 | 1.75 | 0 0 24 24 |
+| lucide | `lucide-shield-check` | 2 | 2 | 1.75 | 0 0 24 24 |
 | lucide | `lucide-arrow-down` | 1 | 1 | 1.75 | 0 0 24 24 |
 | lucide | `lucide-banknote` | 1 | 1 | 1.75 | 0 0 24 24 |
 | lucide | `lucide-file-check` | 1 | 1 | 1.75 | 0 0 24 24 |
@@ -91,10 +106,10 @@ Keine.
 | lucide | `lucide-tablet-smartphone` | 1 | 1 | 1.75 | 0 0 24 24 |
 | lucide | `lucide-graduation-cap` | 1 | 1 | 1.75 | 0 0 24 24 |
 | lucide | `lucide-users` | 1 | 1 | 1.75 | 0 0 24 24 |
-| lucide | `lucide-shield-check` | 1 | 1 | 1.75 | 0 0 24 24 |
 | lucide | `lucide-chevron-left` | 1 | 1 | 1.75 | 0 0 24 24 |
-| lucide | `lucide-chevron-right` | 1 | 1 | 1.75 | 0 0 24 24 |
-| lucide | `lucide-mail` | 1 | 1 | 1.75 | 0 0 24 24 |
+| lucide | `lucide-file-text` | 1 | 1 | 1.75 | 0 0 24 24 |
+| lucide | `lucide-camera` | 1 | 1 | 1.75 | 0 0 24 24 |
+| lucide | `lucide-printer` | 1 | 1 | 1.75 | 0 0 24 24 |
 
 ## SVG-Dateien (3)
 
