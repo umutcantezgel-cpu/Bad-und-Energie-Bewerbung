@@ -1,6 +1,6 @@
 # Slop-Prüfung, harte Befunde S-01 bis S-07 · P0-SLOP-01
 
-Erstellt 2026-10-09T07:50:43.670Z · Basis http://localhost:3500
+Erstellt 2026-10-09T08:07:31.854Z · Basis http://localhost:3500
 
 Messbedingungen Rendern: Ansichten m375, d1440 · hell · Bewegung no-preference · S-07: domcontentloaded + 300 ms; Rest: networkidle + fonts.ready + 600 ms, dann scrollThrough (mit html{scroll-behavior:auto!important}, damit das Seitenende erreicht wird; Abdeckung steht je Seite in s02.scrollAbdeckung) + 500 ms · Stichprobe S-05 60 Elemente · Tab-Stopps 15 · axe-Regeln color-contrast
 Messbedingungen Code: 245 Dateien (.ts, .tsx, .css) in app, components, lib; ausgeschlossen __tests__, *.test.ts(x), *.spec.ts(x), node_modules, .next.
@@ -15,7 +15,7 @@ Tokens aus app/styles/theme.css: 42 Farbwerte · Radien 0/6/10/14/20/28/9999 px 
 | S-03 Unzugänglich | – | Kontrast 0 Verletzungen (10 unklar) · Fokus 0 von 350 Tab-Stopps ohne 2-px-Outline |
 | S-04 Gemischte Bildsprache | Quellen lucide-react: 71 · 34 verschiedene Icons · 3 eigene SVG-Komponenten · Icon-Marken ohne strokeWidth 0 · Emojis im Code 0 | Emojis 0 (+ 24 typografisch) · höchstens 3 verschiedene Strichstärken je Seite (Icons) |
 | S-05 Ungeordnete Werte | -[ Wertklassen 14 (tokenrelevant 1) · duration-/delay-Zahl 2 · Hex 0 · Inline-style frei 17 · CSS frei 15 · JS-Dauern/Kurven 2 | schriftgroesse 82 · radius 0 · schatten 0 · farbe 0 · hintergrund 0 · dauer 0 (Elemente außerhalb Token, Summe der Seitenansichten) |
-| S-06 Halbe Zustände | – | 719 interaktive Elemente · ohne Hover-Stil 135 (am Element selbst 175) · ohne :focus-visible-Stil 0 · Felder ohne aria-invalid-Stil 0 |
+| S-06 Halbe Zustände | – | 719 interaktive Elemente (alle Seitenansichten) · Hover d1440: 76 von 375 ohne Hover-Regel (am Element selbst 96), davon per Zeigermessung ohne Darstellungswechsel 46 (nicht messbar 12) · Hover m375 nur nach CSS-Regel: 59 von 344 · ohne :focus-visible-Stil 0 · Felder ohne aria-invalid-Stil 0 von 16 |
 | S-07 Blockierender Auftakt | 36 Treffer (davon 0 Kandidaten) | h1 nach 300 ms nicht sichtbar 0 · Scrollen nicht möglich 0 · Vollbild-Überlagerung 0 · Zähleränderungen 0 |
 
 ## Teil A: Code
@@ -626,62 +626,86 @@ Stichprobe (60 Elemente je Seitenansicht, gleichmäßig durch die Dokumentreihen
 | /gibt-es-nicht-404 | m375 | 2/17 (2) | 0/1 (0) | 0/0 | 0/17 | 0/1 | 0/0 | 0/0 | 13/9/1 |
 | /gibt-es-nicht-404 | d1440 | 2/21 (2) | 0/0 (0) | 0/0 | 0/21 | 0/0 | 0/0 | 0/0 | 13/9/1 |
 
-### S-06 Elemente ohne Hover-Stil (d1440) (76)
+### S-06 Elemente ohne Hover-Regel im CSS (d1440, mit Zeigermessung) (76)
 
-| Seite | Typ | Element | Fundstelle |
-| --- | --- | --- | --- |
-| / | link | Zum Inhalt springen | `a.sr-only` |
-| / | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` |
-| / | sonstiges | Stimmen von Kunden und Team | `-16.border-t:nth-of-type(3) > div.mt-8:nth-of-type(2) > div > ul.-mx-gutter.mt-6` |
-| / | sonstiges | Wie läuft der diskrete Wechsel ab, wenn  | `l:nth-of-type(2) > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11` |
-| / | sonstiges | Brauche ich ein Anschreiben oder einen L | `l:nth-of-type(2) > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11` |
-| / | sonstiges | Welche Heizsysteme und Sanitäranlagen mo | `l:nth-of-type(2) > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11` |
-| / | sonstiges | Darf ich das Firmenfahrzeug mit nach Hau | `l:nth-of-type(2) > details.group.border-b:nth-of-type(4) > summary.flex.min-h-11` |
-| / | sonstiges | Gibt es Fernmontagen oder Wochenendarbei | `l:nth-of-type(2) > details.group.border-b:nth-of-type(5) > summary.flex.min-h-11` |
-| /jobs | link | Zum Inhalt springen | `a.sr-only` |
-| /jobs | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` |
-| /jobs | link | Stellen | `> nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11` |
-| /jobs | link | Anrufen06441 42956 | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex` |
-| /jobs | link | WhatsAppNachricht schreiben (öffnet in n | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex` |
-| /jobs | link | E-Mailinfo@bad-energie.de | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex` |
-| /jobs/anlagenmechaniker-shk-wetzlar | link | Zum Inhalt springen | `a.sr-only` |
-| /jobs/anlagenmechaniker-shk-wetzlar | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` |
-| /jobs/anlagenmechaniker-shk-wetzlar | link | Stellen | `> nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11` |
-| /jobs/anlagenmechaniker-shk-wetzlar | sonstiges | Wie läuft der diskrete Wechsel ab, wenn  | `er-t.border-line > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11` |
-| /jobs/anlagenmechaniker-shk-wetzlar | sonstiges | Darf ich das Firmenfahrzeug mit nach Hau | `er-t.border-line > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11` |
-| /jobs/anlagenmechaniker-shk-wetzlar | sonstiges | Gibt es Fernmontagen oder Wochenendarbei | `er-t.border-line > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11` |
-| /jobs/anlagenmechaniker-shk-wetzlar | link | Anrufen06441 42956 | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex` |
-| /jobs/anlagenmechaniker-shk-wetzlar | link | WhatsAppNachricht schreiben (öffnet in n | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex` |
-| /jobs/anlagenmechaniker-shk-wetzlar | link | E-Mailinfo@bad-energie.de | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex` |
-| /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | Zum Inhalt springen | `a.sr-only` |
-| /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` |
-| /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | Stellen | `> nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11` |
-| /jobs/kundendiensttechniker-waermepumpe-wetzlar | sonstiges | Wie läuft der diskrete Wechsel ab, wenn  | `er-t.border-line > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11` |
-| /jobs/kundendiensttechniker-waermepumpe-wetzlar | sonstiges | Darf ich das Firmenfahrzeug mit nach Hau | `er-t.border-line > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11` |
-| /jobs/kundendiensttechniker-waermepumpe-wetzlar | sonstiges | Gibt es Fernmontagen oder Wochenendarbei | `er-t.border-line > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11` |
-| /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | Anrufen06441 42956 | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex` |
-| /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | WhatsAppNachricht schreiben (öffnet in n | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex` |
-| /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | E-Mailinfo@bad-energie.de | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex` |
-| /jobs/obermonteur-projektleiter-shk-wetzlar | link | Zum Inhalt springen | `a.sr-only` |
-| /jobs/obermonteur-projektleiter-shk-wetzlar | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` |
-| /jobs/obermonteur-projektleiter-shk-wetzlar | link | Stellen | `> nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11` |
-| /jobs/obermonteur-projektleiter-shk-wetzlar | sonstiges | Wie läuft der diskrete Wechsel ab, wenn  | `er-t.border-line > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11` |
-| /jobs/obermonteur-projektleiter-shk-wetzlar | sonstiges | Darf ich das Firmenfahrzeug mit nach Hau | `er-t.border-line > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11` |
-| /jobs/obermonteur-projektleiter-shk-wetzlar | sonstiges | Gibt es Fernmontagen oder Wochenendarbei | `er-t.border-line > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11` |
-| /jobs/obermonteur-projektleiter-shk-wetzlar | link | Anrufen06441 42956 | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex` |
-| /jobs/obermonteur-projektleiter-shk-wetzlar | link | WhatsAppNachricht schreiben (öffnet in n | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex` |
-| /jobs/obermonteur-projektleiter-shk-wetzlar | link | E-Mailinfo@bad-energie.de | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex` |
-| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | link | Zum Inhalt springen | `a.sr-only` |
-| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` |
-| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | link | Stellen | `> nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11` |
-| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | sonstiges | Brauche ich ein Anschreiben oder einen L | `er-t.border-line > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11` |
-| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | sonstiges | Welche Heizsysteme und Sanitäranlagen mo | `er-t.border-line > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11` |
-| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | sonstiges | Gibt es Fernmontagen oder Wochenendarbei | `er-t.border-line > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11` |
-| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | link | Anrufen06441 42956 | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex` |
-| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | link | WhatsAppNachricht schreiben (öffnet in n | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex` |
-| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | link | E-Mailinfo@bad-energie.de | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex` |
-
-… 26 weitere in slop-hart.json
+| Seite | Typ | Element | Fundstelle | Zeigermessung |
+| --- | --- | --- | --- | --- |
+| / | link | Zum Inhalt springen | `a.sr-only` | nicht hoverbar (1 px oder verdeckt) |
+| / | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` | keine Änderung |
+| / | sonstiges | Stimmen von Kunden und Team | `-16.border-t:nth-of-type(3) > div.mt-8:nth-of-type(2) > div > ul.-mx-gutter.mt-6` | keine Änderung |
+| / | sonstiges | Wie läuft der diskrete Wechsel ab, wenn  | `l:nth-of-type(2) > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11` | keine Änderung |
+| / | sonstiges | Brauche ich ein Anschreiben oder einen L | `l:nth-of-type(2) > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11` | keine Änderung |
+| / | sonstiges | Welche Heizsysteme und Sanitäranlagen mo | `l:nth-of-type(2) > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11` | keine Änderung |
+| / | sonstiges | Darf ich das Firmenfahrzeug mit nach Hau | `l:nth-of-type(2) > details.group.border-b:nth-of-type(4) > summary.flex.min-h-11` | keine Änderung |
+| / | sonstiges | Gibt es Fernmontagen oder Wochenendarbei | `l:nth-of-type(2) > details.group.border-b:nth-of-type(5) > summary.flex.min-h-11` | keine Änderung |
+| /jobs | link | Zum Inhalt springen | `a.sr-only` | nicht hoverbar (1 px oder verdeckt) |
+| /jobs | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` | keine Änderung |
+| /jobs | link | Stellen | `> nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11` | keine Änderung |
+| /jobs | link | Anrufen06441 42956 | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex` | Darstellung ändert sich (n5.textDecorationLine) |
+| /jobs | link | WhatsAppNachricht schreiben (öffnet in n | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex` | Darstellung ändert sich (n5.textDecorationLine) |
+| /jobs | link | E-Mailinfo@bad-energie.de | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex` | Darstellung ändert sich (n6.textDecorationLine) |
+| /jobs/anlagenmechaniker-shk-wetzlar | link | Zum Inhalt springen | `a.sr-only` | nicht hoverbar (1 px oder verdeckt) |
+| /jobs/anlagenmechaniker-shk-wetzlar | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` | keine Änderung |
+| /jobs/anlagenmechaniker-shk-wetzlar | link | Stellen | `> nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11` | keine Änderung |
+| /jobs/anlagenmechaniker-shk-wetzlar | sonstiges | Wie läuft der diskrete Wechsel ab, wenn  | `er-t.border-line > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11` | keine Änderung |
+| /jobs/anlagenmechaniker-shk-wetzlar | sonstiges | Darf ich das Firmenfahrzeug mit nach Hau | `er-t.border-line > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11` | keine Änderung |
+| /jobs/anlagenmechaniker-shk-wetzlar | sonstiges | Gibt es Fernmontagen oder Wochenendarbei | `er-t.border-line > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11` | keine Änderung |
+| /jobs/anlagenmechaniker-shk-wetzlar | link | Anrufen06441 42956 | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex` | Darstellung ändert sich (n5.textDecorationLine) |
+| /jobs/anlagenmechaniker-shk-wetzlar | link | WhatsAppNachricht schreiben (öffnet in n | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex` | Darstellung ändert sich (n5.textDecorationLine) |
+| /jobs/anlagenmechaniker-shk-wetzlar | link | E-Mailinfo@bad-energie.de | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex` | Darstellung ändert sich (n6.textDecorationLine) |
+| /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | Zum Inhalt springen | `a.sr-only` | nicht hoverbar (1 px oder verdeckt) |
+| /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` | keine Änderung |
+| /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | Stellen | `> nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11` | keine Änderung |
+| /jobs/kundendiensttechniker-waermepumpe-wetzlar | sonstiges | Wie läuft der diskrete Wechsel ab, wenn  | `er-t.border-line > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11` | keine Änderung |
+| /jobs/kundendiensttechniker-waermepumpe-wetzlar | sonstiges | Darf ich das Firmenfahrzeug mit nach Hau | `er-t.border-line > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11` | keine Änderung |
+| /jobs/kundendiensttechniker-waermepumpe-wetzlar | sonstiges | Gibt es Fernmontagen oder Wochenendarbei | `er-t.border-line > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11` | keine Änderung |
+| /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | Anrufen06441 42956 | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex` | Darstellung ändert sich (n5.textDecorationLine) |
+| /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | WhatsAppNachricht schreiben (öffnet in n | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex` | Darstellung ändert sich (n5.textDecorationLine) |
+| /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | E-Mailinfo@bad-energie.de | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex` | Darstellung ändert sich (n6.textDecorationLine) |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | link | Zum Inhalt springen | `a.sr-only` | nicht hoverbar (1 px oder verdeckt) |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` | keine Änderung |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | link | Stellen | `> nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11` | keine Änderung |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | sonstiges | Wie läuft der diskrete Wechsel ab, wenn  | `er-t.border-line > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11` | keine Änderung |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | sonstiges | Darf ich das Firmenfahrzeug mit nach Hau | `er-t.border-line > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11` | keine Änderung |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | sonstiges | Gibt es Fernmontagen oder Wochenendarbei | `er-t.border-line > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11` | keine Änderung |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | link | Anrufen06441 42956 | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex` | Darstellung ändert sich (n5.textDecorationLine) |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | link | WhatsAppNachricht schreiben (öffnet in n | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex` | Darstellung ändert sich (n5.textDecorationLine) |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | link | E-Mailinfo@bad-energie.de | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex` | Darstellung ändert sich (n6.textDecorationLine) |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | link | Zum Inhalt springen | `a.sr-only` | nicht hoverbar (1 px oder verdeckt) |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` | keine Änderung |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | link | Stellen | `> nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11` | keine Änderung |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | sonstiges | Brauche ich ein Anschreiben oder einen L | `er-t.border-line > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11` | keine Änderung |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | sonstiges | Welche Heizsysteme und Sanitäranlagen mo | `er-t.border-line > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11` | keine Änderung |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | sonstiges | Gibt es Fernmontagen oder Wochenendarbei | `er-t.border-line > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11` | keine Änderung |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | link | Anrufen06441 42956 | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex` | Darstellung ändert sich (n5.textDecorationLine) |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | link | WhatsAppNachricht schreiben (öffnet in n | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex` | Darstellung ändert sich (n5.textDecorationLine) |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | link | E-Mailinfo@bad-energie.de | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex` | Darstellung ändert sich (n6.textDecorationLine) |
+| /bewerbung | link | Zum Inhalt springen | `a.sr-only` | nicht hoverbar (1 px oder verdeckt) |
+| /bewerbung | link | Bad und Energie GmbH Lahn Dill, zur Star | `ader.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex:nth-of-type(1)` | keine Änderung |
+| /bewerbung/danke | link | Zum Inhalt springen | `a.sr-only` | nicht hoverbar (1 px oder verdeckt) |
+| /bewerbung/danke | link | Bad und Energie GmbH Lahn Dill, zur Star | `ader.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex:nth-of-type(1)` | keine Änderung |
+| /bewerbung/danke | link | Anrufen06441 42956 | `ex.flex-col:nth-of-type(3) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex` | Darstellung ändert sich (n5.textDecorationLine) |
+| /bewerbung/danke | link | WhatsAppNachricht schreiben (öffnet in n | `ex.flex-col:nth-of-type(3) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex` | Darstellung ändert sich (n5.textDecorationLine) |
+| /bewerbung/danke | link | E-Mailinfo@bad-energie.de | `ex.flex-col:nth-of-type(3) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex` | Darstellung ändert sich (n6.textDecorationLine) |
+| /bewerbung/mappe | link | Zum Inhalt springen | `a.sr-only` | nicht hoverbar (1 px oder verdeckt) |
+| /bewerbung/mappe | link | Bad und Energie GmbH Lahn Dill, zur Star | `ader.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex:nth-of-type(1)` | keine Änderung |
+| /bewerbung/mappe | sonstiges | AnschreibenDein NameWohnort · Telefon ·  | `-0:nth-of-type(2) > div.flex.min-h-0:nth-of-type(2) > section.min-h-0.rounded-lg` | keine Änderung |
+| /datenschutz | link | Zum Inhalt springen | `a.sr-only` | nicht hoverbar (1 px oder verdeckt) |
+| /datenschutz | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` | keine Änderung |
+| /datenschutz | link | datenschutz@bad-energie.de | `section#verantwortlicher > p:nth-of-type(2) > a` | keine Änderung |
+| /datenschutz | link | Herkunftsmessung | `section#bewerberdaten > ul:nth-of-type(1) > li:nth-of-type(7) > a` | keine Änderung |
+| /datenschutz | link | Schutz vor Missbrauch | `section#bewerberdaten > ul:nth-of-type(1) > li:nth-of-type(8) > a` | keine Änderung |
+| /datenschutz | link | Hosting, Server-Logdateien und Sicherhei | `section#bewerberdaten > p:nth-of-type(7) > a` | keine Änderung |
+| /datenschutz | link | Datenschutzerklärung von Google | `section#google-maps > p:nth-of-type(2) > a` | keine Änderung |
+| /datenschutz | link | Entwurf und Bewerbungsmappe im Browser | `section#cookies-analyse > p:nth-of-type(1) > a:nth-of-type(1)` | keine Änderung |
+| /datenschutz | link | Google Maps | `section#cookies-analyse > p:nth-of-type(1) > a:nth-of-type(2)` | keine Änderung |
+| /datenschutz | link | E-Mail an datenschutz@bad-energie.de | `section#betroffenenrechte > p:nth-of-type(2) > a` | keine Änderung |
+| /datenschutz | link | datenschutz@bad-energie.de | `section#betroffenenrechte > p:nth-of-type(3) > a:nth-of-type(1)` | keine Änderung |
+| /datenschutz | link | 06441 42956 | `section#betroffenenrechte > p:nth-of-type(3) > a:nth-of-type(2)` | keine Änderung |
+| /impressum | link | Zum Inhalt springen | `a.sr-only` | nicht hoverbar (1 px oder verdeckt) |
+| /impressum | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` | keine Änderung |
+| /gibt-es-nicht-404 | link | Zum Inhalt springen | `a.sr-only` | nicht hoverbar (1 px oder verdeckt) |
+| /gibt-es-nicht-404 | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` | keine Änderung |
 
 ### S-06 Elemente ohne :focus-visible-Stil (d1440) (0)
 
@@ -727,4 +751,5 @@ Keine.
 - S-03: axe-core-Regel color-contrast allein; Fokus: echte Tab-Taste, `:focus-visible` muss zutreffen und am Element selbst, an `::after`/`::before` oder an einem bis zu drei Ebenen höheren Vorfahren mit `:has(:focus-visible)` muss `outline-style` ≠ none mit `outline-width` ≥ 2 px gelten (ein Ring über box-shadow zählt nicht als Outline, wird aber als „nur box-shadow“ ausgewiesen; der Ort des Rings steht in `ringOrt`). „Information nur über Hover oder Farbe“ ist per Skript nicht entscheidbar; Hinweise stehen unter Code.
 - S-05 Stichprobe: gleichmäßig durch die Dokumentreihenfolge aller sichtbaren Elemente; Vergleich mit den aus theme.css gelesenen Werten (Farben alle Hex-Werte der Datei, Radien, Schatten über Prüfelement normalisiert, Dauern, Schriftstufen als clamp() für die jeweilige Ansichtsbreite aufgelöst). Der Volltext derselben Seite ist die vollständige Zählung. Farben mit Deckkraft < 1 gelten als Token, wenn der RGB-Anteil einem Token entspricht (±3).
 - S-06: Hover-/Fokus-Regeln werden aus allen lesbaren Stylesheets samt verschachtelten Regeln und @media/@supports/@layer gesammelt; ein Element hat den Stil, wenn es den Selektor ohne die Pseudoklasse trifft (Vorfahren-Hover im Selektor eingeschlossen). Für Hover zählt zusätzlich ein Hover-Stil an einem der vier nächsten Vorfahren (Karte mit gestrecktem Link: der Zeiger über dem Link liegt immer auch über der Karte); `hoverSelbst` in der JSON-Datei und die Spalte „am Element selbst“ weisen die strenge Zählung aus. Medienbedingungen wie (hover: hover) werden nicht ausgewertet.
+- S-06 Zeigermessung (nur d1440): Für jedes Element ohne Hover-Regel setzt das Skript den Mauszeiger darauf und vergleicht 300 ms später Farben, Rahmen, Textdekoration, Deckkraft, Schatten, Transform, Filter, Füllung und Strich von Element, vier Vorfahren und bis zu 60 Nachfahren. Mobil (hover: none) greifen hover:-Stile nicht, dort zählt nur die CSS-Regel.
 - S-07: `domcontentloaded` + 300 ms; h1 gilt als sichtbar bei Gesamt-Deckkraft ≥ 0,999, visibility visible und Lage im ersten Bildschirm; Scrollen wird mit scrollTo geprüft, wenn die Seite höher als der Bildschirm ist; Zähler = Blattelemente, deren Text nur aus Ziffern und Zeichen besteht und sich zwischen 300 ms und 2,5 s ändert.

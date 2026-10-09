@@ -1,7 +1,7 @@
 {
   "label": "P0-SLOP-01",
   "base": "http://localhost:3500",
-  "erstellt": "2026-10-09T07:50:43.670Z",
+  "erstellt": "2026-10-09T08:07:31.854Z",
   "bedingungen": {
     "code": {
       "dateien": 245,
@@ -168,10 +168,21 @@
     },
     "S-06": {
       "elemente": 719,
-      "ohneHover": 135,
-      "ohneHoverAmElementSelbst": 175,
+      "hoverD1440": {
+        "elemente": 375,
+        "ohneHoverRegel": 76,
+        "ohneHoverRegelAmElementSelbst": 96,
+        "ohneHoverNachZeigermessung": 46,
+        "nichtMessbar": 12
+      },
+      "hoverM375": {
+        "elemente": 344,
+        "ohneHoverRegel": 59,
+        "ohneHoverRegelAmElementSelbst": 79
+      },
       "ohneFokusVisibleStil": 0,
-      "felderOhneFehlerstil": 0
+      "felderOhneFehlerstil": 0,
+      "felderGeprueft": 16
     },
     "S-07": {
       "code": {
@@ -3960,7 +3971,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
@@ -3972,7 +3984,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1
           },
           {
             "fundstelle": "div.mx-auto.box-content > div.mt-16.border-t:nth-of-type(3) > div.mt-8:nth-of-type(2) > div > ul.-mx-gutter.mt-6",
@@ -3984,7 +3997,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 19
           },
           {
             "fundstelle": "section#faq > div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11",
@@ -3996,7 +4010,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 20
           },
           {
             "fundstelle": "section#faq > div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11",
@@ -4008,7 +4023,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 21
           },
           {
             "fundstelle": "section#faq > div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11",
@@ -4020,7 +4036,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 22
           },
           {
             "fundstelle": "section#faq > div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(4) > summary.flex.min-h-11",
@@ -4032,7 +4049,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 23
           },
           {
             "fundstelle": "section#faq > div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(5) > summary.flex.min-h-11",
@@ -4044,7 +4062,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 24
           }
         ],
         "ohneFokusVisible": [],
@@ -4333,7 +4352,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 12142
+      "ms": 12705
     },
     {
       "pfad": "/",
@@ -5090,7 +5109,10 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0,
+            "hoverGemessen": null,
+            "hoverGrund": "nicht hoverbar (1 px oder verdeckt)"
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
@@ -5102,7 +5124,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.mx-auto.box-content > div.mt-16.border-t:nth-of-type(3) > div.mt-8:nth-of-type(2) > div > ul.-mx-gutter.mt-6",
@@ -5114,7 +5140,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 24,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "section#faq > div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11",
@@ -5126,7 +5156,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 25,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "section#faq > div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11",
@@ -5138,7 +5172,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 26,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "section#faq > div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11",
@@ -5150,7 +5188,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 27,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "section#faq > div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(4) > summary.flex.min-h-11",
@@ -5162,7 +5204,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 28,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "section#faq > div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(5) > summary.flex.min-h-11",
@@ -5174,11 +5220,21 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 29,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           }
         ],
         "ohneFokusVisible": [],
-        "felderOhneFehlerstil": []
+        "felderOhneFehlerstil": [],
+        "hoverMessung": {
+          "kandidaten": 8,
+          "geprueft": 7,
+          "mitDarstellungswechsel": 0,
+          "ohneWechsel": 7
+        }
       },
       "s03kontrast": {
         "verletzungen": 0,
@@ -5463,7 +5519,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 11567
+      "ms": 15173
     },
     {
       "pfad": "/jobs",
@@ -6028,7 +6084,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
@@ -6040,7 +6097,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1
           },
           {
             "fundstelle": "div.mx-auto.box-content > div.flex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex",
@@ -6052,7 +6110,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 10
           },
           {
             "fundstelle": "div.mx-auto.box-content > div.flex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex",
@@ -6064,7 +6123,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 11
           },
           {
             "fundstelle": "div.mx-auto.box-content > div.flex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex",
@@ -6076,7 +6136,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 12
           }
         ],
         "ohneFokusVisible": [],
@@ -6344,7 +6405,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10164
+      "ms": 10712
     },
     {
       "pfad": "/jobs",
@@ -6839,7 +6900,10 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0,
+            "hoverGemessen": null,
+            "hoverGrund": "nicht hoverbar (1 px oder verdeckt)"
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
@@ -6851,7 +6915,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.mx-auto.box-content > nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11",
@@ -6863,7 +6931,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 2,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.mx-auto.box-content > div.flex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex",
@@ -6875,7 +6947,13 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 15,
+            "hoverGemessen": true,
+            "hoverUnterschiede": [
+              "n5.textDecorationLine"
+            ],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.mx-auto.box-content > div.flex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex",
@@ -6887,7 +6965,13 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 16,
+            "hoverGemessen": true,
+            "hoverUnterschiede": [
+              "n5.textDecorationLine"
+            ],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.mx-auto.box-content > div.flex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex",
@@ -6899,11 +6983,23 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 17,
+            "hoverGemessen": true,
+            "hoverUnterschiede": [
+              "n6.textDecorationLine"
+            ],
+            "zeigerAufElement": true
           }
         ],
         "ohneFokusVisible": [],
-        "felderOhneFehlerstil": []
+        "felderOhneFehlerstil": [],
+        "hoverMessung": {
+          "kandidaten": 6,
+          "geprueft": 5,
+          "mitDarstellungswechsel": 3,
+          "ohneWechsel": 2
+        }
       },
       "s03kontrast": {
         "verletzungen": 0,
@@ -7167,7 +7263,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 9784
+      "ms": 12366
     },
     {
       "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
@@ -7881,7 +7977,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
@@ -7893,7 +7990,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11",
@@ -7905,7 +8003,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 15
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11",
@@ -7917,7 +8016,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 16
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11",
@@ -7929,7 +8029,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 17
           }
         ],
         "ohneFokusVisible": [],
@@ -8196,7 +8297,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 11178
+      "ms": 11695
     },
     {
       "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
@@ -8884,7 +8985,10 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0,
+            "hoverGemessen": null,
+            "hoverGrund": "nicht hoverbar (1 px oder verdeckt)"
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
@@ -8896,7 +9000,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.mx-auto.box-content > nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11",
@@ -8908,7 +9016,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 2,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11",
@@ -8920,7 +9032,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 17,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11",
@@ -8932,7 +9048,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 18,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11",
@@ -8944,7 +9064,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 19,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.sticky.top-24 > div.flex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex",
@@ -8956,7 +9080,13 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 21,
+            "hoverGemessen": true,
+            "hoverUnterschiede": [
+              "n5.textDecorationLine"
+            ],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.sticky.top-24 > div.flex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex",
@@ -8968,7 +9098,13 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 22,
+            "hoverGemessen": true,
+            "hoverUnterschiede": [
+              "n5.textDecorationLine"
+            ],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.sticky.top-24 > div.flex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex",
@@ -8980,11 +9116,23 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 23,
+            "hoverGemessen": true,
+            "hoverUnterschiede": [
+              "n6.textDecorationLine"
+            ],
+            "zeigerAufElement": true
           }
         ],
         "ohneFokusVisible": [],
-        "felderOhneFehlerstil": []
+        "felderOhneFehlerstil": [],
+        "hoverMessung": {
+          "kandidaten": 9,
+          "geprueft": 8,
+          "mitDarstellungswechsel": 3,
+          "ohneWechsel": 5
+        }
       },
       "s03kontrast": {
         "verletzungen": 0,
@@ -9247,7 +9395,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10612
+      "ms": 14505
     },
     {
       "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
@@ -9949,7 +10097,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
@@ -9961,7 +10110,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11",
@@ -9973,7 +10123,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 15
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11",
@@ -9985,7 +10136,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 16
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11",
@@ -9997,7 +10149,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 17
           }
         ],
         "ohneFokusVisible": [],
@@ -10264,7 +10417,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 11204
+      "ms": 11631
     },
     {
       "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
@@ -10940,7 +11093,10 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0,
+            "hoverGemessen": null,
+            "hoverGrund": "nicht hoverbar (1 px oder verdeckt)"
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
@@ -10952,7 +11108,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.mx-auto.box-content > nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11",
@@ -10964,7 +11124,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 2,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11",
@@ -10976,7 +11140,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 17,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11",
@@ -10988,7 +11156,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 18,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11",
@@ -11000,7 +11172,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 19,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.sticky.top-24 > div.flex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex",
@@ -11012,7 +11188,13 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 21,
+            "hoverGemessen": true,
+            "hoverUnterschiede": [
+              "n5.textDecorationLine"
+            ],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.sticky.top-24 > div.flex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex",
@@ -11024,7 +11206,13 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 22,
+            "hoverGemessen": true,
+            "hoverUnterschiede": [
+              "n5.textDecorationLine"
+            ],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.sticky.top-24 > div.flex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex",
@@ -11036,11 +11224,23 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 23,
+            "hoverGemessen": true,
+            "hoverUnterschiede": [
+              "n6.textDecorationLine"
+            ],
+            "zeigerAufElement": true
           }
         ],
         "ohneFokusVisible": [],
-        "felderOhneFehlerstil": []
+        "felderOhneFehlerstil": [],
+        "hoverMessung": {
+          "kandidaten": 9,
+          "geprueft": 8,
+          "mitDarstellungswechsel": 3,
+          "ohneWechsel": 5
+        }
       },
       "s03kontrast": {
         "verletzungen": 0,
@@ -11303,7 +11503,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10699
+      "ms": 14336
     },
     {
       "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
@@ -12012,7 +12212,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
@@ -12024,7 +12225,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11",
@@ -12036,7 +12238,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 15
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11",
@@ -12048,7 +12251,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 16
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11",
@@ -12060,7 +12264,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 17
           }
         ],
         "ohneFokusVisible": [],
@@ -12327,7 +12532,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 11476
+      "ms": 11395
     },
     {
       "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
@@ -13010,7 +13215,10 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0,
+            "hoverGemessen": null,
+            "hoverGrund": "nicht hoverbar (1 px oder verdeckt)"
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
@@ -13022,7 +13230,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.mx-auto.box-content > nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11",
@@ -13034,7 +13246,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 2,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11",
@@ -13046,7 +13262,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 17,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11",
@@ -13058,7 +13278,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 18,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11",
@@ -13070,7 +13294,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 19,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.sticky.top-24 > div.flex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex",
@@ -13082,7 +13310,13 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 21,
+            "hoverGemessen": true,
+            "hoverUnterschiede": [
+              "n5.textDecorationLine"
+            ],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.sticky.top-24 > div.flex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex",
@@ -13094,7 +13328,13 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 22,
+            "hoverGemessen": true,
+            "hoverUnterschiede": [
+              "n5.textDecorationLine"
+            ],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.sticky.top-24 > div.flex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex",
@@ -13106,11 +13346,23 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 23,
+            "hoverGemessen": true,
+            "hoverUnterschiede": [
+              "n6.textDecorationLine"
+            ],
+            "zeigerAufElement": true
           }
         ],
         "ohneFokusVisible": [],
-        "felderOhneFehlerstil": []
+        "felderOhneFehlerstil": [],
+        "hoverMessung": {
+          "kandidaten": 9,
+          "geprueft": 8,
+          "mitDarstellungswechsel": 3,
+          "ohneWechsel": 5
+        }
       },
       "s03kontrast": {
         "verletzungen": 0,
@@ -13373,7 +13625,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10835
+      "ms": 14455
     },
     {
       "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
@@ -14065,7 +14317,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
@@ -14077,7 +14330,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11",
@@ -14089,7 +14343,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 13
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11",
@@ -14101,7 +14356,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 14
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11",
@@ -14113,7 +14369,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 15
           }
         ],
         "ohneFokusVisible": [],
@@ -14380,7 +14637,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10942
+      "ms": 11080
     },
     {
       "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
@@ -15046,7 +15303,10 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0,
+            "hoverGemessen": null,
+            "hoverGrund": "nicht hoverbar (1 px oder verdeckt)"
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
@@ -15058,7 +15318,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.mx-auto.box-content > nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11",
@@ -15070,7 +15334,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 2,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11",
@@ -15082,7 +15350,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 15,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11",
@@ -15094,7 +15366,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 16,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.flex.min-w-0 > section.flex.flex-col:nth-of-type(5) > div.border-t.border-line > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11",
@@ -15106,7 +15382,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 17,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.sticky.top-24 > div.flex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex",
@@ -15118,7 +15398,13 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 19,
+            "hoverGemessen": true,
+            "hoverUnterschiede": [
+              "n5.textDecorationLine"
+            ],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.sticky.top-24 > div.flex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex",
@@ -15130,7 +15416,13 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 20,
+            "hoverGemessen": true,
+            "hoverUnterschiede": [
+              "n5.textDecorationLine"
+            ],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.sticky.top-24 > div.flex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex",
@@ -15142,11 +15434,23 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 21,
+            "hoverGemessen": true,
+            "hoverUnterschiede": [
+              "n6.textDecorationLine"
+            ],
+            "zeigerAufElement": true
           }
         ],
         "ohneFokusVisible": [],
-        "felderOhneFehlerstil": []
+        "felderOhneFehlerstil": [],
+        "hoverMessung": {
+          "kandidaten": 9,
+          "geprueft": 8,
+          "mitDarstellungswechsel": 3,
+          "ohneWechsel": 5
+        }
       },
       "s03kontrast": {
         "verletzungen": 0,
@@ -15409,7 +15713,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10358
+      "ms": 14389
     },
     {
       "pfad": "/bewerbung",
@@ -15833,7 +16137,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex:nth-of-type(1)",
@@ -15845,7 +16150,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1
           }
         ],
         "ohneFokusVisible": [],
@@ -16112,7 +16418,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 9472
+      "ms": 9697
     },
     {
       "pfad": "/bewerbung",
@@ -16536,7 +16842,10 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0,
+            "hoverGemessen": null,
+            "hoverGrund": "nicht hoverbar (1 px oder verdeckt)"
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex:nth-of-type(1)",
@@ -16548,11 +16857,21 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           }
         ],
         "ohneFokusVisible": [],
-        "felderOhneFehlerstil": []
+        "felderOhneFehlerstil": [],
+        "hoverMessung": {
+          "kandidaten": 2,
+          "geprueft": 1,
+          "mitDarstellungswechsel": 0,
+          "ohneWechsel": 1
+        }
       },
       "s03kontrast": {
         "verletzungen": 0,
@@ -16815,7 +17134,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 9507
+      "ms": 10404
     },
     {
       "pfad": "/bewerbung/danke",
@@ -17226,7 +17545,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex:nth-of-type(1)",
@@ -17238,7 +17558,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1
           },
           {
             "fundstelle": "div.flex.flex-col > div.flex.flex-col:nth-of-type(3) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex",
@@ -17250,7 +17571,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 5
           },
           {
             "fundstelle": "div.flex.flex-col > div.flex.flex-col:nth-of-type(3) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex",
@@ -17262,7 +17584,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 6
           },
           {
             "fundstelle": "div.flex.flex-col > div.flex.flex-col:nth-of-type(3) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex",
@@ -17274,7 +17597,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 7
           }
         ],
         "ohneFokusVisible": [],
@@ -17461,7 +17785,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 8579
+      "ms": 8878
     },
     {
       "pfad": "/bewerbung/danke",
@@ -17783,7 +18107,10 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0,
+            "hoverGemessen": null,
+            "hoverGrund": "nicht hoverbar (1 px oder verdeckt)"
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex:nth-of-type(1)",
@@ -17795,7 +18122,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.flex.flex-col > div.flex.flex-col:nth-of-type(3) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex",
@@ -17807,7 +18138,13 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 5,
+            "hoverGemessen": true,
+            "hoverUnterschiede": [
+              "n5.textDecorationLine"
+            ],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.flex.flex-col > div.flex.flex-col:nth-of-type(3) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex",
@@ -17819,7 +18156,13 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 6,
+            "hoverGemessen": true,
+            "hoverUnterschiede": [
+              "n5.textDecorationLine"
+            ],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.flex.flex-col > div.flex.flex-col:nth-of-type(3) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex",
@@ -17831,11 +18174,23 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 7,
+            "hoverGemessen": true,
+            "hoverUnterschiede": [
+              "n6.textDecorationLine"
+            ],
+            "zeigerAufElement": true
           }
         ],
         "ohneFokusVisible": [],
-        "felderOhneFehlerstil": []
+        "felderOhneFehlerstil": [],
+        "hoverMessung": {
+          "kandidaten": 5,
+          "geprueft": 4,
+          "mitDarstellungswechsel": 3,
+          "ohneWechsel": 1
+        }
       },
       "s03kontrast": {
         "verletzungen": 0,
@@ -18018,7 +18373,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 8539
+      "ms": 10715
     },
     {
       "pfad": "/bewerbung/mappe",
@@ -18690,7 +19045,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex:nth-of-type(1)",
@@ -18702,7 +19058,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1
           },
           {
             "fundstelle": "div.mx-auto.box-content > div.grid.gap-12 > div.flex.min-w-0:nth-of-type(2) > div.flex.min-h-0:nth-of-type(2) > section.min-h-0.rounded-lg",
@@ -18714,7 +19071,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 25
           }
         ],
         "ohneFokusVisible": [],
@@ -18981,7 +19339,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10356
+      "ms": 10605
     },
     {
       "pfad": "/bewerbung/mappe",
@@ -19617,7 +19975,10 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0,
+            "hoverGemessen": null,
+            "hoverGrund": "nicht hoverbar (1 px oder verdeckt)"
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex:nth-of-type(1)",
@@ -19629,7 +19990,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "div.mx-auto.box-content > div.grid.gap-12 > div.flex.min-w-0:nth-of-type(2) > div.flex.min-h-0:nth-of-type(2) > section.min-h-0.rounded-lg",
@@ -19641,11 +20006,21 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 25,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           }
         ],
         "ohneFokusVisible": [],
-        "felderOhneFehlerstil": []
+        "felderOhneFehlerstil": [],
+        "hoverMessung": {
+          "kandidaten": 3,
+          "geprueft": 2,
+          "mitDarstellungswechsel": 0,
+          "ohneWechsel": 2
+        }
       },
       "s03kontrast": {
         "verletzungen": 0,
@@ -19908,7 +20283,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 9976
+      "ms": 11404
     },
     {
       "pfad": "/datenschutz",
@@ -20475,7 +20850,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
@@ -20487,7 +20863,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1
           },
           {
             "fundstelle": "section#verantwortlicher > p:nth-of-type(2) > a",
@@ -20499,7 +20876,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 18
           },
           {
             "fundstelle": "section#bewerberdaten > ul:nth-of-type(1) > li:nth-of-type(7) > a",
@@ -20511,7 +20889,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 19
           },
           {
             "fundstelle": "section#bewerberdaten > ul:nth-of-type(1) > li:nth-of-type(8) > a",
@@ -20523,7 +20902,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 20
           },
           {
             "fundstelle": "section#bewerberdaten > p:nth-of-type(7) > a",
@@ -20535,7 +20915,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 21
           },
           {
             "fundstelle": "section#google-maps > p:nth-of-type(2) > a",
@@ -20547,7 +20928,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 22
           },
           {
             "fundstelle": "section#cookies-analyse > p:nth-of-type(1) > a:nth-of-type(1)",
@@ -20559,7 +20941,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 23
           },
           {
             "fundstelle": "section#cookies-analyse > p:nth-of-type(1) > a:nth-of-type(2)",
@@ -20571,7 +20954,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 24
           },
           {
             "fundstelle": "section#betroffenenrechte > p:nth-of-type(2) > a",
@@ -20583,7 +20967,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 25
           },
           {
             "fundstelle": "section#betroffenenrechte > p:nth-of-type(3) > a:nth-of-type(1)",
@@ -20595,7 +20980,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 26
           },
           {
             "fundstelle": "section#betroffenenrechte > p:nth-of-type(3) > a:nth-of-type(2)",
@@ -20607,7 +20993,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 27
           }
         ],
         "ohneFokusVisible": [],
@@ -20874,7 +21261,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 13368
+      "ms": 13522
     },
     {
       "pfad": "/datenschutz",
@@ -21415,7 +21802,10 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0,
+            "hoverGemessen": null,
+            "hoverGrund": "nicht hoverbar (1 px oder verdeckt)"
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
@@ -21427,7 +21817,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "section#verantwortlicher > p:nth-of-type(2) > a",
@@ -21439,7 +21833,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 23,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "section#bewerberdaten > ul:nth-of-type(1) > li:nth-of-type(7) > a",
@@ -21451,7 +21849,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 24,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "section#bewerberdaten > ul:nth-of-type(1) > li:nth-of-type(8) > a",
@@ -21463,7 +21865,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 25,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "section#bewerberdaten > p:nth-of-type(7) > a",
@@ -21475,7 +21881,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 26,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "section#google-maps > p:nth-of-type(2) > a",
@@ -21487,7 +21897,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 27,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "section#cookies-analyse > p:nth-of-type(1) > a:nth-of-type(1)",
@@ -21499,7 +21913,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 28,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "section#cookies-analyse > p:nth-of-type(1) > a:nth-of-type(2)",
@@ -21511,7 +21929,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 29,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "section#betroffenenrechte > p:nth-of-type(2) > a",
@@ -21523,7 +21945,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 30,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "section#betroffenenrechte > p:nth-of-type(3) > a:nth-of-type(1)",
@@ -21535,7 +21961,11 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 31,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           },
           {
             "fundstelle": "section#betroffenenrechte > p:nth-of-type(3) > a:nth-of-type(2)",
@@ -21547,11 +21977,21 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 32,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           }
         ],
         "ohneFokusVisible": [],
-        "felderOhneFehlerstil": []
+        "felderOhneFehlerstil": [],
+        "hoverMessung": {
+          "kandidaten": 12,
+          "geprueft": 11,
+          "mitDarstellungswechsel": 0,
+          "ohneWechsel": 11
+        }
       },
       "s03kontrast": {
         "verletzungen": 0,
@@ -21814,7 +22254,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 11866
+      "ms": 17196
     },
     {
       "pfad": "/impressum",
@@ -22311,7 +22751,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
@@ -22323,7 +22764,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1
           }
         ],
         "ohneFokusVisible": [],
@@ -22590,7 +23032,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10216
+      "ms": 10592
     },
     {
       "pfad": "/impressum",
@@ -23061,7 +23503,10 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0,
+            "hoverGemessen": null,
+            "hoverGrund": "nicht hoverbar (1 px oder verdeckt)"
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
@@ -23073,11 +23518,21 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           }
         ],
         "ohneFokusVisible": [],
-        "felderOhneFehlerstil": []
+        "felderOhneFehlerstil": [],
+        "hoverMessung": {
+          "kandidaten": 2,
+          "geprueft": 1,
+          "mitDarstellungswechsel": 0,
+          "ohneWechsel": 1
+        }
       },
       "s03kontrast": {
         "verletzungen": 0,
@@ -23340,7 +23795,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10002
+      "ms": 10527
     },
     {
       "pfad": "/gibt-es-nicht-404",
@@ -23795,7 +24250,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
@@ -23807,7 +24263,8 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1
           }
         ],
         "ohneFokusVisible": [],
@@ -24079,7 +24536,7 @@
         }
       ],
       "gesperrt": 0,
-      "ms": 9468
+      "ms": 10049
     },
     {
       "pfad": "/gibt-es-nicht-404",
@@ -24490,7 +24947,10 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 0,
+            "hoverGemessen": null,
+            "hoverGrund": "nicht hoverbar (1 px oder verdeckt)"
           },
           {
             "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
@@ -24502,11 +24962,21 @@
             "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
-            "deaktiviert": false
+            "deaktiviert": false,
+            "idx": 1,
+            "hoverGemessen": false,
+            "hoverUnterschiede": [],
+            "zeigerAufElement": true
           }
         ],
         "ohneFokusVisible": [],
-        "felderOhneFehlerstil": []
+        "felderOhneFehlerstil": [],
+        "hoverMessung": {
+          "kandidaten": 2,
+          "geprueft": 1,
+          "mitDarstellungswechsel": 0,
+          "ohneWechsel": 1
+        }
       },
       "s03kontrast": {
         "verletzungen": 0,
@@ -24774,7 +25244,7 @@
         }
       ],
       "gesperrt": 0,
-      "ms": 9567
+      "ms": 10408
     }
   ]
 }

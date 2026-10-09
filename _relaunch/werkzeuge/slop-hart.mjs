@@ -868,6 +868,9 @@ if (teile.includes('render')) {
         }
         // ── S-03: axe color-contrast ──
         try {
+          await page.evaluate(() => scrollTo({ top: 0, left: 0, behavior: 'instant' }));
+          await page.mouse.move(0, 0);
+          await page.waitForTimeout(250);
           const ax = await new AxeBuilder({ page }).withRules(['color-contrast']).analyze();
           const knoten = ax.violations.flatMap((v) => v.nodes.map((n) => { const d = n.any?.[0]?.data ?? {}; return { ziel: n.target.join(' '), html: (n.html || '').slice(0, 110), kontrast: d.contrastRatio ?? null, erwartet: d.expectedContrastRatio ?? null, vordergrund: d.fgColor ?? null, hintergrund: d.bgColor ?? null, schriftPx: d.fontSize ?? null }; }));
           const inc = ax.incomplete.flatMap((v) => v.nodes.map((n) => ({ ziel: n.target.join(' '), grund: n.any?.[0]?.data?.messageKey ?? n.any?.[0]?.message ?? null })));
@@ -938,7 +941,18 @@ if (c['S-01'] || seiten.length) {
     code: c['S-05'] ? { eckigWertklassen: c['S-05'].eckigWertklassen, eckigTokenrelevant: c['S-05'].eckigTokenrelevant, zahlDauerKlassen: c['S-05'].zahlDauerKlassen, hexwerteOhneAnker: c['S-05'].hexwerteOhneAnker, inlineStyleFrei: c['S-05'].inlineStyleFrei, cssFreieWerte: c['S-05'].cssFreieWerte, jsDauernUndKurven: c['S-05'].jsDauernUndKurven } : null,
     gerendert: seiten.length ? Object.fromEntries(['schriftgroesse', 'radius', 'schatten', 'farbe', 'hintergrund', 'dauer'].map((e) => [e, { elementeAusserhalb: summe((x) => x.s05?.volltext[e].ausserhalb), stichprobeAbweichend: summe((x) => x.s05?.stichprobe.abweichungenJeEigenschaft[e]) }])) : null,
   };
-  z['S-06'] = seiten.length ? { elemente: summe((x) => x.s06?.elemente), ohneHover: summe((x) => x.s06?.ohneHover.length), ohneHoverAmElementSelbst: summe((x) => ['link', 'knopf', 'feld', 'sonstiges'].reduce((n, k) => n + (x.s06?.[k].ohneHoverAmElementSelbst ?? 0), 0)), ohneHoverNachMessungOhneWechsel: summe((x) => x.s06?.hoverMessung?.ohneWechsel), ohneHoverMessungNichtMoeglich: summe((x) => (x.s06?.ohneHover ?? []).filter((e) => e.hoverGemessen === null).length), ohneFokusVisibleStil: summe((x) => x.s06?.ohneFokusVisible.length), felderOhneFehlerstil: summe((x) => x.s06?.feld.ohneFehlerstil) } : null;
+  const dSeiten = seiten.filter((x) => x.ansicht === 'd1440');
+  const mSeiten = seiten.filter((x) => x.ansicht === 'm375');
+  const sm = (liste, f) => liste.reduce((n, x) => n + (f(x) ?? 0), 0);
+  const strengHover = (x) => ['link', 'knopf', 'feld', 'sonstiges'].reduce((n, k) => n + (x.s06?.[k].ohneHoverAmElementSelbst ?? 0), 0);
+  z['S-06'] = seiten.length ? {
+    elemente: summe((x) => x.s06?.elemente),
+    hoverD1440: { elemente: sm(dSeiten, (x) => x.s06?.elemente), ohneHoverRegel: sm(dSeiten, (x) => x.s06?.ohneHover.length), ohneHoverRegelAmElementSelbst: sm(dSeiten, strengHover), ohneHoverNachZeigermessung: sm(dSeiten, (x) => x.s06?.hoverMessung?.ohneWechsel), nichtMessbar: sm(dSeiten, (x) => (x.s06?.ohneHover ?? []).filter((e) => e.hoverGemessen === null).length) },
+    hoverM375: { elemente: sm(mSeiten, (x) => x.s06?.elemente), ohneHoverRegel: sm(mSeiten, (x) => x.s06?.ohneHover.length), ohneHoverRegelAmElementSelbst: sm(mSeiten, strengHover) },
+    ohneFokusVisibleStil: summe((x) => x.s06?.ohneFokusVisible.length),
+    felderOhneFehlerstil: summe((x) => x.s06?.feld.ohneFehlerstil),
+    felderGeprueft: summe((x) => x.s06?.feld.mitFehlerstilPruefung),
+  } : null;
   z['S-07'] = {
     code: c['S-07'] ? { treffer: c['S-07'].treffer, kandidat: c['S-07'].davonKandidat } : null,
     gerendert: seiten.length ? { h1NichtSichtbarNach300ms: seiten.filter((x) => x.s07?.h1SichtbarNach300ms === false).length, scrollenNichtMoeglich: seiten.filter((x) => x.s07?.scrollenOk === false).length, vollbildUeberlagerung: seiten.filter((x) => x.s07?.vollbildUeberlagerungen.length).length, zaehlerAenderungen: summe((x) => x.s07?.zaehlerAenderungen.length), seitenOhneH1: seiten.filter((x) => x.s07 && x.s07.h1 === null).length } : null,
@@ -972,7 +986,7 @@ zeilen.push(['S-02 Effektteppich', '–', Z['S-02'] ? `${Z['S-02'].abschnitteMit
 zeilen.push(['S-03 Unzugänglich', '–', Z['S-03'] ? `Kontrast ${Z['S-03'].kontrastVerletzungen} Verletzungen (${Z['S-03'].kontrastUnklar} unklar) · Fokus ${Z['S-03'].fokusNichtOk} von ${Z['S-03'].fokusGeprueft} Tab-Stopps ohne 2-px-Outline` : '–']);
 zeilen.push(['S-04 Gemischte Bildsprache', Z['S-04']?.code ? `Quellen ${kv(Z['S-04'].code.iconQuellen)} · ${Z['S-04'].code.verschiedeneIcons} verschiedene Icons · ${Z['S-04'].code.eigeneSvgKomponenten} eigene SVG-Komponenten · Icon-Marken ohne strokeWidth ${Z['S-04'].code.iconMarkenOhneStrokeWidth} · Emojis im Code ${Z['S-04'].code.emojisImCodeHart}` : '–', Z['S-04']?.gerendert ? `Emojis ${Z['S-04'].gerendert.emojisHart} (+ ${Z['S-04'].gerendert.emojisTypografisch} typografisch) · höchstens ${Z['S-04'].gerendert.verschiedeneStrichstaerkenNurIconsMax} verschiedene Strichstärken je Seite (Icons)` : '–']);
 zeilen.push(['S-05 Ungeordnete Werte', Z['S-05']?.code ? `-[ Wertklassen ${Z['S-05'].code.eckigWertklassen} (tokenrelevant ${Z['S-05'].code.eckigTokenrelevant}) · duration-/delay-Zahl ${Z['S-05'].code.zahlDauerKlassen} · Hex ${Z['S-05'].code.hexwerteOhneAnker} · Inline-style frei ${Z['S-05'].code.inlineStyleFrei} · CSS frei ${Z['S-05'].code.cssFreieWerte} · JS-Dauern/Kurven ${Z['S-05'].code.jsDauernUndKurven}` : '–', Z['S-05']?.gerendert ? Object.entries(Z['S-05'].gerendert).map(([k, v]) => `${k} ${v.elementeAusserhalb}`).join(' · ') + ' (Elemente außerhalb Token, Summe der Seitenansichten)' : '–']);
-zeilen.push(['S-06 Halbe Zustände', '–', Z['S-06'] ? `${Z['S-06'].elemente} interaktive Elemente · ohne Hover-Stil ${Z['S-06'].ohneHover} (am Element selbst ${Z['S-06'].ohneHoverAmElementSelbst}; per Zeigermessung d1440 ohne Darstellungswechsel ${Z['S-06'].ohneHoverNachMessungOhneWechsel}, nicht messbar ${Z['S-06'].ohneHoverMessungNichtMoeglich}) · ohne :focus-visible-Stil ${Z['S-06'].ohneFokusVisibleStil} · Felder ohne aria-invalid-Stil ${Z['S-06'].felderOhneFehlerstil}` : '–']);
+zeilen.push(['S-06 Halbe Zustände', '–', Z['S-06'] ? `${Z['S-06'].elemente} interaktive Elemente (alle Seitenansichten) · Hover d1440: ${Z['S-06'].hoverD1440.ohneHoverRegel} von ${Z['S-06'].hoverD1440.elemente} ohne Hover-Regel (am Element selbst ${Z['S-06'].hoverD1440.ohneHoverRegelAmElementSelbst}), davon per Zeigermessung ohne Darstellungswechsel ${Z['S-06'].hoverD1440.ohneHoverNachZeigermessung} (nicht messbar ${Z['S-06'].hoverD1440.nichtMessbar}) · Hover m375 nur nach CSS-Regel: ${Z['S-06'].hoverM375.ohneHoverRegel} von ${Z['S-06'].hoverM375.elemente} · ohne :focus-visible-Stil ${Z['S-06'].ohneFokusVisibleStil} · Felder ohne aria-invalid-Stil ${Z['S-06'].felderOhneFehlerstil} von ${Z['S-06'].felderGeprueft}` : '–']);
 zeilen.push(['S-07 Blockierender Auftakt', Z['S-07']?.code ? `${Z['S-07'].code.treffer} Treffer (davon ${Z['S-07'].code.kandidat} Kandidaten)` : '–', Z['S-07']?.gerendert ? `h1 nach 300 ms nicht sichtbar ${Z['S-07'].gerendert.h1NichtSichtbarNach300ms} · Scrollen nicht möglich ${Z['S-07'].gerendert.scrollenNichtMoeglich} · Vollbild-Überlagerung ${Z['S-07'].gerendert.vollbildUeberlagerung} · Zähleränderungen ${Z['S-07'].gerendert.zaehlerAenderungen}` : '–']);
 L.push(...tab(['Befund', 'Code', 'Gerendert (Summe der Seitenansichten)'], zeilen));
 
