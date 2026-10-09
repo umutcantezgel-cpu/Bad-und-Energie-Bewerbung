@@ -22,7 +22,7 @@ Paket P1-KUND-01 · Rolle Kundschafter · Stufe 1 · Kern-Version 0 (vorläufig)
 | ALT-START-006 | / | Meta | Suche und Technik | og:url · og:siteName · og:locale · og:type | „https://karriere.bad-energie.de“ · „Bad und Energie GmbH Lahn Dill“ · „de_DE“ · „website“ | openGraph-Felder | – | – | app/page.tsx:69-72 | – |
 | ALT-START-007 | / | Hero · Hintergrund | Grafik und SVG | Hintergrund und Lichthöfe | – | Verlauf Weiß → #F8FAFC → #F1F5F9; unterer Rand slate-200/80; zwei unscharfe Lichthöfe (Blau und Rot) | CSS-Halos, keine SVG | Keine | app/page.tsx:155-158 | – |
 | ALT-START-008 | / | Hero · Kopf | Vertrauen | Badge | „100 Jahre Meisterbetrieb (1926–2026) • Offene Stellenangebote in Wetzlar“ | Statische Pille | Grüner Punkt (span) | animate-pulse am Punkt | app/page.tsx:164-167 | – |
-| ALT-START-009 | / | Hero · Überschrift | Inhalt | H1 | „Ehrliches Handwerk. Erstklassiger Lohn.“ · Akzentzeile „Pünktlich Feierabend im Meisterteam.“ | Einzige H1 der Seite; Akzentzeile mit Verlaufstext (bg-clip-text, Rot → Navy → Blau), eigene Zeile | – | – | app/page.tsx:169-174 | – |
+| ALT-START-009 | / | Hero · Überschrift | Inhalt | H1 | „Ehrliches Handwerk. Erstklassiger Lohn.“ · Akzentzeile „Pünktlich Feierabend im Meisterteam.“ | H1 in app/page.tsx (Header und Footer nicht geprüft); Akzentzeile mit Verlaufstext (bg-clip-text, Rot → Navy → Blau), eigene Zeile | – | – | app/page.tsx:169-174 | – |
 | ALT-START-010 | / | Hero · Einleitung | Inhalt | Einleitungstext | „Attraktive Jobs in Wetzlar für erfahrene Heizungsbauer und engagierte Monteure: Ehrliches Handwerk, erstklassiger Lohn und pünktlich Feierabend im Meisterteam erlebe […]“ (41 Wörter) | „60 Sekunden“ fett und nicht umbrechend; Rest statisch | – | – | app/page.tsx:176-178 | – |
 | ALT-START-011 | / | Hero · USP-Kacheln | Inhalt | USP-Kachel 1 | „Wochenendstart“ · „Freitags ab 13:30 Uhr“ · „Pünktlicher Feierabend“ | Statisch; Hover wechselt Rahmen zu #0369a1/60 | – | transition-colors (Hover) | app/page.tsx:182-188 | – |
 | ALT-START-012 | / | Hero · USP-Kacheln | Inhalt | USP-Kachel 2 | „Erholungsurlaub“ · „30 Tage garantiert“ · „Plus Urlaubsgeld“ | Statisch; Hover wie ALT-START-011 | – | transition-colors (Hover) | app/page.tsx:189-195 | – |
@@ -92,10 +92,10 @@ Paket P1-KUND-01 · Rolle Kundschafter · Stufe 1 · Kern-Version 0 (vorläufig)
 | ALT-START-076 | / | Funnel · Schritt 4 | Inhalt | Eyebrow | „Schnelle Diskretionsgarantie“ | Mono, emerald, uppercase | – | Keine | components/HeroExpressFunnel.tsx:592-594 | – |
 | ALT-START-077 | / | Funnel · Schritt 4 | Inhalt | Frage | „Wie dürfen wir Dich unverbindlich kontaktieren?“ | H3 | – | Formular (motion.form) wie ALT-START-040 | components/HeroExpressFunnel.tsx:595-597 | – |
 | ALT-START-078 | / | Funnel · Schritt 4 | Inhalt | Einleitung | „Kein Lebenslauf nötig. Sabri Demir meldet sich werktags innerhalb von 24 Stunden diskret bei Dir.“ | – | – | Keine | components/HeroExpressFunnel.tsx:598-600 | – |
-| ALT-START-079 | / | Funnel · Schritt 4 | Funktion | Validierungsfehler (bedingt) | „Bitte Name und Telefonnummer angeben für die diskrete Rückmeldung.“ | Erscheint beim Absenden, wenn Name oder Telefon leer sind; roter Kasten | lucide-frei | Keine | components/HeroExpressFunnel.tsx:114-117, 603-607 | – |
+| ALT-START-079 | / | Funnel · Schritt 4 | Funktion | Validierungsfehler (bedingt) | „Bitte Name und Telefonnummer angeben für die diskrete Rückmeldung.“ | Erscheint beim Absenden, wenn Name oder Telefon leer sind; roter Kasten | – | Keine | components/HeroExpressFunnel.tsx:114-117, 603-607 | – |
 | ALT-START-080 | / | Funnel · Schritt 4 | Funktion | Feld Name | Label „Dein Vorname und Nachname *“ · Platzhalter „z.B. Alexander Koch“ | Pflichtfeld (required) | – | Keine | components/HeroExpressFunnel.tsx:610-621 | – |
 | ALT-START-081 | / | Funnel · Schritt 4 | Funktion | Feld Telefon | Label „Telefonnummer oder WhatsApp *“ · Platzhalter „z.B. 0170 8892341“ | Pflichtfeld (required, type tel) | – | Keine | components/HeroExpressFunnel.tsx:624-635 | – |
-| ALT-START-082 | / | Funnel · Schritt 4 | Funktion | Feld Wohnort | Label „Wohnort oder PLZ“ · Vorwert „Wetzlar und Umgebung“ · Platzhalter „z.B. 35578 Wetzlar“ | Optional | – | Keine | components/HeroExpressFunnel.tsx:638-649, 127 | – |
+| ALT-START-082 | / | Funnel · Schritt 4 | Funktion | Feld Wohnort | Label „Wohnort oder PLZ“ · Vorwert „Wetzlar und Umgebung“ · Platzhalter „z.B. 35578 Wetzlar“ | Optional | – | Keine | components/HeroExpressFunnel.tsx:55, 638-649 | – |
 | ALT-START-083 | / | Funnel · Schritt 4 | Funktion | Feld E-Mail | Label „E Mail Adresse (für Eingangsbestätigung)“ · Platzhalter „z.B. alexander.koch@beispiel.de“ | Optional (type email). Befund: ohne Eingabe wird `bewerber.<Ziffern>@karriere.bad-energie.de` gesendet | – | Keine | components/HeroExpressFunnel.tsx:651-662, 140-141 | – |
 | ALT-START-084 | / | Funnel · Schritt 4 | Interaktives | Auswahl Kontaktweg | Label „Bevorzugter Kontaktweg“ · Optionen „WhatsApp kurz und unkompliziert“ (Vorwahl) · „Telefonat nach Feierabend“ · „Per E Mail“ | Select | – | Keine | components/HeroExpressFunnel.tsx:664-677 | – |
 | ALT-START-085 | / | Funnel · Schritt 4 | Recht | Sperrvermerk-Checkbox | „Garantierter Sperrvermerk für ungekündigte Fachkräfte“ · „Deine Bewerbung wird streng vertraulich nach § 26 BDSG behandelt. Dein aktueller Arbeitgeber erfährt zu keinem Zeitpunkt von dieser Interessensbekundung.“ | Vorwahl (angehakt); Label klickbar | Checkbox (#C51E1E), Karte amber-50 | Keine | components/HeroExpressFunnel.tsx:681-695 | – |
@@ -105,7 +105,7 @@ Paket P1-KUND-01 · Rolle Kundschafter · Stufe 1 · Kern-Version 0 (vorläufig)
 | ALT-START-089 | / | Funnel · nach Absenden | Einbindung Dritter | Konfetti | – | Dynamischer Import canvas-confetti; 120 Partikel, Streuung 70, Ursprung y 0,6; Farben #0369a1, #047857, #C51E1E, #0A1E3A | Partikel (Canvas) | Partikel-Animation einmalig | components/HeroExpressFunnel.tsx:169-181 | – |
 | ALT-START-090 | / | Funnel · Erfolg | Grafik und SVG | Logo-Karte | – | Komponente Logo (variant default, framing card, size sm, ohne Link); Komponente nicht gelesen | Logo-Komponente | Keine | components/HeroExpressFunnel.tsx:744 | – |
 | ALT-START-091 | / | Funnel · Erfolg | Inhalt | Erfolgs-Überschrift | „Vielen Dank, {Name}!“ | H3; Name dynamisch | – | Keine | components/HeroExpressFunnel.tsx:752-754 | – |
-| ALT-START-092 | / | Funnel · Erfolg | Inhalt | Erfolgs-Text | „Deine Anfrage für die Stelle als {Rolle} ist sicher und verschlüsselt bei Geschäftsführer Sabri Demir eingegangen.“ | Rolle dynamisch. Befund: „sicher und verschlüsselt“ nicht im Code belegt | – | Keine | components/HeroExpressFunnel.tsx:755-757 | – |
+| ALT-START-092 | / | Funnel · Erfolg | Inhalt | Erfolgs-Text | „Deine Anfrage für die Stelle als {Rolle} ist sicher und verschlüsselt bei Geschäftsführer Sabri Demir eingegangen.“ | Rolle dynamisch. Befund: „sicher und verschlüsselt“ ist nur Aussage, Transport und Speicherung nicht geprüft | – | Keine | components/HeroExpressFunnel.tsx:755-757 | – |
 | ALT-START-093 | / | Funnel · Erfolg | Inhalt | Erfolgs-Hinweis | „Wir melden uns innerhalb von 24 Stunden diskret über Deinen Wunschkanal (WhatsApp oder Telefon).“ | Befund: bei Wahl „Per E Mail“ steht trotzdem „Telefon“ | – | Keine | components/HeroExpressFunnel.tsx:758-760 | – |
 | ALT-START-094 | / | Funnel · Erfolg | Inhalt | Profil-Box | „Erfasstes Profil“ · „Position:“ {Rolle} · „Erfahrung:“ {Erfahrung} · „Starttermin:“ {Starttermin} | Zusammenfassung, dynamisch | – | Keine | components/HeroExpressFunnel.tsx:763-779 | – |
 | ALT-START-095 | / | Funnel · Erfolg | Navigation | Knopf „Vollständiges DINA4 Dossier anzeigen“ | „Vollständiges DINA4 Dossier anzeigen“ | Link auf /bewerbung | lucide ArrowRight | Keine | components/HeroExpressFunnel.tsx:782-788 | – |
@@ -364,7 +364,7 @@ Paket P1-KUND-01 · Rolle Kundschafter · Stufe 1 · Kern-Version 0 (vorläufig)
 | ALT-START-348 | / | FAQ · Kopf | Inhalt | Überschrift | „Alles Wichtige zum Bewerbungsprozess“ | H2 | – | Keine | app/page.tsx:919-921 | – |
 | ALT-START-349 | / | FAQ · Kopf | Inhalt | Einleitung | „Offene Antworten auf Fragen, die Monteuren und Gesellen wichtig sind.“ | – | – | Keine | app/page.tsx:922-924 | – |
 | ALT-START-350 | / | FAQ · Eintrag 1 | Interaktives | Frage und Antwort 1 | Frage „Wie läuft der diskrete Wechsel ab, wenn ich noch bei einem anderen Betrieb angestellt bin?“ · Antwort „Absolute Diskretion ist für uns selbstverständlich. Wir kontaktieren unter keinen Umständen Deinen derzeitigen Arbeitgeber. Ein unverbindliches Kennenlernen findet diskret nach […]“ (32 Wörter) | Akkordeon (details/summary), geschlossen | lucide ChevronDown (dreht bei geöffnet um 180°) | Chevron-Drehung; Schatten bei hover | app/page.tsx:929-942 (Eintrag 130-133) | – |
-| ALT-START-351 | / | FAQ · Eintrag 2 | Interaktives | Frage und Antwort 2 | Frage „Brauche ich ein Anschreiben oder einen Lebenslauf für den ersten Kontakt?“ · Antwort „Nein! Für den ersten Schritt reicht unser Express Fragebogen in zwei Minuten völlig aus. Wir benötigen vorab keine Anschreiben oder […]“ (37 Wörter) | Akkordeon | lucide ChevronDown | Wie ALT-START-350 | components/HeroExpressFunnel.tsx: nicht; app/page.tsx:134-137 | – |
+| ALT-START-351 | / | FAQ · Eintrag 2 | Interaktives | Frage und Antwort 2 | Frage „Brauche ich ein Anschreiben oder einen Lebenslauf für den ersten Kontakt?“ · Antwort „Nein! Für den ersten Schritt reicht unser Express Fragebogen in zwei Minuten völlig aus. Wir benötigen vorab keine Anschreiben oder […]“ (37 Wörter) | Akkordeon | lucide ChevronDown | Wie ALT-START-350 | app/page.tsx:134-137 (Daten); Render 929-942 | – |
 | ALT-START-352 | / | FAQ · Eintrag 3 | Interaktives | Frage und Antwort 3 | Frage „Welche Heizsysteme und Sanitäranlagen montieren wir hauptsächlich?“ · Antwort „Unser Schwerpunkt liegt auf modernen Wärmepumpen von Buderus, Bosch, NIBE, Alpha Innotec und Viessmann, Fußbodenheizungen und schlüsselfertigen Badsanierungen in enger […]“ (27 Wörter) | Akkordeon | lucide ChevronDown | Wie ALT-START-350 | app/page.tsx:138-141 | – |
 | ALT-START-353 | / | FAQ · Eintrag 4 | Interaktives | Frage und Antwort 4 | Frage „Darf das Firmenfahrzeug mit nach Hause genommen werden?“ · Antwort „Ja. Je nach Aufgabenbereich und Absprache kann Dein persönliches, modern ausgestattetes Servicefahrzeug für die direkte Anfahrt von Deinem Wohnort zur […]“ (33 Wörter) | Akkordeon | lucide ChevronDown | Wie ALT-START-350 | app/page.tsx:142-145 | – |
 | ALT-START-354 | / | FAQ · Eintrag 5 | Interaktives | Frage und Antwort 5 | Frage „Gibt es bei Bad und Energie Fernmontagen oder Notdienst Zwang?“ · Antwort „Nein. Unsere Baustellen liegen ausnahmslos in Wetzlar, Gießen und dem Lahn Dill Kreis. Du bist jeden Nachmittag pünktlich zu Hause. […]“ (29 Wörter) | Akkordeon | lucide ChevronDown | Wie ALT-START-350 | app/page.tsx:146-149 | – |
@@ -377,7 +377,21 @@ Paket P1-KUND-01 · Rolle Kundschafter · Stufe 1 · Kern-Version 0 (vorläufig)
 
 ## Zählung je Kategorie
 
-ZÄHLUNG_PLATZHALTER
+Zeilen gesamt: 360 (ALT-START-001 bis ALT-START-360)
+
+| Kategorie | Zeilen |
+|---|---|
+| Inhalt | 174 |
+| Interaktives | 64 |
+| Vertrauen | 45 |
+| Navigation | 25 |
+| Funktion | 20 |
+| Grafik und SVG | 10 |
+| Suche und Technik | 9 |
+| Einbindung Dritter | 7 |
+| Bewegung | 4 |
+| Recht | 2 |
+| **Summe** | **360** |
 
 ## Anker-IDs (`id="…"`)
 
