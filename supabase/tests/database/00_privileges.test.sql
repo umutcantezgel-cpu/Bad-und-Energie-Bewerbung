@@ -1,5 +1,6 @@
 -- Rechte: RLS überall, keine Tabellenrechte für anon/service_role, genaue Spaltenrechte,
 -- RPCs nur für service_role, keine Storage-Policies, genaue Realtime-Policy.
+-- Katalogspalten sind vom Typ name (Collation "C"); für results_eq daher collate "default".
 begin;
 create extension if not exists pgtap with schema extensions;
 select plan(21);
@@ -32,7 +33,8 @@ select is(
 );
 
 select results_eq(
-  $$ select table_name::text, column_name::text, privilege_type::text
+  $$ select table_name::text collate "default", column_name::text collate "default",
+            privilege_type::text collate "default"
        from information_schema.column_privileges
       where grantee = 'authenticated' and table_schema = 'public' and privilege_type <> 'SELECT'
       order by 1, 2, 3 $$,
@@ -86,14 +88,14 @@ select is(
 );
 
 select is(
-  (select array_agg(p.proname::text order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+  (select array_agg(p.proname::text collate "default" order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
     where n.nspname = 'private' and has_function_privilege('authenticated', p.oid, 'execute')),
   array['is_aal2', 'is_staff', 'staff_role_at_least'],
   'authenticated darf in private nur die RLS-Helper ausführen'
 );
 
 select is(
-  (select array_agg(p.proname::text order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+  (select array_agg(p.proname::text collate "default" order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
     where n.nspname = 'public' and has_function_privilege('service_role', p.oid, 'execute')),
   array['rpc_rate_limit_hit', 'rpc_submit_application', 'rpc_submit_follow_up'],
   'service_role darf in public genau die drei rpc_* ausführen'
@@ -107,8 +109,8 @@ select ok(
 );
 
 select results_eq(
-  $$ select policyname::text, cmd::text, roles::text from pg_policies
-      where schemaname = 'private' order by 1 $$,
+  $$ select policyname::text collate "default", cmd::text collate "default", roles::text collate "default"
+       from pg_policies where schemaname = 'private' order by 1 $$,
   $$ values ('auth_admin_reads_allowlist', 'SELECT', '{supabase_auth_admin}') $$,
   'in private gibt es genau eine Policy (Hook liest Allowlist)'
 );
@@ -142,8 +144,8 @@ select is(
 );
 
 select results_eq(
-  $$ select policyname::text, cmd::text, roles::text from pg_policies
-      where schemaname = 'realtime' and tablename = 'messages' order by 1 $$,
+  $$ select policyname::text collate "default", cmd::text collate "default", roles::text collate "default"
+       from pg_policies where schemaname = 'realtime' and tablename = 'messages' order by 1 $$,
   $$ values ('staff_receive_inbox', 'SELECT', '{authenticated}') $$,
   'Realtime: genau eine Lese-Policy auf realtime.messages'
 );
