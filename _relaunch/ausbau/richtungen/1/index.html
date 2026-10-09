@@ -50,8 +50,8 @@
   --t-5:clamp(1.5rem,1.25rem + 1vw,2.25rem);            /* 24–36  Maße */
   --t-6:clamp(2rem,1.5rem + 2vw,3.5rem);                /* 32–56  Hauptmaß 13:30, H2 */
   --t-7:clamp(3.75rem,.25rem + 18.5vw,7.5rem);          /* 60–120 H1 (mobil, Tablet) */
-  /* Abstände: 10 Stufen */
-  --a-1:.25rem; --a-2:.5rem; --a-3:.75rem; --a-4:1rem; --a-5:1.5rem; --a-6:2rem; --a-7:3rem; --a-8:4rem; --a-9:6rem; --a-10:8rem;
+  /* Abstände: 11 Stufen */
+  --a-1:.25rem; --a-2:.5rem; --a-3:.75rem; --a-4:1rem; --a-5:1.5rem; --a-6:2rem; --a-7:3rem; --a-8:4rem; --a-9:5rem; --a-10:6rem; --a-11:8rem;
   /* Maße */
   --m-ziel:2.75rem; --m-knopf:3.5rem; --m-kopf:3.5rem; --m-strich:3px;
   /* Radien: 3 Stufen */
@@ -146,7 +146,7 @@ main{overflow-x:clip}
 .text{grid-column:inhalt;padding-top:var(--a-3)}
 .ortsmarke{font-size:var(--t-1);color:var(--tinte-2);margin-bottom:var(--a-2)}
 .titel{color:var(--display)}
-.titel-haupt{display:block;font:800 var(--t-7)/.92 "Bricolage Grotesque","Bricolage Ersatz",sans-serif;letter-spacing:-.01em;margin-left:-.04em}
+.titel-haupt{display:block;font:800 var(--t-7)/.92 "Bricolage Grotesque","Bricolage Ersatz",sans-serif;letter-spacing:-.01em}
 .titel-haupt span{display:block;white-space:nowrap}
 .titel-zweit{display:block;margin-top:var(--a-3);font:700 var(--t-4)/1.12 "Bricolage Grotesque","Bricolage Ersatz",sans-serif;color:var(--tinte-2);text-wrap:balance}
 .titel-zweit span{display:block}
@@ -182,8 +182,8 @@ main{overflow-x:clip}
 .jahre{display:none}
 
 /* Erdreich: Bodenlinie, Leitungen in die Hauptaktion */
-.boden{grid-column:voll;position:relative;border-top:var(--m-strich) solid var(--strich);padding:calc(var(--a-8) + var(--a-4)) var(--rand) 0;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:var(--a-4);row-gap:var(--a-2)}
-.erdleitung{position:absolute;top:0;width:var(--m-strich);height:calc(var(--a-8) + var(--a-4));transform-origin:top}
+.boden{grid-column:voll;position:relative;border-top:var(--m-strich) solid var(--strich);padding:var(--a-9) var(--rand) 0;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:var(--a-4);row-gap:var(--a-2)}
+.erdleitung{position:absolute;top:0;width:var(--m-strich);height:var(--a-9);transform-origin:top}
 .erdleitung--vl{left:calc(var(--dx) + 216px * var(--s) - var(--m-strich) / 2);background:var(--vorlauf)}
 .erdleitung--rl{left:calc(var(--dx) + 256px * var(--s) - var(--m-strich) / 2);background:var(--ruecklauf)}
 .erdleitung-d{display:none}
@@ -258,11 +258,11 @@ main{overflow-x:clip}
 @media (min-width:120em) and (min-height:66em){:root{--s:1.7}}  /* 1920 × 1080 */
 
 /* ═══ Anschluss: die Woche als Heizkreisverteiler ═══ */
-.woche{position:relative;padding:var(--a-9) var(--rand) var(--a-8);max-width:calc(var(--satz) + 2 * var(--a-8));margin:0 auto}
+.woche{position:relative;padding:var(--a-10) var(--rand) var(--a-8);max-width:calc(var(--satz) + 2 * var(--a-8));margin:0 auto}
 .woche-kopf{display:grid;gap:var(--a-4);max-width:44rem}
 .h2{font:800 var(--t-6)/1 "Bricolage Grotesque","Bricolage Ersatz",sans-serif;letter-spacing:-.01em;color:var(--display);text-wrap:balance}
 .woche-kopf p{color:var(--tinte-2);text-wrap:pretty}
-.plan{--spalte:3.5rem;--luecke:var(--a-3);--rechts:3.5rem;--x0:calc((100% - var(--rechts)) / 12);position:relative;margin-top:var(--a-7);padding-top:var(--a-7);
+.plan{--spalte:var(--a-7);--luecke:var(--a-4);--rechts:var(--a-8);--x0:calc((100% - var(--rechts)) / 12);position:relative;margin-top:var(--a-7);padding-top:var(--a-7);
   --reihe:calc(var(--a-8) + 1px);--h-vl:calc(var(--a-7) + 5 * var(--reihe) - var(--a-8) / 2 - var(--a-5) / 2 + var(--m-strich) - var(--a-3));--h-rl:calc(var(--a-7) + 5 * var(--reihe) - var(--a-8) / 2 + var(--a-5) / 2)}
 /* Leitungspaar: kommt vom linken Rand, biegt am 07:00-Strich in den Verteiler (Vorlauf links, Rücklauf rechts) */
 .verteiler{position:absolute;z-index:1;top:0;left:calc(var(--spalte) + var(--luecke));right:0;bottom:0;pointer-events:none}
@@ -286,7 +286,7 @@ main{overflow-x:clip}
 .achse span{position:absolute;top:var(--a-3);left:calc((var(--h) - 6) / 12 * 100%);transform:translateX(-50%)}
 
 /* ═══ Offene Stellen ═══ */
-.stellen{padding:0 var(--rand) var(--a-9);max-width:calc(var(--satz) + 2 * var(--a-8));margin:0 auto}
+.stellen{padding:0 var(--rand) var(--a-10);max-width:calc(var(--satz) + 2 * var(--a-8));margin:0 auto}
 .stellen-liste{margin-top:var(--a-5);border-top:var(--m-strich) solid var(--strich)}
 .stelle a{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:var(--a-1) var(--a-4);min-height:var(--a-8);padding:var(--a-4) 0;border-bottom:1px solid var(--haar);color:var(--tinte);text-decoration:none}
 .stelle-titel{font:700 var(--t-4)/1.15 "Bricolage Grotesque","Bricolage Ersatz",sans-serif;color:var(--display)}
@@ -300,6 +300,7 @@ main{overflow-x:clip}
 @keyframes einblenden{from{opacity:0}to{opacity:1}}
 @keyframes drehen{from{transform:rotate(-540deg)}to{transform:none}}
 @keyframes stunde{from{transform:rotate(-45deg)}to{transform:none}}
+@keyframes steigen{from{transform:translateY(345px)}to{transform:none}}
 @keyframes fall{from{transform:scaleY(0)}to{transform:none}}
 @keyframes einschub{from{opacity:0;transform:translateX(calc(var(--a-4) * -1))}to{opacity:1;transform:none}}
 [data-motion="luefter"]{transform-origin:236px 462px}
@@ -309,7 +310,7 @@ main{overflow-x:clip}
 .auftakt [data-motion="luft"] path:nth-child(3){animation-delay:calc(var(--takt) * 2)}
 .auftakt [data-motion="luefter"]{animation:drehen var(--d-6) var(--k-wechsel) both}
 .auftakt [data-motion="vorlauf-haus"]{stroke-dasharray:1 1;animation:zeichnen var(--d-3) var(--k-wechsel) calc(var(--takt) * 3) both}
-.auftakt [data-motion="waerme"]{animation:einblenden var(--d-4) var(--k-aus) calc(var(--takt) * 6) both}
+.auftakt [data-motion="waerme"]{animation:steigen var(--d-4) var(--k-aus) calc(var(--takt) * 6) both}
 .auftakt [data-motion="ruecklauf-haus"]{stroke-dasharray:1 1;animation:zeichnen var(--d-3) var(--k-wechsel) calc(var(--takt) * 8) both}
 .auftakt [data-motion="uhr"] .zeiger--min{animation:drehen var(--d-6) var(--k-wechsel) calc(var(--takt) * 2) both}
 .auftakt [data-motion="uhr"] .zeiger--std{animation:stunde var(--d-6) var(--k-wechsel) calc(var(--takt) * 2) both}
@@ -415,7 +416,8 @@ main{overflow-x:clip}
         <path class="z vl" d="M216 512V520"/>
         <path class="z rl" d="M256 512V520"/>
         <!-- Haus aus dem Logo: Giebel 45° -->
-        <path class="haus-flaeche" data-motion="waerme" d="M340 520V320L470 190L600 320V520Z"/>
+        <clipPath id="waerme-pegel"><rect class="pegel" data-motion="waerme" x="330" y="180" width="280" height="345"/></clipPath>
+        <path class="haus-flaeche" clip-path="url(#waerme-pegel)" d="M340 520V320L470 190L600 320V520Z"/>
         <path class="z" d="M316 344L470 190L624 344M340 320V520M600 320V520"/>
         <!-- Fenster mit Sprossenkreuz, Tür -->
         <rect class="z" x="520" y="352" width="48" height="48" rx="4"/>
