@@ -10,6 +10,7 @@
 @source not "../supabase";
 @source not "../**/__tests__";
 @source not "../README.md";
+@source not "../_relaunch";
 
 @layer base {
   html {

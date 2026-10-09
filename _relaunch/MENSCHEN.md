@@ -1,0 +1,9 @@
+# Für Menschen – was nur du entscheiden oder prüfen kannst
+
+Format: M-[Nr] · Gegenstand · Beleg · betroffenes Kriterium · Standardannahme bis zur Antwort.
+
+## Offene Punkte
+- M-001 · Produktions-Merge nach `main` · ENTSCHEIDUNGEN E-001 · Z-14 · Vor dem Merge brauche ich deine Bestätigung, dass in Vercel (Production und Preview) die Variablen `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `IP_HASH_SALT`, `APPLICATION_TOKEN_SECRET`, `INDEXNOW_KEY` gesetzt sind (PR #1, „Vor dem Merge“ Punkt 2). Ohne sie bleibt die Seite online, lehnt Bewerbungen aber mit 503 ab und zeigt Telefon und WhatsApp. Standardannahme: nicht mergen, bis bestätigt.
+- M-002 · Supabase Phase 2a wird mit nach `main` gemergt · ENTSCHEIDUNGEN E-002 · Z-05 · Die Migrationen sind „not yet applied“. Ich prüfe vor dem Merge lesend, ob eine GitHub-Integration sie automatisch anwendet. Standardannahme: Migrationen werden nicht automatisch angewandt; die parallele Supabase-Session behält die Hoheit über `supabase/` und `lib/supabase`.
+- M-003 · Offene Fakten aus der Basis · docs/operations/fakten-abgleich.md (A1–A5, B1–B26, C1–C5, D1–D3), docs/ROADMAP.md §13 · Z-01, Z-02 · Der Lauf spielt keine unbelegten Fakten aus. Standardannahme: nur Fakten mit Quelle in `lib/content/facts.ts`, ohne `pending`.
+- M-004 · Logo als Vektor und helle Variante · docs/ROADMAP.md §13, `components/brand/Logo.tsx` · G8, Z-10 · Die Basis färbt das Logo im Dunkelmodus per CSS-Filter weiß – das ändert die Logofarben. Der Lauf stellt auf das Original auf heller Fläche um. Bitte eine Vektordatei (SVG/PDF) des echten Logos und, falls vorhanden, eine offizielle Negativ-Variante liefern. Standardannahme: Original-Raster auf heller Plakette.
