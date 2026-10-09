@@ -41,3 +41,4 @@ STATUS · Phase P0 · Welle 0/0 · Erfüllt 0/14 · Ausnahmen 0 · Elemente 0/? 
 
 ## Protokoll (stündlich)
 - 2026-10-09 09:14 CEST · P0 gestartet, Sicherung erstellt, Basis hergestellt (a83269d).
+- 2026-10-09 09:54 CEST · P0-MESS-01/-02, P0-SLOP-02, P1-KUND-01…03 abgenommen; Jury Start 5,2 · Stellen 4,5 · Stellenseite 5,0; Slop weich 35 (E-010).
