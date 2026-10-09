@@ -1,5 +1,5 @@
 # KERN – Gestaltungssystem
-Version: 1.0 (09.10.2026, nach FREIGABE E-021). Maßgebliche Detailquelle für Tokens, Zeichnung und Bewegung ist der Prototyp `ausbau/richtungen/1/` (index.html, BEGRUENDUNG.md §8–§10); für `/jobs` und den Kopf der Stellenseiten `ausbau/richtungen/2/`, für das Wärmebild `ausbau/richtungen/3/` (statisch). Änderungen nur durch den Orchestrator, mit Versionsnummer und Grund.
+Version: 1.1 (09.10.2026; 1.0 nach FREIGABE E-021, 1.1: K-004 CSP nach E-022). Maßgebliche Detailquelle für Tokens, Zeichnung und Bewegung ist der Prototyp `ausbau/richtungen/1/` (index.html, BEGRUENDUNG.md §8–§10); für `/jobs` und den Kopf der Stellenseiten `ausbau/richtungen/2/`, für das Wärmebild `ausbau/richtungen/3/` (statisch). Änderungen nur durch den Orchestrator, mit Versionsnummer und Grund.
 
 ## Das Projekt in fünf Sätzen
 1. Bad & Energie in Wetzlar, SHK-Meisterbetrieb seit 1926, sucht Fachkräfte, Azubis und Quereinsteiger im Umkreis von 35 km; die Karriereseite muss in Sekunden sagen, was die Stelle bietet und wie man sich in 60 Sekunden bewirbt.
@@ -44,7 +44,7 @@ Austauschprobe: Ein anderer Betrieb kann Uhr 13:30, Radius 35 km, Giebel des Log
 - **Themen:** Hell/Dunkel über `prefers-color-scheme`, Druck immer hell; jedes neue Teil beherrscht hell, dunkel, Inverse-Band und Druck.
 - **Tests:** Vitest (`bun run test`, 927 grün in P0), Playwright (`playwright.config.ts`: 4 Projekte mobil/Desktop × hell/dunkel, `reducedMotion: 'reduce'`, axe WCAG 2.2 AA), Guards (`check:design`, `check:contrast`, `check:client-imports`), `test:graph` (JSON-LD), Lighthouse CI (`lighthouserc.json`). Neue Funktionen bekommen Vitest- und E2E-Tests im bestehenden Muster.
 - **Dateihoheit (E-012):** nie `supabase/**`, `lib/supabase/**`, `lib/uploads/**`, `app/admin/**`, `app/api/admin/**`; gemeinsame Verträge nur ergänzend mit Absprache-Eintrag.
-- **Sicherheit:** CSP derzeit Report-Only in `next.config.ts` – jedes Inline-Skript braucht dort einen Hash; keine neuen Drittanbieter.
+- **Sicherheit:** CSP derzeit Report-Only in `next.config.ts` mit `'unsafe-inline'` für Skripte (ein Hash würde die Inline-Skripte von Next sperren, E-022); Hash des Kopfskripts dokumentiert in `lib/motion/head-script.ts`; Nonce-Strategie offen (M-018); keine neuen Drittanbieter.
 
 ## K-005 Typografie
 - Familien (OFL, selbst gehostet über `next/font/local`, woff2 latin + latin-ext, ≤ 250 KB gesamt, zwei Schnitte vorgeladen, Ersatzschrift mit Metrik-Overrides): **Bricolage Grotesque** (Display, 800, −0,01 em), **Atkinson Hyperlegible Next** (Text 400/700), **Martian Mono** (nur Maße und Planbeschriftung; Werte Breite 75 %, Etiketten Versalien +0,06 em). Lizenzen in `app/fonts/LIZENZEN.md`. Kaufempfehlung: M-017.

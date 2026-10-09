@@ -7,6 +7,7 @@ export interface LogoProps {
   size?: 'sm' | 'md';
   /** Load eagerly with high fetch priority (header, above the fold). */
   priority?: boolean;
+  /** Classes for the image (height, object-fit); the plaque around it follows. */
   className?: string;
 }
 
@@ -14,28 +15,25 @@ const HEIGHT = { sm: 32, md: 40 } as const;
 const HEIGHT_CLASS = { sm: 'h-8', md: 'h-10' } as const;
 
 /**
- * Interim raster wordmark, deviating from roadmap §4 (inline SVG, text as paths,
- * currentColor) until the owner supplies a vector logo (open point in §13).
- * The SVG files in public/images show a different emblem with system-font text,
- * so they are not used. No light-on-dark variant exists (the "white-transparent"
- * file still has navy text), so dark mode and the inverse band show a flat white
- * silhouette via CSS filter; print keeps the colors.
+ * Raster wordmark, always the unchanged original file (G8 „Unantastbar“: the logo's final state
+ * matches the original exactly). The file has navy and red artwork on transparency and no
+ * light-on-dark variant exists, so in the dark theme and in the inverse band the original sits on a
+ * light plaque (`bg-plakette`: Papier, radius 4, 4px padding; transparent in the light theme and in
+ * print) instead of being recolored by brightness/invert filters (KERN K-006: Navy and Rot are the
+ * logo's colors and stay visible). The SVG files in public/images show a different emblem with
+ * system-font text, so they are not used.
  */
 export function Logo({ size = 'md', priority = false, className }: LogoProps) {
   return (
-    <Image
-      src={logo}
-      alt="Bad und Energie GmbH Lahn Dill"
-      height={HEIGHT[size]}
-      loading={priority ? 'eager' : undefined}
-      fetchPriority={priority ? 'high' : undefined}
-      className={cn(
-        'w-auto select-none',
-        HEIGHT_CLASS[size],
-        'dark:brightness-0 dark:invert in-data-[tone=inverse]:brightness-0 in-data-[tone=inverse]:invert',
-        'print:brightness-100 print:invert-0',
-        className,
-      )}
-    />
+    <span data-logo-plakette="" className="inline-flex min-w-0 max-w-full shrink items-center rounded-1 bg-plakette p-1">
+      <Image
+        src={logo}
+        alt="Bad und Energie GmbH Lahn Dill"
+        height={HEIGHT[size]}
+        loading={priority ? 'eager' : undefined}
+        fetchPriority={priority ? 'high' : undefined}
+        className={cn('w-auto select-none', HEIGHT_CLASS[size], className)}
+      />
+    </span>
   );
 }

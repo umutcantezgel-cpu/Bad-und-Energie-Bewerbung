@@ -213,3 +213,17 @@ Format: E-[Nr] · Datum · Gegenstand · Entscheidung · Grund · Umkehr (bei De
   - Das Fundament (theme.css, Schriften, Guard, Bewegungsmodul, Icon-Schnittstelle, Logo) setzt ein einziger Opus-Agent als **exklusives Paket** um. Kein anderes Paket läuft gleichzeitig auf diesen Dateien.
   - Der Orchestrator nimmt es ab und committet. Das ist eine Abweichung von „gemeinsame Dateien nur der Orchestrator“, begründet mit der Kontextökonomie. Die Dateihoheit bleibt dabei gewahrt.
 - **Umkehr:** Jede Welle ist ein eigener Commit je Paket. Der Rückweg ist der Revert auf 8761d41 (Merge von main).
+
+## E-022 · 09.10.2026 · Abnahme R2-FUND-01 mit zwei bekannten Befunden
+- **Abgenommen:**
+  - Paket-Rubrik 80 %.
+  - Ebene 1 grün: lint, type-check, 1078 Vitest (vorher 927, kein bestehender Test geschwächt), Design-Guard (strenger), Kontrast (351 Paare in 7 Modi), Client-Importe, Build, Graph.
+  - Logo bytegleich auf Plakette, ohne Filter.
+- **CSP:** Der sha256-Hash des Kopfskripts steht **nicht** in `script-src`. Ein Hash schaltet nach CSP Level 2+ `'unsafe-inline'` ab und würde die Inline-Skripte von Next sperren. Das Schutzniveau bleibt wie im Ausgangsstand (Report-Only, `'unsafe-inline'`). Der Hash ist in `lib/motion/head-script.ts` dokumentiert und getestet; eine Nonce-Strategie kommt nach MENSCHEN (M-018). KERN K-004 ist angepasst.
+- **Leistung:** Der LCP mobil steigt mit den neuen Schriften gegenüber P0: `/` 2,92 → 3,36 s (+15 %), Stellenseite +14 %, `/bewerbung` +9,5 %. Gegenmaßnahme ist ein eigenes Paket **R3-PERF-01**, parallel zur Startseiten-Welle:
+  - statische Instanzen und engere Teilmengen der variablen Schriften (Bricolage 800, Atkinson 400/700, Martian nur Ziffern und Etiketten);
+  - Vorladen und `font-display` je Rolle prüfen;
+  - Messung als Median aus 5 Läufen.
+  
+  Das Ziel bleibt Z-12, nie schlechter als P0 plus 10 % LCP.
+- **Rechtstext:** Die Datenschutzerklärung nennt „Inter“ als selbst gehostete Schrift (`app/datenschutz/page.tsx`). Die Aussage wird faktisch unrichtig, deshalb ersetzt R5-RECHT-01 den Schriftnamen minimal (weiter selbst gehostet, keine Übermittlung). Vermerk zur Prüfung durch den Datenschutzbeauftragten in `docs/operations/datenschutz-aenderungen.md` und M-019.

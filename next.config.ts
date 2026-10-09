@@ -18,7 +18,7 @@ const GOOGLE_MAPS = {
 
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} ${GOOGLE_MAPS.script}`,
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} ${GOOGLE_MAPS.script}`, // Bewusst ohne Hash/Nonce: ein Hash schaltet 'unsafe-inline' ab und sperrte die Inline-Skripte von Next (self.__next_f); bis zur Nonce-Strategie deckt 'unsafe-inline' alle ab, auch das Kopfskript (Hash: lib/motion/head-script.ts HEAD_SCRIPT_SHA256; Prüfung lib/motion/__tests__/csp.test.ts)
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   `img-src 'self' data: blob: ${GOOGLE_MAPS.img}`,
   "font-src 'self' data: https://fonts.gstatic.com",

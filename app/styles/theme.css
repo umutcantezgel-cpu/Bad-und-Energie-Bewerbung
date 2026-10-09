@@ -1,112 +1,131 @@
 /*
- * Design tokens (roadmap §4). Three tiers:
- *   1. @theme          primitives, type scale, space, radii, shadows, motion
- *   2. :root + scopes  semantic roles (light, dark, inverse band)
- *   3. @theme inline   roles → utilities (bg-surface, text-ink, border-line …)
- * Components use the semantic utilities only; scripts/qa/check-design-tokens.mjs
- * rejects raw palette classes. scripts/qa/check-contrast.mjs parses this file,
- * so keep role values as plain hex.
+ * Gestaltungssystem KERN 1.0 (_relaunch/KERN.md K-004…K-010), Werte aus der freigegebenen
+ * Variante 1 (_relaunch/ausbau/richtungen/1, BEGRUENDUNG §8–§10) und den Farben aus E-016.
+ * Drei Ebenen:
+ *   1. Primitive      --p-* in :root (keine Utilities; nur diese Datei darf sie nennen)
+ *   2. Rollen         :root (hell), dunkel, [data-tone="inverse"] (Navy-Band), Druck
+ *   3. Utilities      @theme inline: Rollen → bg-surface, text-ink, border-line, text-brand …
+ * Komponenten nutzen nur die Rollen-Utilities; scripts/qa/check-design-tokens.mjs verbietet
+ * Rohpaletten, Hexwerte in Klassen und --p-* außerhalb dieser Datei. scripts/qa/check-contrast.mjs
+ * rechnet die Kontraste aus dieser Datei: Primitive bleiben reine Hexwerte, Rollen zeigen per var()
+ * auf Primitive. Neue Token-Namen gehören auch in lib/utils/cn.ts (extendTailwindMerge).
  */
 
 @theme {
-  /* No Tailwind default palette (and no white/black): only the colors below exist. */
+  /* Keine Tailwind-Standardpalette, keine Standardschriften: nur die Rollen unten existieren. */
   --color-*: initial;
+  --font-*: initial;
 
-  /* Neutral grays with a slight navy tint (hue ~255) */
-  --color-gray-0: #FFFFFF;
-  --color-gray-25: #FAFBFC;
-  --color-gray-50: #F5F6F8;
-  --color-gray-100: #ECEEF2;
-  --color-gray-200: #E3E6EB;
-  --color-gray-300: #CDD2DA;
-  --color-gray-400: #A3ABB8;
-  --color-gray-500: #7D8696;
-  --color-gray-600: #5F6878;
-  --color-gray-700: #4A5363;
-  --color-gray-800: #2E3645;
-  --color-gray-900: #121826;
-  --color-gray-950: #0B0F17;
-
-  /* Brand: navy = ink, crimson = primary action fill only,
-     hydro = focus rings only, eco = success only */
-  --color-navy-900: #0A1E3A;
-  --color-crimson-600: #C51E1E;
-  --color-crimson-700: #A8191A;
-  --color-crimson-800: #8F1516;
-  --color-hydro-300: #6CB8F0;
-  --color-hydro-600: #0369A1;
-  --color-eco-300: #4ADE9B;
-  --color-eco-700: #047857;
-
-  /* Type scale: size / line-height / tracking / weight. Weights 400–700 only.
-     display 39–72px, numeral 48–104px (roadmap §4); both reach their maximum at 1280 / 1504px. */
-  --text-footnote: 0.8125rem;
-  --text-footnote--line-height: 1.4;
-  --text-callout: 0.9375rem;
-  --text-callout--line-height: 1.45;
-  --text-body: clamp(1rem, 0.95rem + 0.25vw, 1.0625rem);
+  /* ── Schriftskala (K-005): 10 Stufen, fließend mit rem-Anteil, Werte aus Variante 1 ──
+     footnote 14 · callout 15–16 · body 17–20 · lead 19–24 · title-3 20–30 · title-2 24–36 ·
+     title-1 32–56 (= numeral, Hauptmaß) · display (H1 mit beliebigem Wortlaut) · plakat (die eine
+     Plakatzeile der Startseite, „SHK-Jobs / in Wetzlar.“, Zeilen ohne Umbruch).
+     display ist am längsten Wort geprüft, das heute in Display steht („Feierabend.“, Bricolage 800,
+     gemessen 5,12–5,55 em je nach opsz): mobil und Tablet 52–120 px (390 px: 60,6 px, das Wort
+     326 px in der 350-px-Spalte), unter 360 px 40–52 px, ab 64em 64–168 px (max-w-4xl).
+     Prüfung: app/fonts/__tests__/display.test.ts. plakat übernimmt Variante 1 wörtlich (390 px: 76 px;
+     dazu die Höhenstufen B–D unten), nur für kurze Zeilen. Familie und Achsen der Stufen setzen die @utility-Regeln unten. */
+  --text-footnote: 0.875rem;
+  --text-footnote--line-height: 1.45;
+  --text-callout: clamp(0.9375rem, 0.89rem + 0.2vw, 1rem);
+  --text-callout--line-height: 1.5;
+  --text-body: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
   --text-body--line-height: 1.55;
-  --text-lead: clamp(1.125rem, 1.04rem + 0.4vw, 1.3125rem);
-  --text-lead--line-height: 1.45;
-  --text-title-3: clamp(1.25rem, 1.16rem + 0.45vw, 1.5rem);
-  --text-title-3--line-height: 1.3;
+  --text-lead: clamp(1.1875rem, 1.1rem + 0.45vw, 1.5rem);
+  --text-lead--line-height: 1.5;
+  --text-title-3: clamp(1.25rem, 1.05rem + 0.85vw, 1.875rem);
+  --text-title-3--line-height: 1.15;
   --text-title-3--letter-spacing: -0.01em;
-  --text-title-3--font-weight: 600;
-  --text-title-2: clamp(1.5rem, 1.29rem + 1.05vw, 2.125rem);
-  --text-title-2--line-height: 1.2;
-  --text-title-2--letter-spacing: -0.015em;
-  --text-title-2--font-weight: 600;
-  --text-title-1: clamp(1.875rem, 1.45rem + 2.1vw, 3rem);
-  --text-title-1--line-height: 1.1;
-  --text-title-1--letter-spacing: -0.02em;
-  --text-title-1--font-weight: 600;
-  --text-display: clamp(2.4375rem, 1.5rem + 3.75vw, 4.5rem);
-  --text-display--line-height: 1.04;
-  --text-display--letter-spacing: -0.03em;
-  --text-display--font-weight: 700;
-  --text-numeral: clamp(3rem, 1.8rem + 5vw, 6.5rem);
+  --text-title-3--font-weight: 700;
+  --text-title-2: clamp(1.5rem, 1.25rem + 1vw, 2.25rem);
+  --text-title-2--line-height: 1.1;
+  --text-title-2--letter-spacing: -0.01em;
+  --text-title-2--font-weight: 700;
+  --text-title-1: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+  --text-title-1--line-height: 1;
+  --text-title-1--letter-spacing: -0.01em;
+  --text-title-1--font-weight: 800;
+  --text-numeral: clamp(2rem, 1.5rem + 2vw, 3.5rem);
   --text-numeral--line-height: 1;
-  --text-numeral--letter-spacing: -0.04em;
+  --text-numeral--letter-spacing: -0.02em;
   --text-numeral--font-weight: 600;
+  --text-display: clamp(3.25rem, 0.25rem + 14.5vw, 7.5rem);
+  --text-display--line-height: 0.92;
+  --text-display--letter-spacing: -0.01em;
+  --text-display--font-weight: 800;
+  --text-plakat: clamp(3.75rem, 0.25rem + 18.5vw, 7.5rem);
+  --text-plakat--line-height: 0.92;
+  --text-plakat--letter-spacing: -0.01em;
+  --text-plakat--font-weight: 800;
 
-  /* Space (8-pt grid on the 0.25rem base) and layout */
+  /* ── Raster und Abstände (K-007) ──
+     Abstandsskala 11 Stufen auf der 0,25-rem-Basis: 1 · 2 · 3 · 4 · 6 · 8 · 12 · 16 · 20 · 24 · 32
+     (= 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 · 80 · 96 · 128 px; als --a-1…--a-11 unten). */
   --spacing: 0.25rem;
-  --spacing-gutter: clamp(1.25rem, 0.8rem + 2.2vw, 2.5rem);
+  /* Seitenrand und Bundsteg; das Leitungspaar steht im Abstand --paar */
+  --spacing-gutter: clamp(1.25rem, 4vw, 4rem);
+  --spacing-bundsteg: clamp(1rem, 2.2vw, 1.5rem);
+  --spacing-paar: 0.75rem;
   --spacing-section: clamp(4rem, 2.8rem + 6vw, 8rem);
   --spacing-section-sm: clamp(3rem, 2.4rem + 3vw, 5rem);
   --container-prose: 40rem;
   --container-content: 68rem;
   --container-wide: 80rem;
-  /* Tailwind ships a static max-w-prose (65ch); the theme key takes precedence. */
+  /* Satzspiegel ≤ 84 rem */
+  --container-satz: 84rem;
+  /* Tailwind liefert ein statisches max-w-prose (65ch); der Theme-Schlüssel hat Vorrang. */
   --max-width-prose: 40rem;
 
+  /* ── Radien (K-008): vier Stufen 4 · 12 · 24 · 999 px; 24 = 12 + --paar, äußerer Bogen eines Paars ── */
   --radius-*: initial;
-  --radius-xs: 6px;
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 28px;
-  --radius-full: 9999px;
+  --radius-1: 4px;
+  --radius-2: 12px;
+  --radius-3: 24px;
+  --radius-voll: 999px;
+  /* Ältere Namen der Komponenten (Umbau in R3–R5) zeigen auf dieselben vier Stufen. */
+  --radius-xs: 4px;
+  --radius-sm: 4px;
+  --radius-md: 12px;
+  --radius-lg: 12px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
 
-  /* Cards sit on surface-2 instead of floating on shadows; three shadows only. */
+  /* ── Ein Schatten (K-008): nur für schwebende Ebenen (Blatt, Meldung, Sprunglink).
+     Tiefe entsteht sonst über Flächen (Papier, Wand, Wärme), nie über Glas, Glow oder Verläufe. ── */
   --shadow-*: initial;
-  --shadow-xs: 0 1px 2px rgb(10 30 58 / 0.06);
-  --shadow-sm: 0 1px 2px rgb(10 30 58 / 0.04), 0 4px 12px rgb(10 30 58 / 0.05);
-  --shadow-lg: 0 8px 40px rgb(10 30 58 / 0.12);
+  --shadow-lg: 0 8px 32px rgb(17 29 109 / 0.14);
 }
 
-/* Motion is emitted unconditionally so inline styles and JS can read it (mirrored in lib/tokens). */
+/* Bewegung (K-009, E-013): immer ausgegeben, damit Inline-Stile und JS sie lesen (Spiegel: lib/tokens).
+   Alle Utility-Namen zeigen auf die vier Dauern und drei Kurven aus :root. */
 @theme static {
-  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
-  --ease-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
-  --transition-duration-fast: 150ms;
-  --transition-duration-step: 220ms;
-  --transition-duration-sheet: 280ms;
+  --default-transition-duration: var(--d-1);
+  --default-transition-timing-function: var(--k-aus);
+  --transition-duration-d1: var(--d-1);
+  --transition-duration-d2: var(--d-2);
+  --transition-duration-d3: var(--d-3);
+  --transition-duration-d4: var(--d-4);
+  /* Ältere Namen: fast = Ausgang/Rückmeldung (d-1), step und sheet = Eingang (d-2) */
+  --transition-duration-fast: var(--d-1);
+  --transition-duration-step: var(--d-2);
+  --transition-duration-sheet: var(--d-2);
+  --ease-aus: var(--k-aus);
+  --ease-wechsel: var(--k-wechsel);
+  --ease-ein: var(--k-ein);
+  --ease-standard: var(--k-aus);
+  --ease-emphasized: var(--k-wechsel);
+  /* Tailwinds ease-in/-out/-in-out folgen denselben drei Kurven */
+  --ease-in: var(--k-ein);
+  --ease-out: var(--k-aus);
+  --ease-in-out: var(--k-wechsel);
 }
 
-/* var() fallback keeps the system stack if the next/font variable is missing. */
+/* Schriftvariablen aus app/fonts (next/font/local); latin-ext zuerst, sie greift nur in ihrem
+   unicode-range. Der var()-Ersatz hält die Systemschrift, falls eine Variable fehlt (global-error). */
 @theme inline {
-  --font-sans: var(--font-inter, ui-sans-serif), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-bricolage-ext, ui-sans-serif), var(--font-bricolage, ui-sans-serif), system-ui, sans-serif;
+  --font-sans: var(--font-atkinson-ext, ui-sans-serif), var(--font-atkinson, ui-sans-serif), system-ui, sans-serif;
+  --font-mass: var(--font-martian-ext, ui-monospace), var(--font-martian, ui-monospace), ui-monospace, monospace;
 
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
@@ -114,115 +133,325 @@
   --color-surface-raised: var(--surface-raised);
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
+  --color-ink-2: var(--ink-2);
+  --color-brand: var(--brand);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
+  --color-accent-press: var(--accent-press);
   --color-on-accent: var(--on-accent);
   --color-focus: var(--focus);
+  --color-vorlauf: var(--vorlauf);
+  --color-ruecklauf: var(--ruecklauf);
+  --color-waerme: var(--waerme);
+  --color-wand: var(--wand);
+  --color-plakette: var(--plakette);
   --color-success: var(--success);
   --color-success-subtle: var(--success-subtle);
   --color-danger: var(--danger);
   --color-danger-subtle: var(--danger-subtle);
 }
 
+/* ── Semantische Schrift-Utilities (K-005). Ergänzen die Theme-Stufen gleichen Namens um die Familie. ── */
+@utility text-display {
+  font-family: var(--font-display);
+}
+
+@utility text-plakat {
+  font-family: var(--font-display);
+}
+
+@utility text-title-1 {
+  font-family: var(--font-display);
+}
+
+@utility text-title-2 {
+  font-family: var(--font-display);
+}
+
+@utility text-title-3 {
+  font-family: var(--font-display);
+}
+
+/* Hauptmaß: Martian Mono, Breite 75 %, tabellarische Ziffern */
 @utility text-numeral {
+  font-family: var(--font-mass);
+  font-stretch: 75%;
   font-variant-numeric: tabular-nums;
 }
 
-/*
- * Semantic roles. Dark mode and the inverse band are screen-only, so print
- * always gets ink on white paper.
- */
+/* Maße an der Zeichnung (13:30, 35 km, Gehälter): Martian Mono, Breite 75 %, tabellarisch.
+   Größe und Gewicht kommen aus dem Zusammenhang (text-*, font-*). */
+@utility font-mass {
+  font-stretch: 75%;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Ziffern im Fließtext (Variante 1 .ziffer): Atkinson Hyperlegible Next zeichnet die Null mit
+   Schrägstrich. Telefonnummern, Uhrzeiten, Hausnummern, Postleitzahlen und Gehälter im Satz setzen ihre
+   Ziffern darum in Bricolage, im Gewicht des umgebenden Textes, tabellarisch. Maße an der Zeichnung
+   bleiben font-mass. */
+@utility ziffer {
+  font-family: var(--font-display);
+  font-weight: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Mono-Etikett: Planbeschriftung in Versalien, +0,06 em. Der einzige Weg zu Versalien (Guard). */
+@utility text-etikett {
+  font-family: var(--font-mass);
+  font-stretch: 75%;
+  font-size: var(--text-footnote);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
 @layer base {
+  /* ── Ebene 1: Primitive (E-016, Variante 1). Reine Hexwerte, keine Mischfarbe ohne eigenen Namen. ── */
+  :root {
+    /* hell */
+    --p-papier: #FBF7F0;
+    --p-wand: #F1E9DB;
+    --p-sand: #E9DFCC;
+    --p-waerme: #FADCC9;
+    --p-haar: #DDD3C2;
+    --p-rand: #6B74A6;
+    --p-tinte: #111A3B;
+    --p-navy: #111D6D;
+    --p-tinte-2: #454C78;
+    --p-weiss: #FFFFFF;
+    --p-rot: #D60000;
+    --p-rot-hover: #B00000;
+    --p-rot-druck: #A80000;
+    --p-blau: #1F57C4;
+    --p-gruen: #05664A;
+    --p-gruen-flaeche: #E3F0E6;
+    --p-fehler: #B42318;
+    --p-fehler-flaeche: #FBE6E1;
+    /* dunkel (aus derselben Familie; Glut = Wärme auf Nacht) */
+    --p-nacht: #0A1033;
+    --p-nacht-2: #131B4A;
+    --p-nacht-3: #1B2458;
+    --p-glut: #47445B;
+    --p-haar-d: #2A356B;
+    --p-rand-d: #7A84C8;
+    --p-creme: #F6F0E4;
+    --p-creme-2: #B9C0E8;
+    --p-rot-hell: #FF6B5F;
+    --p-blau-hell: #86AEFF;
+    --p-gruen-hell: #4ADE9B;
+    --p-gruen-nacht: #0F2A1F;
+    --p-fehler-hell: #FF8A80;
+    --p-fehler-nacht: #2C1513;
+    /* Inverse-Band: Navy-Fläche mit Creme-Schrift (hell) bzw. ein helleres Navy (dunkel) */
+    --p-navy-2: #1A2878;
+    --p-navy-3: #24338A;
+    --p-navy-linie: #2E3C92;
+    --p-navy-rand: #8E97D6;
+    --p-band-d: #16237A;
+    --p-band-d-2: #1E2C86;
+    --p-band-d-3: #27368F;
+    --p-band-d-linie: #34439A;
+
+    /* ── Maße, Abstände, Bewegung (K-007…K-009); Spiegel in lib/tokens ── */
+    --a-1: 0.25rem;
+    --a-2: 0.5rem;
+    --a-3: 0.75rem;
+    --a-4: 1rem;
+    --a-5: 1.5rem;
+    --a-6: 2rem;
+    --a-7: 3rem;
+    --a-8: 4rem;
+    --a-9: 5rem;
+    --a-10: 6rem;
+    --a-11: 8rem;
+    /* Paarabstand der Leitungen = --a-3; Strich 3 px für Zeichnung, Icons, Rahmen, Fokus */
+    --paar: var(--a-3);
+    --m-strich: 3px;
+    /* Touch-Ziel 44 px, Hauptaktion 56 px; Kopf 56 px (ab 64em 64 px), StickyApplyBar 80 px */
+    --m-ziel: 2.75rem;
+    --m-knopf: 3.5rem;
+    --m-kopf: 3.5rem;
+    --m-leiste: 5rem;
+    /* Dauern 4 Stufen, Takt 80 ms (Verzögerungen nur als Vielfache), Kurven 3 + linear.
+       Eingänge d-2 mit k-aus, Ausgänge d-1 mit k-ein. */
+    --d-1: 120ms;
+    --d-2: 240ms;
+    --d-3: 400ms;
+    --d-4: 600ms;
+    --takt: 80ms;
+    --k-aus: cubic-bezier(0.16, 1, 0.3, 1);
+    --k-wechsel: cubic-bezier(0.65, 0, 0.35, 1);
+    --k-ein: cubic-bezier(0.32, 0, 0.67, 0);
+  }
+
+  /* ── Ebene 2: Rollen, hell ── */
   :root {
     color-scheme: light dark;
 
-    --surface: #FFFFFF;
-    --surface-2: #F5F6F8;
-    --surface-3: #ECEEF2;
-    /* Cards on a surface-2 section: lighter than the section in both modes, so they read as raised. */
-    --surface-raised: #FFFFFF;
-    --ink: #0A1E3A;
-    --ink-muted: #5F6878;
-    --line: #E3E6EB;
-    --line-strong: #7D8696;
-    --accent: #C51E1E;
-    --accent-hover: #A8191A;
-    --on-accent: #FFFFFF;
-    --focus: #0369A1;
-    --success: #047857;
-    --success-subtle: #E8F5EF;
-    --danger: #B42318;
-    --danger-subtle: #FDECEA;
+    --surface: var(--p-papier);
+    --surface-2: var(--p-wand);
+    /* Spur, Chips, Hover auf Karten: eine Stufe unter der Wand */
+    --surface-3: var(--p-sand);
+    /* Karten auf einer surface-2-Fläche: heller als die Fläche, in jedem Modus */
+    --surface-raised: var(--p-papier);
+    --ink: var(--p-tinte);
+    --ink-muted: var(--p-tinte-2);
+    --ink-2: var(--p-tinte-2);
+    /* Marke: Überschriften, Maße, Linien der Zeichnung */
+    --brand: var(--p-navy);
+    --line: var(--p-haar);
+    --line-strong: var(--p-rand);
+    /* Rot nur als Knopffläche der einen Hauptaktion (E-016) */
+    --accent: var(--p-rot);
+    --accent-hover: var(--p-rot-hover);
+    --accent-press: var(--p-rot-druck);
+    --on-accent: var(--p-weiss);
+    --focus: var(--p-blau);
+    /* Leitungspaar: Vorlauf rot (nur als Linie), Rücklauf blau */
+    --vorlauf: var(--p-rot);
+    --ruecklauf: var(--p-blau);
+    --waerme: var(--p-waerme);
+    --wand: var(--p-wand);
+    /* Logo-Plakette (G8): hell unsichtbar; dunkel und im Band Papier hinter dem Original */
+    --plakette: transparent;
+    --success: var(--p-gruen);
+    --success-subtle: var(--p-gruen-flaeche);
+    --danger: var(--p-fehler);
+    --danger-subtle: var(--p-fehler-flaeche);
   }
 
+  /* ── dunkel (nur Bildschirm; Druck bleibt hell) ── */
   @media screen and (prefers-color-scheme: dark) {
     :root {
-      --surface: #0B0F17;
-      --surface-2: #121826;
-      --surface-3: #1A2131;
-      --surface-raised: #1A2131;
-      --ink: #F2F4F7;
-      --ink-muted: #A3ACBA;
-      --line: #232B3A;
-      --line-strong: #6B7587;
-      --accent: #C51E1E;
-      --accent-hover: #D93636;
-      --on-accent: #FFFFFF;
-      --focus: #6CB8F0;
-      --success: #4ADE9B;
-      --success-subtle: #0F2A1F;
-      --danger: #FF8A80;
-      --danger-subtle: #2C1513;
+      --surface: var(--p-nacht);
+      --surface-2: var(--p-nacht-2);
+      --surface-3: var(--p-nacht-3);
+      --surface-raised: var(--p-nacht-3);
+      --ink: var(--p-creme);
+      --ink-muted: var(--p-creme-2);
+      --ink-2: var(--p-creme-2);
+      --brand: var(--p-creme);
+      --line: var(--p-haar-d);
+      --line-strong: var(--p-rand-d);
+      --accent: var(--p-rot);
+      --accent-hover: var(--p-rot-hover);
+      --accent-press: var(--p-rot-druck);
+      --on-accent: var(--p-weiss);
+      --focus: var(--p-blau-hell);
+      --vorlauf: var(--p-rot-hell);
+      --ruecklauf: var(--p-blau-hell);
+      --waerme: var(--p-glut);
+      --wand: var(--p-nacht-2);
+      --plakette: var(--p-papier);
+      --success: var(--p-gruen-hell);
+      --success-subtle: var(--p-gruen-nacht);
+      --danger: var(--p-fehler-hell);
+      --danger-subtle: var(--p-fehler-nacht);
     }
   }
 
-  /* Inverse band (closing CTA): navy in light mode */
+  /* ── Inverse-Band (data-tone="inverse"): Navy-Fläche mit Creme-Schrift ── */
   @media screen {
     [data-tone="inverse"] {
       color-scheme: dark;
 
-      --surface: #0A1E3A;
-      --surface-2: #11284B;
-      --surface-3: #18315A;
-      --surface-raised: #18315A;
-      --ink: #FFFFFF;
-      --ink-muted: #B3BDCC;
-      --line: #22385A;
-      --line-strong: #7E8CA3;
-      --accent: #C51E1E;
-      --accent-hover: #D93636;
-      --on-accent: #FFFFFF;
-      --focus: #6CB8F0;
-      --success: #4ADE9B;
-      --success-subtle: #0F2A1F;
-      --danger: #FF8A80;
-      --danger-subtle: #2C1513;
+      --surface: var(--p-navy);
+      --surface-2: var(--p-navy-2);
+      --surface-3: var(--p-navy-3);
+      --surface-raised: var(--p-navy-3);
+      --ink: var(--p-creme);
+      --ink-muted: var(--p-creme-2);
+      --ink-2: var(--p-creme-2);
+      --brand: var(--p-creme);
+      --line: var(--p-navy-linie);
+      --line-strong: var(--p-navy-rand);
+      --accent: var(--p-rot);
+      --accent-hover: var(--p-rot-hover);
+      --accent-press: var(--p-rot-druck);
+      --on-accent: var(--p-weiss);
+      --focus: var(--p-blau-hell);
+      --vorlauf: var(--p-rot-hell);
+      --ruecklauf: var(--p-blau-hell);
+      --waerme: var(--p-glut);
+      --wand: var(--p-navy-2);
+      --plakette: var(--p-papier);
+      --success: var(--p-gruen-hell);
+      --success-subtle: var(--p-gruen-nacht);
+      --danger: var(--p-fehler-hell);
+      --danger-subtle: var(--p-fehler-nacht);
     }
   }
 
-  /* Inverse band in dark mode: a deep navy that differs from both page surfaces, so the
-     closing band keeps its identity between the FAQ (surface-2) and the footer (surface-2).
-     scripts/qa/check-contrast.mjs checks that separation. */
+  /* Inverse-Band im dunklen Thema: ein helleres Navy, das sich von Nacht (surface) und Wand
+     (surface-2) abhebt; scripts/qa/check-contrast.mjs prüft den Abstand. */
   @media screen and (prefers-color-scheme: dark) {
     [data-tone="inverse"] {
-      --surface: #0F2547;
-      --surface-2: #152D55;
-      --surface-3: #1B3663;
-      --surface-raised: #1B3663;
-      --ink: #F2F4F7;
-      --ink-muted: #B3BDCC;
-      --line: #26416D;
-      --line-strong: #7E8CA3;
-      --accent: #C51E1E;
-      --accent-hover: #D93636;
-      --on-accent: #FFFFFF;
-      --focus: #6CB8F0;
-      --success: #4ADE9B;
-      --success-subtle: #0F2A1F;
-      --danger: #FF8A80;
-      --danger-subtle: #2C1513;
+      --surface: var(--p-band-d);
+      --surface-2: var(--p-band-d-2);
+      --surface-3: var(--p-band-d-3);
+      --surface-raised: var(--p-band-d-3);
+      --line: var(--p-band-d-linie);
+      --wand: var(--p-band-d-2);
+    }
+  }
+
+  /* ── Druck: immer die hellen Primitiven, Papier weiß (dunkel und Inverse-Band gelten nur am Bildschirm) ── */
+  @media print {
+    :root {
+      color-scheme: light;
+      --surface: var(--p-weiss);
+      --surface-raised: var(--p-weiss);
+    }
+  }
+
+  /* ── Display- und Plakatstufe nach Breite: unter 360 px enger, ab 64em eigene Desktop-Stufe ──
+     display passt mit „Feierabend.“ in jede Spalte (320 px: 47 px = 259 px von 280 px); plakat folgt
+     Variante 1 (BEGRUENDUNG §8), auch in den Höhenstufen B–D (erster Bildschirm mit Hauptaktion). */
+  @media (max-width: 22.49em) {
+    :root {
+      --text-display: clamp(2.5rem, 0.25rem + 13.5vw, 3.25rem);
+      --text-plakat: clamp(3rem, 0.25rem + 17.5vw, 3.75rem);
+    }
+  }
+
+  /* Höhenstufe B (680–807 px Höhe, mobil und Tablet) */
+  @media (max-width: 63.99em) and (max-height: 50.49em) {
+    :root {
+      --text-plakat: clamp(3.25rem, 0.25rem + 16.5vw, 4.25rem);
+    }
+  }
+
+  /* Höhenstufe C (600–679 px) */
+  @media (max-width: 63.99em) and (max-height: 42.49em) {
+    :root {
+      --text-plakat: clamp(3rem, 0.25rem + 15vw, 3.75rem);
+    }
+  }
+
+  /* Höhenstufe D (unter 600 px), 320 × 568 noch eine Stufe kleiner */
+  @media (max-width: 63.99em) and (max-height: 37.49em) {
+    :root {
+      --text-plakat: clamp(2.5rem, 0.25rem + 12vw, 3rem);
+    }
+  }
+
+  @media (max-width: 22.49em) and (max-height: 37.49em) {
+    :root {
+      --text-plakat: clamp(2.5rem, 0.25rem + 11vw, 3rem);
+    }
+  }
+
+  @media (min-width: 64em) {
+    :root {
+      /* display endet bei 168 px: „Feierabend.“ (5,12 em) bleibt in max-w-4xl (896 px) */
+      --text-display: clamp(4rem, 0.25rem + 8.6vw, 10.5rem);
+      --text-plakat: clamp(4rem, 0.25rem + 8.6vw, 12rem);
+      --m-kopf: 4rem;
     }
   }
 }
