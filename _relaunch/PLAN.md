@@ -1,83 +1,44 @@
 # Gesamtplan
-Version 0.1 · Entwurf vor Richtungswahl und vor L0. Version 1.0 entsteht nach der Wahl (Richtungs-Denkprotokoll in ENTSCHEIDUNGEN) und der Plan-Schleife L0. Gebaut wird gegen KERN v1.
+Version 1.0 · 09.10.2026 · nach FREIGABE E-021, gebaut gegen KERN 1.0. Ersetzt 0.1; der Paketzuschnitt aus 0.1 bleibt im Kern erhalten, verteilt auf die Wellen R2–R7.
 
 ## Mengengerüst
-| Größe | Menge | Quelle |
+- **Seiten:** 12 (Grundmenge) in 8 Vorlagen. Erzählseiten sind `/`, `/jobs/[slug]` und 404, alle übrigen sind Arbeitsseiten.
+- **Elemente bis zum Merge:** 55 (Muss 20 · Soll 35). Kann (6) und die Showcase-Kriterien kommen danach (E-021).
+- **SVG:**
+  - Icon-Familie mit ≈ 34 Glyphen (die 8 Familien-Icons plus 26 Ersatz für lucide).
+  - Zeichnungen: Haus mit Wärmepumpe (`/`), Heizkreis um Zahl (`/jobs`, Stellenkopf), Maßketten (Stellenseite), Wärmebild statisch (Wärmepumpen-Stelle), Fortschrittsstrang (Bewerbung), geschlossener Kreis (Danke), offene Leitung + Wegweiser (404), Leitungstrenner, Rohrklammer.
+- **Bewegung:** Register in KERN K-009 mit 15 Kennungen aus V1 und 4 neuen; 3 Signaturmomente.
+- **Sprachen:** 1.
+- **Tests:** Bestand mindestens 927 Vitest und E2E in 4 Projekten. Neu:
+  - Vitest für `lib/motion`, `components/icons`, Konfigurator, Anker-Aliase, URL-Parameter, Upload-Adapter, Mappe-Stand, WhatsApp-Text, E-Mail-Fußzeile, JSON-LD, `llms.txt`.
+  - E2E und axe je Vorlage.
+
+## Wellen (Schreibrechte exakt je Paket, keine Datei in zwei gleichzeitigen Paketen)
+| Welle | Pakete | Elemente / Inhalt |
 |---|---|---|
-| Seiten der Grundmenge | 12: `/`, `/jobs`, 4 × `/jobs/[slug]`, `/bewerbung`, `/bewerbung/danke`, `/bewerbung/mappe`, `/datenschutz`, `/impressum`, 404 | P0, `werkzeuge/lib/browser.mjs` |
-| Vorlagen | 8: Startseite · Stellenliste · Stellenseite (4 Seiten) · Bewerbungsflow · Danke · Mappe · Rechtstext (2 Seiten) · Fehlerseite | `app/**` |
-| Erzählseiten / Arbeitsseiten | 3 Vorlagen (Start, Stellenseite, 404) / 5 Vorlagen | KERN K-002 |
-| Element-Pässe | 165 · zu bauen 61: Muss 20 · Soll 35 · Kann 6 · zurückgestellt 9 (5,5 %) | VERLUSTLISTE.md |
-| Doppelpässe (Leitpass → Querverweis) | E-START-002 ← E-SHELL-001 · E-START-052 ← E-SEO-021 · E-BEW-004 ← E-START-017 · E-START-019 ← E-BEW-022 · E-START-015 ← E-BEW-009 · E-BEW-012 ← E-START-007 (Upload-Teil), E-BEW-027 (`vault`) | gegenpruefung-p1.md Q1 |
-| Komponenten im Umbau | 27 `components/ui/*`, 13 `components/site/*`, 10 `components/home/*`, 11 `components/jobs/*`, 15 `components/apply/**`, 12 `components/mappe/*`, 6 `components/maps/*`, 5 `components/reviews/*`, 5 `components/legal/*`, Logo (nur Darstellung, G8) | Bestand |
-| SVG | Icon-Familie ≈ 30 Glyphen (ersetzt 26 lucide-Icons in 35 Dateien) · Illustrationen: Einstiegsmotiv, Einsatzgebiet (Radius, Lahn/Dill, A45/B49), Fehlerseite, Fortschrittsring, Siegel „1926–2026“, Ladeanzeige · Trenner/Muster aus dem Formsystem | Bestand, Pässe |
-| Animationen (Register) | ≈ 18–24 Einträge, davon 2–3 Signaturmomente (Ausbaustufe Voll) | KERN K-009 |
-| Sprachen | 1 (Deutsch) | Plattform |
-| Tests | 927 Vitest (Bestand, bleibt grün) + je zurückgeführter Funktion ein Kernaufgaben-Test (Konfigurator, Radius/Pendel, Anker-Aliase, URL-Parameter, Upload-Adapter gegen Attrappe, Mappe-Stand, WhatsApp-Text, E-Mail-Fußzeile, JSON-LD) + E2E je Vorlage (4 Projekte) + Guards (Design, Kontrast, Client-Importe, Graph, neu: SVG) | K-004 |
+| R2 Fundament (exklusiv) | R2-FUND-01 | `theme.css`, Schriften, Skalen, Guard, `lib/motion`, `components/icons`, Logo (G8) |
+| R3 Startseite | R3-ORCH (Orchestrator: `components/home/content.ts` und `app/page.tsx` vorab) · R3-HOME-01 Einstieg · R3-HOME-02 Stellen und Vorteile · R3-HOME-03 Einsatzgebiet · R3-HOME-04 Stimmen, Betrieb, Kontakt · R3-HOME-05 Ablauf, FAQ, Abschnittsköpfe | E-START-002/010/011/021/013 · 024/025/026/016 · 032/029/030/033/036/038/040, E-SHELL-021 · 043/046/031/048/051 · 052, E-SEO-021 |
+| R4 Rahmen | R4-SHELL-01 Kopf und Mobilmenü · R4-SHELL-02 Fuß und Direktwege · R4-UI-01 Eingabe-Bausteine · R4-UI-02 Anzeige-Bausteine · R4-404 | E-SHELL-012/011/002/004/023 · 005/008, E-RECHT-008 · Zustände S-06 · E-BEW-003/007 · E-SHELL-025/027 |
+| R5a Unterseiten | R5-JOBS-01 Stellenliste (V2) · R5-JOBS-02 Stellenseite (V2 + V1, V3 statisch; E-SEO-010) · R5-APPLY-01 Bewerbungsflow · R5-BEW-01 Bewerbungsseite und Parameter · R5-SEO-01 JSON-LD und `llms.txt` | E-BEW-004/001, E-START-013 · E-BEW-027/008, E-BEW-029 · E-SEO-006/009/014 |
+| R5b Unterseiten | R5-THANKS-01 Danke · R5-MAPPE-01 Mappe · R5-UPLOAD-01 Unterlagen-Schnittstelle · R5-RECHT-01 Rechtsseiten · R5-MAIL-01 E-Mail-Fußzeile · R5-ICON-01 lucide-Rest, OG-Schrift | E-START-020/015, E-BEW-015 · E-BEW-006/020 · E-BEW-012, E-START-007 · E-RECHT-005/013 · E-BEW-025 |
+| R6 Abschluss | Volltest, Lighthouse, axe, Slop, Jury mit Lockvogel, eine Reparaturrunde, Gegenprüfer, BERICHT, MENSCHEN | Z-02, Z-03, Z-05…Z-13 nach Merge-Gate E-021 |
+| R7 Merge | PR → `main`, CI, Supabase lesend prüfen, Merge, GET-Prüfung live | – |
 
-## Wellen und Pakete
-Regeln: höchstens 5 Pakete je Welle, nie dieselbe Datei in zwei gleichzeitigen Paketen, gemeinsame Dateien (Tokens, globale Stile, `components/home/content.ts`, `lib/content/*`, Konfiguration, `app/layout.tsx`, `package.json`, KERN) nur durch den Orchestrator. Muss vor Soll vor Kann. Nach jeder Welle L2: Ebene 1, betroffene Tests, Bildprüfung (betroffene Seiten, Hauptseiten, zwei Seiten je Vorlage), axe; ein Commit je Paket, dann Push.
+**Nach jeder Welle:**
+- Ebene 1: lint, type-check, test, Guards, Build, test:graph.
+- Betroffene Playwright-Specs mit axe.
+- Bildschirmfotos in 6 Ansichten, Bilder in den Chat.
+- Ein Commit je Paket, Push, CI beobachten.
 
-### P3 Durchstich – Startseite als Referenz
-| Welle | Paket | Rolle | Dateien (Schreibrecht) | Elemente | Kriterien |
-|---|---|---|---|---|---|
-| 3.0 | P3-ORCH-01 Tokens und Guard | Orchestrator | `app/styles/theme.css`, `app/globals.css`, `lib/tokens/index.ts`, `lib/utils/cn.ts`, `scripts/qa/check-design-tokens.mjs`, `scripts/qa/check-contrast.mjs`, `docs/ROADMAP.md` (§4) | – | Z-05, Z-07 (S-05, S-08), Z-11 |
-| 3.0 | P3-ORCH-02 Schriften und LCP-Lichtung (N-14) | Orchestrator | `app/layout.tsx` (Schriften), `app/fonts/*` (woff2-Teilmengen, Lizenzen) | – | Z-12, Z-07 |
-| 3.0 | P3-ORCH-03 Bewegungsmodul | Orchestrator | `lib/motion/*` (+ Tests), `app/layout.tsx` (Head-Skript), `next.config.ts` (CSP-Hash) | – | Z-09 |
-| 3.0 | P3-ORCH-04 Icon-Schnittstelle und Startseiten-Texte | Orchestrator | `components/icons/Icon.tsx` (Namens-API), `components/home/content.ts` (alle Textfelder der Startseiten-Pässe) | Inhalte zu E-START-002/010/011/021/013/024/025/026/031/048/051 | Z-02, Z-10 |
-| 3.0 | P3-ORCH-05 Logo nach G8 | Orchestrator | `components/brand/Logo.tsx` | (Logo unverändert; Dunkel/Inverse ohne Filter) | G8, Z-11 |
-| 3.1 | P3-SVG-01 Formsystem und Icons der Startseite | Sonnet | `components/icons/**` (außer `Icon.tsx`-API) | – | Z-10 |
-| 3.1 | P3-HOME-01 Einstieg, Vertrauenszeile, Signaturmoment 1 | Sonnet | `components/home/Hero.tsx`, `components/home/TrustLine.tsx` (neu), Tests | E-START-002 (Leit), E-START-010, E-START-011, E-START-021, E-START-013 (Startseite) | Z-02, Z-04, Z-08, Z-09 |
-| 3.1 | P3-HOME-02 Stellen und Vorteile mit Konfigurator | Sonnet | `components/home/JobList.tsx`, `components/home/BenefitGrid.tsx`, `components/home/BenefitConfigurator.tsx` (neu), Tests | E-START-024 (Leit für 016), E-START-025, E-START-026 | Z-02, Z-03 |
-| 3.1 | P3-HOME-03 Einsatzgebiet | Sonnet | `components/home/RegionSection.tsx`, `components/maps/**`, Tests | E-START-032 (Leit), 029, 030, 033, 036, 038 (Soll seit E-017; 7 Lagebeschreibungen, 3 nach M-016), 040, E-SHELL-021; Kann 035, 037 | Z-02, Z-03, Z-09, Z-10 |
-| 3.1 | P3-HOME-04 Stimmen, Betrieb, Kontakt | Sonnet | `components/reviews/**`, `components/home/AboutSection.tsx`, `components/home/CtaBand.tsx`, Tests | E-START-043, 046, 031, 048, 051 | Z-02, Z-09 |
-| 3.2 | P3-HOME-05 Ablauf, FAQ, Abschnittsköpfe, Anker | Sonnet | `components/home/ProcessTimeline.tsx`, `FaqSection.tsx`, `SectionHeader.tsx`, `app/page.tsx` (Anker-Aliase) | E-START-052 (Leit für E-SEO-021) | Z-02, Z-06, Z-07 (S-12) |
-| 3.2 | P3-SHELL-00 Kopf und Fuß, Darstellung | Sonnet | `components/site/HeaderBar.tsx`, `SiteHeader.tsx`, `SiteFooter.tsx`, `FooterSwitch.tsx`, `ContactOptions.tsx` | (nur Gestaltung; Mechanik P4) | Z-08 |
-| 3.3 | P3-PRUEF Phasentor | Orchestrator + Prüfer | – | – | alle auf `/` anwendbaren |
-
-### P4 Fundament
-| Welle | Paket | Rolle | Dateien | Elemente | Kriterien |
-|---|---|---|---|---|---|
-| 4.1 | P4-SHELL-01 Kopf und Mobilmenü | Sonnet | `components/site/MobileNav.tsx`, `HeaderBar.tsx`, `SiteHeader.tsx`, `StickyApplyBar*.tsx`, `components/ui/Sheet.tsx` | E-SHELL-012 (Muss), 011, 002, 004 (Menü), 023 (Leit), Kann 013, E-START-053 | Z-02, Z-09, Z-11 |
-| 4.1 | P4-SHELL-02 Fuß und Direktwege | Sonnet | `components/site/SiteFooter.tsx`, `FooterSwitch.tsx`, `ContactOptions.tsx`, `OpeningHoursText.tsx` | E-SHELL-005 (Muss), 008, 004 (Fuß), E-RECHT-008 | Z-02 |
-| 4.1 | P4-UI-01 Eingabe-Bausteine mit allen Zuständen | Sonnet | `components/ui/{Button,IconButton,Input,Field,Textarea,Checkbox,ChoiceCard,Chip,SegmentedControl,variants}.tsx`, Tests | – | Z-07 (S-06), Z-11 |
-| 4.1 | P4-UI-02 Anzeige-Bausteine, Fortschritt | Sonnet | `components/ui/{Card,Tag,StatTile,Disclosure,Toast,ToastCard,Breadcrumbs,PageHeader,Prose,Rating,StepHeader,TextLink,SkipLink}.tsx`, `components/ui/ProgressRing.tsx` (neu), Tests | E-BEW-003, E-BEW-007 | Z-02, Z-07, Z-10 |
-| 4.1 | P4-404-01 Fehlerseiten mit Charakter | Sonnet | `app/not-found.tsx`, `app/error.tsx`, `app/global-error.tsx` | E-SHELL-025, E-SHELL-027 | Z-02, Z-08 |
-| 4.2 | P4-ORCH-06 Seitenübergänge, Fokus, Auswahl | Orchestrator | `app/globals.css`, `app/layout.tsx`, `next.config.ts` | – | Z-09, Z-11 |
-| 4.3 | P4-PRUEF Phasentor (Z-05, Z-11, Z-13 auf Hauptseiten, Pixelvergleich) | Orchestrator | – | – | Z-05, Z-11, Z-13 |
-
-### P5 Ausrollen
-| Welle | Paket | Rolle | Dateien | Elemente | Kriterien |
-|---|---|---|---|---|---|
-| 5.1 | P5-APPLY-01 Bewerbungsflow (nur Darstellung, Logik nach G9) | Sonnet | `components/apply/{ApplyFlow,ApplyFlowClient,ContactStep,FlowShortcuts,SubmitErrorPanel,steps,options}.tsx`, Tests | E-BEW-004 (Leit für E-START-017), E-BEW-001, E-START-013 (Flow) | Z-02, Z-04 |
-| 5.1 | P5-BEW-01 Bewerbungsseite und Parameter | Sonnet | `app/bewerbung/page.tsx`, `app/bewerbung/layout.tsx`, `lib/apply/params.ts`, Tests | E-BEW-027, E-BEW-008, Z-01-Nachträge (Ladezustände) | Z-02, Z-03, Z-06 |
-| 5.1 | P5-SEO-01 Strukturierte Daten | Sonnet | `components/site/site-jsonld.ts`, `lib/jobs/jsonld.ts`, `lib/seo/*` (außer `og-*`), Tests | E-SEO-006, E-SEO-009 (LocalBusiness-Beschreibung, areaServed, hasMap), E-SEO-014 (`app/llms.txt/content.ts`, `app/llms.txt/route.ts`) | Z-02, Z-06 |
-| 5.1 | P5-RECHT-01 Rechtsseiten (Darstellung; Inhalt unantastbar) | Sonnet | `components/legal/**`, `app/impressum/page.tsx`, `app/datenschutz/{page,layout}.tsx` | E-RECHT-005 (Wortlaut bleibt, M-015), E-RECHT-013 | Z-02, Z-11 |
-| 5.1 | P5-MAIL-01 E-Mail-Fußzeile | Haiku | `lib/email/templates/layout.ts`, Test | E-BEW-025 | Z-02, Z-03 |
-| 5.2 | P5-JOBS-01 Stellenliste | Sonnet | `app/jobs/page.tsx`, `components/jobs/JobCard.tsx` | – | Z-07, Z-08 |
-| 5.2 | P5-JOBS-02 Stellenseite (Erzählseite) | Sonnet | `app/jobs/[slug]/page.tsx`, `components/jobs/*` außer `JobCard.tsx`, `lib/jobs/data/anlagenmechaniker-shk.ts` | E-SEO-010 (Fakt `noWeekendOnCall` in den Benefits); Signaturmoment 3, falls gewählt | Z-07, Z-08, Z-09 |
-| 5.2 | P5-UPLOAD-01 Unterlagen-Schnittstelle (eigener Adapter, ehrlich deaktiviert, E-012) | Sonnet | `lib/apply/upload/*` (neu), `components/apply/UploadPanel.tsx` (neu), Tests | E-BEW-012 (Leit; mit E-START-007, E-BEW-027 `vault`) | Z-02, Z-03 |
-| 5.2 | P5-THANKS-01 Danke-Seite und Erfolgsmoment | Sonnet | `app/bewerbung/danke/page.tsx`, `components/apply/thanks/**` | E-START-020, E-START-015 (Leit), E-BEW-015, Kann E-START-019 (Leit) | Z-02, Z-09 |
-| 5.2 | P5-MAPPE-01 Mappe | Sonnet | `app/bewerbung/mappe/page.tsx`, `components/mappe/**` | E-BEW-006, E-BEW-020 (+ Einbindung E-BEW-007) | Z-02, Z-03 |
-| 5.3 | P5-ICON-01 Icon-Umstellung Restdateien, lucide entfernen | Sonnet + Orchestrator (`package.json`, `bun.lock`) | alle Dateien mit lucide-Import ohne offenes Paket | – | Z-10, Z-07 (S-04) |
-| 5.3 | P5-PRUEF Mutationsprobe, Phasentor | Orchestrator + Gegenprüfer | – | – | Z-02…Z-07, Z-09…Z-13 |
-
-### P6 Feinschliff und Signatur
-| Welle | Paket | Rolle | Dateien | Kriterien |
-|---|---|---|---|---|
-| 6.1 | P6-SIG-01…03 Signaturmomente auf Zielniveau | Sonnet | Dateien des Ursprungspakets | Z-08, Z-09 |
-| 6.1 | P6-ZUST-01 Zustände Arbeitsseiten (Lade, Leer, Fehler, Formular-Rückmeldung) | Sonnet | `components/apply/**`, `components/mappe/**` | Z-07 (S-06) |
-| 6.1 | P6-META-01 Favicon, Teilen-Bilder (lokale Schriften statt Google-Abruf), Auswahlfarbe | Sonnet | `app/opengraph-image.tsx`, `app/jobs/[slug]/opengraph-image.tsx`, `lib/seo/og-*`, `app/icon*` | Z-06, Z-12 |
-| 6.2 | P6-ZUST-02 Zustände Erzählseiten und Rahmen | Sonnet | `components/home/**`, `components/jobs/**`, `components/site/**` | Z-07 |
-| 6.2 | P6-JURY Jury und Blindvergleich bis Z-08 | Jury | – | Z-08 |
-
-### P7 Abnahme und Übergabe
-P7-VOLL Volltest aller Ebenen · P7-BERICHT BERICHT.md mit Galerie (HTML in `belege/`) und Anleitung Zusammenführen/Zurückrollen · P7-GEGEN frischer Gegenprüfer bestätigt jedes Häkchen · P7-MERGE PR `claude/kind-ride-n9duod → main` nach Bedingungen (CI grün, Supabase-Migrationen lesend geprüft, Vercel-Variablen bestätigt M-001).
-
-## Abhängigkeiten und kritischer Pfad
-P3-ORCH-01 → P3-ORCH-02 → P3-ORCH-03 → P3-ORCH-04 → P3-HOME-01 (Signaturmoment 1) → P3-PRUEF (Jury Start ≥ 8,0) → P4-UI-01 → P5-APPLY-01 → P5-THANKS-01 → P6-JURY → P7-GEGEN → P7-MERGE (wartet auf M-001).
-Weitere Kanten: P3-SVG-01 vor P5-ICON-01 · P4-UI-02 (ProgressRing) vor P5-MAPPE-01 · P5-UPLOAD-01 vor Feinschliff von P5-BEW-01 (`vault`) · P5-SEO-01 nach Z-01-Nachträgen.
+## Kritischer Pfad
+R2 → R3-ORCH → R3-HOME-01 → R4-UI-01 → R5-APPLY-01 → R5-THANKS-01 → R6 → R7.
 
 ## Kapazität
-Pakete: 39 (P3 12 · P4 6 · P5 11 · P6 6 · P7 4). Wellen pro Tag: 3 (Bau ≈ 1,5 h, Wellenprüfung ≈ 45 min nacheinander).
-Formel: Tage = 39 ÷ (5 × 3) × 1,2 = **3,1 Tage**. Mit der real tragfähigen Parallelität 3 (4 CPU, Build und Tests nacheinander) = 39 ÷ (3 × 3) × 1,2 = **5,2 Tage**. Planwert: 4–5 Arbeitstage nach FREIGABE.
+31 Pakete. Workflows laufen mit 2 parallel; bei 2 gleichzeitigen Workflows sind es effektiv 3–4.
+
+| Schritt | Dauer |
+|---|---|
+| Je Paket (Opus mit Prüfung) | ≈ 1–1,5 h |
+| Wellen | 6 |
+| Formel 31 ÷ (4 × 3 Wellen/Tag) × 1,2 | ≈ 3,1 Tage |
+| Realistisch mit Sitzungslimits | 1,5–3 Tage |

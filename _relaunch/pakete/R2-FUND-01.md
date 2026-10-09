@@ -67,9 +67,9 @@ Die Plattform bekommt das Gestaltungssystem aus KERN 1.0, damit alle 12 Seiten s
 ## Prüfung (Paketprüfung, alles muss grün sein)
 - `bun run lint`, `bun run type-check`, `bun run test` (alle bestehenden 927+ Tests grün; angepasste Tests nur, wo sie alte Farbwerte, Inter oder Logo-Filter festschreiben, mit Begründung im Ausgabeformular).
 - `bun run check:design`, `bun run check:contrast`, `bun run check:client-imports`.
-- Build mit CI-Umgebung: `EMAIL_SIMULATION=true ALLOW_DEV_SECRETS=true APP_URL=http://localhost:3400 bun run build`. Achtung: `:3500` (Ausgangsstand) läuft aus `.next` – baue deshalb mit `NEXT_DIST_DIR`, falls vorhanden, oder in eine Kopie. **Bevorzugt:** Prüfe nur `bun run type-check` und den Build in einem eigenen Ordner über `next build` mit `distDir` per Umgebungsvariable, wenn `next.config.ts` das hergibt. Sonst den Build überspringen und melden; der Orchestrator baut nach Wellenschluss.
+- Build im Repository (der Ausgangsstand auf :3500 läuft jetzt aus einer eigenen Kopie, `.next` im Repo ist frei): `EMAIL_SIMULATION=true ALLOW_DEV_SECRETS=true APP_URL=http://localhost:3450 bun run build` – muss grün sein; danach `bun run test:graph`, falls es den Build braucht.
 - Bildschirmfotos zur Selbstkontrolle mit `node _relaunch/werkzeuge/screens.mjs --base http://localhost:<eigener Port> --label r2-fundament --vps m390,d1440 --schemes light,dark --belege haupt`.
-  - Eigener Server: `PORT=3450 EMAIL_SIMULATION=true ALLOW_DEV_SECRETS=true APP_URL=http://localhost:3450 bunx next dev -p 3450`.
+  - Eigener Server nach dem Build: `EMAIL_SIMULATION=true ALLOW_DEV_SECRETS=true APP_URL=http://localhost:3450 bunx next start -p 3450`.
   - Am Ende beenden.
 
 ## Grenzen
