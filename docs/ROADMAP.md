@@ -419,7 +419,7 @@ Zwei Claude-Sessions arbeiten parallel am selben Repo. Mit dem Owner abgestimmt:
 
 ## 9. Sicherheit, DSGVO, Qualität
 
-1. **Sofort (User):** Resend-Key widerrufen und rotieren, Resend-Logs prüfen. Im Repo kommt ein Platzhalter hinein, dazu Secret-Scanning und gitleaks in der CI.
+1. ~~**Sofort (User):** Resend-Key widerrufen und rotieren, Resend-Logs prüfen.~~ **Erledigt am 2026-10-08** (alter Key widerrufen, neuer Key in Vercel, Logs ohne Auffälligkeiten). Im Repo steht ein Platzhalter, dazu Secret-Scanning und gitleaks in der CI.
 2. Kein simulierter Erfolg in Production, keine Empfänger-Adressen in Logs, `server-only` in `lib/email/*` und `lib/supabase/server.ts`.
 3. `/api/bewerbung`:
    - `validateCSRF()` erweitern (Allowlist `APP_URL` + `VERCEL_URL`, testbar).
@@ -563,7 +563,7 @@ Beispiel-Description für Anlagenmechaniker:
 
 ## 13. Offene Owner-Punkte (blockieren Phase 1 nicht; bis zur Klärung gilt jeweils der sichere Standard)
 
-- **Sofort:** Resend-Key rotieren. Er liegt im öffentlichen Git-Verlauf.
+- ~~**Sofort:** Resend-Key rotieren.~~ **Erledigt am 2026-10-08.**
 - Versprechen „Rückmeldung in 24 h“? Standard: „Wir melden uns schnellstmöglich“.
 - Stand der Google-Bewertungen. `reviews.data.ts` nennt 24 Bewertungen und zitiert 10.
 - Quereinsteiger/Montagehelfer als echte Stelle (mit Gehalt)? Standard: `funnel_only`.
