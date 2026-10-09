@@ -312,7 +312,7 @@ Stand der Live-Prüfung auf `localhost:3600` mit GET (Chrome/141-User-Agent). Ni
 | `/datenschutz` | Seite | 200 | 128 311 B | app/datenschutz/page.tsx |
 | `/impressum` | Seite | 200 | 109 400 B | app/impressum/page.tsx |
 | `/gibt-es-nicht-404` · `/danke` | nicht gefunden | 404 | 98 454 B | app/not-found.tsx |
-| `/admin/` | Weiterleitung | 308 | 6 B | (Vermutung: Weiterleitung ohne Schrägstrich, Ziel nicht geprüft) |
+| `/admin/` | Weiterleitung | 308 | 6 B | Ziel `/admin` antwortet mit 404 (live geprüft, GET) |
 | `/robots.txt` | Textroute | 200 | 754 B | app/robots.ts |
 | `/sitemap.xml` | Textroute | 200 | 770 B | app/sitemap.ts |
 | `/llms.txt` | Textroute | 200 | 2 351 B | app/llms.txt/route.ts |
