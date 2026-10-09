@@ -20,3 +20,6 @@ Status: ☐ offen · ☑ mit Beleg erfüllt · AUSNAHME (nur nach L7, höchstens
 | Z-14 | Übergabe | Sichtprüfung frischer Gegenprüfer | BERICHT.md mit Galerie, KERN.md als Doku, MENSCHEN.md vollständig, Anleitung Zusammenführen/Zurückrollen | Dateien | ☐ |
 
 Geltungsbereich: Z-05 und Z-11 gelten für alles, was der Lauf ändern darf. Vorbestehende Befunde in Unantastbarem, Geschäftslogik und Einbettungen dürfen nicht zunehmen und stehen mit Fundstelle in MENSCHEN.md.
+
+## Phasentore
+- **P0 (09.10.2026, bestanden):** Plattform läuft (Produktions-Build :3500, Altstand :3600) · Sicherung belegt (Ausgangsstand a83269d, Archive `_relaunch/sicherung/altstand-main-f2e7eae.tar.gz` und `ausgangsstand-a83269d.tar.gz`, lokal) · Messbasis vollständig: Bildschirmfotos (96 + 36), Lighthouse (Median aus 5), axe (110 Läufe), Tastatur/Reflow/Zoom/Textabstände/erzwungene Farben/ohne JS, Größen, Konsolenfehler, Slop hart und weich, SVG, Meta, Jury-Ausgangswert je Hauptseite. Belege: `MESSUNGEN.md`.
