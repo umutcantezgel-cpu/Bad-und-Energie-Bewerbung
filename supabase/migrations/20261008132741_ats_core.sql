@@ -22,8 +22,14 @@ create type public.application_stage as enum (
 );
 
 -- ---------------------------------------------------------------------------
--- Kandidaten (Dedupe über E.164-Telefonnummer bzw. E-Mail)
+-- Kandidaten: Kontakt-Snapshot je Bewerbung
 -- ---------------------------------------------------------------------------
+--
+-- Der öffentliche Intake legt für jede Bewerbung einen eigenen Datensatz an und ändert nie
+-- einen bestehenden: Wer eine fremde Telefonnummer oder Adresse eintippt, darf deren Namen
+-- und Kontaktdaten nicht überschreiben (Art. 5 Abs. 1 lit. d DSGVO). Mögliche Dubletten
+-- zeigt das Cockpit über die Indizes auf phone_e164/email nur als Hinweis; zusammengeführt
+-- wird ausschließlich durch Staff (staff_*-RPC mit aal2, Phase 2d).
 
 create table public.candidates (
   id uuid primary key default gen_random_uuid(),
@@ -50,8 +56,13 @@ create table public.applications (
   id uuid primary key default gen_random_uuid(),
   reference text not null unique
     check (reference ~ '^BE-[0-9]{2}-[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{4,6}$'),
-  idempotency_key uuid not null unique,
-  candidate_id uuid not null references public.candidates (id) on delete cascade,
+  -- sha256(idempotency_key) als Hex: Der Key selbst wirkt wie ein Inhaber-Token
+  -- (Wiederholung ⇒ Nummer + Ergänzungs-Token) und wird deshalb nicht gespeichert.
+  idempotency_key_hash text not null unique check (idempotency_key_hash ~ '^[0-9a-f]{64}$'),
+  -- applicationContentHash aus Next (lib/applications/fingerprint.ts): gleiche Angaben ⇒ gleicher Wert.
+  content_hash text check (content_hash ~ '^[0-9a-f]{32}$'),
+  -- restrict: Kandidat (Kontakt-Snapshot) wird erst nach seinen Bewerbungen gelöscht (Purge 2c).
+  candidate_id uuid not null references public.candidates (id) on delete restrict,
 
   job_id text not null check (job_id in (
     'anlagenmechaniker-shk',
@@ -66,9 +77,11 @@ create table public.applications (
   question_set text not null check (question_set in ('fachkraft', 'ausbildung', 'quereinstieg')),
 
   answers jsonb not null default '{}'::jsonb
-    check (jsonb_typeof(answers) = 'object' and pg_column_size(answers) <= 4096),
+    check (jsonb_typeof(answers) = 'object' and pg_column_size(answers) <= 16384),
+  -- Großzügiger als der 64-KB-Body in Next: Die DB darf nie strenger sein als zod,
+  -- sonst ginge eine gültige Bewerbung auf dem DB-Pfad verloren.
   mappe jsonb
-    check (mappe is null or (jsonb_typeof(mappe) = 'object' and pg_column_size(mappe) <= 65536)),
+    check (mappe is null or (jsonb_typeof(mappe) = 'object' and pg_column_size(mappe) <= 262144)),
 
   contact_channel text not null check (contact_channel in ('whatsapp', 'phone', 'email')),
   acquisition_channel text not null check (acquisition_channel in (
@@ -120,11 +133,13 @@ create table public.application_follow_ups (
   start_date text check (char_length(start_date) <= 100),
   postal_code text check (char_length(postal_code) <= 10),
   message text check (char_length(message) <= 3000),
-  mappe jsonb check (mappe is null or (jsonb_typeof(mappe) = 'object' and pg_column_size(mappe) <= 65536)),
-  received_at timestamptz not null default now()
+  mappe jsonb check (mappe is null or (jsonb_typeof(mappe) = 'object' and pg_column_size(mappe) <= 262144)),
+  -- received_at: Zeitpunkt laut Next; created_at: Eingang in der DB (Grundlage der Grenzen).
+  received_at timestamptz not null default now(),
+  created_at timestamptz not null default now()
 );
 
-create index application_follow_ups_application_idx on public.application_follow_ups (application_id);
+create index application_follow_ups_application_idx on public.application_follow_ups (application_id, created_at desc);
 
 -- Unterlagen (Uploads ab Phase 2b; Objekte im privaten Bucket application-files).
 create table public.application_files (
@@ -160,14 +175,16 @@ create index application_notes_application_idx on public.application_notes (appl
 create index application_notes_author_idx on public.application_notes (author_id) where author_id is not null;
 
 -- Zeitleiste (append-only, ohne personenbezogene Inhalte: nur IDs, Stufen, Codes).
+-- actor_id mit restrict: Staff wird deaktiviert, nicht gelöscht (ein SET NULL wäre ein UPDATE
+-- und scheitert ohnehin an der append-only-Sperre).
 create table public.application_events (
   id bigint generated always as identity primary key,
   application_id uuid not null references public.applications (id) on delete cascade,
   event_type text not null check (event_type in (
-    'submitted', 'follow_up', 'stage_changed', 'assigned', 'rated', 'note_added',
+    'submitted', 'resubmitted', 'follow_up', 'stage_changed', 'assigned', 'rated', 'note_added',
     'file_added', 'file_viewed', 'exported', 'consent_changed', 'email_queued', 'email_skipped'
   )),
-  actor_id uuid references public.staff (user_id) on delete set null,
+  actor_id uuid references public.staff (user_id) on delete restrict,
   data jsonb not null default '{}'::jsonb
     check (jsonb_typeof(data) = 'object' and pg_column_size(data) <= 2048),
   created_at timestamptz not null default now()
@@ -224,8 +241,11 @@ insert into private.app_settings (key, enabled) values
   ('sla_digest_enabled', false),
   ('ops_alert_enabled', false);
 
--- E-Mail-Outbox. Ohne Empfängeradresse und ohne Inhalt: Die Edge Function (2c) liest die
--- Bewerbung zur Sendezeit. recipient_hash = sha256(lower(email)) für die Obergrenze je Empfänger.
+-- E-Mail-Outbox. Ohne Empfängeradresse und ohne Inhalt: Die Edge Function (2c) liest den
+-- Kontakt-Snapshot der Bewerbung zur Sendezeit und sendet nur, wenn sha256(email) noch
+-- recipient_hash entspricht. recipient_hash = sha256(lower(email)) für die Obergrenze je Empfänger.
+-- skip_reason 'disabled': Bestätigung entstand, während outbound_email_enabled aus war
+-- (kein Nachversand wochenalter Eingangsbestätigungen beim Einschalten).
 create table private.outbox (
   id uuid primary key default gen_random_uuid(),
   kind text not null check (kind in (
@@ -254,13 +274,16 @@ create index outbox_follow_up_idx on private.outbox (follow_up_id) where follow_
 create index outbox_recipient_recent_idx on private.outbox (recipient_hash, created_at desc)
   where kind = 'application_confirmation' and recipient_hash is not null;
 
--- Rate-Limit (feste Zeitfenster). key_hash = HMAC(IP) aus Next, nie die IP selbst.
+-- Rate-Limit (feste Zeitfenster). key_hash = sha256 des Limiter-Schlüssels aus Next
+-- ("<scope>:<HMAC(IP)>"), nie die IP selbst. window_seconds gehört zum Schlüssel, damit
+-- mehrere Regeln für denselben Schlüssel (10 min / 24 h) getrennt zählen.
 create table private.rate_limit_counters (
   key_hash text not null check (key_hash ~ '^[0-9a-f]{64}$'),
   action text not null check (action ~ '^[a-z0-9_:.-]{1,40}$'),
+  window_seconds integer not null check (window_seconds between 1 and 86400),
   window_start timestamptz not null,
   hits integer not null default 0 check (hits >= 0),
-  primary key (key_hash, action, window_start)
+  primary key (key_hash, action, window_seconds, window_start)
 );
 
 create index rate_limit_counters_window_idx on private.rate_limit_counters (window_start);

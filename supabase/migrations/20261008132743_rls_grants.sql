@@ -7,7 +7,9 @@
 --   Lesen ab viewer; Stufe/Zuständigkeit/Bewertung/Absage-Zeitpunkt ändern und
 --   Notizen schreiben ab recruiter. Alles Weitere über staff_*-RPCs (Phase 2d).
 -- - service_role: keine Tabellenrechte; nur EXECUTE auf rpc_* (intake_rpc.sql).
---   Ein geleakter Secret-Key kann so keine Tabellen auslesen.
+--   Das schließt nur den Tabellenzugriff über PostgREST. Der Secret-Key bleibt ein
+--   Root-Zugang: Storage (bypassrls), Realtime-Broadcast und die Auth-Admin-API sind damit
+--   weiter erreichbar. Er gehört ausschließlich auf den Server.
 -- - Trigger und RPCs schreiben als Owner (postgres, bypassrls).
 -- =============================================================================
 
