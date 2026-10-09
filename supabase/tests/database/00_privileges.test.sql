@@ -1,7 +1,8 @@
--- Rechte: RLS überall, keine Tabellenrechte für anon/service_role, RPCs nur für service_role.
+-- Rechte: RLS überall, keine Tabellenrechte für anon/service_role, genaue Spaltenrechte,
+-- RPCs nur für service_role, keine Storage-Policies, genaue Realtime-Policy.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(16);
+select plan(21);
 
 select is(
   (select count(*) from pg_tables where schemaname in ('public', 'private') and not rowsecurity),
@@ -11,16 +12,9 @@ select is(
 
 select is(
   (select count(*) from information_schema.role_table_grants
-    where grantee = 'anon' and table_schema in ('public', 'private')),
+    where grantee in ('anon', 'service_role') and table_schema in ('public', 'private')),
   0::bigint,
-  'anon hat keine Tabellenrechte in public/private'
-);
-
-select is(
-  (select count(*) from information_schema.role_table_grants
-    where grantee = 'service_role' and table_schema in ('public', 'private')),
-  0::bigint,
-  'service_role hat keine Tabellenrechte in public/private'
+  'anon und service_role haben keine Tabellenrechte in public/private'
 );
 
 select is(
@@ -32,10 +26,49 @@ select is(
 
 select is(
   (select count(*) from information_schema.role_table_grants
-    where grantee = 'authenticated' and table_schema = 'public'
-      and privilege_type in ('INSERT', 'DELETE', 'TRUNCATE', 'REFERENCES', 'TRIGGER')),
+    where grantee = 'authenticated' and table_schema = 'public' and privilege_type <> 'SELECT'),
   0::bigint,
-  'authenticated hat keine INSERT/DELETE/TRUNCATE-Tabellenrechte in public (nur Spaltenrechte)'
+  'authenticated hat in public auf Tabellenebene nur SELECT'
+);
+
+select results_eq(
+  $$ select table_name::text, column_name::text, privilege_type::text
+       from information_schema.column_privileges
+      where grantee = 'authenticated' and table_schema = 'public' and privilege_type <> 'SELECT'
+      order by 1, 2, 3 $$,
+  $$ values ('application_notes', 'application_id', 'INSERT'),
+            ('application_notes', 'body', 'INSERT'),
+            ('applications', 'assigned_to', 'UPDATE'),
+            ('applications', 'rating', 'UPDATE'),
+            ('applications', 'rejection_notified_at', 'UPDATE'),
+            ('applications', 'stage', 'UPDATE') $$,
+  'authenticated darf genau diese Spalten schreiben'
+);
+
+select is(
+  (select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace
+    where n.nspname = 'public' and c.relkind in ('v', 'm')),
+  0::bigint,
+  'keine Views in public (würden RLS umgehen)'
+);
+
+select is(
+  (select count(*) from pg_tables t
+    where t.schemaname = 'public'
+      and not exists (
+        select 1 from pg_policies p
+        where p.schemaname = 'public' and p.tablename = t.tablename
+          and p.permissive = 'RESTRICTIVE' and p.cmd = 'ALL'
+          and p.roles = '{authenticated}' and p.qual like '%is_aal2%'
+      )),
+  0::bigint,
+  'jede Tabelle in public hat die restriktive aal2-Policy'
+);
+
+select ok(
+  not has_schema_privilege('anon', 'private', 'usage')
+  and not has_schema_privilege('service_role', 'private', 'usage'),
+  'anon und service_role haben kein USAGE auf private'
 );
 
 select is(
@@ -67,13 +100,17 @@ select is(
 );
 
 select ok(
-  has_function_privilege('supabase_auth_admin', 'private.hook_before_user_created(jsonb)', 'execute'),
-  'supabase_auth_admin darf den Auth-Hook ausführen'
+  has_function_privilege('supabase_auth_admin', 'private.hook_before_user_created(jsonb)', 'execute')
+  and has_schema_privilege('supabase_auth_admin', 'private', 'usage')
+  and has_table_privilege('supabase_auth_admin', 'private.staff_email_allowlist', 'select'),
+  'supabase_auth_admin kann den Auth-Hook ausführen und die Allowlist lesen'
 );
 
-select ok(
-  not has_function_privilege('authenticated', 'private.hook_before_user_created(jsonb)', 'execute'),
-  'authenticated darf den Auth-Hook nicht ausführen'
+select results_eq(
+  $$ select policyname::text, cmd::text, roles::text from pg_policies
+      where schemaname = 'private' order by 1 $$,
+  $$ values ('auth_admin_reads_allowlist', 'SELECT', '{supabase_auth_admin}') $$,
+  'in private gibt es genau eine Policy (Hook liest Allowlist)'
 );
 
 select is(
@@ -84,28 +121,48 @@ select is(
   'alle SECURITY-DEFINER-Funktionen haben einen festen search_path'
 );
 
+select is(
+  (select count(*) from pg_default_acl d, aclexplode(d.defaclacl) a
+    where d.defaclrole = 'postgres'::regrole
+      and d.defaclnamespace = 'public'::regnamespace
+      and a.grantee in ('anon'::regrole, 'authenticated'::regrole, 'service_role'::regrole)),
+  0::bigint,
+  'keine Default-Privileges für API-Rollen auf neue Objekte in public'
+);
+
 select ok(
   exists (select 1 from storage.buckets where id = 'application-files' and not public and file_size_limit = 10485760),
   'Bucket application-files ist privat mit 10 MiB'
 );
 
 select is(
-  (select count(*) from pg_policies where schemaname = 'storage' and tablename = 'objects'
-    and policyname = 'staff_read_application_files' and cmd = 'SELECT'),
-  1::bigint,
-  'Storage: nur eine Lese-Policy für Staff'
+  (select count(*) from pg_policies where schemaname = 'storage' and tablename = 'objects'),
+  0::bigint,
+  'Storage: keine Policies auf storage.objects (Zugriff nur über Server und staff_*-RPC)'
 );
 
-select is(
-  (select count(*) from pg_policies where schemaname = 'storage' and tablename = 'objects'
-    and qual like '%application-files%' and cmd <> 'SELECT'),
-  0::bigint,
-  'Storage: keine Schreib-Policies für application-files'
+select results_eq(
+  $$ select policyname::text, cmd::text, roles::text from pg_policies
+      where schemaname = 'realtime' and tablename = 'messages' order by 1 $$,
+  $$ values ('staff_receive_inbox', 'SELECT', '{authenticated}') $$,
+  'Realtime: genau eine Lese-Policy auf realtime.messages'
 );
 
 select ok(
-  exists (select 1 from pg_policies where schemaname = 'realtime' and tablename = 'messages' and policyname = 'staff_receive_inbox'),
-  'Realtime: Policy für staff:inbox existiert'
+  (select qual like '%staff:inbox%' and qual like '%is_staff%' and qual like '%is_aal2%'
+     from pg_policies where schemaname = 'realtime' and policyname = 'staff_receive_inbox'),
+  'Realtime-Policy verlangt Topic staff:inbox, Staff und aal2'
+);
+
+select is(
+  (select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'private' and p.proname in ('protect_last_admin')
+      and p.prosrc like '%pg_advisory_xact_lock%')
+  + (select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public' and p.proname = 'rpc_submit_application'
+      and p.prosrc like '%''intake:''%' and p.prosrc like '%''confirm:''%'),
+  2::bigint,
+  'Advisory-Locks für letzten Admin, Intake-Key und Bestätigungs-Obergrenze'
 );
 
 select * from finish();

@@ -1,0 +1,61 @@
+# Datenbank-CI (Supabase): Migrationen, pgTAP-Tests und Schema-Lint (ROADMAP §8.1, Phase 2a).
+#
+# Startet den lokalen Supabase-Stack auf dem Runner (Docker), spielt dabei alle Migrationen aus
+# supabase/migrations ein und führt die pgTAP-Tests aus supabase/tests/database aus.
+# Gate: Migrationen werden erst auf das Supabase-Projekt eingespielt, wenn dieser Lauf auf dem
+# aktuellen Commit grün ist.
+#
+# Keine Secrets: Der Workflow arbeitet nur gegen den lokalen Stack. Die CLI-Version ist wie
+# lokal gepinnt (bunx supabase@2.118.0).
+
+name: DB
+
+on:
+  push:
+    paths:
+      - "supabase/**"
+      - ".github/workflows/db.yml"
+  pull_request:
+    paths:
+      - "supabase/**"
+      - ".github/workflows/db.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  database:
+    name: Migrationen, pgTAP, Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Supabase CLI einrichten
+        uses: supabase/setup-cli@v1
+        with:
+          version: 2.118.0
+
+      # Nur die Dienste, die Schema und Tests brauchen (DB, Auth, Storage, Realtime, REST).
+      - name: Lokalen Stack starten (spielt die Migrationen ein)
+        run: supabase start -x studio,imgproxy,mailpit,logflare,vector,edge-runtime,supavisor
+
+      - name: pgTAP-Tests
+        run: supabase test db
+
+      - name: Schema-Lint (plpgsql_check)
+        run: supabase db lint --local --schema public,private --level warning --fail-on error
+
+      - name: Stack stoppen
+        if: always()
+        run: supabase stop --no-backup
