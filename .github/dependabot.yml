@@ -1,0 +1,53 @@
+# Dependabot für karriere.bad-energie.de (ROADMAP §9.8).
+#
+# Ökosystem "bun": Dependabot aktualisiert package.json UND bun.lock (Textformat,
+# lockfileVersion <= 3). Mit "npm" bliebe bun.lock alt, und
+# `bun install --frozen-lockfile` in der CI würde jeden Update-PR ablehnen.
+
+version: 2
+
+updates:
+  - package-ecosystem: bun
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: chore(deps)
+    ignore:
+      # Die Typen folgen der Node-Hauptversion der Laufzeit, nicht umgekehrt.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+    groups:
+      # Next.js, sein ESLint-Preset und React gemeinsam, damit die Versionen zusammenpassen.
+      next-react:
+        patterns:
+          - next
+          - eslint-config-next
+          - "@next/*"
+          - react
+          - react-dom
+          - "@types/react"
+          - "@types/react-dom"
+      # Tailwind ist exakt gepinnt; Kern und PostCSS-Plugin müssen gleich bleiben.
+      tailwind:
+        patterns:
+          - tailwindcss
+          - "@tailwindcss/*"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Berlin
+    commit-message:
+      prefix: chore(ci)
+    groups:
+      github-actions:
+        patterns:
+          - "*"

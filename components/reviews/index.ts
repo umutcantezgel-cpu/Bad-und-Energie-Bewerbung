@@ -1,4 +1,3 @@
-export * from './GoogleReviewsBadge';
-export * from './ReviewCard';
-export * from './ReviewCarousel';
-export * from './KineticReviewCarousel';
+export { ReviewCarousel, type ReviewCarouselProps } from './ReviewCarousel';
+export { ReviewSummary, type ReviewSummaryProps } from './ReviewSummary';
+export type { ReviewFilter } from './model';

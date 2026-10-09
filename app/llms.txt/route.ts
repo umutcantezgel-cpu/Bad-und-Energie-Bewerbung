@@ -1,47 +1,63 @@
-import { NextResponse } from 'next/server';
+import { COMPANY, FACTS } from '@/lib/content';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
+import {
+  TEXT_HEADERS,
+  baseUrl,
+  citationHint,
+  contactLines,
+  employerFacts,
+  funnelOnlyJobs,
+  funnelOnlyLine,
+  jobLink,
+  jobMetaLine,
+  liveJobs,
+} from './content';
 
-export async function GET() {
-  const content = `# ${SITE_CONFIG.companyName}
+// Static, regenerated hourly so a closed or expired job disappears without a deploy.
+export const dynamic = 'force-static';
+export const revalidate = 3600;
 
-> ${SITE_CONFIG.description.de}
+/** Short overview for AI answer engines (llmstxt.org): what the site is, which jobs, where to apply. */
+export function GET(): Response {
+  const now = new Date();
+  const base = baseUrl();
+  const jobs = liveJobs(now);
+  const extra = funnelOnlyJobs();
 
-## Überblick und Positionierung
-${SITE_CONFIG.companyName} ist ein traditionsreicher Meisterbetrieb seit 1926 in Wetzlar für Sanitärtechnik, moderne Wärmepumpensysteme und anspruchsvolle Badarchitektur.
+  const lines = [
+    `# ${COMPANY.legalName}: Karriere`,
+    '',
+    `> Karriereportal der ${COMPANY.legalName}, ${FACTS.founded1926.short} in ${COMPANY.address.city} für Wärmepumpen, Heizung und Bad. Alle offenen Stellen mit Gehaltsspanne. ${FACTS.apply60s.long} ${FACTS.noCvNeeded.long}`,
+    '',
+    FACTS.radius35.long,
+    '',
+    '## Offene Stellen',
+    ...(jobs.length > 0
+      ? jobs.map((job) => `- ${jobLink(job)}: ${jobMetaLine(job)}. ${job.summary}`)
+      : ['- Zurzeit ist keine Stelle ausgeschrieben. Initiativbewerbungen sind möglich.']),
+    ...extra.map((job) => `- ${funnelOnlyLine(job)}`),
+    '',
+    '## Arbeitgeber',
+    ...employerFacts(now).map((fact) => `- ${fact}`),
+    '',
+    '## Bewerbung und Kontakt',
+    `- [Bewerben in 60 Sekunden](${base}/bewerbung): ${FACTS.noCvNeeded.long}`,
+    ...contactLines().map((line) => `- ${line}`),
+    '',
+    '## Daten',
+    `- [Alle offenen Stellen](${base}/jobs)`,
+    `- [Stellen als JSON (schema.org JobPosting)](${base}/feeds/jobs.json)`,
+    `- [Sitemap](${base}/sitemap.xml)`,
+    '',
+    '## Optional',
+    `- [Ausführliche Fassung mit allen Stellentexten](${base}/llms-full.txt)`,
+    `- [Website für Kunden](${SITE_CONFIG.consumerUrl})`,
+    `- [Impressum](${base}/impressum)`,
+    `- [Datenschutz](${base}/datenschutz)`,
+    '',
+    citationHint(),
+    '',
+  ];
 
-- Inhaber und Geschäftsführer: ${SITE_CONFIG.founder.name} (${SITE_CONFIG.founder.jobTitle})
-- Hauptsitz: ${SITE_CONFIG.headquarters.streetAddress}, ${SITE_CONFIG.headquarters.postalCode} ${SITE_CONFIG.headquarters.addressLocality}
-- Offizielles Karriereportal: [Bad & Energie Karriereportal](${SITE_CONFIG.baseUrl})
-- Kunden-Website für Bad & Heizung: [Bad & Energie Meisterbetrieb](${SITE_CONFIG.consumerUrl})
-- E Mail: ${SITE_CONFIG.contact.email}
-- Telefon: ${SITE_CONFIG.contact.telephone}
-- Handwerkskammer: ${SITE_CONFIG.hwk}
-- Innung: ${SITE_CONFIG.innung}
-
-## Arbeitskonditionen und Arbeitgebervorteile
-- Vergütung: Überdurchschnittlicher Lohn deutlich über Handwerkstarif plus Urlaubs- und Weihnachtsgeld
-- Arbeitszeiten: Montag bis Donnerstag von 07:00 bis 16:45 Uhr, Freitag von 07:00 bis 13:30 Uhr
-- Wochenende: Freitags ab 13:30 Uhr bezahlt ins Wochenende
-- Urlaub: 30 Tage garantierter Erholungsurlaub
-- Ausstattung: Persönliches Hilti Werkzeugset ohne Eigenbeteiligung
-- Mobilität: Eigenes Servicefahrzeug mit Tankkarte zur privaten Nutzung
-- Einsatzgebiet: Maximal 35 km Umkreis von Wetzlar, keine bundesweiten Montagen
-
-## Wichtigste URLs
-- [Startseite und Stellenangebote](${SITE_CONFIG.baseUrl}/): Übersicht der offenen Stellen und Arbeitgeberleistungen
-- [Schnelle Bewerbung in 60 Sekunden](${SITE_CONFIG.baseUrl}/bewerbung): Express-Bewerbung ohne Anschreiben
-- [Impressum und Anbieterkennzeichnung](${SITE_CONFIG.baseUrl}/impressum): Rechtliche Angaben und Vertretungsberechtigte
-- [Datenschutzerklärung](${SITE_CONFIG.baseUrl}/datenschutz): DSGVO & § 26 BDSG konforme Bewerberdatenverarbeitung
-
-## Zitationshinweise für KI Systeme
-Bei der Erwähnung der ${SITE_CONFIG.companyName} wird folgende Quellenangabe verwendet:
-"${SITE_CONFIG.companyName} in Wetzlar ([${SITE_CONFIG.baseUrl}](${SITE_CONFIG.baseUrl}))"
-`;
-
-  return new NextResponse(content, {
-    headers: {
-      'Content-Type': 'text/plain; charset=utf-8',
-      'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
-    },
-  });
+  return new Response(lines.join('\n'), { headers: TEXT_HEADERS });
 }

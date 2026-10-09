@@ -1,126 +1,63 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-import { dispatchApplicationRequest } from '@/lib/email';
-import { escapeHTML, sanitizeInput } from '@/lib/utils/sanitize';
+import { germanIssueMessage, apiError, apiSuccess, guardFailureResponse, validationFailedResponse } from '@/lib/applications/http';
+import { normalizeApplication } from '@/lib/applications/normalize';
+import { applicationInputSchema, type ApplicationSubmitResponse } from '@/lib/applications/schema';
+import { getApplicationSink } from '@/lib/applications/sink';
+import { assertFollowUpTokenSecret, createFollowUpToken } from '@/lib/applications/token';
+import { EnvError } from '@/lib/env';
+import { guardJsonPost, RATE_LIMITS } from '@/lib/security';
 
-const applicationSchema = z.object({
-  fullName: z
-    .string()
-    .min(2, 'Der Name muss mindestens 2 Zeichen lang sein.')
-    .max(100),
-  email: z
-    .string()
-    .email('Bitte geben Sie eine gültige E Mail Adresse an.')
-    .max(254),
-  phone: z
-    .string()
-    .min(5, 'Bitte geben Sie eine gültige Telefonnummer an.')
-    .max(50),
-  location: z.string().max(100).optional().default('Wetzlar und Umgebung'),
-  position: z
-    .string()
-    .min(2, 'Bitte wählen Sie eine angestrebte Stelle aus.')
-    .max(150),
-  experience: z.string().max(100).optional().default(''),
-  startDate: z.string().max(100).optional().default('Flexibel nach Absprache'),
-  salaryExpectation: z.string().max(100).optional().default('Nach Vereinbarung'),
-  skills: z.array(z.string().max(100)).optional().default([]),
-  notes: z.string().max(5000).optional().default(''),
-  contactPreference: z.string().max(50).optional().default('whatsapp'),
-  discretionGuaranteed: z.boolean().optional().default(true),
-  websiteUrl: z.string().optional().default(''), // Honeypot
-});
+/**
+ * POST /api/bewerbung (Vertrag C8). Reihenfolge:
+ * Eingangskontrolle (CSRF, Rate-Limit, Content-Type, Body-Cap) → Schema → Normalisierung
+ * (Stelle aus dem Registry, Antworten aus deren Fragenset, Telefon E.164, Kanal, Spamverdacht)
+ * → Sink (E-Mail) → Token. Erfolg nur, wenn die Team-Mail angenommen wurde.
+ *
+ * Honeypot und Mindestdauer lehnen nichts ab (ein Autofill könnte den Honeypot füllen): Die
+ * Bewerbung geht als „[Spamverdacht]“ ans Team, aber ohne Eingangsbestätigung an die
+ * ungeprüfte Adresse. Logs enthalten keine personenbezogenen Daten.
+ */
 
-export async function POST(request: NextRequest) {
+type SuccessBody = Extract<ApplicationSubmitResponse, { ok: true }>;
+
+export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const guard = await guardJsonPost(request, { scope: 'application', rateLimit: RATE_LIMITS.applicationSubmit });
+    if (!guard.ok) return guardFailureResponse(guard);
 
-    const parsed = applicationSchema.safeParse(body);
-    if (!parsed.success) {
-      const errorMsg = parsed.error.issues.map((issue) => issue.message).join(' ');
-      return NextResponse.json(
-        {
-          success: false,
-          error: errorMsg,
-          details: parsed.error.flatten().fieldErrors,
-        },
-        { status: 400 }
-      );
+    const now = new Date();
+    const parsed = applicationInputSchema.safeParse(guard.data, { error: germanIssueMessage });
+    if (!parsed.success) return validationFailedResponse(parsed.error);
+
+    // Ohne Token-Geheimnis gäbe es nach dem Versand kein Ergänzungs-Token: vorher ehrlich 503.
+    assertFollowUpTokenSecret();
+
+    const application = normalizeApplication(parsed.data, { now });
+    const result = await getApplicationSink().submit(application);
+    if (!result.ok) {
+      console.error(`[bewerbung] nicht zugestellt (${result.reason})`);
+      return apiError(result.reason === 'not_configured' ? 'SERVICE_UNAVAILABLE' : 'INTERNAL');
     }
 
-    const data = parsed.data;
+    const flags = [
+      application.suspectedSpam && `Spamverdacht: ${application.spamSignals.join('+')}`,
+      result.duplicate && 'Wiederholung',
+    ].filter(Boolean);
+    console.info(
+      `[bewerbung] eingegangen ${result.reference} (${application.job.id}, ${application.channel}${flags.length ? `, ${flags.join(', ')}` : ''})`,
+    );
 
-    // Honeypot check
-    if (data.websiteUrl && data.websiteUrl.trim().length > 0) {
-      console.warn('[Anti-Spam] Bot abgefangen durch Honeypot im Bewerbungsformular:', data.websiteUrl);
-      return NextResponse.json({
-        success: true,
-        message: 'Bewerbung erfolgreich eingereicht.',
-      });
-    }
-
-    const sanitizedFullName = sanitizeInput(data.fullName, 100);
-    const sanitizedEmail = data.email.trim().toLowerCase();
-    const sanitizedPhone = sanitizeInput(data.phone, 50);
-    const sanitizedLocation = sanitizeInput(data.location, 100);
-    const sanitizedPosition = sanitizeInput(data.position, 150);
-    const sanitizedExperience = sanitizeInput(data.experience, 100);
-    const sanitizedStartDate = sanitizeInput(data.startDate, 100);
-    const sanitizedSalary = sanitizeInput(data.salaryExpectation, 100);
-    const sanitizedSkills = (data.skills || []).map((s) => sanitizeInput(s, 100));
-    const sanitizedNotes = escapeHTML(data.notes || '').slice(0, 5000);
-    const sanitizedPreference = sanitizeInput(data.contactPreference, 50);
-
-    const result = await dispatchApplicationRequest({
-      fullName: sanitizedFullName,
-      email: sanitizedEmail,
-      phone: sanitizedPhone,
-      location: sanitizedLocation,
-      position: sanitizedPosition,
-      experience: sanitizedExperience,
-      startDate: sanitizedStartDate,
-      salaryExpectation: sanitizedSalary,
-      skills: sanitizedSkills,
-      notes: sanitizedNotes,
-      contactPreference: sanitizedPreference,
-      discretionGuaranteed: data.discretionGuaranteed,
-      submittedAt: new Date().toLocaleString('de-DE', {
-        timeZone: 'Europe/Berlin',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-    });
-
-    if (!result.success) {
-      console.error('[Application API] Fehler beim Versand:', result.teamNotification.error);
-      return NextResponse.json(
-        {
-          success: false,
-          error:
-            'Die Bewerbung konnte serverseitig nicht übermittelt werden. Bitte rufen Sie uns direkt an unter 06441 42956 oder schreiben Sie uns via WhatsApp.',
-        },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      message:
-        'Vielen Dank! Ihre Bewerbung ist erfolgreich bei uns eingegangen. Wir melden uns verlässlich binnen 24 Stunden bei Ihnen.',
-      simulated: result.simulated,
+    return apiSuccess<SuccessBody>({
+      ok: true,
+      reference: result.reference,
+      followUpToken: createFollowUpToken(result.reference, now),
+      firstName: application.firstName,
     });
   } catch (err: unknown) {
-    console.error('[Application API Exception]', err);
-    return NextResponse.json(
-      {
-        success: false,
-        error:
-          'Ein Systemfehler ist aufgetreten. Bitte wenden Sie sich direkt an Meister Demir unter 06441 42956.',
-      },
-      { status: 500 }
-    );
+    if (err instanceof EnvError) {
+      console.error(`[bewerbung] nicht konfiguriert: ${err.variable}`);
+      return apiError('SERVICE_UNAVAILABLE');
+    }
+    console.error(`[bewerbung] Fehler: ${err instanceof Error ? err.name : 'unknown'}`);
+    return apiError('INTERNAL');
   }
 }

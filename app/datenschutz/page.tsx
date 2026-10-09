@@ -1,732 +1,559 @@
-'use client';
-
-import React, { useState } from 'react';
-import Link from 'next/link';
+import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
 import {
-  Shield,
-  Lock,
-  FileCheck,
-  Search,
-  Printer,
-  Mail,
-  Phone,
-  ExternalLink,
-  ChevronDown,
-  Building,
-  CheckCircle2,
-  AlertTriangle,
-} from 'lucide-react';
-import { Logo } from '@/components/Logo';
+  LEGAL_ENTITY,
+  LegalDocument,
+  LegalFactLink,
+  LegalFacts,
+  LegalSection,
+  SUPERVISORY_AUTHORITY,
+  displayUrl,
+  formatNoticeDate,
+  mailtoHref,
+  type LegalFact,
+} from '@/components/legal';
+import { TextLink } from '@/components/ui/TextLink';
+import { PRIVACY_NOTICE_VERSION } from '@/lib/applications/schema';
+import { DISCRETION_PROMISE } from '@/lib/content';
+import { MAPS_CONSENT_KEY } from '@/lib/maps/consent';
+import { generatePageMetadata } from '@/lib/seo/metadata';
+
+/*
+ * Datenschutzerklärung (Stand: PRIVACY_NOTICE_VERSION). Jede inhaltliche Änderung gegenüber der
+ * Vorversion steht in docs/operations/datenschutz-aenderungen.md und ist dort zur Prüfung durch
+ * den Datenschutzbeauftragten markiert. Bei neuen Änderungen: Liste ergänzen und
+ * die neue Fassung an PRIVACY_NOTICE_VERSIONS in lib/applications/constants.ts anhängen (wird mit
+ * jeder Bewerbung gespeichert; der Server nimmt nur dort gelistete Fassungen an).
+ */
+
+export const metadata: Metadata = generatePageMetadata({
+  title: 'Datenschutzerklärung',
+  description:
+    'Datenschutz bei Bad und Energie in Wetzlar: Bewerbungsdaten, Entwurf im Browser, Herkunftsmessung ohne Cookies, Google Maps per Klick und deine Rechte.',
+  path: '/datenschutz',
+  type: 'legal',
+});
+
+type SectionId =
+  | 'verantwortlicher'
+  | 'ueberblick'
+  | 'rechtsgrundlagen'
+  | 'datenerfassung'
+  | 'bewerberdaten'
+  | 'entwurf'
+  | 'herkunft'
+  | 'google-maps'
+  | 'kontakt'
+  | 'cookies-analyse'
+  | 'betroffenenrechte'
+  | 'aufsichtsbehoerde';
+
+/** Reihenfolge = Reihenfolge im Inhaltsverzeichnis und auf der Seite. Die alten Anker bleiben gültig. */
+const SECTIONS: Record<SectionId, { title: string; toc?: string }> = {
+  verantwortlicher: { title: 'Verantwortlicher' },
+  ueberblick: { title: 'Kurz gesagt' },
+  rechtsgrundlagen: { title: 'Rechtsgrundlagen' },
+  datenerfassung: { title: 'Hosting, Server-Logdateien und Sicherheit', toc: 'Hosting und Sicherheit' },
+  bewerberdaten: { title: 'Bewerbung über diese Website', toc: 'Bewerbung' },
+  entwurf: { title: 'Entwurf und Bewerbungsmappe im Browser', toc: 'Entwurf im Browser' },
+  herkunft: { title: 'Herkunftsmessung ohne Cookies', toc: 'Herkunftsmessung' },
+  'google-maps': { title: 'Google Maps (2-Klick-Lösung)', toc: 'Google Maps' },
+  kontakt: { title: 'Kontakt per Telefon, E-Mail und WhatsApp', toc: 'Telefon, E-Mail, WhatsApp' },
+  'cookies-analyse': { title: 'Cookies, Analyse und Schriften', toc: 'Cookies und Schriften' },
+  betroffenenrechte: { title: 'Deine Rechte' },
+  aufsichtsbehoerde: { title: 'Beschwerde bei der Aufsichtsbehörde', toc: 'Aufsichtsbehörde' },
+};
+
+const TOC = (Object.keys(SECTIONS) as SectionId[]).map((id) => ({ id, label: SECTIONS[id].toc ?? SECTIONS[id].title }));
+
+function Chapter({ id, children }: { id: SectionId; children: ReactNode }) {
+  return (
+    <LegalSection id={id} title={SECTIONS[id].title}>
+      {children}
+    </LegalSection>
+  );
+}
+
+const CONTROLLER: readonly LegalFact[] = [
+  { label: 'Unternehmen', value: LEGAL_ENTITY.name },
+  {
+    label: 'Anschrift',
+    value: (
+      <>
+        {LEGAL_ENTITY.street}
+        <br />
+        {LEGAL_ENTITY.postalCodeCity}
+      </>
+    ),
+  },
+  { label: 'Geschäftsführer', value: LEGAL_ENTITY.managingDirector },
+  {
+    label: 'Telefon',
+    value: (
+      <LegalFactLink href={LEGAL_ENTITY.phone.href}>
+        {LEGAL_ENTITY.phone.display}
+      </LegalFactLink>
+    ),
+  },
+  { label: 'Telefax', value: LEGAL_ENTITY.fax },
+  {
+    label: 'E-Mail',
+    value: (
+      <LegalFactLink href={LEGAL_ENTITY.emailHref}>
+        {LEGAL_ENTITY.email}
+      </LegalFactLink>
+    ),
+  },
+  { label: 'Handelsregister', value: `${LEGAL_ENTITY.registerCourt}, ${LEGAL_ENTITY.registerNumber}` },
+  { label: 'USt-IdNr.', value: LEGAL_ENTITY.vatId },
+];
+
+const AUTHORITY: readonly LegalFact[] = [
+  { label: 'Behörde', value: SUPERVISORY_AUTHORITY.name },
+  { label: 'Hausanschrift', value: SUPERVISORY_AUTHORITY.visitingAddress },
+  { label: 'Postanschrift', value: SUPERVISORY_AUTHORITY.postalAddress },
+  {
+    label: 'Telefon',
+    value: (
+      <LegalFactLink href={SUPERVISORY_AUTHORITY.phone.href}>
+        {SUPERVISORY_AUTHORITY.phone.display}
+      </LegalFactLink>
+    ),
+  },
+  { label: 'Telefax', value: SUPERVISORY_AUTHORITY.fax },
+  {
+    label: 'E-Mail',
+    value: (
+      <LegalFactLink href={mailtoHref(SUPERVISORY_AUTHORITY.email)}>
+        {SUPERVISORY_AUTHORITY.email}
+      </LegalFactLink>
+    ),
+  },
+  {
+    label: 'Website',
+    value: (
+      <LegalFactLink href={SUPERVISORY_AUTHORITY.url}>
+        {displayUrl(SUPERVISORY_AUTHORITY.url)}
+      </LegalFactLink>
+    ),
+  },
+];
+
+const privacyMail = (
+  <a href={mailtoHref(LEGAL_ENTITY.privacyEmail)}>{LEGAL_ENTITY.privacyEmail}</a>
+);
 
 export default function DatenschutzPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [openAccordions, setOpenAccordions] = useState<{ [key: string]: boolean }>({
-    serverLogs: true,
-    sslTls: false,
-    contactForms: false,
-  });
-
-  const toggleAccordion = (key: string) => {
-    setOpenAccordions((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
-
-  const sections = [
-    { id: 'verantwortlicher', code: '§ 01', title: 'Verantwortliche Stelle & Kontakt' },
-    { id: 'rechtsgrundlagen', code: '§ 02', title: 'Rechtsgrundlagen (Art. 6 DSGVO)' },
-    { id: 'datenerfassung', code: '§ 03', title: 'Datenerfassung & Hosting' },
-    { id: 'bewerberdaten', code: '§ 04', title: 'Bewerbung und Recruiting nach § 26 BDSG', highlight: true },
-    { id: 'cookies-analyse', code: '§ 05', title: 'Cookies, Analyse und Lokale Schriften' },
-    { id: 'betroffenenrechte', code: '§ 06', title: 'Ihre Betroffenenrechte Art. 15 bis 21' },
-    { id: 'aufsichtsbehoerde', code: '§ 07', title: 'Aufsichtsbehörde (HBDI Hessen)' },
-  ];
-
-  const filteredSections = sections.filter(
-    (s) =>
-      s.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.code.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
-      {/* Top Regulatory Anchor Strip */}
-      <div className="w-full bg-[#0A1E3A] text-white py-3 px-6 lg:px-12 border-b border-slate-800 no-print">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-[#C51E1E] text-white font-mono text-[10px] font-bold uppercase tracking-wider rounded">
-              <Shield className="w-3 h-3 text-white" strokeWidth={1.5} />
-              DSGVO und § 26 BDSG RECHTSSTAND
-            </span>
-            <span className="text-xs text-slate-300 font-mono">
-              Dokumentenversion 4.2.1 • Letzte Revision: Oktober 2026
-            </span>
-          </div>
+    <LegalDocument
+      title="Datenschutzerklärung"
+      breadcrumb="Datenschutz"
+      lead="Welche Daten wir verarbeiten, wenn du diese Website nutzt oder dich bei uns bewirbst, wofür und wie lange."
+      meta={`Stand: ${formatNoticeDate(PRIVACY_NOTICE_VERSION)}`}
+      toc={TOC}
+    >
+      <Chapter id="verantwortlicher">
+        <p>
+          Verantwortlich im Sinne der Datenschutz-Grundverordnung (DSGVO), sonstiger in den Mitgliedstaaten der
+          Europäischen Union geltender Datenschutzgesetze und anderer Bestimmungen mit datenschutzrechtlichem Charakter
+          ist:
+        </p>
+        <LegalFacts items={CONTROLLER} />
+        <h3>Datenschutzbeauftragter</h3>
+        <p>
+          In unserem Handwerksbetrieb sind in der Regel weniger als 20 Personen ständig mit der automatisierten
+          Verarbeitung personenbezogener Daten beschäftigt, und es gibt keine Verarbeitungen, die einer
+          Datenschutz-Folgenabschätzung nach Art. 35 DSGVO unterliegen. Deshalb besteht keine gesetzliche Pflicht, einen
+          Datenschutzbeauftragten zu benennen (§ 38 BDSG). Fragen zum Datenschutz beantwortet die Geschäftsleitung direkt
+          unter {privacyMail}.
+        </p>
+      </Chapter>
 
-          <div className="flex items-center gap-6 text-xs text-slate-300 font-mono">
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" strokeWidth={1.5} />
-              Auditierte Verschlüsselung (TLS 1.3)
-            </span>
-            <span className="hidden md:inline text-slate-600">|</span>
-            <span className="hidden md:flex items-center gap-1.5">
-              <Building className="w-3.5 h-3.5 text-sky-400" strokeWidth={1.5} />
-              Serverstandort Frankfurt am Main (Hessen)
-            </span>
-          </div>
-        </div>
-      </div>
+      <Chapter id="ueberblick">
+        <ul>
+          <li>Diese Website setzt keine Cookies und nutzt keine Tracking-Pixel und keine Analyse-Tools.</li>
+          <li>
+            Deine Bewerbung lesen nur Menschen in unserem Betrieb. Wir entscheiden nicht automatisiert und setzen keine
+            KI ein.
+          </li>
+          <li>Was du ins Bewerbungsformular tippst, bleibt bis zum Absenden in deinem Browser.</li>
+          <li>Google Maps lädt erst, wenn du es mit einem Klick erlaubst.</li>
+          <li>
+            Bekommst du eine Absage, löschen wir deine Daten spätestens 6 Monate danach. Länger nur, wenn du in unseren
+            Talentpool möchtest.
+          </li>
+        </ul>
+      </Chapter>
 
-      {/* Main Container Frame */}
-      <div className="max-w-7xl mx-auto w-full px-6 lg:px-12 py-8 lg:py-12">
-        {/* Breadcrumb & Header Hero */}
-        <div className="mb-10 space-y-4">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-mono text-slate-500 no-print">
-            <Link href="/" className="hover:text-[#0A1E3A] transition-colors">
-              Startseite
-            </Link>
-            <span>/</span>
-            <span className="text-slate-500">Rechtliches und Compliance</span>
-            <span>/</span>
-            <span className="text-slate-900 font-semibold">Datenschutzerklärung</span>
-          </nav>
+      <Chapter id="rechtsgrundlagen">
+        <p>
+          Nach Art. 13 DSGVO nennen wir dir die Rechtsgrundlagen unserer Verarbeitungen. Wo in dieser Erklärung nichts
+          anderes steht, gilt:
+        </p>
+        <ul>
+          <li>
+            <strong>Einwilligung, Art. 6 Abs. 1 lit. a DSGVO:</strong> Du hast in die Verarbeitung für bestimmte Zwecke
+            eingewilligt, zum Beispiel in die Aufnahme in unseren Talentpool oder in das Laden von Google Maps. Eine
+            Einwilligung kannst du jederzeit frei widerrufen.
+          </li>
+          <li>
+            <strong>Vertrag und vorvertragliche Maßnahmen, Art. 6 Abs. 1 lit. b DSGVO:</strong> Die Verarbeitung ist für
+            einen Vertrag mit dir oder für Schritte davor nötig, etwa für deine Bewerbung oder, als Kundin oder Kunde,
+            für Sanitärangebote, Heizungswartung oder ein Aufmaß.
+          </li>
+          <li>
+            <strong>Rechtliche Verpflichtung, Art. 6 Abs. 1 lit. c DSGVO:</strong> insbesondere steuer- und
+            handelsrechtliche Aufbewahrungspflichten nach HGB und AO (bis zu 10 Jahre).
+          </li>
+          <li>
+            <strong>Berechtigte Interessen, Art. 6 Abs. 1 lit. f DSGVO:</strong> zum Beispiel die IT-Sicherheit unserer
+            Website, der Schutz vor Angriffen und Missbrauch, ein störungsfreier Betrieb und die Auswertung, über welche
+            Kanäle Bewerbungen zu uns kommen.
+          </li>
+        </ul>
+        <p>
+          Speichern wir etwas auf deinem Gerät oder lesen es dort aus, gilt zusätzlich § 25 des
+          Telekommunikation-Digitale-Dienste-Datenschutz-Gesetzes (TDDDG): Ist das für einen Dienst, den du ausdrücklich
+          nutzen möchtest, unbedingt erforderlich, ist es nach § 25 Abs. 2 Nr. 2 TDDDG ohne Einwilligung erlaubt.
+          Andernfalls nur mit deiner Einwilligung (§ 25 Abs. 1 TDDDG).
+        </p>
+      </Chapter>
 
-          <div className="border-l-4 border-[#C51E1E] pl-5 py-1">
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-[#0A1E3A] uppercase tracking-tight">
-              Datenschutzerklärung und Information zur Verarbeitung personenbezogener Daten
-            </h1>
-            <p className="text-xs sm:text-base text-slate-600 mt-2 max-w-4xl leading-relaxed">
-              Transparenz, Datensicherheit und kompromissloser Schutz Ihrer Privatsphäre nach der <strong className="text-slate-900 font-semibold">DSGVO</strong> bei der{' '}
-              <strong className="text-slate-900 font-semibold">Bad und Energie GmbH Lahn Dill</strong>, einschließlich der sicheren Verarbeitung sensibler <strong className="text-slate-900 font-semibold">Bewerberdaten</strong> in unserem diskreten Bewerberbereich für Fachhandwerker.
-            </p>
-          </div>
+      <Chapter id="datenerfassung">
+        <h3>Hosting</h3>
+        <p>
+          Diese Website wird bei der Vercel Inc. (USA) gehostet. Vercel liefert die Seiten aus und betreibt die
+          Serverfunktionen, die zum Beispiel deine Bewerbung entgegennehmen. Diese Serverfunktionen laufen in der Region
+          Frankfurt am Main (fra1). Die Seiten selbst liefert Vercel über ein weltweites Servernetz aus, damit sie schnell
+          laden. Vercel verarbeitet die Daten in unserem Auftrag und nach unseren Weisungen (Art. 28 DSGVO).
+        </p>
+        <h3>Server-Logdateien</h3>
+        <p>
+          Beim Aufruf der Website erhebt und speichert der Hoster automatisch Informationen in sogenannten
+          Server-Logdateien, die dein Browser automatisch übermittelt:
+        </p>
+        <ul>
+          <li>Browsertyp und Browserversion</li>
+          <li>verwendetes Betriebssystem</li>
+          <li>Referrer-URL (zuvor besuchte Seite)</li>
+          <li>Hostname des zugreifenden Rechners</li>
+          <li>Uhrzeit der Serveranfrage</li>
+          <li>IP-Adresse (in gekürzter und anonymisierter Form)</li>
+        </ul>
+        <p>
+          Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Die Logdateien werden automatisch nach 7 Tagen gelöscht.
+        </p>
+        <h3>Schutz vor Missbrauch</h3>
+        <p>
+          Damit niemand unsere Formulare massenhaft missbraucht, zählen wir, wie oft aus einem Netz Formulare abgeschickt
+          werden. Dafür wird deine IP-Adresse mit einem täglich wechselnden geheimen Schlüssel in einen Prüfwert (Hash)
+          umgerechnet. Gezählt wird nur dieser Wert, nur im Arbeitsspeicher des Servers, und der Zähler läuft nach
+          spätestens 24 Stunden ab. Außerdem enthält das Bewerbungsformular ein für Menschen unsichtbares Feld, und wir
+          messen, wie lange das Ausfüllen gedauert hat. Ist das Feld ausgefüllt oder ging es auffällig schnell, markieren
+          wir die Bewerbung als möglichen Spam. Sie erreicht unser Team trotzdem, eine Eingangsbestätigung per E-Mail
+          verschicken wir dann aber nicht. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO.
+        </p>
+        <h3>Sicherheitsmeldungen des Browsers</h3>
+        <p>
+          Verstößt ein Inhalt auf unserer Website gegen unsere Sicherheitsregeln (Content Security Policy), kann dein
+          Browser uns automatisch eine Meldung schicken. Davon speichern wir nur die betroffene Seite ohne Parameter, die
+          verletzte Regel und die Herkunft des Inhalts in den Server-Logdateien. Das hilft uns, Fehler und Angriffe zu
+          erkennen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO.
+        </p>
+        <h3>SSL- und TLS-Verschlüsselung</h3>
+        <p>
+          Diese Seite nutzt aus Sicherheitsgründen und zum Schutz der Übertragung vertraulicher Inhalte, zum Beispiel
+          deiner Bewerbung, eine SSL- und TLS-Verschlüsselung mit einer Schlüssellänge von 256 Bit. Eine verschlüsselte
+          Verbindung erkennst du daran, dass die Adresszeile des Browsers mit „https://“ beginnt, und am Schloss-Symbol in
+          deiner Browserzeile. Ist die Verschlüsselung aktiv, können die Daten, die du an uns übermittelst, nicht von
+          Dritten mitgelesen werden.
+        </p>
+        <h3>Übermittlung in die USA</h3>
+        <p>
+          Vercel und unser E-Mail-Dienstleister Resend sind Unternehmen mit Sitz in den USA. Soweit dabei
+          personenbezogene Daten in die USA übermittelt werden, geschieht das auf Grundlage des Angemessenheitsbeschlusses
+          der EU-Kommission zum EU-US Data Privacy Framework, soweit der Anbieter danach zertifiziert ist, und im Übrigen
+          auf Grundlage der EU-Standardvertragsklauseln (Art. 46 Abs. 2 lit. c DSGVO).
+        </p>
+      </Chapter>
 
-          {/* Trust & Compliance Metrics Strip */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
-            <div className="bg-white p-4.5 rounded-2xl border border-slate-200 flex flex-col justify-between shadow-xs">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-mono font-bold uppercase text-[#C51E1E]">
-                  Rechtsrahmen
-                </span>
-                <Building className="w-4 h-4 text-[#0A1E3A]" strokeWidth={1.5} />
-              </div>
-              <div className="text-base font-bold text-[#0A1E3A]">100% DSGVO & BDSG</div>
-              <div className="text-xs text-slate-500 mt-1">
-                Strikte Einhaltung bundesdeutscher und hessischer Vorschriften
-              </div>
-            </div>
+      <Chapter id="bewerberdaten">
+        <p>
+          Wenn du dich über diese Website bewirbst, verarbeiten wir deine Angaben, um über ein Beschäftigungsverhältnis
+          mit dir zu entscheiden. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Anbahnung eines
+          Beschäftigungsverhältnisses). Nach dem Urteil des Europäischen Gerichtshofs in der Rechtssache C-34/21 richtet
+          sich die Verarbeitung von Bewerber- und Beschäftigtendaten vorrangig nach Art. 6 und Art. 88 DSGVO; § 26 BDSG
+          ziehen wir nur ergänzend heran, soweit er anwendbar bleibt.
+        </p>
 
-            <div className="bg-white p-4.5 rounded-2xl border border-slate-200 flex flex-col justify-between shadow-xs">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-mono font-bold uppercase text-[#C51E1E]">
-                  Schriftarten
-                </span>
-                <CheckCircle2 className="w-4 h-4 text-[#047857]" strokeWidth={1.5} />
-              </div>
-              <div className="text-base font-bold text-[#0A1E3A]">100% Lokale Fonts</div>
-              <div className="text-xs text-slate-500 mt-1">
-                Kein Verbindungsaufbau zu Drittanbietern oder US Servern
-              </div>
-            </div>
+        <h3>Was wir bei der Bewerbung erfassen</h3>
+        <ul>
+          <li>die Stelle, auf die du dich bewirbst, oder deine Initiativbewerbung</li>
+          <li>
+            deine Antworten auf die kurzen Fragen, zum Beispiel zu Ausbildung und Berufserfahrung, zum Stand in der
+            Schule, zu deiner aktuellen Tätigkeit, zum Führerschein Klasse B und zum frühesten Starttermin
+          </li>
+          <li>deinen Namen und deine Telefonnummer</li>
+          <li>deine E-Mail-Adresse, wenn du sie angibst</li>
+          <li>deinen bevorzugten Kontaktweg: WhatsApp, Anruf oder E-Mail</li>
+          <li>
+            auf Wunsch die Inhalte deiner Bewerbungsmappe: Anschreiben, Kenntnisse, Arbeitsstil sowie Berufs- und
+            Ausbildungsstationen
+          </li>
+          <li>
+            die Herkunft deiner Bewerbung, also Quelle und Kampagne (siehe <a href="#herkunft">Herkunftsmessung</a>)
+          </li>
+          <li>
+            technische Angaben: Zeitpunkt, Bewerbungsnummer, wie lange das Ausfüllen gedauert hat, ob die Bewerbung als
+            möglicher Spam markiert wurde (siehe <a href="#datenerfassung">Schutz vor Missbrauch</a>) und die Fassung
+            dieses Datenschutzhinweises, die dir angezeigt wurde (derzeit {PRIVACY_NOTICE_VERSION})
+          </li>
+        </ul>
+        <p>
+          Pflicht sind nur die Stelle, deine Antworten auf die kurzen Fragen, dein Name und deine Telefonnummer, damit
+          wir die Bewerbung einordnen und dich erreichen können. Die E-Mail-Adresse brauchen wir nur, wenn du E-Mail als
+          Kontaktweg wählst. Alles andere ist freiwillig. Ohne die Pflichtangaben können wir deine Bewerbung nicht
+          bearbeiten.
+        </p>
+        <p>
+          Nach dem Absenden kannst du auf der Danke-Seite freiwillig etwas ergänzen: Starttermin, Postleitzahl, eine
+          Nachricht oder deine Bewerbungsmappe. Wir ordnen das über die Bewerbungsnummer deiner Bewerbung zu.
+        </p>
 
-            <div className="bg-white p-4.5 rounded-2xl border border-slate-200 flex flex-col justify-between shadow-xs">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-mono font-bold uppercase text-[#C51E1E]">
-                  Verschlüsselung
-                </span>
-                <Lock className="w-4 h-4 text-[#0284C7]" strokeWidth={1.5} />
-              </div>
-              <div className="text-base font-bold text-[#0A1E3A]">256 Bit SSL und TLS</div>
-              <div className="text-xs text-slate-500 mt-1">
-                Vollständig verschlüsselte Übertragung aller Formulare
-              </div>
-            </div>
+        <h3>Weitere Angaben im Bewerbungsverfahren</h3>
+        <p>
+          Bewirbst du dich auf anderem Weg, etwa per E-Mail, Telefon oder WhatsApp, oder sprechen wir im weiteren
+          Verfahren miteinander, verarbeiten wir außerdem:
+        </p>
+        <ul>
+          <li>Stammdaten wie Name, Vorname, Wohnort, Telefon und E-Mail</li>
+          <li>berufliche Qualifikationen wie Gesellenbrief, Meistertitel und Fachzertifikate</li>
+          <li>Führerscheinklassen, zum Beispiel Klasse B oder BE für Kundendienstfahrzeuge</li>
+          <li>freiwillige Konditionswünsche sowie deinen möglichen Eintrittstermin oder deine Kündigungsfrist</li>
+        </ul>
 
-            <div className="bg-white p-4.5 rounded-2xl border border-slate-200 flex flex-col justify-between shadow-xs">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-mono font-bold uppercase text-[#C51E1E]">
-                  Sperrvermerk
-                </span>
-                <Shield className="w-4 h-4 text-purple-600" strokeWidth={1.5} />
-              </div>
-              <div className="text-base font-bold text-[#0A1E3A]">§ 26 BDSG Diskretion</div>
-              <div className="text-xs text-slate-500 mt-1">
-                Garantierter Kündigungsschutz und Sperrvermerk
-              </div>
-            </div>
-          </div>
-        </div>
+        <h3>Sperrvermerk für ungekündigte Fachkräfte</h3>
+        <p>
+          Bist du noch ungekündigt angestellt, gilt unsere Diskretionszusage. {DISCRETION_PROMISE} Unsere Geschäftsleitung
+          meldet sich vertraulich und nur über die privaten Kanäle, die du uns nennst, zum Beispiel über deine private
+          Mobilnummer oder per WhatsApp nach Feierabend.
+        </p>
 
-        {/* Two-Column Grid: Sticky Index + Legal Body */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative">
-          {/* Quick-Jump Sidebar */}
-          <aside className="lg:col-span-4 sticky top-28 space-y-5 no-print">
-            <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#0A1E3A]">
-                  Inhaltsverzeichnis & Index
-                </span>
-                <span className="px-2 py-0.5 bg-[#0A1E3A] text-white font-mono text-[10px] uppercase rounded">
-                  7 Abschnitte
-                </span>
-              </div>
+        <h3>Wer deine Bewerbung erhält</h3>
+        <p>
+          Deine Bewerbung geht per E-Mail an unser Team in Wetzlar. Sie lesen nur die Personen, die an der Auswahl
+          beteiligt sind. Hast du eine E-Mail-Adresse angegeben, bekommst du eine Eingangsbestätigung, außer die Bewerbung
+          wurde als möglicher Spam markiert. Wir verkaufen deine
+          Daten nicht und geben sie nicht an Dritte weiter. Technisch beteiligt sind nur unsere Auftragsverarbeiter:
+        </p>
+        <ul>
+          <li>
+            <strong>Vercel Inc. (USA):</strong> Hosting der Website. Die Serverfunktion, die deine Bewerbung annimmt,
+            läuft in Frankfurt am Main (Region fra1).
+          </li>
+          <li>
+            <strong>Resend (USA):</strong> Versand der E-Mail mit deiner Bewerbung an unser Team und der
+            Eingangsbestätigung an dich.
+          </li>
+        </ul>
+        <p>
+          Beide verarbeiten die Daten nur in unserem Auftrag und nach unseren Weisungen (Art. 28 DSGVO). Zur Übermittlung
+          in die USA siehe <a href="#datenerfassung">Hosting, Server-Logdateien und Sicherheit</a>.
+        </p>
 
-              {/* Filter */}
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Stichwort filtern (z.B. Löschung)..."
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#0A1E3A]"
-                />
-                <Search className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-2.5" strokeWidth={1.5} />
-              </div>
+        <h3>Speicherdauer</h3>
+        <p>
+          Führt deine Bewerbung nicht zu einer Einstellung, löschen wir deine Daten spätestens 6 Monate nach Bekanntgabe
+          der Absage vollständig und unwiederbringlich (Art. 17 DSGVO in Verbindung mit § 15 Abs. 4 AGG, zur Abwehr
+          möglicher Rechtsansprüche). Kommt es zu einer Einstellung, übernehmen wir die erforderlichen Daten in deine
+          Personalakte.
+        </p>
+        <p>
+          <strong>Talentpool:</strong> Über die 6 Monate hinaus, höchstens 24 Monate, speichern wir deine Bewerbung nur,
+          wenn du ausdrücklich einwilligst (Art. 6 Abs. 1 lit. a DSGVO). Diese Einwilligung kannst du jederzeit
+          widerrufen.
+        </p>
 
-              {/* Navigation Rail */}
-              <nav className="flex flex-col space-y-1 text-xs">
-                {filteredSections.map((sec) => (
-                  <a
-                    key={sec.id}
-                    href={`#${sec.id}`}
-                    className={`flex items-start gap-2.5 px-3 py-2 rounded-xl transition-all ${
-                      sec.highlight
-                        ? 'bg-red-50 text-[#C51E1E] font-bold border-l-3 border-[#C51E1E]'
-                        : 'text-slate-600 hover:text-[#0A1E3A] hover:bg-slate-50'
-                    }`}
-                  >
-                    <span className="font-mono text-[10px] text-slate-400 shrink-0 mt-0.5">
-                      {sec.code}
-                    </span>
-                    <span className="leading-tight">{sec.title}</span>
-                  </a>
-                ))}
-              </nav>
-            </div>
+        <h3>Keine automatisierte Entscheidung, keine KI</h3>
+        <p>
+          Über deine Bewerbung entscheiden Menschen. Wir treffen keine automatisierten Entscheidungen einschließlich
+          Profiling im Sinne von Art. 22 DSGVO und setzen keine künstliche Intelligenz ein, um Bewerbungen zu bewerten
+          oder zu bearbeiten.
+        </p>
+      </Chapter>
 
-            {/* Quick Assistance Card */}
-            <div className="bg-[#0A1E3A] text-white p-5 rounded-3xl border border-slate-800 space-y-3.5 shadow-md">
-              <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-[#C51E1E]" strokeWidth={1.5} />
-                <span className="font-mono text-xs font-bold uppercase tracking-wider">
-                  Datenschutzauskunft
-                </span>
-              </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Sie haben Fragen zur Datenspeicherung im Bewerbungsverfahren oder möchten Ihre Einwilligung widerrufen?
-              </p>
-              <div className="space-y-1.5 font-mono text-xs text-slate-300">
-                <a
-                  href="mailto:datenschutz@bad-energie.de"
-                  className="flex items-center gap-2 text-white hover:text-sky-300 transition-colors"
-                >
-                  <Mail className="w-3.5 h-3.5 text-[#0284C7]" strokeWidth={1.5} />
-                  <span>datenschutz@bad-energie.de</span>
-                </a>
-                <div className="flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5 text-[#0284C7]" strokeWidth={1.5} />
-                  <span>06441 42956 Zentrale Wetzlar</span>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => typeof window !== 'undefined' && window.print()}
-                className="w-full py-2 px-3 bg-white hover:bg-slate-100 text-[#0A1E3A] rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer"
-              >
-                <Printer className="w-3.5 h-3.5" strokeWidth={1.5} />
-                <span>PDF drucken oder exportieren</span>
-              </button>
-            </div>
-          </aside>
+      <Chapter id="entwurf">
+        <p>
+          Damit nichts verloren geht, wenn du die Seite neu lädst oder kurz in eine andere App wechselst, speichert dein
+          Browser deine Eingaben im Bewerbungsformular als Entwurf im sogenannten sessionStorage. Das ist ein Speicher in
+          deinem Browser, der nur für den geöffneten Tab gilt.
+        </p>
+        <ul>
+          <li>Der Entwurf bleibt auf deinem Gerät. Übertragen wird er erst, wenn du die Bewerbung absendest.</li>
+          <li>Beim Absenden wird der Entwurf gelöscht. Spätestens nach 24 Stunden verfällt er.</li>
+          <li>
+            Die Bewerbungsmappe speichert deine Eingaben ebenfalls im sessionStorage, auch die Kontaktdaten für den
+            Briefkopf. Ein Foto bleibt nur im Arbeitsspeicher der geöffneten Seite. Telefon, E-Mail, Wohnort und Foto
+            aus der Mappe werden nicht mitgesendet. Druck und PDF erstellt dein Browser selbst.
+          </li>
+          <li>
+            Nach dem Absenden merkt sich der Browser im selben Tab Bewerbungsnummer, Vorname, Stelle und einen
+            Prüfschlüssel, damit du auf der Danke-Seite Angaben ergänzen kannst.
+          </li>
+          <li>Schließt du den Tab, löscht dein Browser den sessionStorage.</li>
+        </ul>
+        <p>
+          Rechtsgrundlage ist § 25 Abs. 2 Nr. 2 TDDDG: Das Speichern ist unbedingt erforderlich, damit das Formular so
+          funktioniert, wie du es nutzen möchtest. Für die Verarbeitung nach dem Absenden gilt Art. 6 Abs. 1 lit. b
+          DSGVO.
+        </p>
+        <p>
+          Frühere Versionen dieser Website haben Formulareingaben dauerhaft im localStorage deines Browsers gespeichert.
+          Diese alten Einträge löschen wir automatisch, sobald du das Bewerbungsformular oder die Bewerbungsmappe öffnest.
+        </p>
+      </Chapter>
 
-          {/* Main Legal Body */}
-          <main className="lg:col-span-8 space-y-12">
-            {/* § 01: VERANTWORTLICHE STELLE */}
-            <section id="verantwortlicher" className="scroll-mt-32 space-y-4">
-              <div className="flex items-center gap-3 border-b-2 border-[#0A1E3A] pb-2">
-                <span className="font-mono text-xs font-bold text-[#C51E1E]">§ 01</span>
-                <h2 className="text-xl sm:text-2xl font-bold text-[#0A1E3A] tracking-tight">
-                  Verantwortliche Stelle & Kontakt
-                </h2>
-              </div>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-                Verantwortlicher im Sinne der Datenschutz Grundverordnung DSGVO, sonstiger in den Mitgliedstaaten der Europäischen Union geltenden Datenschutzgesetze und anderer Bestimmungen mit datenschutzrechtlichem Charakter ist:
-              </p>
+      <Chapter id="herkunft">
+        <p>
+          Wir möchten wissen, über welche Wege Bewerbungen zu uns finden, zum Beispiel über Google, Jobbörsen, Anzeigen
+          oder Empfehlungen. Dafür liest die Seite beim Aufruf aus:
+        </p>
+        <ul>
+          <li>
+            Kampagnen-Parameter in der Adresse (utm_source, utm_medium, utm_campaign, utm_content, utm_term) und einen
+            Empfehlungscode (ref)
+          </li>
+          <li>den Namen der Website, von der du kommst (nur den Host, nicht die vollständige Adresse)</li>
+          <li>die Seite, auf der du eingestiegen bist, und wo du das Bewerbungsformular geöffnet hast</li>
+        </ul>
+        <p>
+          Diese Angaben bleiben nur im Arbeitsspeicher der geöffneten Seite. Wir speichern sie nicht auf deinem Gerät;
+          nach dem Neuladen oder in einem neuen Tab sind sie weg. Nur wenn du dich bewirbst, gehen sie zusammen mit deiner
+          Bewerbung an uns. So zählen wir Bewerbungen pro Kanal.
+        </p>
+        <p>
+          Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Unser berechtigtes Interesse ist, zu erkennen, welche
+          Stellenanzeigen und Kanäle funktionieren, und sie zu verbessern. Du kannst dieser Verarbeitung widersprechen
+          (Art. 21 DSGVO). Wir setzen dafür keine Cookies, keine Tracking-Pixel und keine Analyse-Tools ein.
+        </p>
+      </Chapter>
 
-              <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-xs space-y-4">
-                <div className="pb-4 border-b border-slate-100 flex items-center justify-between">
-                  <Logo variant="default" framing="card" size="sm" withLink={false} />
-                  <span className="hidden sm:inline-block px-2 py-0.5 bg-slate-100 text-slate-700 font-mono text-[10px] uppercase font-bold rounded">
-                    Meisterbetrieb seit 1926
-                  </span>
-                </div>
+      <Chapter id="google-maps">
+        <p>
+          Unser Einsatzgebiet zeigen wir als Grafik mit Ortsliste, ganz ohne Verbindung zu Google. Zusätzlich kannst du
+          eine interaktive Karte von Google Maps laden. Anbieter ist die Google Ireland Limited, Gordon House, Barrow
+          Street, Dublin 4, Irland.
+        </p>
+        <ul>
+          <li>
+            Bevor du auf „Interaktive Karte laden“ klickst, stellt dein Browser keine Verbindung zu Google her.
+          </li>
+          <li>
+            Nach dem Klick lädt dein Browser die Karte von Servern von Google. Google erhält dabei insbesondere deine
+            IP-Adresse, Angaben zu Browser und Gerät sowie die Adresse der aufgerufenen Seite. Dabei können Daten auch an
+            die Google LLC in den USA übermittelt werden; Google stützt sich dafür auf das EU-US Data Privacy Framework.
+          </li>
+          <li>
+            Damit du nicht bei jedem Besuch neu klicken musst, speichern wir deine Wahl im localStorage deines Browsers
+            (Eintrag „{MAPS_CONSENT_KEY}“ mit dem Zeitpunkt des Klicks).
+          </li>
+          <li>
+            Mit „Karte wieder ausblenden“ widerrufst du deine Einwilligung: Die Karte wird ausgeblendet und der Eintrag
+            gelöscht. Die Rechtmäßigkeit der Verarbeitung bis zum Widerruf bleibt davon unberührt.
+          </li>
+        </ul>
+        <p>
+          Rechtsgrundlage ist deine Einwilligung (Art. 6 Abs. 1 lit. a DSGVO und § 25 Abs. 1 TDDDG), die du mit dem Klick
+          erteilst. Was Google mit den Daten macht, steht in der{' '}
+          <a href="https://policies.google.com/privacy">Datenschutzerklärung von Google</a>.
+        </p>
+      </Chapter>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <span className="text-[10px] font-mono font-bold uppercase text-slate-400">
-                      Betriebsdaten
-                    </span>
-                    <h3 className="text-base font-bold text-[#0A1E3A]">Bad und Energie GmbH Lahn Dill</h3>
-                    <p className="text-xs text-slate-600 leading-relaxed">
-                      Siegmund-Hiepe-Str. 20<br />
-                      35578 Wetzlar im Lahn Dill Kreis
-                    </p>
-                    <p className="text-[11px] text-slate-500 font-mono pt-1">
-                      Handelsregister: Amtsgericht Wetzlar<br />
-                      Registernummer: HRB 2449<br />
-                      USt-IdNr.: DE 346 648 448
-                    </p>
-                  </div>
+      <Chapter id="kontakt">
+        <p>
+          Wenn du uns per Telefon, E-Mail oder WhatsApp kontaktierst, speichern wir deine Angaben einschließlich deiner
+          Kontaktdaten, um deine Anfrage zu bearbeiten, und für den Fall von Anschlussfragen. Diese Daten geben wir nicht
+          ohne deine Einwilligung weiter. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche Maßnahmen).
+        </p>
+        <h3>WhatsApp</h3>
+        <p>
+          Auf unseren Seiten findest du Links, über die du uns per WhatsApp schreiben kannst, teils mit einem
+          vorausgefüllten Text, zum Beispiel mit deinen Angaben aus dem Bewerbungsformular, falls das Absenden nicht
+          klappt. Erst wenn du einen solchen Link antippst, öffnet sich WhatsApp; der vorausgefüllte Text ist dabei Teil
+          der Link-Adresse. Abschicken musst du die Nachricht selbst.
+        </p>
+        <p>
+          WhatsApp ist ein Dienst der WhatsApp Ireland Limited (Irland). WhatsApp verarbeitet dabei unter anderem deine
+          Telefonnummer und Daten zu deiner Nutzung und kann Daten an die Meta Platforms, Inc. in den USA übermitteln.
+          Möchtest du das nicht, erreichst du uns genauso per Telefon oder E-Mail.
+        </p>
+      </Chapter>
 
-                <div className="space-y-2 md:border-l md:border-slate-100 md:pl-5">
-                  <span className="text-[10px] font-mono font-bold uppercase text-slate-400">
-                    Vertretung und Kontakt
-                  </span>
-                  <p className="text-xs font-bold text-slate-900">
-                    Geschäftsführer: Diplomingenieur Sabri Demir
-                  </p>
-                  <div className="text-xs font-mono space-y-1 text-slate-600 pt-1">
-                    <p>Telefon: <span className="font-bold text-slate-900">06441 42956</span></p>
-                    <p>Telefax: <span className="font-bold text-slate-900">06441 48781</span></p>
-                    <p>E Mail: <a href="mailto:info@bad-energie.de" className="text-[#C51E1E] hover:underline">info@bad-energie.de</a></p>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <Chapter id="cookies-analyse">
+        <p>
+          Diese Website setzt keine Cookies und nutzt keine Tracking-Pixel und keine Analyse- oder Statistik-Tools.
+          Deshalb gibt es auch kein Cookie-Banner. Auf deinem Gerät speichern wir nur, was unter{' '}
+          <a href="#entwurf">Entwurf und Bewerbungsmappe im Browser</a> und <a href="#google-maps">Google Maps</a> steht.
+        </p>
+        <h3>Schriften</h3>
+        <p>
+          Wir nutzen die Schrift Inter. Sie wird beim Erstellen der Website eingebunden und von unserem Hoster zusammen
+          mit den Seiten ausgeliefert. Dein Browser stellt dafür keine Verbindung zu Google Fonts oder anderen Dritten
+          her.
+        </p>
+      </Chapter>
 
-              <div className="p-4 bg-slate-50 rounded-2xl border-l-4 border-slate-400 space-y-1 text-xs text-slate-600 leading-relaxed">
-                <strong className="block font-bold text-slate-800">
-                  Gesetzlicher Status zum Datenschutzbeauftragten gem. § 38 BDSG:
-                </strong>
-                <p>
-                  Da in unserem Handwerksbetrieb in der Regel weniger als 20 Personen ständig mit der automatisierten Verarbeitung personenbezogener Daten beschäftigt sind und keine Verarbeitungen vorliegen, die einer Datenschutz Folgenabschätzung gem. Art. 35 DSGVO unterliegen, besteht keine gesetzliche Pflicht zur Benennung eines Datenschutzbeauftragten. Anfragen zum Datenschutz werden direkt von der Geschäftsleitung unter <a href="mailto:datenschutz@bad-energie.de" className="text-[#C51E1E] underline">datenschutz@bad-energie.de</a> beantwortet.
-                </p>
-              </div>
-            </section>
+      <Chapter id="betroffenenrechte">
+        <p>Du hast nach der DSGVO diese Rechte und kannst sie jederzeit kostenfrei und formlos geltend machen:</p>
+        <ul>
+          <li>
+            <strong>Auskunft (Art. 15 DSGVO):</strong> ob und welche personenbezogenen Daten wir über dich verarbeiten,
+            zu welchem Zweck und an wen wir sie weitergegeben haben.
+          </li>
+          <li>
+            <strong>Berichtigung (Art. 16 DSGVO):</strong> die unverzügliche Berichtigung oder Vervollständigung
+            unrichtiger Daten, die wir zum Beispiel im Rahmen deiner Bewerbung führen.
+          </li>
+          <li>
+            <strong>Löschung (Art. 17 DSGVO):</strong> die unverzügliche Löschung deiner Daten, sofern keine gesetzlichen
+            Aufbewahrungspflichten wie nach HGB oder AO entgegenstehen.
+          </li>
+          <li>
+            <strong>Einschränkung (Art. 18 DSGVO):</strong> Unter bestimmten gesetzlichen Voraussetzungen kannst du
+            verlangen, dass wir deine Daten sperren und nur noch aufbewahren.
+          </li>
+          <li>
+            <strong>Datenübertragbarkeit (Art. 20 DSGVO):</strong> Daten, die du uns bereitgestellt hast, in einem
+            strukturierten, gängigen und maschinenlesbaren Format zu erhalten.
+          </li>
+          <li>
+            <strong>Widerspruch (Art. 21 DSGVO):</strong> Einer Verarbeitung auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO
+            kannst du aus Gründen, die sich aus deiner besonderen Situation ergeben, jederzeit widersprechen.
+          </li>
+        </ul>
+        <h3>Widerruf einer Einwilligung</h3>
+        <p>
+          Eine erteilte Einwilligung kannst du jederzeit ohne Angabe von Gründen mit Wirkung für die Zukunft widerrufen
+          (Art. 7 Abs. 3 DSGVO), zum Beispiel per{' '}
+          <a href={mailtoHref(LEGAL_ENTITY.privacyEmail, 'Widerruf Einwilligung Datenschutz')}>
+            E-Mail an {LEGAL_ENTITY.privacyEmail}
+          </a>
+          . Die Einwilligung für Google Maps widerrufst du direkt auf der Seite mit „Karte wieder ausblenden“.
+        </p>
+        <p>
+          Fragen zu deinen Daten, zum Beispiel aus deiner Bewerbung? Schreib an {privacyMail} oder ruf uns an:{' '}
+          <a href={LEGAL_ENTITY.phone.href}>{LEGAL_ENTITY.phone.display}</a>.
+        </p>
+      </Chapter>
 
-            {/* § 02: RECHTSGRUNDLAGEN */}
-            <section id="rechtsgrundlagen" className="scroll-mt-32 space-y-4">
-              <div className="flex items-center gap-3 border-b-2 border-[#0A1E3A] pb-2">
-                <span className="font-mono text-xs font-bold text-[#C51E1E]">§ 02</span>
-                <h2 className="text-xl sm:text-2xl font-bold text-[#0A1E3A] tracking-tight">
-                  Rechtsgrundlagen der Verarbeitung (Art. 6 DSGVO)
-                </h2>
-              </div>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-                Nach Maßgabe des Art. 13 DSGVO teilen wir Ihnen die Rechtsgrundlagen unserer Datenverarbeitungen mit. Sofern die Rechtsgrundlage in dieser Erklärung nicht gesondert genannt wird, gilt Folgendes:
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-5 bg-white rounded-3xl border border-slate-200 flex flex-col justify-between shadow-xs">
-                  <div>
-                    <span className="inline-block px-2.5 py-0.5 bg-slate-100 text-slate-700 font-mono text-[10px] uppercase font-bold rounded mb-2">
-                      Art. 6 Abs. 1 lit. a DSGVO
-                    </span>
-                    <h3 className="text-sm font-bold text-[#0A1E3A]">Einwilligung</h3>
-                    <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                      Die betroffene Person hat ihre Einwilligung zu der Verarbeitung der sie betreffenden personenbezogenen Daten für einen oder mehrere bestimmte Zwecke gegeben (z.B. Aufnahme in den Talentpool, optionale Analyse-Cookies).
-                    </p>
-                  </div>
-                  <div className="mt-4 pt-2 border-t border-slate-100 font-mono text-[10px] uppercase text-[#C51E1E] font-bold">
-                    Jederzeit frei widerruflich
-                  </div>
-                </div>
-
-                <div className="p-5 bg-white rounded-3xl border border-slate-200 flex flex-col justify-between shadow-xs">
-                  <div>
-                    <span className="inline-block px-2.5 py-0.5 bg-[#0A1E3A] text-white font-mono text-[10px] uppercase font-bold rounded mb-2">
-                      Art. 6 Abs. 1 lit. b DSGVO
-                    </span>
-                    <h3 className="text-sm font-bold text-[#0A1E3A]">Vertragserfüllung & Anfragen</h3>
-                    <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                      Die Verarbeitung ist für die Erfüllung eines Vertrags, dessen Vertragspartei die betroffene Person ist, oder zur Durchführung vorvertraglicher Maßnahmen erforderlich (z.B. Sanitärangebote, Heizungswartung, Aufmaß).
-                    </p>
-                  </div>
-                  <div className="mt-4 pt-2 border-t border-slate-100 font-mono text-[10px] uppercase text-[#047857] font-bold">
-                    Kerngeschäft Handwerk
-                  </div>
-                </div>
-
-                <div className="p-5 bg-white rounded-3xl border border-slate-200 flex flex-col justify-between shadow-xs">
-                  <div>
-                    <span className="inline-block px-2.5 py-0.5 bg-slate-100 text-slate-700 font-mono text-[10px] uppercase font-bold rounded mb-2">
-                      Art. 6 Abs. 1 lit. c DSGVO
-                    </span>
-                    <h3 className="text-sm font-bold text-[#0A1E3A]">Rechtliche Verpflichtung</h3>
-                    <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                      Die Verarbeitung ist zur Erfüllung einer rechtlichen Verpflichtung erforderlich, der der Verantwortliche unterliegt (insbesondere steuer- und handelsrechtliche Aufbewahrungspflichten nach HGB, AO bis 10 Jahre).
-                    </p>
-                  </div>
-                  <div className="mt-4 pt-2 border-t border-slate-100 font-mono text-[10px] uppercase text-[#0A1E3A] font-bold">
-                    Gesetzliche Aufbewahrung
-                  </div>
-                </div>
-
-                <div className="p-5 bg-white rounded-3xl border border-slate-200 flex flex-col justify-between shadow-xs">
-                  <div>
-                    <span className="inline-block px-2.5 py-0.5 bg-slate-100 text-slate-700 font-mono text-[10px] uppercase font-bold rounded mb-2">
-                      Art. 6 Abs. 1 lit. f DSGVO
-                    </span>
-                    <h3 className="text-sm font-bold text-[#0A1E3A]">Berechtigte Interessen</h3>
-                    <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                      Die Verarbeitung ist zur Wahrung der berechtigten Interessen des Verantwortlichen erforderlich (z.B. IT-Sicherheit der Webserver, Schutz vor gezielten Angriffen, störungsfreie Bereitstellung unserer Meisterbetrieb-Dienste).
-                    </p>
-                  </div>
-                  <div className="mt-4 pt-2 border-t border-slate-100 font-mono text-[10px] uppercase text-slate-500 font-bold">
-                    Systemintegrität
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* § 03: DATENERFASSUNG & HOSTING */}
-            <section id="datenerfassung" className="scroll-mt-32 space-y-4">
-              <div className="flex items-center gap-3 border-b-2 border-[#0A1E3A] pb-2">
-                <span className="font-mono text-xs font-bold text-[#C51E1E]">§ 03</span>
-                <h2 className="text-xl sm:text-2xl font-bold text-[#0A1E3A] tracking-tight">
-                  Datenerfassung und Hosting
-                </h2>
-              </div>
-
-              <div className="space-y-3">
-                {/* Accordion 1 */}
-                <div className="border border-slate-200 rounded-2xl overflow-hidden bg-white">
-                  <button
-                    type="button"
-                    onClick={() => toggleAccordion('serverLogs')}
-                    className="w-full p-4.5 bg-slate-50 text-left flex items-center justify-between font-bold text-sm text-[#0A1E3A] hover:bg-slate-100 transition-colors cursor-pointer"
-                  >
-                    <span>1. Server Logfiles und Bereitstellung der Website</span>
-                    <ChevronDown
-                      className={`w-4 h-4 transition-transform ${openAccordions.serverLogs ? 'rotate-180' : ''}`}
-                      strokeWidth={1.5}
-                    />
-                  </button>
-                  {openAccordions.serverLogs && (
-                    <div className="p-5 text-xs text-slate-600 space-y-2 border-t border-slate-100">
-                      <p>
-                        Der Provider dieser Seiten erhebt und speichert automatisch Informationen in so genannten Server Logdateien, die Ihr Browser automatisch an uns übermittelt:
-                      </p>
-                      <ul className="list-disc pl-5 space-y-1 font-mono text-[11px]">
-                        <li>Browsertyp und Browserversion</li>
-                        <li>Verwendetes Betriebssystem</li>
-                        <li>Referrer URL (zuvor besuchte Seite)</li>
-                        <li>Hostname des zugreifenden Rechners</li>
-                        <li>Uhrzeit der Serveranfrage</li>
-                        <li>IP Adresse (in gekürzter und anonymisierter Form)</li>
-                      </ul>
-                      <div className="p-3 bg-slate-50 rounded-xl flex items-center justify-between font-mono text-[10px] text-slate-500 mt-2">
-                        <span>Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO</span>
-                        <span className="text-[#C51E1E] font-bold">Löschfrist: Automatisch nach 7 Tagen</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Accordion 2 */}
-                <div className="border border-slate-200 rounded-2xl overflow-hidden bg-white">
-                  <button
-                    type="button"
-                    onClick={() => toggleAccordion('sslTls')}
-                    className="w-full p-4.5 bg-slate-50 text-left flex items-center justify-between font-bold text-sm text-[#0A1E3A] hover:bg-slate-100 transition-colors cursor-pointer"
-                  >
-                    <span>2. SSL und TLS Verschlüsselung mit 256 Bit</span>
-                    <ChevronDown
-                      className={`w-4 h-4 transition-transform ${openAccordions.sslTls ? 'rotate-180' : ''}`}
-                      strokeWidth={1.5}
-                    />
-                  </button>
-                  {openAccordions.sslTls && (
-                    <div className="p-5 text-xs text-slate-600 space-y-2 border-t border-slate-100">
-                      <p>
-                        Diese Seite nutzt aus Sicherheitsgründen und zum Schutz der Übertragung vertraulicher Inhalte, wie zum Beispiel Bestellanfragen oder Expressbewerbungen, eine SSL und TLS Verschlüsselung mit einer Schlüssellänge von 256 Bit. Eine verschlüsselte Verbindung erkennen Sie daran, dass die Adresszeile des Browsers von <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-[#0A1E3A]">http://</code> auf <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-[#0A1E3A]">https://</code> wechselt und an dem Schloss-Symbol in Ihrer Browserzeile. Wenn die Verschlüsselung aktiviert ist, können die Daten, die Sie an uns übermitteln, nicht von Dritten mitgelesen werden.
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Accordion 3 */}
-                <div className="border border-slate-200 rounded-2xl overflow-hidden bg-white">
-                  <button
-                    type="button"
-                    onClick={() => toggleAccordion('contactForms')}
-                    className="w-full p-4.5 bg-slate-50 text-left flex items-center justify-between font-bold text-sm text-[#0A1E3A] hover:bg-slate-100 transition-colors cursor-pointer"
-                  >
-                    <span>3. Kontaktformulare und direkte Anfragen</span>
-                    <ChevronDown
-                      className={`w-4 h-4 transition-transform ${openAccordions.contactForms ? 'rotate-180' : ''}`}
-                      strokeWidth={1.5}
-                    />
-                  </button>
-                  {openAccordions.contactForms && (
-                    <div className="p-5 text-xs text-slate-600 space-y-2 border-t border-slate-100">
-                      <p>
-                        Wenn Sie uns per Kontaktformular oder E Mail Anfragen zukommen lassen, werden Ihre Angaben inklusive der Kontaktdaten zwecks Bearbeitung der Anfrage und für den Fall von Anschlussfragen bei uns gespeichert. Diese Daten geben wir nicht ohne Ihre Einwilligung weiter.
-                      </p>
-                      <p className="text-[11px] text-slate-500 font-mono">
-                        Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche Maßnahmen).
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </section>
-
-            {/* § 04: BEWERBER-HUB & RECRUITING (HIGHLIGHT SECTION) */}
-            <section id="bewerberdaten" className="scroll-mt-32 space-y-5">
-              <div className="border-2 border-[#C51E1E] bg-white rounded-3xl p-6 sm:p-8 relative shadow-lg">
-                <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200">
-                  <div className="flex items-center gap-3">
-                    <span className="w-9 h-9 rounded-xl bg-[#C51E1E] text-white flex items-center justify-center font-bold">
-                      <Shield className="w-5 h-5 text-white" strokeWidth={1.5} />
-                    </span>
-                    <div>
-                      <span className="font-mono text-[10px] uppercase tracking-wider text-[#C51E1E] font-bold block">
-                        Paragraph 26 BDSG RECHTSVORSCHRIFT
-                      </span>
-                      <h2 className="text-lg sm:text-xl font-bold text-[#0A1E3A]">
-                        Datenschutz im Bewerbungsverfahren und Bewerberportal
-                      </h2>
-                    </div>
-                  </div>
-                  <span className="px-3 py-1 bg-[#0A1E3A] text-white font-mono text-[10px] uppercase font-bold rounded-lg">
-                    Verifiziert Sicher
-                  </span>
-                </div>
-
-                <p className="text-xs sm:text-sm text-slate-700 mt-4 leading-relaxed">
-                  Wir verarbeiten personenbezogene Daten von Bewerberinnen und Bewerbern m w d ausschließlich im Einklang mit den einschlägigen datenschutzrechtlichen Vorgaben, insbesondere <strong className="text-slate-900 font-semibold">Art. 6 Abs. 1 lit. b DSGVO in Verbindung mit Paragraph 26 Abs. 1 BDSG</strong> (Begründung eines Beschäftigungsverhältnisses).
-                </p>
-
-                {/* Sperrvermerk Special Callout */}
-                <div className="mt-5 bg-red-50/70 border-l-4 border-[#C51E1E] p-4.5 rounded-2xl space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Lock className="w-4 h-4 text-[#C51E1E]" strokeWidth={1.5} />
-                    <strong className="text-xs sm:text-sm font-bold text-[#0A1E3A]">
-                      Garantierter Sperrvermerk für ungekündigte Fachkräfte
-                    </strong>
-                  </div>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    Sofern Sie sich in einem bestehenden, ungekündigten Arbeitsverhältnis befinden und unseren digitalen Expressbereich nutzen, greift unsere uneingeschränkte Diskretionsgarantie. Wir kontaktieren unter keinen Umständen Ihren derzeitigen Arbeitgeber. Eine Kontaktaufnahme unserer Geschäftsleitung erfolgt absolut vertraulich und ausschließlich über Ihre privaten, dezidiert freigegebenen Kanäle (z.B. private Mobilnummer oder diskrete WhatsApp-Terminierung nach Feierabend).
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-                  <div className="border border-slate-200 rounded-2xl p-4 bg-slate-50">
-                    <span className="text-[10px] font-mono font-bold uppercase text-[#C51E1E] block mb-2">
-                      1. Erfasste Datenkategorien
-                    </span>
-                    <ul className="space-y-1.5 text-xs text-slate-700">
-                      <li className="flex items-start gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#C51E1E] mt-1.5 shrink-0" />
-                        <span>Stammdaten wie Name, Vorname, Wohnort, Telefon, E Mail</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#C51E1E] mt-1.5 shrink-0" />
-                        <span>Berufliche Qualifikationen wie Gesellenbrief, Meistertitel, Fachzertifikate</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#C51E1E] mt-1.5 shrink-0" />
-                        <span>Führerscheinklassen wie Klasse B oder BE für Kundendienstfahrzeuge</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#C51E1E] mt-1.5 shrink-0" />
-                        <span>Freiwillige Konditionswünsche sowie möglicher Eintrittstermin oder Kündigungsfrist</span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div className="border border-slate-200 rounded-2xl p-4 bg-slate-50">
-                    <span className="text-[10px] font-mono font-bold uppercase text-[#0A1E3A] block mb-2">
-                      2. Gesetzliche Löschfristen
-                    </span>
-                    <p className="text-xs text-slate-700 leading-relaxed">
-                      Sollte Ihre Bewerbung nicht zu einer Einstellung führen, werden Ihre Daten <strong>spätestens 6 Monate</strong> nach Bekanntgabe der Absageentscheidung vollständig und unwiederbringlich gelöscht (Art. 17 DSGVO in Verbindung mit Paragraph 15 Abs. 4 AGG zur Abwehr allfälliger Rechtsansprüche).
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
-                  <div>
-                    <strong className="block font-bold text-[#0A1E3A]">
-                      Talentpool der Bad und Energie GmbH
-                    </strong>
-                    <p className="text-slate-500 text-[11px] mt-0.5">
-                      Eine Speicherung über die sechsmonatigen Frist hinaus (maximal 24 Monate) erfolgt ausschließlich bei expliziter Einwilligung gem. Art. 6 Abs. 1 lit. a DSGVO.
-                    </p>
-                  </div>
-                  <span className="px-3 py-1 bg-white border border-slate-200 rounded-lg font-mono text-[10px] whitespace-nowrap text-slate-700 font-semibold">
-                    Maximal 24 Monate mit Widerrufsrecht
-                  </span>
-                </div>
-              </div>
-            </section>
-
-            {/* § 05: COOKIES, ANALYSE & LOCAL FONTS */}
-            <section id="cookies-analyse" className="scroll-mt-32 space-y-4">
-              <div className="flex items-center gap-3 border-b-2 border-[#0A1E3A] pb-2">
-                <span className="font-mono text-xs font-bold text-[#C51E1E]">§ 05</span>
-                <h2 className="text-xl sm:text-2xl font-bold text-[#0A1E3A] tracking-tight">
-                  Cookies, Analyse und Lokale Schriften
-                </h2>
-              </div>
-
-              <div className="border border-slate-200 rounded-3xl p-5 bg-white space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#047857]" strokeWidth={1.5} />
-                    <h3 className="text-sm font-bold text-[#0A1E3A]">
-                      Lokales Hosting von Schriftarten ohne US Transfer
-                    </h3>
-                  </div>
-                  <span className="px-2 py-0.5 bg-emerald-50 text-[#047857] font-mono text-[10px] uppercase font-bold rounded">
-                    Kein US Transfer
-                  </span>
-                </div>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Diese Seite nutzt zur einheitlichen Darstellung von Schriftarten lokale Schriftdateien. Diese Schriften sind lokal auf unseren eigenen Servern in der Bundesrepublik Deutschland installiert. Beim Aufruf einer Seite lädt Ihr Browser die benötigten Web Fonts direkt aus unserem Server Cache. Es findet zu keinem Zeitpunkt eine Verbindung zu Servern der Google LLC oder sonstigen Dritten statt. Eine Übertragung Ihrer IP Adresse an externe Server ist <strong className="text-slate-900 font-semibold">vollständig ausgeschlossen</strong>.
-                </p>
-              </div>
-
-              <div className="border border-slate-200 rounded-3xl p-5 bg-white space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#0284C7]" strokeWidth={1.5} />
-                    <h3 className="text-sm font-bold text-[#0A1E3A]">
-                      Webanalyse und Cookiesteuerung nach TDDDG Paragraph 25
-                    </h3>
-                  </div>
-                  <span className="px-2 py-0.5 bg-slate-100 text-slate-700 font-mono text-[10px] uppercase font-bold rounded">
-                    Einwilligung erforderlich
-                  </span>
-                </div>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Wir verwenden Technologien, um das Nutzerverhalten auf unserer Webseite aggregiert zu verstehen und Fehler im digitalen Kundendienst und Bewerberprozess zu beheben. Die Erfassung erfolgt ausschließlich unter Verwendung einer gekürzten und somit anonymisierten IP-Adresse. Nicht technisch notwendige Tracking Cookies werden erst nach Erteilung Ihrer ausdrücklichen Einwilligung im Einwilligungsdialog geladen (Art. 6 Abs. 1 lit. a DSGVO in Verbindung mit Paragraph 25 Abs. 1 TDDDG).
-                </p>
-              </div>
-            </section>
-
-            {/* § 06: BETROFFENENRECHTE */}
-            <section id="betroffenenrechte" className="scroll-mt-32 space-y-4">
-              <div className="flex items-center gap-3 border-b-2 border-[#0A1E3A] pb-2">
-                <span className="font-mono text-xs font-bold text-[#C51E1E]">§ 06</span>
-                <h2 className="text-xl sm:text-2xl font-bold text-[#0A1E3A] tracking-tight">
-                  Ihre Betroffenenrechte Art. 15 bis 21 DSGVO
-                </h2>
-              </div>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-                Als betroffene Person stehen Ihnen nach der Datenschutz Grundverordnung umfangreiche Rechte gegenüber der Bad und Energie GmbH zu, die Sie jederzeit kostenfrei und formlos geltend machen können:
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  {
-                    art: 'Art. 15 DSGVO',
-                    title: 'Recht auf Auskunft',
-                    desc: 'Sie haben das Recht, Auskunft darüber zu verlangen, ob und welche personenbezogenen Daten wir verarbeiten, zu welchem Zweck und an wen diese weitergegeben wurden.',
-                  },
-                  {
-                    art: 'Art. 16 DSGVO',
-                    title: 'Recht auf Berichtigung',
-                    desc: 'Sie können die unverzügliche Berichtigung oder Vervollständigung fehlerhafter und unrichtiger Daten verlangen, die wir im Rahmen Ihrer Bewerbung führen.',
-                  },
-                  {
-                    art: 'Art. 17 DSGVO',
-                    title: 'Recht auf Löschung und Vergessenwerden',
-                    desc: 'Sie haben das Recht, die unverzügliche Löschung Ihrer Daten zu fordern, sofern keine gesetzlichen Aufbewahrungspflichten wie HGB oder AO entgegenstehen.',
-                  },
-                  {
-                    art: 'Art. 18 DSGVO',
-                    title: 'Recht auf Einschränkung',
-                    desc: 'Unter bestimmten gesetzlichen Voraussetzungen können Sie verlangen, dass Ihre Daten für weitere Verarbeitungsschritte gesperrt und nur noch archiviert werden.',
-                  },
-                  {
-                    art: 'Art. 20 DSGVO',
-                    title: 'Recht auf Datenübertragbarkeit',
-                    desc: 'Sie haben das Recht, Daten, die Sie uns bereitgestellt haben, in einem strukturierten, gängigen und maschinenlesbaren Format zu erhalten.',
-                  },
-                  {
-                    art: 'Art. 21 DSGVO',
-                    title: 'Widerspruchsrecht',
-                    desc: 'Sie können einer Verarbeitung, die auf Art. 6 Abs. 1 lit. f DSGVO beruht, aus Gründen, die sich aus Ihrer besonderen Situation ergeben, jederzeit widersprechen.',
-                  },
-                ].map((item) => (
-                  <div key={item.art} className="p-4.5 bg-white rounded-3xl border border-slate-200 space-y-2 shadow-xs">
-                    <span className="font-mono text-[10px] font-bold text-[#C51E1E] uppercase block">
-                      {item.art}
-                    </span>
-                    <h3 className="text-sm font-bold text-[#0A1E3A]">{item.title}</h3>
-                    <p className="text-xs text-slate-600 leading-relaxed">{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="p-4.5 bg-[#0A1E3A] text-white rounded-2xl flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <span className="font-mono text-[10px] uppercase font-bold text-slate-400 block">
-                    Widerruf erteilter Einwilligungen (Art. 7 Abs. 3 DSGVO)
-                  </span>
-                  <p className="text-xs text-slate-300 mt-0.5">
-                    Sie können erteilte Einwilligungen jederzeit ohne Angabe von Gründen per E Mail widerrufen.
-                  </p>
-                </div>
-                <a
-                  href="mailto:datenschutz@bad-energie.de?subject=Widerruf%20Einwilligung%20Datenschutz"
-                  className="px-4 py-2 bg-[#C51E1E] hover:bg-[#A51616] text-white rounded-xl text-xs font-bold transition-colors cursor-pointer"
-                >
-                  Widerruf absenden
-                </a>
-              </div>
-            </section>
-
-            {/* § 07: AUFSICHTSBEHÖRDE HESSEN */}
-            <section id="aufsichtsbehoerde" className="scroll-mt-32 space-y-4">
-              <div className="flex items-center gap-3 border-b-2 border-[#0A1E3A] pb-2">
-                <span className="font-mono text-xs font-bold text-[#C51E1E]">§ 07</span>
-                <h2 className="text-xl sm:text-2xl font-bold text-[#0A1E3A] tracking-tight">
-                  Zuständige Aufsichtsbehörde (HBDI Hessen)
-                </h2>
-              </div>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-                Gemäß Art. 77 DSGVO haben Sie unbeschadet eines anderweitigen verwaltungsrechtlichen oder gerichtlichen Rechtsbehelfs das Recht auf Beschwerde bei einer Datenschutz Aufsichtsbehörde, wenn Sie der Ansicht sind, dass die Verarbeitung der Sie betreffenden personenbezogenen Daten gegen die DSGVO verstößt.
-              </p>
-
-              <div className="border border-slate-200 rounded-3xl p-6 bg-white flex flex-col md:flex-row items-start justify-between gap-6 shadow-xs">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 bg-[#C51E1E] rounded-full" />
-                    <h3 className="text-sm font-bold text-[#0A1E3A]">
-                      Der Hessische Beauftragte für Datenschutz und Informationsfreiheit (HBDI)
-                    </h3>
-                  </div>
-                  <div className="text-xs text-slate-600 space-y-1">
-                    <p>Hausanschrift: Gustav Stresemann Ring 1, 65189 Wiesbaden</p>
-                    <p>Postanschrift: Postfach 3163, 65021 Wiesbaden</p>
-                  </div>
-                  <div className="text-xs font-mono space-y-1 pt-1 text-slate-700">
-                    <p>Telefon: <span className="font-bold text-slate-900">+49 611 1408 0</span></p>
-                    <p>Telefax: <span className="font-bold text-slate-900">+49 611 1408 900</span></p>
-                    <p>E Mail: <span className="text-slate-900">poststelle@datenschutz.hessen.de</span></p>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-2 min-w-[200px]">
-                  <a
-                    href="https://datenschutz.hessen.de"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2.5 bg-[#0A1E3A] hover:bg-[#132B50] text-white rounded-xl text-xs font-bold text-center transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-                  >
-                    <span>Offizielles HBDI Portal</span>
-                    <ExternalLink className="w-3.5 h-3.5" strokeWidth={1.5} />
-                  </a>
-                  <span className="text-[11px] text-slate-500 text-center font-mono">
-                    Zuständig für Hessen und Lahn Dill
-                  </span>
-                </div>
-              </div>
-            </section>
-          </main>
-        </div>
-      </div>
-    </div>
+      <Chapter id="aufsichtsbehoerde">
+        <p>
+          Nach Art. 77 DSGVO hast du unbeschadet eines anderweitigen verwaltungsrechtlichen oder gerichtlichen
+          Rechtsbehelfs das Recht auf Beschwerde bei einer Datenschutz-Aufsichtsbehörde, wenn du der Ansicht bist, dass
+          die Verarbeitung deiner personenbezogenen Daten gegen die DSGVO verstößt. Für uns zuständig ist:
+        </p>
+        <LegalFacts items={AUTHORITY} />
+      </Chapter>
+    </LegalDocument>
   );
 }

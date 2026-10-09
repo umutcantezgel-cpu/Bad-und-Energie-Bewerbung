@@ -1,2 +1,1 @@
-export * from './InteractiveMap';
-export * from './InteractiveMapClientWrapper';
+export { RegionMap, type RegionMapProps } from './RegionMap';

@@ -1,20 +1,23 @@
+import 'server-only';
+import { createHash, randomUUID } from 'node:crypto';
 import { Resend } from 'resend';
-import { SITE_CONFIG } from '@/lib/seo/site-config';
+
+import { applicationContent } from '@/lib/applications/fingerprint';
+import type { NormalizedFollowUp, ReferencedApplication } from '@/lib/applications/types';
+import { emailSimulationAllowed, getEmailConfig } from '@/lib/env';
 import {
-  ContactLeadData,
-  renderContactLeadNotificationEmail,
-  ContactUserConfirmationData,
-  renderContactUserConfirmationEmail,
-  ApplicationLeadData,
-  renderApplicationLeadNotificationEmail,
-  ApplicationUserConfirmationData,
-  renderApplicationUserConfirmationEmail,
+  renderApplicationConfirmationEmail,
+  renderApplicationFollowUpEmail,
+  renderApplicationTeamEmail,
 } from './templates';
 
 export interface EmailDispatchResult {
   success: boolean;
   id?: string;
   simulated?: boolean;
+  /** Resend kannte den Idempotency-Key schon: Die Mail ging bereits mit einer früheren Anfrage raus. */
+  duplicate?: boolean;
+  /** Fehlercode, z. B. 'not_configured', 'no_recipient' oder ein Resend-Code wie 'validation_error'. */
   error?: string;
 }
 
@@ -25,205 +28,207 @@ export interface DualDispatchResult {
   simulated: boolean;
 }
 
-/**
- * Resend Client Configuration Helper
- */
+/** Resend-Tags: Name und Wert nur ASCII-Buchstaben, Ziffern, `_` und `-`. */
+export interface EmailTag {
+  name: string;
+  value: string;
+}
+
+export interface SendEmailOptions {
+  to: string | string[];
+  subject: string;
+  html: string;
+  /** Textfassung (multipart/alternative). */
+  text?: string;
+  replyTo?: string;
+  from?: string;
+  tags?: EmailTag[];
+  /** Wird als `Idempotency-Key` an Resend durchgereicht (sichere Wiederholungen). */
+  idempotencyKey?: string;
+}
+
+export interface DispatchOptions {
+  /**
+   * Basis-Schlüssel, z. B. `bewerbung:<uuid>`. Je Mail wird `:<art>:<Inhalts-Hash>` angehängt:
+   * Gleicher Inhalt wird von Resend 24 h lang nur einmal versendet, geänderter Inhalt
+   * (z. B. korrigierte Telefonnummer nach einem Fehler) bekommt einen eigenen Schlüssel.
+   * Bei Bewerbungen zählen nur die Angaben, nicht Eingangszeit oder Ausfülldauer
+   * (applicationFingerprint), damit Wiederholungen auf einer anderen Instanz denselben Key haben.
+   */
+  idempotencyKey?: string;
+}
+
 export function getResendClient(): {
   client: Resend | null;
-  fromEmail: string;
+  fromEmail?: string;
   toEmail: string;
   isConfigured: boolean;
+  forceSimulation: boolean;
 } {
-  const apiKey = process.env.RESEND_API_KEY?.trim();
-  const isConfigured = Boolean(
-    apiKey &&
-      apiKey !== 'MY_RESEND_API_KEY' &&
-      !apiKey.startsWith('re_placeholder') &&
-      apiKey.length > 5
-  );
-
-  // DMARC-Schutz: Fallback auf onboarding@resend.dev, falls keine eigene Domain in Resend verifiziert ist,
-  // um DMARC sp=quarantine Konflikte auf bad-energie.de zuverlässig zu verhindern.
-  const fromEmail =
-    process.env.RESEND_FROM_EMAIL?.trim() ||
-    'Bad und Energie Karriere <onboarding@resend.dev>';
-
-  const toEmail =
-    process.env.CONTACT_NOTIFICATION_EMAIL?.trim() ||
-    process.env.RESEND_TO_EMAIL?.trim() ||
-    SITE_CONFIG.contact.email ||
-    'info@bad-energie.de';
-
-  const client = isConfigured && apiKey ? new Resend(apiKey) : null;
+  const config = getEmailConfig();
+  const isConfigured = config.missing.length === 0;
 
   return {
-    client,
-    fromEmail,
-    toEmail,
+    client: config.apiKey ? new Resend(config.apiKey) : null,
+    fromEmail: config.from,
+    toEmail: config.notificationTo,
     isConfigured,
+    forceSimulation: config.forceSimulation,
   };
 }
 
 /**
- * Send a single transactional email via Resend with Graceful Simulation Fallback
+ * Sendet eine Mail über Resend. Erfolg wird nur gemeldet, wenn Resend die Mail angenommen hat
+ * oder Simulation ausdrücklich erlaubt ist (lokal/E2E, nie auf Vercel Production).
+ * Logs enthalten nur IDs und Fehlercodes, keine Adressen oder Inhalte.
  */
 export async function sendEmail({
   to,
   subject,
   html,
+  text,
   replyTo,
   from,
-}: {
-  to: string | string[];
-  subject: string;
-  html: string;
-  replyTo?: string;
-  from?: string;
-}): Promise<EmailDispatchResult> {
+  tags,
+  idempotencyKey,
+}: SendEmailOptions): Promise<EmailDispatchResult> {
   const config = getResendClient();
   const sender = from || config.fromEmail;
-  const recipients = Array.isArray(to) ? to : [to];
 
-  if (!config.isConfigured || !config.client) {
-    console.info(
-      `[Resend Simulation Mode] E Mail an ${recipients.join(', ')} | Betreff: "${subject}"`
-    );
-    return {
-      success: true,
-      id: `sim_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
-      simulated: true,
-    };
+  if (config.forceSimulation || !config.client || !sender) {
+    if (emailSimulationAllowed()) {
+      const id = `sim_${randomUUID()}`;
+      console.info(`[email] simuliert (${id})`);
+      return { success: true, id, simulated: true };
+    }
+
+    console.error('[email] nicht versendet: Versand nicht konfiguriert');
+    return { success: false, error: 'not_configured', simulated: false };
   }
 
   try {
-    const { data, error } = await config.client.emails.send({
-      from: sender,
-      to: recipients,
-      subject,
-      html,
-      replyTo: replyTo || undefined,
-    });
+    const { data, error } = await config.client.emails.send(
+      {
+        from: sender,
+        to: Array.isArray(to) ? to : [to],
+        subject,
+        html,
+        ...(text ? { text } : {}),
+        replyTo: replyTo || undefined,
+        tags: tags?.length ? tags : undefined,
+      },
+      idempotencyKey ? { idempotencyKey } : undefined
+    );
 
     if (error) {
-      console.error('[Resend API Error]', error);
-      return {
-        success: false,
-        error: error.message || 'Resend API returned an error',
-        simulated: false,
-      };
+      // Gleicher Key, anderer Inhalt: Bei unseren Keys (Hash der Angaben) unterscheidet sich nur
+      // z. B. die Eingangszeit. Die Mail wurde also schon zugestellt.
+      if (idempotencyKey && error.name === 'invalid_idempotent_request') {
+        console.info('[email] bereits versendet (Idempotency-Key bekannt)');
+        return { success: true, duplicate: true, simulated: false };
+      }
+      console.error(`[email] Resend-Fehler: ${error.name} (HTTP ${error.statusCode ?? '–'})`);
+      return { success: false, error: error.name || 'send_failed', simulated: false };
     }
 
-    console.info(`[Resend Live Dispatch] Erfolgreich gesendet (${data?.id}) von "${sender}" an "${recipients.join(', ')}"`);
-
-    return {
-      success: true,
-      id: data?.id,
-      simulated: false,
-    };
+    console.info(`[email] gesendet (${data?.id})`);
+    return { success: true, id: data?.id, simulated: false };
   } catch (err: unknown) {
-    const errorMessage = err instanceof Error ? err.message : 'Unknown Resend dispatch error';
-    console.error('[Resend Network Exception]', errorMessage);
-    return {
-      success: false,
-      error: errorMessage,
-      simulated: false,
-    };
+    console.error(`[email] Versand fehlgeschlagen: ${err instanceof Error ? err.name : 'unknown'}`);
+    return { success: false, error: 'send_failed', simulated: false };
   }
 }
 
-/**
- * Dispatches both internal lead notification and user receipt confirmation for contact inquiries
- */
-export async function dispatchContactRequest(
-  data: ContactLeadData
-): Promise<DualDispatchResult> {
-  const config = getResendClient();
+function settle(result: PromiseSettledResult<EmailDispatchResult>): EmailDispatchResult {
+  return result.status === 'fulfilled' ? result.value : { success: false, error: 'send_failed' };
+}
 
-  const leadMail = renderContactLeadNotificationEmail(data);
-  const confirmationMail = renderContactUserConfirmationEmail({
-    name: data.name,
-    email: data.email,
-    subject: data.subject,
-  });
+/** Resend erlaubt Schlüssel bis 256 Zeichen; der Hash bindet den Schlüssel an Empfänger und Inhalt. */
+export function idempotencyFor(
+  options: DispatchOptions | undefined,
+  kind: string,
+  mail: { to: string | string[]; subject: string; html: string; text?: string }
+): string | undefined {
+  if (!options?.idempotencyKey) return undefined;
+  const digest = createHash('sha256')
+    .update(JSON.stringify([mail.to, mail.subject, mail.html, mail.text ?? '']))
+    .digest('hex')
+    .slice(0, 16);
+  return `${options.idempotencyKey.slice(0, 200)}:${kind}:${digest}`;
+}
 
-  const [teamRes, userRes] = await Promise.allSettled([
-    // 1. Team Notification to Meister Demir
-    sendEmail({
-      to: config.toEmail,
-      subject: leadMail.subject,
-      html: leadMail.html,
-      replyTo: data.email,
-    }),
-    // 2. Receipt confirmation to the inquirer
-    sendEmail({
-      to: data.email,
-      subject: confirmationMail.subject,
-      html: confirmationMail.html,
-      replyTo: config.toEmail,
-    }),
-  ]);
-
-  const teamNotification: EmailDispatchResult =
-    teamRes.status === 'fulfilled'
-      ? teamRes.value
-      : { success: false, error: String(teamRes.reason) };
-
-  const userConfirmation: EmailDispatchResult =
-    userRes.status === 'fulfilled'
-      ? userRes.value
-      : { success: false, error: String(userRes.reason) };
-
-  const overallSuccess = teamNotification.success;
-
-  return {
-    success: overallSuccess,
-    teamNotification,
-    userConfirmation,
-    simulated: Boolean(teamNotification.simulated || userConfirmation.simulated),
-  };
+/** Schlüssel aus einem eigenen, stabilen Fingerabdruck statt aus dem gerenderten Mail-Inhalt. */
+export function stableIdempotencyKey(
+  options: DispatchOptions | undefined,
+  kind: string,
+  fingerprint: unknown
+): string | undefined {
+  if (!options?.idempotencyKey) return undefined;
+  const digest = createHash('sha256').update(JSON.stringify(fingerprint)).digest('hex').slice(0, 16);
+  return `${options.idempotencyKey.slice(0, 200)}:${kind}:${digest}`;
 }
 
 /**
- * Dispatches both internal dossier notification and candidate receipt confirmation for applications
+ * Nummer plus alle Angaben einer Bewerbung (applicationContent), ohne Eingangszeit, Ausfülldauer
+ * und Spam-Markierung: Diese ändern sich bei jeder Wiederholung, die Bewerbung selbst nicht.
  */
-export async function dispatchApplicationRequest(
-  data: ApplicationLeadData
+export function applicationFingerprint(app: ReferencedApplication): unknown {
+  return [app.reference, ...applicationContent(app)];
+}
+
+const NO_RECIPIENT: EmailDispatchResult = { success: false, error: 'no_recipient' };
+/** Keine Eingangsbestätigung bei Spamverdacht: Die Adresse ist ungeprüft und könnte fremd sein. */
+const SKIPPED_SPAM: EmailDispatchResult = { success: false, error: 'skipped_suspected_spam' };
+
+/** Resend-Tag-Wert: nur [A-Za-z0-9_-], höchstens 256 Zeichen. */
+function tagValue(value: string): string {
+  return value.replace(/[^A-Za-z0-9_-]/g, '_').slice(0, 256) || 'none';
+}
+
+/**
+ * Bewerbung: Benachrichtigung ans Team (Reply-To = Bewerber-E-Mail, falls vorhanden) plus
+ * Eingangsbestätigung, aber nur wenn eine E-Mail angegeben wurde und kein Spamverdacht besteht
+ * (die Adresse ist ungeprüft). Erfolg = Team-Mail angenommen.
+ */
+export async function dispatchApplicationEmails(
+  app: ReferencedApplication,
+  options?: DispatchOptions
 ): Promise<DualDispatchResult> {
   const config = getResendClient();
+  const team = renderApplicationTeamEmail(app);
+  const teamMail = { to: config.toEmail, ...team };
+  const tags: EmailTag[] = [
+    { name: 'job', value: tagValue(app.job.id) },
+    { name: 'channel', value: tagValue(app.channel) },
+  ];
 
-  const appMail = renderApplicationLeadNotificationEmail(data);
-  const userConfMail = renderApplicationUserConfirmationEmail({
-    fullName: data.fullName,
-    email: data.email,
-    position: data.position,
-  });
+  const confirmation = app.email && !app.suspectedSpam ? renderApplicationConfirmationEmail(app) : null;
+  const confirmationMail = confirmation && app.email ? { to: app.email, ...confirmation } : null;
+  const fingerprint = applicationFingerprint(app);
 
   const [teamRes, userRes] = await Promise.allSettled([
-    // 1. Detailed candidate dossier to Meister Demir
     sendEmail({
-      to: config.toEmail,
-      subject: appMail.subject,
-      html: appMail.html,
-      replyTo: data.email,
+      ...teamMail,
+      replyTo: app.email || undefined,
+      tags: [
+        { name: 'category', value: 'application_team' },
+        ...tags,
+        ...(app.suspectedSpam ? [{ name: 'spam', value: 'suspected' }] : []),
+      ],
+      idempotencyKey: stableIdempotencyKey(options, 'team', [teamMail.to, fingerprint]),
     }),
-    // 2. Step-by-step roadmap confirmation to the applicant
-    sendEmail({
-      to: data.email,
-      subject: userConfMail.subject,
-      html: userConfMail.html,
-      replyTo: config.toEmail,
-    }),
+    confirmationMail
+      ? sendEmail({
+          ...confirmationMail,
+          replyTo: config.toEmail,
+          tags: [{ name: 'category', value: 'application_confirmation' }, ...tags],
+          idempotencyKey: stableIdempotencyKey(options, 'user', [confirmationMail.to, fingerprint]),
+        })
+      : Promise.resolve(app.email && app.suspectedSpam ? { ...SKIPPED_SPAM } : { ...NO_RECIPIENT }),
   ]);
 
-  const teamNotification: EmailDispatchResult =
-    teamRes.status === 'fulfilled'
-      ? teamRes.value
-      : { success: false, error: String(teamRes.reason) };
-
-  const userConfirmation: EmailDispatchResult =
-    userRes.status === 'fulfilled'
-      ? userRes.value
-      : { success: false, error: String(userRes.reason) };
+  const teamNotification = settle(teamRes);
+  const userConfirmation = settle(userRes);
 
   return {
     success: teamNotification.success,
@@ -231,4 +236,22 @@ export async function dispatchApplicationRequest(
     userConfirmation,
     simulated: Boolean(teamNotification.simulated || userConfirmation.simulated),
   };
+}
+
+/** Ergänzung zu einer Bewerbung: eine Mail ans Team mit der Bewerbungsnummer im Betreff. */
+export async function dispatchApplicationFollowUpEmail(
+  followUp: NormalizedFollowUp,
+  options?: DispatchOptions
+): Promise<EmailDispatchResult> {
+  const config = getResendClient();
+  const mail = { to: config.toEmail, ...renderApplicationFollowUpEmail(followUp) };
+  try {
+    return await sendEmail({
+      ...mail,
+      tags: [{ name: 'category', value: 'application_follow_up' }],
+      idempotencyKey: idempotencyFor(options, 'follow-up', mail),
+    });
+  } catch {
+    return { success: false, error: 'send_failed' };
+  }
 }

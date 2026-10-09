@@ -1,188 +1,116 @@
-import { SITE_CONFIG } from '@/lib/seo/site-config';
-import { regionalLocations, RegionalLocation } from '@/lib/data/locations';
+import { REGION } from '@/lib/content/region';
+import { haversineKm } from './projection';
+
+/**
+ * Data and styles for the Google map, loaded only after the 2-click consent. Places come from
+ * REGION (lib/content/region.ts), the single source for the radius graphic and the commute table.
+ */
 
 export interface MapCoordinates {
   lat: number;
   lng: number;
 }
 
-export const HEADQUARTERS_COORDINATES: MapCoordinates = {
-  lat: SITE_CONFIG.headquarters.geo.latitude, // 50.56499
-  lng: SITE_CONFIG.headquarters.geo.longitude, // 8.49842
-};
+export const HEADQUARTERS_COORDINATES: MapCoordinates = Object.freeze({
+  lat: REGION.center.latitude,
+  lng: REGION.center.longitude,
+});
 
-export const DEFAULT_MAP_ZOOM = 12;
-export const MAX_SERVICE_RADIUS_KM = 35;
+export const MAX_SERVICE_RADIUS_KM = REGION.radiusKm;
 
-/**
- * Mandatory Solution Attribution ID for Google Maps Platform tracking
- */
-export const GMP_ATTRIBUTION_IDS = ['gmp_git_agentskills_v1'];
+/** Places closer than this to the headquarters share its marker (e.g. "Wetzlar Kernstadt"). */
+export const CENTER_MERGE_KM = 0.5;
 
 export interface MapPOI {
   id: string;
   name: string;
-  type: 'headquarters' | 'service_hub' | 'core_zone' | 'region';
+  type: 'headquarters' | 'place';
   coordinates: MapCoordinates;
-  address: string;
   distanceKm: number;
   commuteMinutes: number;
-  description: string;
-  badge: string;
 }
 
-export const MAP_POIS: MapPOI[] = [
-  {
+export const MAP_POIS: readonly MapPOI[] = Object.freeze([
+  Object.freeze({
     id: 'poi-hq',
-    name: 'Firmensitz & Meisterbüro Wetzlar',
-    type: 'headquarters',
+    name: `Firmensitz, ${REGION.center.street}, ${REGION.center.postalCode} ${REGION.center.name}`,
+    type: 'headquarters' as const,
     coordinates: HEADQUARTERS_COORDINATES,
-    address: 'Siegmund-Hiepe-Str. 20, 35578 Wetzlar',
     distanceKm: 0,
     commuteMinutes: 0,
-    description: 'Zentrale Verwaltung, Werkstatt, Schulungsräume und Startpunkt aller Kundendienstfahrzeuge.',
-    badge: 'Firmensitz seit 1926',
-  },
-  ...regionalLocations.map((loc) => ({
-    id: loc.id,
-    name: loc.name,
-    type: loc.isCoreZone ? ('core_zone' as const) : ('service_hub' as const),
-    coordinates: { lat: loc.latitude, lng: loc.longitude },
-    address: `${loc.plz} ${loc.name}`,
-    distanceKm: loc.distanceKm,
-    commuteMinutes: loc.commuteMinutes,
-    description: loc.character,
-    badge: loc.isCoreZone ? 'Kerngebiet' : 'Regionales Einsatzgebiet',
-  })),
-];
+  }),
+  ...REGION.locations
+    .filter((l) => haversineKm(HEADQUARTERS_COORDINATES, { lat: l.latitude, lng: l.longitude }) >= CENTER_MERGE_KM)
+    .map((l) =>
+      Object.freeze({
+        id: l.id,
+        name: l.name,
+        type: 'place' as const,
+        coordinates: Object.freeze({ lat: l.latitude, lng: l.longitude }),
+        distanceKm: l.distanceKm,
+        commuteMinutes: l.commuteMinutes,
+      }),
+    ),
+]);
 
-/**
- * Apple-Silver Minimalist Map Styling for Google Maps
- * Clean porcelain tones, light water, subtle roads, zero clutter.
- */
-export const APPLE_SILVER_MAP_STYLE: google.maps.MapTypeStyle[] = [
-  {
-    elementType: 'geometry',
-    stylers: [{ color: '#f8fafc' }],
-  },
-  {
-    elementType: 'labels.icon',
-    stylers: [{ visibility: 'off' }],
-  },
-  {
-    elementType: 'labels.text.fill',
-    stylers: [{ color: '#475569' }],
-  },
-  {
-    elementType: 'labels.text.stroke',
-    stylers: [{ color: '#ffffff' }],
-  },
-  {
-    featureType: 'administrative.land_parcel',
-    stylers: [{ visibility: 'off' }],
-  },
-  {
-    featureType: 'administrative.neighborhood',
-    stylers: [{ visibility: 'off' }],
-  },
-  {
-    featureType: 'poi',
-    elementType: 'labels.text',
-    stylers: [{ visibility: 'off' }],
-  },
-  {
-    featureType: 'poi.business',
-    stylers: [{ visibility: 'off' }],
-  },
-  {
-    featureType: 'poi.park',
-    elementType: 'geometry',
-    stylers: [{ color: '#e2f5ea' }],
-  },
-  {
-    featureType: 'road',
-    elementType: 'geometry',
-    stylers: [{ color: '#ffffff' }],
-  },
-  {
-    featureType: 'road',
-    elementType: 'geometry.stroke',
-    stylers: [{ color: '#e2e8f0' }],
-  },
-  {
-    featureType: 'road.arterial',
-    elementType: 'geometry',
-    stylers: [{ color: '#f1f5f9' }],
-  },
-  {
-    featureType: 'road.highway',
-    elementType: 'geometry',
-    stylers: [{ color: '#fed7aa' }], // Soft warm accent for Autobahn A45 / B49
-  },
-  {
-    featureType: 'road.highway',
-    elementType: 'geometry.stroke',
-    stylers: [{ color: '#fdba74' }],
-  },
-  {
-    featureType: 'transit',
-    stylers: [{ visibility: 'off' }],
-  },
-  {
-    featureType: 'water',
-    elementType: 'geometry',
-    stylers: [{ color: '#e0f2fe' }], // Lahn river soft blue
-  },
-  {
-    featureType: 'water',
-    elementType: 'labels.text.fill',
-    stylers: [{ color: '#0284c7' }],
-  },
-];
+/** Map colors per color scheme. Mirrors the semantic roles in app/styles/theme.css. */
+export interface MapPalette {
+  land: string;
+  water: string;
+  road: string;
+  roadMajor: string;
+  label: string;
+  labelStrong: string;
+  labelHalo: string;
+  /** Markers: ink fill on a surface ring; the radius circle uses lineStrong. */
+  ink: string;
+  surface: string;
+  lineStrong: string;
+}
 
-/**
- * Midnight Meister Map Styling for Google Maps (Dark Apple Luxury)
- * Deep navy tones matching Bad und Energie corporate colors (#0A1E3A).
- */
-export const MIDNIGHT_MEISTER_MAP_STYLE: google.maps.MapTypeStyle[] = [
-  {
-    elementType: 'geometry',
-    stylers: [{ color: '#0A1E3A' }],
-  },
-  {
-    elementType: 'labels.text.fill',
-    stylers: [{ color: '#94a3b8' }],
-  },
-  {
-    elementType: 'labels.text.stroke',
-    stylers: [{ color: '#050f1e' }],
-  },
-  {
-    featureType: 'administrative.locality',
-    elementType: 'labels.text.fill',
-    stylers: [{ color: '#ffffff' }],
-  },
-  {
-    featureType: 'poi',
-    stylers: [{ visibility: 'off' }],
-  },
-  {
-    featureType: 'road',
-    elementType: 'geometry',
-    stylers: [{ color: '#132B50' }],
-  },
-  {
-    featureType: 'road.highway',
-    elementType: 'geometry',
-    stylers: [{ color: '#0284C7' }],
-  },
-  {
-    featureType: 'transit',
-    stylers: [{ visibility: 'off' }],
-  },
-  {
-    featureType: 'water',
-    elementType: 'geometry',
-    stylers: [{ color: '#061324' }],
-  },
-];
+export const MAP_PALETTES: Readonly<Record<'light' | 'dark', MapPalette>> = Object.freeze({
+  light: Object.freeze({
+    land: '#F5F6F8',
+    water: '#DCE5EE',
+    road: '#FFFFFF',
+    roadMajor: '#E3E6EB',
+    label: '#5F6878',
+    labelStrong: '#0A1E3A',
+    labelHalo: '#FFFFFF',
+    ink: '#0A1E3A',
+    surface: '#FFFFFF',
+    lineStrong: '#7D8696',
+  }),
+  dark: Object.freeze({
+    land: '#121826',
+    water: '#0B0F17',
+    road: '#1A2131',
+    roadMajor: '#232B3A',
+    label: '#A3ACBA',
+    labelStrong: '#F2F4F7',
+    labelHalo: '#0B0F17',
+    ink: '#F2F4F7',
+    surface: '#0B0F17',
+    lineStrong: '#6B7587',
+  }),
+});
+
+/** Quiet base map: no business POIs, no transit, no icons; towns and roads in two tones. */
+export function buildMapStyle(p: MapPalette): google.maps.MapTypeStyle[] {
+  return [
+    { elementType: 'geometry', stylers: [{ color: p.land }] },
+    { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+    { elementType: 'labels.text.fill', stylers: [{ color: p.label }] },
+    { elementType: 'labels.text.stroke', stylers: [{ color: p.labelHalo }] },
+    { featureType: 'administrative.land_parcel', stylers: [{ visibility: 'off' }] },
+    { featureType: 'administrative.neighborhood', stylers: [{ visibility: 'off' }] },
+    { featureType: 'administrative.locality', elementType: 'labels.text.fill', stylers: [{ color: p.labelStrong }] },
+    { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+    { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+    { featureType: 'road', elementType: 'geometry', stylers: [{ color: p.road }] },
+    { featureType: 'road', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+    { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: p.roadMajor }] },
+    { featureType: 'water', elementType: 'geometry', stylers: [{ color: p.water }] },
+    { featureType: 'water', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+  ];
+}

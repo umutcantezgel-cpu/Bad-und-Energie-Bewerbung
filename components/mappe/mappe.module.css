@@ -1,0 +1,138 @@
+/*
+ * A4 sheet of the Bewerbungsmappe (roadmap §6).
+ * Screen: paper preview, zoomed to the column width (--mappe-scale is set from JS;
+ *   the values below are only the fallback until hydration).
+ * Print: the sheets are the only content (everything else is print-hidden) at real size.
+ *   @page { size: A4; margin: 0 } comes from app/globals.css, so the page padding is the
+ *   margin and browsers print no URL/date header.
+ * Type sizes are in pt because they describe paper, not the fluid screen scale.
+ */
+
+.frame {
+  --mappe-scale: 0.42;
+  overflow-x: auto;
+}
+
+@media (width >= 64rem) {
+  .frame {
+    --mappe-scale: 0.56;
+  }
+}
+
+.stack {
+  zoom: var(--mappe-scale);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 210mm;
+}
+
+/* Paper stays white in dark mode, like the printout: the light roles from app/styles/theme.css. */
+.paper {
+  color-scheme: light;
+  --surface: #FFFFFF;
+  --surface-2: #F5F6F8;
+  --surface-3: #ECEEF2;
+  --ink: #0A1E3A;
+  --ink-muted: #5F6878;
+  --line: #E3E6EB;
+  --line-strong: #7D8696;
+  background-color: var(--surface);
+  color: var(--ink);
+}
+
+.page {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 20mm 20mm 18mm 25mm;
+  border: 1px solid var(--line);
+  font-size: 10.5pt;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.small {
+  font-size: 9pt;
+  line-height: 1.45;
+}
+
+.large {
+  font-size: 12pt;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.name {
+  font-size: 22pt;
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.heading {
+  font-size: 11pt;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+/* Lebenslauf rows: period | details */
+.row {
+  display: grid;
+  grid-template-columns: 38mm minmax(0, 1fr);
+  column-gap: 6mm;
+  break-inside: avoid;
+}
+
+.photo {
+  width: 35mm;
+  height: 45mm;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 1.5mm;
+}
+
+.letter {
+  white-space: pre-line;
+  text-wrap: pretty;
+}
+
+/* Empty fields on screen: a dashed hint, never printed. */
+.placeholder {
+  color: var(--ink-muted);
+  border-bottom: 1px dashed var(--line-strong);
+}
+
+@media print {
+  .frame {
+    --mappe-scale: 1;
+    overflow: visible;
+  }
+
+  .stack {
+    zoom: 1;
+    display: block;
+    width: auto;
+  }
+
+  .page {
+    width: 210mm;
+    /* A hair under 297mm: fills the sheet (footer at the bottom) without spilling a blank page. */
+    min-height: 296mm;
+    border: 0;
+    break-after: page;
+    /* Overflowing content keeps the page margins on the next sheet. */
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  .page:last-child {
+    break-after: auto;
+  }
+
+  .placeholder {
+    visibility: hidden;
+  }
+}

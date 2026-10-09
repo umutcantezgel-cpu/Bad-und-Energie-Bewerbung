@@ -1,0 +1,9 @@
+{
+  "_comment": "Jeder jemals veröffentlichte Stellen-Slug. Nie löschen: Ein Slug, der keiner Stelle mehr gehört, muss in redirectFrom einer Stelle stehen. Siehe docs/operations/stellen-pflegen.md.",
+  "slugs": [
+    "anlagenmechaniker-shk-wetzlar",
+    "kundendiensttechniker-waermepumpe-wetzlar",
+    "obermonteur-projektleiter-shk-wetzlar",
+    "ausbildung-anlagenmechaniker-shk-wetzlar"
+  ]
+}

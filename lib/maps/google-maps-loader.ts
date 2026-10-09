@@ -1,36 +1,65 @@
+import { isUsableMapsApiKey } from './keys';
+
 /**
- * Lightweight, robust Google Maps JavaScript API Client Loader
- * Designed for Next.js App Router with dual-resolution support:
- * 1. Client-side NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
- * 2. Server-side GOOGLE_MAPS_API_KEY (via /api/maps/config)
- * 3. Graceful fallback to standalone vector topology map when no key is set or on auth failure.
+ * Google Maps JavaScript API loader. Call it only after the visitor's 2-click consent
+ * (lib/maps/consent.ts): it is the only code that contacts Google, and it lives in the lazily
+ * imported chunk of components/maps/GoogleRegionMap.tsx.
+ *
+ * Key resolution: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY (inlined at build) or GOOGLE_MAPS_API_KEY via
+ * /api/maps/config. Without a key, on gm_authFailure, a script error or a timeout the promise
+ * resolves to false and the caller keeps the typographic radius graphic.
  */
 
 declare global {
   interface Window {
     google?: typeof google;
-    __googleMapsLoaderPromise?: Promise<boolean>;
-    __googleMapsLoadedCallback?: () => void;
     gm_authFailure?: () => void;
+    __beGoogleMapsLoaded?: () => void;
   }
 }
+
+const CALLBACK_NAME = '__beGoogleMapsLoaded';
+const LOAD_TIMEOUT_MS = 10_000;
 
 let cachedApiKey: string | null = null;
 let cachedMapId: string | null = null;
 let hasAuthError = false;
-const authErrorListeners: Array<() => void> = [];
+let authFailureHooked = false;
+let loaderPromise: Promise<boolean> | null = null;
+const authErrorListeners = new Set<() => void>();
+
+function notifyAuthError(): void {
+  if (hasAuthError) return;
+  hasAuthError = true;
+  for (const listener of authErrorListeners) {
+    try {
+      listener();
+    } catch (err) {
+      console.warn('[Google Maps] Fehler im Auth-Listener:', err);
+    }
+  }
+}
+
+/** Google calls window.gm_authFailure for invalid keys, referrer restrictions or quota errors. */
+function hookAuthFailure(): void {
+  if (authFailureHooked) return;
+  authFailureHooked = true;
+  const previous = window.gm_authFailure;
+  window.gm_authFailure = () => {
+    console.warn('[Google Maps] gm_authFailure: zurück zur Radius-Grafik.');
+    notifyAuthError();
+    previous?.();
+  };
+}
 
 export function onGoogleMapsAuthError(callback: () => void): () => void {
   if (hasAuthError) {
     callback();
     return () => {};
   }
-  authErrorListeners.push(callback);
+  authErrorListeners.add(callback);
   return () => {
-    const idx = authErrorListeners.indexOf(callback);
-    if (idx !== -1) {
-      authErrorListeners.splice(idx, 1);
-    }
+    authErrorListeners.delete(callback);
   };
 }
 
@@ -43,14 +72,9 @@ export function resetGoogleMapsAuthError(): void {
 }
 
 export function getGoogleMapsApiKey(): string {
-  if (cachedApiKey !== null) {
-    return cachedApiKey;
-  }
-  const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY?.trim() || '';
-  if (!key || key === 'MY_GOOGLE_MAPS_API_KEY' || key.startsWith('AIzaSy_placeholder')) {
-    return '';
-  }
-  return key;
+  if (cachedApiKey !== null) return cachedApiKey;
+  const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  return isUsableMapsApiKey(key) ? key.trim() : '';
 }
 
 export function hasGoogleMapsKey(): boolean {
@@ -58,138 +82,86 @@ export function hasGoogleMapsKey(): boolean {
 }
 
 export function getGoogleMapsMapId(): string | undefined {
-  if (cachedMapId !== null) {
-    return cachedMapId || undefined;
-  }
+  if (cachedMapId !== null) return cachedMapId || undefined;
   return process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID?.trim() || undefined;
 }
 
-/**
- * Resolves the API key either from client environment or from server config API.
- */
+/** Build-time key, else /api/maps/config (same origin, no Google request). Empty string = no key. */
 export async function resolveGoogleMapsApiKey(): Promise<string> {
   const syncKey = getGoogleMapsApiKey();
   if (syncKey) {
     cachedApiKey = syncKey;
     return syncKey;
   }
-
-  if (typeof window === 'undefined') {
-    return '';
-  }
+  if (typeof window === 'undefined') return '';
 
   try {
-    const res = await fetch('/api/maps/config');
-    if (res.ok) {
-      const data = await res.json();
-      if (data?.apiKey) {
-        cachedApiKey = data.apiKey;
-        if (data.mapId) cachedMapId = data.mapId;
-        return data.apiKey;
-      }
+    const res = await fetch('/api/maps/config', {
+      credentials: 'same-origin',
+      cache: 'no-store',
+      headers: { Accept: 'application/json' },
+    });
+    if (!res.ok) return '';
+    const data: unknown = await res.json();
+    const { apiKey, mapId } = (data ?? {}) as { apiKey?: unknown; mapId?: unknown };
+    const key = typeof apiKey === 'string' ? apiKey : null;
+    if (isUsableMapsApiKey(key)) {
+      cachedApiKey = key.trim();
+      if (typeof mapId === 'string') cachedMapId = mapId.trim();
+      return cachedApiKey;
     }
   } catch (err) {
-    console.warn('[Google Maps Loader] Error resolving key from /api/maps/config:', err);
+    console.warn('[Google Maps] /api/maps/config nicht erreichbar:', err);
   }
-
   return '';
 }
 
-/**
- * Loads the Google Maps JavaScript API script dynamically.
- */
-export async function loadGoogleMapsScript(): Promise<boolean> {
-  if (typeof window === 'undefined') {
-    return false;
-  }
+function injectScript(apiKey: string): Promise<boolean> {
+  return new Promise<boolean>((resolve) => {
+    const timer = window.setTimeout(() => {
+      console.warn('[Google Maps] Zeitüberschreitung beim Laden.');
+      resolve(false);
+    }, LOAD_TIMEOUT_MS);
 
-  if (hasAuthError) {
-    return false;
-  }
-
-  // Hook global gm_authFailure early to intercept domain/key/quota errors
-  const previousAuthFailure = window.gm_authFailure;
-  window.gm_authFailure = () => {
-    console.warn('[Google Maps Loader] gm_authFailure erkannt: Fallback auf Vektor-Topologie aktiviert.');
-    hasAuthError = true;
-    authErrorListeners.forEach((listener) => {
-      try {
-        listener();
-      } catch (err) {
-        console.warn('[Google Maps Loader] Auth listener error:', err);
-      }
-    });
-    if (typeof previousAuthFailure === 'function') {
-      previousAuthFailure();
-    }
-  };
-
-  // Already loaded
-  if (window.google?.maps?.Map) {
-    return true;
-  }
-
-  // Re-use pending loading promise
-  if (window.__googleMapsLoaderPromise) {
-    return window.__googleMapsLoaderPromise;
-  }
-
-  const apiKey = await resolveGoogleMapsApiKey();
-  if (!apiKey) {
-    return false;
-  }
-
-  window.__googleMapsLoaderPromise = new Promise<boolean>((resolve) => {
-    // Check if script tag already exists in DOM
-    const existingScript = document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]');
-    if (existingScript && window.google?.maps?.Map) {
-      resolve(true);
-      return;
-    }
-
-    const callbackName = '__googleMapsLoadedCallback';
-    window.__googleMapsLoadedCallback = () => {
-      resolve(true);
+    window[CALLBACK_NAME] = () => {
+      window.clearTimeout(timer);
+      resolve(Boolean(window.google?.maps?.Map));
     };
 
+    const params = new URLSearchParams({
+      key: apiKey,
+      v: 'weekly',
+      language: 'de',
+      region: 'DE',
+      callback: CALLBACK_NAME,
+    });
     const script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(
-      apiKey
-    )}&libraries=geometry,marker&v=weekly&callback=${callbackName}`;
+    script.src = `https://maps.googleapis.com/maps/api/js?${params.toString()}`;
     script.async = true;
-    script.defer = true;
-
-    script.onerror = (err) => {
-      console.warn('[Google Maps Loader] Script konnte nicht geladen werden:', err);
-      hasAuthError = true;
-      authErrorListeners.forEach((listener) => {
-        try {
-          listener();
-        } catch (e) {
-          console.warn('[Google Maps Loader] Auth listener error:', e);
-        }
-      });
+    script.onerror = () => {
+      window.clearTimeout(timer);
+      console.warn('[Google Maps] Skript konnte nicht geladen werden.');
+      notifyAuthError();
       resolve(false);
     };
-
-    // Safety timeout in case callback never fires (e.g. network throttled or hung)
-    const timeoutTimer = setTimeout(() => {
-      if (!window.google?.maps?.Map) {
-        console.warn('[Google Maps Loader] Script-Lade-Timeout nach 8 Sekunden. Fallback aktiv.');
-        resolve(false);
-      }
-    }, 8000);
-
-    // Clear timeout on successful callback
-    const originalCallback = window.__googleMapsLoadedCallback;
-    window.__googleMapsLoadedCallback = () => {
-      clearTimeout(timeoutTimer);
-      originalCallback?.();
-    };
-
     document.head.appendChild(script);
   });
+}
 
-  return window.__googleMapsLoaderPromise;
+/** Loads the API once per page; resolves true when google.maps is ready. */
+export function loadGoogleMapsScript(): Promise<boolean> {
+  if (typeof window === 'undefined' || hasAuthError) return Promise.resolve(false);
+  hookAuthFailure();
+  // Also covers a script that finished after an earlier timeout.
+  if (window.google?.maps?.Map) return Promise.resolve(true);
+
+  loaderPromise ??= resolveGoogleMapsApiKey().then((apiKey) => {
+    if (!apiKey) {
+      // No key configured: nothing was injected, so a later attempt may ask the config again.
+      loaderPromise = null;
+      return false;
+    }
+    return injectScript(apiKey);
+  });
+  return loaderPromise;
 }

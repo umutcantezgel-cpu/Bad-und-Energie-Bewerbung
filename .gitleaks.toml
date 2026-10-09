@@ -1,0 +1,55 @@
+# gitleaks-Konfiguration für karriere.bad-energie.de (ROADMAP §9.1)
+#
+# Basis sind die Standardregeln von gitleaks. Alle Ausnahmen gelten nur für die
+# heuristische Regel "generic-api-key" und sind eng gefasst; anbieterspezifische
+# Regeln (AWS, GitHub, Stripe, Google usw.) greifen überall, auch in Tests.
+# Neue Ausnahmen nur mit Begründung ergänzen und NIE echte Schlüssel eintragen.
+#
+# Lokal prüfen (ganzer Verlauf): gitleaks detect --redact -v
+# Geprüft mit gitleaks 8.24.3 (Standard von gitleaks-action@v2) und 8.30.0.
+
+title = "karriere.bad-energie.de"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "generic-api-key"
+
+# Testdaten: Idempotenz-UUIDs und erfundene Schlüssel in Vitest- und Playwright-Dateien.
+[[rules.allowlists]]
+description = "Testdaten in Test- und E2E-Dateien"
+paths = [
+  '''(^|/)__tests__/''',
+  '''\.(test|spec)\.[cm]?[jt]sx?$''',
+  '''(^|/)e2e/''',
+]
+
+# Historischer Resend-API-Key: Commit 9717265 hat einen echten Key in .env.example
+# veröffentlicht. Er steht für immer im öffentlichen Git-Verlauf und gilt als
+# kompromittiert. Er wurde am 2026-10-08 im Resend-Dashboard widerrufen und ersetzt
+# (docs/operations/betrieb.md, Abschnitt 1, Schritt 6). Die Ausnahme bleibt, weil der
+# widerrufene Key weiter im Git-Verlauf steht.
+# Die Ausnahme gilt nur, wenn Commit UND Datei UND Zeile zusammenpassen; ein neuer
+# Key in .env.example oder in einem anderen Commit schlägt weiterhin an.
+[[rules.allowlists]]
+description = "Historischer Resend-Key, widerrufen am 2026-10-08 (Commit 9717265, .env.example)"
+condition = "AND"
+commits = ["9717265716d22a82c9c09ee0fdfb7ff3f0d5b5e1"]
+paths = ['''^\.env\.example$''']
+regexTarget = "match"
+regexes = ['''^RESEND_API_KEY=''']
+
+# Öffentliche Werte und Platzhalter.
+[[rules.allowlists]]
+description = "IndexNow-Prüfschlüssel (per Protokoll öffentlich, public/<key>.txt) und Resend-Platzhalter"
+regexTarget = "secret"
+regexes = [
+  '''^298d966b7e4f4a43981cb8e30da6b5b5$''',
+  '''^re_123456789''',
+]
+
+# Projektinterne Schlüsselnamen wie STORAGE_KEY = 'bad_energie_consent_v1'.
+[[rules.allowlists]]
+description = "Projektinterne Speicher-Schlüsselnamen (kein Geheimnis)"
+stopwords = ["bad_energie_"]

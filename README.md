@@ -1,369 +1,228 @@
-# Bad und Energie GmbH Lahn Dill – High-Performance Karriereportal & Recruiting-Engine
+# karriere.bad-energie.de
 
-[![Next.js](https://img.shields.io/badge/Next.js-16.3.8-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19.0.0-blue?style=for-the-badge&logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
-[![PageSpeed](https://img.shields.io/badge/PageSpeed-100%2F100-emerald?style=for-the-badge&logo=googlechrome)](https://pagespeed.web.dev/)
-[![Seobility](https://img.shields.io/badge/Seobility-100%2F100-emerald?style=for-the-badge)](https://www.seobility.net/)
-[![CLS](https://img.shields.io/badge/CLS-0.000-emerald?style=for-the-badge)](#)
-[![Vercel Edge](https://img.shields.io/badge/Deployment-Vercel_Edge-black?style=for-the-badge&logo=vercel)](https://vercel.com/)
+Karriereportal der **Bad und Energie GmbH Lahn Dill** (SHK, Wärmepumpen, Bad; Wetzlar). Die Seite hat zwei Aufgaben: Bewerberinnen und Bewerber sollen die offenen Stellen finden, und das Bewerben soll so einfach wie möglich sein – ein Flow, ein paar Fragen zum Antippen, Name und Telefon, kein Lebenslauf nötig.
 
-> **Offizielles Karriere- und Bewerberportal der Bad & Energie GmbH**  
-> **100 Jahre Meisterbetrieb (1926–2026)** · Spezialist für regenerative Wärmepumpensysteme, moderne Badarchitektur und Haustechnik im Lahn-Dill-Kreis und Mittelhessen.  
-> **Hauptstandort (Meilenstein 2026):** Siegmund-Hiepe-Str. 20 · 35578 Wetzlar · 15 Mitarbeiter · HRB 2449 Amtsgericht Wetzlar  
-> **Live-Instanz:** [karriere.bad-energie.de](https://karriere.bad-energie.de) · **Hauptdomain:** [bad-energie.de](https://bad-energie.de)
+- **Live:** [karriere.bad-energie.de](https://karriere.bad-energie.de) · Kunden-Website: [bad-energie.de](https://bad-energie.de)
+- **Stack:** Next.js 16 (App Router, Server Components), React 19, TypeScript, Tailwind CSS 4, zod, Resend. Paketmanager Bun, Tests mit Vitest und Playwright + axe. Hosting auf Vercel (Region `fra1`).
+- **Verbindlicher Plan:** [`docs/ROADMAP.md`](docs/ROADMAP.md). Alle weiteren Dokumente: [`docs/README.md`](docs/README.md).
 
----
+Die Website nutzt keine KI-Funktionen, keine Tracking-Cookies und keine Fotos.
 
-## Inhaltsverzeichnis
+## Inhalt
 
-1. [Unternehmensprofil & Die 5 Partner-Säulen](#1-unternehmensprofil--die-5-partner-säulen)
-2. [Technische Architektur & Key Metrics](#2-technische-architektur--key-metrics)
-3. [System-Flowcharts & Mermaid-Diagramme](#3-system-flowcharts--mermaid-diagramme)
-4. [Die 8 Kernmodule der Plattform](#4-die-8-kernmodule-der-plattform)
-5. [Wirtschaftliche Wert- & ROI-Analyse](#5-wirtschaftliche-wert--roi-analyse)
-6. [Cybersecurity, DMARC-Schutz & Edge-Shield](#6-cybersecurity-dmarc-schutz--edge-shield)
-7. [Installation & Lokale Entwicklung](#7-installation--lokale-entwicklung)
-8. [API-Endpunkte & Testbefehle](#8-api-endpunkte--testbefehle)
-9. [Deployment & Vercel Edge-Konfiguration](#9-deployment--vercel-edge-konfiguration)
-10. [Rechtliche Compliance & Impressum](#10-rechtliche-compliance--impressum)
+1. [Architektur](#1-architektur)
+2. [Design-System](#2-design-system)
+3. [Datenfluss einer Bewerbung](#3-datenfluss-einer-bewerbung)
+4. [Reichweite](#4-reichweite)
+5. [Sicherheit und Datenschutz](#5-sicherheit-und-datenschutz)
+6. [Lokale Entwicklung](#6-lokale-entwicklung)
+7. [Umgebungsvariablen](#7-umgebungsvariablen)
+8. [Deployment auf Vercel](#8-deployment-auf-vercel)
+9. [Stellen pflegen und Stellenbörsen](#9-stellen-pflegen-und-stellenbörsen)
+10. [Roadmap und Stand](#10-roadmap-und-stand)
+11. [Offene Owner-Punkte](#11-offene-owner-punkte)
 
 ---
 
-## 1. Unternehmensprofil & Die 5 Partner-Säulen
+## 1. Architektur
 
-Die **Bad & Energie GmbH** ist ein traditionsreicher Handwerksmeisterbetrieb mit 100 Jahren Unternehmensgeschichte (1926–2026). Unter der Geschäftsführung von **Dipl.-Ing. Sabri Demir** (Meister SHK, Gebäudeenergieberater) verbindet das Unternehmen traditionelle Handwerkswerte mit modernster regenerativer Heiztechnik.
+Alle Inhalte kommen aus zwei typisierten Quellen im Repo: dem **Stellen-Registry** (`lib/jobs`) und der **Fakten-Registry** (`lib/content`). Seiten, JSON-LD, Feeds, Sitemap und `llms.txt` werden daraus erzeugt. Komponenten referenzieren Fakten nur über IDs; kein Text erfindet eigene Aussagen.
 
-### Meilenstein 2026 (Standorterweiterung):
-Durch kontinuierliches Wachstum wurde der Hauptstandort in die **Siegmund-Hiepe-Str. 20, 35578 Wetzlar** verlagert. Der neue Standort bietet ein moderneres Büro, ein vergrößertes Ersatzteil- und Materiallager sowie beste Arbeitsbedingungen für das **15-köpfige Meisterteam**.
+### Routen
 
-### Die 5 offiziellen Partner-Säulen:
-1. **Buderus & Bosch Partnerbetrieb:** Offizielle Partnerurkunde 2026 mit unmittelbarer Werksnähe (14,8 km zum Buderus-Stammwerk in Lollar).
-2. **NIBE Effizienzpartner:** Berechtigung zur Vergabe der exklusiven 7-Jahre-Herstellergarantie auf NIBE-Wärmepumpensysteme.
-3. **Alpha Innotec zertifizierter Inbetriebnahme-Partner:** Autorisierter Service- und Inbetriebnahmepartner für Hochtemperatur- und Erdwärmepumpen.
-4. **Viessmann Fachbetrieb:** Zertifizierter Partner für modernste Hybrid- und Wärmepumpentechnik.
-5. **Fachbetriebspartner des Lahn-Dill-Kreises:** Betreuung, Wartung und Instandhaltung von Heizungs- und Sanitärtechnik in öffentlichen Liegenschaften und Schulen.
+| Route | Zweck | Index |
+|---|---|---|
+| `/` | Startseite: Einstieg, offene Stellen, Vorteile, Einsatzgebiet mit Karte, Ablauf, Über uns und Stimmen, FAQ | ja |
+| `/jobs` | Übersicht aller Stellen (ohne JobPosting-Markup) | ja |
+| `/jobs/[slug]` | Stellenseite mit JobPosting- und Breadcrumb-JSON-LD, Gehaltsspanne, Teamzitat und eingebettetem Flow (`#bewerben`), eigenes OG-Bild. Besetzte oder abgelaufene Stellen zeigen „Besetzt“ (noindex, ohne JobPosting). Alte Slugs leiten dauerhaft um. | ja |
+| `/bewerbung` | Der eine Bewerbungsflow. `?stelle=<slug>` bzw. `?stelle=initiativ` wählt vor, UTM-Parameter und `ref` werden erfasst. Alte `?tab=`-Links des Vorgängerportals werden umgeleitet. | ja |
+| `/bewerbung/danke` | Bestätigung mit Bewerbungsnummer, optionale Ergänzungen, Kontakt als `.vcf` | noindex |
+| `/bewerbung/mappe` | Bewerbungsmappen-Generator (A4-Vorschau, Druck/PDF), optional | noindex |
+| `/datenschutz`, `/impressum` | Rechtstexte | noindex |
+| `/feeds/indeed.xml`, `/feeds/jobs.xml`, `/feeds/jobs.json` | Feeds für Indeed, Aggregatoren und das Widget auf bad-energie.de, stündlich neu erzeugt | – |
+| `/sitemap.xml`, `/llms.txt`, `/llms-full.txt` | Aus dem Registry erzeugt, stündlich neu | – |
+| `/robots.txt` | Crawler-Regeln, sperrt `/api/` und `/admin/` | – |
+| `POST /api/bewerbung` | Nimmt eine Bewerbung an | – |
+| `POST /api/bewerbung/ergaenzung` | Ergänzungen und Mappe zu einer abgeschickten Bewerbung (Token) | – |
+| `POST /api/indexnow` | Meldet URLs an IndexNow (Bearer-Token) | – |
+| `POST /api/csp-report` | Sammelt CSP-Meldungen (Report-Only) | – |
+| `GET /api/maps/config` | Maps-Key für die 2-Klick-Karte, nur für Aufrufe von der eigenen Seite | – |
 
----
+Vorgesehen, aber noch nicht gebaut: `/admin` (Phase 2), `/lp/[slug]` (Phase 3), `/talentpool`, `/empfehlen`, `/r/[code]` (Phase 4).
 
-## 2. Technische Architektur & Key Metrics
+### Module (`lib/`)
 
-Die Plattform wurde ohne Standard-Themes oder monolithische CMS von Grund auf als maßgeschneiderte, hochperformante Webanwendung entwickelt.
+| Modul | Inhalt |
+|---|---|
+| `lib/jobs/` | Job-Domänenmodell mit zod (`schema.ts`), eine Datei je Stelle in `data/`, `registry.ts` (`getActiveJobs`, `getJobBySlug`, `getFunnelOptions` …), `jsonld.ts`, Feed-Builder in `feeds/`, Stellen-IDs in `ids.ts`, Slug-Sperre `slugs.lock.json` |
+| `lib/content/` | Fakten-Registry `facts.ts` (jede Aussage mit ID und Quelle), dazu `faq`, `process`, `region`, `team`, `company`, `breadcrumbs` |
+| `lib/data/` | Stammdaten (Firma, Kontakt, Orte, Bewertungen, Team), aus denen `lib/content` liest |
+| `lib/applications/` | Bewerbungsvertrag: zod-Schema (`schema.ts`), Konstanten ohne zod für den Browser (`constants.ts`), Normalisierung, `sink.ts` (`ApplicationSink`, Phase 1 `EmailSink`), Bewerbungsnummer (`reference.ts`), Ergänzungs-Token (`token.ts`), Idempotenz, Antwortformat (`http.ts`) |
+| `lib/apply/` | Flow-Logik im Browser: Fragen je Fragenset, Schrittfolge, Entwurf in `sessionStorage`, Absenden, Fehlertexte, WhatsApp-Fallback, vCard, Bürozeiten, URL-Parameter |
+| `lib/mappe/` | Mappe-Editor, Anschreiben-Vorlage, Stationen, Speicher, Nachreichen an eine Bewerbung |
+| `lib/attribution/` | UTM, `ref` und Referrer-Host → Kanal (`channel.ts`), nur im Arbeitsspeicher (`store.ts`) |
+| `lib/email/` | Versand über Resend (`resend.ts`) und Mail-Vorlagen (Team, Eingangsbestätigung, Ergänzung) |
+| `lib/security/` | `guardJsonPost` (Herkunft → Rate-Limit → Content-Type und Body-Größe), Rate-Limit, IP-Hash, Herkunftsprüfung, CSP-Meldungen |
+| `lib/env.ts` | zod-Prüfung der Umgebungsvariablen, Start-Check, Dev-Fallbacks |
+| `lib/seo/` | Metadaten, Canonicals, OG-Bilder, IndexNow, `site-config.ts` |
+| `lib/maps/` | 2-Klick-Einwilligung, Maps-Loader, Fahrzeiten, Projektion der Radius-Grafik |
+| `lib/tokens/`, `lib/utils/` | Design-Tokens für JS, `cn()`, CSRF-Prüfung, WhatsApp-Links |
+| `lib/supabase/` | Clients für Phase 2, noch ungenutzt |
 
-### Codebase-Metriken:
-* **Gesamtumfang:** **16.504 Zeilen Quellcode** (reine Anwendung, ohne Fremdbibliotheken/Lockfiles).
-* **Dateien:** 134 Quelldateien (128 TypeScript/TSX-Dateien).
-* **Komponenten (`components/`):** 9.301 Zeilen (64 modulare UI-Komponenten).
-* **App-Routen (`app/`):** 3.653 Zeilen (19 Routen, Server Components & API Handler).
-* **Core-Bibliotheken (`lib/`):** 2.978 Zeilen (40 Utilities, SEO-, Maps- & Mail-Module).
+### Komponenten (`components/`)
 
-### Audit- & Performance-Benchmarks:
-| Benchmark | Wert | Industriestandard | Bewertung |
-| :--- | :---: | :---: | :--- |
-| **PageSpeed Mobile** | **100 / 100** | 70–85 | Awwwards-Tier Mobile Excellence |
-| **PageSpeed Desktop** | **100 / 100** | 85–95 | Absolutes Leistungsmaximum |
-| **Cumulative Layout Shift (CLS)** | **0.000** | < 0.100 | Absoluter Null-Shift (Font Metric Override) |
-| **Largest Contentful Paint (LCP)** | **< 1.1s** | < 2.5s | Instant Rendering über Vercel Edge |
-| **Total Blocking Time (TBT)** | **0 ms** | < 200 ms | Unblockierter Main-Thread |
-| **Seobility Audit** | **100 / 100** | 80–90 | Perfekte On-Page- & Snippet-Optimierung |
-| **Barrierefreiheit (A11y)** | **100 / 100** | 85–92 | WCAG AAA Kontraste & WAI-ARIA Support |
-| **Best Practices** | **100 / 100** | 85–95 | COOP, HSTS Preload & Strict CSP Headers |
+| Ordner | Inhalt |
+|---|---|
+| `ui/` | Primitives (Button, Field, Input, ChoiceCard, SegmentedControl, Sheet, Disclosure, StatTile, StepHeader, Toast …) mit cva, standardmäßig Server-Komponenten. Import über `@/components/ui` |
+| `site/` | Sticky Header, Menü-Sheet für Mobil, Footer, StickyApplyBar, Kontaktwege, globales JSON-LD |
+| `home/` | Abschnitte der Startseite |
+| `jobs/` | Bausteine der Stellenseite und JobCard |
+| `apply/` | `ApplyFlow` (eingebettet auf `/bewerbung` und `/jobs/[slug]`), Schritte, Kontaktschritt, Fehlerpanel, Danke-Seite (`thanks/`) |
+| `mappe/` | Mappe-Werkzeug und A4-Vorschau |
+| `maps/` | Typografische Radius-Grafik mit Ortsliste, Google-Karte per 2-Klick |
+| `reviews/` | Ruhiges Bewertungs-Karussell (Scroll-Snap, kein Autoplay) |
+| `legal/` | Bausteine für Datenschutz und Impressum |
+| `layout/`, `brand/`, `seo/`, `analytics/` | Section/Container, Logo, `JsonLd`, `AttributionCapture` |
 
----
+Weitere Dateien im Wurzelverzeichnis: `proxy.ts` (Next-16-Nachfolger der Middleware), `next.config.ts` (Security-Header), `instrumentation.ts` (Start-Check der Umgebung), `vercel.json` (Region).
 
-## 3. System-Flowcharts & Mermaid-Diagramme
+## 2. Design-System
 
-### A. Plattform-Architektur
+Ruhig und typografisch, im Apple-Stil (Details: [ROADMAP §4](docs/ROADMAP.md#4-säule-a-design-system-im-apple-stil-typografisch)).
 
-```mermaid
-flowchart TD
-    User["Bewerber / Fachkraft"] --> CDN["Vercel Global Edge Network"]
-    CDN --> EdgeMiddleware["Edge Middleware (middleware.ts)<br/>- Bad-Bot Filter (Semrush, PetalBot)<br/>- Security Headers (HSTS, COOP)<br/>- Google Maps Referer Lock"]
-    
-    EdgeMiddleware --> AppRouter["Next.js 16.3 App Router (Turbopack)"]
-    
-    subgraph Frontend ["Client & Server Components"]
-        AppRouter --> Hero["Hero & Express-Funnel (Code-Split)"]
-        AppRouter --> Portal["4-Wege-Bewerberportal (/bewerbung)"]
-        AppRouter --> Vault["Bewerber-Tresor & Dokumentenupload"]
-        AppRouter --> Dossier["DIN-A4 Druck-Engine (PrintA4View)"]
-        AppRouter --> Maps["Interaktive Google Maps Platform"]
-    end
-    
-    subgraph Backend ["Edge API Route Handlers"]
-        AppRouter --> ApiContact["POST /api/contact"]
-        AppRouter --> ApiApply["POST /api/bewerbung"]
-        AppRouter --> ApiMaps["GET /api/maps/config"]
-        AppRouter --> ApiLLM["GET /llms.txt & /llms-full.txt"]
-    end
-    
-    subgraph SecurityShield ["Cybersecurity & Domain-Schutz"]
-        ApiContact --> Resend["Resend Gateway (DMARC-sicher)"]
-        ApiApply --> Resend
-        Resend --> TeamMail["info@bad-energie.de (Team-Alert)"]
-        Resend --> ApplicantMail["Bewerber (Bestätigung mit Sperrvermerk)"]
-    end
-```
+- **Tokens:** `app/styles/theme.css` definiert Primitive und semantische Rollen (`surface`, `surface-2`, `surface-3`, `ink`, `ink-muted`, `line`, `line-strong`, `accent`, `focus`, `success`, `danger`), hellen und dunklen Modus über `prefers-color-scheme` und den Inverse-Bereich `[data-tone="inverse"]`. Die Tailwind-Standardpaletten sind abgeschaltet (`--color-*: initial`). `app/globals.css` enthält die Basisstile, `lib/tokens/index.ts` die Werte für JavaScript.
+- **Schrift:** Inter über `next/font`, selbst gehostet. Gewichte 400–700, Eingabefelder mindestens 17 px.
+- **Regeln:** nur semantische Tokens; Crimson (`accent`) nur für die eine Primäraktion je Ansicht; Glas nur im Sticky Header; keine Fotos; Bewegung nur als Rückmeldung, bei `prefers-reduced-motion` nur Überblendungen. Ziel ist WCAG 2.2 AA.
+- **Guard-Skripte** (laufen vor jedem Build über `prebuild` und in der CI):
 
----
+| Skript | Prüft |
+|---|---|
+| `scripts/qa/check-design-tokens.mjs` | Verbotene Klassen in `app/`, `components/`, `lib/`: `text-[…]`, `font-mono`, schwere Gewichte, `animate-pulse/ping/bounce/marquee`, Hex-Farben, Rohpaletten, `uppercase`, Glas außerhalb des Headers u. a. Eine einzelne Zeile lässt sich mit einem `design-allow`-Kommentar ausnehmen. |
+| `scripts/qa/check-contrast.mjs` | Kontrast aller Text- und Flächenpaare in hell, dunkel und im Inverse-Bereich |
+| `scripts/qa/check-client-imports.mjs` | zod darf nicht im Browser-Bundle landen |
+| `scripts/qa/check-graph.mjs` | Nach dem Build: JSON-LD gültig, JobPosting nur auf Stellenseiten (genau eins), Pflichtfelder, `url` = Canonical |
 
-### B. Dual-Dispatch E-Mail Pipeline
+## 3. Datenfluss einer Bewerbung
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Candidate as Bewerber (Anlagenmechaniker SHK)
-    participant Edge as Edge Middleware / Router
-    participant API as /api/bewerbung (Route Handler)
-    participant Resend as Resend E-Mail-Gateway
-    actor Boss as Meister Sabri Demir (info@bad-energie.de)
-    actor Mailbox as Bewerber-Postfach
+1. **Einstieg.** `AttributionCapture` im Root-Layout merkt sich UTM-Parameter, `ref`, den Host der verweisenden Seite und den Einstiegspfad – nur im Arbeitsspeicher, ohne Cookie oder Browser-Speicher.
+2. **Flow** (`components/apply`). Stelle wählen (entfällt bei `?stelle=`), ein bis zwei Fragen je Fragenset (Fachkraft, Ausbildung, Quereinstieg), dann Kontakt: Name, Telefon, Kontaktweg (WhatsApp, Anruf, E-Mail). Die E-Mail ist nur beim Kontaktweg E-Mail Pflicht. Jeder Schritt steht in `?schritt=`, damit die Zurück-Geste funktioniert. Der Entwurf liegt 24 Stunden in `sessionStorage`.
+3. **Absenden.** `POST /api/bewerbung` mit einem Idempotency-Key (UUID aus dem Entwurf, bleibt nach einem Reload gleich). Die Route prüft der Reihe nach: Herkunft (403), Rate-Limit (429), Content-Type und Größe bis 64 KB (415/413), Schema (400), Token-Geheimnis (503). Danach normalisiert sie die Angaben: Stelle aus dem Registry, Antworten aus dem Fragenset, Telefon nach E.164, Kanal aus der Attribution, Spamsignale (Honeypot, Ausfülldauer unter 3 Sekunden). Spamverdacht führt nicht zur Ablehnung, sondern zu einer Markierung.
+4. **Sink.** Phase 1 nutzt den `EmailSink`: Er leitet die Bewerbungsnummer (`BE-26-XXXXXX`) per HMAC aus dem Idempotency-Key ab, schickt die Team-Mail an `CONTACT_NOTIFICATION_EMAIL` (Reply-To ist die E-Mail der Bewerberin bzw. des Bewerbers, falls angegeben) und eine Eingangsbestätigung, wenn eine E-Mail angegeben ist und kein Spamverdacht besteht. Resend-Idempotency-Keys verhindern doppelten Versand, auch über Server-Instanzen hinweg. **Erfolg gibt es nur, wenn Resend die Team-Mail angenommen hat.**
+5. **Danke-Seite.** Die Antwort enthält Bewerbungsnummer und ein Ergänzungs-Token. Der Flow löscht den Entwurf und wechselt per `router.replace` auf `/bewerbung/danke`, damit ein Reload nicht erneut sendet. Dort lassen sich Startdatum, PLZ, eine Nachricht oder die Bewerbungsmappe nachreichen: `POST /api/bewerbung/ergaenzung` mit Nummer und Token (HMAC, 14 Tage gültig). Das Team bekommt dazu eine Mail „Ergänzung zu BE-…“.
+6. **Fehler.** Jede Ablehnung erscheint ehrlich als Meldung (`role="alert"`) mit „Erneut senden“, Anruf und WhatsApp mit vorausgefüllter Bewerbung. Ein simulierter Erfolg ist nur lokal und in E2E-Tests möglich, nie auf Vercel Production.
 
-    Candidate->>Edge: Absenden via Express-Funnel / Dossier
-    Edge->>API: Validierte JSON-Payload (Zod-geprüft)
-    Note over API: XSS-Sanitization & Spam-Honeypot Prüfung
-    
-    rect rgb(240, 248, 255)
-        Note over API,Resend: Paralleler Dual-Dispatch (Promise.allSettled)
-        API->>Resend: 1. Team-Benachrichtigung (Datentabelle, Click-to-Call, WhatsApp)
-        API->>Resend: 2. Eingangsbestätigung (Porzellan-Optik, 100% Diskretionsgarantie)
-    end
-    
-    Resend-->>Boss: Sofortiger Bewerber-Lead auf Smartphone
-    Resend-->>Mailbox: Bestätigungs-E-Mail mit verbindlichem 24h-Fahrplan
-    API-->>Candidate: HTTP 200 { success: true } & Konfetti-Animation
-```
+Wie das Team die Mails liest und Ergänzungen zuordnet: [`docs/operations/betrieb.md`](docs/operations/betrieb.md#4-bewerbungs-e-mails-lesen).
 
----
+**Phase 2** ersetzt den `EmailSink` durch einen `SupabaseSink` mit demselben Vertrag: Bewerbungen und Dateien in Supabase (Frankfurt), Uploads, Recruiter-Cockpit unter `/admin`, Not-E-Mail bei einem Datenbankausfall und automatische Löschfristen ([ROADMAP §8](docs/ROADMAP.md#8-säule-e-ats-auf-supabase-phase-2)). Noch nicht aktiv; die Migrationen in `supabase/migrations/` sind Altbestand und werden in Phase 2 ersetzt.
 
-## 4. Die 8 Kernmodule der Plattform
+## 4. Reichweite
 
-### 1. 120-Sekunden Express-Bewerbungsfunnel (`HeroExpressFunnel.tsx`)
-Ein interaktiver, 4-stufiger Bewerbungs-Wizard direkt auf der Startseite:
-* **Kein Anschreiben, kein Lebenslauf:** Auswahl von Wunschposition, Qualifikationen, Berufserfahrung und Kontaktdaten.
-* **Code-Splitting:** Als dynamische Komponente entkoppelt, um den initialen Page-Load auf unter 1.1s LCP zu drücken.
+- **Stellenseiten:** eine statische Seite je veröffentlichter Stelle, keine Stadt-Duplikate. Seiten, Sitemap, Feeds und `llms.txt` werden stündlich neu erzeugt, abgelaufene Stellen fallen ohne Deploy heraus.
+- **JSON-LD:** JobPosting nur auf `/jobs/[slug]`, mit `url`, `directApply`, `baseSalary`, `validThrough` und `hiringOrganization`. Organization, WebSite und LocalBusiness global, FAQPage nur auf `/`. Prüfung: `bun run test:graph`.
+- **Feeds:** `/feeds/indeed.xml` (Indeed), `/feeds/jobs.xml` (Jooble, Talent.com, Adzuna, Careerjet, Kimeta), `/feeds/jobs.json` (schema.org JobPosting, per CORS von bad-energie.de lesbar). Alle Links tragen `utm_source=<Feed>`.
+- **Sitemap und robots:** nur indexierbare Seiten; `/api/` und `/admin/` sind gesperrt. `proxy.ts` blockt nur benannte SEO-Scraper; Feeds, Sitemap, `robots.txt`, `llms*.txt` und die IndexNow-Datei sind ausgenommen.
+- **IndexNow:** `POST /api/indexnow` mit `Authorization: Bearer <INDEXNOW_SUBMIT_TOKEN>` meldet ohne Body Startseite, `/jobs`, alle Stellenseiten und `/bewerbung`.
+- **`llms.txt` / `llms-full.txt`:** Kurz- und Langfassung für KI-Suchmaschinen, aus Registry und Fakten erzeugt.
+- **Manuelle Kanäle:** Jobbörse der Bundesagentur für Arbeit und HWK-Lehrstellenbörse mit getrackten Links, siehe [`docs/operations/stellenboersen.md`](docs/operations/stellenboersen.md).
 
-### 2. 4-Wege-Bewerberportal (`app/bewerbung/page.tsx`)
-Bietet vier maßgeschneiderte Bewerbungspfade:
-1. **Express-Quiz:** Für schnelle Kontaktaufnahme vom Smartphone.
-2. **Dokumenten-Tresor (Vault):** Drag & Drop Upload für Gesellenbrief, Zertifikate und Foto.
-3. **Formular-Express:** Klassische Kontaktaufnahme mit individuellen Wünschen.
-4. **Dossier-Vorschau:** Generierung eines vollwertigen DIN-A4-Bewerberprofils.
+## 5. Sicherheit und Datenschutz
 
-### 3. ISO 216 DIN-A4 Dossier- & Druck-Engine (`PrintA4View.tsx`)
-* Schlüsselfertige Druck-Engine im Standardformat DIN A4 (210 mm × 297 mm).
-* Automatischer Seitenumbruch (`page-break-before: always`), Ausblendung aller Navigations- und Cookie-Elemente via `@media print`.
-* Integrierter Briefkopf mit Firmenlogo, Meilenstein-Angaben und rechtssicherem Sign-Off.
+- **Proxy** (`proxy.ts`): blockt benannte SEO-Scraper (403) und lässt `/api/maps/config` in Production nur für Aufrufe von der eigenen Seite zu. Er setzt keine Header.
+- **Header** kommen ausschließlich aus `next.config.ts`: HSTS, `nosniff`, Referrer-Policy, Permissions-Policy, COOP, `X-Frame-Options`. Die **Content-Security-Policy läuft als Report-Only**; Meldungen gehen an `/api/csp-report` und erscheinen als `[csp]`-Zeilen im Log. Scharf geschaltet wird sie in Phase 3.
+- **Formular-APIs:** CSRF über `Sec-Fetch-Site` bzw. Origin-Allowlist (`APP_URL`, Produktions-Domain, Vercel-Deployment-URL), Rate-Limit je IP-Hash (Bewerbung 5 je 10 Minuten und 20 je Tag, Ergänzungen 10 je Stunde), 64 KB Body-Limit, Honeypot, Idempotenz. Die IP wird nur als HMAC-Hash mit täglich wechselndem Schlüssel verwendet. Das Rate-Limit liegt in Phase 1 im Speicher der jeweiligen Server-Instanz.
+- **Ehrliche Fehler:** Fehlt Konfiguration, antworten die Formular-APIs mit 503; die Oberfläche bietet dann Anruf und WhatsApp an. Logs enthalten keine personenbezogenen Daten, nur Bewerbungsnummer, Stelle und Kanal.
+- **Keine Cookies, kein Banner:** Die Website setzt keine Cookies und lädt ohne Klick keine Drittanbieter-Skripte. Die Schrift ist selbst gehostet.
+- **Google Maps per 2-Klick:** Erst „Interaktive Karte laden“ lädt Skripte von Google; die Wahl wird in `localStorage` (`be:maps-consent:v1`) gemerkt und lässt sich mit „Karte wieder ausblenden“ widerrufen. Standard ist die typografische Radius-Grafik.
+- **Browser-Speicher:** Entwurf, abgeschickte Bewerbung (Nummer und Token) und Mappe liegen nur in `sessionStorage` (Entwurf höchstens 24 Stunden); das Foto der Mappe wird nie gespeichert. Der alte `localStorage`-Eintrag `bad_energie_dossier` wird beim Öffnen gelöscht.
+- **Secrets:** `.env.example` enthält nur Platzhalter. gitleaks prüft jeden Push (`.gitleaks.toml`), Dependabot hält Abhängigkeiten aktuell.
 
-### 4. Google Maps Platform Integration (`components/maps/`)
-* **Dynamic Config API (`/api/maps/config`):** Der API-Schlüssel wird niemals statisch im Client-Bundle exponiert.
-* **Referer Lock:** Streng abgesichert gegen unbefugte Abfragen von Fremddomains.
-* **10 Einsatzorte im Lahn-Dill-Kreis:** Interaktive Visualisierung des maximalen 35-km-Arbeitsradius (Wetzlar, Gießen, Aßlar, Solms, etc.).
+Die Datenschutzerklärung beschreibt diese Verarbeitung; die Änderungen zur Prüfung durch die oder den DSB stehen in [`docs/operations/datenschutz-aenderungen.md`](docs/operations/datenschutz-aenderungen.md).
 
-### 5. Resend Dual-Dispatch E-Mail Pipeline (`lib/email/resend.ts`)
-* Vollautomatische Zwei-Wege-Zustellung über die moderne Resend API.
-* **DMARC-Sicherheit:** Verhindert SPF- und DMARC-Konflikte mit der Hauptdomain (`bad-energie.de`), indem verifizierte Absenderadressen genutzt werden.
-* **Sperrvermerk für ungekündigte Fachkräfte:** Garantierte Diskretion und kein Kontakt zum bisherigen Arbeitgeber.
+## 6. Lokale Entwicklung
 
-### 6. Edge Middleware Cyber-Shield (`middleware.ts`)
-* Weist aggressive Bad-Bots und Scraper (SemrushBot, PetalBot, Scrapy, HeadlessChrome) mit HTTP 403 ab.
-* Verhindert Serverüberlastung und schützt die Server-Reputation der Hauptdomain.
-* Setzt strikte Sicherheitsheader: HSTS Preload (`max-age=31536000`), COOP (`same-origin`), Permissions-Policy.
-
-### 7. DSGVO & TDDDG Compliant Cookie Consent Manager (`CookieConsent.tsx`)
-* Rechtssicherer Consent Manager nach deutschen und europäischen Richtlinien.
-* Granulare Steuerung (Notwendig, Analytics, Funktional) mit Audit-ID (`CONSENT-WETZLAR-2449-2026`).
-* Zero Third-Party Tracker auf der initialen Render-Schicht.
-
-### 8. LLMs.txt & Agentic AI Ingestion Endpoints (`/llms.txt`, `/llms-full.txt`)
-* Standardisierte Ingestion-Schnittstellen für KI-Agenten, Suchmaschinen (Perplexity, SearchGPT) und Crawler.
-* Strukturierte Wissensrepräsentation über Unternehmensfakten, Stellenangebote und Zertifizierungen.
-
----
-
-## 5. Wirtschaftliche Wert- & ROI-Analyse
-
-Eine realistische marktwirtschaftliche Bewertung des Projekts nach anerkannten Software- und Personalmarkt-Kriterien:
-
-| Bewertungsdimension | Berechnungsgrundlage | Marktwert |
-| :--- | :--- | :---: |
-| **Individuelle Software-Entwicklung** | 16.504 Zeilen individueller Next.js 16/React 19 Code, maßgeschneiderte DIN-A4 Druck-Engine, interaktive Google Maps API, Edge Middleware, barrierefreies UI/UX (ca. 240–320 Stunden à 120–160 €). | **30.000 € – 48.000 €** |
-| **HR-Recruiting Einsparungen (3 Jahre)** | Vermeidung von Headhunter-Provisionen für SHK-Fachkräfte (25–35 % des Jahresgehalts = ca. 10.000–15.000 € pro Einstellung). Bei nur 3–4 erfolgreichen Einstellungen amortisiert sich das Portal vollständig. | **30.000 € – 60.000 €** |
-| **Cybersecurity- & Domain-Schutzschild** | Schutz der Hauptdomain (`bad-energie.de`) vor 691 Spam-Domains, DMARC-Reputationsrettung, Google Maps API Key Lock (Vermeidung von Missbrauchskosten). | **8.000 € – 15.000 €** |
-| **SEO- & Brand-Equity-Wert** | 100/100 Seobility, Google Jobs Integration, lokale Dominanz im Lahn-Dill-Kreis ohne laufende Google-Ads-Kosten (organische Reichweite). | **10.000 € – 20.000 €** |
-| **Gesamtwirtschaftlicher Wert** | **Realer Vermögenswert und wirtschaftlicher Gesamtnutzen des Projekts** | **> 78.000 € – 143.000 €** |
-
----
-
-## 6. Cybersecurity, DMARC-Schutz & Edge-Shield
-
-Um die E-Mail-Reputation und Domain-Autorität der Unternehmens-Hauptdomain (`bad-energie.de`) vor Angriffen zu schützen, fungiert die Karriere-Subdomain (`karriere.bad-energie.de`) als aktives Schutzschild:
-
-1. **DMARC-Konformität:**
-   Da `bad-energie.de` eine strikte DMARC-Quarantine-Richtlinie (`p=quarantine; sp=quarantine`) besitzt, sendet das Portal alle ausgehenden Mails isoliert über sichere Resend-Absender (`onboarding@resend.dev` oder verifizierte Karriere-Subdomain). Dadurch wird vermieden, dass Mails als Spam deklariert werden.
-2. **API-Schutz:**
-   Der Endpunkt `/api/maps/config` verlangt eine Prüfung auf den Referer `bad-energie.de` und liefert `Cache-Control: private, no-cache, no-store`.
-3. **Bad-Bot Abwehr:**
-   In `middleware.ts` werden bekannte aggressive Scraper über RegEx-Filterung direkt am Vercel-Edge mit HTTP 403 abgewiesen, bevor Rechenleistung auf dem Server verbraucht wird.
-
----
-
-## 7. Installation & Lokale Entwicklung
-
-### Voraussetzungen:
-* **Node.js:** >= 20.x oder **Bun:** >= 1.2.x (empfohlen für maximale Geschwindigkeit)
-* **Git:** Aktuelle Version
-
-### Schnellstart:
+Voraussetzungen: [Bun](https://bun.sh) und Node.js 22 (wie in der CI; Next.js 16 braucht mindestens 20.9).
 
 ```bash
-# 1. Repository klonen
-git clone https://github.com/umutcantezgel-cpu/Bad-und-Energie-Bewerbung.git
-cd Bad-und-Energie-Bewerbung-main
-
-# 2. Abhängigkeiten installieren (Bun oder npm)
-bun install
-# oder: npm install
-
-# 3. Umgebungsvariablen einrichten
-cp .env.example .env.local
-
-# 4. Entwicklungsserver starten
-bun run dev
-# oder: npm run dev
+bun install                 # Abhängigkeiten (in der CI: --frozen-lockfile)
+cp .env.example .env.local  # optional; ohne Werte wird lokal simuliert
+bun run dev                 # http://localhost:3000
 ```
 
-Die Anwendung ist nun unter `http://localhost:3000` erreichbar.
+Mit `next dev` simuliert die Website den Mailversand (Log `[email] simuliert`), wenn kein Resend-Key gesetzt ist, und nutzt feste Dev-Werte für die HMAC-Geheimnisse. Echte Mails gibt es lokal nur mit eigenem Resend-Key und verifiziertem Absender.
 
-### Verzeichnisstruktur (Modulare Codebase-Architektur):
+| Befehl | Zweck |
+|---|---|
+| `bun run test` | Unit-Tests (Vitest); einzelne Bereiche mit `bunx vitest run lib/jobs` |
+| `bun run lint` / `bun run type-check` | ESLint / TypeScript |
+| `bun run check:design` / `check:contrast` / `check:client-imports` | Guard-Skripte einzeln |
+| `bun run build` | Production-Build; führt vorher über `prebuild` die drei Guard-Skripte aus |
+| `bun run test:graph` | JSON-LD-Prüfung auf dem Build |
+| `bun run e2e` | Playwright + axe gegen den Build (mobil und Desktop, hell und dunkel); vorher `bun run build` und einmalig `bunx playwright install chromium` |
+| `bun run lighthouse` | Lighthouse CI mobil gegen den Build (`lighthouserc.json`, eigener `next start` auf Port 3410); vorher `bun run build`. Barrierefreiheit, Best Practices und SEO müssen 100 erreichen, CLS höchstens 0,02; Performance unter dem Ziel (≥ 95, Flow ≥ 90) ergibt nur eine Warnung |
+| `bun run audit` | Lint, Typen, Tests, Design-Guard, Kontrast, Build und Graph-Check in einem Lauf |
 
-```text
-Bad-und-Energie-Bewerbung/
-├── app/                  # Next.js 16 App Router (Seiten, Metadata & API-Handler)
-│   ├── api/              # Edge API-Endpunkte (bewerbung, contact, indexnow, maps/config)
-│   ├── bewerbung/        # 4-Wege-Bewerberportal (Quiz, Express, Vault, Print)
-│   ├── datenschutz/      # DSGVO-Datenschutzerklärung
-│   └── impressum/        # Rechtliches Impressum (§ 5 DDG / HRB 2449)
-├── components/           # Modulare React 19 UI-Komponenten
-│   ├── analytics/        # WebVitals & Performance-Tracking
-│   ├── contact/          # WhatsApp, Ansprechpartner & Lead-Formulare
-│   ├── layout/           # Grid, Container, Section & Stack Primitives
-│   ├── maps/             # Dual-Engine Interactive Map (Google Maps & Vektor)
-│   ├── navigation/       # Motion SVG Hamburger & Sheet Drawer
-│   ├── pricing/          # Gehaltsrechner Mittelhessen
-│   ├── reviews/          # Google Reviews & Kinetic Carousel
-│   ├── seo/              # AI-Answer-Box & Structured Data
-│   ├── trust/            # Prozess-Schritte & Trust-Banner
-│   ├── ui/               # Atomare UI-Komponenten (Buttons, Badges, Modals)
-│   └── views/            # 4 Bewerbungs-Ansichten (Quiz, Form, Vault, PrintA4)
-├── docs/                 # Entwickler-Dokumentation & archivierte Prompts
-│   └── prompts/          # Historische Master-Prompts (Phasen 18–21)
-├── hooks/                # Zentrale React Hooks (useIsMobile, useReducedMotion)
-├── lib/                  # Geschäftslogik, APIs, SEO & Typen
-│   ├── data/             # Unternehmensdaten, Standorte & Partner-Säulen
-│   ├── email/            # Resend E-Mail Pipeline & Vorlagen
-│   ├── maps/             # Google Maps Konfiguration & Resilienter Loader
-│   ├── seo/              # Schema.org Generatoren, Site-Config & IndexNow
-│   ├── store/            # Client-State (Cookie Consent & Storage Gate)
-│   ├── tokens/           # Spacing- und Design-Tokens
-│   └── utils/            # Utilities (cn, Haptik, Sanitize, WhatsApp)
-├── public/               # Statische Assets (Logos, Icons, WebP-Bilder)
-└── scripts/qa/           # Automatisierte QA- & Linked-Data-Tests
-```
+Die E2E-Tests starten `next start` auf Port 3400 mit `EMAIL_SIMULATION=true` und `ALLOW_DEV_SECRETS=true`. Die CI (`.github/workflows/ci.yml`) führt dieselben Schritte aus, dazu Lighthouse CI und gitleaks.
 
-### Qualitäts- und Entwickler-Befehle:
+Stichprobe am laufenden Build: `curl -s localhost:3000/feeds/indeed.xml | xmllint --noout -`.
 
-```bash
-# Linter prüfen (0 Fehler, 0 Warnungen)
-bun run lint
+## 7. Umgebungsvariablen
 
-# TypeScript Typ-Prüfung ohne Build
-bun run type-check
+Vorlage: [`.env.example`](.env.example), Prüfung: [`lib/env.ts`](lib/env.ts). Leere Werte und Platzhalter wie `re_123456789` oder `your_…` gelten als nicht gesetzt.
 
-# JSON-LD Linked Data Graph Integrity Check
-bun run test:graph
+| Variable | Pflicht | Zweck |
+|---|---|---|
+| `APP_URL` | nein | Öffentliche Basis-URL ohne Slash am Ende. Standard `https://karriere.bad-energie.de`. Canonicals, Sitemap, Feeds, CSRF-Allowlist |
+| `RESEND_API_KEY` | Production | Resend-API-Key (`re_…`) |
+| `RESEND_FROM_EMAIL` | Production | Absender auf einer in Resend verifizierten Domain, z. B. `Bad und Energie Karriere <bewerbung@karriere.bad-energie.de>`. Es gibt keinen Ersatzabsender |
+| `CONTACT_NOTIFICATION_EMAIL` | nein | Empfänger der Team-Mails. Standard `info@bad-energie.de` (alter Name `RESEND_TO_EMAIL` wird noch gelesen) |
+| `IP_HASH_SALT` | jeder Production-Build | HMAC-Salt für IP-Hashes (Rate-Limit), mindestens 32 Zeichen |
+| `APPLICATION_TOKEN_SECRET` | jeder Production-Build | HMAC-Geheimnis für Bewerbungsnummer und Ergänzungs-Token, mindestens 32 Zeichen. Ein Wechsel macht offene Ergänzungs-Links ungültig |
+| `INDEXNOW_KEY` | nein | Öffentlicher IndexNow-Schlüssel (8–128 Zeichen `A–Z a–z 0–9 -`). Es muss `public/<key>.txt` mit dem Key als Inhalt geben |
+| `INDEXNOW_SUBMIT_TOKEN` | nein | Bearer-Token für `POST /api/indexnow`, mindestens 32 Zeichen. Ohne Key oder Token antwortet der Endpunkt mit 503 |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | nein | Browser-Key der Maps JavaScript API. Wird beim Build eingebettet und öffentlich ausgeliefert, deshalb auf die Domain beschränken |
+| `GOOGLE_MAPS_API_KEY` | nein | Alternative ohne `NEXT_PUBLIC_`, ausgeliefert über `/api/maps/config` |
+| `NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID` | nein | Map-ID für Cloud-Styling |
+| `EMAIL_SIMULATION` | nein | `true` simuliert den Versand (lokal, E2E, Preview). Auf Vercel Production wirkungslos |
+| `ALLOW_DEV_SECRETS` | nein | `true` erlaubt Dev-Werte für fehlende Geheimnisse, nur für lokale E2E-Läufe. Auf Vercel Production wirkungslos |
 
-# Turbopack Produktions-Build
-bun run build
+„Production“ heißt: Ohne diese Werte nimmt die Bewerbungs-API in einem Production-Build nichts an (503). Ohne `IP_HASH_SALT` und `APPLICATION_TOKEN_SECRET` gilt das auch für Preview-Deployments und `next start`. Die Website selbst bleibt online; `instrumentation.ts` meldet fehlende Variablen beim Start als `[env]`-Zeile im Log (nur Namen, nie Werte).
 
-# Vollständiger Qualitäts-Audit (Lint + TypeCheck + Build)
-bun run audit
+Phase 2 (noch nicht aktiv, in `.env.example` auskommentiert): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `ADMIN_EMAIL_ALLOWLIST`, `CRON_SECRET`.
 
-# Produktions-Server lokal starten
-bun run start
-```
+Von Vercel gesetzt und genutzt: `VERCEL_ENV` (erkennt Production), `VERCEL_URL` und `VERCEL_BRANCH_URL` (CSRF-Allowlist für Preview-Deployments).
 
----
+## 8. Deployment auf Vercel
 
-## 8. API-Endpunkte & Testbefehle
+- **Projekt:** Framework Next.js, Region `fra1` (aus `vercel.json`). Vercel erkennt `bun.lock` und installiert mit Bun. Build Command `bun run build`, damit die Guard-Skripte laufen. Node.js 22.x wie in der CI.
+- **Domain:** `karriere.bad-energie.de` als Custom Domain, DNS-Eintrag nach Vorgabe im Vercel-Dashboard.
+- **Umgebungsvariablen Production:** `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `IP_HASH_SALT`, `APPLICATION_TOKEN_SECRET`; empfohlen `APP_URL`, `CONTACT_NOTIFICATION_EMAIL`, `INDEXNOW_KEY`, `INDEXNOW_SUBMIT_TOKEN`, `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`. Geheimnisse als „Sensitive“ anlegen. Änderungen wirken erst nach einem neuen Deploy (Maps-Key und `APP_URL` werden beim Build eingebettet).
+- **Preview:** eigene Werte für `IP_HASH_SALT` und `APPLICATION_TOKEN_SECRET` (nicht die aus Production) und `EMAIL_SIMULATION=true`, damit Tests keine echten Mails an das Team schicken.
+- **Resend:** Die Domain des Absenders muss in Resend verifiziert sein (DNS-Einträge aus dem Resend-Dashboard). Ohne Verifizierung lehnt Resend den Versand ab, und die Bewerbungs-API antwortet mit einem Fehler.
+- **IndexNow:** `INDEXNOW_KEY` setzen und die Prüfdatei `public/<key>.txt` im Repo haben. Im Repo liegt die Datei des bisher genutzten Keys (`public/298d966b7e4f4a43981cb8e30da6b5b5.txt`).
 
-### 1. Kontaktformular testen (`POST /api/contact`)
-```bash
-curl -X POST http://localhost:3000/api/contact \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Alexander Koch",
-    "email": "alexander.koch@beispiel.de",
-    "phone": "0170 8892341",
-    "subject": "Frage zu Arbeitszeiten und Wärmepumpen",
-    "message": "Guten Tag, ich bin gelernter Anlagenmechaniker SHK und interessiere mich für das Team in Wetzlar.",
-    "consent": true
-  }'
-```
+Die vollständige Go-live-Checkliste mit Befehlen zum Erzeugen der Geheimnisse, Search Console, Indeed, BA und Monitoring steht in [`docs/operations/betrieb.md`](docs/operations/betrieb.md).
 
-### 2. Expressbewerbung testen (`POST /api/bewerbung`)
-```bash
-curl -X POST http://localhost:3000/api/bewerbung \
-  -H "Content-Type: application/json" \
-  -d '{
-    "fullName": "Max Mustermann",
-    "email": "max.mustermann@beispiel.de",
-    "phone": "0171 1234567",
-    "position": "Anlagenmechaniker SHK für Wärmepumpen m w d",
-    "experience": "4 Jahre Praxis",
-    "skills": ["Wärmepumpen (Buderus, Bosch, NIBE, Alpha Innotec, Viessmann)", "Badsanierung"],
-    "notes": "Keine Montagen gewünscht",
-    "contactPreference": "whatsapp",
-    "discretionGuaranteed": true
-  }'
-```
+## 9. Stellen pflegen und Stellenbörsen
 
-### 3. Maps-Konfiguration abfragen (`GET /api/maps/config`)
-```bash
-curl -I http://localhost:3000/api/maps/config
-```
+- **Stellen anlegen, ändern, verlängern, schließen:** [`docs/operations/stellen-pflegen.md`](docs/operations/stellen-pflegen.md). Jede Stelle ist eine TypeScript-Datei in `lib/jobs/data/`; die Tests prüfen Schema, Slugs, Gehalt und Ablaufdatum vor dem Merge.
+- **Stellenbörsen und Reichweite:** [`docs/operations/stellenboersen.md`](docs/operations/stellenboersen.md) mit getrackten Links für BA und HWK, Indeed-Aufnahme, Aggregatoren, Search Console und dem Widget für bad-energie.de.
 
----
+## 10. Roadmap und Stand
 
-## 9. Deployment & Vercel Edge-Konfiguration
+Plan und Entscheidungen: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
-Das Projekt ist für den Zero-Configuration-Deploy auf **Vercel** ausgelegt:
+| Phase | Inhalt | Stand |
+|---|---|---|
+| 1 – Fundament & Flow | Job-Registry, Design-System, neue Seiten, ein Flow, Mappe, Karte, Karussell, Intake per E-Mail, Attribution, Feeds, SEO, Tests und CI | in Umsetzung. Offen: das Performance-Ziel von Lighthouse mobil (≥ 95, Flow ≥ 90) wird noch nicht auf allen Seiten erreicht; die manuellen Prüfungen nach dem Deploy (§14.5) |
+| 2 – ATS | Supabase, Uploads, Recruiter-Cockpit, Löschfristen per Cron | geplant |
+| 3 – Social & Beschleunigung | Landingpages, Einwilligung für Pixel, CSP scharf, Indexing API | geplant |
+| 4 – Talent-Pool & Empfehlungen | Job-Alarm mit Double-Opt-in, Empfehlungslinks | geplant |
+| 5 – Optional | Jobs-Editor, HR-BA-XML, Reporting | nach Bedarf |
 
-1. Änderungen auf den `main`-Branch pushen:
-   ```bash
-   git push origin main
-   ```
-2. Vercel führt den automatischen Turbopack-Build aus (`bun run build`).
-3. Unter **Project Settings > Environment Variables** folgende Schlüssel konfigurieren:
-   - `RESEND_API_KEY`: API-Schlüssel für E-Mail-Dispatch.
-   - `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`: Google Maps JavaScript API-Schlüssel.
-   - `NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID`: Google Maps Vector Map-ID.
-   - `APP_URL`: `https://karriere.bad-energie.de`.
+## 11. Offene Owner-Punkte
 
----
+Bis zur Klärung gilt jeweils der sichere Standard ([ROADMAP §13](docs/ROADMAP.md#13-offene-owner-punkte-blockieren-phase-1-nicht-bis-zur-klärung-gilt-jeweils-der-sichere-standard)).
 
-## 10. Rechtliche Compliance & Impressum
-
-* **Betreiber:** Bad und Energie GmbH Lahn Dill
-* **Geschäftsführung:** Dipl.-Ing. Sabri Demir (Meister SHK, Gebäudeenergieberater)
-* **Handelsregister:** Amtsgericht Wetzlar **HRB 2449**
-* **USt-IdNr.:** DE 346 648 448
-* **Zuständige Handwerkskammer:** Handwerkskammer Wiesbaden
-* **Innungszugehörigkeit:** Innung Sanitär-, Heizungs- und Klimatechnik Lahn-Dill
-* **Firmensitz:** Siegmund-Hiepe-Str. 20 · 35578 Wetzlar (Hessen)
-* **Telefon:** (06441) 42956 · **E-Mail:** info@bad-energie.de
-
----
-
-© 1926–2026 **Bad und Energie GmbH Lahn Dill** · 100 Jahre Meisterbetrieb · Alle Rechte vorbehalten.
+- **Erledigt (2026-10-08):** Der im Git-Verlauf veröffentlichte Resend-Key ist widerrufen und ersetzt ([`betrieb.md`](docs/operations/betrieb.md#1-resend-key-rotiert-erledigt)).
+- **Fakten bestätigen:** [`docs/operations/fakten-abgleich.md`](docs/operations/fakten-abgleich.md) – offene Aussagen, Widersprüche zwischen Quellen, Stellentitel und Texte im Flow.
+- **Datenschutz prüfen:** [`docs/operations/datenschutz-aenderungen.md`](docs/operations/datenschutz-aenderungen.md) – jede inhaltliche Änderung der Datenschutzerklärung und des Impressums zur Prüfung durch die oder den DSB.
