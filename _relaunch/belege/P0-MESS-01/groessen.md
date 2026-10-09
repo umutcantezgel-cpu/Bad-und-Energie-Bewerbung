@@ -1,9 +1,9 @@
 # Größen je Seite · P0-MESS-01
 
-- Datum: 09.10.2026, 09:30 (Europe/Berlin) · Basis: http://localhost:3500 (Produktions-Build)
+- Datum: 09.10.2026, 09:33 (Europe/Berlin) · Basis: http://localhost:3500 (Produktions-Build)
 - Ansicht d1440 (1440×900), hell, Bewegung no-preference; je Seite neuer Kontext (kalter Zwischenspeicher); Laden bis networkidle, danach schrittweises Durchscrollen
 - übertragen = Body-Bytes über die Leitung (ohne Kopfzeilen) · roh = entpackt · gzip = `zlib.gzipSync` Stufe 9 auf dem Body · 1 KB = 1024 Byte
-- Next-Prefetch (`?_rsc=`, Seitenwechsel-Vorabrufe der Links) wird als eigener Typ geführt und gehört zur Summe; „nach Scrollen“ = erst nach dem Durchscrollen geladen
+- Next-Prefetch (`?_rsc=`, Seitenwechsel-Vorabrufe der Links) wird als eigener Typ geführt und gehört zur Summe (Spalte „ohne Prefetch“ lässt ihn weg, er schwankt von Lauf zu Lauf); „nach Scrollen“ = erst nach dem Durchscrollen geladen
 - Nur Antworten des eigenen Hosts; Tracking-Attrappen und gesperrte Fremdanfragen zählen nicht zum Gewicht (Anzahl je Seite in der JSON: `gesperrteAnfragen`)
 - Budgets (K-013): Schriften gesamt ≤ 250 KB · Icon-SVG ≤ 1,5 KB (auf die rohe Größe gerechnet) · Illustrations-SVG ≤ 40 KB gzip · Bewegungs-JS ≤ 60 KB gzip (nicht abgrenzbar, siehe unten)
 
@@ -21,11 +21,11 @@
 |---|---:|---:|---:|---|---:|
 | `…/chunks/0a37caasaw7-7.js` | 71,6 | 228,7 | 71,4 | gzip | 12 |
 | `…/chunks/2gntgrcwrye4_.js` | 44,2 | 162,7 | 44,1 | gzip | 12 |
-| `…/chunks/11wu3hljr9hj4.js` | 20,3 | 57,1 | 20,3 | gzip | 9 |
+| `…/chunks/11wu3hljr9hj4.js` | 20,3 | 57,1 | 20,3 | gzip | 8 |
 | `…/chunks/2ii7mwog_k9qo.js` | 13,3 | 37,0 | 13,3 | gzip | 1 |
 | `…/chunks/25i8q8ks78nna.js` | 11,9 | 36,1 | 11,9 | gzip | 2 |
 | `…/chunks/2o0b38gyj507j.js` | 11,1 | 31,0 | 11,1 | gzip | 12 |
-| `…/chunks/3snddn835qz2b.js` | 10,9 | 30,7 | 10,8 | gzip | 9 |
+| `…/chunks/3snddn835qz2b.js` | 10,9 | 30,7 | 10,8 | gzip | 8 |
 | `…/chunks/1--_3ulp8dgus.js` | 10,6 | 30,6 | 10,6 | gzip | 2 |
 | `…/chunks/118nq7mu3xtd_.js` | 9,1 | 25,4 | 9,1 | gzip | 12 |
 | `…/chunks/0htzap2iir08t.js` | 8,7 | 28,2 | 8,7 | gzip | 12 |
@@ -70,20 +70,20 @@ Größe = UTF-8-Byte der serialisierten Auszeichnung im DOM nach dem Laden (kann
 
 Übersicht (übertragen KB, Dateien in Klammern):
 
-| Seite | Status | Dokument | JS | CSS | Schriften | SVG-Dateien | Bilder | Prefetch (_rsc) | Sonstiges | Summe KB | JS gzip KB | davon nach Scrollen KB | inline-SVG | Schriften-Budget |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| / | 200 | 27,9 (1) | 202,7 (16) | 12,7 (1) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 57,9 (13) | 0,0 (0) | 353,3 | 201,6 | 68,6 | 42 | ok |
-| /jobs | 200 | 12,0 (1) | 202,7 (16) | 12,7 (1) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 73,6 (19) | 0,0 (0) | 353,0 | 201,6 | 15,0 | 11 | ok |
-| /jobs/anlagenmechaniker-shk-wetzlar | 200 | 22,3 (1) | 202,7 (16) | 12,7 (1) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 21,6 (7) | 0,0 (0) | 311,3 | 201,6 | 0,0 | 31 | ok |
-| /jobs/kundendiensttechniker-waermepumpe-wetzlar | 200 | 22,3 (1) | 202,7 (16) | 12,7 (1) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 21,6 (7) | 0,0 (0) | 311,3 | 201,6 | 0,0 | 31 | ok |
-| /jobs/obermonteur-projektleiter-shk-wetzlar | 200 | 22,3 (1) | 202,7 (16) | 12,7 (1) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 19,9 (7) | 0,0 (0) | 309,7 | 201,6 | 0,0 | 32 | ok |
-| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | 200 | 21,0 (1) | 202,7 (16) | 12,7 (1) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 21,5 (7) | 0,0 (0) | 310,0 | 201,6 | 0,0 | 27 | ok |
-| /bewerbung | 200 | 11,8 (1) | 224,3 (17) | 13,4 (2) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 33,6 (9) | 0,0 (0) | 335,2 | 223,4 | 15,0 | 12 | ok |
-| /bewerbung/danke | 200 | 8,8 (1) | 183,9 (14) | 12,7 (1) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 34,9 (11) | 0,0 (0) | 292,4 | 183,2 | 0,0 | 3 | ok |
-| /bewerbung/mappe | 200 | 12,7 (1) | 193,1 (15) | 13,4 (2) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 15,2 (3) | 0,0 (0) | 286,5 | 192,3 | 0,0 | 15 | ok |
-| /datenschutz | 200 | 25,8 (1) | 170,6 (13) | 12,7 (1) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 20,1 (7) | 0,0 (0) | 281,3 | 169,9 | 0,0 | 4 | ok |
-| /impressum | 200 | 11,6 (1) | 202,7 (16) | 12,7 (1) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 35,0 (11) | 0,0 (0) | 314,1 | 201,6 | 45,6 | 4 | ok |
-| /gibt-es-nicht-404 | 404 | 8,0 (1) | 202,7 (16) | 12,7 (1) | 94,6 (2) | 0,0 (0) | 4,8 (1) | 73,7 (19) | 0,0 (0) | 396,5 | 201,6 | 0,0 | 3 | ok |
+| Seite | Status | Dokument | JS | CSS | Schriften | SVG-Dateien | Bilder | Prefetch (_rsc) | Sonstiges | Summe KB | ohne Prefetch KB | JS gzip KB | davon nach Scrollen KB | inline-SVG | Schriften-Budget |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| / | 200 | 27,9 (1) | 202,7 (16) | 12,7 (1) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 56,4 (13) | 0,0 (0) | 351,8 | 295,4 | 201,6 | 68,6 | 42 | ok |
+| /jobs | 200 | 12,0 (1) | 202,7 (16) | 12,7 (1) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 72,3 (19) | 0,0 (0) | 351,7 | 279,5 | 201,6 | 15,0 | 11 | ok |
+| /jobs/anlagenmechaniker-shk-wetzlar | 200 | 22,3 (1) | 202,7 (16) | 12,7 (1) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 21,6 (7) | 0,0 (0) | 311,3 | 289,8 | 201,6 | 0,0 | 31 | ok |
+| /jobs/kundendiensttechniker-waermepumpe-wetzlar | 200 | 22,3 (1) | 202,7 (16) | 12,7 (1) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 19,9 (7) | 0,0 (0) | 309,7 | 289,8 | 201,6 | 0,0 | 31 | ok |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | 200 | 22,3 (1) | 202,7 (16) | 12,7 (1) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 21,6 (7) | 0,0 (0) | 311,3 | 289,7 | 201,6 | 0,0 | 32 | ok |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | 200 | 21,0 (1) | 202,7 (16) | 12,7 (1) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 20,1 (7) | 0,0 (0) | 308,5 | 288,4 | 201,6 | 0,0 | 27 | ok |
+| /bewerbung | 200 | 11,8 (1) | 224,3 (17) | 13,4 (2) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 33,6 (9) | 0,0 (0) | 335,2 | 301,6 | 223,4 | 15,0 | 12 | ok |
+| /bewerbung/danke | 200 | 8,8 (1) | 183,9 (14) | 12,7 (1) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 35,1 (11) | 0,0 (0) | 292,6 | 257,5 | 183,2 | 0,0 | 3 | ok |
+| /bewerbung/mappe | 200 | 12,7 (1) | 193,1 (15) | 13,4 (2) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 15,2 (3) | 0,0 (0) | 286,5 | 271,3 | 192,3 | 0,0 | 15 | ok |
+| /datenschutz | 200 | 25,8 (1) | 170,6 (13) | 12,7 (1) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 21,4 (7) | 0,0 (0) | 282,6 | 261,2 | 169,9 | 0,0 | 4 | ok |
+| /impressum | 200 | 11,6 (1) | 170,6 (13) | 12,7 (1) | 47,3 (1) | 0,0 (0) | 4,8 (1) | 20,1 (7) | 0,0 (0) | 267,1 | 247,0 | 169,9 | 0,0 | 4 | ok |
+| /gibt-es-nicht-404 | 404 | 8,0 (1) | 202,7 (16) | 12,7 (1) | 94,6 (2) | 0,0 (0) | 4,8 (1) | 73,6 (19) | 0,0 (0) | 396,3 | 322,7 | 201,6 | 0,0 | 3 | ok |
 
 ### / (start)
 
@@ -94,8 +94,8 @@ Größe = UTF-8-Byte der serialisierten Auszeichnung im DOM nach dem Laden (kann
 | CSS | 1 | 12,7 | 68,9 | 12,6 | – |
 | Schriften | 1 | 47,3 | 47,3 | 47,3 | ok (≤ 250 KB) |
 | Bilder (ohne SVG) | 1 | 4,8 | 4,8 | 4,7 | – |
-| Next-Prefetch (_rsc) | 13 | 57,9 | 296,2 | 57,4 | – |
-| **Summe** | 33 | 353,3 | 1.215,9 | 351,3 | |
+| Next-Prefetch (_rsc) | 13 | 56,4 | 291,9 | 56,1 | – |
+| **Summe** | 33 | 351,8 | 1.211,5 | 350,0 | |
 
 Inline-`<svg>` im DOM: 42 (zusammen 23.399 Byte, 13.135 Byte gzip einzeln gerechnet; 1 über 1,5 KB).
 
@@ -108,8 +108,8 @@ Inline-`<svg>` im DOM: 42 (zusammen 23.399 Byte, 13.135 Byte gzip einzeln gerech
 | CSS | 1 | 12,7 | 68,9 | 12,6 | – |
 | Schriften | 1 | 47,3 | 47,3 | 47,3 | ok (≤ 250 KB) |
 | Bilder (ohne SVG) | 1 | 4,8 | 4,8 | 4,7 | – |
-| Next-Prefetch (_rsc) | 19 | 73,6 | 357,2 | 73,0 | – |
-| **Summe** | 39 | 353,0 | 1.187,3 | 351,1 | |
+| Next-Prefetch (_rsc) | 19 | 72,3 | 353,1 | 71,9 | – |
+| **Summe** | 39 | 351,7 | 1.183,2 | 350,0 | |
 
 Inline-`<svg>` im DOM: 11 (zusammen 3.948 Byte, 2.724 Byte gzip einzeln gerechnet; 0 über 1,5 KB).
 
@@ -136,8 +136,8 @@ Inline-`<svg>` im DOM: 31 (zusammen 10.714 Byte, 7.623 Byte gzip einzeln gerechn
 | CSS | 1 | 12,7 | 68,9 | 12,6 | – |
 | Schriften | 1 | 47,3 | 47,3 | 47,3 | ok (≤ 250 KB) |
 | Bilder (ohne SVG) | 1 | 4,8 | 4,8 | 4,7 | – |
-| Next-Prefetch (_rsc) | 7 | 21,6 | 93,5 | 21,3 | – |
-| **Summe** | 27 | 311,3 | 990,1 | 309,6 | |
+| Next-Prefetch (_rsc) | 7 | 19,9 | 88,9 | 19,9 | – |
+| **Summe** | 27 | 309,7 | 985,5 | 308,2 | |
 
 Inline-`<svg>` im DOM: 31 (zusammen 10.714 Byte, 7.623 Byte gzip einzeln gerechnet; 0 über 1,5 KB).
 
@@ -150,8 +150,8 @@ Inline-`<svg>` im DOM: 31 (zusammen 10.714 Byte, 7.623 Byte gzip einzeln gerechn
 | CSS | 1 | 12,7 | 68,9 | 12,6 | – |
 | Schriften | 1 | 47,3 | 47,3 | 47,3 | ok (≤ 250 KB) |
 | Bilder (ohne SVG) | 1 | 4,8 | 4,8 | 4,7 | – |
-| Next-Prefetch (_rsc) | 7 | 19,9 | 88,9 | 19,9 | – |
-| **Summe** | 27 | 309,7 | 986,2 | 308,1 | |
+| Next-Prefetch (_rsc) | 7 | 21,6 | 93,5 | 21,3 | – |
+| **Summe** | 27 | 311,3 | 990,7 | 309,6 | |
 
 Inline-`<svg>` im DOM: 32 (zusammen 11.011 Byte, 7.846 Byte gzip einzeln gerechnet; 0 über 1,5 KB).
 
@@ -164,8 +164,8 @@ Inline-`<svg>` im DOM: 32 (zusammen 11.011 Byte, 7.846 Byte gzip einzeln gerechn
 | CSS | 1 | 12,7 | 68,9 | 12,6 | – |
 | Schriften | 1 | 47,3 | 47,3 | 47,3 | ok (≤ 250 KB) |
 | Bilder (ohne SVG) | 1 | 4,8 | 4,8 | 4,7 | – |
-| Next-Prefetch (_rsc) | 7 | 21,5 | 93,4 | 21,3 | – |
-| **Summe** | 27 | 310,0 | 982,4 | 308,2 | |
+| Next-Prefetch (_rsc) | 7 | 20,1 | 89,2 | 20,0 | – |
+| **Summe** | 27 | 308,5 | 978,2 | 307,0 | |
 
 Inline-`<svg>` im DOM: 27 (zusammen 9.486 Byte, 6.715 Byte gzip einzeln gerechnet; 0 über 1,5 KB).
 
@@ -192,8 +192,8 @@ Inline-`<svg>` im DOM: 12 (zusammen 4.610 Byte, 3.195 Byte gzip einzeln gerechne
 | CSS | 1 | 12,7 | 68,9 | 12,6 | – |
 | Schriften | 1 | 47,3 | 47,3 | 47,3 | ok (≤ 250 KB) |
 | Bilder (ohne SVG) | 1 | 4,8 | 4,8 | 4,7 | – |
-| Next-Prefetch (_rsc) | 11 | 34,9 | 148,8 | 34,8 | – |
-| **Summe** | 29 | 292,4 | 899,8 | 291,4 | |
+| Next-Prefetch (_rsc) | 11 | 35,1 | 149,1 | 35,0 | – |
+| **Summe** | 29 | 292,6 | 900,0 | 291,5 | |
 
 Inline-`<svg>` im DOM: 3 (zusammen 1.224 Byte, 827 Byte gzip einzeln gerechnet; 0 über 1,5 KB).
 
@@ -220,8 +220,8 @@ Inline-`<svg>` im DOM: 15 (zusammen 5.032 Byte, 3.573 Byte gzip einzeln gerechne
 | CSS | 1 | 12,7 | 68,9 | 12,6 | – |
 | Schriften | 1 | 47,3 | 47,3 | 47,3 | ok (≤ 250 KB) |
 | Bilder (ohne SVG) | 1 | 4,8 | 4,8 | 4,7 | – |
-| Next-Prefetch (_rsc) | 7 | 20,1 | 89,2 | 20,0 | – |
-| **Summe** | 24 | 281,3 | 868,2 | 280,3 | |
+| Next-Prefetch (_rsc) | 7 | 21,4 | 93,2 | 21,1 | – |
+| **Summe** | 24 | 282,6 | 872,3 | 281,4 | |
 
 Inline-`<svg>` im DOM: 4 (zusammen 1.496 Byte, 1.017 Byte gzip einzeln gerechnet; 0 über 1,5 KB).
 
@@ -230,12 +230,12 @@ Inline-`<svg>` im DOM: 4 (zusammen 1.496 Byte, 1.017 Byte gzip einzeln gerechnet
 | Typ | Dateien | übertragen KB | roh KB | gzip KB | Budget |
 |---|---:|---:|---:|---:|---|
 | Dokument (HTML) | 1 | 11,6 | 62,2 | 11,5 | – |
-| JavaScript | 16 | 202,7 | 641,3 | 201,6 | Bewegungs-JS nicht abgrenzbar |
+| JavaScript | 13 | 170,6 | 552,6 | 169,9 | Bewegungs-JS nicht abgrenzbar |
 | CSS | 1 | 12,7 | 68,9 | 12,6 | – |
 | Schriften | 1 | 47,3 | 47,3 | 47,3 | ok (≤ 250 KB) |
 | Bilder (ohne SVG) | 1 | 4,8 | 4,8 | 4,7 | – |
-| Next-Prefetch (_rsc) | 11 | 35,0 | 163,3 | 34,6 | – |
-| **Summe** | 31 | 314,1 | 987,8 | 312,4 | |
+| Next-Prefetch (_rsc) | 7 | 20,1 | 89,2 | 20,0 | – |
+| **Summe** | 24 | 267,1 | 824,9 | 266,1 | |
 
 Inline-`<svg>` im DOM: 4 (zusammen 1.496 Byte, 1.017 Byte gzip einzeln gerechnet; 0 über 1,5 KB).
 
@@ -248,8 +248,8 @@ Inline-`<svg>` im DOM: 4 (zusammen 1.496 Byte, 1.017 Byte gzip einzeln gerechnet
 | CSS | 1 | 12,7 | 68,9 | 12,6 | – |
 | Schriften | 2 | 94,6 | 94,6 | 94,6 | ok (≤ 250 KB) |
 | Bilder (ohne SVG) | 1 | 4,8 | 4,8 | 4,7 | – |
-| Next-Prefetch (_rsc) | 19 | 73,7 | 357,5 | 73,1 | – |
-| **Summe** | 40 | 396,5 | 1.207,7 | 394,6 | |
+| Next-Prefetch (_rsc) | 19 | 73,6 | 357,2 | 73,0 | – |
+| **Summe** | 40 | 396,3 | 1.207,4 | 394,4 | |
 
 Inline-`<svg>` im DOM: 3 (zusammen 1.204 Byte, 799 Byte gzip einzeln gerechnet; 0 über 1,5 KB).
 Mehrfach geladene Adressen: 1 (…/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2 ×2).

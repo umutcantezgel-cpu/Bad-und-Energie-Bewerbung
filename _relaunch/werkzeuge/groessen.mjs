@@ -149,7 +149,7 @@ for (const p of seiten) {
   seitenErgebnis.push({
     pfad: p.path, slug: p.slug, haupt: !!p.haupt, status, fehler,
     summe, gesamt, mehrfachGeladen: mehrfach,
-    inlineSvg: { anzahl: inline.length, bytes: inline.reduce((a, s) => a + s.bytes, 0), gzip: inline.reduce((a, s) => a + s.gzip, 0), ueberIconBudget: inline.filter((s) => s.bytes > BUDGET.iconSvgKB * KB).length, elemente: inline },
+    inlineSvg: { anzahl: inline.length, bytes: inline.reduce((a, s) => a + s.bytes, 0), gzip: inline.reduce((a, s) => a + s.gzip, 0), ueberIconBudget: inline.filter((s) => s.bytes > BUDGET.iconSvgKB * KB).length, eindeutig: [...inline.reduce((m, e) => m.set(e.hash, { ...e, vorkommen: (m.get(e.hash)?.vorkommen ?? 0) + 1 }), new Map()).values()] },
     dateien,
     gesperrt: requestLog,
   });
@@ -175,9 +175,9 @@ const css = proUrl(['stylesheet']).sort((a, b) => (b.gzip ?? 0) - (a.gzip ?? 0))
 const svgDateien = proUrl(['svg']).sort((a, b) => (b.gzip ?? 0) - (a.gzip ?? 0)).map((d) => ({ ...d, budget: svgUrteil(d.roh, d.gzip) }));
 // Inline-SVG global nach Auszeichnung (Hash) zusammenfassen
 const inlineMap = new Map();
-for (const s of seitenErgebnis) for (const e of s.inlineSvg.elemente) {
+for (const s of seitenErgebnis) for (const e of s.inlineSvg.eindeutig) {
   const k = inlineMap.get(e.hash) ?? { hash: e.hash, bytes: e.bytes, gzip: e.gzip, breite: e.breite, hoehe: e.hoehe, kennung: e.kennung, ort: e.ort, vorkommen: 0, seiten: [] };
-  k.vorkommen += 1;
+  k.vorkommen += e.vorkommen;
   if (!k.seiten.includes(s.slug)) k.seiten.push(s.slug);
   inlineMap.set(e.hash, k);
 }

@@ -1,8 +1,8 @@
 {
   "label": "P0-MESS-01",
   "base": "http://localhost:3500",
-  "erstellt": "2026-10-09T07:30:09.985Z",
-  "dauerSekunden": 33,
+  "erstellt": "2026-10-09T07:33:49.391Z",
+  "dauerSekunden": 31,
   "node": "v22.22.0",
   "bedingungen": {
     "ansicht": "d1440 (1440×900)",
@@ -73,9 +73,9 @@
         },
         "rsc": {
           "dateien": 13,
-          "uebertragen": 59242,
-          "roh": 303291,
-          "gzip": 58747,
+          "uebertragen": 57745,
+          "roh": 298870,
+          "gzip": 57448,
           "nachScrollen": 37353
         },
         "andere": {
@@ -88,10 +88,10 @@
       },
       "gesamt": {
         "dateien": 33,
-        "uebertragen": 361750,
+        "uebertragen": 360253,
         "kopfBytes": 51794,
-        "roh": 1245039,
-        "gzip": 359741
+        "roh": 1240618,
+        "gzip": 358442
       },
       "mehrfachGeladen": [],
       "inlineSvg": {
@@ -99,7 +99,7 @@
         "bytes": 23399,
         "gzip": 13135,
         "ueberIconBudget": 1,
-        "elemente": [
+        "eindeutig": [
           {
             "hash": "a696ccf47a",
             "bytes": 490,
@@ -108,7 +108,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-4",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "0bd64a8400",
@@ -118,7 +119,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-menu size-6",
-            "ort": "div > button > svg"
+            "ort": "div > button > svg",
+            "vorkommen": 1
           },
           {
             "hash": "14c9136472",
@@ -128,7 +130,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-arrow-down size-4",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "8f334f855e",
@@ -138,37 +141,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "8f334f855e",
-            "bytes": 307,
-            "gzip": 220,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "8f334f855e",
-            "bytes": 307,
-            "gzip": 220,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "8f334f855e",
-            "bytes": 307,
-            "gzip": 220,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
+            "ort": "div > span > svg",
+            "vorkommen": 4
           },
           {
             "hash": "e3ab7f1e50",
@@ -178,7 +152,8 @@
             "hoehe": 24,
             "versteckt": true,
             "kennung": "lucide lucide-banknote size-6",
-            "ort": "ul > li > svg"
+            "ort": "ul > li > svg",
+            "vorkommen": 1
           },
           {
             "hash": "c20e31e89a",
@@ -188,7 +163,8 @@
             "hoehe": 24,
             "versteckt": true,
             "kennung": "lucide lucide-file-check size-6",
-            "ort": "ul > li > svg"
+            "ort": "ul > li > svg",
+            "vorkommen": 1
           },
           {
             "hash": "5fe1a45627",
@@ -198,7 +174,8 @@
             "hoehe": 24,
             "versteckt": true,
             "kennung": "lucide lucide-calendar-off size-6",
-            "ort": "ul > li > svg"
+            "ort": "ul > li > svg",
+            "vorkommen": 1
           },
           {
             "hash": "9efe8e921d",
@@ -208,7 +185,8 @@
             "hoehe": 24,
             "versteckt": true,
             "kennung": "lucide lucide-wrench size-6",
-            "ort": "ul > li > svg"
+            "ort": "ul > li > svg",
+            "vorkommen": 1
           },
           {
             "hash": "1bc64dec1d",
@@ -218,7 +196,8 @@
             "hoehe": 24,
             "versteckt": true,
             "kennung": "lucide lucide-truck size-6",
-            "ort": "ul > li > svg"
+            "ort": "ul > li > svg",
+            "vorkommen": 1
           },
           {
             "hash": "0830a0106e",
@@ -228,7 +207,8 @@
             "hoehe": 24,
             "versteckt": true,
             "kennung": "lucide lucide-tablet-smartphone size-6",
-            "ort": "ul > li > svg"
+            "ort": "ul > li > svg",
+            "vorkommen": 1
           },
           {
             "hash": "038317f1cd",
@@ -238,7 +218,8 @@
             "hoehe": 24,
             "versteckt": true,
             "kennung": "lucide lucide-graduation-cap size-6",
-            "ort": "ul > li > svg"
+            "ort": "ul > li > svg",
+            "vorkommen": 1
           },
           {
             "hash": "ef89a8dc9a",
@@ -248,7 +229,8 @@
             "hoehe": 24,
             "versteckt": true,
             "kennung": "lucide lucide-users size-6",
-            "ort": "ul > li > svg"
+            "ort": "ul > li > svg",
+            "vorkommen": 1
           },
           {
             "hash": "b43125a8e6",
@@ -258,7 +240,8 @@
             "hoehe": 448,
             "versteckt": false,
             "kennung": "size-full select-none",
-            "ort": "div > div > svg"
+            "ort": "div > div > svg",
+            "vorkommen": 1
           },
           {
             "hash": "df4b01e8ab",
@@ -268,7 +251,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-chevron-down pointer-events-none",
-            "ort": "div > div > svg"
+            "ort": "div > div > svg",
+            "vorkommen": 1
           },
           {
             "hash": "89e826998b",
@@ -278,17 +262,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-shield-check mt-0.5",
-            "ort": "div > p > svg"
-          },
-          {
-            "hash": "7924b18858",
-            "bytes": 318,
-            "gzip": 233,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check hidden",
-            "ort": "div > button > svg"
+            "ort": "div > p > svg",
+            "vorkommen": 1
           },
           {
             "hash": "7924b18858",
@@ -298,17 +273,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-check hidden",
-            "ort": "div > button > svg"
-          },
-          {
-            "hash": "7924b18858",
-            "bytes": 318,
-            "gzip": 233,
-            "breite": 0,
-            "hoehe": 0,
-            "versteckt": true,
-            "kennung": "lucide lucide-check hidden",
-            "ort": "div > button > svg"
+            "ort": "div > button > svg",
+            "vorkommen": 3
           },
           {
             "hash": "e26eeff6a7",
@@ -318,7 +284,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-chevron-left size-5",
-            "ort": "div > button > svg"
+            "ort": "div > button > svg",
+            "vorkommen": 1
           },
           {
             "hash": "c32b9c5657",
@@ -328,7 +295,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-chevron-right size-5",
-            "ort": "div > button > svg"
+            "ort": "div > button > svg",
+            "vorkommen": 1
           },
           {
             "hash": "e063336fc5",
@@ -338,97 +306,8 @@
             "hoehe": 16,
             "versteckt": false,
             "kennung": "5,0 von 5 Sternen",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "e063336fc5",
-            "bytes": 897,
-            "gzip": 423,
-            "breite": 88,
-            "hoehe": 16,
-            "versteckt": false,
-            "kennung": "5,0 von 5 Sternen",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "e063336fc5",
-            "bytes": 897,
-            "gzip": 423,
-            "breite": 88,
-            "hoehe": 16,
-            "versteckt": false,
-            "kennung": "5,0 von 5 Sternen",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "e063336fc5",
-            "bytes": 897,
-            "gzip": 423,
-            "breite": 88,
-            "hoehe": 16,
-            "versteckt": false,
-            "kennung": "5,0 von 5 Sternen",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "e063336fc5",
-            "bytes": 897,
-            "gzip": 423,
-            "breite": 88,
-            "hoehe": 16,
-            "versteckt": false,
-            "kennung": "5,0 von 5 Sternen",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "e063336fc5",
-            "bytes": 897,
-            "gzip": 423,
-            "breite": 88,
-            "hoehe": 16,
-            "versteckt": false,
-            "kennung": "5,0 von 5 Sternen",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "e063336fc5",
-            "bytes": 897,
-            "gzip": 423,
-            "breite": 88,
-            "hoehe": 16,
-            "versteckt": false,
-            "kennung": "5,0 von 5 Sternen",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "e063336fc5",
-            "bytes": 897,
-            "gzip": 423,
-            "breite": 88,
-            "hoehe": 16,
-            "versteckt": false,
-            "kennung": "5,0 von 5 Sternen",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "e063336fc5",
-            "bytes": 897,
-            "gzip": 423,
-            "breite": 88,
-            "hoehe": 16,
-            "versteckt": false,
-            "kennung": "5,0 von 5 Sternen",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "e063336fc5",
-            "bytes": 897,
-            "gzip": 423,
-            "breite": 88,
-            "hoehe": 16,
-            "versteckt": false,
-            "kennung": "5,0 von 5 Sternen",
-            "ort": "div > span > svg"
+            "ort": "div > span > svg",
+            "vorkommen": 10
           },
           {
             "hash": "423aa2d4dc",
@@ -438,47 +317,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-chevron-down size-5",
-            "ort": "details > summary > svg"
-          },
-          {
-            "hash": "423aa2d4dc",
-            "bytes": 376,
-            "gzip": 266,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-chevron-down size-5",
-            "ort": "details > summary > svg"
-          },
-          {
-            "hash": "423aa2d4dc",
-            "bytes": 376,
-            "gzip": 266,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-chevron-down size-5",
-            "ort": "details > summary > svg"
-          },
-          {
-            "hash": "423aa2d4dc",
-            "bytes": 376,
-            "gzip": 266,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-chevron-down size-5",
-            "ort": "details > summary > svg"
-          },
-          {
-            "hash": "423aa2d4dc",
-            "bytes": 376,
-            "gzip": 266,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-chevron-down size-5",
-            "ort": "details > summary > svg"
+            "ort": "details > summary > svg",
+            "vorkommen": 5
           },
           {
             "hash": "1214cc2a89",
@@ -488,7 +328,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-5",
-            "ort": "li > a > svg"
+            "ort": "li > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "01d27c798b",
@@ -498,7 +339,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-5",
-            "ort": "li > a > svg"
+            "ort": "li > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "91f18c4524",
@@ -508,7 +350,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-mail size-5",
-            "ort": "li > a > svg"
+            "ort": "li > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "eb0e1ca9fa",
@@ -518,7 +361,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-6",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           }
         ]
       },
@@ -536,20 +380,6 @@
           "roh": 161129,
           "gzip": 28378,
           "sha": "4e60ff2a57"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2",
-          "status": 200,
-          "typ": "font",
-          "resourceType": "font",
-          "contentType": "font/woff2",
-          "kodierung": "keine",
-          "phase": "laden",
-          "uebertragen": 48432,
-          "kopfBytes": 1478,
-          "roh": 48432,
-          "gzip": 48442,
-          "sha": "72de81a16b"
         },
         {
           "url": "http://localhost:3500/_next/image",
@@ -579,6 +409,20 @@
           "roh": 70552,
           "gzip": 12924,
           "sha": "967bd6dd40"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2",
+          "status": 200,
+          "typ": "font",
+          "resourceType": "font",
+          "contentType": "font/woff2",
+          "kodierung": "keine",
+          "phase": "laden",
+          "uebertragen": 48432,
+          "kopfBytes": 1478,
+          "roh": 48432,
+          "gzip": 48442,
+          "sha": "72de81a16b"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/3_pz_xyhj63hd.js",
@@ -623,6 +467,34 @@
           "sha": "444672ed4f"
         },
         {
+          "url": "http://localhost:3500/_next/static/chunks/0e4c9xds_42la.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 7480,
+          "kopfBytes": 1557,
+          "roh": 18881,
+          "gzip": 7461,
+          "sha": "61ef57b667"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/2gntgrcwrye4_.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 45311,
+          "kopfBytes": 1558,
+          "roh": 166561,
+          "gzip": 45131,
+          "sha": "eb84dbf702"
+        },
+        {
           "url": "http://localhost:3500/_next/static/chunks/118nq7mu3xtd_.js",
           "status": 200,
           "typ": "script",
@@ -637,18 +509,18 @@
           "sha": "d3d2f000a8"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/0e4c9xds_42la.js",
+          "url": "http://localhost:3500/_next/static/chunks/3fntmmi971322.js",
           "status": 200,
           "typ": "script",
           "resourceType": "script",
           "contentType": "application/javascript",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 7480,
+          "uebertragen": 3678,
           "kopfBytes": 1557,
-          "roh": 18881,
-          "gzip": 7461,
-          "sha": "61ef57b667"
+          "roh": 14377,
+          "gzip": 3653,
+          "sha": "e558c95969"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/0a37caasaw7-7.js",
@@ -679,48 +551,6 @@
           "sha": "ff7e956ae2"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/2q3e_ybdy56h_.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 1451,
-          "kopfBytes": 1556,
-          "roh": 3047,
-          "gzip": 1431,
-          "sha": "9c07a3f9aa"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/2gntgrcwrye4_.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 45311,
-          "kopfBytes": 1558,
-          "roh": 166561,
-          "gzip": 45131,
-          "sha": "eb84dbf702"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/3fntmmi971322.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 3678,
-          "kopfBytes": 1557,
-          "roh": 14377,
-          "gzip": 3653,
-          "sha": "e558c95969"
-        },
-        {
           "url": "http://localhost:3500/_next/static/chunks/0htzap2iir08t.js",
           "status": 200,
           "typ": "script",
@@ -733,6 +563,20 @@
           "roh": 28837,
           "gzip": 8920,
           "sha": "98a56612e7"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/2q3e_ybdy56h_.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 1451,
+          "kopfBytes": 1556,
+          "roh": 3047,
+          "gzip": 1431,
+          "sha": "9c07a3f9aa"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/2qoqctrx7khrp.js",
@@ -861,11 +705,11 @@
           "contentType": "text/x-component",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 1497,
+          "uebertragen": 0,
           "kopfBytes": 1541,
-          "roh": 4421,
-          "gzip": 1299,
-          "sha": "9e808dd394"
+          "roh": null,
+          "gzip": null,
+          "hinweis": "Body nicht lesbar (Weiterleitung, 204 o. Ä.)"
         },
         {
           "url": "http://localhost:3500/jobs/anlagenmechaniker-shk-wetzlar",
@@ -898,21 +742,6 @@
           "sha": "a30ed8f08b"
         },
         {
-          "url": "http://localhost:3500/jobs/kundendiensttechniker-waermepumpe-wetzlar",
-          "query": "?_rsc=J7MvdjA4ZnBxmJR0",
-          "status": 200,
-          "typ": "rsc",
-          "resourceType": "fetch",
-          "contentType": "text/x-component",
-          "kodierung": "gzip",
-          "phase": "scroll",
-          "uebertragen": 9297,
-          "kopfBytes": 1599,
-          "roh": 52404,
-          "gzip": 9248,
-          "sha": "ce9166b468"
-        },
-        {
           "url": "http://localhost:3500/jobs/anlagenmechaniker-shk-wetzlar",
           "query": "?_rsc=J7MvdjA4ZnBxmJR0",
           "status": 200,
@@ -926,6 +755,21 @@
           "roh": 52149,
           "gzip": 9229,
           "sha": "2c53a47188"
+        },
+        {
+          "url": "http://localhost:3500/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+          "query": "?_rsc=J7MvdjA4ZnBxmJR0",
+          "status": 200,
+          "typ": "rsc",
+          "resourceType": "fetch",
+          "contentType": "text/x-component",
+          "kodierung": "gzip",
+          "phase": "scroll",
+          "uebertragen": 9297,
+          "kopfBytes": 1599,
+          "roh": 52404,
+          "gzip": 9248,
+          "sha": "ce9166b468"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/344bdav7k-may.js",
@@ -1054,9 +898,9 @@
         },
         "rsc": {
           "dateien": 19,
-          "uebertragen": 75329,
-          "roh": 365763,
-          "gzip": 74733,
+          "uebertragen": 74015,
+          "roh": 361611,
+          "gzip": 73602,
           "nachScrollen": 15377
         },
         "andere": {
@@ -1069,10 +913,10 @@
       },
       "gesamt": {
         "dateien": 39,
-        "uebertragen": 361501,
+        "uebertragen": 360187,
         "kopfBytes": 61389,
-        "roh": 1215746,
-        "gzip": 359508
+        "roh": 1211594,
+        "gzip": 358377
       },
       "mehrfachGeladen": [],
       "inlineSvg": {
@@ -1080,7 +924,7 @@
         "bytes": 3948,
         "gzip": 2724,
         "ueberIconBudget": 0,
-        "elemente": [
+        "eindeutig": [
           {
             "hash": "a696ccf47a",
             "bytes": 490,
@@ -1089,7 +933,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-4",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "0bd64a8400",
@@ -1099,7 +944,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-menu size-6",
-            "ort": "div > button > svg"
+            "ort": "div > button > svg",
+            "vorkommen": 1
           },
           {
             "hash": "c04a71bc06",
@@ -1109,7 +955,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-chevron-right size-4",
-            "ort": "ol > li > svg"
+            "ort": "ol > li > svg",
+            "vorkommen": 1
           },
           {
             "hash": "8f334f855e",
@@ -1119,37 +966,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "8f334f855e",
-            "bytes": 307,
-            "gzip": 220,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "8f334f855e",
-            "bytes": 307,
-            "gzip": 220,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "8f334f855e",
-            "bytes": 307,
-            "gzip": 220,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
+            "ort": "div > span > svg",
+            "vorkommen": 4
           },
           {
             "hash": "44fd71baf6",
@@ -1159,7 +977,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-5",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "fd60c4c816",
@@ -1169,7 +988,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-5",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "42f70fd309",
@@ -1179,7 +999,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-mail size-5",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "eb0e1ca9fa",
@@ -1189,7 +1010,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-6",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           }
         ]
       },
@@ -1252,20 +1074,6 @@
           "sha": "a71986e2cb"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/0dk_14w2_fmo8.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 7554,
-          "kopfBytes": 1557,
-          "roh": 28325,
-          "gzip": 7509,
-          "sha": "83060995cf"
-        },
-        {
           "url": "http://localhost:3500/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2",
           "status": 200,
           "typ": "font",
@@ -1280,46 +1088,18 @@
           "sha": "72de81a16b"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/2gntgrcwrye4_.js",
+          "url": "http://localhost:3500/_next/static/chunks/0dk_14w2_fmo8.js",
           "status": 200,
           "typ": "script",
           "resourceType": "script",
           "contentType": "application/javascript",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 45311,
-          "kopfBytes": 1558,
-          "roh": 166561,
-          "gzip": 45131,
-          "sha": "eb84dbf702"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/turbopack-43yqbgrfns39j.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 4323,
+          "uebertragen": 7554,
           "kopfBytes": 1557,
-          "roh": 10946,
-          "gzip": 4305,
-          "sha": "444672ed4f"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/0e4c9xds_42la.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 7480,
-          "kopfBytes": 1557,
-          "roh": 18881,
-          "gzip": 7461,
-          "sha": "61ef57b667"
+          "roh": 28325,
+          "gzip": 7509,
+          "sha": "83060995cf"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/0a37caasaw7-7.js",
@@ -1336,18 +1116,32 @@
           "sha": "d0c8f37127"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/118nq7mu3xtd_.js",
+          "url": "http://localhost:3500/_next/static/chunks/turbopack-43yqbgrfns39j.js",
           "status": 200,
           "typ": "script",
           "resourceType": "script",
           "contentType": "application/javascript",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 9362,
+          "uebertragen": 4323,
           "kopfBytes": 1557,
-          "roh": 26029,
-          "gzip": 9340,
-          "sha": "d3d2f000a8"
+          "roh": 10946,
+          "gzip": 4305,
+          "sha": "444672ed4f"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/2q3e_ybdy56h_.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 1451,
+          "kopfBytes": 1556,
+          "roh": 3047,
+          "gzip": 1431,
+          "sha": "9c07a3f9aa"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/3fntmmi971322.js",
@@ -1364,18 +1158,46 @@
           "sha": "e558c95969"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/2q3e_ybdy56h_.js",
+          "url": "http://localhost:3500/_next/static/chunks/118nq7mu3xtd_.js",
           "status": 200,
           "typ": "script",
           "resourceType": "script",
           "contentType": "application/javascript",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 1451,
-          "kopfBytes": 1556,
-          "roh": 3047,
-          "gzip": 1431,
-          "sha": "9c07a3f9aa"
+          "uebertragen": 9362,
+          "kopfBytes": 1557,
+          "roh": 26029,
+          "gzip": 9340,
+          "sha": "d3d2f000a8"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/0e4c9xds_42la.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 7480,
+          "kopfBytes": 1557,
+          "roh": 18881,
+          "gzip": 7461,
+          "sha": "61ef57b667"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/2gntgrcwrye4_.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 45311,
+          "kopfBytes": 1558,
+          "roh": 166561,
+          "gzip": 45131,
+          "sha": "eb84dbf702"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/2qoqctrx7khrp.js",
@@ -1430,11 +1252,11 @@
           "contentType": "text/x-component",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 0,
+          "uebertragen": 185,
           "kopfBytes": 1541,
-          "roh": null,
-          "gzip": null,
-          "hinweis": "Body nicht lesbar (Weiterleitung, 204 o. Ä.)"
+          "roh": 269,
+          "gzip": 169,
+          "sha": "76cef33406"
         },
         {
           "url": "http://localhost:3500/jobs/anlagenmechaniker-shk-wetzlar",
@@ -1550,39 +1372,11 @@
           "contentType": "text/x-component",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 1499,
+          "uebertragen": 0,
           "kopfBytes": 1541,
-          "roh": 4421,
-          "gzip": 1300,
-          "sha": "dd9b4bd62d"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/0q1a5avojmzza.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "keine",
-          "phase": "laden",
-          "uebertragen": 215,
-          "kopfBytes": 1524,
-          "roh": 215,
-          "gzip": 198,
-          "sha": "ff7e956ae2"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/0htzap2iir08t.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 8945,
-          "kopfBytes": 1557,
-          "roh": 28837,
-          "gzip": 8920,
-          "sha": "98a56612e7"
+          "roh": null,
+          "gzip": null,
+          "hinweis": "Body nicht lesbar (Weiterleitung, 204 o. Ä.)"
         },
         {
           "url": "http://localhost:3500/jobs/anlagenmechaniker-shk-wetzlar",
@@ -1600,6 +1394,20 @@
           "sha": "2c53a47188"
         },
         {
+          "url": "http://localhost:3500/_next/static/chunks/0q1a5avojmzza.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "keine",
+          "phase": "laden",
+          "uebertragen": 215,
+          "kopfBytes": 1524,
+          "roh": 215,
+          "gzip": 198,
+          "sha": "ff7e956ae2"
+        },
+        {
           "url": "http://localhost:3500/jobs/kundendiensttechniker-waermepumpe-wetzlar",
           "query": "?_rsc=BJ9L9TEtXNUenGLq",
           "status": 200,
@@ -1613,6 +1421,34 @@
           "roh": 52404,
           "gzip": 9248,
           "sha": "ce9166b468"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/0htzap2iir08t.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 8945,
+          "kopfBytes": 1557,
+          "roh": 28837,
+          "gzip": 8920,
+          "sha": "98a56612e7"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/2o0b38gyj507j.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 11376,
+          "kopfBytes": 1557,
+          "roh": 31713,
+          "gzip": 11351,
+          "sha": "54401eac2e"
         },
         {
           "url": "http://localhost:3500/jobs/obermonteur-projektleiter-shk-wetzlar",
@@ -1630,20 +1466,6 @@
           "sha": "a9c219bc7d"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/2o0b38gyj507j.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 11376,
-          "kopfBytes": 1557,
-          "roh": 31713,
-          "gzip": 11351,
-          "sha": "54401eac2e"
-        },
-        {
           "url": "http://localhost:3500/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
           "query": "?_rsc=BJ9L9TEtXNUenGLq",
           "status": 200,
@@ -1659,20 +1481,6 @@
           "sha": "f5c82fe176"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/3snddn835qz2b.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 11129,
-          "kopfBytes": 1557,
-          "roh": 31436,
-          "gzip": 11097,
-          "sha": "04700e1af7"
-        },
-        {
           "url": "http://localhost:3500/_next/static/chunks/344bdav7k-may.js",
           "status": 200,
           "typ": "script",
@@ -1685,6 +1493,20 @@
           "roh": 945,
           "gzip": 564,
           "sha": "d6fba95207"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/3snddn835qz2b.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 11129,
+          "kopfBytes": 1557,
+          "roh": 31436,
+          "gzip": 11097,
+          "sha": "04700e1af7"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/11wu3hljr9hj4.js",
@@ -1716,21 +1538,6 @@
           "sha": "c2b746d191"
         },
         {
-          "url": "http://localhost:3500/datenschutz",
-          "query": "?_rsc=ei5oL2u6deBo0B0U",
-          "status": 200,
-          "typ": "rsc",
-          "resourceType": "fetch",
-          "contentType": "text/x-component",
-          "kodierung": "gzip",
-          "phase": "scroll",
-          "uebertragen": 300,
-          "kopfBytes": 1599,
-          "roh": 441,
-          "gzip": 283,
-          "sha": "f40a221341"
-        },
-        {
           "url": "http://localhost:3500/impressum",
           "query": "?_rsc=U8iQjfKNhqPu80gY",
           "status": 200,
@@ -1744,6 +1551,21 @@
           "roh": 18340,
           "gzip": 3831,
           "sha": "6f65b50a52"
+        },
+        {
+          "url": "http://localhost:3500/datenschutz",
+          "query": "?_rsc=ei5oL2u6deBo0B0U",
+          "status": 200,
+          "typ": "rsc",
+          "resourceType": "fetch",
+          "contentType": "text/x-component",
+          "kodierung": "gzip",
+          "phase": "scroll",
+          "uebertragen": 300,
+          "kopfBytes": 1599,
+          "roh": 441,
+          "gzip": 283,
+          "sha": "f40a221341"
         },
         {
           "url": "http://localhost:3500/datenschutz",
@@ -1815,9 +1637,9 @@
         },
         "rsc": {
           "dateien": 7,
-          "uebertragen": 22077,
+          "uebertragen": 22074,
           "roh": 95741,
-          "gzip": 21801,
+          "gzip": 21799,
           "nachScrollen": 0
         },
         "andere": {
@@ -1830,10 +1652,10 @@
       },
       "gesamt": {
         "dateien": 27,
-        "uebertragen": 318820,
+        "uebertragen": 318817,
         "kopfBytes": 42200,
         "roh": 1013432,
-        "gzip": 317058
+        "gzip": 317056
       },
       "mehrfachGeladen": [],
       "inlineSvg": {
@@ -1841,7 +1663,7 @@
         "bytes": 10714,
         "gzip": 7623,
         "ueberIconBudget": 0,
-        "elemente": [
+        "eindeutig": [
           {
             "hash": "a696ccf47a",
             "bytes": 490,
@@ -1850,7 +1672,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-4",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "0bd64a8400",
@@ -1860,7 +1683,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-menu size-6",
-            "ort": "div > button > svg"
+            "ort": "div > button > svg",
+            "vorkommen": 1
           },
           {
             "hash": "c04a71bc06",
@@ -1870,17 +1694,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-chevron-right size-4",
-            "ort": "ol > li > svg"
-          },
-          {
-            "hash": "c04a71bc06",
-            "bytes": 292,
-            "gzip": 218,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-chevron-right size-4",
-            "ort": "ol > li > svg"
+            "ort": "ol > li > svg",
+            "vorkommen": 2
           },
           {
             "hash": "a2eaf4544e",
@@ -1890,77 +1705,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
+            "ort": "ul > li > svg",
+            "vorkommen": 8
           },
           {
             "hash": "d74602ea85",
@@ -1970,47 +1716,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
+            "ort": "button > span > svg",
+            "vorkommen": 5
           },
           {
             "hash": "ca1589633a",
@@ -2020,7 +1727,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle mt-[calc((1lh_-_1.25rem)/2)]",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "1214cc2a89",
@@ -2030,7 +1738,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-5",
-            "ort": "li > a > svg"
+            "ort": "li > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "01d27c798b",
@@ -2040,7 +1749,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-5",
-            "ort": "li > a > svg"
+            "ort": "li > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "91f18c4524",
@@ -2050,7 +1760,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-mail size-5",
-            "ort": "li > a > svg"
+            "ort": "li > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "423aa2d4dc",
@@ -2060,27 +1771,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-chevron-down size-5",
-            "ort": "details > summary > svg"
-          },
-          {
-            "hash": "423aa2d4dc",
-            "bytes": 376,
-            "gzip": 266,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-chevron-down size-5",
-            "ort": "details > summary > svg"
-          },
-          {
-            "hash": "423aa2d4dc",
-            "bytes": 376,
-            "gzip": 266,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-chevron-down size-5",
-            "ort": "details > summary > svg"
+            "ort": "details > summary > svg",
+            "vorkommen": 3
           },
           {
             "hash": "44fd71baf6",
@@ -2090,7 +1782,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-5",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "fd60c4c816",
@@ -2100,7 +1793,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-5",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "42f70fd309",
@@ -2110,7 +1804,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-mail size-5",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "8f334f855e",
@@ -2120,27 +1815,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "8f334f855e",
-            "bytes": 307,
-            "gzip": 220,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "8f334f855e",
-            "bytes": 307,
-            "gzip": 220,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
+            "ort": "div > span > svg",
+            "vorkommen": 3
           },
           {
             "hash": "eb0e1ca9fa",
@@ -2150,7 +1826,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-6",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           }
         ]
       },
@@ -2168,21 +1845,6 @@
           "roh": 137072,
           "gzip": 22641,
           "sha": "d57e550972"
-        },
-        {
-          "url": "http://localhost:3500/_next/image",
-          "query": "?url=%2F_next%2Fstatic%2Fmedia%2Fbad-energie-lahn-dill-logo-transparent.3ymc_7q1mu2_-.webp&w=256&q=75",
-          "status": 200,
-          "typ": "image",
-          "resourceType": "image",
-          "contentType": "image/avif",
-          "kodierung": "keine",
-          "phase": "laden",
-          "uebertragen": 4907,
-          "kopfBytes": 1629,
-          "roh": 4907,
-          "gzip": 4862,
-          "sha": "43c7fa535d"
         },
         {
           "url": "http://localhost:3500/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2",
@@ -2213,6 +1875,21 @@
           "sha": "967bd6dd40"
         },
         {
+          "url": "http://localhost:3500/_next/image",
+          "query": "?url=%2F_next%2Fstatic%2Fmedia%2Fbad-energie-lahn-dill-logo-transparent.3ymc_7q1mu2_-.webp&w=256&q=75",
+          "status": 200,
+          "typ": "image",
+          "resourceType": "image",
+          "contentType": "image/avif",
+          "kodierung": "keine",
+          "phase": "laden",
+          "uebertragen": 4907,
+          "kopfBytes": 1629,
+          "roh": 4907,
+          "gzip": 4862,
+          "sha": "43c7fa535d"
+        },
+        {
           "url": "http://localhost:3500/_next/static/chunks/3_pz_xyhj63hd.js",
           "status": 200,
           "typ": "script",
@@ -2225,62 +1902,6 @@
           "roh": 348,
           "gzip": 268,
           "sha": "a71986e2cb"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/turbopack-43yqbgrfns39j.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 4323,
-          "kopfBytes": 1557,
-          "roh": 10946,
-          "gzip": 4305,
-          "sha": "444672ed4f"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/2gntgrcwrye4_.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 45311,
-          "kopfBytes": 1558,
-          "roh": 166561,
-          "gzip": 45131,
-          "sha": "eb84dbf702"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/0e4c9xds_42la.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 7480,
-          "kopfBytes": 1557,
-          "roh": 18881,
-          "gzip": 7461,
-          "sha": "61ef57b667"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/118nq7mu3xtd_.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 9362,
-          "kopfBytes": 1557,
-          "roh": 26029,
-          "gzip": 9340,
-          "sha": "d3d2f000a8"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/0dk_14w2_fmo8.js",
@@ -2297,74 +1918,18 @@
           "sha": "83060995cf"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/3fntmmi971322.js",
+          "url": "http://localhost:3500/_next/static/chunks/turbopack-43yqbgrfns39j.js",
           "status": 200,
           "typ": "script",
           "resourceType": "script",
           "contentType": "application/javascript",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 3678,
+          "uebertragen": 4323,
           "kopfBytes": 1557,
-          "roh": 14377,
-          "gzip": 3653,
-          "sha": "e558c95969"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/344bdav7k-may.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "keine",
-          "phase": "laden",
-          "uebertragen": 945,
-          "kopfBytes": 1525,
-          "roh": 945,
-          "gzip": 564,
-          "sha": "d6fba95207"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/3snddn835qz2b.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 11129,
-          "kopfBytes": 1557,
-          "roh": 31436,
-          "gzip": 11097,
-          "sha": "04700e1af7"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/0htzap2iir08t.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 8945,
-          "kopfBytes": 1557,
-          "roh": 28837,
-          "gzip": 8920,
-          "sha": "98a56612e7"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/2q3e_ybdy56h_.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 1451,
-          "kopfBytes": 1556,
-          "roh": 3047,
-          "gzip": 1431,
-          "sha": "9c07a3f9aa"
+          "roh": 10946,
+          "gzip": 4305,
+          "sha": "444672ed4f"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/0a37caasaw7-7.js",
@@ -2381,6 +1946,104 @@
           "sha": "d0c8f37127"
         },
         {
+          "url": "http://localhost:3500/_next/static/chunks/2gntgrcwrye4_.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 45311,
+          "kopfBytes": 1558,
+          "roh": 166561,
+          "gzip": 45131,
+          "sha": "eb84dbf702"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/3fntmmi971322.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 3678,
+          "kopfBytes": 1557,
+          "roh": 14377,
+          "gzip": 3653,
+          "sha": "e558c95969"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/0e4c9xds_42la.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 7480,
+          "kopfBytes": 1557,
+          "roh": 18881,
+          "gzip": 7461,
+          "sha": "61ef57b667"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/2q3e_ybdy56h_.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 1451,
+          "kopfBytes": 1556,
+          "roh": 3047,
+          "gzip": 1431,
+          "sha": "9c07a3f9aa"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/118nq7mu3xtd_.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 9362,
+          "kopfBytes": 1557,
+          "roh": 26029,
+          "gzip": 9340,
+          "sha": "d3d2f000a8"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/344bdav7k-may.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "keine",
+          "phase": "laden",
+          "uebertragen": 945,
+          "kopfBytes": 1525,
+          "roh": 945,
+          "gzip": 564,
+          "sha": "d6fba95207"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/0htzap2iir08t.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 8945,
+          "kopfBytes": 1557,
+          "roh": 28837,
+          "gzip": 8920,
+          "sha": "98a56612e7"
+        },
+        {
           "url": "http://localhost:3500/_next/static/chunks/2qoqctrx7khrp.js",
           "status": 200,
           "typ": "script",
@@ -2393,6 +2056,20 @@
           "roh": 2409,
           "gzip": 1289,
           "sha": "270c5badf9"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/3snddn835qz2b.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 11129,
+          "kopfBytes": 1557,
+          "roh": 31436,
+          "gzip": 11097,
+          "sha": "04700e1af7"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/11wu3hljr9hj4.js",
@@ -2507,11 +2184,11 @@
           "contentType": "text/x-component",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 1500,
+          "uebertragen": 1497,
           "kopfBytes": 1541,
           "roh": 4421,
-          "gzip": 1301,
-          "sha": "0d2128a1ee"
+          "gzip": 1299,
+          "sha": "c6d0a30559"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/0q1a5avojmzza.js",
@@ -2596,9 +2273,9 @@
         },
         "rsc": {
           "dateien": 7,
-          "uebertragen": 22075,
-          "roh": 95741,
-          "gzip": 21798,
+          "uebertragen": 20392,
+          "roh": 91051,
+          "gzip": 20331,
           "nachScrollen": 0
         },
         "andere": {
@@ -2611,10 +2288,10 @@
       },
       "gesamt": {
         "dateien": 27,
-        "uebertragen": 318798,
+        "uebertragen": 317115,
         "kopfBytes": 42200,
-        "roh": 1013888,
-        "gzip": 317034
+        "roh": 1009198,
+        "gzip": 315567
       },
       "mehrfachGeladen": [],
       "inlineSvg": {
@@ -2622,7 +2299,7 @@
         "bytes": 10714,
         "gzip": 7623,
         "ueberIconBudget": 0,
-        "elemente": [
+        "eindeutig": [
           {
             "hash": "a696ccf47a",
             "bytes": 490,
@@ -2631,7 +2308,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-4",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "0bd64a8400",
@@ -2641,7 +2319,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-menu size-6",
-            "ort": "div > button > svg"
+            "ort": "div > button > svg",
+            "vorkommen": 1
           },
           {
             "hash": "c04a71bc06",
@@ -2651,17 +2330,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-chevron-right size-4",
-            "ort": "ol > li > svg"
-          },
-          {
-            "hash": "c04a71bc06",
-            "bytes": 292,
-            "gzip": 218,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-chevron-right size-4",
-            "ort": "ol > li > svg"
+            "ort": "ol > li > svg",
+            "vorkommen": 2
           },
           {
             "hash": "a2eaf4544e",
@@ -2671,77 +2341,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
+            "ort": "ul > li > svg",
+            "vorkommen": 8
           },
           {
             "hash": "d74602ea85",
@@ -2751,47 +2352,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
+            "ort": "button > span > svg",
+            "vorkommen": 5
           },
           {
             "hash": "ca1589633a",
@@ -2801,7 +2363,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle mt-[calc((1lh_-_1.25rem)/2)]",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "1214cc2a89",
@@ -2811,7 +2374,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-5",
-            "ort": "li > a > svg"
+            "ort": "li > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "01d27c798b",
@@ -2821,7 +2385,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-5",
-            "ort": "li > a > svg"
+            "ort": "li > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "91f18c4524",
@@ -2831,7 +2396,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-mail size-5",
-            "ort": "li > a > svg"
+            "ort": "li > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "423aa2d4dc",
@@ -2841,27 +2407,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-chevron-down size-5",
-            "ort": "details > summary > svg"
-          },
-          {
-            "hash": "423aa2d4dc",
-            "bytes": 376,
-            "gzip": 266,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-chevron-down size-5",
-            "ort": "details > summary > svg"
-          },
-          {
-            "hash": "423aa2d4dc",
-            "bytes": 376,
-            "gzip": 266,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-chevron-down size-5",
-            "ort": "details > summary > svg"
+            "ort": "details > summary > svg",
+            "vorkommen": 3
           },
           {
             "hash": "44fd71baf6",
@@ -2871,7 +2418,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-5",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "fd60c4c816",
@@ -2881,7 +2429,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-5",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "42f70fd309",
@@ -2891,7 +2440,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-mail size-5",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "8f334f855e",
@@ -2901,27 +2451,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "8f334f855e",
-            "bytes": 307,
-            "gzip": 220,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "8f334f855e",
-            "bytes": 307,
-            "gzip": 220,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
+            "ort": "div > span > svg",
+            "vorkommen": 3
           },
           {
             "hash": "eb0e1ca9fa",
@@ -2931,7 +2462,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-6",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           }
         ]
       },
@@ -3050,20 +2582,6 @@
           "sha": "83060995cf"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/118nq7mu3xtd_.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 9362,
-          "kopfBytes": 1557,
-          "roh": 26029,
-          "gzip": 9340,
-          "sha": "d3d2f000a8"
-        },
-        {
           "url": "http://localhost:3500/_next/static/chunks/2gntgrcwrye4_.js",
           "status": 200,
           "typ": "script",
@@ -3078,18 +2596,18 @@
           "sha": "eb84dbf702"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/344bdav7k-may.js",
+          "url": "http://localhost:3500/_next/static/chunks/118nq7mu3xtd_.js",
           "status": 200,
           "typ": "script",
           "resourceType": "script",
           "contentType": "application/javascript",
-          "kodierung": "keine",
+          "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 945,
-          "kopfBytes": 1525,
-          "roh": 945,
-          "gzip": 564,
-          "sha": "d6fba95207"
+          "uebertragen": 9362,
+          "kopfBytes": 1557,
+          "roh": 26029,
+          "gzip": 9340,
+          "sha": "d3d2f000a8"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/3fntmmi971322.js",
@@ -3106,6 +2624,20 @@
           "sha": "e558c95969"
         },
         {
+          "url": "http://localhost:3500/_next/static/chunks/344bdav7k-may.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "keine",
+          "phase": "laden",
+          "uebertragen": 945,
+          "kopfBytes": 1525,
+          "roh": 945,
+          "gzip": 564,
+          "sha": "d6fba95207"
+        },
+        {
           "url": "http://localhost:3500/_next/static/chunks/2q3e_ybdy56h_.js",
           "status": 200,
           "typ": "script",
@@ -3118,20 +2650,6 @@
           "roh": 3047,
           "gzip": 1431,
           "sha": "9c07a3f9aa"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/0a37caasaw7-7.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 73345,
-          "kopfBytes": 1558,
-          "roh": 234172,
-          "gzip": 73117,
-          "sha": "d0c8f37127"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/3snddn835qz2b.js",
@@ -3162,20 +2680,6 @@
           "sha": "98a56612e7"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/11wu3hljr9hj4.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 20792,
-          "kopfBytes": 1557,
-          "roh": 58487,
-          "gzip": 20754,
-          "sha": "c3d6e7dc62"
-        },
-        {
           "url": "http://localhost:3500/_next/static/chunks/2qoqctrx7khrp.js",
           "status": 200,
           "typ": "script",
@@ -3188,6 +2692,34 @@
           "roh": 2409,
           "gzip": 1289,
           "sha": "270c5badf9"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/0a37caasaw7-7.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 73345,
+          "kopfBytes": 1558,
+          "roh": 234172,
+          "gzip": 73117,
+          "sha": "d0c8f37127"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/11wu3hljr9hj4.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 20792,
+          "kopfBytes": 1557,
+          "roh": 58487,
+          "gzip": 20754,
+          "sha": "c3d6e7dc62"
         },
         {
           "url": "http://localhost:3500/",
@@ -3228,11 +2760,11 @@
           "contentType": "text/x-component",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 185,
+          "uebertragen": 0,
           "kopfBytes": 1541,
-          "roh": 269,
-          "gzip": 169,
-          "sha": "76cef33406"
+          "roh": null,
+          "gzip": null,
+          "hinweis": "Body nicht lesbar (Weiterleitung, 204 o. Ä.)"
         },
         {
           "url": "http://localhost:3500/",
@@ -3288,25 +2820,11 @@
           "contentType": "text/x-component",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 1498,
+          "uebertragen": 0,
           "kopfBytes": 1541,
-          "roh": 4421,
-          "gzip": 1298,
-          "sha": "5fb837ae17"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/0q1a5avojmzza.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "keine",
-          "phase": "laden",
-          "uebertragen": 215,
-          "kopfBytes": 1524,
-          "roh": 215,
-          "gzip": 198,
-          "sha": "ff7e956ae2"
+          "roh": null,
+          "gzip": null,
+          "hinweis": "Body nicht lesbar (Weiterleitung, 204 o. Ä.)"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/2o0b38gyj507j.js",
@@ -3321,6 +2839,20 @@
           "roh": 31713,
           "gzip": 11351,
           "sha": "54401eac2e"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/0q1a5avojmzza.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "keine",
+          "phase": "laden",
+          "uebertragen": 215,
+          "kopfBytes": 1524,
+          "roh": 215,
+          "gzip": 198,
+          "sha": "ff7e956ae2"
         }
       ],
       "gesperrteAnfragen": 0,
@@ -3377,9 +2909,9 @@
         },
         "rsc": {
           "dateien": 7,
-          "uebertragen": 20392,
-          "roh": 91051,
-          "gzip": 20331,
+          "uebertragen": 22074,
+          "roh": 95741,
+          "gzip": 21801,
           "nachScrollen": 0
         },
         "andere": {
@@ -3392,10 +2924,10 @@
       },
       "gesamt": {
         "dateien": 27,
-        "uebertragen": 317085,
+        "uebertragen": 318767,
         "kopfBytes": 42200,
-        "roh": 1009830,
-        "gzip": 315532
+        "roh": 1014520,
+        "gzip": 317002
       },
       "mehrfachGeladen": [],
       "inlineSvg": {
@@ -3403,7 +2935,7 @@
         "bytes": 11011,
         "gzip": 7846,
         "ueberIconBudget": 0,
-        "elemente": [
+        "eindeutig": [
           {
             "hash": "a696ccf47a",
             "bytes": 490,
@@ -3412,7 +2944,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-4",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "0bd64a8400",
@@ -3422,7 +2955,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-menu size-6",
-            "ort": "div > button > svg"
+            "ort": "div > button > svg",
+            "vorkommen": 1
           },
           {
             "hash": "c04a71bc06",
@@ -3432,17 +2966,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-chevron-right size-4",
-            "ort": "ol > li > svg"
-          },
-          {
-            "hash": "c04a71bc06",
-            "bytes": 292,
-            "gzip": 218,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-chevron-right size-4",
-            "ort": "ol > li > svg"
+            "ort": "ol > li > svg",
+            "vorkommen": 2
           },
           {
             "hash": "a2eaf4544e",
@@ -3452,87 +2977,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
+            "ort": "ul > li > svg",
+            "vorkommen": 9
           },
           {
             "hash": "d74602ea85",
@@ -3542,47 +2988,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
+            "ort": "button > span > svg",
+            "vorkommen": 5
           },
           {
             "hash": "ca1589633a",
@@ -3592,7 +2999,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle mt-[calc((1lh_-_1.25rem)/2)]",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "1214cc2a89",
@@ -3602,7 +3010,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-5",
-            "ort": "li > a > svg"
+            "ort": "li > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "01d27c798b",
@@ -3612,7 +3021,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-5",
-            "ort": "li > a > svg"
+            "ort": "li > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "91f18c4524",
@@ -3622,7 +3032,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-mail size-5",
-            "ort": "li > a > svg"
+            "ort": "li > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "423aa2d4dc",
@@ -3632,27 +3043,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-chevron-down size-5",
-            "ort": "details > summary > svg"
-          },
-          {
-            "hash": "423aa2d4dc",
-            "bytes": 376,
-            "gzip": 266,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-chevron-down size-5",
-            "ort": "details > summary > svg"
-          },
-          {
-            "hash": "423aa2d4dc",
-            "bytes": 376,
-            "gzip": 266,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-chevron-down size-5",
-            "ort": "details > summary > svg"
+            "ort": "details > summary > svg",
+            "vorkommen": 3
           },
           {
             "hash": "44fd71baf6",
@@ -3662,7 +3054,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-5",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "fd60c4c816",
@@ -3672,7 +3065,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-5",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "42f70fd309",
@@ -3682,7 +3076,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-mail size-5",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "8f334f855e",
@@ -3692,27 +3087,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "8f334f855e",
-            "bytes": 307,
-            "gzip": 220,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "8f334f855e",
-            "bytes": 307,
-            "gzip": 220,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
+            "ort": "div > span > svg",
+            "vorkommen": 3
           },
           {
             "hash": "eb0e1ca9fa",
@@ -3722,7 +3098,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-6",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           }
         ]
       },
@@ -3742,20 +3119,6 @@
           "sha": "9b8f1a2f85"
         },
         {
-          "url": "http://localhost:3500/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2",
-          "status": 200,
-          "typ": "font",
-          "resourceType": "font",
-          "contentType": "font/woff2",
-          "kodierung": "keine",
-          "phase": "laden",
-          "uebertragen": 48432,
-          "kopfBytes": 1478,
-          "roh": 48432,
-          "gzip": 48442,
-          "sha": "72de81a16b"
-        },
-        {
           "url": "http://localhost:3500/_next/static/chunks/0kbnfew8ieia6.css",
           "status": 200,
           "typ": "stylesheet",
@@ -3768,6 +3131,20 @@
           "roh": 70552,
           "gzip": 12924,
           "sha": "967bd6dd40"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2",
+          "status": 200,
+          "typ": "font",
+          "resourceType": "font",
+          "contentType": "font/woff2",
+          "kodierung": "keine",
+          "phase": "laden",
+          "uebertragen": 48432,
+          "kopfBytes": 1478,
+          "roh": 48432,
+          "gzip": 48442,
+          "sha": "72de81a16b"
         },
         {
           "url": "http://localhost:3500/_next/image",
@@ -3813,34 +3190,6 @@
           "sha": "83060995cf"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/2gntgrcwrye4_.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 45311,
-          "kopfBytes": 1558,
-          "roh": 166561,
-          "gzip": 45131,
-          "sha": "eb84dbf702"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/0a37caasaw7-7.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 73345,
-          "kopfBytes": 1558,
-          "roh": 234172,
-          "gzip": 73117,
-          "sha": "d0c8f37127"
-        },
-        {
           "url": "http://localhost:3500/_next/static/chunks/turbopack-43yqbgrfns39j.js",
           "status": 200,
           "typ": "script",
@@ -3853,6 +3202,34 @@
           "roh": 10946,
           "gzip": 4305,
           "sha": "444672ed4f"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/0e4c9xds_42la.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 7480,
+          "kopfBytes": 1557,
+          "roh": 18881,
+          "gzip": 7461,
+          "sha": "61ef57b667"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/2gntgrcwrye4_.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 45311,
+          "kopfBytes": 1558,
+          "roh": 166561,
+          "gzip": 45131,
+          "sha": "eb84dbf702"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/118nq7mu3xtd_.js",
@@ -3883,18 +3260,18 @@
           "sha": "e558c95969"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/0e4c9xds_42la.js",
+          "url": "http://localhost:3500/_next/static/chunks/0a37caasaw7-7.js",
           "status": 200,
           "typ": "script",
           "resourceType": "script",
           "contentType": "application/javascript",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 7480,
-          "kopfBytes": 1557,
-          "roh": 18881,
-          "gzip": 7461,
-          "sha": "61ef57b667"
+          "uebertragen": 73345,
+          "kopfBytes": 1558,
+          "roh": 234172,
+          "gzip": 73117,
+          "sha": "d0c8f37127"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/344bdav7k-may.js",
@@ -3925,34 +3302,6 @@
           "sha": "9c07a3f9aa"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/2qoqctrx7khrp.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 1306,
-          "kopfBytes": 1556,
-          "roh": 2409,
-          "gzip": 1289,
-          "sha": "270c5badf9"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/3snddn835qz2b.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 11129,
-          "kopfBytes": 1557,
-          "roh": 31436,
-          "gzip": 11097,
-          "sha": "04700e1af7"
-        },
-        {
           "url": "http://localhost:3500/_next/static/chunks/0htzap2iir08t.js",
           "status": 200,
           "typ": "script",
@@ -3979,6 +3328,34 @@
           "roh": 58487,
           "gzip": 20754,
           "sha": "c3d6e7dc62"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/3snddn835qz2b.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 11129,
+          "kopfBytes": 1557,
+          "roh": 31436,
+          "gzip": 11097,
+          "sha": "04700e1af7"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/2qoqctrx7khrp.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 1306,
+          "kopfBytes": 1556,
+          "roh": 2409,
+          "gzip": 1289,
+          "sha": "270c5badf9"
         },
         {
           "url": "http://localhost:3500/",
@@ -4019,11 +3396,11 @@
           "contentType": "text/x-component",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 0,
+          "uebertragen": 185,
           "kopfBytes": 1541,
-          "roh": null,
-          "gzip": null,
-          "hinweis": "Body nicht lesbar (Weiterleitung, 204 o. Ä.)"
+          "roh": 269,
+          "gzip": 169,
+          "sha": "76cef33406"
         },
         {
           "url": "http://localhost:3500/",
@@ -4079,11 +3456,11 @@
           "contentType": "text/x-component",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 0,
+          "uebertragen": 1497,
           "kopfBytes": 1541,
-          "roh": null,
-          "gzip": null,
-          "hinweis": "Body nicht lesbar (Weiterleitung, 204 o. Ä.)"
+          "roh": 4421,
+          "gzip": 1301,
+          "sha": "0d07c995fe"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/0q1a5avojmzza.js",
@@ -4168,9 +3545,9 @@
         },
         "rsc": {
           "dateien": 7,
-          "uebertragen": 22036,
-          "roh": 95621,
-          "gzip": 21761,
+          "uebertragen": 20577,
+          "roh": 91320,
+          "gzip": 20500,
           "nachScrollen": 0
         },
         "andere": {
@@ -4183,10 +3560,10 @@
       },
       "gesamt": {
         "dateien": 27,
-        "uebertragen": 317395,
+        "uebertragen": 315936,
         "kopfBytes": 42200,
-        "roh": 1005977,
-        "gzip": 315634
+        "roh": 1001676,
+        "gzip": 314373
       },
       "mehrfachGeladen": [],
       "inlineSvg": {
@@ -4194,7 +3571,7 @@
         "bytes": 9486,
         "gzip": 6715,
         "ueberIconBudget": 0,
-        "elemente": [
+        "eindeutig": [
           {
             "hash": "a696ccf47a",
             "bytes": 490,
@@ -4203,7 +3580,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-4",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "0bd64a8400",
@@ -4213,7 +3591,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-menu size-6",
-            "ort": "div > button > svg"
+            "ort": "div > button > svg",
+            "vorkommen": 1
           },
           {
             "hash": "c04a71bc06",
@@ -4223,17 +3602,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-chevron-right size-4",
-            "ort": "ol > li > svg"
-          },
-          {
-            "hash": "c04a71bc06",
-            "bytes": 292,
-            "gzip": 218,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-chevron-right size-4",
-            "ort": "ol > li > svg"
+            "ort": "ol > li > svg",
+            "vorkommen": 2
           },
           {
             "hash": "a2eaf4544e",
@@ -4243,57 +3613,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
-          },
-          {
-            "hash": "a2eaf4544e",
-            "bytes": 297,
-            "gzip": 223,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-check mt-1",
-            "ort": "ul > li > svg"
+            "ort": "ul > li > svg",
+            "vorkommen": 6
           },
           {
             "hash": "d74602ea85",
@@ -4303,27 +3624,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
+            "ort": "button > span > svg",
+            "vorkommen": 3
           },
           {
             "hash": "ca1589633a",
@@ -4333,7 +3635,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle mt-[calc((1lh_-_1.25rem)/2)]",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "1214cc2a89",
@@ -4343,7 +3646,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-5",
-            "ort": "li > a > svg"
+            "ort": "li > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "01d27c798b",
@@ -4353,7 +3657,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-5",
-            "ort": "li > a > svg"
+            "ort": "li > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "91f18c4524",
@@ -4363,7 +3668,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-mail size-5",
-            "ort": "li > a > svg"
+            "ort": "li > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "423aa2d4dc",
@@ -4373,27 +3679,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-chevron-down size-5",
-            "ort": "details > summary > svg"
-          },
-          {
-            "hash": "423aa2d4dc",
-            "bytes": 376,
-            "gzip": 266,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-chevron-down size-5",
-            "ort": "details > summary > svg"
-          },
-          {
-            "hash": "423aa2d4dc",
-            "bytes": 376,
-            "gzip": 266,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-chevron-down size-5",
-            "ort": "details > summary > svg"
+            "ort": "details > summary > svg",
+            "vorkommen": 3
           },
           {
             "hash": "44fd71baf6",
@@ -4403,7 +3690,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-5",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "fd60c4c816",
@@ -4413,7 +3701,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-5",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "42f70fd309",
@@ -4423,7 +3712,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-mail size-5",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "8f334f855e",
@@ -4433,27 +3723,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "8f334f855e",
-            "bytes": 307,
-            "gzip": 220,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
-          },
-          {
-            "hash": "8f334f855e",
-            "bytes": 307,
-            "gzip": 220,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-arrow-right size-4",
-            "ort": "div > span > svg"
+            "ort": "div > span > svg",
+            "vorkommen": 3
           },
           {
             "hash": "eb0e1ca9fa",
@@ -4463,7 +3734,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-6",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           }
         ]
       },
@@ -4483,20 +3755,6 @@
           "sha": "4a47d0b6de"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/0kbnfew8ieia6.css",
-          "status": 200,
-          "typ": "stylesheet",
-          "resourceType": "stylesheet",
-          "contentType": "text/css",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 12999,
-          "kopfBytes": 1544,
-          "roh": 70552,
-          "gzip": 12924,
-          "sha": "967bd6dd40"
-        },
-        {
           "url": "http://localhost:3500/_next/image",
           "query": "?url=%2F_next%2Fstatic%2Fmedia%2Fbad-energie-lahn-dill-logo-transparent.3ymc_7q1mu2_-.webp&w=256&q=75",
           "status": 200,
@@ -4512,18 +3770,18 @@
           "sha": "43c7fa535d"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/3_pz_xyhj63hd.js",
+          "url": "http://localhost:3500/_next/static/chunks/0kbnfew8ieia6.css",
           "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "keine",
+          "typ": "stylesheet",
+          "resourceType": "stylesheet",
+          "contentType": "text/css",
+          "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 348,
-          "kopfBytes": 1525,
-          "roh": 348,
-          "gzip": 268,
-          "sha": "a71986e2cb"
+          "uebertragen": 12999,
+          "kopfBytes": 1544,
+          "roh": 70552,
+          "gzip": 12924,
+          "sha": "967bd6dd40"
         },
         {
           "url": "http://localhost:3500/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2",
@@ -4540,6 +3798,20 @@
           "sha": "72de81a16b"
         },
         {
+          "url": "http://localhost:3500/_next/static/chunks/3_pz_xyhj63hd.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "keine",
+          "phase": "laden",
+          "uebertragen": 348,
+          "kopfBytes": 1525,
+          "roh": 348,
+          "gzip": 268,
+          "sha": "a71986e2cb"
+        },
+        {
           "url": "http://localhost:3500/_next/static/chunks/0dk_14w2_fmo8.js",
           "status": 200,
           "typ": "script",
@@ -4554,32 +3826,18 @@
           "sha": "83060995cf"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/turbopack-43yqbgrfns39j.js",
+          "url": "http://localhost:3500/_next/static/chunks/3fntmmi971322.js",
           "status": 200,
           "typ": "script",
           "resourceType": "script",
           "contentType": "application/javascript",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 4323,
+          "uebertragen": 3678,
           "kopfBytes": 1557,
-          "roh": 10946,
-          "gzip": 4305,
-          "sha": "444672ed4f"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/2gntgrcwrye4_.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 45311,
-          "kopfBytes": 1558,
-          "roh": 166561,
-          "gzip": 45131,
-          "sha": "eb84dbf702"
+          "roh": 14377,
+          "gzip": 3653,
+          "sha": "e558c95969"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/0a37caasaw7-7.js",
@@ -4624,32 +3882,18 @@
           "sha": "d3d2f000a8"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/3fntmmi971322.js",
+          "url": "http://localhost:3500/_next/static/chunks/turbopack-43yqbgrfns39j.js",
           "status": 200,
           "typ": "script",
           "resourceType": "script",
           "contentType": "application/javascript",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 3678,
+          "uebertragen": 4323,
           "kopfBytes": 1557,
-          "roh": 14377,
-          "gzip": 3653,
-          "sha": "e558c95969"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/2q3e_ybdy56h_.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 1451,
-          "kopfBytes": 1556,
-          "roh": 3047,
-          "gzip": 1431,
-          "sha": "9c07a3f9aa"
+          "roh": 10946,
+          "gzip": 4305,
+          "sha": "444672ed4f"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/344bdav7k-may.js",
@@ -4666,6 +3910,34 @@
           "sha": "d6fba95207"
         },
         {
+          "url": "http://localhost:3500/_next/static/chunks/2q3e_ybdy56h_.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 1451,
+          "kopfBytes": 1556,
+          "roh": 3047,
+          "gzip": 1431,
+          "sha": "9c07a3f9aa"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/2gntgrcwrye4_.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 45311,
+          "kopfBytes": 1558,
+          "roh": 166561,
+          "gzip": 45131,
+          "sha": "eb84dbf702"
+        },
+        {
           "url": "http://localhost:3500/_next/static/chunks/3snddn835qz2b.js",
           "status": 200,
           "typ": "script",
@@ -4678,20 +3950,6 @@
           "roh": 31436,
           "gzip": 11097,
           "sha": "04700e1af7"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/2qoqctrx7khrp.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 1306,
-          "kopfBytes": 1556,
-          "roh": 2409,
-          "gzip": 1289,
-          "sha": "270c5badf9"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/0htzap2iir08t.js",
@@ -4720,6 +3978,20 @@
           "roh": 58487,
           "gzip": 20754,
           "sha": "c3d6e7dc62"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/2qoqctrx7khrp.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 1306,
+          "kopfBytes": 1556,
+          "roh": 2409,
+          "gzip": 1289,
+          "sha": "270c5badf9"
         },
         {
           "url": "http://localhost:3500/",
@@ -4767,7 +4039,7 @@
           "sha": "76cef33406"
         },
         {
-          "url": "http://localhost:3500/jobs",
+          "url": "http://localhost:3500/",
           "query": "?_rsc=4Uwr3ACyMcSg3zqm",
           "status": 200,
           "typ": "rsc",
@@ -4775,26 +4047,11 @@
           "contentType": "text/x-component",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 3771,
+          "uebertragen": 3811,
           "kopfBytes": 1599,
-          "roh": 14212,
-          "gzip": 3763,
-          "sha": "4fc9198958"
-        },
-        {
-          "url": "http://localhost:3500/jobs",
-          "query": "?_rsc=xT5lIMzSMust7OHn",
-          "status": 200,
-          "typ": "rsc",
-          "resourceType": "fetch",
-          "contentType": "text/x-component",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 4572,
-          "kopfBytes": 1599,
-          "roh": 21019,
-          "gzip": 4572,
-          "sha": "48408df3b4"
+          "roh": 14332,
+          "gzip": 3803,
+          "sha": "0412b136b1"
         },
         {
           "url": "http://localhost:3500/",
@@ -4812,6 +4069,21 @@
           "sha": "8421127bce"
         },
         {
+          "url": "http://localhost:3500/jobs",
+          "query": "?_rsc=xT5lIMzSMust7OHn",
+          "status": 200,
+          "typ": "rsc",
+          "resourceType": "fetch",
+          "contentType": "text/x-component",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 4572,
+          "kopfBytes": 1599,
+          "roh": 21019,
+          "gzip": 4572,
+          "sha": "48408df3b4"
+        },
+        {
           "url": "http://localhost:3500/bewerbung",
           "query": "?_rsc=ArOvUWkbUhYD89Z8",
           "status": 200,
@@ -4820,11 +4092,11 @@
           "contentType": "text/x-component",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 1499,
+          "uebertragen": 0,
           "kopfBytes": 1541,
-          "roh": 4421,
-          "gzip": 1301,
-          "sha": "d229f91291"
+          "roh": null,
+          "gzip": null,
+          "hinweis": "Body nicht lesbar (Weiterleitung, 204 o. Ä.)"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/0q1a5avojmzza.js",
@@ -4935,7 +4207,7 @@
         "bytes": 4610,
         "gzip": 3195,
         "ueberIconBudget": 0,
-        "elemente": [
+        "eindeutig": [
           {
             "hash": "d74602ea85",
             "bytes": 317,
@@ -4944,57 +4216,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
+            "ort": "button > span > svg",
+            "vorkommen": 6
           },
           {
             "hash": "ca1589633a",
@@ -5004,7 +4227,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle mt-[calc((1lh_-_1.25rem)/2)]",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "fccb70ee78",
@@ -5014,7 +4238,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-file-text mt-[calc((1lh_-_1.25rem)/2)]",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "89e826998b",
@@ -5024,7 +4249,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-shield-check mt-0.5",
-            "ort": "div > p > svg"
+            "ort": "div > p > svg",
+            "vorkommen": 1
           },
           {
             "hash": "1214cc2a89",
@@ -5034,7 +4260,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-5",
-            "ort": "li > a > svg"
+            "ort": "li > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "01d27c798b",
@@ -5044,7 +4271,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-5",
-            "ort": "li > a > svg"
+            "ort": "li > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "91f18c4524",
@@ -5054,7 +4282,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-mail size-5",
-            "ort": "li > a > svg"
+            "ort": "li > a > svg",
+            "vorkommen": 1
           }
         ]
       },
@@ -5102,20 +4331,6 @@
           "sha": "967bd6dd40"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/3_pz_xyhj63hd.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "keine",
-          "phase": "laden",
-          "uebertragen": 348,
-          "kopfBytes": 1525,
-          "roh": 348,
-          "gzip": 268,
-          "sha": "a71986e2cb"
-        },
-        {
           "url": "http://localhost:3500/_next/image",
           "query": "?url=%2F_next%2Fstatic%2Fmedia%2Fbad-energie-lahn-dill-logo-transparent.3ymc_7q1mu2_-.webp&w=256&q=75",
           "status": 200,
@@ -5129,6 +4344,20 @@
           "roh": 4907,
           "gzip": 4862,
           "sha": "43c7fa535d"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/3_pz_xyhj63hd.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "keine",
+          "phase": "laden",
+          "uebertragen": 348,
+          "kopfBytes": 1525,
+          "roh": 348,
+          "gzip": 268,
+          "sha": "a71986e2cb"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/0dk_14w2_fmo8.js",
@@ -5145,20 +4374,6 @@
           "sha": "83060995cf"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/turbopack-43yqbgrfns39j.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 4323,
-          "kopfBytes": 1557,
-          "roh": 10946,
-          "gzip": 4305,
-          "sha": "444672ed4f"
-        },
-        {
           "url": "http://localhost:3500/_next/static/chunks/2gntgrcwrye4_.js",
           "status": 200,
           "typ": "script",
@@ -5171,6 +4386,20 @@
           "roh": 166561,
           "gzip": 45131,
           "sha": "eb84dbf702"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/turbopack-43yqbgrfns39j.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 4323,
+          "kopfBytes": 1557,
+          "roh": 10946,
+          "gzip": 4305,
+          "sha": "444672ed4f"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/0e4c9xds_42la.js",
@@ -5215,18 +4444,18 @@
           "sha": "d0c8f37127"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/3fntmmi971322.js",
+          "url": "http://localhost:3500/_next/static/chunks/2q3e_ybdy56h_.js",
           "status": 200,
           "typ": "script",
           "resourceType": "script",
           "contentType": "application/javascript",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 3678,
-          "kopfBytes": 1557,
-          "roh": 14377,
-          "gzip": 3653,
-          "sha": "e558c95969"
+          "uebertragen": 1451,
+          "kopfBytes": 1556,
+          "roh": 3047,
+          "gzip": 1431,
+          "sha": "9c07a3f9aa"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/2qoqctrx7khrp.js",
@@ -5243,20 +4472,6 @@
           "sha": "270c5badf9"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/2q3e_ybdy56h_.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 1451,
-          "kopfBytes": 1556,
-          "roh": 3047,
-          "gzip": 1431,
-          "sha": "9c07a3f9aa"
-        },
-        {
           "url": "http://localhost:3500/_next/static/chunks/3snddn835qz2b.js",
           "status": 200,
           "typ": "script",
@@ -5269,6 +4484,20 @@
           "roh": 31436,
           "gzip": 11097,
           "sha": "04700e1af7"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/3fntmmi971322.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 3678,
+          "kopfBytes": 1557,
+          "roh": 14377,
+          "gzip": 3653,
+          "sha": "e558c95969"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/0htzap2iir08t.js",
@@ -5402,18 +4631,18 @@
           "sha": "ff7e956ae2"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/25i8q8ks78nna.js",
+          "url": "http://localhost:3500/_next/static/chunks/2o0b38gyj507j.js",
           "status": 200,
           "typ": "script",
           "resourceType": "script",
           "contentType": "application/javascript",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 12189,
+          "uebertragen": 11376,
           "kopfBytes": 1557,
-          "roh": 36982,
-          "gzip": 12153,
-          "sha": "70a25742d9"
+          "roh": 31713,
+          "gzip": 11351,
+          "sha": "54401eac2e"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/1--_3ulp8dgus.js",
@@ -5430,18 +4659,18 @@
           "sha": "890d73860b"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/2o0b38gyj507j.js",
+          "url": "http://localhost:3500/_next/static/chunks/25i8q8ks78nna.js",
           "status": 200,
           "typ": "script",
           "resourceType": "script",
           "contentType": "application/javascript",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 11376,
+          "uebertragen": 12189,
           "kopfBytes": 1557,
-          "roh": 31713,
-          "gzip": 11351,
-          "sha": "54401eac2e"
+          "roh": 36982,
+          "gzip": 12153,
+          "sha": "70a25742d9"
         },
         {
           "url": "http://localhost:3500/impressum",
@@ -5558,9 +4787,9 @@
         },
         "rsc": {
           "dateien": 11,
-          "uebertragen": 35769,
-          "roh": 152374,
-          "gzip": 35642,
+          "uebertragen": 35954,
+          "roh": 152643,
+          "gzip": 35811,
           "nachScrollen": 0
         },
         "andere": {
@@ -5573,10 +4802,10 @@
       },
       "gesamt": {
         "dateien": 29,
-        "uebertragen": 299428,
+        "uebertragen": 299613,
         "kopfBytes": 45513,
-        "roh": 921370,
-        "gzip": 298365
+        "roh": 921639,
+        "gzip": 298534
       },
       "mehrfachGeladen": [],
       "inlineSvg": {
@@ -5584,7 +4813,7 @@
         "bytes": 1224,
         "gzip": 827,
         "ueberIconBudget": 0,
-        "elemente": [
+        "eindeutig": [
           {
             "hash": "44fd71baf6",
             "bytes": 475,
@@ -5593,7 +4822,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-5",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "fd60c4c816",
@@ -5603,7 +4833,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-5",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "42f70fd309",
@@ -5613,7 +4844,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-mail size-5",
-            "ort": "a > span > svg"
+            "ort": "a > span > svg",
+            "vorkommen": 1
           }
         ]
       },
@@ -5633,6 +4865,20 @@
           "sha": "e9c68b9107"
         },
         {
+          "url": "http://localhost:3500/_next/static/chunks/0kbnfew8ieia6.css",
+          "status": 200,
+          "typ": "stylesheet",
+          "resourceType": "stylesheet",
+          "contentType": "text/css",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 12999,
+          "kopfBytes": 1544,
+          "roh": 70552,
+          "gzip": 12924,
+          "sha": "967bd6dd40"
+        },
+        {
           "url": "http://localhost:3500/_next/image",
           "query": "?url=%2F_next%2Fstatic%2Fmedia%2Fbad-energie-lahn-dill-logo-transparent.3ymc_7q1mu2_-.webp&w=256&q=75",
           "status": 200,
@@ -5646,20 +4892,6 @@
           "roh": 4907,
           "gzip": 4862,
           "sha": "43c7fa535d"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/0kbnfew8ieia6.css",
-          "status": 200,
-          "typ": "stylesheet",
-          "resourceType": "stylesheet",
-          "contentType": "text/css",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 12999,
-          "kopfBytes": 1544,
-          "roh": 70552,
-          "gzip": 12924,
-          "sha": "967bd6dd40"
         },
         {
           "url": "http://localhost:3500/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2",
@@ -5690,6 +4922,34 @@
           "sha": "a71986e2cb"
         },
         {
+          "url": "http://localhost:3500/_next/static/chunks/0dk_14w2_fmo8.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 7554,
+          "kopfBytes": 1557,
+          "roh": 28325,
+          "gzip": 7509,
+          "sha": "83060995cf"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/0a37caasaw7-7.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 73345,
+          "kopfBytes": 1558,
+          "roh": 234172,
+          "gzip": 73117,
+          "sha": "d0c8f37127"
+        },
+        {
           "url": "http://localhost:3500/_next/static/chunks/turbopack-43yqbgrfns39j.js",
           "status": 200,
           "typ": "script",
@@ -5716,20 +4976,6 @@
           "roh": 18881,
           "gzip": 7461,
           "sha": "61ef57b667"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/0dk_14w2_fmo8.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 7554,
-          "kopfBytes": 1557,
-          "roh": 28325,
-          "gzip": 7509,
-          "sha": "83060995cf"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/2gntgrcwrye4_.js",
@@ -5760,18 +5006,18 @@
           "sha": "d3d2f000a8"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/0a37caasaw7-7.js",
+          "url": "http://localhost:3500/_next/static/chunks/2qoqctrx7khrp.js",
           "status": 200,
           "typ": "script",
           "resourceType": "script",
           "contentType": "application/javascript",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 73345,
-          "kopfBytes": 1558,
-          "roh": 234172,
-          "gzip": 73117,
-          "sha": "d0c8f37127"
+          "uebertragen": 1306,
+          "kopfBytes": 1556,
+          "roh": 2409,
+          "gzip": 1289,
+          "sha": "270c5badf9"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/3fntmmi971322.js",
@@ -5800,20 +5046,6 @@
           "roh": 3047,
           "gzip": 1431,
           "sha": "9c07a3f9aa"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/2qoqctrx7khrp.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 1306,
-          "kopfBytes": 1556,
-          "roh": 2409,
-          "gzip": 1289,
-          "sha": "270c5badf9"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/0htzap2iir08t.js",
@@ -5889,6 +5121,36 @@
           "sha": "f40a221341"
         },
         {
+          "url": "http://localhost:3500/bewerbung",
+          "query": "?_rsc=BK9tIe_jeZzbNm23",
+          "status": 200,
+          "typ": "rsc",
+          "resourceType": "fetch",
+          "contentType": "text/x-component",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 185,
+          "kopfBytes": 1541,
+          "roh": 269,
+          "gzip": 169,
+          "sha": "76cef33406"
+        },
+        {
+          "url": "http://localhost:3500/jobs",
+          "query": "?_rsc=BK9tIe_jeZzbNm23",
+          "status": 200,
+          "typ": "rsc",
+          "resourceType": "fetch",
+          "contentType": "text/x-component",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 296,
+          "kopfBytes": 1599,
+          "roh": 434,
+          "gzip": 279,
+          "sha": "5ccd04f9b6"
+        },
+        {
           "url": "http://localhost:3500/",
           "query": "?_rsc=jy4aG4sbse_PF6c4",
           "status": 200,
@@ -5919,36 +5181,6 @@
           "sha": "8421127bce"
         },
         {
-          "url": "http://localhost:3500/bewerbung",
-          "query": "?_rsc=BK9tIe_jeZzbNm23",
-          "status": 200,
-          "typ": "rsc",
-          "resourceType": "fetch",
-          "contentType": "text/x-component",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 0,
-          "kopfBytes": 1541,
-          "roh": null,
-          "gzip": null,
-          "hinweis": "Body nicht lesbar (Weiterleitung, 204 o. Ä.)"
-        },
-        {
-          "url": "http://localhost:3500/jobs",
-          "query": "?_rsc=BK9tIe_jeZzbNm23",
-          "status": 200,
-          "typ": "rsc",
-          "resourceType": "fetch",
-          "contentType": "text/x-component",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 296,
-          "kopfBytes": 1599,
-          "roh": 434,
-          "gzip": 279,
-          "sha": "5ccd04f9b6"
-        },
-        {
           "url": "http://localhost:3500/impressum",
           "query": "?_rsc=TEY6lnu0i0V-ZUK4",
           "status": 200,
@@ -5962,34 +5194,6 @@
           "roh": 18340,
           "gzip": 3831,
           "sha": "6f65b50a52"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/0q1a5avojmzza.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "keine",
-          "phase": "laden",
-          "uebertragen": 215,
-          "kopfBytes": 1524,
-          "roh": 215,
-          "gzip": 198,
-          "sha": "ff7e956ae2"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/2o0b38gyj507j.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 11376,
-          "kopfBytes": 1557,
-          "roh": 31713,
-          "gzip": 11351,
-          "sha": "54401eac2e"
         },
         {
           "url": "http://localhost:3500/datenschutz",
@@ -6022,6 +5226,20 @@
           "hinweis": "Body nicht lesbar (Weiterleitung, 204 o. Ä.)"
         },
         {
+          "url": "http://localhost:3500/_next/static/chunks/0q1a5avojmzza.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "keine",
+          "phase": "laden",
+          "uebertragen": 215,
+          "kopfBytes": 1524,
+          "roh": 215,
+          "gzip": 198,
+          "sha": "ff7e956ae2"
+        },
+        {
           "url": "http://localhost:3500/jobs",
           "query": "?_rsc=zS-lcex7UA1yZgLP",
           "status": 200,
@@ -6035,6 +5253,20 @@
           "roh": 21019,
           "gzip": 4572,
           "sha": "48408df3b4"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/2o0b38gyj507j.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 11376,
+          "kopfBytes": 1557,
+          "roh": 31713,
+          "gzip": 11351,
+          "sha": "54401eac2e"
         }
       ],
       "gesperrteAnfragen": 0,
@@ -6117,7 +5349,7 @@
         "bytes": 5032,
         "gzip": 3573,
         "ueberIconBudget": 0,
-        "elemente": [
+        "eindeutig": [
           {
             "hash": "84bc4ea03e",
             "bytes": 480,
@@ -6126,7 +5358,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-camera size-5",
-            "ort": "button > span > svg"
+            "ort": "button > span > svg",
+            "vorkommen": 1
           },
           {
             "hash": "df4b01e8ab",
@@ -6136,7 +5369,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-chevron-down pointer-events-none",
-            "ort": "div > div > svg"
+            "ort": "div > div > svg",
+            "vorkommen": 1
           },
           {
             "hash": "7924b18858",
@@ -6146,57 +5380,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-check hidden",
-            "ort": "div > button > svg"
-          },
-          {
-            "hash": "7924b18858",
-            "bytes": 318,
-            "gzip": 233,
-            "breite": 0,
-            "hoehe": 0,
-            "versteckt": true,
-            "kennung": "lucide lucide-check hidden",
-            "ort": "div > button > svg"
-          },
-          {
-            "hash": "7924b18858",
-            "bytes": 318,
-            "gzip": 233,
-            "breite": 0,
-            "hoehe": 0,
-            "versteckt": true,
-            "kennung": "lucide lucide-check hidden",
-            "ort": "div > button > svg"
-          },
-          {
-            "hash": "7924b18858",
-            "bytes": 318,
-            "gzip": 233,
-            "breite": 0,
-            "hoehe": 0,
-            "versteckt": true,
-            "kennung": "lucide lucide-check hidden",
-            "ort": "div > button > svg"
-          },
-          {
-            "hash": "7924b18858",
-            "bytes": 318,
-            "gzip": 233,
-            "breite": 0,
-            "hoehe": 0,
-            "versteckt": true,
-            "kennung": "lucide lucide-check hidden",
-            "ort": "div > button > svg"
-          },
-          {
-            "hash": "7924b18858",
-            "bytes": 318,
-            "gzip": 233,
-            "breite": 0,
-            "hoehe": 0,
-            "versteckt": true,
-            "kennung": "lucide lucide-check hidden",
-            "ort": "div > button > svg"
+            "ort": "div > button > svg",
+            "vorkommen": 6
           },
           {
             "hash": "d7be722512",
@@ -6206,7 +5391,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-plus size-5",
-            "ort": "button > span > svg"
+            "ort": "button > span > svg",
+            "vorkommen": 3
           },
           {
             "hash": "d74602ea85",
@@ -6216,47 +5402,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d74602ea85",
-            "bytes": 317,
-            "gzip": 231,
-            "breite": 16,
-            "hoehe": 16,
-            "versteckt": true,
-            "kennung": "lucide lucide-check size-4",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d7be722512",
-            "bytes": 295,
-            "gzip": 211,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-plus size-5",
-            "ort": "button > span > svg"
-          },
-          {
-            "hash": "d7be722512",
-            "bytes": 295,
-            "gzip": 211,
-            "breite": 20,
-            "hoehe": 20,
-            "versteckt": true,
-            "kennung": "lucide lucide-plus size-5",
-            "ort": "button > span > svg"
+            "ort": "button > span > svg",
+            "vorkommen": 3
           },
           {
             "hash": "e9b017c3e0",
@@ -6266,7 +5413,8 @@
             "hoehe": 20,
             "versteckt": true,
             "kennung": "lucide lucide-printer size-5",
-            "ort": "button > span > svg"
+            "ort": "button > span > svg",
+            "vorkommen": 1
           }
         ]
       },
@@ -6286,20 +5434,6 @@
           "sha": "8a7687cb52"
         },
         {
-          "url": "http://localhost:3500/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2",
-          "status": 200,
-          "typ": "font",
-          "resourceType": "font",
-          "contentType": "font/woff2",
-          "kodierung": "keine",
-          "phase": "laden",
-          "uebertragen": 48432,
-          "kopfBytes": 1478,
-          "roh": 48432,
-          "gzip": 48442,
-          "sha": "72de81a16b"
-        },
-        {
           "url": "http://localhost:3500/_next/static/chunks/0kbnfew8ieia6.css",
           "status": 200,
           "typ": "stylesheet",
@@ -6312,6 +5446,35 @@
           "roh": 70552,
           "gzip": 12924,
           "sha": "967bd6dd40"
+        },
+        {
+          "url": "http://localhost:3500/_next/image",
+          "query": "?url=%2F_next%2Fstatic%2Fmedia%2Fbad-energie-lahn-dill-logo-transparent.3ymc_7q1mu2_-.webp&w=256&q=75",
+          "status": 200,
+          "typ": "image",
+          "resourceType": "image",
+          "contentType": "image/avif",
+          "kodierung": "keine",
+          "phase": "laden",
+          "uebertragen": 4907,
+          "kopfBytes": 1629,
+          "roh": 4907,
+          "gzip": 4862,
+          "sha": "43c7fa535d"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2",
+          "status": 200,
+          "typ": "font",
+          "resourceType": "font",
+          "contentType": "font/woff2",
+          "kodierung": "keine",
+          "phase": "laden",
+          "uebertragen": 48432,
+          "kopfBytes": 1478,
+          "roh": 48432,
+          "gzip": 48442,
+          "sha": "72de81a16b"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/376rzseq80lhj.css",
@@ -6342,21 +5505,6 @@
           "sha": "a71986e2cb"
         },
         {
-          "url": "http://localhost:3500/_next/image",
-          "query": "?url=%2F_next%2Fstatic%2Fmedia%2Fbad-energie-lahn-dill-logo-transparent.3ymc_7q1mu2_-.webp&w=256&q=75",
-          "status": 200,
-          "typ": "image",
-          "resourceType": "image",
-          "contentType": "image/avif",
-          "kodierung": "keine",
-          "phase": "laden",
-          "uebertragen": 4907,
-          "kopfBytes": 1629,
-          "roh": 4907,
-          "gzip": 4862,
-          "sha": "43c7fa535d"
-        },
-        {
           "url": "http://localhost:3500/_next/static/chunks/0dk_14w2_fmo8.js",
           "status": 200,
           "typ": "script",
@@ -6369,20 +5517,6 @@
           "roh": 28325,
           "gzip": 7509,
           "sha": "83060995cf"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/0e4c9xds_42la.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 7480,
-          "kopfBytes": 1557,
-          "roh": 18881,
-          "gzip": 7461,
-          "sha": "61ef57b667"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/turbopack-43yqbgrfns39j.js",
@@ -6399,6 +5533,20 @@
           "sha": "444672ed4f"
         },
         {
+          "url": "http://localhost:3500/_next/static/chunks/0e4c9xds_42la.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 7480,
+          "kopfBytes": 1557,
+          "roh": 18881,
+          "gzip": 7461,
+          "sha": "61ef57b667"
+        },
+        {
           "url": "http://localhost:3500/_next/static/chunks/118nq7mu3xtd_.js",
           "status": 200,
           "typ": "script",
@@ -6411,20 +5559,6 @@
           "roh": 26029,
           "gzip": 9340,
           "sha": "d3d2f000a8"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/0a37caasaw7-7.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 73345,
-          "kopfBytes": 1558,
-          "roh": 234172,
-          "gzip": 73117,
-          "sha": "d0c8f37127"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/2gntgrcwrye4_.js",
@@ -6483,20 +5617,6 @@
           "sha": "270c5badf9"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/0htzap2iir08t.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 8945,
-          "kopfBytes": 1557,
-          "roh": 28837,
-          "gzip": 8920,
-          "sha": "98a56612e7"
-        },
-        {
           "url": "http://localhost:3500/_next/static/chunks/1--_3ulp8dgus.js",
           "status": 200,
           "typ": "script",
@@ -6523,6 +5643,34 @@
           "roh": 36982,
           "gzip": 12153,
           "sha": "70a25742d9"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/0a37caasaw7-7.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 73345,
+          "kopfBytes": 1558,
+          "roh": 234172,
+          "gzip": 73117,
+          "sha": "d0c8f37127"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/0htzap2iir08t.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 8945,
+          "kopfBytes": 1557,
+          "roh": 28837,
+          "gzip": 8920,
+          "sha": "98a56612e7"
         },
         {
           "url": "http://localhost:3500/",
@@ -6652,9 +5800,9 @@
         },
         "rsc": {
           "dateien": 7,
-          "uebertragen": 20577,
-          "roh": 91320,
-          "gzip": 20500,
+          "uebertragen": 21890,
+          "roh": 95472,
+          "gzip": 21631,
           "nachScrollen": 0
         },
         "andere": {
@@ -6667,10 +5815,10 @@
       },
       "gesamt": {
         "dateien": 24,
-        "uebertragen": 288044,
+        "uebertragen": 289357,
         "kopfBytes": 37561,
-        "roh": 889081,
-        "gzip": 287021
+        "roh": 893233,
+        "gzip": 288152
       },
       "mehrfachGeladen": [],
       "inlineSvg": {
@@ -6678,7 +5826,7 @@
         "bytes": 1496,
         "gzip": 1017,
         "ueberIconBudget": 0,
-        "elemente": [
+        "eindeutig": [
           {
             "hash": "a696ccf47a",
             "bytes": 490,
@@ -6687,7 +5835,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-4",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "0bd64a8400",
@@ -6697,7 +5846,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-menu size-6",
-            "ort": "div > button > svg"
+            "ort": "div > button > svg",
+            "vorkommen": 1
           },
           {
             "hash": "c04a71bc06",
@@ -6707,7 +5857,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-chevron-right size-4",
-            "ort": "ol > li > svg"
+            "ort": "ol > li > svg",
+            "vorkommen": 1
           },
           {
             "hash": "eb0e1ca9fa",
@@ -6717,7 +5868,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-6",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           }
         ]
       },
@@ -6735,21 +5887,6 @@
           "roh": 108010,
           "gzip": 26320,
           "sha": "fae9dc1850"
-        },
-        {
-          "url": "http://localhost:3500/_next/image",
-          "query": "?url=%2F_next%2Fstatic%2Fmedia%2Fbad-energie-lahn-dill-logo-transparent.3ymc_7q1mu2_-.webp&w=256&q=75",
-          "status": 200,
-          "typ": "image",
-          "resourceType": "image",
-          "contentType": "image/avif",
-          "kodierung": "keine",
-          "phase": "laden",
-          "uebertragen": 4907,
-          "kopfBytes": 1629,
-          "roh": 4907,
-          "gzip": 4862,
-          "sha": "43c7fa535d"
         },
         {
           "url": "http://localhost:3500/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2",
@@ -6778,6 +5915,21 @@
           "roh": 70552,
           "gzip": 12924,
           "sha": "967bd6dd40"
+        },
+        {
+          "url": "http://localhost:3500/_next/image",
+          "query": "?url=%2F_next%2Fstatic%2Fmedia%2Fbad-energie-lahn-dill-logo-transparent.3ymc_7q1mu2_-.webp&w=256&q=75",
+          "status": 200,
+          "typ": "image",
+          "resourceType": "image",
+          "contentType": "image/avif",
+          "kodierung": "keine",
+          "phase": "laden",
+          "uebertragen": 4907,
+          "kopfBytes": 1629,
+          "roh": 4907,
+          "gzip": 4862,
+          "sha": "43c7fa535d"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/3_pz_xyhj63hd.js",
@@ -6836,62 +5988,6 @@
           "sha": "444672ed4f"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/118nq7mu3xtd_.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 9362,
-          "kopfBytes": 1557,
-          "roh": 26029,
-          "gzip": 9340,
-          "sha": "d3d2f000a8"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/3fntmmi971322.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 3678,
-          "kopfBytes": 1557,
-          "roh": 14377,
-          "gzip": 3653,
-          "sha": "e558c95969"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/2q3e_ybdy56h_.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 1451,
-          "kopfBytes": 1556,
-          "roh": 3047,
-          "gzip": 1431,
-          "sha": "9c07a3f9aa"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/2qoqctrx7khrp.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 1306,
-          "kopfBytes": 1556,
-          "roh": 2409,
-          "gzip": 1289,
-          "sha": "270c5badf9"
-        },
-        {
           "url": "http://localhost:3500/_next/static/chunks/2gntgrcwrye4_.js",
           "status": 200,
           "typ": "script",
@@ -6918,6 +6014,62 @@
           "roh": 234172,
           "gzip": 73117,
           "sha": "d0c8f37127"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/118nq7mu3xtd_.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 9362,
+          "kopfBytes": 1557,
+          "roh": 26029,
+          "gzip": 9340,
+          "sha": "d3d2f000a8"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/2qoqctrx7khrp.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 1306,
+          "kopfBytes": 1556,
+          "roh": 2409,
+          "gzip": 1289,
+          "sha": "270c5badf9"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/2q3e_ybdy56h_.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 1451,
+          "kopfBytes": 1556,
+          "roh": 3047,
+          "gzip": 1431,
+          "sha": "9c07a3f9aa"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/3fntmmi971322.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 3678,
+          "kopfBytes": 1557,
+          "roh": 14377,
+          "gzip": 3653,
+          "sha": "e558c95969"
         },
         {
           "url": "http://localhost:3500/",
@@ -6958,11 +6110,11 @@
           "contentType": "text/x-component",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 185,
+          "uebertragen": 0,
           "kopfBytes": 1541,
-          "roh": 269,
-          "gzip": 169,
-          "sha": "76cef33406"
+          "roh": null,
+          "gzip": null,
+          "hinweis": "Body nicht lesbar (Weiterleitung, 204 o. Ä.)"
         },
         {
           "url": "http://localhost:3500/",
@@ -7018,11 +6170,11 @@
           "contentType": "text/x-component",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 0,
+          "uebertragen": 1498,
           "kopfBytes": 1541,
-          "roh": null,
-          "gzip": null,
-          "hinweis": "Body nicht lesbar (Weiterleitung, 204 o. Ä.)"
+          "roh": 4421,
+          "gzip": 1300,
+          "sha": "ef86a7e583"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/0q1a5avojmzza.js",
@@ -7085,11 +6237,11 @@
           "nachScrollen": 0
         },
         "script": {
-          "dateien": 16,
-          "uebertragen": 207560,
-          "roh": 656728,
-          "gzip": 206388,
-          "nachScrollen": 32866
+          "dateien": 13,
+          "uebertragen": 174694,
+          "roh": 565860,
+          "gzip": 173973,
+          "nachScrollen": 0
         },
         "stylesheet": {
           "dateien": 1,
@@ -7120,11 +6272,11 @@
           "nachScrollen": 0
         },
         "rsc": {
-          "dateien": 11,
-          "uebertragen": 35859,
-          "roh": 167234,
-          "gzip": 35473,
-          "nachScrollen": 13783
+          "dateien": 7,
+          "uebertragen": 20577,
+          "roh": 91320,
+          "gzip": 20500,
+          "nachScrollen": 0
         },
         "andere": {
           "dateien": 0,
@@ -7135,11 +6287,11 @@
         }
       },
       "gesamt": {
-        "dateien": 31,
-        "uebertragen": 321646,
-        "kopfBytes": 48596,
-        "roh": 1011507,
-        "gzip": 319883
+        "dateien": 24,
+        "uebertragen": 273498,
+        "kopfBytes": 37561,
+        "roh": 844725,
+        "gzip": 272495
       },
       "mehrfachGeladen": [],
       "inlineSvg": {
@@ -7147,7 +6299,7 @@
         "bytes": 1496,
         "gzip": 1017,
         "ueberIconBudget": 0,
-        "elemente": [
+        "eindeutig": [
           {
             "hash": "a696ccf47a",
             "bytes": 490,
@@ -7156,7 +6308,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-4",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "0bd64a8400",
@@ -7166,7 +6319,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-menu size-6",
-            "ort": "div > button > svg"
+            "ort": "div > button > svg",
+            "vorkommen": 1
           },
           {
             "hash": "c04a71bc06",
@@ -7176,7 +6330,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-chevron-right size-4",
-            "ort": "ol > li > svg"
+            "ort": "ol > li > svg",
+            "vorkommen": 1
           },
           {
             "hash": "eb0e1ca9fa",
@@ -7186,7 +6341,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-6",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           }
         ]
       },
@@ -7204,20 +6360,6 @@
           "roh": 63654,
           "gzip": 11794,
           "sha": "6dae21082c"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2",
-          "status": 200,
-          "typ": "font",
-          "resourceType": "font",
-          "contentType": "font/woff2",
-          "kodierung": "keine",
-          "phase": "laden",
-          "uebertragen": 48432,
-          "kopfBytes": 1478,
-          "roh": 48432,
-          "gzip": 48442,
-          "sha": "72de81a16b"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/0kbnfew8ieia6.css",
@@ -7247,6 +6389,20 @@
           "roh": 4907,
           "gzip": 4862,
           "sha": "43c7fa535d"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2",
+          "status": 200,
+          "typ": "font",
+          "resourceType": "font",
+          "contentType": "font/woff2",
+          "kodierung": "keine",
+          "phase": "laden",
+          "uebertragen": 48432,
+          "kopfBytes": 1478,
+          "roh": 48432,
+          "gzip": 48442,
+          "sha": "72de81a16b"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/3_pz_xyhj63hd.js",
@@ -7291,20 +6447,6 @@
           "sha": "444672ed4f"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/0e4c9xds_42la.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 7480,
-          "kopfBytes": 1557,
-          "roh": 18881,
-          "gzip": 7461,
-          "sha": "61ef57b667"
-        },
-        {
           "url": "http://localhost:3500/_next/static/chunks/3fntmmi971322.js",
           "status": 200,
           "typ": "script",
@@ -7317,6 +6459,20 @@
           "roh": 14377,
           "gzip": 3653,
           "sha": "e558c95969"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/0e4c9xds_42la.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 7480,
+          "kopfBytes": 1557,
+          "roh": 18881,
+          "gzip": 7461,
+          "sha": "61ef57b667"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/118nq7mu3xtd_.js",
@@ -7333,32 +6489,18 @@
           "sha": "d3d2f000a8"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/2gntgrcwrye4_.js",
+          "url": "http://localhost:3500/_next/static/chunks/0a37caasaw7-7.js",
           "status": 200,
           "typ": "script",
           "resourceType": "script",
           "contentType": "application/javascript",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 45311,
+          "uebertragen": 73345,
           "kopfBytes": 1558,
-          "roh": 166561,
-          "gzip": 45131,
-          "sha": "eb84dbf702"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/2qoqctrx7khrp.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 1306,
-          "kopfBytes": 1556,
-          "roh": 2409,
-          "gzip": 1289,
-          "sha": "270c5badf9"
+          "roh": 234172,
+          "gzip": 73117,
+          "sha": "d0c8f37127"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/2q3e_ybdy56h_.js",
@@ -7375,18 +6517,32 @@
           "sha": "9c07a3f9aa"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/0a37caasaw7-7.js",
+          "url": "http://localhost:3500/_next/static/chunks/2qoqctrx7khrp.js",
           "status": 200,
           "typ": "script",
           "resourceType": "script",
           "contentType": "application/javascript",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 73345,
+          "uebertragen": 1306,
+          "kopfBytes": 1556,
+          "roh": 2409,
+          "gzip": 1289,
+          "sha": "270c5badf9"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/2gntgrcwrye4_.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 45311,
           "kopfBytes": 1558,
-          "roh": 234172,
-          "gzip": 73117,
-          "sha": "d0c8f37127"
+          "roh": 166561,
+          "gzip": 45131,
+          "sha": "eb84dbf702"
         },
         {
           "url": "http://localhost:3500/",
@@ -7487,11 +6643,25 @@
           "contentType": "text/x-component",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 1499,
+          "uebertragen": 0,
           "kopfBytes": 1541,
-          "roh": 4421,
-          "gzip": 1300,
-          "sha": "96f8c8e98f"
+          "roh": null,
+          "gzip": null,
+          "hinweis": "Body nicht lesbar (Weiterleitung, 204 o. Ä.)"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/2o0b38gyj507j.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 11376,
+          "kopfBytes": 1557,
+          "roh": 31713,
+          "gzip": 11351,
+          "sha": "54401eac2e"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/0q1a5avojmzza.js",
@@ -7520,122 +6690,6 @@
           "roh": 28837,
           "gzip": 8920,
           "sha": "98a56612e7"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/2o0b38gyj507j.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 11376,
-          "kopfBytes": 1557,
-          "roh": 31713,
-          "gzip": 11351,
-          "sha": "54401eac2e"
-        },
-        {
-          "url": "http://localhost:3500/jobs/anlagenmechaniker-shk-wetzlar",
-          "query": "?_rsc=k1RbkaFpF1r5nyc0",
-          "status": 200,
-          "typ": "rsc",
-          "resourceType": "fetch",
-          "contentType": "text/x-component",
-          "kodierung": "gzip",
-          "phase": "scroll",
-          "uebertragen": 348,
-          "kopfBytes": 1599,
-          "roh": 565,
-          "gzip": 331,
-          "sha": "d5ece3373a"
-        },
-        {
-          "url": "http://localhost:3500/impressum",
-          "query": "?_rsc=k1RbkaFpF1r5nyc0",
-          "status": 200,
-          "typ": "rsc",
-          "resourceType": "fetch",
-          "contentType": "text/x-component",
-          "kodierung": "gzip",
-          "phase": "scroll",
-          "uebertragen": 299,
-          "kopfBytes": 1599,
-          "roh": 439,
-          "gzip": 282,
-          "sha": "c2b746d191"
-        },
-        {
-          "url": "http://localhost:3500/jobs/anlagenmechaniker-shk-wetzlar",
-          "query": "?_rsc=fdOMHrahGwdPZ29x",
-          "status": 200,
-          "typ": "rsc",
-          "resourceType": "fetch",
-          "contentType": "text/x-component",
-          "kodierung": "gzip",
-          "phase": "scroll",
-          "uebertragen": 9284,
-          "kopfBytes": 1599,
-          "roh": 52149,
-          "gzip": 9229,
-          "sha": "2c53a47188"
-        },
-        {
-          "url": "http://localhost:3500/impressum",
-          "query": "?_rsc=5AnmViOqd2TJeIQ5",
-          "status": 200,
-          "typ": "rsc",
-          "resourceType": "fetch",
-          "contentType": "text/x-component",
-          "kodierung": "gzip",
-          "phase": "scroll",
-          "uebertragen": 3852,
-          "kopfBytes": 1599,
-          "roh": 18340,
-          "gzip": 3831,
-          "sha": "6f65b50a52"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/344bdav7k-may.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "keine",
-          "phase": "scroll",
-          "uebertragen": 945,
-          "kopfBytes": 1525,
-          "roh": 945,
-          "gzip": 564,
-          "sha": "d6fba95207"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/3snddn835qz2b.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "scroll",
-          "uebertragen": 11129,
-          "kopfBytes": 1557,
-          "roh": 31436,
-          "gzip": 11097,
-          "sha": "04700e1af7"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/11wu3hljr9hj4.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "scroll",
-          "uebertragen": 20792,
-          "kopfBytes": 1557,
-          "roh": 58487,
-          "gzip": 20754,
-          "sha": "c3d6e7dc62"
         }
       ],
       "gesperrteAnfragen": 0,
@@ -7692,9 +6746,9 @@
         },
         "rsc": {
           "dateien": 19,
-          "uebertragen": 75514,
-          "roh": 366032,
-          "gzip": 74902,
+          "uebertragen": 75327,
+          "roh": 365763,
+          "gzip": 74732,
           "nachScrollen": 0
         },
         "andere": {
@@ -7707,10 +6761,10 @@
       },
       "gesamt": {
         "dateien": 40,
-        "uebertragen": 405999,
+        "uebertragen": 405812,
         "kopfBytes": 62881,
-        "roh": 1236656,
-        "gzip": 404062
+        "roh": 1236387,
+        "gzip": 403892
       },
       "mehrfachGeladen": [
         {
@@ -7723,7 +6777,7 @@
         "bytes": 1204,
         "gzip": 799,
         "ueberIconBudget": 0,
-        "elemente": [
+        "eindeutig": [
           {
             "hash": "a696ccf47a",
             "bytes": 490,
@@ -7732,7 +6786,8 @@
             "hoehe": 16,
             "versteckt": true,
             "kennung": "lucide lucide-phone size-4",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           },
           {
             "hash": "0bd64a8400",
@@ -7742,7 +6797,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-menu size-6",
-            "ort": "div > button > svg"
+            "ort": "div > button > svg",
+            "vorkommen": 1
           },
           {
             "hash": "eb0e1ca9fa",
@@ -7752,7 +6808,8 @@
             "hoehe": 0,
             "versteckt": true,
             "kennung": "lucide lucide-message-circle size-6",
-            "ort": "div > a > svg"
+            "ort": "div > a > svg",
+            "vorkommen": 1
           }
         ]
       },
@@ -7993,11 +7050,11 @@
           "contentType": "text/x-component",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 185,
+          "uebertragen": 0,
           "kopfBytes": 1541,
-          "roh": 269,
-          "gzip": 169,
-          "sha": "76cef33406"
+          "roh": null,
+          "gzip": null,
+          "hinweis": "Body nicht lesbar (Weiterleitung, 204 o. Ä.)"
         },
         {
           "url": "http://localhost:3500/jobs/anlagenmechaniker-shk-wetzlar",
@@ -8015,6 +7072,20 @@
           "sha": "d5ece3373a"
         },
         {
+          "url": "http://localhost:3500/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2",
+          "status": 200,
+          "typ": "font",
+          "resourceType": "font",
+          "contentType": "font/woff2",
+          "kodierung": "keine",
+          "phase": "laden",
+          "uebertragen": 48432,
+          "kopfBytes": 1478,
+          "roh": 48432,
+          "gzip": 48442,
+          "sha": "72de81a16b"
+        },
+        {
           "url": "http://localhost:3500/jobs/kundendiensttechniker-waermepumpe-wetzlar",
           "query": "?_rsc=OXEfaXsCQr9qpu4a",
           "status": 200,
@@ -8028,20 +7099,6 @@
           "roh": 577,
           "gzip": 339,
           "sha": "a30ed8f08b"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2",
-          "status": 200,
-          "typ": "font",
-          "resourceType": "font",
-          "contentType": "font/woff2",
-          "kodierung": "keine",
-          "phase": "laden",
-          "uebertragen": 48432,
-          "kopfBytes": 1478,
-          "roh": 48432,
-          "gzip": 48442,
-          "sha": "72de81a16b"
         },
         {
           "url": "http://localhost:3500/jobs/obermonteur-projektleiter-shk-wetzlar",
@@ -8157,11 +7214,25 @@
           "contentType": "text/x-component",
           "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 1499,
+          "uebertragen": 1497,
           "kopfBytes": 1541,
           "roh": 4421,
-          "gzip": 1300,
-          "sha": "b76aedd041"
+          "gzip": 1299,
+          "sha": "62d9689059"
+        },
+        {
+          "url": "http://localhost:3500/_next/static/chunks/0q1a5avojmzza.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "keine",
+          "phase": "laden",
+          "uebertragen": 215,
+          "kopfBytes": 1524,
+          "roh": 215,
+          "gzip": 198,
+          "sha": "ff7e956ae2"
         },
         {
           "url": "http://localhost:3500/jobs/anlagenmechaniker-shk-wetzlar",
@@ -8179,18 +7250,18 @@
           "sha": "2c53a47188"
         },
         {
-          "url": "http://localhost:3500/_next/static/chunks/0q1a5avojmzza.js",
+          "url": "http://localhost:3500/_next/static/chunks/2o0b38gyj507j.js",
           "status": 200,
           "typ": "script",
           "resourceType": "script",
           "contentType": "application/javascript",
-          "kodierung": "keine",
+          "kodierung": "gzip",
           "phase": "laden",
-          "uebertragen": 215,
-          "kopfBytes": 1524,
-          "roh": 215,
-          "gzip": 198,
-          "sha": "ff7e956ae2"
+          "uebertragen": 11376,
+          "kopfBytes": 1557,
+          "roh": 31713,
+          "gzip": 11351,
+          "sha": "54401eac2e"
         },
         {
           "url": "http://localhost:3500/_next/static/chunks/0htzap2iir08t.js",
@@ -8220,20 +7291,6 @@
           "roh": 52404,
           "gzip": 9248,
           "sha": "ce9166b468"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/2o0b38gyj507j.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 11376,
-          "kopfBytes": 1557,
-          "roh": 31713,
-          "gzip": 11351,
-          "sha": "54401eac2e"
         },
         {
           "url": "http://localhost:3500/jobs/obermonteur-projektleiter-shk-wetzlar",
@@ -8280,6 +7337,20 @@
           "sha": "d6fba95207"
         },
         {
+          "url": "http://localhost:3500/_next/static/chunks/3snddn835qz2b.js",
+          "status": 200,
+          "typ": "script",
+          "resourceType": "script",
+          "contentType": "application/javascript",
+          "kodierung": "gzip",
+          "phase": "laden",
+          "uebertragen": 11129,
+          "kopfBytes": 1557,
+          "roh": 31436,
+          "gzip": 11097,
+          "sha": "04700e1af7"
+        },
+        {
           "url": "http://localhost:3500/impressum",
           "query": "?_rsc=kr3BFrJSngVRqnRD",
           "status": 200,
@@ -8322,20 +7393,6 @@
           "roh": 42103,
           "gzip": 10915,
           "sha": "9303ebff6c"
-        },
-        {
-          "url": "http://localhost:3500/_next/static/chunks/3snddn835qz2b.js",
-          "status": 200,
-          "typ": "script",
-          "resourceType": "script",
-          "contentType": "application/javascript",
-          "kodierung": "gzip",
-          "phase": "laden",
-          "uebertragen": 11129,
-          "kopfBytes": 1557,
-          "roh": 31436,
-          "gzip": 11097,
-          "sha": "04700e1af7"
         }
       ],
       "gesperrteAnfragen": 0,
@@ -8439,7 +7496,6 @@
           "stelle-obermonteur",
           "stelle-ausbildung",
           "bewerbung",
-          "impressum",
           "fehler-404"
         ]
       },
@@ -8507,7 +7563,6 @@
           "stelle-obermonteur",
           "stelle-ausbildung",
           "bewerbung",
-          "impressum",
           "fehler-404"
         ]
       },
@@ -9059,8 +8114,8 @@
           "hash": "7924b18858",
           "bytes": 318,
           "gzip": 233,
-          "breite": 16,
-          "hoehe": 16,
+          "breite": 0,
+          "hoehe": 0,
           "kennung": "lucide lucide-check hidden",
           "ort": "div > button > svg",
           "vorkommen": 9,

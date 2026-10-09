@@ -41,6 +41,12 @@ for (const p of set) {
   for (const vp of vps) {
     for (const scheme of schemes) {
       const { context, requestLog } = await newContext(browser, { origin: base, viewport: vp, colorScheme: scheme, reducedMotion: motion, userAgent });
+      if (args.set === 'alt') {
+        // Altstand: Einwilligung „nur essenzielle“ vorbelegen, damit das Cookie-Banner keine Inhalte verdeckt (Bildpaare).
+        await context.addInitScript(() => {
+          try { localStorage.setItem('bad_energie_cookie_consent_v2', JSON.stringify({ necessary: true, analytics: false, functional: false, timestamp: '2026-10-09 07:00:00 UTC', consentId: 'PRUEFLAUF' })); } catch {}
+        });
+      }
       const page = await context.newPage();
       const errors = collectErrors(page);
       const t0 = Date.now();

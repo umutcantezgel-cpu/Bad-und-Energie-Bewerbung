@@ -1,0 +1,2206 @@
+{
+  "label": "p0-altstand",
+  "base": "http://localhost:3600",
+  "motion": "reduce",
+  "erstellt": "2026-10-09T07:34:00.605Z",
+  "seiten": [
+    {
+      "pfad": "/",
+      "slug": "alt-start",
+      "ansicht": "m375",
+      "schema": "light",
+      "status": 200,
+      "ms": 16649,
+      "seitenhoehe": 24290,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 77
+          },
+          {
+            "tag": "span",
+            "text": "WhatsApp:",
+            "clipX": false,
+            "offRight": 2
+          },
+          {
+            "tag": "span",
+            "text": "Sabri Demir",
+            "clipX": false,
+            "offRight": 66
+          },
+          {
+            "tag": "span",
+            "text": "5 Partner-Säulen: Buderus, Bosch, NIBE, Alpha Innotec, Viess",
+            "clipX": false,
+            "offRight": 382
+          },
+          {
+            "tag": "span",
+            "text": "Fachbetriebspartner des Lahn-Dill-Kreises",
+            "clipX": false,
+            "offRight": 699
+          },
+          {
+            "tag": "span",
+            "text": "Freitags ab 13:30 Uhr ins Wochenende",
+            "clipX": false,
+            "offRight": 988
+          },
+          {
+            "tag": "span",
+            "text": "Persönliche Hilti Werkzeugausstattung",
+            "clipX": false,
+            "offRight": 1280
+          },
+          {
+            "tag": "span",
+            "text": "Servicefahrzeug mit Privatnutzung",
+            "clipX": false,
+            "offRight": 1547
+          },
+          {
+            "tag": "span",
+            "text": "30 Tage garantierter Urlaub",
+            "clipX": false,
+            "offRight": 1774
+          },
+          {
+            "tag": "span",
+            "text": "100 Jahre Meisterbetrieb (1926–2026)",
+            "clipX": false,
+            "offRight": 2061
+          },
+          {
+            "tag": "span",
+            "text": "5 Partner-Säulen: Buderus, Bosch, NIBE, Alpha Innotec, Viess",
+            "clipX": false,
+            "offRight": 2514
+          },
+          {
+            "tag": "span",
+            "text": "Fachbetriebspartner des Lahn-Dill-Kreises",
+            "clipX": false,
+            "offRight": 2831
+          },
+          {
+            "tag": "span",
+            "text": "Freitags ab 13:30 Uhr ins Wochenende",
+            "clipX": false,
+            "offRight": 3120
+          },
+          {
+            "tag": "span",
+            "text": "Persönliche Hilti Werkzeugausstattung",
+            "clipX": false,
+            "offRight": 3412
+          },
+          {
+            "tag": "span",
+            "text": "Servicefahrzeug mit Privatnutzung",
+            "clipX": false,
+            "offRight": 3679
+          },
+          {
+            "tag": "span",
+            "text": "30 Tage garantierter Urlaub",
+            "clipX": false,
+            "offRight": 3906
+          },
+          {
+            "tag": "button",
+            "text": "Team & Meisterstimmen",
+            "clipX": false,
+            "offRight": 7
+          },
+          {
+            "tag": "span",
+            "text": "J F",
+            "clipX": false,
+            "offRight": 84
+          },
+          {
+            "tag": "span",
+            "text": "Vor 11 Monaten",
+            "clipX": false,
+            "offRight": 282
+          },
+          {
+            "tag": "span",
+            "text": "Besonderes Teamlob für Timo",
+            "clipX": false,
+            "offRight": 177
+          },
+          {
+            "tag": "span",
+            "text": "Meister",
+            "clipX": false,
+            "offRight": 238
+          },
+          {
+            "tag": "span",
+            "text": "6 Rezensionen",
+            "clipX": false,
+            "offRight": 80
+          },
+          {
+            "tag": "span",
+            "text": "5,0",
+            "clipX": false,
+            "offRight": 121
+          },
+          {
+            "tag": "p",
+            "text": "„Wir sind sehr zufrieden mit Bad und Energie Wetzlar. Besond",
+            "clipX": false,
+            "offRight": 282
+          },
+          {
+            "tag": "button",
+            "text": "Antwort von Meister Demir",
+            "clipX": false,
+            "offRight": 194
+          }
+        ]
+      },
+      "fehler": [
+        {
+          "kind": "console",
+          "text": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+        }
+      ],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/p0-altstand/alt-start__m375-light__01.webp",
+        "belege/p0-altstand/alt-start__m375-light__02.webp",
+        "belege/p0-altstand/alt-start__m375-light__03.webp",
+        "belege/p0-altstand/alt-start__m375-light__04.webp",
+        "belege/p0-altstand/alt-start__m375-light__05.webp",
+        "belege/p0-altstand/alt-start__m375-light__06.webp",
+        "belege/p0-altstand/alt-start__m375-light__07.webp",
+        "belege/p0-altstand/alt-start__m375-light__08.webp",
+        "belege/p0-altstand/alt-start__m375-light__09.webp",
+        "belege/p0-altstand/alt-start__m375-light__10.webp",
+        "belege/p0-altstand/alt-start__m375-light__11.webp",
+        "belege/p0-altstand/alt-start__m375-light__12.webp",
+        "belege/p0-altstand/alt-start__m375-light__13.webp",
+        "belege/p0-altstand/alt-start__m375-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "alt-start",
+      "ansicht": "t768",
+      "schema": "light",
+      "status": 200,
+      "ms": 21603,
+      "seitenhoehe": 17622,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 76
+          },
+          {
+            "tag": "span",
+            "text": "Direkt mit Sabri Demir schreiben",
+            "clipX": false,
+            "offRight": 65
+          },
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 231
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 215
+          },
+          {
+            "tag": "span",
+            "text": "5 Partner-Säulen: Buderus, Bosch, NIBE, Alpha Innotec, Viess",
+            "clipX": false,
+            "offRight": 21
+          },
+          {
+            "tag": "span",
+            "text": "Fachbetriebspartner des Lahn-Dill-Kreises",
+            "clipX": false,
+            "offRight": 354
+          },
+          {
+            "tag": "span",
+            "text": "Freitags ab 13:30 Uhr ins Wochenende",
+            "clipX": false,
+            "offRight": 659
+          },
+          {
+            "tag": "span",
+            "text": "Persönliche Hilti Werkzeugausstattung",
+            "clipX": false,
+            "offRight": 967
+          },
+          {
+            "tag": "span",
+            "text": "Servicefahrzeug mit Privatnutzung",
+            "clipX": false,
+            "offRight": 1250
+          },
+          {
+            "tag": "span",
+            "text": "30 Tage garantierter Urlaub",
+            "clipX": false,
+            "offRight": 1493
+          },
+          {
+            "tag": "span",
+            "text": "100 Jahre Meisterbetrieb (1926–2026)",
+            "clipX": false,
+            "offRight": 1796
+          },
+          {
+            "tag": "span",
+            "text": "5 Partner-Säulen: Buderus, Bosch, NIBE, Alpha Innotec, Viess",
+            "clipX": false,
+            "offRight": 2265
+          },
+          {
+            "tag": "span",
+            "text": "Fachbetriebspartner des Lahn-Dill-Kreises",
+            "clipX": false,
+            "offRight": 2598
+          },
+          {
+            "tag": "span",
+            "text": "Freitags ab 13:30 Uhr ins Wochenende",
+            "clipX": false,
+            "offRight": 2903
+          },
+          {
+            "tag": "span",
+            "text": "Persönliche Hilti Werkzeugausstattung",
+            "clipX": false,
+            "offRight": 3211
+          },
+          {
+            "tag": "span",
+            "text": "Servicefahrzeug mit Privatnutzung",
+            "clipX": false,
+            "offRight": 3494
+          },
+          {
+            "tag": "span",
+            "text": "30 Tage garantierter Urlaub",
+            "clipX": false,
+            "offRight": 3737
+          },
+          {
+            "tag": "a",
+            "text": "Jetzt Expressbewerbung starten",
+            "clipX": false,
+            "offRight": 4
+          },
+          {
+            "tag": "span",
+            "text": "Vor 11 Monaten",
+            "clipX": false,
+            "offRight": 196
+          },
+          {
+            "tag": "span",
+            "text": "Besonderes Teamlob für Timo",
+            "clipX": false,
+            "offRight": 39
+          },
+          {
+            "tag": "span",
+            "text": "Meister",
+            "clipX": false,
+            "offRight": 100
+          },
+          {
+            "tag": "span",
+            "text": "6 Rezensionen",
+            "clipX": false,
+            "offRight": 174
+          },
+          {
+            "tag": "p",
+            "text": "„Wir sind sehr zufrieden mit Bad und Energie Wetzlar. Besond",
+            "clipX": false,
+            "offRight": 196
+          },
+          {
+            "tag": "button",
+            "text": "Antwort von Meister Demir",
+            "clipX": false,
+            "offRight": 56
+          },
+          {
+            "tag": "span",
+            "text": "Antwort von Meister Demir",
+            "clipX": false,
+            "offRight": 36
+          }
+        ]
+      },
+      "fehler": [
+        {
+          "kind": "console",
+          "text": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+        }
+      ],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/p0-altstand/webp/alt-start__t768-light__01.webp",
+        ".roh/p0-altstand/webp/alt-start__t768-light__02.webp",
+        ".roh/p0-altstand/webp/alt-start__t768-light__03.webp",
+        ".roh/p0-altstand/webp/alt-start__t768-light__04.webp",
+        ".roh/p0-altstand/webp/alt-start__t768-light__05.webp",
+        ".roh/p0-altstand/webp/alt-start__t768-light__06.webp",
+        ".roh/p0-altstand/webp/alt-start__t768-light__07.webp",
+        ".roh/p0-altstand/webp/alt-start__t768-light__08.webp",
+        ".roh/p0-altstand/webp/alt-start__t768-light__09.webp",
+        ".roh/p0-altstand/webp/alt-start__t768-light__10.webp",
+        ".roh/p0-altstand/webp/alt-start__t768-light__11.webp",
+        ".roh/p0-altstand/webp/alt-start__t768-light__12.webp",
+        ".roh/p0-altstand/webp/alt-start__t768-light__13.webp",
+        ".roh/p0-altstand/webp/alt-start__t768-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "alt-start",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 11133,
+      "seitenhoehe": 14307,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 134
+          },
+          {
+            "tag": "span",
+            "text": "Direkt mit Sabri Demir schreiben",
+            "clipX": false,
+            "offRight": 123
+          },
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 289
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 273
+          },
+          {
+            "tag": "span",
+            "text": "Freitags ab 13:30 Uhr ins Wochenende",
+            "clipX": false,
+            "offRight": 131
+          },
+          {
+            "tag": "span",
+            "text": "Persönliche Hilti Werkzeugausstattung",
+            "clipX": false,
+            "offRight": 439
+          },
+          {
+            "tag": "span",
+            "text": "Servicefahrzeug mit Privatnutzung",
+            "clipX": false,
+            "offRight": 722
+          },
+          {
+            "tag": "span",
+            "text": "30 Tage garantierter Urlaub",
+            "clipX": false,
+            "offRight": 965
+          },
+          {
+            "tag": "span",
+            "text": "100 Jahre Meisterbetrieb (1926–2026)",
+            "clipX": false,
+            "offRight": 1268
+          },
+          {
+            "tag": "span",
+            "text": "5 Partner-Säulen: Buderus, Bosch, NIBE, Alpha Innotec, Viess",
+            "clipX": false,
+            "offRight": 1737
+          },
+          {
+            "tag": "span",
+            "text": "Fachbetriebspartner des Lahn-Dill-Kreises",
+            "clipX": false,
+            "offRight": 2070
+          },
+          {
+            "tag": "span",
+            "text": "Freitags ab 13:30 Uhr ins Wochenende",
+            "clipX": false,
+            "offRight": 2375
+          },
+          {
+            "tag": "span",
+            "text": "Persönliche Hilti Werkzeugausstattung",
+            "clipX": false,
+            "offRight": 2683
+          },
+          {
+            "tag": "span",
+            "text": "Servicefahrzeug mit Privatnutzung",
+            "clipX": false,
+            "offRight": 2966
+          },
+          {
+            "tag": "span",
+            "text": "30 Tage garantierter Urlaub",
+            "clipX": false,
+            "offRight": 3209
+          },
+          {
+            "tag": "span",
+            "text": "Vor 10 Monaten",
+            "clipX": false,
+            "offRight": 163
+          },
+          {
+            "tag": "span",
+            "text": "Planung",
+            "clipX": false,
+            "offRight": 57
+          },
+          {
+            "tag": "span",
+            "text": "3 Rezensionen",
+            "clipX": false,
+            "offRight": 132
+          },
+          {
+            "tag": "p",
+            "text": "„Service aus einer Hand, professionell geplant und umgesetzt",
+            "clipX": false,
+            "offRight": 163
+          },
+          {
+            "tag": "span",
+            "text": "Google Rezension",
+            "clipX": false,
+            "offRight": 163
+          },
+          {
+            "tag": "span",
+            "text": "Burim Loshaj",
+            "clipX": false,
+            "offRight": 383
+          },
+          {
+            "tag": "span",
+            "text": "Vor 11 Monaten",
+            "clipX": false,
+            "offRight": 593
+          },
+          {
+            "tag": "span",
+            "text": "Gewerbekunde Poco Einrichtungsmarkt",
+            "clipX": false,
+            "offRight": 457
+          },
+          {
+            "tag": "span",
+            "text": "Arbeit",
+            "clipX": false,
+            "offRight": 511
+          },
+          {
+            "tag": "span",
+            "text": "10 Rezensionen",
+            "clipX": false,
+            "offRight": 591
+          }
+        ]
+      },
+      "fehler": [
+        {
+          "kind": "console",
+          "text": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+        }
+      ],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/p0-altstand/alt-start__d1440-light__01.webp",
+        "belege/p0-altstand/alt-start__d1440-light__02.webp",
+        "belege/p0-altstand/alt-start__d1440-light__03.webp",
+        "belege/p0-altstand/alt-start__d1440-light__04.webp",
+        "belege/p0-altstand/alt-start__d1440-light__05.webp",
+        "belege/p0-altstand/alt-start__d1440-light__06.webp",
+        "belege/p0-altstand/alt-start__d1440-light__07.webp",
+        "belege/p0-altstand/alt-start__d1440-light__08.webp",
+        "belege/p0-altstand/alt-start__d1440-light__09.webp",
+        "belege/p0-altstand/alt-start__d1440-light__10.webp",
+        "belege/p0-altstand/alt-start__d1440-light__11.webp",
+        "belege/p0-altstand/alt-start__d1440-light__12.webp",
+        "belege/p0-altstand/alt-start__d1440-light__13.webp",
+        "belege/p0-altstand/alt-start__d1440-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "alt-start",
+      "ansicht": "d1920",
+      "schema": "light",
+      "status": 200,
+      "ms": 10584,
+      "seitenhoehe": 14307,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 49
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 33
+          },
+          {
+            "tag": "span",
+            "text": "Persönliche Hilti Werkzeugausstattung",
+            "clipX": false,
+            "offRight": 199
+          },
+          {
+            "tag": "span",
+            "text": "Servicefahrzeug mit Privatnutzung",
+            "clipX": false,
+            "offRight": 482
+          },
+          {
+            "tag": "span",
+            "text": "30 Tage garantierter Urlaub",
+            "clipX": false,
+            "offRight": 725
+          },
+          {
+            "tag": "span",
+            "text": "100 Jahre Meisterbetrieb (1926–2026)",
+            "clipX": false,
+            "offRight": 1028
+          },
+          {
+            "tag": "span",
+            "text": "5 Partner-Säulen: Buderus, Bosch, NIBE, Alpha Innotec, Viess",
+            "clipX": false,
+            "offRight": 1497
+          },
+          {
+            "tag": "span",
+            "text": "Fachbetriebspartner des Lahn-Dill-Kreises",
+            "clipX": false,
+            "offRight": 1830
+          },
+          {
+            "tag": "span",
+            "text": "Freitags ab 13:30 Uhr ins Wochenende",
+            "clipX": false,
+            "offRight": 2135
+          },
+          {
+            "tag": "span",
+            "text": "Persönliche Hilti Werkzeugausstattung",
+            "clipX": false,
+            "offRight": 2443
+          },
+          {
+            "tag": "span",
+            "text": "Servicefahrzeug mit Privatnutzung",
+            "clipX": false,
+            "offRight": 2726
+          },
+          {
+            "tag": "span",
+            "text": "30 Tage garantierter Urlaub",
+            "clipX": false,
+            "offRight": 2969
+          },
+          {
+            "tag": "span",
+            "text": "Burim Loshaj",
+            "clipX": false,
+            "offRight": 202
+          },
+          {
+            "tag": "span",
+            "text": "Vor 11 Monaten",
+            "clipX": false,
+            "offRight": 412
+          },
+          {
+            "tag": "span",
+            "text": "Gewerbekunde Poco Einrichtungsmarkt",
+            "clipX": false,
+            "offRight": 276
+          },
+          {
+            "tag": "span",
+            "text": "Arbeit",
+            "clipX": false,
+            "offRight": 330
+          },
+          {
+            "tag": "span",
+            "text": "10 Rezensionen",
+            "clipX": false,
+            "offRight": 410
+          },
+          {
+            "tag": "span",
+            "text": "5,0",
+            "clipX": false,
+            "offRight": 169
+          },
+          {
+            "tag": "p",
+            "text": "„Ich schreibe als Marktleiter der Firma Poco in Wetzlar. Wir",
+            "clipX": false,
+            "offRight": 412
+          },
+          {
+            "tag": "button",
+            "text": "Antwort von Meister Demir",
+            "clipX": false,
+            "offRight": 242
+          },
+          {
+            "tag": "span",
+            "text": "Antwort von Meister Demir",
+            "clipX": false,
+            "offRight": 222
+          },
+          {
+            "tag": "span",
+            "text": "Wetzlar",
+            "clipX": false,
+            "offRight": 116
+          },
+          {
+            "tag": "span",
+            "text": "Google Rezension",
+            "clipX": false,
+            "offRight": 412
+          },
+          {
+            "tag": "span",
+            "text": "Feld Salat",
+            "clipX": false,
+            "offRight": 612
+          },
+          {
+            "tag": "span",
+            "text": "Vor einem Jahr",
+            "clipX": false,
+            "offRight": 842
+          }
+        ]
+      },
+      "fehler": [
+        {
+          "kind": "console",
+          "text": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+        }
+      ],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/p0-altstand/webp/alt-start__d1920-light__01.webp",
+        ".roh/p0-altstand/webp/alt-start__d1920-light__02.webp",
+        ".roh/p0-altstand/webp/alt-start__d1920-light__03.webp",
+        ".roh/p0-altstand/webp/alt-start__d1920-light__04.webp",
+        ".roh/p0-altstand/webp/alt-start__d1920-light__05.webp",
+        ".roh/p0-altstand/webp/alt-start__d1920-light__06.webp",
+        ".roh/p0-altstand/webp/alt-start__d1920-light__07.webp",
+        ".roh/p0-altstand/webp/alt-start__d1920-light__08.webp",
+        ".roh/p0-altstand/webp/alt-start__d1920-light__09.webp",
+        ".roh/p0-altstand/webp/alt-start__d1920-light__10.webp",
+        ".roh/p0-altstand/webp/alt-start__d1920-light__11.webp",
+        ".roh/p0-altstand/webp/alt-start__d1920-light__12.webp",
+        ".roh/p0-altstand/webp/alt-start__d1920-light__13.webp",
+        ".roh/p0-altstand/webp/alt-start__d1920-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "alt-bewerbung",
+      "ansicht": "m375",
+      "schema": "light",
+      "status": 200,
+      "ms": 8216,
+      "seitenhoehe": 8048,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 77
+          },
+          {
+            "tag": "span",
+            "text": "WhatsApp:",
+            "clipX": false,
+            "offRight": 2
+          },
+          {
+            "tag": "span",
+            "text": "Sabri Demir",
+            "clipX": false,
+            "offRight": 66
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/p0-altstand/alt-bewerbung__m375-light__01.webp",
+        "belege/p0-altstand/alt-bewerbung__m375-light__02.webp",
+        "belege/p0-altstand/alt-bewerbung__m375-light__03.webp",
+        "belege/p0-altstand/alt-bewerbung__m375-light__04.webp",
+        "belege/p0-altstand/alt-bewerbung__m375-light__05.webp",
+        "belege/p0-altstand/alt-bewerbung__m375-light__06.webp",
+        "belege/p0-altstand/alt-bewerbung__m375-light__07.webp",
+        "belege/p0-altstand/alt-bewerbung__m375-light__08.webp",
+        "belege/p0-altstand/alt-bewerbung__m375-light__09.webp",
+        "belege/p0-altstand/alt-bewerbung__m375-light__10.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "alt-bewerbung",
+      "ansicht": "t768",
+      "schema": "light",
+      "status": 200,
+      "ms": 7359,
+      "seitenhoehe": 5202,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 76
+          },
+          {
+            "tag": "span",
+            "text": "Direkt mit Sabri Demir schreiben",
+            "clipX": false,
+            "offRight": 65
+          },
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 231
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 215
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/p0-altstand/webp/alt-bewerbung__t768-light__01.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung__t768-light__02.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung__t768-light__03.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung__t768-light__04.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung__t768-light__05.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung__t768-light__06.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "alt-bewerbung",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 4120,
+      "seitenhoehe": 4031,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 134
+          },
+          {
+            "tag": "span",
+            "text": "Direkt mit Sabri Demir schreiben",
+            "clipX": false,
+            "offRight": 123
+          },
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 289
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 273
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/p0-altstand/alt-bewerbung__d1440-light__01.webp",
+        "belege/p0-altstand/alt-bewerbung__d1440-light__02.webp",
+        "belege/p0-altstand/alt-bewerbung__d1440-light__03.webp",
+        "belege/p0-altstand/alt-bewerbung__d1440-light__04.webp",
+        "belege/p0-altstand/alt-bewerbung__d1440-light__05.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "alt-bewerbung",
+      "ansicht": "d1920",
+      "schema": "light",
+      "status": 200,
+      "ms": 3992,
+      "seitenhoehe": 4031,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 49
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 33
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/p0-altstand/webp/alt-bewerbung__d1920-light__01.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung__d1920-light__02.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung__d1920-light__03.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung__d1920-light__04.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung?tab=quiz",
+      "slug": "alt-bewerbung-quiz",
+      "ansicht": "m375",
+      "schema": "light",
+      "status": 200,
+      "ms": 4244,
+      "seitenhoehe": 3218,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 77
+          },
+          {
+            "tag": "span",
+            "text": "WhatsApp:",
+            "clipX": false,
+            "offRight": 2
+          },
+          {
+            "tag": "span",
+            "text": "Sabri Demir",
+            "clipX": false,
+            "offRight": 66
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/p0-altstand/alt-bewerbung-quiz__m375-light__01.webp",
+        "belege/p0-altstand/alt-bewerbung-quiz__m375-light__02.webp",
+        "belege/p0-altstand/alt-bewerbung-quiz__m375-light__03.webp",
+        "belege/p0-altstand/alt-bewerbung-quiz__m375-light__04.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung?tab=quiz",
+      "slug": "alt-bewerbung-quiz",
+      "ansicht": "t768",
+      "schema": "light",
+      "status": 200,
+      "ms": 4232,
+      "seitenhoehe": 2403,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 76
+          },
+          {
+            "tag": "span",
+            "text": "Direkt mit Sabri Demir schreiben",
+            "clipX": false,
+            "offRight": 65
+          },
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 231
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 215
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/p0-altstand/webp/alt-bewerbung-quiz__t768-light__01.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung-quiz__t768-light__02.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung-quiz__t768-light__03.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung?tab=quiz",
+      "slug": "alt-bewerbung-quiz",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 3115,
+      "seitenhoehe": 1980,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 134
+          },
+          {
+            "tag": "span",
+            "text": "Direkt mit Sabri Demir schreiben",
+            "clipX": false,
+            "offRight": 123
+          },
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 289
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 273
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/p0-altstand/alt-bewerbung-quiz__d1440-light__01.webp",
+        "belege/p0-altstand/alt-bewerbung-quiz__d1440-light__02.webp",
+        "belege/p0-altstand/alt-bewerbung-quiz__d1440-light__03.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung?tab=quiz",
+      "slug": "alt-bewerbung-quiz",
+      "ansicht": "d1920",
+      "schema": "light",
+      "status": 200,
+      "ms": 3359,
+      "seitenhoehe": 2160,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 49
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 33
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/p0-altstand/webp/alt-bewerbung-quiz__d1920-light__01.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung-quiz__d1920-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung?tab=vault",
+      "slug": "alt-bewerbung-tresor",
+      "ansicht": "m375",
+      "schema": "light",
+      "status": 200,
+      "ms": 5637,
+      "seitenhoehe": 4885,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 77
+          },
+          {
+            "tag": "span",
+            "text": "WhatsApp:",
+            "clipX": false,
+            "offRight": 2
+          },
+          {
+            "tag": "span",
+            "text": "Sabri Demir",
+            "clipX": false,
+            "offRight": 66
+          },
+          {
+            "tag": "span",
+            "text": "Bereit",
+            "clipX": false,
+            "offRight": 33
+          },
+          {
+            "tag": "button",
+            "text": "",
+            "clipX": false,
+            "offRight": 69
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/p0-altstand/alt-bewerbung-tresor__m375-light__01.webp",
+        "belege/p0-altstand/alt-bewerbung-tresor__m375-light__02.webp",
+        "belege/p0-altstand/alt-bewerbung-tresor__m375-light__03.webp",
+        "belege/p0-altstand/alt-bewerbung-tresor__m375-light__04.webp",
+        "belege/p0-altstand/alt-bewerbung-tresor__m375-light__05.webp",
+        "belege/p0-altstand/alt-bewerbung-tresor__m375-light__06.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung?tab=vault",
+      "slug": "alt-bewerbung-tresor",
+      "ansicht": "t768",
+      "schema": "light",
+      "status": 200,
+      "ms": 5567,
+      "seitenhoehe": 3597,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 76
+          },
+          {
+            "tag": "span",
+            "text": "Direkt mit Sabri Demir schreiben",
+            "clipX": false,
+            "offRight": 65
+          },
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 231
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 215
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/p0-altstand/webp/alt-bewerbung-tresor__t768-light__01.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung-tresor__t768-light__02.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung-tresor__t768-light__03.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung-tresor__t768-light__04.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung?tab=vault",
+      "slug": "alt-bewerbung-tresor",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 3658,
+      "seitenhoehe": 2930,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 134
+          },
+          {
+            "tag": "span",
+            "text": "Direkt mit Sabri Demir schreiben",
+            "clipX": false,
+            "offRight": 123
+          },
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 289
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 273
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/p0-altstand/alt-bewerbung-tresor__d1440-light__01.webp",
+        "belege/p0-altstand/alt-bewerbung-tresor__d1440-light__02.webp",
+        "belege/p0-altstand/alt-bewerbung-tresor__d1440-light__03.webp",
+        "belege/p0-altstand/alt-bewerbung-tresor__d1440-light__04.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung?tab=vault",
+      "slug": "alt-bewerbung-tresor",
+      "ansicht": "d1920",
+      "schema": "light",
+      "status": 200,
+      "ms": 3587,
+      "seitenhoehe": 2930,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 49
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 33
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/p0-altstand/webp/alt-bewerbung-tresor__d1920-light__01.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung-tresor__d1920-light__02.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung-tresor__d1920-light__03.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung?tab=form",
+      "slug": "alt-bewerbung-formular",
+      "ansicht": "m375",
+      "schema": "light",
+      "status": 200,
+      "ms": 5092,
+      "seitenhoehe": 3715,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 77
+          },
+          {
+            "tag": "span",
+            "text": "WhatsApp:",
+            "clipX": false,
+            "offRight": 2
+          },
+          {
+            "tag": "span",
+            "text": "Sabri Demir",
+            "clipX": false,
+            "offRight": 66
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/p0-altstand/alt-bewerbung-formular__m375-light__01.webp",
+        "belege/p0-altstand/alt-bewerbung-formular__m375-light__02.webp",
+        "belege/p0-altstand/alt-bewerbung-formular__m375-light__03.webp",
+        "belege/p0-altstand/alt-bewerbung-formular__m375-light__04.webp",
+        "belege/p0-altstand/alt-bewerbung-formular__m375-light__05.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung?tab=form",
+      "slug": "alt-bewerbung-formular",
+      "ansicht": "t768",
+      "schema": "light",
+      "status": 200,
+      "ms": 4684,
+      "seitenhoehe": 2673,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 76
+          },
+          {
+            "tag": "span",
+            "text": "Direkt mit Sabri Demir schreiben",
+            "clipX": false,
+            "offRight": 65
+          },
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 231
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 215
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/p0-altstand/webp/alt-bewerbung-formular__t768-light__01.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung-formular__t768-light__02.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung-formular__t768-light__03.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung?tab=form",
+      "slug": "alt-bewerbung-formular",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 3391,
+      "seitenhoehe": 2308,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 134
+          },
+          {
+            "tag": "span",
+            "text": "Direkt mit Sabri Demir schreiben",
+            "clipX": false,
+            "offRight": 123
+          },
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 289
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 273
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/p0-altstand/alt-bewerbung-formular__d1440-light__01.webp",
+        "belege/p0-altstand/alt-bewerbung-formular__d1440-light__02.webp",
+        "belege/p0-altstand/alt-bewerbung-formular__d1440-light__03.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung?tab=form",
+      "slug": "alt-bewerbung-formular",
+      "ansicht": "d1920",
+      "schema": "light",
+      "status": 200,
+      "ms": 3366,
+      "seitenhoehe": 2308,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 49
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 33
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/p0-altstand/webp/alt-bewerbung-formular__d1920-light__01.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung-formular__d1920-light__02.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung-formular__d1920-light__03.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung?tab=dossier",
+      "slug": "alt-bewerbung-mappe",
+      "ansicht": "m375",
+      "schema": "light",
+      "status": 200,
+      "ms": 6873,
+      "seitenhoehe": 5551,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 77
+          },
+          {
+            "tag": "span",
+            "text": "WhatsApp:",
+            "clipX": false,
+            "offRight": 2
+          },
+          {
+            "tag": "span",
+            "text": "Sabri Demir",
+            "clipX": false,
+            "offRight": 66
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/p0-altstand/alt-bewerbung-mappe__m375-light__01.webp",
+        "belege/p0-altstand/alt-bewerbung-mappe__m375-light__02.webp",
+        "belege/p0-altstand/alt-bewerbung-mappe__m375-light__03.webp",
+        "belege/p0-altstand/alt-bewerbung-mappe__m375-light__04.webp",
+        "belege/p0-altstand/alt-bewerbung-mappe__m375-light__05.webp",
+        "belege/p0-altstand/alt-bewerbung-mappe__m375-light__06.webp",
+        "belege/p0-altstand/alt-bewerbung-mappe__m375-light__07.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung?tab=dossier",
+      "slug": "alt-bewerbung-mappe",
+      "ansicht": "t768",
+      "schema": "light",
+      "status": 200,
+      "ms": 6791,
+      "seitenhoehe": 3957,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 76
+          },
+          {
+            "tag": "span",
+            "text": "Direkt mit Sabri Demir schreiben",
+            "clipX": false,
+            "offRight": 65
+          },
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 231
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 215
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/p0-altstand/webp/alt-bewerbung-mappe__t768-light__01.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung-mappe__t768-light__02.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung-mappe__t768-light__03.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung-mappe__t768-light__04.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung?tab=dossier",
+      "slug": "alt-bewerbung-mappe",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 4542,
+      "seitenhoehe": 3531,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 134
+          },
+          {
+            "tag": "span",
+            "text": "Direkt mit Sabri Demir schreiben",
+            "clipX": false,
+            "offRight": 123
+          },
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 289
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 273
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/p0-altstand/alt-bewerbung-mappe__d1440-light__01.webp",
+        "belege/p0-altstand/alt-bewerbung-mappe__d1440-light__02.webp",
+        "belege/p0-altstand/alt-bewerbung-mappe__d1440-light__03.webp",
+        "belege/p0-altstand/alt-bewerbung-mappe__d1440-light__04.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung?tab=dossier",
+      "slug": "alt-bewerbung-mappe",
+      "ansicht": "d1920",
+      "schema": "light",
+      "status": 200,
+      "ms": 4528,
+      "seitenhoehe": 3531,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 49
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 33
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/p0-altstand/webp/alt-bewerbung-mappe__d1920-light__01.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung-mappe__d1920-light__02.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung-mappe__d1920-light__03.webp",
+        ".roh/p0-altstand/webp/alt-bewerbung-mappe__d1920-light__04.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "alt-datenschutz",
+      "ansicht": "m375",
+      "schema": "light",
+      "status": 200,
+      "ms": 10467,
+      "seitenhoehe": 10901,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 77
+          },
+          {
+            "tag": "span",
+            "text": "WhatsApp:",
+            "clipX": false,
+            "offRight": 2
+          },
+          {
+            "tag": "span",
+            "text": "Sabri Demir",
+            "clipX": false,
+            "offRight": 66
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/p0-altstand/alt-datenschutz__m375-light__01.webp",
+        "belege/p0-altstand/alt-datenschutz__m375-light__02.webp",
+        "belege/p0-altstand/alt-datenschutz__m375-light__03.webp",
+        "belege/p0-altstand/alt-datenschutz__m375-light__04.webp",
+        "belege/p0-altstand/alt-datenschutz__m375-light__05.webp",
+        "belege/p0-altstand/alt-datenschutz__m375-light__06.webp",
+        "belege/p0-altstand/alt-datenschutz__m375-light__07.webp",
+        "belege/p0-altstand/alt-datenschutz__m375-light__08.webp",
+        "belege/p0-altstand/alt-datenschutz__m375-light__09.webp",
+        "belege/p0-altstand/alt-datenschutz__m375-light__10.webp",
+        "belege/p0-altstand/alt-datenschutz__m375-light__11.webp",
+        "belege/p0-altstand/alt-datenschutz__m375-light__12.webp",
+        "belege/p0-altstand/alt-datenschutz__m375-light__13.webp",
+        "belege/p0-altstand/alt-datenschutz__m375-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "alt-datenschutz",
+      "ansicht": "t768",
+      "schema": "light",
+      "status": 200,
+      "ms": 9019,
+      "seitenhoehe": 7015,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 76
+          },
+          {
+            "tag": "span",
+            "text": "Direkt mit Sabri Demir schreiben",
+            "clipX": false,
+            "offRight": 65
+          },
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 231
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 215
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/p0-altstand/webp/alt-datenschutz__t768-light__01.webp",
+        ".roh/p0-altstand/webp/alt-datenschutz__t768-light__02.webp",
+        ".roh/p0-altstand/webp/alt-datenschutz__t768-light__03.webp",
+        ".roh/p0-altstand/webp/alt-datenschutz__t768-light__04.webp",
+        ".roh/p0-altstand/webp/alt-datenschutz__t768-light__05.webp",
+        ".roh/p0-altstand/webp/alt-datenschutz__t768-light__06.webp",
+        ".roh/p0-altstand/webp/alt-datenschutz__t768-light__07.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "alt-datenschutz",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 6029,
+      "seitenhoehe": 5782,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 134
+          },
+          {
+            "tag": "span",
+            "text": "Direkt mit Sabri Demir schreiben",
+            "clipX": false,
+            "offRight": 123
+          },
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 289
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 273
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/p0-altstand/alt-datenschutz__d1440-light__01.webp",
+        "belege/p0-altstand/alt-datenschutz__d1440-light__02.webp",
+        "belege/p0-altstand/alt-datenschutz__d1440-light__03.webp",
+        "belege/p0-altstand/alt-datenschutz__d1440-light__04.webp",
+        "belege/p0-altstand/alt-datenschutz__d1440-light__05.webp",
+        "belege/p0-altstand/alt-datenschutz__d1440-light__06.webp",
+        "belege/p0-altstand/alt-datenschutz__d1440-light__07.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "alt-datenschutz",
+      "ansicht": "d1920",
+      "schema": "light",
+      "status": 200,
+      "ms": 5196,
+      "seitenhoehe": 5782,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 49
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 33
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/p0-altstand/webp/alt-datenschutz__d1920-light__01.webp",
+        ".roh/p0-altstand/webp/alt-datenschutz__d1920-light__02.webp",
+        ".roh/p0-altstand/webp/alt-datenschutz__d1920-light__03.webp",
+        ".roh/p0-altstand/webp/alt-datenschutz__d1920-light__04.webp",
+        ".roh/p0-altstand/webp/alt-datenschutz__d1920-light__05.webp",
+        ".roh/p0-altstand/webp/alt-datenschutz__d1920-light__06.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "alt-impressum",
+      "ansicht": "m375",
+      "schema": "light",
+      "status": 200,
+      "ms": 4602,
+      "seitenhoehe": 3928,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 77
+          },
+          {
+            "tag": "span",
+            "text": "WhatsApp:",
+            "clipX": false,
+            "offRight": 2
+          },
+          {
+            "tag": "span",
+            "text": "Sabri Demir",
+            "clipX": false,
+            "offRight": 66
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/p0-altstand/alt-impressum__m375-light__01.webp",
+        "belege/p0-altstand/alt-impressum__m375-light__02.webp",
+        "belege/p0-altstand/alt-impressum__m375-light__03.webp",
+        "belege/p0-altstand/alt-impressum__m375-light__04.webp",
+        "belege/p0-altstand/alt-impressum__m375-light__05.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "alt-impressum",
+      "ansicht": "t768",
+      "schema": "light",
+      "status": 200,
+      "ms": 4571,
+      "seitenhoehe": 2761,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 76
+          },
+          {
+            "tag": "span",
+            "text": "Direkt mit Sabri Demir schreiben",
+            "clipX": false,
+            "offRight": 65
+          },
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 231
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 215
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/p0-altstand/webp/alt-impressum__t768-light__01.webp",
+        ".roh/p0-altstand/webp/alt-impressum__t768-light__02.webp",
+        ".roh/p0-altstand/webp/alt-impressum__t768-light__03.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "alt-impressum",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 2842,
+      "seitenhoehe": 2427,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 134
+          },
+          {
+            "tag": "span",
+            "text": "Direkt mit Sabri Demir schreiben",
+            "clipX": false,
+            "offRight": 123
+          },
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 289
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 273
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/p0-altstand/alt-impressum__d1440-light__01.webp",
+        "belege/p0-altstand/alt-impressum__d1440-light__02.webp",
+        "belege/p0-altstand/alt-impressum__d1440-light__03.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "alt-impressum",
+      "ansicht": "d1920",
+      "schema": "light",
+      "status": 200,
+      "ms": 3124,
+      "seitenhoehe": 2427,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 49
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 33
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/p0-altstand/webp/alt-impressum__d1920-light__01.webp",
+        ".roh/p0-altstand/webp/alt-impressum__d1920-light__02.webp",
+        ".roh/p0-altstand/webp/alt-impressum__d1920-light__03.webp"
+      ]
+    },
+    {
+      "pfad": "/gibt-es-nicht-404",
+      "slug": "alt-fehler-404",
+      "ansicht": "m375",
+      "schema": "light",
+      "status": 404,
+      "ms": 3920,
+      "seitenhoehe": 2857,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 77
+          },
+          {
+            "tag": "span",
+            "text": "WhatsApp:",
+            "clipX": false,
+            "offRight": 2
+          },
+          {
+            "tag": "span",
+            "text": "Sabri Demir",
+            "clipX": false,
+            "offRight": 66
+          }
+        ]
+      },
+      "fehler": [
+        {
+          "kind": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/p0-altstand/alt-fehler-404__m375-light__01.webp",
+        "belege/p0-altstand/alt-fehler-404__m375-light__02.webp",
+        "belege/p0-altstand/alt-fehler-404__m375-light__03.webp",
+        "belege/p0-altstand/alt-fehler-404__m375-light__04.webp"
+      ]
+    },
+    {
+      "pfad": "/gibt-es-nicht-404",
+      "slug": "alt-fehler-404",
+      "ansicht": "t768",
+      "schema": "light",
+      "status": 404,
+      "ms": 3739,
+      "seitenhoehe": 2198,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 76
+          },
+          {
+            "tag": "span",
+            "text": "Direkt mit Sabri Demir schreiben",
+            "clipX": false,
+            "offRight": 65
+          },
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 231
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 215
+          }
+        ]
+      },
+      "fehler": [
+        {
+          "kind": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/p0-altstand/webp/alt-fehler-404__t768-light__01.webp",
+        ".roh/p0-altstand/webp/alt-fehler-404__t768-light__02.webp",
+        ".roh/p0-altstand/webp/alt-fehler-404__t768-light__03.webp"
+      ]
+    },
+    {
+      "pfad": "/gibt-es-nicht-404",
+      "slug": "alt-fehler-404",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 404,
+      "ms": 2645,
+      "seitenhoehe": 1809,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "WhatsApp:Direkt mit Sabri Demir schreibenSabri Demir",
+            "clipX": false,
+            "offRight": 134
+          },
+          {
+            "tag": "span",
+            "text": "Direkt mit Sabri Demir schreiben",
+            "clipX": false,
+            "offRight": 123
+          },
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 289
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 273
+          }
+        ]
+      },
+      "fehler": [
+        {
+          "kind": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/p0-altstand/alt-fehler-404__d1440-light__01.webp",
+        "belege/p0-altstand/alt-fehler-404__d1440-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/gibt-es-nicht-404",
+      "slug": "alt-fehler-404",
+      "ansicht": "d1920",
+      "schema": "light",
+      "status": 404,
+      "ms": 2427,
+      "seitenhoehe": 1944,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": [
+          {
+            "tag": "a",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 49
+          },
+          {
+            "tag": "span",
+            "text": "Zur Kunden-Website",
+            "clipX": false,
+            "offRight": 33
+          }
+        ]
+      },
+      "fehler": [
+        {
+          "kind": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/p0-altstand/webp/alt-fehler-404__d1920-light__01.webp",
+        ".roh/p0-altstand/webp/alt-fehler-404__d1920-light__02.webp"
+      ]
+    }
+  ]
+}

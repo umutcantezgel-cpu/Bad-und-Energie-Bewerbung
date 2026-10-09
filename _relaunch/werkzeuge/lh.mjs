@@ -3,7 +3,7 @@
 // Zusammenfassung → _relaunch/belege/<label>/lighthouse.json und lighthouse.md
 //
 // Aufruf: node lh.mjs --base http://localhost:3500 --label <label> [--runs 5] [--forms mobile,desktop] [--only start,stellen]
-//         [--warmup true|false]
+//         [--warmup true|false] [--retries 2]   (Wiederholungen je Lauf nur bei technischem Fehler, z. B. NO_NAVSTART)
 //
 // Messbedingungen (stehen auch im Kopf der Ausgaben):
 // - Mobil = Lighthouse-Standardkonfiguration (Moto-G-Power-Profil, simulierte Drosselung „Slow 4G“, CPU-Faktor 4).
@@ -25,6 +25,7 @@ const base = (args.base ?? 'http://localhost:3500').replace(/\/$/, '');
 const label = args.label ?? 'lauf';
 const runs = Math.max(1, Number.parseInt(args.runs ?? '5', 10) || 5);
 const warmup = (args.warmup ?? 'true') !== 'false';
+const retries = Math.max(0, Number.parseInt(args.retries ?? '2', 10) || 0);
 const only = args.only ? args.only.split(',').map((s) => s.trim()).filter(Boolean) : null;
 const FORMEN = { mobile: 'mobile', mobil: 'mobile', desktop: 'desktop' };
 const forms = [...new Set((args.forms ?? 'mobile,desktop').split(',').map((f) => FORMEN[f.trim()]).filter(Boolean))];
@@ -164,31 +165,33 @@ for (const p of seiten) {
     const einzel = [];
     const benchmark = [];
     for (let n = 1; n <= runs; n++) {
-      try {
-        const { lhr, rohdatei, fehler } = await einLauf(url, form, p.slug, n);
-        lhVersion ??= lhr.lighthouseVersion;
-        bedingungen[form] ??= {
-          formFactor: lhr.configSettings?.formFactor,
-          drosselungsmethode: lhr.configSettings?.throttlingMethod,
-          drosselung: lhr.configSettings?.throttling,
-          bildschirm: lhr.configSettings?.screenEmulation,
-          userAgent: lhr.configSettings?.emulatedUserAgent,
-        };
-        if (lhr.environment?.benchmarkIndex) benchmark.push(lhr.environment.benchmarkIndex);
-        if (fehler) {
-          fehlerGesamt++;
-          einzel.push({ n, fehler, rohdatei });
-          process.stdout.write(`FEHLER ${p.slug} ${form} #${n}: ${fehler}\n`);
-          continue;
+      // Technische Fehler (z. B. NO_NAVSTART) werden bis zu `retries`-mal wiederholt; schlechte Werte nie.
+      const fehlversuche = [];
+      let fertig = null;
+      for (let versuch = 1; versuch <= 1 + retries; versuch++) {
+        try {
+          const { lhr, rohdatei, fehler } = await einLauf(url, form, p.slug, n);
+          lhVersion ??= lhr.lighthouseVersion;
+          bedingungen[form] ??= {
+            formFactor: lhr.configSettings?.formFactor,
+            drosselungsmethode: lhr.configSettings?.throttlingMethod,
+            drosselung: lhr.configSettings?.throttling,
+            bildschirm: lhr.configSettings?.screenEmulation,
+            userAgent: lhr.configSettings?.emulatedUserAgent,
+          };
+          if (fehler) throw new Error(fehler);
+          if (lhr.environment?.benchmarkIndex) benchmark.push(lhr.environment.benchmarkIndex);
+          const k = kennzahlen(lhr);
+          fertig = { n, ...k, lcpElement: lcpElement(lhr), lcpTeileMs: lcpTeile(lhr), rohdatei, ...(fehlversuche.length ? { fehlversuche } : {}) };
+          process.stdout.write(`${p.slug} ${form} #${n}/${runs}${versuch > 1 ? ` (Versuch ${versuch})` : ''}: Perf ${k.leistung} · LCP ${(k.lcpMs / 1000).toFixed(2)} s · CLS ${k.cls?.toFixed(3)} · TBT ${Math.round(k.tbtMs)} ms · ${Math.round(k.bytes / KB)} KB\n`);
+          break;
+        } catch (err) {
+          fehlversuche.push(String(err?.message ?? err).split('\n')[0]);
+          process.stdout.write(`FEHLVERSUCH ${p.slug} ${form} #${n} Versuch ${versuch}/${1 + retries}: ${fehlversuche.at(-1)}\n`);
         }
-        const k = kennzahlen(lhr);
-        einzel.push({ n, ...k, lcpElement: lcpElement(lhr), lcpTeileMs: lcpTeile(lhr), rohdatei });
-        process.stdout.write(`${p.slug} ${form} #${n}/${runs}: Perf ${k.leistung} · LCP ${(k.lcpMs / 1000).toFixed(2)} s · CLS ${k.cls?.toFixed(3)} · TBT ${Math.round(k.tbtMs)} ms · ${Math.round(k.bytes / KB)} KB\n`);
-      } catch (err) {
-        fehlerGesamt++;
-        einzel.push({ n, fehler: String(err?.message ?? err) });
-        process.stdout.write(`FEHLER ${p.slug} ${form} #${n}: ${err?.message ?? err}\n`);
       }
+      if (fertig) einzel.push(fertig);
+      else { fehlerGesamt++; einzel.push({ n, fehler: fehlversuche.at(-1), fehlversuche }); }
     }
     const gueltig = einzel.filter((e) => !e.fehler);
     const median_ = {};
@@ -216,7 +219,7 @@ for (const p of seiten) {
 function bewerten(form, m, gueltig) {
   if (!gueltig) return { urteil: 'keine gültigen Läufe', verletzt: [] };
   const verletzt = [];
-  if (form === 'mobile' && m.leistung < BUDGET.perfMobilMin) verletzt.push(`Perf ${m.leistung} < ${BUDGET.perfMobilMin}`);
+  if (form === 'mobile' && m.leistung < BUDGET.perfMobilMin) verletzt.push(`Perf ${fmt(m.leistung, Number.isInteger(m.leistung) ? 0 : 1)} < ${BUDGET.perfMobilMin}`);
   if (m.lcpMs > BUDGET.lcpMsMax) verletzt.push(`LCP ${fmt(m.lcpMs / 1000, 2)} s > 2,5 s`);
   if (m.cls > BUDGET.clsMax) verletzt.push(`CLS ${fmt(m.cls, 3)} > 0,1`);
   if (m.tbtMs > BUDGET.tbtMsMax) verletzt.push(`TBT ${Math.round(m.tbtMs)} ms > 200 ms`);
@@ -228,6 +231,7 @@ function fmt(x, d = 0) {
   if (x == null || !Number.isFinite(x)) return '–';
   return x.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d });
 }
+const sc = (x) => fmt(x, x != null && !Number.isInteger(x) ? 1 : 0);
 const s = (ms, d = 2) => fmt(ms == null ? null : ms / 1000, d);
 const kb = (b) => fmt(b == null ? null : b / KB, 0);
 const range = (a, b, f) => (a == null ? '–' : a === b ? f(a) : `${f(a)}–${f(b)}`);
@@ -237,7 +241,7 @@ const erstellt = new Date();
 const zusammenfassung = {
   label, base, erstellt: erstellt.toISOString(), dauerSekunden: Math.round((Date.now() - t0) / 1000),
   chromium: chromiumVersion, lighthouse: lhVersion, node: process.version,
-  laeufeJeKombination: runs, formfaktoren: forms, aufwaermen: warmup,
+  laeufeJeKombination: runs, wiederholungenBeiTechnischemFehler: retries, formfaktoren: forms, aufwaermen: warmup,
   statistik: 'Median (bei gerader Anzahl: Mittel der beiden mittleren Werte), min, max über die gültigen Läufe',
   kilobyte: '1 KB = 1024 Byte',
   bedingungen,
@@ -264,7 +268,7 @@ md.push('|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|');
 for (const e of ergebnisse) {
   const m = e.median;
   const bud = e.budget.verletzt.length ? `über Budget (${e.budget.verletzt.join('; ')})` : e.budget.urteil;
-  md.push(`| ${e.pfad} | ${e.formfaktor === 'mobile' ? 'mobil' : 'Desktop'} | ${fmt(m.leistung)} | ${fmt(m.barrierefreiheit)} | ${fmt(m.bestPractices)} | ${fmt(m.seo)} | ${s(m.lcpMs)} | ${fmt(m.cls, 3)} | ${fmt(m.tbtMs)} | ${s(m.siMs)} | ${kb(m.bytes)} | ${bud} |`);
+  md.push(`| ${e.pfad} | ${e.formfaktor === 'mobile' ? 'mobil' : 'Desktop'} | ${sc(m.leistung)} | ${sc(m.barrierefreiheit)} | ${sc(m.bestPractices)} | ${sc(m.seo)} | ${s(m.lcpMs)} | ${fmt(m.cls, 3)} | ${fmt(m.tbtMs)} | ${s(m.siMs)} | ${kb(m.bytes)} | ${bud} |`);
 }
 md.push('', '## Weitere Kennzahlen und Streuung', '');
 md.push('| Seite | Formfaktor | gültige Läufe | Perf min–max | LCP s min–max | TBT ms min–max | FCP s | TTI s | Anfragen | Dritt-KB | fremde Anfragen | CPU-Benchmark | LCP-Element |');
@@ -272,13 +276,14 @@ md.push('|---|---|---:|---|---|---|---:|---:|---:|---:|---:|---:|---|');
 for (const e of ergebnisse) {
   const m = e.median;
   const el = e.lcpElement ? `\`${String(e.lcpElement).replace(/\|/g, '\\|').slice(0, 90)}\`` : '–';
-  md.push(`| ${e.pfad} | ${e.formfaktor === 'mobile' ? 'mobil' : 'Desktop'} | ${e.gueltigeLaeufe}/${e.laeufe} | ${range(e.min.leistung, e.max.leistung, (x) => fmt(x))} | ${range(e.min.lcpMs, e.max.lcpMs, (x) => s(x))} | ${range(e.min.tbtMs, e.max.tbtMs, (x) => fmt(x))} | ${s(m.fcpMs)} | ${s(m.ttiMs)} | ${fmt(m.anfragen)} | ${kb(m.drittanbieterBytes)} | ${fmt(m.fremdeAnfragen)} | ${fmt(e.cpuBenchmarkMedian)} | ${el} |`);
+  md.push(`| ${e.pfad} | ${e.formfaktor === 'mobile' ? 'mobil' : 'Desktop'} | ${e.gueltigeLaeufe}/${e.laeufe} | ${range(e.min.leistung, e.max.leistung, (x) => sc(x))} | ${range(e.min.lcpMs, e.max.lcpMs, (x) => s(x))} | ${range(e.min.tbtMs, e.max.tbtMs, (x) => fmt(x))} | ${s(m.fcpMs)} | ${s(m.ttiMs)} | ${fmt(m.anfragen)} | ${kb(m.drittanbieterBytes)} | ${fmt(m.fremdeAnfragen)} | ${fmt(e.cpuBenchmarkMedian)} | ${el} |`);
 }
 const fehlerLaeufe = ergebnisse.flatMap((e) => e.einzel.filter((x) => x.fehler).map((x) => `- ${e.pfad} ${e.formfaktor} Lauf ${x.n}: ${x.fehler}`));
 if (fehlerLaeufe.length) md.push('', '## Fehlgeschlagene Läufe (nicht in den Medianen)', '', ...fehlerLaeufe);
 md.push('', `Rohberichte: \`_relaunch/.roh/${label}/lh/<slug>-<formfaktor>-<n>.json\` · Zusammenfassung: \`_relaunch/belege/${label}/lighthouse.json\``, '');
 await fs.writeFile(path.join(outDir, 'lighthouse.md'), md.join('\n'));
 
-const ueber = ergebnisse.filter((e) => e.budget.urteil !== 'ok').length;
-console.log(`\nFERTIG ${ergebnisse.length} Kombinationen × ${runs} Läufe in ${zusammenfassung.dauerSekunden} s · über Budget ${ueber} · fehlgeschlagene Läufe ${fehlerGesamt} → ${path.relative(ROOT, outDir)}/lighthouse.{json,md}`);
+const ueber = ergebnisse.filter((e) => e.budget.urteil === 'über Budget').length;
+const ohneDaten = ergebnisse.filter((e) => !e.gueltigeLaeufe).length;
+console.log(`\nFERTIG ${ergebnisse.length} Kombinationen × ${runs} Läufe in ${zusammenfassung.dauerSekunden} s · über Budget ${ueber} · ohne gültigen Lauf ${ohneDaten} · fehlgeschlagene Läufe ${fehlerGesamt} → ${path.relative(ROOT, outDir)}/lighthouse.{json,md}`);
 if (fehlerGesamt) process.exitCode = 1;
