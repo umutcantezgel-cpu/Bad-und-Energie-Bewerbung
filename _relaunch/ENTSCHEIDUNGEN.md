@@ -100,6 +100,7 @@ Format: E-[Nr] · Datum · Gegenstand · Entscheidung · Grund · Umkehr (bei De
   - Helles Papier als Fläche, kühl #F3F5F9 (A) oder warm #FBF7F0 (B); dazu Bs warme Illustrationsflächen #F1E9DB/#FADCC9.
   - Ein helleres Rücklauf- und Fokusblau ist erlaubt (#1F57C4).
   - Nicht mehr als Hauptfarben: die bisherigen Plattform-Tokens Navy #0A1E3A und Crimson #C51E1E (ROADMAP §4). Grün nur für Erfolg, keine Verläufe.
+- Auslegung (ergänzt nach Runde 2): „Rot nur für die eine Primäraktion“ (ROADMAP §4) gilt für Flächen, Knöpfe und Hervorhebungen. Rot als dünne Vorlauf-Leitung und Blau als Rücklauf in Grafiken sind durch die bestätigten Bilder ausdrücklich erlaubt. Kachel B hat sie in der Überarbeitung auf einen Prüferbefund hin entfernt; die gewählte Richtung stellt sie wieder her.
 - Offen bis zur Freigabe: kühles oder warmes Papier, entschieden mit der Richtung. Das dunkle Thema wird aus derselben Familie abgeleitet und am Freigabepunkt gezeigt.
 - Folgen:
   - `pakete/_richtung.md` trägt die Palette als harte Vorgabe. Das betrifft Kachel C und die Überarbeitungsrunde.
