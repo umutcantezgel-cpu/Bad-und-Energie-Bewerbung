@@ -1,0 +1,200 @@
+{
+  "url": "http://localhost:3803/",
+  "motion": "no-preference",
+  "erstellt": "2026-10-09T20:06:51.332Z",
+  "zeiten_ms": [
+    0,
+    250,
+    500,
+    750,
+    1000,
+    1250,
+    1500
+  ],
+  "aufnahmen": [
+    {
+      "ansicht": "m390",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "bilder": [
+        {
+          "ms": 0,
+          "datei": "m390-light-voll__t0000.webp",
+          "bild_ab_ms": null
+        },
+        {
+          "ms": 250,
+          "datei": "m390-light-voll__t0250.webp",
+          "bild_ab_ms": 250
+        },
+        {
+          "ms": 500,
+          "datei": "m390-light-voll__t0500.webp",
+          "bild_ab_ms": 497
+        },
+        {
+          "ms": 750,
+          "datei": "m390-light-voll__t0750.webp",
+          "bild_ab_ms": 749
+        },
+        {
+          "ms": 1000,
+          "datei": "m390-light-voll__t1000.webp",
+          "bild_ab_ms": 998
+        },
+        {
+          "ms": 1250,
+          "datei": "m390-light-voll__t1250.webp",
+          "bild_ab_ms": 1248
+        },
+        {
+          "ms": 1500,
+          "datei": "m390-light-voll__t1500.webp",
+          "bild_ab_ms": 1336
+        }
+      ],
+      "streifen": "m390-light-voll__streifen.webp",
+      "screencast_bilder": 71,
+      "fehler": [],
+      "gesperrt": []
+    },
+    {
+      "ansicht": "m390",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "bilder": [
+        {
+          "ms": 0,
+          "datei": "m390-dark-voll__t0000.webp",
+          "bild_ab_ms": null
+        },
+        {
+          "ms": 250,
+          "datei": "m390-dark-voll__t0250.webp",
+          "bild_ab_ms": 247
+        },
+        {
+          "ms": 500,
+          "datei": "m390-dark-voll__t0500.webp",
+          "bild_ab_ms": 497
+        },
+        {
+          "ms": 750,
+          "datei": "m390-dark-voll__t0750.webp",
+          "bild_ab_ms": 746
+        },
+        {
+          "ms": 1000,
+          "datei": "m390-dark-voll__t1000.webp",
+          "bild_ab_ms": 996
+        },
+        {
+          "ms": 1250,
+          "datei": "m390-dark-voll__t1250.webp",
+          "bild_ab_ms": 1246
+        },
+        {
+          "ms": 1500,
+          "datei": "m390-dark-voll__t1500.webp",
+          "bild_ab_ms": 1329
+        }
+      ],
+      "streifen": "m390-dark-voll__streifen.webp",
+      "screencast_bilder": 73,
+      "fehler": [],
+      "gesperrt": []
+    },
+    {
+      "ansicht": "d1440",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "bilder": [
+        {
+          "ms": 0,
+          "datei": "d1440-light-voll__t0000.webp",
+          "bild_ab_ms": null
+        },
+        {
+          "ms": 250,
+          "datei": "d1440-light-voll__t0250.webp",
+          "bild_ab_ms": 158
+        },
+        {
+          "ms": 500,
+          "datei": "d1440-light-voll__t0500.webp",
+          "bild_ab_ms": 490
+        },
+        {
+          "ms": 750,
+          "datei": "d1440-light-voll__t0750.webp",
+          "bild_ab_ms": 741
+        },
+        {
+          "ms": 1000,
+          "datei": "d1440-light-voll__t1000.webp",
+          "bild_ab_ms": 995
+        },
+        {
+          "ms": 1250,
+          "datei": "d1440-light-voll__t1250.webp",
+          "bild_ab_ms": 1237
+        },
+        {
+          "ms": 1500,
+          "datei": "d1440-light-voll__t1500.webp",
+          "bild_ab_ms": 1372
+        }
+      ],
+      "streifen": "d1440-light-voll__streifen.webp",
+      "screencast_bilder": 69,
+      "fehler": [],
+      "gesperrt": []
+    },
+    {
+      "ansicht": "d1440",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "bilder": [
+        {
+          "ms": 0,
+          "datei": "d1440-dark-voll__t0000.webp",
+          "bild_ab_ms": null
+        },
+        {
+          "ms": 250,
+          "datei": "d1440-dark-voll__t0250.webp",
+          "bild_ab_ms": 155
+        },
+        {
+          "ms": 500,
+          "datei": "d1440-dark-voll__t0500.webp",
+          "bild_ab_ms": 500
+        },
+        {
+          "ms": 750,
+          "datei": "d1440-dark-voll__t0750.webp",
+          "bild_ab_ms": 740
+        },
+        {
+          "ms": 1000,
+          "datei": "d1440-dark-voll__t1000.webp",
+          "bild_ab_ms": 999
+        },
+        {
+          "ms": 1250,
+          "datei": "d1440-dark-voll__t1250.webp",
+          "bild_ab_ms": 1246
+        },
+        {
+          "ms": 1500,
+          "datei": "d1440-dark-voll__t1500.webp",
+          "bild_ab_ms": 1436
+        }
+      ],
+      "streifen": "d1440-dark-voll__streifen.webp",
+      "screencast_bilder": 66,
+      "fehler": [],
+      "gesperrt": []
+    }
+  ]
+}

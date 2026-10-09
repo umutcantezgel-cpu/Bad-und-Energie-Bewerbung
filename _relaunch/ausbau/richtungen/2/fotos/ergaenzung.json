@@ -1,0 +1,768 @@
+{
+  "url": "http://localhost:3802/",
+  "erstellt": "2026-10-09T19:17:18.910Z",
+  "hinweis": "Ergänzung zu kachel-fotos.mjs: Szene als Bildfolge (Fortschritt p000–p100 des Animationsbereichs, dazu rückwärts), Bild-ab-Stopps, Stufen-Rückfall, Menü als modaler Dialog, 320 px, ohne JavaScript, kurze Fenster (390×664, 375×553), Druckzustände, Grundschrift 20/24 px. Messwerte aus scratchpad-Skript pruef.cjs unter „messungen“.",
+  "laeufe": [
+    {
+      "lauf": "szene-m390-light",
+      "ansicht": "m390",
+      "breite": 390,
+      "hoehe": 844,
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "szene-m390-light-voll__p000.webp",
+        "szene-m390-light-voll__p020.webp",
+        "szene-m390-light-voll__p045.webp",
+        "szene-m390-light-voll__p070.webp",
+        "szene-m390-light-voll__p100.webp",
+        "szene-m390-light-voll__p045-rueckwaerts.webp"
+      ],
+      "extra": {
+        "scrollpositionen": [
+          633,
+          743,
+          880,
+          1017,
+          1182
+        ]
+      }
+    },
+    {
+      "lauf": "szene-m390-dark",
+      "ansicht": "m390",
+      "breite": 390,
+      "hoehe": 844,
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "szene-m390-dark-voll__p000.webp",
+        "szene-m390-dark-voll__p020.webp",
+        "szene-m390-dark-voll__p045.webp",
+        "szene-m390-dark-voll__p070.webp",
+        "szene-m390-dark-voll__p100.webp",
+        "szene-m390-dark-voll__p045-rueckwaerts.webp"
+      ],
+      "extra": {
+        "scrollpositionen": [
+          633,
+          743,
+          880,
+          1017,
+          1182
+        ]
+      }
+    },
+    {
+      "lauf": "szene-d1440-light",
+      "ansicht": "d1440",
+      "breite": 1440,
+      "hoehe": 900,
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "szene-d1440-light-voll__p000.webp",
+        "szene-d1440-light-voll__p020.webp",
+        "szene-d1440-light-voll__p045.webp",
+        "szene-d1440-light-voll__p070.webp",
+        "szene-d1440-light-voll__p100.webp",
+        "szene-d1440-light-voll__p045-rueckwaerts.webp"
+      ],
+      "extra": {
+        "scrollpositionen": [
+          675,
+          792,
+          938,
+          1085,
+          1260
+        ]
+      }
+    },
+    {
+      "lauf": "szene-d1440-dark",
+      "ansicht": "d1440",
+      "breite": 1440,
+      "hoehe": 900,
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "szene-d1440-dark-voll__p000.webp",
+        "szene-d1440-dark-voll__p020.webp",
+        "szene-d1440-dark-voll__p045.webp",
+        "szene-d1440-dark-voll__p070.webp",
+        "szene-d1440-dark-voll__p100.webp",
+        "szene-d1440-dark-voll__p045-rueckwaerts.webp"
+      ],
+      "extra": {
+        "scrollpositionen": [
+          675,
+          792,
+          938,
+          1085,
+          1260
+        ]
+      }
+    },
+    {
+      "lauf": "bildab-m390-light",
+      "ansicht": "m390",
+      "breite": 390,
+      "hoehe": 844,
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "bildab-m390-light-voll__0.webp",
+        "bildab-m390-light-voll__1.webp",
+        "bildab-m390-light-voll__2.webp",
+        "bildab-m390-light-voll__3.webp"
+      ],
+      "extra": {
+        "scrollpositionen": [
+          0,
+          724,
+          1448,
+          1574
+        ]
+      }
+    },
+    {
+      "lauf": "stufen-m390-light",
+      "ansicht": "m390",
+      "breite": 390,
+      "hoehe": 844,
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "stufen-m390-light__stufe1.webp",
+        "stufen-m390-light__stufe2.webp",
+        "stufen-m390-light__stufe3.webp"
+      ],
+      "extra": {
+        "gemeldeteStufen": [
+          "1",
+          "2",
+          "3"
+        ]
+      }
+    },
+    {
+      "lauf": "stufen-d1440-light",
+      "ansicht": "d1440",
+      "breite": 1440,
+      "hoehe": 900,
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "stufen-d1440-light__stufe1.webp",
+        "stufen-d1440-light__stufe2.webp",
+        "stufen-d1440-light__stufe3.webp"
+      ],
+      "extra": {
+        "gemeldeteStufen": [
+          "1",
+          "2",
+          "3"
+        ]
+      }
+    },
+    {
+      "lauf": "menue-m390-light",
+      "ansicht": "m390",
+      "breite": 390,
+      "hoehe": 844,
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "menue-m390-light.webp"
+      ],
+      "extra": {
+        "offen": true,
+        "modal": true,
+        "knopfDerSeiteVerdecktVomMenue": true
+      }
+    },
+    {
+      "lauf": "menue-m390-dark",
+      "ansicht": "m390",
+      "breite": 390,
+      "hoehe": 844,
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "menue-m390-dark.webp"
+      ],
+      "extra": {
+        "offen": true,
+        "modal": true,
+        "knopfDerSeiteVerdecktVomMenue": true
+      }
+    },
+    {
+      "lauf": "menue-m390-tastatur",
+      "ansicht": "m390",
+      "breite": 390,
+      "hoehe": 844,
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "menue-m390-tastatur__1-offen.webp",
+        "menue-m390-tastatur__2-esc.webp"
+      ],
+      "extra": {
+        "tabfolge": [
+          "im Menü: Stellen",
+          "im Menü: Vorteile",
+          "im Menü: Ablauf",
+          "im Menü: FAQ",
+          "im Menü: Jetzt bewerben",
+          "im Menü: 06441 42956 anrufen",
+          "außerhalb: (Browser)",
+          "im Menü: Schließen",
+          "im Menü: Stellen"
+        ],
+        "nachEsc": {
+          "offen": false,
+          "fokus": "Menü"
+        }
+      }
+    },
+    {
+      "lauf": "m320-light-no-preference",
+      "ansicht": "m320",
+      "breite": 320,
+      "hoehe": 568,
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 320,
+        "clientWidth": 320,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m320-light-voll__start.webp",
+        "m320-light-voll__szene.webp",
+        "m320-light-voll__stellen.webp"
+      ]
+    },
+    {
+      "lauf": "m320-light-reduce",
+      "ansicht": "m320",
+      "breite": 320,
+      "hoehe": 568,
+      "schema": "light",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 320,
+        "clientWidth": 320,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m320-light-reduziert__start.webp",
+        "m320-light-reduziert__szene.webp",
+        "m320-light-reduziert__stellen.webp"
+      ]
+    },
+    {
+      "lauf": "ohne-js-m390-light",
+      "ansicht": "m390",
+      "breite": 390,
+      "hoehe": 844,
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "ohne-js-m390-light__01.webp",
+        "ohne-js-m390-light__02.webp",
+        "ohne-js-m390-light__03.webp"
+      ]
+    },
+    {
+      "lauf": "kurz-m390s-light-no-preference",
+      "ansicht": "m390s",
+      "breite": 390,
+      "hoehe": 664,
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "kurz-m390s-light-voll.webp"
+      ],
+      "extra": {
+        "knopf": [
+          596,
+          652
+        ],
+        "hoehe": 664,
+        "ueberFalz": true
+      }
+    },
+    {
+      "lauf": "kurz-m390s-light-reduce",
+      "ansicht": "m390s",
+      "breite": 390,
+      "hoehe": 664,
+      "schema": "light",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "kurz-m390s-light-reduziert.webp"
+      ],
+      "extra": {
+        "knopf": [
+          596,
+          652
+        ],
+        "hoehe": 664,
+        "ueberFalz": true
+      }
+    },
+    {
+      "lauf": "kurz-m390s-dark-no-preference",
+      "ansicht": "m390s",
+      "breite": 390,
+      "hoehe": 664,
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "kurz-m390s-dark-voll.webp"
+      ],
+      "extra": {
+        "knopf": [
+          596,
+          652
+        ],
+        "hoehe": 664,
+        "ueberFalz": true
+      }
+    },
+    {
+      "lauf": "kurz-m390s-dark-reduce",
+      "ansicht": "m390s",
+      "breite": 390,
+      "hoehe": 664,
+      "schema": "dark",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "kurz-m390s-dark-reduziert.webp"
+      ],
+      "extra": {
+        "knopf": [
+          596,
+          652
+        ],
+        "hoehe": 664,
+        "ueberFalz": true
+      }
+    },
+    {
+      "lauf": "kurz-m375se-light-no-preference",
+      "ansicht": "m375se",
+      "breite": 375,
+      "hoehe": 553,
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "kurz-m375se-light-voll.webp"
+      ],
+      "extra": {
+        "knopf": [
+          606,
+          662
+        ],
+        "hoehe": 553,
+        "ueberFalz": false
+      }
+    },
+    {
+      "lauf": "kurz-m375se-light-reduce",
+      "ansicht": "m375se",
+      "breite": 375,
+      "hoehe": 553,
+      "schema": "light",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "kurz-m375se-light-reduziert.webp"
+      ],
+      "extra": {
+        "knopf": [
+          606,
+          662
+        ],
+        "hoehe": 553,
+        "ueberFalz": false
+      }
+    },
+    {
+      "lauf": "kurz-m375se-dark-no-preference",
+      "ansicht": "m375se",
+      "breite": 375,
+      "hoehe": 553,
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "kurz-m375se-dark-voll.webp"
+      ],
+      "extra": {
+        "knopf": [
+          606,
+          662
+        ],
+        "hoehe": 553,
+        "ueberFalz": false
+      }
+    },
+    {
+      "lauf": "kurz-m375se-dark-reduce",
+      "ansicht": "m375se",
+      "breite": 375,
+      "hoehe": 553,
+      "schema": "dark",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "kurz-m375se-dark-reduziert.webp"
+      ],
+      "extra": {
+        "knopf": [
+          606,
+          662
+        ],
+        "hoehe": 553,
+        "ueberFalz": false
+      }
+    },
+    {
+      "lauf": "druck-m390-light",
+      "ansicht": "m390",
+      "breite": 390,
+      "hoehe": 844,
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [],
+      "extra": {
+        "bildpaar": "druck-m390-light__ruhe-gegen-aktiv.webp",
+        "links": "Ruhe",
+        "rechts": ":active (Tippen)"
+      }
+    },
+    {
+      "lauf": "druck-m390-dark",
+      "ansicht": "m390",
+      "breite": 390,
+      "hoehe": 844,
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [],
+      "extra": {
+        "bildpaar": "druck-m390-dark__ruhe-gegen-aktiv.webp",
+        "links": "Ruhe",
+        "rechts": ":active (Tippen)"
+      }
+    },
+    {
+      "lauf": "schrift-m320-20",
+      "ansicht": "m320",
+      "breite": 320,
+      "hoehe": 568,
+      "schema": "light",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 320,
+        "clientWidth": 320,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "schrift-m320-20px.webp"
+      ]
+    },
+    {
+      "lauf": "schrift-m390-20",
+      "ansicht": "m390",
+      "breite": 390,
+      "hoehe": 844,
+      "schema": "light",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "schrift-m390-20px.webp"
+      ]
+    },
+    {
+      "lauf": "schrift-m320-24",
+      "ansicht": "m320",
+      "breite": 320,
+      "hoehe": 568,
+      "schema": "light",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 320,
+        "clientWidth": 320,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "schrift-m320-24px.webp"
+      ]
+    },
+    {
+      "lauf": "schrift-m390-24",
+      "ansicht": "m390",
+      "breite": 390,
+      "hoehe": 844,
+      "schema": "light",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "schrift-m390-24px.webp"
+      ]
+    }
+  ],
+  "messungen": {
+    "anschluss": [
+      "m375 voll 1.909",
+      "m375 red 1.552",
+      "m390 voll 1.865",
+      "m390 red 1.486",
+      "m430 voll 1.799",
+      "m430 red 1.342",
+      "t768 voll 1.704",
+      "t768 red 1.458",
+      "d1440 voll 1.906",
+      "d1440 red 1.44",
+      "d1920 voll 1.822",
+      "d1920 red 1.46",
+      "m390s voll 1.991",
+      "m390s red 1.889",
+      "m375se voll 2.091",
+      "m375se red 2.279"
+    ],
+    "sweep": {
+      "probleme": [],
+      "kleinsterAbstand": 24
+    },
+    "schrift": [
+      "20px @320: treffer=0  sw=320/320 frZeilen=1 minAbst=null 13:30=96.8px h1=58.8px h1Zeilen=54,54",
+      "20px @375: treffer=0  sw=375/375 frZeilen=1 minAbst=null 13:30=121px h1=65px h1Zeilen=60,60",
+      "20px @390: treffer=0  sw=390/390 frZeilen=1 minAbst=null 13:30=127.6px h1=65px h1Zeilen=60,60",
+      "20px @430: treffer=0  sw=430/430 frZeilen=1 minAbst=null 13:30=135.04px h1=65px h1Zeilen=60,60",
+      "20px @768: treffer=0  sw=768/768 frZeilen=1 minAbst=30 13:30=135.04px h1=83.296px h1Zeilen=77,77",
+      "20px @1440: treffer=0  sw=1440/1440 frZeilen=1 minAbst=30 13:30=248.689px h1=131.293px h1Zeilen=121,121",
+      "24px @320: treffer=0  sw=320/320 frZeilen=1 minAbst=null 13:30=88px h1=57.12px h1Zeilen=53,53",
+      "24px @375: treffer=0  sw=375/375 frZeilen=1 minAbst=null 13:30=112.2px h1=68.67px h1Zeilen=63,63",
+      "24px @390: treffer=0  sw=390/390 frZeilen=1 minAbst=null 13:30=118.8px h1=71.82px h1Zeilen=66,66",
+      "24px @430: treffer=0  sw=430/430 frZeilen=1 minAbst=null 13:30=135.04px h1=78px h1Zeilen=72,72",
+      "24px @768: treffer=0  sw=768/768 frZeilen=1 minAbst=36 13:30=135.04px h1=88.896px h1Zeilen=82,82",
+      "24px @1440: treffer=0  sw=1440/1440 frZeilen=1 minAbst=36 13:30=144px h1=137.28px h1Zeilen=126,126"
+    ],
+    "daumen": [
+      "390x844 voll: Knopf 675–731 (80–87 %) über Falz, Mikro bis 768, Stellen 776–820 sichtbar, 13:30 129.1px",
+      "390x844 red: Knopf 675–731 (80–87 %) über Falz, Mikro bis 768, Stellen 776–820 sichtbar, 13:30 129.1px",
+      "375x812 voll: Knopf 662–718 (82–88 %) über Falz, Mikro bis 755, Stellen 763–807 sichtbar, 13:30 124.75px",
+      "375x812 red: Knopf 662–718 (82–88 %) über Falz, Mikro bis 755, Stellen 763–807 sichtbar, 13:30 124.75px",
+      "430x932 voll: Knopf 763–819 (82–88 %) über Falz, Mikro bis 856, Stellen 864–908 sichtbar, 13:30 140.7px",
+      "430x932 red: Knopf 763–819 (82–88 %) über Falz, Mikro bis 856, Stellen 864–908 sichtbar, 13:30 140.7px",
+      "390x664 voll: Knopf 596–652 (90–98 %) über Falz, Mikro bis 689, Stellen 697–741 unter Falz, 13:30 106.24px",
+      "390x664 red: Knopf 596–652 (90–98 %) über Falz, Mikro bis 689, Stellen 697–741 unter Falz, 13:30 106.24px",
+      "375x553 voll: Knopf 606–662 (110–120 %) UNTER FALZ, Mikro bis 699, Stellen 707–751 unter Falz, 13:30 88.48px",
+      "375x553 red: Knopf 606–662 (110–120 %) UNTER FALZ, Mikro bis 699, Stellen 707–751 unter Falz, 13:30 88.48px",
+      "320x568 voll: Knopf 652–708 (115–125 %) UNTER FALZ, Mikro bis 766, Stellen 774–818 unter Falz, 13:30 90.88px",
+      "320x568 red: Knopf 652–708 (115–125 %) UNTER FALZ, Mikro bis 766, Stellen 774–818 unter Falz, 13:30 90.88px"
+    ]
+  },
+  "summe": {
+    "laeufe": 27,
+    "bilder": 59,
+    "ueberlauf": 0,
+    "fehler": 0,
+    "fremdanfragen": 0
+  }
+}

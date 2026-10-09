@@ -1,0 +1,1269 @@
+{
+  "url": "http://localhost:3803/",
+  "erstellt": "2026-10-09T20:11:22.296Z",
+  "zoom200": [
+    {
+      "fenster": "1440×900",
+      "z100": {
+        "h1_geraetepixel": 122,
+        "t2_geraetepixel": 32.2,
+        "ueberlauf": false
+      },
+      "z200": {
+        "h1_geraetepixel": 131.2,
+        "t2_geraetepixel": 45,
+        "ueberlauf": false
+      },
+      "h1_waechst": true,
+      "t2_waechst": true
+    },
+    {
+      "fenster": "1920×1080",
+      "z100": {
+        "h1_geraetepixel": 140,
+        "t2_geraetepixel": 36,
+        "ueberlauf": false
+      },
+      "z200": {
+        "h1_geraetepixel": 172,
+        "t2_geraetepixel": 51.5,
+        "ueberlauf": false
+      },
+      "h1_waechst": true,
+      "t2_waechst": true
+    },
+    {
+      "fenster": "1920×950",
+      "z100": {
+        "h1_geraetepixel": 127,
+        "t2_geraetepixel": 36,
+        "ueberlauf": false
+      },
+      "z200": {
+        "h1_geraetepixel": 159,
+        "t2_geraetepixel": 51.5,
+        "ueberlauf": false
+      },
+      "h1_waechst": true,
+      "t2_waechst": true
+    },
+    {
+      "fenster": "1280×633",
+      "z100": {
+        "h1_geraetepixel": 95.3,
+        "t2_geraetepixel": 30.1,
+        "ueberlauf": false
+      },
+      "z200": {
+        "h1_geraetepixel": 118.4,
+        "t2_geraetepixel": 42.9,
+        "ueberlauf": false
+      },
+      "h1_waechst": true,
+      "t2_waechst": true
+    }
+  ],
+  "desktop": [
+    {
+      "fenster": "1920×600",
+      "bewegung": "reduce",
+      "abstand_einleitung_knopf": 24,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 543.8,
+      "fensterhoehe": 600,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M960 459.7H944A16 16 0 0 1 928 443.7V407.8A16 16 0 0 0 912 391.8H290.6",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1920×600",
+      "bewegung": "no-preference",
+      "abstand_einleitung_knopf": 24,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 543.8,
+      "fensterhoehe": 600,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M960 459.7H944A16 16 0 0 1 928 443.7V407.8A16 16 0 0 0 912 391.8H290.6",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1680×650",
+      "bewegung": "reduce",
+      "abstand_einleitung_knopf": 24,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 552.9,
+      "fensterhoehe": 650,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M840 488.4H824A16 16 0 0 1 808 472.4V416.9A16 16 0 0 0 792 400.9H287.4",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1680×650",
+      "bewegung": "no-preference",
+      "abstand_einleitung_knopf": 24,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 552.9,
+      "fensterhoehe": 650,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M840 488.4H824A16 16 0 0 1 808 472.4V416.9A16 16 0 0 0 792 400.9H287.4",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1440×600",
+      "bewegung": "reduce",
+      "abstand_einleitung_knopf": 24,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 540.1,
+      "fensterhoehe": 600,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M720 459.7H704A16 16 0 0 1 688 443.7V404.1A16 16 0 0 0 672 388.1H279.5",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1440×600",
+      "bewegung": "no-preference",
+      "abstand_einleitung_knopf": 24,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 540.1,
+      "fensterhoehe": 600,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M720 459.7H704A16 16 0 0 1 688 443.7V404.1A16 16 0 0 0 672 388.1H279.5",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1440×900",
+      "bewegung": "reduce",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 755.2,
+      "fensterhoehe": 900,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M720 699.7H704A16 16 0 0 1 688 683.7V584A16 16 0 0 0 672 568H279.5",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1440×900",
+      "bewegung": "no-preference",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 755.2,
+      "fensterhoehe": 900,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M720 699.7H704A16 16 0 0 1 688 683.7V584A16 16 0 0 0 672 568H279.5",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1920×937",
+      "bewegung": "reduce",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 776.3,
+      "fensterhoehe": 937,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M960 730.9H944A16 16 0 0 1 928 714.9V605.1A16 16 0 0 0 912 589.1H290.6",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1920×937",
+      "bewegung": "no-preference",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 776.3,
+      "fensterhoehe": 937,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M960 730.9H944A16 16 0 0 1 928 714.9V605.1A16 16 0 0 0 912 589.1H290.6",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1920×1080",
+      "bewegung": "reduce",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 802.6,
+      "fensterhoehe": 1080,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M960 851.8H944A16 16 0 0 1 928 835.8V631.4A16 16 0 0 0 912 615.4H290.6",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1920×1080",
+      "bewegung": "no-preference",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 802.6,
+      "fensterhoehe": 1080,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M960 851.8H944A16 16 0 0 1 928 835.8V631.4A16 16 0 0 0 912 615.4H290.6",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "2560×1300",
+      "bewegung": "reduce",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 843.8,
+      "fensterhoehe": 1300,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M1280 1037.7H1264A16 16 0 0 1 1248 1021.7V672.6A16 16 0 0 0 1232 656.6H290.6",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "2560×1300",
+      "bewegung": "no-preference",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 843.8,
+      "fensterhoehe": 1300,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M1280 1037.7H1264A16 16 0 0 1 1248 1021.7V672.6A16 16 0 0 0 1232 656.6H290.6",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1280×720",
+      "bewegung": "reduce",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 715.1,
+      "fensterhoehe": 720,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M640 590.7H624A16 16 0 0 1 608 574.7V543.9A16 16 0 0 0 592 527.9H274.4",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1280×720",
+      "bewegung": "no-preference",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 715.1,
+      "fensterhoehe": 720,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M640 590.7H624A16 16 0 0 1 608 574.7V543.9A16 16 0 0 0 592 527.9H274.4",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1366×768",
+      "bewegung": "reduce",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 727.7,
+      "fensterhoehe": 768,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M683 595.8H667A16 16 0 0 1 651 579.8V556.5A16 16 0 0 0 635 540.5H277",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1366×768",
+      "bewegung": "no-preference",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 727.7,
+      "fensterhoehe": 768,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M683 595.8H667A16 16 0 0 1 651 579.8V556.5A16 16 0 0 0 635 540.5H277",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1440×780",
+      "bewegung": "reduce",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 733.1,
+      "fensterhoehe": 780,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M720 599.4H704A16 16 0 0 1 688 583.4V561.9A16 16 0 0 0 672 545.9H279.5",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1440×780",
+      "bewegung": "no-preference",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 733.1,
+      "fensterhoehe": 780,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M720 599.4H704A16 16 0 0 1 688 583.4V561.9A16 16 0 0 0 672 545.9H279.5",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1536×730",
+      "bewegung": "reduce",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 728,
+      "fensterhoehe": 730,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M768 602.1H752A16 16 0 0 1 736 586.1V556.8A16 16 0 0 0 720 540.8H282.8",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1536×730",
+      "bewegung": "no-preference",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 728,
+      "fensterhoehe": 730,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M768 602.1H752A16 16 0 0 1 736 586.1V556.8A16 16 0 0 0 720 540.8H282.8",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1280×800",
+      "bewegung": "reduce",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 729.3,
+      "fensterhoehe": 800,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M640 615.2H624A16 16 0 0 1 608 599.2V558.1A16 16 0 0 0 592 542.1H274.4",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1280×800",
+      "bewegung": "no-preference",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 729.3,
+      "fensterhoehe": 800,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M640 615.2H624A16 16 0 0 1 608 599.2V558.1A16 16 0 0 0 592 542.1H274.4",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "960×1080",
+      "bewegung": "reduce",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 670.8,
+      "fensterhoehe": 1080,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M480 916.4H464A16 16 0 0 1 448 900.4V499.6A16 16 0 0 0 432 483.6H263.8",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "960×1080",
+      "bewegung": "no-preference",
+      "abstand_einleitung_knopf": 48,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 670.8,
+      "fensterhoehe": 1080,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M480 916.4H464A16 16 0 0 1 448 900.4V499.6A16 16 0 0 0 432 483.6H263.8",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1024×640",
+      "bewegung": "reduce",
+      "abstand_einleitung_knopf": 24,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 622.4,
+      "fensterhoehe": 640,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M512 486.4H496A16 16 0 0 1 480 470.4V455.2A16 16 0 0 0 464 439.2H265.9",
+      "first_sichtbar": true,
+      "fehler": 0
+    },
+    {
+      "fenster": "1024×640",
+      "bewegung": "no-preference",
+      "abstand_einleitung_knopf": 24,
+      "mindestens_a5": true,
+      "ueberdeckung": false,
+      "weg2_unterkante": 622.4,
+      "fensterhoehe": 640,
+      "weg2_im_ersten_bild": true,
+      "knopf_im_ersten_bild": true,
+      "rohr_start_x_bildkante": true,
+      "rohr_start_y_pumpe": true,
+      "rohr_ende_am_knopf": true,
+      "rohr_d": "M512 486.4H496A16 16 0 0 1 480 470.4V455.2A16 16 0 0 0 464 439.2H265.9",
+      "first_sichtbar": true,
+      "fehler": 0
+    }
+  ],
+  "mobil": [
+    {
+      "fenster": 664,
+      "bewegung": "reduce",
+      "knopf": [
+        567,
+        623
+      ],
+      "zusage_unten": 658,
+      "weg2_unten": 806,
+      "knopf_ganz": true,
+      "zusage_ganz": true,
+      "leiste": false,
+      "bild_h": 411,
+      "haus_breite": 231,
+      "h1": 36.9506,
+      "leiste_richtig": true
+    },
+    {
+      "fenster": 664,
+      "bewegung": "no-preference",
+      "knopf": [
+        567,
+        623
+      ],
+      "zusage_unten": 658,
+      "weg2_unten": 806,
+      "knopf_ganz": true,
+      "zusage_ganz": true,
+      "leiste": false,
+      "bild_h": 411,
+      "haus_breite": 231,
+      "h1": 36.9506,
+      "leiste_richtig": true
+    },
+    {
+      "fenster": 667,
+      "bewegung": "reduce",
+      "knopf": [
+        545,
+        601
+      ],
+      "zusage_unten": 660,
+      "weg2_unten": 808,
+      "knopf_ganz": true,
+      "zusage_ganz": true,
+      "leiste": false,
+      "bild_h": 389,
+      "haus_breite": 212,
+      "h1": 36,
+      "leiste_richtig": true
+    },
+    {
+      "fenster": 667,
+      "bewegung": "no-preference",
+      "knopf": [
+        545,
+        601
+      ],
+      "zusage_unten": 660,
+      "weg2_unten": 808,
+      "knopf_ganz": true,
+      "zusage_ganz": true,
+      "leiste": false,
+      "bild_h": 389,
+      "haus_breite": 212,
+      "h1": 36,
+      "leiste_richtig": true
+    },
+    {
+      "fenster": 640,
+      "bewegung": "reduce",
+      "knopf": [
+        518,
+        574
+      ],
+      "zusage_unten": 633,
+      "weg2_unten": 781,
+      "knopf_ganz": true,
+      "zusage_ganz": true,
+      "leiste": false,
+      "bild_h": 362,
+      "haus_breite": 186,
+      "h1": 36,
+      "leiste_richtig": true
+    },
+    {
+      "fenster": 640,
+      "bewegung": "no-preference",
+      "knopf": [
+        518,
+        574
+      ],
+      "zusage_unten": 633,
+      "weg2_unten": 781,
+      "knopf_ganz": true,
+      "zusage_ganz": true,
+      "leiste": false,
+      "bild_h": 362,
+      "haus_breite": 186,
+      "h1": 36,
+      "leiste_richtig": true
+    },
+    {
+      "fenster": 844,
+      "bewegung": "reduce",
+      "knopf": [
+        625,
+        681
+      ],
+      "zusage_unten": 717,
+      "weg2_unten": 865,
+      "knopf_ganz": true,
+      "zusage_ganz": true,
+      "leiste": false,
+      "bild_h": 469,
+      "haus_breite": 274,
+      "h1": 43.7287,
+      "leiste_richtig": true
+    },
+    {
+      "fenster": 844,
+      "bewegung": "no-preference",
+      "knopf": [
+        625,
+        681
+      ],
+      "zusage_unten": 717,
+      "weg2_unten": 865,
+      "knopf_ganz": true,
+      "zusage_ganz": true,
+      "leiste": false,
+      "bild_h": 469,
+      "haus_breite": 274,
+      "h1": 43.7287,
+      "leiste_richtig": true
+    },
+    {
+      "fenster": 812,
+      "bewegung": "reduce",
+      "knopf": [
+        610,
+        666
+      ],
+      "zusage_unten": 724,
+      "weg2_unten": 872,
+      "knopf_ganz": true,
+      "zusage_ganz": true,
+      "leiste": false,
+      "bild_h": 454,
+      "haus_breite": 263,
+      "h1": 42.0469,
+      "leiste_richtig": true
+    },
+    {
+      "fenster": 812,
+      "bewegung": "no-preference",
+      "knopf": [
+        610,
+        666
+      ],
+      "zusage_unten": 724,
+      "weg2_unten": 872,
+      "knopf_ganz": true,
+      "zusage_ganz": true,
+      "leiste": false,
+      "bild_h": 454,
+      "haus_breite": 263,
+      "h1": 42.0469,
+      "leiste_richtig": true
+    },
+    {
+      "fenster": 932,
+      "bewegung": "reduce",
+      "knopf": [
+        667,
+        723
+      ],
+      "zusage_unten": 758,
+      "weg2_unten": 907,
+      "knopf_ganz": true,
+      "zusage_ganz": true,
+      "leiste": false,
+      "bild_h": 511,
+      "haus_breite": 302,
+      "h1": 48.2137,
+      "leiste_richtig": true
+    },
+    {
+      "fenster": 932,
+      "bewegung": "no-preference",
+      "knopf": [
+        667,
+        723
+      ],
+      "zusage_unten": 758,
+      "weg2_unten": 907,
+      "knopf_ganz": true,
+      "zusage_ganz": true,
+      "leiste": false,
+      "bild_h": 511,
+      "haus_breite": 302,
+      "h1": 48.2137,
+      "leiste_richtig": true
+    },
+    {
+      "fenster": 568,
+      "bewegung": "reduce",
+      "knopf": [
+        521,
+        577
+      ],
+      "zusage_unten": 636,
+      "weg2_unten": 808,
+      "knopf_ganz": false,
+      "zusage_ganz": false,
+      "leiste": true,
+      "bild_h": 327,
+      "haus_breite": 152,
+      "h1": 36,
+      "leiste_richtig": true
+    },
+    {
+      "fenster": 568,
+      "bewegung": "no-preference",
+      "knopf": [
+        521,
+        577
+      ],
+      "zusage_unten": 636,
+      "weg2_unten": 808,
+      "knopf_ganz": false,
+      "zusage_ganz": false,
+      "leiste": true,
+      "bild_h": 327,
+      "haus_breite": 152,
+      "h1": 36,
+      "leiste_richtig": true
+    },
+    {
+      "fenster": 736,
+      "bewegung": "reduce",
+      "knopf": [
+        637,
+        693
+      ],
+      "zusage_unten": 728,
+      "weg2_unten": 876,
+      "knopf_ganz": true,
+      "zusage_ganz": true,
+      "leiste": false,
+      "bild_h": 481,
+      "haus_breite": 282,
+      "h1": 44.9653,
+      "leiste_richtig": true
+    },
+    {
+      "fenster": 736,
+      "bewegung": "no-preference",
+      "knopf": [
+        637,
+        693
+      ],
+      "zusage_unten": 728,
+      "weg2_unten": 876,
+      "knopf_ganz": true,
+      "zusage_ganz": true,
+      "leiste": false,
+      "bild_h": 481,
+      "haus_breite": 282,
+      "h1": 44.9653,
+      "leiste_richtig": true
+    }
+  ],
+  "grundschrift": [
+    {
+      "schrift": "100%",
+      "fenster": "390×844",
+      "kleinster_abstand_zum_dach_px": 46.6,
+      "zeile": "Pünktlich Feierabend.",
+      "knopf_unten": 681.3,
+      "zusage_unten": 716.5,
+      "fenster_h": 844,
+      "ueberlauf": false
+    },
+    {
+      "schrift": "100%",
+      "fenster": "390×664",
+      "kleinster_abstand_zum_dach_px": 20.3,
+      "zeile": "Pünktlich Feierabend.",
+      "knopf_unten": 622.5,
+      "zusage_unten": 657.8,
+      "fenster_h": 664,
+      "ueberlauf": false
+    },
+    {
+      "schrift": "100%",
+      "fenster": "768×1024",
+      "kleinster_abstand_zum_dach_px": 36.6,
+      "zeile": "Pünktlich Feierabend.",
+      "knopf_unten": 813.2,
+      "zusage_unten": 848.4,
+      "fenster_h": 1024,
+      "ueberlauf": false
+    },
+    {
+      "schrift": "125%",
+      "fenster": "390×844",
+      "kleinster_abstand_zum_dach_px": 15.7,
+      "zeile": "Pünktlich Feierabend.",
+      "knopf_unten": 760.7,
+      "zusage_unten": 833.7,
+      "fenster_h": 844,
+      "ueberlauf": false
+    },
+    {
+      "schrift": "125%",
+      "fenster": "390×664",
+      "kleinster_abstand_zum_dach_px": 15.2,
+      "zeile": "Pünktlich Feierabend.",
+      "knopf_unten": 668.9,
+      "zusage_unten": 741.9,
+      "fenster_h": 664,
+      "ueberlauf": false
+    },
+    {
+      "schrift": "125%",
+      "fenster": "768×1024",
+      "kleinster_abstand_zum_dach_px": 15.9,
+      "zeile": "Pünktlich Feierabend.",
+      "knopf_unten": 897.2,
+      "zusage_unten": 941.2,
+      "fenster_h": 1024,
+      "ueberlauf": false
+    },
+    {
+      "schrift": "150%",
+      "fenster": "390×844",
+      "kleinster_abstand_zum_dach_px": 18.3,
+      "zeile": "Pünktlich Feierabend.",
+      "knopf_unten": 779.3,
+      "zusage_unten": 866.9,
+      "fenster_h": 844,
+      "ueberlauf": false
+    },
+    {
+      "schrift": "150%",
+      "fenster": "390×664",
+      "kleinster_abstand_zum_dach_px": 18.8,
+      "zeile": "Pünktlich Feierabend.",
+      "knopf_unten": 764.9,
+      "zusage_unten": 852.5,
+      "fenster_h": 664,
+      "ueberlauf": false
+    },
+    {
+      "schrift": "150%",
+      "fenster": "768×1024",
+      "kleinster_abstand_zum_dach_px": 18.5,
+      "zeile": "Pünktlich Feierabend.",
+      "knopf_unten": 1040.2,
+      "zusage_unten": 1093,
+      "fenster_h": 1024,
+      "ueberlauf": false
+    }
+  ],
+  "bewegung": [
+    {
+      "ansicht": "390×844",
+      "animationen": 96,
+      "ohne_data_motion": [],
+      "im_anschluss": [],
+      "kennungen": [
+        "blaupause",
+        "messpunkt",
+        "ruecklauf",
+        "vorlauf",
+        "feld-erreicht",
+        "leitfaden-zeichnen",
+        "vorlauf-zum-knopf"
+      ]
+    },
+    {
+      "ansicht": "1440×900",
+      "animationen": 91,
+      "ohne_data_motion": [],
+      "im_anschluss": [],
+      "kennungen": [
+        "blaupause",
+        "messpunkt",
+        "massline",
+        "ruecklauf",
+        "vorlauf",
+        "feld-erreicht",
+        "vorlauf-zum-knopf"
+      ]
+    }
+  ],
+  "martian": [
+    {
+      "ansicht": "390×844",
+      "elemente": [
+        {
+          "klasse": "wb-marke__text",
+          "text": "Wärme­pumpen"
+        },
+        {
+          "klasse": "wb-marke__text",
+          "text": "Heizungen"
+        },
+        {
+          "klasse": "wb-marke__text",
+          "text": "Bäder"
+        },
+        {
+          "klasse": "wb-ablesung",
+          "text": "13:30"
+        },
+        {
+          "klasse": "zeile__gehalt",
+          "text": "3.600–4.600 €Gehalt / Monat"
+        },
+        {
+          "klasse": "zeile__gehalt",
+          "text": "3.800–4.900 €Gehalt / Monat"
+        },
+        {
+          "klasse": "zeile__gehalt",
+          "text": "4.400–5.600 €Gehalt / Monat"
+        },
+        {
+          "klasse": "zeile__gehalt",
+          "text": "1.050–1.400 €Vergütung / Monat"
+        },
+        {
+          "klasse": "woche__titel",
+          "text": "Mo–Do 07:00–16:45 · Fr 07:00–13:30"
+        },
+        {
+          "klasse": "span",
+          "text": "06"
+        },
+        {
+          "klasse": "span",
+          "text": "09"
+        },
+        {
+          "klasse": "span",
+          "text": "12"
+        },
+        {
+          "klasse": "span",
+          "text": "15"
+        },
+        {
+          "klasse": "span",
+          "text": "18"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "Mo"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "Di"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "Mi"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "Do"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "Fr"
+        },
+        {
+          "klasse": "woche__zeit",
+          "text": "13:30"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "Sa"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "So"
+        }
+      ]
+    },
+    {
+      "ansicht": "768×1024",
+      "elemente": [
+        {
+          "klasse": "wb-marke__text",
+          "text": "Wärme­pumpen"
+        },
+        {
+          "klasse": "wb-marke__text",
+          "text": "Heizungen"
+        },
+        {
+          "klasse": "wb-marke__text",
+          "text": "Bäder"
+        },
+        {
+          "klasse": "wb-ablesung",
+          "text": "13:30"
+        },
+        {
+          "klasse": "zeile__gehalt",
+          "text": "3.600–4.600 €Gehalt / Monat"
+        },
+        {
+          "klasse": "zeile__gehalt",
+          "text": "3.800–4.900 €Gehalt / Monat"
+        },
+        {
+          "klasse": "zeile__gehalt",
+          "text": "4.400–5.600 €Gehalt / Monat"
+        },
+        {
+          "klasse": "zeile__gehalt",
+          "text": "1.050–1.400 €Vergütung / Monat"
+        },
+        {
+          "klasse": "woche__titel",
+          "text": "Mo–Do 07:00–16:45 · Fr 07:00–13:30"
+        },
+        {
+          "klasse": "span",
+          "text": "06"
+        },
+        {
+          "klasse": "span",
+          "text": "09"
+        },
+        {
+          "klasse": "span",
+          "text": "12"
+        },
+        {
+          "klasse": "span",
+          "text": "15"
+        },
+        {
+          "klasse": "span",
+          "text": "18"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "Mo"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "Di"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "Mi"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "Do"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "Fr"
+        },
+        {
+          "klasse": "woche__zeit",
+          "text": "13:30"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "Sa"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "So"
+        }
+      ]
+    },
+    {
+      "ansicht": "1440×900",
+      "elemente": [
+        {
+          "klasse": "wb-marke__text",
+          "text": "Wärme­pumpen"
+        },
+        {
+          "klasse": "wb-marke__text",
+          "text": "Heizungen"
+        },
+        {
+          "klasse": "wb-marke__text",
+          "text": "Bäder"
+        },
+        {
+          "klasse": "zeile__gehalt",
+          "text": "3.600–4.600 €Gehalt / Monat"
+        },
+        {
+          "klasse": "zeile__gehalt",
+          "text": "3.800–4.900 €Gehalt / Monat"
+        },
+        {
+          "klasse": "zeile__gehalt",
+          "text": "4.400–5.600 €Gehalt / Monat"
+        },
+        {
+          "klasse": "zeile__gehalt",
+          "text": "1.050–1.400 €Vergütung / Monat"
+        },
+        {
+          "klasse": "woche__titel",
+          "text": "Mo–Do 07:00–16:45 · Fr 07:00–13:30"
+        },
+        {
+          "klasse": "span",
+          "text": "06"
+        },
+        {
+          "klasse": "span",
+          "text": "09"
+        },
+        {
+          "klasse": "span",
+          "text": "12"
+        },
+        {
+          "klasse": "span",
+          "text": "15"
+        },
+        {
+          "klasse": "span",
+          "text": "18"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "Mo"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "Di"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "Mi"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "Do"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "Fr"
+        },
+        {
+          "klasse": "woche__zeit",
+          "text": "13:30"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "Sa"
+        },
+        {
+          "klasse": "woche__name",
+          "text": "So"
+        }
+      ]
+    }
+  ],
+  "tablett": [
+    {
+      "fenster": "768×1024",
+      "kleinster_abstand_zum_dach_px": 36.6,
+      "zeile": "Pünktlich Feierabend."
+    },
+    {
+      "fenster": "600×960",
+      "kleinster_abstand_zum_dach_px": 12.5,
+      "zeile": "Pünktlich Feierabend."
+    },
+    {
+      "fenster": "820×1180",
+      "kleinster_abstand_zum_dach_px": 47.6,
+      "zeile": "Pünktlich Feierabend."
+    },
+    {
+      "fenster": "912×1368",
+      "kleinster_abstand_zum_dach_px": 67.8,
+      "zeile": "Pünktlich Feierabend."
+    }
+  ],
+  "zeigen": {
+    "ziele": [
+      {
+        "name": "Wärmepumpen",
+        "b": 44,
+        "h": 44
+      },
+      {
+        "name": "Heizungen",
+        "b": 44,
+        "h": 44
+      },
+      {
+        "name": "Bäder",
+        "b": 44,
+        "h": 44
+      }
+    ],
+    "tastatur_ein": {
+      "zone": "1",
+      "gedrueckt": "true",
+      "messfeld": "inline"
+    },
+    "tastatur_aus": {
+      "zone": null,
+      "gedrueckt": "false"
+    }
+  }
+}

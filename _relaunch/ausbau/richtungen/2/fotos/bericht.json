@@ -1,0 +1,366 @@
+{
+  "url": "http://localhost:3802/",
+  "erstellt": "2026-10-09T19:14:37.267Z",
+  "aufnahmen": [
+    {
+      "ansicht": "m375",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m375-light-voll__01.webp",
+        "m375-light-voll__02.webp",
+        "m375-light-voll__03.webp"
+      ]
+    },
+    {
+      "ansicht": "m375",
+      "schema": "light",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m375-light-reduziert__01.webp",
+        "m375-light-reduziert__02.webp",
+        "m375-light-reduziert__03.webp"
+      ]
+    },
+    {
+      "ansicht": "m375",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m375-dark-voll__01.webp",
+        "m375-dark-voll__02.webp",
+        "m375-dark-voll__03.webp"
+      ]
+    },
+    {
+      "ansicht": "m375",
+      "schema": "dark",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m375-dark-reduziert__01.webp",
+        "m375-dark-reduziert__02.webp",
+        "m375-dark-reduziert__03.webp"
+      ]
+    },
+    {
+      "ansicht": "m390",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m390-light-voll__01.webp",
+        "m390-light-voll__02.webp",
+        "m390-light-voll__03.webp"
+      ]
+    },
+    {
+      "ansicht": "m390",
+      "schema": "light",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m390-light-reduziert__01.webp",
+        "m390-light-reduziert__02.webp",
+        "m390-light-reduziert__03.webp"
+      ]
+    },
+    {
+      "ansicht": "m390",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m390-dark-voll__01.webp",
+        "m390-dark-voll__02.webp",
+        "m390-dark-voll__03.webp"
+      ]
+    },
+    {
+      "ansicht": "m390",
+      "schema": "dark",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m390-dark-reduziert__01.webp",
+        "m390-dark-reduziert__02.webp",
+        "m390-dark-reduziert__03.webp"
+      ]
+    },
+    {
+      "ansicht": "m430",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m430-light-voll__01.webp",
+        "m430-light-voll__02.webp",
+        "m430-light-voll__03.webp"
+      ]
+    },
+    {
+      "ansicht": "m430",
+      "schema": "light",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m430-light-reduziert__01.webp",
+        "m430-light-reduziert__02.webp",
+        "m430-light-reduziert__03.webp"
+      ]
+    },
+    {
+      "ansicht": "m430",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m430-dark-voll__01.webp",
+        "m430-dark-voll__02.webp",
+        "m430-dark-voll__03.webp"
+      ]
+    },
+    {
+      "ansicht": "m430",
+      "schema": "dark",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m430-dark-reduziert__01.webp",
+        "m430-dark-reduziert__02.webp",
+        "m430-dark-reduziert__03.webp"
+      ]
+    },
+    {
+      "ansicht": "t768",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "t768-light-voll__01.webp",
+        "t768-light-voll__02.webp",
+        "t768-light-voll__03.webp"
+      ]
+    },
+    {
+      "ansicht": "t768",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "t768-dark-voll__01.webp",
+        "t768-dark-voll__02.webp",
+        "t768-dark-voll__03.webp"
+      ]
+    },
+    {
+      "ansicht": "d1440",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "d1440-light-voll__01.webp",
+        "d1440-light-voll__02.webp",
+        "d1440-light-voll__03.webp"
+      ]
+    },
+    {
+      "ansicht": "d1440",
+      "schema": "light",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "d1440-light-reduziert__01.webp",
+        "d1440-light-reduziert__02.webp",
+        "d1440-light-reduziert__03.webp"
+      ]
+    },
+    {
+      "ansicht": "d1440",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "d1440-dark-voll__01.webp",
+        "d1440-dark-voll__02.webp",
+        "d1440-dark-voll__03.webp"
+      ]
+    },
+    {
+      "ansicht": "d1440",
+      "schema": "dark",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "d1440-dark-reduziert__01.webp",
+        "d1440-dark-reduziert__02.webp",
+        "d1440-dark-reduziert__03.webp"
+      ]
+    },
+    {
+      "ansicht": "d1920",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "d1920-light-voll__01.webp",
+        "d1920-light-voll__02.webp",
+        "d1920-light-voll__03.webp"
+      ]
+    },
+    {
+      "ansicht": "d1920",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "d1920-dark-voll__01.webp",
+        "d1920-dark-voll__02.webp",
+        "d1920-dark-voll__03.webp"
+      ]
+    }
+  ]
+}

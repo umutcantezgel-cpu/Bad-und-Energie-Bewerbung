@@ -1,0 +1,1167 @@
+{
+  "url": "http://localhost:3803/",
+  "erstellt": "2026-10-09T20:10:39.724Z",
+  "ansichten": [
+    {
+      "ansicht": "m320",
+      "schema": "light",
+      "tokens": {
+        "t-1": 14,
+        "t-2": 16,
+        "t-3": 16,
+        "t-4": 18,
+        "t-5": 17,
+        "t-6": 24,
+        "t-7": 36,
+        "t-8": 36,
+        "t-9": 32,
+        "t-10": 20
+      },
+      "ansicht_breite": 320,
+      "schriftgroessen": [
+        14,
+        16,
+        17,
+        18,
+        20,
+        36
+      ],
+      "freie_schriftgroessen": [],
+      "dauern_ms": [
+        120,
+        240,
+        400
+      ],
+      "kurven": [
+        "cubic-bezier(0.16, 1, 0.3, 1)",
+        "linear"
+      ],
+      "zu_klein": [],
+      "data_motion": [
+        "nav-strich",
+        "druck",
+        "menue",
+        "baender-ersatz",
+        "blaupause",
+        "messpunkt",
+        "massline",
+        "ruecklauf",
+        "vorlauf",
+        "feld-erreicht",
+        "waermebild",
+        "leitfaden-zeichnen",
+        "vorlauf-zum-knopf",
+        "knopf-druck",
+        "weg-pfeil",
+        "zeile-druck",
+        "leiste"
+      ],
+      "h1_px": 36,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 320,
+        "clientWidth": 320,
+        "clipped": []
+      },
+      "axe": {
+        "verstoesse": []
+      },
+      "fehler": [],
+      "fremdanfragen": []
+    },
+    {
+      "ansicht": "m320",
+      "schema": "dark",
+      "tokens": {
+        "t-1": 14,
+        "t-2": 16,
+        "t-3": 16,
+        "t-4": 18,
+        "t-5": 17,
+        "t-6": 24,
+        "t-7": 36,
+        "t-8": 36,
+        "t-9": 32,
+        "t-10": 20
+      },
+      "ansicht_breite": 320,
+      "schriftgroessen": [
+        14,
+        16,
+        17,
+        18,
+        20,
+        36
+      ],
+      "freie_schriftgroessen": [],
+      "dauern_ms": [
+        120,
+        240,
+        400
+      ],
+      "kurven": [
+        "cubic-bezier(0.16, 1, 0.3, 1)",
+        "linear"
+      ],
+      "zu_klein": [],
+      "data_motion": [
+        "nav-strich",
+        "druck",
+        "menue",
+        "baender-ersatz",
+        "blaupause",
+        "messpunkt",
+        "massline",
+        "ruecklauf",
+        "vorlauf",
+        "feld-erreicht",
+        "waermebild",
+        "leitfaden-zeichnen",
+        "vorlauf-zum-knopf",
+        "knopf-druck",
+        "weg-pfeil",
+        "zeile-druck",
+        "leiste"
+      ],
+      "h1_px": 36,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 320,
+        "clientWidth": 320,
+        "clipped": []
+      },
+      "axe": {
+        "verstoesse": []
+      },
+      "fehler": [],
+      "fremdanfragen": []
+    },
+    {
+      "ansicht": "m375",
+      "schema": "light",
+      "tokens": {
+        "t-1": 14,
+        "t-2": 16,
+        "t-3": 16,
+        "t-4": 18,
+        "t-5": 17.3672,
+        "t-6": 24,
+        "t-7": 36,
+        "t-8": 42.0469,
+        "t-9": 32,
+        "t-10": 20
+      },
+      "ansicht_breite": 375,
+      "schriftgroessen": [
+        14,
+        16,
+        17.37,
+        18,
+        20,
+        36,
+        42.05
+      ],
+      "freie_schriftgroessen": [],
+      "dauern_ms": [
+        120,
+        240,
+        400
+      ],
+      "kurven": [
+        "cubic-bezier(0.16, 1, 0.3, 1)",
+        "linear",
+        "cubic-bezier(0.32, 0, 0.67, 0)"
+      ],
+      "zu_klein": [],
+      "data_motion": [
+        "nav-strich",
+        "druck",
+        "menue",
+        "baender-ersatz",
+        "blaupause",
+        "messpunkt",
+        "massline",
+        "ruecklauf",
+        "vorlauf",
+        "feld-erreicht",
+        "waermebild",
+        "leitfaden-zeichnen",
+        "vorlauf-zum-knopf",
+        "knopf-druck",
+        "weg-pfeil",
+        "zeile-druck",
+        "leiste"
+      ],
+      "h1_px": 42.0469,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": []
+      },
+      "axe": null,
+      "fehler": [],
+      "fremdanfragen": []
+    },
+    {
+      "ansicht": "m390",
+      "schema": "light",
+      "tokens": {
+        "t-1": 14,
+        "t-2": 16,
+        "t-3": 16.015,
+        "t-4": 18,
+        "t-5": 18.0619,
+        "t-6": 24,
+        "t-7": 36,
+        "t-8": 43.7287,
+        "t-9": 32,
+        "t-10": 20
+      },
+      "ansicht_breite": 390,
+      "schriftgroessen": [
+        14,
+        16,
+        16.02,
+        18,
+        18.06,
+        20,
+        36,
+        43.73
+      ],
+      "freie_schriftgroessen": [],
+      "dauern_ms": [
+        120,
+        240,
+        400
+      ],
+      "kurven": [
+        "cubic-bezier(0.16, 1, 0.3, 1)",
+        "linear",
+        "cubic-bezier(0.32, 0, 0.67, 0)"
+      ],
+      "zu_klein": [],
+      "data_motion": [
+        "nav-strich",
+        "druck",
+        "menue",
+        "baender-ersatz",
+        "blaupause",
+        "messpunkt",
+        "massline",
+        "ruecklauf",
+        "vorlauf",
+        "feld-erreicht",
+        "waermebild",
+        "leitfaden-zeichnen",
+        "vorlauf-zum-knopf",
+        "knopf-druck",
+        "weg-pfeil",
+        "zeile-druck",
+        "leiste"
+      ],
+      "h1_px": 43.7287,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "axe": {
+        "verstoesse": []
+      },
+      "fehler": [],
+      "fremdanfragen": []
+    },
+    {
+      "ansicht": "m390",
+      "schema": "dark",
+      "tokens": {
+        "t-1": 14,
+        "t-2": 16,
+        "t-3": 16.015,
+        "t-4": 18,
+        "t-5": 18.0619,
+        "t-6": 24,
+        "t-7": 36,
+        "t-8": 43.7287,
+        "t-9": 32,
+        "t-10": 20
+      },
+      "ansicht_breite": 390,
+      "schriftgroessen": [
+        14,
+        16,
+        16.02,
+        18,
+        18.06,
+        20,
+        36,
+        43.73
+      ],
+      "freie_schriftgroessen": [],
+      "dauern_ms": [
+        120,
+        240,
+        400
+      ],
+      "kurven": [
+        "cubic-bezier(0.16, 1, 0.3, 1)",
+        "linear",
+        "cubic-bezier(0.32, 0, 0.67, 0)"
+      ],
+      "zu_klein": [],
+      "data_motion": [
+        "nav-strich",
+        "druck",
+        "menue",
+        "baender-ersatz",
+        "blaupause",
+        "messpunkt",
+        "massline",
+        "ruecklauf",
+        "vorlauf",
+        "feld-erreicht",
+        "waermebild",
+        "leitfaden-zeichnen",
+        "vorlauf-zum-knopf",
+        "knopf-druck",
+        "weg-pfeil",
+        "zeile-druck",
+        "leiste"
+      ],
+      "h1_px": 43.7287,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "axe": {
+        "verstoesse": []
+      },
+      "fehler": [],
+      "fremdanfragen": []
+    },
+    {
+      "ansicht": "m430",
+      "schema": "light",
+      "tokens": {
+        "t-1": 14,
+        "t-2": 16,
+        "t-3": 16.115,
+        "t-4": 18,
+        "t-5": 19.9144,
+        "t-6": 24,
+        "t-7": 36,
+        "t-8": 48.2137,
+        "t-9": 32,
+        "t-10": 20
+      },
+      "ansicht_breite": 430,
+      "schriftgroessen": [
+        14,
+        16,
+        16.11,
+        18,
+        19.91,
+        20,
+        36,
+        48.21
+      ],
+      "freie_schriftgroessen": [],
+      "dauern_ms": [
+        120,
+        240,
+        400
+      ],
+      "kurven": [
+        "cubic-bezier(0.16, 1, 0.3, 1)",
+        "linear",
+        "cubic-bezier(0.32, 0, 0.67, 0)"
+      ],
+      "zu_klein": [],
+      "data_motion": [
+        "nav-strich",
+        "druck",
+        "menue",
+        "baender-ersatz",
+        "blaupause",
+        "messpunkt",
+        "massline",
+        "ruecklauf",
+        "vorlauf",
+        "feld-erreicht",
+        "waermebild",
+        "leitfaden-zeichnen",
+        "vorlauf-zum-knopf",
+        "knopf-druck",
+        "weg-pfeil",
+        "zeile-druck",
+        "leiste"
+      ],
+      "h1_px": 48.2137,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "axe": null,
+      "fehler": [],
+      "fremdanfragen": []
+    },
+    {
+      "ansicht": "t768",
+      "schema": "light",
+      "tokens": {
+        "t-1": 14,
+        "t-2": 16,
+        "t-3": 16.96,
+        "t-4": 19.456,
+        "t-5": 23.168,
+        "t-6": 29.088,
+        "t-7": 43.904,
+        "t-8": 69.44,
+        "t-9": 40.768,
+        "t-10": 22.176
+      },
+      "ansicht_breite": 768,
+      "schriftgroessen": [
+        14,
+        16,
+        16.96,
+        19.46,
+        22.18,
+        23.17,
+        43.9,
+        69.44
+      ],
+      "freie_schriftgroessen": [],
+      "dauern_ms": [
+        120,
+        240,
+        400
+      ],
+      "kurven": [
+        "cubic-bezier(0.16, 1, 0.3, 1)",
+        "linear",
+        "cubic-bezier(0.32, 0, 0.67, 0)"
+      ],
+      "zu_klein": [],
+      "data_motion": [
+        "nav-strich",
+        "druck",
+        "menue",
+        "baender-ersatz",
+        "blaupause",
+        "messpunkt",
+        "massline",
+        "ruecklauf",
+        "vorlauf",
+        "feld-erreicht",
+        "waermebild",
+        "leitfaden-zeichnen",
+        "vorlauf-zum-knopf",
+        "knopf-druck",
+        "weg-pfeil",
+        "zeile-druck",
+        "leiste"
+      ],
+      "h1_px": 69.44,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": []
+      },
+      "axe": {
+        "verstoesse": []
+      },
+      "fehler": [],
+      "fremdanfragen": []
+    },
+    {
+      "ansicht": "t768",
+      "schema": "dark",
+      "tokens": {
+        "t-1": 14,
+        "t-2": 16,
+        "t-3": 16.96,
+        "t-4": 19.456,
+        "t-5": 23.168,
+        "t-6": 29.088,
+        "t-7": 43.904,
+        "t-8": 69.44,
+        "t-9": 40.768,
+        "t-10": 22.176
+      },
+      "ansicht_breite": 768,
+      "schriftgroessen": [
+        14,
+        16,
+        16.96,
+        19.46,
+        22.18,
+        23.17,
+        43.9,
+        69.44
+      ],
+      "freie_schriftgroessen": [],
+      "dauern_ms": [
+        120,
+        240,
+        400
+      ],
+      "kurven": [
+        "cubic-bezier(0.16, 1, 0.3, 1)",
+        "linear",
+        "cubic-bezier(0.32, 0, 0.67, 0)"
+      ],
+      "zu_klein": [],
+      "data_motion": [
+        "nav-strich",
+        "druck",
+        "menue",
+        "baender-ersatz",
+        "blaupause",
+        "messpunkt",
+        "massline",
+        "ruecklauf",
+        "vorlauf",
+        "feld-erreicht",
+        "waermebild",
+        "leitfaden-zeichnen",
+        "vorlauf-zum-knopf",
+        "knopf-druck",
+        "weg-pfeil",
+        "zeile-druck",
+        "leiste"
+      ],
+      "h1_px": 69.44,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": []
+      },
+      "axe": {
+        "verstoesse": []
+      },
+      "fehler": [],
+      "fremdanfragen": []
+    },
+    {
+      "ansicht": "d1440",
+      "schema": "light",
+      "tokens": {
+        "t-1": 14,
+        "t-2": 16,
+        "t-3": 18.64,
+        "t-4": 22.48,
+        "t-5": 32.24,
+        "t-6": 39.84,
+        "t-7": 62.72,
+        "t-8": 122,
+        "t-9": 58.24,
+        "t-10": 26.88
+      },
+      "ansicht_breite": 1440,
+      "schriftgroessen": [
+        14,
+        16,
+        18.64,
+        22.48,
+        26.88,
+        32.24,
+        39.84,
+        62.72,
+        122
+      ],
+      "freie_schriftgroessen": [],
+      "dauern_ms": [
+        120,
+        240,
+        400
+      ],
+      "kurven": [
+        "cubic-bezier(0.16, 1, 0.3, 1)",
+        "linear",
+        "cubic-bezier(0.32, 0, 0.67, 0)"
+      ],
+      "zu_klein": [],
+      "data_motion": [
+        "nav-strich",
+        "druck",
+        "menue",
+        "baender-ersatz",
+        "blaupause",
+        "messpunkt",
+        "massline",
+        "ruecklauf",
+        "vorlauf",
+        "feld-erreicht",
+        "waermebild",
+        "leitfaden-zeichnen",
+        "vorlauf-zum-knopf",
+        "knopf-druck",
+        "weg-pfeil",
+        "zeile-druck",
+        "leiste"
+      ],
+      "h1_px": 122,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "axe": {
+        "verstoesse": []
+      },
+      "fehler": [],
+      "fremdanfragen": []
+    },
+    {
+      "ansicht": "d1440",
+      "schema": "dark",
+      "tokens": {
+        "t-1": 14,
+        "t-2": 16,
+        "t-3": 18.64,
+        "t-4": 22.48,
+        "t-5": 32.24,
+        "t-6": 39.84,
+        "t-7": 62.72,
+        "t-8": 122,
+        "t-9": 58.24,
+        "t-10": 26.88
+      },
+      "ansicht_breite": 1440,
+      "schriftgroessen": [
+        14,
+        16,
+        18.64,
+        22.48,
+        26.88,
+        32.24,
+        39.84,
+        62.72,
+        122
+      ],
+      "freie_schriftgroessen": [],
+      "dauern_ms": [
+        120,
+        240,
+        400
+      ],
+      "kurven": [
+        "cubic-bezier(0.16, 1, 0.3, 1)",
+        "linear",
+        "cubic-bezier(0.32, 0, 0.67, 0)"
+      ],
+      "zu_klein": [],
+      "data_motion": [
+        "nav-strich",
+        "druck",
+        "menue",
+        "baender-ersatz",
+        "blaupause",
+        "messpunkt",
+        "massline",
+        "ruecklauf",
+        "vorlauf",
+        "feld-erreicht",
+        "waermebild",
+        "leitfaden-zeichnen",
+        "vorlauf-zum-knopf",
+        "knopf-druck",
+        "weg-pfeil",
+        "zeile-druck",
+        "leiste"
+      ],
+      "h1_px": 122,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "axe": {
+        "verstoesse": []
+      },
+      "fehler": [],
+      "fremdanfragen": []
+    },
+    {
+      "ansicht": "d1920",
+      "schema": "light",
+      "tokens": {
+        "t-1": 14,
+        "t-2": 16,
+        "t-3": 19.84,
+        "t-4": 24,
+        "t-5": 36,
+        "t-6": 44,
+        "t-7": 72,
+        "t-8": 140,
+        "t-9": 64,
+        "t-10": 28
+      },
+      "ansicht_breite": 1920,
+      "schriftgroessen": [
+        14,
+        16,
+        19.84,
+        24,
+        28,
+        36,
+        44,
+        72,
+        140
+      ],
+      "freie_schriftgroessen": [],
+      "dauern_ms": [
+        120,
+        240,
+        400
+      ],
+      "kurven": [
+        "cubic-bezier(0.16, 1, 0.3, 1)",
+        "linear",
+        "cubic-bezier(0.32, 0, 0.67, 0)"
+      ],
+      "zu_klein": [],
+      "data_motion": [
+        "nav-strich",
+        "druck",
+        "menue",
+        "baender-ersatz",
+        "blaupause",
+        "messpunkt",
+        "massline",
+        "ruecklauf",
+        "vorlauf",
+        "feld-erreicht",
+        "waermebild",
+        "leitfaden-zeichnen",
+        "vorlauf-zum-knopf",
+        "knopf-druck",
+        "weg-pfeil",
+        "zeile-druck",
+        "leiste"
+      ],
+      "h1_px": 140,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": []
+      },
+      "axe": null,
+      "fehler": [],
+      "fremdanfragen": []
+    },
+    {
+      "ansicht": "d1920",
+      "schema": "dark",
+      "tokens": {
+        "t-1": 14,
+        "t-2": 16,
+        "t-3": 19.84,
+        "t-4": 24,
+        "t-5": 36,
+        "t-6": 44,
+        "t-7": 72,
+        "t-8": 140,
+        "t-9": 64,
+        "t-10": 28
+      },
+      "ansicht_breite": 1920,
+      "schriftgroessen": [
+        14,
+        16,
+        19.84,
+        24,
+        28,
+        36,
+        44,
+        72,
+        140
+      ],
+      "freie_schriftgroessen": [],
+      "dauern_ms": [
+        120,
+        240,
+        400
+      ],
+      "kurven": [
+        "cubic-bezier(0.16, 1, 0.3, 1)",
+        "linear",
+        "cubic-bezier(0.32, 0, 0.67, 0)"
+      ],
+      "zu_klein": [],
+      "data_motion": [
+        "nav-strich",
+        "druck",
+        "menue",
+        "baender-ersatz",
+        "blaupause",
+        "messpunkt",
+        "massline",
+        "ruecklauf",
+        "vorlauf",
+        "feld-erreicht",
+        "waermebild",
+        "leitfaden-zeichnen",
+        "vorlauf-zum-knopf",
+        "knopf-druck",
+        "weg-pfeil",
+        "zeile-druck",
+        "leiste"
+      ],
+      "h1_px": 140,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": []
+      },
+      "axe": null,
+      "fehler": [],
+      "fremdanfragen": []
+    }
+  ],
+  "kontraste": [
+    {
+      "thema": "hell",
+      "paar": "Text tinte auf Papier",
+      "vorder": "#111A3B",
+      "hinter": "#FBF7F0",
+      "verhaeltnis": 15.92,
+      "soll": 4.5,
+      "ok": true
+    },
+    {
+      "thema": "hell",
+      "paar": "Text 2 auf Papier",
+      "vorder": "#3D4373",
+      "hinter": "#FBF7F0",
+      "verhaeltnis": 8.74,
+      "soll": 4.5,
+      "ok": true
+    },
+    {
+      "thema": "hell",
+      "paar": "Titel navy auf Papier",
+      "vorder": "#111D6D",
+      "hinter": "#FBF7F0",
+      "verhaeltnis": 13.84,
+      "soll": 4.5,
+      "ok": true
+    },
+    {
+      "thema": "hell",
+      "paar": "Weiß auf Knopf rot",
+      "vorder": "#FFFFFF",
+      "hinter": "#D60000",
+      "verhaeltnis": 5.44,
+      "soll": 4.5,
+      "ok": true
+    },
+    {
+      "thema": "hell",
+      "paar": "Weiß auf Knopf gedrückt",
+      "vorder": "#FFFFFF",
+      "hinter": "#A80000",
+      "verhaeltnis": 7.88,
+      "soll": 4.5,
+      "ok": true
+    },
+    {
+      "thema": "hell",
+      "paar": "Knopf gegen Papier (Bedienelement)",
+      "vorder": "#D60000",
+      "hinter": "#FBF7F0",
+      "verhaeltnis": 5.09,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "hell",
+      "paar": "Fokus blau auf Papier",
+      "vorder": "#1F57C4",
+      "hinter": "#FBF7F0",
+      "verhaeltnis": 6.1,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "hell",
+      "paar": "Rand (Bedienelement) auf Papier",
+      "vorder": "#7F84A3",
+      "hinter": "#FBF7F0",
+      "verhaeltnis": 3.43,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "hell",
+      "paar": "Tinte auf Wärmefläche (Zeile Hover)",
+      "vorder": "#111A3B",
+      "hinter": "#FADCC9",
+      "verhaeltnis": 13.07,
+      "soll": 4.5,
+      "ok": true
+    },
+    {
+      "thema": "dunkel",
+      "paar": "Text creme auf Nachtblau",
+      "vorder": "#F6F0E4",
+      "hinter": "#0A1033",
+      "verhaeltnis": 16.3,
+      "soll": 4.5,
+      "ok": true
+    },
+    {
+      "thema": "dunkel",
+      "paar": "Text 2 auf Nachtblau",
+      "vorder": "#C6C8DF",
+      "hinter": "#0A1033",
+      "verhaeltnis": 11.21,
+      "soll": 4.5,
+      "ok": true
+    },
+    {
+      "thema": "dunkel",
+      "paar": "Knopf rot gegen Nachtblau (Bedienelement)",
+      "vorder": "#D60000",
+      "hinter": "#0A1033",
+      "verhaeltnis": 3.4,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "dunkel",
+      "paar": "Weiß auf Knopf rot",
+      "vorder": "#FFFFFF",
+      "hinter": "#D60000",
+      "verhaeltnis": 5.44,
+      "soll": 4.5,
+      "ok": true
+    },
+    {
+      "thema": "dunkel",
+      "paar": "Fokus hellblau auf Nachtblau",
+      "vorder": "#7FAAFF",
+      "hinter": "#0A1033",
+      "verhaeltnis": 8.01,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "dunkel",
+      "paar": "Vorlauf koralle auf Nachtblau",
+      "vorder": "#FF5A4D",
+      "hinter": "#0A1033",
+      "verhaeltnis": 6.01,
+      "soll": 4.5,
+      "ok": true
+    },
+    {
+      "thema": "dunkel",
+      "paar": "Rücklauf hellblau auf Nachtblau",
+      "vorder": "#7FAAFF",
+      "hinter": "#0A1033",
+      "verhaeltnis": 8.01,
+      "soll": 4.5,
+      "ok": true
+    },
+    {
+      "thema": "dunkel",
+      "paar": "Rand auf Nachtblau",
+      "vorder": "#8E94C2",
+      "hinter": "#0A1033",
+      "verhaeltnis": 6.31,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "dunkel",
+      "paar": "Tinte auf Wärmefläche (Zeile Hover, dunkel)",
+      "vorder": "#111A3B",
+      "hinter": "#FADCC9",
+      "verhaeltnis": 13.07,
+      "soll": 4.5,
+      "ok": true
+    },
+    {
+      "thema": "bild",
+      "paar": "Creme auf kaltem Navy (H1 mobil, Messwerte)",
+      "vorder": "#FBF7F0",
+      "hinter": "#111D6D",
+      "verhaeltnis": 13.84,
+      "soll": 4.5,
+      "ok": true
+    },
+    {
+      "thema": "bild",
+      "paar": "Creme auf Blau-Isotherme",
+      "vorder": "#FBF7F0",
+      "hinter": "#1F57C4",
+      "verhaeltnis": 6.1,
+      "soll": 4.5,
+      "ok": true
+    },
+    {
+      "thema": "bild",
+      "paar": "Navy-Planbeschriftung auf Creme-Etikett",
+      "vorder": "#111D6D",
+      "hinter": "#FBF7F0",
+      "verhaeltnis": 13.84,
+      "soll": 4.5,
+      "ok": true
+    },
+    {
+      "thema": "bild",
+      "paar": "Navy-Strich auf Wandton",
+      "vorder": "#111D6D",
+      "hinter": "#F1E9DB",
+      "verhaeltnis": 12.26,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "bild",
+      "paar": "Navy-Strich auf Wärmefläche",
+      "vorder": "#111D6D",
+      "hinter": "#FADCC9",
+      "verhaeltnis": 11.36,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "bild",
+      "paar": "Navy-Strich auf heißester Isotherme (Papier)",
+      "vorder": "#111D6D",
+      "hinter": "#FBF7F0",
+      "verhaeltnis": 13.84,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "bild",
+      "paar": "Creme-Strich auf Navy (Blaupause)",
+      "vorder": "#FBF7F0",
+      "hinter": "#111D6D",
+      "verhaeltnis": 13.84,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "bild",
+      "paar": "Vorlauf rot auf Wärmefläche (Hof der Leitung)",
+      "vorder": "#D60000",
+      "hinter": "#FADCC9",
+      "verhaeltnis": 4.18,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "bild",
+      "paar": "Rücklauf blau auf Wandton",
+      "vorder": "#1F57C4",
+      "hinter": "#F1E9DB",
+      "verhaeltnis": 5.41,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "bild hell",
+      "paar": "Vorlauf rot gegen Papier-Mantel",
+      "vorder": "#D60000",
+      "hinter": "#FBF7F0",
+      "verhaeltnis": 5.09,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "bild hell",
+      "paar": "Rücklauf blau gegen Papier-Mantel",
+      "vorder": "#1F57C4",
+      "hinter": "#FBF7F0",
+      "verhaeltnis": 6.1,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "bild hell",
+      "paar": "Papier-Mantel gegen Bild-Navy",
+      "vorder": "#FBF7F0",
+      "hinter": "#111D6D",
+      "verhaeltnis": 13.84,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "bild dunkel",
+      "paar": "Vorlauf koralle auf Bild-Navy",
+      "vorder": "#FF5A4D",
+      "hinter": "#111D6D",
+      "verhaeltnis": 4.8,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "bild dunkel",
+      "paar": "Rücklauf hellblau auf Bild-Navy",
+      "vorder": "#7FAAFF",
+      "hinter": "#111D6D",
+      "verhaeltnis": 6.4,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "bild dunkel",
+      "paar": "Nachtblau-Mantel gegen Wandton",
+      "vorder": "#0A1033",
+      "hinter": "#F1E9DB",
+      "verhaeltnis": 15.34,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "bild dunkel",
+      "paar": "Vorlauf koralle gegen Nachtblau-Mantel",
+      "vorder": "#FF5A4D",
+      "hinter": "#0A1033",
+      "verhaeltnis": 6.01,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "bild",
+      "paar": "Marke: Navy-Ring gegen Wandton",
+      "vorder": "#111D6D",
+      "hinter": "#F1E9DB",
+      "verhaeltnis": 12.26,
+      "soll": 3,
+      "ok": true
+    },
+    {
+      "thema": "bild",
+      "paar": "Marke: Creme-Platte gegen Bild-Navy",
+      "vorder": "#FBF7F0",
+      "hinter": "#111D6D",
+      "verhaeltnis": 13.84,
+      "soll": 3,
+      "ok": true
+    }
+  ],
+  "leerzeichen_vor_einheit": [],
+  "zoom200": {
+    "h1_geraetepixel_100": 122,
+    "h1_geraetepixel_200": 131.2,
+    "vergroessert": true
+  }
+}
