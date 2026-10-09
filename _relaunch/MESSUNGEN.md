@@ -4,7 +4,7 @@
 | Größe | Ausgangswert (P0) | Zielwert | Aktuell | Beleg |
 |---|---|---|---|---|
 | Slop hart (Summe S-01…S-07) | folgt P0 | 0 | – | belege/P0-SLOP-01/slop-hart.md |
-| Slop weich (Summe S-08…S-14, Grundmenge) | folgt P0 | ≤ 20 % des Ausgangswerts, ≤ 2 je Hauptseite | – | belege/p0-slop-weich/ |
+| Slop weich (Summe S-08…S-14, Grundmenge, Regeln E-010) | 35 (streng-wörtlich 17, mit allen Grenzfällen 46; 7 eindeutige Fundstellen) | ≤ 7, ≤ 2 je Hauptseite | 35 | belege/p0-slop-weich/slop-weich.md |
 | Jury (gewichtet, Median, je Hauptseite) | folgt P0 | ≥ 8,0, keine Kategorie < 7,5 | – | belege/p0-jury/ |
 | Blindvergleich (Siege Endstand) | – | ≥ 90 % | – | – |
 | Bewegungsregister-Abdeckung (data-motion ↔ Register) | folgt P0 | 100 % | – | – |

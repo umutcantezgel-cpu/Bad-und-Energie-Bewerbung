@@ -46,3 +46,14 @@ Format: E-[Nr] · Datum · Gegenstand · Entscheidung · Grund · Umkehr (bei De
 - Barrierefreiheitsregeln aus §4 (Fokus, 44-px-Ziele, Kontraste, konsistente Hilfe) bleiben vollständig.
 - Geschmacksabnahme: am Freigabepunkt (MENSCHEN.md M-005).
 - Umkehr: KERN auf §4 zurückstellen; Guard-Änderungen per Revert.
+
+## E-010 · 09.10.2026 · Zählregeln für weichen Slop (gelten für Ausgangs- und Endwert gleich)
+- S-08 zählt je Seite, wenn eine Framework-Standardschrift (Inter) die einzige Schrift ist – auch wenn Radien/Schatten projekteigene Tokens sind (die Aufzählung im Katalog beschreibt Erscheinungsformen, jede genügt).
+- S-09 zählt den Weichzeichner der Kopfleiste (`backdrop-blur`) als Glaseffekt ohne Leitidee-Begründung – je Seite.
+- S-11 zählt nur Karten mit Icon + Überschrift + Kurztext (Wortlaut); gleichförmige Karten ohne Icon werden als Hinweis geführt, nicht gezählt.
+- S-12 zählt auf Erzählseiten: Startseite und Stellenseiten. Rechtsseiten, Flow, Mappe, Danke sind Arbeitsseiten.
+- S-13 zählt nicht in echten Kundenzitaten (werden nie umgeschrieben); Textbausteine der Mappe zählen.
+- S-14 zählt das per CSS-Filter umgefärbte Logo im Dunkelmodus (uneinheitliche Bildbearbeitung) je Hauptseite.
+- S-10 nur, wenn alle drei Merkmale (zentriert, Unterzeile + zwei Knöpfe, abstrakter Hintergrund) erfüllt sind.
+- Mitgeführt wird zusätzlich die Zahl eindeutiger Fundstellen (Komponenten).
+- Ausgangswert nach diesen Regeln: S-08 12 · S-09 12 · S-11 1 · S-12 5 · S-13 1 · S-14 4 = **35** (eindeutige Fundstellen: Layout-Schrift, HeaderBar, BenefitGrid, JobSections, Home-Abschnittsfolge, Mappe-Textbaustein, Logo = 7). Ziel Z-07: ≤ 7 gesamt (−80 %), ≤ 2 je Hauptseite.
