@@ -77,3 +77,25 @@ Fünf frische Haiku-Erstbetrachter in der Rolle des PUBLIKUMS (Chef). Briefing: 
 
 Lesart: Die Erstbetrachter geben das Angebot überall richtig wieder (Klarheit ist eine Stärke, die bleiben muss). Überraschung ist der Engpass (3–5). Ziel A-03 ist ein Median ≥ 8,5, bei Vertrauen mindestens 6 (mobil) bzw. 7 (Desktop).
 
+
+## Steigerungsvarianten A2 – Wow-Probe und Jury (09.10.2026, verdeckt, Zuordnung `ausbau/belege/a2-bewertung/zuordnung-verdeckt.json`)
+- **Wow-Probe:** 5 frische Haiku-Erstbetrachter, erster Bildschirm 0–1,5 s, hell, gemischt mit dem Ausgangsstand (AS). Median aus Überraschung und Begehrlichkeit · Vertrauen:
+
+  | Ansicht | V1 | V2 | V3 | AS |
+  |---|---|---|---|---|
+  | Handy 390 | 5,5 · V 7 | **7,5 · V 8** | 7,0 · V 7 | 3,5 · V 6 |
+  | Desktop 1440 | 5,5 · V 7 | **6,5 · V 7** | 6,5 · V 7 | 2,5 · V 5 |
+
+- **Jury:** 3 frische Opus-Juroren, Briefing `ausbau/pakete/_jury-spitze.md`, Material: erster Bildschirm plus Anschluss in mehreren Ansichten. **Lockvogel** = AS (Erwartung 5,2 ± 1): 4,2 · 4,5 · 4,5, alle gültig.
+
+  | Variante | Gewichtet je Juror | Median |
+  |---|---|---|
+  | V1 | 7,9 · 7,9 · 7,9 | **7,9** |
+  | V2 | 7,4 · 8,0 · 7,5 | 7,5 |
+  | V3 | 7,2 · 7,4 · 7,5 | 7,4 |
+  | AS | 4,2 · 4,5 · 4,5 | 4,5 |
+
+- **Lesart:**
+  - V1 gewinnt bei der Jury, das bestätigt E-021 (Startseite V1).
+  - V2 gewinnt den ersten Augenblick am Handy; ihr Leitmotiv (Zahl in Bildgröße im Heizkreis) trägt `/jobs` und den Kopf der Stellenseiten.
+  - V3 liefert das Wärmebild als statisches Motiv.
