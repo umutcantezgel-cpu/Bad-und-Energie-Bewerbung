@@ -367,7 +367,7 @@ html:not(.js) .pl-s35{opacity:1}
 .cta2{margin-top:var(--s-8);display:grid;gap:var(--s-3)}
 .cta2__reihe{display:flex;align-items:flex-start;max-width:56rem}
 .cta2__leitung{flex:1;min-width:2rem;height:var(--strich);margin-top:calc(1.75rem - var(--strich) / 2);background:var(--rot)}
-.cta2__ziel{flex:none;display:grid;gap:var(--s-3);justify-items:start}
+.cta2__ziel{flex:0 1 auto;min-width:0;display:grid;gap:var(--s-3);justify-items:start}
 .cta2 .btn__muffe{left:0}
 .cta2 .mikro{margin-top:0}
 
@@ -390,12 +390,12 @@ html:not(.js) .pl-s35{opacity:1}
 .system{padding-block:var(--s-8) var(--s-9)}
 .system__kopf{display:grid;gap:var(--s-3);max-width:46rem;margin-bottom:var(--s-8)}
 .system__kopf .h2{max-width:none;margin-bottom:var(--s-2)}
-.blatt{display:grid;gap:var(--s-5);padding-block:var(--s-7);border-top:var(--haar) solid var(--linie-stark)}
+.blatt{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s-5);padding-block:var(--s-7);border-top:var(--haar) solid var(--linie-stark)}
 .blatt__kopf{display:flex;align-items:baseline;gap:var(--s-3);flex-wrap:wrap}
 .blatt__kopf .h3{font-size:var(--t-6)}
-.blatt__inhalt{display:grid;gap:var(--s-6);min-width:0}
+.blatt__inhalt{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s-6);min-width:0}
 .h4{font-family:var(--f-text);font-stretch:85%;font-weight:700;font-size:var(--t-4);line-height:1.2;text-transform:none;margin:0}
-.zweispalt{display:grid;gap:var(--s-6)}
+.zweispalt{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s-6)}
 @media (min-width:64rem){
   .blatt{grid-template-columns:13rem minmax(0,1fr);column-gap:var(--s-7)}
   .blatt__kopf{flex-direction:column;gap:var(--s-1);position:sticky;top:var(--s-5);align-self:start}
@@ -420,13 +420,16 @@ html:not(.js) .pl-s35{opacity:1}
 .fam__name{margin:0;font-size:var(--t-7);line-height:1;color:var(--blau)}
 .fam__name.mass-zahl{font-size:var(--t-6);padding-block:var(--s-2)}
 .achse{display:grid;gap:var(--s-1);margin:0;padding:0}
-.achse li{display:grid;grid-template-columns:4.5rem 1fr;align-items:baseline;font-weight:700;font-size:var(--t-6);line-height:1.15;border-bottom:var(--haar) solid var(--linie);padding-block:var(--s-1);overflow:hidden;white-space:nowrap}
+.achse li{display:grid;grid-template-columns:4.5rem minmax(0,1fr);align-items:baseline;font-weight:700;font-size:var(--t-5);line-height:1.15;border-bottom:var(--haar) solid var(--linie);padding-block:var(--s-1)}
 .achse .mono{font-weight:400;font-stretch:85%;font-size:var(--t-2);color:var(--tinte-ged)}
 .stufen td:nth-child(2){min-width:12rem}
 .deutsch{max-width:36rem;font-size:var(--t-4)}
 .anteil{display:flex;height:3rem;border:var(--haar) solid var(--linie-stark)}
-.anteil span{flex:var(--w) 1 0;min-width:0;background:var(--c);display:flex;align-items:center;padding-inline:var(--s-2);font-family:var(--f-mono);font-stretch:85%;font-size:var(--t-1);white-space:nowrap;overflow:hidden;color:var(--tinte)}
+.anteil span{flex:var(--w) 1 0;min-width:0;background:var(--c)}
 .anteil span+span{border-left:var(--haar) solid var(--linie-stark)}
+.legende{display:flex;flex-wrap:wrap;gap:var(--s-2) var(--s-5);margin:calc(var(--s-3) * -1) 0 0;padding:0}
+.legende li{display:inline-flex;align-items:center;gap:var(--s-2);font-family:var(--f-mono);font-stretch:85%;font-size:var(--t-2)}
+.legende i{display:inline-block;width:1rem;height:1rem;background:var(--c);border:var(--haar) solid var(--linie-stark)}
 .anteil__u{margin-top:calc(var(--s-3) * -1)}
 .swatch{display:inline-block;width:2.5rem;height:1.5rem;margin-right:var(--s-3);vertical-align:middle;background:var(--c);border:var(--haar) solid var(--linie-stark)}
 .chip{display:inline-block;width:1.25rem;height:1.25rem;margin-right:var(--s-2);vertical-align:middle;background:var(--g);border:var(--haar) solid var(--linie-stark);position:relative}
@@ -771,9 +774,10 @@ html:not(.js) .pl-s35{opacity:1}
       <div class="blatt__inhalt">
         <p class="lead">Zwei Papiere, zwei Leitungsfarben. Hell ist <b>Pauspapier</b>, dunkel ist <b>Blaupause</b>: beide sind gezeichnet, nicht invertiert. Das Blau wird dunkel heller, weil Navy auf Blaupause verschwindet; das Rot bleibt, denn es besteht den Grafikkontrast auch dort.</p>
         <div class="anteil" role="img" aria-label="Zielanteil der Fläche: Papier 62 Prozent, Feld 8, Tinte 14, Blau 14, Rot 2">
-          <span style="--w:62;--c:var(--papier)">Papier 62</span><span style="--w:8;--c:var(--feld)">Feld 8</span><span style="--w:14;--c:var(--tinte);color:var(--papier)">Tinte 14</span><span style="--w:14;--c:var(--blau);color:var(--papier)">Blau 14</span><span style="--w:2;--c:var(--rot)"></span>
+          <span style="--w:62;--c:var(--papier)"></span><span style="--w:8;--c:var(--feld)"></span><span style="--w:14;--c:var(--tinte)"></span><span style="--w:14;--c:var(--blau)"></span><span style="--w:2;--c:var(--rot)"></span>
         </div>
-        <p class="mono muted anteil__u">Zielanteil der Fläche in Prozent: Rot nur die eine Hauptaktion je Ansicht und die Leitung, die zu ihr führt.</p>
+        <ul class="legende" role="list"><li><i style="--c:var(--papier)"></i>Papier 62&nbsp;%</li><li><i style="--c:var(--feld)"></i>Feld 8&nbsp;%</li><li><i style="--c:var(--tinte)"></i>Tinte 14&nbsp;%</li><li><i style="--c:var(--blau)"></i>Blau 14&nbsp;%</li><li><i style="--c:var(--rot)"></i>Rot 2&nbsp;%</li></ul>
+        <p class="mono muted anteil__u">Zielanteil der Fläche. Rot steht nur für die eine Hauptaktion je Ansicht und die Leitung, die zu ihr führt.</p>
         <div class="tabrahmen" tabindex="0" role="region" aria-label="Farbrollen mit Hexwerten in hell und dunkel"><table class="doku farben"><caption class="sr-only">Farbrollen mit Hexwerten in hell und dunkel</caption><thead><tr><th scope="col">Rolle</th><th scope="col">Hell</th><th scope="col">Dunkel</th><th scope="col">Aufgabe</th></tr></thead><tbody><tr><th scope="row">Papier<br><span class="mono muted">--papier</span></th><td><span class="swatch" style="--c:#F3F5F9"></span><span class="mono">#F3F5F9</span></td><td><span class="swatch" style="--c:#0A1236"></span><span class="mono">#0A1236</span></td><td>Seitenfläche: Pauspapier hell, Blaupause dunkel.</td></tr><tr><th scope="row">Feld<br><span class="mono muted">--feld</span></th><td><span class="swatch" style="--c:#E4E9F2"></span><span class="mono">#E4E9F2</span></td><td><span class="swatch" style="--c:#101B49"></span><span class="mono">#101B49</span></td><td>Zweite Fläche: gewählte Zeile, Radiusscheibe, Plankopf.</td></tr><tr><th scope="row">Linie<br><span class="mono muted">--linie</span></th><td><span class="swatch" style="--c:#C3CADB"></span><span class="mono">#C3CADB</span></td><td><span class="swatch" style="--c:#24336B"></span><span class="mono">#24336B</span></td><td>Raster und Zeilenlinien, rein dekorativ.</td></tr><tr><th scope="row">Linie stark<br><span class="mono muted">--linie-stark</span></th><td><span class="swatch" style="--c:#6A7599"></span><span class="mono">#6A7599</span></td><td><span class="swatch" style="--c:#7A8CCB"></span><span class="mono">#7A8CCB</span></td><td>Maßlinien, Rahmen, Tabellenkopf – trägt Bedeutung, mindestens 3 : 1.</td></tr><tr><th scope="row">Tinte<br><span class="mono muted">--tinte</span></th><td><span class="swatch" style="--c:#111A3B"></span><span class="mono">#111A3B</span></td><td><span class="swatch" style="--c:#EAF0FF"></span><span class="mono">#EAF0FF</span></td><td>Text und Überschriften.</td></tr><tr><th scope="row">Tinte gedämpft<br><span class="mono muted">--tinte-ged</span></th><td><span class="swatch" style="--c:#444F72"></span><span class="mono">#444F72</span></td><td><span class="swatch" style="--c:#AAB6DC"></span><span class="mono">#AAB6DC</span></td><td>Beschriftungen und zweite Textebene.</td></tr><tr><th scope="row">Rücklauf-Blau<br><span class="mono muted">--blau</span></th><td><span class="swatch" style="--c:#0C1A72"></span><span class="mono">#0C1A72</span></td><td><span class="swatch" style="--c:#7FA4FF"></span><span class="mono">#7FA4FF</span></td><td>Marke Navy: Rücklauf, Maße, Auswahl, Links. Dunkel aufgehellt, weil Navy auf Blaupause verschwindet.</td></tr><tr><th scope="row">Vorlauf-Rot<br><span class="mono muted">--rot</span></th><td><span class="swatch" style="--c:#D60000"></span><span class="mono">#D60000</span></td><td><span class="swatch" style="--c:#D60000"></span><span class="mono">#D60000</span></td><td>Marke Rot: nur die eine Hauptaktion je Ansicht und die Leitung, die zu ihr führt. In beiden Modi unverändert.</td></tr><tr><th scope="row">Rot als Text<br><span class="mono muted">--rot-text</span></th><td><span class="swatch" style="--c:#C00000"></span><span class="mono">#C00000</span></td><td><span class="swatch" style="--c:#FF8E82"></span><span class="mono">#FF8E82</span></td><td>Rot als Schrift (Beschriftung „Vorlauf“); dunkel aufgehellt.</td></tr><tr><th scope="row">Rot gedrückt<br><span class="mono muted">--rot-hover</span></th><td><span class="swatch" style="--c:#A80000"></span><span class="mono">#A80000</span></td><td><span class="swatch" style="--c:#E60000"></span><span class="mono">#E60000</span></td><td>Hauptaktion bei Hover, Muffe am Knopf.</td></tr><tr><th scope="row">Wärme<br><span class="mono muted">--waerme</span></th><td><span class="swatch" style="--c:#FF9A85"></span><span class="mono">#FF9A85</span></td><td><span class="swatch" style="--c:#FF9A85"></span><span class="mono">#FF9A85</span></td><td>Nur der einmalige Wärmefluss; trägt keine Information.</td></tr></tbody></table></div>
         <h4 class="h4">Berechnete Kontrastwerte</h4>
         <p class="text muted">Berechnet aus den Hexwerten nach WCAG 2.2 (relative Leuchtdichte, zwei Nachkommastellen). Text braucht 4,5&nbsp;:&nbsp;1, große Schrift, Bedienelemente und bedeutungstragende Grafik 3&nbsp;:&nbsp;1. Alle 17 Paare bestehen in beiden Modi.</p>
