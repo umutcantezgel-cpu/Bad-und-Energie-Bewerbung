@@ -1,0 +1,259 @@
+ ALT-SHELL-01 | Kopf, Skip-Link | Skip-Link | components/Header.tsx:120-125; app/layout.tsx:563 
+ ALT-SHELL-02 | Oberleiste, links | Badge „Meisterbetrieb“ | components/Header.tsx:138-143 
+ ALT-SHELL-03 | Oberleiste, links | Ortsangabe | components/Header.tsx:145-147 
+ ALT-SHELL-04 | Oberleiste, Mitte | Live-Status | components/Header.tsx:151-159 
+ ALT-SHELL-05 | Oberleiste, Mitte | Einzugsgebiet-Zusatz | components/Header.tsx:160-162 
+ ALT-SHELL-06 | Oberleiste, Mitte | Vertraulichkeitshinweis | components/Header.tsx:167-173 
+ ALT-SHELL-07 | Oberleiste, rechts | WhatsApp-Pille (Oberleiste) | components/Header.tsx:179-190; lib/utils/whatsapp-utils.ts:
+ ALT-SHELL-08 | Oberleiste, rechts (md+) | Link „Zur Kunden-Website“ | components/Header.tsx:195-206 
+ ALT-SHELL-09 | Oberleiste (Scroll-Zustand) | Einklappen beim Scrollen | components/Header.tsx:38-51, 128-133, 215-219 
+ ALT-SHELL-10 | Kopf, links | Logo-Link mit Logo | components/Header.tsx:224-240; components/Logo.tsx:44-46, 9
+ ALT-SHELL-11 | Kopf-Nav (lg+) | Nav: Offene Stellen | components/Header.tsx:65-72, 244-271 
+ ALT-SHELL-12 | Kopf-Nav (lg+) | Nav: Werkzeug und Fuhrpark | components/Header.tsx:73-77 
+ ALT-SHELL-13 | Kopf-Nav (lg+) | Nav: Vorteile & Benefits | components/Header.tsx:78-82 
+ ALT-SHELL-14 | Kopf-Nav (lg+) | Nav: Wechselprozess | components/Header.tsx:83-87 
+ ALT-SHELL-15 | Kopf-Nav (lg+) | Nav: Bewerberportal (hervorgehoben) | components/Header.tsx:88-93, 250-268 
+ ALT-SHELL-16 | Kopf, rechts (sm+) | Telefon-Pille mit Tooltip | components/Header.tsx:277-299 
+ ALT-SHELL-17 | Kopf, rechts | Primär-CTA Expressbewerbung | components/Header.tsx:302-311 
+ ALT-SHELL-18 | Kopf, rechts (unter lg) | Hamburger-Knopf | components/Header.tsx:314-323 
+ ALT-SHELL-19 | Kopf, Hamburger | Hamburger-Morph | components/navigation/MotionHamburgerIcon.tsx:12-62 
+ ALT-SHELL-20 | Kopf (gesamt) | Sticky-Kopf und Höhenmessung | components/Header.tsx:21-24, 53-63, 118 
+ ALT-SHELL-21 | Mobilmenü, Container | Mobil-Drawer (Dialog) | components/navigation/MobileMenuDrawer.tsx:118-133 
+ ALT-SHELL-22 | Mobilmenü, Hintergrund | Backdrop | components/navigation/MobileMenuDrawer.tsx:107-116 
+ ALT-SHELL-23 | Mobilmenü, Verhalten | Scroll-Sperre und Escape | components/navigation/MobileMenuDrawer.tsx:53-81; component
+ ALT-SHELL-24 | Mobilmenü, Zone 1 | Überschrift Zone 1 | components/navigation/MobileMenuDrawer.tsx:141-144 
+ ALT-SHELL-25 | Mobilmenü, Zone 1 | Kachel WhatsApp | components/navigation/MobileMenuDrawer.tsx:146-169 
+ ALT-SHELL-26 | Mobilmenü, Zone 1 | Kachel Telefon | components/navigation/MobileMenuDrawer.tsx:171-191 
+ ALT-SHELL-27 | Mobilmenü, Zone 1 | Kachel Expressbewerbung | components/navigation/MobileMenuDrawer.tsx:193-213 
+ ALT-SHELL-28 | Mobilmenü, Zone 2 | Überschrift Stellen | components/navigation/MobileMenuDrawer.tsx:218-226 
+ ALT-SHELL-29 | Mobilmenü, Zone 2 | Stelle 1 (Karte) | components/Header.tsx:96-102; components/navigation/MobileM
+ ALT-SHELL-30 | Mobilmenü, Zone 2 | Stelle 2 (Karte) | components/Header.tsx:103-108 
+ ALT-SHELL-31 | Mobilmenü, Zone 2 | Stelle 3 (Karte) | components/Header.tsx:109-114 
+ ALT-SHELL-32 | Mobilmenü, Zone 3 | Überschrift Zone 3 | components/navigation/MobileMenuDrawer.tsx:258-261 
+ ALT-SHELL-33 | Mobilmenü, Zone 3 | Eintrag Offene Stellen | components/navigation/MobileMenuDrawer.tsx:263-305 
+ ALT-SHELL-34 | Mobilmenü, Zone 3 | Eintrag Werkzeug und Fuhrpark | components/navigation/MobileMenuDrawer.tsx:263-305 
+ ALT-SHELL-35 | Mobilmenü, Zone 3 | Eintrag Vorteile & Benefits | components/navigation/MobileMenuDrawer.tsx:263-305 
+ ALT-SHELL-36 | Mobilmenü, Zone 3 | Eintrag Wechselprozess | components/navigation/MobileMenuDrawer.tsx:263-305 
+ ALT-SHELL-37 | Mobilmenü, Zone 3 | Eintrag Bewerberportal (hervorgehoben) | components/navigation/MobileMenuDrawer.tsx:263-305 
+ ALT-SHELL-38 | Mobilmenü, Zone 4 | Vertraulichkeits-Garantie | components/navigation/MobileMenuDrawer.tsx:309-322 
+ ALT-SHELL-39 | Mobilmenü, Zone 4 | Adresszeile | components/navigation/MobileMenuDrawer.tsx:325-326 
+ ALT-SHELL-40 | Mobilmenü, Zone 4 | Link „Kunden-Website“ | components/navigation/MobileMenuDrawer.tsx:327-335 
+ ALT-SHELL-41 | Fuß, Container | Fuß-Hintergrund | components/Footer.tsx:50-56 
+ ALT-SHELL-42 | Fuß, Vorspann | Vorspann-Kicker | components/Footer.tsx:59-70 
+ ALT-SHELL-43 | Fuß, Vorspann | Vorspann-Überschrift und Text | components/Footer.tsx:60-78 
+ ALT-SHELL-44 | Fuß, Vorspann | Knopf „WhatsApp Direktkontakt“ | components/Footer.tsx:83-93 
+ ALT-SHELL-45 | Fuß, Vorspann | Knopf Telefon (Fuß) | components/Footer.tsx:95-103 
+ ALT-SHELL-46 | Fuß, Spalte 1 | Logo im Fuß | components/Footer.tsx:116-123; components/Logo.tsx:129-137 
+ ALT-SHELL-47 | Fuß, Spalte 1 | Firmenname und Claim | components/Footer.tsx:124-131 
+ ALT-SHELL-48 | Fuß, Spalte 1 | Nachweis Handwerksrolle | components/Footer.tsx:136-139 
+ ALT-SHELL-49 | Fuß, Spalte 1 | Innungsmitgliedschaft | components/Footer.tsx:140-146 
+ ALT-SHELL-50 | Fuß, Spalte 1 | Auszeichnung Ausbildung | components/Footer.tsx:147-153 
+ ALT-SHELL-51 | Fuß, Spalte 2 | Spaltenüberschrift Stellen | components/Footer.tsx:157-161 
+ ALT-SHELL-52 | Fuß, Spalte 2 | Fußlink Anlagenmechaniker | components/Footer.tsx:163-175 
+ ALT-SHELL-53 | Fuß, Spalte 2 | Fußlink Kundendiensttechniker | components/Footer.tsx:177-188 
+ ALT-SHELL-54 | Fuß, Spalte 2 | Fußlink Ausbildung | components/Footer.tsx:190-201 
+ ALT-SHELL-55 | Fuß, Spalte 2 | Fußlink Quereinsteiger | components/Footer.tsx:203-214 
+ ALT-SHELL-56 | Fuß, Spalte 2 | Fußlink Bewerberportal | components/Footer.tsx:217-225 
+ ALT-SHELL-57 | Fuß, Spalte 3 | Einsatzgebiet-Überschrift und Text | components/Footer.tsx:228-235 
+ ALT-SHELL-58 | Fuß, Spalte 3 | Ortsliste (neun Pillen) | components/Footer.tsx:37-47, 237-251 
+ ALT-SHELL-59 | Fuß, Spalte 3 | Arbeitszeit-Kasten | components/Footer.tsx:253-264 
+ ALT-SHELL-60 | Fuß, Spalte 4 | Standort-Block | components/Footer.tsx:267-281 
+ ALT-SHELL-61 | Fuß, Spalte 4 | Telefon (Fuß) | components/Footer.tsx:283-290 
+ ALT-SHELL-62 | Fuß, Spalte 4 | Öffnungszeiten | components/Footer.tsx:291-293 
+ ALT-SHELL-63 | Fuß, Spalte 4 | E-Mail (Fuß) | components/Footer.tsx:295-301 
+ ALT-SHELL-64 | Fuß, Spalte 4 | Link „Zur Kunden Website für Bad und Heizung“ | components/Footer.tsx:305-319 
+ ALT-SHELL-65 | Fuß, Fußleiste | Copyright-Zeile | components/Footer.tsx:324-327 
+ ALT-SHELL-66 | Fuß, Fußleiste | Registerzeile | components/Footer.tsx:328-330 
+ ALT-SHELL-67 | Fuß, Fußleiste | Link „Impressum“ | components/Footer.tsx:334-337 
+ ALT-SHELL-68 | Fuß, Fußleiste | Link „Datenschutzerklärung“ | components/Footer.tsx:338-340 
+ ALT-SHELL-69 | Fuß, Fußleiste | Link „Bewerber Datenschutz nach Paragraph 26 BDSG“ | components/Footer.tsx:341-347; app/datenschutz/page.tsx (se
+ ALT-SHELL-70 | Fuß, Fußleiste | Knopf „Cookie Einstellungen“ | components/Footer.tsx:30-35, 348-354; components/CookieCons
+ ALT-SHELL-71 | Seitenleiste rechts, Container | Schnellbewerbungs-Seitenleiste | components/QuickApplySidebar.tsx:19-29 
+ ALT-SHELL-72 | Seitenleiste, eingeklappt | Reiter (eingeklappt) | components/QuickApplySidebar.tsx:33-60 
+ ALT-SHELL-73 | Seitenleiste, ausgeklappt | Statuszeile und Einklappen | components/QuickApplySidebar.tsx:72-92 
+ ALT-SHELL-74 | Seitenleiste, ausgeklappt | Titel und Kurztext | components/QuickApplySidebar.tsx:95-102 
+ ALT-SHELL-75 | Seitenleiste, ausgeklappt | CTA Expressbewerbung | components/QuickApplySidebar.tsx:105-126 
+ ALT-SHELL-76 | Seitenleiste, ausgeklappt | CTA WhatsApp | components/QuickApplySidebar.tsx:128-153 
+ ALT-SHELL-77 | Seitenleiste, ausgeklappt | CTA Telefon | components/QuickApplySidebar.tsx:155-165 
+ ALT-SHELL-78 | Seitenleiste, ausgeklappt | Fußzeile Diskretion | components/QuickApplySidebar.tsx:168-171 
+ ALT-SHELL-79 | Schwebender Kreis (unten rechts, vers | WhatsApp-Kreis | components/contact/FloatingWhatsAppWidget.tsx:11-18, 38-53,
+ ALT-SHELL-80 | WhatsApp-Kreis, Ziehen | Ziehen und Einrasten | components/contact/FloatingWhatsAppWidget.tsx:9, 79-97, 134
+ ALT-SHELL-81 | WhatsApp-Kreis, Hinweis-Blase | Hinweis-Blase | components/contact/FloatingWhatsAppWidget.tsx:99-106, 249-2
+ ALT-SHELL-82 | WhatsApp-Kreis, Indikator | Ungelesen-Punkt | components/contact/FloatingWhatsAppWidget.tsx:100-106, 303-
+ ALT-SHELL-83 | WhatsApp-Kreis, Nachricht | Seitenabhängige Nachricht | lib/utils/whatsapp-utils.ts:11-16; components/contact/Float
+ ALT-SHELL-84 | unten rechts | Nach-oben-Knopf | components/ui/BackToTop.tsx:8-38 
+ ALT-SHELL-85 | Cookie-Banner, Ebene 1 | Banner-Container | components/CookieConsent.tsx:124-147, 16 
+ ALT-SHELL-86 | Cookie-Banner, Kopf | Titel und Badge | components/CookieConsent.tsx:158-176 
+ ALT-SHELL-87 | Cookie-Banner, Text | Banner-Text | components/CookieConsent.tsx:178-182 
+ ALT-SHELL-88 | Cookie-Banner, Knöpfe | Knopf „Nur essenzielle Cookies“ | components/CookieConsent.tsx:185-192 
+ ALT-SHELL-89 | Cookie-Banner, Knöpfe | Knopf „Alle akzeptieren“ | components/CookieConsent.tsx:194-201; app/globals.css:155-1
+ ALT-SHELL-90 | Cookie-Banner, Fuß | Link „Einstellungen anpassen“ | components/CookieConsent.tsx:205-212 
+ ALT-SHELL-91 | Cookie-Banner, Fuß | Links „Datenschutz“ · „Impressum“ | components/CookieConsent.tsx:214-222 
+ ALT-SHELL-92 | Cookie-Knopf unten links | Knopf „Cookie Einstellungen“ | components/CookieConsent.tsx:125-138 
+ ALT-SHELL-93 | Cookie-Modal, Kopf | Modal-Kopf | components/CookieConsent.tsx:231-277 
+ ALT-SHELL-94 | Cookie-Modal, Einleitung | Modal-Einleitung | components/CookieConsent.tsx:280-282 
+ ALT-SHELL-95 | Cookie-Modal, Kategorie 1 | Kategorie „Technisch notwendige Dienste“ | components/CookieConsent.tsx:287-309 
+ ALT-SHELL-96 | Cookie-Modal, Kategorie 1 | Tabelle „3 Cookies einsehen“ | components/CookieConsent.tsx:311-358 
+ ALT-SHELL-97 | Cookie-Modal, Kategorie 2 | Kategorie „Analyse und Performancemessung“ | components/CookieConsent.tsx:362-394 
+ ALT-SHELL-98 | Cookie-Modal, Kategorie 2 | Tabelle „2 Cookies & Tracker einsehen“ | components/CookieConsent.tsx:396-438 
+ ALT-SHELL-99 | Cookie-Modal, Kategorie 3 | Kategorie „Funktionale Erweiterungen & Drittmedien“ | components/CookieConsent.tsx:441-471 
+ ALT-SHELL-100 | Cookie-Modal, Kategorie 3 | Tabelle „2 Dienste & Tags einsehen“ | components/CookieConsent.tsx:475-517 
+ ALT-SHELL-101 | Cookie-Modal, Fußknöpfe | Knöpfe „Alle ablehnen“, „Auswahl speichern“, „Alle akzepti | components/CookieConsent.tsx:522-545 
+ ALT-SHELL-102 | Cookie-Modal, Fußzeile | Consent-ID und Zeitstempel | components/CookieConsent.tsx:80-88, 547-552 
+ ALT-SHELL-103 | Cookie-Modal, Fußzeile | Links im Modal | components/CookieConsent.tsx:553-568 
+ ALT-SHELL-104 | Cookie-Speicher | Speicherung der Einwilligung | components/CookieConsent.tsx:16-33, 90-110 
+ ALT-SHELL-105 | 404-Seite, Grafik | Werkzeug-Kachel | app/not-found.tsx:24-36 
+ ALT-SHELL-106 | 404-Seite, Kopf | Kennzeile | app/not-found.tsx:39-41 
+ ALT-SHELL-107 | 404-Seite, Kopf | Hauptüberschrift | app/not-found.tsx:42-44 
+ ALT-SHELL-108 | 404-Seite, Kopf | Einleitung | app/not-found.tsx:45-47 
+ ALT-SHELL-109 | 404-Seite, Knöpfe | Knopf „Zurück zur Startseite“ | app/not-found.tsx:50-57 
+ ALT-SHELL-110 | 404-Seite, Knöpfe | Knopf „4 Wege Bewerberportal“ | app/not-found.tsx:59-65 
+ ALT-SHELL-111 | 404-Seite, Knöpfe | Knopf „Offene Stellen ansehen“ | app/not-found.tsx:67-73 
+ ALT-SHELL-112 | 404-Seite, Karte | Karte „Schneller Direktkontakt“ | app/not-found.tsx:77-80 
+ ALT-SHELL-113 | 404-Seite, Karte | Knopf „WhatsApp an Sabri Demir“ | app/not-found.tsx:20-22, 82-90 
+ ALT-SHELL-114 | 404-Seite, Karte | Knopf Telefon (404) | app/not-found.tsx:92-98 
+ ALT-SHELL-115 | `app/error.tsx`, Kopf | Überschrift | app/error.tsx:15-33 
+ ALT-SHELL-116 | `app/error.tsx`, Text | Einleitung | app/error.tsx:34-36 
+ ALT-SHELL-117 | `app/error.tsx`, Kopf | Referenz-ID | app/error.tsx:38-42 
+ ALT-SHELL-118 | `app/error.tsx`, Knöpfe | Knopf „Erneut versuchen“ | app/error.tsx:44-52 
+ ALT-SHELL-119 | `app/error.tsx`, Knöpfe | Knopf „Zur Startseite“ | app/error.tsx:54-60 
+ ALT-SHELL-120 | `app/error.tsx`, Fuß | Link WhatsApp (Fehler) | app/error.tsx:20-22, 63-72 
+ ALT-SHELL-121 | `app/global-error.tsx` | Überschrift | – 
+ ALT-SHELL-122 | `app/global-error.tsx` | Text | app/global-error.tsx:26-28 
+ ALT-SHELL-123 | `app/global-error.tsx` | Knopf „Seite neu laden“ | app/global-error.tsx:29-35 
+ ALT-SHELL-124 | Layout, Widgets | Verzögertes Laden der Widgets | components/layout/LayoutClientWidgets.tsx:1-35; app/layout.
+ ALT-SHELL-125 | Layout, Gerüst | Seitenrahmen und Sprache | app/layout.tsx:1-15, 550-569 
+ ALT-RECHT-01 | Kopf, Brotkrumen | Brotkrumen | app/impressum/page.tsx:92-98 
+ ALT-RECHT-02 | Kopf | Kicker | app/impressum/page.tsx:101-104 
+ ALT-RECHT-03 | Kopf | Hauptüberschrift | app/impressum/page.tsx:105-107 
+ ALT-RECHT-04 | Kopf | Untertitel | app/impressum/page.tsx:108-110 
+ ALT-RECHT-05 | Profilkarte, Kopf | Logo-Karte und Badge | app/impressum/page.tsx:114-120; components/Logo.tsx 
+ ALT-RECHT-06 | Profilkarte, Betrieb | Betrieb und Anschrift | app/impressum/page.tsx:122-138 
+ ALT-RECHT-07 | Profilkarte, Direktkontakt | Kontaktangaben | app/impressum/page.tsx:140-160 
+ ALT-RECHT-08 | Profilkarte, Handelsregister | Handelsregister | app/impressum/page.tsx:165-173; lib/seo/site-config.ts:30 
+ ALT-RECHT-09 | Profilkarte, Handelsregister | Umsatzsteuer-ID | app/impressum/page.tsx:174-177 
+ ALT-RECHT-10 | Profilkarte, Geschäftsführung | Geschäftsführung | app/impressum/page.tsx:180-186 
+ ALT-RECHT-11 | Profilkarte, Geschäftsführung | Verantwortlich für den Inhalt | app/impressum/page.tsx:187-190 
+ ALT-RECHT-12 | Profilkarte, Kammer | Kammer-Block | app/impressum/page.tsx:195-210 
+ ALT-RECHT-13 | Profilkarte, Kammer | Knopf „Kammerportal öffnen“ | app/impressum/page.tsx:211-218 
+ ALT-RECHT-14 | Profilkarte, Kammer | Berufsbezeichnung | app/impressum/page.tsx:220-222 
+ ALT-RECHT-15 | Abschnitt Streitbeilegung | Verbraucherstreitbeilegung | app/impressum/page.tsx:225-244 
+ ALT-RECHT-16 | Abschnitt Haftung | Haftung für Inhalte und Links | app/impressum/page.tsx:246-251 
+ ALT-RECHT-17 | Seitenende | Zurück-Link | app/impressum/page.tsx:256-263 
+ ALT-RECHT-18 | Kopfstreifen (dunkel) | Rechtsstand-Badge | app/datenschutz/page.tsx:52-61 
+ ALT-RECHT-19 | Kopfstreifen | Verschlüsselungs-Angabe | app/datenschutz/page.tsx:64-68 
+ ALT-RECHT-20 | Kopfstreifen (md+) | Serverstandort-Angabe | app/datenschutz/page.tsx:70-73 
+ ALT-RECHT-21 | Kopf, Brotkrumen | Brotkrumen | app/datenschutz/page.tsx:82-90 
+ ALT-RECHT-22 | Kopf | Hauptüberschrift | app/datenschutz/page.tsx:92-95 
+ ALT-RECHT-23 | Kopf | Einleitung | app/datenschutz/page.tsx:96-99 
+ ALT-RECHT-24 | Kennzahlenkarten | Kennzahl „Rechtsrahmen“ | app/datenschutz/page.tsx:103-115 
+ ALT-RECHT-25 | Kennzahlenkarten | Kennzahl „Schriftarten“ | app/datenschutz/page.tsx:117-128 
+ ALT-RECHT-26 | Kennzahlenkarten | Kennzahl „Verschlüsselung“ | app/datenschutz/page.tsx:130-141 
+ ALT-RECHT-27 | Kennzahlenkarten | Kennzahl „Sperrvermerk“ | app/datenschutz/page.tsx:143-154 
+ ALT-RECHT-28 | Seitenleiste, Inhaltsverzeichnis | Inhaltsverzeichnis-Box | app/datenschutz/page.tsx:161-170 
+ ALT-RECHT-29 | Seitenleiste, Inhaltsverzeichnis | Stichwortfilter | app/datenschutz/page.tsx:172-182, 43-47 
+ ALT-RECHT-30 | Seitenleiste, Sprungliste | Sprung § 01 | app/datenschutz/page.tsx:34, 185-202 
+ ALT-RECHT-31 | Seitenleiste, Sprungliste | Sprung § 02 | app/datenschutz/page.tsx:35 
+ ALT-RECHT-32 | Seitenleiste, Sprungliste | Sprung § 03 | app/datenschutz/page.tsx:36 
+ ALT-RECHT-33 | Seitenleiste, Sprungliste | Sprung § 04 (hervorgehoben) | app/datenschutz/page.tsx:37 
+ ALT-RECHT-34 | Seitenleiste, Sprungliste | Sprung § 05 | app/datenschutz/page.tsx:38 
+ ALT-RECHT-35 | Seitenleiste, Sprungliste | Sprung § 06 | app/datenschutz/page.tsx:39 
+ ALT-RECHT-36 | Seitenleiste, Sprungliste | Sprung § 07 | app/datenschutz/page.tsx:40 
+ ALT-RECHT-37 | Seitenleiste, Auskunftskarte | Datenschutzauskunft | app/datenschutz/page.tsx:205-228 
+ ALT-RECHT-38 | Seitenleiste, Auskunftskarte | Knopf „PDF drucken oder exportieren“ | app/datenschutz/page.tsx:229-236 
+ ALT-RECHT-39 | § 01 Verantwortliche Stelle | Abschnittskopf und Einleitung | app/datenschutz/page.tsx:243-252 
+ ALT-RECHT-40 | § 01, Betriebsdaten-Karte | Betriebsdaten | app/datenschutz/page.tsx:254-277 
+ ALT-RECHT-41 | § 01, Vertretung | Vertretung und Kontakt | app/datenschutz/page.tsx:279-291 
+ ALT-RECHT-42 | § 01, Datenschutzbeauftragter | Hinweis zum Datenschutzbeauftragten | app/datenschutz/page.tsx:295-302 
+ ALT-RECHT-43 | § 02 Rechtsgrundlagen | Abschnittskopf und Einleitung | app/datenschutz/page.tsx:306-315 
+ ALT-RECHT-44 | § 02, Karte lit. a | Rechtsgrundlage Einwilligung | app/datenschutz/page.tsx:317-331 
+ ALT-RECHT-45 | § 02, Karte lit. b | Rechtsgrundlage Vertrag | app/datenschutz/page.tsx:333-346 
+ ALT-RECHT-46 | § 02, Karte lit. c | Rechtsgrundlage Pflicht | app/datenschutz/page.tsx:348-361 
+ ALT-RECHT-47 | § 02, Karte lit. f | Rechtsgrundlage berechtigte Interessen | app/datenschutz/page.tsx:363-376 
+ ALT-RECHT-48 | § 03, Akkordeon 1 (offen) | Server-Logfiles | app/datenschutz/page.tsx:389-422; Zustand Zeile 24 
+ ALT-RECHT-49 | § 03, Akkordeon 2 (zu) | SSL und TLS | app/datenschutz/page.tsx:425-444 
+ ALT-RECHT-50 | § 03, Akkordeon 3 (zu) | Kontaktformulare | app/datenschutz/page.tsx:447-469 
+ ALT-RECHT-51 | § 04 Bewerberdaten (Kasten, rot umra | Kopf des Kastens | app/datenschutz/page.tsx:474-493 
+ ALT-RECHT-52 | § 04, Einleitung | Rechtsgrundlage Bewerbung | app/datenschutz/page.tsx:495-497 
+ ALT-RECHT-53 | § 04, Sperrvermerk-Kasten | Garantie für ungekündigte Fachkräfte | app/datenschutz/page.tsx:499-510 
+ ALT-RECHT-54 | § 04, Kasten „1. Erfasste Datenkat | Datenkategorien | app/datenschutz/page.tsx:512-535 
+ ALT-RECHT-55 | § 04, Kasten „2. Gesetzliche Lösc | Löschfrist Bewerbung | app/datenschutz/page.tsx:537-544 
+ ALT-RECHT-56 | § 04, Talentpool-Zeile | Talentpool | app/datenschutz/page.tsx:547-558 
+ ALT-RECHT-57 | § 05 Cookies, Analyse und Lokale Sch | Karte „Lokales Hosting von Schriftarten ohne US Transfer“ | app/datenschutz/page.tsx:563-587 
+ ALT-RECHT-58 | § 05 Karte „Webanalyse“ | Webanalyse und Cookiesteuerung | app/datenschutz/page.tsx:589-604 
+ ALT-RECHT-59 | § 06 Betroffenenrechte | Abschnittskopf und Einleitung | app/datenschutz/page.tsx:607-617 
+ ALT-RECHT-60 | § 06, Rechtekarte | Art. 15 DSGVO | app/datenschutz/page.tsx:620-626 
+ ALT-RECHT-61 | § 06, Rechtekarte | Art. 16 DSGVO | app/datenschutz/page.tsx:626-630 
+ ALT-RECHT-62 | § 06, Rechtekarte | Art. 17 DSGVO | app/datenschutz/page.tsx:631-635 
+ ALT-RECHT-63 | § 06, Rechtekarte | Art. 18 DSGVO | app/datenschutz/page.tsx:636-640 
+ ALT-RECHT-64 | § 06, Rechtekarte | Art. 20 DSGVO | app/datenschutz/page.tsx:641-645 
+ ALT-RECHT-65 | § 06, Rechtekarte | Art. 21 DSGVO | app/datenschutz/page.tsx:646-650 
+ ALT-RECHT-66 | § 06, Widerrufskasten | Widerruf per E-Mail | app/datenschutz/page.tsx:662-677 
+ ALT-RECHT-67 | § 07 Aufsichtsbehörde | Abschnittskopf und Einleitung | app/datenschutz/page.tsx:681-690 
+ ALT-RECHT-68 | § 07, Behördenkarte | HBDI-Angaben | app/datenschutz/page.tsx:692-708 
+ ALT-RECHT-69 | § 07, Behördenkarte | Knopf „Offizielles HBDI Portal“ | app/datenschutz/page.tsx:711-724 
+ ALT-RECHT-70 | Kartenblock der Startseite (`Interact | Google-Maps-Anfahrtskarte | components/maps/InteractiveMapClientWrapper.tsx:8-19; compo
+ ALT-RECHT-71 | Einwilligungs-Speicher, zweiter | Zweiter Einwilligungsspeicher | lib/store/consentStore.ts:21, 27-85; lib/store/storageGate.
+ ALT-RECHT-72 | Cookie-Angaben, Abgleich | Abgleich Cookie-Tabelle und Code | components/CookieConsent.tsx:336-517; Grep-Abgleich 
+ ALT-RECHT-73 | Analyse, Abgleich | Analyse-Anbieter | components/CookieConsent.tsx:424; app/datenschutz/page.tsx:
+ ALT-RECHT-74 | WhatsApp-Verbindungen (sieben Fundste | Datenweitergabe per WhatsApp | siehe Spalte Element 
+ ALT-RECHT-75 | Schrift, Quelle | Schriftquelle Plus Jakarta Sans | app/layout.tsx:2-15 
+ ALT-SEO-01 | Metadaten Startseite | Titel und Beschreibung | – 
+ ALT-SEO-02 | Metadaten Bewerbung | Titel und Beschreibung | – 
+ ALT-SEO-03 | Metadaten Datenschutz | Titel und Beschreibung | – 
+ ALT-SEO-04 | Metadaten Impressum | Titel und Beschreibung | – 
+ ALT-SEO-05 | Metadaten 404 | Titel und Beschreibung | – 
+ ALT-SEO-06 | Metadaten Root | Standard-Titel und Schlüsselwörter | – 
+ ALT-SEO-07 | Metadaten Root | Autor, Icons, Canonical | app/layout.tsx:35-44 
+ ALT-SEO-08 | Metadaten Root, OpenGraph | OpenGraph Standard | app/layout.tsx:45-62; public/images/bad-energie-lahn-dill-l
+ ALT-SEO-09 | Metadaten Root, Twitter | Twitter-Karte | app/layout.tsx:63-69 
+ ALT-SEO-10 | Metadaten Root, Robots | Meta-Robots | app/layout.tsx:70-80 
+ ALT-SEO-11 | Metadaten Root, weitere | Geo-Meta-Angaben | app/layout.tsx:81-86 
+ ALT-SEO-12 | `application/ld+json`, Node 1 | Organization `#organization` | app/layout.tsx:90-124 
+ ALT-SEO-13 | JSON-LD Node 2 | Person `#founder` | app/layout.tsx:125-133 
+ ALT-SEO-14 | JSON-LD Node 3 | WebSite `#website` mit SearchAction | app/layout.tsx:134-158 
+ ALT-SEO-15 | JSON-LD Node 4 | BreadcrumbList `#breadcrumb` (Startseite) | app/layout.tsx:159-170 
+ ALT-SEO-16 | JSON-LD Node 5 | LocalBusiness `#localbusiness` | app/layout.tsx:171-258 
+ ALT-SEO-17 | JSON-LD Node 6 | Brand `#brand` | app/layout.tsx:259-266 
+ ALT-SEO-18 | JSON-LD Node 7 | JobPosting `#job-anlagenmechaniker` | app/layout.tsx:267-324 
+ ALT-SEO-19 | JSON-LD Node 8 | JobPosting `#job-kundendienst` | app/layout.tsx:325-382 
+ ALT-SEO-20 | JSON-LD Node 9 | JobPosting `#job-obermonteur` | app/layout.tsx:383-440 
+ ALT-SEO-21 | JSON-LD Node 10 | JobPosting `#job-azubi` | app/layout.tsx:441-497 
+ ALT-SEO-22 | JSON-LD Node 11 | FAQPage `#faq-schema` | app/layout.tsx:498-546 
+ ALT-SEO-23 | FAQ Frage 1 | Frage 1 und Antwort | app/layout.tsx:505-512 
+ ALT-SEO-24 | FAQ Frage 2 | Frage 2 und Antwort | app/layout.tsx:513-520 
+ ALT-SEO-25 | FAQ Frage 3 | Frage 3 und Antwort | app/layout.tsx:521-528 
+ ALT-SEO-26 | FAQ Frage 4 | Frage 4 und Antwort | app/layout.tsx:529-536 
+ ALT-SEO-27 | FAQ Frage 5 | Frage 5 und Antwort | app/layout.tsx:537-544 
+ ALT-SEO-28 | JSON-LD der Datenschutzseite, Knoten | WebPage (Datenschutz) | – 
+ ALT-SEO-29 | JSON-LD der Datenschutzseite, Knoten | BreadcrumbList (Datenschutz) | app/datenschutz/layout.tsx:58-75 
+ ALT-SEO-30 | JSON-LD der Impressumsseite, Knoten 1 | WebPage (Impressum) | – 
+ ALT-SEO-31 | JSON-LD der Impressumsseite, Knoten 2 | BreadcrumbList (Impressum) | app/impressum/page.tsx:62-79 
+ ALT-SEO-32 | JSON-LD der Bewerbungsseite, Knoten 1 | WebPage (Bewerbung) | – 
+ ALT-SEO-33 | JSON-LD der Bewerbungsseite, Knoten 2 | BreadcrumbList (Bewerbung) | app/bewerbung/layout.tsx:58-75 
+ ALT-SEO-34 | robots.txt, Gruppe 1 | Suchmaschinen-Gruppe | app/robots.ts:9-14; Live-Abruf 
+ ALT-SEO-35 | robots.txt, Gruppe 2 | KI-Crawler-Gruppe | app/robots.ts:15-32 
+ ALT-SEO-36 | robots.txt, Gruppe 3 | Sperrgruppe SEO-Scraper | app/robots.ts:33-46 
+ ALT-SEO-37 | robots.txt, Gruppe `*` | Standardgruppe | app/robots.ts:47-51; Live-Abruf 
+ ALT-SEO-38 | robots.txt, Ende | Sitemap- und Host-Zeile | app/robots.ts:53-54 
+ ALT-SEO-39 | sitemap.xml, Eintrag 1 | Eintrag Startseite | app/sitemap.ts:9-15 
+ ALT-SEO-40 | sitemap.xml, Eintrag 2 | Eintrag Bewerbung | app/sitemap.ts:16-21 
+ ALT-SEO-41 | sitemap.xml, Eintrag 3 | Eintrag Datenschutz | app/sitemap.ts:22-27 
+ ALT-SEO-42 | sitemap.xml, Eintrag 4 | Eintrag Impressum | app/sitemap.ts:28-33 
+ ALT-SEO-43 | Textroute | llms.txt (Gliederung) | app/llms.txt/route.ts:4-46 
+ ALT-SEO-44 | Textroute | llms-full.txt (Gliederung) | app/llms-full.txt/route.ts:5-64; lib/data/services (Import)
+ ALT-SEO-45 | Textroute, IndexNow-Schlüssel | Schlüsseldatei | app/298d966b7e4f4a43981cb8e30da6b5b5.txt/route.ts:5-13; pub
+ ALT-SEO-46 | GET ohne Parameter | IndexNow-Auskunft | app/api/indexnow/route.ts:6-29 
+ ALT-SEO-47 | POST | IndexNow-Einreichung | app/api/indexnow/route.ts:31-52 
+ ALT-SEO-48 | GET | Konfiguration Kartenschlüssel | app/api/maps/config/route.ts:3-41; middleware.ts:19-29 
+ ALT-SEO-49 | POST | Kontakt-Schnittstelle (Formularpaket) | app/api/contact/route.ts:6-25 
+ ALT-SEO-50 | POST | Bewerbungs-Schnittstelle (Formularpaket) | app/api/bewerbung/route.ts:34 
+ ALT-SEO-51 | Web-Vitals-Reporter | Leistungsmessung | components/analytics/WebVitalsReporter.tsx:5-15; app/layout
+ ALT-SEO-52 | Mikrodaten im Logo | Schema.org-Organisation im Logo | components/Logo.tsx:71-92 
+ ALT-SEO-53 | Bot-Filter | Abweisung bekannter Scraper | middleware.ts:4-17, 44-49 
+ ALT-SEO-54 | Sicherheitsheader | Header der Middleware | middleware.ts:31-39; Live-Abruf 
+ ALT-SEO-55 | Zusätzliche Header und Cache | Header aus next.config | next.config.ts:37-82 
+ ALT-SEO-56 | Bild-Quellen | Erlaubte externe Bildhosts | next.config.ts:11-33 
+ ALT-SEO-57 | Module ohne Einbindung | Ungenutzte SEO-Module | components/seo/index.ts:2; lib/seo/ (Verzeichnis) 
+ ALT-SEO-58 | Suche | Suchfunktion | app/layout.tsx:150-157; app/datenschutz/page.tsx:172-182 
+ ALT-SEO-59 | Kanonische Adressen | Kanonische Ziele aller Seiten | app/page.tsx:58-64; app/bewerbung/layout.tsx:10-12; app/dat

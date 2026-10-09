@@ -9,7 +9,7 @@ Zählung der Pässe: siehe „Zuordnungsprüfung“. Die Impressum-Pflichtangabe
 
 Wichtigste Befunde (Kurzfassung)
 - Impressum: Keine Pflichtangabe des Altstands fehlt (Anhang A). Offen: USt-IdNr. (zwei Werte im Repo), Verbraucherschlichtung (§ 36 VSBG), Bestätigung der Streichung des OS-Satzes.
-- Verloren, aber belegt und zurückzuführen: „100 Jahre Meisterbetrieb (1926–2026)“ (Fakt vorhanden, nirgends gerendert, läuft 2026-12-31 ab), Zähler offener Stellen, WhatsApp-Zugang auf Desktop und Fuß, 404-Charakter „Rohrleitung verirrt“ mit Direktkontakt, Anker-Aliase der Startseite, fünf Einsatzorte (Solms, Hüttenberg, Lahnau, Ehringshausen, Wettenberg).
+- Verloren oder geschwächt, belegt und zurückzuführen: „100 Jahre Meisterbetrieb (1926–2026)“ (Fakt vorhanden, nirgends gerendert, läuft 2026-12-31 ab), Zähler offener Stellen, WhatsApp-Zugang auf Desktop und Fuß, 404-Charakter „Rohrleitung verirrt“ mit Direktkontakt, Anker-Aliase der Startseite, fünf Einsatzorte (Solms, Hüttenberg, Lahnau, Ehringshausen, Wettenberg).
 - Nicht zurückgeführt (erfunden oder unbelegt): Cookie-Tabellen und Analyse-Anbieter, Datenschutz-Siegel („Auditierte Verschlüsselung“, „100% …“-Karten, „Verifiziert Sicher“), `SearchAction`, „Ungelesen“-Punkt am WhatsApp-Kreis.
 - Gebunden: IndexNow-Schlüsseldatei `/298d966b7e4f4a43981cb8e30da6b5b5.txt` lebt (statische Datei, 200); `INDEXNOW_KEY` muss gleich dem Dateiinhalt sein.
 
@@ -52,7 +52,7 @@ Wichtigste Befunde (Kurzfassung)
 | E-RECHT-004 | Impressum: Handwerkskammer, Kammerportal, Berufsbezeichnung | Recht | verschoben | Muss | Keine Rückführung nötig (vollständig verschoben) |
 | E-RECHT-005 | Impressum: Verbraucherstreitbeilegung und Universalschlichtungsstelle | Recht | geschwächt | Muss | Zurückstellen |
 | E-RECHT-006 | Impressum: Haftung für Inhalte und Links | Recht | verschoben | Muss | Keine Rückführung nötig (vollständig verschoben) |
-| E-RECHT-007 | Fuß: Registerzeile (Register, USt-IdNr., Geschäftsführer) | Recht | geschwächt | Soll | Keine Rückführung nötig (vollständig verschoben) |
+| E-RECHT-007 | Fuß: Registerzeile (Register, USt-IdNr., Geschäftsführer) | Recht | verschoben | Soll | Keine Rückführung nötig (vollständig verschoben) |
 | E-RECHT-008 | Fuß: Link „Bewerber Datenschutz nach Paragraph 26 BDSG“ | Recht | geschwächt | Soll | Verschmelzen |
 | E-RECHT-009 | Datenschutz: Kopf (Stand, Brotkrumen, Überschrift, Einleitung) | Recht | verschoben | Soll | Keine Rückführung nötig (vollständig verschoben) |
 | E-RECHT-010 | Datenschutz: unbelegte Siegel und Kennzahlenkarten | Vertrauen | verloren | Kann | Nicht zurückführen (erfunden/unbelegt) |
@@ -88,7 +88,7 @@ Wichtigste Befunde (Kurzfassung)
 | E-SEO-015 | IndexNow-Schlüsseldatei `/298d966b7e4f4a43981cb8e30da6b5b5.txt` | Suche und Technik | verschoben | Muss | Keine Rückführung nötig (vollständig verschoben) |
 | E-SEO-016 | `/api/indexnow` (Auskunft und Einreichung) | Suche und Technik | verschoben | Kann | Keine Rückführung nötig (vollständig verschoben) |
 | E-SEO-017 | `/api/maps/config` (Kartenschlüssel nur für die eigene Seite) | Einbindung Dritter | verschoben | Soll | Keine Rückführung nötig (vollständig verschoben) |
-| E-SEO-018 | Formular-Schnittstellen `/api/contact` und `/api/bewerbung` | Funktion | verloren | Muss | Keine Rückführung nötig (vollständig verschoben) |
+| E-SEO-018 | Formular-Schnittstellen `/api/contact` und `/api/bewerbung` | Funktion | verschoben | Muss | Keine Rückführung nötig (vollständig verschoben) |
 | E-SEO-019 | Bot-Filter (Abweisung bekannter Scraper) | Suche und Technik | verschoben | Kann | Keine Rückführung nötig (vollständig verschoben) |
 | E-SEO-020 | Sicherheitsheader und Cache-Regeln | Suche und Technik | verschoben | Soll | Keine Rückführung nötig (vollständig verschoben) |
 | E-SEO-021 | Alte Startseiten-Anker (Anker-Aliase) | Navigation | verloren | Soll | Rückführen |
@@ -660,7 +660,7 @@ Wichtigste Befunde (Kurzfassung)
 ### E-RECHT-007 · Fuß: Registerzeile (Register, USt-IdNr., Geschäftsführer)
 - Kategorie: Recht
 - Quelle: ALT-SHELL-66 · components/Footer.tsx:328-330 · Bild: belege/p0-altstand/alt-impressum__d1440-light__03.webp
-- Zustand: geschwächt (+ Gegenstück: NEU-SHELL-15, components/site/SiteFooter.tsx:139-143: „© 2026 Bad und Energie GmbH Lahn Dill · HRB 2449 Amtsgericht Wetzlar · Innung Sanitär-, Heizungs- und Klimatechnik Lahn-Dill“; USt-IdNr. und Geschäftsführer stehen nicht mehr im Fuß, aber vollständig im Impressum)
+- Zustand: verschoben (+ Gegenstück: NEU-SHELL-15, components/site/SiteFooter.tsx:139-143: „© 2026 Bad und Energie GmbH Lahn Dill · HRB 2449 Amtsgericht Wetzlar · Innung Sanitär-, Heizungs- und Klimatechnik Lahn-Dill“; USt-IdNr. und Geschäftsführer stehen nicht mehr im Fuß, aber vollständig im Impressum)
 - Aufgabe: Rechtsform und Register auf jeder Seite sichtbar.
 - Wesenskern: „Amtsgericht Wetzlar HRB 2449 • USt ID DE 346 648 448 • Geschäftsführer: Diplomingenieur Sabri Demir“. Der Fuß ist keine Pflichtstelle; die Angaben nach § 5 DDG stehen im Impressum (E-RECHT-002, -003).
 - Freiraum: Fußzeile ohne USt-IdNr. genügt, solange das Impressum jederzeit erreichbar ist (Link in jedem Fuß, auch im verkürzten Fuß der Bewerbung, NEU-SHELL-16).
@@ -1240,7 +1240,7 @@ Hinweis zu „Bild“: Metadaten, Textrouten und Schnittstellen haben keinen Bil
 ### E-SEO-018 · Formular-Schnittstellen `/api/contact` und `/api/bewerbung`
 - Kategorie: Funktion
 - Quelle: ALT-SEO-49, ALT-SEO-50 · app/api/contact/route.ts:6-25; app/api/bewerbung/route.ts:34 · Bild: –
-- Zustand: verloren (+ Gegenstück: `/api/contact` entfernt (GET 404; ROADMAP §9.3, O5 „erledigt“, Kontaktformular LeadQuickForm entfällt); `/api/bewerbung` besteht neu (GET 405, nur POST; app/api/bewerbung/route.ts:1-63) und gehört zum Bewerbungsflow)
+- Zustand: verschoben (+ Gegenstück: `/api/contact` bewusst entfernt, Ersatz sind Telefon, WhatsApp, E-Mail und der Bewerbungsflow (GET 404; ROADMAP §9.3, O5 „erledigt“, Kontaktformular LeadQuickForm entfällt); `/api/bewerbung` besteht neu (GET 405, nur POST; app/api/bewerbung/route.ts:1-63) und gehört zum Bewerbungsflow)
 - Aufgabe: Anfragen und Bewerbungen serverseitig entgegennehmen.
 - Wesenskern: Kontakt-Schnittstelle mit Pflichtfeldern name, email und Einwilligung (`consent`), Honeypot `websiteUrl`; die Bewerbungs-Schnittstelle gehört zum Formularpaket. Das Kontaktformular entfällt bewusst, die Kontaktwege Telefon, WhatsApp und E-Mail bleiben (E-SHELL-005, -006, -007). Formulare wurden nicht abgeschickt (keine POST-Anfragen).
 - Freiraum: –
@@ -1343,7 +1343,7 @@ Automatisch geprüft (Skript im Arbeitsverzeichnis, nicht Teil der Lieferung): J
 
 Je Bereich der Atlaszeilen: ALT-SHELL: 108 in Pässen, 17 ohne eigenes Element · ALT-RECHT: 75 in Pässen, 0 ohne eigenes Element · ALT-SEO: 55 in Pässen, 4 ohne eigenes Element.
 
-Verteilung der Pässe: Zustand verloren 11 · geschwächt 14 · verschoben 50. Priorität Muss 30 · Soll 29 · Kann 16.
+Verteilung der Pässe: Zustand verloren 10 · geschwächt 13 · verschoben 52. Priorität Muss 30 · Soll 29 · Kann 16.
 
 Entscheidungen: Rückführen 5 · Verschmelzen 9 · Neu interpretieren 2 · Zurückstellen 4 · Nicht zurückführen (erfunden/unbelegt) 3 · Keine Rückführung nötig (vollständig verschoben) 52.
 
