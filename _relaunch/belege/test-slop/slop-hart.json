@@ -1,2960 +1,1528 @@
 {
   "label": "test-slop",
   "base": "http://localhost:3500",
-  "erstellt": "2026-10-09T07:38:40.297Z",
+  "erstellt": "2026-10-09T07:42:15.714Z",
   "bedingungen": {
-    "code": {
-      "dateien": 245,
-      "verzeichnisse": [
-        "app",
-        "components",
-        "lib"
+    "token": {
+      "quelle": "app/styles/theme.css",
+      "farbenHex": 42,
+      "radienPx": [
+        0,
+        6,
+        10,
+        14,
+        20,
+        28,
+        9999
       ],
-      "ausgeschlossen": [
-        "__tests__",
-        "*.test.ts(x)",
-        "*.spec.ts(x)",
-        "node_modules",
-        ".next"
+      "radiusFull": true,
+      "schatten": [
+        "xs",
+        "sm",
+        "lg"
       ],
-      "erweiterungen": [
-        ".ts",
-        ".tsx",
-        ".css"
+      "dauernS": [
+        0,
+        0.15,
+        0.22,
+        0.28
       ],
-      "kommentarzeilen": "Zeilen, die mit //, /*, * oder {/* beginnen, werden bei S-04/S-05/Hinweisen übersprungen, bei S-01 und S-07 mitgezählt und markiert"
+      "schriftgroessen": [
+        "footnote",
+        "callout",
+        "body",
+        "lead",
+        "title-3",
+        "title-2",
+        "title-1",
+        "display",
+        "numeral"
+      ]
+    },
+    "render": {
+      "ansichten": [
+        "d1440"
+      ],
+      "farbschema": "hell",
+      "bewegung": "no-preference",
+      "warten": "S-07: domcontentloaded + 300 ms; Rest: networkidle + fonts.ready + 600 ms, dann scrollThrough + 500 ms",
+      "stichprobeS05": 60,
+      "tabStopps": 15,
+      "axeRegeln": [
+        "color-contrast"
+      ]
     }
   },
   "zusammenfassung": {
     "S-01": {
-      "code": {
-        "treffer": 28,
-        "davonUebrige": 15,
-        "davonPlatzhalterAttribut": 13
-      },
-      "gerendert": null
+      "code": null,
+      "gerendert": {
+        "sichtbareTreffer": 3,
+        "feldPlatzhalterMitMuster": 0,
+        "feldPlatzhalterGesamt": 0
+      }
     },
-    "S-02": null,
-    "S-03": null,
-    "S-04": {
-      "code": {
-        "iconQuellen": {
-          "lucide-react": 71
-        },
-        "verschiedeneIcons": 34,
-        "iconMarkenOhneStrokeWidth": 0,
-        "eigeneSvgKomponenten": 3,
-        "strichstaerkenImCode": {
-          "1": 2,
-          "2": 16,
-          "4": 1,
-          "1.75": 45,
-          "2.5": 4,
-          "1.5": 3,
-          "2.25": 3
-        },
-        "emojisImCodeHart": 0
-      },
-      "gerendert": null
+    "S-02": {
+      "seitenAnsichten": 1,
+      "ueberHaelfte": 1,
+      "mitIrgendeinemAuftritt": 1,
+      "abschnitteGesamt": 8,
+      "abschnitteMitAuftritt": 7,
+      "animationenNachScroll": 15
     },
-    "S-05": {
-      "code": {
-        "eckigWertklassen": 14,
-        "eckigTokenrelevant": 1,
-        "zahlDauerKlassen": 2,
-        "hexwerteOhneAnker": 0,
-        "inlineStyleFrei": 17,
-        "cssFreieWerte": 15,
-        "jsDauernUndKurven": 2
-      },
-      "gerendert": null
-    },
-    "S-06": null,
-    "S-07": {
-      "code": {
-        "treffer": 36,
-        "kandidat": 0
-      },
-      "gerendert": null
-    }
-  },
-  "code": {
-    "S-01": {
-      "regel": "Muster lorem|ipsum|placeholder|platzhalter|beispiel@|max mustermann|alexander koch|dummy|todo:|xxx (ohne Beachtung der Groß-/Kleinschreibung)",
-      "treffer": 28,
-      "zaehlweise": "ein Treffer je Zeile und Muster",
-      "davonPlatzhalterAttribut": 13,
-      "davonUebrige": 15,
-      "davonKommentar": 6,
-      "nachMuster": {
-        "placeholder": 22,
-        "platzhalter": 4,
-        "max mustermann": 1,
-        "alexander koch": 1
-      },
-      "fundstellen": [
-        {
-          "datei": "app/api/maps/config/route.ts",
-          "zeile": 23,
-          "muster": "platzhalter",
-          "art": "text-oder-name",
-          "anzahlInZeile": 1,
-          "kommentar": true,
-          "text": "// Platzhalter aus .env.example gelten als nicht gesetzt."
-        },
-        {
-          "datei": "app/api/maps/config/route.ts",
-          "zeile": 25,
-          "muster": "placeholder",
-          "art": "text-oder-name",
-          "anzahlInZeile": 1,
-          "kommentar": false,
-          "text": "!apiKey || apiKey === 'MY_GOOGLE_MAPS_API_KEY' || apiKey.startsWith('AIzaSy_placeholder')"
-        },
-        {
-          "datei": "components/mappe/MappePreview.tsx",
-          "zeile": 65,
-          "muster": "placeholder",
-          "art": "platzhalter-attribut",
-          "anzahlInZeile": 2,
-          "kommentar": false,
-          "text": "function Filled({ value, placeholder }: { value: string; placeholder: string }) {"
-        },
-        {
-          "datei": "components/mappe/MappePreview.tsx",
-          "zeile": 66,
-          "muster": "placeholder",
-          "art": "platzhalter-attribut",
-          "anzahlInZeile": 2,
-          "kommentar": false,
-          "text": "return value.trim() ? <>{value.trim()}</> : <span className={styles.placeholder}>{placeholder}</span>;"
-        },
-        {
-          "datei": "components/mappe/MappePreview.tsx",
-          "zeile": 82,
-          "muster": "placeholder",
-          "art": "platzhalter-attribut",
-          "anzahlInZeile": 1,
-          "kommentar": false,
-          "text": "<Filled value={person.name} placeholder=\"Dein Name\" />"
-        },
-        {
-          "datei": "components/mappe/MappePreview.tsx",
-          "zeile": 85,
-          "muster": "placeholder",
-          "art": "platzhalter-attribut",
-          "anzahlInZeile": 1,
-          "kommentar": false,
-          "text": "{contact || <span className={styles.placeholder}>Wohnort · Telefon · E-Mail</span>}"
-        },
-        {
-          "datei": "components/mappe/MappePreview.tsx",
-          "zeile": 212,
-          "muster": "placeholder",
-          "art": "platzhalter-attribut",
-          "anzahlInZeile": 1,
-          "kommentar": false,
-          "text": "<Filled value={person.name} placeholder=\"Dein Name\" />"
-        },
-        {
-          "datei": "components/mappe/StationsEditor.tsx",
-          "zeile": 14,
-          "muster": "placeholder",
-          "art": "platzhalter-attribut",
-          "anzahlInZeile": 1,
-          "kommentar": false,
-          "text": "placeholder?: string;"
-        },
-        {
-          "datei": "components/mappe/StationsEditor.tsx",
-          "zeile": 184,
-          "muster": "placeholder",
-          "art": "platzhalter-attribut",
-          "anzahlInZeile": 2,
-          "kommentar": false,
-          "text": "placeholder={field.placeholder}"
-        },
-        {
-          "datei": "components/mappe/StationsEditor.tsx",
-          "zeile": 193,
-          "muster": "placeholder",
-          "art": "platzhalter-attribut",
-          "anzahlInZeile": 2,
-          "kommentar": false,
-          "text": "placeholder={field.placeholder}"
-        },
-        {
-          "datei": "components/mappe/StationsSection.tsx",
-          "zeile": 18,
-          "muster": "placeholder",
-          "art": "text-oder-name",
-          "anzahlInZeile": 1,
-          "kommentar": false,
-          "text": "const PERIOD_PLACEHOLDER = 'z. B. 08/2021 – heute';"
-        },
-        {
-          "datei": "components/mappe/StationsSection.tsx",
-          "zeile": 24,
-          "muster": "placeholder",
-          "art": "platzhalter-attribut",
-          "anzahlInZeile": 2,
-          "kommentar": false,
-          "text": "{ key: 'period', label: 'Zeitraum', placeholder: PERIOD_PLACEHOLDER, maxLength: MAPPE_LIMITS.period, half: true },"
-        },
-        {
-          "datei": "components/mappe/StationsSection.tsx",
-          "zeile": 45,
-          "muster": "placeholder",
-          "art": "platzhalter-attribut",
-          "anzahlInZeile": 2,
-          "kommentar": false,
-          "text": "{ key: 'period', label: 'Zeitraum', placeholder: PERIOD_PLACEHOLDER, maxLength: MAPPE_LIMITS.period, half: true },"
-        },
-        {
-          "datei": "components/mappe/mappe.module.css",
-          "zeile": 103,
-          "muster": "placeholder",
-          "art": "platzhalter-attribut",
-          "anzahlInZeile": 1,
-          "kommentar": false,
-          "text": ".placeholder {"
-        },
-        {
-          "datei": "components/mappe/mappe.module.css",
-          "zeile": 135,
-          "muster": "placeholder",
-          "art": "platzhalter-attribut",
-          "anzahlInZeile": 1,
-          "kommentar": false,
-          "text": ".placeholder {"
-        },
-        {
-          "datei": "components/ui/Input.tsx",
-          "zeile": 11,
-          "muster": "placeholder",
-          "art": "platzhalter-attribut",
-          "anzahlInZeile": 1,
-          "kommentar": false,
-          "text": "'w-full rounded-sm border border-line-strong bg-surface text-ink placeholder:text-ink-muted',"
-        },
-        {
-          "datei": "lib/applications/normalize.ts",
-          "zeile": 49,
-          "muster": "max mustermann",
-          "art": "text-oder-name",
-          "anzahlInZeile": 1,
-          "kommentar": true,
-          "text": "/** Erstes Wort des Namens, z. B. „Max“ aus „Max Mustermann“. */"
-        },
-        {
-          "datei": "lib/data/team.ts",
-          "zeile": 16,
-          "muster": "alexander koch",
-          "art": "text-oder-name",
-          "anzahlInZeile": 1,
-          "kommentar": false,
-          "text": "name: 'Alexander Koch',"
-        },
-        {
-          "datei": "lib/env.ts",
-          "zeile": 11,
-          "muster": "placeholder",
-          "art": "text-oder-name",
-          "anzahlInZeile": 1,
-          "kommentar": false,
-          "text": "const PLACEHOLDER_PATTERNS: readonly RegExp[] = ["
-        },
-        {
-          "datei": "lib/env.ts",
-          "zeile": 14,
-          "muster": "placeholder",
-          "art": "text-oder-name",
-          "anzahlInZeile": 1,
-          "kommentar": false,
-          "text": "/placeholder/i,"
-        },
-        {
-          "datei": "lib/env.ts",
-          "zeile": 19,
-          "muster": "platzhalter",
-          "art": "text-oder-name",
-          "anzahlInZeile": 1,
-          "kommentar": true,
-          "text": "/** Leere Werte und offensichtliche Platzhalter aus .env.example gelten als nicht gesetzt. */"
-        },
-        {
-          "datei": "lib/env.ts",
-          "zeile": 20,
-          "muster": "placeholder",
-          "art": "text-oder-name",
-          "anzahlInZeile": 1,
-          "kommentar": false,
-          "text": "export function isPlaceholder(value: string | null | undefined): boolean {"
-        },
-        {
-          "datei": "lib/env.ts",
-          "zeile": 22,
-          "muster": "placeholder",
-          "art": "text-oder-name",
-          "anzahlInZeile": 1,
-          "kommentar": false,
-          "text": "return trimmed === '' || PLACEHOLDER_PATTERNS.some((pattern) => pattern.test(trimmed));"
-        },
-        {
-          "datei": "lib/env.ts",
-          "zeile": 27,
-          "muster": "placeholder",
-          "art": "text-oder-name",
-          "anzahlInZeile": 1,
-          "kommentar": false,
-          "text": "(value) => (typeof value === 'string' && !isPlaceholder(value) ? value.trim() : undefined),"
-        },
-        {
-          "datei": "lib/mappe/template.ts",
-          "zeile": 7,
-          "muster": "platzhalter",
-          "art": "text-oder-name",
-          "anzahlInZeile": 1,
-          "kommentar": true,
-          "text": "* falsch oder erfunden war: kein Platzhaltername, keine leeren Aufzählungen,"
-        },
-        {
-          "datei": "lib/maps/keys.ts",
-          "zeile": 1,
-          "muster": "placeholder",
-          "art": "text-oder-name",
-          "anzahlInZeile": 1,
-          "kommentar": true,
-          "text": "/** Empty values and the .env.example placeholders count as \"no key\" (same rule as /api/maps/config). */"
-        },
-        {
-          "datei": "lib/maps/keys.ts",
-          "zeile": 4,
-          "muster": "placeholder",
-          "art": "text-oder-name",
-          "anzahlInZeile": 1,
-          "kommentar": false,
-          "text": "return value !== '' && value !== 'MY_GOOGLE_MAPS_API_KEY' && !value.startsWith('AIzaSy_placeholder');"
-        },
-        {
-          "datei": "lib/security/ip.ts",
-          "zeile": 27,
-          "muster": "platzhalter",
-          "art": "text-oder-name",
-          "anzahlInZeile": 1,
-          "kommentar": true,
-          "text": "* IP_HASH_SALT über lib/env.ts (mind. 32 Zeichen, Platzhalter zählen nicht). Fehlt er, wirft jeder"
-        }
-      ],
-      "anmerkung": "„platzhalter-attribut“ = HTML-/Props-/Tailwind-Verwendung des Wortes placeholder; der Inhalt steht in `text` und ist zu prüfen. Erfundene Zahlen, Stimmen oder Auszeichnungen sind per Muster nicht erkennbar (Handprüfung gegen Quellen)."
+    "S-03": {
+      "kontrastVerletzungen": 0,
+      "kontrastUnklar": 5,
+      "fokusGeprueft": 15,
+      "fokusNichtOk": 0,
+      "seitenMitFokusNichtOk": 0
     },
     "S-04": {
-      "regel": "alle Icon-Importe (lucide-react u. a.), eigene SVG-Komponenten, alle strokeWidth/stroke-width-Werte, Emojis im Code",
-      "iconQuellen": {
-        "lucide-react": 71
-      },
-      "verschiedeneIcons": 34,
-      "iconImporte": 71,
-      "icons": [
-        {
-          "datei": "app/bewerbung/page.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "ShieldCheck",
-          "lokal": "ShieldCheck",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "app/error.tsx",
-          "zeile": 5,
-          "quelle": "lucide-react",
-          "icon": "MessageCircle",
-          "lokal": "MessageCircle",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "app/error.tsx",
-          "zeile": 5,
-          "quelle": "lucide-react",
-          "icon": "Phone",
-          "lokal": "Phone",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "app/error.tsx",
-          "zeile": 5,
-          "quelle": "lucide-react",
-          "icon": "RotateCcw",
-          "lokal": "RotateCcw",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/apply/ContactStep.tsx",
-          "zeile": 5,
-          "quelle": "lucide-react",
-          "icon": "FileText",
-          "lokal": "FileText",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/apply/ContactStep.tsx",
-          "zeile": 5,
-          "quelle": "lucide-react",
-          "icon": "Plus",
-          "lokal": "Plus",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/apply/FlowShortcuts.tsx",
-          "zeile": 5,
-          "quelle": "lucide-react",
-          "icon": "FileText",
-          "lokal": "FileText",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/apply/FlowShortcuts.tsx",
-          "zeile": 5,
-          "quelle": "lucide-react",
-          "icon": "MessageCircle",
-          "lokal": "MessageCircle",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/apply/SubmitErrorPanel.tsx",
-          "zeile": 1,
-          "quelle": "lucide-react",
-          "icon": "CircleAlert",
-          "lokal": "CircleAlert",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/apply/SubmitErrorPanel.tsx",
-          "zeile": 1,
-          "quelle": "lucide-react",
-          "icon": "MessageCircle",
-          "lokal": "MessageCircle",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/apply/SubmitErrorPanel.tsx",
-          "zeile": 1,
-          "quelle": "lucide-react",
-          "icon": "Phone",
-          "lokal": "Phone",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/apply/SubmitErrorPanel.tsx",
-          "zeile": 1,
-          "quelle": "lucide-react",
-          "icon": "RotateCw",
-          "lokal": "RotateCw",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/apply/steps.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "ArrowRight",
-          "lokal": "ArrowRight",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/apply/steps.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "CircleCheck",
-          "lokal": "CircleCheck",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/apply/thanks/FollowUpForm.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "CircleCheck",
-          "lokal": "CircleCheck",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/apply/thanks/ThankYouView.tsx",
-          "zeile": 5,
-          "quelle": "lucide-react",
-          "icon": "Check",
-          "lokal": "Check",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/apply/thanks/ThankYouView.tsx",
-          "zeile": 5,
-          "quelle": "lucide-react",
-          "icon": "Mail",
-          "lokal": "Mail",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/apply/thanks/ThankYouView.tsx",
-          "zeile": 5,
-          "quelle": "lucide-react",
-          "icon": "MessageCircle",
-          "lokal": "MessageCircle",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/apply/thanks/ThankYouView.tsx",
-          "zeile": 5,
-          "quelle": "lucide-react",
-          "icon": "UserPlus",
-          "lokal": "UserPlus",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/home/BenefitGrid.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "Banknote",
-          "lokal": "Banknote",
-          "typOnly": false,
-          "verwendungenInDatei": 0
-        },
-        {
-          "datei": "components/home/BenefitGrid.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "CalendarOff",
-          "lokal": "CalendarOff",
-          "typOnly": false,
-          "verwendungenInDatei": 0
-        },
-        {
-          "datei": "components/home/BenefitGrid.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "FileCheck",
-          "lokal": "FileCheck",
-          "typOnly": false,
-          "verwendungenInDatei": 0
-        },
-        {
-          "datei": "components/home/BenefitGrid.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "GraduationCap",
-          "lokal": "GraduationCap",
-          "typOnly": false,
-          "verwendungenInDatei": 0
-        },
-        {
-          "datei": "components/home/BenefitGrid.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "TabletSmartphone",
-          "lokal": "TabletSmartphone",
-          "typOnly": false,
-          "verwendungenInDatei": 0
-        },
-        {
-          "datei": "components/home/BenefitGrid.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "Truck",
-          "lokal": "Truck",
-          "typOnly": false,
-          "verwendungenInDatei": 0
-        },
-        {
-          "datei": "components/home/BenefitGrid.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "Users",
-          "lokal": "Users",
-          "typOnly": false,
-          "verwendungenInDatei": 0
-        },
-        {
-          "datei": "components/home/BenefitGrid.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "Wrench",
-          "lokal": "Wrench",
-          "typOnly": false,
-          "verwendungenInDatei": 0
-        },
-        {
-          "datei": "components/home/Hero.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "ArrowDown",
-          "lokal": "ArrowDown",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/home/ProcessTimeline.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "ShieldCheck",
-          "lokal": "ShieldCheck",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/jobs/JobCard.tsx",
-          "zeile": 1,
-          "quelle": "lucide-react",
-          "icon": "ArrowRight",
-          "lokal": "ArrowRight",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/jobs/JobSections.tsx",
-          "zeile": 1,
-          "quelle": "lucide-react",
-          "icon": "Check",
-          "lokal": "Check",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/mappe/JobSection.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "ChevronDown",
-          "lokal": "ChevronDown",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/mappe/LetterSection.tsx",
-          "zeile": 3,
-          "quelle": "lucide-react",
-          "icon": "RotateCcw",
-          "lokal": "RotateCcw",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/mappe/MappeActions.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "CircleAlert",
-          "lokal": "CircleAlert",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/mappe/MappeActions.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "CircleCheck",
-          "lokal": "CircleCheck",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/mappe/MappeActions.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "Printer",
-          "lokal": "Printer",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/mappe/PersonalSection.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "Camera",
-          "lokal": "Camera",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/mappe/PersonalSection.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "Trash2",
-          "lokal": "Trash2",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/mappe/SkillsSection.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "Plus",
-          "lokal": "Plus",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/mappe/StationsEditor.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "ArrowDown",
-          "lokal": "ArrowDown",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/mappe/StationsEditor.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "ArrowUp",
-          "lokal": "ArrowUp",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/mappe/StationsEditor.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "Plus",
-          "lokal": "Plus",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/mappe/StationsEditor.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "Trash2",
-          "lokal": "Trash2",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/maps/RegionExplorer.tsx",
-          "zeile": 5,
-          "quelle": "lucide-react",
-          "icon": "Check",
-          "lokal": "Check",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/maps/RegionExplorer.tsx",
-          "zeile": 5,
-          "quelle": "lucide-react",
-          "icon": "ChevronDown",
-          "lokal": "ChevronDown",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/maps/RegionExplorer.tsx",
-          "zeile": 5,
-          "quelle": "lucide-react",
-          "icon": "EyeOff",
-          "lokal": "EyeOff",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/maps/RegionExplorer.tsx",
-          "zeile": 5,
-          "quelle": "lucide-react",
-          "icon": "Map",
-          "lokal": "MapIcon",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/reviews/ReviewScroller.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "ChevronLeft",
-          "lokal": "ChevronLeft",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/reviews/ReviewScroller.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "ChevronRight",
-          "lokal": "ChevronRight",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/site/ContactOptions.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "Mail",
-          "lokal": "Mail",
-          "typOnly": false,
-          "verwendungenInDatei": 0
-        },
-        {
-          "datei": "components/site/ContactOptions.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "MessageCircle",
-          "lokal": "MessageCircle",
-          "typOnly": false,
-          "verwendungenInDatei": 0
-        },
-        {
-          "datei": "components/site/ContactOptions.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "Phone",
-          "lokal": "Phone",
-          "typOnly": false,
-          "verwendungenInDatei": 0
-        },
-        {
-          "datei": "components/site/HeaderBar.tsx",
-          "zeile": 6,
-          "quelle": "lucide-react",
-          "icon": "Phone",
-          "lokal": "Phone",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/site/MobileNav.tsx",
-          "zeile": 6,
-          "quelle": "lucide-react",
-          "icon": "Menu",
-          "lokal": "Menu",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/site/MobileNav.tsx",
-          "zeile": 6,
-          "quelle": "lucide-react",
-          "icon": "MessageCircle",
-          "lokal": "MessageCircle",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/site/MobileNav.tsx",
-          "zeile": 6,
-          "quelle": "lucide-react",
-          "icon": "Phone",
-          "lokal": "Phone",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/site/MobileNav.tsx",
-          "zeile": 6,
-          "quelle": "lucide-react",
-          "icon": "X",
-          "lokal": "X",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/site/StickyApplyBarClient.tsx",
-          "zeile": 6,
-          "quelle": "lucide-react",
-          "icon": "MessageCircle",
-          "lokal": "MessageCircle",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/ui/Breadcrumbs.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "ChevronRight",
-          "lokal": "ChevronRight",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/ui/Checkbox.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "CircleAlert",
-          "lokal": "CircleAlert",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/ui/Chip.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "Check",
-          "lokal": "Check",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/ui/ChoiceCard.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "Check",
-          "lokal": "Check",
-          "typOnly": false,
-          "verwendungenInDatei": 2
-        },
-        {
-          "datei": "components/ui/Disclosure.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "ChevronDown",
-          "lokal": "ChevronDown",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/ui/Field.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "CircleAlert",
-          "lokal": "CircleAlert",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/ui/SegmentedControl.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "Check",
-          "lokal": "Check",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/ui/Sheet.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "X",
-          "lokal": "X",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/ui/StepHeader.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "ArrowLeft",
-          "lokal": "ArrowLeft",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/ui/StepHeader.tsx",
-          "zeile": 2,
-          "quelle": "lucide-react",
-          "icon": "X",
-          "lokal": "X",
-          "typOnly": false,
-          "verwendungenInDatei": 2
-        },
-        {
-          "datei": "components/ui/ToastCard.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "CircleAlert",
-          "lokal": "CircleAlert",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/ui/ToastCard.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "CircleCheck",
-          "lokal": "CircleCheck",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        },
-        {
-          "datei": "components/ui/ToastCard.tsx",
-          "zeile": 4,
-          "quelle": "lucide-react",
-          "icon": "X",
-          "lokal": "X",
-          "typOnly": false,
-          "verwendungenInDatei": 1
-        }
-      ],
-      "iconTags": {
-        "gesamt": 66,
-        "mitStrokeWidth": 66,
-        "ohneStrokeWidth": 0,
-        "fundstellenOhneStrokeWidth": []
-      },
-      "svgDateiImporte": [],
-      "eigeneSvgKomponenten": [
-        {
-          "datei": "components/apply/thanks/CheckMark.tsx",
-          "zeile": 8,
-          "komponente": "CheckMark",
-          "text": "<svg viewBox=\"0 0 24 24\" className=\"size-7\" fill=\"none\" stroke=\"currentColor\" strokeWidth={2.5} strokeLinecap=\"round\" st"
-        },
-        {
-          "datei": "components/maps/RadiusGraphic.tsx",
-          "zeile": 27,
-          "komponente": "RadiusGraphic",
-          "text": "<svg"
-        },
-        {
-          "datei": "components/ui/Rating.tsx",
-          "zeile": 39,
-          "komponente": "Rating",
-          "text": "<svg"
-        }
-      ],
-      "anzahlEigeneSvgKomponenten": 3,
-      "strichstaerkenImCode": {
-        "1": 2,
-        "2": 16,
-        "4": 1,
-        "1.75": 45,
-        "2.5": 4,
-        "1.5": 3,
-        "2.25": 3
-      },
-      "strichstaerkenFundstellen": [
-        {
-          "datei": "app/bewerbung/page.tsx",
-          "zeile": 83,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<ShieldCheck aria-hidden=\"true\" strokeWidth={1.75} className=\"mt-0.5 size-5 shrink-0 text-ink-muted\" />"
-        },
-        {
-          "datei": "app/error.tsx",
-          "zeile": 38,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<RotateCcw aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5\" />"
-        },
-        {
-          "datei": "app/error.tsx",
-          "zeile": 48,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<Phone aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5 text-ink-muted\" />"
-        },
-        {
-          "datei": "app/error.tsx",
-          "zeile": 55,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<MessageCircle aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5 text-ink-muted\" />"
-        },
-        {
-          "datei": "components/apply/ContactStep.tsx",
-          "zeile": 197,
-          "art": "strokeWidth",
-          "wert": "2",
-          "text": "<Plus aria-hidden=\"true\" strokeWidth={2} className=\"size-4\" />"
-        },
-        {
-          "datei": "components/apply/ContactStep.tsx",
-          "zeile": 205,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<FileText aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5 shrink-0 text-ink-muted\" />"
-        },
-        {
-          "datei": "components/apply/FlowShortcuts.tsx",
-          "zeile": 47,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<IconLabel icon={<MessageCircle aria-hidden=\"true\" strokeWidth={1.75} className={ICON_CLASS} />}>"
-        },
-        {
-          "datei": "components/apply/FlowShortcuts.tsx",
-          "zeile": 54,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<IconLabel icon={<FileText aria-hidden=\"true\" strokeWidth={1.75} className={ICON_CLASS} />}>"
-        },
-        {
-          "datei": "components/apply/SubmitErrorPanel.tsx",
-          "zeile": 30,
-          "art": "strokeWidth",
-          "wert": "2",
-          "text": "<CircleAlert aria-hidden=\"true\" strokeWidth={2} className=\"mt-0.5 size-5 shrink-0 text-danger\" />"
-        },
-        {
-          "datei": "components/apply/SubmitErrorPanel.tsx",
-          "zeile": 39,
-          "art": "strokeWidth",
-          "wert": "2",
-          "text": "<RotateCw aria-hidden=\"true\" strokeWidth={2} className=\"size-4\" />"
-        },
-        {
-          "datei": "components/apply/SubmitErrorPanel.tsx",
-          "zeile": 45,
-          "art": "strokeWidth",
-          "wert": "2",
-          "text": "<Phone aria-hidden=\"true\" strokeWidth={2} className=\"size-4\" />"
-        },
-        {
-          "datei": "components/apply/SubmitErrorPanel.tsx",
-          "zeile": 51,
-          "art": "strokeWidth",
-          "wert": "2",
-          "text": "<MessageCircle aria-hidden=\"true\" strokeWidth={2} className=\"size-4\" />"
-        },
-        {
-          "datei": "components/apply/steps.tsx",
-          "zeile": 32,
-          "art": "strokeWidth",
-          "wert": "2",
-          "text": "<ArrowRight aria-hidden=\"true\" strokeWidth={2} className=\"size-5\" />"
-        },
-        {
-          "datei": "components/apply/steps.tsx",
-          "zeile": 104,
-          "art": "strokeWidth",
-          "wert": "2",
-          "text": "<CircleCheck strokeWidth={2} className=\"size-6\" />"
-        },
-        {
-          "datei": "components/apply/thanks/CheckMark.tsx",
-          "zeile": 8,
-          "art": "strokeWidth",
-          "wert": "2.5",
-          "text": "<svg viewBox=\"0 0 24 24\" className=\"size-7\" fill=\"none\" stroke=\"currentColor\" strokeWidth={2.5} strokeLinecap=\"round\" st"
-        },
-        {
-          "datei": "components/apply/thanks/FollowUpForm.tsx",
-          "zeile": 97,
-          "art": "strokeWidth",
-          "wert": "2",
-          "text": "<CircleCheck aria-hidden=\"true\" strokeWidth={2} className=\"size-5 shrink-0 text-success\" />"
-        },
-        {
-          "datei": "components/apply/thanks/ThankYouView.tsx",
-          "zeile": 123,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<UserPlus aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5\" />"
-        },
-        {
-          "datei": "components/apply/thanks/ThankYouView.tsx",
-          "zeile": 157,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<MessageCircle aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5\" />"
-        },
-        {
-          "datei": "components/apply/thanks/ThankYouView.tsx",
-          "zeile": 164,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<Mail aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5\" />"
-        },
-        {
-          "datei": "components/apply/thanks/ThankYouView.tsx",
-          "zeile": 217,
-          "art": "strokeWidth",
-          "wert": "2.5",
-          "text": "{item.done ? <Check strokeWidth={2.5} className=\"size-4\" /> : index + 1}"
-        },
-        {
-          "datei": "components/home/BenefitGrid.tsx",
-          "zeile": 61,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<Icon aria-hidden=\"true\" strokeWidth={1.75} className=\"size-6 text-ink-muted\" />"
-        },
-        {
-          "datei": "components/home/Hero.tsx",
-          "zeile": 34,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<ArrowDown aria-hidden=\"true\" strokeWidth={1.75} className=\"size-4\" />"
-        },
-        {
-          "datei": "components/home/ProcessTimeline.tsx",
-          "zeile": 37,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<ShieldCheck aria-hidden=\"true\" strokeWidth={1.75} className=\"mt-0.5 size-5 shrink-0 text-ink-muted\" />"
-        },
-        {
-          "datei": "components/jobs/JobCard.tsx",
-          "zeile": 37,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<ArrowRight strokeWidth={1.75} className=\"size-4\" />"
-        },
-        {
-          "datei": "components/jobs/JobSections.tsx",
-          "zeile": 31,
-          "art": "strokeWidth",
-          "wert": "2",
-          "text": "<Check aria-hidden=\"true\" strokeWidth={2} className=\"mt-1 size-5 shrink-0 text-ink\" />"
-        },
-        {
-          "datei": "components/mappe/JobSection.tsx",
-          "zeile": 24,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "strokeWidth={1.75}"
-        },
-        {
-          "datei": "components/mappe/LetterSection.tsx",
-          "zeile": 73,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<RotateCcw aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5\" />"
-        },
-        {
-          "datei": "components/mappe/MappeActions.tsx",
-          "zeile": 76,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<Printer aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5\" />"
-        },
-        {
-          "datei": "components/mappe/MappeActions.tsx",
-          "zeile": 85,
-          "art": "strokeWidth",
-          "wert": "2",
-          "text": "<CircleCheck aria-hidden=\"true\" strokeWidth={2} className=\"mt-0.5 size-5 shrink-0 text-success\" />"
-        },
-        {
-          "datei": "components/mappe/MappeActions.tsx",
-          "zeile": 97,
-          "art": "strokeWidth",
-          "wert": "2",
-          "text": "<CircleAlert aria-hidden=\"true\" strokeWidth={2} className=\"mt-0.5 size-5 shrink-0 text-danger\" />"
-        },
-        {
-          "datei": "components/mappe/PersonalSection.tsx",
-          "zeile": 110,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<Camera aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5\" />"
-        },
-        {
-          "datei": "components/mappe/PersonalSection.tsx",
-          "zeile": 115,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<Trash2 aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5\" />"
-        },
-        {
-          "datei": "components/mappe/SkillsSection.tsx",
-          "zeile": 83,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<Plus aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5\" />"
-        },
-        {
-          "datei": "components/mappe/StationsEditor.tsx",
-          "zeile": 145,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<ArrowUp aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5\" />"
-        },
-        {
-          "datei": "components/mappe/StationsEditor.tsx",
-          "zeile": 153,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<ArrowDown aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5\" />"
-        },
-        {
-          "datei": "components/mappe/StationsEditor.tsx",
-          "zeile": 156,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<Trash2 aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5\" />"
-        },
-        {
-          "datei": "components/mappe/StationsEditor.tsx",
-          "zeile": 210,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<Plus aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5\" />"
-        },
-        {
-          "datei": "components/maps/RadiusGraphic.tsx",
-          "zeile": 43,
-          "art": "strokeWidth",
-          "wert": "1",
-          "text": "strokeWidth={1}"
-        },
-        {
-          "datei": "components/maps/RadiusGraphic.tsx",
-          "zeile": 52,
-          "art": "strokeWidth",
-          "wert": "1",
-          "text": "strokeWidth={1}"
-        },
-        {
-          "datei": "components/maps/RadiusGraphic.tsx",
-          "zeile": 76,
-          "art": "strokeWidth",
-          "wert": "1.5",
-          "text": "strokeWidth={1.5}"
-        },
-        {
-          "datei": "components/maps/RadiusGraphic.tsx",
-          "zeile": 89,
-          "art": "strokeWidth",
-          "wert": "1.5",
-          "text": "strokeWidth={1.5}"
-        },
-        {
-          "datei": "components/maps/RadiusGraphic.tsx",
-          "zeile": 93,
-          "art": "strokeWidth",
-          "wert": "2",
-          "text": "<circle cx={origin.x} cy={origin.y} r={CENTER_DOT_RADIUS} className=\"fill-ink stroke-surface-2\" strokeWidth={2} />"
-        },
-        {
-          "datei": "components/maps/RadiusGraphic.tsx",
-          "zeile": 105,
-          "art": "strokeWidth",
-          "wert": "4",
-          "text": "strokeWidth={4}"
-        },
-        {
-          "datei": "components/maps/RegionExplorer.tsx",
-          "zeile": 94,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<EyeOff aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5 shrink-0\" />"
-        },
-        {
-          "datei": "components/maps/RegionExplorer.tsx",
-          "zeile": 99,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<MapIcon aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5 shrink-0\" />"
-        },
-        {
-          "datei": "components/maps/RegionExplorer.tsx",
-          "zeile": 187,
-          "art": "strokeWidth",
-          "wert": "2.25",
-          "text": "{isSelected && <Check aria-hidden=\"true\" strokeWidth={2.25} className=\"size-4 shrink-0\" />}"
-        },
-        {
-          "datei": "components/maps/RegionExplorer.tsx",
-          "zeile": 229,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "strokeWidth={1.75}"
-        },
-        {
-          "datei": "components/reviews/ReviewScroller.tsx",
-          "zeile": 108,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<ChevronLeft aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5\" />"
-        },
-        {
-          "datei": "components/reviews/ReviewScroller.tsx",
-          "zeile": 118,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<ChevronRight aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5\" />"
-        },
-        {
-          "datei": "components/site/ContactOptions.tsx",
-          "zeile": 67,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<Icon aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5 text-ink-muted\" />"
-        },
-        {
-          "datei": "components/site/ContactOptions.tsx",
-          "zeile": 98,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<Icon aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5\" />"
-        },
-        {
-          "datei": "components/site/HeaderBar.tsx",
-          "zeile": 106,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<Phone aria-hidden=\"true\" strokeWidth={1.75} className=\"size-4 text-ink-muted\" />"
-        },
-        {
-          "datei": "components/site/MobileNav.tsx",
-          "zeile": 51,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<X aria-hidden=\"true\" strokeWidth={1.75} className=\"size-6\" />"
-        },
-        {
-          "datei": "components/site/MobileNav.tsx",
-          "zeile": 94,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<Menu aria-hidden=\"true\" strokeWidth={1.75} className=\"size-6\" />"
-        },
-        {
-          "datei": "components/site/MobileNav.tsx",
-          "zeile": 131,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<Phone aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5 text-ink-muted\" />"
-        },
-        {
-          "datei": "components/site/MobileNav.tsx",
-          "zeile": 136,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<MessageCircle aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5 text-ink-muted\" />"
-        },
-        {
-          "datei": "components/site/StickyApplyBarClient.tsx",
-          "zeile": 222,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<MessageCircle aria-hidden=\"true\" strokeWidth={1.75} className=\"size-6\" />"
-        },
-        {
-          "datei": "components/ui/Breadcrumbs.tsx",
-          "zeile": 25,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "{i > 0 && <ChevronRight aria-hidden=\"true\" strokeWidth={1.75} className=\"size-4 shrink-0\" />}"
-        },
-        {
-          "datei": "components/ui/Checkbox.tsx",
-          "zeile": 52,
-          "art": "strokeWidth",
-          "wert": "2",
-          "text": "<CircleAlert aria-hidden=\"true\" strokeWidth={2} className=\"mt-px size-4 shrink-0\" />"
-        },
-        {
-          "datei": "components/ui/Chip.tsx",
-          "zeile": 24,
-          "art": "strokeWidth",
-          "wert": "2.25",
-          "text": "<Check aria-hidden=\"true\" strokeWidth={2.25} className=\"hidden size-4 shrink-0 group-aria-pressed:block\" />"
-        },
-        {
-          "datei": "components/ui/ChoiceCard.tsx",
-          "zeile": 67,
-          "art": "strokeWidth",
-          "wert": "2.5",
-          "text": "<Check strokeWidth={2.5} className=\"size-4 opacity-0 group-has-checked:opacity-100\" />"
-        },
-        {
-          "datei": "components/ui/ChoiceCard.tsx",
-          "zeile": 93,
-          "art": "strokeWidth",
-          "wert": "2.5",
-          "text": "<Check strokeWidth={2.5} className=\"size-4 opacity-0 group-aria-pressed:opacity-100\" />"
-        },
-        {
-          "datei": "components/ui/ChoiceCard.tsx",
-          "zeile": 107,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "{Icon && <Icon aria-hidden=\"true\" strokeWidth={1.75} className=\"size-6 shrink-0 text-ink-muted\" />}"
-        },
-        {
-          "datei": "components/ui/Disclosure.tsx",
-          "zeile": 34,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "strokeWidth={1.75}"
-        },
-        {
-          "datei": "components/ui/Field.tsx",
-          "zeile": 88,
-          "art": "strokeWidth",
-          "wert": "2",
-          "text": "<CircleAlert aria-hidden=\"true\" strokeWidth={2} className=\"mt-px size-4 shrink-0\" />"
-        },
-        {
-          "datei": "components/ui/Rating.tsx",
-          "zeile": 45,
-          "art": "strokeWidth",
-          "wert": "1.5",
-          "text": "strokeWidth={1.5}"
-        },
-        {
-          "datei": "components/ui/SegmentedControl.tsx",
-          "zeile": 64,
-          "art": "strokeWidth",
-          "wert": "2.25",
-          "text": "<Check aria-hidden=\"true\" strokeWidth={2.25} className=\"hidden size-4 shrink-0 group-has-checked:block\" />"
-        },
-        {
-          "datei": "components/ui/Sheet.tsx",
-          "zeile": 112,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<X aria-hidden=\"true\" strokeWidth={1.75} className=\"size-6\" />"
-        },
-        {
-          "datei": "components/ui/StepHeader.tsx",
-          "zeile": 38,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<ArrowLeft aria-hidden=\"true\" strokeWidth={1.75} className=\"size-6\" />"
-        },
-        {
-          "datei": "components/ui/StepHeader.tsx",
-          "zeile": 47,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<X aria-hidden=\"true\" strokeWidth={1.75} className=\"size-6\" />"
-        },
-        {
-          "datei": "components/ui/StepHeader.tsx",
-          "zeile": 52,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<X aria-hidden=\"true\" strokeWidth={1.75} className=\"size-6\" />"
-        },
-        {
-          "datei": "components/ui/ToastCard.tsx",
-          "zeile": 16,
-          "art": "strokeWidth",
-          "wert": "2",
-          "text": "success: <CircleCheck aria-hidden=\"true\" strokeWidth={2} className=\"mt-0.5 size-5 shrink-0 text-success\" />,"
-        },
-        {
-          "datei": "components/ui/ToastCard.tsx",
-          "zeile": 17,
-          "art": "strokeWidth",
-          "wert": "2",
-          "text": "error: <CircleAlert aria-hidden=\"true\" strokeWidth={2} className=\"mt-0.5 size-5 shrink-0 text-danger\" />,"
-        },
-        {
-          "datei": "components/ui/ToastCard.tsx",
-          "zeile": 64,
-          "art": "strokeWidth",
-          "wert": "1.75",
-          "text": "<X aria-hidden=\"true\" strokeWidth={1.75} className=\"size-5\" />"
-        }
-      ],
-      "emojisImCode": {
-        "harte": 0,
-        "typografisch": 2,
-        "fundstellen": [
-          {
-            "datei": "components/site/SiteFooter.tsx",
-            "zeile": 58,
-            "zeichen": "©",
-            "codepoint": "U+A9",
-            "typografisch": true,
-            "text": "© {year} {COMPANY.legalName}"
-          },
-          {
-            "datei": "components/site/SiteFooter.tsx",
-            "zeile": 141,
-            "zeichen": "©",
-            "codepoint": "U+A9",
-            "typografisch": true,
-            "text": "© {year} {COMPANY.legalName} · {COMPANY.register.full} · {COMPANY.innung}"
-          }
-        ]
+      "code": null,
+      "gerendert": {
+        "emojisHart": 1,
+        "emojisTypografisch": 1,
+        "verschiedeneStrichstaerkenBerechnetMax": 5,
+        "verschiedeneStrichstaerkenNurIconsMax": 2
       }
     },
     "S-05": {
-      "regel": "Tailwind-Klassen mit -[…], Inline-style mit px/ms/Farbwerten, duration-/delay-Zahlen, Hexwerte in TSX, Dauern und Werte in CSS außerhalb von app/styles/theme.css, Dauern/Kurven in TS",
-      "eckigeKlammernGesamt": 26,
-      "eckigWertklassen": 14,
-      "eckigWertklassenNachKategorie": {
-        "mass": 11,
-        "transition-property": 2,
-        "abstand": 1
-      },
-      "eckigWertklassenNachWerttyp": {
-        "funktion": 8,
-        "laenge": 4,
-        "anderes": 2
-      },
-      "eckigTokenrelevant": 1,
-      "eckigVarianten": 2,
-      "eckigRegexVermutet": 7,
-      "eckigEigenschaften": 3,
-      "eckigFundstellen": [
-        {
-          "datei": "components/apply/FlowShortcuts.tsx",
-          "zeile": 29,
-          "token": "grid-cols-[auto_1fr]",
-          "art": "wert",
-          "kategorie": "mass",
-          "werttyp": "laenge",
-          "designAllow": false
+      "code": null,
+      "gerendert": {
+        "schriftgroesse": {
+          "elementeAusserhalb": 1,
+          "stichprobeAbweichend": 0
         },
-        {
-          "datei": "components/apply/FlowShortcuts.tsx",
-          "zeile": 36,
-          "token": "mt-[calc((1lh_-_1.25rem)/2)]",
-          "art": "wert",
-          "kategorie": "abstand",
-          "werttyp": "funktion",
-          "designAllow": false
+        "radius": {
+          "elementeAusserhalb": 1,
+          "stichprobeAbweichend": 0
         },
-        {
-          "datei": "components/apply/thanks/CheckMark.tsx",
-          "zeile": 13,
-          "token": "transition-[stroke-dashoffset]",
-          "art": "wert",
-          "kategorie": "transition-property",
-          "werttyp": "anderes",
-          "designAllow": false
+        "schatten": {
+          "elementeAusserhalb": 1,
+          "stichprobeAbweichend": 0
         },
-        {
-          "datei": "components/apply/thanks/CheckMark.tsx",
-          "zeile": 13,
-          "token": "[stroke-dashoffset:0]",
-          "art": "eigenschaft",
-          "kategorie": "eigenschaft-in-klammern",
-          "werttyp": null,
-          "designAllow": false
+        "farbe": {
+          "elementeAusserhalb": 1,
+          "stichprobeAbweichend": 0
         },
-        {
-          "datei": "components/apply/thanks/CheckMark.tsx",
-          "zeile": 13,
-          "token": "[stroke-dashoffset:1]",
-          "art": "eigenschaft",
-          "kategorie": "eigenschaft-in-klammern",
-          "werttyp": null,
-          "designAllow": false
+        "hintergrund": {
+          "elementeAusserhalb": 1,
+          "stichprobeAbweichend": 0
         },
-        {
-          "datei": "components/apply/thanks/ThankYouView.tsx",
-          "zeile": 92,
-          "token": "sm:grid-cols-[auto_1fr]",
-          "art": "wert",
-          "kategorie": "mass",
-          "werttyp": "laenge",
-          "designAllow": false
-        },
-        {
-          "datei": "components/brand/Logo.tsx",
-          "zeile": 35,
-          "token": "in-data-[tone=inverse]:brightness-0",
-          "art": "variante",
-          "kategorie": "variante",
-          "werttyp": null,
-          "designAllow": false
-        },
-        {
-          "datei": "components/brand/Logo.tsx",
-          "zeile": 35,
-          "token": "in-data-[tone=inverse]:invert",
-          "art": "variante",
-          "kategorie": "variante",
-          "werttyp": null,
-          "designAllow": false
-        },
-        {
-          "datei": "components/jobs/ApplyAnchorButton.tsx",
-          "zeile": 36,
-          "token": "grid-rows-[1fr]",
-          "art": "wert",
-          "kategorie": "mass",
-          "werttyp": "laenge",
-          "designAllow": false
-        },
-        {
-          "datei": "components/jobs/ApplyAnchorButton.tsx",
-          "zeile": 36,
-          "token": "transition-[grid-template-rows,opacity]",
-          "art": "wert",
-          "kategorie": "transition-property",
-          "werttyp": "anderes",
-          "designAllow": false
-        },
-        {
-          "datei": "components/jobs/ApplyAnchorButton.tsx",
-          "zeile": 36,
-          "token": "data-folded:grid-rows-[0fr]",
-          "art": "wert",
-          "kategorie": "mass",
-          "werttyp": "laenge",
-          "designAllow": false
-        },
-        {
-          "datei": "components/legal/LegalDocument.tsx",
-          "zeile": 32,
-          "token": "grid-cols-[minmax(0,1fr)]",
-          "art": "wert",
-          "kategorie": "mass",
-          "werttyp": "funktion",
-          "designAllow": false
-        },
-        {
-          "datei": "components/legal/LegalDocument.tsx",
-          "zeile": 32,
-          "token": "lg:grid-cols-[minmax(0,13rem)_minmax(0,1fr)]",
-          "art": "wert",
-          "kategorie": "mass",
-          "werttyp": "funktion",
-          "designAllow": false
-        },
-        {
-          "datei": "components/legal/LegalFacts.tsx",
-          "zeile": 25,
-          "token": "grid-cols-[minmax(0,1fr)]",
-          "art": "wert",
-          "kategorie": "mass",
-          "werttyp": "funktion",
-          "designAllow": false
-        },
-        {
-          "datei": "components/legal/LegalFacts.tsx",
-          "zeile": 25,
-          "token": "sm:grid-cols-[minmax(0,11rem)_minmax(0,1fr)]",
-          "art": "wert",
-          "kategorie": "mass",
-          "werttyp": "funktion",
-          "designAllow": false
-        },
-        {
-          "datei": "components/mappe/MappeTool.tsx",
-          "zeile": 238,
-          "token": "lg:max-h-[calc(100dvh-6rem)]",
-          "art": "wert",
-          "kategorie": "mass",
-          "werttyp": "funktion",
-          "designAllow": false
-        },
-        {
-          "datei": "components/reviews/ReviewScroller.tsx",
-          "zeile": 139,
-          "token": "[scrollbar-width:none]",
-          "art": "eigenschaft",
-          "kategorie": "eigenschaft-in-klammern",
-          "werttyp": null,
-          "designAllow": false
-        },
-        {
-          "datei": "components/reviews/ReviewScroller.tsx",
-          "zeile": 145,
-          "token": "sm:basis-[calc(50%-0.5rem)]",
-          "art": "wert",
-          "kategorie": "mass",
-          "werttyp": "funktion",
-          "designAllow": false
-        },
-        {
-          "datei": "components/reviews/ReviewScroller.tsx",
-          "zeile": 145,
-          "token": "lg:basis-[calc((100%-2rem)/3)]",
-          "art": "wert",
-          "kategorie": "mass",
-          "werttyp": "funktion",
-          "designAllow": false
-        },
-        {
-          "datei": "lib/applications/reference.ts",
-          "zeile": 21,
-          "token": "-[${REFERENCE_ALPHABET}]",
-          "art": "regex-vermutet",
-          "kategorie": "kein Tailwind (regulärer Ausdruck oder Vorlage)",
-          "werttyp": null,
-          "designAllow": false
-        },
-        {
-          "datei": "lib/apply/draft.ts",
-          "zeile": 45,
-          "token": "-[0-9a-f]",
-          "art": "regex-vermutet",
-          "kategorie": "kein Tailwind (regulärer Ausdruck oder Vorlage)",
-          "werttyp": null,
-          "designAllow": false
-        },
-        {
-          "datei": "lib/apply/draft.ts",
-          "zeile": 45,
-          "token": "-[0-9a-f]",
-          "art": "regex-vermutet",
-          "kategorie": "kein Tailwind (regulärer Ausdruck oder Vorlage)",
-          "werttyp": null,
-          "designAllow": false
-        },
-        {
-          "datei": "lib/apply/draft.ts",
-          "zeile": 45,
-          "token": "-[0-9a-f]",
-          "art": "regex-vermutet",
-          "kategorie": "kein Tailwind (regulärer Ausdruck oder Vorlage)",
-          "werttyp": null,
-          "designAllow": false
-        },
-        {
-          "datei": "lib/apply/draft.ts",
-          "zeile": 45,
-          "token": "-[0-9a-f]",
-          "art": "regex-vermutet",
-          "kategorie": "kein Tailwind (regulärer Ausdruck oder Vorlage)",
-          "werttyp": null,
-          "designAllow": false
-        },
-        {
-          "datei": "lib/jobs/schema.ts",
-          "zeile": 18,
-          "token": "?:-[a-z0-9]+)*$/",
-          "art": "regex-vermutet",
-          "kategorie": "kein Tailwind (regulärer Ausdruck oder Vorlage)",
-          "werttyp": null,
-          "designAllow": false
-        },
-        {
-          "datei": "lib/jobs/schema.ts",
-          "zeile": 107,
-          "token": "/^SHK-[A-Z]",
-          "art": "regex-vermutet",
-          "kategorie": "kein Tailwind (regulärer Ausdruck oder Vorlage)",
-          "werttyp": null,
-          "designAllow": false
+        "dauer": {
+          "elementeAusserhalb": 1,
+          "stichprobeAbweichend": 0
         }
-      ],
-      "zahlDauerKlassen": 2,
-      "zahlDauerKlassenFundstellen": [
-        {
-          "datei": "components/apply/thanks/CheckMark.tsx",
-          "zeile": 13,
-          "klasse": "delay-150",
-          "designAllow": false
-        },
-        {
-          "datei": "components/apply/thanks/CheckMark.tsx",
-          "zeile": 13,
-          "klasse": "duration-500",
-          "designAllow": false
-        }
-      ],
-      "hexwerteInTsx": 38,
-      "hexwerteOhneAnker": 0,
-      "hexwerteFundstellen": [
-        {
-          "datei": "app/layout.tsx",
-          "zeile": 29,
-          "wert": "#FFFFFF",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "{ media: '(prefers-color-scheme: light)', color: '#FFFFFF' },"
-        },
-        {
-          "datei": "app/layout.tsx",
-          "zeile": 30,
-          "wert": "#0B0F17",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "{ media: '(prefers-color-scheme: dark)', color: '#0B0F17' },"
-        },
-        {
-          "datei": "lib/email/templates/layout.ts",
-          "zeile": 14,
-          "wert": "#F5F6F8",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "page: '#F5F6F8',"
-        },
-        {
-          "datei": "lib/email/templates/layout.ts",
-          "zeile": 15,
-          "wert": "#FFFFFF",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "card: '#FFFFFF',"
-        },
-        {
-          "datei": "lib/email/templates/layout.ts",
-          "zeile": 16,
-          "wert": "#F5F6F8",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "subtle: '#F5F6F8',"
-        },
-        {
-          "datei": "lib/email/templates/layout.ts",
-          "zeile": 17,
-          "wert": "#0A1E3A",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "ink: '#0A1E3A',"
-        },
-        {
-          "datei": "lib/email/templates/layout.ts",
-          "zeile": 18,
-          "wert": "#5F6878",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "muted: '#5F6878',"
-        },
-        {
-          "datei": "lib/email/templates/layout.ts",
-          "zeile": 19,
-          "wert": "#E3E6EB",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "line: '#E3E6EB',"
-        },
-        {
-          "datei": "lib/email/templates/layout.ts",
-          "zeile": 20,
-          "wert": "#C51E1E",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "accent: '#C51E1E',"
-        },
-        {
-          "datei": "lib/email/templates/layout.ts",
-          "zeile": 21,
-          "wert": "#FFFFFF",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "onAccent: '#FFFFFF',"
-        },
-        {
-          "datei": "lib/email/templates/layout.ts",
-          "zeile": 22,
-          "wert": "#047857",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "success: '#047857',"
-        },
-        {
-          "datei": "lib/email/templates/layout.ts",
-          "zeile": 23,
-          "wert": "#E8F5EF",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "successSubtle: '#E8F5EF',"
-        },
-        {
-          "datei": "lib/email/templates/layout.ts",
-          "zeile": 24,
-          "wert": "#B42318",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "danger: '#B42318',"
-        },
-        {
-          "datei": "lib/email/templates/layout.ts",
-          "zeile": 25,
-          "wert": "#FDECEA",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "dangerSubtle: '#FDECEA',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 73,
-          "wert": "#F5F6F8",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "land: '#F5F6F8',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 74,
-          "wert": "#DCE5EE",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "water: '#DCE5EE',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 75,
-          "wert": "#FFFFFF",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "road: '#FFFFFF',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 76,
-          "wert": "#E3E6EB",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "roadMajor: '#E3E6EB',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 77,
-          "wert": "#5F6878",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "label: '#5F6878',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 78,
-          "wert": "#0A1E3A",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "labelStrong: '#0A1E3A',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 79,
-          "wert": "#FFFFFF",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "labelHalo: '#FFFFFF',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 80,
-          "wert": "#0A1E3A",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "ink: '#0A1E3A',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 81,
-          "wert": "#FFFFFF",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "surface: '#FFFFFF',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 82,
-          "wert": "#7D8696",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "lineStrong: '#7D8696',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 85,
-          "wert": "#121826",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "land: '#121826',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 86,
-          "wert": "#0B0F17",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "water: '#0B0F17',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 87,
-          "wert": "#1A2131",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "road: '#1A2131',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 88,
-          "wert": "#232B3A",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "roadMajor: '#232B3A',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 89,
-          "wert": "#A3ACBA",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "label: '#A3ACBA',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 90,
-          "wert": "#F2F4F7",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "labelStrong: '#F2F4F7',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 91,
-          "wert": "#0B0F17",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "labelHalo: '#0B0F17',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 92,
-          "wert": "#F2F4F7",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "ink: '#F2F4F7',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 93,
-          "wert": "#0B0F17",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "surface: '#0B0F17',"
-        },
-        {
-          "datei": "lib/maps/google-maps-config.ts",
-          "zeile": 94,
-          "wert": "#6B7587",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "lineStrong: '#6B7587',"
-        },
-        {
-          "datei": "lib/seo/og-image.ts",
-          "zeile": 23,
-          "wert": "#FFFFFF",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "surface: '#FFFFFF',"
-        },
-        {
-          "datei": "lib/seo/og-image.ts",
-          "zeile": 24,
-          "wert": "#0A1E3A",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "ink: '#0A1E3A',"
-        },
-        {
-          "datei": "lib/seo/og-image.ts",
-          "zeile": 25,
-          "wert": "#5F6878",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "muted: '#5F6878',"
-        },
-        {
-          "datei": "lib/seo/og-image.ts",
-          "zeile": 26,
-          "wert": "#E3E6EB",
-          "vermutlichAnker": true,
-          "ausnahmeKandidat": null,
-          "designAllow": false,
-          "text": "line: '#E3E6EB',"
-        }
-      ],
-      "inlineStyleGesamt": 20,
-      "inlineStyleFrei": 17,
-      "inlineStyleNachStatus": {
-        "frei": 17,
-        "ohne-masswerte": 3
-      },
-      "inlineStyleFundstellen": [
-        {
-          "datei": "app/jobs/[slug]/opengraph-image.tsx",
-          "zeile": 38,
-          "frei": [
-            "zahlenwert"
-          ],
-          "mitTokenBezug": false,
-          "status": "frei",
-          "inhalt": "{ display: 'flex', flexDirection: 'column', gap: 12 }",
-          "ausnahmeKandidat": "Bildinhalt (ImageResponse)"
-        },
-        {
-          "datei": "app/jobs/[slug]/opengraph-image.tsx",
-          "zeile": 39,
-          "frei": [
-            "rem/em"
-          ],
-          "mitTokenBezug": false,
-          "status": "frei",
-          "inhalt": "{ fontSize: titleSize, fontWeight: 600, letterSpacing: '-0.03em', lineHeight: 1.04 }",
-          "ausnahmeKandidat": "Bildinhalt (ImageResponse)"
-        },
-        {
-          "datei": "app/jobs/[slug]/opengraph-image.tsx",
-          "zeile": 42,
-          "frei": [
-            "zahlenwert"
-          ],
-          "mitTokenBezug": false,
-          "status": "frei",
-          "inhalt": "{ fontSize: 40, color: OG_COLOR.muted }",
-          "ausnahmeKandidat": "Bildinhalt (ImageResponse)"
-        },
-        {
-          "datei": "app/jobs/[slug]/opengraph-image.tsx",
-          "zeile": 45,
-          "frei": [
-            "rem/em",
-            "zahlenwert"
-          ],
-          "mitTokenBezug": false,
-          "status": "frei",
-          "inhalt": "{ fontSize: 44, fontWeight: 600, letterSpacing: '-0.02em' }",
-          "ausnahmeKandidat": "Bildinhalt (ImageResponse)"
-        },
-        {
-          "datei": "app/opengraph-image.tsx",
-          "zeile": 20,
-          "frei": [
-            "zahlenwert"
-          ],
-          "mitTokenBezug": false,
-          "status": "frei",
-          "inhalt": "{ display: 'flex', flexDirection: 'column', gap: 8 }",
-          "ausnahmeKandidat": "Bildinhalt (ImageResponse)"
-        },
-        {
-          "datei": "app/opengraph-image.tsx",
-          "zeile": 21,
-          "frei": [
-            "rem/em",
-            "zahlenwert"
-          ],
-          "mitTokenBezug": false,
-          "status": "frei",
-          "inhalt": "{ fontSize: 92, fontWeight: 600, letterSpacing: '-0.03em', lineHeight: 1.04 }",
-          "ausnahmeKandidat": "Bildinhalt (ImageResponse)"
-        },
-        {
-          "datei": "app/opengraph-image.tsx",
-          "zeile": 23,
-          "frei": [
-            "rem/em",
-            "zahlenwert"
-          ],
-          "mitTokenBezug": false,
-          "status": "frei",
-          "inhalt": "{ fontSize: 54, fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1, color: OG_COLOR.muted, maxWidth: 720, }",
-          "ausnahmeKandidat": "Bildinhalt (ImageResponse)"
-        },
-        {
-          "datei": "app/opengraph-image.tsx",
-          "zeile": 37,
-          "frei": [
-            "zahlenwert"
-          ],
-          "mitTokenBezug": false,
-          "status": "frei",
-          "inhalt": "{ display: 'flex', gap: 56 }",
-          "ausnahmeKandidat": "Bildinhalt (ImageResponse)"
-        },
-        {
-          "datei": "app/opengraph-image.tsx",
-          "zeile": 39,
-          "frei": [],
-          "mitTokenBezug": false,
-          "status": "ohne-masswerte",
-          "inhalt": "{ display: 'flex', flexDirection: 'column' }",
-          "ausnahmeKandidat": "Bildinhalt (ImageResponse)"
-        },
-        {
-          "datei": "app/opengraph-image.tsx",
-          "zeile": 40,
-          "frei": [
-            "rem/em",
-            "zahlenwert"
-          ],
-          "mitTokenBezug": false,
-          "status": "frei",
-          "inhalt": "{ fontSize: 44, fontWeight: 600, letterSpacing: '-0.02em' }",
-          "ausnahmeKandidat": "Bildinhalt (ImageResponse)"
-        },
-        {
-          "datei": "app/opengraph-image.tsx",
-          "zeile": 41,
-          "frei": [
-            "zahlenwert"
-          ],
-          "mitTokenBezug": false,
-          "status": "frei",
-          "inhalt": "{ fontSize: 22, color: OG_COLOR.muted }",
-          "ausnahmeKandidat": "Bildinhalt (ImageResponse)"
-        },
-        {
-          "datei": "components/site/StickyApplyBarClient.tsx",
-          "zeile": 203,
-          "frei": [
-            "rem/em"
-          ],
-          "mitTokenBezug": false,
-          "status": "frei",
-          "inhalt": "{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }",
-          "ausnahmeKandidat": null
-        },
-        {
-          "datei": "components/ui/Sheet.tsx",
-          "zeile": 121,
-          "frei": [
-            "rem/em"
-          ],
-          "mitTokenBezug": false,
-          "status": "frei",
-          "inhalt": "{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }",
-          "ausnahmeKandidat": null
-        },
-        {
-          "datei": "components/ui/StepHeader.tsx",
-          "zeile": 69,
-          "frei": [],
-          "mitTokenBezug": false,
-          "status": "ohne-masswerte",
-          "inhalt": "{ transform: `scaleX(${stepProgress(current, total)})` }",
-          "ausnahmeKandidat": null
-        },
-        {
-          "datei": "lib/seo/og-render.tsx",
-          "zeile": 63,
-          "frei": [
-            "px"
-          ],
-          "mitTokenBezug": false,
-          "status": "frei",
-          "inhalt": "{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '64px 72px', backgroundColor: OG_COLOR.surf",
-          "ausnahmeKandidat": "Bildinhalt (ImageResponse)"
-        },
-        {
-          "datei": "lib/seo/og-render.tsx",
-          "zeile": 75,
-          "frei": [],
-          "mitTokenBezug": false,
-          "status": "ohne-masswerte",
-          "inhalt": "{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }",
-          "ausnahmeKandidat": "Bildinhalt (ImageResponse)"
-        },
-        {
-          "datei": "lib/seo/og-render.tsx",
-          "zeile": 81,
-          "frei": [
-            "zahlenwert"
-          ],
-          "mitTokenBezug": false,
-          "status": "frei",
-          "inhalt": "{ fontSize: 28, fontWeight: 600 }",
-          "ausnahmeKandidat": "Bildinhalt (ImageResponse)"
-        },
-        {
-          "datei": "lib/seo/og-render.tsx",
-          "zeile": 83,
-          "frei": [
-            "zahlenwert"
-          ],
-          "mitTokenBezug": false,
-          "status": "frei",
-          "inhalt": "{ fontSize: 26, color: OG_COLOR.muted }",
-          "ausnahmeKandidat": "Bildinhalt (ImageResponse)"
-        },
-        {
-          "datei": "lib/seo/og-render.tsx",
-          "zeile": 89,
-          "frei": [
-            "px",
-            "zahlenwert"
-          ],
-          "mitTokenBezug": false,
-          "status": "frei",
-          "inhalt": "{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', borderTop: `2px solid ${OG_COLOR.line}`, paddingTop: 28, }",
-          "ausnahmeKandidat": "Bildinhalt (ImageResponse)"
-        },
-        {
-          "datei": "lib/seo/og-render.tsx",
-          "zeile": 98,
-          "frei": [
-            "zahlenwert"
-          ],
-          "mitTokenBezug": false,
-          "status": "frei",
-          "inhalt": "{ fontSize: 24, color: OG_COLOR.muted }",
-          "ausnahmeKandidat": "Bildinhalt (ImageResponse)"
-        }
-      ],
-      "jsDauernUndKurven": 2,
-      "jsDauernFundstellen": [
-        {
-          "datei": "lib/tokens/index.ts",
-          "zeile": 14,
-          "art": "Kurve",
-          "wert": "cubic-bezier(0.2, 0, 0, 1)",
-          "ausnahmeKandidat": "Token-Spiegel von theme.css",
-          "text": "standard: 'cubic-bezier(0.2, 0, 0, 1)',"
-        },
-        {
-          "datei": "lib/tokens/index.ts",
-          "zeile": 15,
-          "art": "Kurve",
-          "wert": "cubic-bezier(0.05, 0.7, 0.1, 1)",
-          "ausnahmeKandidat": "Token-Spiegel von theme.css",
-          "text": "emphasized: 'cubic-bezier(0.05, 0.7, 0.1, 1)',"
-        }
-      ],
-      "cssFreieWerte": 15,
-      "cssFreieWerteNachKategorie": {
-        "farbe": 7,
-        "schrift": 5,
-        "dauer": 1,
-        "abstand": 1,
-        "radius": 1
-      },
-      "cssFundstellen": [
-        {
-          "datei": "app/globals.css",
-          "zeile": 93,
-          "kategorie": "dauer",
-          "wert": "0.01ms",
-          "text": "animation-duration: 0.01ms !important;"
-        },
-        {
-          "datei": "components/mappe/mappe.module.css",
-          "zeile": 26,
-          "kategorie": "abstand",
-          "wert": "gap: 24px",
-          "text": "gap: 24px;"
-        },
-        {
-          "datei": "components/mappe/mappe.module.css",
-          "zeile": 33,
-          "kategorie": "farbe",
-          "wert": "#FFFFFF",
-          "text": "--surface: #FFFFFF;"
-        },
-        {
-          "datei": "components/mappe/mappe.module.css",
-          "zeile": 34,
-          "kategorie": "farbe",
-          "wert": "#F5F6F8",
-          "text": "--surface-2: #F5F6F8;"
-        },
-        {
-          "datei": "components/mappe/mappe.module.css",
-          "zeile": 35,
-          "kategorie": "farbe",
-          "wert": "#ECEEF2",
-          "text": "--surface-3: #ECEEF2;"
-        },
-        {
-          "datei": "components/mappe/mappe.module.css",
-          "zeile": 36,
-          "kategorie": "farbe",
-          "wert": "#0A1E3A",
-          "text": "--ink: #0A1E3A;"
-        },
-        {
-          "datei": "components/mappe/mappe.module.css",
-          "zeile": 37,
-          "kategorie": "farbe",
-          "wert": "#5F6878",
-          "text": "--ink-muted: #5F6878;"
-        },
-        {
-          "datei": "components/mappe/mappe.module.css",
-          "zeile": 38,
-          "kategorie": "farbe",
-          "wert": "#E3E6EB",
-          "text": "--line: #E3E6EB;"
-        },
-        {
-          "datei": "components/mappe/mappe.module.css",
-          "zeile": 39,
-          "kategorie": "farbe",
-          "wert": "#7D8696",
-          "text": "--line-strong: #7D8696;"
-        },
-        {
-          "datei": "components/mappe/mappe.module.css",
-          "zeile": 52,
-          "kategorie": "schrift",
-          "wert": "10.5pt",
-          "text": "font-size: 10.5pt;"
-        },
-        {
-          "datei": "components/mappe/mappe.module.css",
-          "zeile": 58,
-          "kategorie": "schrift",
-          "wert": "9pt",
-          "text": "font-size: 9pt;"
-        },
-        {
-          "datei": "components/mappe/mappe.module.css",
-          "zeile": 63,
-          "kategorie": "schrift",
-          "wert": "12pt",
-          "text": "font-size: 12pt;"
-        },
-        {
-          "datei": "components/mappe/mappe.module.css",
-          "zeile": 69,
-          "kategorie": "schrift",
-          "wert": "22pt",
-          "text": "font-size: 22pt;"
-        },
-        {
-          "datei": "components/mappe/mappe.module.css",
-          "zeile": 76,
-          "kategorie": "schrift",
-          "wert": "11pt",
-          "text": "font-size: 11pt;"
-        },
-        {
-          "datei": "components/mappe/mappe.module.css",
-          "zeile": 94,
-          "kategorie": "radius",
-          "wert": "1.5mm",
-          "text": "border-radius: 1.5mm;"
-        }
-      ],
-      "anmerkung": "Zählgröße für den Lint-Teil von S-05 = eckigWertklassen + zahlDauerKlassen + hexwerteOhneAnker + inlineStyleFrei + cssFreieWerte(dauer). „variante“ = eckige Klammer als Selektor (data-[…]:, aria-[…]:, [&_svg]:), kein freier Wert; min-/max-Breakpoints stehen unter kategorie „breakpoint“. Zeilen mit design-allow sind markiert, aber mitgezählt."
+      }
+    },
+    "S-06": {
+      "elemente": 44,
+      "ohneHover": 12,
+      "ohneFokusVisibleStil": 0,
+      "felderOhneFehlerstil": 0
     },
     "S-07": {
-      "regel": "Muster preloader|loader-screen|intro|splash|countUp|count-up|odometer",
-      "zaehlweise": "ein Treffer je Zeile und Muster",
-      "treffer": 36,
-      "davonKandidat": 0,
-      "davonInhaltsfeldOderName": 30,
-      "davonKommentar": 6,
-      "fundstellen": [
-        {
-          "datei": "app/llms-full.txt/route.ts",
-          "zeile": 6,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "PROCESS_INTRO,"
+      "code": null,
+      "gerendert": {
+        "h1NichtSichtbarNach300ms": 0,
+        "scrollenNichtMoeglich": 0,
+        "vollbildUeberlagerung": 0,
+        "zaehlerAenderungen": 0,
+        "seitenOhneH1": 0
+      }
+    }
+  },
+  "code": {},
+  "seiten": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "d1440",
+      "status": 200,
+      "s07": {
+        "h1": {
+          "text": "SHK-Jobs in Wetzlar. Ehrliches Handwerk. Pünktlich Feieraben",
+          "deckkraft": 1,
+          "visibility": "visible",
+          "display": "block",
+          "imErstenBildschirm": true,
+          "oben": 183,
+          "transform": "none"
         },
-        {
-          "datei": "app/llms-full.txt/route.ts",
-          "zeile": 84,
-          "muster": "intro",
-          "anzahlInZeile": 2,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "`${PROCESS_INTRO.title}. ${PROCESS_INTRO.text}`,"
+        "overflow": {
+          "html": "visible",
+          "body": "visible"
         },
-        {
-          "datei": "components/apply/ApplyFlowClient.tsx",
-          "zeile": 523,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "intro={quickResponse}"
-        },
-        {
-          "datei": "components/apply/ContactStep.tsx",
-          "zeile": 40,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "intro?: string;"
-        },
-        {
-          "datei": "components/apply/ContactStep.tsx",
-          "zeile": 60,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "intro,"
-        },
-        {
-          "datei": "components/apply/ContactStep.tsx",
-          "zeile": 125,
-          "muster": "intro",
-          "anzahlInZeile": 2,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "{intro && <p className=\"text-body text-ink-muted\">{intro}</p>}"
-        },
-        {
-          "datei": "components/home/ProcessTimeline.tsx",
-          "zeile": 7,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "import { DISCRETION_PROMISE, PROCESS_INTRO, getProcessSteps } from '@/lib/content/process';"
-        },
-        {
-          "datei": "components/home/ProcessTimeline.tsx",
-          "zeile": 17,
-          "muster": "intro",
-          "anzahlInZeile": 2,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "<SectionHeader id=\"ablauf-title\" title={PROCESS_INTRO.title} lead={PROCESS_INTRO.text} />"
-        },
-        {
-          "datei": "components/jobs/JobHeader.tsx",
-          "zeile": 17,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "kommentar",
-          "text": "* aside shows it there) → intro. The h1 is seo.h1 with the soft hyphens from titleShy; a spaced"
-        },
-        {
-          "datei": "components/jobs/JobHeader.tsx",
-          "zeile": 37,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "<p className=\"max-w-prose text-lead text-ink\">{job.intro}</p>"
-        },
-        {
-          "datei": "components/jobs/JobProcess.tsx",
-          "zeile": 1,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "import { getDiscretionPromise, getProcessIntro, getProcessSteps, type ProcessAudience } from '@/lib/content';"
-        },
-        {
-          "datei": "components/jobs/JobProcess.tsx",
-          "zeile": 12,
-          "muster": "intro",
-          "anzahlInZeile": 2,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "const intro = getProcessIntro(audience);"
-        },
-        {
-          "datei": "components/jobs/JobProcess.tsx",
-          "zeile": 18,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "{intro.title}"
-        },
-        {
-          "datei": "components/jobs/JobProcess.tsx",
-          "zeile": 20,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "<p className=\"max-w-prose text-body text-ink-muted\">{intro.text}</p>"
-        },
-        {
-          "datei": "components/jobs/JobSections.tsx",
-          "zeile": 13,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "kommentar",
-          "text": "/** Shown elsewhere on the page: the intro under the h1, the apply text in #bewerben. */"
-        },
-        {
-          "datei": "components/jobs/JobSections.tsx",
-          "zeile": 14,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "const RENDERED_ELSEWHERE = new Set<JobSection['id']>(['intro', 'bewerben']);"
-        },
-        {
-          "datei": "components/ui/Breadcrumbs.tsx",
-          "zeile": 24,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "kommentar",
-          "text": "{/* Separator before the item it introduces, so a wrapped line never ends in „›“. */}"
-        },
-        {
-          "datei": "components/ui/PageHeader.tsx",
-          "zeile": 22,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "kommentar",
-          "text": "/** Page intro with the page's only <h1>. */"
-        },
-        {
-          "datei": "lib/content/process.ts",
-          "zeile": 75,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "export interface ProcessIntro {"
-        },
-        {
-          "datei": "lib/content/process.ts",
-          "zeile": 81,
-          "muster": "intro",
-          "anzahlInZeile": 2,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "export const PROCESS_INTRO: ProcessIntro = Object.freeze({"
-        },
-        {
-          "datei": "lib/content/process.ts",
-          "zeile": 86,
-          "muster": "intro",
-          "anzahlInZeile": 2,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "const PROCESS_INTROS: Record<ProcessAudience, ProcessIntro> = {"
-        },
-        {
-          "datei": "lib/content/process.ts",
-          "zeile": 87,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "fachkraft: PROCESS_INTRO,"
-        },
-        {
-          "datei": "lib/content/process.ts",
-          "zeile": 89,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "quereinstieg: PROCESS_INTRO,"
-        },
-        {
-          "datei": "lib/content/process.ts",
-          "zeile": 99,
-          "muster": "intro",
-          "anzahlInZeile": 2,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "export function getProcessIntro(audience: ProcessAudience = 'fachkraft'): ProcessIntro {"
-        },
-        {
-          "datei": "lib/content/process.ts",
-          "zeile": 100,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "return PROCESS_INTROS[audience];"
-        },
-        {
-          "datei": "lib/jobs/data/anlagenmechaniker-shk.ts",
-          "zeile": 30,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "intro:"
-        },
-        {
-          "datei": "lib/jobs/data/ausbildung-anlagenmechaniker-shk.ts",
-          "zeile": 33,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "intro:"
-        },
-        {
-          "datei": "lib/jobs/data/kundendiensttechniker-shk.ts",
-          "zeile": 29,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "intro:"
-        },
-        {
-          "datei": "lib/jobs/data/kundendiensttechniker-shk.ts",
-          "zeile": 55,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "kommentar",
-          "text": "// Marken stehen schon im Intro und im Vorteil paidCertifications, das iPad in Aufgaben und Vorteilen."
-        },
-        {
-          "datei": "lib/jobs/data/obermonteur-projektleiter-shk.ts",
-          "zeile": 6,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "kommentar",
-          "text": "// Die direkte Abstimmung mit Sabri Demir steht im Vorteil `directLine`, nicht zusätzlich im Intro."
-        },
-        {
-          "datei": "lib/jobs/data/obermonteur-projektleiter-shk.ts",
-          "zeile": 30,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "intro:"
-        },
-        {
-          "datei": "lib/jobs/data/quereinsteiger-montagehelfer.ts",
-          "zeile": 25,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "intro:"
-        },
-        {
-          "datei": "lib/jobs/format.ts",
-          "zeile": 133,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "export type JobSectionId = 'intro' | 'aufgaben' | 'anforderungen' | 'vorteile' | 'paket' | 'eckdaten' | 'bewerben';"
-        },
-        {
-          "datei": "lib/jobs/format.ts",
-          "zeile": 156,
-          "muster": "intro",
-          "anzahlInZeile": 2,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "{ id: 'intro', heading: null, text: job.intro },"
-        },
-        {
-          "datei": "lib/jobs/schema.ts",
-          "zeile": 117,
-          "muster": "intro",
-          "anzahlInZeile": 1,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "intro: z.string().min(40),"
-        },
-        {
-          "datei": "lib/jobs/schema.ts",
-          "zeile": 151,
-          "muster": "intro",
-          "anzahlInZeile": 2,
-          "einordnung": "inhaltsfeld-oder-name",
-          "text": "[['intro'], job.intro],"
-        }
-      ],
-      "anmerkung": "Einordnung per Muster, nicht per Urteil: „kandidat“ = Muster preloader/loader-screen/splash/countUp/count-up/odometer in jedem Kontext, oder intro als Komponenten-, Klassen-, id- oder Selektorname; „inhaltsfeld-oder-name“ = intro/INTRO als Datenfeld, Prop oder Bezeichner (z. B. job.intro); „kommentar“ = Kommentarzeile. Kandidaten sind Fundstellen für die Handprüfung, ob Inhalt oder Scrollen zurückgehalten wird."
-    },
-    "hinweise": {
-      "S-02": {
-        "beschreibung": "Bewegungs- und Auftrittsmechanismen im Code (Fundstellen, keine Zählung)",
-        "fundstellen": [
-          {
-            "datei": "components/apply/ContactStep.tsx",
-            "zeile": 252,
-            "muster": "animate-spin",
-            "text": "className=\"size-4 animate-spin rounded-full border-2 border-current border-r-transparent\""
-          },
-          {
-            "datei": "components/apply/thanks/FollowUpForm.tsx",
-            "zeile": 144,
-            "muster": "animate-spin",
-            "text": "<span aria-hidden=\"true\" className=\"size-4 animate-spin rounded-full border-2 border-current border-r-transparent\" />"
-          },
-          {
-            "datei": "components/jobs/ApplyAnchorButton.tsx",
-            "zeile": 26,
-            "muster": "IntersectionObserver",
-            "text": "if (!target || typeof IntersectionObserver === 'undefined') return;"
-          },
-          {
-            "datei": "components/jobs/ApplyAnchorButton.tsx",
-            "zeile": 27,
-            "muster": "IntersectionObserver",
-            "text": "const observer = new IntersectionObserver(([entry]) => setFlowVisible(entry.isIntersecting));"
-          },
-          {
-            "datei": "components/site/HeaderBar.tsx",
-            "zeile": 37,
-            "muster": "IntersectionObserver",
-            "text": "if (!sentinel || typeof IntersectionObserver === 'undefined') return;"
-          },
-          {
-            "datei": "components/site/HeaderBar.tsx",
-            "zeile": 38,
-            "muster": "IntersectionObserver",
-            "text": "const observer = new IntersectionObserver(([entry]) => setScrolled(!entry.isIntersecting));"
-          },
-          {
-            "datei": "components/site/StickyApplyBarClient.tsx",
-            "zeile": 88,
-            "muster": "IntersectionObserver",
-            "text": "typeof IntersectionObserver === 'undefined'"
-          },
-          {
-            "datei": "components/site/StickyApplyBarClient.tsx",
-            "zeile": 90,
-            "muster": "IntersectionObserver",
-            "text": ": new IntersectionObserver((entries) => {"
-          },
-          {
-            "datei": "components/ui/Button.tsx",
-            "zeile": 60,
-            "muster": "animate-spin",
-            "text": "className=\"absolute inset-0 m-auto size-5 animate-spin rounded-full border-2 border-current border-r-transparent\""
-          }
-        ]
+        "scrollbarNoetig": true,
+        "scrollhoehe": 8439,
+        "scrollenMoeglich": true,
+        "vollbildUeberlagerungen": [],
+        "elementInDerMitte": "main#main > section.py-section.bg-surface-2:nth-of-type(1) > div.mx-auto.box-content > header.flex.flex-col > p.max-w-prose.text-lead:nth-of-type(2)",
+        "readyState": "complete",
+        "h1SichtbarNach300ms": true,
+        "scrollenOk": true,
+        "zaehlerAenderungen": []
       },
-      "S-03": {
-        "beschreibung": "Hover-Reveal und title-Attribute (Verdacht auf Information nur über Hover)",
-        "fundstellen": []
-      },
-      "S-06": {
-        "beschreibung": "Heuristik: fehlende Lade- oder Leerzustände",
-        "ladezustandVerdacht": [
+      "s02": {
+        "scrollAbdeckung": {
+          "maxY": 7539,
+          "maximal": 7539
+        },
+        "abschnittsart": "section",
+        "abschnitte": 8,
+        "mitAuftritt": 7,
+        "anteil": 0.875,
+        "ueberHaelfte": true,
+        "ruheZustandOhneWechsel": 2,
+        "animationenGesamt": 16,
+        "animationenNachScroll": 15,
+        "abschnittsliste": [
           {
-            "datei": "components/mappe/SkillsSection.tsx",
-            "zeile": 67,
-            "anlass": "<form onSubmit={handleAdd} noValidate>",
-            "art": "asynchrone Aktion ohne erkennbaren Ladezustand (Heuristik)"
+            "index": 0,
+            "fundstelle": "main#main > section.py-section.bg-surface-2:nth-of-type(1)",
+            "id": null,
+            "ueberschrift": "SHK-Jobs in Wetzlar. Ehrliches Handwerk. Pünktlich",
+            "animationenNachScroll": [],
+            "zustandswechsel": [],
+            "ruheStatisch": 0,
+            "mitAuftritt": false
+          },
+          {
+            "index": 1,
+            "fundstelle": "section#stellen",
+            "id": "stellen",
+            "ueberschrift": "Offene Stellen",
+            "animationenNachScroll": [
+              {
+                "ziel": "section#stellen > div.mx-auto.box-content",
+                "typ": "Animation",
+                "name": null,
+                "props": [
+                  "opacity"
+                ],
+                "dauerMs": 600,
+                "endlos": false,
+                "zeitleiste": "document",
+                "scrollY": 720
+              }
+            ],
+            "zustandswechsel": [],
+            "ruheStatisch": 0,
+            "mitAuftritt": true
+          },
+          {
+            "index": 2,
+            "fundstelle": "section#vorteile",
+            "id": "vorteile",
+            "ueberschrift": "Das bekommst du",
+            "animationenNachScroll": [
+              {
+                "ziel": "section#vorteile > div.mx-auto.box-content",
+                "typ": "Animation",
+                "name": null,
+                "props": [
+                  "opacity"
+                ],
+                "dauerMs": 600,
+                "endlos": false,
+                "zeitleiste": "document",
+                "scrollY": 1440
+              }
+            ],
+            "zustandswechsel": [],
+            "ruheStatisch": 0,
+            "mitAuftritt": true
+          },
+          {
+            "index": 3,
+            "fundstelle": "section#einsatzgebiet",
+            "id": "einsatzgebiet",
+            "ueberschrift": "35 km um Wetzlar. Keine Fernmontage.",
+            "animationenNachScroll": [
+              {
+                "ziel": "section#einsatzgebiet > div.mx-auto.box-content",
+                "typ": "Animation",
+                "name": null,
+                "props": [
+                  "opacity"
+                ],
+                "dauerMs": 600,
+                "endlos": false,
+                "zeitleiste": "document",
+                "scrollY": 2160
+              }
+            ],
+            "zustandswechsel": [],
+            "ruheStatisch": 1,
+            "mitAuftritt": true
+          },
+          {
+            "index": 4,
+            "fundstelle": "section#ablauf",
+            "id": "ablauf",
+            "ueberschrift": "In 3 Schritten zu deinem neuen Job",
+            "animationenNachScroll": [
+              {
+                "ziel": "section#ablauf > div.mx-auto.box-content",
+                "typ": "Animation",
+                "name": null,
+                "props": [
+                  "opacity"
+                ],
+                "dauerMs": 600,
+                "endlos": false,
+                "zeitleiste": "document",
+                "scrollY": 3600
+              }
+            ],
+            "zustandswechsel": [],
+            "ruheStatisch": 0,
+            "mitAuftritt": true
+          },
+          {
+            "index": 5,
+            "fundstelle": "section#ueber-uns",
+            "id": "ueber-uns",
+            "ueberschrift": "15 Leute. Ein Meisterbetrieb. Seit 1926.",
+            "animationenNachScroll": [
+              {
+                "ziel": "section#ueber-uns > div.mx-auto.box-content",
+                "typ": "Animation",
+                "name": null,
+                "props": [
+                  "opacity"
+                ],
+                "dauerMs": 600,
+                "endlos": false,
+                "zeitleiste": "document",
+                "scrollY": 4320
+              }
+            ],
+            "zustandswechsel": [],
+            "ruheStatisch": 1,
+            "mitAuftritt": true
+          },
+          {
+            "index": 6,
+            "fundstelle": "section#faq",
+            "id": "faq",
+            "ueberschrift": "Häufige Fragen",
+            "animationenNachScroll": [
+              {
+                "ziel": "section#faq > div.mx-auto.box-content",
+                "typ": "Animation",
+                "name": null,
+                "props": [
+                  "opacity"
+                ],
+                "dauerMs": 600,
+                "endlos": false,
+                "zeitleiste": "document",
+                "scrollY": 6480
+              }
+            ],
+            "zustandswechsel": [],
+            "ruheStatisch": 0,
+            "mitAuftritt": true
+          },
+          {
+            "index": 7,
+            "fundstelle": "main#main > section.py-section.bg-surface:nth-of-type(8)",
+            "id": null,
+            "ueberschrift": "Bewirb dich bei uns.",
+            "animationenNachScroll": [
+              {
+                "ziel": "main#main > section.py-section.bg-surface:nth-of-type(8) > div.mx-auto.box-content",
+                "typ": "Animation",
+                "name": null,
+                "props": [
+                  "opacity"
+                ],
+                "dauerMs": 600,
+                "endlos": false,
+                "zeitleiste": "document",
+                "scrollY": 7200
+              }
+            ],
+            "zustandswechsel": [],
+            "ruheStatisch": 0,
+            "mitAuftritt": true
           }
         ],
-        "leerzustandVerdacht": [
+        "animationenListe": [
           {
-            "datei": "app/sitemap.ts",
-            "zeile": 24,
-            "art": "datengetriebene Liste ohne erkennbaren Leerzustand (Heuristik)",
-            "text": "...jobs.map((job) => ({ url: jobUrl(job), lastModified: job.updatedAt })),"
+            "nachScroll": false,
+            "typ": "Animation",
+            "name": null,
+            "props": [
+              "opacity"
+            ],
+            "endlos": false,
+            "ziel": "main#main > section.py-section.bg-surface-2:nth-of-type(1) > div.mx-auto.box-content",
+            "imMain": true
           },
           {
-            "datei": "components/home/JobList.tsx",
-            "zeile": 29,
-            "art": "datengetriebene Liste ohne erkennbaren Leerzustand (Heuristik)",
-            "text": "{jobs.map((job) => ("
+            "nachScroll": true,
+            "typ": "CSSTransition",
+            "name": "border-bottom-color",
+            "props": [
+              "borderBottomColor"
+            ],
+            "endlos": false,
+            "ziel": "header.sticky.top-0",
+            "imMain": false
           },
           {
-            "datei": "components/mappe/JobSection.tsx",
-            "zeile": 51,
-            "art": "datengetriebene Liste ohne erkennbaren Leerzustand (Heuristik)",
-            "text": "{jobs.map((job) => ("
+            "nachScroll": true,
+            "typ": "CSSTransition",
+            "name": "border-left-color",
+            "props": [
+              "borderLeftColor"
+            ],
+            "endlos": false,
+            "ziel": "header.sticky.top-0",
+            "imMain": false
           },
           {
-            "datei": "components/site/SiteFooter.tsx",
-            "zeile": 103,
-            "art": "datengetriebene Liste ohne erkennbaren Leerzustand (Heuristik)",
-            "text": "{jobs.map((job) => ("
+            "nachScroll": true,
+            "typ": "CSSTransition",
+            "name": "border-right-color",
+            "props": [
+              "borderRightColor"
+            ],
+            "endlos": false,
+            "ziel": "header.sticky.top-0",
+            "imMain": false
+          },
+          {
+            "nachScroll": true,
+            "typ": "CSSTransition",
+            "name": "border-top-color",
+            "props": [
+              "borderTopColor"
+            ],
+            "endlos": false,
+            "ziel": "header.sticky.top-0",
+            "imMain": false
+          },
+          {
+            "nachScroll": true,
+            "typ": "Animation",
+            "name": null,
+            "props": [
+              "opacity"
+            ],
+            "endlos": false,
+            "ziel": "section#stellen > div.mx-auto.box-content",
+            "imMain": true
+          },
+          {
+            "nachScroll": true,
+            "typ": "Animation",
+            "name": null,
+            "props": [
+              "opacity"
+            ],
+            "endlos": false,
+            "ziel": "section#vorteile > div.mx-auto.box-content",
+            "imMain": true
+          },
+          {
+            "nachScroll": true,
+            "typ": "Animation",
+            "name": null,
+            "props": [
+              "opacity"
+            ],
+            "endlos": false,
+            "ziel": "section#einsatzgebiet > div.mx-auto.box-content",
+            "imMain": true
+          },
+          {
+            "nachScroll": true,
+            "typ": "Animation",
+            "name": null,
+            "props": [
+              "opacity"
+            ],
+            "endlos": false,
+            "ziel": "section#ablauf > div.mx-auto.box-content",
+            "imMain": true
+          },
+          {
+            "nachScroll": true,
+            "typ": "Animation",
+            "name": null,
+            "props": [
+              "opacity"
+            ],
+            "endlos": false,
+            "ziel": "section#ueber-uns > div.mx-auto.box-content",
+            "imMain": true
+          },
+          {
+            "nachScroll": true,
+            "typ": "Animation",
+            "name": null,
+            "props": [
+              "opacity"
+            ],
+            "endlos": false,
+            "ziel": "section#faq > div.mx-auto.box-content",
+            "imMain": true
+          },
+          {
+            "nachScroll": true,
+            "typ": "Animation",
+            "name": null,
+            "props": [
+              "opacity"
+            ],
+            "endlos": false,
+            "ziel": "main#main > section.py-section.bg-surface:nth-of-type(8) > div.mx-auto.box-content",
+            "imMain": true
+          },
+          {
+            "nachScroll": true,
+            "typ": "CSSTransition",
+            "name": "border-bottom-color",
+            "props": [
+              "borderBottomColor"
+            ],
+            "endlos": false,
+            "ziel": "header.sticky.top-0",
+            "imMain": false
+          },
+          {
+            "nachScroll": true,
+            "typ": "CSSTransition",
+            "name": "border-left-color",
+            "props": [
+              "borderLeftColor"
+            ],
+            "endlos": false,
+            "ziel": "header.sticky.top-0",
+            "imMain": false
+          },
+          {
+            "nachScroll": true,
+            "typ": "CSSTransition",
+            "name": "border-right-color",
+            "props": [
+              "borderRightColor"
+            ],
+            "endlos": false,
+            "ziel": "header.sticky.top-0",
+            "imMain": false
+          },
+          {
+            "nachScroll": true,
+            "typ": "CSSTransition",
+            "name": "border-top-color",
+            "props": [
+              "borderTopColor"
+            ],
+            "endlos": false,
+            "ziel": "header.sticky.top-0",
+            "imMain": false
           }
         ]
-      }
+      },
+      "s01": {
+        "sichtbareTextknoten": 317,
+        "treffer": [
+          {
+            "muster": "alexander koch",
+            "fundstelle": "ul.-mx-gutter.mt-6 > li.flex.shrink-0:nth-of-type(2) > figure.flex.w-full > figcaption.text-callout > span.block.font-semibold:nth-of-type(1)",
+            "nurScreenreader": false,
+            "kontext": "Alexander Koch"
+          },
+          {
+            "muster": "lorem",
+            "fundstelle": "div#slop-selbsttest",
+            "nurScreenreader": false,
+            "kontext": "Lorem ipsum 🚀"
+          },
+          {
+            "muster": "ipsum",
+            "fundstelle": "div#slop-selbsttest",
+            "nurScreenreader": false,
+            "kontext": "Lorem ipsum 🚀"
+          }
+        ],
+        "feldPlatzhalter": [],
+        "feldPlatzhalterMitMuster": 0,
+        "zahlenInventar": [
+          {
+            "text": "60 Sek",
+            "fundstelle": "section.py-section.bg-surface-2:nth-of-type(1) > div.mx-auto.box-content > header.flex.flex-col > div.mt-2.flex > p.basis-full.text-footnote",
+            "kontext": "Dauert ca. 60 Sekunden. Kein Lebenslauf nö"
+          },
+          {
+            "text": "35 km",
+            "fundstelle": "div.mx-auto.box-content > ul.grid.grid-cols-2 > li:nth-of-type(3) > div.flex.flex-col > p.tabular-nums.text-ink:nth-of-type(1)",
+            "kontext": "35 km"
+          },
+          {
+            "text": "35 km",
+            "fundstelle": "li:nth-of-type(1) > article.rounded-lg.bg-surface-2 > div.mt-auto.flex > p.flex.flex-col > span.text-ink-muted:nth-of-type(1)",
+            "kontext": "Wetzlar + 35 km"
+          },
+          {
+            "text": "4.600 €",
+            "fundstelle": "li:nth-of-type(1) > article.rounded-lg.bg-surface-2 > div.mt-auto.flex > p.flex.flex-col > span.font-medium.tabular-nums:nth-of-type(2)",
+            "kontext": "3.600–4.600 € / Monat"
+          },
+          {
+            "text": "35 km",
+            "fundstelle": "li:nth-of-type(2) > article.rounded-lg.bg-surface-2 > div.mt-auto.flex > p.flex.flex-col > span.text-ink-muted:nth-of-type(1)",
+            "kontext": "Wetzlar + 35 km"
+          },
+          {
+            "text": "4.900 €",
+            "fundstelle": "li:nth-of-type(2) > article.rounded-lg.bg-surface-2 > div.mt-auto.flex > p.flex.flex-col > span.font-medium.tabular-nums:nth-of-type(2)",
+            "kontext": "3.800–4.900 € / Monat"
+          },
+          {
+            "text": "35 km",
+            "fundstelle": "li:nth-of-type(3) > article.rounded-lg.bg-surface-2 > div.mt-auto.flex > p.flex.flex-col > span.text-ink-muted:nth-of-type(1)",
+            "kontext": "Wetzlar + 35 km"
+          },
+          {
+            "text": "5.600 €",
+            "fundstelle": "li:nth-of-type(3) > article.rounded-lg.bg-surface-2 > div.mt-auto.flex > p.flex.flex-col > span.font-medium.tabular-nums:nth-of-type(2)",
+            "kontext": "4.400–5.600 € / Monat"
+          },
+          {
+            "text": "3,5 Jahren",
+            "fundstelle": "div.mx-auto.box-content > ul.mt-10.grid > li:nth-of-type(4) > article.rounded-lg.bg-surface-2 > p.max-w-prose.text-body",
+            "kontext": "instieg noch möglich. In 3,5 Jahren wirst du Anlagenmechanik"
+          },
+          {
+            "text": "35 km",
+            "fundstelle": "li:nth-of-type(4) > article.rounded-lg.bg-surface-2 > div.mt-auto.flex > p.flex.flex-col > span.text-ink-muted:nth-of-type(1)",
+            "kontext": "Wetzlar + 35 km"
+          },
+          {
+            "text": "1.400 €",
+            "fundstelle": "li:nth-of-type(4) > article.rounded-lg.bg-surface-2 > div.mt-auto.flex > p.flex.flex-col > span.font-medium.tabular-nums:nth-of-type(2)",
+            "kontext": "1.050–1.400 € / Monat"
+          },
+          {
+            "text": "35 km",
+            "fundstelle": "h2#einsatzgebiet-title",
+            "kontext": "35 km um Wetzlar. Keine Fernmo"
+          },
+          {
+            "text": "35 km",
+            "fundstelle": "div.grid.items-start:nth-of-type(2) > div.flex.flex-col:nth-of-type(1) > div.relative.mx-auto > svg.size-full.select-none > text.fill-ink-muted.text-callout:nth-of-type(1)",
+            "kontext": "35 km"
+          },
+          {
+            "text": "35 km",
+            "fundstelle": "div.mx-auto.box-content > div.grid.items-start:nth-of-type(2) > div.flex.flex-col:nth-of-type(2) > div.flex.flex-col:nth-of-type(1) > p.-mt-1.text-footnote",
+            "kontext": "arbeiten im Umkreis von 35 km um Wetzlar."
+          },
+          {
+            "text": "1 km",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(1) > td.py-3.pr-4:nth-of-type(1)",
+            "kontext": "1 km"
+          },
+          {
+            "text": "3 Min.",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(1) > td.py-3.pr-2:nth-of-type(2)",
+            "kontext": "3 Min."
+          },
+          {
+            "text": "4 km",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(2) > td.py-3.pr-4:nth-of-type(1)",
+            "kontext": "4 km"
+          },
+          {
+            "text": "6 Min.",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(2) > td.py-3.pr-2:nth-of-type(2)",
+            "kontext": "6 Min."
+          },
+          {
+            "text": "4 km",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(3) > td.py-3.pr-4:nth-of-type(1)",
+            "kontext": "4 km"
+          },
+          {
+            "text": "7 Min.",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(3) > td.py-3.pr-2:nth-of-type(2)",
+            "kontext": "7 Min."
+          },
+          {
+            "text": "4 km",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(4) > td.py-3.pr-4:nth-of-type(1)",
+            "kontext": "4 km"
+          },
+          {
+            "text": "7 Min.",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(4) > td.py-3.pr-2:nth-of-type(2)",
+            "kontext": "7 Min."
+          },
+          {
+            "text": "5 km",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(5) > td.py-3.pr-4:nth-of-type(1)",
+            "kontext": "5 km"
+          },
+          {
+            "text": "8 Min.",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(5) > td.py-3.pr-2:nth-of-type(2)",
+            "kontext": "8 Min."
+          },
+          {
+            "text": "6 km",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(6) > td.py-3.pr-4:nth-of-type(1)",
+            "kontext": "6 km"
+          },
+          {
+            "text": "9 Min.",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(6) > td.py-3.pr-2:nth-of-type(2)",
+            "kontext": "9 Min."
+          },
+          {
+            "text": "7 km",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(7) > td.py-3.pr-4:nth-of-type(1)",
+            "kontext": "7 km"
+          },
+          {
+            "text": "10 Min.",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(7) > td.py-3.pr-2:nth-of-type(2)",
+            "kontext": "10 Min."
+          },
+          {
+            "text": "14 km",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(8) > td.py-3.pr-4:nth-of-type(1)",
+            "kontext": "14 km"
+          },
+          {
+            "text": "18 Min.",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(8) > td.py-3.pr-2:nth-of-type(2)",
+            "kontext": "18 Min."
+          },
+          {
+            "text": "15 km",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(9) > td.py-3.pr-4:nth-of-type(1)",
+            "kontext": "15 km"
+          },
+          {
+            "text": "16 Min.",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(9) > td.py-3.pr-2:nth-of-type(2)",
+            "kontext": "16 Min."
+          },
+          {
+            "text": "24 km",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(10) > td.py-3.pr-4:nth-of-type(1)",
+            "kontext": "24 km"
+          },
+          {
+            "text": "22 Min.",
+            "fundstelle": "div.flex.flex-col:nth-of-type(2) > table.w-full.border-collapse > tbody > tr.border-b.border-line:nth-of-type(10) > td.py-3.pr-2:nth-of-type(2)",
+            "kontext": "22 Min."
+          },
+          {
+            "text": "60 Sek",
+            "fundstelle": "section#ablauf > div.mx-auto.box-content > ol.mt-12.grid > li.flex.flex-col:nth-of-type(1) > h3.text-title-3.text-ink",
+            "kontext": "Bewerben in 60 Sekunden"
+          },
+          {
+            "text": "100 %",
+            "fundstelle": "section#ablauf > div.mx-auto.box-content > ol.mt-12.grid > li.flex.flex-col:nth-of-type(2) > span.inline-flex.items-center:nth-of-type(2)",
+            "kontext": "100 % Diskretion"
+          },
+          {
+            "text": "14,8 km",
+            "fundstelle": "div.mt-12.grid:nth-of-type(2) > div.flex.flex-col > div:nth-of-type(2) > ul.divide-y.divide-line > li.py-3.text-callout:nth-of-type(1)",
+            "kontext": "eb (Partnerurkunde 2026, 14,8 km Werksnähe zum Buderus-St"
+          },
+          {
+            "text": "7 Jahren",
+            "fundstelle": "div.mt-12.grid:nth-of-type(2) > div.flex.flex-col > div:nth-of-type(2) > ul.divide-y.divide-line > li.py-3.text-callout:nth-of-type(2)",
+            "kontext": "chtigung zur Vergabe von 7 Jahren Herstellergarantie)"
+          },
+          {
+            "text": "30 Uhr",
+            "fundstelle": "ul.-mx-gutter.mt-6 > li.flex.shrink-0:nth-of-type(2) > figure.flex.w-full > blockquote.flex-1.text-body > p",
+            "kontext": "Freitags ab 13:30 Uhr Wochenende ist kein Werb"
+          },
+          {
+            "text": "45 Uhr",
+            "fundstelle": "section.py-section.bg-surface:nth-of-type(8) > div.mx-auto.box-content > div.flex.flex-col:nth-of-type(3) > p.text-footnote.text-ink-muted > span.whitespace-nowrap:nth-of-type(1)",
+            "kontext": "Mo–Do 07:00–16:45 Uhr"
+          },
+          {
+            "text": "30 Uhr",
+            "fundstelle": "section.py-section.bg-surface:nth-of-type(8) > div.mx-auto.box-content > div.flex.flex-col:nth-of-type(3) > p.text-footnote.text-ink-muted > span.whitespace-nowrap:nth-of-type(2)",
+            "kontext": "Fr 07:00–13:30 Uhr"
+          },
+          {
+            "text": "45 Uhr",
+            "fundstelle": "footer.border-t.border-line > div.mx-auto.box-content:nth-of-type(1) > div.flex.flex-col:nth-of-type(1) > address.flex.flex-col > span:nth-of-type(2)",
+            "kontext": "bis Donnerstag 07:00–16:45 Uhr"
+          },
+          {
+            "text": "30 Uhr",
+            "fundstelle": "footer.border-t.border-line > div.mx-auto.box-content:nth-of-type(1) > div.flex.flex-col:nth-of-type(1) > address.flex.flex-col > span:nth-of-type(2)",
+            "kontext": "Freitag 07:00–13:30 Uhr"
+          }
+        ]
+      },
+      "s04": {
+        "emojis": {
+          "gesamt": 2,
+          "hart": 1,
+          "typografisch": 1,
+          "liste": [
+            {
+              "zeichen": "©",
+              "codepoint": "U+A9",
+              "typografisch": true,
+              "fundstelle": "footer.border-t.border-line > div.mx-auto.box-content:nth-of-type(2) > p.border-t.border-line",
+              "kontext": "©"
+            },
+            {
+              "zeichen": "🚀",
+              "codepoint": "U+1F680",
+              "typografisch": false,
+              "fundstelle": "div#slop-selbsttest",
+              "kontext": "Lorem ipsum 🚀"
+            }
+          ]
+        },
+        "svg": {
+          "svgSichtbar": 38,
+          "lucide": 27,
+          "eigen": 11,
+          "strichAttribut": {
+            "1": {
+              "anzahl": 2,
+              "beispiel": "div.mx-auto.box-content > div.grid.items-start:nth-of-type(2) > div.flex.flex-col:nth-of-type(1) > div.relative.mx-auto > svg.size-full.select-none"
+            },
+            "2": {
+              "anzahl": 1,
+              "beispiel": "div.mx-auto.box-content > div.grid.items-start:nth-of-type(2) > div.flex.flex-col:nth-of-type(1) > div.relative.mx-auto > svg.size-full.select-none"
+            },
+            "4": {
+              "anzahl": 4,
+              "beispiel": "div.mx-auto.box-content > div.grid.items-start:nth-of-type(2) > div.flex.flex-col:nth-of-type(1) > div.relative.mx-auto > svg.size-full.select-none"
+            },
+            "1.75": {
+              "anzahl": 26,
+              "beispiel": "header.sticky.top-0 > div.mx-auto.box-content > div.hidden.shrink-0:nth-of-type(1) > a.inline-flex.min-h-11:nth-of-type(1) > svg.lucide.lucide-phone"
+            },
+            "2.25": {
+              "anzahl": 1,
+              "beispiel": "div > div.flex.flex-wrap > div.flex.flex-wrap:nth-of-type(1) > button.group.inline-flex:nth-of-type(1) > svg.lucide.lucide-check"
+            },
+            "1.5": {
+              "anzahl": 10,
+              "beispiel": "li.flex.shrink-0:nth-of-type(1) > figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg.shrink-0"
+            }
+          },
+          "strichBerechnet": {
+            "1": {
+              "anzahl": 2,
+              "beispiel": "div.mx-auto.box-content > div.grid.items-start:nth-of-type(2) > div.flex.flex-col:nth-of-type(1) > div.relative.mx-auto > svg.size-full.select-none",
+              "icon": false
+            },
+            "2": {
+              "anzahl": 1,
+              "beispiel": "div.mx-auto.box-content > div.grid.items-start:nth-of-type(2) > div.flex.flex-col:nth-of-type(1) > div.relative.mx-auto > svg.size-full.select-none",
+              "icon": false
+            },
+            "4": {
+              "anzahl": 4,
+              "beispiel": "div.mx-auto.box-content > div.grid.items-start:nth-of-type(2) > div.flex.flex-col:nth-of-type(1) > div.relative.mx-auto > svg.size-full.select-none",
+              "icon": false
+            },
+            "1.75": {
+              "anzahl": 53,
+              "beispiel": "header.sticky.top-0 > div.mx-auto.box-content > div.hidden.shrink-0:nth-of-type(1) > a.inline-flex.min-h-11:nth-of-type(1) > svg.lucide.lucide-phone",
+              "icon": true
+            },
+            "2.25": {
+              "anzahl": 1,
+              "beispiel": "div > div.flex.flex-wrap > div.flex.flex-wrap:nth-of-type(1) > button.group.inline-flex:nth-of-type(1) > svg.lucide.lucide-check",
+              "icon": true
+            }
+          },
+          "strichEffektivPx": {
+            "1": {
+              "anzahl": 2,
+              "beispiel": "div.mx-auto.box-content > div.grid.items-start:nth-of-type(2) > div.flex.flex-col:nth-of-type(1) > div.relative.mx-auto > svg.size-full.select-none"
+            },
+            "1.17": {
+              "anzahl": 11,
+              "beispiel": "header.sticky.top-0 > div.mx-auto.box-content > div.hidden.shrink-0:nth-of-type(1) > a.inline-flex.min-h-11:nth-of-type(1) > svg.lucide.lucide-phone"
+            },
+            "1.75": {
+              "anzahl": 28,
+              "beispiel": "section#vorteile > div.mx-auto.box-content > ul.mt-10.grid > li.flex.flex-col:nth-of-type(1) > svg.lucide.lucide-banknote"
+            },
+            "2.49": {
+              "anzahl": 1,
+              "beispiel": "div.mx-auto.box-content > div.grid.items-start:nth-of-type(2) > div.flex.flex-col:nth-of-type(1) > div.relative.mx-auto > svg.size-full.select-none"
+            },
+            "4.98": {
+              "anzahl": 4,
+              "beispiel": "div.mx-auto.box-content > div.grid.items-start:nth-of-type(2) > div.flex.flex-col:nth-of-type(1) > div.relative.mx-auto > svg.size-full.select-none"
+            },
+            "1.46": {
+              "anzahl": 14,
+              "beispiel": "div.grid.items-start:nth-of-type(2) > div.flex.flex-col:nth-of-type(2) > div.flex.flex-col:nth-of-type(1) > div.relative > svg.lucide.lucide-chevron-down"
+            },
+            "1.5": {
+              "anzahl": 1,
+              "beispiel": "div > div.flex.flex-wrap > div.flex.flex-wrap:nth-of-type(1) > button.group.inline-flex:nth-of-type(1) > svg.lucide.lucide-check"
+            }
+          },
+          "anzahlBerechnet": 5,
+          "anzahlEffektivPx": 7,
+          "anzahlBerechnetNurIcons": 2
+        }
+      },
+      "s05": {
+        "elementeGemessen": 537,
+        "volltext": {
+          "schriftgroesse": {
+            "gemessen": 537,
+            "ausserhalb": 1,
+            "nichtAuswertbar": 0,
+            "werte": {
+              "13.5px": {
+                "anzahl": 1,
+                "beispiele": [
+                  "div#slop-selbsttest"
+                ]
+              }
+            }
+          },
+          "radius": {
+            "gemessen": 537,
+            "ausserhalb": 1,
+            "nichtAuswertbar": 0,
+            "werte": {
+              "7px": {
+                "anzahl": 1,
+                "beispiele": [
+                  "div#slop-selbsttest"
+                ]
+              }
+            }
+          },
+          "schatten": {
+            "gemessen": 537,
+            "ausserhalb": 1,
+            "nichtAuswertbar": 0,
+            "werte": {
+              "rgb(255, 0, 0) 0px 0px 5px 0px": {
+                "anzahl": 1,
+                "beispiele": [
+                  "div#slop-selbsttest"
+                ]
+              }
+            }
+          },
+          "farbe": {
+            "gemessen": 537,
+            "ausserhalb": 1,
+            "nichtAuswertbar": 0,
+            "werte": {
+              "rgb(18, 52, 86)": {
+                "anzahl": 1,
+                "beispiele": [
+                  "div#slop-selbsttest"
+                ]
+              }
+            }
+          },
+          "hintergrund": {
+            "gemessen": 537,
+            "ausserhalb": 1,
+            "nichtAuswertbar": 0,
+            "werte": {
+              "rgb(171, 205, 239)": {
+                "anzahl": 1,
+                "beispiele": [
+                  "div#slop-selbsttest"
+                ]
+              }
+            }
+          },
+          "dauer": {
+            "gemessen": 537,
+            "ausserhalb": 1,
+            "nichtAuswertbar": 0,
+            "werte": {
+              "0.3s": {
+                "anzahl": 1,
+                "beispiele": [
+                  "div#slop-selbsttest"
+                ]
+              }
+            }
+          }
+        },
+        "stichprobe": {
+          "groesse": 60,
+          "schritt": 8,
+          "elementeMitAbweichung": 0,
+          "abweichungenJeEigenschaft": {
+            "schriftgroesse": 0,
+            "radius": 0,
+            "schatten": 0,
+            "farbe": 0,
+            "hintergrund": 0,
+            "dauer": 0
+          },
+          "elemente": [
+            {
+              "fundstelle": "a.sr-only",
+              "werte": {
+                "schriftgroesse": "17px",
+                "radius": "0px",
+                "schatten": "none",
+                "farbe": "rgb(10, 30, 58)",
+                "hintergrund": "token",
+                "dauer": "0s"
+              },
+              "abweichungen": []
+            },
+            {
+              "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > nav.hidden > ul.flex.items-center > li:nth-of-type(1)",
+              "werte": {
+                "schriftgroesse": "17px",
+                "radius": "0px",
+                "schatten": "none",
+                "farbe": "rgb(10, 30, 58)",
+                "hintergrund": "token",
+                "dauer": "0s"
+              },
+              "abweichungen": []
+            },
+            {
+              "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > div.hidden.shrink-0:nth-of-type(1)",
+              "werte": {
+                "schriftgroesse": "17px",
+                "radius": "0px",
+                "schatten": "none",
+                "farbe": "rgb(10, 30, 58)",
+                "hintergrund": "token",
+                "dauer": "0s"
+              },
+              "abweichungen": []
+            },
+            {
+              "fundstelle": "main#main > section.py-section.bg-surface-2:nth-of-type(1) > div.mx-auto.box-content",
+              "werte": {
+                "schriftgroesse": "17px",
+                "radius": "0px",
+                "schatten": "none",
+                "farbe": "rgb(10, 30, 58)",
+                "hintergrund": "token",
+                "dauer": "0s"
+              },
+              "abweichungen": []
+            },
+            {
+              "fundstelle": "div.mx-auto.box-content > header.flex.flex-col > div.mt-2.flex > div.flex.flex-wrap > a.relative.inline-flex:nth-of-type(1)",
+              "werte": {
+                "schriftgroesse": "17px",
+                "radius": "full",
+                "schatten": "none",
+                "farbe": "rgb(255, 255, 255)",
+                "hintergrund": "rgb(197, 30, 30)",
+                "dauer": "0.15s"
+              },
+              "abweichungen": []
+            }
+          ]
+        },
+        "basisSchriftPx": 16,
+        "schriftTokenPx": [
+          {
+            "name": "footnote",
+            "px": 13
+          },
+          {
+            "name": "callout",
+            "px": 15
+          },
+          {
+            "name": "body",
+            "px": 17
+          },
+          {
+            "name": "lead",
+            "px": 21
+          },
+          {
+            "name": "title-3",
+            "px": 24
+          },
+          {
+            "name": "title-2",
+            "px": 34
+          },
+          {
+            "name": "title-1",
+            "px": 48
+          },
+          {
+            "name": "display",
+            "px": 72
+          },
+          {
+            "name": "numeral",
+            "px": 100.8
+          }
+        ]
+      },
+      "s06": {
+        "regelnGelesen": 38,
+        "hoverRegeln": 13,
+        "fokusRegeln": 9,
+        "invalidRegeln": 1,
+        "stylesheetsBlockiert": 0,
+        "elemente": 44,
+        "link": {
+          "gesamt": 32,
+          "ohneHover": 6,
+          "ohneFokusVisible": 0,
+          "ohneHoverUndOhneFokus": 0
+        },
+        "knopf": {
+          "gesamt": 5,
+          "ohneHover": 0,
+          "ohneFokusVisible": 0,
+          "ohneHoverUndOhneFokus": 0
+        },
+        "feld": {
+          "gesamt": 1,
+          "ohneHover": 0,
+          "ohneFokusVisible": 0,
+          "ohneHoverUndOhneFokus": 0,
+          "mitFehlerstilPruefung": 1,
+          "ohneFehlerstil": 0
+        },
+        "sonstiges": {
+          "gesamt": 6,
+          "ohneHover": 6,
+          "ohneFokusVisible": 0,
+          "ohneHoverUndOhneFokus": 0
+        },
+        "ohneHover": [
+          {
+            "fundstelle": "a.sr-only",
+            "typ": "link",
+            "tag": "a",
+            "name": "Zum Inhalt springen",
+            "hover": false,
+            "fokusVisible": true,
+            "fokusNurFocus": true,
+            "deaktiviert": false
+          },
+          {
+            "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
+            "typ": "link",
+            "tag": "a",
+            "name": "Bad und Energie GmbH Lahn Dill, zur Star",
+            "hover": false,
+            "fokusVisible": true,
+            "fokusNurFocus": false,
+            "deaktiviert": false
+          },
+          {
+            "fundstelle": "ul.mt-10.grid > li:nth-of-type(1) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
+            "typ": "link",
+            "tag": "a",
+            "name": "Anlagenmechaniker SHK",
+            "hover": false,
+            "fokusVisible": true,
+            "fokusNurFocus": false,
+            "deaktiviert": false
+          },
+          {
+            "fundstelle": "ul.mt-10.grid > li:nth-of-type(2) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
+            "typ": "link",
+            "tag": "a",
+            "name": "Kundendiensttechniker",
+            "hover": false,
+            "fokusVisible": true,
+            "fokusNurFocus": false,
+            "deaktiviert": false
+          },
+          {
+            "fundstelle": "ul.mt-10.grid > li:nth-of-type(3) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
+            "typ": "link",
+            "tag": "a",
+            "name": "Obermonteur / Projektleiter",
+            "hover": false,
+            "fokusVisible": true,
+            "fokusNurFocus": false,
+            "deaktiviert": false
+          },
+          {
+            "fundstelle": "ul.mt-10.grid > li:nth-of-type(4) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
+            "typ": "link",
+            "tag": "a",
+            "name": "Ausbildung Anlagenmechaniker",
+            "hover": false,
+            "fokusVisible": true,
+            "fokusNurFocus": false,
+            "deaktiviert": false
+          },
+          {
+            "fundstelle": "div.mx-auto.box-content > div.mt-16.border-t:nth-of-type(3) > div.mt-8:nth-of-type(2) > div > ul.-mx-gutter.mt-6",
+            "typ": "sonstiges",
+            "tag": "ul",
+            "name": "Stimmen von Kunden und Team",
+            "hover": false,
+            "fokusVisible": true,
+            "fokusNurFocus": false,
+            "deaktiviert": false
+          },
+          {
+            "fundstelle": "section#faq > div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11",
+            "typ": "sonstiges",
+            "tag": "summary",
+            "name": "Wie läuft der diskrete Wechsel ab, wenn ",
+            "hover": false,
+            "fokusVisible": true,
+            "fokusNurFocus": false,
+            "deaktiviert": false
+          },
+          {
+            "fundstelle": "section#faq > div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11",
+            "typ": "sonstiges",
+            "tag": "summary",
+            "name": "Brauche ich ein Anschreiben oder einen L",
+            "hover": false,
+            "fokusVisible": true,
+            "fokusNurFocus": false,
+            "deaktiviert": false
+          },
+          {
+            "fundstelle": "section#faq > div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11",
+            "typ": "sonstiges",
+            "tag": "summary",
+            "name": "Welche Heizsysteme und Sanitäranlagen mo",
+            "hover": false,
+            "fokusVisible": true,
+            "fokusNurFocus": false,
+            "deaktiviert": false
+          },
+          {
+            "fundstelle": "section#faq > div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(4) > summary.flex.min-h-11",
+            "typ": "sonstiges",
+            "tag": "summary",
+            "name": "Darf ich das Firmenfahrzeug mit nach Hau",
+            "hover": false,
+            "fokusVisible": true,
+            "fokusNurFocus": false,
+            "deaktiviert": false
+          },
+          {
+            "fundstelle": "section#faq > div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(5) > summary.flex.min-h-11",
+            "typ": "sonstiges",
+            "tag": "summary",
+            "name": "Gibt es Fernmontagen oder Wochenendarbei",
+            "hover": false,
+            "fokusVisible": true,
+            "fokusNurFocus": false,
+            "deaktiviert": false
+          }
+        ],
+        "ohneFokusVisible": [],
+        "felderOhneFehlerstil": []
+      },
+      "s03kontrast": {
+        "verletzungen": 0,
+        "unklar": 5,
+        "bestanden": 238,
+        "knoten": [],
+        "unklarListe": [
+          {
+            "ziel": "text[x=\"256.1\"]",
+            "grund": "bgOverlap"
+          },
+          {
+            "ziel": "text[x=\"169\"]",
+            "grund": "bgOverlap"
+          },
+          {
+            "ziel": "text[x=\"122.9\"]",
+            "grund": "bgOverlap"
+          },
+          {
+            "ziel": "text[x=\"244.2\"]",
+            "grund": "bgOverlap"
+          },
+          {
+            "ziel": "text[x=\"135.8\"]",
+            "grund": "bgOverlap"
+          }
+        ],
+        "axeVersion": "4.13.0"
+      },
+      "s03fokus": {
+        "geprueft": 15,
+        "ringOrte": {
+          "selbst": 11,
+          "::after": 4
+        },
+        "ok": 15,
+        "nichtOk": 0,
+        "davonNurBoxShadow": 0,
+        "stopps": [
+          {
+            "nr": 1,
+            "fundstelle": "a.sr-only",
+            "tag": "a",
+            "name": "Zum Inhalt springen",
+            "fokusVisible": true,
+            "ringOrt": "selbst",
+            "outlineStyle": "solid",
+            "outlineWidthPx": 2,
+            "outlineFarbe": "rgb(3, 105, 161)",
+            "outlineOffset": "2px",
+            "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0",
+            "imViewport": true,
+            "outlineOk": true,
+            "nurBoxShadow": false
+          },
+          {
+            "nr": 2,
+            "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
+            "tag": "a",
+            "name": "Bad und Energie GmbH Lahn Dill, zur Star",
+            "fokusVisible": true,
+            "ringOrt": "selbst",
+            "outlineStyle": "solid",
+            "outlineWidthPx": 2,
+            "outlineFarbe": "rgb(3, 105, 161)",
+            "outlineOffset": "2px",
+            "boxShadow": null,
+            "imViewport": true,
+            "outlineOk": true,
+            "nurBoxShadow": false
+          },
+          {
+            "nr": 3,
+            "fundstelle": "div.mx-auto.box-content > nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11",
+            "tag": "a",
+            "name": "Stellen",
+            "fokusVisible": true,
+            "ringOrt": "selbst",
+            "outlineStyle": "solid",
+            "outlineWidthPx": 2,
+            "outlineFarbe": "rgb(3, 105, 161)",
+            "outlineOffset": "2px",
+            "boxShadow": null,
+            "imViewport": true,
+            "outlineOk": true,
+            "nurBoxShadow": false
+          },
+          {
+            "nr": 4,
+            "fundstelle": "div.mx-auto.box-content > nav.hidden > ul.flex.items-center > li:nth-of-type(2) > a.inline-flex.min-h-11",
+            "tag": "a",
+            "name": "Vorteile",
+            "fokusVisible": true,
+            "ringOrt": "selbst",
+            "outlineStyle": "solid",
+            "outlineWidthPx": 2,
+            "outlineFarbe": "rgb(3, 105, 161)",
+            "outlineOffset": "2px",
+            "boxShadow": null,
+            "imViewport": true,
+            "outlineOk": true,
+            "nurBoxShadow": false
+          },
+          {
+            "nr": 5,
+            "fundstelle": "div.mx-auto.box-content > nav.hidden > ul.flex.items-center > li:nth-of-type(3) > a.inline-flex.min-h-11",
+            "tag": "a",
+            "name": "Ablauf",
+            "fokusVisible": true,
+            "ringOrt": "selbst",
+            "outlineStyle": "solid",
+            "outlineWidthPx": 2,
+            "outlineFarbe": "rgb(3, 105, 161)",
+            "outlineOffset": "2px",
+            "boxShadow": null,
+            "imViewport": true,
+            "outlineOk": true,
+            "nurBoxShadow": false
+          },
+          {
+            "nr": 6,
+            "fundstelle": "div.mx-auto.box-content > nav.hidden > ul.flex.items-center > li:nth-of-type(4) > a.inline-flex.min-h-11",
+            "tag": "a",
+            "name": "FAQ",
+            "fokusVisible": true,
+            "ringOrt": "selbst",
+            "outlineStyle": "solid",
+            "outlineWidthPx": 2,
+            "outlineFarbe": "rgb(3, 105, 161)",
+            "outlineOffset": "2px",
+            "boxShadow": null,
+            "imViewport": true,
+            "outlineOk": true,
+            "nurBoxShadow": false
+          },
+          {
+            "nr": 7,
+            "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > div.hidden.shrink-0:nth-of-type(1) > a.inline-flex.min-h-11:nth-of-type(1)",
+            "tag": "a",
+            "name": "06441 42956 anrufen",
+            "fokusVisible": true,
+            "ringOrt": "selbst",
+            "outlineStyle": "solid",
+            "outlineWidthPx": 2,
+            "outlineFarbe": "rgb(3, 105, 161)",
+            "outlineOffset": "2px",
+            "boxShadow": null,
+            "imViewport": true,
+            "outlineOk": true,
+            "nurBoxShadow": false
+          },
+          {
+            "nr": 8,
+            "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > div.hidden.shrink-0:nth-of-type(1) > a.relative.inline-flex:nth-of-type(2)",
+            "tag": "a",
+            "name": "Bewerben",
+            "fokusVisible": true,
+            "ringOrt": "selbst",
+            "outlineStyle": "solid",
+            "outlineWidthPx": 2,
+            "outlineFarbe": "rgb(3, 105, 161)",
+            "outlineOffset": "2px",
+            "boxShadow": null,
+            "imViewport": true,
+            "outlineOk": true,
+            "nurBoxShadow": false
+          },
+          {
+            "nr": 9,
+            "fundstelle": "div.mx-auto.box-content > header.flex.flex-col > div.mt-2.flex > div.flex.flex-wrap > a.relative.inline-flex:nth-of-type(1)",
+            "tag": "a",
+            "name": "Jetzt bewerben",
+            "fokusVisible": true,
+            "ringOrt": "selbst",
+            "outlineStyle": "solid",
+            "outlineWidthPx": 2,
+            "outlineFarbe": "rgb(3, 105, 161)",
+            "outlineOffset": "2px",
+            "boxShadow": null,
+            "imViewport": true,
+            "outlineOk": true,
+            "nurBoxShadow": false
+          },
+          {
+            "nr": 10,
+            "fundstelle": "div.mx-auto.box-content > header.flex.flex-col > div.mt-2.flex > div.flex.flex-wrap > a.rounded-xs.underline:nth-of-type(2)",
+            "tag": "a",
+            "name": "Offene Stellen ansehen",
+            "fokusVisible": true,
+            "ringOrt": "selbst",
+            "outlineStyle": "solid",
+            "outlineWidthPx": 2,
+            "outlineFarbe": "rgb(3, 105, 161)",
+            "outlineOffset": "2px",
+            "boxShadow": null,
+            "imViewport": true,
+            "outlineOk": true,
+            "nurBoxShadow": false
+          },
+          {
+            "nr": 11,
+            "fundstelle": "section#stellen > div.mx-auto.box-content > div.flex.flex-wrap > a.rounded-xs.underline",
+            "tag": "a",
+            "name": "Alle Stellen im Überblick",
+            "fokusVisible": true,
+            "ringOrt": "selbst",
+            "outlineStyle": "solid",
+            "outlineWidthPx": 2,
+            "outlineFarbe": "rgb(3, 105, 161)",
+            "outlineOffset": "2px",
+            "boxShadow": null,
+            "imViewport": true,
+            "outlineOk": true,
+            "nurBoxShadow": false
+          },
+          {
+            "nr": 12,
+            "fundstelle": "ul.mt-10.grid > li:nth-of-type(1) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
+            "tag": "a",
+            "name": "Anlagenmechaniker SHK",
+            "fokusVisible": true,
+            "ringOrt": "::after",
+            "outlineStyle": "solid",
+            "outlineWidthPx": 2,
+            "outlineFarbe": "rgb(3, 105, 161)",
+            "outlineOffset": "2px",
+            "boxShadow": null,
+            "imViewport": true,
+            "outlineOk": true,
+            "nurBoxShadow": false
+          },
+          {
+            "nr": 13,
+            "fundstelle": "ul.mt-10.grid > li:nth-of-type(2) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
+            "tag": "a",
+            "name": "Kundendiensttechniker",
+            "fokusVisible": true,
+            "ringOrt": "::after",
+            "outlineStyle": "solid",
+            "outlineWidthPx": 2,
+            "outlineFarbe": "rgb(3, 105, 161)",
+            "outlineOffset": "2px",
+            "boxShadow": null,
+            "imViewport": true,
+            "outlineOk": true,
+            "nurBoxShadow": false
+          },
+          {
+            "nr": 14,
+            "fundstelle": "ul.mt-10.grid > li:nth-of-type(3) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
+            "tag": "a",
+            "name": "Obermonteur / Projektleiter",
+            "fokusVisible": true,
+            "ringOrt": "::after",
+            "outlineStyle": "solid",
+            "outlineWidthPx": 2,
+            "outlineFarbe": "rgb(3, 105, 161)",
+            "outlineOffset": "2px",
+            "boxShadow": null,
+            "imViewport": true,
+            "outlineOk": true,
+            "nurBoxShadow": false
+          },
+          {
+            "nr": 15,
+            "fundstelle": "ul.mt-10.grid > li:nth-of-type(4) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
+            "tag": "a",
+            "name": "Ausbildung Anlagenmechaniker",
+            "fokusVisible": true,
+            "ringOrt": "::after",
+            "outlineStyle": "solid",
+            "outlineWidthPx": 2,
+            "outlineFarbe": "rgb(3, 105, 161)",
+            "outlineOffset": "2px",
+            "boxShadow": null,
+            "imViewport": true,
+            "outlineOk": true,
+            "nurBoxShadow": false
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": 0,
+      "ms": 11423
     }
-  },
-  "seiten": []
+  ]
 }

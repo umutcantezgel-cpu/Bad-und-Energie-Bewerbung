@@ -369,7 +369,7 @@ if (teile.includes('render')) {
   const radiusVoll = /--radius-full:\s*9999px/.test(themeText);
   const schattenToken = [...themeText.matchAll(/--shadow-(?!\*)(\w+):\s*([^;]+);/g)].map((m) => ({ name: m[1], wert: m[2].trim() }));
   const dauernS = [0, ...[...themeText.matchAll(/--transition-duration-(\w+):\s*(\d+)ms/g)].map((m) => Number(m[2]) / 1000)];
-  const schriftTokens = [...themeText.matchAll(/^\s*--text-([a-z0-9]+):\s*([^;]+);/gm)].map((m) => ({ name: m[1], wert: m[2].trim() }));
+  const schriftTokens = [...themeText.matchAll(/^\s*--text-([a-z]+(?:-\d)?):\s*([^;]+);/gm)].map((m) => ({ name: m[1], wert: m[2].trim() }));
   const PX = 16;
   function auswerten(ausdruck, vwPx) {
     // Summe von Termen "<zahl><einheit>" mit + und -
@@ -419,7 +419,8 @@ if (teile.includes('render')) {
       }
       return teile.join(' > ');
     };
-    addEventListener('scroll', () => { W.gescrollt = true; }, { passive: true, capture: true });
+    W.maxY = 0;
+    addEventListener('scroll', () => { W.gescrollt = true; W.maxY = Math.max(W.maxY, scrollY); }, { passive: true, capture: true });
     const tick = () => {
       try {
         for (const a of document.getAnimations()) {
@@ -683,9 +684,19 @@ if (teile.includes('render')) {
       };
       let blockiert = 0;
       for (const sheet of document.styleSheets) { try { gehe(sheet.cssRules, null); } catch { blockiert += 1; } }
-      const bereit = (re, ersatz) => regeln.filter((r) => re.test(r.sel) && r.hat && !/::/.test(r.sel) && !/:not\([^)]*(?::hover|:focus-visible)/.test(r.sel)).map((r) => r.sel.replace(ersatz, ''));
+      const entferne = (sel, re) => {
+        // Selektorliste auf oberster Ebene teilen, Pseudoklasse und ::before/::after entfernen, leere Reste durch * ersetzen
+        const teile = []; let t = 0; let a = '';
+        for (const ch of sel) { if (ch === '(' || ch === '[') t++; if (ch === ')' || ch === ']') t--; if (ch === ',' && t === 0) { teile.push(a); a = ''; } else a += ch; }
+        teile.push(a);
+        return teile.map((x) => { let r = x.replace(re, '').replace(/::(?:before|after)\b/g, '').trim(); if (!r || /[>+~]$/.test(r)) r += '*'; return r; }).join(', ');
+      };
+      const bereit = (re, ersatz, nurHas = false) => regeln
+        .filter((r) => re.test(r.sel) && r.hat && !/::(?!before|after)/.test(r.sel) && !/:not\([^)]*(?::hover|:focus-visible)/.test(r.sel) && (/:has\([^)]*:focus-visible/.test(r.sel) === nurHas))
+        .map((r) => entferne(r.sel, ersatz));
       const hoverSel = bereit(/:hover/, /:hover/g);
       const fokusSel = bereit(/:focus-visible/, /:focus-visible/g);
+      const fokusHasSel = bereit(/:focus-visible/, /:has\(:focus-visible\)/g, true);
       const fokusAltSel = bereit(/:focus(?![-\w])/, /:focus(?![-\w])/g);
       const invalidSel = bereit(/aria-invalid/, /\[aria-invalid(?:=["']?true["']?)?\]/g);
       const passt = (el, liste) => { for (const s of liste) { try { if (el.matches(s)) return true; } catch { /* ungültiger Selektor */ } } return false; };
@@ -695,7 +706,7 @@ if (teile.includes('render')) {
         const tag = el.tagName.toLowerCase();
         const typ = tag === 'a' ? 'link' : tag === 'button' || el.getAttribute('role') === 'button' || (tag === 'input' && ['submit', 'button', 'reset'].includes(el.type)) ? 'knopf' : ['input', 'select', 'textarea'].includes(tag) ? 'feld' : 'sonstiges';
         const name = (el.getAttribute('aria-label') || el.textContent || el.getAttribute('name') || el.getAttribute('placeholder') || '').trim().replace(/\s+/g, ' ').slice(0, 40);
-        const eintrag = { fundstelle: pfad(el), typ, tag, name, hover: passt(el, hoverSel), fokusVisible: passt(el, fokusSel), fokusNurFocus: passt(el, fokusAltSel), deaktiviert: el.disabled === true || el.getAttribute('aria-disabled') === 'true' };
+        const eintrag = { fundstelle: pfad(el), typ, tag, name, hover: passt(el, hoverSel), fokusVisible: passt(el, fokusSel) || fokusHasSel.some((sl) => { try { return !!el.closest(sl); } catch { return false; } }), fokusNurFocus: passt(el, fokusAltSel), deaktiviert: el.disabled === true || el.getAttribute('aria-disabled') === 'true' };
         if (typ === 'feld' && !['checkbox', 'radio', 'submit', 'button', 'reset', 'image', 'file', 'range', 'color'].includes(el.type ?? '')) eintrag.fehlerstil = passt(el, invalidSel);
         if (typ === 'feld' && ['checkbox', 'radio'].includes(el.type)) eintrag.fehlerstil = passt(el, invalidSel);
         liste.push(eintrag);
@@ -703,7 +714,7 @@ if (teile.includes('render')) {
       const nach = (t) => liste.filter((x) => x.typ === t);
       const bilanz = (l) => ({ gesamt: l.length, ohneHover: l.filter((x) => !x.hover).length, ohneFokusVisible: l.filter((x) => !x.fokusVisible).length, ohneHoverUndOhneFokus: l.filter((x) => !x.hover && !x.fokusVisible).length });
       const felder = liste.filter((x) => 'fehlerstil' in x);
-      out.s06 = { regelnGelesen: regeln.length, hoverRegeln: hoverSel.length, fokusRegeln: fokusSel.length, invalidRegeln: invalidSel.length, stylesheetsBlockiert: blockiert, elemente: liste.length, link: bilanz(nach('link')), knopf: bilanz(nach('knopf')), feld: { ...bilanz(nach('feld')), mitFehlerstilPruefung: felder.length, ohneFehlerstil: felder.filter((x) => !x.fehlerstil).length }, sonstiges: bilanz(nach('sonstiges')), ohneHover: liste.filter((x) => !x.hover).slice(0, 80), ohneFokusVisible: liste.filter((x) => !x.fokusVisible).slice(0, 80), felderOhneFehlerstil: felder.filter((x) => !x.fehlerstil) };
+      out.s06 = { regelnGelesen: regeln.length, hoverRegeln: hoverSel.length, fokusRegeln: fokusSel.length + fokusHasSel.length, invalidRegeln: invalidSel.length, stylesheetsBlockiert: blockiert, elemente: liste.length, link: bilanz(nach('link')), knopf: bilanz(nach('knopf')), feld: { ...bilanz(nach('feld')), mitFehlerstilPruefung: felder.length, ohneFehlerstil: felder.filter((x) => !x.fehlerstil).length }, sonstiges: bilanz(nach('sonstiges')), ohneHover: liste.filter((x) => !x.hover).slice(0, 80), ohneFokusVisible: liste.filter((x) => !x.fokusVisible).slice(0, 80), felderOhneFehlerstil: felder.filter((x) => !x.fehlerstil) };
     }
     return out;
   };
@@ -723,7 +734,7 @@ if (teile.includes('render')) {
     const hoehe = document.documentElement.scrollHeight;
     const scrollbar = hoehe > innerHeight + 1;
     let gescrollt = null;
-    if (scrollbar) { const y0 = scrollY; scrollTo(0, Math.min(200, hoehe - innerHeight)); gescrollt = scrollY > y0; scrollTo(0, y0); }
+    if (scrollbar) { const y0 = scrollY; scrollTo({ top: Math.min(200, hoehe - innerHeight), left: 0, behavior: 'instant' }); gescrollt = scrollY > y0; scrollTo({ top: y0, left: 0, behavior: 'instant' }); }
     const ueberlagerungen = [...document.querySelectorAll('body *')].filter((el) => {
       const cs = getComputedStyle(el);
       if (cs.position !== 'fixed') return false;
@@ -773,14 +784,35 @@ if (teile.includes('render')) {
         eintrag.status = res?.status() ?? 0;
         await page.evaluate(() => document.fonts?.ready);
         await page.waitForTimeout(600);
+        if (args.selbsttest) {
+          // S-02-Prüfkörper: jeder oberste Abschnitt in main startet beim Sichtbarwerden eine opacity-Animation (erster Bildschirm startet vor dem Scrollen und zählt nicht)
+          await page.evaluate(() => {
+            const main = document.querySelector('main') ?? document.body;
+            const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting && !e.target.__st) { e.target.__st = 1; e.target.firstElementChild?.animate([{ opacity: 0.3 }, { opacity: 1 }], { duration: 600 }); } }), { threshold: 0 });
+            for (const sec of [...main.querySelectorAll('section')].filter((x) => !x.parentElement.closest('section'))) { sec.__st = 0; io.observe(sec); }
+          });
+        }
         const abschn = await page.evaluate(abschnitteErfassen);
+        // Weiches Scrollen der Seite würde scrollTo des Durchlaufs verzögern und das Seitenende verfehlen: für die Messung auf sofort stellen
+        await page.addStyleTag({ content: 'html{scroll-behavior:auto!important}' });
         await scrollThrough(page);
         await page.waitForTimeout(500);
+        const abdeckung = await page.evaluate(() => ({ maxY: Math.round(window.__slop.maxY), maximal: Math.max(0, document.documentElement.scrollHeight - innerHeight) }));
         const s02 = await page.evaluate(abschnitteAuswerten);
         const mitAuftritt = s02.abschnitte.filter((x) => x.mitAuftritt).length;
-        eintrag.s02 = { abschnittsart: abschn.art, abschnitte: s02.abschnitte.length, mitAuftritt, anteil: s02.abschnitte.length ? Math.round((mitAuftritt / s02.abschnitte.length) * 1000) / 1000 : null, ueberHaelfte: s02.abschnitte.length ? mitAuftritt / s02.abschnitte.length > 0.5 : null, ruheZustandOhneWechsel: s02.ruheOhneWechsel, animationenGesamt: s02.animationenGesamt, animationenNachScroll: s02.animationenNachScrollGesamt, abschnittsliste: s02.abschnitte, animationenListe: s02.animationenListe };
+        eintrag.s02 = { scrollAbdeckung: abdeckung, abschnittsart: abschn.art, abschnitte: s02.abschnitte.length, mitAuftritt, anteil: s02.abschnitte.length ? Math.round((mitAuftritt / s02.abschnitte.length) * 1000) / 1000 : null, ueberHaelfte: s02.abschnitte.length ? mitAuftritt / s02.abschnitte.length > 0.5 : null, ruheZustandOhneWechsel: s02.ruheOhneWechsel, animationenGesamt: s02.animationenGesamt, animationenNachScroll: s02.animationenNachScrollGesamt, abschnittsliste: s02.abschnitte, animationenListe: s02.animationenListe };
         await page.evaluate(() => scrollTo(0, 0));
         await page.waitForTimeout(250);
+        if (args.selbsttest) {
+          // Prüfkörper mit bekannten Abweichungen: Schrift 13.5px, Radius 7px, Schatten, Farbe #123456, Hintergrund #abcdef, Dauer 300ms, Emoji, Platzhaltertext
+          await page.evaluate(() => {
+            const d = document.createElement('div');
+            d.id = 'slop-selbsttest';
+            d.setAttribute('style', 'font-size:13.5px;border-radius:7px;box-shadow:0 0 5px rgb(255,0,0);color:#123456;background-color:#abcdef;transition-duration:300ms;padding:4px');
+            d.textContent = 'Lorem ipsum 🚀';
+            document.body.appendChild(d);
+          });
+        }
         const m = await page.evaluate(messeSeite, { s01: S01_RE_QUELLE, farben: farbenRgb, radien: radienPx, radiusVoll, schatten: schattenToken, dauern: dauernS, schriften: schriftgroessen(vp.width).map((s) => s.px), stichprobe: 60 });
         eintrag.s01 = m.s01;
         eintrag.s04 = { emojis: m.s04emoji, svg: m.s04svg };
@@ -807,13 +839,20 @@ if (teile.includes('render')) {
               if (!el || el === document.body) return null;
               const cs = getComputedStyle(el);
               const r = el.getBoundingClientRect();
-              return { fundstelle: window.__slop.pfad(el), tag: el.tagName.toLowerCase(), name: (el.getAttribute('aria-label') || el.textContent || el.getAttribute('name') || '').trim().replace(/\s+/g, ' ').slice(0, 40), fokusVisible: el.matches(':focus-visible'), outlineStyle: cs.outlineStyle, outlineWidthPx: parseFloat(cs.outlineWidth), outlineFarbe: cs.outlineColor, outlineOffset: cs.outlineOffset, boxShadow: cs.boxShadow === 'none' ? null : cs.boxShadow.slice(0, 90), imViewport: r.top < innerHeight && r.bottom > 0 && r.width > 0 };
+              const ring = (c, ort) => ({ ort, outlineStyle: c.outlineStyle, outlineWidthPx: parseFloat(c.outlineWidth) || 0, outlineFarbe: c.outlineColor, outlineOffset: c.outlineOffset, boxShadow: c.boxShadow === 'none' ? null : c.boxShadow.slice(0, 90) });
+              const kandidaten = [ring(cs, 'selbst'), ring(getComputedStyle(el, '::after'), '::after'), ring(getComputedStyle(el, '::before'), '::before')];
+              let anc = el.parentElement;
+              for (let i = 0; i < 3 && anc && anc !== document.body; i++, anc = anc.parentElement) if (anc.matches(':has(:focus-visible)')) kandidaten.push(ring(getComputedStyle(anc), `Vorfahr${i + 1}`));
+              const gut = (k) => k.outlineStyle !== 'none' && k.outlineWidthPx >= 2;
+              const treffer = kandidaten.find(gut) ?? null;
+              const e = treffer ?? kandidaten[0];
+              return { fundstelle: window.__slop.pfad(el), tag: el.tagName.toLowerCase(), name: (el.getAttribute('aria-label') || el.textContent || el.getAttribute('name') || '').trim().replace(/\s+/g, ' ').slice(0, 40), fokusVisible: el.matches(':focus-visible'), ringOrt: treffer ? treffer.ort : null, outlineStyle: e.outlineStyle, outlineWidthPx: e.outlineWidthPx, outlineFarbe: e.outlineFarbe, outlineOffset: e.outlineOffset, boxShadow: kandidaten.map((k) => k.boxShadow).find(Boolean) ?? null, imViewport: r.top < innerHeight && r.bottom > 0 && r.width > 0 };
             });
             if (!info) break;
-            const outlineOk = info.fokusVisible && info.outlineStyle !== 'none' && info.outlineWidthPx >= 2;
+            const outlineOk = info.fokusVisible && info.ringOrt !== null;
             stopps.push({ nr: i + 1, ...info, outlineOk, nurBoxShadow: !outlineOk && !!info.boxShadow });
           }
-          eintrag.s03fokus = { geprueft: stopps.length, ok: stopps.filter((s) => s.outlineOk).length, nichtOk: stopps.filter((s) => !s.outlineOk).length, davonNurBoxShadow: stopps.filter((s) => s.nurBoxShadow).length, stopps };
+          eintrag.s03fokus = { geprueft: stopps.length, ringOrte: stopps.reduce((m, st) => (st.ringOrt ? { ...m, [st.ringOrt]: (m[st.ringOrt] || 0) + 1 } : m), {}), ok: stopps.filter((s) => s.outlineOk).length, nichtOk: stopps.filter((s) => !s.outlineOk).length, davonNurBoxShadow: stopps.filter((s) => s.nurBoxShadow).length, stopps };
         }
         eintrag.fehler = fehler;
         eintrag.gesperrt = requestLog.length;
@@ -939,7 +978,7 @@ if (bericht.seiten.length) {
   const zahlen = bericht.seiten.filter((x) => x.ansicht === 'd1440').flatMap((x) => (x.s01?.zahlenInventar ?? []).map((f) => ({ seite: x.pfad, ...f })));
   top(zahlen, 60, ['Seite', 'Zahlangabe', 'Fundstelle'], (f) => [f.seite, f.kontext, `\`${f.fundstelle.slice(-60)}\``], 'S-01 Prüfliste Zahlenangaben im sichtbaren Text (d1440; kein Befund – Handprüfung gegen Quellen auf Erfundenes)');
   // S-02
-  const abschnittsListe = bericht.seiten.filter((x) => x.s02 && x.s02.mitAuftritt > 0).flatMap((x) => x.s02.abschnitte.filter((a) => a.mitAuftritt).map((a) => ({ seite: x.pfad, ansicht: x.ansicht, ...a })));
+  const abschnittsListe = bericht.seiten.filter((x) => x.s02 && x.s02.mitAuftritt > 0).flatMap((x) => x.s02.abschnittsliste.filter((a) => a.mitAuftritt).map((a) => ({ seite: x.pfad, ansicht: x.ansicht, ...a })));
   top(abschnittsListe, 40, ['Seite', 'Ansicht', 'Abschnitt', 'Animationen nach Scroll', 'Zustandswechsel'], (a) => [a.seite, a.ansicht, `\`${a.fundstelle.slice(-60)}\``, a.animationenNachScroll.map((n) => `${n.typ}:${n.name}[${n.props.join(',')}]`).join('; ') || '–', a.zustandswechsel.length], 'S-02 Abschnitte mit Scroll-Auftritt');
   L.push('', `S-02 Nebenbefunde: Elemente außerhalb des ersten Bildschirms mit opacity < 1 oder transform ≠ none, die sich beim Scrollen nicht ändern (statisch): ${bericht.seiten.reduce((s, x) => s + (x.s02?.ruheZustandOhneWechsel ?? 0), 0)} Elemente in Summe; Animationen insgesamt gesehen ${bericht.seiten.reduce((s, x) => s + (x.s02?.animationenGesamt ?? 0), 0)}, davon nach dem ersten Scrollereignis gestartet ${bericht.seiten.reduce((s, x) => s + (x.s02?.animationenNachScroll ?? 0), 0)}.`);
   // S-03
@@ -980,7 +1019,7 @@ if (bericht.seiten.length) {
 L.push('', '## Hinweise zur Methode', '',
   '- Zählung, nicht Urteil: Jede Zahl gehört zu einer Katalogregel; Fundstellen stehen als Datei:Zeile (Code) oder Seite + Selektor (gerendert) in slop-hart.json. Der Selektor ist ein gekürzter Pfad (bis 5 Ebenen) und kein eindeutiger CSS-Selektor.',
   '- S-02 (gerendert): Ein Abschnitt zählt als „mit Auftritt“, wenn nach dem ersten Scrollereignis eine Animation (CSS, Übergang, WAAPI, scroll-/view-gebunden) mit opacity/transform/translate/scale/rotate/clip-path/filter/visibility in ihm startet oder ein Element außerhalb des ersten Bildschirms seinen opacity-/transform-Wert beim Durchscrollen ändert. Abschnitte = oberste `section` in `main` (sonst Kinder von `main`). Grenze: > 50 % der Abschnitte.',
-  '- S-03: axe-core-Regel color-contrast allein; Fokus: echte Tab-Taste, `:focus-visible` muss zutreffen und `outline-style` ≠ none mit `outline-width` ≥ 2 px (ein Ring über box-shadow zählt nicht als Outline, wird aber als „nur box-shadow“ ausgewiesen). „Information nur über Hover oder Farbe“ ist per Skript nicht entscheidbar; Hinweise stehen unter Code.',
+  '- S-03: axe-core-Regel color-contrast allein; Fokus: echte Tab-Taste, `:focus-visible` muss zutreffen und am Element selbst, an `::after`/`::before` oder an einem bis zu drei Ebenen höheren Vorfahren mit `:has(:focus-visible)` muss `outline-style` ≠ none mit `outline-width` ≥ 2 px gelten (ein Ring über box-shadow zählt nicht als Outline, wird aber als „nur box-shadow“ ausgewiesen; der Ort des Rings steht in `ringOrt`). „Information nur über Hover oder Farbe“ ist per Skript nicht entscheidbar; Hinweise stehen unter Code.',
   '- S-05 Stichprobe: gleichmäßig durch die Dokumentreihenfolge aller sichtbaren Elemente; Vergleich mit den aus theme.css gelesenen Werten (Farben alle Hex-Werte der Datei, Radien, Schatten über Prüfelement normalisiert, Dauern, Schriftstufen als clamp() für die jeweilige Ansichtsbreite aufgelöst). Der Volltext derselben Seite ist die vollständige Zählung. Farben mit Deckkraft < 1 gelten als Token, wenn der RGB-Anteil einem Token entspricht (±3).',
   '- S-06: Hover-/Fokus-Regeln werden aus allen lesbaren Stylesheets samt verschachtelten Regeln und @media/@supports/@layer gesammelt; ein Element hat den Stil, wenn es den Selektor ohne die Pseudoklasse trifft (Vorfahren-Hover eingeschlossen). Medienbedingungen wie (hover: hover) werden nicht ausgewertet.',
   '- S-07: `domcontentloaded` + 300 ms; h1 gilt als sichtbar bei Gesamt-Deckkraft ≥ 0,999, visibility visible und Lage im ersten Bildschirm; Scrollen wird mit scrollTo geprüft, wenn die Seite höher als der Bildschirm ist; Zähler = Blattelemente, deren Text nur aus Ziffern und Zeichen besteht und sich zwischen 300 ms und 2,5 s ändert.');
