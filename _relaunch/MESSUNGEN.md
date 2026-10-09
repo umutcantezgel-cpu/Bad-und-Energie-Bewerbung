@@ -6,6 +6,7 @@
 | Slop hart (S-01…S-07) | S-01 0 · S-02 0 · S-03 0 · S-04 1 (4 Icon-Strichstärken 1,75/2/2,25/2,5) · S-05 4 Fundstellen (FlowShortcuts calc-Klasse, CheckMark delay/duration, Mappe-pt-Größen, select 17 px) · S-06 46 Elemente ohne Hover-Zustand (d1440) · S-07 0 | 0 | wie Ausgang | belege/P0-SLOP-01/slop-hart.md |
 | Slop weich (Summe S-08…S-14, Grundmenge, Regeln E-010) | 35 (streng-wörtlich 17, mit allen Grenzfällen 46; 7 eindeutige Fundstellen) | ≤ 7, ≤ 2 je Hauptseite | 35 | belege/p0-slop-weich/slop-weich.md |
 | Jury (gewichtet aus Medianen, je Hauptseite) | Start 5,2 · Stellen 4,5 · Stellenseite 5,0 · Bewerbung 4,8 (schwächste Kategorie: Kreativität 2,5–4,0) | ≥ 8,0, keine Kategorie < 7,5 | wie Ausgang | belege/p0-jury/zusammenfassung.md |
+| Wow-Probe (Lauf 2, A-03): Median aus Überraschung und Begehrlichkeit · Vertrauen, je Schwerpunktseite und Ansicht | Start m390 5,5 · V 6 / d1440 5,0 · V 7; Stellenseite m390 4,0 · V 6 / d1440 4,0 · V 7 (5 Haiku-Erstbetrachter, erster Bildschirm 0–1,5 s, hell) | ≥ 8,5; Vertrauen ≥ Ausgang; ≥ 4/5 konkretes Merkmal | wie Ausgang | ausbau/belege/a0-wow/ergebnis.json |
 | Blindvergleich (Siege Endstand) | – | ≥ 90 % | – | – |
 | Bewegungsregister-Abdeckung (data-motion ↔ Register) | folgt P0 | 100 % | – | – |
 | axe ernst/kritisch (Grundmenge × Ansichten × Schemata + Zustände) | 0 (110 Läufe; auch 0 mäßig/gering) | 0 | 0 | belege/P0-MESS-02/axe.md |
@@ -63,3 +64,16 @@ A11y, Best Practices, SEO überall 100; CLS 0,000; keine Drittanbieter-Bytes. LC
 ## Jury-Durchgänge
 ### Durchgang P0 (09.10.2026, Ausgangsstand a83269d)
 Siehe `belege/p0-jury/zusammenfassung.md` und `belege/p0-jury/urteile/*.json`. Gemeinsame Befunde aller 12 Urteile: keine Bildwelt/Leitidee, Logo-Farben nicht genutzt, gleichförmige Karten, Kernversprechen (Feierabend 13:30, 35 km, Vertraulichkeit) nur als Text, Desktop-Kompositionen mit leeren Hälften. Mehrfach vorgeschlagen: Rohrleitungs-/Heizkreis-Motiv mit Rot/Blau-Fluss als Signatur, Fortschritt als „fließende“ Leitung. Hinweis: Juroren schlagen Fotos vor – ausgeschlossen durch Inhaberentscheidung (keine Fotos); Lösung über SVG/Illustration.
+
+## Wow-Probe – Ausgangswert (gemeinsamer Lauf, Folgeauftrag §9, 09.10.2026)
+Fünf frische Haiku-Erstbetrachter in der Rolle des PUBLIKUMS (Chef). Briefing: `ausbau/pakete/_erstbetrachter.md`. Material: Streifen des ersten Bildschirms 0–1500 ms (`ausbau/belege/a0-erster-bildschirm/`, Werkzeug `werkzeuge/erster-bildschirm.mjs`), helles Schema, Reihenfolge je Betrachter variiert. Einwilligungsbanner: Im Ausgangsstand gibt es keins; die Karte nutzt eine Zwei-Klick-Einwilligung im Abschnitt.
+
+| Seite · Ansicht | Überraschung | Begehrlichkeit | Vertrauen | Median Ü/B | Konkretes Merkmal (häufigste Nennung) |
+|---|---|---|---|---|---|
+| Start · m390 | 5 | 6 | 6 | 5,5 | „13:30 Freitags Feierabend“ groß unten |
+| Start · d1440 | 4 | 6 | 7 | 5,0 | Zahlenreihe 13:30 · 30 · 35 km · 1926 |
+| Stellenseite · m390 | 3 | 5 | 6 | 4,0 | Gehaltskasten 3.600–4.600 € |
+| Stellenseite · d1440 | 3 | 5 | 7 | 4,0 | Gehalt und Kontaktkarte rechts |
+
+Lesart: Die Erstbetrachter geben das Angebot überall richtig wieder (Klarheit ist eine Stärke, die bleiben muss). Überraschung ist der Engpass (3–5). Ziel A-03 ist ein Median ≥ 8,5, bei Vertrauen mindestens 6 (mobil) bzw. 7 (Desktop).
+
