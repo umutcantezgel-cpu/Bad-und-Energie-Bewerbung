@@ -1,6 +1,6 @@
 # Slop-Prüfung, harte Befunde S-01 bis S-07 · P0-SLOP-01
 
-Erstellt 2026-10-09T07:45:47.112Z · Basis http://localhost:3500
+Erstellt 2026-10-09T07:50:43.670Z · Basis http://localhost:3500
 
 Messbedingungen Rendern: Ansichten m375, d1440 · hell · Bewegung no-preference · S-07: domcontentloaded + 300 ms; Rest: networkidle + fonts.ready + 600 ms, dann scrollThrough (mit html{scroll-behavior:auto!important}, damit das Seitenende erreicht wird; Abdeckung steht je Seite in s02.scrollAbdeckung) + 500 ms · Stichprobe S-05 60 Elemente · Tab-Stopps 15 · axe-Regeln color-contrast
 Messbedingungen Code: 245 Dateien (.ts, .tsx, .css) in app, components, lib; ausgeschlossen __tests__, *.test.ts(x), *.spec.ts(x), node_modules, .next.
@@ -15,7 +15,7 @@ Tokens aus app/styles/theme.css: 42 Farbwerte · Radien 0/6/10/14/20/28/9999 px 
 | S-03 Unzugänglich | – | Kontrast 0 Verletzungen (10 unklar) · Fokus 0 von 350 Tab-Stopps ohne 2-px-Outline |
 | S-04 Gemischte Bildsprache | Quellen lucide-react: 71 · 34 verschiedene Icons · 3 eigene SVG-Komponenten · Icon-Marken ohne strokeWidth 0 · Emojis im Code 0 | Emojis 0 (+ 24 typografisch) · höchstens 3 verschiedene Strichstärken je Seite (Icons) |
 | S-05 Ungeordnete Werte | -[ Wertklassen 14 (tokenrelevant 1) · duration-/delay-Zahl 2 · Hex 0 · Inline-style frei 17 · CSS frei 15 · JS-Dauern/Kurven 2 | schriftgroesse 82 · radius 0 · schatten 0 · farbe 0 · hintergrund 0 · dauer 0 (Elemente außerhalb Token, Summe der Seitenansichten) |
-| S-06 Halbe Zustände | – | 719 interaktive Elemente · ohne Hover-Stil 175 · ohne :focus-visible-Stil 0 · Felder ohne aria-invalid-Stil 0 |
+| S-06 Halbe Zustände | – | 719 interaktive Elemente · ohne Hover-Stil 135 (am Element selbst 175) · ohne :focus-visible-Stil 0 · Felder ohne aria-invalid-Stil 0 |
 | S-07 Blockierender Auftakt | 36 Treffer (davon 0 Kandidaten) | h1 nach 300 ms nicht sichtbar 0 · Scrollen nicht möglich 0 · Vollbild-Überlagerung 0 · Zähleränderungen 0 |
 
 ## Teil A: Code
@@ -384,18 +384,18 @@ Keine.
 
 | Seite | Ansicht | Status | S-01 | S-02 Abschnitte mit Auftritt | S-03 Kontrast | S-03 Fokus nicht ok | S-04 Emoji | S-04 Strich (berechnet) | S-05 Elemente außerhalb | S-06 ohne Hover / ohne Fokus / Feld ohne Fehlerstil | S-07 h1 300 ms / scrollbar |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| / | m375 | 200 | 1 | 0/8 (0 %) | 0 | 0/15 | 0 | 5 | s1 r0 s0 f0 h0 d0 | 12 / 0 / 0 | ja / ja |
-| / | d1440 | 200 | 1 | 0/8 (0 %) | 0 | 0/15 | 0 | 5 | s0 r0 s0 f0 h0 d0 | 12 / 0 / 0 | ja / ja |
-| /jobs | m375 | 200 | 0 | 0/2 (0 %) | 0 | 0/15 | 0 | 1 | s0 r0 s0 f0 h0 d0 | 9 / 0 / 0 | ja / ja |
-| /jobs | d1440 | 200 | 0 | 0/2 (0 %) | 0 | 0/15 | 0 | 1 | s0 r0 s0 f0 h0 d0 | 10 / 0 / 0 | ja / ja |
-| /jobs/anlagenmechaniker-shk-wetzlar | m375 | 200 | 1 | 0/11 (0 %) | 0 | 0/15 | 0 | 3 | s0 r0 s0 f0 h0 d0 | 8 / 0 / 0 | ja / ja |
-| /jobs/anlagenmechaniker-shk-wetzlar | d1440 | 200 | 1 | 0/11 (0 %) | 0 | 0/15 | 0 | 3 | s0 r0 s0 f0 h0 d0 | 12 / 0 / 0 | ja / ja |
-| /jobs/kundendiensttechniker-waermepumpe-wetzlar | m375 | 200 | 0 | 0/11 (0 %) | 0 | 0/15 | 0 | 3 | s0 r0 s0 f0 h0 d0 | 8 / 0 / 0 | ja / ja |
-| /jobs/kundendiensttechniker-waermepumpe-wetzlar | d1440 | 200 | 0 | 0/11 (0 %) | 0 | 0/15 | 0 | 3 | s0 r0 s0 f0 h0 d0 | 12 / 0 / 0 | ja / ja |
-| /jobs/obermonteur-projektleiter-shk-wetzlar | m375 | 200 | 1 | 0/11 (0 %) | 0 | 0/15 | 0 | 3 | s0 r0 s0 f0 h0 d0 | 8 / 0 / 0 | ja / ja |
-| /jobs/obermonteur-projektleiter-shk-wetzlar | d1440 | 200 | 1 | 0/11 (0 %) | 0 | 0/15 | 0 | 3 | s0 r0 s0 f0 h0 d0 | 12 / 0 / 0 | ja / ja |
-| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | m375 | 200 | 0 | 0/11 (0 %) | 0 | 0/15 | 0 | 3 | s0 r0 s0 f0 h0 d0 | 8 / 0 / 0 | ja / ja |
-| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | d1440 | 200 | 0 | 0/11 (0 %) | 0 | 0/15 | 0 | 3 | s0 r0 s0 f0 h0 d0 | 12 / 0 / 0 | ja / ja |
+| / | m375 | 200 | 1 | 0/8 (0 %) | 0 | 0/15 | 0 | 5 | s1 r0 s0 f0 h0 d0 | 8 / 0 / 0 | ja / ja |
+| / | d1440 | 200 | 1 | 0/8 (0 %) | 0 | 0/15 | 0 | 5 | s0 r0 s0 f0 h0 d0 | 8 / 0 / 0 | ja / ja |
+| /jobs | m375 | 200 | 0 | 0/2 (0 %) | 0 | 0/15 | 0 | 1 | s0 r0 s0 f0 h0 d0 | 5 / 0 / 0 | ja / ja |
+| /jobs | d1440 | 200 | 0 | 0/2 (0 %) | 0 | 0/15 | 0 | 1 | s0 r0 s0 f0 h0 d0 | 6 / 0 / 0 | ja / ja |
+| /jobs/anlagenmechaniker-shk-wetzlar | m375 | 200 | 1 | 0/11 (0 %) | 0 | 0/15 | 0 | 3 | s0 r0 s0 f0 h0 d0 | 5 / 0 / 0 | ja / ja |
+| /jobs/anlagenmechaniker-shk-wetzlar | d1440 | 200 | 1 | 0/11 (0 %) | 0 | 0/15 | 0 | 3 | s0 r0 s0 f0 h0 d0 | 9 / 0 / 0 | ja / ja |
+| /jobs/kundendiensttechniker-waermepumpe-wetzlar | m375 | 200 | 0 | 0/11 (0 %) | 0 | 0/15 | 0 | 3 | s0 r0 s0 f0 h0 d0 | 5 / 0 / 0 | ja / ja |
+| /jobs/kundendiensttechniker-waermepumpe-wetzlar | d1440 | 200 | 0 | 0/11 (0 %) | 0 | 0/15 | 0 | 3 | s0 r0 s0 f0 h0 d0 | 9 / 0 / 0 | ja / ja |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | m375 | 200 | 1 | 0/11 (0 %) | 0 | 0/15 | 0 | 3 | s0 r0 s0 f0 h0 d0 | 5 / 0 / 0 | ja / ja |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | d1440 | 200 | 1 | 0/11 (0 %) | 0 | 0/15 | 0 | 3 | s0 r0 s0 f0 h0 d0 | 9 / 0 / 0 | ja / ja |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | m375 | 200 | 0 | 0/11 (0 %) | 0 | 0/15 | 0 | 3 | s0 r0 s0 f0 h0 d0 | 5 / 0 / 0 | ja / ja |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | d1440 | 200 | 0 | 0/11 (0 %) | 0 | 0/15 | 0 | 3 | s0 r0 s0 f0 h0 d0 | 9 / 0 / 0 | ja / ja |
 | /bewerbung | m375 | 200 | 0 | 0/1 (0 %) | 0 | 0/15 | 0 | 2 | s0 r0 s0 f0 h0 d0 | 2 / 0 / 0 | ja / ja |
 | /bewerbung | d1440 | 200 | 0 | 0/1 (0 %) | 0 | 0/15 | 0 | 2 | s0 r0 s0 f0 h0 d0 | 2 / 0 / 0 | ja / ja |
 | /bewerbung/danke | m375 | 200 | 0 | 0/1 (0 %) | 0 | 0/10 | 0 | 1 | s0 r0 s0 f0 h0 d0 | 5 / 0 / 0 | ja / ja |
@@ -599,43 +599,39 @@ Stichprobe (60 Elemente je Seitenansicht, gleichmäßig durch die Dokumentreihen
 
 ### S-06 Hover-/Fokus-/Fehlerstil je interaktivem Element
 
-| Seite | Ansicht | Links ohne Hover | Knöpfe ohne Hover | Felder ohne Hover | Links ohne :focus-visible | Knöpfe ohne :focus-visible | Felder ohne :focus-visible | Felder ohne aria-invalid-Stil | CSS-Regeln (Hover/Fokus/Invalid) |
+| Seite | Ansicht | Links ohne Hover (am Element selbst) | Knöpfe ohne Hover | Felder ohne Hover | Links ohne :focus-visible | Knöpfe ohne :focus-visible | Felder ohne :focus-visible | Felder ohne aria-invalid-Stil | CSS-Regeln (Hover/Fokus/Invalid) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| / | m375 | 6/28 | 0/6 | 0/1 | 0/28 | 0/6 | 0/1 | 0/1 | 13/9/1 |
-| / | d1440 | 6/32 | 0/5 | 0/1 | 0/32 | 0/5 | 0/1 | 0/1 | 13/9/1 |
-| /jobs | m375 | 9/24 | 0/1 | 0/0 | 0/24 | 0/1 | 0/0 | 0/0 | 13/9/1 |
-| /jobs | d1440 | 10/28 | 0/0 | 0/0 | 0/28 | 0/0 | 0/0 | 0/0 | 13/9/1 |
-| /jobs/anlagenmechaniker-shk-wetzlar | m375 | 5/24 | 0/7 | 0/0 | 0/24 | 0/7 | 0/0 | 0/0 | 13/9/1 |
-| /jobs/anlagenmechaniker-shk-wetzlar | d1440 | 9/29 | 0/6 | 0/0 | 0/29 | 0/6 | 0/0 | 0/0 | 13/9/1 |
-| /jobs/kundendiensttechniker-waermepumpe-wetzlar | m375 | 5/24 | 0/7 | 0/0 | 0/24 | 0/7 | 0/0 | 0/0 | 13/9/1 |
-| /jobs/kundendiensttechniker-waermepumpe-wetzlar | d1440 | 9/29 | 0/6 | 0/0 | 0/29 | 0/6 | 0/0 | 0/0 | 13/9/1 |
-| /jobs/obermonteur-projektleiter-shk-wetzlar | m375 | 5/24 | 0/7 | 0/0 | 0/24 | 0/7 | 0/0 | 0/0 | 13/9/1 |
-| /jobs/obermonteur-projektleiter-shk-wetzlar | d1440 | 9/29 | 0/6 | 0/0 | 0/29 | 0/6 | 0/0 | 0/0 | 13/9/1 |
-| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | m375 | 5/24 | 0/5 | 0/0 | 0/24 | 0/5 | 0/0 | 0/0 | 13/9/1 |
-| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | d1440 | 9/29 | 0/4 | 0/0 | 0/29 | 0/4 | 0/0 | 0/0 | 13/9/1 |
-| /bewerbung | m375 | 2/10 | 0/6 | 0/0 | 0/10 | 0/6 | 0/0 | 0/0 | 13/9/1 |
-| /bewerbung | d1440 | 2/10 | 0/6 | 0/0 | 0/10 | 0/6 | 0/0 | 0/0 | 13/9/1 |
-| /bewerbung/danke | m375 | 5/10 | 0/0 | 0/0 | 0/10 | 0/0 | 0/0 | 0/0 | 13/9/1 |
-| /bewerbung/danke | d1440 | 5/10 | 0/0 | 0/0 | 0/10 | 0/0 | 0/0 | 0/0 | 13/9/1 |
-| /bewerbung/mappe | m375 | 2/5 | 0/15 | 0/7 | 0/5 | 0/15 | 0/7 | 0/7 | 13/9/1 |
-| /bewerbung/mappe | d1440 | 2/5 | 0/15 | 0/7 | 0/5 | 0/15 | 0/7 | 0/7 | 13/9/1 |
-| /datenschutz | m375 | 12/42 | 0/1 | 0/0 | 0/42 | 0/1 | 0/0 | 0/0 | 13/9/1 |
-| /datenschutz | d1440 | 12/46 | 0/0 | 0/0 | 0/46 | 0/0 | 0/0 | 0/0 | 13/9/1 |
-| /impressum | m375 | 2/28 | 0/1 | 0/0 | 0/28 | 0/1 | 0/0 | 0/0 | 13/9/1 |
-| /impressum | d1440 | 2/32 | 0/0 | 0/0 | 0/32 | 0/0 | 0/0 | 0/0 | 13/9/1 |
-| /gibt-es-nicht-404 | m375 | 2/17 | 0/1 | 0/0 | 0/17 | 0/1 | 0/0 | 0/0 | 13/9/1 |
-| /gibt-es-nicht-404 | d1440 | 2/21 | 0/0 | 0/0 | 0/21 | 0/0 | 0/0 | 0/0 | 13/9/1 |
+| / | m375 | 2/28 (6) | 0/6 (0) | 0/1 | 0/28 | 0/6 | 0/1 | 0/1 | 13/9/1 |
+| / | d1440 | 2/32 (6) | 0/5 (0) | 0/1 | 0/32 | 0/5 | 0/1 | 0/1 | 13/9/1 |
+| /jobs | m375 | 5/24 (9) | 0/1 (0) | 0/0 | 0/24 | 0/1 | 0/0 | 0/0 | 13/9/1 |
+| /jobs | d1440 | 6/28 (10) | 0/0 (0) | 0/0 | 0/28 | 0/0 | 0/0 | 0/0 | 13/9/1 |
+| /jobs/anlagenmechaniker-shk-wetzlar | m375 | 2/24 (5) | 0/7 (0) | 0/0 | 0/24 | 0/7 | 0/0 | 0/0 | 13/9/1 |
+| /jobs/anlagenmechaniker-shk-wetzlar | d1440 | 6/29 (9) | 0/6 (0) | 0/0 | 0/29 | 0/6 | 0/0 | 0/0 | 13/9/1 |
+| /jobs/kundendiensttechniker-waermepumpe-wetzlar | m375 | 2/24 (5) | 0/7 (0) | 0/0 | 0/24 | 0/7 | 0/0 | 0/0 | 13/9/1 |
+| /jobs/kundendiensttechniker-waermepumpe-wetzlar | d1440 | 6/29 (9) | 0/6 (0) | 0/0 | 0/29 | 0/6 | 0/0 | 0/0 | 13/9/1 |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | m375 | 2/24 (5) | 0/7 (0) | 0/0 | 0/24 | 0/7 | 0/0 | 0/0 | 13/9/1 |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | d1440 | 6/29 (9) | 0/6 (0) | 0/0 | 0/29 | 0/6 | 0/0 | 0/0 | 13/9/1 |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | m375 | 2/24 (5) | 0/5 (0) | 0/0 | 0/24 | 0/5 | 0/0 | 0/0 | 13/9/1 |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | d1440 | 6/29 (9) | 0/4 (0) | 0/0 | 0/29 | 0/4 | 0/0 | 0/0 | 13/9/1 |
+| /bewerbung | m375 | 2/10 (2) | 0/6 (0) | 0/0 | 0/10 | 0/6 | 0/0 | 0/0 | 13/9/1 |
+| /bewerbung | d1440 | 2/10 (2) | 0/6 (0) | 0/0 | 0/10 | 0/6 | 0/0 | 0/0 | 13/9/1 |
+| /bewerbung/danke | m375 | 5/10 (5) | 0/0 (0) | 0/0 | 0/10 | 0/0 | 0/0 | 0/0 | 13/9/1 |
+| /bewerbung/danke | d1440 | 5/10 (5) | 0/0 (0) | 0/0 | 0/10 | 0/0 | 0/0 | 0/0 | 13/9/1 |
+| /bewerbung/mappe | m375 | 2/5 (2) | 0/15 (0) | 0/7 | 0/5 | 0/15 | 0/7 | 0/7 | 13/9/1 |
+| /bewerbung/mappe | d1440 | 2/5 (2) | 0/15 (0) | 0/7 | 0/5 | 0/15 | 0/7 | 0/7 | 13/9/1 |
+| /datenschutz | m375 | 12/42 (12) | 0/1 (0) | 0/0 | 0/42 | 0/1 | 0/0 | 0/0 | 13/9/1 |
+| /datenschutz | d1440 | 12/46 (12) | 0/0 (0) | 0/0 | 0/46 | 0/0 | 0/0 | 0/0 | 13/9/1 |
+| /impressum | m375 | 2/28 (2) | 0/1 (0) | 0/0 | 0/28 | 0/1 | 0/0 | 0/0 | 13/9/1 |
+| /impressum | d1440 | 2/32 (2) | 0/0 (0) | 0/0 | 0/32 | 0/0 | 0/0 | 0/0 | 13/9/1 |
+| /gibt-es-nicht-404 | m375 | 2/17 (2) | 0/1 (0) | 0/0 | 0/17 | 0/1 | 0/0 | 0/0 | 13/9/1 |
+| /gibt-es-nicht-404 | d1440 | 2/21 (2) | 0/0 (0) | 0/0 | 0/21 | 0/0 | 0/0 | 0/0 | 13/9/1 |
 
-### S-06 Elemente ohne Hover-Stil (d1440) (96)
+### S-06 Elemente ohne Hover-Stil (d1440) (76)
 
 | Seite | Typ | Element | Fundstelle |
 | --- | --- | --- | --- |
 | / | link | Zum Inhalt springen | `a.sr-only` |
 | / | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` |
-| / | link | Anlagenmechaniker SHK | `:nth-of-type(1) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a` |
-| / | link | Kundendiensttechniker | `:nth-of-type(2) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a` |
-| / | link | Obermonteur / Projektleiter | `:nth-of-type(3) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a` |
-| / | link | Ausbildung Anlagenmechaniker | `:nth-of-type(4) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a` |
 | / | sonstiges | Stimmen von Kunden und Team | `-16.border-t:nth-of-type(3) > div.mt-8:nth-of-type(2) > div > ul.-mx-gutter.mt-6` |
 | / | sonstiges | Wie läuft der diskrete Wechsel ab, wenn  | `l:nth-of-type(2) > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11` |
 | / | sonstiges | Brauche ich ein Anschreiben oder einen L | `l:nth-of-type(2) > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11` |
@@ -645,10 +641,6 @@ Stichprobe (60 Elemente je Seitenansicht, gleichmäßig durch die Dokumentreihen
 | /jobs | link | Zum Inhalt springen | `a.sr-only` |
 | /jobs | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` |
 | /jobs | link | Stellen | `> nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11` |
-| /jobs | link | Anlagenmechaniker SHK | `:nth-of-type(1) > article.rounded-lg.bg-surface-2 > h2.text-title-3.text-ink > a` |
-| /jobs | link | Kundendiensttechniker | `:nth-of-type(2) > article.rounded-lg.bg-surface-2 > h2.text-title-3.text-ink > a` |
-| /jobs | link | Obermonteur / Projektleiter | `:nth-of-type(3) > article.rounded-lg.bg-surface-2 > h2.text-title-3.text-ink > a` |
-| /jobs | link | Ausbildung Anlagenmechaniker | `:nth-of-type(4) > article.rounded-lg.bg-surface-2 > h2.text-title-3.text-ink > a` |
 | /jobs | link | Anrufen06441 42956 | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex` |
 | /jobs | link | WhatsAppNachricht schreiben (öffnet in n | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex` |
 | /jobs | link | E-Mailinfo@bad-energie.de | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex` |
@@ -661,9 +653,6 @@ Stichprobe (60 Elemente je Seitenansicht, gleichmäßig durch die Dokumentreihen
 | /jobs/anlagenmechaniker-shk-wetzlar | link | Anrufen06441 42956 | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex` |
 | /jobs/anlagenmechaniker-shk-wetzlar | link | WhatsAppNachricht schreiben (öffnet in n | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex` |
 | /jobs/anlagenmechaniker-shk-wetzlar | link | E-Mailinfo@bad-energie.de | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex` |
-| /jobs/anlagenmechaniker-shk-wetzlar | link | Kundendiensttechniker | `> li:nth-of-type(1) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a` |
-| /jobs/anlagenmechaniker-shk-wetzlar | link | Obermonteur / Projektleiter | `> li:nth-of-type(2) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a` |
-| /jobs/anlagenmechaniker-shk-wetzlar | link | Ausbildung Anlagenmechaniker | `> li:nth-of-type(3) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a` |
 | /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | Zum Inhalt springen | `a.sr-only` |
 | /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` |
 | /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | Stellen | `> nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11` |
@@ -673,15 +662,26 @@ Stichprobe (60 Elemente je Seitenansicht, gleichmäßig durch die Dokumentreihen
 | /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | Anrufen06441 42956 | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex` |
 | /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | WhatsAppNachricht schreiben (öffnet in n | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex` |
 | /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | E-Mailinfo@bad-energie.de | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex` |
-| /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | Anlagenmechaniker SHK | `> li:nth-of-type(1) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a` |
-| /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | Obermonteur / Projektleiter | `> li:nth-of-type(2) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a` |
-| /jobs/kundendiensttechniker-waermepumpe-wetzlar | link | Ausbildung Anlagenmechaniker | `> li:nth-of-type(3) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a` |
 | /jobs/obermonteur-projektleiter-shk-wetzlar | link | Zum Inhalt springen | `a.sr-only` |
 | /jobs/obermonteur-projektleiter-shk-wetzlar | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` |
 | /jobs/obermonteur-projektleiter-shk-wetzlar | link | Stellen | `> nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11` |
 | /jobs/obermonteur-projektleiter-shk-wetzlar | sonstiges | Wie läuft der diskrete Wechsel ab, wenn  | `er-t.border-line > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11` |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | sonstiges | Darf ich das Firmenfahrzeug mit nach Hau | `er-t.border-line > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11` |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | sonstiges | Gibt es Fernmontagen oder Wochenendarbei | `er-t.border-line > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11` |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | link | Anrufen06441 42956 | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex` |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | link | WhatsAppNachricht schreiben (öffnet in n | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex` |
+| /jobs/obermonteur-projektleiter-shk-wetzlar | link | E-Mailinfo@bad-energie.de | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex` |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | link | Zum Inhalt springen | `a.sr-only` |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | link | Bad und Energie GmbH Lahn Dill, zur Star | `header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex` |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | link | Stellen | `> nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11` |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | sonstiges | Brauche ich ein Anschreiben oder einen L | `er-t.border-line > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11` |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | sonstiges | Welche Heizsysteme und Sanitäranlagen mo | `er-t.border-line > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11` |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | sonstiges | Gibt es Fernmontagen oder Wochenendarbei | `er-t.border-line > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11` |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | link | Anrufen06441 42956 | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(1) > a.group.flex` |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | link | WhatsAppNachricht schreiben (öffnet in n | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(2) > a.group.flex` |
+| /jobs/ausbildung-anlagenmechaniker-shk-wetzlar | link | E-Mailinfo@bad-energie.de | `ex.flex-col:nth-of-type(2) > ul.flex.flex-col > li:nth-of-type(3) > a.group.flex` |
 
-… 46 weitere in slop-hart.json
+… 26 weitere in slop-hart.json
 
 ### S-06 Elemente ohne :focus-visible-Stil (d1440) (0)
 
@@ -726,5 +726,5 @@ Keine.
 - S-02 (gerendert): Ein Abschnitt zählt als „mit Auftritt“, wenn nach dem ersten Scrollereignis eine Animation (CSS, Übergang, WAAPI, scroll-/view-gebunden) mit opacity/transform/translate/scale/rotate/clip-path/filter/visibility in ihm startet oder ein Element außerhalb des ersten Bildschirms seinen opacity-/transform-Wert beim Durchscrollen ändert. Abschnitte = oberste `section` in `main` (sonst Kinder von `main`). Grenze: > 50 % der Abschnitte.
 - S-03: axe-core-Regel color-contrast allein; Fokus: echte Tab-Taste, `:focus-visible` muss zutreffen und am Element selbst, an `::after`/`::before` oder an einem bis zu drei Ebenen höheren Vorfahren mit `:has(:focus-visible)` muss `outline-style` ≠ none mit `outline-width` ≥ 2 px gelten (ein Ring über box-shadow zählt nicht als Outline, wird aber als „nur box-shadow“ ausgewiesen; der Ort des Rings steht in `ringOrt`). „Information nur über Hover oder Farbe“ ist per Skript nicht entscheidbar; Hinweise stehen unter Code.
 - S-05 Stichprobe: gleichmäßig durch die Dokumentreihenfolge aller sichtbaren Elemente; Vergleich mit den aus theme.css gelesenen Werten (Farben alle Hex-Werte der Datei, Radien, Schatten über Prüfelement normalisiert, Dauern, Schriftstufen als clamp() für die jeweilige Ansichtsbreite aufgelöst). Der Volltext derselben Seite ist die vollständige Zählung. Farben mit Deckkraft < 1 gelten als Token, wenn der RGB-Anteil einem Token entspricht (±3).
-- S-06: Hover-/Fokus-Regeln werden aus allen lesbaren Stylesheets samt verschachtelten Regeln und @media/@supports/@layer gesammelt; ein Element hat den Stil, wenn es den Selektor ohne die Pseudoklasse trifft (Vorfahren-Hover eingeschlossen). Medienbedingungen wie (hover: hover) werden nicht ausgewertet.
+- S-06: Hover-/Fokus-Regeln werden aus allen lesbaren Stylesheets samt verschachtelten Regeln und @media/@supports/@layer gesammelt; ein Element hat den Stil, wenn es den Selektor ohne die Pseudoklasse trifft (Vorfahren-Hover im Selektor eingeschlossen). Für Hover zählt zusätzlich ein Hover-Stil an einem der vier nächsten Vorfahren (Karte mit gestrecktem Link: der Zeiger über dem Link liegt immer auch über der Karte); `hoverSelbst` in der JSON-Datei und die Spalte „am Element selbst“ weisen die strenge Zählung aus. Medienbedingungen wie (hover: hover) werden nicht ausgewertet.
 - S-07: `domcontentloaded` + 300 ms; h1 gilt als sichtbar bei Gesamt-Deckkraft ≥ 0,999, visibility visible und Lage im ersten Bildschirm; Scrollen wird mit scrollTo geprüft, wenn die Seite höher als der Bildschirm ist; Zähler = Blattelemente, deren Text nur aus Ziffern und Zeichen besteht und sich zwischen 300 ms und 2,5 s ändert.

@@ -5,7 +5,7 @@
 |---|---|---|---|---|
 | Slop hart (Summe S-01…S-07) | folgt P0 | 0 | – | belege/P0-SLOP-01/slop-hart.md |
 | Slop weich (Summe S-08…S-14, Grundmenge, Regeln E-010) | 35 (streng-wörtlich 17, mit allen Grenzfällen 46; 7 eindeutige Fundstellen) | ≤ 7, ≤ 2 je Hauptseite | 35 | belege/p0-slop-weich/slop-weich.md |
-| Jury (gewichtet, Median, je Hauptseite) | folgt P0 | ≥ 8,0, keine Kategorie < 7,5 | – | belege/p0-jury/ |
+| Jury (gewichtet aus Medianen, je Hauptseite) | Start 5,2 · Stellen 4,5 · Stellenseite 5,0 · Bewerbung 4,8 (schwächste Kategorie: Kreativität 2,5–4,0) | ≥ 8,0, keine Kategorie < 7,5 | wie Ausgang | belege/p0-jury/zusammenfassung.md |
 | Blindvergleich (Siege Endstand) | – | ≥ 90 % | – | – |
 | Bewegungsregister-Abdeckung (data-motion ↔ Register) | folgt P0 | 100 % | – | – |
 | axe ernst/kritisch (Grundmenge × Ansichten × Schemata + Zustände) | 0 (110 Läufe; auch 0 mäßig/gering) | 0 | 0 | belege/P0-MESS-02/axe.md |
@@ -43,4 +43,5 @@ Log: `_relaunch/.roh/p0/ebene1.log` (lokal).
 | Inline-SVG | 215 Elemente, 35 eindeutig; 1 über 1,5 KB (Radiusgrafik 2.459 B) |
 
 ## Jury-Durchgänge
-(folgt)
+### Durchgang P0 (09.10.2026, Ausgangsstand a83269d)
+Siehe `belege/p0-jury/zusammenfassung.md` und `belege/p0-jury/urteile/*.json`. Gemeinsame Befunde aller 12 Urteile: keine Bildwelt/Leitidee, Logo-Farben nicht genutzt, gleichförmige Karten, Kernversprechen (Feierabend 13:30, 35 km, Vertraulichkeit) nur als Text, Desktop-Kompositionen mit leeren Hälften. Mehrfach vorgeschlagen: Rohrleitungs-/Heizkreis-Motiv mit Rot/Blau-Fluss als Signatur, Fortschritt als „fließende“ Leitung. Hinweis: Juroren schlagen Fotos vor – ausgeschlossen durch Inhaberentscheidung (keine Fotos); Lösung über SVG/Illustration.

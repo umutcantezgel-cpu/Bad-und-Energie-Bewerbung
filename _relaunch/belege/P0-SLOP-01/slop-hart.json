@@ -1,7 +1,7 @@
 {
   "label": "P0-SLOP-01",
   "base": "http://localhost:3500",
-  "erstellt": "2026-10-09T07:45:47.112Z",
+  "erstellt": "2026-10-09T07:50:43.670Z",
   "bedingungen": {
     "code": {
       "dateien": 245,
@@ -168,7 +168,8 @@
     },
     "S-06": {
       "elemente": 719,
-      "ohneHover": 175,
+      "ohneHover": 135,
+      "ohneHoverAmElementSelbst": 175,
       "ohneFokusVisibleStil": 0,
       "felderOhneFehlerstil": 0
     },
@@ -3920,19 +3921,22 @@
         "elemente": 41,
         "link": {
           "gesamt": 28,
-          "ohneHover": 6,
+          "ohneHover": 2,
+          "ohneHoverAmElementSelbst": 6,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 6,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 1,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 1,
@@ -3941,6 +3945,7 @@
         "sonstiges": {
           "gesamt": 6,
           "ohneHover": 6,
+          "ohneHoverAmElementSelbst": 6,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -3951,6 +3956,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -3961,46 +3968,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.mt-10.grid > li:nth-of-type(1) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Anlagenmechaniker SHK",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.mt-10.grid > li:nth-of-type(2) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Kundendiensttechniker",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.mt-10.grid > li:nth-of-type(3) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Obermonteur / Projektleiter",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.mt-10.grid > li:nth-of-type(4) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Ausbildung Anlagenmechaniker",
-            "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -4011,6 +3980,8 @@
             "tag": "ul",
             "name": "Stimmen von Kunden und Team",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -4021,6 +3992,8 @@
             "tag": "summary",
             "name": "Wie läuft der diskrete Wechsel ab, wenn ",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -4031,6 +4004,8 @@
             "tag": "summary",
             "name": "Brauche ich ein Anschreiben oder einen L",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -4041,6 +4016,8 @@
             "tag": "summary",
             "name": "Welche Heizsysteme und Sanitäranlagen mo",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -4051,6 +4028,8 @@
             "tag": "summary",
             "name": "Darf ich das Firmenfahrzeug mit nach Hau",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -4061,6 +4040,8 @@
             "tag": "summary",
             "name": "Gibt es Fernmontagen oder Wochenendarbei",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -4352,7 +4333,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 12223
+      "ms": 12142
     },
     {
       "pfad": "/",
@@ -5070,19 +5051,22 @@
         "elemente": 44,
         "link": {
           "gesamt": 32,
-          "ohneHover": 6,
+          "ohneHover": 2,
+          "ohneHoverAmElementSelbst": 6,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 5,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 1,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 1,
@@ -5091,6 +5075,7 @@
         "sonstiges": {
           "gesamt": 6,
           "ohneHover": 6,
+          "ohneHoverAmElementSelbst": 6,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -5101,6 +5086,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -5111,46 +5098,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.mt-10.grid > li:nth-of-type(1) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Anlagenmechaniker SHK",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.mt-10.grid > li:nth-of-type(2) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Kundendiensttechniker",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.mt-10.grid > li:nth-of-type(3) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Obermonteur / Projektleiter",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.mt-10.grid > li:nth-of-type(4) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Ausbildung Anlagenmechaniker",
-            "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -5161,6 +5110,8 @@
             "tag": "ul",
             "name": "Stimmen von Kunden und Team",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -5171,6 +5122,8 @@
             "tag": "summary",
             "name": "Wie läuft der diskrete Wechsel ab, wenn ",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -5181,6 +5134,8 @@
             "tag": "summary",
             "name": "Brauche ich ein Anschreiben oder einen L",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -5191,6 +5146,8 @@
             "tag": "summary",
             "name": "Welche Heizsysteme und Sanitäranlagen mo",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -5201,6 +5158,8 @@
             "tag": "summary",
             "name": "Darf ich das Firmenfahrzeug mit nach Hau",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -5211,6 +5170,8 @@
             "tag": "summary",
             "name": "Gibt es Fernmontagen oder Wochenendarbei",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -5502,7 +5463,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 11368
+      "ms": 11567
     },
     {
       "pfad": "/jobs",
@@ -6028,19 +5989,22 @@
         "elemente": 25,
         "link": {
           "gesamt": 24,
-          "ohneHover": 9,
+          "ohneHover": 5,
+          "ohneHoverAmElementSelbst": 9,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 1,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -6049,6 +6013,7 @@
         "sonstiges": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -6059,6 +6024,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -6069,46 +6036,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(1) > article.rounded-lg.bg-surface-2 > h2.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Anlagenmechaniker SHK",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(2) > article.rounded-lg.bg-surface-2 > h2.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Kundendiensttechniker",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(3) > article.rounded-lg.bg-surface-2 > h2.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Obermonteur / Projektleiter",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(4) > article.rounded-lg.bg-surface-2 > h2.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Ausbildung Anlagenmechaniker",
-            "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -6119,6 +6048,8 @@
             "tag": "a",
             "name": "Anrufen06441 42956",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -6129,6 +6060,8 @@
             "tag": "a",
             "name": "WhatsAppNachricht schreiben (öffnet in n",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -6139,6 +6072,8 @@
             "tag": "a",
             "name": "E-Mailinfo@bad-energie.de",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -6409,7 +6344,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10009
+      "ms": 10164
     },
     {
       "pfad": "/jobs",
@@ -6865,19 +6800,22 @@
         "elemente": 28,
         "link": {
           "gesamt": 28,
-          "ohneHover": 10,
+          "ohneHover": 6,
+          "ohneHoverAmElementSelbst": 10,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -6886,6 +6824,7 @@
         "sonstiges": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -6896,6 +6835,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -6906,6 +6847,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -6916,46 +6859,8 @@
             "tag": "a",
             "name": "Stellen",
             "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(1) > article.rounded-lg.bg-surface-2 > h2.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Anlagenmechaniker SHK",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(2) > article.rounded-lg.bg-surface-2 > h2.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Kundendiensttechniker",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(3) > article.rounded-lg.bg-surface-2 > h2.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Obermonteur / Projektleiter",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(4) > article.rounded-lg.bg-surface-2 > h2.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Ausbildung Anlagenmechaniker",
-            "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -6966,6 +6871,8 @@
             "tag": "a",
             "name": "Anrufen06441 42956",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -6976,6 +6883,8 @@
             "tag": "a",
             "name": "WhatsAppNachricht schreiben (öffnet in n",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -6986,6 +6895,8 @@
             "tag": "a",
             "name": "E-Mailinfo@bad-energie.de",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -7256,7 +7167,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 9652
+      "ms": 9784
     },
     {
       "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
@@ -7931,19 +7842,22 @@
         "elemente": 34,
         "link": {
           "gesamt": 24,
-          "ohneHover": 5,
+          "ohneHover": 2,
+          "ohneHoverAmElementSelbst": 5,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 7,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -7952,6 +7866,7 @@
         "sonstiges": {
           "gesamt": 3,
           "ohneHover": 3,
+          "ohneHoverAmElementSelbst": 3,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -7962,6 +7877,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -7972,6 +7889,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -7982,6 +7901,8 @@
             "tag": "summary",
             "name": "Wie läuft der diskrete Wechsel ab, wenn ",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -7992,6 +7913,8 @@
             "tag": "summary",
             "name": "Darf ich das Firmenfahrzeug mit nach Hau",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -8002,36 +7925,8 @@
             "tag": "summary",
             "name": "Gibt es Fernmontagen oder Wochenendarbei",
             "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(1) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Kundendiensttechniker",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(2) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Obermonteur / Projektleiter",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(3) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Ausbildung Anlagenmechaniker",
-            "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -8301,7 +8196,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 11101
+      "ms": 11178
     },
     {
       "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
@@ -8950,19 +8845,22 @@
         "elemente": 38,
         "link": {
           "gesamt": 29,
-          "ohneHover": 9,
+          "ohneHover": 6,
+          "ohneHoverAmElementSelbst": 9,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 6,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -8971,6 +8869,7 @@
         "sonstiges": {
           "gesamt": 3,
           "ohneHover": 3,
+          "ohneHoverAmElementSelbst": 3,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -8981,6 +8880,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -8991,6 +8892,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -9001,6 +8904,8 @@
             "tag": "a",
             "name": "Stellen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -9011,6 +8916,8 @@
             "tag": "summary",
             "name": "Wie läuft der diskrete Wechsel ab, wenn ",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -9021,6 +8928,8 @@
             "tag": "summary",
             "name": "Darf ich das Firmenfahrzeug mit nach Hau",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -9031,6 +8940,8 @@
             "tag": "summary",
             "name": "Gibt es Fernmontagen oder Wochenendarbei",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -9041,6 +8952,8 @@
             "tag": "a",
             "name": "Anrufen06441 42956",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -9051,6 +8964,8 @@
             "tag": "a",
             "name": "WhatsAppNachricht schreiben (öffnet in n",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -9061,36 +8976,8 @@
             "tag": "a",
             "name": "E-Mailinfo@bad-energie.de",
             "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(1) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Kundendiensttechniker",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(2) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Obermonteur / Projektleiter",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(3) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Ausbildung Anlagenmechaniker",
-            "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -9360,7 +9247,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10380
+      "ms": 10612
     },
     {
       "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
@@ -10023,19 +9910,22 @@
         "elemente": 34,
         "link": {
           "gesamt": 24,
-          "ohneHover": 5,
+          "ohneHover": 2,
+          "ohneHoverAmElementSelbst": 5,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 7,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -10044,6 +9934,7 @@
         "sonstiges": {
           "gesamt": 3,
           "ohneHover": 3,
+          "ohneHoverAmElementSelbst": 3,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -10054,6 +9945,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -10064,6 +9957,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -10074,6 +9969,8 @@
             "tag": "summary",
             "name": "Wie läuft der diskrete Wechsel ab, wenn ",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -10084,6 +9981,8 @@
             "tag": "summary",
             "name": "Darf ich das Firmenfahrzeug mit nach Hau",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -10094,36 +9993,8 @@
             "tag": "summary",
             "name": "Gibt es Fernmontagen oder Wochenendarbei",
             "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(1) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Anlagenmechaniker SHK",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(2) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Obermonteur / Projektleiter",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(3) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Ausbildung Anlagenmechaniker",
-            "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -10393,7 +10264,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 11113
+      "ms": 11204
     },
     {
       "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
@@ -11030,19 +10901,22 @@
         "elemente": 38,
         "link": {
           "gesamt": 29,
-          "ohneHover": 9,
+          "ohneHover": 6,
+          "ohneHoverAmElementSelbst": 9,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 6,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -11051,6 +10925,7 @@
         "sonstiges": {
           "gesamt": 3,
           "ohneHover": 3,
+          "ohneHoverAmElementSelbst": 3,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -11061,6 +10936,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -11071,6 +10948,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -11081,6 +10960,8 @@
             "tag": "a",
             "name": "Stellen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -11091,6 +10972,8 @@
             "tag": "summary",
             "name": "Wie läuft der diskrete Wechsel ab, wenn ",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -11101,6 +10984,8 @@
             "tag": "summary",
             "name": "Darf ich das Firmenfahrzeug mit nach Hau",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -11111,6 +10996,8 @@
             "tag": "summary",
             "name": "Gibt es Fernmontagen oder Wochenendarbei",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -11121,6 +11008,8 @@
             "tag": "a",
             "name": "Anrufen06441 42956",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -11131,6 +11020,8 @@
             "tag": "a",
             "name": "WhatsAppNachricht schreiben (öffnet in n",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -11141,36 +11032,8 @@
             "tag": "a",
             "name": "E-Mailinfo@bad-energie.de",
             "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(1) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Anlagenmechaniker SHK",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(2) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Obermonteur / Projektleiter",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(3) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Ausbildung Anlagenmechaniker",
-            "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -11440,7 +11303,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10653
+      "ms": 10699
     },
     {
       "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
@@ -12110,19 +11973,22 @@
         "elemente": 34,
         "link": {
           "gesamt": 24,
-          "ohneHover": 5,
+          "ohneHover": 2,
+          "ohneHoverAmElementSelbst": 5,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 7,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -12131,6 +11997,7 @@
         "sonstiges": {
           "gesamt": 3,
           "ohneHover": 3,
+          "ohneHoverAmElementSelbst": 3,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -12141,6 +12008,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -12151,6 +12020,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -12161,6 +12032,8 @@
             "tag": "summary",
             "name": "Wie läuft der diskrete Wechsel ab, wenn ",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -12171,6 +12044,8 @@
             "tag": "summary",
             "name": "Darf ich das Firmenfahrzeug mit nach Hau",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -12181,36 +12056,8 @@
             "tag": "summary",
             "name": "Gibt es Fernmontagen oder Wochenendarbei",
             "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(1) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Anlagenmechaniker SHK",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(2) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Kundendiensttechniker",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(3) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Ausbildung Anlagenmechaniker",
-            "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -12480,7 +12327,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10976
+      "ms": 11476
     },
     {
       "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
@@ -13124,19 +12971,22 @@
         "elemente": 38,
         "link": {
           "gesamt": 29,
-          "ohneHover": 9,
+          "ohneHover": 6,
+          "ohneHoverAmElementSelbst": 9,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 6,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -13145,6 +12995,7 @@
         "sonstiges": {
           "gesamt": 3,
           "ohneHover": 3,
+          "ohneHoverAmElementSelbst": 3,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -13155,6 +13006,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -13165,6 +13018,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -13175,6 +13030,8 @@
             "tag": "a",
             "name": "Stellen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -13185,6 +13042,8 @@
             "tag": "summary",
             "name": "Wie läuft der diskrete Wechsel ab, wenn ",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -13195,6 +13054,8 @@
             "tag": "summary",
             "name": "Darf ich das Firmenfahrzeug mit nach Hau",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -13205,6 +13066,8 @@
             "tag": "summary",
             "name": "Gibt es Fernmontagen oder Wochenendarbei",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -13215,6 +13078,8 @@
             "tag": "a",
             "name": "Anrufen06441 42956",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -13225,6 +13090,8 @@
             "tag": "a",
             "name": "WhatsAppNachricht schreiben (öffnet in n",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -13235,36 +13102,8 @@
             "tag": "a",
             "name": "E-Mailinfo@bad-energie.de",
             "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(1) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Anlagenmechaniker SHK",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(2) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Kundendiensttechniker",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(3) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Ausbildung Anlagenmechaniker",
-            "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -13534,7 +13373,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10594
+      "ms": 10835
     },
     {
       "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
@@ -14187,19 +14026,22 @@
         "elemente": 32,
         "link": {
           "gesamt": 24,
-          "ohneHover": 5,
+          "ohneHover": 2,
+          "ohneHoverAmElementSelbst": 5,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 5,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -14208,6 +14050,7 @@
         "sonstiges": {
           "gesamt": 3,
           "ohneHover": 3,
+          "ohneHoverAmElementSelbst": 3,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -14218,6 +14061,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -14228,6 +14073,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -14238,6 +14085,8 @@
             "tag": "summary",
             "name": "Brauche ich ein Anschreiben oder einen L",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -14248,6 +14097,8 @@
             "tag": "summary",
             "name": "Welche Heizsysteme und Sanitäranlagen mo",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -14258,36 +14109,8 @@
             "tag": "summary",
             "name": "Gibt es Fernmontagen oder Wochenendarbei",
             "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(1) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Anlagenmechaniker SHK",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(2) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Kundendiensttechniker",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(3) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Obermonteur / Projektleiter",
-            "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -14557,7 +14380,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10832
+      "ms": 10942
     },
     {
       "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
@@ -15184,19 +15007,22 @@
         "elemente": 36,
         "link": {
           "gesamt": 29,
-          "ohneHover": 9,
+          "ohneHover": 6,
+          "ohneHoverAmElementSelbst": 9,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 4,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -15205,6 +15031,7 @@
         "sonstiges": {
           "gesamt": 3,
           "ohneHover": 3,
+          "ohneHoverAmElementSelbst": 3,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -15215,6 +15042,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -15225,6 +15054,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -15235,6 +15066,8 @@
             "tag": "a",
             "name": "Stellen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -15245,6 +15078,8 @@
             "tag": "summary",
             "name": "Brauche ich ein Anschreiben oder einen L",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -15255,6 +15090,8 @@
             "tag": "summary",
             "name": "Welche Heizsysteme und Sanitäranlagen mo",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -15265,6 +15102,8 @@
             "tag": "summary",
             "name": "Gibt es Fernmontagen oder Wochenendarbei",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -15275,6 +15114,8 @@
             "tag": "a",
             "name": "Anrufen06441 42956",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -15285,6 +15126,8 @@
             "tag": "a",
             "name": "WhatsAppNachricht schreiben (öffnet in n",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -15295,36 +15138,8 @@
             "tag": "a",
             "name": "E-Mailinfo@bad-energie.de",
             "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(1) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Anlagenmechaniker SHK",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(2) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Kundendiensttechniker",
-            "hover": false,
-            "fokusVisible": true,
-            "fokusNurFocus": false,
-            "deaktiviert": false
-          },
-          {
-            "fundstelle": "ul.grid.gap-4 > li:nth-of-type(3) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
-            "typ": "link",
-            "tag": "a",
-            "name": "Obermonteur / Projektleiter",
-            "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -15594,7 +15409,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10452
+      "ms": 10358
     },
     {
       "pfad": "/bewerbung",
@@ -15980,18 +15795,21 @@
         "link": {
           "gesamt": 10,
           "ohneHover": 2,
+          "ohneHoverAmElementSelbst": 2,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 6,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -16000,6 +15818,7 @@
         "sonstiges": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -16010,6 +15829,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -16020,6 +15841,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -16289,7 +16112,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 9651
+      "ms": 9472
     },
     {
       "pfad": "/bewerbung",
@@ -16675,18 +16498,21 @@
         "link": {
           "gesamt": 10,
           "ohneHover": 2,
+          "ohneHoverAmElementSelbst": 2,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 6,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -16695,6 +16521,7 @@
         "sonstiges": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -16705,6 +16532,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -16715,6 +16544,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -16984,7 +16815,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 9424
+      "ms": 9507
     },
     {
       "pfad": "/bewerbung/danke",
@@ -17357,18 +17188,21 @@
         "link": {
           "gesamt": 10,
           "ohneHover": 5,
+          "ohneHoverAmElementSelbst": 5,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -17377,6 +17211,7 @@
         "sonstiges": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -17387,6 +17222,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -17397,6 +17234,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -17407,6 +17246,8 @@
             "tag": "a",
             "name": "Anrufen06441 42956",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -17417,6 +17258,8 @@
             "tag": "a",
             "name": "WhatsAppNachricht schreiben (öffnet in n",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -17427,6 +17270,8 @@
             "tag": "a",
             "name": "E-Mailinfo@bad-energie.de",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -17616,7 +17461,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 8522
+      "ms": 8579
     },
     {
       "pfad": "/bewerbung/danke",
@@ -17900,18 +17745,21 @@
         "link": {
           "gesamt": 10,
           "ohneHover": 5,
+          "ohneHoverAmElementSelbst": 5,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -17920,6 +17768,7 @@
         "sonstiges": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -17930,6 +17779,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -17940,6 +17791,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -17950,6 +17803,8 @@
             "tag": "a",
             "name": "Anrufen06441 42956",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -17960,6 +17815,8 @@
             "tag": "a",
             "name": "WhatsAppNachricht schreiben (öffnet in n",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -17970,6 +17827,8 @@
             "tag": "a",
             "name": "E-Mailinfo@bad-energie.de",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -18159,7 +18018,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 8417
+      "ms": 8539
     },
     {
       "pfad": "/bewerbung/mappe",
@@ -18793,18 +18652,21 @@
         "link": {
           "gesamt": 5,
           "ohneHover": 2,
+          "ohneHoverAmElementSelbst": 2,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 15,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 7,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 7,
@@ -18813,6 +18675,7 @@
         "sonstiges": {
           "gesamt": 1,
           "ohneHover": 1,
+          "ohneHoverAmElementSelbst": 1,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -18823,6 +18686,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -18833,6 +18698,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -18843,6 +18710,8 @@
             "tag": "section",
             "name": "AnschreibenDein NameWohnort · Telefon · ",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -19112,7 +18981,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10698
+      "ms": 10356
     },
     {
       "pfad": "/bewerbung/mappe",
@@ -19710,18 +19579,21 @@
         "link": {
           "gesamt": 5,
           "ohneHover": 2,
+          "ohneHoverAmElementSelbst": 2,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 15,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 7,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 7,
@@ -19730,6 +19602,7 @@
         "sonstiges": {
           "gesamt": 1,
           "ohneHover": 1,
+          "ohneHoverAmElementSelbst": 1,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -19740,6 +19613,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -19750,6 +19625,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -19760,6 +19637,8 @@
             "tag": "section",
             "name": "AnschreibenDein NameWohnort · Telefon · ",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -20029,7 +19908,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10189
+      "ms": 9976
     },
     {
       "pfad": "/datenschutz",
@@ -20558,18 +20437,21 @@
         "link": {
           "gesamt": 42,
           "ohneHover": 12,
+          "ohneHoverAmElementSelbst": 12,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 1,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -20578,6 +20460,7 @@
         "sonstiges": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -20588,6 +20471,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -20598,6 +20483,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -20608,6 +20495,8 @@
             "tag": "a",
             "name": "datenschutz@bad-energie.de",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -20618,6 +20507,8 @@
             "tag": "a",
             "name": "Herkunftsmessung",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -20628,6 +20519,8 @@
             "tag": "a",
             "name": "Schutz vor Missbrauch",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -20638,6 +20531,8 @@
             "tag": "a",
             "name": "Hosting, Server-Logdateien und Sicherhei",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -20648,6 +20543,8 @@
             "tag": "a",
             "name": "Datenschutzerklärung von Google",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -20658,6 +20555,8 @@
             "tag": "a",
             "name": "Entwurf und Bewerbungsmappe im Browser",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -20668,6 +20567,8 @@
             "tag": "a",
             "name": "Google Maps",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -20678,6 +20579,8 @@
             "tag": "a",
             "name": "E-Mail an datenschutz@bad-energie.de",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -20688,6 +20591,8 @@
             "tag": "a",
             "name": "datenschutz@bad-energie.de",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -20698,6 +20603,8 @@
             "tag": "a",
             "name": "06441 42956",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -20967,7 +20874,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 13003
+      "ms": 13368
     },
     {
       "pfad": "/datenschutz",
@@ -21470,18 +21377,21 @@
         "link": {
           "gesamt": 46,
           "ohneHover": 12,
+          "ohneHoverAmElementSelbst": 12,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -21490,6 +21400,7 @@
         "sonstiges": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -21500,6 +21411,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -21510,6 +21423,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -21520,6 +21435,8 @@
             "tag": "a",
             "name": "datenschutz@bad-energie.de",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -21530,6 +21447,8 @@
             "tag": "a",
             "name": "Herkunftsmessung",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -21540,6 +21459,8 @@
             "tag": "a",
             "name": "Schutz vor Missbrauch",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -21550,6 +21471,8 @@
             "tag": "a",
             "name": "Hosting, Server-Logdateien und Sicherhei",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -21560,6 +21483,8 @@
             "tag": "a",
             "name": "Datenschutzerklärung von Google",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -21570,6 +21495,8 @@
             "tag": "a",
             "name": "Entwurf und Bewerbungsmappe im Browser",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -21580,6 +21507,8 @@
             "tag": "a",
             "name": "Google Maps",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -21590,6 +21519,8 @@
             "tag": "a",
             "name": "E-Mail an datenschutz@bad-energie.de",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -21600,6 +21531,8 @@
             "tag": "a",
             "name": "datenschutz@bad-energie.de",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -21610,6 +21543,8 @@
             "tag": "a",
             "name": "06441 42956",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -21879,7 +21814,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 11769
+      "ms": 11866
     },
     {
       "pfad": "/impressum",
@@ -22338,18 +22273,21 @@
         "link": {
           "gesamt": 28,
           "ohneHover": 2,
+          "ohneHoverAmElementSelbst": 2,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 1,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -22358,6 +22296,7 @@
         "sonstiges": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -22368,6 +22307,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -22378,6 +22319,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -22647,7 +22590,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10130
+      "ms": 10216
     },
     {
       "pfad": "/impressum",
@@ -23080,18 +23023,21 @@
         "link": {
           "gesamt": 32,
           "ohneHover": 2,
+          "ohneHoverAmElementSelbst": 2,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -23100,6 +23046,7 @@
         "sonstiges": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -23110,6 +23057,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -23120,6 +23069,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -23389,7 +23340,7 @@
       },
       "fehler": [],
       "gesperrt": 0,
-      "ms": 10036
+      "ms": 10002
     },
     {
       "pfad": "/gibt-es-nicht-404",
@@ -23806,18 +23757,21 @@
         "link": {
           "gesamt": 17,
           "ohneHover": 2,
+          "ohneHoverAmElementSelbst": 2,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 1,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -23826,6 +23780,7 @@
         "sonstiges": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -23836,6 +23791,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -23846,6 +23803,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -24120,7 +24079,7 @@
         }
       ],
       "gesperrt": 0,
-      "ms": 9464
+      "ms": 9468
     },
     {
       "pfad": "/gibt-es-nicht-404",
@@ -24493,18 +24452,21 @@
         "link": {
           "gesamt": 21,
           "ohneHover": 2,
+          "ohneHoverAmElementSelbst": 2,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "knopf": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
         "feld": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0,
           "mitFehlerstilPruefung": 0,
@@ -24513,6 +24475,7 @@
         "sonstiges": {
           "gesamt": 0,
           "ohneHover": 0,
+          "ohneHoverAmElementSelbst": 0,
           "ohneFokusVisible": 0,
           "ohneHoverUndOhneFokus": 0
         },
@@ -24523,6 +24486,8 @@
             "tag": "a",
             "name": "Zum Inhalt springen",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": true,
             "deaktiviert": false
@@ -24533,6 +24498,8 @@
             "tag": "a",
             "name": "Bad und Energie GmbH Lahn Dill, zur Star",
             "hover": false,
+            "hoverSelbst": false,
+            "hoverOrt": null,
             "fokusVisible": true,
             "fokusNurFocus": false,
             "deaktiviert": false
@@ -24807,7 +24774,7 @@
         }
       ],
       "gesperrt": 0,
-      "ms": 9586
+      "ms": 9567
     }
   ]
 }
