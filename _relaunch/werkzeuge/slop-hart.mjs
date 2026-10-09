@@ -868,7 +868,7 @@ if (teile.includes('render')) {
   }
   await browser.close();
   bericht.seiten = roh;
-  bericht.bedingungen.render = { ansichten: vps.map((v) => v.name), farbschema: 'hell', bewegung: 'no-preference', warten: 'S-07: domcontentloaded + 300 ms; Rest: networkidle + fonts.ready + 600 ms, dann scrollThrough + 500 ms', stichprobeS05: 60, tabStopps: 15, axeRegeln: ['color-contrast'] };
+  bericht.bedingungen.render = { ansichten: vps.map((v) => v.name), farbschema: 'hell', bewegung: 'no-preference', warten: 'S-07: domcontentloaded + 300 ms; Rest: networkidle + fonts.ready + 600 ms, dann scrollThrough (mit html{scroll-behavior:auto!important}, damit das Seitenende erreicht wird; Abdeckung steht je Seite in s02.scrollAbdeckung) + 500 ms', stichprobeS05: 60, tabStopps: 15, axeRegeln: ['color-contrast'] };
 }
 
 // ═════════════════════════════ Zusammenfassung und Ausgabe ═════════════════════════════

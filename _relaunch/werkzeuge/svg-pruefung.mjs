@@ -214,6 +214,8 @@ for (const p of GRUNDMENGE) {
   try {
     const res = await page.goto(base + p.path, { waitUntil: 'networkidle', timeout: 45_000 });
     await page.evaluate(() => document.fonts?.ready);
+    // Weiches Scrollen (html { scroll-behavior: smooth }) lässt scrollThrough das Seitenende verfehlen: für die Messung auf sofort stellen
+    await page.addStyleTag({ content: 'html{scroll-behavior:auto!important}' });
     await scrollThrough(page);
     await page.waitForTimeout(400);
     const r = await page.evaluate(inspiziereSvgs);
@@ -352,7 +354,7 @@ const zusammenfassung = {
 };
 const bericht = {
   label, base, erstellt: new Date().toISOString(),
-  bedingungen: { ansicht: 'd1440 hell', bewegung: 'no-preference', gewartet: 'networkidle + scrollThrough + 400 ms', svgo: 'svgo 4.0.0, multipass', budgets: { iconRohBytes: ICON_BUDGET_BYTES, illustrationGzipBytes: ILLU_BUDGET_GZIP } },
+  bedingungen: { ansicht: 'd1440 hell', bewegung: 'no-preference', gewartet: 'networkidle + scrollThrough (mit scroll-behavior: auto) + 400 ms', svgo: 'svgo 4.0.0, multipass', budgets: { iconRohBytes: ICON_BUDGET_BYTES, illustrationGzipBytes: ILLU_BUDGET_GZIP } },
   zusammenfassung, idKollisionen, verweiseKaputt, seiten, dateien,
 };
 await fs.writeFile(path.join(outDir, 'svg.json'), JSON.stringify(bericht, null, 2));
