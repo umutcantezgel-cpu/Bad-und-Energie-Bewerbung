@@ -336,5 +336,5 @@ Stand der Live-Prüfung auf `localhost:3600` mit GET (Chrome/141-User-Agent). Ni
 
 ## Bildbelege (Zuordnung)
 
-Verwendete Ausschnitte (Pfad relativ zu `_relaunch/`): `belege/p0-altstand/alt-start__d1440-light__01.webp` (Oberleiste, Kopf, Schnellleiste, WhatsApp-Kreis, Cookie-Knopf), `…alt-start__m375-light__01.webp` (mobiler Kopf, Hamburger, Express-Knopf, abgeschnittene Oberleiste), `…alt-fehler-404__m375-light__01.webp` (mobile 404, nicht geöffnet), `…alt-impressum__d1440-light__01.webp` (Impressum oben), `…alt-impressum__d1440-light__03.webp` (Fuß), `…alt-datenschutz__d1440-light__01.webp` (Datenschutz oben, Kennzahlen, Inhaltsverzeichnis), `…alt-fehler-404__d1440-light__01.webp` (404).
+Verwendete Ausschnitte (Pfad relativ zu `_relaunch/`): `belege/p0-altstand/alt-start__d1440-light__01.webp` (Oberleiste, Kopf, Schnellleiste, WhatsApp-Kreis, Cookie-Knopf), `…alt-start__m375-light__01.webp` (mobiler Kopf, Hamburger, Express-Knopf, abgeschnittene Oberleiste), `…alt-impressum__d1440-light__01.webp` (Impressum oben), `…alt-impressum__d1440-light__03.webp` (Fuß), `…alt-datenschutz__d1440-light__01.webp` (Datenschutz oben, Kennzahlen, Inhaltsverzeichnis), `…alt-fehler-404__d1440-light__01.webp` (404).
 Zugeordnet sind nur Ausschnitte, die geöffnet und geprüft wurden. Alle übrigen Zeilen stehen mit „–“. Lücken siehe OFFENE FRAGEN.
