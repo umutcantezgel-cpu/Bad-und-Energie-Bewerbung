@@ -24,3 +24,20 @@ Geltungsbereich: Z-05 und Z-11 gelten für alles, was der Lauf ändern darf. Vor
 ## Phasentore
 - **P0 (09.10.2026, bestanden):** Plattform läuft (Produktions-Build :3500, Altstand :3600) · Sicherung belegt (Ausgangsstand a83269d, Archive `_relaunch/sicherung/altstand-main-f2e7eae.tar.gz` und `ausgangsstand-a83269d.tar.gz`, lokal) · Messbasis vollständig: Bildschirmfotos (96 + 36), Lighthouse (Median aus 5), axe (110 Läufe), Tastatur/Reflow/Zoom/Textabstände/erzwungene Farben/ohne JS, Größen, Konsolenfehler, Slop hart und weich, SVG, Meta, Jury-Ausgangswert je Hauptseite. Belege: `MESSUNGEN.md`.
 - **P1 (09.10.2026, bestanden):** Z-01 erfüllt (siehe Zeile Z-01). 165 Element-Pässe, 61 zu bauen (Muss 20 · Soll 35 · Kann 6), 9 zurückgestellt (5,5 %), jede Zurückstellung und Kann-Einstufung von frischen Gegenprüfern geprüft (gegenpruefung-p1.md, gegenpruefung-p1-delta.json). Belege: `VERLUSTLISTE.md`, `atlas/`, ENTSCHEIDUNGEN E-014, E-017.
+
+## Ausbau auf Showcase-Niveau (Lauf 2, gemeinsamer Lauf nach E-018)
+Bezugspunkt „Endstand 1“ = Ausgangsstand a83269d (P0-Messung). Schwerpunktseiten: `/`, `/jobs/anlagenmechaniker-shk-wetzlar`. Status wie oben; ENTFÄLLT nur bei A-08.
+
+| A | Kriterium | Methode | Schwelle | Beleg | Status |
+|---|---|---|---|---|---|
+| A-01 | Spitzenniveau | Jury (Anker 8/8,5/9/10), Endabnahme Median von 5 frischen Opus-Juroren, mit Lockvogel | Schwerpunktseiten gewichtet ≥ 9,0, Design und Kreativität je ≥ 9,0, keine Kategorie < 8,5; übrige Hauptseiten ≥ 8,5 (Arbeitsseiten ohne Kreativität, Gewichte hochgerechnet) | MESSUNGEN.md | ☐ |
+| A-02 | Signifikanz | Blindvergleich Ausgangsstand gegen Endstand je Schwerpunktseite und Ansicht, beide Reihenfolgen | ≥ 90 % Siege; Jury-Zuwachs ≥ halber Abstand P0-Wert → 10 (Start 5,2 → ≥ 7,6; Stellenseite 5,0 → ≥ 7,5) | MESSUNGEN.md | ☐ |
+| A-03 | Erster Augenblick | Wow-Probe, 5 frische Haiku-Erstbetrachter, erster Bildschirm (Bildfolge 1,5 s) mobil und Desktop je für sich, gemischt mit Ausgangsstand | Median aus Überraschung und Begehrlichkeit ≥ 8,5; Vertrauen ≥ Ausgangsstand; ≥ 4/5 nennen konkretes Markenmerkmal, geben Angebot richtig wieder, werten Ausgangsstand niedriger | Formulare | ☐ |
+| A-04 | Erinnerung | 3 frische Erstbetrachter sehen den Vorführpfad als Bildfolge | jeder nennt ≥ 2 der Hauptmomente aus KERN | Formulare | ☐ |
+| A-05 | Kein schwacher Klick | Zufallsstichprobe 20 % der übrigen Seiten, mindestens 8, Startwert vorher notiert | Jury je Seite ≥ 8,0, 0 harte Slop-Befunde | MESSUNGEN.md | ☐ |
+| A-06 | Kein Rückschritt | Volltest nach Lauf 1 | Z-01…Z-14 erfüllt; Lauf-2-Budgets auf allen Hauptseiten; Lighthouse mobil ≥ 90 auch auf Schwerpunktseiten | Testprotokolle | ☐ |
+| A-07 | Ruhige Fassung | Jury mit reduzierter Bewegung auf den Schwerpunktseiten | ≥ 8,0 je Seite, Z-09-Regeln für reduzierte Bewegung | MESSUNGEN.md | ☐ |
+| A-08 | WebGL und Canvas | Messung je Moment | Regeln Lauf-2 §6; LoAF nach Z-09; JS-Heap nach 20 Pfadwechseln ≤ +10 % | Messprotokoll | ☐ |
+| A-09 | Vorführpaket | frischer Gegenprüfer gegen Belege | vollständig nach Lauf-2 §10, A-G2 | `ausbau/vorfuehrung/` | ☐ |
+| A-10 | Probevorführung | frischer Probeläufer, zweimal, lokaler Produktions-Build mit Vorführ-Umgebung auf 127.0.0.1 | Chromium mobil 4× CPU und gedrosseltes Netz: 0 Fehler, Tippen → Rückmeldung ≤ 100 ms, nächste Seite ≤ 1 s, Framezeiten nach Z-09; WebKit, wenn ohne Nachinstallation vorhanden, sonst MENSCHEN; Desktop fehlerfrei | Protokoll, Aufzeichnung | ☐ |
+| A-11 | Übergabe | frischer Gegenprüfer | BERICHT, KERN neue Hauptversion, MENSCHEN vollständig, Anleitung Zusammenführen/Zurückrollen | Dateien | ☐ |

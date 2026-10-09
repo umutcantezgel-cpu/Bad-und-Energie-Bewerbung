@@ -123,3 +123,56 @@ Format: E-[Nr] · Datum · Gegenstand · Entscheidung · Grund · Umkehr (bei De
 - **Neue Bauaufgaben aus Z-01:** E-SEO-014 (`llms.txt`-Ergänzung), E-SEO-010 (Benefit-Fakt), E-START-038 (jetzt Soll).
 - **Umkehr:** Die Pass-Dateien tragen „korrigiert nach P1-GEGEN-02; vorher …“.
 - Die Richtungswahl erhält die nächste freie Nummer.
+
+## E-018 · 09.10.2026 · Denkprotokoll: Zusammenlegung von Lauf 1 und Folgeauftrag „Ausbau auf Showcase-Niveau“ (Lauf 2)
+- **Anlass:**
+  - Der Auftraggeber hat um 15:01 UTC den Folgeauftrag geschickt. Er liegt wörtlich in `ausbau/AUFTRAG.md`.
+  - Lauf 1 stand zu diesem Zeitpunkt in P2.
+  - Der Folgeauftrag setzt einen abgeschlossenen Lauf 1 voraus (A0: „läuft Lauf 1 noch, HALT“).
+  - Auf die Rückfrage hat der Auftraggeber gewählt: „Lauf-2-Ziele sofort einbauen“.
+- **Ziel:** ein einziger Lauf, der die Verluste zurückführt und das Ergebnis auf Showcase-Niveau für das PUBLIKUM hebt (Chef, zuerst am Handy), ohne Arbeit doppelt zu machen.
+- **Wege:**
+  1. Lauf 1 erst abschließen, dann Lauf 2 nach seinen eigenen Regeln. Sauber, aber die Richtung und das Fundament werden zweimal angefasst.
+  2. Beide Läufe jetzt zusammenlegen. Nur ein Freigabepunkt, kein Umbau eines frischen Endstands; die Richtung wird sofort auf Showcase ausgelegt.
+  3. Lauf 1 an P2 kappen und Lauf 2 auf dem Ausgangsstand starten. Dann gehen die Rückführung (Z-02) und ihre Belege verloren.
+- **Bewertung:** Weg 2 dient beiden Nordsternen am besten und folgt der ausdrücklichen Wahl des Auftraggebers. Risiko: Die Showcase-Ziele erhöhen Umfang und Kontingentverbrauch, und die Kriterien „gegen Endstand 1“ brauchen einen anderen Bezugspunkt. Aufwand höher als Weg 1, aber ohne Doppelarbeit.
+- **Entscheidung:** Weg 2. Die HALT-Voraussetzung aus Lauf-2-A0 ist per Auftraggeber-Entscheidung aufgehoben.
+- **Regeln des gemeinsamen Laufs:**
+  - Beide Aufträge gelten; bei Widerspruch gilt Lauf 2 (dort §5).
+  - „Endstand 1“ meint den **Ausgangsstand a83269d**, gemessen in P0. Dazu gelten die Z-Kriterien von Lauf 1 als Bestandsschutz (A-G3).
+  - **Abnahme:** `ABNAHME.md` führt Z-01…Z-14 und zusätzlich A-01…A-11 (gegen den Ausgangsstand angepasst).
+    - A-02: Blindvergleich und Zuwachs gegen die P0-Jury.
+    - A-03: Wow-Probe gegen den ersten Bildschirm des Ausgangsstands.
+    - A-06: Z-05, Z-11 und Z-12 plus Lauf-2-Budgets.
+  - **Schwerpunktseiten:** `/` und `/jobs/anlagenmechaniker-shk-wetzlar` (Vorlage der Stellenseite). Nur diese beiden Hauptseiten sind Erzählseiten. `/bewerbung` bleibt Arbeitsseite und ist im Vorführpfad der Akt „Handlung“ mit gestaltetem Erfolgsmoment.
+  - **STEIGERUNG spektakulär** ersetzt AUSBAUSTUFE und GESTALTUNGSMUT: je Schwerpunktseite ein Hauptmoment, ein Leitfaden, höchstens ein WebGL- oder Canvas-Moment auf der Startseite.
+  - **Budgets:** Erzählseiten bis 120 KB gzip JS für Bewegung, WebGL und Canvas, nur nachgeladen; sonst Lauf 1. Zielreserve beim LCP ≤ 2,2 s (N-14).
+  - **Ansichten:** zusätzlich 390×844 und 430×932.
+  - **Bildmaterial:** nur Vorhandenes. Die Frage nach echten Fotos (N-16) kommt in die Freigabe-Übersicht.
+  - **Freigabe:** **ein** Halt nach dem gemeinsamen P2/A2. Die Übersicht vereint die Pflichtinhalte beider Aufträge in höchstens 40 Zeilen.
+  - **Arbeitsordner:** bleibt `_relaunch`. Lauf-2-Teile liegen in `_relaunch/ausbau/` (AUFTRAG.md, `richtungen`, `drehbuch`, `vorfuehrung`). `ausbau/STATUS.md` und `ausbau/PRUEFPUNKT.md` verweisen auf die gemeinsamen Dateien.
+  - **Statuszeile:** die von Lauf 1, ergänzt um „Ausbau [n]/11 · Wow [Wert]“.
+- **Umkehrprobe:** Die Trennung bleibt möglich. Die A-Kriterien stehen in einem eigenen Abschnitt, Lauf-2-Material liegt in `_relaunch/ausbau/`.
+- **Folgen zweiter Ordnung:**
+  - Mehr Kontingent pro Phase (nur Opus und Haiku, E-020).
+  - Längere Dauer bis ABSCHLUSS.
+  - Die Jury-Schwellen steigen auf den Schwerpunktseiten von Z-08 (8,0) auf A-01 (9,0); N-16 (Fotos) wiegt damit schwerer.
+
+## E-019 · 09.10.2026 · Wunsch des Auftraggebers zur Richtung (Rang 5)
+- Er hat erneut das Bild von Kachel B, Runde 1, geschickt; gesichert in `belege/auftraggeber/2026-10-09-1501-kachel-b-runde1-d1440.webp`. Auf die Rückfrage „Was meinst du damit?“ lautete die Antwort: „alle“. Die drei Antwortmöglichkeiten waren „B ist meine Richtung“, „Nur Farben/Stimmung“ und „B-Bild mit A-Präzision“.
+- **Auslegung:** Grundrichtung ist **B in der Fassung der Runde 1**:
+  - Haus mit Wärmepumpe, roter Vorlauf, blauer Rücklauf, warmes Papier.
+  - Farben und Stimmung nach E-016.
+  - Verschmolzen mit der **Präzision von A**: Maße und Maßketten, Arbeitszeit-Diagramm, die Leitung endet im Bewerben-Knopf.
+  - Die Reparaturen aus Runde 2 von A und B bleiben erhalten: 320 px, Tokens, Ziel des Logo-Links, eigene Mobil-Komposition.
+  - C liefert nur Material, etwa den Tagesbogen der Arbeitszeit.
+- **Folgen:**
+  - Die ausstehende Überarbeitung von C und die Jury der Runde 2 (am Sitzungslimit gescheitert) entfallen. Die Ergebnisse der Runden 1 und 2 dienen als Eingangsmaterial.
+  - Die drei Varianten nach Lauf-2-A2 sind Steigerungsvarianten dieser Grundrichtung: zugespitzt, kühn und an der Grenze mit WebGL/Canvas. Bewertet werden sie per Wow-Probe und Jury.
+  - Den Erklärtext „So arbeitet eine Wärmepumpe …“ setzt der Lauf nicht selbst wieder ein; er steht als Vorschlag in TEXTVORSCHLAEGE.md.
+- Kommt am Freigabepunkt ein Widerspruch, gilt ÄNDERN.
+
+## E-020 · 09.10.2026 · Modelle, Push und Produktions-Merge (Antworten des Auftraggebers)
+- **Modelle:** ab sofort nur Opus 5.5 und Haiku 5.5. Opus übernimmt Orchestrierung, Richtung, Bau (Stufen 2 und 3), Jury, Gegenprüfung, Drehbuch und WebGL. Haiku übernimmt Messen, Bildschirmfotos, Erstbetrachter, Doku und Mengenarbeit. Sonnet wird nicht mehr eingesetzt; das ersetzt die MODELLE-Zeile aus Lauf 1.
+- **Push:** Sicherungs-Pushes nur auf `claude/kind-ride-n9duod`, nach jedem Schritt (der Container ist flüchtig). Vercel-Vorschauen sind erlaubt. Das ersetzt „PUSH UND VERÖFFENTLICHUNG: nie“ aus Lauf 2 für diesen Branch.
+- **Produktions-Merge** (ergänzt E-001): Der PR nach `main` entsteht erst nach ABSCHLUSS. Gemergt wird erst auf das **ausdrückliche Wort des Auftraggebers** und nur bei erfüllten P7-Bedingungen: CI grün, Supabase-Migrationen lesend geprüft, Vercel-Variablen bestätigt (M-001).
