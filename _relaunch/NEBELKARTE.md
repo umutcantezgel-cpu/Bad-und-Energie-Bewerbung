@@ -17,6 +17,7 @@ Sortiert nach Wirkung × Unsicherheit (W × U, je 1–3). Jede Zeile hat eine Li
 | N-11 | riskant | Produktions-Merge ohne Vercel-Variablen → Bewerbungen 503 | 3×2 | G: Gate in P7, M-001 | offen |
 | N-12 | angenommen | Unbelegte Fakten (fakten-abgleich B1–B26) werden nicht neu ausgespielt | 2×1 | G: nur `lib/content/facts.ts` ohne `pending` | gesichert |
 | N-14 | unbekannt | Warum liegt der simulierte LCP mobil bei 2,6–3,1 s, obwohl TTFB 16 ms und die beobachtete Renderverzögerung 157 ms betragen? LCP-Element ist Text der H1 (`span.text-ink-muted`). Vermutung: Lantern rechnet alle Anfragen vor dem beobachteten LCP ein (JS-Chunks, Schrift-Swap) – Ausgangs-LCP hängt am Schrift- und JS-Pfad | 3×2 | L: P3-Lichtungspaket – Lighthouse-Trace auswerten, Varianten messen (Schrift preload/`font-display`, kritisches CSS, LCP-Text ohne Abhängigkeit vom Hydrations-JS); Z-12 hängt daran | offen |
+| N-15 | unbekannt | Vorteils-Konfigurator (E-START-024): Neu interpretieren (2 Urteile) oder bereits durch Stellenseiten-„Dein Paket“ abgedeckt (1 Urteil)? | 2×2 | L: Richtungswahl P2 – die gewählte Richtung zeigt eine interaktive Paketansicht nur, wenn sie die Besucheraufgabe 1/4 messbar besser löst; sonst Rückfall auf „Dein Paket“ mit Hinweis in MENSCHEN | offen |
 | N-13 | gesichert | Altstand ist lokal lauffähig (Port 3600) → Altverhalten testbar | – | – | gesichert |
 
 ## Vorab-Scheitern – Frühwarnzeichen → Gegenmaßnahme

@@ -1,0 +1,1028 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F3F5F9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0A1236" media="(prefers-color-scheme: dark)">
+<title>Stilkachel Werkplan</title>
+<meta name="description" content="Stilkachel Richtung A „Werkplan“ für das Karriereportal der Bad &amp; Energie GmbH: Leitungen, Maße und Plan statt Vorlagenlook.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 2v10a6 6 0 0 0 6 6h10' fill='none' stroke='%23D60000' stroke-width='4'/%3E%3C/svg%3E">
+<link rel="preload" href="fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/martian-mono-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
+<script>
+/* Startzustände nur über diese Klasse; ohne Skript oder bei reduzierter Bewegung bleibt alles im Endzustand; nach 2 s zeigt ein Zeitlimit alles. */
+(function(){var h=document.documentElement;h.classList.add('js');
+try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){h.classList.add('anim');setTimeout(function(){h.classList.remove('anim')},2000)}}catch(e){}})();
+</script>
+<style>
+/* ───────── Schriften (selbst gehostet, OFL, Teilmengen latin + latin-ext) ───────── */
+@font-face{font-family:"Archivo";font-style:normal;font-weight:100 900;font-stretch:62% 125%;font-display:swap;src:url(fonts/archivo-latin-ext-wdth-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Archivo";font-style:normal;font-weight:100 900;font-stretch:62% 125%;font-display:swap;src:url(fonts/archivo-latin-wdth-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Martian Mono";font-style:normal;font-weight:100 800;font-stretch:75% 112.5%;font-display:swap;src:url(fonts/martian-mono-latin-ext-wdth-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Martian Mono";font-style:normal;font-weight:100 800;font-stretch:75% 112.5%;font-display:swap;src:url(fonts/martian-mono-latin-wdth-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+/* Ersatzschriften mit angeglichenen Metriken (gemessen gegen die echten Dateien) */
+@font-face{font-family:"Archivo Ersatz";src:local("Arial"),local("Liberation Sans"),local("Helvetica Neue"),local("Helvetica");size-adjust:98.7%;ascent-override:89.2%;descent-override:21.3%;line-gap-override:0%}
+@font-face{font-family:"Martian Ersatz";src:local("Courier New"),local("Liberation Mono"),local("Courier");size-adjust:116.6%;ascent-override:85.8%;descent-override:17.2%;line-gap-override:0%}
+
+/* ───────── Tokens ───────── */
+:root{
+  color-scheme:light dark;
+  /* Palette hell: „Pauspapier“ */
+  --papier:#F3F5F9; --feld:#E4E9F2; --linie:#C3CADB; --linie-stark:#6A7599;
+  --tinte:#111A3B; --tinte-ged:#444F72;
+  --blau:#0C1A72; --rot:#D60000; --rot-text:#C00000; --rot-hover:#A80000;
+  --weiss:#FFFFFF; --waerme:#FF9A85; --fokus:#0C1A72; --plakette:transparent;
+  /* Schriften */
+  --f-text:"Archivo","Archivo Ersatz",system-ui,sans-serif;
+  --f-mono:"Martian Mono","Martian Ersatz",ui-monospace,monospace;
+  /* Abstandsskala (10 Stufen) */
+  --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-5:1.5rem; --s-6:2rem; --s-7:3rem; --s-8:4rem; --s-9:6rem; --s-10:8rem;
+  /* Schriftgrößen (9 Stufen) */
+  --t-1:.75rem; --t-2:.8125rem; --t-3:1rem; --t-4:1.125rem;
+  --t-5:clamp(1.25rem,1.1rem + .6vw,1.5rem);
+  --t-6:clamp(1.5rem,1.2rem + 1.2vw,2.25rem);
+  --t-7:clamp(2.25rem,1.3rem + 3.6vw,4.5rem);
+  --t-8:clamp(3.5rem,2.2rem + 5.4vw,7rem);
+  --t-9:clamp(3rem,2.4rem + 2.6vw,4.5rem);
+  /* Radien */
+  --r-1:2px; --r-2:50%;
+  /* Dauern (6) und Kurven (4) */
+  --d-1:120ms; --d-2:180ms; --d-3:320ms; --d-4:560ms; --d-5:900ms; --d-6:1200ms; --stagger:80ms;
+  --e-aus:cubic-bezier(.16,1,.3,1); --e-wechsel:cubic-bezier(.65,0,.35,1); --e-ein:cubic-bezier(.32,0,.67,0); --e-lin:linear;
+  /* Raster */
+  --rand:1rem; --bund:1rem; --strich:4px; --haar:1px;
+}
+@media (min-width:40rem){:root{--rand:1.5rem;--bund:1.5rem}}
+@media (min-width:64rem){:root{--rand:2rem}}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    /* Palette dunkel: „Blaupause“ */
+    --papier:#0A1236; --feld:#101B49; --linie:#24336B; --linie-stark:#7A8CCB;
+    --tinte:#EAF0FF; --tinte-ged:#AAB6DC;
+    --blau:#7FA4FF; --rot:#D60000; --rot-text:#FF8E82; --rot-hover:#E60000;
+    --fokus:#CFE0FF; --plakette:#FFFFFF;
+  }
+}
+
+/* ───────── Grundlagen ───────── */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:var(--s-5);hyphens:auto;hyphenate-limit-chars:6 3 3}
+body{margin:0;background:var(--papier);color:var(--tinte);font:400 var(--t-4)/1.6 var(--f-text);font-stretch:100%;text-wrap:pretty;overflow-wrap:break-word;-webkit-font-smoothing:antialiased}
+img,svg{display:block;max-width:100%}
+h1,h2,h3,h4,p,ul,ol,dl,dd,figure{margin:0}
+ul[role="list"],ol[role="list"]{list-style:none;padding:0}
+a{color:var(--blau);text-underline-offset:.2em;text-decoration-thickness:var(--haar)}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:3px solid var(--fokus);outline-offset:3px}
+::selection{background:var(--blau);color:var(--papier)}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.sprung{position:absolute;left:var(--s-4);top:-6rem;z-index:10;background:var(--blau);color:var(--papier);padding:var(--s-3) var(--s-4);min-height:2.75rem;display:inline-flex;align-items:center;font-weight:600}
+.sprung:focus-visible{top:var(--s-4)}
+.wrap{width:min(100% - 2 * var(--rand),80rem);margin-inline:auto}
+
+/* Typografie */
+.display{font-family:var(--f-text);font-stretch:68%;font-weight:800;line-height:.92;letter-spacing:-.01em;text-wrap:balance;hyphens:manual}
+.label{font-family:var(--f-mono);font-stretch:85%;font-weight:500;font-size:var(--t-1);line-height:1.4;text-transform:uppercase;letter-spacing:.12em;color:var(--tinte-ged);hyphens:manual}
+.mass-zahl{font-family:var(--f-mono);font-stretch:75%;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.mono{font-family:var(--f-mono);font-stretch:85%;font-size:var(--t-2);letter-spacing:.02em}
+.h2{font-size:var(--t-7);margin-block:var(--s-3) var(--s-4);max-width:14ch}
+.h3{font-family:var(--f-text);font-stretch:75%;font-weight:700;font-size:var(--t-6);line-height:1.05;letter-spacing:-.005em;text-wrap:balance}
+.lead{font-size:var(--t-5);line-height:1.5;max-width:38rem}
+.text{max-width:40rem}
+.muted{color:var(--tinte-ged)}
+.tabular{font-variant-numeric:tabular-nums}
+
+/* Kopfleiste */
+.kopf{border-bottom:var(--haar) solid var(--linie-stark);background:var(--papier)}
+.kopf__in{display:flex;align-items:center;justify-content:space-between;gap:var(--s-4);min-height:4.25rem}
+.logo{display:block;background:var(--plakette);padding:var(--s-1) var(--s-2);margin-left:calc(var(--s-2) * -1)}
+.logo img{height:2.25rem;width:auto}
+.nav{display:none}
+.menue{position:relative}
+.menue summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:var(--s-2);min-height:2.75rem;padding-inline:var(--s-3);border:var(--haar) solid var(--linie-stark);border-radius:var(--r-1);color:var(--tinte);transition:background-color var(--d-2) var(--e-wechsel)}
+.menue summary::-webkit-details-marker{display:none}
+.menue summary:hover{background:var(--feld)}
+.menue[open] summary{background:var(--feld)}
+.menue ul{position:absolute;right:0;top:calc(100% + var(--s-2));z-index:5;min-width:13rem;margin:0;padding:var(--s-2);background:var(--papier);border:var(--haar) solid var(--linie-stark);border-radius:var(--r-1)}
+.menue li a{display:flex;align-items:center;min-height:2.75rem;padding-inline:var(--s-3);color:var(--tinte);text-decoration:none;font-weight:600}
+.menue li a:hover{background:var(--feld)}
+@media (min-width:48rem){
+  .logo img{height:2.75rem}
+  .menue{display:none}
+  .nav{display:flex;gap:var(--s-5)}
+  .nav a{display:inline-flex;align-items:center;min-height:2.75rem;color:var(--tinte);text-decoration:none;font-weight:600;font-stretch:90%;border-bottom:2px solid transparent;transition:border-color var(--d-2) var(--e-wechsel)}
+  .nav a:hover{border-bottom-color:var(--blau)}
+}
+
+/* Knopf = Hauptaktion (Rot) */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;min-height:3.5rem;padding:0 var(--s-6);background:var(--rot);color:var(--weiss);font-family:var(--f-text);font-stretch:85%;font-weight:700;font-size:var(--t-5);letter-spacing:.01em;text-decoration:none;border:0;border-radius:0;cursor:pointer;transition:background-color var(--d-2) var(--e-wechsel),transform var(--d-1) var(--e-aus)}
+.btn:hover{background:var(--rot-hover)}
+.btn:active{transform:translateY(1px)}
+.btn[aria-disabled="true"],.btn:disabled{background:var(--linie);color:var(--tinte-ged);cursor:not-allowed}
+.btn__muffe{position:absolute;top:0;bottom:0;width:var(--s-3);background:var(--rot-hover);pointer-events:none}
+.btn:hover .btn__muffe{background:var(--tinte)}
+
+/* ───────── Erster Bildschirm ───────── */
+.hero{padding-block:0 var(--s-8)}
+.stage__in{display:block;position:relative}
+.row{display:grid;grid-template-columns:3.5rem 1fr;min-width:0}
+.rc{position:relative;display:block}
+/* Steigstränge (mobil): Blau links, Rot rechts, Rot biegt in den Knopf */
+.rc-a::before,.rc-a::after,.rc-b .rc__bl,.rc-c::before,.rc-d::before{content:"";position:absolute;top:0;bottom:0;width:var(--strich);left:calc(.75rem - var(--strich) / 2);background:var(--blau);transform-origin:top}
+.rc-a::after{left:calc(2.5rem - var(--strich) / 2);background:var(--rot)}
+.rc-b{display:flex;flex-direction:column}
+.rc-b .rc__vl{width:3.5rem;height:3.5rem;flex:none;position:absolute;left:0;top:0;overflow:visible}
+.rc-b .rc__bl{left:calc(.75rem - var(--strich) / 2)}
+.rc-b .rc__vl path{fill:none;stroke:var(--rot);stroke-width:var(--strich);stroke-linecap:butt}
+.rc-d::after{content:"";position:absolute;left:.75rem;width:2.75rem;top:var(--abg,2.25rem);height:2px;margin-top:-1px;background:var(--blau);transform-origin:left}
+.rc-d i{position:absolute;left:.75rem;top:var(--abg,2.25rem);width:.875rem;height:.875rem;margin:-.4375rem 0 0 -.4375rem;border-radius:var(--r-2);background:var(--papier);border:var(--strich) solid var(--blau)}
+.rc-end::before{bottom:auto;height:calc(var(--abg,2.25rem) + 1px)}
+.hero__body{padding-top:var(--s-6);padding-bottom:var(--s-6)}
+.eyebrow{display:flex;align-items:center;gap:var(--s-3);margin-bottom:var(--s-4)}
+.eyebrow::before{content:"";flex:none;width:var(--s-6);height:2px;background:var(--blau)}
+.h1{margin:0;font-size:var(--t-8)}
+.h1__a{display:block}
+.h1__b{display:block;margin-top:var(--s-3);font-family:var(--f-text);font-stretch:78%;font-weight:600;font-size:var(--t-6);line-height:1.1;letter-spacing:0;color:var(--tinte-ged);text-wrap:balance}
+.hero__text .lead{margin-top:var(--s-5)}
+.hero__ctain{padding-bottom:var(--s-5)}
+.hero__ctain .btn{width:100%;max-width:22rem}
+.hero__ctain .btn__muffe{left:0}
+.mikro{margin-top:var(--s-3);font-size:var(--t-3);color:var(--tinte-ged);max-width:22rem}
+.mass{margin:0;padding:0;list-style:none}
+.mass li{--abg:calc(var(--s-3) + var(--t-9) / 2);display:grid;grid-template-columns:3.5rem 1fr;align-items:stretch}
+.mass__in{position:relative;display:grid;grid-template-columns:9.25rem 1fr;align-items:baseline;column-gap:var(--s-2);padding:var(--s-3) 0 var(--s-4);border-bottom:var(--haar) solid var(--linie-stark);margin-left:var(--s-2)}
+.mass li:last-child .mass__in{border-bottom-color:transparent}
+.mass__in::before,.mass__in::after{content:"";position:absolute;bottom:-.4rem;width:.8rem;height:var(--haar);background:var(--linie-stark);transform:rotate(-45deg)}
+.mass__in::before{left:-.4rem}
+.mass__in::after{right:-.4rem}
+.mass li:last-child .mass__in::before,.mass li:last-child .mass__in::after{display:none}
+.mass__wert{font-size:var(--t-9);line-height:1;color:var(--blau);white-space:nowrap}
+.mass__wert small{font-size:.5em;margin-left:.15em;letter-spacing:0;font-weight:500}
+.mass__cap{font-family:var(--f-mono);font-stretch:85%;font-size:var(--t-1);text-transform:uppercase;letter-spacing:.08em;color:var(--tinte-ged);line-height:1.3;overflow-wrap:anywhere;hyphens:manual}
+@media (min-width:48rem){.mass__cap{letter-spacing:.12em}}
+.plan,.pl-b{display:none}
+
+/* Zeichnen der Leitung (nur mit Klasse .anim aus dem Inline-Skript im Kopf) */
+@keyframes zeichnen{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes wachsen{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes wachsen-x{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes erscheinen{from{opacity:0}to{opacity:1}}
+@keyframes fluss{from{stroke-dashoffset:.1}to{stroke-dashoffset:-1}}
+@media (prefers-reduced-motion:no-preference){
+  .anim .rc-a::after{animation:wachsen var(--d-4) var(--e-wechsel) 150ms both}
+  .anim .rc-a::before{animation:wachsen var(--d-4) var(--e-wechsel) 150ms both}
+  .anim .rc-b .rc__vl path{stroke-dasharray:1;animation:zeichnen var(--d-3) var(--e-aus) 700ms both}
+  .anim .rc-b .rc__bl{animation:wachsen var(--d-2) var(--e-lin) 700ms both}
+  .anim .rc-c::before{animation:wachsen var(--d-2) var(--e-lin) 880ms both}
+  .anim .rc-d::before{animation:wachsen var(--d-2) var(--e-lin) 1000ms both}
+  .anim .rc-d::after{animation:wachsen-x var(--d-2) var(--e-aus) 1100ms both}
+  .anim .rc-d i{animation:erscheinen var(--d-1) var(--e-aus) 1100ms both}
+}
+
+/* ───────── Desktop-Bühne ab 70 rem: Plan 1280 × 680, alle Maße in Planeinheiten (su) ───────── */
+@media (min-width:70rem){
+  :root{--su-v:calc(min(100vw - 2 * var(--rand),80rem) / 1280);--t-8:clamp(3.5rem,calc(112 * var(--su-v)),7rem);--t-9:clamp(2.75rem,calc(76 * var(--su-v)),4.75rem)}
+  .hero{padding-bottom:var(--s-9)}
+  .stage{container-type:inline-size}
+  .stage__in{--su:calc(100cqw / 1280);height:calc(680 * var(--su))}
+  .plan{display:block;position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+  .rc{display:none}
+  .row{display:block}
+  .hero__text{position:absolute;left:0;top:0;width:calc(610 * var(--su))}
+  .hero__body{padding:calc(48 * var(--su)) 0 0}
+  .hero__cta{position:absolute;left:0;top:calc(562 * var(--su));width:calc(610 * var(--su))}
+  .hero__ctain{padding:0}
+  .hero__ctain .btn{width:calc(300 * var(--su));max-width:none;height:calc(56 * var(--su));min-height:2.75rem}
+  .hero__ctain .btn__muffe{left:auto;right:0}
+  .mikro{margin-top:calc(14 * var(--su));max-width:none;white-space:nowrap}
+  .pl-b{display:block;position:absolute;left:calc(var(--x) * var(--su));top:calc(var(--y) * var(--su));font-family:var(--f-mono);font-stretch:85%;font-size:var(--t-1);letter-spacing:.14em;text-transform:uppercase;line-height:1;white-space:nowrap}
+  .pl-b--vl{color:var(--rot-text)}
+  .pl-b--rl{color:var(--blau)}
+  .mass{position:absolute;inset:0}
+  .mass li{position:absolute;left:calc(748 * var(--su));width:calc(514 * var(--su));height:calc(128 * var(--su));display:block}
+  .mass li:nth-child(1){top:calc(40 * var(--su))}
+  .mass li:nth-child(2){top:calc(168 * var(--su))}
+  .mass li:nth-child(3){top:calc(296 * var(--su))}
+  .mass li:nth-child(4){top:calc(424 * var(--su))}
+  .mass__in{display:grid;grid-template-columns:calc(290 * var(--su)) 1fr;column-gap:0;align-items:center;height:100%;padding:0;margin:0;border:0}
+  .mass__in::before,.mass__in::after{display:none}
+  .mass__wert{padding-left:calc(8 * var(--su))}
+  /* Strangschema */
+  .plan path,.plan circle,.plan rect{vector-effect:none}
+  .p-vl,.p-rl,.p-fluss,.p-abg,.p-rl-kappe,.p-knoten,.p-muffe{fill:none;stroke-linecap:butt;stroke-linejoin:round}
+  .p-vl{stroke:var(--rot);stroke-width:4}
+  .p-rl{stroke:var(--blau);stroke-width:4}
+  .p-fluss{stroke:var(--waerme);stroke-width:4;stroke-dasharray:0 2}
+  .p-abg{stroke:var(--blau);stroke-width:2}
+  .p-rl-kappe{stroke:var(--blau);stroke-width:4}
+  .p-knoten{fill:var(--papier);stroke:var(--blau);stroke-width:4}
+  .p-muffe{stroke:var(--blau);stroke-width:2;fill:var(--papier)}
+  .p-haar{fill:none;stroke:var(--linie-stark);stroke-width:1}
+  .p-pfeil-vl{fill:var(--rot)}
+  .p-pfeil-rl{fill:var(--blau)}
+}
+@media (min-width:70rem) and (prefers-reduced-motion:no-preference){
+  .anim .p-vl,.anim .p-rl{stroke-dasharray:1;animation:zeichnen var(--d-6) var(--e-wechsel) 150ms both}
+  .anim .p-abg,.anim .p-muffe,.anim .p-knoten{animation:erscheinen var(--d-2) var(--e-aus) 600ms both}
+  @media (hover:hover){
+    .hero:has(.btn:hover,.btn:focus-visible) .p-fluss{animation:fluss var(--d-5) var(--e-lin) 1 both}
+  }
+}
+
+/* ───────── Arbeitszeit-Band ───────── */
+.woche{padding-block:var(--s-7)}
+.woche__h{margin-top:var(--s-2);max-width:24ch}
+.band{--spalte:0px;margin-top:var(--s-6)}
+.band__achse{position:relative;height:1.5rem;margin-left:var(--spalte);font-family:var(--f-mono);font-stretch:85%;font-size:var(--t-1);color:var(--tinte-ged)}
+.band__achse span{position:absolute;top:0;left:calc((var(--h) - 6) / 12 * 100%);transform:translateX(-50%)}
+.band__koerper{position:relative}
+.band__raster{position:absolute;top:0;bottom:0;right:0;left:var(--spalte);width:calc(100% - var(--spalte));height:100%;overflow:visible}
+.band__raster line{stroke:var(--linie);stroke-width:1}
+.band__zeilen{position:relative;margin:0}
+.zeile{display:grid;grid-template-columns:1fr}
+.zeile dt{font-family:var(--f-mono);font-stretch:85%;font-weight:600;font-size:var(--t-2);text-transform:uppercase;letter-spacing:.1em;padding-top:var(--s-3)}
+.zeile dd{margin:0}
+.feld{position:relative;height:3.5rem}
+.balken{position:absolute;left:calc((var(--a) - 6) / 12 * 100%);width:calc((var(--b) - var(--a)) / 12 * 100%);bottom:var(--s-3);height:var(--strich);background:var(--blau)}
+.balken::before,.balken::after{content:"";position:absolute;top:-.5rem;width:var(--strich);height:calc(var(--strich) + 1rem);background:var(--blau)}
+.balken::before{left:0}
+.balken::after{right:calc(var(--strich) * -1 + var(--strich))}
+.bt{position:absolute;bottom:calc(var(--strich) + .75rem);font-family:var(--f-mono);font-stretch:85%;font-size:var(--t-2);color:var(--tinte);white-space:nowrap}
+.bt--a{left:var(--s-2)}
+.bt--b{right:var(--s-2)}
+.balken--fr::after{display:none}
+.fa{position:absolute;left:calc((var(--b) - 6) / 12 * 100%);bottom:var(--s-3);display:flex;align-items:center;gap:var(--s-3);transform:translateY(50%);margin-bottom:calc(var(--strich) / 2)}
+.fa__k{flex:none;width:var(--s-5);height:var(--s-5);margin-left:calc(var(--s-5) / -2);border-radius:var(--r-2);background:var(--papier);border:var(--strich) solid var(--blau)}
+.fa__in{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s-1)}
+.fa b{font-size:var(--t-5);color:var(--blau);line-height:1}
+.fa__t{font-family:var(--f-mono);font-stretch:85%;font-size:var(--t-1);text-transform:uppercase;letter-spacing:.1em;color:var(--tinte-ged);line-height:1}
+.frei{position:absolute;left:calc((var(--a) - 6) / 12 * 100%);width:calc((var(--b) - var(--a)) / 12 * 100%);bottom:var(--s-2);height:2.25rem;border:var(--haar) solid var(--linie-stark);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.frei svg{position:absolute;inset:0;width:100%;height:100%}
+.frei__t{position:relative;background:var(--papier);padding:2px var(--s-3);font-family:var(--f-mono);font-stretch:85%;font-size:var(--t-1);text-transform:uppercase;letter-spacing:.08em;color:var(--tinte);white-space:nowrap}
+.schraff{stroke:var(--linie-stark);stroke-width:1}
+@media (min-width:48rem){
+  .band{--spalte:7rem}
+  .zeile{grid-template-columns:var(--spalte) 1fr;align-items:end}
+  .zeile dt{padding:0 0 var(--s-3)}
+  .feld{height:4.25rem}
+  .frei__t{letter-spacing:.12em}
+  .fa__in{flex-direction:row;align-items:baseline;gap:var(--s-3)}
+}
+
+/* ───────── Einsatzgebiet ───────── */
+.region{padding-block:var(--s-8) var(--s-9)}
+.region__kopf{display:grid;gap:var(--s-5);align-items:end}
+.region__kopf .h2{max-width:none}
+.region__werk{margin-top:var(--s-7);display:grid;gap:var(--s-5);grid-template-areas:"seg" "hinweis" "plan" "tab";align-items:start}
+.seg{grid-area:seg}.hinweis{grid-area:hinweis}.tab{grid-area:tab}.lageplan{grid-area:plan}
+.seg{border:0;margin:0;padding:0;min-width:0}
+html:not(.js) .seg{display:none}
+.seg legend{padding:0;margin-bottom:var(--s-2)}
+.seg__reihe{display:inline-flex;border:var(--haar) solid var(--linie-stark);border-radius:var(--r-1)}
+.seg__o{position:relative;display:block}
+.seg__o+.seg__o{border-left:var(--haar) solid var(--linie-stark)}
+.seg__o input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.seg__o span{display:flex;align-items:center;justify-content:center;min-width:5.25rem;min-height:3rem;padding-inline:var(--s-4);font-family:var(--f-mono);font-stretch:85%;font-weight:600;font-size:var(--t-3);color:var(--tinte);transition:background-color var(--d-2) var(--e-wechsel),color var(--d-2) var(--e-wechsel)}
+.seg__o:hover span{background:var(--feld)}
+.seg__o input:checked + span{background:var(--blau);color:var(--papier)}
+.seg__o input:focus-visible + span{outline:3px solid var(--fokus);outline-offset:3px}
+.hinweis{max-width:34rem;min-height:3.2em;color:var(--tinte-ged);font-size:var(--t-3)}
+.orte{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.orte th,.orte td{padding:0;border-bottom:var(--haar) solid var(--linie);text-align:left;font-weight:400}
+.orte thead th{padding:var(--s-2);font-family:var(--f-mono);font-stretch:85%;font-weight:500;font-size:var(--t-1);text-transform:uppercase;letter-spacing:.1em;color:var(--tinte-ged);border-bottom-color:var(--linie-stark)}
+.orte thead th:not(:first-child),.orte td{text-align:right}
+.orte tbody th{font-weight:600;font-stretch:90%;border-left:4px solid transparent;padding-block:0}
+.orte tbody th:not(:has(button)){padding:var(--s-3) var(--s-2)}
+.orte td{height:2.75rem;padding:0 var(--s-2);font-family:var(--f-mono);font-stretch:85%;font-size:var(--t-3);white-space:nowrap}
+.orte tr.is-sel{background:var(--feld)}
+.orte tr.is-sel th{border-left-color:var(--blau)}
+.orte tr.is-out th,.orte tr.is-out td{color:var(--tinte-ged);font-weight:400}
+.ort-btn{display:flex;align-items:center;width:100%;min-height:2.75rem;padding:0 var(--s-2);background:none;border:0;border-radius:0;font:inherit;color:inherit;text-align:left;cursor:pointer;transition:background-color var(--d-2) var(--e-wechsel)}
+.ort-btn:hover{background:var(--feld)}
+.ort-btn:focus-visible{outline-offset:-3px}
+.aus{display:none;margin-left:var(--s-2);font-family:var(--f-mono);font-stretch:85%;font-weight:400;font-size:var(--t-1);text-transform:uppercase;letter-spacing:.08em}
+.orte tr.is-out .aus{display:inline}
+.orte tbody th{display:table-cell}
+.orte tbody th:has(button){display:table-cell}
+.lageplan{position:relative;max-width:42rem;width:100%;margin-inline:auto}
+.pl{width:100%;height:auto;aspect-ratio:1;background:var(--papier);border:var(--haar) solid var(--linie-stark)}
+.pl-bg{fill:var(--papier)}
+.pl-aussen{opacity:.7}
+.pl-raster{fill:none;stroke:var(--linie);stroke-width:1}
+.pl-scheibe{fill:var(--feld);opacity:0;transition:opacity var(--d-3) var(--e-wechsel)}
+[data-radius="35"] .pl-s35,[data-radius="25"] .pl-s25,[data-radius="15"] .pl-s15{opacity:1}
+html:not(.js) .pl-s35{opacity:1}
+.pl-ring{fill:none;stroke:var(--linie-stark);stroke-width:1;stroke-dasharray:5 5;transition:stroke var(--d-3) var(--e-wechsel),stroke-width var(--d-3) var(--e-wechsel)}
+.pl-r35{stroke:var(--blau);stroke-width:2;stroke-dasharray:none}
+[data-radius="15"] .pl-r15,[data-radius="25"] .pl-r25,[data-radius="35"] .pl-r35{stroke:var(--blau);stroke-width:4;stroke-dasharray:none}
+.pl-ring-t,.pl-t-klein,.pl-lbl{paint-order:stroke;stroke:var(--papier);stroke-linejoin:round}
+.pl-ring-t{font-family:var(--f-mono);font-stretch:85%;font-size:12px;fill:var(--tinte-ged);stroke-width:6px}
+.pl-t-klein{font-family:var(--f-mono);font-stretch:85%;font-size:11px;fill:var(--tinte-ged);stroke-width:4px}
+.pl-mass path,.pl-nord path{fill:none;stroke:var(--tinte-ged);stroke-width:1.5}
+.pl-lbl{font-family:var(--f-text);font-stretch:88%;font-weight:500;font-size:13px;fill:var(--tinte);stroke-width:5px}
+.pl-leit{fill:none;stroke:var(--linie-stark);stroke-width:1}
+.pl-punkt{fill:var(--blau);stroke:var(--papier);stroke-width:1.5}
+.pl-ort.is-out .pl-punkt{fill:var(--papier);stroke:var(--blau);stroke-width:2}
+.pl-ort.is-out .pl-lbl{fill:var(--tinte-ged);font-weight:400}
+.pl-route{fill:none;stroke:var(--blau);stroke-width:4;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;visibility:hidden}
+.pl-ort.is-sel .pl-route{stroke-dashoffset:0;visibility:visible}
+.pl-marke{fill:none;stroke:var(--blau);stroke-width:2;opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(.6);transition:opacity var(--d-2) var(--e-ein),transform var(--d-2) var(--e-ein)}
+.pl-ort.is-sel .pl-marke{opacity:1;transform:scale(1);transition:opacity var(--d-3) var(--e-aus),transform var(--d-3) var(--e-aus)}
+.pl-ort.is-sel .pl-lbl{font-weight:700;fill:var(--blau)}
+.pl-betrieb{fill:var(--blau)}
+.pl-betrieb-ring{fill:var(--papier);stroke:var(--blau);stroke-width:2}
+.pl-mitte .pl-lbl{font-weight:600}
+.schriftfeld{background:var(--papier);border:var(--haar) solid var(--linie-stark);border-top:0}
+.schriftfeld dl{margin:0;display:grid;grid-template-columns:1.15fr 1fr 1fr}
+.schriftfeld dl>div{display:flex;flex-direction:column;justify-content:space-between;gap:var(--s-2);padding:var(--s-3)}
+.schriftfeld dl>div+div{border-left:var(--haar) solid var(--linie-stark)}
+.schriftfeld dt{display:flex;align-items:flex-start;gap:var(--s-2);font-family:var(--f-mono);font-stretch:85%;font-size:var(--t-1);text-transform:uppercase;letter-spacing:.08em;line-height:1.3;color:var(--tinte-ged)}
+.schriftfeld dd{margin:0;font-family:var(--f-text);font-weight:700;font-stretch:80%;font-size:var(--t-6);line-height:1.1}
+.schriftfeld dd.mass-zahl{font-family:var(--f-mono);font-stretch:75%;font-weight:600;color:var(--blau);font-size:var(--t-5);white-space:nowrap}
+.ic{flex:none;color:var(--blau)}
+@media (max-width:44.99rem){
+  .pl-lbl{font-size:21px;stroke-width:7px}
+  .pl-ring-t{font-size:19px}
+  .pl-t-klein{font-size:17px}
+  .pl-ort:not(.is-sel) .pl-lbl--kern,.pl-ort:not(.is-sel) .pl-lbl--kern ~ .x{display:none}
+  .pl-ort:not(.is-sel):not(.pl-mitte) .pl-leit{display:none}
+  .pl-ort.is-sel .pl-leit{display:inline}
+}
+@media (min-width:64rem){
+  .region{padding-block:var(--s-9)}
+  .region__kopf{grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:var(--s-7)}
+  .region__werk{grid-template-columns:minmax(0,5fr) minmax(0,7fr);grid-template-areas:"seg plan" "hinweis plan" "tab plan";column-gap:var(--s-8);row-gap:var(--s-4)}
+  .lageplan{margin-inline:0;max-width:none}
+}
+@media (min-width:45rem) and (max-width:63.99rem){
+  .region__werk{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"seg seg" "hinweis hinweis" "tab plan";column-gap:var(--s-6)}
+}
+.benutzt{--b:1}
+@media (prefers-reduced-motion:no-preference){
+  .benutzt .pl-ort.is-sel .pl-route{animation:zeichnen var(--d-4) var(--e-aus) both}
+}
+.cta2{margin-top:var(--s-8);display:grid;gap:var(--s-3)}
+.cta2__reihe{display:flex;align-items:flex-start;max-width:56rem}
+.cta2__leitung{flex:1;min-width:2rem;height:var(--strich);margin-top:calc(1.75rem - var(--strich) / 2);background:var(--rot)}
+.cta2__ziel{flex:none;display:grid;gap:var(--s-3);justify-items:start}
+.cta2 .btn__muffe{left:0}
+.cta2 .mikro{margin-top:0}
+
+/* ───────── Trenner (Leitungsversatz) ───────── */
+.trenner{display:flex;align-items:flex-start;height:1.5rem}
+.trenner i{flex:1;height:var(--haar);background:var(--linie-stark)}
+.trenner i:first-child{margin-top:1rem}
+.trenner i:last-child{margin-top:.5rem}
+.trenner svg{flex:none}
+.g-hl{fill:none;stroke:var(--linie-stark);stroke-width:1}
+.g-vl{fill:none;stroke:var(--rot);stroke-width:4;stroke-linecap:butt;stroke-linejoin:round}
+.g-rl{fill:none;stroke:var(--blau);stroke-width:4;stroke-linecap:butt;stroke-linejoin:round}
+.g-kn{fill:var(--papier);stroke:var(--blau);stroke-width:2}
+.g-mu{fill:var(--papier);stroke:var(--blau);stroke-width:2}
+.g-rahmen{fill:none;stroke:var(--linie-stark);stroke-width:1}
+.g-mp{fill:var(--tinte-ged)}
+.g-t{font-family:var(--f-mono);font-stretch:85%;font-size:12px;fill:var(--tinte-ged)}
+
+/* ───────── Systemblätter ───────── */
+.system{padding-block:var(--s-8) var(--s-9)}
+.system__kopf{display:grid;gap:var(--s-3);max-width:46rem;margin-bottom:var(--s-8)}
+.system__kopf .h2{max-width:none;margin-bottom:var(--s-2)}
+.blatt{display:grid;gap:var(--s-5);padding-block:var(--s-7);border-top:var(--haar) solid var(--linie-stark)}
+.blatt__kopf{display:flex;align-items:baseline;gap:var(--s-3);flex-wrap:wrap}
+.blatt__kopf .h3{font-size:var(--t-6)}
+.blatt__inhalt{display:grid;gap:var(--s-6);min-width:0}
+.h4{font-family:var(--f-text);font-stretch:85%;font-weight:700;font-size:var(--t-4);line-height:1.2;text-transform:none;margin:0}
+.zweispalt{display:grid;gap:var(--s-6)}
+@media (min-width:64rem){
+  .blatt{grid-template-columns:13rem minmax(0,1fr);column-gap:var(--s-7)}
+  .blatt__kopf{flex-direction:column;gap:var(--s-1);position:sticky;top:var(--s-5);align-self:start}
+  .zweispalt{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:var(--s-7)}
+}
+.leitsatz{margin:0;font-size:var(--t-6);font-stretch:74%;font-weight:700;line-height:1.08;max-width:36ch;color:var(--blau);hyphens:manual;text-wrap:balance}
+.ableitung{display:grid;gap:var(--s-4);margin:var(--s-3) 0 0;padding:0}
+.ableitung li{display:grid;grid-template-columns:2rem 1fr;gap:var(--s-3);max-width:40rem}
+.nr{color:var(--blau);font-size:var(--t-5);line-height:1.2}
+.text{max-width:40rem}
+.tabrahmen{overflow-x:auto;max-width:100%}
+.tabrahmen:focus-visible{outline-offset:-3px}
+.doku{width:100%;border-collapse:collapse;font-size:var(--t-3)}
+.doku th,.doku td{padding:var(--s-3) var(--s-3) var(--s-3) 0;border-bottom:var(--haar) solid var(--linie);text-align:left;vertical-align:top;font-weight:400}
+.doku thead th{font-family:var(--f-mono);font-stretch:85%;font-weight:500;font-size:var(--t-1);text-transform:uppercase;letter-spacing:.1em;color:var(--tinte-ged);border-bottom-color:var(--linie-stark);white-space:nowrap}
+.doku tbody th{font-weight:600;font-stretch:92%}
+.doku tfoot th,.doku tfoot td{border-bottom:0;padding-top:var(--s-4)}
+.doku .num{text-align:right;white-space:nowrap}
+.probe th{width:36%}
+.stufen,.register,.kontrast,.farben,.dateien{min-width:34rem}
+.fam{display:grid;gap:var(--s-2);align-content:start}
+.fam__name{margin:0;font-size:var(--t-7);line-height:1;color:var(--blau)}
+.fam__name.mass-zahl{font-size:var(--t-6);padding-block:var(--s-2)}
+.achse{display:grid;gap:var(--s-1);margin:0;padding:0}
+.achse li{display:grid;grid-template-columns:4.5rem 1fr;align-items:baseline;font-weight:700;font-size:var(--t-6);line-height:1.15;border-bottom:var(--haar) solid var(--linie);padding-block:var(--s-1);overflow:hidden;white-space:nowrap}
+.achse .mono{font-weight:400;font-stretch:85%;font-size:var(--t-2);color:var(--tinte-ged)}
+.stufen td:nth-child(2){min-width:12rem}
+.deutsch{max-width:36rem;font-size:var(--t-4)}
+.anteil{display:flex;height:3rem;border:var(--haar) solid var(--linie-stark)}
+.anteil span{flex:var(--w) 1 0;min-width:0;background:var(--c);display:flex;align-items:center;padding-inline:var(--s-2);font-family:var(--f-mono);font-stretch:85%;font-size:var(--t-1);white-space:nowrap;overflow:hidden;color:var(--tinte)}
+.anteil span+span{border-left:var(--haar) solid var(--linie-stark)}
+.anteil__u{margin-top:calc(var(--s-3) * -1)}
+.swatch{display:inline-block;width:2.5rem;height:1.5rem;margin-right:var(--s-3);vertical-align:middle;background:var(--c);border:var(--haar) solid var(--linie-stark)}
+.chip{display:inline-block;width:1.25rem;height:1.25rem;margin-right:var(--s-2);vertical-align:middle;background:var(--g);border:var(--haar) solid var(--linie-stark);position:relative}
+.chip::after{content:"";position:absolute;left:25%;top:25%;width:50%;height:50%;background:var(--f)}
+.kontrast td b{font-weight:600}
+.kontrast .pass{display:block;font-family:var(--f-mono);font-stretch:85%;font-size:var(--t-1);text-transform:uppercase;letter-spacing:.08em;color:var(--tinte-ged)}
+.kontrast .nok .pass{color:var(--rot-text);font-weight:700}
+.farben th .mono{white-space:nowrap}
+.farben td{white-space:nowrap}
+.farben td:last-child{white-space:normal}
+.raster-demo{margin:0;display:grid;gap:var(--s-3)}
+.raster-demo__reihe{display:grid;grid-template-columns:repeat(12,1fr);column-gap:var(--bund);height:7rem;padding-inline:0}
+.raster-demo__reihe span{display:flex;align-items:flex-end;justify-content:center;padding-bottom:var(--s-2);background:var(--feld);border-left:var(--haar) solid var(--linie-stark);border-right:var(--haar) solid var(--linie-stark);font-family:var(--f-mono);font-size:var(--t-1);color:var(--tinte-ged)}
+.abst{display:grid;gap:var(--s-1);margin:0;padding:0}
+.abst li{display:grid;grid-template-columns:3.5rem 1fr;grid-template-rows:auto auto;column-gap:var(--s-3);align-items:center;padding-block:var(--s-1)}
+.abst__b{display:block;height:var(--s-3);width:var(--w);max-width:100%;background:var(--blau)}
+.abst li .muted{grid-column:2}
+.bogen{width:100%;max-width:20rem;height:auto;margin-top:var(--s-3)}
+.grund{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-5) var(--s-4);margin:0;padding:0}
+.grund li{display:grid;gap:var(--s-1);align-content:start;font-size:var(--t-3)}
+.grund svg{width:100%;max-width:6rem;height:auto;border:var(--haar) solid var(--linie);background:var(--papier)}
+.grund b{font-family:var(--f-mono);font-stretch:85%;font-weight:600;font-size:var(--t-2);text-transform:uppercase;letter-spacing:.08em}
+@media (min-width:48rem){.grund{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:64rem){.grund{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.raster24{width:100%;max-width:18rem;height:auto;border:var(--haar) solid var(--linie-stark);background:var(--papier);color:var(--blau)}
+.r24-g path{fill:none;stroke:var(--linie);stroke-width:.04}
+.r24-k *{fill:none;stroke:var(--linie-stark);stroke-width:.06;stroke-dasharray:.3 .3}
+.r24-i{color:var(--blau)}
+.striche{display:grid;gap:var(--s-3);margin:0 0 var(--s-3);padding:0}
+.striche li{display:grid;grid-template-columns:5rem 1fr;gap:var(--s-3);align-items:center;font-size:var(--t-3)}
+.strich{display:block;height:var(--h);background:var(--c)}
+.ikonen{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-5) var(--s-4);margin:0;padding:0}
+.ikonen li{display:grid;gap:var(--s-1);align-content:start;font-size:var(--t-3);line-height:1.35}
+.ikonen b{font-family:var(--f-text);font-stretch:85%;font-weight:700}
+.ikon{display:flex;align-items:flex-end;gap:var(--s-4);color:var(--blau);padding-bottom:var(--s-2);border-bottom:var(--haar) solid var(--linie-stark);margin-bottom:var(--s-1)}
+@media (min-width:48rem){.ikonen{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.muster{margin:0;display:grid;gap:var(--s-3)}
+.muster figcaption{display:grid;gap:var(--s-1);font-size:var(--t-3)}
+.muster .trenner{margin-top:var(--s-3)}
+.schraff-demo{width:100%;max-width:14rem;height:auto}
+.zust{display:grid;gap:var(--s-6);margin:0;padding:0}
+.zust>li{display:grid;gap:var(--s-3)}
+.zust__reihe{display:flex;flex-wrap:wrap;gap:var(--s-5) var(--s-5);align-items:flex-start}
+.zust__reihe figure{margin:0;display:grid;gap:var(--s-2);justify-items:start}
+.zust figcaption{font-family:var(--f-mono);font-stretch:85%;font-size:var(--t-1);text-transform:uppercase;letter-spacing:.08em;color:var(--tinte-ged)}
+.btn--demo{padding-inline:var(--s-5);pointer-events:none}
+.btn--demo .btn__muffe{right:0;left:auto}
+.btn[aria-disabled="true"] .btn__muffe{background:var(--linie-stark)}
+.btn.is-hover{background:var(--rot-hover)}
+.btn.is-hover .btn__muffe{background:var(--tinte)}
+.btn.is-focus{outline:3px solid var(--fokus);outline-offset:3px}
+.btn.is-active{transform:translateY(1px);background:var(--rot-hover)}
+.demo-seg{display:flex;align-items:center;justify-content:center;min-width:5.25rem;min-height:3rem;padding-inline:var(--s-4);font-family:var(--f-mono);font-stretch:85%;font-weight:600;font-size:var(--t-3);color:var(--tinte)}
+.demo-seg.is-hover{background:var(--feld)}
+.demo-seg.is-on{background:var(--blau);color:var(--papier)}
+.demo-seg.is-focus{outline:3px solid var(--fokus);outline-offset:3px}
+.zust__reihe--zeilen .orte{width:13.5rem}
+.demo-orte .ort-btn{cursor:default}
+.ort-btn.is-hover{background:var(--feld)}
+.register th:first-child{white-space:nowrap}
+.register td:nth-child(4){min-width:9rem}
+.register td:nth-child(2){min-width:12rem}
+.dauern,.kurven{display:grid;gap:var(--s-3);margin:0;padding:0}
+.dauern li{display:grid;grid-template-columns:3.25rem 1fr 4.5rem;column-gap:var(--s-3);align-items:center;row-gap:var(--s-1)}
+.dauern li .muted{grid-column:1 / -1;font-size:var(--t-3)}
+.dauer__b{display:block;height:var(--s-3);width:var(--w);background:var(--blau)}
+.kurven li{display:grid;grid-template-columns:3.5rem 1fr;gap:var(--s-3);align-items:center;font-size:var(--t-3)}
+.kurven li>span{display:grid;gap:2px}
+.kv-rahmen{fill:none;stroke:var(--linie);stroke-width:1}
+.kv-kurve{fill:none;stroke:var(--blau);stroke-width:3}
+.demo{position:relative;display:grid;gap:var(--s-4);max-width:34rem;padding:var(--s-4);background:var(--feld);border:var(--haar) solid var(--linie-stark)}
+.demo svg{width:100%;height:auto}
+.dv{fill:none;stroke:var(--rot);stroke-width:4;stroke-dasharray:1}
+.dv-rl{fill:none;stroke:var(--blau);stroke-width:4}
+.dv-k{fill:var(--rot)}
+.dv-m{fill:var(--rot-hover)}
+.dv-t{font-family:var(--f-text);font-stretch:85%;font-weight:700;font-size:15px;fill:var(--weiss)}
+.df{fill:none;stroke:var(--waerme);stroke-width:4;stroke-dasharray:0 2}
+.demo__ktl{display:flex;flex-wrap:wrap;gap:var(--s-3);align-items:center}
+.knopf2{min-height:2.75rem;padding:0 var(--s-4);background:var(--papier);border:var(--haar) solid var(--blau);border-radius:var(--r-1);font-family:var(--f-text);font-stretch:90%;font-weight:700;font-size:var(--t-3);color:var(--blau);cursor:pointer;transition:background-color var(--d-2) var(--e-wechsel),color var(--d-2) var(--e-wechsel),transform var(--d-1) var(--e-aus)}
+.knopf2:hover{background:var(--blau);color:var(--papier)}
+.knopf2:active{transform:translateY(1px)}
+.demo__ktl p{margin:0}
+@keyframes fluss-demo{from{stroke-dasharray:.1 2;stroke-dashoffset:.1}to{stroke-dasharray:.1 2;stroke-dashoffset:-1}}
+@media (prefers-reduced-motion:no-preference){
+  .demo.laeuft .dv{animation:zeichnen var(--d-6) var(--e-wechsel) both}
+  .demo.fliesst .df{animation:fluss-demo var(--d-5) var(--e-lin) 1 both}
+}
+
+/* Plankopf */
+.plankopf{border-top:var(--haar) solid var(--linie-stark);padding-bottom:var(--s-8)}
+.plankopf__band{height:var(--s-6);margin-bottom:var(--s-6);border-bottom:var(--haar) solid var(--linie-stark)}
+.plankopf__band svg{display:block}
+.plankopf__raster{display:grid;grid-template-columns:1fr;margin:0;border:var(--haar) solid var(--linie-stark)}
+.plankopf__raster>div{padding:var(--s-3) var(--s-4);border-bottom:var(--haar) solid var(--linie-stark)}
+.plankopf__raster>div:last-child{border-bottom:0}
+.plankopf dt{font-family:var(--f-mono);font-stretch:85%;font-size:var(--t-1);text-transform:uppercase;letter-spacing:.1em;color:var(--tinte-ged)}
+.plankopf dd{margin:0;font-weight:600;font-stretch:92%}
+@media (min-width:48rem){
+  .plankopf__raster{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .plankopf__raster>div{border-right:var(--haar) solid var(--linie-stark)}
+  .plankopf__raster>div:nth-child(3n){border-right:0}
+  .plankopf__raster>div:nth-last-child(-n+3){border-bottom:0}
+}
+@media (forced-colors:active){
+  .btn,.seg__o span,.ort-btn{border:1px solid ButtonText}
+}
+
+</style>
+</head>
+
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="i-waermepumpe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="butt" stroke-linejoin="round"><path d="M3 21V8l4-4h12v17z"/><circle cx="11" cy="13.5" r="4.25"/><path d="M11 13.5a2.9 2.9 0 0 1 2.9-2.9" transform="rotate(0 11 13.5)"/><path d="M11 13.5a2.9 2.9 0 0 1 2.9-2.9" transform="rotate(120 11 13.5)"/><path d="M11 13.5a2.9 2.9 0 0 1 2.9-2.9" transform="rotate(240 11 13.5)"/><path d="M19 8h3M19 16h3"/></symbol><symbol id="i-bad" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="butt" stroke-linejoin="round"><path d="M12 2.5 17.46 10.98A6.5 6.5 0 1 1 6.54 10.98z"/><circle cx="12" cy="15" r="1.75" fill="currentColor" stroke="none"/></symbol><symbol id="i-heizung" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="butt" stroke-linejoin="round"><path d="M12 2.5c.6 3.6 6.5 6 6.5 12.2a6.5 6.5 0 0 1-13 0c0-2.4 1-3.9 2.3-5 .2 1.8 1 2.8 2 3.4C9.6 9.6 10.6 5.7 12 2.5z"/><path d="M12 21.2a2.6 2.6 0 0 1-2.6-2.6c0-1.4 1.2-2.2 2.6-3.8 1.4 1.6 2.6 2.4 2.6 3.8a2.6 2.6 0 0 1-2.6 2.6z" fill="currentColor" stroke="none"/></symbol><symbol id="i-werkzeug" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="butt" stroke-linejoin="round"><g transform="rotate(45 12 12)"><path d="M8.6 3.6V1.5M15.4 3.6V1.5M8.6 3.6A5.5 5.5 0 1 0 15.4 3.6M10 12.4V21.5h4V12.4"/></g></symbol><symbol id="i-fahrzeug" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="butt" stroke-linejoin="round"><path d="M2 17V9a1 1 0 0 1 1-1h10l5 5h4v4"/><path d="M13 8v9"/><circle cx="7" cy="17.5" r="2.25"/><circle cx="17" cy="17.5" r="2.25"/><path d="M2 17h2.75M9.25 17h5.5M19.25 17H22"/></symbol><symbol id="i-uhr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="butt" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 12v6.5M12 12l4-4"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></symbol><symbol id="i-standort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="butt" stroke-linejoin="round"><path d="M12 22 6.45 12.88A6.5 6.5 0 1 1 17.55 12.88z"/><circle cx="12" cy="9.5" r="2" fill="currentColor" stroke="none"/></symbol><symbol id="i-nachricht" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="butt" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M4 7.5l8 6.5 8-6.5"/></symbol><symbol id="i-menue" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 5h16M2 10h16M2 15h16"/></symbol><pattern id="schraffur" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V8" class="schraff"/></pattern></defs></svg>
+<a class="sprung" href="#inhalt">Zum Inhalt springen</a>
+<header class="kopf">
+  <div class="wrap kopf__in">
+    <a class="logo" href="#inhalt" aria-label="Bad &amp; Energie GmbH Lahn-Dill, zum Seitenanfang"><img src="logo.png" width="662" height="121" alt="Bad&amp;Energie GmbH Lahn-Dill"></a>
+    <nav class="nav" aria-label="Planverzeichnis">
+      <a href="#einsatzgebiet">Einsatzgebiet</a>
+      <a href="#leitidee">Leitidee</a>
+      <a href="#schrift">Schrift</a>
+      <a href="#palette">Palette</a>
+      <a href="#formen">Formen</a>
+      <a href="#bewegung">Bewegung</a>
+    </nav>
+    <details class="menue">
+      <summary class="label"><span>Plan</span><svg width="20" height="20" aria-hidden="true"><use href="#i-menue"/></svg></summary>
+      <ul role="list">
+        <li><a href="#einsatzgebiet">Einsatzgebiet</a></li>
+        <li><a href="#leitidee">Leitidee</a></li>
+        <li><a href="#schrift">Schrift</a></li>
+        <li><a href="#palette">Palette</a></li>
+        <li><a href="#formen">Formen</a></li>
+        <li><a href="#bewegung">Bewegung</a></li>
+      </ul>
+    </details>
+  </div>
+</header>
+
+<main id="inhalt">
+<section class="hero" aria-labelledby="h1">
+  <div class="wrap">
+    <div class="stage"><div class="stage__in">
+      <svg class="plan" viewBox="0 0 1280 680" aria-hidden="true" focusable="false">
+<path class="p-haar" d="M1262 40V552M1252 50L1272 30M1252 178L1272 158M1252 306L1272 286M1252 434L1272 414M1252 562L1272 542M748 40H1262M748 168H1262M748 296H1262M748 424H1262M748 552H1262"/>
+<path class="p-abg" d="M700 104H740"/><path class="p-haar" d="M736 112L748 96"/><path class="p-abg" d="M700 232H740"/><path class="p-haar" d="M736 240L748 224"/><path class="p-abg" d="M700 360H740"/><path class="p-haar" d="M736 368L748 352"/><path class="p-abg" d="M700 488H740"/><path class="p-haar" d="M736 496L748 480"/>
+<path class="p-rl" pathLength="1" data-motion="leitung-verlegen" d="M410 622H620A80 80 0 0 0 700 542V0"/>
+<path class="p-vl" pathLength="1" data-motion="leitung-verlegen" d="M668 0V542A48 48 0 0 1 620 590H300"/>
+<path class="p-fluss" pathLength="1" data-motion="fluss-hauptaktion" d="M668 0V542A48 48 0 0 1 620 590H300"/>
+<path class="p-rl-kappe" d="M410 610V634"/>
+<rect class="p-muffe" x="690" y="92" width="20" height="24"/><circle class="p-knoten" cx="700" cy="104" r="7"/><rect class="p-muffe" x="690" y="220" width="20" height="24"/><circle class="p-knoten" cx="700" cy="232" r="7"/><rect class="p-muffe" x="690" y="348" width="20" height="24"/><circle class="p-knoten" cx="700" cy="360" r="7"/><rect class="p-muffe" x="690" y="476" width="20" height="24"/><circle class="p-knoten" cx="700" cy="488" r="7"/>
+<path class="p-pfeil-vl" d="M659 34h18l-9 16z"/>
+<path class="p-pfeil-rl" d="M691 50h18l-9-16z"/>
+</svg>
+      <span class="pl-b pl-b--vl" style="--x:330;--y:556" aria-hidden="true">← Vorlauf</span>
+      <span class="pl-b pl-b--rl" style="--x:430;--y:640" aria-hidden="true">Rücklauf →</span>
+      <div class="hero__text row">
+        <span class="rc rc-a" aria-hidden="true"></span>
+        <div class="hero__body">
+          <p class="eyebrow label">Seit&nbsp;1926 · Wetzlar</p>
+          <h1 class="h1 display" id="h1"><span class="h1__a">SHK-Jobs in Wetzlar.</span> <span class="h1__b">Ehrliches Handwerk. Pünktlich Feierabend.</span></h1>
+          <p class="lead">Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt über Tarif und mit persönlicher Hilti-Ausstattung.</p>
+        </div>
+      </div>
+      <div class="hero__cta row">
+        <span class="rc rc-b" aria-hidden="true"><svg class="rc__vl" viewBox="0 0 56 56"><path pathLength="1" data-motion="leitung-verlegen" d="M40 0V16A12 12 0 0 0 52 28H56"/></svg><span class="rc__bl"></span></span>
+        <div class="hero__ctain">
+          <a class="btn" href="#bewerbung"><span class="btn__muffe" aria-hidden="true"></span>Jetzt bewerben</a>
+          <p class="mikro">Dauert ca.&nbsp;60&nbsp;Sekunden. Kein Lebenslauf nötig.</p>
+        </div>
+      </div>
+      <ul class="mass" role="list">
+        <li><span class="rc rc-d" aria-hidden="true"><i></i></span><div class="mass__in"><span class="mass__wert mass-zahl">13:30</span><span class="mass__cap">Freitags Feierabend</span></div></li>
+        <li><span class="rc rc-d" aria-hidden="true"><i></i></span><div class="mass__in"><span class="mass__wert mass-zahl">30</span><span class="mass__cap">Tage Urlaub</span></div></li>
+        <li><span class="rc rc-d" aria-hidden="true"><i></i></span><div class="mass__in"><span class="mass__wert mass-zahl">35<small>km</small></span><span class="mass__cap">Einsatzradius</span></div></li>
+        <li><span class="rc rc-d rc-end" aria-hidden="true"><i></i></span><div class="mass__in"><span class="mass__wert mass-zahl">1926</span><span class="mass__cap">Gegründet</span></div></li>
+      </ul>
+    </div></div>
+  </div>
+</section>
+
+<div class="wrap"><div class="trenner" aria-hidden="true"><i></i><svg width="56" height="24" viewBox="0 0 56 24" focusable="false"><path class="g-hl" d="M0 16H14L22 8H56"/><circle class="g-kn" cx="22" cy="8" r="4"/></svg><i></i></div></div>
+<section class="woche" aria-labelledby="woche-t">
+  <div class="wrap">
+    <p class="label">Arbeitszeit</p>
+    <h2 id="woche-t" class="h3 woche__h">Mo–Do 07:00–16:45&nbsp;Uhr, Fr 07:00–13:30&nbsp;Uhr</h2>
+    <div class="band">
+      <div class="band__achse" aria-hidden="true">
+        <span style="--h:6">06</span><span style="--h:8">08</span><span style="--h:10">10</span><span style="--h:12">12</span><span style="--h:14">14</span><span style="--h:16">16</span><span style="--h:18">18</span>
+      </div>
+      <div class="band__koerper">
+        <svg class="band__raster" aria-hidden="true" focusable="false"><g><line x1="0%" x2="0%" y1="0" y2="100%"/><line x1="8.333%" x2="8.333%" y1="0" y2="100%"/><line x1="16.667%" x2="16.667%" y1="0" y2="100%"/><line x1="25%" x2="25%" y1="0" y2="100%"/><line x1="33.333%" x2="33.333%" y1="0" y2="100%"/><line x1="41.667%" x2="41.667%" y1="0" y2="100%"/><line x1="50%" x2="50%" y1="0" y2="100%"/><line x1="58.333%" x2="58.333%" y1="0" y2="100%"/><line x1="66.667%" x2="66.667%" y1="0" y2="100%"/><line x1="75%" x2="75%" y1="0" y2="100%"/><line x1="83.333%" x2="83.333%" y1="0" y2="100%"/><line x1="91.667%" x2="91.667%" y1="0" y2="100%"/><line x1="100%" x2="100%" y1="0" y2="100%"/></g></svg>
+        <dl class="band__zeilen">
+          <div class="zeile"><dt>Mo–Do</dt><dd class="feld"><span class="balken" style="--a:7;--b:16.75"><span class="bt bt--a">07:00<span class="sr-only"> Uhr bis </span></span><span class="bt bt--b">16:45<span class="sr-only"> Uhr</span></span></span></dd></div>
+          <div class="zeile"><dt>Fr</dt><dd class="feld"><span class="balken balken--fr" style="--a:7;--b:13.5"><span class="bt bt--a">07:00<span class="sr-only"> Uhr bis </span></span></span><span class="fa" style="--b:13.5"><span class="fa__k" aria-hidden="true"></span><span class="fa__in"><b class="mass-zahl">13:30</b><span class="sr-only"> Uhr, </span><span class="fa__t">Feierabend</span></span></span></dd></div>
+          <div class="zeile"><dt>Sa, So</dt><dd class="feld"><span class="frei" style="--a:7;--b:16.75"><svg aria-hidden="true" focusable="false"><rect width="100%" height="100%" fill="url(#schraffur)"/></svg><span class="frei__t">Kein Wochenend-Notdienst</span></span></dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="trenner" aria-hidden="true"><i></i><svg width="56" height="24" viewBox="0 0 56 24" focusable="false"><path class="g-hl" d="M0 16H14L22 8H56"/><circle class="g-kn" cx="22" cy="8" r="4"/></svg><i></i></div></div>
+<section id="einsatzgebiet" class="region" aria-labelledby="region-t" data-region data-radius="35" data-sel="giessen">
+  <div class="wrap">
+    <header class="region__kopf">
+      <div>
+        <p class="label">Einsatzgebiet</p>
+        <h2 id="region-t" class="h2 display">35&nbsp;km um Wetzlar. Keine Fernmontage.</h2>
+      </div>
+      <p class="lead">Du arbeitest in Wetzlar, Gießen und dem Lahn-Dill-Kreis, ohne Hotelübernachtungen, und bist jeden Abend pünktlich zu Hause.</p>
+    </header>
+    <div class="region__werk">
+      <fieldset class="seg">
+        <legend class="label">Radius</legend>
+        <div class="seg__reihe">
+          <label class="seg__o"><input type="radio" name="radius" value="15"><span>15&nbsp;km</span></label>
+          <label class="seg__o"><input type="radio" name="radius" value="25"><span>25&nbsp;km</span></label>
+          <label class="seg__o"><input type="radio" name="radius" value="35" checked><span>35&nbsp;km</span></label>
+        </div>
+      </fieldset>
+      <p class="hinweis" role="status" data-hinweis>Einsatzgebiet: höchstens 35&nbsp;km um Wetzlar. Alle 10 Orte der Liste liegen darin.</p>
+      <div class="tab"><table class="orte"><caption class="sr-only">Orte im Umkreis von Wetzlar mit Entfernung und Fahrzeit bis Wetzlar</caption><thead><tr><th scope="col">Ort</th><th scope="col">Entfernung</th><th scope="col">Fahrzeit</th></tr></thead><tbody><tr data-ort="wetzlar-kernstadt" data-km="1" data-min="3"><th scope="row">Wetzlar Kernstadt</th><td>1 km</td><td>3 Min.</td></tr><tr data-ort="garbenheim" data-km="4" data-min="6"><th scope="row">Garbenheim</th><td>4 km</td><td>6 Min.</td></tr><tr data-ort="hermannstein" data-km="4" data-min="7"><th scope="row">Hermannstein</th><td>4 km</td><td>7 Min.</td></tr><tr data-ort="steindorf" data-km="4" data-min="7"><th scope="row">Steindorf</th><td>4 km</td><td>7 Min.</td></tr><tr data-ort="nauborn" data-km="5" data-min="8"><th scope="row">Nauborn</th><td>5 km</td><td>8 Min.</td></tr><tr data-ort="asslar" data-km="6" data-min="9"><th scope="row">Aßlar</th><td>6 km</td><td>9 Min.</td></tr><tr data-ort="dutenhofen" data-km="7" data-min="10"><th scope="row">Dutenhofen</th><td>7 km</td><td>10 Min.</td></tr><tr data-ort="braunfels" data-km="14" data-min="18"><th scope="row">Braunfels</th><td>14 km</td><td>18 Min.</td></tr><tr data-ort="giessen" data-km="15" data-min="16" class="is-sel"><th scope="row">Gießen</th><td>15 km</td><td>16 Min.</td></tr><tr data-ort="herborn" data-km="24" data-min="22"><th scope="row">Herborn</th><td>24 km</td><td>22 Min.</td></tr></tbody></table></div>
+      <figure class="lageplan">
+        <svg class="pl" viewBox="0 0 640 640" role="img" aria-labelledby="pl-t pl-d" focusable="false"><title id="pl-t">Lageplan: Einsatzgebiet maximal 35 km um Wetzlar</title><desc id="pl-d">Schematischer Plan mit dem Betrieb in Wetzlar in der Mitte, Hilfsringen bei 15 und 25 Kilometern und dem Rand des Einsatzgebiets bei 35 Kilometern. Außerhalb des Rands ist die Fläche schraffiert: dort montieren wir nicht. Zehn Orte liegen im Umkreis; ihre Entfernung und Fahrzeit stehen in der Tabelle.</desc><defs><clipPath id="pl-clip"><circle cx="320" cy="320" r="270"/></clipPath></defs><rect class="pl-bg" width="640" height="640"/><path class="pl-aussen" fill="url(#schraffur)" fill-rule="evenodd" d="M0 0H640V640H0zM50 320a270 270 0 1 0 540 0a270 270 0 1 0 -540 0z"/><g clip-path="url(#pl-clip)"><circle class="pl-scheibe pl-s35" cx="320" cy="320" r="270"/><circle class="pl-scheibe pl-s25" cx="320" cy="320" r="192.9"/><circle class="pl-scheibe pl-s15" cx="320" cy="320" r="115.7"/><path class="pl-raster" d="M11.4 0V640M0 11.4H640M50 0V640M0 50H640M88.6 0V640M0 88.6H640M127.1 0V640M0 127.1H640M165.7 0V640M0 165.7H640M204.3 0V640M0 204.3H640M242.9 0V640M0 242.9H640M281.4 0V640M0 281.4H640M320 0V640M0 320H640M358.6 0V640M0 358.6H640M397.1 0V640M0 397.1H640M435.7 0V640M0 435.7H640M474.3 0V640M0 474.3H640M512.9 0V640M0 512.9H640M551.4 0V640M0 551.4H640M590 0V640M0 590H640M628.6 0V640M0 628.6H640"/></g><circle class="pl-ring pl-r15" cx="320" cy="320" r="115.7"/><circle class="pl-ring pl-r25" cx="320" cy="320" r="192.9"/><circle class="pl-ring pl-r35" cx="320" cy="320" r="270"/><g class="pl-ringlabels"><text class="pl-ring-t" x="401.8" y="238.2" text-anchor="middle" dominant-baseline="central">15 km</text><text class="pl-ring-t" x="456.4" y="183.6" text-anchor="middle" dominant-baseline="central">25 km</text><text class="pl-ring-t" x="510.9" y="129.1" text-anchor="middle" dominant-baseline="central">35 km</text></g><g class="pl-mass"><path d="M36 604H74.6M32 608L40 600M70.6 608L78.6 600"/><text class="pl-t-klein" x="86.6" y="604" dominant-baseline="central">1 Feld = 5 km</text></g><g class="pl-nord"><path d="M604 58V26M604 26l-6 12M604 26l6 12"/><text class="pl-t-klein" x="604" y="76" text-anchor="middle">N</text></g><g class="pl-ort" data-ort="hermannstein" data-km="4"><path class="pl-route" d="M316.6 304.3L316.6 316.6L320 320" pathLength="1" data-motion="ort-route"/><path class="pl-leit" d="M316.6 304.3L340 281L388 281"/><circle class="pl-marke" cx="316.6" cy="304.3" r="9" data-motion="ort-marke"/><circle class="pl-punkt" cx="316.6" cy="304.3" r="4"/><text class="pl-lbl pl-lbl--kern" x="392" y="285" text-anchor="start">Hermannstein</text></g><g class="pl-ort" data-ort="nauborn" data-km="5"><path class="pl-route" d="M330.2 347.2L330.2 330.2L320 320" pathLength="1" data-motion="ort-route"/><path class="pl-leit" d="M330.2 347.2L330.2 372"/><circle class="pl-marke" cx="330.2" cy="347.2" r="9" data-motion="ort-marke"/><circle class="pl-punkt" cx="330.2" cy="347.2" r="4"/><text class="pl-lbl pl-lbl--kern" x="330.2" y="388" text-anchor="middle">Nauborn</text></g><g class="pl-ort" data-ort="garbenheim" data-km="4"><path class="pl-route" d="M348.3 318.5L321.5 318.5L320 320" pathLength="1" data-motion="ort-route"/><path class="pl-leit" d="M348.3 318.5L368 338.2L396 338.2"/><circle class="pl-marke" cx="348.3" cy="318.5" r="9" data-motion="ort-marke"/><circle class="pl-punkt" cx="348.3" cy="318.5" r="4"/><text class="pl-lbl pl-lbl--kern" x="400" y="342.2" text-anchor="start">Garbenheim</text></g><g class="pl-ort" data-ort="dutenhofen" data-km="7"><path class="pl-route" d="M375.6 318.5L321.5 318.5L320 320" pathLength="1" data-motion="ort-route"/><path class="pl-leit" d="M375.6 318.5L400 318.5"/><circle class="pl-marke" cx="375.6" cy="318.5" r="9" data-motion="ort-marke"/><circle class="pl-punkt" cx="375.6" cy="318.5" r="4"/><text class="pl-lbl pl-lbl--kern" x="404" y="322.5" text-anchor="start">Dutenhofen</text></g><g class="pl-ort" data-ort="steindorf" data-km="4"><path class="pl-route" d="M312 347.2L312 328L320 320" pathLength="1" data-motion="ort-route"/><path class="pl-leit" d="M312 347.2L284 375"/><circle class="pl-marke" cx="312" cy="347.2" r="9" data-motion="ort-marke"/><circle class="pl-punkt" cx="312" cy="347.2" r="4"/><text class="pl-lbl pl-lbl--kern" x="280" y="379" text-anchor="end">Steindorf</text></g><g class="pl-ort" data-ort="asslar" data-km="6"><path class="pl-route" d="M299.9 297.1L299.9 299.9L320 320" pathLength="1" data-motion="ort-route"/><path class="pl-leit" d="M299.9 297.1L279 276L272 276"/><circle class="pl-marke" cx="299.9" cy="297.1" r="9" data-motion="ort-marke"/><circle class="pl-punkt" cx="299.9" cy="297.1" r="4"/><text class="pl-lbl pl-lbl--kern" x="268" y="280" text-anchor="end">Aßlar</text></g><g class="pl-ort" data-ort="braunfels" data-km="14"><path class="pl-route" d="M257.5 361.4L278.6 361.4L320 320" pathLength="1" data-motion="ort-route"/><circle class="pl-marke" cx="257.5" cy="361.4" r="9" data-motion="ort-marke"/><circle class="pl-punkt" cx="257.5" cy="361.4" r="4"/><text class="pl-lbl" x="247" y="365" text-anchor="end">Braunfels</text></g><g class="pl-ort is-sel" data-ort="giessen" data-km="15"><path class="pl-route" d="M416.7 301L339 301L320 320" pathLength="1" data-motion="ort-route"/><circle class="pl-marke" cx="416.7" cy="301" r="9" data-motion="ort-marke"/><circle class="pl-punkt" cx="416.7" cy="301" r="4"/><text class="pl-lbl" x="428" y="305" text-anchor="start">Gießen</text></g><g class="pl-ort" data-ort="herborn" data-km="24"><path class="pl-route" d="M212.1 218.5L218.5 218.5L320 320" pathLength="1" data-motion="ort-route"/><circle class="pl-marke" cx="212.1" cy="218.5" r="9" data-motion="ort-marke"/><circle class="pl-punkt" cx="212.1" cy="218.5" r="4"/><text class="pl-lbl" x="203" y="223" text-anchor="end">Herborn</text></g><g class="pl-ort pl-mitte" data-ort="wetzlar-kernstadt" data-km="1"><circle class="pl-marke" cx="320" cy="320" r="13" data-motion="ort-marke"/><circle class="pl-betrieb-ring" cx="320" cy="320" r="9"/><circle class="pl-betrieb" cx="320" cy="320" r="4.5"/><path class="pl-leit" d="M320 320L360 362"/><text class="pl-lbl pl-lbl--fix" x="366" y="366" text-anchor="start">Betrieb Wetzlar</text></g></svg>
+        <div class="schriftfeld" role="group" aria-label="Gewählter Wohnort">
+          <dl>
+            <div><dt><svg class="ic" width="20" height="20" aria-hidden="true"><use href="#i-standort"/></svg>Wohnort</dt><dd data-f="ort">Gießen</dd></div>
+            <div><dt>Entfernung</dt><dd class="mass-zahl" data-f="km">15&nbsp;km</dd></div>
+            <div><dt><svg class="ic" width="20" height="20" aria-hidden="true"><use href="#i-fahrzeug"/></svg>Fahrzeit bis Wetzlar</dt><dd class="mass-zahl" data-f="min">16&nbsp;Min.</dd></div>
+          </dl>
+        </div>
+      </figure>
+    </div>
+    <div class="cta2">
+      <p class="label">Bewerbung in 60&nbsp;Sekunden</p>
+      <div class="cta2__reihe"><span class="cta2__leitung" aria-hidden="true"></span><div class="cta2__ziel"><a class="btn" href="#bewerbung"><span class="btn__muffe" aria-hidden="true"></span>Jetzt bewerben</a><p class="mikro">Dauert ca.&nbsp;60&nbsp;Sekunden. Kein Lebenslauf nötig.</p></div></div>
+    </div>
+  </div>
+</section>
+
+
+<div class="wrap"><div class="trenner" aria-hidden="true"><i></i><svg width="56" height="24" viewBox="0 0 56 24" focusable="false"><path class="g-hl" d="M0 16H14L22 8H56"/><circle class="g-kn" cx="22" cy="8" r="4"/></svg><i></i></div></div>
+<section id="system" class="system" aria-labelledby="system-t">
+  <div class="wrap">
+    <header class="system__kopf">
+      <p class="label">Systemblätter</p>
+      <h2 id="system-t" class="h2 display">Der Werkplan hinter der Seite.</h2>
+      <p class="lead">Leitidee, Schrift, Palette, Raster, Formen, Zustände und Bewegung dieser Richtung. Ruhig dokumentiert, mit berechneten und gemessenen Werten.</p>
+    </header>
+
+    <!-- Blatt 1 -->
+    <article class="blatt" id="leitidee" aria-labelledby="leitidee-t">
+      <header class="blatt__kopf"><p class="label">Blatt 1</p><h3 id="leitidee-t" class="h3">Leitidee</h3></header>
+      <div class="blatt__inhalt">
+        <p class="leitsatz display">„Sauber verlegt: Der Vorlauf führt in 60&nbsp;Sekunden zu uns, der Rücklauf bringt dich pünktlich nach Hause – und jede Zahl steht als Maß an der Leitung.“</p>
+        <div class="zweispalt">
+          <div>
+            <h4 class="h4">Ableitung aus dem Markenaspekt „sauber verlegt“</h4>
+            <ol class="ableitung" role="list">
+              <li><span class="nr mass-zahl" aria-hidden="true">1</span>Ein SHK-Betrieb verlegt Leitungen, und gute Arbeit erkennt man daran, dass sie maßhaltig, sichtbar geführt und ohne Umweg verläuft.</li>
+              <li><span class="nr mass-zahl" aria-hidden="true">2</span>Darum ist die Seite ein Werkplan: Rot führt als Vorlauf in jedem Abschnitt zur einen Handlung, Blau trägt als Rücklauf, was zu dir zurückkommt, und jede Zahl steht als Maß an einer Leitung statt in einer Kachel.</li>
+              <li><span class="nr mass-zahl" aria-hidden="true">3</span>Weil Rot und Blau zugleich die Farben des Logos und die Leitungsfarben der Heizungstechnik sind, braucht die Seite keine zweite Dekoration: Linie, Bogen und Knoten sind Gestaltung, Wegweiser und Beleg in einem.</li>
+            </ol>
+          </div>
+          <div>
+            <h4 class="h4">Austauschprobe: Warum passt das zu keinem Wettbewerber?</h4>
+            <p class="text muted">Man setze einen beliebigen anderen SHK-Betrieb ein und prüfe, was an der Seite zerbricht.</p>
+            <div class="tabrahmen" tabindex="0" role="region" aria-label="Austauschprobe: Was man tauschen müsste und was dann zerbricht"><table class="doku probe">
+              <caption class="sr-only">Austauschprobe: Was man tauschen müsste und was dann zerbricht</caption>
+              <thead><tr><th scope="col">Was man tauschen müsste</th><th scope="col">Was dann zerbricht</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Die Maße 13:30, 30, 35&nbsp;km, 1926</th><td>Ein Betrieb ohne diese belegten Zusagen hat nichts, woran er die Leitung bemaßen kann. Die Zahlen sind der Inhalt der Idee.</td></tr>
+                <tr><th scope="row">Die Farben Rot und Blau</th><td>Sie sind die Farben dieses Logos und zugleich die der Heizungsrohre. Mit anderem Logo wäre die Leitungsfarbe eine Behauptung, hier ist sie ein Beleg.</td></tr>
+                <tr><th scope="row">Das Versprechen „Rücklauf pünktlich nach Hause“</th><td>Wer Fernmontage, Wochenenddienst oder lange Wege hat, kann keinen Rücklauf zeichnen, der stimmt.</td></tr>
+              </tbody>
+            </table></div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Blatt 2 -->
+    <article class="blatt" id="schrift" aria-labelledby="schrift-t">
+      <header class="blatt__kopf"><p class="label">Blatt 2</p><h3 id="schrift-t" class="h3">Schrift</h3></header>
+      <div class="blatt__inhalt">
+        <div class="zweispalt">
+          <div class="fam">
+            <p class="label">Display und Text</p>
+            <p class="fam__name display">Archivo</p>
+            <p class="text">Technische Grotesk von Omnibus-Type, variabel in Breite (62–125&nbsp;%) und Gewicht (100–900). Schmal und fett (68&nbsp;%, 800) wirkt sie wie Planstempel; in Normalbreite (100&nbsp;%, 400) liest sie sich ruhig. Eine Datei trägt beide Rollen.</p>
+          </div>
+          <div class="fam">
+            <p class="label">Maße und Planbeschriftung</p>
+            <p class="fam__name mass-zahl">Martian Mono</p>
+            <p class="text">Dicktengleiche Schrift der Evil Martians, variabel in Breite (75–112,5&nbsp;%) und Gewicht (100–800). Ziffern stehen auf festem Raster, Versalien sind gesperrt: Zahlen sehen aus wie Maße, nicht wie Werbung.</p>
+          </div>
+        </div>
+
+        <h4 class="h4">Breitenachse von Archivo</h4>
+        <ul class="achse" role="list">
+          <li style="font-stretch:62%"><span class="mono">62&nbsp;%</span>Sauber verlegt, 13:30 Uhr</li>
+          <li style="font-stretch:78%"><span class="mono">78&nbsp;%</span>Sauber verlegt, 13:30 Uhr</li>
+          <li style="font-stretch:100%"><span class="mono">100&nbsp;%</span>Sauber verlegt, 13:30 Uhr</li>
+          <li style="font-stretch:125%"><span class="mono">125&nbsp;%</span>Sauber verlegt, 13:30 Uhr</li>
+        </ul>
+
+        <h4 class="h4">Muster aller Stufen</h4>
+        <div class="tabrahmen" tabindex="0" role="region" aria-label="Schriftstufen mit Muster, Token, Größe und Einstellung"><table class="doku stufen">
+          <caption class="sr-only">Schriftstufen mit Muster, Token, Größe und Einstellung</caption>
+          <thead><tr><th scope="col">Stufe</th><th scope="col">Muster</th><th scope="col">Größe</th><th scope="col">Einstellung · Einsatz</th></tr></thead>
+          <tbody>
+            <tr><th scope="row" class="mono">--t-8</th><td><span class="display" style="font-size:3.5rem">SHK-Jobs</span></td><td class="mono">56–112&nbsp;px</td><td>Archivo 68&nbsp;% · 800 · Zeilenhöhe 0,92 · H1</td></tr>
+            <tr><th scope="row" class="mono">--t-7</th><td><span class="display" style="font-size:2.5rem">35&nbsp;km um Wetzlar</span></td><td class="mono">36–72&nbsp;px</td><td>Archivo 68&nbsp;% · 800 · Zeilenhöhe 0,92 · H2</td></tr>
+            <tr><th scope="row" class="mono">--t-6</th><td><span class="h3">Ehrliches Handwerk.</span></td><td class="mono">24–36&nbsp;px</td><td>Archivo 75&nbsp;% · 700 · Zeilenhöhe 1,05 · H3, zweite H1-Zeile (78&nbsp;% · 600)</td></tr>
+            <tr><th scope="row" class="mono">--t-9</th><td><span class="mass-zahl" style="font-size:2.5rem;color:var(--blau)">13:30</span></td><td class="mono">44–76&nbsp;px <span class="muted">(mobil 48–72)</span></td><td>Martian Mono 75&nbsp;% · 600 · Zeilenhöhe 1 · Maßzahl</td></tr>
+            <tr><th scope="row" class="mono">--t-5</th><td><span style="font-size:1.25rem">Bezahlt über Tarif.</span></td><td class="mono">20–24&nbsp;px</td><td>Archivo 100&nbsp;% · 400 · Zeilenhöhe 1,5 · Einleitung</td></tr>
+            <tr><th scope="row" class="mono">--t-4</th><td><span>Persönliche Hilti-Ausstattung</span></td><td class="mono">18&nbsp;px</td><td>Archivo 100&nbsp;% · 400 · Zeilenhöhe 1,6 · Fließtext (60–75 Zeichen je Zeile)</td></tr>
+            <tr><th scope="row" class="mono">--t-3</th><td><span style="font-size:1rem">Dauert ca. 60 Sekunden.</span></td><td class="mono">16&nbsp;px</td><td>Archivo 100&nbsp;% · Mikrotext, Tabellen</td></tr>
+            <tr><th scope="row" class="mono">--t-2</th><td><span class="mono">1 Feld = 5 km</span></td><td class="mono">13&nbsp;px</td><td>Martian Mono 85&nbsp;% · Planwerte</td></tr>
+            <tr><th scope="row" class="mono">--t-1</th><td><span class="label">Seit 1926 · Wetzlar</span></td><td class="mono">12&nbsp;px</td><td>Martian Mono 85&nbsp;% · 500 · Versalien, Sperrung +0,12&nbsp;em</td></tr>
+          </tbody>
+        </table></div>
+
+        <div class="zweispalt zweispalt--eng">
+          <div>
+            <h4 class="h4">Deutsch im Satz</h4>
+            <p class="deutsch" lang="de">„Einsatzgebiet maximal 35&nbsp;km um Wetzlar – keine Fernmontage.“ Freitags ab 13:30&nbsp;Uhr Feierabend, 30&nbsp;Tage Urlaub. Aßlar, Gießen, Hermannstein: Umlaute, ß und Unterlängen stehen frei, Silbentrennung läuft über <span class="mono">lang="de"</span>.</p>
+          </div>
+          <div>
+            <h4 class="h4">Lizenz und Dateien</h4>
+            <p class="text">Beide Familien stehen unter der SIL Open Font License 1.1, werden selbst gehostet und per <span class="mono">unicode-range</span> in Latin und Latin Extended geteilt. Vorgeladen werden zwei Schnitte (<span class="mono">latin</span> je Familie) mit <span class="mono">crossorigin</span>; die Ersatzschriften sind per <span class="mono">size-adjust</span> und Ascent-/Descent-Überschreibung angeglichen.</p>
+          </div>
+        </div>
+        <div class="tabrahmen" tabindex="0" role="region" aria-label="Schriftdateien mit Größe"><table class="doku dateien"><caption class="sr-only">Schriftdateien mit Größe</caption><thead><tr><th scope="col">Datei</th><th scope="col">Teilmenge</th><th scope="col" class="num">Größe</th></tr></thead><tbody><tr><th scope="row" class="mono">archivo-latin-ext-wdth-normal.woff2</th><td class="mono">latin-ext</td><td class="mono num">86,2 KB</td></tr><tr><th scope="row" class="mono">archivo-latin-wdth-normal.woff2</th><td class="mono">latin</td><td class="mono num">90,1 KB</td></tr><tr><th scope="row" class="mono">martian-mono-latin-ext-wdth-normal.woff2</th><td class="mono">latin-ext</td><td class="mono num">24,7 KB</td></tr><tr><th scope="row" class="mono">martian-mono-latin-wdth-normal.woff2</th><td class="mono">latin</td><td class="mono num">38,5 KB</td></tr></tbody><tfoot><tr><th scope="row">Summe, 4 Dateien</th><td></td><td class="mono num"><b>239,5 KB</b> von 250 KB</td></tr></tfoot></table></div>
+      </div>
+    </article>
+
+    <!-- Blatt 3 -->
+    <article class="blatt" id="palette" aria-labelledby="palette-t">
+      <header class="blatt__kopf"><p class="label">Blatt 3</p><h3 id="palette-t" class="h3">Palette</h3></header>
+      <div class="blatt__inhalt">
+        <p class="lead">Zwei Papiere, zwei Leitungsfarben. Hell ist <b>Pauspapier</b>, dunkel ist <b>Blaupause</b>: beide sind gezeichnet, nicht invertiert. Das Blau wird dunkel heller, weil Navy auf Blaupause verschwindet; das Rot bleibt, denn es besteht den Grafikkontrast auch dort.</p>
+        <div class="anteil" role="img" aria-label="Zielanteil der Fläche: Papier 62 Prozent, Feld 8, Tinte 14, Blau 14, Rot 2">
+          <span style="--w:62;--c:var(--papier)">Papier 62</span><span style="--w:8;--c:var(--feld)">Feld 8</span><span style="--w:14;--c:var(--tinte);color:var(--papier)">Tinte 14</span><span style="--w:14;--c:var(--blau);color:var(--papier)">Blau 14</span><span style="--w:2;--c:var(--rot)"></span>
+        </div>
+        <p class="mono muted anteil__u">Zielanteil der Fläche in Prozent: Rot nur die eine Hauptaktion je Ansicht und die Leitung, die zu ihr führt.</p>
+        <div class="tabrahmen" tabindex="0" role="region" aria-label="Farbrollen mit Hexwerten in hell und dunkel"><table class="doku farben"><caption class="sr-only">Farbrollen mit Hexwerten in hell und dunkel</caption><thead><tr><th scope="col">Rolle</th><th scope="col">Hell</th><th scope="col">Dunkel</th><th scope="col">Aufgabe</th></tr></thead><tbody><tr><th scope="row">Papier<br><span class="mono muted">--papier</span></th><td><span class="swatch" style="--c:#F3F5F9"></span><span class="mono">#F3F5F9</span></td><td><span class="swatch" style="--c:#0A1236"></span><span class="mono">#0A1236</span></td><td>Seitenfläche: Pauspapier hell, Blaupause dunkel.</td></tr><tr><th scope="row">Feld<br><span class="mono muted">--feld</span></th><td><span class="swatch" style="--c:#E4E9F2"></span><span class="mono">#E4E9F2</span></td><td><span class="swatch" style="--c:#101B49"></span><span class="mono">#101B49</span></td><td>Zweite Fläche: gewählte Zeile, Radiusscheibe, Plankopf.</td></tr><tr><th scope="row">Linie<br><span class="mono muted">--linie</span></th><td><span class="swatch" style="--c:#C3CADB"></span><span class="mono">#C3CADB</span></td><td><span class="swatch" style="--c:#24336B"></span><span class="mono">#24336B</span></td><td>Raster und Zeilenlinien, rein dekorativ.</td></tr><tr><th scope="row">Linie stark<br><span class="mono muted">--linie-stark</span></th><td><span class="swatch" style="--c:#6A7599"></span><span class="mono">#6A7599</span></td><td><span class="swatch" style="--c:#7A8CCB"></span><span class="mono">#7A8CCB</span></td><td>Maßlinien, Rahmen, Tabellenkopf – trägt Bedeutung, mindestens 3 : 1.</td></tr><tr><th scope="row">Tinte<br><span class="mono muted">--tinte</span></th><td><span class="swatch" style="--c:#111A3B"></span><span class="mono">#111A3B</span></td><td><span class="swatch" style="--c:#EAF0FF"></span><span class="mono">#EAF0FF</span></td><td>Text und Überschriften.</td></tr><tr><th scope="row">Tinte gedämpft<br><span class="mono muted">--tinte-ged</span></th><td><span class="swatch" style="--c:#444F72"></span><span class="mono">#444F72</span></td><td><span class="swatch" style="--c:#AAB6DC"></span><span class="mono">#AAB6DC</span></td><td>Beschriftungen und zweite Textebene.</td></tr><tr><th scope="row">Rücklauf-Blau<br><span class="mono muted">--blau</span></th><td><span class="swatch" style="--c:#0C1A72"></span><span class="mono">#0C1A72</span></td><td><span class="swatch" style="--c:#7FA4FF"></span><span class="mono">#7FA4FF</span></td><td>Marke Navy: Rücklauf, Maße, Auswahl, Links. Dunkel aufgehellt, weil Navy auf Blaupause verschwindet.</td></tr><tr><th scope="row">Vorlauf-Rot<br><span class="mono muted">--rot</span></th><td><span class="swatch" style="--c:#D60000"></span><span class="mono">#D60000</span></td><td><span class="swatch" style="--c:#D60000"></span><span class="mono">#D60000</span></td><td>Marke Rot: nur die eine Hauptaktion je Ansicht und die Leitung, die zu ihr führt. In beiden Modi unverändert.</td></tr><tr><th scope="row">Rot als Text<br><span class="mono muted">--rot-text</span></th><td><span class="swatch" style="--c:#C00000"></span><span class="mono">#C00000</span></td><td><span class="swatch" style="--c:#FF8E82"></span><span class="mono">#FF8E82</span></td><td>Rot als Schrift (Beschriftung „Vorlauf“); dunkel aufgehellt.</td></tr><tr><th scope="row">Rot gedrückt<br><span class="mono muted">--rot-hover</span></th><td><span class="swatch" style="--c:#A80000"></span><span class="mono">#A80000</span></td><td><span class="swatch" style="--c:#E60000"></span><span class="mono">#E60000</span></td><td>Hauptaktion bei Hover, Muffe am Knopf.</td></tr><tr><th scope="row">Wärme<br><span class="mono muted">--waerme</span></th><td><span class="swatch" style="--c:#FF9A85"></span><span class="mono">#FF9A85</span></td><td><span class="swatch" style="--c:#FF9A85"></span><span class="mono">#FF9A85</span></td><td>Nur der einmalige Wärmefluss; trägt keine Information.</td></tr></tbody></table></div>
+        <h4 class="h4">Berechnete Kontrastwerte</h4>
+        <p class="text muted">Berechnet aus den Hexwerten nach WCAG 2.2 (relative Leuchtdichte, zwei Nachkommastellen). Text braucht 4,5&nbsp;:&nbsp;1, große Schrift, Bedienelemente und bedeutungstragende Grafik 3&nbsp;:&nbsp;1. Alle 17 Paare bestehen in beiden Modi.</p>
+        <div class="tabrahmen" tabindex="0" role="region" aria-label="Berechnete Kontrastwerte nach WCAG 2.2 je Farbpaar, hell und dunkel"><table class="doku kontrast"><caption class="sr-only">Berechnete Kontrastwerte nach WCAG 2.2 je Farbpaar, hell und dunkel</caption><thead><tr><th scope="col">Farbpaar</th><th scope="col">Verwendung</th><th scope="col">Anforderung</th><th scope="col">Hell</th><th scope="col">Dunkel</th></tr></thead><tbody><tr><th scope="row"><span class="chip" style="--f:#111A3B;--g:#F3F5F9"></span>Tinte auf Papier</th><td>Fließtext, Überschriften</td><td class="mono">Text ≥ 4,5</td><td class="ok"><b class="mass-zahl">15,58</b> : 1<span class="pass">AAA</span></td><td class="ok"><b class="mass-zahl">15,97</b> : 1<span class="pass">AAA</span></td></tr><tr><th scope="row"><span class="chip" style="--f:#111A3B;--g:#E4E9F2"></span>Tinte auf Feld</th><td>Text auf Feld (Zeile, Plankopf)</td><td class="mono">Text ≥ 4,5</td><td class="ok"><b class="mass-zahl">13,96</b> : 1<span class="pass">AAA</span></td><td class="ok"><b class="mass-zahl">14,44</b> : 1<span class="pass">AAA</span></td></tr><tr><th scope="row"><span class="chip" style="--f:#444F72;--g:#F3F5F9"></span>Tinte gedämpft auf Papier</th><td>Beschriftungen, zweite H1-Zeile</td><td class="mono">Text ≥ 4,5</td><td class="ok"><b class="mass-zahl">7,38</b> : 1<span class="pass">AAA</span></td><td class="ok"><b class="mass-zahl">9,05</b> : 1<span class="pass">AAA</span></td></tr><tr><th scope="row"><span class="chip" style="--f:#444F72;--g:#E4E9F2"></span>Tinte gedämpft auf Feld</th><td>Beschriftung auf Feld</td><td class="mono">Text ≥ 4,5</td><td class="ok"><b class="mass-zahl">6,61</b> : 1<span class="pass">AA</span></td><td class="ok"><b class="mass-zahl">8,18</b> : 1<span class="pass">AAA</span></td></tr><tr><th scope="row"><span class="chip" style="--f:#0C1A72;--g:#F3F5F9"></span>Rücklauf-Blau auf Papier</th><td>Links, Maßzahlen, Auswahl</td><td class="mono">Text ≥ 4,5</td><td class="ok"><b class="mass-zahl">13,68</b> : 1<span class="pass">AAA</span></td><td class="ok"><b class="mass-zahl">7,51</b> : 1<span class="pass">AAA</span></td></tr><tr><th scope="row"><span class="chip" style="--f:#0C1A72;--g:#E4E9F2"></span>Rücklauf-Blau auf Feld</th><td>Maßzahlen auf Feld</td><td class="mono">Text ≥ 4,5</td><td class="ok"><b class="mass-zahl">12,26</b> : 1<span class="pass">AAA</span></td><td class="ok"><b class="mass-zahl">6,79</b> : 1<span class="pass">AA</span></td></tr><tr><th scope="row"><span class="chip" style="--f:#C00000;--g:#F3F5F9"></span>Rot als Text auf Papier</th><td>Beschriftung „Vorlauf“</td><td class="mono">Text ≥ 4,5</td><td class="ok"><b class="mass-zahl">5,94</b> : 1<span class="pass">AA</span></td><td class="ok"><b class="mass-zahl">8,19</b> : 1<span class="pass">AAA</span></td></tr><tr><th scope="row"><span class="chip" style="--f:#C00000;--g:#E4E9F2"></span>Rot als Text auf Feld</th><td>Rotbeschriftung auf Feld</td><td class="mono">Text ≥ 4,5</td><td class="ok"><b class="mass-zahl">5,32</b> : 1<span class="pass">AA</span></td><td class="ok"><b class="mass-zahl">7,41</b> : 1<span class="pass">AAA</span></td></tr><tr><th scope="row"><span class="chip" style="--f:#FFFFFF;--g:#D60000"></span>Weiß auf Vorlauf-Rot</th><td>Knopftext Hauptaktion</td><td class="mono">Text ≥ 4,5</td><td class="ok"><b class="mass-zahl">5,44</b> : 1<span class="pass">AA</span></td><td class="ok"><b class="mass-zahl">5,44</b> : 1<span class="pass">AA</span></td></tr><tr><th scope="row"><span class="chip" style="--f:#FFFFFF;--g:#A80000"></span>Weiß auf Rot gedrückt</th><td>Knopftext beim Hover</td><td class="mono">Text ≥ 4,5</td><td class="ok"><b class="mass-zahl">7,88</b> : 1<span class="pass">AAA</span></td><td class="ok"><b class="mass-zahl">4,81</b> : 1<span class="pass">AA</span></td></tr><tr><th scope="row"><span class="chip" style="--f:#F3F5F9;--g:#0C1A72"></span>Papier auf Rücklauf-Blau</th><td>Text im gewählten Segment</td><td class="mono">Text ≥ 4,5</td><td class="ok"><b class="mass-zahl">13,68</b> : 1<span class="pass">AAA</span></td><td class="ok"><b class="mass-zahl">7,51</b> : 1<span class="pass">AAA</span></td></tr><tr><th scope="row"><span class="chip" style="--f:#D60000;--g:#F3F5F9"></span>Vorlauf-Rot auf Papier</th><td>Leitung zur Hauptaktion</td><td class="mono">Grafik ≥ 3</td><td class="ok"><b class="mass-zahl">4,99</b> : 1<span class="pass">AA</span></td><td class="ok"><b class="mass-zahl">3,35</b> : 1<span class="pass">AA</span></td></tr><tr><th scope="row"><span class="chip" style="--f:#D60000;--g:#E4E9F2"></span>Vorlauf-Rot auf Feld</th><td>Leitung auf Feld</td><td class="mono">Grafik ≥ 3</td><td class="ok"><b class="mass-zahl">4,47</b> : 1<span class="pass">AA</span></td><td class="ok"><b class="mass-zahl">3,03</b> : 1<span class="pass">AA</span></td></tr><tr><th scope="row"><span class="chip" style="--f:#0C1A72;--g:#F3F5F9"></span>Rücklauf-Blau auf Papier</th><td>Rücklauf, Ringe, Knoten</td><td class="mono">Grafik ≥ 3</td><td class="ok"><b class="mass-zahl">13,68</b> : 1<span class="pass">AA</span></td><td class="ok"><b class="mass-zahl">7,51</b> : 1<span class="pass">AA</span></td></tr><tr><th scope="row"><span class="chip" style="--f:#6A7599;--g:#F3F5F9"></span>Linie stark auf Papier</th><td>Maßlinien, Rahmen, Tabellenkopf</td><td class="mono">Grafik ≥ 3</td><td class="ok"><b class="mass-zahl">4,17</b> : 1<span class="pass">AA</span></td><td class="ok"><b class="mass-zahl">5,59</b> : 1<span class="pass">AA</span></td></tr><tr><th scope="row"><span class="chip" style="--f:#6A7599;--g:#E4E9F2"></span>Linie stark auf Feld</th><td>Maßlinien auf Feld</td><td class="mono">Grafik ≥ 3</td><td class="ok"><b class="mass-zahl">3,73</b> : 1<span class="pass">AA</span></td><td class="ok"><b class="mass-zahl">5,05</b> : 1<span class="pass">AA</span></td></tr><tr><th scope="row"><span class="chip" style="--f:#0C1A72;--g:#F3F5F9"></span>Fokus auf Papier</th><td>Fokusring (3 px, Abstand 3 px)</td><td class="mono">Grafik ≥ 3</td><td class="ok"><b class="mass-zahl">13,68</b> : 1<span class="pass">AA</span></td><td class="ok"><b class="mass-zahl">13,67</b> : 1<span class="pass">AA</span></td></tr></tbody></table></div>
+      </div>
+    </article>
+
+    <!-- Blatt 4 -->
+    <article class="blatt" id="raster" aria-labelledby="raster-t">
+      <header class="blatt__kopf"><p class="label">Blatt 4</p><h3 id="raster-t" class="h3">Raster</h3></header>
+      <div class="blatt__inhalt">
+        <p class="lead">Zwölf Spalten, ein Bundsteg, eine Abstandsskala. Auf der Startseite zeichnet eine Bühne aus Planeinheiten die Leitungen auf das Raster; mobil läuft der Strang als eigene Spalte neben dem Text.</p>
+        <figure class="raster-demo" aria-label="Zwölf Spalten mit Bundsteg">
+          <div class="raster-demo__reihe" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span></div>
+          <figcaption class="mono muted">12 Spalten · Bundsteg 24&nbsp;px (mobil 16) · Rand 32&nbsp;px (mobil 16, ab 40&nbsp;rem 24) · Höchstbreite 1.280&nbsp;px</figcaption>
+        </figure>
+        <div class="zweispalt">
+          <div>
+            <h4 class="h4">Abstandsskala, 10 Stufen</h4>
+            <ol class="abst" role="list"><li><span class="mono">--s-1</span><span class="abst__b" style="--w:0.25rem"></span><span class="mono muted">0,25 rem · 4 px</span></li><li><span class="mono">--s-2</span><span class="abst__b" style="--w:0.5rem"></span><span class="mono muted">0,5 rem · 8 px</span></li><li><span class="mono">--s-3</span><span class="abst__b" style="--w:0.75rem"></span><span class="mono muted">0,75 rem · 12 px</span></li><li><span class="mono">--s-4</span><span class="abst__b" style="--w:1rem"></span><span class="mono muted">1 rem · 16 px</span></li><li><span class="mono">--s-5</span><span class="abst__b" style="--w:1.5rem"></span><span class="mono muted">1,5 rem · 24 px</span></li><li><span class="mono">--s-6</span><span class="abst__b" style="--w:2rem"></span><span class="mono muted">2 rem · 32 px</span></li><li><span class="mono">--s-7</span><span class="abst__b" style="--w:3rem"></span><span class="mono muted">3 rem · 48 px</span></li><li><span class="mono">--s-8</span><span class="abst__b" style="--w:4rem"></span><span class="mono muted">4 rem · 64 px</span></li><li><span class="mono">--s-9</span><span class="abst__b" style="--w:6rem"></span><span class="mono muted">6 rem · 96 px</span></li><li><span class="mono">--s-10</span><span class="abst__b" style="--w:8rem"></span><span class="mono muted">8 rem · 128 px</span></li></ol>
+          </div>
+          <div>
+            <h4 class="h4">Planeinheit und Bogenradien</h4>
+            <p class="text">Eine Planeinheit (su) ist 1/1280 der Bühnenbreite. Vorlauf liegt auf x&nbsp;=&nbsp;668, Rücklauf auf x&nbsp;=&nbsp;700 – 32&nbsp;su Leitungsabstand. Beide biegen konzentrisch: Vorlauf R&nbsp;48 innen, Rücklauf R&nbsp;80 außen. Die Zeilen der Maßkette sind je 128&nbsp;su hoch.</p>
+            <svg class="bogen" viewBox="0 0 320 168" role="img" aria-labelledby="bogen-t" focusable="false">
+              <title id="bogen-t">Konzentrische Bögen: Vorlauf mit Radius 48, Rücklauf mit Radius 80, Mittelpunkt gemeinsam</title>
+              <path class="p-haar" d="M120 20V120M20 120H120"/>
+              <path class="g-rl" d="M200 8V80A80 80 0 0 1 120 160H20"/>
+              <path class="g-vl" d="M168 8V112A48 48 0 0 1 120 160H20" transform="translate(0 -32)"/>
+              <circle class="g-mp" cx="120" cy="80" r="3"/>
+              <text class="g-t" x="128" y="76">R&#160;80</text>
+              <text class="g-t" x="82" y="108" text-anchor="end">R&#160;48</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Blatt 5 -->
+    <article class="blatt" id="formen" aria-labelledby="formen-t">
+      <header class="blatt__kopf"><p class="label">Blatt 5</p><h3 id="formen-t" class="h3">SVG-Formsystem</h3></header>
+      <div class="blatt__inhalt">
+        <p class="lead">Alles besteht aus Rohrlinien: eine Strichstärke, Bögen aus dem Raster, stumpfe Enden, Knoten als Punkte. Aus denselben Strichen entstehen Icons, Trenner, Muster, Plan und Maßkette.</p>
+
+        <h4 class="h4">Grundgeometrie</h4>
+        <ul class="grund" role="list">
+          <li><svg viewBox="0 0 96 96" aria-hidden="true" focusable="false"><path class="g-vl" d="M8 48H88"/></svg><b>Gerade</b><span class="muted">Leitung, waagerecht oder senkrecht.</span></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true" focusable="false"><path class="g-vl" d="M20 90V56A24 24 0 0 1 44 32H90"/></svg><b>Bogen 90°</b><span class="muted">Radius aus dem Raster: 2, 4, 6 im Icon; 12, 16, 48, 80 im Plan.</span></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true" focusable="false"><path class="g-vl" d="M6 76H34L58 52H92"/></svg><b>Fase 45°</b><span class="muted">Versatz ohne Radius, für Abgänge und den Trenner.</span></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true" focusable="false"><path class="g-rl" d="M6 48H90"/><circle class="g-kn" cx="48" cy="48" r="9"/></svg><b>Knoten</b><span class="muted">Punkt mit Papierfüllung: hier geht etwas ab.</span></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true" focusable="false"><path class="g-rl" d="M6 48H90"/><rect class="g-mu" x="38" y="34" width="20" height="28"/></svg><b>Muffe</b><span class="muted">Rechteck um die Leitung: Verbindung, Stutzen am Knopf.</span></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true" focusable="false"><path class="g-rl" d="M6 48H70"/><path class="g-rl" d="M70 32V64"/></svg><b>Kappe</b><span class="muted">Querstrich: die Leitung endet bewusst.</span></li>
+        </ul>
+
+        <div class="zweispalt">
+          <div>
+            <h4 class="h4">Raster 24 × 24</h4>
+            <svg class="raster24" viewBox="0 0 24 24" role="img" aria-labelledby="r24-t" focusable="false">
+              <title id="r24-t">Icon-Raster 24 mal 24 mit Sicherheitsrand von 2, Kreis, Quadrat und Hochformat als Hilfsfiguren und der Wärmepumpe als Beispiel</title>
+              <g class="r24-g"><path d="M1 0V24M2 0V24M3 0V24M4 0V24M5 0V24M6 0V24M7 0V24M8 0V24M9 0V24M10 0V24M11 0V24M12 0V24M13 0V24M14 0V24M15 0V24M16 0V24M17 0V24M18 0V24M19 0V24M20 0V24M21 0V24M22 0V24M23 0V24M0 1H24M0 2H24M0 3H24M0 4H24M0 5H24M0 6H24M0 7H24M0 8H24M0 9H24M0 10H24M0 11H24M0 12H24M0 13H24M0 14H24M0 15H24M0 16H24M0 17H24M0 18H24M0 19H24M0 20H24M0 21H24M0 22H24M0 23H24"/></g>
+              <g class="r24-k"><rect x="2" y="2" width="20" height="20"/><circle cx="12" cy="12" r="10"/><rect x="3" y="3" width="18" height="18"/><rect x="4" y="2" width="16" height="20"/><rect x="2" y="4" width="20" height="16"/></g>
+              <use href="#i-waermepumpe" width="24" height="24" class="r24-i"/>
+            </svg>
+            <p class="mono muted">Sicherheitsrand 2 · Strich 2 · Hilfsfiguren Kreis Ø&nbsp;20, Quadrat 18, Hochformat 16×20, Querformat 20×16</p>
+          </div>
+          <div>
+            <h4 class="h4">Strichstärke, Ecken und Enden</h4>
+            <ul class="striche" role="list">
+              <li><span class="strich" style="--h:4px;--c:var(--blau)"></span><span><b>Leitung 4&nbsp;px</b> – Plan, ein Zwölftel des Moduls 48; Rohr, Knoten, Muffe.</span></li>
+              <li><span class="strich" style="--h:2px;--c:var(--blau)"></span><span><b>Icon 2 auf 24</b> – ebenfalls ein Zwölftel; alle Icons zeichnen mit derselben Strichstärke.</span></li>
+              <li><span class="strich" style="--h:1px;--c:var(--linie-stark)"></span><span><b>Haarlinie 1&nbsp;px</b> – nur Maß-, Hilfs- und Rasterlinien, nie Form.</span></li>
+            </ul>
+            <p class="text">Enden sind stumpf (<span class="mono">butt</span>), Knicke laufen als Bogen oder 45°-Fase (<span class="mono">round</span>), scharfe 90°-Ecken gibt es in Leitungen nicht. Farbe immer über <span class="mono">currentColor</span> oder Token, Symbole über <span class="mono">symbol</span> und <span class="mono">use</span>.</p>
+          </div>
+        </div>
+
+        <h4 class="h4">Acht Icons derselben Familie</h4>
+        <ul class="ikonen" role="list"><li><span class="ikon"><svg width="24" height="24" aria-hidden="true"><use href="#i-waermepumpe"/></svg><svg width="48" height="48" aria-hidden="true"><use href="#i-waermepumpe"/></svg></span><b>Wärmepumpe</b><span class="muted">Schwerpunkt Wärmepumpen</span></li><li><span class="ikon"><svg width="24" height="24" aria-hidden="true"><use href="#i-bad"/></svg><svg width="48" height="48" aria-hidden="true"><use href="#i-bad"/></svg></span><b>Bad / Tropfen</b><span class="muted">moderne Bäder</span></li><li><span class="ikon"><svg width="24" height="24" aria-hidden="true"><use href="#i-heizung"/></svg><svg width="48" height="48" aria-hidden="true"><use href="#i-heizung"/></svg></span><b>Heizung / Flamme</b><span class="muted">Heizungen</span></li><li><span class="ikon"><svg width="24" height="24" aria-hidden="true"><use href="#i-werkzeug"/></svg><svg width="48" height="48" aria-hidden="true"><use href="#i-werkzeug"/></svg></span><b>Werkzeug</b><span class="muted">Persönliche Hilti-Ausstattung</span></li><li><span class="ikon"><svg width="24" height="24" aria-hidden="true"><use href="#i-fahrzeug"/></svg><svg width="48" height="48" aria-hidden="true"><use href="#i-fahrzeug"/></svg></span><b>Servicefahrzeug</b><span class="muted">Servicefahrzeug, Fahrzeit</span></li><li><span class="ikon"><svg width="24" height="24" aria-hidden="true"><use href="#i-uhr"/></svg><svg width="48" height="48" aria-hidden="true"><use href="#i-uhr"/></svg></span><b>Uhr / Feierabend</b><span class="muted">Feierabend 13:30</span></li><li><span class="ikon"><svg width="24" height="24" aria-hidden="true"><use href="#i-standort"/></svg><svg width="48" height="48" aria-hidden="true"><use href="#i-standort"/></svg></span><b>Standort</b><span class="muted">Wohnort, Einsatzgebiet</span></li><li><span class="ikon"><svg width="24" height="24" aria-hidden="true"><use href="#i-nachricht"/></svg><svg width="48" height="48" aria-hidden="true"><use href="#i-nachricht"/></svg></span><b>Nachricht</b><span class="muted">Kontakt</span></li></ul>
+
+        <h4 class="h4">Trenner und Muster</h4>
+        <div class="zweispalt zweispalt--eng">
+          <figure class="muster">
+            <div class="trenner" aria-hidden="true"><i></i><svg width="56" height="24" viewBox="0 0 56 24" focusable="false"><path class="g-hl" d="M0 16H14L22 8H56"/><circle class="g-kn" cx="22" cy="8" r="4"/></svg><i></i></div>
+            <figcaption><b>Leitungsversatz</b><span class="muted">Trenner zwischen Abschnitten: eine Fase 45° und ein Knoten, Haarlinie.</span></figcaption>
+          </figure>
+          <figure class="muster">
+            <svg class="schraff-demo" viewBox="0 0 160 40" aria-hidden="true" focusable="false"><rect width="160" height="40" fill="url(#schraffur)"/><rect class="g-rahmen" x=".5" y=".5" width="159" height="39"/></svg>
+            <figcaption><b>Schraffur 45°</b><span class="muted">Fläche, auf der nichts verlegt wird: außerhalb von 35&nbsp;km, am Wochenende.</span></figcaption>
+          </figure>
+        </div>
+      </div>
+    </article>
+
+    <!-- Blatt 6 -->
+    <article class="blatt" id="zustaende" aria-labelledby="zustaende-t">
+      <header class="blatt__kopf"><p class="label">Blatt 6</p><h3 id="zustaende-t" class="h3">Zustände</h3></header>
+      <div class="blatt__inhalt">
+        <p class="lead">Jedes Bedienelement dieser Kachel hat gestaltete Zustände. Fokus ist ein Ring von 3&nbsp;px mit 3&nbsp;px Abstand in der Fokusfarbe (hell 13,68 : 1, dunkel 13,67 : 1 gegen das Papier).</p>
+        <ul class="zust" role="list">
+          <li><span class="label">Hauptaktion</span>
+            <div class="zust__reihe">
+              <figure><a class="btn btn--demo" href="#zustaende"><span class="btn__muffe" aria-hidden="true"></span>Ruhe</a><figcaption>Ruhe</figcaption></figure>
+              <figure><a class="btn btn--demo is-hover" href="#zustaende"><span class="btn__muffe" aria-hidden="true"></span>Hover</a><figcaption>Hover</figcaption></figure>
+              <figure><a class="btn btn--demo is-focus" href="#zustaende"><span class="btn__muffe" aria-hidden="true"></span>Fokus</a><figcaption>Fokus</figcaption></figure>
+              <figure><a class="btn btn--demo is-active" href="#zustaende"><span class="btn__muffe" aria-hidden="true"></span>Gedrückt</a><figcaption>Gedrückt</figcaption></figure>
+              <figure><a class="btn btn--demo" aria-disabled="true" href="#zustaende" tabindex="-1"><span class="btn__muffe" aria-hidden="true"></span>Gesperrt</a><figcaption>Deaktiviert</figcaption></figure>
+            </div>
+          </li>
+          <li><span class="label">Radius-Umschalter</span>
+            <div class="zust__reihe">
+              <figure><span class="seg__reihe"><span class="seg__o"><span class="demo-seg">25&nbsp;km</span></span></span><figcaption>Ruhe</figcaption></figure>
+              <figure><span class="seg__reihe"><span class="seg__o"><span class="demo-seg is-hover">25&nbsp;km</span></span></span><figcaption>Hover</figcaption></figure>
+              <figure><span class="seg__reihe"><span class="seg__o"><span class="demo-seg is-on">25&nbsp;km</span></span></span><figcaption>Gewählt</figcaption></figure>
+              <figure><span class="seg__reihe"><span class="seg__o"><span class="demo-seg is-focus">25&nbsp;km</span></span></span><figcaption>Fokus</figcaption></figure>
+            </div>
+          </li>
+          <li><span class="label">Ortszeile</span>
+            <div class="zust__reihe zust__reihe--zeilen">
+              <figure><table class="orte demo-orte"><tbody><tr><th scope="row"><span class="ort-btn">Nauborn</span></th><td>5&nbsp;km</td><td>8&nbsp;Min.</td></tr></tbody></table><figcaption>Ruhe</figcaption></figure>
+              <figure><table class="orte demo-orte"><tbody><tr><th scope="row"><span class="ort-btn is-hover">Nauborn</span></th><td>5&nbsp;km</td><td>8&nbsp;Min.</td></tr></tbody></table><figcaption>Hover</figcaption></figure>
+              <figure><table class="orte demo-orte"><tbody><tr class="is-sel"><th scope="row"><span class="ort-btn">Nauborn</span></th><td>5&nbsp;km</td><td>8&nbsp;Min.</td></tr></tbody></table><figcaption>Gewählt</figcaption></figure>
+              <figure><table class="orte demo-orte"><tbody><tr class="is-out"><th scope="row"><span class="ort-btn">Herborn<span class="aus" style="display:inline">außerhalb</span></span></th><td>24&nbsp;km</td><td>22&nbsp;Min.</td></tr></tbody></table><figcaption>Außerhalb des Radius</figcaption></figure>
+            </div>
+          </li>
+        </ul>
+        <p class="text muted">Lade-, Fehler-, Erfolgs- und Leerzustand kommen in dieser Kachel nicht vor, weil sie nur auf Arbeitsseiten entstehen. Im Bewerbungsflow zeichnet derselbe Strich sie: Laden als linear durchlaufende Wärme, Fehler als Rot-Text mit Kappe, Erfolg als geschlossener Knoten, leer als gestrichelte Leitung ohne Knoten.</p>
+      </div>
+    </article>
+
+    <!-- Blatt 7 -->
+    <article class="blatt" id="bewegung" aria-labelledby="bewegung-t">
+      <header class="blatt__kopf"><p class="label">Blatt 7</p><h3 id="bewegung-t" class="h3">Bewegung</h3></header>
+      <div class="blatt__inhalt">
+        <p class="lead">Ein Signaturmoment, fünf kleine Rückmeldungen. Es bewegt sich nur <span class="mono">transform</span>, <span class="mono">opacity</span> und der Strichverlauf (<span class="mono">stroke-dashoffset</span> mit <span class="mono">pathLength="1"</span>). Nichts läuft endlos, nichts blinkt, nichts hält Inhalt zurück.</p>
+
+        <h4 class="h4">Bewegungsregister</h4>
+        <div class="tabrahmen" tabindex="0" role="region" aria-label="Bewegungsregister dieser Kachel"><table class="doku register">
+          <caption class="sr-only">Bewegungsregister dieser Kachel</caption>
+          <thead><tr><th scope="col">Kennung <span class="mono">data-motion</span></th><th scope="col">Zweck</th><th scope="col">Auslöser</th><th scope="col">Dauer · Kurve</th><th scope="col">Reduzierte Bewegung</th></tr></thead>
+          <tbody>
+            <tr><th scope="row" class="mono">leitung-verlegen</th><td>Verbindet das Versprechen mit der Handlung: Rot läuft zum Knopf, Blau trägt die Maße. Signaturmoment der Startseite.</td><td>Seitenaufruf, einmal, nach 150&nbsp;ms; Skriptklasse im Kopf, Sicherheitsnetz 2&nbsp;s</td><td class="mono">1.200&nbsp;ms <span class="muted">--d-6</span> · wechselnd</td><td>Die Leitung steht sofort, Endzustand identisch.</td></tr>
+            <tr><th scope="row" class="mono">fluss-hauptaktion</th><td>Rückmeldung: Wärme läuft einmal durch den Vorlauf zum Knopf.</td><td>Hover oder Tastaturfokus auf „Jetzt bewerben“ (ab 70&nbsp;rem, nur mit Hover-Fähigkeit)</td><td class="mono">900&nbsp;ms <span class="muted">--d-5</span> · linear</td><td>Kein Lauf; der Knopf wechselt in 180&nbsp;ms die Farbe.</td></tr>
+            <tr><th scope="row" class="mono">knopf-druck</th><td>Sofortige Druck-Rückmeldung der Hauptaktion (1&nbsp;px nach unten).</td><td>Drücken</td><td class="mono">120&nbsp;ms <span class="muted">--d-1</span> · ausklingend</td><td>Nur Farbwechsel, keine Verschiebung.</td></tr>
+            <tr><th scope="row" class="mono">radius-wahl</th><td>Zustandswechsel: gewählter Ring wird stark, die Scheibe darin blendet über.</td><td>Wahl von 15, 25 oder 35&nbsp;km</td><td class="mono">320&nbsp;ms <span class="muted">--d-3</span> · wechselnd</td><td>Sofortzustand.</td></tr>
+            <tr><th scope="row" class="mono">ort-route</th><td>Die Leitung vom Wohnort zum Betrieb zeichnet sich: Fahrtweg als Plan, nicht als Straße.</td><td>Wahl eines Orts, nur nach Nutzeraktion</td><td class="mono">560&nbsp;ms <span class="muted">--d-4</span> · ausklingend</td><td>Die Route steht sofort.</td></tr>
+            <tr><th scope="row" class="mono">ort-marke</th><td>Ring um den gewählten Ort wächst von 0,6 auf 1; beim Abwählen kürzer und beschleunigend.</td><td>Wahl eines Orts</td><td class="mono">320&nbsp;ms <span class="muted">--d-3</span> · ausklingend; aus 180&nbsp;ms <span class="muted">--d-2</span> · beschleunigend</td><td>Sofortzustand.</td></tr>
+          </tbody>
+        </table></div>
+
+        <div class="zweispalt">
+          <div>
+            <h4 class="h4">Dauern, 6 Stufen</h4>
+            <ol class="dauern" role="list"><li><span class="mono">--d-1</span><span class="dauer__b" style="--w:10%"></span><span class="mono num">120 ms</span><span class="muted">Druck-Rückmeldung</span></li><li><span class="mono">--d-2</span><span class="dauer__b" style="--w:15%"></span><span class="mono num">180 ms</span><span class="muted">Hover, Farbwechsel, Ausblenden</span></li><li><span class="mono">--d-3</span><span class="dauer__b" style="--w:26.666666666666668%"></span><span class="mono num">320 ms</span><span class="muted">Zustandswechsel Radius, Auswahl</span></li><li><span class="mono">--d-4</span><span class="dauer__b" style="--w:46.666666666666664%"></span><span class="mono num">560 ms</span><span class="muted">Route zeichnen</span></li><li><span class="mono">--d-5</span><span class="dauer__b" style="--w:75%"></span><span class="mono num">900 ms</span><span class="muted">Wärmefluss</span></li><li><span class="mono">--d-6</span><span class="dauer__b" style="--w:100%"></span><span class="mono num">1200 ms</span><span class="muted">Leitung verlegen (Signatur)</span></li></ol>
+          </div>
+          <div>
+            <h4 class="h4">Kurven, 4 Stufen</h4>
+            <ol class="kurven" role="list"><li><svg width="56" height="56" viewBox="-4 -4 56 56" aria-hidden="true" focusable="false"><path class="kv-rahmen" d="M0 0H48V48H0z"/><path class="kv-kurve" d="M0 48C7.68 0 14.399999999999999 0 48 0"/></svg><span><b>ausklingend</b><span class="mono muted">--e-aus · cubic-bezier(0.16, 1, 0.3, 1)</span><span class="muted">Auftritte, Auswahl, Zeichnen kurzer Wege</span></span></li><li><svg width="56" height="56" viewBox="-4 -4 56 56" aria-hidden="true" focusable="false"><path class="kv-rahmen" d="M0 0H48V48H0z"/><path class="kv-kurve" d="M0 48C31.200000000000003 48 16.799999999999997 0 48 0"/></svg><span><b>wechselnd</b><span class="mono muted">--e-wechsel · cubic-bezier(0.65, 0, 0.35, 1)</span><span class="muted">Zustandswechsel, die große Leitung</span></span></li><li><svg width="56" height="56" viewBox="-4 -4 56 56" aria-hidden="true" focusable="false"><path class="kv-rahmen" d="M0 0H48V48H0z"/><path class="kv-kurve" d="M0 48C15.36 48 32.160000000000004 48 48 0"/></svg><span><b>beschleunigend</b><span class="mono muted">--e-ein · cubic-bezier(0.32, 0, 0.67, 0)</span><span class="muted">Abgänge, Ausblenden</span></span></li><li><svg width="56" height="56" viewBox="-4 -4 56 56" aria-hidden="true" focusable="false"><path class="kv-rahmen" d="M0 0H48V48H0z"/><path class="kv-kurve" d="M0 48L48 0"/></svg><span><b>linear</b><span class="mono muted">--e-lin · linear</span><span class="muted">Wärmefluss, Fortschritt</span></span></li></ol>
+          </div>
+        </div>
+        <p class="text muted">Staffelabstand 80&nbsp;ms (<span class="mono">--stagger</span>), höchstens vier Elemente je Staffel. Pro Bildschirmhöhe gibt es einen Auftritt mit Gewicht: die Leitung. Scroll-Auftritte kommen auf dieser Seite nicht vor.</p>
+
+        <h4 class="h4">Probe</h4>
+        <div class="demo" data-demo>
+          <svg viewBox="0 0 360 96" aria-hidden="true" focusable="false">
+            <path class="dv-rl" d="M8 76H352"/>
+            <path class="dv-rl" d="M8 64V88"/>
+            <path class="dv" pathLength="1" data-motion="leitung-verlegen" d="M8 40H236"/>
+            <path class="df" pathLength="1" data-motion="fluss-hauptaktion" d="M8 40H236"/>
+            <rect class="dv-k" x="236" y="14" width="116" height="52"/>
+            <rect class="dv-m" x="236" y="14" width="10" height="52"/>
+            <text class="dv-t" x="300" y="46" text-anchor="middle">Jetzt bewerben</text>
+          </svg>
+          <div class="demo__ktl">
+            <button type="button" class="knopf2" data-demo-verlegen>Leitung neu verlegen</button>
+            <button type="button" class="knopf2" data-demo-fluss>Wärme durchlassen</button>
+            <p class="mono muted" data-demo-status role="status">Noch nicht gestartet.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+</main>
+
+<footer class="plankopf">
+  <div class="wrap">
+    <div class="plankopf__band" aria-hidden="true"><svg width="100%" height="100%" focusable="false"><rect width="100%" height="100%" fill="url(#schraffur)"/></svg></div>
+    <dl class="plankopf__raster">
+      <div><dt>Bauvorhaben</dt><dd>Karriereportal karriere.bad-energie.de</dd></div>
+      <div><dt>Blatt</dt><dd>Stilkachel Richtung A „Werkplan“</dd></div>
+      <div><dt>Bauherr</dt><dd>Bad &amp; Energie GmbH Lahn-Dill, Wetzlar</dd></div>
+      <div><dt>Stand</dt><dd>09.10.2026 · Runde 1</dd></div>
+      <div><dt>Schriften</dt><dd>Archivo, Martian Mono · SIL OFL 1.1</dd></div>
+      <div id="bewerbung" tabindex="-1"><dt>Ziel der Hauptaktion</dt><dd class="mono">/bewerbung (Bewerbungsflow, Arbeitsseite)</dd></div>
+    </dl>
+  </div>
+</footer>
+
+<script>
+(function(){
+var root=document.querySelector('[data-region]');
+if(root){
+  var rows=[].slice.call(root.querySelectorAll('.orte tbody tr'));
+  var orte=[].slice.call(root.querySelectorAll('.pl-ort'));
+  var hint=root.querySelector('[data-hinweis]');
+  var f={ort:root.querySelector('[data-f=ort]'),km:root.querySelector('[data-f=km]'),min:root.querySelector('[data-f=min]')};
+  var radius=35,sel=root.getAttribute('data-sel'),NB=' ';
+  var byId=function(id){return rows.filter(function(r){return r.getAttribute('data-ort')===id})[0]};
+  rows.forEach(function(tr){
+    var th=tr.querySelector('th'),name=th.textContent;th.textContent='';
+    var b=document.createElement('button');b.type='button';b.className='ort-btn';b.textContent=name;th.appendChild(b);
+    var s=document.createElement('span');s.className='aus';s.textContent='außerhalb';th.appendChild(s);
+    b.addEventListener('click',function(){root.classList.add('benutzt');pick(tr.getAttribute('data-ort'))});
+  });
+  function note(){
+    var n=rows.filter(function(r){return +r.getAttribute('data-km')<=radius}).length,t=rows.length,s=byId(sel),txt;
+    if(radius===35){txt='Einsatzgebiet: höchstens 35'+NB+'km um Wetzlar. Alle '+t+' Orte der Liste liegen darin.'}
+    else{txt='Im Radius von '+radius+NB+'km: '+n+' von '+t+' Orten. '+radius+' und 25'.replace(radius+' und ','')+NB+'km sind Hilfsringe zum Prüfen, die Zusage bleibt: höchstens 35'+NB+'km um Wetzlar.';
+      txt='Im Radius von '+radius+NB+'km: '+n+' von '+t+' Orten. Die Ringe bei 15 und 25'+NB+'km helfen beim Prüfen, die Zusage bleibt: höchstens 35'+NB+'km um Wetzlar.'}
+    if(s&&+s.getAttribute('data-km')>radius)txt+=' '+s.querySelector('.ort-btn').textContent+' liegt außerhalb von '+radius+NB+'km.';
+    hint.textContent=txt;
+  }
+  function pick(id){
+    sel=id;
+    rows.forEach(function(r){var on=r.getAttribute('data-ort')===id;r.classList.toggle('is-sel',on);r.querySelector('.ort-btn').setAttribute('aria-pressed',on)});
+    orte.forEach(function(o){o.classList.toggle('is-sel',o.getAttribute('data-ort')===id)});
+    var r=byId(id);f.ort.textContent=r.querySelector('.ort-btn').textContent;f.km.textContent=r.getAttribute('data-km')+NB+'km';f.min.textContent=r.getAttribute('data-min')+NB+'Min.';
+    note();
+  }
+  function setRadius(v){
+    radius=v;root.setAttribute('data-radius',v);
+    rows.forEach(function(r){r.classList.toggle('is-out',+r.getAttribute('data-km')>v)});
+    orte.forEach(function(o){o.classList.toggle('is-out',+o.getAttribute('data-km')>v)});
+    note();
+  }
+  [].forEach.call(root.querySelectorAll('input[name=radius]'),function(i){i.addEventListener('change',function(){root.classList.add('benutzt');setRadius(+i.value)})});
+  pick(sel);setRadius(35);
+}
+
+var demo=document.querySelector('[data-demo]');
+if(demo){
+  var st=demo.querySelector('[data-demo-status]');
+  var calm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var run=function(cls,txt){demo.classList.remove('laeuft','fliesst');void demo.offsetWidth;if(!calm)demo.classList.add(cls);st.textContent=calm?'Reduzierte Bewegung: '+txt.sofort:txt.lauf};
+  demo.querySelector('[data-demo-verlegen]').addEventListener('click',function(){run('laeuft',{lauf:'Leitung verlegt in 1.200 ms.',sofort:'die Leitung steht sofort.'})});
+  demo.querySelector('[data-demo-fluss]').addEventListener('click',function(){run('fliesst',{lauf:'Wärme fließt in 900 ms durch die Leitung.',sofort:'kein Lauf, die Leitung steht.'})});
+}
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,646 @@
+{
+  "url": "http://localhost:3701/",
+  "erstellt": "2026-10-09T10:40:31.857Z",
+  "aufnahmen": [
+    {
+      "ansicht": "m375",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": true,
+        "scrollWidth": 404,
+        "clientWidth": 375,
+        "clipped": [
+          {
+            "tag": "p",
+            "text": "Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.",
+            "clipX": false,
+            "offRight": 8
+          },
+          {
+            "tag": "p",
+            "text": "„Sauber verlegt: Der Vorlauf führt in 60 Sekunden zu uns, de",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "h4",
+            "text": "Ableitung aus dem Markenaspekt „sauber verlegt“",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "li",
+            "text": "1Ein SHK-Betrieb verlegt Leitungen, und gute Arbeit erkennt ",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "li",
+            "text": "2Darum ist die Seite ein Werkplan: Rot führt als Vorlauf in ",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "li",
+            "text": "3Weil Rot und Blau zugleich die Farben des Logos und die Lei",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "h4",
+            "text": "Austauschprobe: Warum passt das zu keinem Wettbewerber?",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "p",
+            "text": "Man setze einen beliebigen anderen SHK-Betrieb ein und prüfe",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "li",
+            "text": "100 %Sauber verlegt, 13:30 Uhr",
+            "clipX": true,
+            "offRight": 0
+          },
+          {
+            "tag": "li",
+            "text": "125 %Sauber verlegt, 13:30 Uhr",
+            "clipX": true,
+            "offRight": 0
+          },
+          {
+            "tag": "span",
+            "text": "Feld 8",
+            "clipX": true,
+            "offRight": 0
+          },
+          {
+            "tag": "span",
+            "text": "Tinte 14",
+            "clipX": true,
+            "offRight": 0
+          },
+          {
+            "tag": "span",
+            "text": "Blau 14",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m375-light-voll__01.webp",
+        "m375-light-voll__02.webp",
+        "m375-light-voll__03.webp",
+        "m375-light-voll__04.webp",
+        "m375-light-voll__05.webp",
+        "m375-light-voll__06.webp",
+        "m375-light-voll__07.webp",
+        "m375-light-voll__08.webp",
+        "m375-light-voll__09.webp",
+        "m375-light-voll__10.webp",
+        "m375-light-voll__11.webp",
+        "m375-light-voll__12.webp"
+      ]
+    },
+    {
+      "ansicht": "m375",
+      "schema": "light",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": true,
+        "scrollWidth": 404,
+        "clientWidth": 375,
+        "clipped": [
+          {
+            "tag": "p",
+            "text": "Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.",
+            "clipX": false,
+            "offRight": 8
+          },
+          {
+            "tag": "p",
+            "text": "„Sauber verlegt: Der Vorlauf führt in 60 Sekunden zu uns, de",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "h4",
+            "text": "Ableitung aus dem Markenaspekt „sauber verlegt“",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "li",
+            "text": "1Ein SHK-Betrieb verlegt Leitungen, und gute Arbeit erkennt ",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "li",
+            "text": "2Darum ist die Seite ein Werkplan: Rot führt als Vorlauf in ",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "li",
+            "text": "3Weil Rot und Blau zugleich die Farben des Logos und die Lei",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "h4",
+            "text": "Austauschprobe: Warum passt das zu keinem Wettbewerber?",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "p",
+            "text": "Man setze einen beliebigen anderen SHK-Betrieb ein und prüfe",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "li",
+            "text": "100 %Sauber verlegt, 13:30 Uhr",
+            "clipX": true,
+            "offRight": 0
+          },
+          {
+            "tag": "li",
+            "text": "125 %Sauber verlegt, 13:30 Uhr",
+            "clipX": true,
+            "offRight": 0
+          },
+          {
+            "tag": "span",
+            "text": "Feld 8",
+            "clipX": true,
+            "offRight": 0
+          },
+          {
+            "tag": "span",
+            "text": "Tinte 14",
+            "clipX": true,
+            "offRight": 0
+          },
+          {
+            "tag": "span",
+            "text": "Blau 14",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m375-light-reduziert__01.webp",
+        "m375-light-reduziert__02.webp",
+        "m375-light-reduziert__03.webp",
+        "m375-light-reduziert__04.webp",
+        "m375-light-reduziert__05.webp",
+        "m375-light-reduziert__06.webp",
+        "m375-light-reduziert__07.webp",
+        "m375-light-reduziert__08.webp",
+        "m375-light-reduziert__09.webp",
+        "m375-light-reduziert__10.webp",
+        "m375-light-reduziert__11.webp",
+        "m375-light-reduziert__12.webp"
+      ]
+    },
+    {
+      "ansicht": "m375",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": true,
+        "scrollWidth": 404,
+        "clientWidth": 375,
+        "clipped": [
+          {
+            "tag": "p",
+            "text": "Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.",
+            "clipX": false,
+            "offRight": 8
+          },
+          {
+            "tag": "p",
+            "text": "„Sauber verlegt: Der Vorlauf führt in 60 Sekunden zu uns, de",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "h4",
+            "text": "Ableitung aus dem Markenaspekt „sauber verlegt“",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "li",
+            "text": "1Ein SHK-Betrieb verlegt Leitungen, und gute Arbeit erkennt ",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "li",
+            "text": "2Darum ist die Seite ein Werkplan: Rot führt als Vorlauf in ",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "li",
+            "text": "3Weil Rot und Blau zugleich die Farben des Logos und die Lei",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "h4",
+            "text": "Austauschprobe: Warum passt das zu keinem Wettbewerber?",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "p",
+            "text": "Man setze einen beliebigen anderen SHK-Betrieb ein und prüfe",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "li",
+            "text": "100 %Sauber verlegt, 13:30 Uhr",
+            "clipX": true,
+            "offRight": 0
+          },
+          {
+            "tag": "li",
+            "text": "125 %Sauber verlegt, 13:30 Uhr",
+            "clipX": true,
+            "offRight": 0
+          },
+          {
+            "tag": "span",
+            "text": "Feld 8",
+            "clipX": true,
+            "offRight": 0
+          },
+          {
+            "tag": "span",
+            "text": "Tinte 14",
+            "clipX": true,
+            "offRight": 0
+          },
+          {
+            "tag": "span",
+            "text": "Blau 14",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m375-dark-voll__01.webp",
+        "m375-dark-voll__02.webp",
+        "m375-dark-voll__03.webp",
+        "m375-dark-voll__04.webp",
+        "m375-dark-voll__05.webp",
+        "m375-dark-voll__06.webp",
+        "m375-dark-voll__07.webp",
+        "m375-dark-voll__08.webp",
+        "m375-dark-voll__09.webp",
+        "m375-dark-voll__10.webp",
+        "m375-dark-voll__11.webp",
+        "m375-dark-voll__12.webp"
+      ]
+    },
+    {
+      "ansicht": "m375",
+      "schema": "dark",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": true,
+        "scrollWidth": 404,
+        "clientWidth": 375,
+        "clipped": [
+          {
+            "tag": "p",
+            "text": "Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.",
+            "clipX": false,
+            "offRight": 8
+          },
+          {
+            "tag": "p",
+            "text": "„Sauber verlegt: Der Vorlauf führt in 60 Sekunden zu uns, de",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "h4",
+            "text": "Ableitung aus dem Markenaspekt „sauber verlegt“",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "li",
+            "text": "1Ein SHK-Betrieb verlegt Leitungen, und gute Arbeit erkennt ",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "li",
+            "text": "2Darum ist die Seite ein Werkplan: Rot führt als Vorlauf in ",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "li",
+            "text": "3Weil Rot und Blau zugleich die Farben des Logos und die Lei",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "h4",
+            "text": "Austauschprobe: Warum passt das zu keinem Wettbewerber?",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "p",
+            "text": "Man setze einen beliebigen anderen SHK-Betrieb ein und prüfe",
+            "clipX": false,
+            "offRight": 29
+          },
+          {
+            "tag": "li",
+            "text": "100 %Sauber verlegt, 13:30 Uhr",
+            "clipX": true,
+            "offRight": 0
+          },
+          {
+            "tag": "li",
+            "text": "125 %Sauber verlegt, 13:30 Uhr",
+            "clipX": true,
+            "offRight": 0
+          },
+          {
+            "tag": "span",
+            "text": "Feld 8",
+            "clipX": true,
+            "offRight": 0
+          },
+          {
+            "tag": "span",
+            "text": "Tinte 14",
+            "clipX": true,
+            "offRight": 0
+          },
+          {
+            "tag": "span",
+            "text": "Blau 14",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m375-dark-reduziert__01.webp",
+        "m375-dark-reduziert__02.webp",
+        "m375-dark-reduziert__03.webp",
+        "m375-dark-reduziert__04.webp",
+        "m375-dark-reduziert__05.webp",
+        "m375-dark-reduziert__06.webp",
+        "m375-dark-reduziert__07.webp",
+        "m375-dark-reduziert__08.webp",
+        "m375-dark-reduziert__09.webp",
+        "m375-dark-reduziert__10.webp",
+        "m375-dark-reduziert__11.webp",
+        "m375-dark-reduziert__12.webp"
+      ]
+    },
+    {
+      "ansicht": "t768",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "t768-light-voll__01.webp",
+        "t768-light-voll__02.webp",
+        "t768-light-voll__03.webp",
+        "t768-light-voll__04.webp",
+        "t768-light-voll__05.webp",
+        "t768-light-voll__06.webp",
+        "t768-light-voll__07.webp",
+        "t768-light-voll__08.webp",
+        "t768-light-voll__09.webp",
+        "t768-light-voll__10.webp",
+        "t768-light-voll__11.webp",
+        "t768-light-voll__12.webp"
+      ]
+    },
+    {
+      "ansicht": "t768",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "t768-dark-voll__01.webp",
+        "t768-dark-voll__02.webp",
+        "t768-dark-voll__03.webp",
+        "t768-dark-voll__04.webp",
+        "t768-dark-voll__05.webp",
+        "t768-dark-voll__06.webp",
+        "t768-dark-voll__07.webp",
+        "t768-dark-voll__08.webp",
+        "t768-dark-voll__09.webp",
+        "t768-dark-voll__10.webp",
+        "t768-dark-voll__11.webp",
+        "t768-dark-voll__12.webp"
+      ]
+    },
+    {
+      "ansicht": "d1440",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "d1440-light-voll__01.webp",
+        "d1440-light-voll__02.webp",
+        "d1440-light-voll__03.webp",
+        "d1440-light-voll__04.webp",
+        "d1440-light-voll__05.webp",
+        "d1440-light-voll__06.webp",
+        "d1440-light-voll__07.webp",
+        "d1440-light-voll__08.webp",
+        "d1440-light-voll__09.webp",
+        "d1440-light-voll__10.webp",
+        "d1440-light-voll__11.webp",
+        "d1440-light-voll__12.webp"
+      ]
+    },
+    {
+      "ansicht": "d1440",
+      "schema": "light",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "d1440-light-reduziert__01.webp",
+        "d1440-light-reduziert__02.webp",
+        "d1440-light-reduziert__03.webp",
+        "d1440-light-reduziert__04.webp",
+        "d1440-light-reduziert__05.webp",
+        "d1440-light-reduziert__06.webp",
+        "d1440-light-reduziert__07.webp",
+        "d1440-light-reduziert__08.webp",
+        "d1440-light-reduziert__09.webp",
+        "d1440-light-reduziert__10.webp",
+        "d1440-light-reduziert__11.webp",
+        "d1440-light-reduziert__12.webp"
+      ]
+    },
+    {
+      "ansicht": "d1440",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "d1440-dark-voll__01.webp",
+        "d1440-dark-voll__02.webp",
+        "d1440-dark-voll__03.webp",
+        "d1440-dark-voll__04.webp",
+        "d1440-dark-voll__05.webp",
+        "d1440-dark-voll__06.webp",
+        "d1440-dark-voll__07.webp",
+        "d1440-dark-voll__08.webp",
+        "d1440-dark-voll__09.webp",
+        "d1440-dark-voll__10.webp",
+        "d1440-dark-voll__11.webp",
+        "d1440-dark-voll__12.webp"
+      ]
+    },
+    {
+      "ansicht": "d1440",
+      "schema": "dark",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "d1440-dark-reduziert__01.webp",
+        "d1440-dark-reduziert__02.webp",
+        "d1440-dark-reduziert__03.webp",
+        "d1440-dark-reduziert__04.webp",
+        "d1440-dark-reduziert__05.webp",
+        "d1440-dark-reduziert__06.webp",
+        "d1440-dark-reduziert__07.webp",
+        "d1440-dark-reduziert__08.webp",
+        "d1440-dark-reduziert__09.webp",
+        "d1440-dark-reduziert__10.webp",
+        "d1440-dark-reduziert__11.webp",
+        "d1440-dark-reduziert__12.webp"
+      ]
+    },
+    {
+      "ansicht": "d1920",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "d1920-light-voll__01.webp",
+        "d1920-light-voll__02.webp",
+        "d1920-light-voll__03.webp",
+        "d1920-light-voll__04.webp",
+        "d1920-light-voll__05.webp",
+        "d1920-light-voll__06.webp",
+        "d1920-light-voll__07.webp",
+        "d1920-light-voll__08.webp",
+        "d1920-light-voll__09.webp",
+        "d1920-light-voll__10.webp",
+        "d1920-light-voll__11.webp",
+        "d1920-light-voll__12.webp"
+      ]
+    },
+    {
+      "ansicht": "d1920",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "d1920-dark-voll__01.webp",
+        "d1920-dark-voll__02.webp",
+        "d1920-dark-voll__03.webp",
+        "d1920-dark-voll__04.webp",
+        "d1920-dark-voll__05.webp",
+        "d1920-dark-voll__06.webp",
+        "d1920-dark-voll__07.webp",
+        "d1920-dark-voll__08.webp",
+        "d1920-dark-voll__09.webp",
+        "d1920-dark-voll__10.webp",
+        "d1920-dark-voll__11.webp",
+        "d1920-dark-voll__12.webp"
+      ]
+    }
+  ]
+}
