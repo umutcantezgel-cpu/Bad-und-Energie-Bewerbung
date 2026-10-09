@@ -87,7 +87,7 @@ Bereichskennung: 404 und Fehlerseiten sind nach Paket-Schritt 2 als ALT-SHELL-* 
 | ALT-SHELL-76 | alle (ab lg) | Seitenleiste, ausgeklappt | Einbindung Dritter | CTA WhatsApp | „WhatsApp Chat“ · „Direkt mit Sabri Demir“ · Titel „Direkter WhatsApp Chat mit Geschäftsführer Sabri Demir“ | Link api.whatsapp.com, Nachricht „Hallo Herr Demir, ich interessiere mich für eine Stelle als SHK Fachkraft bei Bad und Energie.“, neuer Tab | MessageSquare | – | components/QuickApplySidebar.tsx:128-153 | – |
 | ALT-SHELL-77 | alle (ab lg) | Seitenleiste, ausgeklappt | Einbindung Dritter | CTA Telefon | „(06441) 42956“ · „Montag bis Freitag“ | Link `tel:0644142956` | PhoneCall | – | components/QuickApplySidebar.tsx:155-165 | – |
 | ALT-SHELL-78 | alle (ab lg) | Seitenleiste, ausgeklappt | Recht | Fußzeile Diskretion | „100% diskret nach Paragraph 26 BDSG“ | nur Anzeige | ShieldCheck | – | components/QuickApplySidebar.tsx:168-171 | – |
-| ALT-SHELL-79 | alle (alle Breiten) | Schwebender Kreis (unten rechts, verschiebbar) | Einbindung Dritter | WhatsApp-Kreis | aria „WhatsApp Direktkontakt zu Meister Sabri Demir öffnen (verschiebbar)“ | Klick oder Tippen (ohne Ziehen über 5 px) öffnet WhatsApp in neuem Tab (window.open, noopener). Enter/Leertaste ebenso; Escape blendet das Widget für die Seite aus. Größe 48 px mobil, 56 px ab sm; Startposition rechts, 80 % Höhe | Lucide MessageSquare (gefüllt), 20/24 px; Hintergrund #047857, weißer Rand, Ring | Einrasten 0.4 s; hover scale 1.05; active 0.95; beim Ziehen scale 1.05 | components/contact/FloatingWhatsAppWidget.tsx:11-18, 38-53, 108-132, 278-301 | belege/p0-altstand/alt-start__d1440-light__01.webp (rechts unten, grüner Kreis); mobil belege/p0-altstand/alt-start__m375-light__01.webp |
+| ALT-SHELL-79 | alle (alle Breiten) | Schwebender Kreis (unten rechts, verschiebbar) | Einbindung Dritter | WhatsApp-Kreis | aria „WhatsApp Direktkontakt zu Meister Sabri Demir öffnen (verschiebbar)“ | Klick oder Tippen (ohne Ziehen über 5 px) öffnet WhatsApp in neuem Tab (window.open, noopener). Enter/Leertaste ebenso; Escape blendet das Widget für die Seite aus. Größe 48 px mobil, 56 px ab sm; Startposition rechts unten, über dem Nach-oben-Knopf (Abstand 96 px ab sm, 88 px mobil) | Lucide MessageSquare (gefüllt), 20/24 px; Hintergrund #047857, weißer Rand, Ring | Einrasten 0.4 s; hover scale 1.05; active 0.95; beim Ziehen scale 1.05 | components/contact/FloatingWhatsAppWidget.tsx:11-18, 38-53, 108-132, 278-301 | belege/p0-altstand/alt-start__d1440-light__01.webp (rechts unten, grüner Kreis); mobil belege/p0-altstand/alt-start__m375-light__01.webp |
 | ALT-SHELL-80 | alle (alle Breiten) | WhatsApp-Kreis, Ziehen | Bewegung | Ziehen und Einrasten | – | Ziehen per Zeiger, Einrasten an den nächsten Rand (Mitte als Schwelle); Y-Grenzen 72 px oben und 96 px (sm+) bzw. 80 px (mobil) unten; haptisches Signal (vibrate 10 ms); Lage in sessionStorage `bad_energie_whatsapp_pos_v2` (dockSide, yRatio); der Schlüssel steht nicht in der Cookie-Tabelle | – | Zeiger ohne Verzögerung beim Ziehen; sonst Federweg 0.4 s | components/contact/FloatingWhatsAppWidget.tsx:9, 79-97, 134-211 | – |
 | ALT-SHELL-81 | alle (sm+) | WhatsApp-Kreis, Hinweis-Blase | Interaktives | Hinweis-Blase | Überschrift „Frage an Meister Sabri Demir?“ · Text „Schreibe uns vertraulich per WhatsApp. Du kannst diesen Button jederzeit verschieben.“ · aria „Hinweis schließen“ | Erscheint 12 s nach dem Laden (Timer); nur sm+; schließt per Knopf (Klick im Kreis unberührt) | X-Icon 14 px | Einblendung 0.3 s von unten, Fade | components/contact/FloatingWhatsAppWidget.tsx:99-106, 249-276 | belege/p0-altstand/alt-start__d1440-light__01.webp (Blase nicht sichtbar, Anzeige nach 12 s) |
 | ALT-SHELL-82 | alle | WhatsApp-Kreis, Indikator | Bewegung | Ungelesen-Punkt | – | grüner Punkt oben rechts nach 12 s (Ungelesen-Zustand, nur Anzeige) | CSS-Punkt | animate-ping am Punkt | components/contact/FloatingWhatsAppWidget.tsx:100-106, 303-309 | – |
@@ -108,7 +108,7 @@ Bereichskennung: 404 und Fehlerseiten sind nach Paket-Schritt 2 als ALT-SHELL-* 
 | ALT-SHELL-97 | alle (Modal) | Cookie-Modal, Kategorie 2 | Recht | Kategorie „Analyse und Performancemessung“ | „Analyse und Performancemessung“ · Badge „Optional“ · Schalter role switch, Startwert aus · „Erlaubt uns die pseudonyme statistische Auswertung der Besuchernutzung. Wir erkennen Ladezeiten Engpässe und vereinfachen Hürden beim Hochladen von Bewerbungsdokumenten. Daten […]“ (25 Wörter) | Schalter setzt nur den Zustand; gespeichert wird erst mit „Auswahl speichern“ oder „Alle akzeptieren“. Befund: Startwert ist immer aus, auch nach früherer Zustimmung | Schalter gleitet 0.2 s | – | components/CookieConsent.tsx:362-394 | – |
 | ALT-SHELL-98 | alle (Modal) | Cookie-Modal, Kategorie 2 | Recht | Tabelle „2 Cookies & Tracker einsehen“ | „2 Cookies & Tracker einsehen“ · Zeile 1 „_pk_id“, „Matomo / PostHog (EU-Hosting)“, „Anonyme Metriken der Seitenaufrufe“, „13 Monate“ · Zeile 2 „perf_load_metrics“, „Bad & Energie GmbH“, „Monitoring von Asset-Latenz & Bildkompression“, „30 Tage“ | Akkordeon. Befund: beide Namen fehlen im Code; kein Matomo- oder PostHog-Skript eingebunden | ChevronDown | – | components/CookieConsent.tsx:396-438 | – |
 | ALT-SHELL-99 | alle (Modal) | Cookie-Modal, Kategorie 3 | Recht | Kategorie „Funktionale Erweiterungen & Drittmedien“ | „Funktionale Erweiterungen & Drittmedien“ · Badge „Optional“ · Schalter role switch, Startwert aus · „Ermöglicht interaktive Inhalte wie die Anfahrtskarte zu unserem Meisterbetrieb in der Siegmund-Hiepe-Str. 20 (Google Maps) und Videotouren der Sanierungsausstellung.“ (19 Wörter) | Schalter wie oben. Befund: die Startseite lädt die Google-Maps-Schnittstelle, ohne den Schalter zu prüfen (siehe ALT-RECHT) | – | – | components/CookieConsent.tsx:441-471 | – |
-| ALT-SHELL-100 | alle (Modal) | Cookie-Modal, Kategorie 3 | Recht | Tabelle „2 Dienste & Tags einsehen“ | „2 Dienste & Tags einsehen“ · Zeile 1 „maps_view_coord“, „Google Ireland Ltd.“, „Karten-Zentrierung auf Wetzlar / Lahn-Dill-Kreis“, „6 Monate“ · Zeile 2 „video_embed_state“, „Bad & Energie GmbH“, „Player Einstellungen für SHK Installationsvideos“, „Session“ | Akkordeon. Befund: beide Namen fehlen im Code; das Maps-Skript setzt nach Herkunft keine solchen Cookies (Vermutung, nicht prüfbar ohne Browserlauf) | – | – | components/CookieConsent.tsx:475-517 | – |
+| ALT-SHELL-100 | alle (Modal) | Cookie-Modal, Kategorie 3 | Recht | Tabelle „2 Dienste & Tags einsehen“ | „2 Dienste & Tags einsehen“ · Zeile 1 „maps_view_coord“, „Google Ireland Ltd.“, „Karten-Zentrierung auf Wetzlar / Lahn-Dill-Kreis“, „6 Monate“ · Zeile 2 „video_embed_state“, „Bad & Energie GmbH“, „Player Einstellungen für SHK Installationsvideos“, „Session“ | Akkordeon. Befund: beide Namen fehlen im Code; ob das Maps-Skript solche Cookies setzt, ist ohne Browserlauf nicht prüfbar (Vermutung) | – | – | components/CookieConsent.tsx:475-517 | – |
 | ALT-SHELL-101 | alle (Modal) | Cookie-Modal, Fußknöpfe | Recht | Knöpfe „Alle ablehnen“, „Auswahl speichern“, „Alle akzeptieren“ | „Alle ablehnen“ · „Auswahl speichern“ · „Alle akzeptieren“ | Ablehnen speichert nur notwendige Dienste; „Auswahl speichern“ übernimmt die Schalter; „Alle akzeptieren“ setzt alles auf wahr. Gespeichert wird im localStorage | – | – | components/CookieConsent.tsx:522-545 | – |
 | ALT-SHELL-102 | alle (Modal) | Cookie-Modal, Fußzeile | Recht | Consent-ID und Zeitstempel | „ID: CONSENT-WETZLAR-2449-2026“ · „2026-10-01 04:10:50 UTC“ | Feste Standardwerte, auch ohne gespeicherte Einwilligung (Befund: Platzhalter, keine echte Protokoll-ID) | – | – | components/CookieConsent.tsx:80-88, 547-552 | – |
 | ALT-SHELL-103 | alle (Modal) | Cookie-Modal, Fußzeile | Navigation | Links im Modal | „Datenschutzerklärung“ · „Impressum“ | Links; schließen das Modal | – | – | components/CookieConsent.tsx:553-568 | – |
@@ -279,3 +279,62 @@ Bereichskennung: 404 und Fehlerseiten sind nach Paket-Schritt 2 als ALT-SHELL-* 
 | ALT-SEO-57 | alle | Module ohne Einbindung | Suche und Technik | Ungenutzte SEO-Module | `components/seo/JsonLd.tsx` (nur re-exportiert); `lib/seo/canonical-links.ts`, `lib/seo/metadata.ts`, `lib/seo/schema-generators.ts`, `lib/seo/schemaPyramid.ts` (keine Verwendung in app/ und components/ gefunden) | Befund: totes Material, verwechselbar mit Live-Daten (Vermutung) | – | – | components/seo/index.ts:2; lib/seo/ (Verzeichnis) | – |
 | ALT-SEO-58 | alle | Suche | Funktion | Suchfunktion | keine Suchseite und kein Suchfeld im Seitenrahmen; einziges Filterfeld steht im Datenschutz-Inhaltsverzeichnis (ALT-RECHT-29) | Befund: SearchAction-Eintrag (ALT-SEO-14) verweist auf nicht vorhandene Suche | – | – | app/layout.tsx:150-157; app/datenschutz/page.tsx:172-182 | – |
 | ALT-SEO-59 | alle | Kanonische Adressen | Suche und Technik | Kanonische Ziele aller Seiten | `/` → https://karriere.bad-energie.de · `/bewerbung` → …/bewerbung · `/datenschutz` → …/datenschutz · `/impressum` → …/impressum · 404 erbt Root (Vermutung) | Live bestätigt die Basis-URL in robots.txt und Sitemap | – | – | app/page.tsx:58-64; app/bewerbung/layout.tsx:10-12; app/datenschutz/layout.tsx:10-12; app/impressum/page.tsx:14-16 | – |
+
+## Zählung je Kategorie
+
+Gesamt 259 Elemente (ALT-SHELL 125 · ALT-RECHT 75 · ALT-SEO 59).
+
+| Kategorie | Anzahl |
+|---|---|
+| Recht | 72 |
+| Suche und Technik | 53 |
+| Inhalt | 38 |
+| Navigation | 36 |
+| Einbindung Dritter | 26 |
+| Interaktives | 11 |
+| Vertrauen | 9 |
+| Grafik und SVG | 6 |
+| Funktion | 5 |
+| Bewegung | 3 |
+| Summe | 259 |
+
+Die Kategorie „Bewegung“ ist für die Elemente mit eigener Bewegung nur knapp belegt, weil Bewegung meist in den Zeilen der jeweiligen Elemente steht (Spalte „Bewegung“). Die Zahl bildet nur die Hauptkategorie je Zeile ab.
+
+## Routen und URLs, die der Altstand ausliefert
+
+Stand der Live-Prüfung auf `localhost:3600` mit GET (Chrome/141-User-Agent). Nicht aufgerufen: `action=submit` an `/api/indexnow`, alle POST-Routen und Formularsendungen.
+
+| Pfad | Art | Status (live) | Größe | Quelle |
+|---|---|---|---|---|
+| `/` | Seite | 200 | 293 305 B | app/page.tsx |
+| `/bewerbung` | Seite | 200 | 142 604 B | app/bewerbung/page.tsx (Paket Formular) |
+| `/bewerbung?tab=quiz` · `?tab=vault` · `?tab=form` · `?tab=dossier` | Seite (Varianten) | 200 je | 142 604 B | gleiche Seite, Query |
+| `/datenschutz` | Seite | 200 | 128 311 B | app/datenschutz/page.tsx |
+| `/impressum` | Seite | 200 | 109 400 B | app/impressum/page.tsx |
+| `/gibt-es-nicht-404` · `/danke` | nicht gefunden | 404 | 98 454 B | app/not-found.tsx |
+| `/admin/` | Weiterleitung | 308 | 6 B | (Vermutung: Weiterleitung ohne Schrägstrich, Ziel nicht geprüft) |
+| `/robots.txt` | Textroute | 200 | 754 B | app/robots.ts |
+| `/sitemap.xml` | Textroute | 200 | 770 B | app/sitemap.ts |
+| `/llms.txt` | Textroute | 200 | 2 351 B | app/llms.txt/route.ts |
+| `/llms-full.txt` | Textroute | 200 | 3 460 B | app/llms-full.txt/route.ts |
+| `/298d966b7e4f4a43981cb8e30da6b5b5.txt` | Textroute (IndexNow) | 200 | 33 B | app/298…txt/route.ts und public/ |
+| `/api/maps/config` (GET ohne Bad-Energie-Referer) | Schnittstelle | 403 | 27 B | app/api/maps/config/route.ts |
+| `/api/indexnow` (GET ohne Parameter) | Schnittstelle | 200 | 562 B | app/api/indexnow/route.ts |
+| `/api/indexnow?action=submit` | Schnittstelle (nicht aufgerufen) | – | – | externe Übermittlung |
+| `/api/indexnow` (POST) | Schnittstelle (nicht aufgerufen) | – | – | app/api/indexnow/route.ts |
+| `/api/contact` (POST) | Schnittstelle (nicht aufgerufen) | – | – | Formularpaket |
+| `/api/bewerbung` (POST) | Schnittstelle (nicht aufgerufen) | – | – | Formularpaket |
+| `/favicon.ico`, `/icon-192.png`, `/images/bad-energie-lahn-dill-logo*.{webp,png,svg}` | statische Dateien | nicht live geprüft (in `public/` vorhanden) | – | public/ |
+
+## Selbstprüfung (Paket)
+
+- Fußlinks mit Ziel: 14 Links im Fuß (ohne den Knopf „Cookie Einstellungen“). 13 Ziele sind vorhanden oder eindeutig (Start-Anker `#stellen` gefunden; `/impressum`, `/datenschutz`, `/bewerbung` gefunden; `tel:`, `mailto:`, externe Adressen nur als URL geprüft, nicht aufgerufen). 1 Ziel fehlt: `/datenschutz#bewerber-datenschutz` (ALT-SHELL-69).
+- Pflichtangaben im Impressum wörtlich erfasst: Firma, Anschrift, Telefon, Telefax, E-Mail, Website, Registergericht, Registernummer, USt-IdNr., Geschäftsführung, Verantwortlicher nach § 18 Abs. 2 MStV, Handwerkskammer mit Anschrift, Telefon und E-Mail, Berufsbezeichnung, Streitbeilegung (Plattform und Bereitschaft), Haftungstext.
+- JSON-LD-Knoten erfasst: 17 (Root 11: Organization, Person, WebSite, BreadcrumbList, LocalBusiness, Brand, JobPosting×4, FAQPage; Datenschutz 2; Impressum 2; Bewerbung 2). Die fünf FAQ-Fragen sind als Unterpunkte erfasst (ALT-SEO-23 bis -27).
+- Robots-Regeln: vier Gruppen wörtlich, live bestätigt. Sitemap: vier Einträge, live bestätigt.
+- Verifikation der Zusammenhänge per Grep (Anker, Cookie-Namen, Analysedienste, CSP, Schriftquellen, Bildhosts, Konsens-Speicher): Ergebnisse in ALT-RECHT-70 bis -75 und ALT-SEO-56 bis -58.
+
+## Bildbelege (Zuordnung)
+
+Verwendete Ausschnitte (Pfad relativ zu `_relaunch/`): `belege/p0-altstand/alt-start__d1440-light__01.webp` (Oberleiste, Kopf, Schnellleiste, WhatsApp-Kreis, Cookie-Knopf), `…alt-start__m375-light__01.webp` (mobiler Kopf, Hamburger, Express-Knopf, abgeschnittene Oberleiste), `…alt-fehler-404__m375-light__01.webp` (mobile 404, nicht geöffnet), `…alt-impressum__d1440-light__01.webp` (Impressum oben), `…alt-impressum__d1440-light__03.webp` (Fuß), `…alt-datenschutz__d1440-light__01.webp` (Datenschutz oben, Kennzahlen, Inhaltsverzeichnis), `…alt-fehler-404__d1440-light__01.webp` (404).
+Zugeordnet sind nur Ausschnitte, die geöffnet und geprüft wurden. Alle übrigen Zeilen stehen mit „–“. Lücken siehe OFFENE FRAGEN.
