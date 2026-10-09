@@ -368,3 +368,8 @@ ALT-BEW-001, ALT-BEW-002, ALT-BEW-003, ALT-BEW-004, ALT-BEW-005, ALT-BEW-006, AL
 - Bildspalte: 297 × „–“.
 - IDs laufen lückenlos von ALT-BEW-001 bis ALT-BEW-297.
 - Browserläufe nur lesend über `_relaunch/werkzeuge/lib/browser.mjs`; keine Formularsendung, keine Anfrage außerhalb localhost (Anfragesperre leer).
+
+## Nachtrag aus der Gegenprobe P1-KUND-06 (Orchestrator, 09.10.2026)
+| A-ID | Seite | Abschnitt (Anker/Ort) | Kategorie | Element | Inhalt wörtlich | Verhalten / Funktion | Grafik / SVG | Bewegung | Fundstelle | Bild |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ALT-BEW-298 | /bewerbung | Checkliste, offene Kriterienkarte | Inhalt | Hinweistext auf offenen Kriterienkarten | „Klicke hier zur Erfassung:“ | führt zur Erfassung des fehlenden Kriteriums | – | – | components/BewerberCheckliste.tsx:966-968 | – |

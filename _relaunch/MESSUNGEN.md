@@ -9,7 +9,7 @@
 | Blindvergleich (Siege Endstand) | – | ≥ 90 % | – | – |
 | Bewegungsregister-Abdeckung (data-motion ↔ Register) | folgt P0 | 100 % | – | – |
 | axe ernst/kritisch (Grundmenge × Ansichten × Schemata + Zustände) | 0 (110 Läufe; auch 0 mäßig/gering) | 0 | 0 | belege/P0-MESS-02/axe.md |
-| Lighthouse mobil Perf (Median, Hauptseiten) | folgt P0 | ≥ 90 je Hauptseite | – | belege/p0-lighthouse/lighthouse.md |
+| Lighthouse mobil (Median aus 5, Hauptseiten) | Perf 94 · 96 · 94 · 94 – LCP 2,92 · 2,63 · 3,08 · 2,94 s (alle über 2,5 s) · CLS 0 · TBT 80–108 ms | Perf ≥ 90, LCP ≤ 2,5 s, CLS ≤ 0,1, TBT ≤ 200 ms | wie Ausgang | belege/p0-lighthouse/lighthouse.md |
 | Element-Abdeckung (integriert / Muss+Soll) | – | 100 % | – | VERLUSTLISTE.md |
 
 ## Ebene 1 Bestand (P0, 09.10.2026, Commit a83269d + Ausschluss-Konfiguration)
@@ -22,6 +22,15 @@
 | `bun run build` | grün, 27 statische Seiten | 27 s |
 | `bun run test:graph` | grün | < 1 s |
 Log: `_relaunch/.roh/p0/ebene1.log` (lokal).
+
+## Ebene 6 Leistung – Lighthouse (P0, 09.10.2026, Median aus 5 Läufen, Produktions-Build :3500, Chromium 141, Lighthouse 13.5)
+| Seite | mobil Perf | mobil LCP | mobil TBT | Desktop Perf | Desktop LCP | Budget |
+|---|---|---|---|---|---|---|
+| / | 94 | 2,92 s | 108 ms | 100 | 0,64 s | LCP über Budget |
+| /jobs | 96 | 2,63 s | 98 ms | 100 | 0,55 s | LCP über Budget |
+| /jobs/anlagenmechaniker-shk-wetzlar | 94 | 3,08 s | 80 ms | 100 | 0,67 s | LCP über Budget |
+| /bewerbung | 94 | 2,94 s | 93 ms | 100 | 0,60 s | LCP über Budget |
+A11y, Best Practices, SEO überall 100; CLS 0,000; keine Drittanbieter-Bytes. LCP-Element ist jeweils die H1 bzw. ein Text im Kopf (Schrift-/Renderpfad). Z-12 verlangt: LCP ≤ 2,5 s auf allen Hauptseiten – der Ausgangsstand verfehlt das bereits; Ursache in P3 (Schriftladen, kritischer Pfad) klären.
 
 ## Ebene 5 Zugänglichkeit (P0, P0-MESS-02)
 | Prüfung | Ausgangswert |
