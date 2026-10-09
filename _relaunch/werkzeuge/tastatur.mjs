@@ -150,10 +150,24 @@ function messeAktiv() {
     el.getAttribute('role') ||
     ({ a: el.hasAttribute('href') ? 'link' : 'generic', button: 'button', select: 'combobox', textarea: 'textbox', summary: 'button (summary)', details: 'group', h1: 'heading', h2: 'heading', h3: 'heading' }[tag] ??
       (tag === 'input' ? ({ checkbox: 'checkbox', radio: 'radio', button: 'button', submit: 'button', range: 'slider', search: 'searchbox' }[typ ?? 'text'] ?? 'textbox') : 'generic'));
+  // Fokusdarstellung: am Element selbst und an seinen Pseudo-Elementen (Stretched Links zeichnen den Ring auf ::after).
+  const ringVon = (stil, pseudo) => {
+    if (pseudo && (stil.content === 'none' || stil.content === 'normal')) return { outline: false, schatten: false, outlineText: '', schattenText: '' };
+    const w = parseFloat(stil.outlineWidth) || 0;
+    return {
+      outline: stil.outlineStyle !== 'none' && w >= 2 && alpha(stil.outlineColor) > 0,
+      schatten: schattenSichtbar(stil.boxShadow),
+      outlineText: `${stil.outlineWidth} ${stil.outlineStyle} ${stil.outlineColor}`,
+      schattenText: stil.boxShadow === 'none' ? 'none' : stil.boxShadow.slice(0, 120),
+    };
+  };
   const cs = getComputedStyle(el);
-  const outlineW = parseFloat(cs.outlineWidth) || 0;
-  const outlineSichtbar = cs.outlineStyle !== 'none' && outlineW >= 2 && alpha(cs.outlineColor) > 0;
-  const shadowSichtbar = schattenSichtbar(cs.boxShadow);
+  const selbst = ringVon(cs, false);
+  const nachher = ringVon(getComputedStyle(el, '::after'), true);
+  const vorher = ringVon(getComputedStyle(el, '::before'), true);
+  const outlineSichtbar = selbst.outline;
+  const shadowSichtbar = selbst.schatten;
+  const fokusOrt = selbst.outline || selbst.schatten ? 'element' : nachher.outline || nachher.schatten ? '::after' : vorher.outline || vorher.schatten ? '::before' : null;
   const r = el.getBoundingClientRect();
   const vw = document.documentElement.clientWidth;
   const vh = innerHeight;
@@ -165,12 +179,19 @@ function messeAktiv() {
   const vollstaendig = r.width > 0 && r.height > 0 && r.top >= -1 && r.left >= -1 && r.bottom <= vh + 1 && r.right <= vw + 1;
   // Trefferprobe: liegt etwas anderes über dem Mittelpunkt des sichtbaren Teils?
   let verdecktDurch = null;
+  let kopfTreffer = false;
   if (schneidet && r.width >= 4 && r.height >= 4) {
     const x = (Math.max(r.left, 0) + Math.min(r.right, vw)) / 2;
     const y = (Math.max(r.top, 0) + Math.min(r.bottom, vh)) / 2;
     const hit = document.elementFromPoint(x, y);
     const gehoertDazu = hit && (hit === el || el.contains(hit) || hit.contains(el) || (el.labels && [...el.labels].some((l) => l.contains(hit))));
     if (hit && !gehoertDazu) verdecktDurch = `${hit.tagName.toLowerCase()}${hit.id ? '#' + hit.id : ''}${hit.className && typeof hit.className === 'string' ? '.' + hit.className.trim().split(/\s+/).slice(0, 2).join('.') : ''}`;
+    // Oberkante des Elements (2 px darunter, horizontal mittig): liegt dort die Kopfleiste darüber?
+    if (kopf && !imKopf && r.top < kopfH - 0.5) {
+      const yo = Math.min(Math.max(r.top + 2, 0), vh - 1);
+      const hitOben = document.elementFromPoint(x, yo);
+      kopfTreffer = Boolean(hitOben && kopf.contains(hitOben));
+    }
   }
   return {
     koerper: false,
@@ -180,18 +201,24 @@ function messeAktiv() {
     name: name.replace(/\s+/g, ' ').trim().slice(0, 80),
     href: el.getAttribute('href')?.slice(0, 80) ?? null,
     focusVisible: el.matches(':focus-visible'),
-    outline: `${cs.outlineWidth} ${cs.outlineStyle} ${cs.outlineColor}`,
+    outline: selbst.outlineText,
     outlineOffset: cs.outlineOffset,
-    boxShadow: cs.boxShadow === 'none' ? 'none' : cs.boxShadow.slice(0, 120),
+    boxShadow: selbst.schattenText,
+    outlineAfter: nachher.outlineText,
+    outlineBefore: vorher.outlineText,
+    fokusOrt,
     outlineSichtbar,
     schattenSichtbar: shadowSichtbar,
-    fokusSichtbar: outlineSichtbar || shadowSichtbar,
+    fokusSichtbar: fokusOrt !== null,
     rect: { top: Math.round(r.top), left: Math.round(r.left), width: Math.round(r.width), height: Math.round(r.height) },
     imViewport: schneidet,
     vollstaendigImViewport: vollstaendig,
     kopfHoehe: Math.round(kopfH),
     abstandZurKopfleiste: imKopf ? null : Math.round(r.top - kopfH),
-    verdecktVonKopfleiste: !imKopf && kopf && schneidet ? r.top < kopfH - 0.5 : false,
+    // Spezifikation: Oberkante unter der Unterkante der Kopfleiste (reine Rechteckprüfung) …
+    obenUnterKopfleiste: !imKopf && kopf && schneidet ? r.top < kopfH - 0.5 : false,
+    // … und durch Trefferprobe bestätigt (Sprunglink liegt absichtlich über der Kopfleiste und zählt deshalb nicht als verdeckt).
+    verdecktVonKopfleiste: kopfTreffer,
     verdecktDurch,
     imKopf,
     imFuss: Boolean(el.closest('footer')),
@@ -203,10 +230,18 @@ function messeAktiv() {
 function messeBreite() {
   const doc = document.documentElement;
   const sel = (el) => `${el.tagName.toLowerCase()}${el.id ? '#' + el.id : ''}${el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\s+/).slice(0, 3).join('.') : ''}`;
+  // Inhalte in eigenen Scrollcontainern (Karussell, overflow-x auto/scroll/hidden/clip) zählen nicht als Seitenüberlauf.
+  const imScroller = (e) => {
+    for (let p = e.parentElement; p && p !== document.body; p = p.parentElement) {
+      const o = getComputedStyle(p).overflowX;
+      if (o === 'auto' || o === 'scroll' || o === 'hidden' || o === 'clip') return true;
+    }
+    return false;
+  };
   const breit = [...document.body.querySelectorAll('*')]
     .filter((e) => {
       const r = e.getBoundingClientRect();
-      return r.width > 0 && r.right > doc.clientWidth + 1 && e.checkVisibility?.();
+      return r.width > 0 && r.right > doc.clientWidth + 1 && e.checkVisibility?.() && !imScroller(e);
     })
     .slice(0, 6)
     .map((e) => ({ ziel: sel(e), rechts: Math.round(e.getBoundingClientRect().right - doc.clientWidth) }));
@@ -280,7 +315,7 @@ function messeOhneJs() {
     if (cs.opacity !== '0') continue;
     const r = el.getBoundingClientRect();
     if (r.width === 0 || r.height === 0 || r.bottom <= 0 || r.top >= innerHeight) continue;
-    unsichtbar.push({ ziel: sel(el), text: (el.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 40), mitText: Boolean((el.innerText || '').trim()), inMain: Boolean(main?.contains(el)) });
+    unsichtbar.push({ ziel: sel(el), text: (el.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 40), mitText: Boolean((el.innerText || '').trim()), inMain: Boolean(main?.contains(el)), eltern: (el.closest('a,button,summary,li,section')?.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 40) });
     if (unsichtbar.length >= 25) break;
   }
   return {
@@ -337,6 +372,7 @@ async function tabDurchlauf(p) {
     const fussErreicht = echte.some((s) => s.imFuss);
     const ohneFokus = echte.filter((s) => !s.fokusSichtbar);
     const verdeckt = echte.filter((s) => s.verdecktVonKopfleiste);
+    const obenUnter = echte.filter((s) => s.obenUnterKopfleiste);
     const ausserhalb = echte.filter((s) => !s.imViewport);
     const verdecktSonst = echte.filter((s) => s.verdecktDurch);
     return {
@@ -350,6 +386,7 @@ async function tabDurchlauf(p) {
       sprunglinkSichtbarBeiFokus: sprunglink ? Boolean(erstes.fokusSichtbar && erstes.imViewport) : null,
       fokusOhneFokusdarstellung: ohneFokus.length,
       fokusVerdecktVonKopfleiste: verdeckt.length,
+      fokusObenUnterKopfleisteRechteck: obenUnter.length,
       fokusAusserhalbViewport: ausserhalb.length,
       fokusVonAnderemElementUeberdeckt: verdecktSonst.length,
       koerperSchritte: schritte.filter((s) => s.koerper).length,
@@ -360,7 +397,7 @@ async function tabDurchlauf(p) {
       ohneAbschlussIn80: stopp === 'limit',
       auffaellig: schritte
         .filter((s) => !s.koerper && (!s.fokusSichtbar || s.verdecktVonKopfleiste || !s.imViewport || s.verdecktDurch))
-        .map((s) => ({ schritt: s.schritt, element: `${s.tag} „${s.name}“`, rolle: s.rolle, fokusSichtbar: s.fokusSichtbar, outline: s.outline, boxShadow: s.boxShadow, imViewport: s.imViewport, verdecktVonKopfleiste: s.verdecktVonKopfleiste, abstandZurKopfleiste: s.abstandZurKopfleiste, verdecktDurch: s.verdecktDurch })),
+        .map((s) => ({ schritt: s.schritt, element: `${s.tag} „${s.name}“`, rolle: s.rolle, fokusSichtbar: s.fokusSichtbar, fokusOrt: s.fokusOrt, outline: s.outline, boxShadow: s.boxShadow, imViewport: s.imViewport, verdecktVonKopfleiste: s.verdecktVonKopfleiste, abstandZurKopfleiste: s.abstandZurKopfleiste, verdecktDurch: s.verdecktDurch })),
       schritte,
     };
   });
@@ -405,6 +442,7 @@ async function textabstand(p, vpName) {
     await page.waitForTimeout(250);
     const mit = await overflowReport(page);
     const mitV = await page.evaluate(messeVertikalAbgeschnitten);
+    const breiteMit = await page.evaluate(messeBreite);
     const key = (c) => `${c.tag}|${c.text}`;
     const basisKeys = new Set(basis.clipped.map(key));
     const basisVKeys = new Set(basisV.map((c) => `${c.tag}|${c.text}`));
@@ -417,6 +455,7 @@ async function textabstand(p, vpName) {
       neuHorizontalAbgeschnitten: mit.clipped.filter((c) => !basisKeys.has(key(c))).length,
       neuVertikalAbgeschnitten: mitV.filter((c) => !basisVKeys.has(`${c.tag}|${c.text}`)).length,
       neuerUeberlauf: mit.horizontal && !basis.horizontal,
+      breiteMit,
     };
   });
 }
@@ -538,6 +577,7 @@ const summen = {
     ohneSprunglinkAlsErstesZiel: tab.filter((t) => !t.sprunglinkErstesZiel).map((t) => t.slug),
     schritteOhneFokusdarstellung: tab.reduce((n, t) => n + t.fokusOhneFokusdarstellung, 0),
     schritteVerdecktVonKopfleiste: tab.reduce((n, t) => n + t.fokusVerdecktVonKopfleiste, 0),
+    schritteObenUnterKopfleisteRechteck: tab.reduce((n, t) => n + t.fokusObenUnterKopfleisteRechteck, 0),
     schritteAusserhalbViewport: tab.reduce((n, t) => n + t.fokusAusserhalbViewport, 0),
     schritteVonAnderemElementUeberdeckt: tab.reduce((n, t) => n + t.fokusVonAnderemElementUeberdeckt, 0),
     fokusfallen: tab.filter((t) => t.fokusfalle).map((t) => t.slug),
@@ -578,11 +618,11 @@ const summary = {
     chromium: chromiumVersion,
     reducedMotion: "reduce (nur 'ohne JavaScript': no-preference)",
     farbschema: 'hell',
-    tab: `d1440 hell, bis zu ${MAX_TABS} × Tab je Hauptseite (${hauptseiten.map((p) => p.slug).join(', ')}), 90 ms Wartezeit je Schritt, ohne vorheriges Durchscrollen; Fokus sichtbar = berechnete outline-width ≥ 2 px (Stil ≠ none, Farbe nicht transparent) oder box-shadow mit sichtbarer Farbe und Maß ≠ 0, nur am fokussierten Element selbst gemessen; verdeckt = Elementoberkante < Unterkante der ersten sticky/fixed header; Fokusfalle = gleiches Element 3× in Folge oder Zyklus ohne Fußbereich`,
-    reflow: `${VP_320.width}×${VP_320.height} isMobile, dsf 2, jede Seite der Grundmenge (${seiten.length}), overflowReport() nach Durchscrollen`,
+    tab: `d1440 hell, bis zu ${MAX_TABS} × Tab je Hauptseite (${hauptseiten.map((p) => p.slug).join(', ')}), 90 ms Wartezeit je Schritt, ohne vorheriges Durchscrollen; Fokus sichtbar = berechnete outline-width ≥ 2 px (Stil ≠ none, Farbe nicht transparent) oder box-shadow mit sichtbarer Farbe und Maß ≠ 0, gemessen am fokussierten Element und seinen Pseudo-Elementen ::after/::before (nicht an Vorfahren oder Geschwistern); verdeckt (Kopfleiste) = Elementoberkante < Unterkante der ersten sticky/fixed header UND Trefferprobe 2 px unter der Oberkante liegt in der Kopfleiste (Rechteckprüfung allein wird zusätzlich gezählt); Fokusfalle = gleiches Element 3× in Folge oder Zyklus ohne Fußbereich`,
+    reflow: `${VP_320.width}×${VP_320.height} isMobile, dsf 2, jede Seite der Grundmenge (${seiten.length}), overflowReport() nach Durchscrollen; „erste Verursacher“ = sichtbare Elemente mit Rechteck rechts über dem Rand, ohne Inhalte in eigenen Scrollcontainern`,
     zoom: 'Primär: Viewport 720×450, dsf 2, ohne isMobile (entspricht Browser-Zoom 200 % bei 1440 px); Vergleich: d1440 mit document.documentElement.style.zoom = 2',
     textabstand: `m375 und d1440, hell; Stylesheet „${TEXTABSTAND_CSS}“; overflowReport() vorher und nachher, ergänzend vertikal abgeschnittener Text (overflow hidden/clip, Inhalt höher als Box)`,
-    erzwungeneFarben: 'forcedColors „active“, Farbschema hell, m375 und d1440, Hauptseiten; Bildschirmfoto der ersten Bildschirmhöhe (WebP, Qualität 70); sichtbar = Rahmen (eine Seite, Stil ≠ none) oder Outline oder Unterstreichung laut berechneten Styles',
+    erzwungeneFarben: 'forcedColors „active“, Farbschema hell, m375 und d1440, Hauptseiten; Bildschirmfoto der ersten Bildschirmhöhe (WebP, Qualität 70); sichtbar = Rahmen (eine Seite, Stil ≠ none) oder Outline oder Unterstreichung laut berechneten Styles; „Fließtext“ nach der Heuristik aus e2e/support/site.ts (Block-Vorfahr enthält mehr Text als der Link), daher zählen auch Titel-Links der Stellenkarten dazu; Links umfassen auch als Knopf gestaltete Links (z. B. „Jetzt bewerben“)',
     ohneJavaScript: 'javaScriptEnabled false, m375 und d1440, alle Seiten der Grundmenge, Wartezeit 1,5 s nach load; opacity 0 = berechnete opacity exakt 0 bei Element im ersten Bildschirm',
     anfragesperre: 'lib/browser.mjs (G5)',
     parallel: jobs,
@@ -613,7 +653,7 @@ md.push(`- Fehlgeschlagen: ${fehlerListe.length ? fehlerListe.join(', ') : 'kein
 md.push(`- Anfragesperre insgesamt: ${Object.keys(anfragen).length ? Object.entries(anfragen).map(([k, n]) => `${k} ×${n}`).join(', ') : 'keine gesperrten oder abgefangenen Anfragen'}`);
 md.push('');
 md.push('## Summenzeile');
-md.push(`- Tab: ohne Sprunglink als erstes Ziel ${summen.tab.ohneSprunglinkAlsErstesZiel.length}/${summen.tab.hauptseiten} Hauptseiten (${summen.tab.ohneSprunglinkAlsErstesZiel.join(', ') || '–'}) · Schritte ohne Fokusdarstellung ${summen.tab.schritteOhneFokusdarstellung} · verdeckt von Kopfleiste ${summen.tab.schritteVerdecktVonKopfleiste} · außerhalb Viewport ${summen.tab.schritteAusserhalbViewport} · von anderem Element überdeckt ${summen.tab.schritteVonAnderemElementUeberdeckt} · Fokusfallen ${summen.tab.fokusfallen.length} (${summen.tab.fokusfallen.join(', ') || '–'})`);
+md.push(`- Tab: ohne Sprunglink als erstes Ziel ${summen.tab.ohneSprunglinkAlsErstesZiel.length}/${summen.tab.hauptseiten} Hauptseiten (${summen.tab.ohneSprunglinkAlsErstesZiel.join(', ') || '–'}) · Schritte ohne Fokusdarstellung ${summen.tab.schritteOhneFokusdarstellung} · verdeckt von Kopfleiste ${summen.tab.schritteVerdecktVonKopfleiste} (nur Rechteckprüfung ${summen.tab.schritteObenUnterKopfleisteRechteck}) · außerhalb Viewport ${summen.tab.schritteAusserhalbViewport} · von anderem Element überdeckt ${summen.tab.schritteVonAnderemElementUeberdeckt} · Fokusfallen ${summen.tab.fokusfallen.length} (${summen.tab.fokusfallen.join(', ') || '–'})`);
 md.push(`- Reflow 320: horizontaler Überlauf ${summen.reflow320.mitHorizontalemUeberlauf.length}/${summen.reflow320.seiten} (${summen.reflow320.mitHorizontalemUeberlauf.join(', ') || '–'}) · Seiten mit abgeschnittenem/überstehendem Text ${summen.reflow320.seitenMitAbgeschnittenemText.length}`);
 md.push(`- Zoom 200 % (Viewport 720×450): Überlauf ${summen.zoom200.viewport720x450MitUeberlauf.length}/${summen.zoom200.seiten} · abgeschnittener Text ${summen.zoom200.viewport720x450MitAbgeschnittenemText.length} · Vergleichsverfahren CSS-Zoom: Überlauf ${summen.zoom200.cssZoomMitUeberlauf.length}/${summen.zoom200.seiten}`);
 md.push(`- Textabstände: neuer Überlauf ${summen.textabstand.mitNeuemUeberlauf.length}/${summen.textabstand.laeufe} Läufe · neu abgeschnittener Text ${summen.textabstand.mitNeuAbgeschnittenemText.length}/${summen.textabstand.laeufe}`);
@@ -623,25 +663,25 @@ md.push('');
 
 if (erg.tab.length) {
   md.push('## 1 · Tab-Durchlauf (d1440, hell)');
-  md.push('| Seite | Schritte | Ende | Sprunglink erstes Ziel | Fokus ohne Darstellung | verdeckt (Kopfleiste) | außerhalb Viewport | überdeckt (anderes Element) | Fokusfalle | Fußbereich erreicht | Zyklus | sichtbar interaktiv |');
+  md.push('| Seite | Schritte | Ende | Sprunglink erstes Ziel | Fokus ohne Darstellung | verdeckt (Kopfleiste, bestätigt) / nur Rechteck | außerhalb Viewport | überdeckt (anderes Element) | Fokusfalle | Fußbereich erreicht | Zyklus | sichtbar interaktiv |');
   md.push('|---|---:|---|---|---:|---:|---:|---:|---|---|---|---:|');
   for (const t of erg.tab) {
     if (t.fehlgeschlagen) {
       md.push(`| ${t.slug ?? ''} | FEHLER: ${esc(t.fehlgeschlagen)} |||||||||||`);
       continue;
     }
-    md.push(`| ${t.slug} | ${t.schritteGesamt} | ${t.stopp} | ${jn(t.sprunglinkErstesZiel)} | ${t.fokusOhneFokusdarstellung} | ${t.fokusVerdecktVonKopfleiste} | ${t.fokusAusserhalbViewport} | ${t.fokusVonAnderemElementUeberdeckt} | ${jn(t.fokusfalle)} | ${jn(t.fussbereichErreicht)} | ${t.zyklus ? `Schritt ${t.zyklus.schritt}, Länge ${t.zyklus.laenge}` : '–'} | ${t.interaktivSichtbar} |`);
+    md.push(`| ${t.slug} | ${t.schritteGesamt} | ${t.stopp} | ${jn(t.sprunglinkErstesZiel)} | ${t.fokusOhneFokusdarstellung} | ${t.fokusVerdecktVonKopfleiste} / ${t.fokusObenUnterKopfleisteRechteck} | ${t.fokusAusserhalbViewport} | ${t.fokusVonAnderemElementUeberdeckt} | ${jn(t.fokusfalle)} | ${jn(t.fussbereichErreicht)} | ${t.zyklus ? `Schritt ${t.zyklus.schritt}, Länge ${t.zyklus.laenge}` : '–'} | ${t.interaktivSichtbar} |`);
   }
   md.push('');
   for (const t of erg.tab.filter((x) => !x.fehlgeschlagen)) {
     md.push(`### ${t.slug} · ${t.pfad}`);
     md.push(`Erste Ziele: ${t.ersteSchritte.map(esc).join(' → ')}${t.sprunglinkErstesZiel ? ` · Sprunglink bei Fokus sichtbar: ${jn(t.sprunglinkSichtbarBeiFokus)}` : ''}`);
     if (t.auffaellig.length) {
-      md.push('', 'Auffällige Schritte:', '', '| # | Element | Rolle | Fokus sichtbar | outline | box-shadow | im Viewport | verdeckt (Kopf) | überdeckt durch |', '|---:|---|---|---|---|---|---|---|---|');
-      for (const a of t.auffaellig) md.push(`| ${a.schritt} | ${esc(a.element)} | ${esc(a.rolle)} | ${jn(a.fokusSichtbar)} | ${esc(a.outline)} | ${esc((a.boxShadow ?? '').slice(0, 60))} | ${jn(a.imViewport)} | ${a.verdecktVonKopfleiste ? `ja (${a.abstandZurKopfleiste} px)` : 'nein'} | ${esc(a.verdecktDurch ?? '–')} |`);
+      md.push('', 'Auffällige Schritte:', '', '| # | Element | Rolle | Fokus sichtbar (Ort) | outline | box-shadow | im Viewport | verdeckt (Kopf) | überdeckt durch |', '|---:|---|---|---|---|---|---|---|---|');
+      for (const a of t.auffaellig) md.push(`| ${a.schritt} | ${esc(a.element)} | ${esc(a.rolle)} | ${jn(a.fokusSichtbar)}${a.fokusOrt ? ` (${a.fokusOrt})` : ''} | ${esc(a.outline)} | ${esc((a.boxShadow ?? '').slice(0, 60))} | ${jn(a.imViewport)} | ${a.verdecktVonKopfleiste ? `ja (${a.abstandZurKopfleiste} px)` : 'nein'} | ${esc(a.verdecktDurch ?? '–')} |`);
     } else md.push('', 'Keine auffälligen Schritte.');
     md.push('', '<details><summary>Alle Schritte</summary>', '', '| # | Element | Rolle | Name | Fokus | Kopfabstand | Fuß |', '|---:|---|---|---|---|---:|---|');
-    for (const s of t.schritte) md.push(s.koerper ? `| ${s.schritt} | body | | | | | |` : `| ${s.schritt} | ${s.tag} | ${esc(s.rolle)} | ${esc((s.name ?? '').slice(0, 50))} | ${s.fokusSichtbar ? (s.outlineSichtbar ? 'outline' : 'shadow') : '**keiner**'} | ${s.abstandZurKopfleiste ?? 'Kopf'} | ${s.imFuss ? 'ja' : ''} |`);
+    for (const s of t.schritte) md.push(s.koerper ? `| ${s.schritt} | body | | | | | |` : `| ${s.schritt} | ${s.tag} | ${esc(s.rolle)} | ${esc((s.name ?? '').slice(0, 50))} | ${s.fokusSichtbar ? (s.fokusOrt === 'element' ? (s.outlineSichtbar ? 'outline' : 'shadow') : s.fokusOrt) : '**keiner**'} | ${s.abstandZurKopfleiste ?? 'Kopf'} | ${s.imFuss ? 'ja' : ''} |`);
     md.push('', '</details>', '');
   }
 }
@@ -655,6 +695,9 @@ if (erg.reflow320.length) {
       continue;
     }
     md.push(`| ${r.slug} | ${r.status} | ${jn(r.horizontal)} | ${r.scrollWidth} / ${r.clientWidth} | ${r.breite.innerWidth} | ${r.abgeschnitten} | ${esc(r.breite.ueberstehend.slice(0, 3).map((u) => `${u.ziel} (+${u.rechts})`).join('; ') || '–')} |`);
+  }
+  for (const r of erg.reflow320.filter((x) => !x.fehlgeschlagen && x.abgeschnitten > 0)) {
+    md.push('', `Abgeschnitten/überstehend auf ${r.slug}: ${esc(r.clipped.map((c) => `${c.tag} „${c.text}“ (${c.clipX ? 'overflow hidden' : `${c.offRight} px über dem Rand`})`).join('; '))}`);
   }
   md.push('');
 }
@@ -677,6 +720,11 @@ if (erg.textabstand.length) {
       continue;
     }
     md.push(`| ${r.slug} | ${r.ansicht} | ${jn(r.basis.horizontal)} → ${jn(r.mitTextabstand.horizontal)} | ${r.basis.abgeschnitten} → ${r.mitTextabstand.abgeschnitten} | ${r.basis.vertikalAbgeschnitten} → ${r.mitTextabstand.vertikalAbgeschnitten} | ${r.neuHorizontalAbgeschnitten} / ${r.neuVertikalAbgeschnitten} |`);
+  }
+  const ueberl = erg.textabstand.filter((r) => !r.fehlgeschlagen && r.neuerUeberlauf);
+  if (ueberl.length) {
+    md.push('', 'Neuer horizontaler Überlauf (erste Verursacher laut Rechteckprüfung):', '');
+    for (const r of ueberl) md.push(`- ${r.slug} ${r.ansicht}: scrollWidth ${r.mitTextabstand.scrollWidth} / clientWidth ${r.mitTextabstand.clientWidth} · ${esc(r.breiteMit.ueberstehend.slice(0, 4).map((u) => `${u.ziel} (+${u.rechts})`).join('; ') || 'kein Element mit Rechteck rechts über dem Rand')}`);
   }
   const mitBefund = erg.textabstand.filter((r) => !r.fehlgeschlagen && (r.neuHorizontalAbgeschnitten || r.neuVertikalAbgeschnitten));
   if (mitBefund.length) {
@@ -718,7 +766,7 @@ if (erg.ohneJs.length) {
   const mitO = erg.ohneJs.filter((r) => !r.fehlgeschlagen && r.opacity0Anzahl);
   if (mitO.length) {
     md.push('', 'Elemente mit opacity 0 im ersten Bildschirm:', '');
-    for (const r of mitO) md.push(`- ${r.slug} ${r.ansicht}: ${esc(r.opacity0ImErstenBildschirm.slice(0, 5).map((e) => `${e.ziel}${e.text ? ` „${e.text}“` : ''}`).join('; '))}`);
+    for (const r of mitO) md.push(`- ${r.slug} ${r.ansicht}: ${esc(r.opacity0ImErstenBildschirm.slice(0, 5).map((e) => `${e.ziel}${e.text ? ` „${e.text}“` : ''}${e.eltern ? ` in „${e.eltern}“` : ''}`).join('; '))}`);
   }
   md.push('');
 }
