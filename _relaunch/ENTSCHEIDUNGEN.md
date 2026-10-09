@@ -176,3 +176,40 @@ Format: E-[Nr] · Datum · Gegenstand · Entscheidung · Grund · Umkehr (bei De
 - **Modelle:** ab sofort nur Opus 5.5 und Haiku 5.5. Opus übernimmt Orchestrierung, Richtung, Bau (Stufen 2 und 3), Jury, Gegenprüfung, Drehbuch und WebGL. Haiku übernimmt Messen, Bildschirmfotos, Erstbetrachter, Doku und Mengenarbeit. Sonnet wird nicht mehr eingesetzt; das ersetzt die MODELLE-Zeile aus Lauf 1.
 - **Push:** Sicherungs-Pushes nur auf `claude/kind-ride-n9duod`, nach jedem Schritt (der Container ist flüchtig). Vercel-Vorschauen sind erlaubt. Das ersetzt „PUSH UND VERÖFFENTLICHUNG: nie“ aus Lauf 2 für diesen Branch.
 - **Produktions-Merge** (ergänzt E-001): Der PR nach `main` entsteht erst nach ABSCHLUSS. Gemergt wird erst auf das **ausdrückliche Wort des Auftraggebers** und nur bei erfüllten P7-Bedingungen: CI grün, Supabase-Migrationen lesend geprüft, Vercel-Variablen bestätigt (M-001).
+
+## E-021 · 09.10.2026 · FREIGABE durch den Auftraggeber: Richtung, Verteilung auf die Seiten, Umfang, Merge
+- **Wortlaut:**
+  - „designs wieder verwerten und auf allen Pages verteilen und die webeite endlich fertig auf main zusammenführen“
+  - „das sieht halt schöner für die homepage aus und den rest kannst du auf die anderen unterseiten verteilen“ (Bild: Kachel B, Runde 1)
+  - „mach alles ready so wie du denkst und vollende das projekt“ (Bild: Variante 1 Desktop)
+- **Antworten auf die Rückfragen:**
+  - Gestaltung „Alle drei verteilt“.
+  - Umfang „Design + Muss/Soll“.
+  - Vercel-Variablen „Ja, alle gesetzt“ (M-001 erledigt).
+  - Merge „Automatisch, wenn alles grün“.
+- **Das gilt als FREIGABE:** Der Halt nach P2/A2 entfällt, der Lauf arbeitet ohne weiteren Halt bis zum Merge.
+- **Gestaltung je Seite:**
+
+  | Seite | Gestaltung |
+  |---|---|
+  | `/` | **Variante 1** (`ausbau/richtungen/1`, geschärfte Fassung von B Runde 1). Dazu aus B Runde 1: Wegweiser „Wetzlar“, Knopf „Kreislauf zeigen“, Erklärsatz zur Wärmepumpe (T-001, durch das Bild des Auftraggebers freigegeben), Rohrklammer, Leitungstrenner, Arbeitszeit-Diagramm. |
+  | `/jobs` | **Variante 2:** 13:30 in Bildgröße im Heizkreis; Stellen als Leitungsabgänge mit Gehalt. |
+  | `/jobs/[slug]` | **Variante 2 und 1:** Gehaltsspanne in Bildgröße im Heizkreis, Vorlauf endet im Bewerben-Knopf, Maßketten. Auf der Wärmepumpen-Stelle zusätzlich das Wärmebild aus **Variante 3**, als statisches SVG ohne WebGL. |
+  | `/bewerbung*` | Ruhige Arbeitsseiten. Das Leitungspaar ist der Fortschrittsstrang; auf der Danke-Seite schließt sich der Kreislauf. |
+  | 404 | Offene Leitung, Wegweiser ins Leere. |
+  | Recht | Typografisch ruhig. |
+
+  WebGL entfällt; STEIGERUNG erlaubt „höchstens einen“ Moment, A-08 ist damit ENTFÄLLT.
+- **Umfang bis zum Merge:**
+  - Pflicht: Design auf allen 12 Seiten und alle 55 Muss- und Soll-Elemente.
+  - Kann (6), Showcase-Kriterien A-01 (≥ 9), A-03, A-04 und das Vorführpaket A-09/A-10 folgen nach dem Merge als Folgearbeit. Das ist ausdrücklich ein Umfangsentscheid des Auftraggebers.
+- **Merge-Gate:**
+  - CI grün.
+  - Lokal grün auf Ebene 1 und E2E mit axe.
+  - Erfüllt: Z-02 (Muss/Soll), Z-03, Z-05, Z-06, Z-11, Z-12 und Z-13.
+  - Gemessen: Z-07, Z-08 (Jury mit Lockvogel) und Z-09/Z-10, mit höchstens einer Reparaturrunde.
+  - Supabase lesend geprüft. Würde der Merge 2a-Migrationen auf die Produktion anwenden, frage ich einmal nach.
+- **Umsetzung der gemeinsamen Dateien:**
+  - Das Fundament (theme.css, Schriften, Guard, Bewegungsmodul, Icon-Schnittstelle, Logo) setzt ein einziger Opus-Agent als **exklusives Paket** um. Kein anderes Paket läuft gleichzeitig auf diesen Dateien.
+  - Der Orchestrator nimmt es ab und committet. Das ist eine Abweichung von „gemeinsame Dateien nur der Orchestrator“, begründet mit der Kontextökonomie. Die Dateihoheit bleibt dabei gewahrt.
+- **Umkehr:** Jede Welle ist ein eigener Commit je Paket. Der Rückweg ist der Revert auf 8761d41 (Merge von main).
