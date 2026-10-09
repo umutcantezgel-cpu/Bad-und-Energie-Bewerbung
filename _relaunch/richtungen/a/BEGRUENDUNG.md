@@ -74,6 +74,8 @@ Arbeitsseiten bleiben ruhig, dicht und schnell, ohne Signaturmoment; vom Werkpla
 - Schriften 239,5 KB; Bewegungs-JS 3,3 KB (1,2 KB gzip, Budget 60 KB); Icons je 239–441 Byte (Budget 1,5 KB); Plan-SVG 6,4 KB (1,6 KB gzip); Bühnen-SVG 1,9 KB.
 - axe (WCAG 2.2 AA und Best Practice): 0 Verstöße in hell und dunkel, 375 und 1440 px. Kein horizontaler Überlauf in 13 Breiten von 320 bis 1920 px.
 - Keine Anfrage an fremde Hosts; keine Konsolenfehler.
+- Bildschirmfotos: `fotos/` (Werkzeug `kachel-fotos.mjs`, 12 Ansichten × 12 Ausschnitte, hell/dunkel, volle und reduzierte Bewegung). `fotos/bericht.json` meldet **0 Überlauf, 0 abgeschnittene Texte, 0 Fehler, 0 Fremdanfragen** in allen zwölf Aufnahmen. Weil das Werkzeug bei 12 Ausschnitten abschneidet und die Seite länger ist (mobil 33, Desktop 16 Bildschirmhöhen), sind für m375 und d1440, hell und dunkel, die Ausschnitte ab `__13` mit demselben Schnitt ergänzt (nicht in `bericht.json` aufgeführt).
+- Zustandsprüfung: Radius-Umschalter und Ortswahl getestet (15 km: 9 von 10 Orten, Herborn liegt außerhalb); ohne JavaScript bleiben H1, Tabelle mit zehn Orten und die vollständige Leitung sichtbar; mit reduzierter Bewegung läuft keine Animation (alle animierten Elemente tragen `data-motion`).
 
 ## 11. OFFENE FRAGEN
 

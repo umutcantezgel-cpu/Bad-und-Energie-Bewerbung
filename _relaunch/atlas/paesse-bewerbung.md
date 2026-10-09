@@ -1,6 +1,6 @@
 # Element-Pässe Bewerbungsstrecke `/bewerbung` · P1-REST-02
 
-Rolle Restaurator, Stufe 2, Kern-Version 0. Stand 2026-10-09. Grundlage: Altatlas `_relaunch/atlas/alt-bewerbung.md` (ALT-BEW-001 bis ALT-BEW-297), Neuatlas `_relaunch/atlas/neu-plattform.md` (Teile 3 bis 5: NEU-BEW, NEU-DANKE, NEU-MAPPE) und der Code des Ausgangsstands (Commit a83269d, Arbeitsbaum). Messbedingungen und gesammelte offene Fragen stehen am Ende der Datei.
+Rolle Restaurator, Stufe 2, Kern-Version 0. Stand 2026-10-09. Grundlage: Altatlas `_relaunch/atlas/alt-bewerbung.md` (ALT-BEW-001 bis ALT-BEW-302; 298 ist ein Nachtrag der Gegenprobe P1-KUND-06, 299 bis 302 stammen aus Runde 1), Neuatlas `_relaunch/atlas/neu-plattform.md` (Teile 3 bis 5: NEU-BEW, NEU-DANKE, NEU-MAPPE) und der Code des Ausgangsstands (Commit a83269d, Arbeitsbaum). Messbedingungen und gesammelte offene Fragen stehen am Ende der Datei.
 
 ## Übersicht
 
@@ -39,6 +39,7 @@ Rolle Restaurator, Stufe 2, Kern-Version 0. Stand 2026-10-09. Grundlage: Altatla
 | E-BEW-031 | Titel und Anrede des Ansprechpartners | Vertrauen | verschoben | Soll | Zurückstellen |
 | E-BEW-032 | Platzhalter-Standarddossier „Alexander Koch“ und erfundene Lebenslaufinhalte | Vertrauen | verloren | Kann | Nicht zurückführen (erfunden/unbelegt) |
 | E-BEW-033 | Vorgetäuschte Erfolgs- und Sicherheitszustände | Vertrauen | verloren | Kann | Nicht zurückführen (erfunden/unbelegt) |
+| E-BEW-034 | Lade-Platzhalter der Ansichten (Fragebogen, Dokumente, Formular, Mappe) | Interaktives | verschoben | Kann | Keine Rückführung nötig (vollständig verschoben) |
 
 ## Element-Pässe
 
@@ -124,10 +125,10 @@ Rolle Restaurator, Stufe 2, Kern-Version 0. Stand 2026-10-09. Grundlage: Altatla
 
 ### E-BEW-006 · Bewerber-Checkliste mit Sprungmarken
 - Kategorie: Interaktives
-- Quelle: ALT-BEW-030–034, 037, 043–055, 057–067, 184, 259 · Altstand: `app/bewerbung/page.tsx:70-83, 322-325`, `components/BewerberCheckliste.tsx:116-168, 220-331, 390-398, 499-502, 515-583, 591-665, 670-692, 709-741, 768-837, 856-886, 899-933`, `lib/recruiting-types.ts:88-98`, `components/views/FormView.tsx:43-59` · Bild: `_relaunch/belege/p0-altstand/alt-bewerbung__d1440-light__02.webp` (Kategorien, Module), `_relaunch/belege/p0-altstand/alt-bewerbung__d1440-light__03.webp` (Kriterien)
+- Quelle: ALT-BEW-030–034, 037, 043–055, 057–067, 184, 259, 298 · Altstand: `app/bewerbung/page.tsx:70-83, 322-325`, `components/BewerberCheckliste.tsx:116-168, 220-331, 390-398, 499-502, 515-583, 591-665, 670-692, 709-741, 768-837, 856-886, 899-933, 966-968`, `lib/recruiting-types.ts:88-98`, `components/views/FormView.tsx:43-59` · Bild: `_relaunch/belege/p0-altstand/alt-bewerbung__d1440-light__02.webp` (Kategorien, Module), `_relaunch/belege/p0-altstand/alt-bewerbung__d1440-light__03.webp` (Kriterien)
 - Zustand: geschwächt (+ Gegenstück: NEU-BEW-02 (Fortschritt), NEU-BEW-18 bis NEU-BEW-22 (Feldfehler mit Fokus auf das erste fehlerhafte Feld), NEU-BEW-39 (Entwurf), NEU-MAPPE-03, -09, -11, -15, -19 (fünf nummerierte Mappe-Abschnitte mit Ankern `mappe-persoenliches`, `mappe-stelle`, `mappe-schwerpunkte`, `mappe-anschreiben`, `mappe-lebenslauf`), NEU-MAPPE-14 (Zähler „0 von 12 gewählt“))
 - Aufgabe: Bewerber sehen, was ihre Bewerbung noch braucht, und springen direkt dorthin; das Unternehmen erhält vollständige Angaben.
-- Wesenskern: Titel „Bewerbungscheckliste und Vollständigkeit“ · „Automatische Prüfung aller Pflichtangaben mit direktem Sprung in die entsprechenden Module.“ · Eyebrow „Reifegrad der Bewerbung“ · Knöpfe „DINA4 Bewerbungsmappe anzeigen“ und „Onlineformular öffnen“. Drei Kategorien mit Balken und Zähler: „Kontaktdaten“ („Name, Telefon und Wohnort erfasst“ · 3/3), „Berufliche Qualifikation“ („Erfahrung und Kompetenzen verifiziert“), „Konditionen & Starttermin“ („Frühester Starttermin hinterlegt“), je mit „Ansehen“, „Ausfüllen“ oder „Öffnen“. Vier Module: „Modul 01 Profilfragebogen“ („Kompetenzen und Anschreiben“), „Modul 02 Dokumentenablage“ („Gesellenbrief und Zeugnisse“), „Modul 03 Onlineformular“ („Stammdaten und Konditionen“), „Modul 04 DINA4 Bewerbungsmappe“ („Ausdruck und Meistersiegel“), Abschnitt „Verknüpfung mit den Modulen“ · „Direkter Absprung in Modul 01 bis 04“. Sprungmarken „Sprungmarken in das Onlineformular“ · „Noch N Pflichtfeld(er) mit direktem Tastatur-Fokus anspringen:“ · „Klick springt direkt ins Feld“ auf fünf Pflichtfelder („Vollständiger Name *“, „Telefonnummer oder WhatsApp *“, „Wohnort und Postleitzahl *“, „Berufserfahrung *“, „Frühester Starttermin *“) mit Fokus und 2-s-Ring (`scrollIntoView` smooth, Auslösung nach 150 ms). Sechs Kriterien mit „Erledigt“: „Lebenslauf oder Gesellenbrief hochladen“, „Wunschkonditionen & Arbeitszeitmodell“, „Verfügbarkeit und Kündigungsfrist“, „Fachschwerpunkte und Kernkompetenzen“ (mindestens 3), „Kontaktdaten und Rückrufkanal“, „Diskretionsschutz nach § 26 BDSG“ (siehe E-BEW-004); Abschnittskopf „Detaillierte Übersicht aller Kriterien“ · „N von 6 Kriterien erfüllt“. Das Wesen: ehrlicher Stand aus echten Eingaben plus Sprung zum Fehlenden. Nicht zurückführen: Standardwerte (Gesamtwert 100 % ohne Eingabe, Kriterium 2 fest „Erledigt“, Kriterium 1 „erledigt“ durch eine vorbelegte Datei, „verifiziert“), „Meistersiegel“ (kein Siegel im Bewerbungspfad, Wahrheitsregel), Kontaktweg in Großbuchstaben („WHATSAPP“) aus dem internen Schlüssel. Im Ausgangsstand lebt: Pflichtfeld-Fehler mit Fokus im Flow, Fortschritt „Schritt n von m“. Es fehlt: ein Stand mit Sprung für das Mappe-Werkzeug (fünf Abschnitte, kein Fortschritt).
+- Wesenskern: Titel „Bewerbungscheckliste und Vollständigkeit“ · „Automatische Prüfung aller Pflichtangaben mit direktem Sprung in die entsprechenden Module.“ · Eyebrow „Reifegrad der Bewerbung“ · Knöpfe „DINA4 Bewerbungsmappe anzeigen“ und „Onlineformular öffnen“. Drei Kategorien mit Balken und Zähler: „Kontaktdaten“ („Name, Telefon und Wohnort erfasst“ · 3/3), „Berufliche Qualifikation“ („Erfahrung und Kompetenzen verifiziert“), „Konditionen & Starttermin“ („Frühester Starttermin hinterlegt“), je mit „Ansehen“, „Ausfüllen“ oder „Öffnen“. Vier Module: „Modul 01 Profilfragebogen“ („Kompetenzen und Anschreiben“), „Modul 02 Dokumentenablage“ („Gesellenbrief und Zeugnisse“), „Modul 03 Onlineformular“ („Stammdaten und Konditionen“), „Modul 04 DINA4 Bewerbungsmappe“ („Ausdruck und Meistersiegel“), Abschnitt „Verknüpfung mit den Modulen“ · „Direkter Absprung in Modul 01 bis 04“. Sprungmarken „Sprungmarken in das Onlineformular“ · „Noch N Pflichtfeld(er) mit direktem Tastatur-Fokus anspringen:“ · „Klick springt direkt ins Feld“ auf fünf Pflichtfelder („Vollständiger Name *“, „Telefonnummer oder WhatsApp *“, „Wohnort und Postleitzahl *“, „Berufserfahrung *“, „Frühester Starttermin *“) mit Fokus und 2-s-Ring (`scrollIntoView` smooth, Auslösung nach 150 ms). Sechs Kriterien mit „Erledigt“: „Lebenslauf oder Gesellenbrief hochladen“, „Wunschkonditionen & Arbeitszeitmodell“, „Verfügbarkeit und Kündigungsfrist“, „Fachschwerpunkte und Kernkompetenzen“ (mindestens 3), „Kontaktdaten und Rückrufkanal“, „Diskretionsschutz nach § 26 BDSG“ (siehe E-BEW-004); Abschnittskopf „Detaillierte Übersicht aller Kriterien“ · „N von 6 Kriterien erfüllt“; Hinweistext auf offenen Kriterienkarten „Klicke hier zur Erfassung:“ (ALT-BEW-298, führt zur Erfassung des fehlenden Kriteriums; gehört zu den Sprungmarken). Das Wesen: ehrlicher Stand aus echten Eingaben plus Sprung zum Fehlenden. Nicht zurückführen: Standardwerte (Gesamtwert 100 % ohne Eingabe, Kriterium 2 fest „Erledigt“, Kriterium 1 „erledigt“ durch eine vorbelegte Datei, „verifiziert“), „Meistersiegel“ (kein Siegel im Bewerbungspfad, Wahrheitsregel), Kontaktweg in Großbuchstaben („WHATSAPP“) aus dem internen Schlüssel. Im Ausgangsstand lebt: Pflichtfeld-Fehler mit Fokus im Flow, Fortschritt „Schritt n von m“. Es fehlt: ein Stand mit Sprung für das Mappe-Werkzeug (fünf Abschnitte, kein Fortschritt).
 - Freiraum: Zahl und Art der Kategorien (Vorschlag: ein Stand für die Mappe mit fünf Einträgen: Persönliches, Stelle, Schwerpunkte, Anschreiben, Berufserfahrung und Ausbildung), Karten, Listen, Icons; der Sprung darf ein Anker sein.
 - Bindungen: Ankerids der Mappe-Abschnitte (`mappe-persoenliches` bis `mappe-lebenslauf`); Altstand-IDs `field-fullName` bis `field-notes` und der interne Feldparameter waren intern, nie in URLs (keine eingehenden Links).
 - Priorität: Soll – Grund: interaktives Element mit klarem Besuchernutzen; der Geschäftswert (Bewerbung) hängt nicht daran.
@@ -571,6 +572,22 @@ Rolle Restaurator, Stufe 2, Kern-Version 0. Stand 2026-10-09. Grundlage: Altatla
 - Unsicherheit: keine. Die Kann-Einstufung prüft ein frischer Gegenprüfer.
 
 
+### E-BEW-034 · Lade-Platzhalter der Ansichten (Fragebogen, Dokumente, Formular, Mappe)
+- Kategorie: Interaktives
+- Quelle: ALT-BEW-299–302 · Altstand: `app/bewerbung/page.tsx:20-59` (vier dynamische Importe mit `loading`; sichtbar nur im jeweiligen Tab, Zeilen 441, 458, 475, 493) · Bild: – (Zwischenzustand, nicht fotografiert)
+- Zustand: verschoben (+ Gegenstück: kein Platzhalter nötig. `ApplyFlow` ist eine Serverkomponente und liefert den ersten Schritt im HTML (`components/apply/ApplyFlow.tsx`, `ApplyFlowClient` hydratisiert; im HTML von `/bewerbung` stehen „Schritt 1 von 4“ und die Stellenauswahl, kein Ladetext); die Mappe ist statisch und rendert den Editor serverseitig (`components/mappe/MappeTool.tsx:95-96`, `app/bewerbung/mappe/page.tsx`); auf Stellenseiten steht beim Nachladen der Link „Bewerbung als … öffnen“ (`ApplyFallback`, `app/jobs/[slug]/page.tsx:144, 183-191`); den Dokumenten-Tresor gibt es nicht (E-BEW-012). HTML von `/bewerbung` und `/bewerbung/mappe` am 2026-10-09 geprüft: „wird vorbereitet“ kommt nicht vor.)
+- Aufgabe: Während eine Ansicht nachlädt, steht keine leere Fläche; Besucher sehen, dass etwas passiert.
+- Wesenskern: Vier Platzhaltertexte, je nur im zugehörigen Tab sichtbar, zentriert, 12 px, slate-500, Innenabstand p-12, ohne Spinner: „Profilfragebogen wird vorbereitet...“ (Quiz) · „Dokumentenablage wird vorbereitet...“ (Tresor) · „Bewerbungsassistent wird vorbereitet...“ (Formular) · „DINA4 Dossier wird vorbereitet...“ (Mappe). Das Wesen (nie eine leere Fläche) lebt über Serverrendering. Die Wortlaute kommen nicht zurück: Die Module „Profilfragebogen“, „Dokumentenablage“, „Bewerbungsassistent“ und „DINA4 Dossier“ gibt es im Ausgangsstand nicht mehr. Lädt künftig eine Ansicht nach (z. B. die Oberfläche des Uploads, E-BEW-012), gilt KERN K-011 „Lädt“: Anzeige erst nach 300 ms, dann mindestens 500 ms sichtbar.
+- Freiraum: Wortlaut, Form und Ort eines künftigen Ladehinweises; kein Spinner und kein Pulsieren nötig (E-009).
+- Bindungen: keine URLs; `role="status"` oder `aria-live`, falls ein Ladehinweis nötig wird.
+- Priorität: Kann – Grund: Übergangszustand ohne eigene Information; die Aufgabe ist im Ausgangsstand durch Serverrendering erfüllt. Der Atlas schlägt Soll vor (Kategorie Interaktives); das gilt nur für einen echten Nachladezustand, den es hier nicht mehr gibt.
+- Entscheidung: Keine Rückführung nötig (vollständig verschoben)
+- Ziel in der Plattform: – (vorhanden: `components/apply/ApplyFlow.tsx`, `ApplyFallback` in `app/jobs/[slug]/page.tsx`)
+- Gestaltung: folgt KERN (P2) · Idee: kein eigener Platzhalter; erster Schritt und Editor kommen fertig im HTML.
+- Abnahme: Das gelieferte HTML von `/bewerbung` enthält den ersten Schritt, das von `/bewerbung/mappe` den Editor (curl, ohne JavaScript); die vier Platzhaltertexte kommen in keinem gerenderten HTML vor · Bildpaar –
+- Status: offen
+- Unsicherheit: keine
+
 ## Ohne eigenes Element
 
 | Atlas-ID | Element | Grund | Begründung |
@@ -585,10 +602,11 @@ Rolle Restaurator, Stufe 2, Kern-Version 0. Stand 2026-10-09. Grundlage: Altatla
 
 ## Zuordnungsprüfung
 
-- Atlaszeilen des Altstands gesamt (`alt-bewerbung.md`): 297
-- einem Element-Pass zugeordnet: 290 (in 33 Pässen)
+- Atlaszeilen des Altstands gesamt (`alt-bewerbung.md`): 302
+- einem Element-Pass zugeordnet: 295 (in 34 Pässen)
 - ohne eigenes Element (Tabelle oben): 7
-- Summe: 290 + 7 = 297; Doppelzuordnungen: 0; nicht zugeordnet: 0 (maschinell geprüft: jede ID von ALT-BEW-001 bis ALT-BEW-297 genau einmal)
+- Summe: 295 + 7 = 302; Doppelzuordnungen: 0; nicht zugeordnet: 0 (maschinell geprüft: jede ID von ALT-BEW-001 bis ALT-BEW-302 genau einmal)
+- Runde 1: ALT-BEW-299 bis -302 (Lade-Platzhalter) bilden den neuen Pass E-BEW-034; ALT-BEW-298 (Nachtrag der Gegenprobe P1-KUND-06, in der Liste der Runde 1 nicht enthalten und bis dahin keinem Pass zugeordnet) steht in E-BEW-006.
 
 | E-ID | Atlaszeilen |
 | --- | --- |
@@ -597,7 +615,7 @@ Rolle Restaurator, Stufe 2, Kern-Version 0. Stand 2026-10-09. Grundlage: Altatla
 | E-BEW-003 | 5 |
 | E-BEW-004 | 3 |
 | E-BEW-005 | 2 |
-| E-BEW-006 | 32 |
+| E-BEW-006 | 33 |
 | E-BEW-007 | 7 |
 | E-BEW-008 | 7 |
 | E-BEW-009 | 19 |
@@ -625,15 +643,16 @@ Rolle Restaurator, Stufe 2, Kern-Version 0. Stand 2026-10-09. Grundlage: Altatla
 | E-BEW-031 | 1 |
 | E-BEW-032 | 12 |
 | E-BEW-033 | 7 |
+| E-BEW-034 | 4 |
 | ohne eigenes Element | 7 |
-| Summe | 297 |
+| Summe | 302 |
 
 Verteilung der Pässe:
 
-- Zustand: verschoben 22 · geschwächt 6 · verloren 5
-- Priorität: Muss 11 · Soll 20 · Kann 2
-- Entscheidung: Rückführen 3 · Verschmelzen 5 · Neu interpretieren 3 · Zurückstellen 3 · Nicht zurückführen (erfunden/unbelegt) 2 · Keine Rückführung nötig (vollständig verschoben) 17
-- Zurückgestellt: 3 von 33 Pässen = 9.1 % (Ziel ≤ 10 %)
+- Zustand: verschoben 23 · geschwächt 6 · verloren 5
+- Priorität: Muss 11 · Soll 20 · Kann 3
+- Entscheidung: Rückführen 3 · Verschmelzen 5 · Neu interpretieren 3 · Zurückstellen 3 · Nicht zurückführen (erfunden/unbelegt) 2 · Keine Rückführung nötig (vollständig verschoben) 18
+- Zurückgestellt: 3 von 34 Pässen = 8.8 % (Ziel ≤ 10 %)
 
 ### Abgleich je Atlaszeile
 
@@ -938,12 +957,17 @@ Abgleichstatus je Zeile = Zustand des Elements (verschoben · geschwächt · ver
 | ALT-BEW-295 | E-BEW-012 | geschwächt |
 | ALT-BEW-296 | E-BEW-009 | verschoben |
 | ALT-BEW-297 | E-BEW-030 | verschoben |
+| ALT-BEW-298 | E-BEW-006 | geschwächt |
+| ALT-BEW-299 | E-BEW-034 | verschoben |
+| ALT-BEW-300 | E-BEW-034 | verschoben |
+| ALT-BEW-301 | E-BEW-034 | verschoben |
+| ALT-BEW-302 | E-BEW-034 | verschoben |
 
 ## Messbedingungen und Quellen
 
 - Gelesen: `app/bewerbung/**`, `components/apply/**`, `components/mappe/**`, `lib/apply/*`, `lib/applications/*`, `lib/mappe/*`, `app/api/bewerbung/**`, `lib/email/templates/*`, `lib/content/*`, `docs/ROADMAP.md` (§1, §3.1, §5, §6, §7, §8.1, §9, §13, §14), `docs/operations/fakten-abgleich.md`, `docs/operations/datenschutz-aenderungen.md`, `supabase/migrations/*_ats_core.sql`, `*_storage.sql`, `supabase/config.toml`, Commit-Nachrichten `f2e7eae..a83269d`.
 - Gemessen wurde nur lesend: GET-Anfragen auf http://localhost:3500 (Weiterleitungen und Statuscodes der `?tab=`-Parameter, Meta-Tags, JSON-LD, Suche nach Platzhalter-Zeichenketten im gerenderten HTML). Kein Browserlauf, keine Formularsendung, keine POST-Anfrage, kein Zugriff auf http://localhost:3600 und keine Anfrage an die Live-Seite. Der Altstand wurde aus dem Quelltext (`_relaunch/altstand/main/`) und den Bildschirmfotos unter `_relaunch/belege/p0-altstand/` gelesen.
-- Bildbelege: Der Altatlas nennt „Bildbelege: keine vorhanden“; inzwischen liegen Bildschirmfotos vor (`_relaunch/belege/p0-altstand/alt-bewerbung*.webp`). Pfade in den Pässen beziehen sich auf diese Dateien (Sichtprüfung). Nicht fotografiert: Quiz-Schritte 2 bis 4, Erfolgszustände des Altstands (keine Formularsendung), Kontaktschritt und Danke-Seite mit Bewerbung im Ausgangsstand, Abschnitt „Unterlagen schicken“.
+- Bildbelege: Der Altatlas verweist inzwischen selbst auf die Bildschirmfotos unter `_relaunch/belege/p0-altstand/` (früher „keine vorhanden“); sie liegen als `_relaunch/belege/p0-altstand/alt-bewerbung*.webp` vor. Pfade in den Pässen beziehen sich auf diese Dateien (Sichtprüfung). Nicht fotografiert: Quiz-Schritte 2 bis 4, Erfolgszustände des Altstands (keine Formularsendung), Kontaktschritt und Danke-Seite mit Bewerbung im Ausgangsstand, Abschnitt „Unterlagen schicken“.
 - Fundstellen in den Quelle-Zeilen: Zeilenbereiche aus dem Altatlas übernommen, benachbarte Bereiche (Lücke ≤ 4 Zeilen) je Datei zusammengefasst; Altstand-Pfade relativ zu `_relaunch/altstand/main/`, Ausgangsstand-Pfade relativ zum Repo, Bildpfade relativ zum Repo.
 - Neuatlas: Teile 3 bis 5 lagen vollständig vor und wurden gegen den Code geprüft; maßgeblich ist der Code. Sprache der Plattform: nur Deutsch (keine Übersetzungsstruktur gefunden), daher keine Übersetzungs-Bindungen.
 - Zeitbezüge, möglicherweise veraltet: „Start 2026“ (E-BEW-009), „100 Jahre Meisterbetrieb (1926–2026)“ und Datum-Rückfall „01.10.2026“ (E-BEW-016, E-BEW-032), Öffnungszeiten und Adresse (E-BEW-008).

@@ -2,7 +2,7 @@
 
 Kennung: P1-REST-03 · Rolle Restaurator · Stufe 2 · Kern-Version 0
 Stand: 2026-10-09 · Altstand = Git-Stand `main` @ f2e7eae (Pfade relativ zu `_relaunch/altstand/main/`) · Ausgangsstand = Arbeitsbaum a83269d (Pfade relativ zum Repo) · Bild-Pfade relativ zu `_relaunch/`.
-Eingaben: `_relaunch/atlas/alt-shell-recht-seo.md` (259 Zeilen: ALT-SHELL 125, ALT-RECHT 75, ALT-SEO 59) und `_relaunch/atlas/neu-plattform.md` (NEU-SHELL-01 bis -24, NEU-RECHT-01 bis -25, NEU-SEO-01 bis -32; Neuatlas vollständig, maßgeblich blieb der Code).
+Eingaben: `_relaunch/atlas/alt-shell-recht-seo.md` (274 Zeilen: ALT-SHELL 125, ALT-RECHT 75, ALT-SEO 74; Runde 1 ergänzte ALT-SEO-60 bis -74, den Wortlaut der JSON-LD-Beschreibungen, Benefit-Listen, Einsatzkreise und FAQ-Abweichungen) und `_relaunch/atlas/neu-plattform.md` (NEU-SHELL-01 bis -24, NEU-RECHT-01 bis -25, NEU-SEO-01 bis -32; Neuatlas vollständig, maßgeblich blieb der Code).
 Methode: Code des Ausgangsstands gelesen (components/site/*, components/brand/Logo.tsx, components/legal/*, app/datenschutz, app/impressum, app/not-found.tsx, app/error.tsx, app/global-error.tsx, app/layout.tsx, app/robots.ts, app/sitemap.ts, app/llms*, next.config.ts, proxy.ts, lib/seo/*, lib/content/*, docs/ROADMAP.md §1, §5, §9, §10, §13, docs/operations/datenschutz-aenderungen.md, docs/operations/fakten-abgleich.md, Commit-Nachrichten f2e7eae..a83269d). Gerendertes HTML beider Stände per `curl` (nur GET, ohne Weiterleitungen) abgeglichen: Altstand http://localhost:3600 (User-Agent Chrome/141), Ausgangsstand http://localhost:3500, Messtag 2026-10-09. Keine POST-Anfragen, keine Formularsendungen, `/api/indexnow?action=submit` nicht aufgerufen. Bildschirmfotos nur gelesen.
 Zustände: unverändert vorhandene Zeilen stehen in der Tabelle „Ohne eigenes Element“; „verschoben“ heißt: Aufgabe lebt im Ausgangsstand an anderer Stelle oder in neuer Form; „geschwächt“: ein Teil der Aufgabe fehlt; „verloren“: nichts davon lebt.
 Zählung der Pässe: siehe „Zuordnungsprüfung“. Die Impressum-Pflichtangaben sind in Anhang A wörtlich verglichen, alte URLs und Anker (Z-06) in Anhang B.
@@ -12,6 +12,7 @@ Wichtigste Befunde (Kurzfassung)
 - Verloren oder geschwächt, belegt und zurückzuführen: „100 Jahre Meisterbetrieb (1926–2026)“ (Fakt vorhanden, nirgends gerendert, läuft 2026-12-31 ab), Zähler offener Stellen, WhatsApp-Zugang auf Desktop und Fuß, 404-Charakter „Rohrleitung verirrt“ mit Direktkontakt, Anker-Aliase der Startseite, fünf Einsatzorte (Solms, Hüttenberg, Lahnau, Ehringshausen, Wettenberg).
 - Nicht zurückgeführt (erfunden oder unbelegt): Cookie-Tabellen und Analyse-Anbieter, Datenschutz-Siegel („Auditierte Verschlüsselung“, „100% …“-Karten, „Verifiziert Sicher“), `SearchAction`, „Ungelesen“-Punkt am WhatsApp-Kreis.
 - Gebunden: IndexNow-Schlüsseldatei `/298d966b7e4f4a43981cb8e30da6b5b5.txt` lebt (statische Datei, 200); `INDEXNOW_KEY` muss gleich dem Dateiinhalt sein.
+- Runde 1 (ALT-SEO-60 bis -74, alle in bestehenden Pässen): Die JobPosting-Beschreibungen und alle 23 Benefit-Einträge leben aus der Stellen-Registry (E-SEO-010, nur Belegtes); die drei benannten Einsatzkreise des LocalBusiness fehlen im JSON-LD und kehren zurück (E-SEO-009); die zwei Abweichungen zwischen FAQPage-Markup und sichtbarer FAQ sind im Ausgangsstand aufgehoben (E-SEO-011).
 
 ## Übersicht
 
@@ -452,8 +453,8 @@ Wichtigste Befunde (Kurzfassung)
 - Quelle: ALT-SHELL-71–78 · components/QuickApplySidebar.tsx:19-171 · Bild: belege/p0-altstand/alt-start__d1440-light__01.webp (Reiter rechts, eingeklappt)
 - Zustand: geschwächt (+ Gegenstück: NEU-SHELL-06 und NEU-SHELL-05 im sticky Kopf („Bewerben“, Telefon); die Sticky-Leiste NEU-SHELL-10/-11 gilt nur unter lg; ab lg fehlt WhatsApp im Rahmen)
 - Aufgabe: Am Desktop jederzeit schnell bewerben, anrufen oder per WhatsApp schreiben, ohne zu scrollen.
-- Wesenskern: Reiter „Schnellbewerbung • WhatsApp“ (aria „Schnellbewerbung • WhatsApp öffnen“, Titel „Expressbewerbung und WhatsApp öffnen“), Karte „Schnellbewerbung“ · „In 60 Sekunden ohne Lebenslauf & Anschreiben.“ · Aktion „Expressbewerbung“ · „In 60 Sekunden ohne Lebenslauf“ · „WhatsApp Chat“ · „Direkt mit Sabri Demir“ · „(06441) 42956“ · „Montag bis Freitag“ (ungenau: freitags nur bis 13:30 Uhr) · Statuszeile „3 Stellen offen · Wetzlar“ (siehe E-SHELL-002) · „100% diskret nach Paragraph 26 BDSG“ (nicht übernehmen, siehe E-SHELL-004). Startzustand eingeklappt, kein Speichern.
-- Freiraum: Form (kein Seitenreiter nötig); die Anteile verteilen sich auf Kopf und Fuß.
+- Wesenskern: Reiter „Schnellbewerbung • WhatsApp“ (aria „Schnellbewerbung • WhatsApp öffnen“, Titel „Expressbewerbung und WhatsApp öffnen“), Karte „Schnellbewerbung“ · „In 60 Sekunden ohne Lebenslauf & Anschreiben.“ · Aktion „Expressbewerbung“ · „In 60 Sekunden ohne Lebenslauf“ · „WhatsApp Chat“ · „Direkt mit Sabri Demir“ · „(06441) 42956“ · „Montag bis Freitag“ (ungenau: freitags nur bis 13:30 Uhr) · Statuszeile „3 Stellen offen · Wetzlar“ (siehe E-SHELL-002) · „100% diskret nach Paragraph 26 BDSG“ (nicht übernehmen, siehe E-SHELL-004). Startzustand eingeklappt, kein Speichern. Bewegung (ALT-SHELL-71, -72, -74; Fundstellen QuickApplySidebar.tsx:19-30, 35-38, 63-68): Der Wechsel zwischen Reiter und Karte läuft über `AnimatePresence` im Modus „wait“ (der eine blendet aus, bevor der andere einblendet); der Reiter blendet mit Deckkraft 0 → 1 und x 20 → 0 ein (0,2 s, beim Verlassen Deckkraft 0 und x 20), die Karte mit Deckkraft 0 → 1 und x 40 → 0 (0,25 s easeOut, beim Verlassen umgekehrt); der `aside` selbst ist nicht animiert. Nicht zurückführen: der grüne Punkt am Reiter mit `animate-pulse` (Pulsieren verboten, E-009; Live-Zustand nur belegt, siehe E-SHELL-002).
+- Freiraum: Form (kein Seitenreiter nötig); die Anteile verteilen sich auf Kopf und Fuß; die Einblendung ist Gestaltung (Bewegungsregister K-009), eine seitliche Einblendung ist nicht Pflicht.
 - Bindungen: ROADMAP §5 (Leiste entfällt bewusst); Anteil WhatsApp siehe E-SHELL-005, Anteil Zähler siehe E-SHELL-002.
 - Priorität: Soll – Grund: Geschäftsfunktion (Kontakt), im Wesen bereits zu großen Teilen im Kopf vorhanden.
 - Entscheidung: Verschmelzen
@@ -1095,43 +1096,43 @@ Hinweis zu „Bild“: Metadaten, Textrouten und Schnittstellen haben keinen Bil
 
 ### E-SEO-009 · JSON-LD LocalBusiness (Einsatzgebiet und Öffnungszeiten)
 - Kategorie: Suche und Technik
-- Quelle: ALT-SEO-16 · app/layout.tsx:171-258 · Bild: –
-- Zustand: geschwächt (+ Gegenstück: NEU-SEO-20, components/site/site-jsonld.ts:63-91: name, legalName, alternateName, parentOrganization, Beschreibung neu, url, telephone, email, logo, image, hasMap, address, geo, foundingDate, ein `GeoCircle` (35 000 m) und Öffnungszeiten; es fehlen die drei benannten Einsatzkreise)
+- Quelle: ALT-SEO-16, ALT-SEO-60, ALT-SEO-69, ALT-SEO-70, ALT-SEO-71 · app/layout.tsx:171-258 (Beschreibung 180-181, Einsatzkreise 202-237) · Bild: –
+- Zustand: geschwächt (+ Gegenstück: NEU-SEO-20, components/site/site-jsonld.ts:63-91: name, legalName, alternateName, parentOrganization, Beschreibung neu („Innungs-Meisterbetrieb seit 1926 für Heiztechnik, Wärmepumpen, moderne Bäder und Haustechnik im Lahn-Dill-Kreis.“, HTML geprüft), url, telephone, email, logo, image, hasMap, address, geo, foundingDate, ein `GeoCircle` (35 000 m) und Öffnungszeiten; es fehlen die drei benannten Einsatzkreise; ihre Ortslisten stehen nur in `SITE_CONFIG.serviceRegions` / `REGION.areas` und erscheinen im Ausgangsstand ausschließlich in `/llms-full.txt` (app/llms-full.txt/route.ts:98))
 - Aufgabe: Lokale Suche: Wo arbeitet der Betrieb, wann ist er erreichbar.
-- Wesenskern: `areaServed` mit drei `GeoCircle`: „Wetzlar Kern“ (15 000 m), „Gießen und Umland“ (20 000 m), „Lahn Dill Kreis“ (35 000 m; Beschreibung „Maximal 35 km Einsatzradius, keine Montage Fernreisen.“); `openingHoursSpecification` Mo–Do 07:00–16:45, Fr 07:00–13:30; `hasMap` maps.google.com; Alternativnamen „Bad und Energie“, „Bad und Energie Wetzlar“, „Bad und Energie GmbH“. Im Altstand gab es weder `priceRange` noch `knowsAbout` im ausgelieferten JSON-LD (Grep und HTML), `SITE_CONFIG.knowsAbout` liegt ungenutzt; ein `priceRange` wäre erfunden.
-- Freiraum: Namen der Kreise nach `SITE_CONFIG.serviceRegions`; Radien aus `REGION.areas`.
-- Bindungen: `SITE_CONFIG.serviceRegions` (15, 20 und 35 km), `REGION.areas`; Öffnungszeiten aus `COMPANY.openingHours`.
+- Wesenskern: `areaServed` mit drei `GeoCircle` (Wortlaut ALT-SEO-69 bis -71): (1) „Einsatzgebiet Wetzlar (Firmensitz und Kernzone)“, 15 000 m, Orte Wetzlar, Hermannstein, Nauborn, Garbenheim, Steindorf, Dutenhofen, Münchholzhausen; (2) „Einsatzgebiet Gießen und Umland“, 20 000 m, Orte Gießen, Wettenberg, Heuchelheim, Linden, Pohlheim, Biebertal; (3) „Servicegebiet Lahn Dill Kreis“, 35 000 m, Orte Aßlar, Solms, Braunfels, Ehringshausen, Hüttenberg, Lahnau, Herborn, Dillenburg, Schöffengrund, Beschreibung endet „Maximal 35 km Einsatzradius, keine Montage Fernreisen.“ (zusammen 22 Ortsnamen, alle belegt in `SITE_CONFIG.serviceRegions`). „Hohenahr“ (sichtbare Ortsliste des Altstands) kommt in keinem Kreis vor und kommt auch nicht dazu (B17 offen). LocalBusiness-Beschreibung (ALT-SEO-60, 18 Wörter): „Zertifizierter Fachbetrieb und Innungsmeisterbetrieb seit 1926 für Heiztechnik, regenerative Wärmepumpen, moderne Bäder und Haustechnik im Lahn Dill Kreis.“ Sie lebt gekürzt weiter (ohne „Zertifizierter Fachbetrieb“, ohne „regenerative“); das bleibt so, denn belegt ist nur „Zertifizierter Fachpartner für Wärmepumpen von Buderus, Bosch, NIBE, Alpha Innotec und Viessmann“ (Fakt `heatPumpBrands`). Mittelpunkte des Altstands: Kreis 1 50.5583 / 8.5011, Kreis 2 50.5872 / 8.6755 (gleich Gießen in lib/data/locations.ts), Kreis 3 50.65 / 8.4. Nicht zurückführen: die Mittelpunkte von Kreis 1 und 3 (weder Firmensitz noch Ort der Ortstabelle; Kreis 3 verschiebt den 35-km-Kreis um rund 12 km und widerspricht dem Fakt `radius35`, der vom Firmensitz misst); stattdessen Firmensitz (`COMPANY.geo` 50.56499 / 8.49842) für Kreis 1 und 3, Gießen (`loc-giessen`) für Kreis 2. `openingHoursSpecification` Mo–Do 07:00–16:45, Fr 07:00–13:30; `hasMap` maps.google.com; Alternativnamen „Bad und Energie“, „Bad und Energie Wetzlar“, „Bad und Energie GmbH“. Im Altstand gab es weder `priceRange` noch `knowsAbout` im ausgelieferten JSON-LD (Grep und HTML), `SITE_CONFIG.knowsAbout` liegt ungenutzt; ein `priceRange` wäre erfunden.
+- Freiraum: Namen der Kreise nach `SITE_CONFIG.serviceRegions` („Wetzlar Kernstadt und Stadtteile“, „Gießen und Umland“, „Lahn Dill Kreis“); Radien und Ortsnamen aus `REGION.areas`; die Beschreibungstexte der Kreise dürfen kürzer sein, solange alle Orte aus den Daten stammen.
+- Bindungen: `SITE_CONFIG.serviceRegions` (15, 20 und 35 km), `REGION.areas` (dieselben Kreise stehen in `/llms-full.txt`: Konsistenz halten); Fakt `radius35`; B17; Öffnungszeiten aus `COMPANY.openingHours`.
 - Priorität: Soll – Grund: lokaler Suchwert, belegte Daten vorhanden.
 - Entscheidung: Verschmelzen
 - Ziel in der Plattform: components/site/site-jsonld.ts (`areaServed` als Liste aus `REGION.areas`)
 - Gestaltung: folgt KERN (P2); vorläufige Idee: entfällt (kein sichtbares Element).
-- Abnahme: `areaServed` enthält drei Kreise mit Radius; Test site-jsonld.test.ts angepasst · Bildpaar –
+- Abnahme: `areaServed` enthält drei Kreise mit Radius, Namen und Ortsnamen aus den Daten, den Radius 35 000 m um den Firmensitz und kein „Hohenahr“; Test site-jsonld.test.ts angepasst · Bildpaar –
 - Status: offen
-- Unsicherheit: Ob die drei Radien zur heutigen Aussage „35 km um Wetzlar“ passen (15 und 20 km sind Teilkreise; im Altstand bewusst gestaffelt).
+- Unsicherheit: Ob die drei Radien zur heutigen Aussage „35 km um Wetzlar“ passen (15 und 20 km sind Teilkreise; im Altstand bewusst gestaffelt), und ob Orte ohne Eintrag in der sichtbaren Ortstabelle (Münchholzhausen, Heuchelheim, Linden, Pohlheim, Dillenburg, Schöffengrund) im Markup stehen sollen; sie stehen belegt in site-config.ts und llms-full.txt, aber nirgends auf der Seite.
 
 ### E-SEO-010 · JSON-LD JobPosting (vier Stellen)
 - Kategorie: Suche und Technik
-- Quelle: ALT-SEO-18–21 · app/layout.tsx:267-497 · Bild: –
+- Quelle: ALT-SEO-18–21, 61–68 · app/layout.tsx:267-497 (Beschreibungen 271-272, 329-330, 387-388, 445-446; Benefits 299-306, 357-364, 415-422, 473-479) · Bild: –
 - Zustand: verschoben (+ Gegenstück: NEU-SEO-18, NEU-SEO-31; lib/jobs/jsonld.ts, app/jobs/[slug]/page.tsx:116-123; HTML geprüft: Stellenseiten tragen `JobPosting` und `BreadcrumbList`, die Startseite kein `JobPosting`)
 - Aufgabe: Google for Jobs findet die Stellen mit Gehalt und Gültigkeit.
-- Wesenskern: Im Altstand hingen alle vier JobPostings auf jeder Seite (Google erlaubt sie nur auf der Stellenseite): „Anlagenmechaniker SHK für Wärmepumpen & Heizungstechnik (m/w/d)“ (EUR 3 600–4 600), „Kundendiensttechniker SHK / Servicemonteur (m/w/d)“ (3 800–4 900), „Obermonteur / Projektleiter SHK & Badsanierung (m/w/d)“ (4 400–5 600), „Auszubildender zum Anlagenmechaniker SHK 2026 (m/w/d)“ (1 050–1 400). Neu: je ein JobPosting auf der eigenen Stellenseite mit `url` = canonical, Gehaltsspanne sichtbar; die Gehaltsspannen stehen jetzt auch auf der Seite (Eigentümer-Entscheidung).
-- Freiraum: Texte der Stellen (Paket Stellen).
+- Wesenskern: Im Altstand hingen alle vier JobPostings auf jeder Seite (Google erlaubt sie nur auf der Stellenseite): „Anlagenmechaniker SHK für Wärmepumpen & Heizungstechnik (m/w/d)“ (EUR 3 600–4 600), „Kundendiensttechniker SHK / Servicemonteur (m/w/d)“ (3 800–4 900), „Obermonteur / Projektleiter SHK & Badsanierung (m/w/d)“ (4 400–5 600), „Auszubildender zum Anlagenmechaniker SHK 2026 (m/w/d)“ (1 050–1 400). Neu: je ein JobPosting auf der eigenen Stellenseite mit `url` = canonical, Gehaltsspanne sichtbar; die Gehaltsspannen stehen jetzt auch auf der Seite (Eigentümer-Entscheidung). Beschreibung und Benefits (Wortlaut ALT-SEO-61 bis -68; 23 Einträge: 6 + 6 + 6 + 5): Im Altstand waren sie in app/layout.tsx von Hand geschrieben; im Ausgangsstand entstehen sie aus der Stellen-Registry: `description` = die sichtbaren Abschnitte der Stellenseite als HTML (Einleitung, „Das erwartet dich“, „Das bringst du mit“, „Das bekommst du“, „Dein Paket“, „Auf einen Blick“; lib/jobs/format.ts:`toHtmlDescription`), `jobBenefits` = Kurzform der Vorteils-Fakten plus Paketzeilen, mit „; “ verbunden (lib/jobs/jsonld.ts:127-128); HTML der vier Stellenseiten (Anlagenmechaniker, Kundendienst, Obermonteur, Ausbildung) am 2026-10-09 geprüft. Alle 23 Altstand-Einträge haben dort eine Entsprechung; bewusst anders gefasst oder nicht übernommen (nur Belegtes): „bezahlt“ in „Freitags ab 13:30 Uhr bezahlt ins Wochenende“ (B10 offen; neu „Freitags ab 13:30 Uhr Feierabend“); „100%“ vor „persönliche Hilti 22V Akku-Flotte“ (Fakt `hilti` ohne Prozentzahl); Anlagenmechaniker „Fester Firmenwagen … & Privatnutzung“ (B7; neu „Fester Transporter mit Sortimo-Regalsystem, Mitnahme nach Hause möglich“); Obermonteur „Eigenes Projektleitungs-Fahrzeug mit Tankkarte“ (neu „Firmenfahrzeug mit 1-%-Privatnutzung“, A2 offen, plus „Tankkarte“); Kundendienst „Firmen-iPad & Smartphone zur freien privaten Nutzung“ (B9; neu „iPad und Smartphone, auch privat“); Ausbildung „ab August 2026“ (B5; neu „nach Absprache“), „100 Jahren Ausbildungstradition“ (belegt ist nur „Meisterbetrieb seit 1926“, nicht eine Ausbildungstradition), „Meisterbegleitung durch Dipl.-Ing. Sabri Demir“ (Titel offen, A5; neu „Lernen von Meistern und Gesellen“) und „garantierter Übernahme“ (lebt als Fakt `takeoverGuarantee`, bis zur Bestätigung nur bei der Ausbildung, A1); Superlative „exklusive Bäder“, „modernstes Werkzeug“, „Spitzenvergütung“ (belegt ist „über Tarif“, Fakt `aboveTariff`).
+- Freiraum: Texte der Stellen (Paket Stellen); `jobBenefits` darf als Liste statt als „; “-getrennte Zeichenkette ausgegeben werden.
 - Bindungen: Registry; e2e/seo.spec.ts (genau ein JobPosting, `url` = canonical); fakten-abgleich Abschnitt C (Gehaltsspannen bestätigen).
 - Priorität: Muss – Grund: Seiten und URLs mit Suchwert (Google for Jobs).
 - Entscheidung: Keine Rückführung nötig (vollständig verschoben)
 - Ziel in der Plattform: lib/jobs/jsonld.ts, app/jobs/[slug]/page.tsx (vorhanden)
 - Gestaltung: folgt KERN (P2); vorläufige Idee: unverändert.
-- Abnahme: Je Stellenseite genau ein JobPosting, Startseite keines · Bildpaar –
+- Abnahme: Je Stellenseite genau ein JobPosting, Startseite keines; `description` und `jobBenefits` jeder Stelle nennen nur Aussagen aus Registry und Fakten, und jede belegte Aussage der Altstand-Listen (ALT-SEO-61 bis -68) hat eine Entsprechung (Textvergleich im Test) · Bildpaar –
 - Status: offen
-- Unsicherheit: Gehaltsspannen sind aus den Altstand-JobPostings übernommen und vom Eigentümer noch zu bestätigen (fakten-abgleich Abschnitt C).
+- Unsicherheit: Gehaltsspannen sind aus den Altstand-JobPostings übernommen und vom Eigentümer noch zu bestätigen (fakten-abgleich Abschnitt C). OFFENE FRAGE an das Stellenpaket: „ohne Bereitschaftszwang“ (ALT-SEO-61, Anlagenmechaniker) hat in der Registry dieser Stelle keine Entsprechung; der Fakt `noWeekendOnCall` ist belegt, aber nur beim Kundendienst eingetragen.
 
 ### E-SEO-011 · JSON-LD FAQPage und die fünf FAQ-Texte
 - Kategorie: Inhalt
-- Quelle: ALT-SEO-22–27 · app/layout.tsx:498-546 · Bild: –
+- Quelle: ALT-SEO-22–27, 72–74 · app/layout.tsx:498-546 (Beschreibung 502-503) · Bild: –
 - Zustand: verschoben (+ Gegenstück: NEU-SEO-10, components/home/FaqSection.tsx:24; lib/content/faq.ts:19-56; HTML geprüft: FAQPage nur auf `/`)
 - Aufgabe: Rich Result mit den häufigsten Fragen; sichtbare FAQ und Markup stimmen überein.
-- Wesenskern: Fünf Fragen: „Wie läuft der diskrete Wechsel ab, wenn ich noch bei einem anderen Betrieb angestellt bin?“ · „Brauche ich ein Anschreiben oder einen Lebenslauf für den ersten Kontakt?“ (neu ohne „für den ersten Kontakt“) · „Welche Heizsysteme und Sanitäranlagen montieren wir hauptsächlich?“ (neu „montiert ihr“) · „Darf das Firmenfahrzeug mit nach Hause genommen werden?“ (neu „Darf ich …“) · „Gibt es bei Bad und Energie Fernmontagen oder Wochenendarbeit?“ (neu ohne „bei Bad und Energie“). Antworten in Du-Form; dokumentierte Änderungen: „Absolute Diskretion“ → „Diskretion“; Express-Fragebogen „in zwei Minuten“ → „ein paar kurze Fragen“ (B4); Antwort 5 „jeden Nachmittag“ → „jeden Abend … am Wochenende hast du frei“ (B23); Partner „ELEMENTS, VIGOUR, Kermi und Geberit“ unverändert, „Fußbodenheizungen“ ergänzt (B15).
-- Freiraum: Wortlaut, solange sichtbarer Text und Markup übereinstimmen.
+- Wesenskern: Fünf Fragen: „Wie läuft der diskrete Wechsel ab, wenn ich noch bei einem anderen Betrieb angestellt bin?“ · „Brauche ich ein Anschreiben oder einen Lebenslauf für den ersten Kontakt?“ (neu ohne „für den ersten Kontakt“) · „Welche Heizsysteme und Sanitäranlagen montieren wir hauptsächlich?“ (neu „montiert ihr“) · „Darf das Firmenfahrzeug mit nach Hause genommen werden?“ (neu „Darf ich …“) · „Gibt es bei Bad und Energie Fernmontagen oder Wochenendarbeit?“ (neu ohne „bei Bad und Energie“). Antworten in Du-Form; dokumentierte Änderungen: „Absolute Diskretion“ → „Diskretion“; Express-Fragebogen „in zwei Minuten“ → „ein paar kurze Fragen“ (B4); Antwort 5 „jeden Nachmittag“ → „jeden Abend … am Wochenende hast du frei“ (B23); Partner „ELEMENTS, VIGOUR, Kermi und Geberit“ unverändert, „Fußbodenheizungen“ ergänzt (B15). Zwei Abweichungen des Altstands zwischen FAQPage-Markup und sichtbarer FAQ (ALT-SEO-72: Antwort 3 im Markup ohne „Fußbodenheizungen“; ALT-SEO-73: Frage 5 im Markup „… oder Wochenendarbeit?“, sichtbar „… oder Notdienst Zwang?“) sind im Ausgangsstand aufgehoben: Markup und sichtbare FAQ lesen dieselben `FAQ_ITEMS` (`buildFaqPageJsonLd(items)`, components/home/content.ts:118-132; FaqSection.tsx:24); im HTML steht Antwort 3 mit „Fußbodenheizungen“ und Frage 5 als „Gibt es Fernmontagen oder Wochenendarbeit?“ (B16). Der FAQPage-Knoten trug im Altstand außerdem `name` („Häufige Fragen zum Bewerbungsprozess bei Bad und Energie GmbH Lahn Dill“) und `description` (ALT-SEO-74: „Antworten auf die wichtigsten Fragen von Anlagenmechanikern, Kundendienstmonteuren und Auszubildenden zu Diskretion, Bewerbungsprozess, Werkzeug und Arbeitszeiten.“, 16 Wörter); beide fehlen im Ausgangsstand (nur `@id`, `inLanguage`, `mainEntity`). Für das Rich Result sind sie nicht nötig, und „Werkzeug“ trägt keine der fünf Fragen; der Wortlaut kommt nicht zurück.
+- Freiraum: Wortlaut, solange sichtbarer Text und Markup übereinstimmen; eine neue `description` des FAQPage-Knotens, abgeleitet aus den sichtbaren Fragen, ist erlaubt.
 - Bindungen: Fakten-IDs je Antwort; Regel „FAQPage nur auf `/`“ (ROADMAP §10).
 - Priorität: Muss – Grund: Seite mit Suchwert und sichtbarer Inhalt.
 - Entscheidung: Keine Rückführung nötig (vollständig verschoben)
@@ -1139,7 +1140,7 @@ Hinweis zu „Bild“: Metadaten, Textrouten und Schnittstellen haben keinen Bil
 - Gestaltung: folgt KERN (P2); vorläufige Idee: unverändert.
 - Abnahme: FAQPage enthält fünf Fragen, Wortlaut gleich der sichtbaren FAQ · Bildpaar –
 - Status: offen
-- Unsicherheit: Aussagen „Smartphone und Tablet … private Nutzung“ (B9) und „Wochenende frei“ (B23) warten auf die Bestätigung des Eigentümers.
+- Unsicherheit: Aussagen „Smartphone und Tablet … private Nutzung“ (B9) und „Wochenende frei“ (B23) warten auf die Bestätigung des Eigentümers. Die Abweichungen ALT-SEO-72 und -73 sind keine Verluste, sondern Altstand-Fehler (Markup ≠ sichtbarer Text); die Regel „Markup = sichtbarer Text“ gilt weiter.
 
 ### E-SEO-012 · robots.txt
 - Kategorie: Suche und Technik
@@ -1331,23 +1332,23 @@ Zeilen des Altatlas, die keinen eigenen Pass brauchen. Gründe: „unverändert 
 
 ## Zuordnungsprüfung
 
-Automatisch geprüft (Skript im Arbeitsverzeichnis, nicht Teil der Lieferung): Jede der 259 Atlaszeilen steht genau einmal in der Spalte „Quelle“ eines Passes oder in der Tabelle „Ohne eigenes Element“; keine Zeile doppelt, keine unbekannte ID.
+Automatisch geprüft (Skript im Arbeitsverzeichnis, nicht Teil der Lieferung): Jede der 274 Atlaszeilen steht genau einmal in der Spalte „Quelle“ eines Passes oder in der Tabelle „Ohne eigenes Element“; keine Zeile doppelt, keine unbekannte ID.
 
 | Größe | Anzahl |
 |---|---|
-| Atlaszeilen gesamt (ALT-SHELL 125 · ALT-RECHT 75 · ALT-SEO 59) | 259 |
-| zugeordnet zu einem Element-Pass | 238 |
+| Atlaszeilen gesamt (ALT-SHELL 125 · ALT-RECHT 75 · ALT-SEO 74) | 274 |
+| zugeordnet zu einem Element-Pass | 253 |
 | ohne eigenes Element (Tabelle) | 21 |
-| Summe | 259 (muss 259 sein) |
+| Summe | 274 (muss 274 sein) |
 | Element-Pässe | 75 (E-SHELL 29 · E-RECHT 25 · E-SEO 21) |
 
-Je Bereich der Atlaszeilen: ALT-SHELL: 108 in Pässen, 17 ohne eigenes Element · ALT-RECHT: 75 in Pässen, 0 ohne eigenes Element · ALT-SEO: 55 in Pässen, 4 ohne eigenes Element.
+Je Bereich der Atlaszeilen: ALT-SHELL: 108 in Pässen, 17 ohne eigenes Element · ALT-RECHT: 75 in Pässen, 0 ohne eigenes Element · ALT-SEO: 70 in Pässen, 4 ohne eigenes Element. Runde 1 (ALT-SEO-60 bis -74, 15 Zeilen) steht in E-SEO-009 (60, 69, 70, 71), E-SEO-010 (61 bis 68) und E-SEO-011 (72, 73, 74); es entstand kein neuer Pass.
 
 Verteilung der Pässe: Zustand verloren 10 · geschwächt 13 · verschoben 52. Priorität Muss 30 · Soll 29 · Kann 16.
 
 Entscheidungen: Rückführen 5 · Verschmelzen 9 · Neu interpretieren 2 · Zurückstellen 4 · Nicht zurückführen (erfunden/unbelegt) 3 · Keine Rückführung nötig (vollständig verschoben) 52.
 
-Zurückgestellt: 4 von 75 Pässen (5.3 %), betrifft 4 von 259 Atlaszeilen (1.5 %). Ziel höchstens 10 %: eingehalten.
+Zurückgestellt: 4 von 75 Pässen (5.3 %), betrifft 4 von 274 Atlaszeilen (1.5 %). Ziel höchstens 10 %: eingehalten.
 
 Zurückgestellt sind: E-SHELL-017 (Nachweis „Eingetragen in die Handwerksrolle der Handwerkskammer Wiesbaden“); E-SHELL-019 („Ausgezeichneter Ausbildungsbetrieb im Handwerk“); E-SHELL-024 (Nach-oben-Knopf); E-RECHT-005 (Impressum: Verbraucherstreitbeilegung und Universalschlichtungsstelle). Keine gesetzliche Pflichtangabe des Impressums fehlt (Anhang A); die zurückgestellte Verbraucherstreitbeilegung ist eine offene Rechtsfrage, deren vorhandener Wortlaut stehen bleibt.
 
