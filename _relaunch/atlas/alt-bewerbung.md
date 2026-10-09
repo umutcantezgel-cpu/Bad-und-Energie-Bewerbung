@@ -7,7 +7,7 @@ Auftrag: P1-KUND-02 (Rolle Kundschafter, Stufe 1, Kern-Version 0). Schreibrecht:
 - Quelle: `_relaunch/altstand/main/` (Git-Stand main @ f2e7eae, nur gelesen). Alle Fundstellen relativ dazu, sofern nicht anders angegeben.
 - Browser: http://localhost:3600 (Produktions-Build, Antwort 200), User-Agent Chrome/141 (Altstand), Ansichten d1440 und m375, Anfragesperre aktiv (G5, keine Fremdhosts, keine Schreibzugriffe nötig).
 - Keine Formularsendung ausgelöst. Standardzustand bei leerem localStorage. Tabs über `?tab=quiz`, `?tab=vault`, `?tab=form`, `?tab=dossier`. Zusätzlich geprüft: `?direct=true`, `?tab=direct`, `?tab=bogus`. Quiz-Schritt 2 nur per Weiter-Knopf erreicht (kein Absenden).
-- Bildbelege: keine vorhanden (`_relaunch/belege/p0-altstand/` und `_relaunch/.roh/p0-altstand/webp/` existieren nicht). Spalte Bild deshalb durchgehend „–“. Es wurden keine Bilder gespeichert (kein Schreibrecht außerhalb dieser Datei).
+- Bildbelege: Altstand-Bildschirmfotos liegen unter `_relaunch/belege/p0-altstand/` (Rohdaten unter `_relaunch/.roh/p0-altstand/`). Die Spalte Bild ist in diesem Atlas noch nicht zugeordnet und steht durchgehend auf „–“. Es wurden in diesem Auftrag keine Bilder gespeichert (kein Schreibrecht außerhalb dieser Datei).
 - Wortzahl: durch Leerzeichen getrennte Einheiten des Quelltexts; Platzhalter wie `${…}` zählen als 1 Wort. Erste 20 Wörter + „[…]“ + Wortzahl nur bei Texten über 20 Wörtern, sonst vollständig.
 - Befund = im Quelltext oder im Browser beobachtet. (Vermutung) = nicht belegt. Keine Wertung, keine Empfehlung.
 - Umfang: Die globale Shell (Kopfleiste, Fußzeile, Schnellbewerbungs-Seitenleiste, Cookie-Banner) wird auf /bewerbung mitgerendert und ist in diesem Atlas nicht erfasst (siehe OFFENE FRAGEN im Bericht).
@@ -359,13 +359,13 @@ ALT-BEW-001, ALT-BEW-002, ALT-BEW-003, ALT-BEW-004, ALT-BEW-005, ALT-BEW-006, AL
 
 - Globale Shell auf /bewerbung (Kopf, Fußzeile, Schnellbewerbungs-Seitenleiste, Cookie-Banner, Links zu /impressum und /datenschutz): gerendert, aber nicht Teil dieses Atlas.
 - Erfolgszustände nach Absenden (Erfolgsbanner im Tresor, Toast in der Mappe) und die Server-Antworten wurden nicht ausgelöst (Vorgabe: keine Formularsendungen). Ihre Beschreibung stammt aus dem Quelltext.
-- Bildbelege: keine vorhanden; Spalte Bild steht durchgehend auf „–“.
+- Bildbelege: Altstand-Bildschirmfotos liegen unter `_relaunch/belege/p0-altstand/` (Dateien `alt-bewerbung*__d1440-light__*.webp`, `alt-bewerbung*__m375-light__*.webp`); die Zuordnung zu den Zeilen steht aus, die Spalte Bild steht durchgehend auf „–“.
 - Hover- und Tastaturzustände, Druckausgabe (window.print) und Konfetti nicht im Browser ausgelöst; Beschreibung aus dem Quelltext.
 
 ## Prüfung der Tabelle
 
 - 297 Zeilen mit je 11 Spalten; Kategorien ausschließlich aus der erlaubten Liste; genau eine Kategorie je Zeile.
-- Bildspalte: 297 × „–“.
+- Bildspalte: 297 × „–“ (Stand der Erstfassung; Belege liegen unter `_relaunch/belege/p0-altstand/`, Zuordnung offen).
 - IDs laufen lückenlos von ALT-BEW-001 bis ALT-BEW-297.
 - Browserläufe nur lesend über `_relaunch/werkzeuge/lib/browser.mjs`; keine Formularsendung, keine Anfrage außerhalb localhost (Anfragesperre leer).
 
@@ -373,3 +373,14 @@ ALT-BEW-001, ALT-BEW-002, ALT-BEW-003, ALT-BEW-004, ALT-BEW-005, ALT-BEW-006, AL
 | A-ID | Seite | Abschnitt (Anker/Ort) | Kategorie | Element | Inhalt wörtlich | Verhalten / Funktion | Grafik / SVG | Bewegung | Fundstelle | Bild |
 |---|---|---|---|---|---|---|---|---|---|---|
 | ALT-BEW-298 | /bewerbung | Checkliste, offene Kriterienkarte | Inhalt | Hinweistext auf offenen Kriterienkarten | „Klicke hier zur Erfassung:“ | führt zur Erfassung des fehlenden Kriteriums | – | – | components/BewerberCheckliste.tsx:966-968 | – |
+
+## Nachträge aus der Z-01-Nachprüfung (Runde 1)
+
+Ergänzt aus der Z-01-Nachprüfung (Kennung P1-KUND-08-R1). Fundstellen im Altstand-Quelltext selbst geprüft. Die sieben Ortschips im Regionalband (app/bewerbung/page.tsx:404-410) stehen bereits wörtlich und mit richtiger Fundstelle in ALT-BEW-076; dafür ist keine neue Zeile nötig.
+
+| A-ID | Seite | Abschnitt (Anker/Ort) | Kategorie | Element | Inhalt wörtlich | Verhalten / Funktion | Grafik / SVG | Bewegung | Fundstelle | Bild |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ALT-BEW-299 | /bewerbung?tab=quiz | Quiz · Lade-Fallback | Interaktives | Lade-Fallback der Ansicht QuizView | „Profilfragebogen wird vorbereitet...“ | Platzhalter, solange das Bauteil QuizView (dynamischer Import) lädt; nur im Tab Quiz sichtbar (page.tsx:441); zentrierter Text, 12 px, slate-500, Innenabstand p-12, ohne Spinner | – | Keine | app/bewerbung/page.tsx:20-29 | – |
+| ALT-BEW-300 | /bewerbung?tab=vault | Tresor · Lade-Fallback | Interaktives | Lade-Fallback der Ansicht VaultView | „Dokumentenablage wird vorbereitet...“ | Platzhalter, solange das Bauteil VaultView (dynamischer Import) lädt; nur im Tab Tresor sichtbar (page.tsx:458); zentrierter Text, 12 px, slate-500, Innenabstand p-12, ohne Spinner | – | Keine | app/bewerbung/page.tsx:30-39 | – |
+| ALT-BEW-301 | /bewerbung?tab=form | Formular · Lade-Fallback | Interaktives | Lade-Fallback der Ansicht FormView | „Bewerbungsassistent wird vorbereitet...“ | Platzhalter, solange das Bauteil FormView (dynamischer Import) lädt; nur im Tab Formular sichtbar (page.tsx:475); zentrierter Text, 12 px, slate-500, Innenabstand p-12, ohne Spinner | – | Keine | app/bewerbung/page.tsx:40-49 | – |
+| ALT-BEW-302 | /bewerbung?tab=dossier | Mappe · Lade-Fallback | Interaktives | Lade-Fallback der Ansicht PrintA4View | „DINA4 Dossier wird vorbereitet...“ | Platzhalter, solange das Bauteil PrintA4View (dynamischer Import) lädt; nur im Tab Mappe sichtbar (page.tsx:493); zentrierter Text, 12 px, slate-500, Innenabstand p-12, ohne Spinner | – | Keine | app/bewerbung/page.tsx:50-59 | – |

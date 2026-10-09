@@ -1,6 +1,6 @@
 {
   "url": "http://localhost:3702/",
-  "erstellt": "2026-10-09T10:41:47.549Z",
+  "erstellt": "2026-10-09T10:55:44.215Z",
   "aufnahmen": [
     {
       "ansicht": "m375",
@@ -10,32 +10,7 @@
         "horizontal": false,
         "scrollWidth": 375,
         "clientWidth": 375,
-        "clipped": [
-          {
-            "tag": "span",
-            "text": "Szene 6, läuft in den Rand",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Stellen · Kopf 4",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Gebiet · Steuerung 5",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Karte 7, Dachspitze über Spalte 9",
-            "clipX": true,
-            "offRight": 0
-          }
-        ]
+        "clipped": []
       },
       "fehler": [],
       "fremdanfragen": [],
@@ -62,32 +37,7 @@
         "horizontal": false,
         "scrollWidth": 375,
         "clientWidth": 375,
-        "clipped": [
-          {
-            "tag": "span",
-            "text": "Szene 6, läuft in den Rand",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Stellen · Kopf 4",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Gebiet · Steuerung 5",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Karte 7, Dachspitze über Spalte 9",
-            "clipX": true,
-            "offRight": 0
-          }
-        ]
+        "clipped": []
       },
       "fehler": [],
       "fremdanfragen": [],
@@ -114,32 +64,7 @@
         "horizontal": false,
         "scrollWidth": 375,
         "clientWidth": 375,
-        "clipped": [
-          {
-            "tag": "span",
-            "text": "Szene 6, läuft in den Rand",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Stellen · Kopf 4",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Gebiet · Steuerung 5",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Karte 7, Dachspitze über Spalte 9",
-            "clipX": true,
-            "offRight": 0
-          }
-        ]
+        "clipped": []
       },
       "fehler": [],
       "fremdanfragen": [],
@@ -166,32 +91,7 @@
         "horizontal": false,
         "scrollWidth": 375,
         "clientWidth": 375,
-        "clipped": [
-          {
-            "tag": "span",
-            "text": "Szene 6, läuft in den Rand",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Stellen · Kopf 4",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Gebiet · Steuerung 5",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Karte 7, Dachspitze über Spalte 9",
-            "clipX": true,
-            "offRight": 0
-          }
-        ]
+        "clipped": []
       },
       "fehler": [],
       "fremdanfragen": [],

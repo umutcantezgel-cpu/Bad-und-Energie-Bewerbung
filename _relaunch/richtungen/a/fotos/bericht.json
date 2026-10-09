@@ -1,95 +1,16 @@
 {
   "url": "http://localhost:3701/",
-  "erstellt": "2026-10-09T10:40:31.857Z",
+  "erstellt": "2026-10-09T10:54:50.246Z",
   "aufnahmen": [
     {
       "ansicht": "m375",
       "schema": "light",
       "bewegung": "no-preference",
       "ueberlauf": {
-        "horizontal": true,
-        "scrollWidth": 404,
+        "horizontal": false,
+        "scrollWidth": 375,
         "clientWidth": 375,
-        "clipped": [
-          {
-            "tag": "p",
-            "text": "Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.",
-            "clipX": false,
-            "offRight": 8
-          },
-          {
-            "tag": "p",
-            "text": "„Sauber verlegt: Der Vorlauf führt in 60 Sekunden zu uns, de",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "h4",
-            "text": "Ableitung aus dem Markenaspekt „sauber verlegt“",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "li",
-            "text": "1Ein SHK-Betrieb verlegt Leitungen, und gute Arbeit erkennt ",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "li",
-            "text": "2Darum ist die Seite ein Werkplan: Rot führt als Vorlauf in ",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "li",
-            "text": "3Weil Rot und Blau zugleich die Farben des Logos und die Lei",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "h4",
-            "text": "Austauschprobe: Warum passt das zu keinem Wettbewerber?",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "p",
-            "text": "Man setze einen beliebigen anderen SHK-Betrieb ein und prüfe",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "li",
-            "text": "100 %Sauber verlegt, 13:30 Uhr",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "li",
-            "text": "125 %Sauber verlegt, 13:30 Uhr",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Feld 8",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Tinte 14",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Blau 14",
-            "clipX": true,
-            "offRight": 0
-          }
-        ]
+        "clipped": []
       },
       "fehler": [],
       "fremdanfragen": [],
@@ -113,89 +34,10 @@
       "schema": "light",
       "bewegung": "reduce",
       "ueberlauf": {
-        "horizontal": true,
-        "scrollWidth": 404,
+        "horizontal": false,
+        "scrollWidth": 375,
         "clientWidth": 375,
-        "clipped": [
-          {
-            "tag": "p",
-            "text": "Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.",
-            "clipX": false,
-            "offRight": 8
-          },
-          {
-            "tag": "p",
-            "text": "„Sauber verlegt: Der Vorlauf führt in 60 Sekunden zu uns, de",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "h4",
-            "text": "Ableitung aus dem Markenaspekt „sauber verlegt“",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "li",
-            "text": "1Ein SHK-Betrieb verlegt Leitungen, und gute Arbeit erkennt ",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "li",
-            "text": "2Darum ist die Seite ein Werkplan: Rot führt als Vorlauf in ",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "li",
-            "text": "3Weil Rot und Blau zugleich die Farben des Logos und die Lei",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "h4",
-            "text": "Austauschprobe: Warum passt das zu keinem Wettbewerber?",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "p",
-            "text": "Man setze einen beliebigen anderen SHK-Betrieb ein und prüfe",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "li",
-            "text": "100 %Sauber verlegt, 13:30 Uhr",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "li",
-            "text": "125 %Sauber verlegt, 13:30 Uhr",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Feld 8",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Tinte 14",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Blau 14",
-            "clipX": true,
-            "offRight": 0
-          }
-        ]
+        "clipped": []
       },
       "fehler": [],
       "fremdanfragen": [],
@@ -219,89 +61,10 @@
       "schema": "dark",
       "bewegung": "no-preference",
       "ueberlauf": {
-        "horizontal": true,
-        "scrollWidth": 404,
+        "horizontal": false,
+        "scrollWidth": 375,
         "clientWidth": 375,
-        "clipped": [
-          {
-            "tag": "p",
-            "text": "Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.",
-            "clipX": false,
-            "offRight": 8
-          },
-          {
-            "tag": "p",
-            "text": "„Sauber verlegt: Der Vorlauf führt in 60 Sekunden zu uns, de",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "h4",
-            "text": "Ableitung aus dem Markenaspekt „sauber verlegt“",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "li",
-            "text": "1Ein SHK-Betrieb verlegt Leitungen, und gute Arbeit erkennt ",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "li",
-            "text": "2Darum ist die Seite ein Werkplan: Rot führt als Vorlauf in ",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "li",
-            "text": "3Weil Rot und Blau zugleich die Farben des Logos und die Lei",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "h4",
-            "text": "Austauschprobe: Warum passt das zu keinem Wettbewerber?",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "p",
-            "text": "Man setze einen beliebigen anderen SHK-Betrieb ein und prüfe",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "li",
-            "text": "100 %Sauber verlegt, 13:30 Uhr",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "li",
-            "text": "125 %Sauber verlegt, 13:30 Uhr",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Feld 8",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Tinte 14",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Blau 14",
-            "clipX": true,
-            "offRight": 0
-          }
-        ]
+        "clipped": []
       },
       "fehler": [],
       "fremdanfragen": [],
@@ -325,89 +88,10 @@
       "schema": "dark",
       "bewegung": "reduce",
       "ueberlauf": {
-        "horizontal": true,
-        "scrollWidth": 404,
+        "horizontal": false,
+        "scrollWidth": 375,
         "clientWidth": 375,
-        "clipped": [
-          {
-            "tag": "p",
-            "text": "Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.",
-            "clipX": false,
-            "offRight": 8
-          },
-          {
-            "tag": "p",
-            "text": "„Sauber verlegt: Der Vorlauf führt in 60 Sekunden zu uns, de",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "h4",
-            "text": "Ableitung aus dem Markenaspekt „sauber verlegt“",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "li",
-            "text": "1Ein SHK-Betrieb verlegt Leitungen, und gute Arbeit erkennt ",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "li",
-            "text": "2Darum ist die Seite ein Werkplan: Rot führt als Vorlauf in ",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "li",
-            "text": "3Weil Rot und Blau zugleich die Farben des Logos und die Lei",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "h4",
-            "text": "Austauschprobe: Warum passt das zu keinem Wettbewerber?",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "p",
-            "text": "Man setze einen beliebigen anderen SHK-Betrieb ein und prüfe",
-            "clipX": false,
-            "offRight": 29
-          },
-          {
-            "tag": "li",
-            "text": "100 %Sauber verlegt, 13:30 Uhr",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "li",
-            "text": "125 %Sauber verlegt, 13:30 Uhr",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Feld 8",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Tinte 14",
-            "clipX": true,
-            "offRight": 0
-          },
-          {
-            "tag": "span",
-            "text": "Blau 14",
-            "clipX": true,
-            "offRight": 0
-          }
-        ]
+        "clipped": []
       },
       "fehler": [],
       "fremdanfragen": [],
