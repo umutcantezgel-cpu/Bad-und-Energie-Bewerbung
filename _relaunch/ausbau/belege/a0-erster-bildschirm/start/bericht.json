@@ -1,7 +1,7 @@
 {
   "url": "http://localhost:3500/",
-  "motion": "no-preference",
-  "erstellt": "2026-10-09T15:44:55.177Z",
+  "motion": "reduce",
+  "erstellt": "2026-10-09T20:19:13.662Z",
   "zeiten_ms": [
     0,
     250,
@@ -15,184 +15,46 @@
     {
       "ansicht": "m390",
       "schema": "light",
-      "bewegung": "no-preference",
+      "bewegung": "reduce",
       "bilder": [
         {
           "ms": 0,
-          "datei": "m390-light-voll__t0000.webp",
+          "datei": "m390-light-reduziert__t0000.webp",
           "bild_ab_ms": null
         },
         {
           "ms": 250,
-          "datei": "m390-light-voll__t0250.webp",
-          "bild_ab_ms": 226
+          "datei": "m390-light-reduziert__t0250.webp",
+          "bild_ab_ms": 17
         },
         {
           "ms": 500,
-          "datei": "m390-light-voll__t0500.webp",
-          "bild_ab_ms": 325
+          "datei": "m390-light-reduziert__t0500.webp",
+          "bild_ab_ms": 17
         },
         {
           "ms": 750,
-          "datei": "m390-light-voll__t0750.webp",
-          "bild_ab_ms": 506
+          "datei": "m390-light-reduziert__t0750.webp",
+          "bild_ab_ms": 17
         },
         {
           "ms": 1000,
-          "datei": "m390-light-voll__t1000.webp",
-          "bild_ab_ms": 506
+          "datei": "m390-light-reduziert__t1000.webp",
+          "bild_ab_ms": 17
         },
         {
           "ms": 1250,
-          "datei": "m390-light-voll__t1250.webp",
-          "bild_ab_ms": 506
+          "datei": "m390-light-reduziert__t1250.webp",
+          "bild_ab_ms": 17
         },
         {
           "ms": 1500,
-          "datei": "m390-light-voll__t1500.webp",
-          "bild_ab_ms": 506
+          "datei": "m390-light-reduziert__t1500.webp",
+          "bild_ab_ms": 17
         }
       ],
-      "streifen": "m390-light-voll__streifen.webp",
+      "streifen": "m390-light-reduziert__streifen.webp",
       "screencast_bilder": 5,
-      "fehler": [],
-      "gesperrt": []
-    },
-    {
-      "ansicht": "m390",
-      "schema": "dark",
-      "bewegung": "no-preference",
-      "bilder": [
-        {
-          "ms": 0,
-          "datei": "m390-dark-voll__t0000.webp",
-          "bild_ab_ms": null
-        },
-        {
-          "ms": 250,
-          "datei": "m390-dark-voll__t0250.webp",
-          "bild_ab_ms": 216
-        },
-        {
-          "ms": 500,
-          "datei": "m390-dark-voll__t0500.webp",
-          "bild_ab_ms": 340
-        },
-        {
-          "ms": 750,
-          "datei": "m390-dark-voll__t0750.webp",
-          "bild_ab_ms": 504
-        },
-        {
-          "ms": 1000,
-          "datei": "m390-dark-voll__t1000.webp",
-          "bild_ab_ms": 504
-        },
-        {
-          "ms": 1250,
-          "datei": "m390-dark-voll__t1250.webp",
-          "bild_ab_ms": 504
-        },
-        {
-          "ms": 1500,
-          "datei": "m390-dark-voll__t1500.webp",
-          "bild_ab_ms": 504
-        }
-      ],
-      "streifen": "m390-dark-voll__streifen.webp",
-      "screencast_bilder": 5,
-      "fehler": [],
-      "gesperrt": []
-    },
-    {
-      "ansicht": "d1440",
-      "schema": "light",
-      "bewegung": "no-preference",
-      "bilder": [
-        {
-          "ms": 0,
-          "datei": "d1440-light-voll__t0000.webp",
-          "bild_ab_ms": null
-        },
-        {
-          "ms": 250,
-          "datei": "d1440-light-voll__t0250.webp",
-          "bild_ab_ms": 47
-        },
-        {
-          "ms": 500,
-          "datei": "d1440-light-voll__t0500.webp",
-          "bild_ab_ms": 412
-        },
-        {
-          "ms": 750,
-          "datei": "d1440-light-voll__t0750.webp",
-          "bild_ab_ms": 575
-        },
-        {
-          "ms": 1000,
-          "datei": "d1440-light-voll__t1000.webp",
-          "bild_ab_ms": 575
-        },
-        {
-          "ms": 1250,
-          "datei": "d1440-light-voll__t1250.webp",
-          "bild_ab_ms": 575
-        },
-        {
-          "ms": 1500,
-          "datei": "d1440-light-voll__t1500.webp",
-          "bild_ab_ms": 575
-        }
-      ],
-      "streifen": "d1440-light-voll__streifen.webp",
-      "screencast_bilder": 4,
-      "fehler": [],
-      "gesperrt": []
-    },
-    {
-      "ansicht": "d1440",
-      "schema": "dark",
-      "bewegung": "no-preference",
-      "bilder": [
-        {
-          "ms": 0,
-          "datei": "d1440-dark-voll__t0000.webp",
-          "bild_ab_ms": null
-        },
-        {
-          "ms": 250,
-          "datei": "d1440-dark-voll__t0250.webp",
-          "bild_ab_ms": 37
-        },
-        {
-          "ms": 500,
-          "datei": "d1440-dark-voll__t0500.webp",
-          "bild_ab_ms": 411
-        },
-        {
-          "ms": 750,
-          "datei": "d1440-dark-voll__t0750.webp",
-          "bild_ab_ms": 509
-        },
-        {
-          "ms": 1000,
-          "datei": "d1440-dark-voll__t1000.webp",
-          "bild_ab_ms": 509
-        },
-        {
-          "ms": 1250,
-          "datei": "d1440-dark-voll__t1250.webp",
-          "bild_ab_ms": 509
-        },
-        {
-          "ms": 1500,
-          "datei": "d1440-dark-voll__t1500.webp",
-          "bild_ab_ms": 509
-        }
-      ],
-      "streifen": "d1440-dark-voll__streifen.webp",
-      "screencast_bilder": 4,
       "fehler": [],
       "gesperrt": []
     }
