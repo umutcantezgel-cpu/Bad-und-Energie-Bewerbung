@@ -7,7 +7,9 @@
 -- - Idempotent über idempotency_key (UUID des Clients, gespeichert nur als sha256):
 --   gleicher Key + gleicher content_hash ⇒ gleiche Nummer, nichts Neues;
 --   gleicher Key + anderer content_hash ⇒ Angaben aktualisieren, Teammail erneut,
---   gleiche Nummer (wie der EmailSink in lib/applications/sink.ts).
+--   gleiche Nummer (wie der EmailSink in lib/applications/sink.ts) – aber nur binnen 24 h,
+--   solange die Bewerbung noch in Stufe 'neu' ist und kein Löschantrag vorliegt.
+-- - Unbekannte Schlüssel ⇒ validation_failed (fängt Fehler im camelCase→snake_case-Mapping).
 -- - Der öffentliche Pfad ändert nie Kontaktdaten anderer Bewerbungen (kein Dedupe-Update).
 -- - Fehler in den Daten werden als 'validation_failed' gemeldet, ohne Zeileninhalte
 --   (kein „Failing row contains …“ mit personenbezogenen Daten im Log).
@@ -69,6 +71,7 @@ declare
   v_attr jsonb;
   v_mail_enabled boolean;
   v_recent_confirmations integer;
+  v_shared_snapshot boolean;
   v_constraint text;
 begin
   -- Form der Nutzlast: fehlende Pflichtfelder oder falsche Typen nie still ergänzen.
@@ -83,6 +86,28 @@ begin
      or coalesce(jsonb_typeof(payload -> 'mappe'), 'null') not in ('object', 'null')
      or coalesce(jsonb_typeof(payload -> 'email'), 'null') not in ('string', 'null')
      or coalesce(jsonb_typeof(payload -> 'content_hash'), 'null') not in ('string', 'null') then
+    raise exception 'validation_failed' using errcode = 'P0001';
+  end if;
+
+  if exists (
+       select 1 from jsonb_object_keys(payload) k
+       where k <> all (array[
+         'reference', 'idempotency_key', 'content_hash', 'submitted_at', 'job', 'answers', 'mappe',
+         'name', 'phone', 'email', 'contact_channel', 'acquisition_channel', 'attribution',
+         'privacy_notice_version', 'suspected_spam', 'spam_signals', 'fill_duration_ms'
+       ]))
+     or exists (
+       select 1 from jsonb_object_keys(payload -> 'job') k
+       where k <> all (array['id', 'title', 'reference_code', 'question_set']))
+     or exists (
+       select 1 from jsonb_object_keys(payload -> 'phone') k
+       where k <> all (array['raw', 'e164']))
+     or exists (
+       select 1 from jsonb_object_keys(coalesce(payload -> 'attribution', '{}'::jsonb)) k
+       where k <> all (array[
+         'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
+         'ref', 'referrer_host', 'landing_path', 'funnel'
+       ])) then
     raise exception 'validation_failed' using errcode = 'P0001';
   end if;
 
@@ -119,14 +144,24 @@ begin
     v_mappe := case when jsonb_typeof(payload -> 'mappe') = 'object' then payload -> 'mappe' end;
     v_attr := coalesce(payload -> 'attribution', '{}'::jsonb);
 
-    select a.id, a.reference, a.content_hash, a.candidate_id, a.privacy_notice_version
+    select a.id, a.reference, a.content_hash, a.candidate_id, a.privacy_notice_version,
+           a.stage, a.created_at, a.erasure_requested_at, a.purge_state
     into v_existing
     from public.applications a
-    where a.idempotency_key_hash = v_key_hash;
+    where a.idempotency_key_hash = v_key_hash
+    for update;
 
     if found then
       -- Wiederholung mit gleichen Angaben (oder ohne Hash): bestehende Nummer zurückgeben.
-      if v_content_hash is null or v_existing.content_hash is not distinct from v_content_hash then
+      -- Ebenso, wenn eine Korrektur nicht mehr zulässig ist: nach 24 h (der Client verwirft
+      -- den Key nach dem Erfolg, der EmailSink merkt ihn 24 h), sobald das Team die Bewerbung
+      -- bearbeitet, nach einem Löschantrag und während der Löschung. Dann ändert sich nichts.
+      if v_content_hash is null
+         or v_existing.content_hash is not distinct from v_content_hash
+         or v_existing.stage <> 'neu'
+         or v_existing.created_at < now() - interval '24 hours'
+         or v_existing.erasure_requested_at is not null
+         or v_existing.purge_state <> 'active' then
         return jsonb_build_object(
           'application_id', v_existing.id,
           'reference', v_existing.reference,
@@ -138,10 +173,15 @@ begin
       -- Gleicher Key, geänderte Angaben (z. B. nach einem Netzwerkfehler korrigiert):
       -- Wer den Key hat, hat diese Bewerbung abgeschickt. Der Kontakt-Snapshot wird nur
       -- geändert, wenn keine andere Bewerbung daran hängt (z. B. nach einer Zusammenführung).
-      if exists (
+      -- Sperre: serialisiert gegen gleichzeitiges Umhängen (FK-Prüfung nimmt FOR KEY SHARE).
+      perform 1 from public.candidates c where c.id = v_existing.candidate_id for update;
+
+      v_shared_snapshot := exists (
         select 1 from public.applications a
         where a.candidate_id = v_existing.candidate_id and a.id <> v_existing.id
-      ) then
+      );
+
+      if v_shared_snapshot then
         insert into public.candidates (full_name, phone_raw, phone_e164, email)
         values (v_name, v_phone_raw, v_phone_e164, v_email)
         returning id into v_candidate_id;
@@ -209,7 +249,11 @@ begin
       values (
         v_existing.id,
         'resubmitted',
-        jsonb_build_object('job_id', payload -> 'job' ->> 'id', 'suspected_spam', v_spam)
+        jsonb_build_object(
+          'job_id', payload -> 'job' ->> 'id',
+          'suspected_spam', v_spam,
+          'contact', case when v_shared_snapshot then 'new_snapshot' else 'updated' end
+        )
       );
 
       -- Teammail erneut (gleiche Nummer, neue Angaben). Keine zweite Eingangsbestätigung.
@@ -374,7 +418,20 @@ begin
   if payload is null or jsonb_typeof(payload) <> 'object'
      or jsonb_typeof(payload -> 'reference') is distinct from 'string'
      or jsonb_typeof(payload -> 'idempotency_key') is distinct from 'string'
-     or coalesce(jsonb_typeof(payload -> 'mappe'), 'null') not in ('object', 'null') then
+     or coalesce(jsonb_typeof(payload -> 'mappe'), 'null') not in ('object', 'null')
+     or coalesce(jsonb_typeof(payload -> 'received_at'), 'null') not in ('string', 'null')
+     or coalesce(jsonb_typeof(payload -> 'start_date'), 'null') not in ('string', 'null')
+     or coalesce(jsonb_typeof(payload -> 'postal_code'), 'null') not in ('string', 'null')
+     or coalesce(jsonb_typeof(payload -> 'message'), 'null') not in ('string', 'null') then
+    raise exception 'validation_failed' using errcode = 'P0001';
+  end if;
+
+  if exists (
+    select 1 from jsonb_object_keys(payload) k
+    where k <> all (array[
+      'reference', 'idempotency_key', 'received_at', 'start_date', 'postal_code', 'message', 'mappe'
+    ])
+  ) then
     raise exception 'validation_failed' using errcode = 'P0001';
   end if;
 
@@ -395,6 +452,12 @@ begin
 
   if v_application_id is null then
     raise exception 'not_found' using errcode = 'P0001';
+  end if;
+
+  -- Gleiche Ergänzung lief parallel und ist inzwischen gespeichert: als Duplikat beantworten,
+  -- nicht als Grenzüberschreitung.
+  if exists (select 1 from public.application_follow_ups f where f.idempotency_key = v_key) then
+    return jsonb_build_object('ok', true, 'duplicate', true);
   end if;
 
   select count(*), count(*) filter (where f.created_at > now() - interval '24 hours')
@@ -454,6 +517,8 @@ grant execute on function public.rpc_submit_follow_up(jsonb) to service_role;
 --
 -- Feste Zeitfenster. p_key_hash = sha256 des Limiter-Schlüssels („<scope>:<HMAC(IP)>“) als
 -- Hex aus Next; die IP selbst erreicht die Datenbank nie. Jede Regel (Fenster) zählt getrennt.
+-- Innerhalb einer action muss jedes Fenster eindeutig sein (anders als MemoryRateLimiter ist
+-- das Limit nicht Teil des Schlüssels; zwei Regeln mit gleichem Fenster würden doppelt zählen).
 -- Antwort: { "allowed", "remaining", "retry_after_sec" }.
 
 create function public.rpc_rate_limit_hit(

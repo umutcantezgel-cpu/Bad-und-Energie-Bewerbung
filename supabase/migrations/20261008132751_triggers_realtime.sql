@@ -168,6 +168,9 @@ begin
   if new.content_hash is distinct from old.content_hash then
     v_fields := array_append(v_fields, 'content');
   end if;
+  if new.candidate_id is distinct from old.candidate_id then
+    v_fields := array_append(v_fields, 'candidate_id');
+  end if;
 
   if cardinality(v_fields) > 0 then
     insert into private.audit_log (actor_id, action, entity, entity_id, fields)
@@ -249,7 +252,10 @@ revoke all on function private.broadcast_application() from public, anon, authen
 create trigger broadcast_application_insert after insert on public.applications
   for each row execute function private.broadcast_application();
 
-create trigger broadcast_application_update after update of stage, assigned_to on public.applications
+-- Auch Korrekturen (content_hash) und neue Aktivität (Ergänzung, Notiz) melden, damit offene
+-- Cockpit-Ansichten nachladen.
+create trigger broadcast_application_update
+  after update of stage, assigned_to, content_hash, last_activity_at on public.applications
   for each row execute function private.broadcast_application();
 
 -- Nur aktive Staff-Mitglieder mit MFA dürfen den privaten Kanal empfangen.

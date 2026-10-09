@@ -17,7 +17,7 @@ begin
   end loop;
 end $$;
 
-select plan(39);
+select plan(44);
 
 -- Test-Payload als Funktion (nur in dieser Transaktion). NULL-Werte fallen weg.
 create function pg_temp.app(
@@ -106,6 +106,18 @@ select throws_ok(
   $$ select public.rpc_submit_application(pg_temp.app('BE-26-AAAA33', '10000000-0000-4000-8000-000000000003', null, null, false, 'Max Beispiel', 'XYZ')) $$,
   'P0001', 'validation_failed',
   'Ungültiger content_hash wird abgelehnt'
+);
+select throws_ok(
+  $$ select public.rpc_submit_application(pg_temp.app('BE-26-AAAAC2', '10000000-0000-4000-8000-000000000011', null, null, false, 'Max Beispiel', null)
+       || '{"contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}'::jsonb) $$,
+  'P0001', 'validation_failed',
+  'Unbekannter Schlüssel (camelCase) wird abgelehnt statt still verworfen'
+);
+select throws_ok(
+  $$ select public.rpc_submit_application(pg_temp.app('BE-26-AAAAC2', '10000000-0000-4000-8000-000000000011', null, null, false, 'Max Beispiel', null)
+       || '{"attribution": {"utmSource": "google"}}'::jsonb) $$,
+  'P0001', 'validation_failed',
+  'Unbekannter Attributions-Schlüssel wird abgelehnt'
 );
 
 -- Weitere Einsendungen -------------------------------------------------------------
@@ -248,13 +260,29 @@ select throws_ok(
   'P0001', 'not_found',
   'Ergänzung zu unbekannter Nummer'
 );
+select throws_ok(
+  $$ select public.rpc_submit_follow_up('{"reference": "BE-26-AAAA22", "idempotency_key": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1", "startDate": "sofort"}'::jsonb) $$,
+  'P0001', 'validation_failed',
+  'Unbekannter Schlüssel in der Ergänzung wird abgelehnt'
+);
 reset role;
 update public.applications set erasure_requested_at = now() where reference = 'BE-26-AAAA55';
+update public.applications set stage = 'kontaktiert' where reference = 'BE-26-AAAA66';
 set local role service_role;
 select throws_ok(
   $$ select public.rpc_submit_follow_up('{"reference": "BE-26-AAAA55", "idempotency_key": "b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0"}'::jsonb) $$,
   'P0001', 'not_found',
   'Keine Ergänzung nach einem Löschantrag'
+);
+select is(
+  public.rpc_submit_application(pg_temp.app('BE-26-AAAA55', '10000000-0000-4000-8000-000000000005', 'max@example.com', null, false, 'Max Beispiel', 'cccccccccccccccccccccccccccccccc')) ->> 'resubmitted',
+  'false',
+  'Keine Korrektur nach einem Löschantrag'
+);
+select is(
+  public.rpc_submit_application(pg_temp.app('BE-26-AAAA66', '10000000-0000-4000-8000-000000000006', 'max@example.com', null, false, 'Max Beispiel', 'dddddddddddddddddddddddddddddddd')) ->> 'duplicate',
+  'true',
+  'Keine Korrektur mehr, sobald das Team die Bewerbung bearbeitet'
 );
 
 -- Rate-Limit ---------------------------------------------------------------------------
