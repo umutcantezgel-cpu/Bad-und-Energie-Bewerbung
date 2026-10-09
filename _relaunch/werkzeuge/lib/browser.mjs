@@ -5,9 +5,11 @@ import { chromium } from 'playwright';
 
 export const CHROME = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 
-/** ANSICHTEN aus Abschnitt 0. */
+/** ANSICHTEN aus Abschnitt 0 (Lauf 1) plus 390×844 und 430×932 (Lauf 2, E-018). */
 export const VIEWPORTS = Object.freeze([
   { name: 'm375', width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 },
+  { name: 'm390', width: 390, height: 844, isMobile: true, hasTouch: true, deviceScaleFactor: 3 },
+  { name: 'm430', width: 430, height: 932, isMobile: true, hasTouch: true, deviceScaleFactor: 3 },
   { name: 't768', width: 768, height: 1024, isMobile: true, hasTouch: true, deviceScaleFactor: 2 },
   { name: 'd1440', width: 1440, height: 900, isMobile: false, hasTouch: false, deviceScaleFactor: 1 },
   { name: 'd1920', width: 1920, height: 1080, isMobile: false, hasTouch: false, deviceScaleFactor: 1 },

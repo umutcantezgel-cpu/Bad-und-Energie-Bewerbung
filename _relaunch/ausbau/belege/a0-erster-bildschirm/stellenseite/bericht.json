@@ -1,0 +1,200 @@
+{
+  "url": "http://localhost:3500/jobs/anlagenmechaniker-shk-wetzlar",
+  "motion": "no-preference",
+  "erstellt": "2026-10-09T15:45:12.280Z",
+  "zeiten_ms": [
+    0,
+    250,
+    500,
+    750,
+    1000,
+    1250,
+    1500
+  ],
+  "aufnahmen": [
+    {
+      "ansicht": "m390",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "bilder": [
+        {
+          "ms": 0,
+          "datei": "m390-light-voll__t0000.webp",
+          "bild_ab_ms": null
+        },
+        {
+          "ms": 250,
+          "datei": "m390-light-voll__t0250.webp",
+          "bild_ab_ms": 241
+        },
+        {
+          "ms": 500,
+          "datei": "m390-light-voll__t0500.webp",
+          "bild_ab_ms": 471
+        },
+        {
+          "ms": 750,
+          "datei": "m390-light-voll__t0750.webp",
+          "bild_ab_ms": 471
+        },
+        {
+          "ms": 1000,
+          "datei": "m390-light-voll__t1000.webp",
+          "bild_ab_ms": 471
+        },
+        {
+          "ms": 1250,
+          "datei": "m390-light-voll__t1250.webp",
+          "bild_ab_ms": 471
+        },
+        {
+          "ms": 1500,
+          "datei": "m390-light-voll__t1500.webp",
+          "bild_ab_ms": 471
+        }
+      ],
+      "streifen": "m390-light-voll__streifen.webp",
+      "screencast_bilder": 18,
+      "fehler": [],
+      "gesperrt": []
+    },
+    {
+      "ansicht": "m390",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "bilder": [
+        {
+          "ms": 0,
+          "datei": "m390-dark-voll__t0000.webp",
+          "bild_ab_ms": null
+        },
+        {
+          "ms": 250,
+          "datei": "m390-dark-voll__t0250.webp",
+          "bild_ab_ms": 242
+        },
+        {
+          "ms": 500,
+          "datei": "m390-dark-voll__t0500.webp",
+          "bild_ab_ms": 481
+        },
+        {
+          "ms": 750,
+          "datei": "m390-dark-voll__t0750.webp",
+          "bild_ab_ms": 481
+        },
+        {
+          "ms": 1000,
+          "datei": "m390-dark-voll__t1000.webp",
+          "bild_ab_ms": 481
+        },
+        {
+          "ms": 1250,
+          "datei": "m390-dark-voll__t1250.webp",
+          "bild_ab_ms": 481
+        },
+        {
+          "ms": 1500,
+          "datei": "m390-dark-voll__t1500.webp",
+          "bild_ab_ms": 481
+        }
+      ],
+      "streifen": "m390-dark-voll__streifen.webp",
+      "screencast_bilder": 18,
+      "fehler": [],
+      "gesperrt": []
+    },
+    {
+      "ansicht": "d1440",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "bilder": [
+        {
+          "ms": 0,
+          "datei": "d1440-light-voll__t0000.webp",
+          "bild_ab_ms": null
+        },
+        {
+          "ms": 250,
+          "datei": "d1440-light-voll__t0250.webp",
+          "bild_ab_ms": 25
+        },
+        {
+          "ms": 500,
+          "datei": "d1440-light-voll__t0500.webp",
+          "bild_ab_ms": 489
+        },
+        {
+          "ms": 750,
+          "datei": "d1440-light-voll__t0750.webp",
+          "bild_ab_ms": 489
+        },
+        {
+          "ms": 1000,
+          "datei": "d1440-light-voll__t1000.webp",
+          "bild_ab_ms": 489
+        },
+        {
+          "ms": 1250,
+          "datei": "d1440-light-voll__t1250.webp",
+          "bild_ab_ms": 489
+        },
+        {
+          "ms": 1500,
+          "datei": "d1440-light-voll__t1500.webp",
+          "bild_ab_ms": 489
+        }
+      ],
+      "streifen": "d1440-light-voll__streifen.webp",
+      "screencast_bilder": 4,
+      "fehler": [],
+      "gesperrt": []
+    },
+    {
+      "ansicht": "d1440",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "bilder": [
+        {
+          "ms": 0,
+          "datei": "d1440-dark-voll__t0000.webp",
+          "bild_ab_ms": null
+        },
+        {
+          "ms": 250,
+          "datei": "d1440-dark-voll__t0250.webp",
+          "bild_ab_ms": 231
+        },
+        {
+          "ms": 500,
+          "datei": "d1440-dark-voll__t0500.webp",
+          "bild_ab_ms": 498
+        },
+        {
+          "ms": 750,
+          "datei": "d1440-dark-voll__t0750.webp",
+          "bild_ab_ms": 498
+        },
+        {
+          "ms": 1000,
+          "datei": "d1440-dark-voll__t1000.webp",
+          "bild_ab_ms": 498
+        },
+        {
+          "ms": 1250,
+          "datei": "d1440-dark-voll__t1250.webp",
+          "bild_ab_ms": 498
+        },
+        {
+          "ms": 1500,
+          "datei": "d1440-dark-voll__t1500.webp",
+          "bild_ab_ms": 498
+        }
+      ],
+      "streifen": "d1440-dark-voll__streifen.webp",
+      "screencast_bilder": 4,
+      "fehler": [],
+      "gesperrt": []
+    }
+  ]
+}
