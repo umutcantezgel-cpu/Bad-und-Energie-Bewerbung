@@ -1,16 +1,16 @@
 {
   "label": "P0-MESS-02",
   "base": "http://localhost:3500",
-  "erstellt": "2026-10-09T07:37:28.266Z",
+  "erstellt": "2026-10-09T07:39:48.184Z",
   "bedingungen": {
     "chromium": "141.0.7390.37",
     "reducedMotion": "reduce (nur 'ohne JavaScript': no-preference)",
     "farbschema": "hell",
     "tab": "d1440 hell, bis zu 80 × Tab je Hauptseite (start, stellen, stelle-anlagenmechaniker, bewerbung), 90 ms Wartezeit je Schritt, ohne vorheriges Durchscrollen; Fokus sichtbar = berechnete outline-width ≥ 2 px (Stil ≠ none, Farbe nicht transparent) oder box-shadow mit sichtbarer Farbe und Maß ≠ 0, gemessen am fokussierten Element und seinen Pseudo-Elementen ::after/::before (nicht an Vorfahren oder Geschwistern); verdeckt (Kopfleiste) = Elementoberkante < Unterkante der ersten sticky/fixed header UND Trefferprobe 2 px unter der Oberkante liegt in der Kopfleiste (Rechteckprüfung allein wird zusätzlich gezählt); Fokusfalle = gleiches Element 3× in Folge oder Zyklus ohne Fußbereich",
-    "reflow": "320×640 isMobile, dsf 2, jede Seite der Grundmenge (12), overflowReport() nach Durchscrollen",
+    "reflow": "320×640 isMobile, dsf 2, jede Seite der Grundmenge (12), overflowReport() nach Durchscrollen; „erste Verursacher“ = sichtbare Elemente mit Rechteck rechts über dem Rand, ohne Inhalte in eigenen Scrollcontainern",
     "zoom": "Primär: Viewport 720×450, dsf 2, ohne isMobile (entspricht Browser-Zoom 200 % bei 1440 px); Vergleich: d1440 mit document.documentElement.style.zoom = 2",
     "textabstand": "m375 und d1440, hell; Stylesheet „* { line-height:1.5 !important; letter-spacing:.12em !important; word-spacing:.16em !important } p { margin-bottom:2em !important }“; overflowReport() vorher und nachher, ergänzend vertikal abgeschnittener Text (overflow hidden/clip, Inhalt höher als Box)",
-    "erzwungeneFarben": "forcedColors „active“, Farbschema hell, m375 und d1440, Hauptseiten; Bildschirmfoto der ersten Bildschirmhöhe (WebP, Qualität 70); sichtbar = Rahmen (eine Seite, Stil ≠ none) oder Outline oder Unterstreichung laut berechneten Styles",
+    "erzwungeneFarben": "forcedColors „active“, Farbschema hell, m375 und d1440, Hauptseiten; Bildschirmfoto der ersten Bildschirmhöhe (WebP, Qualität 70); sichtbar = Rahmen (eine Seite, Stil ≠ none) oder Outline oder Unterstreichung laut berechneten Styles; „Fließtext“ nach der Heuristik aus e2e/support/site.ts (Block-Vorfahr enthält mehr Text als der Link), daher zählen auch Titel-Links der Stellenkarten dazu; Links umfassen auch als Knopf gestaltete Links (z. B. „Jetzt bewerben“)",
     "ohneJavaScript": "javaScriptEnabled false, m375 und d1440, alle Seiten der Grundmenge, Wartezeit 1,5 s nach load; opacity 0 = berechnete opacity exakt 0 bei Element im ersten Bildschirm",
     "anfragesperre": "lib/browser.mjs (G5)",
     "parallel": 3
@@ -4766,32 +4766,7 @@
         "scrollWidth": 320,
         "bodyScrollWidth": 320,
         "visualViewportScale": 1,
-        "ueberstehend": [
-          {
-            "ziel": "li.flex.shrink-0.basis-5/6",
-            "rechts": 183
-          },
-          {
-            "ziel": "figure.flex.w-full.flex-col",
-            "rechts": 183
-          },
-          {
-            "ziel": "div.flex.min-h-5.items-center",
-            "rechts": 159
-          },
-          {
-            "ziel": "p.text-footnote.text-ink-muted",
-            "rechts": 65
-          },
-          {
-            "ziel": "blockquote.flex-1.text-body.text-ink",
-            "rechts": 159
-          },
-          {
-            "ziel": "p",
-            "rechts": 159
-          }
-        ]
+        "ueberstehend": []
       },
       "ueberlauf320": false,
       "status": 200
@@ -5040,32 +5015,7 @@
           "scrollWidth": 720,
           "bodyScrollWidth": 720,
           "visualViewportScale": 1,
-          "ueberstehend": [
-            {
-              "ziel": "li.flex.shrink-0.basis-5/6",
-              "rechts": 311
-            },
-            {
-              "ziel": "figure.flex.w-full.flex-col",
-              "rechts": 311
-            },
-            {
-              "ziel": "div.flex.min-h-5.items-center",
-              "rechts": 287
-            },
-            {
-              "ziel": "span.inline-flex.items-center.gap-2",
-              "rechts": 99
-            },
-            {
-              "ziel": "svg",
-              "rechts": 99
-            },
-            {
-              "ziel": "g",
-              "rechts": 98
-            }
-          ]
+          "ueberstehend": []
         },
         "kopfHoehe": 57,
         "status": 200
@@ -5644,28 +5594,16 @@
         "visualViewportScale": 1,
         "ueberstehend": [
           {
-            "ziel": "li.flex.shrink-0.basis-5/6",
-            "rechts": 217
+            "ziel": "aside.fixed.inset-x-0.bottom-0",
+            "rechts": 6
           },
           {
-            "ziel": "figure.flex.w-full.flex-col",
-            "rechts": 217
+            "ziel": "div.mx-auto.flex.max-w-content",
+            "rechts": 6
           },
           {
-            "ziel": "div.flex.min-h-5.items-center",
-            "rechts": 193
-          },
-          {
-            "ziel": "p.text-footnote.text-ink-muted",
-            "rechts": 78
-          },
-          {
-            "ziel": "blockquote.flex-1.text-body.text-ink",
-            "rechts": 193
-          },
-          {
-            "ziel": "p",
-            "rechts": 193
+            "ziel": "section.pointer-events-none.fixed.inset-x-0",
+            "rechts": 6
           }
         ]
       },
@@ -5701,32 +5639,7 @@
         "scrollWidth": 1440,
         "bodyScrollWidth": 1440,
         "visualViewportScale": 1,
-        "ueberstehend": [
-          {
-            "ziel": "li.flex.shrink-0.basis-5/6",
-            "rechts": 192
-          },
-          {
-            "ziel": "figure.flex.w-full.flex-col",
-            "rechts": 192
-          },
-          {
-            "ziel": "div.flex.min-h-5.items-center",
-            "rechts": 168
-          },
-          {
-            "ziel": "blockquote.flex-1.text-body.text-ink",
-            "rechts": 168
-          },
-          {
-            "ziel": "p",
-            "rechts": 168
-          },
-          {
-            "ziel": "figcaption.text-callout",
-            "rechts": 168
-          }
-        ]
+        "ueberstehend": []
       },
       "status": 200
     },

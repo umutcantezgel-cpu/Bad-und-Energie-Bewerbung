@@ -1,15 +1,15 @@
 # Tastatur und Anpassung · P0-MESS-02
 
-Erstellt 2026-10-09T07:37:28.266Z · Basis http://localhost:3500 · Chromium 141.0.7390.37
+Erstellt 2026-10-09T07:39:48.184Z · Basis http://localhost:3500 · Chromium 141.0.7390.37
 
 ## Messbedingungen
 - **reducedMotion**: reduce (nur 'ohne JavaScript': no-preference)
 - **farbschema**: hell
 - **tab**: d1440 hell, bis zu 80 × Tab je Hauptseite (start, stellen, stelle-anlagenmechaniker, bewerbung), 90 ms Wartezeit je Schritt, ohne vorheriges Durchscrollen; Fokus sichtbar = berechnete outline-width ≥ 2 px (Stil ≠ none, Farbe nicht transparent) oder box-shadow mit sichtbarer Farbe und Maß ≠ 0, gemessen am fokussierten Element und seinen Pseudo-Elementen ::after/::before (nicht an Vorfahren oder Geschwistern); verdeckt (Kopfleiste) = Elementoberkante < Unterkante der ersten sticky/fixed header UND Trefferprobe 2 px unter der Oberkante liegt in der Kopfleiste (Rechteckprüfung allein wird zusätzlich gezählt); Fokusfalle = gleiches Element 3× in Folge oder Zyklus ohne Fußbereich
-- **reflow**: 320×640 isMobile, dsf 2, jede Seite der Grundmenge (12), overflowReport() nach Durchscrollen
+- **reflow**: 320×640 isMobile, dsf 2, jede Seite der Grundmenge (12), overflowReport() nach Durchscrollen; „erste Verursacher“ = sichtbare Elemente mit Rechteck rechts über dem Rand, ohne Inhalte in eigenen Scrollcontainern
 - **zoom**: Primär: Viewport 720×450, dsf 2, ohne isMobile (entspricht Browser-Zoom 200 % bei 1440 px); Vergleich: d1440 mit document.documentElement.style.zoom = 2
 - **textabstand**: m375 und d1440, hell; Stylesheet „* { line-height:1.5 !important; letter-spacing:.12em !important; word-spacing:.16em !important } p { margin-bottom:2em !important }“; overflowReport() vorher und nachher, ergänzend vertikal abgeschnittener Text (overflow hidden/clip, Inhalt höher als Box)
-- **erzwungeneFarben**: forcedColors „active“, Farbschema hell, m375 und d1440, Hauptseiten; Bildschirmfoto der ersten Bildschirmhöhe (WebP, Qualität 70); sichtbar = Rahmen (eine Seite, Stil ≠ none) oder Outline oder Unterstreichung laut berechneten Styles
+- **erzwungeneFarben**: forcedColors „active“, Farbschema hell, m375 und d1440, Hauptseiten; Bildschirmfoto der ersten Bildschirmhöhe (WebP, Qualität 70); sichtbar = Rahmen (eine Seite, Stil ≠ none) oder Outline oder Unterstreichung laut berechneten Styles; „Fließtext“ nach der Heuristik aus e2e/support/site.ts (Block-Vorfahr enthält mehr Text als der Link), daher zählen auch Titel-Links der Stellenkarten dazu; Links umfassen auch als Knopf gestaltete Links (z. B. „Jetzt bewerben“)
 - **ohneJavaScript**: javaScriptEnabled false, m375 und d1440, alle Seiten der Grundmenge, Wartezeit 1,5 s nach load; opacity 0 = berechnete opacity exakt 0 bei Element im ersten Bildschirm
 - **anfragesperre**: lib/browser.mjs (G5)
 - **parallel**: 3
@@ -220,7 +220,7 @@ Keine auffälligen Schritte.
 ## 2 · Reflow 320 × 640
 | Seite | Status | horizontaler Überlauf | scrollWidth / clientWidth | innerWidth | abgeschnitten/überstehend | erste Verursacher |
 |---|---:|---|---|---:|---:|---|
-| start | 200 | nein | 320 / 320 | 320 | 0 | li.flex.shrink-0.basis-5/6 (+183); figure.flex.w-full.flex-col (+183); div.flex.min-h-5.items-center (+159) |
+| start | 200 | nein | 320 / 320 | 320 | 0 | – |
 | stellen | 200 | nein | 320 / 320 | 320 | 0 | – |
 | stelle-anlagenmechaniker | 200 | nein | 320 / 320 | 320 | 0 | – |
 | stelle-kundendienst | 200 | nein | 320 / 320 | 320 | 0 | – |
@@ -281,7 +281,7 @@ Abgeschnitten/überstehend auf bewerbung-mappe: span „Hinzufügen“ (overflow
 
 Neuer horizontaler Überlauf (erste Verursacher laut Rechteckprüfung):
 
-- start m375: scrollWidth 381 / clientWidth 375 · li.flex.shrink-0.basis-5/6 (+217); figure.flex.w-full.flex-col (+217); div.flex.min-h-5.items-center (+193); p.text-footnote.text-ink-muted (+78)
+- start m375: scrollWidth 381 / clientWidth 375 · aside.fixed.inset-x-0.bottom-0 (+6); div.mx-auto.flex.max-w-content (+6); section.pointer-events-none.fixed.inset-x-0 (+6)
 
 ## 5 · Erzwungene Farben (forced-colors: active, hell)
 | Seite | Ansicht | aktiv | Links ohne / gesamt | davon im Fließtext | Knöpfe ohne / gesamt | Felder ohne / gesamt | forced-color-adjust: none | Foto |
