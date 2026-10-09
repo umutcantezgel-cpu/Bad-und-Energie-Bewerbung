@@ -409,3 +409,12 @@ Komponenten (9):
 - `privacy-consent-quickform` (components/contact/LeadQuickForm.tsx:202)
 
 Gesamt: 20 Vorkommen, davon 19 verschiedene IDs; `express-funnel` doppelt.
+
+## Nachträge aus der Gegenprobe P1-KUND-05 (Orchestrator, 09.10.2026)
+| A-ID | Seite | Abschnitt (Anker/Ort) | Kategorie | Element | Inhalt wörtlich | Verhalten / Funktion | Grafik / SVG | Bewegung | Fundstelle | Bild |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ALT-START-361 | / | #einsatzgebiet | Interaktives | Ladezustand der Karte | „Standortkarte & Einsatzgebiet werden geladen...“ | Platzhalter, solange die Karte (ssr:false) lädt | – | – | components/maps/InteractiveMapClientWrapper.tsx:8-19 | – |
+| ALT-START-362 | / | #einsatzgebiet (Kartenpanel, Orte) | Inhalt | Standortbeschreibungen der zehn Orte mit Einstufung „Kerngebiet“ / „Regionales Einsatzgebiet“ | je Ort Kurztext und Badge (wörtlich in lib/data/locations.ts) | erscheinen im Seitenpanel bei Ortswahl | – | – | lib/data/locations.ts (alle Einträge) | alt-start__d1440-light__11.webp |
+| ALT-START-363 | / | #karriere-paket | Inhalt | Rollenbeschreibungen des Vorteils-Konfigurators (ROLE_CONFIGS label/description) | wörtlich in pricing.constants.ts | im Altstand definiert, nur teilweise gerendert (Vermutung: nicht sichtbar) | – | – | components/pricing/pricing.constants.ts | – |
+
+Korrekturen: ALT-START-097 – `animate-marquee` ist im Altstand nicht definiert, die Trust-Leiste stand still (bei 1440 px drei von sieben Einträgen sichtbar). ALT-START-086 – Bewegung: `btn-crimson-glow` mit Hover-Hebung/Schatten/Aktivzustand (app/globals.css:155-170). ALT-START-090 – Erfolgszustand mit Skalierung 0,95 → 1 (0,3 s). ALT-SHELL-74 – Ausklappen x 40 → 0 (0,25 s). ALT-SHELL-81 und InteractiveMap.tsx:556 – `animate-in` ohne tw-animate-css-Import, wirkungslos.
