@@ -1,5 +1,5 @@
 # KERN – Gestaltungssystem
-Version: 0.1 (Entwurf vor der Richtungswahl; vollständig ab Version 1 am Ende von P2)
+Version: 0.2 (Entwurf vor der Richtungswahl; K-011, K-012, K-015 richtungsunabhängig ergänzt; vollständig ab Version 1 am Ende von P2)
 
 ## K-002 Marke, Zielgruppe, fünf Besucheraufgaben (Entwurf, als Annahme markiert)
 **Marke (Annahme, abgeleitet aus Inhalten):** Bad & Energie GmbH Lahn-Dill – SHK-Meisterbetrieb in Wetzlar, gegründet 1926, 15 Leute; Schwerpunkt Wärmepumpen, Heizung und moderne Bäder; Fachbetrieb des Lahn-Dill-Kreises; Partner Buderus, Bosch, NIBE, Alpha Innotec und Viessmann. Gefühl: ehrliches Handwerk, Verlässlichkeit, Stolz auf gutes Werkzeug, Nähe (höchstens 35 km), Respekt vor der Zeit der Leute (Freitag 13:30 Feierabend), Diskretion beim Wechsel.
@@ -33,5 +33,48 @@ Lighthouse mobil ≥ 90 · LCP ≤ 2,5 s · CLS ≤ 0,1 · TBT ≤ 200 ms · INP
 ## K-014 Wünsche (verbindliche Inhaberentscheidungen, ROADMAP §1, Rang 5)
 Keine KI-Funktionen · nur bestehende, belegte Fakten (kürzen/umstellen erlaubt) · keine Fotos, kein Stock, typografische Ästhetik · Gehaltsspannen sichtbar · Google-Karte + Pendelrechner, Bewerbungsmappen-Generator und Bewertungsband bleiben (neu gestaltet) · Ausbildung 2026: „Einstieg noch möglich“ · die vier Teamzitate sind echt und freigegeben · Navy als Schriftfarbe, Rot nur für die eine Primäraktion · Barrierefreiheit WCAG 2.2 AA (44-px-Ziele, Auswahlkarten ≥ 64 px, Hilfe immer an derselben Stelle).
 
+## K-011 Komponenten, Zustände, Seitenarten (richtungsunabhängig, Entwurf 0.2)
+**Seitenarten.**
+- Erzählseiten (`/`, `/jobs/[slug]`, 404): ein Blickfang je Bildschirmhöhe; benachbarte Abschnitte unterscheiden sich in Struktur und Dichte (S-12); Signaturmomente nur hier. Scroll-Auftritte auf höchstens der Hälfte der Abschnitte (S-02).
+- Arbeitsseiten (`/jobs`, `/bewerbung*`, `/datenschutz`, `/impressum`): ruhig, dicht, schnell. Nur Rückmeldungs- und Zustandsbewegung, keine Auftritte beim Scrollen. Formular zuerst, Erklärung daneben oder darunter.
+
+**Komponenten.** `components/ui/*` mit cva-Varianten statt Kopien. Neue Aufgaben werden zur Variante einer vorhandenen Komponente, wo eine passt (Auftrag 8: Verschmelzen). Abschnitte unter `components/home/*`, Stellen unter `components/jobs/*` usw. (K-004). Eine Komponente wird nur neu angelegt, wenn keine vorhandene die Aufgabe trägt; Beispiele sind `TrustLine`, `BenefitConfigurator`, `ProgressRing`, `UploadPanel` und `components/icons/*`.
+
+**Zustände (Pflicht für jedes interaktive Element, wo der Zustand vorkommen kann):**
+
+| Zustand | Regel |
+|---|---|
+| Ruhe | aus Rollen-Tokens, nie aus Rohwerten |
+| Hover | nur bei `(hover: hover) and (pointer: fine)`; nie einzige Informationsquelle |
+| Fokus | `:focus-visible` mit `outline` ≥ 2 px und Abstand; Kontrast ≥ 3:1 gegen Umgebung und Ruhezustand; `scroll-padding-top` in Höhe von Kopf und StickyApplyBar |
+| Aktiv | Druck-Rückmeldung sofort (Dauerstufe „Rückmeldung“), Touch mit eigener Rückmeldung |
+| Deaktiviert | sichtbar anders, mit Grund in Textform, wenn der Grund nicht offensichtlich ist (z. B. Upload bis Phase 2) |
+| Lädt | Anzeige erst nach 300 ms, dann mindestens 500 ms sichtbar; Knopf behält seine Breite |
+| Fehler | Text mit Ursache und nächstem Schritt, Icon und Farbe nur zusätzlich; Alternativweg Telefon/WhatsApp |
+| Erfolg | Text zuerst; Bewegung bestätigt, blockiert nie |
+| Leer | erklärt, warum leer, und bietet den nächsten Schritt an |
+
+**Bedienmaße.** Touch-Ziele 44 × 44 px, Auswahlkarten ≥ 64 px Höhe, nie unter 24 × 24 px (WCAG 2.5.8). Eingabefelder ≥ 17 px Schrift (kein iOS-Zoom). Sichtbare Beschriftungen, `autocomplete`, Fehlermeldungen am Feld. Hilfe (Telefon, WhatsApp) steht immer an derselben Stelle (WCAG 3.2.6).
+
+## K-012 Inhalte, Ton, Mikrotexte (richtungsunabhängig, Entwurf 0.2)
+- **Wahrheit:** Jede Arbeitgeber-Aussage kommt aus `lib/content/facts.ts`. Dort markierte Fakten mit `pending` erscheinen nur, wo die Basis es erlaubt; `validUntil` wird beachtet (Jubiläum bis 31.12.2026). Was nicht im Register steht, wird nicht behauptet. Das gilt für Zahlen, Auszeichnungen, Zitate und Bewertungen; offene Belege stehen in MENSCHEN.md (M-003, M-007…M-015).
+- **Ton:** du-Anrede, kurze Hauptsätze, Fakt vor Adjektiv („Freitags ab 13:30 Uhr Feierabend“ statt „attraktive Arbeitszeiten“). Handwerkersprache ohne Jargon-Überhöhung. Keine KI-Floskeln (S-13: „nahtlos“, „innovativ“, „ganzheitlich“, „maßgeschneidert“, „Entdecken Sie …“, „auf das nächste Level“), keine Superlative ohne Beleg.
+- **Typografie im Text:** „…“ als Anführungszeichen, Gedankenstrich –, Halbgeviert für Bereiche (07:00–16:45 Uhr), geschütztes Leerzeichen vor Einheiten und in Zahl-Wort-Paaren (35 km, 13:30 Uhr, 30 Tage). `lang="de"` und `hyphens: auto` im Fließtext; weiche Trennstellen für lange Berufsnamen (`titleShy`).
+- **Knöpfe sagen, was passiert:** „Jetzt in 60 Sekunden bewerben“, „Mappe als PDF speichern“, „Route in Google Maps öffnen“; nie „Absenden“, „Mehr“ oder „Klicken Sie hier“.
+- **Fehlertexte:** was passiert ist, was jetzt zu tun ist, und der Direktweg (Telefon/WhatsApp mit Sabri Demir).
+- **Mikrotexte** ändert der Lauf direkt (TEXTE = Mikrotexte direkt). Längere Texte gehen als Vorschlag nach `TEXTVORSCHLAEGE.md`. Rechtstexte bleiben wörtlich.
+
+## K-015 Glossar (Entwurf 0.2, wird mit der Richtung ergänzt)
+- **Altstand:** `main` @ f2e7eae, die Live-Seite vor dem Umbau.
+- **Ausgangsstand:** a83269d, die Plattform zu Beginn dieses Laufs.
+- **Element / Pass / Leitpass:** ein Teil des Altstands mit eigener Aufgabe; sein Eintrag in `atlas/paesse-*.md`; bei Doppelpässen der eine Pass, der die Arbeit trägt (die übrigen verweisen nur auf ihn).
+- **Erzählseite / Arbeitsseite:** siehe K-011.
+- **Signaturmoment:** Bewegung, die ein konkretes Merkmal der Marke erlebbar macht und die Austauschprobe besteht (K-009).
+- **Register:** die Tabelle aller Bewegungen in K-009; jedes animierte Element trägt seine Kennung als `data-motion`.
+- **Formsystem:** Grundgeometrie, Raster, Strich, Ecken und Enden aller SVGs (K-010).
+- **Inverse-Band:** Abschnitt mit `data-tone="inverse"` (dunkle Fläche in hellem Thema).
+- **Faktenregister:** `lib/content/facts.ts`.
+- **Vorlauf / Rücklauf:** in der Heizungstechnik die warme Zuleitung (rot) und die abgekühlte Rückleitung (blau). Die Farben decken sich mit Rot und Navy des Logos.
+
 ## Weitere Abschnitte
-K-001, K-003, K-005 … K-012, K-015 entstehen nach der Richtungswahl (P2).
+K-001, K-003, K-005 … K-010 entstehen nach der Richtungswahl (P2).
