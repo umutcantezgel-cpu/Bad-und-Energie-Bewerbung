@@ -1,5 +1,5 @@
 # Gesamtplan
-Version 0.1 · Entwurf vor Richtungswahl und vor L0. Version 1.0 entsteht nach der Wahl (E-017) und der Plan-Schleife L0. Gebaut wird gegen KERN v1.
+Version 0.1 · Entwurf vor Richtungswahl und vor L0. Version 1.0 entsteht nach der Wahl (Richtungs-Denkprotokoll in ENTSCHEIDUNGEN) und der Plan-Schleife L0. Gebaut wird gegen KERN v1.
 
 ## Mengengerüst
 | Größe | Menge | Quelle |

@@ -106,4 +106,19 @@ Format: E-[Nr] · Datum · Gegenstand · Entscheidung · Grund · Umkehr (bei De
   - In P3-ORCH-01 werden `theme.css` (Primitive und Rollen) und `check-contrast.mjs` umgestellt. Weiß auf #D60000 hat 5,4:1 (≥ 4,5); #0C1A72 auf #F3F5F9 hat ≈ 14:1.
   - ROADMAP §4 „Farbe“ wird mit KERN K-006 abgeglichen.
 - Umkehr: Werte in `theme.css` zurücksetzen. Die Rollen-Tokens bleiben gleich, sodass Komponenten unberührt bleiben.
-- Die Richtungswahl wird damit E-017.
+- Die Richtungswahl erhält die nächste freie Nummer (E-017 ist der Z-01-Abschluss).
+
+## E-017 · 09.10.2026 · Z-01 abgeschlossen: Nachprüfung in drei Runden und Delta-Gegenprüfung (P1-KUND-08/09, P1-REST-04/05, P1-GEGEN-02/03)
+- **Nachprüfung:**
+  - Ablauf: drei Runden aus Nachtragen, Zuordnen und zwei frischen Kundschaftern.
+  - Nachgetragen wurden 75 Atlaszeilen, darunter JSON-LD-Beschreibungen, die vier JobPostings mit Benefits (23 Einträge), die drei GeoCircles, die Abweichungen der FAQPage, `llms.txt`/`llms-full.txt`, die zehn Standortbeschreibungen und die vier Lade-Platzhalter.
+  - Ergebnis: Runde 1 fand 46 Lücken, Runde 2 fand 20, Runde 3 fand **0 Muss/Soll** (nur Kann-Technikdetails). Beide Prüfer der Runde 3 urteilen unabhängig: Die Kann-Reste sind kein eigenes Element.
+- **Delta-Gegenprüfung:** zwei Linsen, „Regeln“ und „Wahrheit/Machbarkeit“, über 22 geänderte oder neue Pässe. Beide bestätigen die Z-01-Bedingung. Übernommen werden alle 30 Korrekturen (`atlas/gegenpruefung-p1-delta.json`), darunter:
+  - E-START-038 Kann → **Soll**. Davon werden sieben Ortsbeschreibungen wörtlich gezeigt; drei Geschäftsaussagen erst nach Bestätigung (M-003).
+  - E-SEO-010 → **Verschmelzen**: Der belegte Fakt `noWeekendOnCall` kommt in die Benefits der Stelle Anlagenmechaniker.
+  - E-BEW-029 wird Leitpass für den Brotkrumen von /bewerbung.
+  - Die E-014-Korrekturen werden in Übersichten und Verteilungen nachgezogen.
+  - Präzisere Abnahmen für E-START-024, 033, 035, 047, 056, E-SEO-003, 006, 009, 014 und E-BEW-006.
+- **Neue Bauaufgaben aus Z-01:** E-SEO-014 (`llms.txt`-Ergänzung), E-SEO-010 (Benefit-Fakt), E-START-038 (jetzt Soll).
+- **Umkehr:** Die Pass-Dateien tragen „korrigiert nach P1-GEGEN-02; vorher …“.
+- Die Richtungswahl erhält die nächste freie Nummer.

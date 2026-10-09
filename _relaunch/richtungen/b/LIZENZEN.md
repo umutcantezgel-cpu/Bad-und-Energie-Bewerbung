@@ -12,6 +12,8 @@ Bezugsquelle: npm-Pakete `@fontsource-variable/bricolage-grotesque` 5.3.0, `@fon
 
 Summe der Schriftdateien: 188.768 Byte (≈ 184,3 KiB), Budget 250 KB.
 
+Runde 2: Die eingebundenen Schriftdateien sind unverändert (6 woff2, 188.768 Byte). Zum Vergleich wurden Gabarito, Rethink Sans, Familjen Grotesk, Schibsted Grotesk, Onest, Hanken Grotesk und Big Shoulders Display aus dem Schriftpool (alle OFL) nur lokal in einer Probeseite außerhalb dieses Ordners gesetzt; sie sind nicht eingebunden und nicht ausgeliefert.
+
 ## Urheberrechtsvermerke
 
 ### Bricolage Grotesque
