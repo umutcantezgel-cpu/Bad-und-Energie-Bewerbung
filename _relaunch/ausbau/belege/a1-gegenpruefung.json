@@ -1,0 +1,78 @@
+{
+ "bestaetigt": false,
+ "korrekturen": [
+  {
+   "lid": "§1 Grenzen der Belege · §3.1 Abstand zur Stufe 9 · §7 Messlücken (Wow-Ausgangswert)",
+   "art": "falsch",
+   "beschreibung": "Die Liste sagt dreimal, es gebe keinen Wow-Ausgangswert: §1 „Einen Wow-Ausgangswert gibt es noch nicht (STATUS: „Wow –“)“, §3.1 „geschätzt; gemessen ist es nicht“ und §7 „Wow-Ausgangswert für A-03, Spalte Vertrauen“. Das stimmt nicht. Commit 151afaa (15:51 UTC, also vor der Lückenliste von 15:59) hat die Wow-Probe gemessen und eingetragen: _relaunch/MESSUNGEN.md, Abschnitt „Wow-Probe – Ausgangswert“, und _relaunch/ausbau/belege/a0-wow/ergebnis.json. Werte (Überraschung/Begehrlichkeit/Vertrauen → Median Ü/B): Start m390 5/6/6 → 5,5 · Start d1440 4/6/7 → 5,0 · Stelle m390 3/5/6 → 4,0 · Stelle d1440 3/5/7 → 4,0. Veraltet ist nur die Statuszeile in _relaunch/STATUS.md.",
+   "vorschlag": "§1, §3.1 und §7 auf die gemessenen Werte umstellen, mit Quelle. Für beide Seiten den Abstand zu A-03 (≥ 8,5) eintragen: Start +3,0 mobil und +3,5 Desktop, Stelle je +4,5. Die Untergrenze für Vertrauen festhalten: 6 mobil, 7 Desktop. Die Aussagen der Erstbetrachter als Belege einbauen: Bei L-03 ist 13:30 auf der Startseite das einzige genannte Merkmal (Start d1440: 5 von 5 nennen die Zahlenreihe; S2-2: „35 km und 1926 fehlen auf dem Handy“). Bei L-06 bemerkt S4-2, dass die Seite „erst nach einer halben Sekunde“ kam. Bei L-21 trägt auf der Stelle am Desktop die Kontaktkarte das Vertrauen (3 von 5). Die Stellenseite hat den größeren Wow-Abstand; das stützt „hoch“ für L-19 und L-21. Den Punkt in §7 streichen."
+  },
+  {
+   "lid": "§3.2 Erster Bildschirm mobil (Stelle) / L-19",
+   "art": "falsch",
+   "beschreibung": "Dort steht „H1 in 3 Zeilen (y 320–450)“. Bei 390 hat die H1 aber 2 Zeilen: „Anlagenmechaniker / SHK (m/w/d) in Wetzlar“ (EB/stelle/m390-light-voll__t1500.webp, y ≈ 320–450). Drei Zeilen hat sie erst bei 375 (P0/stelle-anlagenmechaniker__m375-light__01.webp, y ≈ 360–560).",
+   "vorschlag": "Für 390 auf „H1 in 2 Zeilen zu etwa 30 px“ korrigieren. Den Stand bei 375 getrennt festhalten (siehe nächste Korrektur)."
+  },
+  {
+   "lid": "neu (Stelle · erster Bildschirm mobil 375: Brotkrume und H1)",
+   "art": "fehlt",
+   "beschreibung": "Auf der Schwerpunkt-Stelle bricht die Brotkrume bei 375 auf zwei Zeilen um: „Startseite › Stellen“ / „› Anlagenmechaniker SHK“ (P0/stelle-anlagenmechaniker__m375-light__01.webp, y ≈ 195–310). Zusammen mit der dreizeiligen H1 rutscht dadurch die Gehaltsbox nach y ≈ 700–915, und die Einleitung läuft unter die Bewerbenleiste. Alle drei Juroren nennen das: JU/stelle-anlagenmechaniker-1/-2/-3, „Brotkrume bricht mobil (um)“. Die Lückenliste führt es nur als Stichpunkt bei den Jury-Schwächen. In der Austauschprobe (#2) und in §5 (Obermonteur) wird es fälschlich nur langen Titeln zugeschrieben. Es gibt keine L-Zeile für die Schwerpunktseite.",
+   "vorschlag": "Neue Zeile: Stelle · erster Bildschirm mobil · Brotkrume und Display-H1 bei 320/375/390 · Priorität mittel (nach der eigenen Regel §1 Nr. 7 sogar hoch) · Bezug A-01, A-03, Z-04. Lösungsrichtung: die Brotkrume mobil einzeilig kürzen, zum Beispiel nur „← Stellen“, oder in den Kopf ziehen; jede Display-Zeile am längsten Wort „Anlagenmechaniker“ prüfen. Den Text in Austauschprobe #2 berichtigen."
+  },
+  {
+   "lid": "§6 Nr. 2 / L-04 (60-Sekunden-Zusage)",
+   "art": "falsch",
+   "beschreibung": "§6 Nr. 2 sagt, „Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.“ stehe „direkt am Knopf“. Mobil stimmt das nicht: Zwischen Knopf (y 1065–1175) und Zusage (y 1310–1340) steht der Textlink „Offene Stellen ansehen ↓“ (y 1215–1255; EB/start/m390-light-voll__t1500.webp, ebenso P0/start__t768-light__01.webp). Die stärkste Zusage ist damit mobil vom Knopf getrennt. Das gehört in die Lücke L-04 und nicht unter „Was bleiben muss“.",
+   "vorschlag": "§6 Nr. 2 umformulieren: „steht im ersten Bildschirm, mobil aber vom Knopf getrennt; sie muss direkt an den Knopf rücken und darf nicht wegfallen“. In L-04 die Trennung durch den Textlink als Teil der Lücke mit Beleg ergänzen. Die Lösungsrichtung („in Lesegröße direkt am Knopf“, wie AG) bleibt."
+  },
+  {
+   "lid": "L-23",
+   "art": "erfunden",
+   "beschreibung": "Die Lösungsrichtung nennt einen „Werkzeugkoffer“. Den gibt es weder in packageExtras („Persönliche Hilti-22-V-Akku-Flotte und Pressbacken für Viega und Geberit“) noch in facts.ts: hilti.long nennt „Akku-Flotte mit Bohrhammer, Säbelsäge und Presszangen für Viega und Geberit“, vehicle.long nennt „Servicefahrzeug mit Sortimo-Ausbau“. Damit verletzt die Zeile ihre eigene Regel „Nur Gegenstände aus packageExtras, hilti und vehicle“. Auch „Bemaßung nach A“ an Fahrzeug und Werkzeug lädt zu erfundenen Maßen ein, denn die Daten enthalten keine Abmessungen.",
+   "vorschlag": "„Werkzeugkoffer“ ersetzen durch „Hilti-22-V-Akku-Flotte (Bohrhammer, Säbelsäge, Presszangen) und Pressbacken für Viega/Geberit; Transporter mit Sortimo-Regalsystem“. Den Zusatz aufnehmen: Bemaßung trägt nur belegte Werte (22 V, Herstellernamen, „Mitnahme nach Hause möglich“), keine erfundenen Maße, Stückzahlen oder Gegenstände."
+  },
+  {
+   "lid": "L-06",
+   "art": "Priorität",
+   "beschreibung": "L-06 steht auf „mittel“, liegt aber im ersten Bildschirm beider Schwerpunktseiten: Die Bilder bei 0 und 250 ms sind weiß (d1440 hell), und der LCP liegt mit 2,92 s und 3,08 s über 2,5 s. Nach der eigenen Regel (§1 Nr. 7: „liegt im ersten Bildschirm einer Schwerpunktseite“) ist das „hoch“. Dazu kommt: Für A-06 ist keine AUSNAHME zulässig (Auftrag §8), die Display-Schrift in Bildgröße verschärft das Risiko, und der Wow-Erstbetrachter S4-2 hat die Verzögerung bemerkt.",
+   "vorschlag": "Priorität auf hoch setzen. L-06 als Voraussetzung jeder Lösung im ersten Bildschirm kennzeichnen: LCP-Reserve ≤ 2,2 s nach jeder Welle messen."
+  },
+  {
+   "lid": "L-18 (und Prioritätsregel §1 Nr. 7 für L-07, L-20, L-39)",
+   "art": "Priorität",
+   "beschreibung": "L-07, L-18, L-20 und L-39 liegen alle im ersten Bildschirm, stehen aber auf mittel oder niedrig. Das widerspricht der eigenen Regel in §1 Nr. 7. Am deutlichsten gilt das für L-18: Das PUBLIKUM öffnet die Seite zuerst auf dem eigenen Handy. Ist dort der Dunkelmodus an, ist der dunkle erste Bildschirm (generisches Schiefer, Logo als weiße Silhouette, EB/start/m390-dark-voll__streifen.webp) der erste Eindruck. Der Wow-Ausgangswert wurde aber nur im hellen Schema gemessen.",
+   "vorschlag": "L-18 auf hoch setzen und in der Lösungsrichtung festlegen: Bildfolgen und Wow-Probe des ersten Bildschirms auch im dunklen Schema. Die Regel in §1 Nr. 7 schärfen, etwa „prägt den ersten Bildschirm sichtbar“, oder L-07 und L-20 entsprechend anheben bzw. die Abweichung begründen."
+  },
+  {
+   "lid": "L-32",
+   "art": "Bezug",
+   "beschreibung": "L-32 hat keinen Bezug zu A-01…A-05, nur zu A-07 und Z-09. Das Phasentor verlangt aber den Bezug zu A-01 bis A-05. Inhaltlich ist er gegeben: Hat das Handy des PUBLIKUMS „Bewegung reduzieren“ an (das gehört zur Generalprobe nach §10, CHECKLISTE), ist die ruhige Fassung sein erster Bildschirm.",
+   "vorschlag": "Bezug auf „A-07, A-03, A-01, Z-09“ ändern."
+  },
+  {
+   "lid": "L-20",
+   "art": "Bezug",
+   "beschreibung": "Bei Vertrauen gilt laut A-03: nicht unter dem Ausgangsstand. Auf der Stelle liegt Vertrauen mobil bei 6 und am Desktop bei 7. Die Desktop-Erstbetrachter nennen die Kontaktkarte mit Sabri Demir als Vertrauensanker (3 von 5). Im ersten Bildschirm mobil gibt es keine benannte Person, nur das unbeschriftete Chat-Symbol. L-20 nennt nur die fehlende Beschriftung, nicht den Bezug zum Vertrauen.",
+   "vorschlag": "In L-20 den Bezug A-03 (Vertrauen) mit dem Beleg aus a0-wow/ergebnis.json ergänzen. Lösungsrichtung: Die zweite Aktion trägt ein Wort und den Namen aus dem belegten Fakt directLine („Direkter Draht zu Sabri Demir“). Hilfe bleibt an derselben Stelle (WCAG 3.2.6)."
+  },
+  {
+   "lid": "L-01 / L-05 / L-19 / L-21 (Ansichten 768 und 1920)",
+   "art": "Bezug",
+   "beschreibung": "A-02 vergleicht „je Schwerpunktseite und Ansicht“; das schließt die Ansichten aus Lauf 1 ein, also 375, 768 und 1920. Die Analyse des ersten Bildschirms deckt nur 390, 430 und 1440 ab. Bei 768 ist die Mobil-Komposition nur gestreckt: Auf der Startseite steht die H1 in drei Zeilen deutlich unter Bildgröße, das rechte Drittel ist leer, die Kennzahlen stehen 2 × 2 (P0/start__t768-light__01.webp). Auf der Stelle zieht sich die graue Gehaltsbox über die volle Breite, ohne Kontakt (P0/stelle-anlagenmechaniker__t768-light__01.webp). Bei 1920 bleibt die Spalte schmal, die H1 hat etwa 72 px, also rund 3,75 vw statt bis zu 20 vw (P0/start__d1920-light__01.webp).",
+   "vorschlag": "Bei L-01, L-05, L-19 und L-21 A-02 als Bezug und die Belege für 768 und 1920 ergänzen. Alternativ eine eigene Zeile anlegen: „Tablett 768 und 1920 eigens komponiert prüfen“, Priorität mittel."
+  },
+  {
+   "lid": "L-12",
+   "art": "fehlt",
+   "beschreibung": "Bei den Jury-Schwächen der Startseite fehlt ein Befund, den zwei von drei Juroren nennen: „Fahrzeit-Spalte bricht mobil um“ bzw. „Fahrzeiten brechen um“ (JU/start-1, JU/start-2). Bei 375 bricht in der Ortstabelle zum Beispiel die PLZ unter den Ortsnamen (P0/start__m375-light__07.webp, unten). Außerdem ist „Punkte unbeschriftet“ ungenau: 4 von 10 Orten sind beschriftet (Herborn, Wetzlar, Gießen, Braunfels), 6 nicht (P0/start__d1440-light__04.webp).",
+   "vorschlag": "In §3.1 bei den Jury-Schwächen und in L-12 ergänzen: Tabelle und Ortsliste mobil ohne Umbruch der Werte, Zahlen in der Maßschrift, bei 320 und 375 geprüft. „unbeschriftete Punkte“ ändern in „6 von 10 Punkten unbeschriftet, Kern überfüllt“."
+  },
+  {
+   "lid": "L-39",
+   "art": "Beleg",
+   "beschreibung": "Zum Rahmen des ersten Bildschirms mobil gehört auch die Browser-Leiste. Sie wird über `theme-color` gefärbt, im ausgelieferten HTML #FFFFFF für hell und #0B0F17 für dunkel (app/layout.tsx:28, GET /). Diese Werte passen weder zur heutigen grauen Fläche des Einstiegs noch zum künftigen Papier. L-39 nennt nur den Hintergrund des Dokuments.",
+   "vorschlag": "In L-39 `theme-color` (hell und dunkel) mit Beleg ergänzen. Lösungsrichtung: die Farbe des Einstiegs (Papier bzw. Abend), geprüft in Chromium und WebKit."
+  }
+ ],
+ "begruendung": "Ich kann die Liste noch nicht bestätigen. Sie ist gründlich und überwiegend gut belegt, aber drei Korrekturen der Art „falsch“, zwei der Art „fehlt“ und eine der Art „erfunden“ sind nötig.\n\n**Was ich nachgeprüft habe:**\n- Die Streifen und die Einzelbilder bei 1.500 ms in _relaunch/ausbau/belege/a0-erster-bildschirm/ für beide Seiten, mobil und Desktop, hell und dunkel; dazu bericht.json und die Dateigrößen.\n- Je Schwerpunktseite drei Ausschnitte aus p0-ausgangsstand:\n  - Start: d1920-light__01, d1440-light__04, m375-light__01 (dazu t768-light__01 und m375-light__07).\n  - Stelle: d1440-light__02, m375-light__03, m375-light__01 (dazu t768-light__01).\n- Weitere Bilder: A0 m430/m390 und das Wunschbild AG.\n- Seiten-HTML per GET von localhost:3500 für `/` und die Stelle. Die Zählungen stimmen: data-motion 0, „Interaktive Karte laden“ 0, auf der Stelle „Fahrzeit“ und „einsatzgebiet“ 0, view-transition 0.\n- Code: Logo.tsx:35, HeaderBar.tsx:55–61, theme.css (Navy und Crimson, #F5F6F8, #5F6878), layout.tsx (Inter, min-h-dvh), RegionExplorer.tsx:23, MobileNav (lazy loadSheet), nav.ts, BenefitGrid und JobSections.\n- MESSUNGEN.md: LCP 2,92 und 3,08 s, CLS 0, TBT 80–108 ms, 204 von 215 SVG lucide, Reflow 320.\n- Jury-Mediane: 5,2 und 5,0; die A-02-Zwischenziele 7,6 und 7,5 sind richtig gerechnet.\n- Verlustliste E-START-002, E-SHELL-001, E-START-011 und E-START-045; Grundmenge und Hauptseiten (PLAN, E-005).\n\n**Fakten in den Lösungsrichtungen:** Ich habe sie mit lib/content/facts.ts, den Stellendaten, team.ts (vier Zitate; Koch nennt 13:30 und Hilti) und locations.ts (10 Orte) abgeglichen. Bis auf den „Werkzeugkoffer“ in L-23 sind sie gedeckt. Der Umschalter 15/25/35 km stammt nachweislich aus B Runde 1 (git show 2035339).\n\n**Die Fehler im Einzelnen:**\n- Der größte Fehler: Die Liste erklärt den Wow-Ausgangswert dreimal für nicht gemessen. Er wurde aber vor ihrer Erstellung gemessen und committet (151afaa; MESSUNGEN.md, a0-wow/ergebnis.json). Das betrifft die Abstände und den Anker für Vertrauen nach A-03.\n- „H1 in 3 Zeilen“ bei 390 ist falsch; drei Zeilen hat die H1 erst bei 375.\n- „60-Sekunden-Zusage direkt am Knopf“ ist mobil falsch; der Textlink steht dazwischen.\n\n**Was fehlt:**\n- Die Brotkrume der Schwerpunkt-Stelle bricht bei 375 um. Alle drei Juroren nennen das, aber es gibt keine L-Zeile dafür.\n- Die Jury-Schwäche „Fahrzeiten brechen um“ (2 von 3 Juroren) fehlt.\n\n**Priorität und Bezug:**\n- L-06 und L-18 sind nach der eigenen Prioritätsregel (erster Bildschirm), wegen A-06 ohne Ausnahme und wegen des Handys des PUBLIKUMS „hoch“.\n- L-32 hat keinen Bezug zu A-01…A-05.\n- Die Ansichten 768 und 1920 fehlen für A-02.\n\n**Abfallende Seiten (§5):** Die Tabelle ist plausibel und vollständig. Sie deckt alle 10 übrigen Seiten der Grundmenge von 12 ab. Die Risikoreihenfolge ist nachvollziehbar: /jobs, /bewerbung, Danke und Ausbildung hoch; Datenschutz und Impressum niedrig. Hier ist keine Korrektur nötig.\n\n**Gesamturteil:** Die übrigen Prioritäten und Bezüge (L-01…L-05, L-08…L-12, L-19, L-21, L-27, L-29, L-30) halte ich für richtig."
+}
