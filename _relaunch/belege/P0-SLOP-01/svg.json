@@ -1,0 +1,3274 @@
+{
+  "label": "P0-SLOP-01",
+  "base": "http://localhost:3500",
+  "erstellt": "2026-10-09T07:27:45.264Z",
+  "bedingungen": {
+    "ansicht": "d1440 hell",
+    "bewegung": "no-preference",
+    "gewartet": "networkidle + scrollThrough + 400 ms",
+    "svgo": "svgo 4.0.0, multipass",
+    "budgets": {
+      "iconRohBytes": 1536,
+      "illustrationGzipBytes": 40960
+    }
+  },
+  "zusammenfassung": {
+    "seiten": 1,
+    "inlineSvgGesamt": 42,
+    "inlineSvgSichtbar": 38,
+    "proSeite": {
+      "start": 42
+    },
+    "quelle": {
+      "lucide": 31,
+      "eigen": 11
+    },
+    "ohneViewBox": 0,
+    "zugaenglichkeit": {
+      "dekorativ": 31,
+      "bedeutungstragend": 11
+    },
+    "zugaenglichkeitNichtOk": 0,
+    "viewBoxMasseIcons": {
+      "24x24": 31
+    },
+    "strichAttributeAlle": {
+      "1": 1,
+      "2": 1,
+      "4": 1,
+      "1.75": 28,
+      "1.5": 10,
+      "2.25": 3
+    },
+    "strichBerechnetIcons": {
+      "1.75": 28,
+      "2.25": 3
+    },
+    "strichEffektivPxIcons": {
+      "1.46": 12,
+      "1.75": 10,
+      "1.17": 6,
+      "2.25": 2,
+      "1.5": 1
+    },
+    "anzahlStrichstaerkenBerechnetIcons": 2,
+    "anzahlStrichstaerkenEffektivPxIcons": 5,
+    "festeFarben": [],
+    "svgMitFestenFarben": 0,
+    "iconBudgetUeberschritten": 0,
+    "illustrationBudgetUeberschritten": 0,
+    "idKollisionenImDom": 0,
+    "verweiseNichtEindeutigAufloesbar": 0,
+    "doppelteIdsImDokumentGesamt": 0,
+    "useVerweise": 50,
+    "svgAlsImg": 0,
+    "svgAlsCssHintergrund": 0,
+    "dateien": {
+      "anzahl": 3,
+      "fixpunkt": 0,
+      "keinFixpunkt": 3,
+      "keinFixpunktStandardkonfiguration": 3,
+      "ohneViewBox": 0,
+      "mitEingebettetemBitmap": 0,
+      "textAlsPfadVermutet": 0,
+      "budgetUeberschritten": 0
+    }
+  },
+  "idKollisionen": [],
+  "verweiseKaputt": [],
+  "seiten": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "status": 200,
+      "svgs": [
+        {
+          "index": 0,
+          "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > div.hidden.shrink-0:nth-of-type(1) > a.inline-flex.min-h-11:nth-of-type(1) > svg.lucide.lucide-phone",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-phone",
+            "size-4",
+            "text-ink-muted"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 16,
+            "hoehe": 16
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": "a",
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.17
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(95, 104, 120)"
+          ],
+          "formen": 1,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 490,
+          "bytesGzip": 307,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 1,
+          "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > div.shrink-0:nth-of-type(2) > button.inline-flex.shrink-0 > svg.lucide.lucide-menu",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-menu",
+            "size-6"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 0,
+            "hoehe": 0
+          },
+          "sichtbar": false,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": "button",
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.75
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(10, 30, 58)"
+          ],
+          "formen": 3,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 320,
+          "bytesGzip": 213,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 2,
+          "fundstelle": "header.flex.flex-col > div.mt-2.flex > div.flex.flex-wrap > a.rounded-xs.underline:nth-of-type(2) > svg.lucide.lucide-arrow-down",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-arrow-down",
+            "size-4"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 16,
+            "hoehe": 16
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": "a",
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.17
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(10, 30, 58)"
+          ],
+          "formen": 2,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 307,
+          "bytesGzip": 222,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 3,
+          "fundstelle": "li:nth-of-type(1) > article.rounded-lg.bg-surface-2 > div.mt-auto.flex > span.inline-flex.items-center > svg.lucide.lucide-arrow-right",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-arrow-right",
+            "size-4"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 16,
+            "hoehe": 16
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.17
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(10, 30, 58)"
+          ],
+          "formen": 2,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 307,
+          "bytesGzip": 220,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 4,
+          "fundstelle": "li:nth-of-type(2) > article.rounded-lg.bg-surface-2 > div.mt-auto.flex > span.inline-flex.items-center > svg.lucide.lucide-arrow-right",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-arrow-right",
+            "size-4"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 16,
+            "hoehe": 16
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.17
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(10, 30, 58)"
+          ],
+          "formen": 2,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 307,
+          "bytesGzip": 220,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 5,
+          "fundstelle": "li:nth-of-type(3) > article.rounded-lg.bg-surface-2 > div.mt-auto.flex > span.inline-flex.items-center > svg.lucide.lucide-arrow-right",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-arrow-right",
+            "size-4"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 16,
+            "hoehe": 16
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.17
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(10, 30, 58)"
+          ],
+          "formen": 2,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 307,
+          "bytesGzip": 220,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 6,
+          "fundstelle": "li:nth-of-type(4) > article.rounded-lg.bg-surface-2 > div.mt-auto.flex > span.inline-flex.items-center > svg.lucide.lucide-arrow-right",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-arrow-right",
+            "size-4"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 16,
+            "hoehe": 16
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.17
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(10, 30, 58)"
+          ],
+          "formen": 2,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 307,
+          "bytesGzip": 220,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 7,
+          "fundstelle": "section#vorteile > div.mx-auto.box-content > ul.mt-10.grid > li.flex.flex-col:nth-of-type(1) > svg.lucide.lucide-banknote",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-banknote",
+            "size-6",
+            "text-ink-muted"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 24,
+            "hoehe": 24
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.75
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(95, 104, 120)"
+          ],
+          "formen": 3,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 393,
+          "bytesGzip": 264,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 8,
+          "fundstelle": "section#vorteile > div.mx-auto.box-content > ul.mt-10.grid > li.flex.flex-col:nth-of-type(2) > svg.lucide.lucide-file-check",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-file-check",
+            "size-6",
+            "text-ink-muted"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 24,
+            "hoehe": 24
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.75
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(95, 104, 120)"
+          ],
+          "formen": 3,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 464,
+          "bytesGzip": 293,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 9,
+          "fundstelle": "section#vorteile > div.mx-auto.box-content > ul.mt-10.grid > li.flex.flex-col:nth-of-type(3) > svg.lucide.lucide-calendar-off",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-calendar-off",
+            "size-6",
+            "text-ink-muted"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 24,
+            "hoehe": 24
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.75
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(95, 104, 120)"
+          ],
+          "formen": 6,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 499,
+          "bytesGzip": 292,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 10,
+          "fundstelle": "section#vorteile > div.mx-auto.box-content > ul.mt-10.grid > li.flex.flex-col:nth-of-type(4) > svg.lucide.lucide-wrench",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-wrench",
+            "size-6",
+            "text-ink-muted"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 24,
+            "hoehe": 24
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.75
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(95, 104, 120)"
+          ],
+          "formen": 1,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 471,
+          "bytesGzip": 314,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 11,
+          "fundstelle": "section#vorteile > div.mx-auto.box-content > ul.mt-10.grid > li.flex.flex-col:nth-of-type(5) > svg.lucide.lucide-truck",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-truck",
+            "size-6",
+            "text-ink-muted"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 24,
+            "hoehe": 24
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.75
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(95, 104, 120)"
+          ],
+          "formen": 5,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 534,
+          "bytesGzip": 318,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 12,
+          "fundstelle": "section#vorteile > div.mx-auto.box-content > ul.mt-10.grid > li.flex.flex-col:nth-of-type(6) > svg.lucide.lucide-tablet-smartphone",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-tablet-smartphone",
+            "size-6",
+            "text-ink-muted"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 24,
+            "hoehe": 24
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.75
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(95, 104, 120)"
+          ],
+          "formen": 3,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 428,
+          "bytesGzip": 280,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 13,
+          "fundstelle": "section#vorteile > div.mx-auto.box-content > ul.mt-10.grid > li.flex.flex-col:nth-of-type(7) > svg.lucide.lucide-graduation-cap",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-graduation-cap",
+            "size-6",
+            "text-ink-muted"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 24,
+            "hoehe": 24
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.75
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(95, 104, 120)"
+          ],
+          "formen": 3,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 478,
+          "bytesGzip": 309,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 14,
+          "fundstelle": "section#vorteile > div.mx-auto.box-content > ul.mt-10.grid > li.flex.flex-col:nth-of-type(8) > svg.lucide.lucide-users",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-users",
+            "size-6",
+            "text-ink-muted"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 24,
+            "hoehe": 24
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.75
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(95, 104, 120)"
+          ],
+          "formen": 4,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 444,
+          "bytesGzip": 282,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 15,
+          "fundstelle": "div.mx-auto.box-content > div.grid.items-start:nth-of-type(2) > div.flex.flex-col:nth-of-type(1) > div.relative.mx-auto > svg.size-full.select-none",
+          "quelle": "eigen",
+          "klassen": [
+            "size-full",
+            "select-none"
+          ],
+          "viewBox": "0 0 360 360",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            360,
+            360
+          ],
+          "attrBreite": null,
+          "attrHoehe": null,
+          "gerendert": {
+            "breite": 448,
+            "hoehe": 448
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": null,
+            "role": "img",
+            "label": null,
+            "labelledby": "_R_4hbrbb_-title _R_4hbrbb_-desc",
+            "title": "Einsatzgebiet: 35 km um Wetzlar",
+            "desc": "Schematische Karte mit Wetzlar in der Mitte. Im Umkreis liegen Garbenheim, Hermannstein, Steindorf, Nauborn, Aßlar, Dutenhofen, Braunfels, Gießen, Herborn. Entfernung und Fahrzeit stehen in der Tabelle.",
+            "focusable": null
+          },
+          "namenAufgeloest": "Einsatzgebiet: 35 km um Wetzlar Schematische Karte mit Wetzlar in der Mitte. Im Umkreis liegen Garbenheim, Hermannstein, Steindorf, Nauborn, Aßlar, Dutenhofen, Braunfels, Gießen, Herborn. Entfernung und Fahrzeit stehen in der Tabelle.",
+          "a11y": "bedeutungstragend",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1",
+            "2",
+            "4"
+          ],
+          "strichBerechnet": [
+            1,
+            2,
+            4
+          ],
+          "strichEffektivPx": [
+            1,
+            2.49,
+            4.98
+          ],
+          "strichFarbe": {},
+          "fuellFarbe": {},
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(125, 134, 150)",
+            "rgb(245, 246, 248)",
+            "rgb(0, 0, 0)",
+            "rgb(95, 104, 120)",
+            "rgb(10, 30, 58)"
+          ],
+          "formen": 17,
+          "ids": [
+            {
+              "id": "_R_4hbrbb_-title",
+              "element": "title",
+              "imDokument": 1
+            },
+            {
+              "id": "_R_4hbrbb_-desc",
+              "element": "desc",
+              "imDokument": 1
+            }
+          ],
+          "verweise": [
+            {
+              "art": "aria-labelledby",
+              "id": "_R_4hbrbb_-title",
+              "vorhanden": 1
+            },
+            {
+              "art": "aria-labelledby",
+              "id": "_R_4hbrbb_-desc",
+              "vorhanden": 1
+            }
+          ],
+          "istSprite": false,
+          "bytesRoh": 2459,
+          "bytesGzip": 750,
+          "istIcon": false,
+          "budgetIcon": null,
+          "budgetIllustration": true
+        },
+        {
+          "index": 16,
+          "fundstelle": "div.grid.items-start:nth-of-type(2) > div.flex.flex-col:nth-of-type(2) > div.flex.flex-col:nth-of-type(1) > div.relative > svg.lucide.lucide-chevron-down",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-chevron-down",
+            "pointer-events-none",
+            "absolute",
+            "top-1/2",
+            "right-4",
+            "size-5",
+            "-translate-y-1/2"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 20,
+            "hoehe": 20
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.46
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(95, 104, 120)"
+          ],
+          "formen": 1,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 358,
+          "bytesGzip": 257,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 17,
+          "fundstelle": "section#ablauf > div.mx-auto.box-content > div.mt-12.flex:nth-of-type(2) > p.flex.max-w-prose > svg.lucide.lucide-shield-check",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-shield-check",
+            "mt-0.5",
+            "size-5",
+            "shrink-0",
+            "text-ink-muted"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 20,
+            "hoehe": 20
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.46
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(95, 104, 120)"
+          ],
+          "formen": 2,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 493,
+          "bytesGzip": 330,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 18,
+          "fundstelle": "div > div.flex.flex-wrap > div.flex.flex-wrap:nth-of-type(1) > button.group.inline-flex:nth-of-type(1) > svg.lucide.lucide-check",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-check",
+            "hidden",
+            "size-4",
+            "shrink-0",
+            "group-aria-pressed:block"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 16,
+            "hoehe": 16
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": "button",
+          "strichAttribute": [
+            "2.25"
+          ],
+          "strichBerechnet": [
+            2.25
+          ],
+          "strichEffektivPx": [
+            1.5
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(255, 255, 255)"
+          ],
+          "formen": 1,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 318,
+          "bytesGzip": 233,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 19,
+          "fundstelle": "div > div.flex.flex-wrap > div.flex.flex-wrap:nth-of-type(1) > button.group.inline-flex:nth-of-type(2) > svg.lucide.lucide-check",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-check",
+            "hidden",
+            "size-4",
+            "shrink-0",
+            "group-aria-pressed:block"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 0,
+            "hoehe": 0
+          },
+          "sichtbar": false,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": "button",
+          "strichAttribute": [
+            "2.25"
+          ],
+          "strichBerechnet": [
+            2.25
+          ],
+          "strichEffektivPx": [
+            2.25
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(10, 30, 58)"
+          ],
+          "formen": 1,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 318,
+          "bytesGzip": 233,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 20,
+          "fundstelle": "div > div.flex.flex-wrap > div.flex.flex-wrap:nth-of-type(1) > button.group.inline-flex:nth-of-type(3) > svg.lucide.lucide-check",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-check",
+            "hidden",
+            "size-4",
+            "shrink-0",
+            "group-aria-pressed:block"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 0,
+            "hoehe": 0
+          },
+          "sichtbar": false,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": "button",
+          "strichAttribute": [
+            "2.25"
+          ],
+          "strichBerechnet": [
+            2.25
+          ],
+          "strichEffektivPx": [
+            2.25
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(10, 30, 58)"
+          ],
+          "formen": 1,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 318,
+          "bytesGzip": 233,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 21,
+          "fundstelle": "div > div.flex.flex-wrap > div.flex.gap-2:nth-of-type(2) > button.inline-flex.shrink-0:nth-of-type(1) > svg.lucide.lucide-chevron-left",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-chevron-left",
+            "size-5"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 20,
+            "hoehe": 20
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": "button",
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.46
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(10, 30, 58)"
+          ],
+          "formen": 1,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 283,
+          "bytesGzip": 215,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 22,
+          "fundstelle": "div > div.flex.flex-wrap > div.flex.gap-2:nth-of-type(2) > button.inline-flex.shrink-0:nth-of-type(2) > svg.lucide.lucide-chevron-right",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-chevron-right",
+            "size-5"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 20,
+            "hoehe": 20
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": "button",
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.46
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(10, 30, 58)"
+          ],
+          "formen": 1,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 283,
+          "bytesGzip": 213,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 23,
+          "fundstelle": "li.flex.shrink-0:nth-of-type(1) > figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg.shrink-0",
+          "quelle": "eigen",
+          "klassen": [
+            "shrink-0"
+          ],
+          "viewBox": "0 0 132 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            132,
+            24
+          ],
+          "attrBreite": "88",
+          "attrHoehe": "16",
+          "gerendert": {
+            "breite": 88,
+            "hoehe": 16
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": null,
+            "role": "img",
+            "label": "5,0 von 5 Sternen",
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "bedeutungstragend",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.5"
+          ],
+          "strichBerechnet": [],
+          "strichEffektivPx": [],
+          "strichFarbe": {},
+          "fuellFarbe": {},
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(0, 0, 0)"
+          ],
+          "formen": 1,
+          "ids": [
+            {
+              "id": "_R_4fmpbrbb_-star",
+              "element": "path",
+              "imDokument": 1
+            }
+          ],
+          "verweise": [
+            {
+              "art": "href",
+              "id": "_R_4fmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_4fmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_4fmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_4fmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_4fmpbrbb_-star",
+              "vorhanden": 1
+            }
+          ],
+          "istSprite": false,
+          "bytesRoh": 897,
+          "bytesGzip": 423,
+          "istIcon": false,
+          "budgetIcon": null,
+          "budgetIllustration": true
+        },
+        {
+          "index": 24,
+          "fundstelle": "li.flex.shrink-0:nth-of-type(3) > figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg.shrink-0",
+          "quelle": "eigen",
+          "klassen": [
+            "shrink-0"
+          ],
+          "viewBox": "0 0 132 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            132,
+            24
+          ],
+          "attrBreite": "88",
+          "attrHoehe": "16",
+          "gerendert": {
+            "breite": 88,
+            "hoehe": 16
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": null,
+            "role": "img",
+            "label": "5,0 von 5 Sternen",
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "bedeutungstragend",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.5"
+          ],
+          "strichBerechnet": [],
+          "strichEffektivPx": [],
+          "strichFarbe": {},
+          "fuellFarbe": {},
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(0, 0, 0)"
+          ],
+          "formen": 1,
+          "ids": [
+            {
+              "id": "_R_4vmpbrbb_-star",
+              "element": "path",
+              "imDokument": 1
+            }
+          ],
+          "verweise": [
+            {
+              "art": "href",
+              "id": "_R_4vmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_4vmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_4vmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_4vmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_4vmpbrbb_-star",
+              "vorhanden": 1
+            }
+          ],
+          "istSprite": false,
+          "bytesRoh": 897,
+          "bytesGzip": 423,
+          "istIcon": false,
+          "budgetIcon": null,
+          "budgetIllustration": true
+        },
+        {
+          "index": 25,
+          "fundstelle": "li.flex.shrink-0:nth-of-type(5) > figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg.shrink-0",
+          "quelle": "eigen",
+          "klassen": [
+            "shrink-0"
+          ],
+          "viewBox": "0 0 132 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            132,
+            24
+          ],
+          "attrBreite": "88",
+          "attrHoehe": "16",
+          "gerendert": {
+            "breite": 88,
+            "hoehe": 16
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": null,
+            "role": "img",
+            "label": "5,0 von 5 Sternen",
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "bedeutungstragend",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.5"
+          ],
+          "strichBerechnet": [],
+          "strichEffektivPx": [],
+          "strichFarbe": {},
+          "fuellFarbe": {},
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(0, 0, 0)"
+          ],
+          "formen": 1,
+          "ids": [
+            {
+              "id": "_R_5fmpbrbb_-star",
+              "element": "path",
+              "imDokument": 1
+            }
+          ],
+          "verweise": [
+            {
+              "art": "href",
+              "id": "_R_5fmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_5fmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_5fmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_5fmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_5fmpbrbb_-star",
+              "vorhanden": 1
+            }
+          ],
+          "istSprite": false,
+          "bytesRoh": 897,
+          "bytesGzip": 423,
+          "istIcon": false,
+          "budgetIcon": null,
+          "budgetIllustration": true
+        },
+        {
+          "index": 26,
+          "fundstelle": "li.flex.shrink-0:nth-of-type(7) > figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg.shrink-0",
+          "quelle": "eigen",
+          "klassen": [
+            "shrink-0"
+          ],
+          "viewBox": "0 0 132 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            132,
+            24
+          ],
+          "attrBreite": "88",
+          "attrHoehe": "16",
+          "gerendert": {
+            "breite": 88,
+            "hoehe": 16
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": null,
+            "role": "img",
+            "label": "5,0 von 5 Sternen",
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "bedeutungstragend",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.5"
+          ],
+          "strichBerechnet": [],
+          "strichEffektivPx": [],
+          "strichFarbe": {},
+          "fuellFarbe": {},
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(0, 0, 0)"
+          ],
+          "formen": 1,
+          "ids": [
+            {
+              "id": "_R_5vmpbrbb_-star",
+              "element": "path",
+              "imDokument": 1
+            }
+          ],
+          "verweise": [
+            {
+              "art": "href",
+              "id": "_R_5vmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_5vmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_5vmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_5vmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_5vmpbrbb_-star",
+              "vorhanden": 1
+            }
+          ],
+          "istSprite": false,
+          "bytesRoh": 897,
+          "bytesGzip": 423,
+          "istIcon": false,
+          "budgetIcon": null,
+          "budgetIllustration": true
+        },
+        {
+          "index": 27,
+          "fundstelle": "li.flex.shrink-0:nth-of-type(8) > figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg.shrink-0",
+          "quelle": "eigen",
+          "klassen": [
+            "shrink-0"
+          ],
+          "viewBox": "0 0 132 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            132,
+            24
+          ],
+          "attrBreite": "88",
+          "attrHoehe": "16",
+          "gerendert": {
+            "breite": 88,
+            "hoehe": 16
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": null,
+            "role": "img",
+            "label": "5,0 von 5 Sternen",
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "bedeutungstragend",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.5"
+          ],
+          "strichBerechnet": [],
+          "strichEffektivPx": [],
+          "strichFarbe": {},
+          "fuellFarbe": {},
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(0, 0, 0)"
+          ],
+          "formen": 1,
+          "ids": [
+            {
+              "id": "_R_67mpbrbb_-star",
+              "element": "path",
+              "imDokument": 1
+            }
+          ],
+          "verweise": [
+            {
+              "art": "href",
+              "id": "_R_67mpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_67mpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_67mpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_67mpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_67mpbrbb_-star",
+              "vorhanden": 1
+            }
+          ],
+          "istSprite": false,
+          "bytesRoh": 897,
+          "bytesGzip": 423,
+          "istIcon": false,
+          "budgetIcon": null,
+          "budgetIllustration": true
+        },
+        {
+          "index": 28,
+          "fundstelle": "li.flex.shrink-0:nth-of-type(9) > figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg.shrink-0",
+          "quelle": "eigen",
+          "klassen": [
+            "shrink-0"
+          ],
+          "viewBox": "0 0 132 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            132,
+            24
+          ],
+          "attrBreite": "88",
+          "attrHoehe": "16",
+          "gerendert": {
+            "breite": 88,
+            "hoehe": 16
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": null,
+            "role": "img",
+            "label": "5,0 von 5 Sternen",
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "bedeutungstragend",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.5"
+          ],
+          "strichBerechnet": [],
+          "strichEffektivPx": [],
+          "strichFarbe": {},
+          "fuellFarbe": {},
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(0, 0, 0)"
+          ],
+          "formen": 1,
+          "ids": [
+            {
+              "id": "_R_6fmpbrbb_-star",
+              "element": "path",
+              "imDokument": 1
+            }
+          ],
+          "verweise": [
+            {
+              "art": "href",
+              "id": "_R_6fmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_6fmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_6fmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_6fmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_6fmpbrbb_-star",
+              "vorhanden": 1
+            }
+          ],
+          "istSprite": false,
+          "bytesRoh": 897,
+          "bytesGzip": 423,
+          "istIcon": false,
+          "budgetIcon": null,
+          "budgetIllustration": true
+        },
+        {
+          "index": 29,
+          "fundstelle": "li.flex.shrink-0:nth-of-type(10) > figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg.shrink-0",
+          "quelle": "eigen",
+          "klassen": [
+            "shrink-0"
+          ],
+          "viewBox": "0 0 132 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            132,
+            24
+          ],
+          "attrBreite": "88",
+          "attrHoehe": "16",
+          "gerendert": {
+            "breite": 88,
+            "hoehe": 16
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": null,
+            "role": "img",
+            "label": "5,0 von 5 Sternen",
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "bedeutungstragend",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.5"
+          ],
+          "strichBerechnet": [],
+          "strichEffektivPx": [],
+          "strichFarbe": {},
+          "fuellFarbe": {},
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(0, 0, 0)"
+          ],
+          "formen": 1,
+          "ids": [
+            {
+              "id": "_R_6nmpbrbb_-star",
+              "element": "path",
+              "imDokument": 1
+            }
+          ],
+          "verweise": [
+            {
+              "art": "href",
+              "id": "_R_6nmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_6nmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_6nmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_6nmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_6nmpbrbb_-star",
+              "vorhanden": 1
+            }
+          ],
+          "istSprite": false,
+          "bytesRoh": 897,
+          "bytesGzip": 423,
+          "istIcon": false,
+          "budgetIcon": null,
+          "budgetIllustration": true
+        },
+        {
+          "index": 30,
+          "fundstelle": "li.flex.shrink-0:nth-of-type(11) > figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg.shrink-0",
+          "quelle": "eigen",
+          "klassen": [
+            "shrink-0"
+          ],
+          "viewBox": "0 0 132 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            132,
+            24
+          ],
+          "attrBreite": "88",
+          "attrHoehe": "16",
+          "gerendert": {
+            "breite": 88,
+            "hoehe": 16
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": null,
+            "role": "img",
+            "label": "5,0 von 5 Sternen",
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "bedeutungstragend",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.5"
+          ],
+          "strichBerechnet": [],
+          "strichEffektivPx": [],
+          "strichFarbe": {},
+          "fuellFarbe": {},
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(0, 0, 0)"
+          ],
+          "formen": 1,
+          "ids": [
+            {
+              "id": "_R_6vmpbrbb_-star",
+              "element": "path",
+              "imDokument": 1
+            }
+          ],
+          "verweise": [
+            {
+              "art": "href",
+              "id": "_R_6vmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_6vmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_6vmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_6vmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_6vmpbrbb_-star",
+              "vorhanden": 1
+            }
+          ],
+          "istSprite": false,
+          "bytesRoh": 897,
+          "bytesGzip": 423,
+          "istIcon": false,
+          "budgetIcon": null,
+          "budgetIllustration": true
+        },
+        {
+          "index": 31,
+          "fundstelle": "li.flex.shrink-0:nth-of-type(12) > figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg.shrink-0",
+          "quelle": "eigen",
+          "klassen": [
+            "shrink-0"
+          ],
+          "viewBox": "0 0 132 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            132,
+            24
+          ],
+          "attrBreite": "88",
+          "attrHoehe": "16",
+          "gerendert": {
+            "breite": 88,
+            "hoehe": 16
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": null,
+            "role": "img",
+            "label": "5,0 von 5 Sternen",
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "bedeutungstragend",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.5"
+          ],
+          "strichBerechnet": [],
+          "strichEffektivPx": [],
+          "strichFarbe": {},
+          "fuellFarbe": {},
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(0, 0, 0)"
+          ],
+          "formen": 1,
+          "ids": [
+            {
+              "id": "_R_77mpbrbb_-star",
+              "element": "path",
+              "imDokument": 1
+            }
+          ],
+          "verweise": [
+            {
+              "art": "href",
+              "id": "_R_77mpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_77mpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_77mpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_77mpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_77mpbrbb_-star",
+              "vorhanden": 1
+            }
+          ],
+          "istSprite": false,
+          "bytesRoh": 897,
+          "bytesGzip": 423,
+          "istIcon": false,
+          "budgetIcon": null,
+          "budgetIllustration": true
+        },
+        {
+          "index": 32,
+          "fundstelle": "li.flex.shrink-0:nth-of-type(13) > figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg.shrink-0",
+          "quelle": "eigen",
+          "klassen": [
+            "shrink-0"
+          ],
+          "viewBox": "0 0 132 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            132,
+            24
+          ],
+          "attrBreite": "88",
+          "attrHoehe": "16",
+          "gerendert": {
+            "breite": 88,
+            "hoehe": 16
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": null,
+            "role": "img",
+            "label": "5,0 von 5 Sternen",
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "bedeutungstragend",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.5"
+          ],
+          "strichBerechnet": [],
+          "strichEffektivPx": [],
+          "strichFarbe": {},
+          "fuellFarbe": {},
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(0, 0, 0)"
+          ],
+          "formen": 1,
+          "ids": [
+            {
+              "id": "_R_7fmpbrbb_-star",
+              "element": "path",
+              "imDokument": 1
+            }
+          ],
+          "verweise": [
+            {
+              "art": "href",
+              "id": "_R_7fmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_7fmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_7fmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_7fmpbrbb_-star",
+              "vorhanden": 1
+            },
+            {
+              "art": "href",
+              "id": "_R_7fmpbrbb_-star",
+              "vorhanden": 1
+            }
+          ],
+          "istSprite": false,
+          "bytesRoh": 897,
+          "bytesGzip": 423,
+          "istIcon": false,
+          "budgetIcon": null,
+          "budgetIllustration": true
+        },
+        {
+          "index": 33,
+          "fundstelle": "div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(1) > summary.flex.min-h-11 > svg.lucide.lucide-chevron-down",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-chevron-down",
+            "size-5",
+            "shrink-0",
+            "text-ink-muted",
+            "transition-transform",
+            "duration-fast",
+            "ease-standard"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 20,
+            "hoehe": 20
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.46
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(95, 104, 120)"
+          ],
+          "formen": 1,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 376,
+          "bytesGzip": 266,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 34,
+          "fundstelle": "div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(2) > summary.flex.min-h-11 > svg.lucide.lucide-chevron-down",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-chevron-down",
+            "size-5",
+            "shrink-0",
+            "text-ink-muted",
+            "transition-transform",
+            "duration-fast",
+            "ease-standard"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 20,
+            "hoehe": 20
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.46
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(95, 104, 120)"
+          ],
+          "formen": 1,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 376,
+          "bytesGzip": 266,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 35,
+          "fundstelle": "div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(3) > summary.flex.min-h-11 > svg.lucide.lucide-chevron-down",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-chevron-down",
+            "size-5",
+            "shrink-0",
+            "text-ink-muted",
+            "transition-transform",
+            "duration-fast",
+            "ease-standard"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 20,
+            "hoehe": 20
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.46
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(95, 104, 120)"
+          ],
+          "formen": 1,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 376,
+          "bytesGzip": 266,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 36,
+          "fundstelle": "div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(4) > summary.flex.min-h-11 > svg.lucide.lucide-chevron-down",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-chevron-down",
+            "size-5",
+            "shrink-0",
+            "text-ink-muted",
+            "transition-transform",
+            "duration-fast",
+            "ease-standard"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 20,
+            "hoehe": 20
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.46
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(95, 104, 120)"
+          ],
+          "formen": 1,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 376,
+          "bytesGzip": 266,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 37,
+          "fundstelle": "div.mx-auto.box-content > div.mt-8.max-w-3xl:nth-of-type(2) > details.group.border-b:nth-of-type(5) > summary.flex.min-h-11 > svg.lucide.lucide-chevron-down",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-chevron-down",
+            "size-5",
+            "shrink-0",
+            "text-ink-muted",
+            "transition-transform",
+            "duration-fast",
+            "ease-standard"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 20,
+            "hoehe": 20
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": null,
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.46
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(95, 104, 120)"
+          ],
+          "formen": 1,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 376,
+          "bytesGzip": 266,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 38,
+          "fundstelle": "div.flex.flex-col:nth-of-type(3) > ul.flex.flex-wrap > li:nth-of-type(1) > a.inline-flex.min-h-11 > svg.lucide.lucide-phone",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-phone",
+            "size-5",
+            "text-ink-muted"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 20,
+            "hoehe": 20
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": "a",
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.46
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(179, 189, 204)"
+          ],
+          "formen": 1,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 490,
+          "bytesGzip": 307,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 39,
+          "fundstelle": "div.flex.flex-col:nth-of-type(3) > ul.flex.flex-wrap > li:nth-of-type(2) > a.inline-flex.min-h-11 > svg.lucide.lucide-message-circle",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-message-circle",
+            "size-5",
+            "text-ink-muted"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 20,
+            "hoehe": 20
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": "a",
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.46
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(179, 189, 204)"
+          ],
+          "formen": 1,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 409,
+          "bytesGzip": 289,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 40,
+          "fundstelle": "div.flex.flex-col:nth-of-type(3) > ul.flex.flex-wrap > li:nth-of-type(3) > a.inline-flex.min-h-11 > svg.lucide.lucide-mail",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-mail",
+            "size-5",
+            "text-ink-muted"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 20,
+            "hoehe": 20
+          },
+          "sichtbar": true,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": "a",
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.46
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(179, 189, 204)"
+          ],
+          "formen": 2,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 370,
+          "bytesGzip": 262,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        },
+        {
+          "index": 41,
+          "fundstelle": "aside.fixed.inset-x-0 > div.mx-auto.flex > a.inline-flex.shrink-0:nth-of-type(2) > svg.lucide.lucide-message-circle",
+          "quelle": "lucide",
+          "klassen": [
+            "lucide",
+            "lucide-message-circle",
+            "size-6"
+          ],
+          "viewBox": "0 0 24 24",
+          "hatViewBox": true,
+          "viewBoxMasse": [
+            24,
+            24
+          ],
+          "attrBreite": "24",
+          "attrHoehe": "24",
+          "gerendert": {
+            "breite": 0,
+            "hoehe": 0
+          },
+          "sichtbar": false,
+          "aria": {
+            "hidden": "true",
+            "role": null,
+            "label": null,
+            "labelledby": null,
+            "title": null,
+            "desc": null,
+            "focusable": null
+          },
+          "namenAufgeloest": null,
+          "a11y": "dekorativ",
+          "a11yGrund": "",
+          "imInteraktiven": "a",
+          "strichAttribute": [
+            "1.75"
+          ],
+          "strichBerechnet": [
+            1.75
+          ],
+          "strichEffektivPx": [
+            1.75
+          ],
+          "strichFarbe": {
+            "currentColor": 1
+          },
+          "fuellFarbe": {
+            "none": 1
+          },
+          "festeFarben": [],
+          "berechneteFarben": [
+            "rgb(10, 30, 58)"
+          ],
+          "formen": 1,
+          "ids": [],
+          "verweise": [],
+          "istSprite": false,
+          "bytesRoh": 394,
+          "bytesGzip": 279,
+          "istIcon": true,
+          "budgetIcon": true,
+          "budgetIllustration": null
+        }
+      ],
+      "uses": [
+        "#_R_4fmpbrbb_-star",
+        "#_R_4fmpbrbb_-star",
+        "#_R_4fmpbrbb_-star",
+        "#_R_4fmpbrbb_-star",
+        "#_R_4fmpbrbb_-star",
+        "#_R_4vmpbrbb_-star",
+        "#_R_4vmpbrbb_-star",
+        "#_R_4vmpbrbb_-star",
+        "#_R_4vmpbrbb_-star",
+        "#_R_4vmpbrbb_-star",
+        "#_R_5fmpbrbb_-star",
+        "#_R_5fmpbrbb_-star",
+        "#_R_5fmpbrbb_-star",
+        "#_R_5fmpbrbb_-star",
+        "#_R_5fmpbrbb_-star",
+        "#_R_5vmpbrbb_-star",
+        "#_R_5vmpbrbb_-star",
+        "#_R_5vmpbrbb_-star",
+        "#_R_5vmpbrbb_-star",
+        "#_R_5vmpbrbb_-star",
+        "#_R_67mpbrbb_-star",
+        "#_R_67mpbrbb_-star",
+        "#_R_67mpbrbb_-star",
+        "#_R_67mpbrbb_-star",
+        "#_R_67mpbrbb_-star",
+        "#_R_6fmpbrbb_-star",
+        "#_R_6fmpbrbb_-star",
+        "#_R_6fmpbrbb_-star",
+        "#_R_6fmpbrbb_-star",
+        "#_R_6fmpbrbb_-star",
+        "#_R_6nmpbrbb_-star",
+        "#_R_6nmpbrbb_-star",
+        "#_R_6nmpbrbb_-star",
+        "#_R_6nmpbrbb_-star",
+        "#_R_6nmpbrbb_-star",
+        "#_R_6vmpbrbb_-star",
+        "#_R_6vmpbrbb_-star",
+        "#_R_6vmpbrbb_-star",
+        "#_R_6vmpbrbb_-star",
+        "#_R_6vmpbrbb_-star",
+        "#_R_77mpbrbb_-star",
+        "#_R_77mpbrbb_-star",
+        "#_R_77mpbrbb_-star",
+        "#_R_77mpbrbb_-star",
+        "#_R_77mpbrbb_-star",
+        "#_R_7fmpbrbb_-star",
+        "#_R_7fmpbrbb_-star",
+        "#_R_7fmpbrbb_-star",
+        "#_R_7fmpbrbb_-star",
+        "#_R_7fmpbrbb_-star"
+      ],
+      "imgSvg": [],
+      "cssSvg": [],
+      "doppelteIdsImDokument": [],
+      "fehler": [],
+      "gesperrt": 0
+    }
+  ],
+  "dateien": [
+    {
+      "datei": "public/images/bad-energie-lahn-dill-logo-transparent.svg",
+      "bytesRoh": 2541,
+      "bytesGzip": 1004,
+      "viewBox": "0 0 662 121",
+      "hatViewBox": true,
+      "istIcon": false,
+      "budgetOk": true,
+      "eingebetteteBitmaps": {
+        "imageElemente": 0,
+        "dataUri": 0
+      },
+      "textElemente": 5,
+      "pfadElemente": 2,
+      "textAlsPfadVermutet": false,
+      "festeFarben": [
+        "#38bdf8",
+        "#0284c7",
+        "#0369a1",
+        "#c51e1e",
+        "#e11d48",
+        "#fb7185",
+        "rgba(10,30,58,0.12)",
+        "#ffffff",
+        "#0a1e3a",
+        "rgba(10,30,58,0.04)",
+        "rgba(10,30,58,0.2)",
+        "#475569",
+        "rgba(10,30,58,0.15)"
+      ],
+      "schriftfamilien": [
+        "system-ui, -apple-system, BlinkMacSystemFont,",
+        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+      ],
+      "animiert": false,
+      "konfiguration": "statisch",
+      "svgo": {
+        "fixpunkt": false,
+        "fixpunktStandardkonfiguration": false,
+        "idempotent": true,
+        "bytesNachSvgo": 2107,
+        "ersparnisBytes": 434,
+        "ersparnisProzent": 17.1
+      },
+      "svgoFehler": null
+    },
+    {
+      "datei": "public/images/bad-energie-lahn-dill-logo-white-transparent.svg",
+      "bytesRoh": 2554,
+      "bytesGzip": 1006,
+      "viewBox": "0 0 662 121",
+      "hatViewBox": true,
+      "istIcon": false,
+      "budgetOk": true,
+      "eingebetteteBitmaps": {
+        "imageElemente": 0,
+        "dataUri": 0
+      },
+      "textElemente": 5,
+      "pfadElemente": 2,
+      "textAlsPfadVermutet": false,
+      "festeFarben": [
+        "#38bdf8",
+        "#0284c7",
+        "#0369a1",
+        "#c51e1e",
+        "#e11d48",
+        "#fb7185",
+        "rgba(255,255,255,0.15)",
+        "#ffffff",
+        "rgba(255,255,255,0.08)",
+        "rgba(255,255,255,0.25)",
+        "#cbd5e1",
+        "rgba(255,255,255,0.2)",
+        "#94a3b8"
+      ],
+      "schriftfamilien": [
+        "system-ui, -apple-system, BlinkMacSystemFont,",
+        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+      ],
+      "animiert": false,
+      "konfiguration": "statisch",
+      "svgo": {
+        "fixpunkt": false,
+        "fixpunktStandardkonfiguration": false,
+        "idempotent": true,
+        "bytesNachSvgo": 2114,
+        "ersparnisBytes": 440,
+        "ersparnisProzent": 17.2
+      },
+      "svgoFehler": null
+    },
+    {
+      "datei": "public/images/bad-energie-lahn-dill-logo.svg",
+      "bytesRoh": 2521,
+      "bytesGzip": 1000,
+      "viewBox": "0 0 662 121",
+      "hatViewBox": true,
+      "istIcon": false,
+      "budgetOk": true,
+      "eingebetteteBitmaps": {
+        "imageElemente": 0,
+        "dataUri": 0
+      },
+      "textElemente": 5,
+      "pfadElemente": 2,
+      "textAlsPfadVermutet": false,
+      "festeFarben": [
+        "#38bdf8",
+        "#0284c7",
+        "#0369a1",
+        "#c51e1e",
+        "#e11d48",
+        "#fb7185",
+        "rgba(10,30,58,0.12)",
+        "#ffffff",
+        "#0a1e3a",
+        "rgba(10,30,58,0.04)",
+        "rgba(10,30,58,0.2)",
+        "#475569",
+        "rgba(10,30,58,0.15)"
+      ],
+      "schriftfamilien": [
+        "system-ui, -apple-system, BlinkMacSystemFont,",
+        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+      ],
+      "animiert": false,
+      "konfiguration": "statisch",
+      "svgo": {
+        "fixpunkt": false,
+        "fixpunktStandardkonfiguration": false,
+        "idempotent": true,
+        "bytesNachSvgo": 2107,
+        "ersparnisBytes": 414,
+        "ersparnisProzent": 16.4
+      },
+      "svgoFehler": null
+    }
+  ]
+}
