@@ -57,3 +57,9 @@ Format: E-[Nr] · Datum · Gegenstand · Entscheidung · Grund · Umkehr (bei De
 - S-10 nur, wenn alle drei Merkmale (zentriert, Unterzeile + zwei Knöpfe, abstrakter Hintergrund) erfüllt sind.
 - Mitgeführt wird zusätzlich die Zahl eindeutiger Fundstellen (Komponenten).
 - Ausgangswert nach diesen Regeln: S-08 12 · S-09 12 · S-11 1 · S-12 5 · S-13 1 · S-14 4 = **35** (eindeutige Fundstellen: Layout-Schrift, HeaderBar, BenefitGrid, JobSections, Home-Abschnittsfolge, Mappe-Textbaustein, Logo = 7). Ziel Z-07: ≤ 7 gesamt (−80 %), ≤ 2 je Hauptseite.
+
+## E-011 · 09.10.2026 · Prüfregeln aus P0-SLOP-01
+- S-01: „Alexander Koch“ ist laut ROADMAP §1 ein echter Mitarbeiter mit freigegebenem Zitat → kein Platzhalter. Im Altstand war sein Name als vorbelegte Bewerberdaten missbraucht – das bleibt „nicht zurückführen“.
+- S-05 Ausnahmen: OG-Bilder (`ImageResponse`, Bildinhalte), `lib/tokens/index.ts` (Spiegel von theme.css), `0.01ms` in der Reduced-Motion-Regel (Technik, kommt ins Bewegungsregister), `env(safe-area-inset-bottom)` (Gerätewert). Keine Ausnahme: A4-Vorschau der Mappe (bekommt in P4 eine eigene Druck-Tokenskala in pt), Eingabefelder 17 px (bekommt ein Token).
+- SVGO: statische Konfiguration schützt IDs, auf die `aria-labelledby` zeigt (`staticConfig({}, {svg})` ist Standard); animierte Konfiguration ohne `inlineStyles`.
+- Werkzeug: `scrollThrough` scrollt mit `behavior: 'instant'` (vorher nur ~70 % Abdeckung bei `scroll-behavior: smooth`).

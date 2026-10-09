@@ -1,6 +1,8 @@
 // Slop-Prüfung, harte Befunde S-01 bis S-07 (Ebene 8 · Konsistenz, Z-07-Vorstufe).
 //
-// Aufruf: node slop-hart.mjs --base http://localhost:3500 --label P0-SLOP-01 [--teile code,render] [--only start,stellen] [--vps d1440,m375]
+// Aufruf: node slop-hart.mjs --base http://localhost:3500 --label P0-SLOP-01 [--teile code,render] [--only start,stellen] [--vps d1440,m375] [--selbsttest true]
+//   --selbsttest legt je Seite einen Prüfkörper mit bekannten Abweichungen an (Schrift, Radius, Schatten, Farben, Dauer, Platzhaltertext, Emoji,
+//   Scroll-Auftritt je Abschnitt) und weist damit nach, dass die Zählungen anschlagen; nie mit dem Beleg-Label des Ausgangsstands verwenden.
 //
 // Teil A (Code-Scan über app/, components/, lib/ – ohne __tests__ und *.test.ts(x), ohne node_modules/.next):
 //   S-01 Platzhalter-Muster · S-04 Icon-Quellen und Strichstärken · S-05 freie Werte (eckige Klammern, Inline-style,

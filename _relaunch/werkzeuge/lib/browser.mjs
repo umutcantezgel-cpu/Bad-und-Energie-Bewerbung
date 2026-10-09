@@ -125,14 +125,16 @@ export async function scrollThrough(page, { step = 0.8, pauseMs = 120 } = {}) {
   await page.evaluate(async ({ step, pauseMs }) => {
     const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     const h = () => document.documentElement.scrollHeight;
+    // scroll-behavior: smooth der Seite würde sonst jeden Sprung abbremsen (nur ~70 % Abdeckung, P0-SLOP-01).
+    const go = (top) => window.scrollTo({ top, left: 0, behavior: 'instant' });
     let y = 0;
     while (y < h() - innerHeight) {
       y += Math.round(innerHeight * step);
-      scrollTo(0, y);
+      go(y);
       await sleep(pauseMs);
     }
     await sleep(pauseMs * 2);
-    scrollTo(0, 0);
+    go(0);
     await sleep(pauseMs);
   }, { step, pauseMs });
 }

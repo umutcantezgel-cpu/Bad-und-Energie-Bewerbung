@@ -3,7 +3,7 @@
 ## Zehnfach-Tafel
 | Größe | Ausgangswert (P0) | Zielwert | Aktuell | Beleg |
 |---|---|---|---|---|
-| Slop hart (Summe S-01…S-07) | folgt P0 | 0 | – | belege/P0-SLOP-01/slop-hart.md |
+| Slop hart (S-01…S-07) | S-01 0 · S-02 0 · S-03 0 · S-04 1 (4 Icon-Strichstärken 1,75/2/2,25/2,5) · S-05 4 Fundstellen (FlowShortcuts calc-Klasse, CheckMark delay/duration, Mappe-pt-Größen, select 17 px) · S-06 46 Elemente ohne Hover-Zustand (d1440) · S-07 0 | 0 | wie Ausgang | belege/P0-SLOP-01/slop-hart.md |
 | Slop weich (Summe S-08…S-14, Grundmenge, Regeln E-010) | 35 (streng-wörtlich 17, mit allen Grenzfällen 46; 7 eindeutige Fundstellen) | ≤ 7, ≤ 2 je Hauptseite | 35 | belege/p0-slop-weich/slop-weich.md |
 | Jury (gewichtet aus Medianen, je Hauptseite) | Start 5,2 · Stellen 4,5 · Stellenseite 5,0 · Bewerbung 4,8 (schwächste Kategorie: Kreativität 2,5–4,0) | ≥ 8,0, keine Kategorie < 7,5 | wie Ausgang | belege/p0-jury/zusammenfassung.md |
 | Blindvergleich (Siege Endstand) | – | ≥ 90 % | – | – |
@@ -41,6 +41,15 @@ Log: `_relaunch/.roh/p0/ebene1.log` (lokal).
 | JS je Seite (gzip) | 170–224 KB; eindeutig 19 Dateien, 237 KB gzip |
 | CSS | 2 Dateien, 13,3 KB gzip |
 | Inline-SVG | 215 Elemente, 35 eindeutig; 1 über 1,5 KB (Radiusgrafik 2.459 B) |
+
+## Ebene 7/8 Suche und SVG (P0, P0-SLOP-01)
+| Prüfung | Ausgangswert |
+|---|---|
+| Metadaten Grundmenge | 12/12 mit title, description, 1 h1, JSON-LD (19 Blöcke gültig); 228 interne Links, 0 kaputt |
+| Alte URLs/Anker (24) | 15 ok · 1 Weiterleitung (`?tab=dossier` → 308 `/bewerbung/mappe`) · 8 Anker fehlen (`#express-funnel`, `#gehalt`, `#karriere-paket`, `#benefits`, `#ausstattung`, `#wechsel-prozess`, `#bewertungen`, `#kontakt`) |
+| Canonical | `/bewerbung` nutzt Anfrage-Host (lokal localhost) – prüfen; 404 ohne canonical (richtig) |
+| Inline-SVG | 215 (204 lucide, 11 eigene); 0 ID-Kollisionen; 0 Zugänglichkeitsfehler; Budgets eingehalten |
+| SVG-Dateien | 3 KI-Nachzeichnungen des Logos in `public/images/*.svg` (ungenutzt, kein SVGO-Fixpunkt) |
 
 ## Jury-Durchgänge
 ### Durchgang P0 (09.10.2026, Ausgangsstand a83269d)
