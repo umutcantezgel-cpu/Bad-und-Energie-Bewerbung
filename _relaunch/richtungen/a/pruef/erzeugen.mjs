@@ -128,7 +128,7 @@ function genKontrast() {
       return `<td class="modus-${m ? 'dunkel' : 'hell'} ${s === 'ungenügend' ? 'nok' : 'ok'}" data-l="${m ? 'Dunkel' : 'Hell'}"><b class="mass-zahl">${de(v)}</b>&nbsp;:&nbsp;1<span class="pass">${s}</span></td>`;
     };
     const chip = (m) => `<span class="chip modus-${m ? 'dunkel' : 'hell'}" style="--f:var(${fg});--g:var(${bg})"></span>`;
-    return `<tr><th scope="row"><span class="chips">${chip(0)}${chip(1)}</span>${name}</th><td data-l="Verwendung">${use}</td><td class="mono" data-l="Anforderung">${art === 'T' ? 'Text mindestens 4,5' : 'Grafik mindestens 3'}</td>${cell(0)}${cell(1)}</tr>`;
+    return `<tr><th scope="row"><span class="chips">${chip(0)}${chip(1)}</span>${name}</th><td data-l="Verwendung">${use}</td><td class="mono" data-l="Anforderung">${art === 'T' ? 'Text 4,5' : 'Grafik 3'}</td>${cell(0)}${cell(1)}</tr>`;
   });
   return rows.join('');
 }
