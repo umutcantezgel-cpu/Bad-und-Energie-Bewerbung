@@ -90,3 +90,20 @@ Format: E-[Nr] · Datum · Gegenstand · Entscheidung · Grund · Umkehr (bei De
 - Wortlaut: „zeig mir die bilder immer im chat wenn du welche machst“.
 - Regel: Jeder Bildlauf des Orchestrators oder eines Unteragenten (Bildschirmfotos, Stilkacheln, Bildpaare alt/neu, Bewegungs-Bildfolgen, Galerie) endet mit einer Auswahl der aussagekräftigsten Ausschnitte per SendUserFile in den Chat (Ansicht „render“, kurze Bildunterschrift: was, welcher Stand, welche Ansicht). Volle Sätze bleiben in `_relaunch/belege/`. Unteragenten können nicht in den Chat senden; das übernimmt der Orchestrator beim Auswerten.
 - Folge: Die Freigabe-Übersicht und jedes Wellenende enthalten Bilder. Die Nummer für die Richtungswahl verschiebt sich auf E-016.
+
+## E-016 · 09.10.2026 · Farben vom Auftraggeber bestätigt (WUNSCH, Rang 5)
+- Wortlaut: „Diese Design Farben sind die richtigen“, zusammen mit den Bildschirmfotos der Kacheln A „Werkplan“ und B „Haus & Kreislauf“ im hellen Thema (Desktop 1440 und Mobil 375, Stand Runde 1).
+- Festlegung (bindet Kacheln, KERN K-006 und alle Pakete):
+  - **Signalrot #D60000** für die eine Hauptaktion je Ansicht und den Vorlauf; Druck/Hover #A80000–#B00000.
+  - **Marken-Navy #0C1A72–#111D6D** (Logo und bad-energie.de) für Überschriften, Kennzahlen, Rücklauf und Leitungen.
+  - Schrift in tiefem Navy (#111A3B oder #111D6D).
+  - Helles Papier als Fläche, kühl #F3F5F9 (A) oder warm #FBF7F0 (B); dazu Bs warme Illustrationsflächen #F1E9DB/#FADCC9.
+  - Ein helleres Rücklauf- und Fokusblau ist erlaubt (#1F57C4).
+  - Nicht mehr als Hauptfarben: die bisherigen Plattform-Tokens Navy #0A1E3A und Crimson #C51E1E (ROADMAP §4). Grün nur für Erfolg, keine Verläufe.
+- Offen bis zur Freigabe: kühles oder warmes Papier, entschieden mit der Richtung. Das dunkle Thema wird aus derselben Familie abgeleitet und am Freigabepunkt gezeigt.
+- Folgen:
+  - `pakete/_richtung.md` trägt die Palette als harte Vorgabe. Das betrifft Kachel C und die Überarbeitungsrunde.
+  - In P3-ORCH-01 werden `theme.css` (Primitive und Rollen) und `check-contrast.mjs` umgestellt. Weiß auf #D60000 hat 5,4:1 (≥ 4,5); #0C1A72 auf #F3F5F9 hat ≈ 14:1.
+  - ROADMAP §4 „Farbe“ wird mit KERN K-006 abgeglichen.
+- Umkehr: Werte in `theme.css` zurücksetzen. Die Rollen-Tokens bleiben gleich, sodass Komponenten unberührt bleiben.
+- Die Richtungswahl wird damit E-017.
