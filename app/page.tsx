@@ -12,6 +12,7 @@ import {
   RegionSection,
   homeDescription,
 } from '@/components/home';
+import { AnchorAliases } from '@/components/home/AnchorAliases';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import { generatePageMetadata } from '@/lib/seo/metadata';
 
@@ -36,16 +37,38 @@ export function generateMetadata(): Metadata {
  * („Jetzt bewerben“) per viewport. Job cards, map and reviews sit on plain surface sections
  * because their cards use surface-2.
  */
+/**
+ * Anchors of the previous career page (E-START-052, E-SEO-021), kept as alias targets right
+ * before the section that took over their task. Plain spans work without JavaScript; the scroll
+ * offset for the sticky header comes from the global scroll-padding.
+ */
+function Alias({ ids }: { ids: readonly string[] }) {
+  return (
+    <>
+      {ids.map((id) => (
+        <span key={id} id={id} aria-hidden="true" className="block" />
+      ))}
+    </>
+  );
+}
+
 export default function HomePage() {
   return (
     <>
+      <AnchorAliases />
+      <Alias ids={['express-funnel']} />
       <Hero />
+      <Alias ids={['karriere-paket', 'gehalt']} />
       <JobList />
+      <Alias ids={['benefits', 'ausstattung']} />
       <BenefitGrid />
       <RegionSection />
+      <Alias ids={['wechsel-prozess']} />
       <ProcessTimeline />
+      <Alias ids={['bewertungen']} />
       <AboutSection />
       <FaqSection />
+      <Alias ids={['kontakt']} />
       <CtaBand />
     </>
   );
