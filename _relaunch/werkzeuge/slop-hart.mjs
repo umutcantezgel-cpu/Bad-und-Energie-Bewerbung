@@ -712,12 +712,13 @@ if (teile.includes('render')) {
         const eintrag = { fundstelle: pfad(el), typ, tag, name, hover: hoverOrt !== null, hoverSelbst, hoverOrt, fokusVisible: passt(el, fokusSel) || fokusHasSel.some((sl) => { try { return !!el.closest(sl); } catch { return false; } }), fokusNurFocus: passt(el, fokusAltSel), deaktiviert: el.disabled === true || el.getAttribute('aria-disabled') === 'true' };
         if (typ === 'feld' && !['checkbox', 'radio', 'submit', 'button', 'reset', 'image', 'file', 'range', 'color'].includes(el.type ?? '')) eintrag.fehlerstil = passt(el, invalidSel);
         if (typ === 'feld' && ['checkbox', 'radio'].includes(el.type)) eintrag.fehlerstil = passt(el, invalidSel);
+        if (!eintrag.hover) { eintrag.idx = liste.length; el.setAttribute('data-slop-s06', String(liste.length)); }
         liste.push(eintrag);
       }
       const nach = (t) => liste.filter((x) => x.typ === t);
       const bilanz = (l) => ({ gesamt: l.length, ohneHover: l.filter((x) => !x.hover).length, ohneHoverAmElementSelbst: l.filter((x) => !x.hoverSelbst).length, ohneFokusVisible: l.filter((x) => !x.fokusVisible).length, ohneHoverUndOhneFokus: l.filter((x) => !x.hover && !x.fokusVisible).length });
       const felder = liste.filter((x) => 'fehlerstil' in x);
-      out.s06 = { regelnGelesen: regeln.length, hoverRegeln: hoverSel.length, fokusRegeln: fokusSel.length + fokusHasSel.length, invalidRegeln: invalidSel.length, stylesheetsBlockiert: blockiert, elemente: liste.length, link: bilanz(nach('link')), knopf: bilanz(nach('knopf')), feld: { ...bilanz(nach('feld')), mitFehlerstilPruefung: felder.length, ohneFehlerstil: felder.filter((x) => !x.fehlerstil).length }, sonstiges: bilanz(nach('sonstiges')), ohneHover: liste.filter((x) => !x.hover).slice(0, 80), ohneFokusVisible: liste.filter((x) => !x.fokusVisible).slice(0, 80), felderOhneFehlerstil: felder.filter((x) => !x.fehlerstil) };
+      out.s06 = { regelnGelesen: regeln.length, hoverRegeln: hoverSel.length, fokusRegeln: fokusSel.length + fokusHasSel.length, invalidRegeln: invalidSel.length, stylesheetsBlockiert: blockiert, elemente: liste.length, link: bilanz(nach('link')), knopf: bilanz(nach('knopf')), feld: { ...bilanz(nach('feld')), mitFehlerstilPruefung: felder.length, ohneFehlerstil: felder.filter((x) => !x.fehlerstil).length }, sonstiges: bilanz(nach('sonstiges')), ohneHover: liste.filter((x) => !x.hover), ohneFokusVisible: liste.filter((x) => !x.fokusVisible).slice(0, 80), felderOhneFehlerstil: felder.filter((x) => !x.fehlerstil) };
     }
     return out;
   };
@@ -752,6 +753,21 @@ if (teile.includes('render')) {
       if (/^[\d.,\s%+€]+$/.test(t) && /\d/.test(t)) zahlen[pfad(el)] = t;
     }
     return { h1: h1Info, overflow: { html: de.overflowY, body: bo.overflowY }, scrollbarNoetig: scrollbar, scrollhoehe: hoehe, scrollenMoeglich: gescrollt, vollbildUeberlagerungen: ueberlagerungen, elementInDerMitte: mitte ? pfad(mitte) : null, readyState: document.readyState, zahlen };
+  };
+
+  // Darstellung von Element, vier Vorfahren und bis zu 60 Nachfahren (für die Hover-Messung)
+  const snapshotHover = (idx) => {
+    const el = document.querySelector(`[data-slop-s06="${idx}"]`);
+    if (!el) return {};
+    const knoten = [];
+    let a = el.parentElement;
+    for (let i = 0; i < 4 && a && a !== document.body; i++, a = a.parentElement) knoten.push(['v' + (i + 1), a]);
+    knoten.push(['e', el]);
+    [...el.querySelectorAll('*')].slice(0, 60).forEach((d, i) => knoten.push([`n${i}`, d]));
+    const eigenschaften = ['color', 'backgroundColor', 'borderTopColor', 'borderBottomColor', 'borderLeftColor', 'borderRightColor', 'textDecorationLine', 'textDecorationColor', 'opacity', 'boxShadow', 'transform', 'outlineStyle', 'filter', 'fill', 'stroke', 'translate', 'scale'];
+    const out = {};
+    for (const [k, n] of knoten) { const cs = getComputedStyle(n); for (const p of eigenschaften) out[`${k}.${p}`] = cs[p]; }
+    return out;
   };
 
   const browser = await launch();
@@ -822,6 +838,34 @@ if (teile.includes('render')) {
         eintrag.s05 = m.s05;
         eintrag.s05.schriftTokenPx = schriftgroessen(vp.width);
         eintrag.s06 = m.s06;
+        // Hover per Messung (nur Desktop-Ansicht: mobil gilt (hover: none), dort greifen hover:-Stile nicht): Zeiger auf das Element setzen und prüfen, ob sich Darstellung von Element, Vorfahren oder Nachfahren ändert
+        if (vp.name === 'd1440') {
+          const kandidaten = m.s06.ohneHover;
+          let geprueft = 0; let mitWechsel = 0;
+          for (const k of kandidaten) {
+            const sel = `[data-slop-s06="${k.idx}"]`;
+            const loc = page.locator(sel);
+            try {
+              await loc.scrollIntoViewIfNeeded({ timeout: 2000 });
+              const box = await loc.boundingBox();
+              if (!box || box.width < 2 || box.height < 2) { k.hoverGemessen = null; k.hoverGrund = 'nicht hoverbar (1 px oder verdeckt)'; continue; }
+              await page.mouse.move(2, 2); await page.waitForTimeout(60);
+              const vor = await page.evaluate(snapshotHover, k.idx);
+              await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+              await page.waitForTimeout(300);
+              const nach = await page.evaluate(snapshotHover, k.idx);
+              const unter = await page.evaluate(([x, y, i]) => { const e = document.elementFromPoint(x, y); const z = document.querySelector(`[data-slop-s06="${i}"]`); return !!(e && z && (e === z || z.contains(e) || e.contains(z))); }, [box.x + box.width / 2, box.y + box.height / 2, k.idx]);
+              const unterschiede = [];
+              for (const key of Object.keys(vor)) if (vor[key] !== nach[key]) unterschiede.push(key);
+              k.hoverGemessen = unterschiede.length > 0;
+              k.hoverUnterschiede = unterschiede.slice(0, 6);
+              k.zeigerAufElement = unter;
+              geprueft += 1; if (unterschiede.length) mitWechsel += 1;
+              await page.mouse.move(2, 2);
+            } catch (e) { k.hoverGemessen = null; k.hoverGrund = String(e?.message ?? e).slice(0, 80); }
+          }
+          eintrag.s06.hoverMessung = { kandidaten: kandidaten.length, geprueft, mitDarstellungswechsel: mitWechsel, ohneWechsel: geprueft - mitWechsel };
+        }
         // ── S-03: axe color-contrast ──
         try {
           const ax = await new AxeBuilder({ page }).withRules(['color-contrast']).analyze();
@@ -894,7 +938,7 @@ if (c['S-01'] || seiten.length) {
     code: c['S-05'] ? { eckigWertklassen: c['S-05'].eckigWertklassen, eckigTokenrelevant: c['S-05'].eckigTokenrelevant, zahlDauerKlassen: c['S-05'].zahlDauerKlassen, hexwerteOhneAnker: c['S-05'].hexwerteOhneAnker, inlineStyleFrei: c['S-05'].inlineStyleFrei, cssFreieWerte: c['S-05'].cssFreieWerte, jsDauernUndKurven: c['S-05'].jsDauernUndKurven } : null,
     gerendert: seiten.length ? Object.fromEntries(['schriftgroesse', 'radius', 'schatten', 'farbe', 'hintergrund', 'dauer'].map((e) => [e, { elementeAusserhalb: summe((x) => x.s05?.volltext[e].ausserhalb), stichprobeAbweichend: summe((x) => x.s05?.stichprobe.abweichungenJeEigenschaft[e]) }])) : null,
   };
-  z['S-06'] = seiten.length ? { elemente: summe((x) => x.s06?.elemente), ohneHover: summe((x) => x.s06?.ohneHover.length), ohneHoverAmElementSelbst: summe((x) => ['link', 'knopf', 'feld', 'sonstiges'].reduce((n, k) => n + (x.s06?.[k].ohneHoverAmElementSelbst ?? 0), 0)), ohneFokusVisibleStil: summe((x) => x.s06?.ohneFokusVisible.length), felderOhneFehlerstil: summe((x) => x.s06?.feld.ohneFehlerstil) } : null;
+  z['S-06'] = seiten.length ? { elemente: summe((x) => x.s06?.elemente), ohneHover: summe((x) => x.s06?.ohneHover.length), ohneHoverAmElementSelbst: summe((x) => ['link', 'knopf', 'feld', 'sonstiges'].reduce((n, k) => n + (x.s06?.[k].ohneHoverAmElementSelbst ?? 0), 0)), ohneHoverNachMessungOhneWechsel: summe((x) => x.s06?.hoverMessung?.ohneWechsel), ohneHoverMessungNichtMoeglich: summe((x) => (x.s06?.ohneHover ?? []).filter((e) => e.hoverGemessen === null).length), ohneFokusVisibleStil: summe((x) => x.s06?.ohneFokusVisible.length), felderOhneFehlerstil: summe((x) => x.s06?.feld.ohneFehlerstil) } : null;
   z['S-07'] = {
     code: c['S-07'] ? { treffer: c['S-07'].treffer, kandidat: c['S-07'].davonKandidat } : null,
     gerendert: seiten.length ? { h1NichtSichtbarNach300ms: seiten.filter((x) => x.s07?.h1SichtbarNach300ms === false).length, scrollenNichtMoeglich: seiten.filter((x) => x.s07?.scrollenOk === false).length, vollbildUeberlagerung: seiten.filter((x) => x.s07?.vollbildUeberlagerungen.length).length, zaehlerAenderungen: summe((x) => x.s07?.zaehlerAenderungen.length), seitenOhneH1: seiten.filter((x) => x.s07 && x.s07.h1 === null).length } : null,
@@ -928,7 +972,7 @@ zeilen.push(['S-02 Effektteppich', '–', Z['S-02'] ? `${Z['S-02'].abschnitteMit
 zeilen.push(['S-03 Unzugänglich', '–', Z['S-03'] ? `Kontrast ${Z['S-03'].kontrastVerletzungen} Verletzungen (${Z['S-03'].kontrastUnklar} unklar) · Fokus ${Z['S-03'].fokusNichtOk} von ${Z['S-03'].fokusGeprueft} Tab-Stopps ohne 2-px-Outline` : '–']);
 zeilen.push(['S-04 Gemischte Bildsprache', Z['S-04']?.code ? `Quellen ${kv(Z['S-04'].code.iconQuellen)} · ${Z['S-04'].code.verschiedeneIcons} verschiedene Icons · ${Z['S-04'].code.eigeneSvgKomponenten} eigene SVG-Komponenten · Icon-Marken ohne strokeWidth ${Z['S-04'].code.iconMarkenOhneStrokeWidth} · Emojis im Code ${Z['S-04'].code.emojisImCodeHart}` : '–', Z['S-04']?.gerendert ? `Emojis ${Z['S-04'].gerendert.emojisHart} (+ ${Z['S-04'].gerendert.emojisTypografisch} typografisch) · höchstens ${Z['S-04'].gerendert.verschiedeneStrichstaerkenNurIconsMax} verschiedene Strichstärken je Seite (Icons)` : '–']);
 zeilen.push(['S-05 Ungeordnete Werte', Z['S-05']?.code ? `-[ Wertklassen ${Z['S-05'].code.eckigWertklassen} (tokenrelevant ${Z['S-05'].code.eckigTokenrelevant}) · duration-/delay-Zahl ${Z['S-05'].code.zahlDauerKlassen} · Hex ${Z['S-05'].code.hexwerteOhneAnker} · Inline-style frei ${Z['S-05'].code.inlineStyleFrei} · CSS frei ${Z['S-05'].code.cssFreieWerte} · JS-Dauern/Kurven ${Z['S-05'].code.jsDauernUndKurven}` : '–', Z['S-05']?.gerendert ? Object.entries(Z['S-05'].gerendert).map(([k, v]) => `${k} ${v.elementeAusserhalb}`).join(' · ') + ' (Elemente außerhalb Token, Summe der Seitenansichten)' : '–']);
-zeilen.push(['S-06 Halbe Zustände', '–', Z['S-06'] ? `${Z['S-06'].elemente} interaktive Elemente · ohne Hover-Stil ${Z['S-06'].ohneHover} (am Element selbst ${Z['S-06'].ohneHoverAmElementSelbst}) · ohne :focus-visible-Stil ${Z['S-06'].ohneFokusVisibleStil} · Felder ohne aria-invalid-Stil ${Z['S-06'].felderOhneFehlerstil}` : '–']);
+zeilen.push(['S-06 Halbe Zustände', '–', Z['S-06'] ? `${Z['S-06'].elemente} interaktive Elemente · ohne Hover-Stil ${Z['S-06'].ohneHover} (am Element selbst ${Z['S-06'].ohneHoverAmElementSelbst}; per Zeigermessung d1440 ohne Darstellungswechsel ${Z['S-06'].ohneHoverNachMessungOhneWechsel}, nicht messbar ${Z['S-06'].ohneHoverMessungNichtMoeglich}) · ohne :focus-visible-Stil ${Z['S-06'].ohneFokusVisibleStil} · Felder ohne aria-invalid-Stil ${Z['S-06'].felderOhneFehlerstil}` : '–']);
 zeilen.push(['S-07 Blockierender Auftakt', Z['S-07']?.code ? `${Z['S-07'].code.treffer} Treffer (davon ${Z['S-07'].code.kandidat} Kandidaten)` : '–', Z['S-07']?.gerendert ? `h1 nach 300 ms nicht sichtbar ${Z['S-07'].gerendert.h1NichtSichtbarNach300ms} · Scrollen nicht möglich ${Z['S-07'].gerendert.scrollenNichtMoeglich} · Vollbild-Überlagerung ${Z['S-07'].gerendert.vollbildUeberlagerung} · Zähleränderungen ${Z['S-07'].gerendert.zaehlerAenderungen}` : '–']);
 L.push(...tab(['Befund', 'Code', 'Gerendert (Summe der Seitenansichten)'], zeilen));
 
@@ -1008,7 +1052,7 @@ if (bericht.seiten.length) {
   L.push('', '### S-06 Hover-/Fokus-/Fehlerstil je interaktivem Element', '');
   L.push(...tab(['Seite', 'Ansicht', 'Links ohne Hover (am Element selbst)', 'Knöpfe ohne Hover', 'Felder ohne Hover', 'Links ohne :focus-visible', 'Knöpfe ohne :focus-visible', 'Felder ohne :focus-visible', 'Felder ohne aria-invalid-Stil', 'CSS-Regeln (Hover/Fokus/Invalid)'], bericht.seiten.filter((x) => x.s06).map((x) => [x.pfad, x.ansicht, `${x.s06.link.ohneHover}/${x.s06.link.gesamt} (${x.s06.link.ohneHoverAmElementSelbst})`, `${x.s06.knopf.ohneHover}/${x.s06.knopf.gesamt} (${x.s06.knopf.ohneHoverAmElementSelbst})`, `${x.s06.feld.ohneHover}/${x.s06.feld.gesamt}`, `${x.s06.link.ohneFokusVisible}/${x.s06.link.gesamt}`, `${x.s06.knopf.ohneFokusVisible}/${x.s06.knopf.gesamt}`, `${x.s06.feld.ohneFokusVisible}/${x.s06.feld.gesamt}`, `${x.s06.feld.ohneFehlerstil}/${x.s06.feld.mitFehlerstilPruefung}`, `${x.s06.hoverRegeln}/${x.s06.fokusRegeln}/${x.s06.invalidRegeln}`])));
   const ohneH = bericht.seiten.filter((x) => x.ansicht === 'd1440').flatMap((x) => x.s06.ohneHover.map((e) => ({ seite: x.pfad, ...e })));
-  top(ohneH, 50, ['Seite', 'Typ', 'Element', 'Fundstelle'], (e) => [e.seite, e.typ, e.name || e.tag, `\`${e.fundstelle.slice(-80)}\``], 'S-06 Elemente ohne Hover-Stil (d1440)');
+  top(ohneH, 80, ['Seite', 'Typ', 'Element', 'Fundstelle', 'Zeigermessung'], (e) => [e.seite, e.typ, e.name || e.tag, `\`${e.fundstelle.slice(-80)}\``, e.hoverGemessen === true ? `Darstellung ändert sich (${(e.hoverUnterschiede ?? []).join(', ')})` : e.hoverGemessen === false ? 'keine Änderung' : (e.hoverGrund ?? '–')], 'S-06 Elemente ohne Hover-Regel im CSS (d1440, mit Zeigermessung)');
   const ohneF = bericht.seiten.filter((x) => x.ansicht === 'd1440').flatMap((x) => x.s06.ohneFokusVisible.map((e) => ({ seite: x.pfad, ...e })));
   top(ohneF, 50, ['Seite', 'Typ', 'Element', 'Fundstelle', ':focus-Stil statt :focus-visible'], (e) => [e.seite, e.typ, e.name || e.tag, `\`${e.fundstelle.slice(-80)}\``, e.fokusNurFocus ? 'ja' : 'nein'], 'S-06 Elemente ohne :focus-visible-Stil (d1440)');
   const ohneI = bericht.seiten.filter((x) => x.ansicht === 'd1440').flatMap((x) => x.s06.felderOhneFehlerstil.map((e) => ({ seite: x.pfad, ...e })));
@@ -1025,6 +1069,7 @@ L.push('', '## Hinweise zur Methode', '',
   '- S-03: axe-core-Regel color-contrast allein; Fokus: echte Tab-Taste, `:focus-visible` muss zutreffen und am Element selbst, an `::after`/`::before` oder an einem bis zu drei Ebenen höheren Vorfahren mit `:has(:focus-visible)` muss `outline-style` ≠ none mit `outline-width` ≥ 2 px gelten (ein Ring über box-shadow zählt nicht als Outline, wird aber als „nur box-shadow“ ausgewiesen; der Ort des Rings steht in `ringOrt`). „Information nur über Hover oder Farbe“ ist per Skript nicht entscheidbar; Hinweise stehen unter Code.',
   '- S-05 Stichprobe: gleichmäßig durch die Dokumentreihenfolge aller sichtbaren Elemente; Vergleich mit den aus theme.css gelesenen Werten (Farben alle Hex-Werte der Datei, Radien, Schatten über Prüfelement normalisiert, Dauern, Schriftstufen als clamp() für die jeweilige Ansichtsbreite aufgelöst). Der Volltext derselben Seite ist die vollständige Zählung. Farben mit Deckkraft < 1 gelten als Token, wenn der RGB-Anteil einem Token entspricht (±3).',
   '- S-06: Hover-/Fokus-Regeln werden aus allen lesbaren Stylesheets samt verschachtelten Regeln und @media/@supports/@layer gesammelt; ein Element hat den Stil, wenn es den Selektor ohne die Pseudoklasse trifft (Vorfahren-Hover im Selektor eingeschlossen). Für Hover zählt zusätzlich ein Hover-Stil an einem der vier nächsten Vorfahren (Karte mit gestrecktem Link: der Zeiger über dem Link liegt immer auch über der Karte); `hoverSelbst` in der JSON-Datei und die Spalte „am Element selbst“ weisen die strenge Zählung aus. Medienbedingungen wie (hover: hover) werden nicht ausgewertet.',
+  '- S-06 Zeigermessung (nur d1440): Für jedes Element ohne Hover-Regel setzt das Skript den Mauszeiger darauf und vergleicht 300 ms später Farben, Rahmen, Textdekoration, Deckkraft, Schatten, Transform, Filter, Füllung und Strich von Element, vier Vorfahren und bis zu 60 Nachfahren. Mobil (hover: none) greifen hover:-Stile nicht, dort zählt nur die CSS-Regel.',
   '- S-07: `domcontentloaded` + 300 ms; h1 gilt als sichtbar bei Gesamt-Deckkraft ≥ 0,999, visibility visible und Lage im ersten Bildschirm; Scrollen wird mit scrollTo geprüft, wenn die Seite höher als der Bildschirm ist; Zähler = Blattelemente, deren Text nur aus Ziffern und Zeichen besteht und sich zwischen 300 ms und 2,5 s ändert.');
 await fs.writeFile(path.join(outDir, 'slop-hart.md'), L.join('\n') + '\n');
 console.log(`\nFERTIG → ${path.relative(REPO, outDir)}/slop-hart.json, slop-hart.md`);
