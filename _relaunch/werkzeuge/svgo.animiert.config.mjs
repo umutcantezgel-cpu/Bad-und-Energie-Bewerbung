@@ -27,12 +27,21 @@ export const PRESERVE_IDS = [];
 /** Dauerhaft geschützte ID-Präfixe, z. B. für je Instanz erzeugte IDs (useId-Muster). */
 export const PRESERVE_PREFIXES = [];
 
-/** Aufbau der animierten Konfiguration. `ids`/`prefixes` ergänzen die Schutzlisten, `svg` liest Ids automatisch aus dem Quelltext. */
-export function animiertConfig({ ids = [], prefixes = [], svg } = {}) {
+/**
+ * Aufbau der animierten Konfiguration. `ids`/`prefixes` ergänzen die Schutzlisten, `svg` liest Ids automatisch aus dem Quelltext.
+ *
+ * `inlineStyles: false` (Standard: true = wie im Auftrag, das Plugin bleibt aktiv) schaltet zusätzlich inlineStyles ab.
+ * BEFUND (gemessen mit SVGO 4.0.0): inlineStyles läuft vor cleanupIds, überträgt CSS aus einem <style> in style-Attribute und
+ * entfernt danach die dadurch „überflüssigen“ id- und class-Attribute – auch solche, die in `preserve` stehen. IDs und Klassen,
+ * die Skripte oder Seiten-CSS ansprechen, gehen so verloren. Ob die animierte Konfiguration inlineStyles abschalten soll, ist
+ * als OFFENE FRAGE an den Orchestrator gemeldet (Bericht P0-SLOP-01).
+ */
+export function animiertConfig({ ids = [], prefixes = [], svg, inlineStyles = true } = {}) {
   const preserve = [...new Set([...PRESERVE_IDS, ...ids, ...(svg ? idsAusQuelltext(svg) : [])])];
   const preservePrefixes = [...new Set([...PRESERVE_PREFIXES, ...prefixes])];
   const overrides = Object.fromEntries(ABGESCHALTET.map((n) => [n, false]));
   overrides.cleanupIds = { preserve, preservePrefixes };
+  if (!inlineStyles) overrides.inlineStyles = false;
   return staticConfig(overrides);
 }
 
