@@ -118,12 +118,9 @@ enabled = true
 # The maximum file size allowed (e.g. "5MB", "500KB").
 file_size_limit = "50MiB"
 
-# Bewerbungsunterlagen: privat, nur über signierte Upload-URLs vom Server (Phase 2b).
-# Die Migration *_storage.sql legt denselben Bucket in der Cloud an.
-[storage.buckets.application-files]
-public = false
-file_size_limit = "10MiB"
-allowed_mime_types = ["application/pdf", "image/jpeg", "image/png", "image/heic", "image/heif", "image/webp"]
+# Bucket application-files: bewusst nicht hier, sondern nur in der Migration *_storage.sql.
+# Ein Eintrag hier würde lokal nach den Migrationen über die Storage-API gespiegelt und die
+# Tests würden die Config statt der Migration prüfen.
 
 # Allow connections via S3 compatible clients
 # Aus: S3-Zugangsschlüssel umgehen RLS; der Bucket wird nur über die Storage-API genutzt.
@@ -221,7 +218,10 @@ web3 = 30
 
 [auth.email]
 # Allow/disallow new user signups via email to your project.
-enable_signup = false
+# Achtung: Dieser Schalter ist der E-Mail-Provider selbst (GOTRUE_EXTERNAL_EMAIL_ENABLED). Mit
+# false wäre auch der OTP-Login aus. Neue Konten verhindert [auth] enable_signup = false
+# zusammen mit dem before_user_created-Hook.
+enable_signup = true
 # If enabled, a user will be required to confirm any email change on both the old, and new email
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
@@ -232,9 +232,12 @@ secure_password_change = false
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
 max_frequency = "60s"
 # Number of characters used in the email OTP.
-otp_length = 6
+# 8 statt 6 Stellen: Die Gültigkeit gilt auch für Einladungslinks und ist deshalb länger.
+otp_length = 8
 # Number of seconds before the email OTP expires (defaults to 1 hour).
-otp_expiry = 600
+# Gilt in GoTrue auch für Einladungs- und Bestätigungslinks; 600 s ließen Einladungen nach
+# 10 Minuten verfallen (danach hilft nur eine neue Einladung).
+otp_expiry = 3600
 
 # Use a production-ready SMTP server
 # [auth.email.smtp]

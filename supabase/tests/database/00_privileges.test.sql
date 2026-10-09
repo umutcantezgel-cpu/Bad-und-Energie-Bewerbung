@@ -3,7 +3,7 @@
 -- Katalogspalten sind vom Typ name (Collation "C"); für results_eq daher collate "default".
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(21);
+select plan(23);
 
 select is(
   (select count(*) from pg_tables where schemaname in ('public', 'private') and not rowsecurity),
@@ -23,6 +23,25 @@ select is(
     where grantee = 'authenticated' and table_schema = 'private'),
   0::bigint,
   'authenticated hat keine Tabellenrechte in private'
+);
+
+-- has_*_privilege berücksichtigt auch Rechte über PUBLIC und Spaltenrechte.
+select is(
+  (select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace
+     cross join (values ('anon'), ('service_role')) r(rol)
+    where n.nspname in ('public', 'private') and c.relkind in ('r', 'p', 'v', 'm', 'f')
+      and (has_table_privilege(r.rol, c.oid, 'SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER, MAINTAIN')
+           or has_any_column_privilege(r.rol, c.oid, 'SELECT, INSERT, UPDATE, REFERENCES'))),
+  0::bigint,
+  'anon und service_role: keine Tabellen- oder Spaltenrechte, auch nicht über PUBLIC'
+);
+
+select is(
+  (select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace
+    where n.nspname = 'private' and c.relkind in ('r', 'p')
+      and has_any_column_privilege('authenticated', c.oid, 'SELECT, INSERT, UPDATE, REFERENCES')),
+  0::bigint,
+  'authenticated: keine Spaltenrechte in private'
 );
 
 select is(
@@ -132,9 +151,11 @@ select is(
   'keine Default-Privileges für API-Rollen auf neue Objekte in public'
 );
 
-select ok(
-  exists (select 1 from storage.buckets where id = 'application-files' and not public and file_size_limit = 10485760),
-  'Bucket application-files ist privat mit 10 MiB'
+select results_eq(
+  $$ select public, file_size_limit, allowed_mime_types from storage.buckets where id = 'application-files' $$,
+  $$ values (false, 10485760::bigint,
+             array['application/pdf', 'image/jpeg', 'image/png', 'image/heic', 'image/heif', 'image/webp']::text[]) $$,
+  'Bucket application-files (aus der Migration): privat, 10 MiB, nur PDF und Bilder'
 );
 
 select is(

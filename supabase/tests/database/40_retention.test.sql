@@ -4,7 +4,7 @@
 -- erzwingt die DB now() (siehe 20_rls). now() ist innerhalb der Transaktion konstant.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(15);
+select plan(18);
 
 create function pg_temp.app(p_ref text, p_key text)
 returns jsonb language sql as $$
@@ -138,6 +138,26 @@ select is(
   (select last_activity_at from public.applications where reference = 'BE-26-RET237'),
   now() - interval '30 days',
   'Abmelden durch Kaskade zählt nicht als Aktivität'
+);
+
+-- Basis unterscheidbar von now(): Die Frist hängt an der Aktivität bzw. am Stufenwechsel,
+-- nicht am Zeitpunkt der letzten Änderung.
+select is(
+  (select retention_until from public.applications where reference = 'BE-26-RET237'),
+  now() - interval '30 days' + interval '12 months',
+  'Offene Bewerbung: 12 Monate ab letzter Aktivität, nicht ab der letzten Änderung'
+);
+
+update public.applications set stage_changed_at = now() - interval '2 months' where reference = 'BE-26-RET236';
+update public.applications set rating = 2 where reference = 'BE-26-RET236';
+select lives_ok(
+  $$ select public.rpc_submit_follow_up('{"reference": "BE-26-RET236", "idempotency_key": "7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a", "message": "Nachtrag"}'::jsonb) $$,
+  'Ergänzung nach der Einstellung'
+);
+select is(
+  (select retention_until from public.applications where reference = 'BE-26-RET236'),
+  now() - interval '2 months' + interval '6 months',
+  'Einstellung: 6 Monate ab Stufenwechsel, spätere Aktivität verlängert nicht'
 );
 
 select throws_ok(

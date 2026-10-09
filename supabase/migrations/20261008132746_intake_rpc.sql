@@ -85,11 +85,27 @@ begin
      or coalesce(jsonb_typeof(payload -> 'attribution'), 'object') <> 'object'
      or coalesce(jsonb_typeof(payload -> 'mappe'), 'null') not in ('object', 'null')
      or coalesce(jsonb_typeof(payload -> 'email'), 'null') not in ('string', 'null')
-     or coalesce(jsonb_typeof(payload -> 'content_hash'), 'null') not in ('string', 'null') then
+     or coalesce(jsonb_typeof(payload -> 'content_hash'), 'null') not in ('string', 'null')
+     -- Pflicht-Strings (->> würde jeden JSON-Typ still in Text umwandeln).
+     or jsonb_typeof(payload -> 'reference') is distinct from 'string'
+     or jsonb_typeof(payload -> 'submitted_at') is distinct from 'string'
+     or jsonb_typeof(payload -> 'name') is distinct from 'string'
+     or jsonb_typeof(payload -> 'contact_channel') is distinct from 'string'
+     or jsonb_typeof(payload -> 'acquisition_channel') is distinct from 'string'
+     or jsonb_typeof(payload -> 'privacy_notice_version') is distinct from 'string'
+     or jsonb_typeof(payload -> 'job' -> 'id') is distinct from 'string'
+     or jsonb_typeof(payload -> 'job' -> 'title') is distinct from 'string'
+     or jsonb_typeof(payload -> 'job' -> 'question_set') is distinct from 'string'
+     or jsonb_typeof(payload -> 'phone' -> 'raw') is distinct from 'string'
+     or coalesce(jsonb_typeof(payload -> 'job' -> 'reference_code'), 'null') not in ('string', 'null')
+     or coalesce(jsonb_typeof(payload -> 'phone' -> 'e164'), 'null') not in ('string', 'null') then
     raise exception 'validation_failed' using errcode = 'P0001';
   end if;
 
   if exists (
+       select 1 from jsonb_each(coalesce(payload -> 'attribution', '{}'::jsonb)) e
+       where jsonb_typeof(e.value) not in ('string', 'null'))
+     or exists (
        select 1 from jsonb_object_keys(payload) k
        where k <> all (array[
          'reference', 'idempotency_key', 'content_hash', 'submitted_at', 'job', 'answers', 'mappe',
@@ -296,7 +312,7 @@ begin
       v_spam,
       v_signals,
       v_fill,
-      coalesce((payload ->> 'submitted_at')::timestamptz, now())
+      (payload ->> 'submitted_at')::timestamptz
     )
     returning id, reference into v_application_id, v_reference;
 

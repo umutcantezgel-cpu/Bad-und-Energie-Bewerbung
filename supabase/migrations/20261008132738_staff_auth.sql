@@ -2,11 +2,14 @@
 -- Cockpit-Zugang: Staff, Allowlist, Auth-Hook und RLS-Hilfsfunktionen.
 --
 -- - Registrierung ist aus (config.toml lokal; remote im Dashboard, siehe Plan §8).
---   Neue Auth-Nutzer entstehen nur für Adressen auf private.staff_email_allowlist
---   (Hook before_user_created).
--- - Onboarding nur per Einladung: Ein neuer Auth-Nutzer mit Allowlist-Eintrag und ohne
---   Passwort bekommt automatisch eine Staff-Zeile. Ein selbst registriertes Konto hat immer
---   ein Passwort und wird nie Staff (Schutz vor Vorab-Registrierung fremder Adressen).
+--   Über Signup, Einladung, Magic Link, OAuth/SSO entstehen Auth-Nutzer nur für Adressen auf
+--   private.staff_email_allowlist (Hook before_user_created). auth.admin.createUser (Secret-Key)
+--   umgeht den Hook; solche Nutzer werden aber nie Staff (siehe unten).
+-- - Onboarding nur per Einladung (auth.admin.inviteUserByEmail bzw. generateLink 'invite'):
+--   Nur diese Wege legen den Nutzer ohne Passwort an, und nur dann entsteht automatisch eine
+--   Staff-Zeile aus der Allowlist. Signup, admin.createUser und generateLink 'magiclink'/'signup'
+--   setzen immer ein (ggf. generiertes) Passwort und ergeben nie Staff – Schutz vor einer
+--   Vorab-Registrierung fremder Adressen. Solche Konten löschen und neu einladen.
 -- - Rollen: viewer < recruiter < admin (Reihenfolge des Enums = Rangfolge).
 -- - Der letzte aktive Admin kann weder herabgestuft, deaktiviert noch gelöscht werden.
 -- =============================================================================
@@ -139,10 +142,10 @@ create policy "auth_admin_reads_allowlist"
 -- Staff-Zeile für neue Auth-Nutzer aus der Allowlist anlegen
 -- ---------------------------------------------------------------------------
 --
--- Nur Konten ohne Passwort (Einladung bzw. Admin-Anlage ohne Passwort). Eine öffentliche
--- Registrierung legt das Konto immer mit Passwort an; bestätigt die echte Person später
--- per Einladung oder OTP, bliebe das fremde Passwort gültig. Solche Konten bekommen
--- deshalb keine Staff-Zeile und müssen gelöscht und neu eingeladen werden.
+-- Nur Konten ohne Passwort, also aus einer Einladung. Eine öffentliche Registrierung legt das
+-- Konto immer mit Passwort an; bestätigt die echte Person später per Einladung oder OTP,
+-- bliebe das fremde Passwort gültig. Solche Konten bekommen deshalb keine Staff-Zeile und
+-- müssen gelöscht und neu eingeladen werden.
 
 create function private.handle_new_auth_user()
 returns trigger

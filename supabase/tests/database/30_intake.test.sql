@@ -17,7 +17,7 @@ begin
   end loop;
 end $$;
 
-select plan(44);
+select plan(55);
 
 -- Test-Payload als Funktion (nur in dieser Transaktion). NULL-Werte fallen weg.
 create function pg_temp.app(
@@ -118,6 +118,36 @@ select throws_ok(
        || '{"attribution": {"utmSource": "google"}}'::jsonb) $$,
   'P0001', 'validation_failed',
   'Unbekannter Attributions-Schlüssel wird abgelehnt'
+);
+select throws_ok(
+  $$ select public.rpc_submit_application(pg_temp.app('BE-26-AAAAC2', '10000000-0000-4000-8000-000000000011', null, null, false, 'Max Beispiel', null)
+       - 'submitted_at') $$,
+  'P0001', 'validation_failed',
+  'Fehlender Eingangszeitpunkt wird nicht still mit now() ergänzt'
+);
+select throws_ok(
+  $$ select public.rpc_submit_application(pg_temp.app('BE-26-AAAAC2', '10000000-0000-4000-8000-000000000011', null, null, false, 'Max Beispiel', null)
+       || '{"name": {"first": "Max"}}'::jsonb) $$,
+  'P0001', 'validation_failed',
+  'Name als Objekt wird abgelehnt'
+);
+select throws_ok(
+  $$ select public.rpc_submit_application(pg_temp.app('BE-26-AAAAC2', '10000000-0000-4000-8000-000000000011', null, null, false, 'Max Beispiel', null)
+       || '{"privacy_notice_version": 202610}'::jsonb) $$,
+  'P0001', 'validation_failed',
+  'Fassung des Datenschutzhinweises als Zahl wird abgelehnt'
+);
+select throws_ok(
+  $$ select public.rpc_submit_application(pg_temp.app('BE-26-AAAAC2', '10000000-0000-4000-8000-000000000011', null, null, false, 'Max Beispiel', null)
+       || '{"phone": {"raw": 15123456789}}'::jsonb) $$,
+  'P0001', 'validation_failed',
+  'Telefonnummer als Zahl wird abgelehnt'
+);
+select throws_ok(
+  $$ select public.rpc_submit_application(pg_temp.app('BE-26-AAAAC2', '10000000-0000-4000-8000-000000000011', null, null, false, 'Max Beispiel', null)
+       || '{"attribution": {"utm_source": 42}}'::jsonb) $$,
+  'P0001', 'validation_failed',
+  'Attributionswert als Zahl wird abgelehnt'
 );
 
 -- Weitere Einsendungen -------------------------------------------------------------
@@ -284,6 +314,50 @@ select is(
   'true',
   'Keine Korrektur mehr, sobald das Team die Bewerbung bearbeitet'
 );
+
+-- Grenzen der Korrektur und geteilter Snapshot -----------------------------------------
+reset role;
+update public.applications set created_at = now() - interval '25 hours' where reference = 'BE-26-AAAA99';
+update public.applications set purge_state = 'purging' where reference = 'BE-26-AAAA88';
+-- Zusammenführung durch Staff simulieren: AAAA33 hängt jetzt am Snapshot von AAAA44.
+update public.applications
+set candidate_id = (select candidate_id from public.applications where reference = 'BE-26-AAAA44')
+where reference = 'BE-26-AAAA33';
+set local role service_role;
+select is(
+  public.rpc_submit_application(pg_temp.app('BE-26-AAAA99', '10000000-0000-4000-8000-000000000009', null, '+491709999999', false, 'Max Beispiel', 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')) ->> 'duplicate',
+  'true',
+  'Keine Korrektur nach 24 h'
+);
+select is(
+  public.rpc_submit_application(pg_temp.app('BE-26-AAAA88', '10000000-0000-4000-8000-000000000008', 'spam@example.com', null, false, 'Max Beispiel', 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')) ->> 'duplicate',
+  'true',
+  'Keine Korrektur während der Löschung'
+);
+select throws_ok(
+  $$ select public.rpc_submit_follow_up('{"reference": "BE-26-AAAA88", "idempotency_key": "9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e"}'::jsonb) $$,
+  'P0001', 'not_found',
+  'Keine Ergänzung während der Löschung'
+);
+select is(
+  public.rpc_submit_application(pg_temp.app('BE-26-AAAA44', '10000000-0000-4000-8000-000000000004', 'mallory@example.com', '+491512345678', false, 'Mallory Neu', 'ffffffffffffffffffffffffffffffff')) ->> 'resubmitted',
+  'true',
+  'Korrektur bei geteiltem Snapshot'
+);
+reset role;
+select is(
+  (select string_agg(c.full_name, '|' order by a.reference) from public.applications a
+     join public.candidates c on c.id = a.candidate_id
+    where a.reference in ('BE-26-AAAA33', 'BE-26-AAAA44')),
+  'Mallory Muster|Mallory Neu',
+  'Korrektur legt einen neuen Snapshot an, der geteilte bleibt unverändert'
+);
+select is(
+  (select content_hash from public.applications where reference = 'BE-26-AAAA99'),
+  null::text,
+  'Nach 24 h bleibt die Bewerbung unverändert'
+);
+set local role service_role;
 
 -- Rate-Limit ---------------------------------------------------------------------------
 select is(

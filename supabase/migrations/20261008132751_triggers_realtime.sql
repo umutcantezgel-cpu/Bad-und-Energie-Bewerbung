@@ -54,13 +54,17 @@ begin
       new.stage_changed_at := now();
     end if;
 
-    -- Absage-Mitteilung: Über die API (authenticated) bestimmt die DB den Zeitpunkt.
-    -- Ein frei wählbares Datum würde die Löschfrist steuern (rückdatiert ⇒ sofortiger Purge,
-    -- in der Zukunft ⇒ Daten bleiben unbegrenzt).
-    if new.rejection_notified_at is distinct from old.rejection_notified_at
-       and new.rejection_notified_at is not null
-       and current_user = 'authenticated' then
-      if new.stage <> 'abgesagt' then
+    -- Absage-Mitteilung: Über die API (authenticated) bestimmt die DB den Zeitpunkt, und er
+    -- wird je Absage nur einmal gesetzt. Ein frei wählbares, geleertes oder neu gestempeltes
+    -- Datum würde die Löschfrist steuern (rückdatiert oder geleert ⇒ früher Purge, ständig neu
+    -- gesetzt ⇒ Daten bleiben unbegrenzt). Erneut setzbar erst nach einer neuen Absage
+    -- (Stufenwechsel nach der letzten Mitteilung); Korrekturen später über eine staff_*-RPC.
+    if current_user = 'authenticated'
+       and new.rejection_notified_at is distinct from old.rejection_notified_at then
+      if new.rejection_notified_at is null
+         or new.stage <> 'abgesagt'
+         or (old.rejection_notified_at is not null
+             and old.rejection_notified_at >= new.stage_changed_at) then
         raise exception 'validation_failed' using errcode = 'P0001';
       end if;
       new.rejection_notified_at := now();
@@ -252,11 +256,19 @@ revoke all on function private.broadcast_application() from public, anon, authen
 create trigger broadcast_application_insert after insert on public.applications
   for each row execute function private.broadcast_application();
 
--- Auch Korrekturen (content_hash) und neue Aktivität (Ergänzung, Notiz) melden, damit offene
--- Cockpit-Ansichten nachladen.
+-- Nur bei echten Änderungen melden (WHEN sieht die Zeile nach den BEFORE-Triggern), auch bei
+-- Korrekturen (content_hash) und neuer Aktivität (Ergänzung, Notiz, Bewertung). Ein leeres
+-- UPDATE (SET stage = stage) erzeugt keine Nachricht.
 create trigger broadcast_application_update
-  after update of stage, assigned_to, content_hash, last_activity_at on public.applications
-  for each row execute function private.broadcast_application();
+  after update on public.applications
+  for each row
+  when (old.stage is distinct from new.stage
+        or old.assigned_to is distinct from new.assigned_to
+        or old.rating is distinct from new.rating
+        or old.rejection_notified_at is distinct from new.rejection_notified_at
+        or old.content_hash is distinct from new.content_hash
+        or old.last_activity_at is distinct from new.last_activity_at)
+  execute function private.broadcast_application();
 
 -- Nur aktive Staff-Mitglieder mit MFA dürfen den privaten Kanal empfangen.
 create policy "staff_receive_inbox"

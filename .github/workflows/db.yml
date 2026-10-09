@@ -54,7 +54,7 @@ jobs:
         run: supabase test db
 
       - name: Schema-Lint (plpgsql_check)
-        run: supabase db lint --local --schema public,private --level warning --fail-on error
+        run: supabase db lint --local --schema public,private --level warning --fail-on warning
 
       - name: Stack stoppen
         if: always()
