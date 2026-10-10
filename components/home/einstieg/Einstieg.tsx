@@ -74,7 +74,6 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
           <div className={cn(styles.kette, styles.kette35)} aria-hidden="true" />
           {jahre ? (
             <p className={cn(styles.jahre, 'text-footnote text-ink-2')} aria-hidden="true" data-bis={`${jahre.bis}-12-31`}>
-              <span className={cn(styles.jahreText, 'text-etikett')}>{jahre.text}</span>
               <span className={cn(styles.kette, styles.jahreKette)} />
               <span className={cn(styles.jahreEnde, 'font-mass text-ink')}>{jahre.bis}</span>
             </p>
@@ -84,19 +83,19 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
         <div className={styles.boden} data-primary-cta="">
           <ul className={styles.masse}>
             <li className={cn(styles.mass, styles.mass1330)}>
-              <span className={cn(styles.wert, 'font-mass text-brand')}>{masse.freitag.value}</span>
+              <span className={cn(styles.wert, 'font-mass text-brand')}>{masse.freitag.value}</span>{' '}
               <span className={cn(styles.name, 'text-etikett text-ink-2')}>{masse.freitag.label}</span>
             </li>
             <li className={cn(styles.mass, styles.mass30)}>
-              <span className={cn(styles.wert, 'font-mass text-brand')}>{masse.urlaub.value}</span>
+              <span className={cn(styles.wert, 'font-mass text-brand')}>{masse.urlaub.value}</span>{' '}
               <span className={cn(styles.name, 'text-etikett text-ink-2')}>{masse.urlaub.label}</span>
             </li>
             <li className={cn(styles.mass, styles.mass35)}>
-              <span className={cn(styles.wert, 'font-mass text-brand')}>{masse.radius.value}</span>
+              <span className={cn(styles.wert, 'font-mass text-brand')}>{masse.radius.value}</span>{' '}
               <span className={cn(styles.name, 'text-etikett text-ink-2')}>{masse.radius.label}</span>
             </li>
             <li className={cn(styles.mass, styles.mass1926)}>
-              <span className={cn(styles.wert, 'font-mass text-brand')}>{masse.gruendung.value}</span>
+              <span className={cn(styles.wert, 'font-mass text-brand')}>{masse.gruendung.value}</span>{' '}
               <span className={cn(styles.name, 'text-etikett text-ink-2')}>{masse.gruendung.label}</span>
             </li>
           </ul>

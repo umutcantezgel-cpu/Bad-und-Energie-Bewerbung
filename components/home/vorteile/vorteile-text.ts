@@ -39,16 +39,60 @@ export const WUNSCH_OPTIONEN: readonly WunschOption[] = [
 ];
 
 /**
- * Fakten, die einen Wunsch beantworten. Eine Stelle zeigt nur die Fakten aus ihren eigenen
- * `benefitFactIds` (Registry-Test: pending nur bei `onlyForJobIds`), und nur auf Wunsch, weil
- * 13:30, 35 km und Tarif schon im Einstieg und in den Zusagen stehen (Fakten höchstens zweimal).
+ * Fakten, die einen Wunsch im Paket beantworten. Eine Stelle zeigt nur die Fakten aus ihren eigenen
+ * `benefitFactIds` (Registry-Test: pending nur bei `onlyForJobIds`), und nur auf Wunsch. Faktenverteilung E-023:
+ * Was schon an anderer Stelle der Seite steht (13:30 und Wochenende in der Woche, Tarif und Überstunden in
+ * den Zusagen, Hilti und Fahrzeug in Werkzeug & Fuhrpark, 35 km und Fernmontage im Einsatzgebiet), kommt
+ * nicht ein drittes Mal ins Paket; dafür zeigt eine Verweiszeile dorthin (WUNSCH_VERWEISE).
  * `payFirstWorkday` steht bewusst nirgends (fakten-abgleich A3).
  */
 export const WUNSCH_FAKTEN: Readonly<Record<WunschId, readonly FactId[]>> = {
-  feierabend: ['friday1330', 'noWeekendOnCall', 'noUnpaidOvertime'],
-  verguetung: ['aboveTariff'],
-  ausstattung: ['hilti', 'vehicle', 'privateCarOnePercent', 'fuelCard', 'ipadSmartphone'],
-  naehe: ['noFarAssembly', 'radius35'],
+  feierabend: [],
+  verguetung: [],
+  ausstattung: ['privateCarOnePercent', 'fuelCard'],
+  naehe: [],
+};
+
+export interface WunschVerweis {
+  /** Planbeschriftung der Zeile. */
+  etikett: string;
+  /** Sprungziel auf der Startseite. */
+  href: string;
+  /** Linktext: sagt, wohin es geht. */
+  label: string;
+  /** Die Stelle bekommt den Verweis nur, wenn einer dieser Fakten zu ihr gehört (keine Verallgemeinerung). */
+  fakten: readonly FactId[];
+  /** Das Ziel liegt über (Arbeitswoche) oder unter dem Paket. */
+  richtung: 'hoch' | 'runter';
+}
+
+/** Sprungziel des Unterblocks „Werkzeug & Fuhrpark“ (E-START-026: /#ausstattung springt hierher). */
+export const AUSSTATTUNG_ID = 'ausstattung';
+
+/** Verweise statt Wiederholung (E-023); Ziele sind Abschnitte bzw. Blöcke der Startseite. */
+export const WUNSCH_VERWEISE: Readonly<Record<WunschId, WunschVerweis>> = {
+  feierabend: {
+    etikett: 'Arbeitszeit',
+    href: '#woche',
+    label: 'Arbeitswoche ansehen',
+    fakten: ['friday1330', 'noWeekendOnCall', 'noUnpaidOvertime'],
+    richtung: 'hoch',
+  },
+  verguetung: { etikett: 'Vergütung', href: '#vorteile-zusagen', label: 'Zusagen ansehen', fakten: ['aboveTariff'], richtung: 'runter' },
+  ausstattung: {
+    etikett: 'Ausstattung',
+    href: `#${AUSSTATTUNG_ID}`,
+    label: 'Werkzeug & Fuhrpark ansehen',
+    fakten: ['hilti', 'vehicle', 'measurementTools', 'ipadSmartphone'],
+    richtung: 'runter',
+  },
+  naehe: {
+    etikett: 'Baustellen',
+    href: '#einsatzgebiet',
+    label: 'Einsatzgebiet ansehen',
+    fakten: ['noFarAssembly', 'radius35'],
+    richtung: 'runter',
+  },
 };
 
 /** Paketzeilen (`packageExtras.label`), die einen Wunsch erfüllen. */
@@ -58,19 +102,16 @@ const EXTRA_WUENSCHE: Readonly<Record<string, readonly WunschId[]>> = {
   Werkzeug: ['ausstattung'],
 };
 
+/**
+ * Paketzeilen, deren Inhalt „Werkzeug & Fuhrpark“ trägt (E-023: Hilti und Fahrzeug an genau einem Ort in
+ * #vorteile). Sie stehen im Paket als eine Verweiszeile; der Wortlaut der Stelle steht auf ihrer Seite.
+ */
+const AUSSTATTUNG_EXTRAS: ReadonlySet<string> = new Set(['Werkzeug', 'Fahrzeug']);
+
 /** Planbeschriftung der Fakt-Zeilen. */
 const FAKT_ETIKETT: Partial<Record<FactId, string>> = {
-  friday1330: 'Freitag',
-  noWeekendOnCall: 'Wochenende',
-  noUnpaidOvertime: 'Überstunden',
-  aboveTariff: 'Tarif',
-  hilti: 'Werkzeug',
-  vehicle: 'Fahrzeug',
   privateCarOnePercent: 'Fahrzeug',
   fuelCard: 'Tankkarte',
-  ipadSmartphone: 'Digital',
-  noFarAssembly: 'Baustellen',
-  radius35: 'Umkreis',
 };
 
 /** Fakt darf auf dieser Stelle stehen: aktiv und, falls pending, freigegeben für genau sie. */
@@ -80,24 +121,42 @@ function faktErlaubt(id: FactId, job: Pick<Job, 'id'>, now: Date): boolean {
   return !fact.pending || fact.pending.onlyForJobIds.includes(job.id);
 }
 
-/** Zeilen einer Stelle: zuerst ihre Paketzeilen, dann je Wunsch ohne passende Paketzeile ihre Fakten. */
+function verweisZeile(wunsch: WunschId, nurAufWunsch: boolean): PaketZeile {
+  const v = WUNSCH_VERWEISE[wunsch];
+  return { key: `verweis-${wunsch}`, etikett: v.etikett, text: v.label, href: v.href, richtung: v.richtung, wuensche: [wunsch], nurAufWunsch };
+}
+
+/**
+ * Zeilen einer Stelle:
+ * 1. ihre Paketzeilen in Reihenfolge; Werkzeug und Fahrzeug als eine Verweiszeile auf „Werkzeug & Fuhrpark“;
+ * 2. je Wunsch, den noch keine Zeile beantwortet: ihre erlaubten Fakten aus WUNSCH_FAKTEN, sonst ein Verweis
+ *    auf den Block, der die Antwort trägt (nur wenn ein passender Fakt zu ihr gehört).
+ */
 export function paketZeilen(job: Pick<Job, 'id' | 'packageExtras' | 'benefitFactIds'>, now: Date = new Date()): PaketZeile[] {
-  const extras: PaketZeile[] = job.packageExtras.map((extra) => ({
-    key: `extra-${extra.label}`,
-    etikett: extra.label,
-    text: extra.text,
-    wuensche: EXTRA_WUENSCHE[extra.label] ?? [],
-    nurAufWunsch: false,
-  }));
-  const fakten: PaketZeile[] = [];
+  const extras: PaketZeile[] = [];
+  for (const extra of job.packageExtras) {
+    if (AUSSTATTUNG_EXTRAS.has(extra.label)) {
+      if (!extras.some((zeile) => zeile.key === 'verweis-ausstattung')) extras.push(verweisZeile('ausstattung', false));
+      continue;
+    }
+    extras.push({
+      key: `extra-${extra.label}`,
+      etikett: extra.label,
+      text: extra.text,
+      wuensche: EXTRA_WUENSCHE[extra.label] ?? [],
+      nurAufWunsch: false,
+    });
+  }
+  const aufWunsch: PaketZeile[] = [];
   for (const { id: wunsch } of WUNSCH_OPTIONEN) {
     if (extras.some((zeile) => zeile.wuensche.includes(wunsch))) continue;
     for (const id of WUNSCH_FAKTEN[wunsch]) {
       if (!job.benefitFactIds.includes(id) || !faktErlaubt(id, job, now)) continue;
-      fakten.push({ key: `fakt-${id}`, etikett: FAKT_ETIKETT[id] ?? FACTS[id].short, text: FACTS[id].short, wuensche: [wunsch], nurAufWunsch: true });
+      aufWunsch.push({ key: `fakt-${id}`, etikett: FAKT_ETIKETT[id] ?? FACTS[id].short, text: FACTS[id].short, wuensche: [wunsch], nurAufWunsch: true });
     }
+    if (WUNSCH_VERWEISE[wunsch].fakten.some((id) => job.benefitFactIds.includes(id))) aufWunsch.push(verweisZeile(wunsch, true));
   }
-  return [...extras, ...fakten];
+  return [...extras, ...aufWunsch];
 }
 
 /**
@@ -120,7 +179,11 @@ export function paketRollen(jobs: readonly Job[], now: Date = new Date()): Paket
 
 // ── Zusagen (E-START-025) ─────────────────────────────────────────────────────────────────
 
-export const ZUSAGEN_TITEL = 'Das gilt für alle Fachkräfte';
+/** Neutral: die Zusagen sind betriebsweite Fakten, nicht für jede Stelle einzeln belegt (kein „für alle“). */
+export const ZUSAGEN_TITEL = 'Unsere Zusagen';
+
+/** Sprungziel der Zusagen (Verweis aus dem Paket). */
+export const ZUSAGEN_ID = 'vorteile-zusagen';
 
 export interface Zusage {
   id: FactId;
@@ -131,12 +194,15 @@ export interface Zusage {
   mass?: string;
 }
 
+/** „Mo–Do 07:00–16:45 Uhr“: die Arbeitszeit ohne den Freitag (13:30 tragen Einstieg und Woche, E-023). */
+const ARBEITSZEIT_MO_DO = FACTS.workingHours.short.split(/,\s*/)[0];
+
 /**
  * Sechs Zusagen. Werkzeug, Fahrzeug und iPad stehen gesammelt in „Werkzeug & Fuhrpark“, darum
  * nicht noch einmal hier (BENEFIT_FACT_IDS ohne hilti, vehicle, ipadSmartphone). Neu ist die
- * Arbeitszeit-Zusage: „Keine unbezahlten Überstunden“ mit den festen Zeiten als kurzes Maß (Abnahme
- * E-START-025: „07:00“ und „unbezahlten Überstunden“ in #vorteile). Den ganzen Satz der Arbeitszeiten
- * trägt die Arbeitswoche darüber (R3-HOME-05); hier steht nur die Kurzform, so bleibt es bei zweimal.
+ * Arbeitszeit-Zusage: „Keine unbezahlten Überstunden“ mit der festen Zeit Mo–Do als kurzes Maß (Abnahme
+ * E-START-025: „07:00“ und „unbezahlten Überstunden“ in #vorteile). Den Freitag mit 13:30 trägt die
+ * Arbeitswoche darüber (Faktenverteilung E-023: 13:30 nicht in den Vorteilen).
  */
 export const ZUSAGEN: readonly Zusage[] = [
   { id: 'aboveTariff', icon: 'banknote', titel: FACTS.aboveTariff.short, text: FACTS.aboveTariff.long },
@@ -145,7 +211,7 @@ export const ZUSAGEN: readonly Zusage[] = [
     icon: 'uhr',
     titel: FACTS.noUnpaidOvertime.short,
     text: FACTS.noUnpaidOvertime.long,
-    mass: FACTS.workingHours.short,
+    mass: ARBEITSZEIT_MO_DO,
   },
   { id: 'noWeekendOnCall', icon: 'calendar-off', titel: FACTS.noWeekendOnCall.short, text: FACTS.noWeekendOnCall.long },
   { id: 'permanentContract', icon: 'file-check', titel: FACTS.permanentContract.short, text: FACTS.permanentContract.long },
@@ -157,8 +223,6 @@ export const ZUSAGEN: readonly Zusage[] = [
 
 export const AUSSTATTUNG_TITEL = 'Werkzeug & Fuhrpark';
 
-/** Sprungziel des Unterblocks; der alte Anker #ausstattung zeigt per Alias davor (page.tsx). */
-export const AUSSTATTUNG_ID = 'werkzeug-fuhrpark';
 
 export interface Geraet {
   id: FactId;

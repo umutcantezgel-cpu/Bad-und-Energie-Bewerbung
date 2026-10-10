@@ -42,40 +42,15 @@
   stroke-linecap: butt;
 }
 
-.tag {
-  fill: var(--ink);
-  font-family: var(--font-sans);
-  font-size: var(--text-callout);
-  font-weight: 700;
-}
-
-.mass {
-  fill: var(--ink);
-  font-family: var(--font-mass);
-  font-stretch: 75%;
-  font-variant-numeric: tabular-nums;
-  font-size: var(--text-footnote);
-  font-weight: 500;
-}
-
-/* Hauptmaß: der Freitag endet um 13:30 */
+/* Schrift im Plan kommt aus den Utilities im Markup (text-etikett, font-mass, text-callout; KERN K-005).
+   Hier steht nur, was die Utilities nicht tragen: die Größe des Hauptmaßes. */
 .feierabend {
-  fill: var(--brand);
   font-size: var(--text-title-2);
-  font-weight: 600;
 }
 
-.achse {
-  fill: var(--ink-muted);
-}
-
-/* Etikett im Plan (wie text-etikett): Versalien nur über diese Planbeschriftung (K-005) */
-.etikett {
-  fill: var(--ink-muted);
-  font-family: var(--font-mass);
-  font-stretch: 75%;
-  font-size: var(--text-footnote);
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+/* Unter 360 px ist die Spur schmal: „Kein Wochenend-Notdienst“ ohne Sperrung, damit es im Raster bleibt */
+@media (max-width: 22.49em) {
+  .frei {
+    letter-spacing: 0;
+  }
 }

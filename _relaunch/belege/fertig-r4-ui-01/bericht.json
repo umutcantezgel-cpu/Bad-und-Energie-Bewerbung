@@ -1,0 +1,57 @@
+{
+  "label": "fertig-r4-ui-01",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T08:38:57.718Z",
+  "seiten": [
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 3972,
+      "seitenhoehe": 1674,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r4-ui-01/bewerbung__m390-light__01.webp",
+        "belege/fertig-r4-ui-01/bewerbung__m390-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 2563,
+      "seitenhoehe": 1555,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r4-ui-01/bewerbung__d1440-light__01.webp",
+        "belege/fertig-r4-ui-01/bewerbung__d1440-light__02.webp"
+      ]
+    }
+  ]
+}

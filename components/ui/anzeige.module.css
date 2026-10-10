@@ -1,0 +1,80 @@
+/*
+ * Anzeige-Bausteine im Formsystem (KERN K-008…K-010, R4-UI-02): Maßkette am StatTile und der
+ * ProgressRing (E-BEW-007). Farben nur über Rollen, eine Strichstärke (--m-strich); hell, dunkel,
+ * Inverse-Band und Druck kommen aus theme.css. Bewegung nur mit Registerkennung am Element
+ * (data-motion="fortschritt" bzw. "kreis-schliessen"); reduzierte Bewegung setzt globals.css auf 0,01 ms.
+ */
+
+/* ── Maßkette (wie die Maße des Einstiegs): Endstriche und Maßlinie in Marken-Navy ── */
+.kette {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: var(--a-3);
+  border-inline: var(--m-strich) solid var(--brand);
+}
+
+.kette::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: var(--m-strich);
+  transform: translateY(-50%);
+  background-color: var(--brand);
+}
+
+/* Maß mittlerer Größe (StatTile md): Martian Mono auf der Stufe title-2, ohne die Display-Familie der Stufe */
+.wertMd {
+  font-size: var(--text-title-2);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+/* ── ProgressRing: Spur als Planpunkte, Vorlauf als Anteil, bei 100 % schließt der Rücklauf den Kreis ── */
+.spur {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: var(--m-strich);
+  stroke-linecap: round;
+  /* Punkte im Abstand 8 px, wie die Radiuskreise des Einsatzgebiets */
+  stroke-dasharray: 0 8;
+}
+
+.vorlauf {
+  fill: none;
+  stroke: var(--vorlauf);
+  stroke-width: var(--m-strich);
+  stroke-linecap: round;
+  /* Register „fortschritt“: d-2, k-aus; der Anteil steht als stroke-dashoffset im Attribut */
+  transition: stroke-dashoffset var(--d-2) var(--k-aus);
+}
+
+.ruecklauf {
+  fill: none;
+  stroke: var(--ruecklauf);
+  stroke-width: var(--m-strich);
+  stroke-linecap: butt;
+  /* Register „kreis-schliessen“: einmal beim Erscheinen, d-3, k-wechsel */
+  transition: stroke-dashoffset var(--d-3) var(--k-wechsel);
+}
+
+/* Der Strich zeichnet sich einmal beim Erscheinen: Startwerte gelten nur für den ersten Stil. */
+@starting-style {
+  .vorlauf {
+    stroke-dashoffset: 100;
+  }
+
+  .ruecklauf {
+    stroke-dashoffset: 1;
+  }
+}
+
+/* Druck: der Stand ist im Text lesbar, die Zeichnung steht im Endzustand */
+@media print {
+  .vorlauf,
+  .ruecklauf {
+    transition: none;
+  }
+}

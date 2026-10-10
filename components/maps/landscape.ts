@@ -1,6 +1,6 @@
 import { layoutLabels, type Box } from '@/lib/maps/labels';
 import type { LatLng, RadiusProjection, SvgPoint } from '@/lib/maps/projection';
-import { octilinearChain, pathData } from './graphic';
+import { LANDSCAPE_LABEL_FONT_SIZE, octilinearChain, pathData } from './graphic';
 import type { LandscapeId, LandscapeLine } from './types';
 
 /**
@@ -91,8 +91,6 @@ export const LANDSCAPE: readonly LandscapeSource[] = [
   },
 ];
 
-/** Landscape labels: 12 units; road numbers in Martian Mono, river names in Atkinson. */
-export const LANDSCAPE_LABEL_FONT_SIZE = 12;
 const LABEL_CHAR_WIDTH = 0.72;
 /** Labels sit in the outer part of the frame, away from the dense centre. */
 const LABEL_MIN_FRACTION = 0.45;

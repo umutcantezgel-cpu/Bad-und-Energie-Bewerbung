@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
@@ -48,10 +50,15 @@ describe('Arbeitswoche: Zeiten nur aus dem Faktenregister', () => {
     expect(FACTS.workingHours.long).toBe(`Feste Arbeitszeiten: ${satz}.`);
   });
 
-  it('Kopf und Einleitung sind friday1330.short und workingHours.long (Variante 1)', () => {
+  it('Kopf ist friday1330.short; die Einleitung nennt Mo–Do aus workingHours.long, ohne 13:30 (E-023)', () => {
     expect(WOCHE_TEXT.titel).toBe('Freitags ab 13:30 Uhr Feierabend');
     expect(WOCHE_TEXT.titel).toBe(FACTS.friday1330.short);
-    expect(WOCHE_TEXT.einleitung).toBe(FACTS.workingHours.long);
+    const einleitung = WOCHE_TEXT.einleitung.replaceAll(NBSP, ' ');
+    expect(einleitung).toBe('Feste Arbeitszeiten: Montag bis Donnerstag von 07:00 bis 16:45 Uhr.');
+    // wörtlich der Anfang von workingHours.long, nur der Freitag fehlt (den trägt die Überschrift)
+    expect(FACTS.workingHours.long.startsWith(einleitung.slice(0, -1))).toBe(true);
+    expect(einleitung).not.toContain(FACTS.friday1330.value);
+    expect(WOCHE_TEXT.etikett).toBe('Arbeitszeit');
   });
 
   it('faltet Tagesbereiche auf und lehnt Widersprüche ab', () => {
@@ -92,9 +99,22 @@ describe('Wochenplan (Inline-SVG)', () => {
     expect(html).toContain(`aria-describedby="${WOCHE_BILD_TEXT_ID}"`);
     expect(html).toContain(`<title id="${WOCHE_BILD_TITEL_ID}">Arbeitszeit der Woche</title>`);
     const desc = html.match(new RegExp(`<desc id="${WOCHE_BILD_TEXT_ID}">([^<]*)</desc>`))?.[1] ?? '';
-    expect(desc).toBe(
-      `Montag bis Donnerstag von 07:00 bis 16:45${NBSP}Uhr, Freitag von 07:00 bis 13:30${NBSP}Uhr. Samstag und Sonntag: Kein Wochenend-Notdienst.`,
-    );
+    expect(desc).toBe(`Fünf Arbeitstage ab 07:00${NBSP}Uhr, der Freitag am kürzesten. Samstag und Sonntag: Kein Wochenend-Notdienst.`);
+  });
+
+  it('Screenreader hören keine Zeit doppelt: die Beschreibung wiederholt weder Einleitung noch Überschrift', () => {
+    const desc = WOCHE_TEXT.bildText.replaceAll(NBSP, ' ');
+    expect(desc).not.toContain(WOCHE_TEXT.einleitung.replaceAll(NBSP, ' ').replace(/^[^:]*: /, '').slice(0, -1));
+    expect(desc).not.toContain('16:45');
+    expect(desc).not.toContain(FACTS.friday1330.value);
+  });
+
+  it('Schrift im SVG über die semantischen Utilities, kein Nachbau von Versalien im CSS-Modul (K-005)', () => {
+    const html = plan();
+    expect(html).toMatch(/<text class="fill-current text-etikett text-ink-muted [^"]*"[^>]*>Kein Wochenend-Notdienst<\/text>/);
+    expect(count(html, /<text class="fill-current font-mass /g)).toBe(ARBEITSTAGE.length + ACHSE.striche.length);
+    const css = readFileSync(path.resolve(__dirname, '../woche/woche.module.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    expect(css).not.toMatch(/text-transform|font-family|font-stretch/);
   });
 
   it('zeichnet fünf Heizkreise ab 07:00; Mo–Do kehren bei 16:45 um, der Freitag bei 13:30', () => {
@@ -152,7 +172,17 @@ describe('WeekSection', () => {
 
   it('setzt Uhrzeiten im Fließtext in Bricolage-Ziffern und bindet „Uhr“', () => {
     expect(html).toContain('<span class="ziffer">07:00</span>');
-    expect(html).toContain(`<span class="ziffer">13:30</span>${NBSP}Uhr.`);
+    expect(html).toContain(`<span class="ziffer">16:45</span>${NBSP}Uhr.`);
+  });
+
+  it('Tonfolge E-023: Wand, Leitungstrenner oben, Kopf mit Etikett und Rohrklammer', () => {
+    expect(html).toMatch(/<section class="[^"]*bg-surface-2[^"]*"[^>]*id="woche"/);
+    expect(html).toContain('data-zeichnung="leitungstrenner"');
+    expect(html).toContain('<p class="text-etikett text-ink-muted">Arbeitszeit</p>');
+    expect(html).toContain('data-zeichnung="rohrklammer"');
+    // 13:30 steht im Abschnitt als Überschrift und als Maß der Zeichnung, nicht noch einmal in der Einleitung
+    const einleitung = html.match(/<p class="max-w-prose text-lead text-ink-muted">([\s\S]*?)<\/p>/)![1];
+    expect(einleitung).not.toContain('13:30');
   });
 
   it('schneidet den Zulauf am Seitenrand ab und hält Tagesspalte und Endmaße frei', () => {

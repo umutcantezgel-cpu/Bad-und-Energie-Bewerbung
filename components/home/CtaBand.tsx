@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Fragment } from 'react';
 import { Icon } from '@/components/icons';
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
@@ -8,6 +9,8 @@ import { cn } from '@/lib/utils/cn';
 import { KONTAKT, UNVERBINDLICH, schuetzeNamen } from './betrieb/betrieb-text';
 import { CTA } from './content';
 import styles from './betrieb/schlussband.module.css';
+
+const NBSP = '\u00A0';
 
 /**
  * Schlussband (E-START-051, E-START-048), das zweite und letzte Navy-Band der Startseite.
@@ -36,7 +39,15 @@ export function CtaBand() {
               <Icon name="arrow-right" size="md" />
             </Link>
           </div>
-          <p className="mt-4 text-etikett text-ink-muted">{UNVERBINDLICH}</p>
+          {/* Umbruch nur vor einem Trennpunkt: der Punkt wandert an den Zeilenanfang, nie hängt er am Ende */}
+          <p className="mt-4 text-etikett text-ink-2">
+            {UNVERBINDLICH.split(' · ').map((teil, i) => (
+              <Fragment key={teil}>
+                {i > 0 && ' '}
+                <span className="whitespace-nowrap">{i > 0 ? `·${NBSP}${teil}` : teil}</span>
+              </Fragment>
+            ))}
+          </p>
         </div>
 
         <div className="border-t border-line pt-8 lg:col-span-5 lg:border-t-0 lg:pt-0">

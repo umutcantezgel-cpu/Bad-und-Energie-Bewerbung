@@ -8,14 +8,20 @@ import { WOCHE_TEXT } from './woche/woche-daten';
 /**
  * Arbeitswoche (Variante 1 `.woche` „Freitags ab 13:30 Uhr Feierabend“ mit dem Arbeitszeit-Diagramm aus
  * B Runde 1): die Woche als Heizkreisverteiler. Server-Komponente ohne Bewegung und ohne JavaScript.
- * Warmes Papier wie in Variante 1; der Abschnitt schneidet den Zulauf am Seitenrand ab (overflow-x: clip),
- * der Leitungstrenner davor kommt vom Orchestrator.
+ * Tonfolge E-023: auf der Wand (bg-surface-2) nach dem Einstieg auf Papier, oben der Leitungstrenner wie in
+ * Variante 1. Der Abschnitt schneidet den Zulauf am Seitenrand ab (overflow-x: clip).
  */
 export function WeekSection() {
   return (
-    <Section id="woche" aria-labelledby="woche-title" className="overflow-x-clip">
+    <Section id="woche" tone="wand" trenner aria-labelledby="woche-title" className="overflow-x-clip">
       <Container>
-        <SectionHeader id="woche-title" title={bindeUhr(WOCHE_TEXT.titel)} lead={mitZiffern(WOCHE_TEXT.einleitung)} />
+        <SectionHeader
+          id="woche-title"
+          eyebrow={WOCHE_TEXT.etikett}
+          klammer
+          title={bindeUhr(WOCHE_TEXT.titel)}
+          lead={mitZiffern(WOCHE_TEXT.einleitung)}
+        />
         {/* px-16: Tagesspalte links und Platz für die Endmaße rechts (MASS.spalte / MASS.rechts) */}
         <figure className="mt-12 px-16">
           <Wochenplan />

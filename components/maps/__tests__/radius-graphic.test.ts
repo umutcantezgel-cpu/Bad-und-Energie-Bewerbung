@@ -43,6 +43,22 @@ describe('RadiusGraphic', () => {
     expect(html).not.toMatch(/fill-(vorlauf|accent)/);
   });
 
+  it('does not repeat the promise in title and description (E-023: 35 km stands in the heading and at the ring)', () => {
+    const html = render(35, null);
+    const title = html.match(/<title[^>]*>([^<]*)<\/title>/)?.[1] ?? '';
+    const desc = html.match(/<desc[^>]*>([^<]*)<\/desc>/)?.[1] ?? '';
+    expect(`${title} ${desc}`).not.toMatch(/35\s?km/);
+    // A zoomed view says which section it shows, without calling 15 km the service area.
+    expect(render(15, null)).toMatch(/<desc[^>]*>[^<]*Ausschnitt: 15 km um Wetzlar/);
+    expect(render(15, null)).not.toMatch(/<title[^>]*>[^<]*15 km/);
+  });
+
+  it('draws the landscape names below the Pendel, so their halo never cuts Vorlauf or Rücklauf', () => {
+    const html = render(15, 'loc-herborn');
+    expect(html.indexOf('>A45<')).toBeGreaterThan(-1);
+    expect(html.indexOf('>A45<')).toBeLessThan(html.indexOf('stroke-vorlauf'));
+  });
+
   it('carries no motion of its own (switching changes the view at once)', () => {
     expect(render(15, 'loc-giessen')).not.toMatch(/data-motion|animate-|transition/);
   });

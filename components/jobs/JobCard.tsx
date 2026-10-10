@@ -58,7 +58,8 @@ export function JobCard({ job, headingLevel = 'h3', variant = 'karte', className
 }
 
 /**
- * One manifold row. Mobile: title, salary, employment; from md the salary gets its own column.
+ * One manifold row. Mobile: title, employment, salary (the unit stays with its figure); from md the salary
+ * gets its own column and the employment sits under the title.
  * The whole row is the link: CardLink's ::after stretches over the inner row (its nearest positioned
  * ancestor, arrow included); the hover surface sits behind the text in the row's own stacking context
  * (isolate, -z-10). Hover shows the wall surface, press moves the row by 1 px („flaeche“, „druck“).
@@ -85,21 +86,22 @@ function JobAbgang({ job, headingLevel: Heading = 'h3', className }: Omit<JobCar
         />
         <div className="grid min-w-0 flex-1 gap-y-1 md:grid-cols-[minmax(0,7fr)_minmax(0,4fr)] md:gap-x-8">
           <Heading className="text-title-3 text-brand md:col-start-1 md:row-start-1">
+            {/* Focus ring inside the row (B R1 `.zeile:focus-visible{outline-offset:-3px}`), never flush with the edge */}
             <CardLink
               href={jobPath(job)}
-              className="after:rounded-none focus-visible:after:outline-3 focus-visible:after:outline-offset-0"
+              className="after:rounded-none focus-visible:after:outline-3 focus-visible:after:-outline-offset-3"
             >
               {bindSeparators(withSoftHyphens(job.shortTitle, job.titleShy))}
             </CardLink>{' '}
             <span className="font-sans text-callout font-normal text-ink-muted">(m/w/d)</span>
           </Heading>
+          <p className="text-etikett text-ink-muted md:col-start-1 md:row-start-2">{employmentLabel(job)}</p>
           {amount && (
-            <p className="flex flex-col gap-1 md:col-start-2 md:row-span-2 md:row-start-1 md:self-center">
+            <p className="mt-2 flex flex-col gap-1 md:col-start-2 md:row-span-2 md:row-start-1 md:mt-0 md:self-center">
               <span className="font-mass text-lead font-medium text-brand">{amount}</span>
               {unit && <span className="text-etikett text-ink-muted">{unit}</span>}
             </p>
           )}
-          <p className="text-etikett text-ink-muted md:col-start-1 md:row-start-2">{employmentLabel(job)}</p>
         </div>
         <Icon name="arrow-right" size="lg" className="text-brand" />
       </div>

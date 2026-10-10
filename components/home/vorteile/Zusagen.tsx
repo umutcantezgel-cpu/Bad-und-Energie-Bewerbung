@@ -1,20 +1,20 @@
 import { Icon } from '@/components/icons';
 import { cn } from '@/lib/utils/cn';
-import { ZUSAGEN, ZUSAGEN_TITEL } from './vorteile-text';
+import { ZUSAGEN, ZUSAGEN_ID, ZUSAGEN_TITEL } from './vorteile-text';
 
 /**
- * Zusagen für alle Fachkräfte (E-START-025): sechs Fakten als ruhige Liste mit Familien-Icons,
+ * Zusagen des Betriebs (E-START-025): sechs Fakten als ruhige Liste mit Familien-Icons,
  * keine Kennzahl-Kacheln (K-003). Mobil eine Spalte, ab md zwei, ab lg drei; Haarlinie über jedem
  * Eintrag, 3-px-Strich über der Gruppe.
  */
 export function Zusagen({ className }: { className?: string }) {
   return (
     <div className={cn('flex flex-col gap-6', className)}>
-      <h3 id="vorteile-zusagen" className="text-title-2 text-brand">
+      <h3 id={ZUSAGEN_ID} className="text-title-2 text-brand">
         {ZUSAGEN_TITEL}
       </h3>
       <ul
-        aria-labelledby="vorteile-zusagen"
+        aria-labelledby={ZUSAGEN_ID}
         className="grid gap-x-8 border-t-[length:var(--m-strich)] border-brand md:grid-cols-2 lg:grid-cols-3"
       >
         {ZUSAGEN.map((zusage) => (

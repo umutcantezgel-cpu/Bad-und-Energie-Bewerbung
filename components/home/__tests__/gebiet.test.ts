@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { COMPANY } from '@/lib/content/company';
 import { REGION } from '@/lib/content/region';
-import { ORT_FEHLT, ROUTE_LABEL, WERKSTATT, routeUrl, weitereOrte } from '../gebiet/gebiet-text';
+import { ORT_FEHLT, ROUTE_LABEL, WERKSTATT, headlineSaetze, routeUrl, weitereOrte } from '../gebiet/gebiet-text';
 import { WeitereOrte } from '../gebiet/WeitereOrte';
 import { Werkstatt } from '../gebiet/Werkstatt';
 
@@ -62,5 +62,23 @@ describe('Weitere Orte (E-START-029)', () => {
   it('offers the phone line for places that are missing', () => {
     expect(html).toContain(ORT_FEHLT.question);
     expect(html).toContain(`href="${COMPANY.phone.href}"`);
+  });
+
+  it('gives the phone link a target of at least 44 px (K-011)', () => {
+    const link = html.match(/<a [^>]*href="tel:[^"]*"[^>]*>/)?.[0] ?? '';
+    expect(link).toMatch(/\bmin-h-11\b/);
+    expect(link).toMatch(/\binline-flex\b/);
+  });
+
+  it('ends no wrapped line with a separator: each place carries its dot in front', () => {
+    expect(html).not.toContain('·');
+    expect(html.match(/rounded-full bg-brand/g)).toHaveLength(weitereOrte().length);
+  });
+});
+
+describe('Überschrift satzweise', () => {
+  it('splits REGION.headline into its two sentences without changing the wording', () => {
+    expect(headlineSaetze()).toEqual(['35 km um Wetzlar.', 'Keine Fernmontage.']);
+    expect(headlineSaetze().join(' ')).toBe(REGION.headline);
   });
 });

@@ -21,6 +21,73 @@ const CENTER_LABEL_GAP = CENTER_DOT_EXTENT + 4;
 
 export const CENTER_LABEL_ID = '__center';
 
+/**
+ * Landscape labels: 12 units; road numbers in Martian Mono, river names in Atkinson. Lives here, not in
+ * landscape.ts, so the client graphic does not pull the landscape anchors into its bundle.
+ */
+export const LANDSCAPE_LABEL_FONT_SIZE = 12;
+
+// --- Ortspunkte frei vom Haus ------------------------------------------------------------
+
+/**
+ * Drawn dots keep this distance (centre to centre) from the house in the middle: the house's farthest
+ * corner (≈ 10.6 units plus half the stroke), the selected dot (5.5 + 1) and 1–2 units of air.
+ */
+export const HOUSE_CLEARANCE = 19;
+/** Two drawn dots keep this distance (centre to centre): 2 × (4.5 + 1) and one unit of air. */
+export const DOT_SPACING = 12;
+
+/**
+ * Where the dots are drawn: at their true position, except the few places that lie under or against the
+ * house (Hermannstein at 35 and 25 km). Those move straight outwards just far enough to clear it, and
+ * crowded neighbours step apart a little (E-START-036 „Ortspunkte bleiben lesbar“). Only the inner
+ * cluster moves (by a few units, well under a kilometre's worth outside the zoom); every distance the
+ * visitor reads comes from the place list.
+ */
+export function clearOfHouse(points: readonly SvgPoint[], origin: SvgPoint, skip: readonly boolean[] = []): SvgPoint[] {
+  const out = points.map((p) => ({ x: p.x, y: p.y }));
+  const free = (i: number) => !skip[i];
+  const pushOut = (p: SvgPoint) => {
+    const dx = p.x - origin.x;
+    const dy = p.y - origin.y;
+    const d = Math.hypot(dx, dy);
+    if (d >= HOUSE_CLEARANCE) return;
+    // A dot right on the centre goes north-east, where no place of the data lies.
+    const ux = d > 0.01 ? dx / d : Math.SQRT1_2;
+    const uy = d > 0.01 ? dy / d : -Math.SQRT1_2;
+    p.x = origin.x + ux * HOUSE_CLEARANCE;
+    p.y = origin.y + uy * HOUSE_CLEARANCE;
+  };
+  for (let round = 0; round < 24; round++) {
+    let moved = false;
+    out.forEach((p, i) => {
+      if (!free(i)) return;
+      const before = { ...p };
+      pushOut(p);
+      if (before.x !== p.x || before.y !== p.y) moved = true;
+    });
+    for (let i = 0; i < out.length; i++) {
+      for (let j = i + 1; j < out.length; j++) {
+        if (!free(i) || !free(j)) continue;
+        const a = out[i];
+        const b = out[j];
+        const d = Math.hypot(b.x - a.x, b.y - a.y);
+        if (d >= DOT_SPACING - 0.01) continue;
+        const ux = d > 0.01 ? (b.x - a.x) / d : 1;
+        const uy = d > 0.01 ? (b.y - a.y) / d : 0;
+        const step = (DOT_SPACING - d) / 2;
+        a.x -= ux * step;
+        a.y -= uy * step;
+        b.x += ux * step;
+        b.y += uy * step;
+        moved = true;
+      }
+    }
+    if (!moved) break;
+  }
+  return out.map((p) => ({ x: round1(p.x), y: round1(p.y) }));
+}
+
 /** Ring labels sit just inside each ring, a little west of south, where no place and no line runs. */
 const RING_LABEL_ANGLE = 100;
 /** Ring labels: Martian Mono at 13 units (75 % width, tabular); 0.66 em per glyph keeps the estimate safe. */
@@ -127,11 +194,11 @@ export function polylineBoxes(
   return boxes;
 }
 
-/** The label frame of one view: places inside the frame, ring and landscape labels as obstacles. */
+/** The label frame of one view: places inside the frame (where their dots are drawn), ring and landscape labels as obstacles. */
 export function labelFrame(data: Pick<RegionMapData, 'centerName' | 'places'>, view: RadiusView): LabelFrame {
   const places = view.points.flatMap((point, i) => {
     const place = data.places[i];
-    return point.inFrame && place ? [{ id: place.id, name: place.name, x: point.x, y: point.y, atCenter: place.atCenter }] : [];
+    return point.inFrame && place ? [{ id: place.id, name: place.name, x: point.drawn.x, y: point.drawn.y, atCenter: place.atCenter }] : [];
   });
   const obstacles = [
     ...ringLabels(view).map((label) => label.box),

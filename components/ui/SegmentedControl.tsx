@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { Check } from 'lucide-react';
+import { Icon } from '@/components/icons';
 import { cn } from '@/lib/utils/cn';
 
 export interface SegmentedOption<V extends string = string> {
@@ -24,7 +24,11 @@ export interface SegmentedControlProps<V extends string = string> {
 
 /**
  * Native radio group styled as segments: arrow keys, form submission and
- * screen reader semantics come from the browser. Selected = ink with check.
+ * screen reader semantics come from the browser. Drawn like the radius switch of the start page
+ * (components/maps): 2 px navy contour, radius 12 at the ends; selected = navy fill with a check
+ * (dark/inverse: cream), so the state never rests on colour alone. Each segment carries its own
+ * contour, so nothing clips the 3 px focus ring. The fill changes in d-2 (≤ 300 ms, E-BEW-003),
+ * press 1 px down (Register `druck`), hover only with a fine pointer.
  */
 export function SegmentedControl<V extends string = string>({
   legend,
@@ -39,16 +43,19 @@ export function SegmentedControl<V extends string = string>({
   const controlled = value !== undefined;
   return (
     <fieldset className={cn('min-w-0', className)}>
-      <legend className={cn('mb-2 text-callout font-medium text-ink', hideLegend && 'sr-only')}>{legend}</legend>
-      <div className="flex gap-1 rounded-full bg-surface-3 p-1">
+      <legend className={cn('mb-2 text-callout font-bold text-ink', hideLegend && 'sr-only')}>{legend}</legend>
+      <div className="flex">
         {options.map((option) => (
           <label
             key={option.value}
+            data-motion="druck"
             className={cn(
-              'group flex min-h-11 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-full px-3 text-center',
-              'text-callout font-medium text-ink-muted transition-colors duration-fast ease-standard hover:text-ink',
-              'has-checked:bg-ink has-checked:text-surface',
-              'has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-focus',
+              'group relative flex min-h-12 min-w-0 flex-1 cursor-pointer items-center justify-center gap-1 px-1.5 py-2 text-center',
+              'border-2 border-brand bg-surface-raised not-first:-ml-0.5 first:rounded-l-2 last:rounded-r-2',
+              'text-callout font-bold text-brand transition-colors duration-d1 ease-ein',
+              'pointer-fine:hover:not-has-checked:bg-surface-3 pointer-fine:hover:duration-d2 pointer-fine:hover:ease-aus',
+              'has-checked:bg-brand has-checked:text-surface has-checked:duration-d2 has-checked:ease-aus',
+              'has-focus-visible:z-10 has-focus-visible:outline-3 has-focus-visible:outline-offset-3 has-focus-visible:outline-focus',
             )}
           >
             <input
@@ -61,7 +68,7 @@ export function SegmentedControl<V extends string = string>({
                 if (event.target.checked) onValueChange?.(option.value);
               }}
             />
-            <Check aria-hidden="true" strokeWidth={2.25} className="hidden size-4 shrink-0 group-has-checked:block" />
+            <Icon name="check" size="sm" className="hidden group-has-checked:block" />
             {option.label}
           </label>
         ))}

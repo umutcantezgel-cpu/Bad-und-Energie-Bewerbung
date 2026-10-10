@@ -11,6 +11,7 @@ import {
 } from '@/lib/maps/google-maps-config';
 import { hasGoogleMapsAuthError, loadGoogleMapsScript, onGoogleMapsAuthError } from '@/lib/maps/google-maps-loader';
 import { cn } from '@/lib/utils/cn';
+import { radiusCircles } from './google-circles';
 
 export interface GoogleRegionMapProps {
   /** Selected REGION location id; places at the headquarters select the HQ marker. */
@@ -132,7 +133,7 @@ export default function GoogleRegionMap({
   );
 }
 
-interface MapContext {
+export interface MapContext {
   selectedRef: { current: string | null };
   applySelectionRef: { current: ((id: string | null) => void) | null };
   radiusRef: { current: number };
@@ -142,7 +143,11 @@ interface MapContext {
   ready: () => void;
 }
 
-function createMap(
+/**
+ * Builds the map inside `container` from `window.google.maps` (loaded by the caller). Exported for the
+ * test with a stubbed `window.google` (components/maps/__tests__/google-circles.test.ts, E-START-033).
+ */
+export function createMap(
   container: HTMLDivElement,
   { selectedRef, applySelectionRef, radiusRef, radiiRef, applyRadiusRef, callbacks, ready }: MapContext,
 ): () => void {
@@ -163,36 +168,14 @@ function createMap(
   });
 
   // E-START-033: one thin circle per switch radius (15, 25, 35 km), lines only; the chosen one is
-  // drawn stronger and framed. Same ring logic as the radius graphic.
-  const circles = radiiRef.current.map((km) => ({
-    km,
-    circle: new g.Circle({
-      map,
-      center: HEADQUARTERS_COORDINATES,
-      radius: km * 1000,
-      clickable: false,
-      fillOpacity: 0,
-      strokeColor: palette().lineStrong,
-      strokeOpacity: 1,
-      strokeWeight: 1,
-    }),
-  }));
-  const paintCircles = () => {
-    const colors = palette();
-    for (const { km, circle } of circles) {
-      const active = km === radiusRef.current;
-      circle.setOptions({ strokeColor: active ? colors.ink : colors.lineStrong, strokeWeight: active ? 2 : 1 });
-    }
-  };
-  const frameRadius = (km: number) => {
-    const bounds = circles.find((c) => c.km === km)?.circle.getBounds();
-    if (bounds) map.fitBounds(bounds, 8);
-  };
+  // drawn stronger and framed. Same ring logic as the radius graphic (google-circles.ts).
+  const circles = radiusCircles(g, map, { center: HEADQUARTERS_COORDINATES, radii: radiiRef.current, palette: palette() });
+  const paintCircles = () => circles.paint(radiusRef.current, palette());
   paintCircles();
-  frameRadius(radiusRef.current);
+  circles.frame(radiusRef.current);
   applyRadiusRef.current = (km) => {
     paintCircles();
-    frameRadius(km);
+    circles.frame(km);
   };
 
   const markers = MAP_POIS.map((poi) => {
@@ -248,7 +231,7 @@ function createMap(
       g.event.clearInstanceListeners(marker);
       marker.setMap(null);
     }
-    for (const { circle } of circles) circle.setMap(null);
+    circles.remove();
     g.event.clearInstanceListeners(map);
   };
 }

@@ -1,11 +1,15 @@
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import { COMPANY } from '@/lib/content/company';
 import { getFaqItems } from '@/lib/content/faq';
+import { formatSalaryAmount, jobPath } from '@/lib/jobs/format';
+import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import { DISCRETION_PROMISE, PROCESS_INTRO, getProcessSteps } from '@/lib/content/process';
 import { buildFaqPageJsonLd } from '../content';
 import { FaqSection } from '../FaqSection';
 import { ProcessTimeline } from '../ProcessTimeline';
+import { JobList, stellenEtikett } from '../JobList';
 import { SectionHeader } from '../SectionHeader';
 import { ABLAUF_KOPF, FAQ_KOPF } from '../woche/abschnitte-text';
 
@@ -77,6 +81,14 @@ describe('ProcessTimeline (#ablauf, E-START-027)', () => {
     expect(html).toMatch(/<div data-primary-cta="true" class="shrink-0"><a [^>]*href="\/bewerbung"[^>]*>Jetzt bewerben<\/a>/);
   });
 
+  it('Wand mit Leitungstrenner und Rohrklammer am Kopf; Abgänge auf der Abstandsskala (24 px)', () => {
+    expect(html).toMatch(/<section class="[^"]*bg-surface-2[^"]*"[^>]*id="ablauf"/);
+    expect(html).toContain('data-zeichnung="leitungstrenner"');
+    expect(html).toContain('data-zeichnung="rohrklammer"');
+    expect(html).not.toMatch(/\b[wh]-7\b/);
+    expect(html).toContain('w-6');
+  });
+
   it('Icon aus der eigenen Familie statt lucide', () => {
     expect(html).not.toContain('lucide');
     expect(html).toContain('stroke-width="3"');
@@ -88,8 +100,15 @@ describe('FaqSection (#faq, E-START-050)', () => {
   const items = getFaqItems();
 
   it('Überschrift bleibt „Häufige Fragen“, die Einleitung des Altstands kehrt zurück', () => {
+    // Einzeilige Überschrift: ohne Rohrklammer (die Klammer fasst zwei Zeilen, wie im Einstieg)
     expect(html).toContain(`id="faq-title" class="text-title-1 text-brand">${FAQ_KOPF.titel}</h2>`);
     expect(html).toContain(`>${FAQ_KOPF.einleitung}</p>`);
+  });
+
+  it('Kopf im Muster des Einstiegs: Etikett „FAQ“; Wand mit Leitungstrenner (E-023)', () => {
+    expect(html).toContain(`<p class="text-etikett text-ink-muted">${FAQ_KOPF.etikett}</p>`);
+    expect(html).toMatch(/<section class="[^"]*bg-surface-2[^"]*"[^>]*id="faq"/);
+    expect(html).toContain('data-zeichnung="leitungstrenner"');
   });
 
   it('fünf Fragen als exklusives Akkordeon (Disclosure, name="faq")', () => {
@@ -106,6 +125,38 @@ describe('FaqSection (#faq, E-START-050)', () => {
     for (const q of data.mainEntity) {
       expect(visible).toContain(`>${q.name}</span>`);
       expect(visible).toContain(`>${q.acceptedAnswer.text}</p>`);
+    }
+  });
+});
+
+describe('Leitungstrenner zwischen Abschnitten (E-023, über Section trenner)', () => {
+  it('jeder Abschnitt dieses Pakets trägt oben das Leitungspaar, randlos und rein grafisch', () => {
+    for (const html of [renderToStaticMarkup(createElement(ProcessTimeline)), renderToStaticMarkup(createElement(FaqSection))]) {
+      expect(html).toMatch(/<section class="[^"]*relative pt-24 md:pt-section/);
+      expect(html).toMatch(/<svg class="[^"]*pointer-events-none absolute inset-x-0 top-6 md:top-8" aria-hidden="true"[^>]*data-zeichnung="leitungstrenner"/);
+    }
+  });
+});
+
+describe('JobList (#stellen, E-START-023)', () => {
+  const NOW = new Date('2026-10-09T12:00:00Z');
+  const live = getActiveJobs().filter((job) => isJobLive(job, NOW));
+  const html = renderToStaticMarkup(createElement(JobList, { now: NOW }));
+
+  it('Etikett zählt die Stellen, die gerade live sind, und nennt den Ort', () => {
+    expect(stellenEtikett(4)).toBe(`4\u00a0Stellen · ${COMPANY.address.city}`);
+    expect(stellenEtikett(1)).toBe(`1\u00a0Stelle · ${COMPANY.address.city}`);
+    expect(html).toContain(`<p class="text-etikett text-ink-muted">${stellenEtikett(live.length)}</p>`);
+  });
+
+  it('Papier mit Leitungstrenner; vier Zeilen mit Gehalt aus job.salary und benannter Liste', () => {
+    expect(html).toMatch(/<section class="[^"]*relative[^"]*"[^>]*id="stellen"/);
+    expect(html).not.toMatch(/<section class="[^"]*bg-surface-2/);
+    expect(html).toContain('data-zeichnung="leitungstrenner"');
+    expect(html).toContain(`aria-label="${live.length} offene Stellen"`);
+    for (const job of live) {
+      expect(html).toContain(`href="${jobPath(job)}"`);
+      expect(html).toContain(`>${formatSalaryAmount(job)}<`);
     }
   });
 });

@@ -42,9 +42,9 @@ function FallbackToastCard({ toast, paused, onDismiss }: ToastCardProps) {
   }, [id, duration, persistent, paused, onDismiss]);
 
   return (
-    <div data-tone="inverse" className="pointer-events-auto flex w-full items-start gap-3 rounded-md py-3 pr-2 pl-4 shadow-lg">
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5 py-2.5">
-        <p className="text-callout font-semibold text-ink">{title}</p>
+    <div data-tone="inverse" className="pointer-events-auto flex w-full items-start gap-3 rounded-2 py-3 pr-2 pl-4 shadow-lg">
+      <div className="flex min-w-0 flex-1 flex-col gap-1 py-2.5">
+        <p className="text-callout font-bold text-ink">{title}</p>
         {description && <p className="text-callout text-ink-muted">{description}</p>}
         {action && (
           <button
@@ -53,7 +53,7 @@ function FallbackToastCard({ toast, paused, onDismiss }: ToastCardProps) {
               action.onClick();
               onDismiss(id);
             }}
-            className="-mb-2.5 inline-flex min-h-11 items-center self-start rounded-xs text-callout font-semibold text-ink underline underline-offset-4"
+            className="-mb-2.5 inline-flex min-h-11 items-center self-start rounded-1 text-callout font-bold text-ink underline underline-offset-4"
           >
             {action.label}
           </button>
@@ -62,7 +62,7 @@ function FallbackToastCard({ toast, paused, onDismiss }: ToastCardProps) {
       <button
         type="button"
         onClick={() => onDismiss(id)}
-        className="inline-flex min-h-11 shrink-0 items-center rounded-full px-3 text-callout font-semibold text-ink"
+        className="inline-flex min-h-11 shrink-0 items-center rounded-1 px-3 text-callout font-bold text-ink underline underline-offset-4"
       >
         Schließen
       </button>

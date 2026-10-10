@@ -31,8 +31,9 @@ describe('Einstieg-Texte (R3-HOME-01)', () => {
     expect(ortsmarke(NEUJAHR)).toMatch(/^Seit 1926/);
   });
 
-  it('die Jahres-Maßkette gilt nur im Jubiläumsjahr und misst 1926 bis 2026', () => {
-    expect(jahreskette(HEUTE)).toEqual({ text: '100 Jahre Meisterbetrieb', von: '1926', bis: '2026' });
+  it('die Jahres-Maßkette gilt nur im Jubiläumsjahr und misst 1926 bis 2026, ohne den Satz (E-023)', () => {
+    expect(jahreskette(HEUTE)).toEqual({ von: '1926', bis: '2026' });
+    expect(jahreskette(LETZTER_TAG)).toEqual({ von: '1926', bis: '2026' });
     expect(jahreskette(NEUJAHR)).toBeNull();
   });
 
@@ -72,8 +73,9 @@ describe('Vertrauenszeile (E-START-021, E-START-010, E-START-011)', () => {
     expect(texte.some((t) => /Diskretion|vertraulich/.test(t))).toBe(true);
   });
 
-  it('nennt feste Baustellen (Fakt noFarAssembly) und die Partner in der abgestuften Fassung, nie pauschal', () => {
-    expect(texte).toContain(FACTS.noFarAssembly.short);
+  it('nennt keine Fernmontage (REGION.headline und FAQ tragen sie, E-023) und die Partner abgestuft, nie pauschal', () => {
+    expect(texte).not.toContain(FACTS.noFarAssembly.short);
+    expect(texte.join(' · ')).not.toMatch(/Fernmontage/);
     expect(texte).toEqual(
       expect.arrayContaining([
         'Buderus & Bosch Partnerbetrieb',
@@ -99,6 +101,6 @@ describe('Vertrauenszeile (E-START-021, E-START-010, E-START-011)', () => {
     expect(punkte.every((p) => p.quelle.length > 0 && p.text.length > 0)).toBe(true);
     const gruppen = punkte.map((p) => p.gruppe);
     expect(gruppen.lastIndexOf('betrieb')).toBeLessThan(gruppen.indexOf('partner'));
-    expect(punkte).toHaveLength(7);
+    expect(punkte).toHaveLength(6);
   });
 });

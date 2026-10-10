@@ -12,6 +12,13 @@ import {
 } from './woche-daten';
 import s from './woche.module.css';
 
+/** Schrift im SVG über die semantischen Utilities (fill folgt der Textfarbe). */
+const TAG = 'fill-current text-callout font-bold text-ink';
+const MASSTEXT = 'fill-current font-mass text-footnote font-medium text-ink';
+const HAUPTMASS = `fill-current font-mass font-semibold text-brand ${s.feierabend}`;
+const ACHSTEXT = 'fill-current font-mass text-footnote font-medium text-ink-muted';
+const ETIKETT = `fill-current text-etikett text-ink-muted ${s.frei}`;
+
 export const WOCHE_BILD_TITEL_ID = 'woche-bild-titel';
 export const WOCHE_BILD_TEXT_ID = 'woche-bild-text';
 
@@ -61,7 +68,7 @@ function Heizkreis({ tag, i }: { tag: Arbeitstag; i: number }) {
   const freitag = tag.kuerzel === 'Fr';
   return (
     <g>
-      <text className={s.tag} x={-spalte} y={reihenMitte(i)} dy="0.35em">
+      <text className={TAG} x={-spalte} y={reihenMitte(i)} dy="0.35em">
         {tag.kuerzel}
       </text>
       <line className={s.vorlauf} x1={von} x2={bis} y1={vorlaufY(i)} y2={vorlaufY(i)} />
@@ -71,7 +78,7 @@ function Heizkreis({ tag, i }: { tag: Arbeitstag; i: number }) {
         <path className={s.ruecklauf} d={`M${kreis} 0A${kreis} ${kreis} 0 0 1 0 ${kreis}`} />
       </svg>
       <text
-        className={freitag ? `${s.mass} ${s.feierabend}` : s.mass}
+        className={freitag ? HAUPTMASS : MASSTEXT}
         x={bis}
         dx={kreis + mass}
         y={reihenMitte(i)}
@@ -132,10 +139,10 @@ export function Wochenplan() {
 
       {FREIE_TAGE.length > 0 && (
         <g>
-          <text className={s.tag} x={-spalte} y={reihenMitte(wochenende)} dy="0.35em">
+          <text className={TAG} x={-spalte} y={reihenMitte(wochenende)} dy="0.35em">
             {WOCHE_TEXT.freieTage}
           </text>
-          <text className={s.etikett} x={0} y={reihenMitte(wochenende)} dy="0.35em">
+          <text className={ETIKETT} x={0} y={reihenMitte(wochenende)} dy="0.35em">
             {WOCHE_TEXT.wochenende}
           </text>
         </g>
@@ -145,7 +152,7 @@ export function Wochenplan() {
       {ACHSE.striche.map((h) => (
         <g key={h}>
           <line className={s.strich} x1={prozent(h)} x2={prozent(h)} y1={achseY + 1} y2={achseY + 9} />
-          <text className={`${s.mass} ${s.achse}`} x={prozent(h)} y={achseY + 22} dy="0.35em" textAnchor="middle">
+          <text className={ACHSTEXT} x={prozent(h)} y={achseY + 22} dy="0.35em" textAnchor="middle">
             {stundeKurz(h)}
           </text>
         </g>

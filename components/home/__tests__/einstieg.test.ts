@@ -48,6 +48,12 @@ describe('Hero / Einstieg (R3-HOME-01)', () => {
     expect(html2027).not.toContain('data-bis=');
   });
 
+  it('E-023: „100 Jahre“ steht im Einstieg genau einmal (Ortsmarke); die Jahres-Maßkette zeigt nur 1926 … 2026', () => {
+    expect(text2026.match(/100 Jahre/g)).toHaveLength(1);
+    const kette = html2026.match(/<p[^>]*data-bis="2026-12-31"[^>]*>([\s\S]*?)<\/p>/)!;
+    expect(plain(kette[1]).trim()).toBe('2026');
+  });
+
   it('die Hauptaktion „Jetzt bewerben“ führt nach /bewerbung und liegt im Bereich der Hauptaktion (StickyApplyBar)', () => {
     const bereich = html2026.slice(html2026.indexOf(`${PRIMARY_CTA_ATTR}=""`));
     const aktion = bereich.match(/<a [^>]*>Jetzt bewerben/)![0];
@@ -58,9 +64,10 @@ describe('Hero / Einstieg (R3-HOME-01)', () => {
     expect(text2026).toContain('Offene Stellen ansehen');
   });
 
-  it('zeigt die vier Maße aus HERO_STATS als echten Text (Liste), die Zeichnung ist dekorativ', () => {
+  it('zeigt die vier Maße aus HERO_STATS als echten Text (Liste), Wert und Name getrennt; die Zeichnung ist dekorativ', () => {
     for (const stat of HERO_STATS) {
-      expect(text2026).toContain(`${stat.value.replace(/ /g, ' ')}${stat.label}`);
+      // Leerzeichen im DOM zwischen Wert und Name (Kopieren, Lesemodus): „13:30 Freitags Feierabend“
+      expect(text2026).toContain(`${stat.value.replace(/\u00a0/g, ' ')} ${stat.label}`);
     }
     expect(html2026).toMatch(/<svg class="[^"]*" viewBox="0 0 760 520" aria-hidden="true" focusable="false" data-szene="einstieg">/);
     expect(html2026).toMatch(/<text[^>]*>Wetzlar<\/text>/);
@@ -83,7 +90,13 @@ describe('Hero / Einstieg (R3-HOME-01)', () => {
     expect(text2026).toContain(KREISLAUF_SATZ);
   });
 
-  it('Vertrauenszeile: statische Liste mit allen Punkten, ohne Laufband', () => {
+  it('ohne Skript bleibt keine leere Knopffläche: das CSS-Modul blendet den Knopf bei scripting: none aus', () => {
+    const css = quelle(path.join(EINSTIEG, 'einstieg.module.css'));
+    expect(css).toMatch(/@media \(scripting: none\) \{\s*\.knopf \{\s*display: none;/);
+  });
+
+  it('Vertrauenszeile: statische Liste mit allen Punkten, ohne Laufband und ohne Fernmontage (E-023)', () => {
+    expect(text2026).not.toContain('Fernmontage');
     const liste = html2026.match(/<ul[^>]*data-vertrauenszeile=""[^>]*>([\s\S]*?)<\/ul>/)!;
     expect(liste[0]).toContain('aria-label="Betrieb und Partner"');
     const eintraege = [...liste[1].matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/g)].map((m) => plain(m[1]));

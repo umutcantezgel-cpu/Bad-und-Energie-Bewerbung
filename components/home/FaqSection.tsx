@@ -11,15 +11,21 @@ import { FAQ_KOPF } from './woche/abschnitte-text';
  * #faq (E-START-050): die fünf Fragen als exklusives natives Akkordeon (`Disclosure`, name="faq": immer nur
  * eine offen, ohne JavaScript, mit Seitensuche), dazu die einzige FAQPage der Website. Das JSON-LD trägt
  * genau den sichtbaren Wortlaut (buildFaqPageJsonLd). Ab lg: Kopf links, Fragen rechts (eigene Struktur
- * gegenüber den Nachbarabschnitten, S-12).
+ * gegenüber den Nachbarabschnitten, S-12). Tonfolge E-023: Wand vor dem Schlussband.
  */
 export function FaqSection() {
   const items = getFaqItems();
 
   return (
-    <Section id="faq" tone="subtle" aria-labelledby="faq-title">
+    <Section id="faq" tone="wand" trenner aria-labelledby="faq-title">
       <Container className="grid gap-8 lg:grid-cols-12 lg:gap-x-8">
-        <SectionHeader id="faq-title" title={FAQ_KOPF.titel} lead={FAQ_KOPF.einleitung} className="lg:col-span-5" />
+        <SectionHeader
+          id="faq-title"
+          eyebrow={FAQ_KOPF.etikett}
+          title={FAQ_KOPF.titel}
+          lead={FAQ_KOPF.einleitung}
+          className="lg:col-span-5"
+        />
         <div className="border-t-(length:--m-strich) border-brand lg:col-span-7">
           {items.map((item) => (
             <Disclosure key={item.id} name="faq" summary={<span className="text-pretty">{item.question}</span>}>

@@ -1,8 +1,9 @@
+import { Fragment } from 'react';
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
 import { RegionMap } from '@/components/maps';
 import { REGION } from '@/lib/content/region';
-import { GEBIET_ETIKETT } from './gebiet/gebiet-text';
+import { GEBIET_ETIKETT, headlineSaetze } from './gebiet/gebiet-text';
 import { WeitereOrte } from './gebiet/WeitereOrte';
 import { Werkstatt } from './gebiet/Werkstatt';
 import { SectionHeader } from './SectionHeader';
@@ -23,7 +24,12 @@ export function RegionSection() {
               id="einsatzgebiet-title"
               eyebrow={GEBIET_ETIKETT}
               klammer
-              title={REGION.headline}
+              title={headlineSaetze().map((satz, i) => (
+                <Fragment key={satz}>
+                  {i > 0 && ' '}
+                  <span className="block">{satz}</span>
+                </Fragment>
+              ))}
               lead={REGION.summary}
             />
           }

@@ -47,6 +47,14 @@ describe('JobCard (R3-HOME-02)', () => {
     expect(render({ job: azubi, variant: 'abgang' })).toContain('Vergütung / Monat');
   });
 
+  it('abgang variant: employment right under the title, salary and unit together after it; focus ring inside', () => {
+    const html = render({ job: am, variant: 'abgang' });
+    expect(html.indexOf(employmentLabel(am))).toBeLessThan(html.indexOf(formatSalaryAmount(am)!));
+    expect(html.indexOf(formatSalaryAmount(am)!)).toBeLessThan(html.indexOf('Gehalt / Monat'));
+    expect(html).toContain('focus-visible:after:-outline-offset-3');
+    expect(html).not.toContain('outline-offset-0');
+  });
+
   it('abgang variant: supply and return stubs are decorative, motion only through register ids', () => {
     const html = render({ job: am, variant: 'abgang' });
     expect(html).toMatch(/<span aria-hidden="true" class="[^"]*bg-vorlauf/);

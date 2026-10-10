@@ -1,6 +1,15 @@
 import { cn } from '@/lib/utils/cn';
-import { CENTER_LABEL_ID, LANDSCAPE_CLEAR, RING_LABEL_FONT_SIZE, SELECTED_RING_RADIUS, graphicLabels, labelFrame, pendelPaths, ringLabels } from './graphic';
-import { LANDSCAPE_LABEL_FONT_SIZE } from './landscape';
+import {
+  CENTER_LABEL_ID,
+  LANDSCAPE_CLEAR,
+  LANDSCAPE_LABEL_FONT_SIZE,
+  RING_LABEL_FONT_SIZE,
+  SELECTED_RING_RADIUS,
+  graphicLabels,
+  labelFrame,
+  pendelPaths,
+  ringLabels,
+} from './graphic';
 import type { RadiusView, RegionMapData } from './types';
 
 export interface RadiusGraphicProps {
@@ -38,8 +47,10 @@ export function RadiusGraphic({ data, view, selectedId, onSelect, titleId, descI
   const selectedPoint = selectedIndex >= 0 ? view.points[selectedIndex] : null;
   const centerSelected = selectedPlace?.atCenter ?? false;
   const pendel =
-    selectedPlace && selectedPoint?.inFrame && !selectedPlace.atCenter ? pendelPaths(origin, selectedPoint) : null;
+    selectedPlace && selectedPoint?.inFrame && !selectedPlace.atCenter ? pendelPaths(origin, selectedPoint.drawn) : null;
   const inFrameNames = frame.places.filter((place) => !place.atCenter).map((place) => place.name);
+  // Hohl = außerhalb des gewählten Radius, nach der Entfernung der Ortsliste (wie radiusStatus in status.ts),
+  // damit Punkt, Kärtchen und Ergebnis dasselbe sagen. Die Lage des Punkts folgt der Luftlinie.
   const outside = (distanceKm: number) => distanceKm > view.radiusKm;
   const maskId = `${titleId}-landschaft`;
 
@@ -50,9 +61,11 @@ export function RadiusGraphic({ data, view, selectedId, onSelect, titleId, descI
       aria-labelledby={`${titleId} ${descId}`}
       className={cn('block size-full select-none', className)}
     >
-      <title id={titleId}>{`Einsatzgebiet: ${view.radiusKm} km Luftlinie um ${data.centerName}`}</title>
+      {/* E-023: Die Zusage (35 km) steht in der Überschrift und am Ring; Titel und Beschreibung wiederholen sie nicht. */}
+      <title id={titleId}>{`Plan des Einsatzgebiets um ${data.centerName}, Kreise in Luftlinie`}</title>
       <desc id={descId}>
-        {`Plan mit ${data.centerName} in der Mitte und Kreisen für ${view.rings.map((ring) => `${ring.km} km`).join(', ')} Luftlinie. ` +
+        {`${data.centerName} in der Mitte. ` +
+          (view.radiusKm === data.radiusKm ? 'Ausschnitt: das ganze Einsatzgebiet. ' : `Ausschnitt: ${view.radiusKm} km um ${data.centerName}. `) +
           `Lahn, Dill, A45 und B49 sind schematisch eingezeichnet. Im Ausschnitt liegen ${inFrameNames.join(', ')}. ` +
           (selectedPlace ? `Gewählt: ${selectedPlace.name}. ` : '') +
           'Entfernung und Fahrzeit stehen in der Ortsliste.'}
@@ -93,46 +106,8 @@ export function RadiusGraphic({ data, view, selectedId, onSelect, titleId, descI
         ))}
       </g>
 
-      {/* Pendel: Vorlauf hin, Rücklauf zurück (statisch) */}
-      {pendel && (
-        <g fill="none">
-          <path d={pendel.vorlauf} className="stroke-vorlauf" {...lineProps} />
-          <path d={pendel.ruecklauf} className="stroke-ruecklauf" {...lineProps} />
-        </g>
-      )}
-
-      {/* Orte; außerhalb des gewählten Radius hohl */}
-      {data.places.map((place, i) => {
-        const point = view.points[i];
-        if (!point?.inFrame || place.atCenter) return null;
-        const isSelected = place.id === selectedId;
-        return (
-          <g key={place.id}>
-            {isSelected && (
-              <circle cx={point.x} cy={point.y} r={SELECTED_RING_RADIUS} className="fill-none stroke-brand" strokeWidth={2} vectorEffect="non-scaling-stroke" />
-            )}
-            <circle
-              cx={point.x}
-              cy={point.y}
-              r={isSelected ? 5.5 : 4.5}
-              className={outside(place.distanceKm) ? 'fill-surface-raised stroke-brand' : 'fill-brand stroke-waerme'}
-              strokeWidth={2}
-              vectorEffect="non-scaling-stroke"
-            />
-          </g>
-        );
-      })}
-
-      {/* Haus der Werkstatt in der Mitte */}
-      <path
-        d={CENTER_HOUSE}
-        transform={`translate(${origin.x} ${origin.y})`}
-        className={cn('stroke-brand', centerSelected ? 'fill-brand' : 'fill-surface-raised')}
-        {...lineProps}
-      />
-
-      {/* Beschriftung mit Halo in Wärme, damit Linien darunter nicht durch die Schrift laufen */}
-      <g paintOrder="stroke" strokeLinejoin="round" className="stroke-waerme">
+      {/* Namen der Landschaft unter dem Pendel: ihr Halo unterbricht Ringe und Landschaft, nie Vorlauf und Rücklauf */}
+      <g aria-hidden="true" paintOrder="stroke" strokeLinejoin="round" className="stroke-waerme">
         {view.landscape.map(
           (line) =>
             line.label && (
@@ -150,6 +125,49 @@ export function RadiusGraphic({ data, view, selectedId, onSelect, titleId, descI
               </text>
             ),
         )}
+      </g>
+
+      {/* Pendel: Vorlauf hin, Rücklauf zurück (statisch) */}
+      {pendel && (
+        <g fill="none">
+          <path d={pendel.vorlauf} className="stroke-vorlauf" {...lineProps} />
+          <path d={pendel.ruecklauf} className="stroke-ruecklauf" {...lineProps} />
+        </g>
+      )}
+
+      {/* Orte; außerhalb des gewählten Radius hohl */}
+      {data.places.map((place, i) => {
+        const point = view.points[i];
+        if (!point?.inFrame || place.atCenter) return null;
+        const { x, y } = point.drawn;
+        const isSelected = place.id === selectedId;
+        return (
+          <g key={place.id}>
+            {isSelected && (
+              <circle cx={x} cy={y} r={SELECTED_RING_RADIUS} className="fill-none stroke-brand" strokeWidth={2} vectorEffect="non-scaling-stroke" />
+            )}
+            <circle
+              cx={x}
+              cy={y}
+              r={isSelected ? 5.5 : 4.5}
+              className={outside(place.distanceKm) ? 'fill-surface-raised stroke-brand' : 'fill-brand stroke-waerme'}
+              strokeWidth={2}
+              vectorEffect="non-scaling-stroke"
+            />
+          </g>
+        );
+      })}
+
+      {/* Haus der Werkstatt in der Mitte */}
+      <path
+        d={CENTER_HOUSE}
+        transform={`translate(${origin.x} ${origin.y})`}
+        className={cn('stroke-brand', centerSelected ? 'fill-brand' : 'fill-surface-raised')}
+        {...lineProps}
+      />
+
+      {/* Ringe und Orte beschriftet, mit Halo in Wärme, damit Linien darunter nicht durch die Schrift laufen */}
+      <g paintOrder="stroke" strokeLinejoin="round" className="stroke-waerme">
         {rings.map((ring) => (
           <text
             key={ring.km}
@@ -187,7 +205,7 @@ export function RadiusGraphic({ data, view, selectedId, onSelect, titleId, descI
           {data.places.map((place, i) => {
             const point = view.points[i];
             if (!point?.inFrame) return null;
-            const at = place.atCenter ? origin : point;
+            const at = place.atCenter ? origin : point.drawn;
             return (
               <circle
                 key={place.id}

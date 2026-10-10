@@ -41,16 +41,17 @@ function Leitungsstrang() {
   );
 }
 
-/** #ablauf: drei Schritte am Leitungsstrang, die Diskretionszusage und die Hauptaktion. */
+/** #ablauf auf der Wand (Tonfolge E-023): drei Schritte am Leitungsstrang, die Diskretionszusage und die Hauptaktion. */
 export function ProcessTimeline() {
   const steps = getProcessSteps('fachkraft');
 
   return (
-    <Section id="ablauf" tone="subtle" aria-labelledby="ablauf-title" className="overflow-x-clip">
+    <Section id="ablauf" tone="wand" trenner aria-labelledby="ablauf-title" className="overflow-x-clip">
       <Container>
         <SectionHeader
           id="ablauf-title"
           eyebrow={ABLAUF_KOPF.etikett}
+          klammer
           title={PROCESS_INTRO.title}
           lead={PROCESS_INTRO.text}
         />
@@ -59,10 +60,10 @@ export function ProcessTimeline() {
           <ol className="grid gap-12 pt-12 pb-6 pl-12 lg:grid-cols-3 lg:gap-8 lg:pt-12 lg:pb-0 lg:pl-0">
             {steps.map((step) => (
               <li key={step.id} className="relative flex flex-col gap-3">
-                {/* Abgang in Navy vom Rücklauf zur Schrittnummer: mobil waagerecht, ab lg senkrecht */}
+                {/* Abgang in Navy vom Rücklauf zur Schrittnummer: mobil waagerecht, ab lg senkrecht (24 px, Skala --a-5) */}
                 <span aria-hidden="true" className="relative self-start">
-                  <span className="absolute top-1/2 right-full mr-2 h-(--m-strich) w-7 -translate-y-1/2 bg-brand lg:hidden" />
-                  <span className="absolute bottom-full left-0 mb-2 hidden h-7 w-(--m-strich) bg-brand lg:block" />
+                  <span className="absolute top-1/2 right-full mr-3 h-(--m-strich) w-6 -translate-y-1/2 bg-brand lg:hidden" />
+                  <span className="absolute bottom-full left-0 mb-3 hidden h-6 w-(--m-strich) bg-brand lg:block" />
                   <span className="font-mass text-lead font-semibold text-brand">{String(step.number).padStart(2, '0')}</span>
                 </span>
                 <h3 className="text-title-3 text-brand">

@@ -14,6 +14,8 @@ export const ABLAUF_KOPF = Object.freeze({
  * (Freiraum des Passes: „die Einleitung ‚Offene Antworten …‘ darf zurückkehren“).
  */
 export const FAQ_KOPF = Object.freeze({
+  /** Etikett wie der Menüpunkt (Planbeschriftung, E-023 SectionHeader-Muster). */
+  etikett: 'FAQ',
   titel: 'Häufige Fragen',
   einleitung: 'Offene Antworten auf Fragen, die Monteuren und Gesellen wichtig sind.',
 });

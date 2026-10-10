@@ -17,8 +17,14 @@ export interface RegionPlace extends CommutePlace {
 /** Position of a place in one radius view. */
 export interface ViewPoint {
   id: string;
+  /** True position (projected coordinates, to scale). */
   x: number;
   y: number;
+  /**
+   * Where the dot is drawn: the true position, or, for the few places under the house in the middle,
+   * just clear of it (graphic.ts clearOfHouse). Labels and the Pendel use this point.
+   */
+  drawn: SvgPoint;
   /** Inside the square viewBox (with a small margin); places outside are not drawn. */
   inFrame: boolean;
 }

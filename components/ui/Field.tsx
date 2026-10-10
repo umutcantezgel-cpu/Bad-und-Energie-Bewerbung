@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, use, useId, type ReactNode } from 'react';
-import { CircleAlert } from 'lucide-react';
+import { Icon } from '@/components/icons';
 import { cn } from '@/lib/utils/cn';
 import { joinIds } from './helpers';
 
@@ -54,7 +54,10 @@ export interface FieldProps {
   children: ReactNode;
 }
 
-/** Label (always visible), hint, control and error for one form field. */
+/**
+ * Label (always visible), hint, control and error for one form field. The error never relies on
+ * colour alone: icon, bold text and the danger contour of the control carry it (KERN K-011).
+ */
 export function Field({ label, hint, error, optional, required = false, id, className, children }: FieldProps) {
   const autoId = useId();
   const controlId = id ?? `${autoId}-control`;
@@ -64,12 +67,12 @@ export function Field({ label, hint, error, optional, required = false, id, clas
 
   return (
     <div className={cn('flex flex-col gap-2', className)}>
-      <label htmlFor={controlId} className="text-callout font-medium text-ink">
+      <label htmlFor={controlId} className="text-callout font-bold text-ink">
         {label}
-        {optional && <span className="font-normal text-ink-muted"> (optional)</span>}
+        {optional && <span className="font-normal text-ink-2"> (optional)</span>}
       </label>
       {hint && (
-        <p id={hintId} className="-mt-1 text-footnote text-ink-muted">
+        <p id={hintId} className="-mt-1 text-footnote text-ink-2">
           {hint}
         </p>
       )}
@@ -84,11 +87,18 @@ export function Field({ label, hint, error, optional, required = false, id, clas
         {children}
       </FieldContext>
       {hasError && (
-        <p id={errorId} className="flex items-start gap-1.5 text-footnote font-medium text-danger">
-          <CircleAlert aria-hidden="true" strokeWidth={2} className="mt-px size-4 shrink-0" />
-          <span>{error}</span>
-        </p>
+        <FieldError id={errorId}>{error}</FieldError>
       )}
     </div>
+  );
+}
+
+/** Error line below a control: icon and bold text in the danger role (shared by Field and Checkbox). */
+export function FieldError({ id, className, children }: { id: string; className?: string; children: ReactNode }) {
+  return (
+    <p id={id} className={cn('flex items-start gap-2 text-callout font-bold text-danger', className)}>
+      <Icon name="circle-alert" size="md" className="mt-0.5" />
+      <span>{children}</span>
+    </p>
   );
 }

@@ -164,16 +164,31 @@ export const reihenMitte = (i: number) => MASS.kopf + i * MASS.reihe + MASS.reih
 /** Gesamthöhe: Zulauf, fünf Arbeitstage, eine Reihe Wochenende, Achse. */
 export const PLAN_HOEHE = MASS.kopf + (ARBEITSTAGE.length + (FREIE_TAGE.length > 0 ? 1 : 0)) * MASS.reihe + MASS.achse;
 
-/** Texte des Abschnitts, alle aus dem Faktenregister. */
+/** Zahlwort für die Bildbeschreibung („Fünf Arbeitstage“). */
+const ZAHLWORT = ['Kein', 'Ein', 'Zwei', 'Drei', 'Vier', 'Fünf', 'Sechs', 'Sieben'] as const;
+
+/** Tage, die nicht mit dem Freitag enden (Mo–Do): Stoff der Einleitung, die 13:30 trägt schon die Überschrift. */
+const VOR_FREITAG = ARBEITSTAGE.filter((t) => t.kuerzel !== FEIERABEND_FREITAG.kuerzel);
+
+/** „Feste Arbeitszeiten“ aus workingHours.long (der Teil vor dem Doppelpunkt). */
+const ARBEITSZEITEN_WORT = FACTS.workingHours.long.slice(0, FACTS.workingHours.long.indexOf(':'));
+
+/**
+ * Texte des Abschnitts, alle aus dem Faktenregister. Faktenverteilung E-023: 13:30 steht im Abschnitt einmal
+ * als Überschrift (die Zeichnung zeigt dasselbe Maß); die Einleitung nennt nur Mo–Do, die Bildbeschreibung
+ * wiederholt keine Zeit der Einleitung (Screenreader hören jede Zeit einmal).
+ */
 export const WOCHE_TEXT = Object.freeze({
+  /** Etikett über der Überschrift (Planbeschriftung). */
+  etikett: 'Arbeitszeit',
   /** „Freitags ab 13:30 Uhr Feierabend“ (friday1330.short, Variante 1). */
   titel: FACTS.friday1330.short,
-  /** „Feste Arbeitszeiten: Montag bis Donnerstag von 07:00 bis 16:45 Uhr, Freitag von 07:00 bis 13:30 Uhr.“ */
-  einleitung: FACTS.workingHours.long,
+  /** „Feste Arbeitszeiten: Montag bis Donnerstag von 07:00 bis 16:45 Uhr.“ (workingHours ohne den Freitag) */
+  einleitung: `${ARBEITSZEITEN_WORT}: ${beschreibeWoche(VOR_FREITAG)}.`,
   /** Titel der Zeichnung (B Runde 1). */
   bildTitel: 'Arbeitszeit der Woche',
-  /** Beschreibung der Zeichnung für Screenreader: dieselben Zeiten, aus den gelesenen Tagen gebaut. */
-  bildText: `${beschreibeWoche(ARBEITSTAGE)}. ${FREIE_TAGE.map((k) => TAG_NAME[k]).join(' und ')}: ${FACTS.noWeekendOnCall.short}.`,
+  /** Beschreibung der Zeichnung: was das Bild über die Einleitung hinaus zeigt (Beginn, kürzester Tag, Wochenende). */
+  bildText: `${ZAHLWORT[ARBEITSTAGE.length] ?? ARBEITSTAGE.length} Arbeitstage ab ${ARBEITSTAGE[0].von}\u00a0Uhr, der ${FEIERABEND_FREITAG.name} am kürzesten. ${FREIE_TAGE.map((k) => TAG_NAME[k]).join(' und ')}: ${FACTS.noWeekendOnCall.short}.`,
   /** „Sa, So“ */
   freieTage: FREIE_TAGE.join(', '),
   wochenende: FACTS.noWeekendOnCall.short,

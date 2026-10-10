@@ -11,6 +11,14 @@ import { REGION } from '@/lib/content/region';
 export const GEBIET_ETIKETT = 'Einsatzgebiet';
 
 /**
+ * REGION.headline satzweise („35 km um Wetzlar.“ / „Keine Fernmontage.“), damit die Überschrift an der
+ * Satzgrenze umbricht und nie quer darüber (B Runde 1 setzt die Sätze als eigene Zeilen). Der Wortlaut bleibt.
+ */
+export function headlineSaetze(headline: string = REGION.headline): string[] {
+  return headline.split(/(?<=[.!?])\s+/).filter(Boolean);
+}
+
+/**
  * E-START-030: Karte „Zentrale Werkstatt & Logistiklager“ (Altstand app/page.tsx@f2e7eae:753-785).
  * Kern sind Adresse und „Kurze Rüstzeiten“ (Pass, Freiraum). Nicht übernommen: das Badge „Optimal
  * angebunden via B49 & A45“ (nur indirekt gestützt), „Feste Partner Ausstellungen“ und die

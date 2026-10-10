@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatRating, isExternalHref, joinIds, starFills, stepProgress } from '../helpers';
+import { formatRating, isExternalHref, joinIds, starFills, stepMarks, stepProgress } from '../helpers';
 import { buttonVariants } from '../Button';
 import { buttonVariants as rawButtonVariants } from '../variants';
 import { cn } from '@/lib/utils/cn';
@@ -49,6 +49,27 @@ describe('stepProgress', () => {
   });
 });
 
+describe('stepMarks', () => {
+  it('puts a mark at the start and at the end of every step', () => {
+    expect(stepMarks(4)).toEqual([0, 0.25, 0.5, 0.75, 1]);
+    expect(stepMarks(1)).toEqual([0, 1]);
+  });
+
+  it('marks the current step exactly where stepProgress ends (no rounding gap)', () => {
+    for (const total of [3, 4, 6, 7]) {
+      for (let current = 1; current <= total; current++) {
+        expect(stepMarks(total)).toContain(stepProgress(current, total));
+      }
+    }
+  });
+
+  it('is empty for no or invalid step counts', () => {
+    expect(stepMarks(0)).toEqual([]);
+    expect(stepMarks(-2)).toEqual([]);
+    expect(stepMarks(Number.NaN)).toEqual([]);
+  });
+});
+
 describe('joinIds', () => {
   it('drops empty and non-string entries', () => {
     expect(joinIds('a-hint', false, undefined, '', 'a-error')).toBe('a-hint a-error');
@@ -57,9 +78,10 @@ describe('joinIds', () => {
 });
 
 describe('buttonVariants', () => {
-  it('keeps the pill shape and accent fill for primary', () => {
+  it('primary is the Einstieg action: radius 4, accent fill, bold (R4-UI-01)', () => {
     const classes = buttonVariants().split(' ');
-    expect(classes).toEqual(expect.arrayContaining(['rounded-full', 'bg-accent', 'text-on-accent', 'h-11']));
+    expect(classes).toEqual(expect.arrayContaining(['rounded-1', 'bg-accent', 'text-on-accent', 'font-bold', 'h-11']));
+    expect(classes).not.toContain('rounded-full');
   });
 
   it('lets cn() resolve conflicting type and color utilities', () => {
@@ -71,8 +93,8 @@ describe('buttonVariants', () => {
 
   it('wrap: grows with the label instead of clipping it (minimum height, normal white-space)', () => {
     const classes = buttonVariants({ size: 'lg', wrap: true }).split(' ');
-    expect(classes).toEqual(expect.arrayContaining(['min-h-13', 'whitespace-normal', 'px-4']));
-    expect(classes).not.toContain('h-13');
+    expect(classes).toEqual(expect.arrayContaining(['min-h-14', 'whitespace-normal', 'px-4']));
+    expect(classes).not.toContain('h-14');
     expect(classes).not.toContain('whitespace-nowrap');
     expect(classes).not.toContain('px-6');
   });

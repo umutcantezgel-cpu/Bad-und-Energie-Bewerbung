@@ -1,11 +1,15 @@
-import { useId, type ComponentPropsWithRef, type ReactNode } from 'react';
-import { Check, type LucideIcon } from 'lucide-react';
+import { useId, type ComponentPropsWithRef, type ComponentType, type ReactNode } from 'react';
+import { Icon, type IconName } from '@/components/icons';
 import { cn } from '@/lib/utils/cn';
+
+/** A component that draws an icon from a className (e.g. an older lucide icon); kept for compatibility. */
+type IconComponent = ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false'; strokeWidth?: number }>;
 
 interface ChoiceContent {
   title: ReactNode;
   description?: ReactNode;
-  icon?: LucideIcon;
+  /** Icon of the family (components/icons) by name; an icon component still works. */
+  icon?: IconName | IconComponent;
   className?: string;
 }
 
@@ -26,17 +30,24 @@ export interface MultiChoiceCardProps
 
 export type ChoiceCardProps = SingleChoiceCardProps | MultiChoiceCardProps;
 
+/*
+ * Answer card of the form system (R4-UI-01, E-BEW-003): radius 12, 2 px contour on the raised
+ * surface. Hover (fine pointer) turns the contour navy; selected fills the card navy with a cream
+ * indicator and check (dark mode and inverse band: cream fill, navy text), never accent red and never
+ * a glow. The fill changes in d-2 (240 ms ≤ 300 ms), the way out in d-1; with reduced motion it
+ * switches at once. Press 1 px down (Register `druck`).
+ */
 const card = cn(
-  'group flex min-h-16 w-full items-center gap-4 rounded-md border border-line bg-surface px-4 py-3 text-left',
-  'transition duration-fast ease-standard hover:border-line-strong active:scale-98',
+  'group flex min-h-16 w-full items-center gap-4 rounded-2 border-2 border-line-strong bg-surface-raised px-4 py-3 text-left text-ink',
+  'transition-colors duration-d1 ease-ein pointer-fine:hover:border-brand pointer-fine:hover:duration-d2 pointer-fine:hover:ease-aus',
 );
 
 const indicator = cn(
-  'ml-auto flex size-6 shrink-0 items-center justify-center border border-line-strong text-surface',
-  'transition-colors duration-fast ease-standard',
+  'ml-auto flex size-7 shrink-0 items-center justify-center border-2 border-line-strong bg-surface-raised text-brand',
+  'transition-colors duration-d1 ease-ein',
 );
 
-/** Answer card, at least 64px tall. Selected = ink border and check, never accent red. */
+/** Answer card, at least 64px tall. Selected = navy fill with check, never accent red. */
 export function ChoiceCard(props: ChoiceCardProps) {
   const id = useId();
   const titleId = `${id}-title`;
@@ -46,11 +57,12 @@ export function ChoiceCard(props: ChoiceCardProps) {
     const { mode: _mode, title, description, icon, className, disabled, ...inputProps } = props;
     return (
       <label
+        data-motion="druck"
         className={cn(
           card,
-          'cursor-pointer has-checked:border-ink has-checked:ring-1 has-checked:ring-inset has-checked:ring-ink',
-          'has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-focus',
-          disabled && 'pointer-events-none opacity-50',
+          'cursor-pointer has-checked:border-brand has-checked:bg-brand has-checked:text-surface has-checked:duration-d2 has-checked:ease-aus',
+          'has-focus-visible:outline-3 has-focus-visible:outline-offset-3 has-focus-visible:outline-focus',
+          disabled && 'pointer-events-none border-dashed text-ink-2',
           className,
         )}
       >
@@ -63,8 +75,8 @@ export function ChoiceCard(props: ChoiceCardProps) {
           {...inputProps}
         />
         <ChoiceBody title={title} description={description} icon={icon} titleId={titleId} descriptionId={descriptionId} />
-        <span aria-hidden="true" className={cn(indicator, 'rounded-xs group-has-checked:border-ink group-has-checked:bg-ink')}>
-          <Check strokeWidth={2.5} className="size-4 opacity-0 group-has-checked:opacity-100" />
+        <span aria-hidden="true" className={cn(indicator, 'rounded-1 group-has-checked:border-surface group-has-checked:bg-surface')}>
+          <Icon name="check" size="sm" className="opacity-0 group-has-checked:opacity-100" />
         </span>
       </label>
     );
@@ -77,10 +89,11 @@ export function ChoiceCard(props: ChoiceCardProps) {
       aria-pressed={selected}
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
+      data-motion="druck"
       className={cn(
         card,
-        'aria-pressed:border-ink aria-pressed:ring-1 aria-pressed:ring-inset aria-pressed:ring-ink',
-        'disabled:pointer-events-none disabled:opacity-50',
+        'aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-surface aria-pressed:duration-d2 aria-pressed:ease-aus',
+        'disabled:pointer-events-none disabled:border-dashed disabled:text-ink-2',
         className,
       )}
       {...buttonProps}
@@ -88,9 +101,9 @@ export function ChoiceCard(props: ChoiceCardProps) {
       <ChoiceBody title={title} description={description} icon={icon} titleId={titleId} descriptionId={descriptionId} />
       <span
         aria-hidden="true"
-        className={cn(indicator, 'rounded-full group-aria-pressed:border-ink group-aria-pressed:bg-ink')}
+        className={cn(indicator, 'rounded-voll group-aria-pressed:border-surface group-aria-pressed:bg-surface')}
       >
-        <Check strokeWidth={2.5} className="size-4 opacity-0 group-aria-pressed:opacity-100" />
+        <Icon name="check" size="sm" className="opacity-0 group-aria-pressed:opacity-100" />
       </span>
     </button>
   );
@@ -101,16 +114,23 @@ interface ChoiceBodyProps extends Omit<ChoiceContent, 'className'> {
   descriptionId?: string;
 }
 
-function ChoiceBody({ title, description, icon: Icon, titleId, descriptionId }: ChoiceBodyProps) {
+const BODY_ICON = 'size-6 shrink-0 text-brand group-aria-pressed:text-surface group-has-checked:text-surface';
+
+function ChoiceBody({ title, description, icon, titleId, descriptionId }: ChoiceBodyProps) {
+  const OwnIcon = typeof icon === 'string' ? null : icon;
   return (
     <>
-      {Icon && <Icon aria-hidden="true" strokeWidth={1.75} className="size-6 shrink-0 text-ink-muted" />}
-      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span id={titleId} className="text-body font-medium text-ink">
+      {typeof icon === 'string' && <Icon name={icon} size="lg" className={BODY_ICON} />}
+      {OwnIcon && <OwnIcon aria-hidden="true" className={BODY_ICON} />}
+      <span className="flex min-w-0 flex-1 flex-col gap-1">
+        <span id={titleId} className="text-body font-bold">
           {title}
         </span>
         {description && (
-          <span id={descriptionId} className="text-callout text-ink-muted">
+          <span
+            id={descriptionId}
+            className="text-callout text-ink-2 transition-colors duration-d1 ease-ein group-aria-pressed:text-surface group-has-checked:text-surface"
+          >
             {description}
           </span>
         )}
@@ -146,12 +166,12 @@ export function ChoiceGroup({ label, labelledBy, description, columns = 1, class
       {(ownLabelId || description) && (
         <div className="flex flex-col gap-1">
           {ownLabelId && (
-            <div id={ownLabelId} className="text-title-3 text-ink">
+            <div id={ownLabelId} className="text-title-3 text-brand">
               {label}
             </div>
           )}
           {description && (
-            <p id={descriptionId} className="text-callout text-ink-muted">
+            <p id={descriptionId} className="text-callout text-ink-2">
               {description}
             </p>
           )}

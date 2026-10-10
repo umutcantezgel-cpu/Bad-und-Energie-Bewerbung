@@ -452,6 +452,13 @@
   visibility: hidden;
 }
 
+/* Ohne Skript gibt es keinen Knopf und keinen Platzhalter (keine leere Fläche unter dem Erklärsatz) */
+@media (scripting: none) {
+  .knopf {
+    display: none;
+  }
+}
+
 /* Reduzierte Bewegung: die Zeichnung steht im Endzustand, der Knopf bleibt verborgen (Register) */
 @media (prefers-reduced-motion: reduce) {
   .knopf {
@@ -626,6 +633,52 @@
   }
 }
 
+/* Schmale Handys unter 360 px (320 × 568–807, 340 × 720): Der Zweitweg bekommt eine eigene Zeile unter dem
+   Mikrotext, sonst bleiben ihm neben „Jetzt bewerben“ keine 60 px. 35 km und 1926 rücken in jeder Höhe wie in
+   Stufe C unter die Hauptaktion, damit die Erdleitungen nicht durch „Einsatzradius“ laufen. */
+@media (max-width: 22.49em) {
+  .einstieg {
+    --boden-oben: var(--a-6);
+  }
+
+  .kette35 {
+    display: none;
+  }
+
+  .masse {
+    position: static;
+    grid-column: 1 / -1;
+    grid-row: 4;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--a-3) var(--a-6);
+    margin-top: var(--a-4);
+  }
+
+  .mass35,
+  .mass1926 {
+    position: static;
+  }
+
+  .zweitweg {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    justify-self: start;
+  }
+}
+
+/* … und in den Höhenstufen B und C (600–807 px) ein etwas kleineres Haus: Hauptaktion und Mikrotext bleiben im
+   ersten Bildschirm (320 × 693), die Sonne links ganz im Bild */
+@media (max-width: 22.49em) and (max-height: 50.49em) {
+  .held {
+    --s: 0.48;
+  }
+
+  .einstieg {
+    --boden-oben: var(--a-5);
+  }
+}
+
 @media (max-width: 63.99em) and (max-height: 37.49em) {
   .held {
     --s: 0.4;
@@ -787,13 +840,14 @@
     display: none;
   }
 
-  /* Jubiläum als Maßkette unter dem Fundament: 100 Jahre von 1926 bis 2026 */
+  /* Jubiläum als Maßkette unter dem Fundament: 1926 … 2026 ohne Wortlaut (die Ortsmarke über der h1 nennt
+     „100 Jahre“; E-023). Lage wie zuvor mit Beschriftung, damit „2026“ auf der Höhe von „1926“ bleibt. */
   .jahre {
     display: block;
     position: absolute;
     left: calc(var(--dx) + 330px * var(--s));
     width: calc(280px * var(--s));
-    top: calc(var(--dy) + 520px * var(--s) + var(--a-5));
+    top: calc(var(--dy) + 520px * var(--s) + var(--a-5) * 2);
     line-height: 1.1;
   }
 
@@ -801,13 +855,6 @@
     display: block;
     position: relative;
     width: 100%;
-    margin-top: var(--a-2);
-  }
-
-  .jahreText {
-    display: flex;
-    justify-content: center;
-    white-space: nowrap;
   }
 
   .jahreEnde {

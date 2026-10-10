@@ -24,6 +24,13 @@ export interface PaketZeile {
   wuensche: readonly WunschId[];
   /** Fakt-Zeilen erscheinen nur, wenn einer ihrer Wünsche gewählt ist; Paketzeilen immer. */
   nurAufWunsch: boolean;
+  /**
+   * Verweis statt Wiederholung (E-023): Die Antwort steht schon in einem anderen Block der Seite (Arbeitswoche,
+   * Werkzeug & Fuhrpark, Einsatzgebiet). Dann ist `text` die Beschriftung des Links und `href` sein Sprungziel.
+   */
+  href?: string;
+  /** Lage des Sprungziels auf der Seite (Pfeil des Links). */
+  richtung?: 'hoch' | 'runter';
 }
 
 export interface PaketRolle {

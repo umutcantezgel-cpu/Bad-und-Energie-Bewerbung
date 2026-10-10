@@ -14,9 +14,12 @@ export interface IconButtonProps
   asChild?: boolean;
 }
 
-/** 44px (md) or 52px (lg) round button for a single lucide icon (size-5 or size-6). */
+/**
+ * 44px (md) or 56px (lg) square button (radius 4) for a single icon from components/icons
+ * (size md or lg). Hover and press as an overlay, 1 px down (Register `druck`).
+ */
 export function IconButton({ asChild = false, variant, size, className, type, ...props }: IconButtonProps) {
   const classes = cn(iconButtonVariants({ variant, size }), className);
-  if (asChild) return <Slot className={classes} {...props} />;
-  return <button type={type ?? 'button'} className={classes} {...props} />;
+  if (asChild) return <Slot data-motion="druck" className={classes} {...props} />;
+  return <button data-motion="druck" type={type ?? 'button'} className={classes} {...props} />;
 }

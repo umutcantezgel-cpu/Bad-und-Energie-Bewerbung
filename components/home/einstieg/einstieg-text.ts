@@ -46,24 +46,21 @@ export function ortsmarke(now: Date): string {
 }
 
 export interface Jahreskette {
-  /** Beschriftung der Maßkette, z. B. „100 Jahre Meisterbetrieb“. */
-  text: string;
   /** Anfang und Ende der Kette (Gründungsjahr, Ende des Jubiläumsjahrs). */
   von: string;
   bis: string;
 }
 
 /**
- * Maßkette unter dem Fundament (Variante 1 `.jahre`, nur Desktop): die 100 Jahre als Maß von 1926 bis 2026.
- * Nach dem Jubiläumsjahr entfällt sie; „1926 Gegründet“ bleibt als Maß stehen.
+ * Maßkette unter dem Fundament (Variante 1 `.jahre`, nur Desktop): die 100 Jahre als Maß „1926 … 2026“,
+ * ohne Wortlaut (E-023: „100 Jahre Meisterbetrieb“ steht schon als Ortsmarke über der h1, ein Abschnitt
+ * nennt den Fakt einmal). Nach dem Jubiläumsjahr entfällt sie; „1926 Gegründet“ bleibt als Maß stehen.
  */
 export function jahreskette(now: Date): Jahreskette | null {
   if (!jubilaeumAktiv(now)) return null;
-  const { short, validUntil } = FACTS.anniversary100;
-  const text = short.replace(/\s*\([^)]*\)\s*$/, '');
-  const bis = validUntil?.slice(0, 4);
-  if (!bis || text === short) return null;
-  return { text: schuetzeZahlen(text), von: String(COMPANY.foundingYear), bis };
+  const bis = FACTS.anniversary100.validUntil?.slice(0, 4);
+  if (!bis) return null;
+  return { von: String(COMPANY.foundingYear), bis };
 }
 
 /** Die vier Maße am Haus in fester Reihenfolge (HERO_STATS: 13:30, 30, 35 km, 1926). */
@@ -99,12 +96,13 @@ const KENNENLERNEN = PROCESS_STEPS.find((step) => step.id === 'kennenlernen');
 
 /**
  * Vertrauenszeile unter dem Einstieg (E-START-021, mit E-START-010 und E-START-011): ruhig, statisch,
- * alle Punkte sichtbar. Auswahl nach der Regel „jeder Fakt höchstens zweimal je Seite“:
+ * alle Punkte sichtbar. Auswahl nach der Faktenverteilung E-023 (je Abschnitt eine Nennung, höchstens
+ * zwei Abschnitte je Seite):
  * - nicht hier: 13:30, 30 Tage, 35 km, 1926/100 Jahre (Einstieg), Hilti (Einleitung), 15 Leute und
  *   Lahn-Dill-Kreis (Abschnitt Betrieb), Fahrzeug und Urlaub (Vorteile);
+ * - nicht hier: „Keine Fernmontage“ (steht in REGION.headline und in der FAQ, beides Bestand);
  * - „Innungsbetrieb“ ohne Prozentzahl (E-START-011, COMPANY.innung);
  * - Diskretion schon oberhalb von #ablauf (E-START-010), Wortlaut des Ablaufschritts „Kennenlernen“;
- * - feste Baustellen: Fakt noFarAssembly;
  * - Herstellerpartner in der abgestuften, belegten Fassung der Partner-Säulen (nicht die Pauschalform
  *   „Zertifizierter Fachpartner für …“), ohne die Säule Lahn-Dill-Kreis.
  */
@@ -114,7 +112,6 @@ export function vertrauenspunkte(): Vertrauenspunkt[] {
   if (KENNENLERNEN) {
     punkte.push({ id: 'diskretion', gruppe: 'betrieb', text: schuetzeZahlen(KENNENLERNEN.highlight), quelle: 'PROCESS_STEPS.kennenlernen.highlight (Fakt discretion)' });
   }
-  punkte.push({ id: 'fernmontage', gruppe: 'betrieb', text: FACTS.noFarAssembly.short, quelle: 'FACTS.noFarAssembly.short' });
   const saeulen = FACTS.partners5.list ?? [];
   saeulen
     .filter((saeule) => !saeule.includes('Lahn-Dill-Kreis'))

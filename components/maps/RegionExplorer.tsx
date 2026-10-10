@@ -5,6 +5,7 @@ import { useId, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { Icon } from '@/components/icons';
 import { Button } from '@/components/ui/Button';
 import { TextLink } from '@/components/ui/TextLink';
+import { Masskette } from '@/components/zeichnung/Masskette';
 import { findCommute, formatKm, formatMinutes } from '@/lib/maps/commute';
 import { mapsConsent } from '@/lib/maps/consent';
 import { cn } from '@/lib/utils/cn';
@@ -28,11 +29,22 @@ export interface RegionExplorerProps {
 
 const serverConsent = () => false;
 const NBSP = '\u00A0';
+const noSubscribe = () => () => {};
+const onClient = () => true;
+const onServer = () => false;
 
 /**
- * Einsatzgebiet (B Runde 1 „.gebiet“): radius switch 15/25/35 km, the plan, the place choice
- * („Wo wohnst du?“) with result, and all places as a table. Phones: heading, switch, plan, places,
- * result, table. From lg: the plan stays in the right column (sticky).
+ * True once the explorer runs in the browser. Before that (and without JavaScript) switch, place cards and
+ * map button are disabled: nothing looks choosable that would not change plan and result (E-START-039).
+ */
+function useHydrated(): boolean {
+  return useSyncExternalStore(noSubscribe, onClient, onServer);
+}
+
+/**
+ * Einsatzgebiet (B Runde 1 „.gebiet“): radius switch 15/25/35 km, the plan, the result, the place choice
+ * („Wo wohnst du?“) and all places as a table. Phones: heading, switch, plan, result, places, table (the
+ * result sits right under the plan, as in B Runde 1). From lg: the plan stays in the right column (sticky).
  */
 export function RegionExplorer({ data, mapsAvailable, header, className }: RegionExplorerProps) {
   const id = useId();
@@ -41,6 +53,7 @@ export function RegionExplorer({ data, mapsAvailable, header, className }: Regio
   const [mapStatus, setMapStatus] = useState<MapStatus>('loading');
   const [hiddenByUser, setHiddenByUser] = useState(false);
   const consent = useSyncExternalStore(mapsConsent.subscribe, mapsConsent.get, serverConsent);
+  const hydrated = useHydrated();
 
   const showGoogle = mapsAvailable && consent && mapStatus !== 'failed';
   const mapReady = showGoogle && mapStatus === 'ready';
@@ -80,24 +93,27 @@ export function RegionExplorer({ data, mapsAvailable, header, className }: Regio
           radii={data.radii}
           value={radiusKm}
           centerName={data.centerName}
+          disabled={!hydrated}
           onChange={setRadiusKm}
         />
 
+        <CommuteResult className="order-4" data={data} selected={selected} radiusKm={radiusKm} interactive={hydrated} />
+
         <PlaceChoice
-          className="order-4"
+          className="order-5"
           name={`${id}-ort`}
           places={data.places}
           radiusKm={radiusKm}
           selectedId={selected?.id ?? ''}
+          disabled={!hydrated}
           onSelect={setSelectedId}
         />
-
-        <CommuteResult className="order-5" data={data} selected={selected} radiusKm={radiusKm} />
 
         <PlaceTable className="order-6" data={data} selected={selected} />
       </div>
 
-      <figure className="order-3 m-0 flex flex-col gap-3 lg:sticky lg:top-24">
+      {/* Tablet: the plan keeps a readable size instead of filling 700 px (sm–lg). */}
+      <figure className="order-3 m-0 flex w-full flex-col gap-3 sm:mx-auto sm:max-w-lg lg:sticky lg:top-24 lg:mx-0 lg:max-w-none">
         <div className="relative aspect-square w-full overflow-hidden rounded-2 border-2 border-brand bg-surface-raised">
           <RadiusGraphic
             data={data}
@@ -121,14 +137,16 @@ export function RegionExplorer({ data, mapsAvailable, header, className }: Regio
             />
           )}
         </div>
+        {/* E-023: die Radien stehen an den Ringen und am Umschalter, hier nur die Lesart */}
         <figcaption className="max-w-prose text-footnote text-ink-muted">
-          {`Kreise: ${data.radii.map((km) => `${km}${NBSP}km`).join(', ')} Luftlinie um ${data.centerName}. Lahn, Dill, A45 und B49 schematisch.`}
+          {`Kreise in Luftlinie um ${data.centerName}. Lahn, Dill, A45 und B49 schematisch.`}
         </figcaption>
 
         {mapsAvailable && (
           <div className="flex flex-col items-start gap-2">
             <Button
               variant="outline"
+              disabled={!hydrated}
               onClick={consent ? hideMap : loadMap}
               aria-describedby={`${id}-maps-note`}
               className="h-auto min-h-11 whitespace-normal py-3 text-left"
@@ -173,16 +191,27 @@ interface RadiusSwitchProps {
   radii: readonly number[];
   value: number;
   centerName: string;
+  /** Before hydration (and without JavaScript) the switch shows the default radius and cannot change. */
+  disabled?: boolean;
   onChange: (km: number) => void;
   className?: string;
 }
 
-/** E-START-033: a real radio group; the plan zooms to the chosen ring. */
-function RadiusSwitch({ name, radii, value, centerName, onChange, className }: RadiusSwitchProps) {
+/**
+ * E-START-033: a real radio group; the plan zooms to the chosen ring. Focus (K-011): the whole segment
+ * frame gets the ring (3 px, 3 px away, on paper, so nothing clips it and it keeps ≥ 3:1), and the
+ * focused segment underlines its value; in a radio group the focused segment is the chosen one.
+ */
+function RadiusSwitch({ name, radii, value, centerName, disabled, onChange, className }: RadiusSwitchProps) {
   return (
-    <fieldset className={cn('m-0 min-w-0 border-0 p-0', className)}>
-      <legend className="mb-3 p-0 text-etikett text-ink-muted">{`Radius um ${centerName}`}</legend>
-      <div className="flex max-w-sm overflow-hidden rounded-2 border-2 border-brand">
+    <fieldset disabled={disabled} className={cn('m-0 min-w-0 border-0 p-0', className)}>
+      <legend className="mb-3 p-0 text-etikett text-ink-2">{`Radius um ${centerName}`}</legend>
+      <div
+        className={cn(
+          'flex max-w-sm overflow-hidden rounded-2 border-2 border-brand',
+          'has-focus-visible:outline-3 has-focus-visible:outline-offset-3 has-focus-visible:outline-focus',
+        )}
+      >
         {radii.map((km, i) => (
           <label
             key={km}
@@ -190,8 +219,8 @@ function RadiusSwitch({ name, radii, value, centerName, onChange, className }: R
             className={cn(
               'relative flex min-h-12 flex-1 cursor-pointer items-center justify-center bg-surface-raised font-mass text-body font-semibold text-brand',
               'has-checked:bg-brand has-checked:text-surface',
-              'has-focus-visible:z-10 has-focus-visible:outline-3 has-focus-visible:outline-offset-3 has-focus-visible:outline-focus',
-              'hover:bg-surface-2 has-checked:hover:bg-brand',
+              'has-focus-visible:underline has-focus-visible:decoration-2 has-focus-visible:underline-offset-4',
+              'hover:bg-surface-2 has-checked:hover:bg-brand has-disabled:cursor-default has-disabled:hover:bg-surface-raised has-checked:has-disabled:hover:bg-brand',
               i > 0 && 'border-l-2 border-brand',
             )}
           >
@@ -216,14 +245,16 @@ interface PlaceChoiceProps {
   places: readonly RegionPlace[];
   radiusKm: number;
   selectedId: string;
+  /** Before hydration (and without JavaScript) the cards are a plain list: name, km, minutes. */
+  disabled?: boolean;
   onSelect: (id: string) => void;
   className?: string;
 }
 
 /** „Wo wohnst du?“ as a radio group of place cards (≥ 64 px): name, distance, drive time. */
-function PlaceChoice({ name, places, radiusKm, selectedId, onSelect, className }: PlaceChoiceProps) {
+function PlaceChoice({ name, places, radiusKm, selectedId, disabled, onSelect, className }: PlaceChoiceProps) {
   return (
-    <fieldset className={cn('m-0 min-w-0 border-0 p-0', className)}>
+    <fieldset disabled={disabled} className={cn('m-0 min-w-0 border-0 p-0', className)}>
       <legend className="mb-3 p-0 text-title-3 text-brand">Wo wohnst du?</legend>
       <ul className="m-0 grid list-none grid-cols-2 gap-2 p-0 sm:grid-cols-3 lg:grid-cols-2">
         {places.map((place) => {
@@ -239,7 +270,7 @@ function PlaceChoice({ name, places, radiusKm, selectedId, onSelect, className }
                   outside && 'border-dashed',
                   'has-checked:border-brand has-checked:bg-brand has-checked:text-surface',
                   'has-focus-visible:outline-3 has-focus-visible:outline-offset-3 has-focus-visible:outline-focus',
-                  'hover:border-brand',
+                  'hover:border-brand has-disabled:cursor-default has-disabled:hover:border-line-strong',
                 )}
               >
                 <input
@@ -275,39 +306,46 @@ interface CommuteResultProps {
   data: RegionMapData;
   selected: RegionPlace | undefined;
   radiusKm: number;
+  /** False before hydration (and without JavaScript): no choice possible, so no request to choose. */
+  interactive: boolean;
   className?: string;
 }
 
-/** Result of the choice (aria-live): distance and drive time as measures, ring, rating, short description. */
-function CommuteResult({ data, selected, radiusKm, className }: CommuteResultProps) {
+/**
+ * Result of the choice (aria-live): distance and drive time as Maßketten (components/zeichnung, as at the
+ * Einstieg), ring, rating, short description.
+ */
+function CommuteResult({ data, selected, radiusKm, interactive, className }: CommuteResultProps) {
   return (
     <div
       aria-live="polite"
       aria-atomic="true"
-      className={cn('min-h-22 rounded-2 border-2 border-brand bg-surface-raised px-6 py-4', className)}
+      className={cn('min-h-22 rounded-2 border-2 border-brand bg-surface-raised px-6 py-6', className)}
     >
       {selected ? (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4">
           <p className="text-title-3 text-brand">{selected.name}</p>
-          <dl className="m-0 flex flex-wrap gap-x-8 gap-y-2">
-            <div className="flex flex-col-reverse">
-              <dt className="text-footnote text-ink-muted">Entfernung ca.</dt>
-              <dd className="m-0 text-numeral text-brand">{formatKm(selected.distanceKm)}</dd>
-            </div>
-            <div className="flex flex-col-reverse">
-              <dt className="text-footnote text-ink-muted">{`Fahrzeit bis ${data.centerName} ca.`}</dt>
-              <dd className="m-0 text-numeral text-brand">{formatMinutes(selected.commuteMinutes)}</dd>
-            </div>
-          </dl>
+          {/* Maßketten wie am Einstieg: Wert, Maßlinie, Name; im DOM „15 km Entfernung ca.“ */}
+          <p className="m-0 flex flex-wrap items-start gap-x-8 gap-y-6">
+            <Masskette className="min-w-0 flex-1 basis-32" groesse="gross" wert={formatKm(selected.distanceKm)} name="Entfernung ca." />
+            <Masskette
+              className="min-w-0 flex-1 basis-32"
+              groesse="gross"
+              wert={formatMinutes(selected.commuteMinutes)}
+              name={`Fahrzeit bis ${data.centerName}${NBSP}ca.`}
+            />
+          </p>
           <p className="text-callout font-semibold text-ink">{radiusStatus(selected, radiusKm, data.radii)}</p>
           <p className="flex flex-col gap-1 text-callout text-ink-muted">
-            <span className="text-etikett">{zoneLabel(selected)}</span>
+            <span className="text-etikett text-ink-2">{zoneLabel(selected)}</span>
             {selected.character && <span>{selected.character}</span>}
           </p>
         </div>
       ) : (
         <p className="text-callout text-ink-muted">
-          Wähle deinen Ort, dann siehst du Entfernung und Fahrzeit bis {data.centerName}.
+          {interactive
+            ? `Wähle deinen Ort, dann siehst du Entfernung und Fahrzeit bis ${data.centerName}.`
+            : `Entfernung und Fahrzeit bis ${data.centerName} stehen bei jedem Ort.`}
         </p>
       )}
     </div>

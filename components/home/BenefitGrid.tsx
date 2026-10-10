@@ -24,22 +24,31 @@ function BenefitLead({ ausbildungHref }: { ausbildungHref: string | null }) {
   );
 }
 
+/** Etikett über „Das bekommst du“ (Planbeschriftung, wie der Menüpunkt). */
+export const VORTEILE_ETIKETT = 'Vorteile';
+
 /**
- * #vorteile on the wall surface (R3-HOME-02): the package configurator per role (E-START-024 with
- * the wishes of E-START-016, a small client island fed with plain data), the promises for every
- * skilled job (E-START-025) and the equipment list „Werkzeug & Fuhrpark“ (E-START-026).
+ * #vorteile on the wall surface (R3-HOME-02, Tonfolge E-023): the package configurator per role
+ * (E-START-024 with the wishes of E-START-016, a small client island fed with plain data), the
+ * company's promises (E-START-025) and the equipment list „Werkzeug & Fuhrpark“ (E-START-026, the one
+ * place for Hilti and vehicle in this section; the package points there).
  */
-export function BenefitGrid() {
-  const now = new Date();
+export interface BenefitGridProps {
+  /** Stichtag für Stellen und Fakten (Tests mit festem Datum); Standard: jetzt. */
+  now?: Date;
+}
+
+export function BenefitGrid({ now = new Date() }: BenefitGridProps) {
   const live = getActiveJobs().filter((job) => isJobLive(job, now));
   const ausbildung = live.find((job) => job.category === 'ausbildung');
   const rollen = paketRollen(live, now);
 
   return (
-    <Section id="vorteile" tone="subtle" aria-labelledby="vorteile-title">
+    <Section id="vorteile" tone="wand" trenner aria-labelledby="vorteile-title">
       <Container className="flex flex-col gap-16 md:gap-24">
         <SectionHeader
           id="vorteile-title"
+          eyebrow={VORTEILE_ETIKETT}
           title="Das bekommst du"
           lead={<BenefitLead ausbildungHref={ausbildung ? jobPath(ausbildung) : null} />}
         />
@@ -65,6 +74,8 @@ export function BenefitGrid() {
               icons={{
                 haken: <Icon name="check" size="sm" />,
                 pfeil: <Icon name="arrow-right" size="md" />,
+                hoch: <Icon name="arrow-up" size={18} />,
+                runter: <Icon name="arrow-down" size={18} />,
               }}
             />
           </div>
