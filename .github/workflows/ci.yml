@@ -40,7 +40,7 @@ jobs:
 
       # Gleiche Node-Hauptversion wie lokal (Next.js 16 braucht >= 20.9).
       - name: Node einrichten
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 22
 
@@ -109,7 +109,7 @@ jobs:
 
       - name: Playwright-Bericht hochladen
         if: failure() && steps.e2e.outcome == 'failure'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: playwright-report/
@@ -129,7 +129,7 @@ jobs:
 
       - name: Lighthouse-Berichte hochladen
         if: always() && (steps.lighthouse.outcome == 'success' || steps.lighthouse.outcome == 'failure')
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: lighthouse-reports
           path: .lighthouseci/reports/
