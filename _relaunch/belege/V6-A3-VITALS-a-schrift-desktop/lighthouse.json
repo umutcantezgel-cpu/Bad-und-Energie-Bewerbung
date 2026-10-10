@@ -1,0 +1,259 @@
+{
+  "label": "V6-A3-VITALS-a-schrift-desktop",
+  "base": "http://localhost:3465",
+  "erstellt": "2026-10-10T13:42:26.138Z",
+  "dauerSekunden": 47,
+  "chromium": "Chromium 141.0.7390.37",
+  "lighthouse": "13.5.0",
+  "node": "v22.22.0",
+  "laeufeJeKombination": 5,
+  "wiederholungenBeiTechnischemFehler": 2,
+  "formfaktoren": [
+    "desktop"
+  ],
+  "aufwaermen": true,
+  "statistik": "Median (bei gerader Anzahl: Mittel der beiden mittleren Werte), min, max über die gültigen Läufe",
+  "kilobyte": "1 KB = 1024 Byte",
+  "bedingungen": {
+    "desktop": {
+      "formFactor": "desktop",
+      "drosselungsmethode": "simulate",
+      "drosselung": {
+        "rttMs": 40,
+        "throughputKbps": 10240,
+        "requestLatencyMs": 0,
+        "downloadThroughputKbps": 0,
+        "uploadThroughputKbps": 0,
+        "cpuSlowdownMultiplier": 1
+      },
+      "bildschirm": {
+        "mobile": false,
+        "width": 1350,
+        "height": 940,
+        "deviceScaleFactor": 1,
+        "disabled": false
+      },
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+    }
+  },
+  "einstellungen": {
+    "onlyCategories": [
+      "performance",
+      "accessibility",
+      "best-practices",
+      "seo"
+    ],
+    "disableFullPageScreenshot": true,
+    "strikt_nacheinander": true,
+    "chromiumProLauf": "neu gestartet",
+    "fremdhostSperre": "host-resolver-rules: nur localhost auflösbar"
+  },
+  "budget": {
+    "perfMobilMin": 90,
+    "lcpSMax": 2.5,
+    "clsMax": 0.1,
+    "tbtMsMax": 200
+  },
+  "ergebnisse": [
+    {
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "slug": "stelle-kundendienst",
+      "haupt": false,
+      "url": "http://localhost:3465/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "formfaktor": "desktop",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 350.9548,
+        "lcpMs": 720.3240000000001,
+        "cls": 0,
+        "tbtMs": 5,
+        "siMs": 502.8453999043261,
+        "ttiMs": 732.9096,
+        "bytes": 443735,
+        "anfragen": 30,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 336.84590000000003,
+        "lcpMs": 593.6918000000001,
+        "cls": 0,
+        "tbtMs": 0,
+        "siMs": 396.1393319597705,
+        "ttiMs": 720.0591775,
+        "bytes": 442778,
+        "anfragen": 30,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 357.00530000000003,
+        "lcpMs": 776.0106000000001,
+        "cls": 0,
+        "tbtMs": 12,
+        "siMs": 523.8591531863685,
+        "ttiMs": 776.0106000000001,
+        "bytes": 443919,
+        "anfragen": 30,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+      "cpuBenchmarkMedian": 1600.5,
+      "budget": {
+        "urteil": "ok",
+        "verletzt": []
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 350.9548,
+          "lcpMs": 732.9096,
+          "cls": 0,
+          "tbtMs": 5,
+          "siMs": 396.1393319597705,
+          "ttiMs": 732.9096,
+          "bytes": 443919,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kundendiensttechniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 14,
+            "elementRenderDelay": 357
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-a-schrift-desktop/lh/stelle-kundendienst-desktop-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 338.162,
+          "lcpMs": 720.3240000000001,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 523.8591531863685,
+          "ttiMs": 720.3240000000001,
+          "bytes": 443735,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kundendiensttechniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 39,
+            "elementRenderDelay": 481
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-a-schrift-desktop/lh/stelle-kundendienst-desktop-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 353.1743,
+          "lcpMs": 626.3486,
+          "cls": 0,
+          "tbtMs": 7,
+          "siMs": 502.8453999043261,
+          "ttiMs": 754.2256675,
+          "bytes": 443878,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kundendiensttechniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 22,
+            "elementRenderDelay": 408
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-a-schrift-desktop/lh/stelle-kundendienst-desktop-3.json"
+        },
+        {
+          "n": 4,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 336.84590000000003,
+          "lcpMs": 593.6918000000001,
+          "cls": 0,
+          "tbtMs": 1,
+          "siMs": 445.6814523110905,
+          "ttiMs": 720.0591775,
+          "bytes": 443050,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kundendiensttechniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 21,
+            "elementRenderDelay": 360
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-a-schrift-desktop/lh/stelle-kundendienst-desktop-4.json"
+        },
+        {
+          "n": 5,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 357.00530000000003,
+          "lcpMs": 776.0106000000001,
+          "cls": 0,
+          "tbtMs": 12,
+          "siMs": 515.3497146551581,
+          "ttiMs": 776.0106000000001,
+          "bytes": 442778,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kundendiensttechniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 20,
+            "elementRenderDelay": 434
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-a-schrift-desktop/lh/stelle-kundendienst-desktop-5.json"
+        }
+      ]
+    }
+  ]
+}

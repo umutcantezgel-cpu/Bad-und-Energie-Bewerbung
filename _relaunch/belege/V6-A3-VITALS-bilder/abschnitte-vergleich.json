@@ -1,0 +1,134 @@
+[
+ {
+  "name": "start-kopf__m390",
+  "groesse": [
+   1170,
+   168
+  ],
+  "pixel": 196560,
+  "exakt": 0,
+  "sichtbar": 0,
+  "knotenA": 1643,
+  "knotenB": 1533
+ },
+ {
+  "name": "start-stimmen__m390",
+  "groesse": [
+   1170,
+   7023
+  ],
+  "pixel": 8216910,
+  "exakt": 0,
+  "sichtbar": 0,
+  "knotenA": 1643,
+  "knotenB": 1533
+ },
+ {
+  "name": "start-woche__m390",
+  "groesse": [
+   1170,
+   2589
+  ],
+  "pixel": 3029130,
+  "exakt": 0,
+  "sichtbar": 0,
+  "knotenA": 1643,
+  "knotenB": 1533
+ },
+ {
+  "name": "am-seitenkopf__m390",
+  "groesse": [
+   1170,
+   2532
+  ],
+  "pixel": 2962440,
+  "exakt": 0,
+  "sichtbar": 0,
+  "knotenA": 885,
+  "knotenB": 887
+ },
+ {
+  "name": "kd-seitenkopf__m390",
+  "groesse": [
+   1170,
+   3624
+  ],
+  "pixel": 4240080,
+  "exakt": 0,
+  "sichtbar": 0,
+  "knotenA": 917,
+  "knotenB": 916
+ },
+ {
+  "name": "am-leiste__m390",
+  "groesse": [
+   1170,
+   249
+  ],
+  "pixel": 291330,
+  "exakt": 0,
+  "sichtbar": 0,
+  "knotenA": 885,
+  "knotenB": 884
+ },
+ {
+  "name": "start-kopf__d1440",
+  "groesse": [
+   1440,
+   64
+  ],
+  "pixel": 92160,
+  "exakt": 0,
+  "sichtbar": 0,
+  "knotenA": 1643,
+  "knotenB": 1533
+ },
+ {
+  "name": "start-stimmen__d1440",
+  "groesse": [
+   1440,
+   2059
+  ],
+  "pixel": 2964960,
+  "exakt": 0,
+  "sichtbar": 0,
+  "knotenA": 1643,
+  "knotenB": 1533
+ },
+ {
+  "name": "start-woche__d1440",
+  "groesse": [
+   1440,
+   1010
+  ],
+  "pixel": 1454400,
+  "exakt": 0,
+  "sichtbar": 0,
+  "knotenA": 1643,
+  "knotenB": 1533
+ },
+ {
+  "name": "am-seitenkopf__d1440",
+  "groesse": [
+   1440,
+   832
+  ],
+  "pixel": 1198080,
+  "exakt": 0,
+  "sichtbar": 0,
+  "knotenA": 882,
+  "knotenB": 887
+ },
+ {
+  "name": "kd-seitenkopf__d1440",
+  "groesse": [
+   1440,
+   965
+  ],
+  "pixel": 1389600,
+  "exakt": 0,
+  "sichtbar": 0,
+  "knotenA": 917,
+  "knotenB": 919
+ }
+]

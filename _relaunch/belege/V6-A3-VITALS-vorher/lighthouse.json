@@ -1,0 +1,676 @@
+{
+  "label": "V6-A3-VITALS-vorher",
+  "base": "http://localhost:3464",
+  "erstellt": "2026-10-10T14:34:36.289Z",
+  "dauerSekunden": 170,
+  "chromium": "Chromium 141.0.7390.37",
+  "lighthouse": "13.5.0",
+  "node": "v22.22.0",
+  "laeufeJeKombination": 5,
+  "wiederholungenBeiTechnischemFehler": 2,
+  "formfaktoren": [
+    "mobile"
+  ],
+  "aufwaermen": true,
+  "statistik": "Median (bei gerader Anzahl: Mittel der beiden mittleren Werte), min, max über die gültigen Läufe",
+  "kilobyte": "1 KB = 1024 Byte",
+  "bedingungen": {
+    "mobile": {
+      "formFactor": "mobile",
+      "drosselungsmethode": "simulate",
+      "drosselung": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "bildschirm": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      },
+      "userAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36"
+    }
+  },
+  "einstellungen": {
+    "onlyCategories": [
+      "performance",
+      "accessibility",
+      "best-practices",
+      "seo"
+    ],
+    "disableFullPageScreenshot": true,
+    "strikt_nacheinander": true,
+    "chromiumProLauf": "neu gestartet",
+    "fremdhostSperre": "host-resolver-rules: nur localhost auflösbar"
+  },
+  "budget": {
+    "perfMobilMin": 90,
+    "lcpSMax": 2.5,
+    "clsMax": 0.1,
+    "tbtMsMax": 200
+  },
+  "ergebnisse": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "haupt": true,
+      "url": "http://localhost:3464/",
+      "formfaktor": "mobile",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 84,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1683.70005,
+        "lcpMs": 2894.8495000000003,
+        "cls": 0,
+        "tbtMs": 409.4999999999998,
+        "siMs": 2003.072527074482,
+        "ttiMs": 4118.8806275,
+        "bytes": 461603,
+        "anfragen": 27,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 75,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1408.6893,
+        "lcpMs": 2158.6893,
+        "cls": 0,
+        "tbtMs": 110.61667499999999,
+        "siMs": 1683.70005,
+        "ttiMs": 3918.3550575000004,
+        "bytes": 460105,
+        "anfragen": 27,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 94,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1717.2742500000004,
+        "lcpMs": 3027.9902,
+        "cls": 0,
+        "tbtMs": 1053.65535,
+        "siMs": 2081.197218119145,
+        "ttiMs": 4564.683950000001,
+        "bytes": 461605,
+        "anfragen": 27,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "div.einstieg-module__tfiXEq__einstieg > div.einstieg-module__tfiXEq__rest > div.einstieg-module__tfiXEq__handlung > p.einstieg-module__tfiXEq__lead",
+      "cpuBenchmarkMedian": 1799.5,
+      "budget": {
+        "urteil": "über Budget",
+        "verletzt": [
+          "Perf 84 < 90",
+          "LCP 2,89 s > 2,5 s",
+          "TBT 409 ms > 200 ms"
+        ]
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 94,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1683.70005,
+          "lcpMs": 2883.70005,
+          "cls": 0,
+          "tbtMs": 110.61667499999999,
+          "siMs": 1683.70005,
+          "ttiMs": 3918.3550575000004,
+          "bytes": 460467,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__einstieg > div.einstieg-module__tfiXEq__rest > div.einstieg-module__tfiXEq__handlung > p.einstieg-module__tfiXEq__lead",
+            "snippet": "<p class=\"einstieg-module__tfiXEq__lead\">",
+            "bezeichnung": "Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt üb…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 18,
+            "elementRenderDelay": 272
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher/lh/start-mobile-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 90,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1691.9853000000003,
+          "lcpMs": 3027.9902,
+          "cls": 0,
+          "tbtMs": 219,
+          "siMs": 1870.1583126114053,
+          "ttiMs": 4080.633095000001,
+          "bytes": 461603,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__einstieg > div.einstieg-module__tfiXEq__rest > div.einstieg-module__tfiXEq__handlung > p.einstieg-module__tfiXEq__lead",
+            "snippet": "<p class=\"einstieg-module__tfiXEq__lead\">",
+            "bezeichnung": "Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt üb…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 19,
+            "elementRenderDelay": 343
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher/lh/start-mobile-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 84,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1655.5918499999998,
+          "lcpMs": 3005.59185,
+          "cls": 0,
+          "tbtMs": 409.4999999999998,
+          "siMs": 2081.197218119145,
+          "ttiMs": 4118.8806275,
+          "bytes": 460105,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__einstieg > div.einstieg-module__tfiXEq__rest > div.einstieg-module__tfiXEq__handlung > p.einstieg-module__tfiXEq__lead",
+            "snippet": "<p class=\"einstieg-module__tfiXEq__lead\">",
+            "bezeichnung": "Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt üb…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 34,
+            "elementRenderDelay": 404
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher/lh/start-mobile-3.json"
+        },
+        {
+          "n": 4,
+          "leistung": 76,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1408.6893,
+          "lcpMs": 2158.6893,
+          "cls": 0,
+          "tbtMs": 1053.65535,
+          "siMs": 2003.072527074482,
+          "ttiMs": 4564.683950000001,
+          "bytes": 461604,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__einstieg > div.einstieg-module__tfiXEq__rest > div.einstieg-module__tfiXEq__handlung > p.einstieg-module__tfiXEq__lead",
+            "snippet": "<p class=\"einstieg-module__tfiXEq__lead\">",
+            "bezeichnung": "Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt üb…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 33,
+            "elementRenderDelay": 398
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher/lh/start-mobile-4.json"
+        },
+        {
+          "n": 5,
+          "leistung": 75,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1717.2742500000004,
+          "lcpMs": 2894.8495000000003,
+          "cls": 0,
+          "tbtMs": 806.8628749999998,
+          "siMs": 2068.1535622121755,
+          "ttiMs": 4479.0153875000005,
+          "bytes": 461605,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__einstieg > div.einstieg-module__tfiXEq__rest > div.einstieg-module__tfiXEq__handlung > p.einstieg-module__tfiXEq__lead",
+            "snippet": "<p class=\"einstieg-module__tfiXEq__lead\">",
+            "bezeichnung": "Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt üb…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 26,
+            "elementRenderDelay": 389
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher/lh/start-mobile-5.json"
+        }
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "haupt": true,
+      "url": "http://localhost:3464/jobs/anlagenmechaniker-shk-wetzlar",
+      "formfaktor": "mobile",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 91,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1386.1857,
+        "lcpMs": 2895.5136,
+        "cls": 0.014963045181310192,
+        "tbtMs": 217.99999999999955,
+        "siMs": 1389.2202,
+        "ttiMs": 3649.0136,
+        "bytes": 447451,
+        "anfragen": 28,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 88,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1220.602,
+        "lcpMs": 2724.0885000000003,
+        "cls": 0.014963045181310192,
+        "tbtMs": 81.5,
+        "siMs": 1243.5659978212009,
+        "ttiMs": 3523.2202000000007,
+        "bytes": 447410,
+        "anfragen": 28,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 93,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1395.5136,
+        "lcpMs": 3372.1857000000005,
+        "cls": 0.014963045181310192,
+        "tbtMs": 258.5,
+        "siMs": 1541.293689032844,
+        "ttiMs": 3775.438500000001,
+        "bytes": 447451,
+        "anfragen": 28,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+      "cpuBenchmarkMedian": 1680.5,
+      "budget": {
+        "urteil": "über Budget",
+        "verletzt": [
+          "LCP 2,90 s > 2,5 s",
+          "TBT 218 ms > 200 ms"
+        ]
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 93,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1220.602,
+          "lcpMs": 2880.903,
+          "cls": 0.014963045181310192,
+          "tbtMs": 177.1990000000003,
+          "siMs": 1243.5659978212009,
+          "ttiMs": 3666.1030000000005,
+          "bytes": 447451,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Anlagenmechaniker SHK"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 35,
+            "elementRenderDelay": 349
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher/lh/stelle-anlagenmechaniker-mobile-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 91,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1389.2202,
+          "lcpMs": 3358.2202000000007,
+          "cls": 0.014963045181310192,
+          "tbtMs": 81.5,
+          "siMs": 1389.2202,
+          "ttiMs": 3523.2202000000007,
+          "bytes": 447451,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Anlagenmechaniker SHK"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 23,
+            "elementRenderDelay": 428
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher/lh/stelle-anlagenmechaniker-mobile-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 88,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1386.1857,
+          "lcpMs": 3372.1857000000005,
+          "cls": 0.014963045181310192,
+          "tbtMs": 228.37620000000015,
+          "siMs": 1541.293689032844,
+          "ttiMs": 3567.435700000001,
+          "bytes": 447451,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Anlagenmechaniker SHK"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 20,
+            "elementRenderDelay": 513
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher/lh/stelle-anlagenmechaniker-mobile-3.json"
+        },
+        {
+          "n": 4,
+          "leistung": 91,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1383.0884999999998,
+          "lcpMs": 2724.0885000000003,
+          "cls": 0.014963045181310192,
+          "tbtMs": 258.5,
+          "siMs": 1383.0884999999998,
+          "ttiMs": 3775.438500000001,
+          "bytes": 447451,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Anlagenmechaniker SHK"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 24,
+            "elementRenderDelay": 327
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher/lh/stelle-anlagenmechaniker-mobile-4.json"
+        },
+        {
+          "n": 5,
+          "leistung": 91,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1395.5136,
+          "lcpMs": 2895.5136,
+          "cls": 0.014963045181310192,
+          "tbtMs": 217.99999999999955,
+          "siMs": 1395.5136,
+          "ttiMs": 3649.0136,
+          "bytes": 447410,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Anlagenmechaniker SHK"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 27,
+            "elementRenderDelay": 302
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher/lh/stelle-anlagenmechaniker-mobile-5.json"
+        }
+      ]
+    },
+    {
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "slug": "stelle-kundendienst",
+      "haupt": false,
+      "url": "http://localhost:3464/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "formfaktor": "mobile",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 89,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1375.3123500000002,
+        "lcpMs": 2725.3123499999997,
+        "cls": 0,
+        "tbtMs": 302.5,
+        "siMs": 1487.9942147384163,
+        "ttiMs": 3738.8855000000003,
+        "bytes": 449346,
+        "anfragen": 28,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 79,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1242.1324999999997,
+        "lcpMs": 2587.557,
+        "cls": 0,
+        "tbtMs": 103,
+        "siMs": 1375.3123500000002,
+        "ttiMs": 3551.8341499999997,
+        "bytes": 449346,
+        "anfragen": 28,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 95,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1428.3732,
+        "lcpMs": 2930.3341499999997,
+        "cls": 0.0000661624020117742,
+        "tbtMs": 733.4430000000004,
+        "siMs": 1610.9059472131298,
+        "ttiMs": 3933.79875,
+        "bytes": 449346,
+        "anfragen": 28,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+      "cpuBenchmarkMedian": 1461,
+      "budget": {
+        "urteil": "über Budget",
+        "verletzt": [
+          "Perf 89 < 90",
+          "LCP 2,73 s > 2,5 s",
+          "TBT 303 ms > 200 ms"
+        ]
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 95,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1428.3732,
+          "lcpMs": 2778.3732,
+          "cls": 0,
+          "tbtMs": 103,
+          "siMs": 1563.8555750910964,
+          "ttiMs": 3744.8732000000005,
+          "bytes": 449346,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kundendiensttechniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 18,
+            "elementRenderDelay": 341
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher/lh/stelle-kundendienst-mobile-1.json",
+          "fehlversuche": [
+            "NO_NAVSTART: Something went wrong with recording the trace over your page load. Please run Lighthouse again. (NO_NAVSTART)"
+          ]
+        },
+        {
+          "n": 2,
+          "leistung": 89,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1375.3123500000002,
+          "lcpMs": 2725.3123499999997,
+          "cls": 0,
+          "tbtMs": 302.5,
+          "siMs": 1375.3123500000002,
+          "ttiMs": 3710.11235,
+          "bytes": 449346,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kundendiensttechniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 26,
+            "elementRenderDelay": 288
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher/lh/stelle-kundendienst-mobile-2.json",
+          "fehlversuche": [
+            "NO_NAVSTART: Something went wrong with recording the trace over your page load. Please run Lighthouse again. (NO_NAVSTART)"
+          ]
+        },
+        {
+          "n": 3,
+          "leistung": 83,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1253.5561,
+          "lcpMs": 2930.3341499999997,
+          "cls": 0.0000661624020117742,
+          "tbtMs": 490.2219499999999,
+          "siMs": 1375.9050655177496,
+          "ttiMs": 3551.8341499999997,
+          "bytes": 449346,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kundendiensttechniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 21,
+            "elementRenderDelay": 378
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher/lh/stelle-kundendienst-mobile-3.json"
+        },
+        {
+          "n": 4,
+          "leistung": 91,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1242.1324999999997,
+          "lcpMs": 2613.19875,
+          "cls": 0,
+          "tbtMs": 284.4337500000004,
+          "siMs": 1487.9942147384163,
+          "ttiMs": 3933.79875,
+          "bytes": 449346,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kundendiensttechniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 13,
+            "elementRenderDelay": 361
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher/lh/stelle-kundendienst-mobile-4.json"
+        },
+        {
+          "n": 5,
+          "leistung": 79,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1406.3354999999997,
+          "lcpMs": 2587.557,
+          "cls": 0,
+          "tbtMs": 733.4430000000004,
+          "siMs": 1610.9059472131298,
+          "ttiMs": 3738.8855000000003,
+          "bytes": 449346,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kundendiensttechniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 37,
+            "elementRenderDelay": 367
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher/lh/stelle-kundendienst-mobile-5.json"
+        }
+      ]
+    }
+  ]
+}

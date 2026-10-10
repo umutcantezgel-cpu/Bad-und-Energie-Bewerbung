@@ -1,0 +1,938 @@
+{
+  "label": "v6a1-css-prose-nachher",
+  "base": "http://localhost:3460",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T14:00:04.969Z",
+  "seiten": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 23138,
+      "seitenhoehe": 16415,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-light__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-light__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-light__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-light__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-light__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-light__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-light__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-light__08.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-light__09.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-light__10.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-light__11.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-light__12.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-light__13.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 21085,
+      "seitenhoehe": 16415,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-dark__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-dark__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-dark__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-dark__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-dark__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-dark__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-dark__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-dark__08.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-dark__09.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-dark__10.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-dark__11.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-dark__12.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-dark__13.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__m390-dark__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 11069,
+      "seitenhoehe": 12596,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-light__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-light__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-light__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-light__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-light__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-light__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-light__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-light__08.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-light__09.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-light__10.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-light__11.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-light__12.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-light__13.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 11050,
+      "seitenhoehe": 12596,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-dark__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-dark__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-dark__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-dark__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-dark__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-dark__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-dark__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-dark__08.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-dark__09.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-dark__10.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-dark__11.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-dark__12.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-dark__13.webp",
+        ".roh/v6a1-css-prose-nachher/webp/start__d1440-dark__14.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 19317,
+      "seitenhoehe": 11043,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-light__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-light__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-light__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-light__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-light__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-light__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-light__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-light__08.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-light__09.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-light__10.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-light__11.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-light__12.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-light__13.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 17836,
+      "seitenhoehe": 11043,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-dark__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-dark__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-dark__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-dark__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-dark__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-dark__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-dark__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-dark__08.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-dark__09.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-dark__10.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-dark__11.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-dark__12.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-dark__13.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__m390-dark__14.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 7068,
+      "seitenhoehe": 7328,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/stellen__d1440-light__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__d1440-light__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__d1440-light__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__d1440-light__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__d1440-light__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__d1440-light__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__d1440-light__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__d1440-light__08.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__d1440-light__09.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 6979,
+      "seitenhoehe": 7328,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/stellen__d1440-dark__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__d1440-dark__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__d1440-dark__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__d1440-dark__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__d1440-dark__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__d1440-dark__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__d1440-dark__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__d1440-dark__08.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stellen__d1440-dark__09.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 20812,
+      "seitenhoehe": 13202,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-light__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-light__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-light__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-light__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-light__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-light__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-light__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-light__08.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-light__09.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-light__10.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-light__11.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-light__12.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-light__13.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 21210,
+      "seitenhoehe": 13202,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-dark__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-dark__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-dark__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-dark__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-dark__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-dark__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-dark__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-dark__08.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-dark__09.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-dark__10.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-dark__11.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-dark__12.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-dark__13.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__m390-dark__14.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 10136,
+      "seitenhoehe": 9480,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-light__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-light__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-light__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-light__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-light__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-light__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-light__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-light__08.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-light__09.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-light__10.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-light__11.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 10667,
+      "seitenhoehe": 9480,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-dark__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-dark__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-dark__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-dark__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-dark__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-dark__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-dark__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-dark__08.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-dark__09.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-dark__10.webp",
+        ".roh/v6a1-css-prose-nachher/webp/stelle-anlagenmechaniker__d1440-dark__11.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 12368,
+      "seitenhoehe": 6563,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__m390-light__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__m390-light__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__m390-light__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__m390-light__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__m390-light__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__m390-light__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__m390-light__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__m390-light__08.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 15336,
+      "seitenhoehe": 6563,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__m390-dark__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__m390-dark__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__m390-dark__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__m390-dark__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__m390-dark__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__m390-dark__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__m390-dark__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__m390-dark__08.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 7649,
+      "seitenhoehe": 4943,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__d1440-light__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__d1440-light__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__d1440-light__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__d1440-light__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__d1440-light__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__d1440-light__06.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 8201,
+      "seitenhoehe": 4943,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__d1440-dark__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__d1440-dark__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__d1440-dark__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__d1440-dark__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__d1440-dark__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung__d1440-dark__06.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung/mappe",
+      "slug": "bewerbung-mappe",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 21779,
+      "seitenhoehe": 6656,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          },
+          {
+            "tag": "span",
+            "text": "Hinzufügen",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__m390-light__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__m390-light__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__m390-light__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__m390-light__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__m390-light__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__m390-light__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__m390-light__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__m390-light__08.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung/mappe",
+      "slug": "bewerbung-mappe",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 15890,
+      "seitenhoehe": 6656,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          },
+          {
+            "tag": "span",
+            "text": "Hinzufügen",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__m390-dark__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__m390-dark__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__m390-dark__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__m390-dark__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__m390-dark__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__m390-dark__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__m390-dark__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__m390-dark__08.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung/mappe",
+      "slug": "bewerbung-mappe",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 6965,
+      "seitenhoehe": 4623,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__d1440-light__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__d1440-light__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__d1440-light__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__d1440-light__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__d1440-light__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__d1440-light__06.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung/mappe",
+      "slug": "bewerbung-mappe",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 7477,
+      "seitenhoehe": 4623,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__d1440-dark__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__d1440-dark__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__d1440-dark__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__d1440-dark__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__d1440-dark__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/bewerbung-mappe__d1440-dark__06.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 38499,
+      "seitenhoehe": 19900,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-light__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-light__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-light__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-light__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-light__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-light__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-light__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-light__08.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-light__09.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-light__10.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-light__11.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-light__12.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-light__13.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 34973,
+      "seitenhoehe": 19900,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-dark__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-dark__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-dark__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-dark__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-dark__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-dark__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-dark__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-dark__08.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-dark__09.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-dark__10.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-dark__11.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-dark__12.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-dark__13.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__m390-dark__14.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 15517,
+      "seitenhoehe": 13166,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-light__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-light__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-light__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-light__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-light__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-light__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-light__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-light__08.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-light__09.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-light__10.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-light__11.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-light__12.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-light__13.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 13698,
+      "seitenhoehe": 13166,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-dark__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-dark__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-dark__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-dark__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-dark__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-dark__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-dark__07.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-dark__08.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-dark__09.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-dark__10.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-dark__11.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-dark__12.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-dark__13.webp",
+        ".roh/v6a1-css-prose-nachher/webp/datenschutz__d1440-dark__14.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 11088,
+      "seitenhoehe": 5426,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/impressum__m390-light__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__m390-light__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__m390-light__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__m390-light__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__m390-light__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__m390-light__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__m390-light__07.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 12542,
+      "seitenhoehe": 5426,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/impressum__m390-dark__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__m390-dark__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__m390-dark__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__m390-dark__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__m390-dark__05.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__m390-dark__06.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__m390-dark__07.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 5561,
+      "seitenhoehe": 3690,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/impressum__d1440-light__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__d1440-light__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__d1440-light__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__d1440-light__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__d1440-light__05.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 5546,
+      "seitenhoehe": 3690,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-prose-nachher/webp/impressum__d1440-dark__01.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__d1440-dark__02.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__d1440-dark__03.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__d1440-dark__04.webp",
+        ".roh/v6a1-css-prose-nachher/webp/impressum__d1440-dark__05.webp"
+      ]
+    }
+  ]
+}

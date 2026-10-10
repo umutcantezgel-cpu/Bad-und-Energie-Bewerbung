@@ -1,0 +1,470 @@
+{
+  "label": "V6-A3-VITALS-vorher-desktop",
+  "base": "http://localhost:3464",
+  "erstellt": "2026-10-10T14:40:37.412Z",
+  "dauerSekunden": 181,
+  "chromium": "Chromium 141.0.7390.37",
+  "lighthouse": "13.5.0",
+  "node": "v22.22.0",
+  "laeufeJeKombination": 5,
+  "wiederholungenBeiTechnischemFehler": 2,
+  "formfaktoren": [
+    "desktop"
+  ],
+  "aufwaermen": true,
+  "statistik": "Median (bei gerader Anzahl: Mittel der beiden mittleren Werte), min, max über die gültigen Läufe",
+  "kilobyte": "1 KB = 1024 Byte",
+  "bedingungen": {
+    "desktop": {
+      "formFactor": "desktop",
+      "drosselungsmethode": "simulate",
+      "drosselung": {
+        "rttMs": 40,
+        "throughputKbps": 10240,
+        "requestLatencyMs": 0,
+        "downloadThroughputKbps": 0,
+        "uploadThroughputKbps": 0,
+        "cpuSlowdownMultiplier": 1
+      },
+      "bildschirm": {
+        "mobile": false,
+        "width": 1350,
+        "height": 940,
+        "deviceScaleFactor": 1,
+        "disabled": false
+      },
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+    }
+  },
+  "einstellungen": {
+    "onlyCategories": [
+      "performance",
+      "accessibility",
+      "best-practices",
+      "seo"
+    ],
+    "disableFullPageScreenshot": true,
+    "strikt_nacheinander": true,
+    "chromiumProLauf": "neu gestartet",
+    "fremdhostSperre": "host-resolver-rules: nur localhost auflösbar"
+  },
+  "budget": {
+    "perfMobilMin": 90,
+    "lcpSMax": 2.5,
+    "clsMax": 0.1,
+    "tbtMsMax": 200
+  },
+  "ergebnisse": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "haupt": true,
+      "url": "http://localhost:3464/",
+      "formfaktor": "desktop",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 95,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 421.6766,
+        "lcpMs": 707.496,
+        "cls": 0.0000024905740284601216,
+        "tbtMs": 173.25200000000007,
+        "siMs": 822.8246755258335,
+        "ttiMs": 1071.2440000000001,
+        "bytes": 464173,
+        "anfragen": 29,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 90,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 387.43690000000004,
+        "lcpMs": 627.4368999999999,
+        "cls": 0.0000024905740284601216,
+        "tbtMs": 21.5,
+        "siMs": 733.890849396663,
+        "ttiMs": 944.4032,
+        "bytes": 462715,
+        "anfragen": 29,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 507.496,
+        "lcpMs": 767.3140000000002,
+        "cls": 0.00029362796713288406,
+        "tbtMs": 251.99999999999994,
+        "siMs": 955.6358577180732,
+        "ttiMs": 1371.749611399344,
+        "bytes": 464214,
+        "anfragen": 29,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "div.einstieg-module__tfiXEq__kopf > h1#hero-title > span.einstieg-module__tfiXEq__titelHaupt > span",
+      "cpuBenchmarkMedian": 1116,
+      "budget": {
+        "urteil": "ok",
+        "verletzt": []
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 421.6766,
+          "lcpMs": 754.1915,
+          "cls": 0.0000024905740284601216,
+          "tbtMs": 21.5,
+          "siMs": 733.890849396663,
+          "ttiMs": 944.4032,
+          "bytes": 464214,
+          "anfragen": 29,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__kopf > h1#hero-title > span.einstieg-module__tfiXEq__titelHaupt > span",
+            "snippet": "<span>",
+            "bezeichnung": "in Wetzlar."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 31,
+            "elementRenderDelay": 454
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher-desktop/lh/start-desktop-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 387.43690000000004,
+          "lcpMs": 627.4368999999999,
+          "cls": 0.0000024905740284601216,
+          "tbtMs": 33.50000000000006,
+          "siMs": 755.2050073487428,
+          "ttiMs": 1031.4553500000002,
+          "bytes": 464173,
+          "anfragen": 29,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__kopf > h1#hero-title > span.einstieg-module__tfiXEq__titelHaupt > span",
+            "snippet": "<span>",
+            "bezeichnung": "in Wetzlar."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 23,
+            "elementRenderDelay": 488
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher-desktop/lh/start-desktop-2.json",
+          "fehlversuche": [
+            "NO_NAVSTART: Something went wrong with recording the trace over your page load. Please run Lighthouse again. (NO_NAVSTART)"
+          ]
+        },
+        {
+          "n": 3,
+          "leistung": 90,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 406.0422224675268,
+          "lcpMs": 646.0422224675268,
+          "cls": 0.0000024905740284601216,
+          "tbtMs": 251.99999999999994,
+          "siMs": 955.6358577180732,
+          "ttiMs": 1371.749611399344,
+          "bytes": 463266,
+          "anfragen": 29,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__kopf > h1#hero-title > span.einstieg-module__tfiXEq__titelHaupt > span",
+            "snippet": "<span>",
+            "bezeichnung": "in Wetzlar."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 50,
+            "elementRenderDelay": 700
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher-desktop/lh/start-desktop-3.json",
+          "fehlversuche": [
+            "NO_NAVSTART: Something went wrong with recording the trace over your page load. Please run Lighthouse again. (NO_NAVSTART)",
+            "NO_NAVSTART: Something went wrong with recording the trace over your page load. Please run Lighthouse again. (NO_NAVSTART)"
+          ]
+        },
+        {
+          "n": 4,
+          "leistung": 95,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 507.496,
+          "lcpMs": 707.496,
+          "cls": 0.0000024905740284601216,
+          "tbtMs": 173.25200000000007,
+          "siMs": 822.8246755258335,
+          "ttiMs": 1071.2440000000001,
+          "bytes": 462715,
+          "anfragen": 29,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__kopf > h1#hero-title > span.einstieg-module__tfiXEq__titelHaupt > span",
+            "snippet": "<span>",
+            "bezeichnung": "in Wetzlar."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 33,
+            "elementRenderDelay": 488
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher-desktop/lh/start-desktop-4.json"
+        },
+        {
+          "n": 5,
+          "leistung": 93,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 450.9710000000001,
+          "lcpMs": 767.3140000000002,
+          "cls": 0.00029362796713288406,
+          "tbtMs": 207.68600000000004,
+          "siMs": 927.193329477914,
+          "ttiMs": 1337.6570000000002,
+          "bytes": 464213,
+          "anfragen": 29,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__kopf > h1#hero-title > span.einstieg-module__tfiXEq__titelHaupt > span",
+            "snippet": "<span>",
+            "bezeichnung": "in Wetzlar."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 68,
+            "elementRenderDelay": 465
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher-desktop/lh/start-desktop-5.json"
+        }
+      ]
+    },
+    {
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "slug": "stelle-kundendienst",
+      "haupt": false,
+      "url": "http://localhost:3464/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "formfaktor": "desktop",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 354.42900000000003,
+        "lcpMs": 601.3671999999998,
+        "cls": 0.010448594757613823,
+        "tbtMs": 20.687799999999925,
+        "siMs": 586.3294249387212,
+        "ttiMs": 868.5084999999999,
+        "bytes": 443867,
+        "anfragen": 30,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 99,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 352.62440000000004,
+        "lcpMs": 554.429,
+        "cls": 0.010448594757613823,
+        "tbtMs": 1.5,
+        "siMs": 534.5509432997871,
+        "ttiMs": 775.546315,
+        "bytes": 443821,
+        "anfragen": 30,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 391.33899999999994,
+        "lcpMs": 758.5084999999999,
+        "cls": 0.010448594757613823,
+        "tbtMs": 85.5,
+        "siMs": 767.1138283779301,
+        "ttiMs": 1086.4435,
+        "bytes": 443868,
+        "anfragen": 30,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+      "cpuBenchmarkMedian": 1190.5,
+      "budget": {
+        "urteil": "ok",
+        "verletzt": []
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 356.24479999999994,
+          "lcpMs": 601.3671999999998,
+          "cls": 0.010448594757613823,
+          "tbtMs": 3,
+          "siMs": 570.9756892303793,
+          "ttiMs": 794.48452,
+          "bytes": 443821,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kundendiensttechniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 31,
+            "elementRenderDelay": 503
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher-desktop/lh/stelle-kundendienst-desktop-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 352.62440000000004,
+          "lcpMs": 734.9365999999999,
+          "cls": 0.010448594757613823,
+          "tbtMs": 20.687799999999925,
+          "siMs": 604.9019867138629,
+          "ttiMs": 882.4083099999999,
+          "bytes": 443868,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kundendiensttechniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 30,
+            "elementRenderDelay": 526
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher-desktop/lh/stelle-kundendienst-desktop-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 99,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 391.33899999999994,
+          "lcpMs": 758.5084999999999,
+          "cls": 0.010448594757613823,
+          "tbtMs": 72,
+          "siMs": 767.1138283779301,
+          "ttiMs": 868.5084999999999,
+          "bytes": 443868,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kundendiensttechniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 42,
+            "elementRenderDelay": 719
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher-desktop/lh/stelle-kundendienst-desktop-3.json"
+        },
+        {
+          "n": 4,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 354.1106,
+          "lcpMs": 594.1106,
+          "cls": 0.010448594757613823,
+          "tbtMs": 1.5,
+          "siMs": 586.3294249387212,
+          "ttiMs": 775.546315,
+          "bytes": 443828,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kundendiensttechniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 29,
+            "elementRenderDelay": 453
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher-desktop/lh/stelle-kundendienst-desktop-4.json",
+          "fehlversuche": [
+            "NO_NAVSTART: Something went wrong with recording the trace over your page load. Please run Lighthouse again. (NO_NAVSTART)",
+            "NO_NAVSTART: Something went wrong with recording the trace over your page load. Please run Lighthouse again. (NO_NAVSTART)"
+          ]
+        },
+        {
+          "n": 5,
+          "leistung": 99,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 354.42900000000003,
+          "lcpMs": 554.429,
+          "cls": 0.010448594757613823,
+          "tbtMs": 85.5,
+          "siMs": 534.5509432997871,
+          "ttiMs": 1086.4435,
+          "bytes": 443867,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kundendiensttechniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 38,
+            "elementRenderDelay": 408
+          },
+          "rohdatei": ".roh/V6-A3-VITALS-vorher-desktop/lh/stelle-kundendienst-desktop-5.json"
+        }
+      ]
+    }
+  ]
+}

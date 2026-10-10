@@ -1,0 +1,4 @@
+/jobs/kundendiensttechniker-waermepumpe-wetzlar http://localhost:3464 n=5: Perf 100 · FCP 346 · LCP 704 · SI 455 · TBT 4 · CLS 0.010 · 433.5 KB
+/jobs/kundendiensttechniker-waermepumpe-wetzlar http://localhost:3465 n=5: Perf 100 · FCP 346 · LCP 654 · SI 441 · TBT 1 · CLS 0.000 · 434.5 KB
+/ http://localhost:3464 n=5: Perf 100 · FCP 382 · LCP 779 · SI 637 · TBT 0 · CLS 0.000 · 453.3 KB
+/ http://localhost:3465 n=5: Perf 100 · FCP 390 · LCP 693 · SI 753 · TBT 18 · CLS 0.000 · 453.7 KB
