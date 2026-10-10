@@ -1,0 +1,105 @@
+{
+ "bestanden": true,
+ "zusammenfassung": "R3-HOME-02 besteht. Es bleibt kein harter Befund, der im Paket zu beheben wäre. Ein Abnahmepunkt ist trotzdem offen, und den kann nur der Orchestrator schließen (siehe E-START-026).\n\nBauweise: Das Paket hält Schreibrechte und Grenzen ein. app/page.tsx, content.ts, lib/**, components/icons, lib/motion und app/styles sind laut git status unberührt. Die Komponenten sind Server-Komponenten mit genau einer Client-Insel, PaketKonfigurator. Die Insel bekommt nur reine Daten, und check:client-imports ist grün. Die Gestaltung nutzt nur Tokens: check:design grün, keine Hexwerte, kein text-[…]. Rot steht nur als Vorlauf-Linie (bg-vorlauf) im Stellenverteiler, der Bewerben-Knopf ist navy (contrast). Bewegung gibt es nur über die Kennungen flaeche und druck. Bei reduzierter Bewegung greift die globale Regel in globals.css:126, der 1-px-Druck sitzt nur unter no-preference. Die Seite hat genau eine h1, kein id kommt doppelt vor. Die Überschriften folgen h2 → h3 → h4.\n\nAbnahmen:\n- **E-START-023: erfüllt.** Es gibt vier Zeilen, jede führt auf ihre Stellenseite. Die Gehälter im gerenderten HTML von :3450 sind 3.600–4.600, 3.800–4.900, 4.400–5.600 und 1.050–1.400 € und entsprechen damit formatSalaryAmount(job.salary). Geprüft ist das nur in Vitest, nicht in Playwright, siehe weiche Befunde.\n- **E-START-024: erfüllt.**\n  - Ein Rollenwechsel tauscht die Paketzeilen, die URL bleibt unverändert (zustaende.json).\n  - Der Textvergleich liegt im Test (vorteile.test.ts:60-70).\n  - Ein Fakt mit Vorbehalt erscheint nur beim Obermonteur: privateCarOnePercent, bei ihm freigegeben.\n  - payFirstWorkday steht nirgends, weder im Test noch im HTML.\n- **E-START-016: erfüllt.**\n  - Die Frage steht wörtlich in du-Form da, dazu vier echte Checkboxen.\n  - Gewählte Wünsche markieren passende Zeilen warm, mit Haken und einem Hinweis für Screenreader.\n  - lib/apply/params kennt keinen Parameter für Wünsche, deshalb bleibt die Auswahl rein clientseitig. Das ist korrekt als OFFENE FRAGE gemeldet.\n- **E-START-025: erfüllt.** #vorteile enthält „07:00“ und „unbezahlten Überstunden“, es sind 6 Einträge (Grenze 8).\n- **E-START-026: halb erfüllt.**\n  - „Messtechnik“ steht auf /, damit ist Teil 1 erfüllt.\n  - „/#ausstattung springt zum Unterblock“ ist derzeit nicht erfüllt. Der Alias `ausstattung` steht in app/page.tsx:65 vor dem ganzen Abschnitt, der Unterblock heißt `werkzeug-fuhrpark`.\n  - Das liegt außerhalb der Schreibrechte und ist korrekt als OFFENE FRAGE gemeldet. Der Orchestrator muss es vor dem Gate nachziehen (je eine Zeile in page.tsx und vorteile-text.ts).\n\nWahrheit:\n- Jede Zeile stammt aus packageExtras oder FACTS.\n- Im ausgelieferten Seitenzustand steht kein Fakt mehr als zweimal (Textzählung je Abschnitt).\n- In Wunsch-Zuständen erscheinen einzelne Fakten ein drittes Mal (weich, siehe unten).\n\nZugänglichkeit:\n- axe meldet 0 Verstöße auf start und stellen bei m390 und d1440, hell und dunkel.\n- Tastatur: Tab erreicht die Radiogruppe, die Pfeiltaste wechselt die Rolle und die Ansage folgt, die Leertaste setzt einen Wunsch. Der Fokusring ist sichtbar.\n- Touch-Ziele: Rollenkarten 64–76 px, Wünsche 48 px, „Alles zur Stelle“ 44 px, Knopf ≥ 52 px.\n- Die Live-Region ist role=status mit aria-live=polite.\n\nMobil und Desktop:\n- Bei 320, 375, 390, 430, 768, 1440 und 1920 läuft nichts horizontal über.\n- Der Stellenverteiler (Vorlauf links, Rücklauf rechts, Gehalt in font-mass mit „Gehalt / Monat“) trifft V1/B R1 und das Verteilerbild aus V2 gut. Die Ausstattung als Stückliste ist ruhig und klar.\n\nVerbesserungen sind unten als weiche Befunde gelistet. Wichtig sind vor allem:\n- der Alias #ausstattung,\n- das dritte Auftreten von Fakten bei gewählten Wünschen,\n- der Zustand ohne JavaScript, in dem Rollenwahl und Paket auseinanderlaufen,\n- die mobile Reihenfolge Rolle → Wünsche → Paket.\n\nBelege liegen unter /home/user/Bad-und-Energie-Bewerbung/_relaunch/belege/r3-home-02-pruef/:\n- screens: start und stellen bei m375, m390, t768 und d1440, hell und dunkel, dazu zusatz/ mit m430 und d1920\n- bericht.json\n- tastatur.md und tastatur.json\n- axe.md und axe.json\n- zustaende.json\n- zustand-*.png (Konfigurator-Zustände, Tastatur, Zeilenfokus, ohne JavaScript)",
+ "pruefergebnisse": "- **bun run lint:** grün, keine Meldungen.\n- **bun run type-check:** grün (tsc, Exit 0).\n- **bun run test:** rot. 85 Dateien mit 1206 Tests, davon 1203 grün und 3 rot. Alle drei roten Tests liegen in der fremden Datei app/fonts/__tests__/fonts.test.ts (Schriftdateien und Lizenzen, Arbeitsstand R3-PERF-01).\n- **Paket-Tests einzeln:** vorteile.test.ts, job-card.test.ts, app/jobs/__tests__/job-components.test.ts und content.test.ts, zusammen 4 Dateien und 51 Tests, alle grün.\n- **bun run check:design:** grün, 290 Dateien.\n- **bun run check:contrast:** grün, 351 Paare. ink-muted auf waerme ist dort nicht erfasst. Von Hand gerechnet ergibt es 6,5 : 1 hell und 5,2 : 1 dunkel, beides ausreichend.\n- **bun run check:client-imports:** grün, 35 Client-Module.\n- **screens.mjs:** start und stellen bei m375, m390, t768 und d1440, hell und dunkel. 16 Aufnahmen plus 2 Zusatzaufnahmen (m430, d1920). Überlauf 0, Fehler 0, gesperrte Anfragen 0.\n- **tastatur.mjs (start):**\n  - Reflow 320: kein horizontaler Überlauf. Nur „Offene Stellen ansehen“ im Einstieg steht 4 px über, das gehört R3-HOME-01.\n  - Ohne JavaScript: genau eine h1.\n  - Tab-Lauf: Radiogruppe, Checkboxen, Knopf und Stellenzeilen sind fokussierbar, der Fokus ist sichtbar.\n- **axe.mjs (start und stellen, m390 und d1440, hell und dunkel):** 8 Läufe mit 0 Verstößen.\n- **Eigene Zustandsprüfung über lib/browser.mjs mit Anfragesperre:**\n  - Rollenwechsel per Klick und per Pfeiltaste, die Ansage folgt.\n  - Wünsche markieren passende Zeilen.\n  - Ohne JavaScript bleibt das Paket nach einem Rollenklick unverändert.\n  - Bei 320, 390, 430 und 1440 kein Überlauf in #stellen und #vorteile, 0 Fehler.",
+ "befunde": [
+  {
+   "schwere": "weich",
+   "datei": "app/page.tsx (Orchestrator) und components/home/vorteile/vorteile-text.ts",
+   "beschreibung": "Die Abnahme von E-START-026 („/#ausstattung springt zum Unterblock“) ist derzeit nicht erfüllt. Der Alias `ausstattung` steht vor dem ganzen #vorteile-Abschnitt, der Unterblock heißt `werkzeug-fuhrpark`. Im Paket lässt sich das nicht beheben (keine Schreibrechte, sonst doppelte id), es ist korrekt als OFFENE FRAGE gemeldet.",
+   "beleg": "app/page.tsx:65 `<Alias ids={['benefits', 'ausstattung']} />`; vorteile-text.ts:229 `AUSSTATTUNG_ID = 'werkzeug-fuhrpark'`",
+   "vorschlag": "Orchestrator vor dem Gate: in page.tsx `<Alias ids={['benefits']} />` setzen, dann AUSSTATTUNG_ID auf 'ausstattung' stellen. Danach `/#ausstattung` im Bild prüfen und auf doppelte ids testen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/vorteile/vorteile-text.ts",
+   "beschreibung": "Bei gewählten Wünschen erscheinen Fakten ein drittes Mal auf der Seite:\n- noWeekendOnCall: Woche, Zusagen im selben Abschnitt und Paketzeile (Kundendienst + „Pünktlich Feierabend“)\n- friday1330: Einstieg-Maß 13:30, Woche und Paketzeile\n- radius35 bzw. noFarAssembly: Einstieg, Einsatzgebiet und Paketzeile\n\nIm Standardzustand bleibt jeder Fakt bei höchstens zwei Vorkommen (Textsuche), und der Baumeister nennt das als Risiko. Der Pass sieht aber nur vor, dass Zeilen hervorgehoben werden.",
+   "beleg": "WUNSCH_FAKTEN Zeilen 115-120; zustaende.json kdFeierabend und kdNaehe; zustand-kd-feierabend-naehe__d1440-dark.png",
+   "vorschlag": "Fakten, die schon in ZUSAGEN stehen (noWeekendOnCall, noUnpaidOvertime, aboveTariff), aus WUNSCH_FAKTEN nehmen und stattdessen auf die Zusage verweisen. Für 13:30 und 35 km nur markieren oder kurz auf den Abschnitt Woche bzw. Einsatzgebiet zeigen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/vorteile/PaketKonfigurator.tsx",
+   "beschreibung": "Ohne JavaScript bleibt die Radiogruppe bedienbar. Nach einem Klick auf „Kundendiensttechniker“ ist diese Rolle gewählt, aber Paket und Knopf zeigen weiter den Anlagenmechaniker. Die Standardrolle ist sichtbar, wie verlangt, der Endzustand widerspricht sich aber.",
+   "beleg": "Zeilen 57-63 (gesteuerte Radios); _relaunch/belege/r3-home-02-pruef/zustand-ohne-js-nach-klick__d1440.png; zustaende.json ohne-js-d1440.nachKlick",
+   "vorschlag": "Alle drei Pakete auf dem Server rendern und per CSS mit `:has(input[value=…]:checked)` umschalten (funktioniert ohne JavaScript). Alternativ die Radios bis zur Hydrierung `disabled` lassen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/vorteile/PaketKonfigurator.tsx",
+   "beschreibung": "Mobil steht das Ergebnis erst unter Wunschfrage, Hinweis und vier Checkboxen, bei 390 px etwa 400 px unter der Rollenwahl. Ein Rollenwechsel ändert Inhalt außerhalb des Blickfelds, nur die Live-Region meldet ihn. #vorteile wird mobil sehr lang, etwa sechs Bildschirmhöhen.",
+   "beleg": "Zeilen 44-115 (Spaltenreihenfolge); start__m390-light__05.webp und __06.webp",
+   "vorschlag": "Mobil die Reihenfolge Rolle → Paket → Wünsche wählen (order-Klassen unter lg) oder das Paket direkt unter die Rollenwahl setzen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/vorteile/vorteile-text.ts / components/home/BenefitGrid.tsx",
+   "beschreibung": "Neue Unterüberschrift „Das gilt für alle Fachkräfte“. Sie steht in keinem Pass und verallgemeinert: Die benefitFactIds des Obermonteurs enthalten noWeekendOnCall, paidCertifications und noUnpaidOvertime nicht, die des Anlagenmechanikers weder noWeekendOnCall noch noUnpaidOvertime. Die Fakten selbst stammen aus betriebsweiten Quellen.",
+   "beleg": "vorteile-text.ts:191 ZUSAGEN_TITEL; lib/jobs/data/obermonteur-projektleiter-shk.ts:44-54",
+   "vorschlag": "Eine neutrale Beschriftung ohne „alle“ wählen (der Abschnittskopf sagt schon „Für Fachkräfte.“) oder den Wortlaut vom Orchestrator freigeben lassen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/vorteile (Daten aus lib/jobs/data)",
+   "beschreibung": "Im Standardzustand doppeln sich Inhalte innerhalb von #vorteile. Die Paketzeilen Werkzeug und Fahrzeug des Anlagenmechanikers (Hilti-22-V-Akku-Flotte, Viega/Geberit, Sortimo) stehen fast gleich eine Bildschirmhöhe tiefer in „Werkzeug & Fuhrpark“: Hilti 3×, Sortimo 2× im Abschnitt.",
+   "beleg": "start__d1440-light__04.webp bis __06.webp; Textauszug #vorteile",
+   "vorschlag": "Dem Orchestrator melden. Möglich wäre etwa, Werkzeug & Fuhrpark vor den Konfigurator zu ziehen oder die Gerätezeilen kürzer zu fassen (nur short). Die Paketdaten selbst bleiben."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/jobs/JobCard.tsx",
+   "beschreibung": "Mobil stehen in der Stellenzeile zwei gleich gesetzte Etikettzeilen direkt untereinander („GEHALT / MONAT“ und „VOLLZEIT · UNBEFRISTET“). Sie lesen sich wie ein Block. Am Desktop steht die Anstellung unter dem Titel.",
+   "beleg": "Zeilen 96-103; start__m390-light__04.webp",
+   "vorschlag": "Mobil die Anstellung per Reihenfolge direkt unter den Titel setzen, so wie am Desktop, damit Gehalt und Einheit zusammen bleiben."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/jobs/JobCard.tsx",
+   "beschreibung": "Der Fokusring der Stellenzeilen liegt mit outline-offset 0 bündig an der Zeile. Er ist sichtbar, aber K-011 verlangt einen Abstand (global var(--m-strich)).",
+   "beleg": "Zeile 89 `focus-visible:after:outline-offset-0`; zustand-zeile-fokus__d1440-dark.png",
+   "vorschlag": "Negativen Offset (Ring innen) oder einen kleinen positiven Offset setzen, wie B R1 `.zeile:focus-visible{outline-offset:-3px}`."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/__tests__/vorteile.test.ts",
+   "beschreibung": "Die Server-Render-Tests hängen vom echten Datum ab. BenefitGrid ruft intern new Date() auf, deshalb werden die Erwartungen (3 Radios, „Als Anlagenmechaniker SHK bewerben“) nach validThrough 2027-10-06 rot.",
+   "beleg": "vorteile.test.ts:97, 168, 182; BenefitGrid.tsx:33",
+   "vorschlag": "vi.useFakeTimers() mit vi.setSystemTime(NOW) für die Render-Tests."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/content.ts (Orchestrator)",
+   "beschreibung": "BENEFIT_FACT_IDS ist jetzt verwaist. Nur content.test.ts nutzt die Liste noch, die Zusagen kommen aus ZUSAGEN. Die Bindung im Pass E-START-025 nennt BENEFIT_FACT_IDS.",
+   "beleg": "rg BENEFIT_FACT_IDS: nur content.ts:98 und content.test.ts:2,60-61",
+   "vorschlag": "Orchestrator: entweder ZUSAGEN-IDs nach BENEFIT_FACT_IDS übernehmen und von dort lesen oder die Liste samt Test entfernen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "e2e/pages.spec.ts (nicht in den Schreibrechten)",
+   "beschreibung": "Die Abnahme von E-START-023 verlangt Playwright. Belegt ist sie nur über Vitest-SSR (job-card.test.ts) und meine HTML-Prüfung.",
+   "beleg": "paesse-start.md E-START-023 Abnahme „(Playwright)“; e2e/ enthält keinen Test für #stellen",
+   "vorschlag": "In R6 bzw. beim Orchestrator einen e2e-Fall ergänzen: vier Zeilen, href und Gehalt gleich job.salary."
+  },
+  {
+   "schwere": "weich",
+   "datei": "app/fonts/__tests__/fonts.test.ts (fremd, R3-PERF-01)",
+   "beschreibung": "bun run test hat 3 rote Tests in einer fremden Datei. Neue woff2-Dateien sind noch nicht im Test, im Ladeweg und in LIZENZEN.md nachgezogen.",
+   "beleg": "out-test: „Test Files 1 failed | 84 passed (85), Tests 3 failed | 1203 passed (1206)“, AssertionError auf die Liste der woff2-Dateien",
+   "vorschlag": "Dem Paket R3-PERF-01 bzw. dem Orchestrator melden."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/einstieg bzw. Hero.tsx (fremd, R3-HOME-01)",
+   "beschreibung": "Bei 320 px steht „Offene Stellen ansehen“ im Einstieg 4 px über den Rand.",
+   "beleg": "_relaunch/belege/r3-home-02-pruef/tastatur.md, Abschnitt Reflow 320",
+   "vorschlag": "An R3-HOME-01 melden."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/vorteile/vorteile-text.ts",
+   "beschreibung": "Die Gerätezeile Messtechnik nutzt das Icon `waermepumpe`, das ist inhaltlich ungenau.",
+   "beleg": "Zeile 243 `icon: 'waermepumpe'`; start__d1440-light__06.webp",
+   "vorschlag": "Bei Gelegenheit ein Mess- oder Manometer-Glyph in components/icons ergänzen (R2/Orchestrator), bis dahin vertretbar."
+  }
+ ]
+}

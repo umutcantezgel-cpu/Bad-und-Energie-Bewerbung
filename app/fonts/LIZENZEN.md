@@ -1,26 +1,26 @@
 # Schriftlizenzen – `app/fonts/`
 
-Alle Schriften der Plattform stehen unter der **SIL Open Font License, Version 1.1 (OFL-1.1)**. Sie liegen selbst gehostet in diesem Ordner (woff2, Teilmengen latin und latin-ext, variable Achsen) und werden über `next/font/local` eingebunden (`app/fonts/index.ts`). Der Browser lädt keine Schrift von Dritthosts. Die OFL erlaubt Einbettung, Weitergabe und Verwendung auf Webseiten; sie verlangt, dass Copyright-Vermerk und Lizenztext mitgeführt werden, und verbietet den Verkauf der Schriften für sich allein. Reservierte Schriftnamen werden nicht verwendet; die Dateien sind unverändert.
+Alle Schriften der Plattform stehen unter der **SIL Open Font License, Version 1.1 (OFL-1.1)**. Sie liegen selbst gehostet in diesem Ordner (woff2, Teilmengen latin und latin-ext, variable Achsen) und werden über `next/font/local` eingebunden (`app/fonts/index.ts`). Der Browser lädt keine Schrift von Dritthosts. Die OFL erlaubt Einbettung, Weitergabe und Verwendung auf Webseiten; sie verlangt, dass Copyright-Vermerk und Lizenztext mitgeführt werden, und verbietet den Verkauf der Schriften für sich allein. Reservierte Schriftnamen werden nicht verwendet. Die Dateien sind mit fontTools instanziert und teilgesetzt (R3-PERF-01, siehe unten); die OFL erlaubt veränderte Fassungen unter derselben Lizenz, die Copyright-Vermerke und der Lizenztext bleiben erhalten.
 
 | Familie | Quelle (Paket, Version) | Copyright | Dateien (Byte) | Einsatz (KERN K-005) |
 |---|---|---|---|---|
-| Bricolage Grotesque (variabel: Gewicht 200–800, optische Größe 12–96) | `@fontsource-variable/bricolage-grotesque` 5.3.0 (Google Fonts) | Copyright 2022 The Bricolage Grotesque Project Authors (https://github.com/ateliertriay/bricolage) | `bricolage-grotesque-latin-opsz-normal.woff2` (76 888), `bricolage-grotesque-latin-ext-opsz-normal.woff2` (30 736) | Display und Überschriften (`--font-display`, `text-display`, `text-title-*`) |
-| Atkinson Hyperlegible Next (variabel: Gewicht 200–800) | `@fontsource-variable/atkinson-hyperlegible-next` 5.3.0 (Google Fonts) | Copyright 2020-2024 The Atkinson Hyperlegible Next Project Authors (https://github.com/googlefonts/atkinson-hyperlegible-next) | `atkinson-hyperlegible-next-latin-wght-normal.woff2` (33 996), `atkinson-hyperlegible-next-latin-ext-wght-normal.woff2` (19 092) | Text, Bedienelemente, Formulare (`--font-sans`) |
-| Martian Mono (variabel: Breite 75–112,5 %, Gewicht 100–800) | `@fontsource-variable/martian-mono` 5.3.0 (Google Fonts) | Copyright 2020 The Martian Mono Project Authors (https://github.com/evilmartians/mono) | `martian-mono-latin-wdth-normal.woff2` (38 492), `martian-mono-latin-ext-wdth-normal.woff2` (24 660) | nur Maße und Planbeschriftung (`--font-mass`, `font-mass`, `text-etikett`, `text-numeral`) |
+| Bricolage Grotesque (variabel: Gewicht 200–800, optische Größe 12–96) | `@fontsource-variable/bricolage-grotesque` 5.3.0 (Google Fonts) | Copyright 2022 The Bricolage Grotesque Project Authors (https://github.com/ateliertriay/bricolage) | `bricolage-grotesque-latin-opsz-wght400-800.woff2` (66 392), `bricolage-grotesque-latin-ext-opsz-wght400-800.woff2` (26 484) | Display und Überschriften (`--font-display`, `text-display`, `text-title-*`) |
+| Atkinson Hyperlegible Next (variabel: Gewicht 200–800) | `@fontsource-variable/atkinson-hyperlegible-next` 5.3.0 (Google Fonts) | Copyright 2020-2024 The Atkinson Hyperlegible Next Project Authors (https://github.com/googlefonts/atkinson-hyperlegible-next) | `atkinson-hyperlegible-next-latin-wght400-700.woff2` (18 584), `atkinson-hyperlegible-next-latin-ext-wght400-700.woff2` (10 064) | Text, Bedienelemente, Formulare (`--font-sans`) |
+| Martian Mono (variabel: Breite 75–112,5 %, Gewicht 100–800) | `@fontsource-variable/martian-mono` 5.3.0 (Google Fonts) | Copyright 2020 The Martian Mono Project Authors (https://github.com/evilmartians/mono) | `martian-mono-latin-wdth75-wght400-800.woff2` (14 564), `martian-mono-latin-ext-wdth75-wght400-800.woff2` (9 852) | nur Maße und Planbeschriftung (`--font-mass`, `font-mass`, `text-etikett`, `text-numeral`) |
 
-Summe: **223 864 Byte = 218,6 KiB** (Budget 250 KB, KERN K-013). Beim Aufruf lädt eine deutsche Seite nur die latin-Dateien (149 376 Byte); die latin-ext-Dateien greifen erst bei Zeichen außerhalb ihres Bereichs (`unicode-range`). Vorgeladen sind zwei Dateien: Bricolage latin und Atkinson latin.
+Summe: **145 940 Byte = 142,5 KiB** (Budget 250 KB, KERN K-013; vorher 223 864 Byte). Beim Aufruf lädt eine deutsche Seite nur die latin-Dateien; die latin-ext-Dateien greifen erst bei Zeichen außerhalb ihres Bereichs (`unicode-range`). Vorgeladen sind zwei Dateien: Bricolage latin und Atkinson latin.
 
-Herkunft: Die Dateien sind byte-identisch mit denen des freigegebenen Prototyps (`_relaunch/ausbau/richtungen/1/fonts/`, geprüft mit `cmp`). Bricolage Grotesque und Atkinson Hyperlegible Next stammen aus `_relaunch/ausbau/referenz/b-runde1/fonts/`, Martian Mono aus `_relaunch/richtungen/a/fonts/`; beide Ordner führen dieselben Quellen in ihren `LIZENZEN.md`. Keine Teilmengenbildung oder Umwandlung.
+Herkunft: Ausgangsdateien sind die des freigegebenen Prototyps (`_relaunch/ausbau/richtungen/1/fonts/`): Bricolage Grotesque und Atkinson Hyperlegible Next aus `_relaunch/ausbau/referenz/b-runde1/fonts/`, Martian Mono aus `_relaunch/richtungen/a/fonts/`. R3-PERF-01 hat sie reproduzierbar mit fontTools bearbeitet (`_relaunch/werkzeuge/schriften/bauen.py`): Achsen auf die genutzten Werte eingeengt (Bricolage Gewicht 400–800, Atkinson 400–700, Martian Mono Breite fest 75 %, Gewicht 400–800), dieselben unicode-range-Teilmengen, nur die nötigen Layout-Features, ohne Hinting. Copyright- und Lizenzangaben im name-Table bleiben erhalten.
 
 SHA-256 der Dateien:
 
 ```
-a79fdb52d4a5c76552452f69202add96e287401fff03d3e8c0e38b4dcb5a99cd  bricolage-grotesque-latin-opsz-normal.woff2
-776f6dcaf03636cd69a5802c94808cc8896c0a66c8e9ce0fe147231b6ee01957  bricolage-grotesque-latin-ext-opsz-normal.woff2
-18b2a1a39a2fa298b0ba5390aca68462669826c90925656f1c1f6796e0e1bbaf  atkinson-hyperlegible-next-latin-wght-normal.woff2
-7dae0c6c66af1aec82e096186aeb1f0e6fa36ab8061ed65422f2b7daf4dd93f3  atkinson-hyperlegible-next-latin-ext-wght-normal.woff2
-f9c1655c2c9d1ed5bb8b301a57d1169a1123ffef1a588dc50a7a487810f7d732  martian-mono-latin-wdth-normal.woff2
-21fce7e290a2395b70fb1569e1b2ef65b3a2c0a121f28203e23dd9b17d120ed4  martian-mono-latin-ext-wdth-normal.woff2
+489e25149c28dc06a9056308a85a84979e31c6076a358435537b235b24216404  atkinson-hyperlegible-next-latin-ext-wght400-700.woff2
+e934172be32983dbff96caf8183d09d1f27d933c6dc37fd3f18cbd5be457b24c  atkinson-hyperlegible-next-latin-wght400-700.woff2
+ca87f43f38dd906e0780f72d110536605507886de100fb3166de5667f4d75557  bricolage-grotesque-latin-ext-opsz-wght400-800.woff2
+9042ae0c14b8f1f72c2ecdfebe457bca9d978d0c386a3acd8aa568216f590868  bricolage-grotesque-latin-opsz-wght400-800.woff2
+2227126ce23e10f7b5f9275478d1aa4d98b144d9a1cadd8d8b98a87852ec9a75  martian-mono-latin-ext-wdth75-wght400-800.woff2
+d0a3c0de459677d29757b737b909e3b4654406f5ed95da17597c399bca40a70c  martian-mono-latin-wdth75-wght400-800.woff2
 ```
 
 Ersatzschriften: `next/font` erzeugt für Bricolage Grotesque und Atkinson Hyperlegible Next (latin) je eine `@font-face`-Regel über die lokale Systemschrift Arial mit angeglichenen Metriken (`size-adjust`, `ascent-override`, `descent-override`). Für Martian Mono steht „Martian Ersatz“ in `app/globals.css` (lokale Arial-Familie, auf die Breite 75 % abgeglichen). Keine dieser Regeln enthält Schriftdaten.

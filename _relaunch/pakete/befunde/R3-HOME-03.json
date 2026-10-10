@@ -1,0 +1,126 @@
+{
+ "bestanden": false,
+ "zusammenfassung": "R3-HOME-03 ist inhaltlich weit gediehen und hält sich nah am Vorbild „.gebiet“ aus B Runde 1. Zu sehen sind Radius-Umschalter 15/25/35 km mit Zoom, eine Wärmefläche mit gepunkteten Ringen und Ringbeschriftung, Lahn, Dill, A45 und B49 schematisch unter 45°, das Pendel (Vorlauf rot, Rücklauf blau, nur als Linie), Ortskärtchen als Radiogruppe, ein Ergebnis mit aria-live, eine aufklappbare Tabelle, die Ortszeile, die Werkstatt-Karte mit Routenlink und die Ortsliste im Fuß.\n\nDie meisten Abnahme-Zeilen sind belegt erfüllt:\n- E-START-029: Solms, Lahnau, Hüttenberg, Biebertal, Wettenberg und Ehringshausen stehen auf der Seite, Hohenahr nicht.\n- E-START-030: Werkstatt mit Adresse und „Material direkt am Lager einladen“, ohne Markennamen.\n- E-START-032: Ohne Einwilligung geht keine Anfrage an Google; das Anfrageprotokoll ist leer.\n- E-START-033 (Grafikteil): Die Ringe stehen im Maßstab und sind mit „Luftlinie“ beschriftet; Gießen liegt im 15-km-Ring, Herborn zwischen 15 und 25 km.\n- E-START-036: vier Pfade, unter 40 KB gzip, ink-muted auf Wärme mit 6,31:1 (hell) und 5,24:1 (dunkel).\n- E-START-038: Die Wahl markiert Punkt und Tabellenzeile und nennt Entfernung, Fahrzeit, Einstufung und die Kurzbeschreibung. Die drei M-016-Sätze und „Schulungsräume“, „Startpunkt …“ und „Firmensitz seit 1926“ kommen im ganzen HTML 0-mal vor.\n- E-START-039: Gießen zeigt 15 km und 16 Min.; ohne Auswahl steht der Hinweis.\n- E-START-040: neuer Tab, rel „noopener noreferrer“, Koordinaten 50.56499,8.49842, kein Laden vor dem Klick.\n- E-SHELL-021: alle neun Altstand-Orte stehen auf der Seite.\n\nRegeln eingehalten: Die Paketprüfung ist vollständig grün, es gibt genau eine h1, kein horizontaler Überlauf bei 320, 390, 430, 768, 1440 und 1920, keine Konsolenfehler.\n\nZwei harte Befunde verhindern das Bestehen:\n1. Der Fokusring des Radius-Umschalters wird von `overflow-hidden` am Segmentrahmen bis auf einen 3-px-Strich an einer Innenkante abgeschnitten (Verstoß gegen K-011). Im dunklen Thema ist der Rest kaum zu sehen; gegen die gewählte Fläche hat er nur 2,27:1 bzw. 1,95:1.\n2. Der Google-Teil der Abnahme von E-START-033 ist nicht erfüllt: Für die drei Kreise 15/25/35 km gibt es keinen Test mit gestubbtem `window.google`, obwohl `components/maps/**` mit Tests in den Schreibrechten liegt. Der Baumeister hat nur typgeprüft.\n\nDazu kommen weiche Befunde:\n- Der Meilenstein ist aus RegionSection entfernt und steht noch nirgends; „Meilenstein 2026“, „größeres Lager“ und „15 Leuten“ kommen auf / heute 0-mal vor. Das hängt an R3-HOME-04 und muss das Gate prüfen.\n- Ohne JS wirken Umschalter und Kärtchen bedienbar, ändern aber Plan und Ergebnis nicht.\n- Die Telefon-Inline-Verknüpfung ist 22 px hoch.\n- Der SVG-Titel lautet bei 15 und 25 km „Einsatzgebiet: 15 km …“.\n- Die Landschaftsbeschriftungen überdecken das Pendel.\n- Der Hermannstein-Punkt berührt im 35-km-Plan das Haus.\n- Bei 768 px füllt der Plan die ganze Breite.\n- Einige Fakten wiederholen sich, es gibt Hängepunkte in den Ortszeilen, und es gibt Kleinigkeiten in fremden Dateien.\n\nBildurteil gegenüber dem Vorbild: nicht verfehlt, eine klare Plansprache in hell und dunkel, mobil sauber gestapelt. Abzüge gibt es für die gedrängte Mitte und die Größe des Plans auf dem Tablet.\n\nBelege liegen unter /home/user/Bad-und-Energie-Bewerbung/_relaunch/belege/r3-home-03-pruef/: start__{m375,m390,t768,d1440}-{light,dark}__NN.webp, bericht.json und die Prüfausgaben *.txt. In interaktion/ liegen pruef.json, pruef.mjs und die webp-Ausschnitte zu Fokus, Plan, Ergebnis, Ohne-JS und Gesamtabschnitt bei 320, 390, 430, 1440 und 1920.",
+ "pruefergebnisse": "Alle Befehle wurden im Arbeitsordner selbst ausgeführt; die Ausgaben liegen unter _relaunch/belege/r3-home-03-pruef/.\n- `bun run lint`: grün (exit 0).\n- `bun run type-check`: grün (tsc exit 0).\n- `bun run test`: grün, 85 Dateien, 1206 Tests bestanden.\n- `bun run check:design`: grün, 284 Dateien. Keine Hinweise (off-scale, Dauern) für Paketdateien (`--notes` gefiltert).\n- `bun run check:contrast`: grün, 351 Paare. Eigene Nachrechnung:\n  - ink-muted auf Wärme: 6,31 (hell) und 5,24 (dunkel).\n  - Fokusblau gegen die gewählte Brand-Fläche: 2,27 (hell) und 1,95 (dunkel). Das ist relevant für Befund 1.\n- `bun run check:client-imports`: grün, 35 Client-Module.\n- Bildlauf `screens.mjs` (Base :3450, label r3-home-03-pruef, only start, vps m375, m390, t768, d1440, light und dark, belege alle):\n  - 8 Aufnahmen, Status 200.\n  - Überlauf 0, Fehler 0, gesperrte Anfragen 0 (also keine Anfrage an Google).\n- Eigener Prüflauf über `_relaunch/werkzeuge/lib/browser.mjs` mit Anfragesperre (interaktion/pruef.json):\n  - Überlauf: horizontal false bei 320, 390, 430, 1440 und 1920.\n  - Abschnittshöhe: 2403 px bei 320, 2234 bei 390, 2206 bei 430, 1721 bei 1440.\n  - Genau eine h1. Konsolenfehler 0, Anfrageprotokoll leer.\n  - Tastatur: Pfeiltasten im Umschalter funktionieren (35 → 25 → 15, der SVG-Titel folgt).\n  - Ortswahl: Gießen ergibt 15 km, 16 Min., „Regionales Einsatzgebiet“, keine Beschreibung (M-016), Tabellenzeile aria-current, Pendel 1 Vorlauf und 1 Rücklauf. Hermannstein zeigt die Lagebeschreibung, Herborn bei 15 km zeigt „außerhalb von 15 km, aber innerhalb von 25 km“.\n  - Routenlink: href …/dir/?api=1&destination=50.56499,8.49842, target _blank, rel „noopener noreferrer“, Höhe 44 px.\n  - Ohne JS: 10 Kärtchen, 13 Radios, SVG, 10 Tabellenzeilen und die Werkstatt sind da. Ein Klick auf ein Kärtchen ändert das Ergebnis nicht.\n  - Touch-Ziele unter 44 px im Abschnitt: nur der Inline-Telefonlink (108 × 22 px mobil, 127 × 26 px Desktop).\n- Textsuche im gerenderten HTML von / (sichtbarer Text):\n  - 0-mal: „vielen Wärmepumpenmodernisierungen“, „anspruchsvollen Sanierungsobjekten“, „wichtiges Kundendienstgebiet“, „Schulungsräume“, „Startpunkt aller Kundendienstfahrzeuge“, „Firmensitz seit 1926“, „Hohenahr“, „maps.googleapis“, „Meilenstein 2026“, „größeres Lager“, „15 Leuten“.\n  - Häufigkeiten: „35 km“ 7×, Telefon 06441 42956 4×, „Siegmund-Hiepe-Str. 20“ 2× (3×, wenn Wetzlar Kernstadt gewählt ist).",
+ "befunde": [
+  {
+   "schwere": "hart",
+   "datei": "components/maps/RegionExplorer.tsx",
+   "beschreibung": "Der Fokusring des Radius-Umschalters (E-START-033) wird abgeschnitten. Der Segmentrahmen trägt `overflow-hidden`, die Labels zeichnen ihren Fokus als `outline-3 outline-offset-3` außerhalb ihrer Box. Sichtbar bleibt nur ein 3-px-Strich an einer Innenkante (bei 35 km links, bei 15 km rechts). Oben, unten und außen fehlt der Ring. Dieser Rest liegt direkt an der gewählten Brand-Fläche (Kontrast Fokus/Brand 2,27:1 hell, 1,95:1 dunkel). Das verstößt gegen K-011 (Fokus mit Outline ≥ 2 px und Abstand, ≥ 3:1 gegen Umgebung) und gegen die Paketregel „Fokus sichtbar“.",
+   "beleg": "Zeile 185: `<div className=\"flex max-w-sm overflow-hidden rounded-2 border-2 border-brand\">`. Zeile 193: `has-focus-visible:outline-3 has-focus-visible:outline-offset-3`. pruef.json interaktion390.clipAncestor = {DIV, overflow: hidden}. Bilder: _relaunch/belege/r3-home-03-pruef/interaktion/fokus-radius-rand__m390-light.webp, fokus-radius-rand__d1440-light.webp, fokus-radius-rand__d1440-dark.webp.",
+   "vorschlag": "`overflow-hidden` am Segmentrahmen entfernen und die Rundung über `first:rounded-l-… last:rounded-r-…` an den Labels lösen. Alternativ den Fokus nach innen legen (`has-focus-visible:outline-offset-[-…]` ist nicht erlaubt, also z. B. ein inneres Fokuselement oder `outline-offset-0` mit Ring innerhalb), so dass der Ring vollständig und mit ≥ 3:1 sichtbar ist. Danach den Fokus bei 390 und 1440, hell und dunkel, erneut fotografieren."
+  },
+  {
+   "schwere": "hart",
+   "datei": "components/maps/GoogleRegionMap.tsx",
+   "beschreibung": "Die Abnahme-Zeile von E-START-033 ist im Google-Teil nicht erfüllt. Verlangt ist: „in der Google-Ebene liegen Kreise für 15, 25 und 35 km um den Firmensitz (Test mit gestubbtem window.google, siehe E-START-056)“. Die Kreise sind gebaut (Zeilen 167–196), es gibt aber keinen Test dafür; der Baumeister meldet nur Typprüfung. Ein Komponenten- oder Einheitentest mit gestubbtem `google.maps` liegt in den Schreibrechten (`components/maps/**` mit Tests) und ist in der node-Umgebung von Vitest machbar.",
+   "beleg": "GoogleRegionMap.tsx:167 `const circles = radiiRef.current.map((km) => ({ … new g.Circle({ … radius: km * 1000 …`, :180 paintCircles, :187 frameRadius. `grep -rl \"window.google\"` über alle *.test.ts: kein Treffer. Pass paesse-start.md E-START-033, Abnahme. Bericht des Baumeisters: „Die Google-Ebene mit den drei Kreisen ist … nur typgeprüft.“",
+   "vorschlag": "Die Kreislogik in eine reine Funktion auslagern, z. B. `radiusCircles(g, map, radii, current, palette)` mit paint und frame. Dann in components/maps/__tests__ mit einem Fake-`g.Circle` (`setOptions` und `getBounds` aufzeichnen) und einem Fake-`map.fitBounds` prüfen: drei Kreise mit 15 000, 25 000 und 35 000 m um HEADQUARTERS_COORDINATES; der gewählte ist kräftiger und eingepasst; ein Radiuswechsel malt neu und passt ein."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/RegionSection.tsx",
+   "beschreibung": "Der Meilenstein-Absatz (`REGION.milestone.text`) ist aus dem Abschnitt entfernt. R3-HOME-04 hat erst um 22:51 begonnen, AboutSection enthält noch keinen Meilenstein. Damit fehlen auf / derzeit „Meilenstein 2026“, „größeres Lager“ und „15 Leuten“, die Abnahme von E-START-031 (Paket R3-HOME-04). Die Fakten Umzug und 15 Leute sind bis dahin von der Seite verschwunden. Das ist nachvollziehbar, um Doppelungen zu vermeiden, aber eine Abhängigkeit.",
+   "beleg": "git diff: entfernt wurde `<p className=\"mt-8 max-w-prose text-callout text-ink-muted\">{REGION.milestone.text}</p>`. Textsuche im HTML: „größeres Lager“ 0, „15 Leuten“ 0, „Meilenstein 2026“ 0. _relaunch/pakete/fortschritt/R3-HOME-04.log: nur „22:51 · Start“. `grep milestone components/home/AboutSection.tsx`: kein Treffer.",
+   "vorschlag": "Der Orchestrator stellt im Gate sicher, dass R3-HOME-04 den Meilenstein in AboutSection bringt. Sonst den Absatz vorübergehend zurück in RegionSection."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/maps/RegionExplorer.tsx",
+   "beschreibung": "Ohne JS sind Radius-Umschalter und Ortskärtchen sichtbar und lassen sich nativ anwählen. `has-checked` färbt sie um, aber Plan, SVG-Titel und Ergebnis bleiben bei 35 km bzw. beim Hinweistext. Der Zustand widerspricht sich (z. B. „15 km“ gewählt, Plan zeigt 35 km). B Runde 1 blendet beides ohne JS aus (`nur-js`).",
+   "beleg": "pruef.json nojs: Nach dem Klick auf „Gießen“ bleibt afterClick = „Wähle deinen Ort, dann siehst du Entfernung und Fahrzeit bis Wetzlar.“ Bild interaktion/gebiet-ohne-js__m390-light.webp. Code Zeilen 181–212 (RadiusSwitch) und 224–272 (PlaceChoice).",
+   "vorschlag": "Den Umschalter erst nach der Hydrierung zeigen oder ohne JS als nicht interaktiv kennzeichnen. Die Kärtchen dürfen bleiben (sie nennen km und Min.), sollten ohne JS aber keinen scheinbar gewählten Zustand ohne Wirkung erzeugen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/gebiet/WeitereOrte.tsx",
+   "beschreibung": "Der Telefonlink „06441 42956“ unter den weiteren Orten ist nur 22 px (mobil) bzw. 26 px (Desktop) hoch und damit unter KERN 44 px und sogar unter 24 px. Er steht im Satz, die Inline-Ausnahme von WCAG 2.5.8 greift also. Für die einzige Hilfeaktion des Abschnitts auf dem Telefon ist das trotzdem knapp.",
+   "beleg": "Zeilen 154–159 `<a href={ORT_FEHLT.phoneHref} className=\"rounded-1 font-semibold underline …\">`. pruef.json m390.small: {a, \"06441 42956\", w 109, h 22}, m320 h 22, d1440 h 26.",
+   "vorschlag": "Den Link als `inline-flex min-h-11 items-center` setzen oder als eigene Zeile mit Telefon-Icon wie im Kontaktbereich."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/maps/RadiusGraphic.tsx",
+   "beschreibung": "Der SVG-Titel nennt den gewählten Werkzeugradius als Einsatzgebiet: Bei 15 km liest ein Screenreader „Einsatzgebiet: 15 km Luftlinie um Wetzlar“. Laut Pass E-START-033 sind 15 und 25 km keine Firmenaussage; die Zusage bleibt 35 km.",
+   "beleg": "Zeile 53: `<title id={titleId}>{`Einsatzgebiet: ${view.radiusKm} km Luftlinie um ${data.centerName}`}</title>`. pruef.json afterArrowLeft2.title = \"Einsatzgebiet: 15 km Luftlinie um Wetzlar\".",
+   "vorschlag": "Etwa „Umkreis von 15 km Luftlinie um Wetzlar (Einsatzgebiet bis 35 km)“, oder den Titel neutral halten („Plan des Einsatzgebiets um Wetzlar“) und den Radius in der Beschreibung nennen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/maps/RadiusGraphic.tsx",
+   "beschreibung": "Die Landschaftsbeschriftungen werden auf dem Server ohne Kenntnis des Pendels gesetzt und über dem Pendel mit Wärme-Halo gezeichnet. Ihr Halo unterbricht dann Vorlauf und Rücklauf, z. B. „A45“ und „Dill“ auf dem Pendel nach Herborn bei 15 km. Auch „B49“ und „Lahn“ liegen unten links eng an bzw. auf Linien.",
+   "beleg": "Zeilen 134–152 (Labels nach dem Pendel in Zeile 97–102, `paintOrder=\"stroke\" … stroke-waerme`). Bilder interaktion/plan-herborn-15km__m390-light.webp und start__m375-light__10.webp (B49 und Lahn).",
+   "vorschlag": "Landschaftslabels vor dem Pendel zeichnen, oder bei gewähltem Ort Labels ausblenden, die die Pendelstrecke schneiden (`polylineBoxes` des Pendels als Hindernis)."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/maps/graphic.ts",
+   "beschreibung": "Im 35-km-Plan (Standardansicht) berührt bzw. überlappt der Punkt von Hermannstein das Haus in der Mitte. Die innere Gruppe (Steindorf und Nauborn direkt über „Wetzlar“, Garbenheim und Dutenhofen rechts) ist gedrängt. Die Abnahme von E-START-036 „Ortspunkte bleiben lesbar“ ist an der Mitte nur knapp erfüllt. Der Baumeister hat das als Risiko gemeldet.",
+   "beleg": "start__t768-light__07.webp: Punkt bei ~(712,1140) auf der linken Dachschräge. interaktion/plan-hermannstein-35km__m390-light.webp.",
+   "vorschlag": "Punkte innerhalb des Hausquadrats radial aus `centerBox` herausschieben (mit kleiner Führungslinie) oder sie im 35-km-Plan als Gruppe am Haus darstellen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/maps/RegionExplorer.tsx",
+   "beschreibung": "Zwischen sm und lg (768 px) hat der Plan `aspect-square w-full` ohne Höchstbreite und füllt rund 660 × 660 px. Die Beschriftungen wachsen mit (Herborn, Gießen und Wetzlar sehr groß), der Abschnitt ist sehr hoch. Mobil ist der Abschnitt 2234 px (390) bis 2403 px (320) hoch, das Ergebnis steht erst unter allen zehn Kärtchen, und der Plan mit dem Pendel ist beim Antippen außer Sicht.",
+   "beleg": "Zeilen 100–101 `figure … ` und `relative aspect-square w-full`. Bild start__t768-light__07.webp. pruef.json section.height.",
+   "vorschlag": "Bei sm bis lg eine Höchstbreite (z. B. `sm:max-w-lg sm:mx-auto`) oder schon ab md zwei Spalten. Mobil das Ergebnis vor die Kärtchen stellen (B Runde 1: Ergebnis vor der Ortsliste) bzw. nach der Wahl in Sicht halten."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/maps/RegionExplorer.tsx",
+   "beschreibung": "Fakten und Maße wiederholen sich mehrfach. „35 km“ steht sichtbar 7× (Einstieg, Überschrift, Umschalter, Ringlabel, SVG-Titel, SVG-Beschreibung, Bildunterschrift). Die Bildunterschrift wiederholt die vollständige Liste „15 km, 25 km, 35 km“, die schon an Ringen und Umschalter steht. Die Telefonnummer steht durch die neue Zeile „Ruf kurz an“ jetzt 4×. Die Adresse steht 2× (Werkstatt und Fuß), 3×, wenn „Wetzlar Kernstadt“ gewählt ist (deren Datenbeschreibung enthält „Siegmund-Hiepe-Str. 20“), und mit dem Meilenstein von R3-HOME-04 3–4×.",
+   "beleg": "Zeile 125: figcaption `Kreise: ${data.radii.map(...)} Luftlinie um …`. Textsuche start.txt: „35 km“ 7, „06441 42956“ 4, „Siegmund-Hiepe-Str. 20“ 2. pruef.json afterSpace (Wetzlar Kernstadt): „Firmensitz Siegmund-Hiepe-Str. 20 und historische Altstadt“.",
+   "vorschlag": "Bildunterschrift kürzen auf „Kreise in Luftlinie um Wetzlar. Lahn, Dill, A45 und B49 schematisch.“ Die Wiederholung von Adresse und Telefon beim Orchestrator über die Abschnitte von R3-HOME-03 und R3-HOME-04 abstimmen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/gebiet/WeitereOrte.tsx",
+   "beschreibung": "Die Trennpunkte „·“ hängen am Zeilenende: Der Punkt steht im selben `li` nach dem Namen, also endet jede umbrochene Zeile mit „·“. Dasselbe gilt in FooterPlaces.",
+   "beleg": "WeitereOrte.tsx Zeilen 139–148, FooterPlaces.tsx Zeilen 31–41. Bilder start__m375-dark__11.webp (Wettenberg ·, Pohlheim ·, Ehringshausen ·, Dillenburg ·) und gebiet-giessen__d1440-light.webp.",
+   "vorschlag": "Trenner per CSS vor dem Element (`[&+li]:before`) setzen oder die Punkte so führen, dass ein Umbruch sie an den Zeilenanfang nimmt, bzw. mit `gap` ohne Trennzeichen arbeiten."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/maps/status.ts",
+   "beschreibung": "`radiusStatus` vergleicht die Tabellenentfernung (Straße, `distanceKm`) mit Ringen, die als Luftlinie beschriftet sind. Auch die Hohlpunkte der Grafik (`outside(place.distanceKm)`) nutzen Straßen-km, liegen aber an ihrer Luftlinienposition. Mit den heutigen Daten entsteht kein Widerspruch, die Grundlage ist aber gemischt (KERN „Markierte Annahmen“).",
+   "beleg": "status.ts Zeilen 235–240. RadiusGraphic.tsx Zeile 43 `const outside = (distanceKm: number) => distanceKm > view.radiusKm;`.",
+   "vorschlag": "Die Grundlage im Code dokumentieren oder Lage und Hohlpunkt aus der Luftlinie ableiten, die Tabellenwerte nur für Entfernung und Fahrzeit nutzen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/maps/RadiusGraphic.tsx",
+   "beschreibung": "RadiusGraphic gehört zum Client-Baum und importiert `LANDSCAPE_LABEL_FONT_SIZE` aus `landscape.ts`. Damit landen die LANDSCAPE-Stützpunkte und `projectLandscape` im Client-Bundle, obwohl die Landschaft auf dem Server berechnet wird.",
+   "beleg": "Zeile 3: `import { LANDSCAPE_LABEL_FONT_SIZE } from './landscape';`.",
+   "vorschlag": "Die Konstante nach graphic.ts verschieben (oder in RadiusView mitliefern)."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/maps/RegionExplorer.tsx",
+   "beschreibung": "Mehrere Abnahmeteile sind nur zur Laufzeit geprüft oder warten auf einen Testweg. Für E-START-039 verlangt der Pass „(Playwright)“; es gibt kein E2E, der Prüflauf belegt aber Gießen 15 km und 16 Min. sowie den Hinweistext. Die Teile mit Schlüsselattrappe von E-START-032 (Karte lädt) und E-START-038 (Markerklick wählt und schwenkt) hängen am Testweg von E-START-056, den kein Paket trägt.",
+   "beleg": "e2e/*.spec.ts ohne Bezug auf #einsatzgebiet. pruef.json interaktion390.giessen35. Die Pässe E-START-032, -038 und -056 nennen den Testweg; PLAN, VERLUSTLISTE und pakete nennen keinen Träger.",
+   "vorschlag": "Der Orchestrator vergibt den Testweg E-START-056 (Build mit Schlüsselattrappe oder gestubbtes window.google) und ein E2E für den Pendlerrechner (e2e/ liegt außerhalb der Paketrechte)."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/maps/views.ts",
+   "beschreibung": "Der Pass E-START-038 nennt `lib/content/region.ts` (`character` durchreichen) als Ziel. Der Baumeister liest die Beschreibung stattdessen in views.ts aus `lib/data/locations.ts` und sperrt dort M-016. Das ist fachlich korrekt und getestet, weicht aber vom Ziel des Passes ab (offene Frage des Baumeisters).",
+   "beleg": "views.ts Zeilen 26–33 (`WITHHELD_CHARACTER_IDS`, `placeCharacter` mit `regionalLocations`).",
+   "vorschlag": "Der Orchestrator entscheidet, ob `REGION.locations` `character` (mit M-016-Sperre) führen soll; dann zieht views.ts nach."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/einstieg/einstieg-text.ts",
+   "beschreibung": "Fremde Datei (R3-HOME-01): Bei 320 px ragt der Zweitweg „Offene Stellen ansehen“ 4 px über den rechten Rand. Die Seite scrollt nicht seitlich, der Text wird aber angeschnitten.",
+   "beleg": "pruef.json m320.overflow.clipped: [{span „Offene Stellen ansehen“, offRight 4}, {span „ansehen“, offRight 4}].",
+   "vorschlag": "An R3-HOME-01 melden."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/SectionHeader.tsx",
+   "beschreibung": "Fremd (R3-HOME-05 und Orchestrator, `REGION.headline`): Bei 375 px bricht die Überschrift dreizeilig als „35 km um / Wetzlar. Keine / Fernmontage.“ um, quer über die Satzgrenze. B Runde 1 setzt die beiden Sätze als eigene Spans.",
+   "beleg": "start__m375-light__09.webp.",
+   "vorschlag": "Die Überschrift satzweise setzen (zwei Spans bzw. eine Zeile je Satz) über SectionHeader bzw. content; an R3-HOME-05 bzw. den Orchestrator melden."
+  }
+ ]
+}

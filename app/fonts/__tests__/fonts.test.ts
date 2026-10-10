@@ -13,15 +13,17 @@ const calls = [...source.matchAll(/const (\w+) = localFont\(\{([\s\S]*?)\n\}\);/
 describe('Schriften (KERN K-005, K-013)', () => {
   it('liefert drei Familien in latin und latin-ext, zusammen ≤ 250 KB', () => {
     expect(files.sort()).toEqual([
-      'atkinson-hyperlegible-next-latin-ext-wght-normal.woff2',
-      'atkinson-hyperlegible-next-latin-wght-normal.woff2',
-      'bricolage-grotesque-latin-ext-opsz-normal.woff2',
-      'bricolage-grotesque-latin-opsz-normal.woff2',
-      'martian-mono-latin-ext-wdth-normal.woff2',
-      'martian-mono-latin-wdth-normal.woff2',
+      'atkinson-hyperlegible-next-latin-ext-wght400-700.woff2',
+      'atkinson-hyperlegible-next-latin-wght400-700.woff2',
+      'bricolage-grotesque-latin-ext-opsz-wght400-800.woff2',
+      'bricolage-grotesque-latin-opsz-wght400-800.woff2',
+      'martian-mono-latin-ext-wdth75-wght400-800.woff2',
+      'martian-mono-latin-wdth75-wght400-800.woff2',
     ]);
     const total = files.reduce((sum, f) => sum + statSync(path.join(FONTS, f)).size, 0);
     expect(total).toBeLessThanOrEqual(250 * 1024);
+    // R3-PERF-01: instanziert und teilgesetzt, deutlich unter dem Budget.
+    expect(total).toBeLessThanOrEqual(150 * 1024);
   });
 
   it('bindet jede Datei mit unicode-range ein und lädt genau zwei vor (Display-latin, Text-latin)', () => {
@@ -31,7 +33,7 @@ describe('Schriften (KERN K-005, K-013)', () => {
       expect(body, name).toMatch(/display: 'swap'/);
     }
     const preloaded = calls.filter((c) => /preload: true/.test(c.body)).map((c) => c.body.match(/src: '\.\/([^']+)'/)![1]);
-    expect(preloaded.sort()).toEqual(['atkinson-hyperlegible-next-latin-wght-normal.woff2', 'bricolage-grotesque-latin-opsz-normal.woff2']);
+    expect(preloaded.sort()).toEqual(['atkinson-hyperlegible-next-latin-wght400-700.woff2', 'bricolage-grotesque-latin-opsz-wght400-800.woff2']);
     for (const file of files) expect(source, file).toContain(`'./${file}'`);
   });
 
@@ -50,9 +52,12 @@ describe('Schriften (KERN K-005, K-013)', () => {
     expect(globals).toMatch(/font-family: "Martian Ersatz";[\s\S]*?size-adjust: \d+%;[\s\S]*?ascent-override/);
   });
 
-  it('öffnet die Breitenachse von Martian Mono (font-stretch 75 %)', () => {
-    for (const { name, body } of calls.filter((c) => c.name.startsWith('martian'))) {
-      expect(body, name).toMatch(/prop: 'font-stretch', value: '75% 112.5%'/);
+  it('liefert Martian Mono fest in Breite 75 % (instanziert, font-stretch 75 %)', () => {
+    const martian = calls.filter((c) => c.name.startsWith('martian'));
+    expect(martian).toHaveLength(2);
+    for (const { name, body } of martian) {
+      expect(body, name).toMatch(/src: '\.\/martian-mono-[\w-]*wdth75[\w-]*\.woff2'/);
+      expect(body, name).toMatch(/prop: 'font-stretch', value: '75%'/);
     }
   });
 

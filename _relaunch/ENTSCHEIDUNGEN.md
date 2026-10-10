@@ -227,3 +227,24 @@ Format: E-[Nr] · Datum · Gegenstand · Entscheidung · Grund · Umkehr (bei De
   
   Das Ziel bleibt Z-12, nie schlechter als P0 plus 10 % LCP.
 - **Rechtstext:** Die Datenschutzerklärung nennt „Inter“ als selbst gehostete Schrift (`app/datenschutz/page.tsx`). Die Aussage wird faktisch unrichtig, deshalb ersetzt R5-RECHT-01 den Schriftnamen minimal (weiter selbst gehostet, keine Übermittlung). Vermerk zur Prüfung durch den Datenschutzbeauftragten in `docs/operations/datenschutz-aenderungen.md` und M-019.
+
+## E-023 · 10.10.2026 · Fertigstellung im Design des Einstiegs, beschleunigtes Verfahren (Auftraggeber)
+- **Anlass:** Der Auftraggeber schrieb am 10.10. „Bitte die Webseite endlich fertig machen. Ich, ich scheiß auf Test, scheiß auf alles. Mach bitte alles in diesem Design weiter … Dieses Design, was du erstellt hattest. Und bitte, wenn du das überall auf der Seite an.“ Dazu schickte er die Bilder des fertigen Einstiegs (Desktop und Handy).
+- **Design:** Der gebaute Einstieg der Startseite (Variante 1 mit Teilen aus B Runde 1) ist die verbindliche Vorlage für alle Seiten:
+  - Navy-Fläche mit Strichzeichnung;
+  - roter Vorlauf in „Jetzt bewerben“;
+  - Bricolage-h1, Etikett, Rohrklammer;
+  - Mono-Maße mit Maßlinie;
+  - Icon-Kästchen.
+  Ein gemeinsamer `Seitenkopf` (Varianten erzaehl/arbeit/ruhig) trägt das auf alle Unterseiten (`_relaunch/pakete/FERTIG.md`).
+- **Verfahren:**
+  - **Entfallen:** Prüferrunden je Paket, Jury, Wow-Probe und die Showcase-Messungen vor dem Merge.
+  - **Bleiben,** weil sie die Live-Seite schützen und G7 sie verlangt: die bestehenden Tests, Guards und die CI. Sie werden nicht abgeschwächt.
+  - Die Pakete prüfen sich selbst an Bildern. Der Orchestrator macht eine Gesamtprüfung (Ebene 1, Build, E2E) vor dem PR.
+  - Merge nach E-021 automatisch bei grüner CI, mit Supabase-Lesprüfung.
+- **Faktenregel** („jeder Fakt höchstens zweimal je Seite“, ROADMAP §3.2), ausgelegt:
+  - Je Abschnitt zählt ein Fakt einmal (Überschrift, Grafik und Text eines Abschnitts sind eine Nennung).
+  - Höchstens zwei Abschnitte je Seite.
+  - Bestandstexte (FAQ, `HERO.lead`, `REGION.headline`) bleiben und zählen mit; neue Bausteine weichen aus.
+  - Die Verteilung der Startseite steht in FERTIG.md.
+- **Abnahme R3:** Die R3-Pakete sind gebaut (Sicherung 1ff75a3). Die Befunde der Prüfer (`_relaunch/pakete/befunde/`) arbeiten R3-FIX-A und R3-FIX-B ab. R3-PERF-01 ist abgenommen: Schriften 223 864 → 145 940 Byte; Lighthouse-Median `/` 3,36 → 3,21 s (P0 2,92 s, Grenze +10 % = 3,21 s); Test und Lizenzen nachgezogen.

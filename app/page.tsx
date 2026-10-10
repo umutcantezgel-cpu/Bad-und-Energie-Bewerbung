@@ -62,7 +62,7 @@ export default function HomePage() {
       <WeekSection />
       <Alias ids={['karriere-paket', 'gehalt']} />
       <JobList />
-      <Alias ids={['benefits', 'ausstattung']} />
+      <Alias ids={['benefits']} />
       <BenefitGrid />
       <RegionSection />
       <Alias ids={['wechsel-prozess']} />

@@ -1,0 +1,70 @@
+{
+ "bestanden": true,
+ "zusammenfassung": "R3-HOME-05 besteht die Prüfung. Es bleibt kein harter Befund, aber es gibt neun weiche. Der wichtigste betrifft die ganze Seite: Die Faktenregel ist dort verletzt (13:30 steht 8-mal sichtbar). Diesen Fehler kann das Paket nicht selbst beheben, darum muss der Orchestrator entscheiden.\n\nAbnahme:\n- E-START-027 ist erfüllt. Im Abschnitt #ablauf stehen drei Schritte als geordnete Liste aus getProcessSteps('fachkraft'), die Diskretionszusage ist sichtbar und es gibt genau einen Knopf zu /bewerbung (data-primary-cta). Der Alias #wechsel-prozess steht in app/page.tsx:68 direkt vor dem Abschnitt. Der Leitungsstrang aus Vorlauf und Rücklauf ist mobil senkrecht und ab lg waagerecht.\n- E-START-050 ist erfüllt. Es gibt fünf <details name=\"faq\">; nach zwei Klicks ist nur eines offen, auch ohne JavaScript öffnet ein Klick genau eines. Das JSON-LD stimmt im ausgelieferten HTML bei allen fünf Fragen und Antworten genau mit dem sichtbaren Text überein. Auf der Seite gibt es genau eine FAQPage, der Anker ist #faq.\n\nBrief:\n- Die Woche folgt Variante 1 sehr nah (Vergleich mit richtungen/1/fotos/*__02.webp): Heizkreisverteiler, Brücken, Fr 13:30 als Hauptmaß, Sa/So ohne Kreis, Achse 07 · 10 · 13 · 16. Dazu kommen Titel und Beschreibung im Stil von B Runde 1. Alle Zeiten kommen aus FACTS, eine Wochenarbeitszeit wird nicht gezeigt.\n- SectionHeader bleibt rückwärtskompatibel und hat zwei neue Props: eyebrow und klammer.\n- Alle Dateien sind Server-Komponenten. Es gibt kein lucide und kein data-motion. Rot steht nur als Vorlauf-Linie und im Knopf „Jetzt bewerben“.\n\nZugänglichkeit:\n- Genau eine h1. axe meldet 0 Verstöße (m390 und d1440, hell und dunkel).\n- Fokus: 3 px Rücklaufblau mit 3 px Abstand an der FAQ-Frage und am Knopf.\n- Touch-Ziele: FAQ-Fragen 60–112 px hoch, Knopf 52 px.\n- Kontraste laut check:contrast im Soll.\n\nMobil und Desktop: Kein horizontaler Überlauf bei 320, 390, 430, 768, 1024, 1440 und 1920. Auch die vorgegebene Aufnahme (m375, m390, t768, d1440, hell und dunkel) zeigt Überlauf 0 und Fehler 0.",
+ "pruefergebnisse": "Alle Befehle wurden selbst ausgeführt.\n- bun run lint: grün (eslint, keine Meldung).\n- bun run type-check: grün (tsc --noEmit).\n- bun run test: grün (85 Dateien, 1206 Tests).\n- bun run check:design: grün (284 Dateien). Die Hinweise zur Abstandsskala nennen keine Paketdatei.\n- bun run check:contrast: grün (351 Paare).\n- bun run check:client-imports: grün (35 Client-Module).\n\nBilder: screens.mjs mit --label r3-home-05-pruef, --only start, m375/m390/t768/d1440 × hell/dunkel. Ergebnis: 8 Aufnahmen, Überlauf 0, Fehler 0, gesperrt 0 (_relaunch/belege/r3-home-05-pruef/bericht.json).\n\nZusätzlich:\n- axe.mjs auf start (m390, d1440, hell und dunkel): 0 Verstöße (kritisch 0, ernst 0, mäßig 0, gering 0).\n- Eigene Messung über _relaunch/werkzeuge/lib/browser.mjs (Anfragesperre) bei 320, 390, 430, 768, 1024, 1440 und 1920:\n  - scrollWidth gleich clientWidth, h1 = 1, keine Konsolenfehler, 0 gesperrte Anfragen.\n  - Ohne JavaScript bei 390: Woche-SVG vorhanden, 3 Schritte, 5 details, ein Klick öffnet genau eines, kein Überlauf.\n- JSON-LD gegen den sichtbaren Text im ausgelieferten HTML (curl GET): 5 von 5 gleich.",
+ "befunde": [
+  {
+   "schwere": "weich",
+   "datei": "components/home/WeekSection.tsx, components/home/FaqSection.tsx (Seitenebene, Ursache auch in fremden Paketen)",
+   "beschreibung": "Faktenregel „höchstens zweimal je Seite“ ist auf der Seite verletzt. 13:30 (friday1330) steht 8-mal sichtbar, dazu im SVG-desc:\n- Einstieg-Maß (R3-HOME-01)\n- Woche dreimal: h2, Einleitung, Maß im Diagramm\n- Vorteile-Karte mit workingHours.short (R3-HOME-02)\n- Teamzitat (R3-HOME-04)\n- FAQ-Antwort 5 (lib/content/faq.ts, an JSON-LD gebunden)\n- Kontaktzeile „Öffnungszeiten“ (ContactOptions)\n- Fuß\n\nDie Zeiten 07:00–16:45 stehen 4-mal sichtbar, dazu im Diagramm. Die Woche mit 13:30 schreibt der Paketbrief vor, und Einleitung, Diagramm und Titel sind Wortlaut aus Variante 1. Der FAQ-Text liegt außerhalb der Schreibrechte. Das Paket kann die Regel deshalb allein nicht einhalten; der Baumeister hat das als offene Frage gemeldet.",
+   "beleg": "Textsuche im ausgelieferten HTML (curl http://localhost:3450/, ohne script und style): „13:30“ kommt 10-mal vor, davon 2 im SVG-title/desc. Quellen: components/home/vorteile/vorteile-text.ts:148, components/site/ContactOptions.tsx:52, lib/content/faq.ts:52, components/home/woche/woche-daten.ts:170-172",
+   "vorschlag": "Entscheidung des Orchestrators. Die Woche ist laut Brief der Ort für 13:30. Die Vorteile-Karte (workingHours.short bzw. noWeekendOnCall) und die Kontaktzeile „Öffnungszeiten“ auf der Startseite sollten entfallen. Optional die Woche-Einleitung auf den Teil ohne die Freitagszeit kürzen; dafür braucht es eine Freigabe, weil sie Wortlaut aus Variante 1 ist."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/woche/woche.module.css",
+   "beschreibung": "Die Klassen .etikett und .mass im CSS-Modul bauen text-etikett und font-mass nach, mit text-transform: uppercase und letter-spacing 0.06em. Das ist ein zweiter Weg zu Versalien neben text-etikett. KERN K-005 und theme.css nennen text-etikett aber „der einzige Weg zu Versalien“. Der Guard prüft CSS-Module nicht, deshalb fällt das in keinem Check auf.",
+   "beleg": "woche.module.css:79-80 (letter-spacing: 0.06em; text-transform: uppercase); app/styles/theme.css:201 („Der einzige Weg zu Versalien (Guard)“)",
+   "vorschlag": "Auf den SVG-Texten die Utilities direkt nutzen, etwa className=\"text-etikett fill-current text-ink-muted\" bzw. font-mass, und die Nachbauten im Modul streichen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/ProcessTimeline.tsx, components/home/SectionHeader.tsx",
+   "beschreibung": "Es gibt beliebige Klassenwerte, die die Werte über eckige Klammern statt über Tokens setzen (der Guard ist trotzdem grün). Die Längen w-7/h-7 der Abgänge (28 px) liegen außerhalb der 11-stufigen Abstandsskala aus K-007.",
+   "beleg": "- ProcessTimeline.tsx:11-12: w-/h-[calc(var(--paar)+var(--m-strich))]\n- ProcessTimeline.tsx:64-65: w-7 bzw. h-7, 28 px\n- ProcessTimeline.tsx:83: h-[1lh]\n- SectionHeader.tsx:26: top-[0.2em] bottom-[0.2em]",
+   "vorschlag": "Abgänge auf 24 oder 32 px (w-6/w-8) setzen. Für Paarbreite und Klammerlage benannte Utilities oder Variablen in theme.css anfragen (Orchestrator bzw. R2)."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/woche/Wochenplan.tsx",
+   "beschreibung": "Bei 320 px reicht „Kein Wochenend-Notdienst“ 6 px über das Ende der Haarlinie hinaus. Es bleibt im Bildschirm, aber nicht im Satzspiegel.",
+   "beleg": "Messung m320: text 84–306 px, Haarlinie 20–300 px; Bild _relaunch/belege/r3-home-05-pruef/abschnitt-woche__m320-light.webp",
+   "vorschlag": "Unter ca. 360 px die Tagesspalte (MASS.spalte) etwas schmaler setzen, oder das Etikett mit textLength bzw. kleinerer Laufweite begrenzen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/woche/woche-daten.ts",
+   "beschreibung": "Screenreader hören dieselben Arbeitszeiten zweimal hintereinander: einmal als Einleitung (workingHours.long) und gleich danach als <desc> des Diagramms.",
+   "beleg": "woche-daten.ts:172-176; Rendering: Einleitung „Feste Arbeitszeiten: Montag bis Donnerstag …“, danach desc „Montag bis Donnerstag von 07:00 bis 16:45 Uhr, Freitag … Samstag und Sonntag: Kein Wochenend-Notdienst.“",
+   "vorschlag": "desc auf die Zusatzaussage kürzen („Fünf Arbeitstage ab 07:00, Freitag am kürzesten; Samstag und Sonntag: Kein Wochenend-Notdienst.“), oder per aria-describedby auf die Einleitung verweisen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "app/page.tsx (Orchestrator)",
+   "beschreibung": "Drei Abschnitte stehen ohne Flächenwechsel auf Papier hintereinander: Einstieg, Woche und Stellen. Der Brief verlangt Papier und Wand im Wechsel. Variante 1 zeigt dieselbe Folge, trennt aber mit dem Leitungstrenner, und der fehlt noch.",
+   "beleg": "Gerendertes HTML: #woche class=\"py-section overflow-x-clip\" und #stellen class=\"py-section\", beide ohne bg; #vorteile hat bg-surface-2",
+   "vorschlag": "Orchestrator setzt den Leitungstrenner zwischen Einstieg und Woche (wie in Variante 1) oder legt die Stellen auf Wand."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/woche/abschnitte-text.ts",
+   "beschreibung": "Die Kopftexte für Ablauf und FAQ liegen im Ordner woche/. Der Ort ist irreführend; er ergibt sich nur aus den Schreibrechten.",
+   "beleg": "components/home/woche/abschnitte-text.ts (ABLAUF_KOPF, FAQ_KOPF), importiert in ProcessTimeline.tsx:8 und FaqSection.tsx:8",
+   "vorschlag": "Bei Gelegenheit nach components/home/ablauf-faq-text.ts verschieben (Orchestrator)."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/ui/Disclosure.tsx (fremd, R4)",
+   "beschreibung": "Das FAQ zeigt den lucide-ChevronDown mit Strich 1,75. Das weicht vom Formsystem ab (eine Strichstärke 3 px, eigene Icon-Familie).",
+   "beleg": "Disclosure.tsx:2 (import ChevronDown from lucide-react), Zeile 33 (strokeWidth={1.75}); sichtbar in abschnitt-faq__d1440-light.webp",
+   "vorschlag": "In R4 gegen <Icon name=\"chevron-down\"> aus components/icons tauschen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/woche/Wochenplan.tsx",
+   "beschreibung": "Risiko: Das Diagramm nutzt verschachtelte <svg> mit x in Prozent, overflow=\"visible\" und text dx. Geprüft ist das nur in Chromium; in der Umgebung gibt es kein WebKit und kein Firefox (/opt/pw-browsers enthält nur Chromium).",
+   "beleg": "Wochenplan.tsx:53, 70, 95 (<svg x=… overflow=\"visible\">); ls /opt/pw-browsers → nur chromium",
+   "vorschlag": "Vor dem Merge eine Sichtprobe in Safari/iOS und Firefox machen, etwa bei der Endprüfung oder in der Playwright-CI mit WebKit."
+  }
+ ]
+}

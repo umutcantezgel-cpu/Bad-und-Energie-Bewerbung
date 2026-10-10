@@ -1,8 +1,8 @@
-# Prüfpunkt (gemeinsamer Lauf: Lauf 1 + Ausbau, E-018; nach FREIGABE E-021 ohne weiteren Halt bis zum Merge)
-- Phase: R3 Welle Startseite (Plan: `_relaunch/PLAN.md` 1.0; Pakete `_relaunch/pakete/R3-HOME.md`, `R3-PERF-01.md`, gemeinsame Regeln `_welle-r3.md`)
-- Erledigt: R1 Basis (E-021, KERN 1.1, PLAN 1.0), R3-ORCH (Anker-Aliase, Platzhalter WeekSection), R2-FUND-01 (7f0c8fe, abgenommen E-022)
-- Laufend: Workflows R3 (HOME-01…05, PERF-01; je Bau → frischer Opus-Prüfer → eine Reparaturrunde). Fortschritt je Paket in `_relaunch/pakete/fortschritt/<Kennung>.log`.
-- Nächster exakter Schritt nach den Workflows: Wellenprüfung (Ebene 1, Build, test:graph, E2E mit axe für `/`), Leitungstrenner zwischen die Abschnitte in `app/page.tsx` setzen, ein Commit je Paket, Push, Bildschirmfotos 6 Ansichten in den Chat; dann R4 nach `_welle-r45.md`.
-- Server: :3450 gemeinsamer Entwicklungsserver (Repo, `next dev`, Log im Scratchpad `logs/dev-3450.log`); :3500 Ausgangsstand aus Kopie `scratchpad/ausgangsstand` (bei Bedarf starten); :3600 Altstand.
-- Modelle: nur Opus und Haiku (E-020). Merge nach main automatisch nach R6-Gate (E-021).
-- Letzter grüner Commit (Plattform): 7f0c8fe (Ebene 1 grün, 1078 Tests).
+# Prüfpunkt (gemeinsamer Lauf; FREIGABE E-021; beschleunigt nach E-023)
+- Phase: Fertigstellung (FERTIG.md): alle Seiten im Design des Einstiegs, dann Gesamtprüfung, PR, Merge.
+- Erledigt: R1, R2 (7f0c8fe), R3 gebaut (Sicherung 1ff75a3), R3-PERF-01 abgenommen (E-023).
+- Laufend (Workflows, nur Bau ohne Prüferrunde): WF-S SEITENKOPF-01 · WF-A R3-FIX-A, R3-FIX-B · WF-B R4-UI-01, R4-UI-02, R5-KLEIN · WF-C R4-SHELL-01, R4-SHELL-02. Fortschritt in `_relaunch/pakete/fortschritt/<Kennung>.log`.
+- Nach SEITENKOPF-01: WF-D R5-JOBS-01, R5-JOBS-02, R5-APPLY-01, R5-RUHE · WF-E R5-BEW-01, R5-THANKS-01, R5-MAPPE-01.
+- Danach (Orchestrator): Leitungstrenner in `app/page.tsx`, Upload-Einbindung, lucide-Rest + `package.json`, Gesamtprüfung (lint, type-check, test, Guards, Build, test:graph, Playwright mit axe), Bilder in den Chat, Commits je Paket, PR, Supabase lesend, CI grün, Merge, Live-GET.
+- Bei Container-Neustart: Stand auf der Platte prüfen, Sicherungs-Commit, abgebrochene Pakete mit „Fortsetzung“-Prompt neu starten (Skript im Sitzungsordner).
+- Server: :3450 gemeinsamer Entwicklungsserver (`next dev`, Log scratchpad/logs/dev-3450.log).
