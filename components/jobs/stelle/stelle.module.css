@@ -38,17 +38,7 @@
   }
 }
 
-/* ═══ h1: Berufsname in Bildgröße, der Rest der h1 (m/w/d, Ort) in Textgröße darunter ═══
-   Lange Berufsnamen brechen an den Wortfugen (<wbr> aus titleShy, kein U+00AD im HTML), Browser mit
-   Wörterbuch trennen deutsch mit Strich (K-005, Grenzen hyphenate-limit-chars aus der globalen Regel);
-   overflow-wrap ist das letzte Netz für Umgebungen ohne Wörterbuch (Headless-Chromium bei 320 px). */
-.titelHaupt,
-.titelZusatz {
-  -webkit-hyphens: auto;
-  hyphens: auto;
-  overflow-wrap: anywhere;
-}
-
+/* ═══ h1: Berufsname in Bildgröße, der Rest der h1 (m/w/d, Ort) in Textgröße darunter ═══ */
 .titelHaupt {
   display: block;
 }

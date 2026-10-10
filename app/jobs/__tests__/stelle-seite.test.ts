@@ -34,7 +34,6 @@ function woerter(html: string): string[] {
   const text = html
     .replace(/<script\b[\s\S]*?<\/script>/g, ' ')
     .replace(/<svg\b[\s\S]*?<\/svg>/g, ' ')
-    .replace(/<wbr\/?>/g, '')
     .replace(/<[^>]+>/g, ' ')
     .replaceAll('&amp;', '&')
     .replace(/­/g, '');

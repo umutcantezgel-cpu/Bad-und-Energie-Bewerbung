@@ -22,15 +22,6 @@ export function withSoftHyphens(text: string, titleShy: string): string {
   return result;
 }
 
-/**
- * Splits a text at the word joints that `titleShy` marks with soft hyphens, for headings that render the joints
- * as <wbr> instead of U+00AD (V6-G2): crawlers read \u201EKundendiensttechniker\u201C in one piece, the line may still
- * break at \u201EKunden|dienst|techniker\u201C. The parts joined again give the text unchanged.
- */
-export function wortfugen(text: string, titleShy: string): string[] {
-  return withSoftHyphens(text, titleShy).split(SOFT_HYPHEN);
-}
-
 const NBSP = '\u00A0';
 
 /**

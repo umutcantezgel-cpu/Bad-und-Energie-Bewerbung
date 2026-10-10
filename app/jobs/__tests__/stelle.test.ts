@@ -128,17 +128,16 @@ describe('JobHeader (Seitenkopf erzaehl)', () => {
   });
 
   it.each(pageJobs.map((job) => [job.id, job] as const))(
-    '%s: h1 ohne weiche Trennstriche (U+00AD), <wbr> an den Wortfugen aus titleShy',
+    '%s: h1 bricht an den Wortfugen aus titleShy mit Strich (U+00AD, K-005), ohne <wbr>',
     (_id, job) => {
       const html = renderToStaticMarkup(createElement(JobHeader, { job }));
       const h1 = /<h1[^>]*>([\s\S]*?)<\/h1>/.exec(html)![1];
-      expect(h1).not.toContain(SHY);
-      expect(h1).not.toContain('&shy;');
-      // Jede Wortfuge aus titleShy, deren Wort in der h1 steht, wird zu <wbr/>.
+      expect(h1).not.toContain('<wbr');
+      // Jede Wortfuge aus titleShy, deren Wort in der h1 steht, trägt das weiche Trennzeichen.
       const fugen = job.titleShy
         .split(/\s+/)
         .filter((wort) => wort.includes(SHY) && job.seo.h1.includes(wort.split(SHY).join('')));
-      for (const wort of fugen) expect(h1).toContain(wort.split(SHY).join('<wbr/>'));
+      for (const wort of fugen) expect(h1).toContain(wort);
       expect(fugen.length).toBeGreaterThan(0);
     },
   );
