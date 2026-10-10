@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createEmptyEditorState, isMappeEmpty, type MappeEditorState } from '@/lib/mappe/editor';
+import { WORK_STYLE_IDS } from '@/lib/mappe/options';
 import { emptyCareerStation, emptyEducationStation } from '@/lib/mappe/stations';
 import { standAnsage } from '../MappeTool';
 import { erstesFeld, MAPPE_ABSCHNITTE, mappeStand, standText } from '../stand';
@@ -47,10 +48,7 @@ describe('mappeStand (E-BEW-006): „erledigt“ nur aus echten Eingaben', () =>
     expect(erledigtIds(mit({ customLetter: null }))).toEqual([]);
     expect(erledigtIds(mit({ customLetter: '  \n ' }))).toEqual([]);
     expect(erledigtIds(mit({ customLetter: 'Mein eigener Text' }))).toEqual(['mappe-anschreiben']);
-    const mitStil = mappeStand(createEmptyEditorState());
-    expect(mitStil.abschnitte[3].erledigt).toBe(false);
-    const stil = mit({ workStyleId: mappeStandFirstWorkStyle() });
-    expect(erledigtIds(stil)).toEqual(['mappe-anschreiben']);
+    expect(erledigtIds(mit({ workStyleId: WORK_STYLE_IDS[0] }))).toEqual(['mappe-anschreiben']);
   });
 
   it('Berufserfahrung und Ausbildung = mindestens eine nicht leere Station; leere Karten zählen nicht', () => {
@@ -110,8 +108,3 @@ describe('erstesFeld: der Sprung landet im ersten Feld, nicht in einer Bedienlei
     expect(erstesFeld(abschnitt(feld('nur Leiste', true)))).toBeNull();
   });
 });
-
-function mappeStandFirstWorkStyle(): NonNullable<MappeEditorState['workStyleId']> {
-  // Erster Arbeitsstil aus lib/mappe/options über den Editor-Stand (keine eigene Liste im Test)
-  return 'teamgeist' as NonNullable<MappeEditorState['workStyleId']>;
-}
