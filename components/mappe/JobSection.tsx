@@ -1,7 +1,7 @@
 'use client';
 
 import type { ComponentPropsWithRef } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { Icon } from '@/components/icons';
 import { Field, controlClasses, controlStyle, useFieldControl } from '@/components/ui';
 import { INITIATIVE_JOB_ID, isApplicationJobId, type ApplicationJobId } from '@/lib/applications/constants';
 import type { MappeJobOption } from '@/lib/mappe/types';
@@ -19,25 +19,23 @@ function Select({ className, style, children, ...props }: ComponentPropsWithRef<
       >
         {children}
       </select>
-      <ChevronDown
-        aria-hidden="true"
-        strokeWidth={1.75}
-        className="pointer-events-none absolute top-1/2 right-4 size-5 -translate-y-1/2 text-ink-muted"
-      />
+      <Icon name="chevron-down" size="md" className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-brand" />
     </div>
   );
 }
 
 export interface JobSectionProps {
   step: number;
+  /** Mappe-Stand: Stelle gewählt. */
+  done?: boolean;
   jobs: readonly MappeJobOption[];
   value: ApplicationJobId | '';
   onChange: (jobId: ApplicationJobId | '') => void;
 }
 
-export function JobSection({ step, jobs, value, onChange }: JobSectionProps) {
+export function JobSection({ step, done, jobs, value, onChange }: JobSectionProps) {
   return (
-    <EditorSection id="mappe-stelle" step={step} title="Stelle" description="Bestimmt Betreff und Einleitung des Anschreibens.">
+    <EditorSection id="mappe-stelle" step={step} done={done} title="Stelle" description="Bestimmt Betreff und Einleitung des Anschreibens.">
       <Field label="Worauf bewirbst du dich?">
         <Select
           name="stelle"

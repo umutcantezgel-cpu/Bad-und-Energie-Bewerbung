@@ -29,6 +29,18 @@ export interface MappeAbschnitt {
   kurz: string;
 }
 
+/** Mikrotexte von Stand und Ring (K-012). */
+export const STAND_TEXT = Object.freeze({
+  titel: 'Stand deiner Mappe',
+  /** Zugänglicher Name des Rings (role="meter"). */
+  ring: 'Stand deiner Mappe',
+  listeName: 'Abschnitte der Mappe',
+  erledigt: 'erledigt',
+  offen: 'offen',
+  naechster: 'Als Nächstes',
+  fertig: 'Alle fünf Abschnitte ausgefüllt.',
+});
+
 /** Reihenfolge = Reihenfolge im Editor (1–5). */
 export const MAPPE_ABSCHNITTE: readonly MappeAbschnitt[] = Object.freeze([
   { id: 'mappe-persoenliches', titel: 'Persönliches', kurz: 'Persönliches' },

@@ -1,0 +1,369 @@
+/*
+ * Danke-Seite /bewerbung/danke (R5-THANKS-01, E-023) unter dem Seitenkopf `arbeit`.
+ *
+ * Kopf: Papier mit h1, schmale Navy-Fläche mit dem Erfolgsmoment (KreisGeschlossen, Register kreis-schliessen)
+ * und der Bewerbungsnummer als Maß. Arbeitsfläche darunter im Raster des Kopfs (Rand · 2fr · --a-8 · 1fr bis zur
+ * Kante): links der Ablaufstrang mit dem Angaben-Schild, rechts bündig mit der Navy-Fläche die kurzen Wege
+ * (Nummer speichern, Unterlagen, Fragen). Danach der Wand-Abschnitt „Ergänzen“ mit Leitungstrenner.
+ * Am Handy alles untereinander. Nur Rollen und Skalen aus app/styles/theme.css.
+ */
+
+/* ═══ Erfolgsmoment im Kopf ═══
+   Am Handy blendet `arbeit` die Zeichnung der Navy-Fläche aus; der Kreis steht dann über dem Etikett im Band.
+   Ab 37.5em steht er in der Navy-Fläche, größer als der Standard (Strich bleibt 3 px über --s).
+   [data-zeichnung] hebt die Regeln über .kreis aus components/zeichnung. */
+.kreisHandy {
+  display: block;
+  margin-bottom: var(--a-5);
+}
+
+.kreisPanel[data-zeichnung] {
+  --s: 1.25;
+}
+
+@media (min-width: 37.5em) {
+  .kreisHandy {
+    display: none;
+  }
+}
+
+@media (min-width: 64em) {
+  .kreisPanel[data-zeichnung] {
+    --s: 1.5;
+  }
+}
+
+/* ═══ Arbeitsfläche ═══ */
+.flaeche {
+  --rand: max(var(--spacing-gutter, var(--a-5)), env(safe-area-inset-left), env(safe-area-inset-right));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--a-7);
+  padding: var(--a-5) var(--rand) var(--spacing-section-sm);
+  overflow-x: clip;
+}
+
+.haupt {
+  display: grid;
+  align-content: start;
+  row-gap: var(--a-8);
+  min-width: 0;
+  max-width: var(--container-prose);
+}
+
+.seite {
+  display: grid;
+  align-content: start;
+  row-gap: var(--a-7);
+  min-width: 0;
+  max-width: var(--container-prose);
+}
+
+/* Am Handy trennt ein Leitungspaar Ablauf und Wege (randlos wie zwischen den Abschnitten der Startseite) */
+.trenner {
+  margin-inline: calc(var(--rand) * -1);
+  width: calc(100% + var(--rand) * 2);
+}
+
+/* ═══ Ablaufstrang (Formsystem wie #ablauf der Startseite, senkrecht) ═══ */
+.ablauf {
+  display: grid;
+  row-gap: var(--a-5);
+}
+
+.strangRahmen {
+  position: relative;
+}
+
+.strang {
+  display: grid;
+  row-gap: var(--a-7);
+  margin: 0;
+  padding: var(--a-7) 0 var(--a-7) var(--a-7);
+  list-style: none;
+}
+
+.schritt {
+  display: grid;
+  justify-items: start;
+  row-gap: var(--a-3);
+  min-width: 0;
+}
+
+.schritt > * {
+  max-width: 100%;
+}
+
+/* Nummer mit Abgang in Navy vom Rücklauf (--a-5 lang, --a-3 Luft zur Ziffer) */
+.marke {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--a-2);
+  margin: 0;
+}
+
+.marke::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  width: var(--a-5);
+  height: var(--m-strich);
+  margin-right: var(--a-3);
+  background-color: var(--brand);
+  transform: translateY(-50%);
+}
+
+/* Paar: Rücklauf außen (Bogen --radius-3), Vorlauf innen (Bogen --radius-2), dann senkrecht und unten im Bogen um */
+.paar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: calc(var(--paar) + var(--m-strich));
+  pointer-events: none;
+}
+
+.paarRueck,
+.paarVor {
+  position: absolute;
+  width: 100vw;
+  border-style: solid;
+  border-width: var(--m-strich) var(--m-strich) 0 0;
+}
+
+.paarRueck {
+  top: 0;
+  right: 0;
+  height: var(--a-5);
+  border-color: var(--ruecklauf);
+  border-top-right-radius: var(--radius-3);
+}
+
+.paarVor {
+  top: var(--paar);
+  right: var(--paar);
+  height: var(--paar);
+  border-color: var(--vorlauf);
+  border-top-right-radius: var(--radius-2);
+}
+
+.paarLauf {
+  position: absolute;
+  top: var(--a-5);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: var(--m-strich) solid var(--vorlauf);
+  border-top: 0;
+  border-right-color: var(--ruecklauf);
+  border-radius: 0 0 var(--radius-voll) var(--radius-voll);
+}
+
+/* ═══ Angaben-Schild (E-START-020) ═══ */
+.schild {
+  display: grid;
+  width: 100%;
+  margin: var(--a-2) 0 0;
+  padding: var(--a-2) var(--a-5);
+  border: var(--m-strich) solid var(--brand);
+  border-radius: var(--radius-2);
+  background-color: var(--surface);
+}
+
+.zeile {
+  display: grid;
+  row-gap: var(--a-1);
+  padding-block: var(--a-3);
+}
+
+.zeile + .zeile {
+  border-top: 1px solid var(--line);
+}
+
+.wert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--a-2);
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.wert > svg {
+  flex-shrink: 0;
+  margin-top: 0.15em;
+}
+
+@media (min-width: 30em) {
+  .zeile {
+    grid-template-columns: 9rem minmax(0, 1fr);
+    column-gap: var(--a-5);
+    align-items: baseline;
+  }
+}
+
+/* ═══ Wege rechts: Etikett-Kästchen mit Icon, Titel, Text, Aktion ═══ */
+.weg {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--a-4);
+  align-items: start;
+}
+
+.weg + .weg {
+  padding-top: var(--a-7);
+  border-top: 1px solid var(--line);
+}
+
+.kasten {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--m-ziel);
+  height: var(--m-ziel);
+  border: var(--m-strich) solid var(--brand);
+  border-radius: var(--radius-1);
+  color: var(--brand);
+}
+
+.wegInhalt {
+  display: grid;
+  justify-items: start;
+  row-gap: var(--a-3);
+  min-width: 0;
+}
+
+.wegInhalt > h2 {
+  min-height: var(--m-ziel);
+  display: flex;
+  align-items: center;
+}
+
+.knoepfe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-3);
+  margin-top: var(--a-2);
+}
+
+/* „Fragen?“: die Kontaktkarte nimmt die volle Spalte, der Titel bleibt am Kästchen */
+.wegVoll {
+  grid-column: 1 / -1;
+  margin-top: var(--a-3);
+  min-width: 0;
+}
+
+/* ═══ Ergänzen (Wand) ═══ */
+.ergaenzen {
+  --rand: max(var(--spacing-gutter, var(--a-5)), env(safe-area-inset-left), env(safe-area-inset-right));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--a-8);
+  padding-inline: var(--rand);
+}
+
+.ergaenzenHaupt {
+  display: grid;
+  align-content: start;
+  row-gap: var(--a-7);
+  min-width: 0;
+  max-width: var(--container-prose);
+}
+
+.ergaenzenSeite {
+  min-width: 0;
+  max-width: var(--container-prose);
+}
+
+/* ═══ Formular der Ergänzung ═══ */
+.form {
+  display: grid;
+  row-gap: var(--a-6);
+}
+
+.kenntnisse {
+  display: grid;
+  row-gap: var(--a-3);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.kenntnisse > legend {
+  padding: 0;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-2);
+  margin-top: var(--a-1);
+}
+
+.felder {
+  display: grid;
+  gap: var(--a-5);
+}
+
+.senden {
+  display: grid;
+  justify-items: start;
+  row-gap: var(--a-4);
+  scroll-margin-bottom: var(--a-4);
+}
+
+@media (min-width: 30em) {
+  .felder {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 11rem);
+  }
+}
+
+/* ═══ Desktop: Raster des Seitenkopfs `arbeit` ═══ */
+@media (min-width: 64em) {
+  .flaeche,
+  .ergaenzen {
+    grid-template-columns: minmax(0, 2fr) var(--a-8) minmax(20rem, 1fr);
+    padding-right: 0;
+  }
+
+  .flaeche {
+    padding-top: var(--a-8);
+    padding-bottom: var(--spacing-section);
+  }
+
+  .haupt,
+  .ergaenzenHaupt {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .trenner {
+    display: none;
+  }
+
+  .seite,
+  .ergaenzenSeite {
+    grid-column: 3;
+    grid-row: 1;
+    padding: 0 var(--rand) 0 var(--a-8);
+  }
+
+  /* Bündig mit der h2 der linken Spalte */
+  .seite {
+    padding-top: var(--a-1);
+  }
+
+  .ergaenzenSeite {
+    align-self: end;
+  }
+}
+
+@media print {
+  .paar,
+  .kreisHandy {
+    display: none;
+  }
+}

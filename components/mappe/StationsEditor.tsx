@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react';
+import { Icon } from '@/components/icons';
 import { Button, Field, IconButton, Input, Textarea, useToast } from '@/components/ui';
 import type { ListAction } from '@/lib/mappe/stations';
 import { cn } from '@/lib/utils/cn';
@@ -121,28 +121,31 @@ export function StationsEditor<T extends { id: string }>({
 
   return (
     <div className="flex flex-col gap-4">
-      <h3 id={titleId} className="text-body font-semibold text-ink">
+      <h3 id={titleId} className="text-body font-bold text-ink">
         {title}
       </h3>
 
       {items.length === 0 ? (
-        <p className="text-callout text-ink-muted">{emptyText}</p>
+        <p className="text-callout text-ink-2">{emptyText}</p>
       ) : (
         <ol aria-labelledby={titleId} className="flex flex-col gap-4">
           {items.map((item, index) => {
             const n = index + 1;
             return (
-              <li key={item.id} className="flex flex-col gap-5 rounded-lg bg-surface-2 p-5">
+              <li key={item.id} className="flex flex-col gap-5 rounded-2 bg-surface-2 p-5">
                 <div className="flex items-center justify-between gap-3">
-                  <h4 className="text-callout font-semibold text-ink tabular-nums">Eintrag {n}</h4>
-                  <div className="-mr-2 flex shrink-0 items-center">
+                  <h4 className="text-etikett text-ink-2">
+                    Eintrag <span className="font-mass">{n}</span>
+                  </h4>
+                  {/* Bedienleiste: Der Sprung aus der Checkliste landet im ersten Feld, nicht hier (SPRUNG_NEIN in stand.ts). */}
+                  <div className="-mr-2 flex shrink-0 items-center" data-sprung-nein="">
                     <IconButton
                       ref={(node) => setCardRef(item.id, 'up', node)}
                       aria-label={`Eintrag ${n} nach oben verschieben`}
                       disabled={index === 0}
                       onClick={() => move(item, index, -1)}
                     >
-                      <ArrowUp aria-hidden="true" strokeWidth={1.75} className="size-5" />
+                      <Icon name="arrow-up" size="md" />
                     </IconButton>
                     <IconButton
                       ref={(node) => setCardRef(item.id, 'down', node)}
@@ -150,10 +153,10 @@ export function StationsEditor<T extends { id: string }>({
                       disabled={index === items.length - 1}
                       onClick={() => move(item, index, 1)}
                     >
-                      <ArrowDown aria-hidden="true" strokeWidth={1.75} className="size-5" />
+                      <Icon name="arrow-down" size="md" />
                     </IconButton>
                     <IconButton aria-label={`Eintrag ${n} entfernen`} onClick={() => remove(item, index)}>
-                      <Trash2 aria-hidden="true" strokeWidth={1.75} className="size-5" />
+                      <Icon name="trash" size="md" />
                     </IconButton>
                   </div>
                 </div>
@@ -207,11 +210,11 @@ export function StationsEditor<T extends { id: string }>({
 
       {items.length < max ? (
         <Button ref={addRef} variant="outline" onClick={add} className="self-start">
-          <Plus aria-hidden="true" strokeWidth={1.75} className="size-5" />
+          <Icon name="plus" size="md" />
           {addLabel}
         </Button>
       ) : (
-        <p className="text-footnote text-ink-muted tabular-nums">Höchstens {max} Einträge.</p>
+        <p className="text-footnote text-ink-2 tabular-nums">Höchstens {max} Einträge.</p>
       )}
     </div>
   );

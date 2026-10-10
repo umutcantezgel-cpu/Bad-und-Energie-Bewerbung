@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState, type ChangeEvent } from 'react';
-import { Camera, Trash2 } from 'lucide-react';
+import { Icon } from '@/components/icons';
 import { Button, Field, Input } from '@/components/ui';
 import type { MappePerson } from '@/lib/mappe/editor';
 import { MAPPE_LIMITS } from '@/lib/mappe/options';
@@ -11,13 +11,15 @@ const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 export interface PersonalSectionProps {
   step: number;
+  /** Mappe-Stand: Name eingetragen (components/mappe/stand.ts). */
+  done?: boolean;
   person: MappePerson;
   onChange: (patch: Partial<MappePerson>) => void;
   photoUrl: string | null;
   onPhotoChange: (file: File | null) => void;
 }
 
-export function PersonalSection({ step, person, onChange, photoUrl, onPhotoChange }: PersonalSectionProps) {
+export function PersonalSection({ step, done, person, onChange, photoUrl, onPhotoChange }: PersonalSectionProps) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [photoError, setPhotoError] = useState<string | null>(null);
 
@@ -37,6 +39,7 @@ export function PersonalSection({ step, person, onChange, photoUrl, onPhotoChang
     <EditorSection
       id="mappe-persoenliches"
       step={step}
+      done={done}
       title="Persönliches"
       description="Steht oben auf Anschreiben und Lebenslauf. Telefon, E-Mail, Wohnort und Foto werden nicht mitgesendet."
     >
@@ -85,8 +88,8 @@ export function PersonalSection({ step, person, onChange, photoUrl, onPhotoChang
       </div>
 
       <div className="flex flex-col gap-3">
-        <p className="text-callout font-medium text-ink">
-          Foto <span className="font-normal text-ink-muted">(optional)</span>
+        <p className="text-callout font-bold text-ink">
+          Foto <span className="font-normal text-ink-2">(optional)</span>
         </p>
         <div className="flex flex-wrap items-center gap-4">
           {photoUrl && (
@@ -107,17 +110,17 @@ export function PersonalSection({ step, person, onChange, photoUrl, onPhotoChang
             aria-describedby="mappe-foto-hint"
             onClick={() => fileRef.current?.click()}
           >
-            <Camera aria-hidden="true" strokeWidth={1.75} className="size-5" />
+            <Icon name="camera" size="md" />
             {photoUrl ? 'Foto ändern' : 'Foto hinzufügen'}
           </Button>
           {photoUrl && (
             <Button variant="ghost" onClick={() => onPhotoChange(null)}>
-              <Trash2 aria-hidden="true" strokeWidth={1.75} className="size-5" />
+              <Icon name="trash" size="md" />
               Foto entfernen
             </Button>
           )}
         </div>
-        <p id="mappe-foto-hint" className="text-footnote text-ink-muted">
+        <p id="mappe-foto-hint" className="text-footnote text-ink-2">
           Das Foto bleibt auf deinem Gerät. Es wird weder gespeichert noch gesendet und ist nach dem Neuladen weg.
         </p>
         {photoError && (

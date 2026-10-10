@@ -1,11 +1,14 @@
 /**
- * Texte der Mappe-Seite /bewerbung/mappe (R5-MAPPE-01, E-023): Seitenkopf (Variante `arbeit`) und die Mikrotexte
- * von Stand und Aktionen. Nur aus FACTS und COMPANY; Mikrotexte direkt (K-012), keine neuen Zusagen.
+ * Texte des Seitenkopfs von /bewerbung/mappe (R5-MAPPE-01, E-023, Variante `arbeit`). Nur auf dem Server:
+ * COMPANY und FACTS bleiben aus dem Client-Bundle (die Mikrotexte des Werkzeugs stehen in stand.ts).
+ * Nur Belegtes; Mikrotexte direkt (K-012), keine neuen Zusagen.
  */
 import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
-import { MAPPE_PATH } from '@/lib/apply/params';
 import { MAPPE_ABSCHNITTE } from './stand';
+
+/** Der Bewerbungsflow; die Mappe ist ein freiwilliges Werkzeug daneben (ROADMAP §6). */
+export const APPLY_PATH = '/bewerbung';
 
 export interface MappeKopfText {
   etikett: string;
@@ -22,20 +25,9 @@ export const MAPPE_KOPF: Readonly<MappeKopfText> = Object.freeze({
   titel: 'Bewerbungsmappe erstellen.',
   unterzeile: 'Anschreiben und Lebenslauf auf A4.',
   einleitung: `Zum Drucken oder als PDF. Die Mappe ist freiwillig: ${FACTS.noCvNeeded.long}`,
-  zweitweg: Object.freeze({ href: MAPPE_PATH.replace(/\/mappe$/, ''), label: 'Ohne Mappe bewerben' }),
+  zweitweg: Object.freeze({ href: APPLY_PATH, label: 'Ohne Mappe bewerben' }),
   masse: Object.freeze([
     Object.freeze({ wert: String(MAPPE_ABSCHNITTE.length), name: 'Abschnitte' }),
     Object.freeze({ wert: '2', name: 'Seiten A4' }),
   ]),
-});
-
-export const STAND_TEXT = Object.freeze({
-  titel: 'Stand deiner Mappe',
-  /** Zugänglicher Name des Rings (role="meter"). */
-  ring: 'Stand deiner Mappe',
-  listeName: 'Abschnitte der Mappe',
-  erledigt: 'erledigt',
-  offen: 'offen',
-  naechster: 'Als Nächstes',
-  fertig: 'Alle fünf Abschnitte ausgefüllt.',
 });

@@ -32,7 +32,10 @@
   padding-top: var(--a-6);
 }
 
-.kopf {
+/* Der Kopf endet mit der Stand-Zeile; Einleitung und Knopf folgen im Vorspann. Doppelte Klasse, damit die
+   Werte des Seitenkopfs (Restzeile ab 64em, Luft unten) sicher zurücktreten. */
+.kopfzone > .kopf {
+  grid-template-rows: none;
   padding-bottom: 0;
 }
 
