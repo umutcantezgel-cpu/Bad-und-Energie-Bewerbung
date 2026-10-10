@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation';
 import { isFocusMode } from './nav';
 
 export interface FooterSwitchProps {
-  /** Three-column footer; reserves the sticky apply bar's height below lg. */
+  /** Full navy footer (fuss/FussVoll); reserves the sticky apply bar's height below lg. */
   full: ReactNode;
-  /** Legal links and copyright only, for the distraction-free flow (/bewerbung…). */
+  /** Slim navy footer (fuss/FussSchmal): legal links, phone, WhatsApp, register line, for the flow (/bewerbung…). */
   slim: ReactNode;
 }
 

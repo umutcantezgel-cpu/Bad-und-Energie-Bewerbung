@@ -1,6 +1,7 @@
-import { TextLink } from '@/components/ui/TextLink';
 import { REGION } from '@/lib/content/region';
 import { cn } from '@/lib/utils/cn';
+import { FussLink } from './fuss/FussLink';
+import styles from './fuss/fuss.module.css';
 
 /**
  * Orte der Ortsliste im Fuß (E-SHELL-021): Wetzlar zuerst (Firmensitz), dann die Städte und Gemeinden
@@ -16,34 +17,37 @@ export function footerPlaces(): string[] {
 }
 
 /**
- * Einsatzgebiet-Ortsliste im Fuß (E-SHELL-021): eine ruhige Zeile mit den Orten und dem Weg zu
- * Entfernung und Fahrzeit auf der Startseite. Nennt bewusst keine Kilometerzahl (die steht im
- * Einstieg und im Abschnitt Einsatzgebiet). Die Gestaltung des Fußes folgt in R4.
+ * Einsatzgebiet-Ortsliste im Fuß (E-SHELL-021): Etikett wie die Spaltenköpfe, eine ruhige Zeile mit den Orten
+ * (Trennpunkte nie am Zeilenanfang) und der Weg zu Entfernung und Fahrzeit auf der Startseite. Nennt bewusst
+ * keine Kilometerzahl (die steht im Einstieg und im Abschnitt Einsatzgebiet).
  */
 export function FooterPlaces({ className }: { className?: string }) {
   const places = footerPlaces();
   return (
-    <section aria-labelledby="footer-einsatzgebiet" className={cn('flex flex-col gap-3', className)}>
-      <h2 id="footer-einsatzgebiet" className="text-callout font-semibold text-ink">
+    <section aria-labelledby="footer-einsatzgebiet" className={cn(styles.orteRaster, className)}>
+      <h2 id="footer-einsatzgebiet" className={cn(styles.kopf, 'text-etikett text-ink-2')}>
         Einsatzgebiet
       </h2>
-      <ul className="m-0 flex list-none flex-wrap gap-x-2 gap-y-1 p-0 text-callout text-ink-muted">
-        {places.map((name, i) => (
-          <li key={name} className="inline-flex items-center gap-2">
-            {i === 0 ? (
-              <span className="font-medium text-ink">
-                {name} <span className="text-ink-muted">(Firmensitz)</span>
-              </span>
-            ) : (
-              name
-            )}
-            {i < places.length - 1 && <span aria-hidden="true">·</span>}
-          </li>
-        ))}
-      </ul>
-      <TextLink href="/#einsatzgebiet" tone="muted" standalone className="self-start text-callout">
-        Entfernung und Fahrzeit zu deinem Ort
-      </TextLink>
+      <div className={styles.orteInhalt}>
+        <div className={styles.orteClip}>
+          <ul className={styles.orteListe}>
+            {places.map((name, i) => (
+              <li key={name}>
+                {i === 0 ? (
+                  <span className={styles.sitz}>
+                    {name} <span className={styles.sitzZusatz}>(Firmensitz)</span>
+                  </span>
+                ) : (
+                  name
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <FussLink href="/#einsatzgebiet" stark pfeil>
+          Entfernung und Fahrzeit zu deinem Ort
+        </FussLink>
+      </div>
     </section>
   );
 }

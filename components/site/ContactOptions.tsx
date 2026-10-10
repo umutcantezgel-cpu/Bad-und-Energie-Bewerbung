@@ -1,32 +1,10 @@
-import { Fragment } from 'react';
 import { Icon, type IconName } from '@/components/icons';
+import { Rohrklammer } from '@/components/zeichnung';
 import { COMPANY } from '@/lib/content/company';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
 import { cn } from '@/lib/utils/cn';
-
-/**
- * Opening hours such as „Mo–Do 07:00–16:45 Uhr, Fr 07:00–13:30 Uhr“: line breaks only between the day groups
- * (as OpeningHoursText), the times in Bricolage digits (`ziffer`, Variante 1), because Atkinson draws the zero
- * with a slash („Ø“). Text unchanged.
- */
-function HoursText({ text }: { text: string }) {
-  return text.split(', ').map((group, i) => (
-    <Fragment key={i}>
-      {i > 0 && ', '}
-      <span className="whitespace-nowrap">
-        {group.split(/(\d{2}:\d{2}–\d{2}:\d{2})/).map((part, j) =>
-          j % 2 === 1 ? (
-            <span key={j} className="ziffer">
-              {part}
-            </span>
-          ) : (
-            part
-          ),
-        )}
-      </span>
-    </Fragment>
-  ));
-}
+import styles from './fuss/kontakt.module.css';
+import { OpeningHoursText } from './OpeningHoursText';
 
 export interface ContactOptionsProps {
   /**
@@ -70,15 +48,16 @@ export function contactChannels(whatsappMessage?: string): ContactChannel[] {
 const NEW_TAB_HINT = ' (öffnet in neuem Tab)';
 
 /**
- * Phone, WhatsApp and e-mail with the opening hours. Always the same order on every page
- * (WCAG 3.2.6 Consistent Help). Server-safe: no hooks, no client JS. Icons from components/icons
- * (3 px stroke, KERN K-010); the phone number in Bricolage digits (`ziffer`).
+ * Phone, WhatsApp and e-mail with the opening hours. Always the same order on every page (WCAG 3.2.6 Consistent
+ * Help). Server-safe: no hooks, no client JS. In the form system of the home page entry (R4-SHELL-02, E-023):
+ * icons of the own family in a box with a navy outline (3 px), channel names as mono labels (`text-etikett`),
+ * underlines in stroke width, the phone number and times in Bricolage digits (`ziffer`), press feedback `druck`.
  */
 export function ContactOptions({ variant = 'card', whatsappMessage, person, className }: ContactOptionsProps) {
   const items = contactChannels(whatsappMessage);
   const hours = (
     <p className="text-footnote text-ink-muted">
-      Öffnungszeiten: <HoursText text={COMPANY.openingHours.short} />
+      <span className="font-bold text-ink">Öffnungszeiten:</span> <OpeningHoursText text={COMPANY.openingHours.short} />
     </p>
   );
 
@@ -91,9 +70,10 @@ export function ContactOptions({ variant = 'card', whatsappMessage, person, clas
               <a
                 href={href}
                 {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                className="inline-flex min-h-11 items-center gap-2 rounded-1 text-body font-medium text-ink underline decoration-1 underline-offset-4 hover:decoration-2"
+                className={cn(styles.inline, 'inline-flex min-h-11 items-center gap-2 rounded-1 text-body font-bold text-ink')}
+                data-motion="druck"
               >
-                <Icon name={icon} size="md" className="text-ink-muted" />
+                <Icon name={icon} size="md" className="text-brand" />
                 <span className={cn(id === 'phone' && 'ziffer')}>{id === 'whatsapp' ? label : value}</span>
                 {id === 'phone' && <span className="sr-only"> anrufen</span>}
                 {external && <span className="sr-only">{NEW_TAB_HINT}</span>}
@@ -113,13 +93,14 @@ export function ContactOptions({ variant = 'card', whatsappMessage, person, clas
           <a
             href={href}
             {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-            className="group flex min-h-14 items-center gap-4 rounded-1 py-2"
+            className={cn(styles.reihe, 'group flex min-h-14 items-center gap-4 rounded-1 py-2')}
+            data-motion="druck"
           >
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-voll bg-surface-3 text-brand">
-              <Icon name={icon} size="md" />
+            <span className={styles.kasten}>
+              <Icon name={icon} size="lg" />
             </span>
-            <span className="flex min-w-0 flex-col">
-              <span className="text-footnote text-ink-muted">{label}</span>
+            <span className="flex min-w-0 flex-col gap-1">
+              <span className="text-etikett text-ink-2">{label}</span>
               <span
                 className={cn(
                   'truncate text-body font-medium text-ink underline-offset-4 group-hover:underline',
@@ -148,11 +129,14 @@ export function ContactOptions({ variant = 'card', whatsappMessage, person, clas
   return (
     <div className={cn('flex flex-col gap-4 rounded-2 bg-surface-2 p-6', className)}>
       {person && (
-        <p className="flex flex-col">
-          <span className="text-footnote text-ink-muted">Dein Ansprechpartner</span>
-          <span className="text-body font-semibold text-ink">{person.name}</span>
-          <span className="text-callout text-ink-muted">{person.role}</span>
-        </p>
+        <div className="flex flex-col gap-2">
+          <p className="text-etikett text-ink-2">Dein Ansprechpartner</p>
+          <p className={cn(styles.person, 'flex flex-col')}>
+            <Rohrklammer className={styles.klammer} />
+            <span className="text-title-3 text-brand">{person.name}</span>
+            <span className="text-callout text-ink-muted">{person.role}</span>
+          </p>
+        </div>
       )}
       {rows}
       {hours}

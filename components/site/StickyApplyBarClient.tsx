@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { MessageCircle } from 'lucide-react';
-import { buttonVariants, iconButtonVariants } from '@/components/ui/variants';
+import { Icon } from '@/components/icons';
+import styles from './fuss/leiste.module.css';
 import { FLOW_ANCHOR_ID, SHORT_APPLY_LABEL, STICKY_BAR_HIDE_SELECTOR, getStickyApplyAction, isKeyboardOpen } from './nav';
 
 export interface StickyApplyBarClientProps {
@@ -13,10 +13,6 @@ export interface StickyApplyBarClientProps {
   /** WhatsApp link with the prefilled general message, built on the server. */
   whatsappHref: string;
 }
-
-// cva strings without tailwind-merge (shared client bundle); the extra classes do not conflict.
-const APPLY_CLASS = `${buttonVariants({ size: 'lg', wrap: true })} min-w-0 flex-1`;
-const WHATSAPP_CLASS = iconButtonVariants({ variant: 'secondary', size: 'lg' });
 
 const NON_TEXT_INPUTS = new Set(['button', 'checkbox', 'color', 'file', 'hidden', 'image', 'radio', 'range', 'reset', 'submit']);
 
@@ -190,36 +186,42 @@ export function StickyApplyBarClient({ jobLabels, whatsappHref }: StickyApplyBar
   const label = action.label === SHORT_APPLY_LABEL ? action.label : <ApplyLabel key={action.label} label={action.label} />;
 
   return (
-    // Opaque on purpose: translucency and blur are reserved for the sticky header (roadmap §4).
+    // R4-SHELL-02 (E-023): Bodenlinie oben, Vorlauf und Rücklauf fallen in die Hauptaktion (wie das Erdreich des
+    // Einstiegs auf dem Handy); daneben WhatsApp als Zweitweg (E-SHELL-005). Ein- und Ausgang über die
+    // Registerkennung „menue-oeffnen“ (Eingang d-2/k-aus, Ausgang d-1/k-ein; reduziert: sofort).
     <aside
       aria-label="Schnell bewerben"
       inert={hidden}
       data-hidden={hidden || undefined}
       data-sticky-apply-bar=""
-      className={
-        'fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface lg:hidden print-hidden ' +
-        'transition duration-step ease-standard data-hidden:pointer-events-none data-hidden:translate-y-full data-hidden:opacity-0'
-      }
-      style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
+      data-motion="menue-oeffnen"
+      className={`${styles.leiste} print-hidden`}
     >
-      <div className="mx-auto flex max-w-content items-center gap-3 px-gutter pt-3">
-        {action.inPageFlow ? (
-          <a href={action.href} className={APPLY_CLASS}>
-            {label}
-          </a>
-        ) : (
-          <Link href={action.href} className={APPLY_CLASS}>
-            {label}
-          </Link>
-        )}
+      <div className={styles.innen}>
+        <div className={styles.anschluss}>
+          <span className={`${styles.leitung} ${styles.vorlauf}`} aria-hidden="true" />
+          <span className={`${styles.leitung} ${styles.ruecklauf}`} aria-hidden="true" />
+          {action.inPageFlow ? (
+            <a href={action.href} className={styles.aktion} data-motion="druck">
+              <span className={styles.beschriftung}>{label}</span>
+              <Icon name="arrow-right" size="md" />
+            </a>
+          ) : (
+            <Link href={action.href} className={styles.aktion} data-motion="druck">
+              <span className={styles.beschriftung}>{label}</span>
+              <Icon name="arrow-right" size="md" />
+            </Link>
+          )}
+        </div>
         <a
           href={whatsappHref}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Per WhatsApp schreiben (öffnet in neuem Tab)"
-          className={WHATSAPP_CLASS}
+          className={styles.zweit}
+          data-motion="druck"
         >
-          <MessageCircle aria-hidden="true" strokeWidth={1.75} className="size-6" />
+          <Icon name="message-circle" size="lg" />
         </a>
       </div>
     </aside>
