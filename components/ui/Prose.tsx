@@ -1,12 +1,14 @@
 import type { ComponentPropsWithRef } from 'react';
 import { cn } from '@/lib/utils/cn';
+import './prose.css';
 
 export type ProseProps = ComponentPropsWithRef<'div'>;
 
 /**
  * Long-form text (Datenschutz, Impressum), ruhig: Lesebreite 66 ch (K-005: 60–75 Zeichen), Überschriften in
- * Bricolage und Marken-Navy, Text in Atkinson. Colors come from the `prose` utility in globals.css; sizes
- * and weights are mapped to the type scale here. Links wie TextLink (Hover: Strich kräftiger, Rücklaufblau).
+ * Bricolage und Marken-Navy, Text in Atkinson. Plugin und Farben (`prose` utility) stehen in prose.css, das nur
+ * diese Komponente lädt; sizes and weights are mapped to the type scale here. Links wie TextLink (Hover: Strich
+ * kräftiger, Rücklaufblau). Die Klassen unten erzeugt prose.css (es liest diese Datei), nicht das globale Blatt.
  */
 export function Prose({ className, ...props }: ProseProps) {
   return (
