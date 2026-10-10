@@ -3,7 +3,9 @@ import { SITE_CONFIG } from '@/lib/seo/site-config';
 import {
   TEXT_HEADERS,
   baseUrl,
+  chamberLine,
   citationHint,
+  companyClaim,
   contactLines,
   employerFacts,
   funnelOnlyJobs,
@@ -27,7 +29,7 @@ export function GET(): Response {
   const lines = [
     `# ${COMPANY.legalName}: Karriere`,
     '',
-    `> Karriereportal der ${COMPANY.legalName}, ${FACTS.founded1926.short} in ${COMPANY.address.city} für Wärmepumpen, Heizung und Bad. Alle offenen Stellen mit Gehaltsspanne. ${FACTS.apply60s.long} ${FACTS.noCvNeeded.long}`,
+    `> Karriereportal der ${COMPANY.legalName}, ${companyClaim(now)} in ${COMPANY.address.city} für Wärmepumpen, Heizung und Bad. Alle offenen Stellen mit Gehaltsspanne. ${FACTS.apply60s.long} ${FACTS.noCvNeeded.long}`,
     '',
     FACTS.radius35.long,
     '',
@@ -39,6 +41,7 @@ export function GET(): Response {
     '',
     '## Arbeitgeber',
     ...employerFacts(now).map((fact) => `- ${fact}`),
+    `- ${chamberLine()}`,
     '',
     '## Bewerbung und Kontakt',
     `- [Bewerben in 60 Sekunden](${base}/bewerbung): ${FACTS.noCvNeeded.long}`,

@@ -14,6 +14,7 @@ import { SITE_CONFIG } from '@/lib/seo/site-config';
 import {
   TEXT_HEADERS,
   baseUrl,
+  chamberLine,
   citationHint,
   contactLines,
   employerFacts,
@@ -67,7 +68,7 @@ export function GET(): Response {
     `- Firma: ${COMPANY.legalName}`,
     `- Gegründet: ${COMPANY.foundingYear}`,
     `- Handelsregister: ${COMPANY.register.full}`,
-    `- ${COMPANY.hwk}, ${COMPANY.innung}`,
+    `- ${chamberLine()}`,
     ...contactLines().map((line) => `- ${line}`),
     `- Karriereportal: ${base}`,
     `- Website für Kunden: ${SITE_CONFIG.consumerUrl}`,
