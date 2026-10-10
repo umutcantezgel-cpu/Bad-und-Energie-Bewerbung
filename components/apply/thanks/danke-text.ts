@@ -53,8 +53,6 @@ export const ERFOLG_KOPF = Object.freeze({
   unterzeile: 'Deine Bewerbung ist da.',
   zweitweg: Object.freeze({ href: `#${DANKE_ANKER.ergaenzen}`, label: 'Angaben ergänzen' }),
   massName: 'Bewerbungsnummer',
-  /** Zugänglicher Name des Erfolgsmoments (KreisGeschlossen auf der Navy-Fläche). */
-  kreisTitel: 'Der Kreis schließt sich: Bewerbung eingegangen',
 });
 
 /** Leerzustand: in diesem Fenster ist keine Bewerbung gespeichert (neuer Tab, direkt aufgerufen). */
@@ -65,8 +63,9 @@ export const LEER_KOPF = Object.freeze({
   einleitung:
     'Die Bestätigung bleibt nur in dem Fenster, in dem du dich beworben hast. In einem neuen Tab ist sie nicht zu sehen.',
   aktion: Object.freeze({ href: '/bewerbung', label: 'Jetzt bewerben' }),
-  /** Fakten apply60s und noCvNeeded (wie im Kopf der Stellenseiten). */
-  mikrotext: (sekunden: string, ohneLebenslauf: string) => `Dauert ca. ${sekunden}${NBSP}Sekunden. ${ohneLebenslauf}.`,
+  /** Fakten apply60s und noCvNeeded (wie im Kopf der Stellenseiten); ohne Wert entfällt die Dauer. */
+  mikrotext: (sekunden: string | undefined, ohneLebenslauf: string) =>
+    sekunden ? `Dauert ca. ${sekunden}${NBSP}Sekunden. ${ohneLebenslauf}.` : `${ohneLebenslauf}.`,
   zweitweg: Object.freeze({ href: '/jobs', label: 'Offene Stellen ansehen' }),
   fragenEtikett: 'Direkter Draht',
   fragenTitel: 'Schon beworben?',
@@ -87,7 +86,7 @@ export const ABLAUF_TEXT = Object.freeze({
 });
 
 export const SEITEN_TEXT = Object.freeze({
-  nummerTitel: 'Nummer speichern',
+  nummerTitel: 'Unsere Nummer',
   /** Satz um die Telefonnummer: „Speichere unsere Nummer … , damit du uns erkennst, wenn wir uns melden.“ */
   nummerVor: 'Speichere unsere Nummer',
   nummerNach: ', damit du uns erkennst, wenn wir uns melden.',
@@ -120,7 +119,7 @@ export const ERGAENZEN_TEXT = Object.freeze({
   plzFehler: 'Bitte gib eine fünfstellige Postleitzahl an.',
   mappeTitel: 'Bewerbungsmappe',
   mappeText: 'Anschreiben und Lebenslauf auf A4, zum Drucken oder als PDF. Auch die ist freiwillig.',
-  mappeLink: 'Bewerbungsmappe ergänzen (optional)',
+  mappeLink: 'Mappe erstellen',
 });
 
 // ---------------------------------------------------------------------------

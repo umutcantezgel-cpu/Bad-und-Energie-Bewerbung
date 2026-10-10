@@ -94,7 +94,7 @@ export function PersonalSection({ step, done, person, onChange, photoUrl, onPhot
         <div className="flex flex-wrap items-center gap-4">
           {photoUrl && (
             // eslint-disable-next-line @next/next/no-img-element -- local object URL, never uploaded
-            <img src={photoUrl} alt="Dein Bewerbungsfoto" className="h-20 w-16 rounded-xs object-cover" />
+            <img src={photoUrl} alt="Dein Bewerbungsfoto" className="h-20 w-16 rounded-1 object-cover" />
           )}
           <input
             ref={fileRef}

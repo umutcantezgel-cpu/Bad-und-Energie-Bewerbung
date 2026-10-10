@@ -57,9 +57,9 @@ export function SkillsSection({ step, done, skills, onToggle, onAdd }: SkillsSec
               pressed={pressed}
               disabled={!pressed && full}
               onClick={() => onToggle(skill)}
-              // Long skills wrap: rounded-lg instead of a pill keeps two-line chips calm, and on
+              // Long skills wrap: rounded-2 instead of a pill keeps two-line chips calm, and on
               // phones every chip takes the full width, so the list reads as one even column.
-              className="max-w-full shrink rounded-lg py-2 text-left max-sm:w-full"
+              className="max-w-full shrink rounded-2 py-2 text-left max-sm:w-full"
             >
               {skill}
             </Chip>

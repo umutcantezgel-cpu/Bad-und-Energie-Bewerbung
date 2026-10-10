@@ -1,7 +1,7 @@
 import { getFlowJobOptions } from '@/components/apply/options';
+import { LEER_KOPF } from '@/components/apply/thanks/danke-text';
 import { ThankYouView } from '@/components/apply/thanks/ThankYouView';
 import type { ThankYouCompany, ThankYouJobs } from '@/components/apply/thanks/types';
-import { Container } from '@/components/layout';
 import { ContactOptions } from '@/components/site/ContactOptions';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
@@ -42,18 +42,22 @@ const company: ThankYouCompany = {
   openingHoursSpec: COMPANY.openingHours.spec.map((entry) => ({ days: [...entry.days], opens: entry.opens, closes: entry.closes })),
 };
 
-/** Bestätigung nach dem Absenden (noindex). Die persönlichen Angaben liest ThankYouView im Browser. */
+/**
+ * Bestätigung nach dem Absenden (noindex), im Design des Einstiegs (E-023): Seitenkopf `arbeit` mit dem
+ * Erfolgsmoment „Der Kreis schließt sich“, darunter Ablauf, kurze Wege und die freiwillige Ergänzung.
+ * Die persönlichen Angaben liest ThankYouView im Browser; der Kopf ist Teil der Ansicht, weil er vom Zustand
+ * abhängt (Erfolg oder keine Bewerbung in diesem Fenster).
+ */
 export default function DankePage() {
   return (
-    <Container size="prose" className="py-section-sm">
-      <ThankYouView
-        jobs={jobs}
-        processSteps={processSteps}
-        company={company}
-        quickResponse={FACTS.quickResponse.long}
-        noCvNeeded={FACTS.noCvNeeded.long}
-        contactOptions={<ContactOptions variant="card" />}
-      />
-    </Container>
+    <ThankYouView
+      jobs={jobs}
+      processSteps={processSteps}
+      company={company}
+      quickResponse={FACTS.quickResponse.long}
+      noCvNeeded={FACTS.noCvNeeded.long}
+      bewerbenMikrotext={LEER_KOPF.mikrotext(FACTS.apply60s.value, FACTS.noCvNeeded.short)}
+      contactOptions={<ContactOptions variant="card" />}
+    />
   );
 }

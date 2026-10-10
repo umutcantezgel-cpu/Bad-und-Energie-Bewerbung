@@ -39,7 +39,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   row-gap: var(--a-7);
-  padding: var(--a-5) var(--rand) var(--spacing-section-sm);
+  /* oben ohne Polster: Der Seitenkopf endet am Handy schon mit --a-6 unter dem Zweitweg */
+  padding: 0 var(--rand) var(--spacing-section-sm);
   overflow-x: clip;
 }
 
@@ -204,12 +205,16 @@
   }
 }
 
-/* ═══ Wege rechts: Etikett-Kästchen mit Icon, Titel, Text, Aktion ═══ */
+/* ═══ Wege rechts: Etikett-Kästchen mit Icon am Titel, darunter Text und Aktion über die volle Spalte ═══ */
 .weg {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  column-gap: var(--a-4);
-  align-items: start;
+  justify-items: start;
+  row-gap: var(--a-4);
+  min-width: 0;
+}
+
+.weg > * {
+  max-width: 100%;
 }
 
 .weg + .weg {
@@ -217,8 +222,15 @@
   border-top: 1px solid var(--line);
 }
 
+.wegKopf {
+  display: flex;
+  align-items: center;
+  gap: var(--a-4);
+}
+
 .kasten {
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   width: var(--m-ziel);
@@ -228,30 +240,15 @@
   color: var(--brand);
 }
 
-.wegInhalt {
-  display: grid;
-  justify-items: start;
-  row-gap: var(--a-3);
-  min-width: 0;
-}
-
-.wegInhalt > h2 {
-  min-height: var(--m-ziel);
-  display: flex;
-  align-items: center;
-}
-
 .knoepfe {
   display: flex;
   flex-wrap: wrap;
   gap: var(--a-3);
-  margin-top: var(--a-2);
 }
 
-/* „Fragen?“: die Kontaktkarte nimmt die volle Spalte, der Titel bleibt am Kästchen */
-.wegVoll {
-  grid-column: 1 / -1;
-  margin-top: var(--a-3);
+/* Die Kontaktkarte nimmt die volle Spalte */
+.voll {
+  justify-self: stretch;
   min-width: 0;
 }
 
@@ -357,7 +354,11 @@
   }
 
   .ergaenzenSeite {
-    align-self: end;
+    align-self: start;
+  }
+
+  .haupt {
+    max-width: 46rem;
   }
 }
 
@@ -366,4 +367,9 @@
   .kreisHandy {
     display: none;
   }
+}
+
+/* Haus im schmalen Navy-Band des Leerzustands: kleiner als der Standard (wie auf /bewerbung) */
+.haus[data-zeichnung] {
+  width: 11rem;
 }

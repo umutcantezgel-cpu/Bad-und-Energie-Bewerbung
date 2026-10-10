@@ -33,9 +33,7 @@ export function MappeStand({ stand, className }: MappeStandProps) {
           {STAND_TEXT.titel}
         </h2>
         <p className="text-title-3 text-brand" data-mappe-stand-zahl="">
-          <span className="font-mass">
-            {stand.erledigt}&nbsp;von&nbsp;{stand.gesamt}
-          </span>{' '}
+          <span className="font-mass">{stand.erledigt}</span> von <span className="font-mass">{stand.gesamt}</span>{' '}
           {STAND_TEXT.erledigt}
         </p>
       </header>

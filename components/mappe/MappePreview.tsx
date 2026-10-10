@@ -109,7 +109,7 @@ function CoverLetterPage({ person, subject, letter, recipient, today }: PageProp
       </address>
 
       <p className="mt-8 text-right tabular-nums">{dateLine(person.location, today)}</p>
-      <p className="mt-6 font-semibold">{subject}</p>
+      <p className="mt-6 font-bold">{subject}</p>
       <div className={cn(styles.letter, 'mt-6')}>{letter}</div>
     </article>
   );
@@ -154,7 +154,7 @@ function CvPage({ person, subject, skills, career, education, photoUrl, today }:
         )}
       </header>
 
-      <p className="mt-6 font-semibold">{subject}</p>
+      <p className="mt-6 font-bold">{subject}</p>
 
       <CvSection title="Berufserfahrung" isEmpty={careerItems.length === 0} emptyText="Noch keine Berufserfahrung eingetragen.">
         {careerItems.map((station) => {
@@ -164,7 +164,7 @@ function CvPage({ person, subject, skills, career, education, photoUrl, today }:
             <div key={station.id} className={styles.row}>
               <p className="tabular-nums text-ink-muted">{station.period.trim()}</p>
               <div className="flex min-w-0 flex-col">
-                {station.role.trim() && <p className="font-semibold">{station.role.trim()}</p>}
+                {station.role.trim() && <p className="font-bold">{station.role.trim()}</p>}
                 {place && <p className="text-ink-muted">{place}</p>}
                 {tasks.length > 0 && (
                   <ul className="mt-1.5 list-disc pl-5">
@@ -190,7 +190,7 @@ function CvPage({ person, subject, skills, career, education, photoUrl, today }:
             <div key={station.id} className={styles.row}>
               <p className="tabular-nums text-ink-muted">{station.period.trim()}</p>
               <div className="flex min-w-0 flex-col">
-                {station.degree.trim() && <p className="font-semibold">{station.degree.trim()}</p>}
+                {station.degree.trim() && <p className="font-bold">{station.degree.trim()}</p>}
                 {place && <p className="text-ink-muted">{place}</p>}
               </div>
             </div>

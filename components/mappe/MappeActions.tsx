@@ -3,6 +3,7 @@
 import type { ReactNode, RefObject } from 'react';
 import { Icon } from '@/components/icons';
 import { Button, ProgressRing } from '@/components/ui';
+import { CONTACT_PHONE } from '@/lib/data/contact';
 import { cn } from '@/lib/utils/cn';
 import styles from './mappe.module.css';
 import { sprungKlick } from './MappeStand';
@@ -42,9 +43,9 @@ const SAVE_TEXT: Record<SaveStatus, string> = {
 };
 
 /**
- * Pult der Mappe: oben der Stand als Ring (E-BEW-007, ProgressRing aus R4) mit dem nächsten offenen Abschnitt,
- * darunter die eine rote Hauptaktion; Vorlauf und Rücklauf fallen aus dem Ring in den Knopf (Button `leitung`,
- * wie am Handy im Einstieg). Dann die Zweitwege: als PDF speichern und per WhatsApp schicken (E-BEW-020).
+ * Pult der Mappe: der Stand als Ring (E-BEW-007, ProgressRing aus R4) mit dem nächsten offenen Abschnitt und die
+ * eine rote Hauptaktion; Vorlauf und Rücklauf laufen aus dem Ring in den Knopf (Button `leitung`, wie im Einstieg).
+ * Dann die Zweitwege: als PDF speichern und per WhatsApp schicken (E-BEW-020).
  */
 export function MappeActions({
   mode,
@@ -79,9 +80,13 @@ export function MappeActions({
     // No flex gap: the live regions below stay in the DOM while empty (so they announce reliably)
     // and must not add space then. Only children with content get the step.
     <div className={cn(styles.pult, 'rounded-2 bg-surface-2 print-hidden', className)} data-mappe-pult="">
-      <div className={styles.pultStand}>
-        <ProgressRing value={stand.erledigt} max={stand.gesamt} label={STAND_TEXT.ring} caption={STAND_TEXT.erledigt} />
-        <div className="flex min-w-0 flex-col gap-1">
+      {/* Ring, Hauptaktion und „Als Nächstes“ in einem Raster: schmal steht der Knopf unter dem Ring und das Paar
+          fällt hinein, breit steht er daneben und das Paar läuft waagerecht hinein (Containerabfrage im CSS). */}
+      <div className={styles.pultOben}>
+        <div className={styles.pultRing}>
+          <ProgressRing value={stand.erledigt} max={stand.gesamt} label={STAND_TEXT.ring} caption={STAND_TEXT.erledigt} />
+        </div>
+        <div className={styles.pultNaechster}>
           <p className="text-etikett text-ink-2">{naechster ? STAND_TEXT.naechster : STAND_TEXT.titel}</p>
           {naechster ? (
             <a
@@ -97,40 +102,34 @@ export function MappeActions({
             <p className="text-callout font-bold text-brand">{STAND_TEXT.fertig}</p>
           )}
         </div>
-      </div>
-
-      <div className={styles.pultHaupt}>
-        <Button
-          size="lg"
-          leitung="oben"
-          loading={busy}
-          onClick={onPrimary}
-          fullWidth
-          className={cn(styles.pultKnopf, 'sm:w-auto')}
-        >
-          {primaryLabel}
-          <Icon name="arrow-right" size="md" />
-        </Button>
-        <p className="text-footnote text-ink-2">{primaryHint}</p>
+        <div className={styles.pultHaupt}>
+          <Button size="lg" leitung="oben" loading={busy} onClick={onPrimary} className={styles.pultKnopf}>
+            {primaryLabel}
+            <Icon name="arrow-right" size="md" />
+          </Button>
+          <p className="text-footnote text-ink-2">{primaryHint}</p>
+        </div>
       </div>
 
       <div className={styles.pultWege}>
-        <div className="flex flex-col gap-2">
-          <Button variant="outline" size="lg" onClick={onPrint} fullWidth className="sm:w-auto sm:self-start">
+        <div className={styles.pultWeg}>
+          <Button variant="outline" onClick={onPrint} fullWidth>
             <Icon name="printer" size="md" />
-            Als PDF speichern / drucken
+            Als PDF speichern
           </Button>
-          <p className="text-footnote text-ink-2">Für ein PDF wählst du im Druckdialog „Als PDF speichern“.</p>
+          <p className="text-footnote text-ink-2">Öffnet den Druckdialog: „Als PDF speichern“ wählen oder direkt drucken.</p>
         </div>
-        <div className="flex flex-col gap-2">
-          <Button variant="outline" size="lg" fullWidth className="sm:w-auto sm:self-start" asChild>
+        <div className={styles.pultWeg}>
+          <Button variant="outline" fullWidth asChild>
             <a href={whatsappHref} target="_blank" rel="noopener noreferrer" data-mappe-whatsapp="">
               <Icon name="message-circle" size="md" />
               Per WhatsApp schicken
               <span className="sr-only"> (öffnet WhatsApp in einem neuen Tab)</span>
             </a>
           </Button>
-          <p className="text-footnote text-ink-2">Mit vorausgefülltem Text an 06441 42956. Das PDF hängst du danach im Chat an.</p>
+          <p className="text-footnote text-ink-2">
+            Vorausgefüllter Text an <span className="whitespace-nowrap">{CONTACT_PHONE.display}</span>. Das PDF hängst du danach im Chat an.
+          </p>
         </div>
       </div>
 
