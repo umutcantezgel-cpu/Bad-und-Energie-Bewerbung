@@ -29,7 +29,8 @@ describe('check-design-tokens: rules (strict, G7)', () => {
     expect(ids('<div className="bg-white">')).toEqual(['raw-white-black']);
     expect(ids('<div className="shadow-[0_0_8px_red]">')).toEqual(['arbitrary-shadow']);
     expect(ids('<div className="backdrop-blur">')).toEqual(['glass']);
-    expect(ids('<div className="backdrop-blur">', 'components/site/HeaderBar.tsx')).toEqual([]);
+    // Seit R4-SHELL-01 hat auch der Kopf kein Glas mehr: keine Ausnahme.
+    expect(ids('<div className="backdrop-blur">', 'components/site/HeaderBar.tsx')).toEqual(['glass']);
   });
 
   it('adds the KERN 1.0 bans', () => {
