@@ -27,9 +27,16 @@ export function flowRoot(page: Page, variant: FlowVariant): Locator {
   return page.locator(`[data-apply-flow="${variant}"]`);
 }
 
-/** Wartet, bis React den Flow hydriert hat (vorher lösen Taps nichts aus). */
+/**
+ * Wartet, bis React den Flow hydriert hat (vorher lösen Taps nichts aus). Der eingebettete Flow der
+ * Stellenseite lädt und hydriert erst in Reichweite (V6-A2, HydrateNear): darum erst hinscrollen wie der
+ * Sprung über „Jetzt bewerben“ (#bewerben), Anfang des Flows unter dem Kopf (scroll-padding-top).
+ */
 export async function waitForHydration(root: Locator): Promise<void> {
   await expect(root).toBeVisible();
+  if ((await root.getAttribute('data-apply-flow')) === 'embedded') {
+    await root.evaluate((element) => element.scrollIntoView({ block: 'start' }));
+  }
   await expect
     .poll(() => root.evaluate((element) => Object.keys(element).some((key) => key.startsWith('__reactFiber'))), {
       message: 'Flow ist hydriert',

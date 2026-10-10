@@ -1,37 +1,13 @@
-import { COMPANY } from '@/lib/content/company';
-import { FACTS } from '@/lib/content/facts';
-import { getDiscretionPromise } from '@/lib/content/process';
 import { ApplyFlowClient } from './ApplyFlowClient';
-import { getFlowJobOptions } from './options';
-import type { ApplyFlowProps, FlowZusagen } from './types';
-
-/** Diskretionszusage je Fragenset: Fachkraft und Quereinstieg ja, Ausbildung nein (E-BEW-004). */
-const ZUSAGEN: FlowZusagen = Object.freeze({
-  fachkraft: getDiscretionPromise('fachkraft'),
-  quereinstieg: getDiscretionPromise('quereinstieg'),
-  ausbildung: getDiscretionPromise('ausbildung'),
-});
+import { flowClientProps } from './flow-props';
+import type { ApplyFlowProps } from './types';
 
 /**
  * Der eine Bewerbungsflow (ROADMAP §6, C1) für /bewerbung, Stellenseiten und später /lp.
- * Ohne 'use client': Auf dem Server liest er Registry und Stammdaten und reicht nur die
- * kleinen Auswahl- und Kontaktdaten an den Client-Teil weiter, damit Job-Texte und zod-Schemata
- * der Stellen nicht im Browser-Bundle landen. Dazu die Diskretionszusage je Fragenset und die
- * Zeitangabe für die Passungs-Rahmung (Fakt apply60s).
+ * Ohne 'use client': Auf dem Server liest er Registry und Stammdaten (flowClientProps) und reicht nur die
+ * kleinen Auswahl- und Kontaktdaten an den Client-Teil weiter. Die Stellenseite lädt den Flow unter der
+ * Falz stattdessen über <ApplyFlowLazy> (V6-A2) und importiert diese Datei nicht.
  */
-export function ApplyFlow({ initialJobId, ...props }: ApplyFlowProps) {
-  // Nur Stellen, die jetzt live sind (validThrough), wie Stellenseite und Sitemap.
-  const options = getFlowJobOptions(new Date());
-  const preselected = initialJobId && options.some((option) => option.id === initialJobId) ? initialJobId : undefined;
-  return (
-    <ApplyFlowClient
-      {...props}
-      initialJobId={preselected}
-      options={options}
-      contact={{ phoneDisplay: COMPANY.phone.display, phoneHref: COMPANY.phone.href }}
-      quickResponse={FACTS.quickResponse.long}
-      zusagen={ZUSAGEN}
-      sekunden={FACTS.apply60s.value}
-    />
-  );
+export function ApplyFlow(props: ApplyFlowProps) {
+  return <ApplyFlowClient {...flowClientProps(props)} />;
 }

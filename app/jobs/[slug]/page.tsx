@@ -1,9 +1,11 @@
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { notFound, permanentRedirect } from 'next/navigation';
-import { ApplyFlow } from '@/components/apply';
 // Direct module imports instead of the barrels: a barrel would register every client component it
-// re-exports (Sheet, Field, MobileNav …) for this page.
+// re-exports (Sheet, Field, MobileNav …) for this page. Für den Flow heißt das: ApplyFlowLazy statt
+// ApplyFlow, sonst stünde ApplyFlowClient samt react-hook-form wieder im Start-Bundle der Seite.
+import { ApplyFlowLazy } from '@/components/apply/ApplyFlowLazy';
+import { flowClientProps } from '@/components/apply/flow-props';
 import { JobFaq } from '@/components/jobs/JobFaq';
 import { JobHeader } from '@/components/jobs/JobHeader';
 import { JobProcess } from '@/components/jobs/JobProcess';
@@ -152,7 +154,7 @@ function OpenJob({ job }: { job: Job }) {
                 <p className="max-w-prose text-lead text-ink-muted">{FACTS.quickResponse.long}</p>
               </div>
               <Suspense fallback={<ApplyFallback job={job} />}>
-                <ApplyFlow initialJobId={job.id} variant="embedded" funnel="job_page" />
+                <ApplyFlowLazy {...flowClientProps({ initialJobId: job.id, variant: 'embedded', funnel: 'job_page' })} />
               </Suspense>
             </div>
 

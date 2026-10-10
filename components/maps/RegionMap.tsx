@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { isGoogleMapsConfigured } from '@/lib/maps/keys';
-import { RegionExplorer } from './RegionExplorer';
+import { RegionExplorerLazy } from './RegionExplorerLazy';
 import { buildRegionMapData } from './views';
 
 export interface RegionMapProps {
@@ -15,8 +15,9 @@ const REGION_MAP_DATA = buildRegionMapData();
 /**
  * Einsatzgebiet: radius graphic (15/25/35 km, Lahn, Dill, A45, B49 schematisch) and the place
  * choice („Wo wohnst du?“). Google Maps loads only after an explicit click (2-click consent) and
- * only if a key is configured (E-START-032, E-START-056: key and loading path unchanged).
+ * only if a key is configured (E-START-032, E-START-056: key and loading path unchanged). The explorer's
+ * code loads and hydrates only near the viewport (RegionExplorerLazy, V6-A2); its server HTML is unchanged.
  */
 export function RegionMap({ header, className }: RegionMapProps) {
-  return <RegionExplorer data={REGION_MAP_DATA} mapsAvailable={isGoogleMapsConfigured()} header={header} className={className} />;
+  return <RegionExplorerLazy data={REGION_MAP_DATA} mapsAvailable={isGoogleMapsConfigured()} header={header} className={className} />;
 }
