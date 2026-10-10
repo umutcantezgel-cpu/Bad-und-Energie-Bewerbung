@@ -1,6 +1,6 @@
 # Fakten-Abgleich (Owner-Liste)
 
-Stand: 2026-10-08 · Schritt 1.1 der Roadmap, ergänzt nach dem Text-Review (B22–B26, D)
+Stand: 2026-10-08, ergänzt 2026-10-10 (B27) · Schritt 1.1 der Roadmap, ergänzt nach dem Text-Review (B22–B26, D)
 
 Beim Zusammenführen von Stellen und Fakten in `lib/jobs/**` und `lib/content/**` sind abweichende Formulierungen aufgefallen. Regel: Es wird nichts erfunden. Bei Widersprüchen gilt die vorsichtigste bzw. neueste Formulierung (Fakten-Fixes: HRB 2449, 1926–2026, 5 Partner-Säulen, Siegmund-Hiepe-Str. 20, 15 Mitarbeiter).
 
@@ -48,6 +48,7 @@ Diese Fakten sind in `facts.ts` mit `pending` markiert. Der Test lässt sie nur 
 | B24 | Name der Innung | `lib/data/company.ts` und `site-config.ts`: „Innung Sanitär Heizung und Klimatechnik Lahn Dill“ · `README.md@393df01`: „Innung Sanitär-, Heizungs- und Klimatechnik Lahn-Dill“ | Schreibweise aus der README (Footer, E-Mail-Fußzeile, `llms-full.txt`) | Wie lautet der offizielle Name der Innung genau? |
 | B25 | Google-Bewertungen | `reviews.data.ts` `googleOverviewStats`: 5,0 und 24 Bewertungen, ohne Datum und ohne Profil-Link (ROADMAP §13) | Bewertungszeile **ausgeblendet**, bis `asOf: 'JJJJ-MM'` gesetzt ist; dann erscheint sie mit „Stand: …“. Die 10 zitierten Google-Bewertungen bleiben im Karussell | Bitte aktuelle Zahlen, Monat der Abfrage und den Link zum Google-Profil nennen. |
 | B26 | Team-Größe im Text | Meilenstein 2026: „Zurzeit sind 15 Mitarbeiter im Betrieb tätig“ · Startseite: „15 Leute“ | Fakt `employees15`, im Text „15 Leuten“ (ROADMAP §5.6 „15 Leute“); die Zahl kommt nur noch aus `facts.ts` | Stimmt die Zahl noch? Bei Änderung nur `employees15.value` anpassen. |
+| B27 | WhatsApp-Nummer | `lib/data/contact.ts`: WhatsApp lief über die Festnetznummer 06441 42956 | **geklärt:** WhatsApp nur über 0160 8834290 (`WHATSAPP`); Anrufe, Impressum und JSON-LD weiter über 06441 42956 · Quelle: Inhaber, 2026-10-10 | ok (erledigt) |
 
 ## C. Stellentitel und Texte
 

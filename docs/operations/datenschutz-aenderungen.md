@@ -1,6 +1,6 @@
 # Datenschutzerklärung und Impressum: Änderungen zur Prüfung
 
-Stand: 2026-10-08, ergänzt 2026-10-10 (Schriftnamen, Druck) · Schritt 1.3 der Roadmap (§5 „Datenschutz/Impressum“, §9.7) · Fassung `PRIVACY_NOTICE_VERSION = '2026-10'`
+Stand: 2026-10-08, ergänzt 2026-10-10 (Schriftnamen, Druck, WhatsApp-Nummer, Bewerberdatenbank) · Schritt 1.3 der Roadmap (§5 „Datenschutz/Impressum“, §9.7) und Phase 2b (§8.1) · Fassungen `PRIVACY_NOTICE_VERSIONS = ['2026-10', '2026-10-10']`, aktuell `2026-10-10`
 
 Beide Seiten sind jetzt ruhige Server-Komponenten (`app/datenschutz/page.tsx`, `app/impressum/page.tsx`, Bausteine in `components/legal/`). Diese Liste markiert **jede inhaltliche Änderung** der Datenschutzerklärung gegenüber der bisherigen Fassung, damit der oder die Datenschutzbeauftragte sie prüfen kann. Sie ist keine Rechtsberatung; die Texte sind Entwürfe nach bestem Wissen, abgeleitet aus dem, was der Code tatsächlich tut.
 
@@ -17,7 +17,7 @@ Legende: **NEU** = neuer Absatz · **GEÄNDERT** = Aussage geändert · **ENTFER
 - **ENTFERNT (Werbe- und Zierelemente ohne Rechtsinhalt, teils nicht belegbar):** Kopfleiste „DSGVO und § 26 BDSG Rechtsstand“, „Dokumentenversion 4.2.1“, „Auditierte Verschlüsselung (TLS 1.3)“, „Serverstandort Frankfurt am Main (Hessen)“; Kacheln „100% DSGVO & BDSG“, „100% Lokale Fonts“, „256 Bit SSL und TLS“, „§ 26 BDSG Diskretion – Garantierter Kündigungsschutz und Sperrvermerk“; Plakette „Verifiziert Sicher“, „Meisterbetrieb seit 1926“. „Garantierter Kündigungsschutz“ und „auditiert“ waren nicht belegbar.
 - **Formatierung:** Bindestriche ergänzt (E-Mail, Datenschutz-Grundverordnung, Server-Logdateien, Gustav-Stresemann-Ring). HBDI-Telefon/-Fax nach DIN 5008 (`+49 611 1408-0`, `+49 611 1408-900`), gleiche Nummern.
 - **Metadaten:** Titel „Datenschutzerklärung“ bzw. „Impressum“, neue Beschreibung (ohne „§ 26 BDSG“). Beide Seiten sind jetzt `noindex, follow` (`generatePageMetadata({ type: 'legal' })`); bisher waren sie indexierbar. Das JSON-LD (WebPage, BreadcrumbList) entfällt auf diesen `noindex`-Seiten.
-- „Stand“ wird aus `PRIVACY_NOTICE_VERSION` abgeleitet („Stand: Oktober 2026“).
+- „Stand“ wird aus `PRIVACY_NOTICE_VERSION` abgeleitet: „Stand: Oktober 2026“ für `2026-10`, seit der Fassung `2026-10-10` „Stand: 10. Oktober 2026“. Bewerbungen mit der alten Fassung `2026-10` nimmt der Server weiter an (offene Tabs).
 
 ## 2. Datenschutzerklärung je Abschnitt
 
@@ -44,10 +44,12 @@ Legende: **NEU** = neuer Absatz · **GEÄNDERT** = Aussage geändert · **ENTFER
 - **NEU Hosting:** Vercel Inc. (USA) als Hoster und Auftragsverarbeiter; Serverfunktionen (z. B. Bewerbungsannahme) in Frankfurt am Main, Region `fra1` (`vercel.json`); Seiten über das weltweite Auslieferungsnetz von Vercel. Bisher war kein Hoster genannt, nur „Serverstandort Frankfurt am Main“ in der Kopfleiste.
 - **UNVERÄNDERT Server-Logdateien:** Liste, Art. 6 Abs. 1 lit. f, Löschung nach 7 Tagen, „IP-Adresse in gekürzter und anonymisierter Form“. **Prüfen:** Stimmen „gekürzt/anonymisiert“ und „7 Tage“ mit den tatsächlichen Vercel-Logs (Tarif, Log-Aufbewahrung) überein? Sonst anpassen.
 - **NEU Schutz vor Missbrauch:** Rate-Limit der Formulare (`lib/security`): IP wird mit täglich wechselndem geheimem Schlüssel gehasht (HMAC), gezählt nur im Arbeitsspeicher, Zähler läuft nach spätestens 24 Stunden ab; unsichtbares Honeypot-Feld. Art. 6 Abs. 1 lit. f.
+  **UNVERÄNDERT 2026-10-10:** Auch mit der Bewerberdatenbank bleiben die Zähler im Arbeitsspeicher; die Zählertabelle in Supabase wird bewusst nicht genutzt (Roadmap §8.1). Der Absatz stimmt also weiter.
 - **NEU (Text-Review) Spamverdacht:** gemessen wird die Ausfülldauer (erste Eingabe bis Absenden, `fillDurationMs`). Honeypot ausgefüllt oder unter 3 Sekunden (`MIN_FILL_DURATION_MS`) → Bewerbung geht mit „[Spamverdacht]“ ans Team, **keine** Eingangsbestätigung an die angegebene Adresse (`lib/email/resend.ts`).
 - **NEU (Text-Review) Sicherheitsmeldungen des Browsers:** CSP-Meldungen (Report-Only) an `/api/csp-report`; protokolliert werden nur Seite ohne Query, verletzte Regel, Herkunft (Origin) des Inhalts, als Zeile in den Server-Logs (`console.warn`), höchstens 60 Zeilen pro Minute. Art. 6 Abs. 1 lit. f.
 - **GEÄNDERT SSL/TLS:** Beispiel „Bestellanfragen oder Expressbewerbungen“ → „deiner Bewerbung“. „Schlüssellänge von 256 Bit“ unverändert übernommen. **Prüfen:** Trifft 256 Bit für die TLS-Konfiguration von Vercel zu? Sonst die Zahl streichen.
 - **NEU Übermittlung in die USA:** Vercel und Resend haben Sitz in den USA; Grundlage EU-US Data Privacy Framework (soweit zertifiziert), sonst EU-Standardvertragsklauseln (Art. 46 Abs. 2 lit. c DSGVO). **Prüfen:** welcher Mechanismus je Anbieter gilt.
+- **GEÄNDERT 2026-10-10 (Fassung `2026-10-10`):** Der Satz nennt jetzt auch Supabase: „Vercel, unser E-Mail-Dienstleister Resend und der Betreiber unserer Bewerberdatenbank Supabase sind Unternehmen mit Sitz in den USA.“ Grundlage unverändert (DPF, sonst Standardvertragsklauseln). **Prüfen:** Mechanismus für Supabase (O10).
 - Der bisherige Unterpunkt „Kontaktformulare und direkte Anfragen“ steht jetzt unter 2.9.
 
 ### 2.5 Bewerbung über diese Website (`#bewerberdaten`, bisher „Bewerbung und Recruiting nach § 26 BDSG“)
@@ -59,10 +61,13 @@ Legende: **NEU** = neuer Absatz · **GEÄNDERT** = Aussage geändert · **ENTFER
 - **UNVERÄNDERT Datenkategorien** (Stammdaten, Qualifikationen, Führerscheinklassen, Konditionswünsche/Eintrittstermin/Kündigungsfrist), jetzt unter „Weitere Angaben im Bewerbungsverfahren“ für Bewerbungen auf anderem Weg und das weitere Verfahren.
 - **GEÄNDERT Sperrvermerk:** Inhalt gleich (wir kontaktieren nie den aktuellen Arbeitgeber; Kontakt nur über die privaten Kanäle, die die Person nennt, z. B. private Mobilnummer oder WhatsApp nach Feierabend). Neu formuliert mit der Diskretionszusage aus `lib/content` (`DISCRETION_PROMISE`); Verstärker „garantiert“, „uneingeschränkt“, „absolut“ und der nicht mehr existierende „digitale Expressbereich“ entfallen.
 - **NEU Empfänger:** Bewerbung geht per E-Mail an das Team in Wetzlar; lesen nur an der Auswahl Beteiligte; Eingangsbestätigung an die Bewerberin oder den Bewerber, wenn eine E-Mail-Adresse angegeben ist (außer bei Spamverdacht); kein Verkauf, keine Weitergabe an Dritte.
+- **GEÄNDERT 2026-10-10 (Fassung `2026-10-10`), Bewerberdatenbank:** neuer Satz nach der E-Mail an das Team: „Außerdem speichern wir sie mit deinen Ergänzungen in unserer Bewerberdatenbank, damit keine Bewerbung in einem Postfach verloren geht und wir sie geordnet bearbeiten können.“ Grund: Phase 2b (`lib/supabase/sink.ts`) speichert jede Bewerbung und jede Ergänzung zu einer dort gespeicherten Bewerbung zusätzlich in Supabase, sobald die Datenbank in Production konfiguriert ist; die Mails bleiben gleich. **Prüfen:** Der Satz steht auch dann, wenn eine Bewerbung nur per E-Mail ankommt (Datenbank abgeschaltet mit `APPLICATION_SINK=email`, gestört und deshalb Not-E-Mail, oder nicht konfiguriert). Reicht das so?
 - **NEU Auftragsverarbeiter:** Vercel Inc. (Hosting, Serverfunktion in `fra1`), Resend (E-Mail-Versand an Team und Eingangsbestätigung), je nach Art. 28 DSGVO. **Prüfen:** AVVs abgeschlossen (O3)? Vollständige Firmennamen und Anschriften aus den AVVs ergänzen.
+- **NEU 2026-10-10 (Fassung `2026-10-10`), Supabase:** dritter Eintrag „Supabase Inc. (USA): Betrieb unserer Bewerberdatenbank. Die Datenbank liegt in einem Rechenzentrum in Frankfurt am Main (Region eu-central-1).“ Der Folgesatz lautet jetzt „Alle drei verarbeiten die Daten nur in unserem Auftrag …“ statt „Beide …“. **Prüfen:** AVV mit Supabase (O10); vollständiger Firmenname und Anschrift aus dem AVV.
 - **UNVERÄNDERT Speicherdauer:** spätestens 6 Monate nach Bekanntgabe der Absage (Art. 17 DSGVO i. V. m. § 15 Abs. 4 AGG); Talentpool höchstens 24 Monate nur mit ausdrücklicher Einwilligung (Art. 6 Abs. 1 lit. a), jederzeit widerrufbar. **NEU:** „Kommt es zu einer Einstellung, übernehmen wir die erforderlichen Daten in deine Personalakte.“
+- **GEÄNDERT 2026-10-10 (Fassung `2026-10-10`), Speicherdauer:** Zusatz nach der 6-Monats-Frist: „Das gilt für die E-Mails und die Bewerberdatenbank gleichermaßen.“ Die automatische Löschung in der Datenbank (Phase 2c) ist noch nicht gebaut; bis dahin löscht die Administration per SQL (`betrieb.md` §6). Das muss vor der ersten Frist geregelt sein (frühestens etwa 6 Monate nach der ersten Absage).
 - **NEU Keine automatisierte Entscheidung, keine KI:** keine Entscheidungen einschließlich Profiling nach Art. 22 DSGVO; keine KI zur Bewertung oder Bearbeitung von Bewerbungen. **Prüfen:** O7.
-- **Hinweis Phase 2:** Mit dem ATS (Supabase, Frankfurt) ändern sich Speicherort, Empfänger (Cockpit), Auftragsverarbeiter (Supabase) und die automatische Löschung. Der Abschnitt muss **vor** dem Go-live von Phase 2 angepasst werden.
+- **Hinweis Phase 2:** Mit dem ATS (Supabase, Frankfurt) ändern sich Speicherort, Empfänger (Cockpit), Auftragsverarbeiter (Supabase) und die automatische Löschung. Für Phase 2b sind Speicherort, Auftragsverarbeiter und Speicherdauer mit der Fassung `2026-10-10` angepasst (siehe oben). Mit Cockpit (2d), Uploads und automatischer Löschung (2c) muss der Abschnitt **vor** deren Go-live erneut angepasst werden.
 
 ### 2.6 Entwurf und Bewerbungsmappe im Browser (`#entwurf`) · NEU
 
@@ -92,7 +97,7 @@ Legende: **NEU** = neuer Absatz · **GEÄNDERT** = Aussage geändert · **ENTFER
 
 - **GEÄNDERT:** bisher „Kontaktformular oder E-Mail“. Neu „Telefon, E-Mail oder WhatsApp“; das Kontaktformular (LeadQuickForm) entfällt laut Roadmap §5/§9.3. Rest unverändert (Speicherung zur Bearbeitung und für Anschlussfragen, keine Weitergabe ohne Einwilligung, Art. 6 Abs. 1 lit. b).
 - **NEU WhatsApp:** Click-to-Chat-Links, teils mit vorausgefülltem Text (z. B. Bewerbungsangaben, wenn das Absenden scheitert); WhatsApp öffnet sich erst beim Antippen; der Text ist Teil der Link-Adresse; die Person sendet selbst. Anbieter WhatsApp Ireland Limited; mögliche Übermittlung an Meta Platforms, Inc. (USA); Alternative Telefon/E-Mail.
-- **Prüfen:** Anschrift von WhatsApp Ireland ergänzen; Rechtsgrundlage für Nachrichten, die über WhatsApp eingehen; siehe O6.
+- **Prüfen:** Anschrift von WhatsApp Ireland ergänzen; Rechtsgrundlage für Nachrichten, die über WhatsApp eingehen (Mobilnummer 0160 8834290); siehe O6 und O9.
 
 ### 2.10 Cookies, Analyse und Schriften (`#cookies-analyse`, bisher „Cookies, Analyse und Lokale Schriften“)
 
@@ -136,9 +141,11 @@ Bewusst **nicht** geändert, bitte prüfen:
 | O3 | Sind die AVVs mit Vercel und Resend abgeschlossen (Roadmap §9.7)? Welche Resend-Region und welcher Vertragspartner (Firmenname, Anschrift)? | Text nennt beide als Auftragsverarbeiter nach Art. 28. Erst veröffentlichen, wenn die AVVs vorliegen. |
 | O4 | Vercel-Logs: Aufbewahrungsdauer und ob IP-Adressen gekürzt werden. | Bisherige Angaben (7 Tage, gekürzt) bleiben. |
 | O5 | Bleibt `/api/contact` nach dem Löschen des LeadQuickForm in Betrieb? Kein Formular der neuen Website ruft die API noch auf; ROADMAP §9.3 sieht ihren Wegfall vor. | Erledigt: `/api/contact` samt Kontakt-Mailvorlagen ist mit dem Aufräumen der Altkomponenten entfernt. Der Text nennt kein Kontaktformular mehr. |
-| O6 | Ist WhatsApp Business auf 06441 42956 aktiv (Roadmap §13)? | Text beschreibt nur die Click-to-Chat-Links. |
+| O6 | ~~Ist WhatsApp Business auf 06441 42956 aktiv (Roadmap §13)?~~ **Beantwortet 2026-10-10:** WhatsApp läuft nur über die Mobilnummer 0160 8834290 (`lib/data/contact.ts` `WHATSAPP`); 06441 42956 bleibt Telefon, Impressum und JSON-LD. | Text unverändert: Er beschreibt nur die Click-to-Chat-Links und nennt keine WhatsApp-Nummer. Die Fassung `2026-10-10` hat einen anderen Grund (Bewerberdatenbank). |
 | O7 | Nutzt das Team für Bewerbungen KI-Werkzeuge (z. B. zum Zusammenfassen von E-Mails)? | Text sagt: keine KI. Bei „ja“ Abschnitt 2.5 anpassen. |
 | O8 | Talentpool gibt es erst ab Phase 4 (Opt-in mit Double-Opt-in). | Der bisherige Satz (24 Monate nur mit Einwilligung) bleibt. |
+| O9 | Ist 0160 8834290 ein WhatsApp-Business-Konto oder ein privates Konto? Auf welcher Rechtsgrundlage werden dort eingehende Bewerbungsnachrichten verarbeitet, und wie werden die Verläufe auf dem Gerät gelöscht? | Text beschreibt nur die Click-to-Chat-Links; Löschung der Verläufe nach `betrieb.md` §5 und §6. |
+| O10 | Ist der Auftragsverarbeitungsvertrag (DPA) mit Supabase abgeschlossen (Supabase-Dashboard, Bereich Legal/DPA)? Welcher Vertragspartner (Firmenname, Anschrift) und welcher Mechanismus für die Übermittlung in die USA? | Text der Fassung `2026-10-10` nennt Supabase Inc. (USA) als Auftragsverarbeiter mit Datenbank in Frankfurt (`eu-central-1`). Der AVV sollte vorliegen, bevor Bewerbungen in die Datenbank gehen; bis dahin lässt sich die Datenbank mit `APPLICATION_SINK=email` abschalten. |
 
 ## 5. Hinweise an andere Teile der Website
 
@@ -155,17 +162,20 @@ Bewusst **nicht** geändert, bitte prüfen:
 - [ ] 2.4 Sicherheitsmeldungen des Browsers (CSP-Berichte in den Server-Logs), Art. 6 Abs. 1 lit. f
 - [ ] 2.4 TLS „256 Bit“ zutreffend oder streichen
 - [ ] 2.4 Übermittlung in die USA: Mechanismus je Anbieter (DPF oder Standardvertragsklauseln)
+- [ ] 2.4 Übermittlung in die USA nennt seit der Fassung `2026-10-10` auch Supabase (O10)
 - [ ] 2.5 Rechtsgrundlage Bewerbung: Art. 6 Abs. 1 lit. b, Hinweis EuGH C-34/21, Art. 88, § 26 BDSG nur ergänzend
 - [ ] 2.5 Liste der erfassten Daten im 60-Sekunden-Flow vollständig
 - [ ] 2.5 Pflichtangaben und Folgen der Nichtbereitstellung
 - [ ] 2.5 Empfänger, Eingangsbestätigung, Auftragsverarbeiter Vercel und Resend (O3)
+- [ ] 2.5 Fassung `2026-10-10`: Speicherung in der Bewerberdatenbank, Supabase Inc. (USA) als Auftragsverarbeiter, Datenbank in Frankfurt (`eu-central-1`), „Alle drei“ (O10)
 - [ ] 2.5 Speicherdauer: 6 Monate, Personalakte bei Einstellung, Talentpool 24 Monate
+- [ ] 2.5 Fassung `2026-10-10`: Speicherdauer gilt für E-Mails und Datenbank gleichermaßen; Löschung in der Datenbank bis Phase 2c per SQL
 - [ ] 2.5 Keine automatisierte Entscheidung, kein Profiling, keine KI (O7)
 - [ ] 2.5 Sperrvermerk in neuer Formulierung
 - [ ] 2.6 Entwurf und Mappe im `sessionStorage`, § 25 Abs. 2 Nr. 2 TDDDG, Löschung alter `localStorage`-Daten
 - [ ] 2.7 Herkunftsmessung: Art. 6 Abs. 1 lit. f, Interessenabwägung, Verhältnis zu § 25 TDDDG
 - [ ] 2.8 Google Maps: Einwilligung per Klick, Speicherung `be:maps-consent:v1`, Widerruf, Angaben zu Google und DPF
-- [ ] 2.9 Kontakt ohne Kontaktformular (O5) und WhatsApp-Absatz (O6)
+- [ ] 2.9 Kontakt ohne Kontaktformular (O5) und WhatsApp-Absatz (O6 beantwortet, O9 offen)
 - [ ] 2.10 „Keine Cookies, keine Pixel, keine Analyse“ und Schriften-Absatz
 - [ ] 2.10 Schriftnamen-Korrektur vom 2026-10-10 (Bricolage Grotesque, Atkinson Hyperlegible Next, Martian Mono statt Inter; M-019)
 - [ ] 2.11 Ergänzungen bei den Rechten (Google-Maps-Widerruf, Kontaktzeile)
