@@ -2,9 +2,11 @@ import type { Metadata } from 'next';
 // Direct module imports: the barrels re-export client components this page does not use.
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
+import { Ablauf } from '@/components/jobs/liste/Ablauf';
 import { Einsatzgebiet } from '@/components/jobs/liste/Einsatzgebiet';
 import { Initiativband } from '@/components/jobs/liste/Initiativband';
 import { StellenKopf } from '@/components/jobs/liste/StellenKopf';
+import { Stellenvergleich } from '@/components/jobs/liste/Stellenvergleich';
 import { Stellenverteiler } from '@/components/jobs/liste/Stellenverteiler';
 import { pageTitle } from '@/components/jobs/text';
 import { buildJobsBreadcrumbJsonLd, serializeJsonLd } from '@/lib/jobs/jsonld';
@@ -59,14 +61,19 @@ export default function JobsPage() {
 
       <StellenKopf jobs={jobs} titel={H1} />
 
-      {/* Tonfolge (E-023): Kopf Papier/Navy · Stellen Papier mit Leitungstrenner · Einsatzgebiet Wand · Initiativ Navy */}
+      {/* Tonfolge (E-023): Kopf Papier/Navy · Stellen Papier mit Leitungstrenner · Vergleich Wand · Arbeitsalltag
+          und Einsatzgebiet Papier · Ablauf Wand · Initiativ Navy */}
       <Section id="stellen" tone="papier" trenner aria-label="Stellen">
         <Container>
           <Stellenverteiler jobs={jobs} headingLevel="h2" />
         </Container>
       </Section>
 
+      <Stellenvergleich jobs={jobs} />
+
       <Einsatzgebiet />
+
+      <Ablauf />
 
       <Initiativband auchMoeglich={funnelOnly} />
     </>

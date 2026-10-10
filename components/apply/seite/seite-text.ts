@@ -83,5 +83,14 @@ export const REGIONALBAND = Object.freeze({
     name: 'Firmensitz',
     zeilen: Object.freeze([COMPANY.address.street, `${COMPANY.address.postalCode} ${COMPANY.address.city}`]),
   }),
+  /** V6-G1: Fakt noWeekendOnCall gehört zur Arbeitszeit (sonst nirgends auf /bewerbung). */
+  wochenende: FACTS.noWeekendOnCall.long,
+  /** V6-G1: Fahrzeit bis zum Firmensitz für die Orte außerhalb der Kernzone (REGION.locations). */
+  fahrzeiten: Object.freeze({
+    name: `Fahrzeit bis ${REGION.center.name}`,
+    orte: Object.freeze(
+      REGION.locations.filter((ort) => !ort.isCoreZone).map((ort) => `${ort.name} ca.${NBSP}${ort.commuteMinutes}${NBSP}Min.`),
+    ),
+  }),
   link: Object.freeze({ href: '/#einsatzgebiet', label: 'Einsatzgebiet ansehen' }),
 });

@@ -1,6 +1,6 @@
 import { permanentRedirect } from 'next/navigation';
 import { ApplyFlow } from '@/components/apply';
-import { BewerbungFlaeche, bewerbungKopf, DirektSprechen, KopfHaus, Regionalband } from '@/components/apply/seite';
+import { BewerbungFlaeche, bewerbungKopf, DirektSprechen, Erklaerung, KopfHaus, Regionalband } from '@/components/apply/seite';
 import { UNTERLAGEN_ANKER, Unterlagen } from '@/components/apply/unterlagen';
 import { Seitenkopf } from '@/components/seitenkopf';
 import { JsonLd } from '@/components/seo/JsonLd';
@@ -8,7 +8,7 @@ import { WEBSITE_ID } from '@/components/site/site-jsonld';
 import { jobIdFromParam, legacyRedirectTarget, type SearchParamsRecord, wantsDocuments } from '@/lib/apply/params';
 import { getDiscretionPromise } from '@/lib/content/process';
 import { FACTS } from '@/lib/content/facts';
-import { getFunnelOptions, getJobById } from '@/lib/jobs/registry';
+import { getActiveJobs, getFunnelOptions, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
 import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
 import { generatePageMetadata } from '@/lib/seo/metadata';
 import { whatsAppMessageFor } from '@/lib/utils/whatsapp-utils';
@@ -39,6 +39,17 @@ function preselectedJob(params: SearchParamsRecord) {
   return jobIdFromParam(params.stelle, options);
 }
 
+/** Wegweiser im Erklärteil: die Stellen mit eigener Anzeige, die gerade live sind, und die Wege nur im Flow. */
+function wegweiserStellen(now: Date): { jobs: Job[]; ohneAnzeige: Job[] } {
+  return {
+    jobs: getActiveJobs().filter((job) => isJobLive(job, now)),
+    ohneAnzeige: getFunnelOptions(now)
+      .filter((option) => option.status === 'funnel_only')
+      .map((option) => getJobById(option.id))
+      .filter((job) => job !== undefined),
+  };
+}
+
 export default async function BewerbungPage({ searchParams }: { searchParams: Promise<SearchParamsRecord> }) {
   const params = await searchParams;
 
@@ -51,7 +62,8 @@ export default async function BewerbungPage({ searchParams }: { searchParams: Pr
   const initialJobId = preselectedJob(params);
   // Vorausgewählte Ausbildung: meist noch Schule, also kein Arbeitgeber und keine Diskretionszusage.
   const preselected = initialJobId ? getJobById(initialJobId) : undefined;
-  const discretion = getDiscretionPromise(preselected?.apply.questionSet);
+  const audience = preselected?.apply.questionSet ?? 'fachkraft';
+  const discretion = getDiscretionPromise(audience);
 
   const kopf = bewerbungKopf({ diskret: discretion !== null, unterlagenWunsch: wantsDocuments(params), unterlagenAnker: UNTERLAGEN_ANKER });
 
@@ -96,6 +108,9 @@ export default async function BewerbungPage({ searchParams }: { searchParams: Pr
             <DirektSprechen diskretion={discretion} whatsappMessage={whatsAppMessageFor(PATH)} />
           </>
         }
+        /* V6-G1: ruhiger Erklärteil im selben Abschnitt (E-023: „Kein Lebenslauf“ und „diskret“ bleiben in zwei
+           Abschnitten); der Ablauf folgt der vorgewählten Stelle wie die Diskretionszusage. */
+        erklaerung={<Erklaerung audience={audience} {...wegweiserStellen(new Date())} />}
       />
 
       <Regionalband />

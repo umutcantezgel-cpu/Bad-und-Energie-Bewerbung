@@ -341,10 +341,89 @@
   max-width: 38rem;
 }
 
-/* ═══ Einsatzgebiet: Überschrift links, Satz und Weg rechts ═══ */
+/* ═══ Stellenvergleich: Aufgaben und Voraussetzungen als Abgänge, je ein kurzer Navy-Strich vorn ═══ */
+.punkte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.punkte > li {
+  position: relative;
+  max-width: 60ch;
+  padding-left: var(--a-5);
+  color: var(--ink);
+  font-size: var(--text-callout);
+  line-height: 1.5;
+}
+
+.punkte > li::before {
+  content: "";
+  position: absolute;
+  top: calc(0.75em - var(--m-strich) / 2);
+  left: 0;
+  width: var(--a-3);
+  height: var(--m-strich);
+  border-radius: var(--radius-voll);
+  background-color: var(--brand);
+}
+
+/* ═══ Einsatzgebiet: Überschrift links, Einleitung rechts, darunter der Arbeitsalltag in Spalten ═══ */
 .gebiet {
   display: grid;
   row-gap: var(--a-5);
+}
+
+.alltag {
+  display: grid;
+  gap: var(--a-7);
+  margin-top: var(--a-5);
+}
+
+.alltagTeil {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-3);
+  min-width: 0;
+  padding-top: var(--a-5);
+  border-top: 1px solid var(--line);
+}
+
+.orte {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Ort links, Entfernung und Fahrzeit rechts; wird es eng (320 px), rutschen die Maße unter den Namen */
+.ort {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0 var(--a-3);
+  padding-block: var(--a-2);
+  border-bottom: 1px solid var(--line);
+}
+
+@media (min-width: 48em) {
+  .alltag {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--a-7);
+  }
+
+  .orteTeil {
+    grid-column: 1 / -1;
+  }
+
+  .orte {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--a-7);
+  }
 }
 
 @media (min-width: 64em) {
@@ -354,8 +433,22 @@
     align-items: start;
   }
 
-  .gebietEtikett {
+  .gebietEtikett,
+  .alltag {
     grid-column: 1 / -1;
+  }
+
+  .alltag {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--a-8);
+  }
+
+  .orteTeil {
+    grid-column: auto;
+  }
+
+  .orte {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
