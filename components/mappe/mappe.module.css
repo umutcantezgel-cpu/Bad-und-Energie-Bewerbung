@@ -85,20 +85,30 @@
     display: none;
   }
 
-  /* Pult und Vorschau haften unter dem Kopf; die Vorschau scrollt in sich, das Pult bleibt ganz sichtbar */
   .seite {
     grid-column: 3;
     grid-row: 1;
+    gap: var(--a-5);
+  }
+
+  .vorschau {
+    gap: var(--a-3);
+  }
+}
+
+/* Ab 56em Höhe haften Pult und Vorschau unter dem Kopf; die Vorschau scrollt in sich, das Pult bleibt ganz
+   sichtbar. Darunter (Laptops, 1280 × 800, 1366 × 768) bliebe der Vorschau unter dem Pult zu wenig Höhe: Dann läuft
+   die Spalte mit der Seite, und die Blätter stehen in voller Höhe neben dem Editor. */
+@media (min-width: 64em) and (min-height: 56em) {
+  .seite {
     position: sticky;
     top: calc(var(--m-kopf) + var(--a-4));
     max-height: calc(100dvh - var(--m-kopf) - var(--a-4) - var(--a-5));
-    gap: var(--a-5);
   }
 
   .vorschau {
     flex: 1 1 auto;
     min-height: 0;
-    gap: var(--a-3);
   }
 
   .vorschauRahmen {
@@ -376,9 +386,17 @@
     margin-top: var(--a-4);
   }
 
+}
+
+/* Zweitwege nebeneinander erst, wenn beide Beschriftungen einzeilig passen; schmaler untereinander */
+@container pult (min-width: 36rem) {
   .pultWege {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: var(--a-4);
+  }
+
+  .pult .pultWegKnopf {
+    white-space: nowrap;
   }
 }
 

@@ -103,7 +103,7 @@ export function MappeActions({
           )}
         </div>
         <div className={styles.pultHaupt}>
-          <Button size="lg" leitung="oben" loading={busy} onClick={onPrimary} className={styles.pultKnopf}>
+          <Button size="lg" wrap leitung="oben" loading={busy} onClick={onPrimary} className={styles.pultKnopf}>
             {primaryLabel}
             <Icon name="arrow-right" size="md" />
           </Button>
@@ -113,14 +113,14 @@ export function MappeActions({
 
       <div className={styles.pultWege}>
         <div className={styles.pultWeg}>
-          <Button variant="outline" onClick={onPrint} fullWidth>
+          <Button variant="outline" wrap onClick={onPrint} fullWidth className={styles.pultWegKnopf}>
             <Icon name="printer" size="md" />
             Als PDF speichern
           </Button>
           <p className="text-footnote text-ink-2">Öffnet den Druckdialog: „Als PDF speichern“ wählen oder direkt drucken.</p>
         </div>
         <div className={styles.pultWeg}>
-          <Button variant="outline" fullWidth asChild>
+          <Button variant="outline" wrap fullWidth asChild className={styles.pultWegKnopf}>
             <a href={whatsappHref} target="_blank" rel="noopener noreferrer" data-mappe-whatsapp="">
               <Icon name="message-circle" size="md" />
               Per WhatsApp schicken

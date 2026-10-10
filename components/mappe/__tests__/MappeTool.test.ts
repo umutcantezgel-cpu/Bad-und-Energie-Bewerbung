@@ -65,7 +65,7 @@ describe('MappeTool (server render)', () => {
     expect(section).toContain(styles.vorschauRahmen);
     expect(section).toMatch(/\brounded-2\b/);
     expect(section).toContain('tabindex="0"');
-    // The frame scrolls inside the sticky column from 64em on (mappe.module.css).
+    // The frame scrolls inside the sticky column from 64em wide and 56em tall (mappe.module.css).
     const css = readFileSync(path.join(__dirname, '../mappe.module.css'), 'utf8');
     const desktop = css.slice(css.indexOf('@media (min-width: 64em)'));
     expect(desktop).toMatch(/\.vorschauRahmen\s*\{[^}]*overflow-y:\s*auto/);
@@ -98,7 +98,7 @@ describe('Mappe-Stand (E-BEW-006/007) on an empty mappe', () => {
   });
 
   it('links each checklist entry to an existing section anchor, in editor order', () => {
-    const liste = /<ol[^>]*aria-label="Abschnitte der Mappe"[^>]*>(.*?)<\/ol>/s.exec(html)?.[1] ?? '';
+    const liste = /<ol[^>]*aria-label="Abschnitte der Mappe"[^>]*>([\s\S]*?)<\/ol>/.exec(html)?.[1] ?? '';
     const ziele = [...liste.matchAll(/href="#([^"]+)"/g)].map((m) => m[1]);
     expect(ziele).toEqual(MAPPE_ABSCHNITTE.map((abschnitt) => abschnitt.id));
     for (const id of ziele) expect(html).toContain(`<section id="${id}"`);
@@ -118,7 +118,7 @@ describe('Mappe-Stand (E-BEW-006/007) on an empty mappe', () => {
 
   it('points „Als Nächstes“ to the first open section and lets the pair run into the main action', () => {
     expect(text).toContain('Als Nächstes Persönliches');
-    const knopf = /<button[^>]*>(?:(?!<\/button>).)*Mit dieser Mappe bewerben/s.exec(html)?.[0] ?? '';
+    const knopf = /<button[^>]*>(?:(?!<\/button>)[\s\S])*Mit dieser Mappe bewerben/.exec(html)?.[0] ?? '';
     expect(knopf).toContain('after:border-l-vorlauf');
     expect(knopf).toContain('bg-accent');
   });
