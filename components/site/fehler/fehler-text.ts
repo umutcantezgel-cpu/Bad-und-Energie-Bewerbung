@@ -12,7 +12,7 @@ import { FACTS } from '@/lib/content/facts';
  * und Maß („404 Fehlercode“); „Fehler 404“ bleibt für Screenreader der erste Satz der Seite.
  */
 
-const NBSP = ' ';
+const NBSP = '\u00a0';
 
 /**
  * Etikett über der h1 (Versalien über text-etikett). Der Fehlercode steht groß als Maß an der Zeichnung; für

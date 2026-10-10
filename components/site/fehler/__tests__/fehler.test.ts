@@ -3,6 +3,7 @@ import path from 'node:path';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import ErrorPage from '@/app/error';
 import NotFound, { metadata } from '@/app/not-found';
 import { HERO } from '@/components/home/content';
 import { APPLY_PATH } from '@/components/site/nav';
@@ -52,7 +53,10 @@ describe('404-Seite (R4-404 in R5-RUHE)', () => {
   });
 
   it('E-SHELL-026: drei Wege – Bewerbung (rot, mit Vorlauf), Stellen und Startseite', () => {
-    expect(html).toMatch(new RegExp(`<a [^>]*href="${APPLY_PATH}"[^>]*data-motion="druck"[^>]*><span>Jetzt bewerben</span>`));
+    const aktion = html.match(new RegExp(`<a ([^>]*href="${APPLY_PATH}"[^>]*)><span>([^<]+)</span>`));
+    expect(aktion).not.toBeNull();
+    expect(aktion![1]).toContain('data-motion="druck"');
+    expect(aktion![2]).toBe('Jetzt bewerben');
     expect(html).toContain('data-zeichnung="seitenkopf-leitung"');
     expect(html).toContain('data-primary-cta=""');
     expect(html).toContain(`href="${FEHLER_ZWEITWEG.href}"`);
@@ -79,7 +83,7 @@ describe('404-Seite (R4-404 in R5-RUHE)', () => {
 
   it('Texte nur aus Fakten: Mikrotext wortgleich mit dem Einstieg, Ort aus COMPANY, Rückmeldung aus quickResponse', () => {
     expect(FEHLER_MIKROTEXT).toBe(HERO.microcopy);
-    expect(text).toContain(plain(FEHLER_MIKROTEXT.replace(/ /g, ' ')).replace(/ /g, ' '));
+    expect(html).toContain(FEHLER_MIKROTEXT);
     expect(FEHLER_EINLEITUNG).toContain(COMPANY.address.city);
     expect(text).toContain(FACTS.quickResponse.long);
   });
@@ -98,3 +102,26 @@ describe('404-Seite (R4-404 in R5-RUHE)', () => {
     }
   });
 });
+
+describe('Laufzeit-Fehlerseite app/error.tsx (E-SHELL-028, nur Darstellung)', () => {
+  const fehler = Object.assign(new Error('Probe'), { digest: 'abc123' });
+  const markup = renderToStaticMarkup(createElement(ErrorPage, { error: fehler, retry: () => {} }));
+  const inhalt = plain(markup);
+
+  it('Texte unverändert: h1, Hinweis, Fehlernummer, Wiederholung, Startseite, Telefon und WhatsApp', () => {
+    expect(plain(markup.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)![1])).toBe('Da ist etwas schiefgelaufen.');
+    expect(inhalt).toContain('Bitte versuch es noch einmal. Wenn es weiter hakt, erreichst du uns direkt per Telefon oder WhatsApp.');
+    expect(inhalt).toContain('Fehlernummer: abc123');
+    expect(markup).toMatch(/<button type="button"[^>]*>[\s\S]*?Erneut versuchen<\/button>/);
+    expect(markup).toMatch(/<a [^>]*href="\/"[^>]*>Zur Startseite<\/a>/);
+    expect(markup).toContain(`href="${COMPANY.phone.href}"`);
+    expect(markup).toMatch(/href="https:\/\/api\.whatsapp\.com\/send\?[^"]+" target="_blank" rel="noopener noreferrer"/);
+  });
+
+  it('im System: Etikett, h1 in Bricolage und Marken-Navy, Icons der eigenen Familie', () => {
+    expect(markup).toMatch(/<p class="text-etikett[^"]*">Technischer Fehler<\/p>/);
+    expect(markup).toMatch(/<h1 class="[^"]*font-display[^"]*text-brand/);
+    expect(markup.match(/data-icon="(rotate-ccw|phone|message-circle)"/g)).toHaveLength(3);
+  });
+});
+

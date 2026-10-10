@@ -166,14 +166,23 @@
   margin-top: 0;
 }
 
-/* h2 im SectionHeader-Muster: Nummer als Etikett darüber, Überschrift in Bricolage und Marken-Navy */
+/* h2 im SectionHeader-Muster: Nummer als Etikett darüber, Überschrift in Bricolage und Marken-Navy.
+   Am Handy eine Stufe kleiner: „Verbraucherstreitbeilegung“ (26 Buchstaben) passt so auch ohne Trennwörterbuch
+   in 280 px; overflow-wrap bleibt das letzte Netz. */
 .abschnitt h2 {
   margin-top: 0;
   margin-bottom: var(--a-5);
   font-family: var(--font-display);
-  font-size: var(--text-title-2);
+  font-size: var(--text-title-3);
   line-height: 1.1;
   color: var(--brand);
+  overflow-wrap: break-word;
+}
+
+@media (min-width: 37.5em) {
+  .abschnitt h2 {
+    font-size: var(--text-title-2);
+  }
 }
 
 .abschnitt h3 {
