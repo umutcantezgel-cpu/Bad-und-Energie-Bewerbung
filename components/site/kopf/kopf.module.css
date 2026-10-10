@@ -1,0 +1,721 @@
+/*
+ * Seitenkopf und Menü (R4-SHELL-01) im Design des Einstiegs (components/home/einstieg, Variante 1 `.kopf`
+ * und Menü). Nur Rollen und Skalen aus app/styles/theme.css; Schriftfamilien kommen als Utilities aus dem
+ * Markup (font-display, font-mass, text-etikett, text-title-1, ziffer), damit der Guard sie sieht.
+ *
+ * Bewegung nur über Register-Kennungen: unterstrich (Hover-Strich), flaeche (Hover-Fläche), druck
+ * (Hauptaktion), menue-oeffnen (Menü und Strich-zu-X), menue-leitung (Paar fällt), menue-eintrag (Staffel).
+ * Reduzierte Bewegung: globals.css setzt Übergänge auf 0,01 ms, der 1-px-Druck entfällt hier selbst.
+ */
+
+/* ═══ Kopf ═══ */
+.waechter {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  pointer-events: none;
+}
+
+.kopf {
+  /* gleicher Seitenrand wie der Einstieg: Logo und h1 stehen in einer Flucht */
+  --rand: max(var(--spacing-gutter), env(safe-area-inset-left), env(safe-area-inset-right));
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background-color: var(--surface);
+  color: var(--brand);
+}
+
+/* Beim Scrollen trennt eine Linie im Strich der Zeichnung (3 px, Haar) den Kopf vom Inhalt */
+.kopf[data-scrolled]::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  height: var(--m-strich);
+  background-color: var(--line);
+  pointer-events: none;
+}
+
+.zeile {
+  display: flex;
+  align-items: center;
+  gap: var(--a-2);
+  height: var(--m-kopf);
+  padding: 0 var(--rand);
+  padding-top: env(safe-area-inset-top);
+  box-sizing: content-box;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  flex: 0 1 auto;
+  margin-right: auto;
+}
+
+.logo {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  min-height: var(--m-ziel);
+  /* Das Logo selbst trägt 4 px Plakettenrand; die Flucht mit der h1 gleicht -4 px aus */
+  margin-left: calc(var(--a-1) * -1);
+  border-radius: var(--radius-1);
+}
+
+/* Jubiläumsmarke (E-SHELL-001): Planetikett neben dem Logo, abgesetzt mit dem Strich der Zeichnung */
+.marke {
+  display: none;
+  margin: 0;
+}
+
+.markeZahl {
+  color: var(--brand);
+  font-weight: 700;
+}
+
+.markeSpanne {
+  color: var(--ink-2);
+}
+
+.ikon {
+  flex: none;
+}
+
+/* Telefon: mobil nur der Hörer (Name bleibt „06441 42956 anrufen“), ab 64em mit Nummer */
+.tel,
+.whatsapp {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--a-2);
+  min-width: var(--m-ziel);
+  min-height: var(--m-ziel);
+  border-radius: var(--radius-1);
+  color: var(--brand);
+  font-size: var(--text-callout);
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nummer,
+.waText {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.whatsapp,
+.bewerben,
+.nav {
+  display: none;
+}
+
+/* Navigation: Bricolage, Navy; Hover zieht den Strich der Zeichnung unter das Wort */
+.navListe {
+  display: flex;
+  align-items: center;
+  gap: var(--a-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.navLink {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--a-2);
+  min-height: var(--m-ziel);
+  padding: 0 var(--a-3);
+  border-radius: var(--radius-1);
+  color: var(--brand);
+  font-size: var(--text-body);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* E-SHELL-002: Zähler als Planetikett-Kästchen (wie die Etiketten an der Zeichnung) */
+.zaehler {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--a-5);
+  height: var(--a-5);
+  padding: 0 var(--a-1);
+  border: var(--m-strich) solid currentColor;
+  border-radius: var(--radius-1);
+  font-size: var(--text-footnote);
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Hover- und Ortsstrich (Kennung unterstrich): Navy, dunkel Creme; Eingang d-2/aus, Ausgang d-1/ein */
+.navLink::after,
+.tel::after,
+.whatsapp::after,
+.logo::after {
+  content: "";
+  position: absolute;
+  left: var(--a-3);
+  right: var(--a-3);
+  bottom: var(--a-1);
+  height: var(--m-strich);
+  background-color: var(--brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--d-1) var(--k-ein);
+  pointer-events: none;
+}
+
+.tel::after,
+.whatsapp::after {
+  left: var(--a-2);
+  right: var(--a-2);
+}
+
+.logo::after {
+  left: var(--a-1);
+  right: var(--a-1);
+  bottom: 0;
+}
+
+/* Die aktuelle Seite trägt den Strich dauerhaft */
+.navLink[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+/* „Bewerben“ im Kopf: Zweitweg in Navy-Kontur; Rot bleibt der einen Hauptaktion der Seite */
+.bewerben {
+  position: relative;
+  isolation: isolate;
+  align-items: center;
+  min-height: var(--m-ziel);
+  padding: 0 var(--a-4);
+  border: var(--m-strich) solid var(--brand);
+  border-radius: var(--radius-1);
+  color: var(--brand);
+  font-size: var(--text-callout);
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* Menüknopf und Schließen: 44 px, Hover als Wandfläche (Kennung flaeche) */
+.bewerben::before,
+.menueKnopf::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: var(--surface-2);
+  opacity: 0;
+  transition: opacity var(--d-1) var(--k-ein);
+}
+
+.menueKnopf {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--m-ziel);
+  height: var(--m-ziel);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-1);
+  background: none;
+  color: var(--brand);
+  font: inherit;
+}
+
+.direkt {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--a-1);
+  /* die Hörer- und Menüzeichen stehen optisch am Rand, ihre Trefferfläche bleibt 44 px */
+  margin-right: calc(var(--a-2) * -1);
+}
+
+/* Ausgang im Bewerbungsflow: Text mit Unterstrich (dritte Stufe), wie der Zweitweg des Einstiegs */
+.ausgang {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--m-ziel);
+  padding: 0 var(--a-2);
+  border-radius: var(--radius-1);
+  color: var(--brand);
+  font-size: var(--text-callout);
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration-line: underline;
+  text-decoration-thickness: var(--m-strich);
+  text-underline-offset: 0.3em;
+  white-space: nowrap;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .navLink:hover::after,
+  .tel:hover::after,
+  .whatsapp:hover::after,
+  .logo:hover::after {
+    transform: scaleX(1);
+    transition: transform var(--d-2) var(--k-aus);
+  }
+
+  .bewerben:hover::before,
+  .menueKnopf:hover::before {
+    opacity: 1;
+    transition: opacity var(--d-2) var(--k-aus);
+  }
+
+  .ausgang:hover {
+    text-decoration-color: var(--ruecklauf);
+  }
+}
+
+/* Druck: 1 px nach unten (wie Variante 1), nur ohne reduzierte Bewegung */
+@media (prefers-reduced-motion: no-preference) {
+  .navLink:active,
+  .tel:active,
+  .whatsapp:active,
+  .logo:active,
+  .bewerben:active,
+  .menueKnopf:active,
+  .ausgang:active,
+  .kontakt:active,
+  .eintrag:active {
+    transform: translateY(1px);
+  }
+}
+
+.bewerben:active::before,
+.menueKnopf:active::before {
+  opacity: 1;
+  background-color: var(--surface-3);
+  transition: none;
+}
+
+/* ═══ Desktop ab 64em: Navigation, Nummer, WhatsApp, Bewerben; kein Menüknopf ═══ */
+@media (min-width: 64em) {
+  .zeile {
+    gap: var(--a-4);
+  }
+
+  /* Ab hier bleibt die Wortmarke in voller Größe; enger werden Abstände und Schrift der Navigation */
+  .links,
+  .logo {
+    flex-shrink: 0;
+  }
+
+  .nav {
+    display: block;
+  }
+
+  .navLink {
+    padding: 0 var(--a-2);
+    font-size: var(--text-callout);
+  }
+
+  .direkt {
+    gap: var(--a-1);
+    margin-right: 0;
+  }
+
+  .tel,
+  .whatsapp {
+    padding: 0 var(--a-2);
+  }
+
+  .whatsapp {
+    display: inline-flex;
+  }
+
+  .nummer {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+  }
+
+  .bewerben {
+    display: inline-flex;
+    margin-left: var(--a-2);
+  }
+
+  .menueBereich {
+    display: none;
+  }
+}
+
+/* ab 80em: Navigation in Lesegröße, Jubiläumsmarke neben dem Logo */
+@media (min-width: 80em) {
+  /* Navigation und Direktwege als zwei Gruppen lesbar */
+  .nav {
+    margin-right: var(--a-5);
+  }
+
+  .navLink {
+    padding: 0 var(--a-3);
+    font-size: var(--text-body);
+  }
+
+  .marke {
+    display: grid;
+    flex: none;
+    gap: var(--a-1);
+    margin-left: var(--a-4);
+    padding: var(--a-1) 0 var(--a-1) var(--a-4);
+    border-left: var(--m-strich) solid var(--brand);
+    white-space: nowrap;
+  }
+}
+
+/* ab 90em: „WhatsApp“ ausgeschrieben */
+@media (min-width: 90em) {
+  .direkt {
+    gap: var(--a-2);
+  }
+
+  .waText {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+  }
+}
+
+/* ═══ Menüzeichen: drei Striche, im offenen Menü das X (E-SHELL-011) ═══ */
+.zeichen {
+  overflow: visible;
+}
+
+.zeichen line {
+  stroke: currentColor;
+  stroke-width: var(--m-strich);
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  transform-box: view-box;
+  transform-origin: 12px 12px;
+}
+
+.zeichen[data-zustand="offen"] .strichOben {
+  transform: rotate(45deg) translateY(5px);
+}
+
+.zeichen[data-zustand="offen"] .strichMitte {
+  opacity: 0;
+}
+
+.zeichen[data-zustand="offen"] .strichUnten {
+  transform: rotate(-45deg) translateY(-5px);
+}
+
+/* Beim Öffnen drehen sich die drei Striche zum X (d-2, k-aus); reduziert steht das X sofort */
+@media (prefers-reduced-motion: no-preference) {
+  .menue[open] .strichOben {
+    animation: zuX-oben var(--d-2) var(--k-aus) backwards;
+  }
+
+  .menue[open] .strichMitte {
+    animation: zuX-mitte var(--d-1) var(--k-ein) backwards;
+  }
+
+  .menue[open] .strichUnten {
+    animation: zuX-unten var(--d-2) var(--k-aus) backwards;
+  }
+}
+
+@keyframes zuX-oben {
+  from {
+    transform: none;
+  }
+}
+
+@keyframes zuX-mitte {
+  from {
+    opacity: 1;
+  }
+}
+
+@keyframes zuX-unten {
+  from {
+    transform: none;
+  }
+}
+
+/* ═══ Menü: Navy-Band (data-tone="inverse") von oben, dahinter abgedunkelt ═══ */
+.menue {
+  --rand: max(var(--spacing-gutter), env(safe-area-inset-left), env(safe-area-inset-right));
+  position: fixed;
+  inset: 0 0 auto;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  max-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background-color: var(--surface);
+  color: var(--ink);
+  opacity: 0;
+  transform: translateY(calc(var(--a-4) * -1));
+  transition:
+    opacity var(--d-1) var(--k-ein),
+    transform var(--d-1) var(--k-ein),
+    overlay var(--d-1) allow-discrete,
+    display var(--d-1) allow-discrete;
+}
+
+.menue[open] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--d-2) var(--k-aus),
+    transform var(--d-2) var(--k-aus),
+    overlay var(--d-2) allow-discrete,
+    display var(--d-2) allow-discrete;
+}
+
+@starting-style {
+  .menue[open] {
+    opacity: 0;
+    transform: translateY(calc(var(--a-4) * -1));
+  }
+}
+
+/* Hintergrund: Navy des Bands, halb deckend (::backdrop erbt die Rollen des Dialogs) */
+.menue::backdrop {
+  background-color: var(--surface);
+  opacity: 0.6;
+}
+
+/* Die Seite dahinter scrollt nicht, solange das Menü offen ist */
+:global(html):has(.menue[open]) {
+  overflow: hidden;
+}
+
+@media (min-width: 64em) {
+  .menue {
+    display: none;
+  }
+}
+
+.innen {
+  display: grid;
+  padding: env(safe-area-inset-top) var(--rand) calc(var(--a-6) + env(safe-area-inset-bottom));
+}
+
+.menueKopf {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--a-2);
+  height: var(--m-kopf);
+  margin-right: calc(var(--a-2) * -1);
+}
+
+/* Leitungspaar (Abstand --paar): Rücklauf außen, Vorlauf innen; es fällt in „Jetzt bewerben“ */
+.leitung {
+  position: relative;
+  padding: var(--a-4) 0 var(--a-6) var(--a-7);
+}
+
+.leitung::before,
+.leitung::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--m-strich);
+  transform-origin: top;
+}
+
+.leitung::before {
+  left: var(--a-2);
+  background-color: var(--ruecklauf);
+}
+
+.leitung::after {
+  left: calc(var(--a-2) + var(--paar));
+  background-color: var(--vorlauf);
+}
+
+.menueMarke {
+  margin: 0 0 var(--a-3);
+  color: var(--ink-2);
+}
+
+.menueListe {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.eintrag {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--a-3);
+  min-height: var(--a-8);
+  color: var(--brand);
+  text-decoration: none;
+}
+
+/* Abgang: jeder Eintrag zweigt in Navy (dunkel Creme) vom Vorlauf ab */
+.eintrag::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: calc(var(--a-2) + var(--paar) + var(--m-strich) - var(--a-7));
+  width: calc(var(--a-7) - var(--a-3) - var(--a-2) - var(--paar) - var(--m-strich));
+  height: var(--m-strich);
+  margin-top: calc(var(--m-strich) / -2);
+  background-color: var(--brand);
+}
+
+.eintrag[aria-current="page"] {
+  text-decoration-line: underline;
+  text-decoration-thickness: var(--m-strich);
+  text-underline-offset: 0.18em;
+}
+
+.eintragZahl {
+  padding: var(--a-1) var(--a-2);
+  border: var(--m-strich) solid currentColor;
+  border-radius: var(--radius-1);
+  color: var(--ink);
+}
+
+.menueKontakt {
+  display: grid;
+  justify-items: start;
+  gap: var(--a-1);
+  margin-top: var(--a-5);
+}
+
+.kontakt {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--a-3);
+  min-height: var(--m-ziel);
+  border-radius: var(--radius-1);
+  color: var(--ink);
+  font-size: var(--text-body);
+  font-weight: 700;
+  text-decoration-line: underline;
+  text-decoration-thickness: var(--m-strich);
+  text-decoration-color: transparent;
+  text-underline-offset: 0.3em;
+}
+
+.vertraulich {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--a-3);
+  max-width: 30rem;
+  margin: var(--a-3) 0 0;
+  color: var(--ink-2);
+  font-size: var(--text-callout);
+  line-height: 1.5;
+}
+
+.vertraulich .ikon {
+  margin-top: 0.15em;
+  color: var(--ink);
+}
+
+/* Hauptaktion im Menü: die eine rote Fläche; das Leitungspaar endet an ihrer Oberkante */
+.aktion {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--a-4);
+  min-height: var(--m-knopf);
+  padding: 0 var(--a-5);
+  border-radius: var(--radius-1);
+  background-color: var(--accent);
+  color: var(--on-accent);
+  font-size: var(--text-body);
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.aktion::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: var(--accent-hover);
+  opacity: 0;
+  transition: opacity var(--d-1) var(--k-ein);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .aktion:hover::before {
+    opacity: 1;
+    transition: opacity var(--d-2) var(--k-aus);
+  }
+
+  .kontakt:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
+.aktion:active::before {
+  opacity: 1;
+  background-color: var(--accent-press);
+  transition: none;
+}
+
+/* Auftritt beim Öffnen: Paar fällt (menue-leitung, d-2), Einträge zweigen gestaffelt ab (½ Takt) */
+@media (prefers-reduced-motion: no-preference) {
+  .menue[open] .leitung::before,
+  .menue[open] .leitung::after {
+    animation: fall var(--d-2) var(--k-aus) backwards;
+  }
+
+  .menue[open] .menueListe > li {
+    animation: einschub var(--d-1) var(--k-aus) backwards;
+    animation-delay: calc(var(--takt) * var(--i, 0) / 2);
+  }
+}
+
+@keyframes fall {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes einschub {
+  from {
+    opacity: 0;
+    transform: translateY(var(--a-2));
+  }
+}
