@@ -109,9 +109,9 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
     endeMs: 560,
   },
   waerme: {
-    zweck: 'Das Haus wird warm (Pegel steigt).',
+    zweck: 'Das Haus wird warm (Pegel steigt; im Einstieg nach Variante 3 breitet sich das Wärmebild vom Heizkörper aus, heiß zuerst).',
     ausloeser: ['auftakt'],
-    eigenschaften: ['transform'],
+    eigenschaften: ['transform', 'opacity'],
     dauer: ['d-4'],
     verzoegerungTakte: [4],
     kurve: ['k-aus'],
@@ -131,7 +131,8 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
     endeMs: 880,
   },
   erdleitung: {
-    zweck: 'Mobil: Die Leitungen fallen in den Knopf (Daumenzone); Vorlauf von oben, Rücklauf von unten.',
+    zweck:
+      'Die Leitungen laufen in den Knopf: mobil fallen sie senkrecht in die Daumenzone (Startseite, Stellenseiten), am Desktop der Stellenseiten laufen sie waagerecht aus der Navy-Fläche in den Flansch.',
     ausloeser: ['auftakt'],
     eigenschaften: ['transform'],
     dauer: ['d-2'],
@@ -142,7 +143,7 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
     endeMs: 880,
   },
   'erdleitung-d': {
-    zweck: 'Desktop: Der Vorlauf verlängert sich in die Hauptaktion, der Rücklauf kommt zurück.',
+    zweck: 'Desktop der Startseite: Der Vorlauf läuft aus der Hauptaktion in die Wärmepumpe, der Rücklauf kommt zurück.',
     ausloeser: ['auftakt'],
     eigenschaften: ['stroke-dashoffset'],
     // Vorlauf: Fall d-1, Bogen d-1, Lauf d-2 ab 4 Takten; Rücklauf: Lauf d-2, Bogen d-1, Fall d-1 ab 8 Takten
