@@ -33,7 +33,19 @@ function Sonne() {
 }
 
 /**
- * Etiketten-Kästchen an der Zeichnung (Variante 3): die drei Gewerke mit ihren Familien-Icons. Am Desktop
+ * Luft (Feld des Logos, Variante 3 `i-luft`) für die Wärmepumpe: drei Strömungslinien, zwei mit Wirbel. Das
+ * Familien-Icon „waermepumpe“ liefe in der 20-px-Platte zu (Lüfter, Gehäuse und Füße).
+ */
+function Luft() {
+  return (
+    <svg className={styles.glyphe} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M3 8.5h10a3 3 0 1 0-3-3M3 13.5h14a3 3 0 1 1-3 3M3 18.5h4" />
+    </svg>
+  );
+}
+
+/**
+ * Etiketten-Kästchen an der Zeichnung (Variante 3): die drei Gewerke mit Luft und den Familien-Icons Flamme, Tropfen. Am Desktop
  * mit Beschriftung in Versalien, am Handy nur die Zeichen. Dekorativ: die Einleitung nennt dieselben Gewerke.
  */
 function Marken() {
@@ -41,7 +53,7 @@ function Marken() {
     <div className={styles.marken} aria-hidden="true">
       <span className={cn(styles.marke, styles.markePumpe)}>
         <span className={styles.platte}>
-          <Icon name="waermepumpe" size="md" />
+          <Luft />
         </span>
         <span className={cn(styles.markeText, 'text-etikett')}>Wärmepumpen</span>
       </span>
@@ -160,23 +172,25 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
         <span className={cn(styles.leitung, styles.schachtVlOben)} data-motion="erdleitung" aria-hidden="true" />
         <span className={cn(styles.leitung, styles.schachtVlUnten)} data-motion="erdleitung" aria-hidden="true" />
 
-        <p className={styles.lead}>{HERO.lead}</p>
-        <div className={styles.aktion} data-primary-cta="">
-          <span className={styles.abzweig} data-motion="erdleitung" aria-hidden="true" />
-          <Link href={APPLY_PATH} className={cn(styles.bewerben, 'font-display rounded-1')} data-motion="druck">
-            {SHORT_APPLY_LABEL}
-          </Link>
-        </div>
-        <p className={styles.mikro}>{mitZiffern(HERO.microcopy)}</p>
-        <a className={cn(styles.zweitweg, 'rounded-1')} href={ZWEITWEG.href} data-motion="druck">
-          <span>
-            {zweitwegAnfang}{' '}
-            <span className={styles.zusammen}>
-              {zweitwegEnde}
-              <Icon name="chevron-down" size="md" className={styles.zweitwegIkon} />
+        <div className={styles.handlung}>
+          <p className={styles.lead}>{HERO.lead}</p>
+          <div className={styles.aktion} data-primary-cta="">
+            <span className={styles.abzweig} data-motion="erdleitung" aria-hidden="true" />
+            <Link href={APPLY_PATH} className={cn(styles.bewerben, 'font-display rounded-1')} data-motion="druck">
+              {SHORT_APPLY_LABEL}
+            </Link>
+          </div>
+          <p className={styles.mikro}>{mitZiffern(HERO.microcopy)}</p>
+          <a className={cn(styles.zweitweg, 'rounded-1')} href={ZWEITWEG.href} data-motion="druck">
+            <span>
+              {zweitwegAnfang}{' '}
+              <span className={styles.zusammen}>
+                {zweitwegEnde}
+                <Icon name="chevron-down" size="md" className={styles.zweitwegIkon} />
+              </span>
             </span>
-          </span>
-        </a>
+          </a>
+        </div>
 
         <div className={styles.fuss}>
           <p className={styles.satz}>{KREISLAUF_SATZ}</p>
@@ -190,16 +204,18 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
       {/* Desktop: der Vorlauf aus dem Knopf, Bogen (--radius-2) nach unten und auf Pumpenhöhe über den Panelrand.
           Lage über Ankerpositionierung am Knopf (--einstieg-knopf) und an der Pumpe (124 Einheiten über der Falz);
           Zeichnungswerte: 3 = halbe Rohrbreite mit Reserve, 12 = --radius-2, 32 = Abstand der Steigleitung zur Fläche. */}
-      <svg className={styles.rohrD} aria-hidden="true" focusable="false">
-        <line className={styles.rohrD1} data-motion="erdleitung-d" pathLength={1} x1="44" y1="3" x2="100%" y2="3" transform="translate(-44 0)" />
-        <svg x="100%" overflow="visible">
-          <path className={styles.rohrD2} data-motion="erdleitung-d" pathLength={1} d="M-44 3A12 12 0 0 1 -32 15" />
+      <div className={styles.rohrD} aria-hidden="true">
+        <svg className={styles.rohrSvg} aria-hidden="true" focusable="false">
+          <line className={styles.rohrD1} data-motion="erdleitung-d" pathLength={1} x1="44" y1="3" x2="100%" y2="3" transform="translate(-44 0)" />
+          <svg x="100%" overflow="visible">
+            <path className={styles.rohrD2} data-motion="erdleitung-d" pathLength={1} d="M-44 3A12 12 0 0 1 -32 15" />
+          </svg>
+          <line className={styles.rohrD3} data-motion="erdleitung-d" pathLength={1} x1="100%" y1="30" x2="100%" y2="100%" transform="translate(-32 -15)" />
+          <svg x="100%" y="100%" overflow="visible">
+            <path className={styles.rohrD4} data-motion="erdleitung-d" pathLength={1} d="M-32 -15A12 12 0 0 0 -20 -3H0" />
+          </svg>
         </svg>
-        <line className={styles.rohrD3} data-motion="erdleitung-d" pathLength={1} x1="100%" y1="30" x2="100%" y2="100%" transform="translate(-32 -15)" />
-        <svg x="100%" y="100%" overflow="visible">
-          <path className={styles.rohrD4} data-motion="erdleitung-d" pathLength={1} d="M-32 -15A12 12 0 0 0 -20 -3H0" />
-        </svg>
-      </svg>
+      </div>
     </div>
   );
 }

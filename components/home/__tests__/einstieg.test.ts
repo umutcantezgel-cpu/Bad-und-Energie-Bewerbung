@@ -8,6 +8,7 @@ import { MOTION_IDS } from '@/lib/motion/register';
 import { HERO, HERO_STATS } from '../content';
 import { Hero } from '../Hero';
 import { KREISLAUF_SATZ, vertrauenspunkte } from '../einstieg/einstieg-text';
+import { WAERMEBAENDER } from '../einstieg/waermefeld';
 
 const DIR = path.resolve(__dirname, '..');
 const EINSTIEG = path.join(DIR, 'einstieg');
@@ -17,6 +18,7 @@ const plain = (html: string) =>
     .replace(/<[^>]+>/g, '')
     .replace(/&amp;/g, '&')
     .replace(/&#x27;/g, "'")
+    .replace(/­/g, '')
     .replace(/ /g, ' ')
     .replace(/\s+/g, ' ');
 
@@ -25,8 +27,8 @@ const html2026 = render(new Date('2026-10-09T09:00:00Z'));
 const html2027 = render(new Date('2027-01-01T08:00:00Z'));
 const text2026 = plain(html2026);
 
-/** Auftakt-Kennungen der Startseite (R3-HOME.md, Bewegung). */
-const AUFTAKT = ['luft', 'luefter', 'vorlauf-haus', 'waerme', 'ruecklauf-haus', 'erdleitung', 'uhr', 'pfeile'];
+/** Auftakt-Kennungen des Einstiegs nach Variante 3 (R3-EINSTIEG-V3): Vorlauf vom Knopf ins Haus, Wärme, Rücklauf, Uhr. */
+const AUFTAKT = ['luefter', 'erdleitung', 'erdleitung-d', 'vorlauf-haus', 'waerme', 'ruecklauf-haus', 'uhr'];
 
 describe('Hero / Einstieg (R3-HOME-01)', () => {
   it('genau eine h1 mit HERO.title und HERO.titleSecondLine im Wortlaut, Abschnitt zeigt darauf', () => {
@@ -50,7 +52,8 @@ describe('Hero / Einstieg (R3-HOME-01)', () => {
 
   it('E-023: „100 Jahre“ steht im Einstieg genau einmal (Ortsmarke); die Jahres-Maßkette zeigt nur 1926 … 2026', () => {
     expect(text2026.match(/100 Jahre/g)).toHaveLength(1);
-    const kette = html2026.match(/<p[^>]*data-bis="2026-12-31"[^>]*>([\s\S]*?)<\/p>/)!;
+    const kette = html2026.match(/<span[^>]*data-bis="2026-12-31"[^>]*>([\s\S]*?)<\/span>/)!;
+    expect(kette[0]).toContain('aria-hidden="true"');
     expect(plain(kette[1]).trim()).toBe('2026');
   });
 
@@ -69,8 +72,16 @@ describe('Hero / Einstieg (R3-HOME-01)', () => {
       // Leerzeichen im DOM zwischen Wert und Name (Kopieren, Lesemodus): „13:30 Freitags Feierabend“
       expect(text2026).toContain(`${stat.value.replace(/\u00a0/g, ' ')} ${stat.label}`);
     }
-    expect(html2026).toMatch(/<svg class="[^"]*" viewBox="0 0 760 520" aria-hidden="true" focusable="false" data-szene="einstieg">/);
-    expect(html2026).toMatch(/<text[^>]*>Wetzlar<\/text>/);
+    expect(html2026).toMatch(/<svg class="[^"]*" viewBox="0 0 800 800" aria-hidden="true" focusable="false" data-szene="einstieg">/);
+    // Wärmebild (Variante 3): vier Isothermen, die Uhr im Giebel, Vorlauf und Rücklauf als Leitungen
+    const szene = html2026.match(/<svg[^>]*data-szene="einstieg">([\s\S]*?)<\/svg>/)![1];
+    expect(szene.match(/data-motion="waerme"/g)).toHaveLength(4);
+    expect(szene.match(/data-motion="uhr"/g)!.length).toBeGreaterThanOrEqual(2);
+    expect(szene).toContain('data-motion="vorlauf-haus"');
+    expect(szene).toContain('data-motion="ruecklauf-haus"');
+    // Etiketten-Kästchen der drei Gewerke und die Ablesung 13:30 sind Beiwerk der Zeichnung
+    const marken = html2026.match(/<div class="[^"]*" aria-hidden="true">((?:(?!<\/div>)[\s\S])*Wärmepumpen[\s\S]*?)<\/div>/)!;
+    for (const gewerk of ['Wärmepumpen', 'Heizungen', 'Bäder']) expect(plain(marken[1])).toContain(gewerk);
   });
 
   it('Bewegung: alle acht Auftakt-Kennungen an der Szene, nur Kennungen aus dem Register', () => {
@@ -130,6 +141,31 @@ describe('Einstieg: Quellregeln', () => {
     expect(Buffer.byteLength(src)).toBeLessThanOrEqual(3 * 1024);
     const importe = [...src.matchAll(/from '([^']+)'/g)].map((m) => m[1]);
     expect(importe).toEqual(['react', '@/lib/motion/head-script']);
+  });
+
+  it('Desktop: der Vorlauf läuft per Ankerpositionierung vom Knopf zur Pumpe, ohne Anker entfällt er', () => {
+    const css = quelle(path.join(EINSTIEG, 'einstieg.module.css')).replace(/\/\*[\s\S]*?\*\//g, '');
+    expect(css).toMatch(/\.bewerben \{[^}]*anchor-name: --einstieg-knopf;/);
+    expect(css).toMatch(/\.bild \{[^}]*anchor-name: --einstieg-flaeche;/);
+    const rohr = css.match(/\.rohrD \{[^}]*display: block;[^}]*\}/)![0];
+    expect(rohr).toContain('left: calc(anchor(--einstieg-knopf right)');
+    expect(rohr).toContain('top: calc(anchor(--einstieg-knopf center)');
+    // Pumpenanschluss der Szene: y 676 von 800 = 124 Einheiten über der Falz der Fläche
+    expect(rohr).toContain('bottom: calc(anchor(--einstieg-flaeche bottom) + 124 * var(--e)');
+    expect(css).toMatch(/@supports not \(anchor-name: --a\) \{\s*\.rohrD \{\s*display: none !important;/);
+  });
+
+  it('Wärmebild: vier Bänder aus dem Wärmefeld, hell aus den Papier-Rollen, dunkel mit eigenen hellen Stufen', () => {
+    expect(WAERMEBAENDER).toHaveLength(4);
+    for (const band of WAERMEBAENDER) expect(band).toMatch(/^M[\d.\s-]+/);
+    const css = quelle(path.join(EINSTIEG, 'einstieg.module.css')).replace(/\/\*[\s\S]*?\*\//g, '');
+    const hell = css.match(/\.held \{([^}]*)\}/)![1];
+    for (const rolle of ['--wb-1: var(--ruecklauf)', '--wb-2: var(--surface-2)', '--wb-3: var(--waerme)', '--wb-4: var(--surface)']) {
+      expect(hell).toContain(rolle);
+    }
+    const dunkel = css.match(/@media screen and \(prefers-color-scheme: dark\) \{\s*\.held \{([^}]*)\}/)![1];
+    for (const n of [1, 2, 3, 4]) expect(dunkel).toContain(`--wb-${n}:`);
+    expect(dunkel).not.toMatch(/var\(--(?:surface-2|waerme)\)/);
   });
 
   it('CSS-Modul: keine Rohfarben, keine Primitiven, Bewegung nur über Tokens', () => {

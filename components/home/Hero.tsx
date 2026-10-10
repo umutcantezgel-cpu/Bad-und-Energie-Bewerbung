@@ -8,10 +8,11 @@ export interface HeroProps {
 }
 
 /**
- * Einstieg der Startseite (R3-HOME-01, Variante 1 mit Teilen aus B Runde 1): Haus mit Wärmepumpe, der
- * Kreislauf läuft einmal an, die Uhr rastet auf 13:30 ein, der rote Vorlauf endet in „Jetzt bewerben“.
- * Darunter der Erklärsatz mit „Kreislauf zeigen“ und die Vertrauenszeile. Genau eine h1 auf der Seite.
- * Der Abschnitt endet bündig; den Leitungstrenner zum nächsten Abschnitt setzt die Seite.
+ * Einstieg der Startseite nach den Bildern des Auftraggebers (R3-EINSTIEG-V3, Variante 3 „Wärmebild“, statisch):
+ * Papier links mit h1 und dem roten Knopf, die Navy-Fläche rechts mit dem Haus im Wärmebild und den Maßen; am
+ * Handy ein Navy-Block oben, Knopf auf Papier darunter. Der rote Vorlauf läuft aus dem Knopf ins Haus, die Uhr
+ * rastet auf 13:30 ein; „Kreislauf zeigen“ spielt das erneut ab. Darunter die Vertrauenszeile. Genau eine h1
+ * auf der Seite. Der Abschnitt endet bündig; den Leitungstrenner zum nächsten Abschnitt setzt die Seite.
  */
 export function Hero({ now = new Date() }: HeroProps) {
   return (

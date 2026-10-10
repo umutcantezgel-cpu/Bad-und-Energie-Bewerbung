@@ -2,16 +2,15 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import {
   LEGAL_ENTITY,
-  LegalDocument,
   LegalFactLink,
   LegalFacts,
-  LegalSection,
   SUPERVISORY_AUTHORITY,
   displayUrl,
   formatNoticeDate,
   mailtoHref,
   type LegalFact,
 } from '@/components/legal';
+import { RechtAbschnitt, RechtDokument, abschnittsNummer } from '@/components/recht';
 import { TextLink } from '@/components/ui/TextLink';
 import { PRIVACY_NOTICE_VERSION } from '@/lib/applications/schema';
 import { DISCRETION_PROMISE } from '@/lib/content';
@@ -64,13 +63,15 @@ const SECTIONS: Record<SectionId, { title: string; toc?: string }> = {
   aufsichtsbehoerde: { title: 'Beschwerde bei der Aufsichtsbehörde', toc: 'Aufsichtsbehörde' },
 };
 
-const TOC = (Object.keys(SECTIONS) as SectionId[]).map((id) => ({ id, label: SECTIONS[id].toc ?? SECTIONS[id].title }));
+const SECTION_IDS = Object.keys(SECTIONS) as SectionId[];
+const TOC = SECTION_IDS.map((id) => ({ id, label: SECTIONS[id].toc ?? SECTIONS[id].title }));
 
+/** Kapitel mit derselben laufenden Nummer wie im Inhaltsverzeichnis (Darstellung R5-RECHT-01). */
 function Chapter({ id, children }: { id: SectionId; children: ReactNode }) {
   return (
-    <LegalSection id={id} title={SECTIONS[id].title}>
+    <RechtAbschnitt id={id} titel={SECTIONS[id].title} nummer={abschnittsNummer(SECTION_IDS.indexOf(id))}>
       {children}
-    </LegalSection>
+    </RechtAbschnitt>
   );
 }
 
@@ -145,12 +146,15 @@ const privacyMail = (
 
 export default function DatenschutzPage() {
   return (
-    <LegalDocument
-      title="Datenschutzerklärung"
-      breadcrumb="Datenschutz"
-      lead="Welche Daten wir verarbeiten, wenn du diese Website nutzt oder dich bei uns bewirbst, wofür und wie lange."
-      meta={`Stand: ${formatNoticeDate(PRIVACY_NOTICE_VERSION)}`}
-      toc={TOC}
+    <RechtDokument
+      // Weiche Trennstelle: das 20-Buchstaben-Wort bricht bei 320 px als „Datenschutz-/erklärung“
+      titel={'Datenschutz\u00ADerklärung'}
+      pfad="Datenschutz"
+      stand={`Stand: ${formatNoticeDate(PRIVACY_NOTICE_VERSION)}`}
+      einleitung={
+        <p>Welche Daten wir verarbeiten, wenn du diese Website nutzt oder dich bei uns bewirbst, wofür und wie lange.</p>
+      }
+      inhalt={TOC}
     >
       <Chapter id="verantwortlicher">
         <p>
@@ -497,9 +501,11 @@ export default function DatenschutzPage() {
         </p>
         <h3>Schriften</h3>
         <p>
-          Wir nutzen die Schrift Inter. Sie wird beim Erstellen der Website eingebunden und von unserem Hoster zusammen
-          mit den Seiten ausgeliefert. Dein Browser stellt dafür keine Verbindung zu Google Fonts oder anderen Dritten
-          her.
+          {/* Faktenkorrektur M-019 (E-022, R5-RECHT-01, 10.10.2026): statt „Inter“ die tatsächlich selbst gehosteten
+              Schriften (app/fonts, next/font/local); Vermerk in docs/operations/datenschutz-aenderungen.md 2.10. */}
+          Wir nutzen die Schriften Bricolage Grotesque, Atkinson Hyperlegible Next und Martian Mono. Sie werden beim
+          Erstellen der Website eingebunden und von unserem Hoster zusammen mit den Seiten ausgeliefert. Dein Browser
+          stellt dafür keine Verbindung zu Google Fonts oder anderen Dritten her.
         </p>
       </Chapter>
 
@@ -554,6 +560,6 @@ export default function DatenschutzPage() {
         </p>
         <LegalFacts items={AUTHORITY} />
       </Chapter>
-    </LegalDocument>
+    </RechtDokument>
   );
 }

@@ -1,0 +1,110 @@
+{
+  "label": "fertig-r5-ruhe",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T09:10:19.058Z",
+  "seiten": [
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 12005,
+      "seitenhoehe": 20083,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r5-ruhe/datenschutz__m390-light__01.webp",
+        "belege/fertig-r5-ruhe/datenschutz__m390-light__02.webp",
+        "belege/fertig-r5-ruhe/datenschutz__m390-light__03.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 6282,
+      "seitenhoehe": 13244,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r5-ruhe/datenschutz__d1440-light__01.webp",
+        "belege/fertig-r5-ruhe/datenschutz__d1440-light__02.webp",
+        "belege/fertig-r5-ruhe/datenschutz__d1440-light__03.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 6542,
+      "seitenhoehe": 5552,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r5-ruhe/impressum__m390-light__01.webp",
+        "belege/fertig-r5-ruhe/impressum__m390-light__02.webp",
+        "belege/fertig-r5-ruhe/impressum__m390-light__03.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 3581,
+      "seitenhoehe": 3768,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r5-ruhe/impressum__d1440-light__01.webp",
+        "belege/fertig-r5-ruhe/impressum__d1440-light__02.webp",
+        "belege/fertig-r5-ruhe/impressum__d1440-light__03.webp"
+      ]
+    }
+  ]
+}

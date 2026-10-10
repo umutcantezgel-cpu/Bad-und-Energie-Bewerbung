@@ -1,0 +1,124 @@
+/*
+ * 404-Seite (R4-404 in R5-RUHE, E-023). Nur Rollen und Skalen aus app/styles/theme.css; der Kopf selbst kommt aus
+ * components/seitenkopf (Variante erzaehl). Hier stehen die Lage der Zeichnung auf der Navy-Fläche und der
+ * Direktkontakt auf der Wand.
+ */
+
+/* ═══ Zeichnung: die offene Leitung, am Handy volle Breite, am Desktop mittig im Panel ═══
+   Die obere Fünftelhöhe der Zeichnung ist Luft über dem Wegweiser; am Handy rückt sie an die Unterzeile. */
+.zeichnung {
+  width: 100%;
+  max-width: 30rem;
+  margin-top: calc(var(--a-5) * -1);
+}
+
+@media (min-width: 37.5em) {
+  .zeichnung {
+    margin-top: 0;
+  }
+}
+
+/* Der Fehlercode als Maß in Bildgröße (wie die großen Maße des Einstiegs): Wert in der Zahlenstufe */
+.kopf [data-zeichnung="masskette"] > :first-child {
+  font-size: var(--text-numeral);
+}
+
+/* ═══ Direktkontakt und weitere Wege (Wand) ═══
+   Handy: Kopf, Ansprechpartner mit Telefon und WhatsApp, Wege. Desktop: links Kopf und Wege, rechts der Kontakt. */
+.raster {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "kopf" "kontakt" "wege";
+  row-gap: var(--a-7);
+}
+
+.kopfzeile {
+  grid-area: kopf;
+}
+
+.wege {
+  grid-area: wege;
+  display: grid;
+  row-gap: var(--a-3);
+}
+
+.wegListe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Wegweiser-Schild wie die Etiketten-Kästchen der Zeichnung: Rahmen 3 px in Navy, Fläche Papier */
+.schild {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--a-3);
+  min-height: var(--m-ziel);
+  padding: var(--a-2) var(--a-4);
+  border: var(--m-strich) solid var(--brand);
+  background-color: var(--surface);
+  color: var(--brand);
+  text-decoration: none;
+  transition: border-color var(--d-1) var(--k-ein);
+}
+
+.schildPfeil {
+  transition: transform var(--d-1) var(--k-ein);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .schild:hover {
+    border-color: var(--ruecklauf);
+    transition: border-color var(--d-2) var(--k-aus);
+  }
+
+  .schild:hover .schildPfeil {
+    transform: translateX(var(--a-1));
+    transition: transform var(--d-2) var(--k-aus);
+  }
+}
+
+.kontakt {
+  grid-area: kontakt;
+  display: grid;
+  align-content: start;
+  row-gap: var(--a-3);
+  min-width: 0;
+  padding-top: var(--a-5);
+  border-top: var(--m-strich) solid var(--brand);
+}
+
+.person {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-1);
+  margin-bottom: var(--a-2);
+}
+
+@media (min-width: 64em) {
+  .raster {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "kopf kontakt" "wege kontakt";
+    column-gap: var(--a-9);
+    row-gap: var(--a-7);
+    align-items: start;
+  }
+
+  .kontakt {
+    padding-top: 0;
+    padding-left: var(--a-7);
+    border-top: 0;
+    border-left: var(--m-strich) solid var(--brand);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .schild,
+  .schildPfeil {
+    transition: none;
+  }
+}

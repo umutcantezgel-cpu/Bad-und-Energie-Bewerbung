@@ -45,7 +45,7 @@ describe('Auftakt „Der Kreislauf läuft an“ (K-009, Register)', () => {
     }
   });
 
-  it('jede Dauer ist eine Stufe d-1…d-4, Verzögerungen nur aus Takt (auch ½) und Dauerstufen', () => {
+  it('jede Dauer ist eine Stufe d-1…d-4, Verzögerungen nur aus Takt und Dauerstufen', () => {
     for (const { selektor, dauer } of liste) expect(Object.values(DAUER_MS), selektor).toContain(dauer);
     const ausdruecke = [
       ...[...CSS.matchAll(/animation:\s*[^;]*?(calc\([^;]*\))\s+backwards;/g)].map((m) => m[1]),
@@ -53,7 +53,8 @@ describe('Auftakt „Der Kreislauf läuft an“ (K-009, Register)', () => {
     ];
     expect(ausdruecke.length).toBeGreaterThan(10);
     for (const a of ausdruecke) {
-      expect(a, a).toMatch(/^(?:calc\()?var\(--takt\)(?:\s*[*/]\s*\d+)?(?:\s*\+\s*var\(--d-[1-4]\))*\)?$/);
+      // Takt (Vielfache) oder eine Dauerstufe, dazu Summen aus Dauerstufen (Kette Knopf → Bogen → Pumpe)
+      expect(a, a).toMatch(/^(?:calc\()?(?:var\(--takt\)(?:\s*[*/]\s*\d+)?|var\(--d-[1-4]\))(?:\s*\+\s*var\(--d-[1-4]\))*\)?$/);
     }
   });
 

@@ -26,7 +26,7 @@ export const KREISLAUF_SATZ =
 /** Textknopf aus B Runde 1 (Register `kreislauf-zeigen`): sagt, was passiert. */
 export const KREISLAUF_KNOPF = 'Kreislauf zeigen';
 
-/** Beschriftung des Wegweisers an der Szene (B Runde 1): der Firmensitz. */
+/** Firmensitz (Wegweiser aus B Runde 1; die Szene nach Variante 3 zeigt keinen Wegweiser mehr). */
 export const WEGWEISER = COMPANY.address.city;
 
 /** Zweiter Weg neben der Hauptaktion (Plattform-Wortlaut aus dem bisherigen Hero). */
@@ -52,9 +52,9 @@ export interface Jahreskette {
 }
 
 /**
- * Maßkette unter dem Fundament (Variante 1 `.jahre`, nur Desktop): die 100 Jahre als Maß „1926 … 2026“,
- * ohne Wortlaut (E-023: „100 Jahre Meisterbetrieb“ steht schon als Ortsmarke über der h1, ein Abschnitt
- * nennt den Fakt einmal). Nach dem Jubiläumsjahr entfällt sie; „1926 Gegründet“ bleibt als Maß stehen.
+ * Jahres-Maßkette (nur Desktop): „2026“ am Ende der Maßlinie von „1926 Gegründet“, die 100 Jahre als Maß
+ * „1926 … 2026“ ohne Wortlaut (E-023: „100 Jahre Meisterbetrieb“ steht schon als Ortsmarke über der h1, ein
+ * Abschnitt nennt den Fakt einmal). Nach dem Jubiläumsjahr entfällt sie; „1926 Gegründet“ bleibt als Maß stehen.
  */
 export function jahreskette(now: Date): Jahreskette | null {
   if (!jubilaeumAktiv(now)) return null;

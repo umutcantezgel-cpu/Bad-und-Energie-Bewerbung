@@ -33,7 +33,7 @@
    Vorlauf, damit warm innen heller bleibt als kalt außen. */
 @media screen and (prefers-color-scheme: dark) {
   .held {
-    --wb-1: color-mix(in oklab, var(--ruecklauf) 62%, var(--surface));
+    --wb-1: color-mix(in oklch, var(--ruecklauf) 58%, var(--surface));
     --wb-2: var(--ink);
     --wb-3: color-mix(in oklab, var(--plakette) 80%, var(--vorlauf));
     --wb-4: var(--plakette);
@@ -74,6 +74,14 @@
 
 .ortsmarke {
   margin-bottom: var(--a-2);
+  text-wrap: balance;
+}
+
+/* Schmale Handys: das Jubiläum „100 Jahre Meisterbetrieb (1926–2026)“ bleibt ab 360 px auf einer Zeile */
+@media (max-width: 25.99em) {
+  .ortsmarke {
+    letter-spacing: 0.01em;
+  }
 }
 
 .titel {
@@ -277,6 +285,14 @@
   height: calc(var(--m-marke) - var(--a-2));
 }
 
+.glyphe {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .markeText {
   display: none;
   margin-left: -2px;
@@ -417,10 +433,21 @@
   background-color: var(--wb-vl);
 }
 
+/* Unten schließt sich der Kreis: Rücklauf und Vorlauf laufen in einem Bogen zusammen (Hälfte blau, Hälfte rot) */
+.schachtRl,
+.schachtVlUnten {
+  --bogen: calc((var(--vl-x) - var(--rl-x)) / 2 + var(--leitung) / 2);
+  bottom: 0;
+  width: var(--bogen);
+  border-bottom: var(--leitung) solid;
+  background-color: transparent;
+}
+
 .schachtRl {
   top: 0;
-  bottom: 0;
-  border-radius: 0 0 var(--radius-voll) var(--radius-voll);
+  border-left: var(--leitung) solid;
+  border-color: var(--wb-rl);
+  border-radius: 0 0 0 var(--bogen);
 }
 
 /* Bis zur Mitte des Knopfs (Rest beginnt mit --a-3, der Knopf ist --m-knopf hoch) und weiter bis zum Ende */
@@ -432,8 +459,10 @@
 
 .schachtVlUnten {
   top: calc(var(--a-3) + var(--m-knopf) / 2);
-  bottom: 0;
-  border-radius: 0 0 var(--radius-voll) var(--radius-voll);
+  left: calc((var(--rl-x) + var(--vl-x)) / 2);
+  border-right: var(--leitung) solid;
+  border-color: var(--wb-vl);
+  border-radius: 0 0 var(--bogen) 0;
 }
 
 /* ─── Rest auf Papier: mobil Knopf und Mikrotext in der Daumenzone, Einleitung danach ─── */
@@ -444,6 +473,10 @@
   flex-direction: column;
   align-items: flex-start;
   padding: var(--a-3) var(--rand) var(--a-6) var(--schacht);
+}
+
+.handlung {
+  display: contents;
 }
 
 .lead {
@@ -482,7 +515,6 @@
   align-items: center;
   justify-content: center;
   min-height: var(--m-knopf);
-  min-width: 14.5rem;
   padding: 0 var(--a-6);
   background-color: var(--accent);
   color: var(--on-accent);
@@ -708,7 +740,7 @@
 @media (max-width: 22.49em) {
   .masse {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    row-gap: var(--a-3);
+    row-gap: var(--a-2);
   }
 
   .ablesung {
@@ -737,8 +769,26 @@
     padding-top: var(--a-6);
   }
 
-  .marke:not(.markePumpe) .markeText {
+  /* Kästchen beschriftet: Wärmepumpen über dem Zeichen an der Bildkante, die anderen daneben */
+  .markeText {
     display: block;
+  }
+
+  .markePumpe .markeText {
+    position: absolute;
+    bottom: calc(100% + var(--a-2));
+    left: calc(var(--a-2) - var(--mx) * var(--e) + var(--m-marke) / 2);
+    margin: 0;
+  }
+
+  .markeHeizung {
+    --mx: 300;
+    --my: 614;
+  }
+
+  .markeBad {
+    --mx: 548;
+    --my: 640;
   }
 
   .ablesung {
@@ -764,9 +814,9 @@
     --rohr-e: 4;
     --mantel-e: 8;
     --m-marke: clamp(1.5rem, calc(44 * var(--e)), 1.75rem);
+    /* Zeilen: Titelblock · Handlung (beide neben der Fläche, zusammen mindestens --held-h) · Bildunterschrift */
     grid-template-columns: var(--rand) minmax(0, 1fr) var(--a-6) 50%;
-    grid-template-rows: auto 1fr;
-    min-height: var(--held-h);
+    grid-template-rows: auto 1fr auto;
   }
 
   /* Titelblock auf Papier: die Rollen des Inverse-Bands zurück auf die des Papiers */
@@ -808,17 +858,24 @@
     display: block;
   }
 
+  /* Rest löst sich ins Raster auf: Handlung links neben der Fläche, Erklärsatz als Bildunterschrift unter ihr */
   .rest {
+    display: contents;
+  }
+
+  .handlung {
     grid-column: 2;
     grid-row: 2;
-    padding: var(--a-6) 0 var(--a-6);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--a-6) 0 var(--a-7);
   }
 
   .lead,
   .aktion,
   .mikro,
-  .zweitweg,
-  .fuss {
+  .zweitweg {
     order: 0;
   }
 
@@ -836,10 +893,10 @@
   }
 
   .fuss {
-    flex-direction: column;
-    align-items: flex-start;
-    margin-top: auto;
-    padding-top: var(--a-6);
+    grid-column: 4;
+    grid-row: 3;
+    margin-top: 0;
+    padding: var(--a-4) var(--rand) 0 var(--a-6);
   }
 
   .leitung,
@@ -850,8 +907,10 @@
   /* Navy-Fläche über beide Zeilen; die Szene steht auf der Falz */
   .bild {
     grid-column: 4;
-    grid-row: 1 / -1;
+    grid-row: 1 / 3;
+    min-height: var(--held-h);
     overflow: clip;
+    anchor-name: --einstieg-flaeche;
   }
 
   .rahmen {
@@ -871,28 +930,6 @@
 
   .ablesung {
     display: none;
-  }
-
-  /* Kästchen am Desktop beschriftet: Wärmepumpen über dem Zeichen an der Bildkante, die anderen daneben */
-  .markeText {
-    display: block;
-  }
-
-  .markePumpe .markeText {
-    position: absolute;
-    bottom: calc(100% + var(--a-2));
-    left: calc(var(--a-2) - var(--mx) * var(--e) + var(--m-marke) / 2);
-    margin: 0;
-  }
-
-  .markeHeizung {
-    --mx: 300;
-    --my: 614;
-  }
-
-  .markeBad {
-    --mx: 548;
-    --my: 640;
   }
 
   /* Maße als Einblendung im kalten Himmel: 30 · 35 km · 1926 als Maßkette, 13:30 groß mit Hinweislinie zur Uhr */
@@ -953,28 +990,38 @@
     display: none;
   }
 
-  /* Jubiläumsjahr: 2026 am Ende der Maßlinie von 1926 */
+  /* Jubiläumsjahr: 2026 am Ende der Maßlinie von 1926, auf der Zeile des Namens */
+  .massLetzt .name {
+    padding-right: calc(var(--a-7) + var(--a-6));
+  }
+
   .jahre {
     display: block;
     position: absolute;
     right: 0;
-    top: calc(1em * 1.05 - var(--text-footnote) * 1.1);
+    bottom: 0;
     color: var(--ink-2);
     font-size: var(--text-footnote);
-    line-height: 1.1;
+    line-height: 1.6;
   }
 
-  /* Vorlauf aus dem Knopf in die Pumpe (Szene y 676 = 124 Einheiten über der Falz) */
+  /* Vorlauf aus dem Knopf in die Pumpe (Szene y 676 = 124 Einheiten über der Falz der Fläche) */
   .rohrD {
     display: block;
     position: absolute;
     z-index: 0;
     left: calc(anchor(--einstieg-knopf right) - var(--a-2));
-    right: 50%;
+    right: anchor(--einstieg-flaeche left);
     top: calc(anchor(--einstieg-knopf center) - 3px);
-    bottom: calc(124 * var(--e) - 3px);
-    overflow: visible;
+    bottom: calc(anchor(--einstieg-flaeche bottom) + 124 * var(--e) - 3px);
     pointer-events: none;
+  }
+
+  .rohrSvg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
   }
 
   .rohrD line,
@@ -1009,7 +1056,7 @@
     margin-top: var(--a-6);
   }
 
-  .rest {
+  .handlung {
     padding-top: var(--a-4);
   }
 }

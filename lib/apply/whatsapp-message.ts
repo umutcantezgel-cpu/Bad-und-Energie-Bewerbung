@@ -92,3 +92,30 @@ export function buildFollowUpMessage(input: FollowUpMessageInput): string {
     clean(input.message) || null,
   ]);
 }
+
+export interface MappeShareMessageInput {
+  /** Bewerbungsnummer, falls in diesem Tab schon eine Bewerbung abgeschickt wurde (be:application:v1). */
+  reference?: string | null;
+  /** Gewählte Stelle in der Mappe, z. B. „Anlagenmechaniker SHK (m/w/d)“ oder „Initiativbewerbung“. */
+  jobLabel?: string | null;
+  /** Name aus der Mappe, falls schon eingetragen. */
+  name?: string | null;
+}
+
+/** Schlusszeile der geteilten Mappe: WhatsApp nimmt keinen Anhang über den Link, das PDF kommt von Hand dazu. */
+export const MAPPE_SHARE_PDF_LINE = 'Die Mappe als PDF hänge ich hier im Chat an.';
+
+/**
+ * Mappe per WhatsApp teilen (E-BEW-020): ehrlich benannt, nur mit echten Eingaben (Nummer, Stelle, Name),
+ * ohne Standardwerte und ohne Behauptung eines „Dossiers“. Das PDF hängt der Bewerber im Chat selbst an.
+ */
+export function buildMappeShareMessage(input: MappeShareMessageInput = {}): string {
+  const reference = clean(input.reference);
+  const about = reference ? `zur Bewerbung ${reference}` : 'für Bad und Energie';
+  return compact([
+    `${WHATSAPP_GREETING} hier ist meine Bewerbungsmappe (Anschreiben und Lebenslauf) ${about}.`,
+    line('Stelle', input.jobLabel),
+    line('Name', input.name),
+    MAPPE_SHARE_PDF_LINE,
+  ]);
+}
