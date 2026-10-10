@@ -15,6 +15,10 @@ import { cn } from '@/lib/utils/cn';
 export interface GoogleRegionMapProps {
   /** Selected REGION location id; places at the headquarters select the HQ marker. */
   selectedId: string | null;
+  /** Chosen radius of the switch (E-START-033): its circle is drawn stronger and fills the view. */
+  radiusKm?: number;
+  /** All radii of the switch; each gets a thin circle around the headquarters. */
+  radii?: readonly number[];
   onReady: () => void;
   onFail: () => void;
   onSelect?: (id: string) => void;
@@ -30,11 +34,23 @@ const DARK_QUERY = '(prefers-color-scheme: dark)';
  * Google map of the service area. Only ever rendered after the 2-click consent and imported
  * lazily (next/dynamic) from RegionExplorer, so neither this code nor the loader ships before.
  */
-export default function GoogleRegionMap({ selectedId, onReady, onFail, onSelect, hidden, className }: GoogleRegionMapProps) {
+export default function GoogleRegionMap({
+  selectedId,
+  radiusKm = MAX_SERVICE_RADIUS_KM,
+  radii = [MAX_SERVICE_RADIUS_KM],
+  onReady,
+  onFail,
+  onSelect,
+  hidden,
+  className,
+}: GoogleRegionMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const callbacks = useRef({ onReady, onFail, onSelect });
   const selectedRef = useRef(selectedId);
   const applySelectionRef = useRef<((id: string | null) => void) | null>(null);
+  const radiusRef = useRef(radiusKm);
+  const radiiRef = useRef(radii);
+  const applyRadiusRef = useRef<((km: number) => void) | null>(null);
 
   useEffect(() => {
     callbacks.current = { onReady, onFail, onSelect };
@@ -44,6 +60,11 @@ export default function GoogleRegionMap({ selectedId, onReady, onFail, onSelect,
     selectedRef.current = selectedId;
     applySelectionRef.current?.(selectedId);
   }, [selectedId]);
+
+  useEffect(() => {
+    radiusRef.current = radiusKm;
+    applyRadiusRef.current?.(radiusKm);
+  }, [radiusKm]);
 
   useEffect(() => {
     let cancelled = false;
@@ -79,7 +100,7 @@ export default function GoogleRegionMap({ selectedId, onReady, onFail, onSelect,
         return;
       }
       try {
-        teardown = createMap(container, { selectedRef, applySelectionRef, callbacks, ready });
+        teardown = createMap(container, { selectedRef, applySelectionRef, radiusRef, radiiRef, applyRadiusRef, callbacks, ready });
       } catch (err) {
         console.warn('[Google Maps] Karte konnte nicht erstellt werden:', err);
         fail();
@@ -91,6 +112,7 @@ export default function GoogleRegionMap({ selectedId, onReady, onFail, onSelect,
       window.clearTimeout(timeout);
       unsubscribeAuth();
       applySelectionRef.current = null;
+      applyRadiusRef.current = null;
       teardown();
     };
   }, []);
@@ -113,11 +135,17 @@ export default function GoogleRegionMap({ selectedId, onReady, onFail, onSelect,
 interface MapContext {
   selectedRef: { current: string | null };
   applySelectionRef: { current: ((id: string | null) => void) | null };
+  radiusRef: { current: number };
+  radiiRef: { current: readonly number[] };
+  applyRadiusRef: { current: ((km: number) => void) | null };
   callbacks: { current: Pick<GoogleRegionMapProps, 'onSelect'> };
   ready: () => void;
 }
 
-function createMap(container: HTMLDivElement, { selectedRef, applySelectionRef, callbacks, ready }: MapContext): () => void {
+function createMap(
+  container: HTMLDivElement,
+  { selectedRef, applySelectionRef, radiusRef, radiiRef, applyRadiusRef, callbacks, ready }: MapContext,
+): () => void {
   const g = window.google!.maps;
   const scheme = window.matchMedia(DARK_QUERY);
   const palette = (): MapPalette => MAP_PALETTES[scheme.matches ? 'dark' : 'light'];
@@ -134,18 +162,38 @@ function createMap(container: HTMLDivElement, { selectedRef, applySelectionRef, 
     gestureHandling: 'cooperative',
   });
 
-  const circle = new g.Circle({
-    map,
-    center: HEADQUARTERS_COORDINATES,
-    radius: MAX_SERVICE_RADIUS_KM * 1000,
-    clickable: false,
-    fillOpacity: 0,
-    strokeColor: palette().lineStrong,
-    strokeOpacity: 1,
-    strokeWeight: 1,
-  });
-  const bounds = circle.getBounds();
-  if (bounds) map.fitBounds(bounds, 8);
+  // E-START-033: one thin circle per switch radius (15, 25, 35 km), lines only; the chosen one is
+  // drawn stronger and framed. Same ring logic as the radius graphic.
+  const circles = radiiRef.current.map((km) => ({
+    km,
+    circle: new g.Circle({
+      map,
+      center: HEADQUARTERS_COORDINATES,
+      radius: km * 1000,
+      clickable: false,
+      fillOpacity: 0,
+      strokeColor: palette().lineStrong,
+      strokeOpacity: 1,
+      strokeWeight: 1,
+    }),
+  }));
+  const paintCircles = () => {
+    const colors = palette();
+    for (const { km, circle } of circles) {
+      const active = km === radiusRef.current;
+      circle.setOptions({ strokeColor: active ? colors.ink : colors.lineStrong, strokeWeight: active ? 2 : 1 });
+    }
+  };
+  const frameRadius = (km: number) => {
+    const bounds = circles.find((c) => c.km === km)?.circle.getBounds();
+    if (bounds) map.fitBounds(bounds, 8);
+  };
+  paintCircles();
+  frameRadius(radiusRef.current);
+  applyRadiusRef.current = (km) => {
+    paintCircles();
+    frameRadius(km);
+  };
 
   const markers = MAP_POIS.map((poi) => {
     const marker = new g.Marker({ map, position: poi.coordinates, title: poi.name });
@@ -179,7 +227,7 @@ function createMap(container: HTMLDivElement, { selectedRef, applySelectionRef, 
     const colors = palette();
     // backgroundColor can only be set at creation; the tiles cover it once loaded.
     map.setOptions({ styles: buildMapStyle(colors) });
-    circle.setOptions({ strokeColor: colors.lineStrong });
+    paintCircles();
     paintMarkers();
   };
 
@@ -200,7 +248,7 @@ function createMap(container: HTMLDivElement, { selectedRef, applySelectionRef, 
       g.event.clearInstanceListeners(marker);
       marker.setMap(null);
     }
-    circle.setMap(null);
+    for (const { circle } of circles) circle.setMap(null);
     g.event.clearInstanceListeners(map);
   };
 }

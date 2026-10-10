@@ -1,0 +1,299 @@
+{
+  "mode": "ohnejs",
+  "erstellt": "2026-10-09T23:08:02.017Z",
+  "laeufe": [
+    {
+      "vp": "m390",
+      "m": {
+        "vw": 390,
+        "ih": 844,
+        "scrollW": 390,
+        "ueber": [
+          {
+            "tag": "LI",
+            "cls": "flex shrink-0 basis-5/6 snap-start sm:basis-[calc(50%-0.5rem",
+            "left": 328,
+            "right": 619
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex w-full flex-col gap-4 rounded-2 bg-surface-2 p-6",
+            "left": 328,
+            "right": 619
+          },
+          {
+            "tag": "FIGURE",
+            "cls": "flex flex-1 flex-col gap-5",
+            "left": 352,
+            "right": 595
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex min-h-6 items-center",
+            "left": 352,
+            "right": 595
+          },
+          {
+            "tag": "P",
+            "cls": "text-etikett text-ink-muted",
+            "left": 352,
+            "right": 463
+          },
+          {
+            "tag": "BLOCKQUOTE",
+            "cls": "flex-1 text-body text-ink",
+            "left": 352,
+            "right": 595
+          },
+          {
+            "tag": "P",
+            "cls": "",
+            "left": 352,
+            "right": 595
+          },
+          {
+            "tag": "FIGCAPTION",
+            "cls": "text-callout",
+            "left": 352,
+            "right": 595
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block font-bold text-brand",
+            "left": 352,
+            "right": 595
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block text-ink-muted",
+            "left": 352,
+            "right": 595
+          }
+        ],
+        "anzahlUeber": 180,
+        "h1": {
+          "x": 20,
+          "y": 84,
+          "w": 350,
+          "h": 198,
+          "bottom": 283,
+          "right": 370
+        },
+        "h1Font": "76.15px",
+        "aktion": {
+          "x": 20,
+          "y": 742,
+          "w": 210,
+          "h": 56,
+          "bottom": 798,
+          "right": 230
+        },
+        "mikro": {
+          "x": 20,
+          "y": 806,
+          "w": 350,
+          "h": 23,
+          "bottom": 829,
+          "right": 370
+        },
+        "zweit": {
+          "x": 246,
+          "y": 748,
+          "w": 124,
+          "h": 44,
+          "bottom": 792,
+          "right": 370
+        },
+        "knopf": {
+          "x": 20,
+          "y": 957,
+          "w": 180,
+          "h": 44,
+          "bottom": 1001,
+          "right": 200
+        },
+        "knopfVis": "hidden/flex",
+        "satz": {
+          "x": 20,
+          "y": 877,
+          "w": 350,
+          "h": 68,
+          "bottom": 945,
+          "right": 370
+        },
+        "vertrauen": {
+          "x": 20,
+          "y": 1033,
+          "w": 350,
+          "h": 217,
+          "bottom": 1250,
+          "right": 370
+        },
+        "vertrauenZeilen": 6,
+        "abgeschnitten": [],
+        "minFont": 14,
+        "minFontText": "100 Jahre Meisterbetrieb (1926",
+        "schild": null,
+        "held": {
+          "x": 0,
+          "y": 57,
+          "w": 390,
+          "h": 1193,
+          "bottom": 1250,
+          "right": 390
+        },
+        "anzahlH1": 1
+      }
+    },
+    {
+      "vp": "d1440",
+      "m": {
+        "vw": 1440,
+        "ih": 900,
+        "scrollW": 1440,
+        "ueber": [
+          {
+            "tag": "LI",
+            "cls": "flex shrink-0 basis-5/6 snap-start sm:basis-[calc(50%-0.5rem",
+            "left": 1280,
+            "right": 1632
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex w-full flex-col gap-4 rounded-2 bg-surface-2 p-6",
+            "left": 1280,
+            "right": 1632
+          },
+          {
+            "tag": "FIGURE",
+            "cls": "flex flex-1 flex-col gap-5",
+            "left": 1304,
+            "right": 1608
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex min-h-6 items-center",
+            "left": 1304,
+            "right": 1608
+          },
+          {
+            "tag": "BLOCKQUOTE",
+            "cls": "flex-1 text-body text-ink",
+            "left": 1304,
+            "right": 1608
+          },
+          {
+            "tag": "P",
+            "cls": "",
+            "left": 1304,
+            "right": 1608
+          },
+          {
+            "tag": "FIGCAPTION",
+            "cls": "text-callout",
+            "left": 1304,
+            "right": 1608
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block font-bold text-brand",
+            "left": 1304,
+            "right": 1608
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block text-ink-muted",
+            "left": 1304,
+            "right": 1608
+          },
+          {
+            "tag": "LI",
+            "cls": "flex shrink-0 basis-5/6 snap-start sm:basis-[calc(50%-0.5rem",
+            "left": 1648,
+            "right": 2000
+          }
+        ],
+        "anzahlUeber": 150,
+        "h1": {
+          "x": 58,
+          "y": 136,
+          "w": 704,
+          "h": 318,
+          "bottom": 454,
+          "right": 762
+        },
+        "h1Font": "127.84px",
+        "aktion": {
+          "x": 58,
+          "y": 761,
+          "w": 288,
+          "h": 56,
+          "bottom": 817,
+          "right": 346
+        },
+        "mikro": {
+          "x": 58,
+          "y": 835,
+          "w": 334,
+          "h": 25,
+          "bottom": 859,
+          "right": 391
+        },
+        "zweit": {
+          "x": 423,
+          "y": 825,
+          "w": 197,
+          "h": 44,
+          "bottom": 869,
+          "right": 621
+        },
+        "knopf": {
+          "x": 1090,
+          "y": 915,
+          "w": 187,
+          "h": 44,
+          "bottom": 959,
+          "right": 1277
+        },
+        "knopfVis": "hidden/flex",
+        "satz": {
+          "x": 622,
+          "y": 901,
+          "w": 435,
+          "h": 72,
+          "bottom": 973,
+          "right": 1058
+        },
+        "vertrauen": {
+          "x": 58,
+          "y": 1005,
+          "w": 1325,
+          "h": 108,
+          "bottom": 1113,
+          "right": 1382
+        },
+        "vertrauenZeilen": 2,
+        "abgeschnitten": [],
+        "minFont": 14,
+        "minFontText": "100 Jahre Meisterbetrieb (1926",
+        "schild": {
+          "x": 1298,
+          "y": 593,
+          "w": 79,
+          "h": 26,
+          "bottom": 619,
+          "right": 1377
+        },
+        "held": {
+          "x": 0,
+          "y": 65,
+          "w": 1440,
+          "h": 1048,
+          "bottom": 1113,
+          "right": 1440
+        },
+        "anzahlH1": 1
+      }
+    }
+  ]
+}

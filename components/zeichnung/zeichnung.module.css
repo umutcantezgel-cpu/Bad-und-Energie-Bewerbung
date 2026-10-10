@@ -1,0 +1,36 @@
+/*
+ * Formsystem der wiederkehrenden Zeichnungen (KERN K-008, K-010; Variante 1, BEGRUENDUNG §4):
+ * eine Strichstärke (--m-strich), runde Enden, Vorlauf rot oben, Rücklauf blau unten, Paarabstand --paar.
+ * Farben nur über die Rollen (--vorlauf, --ruecklauf); hell, dunkel, Inverse-Band und Druck kommen aus theme.css.
+ */
+
+.strich {
+  fill: none;
+  stroke-width: var(--m-strich);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.vorlauf {
+  stroke: var(--vorlauf);
+}
+
+.ruecklauf {
+  stroke: var(--ruecklauf);
+}
+
+/* Leitungstrenner: das Paar quer durch den Behälter, Höhe = zwei Paarabstände + ein Strich */
+.trenner {
+  display: block;
+  width: 100%;
+  height: calc(var(--paar) * 2 + var(--m-strich));
+  overflow: hidden;
+}
+
+/* Rohrklammer: feste Breite --a-5, Höhe vom Elternelement (z. B. zwei Textzeilen) */
+.klammer {
+  display: block;
+  width: var(--a-5);
+  height: 100%;
+  overflow: visible;
+}

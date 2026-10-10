@@ -1,0 +1,478 @@
+{
+  "mode": "tastatur",
+  "erstellt": "2026-10-09T23:08:18.905Z",
+  "laeufe": [
+    {
+      "vp": "m390",
+      "scheme": "light",
+      "stationen": [
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Zum Inhalt springen",
+          "outline": "solid 0px rgb(17, 26, 59) off 0px",
+          "w": 155,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Bad und Energie GmbH Lahn Dill, zur Star",
+          "outline": "solid 0px rgb(17, 26, 59) off 0px",
+          "w": 191,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "BUTTON",
+          "text": "Menü",
+          "outline": "solid 3px rgb(17, 26, 59) off 3px",
+          "w": 44,
+          "h": 44
+        },
+        {
+          "imEinstieg": true,
+          "tag": "A",
+          "text": "Jetzt bewerben",
+          "outline": "solid 0px rgb(255, 255, 255) off 0px",
+          "w": 210,
+          "h": 56
+        },
+        {
+          "imEinstieg": true,
+          "tag": "A",
+          "text": "Offene Stellen ansehen",
+          "outline": "solid 0px rgb(17, 26, 59) off 0px",
+          "w": 124,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Alle Stellen im Überblick",
+          "outline": "solid 3px rgb(69, 76, 120) off 3px",
+          "w": 193,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Anlagen­mechaniker SHK",
+          "outline": "none 0px rgb(17, 29, 109) off 0px",
+          "w": 192,
+          "h": 47
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Kunden­dienst­techniker",
+          "outline": "none 0px rgb(17, 29, 109) off 0px",
+          "w": 141,
+          "h": 47
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Ober­monteur / Projekt­leiter",
+          "outline": "none 0px rgb(17, 29, 109) off 0px",
+          "w": 141,
+          "h": 47
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Ausbildung Anlagen­mechaniker",
+          "outline": "none 0px rgb(17, 29, 109) off 0px",
+          "w": 198,
+          "h": 47
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Initiativ bewerben",
+          "outline": "solid 3px rgb(17, 26, 59) off 3px",
+          "w": 136,
+          "h": 22
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Seite zur Ausbildung",
+          "outline": "solid 3px rgb(17, 26, 59) off 3px",
+          "w": 255,
+          "h": 54
+        },
+        {
+          "imEinstieg": false,
+          "tag": "INPUT",
+          "text": "",
+          "outline": "solid 0px rgb(17, 26, 59) off 0px",
+          "w": 1,
+          "h": 1
+        },
+        {
+          "imEinstieg": false,
+          "tag": "INPUT",
+          "text": "",
+          "outline": "solid 0px rgb(17, 26, 59) off 0px",
+          "w": 1,
+          "h": 1
+        }
+      ]
+    },
+    {
+      "vp": "m390",
+      "scheme": "dark",
+      "stationen": [
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Zum Inhalt springen",
+          "outline": "solid 3px rgb(134, 174, 255) off 3px",
+          "w": 181,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Bad und Energie GmbH Lahn Dill, zur Star",
+          "outline": "solid 0px rgb(246, 240, 228) off 0px",
+          "w": 191,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "BUTTON",
+          "text": "Menü",
+          "outline": "solid 3px rgb(134, 174, 255) off 3px",
+          "w": 44,
+          "h": 44
+        },
+        {
+          "imEinstieg": true,
+          "tag": "A",
+          "text": "Jetzt bewerben",
+          "outline": "solid 0px rgb(255, 255, 255) off 0px",
+          "w": 210,
+          "h": 56
+        },
+        {
+          "imEinstieg": true,
+          "tag": "A",
+          "text": "Offene Stellen ansehen",
+          "outline": "solid 0px rgb(246, 240, 228) off 0px",
+          "w": 124,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Alle Stellen im Überblick",
+          "outline": "solid 3px rgb(185, 192, 232) off 3px",
+          "w": 193,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Anlagen­mechaniker SHK",
+          "outline": "none 0px rgb(246, 240, 228) off 0px",
+          "w": 192,
+          "h": 47
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Kunden­dienst­techniker",
+          "outline": "none 0px rgb(246, 240, 228) off 0px",
+          "w": 141,
+          "h": 47
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Ober­monteur / Projekt­leiter",
+          "outline": "none 0px rgb(246, 240, 228) off 0px",
+          "w": 141,
+          "h": 47
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Ausbildung Anlagen­mechaniker",
+          "outline": "none 0px rgb(246, 240, 228) off 0px",
+          "w": 198,
+          "h": 47
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Initiativ bewerben",
+          "outline": "solid 3px rgb(246, 240, 228) off 3px",
+          "w": 136,
+          "h": 22
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Seite zur Ausbildung",
+          "outline": "solid 3px rgb(246, 240, 228) off 3px",
+          "w": 255,
+          "h": 54
+        },
+        {
+          "imEinstieg": false,
+          "tag": "INPUT",
+          "text": "",
+          "outline": "solid 0px rgb(246, 240, 228) off 0px",
+          "w": 1,
+          "h": 1
+        },
+        {
+          "imEinstieg": false,
+          "tag": "INPUT",
+          "text": "",
+          "outline": "solid 0px rgb(246, 240, 228) off 0px",
+          "w": 1,
+          "h": 1
+        }
+      ]
+    },
+    {
+      "vp": "d1440",
+      "scheme": "light",
+      "stationen": [
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Zum Inhalt springen",
+          "outline": "solid 3px rgb(31, 87, 196) off 3px",
+          "w": 191,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Bad und Energie GmbH Lahn Dill, zur Star",
+          "outline": "solid 0px rgb(17, 26, 59) off 0px",
+          "w": 234,
+          "h": 48
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Stellen",
+          "outline": "solid 3px rgb(69, 76, 120) off 3px",
+          "w": 74,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Vorteile",
+          "outline": "solid 3px rgb(69, 76, 120) off 3px",
+          "w": 80,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Ablauf",
+          "outline": "solid 3px rgb(69, 76, 120) off 3px",
+          "w": 71,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "FAQ",
+          "outline": "solid 3px rgb(69, 76, 120) off 3px",
+          "w": 54,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "06441 42956 anrufen",
+          "outline": "solid 0px rgb(17, 26, 59) off 0px",
+          "w": 130,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Bewerben",
+          "outline": "solid 3px rgb(17, 26, 59) off 3px",
+          "w": 105,
+          "h": 40
+        },
+        {
+          "imEinstieg": true,
+          "tag": "A",
+          "text": "Jetzt bewerben",
+          "outline": "solid 0px rgb(255, 255, 255) off 0px",
+          "w": 288,
+          "h": 56
+        },
+        {
+          "imEinstieg": true,
+          "tag": "A",
+          "text": "Offene Stellen ansehen",
+          "outline": "solid 0px rgb(17, 26, 59) off 0px",
+          "w": 197,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Alle Stellen im Überblick",
+          "outline": "solid 3px rgb(69, 76, 120) off 3px",
+          "w": 225,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Anlagen­mechaniker SHK",
+          "outline": "none 0px rgb(17, 29, 109) off 0px",
+          "w": 338,
+          "h": 35
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Kunden­dienst­techniker",
+          "outline": "none 0px rgb(17, 29, 109) off 0px",
+          "w": 322,
+          "h": 35
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Ober­monteur / Projekt­leiter",
+          "outline": "none 0px rgb(17, 29, 109) off 0px",
+          "w": 377,
+          "h": 35
+        }
+      ]
+    },
+    {
+      "vp": "d1440",
+      "scheme": "dark",
+      "stationen": [
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Zum Inhalt springen",
+          "outline": "solid 3px rgb(134, 174, 255) off 3px",
+          "w": 191,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Bad und Energie GmbH Lahn Dill, zur Star",
+          "outline": "solid 0px rgb(246, 240, 228) off 0px",
+          "w": 234,
+          "h": 48
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Stellen",
+          "outline": "solid 3px rgb(185, 192, 232) off 3px",
+          "w": 74,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Vorteile",
+          "outline": "solid 3px rgb(185, 192, 232) off 3px",
+          "w": 80,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Ablauf",
+          "outline": "solid 3px rgb(185, 192, 232) off 3px",
+          "w": 71,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "FAQ",
+          "outline": "solid 3px rgb(185, 192, 232) off 3px",
+          "w": 54,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "06441 42956 anrufen",
+          "outline": "solid 0px rgb(246, 240, 228) off 0px",
+          "w": 130,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Bewerben",
+          "outline": "solid 3px rgb(246, 240, 228) off 3px",
+          "w": 105,
+          "h": 40
+        },
+        {
+          "imEinstieg": true,
+          "tag": "A",
+          "text": "Jetzt bewerben",
+          "outline": "solid 0px rgb(255, 255, 255) off 0px",
+          "w": 288,
+          "h": 56
+        },
+        {
+          "imEinstieg": true,
+          "tag": "A",
+          "text": "Offene Stellen ansehen",
+          "outline": "solid 0px rgb(246, 240, 228) off 0px",
+          "w": 197,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Alle Stellen im Überblick",
+          "outline": "solid 3px rgb(185, 192, 232) off 3px",
+          "w": 225,
+          "h": 44
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Anlagen­mechaniker SHK",
+          "outline": "none 0px rgb(246, 240, 228) off 0px",
+          "w": 338,
+          "h": 35
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Kunden­dienst­techniker",
+          "outline": "none 0px rgb(246, 240, 228) off 0px",
+          "w": 322,
+          "h": 35
+        },
+        {
+          "imEinstieg": false,
+          "tag": "A",
+          "text": "Ober­monteur / Projekt­leiter",
+          "outline": "none 0px rgb(246, 240, 228) off 0px",
+          "w": 377,
+          "h": 35
+        }
+      ]
+    }
+  ]
+}

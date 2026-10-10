@@ -5,6 +5,7 @@ import { COMPANY } from '@/lib/content/company';
 import { jobPath } from '@/lib/jobs/format';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
+import { FooterPlaces } from './FooterPlaces';
 import { FooterSwitch } from './FooterSwitch';
 
 const linkClass =
@@ -134,6 +135,11 @@ function FullFooter({ year }: { year: number }) {
             </ul>
           </nav>
         </Column>
+      </Container>
+
+      {/* E-SHELL-021 (R3-HOME-03): Ortsliste des Einsatzgebiets; die Gestaltung des Fußes folgt in R4. */}
+      <Container size="wide">
+        <FooterPlaces className="border-t border-line py-8" />
       </Container>
 
       <Container size="wide">

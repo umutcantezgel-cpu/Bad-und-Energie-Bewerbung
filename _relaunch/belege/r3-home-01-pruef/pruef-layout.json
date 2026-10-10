@@ -1,0 +1,1497 @@
+{
+  "mode": "layout",
+  "erstellt": "2026-10-09T23:05:37.498Z",
+  "laeufe": [
+    {
+      "vp": "m320",
+      "scheme": "light",
+      "m": {
+        "vw": 320,
+        "ih": 568,
+        "scrollW": 320,
+        "ueber": [
+          {
+            "tag": "LI",
+            "cls": "flex shrink-0 basis-5/6 snap-start sm:basis-[calc(50%-0.5rem",
+            "left": 269,
+            "right": 503
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex w-full flex-col gap-4 rounded-2 bg-surface-2 p-6",
+            "left": 269,
+            "right": 503
+          },
+          {
+            "tag": "FIGURE",
+            "cls": "flex flex-1 flex-col gap-5",
+            "left": 293,
+            "right": 479
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex min-h-6 flex-wrap items-center justify-between gap-x-3 ",
+            "left": 293,
+            "right": 479
+          },
+          {
+            "tag": "P",
+            "cls": "text-etikett text-ink-muted",
+            "left": 293,
+            "right": 404
+          },
+          {
+            "tag": "BLOCKQUOTE",
+            "cls": "flex-1 text-body text-ink",
+            "left": 293,
+            "right": 479
+          },
+          {
+            "tag": "P",
+            "cls": "",
+            "left": 293,
+            "right": 479
+          },
+          {
+            "tag": "FIGCAPTION",
+            "cls": "text-callout",
+            "left": 293,
+            "right": 479
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block font-bold text-brand",
+            "left": 293,
+            "right": 479
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block text-ink-muted",
+            "left": 293,
+            "right": 479
+          }
+        ],
+        "anzahlUeber": 180,
+        "h1": {
+          "x": 20,
+          "y": 92,
+          "w": 280,
+          "h": 128,
+          "bottom": 219,
+          "right": 300
+        },
+        "h1Font": "40px",
+        "aktion": {
+          "x": 20,
+          "y": 451,
+          "w": 191,
+          "h": 56,
+          "bottom": 507,
+          "right": 211
+        },
+        "mikro": {
+          "x": 20,
+          "y": 515,
+          "w": 280,
+          "h": 47,
+          "bottom": 561,
+          "right": 300
+        },
+        "zweit": {
+          "x": 223,
+          "y": 451,
+          "w": 77,
+          "h": 55,
+          "bottom": 506,
+          "right": 300
+        },
+        "knopf": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "bottom": 0,
+          "right": 0
+        },
+        "knopfVis": "visible/none",
+        "satz": {
+          "x": 20,
+          "y": 745,
+          "w": 280,
+          "h": 68,
+          "bottom": 813,
+          "right": 300
+        },
+        "vertrauen": {
+          "x": 20,
+          "y": 845,
+          "w": 280,
+          "h": 241,
+          "bottom": 1086,
+          "right": 300
+        },
+        "vertrauenZeilen": 6,
+        "abgeschnitten": [],
+        "minFont": 14,
+        "minFontText": "100 Jahre Meisterbetrieb (1926",
+        "schild": null,
+        "held": {
+          "x": 0,
+          "y": 57,
+          "w": 320,
+          "h": 1029,
+          "bottom": 1086,
+          "right": 320
+        },
+        "anzahlH1": 1
+      },
+      "errors": [],
+      "gesperrt": 0
+    },
+    {
+      "vp": "m320h",
+      "scheme": "light",
+      "m": {
+        "vw": 320,
+        "ih": 700,
+        "scrollW": 320,
+        "ueber": [
+          {
+            "tag": "LI",
+            "cls": "flex shrink-0 basis-5/6 snap-start sm:basis-[calc(50%-0.5rem",
+            "left": 269,
+            "right": 503
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex w-full flex-col gap-4 rounded-2 bg-surface-2 p-6",
+            "left": 269,
+            "right": 503
+          },
+          {
+            "tag": "FIGURE",
+            "cls": "flex flex-1 flex-col gap-5",
+            "left": 293,
+            "right": 479
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex min-h-6 flex-wrap items-center justify-between gap-x-3 ",
+            "left": 293,
+            "right": 479
+          },
+          {
+            "tag": "P",
+            "cls": "text-etikett text-ink-muted",
+            "left": 293,
+            "right": 404
+          },
+          {
+            "tag": "BLOCKQUOTE",
+            "cls": "flex-1 text-body text-ink",
+            "left": 293,
+            "right": 479
+          },
+          {
+            "tag": "P",
+            "cls": "",
+            "left": 293,
+            "right": 479
+          },
+          {
+            "tag": "FIGCAPTION",
+            "cls": "text-callout",
+            "left": 293,
+            "right": 479
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block font-bold text-brand",
+            "left": 293,
+            "right": 479
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block text-ink-muted",
+            "left": 293,
+            "right": 479
+          }
+        ],
+        "anzahlUeber": 180,
+        "h1": {
+          "x": 20,
+          "y": 92,
+          "w": 280,
+          "h": 159,
+          "bottom": 250,
+          "right": 300
+        },
+        "h1Font": "56.8px",
+        "aktion": {
+          "x": 20,
+          "y": 659,
+          "w": 207,
+          "h": 56,
+          "bottom": 715,
+          "right": 227
+        },
+        "mikro": {
+          "x": 20,
+          "y": 723,
+          "w": 280,
+          "h": 47,
+          "bottom": 769,
+          "right": 300
+        },
+        "zweit": {
+          "x": 243,
+          "y": 659,
+          "w": 57,
+          "h": 55,
+          "bottom": 714,
+          "right": 300
+        },
+        "knopf": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "bottom": 0,
+          "right": 0
+        },
+        "knopfVis": "visible/none",
+        "satz": {
+          "x": 20,
+          "y": 817,
+          "w": 280,
+          "h": 68,
+          "bottom": 885,
+          "right": 300
+        },
+        "vertrauen": {
+          "x": 20,
+          "y": 917,
+          "w": 280,
+          "h": 241,
+          "bottom": 1158,
+          "right": 300
+        },
+        "vertrauenZeilen": 6,
+        "abgeschnitten": [
+          "AUSSERHALB: Offene Stellen ansehen 243..324",
+          "AUSSERHALB: ansehen 243..324"
+        ],
+        "minFont": 14,
+        "minFontText": "100 Jahre Meisterbetrieb (1926",
+        "schild": null,
+        "held": {
+          "x": 0,
+          "y": 57,
+          "w": 320,
+          "h": 1101,
+          "bottom": 1158,
+          "right": 320
+        },
+        "anzahlH1": 1
+      },
+      "errors": [],
+      "gesperrt": 0
+    },
+    {
+      "vp": "m375",
+      "scheme": "light",
+      "m": {
+        "vw": 375,
+        "ih": 812,
+        "scrollW": 375,
+        "ueber": [
+          {
+            "tag": "LI",
+            "cls": "flex shrink-0 basis-5/6 snap-start sm:basis-[calc(50%-0.5rem",
+            "left": 315,
+            "right": 594
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex w-full flex-col gap-4 rounded-2 bg-surface-2 p-6",
+            "left": 315,
+            "right": 594
+          },
+          {
+            "tag": "FIGURE",
+            "cls": "flex flex-1 flex-col gap-5",
+            "left": 339,
+            "right": 570
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex min-h-6 flex-wrap items-center justify-between gap-x-3 ",
+            "left": 339,
+            "right": 570
+          },
+          {
+            "tag": "P",
+            "cls": "text-etikett text-ink-muted",
+            "left": 339,
+            "right": 450
+          },
+          {
+            "tag": "BLOCKQUOTE",
+            "cls": "flex-1 text-body text-ink",
+            "left": 339,
+            "right": 570
+          },
+          {
+            "tag": "P",
+            "cls": "",
+            "left": 339,
+            "right": 570
+          },
+          {
+            "tag": "FIGCAPTION",
+            "cls": "text-callout",
+            "left": 339,
+            "right": 570
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block font-bold text-brand",
+            "left": 339,
+            "right": 570
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block text-ink-muted",
+            "left": 339,
+            "right": 570
+          }
+        ],
+        "anzahlUeber": 180,
+        "h1": {
+          "x": 20,
+          "y": 84,
+          "w": 335,
+          "h": 193,
+          "bottom": 277,
+          "right": 355
+        },
+        "h1Font": "73.375px",
+        "aktion": {
+          "x": 20,
+          "y": 710,
+          "w": 208,
+          "h": 56,
+          "bottom": 766,
+          "right": 228
+        },
+        "mikro": {
+          "x": 20,
+          "y": 774,
+          "w": 335,
+          "h": 23,
+          "bottom": 797,
+          "right": 355
+        },
+        "zweit": {
+          "x": 244,
+          "y": 716,
+          "w": 111,
+          "h": 44,
+          "bottom": 760,
+          "right": 355
+        },
+        "knopf": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "bottom": 0,
+          "right": 0
+        },
+        "knopfVis": "visible/none",
+        "satz": {
+          "x": 20,
+          "y": 845,
+          "w": 335,
+          "h": 68,
+          "bottom": 913,
+          "right": 355
+        },
+        "vertrauen": {
+          "x": 20,
+          "y": 945,
+          "w": 335,
+          "h": 241,
+          "bottom": 1186,
+          "right": 355
+        },
+        "vertrauenZeilen": 6,
+        "abgeschnitten": [],
+        "minFont": 14,
+        "minFontText": "100 Jahre Meisterbetrieb (1926",
+        "schild": null,
+        "held": {
+          "x": 0,
+          "y": 57,
+          "w": 375,
+          "h": 1129,
+          "bottom": 1186,
+          "right": 375
+        },
+        "anzahlH1": 1
+      },
+      "errors": [],
+      "gesperrt": 0
+    },
+    {
+      "vp": "m390",
+      "scheme": "light",
+      "m": {
+        "vw": 390,
+        "ih": 844,
+        "scrollW": 390,
+        "ueber": [
+          {
+            "tag": "LI",
+            "cls": "flex shrink-0 basis-5/6 snap-start sm:basis-[calc(50%-0.5rem",
+            "left": 328,
+            "right": 619
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex w-full flex-col gap-4 rounded-2 bg-surface-2 p-6",
+            "left": 328,
+            "right": 619
+          },
+          {
+            "tag": "FIGURE",
+            "cls": "flex flex-1 flex-col gap-5",
+            "left": 352,
+            "right": 595
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex min-h-6 flex-wrap items-center justify-between gap-x-3 ",
+            "left": 352,
+            "right": 595
+          },
+          {
+            "tag": "P",
+            "cls": "text-etikett text-ink-muted",
+            "left": 352,
+            "right": 463
+          },
+          {
+            "tag": "BLOCKQUOTE",
+            "cls": "flex-1 text-body text-ink",
+            "left": 352,
+            "right": 595
+          },
+          {
+            "tag": "P",
+            "cls": "",
+            "left": 352,
+            "right": 595
+          },
+          {
+            "tag": "FIGCAPTION",
+            "cls": "text-callout",
+            "left": 352,
+            "right": 595
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block font-bold text-brand",
+            "left": 352,
+            "right": 595
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block text-ink-muted",
+            "left": 352,
+            "right": 595
+          }
+        ],
+        "anzahlUeber": 180,
+        "h1": {
+          "x": 20,
+          "y": 84,
+          "w": 350,
+          "h": 198,
+          "bottom": 283,
+          "right": 370
+        },
+        "h1Font": "76.15px",
+        "aktion": {
+          "x": 20,
+          "y": 742,
+          "w": 210,
+          "h": 56,
+          "bottom": 798,
+          "right": 230
+        },
+        "mikro": {
+          "x": 20,
+          "y": 806,
+          "w": 350,
+          "h": 23,
+          "bottom": 829,
+          "right": 370
+        },
+        "zweit": {
+          "x": 246,
+          "y": 748,
+          "w": 124,
+          "h": 44,
+          "bottom": 792,
+          "right": 370
+        },
+        "knopf": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "bottom": 0,
+          "right": 0
+        },
+        "knopfVis": "visible/none",
+        "satz": {
+          "x": 20,
+          "y": 877,
+          "w": 350,
+          "h": 68,
+          "bottom": 945,
+          "right": 370
+        },
+        "vertrauen": {
+          "x": 20,
+          "y": 977,
+          "w": 350,
+          "h": 217,
+          "bottom": 1194,
+          "right": 370
+        },
+        "vertrauenZeilen": 6,
+        "abgeschnitten": [],
+        "minFont": 14,
+        "minFontText": "100 Jahre Meisterbetrieb (1926",
+        "schild": null,
+        "held": {
+          "x": 0,
+          "y": 57,
+          "w": 390,
+          "h": 1137,
+          "bottom": 1194,
+          "right": 390
+        },
+        "anzahlH1": 1
+      },
+      "errors": [],
+      "gesperrt": 0
+    },
+    {
+      "vp": "m430",
+      "scheme": "light",
+      "m": {
+        "vw": 430,
+        "ih": 932,
+        "scrollW": 430,
+        "ueber": [
+          {
+            "tag": "LI",
+            "cls": "flex shrink-0 basis-5/6 snap-start sm:basis-[calc(50%-0.5rem",
+            "left": 361,
+            "right": 686
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex w-full flex-col gap-4 rounded-2 bg-surface-2 p-6",
+            "left": 361,
+            "right": 686
+          },
+          {
+            "tag": "FIGURE",
+            "cls": "flex flex-1 flex-col gap-5",
+            "left": 385,
+            "right": 662
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex min-h-6 flex-wrap items-center justify-between gap-x-3 ",
+            "left": 385,
+            "right": 662
+          },
+          {
+            "tag": "P",
+            "cls": "text-etikett text-ink-muted",
+            "left": 385,
+            "right": 496
+          },
+          {
+            "tag": "BLOCKQUOTE",
+            "cls": "flex-1 text-body text-ink",
+            "left": 385,
+            "right": 662
+          },
+          {
+            "tag": "P",
+            "cls": "",
+            "left": 385,
+            "right": 662
+          },
+          {
+            "tag": "FIGCAPTION",
+            "cls": "text-callout",
+            "left": 385,
+            "right": 662
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block font-bold text-brand",
+            "left": 385,
+            "right": 662
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block text-ink-muted",
+            "left": 385,
+            "right": 662
+          }
+        ],
+        "anzahlUeber": 180,
+        "h1": {
+          "x": 20,
+          "y": 84,
+          "w": 390,
+          "h": 213,
+          "bottom": 297,
+          "right": 410
+        },
+        "h1Font": "83.55px",
+        "aktion": {
+          "x": 20,
+          "y": 830,
+          "w": 232,
+          "h": 56,
+          "bottom": 886,
+          "right": 252
+        },
+        "mikro": {
+          "x": 20,
+          "y": 894,
+          "w": 390,
+          "h": 23,
+          "bottom": 917,
+          "right": 410
+        },
+        "zweit": {
+          "x": 268,
+          "y": 836,
+          "w": 142,
+          "h": 44,
+          "bottom": 880,
+          "right": 410
+        },
+        "knopf": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "bottom": 0,
+          "right": 0
+        },
+        "knopfVis": "visible/none",
+        "satz": {
+          "x": 20,
+          "y": 965,
+          "w": 390,
+          "h": 68,
+          "bottom": 1033,
+          "right": 410
+        },
+        "vertrauen": {
+          "x": 20,
+          "y": 1065,
+          "w": 390,
+          "h": 190,
+          "bottom": 1255,
+          "right": 410
+        },
+        "vertrauenZeilen": 5,
+        "abgeschnitten": [],
+        "minFont": 14,
+        "minFontText": "100 Jahre Meisterbetrieb (1926",
+        "schild": null,
+        "held": {
+          "x": 0,
+          "y": 57,
+          "w": 430,
+          "h": 1198,
+          "bottom": 1255,
+          "right": 430
+        },
+        "anzahlH1": 1
+      },
+      "errors": [],
+      "gesperrt": 0
+    },
+    {
+      "vp": "t768",
+      "scheme": "light",
+      "m": {
+        "vw": 768,
+        "ih": 1024,
+        "scrollW": 768,
+        "ueber": [
+          {
+            "tag": "LI",
+            "cls": "flex shrink-0 basis-5/6 snap-start sm:basis-[calc(50%-0.5rem",
+            "left": 753,
+            "right": 1099
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex w-full flex-col gap-4 rounded-2 bg-surface-2 p-6",
+            "left": 753,
+            "right": 1099
+          },
+          {
+            "tag": "FIGURE",
+            "cls": "flex flex-1 flex-col gap-5",
+            "left": 777,
+            "right": 1075
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex min-h-6 flex-wrap items-center justify-between gap-x-3 ",
+            "left": 777,
+            "right": 1075
+          },
+          {
+            "tag": "SPAN",
+            "cls": "inline-flex items-center gap-2",
+            "left": 777,
+            "right": 865
+          },
+          {
+            "tag": "svg",
+            "cls": "shrink-0",
+            "left": 777,
+            "right": 865
+          },
+          {
+            "tag": "P",
+            "cls": "text-etikett text-ink-muted",
+            "left": 927,
+            "right": 1075
+          },
+          {
+            "tag": "BLOCKQUOTE",
+            "cls": "flex-1 text-body text-ink",
+            "left": 777,
+            "right": 1075
+          },
+          {
+            "tag": "P",
+            "cls": "",
+            "left": 777,
+            "right": 1075
+          },
+          {
+            "tag": "FIGCAPTION",
+            "cls": "text-callout",
+            "left": 777,
+            "right": 1075
+          }
+        ],
+        "anzahlUeber": 170,
+        "h1": {
+          "x": 31,
+          "y": 104,
+          "w": 707,
+          "h": 286,
+          "bottom": 391,
+          "right": 737
+        },
+        "h1Font": "120px",
+        "aktion": {
+          "x": 31,
+          "y": 921,
+          "w": 411,
+          "h": 56,
+          "bottom": 977,
+          "right": 442
+        },
+        "mikro": {
+          "x": 31,
+          "y": 985,
+          "w": 707,
+          "h": 24,
+          "bottom": 1009,
+          "right": 737
+        },
+        "zweit": {
+          "x": 458,
+          "y": 927,
+          "w": 279,
+          "h": 44,
+          "bottom": 971,
+          "right": 737
+        },
+        "knopf": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "bottom": 0,
+          "right": 0
+        },
+        "knopfVis": "visible/none",
+        "satz": {
+          "x": 31,
+          "y": 1057,
+          "w": 429,
+          "h": 71,
+          "bottom": 1128,
+          "right": 460
+        },
+        "vertrauen": {
+          "x": 31,
+          "y": 1160,
+          "w": 707,
+          "h": 137,
+          "bottom": 1297,
+          "right": 737
+        },
+        "vertrauenZeilen": 3,
+        "abgeschnitten": [],
+        "minFont": 14,
+        "minFontText": "100 Jahre Meisterbetrieb (1926",
+        "schild": null,
+        "held": {
+          "x": 0,
+          "y": 57,
+          "w": 768,
+          "h": 1240,
+          "bottom": 1297,
+          "right": 768
+        },
+        "anzahlH1": 1
+      },
+      "errors": [],
+      "gesperrt": 0
+    },
+    {
+      "vp": "d1024",
+      "scheme": "light",
+      "m": {
+        "vw": 1024,
+        "ih": 768,
+        "scrollW": 1024,
+        "ueber": [
+          {
+            "tag": "LI",
+            "cls": "flex shrink-0 basis-5/6 snap-start sm:basis-[calc(50%-0.5rem",
+            "left": 999,
+            "right": 1302
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex w-full flex-col gap-4 rounded-2 bg-surface-2 p-6",
+            "left": 999,
+            "right": 1302
+          },
+          {
+            "tag": "FIGURE",
+            "cls": "flex flex-1 flex-col gap-5",
+            "left": 1023,
+            "right": 1278
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex min-h-6 flex-wrap items-center justify-between gap-x-3 ",
+            "left": 1023,
+            "right": 1278
+          },
+          {
+            "tag": "P",
+            "cls": "text-etikett text-ink-muted",
+            "left": 1023,
+            "right": 1134
+          },
+          {
+            "tag": "BLOCKQUOTE",
+            "cls": "flex-1 text-body text-ink",
+            "left": 1023,
+            "right": 1278
+          },
+          {
+            "tag": "P",
+            "cls": "",
+            "left": 1023,
+            "right": 1278
+          },
+          {
+            "tag": "FIGCAPTION",
+            "cls": "text-callout",
+            "left": 1023,
+            "right": 1278
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block font-bold text-brand",
+            "left": 1023,
+            "right": 1278
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block text-ink-muted",
+            "left": 1023,
+            "right": 1278
+          }
+        ],
+        "anzahlUeber": 151,
+        "h1": {
+          "x": 41,
+          "y": 136,
+          "w": 704,
+          "h": 244,
+          "bottom": 380,
+          "right": 745
+        },
+        "h1Font": "92.064px",
+        "aktion": {
+          "x": 41,
+          "y": 629,
+          "w": 288,
+          "h": 56,
+          "bottom": 685,
+          "right": 329
+        },
+        "mikro": {
+          "x": 41,
+          "y": 703,
+          "w": 334,
+          "h": 25,
+          "bottom": 727,
+          "right": 375
+        },
+        "zweit": {
+          "x": 407,
+          "y": 693,
+          "w": 197,
+          "h": 44,
+          "bottom": 737,
+          "right": 604
+        },
+        "knopf": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "bottom": 0,
+          "right": 0
+        },
+        "knopfVis": "visible/none",
+        "satz": {
+          "x": 509,
+          "y": 769,
+          "w": 435,
+          "h": 72,
+          "bottom": 841,
+          "right": 944
+        },
+        "vertrauen": {
+          "x": 41,
+          "y": 873,
+          "w": 942,
+          "h": 138,
+          "bottom": 1011,
+          "right": 983
+        },
+        "vertrauenZeilen": 3,
+        "abgeschnitten": [],
+        "minFont": 14,
+        "minFontText": "100 Jahre Meisterbetrieb (1926",
+        "schild": {
+          "x": 891,
+          "y": 517,
+          "w": 53,
+          "h": 17,
+          "bottom": 534,
+          "right": 944
+        },
+        "held": {
+          "x": 0,
+          "y": 65,
+          "w": 1024,
+          "h": 946,
+          "bottom": 1011,
+          "right": 1024
+        },
+        "anzahlH1": 1
+      },
+      "errors": [],
+      "gesperrt": 0
+    },
+    {
+      "vp": "d1280",
+      "scheme": "light",
+      "m": {
+        "vw": 1280,
+        "ih": 720,
+        "scrollW": 1280,
+        "ueber": [
+          {
+            "tag": "LI",
+            "cls": "flex shrink-0 basis-5/6 snap-start sm:basis-[calc(50%-0.5rem",
+            "left": 1200,
+            "right": 1552
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex w-full flex-col gap-4 rounded-2 bg-surface-2 p-6",
+            "left": 1200,
+            "right": 1552
+          },
+          {
+            "tag": "FIGURE",
+            "cls": "flex flex-1 flex-col gap-5",
+            "left": 1224,
+            "right": 1528
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex min-h-6 flex-wrap items-center justify-between gap-x-3 ",
+            "left": 1224,
+            "right": 1528
+          },
+          {
+            "tag": "P",
+            "cls": "text-etikett text-ink-muted",
+            "left": 1224,
+            "right": 1335
+          },
+          {
+            "tag": "BLOCKQUOTE",
+            "cls": "flex-1 text-body text-ink",
+            "left": 1224,
+            "right": 1528
+          },
+          {
+            "tag": "P",
+            "cls": "",
+            "left": 1224,
+            "right": 1528
+          },
+          {
+            "tag": "FIGCAPTION",
+            "cls": "text-callout",
+            "left": 1224,
+            "right": 1528
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block font-bold text-brand",
+            "left": 1224,
+            "right": 1528
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block text-ink-muted",
+            "left": 1224,
+            "right": 1528
+          }
+        ],
+        "anzahlUeber": 151,
+        "h1": {
+          "x": 51,
+          "y": 112,
+          "w": 704,
+          "h": 268,
+          "bottom": 381,
+          "right": 755
+        },
+        "h1Font": "104.8px",
+        "aktion": {
+          "x": 51,
+          "y": 581,
+          "w": 288,
+          "h": 56,
+          "bottom": 637,
+          "right": 339
+        },
+        "mikro": {
+          "x": 51,
+          "y": 655,
+          "w": 334,
+          "h": 25,
+          "bottom": 679,
+          "right": 385
+        },
+        "zweit": {
+          "x": 417,
+          "y": 645,
+          "w": 197,
+          "h": 44,
+          "bottom": 689,
+          "right": 614
+        },
+        "knopf": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "bottom": 0,
+          "right": 0
+        },
+        "knopfVis": "visible/none",
+        "satz": {
+          "x": 765,
+          "y": 721,
+          "w": 435,
+          "h": 72,
+          "bottom": 793,
+          "right": 1200
+        },
+        "vertrauen": {
+          "x": 51,
+          "y": 825,
+          "w": 1178,
+          "h": 108,
+          "bottom": 933,
+          "right": 1229
+        },
+        "vertrauenZeilen": 2,
+        "abgeschnitten": [],
+        "minFont": 14,
+        "minFontText": "100 Jahre Meisterbetrieb (1926",
+        "schild": {
+          "x": 1147,
+          "y": 469,
+          "w": 53,
+          "h": 17,
+          "bottom": 486,
+          "right": 1200
+        },
+        "held": {
+          "x": 0,
+          "y": 65,
+          "w": 1280,
+          "h": 868,
+          "bottom": 933,
+          "right": 1280
+        },
+        "anzahlH1": 1
+      },
+      "errors": [],
+      "gesperrt": 0
+    },
+    {
+      "vp": "d1440",
+      "scheme": "light",
+      "m": {
+        "vw": 1440,
+        "ih": 900,
+        "scrollW": 1440,
+        "ueber": [
+          {
+            "tag": "LI",
+            "cls": "flex shrink-0 basis-5/6 snap-start sm:basis-[calc(50%-0.5rem",
+            "left": 1280,
+            "right": 1632
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex w-full flex-col gap-4 rounded-2 bg-surface-2 p-6",
+            "left": 1280,
+            "right": 1632
+          },
+          {
+            "tag": "FIGURE",
+            "cls": "flex flex-1 flex-col gap-5",
+            "left": 1304,
+            "right": 1608
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex min-h-6 flex-wrap items-center justify-between gap-x-3 ",
+            "left": 1304,
+            "right": 1608
+          },
+          {
+            "tag": "BLOCKQUOTE",
+            "cls": "flex-1 text-body text-ink",
+            "left": 1304,
+            "right": 1608
+          },
+          {
+            "tag": "P",
+            "cls": "",
+            "left": 1304,
+            "right": 1608
+          },
+          {
+            "tag": "FIGCAPTION",
+            "cls": "text-callout",
+            "left": 1304,
+            "right": 1608
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block font-bold text-brand",
+            "left": 1304,
+            "right": 1608
+          },
+          {
+            "tag": "SPAN",
+            "cls": "block text-ink-muted",
+            "left": 1304,
+            "right": 1608
+          },
+          {
+            "tag": "LI",
+            "cls": "flex shrink-0 basis-5/6 snap-start sm:basis-[calc(50%-0.5rem",
+            "left": 1648,
+            "right": 2000
+          }
+        ],
+        "anzahlUeber": 150,
+        "h1": {
+          "x": 58,
+          "y": 136,
+          "w": 704,
+          "h": 318,
+          "bottom": 454,
+          "right": 762
+        },
+        "h1Font": "127.84px",
+        "aktion": {
+          "x": 58,
+          "y": 761,
+          "w": 288,
+          "h": 56,
+          "bottom": 817,
+          "right": 346
+        },
+        "mikro": {
+          "x": 58,
+          "y": 835,
+          "w": 334,
+          "h": 25,
+          "bottom": 859,
+          "right": 391
+        },
+        "zweit": {
+          "x": 423,
+          "y": 825,
+          "w": 197,
+          "h": 44,
+          "bottom": 869,
+          "right": 621
+        },
+        "knopf": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "bottom": 0,
+          "right": 0
+        },
+        "knopfVis": "visible/none",
+        "satz": {
+          "x": 622,
+          "y": 901,
+          "w": 435,
+          "h": 72,
+          "bottom": 973,
+          "right": 1058
+        },
+        "vertrauen": {
+          "x": 58,
+          "y": 1005,
+          "w": 1325,
+          "h": 108,
+          "bottom": 1113,
+          "right": 1382
+        },
+        "vertrauenZeilen": 2,
+        "abgeschnitten": [],
+        "minFont": 14,
+        "minFontText": "100 Jahre Meisterbetrieb (1926",
+        "schild": {
+          "x": 1298,
+          "y": 593,
+          "w": 79,
+          "h": 26,
+          "bottom": 619,
+          "right": 1377
+        },
+        "held": {
+          "x": 0,
+          "y": 65,
+          "w": 1440,
+          "h": 1048,
+          "bottom": 1113,
+          "right": 1440
+        },
+        "anzahlH1": 1
+      },
+      "errors": [],
+      "gesperrt": 0
+    },
+    {
+      "vp": "d1920",
+      "scheme": "light",
+      "m": {
+        "vw": 1920,
+        "ih": 1080,
+        "scrollW": 1920,
+        "ueber": [
+          {
+            "tag": "LI",
+            "cls": "flex shrink-0 basis-5/6 snap-start sm:basis-[calc(50%-0.5rem",
+            "left": 1888,
+            "right": 2240
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex w-full flex-col gap-4 rounded-2 bg-surface-2 p-6",
+            "left": 1888,
+            "right": 2240
+          },
+          {
+            "tag": "FIGURE",
+            "cls": "flex flex-1 flex-col gap-5",
+            "left": 1912,
+            "right": 2216
+          },
+          {
+            "tag": "DIV",
+            "cls": "flex min-h-6 flex-wrap items-center justify-between gap-x-3 ",
+            "left": 1912,
+            "right": 2216
+          },
+          {
+            "tag": "SPAN",
+            "cls": "inline-flex items-center gap-2",
+            "left": 1912,
+            "right": 2000
+          },
+          {
+            "tag": "svg",
+            "cls": "shrink-0",
+            "left": 1912,
+            "right": 2000
+          },
+          {
+            "tag": "P",
+            "cls": "text-etikett text-ink-muted",
+            "left": 2068,
+            "right": 2216
+          },
+          {
+            "tag": "BLOCKQUOTE",
+            "cls": "flex-1 text-body text-ink",
+            "left": 1912,
+            "right": 2216
+          },
+          {
+            "tag": "P",
+            "cls": "",
+            "left": 1912,
+            "right": 2216
+          },
+          {
+            "tag": "FIGCAPTION",
+            "cls": "text-callout",
+            "left": 1912,
+            "right": 2216
+          }
+        ],
+        "anzahlUeber": 141,
+        "h1": {
+          "x": 64,
+          "y": 136,
+          "w": 704,
+          "h": 396,
+          "bottom": 533,
+          "right": 768
+        },
+        "h1Font": "169.12px",
+        "aktion": {
+          "x": 64,
+          "y": 941,
+          "w": 288,
+          "h": 56,
+          "bottom": 997,
+          "right": 352
+        },
+        "mikro": {
+          "x": 64,
+          "y": 1015,
+          "w": 334,
+          "h": 25,
+          "bottom": 1039,
+          "right": 398
+        },
+        "zweit": {
+          "x": 430,
+          "y": 1005,
+          "w": 197,
+          "h": 44,
+          "bottom": 1049,
+          "right": 627
+        },
+        "knopf": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "bottom": 0,
+          "right": 0
+        },
+        "knopfVis": "visible/none",
+        "satz": {
+          "x": 927,
+          "y": 1081,
+          "w": 435,
+          "h": 72,
+          "bottom": 1153,
+          "right": 1363
+        },
+        "vertrauen": {
+          "x": 64,
+          "y": 1185,
+          "w": 1792,
+          "h": 108,
+          "bottom": 1293,
+          "right": 1856
+        },
+        "vertrauenZeilen": 2,
+        "abgeschnitten": [],
+        "minFont": 14,
+        "minFontText": "100 Jahre Meisterbetrieb (1926",
+        "schild": {
+          "x": 1748,
+          "y": 745,
+          "w": 96,
+          "h": 31,
+          "bottom": 776,
+          "right": 1844
+        },
+        "held": {
+          "x": 0,
+          "y": 65,
+          "w": 1920,
+          "h": 1228,
+          "bottom": 1293,
+          "right": 1920
+        },
+        "anzahlH1": 1
+      },
+      "errors": [],
+      "gesperrt": 0
+    }
+  ]
+}

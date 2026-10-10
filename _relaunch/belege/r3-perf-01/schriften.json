@@ -1,0 +1,226 @@
+{
+  "fonttools": "4.66.1",
+  "merkmale": [
+    "kern",
+    "liga",
+    "calt",
+    "tnum",
+    "lnum",
+    "case",
+    "rvrn"
+  ],
+  "dateien": [
+    {
+      "datei": "bricolage-grotesque-latin-opsz-wght400-800.woff2",
+      "quelle": "_relaunch/ausbau/referenz/b-runde1/fonts/bricolage-grotesque-latin-opsz-normal.woff2",
+      "quelle_bytes": 76888,
+      "quelle_sha256": "a79fdb52d4a5c76552452f69202add96e287401fff03d3e8c0e38b4dcb5a99cd",
+      "achsen_festgelegt": {
+        "wght": [
+          400,
+          800
+        ]
+      },
+      "achsen_ergebnis": {
+        "opsz": [
+          12.0,
+          96.0,
+          96.0
+        ],
+        "wght": [
+          400.0,
+          800.0,
+          800.0
+        ]
+      },
+      "bytes": 66392,
+      "sha256": "9042ae0c14b8f1f72c2ecdfebe457bca9d978d0c386a3acd8aa568216f590868",
+      "treue": {
+        "zeichen_gleich": true,
+        "zeichen": 226,
+        "stuetzstellen": 30,
+        "max_umriss_abweichung": 2,
+        "max_vorschub_abweichung": 1,
+        "max_kern_abweichung": 1,
+        "kern_paare_geprueft": 324480,
+        "kern_paare_ungleich_null": 166901,
+        "upm": 1000,
+        "fehler": []
+      }
+    },
+    {
+      "datei": "bricolage-grotesque-latin-ext-opsz-wght400-800.woff2",
+      "quelle": "_relaunch/ausbau/referenz/b-runde1/fonts/bricolage-grotesque-latin-ext-opsz-normal.woff2",
+      "quelle_bytes": 30736,
+      "quelle_sha256": "776f6dcaf03636cd69a5802c94808cc8896c0a66c8e9ce0fe147231b6ee01957",
+      "achsen_festgelegt": {
+        "wght": [
+          400,
+          800
+        ]
+      },
+      "achsen_ergebnis": {
+        "opsz": [
+          12.0,
+          96.0,
+          96.0
+        ],
+        "wght": [
+          400.0,
+          800.0,
+          800.0
+        ]
+      },
+      "bytes": 26484,
+      "sha256": "ca87f43f38dd906e0780f72d110536605507886de100fb3166de5667f4d75557",
+      "treue": {
+        "zeichen_gleich": true,
+        "zeichen": 160,
+        "stuetzstellen": 9,
+        "max_umriss_abweichung": 2,
+        "max_vorschub_abweichung": 1,
+        "max_kern_abweichung": 0,
+        "kern_paare_geprueft": 36,
+        "kern_paare_ungleich_null": 9,
+        "upm": 1000,
+        "fehler": []
+      }
+    },
+    {
+      "datei": "atkinson-hyperlegible-next-latin-wght400-700.woff2",
+      "quelle": "_relaunch/ausbau/referenz/b-runde1/fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2",
+      "quelle_bytes": 33996,
+      "quelle_sha256": "18b2a1a39a2fa298b0ba5390aca68462669826c90925656f1c1f6796e0e1bbaf",
+      "achsen_festgelegt": {
+        "wght": [
+          400,
+          700
+        ]
+      },
+      "achsen_ergebnis": {
+        "wght": [
+          400.0,
+          400.0,
+          700.0
+        ]
+      },
+      "bytes": 18584,
+      "sha256": "e934172be32983dbff96caf8183d09d1f27d933c6dc37fd3f18cbd5be457b24c",
+      "treue": {
+        "zeichen_gleich": true,
+        "zeichen": 219,
+        "stuetzstellen": 6,
+        "max_umriss_abweichung": 2,
+        "max_vorschub_abweichung": 1,
+        "max_kern_abweichung": 1,
+        "kern_paare_geprueft": 64896,
+        "kern_paare_ungleich_null": 11067,
+        "upm": 1000,
+        "fehler": []
+      }
+    },
+    {
+      "datei": "atkinson-hyperlegible-next-latin-ext-wght400-700.woff2",
+      "quelle": "_relaunch/ausbau/referenz/b-runde1/fonts/atkinson-hyperlegible-next-latin-ext-wght-normal.woff2",
+      "quelle_bytes": 19092,
+      "quelle_sha256": "7dae0c6c66af1aec82e096186aeb1f0e6fa36ab8061ed65422f2b7daf4dd93f3",
+      "achsen_festgelegt": {
+        "wght": [
+          400,
+          700
+        ]
+      },
+      "achsen_ergebnis": {
+        "wght": [
+          400.0,
+          400.0,
+          700.0
+        ]
+      },
+      "bytes": 10064,
+      "sha256": "489e25149c28dc06a9056308a85a84979e31c6076a358435537b235b24216404",
+      "treue": {
+        "zeichen_gleich": true,
+        "zeichen": 120,
+        "stuetzstellen": 3,
+        "max_umriss_abweichung": 2,
+        "max_vorschub_abweichung": 1,
+        "max_kern_abweichung": 0,
+        "kern_paare_geprueft": 12,
+        "kern_paare_ungleich_null": 9,
+        "upm": 1000,
+        "fehler": []
+      }
+    },
+    {
+      "datei": "martian-mono-latin-wdth75-wght400-800.woff2",
+      "quelle": "_relaunch/richtungen/a/fonts/martian-mono-latin-wdth-normal.woff2",
+      "quelle_bytes": 38492,
+      "quelle_sha256": "f9c1655c2c9d1ed5bb8b301a57d1169a1123ffef1a588dc50a7a487810f7d732",
+      "achsen_festgelegt": {
+        "wdth": 75,
+        "wght": [
+          400,
+          800
+        ]
+      },
+      "achsen_ergebnis": {
+        "wght": [
+          400.0,
+          400.0,
+          800.0
+        ]
+      },
+      "bytes": 14564,
+      "sha256": "d0a3c0de459677d29757b737b909e3b4654406f5ed95da17597c399bca40a70c",
+      "treue": {
+        "zeichen_gleich": true,
+        "zeichen": 224,
+        "stuetzstellen": 6,
+        "max_umriss_abweichung": 1,
+        "max_vorschub_abweichung": 0,
+        "max_kern_abweichung": 0,
+        "kern_paare_geprueft": 64896,
+        "kern_paare_ungleich_null": 0,
+        "upm": 1000,
+        "fehler": []
+      }
+    },
+    {
+      "datei": "martian-mono-latin-ext-wdth75-wght400-800.woff2",
+      "quelle": "_relaunch/richtungen/a/fonts/martian-mono-latin-ext-wdth-normal.woff2",
+      "quelle_bytes": 24660,
+      "quelle_sha256": "21fce7e290a2395b70fb1569e1b2ef65b3a2c0a121f28203e23dd9b17d120ed4",
+      "achsen_festgelegt": {
+        "wdth": 75,
+        "wght": [
+          400,
+          800
+        ]
+      },
+      "achsen_ergebnis": {
+        "wght": [
+          400.0,
+          400.0,
+          800.0
+        ]
+      },
+      "bytes": 9852,
+      "sha256": "2227126ce23e10f7b5f9275478d1aa4d98b144d9a1cadd8d8b98a87852ec9a75",
+      "treue": {
+        "zeichen_gleich": true,
+        "zeichen": 168,
+        "stuetzstellen": 3,
+        "max_umriss_abweichung": 1,
+        "max_vorschub_abweichung": 0,
+        "max_kern_abweichung": 0,
+        "kern_paare_geprueft": 12,
+        "kern_paare_ungleich_null": 0,
+        "upm": 1000,
+        "fehler": []
+      }
+    }
+  ],
+  "summe_bytes": 145940,
+  "summe_vorher_bytes": 223864
+}

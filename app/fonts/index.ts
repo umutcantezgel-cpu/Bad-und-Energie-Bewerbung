@@ -12,17 +12,31 @@ import localFont from 'next/font/local';
  * Datei, darum ist jede Teilmenge ein eigener Aufruf; theme.css setzt sie zu --font-display,
  * --font-sans und --font-mass zusammen (latin-ext zuerst, sie greift nur in ihrem Bereich).
  *
- * Vorgeladen sind genau zwei Dateien: Display-latin und Text-latin. Die Ersatzschrift (Arial mit
- * angeglichenen Metriken) hängt nur an den latin-Aufrufen; an latin-ext hinge sie sonst vor latin
- * und finge alle Zeichen ab. Display und Text nutzen adjustFontFallback, Martian Mono eine eigene.
+ * Instanziert und teilgesetzt (R3-PERF-01, Skript _relaunch/werkzeuge/schriften/bauen.py): Achsen auf
+ * den genutzten Bereich gelegt, gleiche Zeichen wie die Originale, nur kern/liga/calt/tnum/lnum/case/rvrn,
+ * ohne Hinting. Genutzt (bedarf.mjs, alle Seiten): Bricolage 400–800 (ziffer im Text 400–700, Zitat 500,
+ * h2 600, Titel 700, Display 800) bei optischer Größe 12–96 nach Schriftgröße; Atkinson 400–700;
+ * Martian 400–600 bei Breite 75 %. Die weight-Angaben unten sind genau diese Bereiche: ein Gewicht
+ * außerhalb (z. B. font-extrabold in Atkinson) würde auf den Rand gezogen statt neu gezeichnet.
+ *
+ * Vorgeladen sind genau zwei Dateien: Display-latin und Text-latin (65 KiB + 18 KiB). Die Ersatzschrift
+ * (Arial mit angeglichenen Metriken) hängt nur an den latin-Aufrufen; an latin-ext hinge sie sonst vor
+ * latin und finge alle Zeichen ab. Display und Text nutzen adjustFontFallback, Martian Mono eine eigene.
+ *
+ * font-display bleibt überall swap. Display und Text sind vorgeladen und kommen auf den gemessenen Wegen
+ * vor dem ersten Bild an; optional hieße bei langsamem Erstbesuch Arial für die ganze Sitzung, gerade
+ * im Plakat. Martian Mono wird nicht vorgeladen (14 KiB, nur Seiten mit Maßen); optional bliebe dort
+ * beim Erstbesuch mobil fast immer bei der Ersatzschrift, die Maße verlören ihre Schrift. swap tauscht
+ * kurze, feste Maßfelder, der Versatz ist klein (CLS gemessen in _relaunch/belege/r3-perf-01).
  *
  * next/font verlangt wörtliche Werte in den Aufrufen; die Bereiche stehen darum ausgeschrieben.
- * Summe der sechs Dateien: 223 864 Byte (Budget 250 KB, K-013).
+ * Summe der sechs Dateien: 145 940 Byte = 142,5 KiB (vorher 223 864; Budget 250 KB, K-013).
+ * Eine deutsche Seite lädt nur latin: 84 976 Byte, mit Maßen 99 540 Byte.
  */
 
 const bricolage = localFont({
-  src: './bricolage-grotesque-latin-opsz-normal.woff2',
-  weight: '200 800',
+  src: './bricolage-grotesque-latin-opsz-wght400-800.woff2',
+  weight: '400 800',
   style: 'normal',
   display: 'swap',
   preload: true,
@@ -39,8 +53,8 @@ const bricolage = localFont({
 });
 
 const bricolageExt = localFont({
-  src: './bricolage-grotesque-latin-ext-opsz-normal.woff2',
-  weight: '200 800',
+  src: './bricolage-grotesque-latin-ext-opsz-wght400-800.woff2',
+  weight: '400 800',
   style: 'normal',
   display: 'swap',
   preload: false,
@@ -56,8 +70,8 @@ const bricolageExt = localFont({
 });
 
 const atkinson = localFont({
-  src: './atkinson-hyperlegible-next-latin-wght-normal.woff2',
-  weight: '200 800',
+  src: './atkinson-hyperlegible-next-latin-wght400-700.woff2',
+  weight: '400 700',
   style: 'normal',
   display: 'swap',
   preload: true,
@@ -74,8 +88,8 @@ const atkinson = localFont({
 });
 
 const atkinsonExt = localFont({
-  src: './atkinson-hyperlegible-next-latin-ext-wght-normal.woff2',
-  weight: '200 800',
+  src: './atkinson-hyperlegible-next-latin-ext-wght400-700.woff2',
+  weight: '400 700',
   style: 'normal',
   display: 'swap',
   preload: false,
@@ -90,13 +104,13 @@ const atkinsonExt = localFont({
   ],
 });
 
-// Breitenachse 75–112,5 % (Standard 112,5): ohne font-stretch-Bereich in @font-face bliebe
-// font-stretch: 75 % wirkungslos. Die automatische Ersatzschrift rechnete mit der Standardbreite
-// (size-adjust 164 %) und wäre beim Tausch viel zu groß; „Martian Ersatz“ in app/globals.css ist
-// auf die Breite 75 % abgeglichen (Ziffer 0,5 em).
+// Breite fest auf 75 % instanziert (die Datei hat keine Breitenachse mehr): font-stretch: 75% im
+// @font-face sagt dem Browser, dass die Datei genau die Breite ist, die font-mass und text-etikett
+// verlangen. Gewicht bleibt variabel 400–800 (genutzt 400–600). Die automatische Ersatzschrift rechnete
+// mit der Standardbreite und wäre beim Tausch viel zu groß; „Martian Ersatz“ steht in app/globals.css.
 const martian = localFont({
-  src: './martian-mono-latin-wdth-normal.woff2',
-  weight: '100 800',
+  src: './martian-mono-latin-wdth75-wght400-800.woff2',
+  weight: '400 800',
   style: 'normal',
   display: 'swap',
   preload: false,
@@ -104,7 +118,7 @@ const martian = localFont({
   fallback: ['Martian Ersatz', 'ui-monospace', 'monospace'],
   variable: '--font-martian',
   declarations: [
-    { prop: 'font-stretch', value: '75% 112.5%' },
+    { prop: 'font-stretch', value: '75%' },
     {
       prop: 'unicode-range',
       value:
@@ -114,15 +128,15 @@ const martian = localFont({
 });
 
 const martianExt = localFont({
-  src: './martian-mono-latin-ext-wdth-normal.woff2',
-  weight: '100 800',
+  src: './martian-mono-latin-ext-wdth75-wght400-800.woff2',
+  weight: '400 800',
   style: 'normal',
   display: 'swap',
   preload: false,
   adjustFontFallback: false,
   variable: '--font-martian-ext',
   declarations: [
-    { prop: 'font-stretch', value: '75% 112.5%' },
+    { prop: 'font-stretch', value: '75%' },
     {
       prop: 'unicode-range',
       value:

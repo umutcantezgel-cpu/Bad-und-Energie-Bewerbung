@@ -1,48 +1,22 @@
-import { REGION } from '@/lib/content/region';
-import { CENTER_MERGE_KM } from '@/lib/maps/google-maps-config';
+import type { ReactNode } from 'react';
 import { isGoogleMapsConfigured } from '@/lib/maps/keys';
-import { createRadiusProjection, haversineKm } from '@/lib/maps/projection';
-import { GRAPHIC_PADDING, GRAPHIC_SIZE } from './graphic';
 import { RegionExplorer } from './RegionExplorer';
-import type { RegionMapData } from './types';
+import { buildRegionMapData } from './views';
 
 export interface RegionMapProps {
+  /** Section heading, placed by the explorer above the switch (mobile) or in the left column. */
+  header?: ReactNode;
   className?: string;
 }
 
-const center = { lat: REGION.center.latitude, lng: REGION.center.longitude };
-const projection = createRadiusProjection({
-  center,
-  radiusKm: REGION.radiusKm,
-  size: GRAPHIC_SIZE,
-  padding: GRAPHIC_PADDING,
-});
-
 /** Computed once on the server; the client gets plain numbers, not lib/content. */
-const REGION_MAP_DATA: RegionMapData = {
-  centerName: REGION.center.name,
-  radiusKm: REGION.radiusKm,
-  size: projection.size,
-  origin: projection.origin,
-  radius: projection.radius,
-  places: REGION.locations.map((location) => {
-    const point = { lat: location.latitude, lng: location.longitude };
-    return {
-      id: location.id,
-      name: location.name,
-      postalCode: location.postalCode,
-      distanceKm: location.distanceKm,
-      commuteMinutes: location.commuteMinutes,
-      ...projection.project(point),
-      atCenter: haversineKm(center, point) < CENTER_MERGE_KM,
-    };
-  }),
-};
+const REGION_MAP_DATA = buildRegionMapData();
 
 /**
- * Einsatzgebiet: typographic 35 km radius graphic plus the commute calculator ("Wo wohnst du?").
- * Google Maps loads only after an explicit click (2-click consent) and only if a key is configured.
+ * Einsatzgebiet: radius graphic (15/25/35 km, Lahn, Dill, A45, B49 schematisch) and the place
+ * choice („Wo wohnst du?“). Google Maps loads only after an explicit click (2-click consent) and
+ * only if a key is configured (E-START-032, E-START-056: key and loading path unchanged).
  */
-export function RegionMap({ className }: RegionMapProps) {
-  return <RegionExplorer data={REGION_MAP_DATA} mapsAvailable={isGoogleMapsConfigured()} className={className} />;
+export function RegionMap({ header, className }: RegionMapProps) {
+  return <RegionExplorer data={REGION_MAP_DATA} mapsAvailable={isGoogleMapsConfigured()} header={header} className={className} />;
 }

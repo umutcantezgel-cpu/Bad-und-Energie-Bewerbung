@@ -1,0 +1,458 @@
+{
+  "label": "r3-home-02-pruef",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-09T23:05:11.975Z",
+  "seiten": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m375",
+      "schema": "light",
+      "status": 200,
+      "ms": 10714,
+      "seitenhoehe": 15909,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-02-pruef/start__m375-light__01.webp",
+        "belege/r3-home-02-pruef/start__m375-light__02.webp",
+        "belege/r3-home-02-pruef/start__m375-light__03.webp",
+        "belege/r3-home-02-pruef/start__m375-light__04.webp",
+        "belege/r3-home-02-pruef/start__m375-light__05.webp",
+        "belege/r3-home-02-pruef/start__m375-light__06.webp",
+        "belege/r3-home-02-pruef/start__m375-light__07.webp",
+        "belege/r3-home-02-pruef/start__m375-light__08.webp",
+        "belege/r3-home-02-pruef/start__m375-light__09.webp",
+        "belege/r3-home-02-pruef/start__m375-light__10.webp",
+        "belege/r3-home-02-pruef/start__m375-light__11.webp",
+        "belege/r3-home-02-pruef/start__m375-light__12.webp",
+        "belege/r3-home-02-pruef/start__m375-light__13.webp",
+        "belege/r3-home-02-pruef/start__m375-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m375",
+      "schema": "dark",
+      "status": 200,
+      "ms": 10142,
+      "seitenhoehe": 15909,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-02-pruef/start__m375-dark__01.webp",
+        "belege/r3-home-02-pruef/start__m375-dark__02.webp",
+        "belege/r3-home-02-pruef/start__m375-dark__03.webp",
+        "belege/r3-home-02-pruef/start__m375-dark__04.webp",
+        "belege/r3-home-02-pruef/start__m375-dark__05.webp",
+        "belege/r3-home-02-pruef/start__m375-dark__06.webp",
+        "belege/r3-home-02-pruef/start__m375-dark__07.webp",
+        "belege/r3-home-02-pruef/start__m375-dark__08.webp",
+        "belege/r3-home-02-pruef/start__m375-dark__09.webp",
+        "belege/r3-home-02-pruef/start__m375-dark__10.webp",
+        "belege/r3-home-02-pruef/start__m375-dark__11.webp",
+        "belege/r3-home-02-pruef/start__m375-dark__12.webp",
+        "belege/r3-home-02-pruef/start__m375-dark__13.webp",
+        "belege/r3-home-02-pruef/start__m375-dark__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 16398,
+      "seitenhoehe": 15821,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-02-pruef/start__m390-light__01.webp",
+        "belege/r3-home-02-pruef/start__m390-light__02.webp",
+        "belege/r3-home-02-pruef/start__m390-light__03.webp",
+        "belege/r3-home-02-pruef/start__m390-light__04.webp",
+        "belege/r3-home-02-pruef/start__m390-light__05.webp",
+        "belege/r3-home-02-pruef/start__m390-light__06.webp",
+        "belege/r3-home-02-pruef/start__m390-light__07.webp",
+        "belege/r3-home-02-pruef/start__m390-light__08.webp",
+        "belege/r3-home-02-pruef/start__m390-light__09.webp",
+        "belege/r3-home-02-pruef/start__m390-light__10.webp",
+        "belege/r3-home-02-pruef/start__m390-light__11.webp",
+        "belege/r3-home-02-pruef/start__m390-light__12.webp",
+        "belege/r3-home-02-pruef/start__m390-light__13.webp",
+        "belege/r3-home-02-pruef/start__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 16087,
+      "seitenhoehe": 15821,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-02-pruef/start__m390-dark__01.webp",
+        "belege/r3-home-02-pruef/start__m390-dark__02.webp",
+        "belege/r3-home-02-pruef/start__m390-dark__03.webp",
+        "belege/r3-home-02-pruef/start__m390-dark__04.webp",
+        "belege/r3-home-02-pruef/start__m390-dark__05.webp",
+        "belege/r3-home-02-pruef/start__m390-dark__06.webp",
+        "belege/r3-home-02-pruef/start__m390-dark__07.webp",
+        "belege/r3-home-02-pruef/start__m390-dark__08.webp",
+        "belege/r3-home-02-pruef/start__m390-dark__09.webp",
+        "belege/r3-home-02-pruef/start__m390-dark__10.webp",
+        "belege/r3-home-02-pruef/start__m390-dark__11.webp",
+        "belege/r3-home-02-pruef/start__m390-dark__12.webp",
+        "belege/r3-home-02-pruef/start__m390-dark__13.webp",
+        "belege/r3-home-02-pruef/start__m390-dark__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "t768",
+      "schema": "light",
+      "status": 200,
+      "ms": 14296,
+      "seitenhoehe": 13943,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-02-pruef/start__t768-light__01.webp",
+        "belege/r3-home-02-pruef/start__t768-light__02.webp",
+        "belege/r3-home-02-pruef/start__t768-light__03.webp",
+        "belege/r3-home-02-pruef/start__t768-light__04.webp",
+        "belege/r3-home-02-pruef/start__t768-light__05.webp",
+        "belege/r3-home-02-pruef/start__t768-light__06.webp",
+        "belege/r3-home-02-pruef/start__t768-light__07.webp",
+        "belege/r3-home-02-pruef/start__t768-light__08.webp",
+        "belege/r3-home-02-pruef/start__t768-light__09.webp",
+        "belege/r3-home-02-pruef/start__t768-light__10.webp",
+        "belege/r3-home-02-pruef/start__t768-light__11.webp",
+        "belege/r3-home-02-pruef/start__t768-light__12.webp",
+        "belege/r3-home-02-pruef/start__t768-light__13.webp",
+        "belege/r3-home-02-pruef/start__t768-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "t768",
+      "schema": "dark",
+      "status": 200,
+      "ms": 15753,
+      "seitenhoehe": 13944,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-02-pruef/start__t768-dark__01.webp",
+        "belege/r3-home-02-pruef/start__t768-dark__02.webp",
+        "belege/r3-home-02-pruef/start__t768-dark__03.webp",
+        "belege/r3-home-02-pruef/start__t768-dark__04.webp",
+        "belege/r3-home-02-pruef/start__t768-dark__05.webp",
+        "belege/r3-home-02-pruef/start__t768-dark__06.webp",
+        "belege/r3-home-02-pruef/start__t768-dark__07.webp",
+        "belege/r3-home-02-pruef/start__t768-dark__08.webp",
+        "belege/r3-home-02-pruef/start__t768-dark__09.webp",
+        "belege/r3-home-02-pruef/start__t768-dark__10.webp",
+        "belege/r3-home-02-pruef/start__t768-dark__11.webp",
+        "belege/r3-home-02-pruef/start__t768-dark__12.webp",
+        "belege/r3-home-02-pruef/start__t768-dark__13.webp",
+        "belege/r3-home-02-pruef/start__t768-dark__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 9047,
+      "seitenhoehe": 12278,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-02-pruef/start__d1440-light__01.webp",
+        "belege/r3-home-02-pruef/start__d1440-light__02.webp",
+        "belege/r3-home-02-pruef/start__d1440-light__03.webp",
+        "belege/r3-home-02-pruef/start__d1440-light__04.webp",
+        "belege/r3-home-02-pruef/start__d1440-light__05.webp",
+        "belege/r3-home-02-pruef/start__d1440-light__06.webp",
+        "belege/r3-home-02-pruef/start__d1440-light__07.webp",
+        "belege/r3-home-02-pruef/start__d1440-light__08.webp",
+        "belege/r3-home-02-pruef/start__d1440-light__09.webp",
+        "belege/r3-home-02-pruef/start__d1440-light__10.webp",
+        "belege/r3-home-02-pruef/start__d1440-light__11.webp",
+        "belege/r3-home-02-pruef/start__d1440-light__12.webp",
+        "belege/r3-home-02-pruef/start__d1440-light__13.webp",
+        "belege/r3-home-02-pruef/start__d1440-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 8918,
+      "seitenhoehe": 12278,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-02-pruef/start__d1440-dark__01.webp",
+        "belege/r3-home-02-pruef/start__d1440-dark__02.webp",
+        "belege/r3-home-02-pruef/start__d1440-dark__03.webp",
+        "belege/r3-home-02-pruef/start__d1440-dark__04.webp",
+        "belege/r3-home-02-pruef/start__d1440-dark__05.webp",
+        "belege/r3-home-02-pruef/start__d1440-dark__06.webp",
+        "belege/r3-home-02-pruef/start__d1440-dark__07.webp",
+        "belege/r3-home-02-pruef/start__d1440-dark__08.webp",
+        "belege/r3-home-02-pruef/start__d1440-dark__09.webp",
+        "belege/r3-home-02-pruef/start__d1440-dark__10.webp",
+        "belege/r3-home-02-pruef/start__d1440-dark__11.webp",
+        "belege/r3-home-02-pruef/start__d1440-dark__12.webp",
+        "belege/r3-home-02-pruef/start__d1440-dark__13.webp",
+        "belege/r3-home-02-pruef/start__d1440-dark__14.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "m375",
+      "schema": "light",
+      "status": 200,
+      "ms": 3886,
+      "seitenhoehe": 4081,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-02-pruef/stellen__m375-light__01.webp",
+        "belege/r3-home-02-pruef/stellen__m375-light__02.webp",
+        "belege/r3-home-02-pruef/stellen__m375-light__03.webp",
+        "belege/r3-home-02-pruef/stellen__m375-light__04.webp",
+        "belege/r3-home-02-pruef/stellen__m375-light__05.webp",
+        "belege/r3-home-02-pruef/stellen__m375-light__06.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "m375",
+      "schema": "dark",
+      "status": 200,
+      "ms": 3891,
+      "seitenhoehe": 4081,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-02-pruef/stellen__m375-dark__01.webp",
+        "belege/r3-home-02-pruef/stellen__m375-dark__02.webp",
+        "belege/r3-home-02-pruef/stellen__m375-dark__03.webp",
+        "belege/r3-home-02-pruef/stellen__m375-dark__04.webp",
+        "belege/r3-home-02-pruef/stellen__m375-dark__05.webp",
+        "belege/r3-home-02-pruef/stellen__m375-dark__06.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 5698,
+      "seitenhoehe": 4012,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-02-pruef/stellen__m390-light__01.webp",
+        "belege/r3-home-02-pruef/stellen__m390-light__02.webp",
+        "belege/r3-home-02-pruef/stellen__m390-light__03.webp",
+        "belege/r3-home-02-pruef/stellen__m390-light__04.webp",
+        "belege/r3-home-02-pruef/stellen__m390-light__05.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 5438,
+      "seitenhoehe": 4012,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-02-pruef/stellen__m390-dark__01.webp",
+        "belege/r3-home-02-pruef/stellen__m390-dark__02.webp",
+        "belege/r3-home-02-pruef/stellen__m390-dark__03.webp",
+        "belege/r3-home-02-pruef/stellen__m390-dark__04.webp",
+        "belege/r3-home-02-pruef/stellen__m390-dark__05.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "t768",
+      "schema": "light",
+      "status": 200,
+      "ms": 3897,
+      "seitenhoehe": 2910,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-02-pruef/stellen__t768-light__01.webp",
+        "belege/r3-home-02-pruef/stellen__t768-light__02.webp",
+        "belege/r3-home-02-pruef/stellen__t768-light__03.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "t768",
+      "schema": "dark",
+      "status": 200,
+      "ms": 4013,
+      "seitenhoehe": 2910,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-02-pruef/stellen__t768-dark__01.webp",
+        "belege/r3-home-02-pruef/stellen__t768-dark__02.webp",
+        "belege/r3-home-02-pruef/stellen__t768-dark__03.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 2902,
+      "seitenhoehe": 2572,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-02-pruef/stellen__d1440-light__01.webp",
+        "belege/r3-home-02-pruef/stellen__d1440-light__02.webp",
+        "belege/r3-home-02-pruef/stellen__d1440-light__03.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 2751,
+      "seitenhoehe": 2572,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-02-pruef/stellen__d1440-dark__01.webp",
+        "belege/r3-home-02-pruef/stellen__d1440-dark__02.webp",
+        "belege/r3-home-02-pruef/stellen__d1440-dark__03.webp"
+      ]
+    }
+  ]
+}

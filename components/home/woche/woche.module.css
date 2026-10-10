@@ -1,0 +1,81 @@
+/*
+ * Arbeitswoche als Heizkreisverteiler (Variante 1 .woche, B Runde 1 figure.woche).
+ * Nur Rollen und Tokens (KERN K-004, K-006, K-010): eine Strichstärke --m-strich, Haarlinien 1 px nur als
+ * Raster, Vorlauf rot, Rücklauf blau, Maße in Martian Mono (75 %). Das SVG hat keine viewBox, also skaliert
+ * weder Strich noch Schrift mit der Breite; die Lage auf der Zeitachse steht in Prozent der Spur.
+ */
+
+.plan {
+  overflow: visible;
+}
+
+.plan :where(path, line) {
+  fill: none;
+  stroke-width: var(--m-strich);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.vorlauf {
+  stroke: var(--vorlauf);
+}
+
+.ruecklauf {
+  stroke: var(--ruecklauf);
+}
+
+/* Verteiler: stumpfe Enden, damit die Brückenlücke im Rücklauf genau drei Striche breit bleibt */
+.plan .verteiler {
+  stroke-linecap: butt;
+}
+
+/* Raster und Achse: Haarlinien */
+.plan .haar {
+  stroke: var(--line);
+  stroke-width: 1px;
+  stroke-linecap: butt;
+}
+
+.plan .strich {
+  stroke: var(--ink-muted);
+  stroke-width: 1px;
+  stroke-linecap: butt;
+}
+
+.tag {
+  fill: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-callout);
+  font-weight: 700;
+}
+
+.mass {
+  fill: var(--ink);
+  font-family: var(--font-mass);
+  font-stretch: 75%;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-footnote);
+  font-weight: 500;
+}
+
+/* Hauptmaß: der Freitag endet um 13:30 */
+.feierabend {
+  fill: var(--brand);
+  font-size: var(--text-title-2);
+  font-weight: 600;
+}
+
+.achse {
+  fill: var(--ink-muted);
+}
+
+/* Etikett im Plan (wie text-etikett): Versalien nur über diese Planbeschriftung (K-005) */
+.etikett {
+  fill: var(--ink-muted);
+  font-family: var(--font-mass);
+  font-stretch: 75%;
+  font-size: var(--text-footnote);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}

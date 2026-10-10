@@ -1,0 +1,1503 @@
+{
+  "m390-light": {
+    "radios": [
+      {
+        "name": "Anlagen­mechaniker SHK",
+        "checked": true
+      },
+      {
+        "name": "Kunden­dienst­techniker",
+        "checked": false
+      },
+      {
+        "name": "Ober­monteur / Projekt­leiter",
+        "checked": false
+      },
+      {
+        "name": "15 km",
+        "checked": false
+      },
+      {
+        "name": "25 km",
+        "checked": false
+      },
+      {
+        "name": "35 km",
+        "checked": true
+      },
+      {
+        "name": "Wetzlar Kernstadt 1 km , 3 Min.",
+        "checked": false
+      },
+      {
+        "name": "Garbenheim 4 km , 6 Min.",
+        "checked": false
+      },
+      {
+        "name": "Hermannstein 4 km , 7 Min.",
+        "checked": false
+      },
+      {
+        "name": "Steindorf 4 km , 7 Min.",
+        "checked": false
+      },
+      {
+        "name": "Nauborn 5 km , 8 Min.",
+        "checked": false
+      },
+      {
+        "name": "Aßlar 6 km , 9 Min.",
+        "checked": false
+      },
+      {
+        "name": "Dutenhofen 7 km , 10 Min.",
+        "checked": false
+      },
+      {
+        "name": "Braunfels 14 km , 18 Min.",
+        "checked": false
+      },
+      {
+        "name": "Gießen 15 km , 16 Min.",
+        "checked": false
+      },
+      {
+        "name": "Herborn 24 km , 22 Min.",
+        "checked": false
+      }
+    ],
+    "checkboxes": [
+      "Pünktlich Feierabend",
+      "Bezahlung über Tarif",
+      "Werkzeug und Fahrzeug",
+      "Baustellen in der Nähe"
+    ],
+    "groups": [
+      "Deine Stelle",
+      "Was ist dir an deinem neuen Arbeitgeber besonders wichtig?"
+    ],
+    "ziele": [
+      {
+        "lbl": "label:Anlagen­mechaniker S",
+        "w": 350,
+        "h": 64
+      },
+      {
+        "lbl": "label:Kunden­dienst­techni",
+        "w": 350,
+        "h": 64
+      },
+      {
+        "lbl": "label:Ober­monteur / Proje",
+        "w": 350,
+        "h": 64
+      },
+      {
+        "lbl": "label:Pünktlich Feierabend",
+        "w": 350,
+        "h": 49
+      },
+      {
+        "lbl": "label:Bezahlung über Tarif",
+        "w": 350,
+        "h": 49
+      },
+      {
+        "lbl": "label:Werkzeug und Fahrzeu",
+        "w": 350,
+        "h": 49
+      },
+      {
+        "lbl": "label:Baustellen in der Nä",
+        "w": 350,
+        "h": 49
+      },
+      {
+        "lbl": "a:Seite zur Ausbildung",
+        "w": 255,
+        "h": 54
+      },
+      {
+        "lbl": "a:Als Anlagenmechaniker SHK bewe",
+        "w": 312,
+        "h": 59
+      },
+      {
+        "lbl": "a:Alles zur Stelle : Anlagenmech",
+        "w": 107,
+        "h": 44
+      },
+      {
+        "lbl": "zeile:Anlagen­mechaniker S",
+        "w": 318,
+        "h": 152
+      },
+      {
+        "lbl": "zeile:Kunden­dienst­techni",
+        "w": 318,
+        "h": 152
+      },
+      {
+        "lbl": "zeile:Ober­monteur / Proje",
+        "w": 318,
+        "h": 152
+      },
+      {
+        "lbl": "zeile:Ausbildung Anlagen­m",
+        "w": 318,
+        "h": 152
+      },
+      {
+        "lbl": "a:Alle Stellen im Überblick",
+        "w": 193,
+        "h": 44,
+        "after": "static auto"
+      },
+      {
+        "lbl": "a:Anlagen­mechaniker SHK",
+        "w": 192,
+        "h": 47,
+        "after": "absolute 0px"
+      },
+      {
+        "lbl": "a:Kunden­dienst­techniker",
+        "w": 141,
+        "h": 47,
+        "after": "absolute 0px"
+      },
+      {
+        "lbl": "a:Ober­monteur / Projekt­le",
+        "w": 141,
+        "h": 47,
+        "after": "absolute 0px"
+      },
+      {
+        "lbl": "a:Ausbildung Anlagen­mechan",
+        "w": 198,
+        "h": 47,
+        "after": "absolute 0px"
+      },
+      {
+        "lbl": "a:Initiativ bewerben",
+        "w": 136,
+        "h": 22,
+        "after": "static auto"
+      }
+    ],
+    "start": {
+      "status": "3 Zeilen im Paket als Anlagenmechaniker SHK.",
+      "paket": [
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Fester Transporter mit Sortimo-Regalsystem, Mitnahme nach Hause möglich",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Persönliche Hilti-22-V-Akku-Flotte und Pressbacken für Viega und Geberit",
+          "warm": false
+        },
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Facharbeitervergütung deutlich über Handwerkstarif",
+          "warm": false
+        }
+      ]
+    },
+    "kundendienst": {
+      "status": "3 Zeilen im Paket als Kundendiensttechniker.",
+      "paket": [
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Persönliches Servicefahrzeug mit Tankkarte und Privatnutzung ab Wohnort",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Digitale Messtechnik, Hilti-Koffer",
+          "warm": false
+        },
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Höchste Facharbeiter-Einstufung mit Qualitätsprämien",
+          "warm": false
+        }
+      ],
+      "knopf": {
+        "t": "Als Kundendiensttechniker bewerben",
+        "href": "/bewerbung?stelle=kundendiensttechniker-waermepumpe-wetzlar",
+        "bg": "rgb(17, 26, 59)",
+        "color": "rgb(251, 247, 240)"
+      },
+      "url": "http://localhost:3450/"
+    },
+    "kdFeierabend": {
+      "status": "5 Zeilen im Paket als Kundendiensttechniker. 2 passen zu deiner Auswahl.",
+      "paket": [
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Persönliches Servicefahrzeug mit Tankkarte und Privatnutzung ab Wohnort",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Digitale Messtechnik, Hilti-Koffer",
+          "warm": false
+        },
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Höchste Facharbeiter-Einstufung mit Qualitätsprämien",
+          "warm": false
+        },
+        {
+          "dt": "FREITAG",
+          "dd": "Freitags ab 13:30 Uhr Feierabend\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "WOCHENENDE",
+          "dd": "Kein Wochenend-Notdienst\n(passt zu deiner Auswahl)",
+          "warm": true
+        }
+      ]
+    },
+    "kdFeierabendCount": {
+      "Kein Wochenend-Notdienst": 2,
+      "Freitags ab 13:30 Uhr Feierabend": 1
+    },
+    "kdNaehe": {
+      "status": "6 Zeilen im Paket als Kundendiensttechniker. 3 passen zu deiner Auswahl.",
+      "paket": [
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Persönliches Servicefahrzeug mit Tankkarte und Privatnutzung ab Wohnort",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Digitale Messtechnik, Hilti-Koffer",
+          "warm": false
+        },
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Höchste Facharbeiter-Einstufung mit Qualitätsprämien",
+          "warm": false
+        },
+        {
+          "dt": "FREITAG",
+          "dd": "Freitags ab 13:30 Uhr Feierabend\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "WOCHENENDE",
+          "dd": "Kein Wochenend-Notdienst\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "UMKREIS",
+          "dd": "Einsatzgebiet maximal 35 km um Wetzlar\n(passt zu deiner Auswahl)",
+          "warm": true
+        }
+      ]
+    },
+    "kdNaeheCount": {
+      "radius35": 1
+    },
+    "omAusstattung": {
+      "status": "6 Zeilen im Paket als Obermonteur / Projektleiter. 3 passen zu deiner Auswahl.",
+      "paket": [
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Übertarifliche Vergütung mit Führungszulage und Erfolgsprämien",
+          "warm": false
+        },
+        {
+          "dt": "FREIHEIT",
+          "dd": "Freie Baustellenorganisation ohne Mikromanagement",
+          "warm": false
+        },
+        {
+          "dt": "MITGESTALTEN",
+          "dd": "Mit Meister- oder Technikerabschluss gestaltest du die Betriebsplanung mit",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Persönliche Hilti-Ausstattung\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Firmenfahrzeug mit 1-%-Privatnutzung\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "TANKKARTE",
+          "dd": "Tankkarte\n(passt zu deiner Auswahl)",
+          "warm": true
+        }
+      ]
+    },
+    "tabRadio": {
+      "tag": "INPUT",
+      "type": "radio",
+      "text": "anlagenmechaniker-shk"
+    },
+    "ringRadio": {
+      "outline": "solid 0px rgb(17, 26, 59)",
+      "offset": "0px"
+    },
+    "nachPfeil": {
+      "status": "3 Zeilen im Paket als Kundendiensttechniker. 2 passen zu deiner Auswahl.",
+      "checked": "kundendiensttechniker-shk"
+    },
+    "checkboxTaste": {
+      "cb": {
+        "type": "checkbox",
+        "v": "feierabend"
+      },
+      "status": "5 Zeilen im Paket als Kundendiensttechniker. 4 passen zu deiner Auswahl.",
+      "ring": "solid 3px"
+    },
+    "zeilenFokus": {
+      "href": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "outline": "solid 0px rgb(17, 29, 109)",
+      "offset": "0px"
+    },
+    "overflow": {
+      "W": 390,
+      "scrollW": 390,
+      "bad": []
+    },
+    "errors": [],
+    "gesperrt": 0
+  },
+  "d1440-dark": {
+    "radios": [
+      {
+        "name": "Anlagen­mechaniker SHK",
+        "checked": true
+      },
+      {
+        "name": "Kunden­dienst­techniker",
+        "checked": false
+      },
+      {
+        "name": "Ober­monteur / Projekt­leiter",
+        "checked": false
+      },
+      {
+        "name": "15 km",
+        "checked": false
+      },
+      {
+        "name": "25 km",
+        "checked": false
+      },
+      {
+        "name": "35 km",
+        "checked": true
+      },
+      {
+        "name": "Wetzlar Kernstadt 1 km , 3 Min.",
+        "checked": false
+      },
+      {
+        "name": "Garbenheim 4 km , 6 Min.",
+        "checked": false
+      },
+      {
+        "name": "Hermannstein 4 km , 7 Min.",
+        "checked": false
+      },
+      {
+        "name": "Steindorf 4 km , 7 Min.",
+        "checked": false
+      },
+      {
+        "name": "Nauborn 5 km , 8 Min.",
+        "checked": false
+      },
+      {
+        "name": "Aßlar 6 km , 9 Min.",
+        "checked": false
+      },
+      {
+        "name": "Dutenhofen 7 km , 10 Min.",
+        "checked": false
+      },
+      {
+        "name": "Braunfels 14 km , 18 Min.",
+        "checked": false
+      },
+      {
+        "name": "Gießen 15 km , 16 Min.",
+        "checked": false
+      },
+      {
+        "name": "Herborn 24 km , 22 Min.",
+        "checked": false
+      }
+    ],
+    "checkboxes": [
+      "Pünktlich Feierabend",
+      "Bezahlung über Tarif",
+      "Werkzeug und Fahrzeug",
+      "Baustellen in der Nähe"
+    ],
+    "groups": [
+      "Deine Stelle",
+      "Was ist dir an deinem neuen Arbeitgeber besonders wichtig?"
+    ],
+    "ziele": [
+      {
+        "lbl": "label:Anlagen­mechaniker S",
+        "w": 435,
+        "h": 64
+      },
+      {
+        "lbl": "label:Kunden­dienst­techni",
+        "w": 435,
+        "h": 64
+      },
+      {
+        "lbl": "label:Ober­monteur / Proje",
+        "w": 435,
+        "h": 97
+      },
+      {
+        "lbl": "label:Pünktlich Feierabend",
+        "w": 435,
+        "h": 53
+      },
+      {
+        "lbl": "label:Bezahlung über Tarif",
+        "w": 435,
+        "h": 53
+      },
+      {
+        "lbl": "label:Werkzeug und Fahrzeu",
+        "w": 435,
+        "h": 53
+      },
+      {
+        "lbl": "label:Baustellen in der Nä",
+        "w": 435,
+        "h": 53
+      },
+      {
+        "lbl": "a:Seite zur Ausbildung",
+        "w": 216,
+        "h": 32
+      },
+      {
+        "lbl": "a:Als Anlagenmechaniker SHK bewe",
+        "w": 417,
+        "h": 52
+      },
+      {
+        "lbl": "a:Alles zur Stelle : Anlagenmech",
+        "w": 114,
+        "h": 44
+      },
+      {
+        "lbl": "zeile:Anlagen­mechaniker S",
+        "w": 1040,
+        "h": 104
+      },
+      {
+        "lbl": "zeile:Kunden­dienst­techni",
+        "w": 1040,
+        "h": 104
+      },
+      {
+        "lbl": "zeile:Ober­monteur / Proje",
+        "w": 1040,
+        "h": 104
+      },
+      {
+        "lbl": "zeile:Ausbildung Anlagen­m",
+        "w": 1040,
+        "h": 104
+      },
+      {
+        "lbl": "a:Alle Stellen im Überblick",
+        "w": 225,
+        "h": 44,
+        "after": "static auto"
+      },
+      {
+        "lbl": "a:Anlagen­mechaniker SHK",
+        "w": 338,
+        "h": 35,
+        "after": "absolute 0px"
+      },
+      {
+        "lbl": "a:Kunden­dienst­techniker",
+        "w": 322,
+        "h": 35,
+        "after": "absolute 0px"
+      },
+      {
+        "lbl": "a:Ober­monteur / Projekt­le",
+        "w": 377,
+        "h": 35,
+        "after": "absolute 0px"
+      },
+      {
+        "lbl": "a:Ausbildung Anlagen­mechan",
+        "w": 435,
+        "h": 35,
+        "after": "absolute 0px"
+      },
+      {
+        "lbl": "a:Initiativ bewerben",
+        "w": 159,
+        "h": 26,
+        "after": "static auto"
+      }
+    ],
+    "start": {
+      "status": "3 Zeilen im Paket als Anlagenmechaniker SHK.",
+      "paket": [
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Fester Transporter mit Sortimo-Regalsystem, Mitnahme nach Hause möglich",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Persönliche Hilti-22-V-Akku-Flotte und Pressbacken für Viega und Geberit",
+          "warm": false
+        },
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Facharbeitervergütung deutlich über Handwerkstarif",
+          "warm": false
+        }
+      ]
+    },
+    "kundendienst": {
+      "status": "3 Zeilen im Paket als Kundendiensttechniker.",
+      "paket": [
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Persönliches Servicefahrzeug mit Tankkarte und Privatnutzung ab Wohnort",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Digitale Messtechnik, Hilti-Koffer",
+          "warm": false
+        },
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Höchste Facharbeiter-Einstufung mit Qualitätsprämien",
+          "warm": false
+        }
+      ],
+      "knopf": {
+        "t": "Als Kundendiensttechniker bewerben",
+        "href": "/bewerbung?stelle=kundendiensttechniker-waermepumpe-wetzlar",
+        "bg": "rgb(246, 240, 228)",
+        "color": "rgb(10, 16, 51)"
+      },
+      "url": "http://localhost:3450/"
+    },
+    "kdFeierabend": {
+      "status": "5 Zeilen im Paket als Kundendiensttechniker. 2 passen zu deiner Auswahl.",
+      "paket": [
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Persönliches Servicefahrzeug mit Tankkarte und Privatnutzung ab Wohnort",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Digitale Messtechnik, Hilti-Koffer",
+          "warm": false
+        },
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Höchste Facharbeiter-Einstufung mit Qualitätsprämien",
+          "warm": false
+        },
+        {
+          "dt": "FREITAG",
+          "dd": "Freitags ab 13:30 Uhr Feierabend\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "WOCHENENDE",
+          "dd": "Kein Wochenend-Notdienst\n(passt zu deiner Auswahl)",
+          "warm": true
+        }
+      ]
+    },
+    "kdFeierabendCount": {
+      "Kein Wochenend-Notdienst": 2,
+      "Freitags ab 13:30 Uhr Feierabend": 1
+    },
+    "kdNaehe": {
+      "status": "6 Zeilen im Paket als Kundendiensttechniker. 3 passen zu deiner Auswahl.",
+      "paket": [
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Persönliches Servicefahrzeug mit Tankkarte und Privatnutzung ab Wohnort",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Digitale Messtechnik, Hilti-Koffer",
+          "warm": false
+        },
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Höchste Facharbeiter-Einstufung mit Qualitätsprämien",
+          "warm": false
+        },
+        {
+          "dt": "FREITAG",
+          "dd": "Freitags ab 13:30 Uhr Feierabend\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "WOCHENENDE",
+          "dd": "Kein Wochenend-Notdienst\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "UMKREIS",
+          "dd": "Einsatzgebiet maximal 35 km um Wetzlar\n(passt zu deiner Auswahl)",
+          "warm": true
+        }
+      ]
+    },
+    "kdNaeheCount": {
+      "radius35": 1
+    },
+    "omAusstattung": {
+      "status": "6 Zeilen im Paket als Obermonteur / Projektleiter. 3 passen zu deiner Auswahl.",
+      "paket": [
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Übertarifliche Vergütung mit Führungszulage und Erfolgsprämien",
+          "warm": false
+        },
+        {
+          "dt": "FREIHEIT",
+          "dd": "Freie Baustellenorganisation ohne Mikromanagement",
+          "warm": false
+        },
+        {
+          "dt": "MITGESTALTEN",
+          "dd": "Mit Meister- oder Technikerabschluss gestaltest du die Betriebsplanung mit",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Persönliche Hilti-Ausstattung\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Firmenfahrzeug mit 1-%-Privatnutzung\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "TANKKARTE",
+          "dd": "Tankkarte\n(passt zu deiner Auswahl)",
+          "warm": true
+        }
+      ]
+    },
+    "tabRadio": {
+      "tag": "INPUT",
+      "type": "radio",
+      "text": "anlagenmechaniker-shk"
+    },
+    "ringRadio": {
+      "outline": "solid 0px rgb(246, 240, 228)",
+      "offset": "0px"
+    },
+    "nachPfeil": {
+      "status": "3 Zeilen im Paket als Kundendiensttechniker. 2 passen zu deiner Auswahl.",
+      "checked": "kundendiensttechniker-shk"
+    },
+    "checkboxTaste": {
+      "cb": {
+        "type": "checkbox",
+        "v": "feierabend"
+      },
+      "status": "5 Zeilen im Paket als Kundendiensttechniker. 4 passen zu deiner Auswahl.",
+      "ring": "solid 0px"
+    },
+    "zeilenFokus": {
+      "href": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "outline": "solid 0px rgb(246, 240, 228)",
+      "offset": "0px"
+    },
+    "overflow": {
+      "W": 1440,
+      "scrollW": 1440,
+      "bad": []
+    },
+    "errors": [],
+    "gesperrt": 0
+  },
+  "m320-light": {
+    "radios": [
+      {
+        "name": "Anlagen­mechaniker SHK",
+        "checked": true
+      },
+      {
+        "name": "Kunden­dienst­techniker",
+        "checked": false
+      },
+      {
+        "name": "Ober­monteur / Projekt­leiter",
+        "checked": false
+      },
+      {
+        "name": "15 km",
+        "checked": false
+      },
+      {
+        "name": "25 km",
+        "checked": false
+      },
+      {
+        "name": "35 km",
+        "checked": true
+      },
+      {
+        "name": "Wetzlar Kernstadt 1 km , 3 Min.",
+        "checked": false
+      },
+      {
+        "name": "Garbenheim 4 km , 6 Min.",
+        "checked": false
+      },
+      {
+        "name": "Hermannstein 4 km , 7 Min.",
+        "checked": false
+      },
+      {
+        "name": "Steindorf 4 km , 7 Min.",
+        "checked": false
+      },
+      {
+        "name": "Nauborn 5 km , 8 Min.",
+        "checked": false
+      },
+      {
+        "name": "Aßlar 6 km , 9 Min.",
+        "checked": false
+      },
+      {
+        "name": "Dutenhofen 7 km , 10 Min.",
+        "checked": false
+      },
+      {
+        "name": "Braunfels 14 km , 18 Min.",
+        "checked": false
+      },
+      {
+        "name": "Gießen 15 km , 16 Min.",
+        "checked": false
+      },
+      {
+        "name": "Herborn 24 km , 22 Min.",
+        "checked": false
+      }
+    ],
+    "checkboxes": [
+      "Pünktlich Feierabend",
+      "Bezahlung über Tarif",
+      "Werkzeug und Fahrzeug",
+      "Baustellen in der Nähe"
+    ],
+    "groups": [
+      "Deine Stelle",
+      "Was ist dir an deinem neuen Arbeitgeber besonders wichtig?"
+    ],
+    "ziele": [
+      {
+        "lbl": "label:Anlagen­mechaniker S",
+        "w": 280,
+        "h": 76
+      },
+      {
+        "lbl": "label:Kunden­dienst­techni",
+        "w": 280,
+        "h": 76
+      },
+      {
+        "lbl": "label:Ober­monteur / Proje",
+        "w": 280,
+        "h": 76
+      },
+      {
+        "lbl": "label:Pünktlich Feierabend",
+        "w": 280,
+        "h": 48
+      },
+      {
+        "lbl": "label:Bezahlung über Tarif",
+        "w": 280,
+        "h": 48
+      },
+      {
+        "lbl": "label:Werkzeug und Fahrzeu",
+        "w": 280,
+        "h": 48
+      },
+      {
+        "lbl": "label:Baustellen in der Nä",
+        "w": 280,
+        "h": 48
+      },
+      {
+        "lbl": "a:Seite zur Ausbildung",
+        "w": 172,
+        "h": 25
+      },
+      {
+        "lbl": "a:Als Anlagenmechaniker SHK bewe",
+        "w": 242,
+        "h": 80
+      },
+      {
+        "lbl": "a:Alles zur Stelle : Anlagenmech",
+        "w": 107,
+        "h": 44
+      },
+      {
+        "lbl": "zeile:Anlagen­mechaniker S",
+        "w": 248,
+        "h": 190
+      },
+      {
+        "lbl": "zeile:Kunden­dienst­techni",
+        "w": 248,
+        "h": 167
+      },
+      {
+        "lbl": "zeile:Ober­monteur / Proje",
+        "w": 248,
+        "h": 167
+      },
+      {
+        "lbl": "zeile:Ausbildung Anlagen­m",
+        "w": 248,
+        "h": 190
+      },
+      {
+        "lbl": "a:Alle Stellen im Überblick",
+        "w": 191,
+        "h": 44,
+        "after": "static auto"
+      },
+      {
+        "lbl": "a:Anlagen­mechaniker SHK",
+        "w": 114,
+        "h": 70,
+        "after": "absolute 0px"
+      },
+      {
+        "lbl": "a:Kunden­dienst­techniker",
+        "w": 140,
+        "h": 47,
+        "after": "absolute 0px"
+      },
+      {
+        "lbl": "a:Ober­monteur / Projekt­le",
+        "w": 140,
+        "h": 47,
+        "after": "absolute 0px"
+      },
+      {
+        "lbl": "a:Ausbildung Anlagen­mechan",
+        "w": 114,
+        "h": 70,
+        "after": "absolute 0px"
+      },
+      {
+        "lbl": "a:Initiativ bewerben",
+        "w": 135,
+        "h": 22,
+        "after": "static auto"
+      }
+    ],
+    "start": {
+      "status": "3 Zeilen im Paket als Anlagenmechaniker SHK.",
+      "paket": [
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Fester Transporter mit Sortimo-Regalsystem, Mitnahme nach Hause möglich",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Persönliche Hilti-22-V-Akku-Flotte und Pressbacken für Viega und Geberit",
+          "warm": false
+        },
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Facharbeitervergütung deutlich über Handwerkstarif",
+          "warm": false
+        }
+      ]
+    },
+    "kundendienst": {
+      "status": "3 Zeilen im Paket als Kundendiensttechniker.",
+      "paket": [
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Persönliches Servicefahrzeug mit Tankkarte und Privatnutzung ab Wohnort",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Digitale Messtechnik, Hilti-Koffer",
+          "warm": false
+        },
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Höchste Facharbeiter-Einstufung mit Qualitätsprämien",
+          "warm": false
+        }
+      ],
+      "knopf": {
+        "t": "Als Kundendiensttechniker bewerben",
+        "href": "/bewerbung?stelle=kundendiensttechniker-waermepumpe-wetzlar",
+        "bg": "rgb(17, 26, 59)",
+        "color": "rgb(251, 247, 240)"
+      },
+      "url": "http://localhost:3450/"
+    },
+    "kdFeierabend": {
+      "status": "5 Zeilen im Paket als Kundendiensttechniker. 2 passen zu deiner Auswahl.",
+      "paket": [
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Persönliches Servicefahrzeug mit Tankkarte und Privatnutzung ab Wohnort",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Digitale Messtechnik, Hilti-Koffer",
+          "warm": false
+        },
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Höchste Facharbeiter-Einstufung mit Qualitätsprämien",
+          "warm": false
+        },
+        {
+          "dt": "FREITAG",
+          "dd": "Freitags ab 13:30 Uhr Feierabend\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "WOCHENENDE",
+          "dd": "Kein Wochenend-Notdienst\n(passt zu deiner Auswahl)",
+          "warm": true
+        }
+      ]
+    },
+    "kdFeierabendCount": {
+      "Kein Wochenend-Notdienst": 2,
+      "Freitags ab 13:30 Uhr Feierabend": 1
+    },
+    "kdNaehe": {
+      "status": "6 Zeilen im Paket als Kundendiensttechniker. 3 passen zu deiner Auswahl.",
+      "paket": [
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Persönliches Servicefahrzeug mit Tankkarte und Privatnutzung ab Wohnort",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Digitale Messtechnik, Hilti-Koffer",
+          "warm": false
+        },
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Höchste Facharbeiter-Einstufung mit Qualitätsprämien",
+          "warm": false
+        },
+        {
+          "dt": "FREITAG",
+          "dd": "Freitags ab 13:30 Uhr Feierabend\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "WOCHENENDE",
+          "dd": "Kein Wochenend-Notdienst\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "UMKREIS",
+          "dd": "Einsatzgebiet maximal 35 km um Wetzlar\n(passt zu deiner Auswahl)",
+          "warm": true
+        }
+      ]
+    },
+    "kdNaeheCount": {
+      "radius35": 1
+    },
+    "omAusstattung": {
+      "status": "6 Zeilen im Paket als Obermonteur / Projektleiter. 3 passen zu deiner Auswahl.",
+      "paket": [
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Übertarifliche Vergütung mit Führungszulage und Erfolgsprämien",
+          "warm": false
+        },
+        {
+          "dt": "FREIHEIT",
+          "dd": "Freie Baustellenorganisation ohne Mikromanagement",
+          "warm": false
+        },
+        {
+          "dt": "MITGESTALTEN",
+          "dd": "Mit Meister- oder Technikerabschluss gestaltest du die Betriebsplanung mit",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Persönliche Hilti-Ausstattung\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Firmenfahrzeug mit 1-%-Privatnutzung\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "TANKKARTE",
+          "dd": "Tankkarte\n(passt zu deiner Auswahl)",
+          "warm": true
+        }
+      ]
+    },
+    "tabRadio": {
+      "tag": "INPUT",
+      "type": "radio",
+      "text": "anlagenmechaniker-shk"
+    },
+    "ringRadio": {
+      "outline": "solid 0px rgb(17, 26, 59)",
+      "offset": "0px"
+    },
+    "nachPfeil": {
+      "status": "3 Zeilen im Paket als Kundendiensttechniker. 2 passen zu deiner Auswahl.",
+      "checked": "kundendiensttechniker-shk"
+    },
+    "checkboxTaste": {
+      "cb": {
+        "type": "checkbox",
+        "v": "feierabend"
+      },
+      "status": "5 Zeilen im Paket als Kundendiensttechniker. 4 passen zu deiner Auswahl.",
+      "ring": "solid 0px"
+    },
+    "zeilenFokus": {
+      "href": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "outline": "solid 0px rgb(17, 29, 109)",
+      "offset": "0px"
+    },
+    "overflow": {
+      "W": 320,
+      "scrollW": 320,
+      "bad": []
+    },
+    "errors": [],
+    "gesperrt": 0
+  },
+  "m430-light": {
+    "radios": [
+      {
+        "name": "Anlagen­mechaniker SHK",
+        "checked": true
+      },
+      {
+        "name": "Kunden­dienst­techniker",
+        "checked": false
+      },
+      {
+        "name": "Ober­monteur / Projekt­leiter",
+        "checked": false
+      },
+      {
+        "name": "15 km",
+        "checked": false
+      },
+      {
+        "name": "25 km",
+        "checked": false
+      },
+      {
+        "name": "35 km",
+        "checked": true
+      },
+      {
+        "name": "Wetzlar Kernstadt 1 km , 3 Min.",
+        "checked": false
+      },
+      {
+        "name": "Garbenheim 4 km , 6 Min.",
+        "checked": false
+      },
+      {
+        "name": "Hermannstein 4 km , 7 Min.",
+        "checked": false
+      },
+      {
+        "name": "Steindorf 4 km , 7 Min.",
+        "checked": false
+      },
+      {
+        "name": "Nauborn 5 km , 8 Min.",
+        "checked": false
+      },
+      {
+        "name": "Aßlar 6 km , 9 Min.",
+        "checked": false
+      },
+      {
+        "name": "Dutenhofen 7 km , 10 Min.",
+        "checked": false
+      },
+      {
+        "name": "Braunfels 14 km , 18 Min.",
+        "checked": false
+      },
+      {
+        "name": "Gießen 15 km , 16 Min.",
+        "checked": false
+      },
+      {
+        "name": "Herborn 24 km , 22 Min.",
+        "checked": false
+      }
+    ],
+    "checkboxes": [
+      "Pünktlich Feierabend",
+      "Bezahlung über Tarif",
+      "Werkzeug und Fahrzeug",
+      "Baustellen in der Nähe"
+    ],
+    "groups": [
+      "Deine Stelle",
+      "Was ist dir an deinem neuen Arbeitgeber besonders wichtig?"
+    ],
+    "ziele": [
+      {
+        "lbl": "label:Anlagen­mechaniker S",
+        "w": 390,
+        "h": 64
+      },
+      {
+        "lbl": "label:Kunden­dienst­techni",
+        "w": 390,
+        "h": 64
+      },
+      {
+        "lbl": "label:Ober­monteur / Proje",
+        "w": 390,
+        "h": 64
+      },
+      {
+        "lbl": "label:Pünktlich Feierabend",
+        "w": 390,
+        "h": 49
+      },
+      {
+        "lbl": "label:Bezahlung über Tarif",
+        "w": 390,
+        "h": 49
+      },
+      {
+        "lbl": "label:Werkzeug und Fahrzeu",
+        "w": 390,
+        "h": 49
+      },
+      {
+        "lbl": "label:Baustellen in der Nä",
+        "w": 390,
+        "h": 49
+      },
+      {
+        "lbl": "a:Seite zur Ausbildung",
+        "w": 257,
+        "h": 54
+      },
+      {
+        "lbl": "a:Als Anlagenmechaniker SHK bewe",
+        "w": 352,
+        "h": 59
+      },
+      {
+        "lbl": "a:Alles zur Stelle : Anlagenmech",
+        "w": 107,
+        "h": 44
+      },
+      {
+        "lbl": "zeile:Anlagen­mechaniker S",
+        "w": 358,
+        "h": 153
+      },
+      {
+        "lbl": "zeile:Kunden­dienst­techni",
+        "w": 358,
+        "h": 130
+      },
+      {
+        "lbl": "zeile:Ober­monteur / Proje",
+        "w": 358,
+        "h": 153
+      },
+      {
+        "lbl": "zeile:Ausbildung Anlagen­m",
+        "w": 358,
+        "h": 153
+      },
+      {
+        "lbl": "a:Alle Stellen im Überblick",
+        "w": 194,
+        "h": 44,
+        "after": "static auto"
+      },
+      {
+        "lbl": "a:Anlagen­mechaniker SHK",
+        "w": 195,
+        "h": 49,
+        "after": "absolute 0px"
+      },
+      {
+        "lbl": "a:Kunden­dienst­techniker",
+        "w": 229,
+        "h": 25,
+        "after": "absolute 0px"
+      },
+      {
+        "lbl": "a:Ober­monteur / Projekt­le",
+        "w": 143,
+        "h": 49,
+        "after": "absolute 0px"
+      },
+      {
+        "lbl": "a:Ausbildung Anlagen­mechan",
+        "w": 195,
+        "h": 49,
+        "after": "absolute 0px"
+      },
+      {
+        "lbl": "a:Initiativ bewerben",
+        "w": 137,
+        "h": 22,
+        "after": "static auto"
+      }
+    ],
+    "start": {
+      "status": "3 Zeilen im Paket als Anlagenmechaniker SHK.",
+      "paket": [
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Fester Transporter mit Sortimo-Regalsystem, Mitnahme nach Hause möglich",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Persönliche Hilti-22-V-Akku-Flotte und Pressbacken für Viega und Geberit",
+          "warm": false
+        },
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Facharbeitervergütung deutlich über Handwerkstarif",
+          "warm": false
+        }
+      ]
+    },
+    "kundendienst": {
+      "status": "3 Zeilen im Paket als Kundendiensttechniker.",
+      "paket": [
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Persönliches Servicefahrzeug mit Tankkarte und Privatnutzung ab Wohnort",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Digitale Messtechnik, Hilti-Koffer",
+          "warm": false
+        },
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Höchste Facharbeiter-Einstufung mit Qualitätsprämien",
+          "warm": false
+        }
+      ],
+      "knopf": {
+        "t": "Als Kundendiensttechniker bewerben",
+        "href": "/bewerbung?stelle=kundendiensttechniker-waermepumpe-wetzlar",
+        "bg": "rgb(17, 26, 59)",
+        "color": "rgb(251, 247, 240)"
+      },
+      "url": "http://localhost:3450/"
+    },
+    "kdFeierabend": {
+      "status": "5 Zeilen im Paket als Kundendiensttechniker. 2 passen zu deiner Auswahl.",
+      "paket": [
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Persönliches Servicefahrzeug mit Tankkarte und Privatnutzung ab Wohnort",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Digitale Messtechnik, Hilti-Koffer",
+          "warm": false
+        },
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Höchste Facharbeiter-Einstufung mit Qualitätsprämien",
+          "warm": false
+        },
+        {
+          "dt": "FREITAG",
+          "dd": "Freitags ab 13:30 Uhr Feierabend\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "WOCHENENDE",
+          "dd": "Kein Wochenend-Notdienst\n(passt zu deiner Auswahl)",
+          "warm": true
+        }
+      ]
+    },
+    "kdFeierabendCount": {
+      "Kein Wochenend-Notdienst": 2,
+      "Freitags ab 13:30 Uhr Feierabend": 1
+    },
+    "kdNaehe": {
+      "status": "6 Zeilen im Paket als Kundendiensttechniker. 3 passen zu deiner Auswahl.",
+      "paket": [
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Persönliches Servicefahrzeug mit Tankkarte und Privatnutzung ab Wohnort",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Digitale Messtechnik, Hilti-Koffer",
+          "warm": false
+        },
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Höchste Facharbeiter-Einstufung mit Qualitätsprämien",
+          "warm": false
+        },
+        {
+          "dt": "FREITAG",
+          "dd": "Freitags ab 13:30 Uhr Feierabend\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "WOCHENENDE",
+          "dd": "Kein Wochenend-Notdienst\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "UMKREIS",
+          "dd": "Einsatzgebiet maximal 35 km um Wetzlar\n(passt zu deiner Auswahl)",
+          "warm": true
+        }
+      ]
+    },
+    "kdNaeheCount": {
+      "radius35": 1
+    },
+    "omAusstattung": {
+      "status": "6 Zeilen im Paket als Obermonteur / Projektleiter. 3 passen zu deiner Auswahl.",
+      "paket": [
+        {
+          "dt": "VERGÜTUNG",
+          "dd": "Übertarifliche Vergütung mit Führungszulage und Erfolgsprämien",
+          "warm": false
+        },
+        {
+          "dt": "FREIHEIT",
+          "dd": "Freie Baustellenorganisation ohne Mikromanagement",
+          "warm": false
+        },
+        {
+          "dt": "MITGESTALTEN",
+          "dd": "Mit Meister- oder Technikerabschluss gestaltest du die Betriebsplanung mit",
+          "warm": false
+        },
+        {
+          "dt": "WERKZEUG",
+          "dd": "Persönliche Hilti-Ausstattung\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "FAHRZEUG",
+          "dd": "Firmenfahrzeug mit 1-%-Privatnutzung\n(passt zu deiner Auswahl)",
+          "warm": true
+        },
+        {
+          "dt": "TANKKARTE",
+          "dd": "Tankkarte\n(passt zu deiner Auswahl)",
+          "warm": true
+        }
+      ]
+    },
+    "tabRadio": {
+      "tag": "INPUT",
+      "type": "radio",
+      "text": "anlagenmechaniker-shk"
+    },
+    "ringRadio": {
+      "outline": "solid 0px rgb(17, 26, 59)",
+      "offset": "0px"
+    },
+    "nachPfeil": {
+      "status": "3 Zeilen im Paket als Kundendiensttechniker. 2 passen zu deiner Auswahl.",
+      "checked": "kundendiensttechniker-shk"
+    },
+    "checkboxTaste": {
+      "cb": {
+        "type": "checkbox",
+        "v": "feierabend"
+      },
+      "status": "5 Zeilen im Paket als Kundendiensttechniker. 4 passen zu deiner Auswahl.",
+      "ring": "solid 3px"
+    },
+    "zeilenFokus": {
+      "href": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "outline": "solid 0px rgb(17, 29, 109)",
+      "offset": "0px"
+    },
+    "overflow": {
+      "W": 430,
+      "scrollW": 430,
+      "bad": []
+    },
+    "errors": [],
+    "gesperrt": 0
+  },
+  "ohne-js-d1440": {
+    "paketTitel": "Anlagen­mechaniker SHK",
+    "status": "3 Zeilen im Paket als Anlagenmechaniker SHK.",
+    "nachKlick": {
+      "checked": "kundendiensttechniker-shk",
+      "paketTitel": "Anlagen­mechaniker SHK",
+      "knopf": "Als Anlagenmechaniker SHK bewerben"
+    }
+  }
+}

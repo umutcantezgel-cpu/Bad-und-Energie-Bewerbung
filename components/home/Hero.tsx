@@ -1,50 +1,23 @@
-import Link from 'next/link';
-import { ArrowDown } from 'lucide-react';
-import { Container } from '@/components/layout/Container';
-import { Section } from '@/components/layout/Section';
-import { Button } from '@/components/ui/Button';
-import { PageHeader } from '@/components/ui/PageHeader';
-import { StatTile } from '@/components/ui/StatTile';
-import { TextLink } from '@/components/ui/TextLink';
-import { HERO, HERO_STATS } from './content';
+import { Einstieg } from './einstieg/Einstieg';
+import { Vertrauenszeile } from './einstieg/Vertrauenszeile';
+import styles from './einstieg/einstieg.module.css';
 
-/** Eyebrow, two-part H1, lead, one primary action and the four key figures. */
-export function Hero() {
+export interface HeroProps {
+  /** Stichtag (Jubiläum bis 31.12.2026, E-START-002); Standard: jetzt. Für Tests setzbar. */
+  now?: Date;
+}
+
+/**
+ * Einstieg der Startseite (R3-HOME-01, Variante 1 mit Teilen aus B Runde 1): Haus mit Wärmepumpe, der
+ * Kreislauf läuft einmal an, die Uhr rastet auf 13:30 ein, der rote Vorlauf endet in „Jetzt bewerben“.
+ * Darunter der Erklärsatz mit „Kreislauf zeigen“ und die Vertrauenszeile. Genau eine h1 auf der Seite.
+ * Der Abschnitt endet bündig; den Leitungstrenner zum nächsten Abschnitt setzt die Seite.
+ */
+export function Hero({ now = new Date() }: HeroProps) {
   return (
-    <Section tone="subtle" aria-labelledby="hero-title" className="pt-12 lg:pt-20">
-      <Container className="flex flex-col gap-14 lg:gap-20">
-        <PageHeader
-          size="display"
-          titleId="hero-title"
-          eyebrow={HERO.eyebrow}
-          title={
-            <>
-              {HERO.title}{' '}
-              <span className="block text-ink-muted">{HERO.titleSecondLine}</span>
-            </>
-          }
-          lead={HERO.lead}
-        >
-          <div data-primary-cta className="flex flex-wrap items-center gap-x-6 gap-y-2">
-            <Button asChild size="xl">
-              <Link href="/bewerbung">Jetzt bewerben</Link>
-            </Button>
-            <TextLink href="#stellen" standalone>
-              Offene Stellen ansehen
-              <ArrowDown aria-hidden="true" strokeWidth={1.75} className="size-4" />
-            </TextLink>
-          </div>
-          <p className="basis-full text-footnote text-ink-muted">{HERO.microcopy}</p>
-        </PageHeader>
-
-        <ul className="grid grid-cols-2 gap-x-6 gap-y-8 border-t border-line pt-8 lg:grid-cols-4">
-          {HERO_STATS.map((stat) => (
-            <li key={stat.factId}>
-              <StatTile value={stat.value} label={stat.label} />
-            </li>
-          ))}
-        </ul>
-      </Container>
-    </Section>
+    <section aria-labelledby="hero-title" className={styles.held} data-kreislauf="ruhe" data-seitenart="erzaehlseite">
+      <Einstieg now={now} titleId="hero-title" />
+      <Vertrauenszeile />
+    </section>
   );
 }

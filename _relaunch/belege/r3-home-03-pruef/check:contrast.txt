@@ -1,0 +1,359 @@
+$ node scripts/qa/check-contrast.mjs
+Contrast check: app/styles/theme.css (light, dark, inverse light, inverse dark, print, print dark, print inverse)
+
+mode                     pair                          values              ratio      min  result
+-----------------------  ----------------------------  ------------------  -----  -------  ------
+light                    ink / surface                 #111A3B on #FBF7F0  15.93      4.5  ok
+light                    ink / surface-2               #111A3B on #F1E9DB  14.11      4.5  ok
+light                    ink / surface-3               #111A3B on #E9DFCC  12.87      4.5  ok
+light                    ink / surface-raised          #111A3B on #FBF7F0  15.93      4.5  ok
+light                    ink-muted / surface           #454C78 on #FBF7F0   7.69      4.5  ok
+light                    ink-muted / surface-2         #454C78 on #F1E9DB   6.81      4.5  ok
+light                    ink-muted / surface-3         #454C78 on #E9DFCC   6.21      4.5  ok
+light                    ink-muted / surface-raised    #454C78 on #FBF7F0   7.69      4.5  ok
+light                    ink-2 / surface               #454C78 on #FBF7F0   7.69      4.5  ok
+light                    ink-2 / surface-2             #454C78 on #F1E9DB   6.81      4.5  ok
+light                    ink-2 / surface-3             #454C78 on #E9DFCC   6.21      4.5  ok
+light                    ink-2 / surface-raised        #454C78 on #FBF7F0   7.69      4.5  ok
+light                    brand / surface               #111D6D on #FBF7F0  13.84      4.5  ok
+light                    brand / surface-2             #111D6D on #F1E9DB  12.26      4.5  ok
+light                    brand / surface-3             #111D6D on #E9DFCC  11.19      4.5  ok
+light                    brand / surface-raised        #111D6D on #FBF7F0  13.84      4.5  ok
+light                    danger / surface              #B42318 on #FBF7F0   6.16      4.5  ok
+light                    danger / surface-2            #B42318 on #F1E9DB   5.45      4.5  ok
+light                    danger / surface-3            #B42318 on #E9DFCC   4.98      4.5  ok
+light                    danger / surface-raised       #B42318 on #FBF7F0   6.16      4.5  ok
+light                    success / surface             #05664A on #FBF7F0   6.54      4.5  ok
+light                    success / surface-2           #05664A on #F1E9DB   5.79      4.5  ok
+light                    success / surface-3           #05664A on #E9DFCC   5.29      4.5  ok
+light                    success / surface-raised      #05664A on #FBF7F0   6.54      4.5  ok
+light                    focus / surface               #1F57C4 on #FBF7F0   6.11        3  ok
+light                    focus / surface-2             #1F57C4 on #F1E9DB   5.41        3  ok
+light                    focus / surface-3             #1F57C4 on #E9DFCC   4.94        3  ok
+light                    focus / surface-raised        #1F57C4 on #FBF7F0   6.11        3  ok
+light                    line-strong / surface         #6B74A6 on #FBF7F0   4.21        3  ok
+light                    line-strong / surface-2       #6B74A6 on #F1E9DB   3.73        3  ok
+light                    line-strong / surface-3       #6B74A6 on #E9DFCC   3.40        3  ok
+light                    line-strong / surface-raised  #6B74A6 on #FBF7F0   4.21        3  ok
+light                    vorlauf / surface             #D60000 on #FBF7F0   5.10        3  ok
+light                    vorlauf / surface-2           #D60000 on #F1E9DB   4.51        3  ok
+light                    vorlauf / waerme              #D60000 on #FADCC9   4.18        3  ok
+light                    ruecklauf / surface           #1F57C4 on #FBF7F0   6.11        3  ok
+light                    ruecklauf / surface-2         #1F57C4 on #F1E9DB   5.41        3  ok
+light                    ruecklauf / waerme            #1F57C4 on #FADCC9   5.02        3  ok
+light                    ink / waerme                  #111A3B on #FADCC9  13.08      4.5  ok
+light                    brand / waerme                #111D6D on #FADCC9  11.37      4.5  ok
+light                    focus / waerme                #1F57C4 on #FADCC9   5.02        3  ok
+light                    on-accent / accent            #FFFFFF on #D60000   5.44      4.5  ok
+light                    on-accent / accent-hover      #FFFFFF on #B00000   7.38      4.5  ok
+light                    on-accent / accent-press      #FFFFFF on #A80000   7.88      4.5  ok
+light                    accent / surface              #D60000 on #FBF7F0   5.10        3  ok
+light                    danger / danger-subtle        #B42318 on #FBE6E1   5.48      4.5  ok
+light                    ink / danger-subtle           #111A3B on #FBE6E1  14.18      4.5  ok
+light                    success / success-subtle      #05664A on #E3F0E6   5.95      4.5  ok
+light                    ink / success-subtle          #111A3B on #E3F0E6  14.47      4.5  ok
+dark                     ink / surface                 #F6F0E4 on #0A1033  16.30      4.5  ok
+dark                     ink / surface-2               #F6F0E4 on #131B4A  14.42      4.5  ok
+dark                     ink / surface-3               #F6F0E4 on #1B2458  12.85      4.5  ok
+dark                     ink / surface-raised          #F6F0E4 on #1B2458  12.85      4.5  ok
+dark                     ink-muted / surface           #B9C0E8 on #0A1033  10.37      4.5  ok
+dark                     ink-muted / surface-2         #B9C0E8 on #131B4A   9.17      4.5  ok
+dark                     ink-muted / surface-3         #B9C0E8 on #1B2458   8.17      4.5  ok
+dark                     ink-muted / surface-raised    #B9C0E8 on #1B2458   8.17      4.5  ok
+dark                     ink-2 / surface               #B9C0E8 on #0A1033  10.37      4.5  ok
+dark                     ink-2 / surface-2             #B9C0E8 on #131B4A   9.17      4.5  ok
+dark                     ink-2 / surface-3             #B9C0E8 on #1B2458   8.17      4.5  ok
+dark                     ink-2 / surface-raised        #B9C0E8 on #1B2458   8.17      4.5  ok
+dark                     brand / surface               #F6F0E4 on #0A1033  16.30      4.5  ok
+dark                     brand / surface-2             #F6F0E4 on #131B4A  14.42      4.5  ok
+dark                     brand / surface-3             #F6F0E4 on #1B2458  12.85      4.5  ok
+dark                     brand / surface-raised        #F6F0E4 on #1B2458  12.85      4.5  ok
+dark                     danger / surface              #FF8A80 on #0A1033   8.11      4.5  ok
+dark                     danger / surface-2            #FF8A80 on #131B4A   7.17      4.5  ok
+dark                     danger / surface-3            #FF8A80 on #1B2458   6.39      4.5  ok
+dark                     danger / surface-raised       #FF8A80 on #1B2458   6.39      4.5  ok
+dark                     success / surface             #4ADE9B on #0A1033  10.76      4.5  ok
+dark                     success / surface-2           #4ADE9B on #131B4A   9.52      4.5  ok
+dark                     success / surface-3           #4ADE9B on #1B2458   8.48      4.5  ok
+dark                     success / surface-raised      #4ADE9B on #1B2458   8.48      4.5  ok
+dark                     focus / surface               #86AEFF on #0A1033   8.38        3  ok
+dark                     focus / surface-2             #86AEFF on #131B4A   7.41        3  ok
+dark                     focus / surface-3             #86AEFF on #1B2458   6.61        3  ok
+dark                     focus / surface-raised        #86AEFF on #1B2458   6.61        3  ok
+dark                     line-strong / surface         #7A84C8 on #0A1033   5.25        3  ok
+dark                     line-strong / surface-2       #7A84C8 on #131B4A   4.65        3  ok
+dark                     line-strong / surface-3       #7A84C8 on #1B2458   4.14        3  ok
+dark                     line-strong / surface-raised  #7A84C8 on #1B2458   4.14        3  ok
+dark                     vorlauf / surface             #FF6B5F on #0A1033   6.63        3  ok
+dark                     vorlauf / surface-2           #FF6B5F on #131B4A   5.86        3  ok
+dark                     vorlauf / waerme              #FF6B5F on #47445B   3.35        3  ok
+dark                     ruecklauf / surface           #86AEFF on #0A1033   8.38        3  ok
+dark                     ruecklauf / surface-2         #86AEFF on #131B4A   7.41        3  ok
+dark                     ruecklauf / waerme            #86AEFF on #47445B   4.24        3  ok
+dark                     ink / waerme                  #F6F0E4 on #47445B   8.24      4.5  ok
+dark                     brand / waerme                #F6F0E4 on #47445B   8.24      4.5  ok
+dark                     focus / waerme                #86AEFF on #47445B   4.24        3  ok
+dark                     on-accent / accent            #FFFFFF on #D60000   5.44      4.5  ok
+dark                     on-accent / accent-hover      #FFFFFF on #B00000   7.38      4.5  ok
+dark                     on-accent / accent-press      #FFFFFF on #A80000   7.88      4.5  ok
+dark                     accent / surface              #D60000 on #0A1033   3.40        3  ok
+dark                     danger / danger-subtle        #FF8A80 on #2C1513   7.52      4.5  ok
+dark                     ink / danger-subtle           #F6F0E4 on #2C1513  15.12      4.5  ok
+dark                     success / success-subtle      #4ADE9B on #0F2A1F   8.91      4.5  ok
+dark                     ink / success-subtle          #F6F0E4 on #0F2A1F  13.49      4.5  ok
+inverse light            ink / surface                 #F6F0E4 on #111D6D  13.03      4.5  ok
+inverse light            ink / surface-2               #F6F0E4 on #1A2878  11.43      4.5  ok
+inverse light            ink / surface-3               #F6F0E4 on #24338A   9.66      4.5  ok
+inverse light            ink / surface-raised          #F6F0E4 on #24338A   9.66      4.5  ok
+inverse light            ink-muted / surface           #B9C0E8 on #111D6D   8.28      4.5  ok
+inverse light            ink-muted / surface-2         #B9C0E8 on #1A2878   7.27      4.5  ok
+inverse light            ink-muted / surface-3         #B9C0E8 on #24338A   6.14      4.5  ok
+inverse light            ink-muted / surface-raised    #B9C0E8 on #24338A   6.14      4.5  ok
+inverse light            ink-2 / surface               #B9C0E8 on #111D6D   8.28      4.5  ok
+inverse light            ink-2 / surface-2             #B9C0E8 on #1A2878   7.27      4.5  ok
+inverse light            ink-2 / surface-3             #B9C0E8 on #24338A   6.14      4.5  ok
+inverse light            ink-2 / surface-raised        #B9C0E8 on #24338A   6.14      4.5  ok
+inverse light            brand / surface               #F6F0E4 on #111D6D  13.03      4.5  ok
+inverse light            brand / surface-2             #F6F0E4 on #1A2878  11.43      4.5  ok
+inverse light            brand / surface-3             #F6F0E4 on #24338A   9.66      4.5  ok
+inverse light            brand / surface-raised        #F6F0E4 on #24338A   9.66      4.5  ok
+inverse light            danger / surface              #FF8A80 on #111D6D   6.48      4.5  ok
+inverse light            danger / surface-2            #FF8A80 on #1A2878   5.68      4.5  ok
+inverse light            danger / surface-3            #FF8A80 on #24338A   4.80      4.5  ok
+inverse light            danger / surface-raised       #FF8A80 on #24338A   4.80      4.5  ok
+inverse light            success / surface             #4ADE9B on #111D6D   8.60      4.5  ok
+inverse light            success / surface-2           #4ADE9B on #1A2878   7.55      4.5  ok
+inverse light            success / surface-3           #4ADE9B on #24338A   6.38      4.5  ok
+inverse light            success / surface-raised      #4ADE9B on #24338A   6.38      4.5  ok
+inverse light            focus / surface               #86AEFF on #111D6D   6.70        3  ok
+inverse light            focus / surface-2             #86AEFF on #1A2878   5.88        3  ok
+inverse light            focus / surface-3             #86AEFF on #24338A   4.97        3  ok
+inverse light            focus / surface-raised        #86AEFF on #24338A   4.97        3  ok
+inverse light            line-strong / surface         #8E97D6 on #111D6D   5.31        3  ok
+inverse light            line-strong / surface-2       #8E97D6 on #1A2878   4.66        3  ok
+inverse light            line-strong / surface-3       #8E97D6 on #24338A   3.94        3  ok
+inverse light            line-strong / surface-raised  #8E97D6 on #24338A   3.94        3  ok
+inverse light            vorlauf / surface             #FF6B5F on #111D6D   5.29        3  ok
+inverse light            vorlauf / surface-2           #FF6B5F on #1A2878   4.65        3  ok
+inverse light            vorlauf / waerme              #FF6B5F on #47445B   3.35        3  ok
+inverse light            ruecklauf / surface           #86AEFF on #111D6D   6.70        3  ok
+inverse light            ruecklauf / surface-2         #86AEFF on #1A2878   5.88        3  ok
+inverse light            ruecklauf / waerme            #86AEFF on #47445B   4.24        3  ok
+inverse light            ink / waerme                  #F6F0E4 on #47445B   8.24      4.5  ok
+inverse light            brand / waerme                #F6F0E4 on #47445B   8.24      4.5  ok
+inverse light            focus / waerme                #86AEFF on #47445B   4.24        3  ok
+inverse light            on-accent / accent            #FFFFFF on #D60000   5.44      4.5  ok
+inverse light            on-accent / accent-hover      #FFFFFF on #B00000   7.38      4.5  ok
+inverse light            on-accent / accent-press      #FFFFFF on #A80000   7.88      4.5  ok
+inverse light            danger / danger-subtle        #FF8A80 on #2C1513   7.52      4.5  ok
+inverse light            ink / danger-subtle           #F6F0E4 on #2C1513  15.12      4.5  ok
+inverse light            success / success-subtle      #4ADE9B on #0F2A1F   8.91      4.5  ok
+inverse light            ink / success-subtle          #F6F0E4 on #0F2A1F  13.49      4.5  ok
+inverse dark             ink / surface                 #F6F0E4 on #16237A  11.89      4.5  ok
+inverse dark             ink / surface-2               #F6F0E4 on #1E2C86  10.51      4.5  ok
+inverse dark             ink / surface-3               #F6F0E4 on #27368F   9.20      4.5  ok
+inverse dark             ink / surface-raised          #F6F0E4 on #27368F   9.20      4.5  ok
+inverse dark             ink-muted / surface           #B9C0E8 on #16237A   7.57      4.5  ok
+inverse dark             ink-muted / surface-2         #B9C0E8 on #1E2C86   6.69      4.5  ok
+inverse dark             ink-muted / surface-3         #B9C0E8 on #27368F   5.85      4.5  ok
+inverse dark             ink-muted / surface-raised    #B9C0E8 on #27368F   5.85      4.5  ok
+inverse dark             ink-2 / surface               #B9C0E8 on #16237A   7.57      4.5  ok
+inverse dark             ink-2 / surface-2             #B9C0E8 on #1E2C86   6.69      4.5  ok
+inverse dark             ink-2 / surface-3             #B9C0E8 on #27368F   5.85      4.5  ok
+inverse dark             ink-2 / surface-raised        #B9C0E8 on #27368F   5.85      4.5  ok
+inverse dark             brand / surface               #F6F0E4 on #16237A  11.89      4.5  ok
+inverse dark             brand / surface-2             #F6F0E4 on #1E2C86  10.51      4.5  ok
+inverse dark             brand / surface-3             #F6F0E4 on #27368F   9.20      4.5  ok
+inverse dark             brand / surface-raised        #F6F0E4 on #27368F   9.20      4.5  ok
+inverse dark             danger / surface              #FF8A80 on #16237A   5.91      4.5  ok
+inverse dark             danger / surface-2            #FF8A80 on #1E2C86   5.23      4.5  ok
+inverse dark             danger / surface-3            #FF8A80 on #27368F   4.58      4.5  ok
+inverse dark             danger / surface-raised       #FF8A80 on #27368F   4.58      4.5  ok
+inverse dark             success / surface             #4ADE9B on #16237A   7.85      4.5  ok
+inverse dark             success / surface-2           #4ADE9B on #1E2C86   6.94      4.5  ok
+inverse dark             success / surface-3           #4ADE9B on #27368F   6.07      4.5  ok
+inverse dark             success / surface-raised      #4ADE9B on #27368F   6.07      4.5  ok
+inverse dark             focus / surface               #86AEFF on #16237A   6.11        3  ok
+inverse dark             focus / surface-2             #86AEFF on #1E2C86   5.41        3  ok
+inverse dark             focus / surface-3             #86AEFF on #27368F   4.73        3  ok
+inverse dark             focus / surface-raised        #86AEFF on #27368F   4.73        3  ok
+inverse dark             line-strong / surface         #8E97D6 on #16237A   4.85        3  ok
+inverse dark             line-strong / surface-2       #8E97D6 on #1E2C86   4.29        3  ok
+inverse dark             line-strong / surface-3       #8E97D6 on #27368F   3.75        3  ok
+inverse dark             line-strong / surface-raised  #8E97D6 on #27368F   3.75        3  ok
+inverse dark             vorlauf / surface             #FF6B5F on #16237A   4.83        3  ok
+inverse dark             vorlauf / surface-2           #FF6B5F on #1E2C86   4.27        3  ok
+inverse dark             vorlauf / waerme              #FF6B5F on #47445B   3.35        3  ok
+inverse dark             ruecklauf / surface           #86AEFF on #16237A   6.11        3  ok
+inverse dark             ruecklauf / surface-2         #86AEFF on #1E2C86   5.41        3  ok
+inverse dark             ruecklauf / waerme            #86AEFF on #47445B   4.24        3  ok
+inverse dark             ink / waerme                  #F6F0E4 on #47445B   8.24      4.5  ok
+inverse dark             brand / waerme                #F6F0E4 on #47445B   8.24      4.5  ok
+inverse dark             focus / waerme                #86AEFF on #47445B   4.24        3  ok
+inverse dark             on-accent / accent            #FFFFFF on #D60000   5.44      4.5  ok
+inverse dark             on-accent / accent-hover      #FFFFFF on #B00000   7.38      4.5  ok
+inverse dark             on-accent / accent-press      #FFFFFF on #A80000   7.88      4.5  ok
+inverse dark             danger / danger-subtle        #FF8A80 on #2C1513   7.52      4.5  ok
+inverse dark             ink / danger-subtle           #F6F0E4 on #2C1513  15.12      4.5  ok
+inverse dark             success / success-subtle      #4ADE9B on #0F2A1F   8.91      4.5  ok
+inverse dark             ink / success-subtle          #F6F0E4 on #0F2A1F  13.49      4.5  ok
+print                    ink / surface                 #111A3B on #FFFFFF  17.01      4.5  ok
+print                    ink / surface-2               #111A3B on #F1E9DB  14.11      4.5  ok
+print                    ink / surface-3               #111A3B on #E9DFCC  12.87      4.5  ok
+print                    ink / surface-raised          #111A3B on #FFFFFF  17.01      4.5  ok
+print                    ink-muted / surface           #454C78 on #FFFFFF   8.21      4.5  ok
+print                    ink-muted / surface-2         #454C78 on #F1E9DB   6.81      4.5  ok
+print                    ink-muted / surface-3         #454C78 on #E9DFCC   6.21      4.5  ok
+print                    ink-muted / surface-raised    #454C78 on #FFFFFF   8.21      4.5  ok
+print                    ink-2 / surface               #454C78 on #FFFFFF   8.21      4.5  ok
+print                    ink-2 / surface-2             #454C78 on #F1E9DB   6.81      4.5  ok
+print                    ink-2 / surface-3             #454C78 on #E9DFCC   6.21      4.5  ok
+print                    ink-2 / surface-raised        #454C78 on #FFFFFF   8.21      4.5  ok
+print                    brand / surface               #111D6D on #FFFFFF  14.78      4.5  ok
+print                    brand / surface-2             #111D6D on #F1E9DB  12.26      4.5  ok
+print                    brand / surface-3             #111D6D on #E9DFCC  11.19      4.5  ok
+print                    brand / surface-raised        #111D6D on #FFFFFF  14.78      4.5  ok
+print                    danger / surface              #B42318 on #FFFFFF   6.57      4.5  ok
+print                    danger / surface-2            #B42318 on #F1E9DB   5.45      4.5  ok
+print                    danger / surface-3            #B42318 on #E9DFCC   4.98      4.5  ok
+print                    danger / surface-raised       #B42318 on #FFFFFF   6.57      4.5  ok
+print                    success / surface             #05664A on #FFFFFF   6.99      4.5  ok
+print                    success / surface-2           #05664A on #F1E9DB   5.79      4.5  ok
+print                    success / surface-3           #05664A on #E9DFCC   5.29      4.5  ok
+print                    success / surface-raised      #05664A on #FFFFFF   6.99      4.5  ok
+print                    focus / surface               #1F57C4 on #FFFFFF   6.52        3  ok
+print                    focus / surface-2             #1F57C4 on #F1E9DB   5.41        3  ok
+print                    focus / surface-3             #1F57C4 on #E9DFCC   4.94        3  ok
+print                    focus / surface-raised        #1F57C4 on #FFFFFF   6.52        3  ok
+print                    line-strong / surface         #6B74A6 on #FFFFFF   4.49        3  ok
+print                    line-strong / surface-2       #6B74A6 on #F1E9DB   3.73        3  ok
+print                    line-strong / surface-3       #6B74A6 on #E9DFCC   3.40        3  ok
+print                    line-strong / surface-raised  #6B74A6 on #FFFFFF   4.49        3  ok
+print                    vorlauf / surface             #D60000 on #FFFFFF   5.44        3  ok
+print                    vorlauf / surface-2           #D60000 on #F1E9DB   4.51        3  ok
+print                    vorlauf / waerme              #D60000 on #FADCC9   4.18        3  ok
+print                    ruecklauf / surface           #1F57C4 on #FFFFFF   6.52        3  ok
+print                    ruecklauf / surface-2         #1F57C4 on #F1E9DB   5.41        3  ok
+print                    ruecklauf / waerme            #1F57C4 on #FADCC9   5.02        3  ok
+print                    ink / waerme                  #111A3B on #FADCC9  13.08      4.5  ok
+print                    brand / waerme                #111D6D on #FADCC9  11.37      4.5  ok
+print                    focus / waerme                #1F57C4 on #FADCC9   5.02        3  ok
+print                    on-accent / accent            #FFFFFF on #D60000   5.44      4.5  ok
+print                    on-accent / accent-hover      #FFFFFF on #B00000   7.38      4.5  ok
+print                    on-accent / accent-press      #FFFFFF on #A80000   7.88      4.5  ok
+print                    accent / surface              #D60000 on #FFFFFF   5.44        3  ok
+print                    danger / danger-subtle        #B42318 on #FBE6E1   5.48      4.5  ok
+print                    ink / danger-subtle           #111A3B on #FBE6E1  14.18      4.5  ok
+print                    success / success-subtle      #05664A on #E3F0E6   5.95      4.5  ok
+print                    ink / success-subtle          #111A3B on #E3F0E6  14.47      4.5  ok
+print dark               ink / surface                 #111A3B on #FFFFFF  17.01      4.5  ok
+print dark               ink / surface-2               #111A3B on #F1E9DB  14.11      4.5  ok
+print dark               ink / surface-3               #111A3B on #E9DFCC  12.87      4.5  ok
+print dark               ink / surface-raised          #111A3B on #FFFFFF  17.01      4.5  ok
+print dark               ink-muted / surface           #454C78 on #FFFFFF   8.21      4.5  ok
+print dark               ink-muted / surface-2         #454C78 on #F1E9DB   6.81      4.5  ok
+print dark               ink-muted / surface-3         #454C78 on #E9DFCC   6.21      4.5  ok
+print dark               ink-muted / surface-raised    #454C78 on #FFFFFF   8.21      4.5  ok
+print dark               ink-2 / surface               #454C78 on #FFFFFF   8.21      4.5  ok
+print dark               ink-2 / surface-2             #454C78 on #F1E9DB   6.81      4.5  ok
+print dark               ink-2 / surface-3             #454C78 on #E9DFCC   6.21      4.5  ok
+print dark               ink-2 / surface-raised        #454C78 on #FFFFFF   8.21      4.5  ok
+print dark               brand / surface               #111D6D on #FFFFFF  14.78      4.5  ok
+print dark               brand / surface-2             #111D6D on #F1E9DB  12.26      4.5  ok
+print dark               brand / surface-3             #111D6D on #E9DFCC  11.19      4.5  ok
+print dark               brand / surface-raised        #111D6D on #FFFFFF  14.78      4.5  ok
+print dark               danger / surface              #B42318 on #FFFFFF   6.57      4.5  ok
+print dark               danger / surface-2            #B42318 on #F1E9DB   5.45      4.5  ok
+print dark               danger / surface-3            #B42318 on #E9DFCC   4.98      4.5  ok
+print dark               danger / surface-raised       #B42318 on #FFFFFF   6.57      4.5  ok
+print dark               success / surface             #05664A on #FFFFFF   6.99      4.5  ok
+print dark               success / surface-2           #05664A on #F1E9DB   5.79      4.5  ok
+print dark               success / surface-3           #05664A on #E9DFCC   5.29      4.5  ok
+print dark               success / surface-raised      #05664A on #FFFFFF   6.99      4.5  ok
+print dark               focus / surface               #1F57C4 on #FFFFFF   6.52        3  ok
+print dark               focus / surface-2             #1F57C4 on #F1E9DB   5.41        3  ok
+print dark               focus / surface-3             #1F57C4 on #E9DFCC   4.94        3  ok
+print dark               focus / surface-raised        #1F57C4 on #FFFFFF   6.52        3  ok
+print dark               line-strong / surface         #6B74A6 on #FFFFFF   4.49        3  ok
+print dark               line-strong / surface-2       #6B74A6 on #F1E9DB   3.73        3  ok
+print dark               line-strong / surface-3       #6B74A6 on #E9DFCC   3.40        3  ok
+print dark               line-strong / surface-raised  #6B74A6 on #FFFFFF   4.49        3  ok
+print dark               vorlauf / surface             #D60000 on #FFFFFF   5.44        3  ok
+print dark               vorlauf / surface-2           #D60000 on #F1E9DB   4.51        3  ok
+print dark               vorlauf / waerme              #D60000 on #FADCC9   4.18        3  ok
+print dark               ruecklauf / surface           #1F57C4 on #FFFFFF   6.52        3  ok
+print dark               ruecklauf / surface-2         #1F57C4 on #F1E9DB   5.41        3  ok
+print dark               ruecklauf / waerme            #1F57C4 on #FADCC9   5.02        3  ok
+print dark               ink / waerme                  #111A3B on #FADCC9  13.08      4.5  ok
+print dark               brand / waerme                #111D6D on #FADCC9  11.37      4.5  ok
+print dark               focus / waerme                #1F57C4 on #FADCC9   5.02        3  ok
+print dark               on-accent / accent            #FFFFFF on #D60000   5.44      4.5  ok
+print dark               on-accent / accent-hover      #FFFFFF on #B00000   7.38      4.5  ok
+print dark               on-accent / accent-press      #FFFFFF on #A80000   7.88      4.5  ok
+print dark               accent / surface              #D60000 on #FFFFFF   5.44        3  ok
+print dark               danger / danger-subtle        #B42318 on #FBE6E1   5.48      4.5  ok
+print dark               ink / danger-subtle           #111A3B on #FBE6E1  14.18      4.5  ok
+print dark               success / success-subtle      #05664A on #E3F0E6   5.95      4.5  ok
+print dark               ink / success-subtle          #111A3B on #E3F0E6  14.47      4.5  ok
+print inverse            ink / surface                 #111A3B on #FFFFFF  17.01      4.5  ok
+print inverse            ink / surface-2               #111A3B on #F1E9DB  14.11      4.5  ok
+print inverse            ink / surface-3               #111A3B on #E9DFCC  12.87      4.5  ok
+print inverse            ink / surface-raised          #111A3B on #FFFFFF  17.01      4.5  ok
+print inverse            ink-muted / surface           #454C78 on #FFFFFF   8.21      4.5  ok
+print inverse            ink-muted / surface-2         #454C78 on #F1E9DB   6.81      4.5  ok
+print inverse            ink-muted / surface-3         #454C78 on #E9DFCC   6.21      4.5  ok
+print inverse            ink-muted / surface-raised    #454C78 on #FFFFFF   8.21      4.5  ok
+print inverse            ink-2 / surface               #454C78 on #FFFFFF   8.21      4.5  ok
+print inverse            ink-2 / surface-2             #454C78 on #F1E9DB   6.81      4.5  ok
+print inverse            ink-2 / surface-3             #454C78 on #E9DFCC   6.21      4.5  ok
+print inverse            ink-2 / surface-raised        #454C78 on #FFFFFF   8.21      4.5  ok
+print inverse            brand / surface               #111D6D on #FFFFFF  14.78      4.5  ok
+print inverse            brand / surface-2             #111D6D on #F1E9DB  12.26      4.5  ok
+print inverse            brand / surface-3             #111D6D on #E9DFCC  11.19      4.5  ok
+print inverse            brand / surface-raised        #111D6D on #FFFFFF  14.78      4.5  ok
+print inverse            danger / surface              #B42318 on #FFFFFF   6.57      4.5  ok
+print inverse            danger / surface-2            #B42318 on #F1E9DB   5.45      4.5  ok
+print inverse            danger / surface-3            #B42318 on #E9DFCC   4.98      4.5  ok
+print inverse            danger / surface-raised       #B42318 on #FFFFFF   6.57      4.5  ok
+print inverse            success / surface             #05664A on #FFFFFF   6.99      4.5  ok
+print inverse            success / surface-2           #05664A on #F1E9DB   5.79      4.5  ok
+print inverse            success / surface-3           #05664A on #E9DFCC   5.29      4.5  ok
+print inverse            success / surface-raised      #05664A on #FFFFFF   6.99      4.5  ok
+print inverse            focus / surface               #1F57C4 on #FFFFFF   6.52        3  ok
+print inverse            focus / surface-2             #1F57C4 on #F1E9DB   5.41        3  ok
+print inverse            focus / surface-3             #1F57C4 on #E9DFCC   4.94        3  ok
+print inverse            focus / surface-raised        #1F57C4 on #FFFFFF   6.52        3  ok
+print inverse            line-strong / surface         #6B74A6 on #FFFFFF   4.49        3  ok
+print inverse            line-strong / surface-2       #6B74A6 on #F1E9DB   3.73        3  ok
+print inverse            line-strong / surface-3       #6B74A6 on #E9DFCC   3.40        3  ok
+print inverse            line-strong / surface-raised  #6B74A6 on #FFFFFF   4.49        3  ok
+print inverse            vorlauf / surface             #D60000 on #FFFFFF   5.44        3  ok
+print inverse            vorlauf / surface-2           #D60000 on #F1E9DB   4.51        3  ok
+print inverse            vorlauf / waerme              #D60000 on #FADCC9   4.18        3  ok
+print inverse            ruecklauf / surface           #1F57C4 on #FFFFFF   6.52        3  ok
+print inverse            ruecklauf / surface-2         #1F57C4 on #F1E9DB   5.41        3  ok
+print inverse            ruecklauf / waerme            #1F57C4 on #FADCC9   5.02        3  ok
+print inverse            ink / waerme                  #111A3B on #FADCC9  13.08      4.5  ok
+print inverse            brand / waerme                #111D6D on #FADCC9  11.37      4.5  ok
+print inverse            focus / waerme                #1F57C4 on #FADCC9   5.02        3  ok
+print inverse            on-accent / accent            #FFFFFF on #D60000   5.44      4.5  ok
+print inverse            on-accent / accent-hover      #FFFFFF on #B00000   7.38      4.5  ok
+print inverse            on-accent / accent-press      #FFFFFF on #A80000   7.88      4.5  ok
+print inverse            danger / danger-subtle        #B42318 on #FBE6E1   5.48      4.5  ok
+print inverse            ink / danger-subtle           #111A3B on #FBE6E1  14.18      4.5  ok
+print inverse            success / success-subtle      #05664A on #E3F0E6   5.95      4.5  ok
+print inverse            ink / success-subtle          #111A3B on #E3F0E6  14.47      4.5  ok
+separation light         inverse surface / surface     #111D6D vs #FBF7F0  13.84      1.1  ok
+separation light         inverse surface / surface-2   #111D6D vs #F1E9DB  12.26      1.1  ok
+separation dark          inverse surface / surface     #16237A vs #0A1033   1.37      1.1  ok
+separation dark          inverse surface / surface-2   #16237A vs #131B4A   1.21      1.1  ok
+elevation light          surface-raised / surface-2    #FBF7F0 vs #F1E9DB   1.13  lighter  ok
+elevation dark           surface-raised / surface-2    #1B2458 vs #131B4A   1.12  lighter  ok
+elevation inverse light  surface-raised / surface-2    #24338A vs #1A2878   1.18  lighter  ok
+elevation inverse dark   surface-raised / surface-2    #27368F vs #1E2C86   1.14  lighter  ok
+elevation print          surface-raised / surface-2    #FFFFFF vs #F1E9DB   1.21  lighter  ok
+elevation print dark     surface-raised / surface-2    #FFFFFF vs #F1E9DB   1.21  lighter  ok
+elevation print inverse  surface-raised / surface-2    #FFFFFF vs #F1E9DB   1.21  lighter  ok
+
+All 351 pairs pass (text ≥ 4.5, UI and lines ≥ 3, band separation ≥ 1.1, raised cards lighter than surface-2).
+check:contrast exit 0

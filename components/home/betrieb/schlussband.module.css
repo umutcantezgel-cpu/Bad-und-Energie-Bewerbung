@@ -1,0 +1,136 @@
+/*
+ * Schlussband der Startseite (R3-HOME-04, E-START-051): Rückruf auf die Leitidee (K-001) „der rote Vorlauf endet
+ * in deiner Bewerbung“. Vorlauf und Rücklauf kommen von der Oberkante des Navy-Bands herab und münden in
+ * „Jetzt bewerben“, gebaut wie die Erdleitungen des Einstiegs (Variante 1, BEGRUENDUNG §4):
+ * - mobil fallen sie senkrecht auf die Oberkante des Knopfs, über dem Pfeil (Daumenzone);
+ * - ab 64em fallen sie am rechten Rand der Spalte, biegen konzentrisch (--r-2 / --r-3) und laufen in den
+ *   Flansch rechts am Knopf.
+ * Farben nur über Rollen (--vorlauf, --ruecklauf, --brand, --accent …); im Inverse-Band hell, im Druck die
+ * hellen Primitiven (theme.css). Eine Strichstärke (--m-strich), Paarabstand --paar. Ohne Bewegung.
+ */
+
+/* Die Leitungen beginnen über dem Band; das Band schneidet sie an seiner Oberkante ab. */
+.band {
+  overflow: clip;
+}
+
+/* Text neben der Leitungsspur: rechts bleibt Platz für das Paar (mobil über dem Pfeil, Desktop am Spaltenrand) */
+.text {
+  padding-right: var(--a-8);
+}
+
+/* Anschluss: Zeile mit dem Knopf, Bezug der Leitungen */
+.anschluss {
+  position: relative;
+  display: flex;
+}
+
+.leitung {
+  position: absolute;
+  top: -200vh;
+  bottom: 100%;
+  width: var(--m-strich);
+  pointer-events: none;
+}
+
+/* Vorlauf links, Rücklauf rechts, Abstand --paar; der Rücklauf steht --a-6 vor der rechten Kante */
+.vorlauf {
+  right: calc(var(--a-6) + var(--paar) - var(--m-strich) / 2);
+  background-color: var(--vorlauf);
+}
+
+.ruecklauf {
+  right: calc(var(--a-6) - var(--m-strich) / 2);
+  background-color: var(--ruecklauf);
+}
+
+/* Hauptaktion: die eine rote Fläche (E-016), wie im Einstieg; Hover und Druck als volle Deckschicht */
+.aktion {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--a-4);
+  min-height: var(--m-knopf);
+  padding: 0 var(--a-5);
+  background-color: var(--accent);
+  color: var(--on-accent);
+  font-size: var(--text-body);
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.aktion::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: var(--accent-hover);
+  opacity: 0;
+  transition: opacity var(--d-1) var(--k-ein);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .aktion:hover::before {
+    opacity: 1;
+    transition: opacity var(--d-2) var(--k-aus);
+  }
+}
+
+.aktion:active::before {
+  opacity: 1;
+  background-color: var(--accent-press);
+  transition: none;
+}
+
+@media (min-width: 64em) {
+  .text {
+    padding-right: var(--a-8);
+  }
+
+  .aktion {
+    flex: 0 0 18rem;
+  }
+
+  /* Flansch in --brand (im Band Creme): hier münden Vorlauf und Rücklauf */
+  .aktion::after {
+    content: "";
+    position: absolute;
+    right: calc(var(--m-strich) * -2);
+    top: var(--a-2);
+    bottom: var(--a-2);
+    width: calc(var(--m-strich) * 2);
+    background-color: var(--brand);
+    border-radius: 0 var(--radius-1) var(--radius-1) 0;
+  }
+
+  /* Fall am rechten Spaltenrand, Bogen, Lauf in den Flansch. Mittellinien: Vorlauf 2·--paar, Rücklauf --paar vor
+     der Kante; waagerecht --paar/2 über bzw. unter der Knopfmitte. Außenradius = Mittellinienradius + Strich/2,
+     damit die Bögen (12 und 24) konzentrisch bleiben. */
+  .leitung {
+    left: calc(18rem + var(--m-strich) * 2);
+    width: auto;
+    background: none;
+    border-style: solid;
+    border-width: 0 var(--m-strich) var(--m-strich) 0;
+  }
+
+  .vorlauf {
+    right: calc(var(--paar) * 2 - var(--m-strich) / 2);
+    bottom: calc(50% + var(--paar) / 2 - var(--m-strich) / 2);
+    border-color: var(--vorlauf);
+    border-bottom-right-radius: calc(var(--radius-2) + var(--m-strich) / 2);
+  }
+
+  .ruecklauf {
+    right: calc(var(--paar) - var(--m-strich) / 2);
+    bottom: calc(50% - var(--paar) / 2 - var(--m-strich) / 2);
+    border-color: var(--ruecklauf);
+    border-bottom-right-radius: calc(var(--radius-3) + var(--m-strich) / 2);
+  }
+}

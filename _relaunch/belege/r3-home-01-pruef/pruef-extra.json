@@ -1,0 +1,848 @@
+[
+  {
+    "size": "320x568",
+    "vw": 320,
+    "scrollW": 320,
+    "aktionBottom": 507,
+    "mikroBottom": 561,
+    "zweitW": 77,
+    "zweitRight": 300,
+    "zweitInhaltRight": 304,
+    "h1Bottom": 219,
+    "masse": [
+      {
+        "t": "13:30Freitags Feierabend",
+        "l": 20,
+        "r": 196,
+        "top": 585,
+        "b": 640
+      },
+      {
+        "t": "30Tage Urlaub",
+        "l": 212,
+        "r": 313,
+        "top": 585,
+        "b": 640
+      },
+      {
+        "t": "35 kmEinsatzradius",
+        "l": 20,
+        "r": 196,
+        "top": 652,
+        "b": 697
+      },
+      {
+        "t": "1926Gegründet",
+        "l": 212,
+        "r": 313,
+        "top": 652,
+        "b": 697
+      }
+    ],
+    "ueberlapp": [],
+    "ortsmarkeRight": 300,
+    "ersterBildschirm": {
+      "aktion": true,
+      "mikro": true
+    }
+  },
+  {
+    "size": "320x640",
+    "vw": 320,
+    "scrollW": 320,
+    "aktionBottom": 641,
+    "mikroBottom": 696,
+    "zweitW": 57,
+    "zweitRight": 300,
+    "zweitInhaltRight": 324,
+    "h1Bottom": 241,
+    "masse": [
+      {
+        "t": "13:30Freitags Feierabend",
+        "l": 45,
+        "r": 221,
+        "top": 355,
+        "b": 410
+      },
+      {
+        "t": "30Tage Urlaub",
+        "l": 70,
+        "r": 171,
+        "top": 433,
+        "b": 478
+      },
+      {
+        "t": "35 kmEinsatzradius",
+        "l": 20,
+        "r": 140,
+        "top": 720,
+        "b": 765
+      },
+      {
+        "t": "1926Gegründet",
+        "l": 172,
+        "r": 255,
+        "top": 720,
+        "b": 765
+      }
+    ],
+    "ueberlapp": [],
+    "ortsmarkeRight": 300,
+    "ersterBildschirm": {
+      "aktion": false,
+      "mikro": false
+    }
+  },
+  {
+    "size": "320x700",
+    "vw": 320,
+    "scrollW": 320,
+    "aktionBottom": 715,
+    "mikroBottom": 769,
+    "zweitW": 57,
+    "zweitRight": 300,
+    "zweitInhaltRight": 324,
+    "h1Bottom": 250,
+    "masse": [
+      {
+        "t": "13:30Freitags Feierabend",
+        "l": 41,
+        "r": 217,
+        "top": 364,
+        "b": 419
+      },
+      {
+        "t": "30Tage Urlaub",
+        "l": 48,
+        "r": 149,
+        "top": 447,
+        "b": 493
+      },
+      {
+        "t": "35 kmEinsatzradius",
+        "l": 20,
+        "r": 140,
+        "top": 608,
+        "b": 653
+      },
+      {
+        "t": "1926Gegründet",
+        "l": 180,
+        "r": 263,
+        "top": 608,
+        "b": 653
+      }
+    ],
+    "ueberlapp": [],
+    "ortsmarkeRight": 300,
+    "ersterBildschirm": {
+      "aktion": false,
+      "mikro": false
+    }
+  },
+  {
+    "size": "320x780",
+    "vw": 320,
+    "scrollW": 320,
+    "aktionBottom": 715,
+    "mikroBottom": 769,
+    "zweitW": 57,
+    "zweitRight": 300,
+    "zweitInhaltRight": 324,
+    "h1Bottom": 250,
+    "masse": [
+      {
+        "t": "13:30Freitags Feierabend",
+        "l": 41,
+        "r": 217,
+        "top": 364,
+        "b": 419
+      },
+      {
+        "t": "30Tage Urlaub",
+        "l": 48,
+        "r": 149,
+        "top": 447,
+        "b": 493
+      },
+      {
+        "t": "35 kmEinsatzradius",
+        "l": 20,
+        "r": 140,
+        "top": 608,
+        "b": 653
+      },
+      {
+        "t": "1926Gegründet",
+        "l": 180,
+        "r": 263,
+        "top": 608,
+        "b": 653
+      }
+    ],
+    "ueberlapp": [],
+    "ortsmarkeRight": 300,
+    "ersterBildschirm": {
+      "aktion": true,
+      "mikro": true
+    }
+  },
+  {
+    "size": "340x720",
+    "vw": 340,
+    "scrollW": 340,
+    "aktionBottom": 698,
+    "mikroBottom": 753,
+    "zweitW": 77,
+    "zweitRight": 320,
+    "zweitInhaltRight": 324,
+    "h1Bottom": 256,
+    "masse": [
+      {
+        "t": "13:30Freitags Feierabend",
+        "l": 57,
+        "r": 233,
+        "top": 348,
+        "b": 402
+      },
+      {
+        "t": "30Tage Urlaub",
+        "l": 64,
+        "r": 165,
+        "top": 431,
+        "b": 476
+      },
+      {
+        "t": "35 kmEinsatzradius",
+        "l": 20,
+        "r": 140,
+        "top": 591,
+        "b": 637
+      },
+      {
+        "t": "1926Gegründet",
+        "l": 196,
+        "r": 279,
+        "top": 591,
+        "b": 637
+      }
+    ],
+    "ueberlapp": [],
+    "ortsmarkeRight": 320,
+    "ersterBildschirm": {
+      "aktion": true,
+      "mikro": false
+    }
+  },
+  {
+    "size": "360x640",
+    "vw": 360,
+    "scrollW": 360,
+    "aktionBottom": 630,
+    "mikroBottom": 661,
+    "zweitW": 96,
+    "zweitRight": 340,
+    "zweitInhaltRight": 340,
+    "h1Bottom": 253,
+    "masse": [
+      {
+        "t": "13:30Freitags Feierabend",
+        "l": 77,
+        "r": 252,
+        "top": 344,
+        "b": 399
+      },
+      {
+        "t": "30Tage Urlaub",
+        "l": 101,
+        "r": 203,
+        "top": 421,
+        "b": 467
+      },
+      {
+        "t": "35 kmEinsatzradius",
+        "l": 20,
+        "r": 140,
+        "top": 685,
+        "b": 731
+      },
+      {
+        "t": "1926Gegründet",
+        "l": 172,
+        "r": 255,
+        "top": 685,
+        "b": 731
+      }
+    ],
+    "ueberlapp": [],
+    "ortsmarkeRight": 340,
+    "ersterBildschirm": {
+      "aktion": true,
+      "mikro": false
+    }
+  },
+  {
+    "size": "360x740",
+    "vw": 360,
+    "scrollW": 360,
+    "aktionBottom": 704,
+    "mikroBottom": 736,
+    "zweitW": 96,
+    "zweitRight": 340,
+    "zweitInhaltRight": 340,
+    "h1Bottom": 262,
+    "masse": [
+      {
+        "t": "13:30Freitags Feierabend",
+        "l": 73,
+        "r": 249,
+        "top": 354,
+        "b": 409
+      },
+      {
+        "t": "30Tage Urlaub",
+        "l": 79,
+        "r": 181,
+        "top": 437,
+        "b": 482
+      },
+      {
+        "t": "35 kmEinsatzradius",
+        "l": 20,
+        "r": 140,
+        "top": 597,
+        "b": 643
+      },
+      {
+        "t": "1926Gegründet",
+        "l": 212,
+        "r": 295,
+        "top": 597,
+        "b": 643
+      }
+    ],
+    "ueberlapp": [],
+    "ortsmarkeRight": 340,
+    "ersterBildschirm": {
+      "aktion": true,
+      "mikro": true
+    }
+  },
+  {
+    "size": "360x800",
+    "vw": 360,
+    "scrollW": 360,
+    "aktionBottom": 754,
+    "mikroBottom": 785,
+    "zweitW": 96,
+    "zweitRight": 340,
+    "zweitInhaltRight": 340,
+    "h1Bottom": 262,
+    "masse": [
+      {
+        "t": "13:30Freitags Feierabend",
+        "l": 73,
+        "r": 249,
+        "top": 403,
+        "b": 458
+      },
+      {
+        "t": "30Tage Urlaub",
+        "l": 79,
+        "r": 181,
+        "top": 486,
+        "b": 532
+      },
+      {
+        "t": "35 kmEinsatzradius",
+        "l": 20,
+        "r": 140,
+        "top": 647,
+        "b": 693
+      },
+      {
+        "t": "1926Gegründet",
+        "l": 212,
+        "r": 295,
+        "top": 647,
+        "b": 693
+      }
+    ],
+    "ueberlapp": [],
+    "ortsmarkeRight": 340,
+    "ersterBildschirm": {
+      "aktion": true,
+      "mikro": true
+    }
+  },
+  {
+    "size": "375x667",
+    "vw": 375,
+    "scrollW": 375,
+    "aktionBottom": 618,
+    "mikroBottom": 649,
+    "zweitW": 111,
+    "zweitRight": 355,
+    "zweitInhaltRight": 355,
+    "h1Bottom": 241,
+    "masse": [
+      {
+        "t": "13:30Freitags Feierabend",
+        "l": 89,
+        "r": 264,
+        "top": 332,
+        "b": 387
+      },
+      {
+        "t": "30Tage Urlaub",
+        "l": 113,
+        "r": 215,
+        "top": 409,
+        "b": 455
+      },
+      {
+        "t": "35 kmEinsatzradius",
+        "l": 20,
+        "r": 140,
+        "top": 673,
+        "b": 719
+      },
+      {
+        "t": "1926Gegründet",
+        "l": 172,
+        "r": 255,
+        "top": 673,
+        "b": 719
+      }
+    ],
+    "ueberlapp": [],
+    "ortsmarkeRight": 355,
+    "ersterBildschirm": {
+      "aktion": true,
+      "mikro": true
+    }
+  },
+  {
+    "size": "390x664",
+    "vw": 390,
+    "scrollW": 390,
+    "aktionBottom": 618,
+    "mikroBottom": 649,
+    "zweitW": 125,
+    "zweitRight": 370,
+    "zweitInhaltRight": 370,
+    "h1Bottom": 241,
+    "masse": [
+      {
+        "t": "13:30Freitags Feierabend",
+        "l": 101,
+        "r": 276,
+        "top": 333,
+        "b": 387
+      },
+      {
+        "t": "30Tage Urlaub",
+        "l": 125,
+        "r": 227,
+        "top": 410,
+        "b": 456
+      },
+      {
+        "t": "35 kmEinsatzradius",
+        "l": 20,
+        "r": 140,
+        "top": 673,
+        "b": 719
+      },
+      {
+        "t": "1926Gegründet",
+        "l": 172,
+        "r": 255,
+        "top": 673,
+        "b": 719
+      }
+    ],
+    "ueberlapp": [],
+    "ortsmarkeRight": 370,
+    "ersterBildschirm": {
+      "aktion": true,
+      "mikro": true
+    }
+  },
+  {
+    "size": "390x844",
+    "vw": 390,
+    "scrollW": 390,
+    "aktionBottom": 798,
+    "mikroBottom": 829,
+    "zweitW": 124,
+    "zweitRight": 370,
+    "zweitInhaltRight": 370,
+    "h1Bottom": 283,
+    "masse": [
+      {
+        "t": "13:30Freitags Feierabend",
+        "l": 132,
+        "r": 307,
+        "top": 414,
+        "b": 468
+      },
+      {
+        "t": "30Tage Urlaub",
+        "l": 102,
+        "r": 204,
+        "top": 507,
+        "b": 553
+      },
+      {
+        "t": "35 kmEinsatzradius",
+        "l": 20,
+        "r": 140,
+        "top": 691,
+        "b": 737
+      },
+      {
+        "t": "1926Gegründet",
+        "l": 263,
+        "r": 346,
+        "top": 691,
+        "b": 737
+      }
+    ],
+    "ueberlapp": [],
+    "ortsmarkeRight": 370,
+    "ersterBildschirm": {
+      "aktion": true,
+      "mikro": true
+    }
+  },
+  {
+    "size": "412x915",
+    "vw": 412,
+    "scrollW": 412,
+    "aktionBottom": 869,
+    "mikroBottom": 900,
+    "zweitW": 126,
+    "zweitRight": 392,
+    "zweitInhaltRight": 392,
+    "h1Bottom": 291,
+    "masse": [
+      {
+        "t": "13:30Freitags Feierabend",
+        "l": 152,
+        "r": 327,
+        "top": 484,
+        "b": 539
+      },
+      {
+        "t": "30Tage Urlaub",
+        "l": 122,
+        "r": 224,
+        "top": 578,
+        "b": 624
+      },
+      {
+        "t": "35 kmEinsatzradius",
+        "l": 20,
+        "r": 140,
+        "top": 762,
+        "b": 808
+      },
+      {
+        "t": "1926Gegründet",
+        "l": 282,
+        "r": 366,
+        "top": 762,
+        "b": 808
+      }
+    ],
+    "ueberlapp": [],
+    "ortsmarkeRight": 392,
+    "ersterBildschirm": {
+      "aktion": true,
+      "mikro": true
+    }
+  },
+  {
+    "size": "414x896",
+    "vw": 414,
+    "scrollW": 414,
+    "aktionBottom": 850,
+    "mikroBottom": 881,
+    "zweitW": 127,
+    "zweitRight": 394,
+    "zweitInhaltRight": 394,
+    "h1Bottom": 291,
+    "masse": [
+      {
+        "t": "13:30Freitags Feierabend",
+        "l": 154,
+        "r": 329,
+        "top": 465,
+        "b": 520
+      },
+      {
+        "t": "30Tage Urlaub",
+        "l": 124,
+        "r": 225,
+        "top": 559,
+        "b": 605
+      },
+      {
+        "t": "35 kmEinsatzradius",
+        "l": 20,
+        "r": 140,
+        "top": 743,
+        "b": 789
+      },
+      {
+        "t": "1926Gegründet",
+        "l": 284,
+        "r": 367,
+        "top": 743,
+        "b": 789
+      }
+    ],
+    "ueberlapp": [],
+    "ortsmarkeRight": 394,
+    "ersterBildschirm": {
+      "aktion": true,
+      "mikro": true
+    }
+  },
+  {
+    "size": "430x932",
+    "vw": 430,
+    "scrollW": 430,
+    "aktionBottom": 886,
+    "mikroBottom": 917,
+    "zweitW": 142,
+    "zweitRight": 410,
+    "zweitInhaltRight": 410,
+    "h1Bottom": 297,
+    "masse": [
+      {
+        "t": "13:30Freitags Feierabend",
+        "l": 164,
+        "r": 340,
+        "top": 484,
+        "b": 539
+      },
+      {
+        "t": "30Tage Urlaub",
+        "l": 116,
+        "r": 218,
+        "top": 584,
+        "b": 630
+      },
+      {
+        "t": "35 kmEinsatzradius",
+        "l": 20,
+        "r": 140,
+        "top": 779,
+        "b": 825
+      },
+      {
+        "t": "1926Gegründet",
+        "l": 291,
+        "r": 374,
+        "top": 779,
+        "b": 825
+      }
+    ],
+    "ueberlapp": [],
+    "ortsmarkeRight": 410,
+    "ersterBildschirm": {
+      "aktion": true,
+      "mikro": true
+    }
+  },
+  {
+    "size": "600x900",
+    "vw": 600,
+    "scrollW": 600,
+    "aktionBottom": 910,
+    "mikroBottom": 942,
+    "zweitW": 253,
+    "zweitRight": 576,
+    "zweitInhaltRight": 515,
+    "h1Bottom": 378,
+    "masse": [
+      {
+        "t": "13:30Freitags Feierabend",
+        "l": 247,
+        "r": 422,
+        "top": 460,
+        "b": 519
+      },
+      {
+        "t": "30Tage Urlaub",
+        "l": 151,
+        "r": 252,
+        "top": 577,
+        "b": 625
+      },
+      {
+        "t": "35 kmEinsatzradius",
+        "l": 24,
+        "r": 144,
+        "top": 803,
+        "b": 851
+      },
+      {
+        "t": "1926Gegründet",
+        "l": 363,
+        "r": 446,
+        "top": 803,
+        "b": 851
+      }
+    ],
+    "ueberlapp": [],
+    "ortsmarkeRight": 576,
+    "ersterBildschirm": {
+      "aktion": false,
+      "mikro": false
+    }
+  },
+  {
+    "size": "768x1024",
+    "vw": 768,
+    "scrollW": 768,
+    "aktionBottom": 977,
+    "mikroBottom": 1009,
+    "zweitW": 279,
+    "zweitRight": 737,
+    "zweitInhaltRight": 653,
+    "h1Bottom": 391,
+    "masse": [
+      {
+        "t": "13:30Freitags Feierabend",
+        "l": 381,
+        "r": 557,
+        "top": 523,
+        "b": 586
+      },
+      {
+        "t": "30Tage Urlaub",
+        "l": 285,
+        "r": 387,
+        "top": 643,
+        "b": 692
+      },
+      {
+        "t": "35 kmEinsatzradius",
+        "l": 31,
+        "r": 151,
+        "top": 870,
+        "b": 919
+      },
+      {
+        "t": "1926Gegründet",
+        "l": 497,
+        "r": 581,
+        "top": 870,
+        "b": 919
+      }
+    ],
+    "ueberlapp": [],
+    "ortsmarkeRight": 737,
+    "ersterBildschirm": {
+      "aktion": true,
+      "mikro": true
+    }
+  },
+  {
+    "size": "820x1180",
+    "vw": 820,
+    "scrollW": 820,
+    "aktionBottom": 1132,
+    "mikroBottom": 1165,
+    "zweitW": 288,
+    "zweitRight": 787,
+    "zweitInhaltRight": 695,
+    "h1Bottom": 392,
+    "masse": [
+      {
+        "t": "13:30Freitags Feierabend",
+        "l": 423,
+        "r": 598,
+        "top": 678,
+        "b": 741
+      },
+      {
+        "t": "30Tage Urlaub",
+        "l": 327,
+        "r": 428,
+        "top": 798,
+        "b": 849
+      },
+      {
+        "t": "35 kmEinsatzradius",
+        "l": 33,
+        "r": 153,
+        "top": 1025,
+        "b": 1076
+      },
+      {
+        "t": "1926Gegründet",
+        "l": 539,
+        "r": 622,
+        "top": 1025,
+        "b": 1076
+      }
+    ],
+    "ueberlapp": [],
+    "ortsmarkeRight": 787,
+    "ersterBildschirm": {
+      "aktion": true,
+      "mikro": true
+    }
+  },
+  {
+    "size": "1024x1366",
+    "vw": 1024,
+    "scrollW": 1024,
+    "aktionBottom": 1283,
+    "mikroBottom": 1325,
+    "zweitW": 197,
+    "zweitRight": 604,
+    "zweitInhaltRight": 604,
+    "h1Bottom": 380,
+    "masse": [
+      {
+        "t": "13:30Freitags Feierabend",
+        "l": 816,
+        "r": 983,
+        "top": 844,
+        "b": 923
+      },
+      {
+        "t": "30Tage Urlaub",
+        "l": 528,
+        "r": 630,
+        "top": 964,
+        "b": 1017
+      },
+      {
+        "t": "35 kmEinsatzradius",
+        "l": 863,
+        "r": 983,
+        "top": 939,
+        "b": 991
+      },
+      {
+        "t": "1926Gegründet",
+        "l": 632,
+        "r": 715,
+        "top": 1256,
+        "b": 1309
+      }
+    ],
+    "ueberlapp": [],
+    "ortsmarkeRight": 745,
+    "ersterBildschirm": {
+      "aktion": true,
+      "mikro": true
+    }
+  }
+]

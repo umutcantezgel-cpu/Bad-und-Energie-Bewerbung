@@ -1,0 +1,72 @@
+{
+  "label": "r3-home-02-pruef/zusatz",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-09T23:08:10.046Z",
+  "seiten": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m430",
+      "schema": "light",
+      "status": 200,
+      "ms": 17709,
+      "seitenhoehe": 15379,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-02-pruef/zusatz/start__m430-light__01.webp",
+        "belege/r3-home-02-pruef/zusatz/start__m430-light__02.webp",
+        "belege/r3-home-02-pruef/zusatz/start__m430-light__03.webp",
+        "belege/r3-home-02-pruef/zusatz/start__m430-light__04.webp",
+        "belege/r3-home-02-pruef/zusatz/start__m430-light__05.webp",
+        "belege/r3-home-02-pruef/zusatz/start__m430-light__06.webp",
+        "belege/r3-home-02-pruef/zusatz/start__m430-light__07.webp",
+        "belege/r3-home-02-pruef/zusatz/start__m430-light__08.webp",
+        "belege/r3-home-02-pruef/zusatz/start__m430-light__09.webp",
+        "belege/r3-home-02-pruef/zusatz/start__m430-light__10.webp",
+        "belege/r3-home-02-pruef/zusatz/start__m430-light__11.webp",
+        "belege/r3-home-02-pruef/zusatz/start__m430-light__12.webp",
+        "belege/r3-home-02-pruef/zusatz/start__m430-light__13.webp",
+        "belege/r3-home-02-pruef/zusatz/start__m430-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "d1920",
+      "schema": "light",
+      "status": 200,
+      "ms": 7896,
+      "seitenhoehe": 12501,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-02-pruef/zusatz/start__d1920-light__01.webp",
+        "belege/r3-home-02-pruef/zusatz/start__d1920-light__02.webp",
+        "belege/r3-home-02-pruef/zusatz/start__d1920-light__03.webp",
+        "belege/r3-home-02-pruef/zusatz/start__d1920-light__04.webp",
+        "belege/r3-home-02-pruef/zusatz/start__d1920-light__05.webp",
+        "belege/r3-home-02-pruef/zusatz/start__d1920-light__06.webp",
+        "belege/r3-home-02-pruef/zusatz/start__d1920-light__07.webp",
+        "belege/r3-home-02-pruef/zusatz/start__d1920-light__08.webp",
+        "belege/r3-home-02-pruef/zusatz/start__d1920-light__09.webp",
+        "belege/r3-home-02-pruef/zusatz/start__d1920-light__10.webp",
+        "belege/r3-home-02-pruef/zusatz/start__d1920-light__11.webp",
+        "belege/r3-home-02-pruef/zusatz/start__d1920-light__12.webp"
+      ]
+    }
+  ]
+}

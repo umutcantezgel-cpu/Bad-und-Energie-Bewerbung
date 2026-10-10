@@ -3,10 +3,12 @@ import { TEAM_QUOTES, TEAM_QUOTE_IDS, type TeamQuote } from '@/lib/content/team'
 import { interleave, type ReviewItem } from './model';
 
 /**
- * Normalizes lib/data/reviews.data.ts for the carousel: quote, name, role and source only.
- * Relative dates ("Vor einem Jahr"), badges and owner replies stay out: they age or add noise.
+ * Normalizes lib/data/reviews.data.ts for the carousel: quote, name, role, source and the owner reply
+ * (E-START-043: replies show that the owner cares; text and author word for word). Relative dates
+ * ("Vor einem Jahr") and badges stay out: they age or add noise.
  */
 function fromGoogle(review: GoogleReview): ReviewItem {
+  const reply = review.ownerResponse;
   return {
     id: review.id,
     kind: 'kunde',
@@ -15,6 +17,7 @@ function fromGoogle(review: GoogleReview): ReviewItem {
     role: review.role,
     source: 'Google-Bewertung',
     rating: review.rating,
+    ...(reply ? { reply: { author: reply.author, text: reply.text } } : {}),
   };
 }
 

@@ -1,0 +1,1163 @@
+/*
+ * Einstieg der Startseite (R3-HOME-01): Variante 1 „Der Kreislauf läuft an“
+ * (_relaunch/ausbau/richtungen/1/index.html `.einstieg`, BEGRUENDUNG §3–§10), dazu aus B Runde 1
+ * Wegweiser, Erklärsatz T-001 mit Knopf „Kreislauf zeigen“ und die Vertrauenszeile (E-START-021).
+ *
+ * Nur Rollen und Skalen aus app/styles/theme.css (--surface, --brand, --vorlauf, --a-*, --d-*, --k-*,
+ * --text-*), keine Rohfarben. Schriftfamilien kommen als Utilities aus dem Markup (font-mass,
+ * text-etikett, text-plakat, text-title-3), damit der Guard sie sieht.
+ *
+ * Zeichnung: viewBox 760 × 520; --s = px je Einheit in festen Stufen, damit jeder Strich 3 px bleibt
+ * (ohne non-scaling-stroke, das in Chromium die pathLength-Animation bricht). Lage über --dx/--dy.
+ */
+
+/* ═══ Grundwerte (mobil zuerst) ═══ */
+.held {
+  --rand: max(var(--spacing-gutter, var(--a-5)), env(safe-area-inset-left), env(safe-area-inset-right));
+  --s: 0.58;
+  --uhr: 0.9;
+  --versatz: 0px;
+  background-color: var(--surface);
+  color: var(--ink);
+}
+
+/* Raster: Text oben, Bild (füllt den Rest, Zeichnung an der Bodenlinie verankert), Erdreich mit Hauptaktion unten */
+.einstieg {
+  position: relative;
+  display: grid;
+  grid-template-columns: [voll-start] var(--rand) [inhalt-start] minmax(0, 1fr) [inhalt-end] var(--rand) [voll-end];
+  grid-template-rows: auto minmax(var(--bild-min), 1fr) auto;
+  min-height: calc(100svh - var(--m-kopf));
+  overflow-x: clip;
+  padding-bottom: var(--a-4);
+  container-type: inline-size;
+  --dx: calc(var(--uhr) * 100cqw - 470px * var(--s) - var(--versatz));
+  /* Haus bis zur Oberkante des Maßes „13:30“ */
+  --bild-min: calc(
+    280px * var(--s) + var(--text-numeral) * 1.1 + var(--a-1) + var(--text-footnote) * 1.1 + var(--a-3)
+  );
+  --boden-oben: var(--a-9);
+}
+
+.text {
+  grid-column: inhalt;
+  grid-row: 1;
+  padding-top: var(--a-1);
+}
+
+.ortsmarke {
+  margin-bottom: var(--a-2);
+}
+
+.titelHaupt {
+  display: block;
+}
+
+.titelHaupt > span {
+  display: block;
+  white-space: nowrap;
+}
+
+.titelZweit {
+  position: relative;
+  display: block;
+  margin-top: var(--a-3);
+  padding-left: var(--a-6);
+  text-wrap: balance;
+}
+
+.titelZweit > span:not(.klammer) {
+  display: block;
+}
+
+/* Rohrklammer (components/zeichnung): Vorlauf oben, Rücklauf unten, über beide Zeilen */
+.klammer {
+  position: absolute;
+  left: 0;
+  top: 0.2em;
+  bottom: 0.2em;
+  width: var(--a-5);
+}
+
+.lead {
+  margin-top: var(--a-4);
+  max-width: 34rem;
+  font-size: var(--text-callout);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* ═══ Bild: Haus mit Wärmepumpe, an der Bodenlinie verankert (--dy aus der Bildhöhe 100cqh) ═══ */
+.bild {
+  grid-column: voll;
+  grid-row: 2;
+  position: relative;
+  container-type: size;
+  margin-top: var(--a-2);
+  overflow-x: clip;
+  --dy: calc(100cqh - 520px * var(--s));
+  --zx: var(--dx);
+  --zy: var(--dy);
+}
+
+.rahmen {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+}
+
+.zeichnung {
+  position: absolute;
+  left: var(--zx);
+  top: var(--zy);
+  width: calc(760px * var(--s));
+  height: calc(520px * var(--s));
+  overflow: visible;
+  /* 3 px auf jeder Stufe: Strich in Einheiten = --m-strich / --s */
+  --sw: calc(var(--m-strich) / var(--s));
+}
+
+.z {
+  fill: none;
+  stroke: var(--brand);
+  stroke-width: var(--sw);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.voll {
+  fill: var(--brand);
+  stroke: none;
+}
+
+.vl {
+  stroke: var(--vorlauf);
+}
+
+.rl {
+  stroke: var(--ruecklauf);
+}
+
+.hausFlaeche {
+  fill: var(--waerme);
+  stroke: none;
+}
+
+/* Sonne mit 30 Teilstrichen = 30 Tage Urlaub; mobil links neben dem Haus, am Desktop zwischen H1 und Dach */
+.sonne {
+  --sonne-x: 43px;
+  --sonne-y: 331px;
+  transform: translate(var(--sonne-x), var(--sonne-y));
+}
+
+/* Anschlüsse der Pumpe: das Paar verlässt die Pumpe im Abstand --paar (in Einheiten: --paar / --s) */
+.stummelVl {
+  transform: translateX(calc(var(--paar) / var(--s) / -2));
+}
+
+.stummelRl {
+  transform: translateX(calc(var(--paar) / var(--s) / 2));
+}
+
+.nurDesktop {
+  display: none;
+}
+
+/* Wegweiser „Wetzlar“ (B Runde 1): Platte in Papier, damit der Pfosten dahinter verschwindet */
+.schild {
+  fill: var(--surface);
+}
+
+.schildText {
+  fill: var(--brand);
+  stroke: none;
+  /* in Einheiten der Zeichnung; nie unter 14 px Bildschirmgröße (kleinste Schriftstufe) */
+  font-size: max(15px, calc(14px / var(--s)));
+}
+
+.fundament {
+  position: absolute;
+  left: calc(var(--dx) + 330px * var(--s));
+  top: calc(var(--dy) + 520px * var(--s) + var(--m-strich));
+  width: calc(280px * var(--s));
+  height: var(--a-3);
+  background-color: var(--surface-2);
+  border: var(--m-strich) solid var(--brand);
+  border-top: 0;
+}
+
+/* Maßkette: Endstriche links und rechts, Linie in der Mitte */
+.kette {
+  height: var(--a-3);
+  border-inline: var(--m-strich) solid var(--brand);
+}
+
+.kette::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: var(--m-strich);
+  transform: translateY(-50%);
+  background-color: var(--brand);
+}
+
+.kette35 {
+  position: absolute;
+  left: var(--rand);
+  width: calc(var(--dx) + 236px * var(--s) - var(--paar) / 2 - var(--a-3) - var(--rand));
+  top: calc(var(--dy) + 520px * var(--s) + var(--a-3));
+}
+
+.jahre {
+  display: none;
+}
+
+/* ═══ Erdreich: Bodenlinie, Maße an der Zeichnung (Bezug Bodenlinie), Leitungen in die Hauptaktion ═══ */
+.boden {
+  grid-column: voll;
+  grid-row: 3;
+  position: relative;
+  border-top: var(--m-strich) solid var(--brand);
+  padding: var(--boden-oben) var(--rand) 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--a-4);
+  row-gap: var(--a-2);
+  --dy: calc(-520px * var(--s) - var(--m-strich));
+}
+
+.masse {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+
+.mass {
+  position: absolute;
+  left: calc(var(--dx) + var(--x) * var(--s) * 1px);
+  top: calc(var(--dy) + var(--y) * var(--s) * 1px);
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.wert {
+  font-size: var(--text-title-2);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.name {
+  margin-top: var(--a-1);
+}
+
+.mass1330 .wert {
+  font-size: var(--text-numeral);
+}
+
+.mass1330 {
+  --x: 406;
+  --y: 240;
+  transform: translate(-100%, -100%);
+  align-items: flex-end;
+  text-align: right;
+}
+
+.mass30 {
+  --x: 104;
+  --y: 331;
+  transform: translateY(-50%);
+}
+
+.mass35 {
+  left: var(--rand);
+  --y: 520;
+}
+
+.mass1926 {
+  --x: 340;
+  --y: 520;
+}
+
+.mass35,
+.mass1926 {
+  top: calc(var(--dy) + var(--y) * var(--s) * 1px + var(--a-6));
+}
+
+/* Mobil fallen Vorlauf und Rücklauf senkrecht aus der Pumpe in den Knopf */
+.erdleitung {
+  position: absolute;
+  top: 0;
+  width: var(--m-strich);
+  height: var(--boden-oben);
+  transform-origin: top;
+}
+
+.erdleitungVl {
+  left: calc(var(--dx) + 236px * var(--s) - var(--paar) / 2 - var(--m-strich) / 2);
+  background-color: var(--vorlauf);
+}
+
+.erdleitungRl {
+  left: calc(var(--dx) + 236px * var(--s) + var(--paar) / 2 - var(--m-strich) / 2);
+  background-color: var(--ruecklauf);
+  transform-origin: bottom;
+}
+
+.erdleitungD {
+  display: none;
+}
+
+/* Hauptaktion: die eine rote Fläche (E-016); Hover und Druck als volle Deckschicht */
+.aktion {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--a-4);
+  min-height: var(--m-knopf);
+  padding: 0 var(--a-5);
+  background-color: var(--accent);
+  color: var(--on-accent);
+  font-size: var(--text-body);
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.aktion::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: var(--accent-hover);
+  opacity: 0;
+  transition: opacity var(--d-1) var(--k-ein);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .aktion:hover::before {
+    opacity: 1;
+    transition: opacity var(--d-2) var(--k-aus);
+  }
+
+  .zweitweg:hover {
+    text-decoration-color: var(--ruecklauf);
+  }
+
+  .knopf:not([aria-disabled="true"]):hover {
+    background-color: var(--surface-2);
+  }
+}
+
+.aktion:active::before {
+  opacity: 1;
+  background-color: var(--accent-press);
+  transition: none;
+}
+
+.boden .aktion {
+  grid-row: 1;
+  grid-column: 1;
+  min-width: calc(var(--dx) + 236px * var(--s) + var(--paar) / 2 + var(--a-6) - var(--rand));
+}
+
+.zweitweg {
+  grid-column: 2;
+  grid-row: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--a-2);
+  min-height: var(--m-ziel);
+  font-size: var(--text-callout);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--ink);
+  text-decoration-line: underline;
+  text-decoration-thickness: var(--m-strich);
+  text-underline-offset: 0.25em;
+  text-wrap: balance;
+}
+
+.zusammen {
+  white-space: nowrap;
+}
+
+.zweitwegIkon {
+  display: inline;
+  margin-left: var(--a-1);
+  vertical-align: -0.2em;
+}
+
+.mikro {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  font-size: var(--text-callout);
+  color: var(--ink-2);
+}
+
+/* ═══ Fuß des Einstiegs: Erklärsatz T-001 und „Kreislauf zeigen“ ═══ */
+.fuss {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--a-3) var(--a-6);
+  padding: var(--a-6) var(--rand) 0;
+}
+
+.satz {
+  max-width: 42ch;
+  font-size: var(--text-callout);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.knopf {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--a-2);
+  min-height: var(--m-ziel);
+  padding: 0 var(--a-4);
+  border: var(--m-strich) solid var(--brand);
+  background-color: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--text-callout);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.knopf:active {
+  background-color: var(--surface-3);
+}
+
+.knopf[aria-disabled="true"] {
+  border-color: var(--line-strong);
+  color: var(--ink-2);
+  cursor: default;
+}
+
+/* Nur mit Skript sichtbar; bis zur Hydration hält der Knopf seinen Platz (kein Layoutsprung) */
+.knopfWartet {
+  visibility: hidden;
+}
+
+/* Reduzierte Bewegung: die Zeichnung steht im Endzustand, der Knopf bleibt verborgen (Register) */
+@media (prefers-reduced-motion: reduce) {
+  .knopf {
+    display: none;
+  }
+}
+
+/* ═══ Vertrauenszeile (E-START-021): ruhig, statisch, alle Punkte sichtbar, kein Laufband ═══
+   Umbruch nur zwischen den Punkten (ab 37.5em); der Trennpunkt steht in der Lücke und wird am Zeilenanfang
+   von overflow abgeschnitten, damit keine Zeile mit „·“ beginnt. */
+.vertrauen {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--a-5);
+  row-gap: var(--a-1);
+  margin: var(--a-6) var(--rand) 0;
+  padding: var(--a-4) 0 var(--a-6);
+  border-top: 1px solid var(--line);
+  overflow: hidden;
+  list-style: none;
+  font-size: var(--text-callout);
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.punkt {
+  position: relative;
+  min-width: 0;
+}
+
+.punkt::before {
+  content: "·" / "";
+  position: absolute;
+  left: calc(var(--a-5) / -2);
+  transform: translateX(-50%);
+  color: var(--ink-2);
+  font-weight: 700;
+}
+
+/* Zwei Reihen: Betrieb, Umbruch, Partner */
+.vertrauen::before {
+  content: "";
+  order: 1;
+  flex-basis: 100%;
+  height: 0;
+}
+
+.betrieb {
+  font-weight: 700;
+}
+
+.partner {
+  order: 2;
+}
+
+@media (min-width: 37.5em) {
+  .punkt {
+    white-space: nowrap;
+  }
+}
+
+/* ═══ Stufen nach Breite: Maßstab der Zeichnung (mobil, Tablet) ═══ */
+@media (min-width: 22.5em) {
+  .held {
+    --s: 0.68;
+  }
+}
+
+@media (min-width: 26.25em) {
+  .held {
+    --s: 0.74;
+  }
+}
+
+@media (min-width: 37.5em) {
+  .held {
+    --s: 0.9;
+    --uhr: 0.8;
+  }
+
+  .text {
+    padding-top: var(--a-5);
+  }
+
+  .lead {
+    font-size: var(--text-body);
+  }
+}
+
+/* Handy hoch: das Haus ist rechts angeschnitten; Fenster und Tür lägen im Schnitt und entfallen */
+@media (max-width: 37.49em) {
+  .fenster {
+    display: none;
+  }
+}
+
+/* ═══ Stufen nach Höhe (mobil, Tablet): erster Bildschirm mit Hauptaktion und Mikrotext in der Daumenzone ═══
+   B 680–807 px: kleineres Haus ganz im Bild, alle Maße an der Zeichnung.
+   C 600–679 px: Haus kleiner; 35 km und 1926 rücken unter die Hauptaktion.
+   D unter 600 px: das ganze Haus klein, Uhr auf 13:30 bleibt im Bild; alle vier Maße als Schriftfeld.
+   Die H1-Stufe (text-plakat) folgt denselben Höhen in theme.css. */
+@media (max-width: 63.99em) and (max-height: 50.49em) {
+  .held {
+    --s: 0.56;
+    --uhr: 0.79;
+  }
+
+  .text {
+    padding-top: 0;
+  }
+
+  .ortsmarke {
+    margin-bottom: var(--a-1);
+  }
+
+  .titelZweit {
+    margin-top: var(--a-2);
+  }
+
+  .lead {
+    margin-top: var(--a-3);
+  }
+
+  .bild {
+    margin-top: 0;
+  }
+
+  .fenster {
+    display: inline;
+  }
+}
+
+@media (max-width: 63.99em) and (max-height: 42.49em) {
+  .held {
+    --s: 0.5;
+  }
+}
+
+@media (max-width: 63.99em) and (max-height: 42.49em), (min-width: 37.5em) and (max-width: 63.99em) and (max-height: 50.49em) {
+  .einstieg {
+    --boden-oben: var(--a-6);
+  }
+
+  .kette35 {
+    display: none;
+  }
+
+  .masse {
+    position: static;
+    grid-column: 1 / -1;
+    grid-row: 3;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--a-3) var(--a-6);
+    margin-top: var(--a-4);
+  }
+
+  .mass35,
+  .mass1926 {
+    position: static;
+  }
+}
+
+@media (min-width: 37.5em) and (max-width: 63.99em) and (max-height: 50.49em) {
+  .held {
+    --s: 0.5;
+    --uhr: 0.66;
+  }
+
+  .lead {
+    font-size: var(--text-callout);
+  }
+}
+
+@media (max-width: 63.99em) and (max-height: 37.49em) {
+  .held {
+    --s: 0.4;
+  }
+
+  .einstieg {
+    --bild-min: calc(330px * var(--s) + var(--a-2));
+    --boden-oben: var(--a-5);
+  }
+
+  .lead {
+    line-height: 1.4;
+    margin-top: var(--a-2);
+  }
+
+  .sonne,
+  .hinweis1330 {
+    display: none;
+  }
+
+  .masse {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    justify-content: start;
+  }
+
+  .mass1330,
+  .mass30 {
+    position: static;
+    transform: none;
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+/* 320 × 568: Haus noch etwas kleiner, Knopf schmaler */
+@media (max-width: 22.49em) and (max-height: 37.49em) {
+  .held {
+    --s: 0.34;
+  }
+
+  .einstieg {
+    --boden-oben: var(--a-4);
+  }
+
+  .boden {
+    column-gap: var(--a-3);
+  }
+
+  .boden .aktion {
+    padding: 0 var(--a-4);
+    gap: var(--a-3);
+  }
+
+  .masse {
+    column-gap: var(--a-4);
+  }
+}
+
+/* ═══ Desktop: eigene Komposition ab 64em ═══
+   Schrift links oben, das Haus als große Geste rechts, Bodenlinie quer über die Seite, Hauptaktion im Erdreich. */
+@media (min-width: 64em) {
+  .held {
+    --s: 0.8;
+  }
+
+  .einstieg {
+    grid-template-rows: 1fr auto;
+    padding-bottom: var(--a-6);
+    --dx: calc(100cqw - 760px * var(--s) - var(--versatz));
+  }
+
+  .text {
+    grid-row: 1;
+    padding-top: var(--a-7);
+    padding-bottom: var(--a-7);
+    max-width: 44rem;
+  }
+
+  .lead {
+    font-size: var(--text-body);
+    max-width: 24rem;
+    margin-top: var(--a-5);
+  }
+
+  .titelZweit {
+    margin-top: var(--a-4);
+  }
+
+  .bild {
+    grid-row: 1;
+    align-self: end;
+    height: 0;
+    margin: 0;
+    --zx: auto;
+    --zy: auto;
+  }
+
+  .rahmen {
+    inset: auto var(--versatz) 0 auto;
+    width: calc(760px * var(--s));
+    height: calc(520px * var(--s));
+    overflow: visible;
+  }
+
+  .zeichnung {
+    left: 0;
+    top: 0;
+  }
+
+  .sonne {
+    --sonne-x: 284px;
+    --sonne-y: 177px;
+  }
+
+  .nurDesktop {
+    display: inline;
+  }
+
+  .nurMobil {
+    display: none;
+  }
+
+  .mass1330 {
+    --x: 560;
+    --y: 182;
+    right: var(--rand);
+    top: calc(var(--dy) + var(--y) * var(--s) * 1px + var(--m-strich) / 2);
+    transform: translateY(-100%);
+    align-items: flex-end;
+    text-align: right;
+    padding-bottom: var(--a-2);
+    border-bottom: var(--m-strich) solid var(--brand);
+  }
+
+  .mass30 {
+    --x: 350;
+    --y: 177;
+    transform: translateY(-100%);
+  }
+
+  .mass35 {
+    --y: 284;
+    left: auto;
+    right: var(--rand);
+    top: calc(var(--dy) + var(--y) * var(--s) * 1px - var(--a-3));
+    transform: translateY(-100%);
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .mass1926 {
+    --x: 330;
+    --y: 520;
+    top: calc(var(--dy) + var(--y) * var(--s) * 1px + var(--a-5) + var(--a-6) + var(--a-2));
+  }
+
+  .kette35 {
+    display: none;
+  }
+
+  /* Jubiläum als Maßkette unter dem Fundament: 100 Jahre von 1926 bis 2026 */
+  .jahre {
+    display: block;
+    position: absolute;
+    left: calc(var(--dx) + 330px * var(--s));
+    width: calc(280px * var(--s));
+    top: calc(var(--dy) + 520px * var(--s) + var(--a-5));
+    line-height: 1.1;
+  }
+
+  .jahreKette {
+    display: block;
+    position: relative;
+    width: 100%;
+    margin-top: var(--a-2);
+  }
+
+  .jahreText {
+    display: flex;
+    justify-content: center;
+    white-space: nowrap;
+  }
+
+  .jahreEnde {
+    display: block;
+    text-align: right;
+    margin-top: var(--a-2);
+  }
+
+  .boden {
+    grid-row: 2;
+    padding: var(--a-6) var(--rand) 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: start;
+    column-gap: var(--a-6);
+    row-gap: var(--a-1);
+  }
+
+  .boden::before {
+    content: "";
+    order: 1;
+    flex-basis: 100%;
+    height: 0;
+  }
+
+  .boden .mikro {
+    order: 2;
+  }
+
+  .boden .zweitweg {
+    order: 3;
+  }
+
+  .boden .aktion {
+    flex: 0 0 18rem;
+    min-width: 18rem;
+  }
+
+  /* Flansch in Navy: hier münden Vorlauf und Rücklauf */
+  .boden .aktion::after {
+    content: "";
+    position: absolute;
+    right: calc(var(--m-strich) * -2);
+    top: var(--a-2);
+    bottom: var(--a-2);
+    width: calc(var(--m-strich) * 2);
+    background-color: var(--brand);
+    border-radius: 0 var(--radius-1) var(--radius-1) 0;
+  }
+
+  .erdleitung {
+    display: none;
+  }
+
+  /* Erdleitungen am Desktop. Lage aus Tokens: Fallstelle = Pumpenanschluss (236 ∓ --paar/2), Höhe = --a-6 + --m-knopf.
+     Zeichnungswerte im SVG (px): Vorlauf y 54 = --a-6 + --m-knopf/2 − --paar/2, Rücklauf y 66 = … + --paar/2,
+     Bogen --r-2 (12) und --r-3 (24) konzentrisch, Versatz 1,5 = --m-strich/2. */
+  .erdleitungD {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: calc(var(--rand) + 18rem);
+    overflow: hidden;
+    height: calc(var(--a-6) + var(--m-knopf));
+  }
+
+  .erdleitungDVl {
+    width: calc(100% - var(--versatz) - var(--rand) - 18rem - var(--s) * 524px - var(--paar) / 2 + var(--m-strich) / 2);
+  }
+
+  .erdleitungDRl {
+    width: calc(100% - var(--versatz) - var(--rand) - 18rem - var(--s) * 524px + var(--paar) / 2 + var(--m-strich) / 2);
+  }
+
+  .erdleitungD line,
+  .erdleitungD path {
+    fill: none;
+    stroke-width: var(--m-strich);
+  }
+
+  .erdleitungDVl line,
+  .erdleitungDVl path {
+    stroke: var(--vorlauf);
+  }
+
+  .erdleitungDRl line,
+  .erdleitungDRl path {
+    stroke: var(--ruecklauf);
+  }
+
+  /* Erklärsatz unter der Szene: beginnt an der Vorderkante der Wärmepumpe (x 176), wie in B Runde 1;
+     der Einstieg hält unten schon --a-6 Luft */
+  .fuss {
+    padding-top: 0;
+    padding-left: max(var(--rand), calc(100% - var(--versatz) - 760px * var(--s) + 176px * var(--s)));
+  }
+}
+
+/* Schmaler Desktop (1024–1279) und flache Laptops: Haus um --a-7 nach links, damit „35 km“ neben der Dachschräge Platz hat */
+@media (min-width: 64em) and (max-width: 79.99em) {
+  .held {
+    --versatz: var(--a-7);
+  }
+
+  .mass30 {
+    --x: 200;
+    --y: 235;
+    transform: none;
+  }
+}
+
+@media (min-width: 80em) {
+  .held {
+    --s: 1;
+  }
+
+  .lead {
+    max-width: 27rem;
+  }
+}
+
+@media (min-width: 80em) and (min-height: 50em) {
+  .held {
+    --s: 1.2;
+  }
+}
+
+@media (min-width: 90em) and (min-height: 56em) {
+  .held {
+    --s: 1.4;
+  }
+}
+
+@media (min-width: 105em) and (min-height: 62em) {
+  .held {
+    --s: 1.55;
+  }
+}
+
+@media (min-width: 120em) and (min-height: 66em) {
+  .held {
+    --s: 1.7;
+  }
+}
+
+/* Flache Laptops (bis 720 px Höhe): Stufe .8, H1 nach Höhe begrenzt, engere Abstände */
+@media (min-width: 64em) and (max-height: 45em) {
+  .held {
+    --s: 0.8;
+    --versatz: var(--a-7);
+  }
+
+  .titelHaupt {
+    font-size: min(var(--text-plakat), max(4rem, calc(0.25rem + 14svh)));
+  }
+
+  .text {
+    padding-top: var(--a-5);
+    padding-bottom: var(--a-4);
+  }
+
+  .titelZweit {
+    margin-top: var(--a-3);
+  }
+
+  .lead {
+    margin-top: var(--a-4);
+  }
+}
+
+/* ═══ Auftakt: der Kreislauf läuft einmal an (Ende 1.120 ms) ═══
+   Läuft unter der Klasse `auftakt` aus dem Kopfskript (lib/motion/head-script.ts) und erneut, wenn der Knopf
+   „Kreislauf zeigen“ data-kreislauf="lauf" setzt. Pumpe 0–400 · Vorlauf 160–560 · Wärme 320–920 · Rücklauf
+   480–880 · Leitungen in den Knopf 320–1.120 · Pfeile 720–960 · Uhr rastet 880–1.120 ein.
+   Füllart backwards: Endwert = Grundwert; ohne Skript, mit reduzierter Bewegung (globals.css) und nach dem
+   Sicherheitsnetz (2 s) steht sofort der Endzustand. */
+@keyframes zeichnen {
+  from {
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes einblenden {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes halb {
+  from {
+    transform: rotate(-180deg);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+@keyframes stunde {
+  from {
+    transform: rotate(-15deg);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+@keyframes steigen {
+  from {
+    transform: translateY(345px);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+@keyframes fall {
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+.zeichnung [data-motion="luefter"] {
+  transform-origin: 236px 462px;
+}
+
+.zeiger {
+  transform-origin: 470px 272px;
+}
+
+:global(.auftakt) .held [data-motion="luft"],
+.held[data-kreislauf="lauf"] [data-motion="luft"] {
+  stroke-dasharray: 1 1;
+  animation: zeichnen var(--d-2) var(--k-aus) backwards;
+}
+
+:global(.auftakt) .held [data-motion="luft"]:nth-child(2),
+.held[data-kreislauf="lauf"] [data-motion="luft"]:nth-child(2) {
+  animation-delay: calc(var(--takt) / 2);
+}
+
+:global(.auftakt) .held [data-motion="luft"]:nth-child(3),
+.held[data-kreislauf="lauf"] [data-motion="luft"]:nth-child(3) {
+  animation-delay: var(--takt);
+}
+
+:global(.auftakt) .held [data-motion="luefter"],
+.held[data-kreislauf="lauf"] [data-motion="luefter"] {
+  animation: halb var(--d-3) var(--k-wechsel) backwards;
+}
+
+:global(.auftakt) .held [data-motion="vorlauf-haus"],
+.held[data-kreislauf="lauf"] [data-motion="vorlauf-haus"] {
+  stroke-dasharray: 1 1;
+  animation: zeichnen var(--d-3) var(--k-wechsel) calc(var(--takt) * 2) backwards;
+}
+
+:global(.auftakt) .held [data-motion="waerme"],
+.held[data-kreislauf="lauf"] [data-motion="waerme"] {
+  animation: steigen var(--d-4) var(--k-aus) calc(var(--takt) * 4) backwards;
+}
+
+:global(.auftakt) .held [data-motion="ruecklauf-haus"],
+.held[data-kreislauf="lauf"] [data-motion="ruecklauf-haus"] {
+  stroke-dasharray: 1 1;
+  animation: zeichnen var(--d-3) var(--k-wechsel) calc(var(--takt) * 6) backwards;
+}
+
+:global(.auftakt) .held [data-motion="erdleitung"],
+.held[data-kreislauf="lauf"] [data-motion="erdleitung"] {
+  animation: fall var(--d-2) var(--k-wechsel) calc(var(--takt) * 5) backwards;
+}
+
+:global(.auftakt) .held [data-motion="erdleitung"].erdleitungRl,
+.held[data-kreislauf="lauf"] [data-motion="erdleitung"].erdleitungRl {
+  animation-delay: calc(var(--takt) * 8);
+}
+
+:global(.auftakt) .held [data-motion="erdleitung-d"],
+.held[data-kreislauf="lauf"] [data-motion="erdleitung-d"] {
+  stroke-dasharray: 1 1;
+}
+
+:global(.auftakt) .held .erdleitungDVl .fallD,
+.held[data-kreislauf="lauf"] .erdleitungDVl .fallD {
+  animation: zeichnen var(--d-1) linear calc(var(--takt) * 4) backwards;
+}
+
+:global(.auftakt) .held .erdleitungDVl .bogenD,
+.held[data-kreislauf="lauf"] .erdleitungDVl .bogenD {
+  animation: zeichnen var(--d-1) linear calc(var(--takt) * 4 + var(--d-1)) backwards;
+}
+
+:global(.auftakt) .held .erdleitungDVl .laufD,
+.held[data-kreislauf="lauf"] .erdleitungDVl .laufD {
+  animation: zeichnen var(--d-2) var(--k-aus) calc(var(--takt) * 4 + var(--d-2)) backwards;
+}
+
+:global(.auftakt) .held .erdleitungDRl .laufD,
+.held[data-kreislauf="lauf"] .erdleitungDRl .laufD {
+  animation: zeichnen var(--d-2) var(--k-ein) calc(var(--takt) * 8) backwards;
+}
+
+:global(.auftakt) .held .erdleitungDRl .bogenD,
+.held[data-kreislauf="lauf"] .erdleitungDRl .bogenD {
+  animation: zeichnen var(--d-1) linear calc(var(--takt) * 8 + var(--d-2)) backwards;
+}
+
+:global(.auftakt) .held .erdleitungDRl .fallD,
+.held[data-kreislauf="lauf"] .erdleitungDRl .fallD {
+  animation: zeichnen var(--d-1) linear calc(var(--takt) * 8 + var(--d-2) + var(--d-1)) backwards;
+}
+
+:global(.auftakt) .held [data-motion="pfeile"],
+.held[data-kreislauf="lauf"] [data-motion="pfeile"] {
+  animation: einblenden var(--d-2) var(--k-aus) calc(var(--takt) * 9) backwards;
+}
+
+:global(.auftakt) .held [data-motion="uhr"],
+.held[data-kreislauf="lauf"] [data-motion="uhr"] {
+  animation: halb var(--d-2) var(--k-aus) calc(var(--takt) * 11) backwards;
+}
+
+:global(.auftakt) .held .zeigerStd[data-motion="uhr"],
+.held[data-kreislauf="lauf"] .zeigerStd[data-motion="uhr"] {
+  animation-name: stunde;
+}
+
+/* ═══ Druck: Einstieg ohne Mindesthöhe; Farben kommen aus den hellen Rollen (theme.css) ═══ */
+@media print {
+  .einstieg {
+    min-height: 0;
+  }
+
+  .knopf {
+    display: none;
+  }
+}

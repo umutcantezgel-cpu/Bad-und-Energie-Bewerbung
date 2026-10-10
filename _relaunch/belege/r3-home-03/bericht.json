@@ -1,0 +1,140 @@
+{
+  "label": "r3-home-03",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-09T22:47:45.301Z",
+  "seiten": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 21203,
+      "seitenhoehe": 14936,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-03/start__m390-light__01.webp",
+        "belege/r3-home-03/start__m390-light__02.webp",
+        "belege/r3-home-03/start__m390-light__03.webp",
+        "belege/r3-home-03/start__m390-light__04.webp",
+        "belege/r3-home-03/start__m390-light__05.webp",
+        "belege/r3-home-03/start__m390-light__06.webp",
+        "belege/r3-home-03/start__m390-light__07.webp",
+        "belege/r3-home-03/start__m390-light__08.webp",
+        "belege/r3-home-03/start__m390-light__09.webp",
+        "belege/r3-home-03/start__m390-light__10.webp",
+        "belege/r3-home-03/start__m390-light__11.webp",
+        "belege/r3-home-03/start__m390-light__12.webp",
+        "belege/r3-home-03/start__m390-light__13.webp",
+        "belege/r3-home-03/start__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 19074,
+      "seitenhoehe": 14936,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-03/start__m390-dark__01.webp",
+        "belege/r3-home-03/start__m390-dark__02.webp",
+        "belege/r3-home-03/start__m390-dark__03.webp",
+        "belege/r3-home-03/start__m390-dark__04.webp",
+        "belege/r3-home-03/start__m390-dark__05.webp",
+        "belege/r3-home-03/start__m390-dark__06.webp",
+        "belege/r3-home-03/start__m390-dark__07.webp",
+        "belege/r3-home-03/start__m390-dark__08.webp",
+        "belege/r3-home-03/start__m390-dark__09.webp",
+        "belege/r3-home-03/start__m390-dark__10.webp",
+        "belege/r3-home-03/start__m390-dark__11.webp",
+        "belege/r3-home-03/start__m390-dark__12.webp",
+        "belege/r3-home-03/start__m390-dark__13.webp",
+        "belege/r3-home-03/start__m390-dark__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 9327,
+      "seitenhoehe": 11839,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-03/start__d1440-light__01.webp",
+        "belege/r3-home-03/start__d1440-light__02.webp",
+        "belege/r3-home-03/start__d1440-light__03.webp",
+        "belege/r3-home-03/start__d1440-light__04.webp",
+        "belege/r3-home-03/start__d1440-light__05.webp",
+        "belege/r3-home-03/start__d1440-light__06.webp",
+        "belege/r3-home-03/start__d1440-light__07.webp",
+        "belege/r3-home-03/start__d1440-light__08.webp",
+        "belege/r3-home-03/start__d1440-light__09.webp",
+        "belege/r3-home-03/start__d1440-light__10.webp",
+        "belege/r3-home-03/start__d1440-light__11.webp",
+        "belege/r3-home-03/start__d1440-light__12.webp",
+        "belege/r3-home-03/start__d1440-light__13.webp",
+        "belege/r3-home-03/start__d1440-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 9135,
+      "seitenhoehe": 11839,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-home-03/start__d1440-dark__01.webp",
+        "belege/r3-home-03/start__d1440-dark__02.webp",
+        "belege/r3-home-03/start__d1440-dark__03.webp",
+        "belege/r3-home-03/start__d1440-dark__04.webp",
+        "belege/r3-home-03/start__d1440-dark__05.webp",
+        "belege/r3-home-03/start__d1440-dark__06.webp",
+        "belege/r3-home-03/start__d1440-dark__07.webp",
+        "belege/r3-home-03/start__d1440-dark__08.webp",
+        "belege/r3-home-03/start__d1440-dark__09.webp",
+        "belege/r3-home-03/start__d1440-dark__10.webp",
+        "belege/r3-home-03/start__d1440-dark__11.webp",
+        "belege/r3-home-03/start__d1440-dark__12.webp",
+        "belege/r3-home-03/start__d1440-dark__13.webp",
+        "belege/r3-home-03/start__d1440-dark__14.webp"
+      ]
+    }
+  ]
+}
