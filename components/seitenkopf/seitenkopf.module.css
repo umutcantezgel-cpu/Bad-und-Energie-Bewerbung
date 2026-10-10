@@ -1,0 +1,534 @@
+/*
+ * Seitenkopf (SEITENKOPF-01, E-023): abgeleitet aus dem Einstieg der Startseite
+ * (components/home/einstieg/einstieg.module.css) und der Doppelseite aus Variante 3 (Papier links, Navy rechts;
+ * am Handy Navy-Block oben, Hauptaktion auf Papier darunter).
+ *
+ * Nur Rollen und Skalen aus app/styles/theme.css. Die Navy-Fläche ist ein Inverse-Band (data-tone="inverse");
+ * der Titelblock steht am Handy darauf und am Desktop auf Papier: Dort holt er die Rollen per `inherit` vom
+ * Papier zurück. Schriftfamilien kommen als Utilities aus dem Markup (text-etikett, text-display …).
+ */
+
+/* ═══ Grundwerte und Raster (mobil zuerst) ═══
+   Zeilen: 1 Titelblock · 2 Zeichnung und Maße (beide auf Navy) · 3 Leitungspaar · 4 Aktion · 5 Einleitung */
+.kopf {
+  --rand: max(var(--spacing-gutter, var(--a-5)), env(safe-area-inset-left), env(safe-area-inset-right));
+  /* Wärmebild-Palette (components/zeichnung/Waermebild): hier auf Papier aufgelöst, gilt dann auf Navy */
+  --wb-lau: var(--surface-2);
+  --wb-warm: var(--waerme);
+  position: relative;
+  display: grid;
+  grid-template-columns: [voll-start] var(--rand) [inhalt-start] minmax(0, 1fr) [inhalt-end] var(--rand) [voll-end];
+  padding-bottom: var(--a-6);
+  overflow-x: clip;
+  background-color: var(--surface);
+  color: var(--ink);
+}
+
+/* Dunkel sind Wand und Wärme des Papiers dunkler als das Band: das Wärmebild nimmt dann seine eigenen,
+   hellen Stufen (Tinte 2, Creme), damit warm innen heller bleibt als kalt außen */
+@media screen and (prefers-color-scheme: dark) {
+  .kopf {
+    --wb-lau: initial;
+    --wb-warm: initial;
+  }
+}
+
+/* Navy-Fläche: am Handy hinter Titelblock und Zeichnung */
+.flaeche {
+  grid-column: voll;
+  grid-row: 1 / 3;
+  background-color: var(--surface);
+}
+
+.titelblock {
+  position: relative;
+  grid-column: inhalt;
+  grid-row: 1;
+  padding-top: var(--a-6);
+  padding-bottom: var(--a-5);
+  container-type: inline-size;
+  color: var(--ink);
+}
+
+.etikett {
+  margin-bottom: var(--a-3);
+}
+
+.titel {
+  overflow-wrap: break-word;
+  hyphens: manual;
+  text-wrap: balance;
+}
+
+/* erzaehl: Bildgröße, aber nie breiter als die Spalte (lange Berufsnamen trennen an den weichen Trennstellen) */
+.erzaehl .titel {
+  font-size: min(var(--text-display), 14cqi);
+}
+
+.unterzeile {
+  margin-top: var(--a-4);
+  max-width: 34rem;
+  text-wrap: balance;
+}
+
+/* Rohrklammer (components/zeichnung): Vorlauf oben, Rücklauf unten, über die Zeilen der Unterzeile.
+   Mittig zum Text; mindestens zwei Bögen (--radius-2) und ein gerades Stück (--a-3), damit auch eine
+   einzelne Zeile als Klammer gefasst ist und nicht als „C“. */
+.mitKlammer {
+  position: relative;
+  padding-left: var(--a-6);
+}
+
+.klammer {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: var(--a-5);
+  height: max(calc(100% - 0.2em), calc(var(--radius-2) * 2 + var(--a-3)));
+  transform: translateY(-50%);
+}
+
+/* ═══ Zeichnung und Maße auf Navy ═══ */
+.panel {
+  position: relative;
+  grid-column: voll;
+  grid-row: 2;
+  display: grid;
+  align-content: end;
+  row-gap: var(--a-5);
+  padding: 0 var(--rand) var(--a-5);
+  /* Die Fläche malt .flaeche; das Panel bleibt durchsichtig, damit das Paar auf Knopfhöhe sichtbar läuft */
+  background-color: transparent;
+  color: var(--ink);
+}
+
+.bild {
+  display: grid;
+  justify-items: start;
+  align-items: end;
+  min-width: 0;
+}
+
+.bild > * {
+  max-width: 100%;
+}
+
+.masse {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-4) var(--a-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mass {
+  min-width: 0;
+}
+
+/* ═══ Leitungspaar: am Handy senkrecht aus der Navy-Fläche in den Knopf (Vorlauf links, Rücklauf rechts) ═══ */
+.leitung {
+  position: relative;
+  z-index: 1;
+  grid-column: voll;
+  grid-row: 3;
+  height: var(--a-6);
+}
+
+.leitungPapier {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: calc(var(--rand) + var(--a-8));
+  width: calc(var(--paar) + var(--m-strich));
+  border-left: var(--m-strich) solid var(--vorlauf);
+  border-right: var(--m-strich) solid var(--ruecklauf);
+}
+
+.leitungNavy {
+  display: none;
+}
+
+/* ═══ Aktion auf Papier ═══ */
+.aktionsblock {
+  position: relative;
+  z-index: 2;
+  grid-column: inhalt;
+  grid-row: 4;
+  display: grid;
+  justify-items: start;
+  row-gap: var(--a-2);
+  margin-top: var(--a-6);
+}
+
+.mitAktion .aktionsblock {
+  margin-top: 0;
+}
+
+/* Hauptaktion: die eine rote Fläche (E-016); Hover und Druck als volle Deckschicht wie im Einstieg */
+.aktion {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--a-4);
+  width: 100%;
+  min-height: var(--m-knopf);
+  padding: 0 var(--a-5);
+  background-color: var(--accent);
+  color: var(--on-accent);
+  font-size: var(--text-body);
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.aktion::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: var(--accent-hover);
+  opacity: 0;
+  transition: opacity var(--d-1) var(--k-ein);
+}
+
+.aktion:active::before {
+  opacity: 1;
+  background-color: var(--accent-press);
+  transition: none;
+}
+
+.mikro {
+  font-size: var(--text-callout);
+  line-height: 1.45;
+}
+
+.zweitweg {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--m-ziel);
+  font-size: var(--text-callout);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--ink);
+  text-decoration-line: underline;
+  text-decoration-thickness: var(--m-strich);
+  text-underline-offset: 0.25em;
+}
+
+.zweitweg > * {
+  margin-left: 0.25em;
+}
+
+.zusammen {
+  white-space: nowrap;
+}
+
+.zweitwegIkon {
+  display: inline;
+  margin-left: var(--a-1);
+  vertical-align: -0.2em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .aktion:hover::before {
+    opacity: 1;
+    transition: opacity var(--d-2) var(--k-aus);
+  }
+
+  .zweitweg:hover {
+    text-decoration-color: var(--ruecklauf);
+  }
+}
+
+.einleitung {
+  grid-column: inhalt;
+  grid-row: 5;
+  margin-top: var(--a-6);
+  max-width: 38rem;
+  font-size: var(--text-body);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.einleitung > * + * {
+  margin-top: var(--a-3);
+}
+
+/* ═══ arbeit: am Handy ein knappes Navy-Band; die Zeichnung erst ab 37.5em ═══ */
+.arbeit .titelblock {
+  padding-top: var(--a-5);
+}
+
+@media (max-width: 37.49em) {
+  .arbeit .bild {
+    display: none;
+  }
+}
+
+/* ═══ ruhig: nur Papier ═══ */
+.ruhig .titelblock {
+  padding-top: var(--a-7);
+  padding-bottom: 0;
+}
+
+.ruhig .einleitung {
+  margin-top: var(--a-5);
+}
+
+/* ═══ Tablet: Zeichnung und Maße nebeneinander, Knopf in Daumenbreite ═══ */
+@media (min-width: 37.5em) {
+  .titelblock {
+    padding-top: var(--a-7);
+  }
+
+  .panel {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    column-gap: var(--a-6);
+  }
+
+  .aktion {
+    width: auto;
+    min-width: 20rem;
+  }
+
+  .leitungPapier {
+    right: auto;
+    left: calc(var(--rand) + 20rem - var(--a-8));
+  }
+
+  .arbeit .panel {
+    grid-row: 1 / 3;
+    align-self: end;
+    padding-top: var(--a-7);
+  }
+
+  .arbeit .titelblock {
+    padding-right: 14rem;
+  }
+
+  .arbeit .bild {
+    width: 12rem;
+    justify-self: end;
+  }
+
+  .arbeit .masse {
+    grid-row: 2;
+    grid-column: 1 / -1;
+  }
+}
+
+/* ═══ Desktop: Papier links, Navy-Fläche rechts; das Paar läuft auf Knopfhöhe in den Flansch ═══
+   Zeilen: 1 Titelblock · 2 Einleitung · 3 Aktion (Knopf oben, darauf das Paar) · 4 Rest (Maße auf Navy) */
+@media (min-width: 64em) {
+  .kopf {
+    grid-template-columns:
+      [voll-start] var(--rand) [inhalt-start text-start] minmax(0, 1.15fr) [text-end] var(--a-8)
+      [panel-start] minmax(0, 1fr) [panel-end inhalt-end voll-end];
+    /* Zeile 4 hält unten mindestens --a-8 Luft, auch wenn die Seite ohne Knopf mit der Einleitung endet */
+    grid-template-rows: auto auto auto minmax(var(--a-8), 1fr);
+    padding-bottom: 0;
+  }
+
+  .erzaehl {
+    min-height: min(calc(100svh - var(--m-kopf)), 52rem);
+  }
+
+  .arbeit {
+    grid-template-columns:
+      [voll-start] var(--rand) [inhalt-start text-start] minmax(0, 2fr) [text-end] var(--a-8)
+      [panel-start] minmax(20rem, 1fr) [panel-end inhalt-end voll-end];
+  }
+
+  .ruhig {
+    grid-template-columns: [voll-start] var(--rand) [inhalt-start text-start] minmax(0, 1fr) [text-end inhalt-end] var(--rand) [voll-end];
+    padding-bottom: var(--a-6);
+  }
+
+  .flaeche {
+    grid-column: panel-start / voll-end;
+    grid-row: 1 / -1;
+  }
+
+  /* Titelblock auf Papier: die Rollen des Inverse-Bands zurück auf die des Papiers */
+  .titelblock[data-tone] {
+    color-scheme: inherit;
+    --surface: inherit;
+    --surface-2: inherit;
+    --surface-3: inherit;
+    --ink: inherit;
+    --ink-muted: inherit;
+    --ink-2: inherit;
+    --brand: inherit;
+    --line: inherit;
+    --line-strong: inherit;
+    --focus: inherit;
+    --vorlauf: inherit;
+    --ruecklauf: inherit;
+    --waerme: inherit;
+  }
+
+  .titelblock {
+    grid-column: text;
+    padding-top: var(--a-8);
+    padding-bottom: 0;
+  }
+
+  .unterzeile {
+    margin-top: var(--a-5);
+  }
+
+  .einleitung {
+    grid-column: text;
+    grid-row: 2;
+    margin-top: var(--a-5);
+    max-width: 34rem;
+  }
+
+  .aktionsblock,
+  .mitAktion .aktionsblock {
+    grid-column: text;
+    grid-row: 3;
+    align-self: start;
+    margin-top: var(--a-7);
+    column-gap: var(--a-6);
+  }
+
+  .aktion {
+    z-index: 2;
+    min-width: 18rem;
+  }
+
+  /* Flansch in Navy am Knopf: hier münden Vorlauf und Rücklauf (wie im Einstieg) */
+  .mitAktion .aktion::after {
+    content: "";
+    position: absolute;
+    right: calc(var(--m-strich) * -2);
+    top: var(--a-2);
+    bottom: var(--a-2);
+    width: calc(var(--m-strich) * 2);
+    background-color: var(--brand);
+    border-radius: 0 var(--radius-1) var(--radius-1) 0;
+  }
+
+  .leitung {
+    grid-column: text-start / voll-end;
+    grid-row: 3;
+    align-self: start;
+    height: var(--m-knopf);
+    margin-top: var(--a-7);
+    display: grid;
+    grid-template-columns: subgrid;
+    align-items: center;
+  }
+
+  .leitungPapier,
+  .leitungNavy {
+    position: static;
+    display: block;
+    width: auto;
+    height: calc(var(--paar) + var(--m-strich));
+    border: 0;
+    border-top: var(--m-strich) solid var(--vorlauf);
+    border-bottom: var(--m-strich) solid var(--ruecklauf);
+  }
+
+  .leitungPapier {
+    grid-column: 1 / 3;
+    margin-left: var(--a-8);
+  }
+
+  .leitungNavy {
+    grid-column: 3;
+  }
+
+  .panel {
+    grid-column: panel-start / voll-end;
+    grid-row: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: subgrid;
+    align-content: stretch;
+    row-gap: 0;
+    padding: var(--a-8) var(--rand) var(--a-8) var(--a-8);
+  }
+
+  .bild {
+    grid-row: 1 / 3;
+    justify-items: center;
+    align-items: center;
+    padding-bottom: var(--a-6);
+  }
+
+  /* Maße unter dem Paar: Abstand = Lage des Knopfs (--a-7) + Knopfhöhe + Luft */
+  .masse {
+    grid-row: 3 / -1;
+    align-self: start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--a-5) var(--a-7);
+    margin-top: calc(var(--a-7) + var(--m-knopf) + var(--a-6));
+  }
+
+  /* Ohne Knopf: die Maße stehen direkt unter der Zeichnung */
+  .kopf:not(.mitAktion) .masse {
+    margin-top: var(--a-6);
+  }
+
+  /* arbeit: Zeichnung und Maße als ruhiger Stapel, unabhängig von den Zeilen des Textes */
+  .arbeit .panel {
+    grid-row: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--a-6);
+    padding-top: var(--a-7);
+    padding-bottom: var(--a-7);
+  }
+
+  .arbeit .titelblock {
+    padding-top: var(--a-7);
+    padding-right: 0;
+  }
+
+  .arbeit .bild {
+    width: auto;
+    justify-self: stretch;
+    justify-items: start;
+    padding-bottom: 0;
+  }
+
+  .arbeit .masse,
+  .arbeit:not(.mitAktion) .masse {
+    margin-top: 0;
+  }
+
+  .ruhig .titelblock {
+    padding-top: var(--a-8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aktion::before {
+    transition: none;
+  }
+}
+
+/* Druck: keine Fläche, kein Paar, Knopf als Text */
+@media print {
+  .flaeche,
+  .leitung {
+    display: none;
+  }
+
+  .aktion {
+    background-color: transparent;
+    color: var(--ink);
+    border: var(--m-strich) solid var(--brand);
+  }
+}

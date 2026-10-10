@@ -34,3 +34,340 @@
   height: 100%;
   overflow: visible;
 }
+
+/* ═══ Gemeinsam für die Zeichnungen in SVG (SEITENKOPF-01) ═══ */
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* 3 px bei jeder Größe für skalierte Zeichnungen ohne Linienanimation */
+.fest {
+  vector-effect: non-scaling-stroke;
+}
+
+.linie {
+  stroke: var(--brand);
+}
+
+.linieLeise {
+  stroke: var(--line-strong);
+}
+
+.voll {
+  fill: var(--brand);
+  stroke: none;
+}
+
+.waermeFlaeche {
+  fill: var(--waerme);
+  stroke: none;
+}
+
+/* Schild des Wegweisers in der Fläche der Umgebung: der Pfosten verschwindet dahinter */
+.schild {
+  fill: var(--surface);
+}
+
+/* ═══ Maßkette: Wert, Maßlinie mit Endstrichen, Name ═══ */
+.masskette {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 100%;
+  line-height: 1.1;
+}
+
+.mkEnde {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.mkWert {
+  font-size: var(--text-title-2);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.mkGross {
+  font-size: var(--text-numeral);
+}
+
+.mkLinie {
+  position: relative;
+  display: block;
+  align-self: stretch;
+  height: var(--a-3);
+  margin-top: var(--a-1);
+  border-inline: var(--m-strich) solid var(--brand);
+}
+
+.mkLinie::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: var(--m-strich);
+  transform: translateY(-50%);
+  background-color: var(--brand);
+}
+
+.mkName {
+  margin-top: var(--a-1);
+}
+
+/* ═══ Heizkreis (Variante 2): Vorlauf oben um die Zahl, Rücklauf unten zurück, links Zu- und Abgang ═══ */
+.heizkreis {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 100%;
+  padding: var(--a-5) var(--a-6) var(--a-5) calc(var(--paar) + var(--a-5));
+}
+
+.hkVorlauf,
+.hkRuecklauf {
+  position: absolute;
+  right: 0;
+  height: 50%;
+  border: var(--m-strich) solid var(--vorlauf);
+}
+
+.hkVorlauf {
+  top: 0;
+  left: 0;
+  border-bottom: 0;
+  border-radius: var(--radius-3) var(--radius-3) 0 0;
+}
+
+.hkRuecklauf {
+  bottom: 0;
+  left: var(--paar);
+  border-color: var(--ruecklauf);
+  border-top: 0;
+  border-radius: 0 0 var(--radius-3) var(--radius-3);
+}
+
+.hkWert {
+  font-size: var(--text-numeral);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.hkGross {
+  padding: var(--a-6) var(--a-7) var(--a-6) calc(var(--paar) + var(--a-6));
+}
+
+.hkGross .hkWert {
+  font-size: clamp(2.25rem, 0.5rem + 8vw, 5.5rem);
+}
+
+.hkName {
+  margin-top: var(--a-3);
+}
+
+/* ═══ Etiketten-Kästchen ═══ */
+.kasten {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--a-2);
+  min-height: var(--a-6);
+  padding: var(--a-1) var(--a-2);
+  border: var(--m-strich) solid var(--brand);
+  background-color: var(--surface);
+  white-space: nowrap;
+}
+
+.kastenIkon {
+  flex: none;
+}
+
+/* ═══ Haus klein ═══ */
+.hausKlein {
+  width: 15rem;
+}
+
+/* ═══ Kreis schließt sich (Register kreis-schliessen): Strich 3 px über --s, keine Skalierung des Strichs ═══ */
+.kreis {
+  --s: 1;
+  width: calc(120px * var(--s));
+  height: calc(120px * var(--s));
+}
+
+.kreisKlein {
+  --s: 0.5334;
+}
+
+.kreisStrich {
+  fill: none;
+  stroke-width: calc(var(--m-strich) / var(--s));
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.kreis [data-motion="kreis-schliessen"] {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+@keyframes schliessen {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .kreis [data-motion="kreis-schliessen"] {
+    animation: schliessen var(--d-3) var(--k-wechsel) backwards;
+  }
+}
+
+/* ═══ Offene Leitung (404) ═══ */
+.offen {
+  width: 100%;
+  max-width: 30rem;
+}
+
+/* ═══ Leitungspaar (Register fortschritt) ═══ */
+.leitungspaar {
+  display: grid;
+  row-gap: var(--a-3);
+}
+
+.lpSpur {
+  position: relative;
+  display: block;
+  height: calc(var(--paar) + var(--m-strich));
+  margin-inline: calc(var(--a-3) / 2);
+  border-block: var(--m-strich) solid var(--line-strong);
+}
+
+.lpFuellung {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--m-strich);
+  transform: scaleX(var(--anteil, 0));
+  transform-origin: left center;
+  transition: transform var(--d-2) var(--k-aus);
+}
+
+.lpVorlauf {
+  top: calc(var(--m-strich) * -1);
+  background-color: var(--vorlauf);
+}
+
+.lpRuecklauf {
+  bottom: calc(var(--m-strich) * -1);
+  background-color: var(--ruecklauf);
+}
+
+.lpKnoten {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--lage) * 100%);
+  width: var(--a-4);
+  height: var(--a-4);
+  border: var(--m-strich) solid var(--line-strong);
+  border-radius: var(--radius-voll);
+  background-color: var(--surface);
+  transform: translate(-50%, -50%);
+}
+
+.lpKnoten[data-stand="erledigt"] {
+  border-color: var(--brand);
+  background-color: var(--brand);
+}
+
+.lpKnoten[data-stand="aktuell"] {
+  border-color: var(--brand);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lpFuellung {
+    transition: none;
+  }
+}
+
+/* ═══ Wärmebild (Variante 3, statisch): immer auf Navy ═══ */
+.waermebild {
+  position: relative;
+  width: 100%;
+  max-width: 34rem;
+  container-type: inline-size;
+  background-color: var(--surface);
+  color: var(--ink);
+}
+
+.isoKalt {
+  fill: var(--surface-3);
+}
+
+.isoKuehl {
+  fill: var(--ruecklauf);
+}
+
+.isoLau {
+  fill: var(--wb-lau, var(--ink-2));
+}
+
+.isoWarm {
+  fill: var(--wb-warm, var(--brand));
+}
+
+/* Mantel: Navy unter jedem Strich, damit er auf hellen Isothermen eine Kante hat */
+.mantel {
+  stroke: var(--surface);
+  stroke-width: calc(var(--m-strich) + var(--a-1));
+}
+
+/* Schmal: die Kästchen stehen als Reihe unter dem Bild (14 px Schrift passt nicht ins kleine Haus) */
+.wbEtiketten {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-2);
+  padding-top: var(--a-3);
+}
+
+/* Breit: die Kästchen hängen an Pumpe, Heizkörper und Wanne */
+@container (min-width: 26rem) {
+  .wbEtiketten {
+    position: absolute;
+    inset: 0;
+    display: block;
+    padding: 0;
+  }
+
+  .wbEtikett {
+    position: absolute;
+    transform: translateY(-100%);
+  }
+
+  .wbPumpe {
+    left: 2%;
+    top: 50%;
+  }
+
+  .wbHeizung {
+    left: 37%;
+    top: 66%;
+  }
+
+  .wbBad {
+    left: 57.5%;
+    top: 79%;
+  }
+}
+
+@media print {
+  .waermebild {
+    background-color: transparent;
+  }
+}
