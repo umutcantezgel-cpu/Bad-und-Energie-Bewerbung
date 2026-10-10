@@ -1,10 +1,12 @@
 -- =============================================================================
 -- Privater Bucket für Bewerbungsunterlagen.
 --
--- - Hochladen nur über signierte Upload-URLs, die der Server (Secret-Key) ausstellt
---   (Phase 2b). Darum gibt es keine INSERT/UPDATE/DELETE-Policies.
--- - Lesen: aktive Staff-Mitglieder mit MFA (aal2); das Cockpit erzeugt kurzlebige
---   signierte Download-URLs.
+-- - Keine einzige Policy auf storage.objects für diesen Bucket: Für API-Rollen ist er
+--   weder les- noch beschreibbar.
+-- - Hochladen nur über signierte Upload-URLs, die der Server (Secret-Key) ausstellt (2b).
+-- - Lesen nur über eine staff_*-RPC (2d): prüft is_staff und aal2, schreibt 'file_viewed'
+--   in die Zeitleiste und erst dann stellt der Server eine 60-s-URL aus. Eine direkte
+--   Lese-Policy würde Liste, Download und beliebig lange signierte URLs ohne Protokoll erlauben.
 -- - Löschen: nur über die Storage-API (Edge Function retention-purge, Phase 2c),
 --   nie per SQL auf storage.objects.
 -- Spiegel in supabase/config.toml: [storage.buckets.application-files].
@@ -22,13 +24,3 @@ on conflict (id) do update
 set public = excluded.public,
     file_size_limit = excluded.file_size_limit,
     allowed_mime_types = excluded.allowed_mime_types;
-
-create policy "staff_read_application_files"
-  on storage.objects
-  for select
-  to authenticated
-  using (
-    bucket_id = 'application-files'
-    and (select private.is_staff())
-    and (select private.is_aal2())
-  );

@@ -6,26 +6,24 @@
 -- ausschließlich über SECURITY-DEFINER-RPCs, die nur service_role ausführen darf.
 -- =============================================================================
 
--- Default-Grants für neue Objekte in public widerrufen (Supabase „Securing your API“).
+-- Default-Grants für neue Objekte in public vollständig widerrufen (Supabase „Securing your API“).
+-- „all“ statt einzelner Rechte: auch TRUNCATE, REFERENCES, TRIGGER und MAINTAIN.
 alter default privileges for role postgres in schema public
-  revoke select, insert, update, delete on tables from anon, authenticated, service_role;
+  revoke all on tables from anon, authenticated, service_role;
 alter default privileges for role postgres in schema public
-  revoke execute on functions from anon, authenticated, service_role;
+  revoke all on sequences from anon, authenticated, service_role;
 alter default privileges for role postgres in schema public
-  revoke usage, select on sequences from anon, authenticated, service_role;
-alter default privileges for role postgres in schema public
-  revoke execute on functions from public;
+  revoke all on functions from anon, authenticated, service_role;
 
 -- Funktionen in allen Schemas (auch private) sind standardmäßig nicht für PUBLIC ausführbar.
+-- (Ein schemabezogenes „revoke … from public“ wäre wirkungslos: Das PUBLIC-Recht stammt aus
+-- den globalen Defaults und lässt sich nur dort entziehen.)
 alter default privileges for role postgres
   revoke execute on functions from public;
 
 -- Extensions (ohne Versionsangabe; Supabase ignoriert sie ohnehin).
+-- pg_net und pg_cron folgen erst mit Phase 2c (Outbox-Versand, Löschfristen).
 create extension if not exists pgcrypto with schema extensions;
-create extension if not exists pg_net with schema extensions;
-create extension if not exists pg_cron with schema pg_catalog;
-grant usage on schema cron to postgres;
-grant all privileges on all tables in schema cron to postgres;
 
 -- Nicht exponiertes Schema für Hilfsfunktionen, Outbox, Zähler und Protokolle.
 create schema if not exists private;

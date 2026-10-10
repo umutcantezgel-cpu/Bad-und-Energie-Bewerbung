@@ -1,9 +1,15 @@
 -- =============================================================================
 -- Cockpit-Zugang: Staff, Allowlist, Auth-Hook und RLS-Hilfsfunktionen.
 --
--- - Registrierung ist aus (config.toml). Neue Auth-Nutzer entstehen nur für
---   Adressen auf private.staff_email_allowlist (Hook before_user_created).
--- - Ein neuer Auth-Nutzer mit Allowlist-Eintrag bekommt automatisch eine Staff-Zeile.
+-- - Registrierung ist aus (config.toml lokal; remote im Dashboard, siehe Plan §8).
+--   Über Signup, Einladung, Magic Link, OAuth/SSO entstehen Auth-Nutzer nur für Adressen auf
+--   private.staff_email_allowlist (Hook before_user_created). auth.admin.createUser (Secret-Key)
+--   umgeht den Hook; solche Nutzer werden aber nie Staff (siehe unten).
+-- - Onboarding nur per Einladung (auth.admin.inviteUserByEmail bzw. generateLink 'invite'):
+--   Nur diese Wege legen den Nutzer ohne Passwort an, und nur dann entsteht automatisch eine
+--   Staff-Zeile aus der Allowlist. Signup, admin.createUser und generateLink 'magiclink'/'signup'
+--   setzen immer ein (ggf. generiertes) Passwort und ergeben nie Staff – Schutz vor einer
+--   Vorab-Registrierung fremder Adressen. Solche Konten löschen und neu einladen.
 -- - Rollen: viewer < recruiter < admin (Reihenfolge des Enums = Rangfolge).
 -- - Der letzte aktive Admin kann weder herabgestuft, deaktiviert noch gelöscht werden.
 -- =============================================================================
@@ -32,6 +38,9 @@ create table private.staff_email_allowlist (
   invited_by uuid references auth.users (id) on delete set null,
   created_at timestamptz not null default now()
 );
+
+create index staff_email_allowlist_invited_by_idx on private.staff_email_allowlist (invited_by)
+  where invited_by is not null;
 
 comment on table private.staff_email_allowlist is
   'Nur diese Adressen dürfen einen Auth-Nutzer bekommen (Hook before_user_created).';
@@ -132,6 +141,11 @@ create policy "auth_admin_reads_allowlist"
 -- ---------------------------------------------------------------------------
 -- Staff-Zeile für neue Auth-Nutzer aus der Allowlist anlegen
 -- ---------------------------------------------------------------------------
+--
+-- Nur Konten ohne Passwort, also aus einer Einladung. Eine öffentliche Registrierung legt das
+-- Konto immer mit Passwort an; bestätigt die echte Person später per Einladung oder OTP,
+-- bliebe das fremde Passwort gültig. Solche Konten bekommen deshalb keine Staff-Zeile und
+-- müssen gelöscht und neu eingeladen werden.
 
 create function private.handle_new_auth_user()
 returns trigger
@@ -142,6 +156,10 @@ as $$
 declare
   v_role public.staff_role;
 begin
+  if coalesce(new.encrypted_password, '') <> '' then
+    return new;
+  end if;
+
   select a.role into v_role
   from private.staff_email_allowlist a
   where a.email = lower(btrim(coalesce(new.email, '')));
@@ -183,6 +201,9 @@ begin
   if tg_op = 'UPDATE' and new.role = 'admin' and new.is_active then
     return new;
   end if;
+
+  -- Serialisiert gleichzeitige Herabstufungen zweier Admins (sonst sehen beide den anderen).
+  perform pg_advisory_xact_lock(hashtextextended('public.staff:admin_set', 0));
 
   select count(*) into v_other_admins
   from public.staff s
