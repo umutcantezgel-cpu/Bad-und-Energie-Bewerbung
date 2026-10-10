@@ -144,3 +144,45 @@ Die Pakete stehen mit Schreibrechten und E-IDs in `_relaunch/pakete/R4.md` und `
 | R5-RUHE | R4-404 + R5-RECHT-01: `app/not-found.tsx`, `app/error.tsx`, `app/global-error.tsx`, `components/site/fehler/**`, `app/datenschutz/**`, `app/impressum/page.tsx`, `components/recht/**`, `docs/operations/datenschutz-aenderungen.md`. 404 in `erzaehl` mit `OffeneLeitung`; Recht in `ruhig`. |
 
 Den lucide-Rest danach und `package.json` erledigt der Orchestrator.
+
+## R3-EINSTIEG-V3 · Einstieg der Startseite nach den Bildern des Auftraggebers (Variante 3)
+- **Anlass:** Die zwei Bilder vom 10.10. zeigen genau Variante 3, nicht den gebauten V1-Einstieg aus Strichhaus auf Papier:
+  - Desktop: `_relaunch/ausbau/richtungen/3/fotos/d1440-light-voll__01.webp`
+  - Handy: `_relaunch/ausbau/richtungen/3/fotos/m375-light-voll__01.webp`
+  Variante 3 ist damit die Vorlage für den Einstieg und, über `components/seitenkopf`, für alle Köpfe.
+- **Schreibrechte:**
+  - `components/home/Hero.tsx`, `components/home/einstieg/**`.
+  - Tests `components/home/__tests__/einstieg*`.
+  - `components/zeichnung/**` nur lesend nutzen; Wünsche als OFFENER PUNKT.
+- **Vorbild:** `_relaunch/ausbau/richtungen/3/index.html` (Einstieg), BEGRUENDUNG.md und die Bildfolgen in `richtungen/3/erster-bildschirm/` und `fotos/`.
+  - **WebGL entfällt (E-021).** Maßgeblich ist der statische Ersatz des Prototyps (`fotos/*-reduziert*`) als Inline-SVG: Wärmeflächen als weiche Pfade in den Rollen Wärme, Rücklauf-hell und Vorlauf-hell. Leichte CSS-Bewegung ist erlaubt (`waerme`), reduziert gilt der Endzustand.
+- **Desktop:**
+  - Links auf Papier:
+    - Etikett;
+    - h1 „SHK-Jobs / in Wetzlar.“ aus `HERO`;
+    - Unterzeile mit Rohrklammer;
+    - Einleitung;
+    - roter Knopf, dessen rote Vorlauf-Linie in die Wärmepumpe im Panel läuft;
+    - Mikrotext und Zweitweg „Offene Stellen ansehen“.
+  - Rechts die Navy-Fläche vom Kopf bis zur Falz:
+    - oben die Maße 30 Tage Urlaub · 35 km Einsatzradius · 1926 Gegründet mit Maßlinie;
+    - groß „13:30 Freitags Feierabend“ mit Leitlinie zur Uhr im Giebel;
+    - das Haus mit Wärmebild, Wärmepumpe, Heizkörper und Speicher;
+    - die Etikett-Kästchen WÄRMEPUMPEN · HEIZUNGEN · BÄDER mit Familien-Icons;
+    - Vorlauf rot und Rücklauf blau als Leitungen.
+- **Handy:**
+  - Ein Navy-Block, der direkt unter dem Kopf beginnt:
+    - Etikett, h1 weiß, Unterzeile weiß;
+    - das Haus mit Wärmebild, Uhr und Kästchen „13:30“;
+    - darunter in Navy die Reihe der vier Maße 13:30 · 30 · 35 km · 1926 mit Maßlinien.
+  - Dann fallen links Vorlauf und Rücklauf senkrecht in den roten Knopf auf Papier.
+  - Danach Mikrotext, Einleitung und Zweitweg.
+  - Bei 390 × 844 stehen h1, Haus und der Knopfanfang im ersten Bildschirm, wenn möglich; sonst h1 und Haus vollständig.
+- **Bleibt aus R3:**
+  - E-START-002: Das Etikett lautet bis 31.12.2026 „100 Jahre Meisterbetrieb (1926–2026)“ bzw. kurz „100 Jahre · Wetzlar“ über `isFactActive('anniversary100', now)`, danach „Seit 1926 · Wetzlar“, mit Test.
+  - Die Vertrauenszeile (E-START-010/011/021) unter dem Einstieg.
+  - Erklärsatz T-001 und „Kreislauf zeigen“: spielt die Anlaufsequenz erneut ab; die Sequenz ist die Vorlauf-Linie vom Knopf ins Haus, dann Wärme, dann die Uhr auf 13:30.
+  - Faktenverteilung E-023, CLS 0, LCP bleibt die h1.
+- **Abschluss:**
+  - Bilder `--only start --vps m390,m430,d1440,d1920 --schemes light` und `m390 dark`.
+  - Vergleich nebeneinander mit den beiden Vorbildbildern; so nah wie möglich an den Bildern.

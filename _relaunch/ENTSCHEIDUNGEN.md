@@ -248,3 +248,12 @@ Format: E-[Nr] · Datum · Gegenstand · Entscheidung · Grund · Umkehr (bei De
   - Bestandstexte (FAQ, `HERO.lead`, `REGION.headline`) bleiben und zählen mit; neue Bausteine weichen aus.
   - Die Verteilung der Startseite steht in FERTIG.md.
 - **Abnahme R3:** Die R3-Pakete sind gebaut (Sicherung 1ff75a3). Die Befunde der Prüfer (`_relaunch/pakete/befunde/`) arbeiten R3-FIX-A und R3-FIX-B ab. R3-PERF-01 ist abgenommen: Schriften 223 864 → 145 940 Byte; Lighthouse-Median `/` 3,36 → 3,21 s (P0 2,92 s, Grenze +10 % = 3,21 s); Test und Lizenzen nachgezogen.
+
+## E-024 · 10.10.2026 · Die Bilder des Auftraggebers zeigen Variante 3: Einstieg wird umgestellt
+- Die zwei Bilder zur Nachricht vom 10.10. („nutze das bitte als Design … überall auf der Seite“) stimmen mit Variante 3 überein:
+  - Desktop: `_relaunch/ausbau/richtungen/3/fotos/d1440-light-voll__01.webp`
+  - Handy: `m375-light-voll__01.webp`
+  - Gezeigt sind: Navy-Fläche mit Wärmebild-Haus, „13:30“ groß mit Leitlinie zur Uhr, Kästchen WÄRMEPUMPEN · HEIZUNGEN · BÄDER, Maße 30 · 35 km · 1926.
+- Der gebaute Einstieg (Variante 1, Strichhaus auf Papier) wird nach diesem Vorbild neu gefasst (Paket R3-EINSTIEG-V3 in FERTIG.md), statisch ohne WebGL (E-021).
+- Der gemeinsame Seitenkopf (SEITENKOPF-01) folgt bereits diesem Bild (Navy-Fläche, Wärmebild, Kästchen), damit tragen alle Seiten dasselbe Design.
+- Die Teile aus B Runde 1 (Rohrklammer, T-001, „Kreislauf zeigen“) bleiben.
