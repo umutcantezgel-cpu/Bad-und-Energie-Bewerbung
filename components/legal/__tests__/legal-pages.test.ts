@@ -35,7 +35,7 @@ describe.each(Object.entries(pages))('%s page', (name, { html, metadata }) => {
 
   it('keeps legal text readable: no search box, no accordion, no client code', () => {
     expect(html).not.toMatch(/<input\b|<details\b|<button\b/);
-    for (const file of [`app/${name}/page.tsx`, 'components/legal/LegalDocument.tsx', 'components/legal/LegalToc.tsx']) {
+    for (const file of [`app/${name}/page.tsx`, 'components/recht/RechtDokument.tsx', 'components/recht/RechtInhalt.tsx', 'components/recht/RechtAbschnitt.tsx']) {
       expect(readFileSync(path.join(ROOT, file), 'utf8')).not.toMatch(/['"]use client['"]/);
     }
   });
@@ -68,7 +68,7 @@ describe('Datenschutz content', () => {
   });
 
   it('covers the processing of the new platform', () => {
-    for (const phrase of ['Art. 6 Abs. 1 lit. b DSGVO', 'C-34/21', 'sessionStorage', '§ 25 Abs. 2 Nr. 2 TDDDG', 'Vercel', 'Resend', 'fra1', 'Interaktive Karte laden', 'Karte wieder ausblenden', 'Inter']) {
+    for (const phrase of ['Art. 6 Abs. 1 lit. b DSGVO', 'C-34/21', 'sessionStorage', '§ 25 Abs. 2 Nr. 2 TDDDG', 'Vercel', 'Resend', 'fra1', 'Interaktive Karte laden', 'Karte wieder ausblenden', 'Bricolage Grotesque', 'Atkinson Hyperlegible Next', 'Martian Mono']) {
       expect(html).toContain(phrase);
     }
   });
