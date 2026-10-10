@@ -1,45 +1,66 @@
 {
-  "project": "Bad & Energie GmbH Lahn-Dill – Karriere & Recruiting-Portal",
-  "version": "v6.0-SOVEREIGN-UNIVERSAL-DYNAMIC-CORE",
-  "runtime": "Next.js 16+ (Turbopack) / React 19+ / Tailwind v4.3 / Motion 14",
-  "status": "EXCELLENCE_100_PERCENT_ACHIEVED",
-  "lastAudit": "2026-10-06T09:55:00Z",
-  "auditTargets": {
-    "pageSpeedMobile": 100,
-    "pageSpeedDesktop": 100,
-    "accessibility": 100,
-    "cls": "0.000",
-    "lcp": "<0.8s",
-    "inp": "<50ms",
-    "seobility": 100,
-    "typecheckErrors": 0,
-    "lintErrors": 0
+  "project": "Bad und Energie GmbH Lahn Dill – Karriereportal karriere.bad-energie.de",
+  "directive": "v6.0-SOVEREIGN-UNIVERSAL-DYNAMIC-CORE",
+  "updated": "2026-10-10",
+  "note": "Neu angelegt am 10.10.2026. Der frühere Stand (archive/state-summary-2026-10-06.json) beschrieb die alte Seite und meldete Werte, die auf dem heutigen Code nicht gemessen sind.",
+  "stack": {
+    "framework": "Next.js 16 (App Router, Turbopack, Server Components)",
+    "react": "19",
+    "css": "Tailwind CSS 4.3, Rollen-Tokens in app/styles/theme.css, CSS-Module je Bereich",
+    "language": "TypeScript strict",
+    "runtime": "Bun",
+    "tests": "Vitest, Playwright + axe (4 Projekte), Guards check:design / check:contrast / check:client-imports, test:graph",
+    "hosting": "Vercel (Region fra1), jeder Push auf main geht live",
+    "data": "Supabase Phase 2a (Schema in Produktion), Resend für Mails"
   },
-  "currentPhase": "PHASE_6_SMART_MAINTENANCE",
-  "routingStructure": [
-    {
-      "path": "/",
-      "type": "Core Landing & Express Funnel",
-      "canonical": "https://karriere.bad-energie.de",
-      "h1": "Kein Bock mehr auf veraltetes Werkzeug & schlechte Laune? Werde Teil unseres Meisterteams."
+  "routes": [
+    { "path": "/", "index": true, "h1": "SHK-Jobs in Wetzlar. Ehrliches Handwerk. Pünktlich Feierabend." },
+    { "path": "/jobs", "index": true, "h1": "Offene Stellen in Wetzlar und Umgebung" },
+    { "path": "/jobs/anlagenmechaniker-shk-wetzlar", "index": true, "h1": "Anlagenmechaniker SHK (m/w/d) in Wetzlar" },
+    { "path": "/jobs/kundendiensttechniker-waermepumpe-wetzlar", "index": true, "h1": "Kundendiensttechniker SHK / Servicemonteur (m/w/d)" },
+    { "path": "/jobs/obermonteur-projektleiter-shk-wetzlar", "index": true, "h1": "Obermonteur / Projektleiter SHK (m/w/d) in Wetzlar" },
+    { "path": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar", "index": true, "h1": "Ausbildung Anlagenmechaniker SHK – Einstieg 2026 noch möglich" },
+    { "path": "/bewerbung", "index": true, "h1": "Jetzt bewerben." },
+    { "path": "/bewerbung/mappe", "index": false, "h1": "Bewerbungsmappe erstellen." },
+    { "path": "/bewerbung/danke", "index": false, "h1": "Danke-Seite (Inhalt nach dem Absenden)" },
+    { "path": "/datenschutz", "index": false, "h1": "Datenschutzerklärung" },
+    { "path": "/impressum", "index": false, "h1": "Impressum" },
+    { "path": "404", "index": false, "h1": "Hier hat sich eine Rohrleitung verirrt." }
+  ],
+  "baseline_2026_10_10": {
+    "source": "_relaunch/belege/d0-basis/lighthouse.md (Lighthouse 13.5, simulate, Median aus 5, next start lokal)",
+    "mobile": {
+      "/": { "perf": 90, "lcp_s": 3.17, "fcp_s": 1.69, "tbt_ms": 173, "cls": 0.0 },
+      "/jobs": { "perf": 92, "lcp_s": 3.31, "tbt_ms": 67, "cls": 0.001 },
+      "/jobs/anlagenmechaniker-shk-wetzlar": { "perf": 93, "lcp_s": 3.03, "tbt_ms": 70, "cls": 0.015 },
+      "/jobs/kundendiensttechniker-waermepumpe-wetzlar": { "perf": 92, "lcp_s": 3.17, "tbt_ms": 75, "cls": 0.0 },
+      "/bewerbung": { "perf": 88, "lcp_s": 3.77, "tbt_ms": 81, "cls": 0.0 }
     },
-    {
-      "path": "/bewerbung",
-      "type": "Recruiting Hub (Quiz, Vault, Form, DIN-A4)",
-      "canonical": "https://karriere.bad-energie.de/bewerbung",
-      "h1": "Bewerbungs-Suite: Vier Wege zu Deinem SHK-Job bei Bad & Energie"
-    },
-    {
-      "path": "/datenschutz",
-      "type": "DSGVO & § 26 BDSG Compliance Documentation",
-      "canonical": "https://karriere.bad-energie.de/datenschutz",
-      "h1": "Datenschutzerklärung"
-    },
-    {
-      "path": "/impressum",
-      "type": "§ 5 DDG & HwO Provider Identification",
-      "canonical": "https://karriere.bad-energie.de/impressum",
-      "h1": "Impressum"
-    }
-  ]
+    "desktop": "Perf 100 auf allen fünf Seiten, LCP 0,69–0,76 s, CLS 0 (Kundendienst 0,013)",
+    "categories": "Accessibility, Best Practices, SEO je 100 auf allen Seiten",
+    "seo_gaps": [
+      "Titel-Keywords fehlen im sichtbaren Text (/jobs: Stellenangebote, Gießen; /: Heizungsbauer)",
+      "weiche Trennzeichen in h1 der Stellen",
+      "Thin Content /jobs (~263 Wörter), /bewerbung (~217)",
+      "JSON-LD in mehreren Blöcken statt einem @graph, keine WebPage-Knoten",
+      "doppelte Ankertexte mit zwei Zielen (Jetzt bewerben, Datenschutz)",
+      "robots.txt mit Host-Zeile, /bewerbung ohne lastmod"
+    ]
+  },
+  "decisions": [
+    "Kein SearchAction: die Seite hat keine Suche (E-SEO-007)",
+    "FAQPage nur auf / (ROADMAP:475); BreadcrumbList nur bei sichtbarem Pfad",
+    "Rechtstexte wörtlich; Logo-Datei bytegleich; nur belegte Fakten (lib/content/facts.ts)",
+    "Kein OKLCH-Umbau der freigegebenen Farben und keine Framer Motion (YAGNI, Direktive 3.4)",
+    "Arbeit direkt auf main nach lokalen Gates (Auftraggeber 10.10.2026)"
+  ],
+  "currentPhase": "PHASE_1_GAP_DELTA_DISCOVERY",
+  "targets": {
+    "pagespeed_mobile": 100,
+    "pagespeed_desktop": 100,
+    "cls": 0.0,
+    "lcp_mobile_s": 1.2,
+    "tbt_ms": 100,
+    "seo_checklist": "100 %"
+  }
 }

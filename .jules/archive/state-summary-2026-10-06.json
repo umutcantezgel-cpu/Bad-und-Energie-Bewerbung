@@ -1,0 +1,45 @@
+{
+  "project": "Bad & Energie GmbH Lahn-Dill – Karriere & Recruiting-Portal",
+  "version": "v6.0-SOVEREIGN-UNIVERSAL-DYNAMIC-CORE",
+  "runtime": "Next.js 16+ (Turbopack) / React 19+ / Tailwind v4.3 / Motion 14",
+  "status": "EXCELLENCE_100_PERCENT_ACHIEVED",
+  "lastAudit": "2026-10-06T09:55:00Z",
+  "auditTargets": {
+    "pageSpeedMobile": 100,
+    "pageSpeedDesktop": 100,
+    "accessibility": 100,
+    "cls": "0.000",
+    "lcp": "<0.8s",
+    "inp": "<50ms",
+    "seobility": 100,
+    "typecheckErrors": 0,
+    "lintErrors": 0
+  },
+  "currentPhase": "PHASE_6_SMART_MAINTENANCE",
+  "routingStructure": [
+    {
+      "path": "/",
+      "type": "Core Landing & Express Funnel",
+      "canonical": "https://karriere.bad-energie.de",
+      "h1": "Kein Bock mehr auf veraltetes Werkzeug & schlechte Laune? Werde Teil unseres Meisterteams."
+    },
+    {
+      "path": "/bewerbung",
+      "type": "Recruiting Hub (Quiz, Vault, Form, DIN-A4)",
+      "canonical": "https://karriere.bad-energie.de/bewerbung",
+      "h1": "Bewerbungs-Suite: Vier Wege zu Deinem SHK-Job bei Bad & Energie"
+    },
+    {
+      "path": "/datenschutz",
+      "type": "DSGVO & § 26 BDSG Compliance Documentation",
+      "canonical": "https://karriere.bad-energie.de/datenschutz",
+      "h1": "Datenschutzerklärung"
+    },
+    {
+      "path": "/impressum",
+      "type": "§ 5 DDG & HwO Provider Identification",
+      "canonical": "https://karriere.bad-energie.de/impressum",
+      "h1": "Impressum"
+    }
+  ]
+}
