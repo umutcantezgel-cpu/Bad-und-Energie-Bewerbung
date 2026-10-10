@@ -1,10 +1,17 @@
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
-import { Tag } from '@/components/ui/Tag';
-import { BREADCRUMB_HOME, BREADCRUMB_JOBS } from '@/lib/content/breadcrumbs';
-import { jobMetaTags } from '@/lib/jobs/format';
+import { Seitenkopf } from '@/components/seitenkopf';
 import type { Job } from '@/lib/jobs/registry';
-import { cn } from '@/lib/utils/cn';
-import { SalaryCard } from './SalaryCard';
+import { Kopfbild } from './stelle/Kopfbild';
+import { Pfad } from './stelle/Pfad';
+import {
+  KOPF_AKTION,
+  KOPF_MIKROTEXT,
+  KOPF_ZWEITWEG,
+  kopfEtikett,
+  kopfMasse,
+  kopfTitel,
+  kopfUnterzeile,
+} from './stelle/stelle-text';
+import styles from './stelle/stelle.module.css';
 import { bindSeparators, withSoftHyphens } from './text';
 
 export interface JobHeaderProps {
@@ -13,28 +20,48 @@ export interface JobHeaderProps {
 }
 
 /**
- * Head of a job page: Breadcrumbs → h1 → meta tags → salary range (below lg; the desktop
- * aside shows it there) → intro. The h1 is seo.h1 with the soft hyphens from titleShy; a spaced
- * „/“ or „–“ stays at the end of its line (bindSeparators).
+ * Kopf der Stellenseite (R5-JOBS-02, E-023) im Design des Einstiegs der Startseite: der gemeinsame Seitenkopf
+ * in der Variante `erzaehl`.
+ * - Pfad (Brotkrumen, gleiche Namen wie die BreadcrumbList) über dem Kopf.
+ * - Etikett (Anstellung), h1 = seo.h1 mit den weichen Trennstellen aus titleShy: Berufsname in Bildgröße,
+ *   „(m/w/d) …“ kleiner darunter; Unterzeile mit Rohrklammer = Kurzbeschreibung der Stelle
+ *   ohne Sätze, die nur die h1 wiederholen. Die Einleitung
+ *   (intro) steht als Lead im ersten Band, damit der Knopf wie im Einstieg über dem Falz bleibt.
+ * - Roter Knopf „Jetzt bewerben“ springt zum eingebetteten Flow; Vorlauf und Rücklauf laufen aus der
+ *   Navy-Fläche in seinen Flansch und zeichnen sich beim Laden einmal dorthin (Register `erdleitung`).
+ * - Navy-Fläche: Gehalt im Heizkreis mit dem Haus darauf (Kundendienst: Wärmebild), Maße 13:30 und 35 km.
  */
 export function JobHeader({ job, className }: JobHeaderProps) {
+  const { haupt, zusatz } = kopfTitel(job.seo.h1);
+  const mitTrennstellen = (text: string) => bindSeparators(withSoftHyphens(text, job.titleShy));
+
   return (
-    <header className={cn('flex flex-col gap-6', className)}>
-      <Breadcrumbs
-        items={[BREADCRUMB_HOME, BREADCRUMB_JOBS, { label: job.shortTitle }]}
-      />
-      <div className="flex flex-col gap-5">
-        <h1 className="text-title-1 text-balance text-ink">{bindSeparators(withSoftHyphens(job.seo.h1, job.titleShy))}</h1>
-        <ul aria-label="Eckdaten" className="flex flex-wrap gap-2">
-          {jobMetaTags(job).map((tag) => (
-            <li key={tag}>
-              <Tag>{tag}</Tag>
-            </li>
-          ))}
-        </ul>
+    <>
+      <Pfad job={job} />
+      <div className={styles.kopf} data-motion="erdleitung">
+        <Seitenkopf
+          variante="erzaehl"
+          className={className}
+          etikett={kopfEtikett(job)}
+          titel={
+            <>
+              <span className={styles.titelHaupt}>{mitTrennstellen(haupt)}</span>
+              {zusatz ? (
+                <>
+                  {' '}
+                  <span className={styles.titelZusatz}>{mitTrennstellen(zusatz)}</span>
+                </>
+              ) : null}
+            </>
+          }
+          unterzeile={kopfUnterzeile(job)}
+          aktion={KOPF_AKTION}
+          mikrotext={KOPF_MIKROTEXT}
+          zweitweg={KOPF_ZWEITWEG}
+          masse={kopfMasse(job)}
+          panel={<Kopfbild job={job} />}
+        />
       </div>
-      <SalaryCard job={job} className="lg:hidden" />
-      <p className="max-w-prose text-lead text-ink">{job.intro}</p>
-    </header>
+    </>
   );
 }

@@ -3,4 +3,4 @@
 // ./thanks, damit Seiten mit dem Flow deren Client-Code nicht mitladen.
 export { ApplyFlow } from './ApplyFlow';
 export { getFlowJobOptions, INITIATIVE_OPTION } from './options';
-export type { ApplyFlowProps, FlowJobOption } from './types';
+export type { ApplyFlowProps, FlowJobOption, FlowZusagen } from './types';

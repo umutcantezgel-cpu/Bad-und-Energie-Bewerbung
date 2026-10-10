@@ -1,0 +1,177 @@
+{
+  "label": "fertig-r5-bew-01-axe",
+  "base": "http://localhost:3450",
+  "erstellt": "2026-10-10T08:59:58.279Z",
+  "bedingungen": {
+    "werkzeug": "@axe-core/playwright 4.13.0, axe-core 4.13.0",
+    "chromium": "141.0.7390.37",
+    "tags": [
+      "wcag2a",
+      "wcag2aa",
+      "wcag21a",
+      "wcag21aa",
+      "wcag22aa"
+    ],
+    "reducedMotion": "reduce",
+    "ansichten": [
+      "m390 390×844",
+      "d1440 1440×900"
+    ],
+    "schemata": [
+      "light",
+      "dark"
+    ],
+    "vorbereitung": "goto networkidle → document.fonts.ready → scrollThrough → Zustand herstellen → Animationen beendet → axe (ganze Seite)",
+    "anfragesperre": "lib/browser.mjs (G5): POST/PUT/PATCH/DELETE → Attrappe, Tracking → 204, Fremdhosts blockiert",
+    "parallel": 1
+  },
+  "abdeckung": {
+    "grundmengeSeiten": 1,
+    "seitenlaeufe": 4,
+    "zustaende": 0,
+    "zustandslaeufe": 0,
+    "gesamtLaeufe": 4,
+    "erfolgreich": 4,
+    "fehlgeschlagen": []
+  },
+  "summenVerstossRegeln": {
+    "critical": 0,
+    "serious": 0,
+    "moderate": 0,
+    "minor": 0
+  },
+  "summenKnoten": {
+    "critical": 0,
+    "serious": 0,
+    "moderate": 0,
+    "minor": 0
+  },
+  "laufMitVerstoss": 0,
+  "laufOhneVerstoss": 4,
+  "anfragesperre": {},
+  "unklarRegeln": [
+    {
+      "id": "color-contrast",
+      "laeufe": 2,
+      "knoten": 4,
+      "seiten": [
+        "bewerbung"
+      ],
+      "ziel": ".kopf-module__gMMShq__waText",
+      "zielLauf": "bewerbung__d1440-light"
+    }
+  ],
+  "laeufe": [
+    {
+      "key": "bewerbung__m390-light",
+      "typ": "seite",
+      "slug": "bewerbung",
+      "titel": "bewerbung",
+      "pfad": "/bewerbung",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 3699,
+      "geprueft": 26,
+      "unklar": 0,
+      "unklarRegeln": [],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "bewerbung__m390-dark",
+      "typ": "seite",
+      "slug": "bewerbung",
+      "titel": "bewerbung",
+      "pfad": "/bewerbung",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 3870,
+      "geprueft": 26,
+      "unklar": 0,
+      "unklarRegeln": [],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "bewerbung__d1440-light",
+      "typ": "seite",
+      "slug": "bewerbung",
+      "titel": "bewerbung",
+      "pfad": "/bewerbung",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 3587,
+      "geprueft": 26,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 2,
+          "ziel": ".kopf-module__gMMShq__waText"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "bewerbung__d1440-dark",
+      "typ": "seite",
+      "slug": "bewerbung",
+      "titel": "bewerbung",
+      "pfad": "/bewerbung",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 3629,
+      "geprueft": 26,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 2,
+          "ziel": ".kopf-module__gMMShq__waText"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    }
+  ],
+  "regeln": []
+}

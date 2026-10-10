@@ -1,0 +1,499 @@
+/*
+ * Stellenliste /jobs (R5-JOBS-01, E-023): Kopf aus components/seitenkopf (erzaehl, Heizkreis 13:30), die Stellen
+ * als Leitungsabgänge (Variante 2 „Verteiler“) und das Initiativband in Navy (wie das Schlussband der Startseite).
+ * Nur Rollen und Skalen aus app/styles/theme.css; eine Strichstärke (--m-strich), Paarabstand --paar.
+ * Bewegung nur Rückmeldung (Arbeitsseite, K-011): Fläche beim Hover (Register `flaeche`), 1 px beim Druck (`druck`).
+ */
+
+/* ═══ Pfadleiste über dem Kopf ═══
+   Raster wie der Seitenkopf (components/seitenkopf): mobil eine Spalte auf Papier über dem Navy-Block; ab 64em
+   Papier links mit dem Pfad und rechts die Navy-Fläche, die so bis an den Seitenkopf der Website reicht. */
+.pfadleiste {
+  --rand: max(var(--spacing-gutter, var(--a-5)), env(safe-area-inset-left), env(safe-area-inset-right));
+  display: grid;
+  grid-template-columns: [voll-start] var(--rand) [text-start] minmax(0, 1fr) [text-end] var(--rand) [voll-end];
+  background-color: var(--surface);
+}
+
+.pfad {
+  grid-column: text;
+  grid-row: 1;
+  padding-block: var(--a-2);
+}
+
+.pfadNavy {
+  display: none;
+}
+
+@media (min-width: 64em) {
+  .pfadleiste {
+    grid-template-columns:
+      [voll-start] var(--rand) [text-start] minmax(0, 1.15fr) [text-end] var(--a-8)
+      [panel-start] minmax(0, 1fr) [panel-end voll-end];
+  }
+
+  .pfad {
+    padding-top: var(--a-4);
+    padding-bottom: 0;
+  }
+
+  .pfadNavy {
+    display: block;
+    grid-column: panel-start / voll-end;
+    grid-row: 1;
+    background-color: var(--surface);
+  }
+
+  /* Der Seitenkopf rückt unter die Pfadleiste: sein oberer Innenabstand (--a-8) trägt den Pfad mit */
+  .pfadleiste {
+    position: relative;
+    z-index: 1;
+  }
+
+  .pfadleiste + * {
+    margin-top: calc(var(--a-6) * -1);
+  }
+}
+
+/* ═══ Zeichnung im Navy-Panel: Heizkreis mit 13:30, darunter die Gewerke als Etiketten-Kästchen ═══ */
+.zeichnung {
+  container-type: inline-size;
+  display: grid;
+  justify-items: start;
+  row-gap: var(--a-5);
+  width: 100%;
+}
+
+/* 13:30 in Bildgröße, an die Breite des Panels gekoppelt: abzüglich der Innenabstände des Heizkreises
+   (--paar + --a-6 links, --a-7 rechts) passt die Zahl bei 320 px ohne Überlauf; „13:30“ ist knapp 2,9 em breit */
+.zahl {
+  font-size: min(9rem, calc((100cqi - var(--a-6) - var(--a-7) - var(--paar)) / 3));
+  letter-spacing: -0.03em;
+}
+
+/* Die Gewerke hängen am Rücklauf: eine Sammelleitung in Rücklaufblau, je Kästchen ein Abgang nach oben */
+.gewerke {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-3) var(--a-4);
+  margin: 0;
+  padding: var(--a-5) 0 0 var(--paar);
+  list-style: none;
+}
+
+.gewerke::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: var(--paar);
+  right: var(--a-6);
+  height: var(--m-strich);
+  border-radius: var(--radius-voll);
+  background-color: var(--ruecklauf);
+}
+
+.gewerk {
+  position: relative;
+}
+
+.gewerk::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: var(--a-5);
+  width: var(--m-strich);
+  height: var(--a-5);
+  background-color: var(--ruecklauf);
+}
+
+/* Handy: eine Reihe ohne Icons (die Beschriftung trägt die Bedeutung), damit der Knopf im ersten Bild bleibt */
+@container (max-width: 27.99rem) {
+  .gewerke {
+    gap: var(--a-2);
+    padding-left: 0;
+  }
+
+  .gewerk svg {
+    display: none;
+  }
+
+  .gewerk::before {
+    left: var(--a-4);
+  }
+}
+
+/* Sehr schmal (320 px): die Reihe (gut 19,5 rem) passt nicht mehr; die Sammelleitung steht senkrecht links,
+   die Abgänge waagrecht */
+@container (max-width: 19.5rem) {
+  .gewerke {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 0 0 var(--a-6);
+  }
+
+  .gewerke::before {
+    top: 0;
+    bottom: calc(var(--a-6) / 2);
+    left: var(--paar);
+    right: auto;
+    width: var(--m-strich);
+    height: auto;
+  }
+
+  .gewerk::before {
+    bottom: auto;
+    top: 50%;
+    left: calc(var(--paar) - var(--a-6));
+    width: calc(var(--a-6) - var(--paar));
+    height: var(--m-strich);
+    transform: translateY(-50%);
+  }
+}
+
+/* ═══ Verteiler: Vorlauf links, Rücklauf rechts, jede Stelle ein Heizkreis dazwischen ═══ */
+.verteiler {
+  --einzug: var(--a-5);
+  position: relative;
+  margin: 0;
+  padding: 0 var(--einzug);
+  list-style: none;
+}
+
+.verteiler::before,
+.verteiler::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--m-strich);
+  border-radius: var(--radius-voll);
+}
+
+.verteiler::before {
+  left: 0;
+  background-color: var(--vorlauf);
+}
+
+.verteiler::after {
+  right: 0;
+  background-color: var(--ruecklauf);
+}
+
+.abgang + .abgang .kreis {
+  border-top: 0;
+}
+
+/* Eine Stelle: die ganze Zeile ist der Link (Pseudoelement von .ziel), Abgänge auf halber Höhe */
+.kreis {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "titel titel"
+    "meta meta"
+    "text text"
+    "gehalt pfeil";
+  align-items: end;
+  column-gap: var(--a-4);
+  padding: var(--a-5) var(--a-4);
+  border-block: 1px solid var(--line);
+}
+
+.kreis::before,
+.kreis::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: calc(var(--einzug) - var(--a-2));
+  height: var(--m-strich);
+  transform: translateY(-50%);
+}
+
+.kreis::before {
+  left: calc(var(--einzug) * -1);
+  border-radius: 0 var(--radius-voll) var(--radius-voll) 0;
+  background-color: var(--vorlauf);
+}
+
+.kreis::after {
+  right: calc(var(--einzug) * -1);
+  border-radius: var(--radius-voll) 0 0 var(--radius-voll);
+  background-color: var(--ruecklauf);
+}
+
+/* Hover-Fläche hinter dem Text (Register flaeche), nur mit Maus */
+.flaeche {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--surface-2);
+  opacity: 0;
+  transition: opacity var(--d-1) var(--k-ein);
+}
+
+.titel {
+  grid-area: titel;
+  max-width: 34ch;
+}
+
+/* Trefferfläche über die ganze Zeile; Fokusring innen, nie bündig mit der Kante */
+.ziel {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ziel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.ziel:focus-visible {
+  outline: none;
+}
+
+.ziel:focus-visible::after {
+  outline: var(--m-strich) solid var(--focus);
+  outline-offset: calc(var(--m-strich) * -1);
+}
+
+.mwd {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.meta {
+  grid-area: meta;
+  margin-top: var(--a-2);
+}
+
+/* Umbruch nur vor einem Trennpunkt: der Punkt wandert an den Zeilenanfang, nie hängt er am Ende */
+.metaTeil {
+  white-space: nowrap;
+}
+
+.text {
+  grid-area: text;
+  max-width: 60ch;
+  margin-top: var(--a-3);
+  font-size: var(--text-callout);
+  line-height: 1.5;
+}
+
+.gehalt {
+  grid-area: gehalt;
+  margin-top: var(--a-5);
+}
+
+.pfeil {
+  grid-area: pfeil;
+  align-self: end;
+  margin-bottom: var(--a-1);
+  color: var(--brand);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kreis:hover .flaeche {
+    opacity: 1;
+    transition: opacity var(--d-2) var(--k-aus);
+  }
+}
+
+@media (min-width: 48em) {
+  .verteiler {
+    --einzug: var(--a-7);
+  }
+
+  .kreis {
+    grid-template-columns: minmax(0, 1fr) minmax(14rem, auto) auto;
+    grid-template-areas:
+      "titel gehalt pfeil"
+      "meta gehalt pfeil"
+      "text gehalt pfeil";
+    align-items: center;
+    column-gap: var(--a-7);
+    padding: var(--a-6) var(--a-5) var(--a-6) var(--a-6);
+  }
+
+  .titel,
+  .meta,
+  .text {
+    align-self: start;
+  }
+
+  .gehalt {
+    margin-top: 0;
+  }
+
+  .pfeil {
+    align-self: center;
+    margin-bottom: 0;
+  }
+}
+
+/* Leerzustand */
+.leer {
+  max-width: 38rem;
+}
+
+/* ═══ Einsatzgebiet: Überschrift links, Satz und Weg rechts ═══ */
+.gebiet {
+  display: grid;
+  row-gap: var(--a-5);
+}
+
+@media (min-width: 64em) {
+  .gebiet {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: var(--a-8);
+    align-items: start;
+  }
+
+  .gebietEtikett {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ═══ Initiativband (Navy): Vorlauf und Rücklauf kommen von oben und münden in „Initiativ bewerben“ ═══ */
+.band {
+  overflow: clip;
+}
+
+.bandText {
+  padding-right: var(--a-8);
+}
+
+.anschluss {
+  position: relative;
+  display: flex;
+}
+
+.leitung {
+  position: absolute;
+  top: -200vh;
+  bottom: 100%;
+  width: var(--m-strich);
+  pointer-events: none;
+}
+
+.vorlauf {
+  right: calc(var(--a-6) + var(--paar) - var(--m-strich) / 2);
+  background-color: var(--vorlauf);
+}
+
+.ruecklauf {
+  right: calc(var(--a-6) - var(--m-strich) / 2);
+  background-color: var(--ruecklauf);
+}
+
+/* Die eine rote Fläche dieser Ansicht (E-016), wie im Schlussband der Startseite */
+.aktion {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--a-4);
+  min-height: var(--m-knopf);
+  padding: 0 var(--a-5);
+  background-color: var(--accent);
+  color: var(--on-accent);
+  font-size: var(--text-body);
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.aktion::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: var(--accent-hover);
+  opacity: 0;
+  transition: opacity var(--d-1) var(--k-ein);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .aktion:hover::before {
+    opacity: 1;
+    transition: opacity var(--d-2) var(--k-aus);
+  }
+}
+
+.aktion:active::before {
+  opacity: 1;
+  background-color: var(--accent-press);
+  transition: none;
+}
+
+@media (min-width: 64em) {
+  .aktion {
+    flex: 0 0 18rem;
+  }
+
+  .aktion::after {
+    content: "";
+    position: absolute;
+    right: calc(var(--m-strich) * -2);
+    top: var(--a-2);
+    bottom: var(--a-2);
+    width: calc(var(--m-strich) * 2);
+    background-color: var(--brand);
+    border-radius: 0 var(--radius-1) var(--radius-1) 0;
+  }
+
+  .leitung {
+    left: calc(18rem + var(--m-strich) * 2);
+    width: auto;
+    background: none;
+    border-style: solid;
+    border-width: 0 var(--m-strich) var(--m-strich) 0;
+  }
+
+  .vorlauf {
+    right: calc(var(--paar) * 2 - var(--m-strich) / 2);
+    bottom: calc(50% + var(--paar) / 2 - var(--m-strich) / 2);
+    border-color: var(--vorlauf);
+    border-bottom-right-radius: calc(var(--radius-2) + var(--m-strich) / 2);
+  }
+
+  .ruecklauf {
+    right: calc(var(--paar) - var(--m-strich) / 2);
+    bottom: calc(50% - var(--paar) / 2 - var(--m-strich) / 2);
+    border-color: var(--ruecklauf);
+    border-bottom-right-radius: calc(var(--radius-3) + var(--m-strich) / 2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flaeche,
+  .aktion::before {
+    transition: none;
+  }
+}
+
+@media print {
+  .verteiler::before,
+  .verteiler::after,
+  .kreis::before,
+  .kreis::after,
+  .leitung,
+  .pfadNavy {
+    display: none;
+  }
+
+  .aktion {
+    background-color: transparent;
+    color: var(--ink);
+    border: var(--m-strich) solid var(--brand);
+  }
+}

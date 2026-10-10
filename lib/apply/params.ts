@@ -65,3 +65,20 @@ export function legacyRedirectTarget(params: SearchParamsRecord): string | null 
   if (tab === 'dossier') return `${MAPPE_PATH}${carryOverQuery(params)}`;
   return null;
 }
+
+/** Alte Tabs des Dokumenten-Tresors (E-BEW-027): `?tab=vault`, `?tab=direct`. */
+const DOCUMENT_TABS: readonly string[] = ['vault', 'direct'];
+/** Werte, mit denen `?direct=` ausdrücklich abgeschaltet ist. */
+const DIRECT_OFF: readonly string[] = ['false', '0', 'nein', 'no'];
+
+/**
+ * Wollte der Link Unterlagen einreichen? Der Vorgänger öffnete mit `?tab=vault`, `?tab=direct` und
+ * `?direct=true` den Tresor (E-BEW-027, E-START-007). Die Seite bleibt beim Flow (HTTP 200) und weist
+ * nur auf den Abschnitt „Unterlagen einreichen“ hin; ein leeres oder abgeschaltetes `direct` zählt nicht.
+ */
+export function wantsDocuments(params: SearchParamsRecord): boolean {
+  const tab = firstParam(params.tab)?.toLowerCase();
+  if (tab && DOCUMENT_TABS.includes(tab)) return true;
+  const direct = firstParam(params.direct)?.toLowerCase();
+  return direct !== undefined && !DIRECT_OFF.includes(direct);
+}

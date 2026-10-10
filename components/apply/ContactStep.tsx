@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode, type Ref } from 'react';
 import { useController, useFormState, useWatch, type SubmitErrorHandler, type SubmitHandler, type UseFormReturn } from 'react-hook-form';
-import { FileText, Plus } from 'lucide-react';
+import { Icon } from '@/components/icons';
 import { Button } from '@/components/ui/Button';
 import { Field } from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
@@ -18,6 +18,7 @@ import type { SubmitFailure } from '@/lib/apply/submit';
 import { buildApplicationMessage } from '@/lib/apply/whatsapp-message';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
 import { SubmitErrorPanel } from './SubmitErrorPanel';
+import { Zusagenblock } from './strang/Zusage';
 
 const CHANNEL_OPTIONS: readonly SegmentedOption<ContactChannel>[] = [
   { value: 'whatsapp', label: 'WhatsApp' },
@@ -43,6 +44,11 @@ export interface ContactStepProps {
   failure: SubmitFailure | null;
   onValid: SubmitHandler<ContactFormValues>;
   onInvalid?: SubmitErrorHandler<ContactFormInput>;
+  /**
+   * Diskretionszusage über dem Absenden-Knopf (E-BEW-004, Wortlaut DISCRETION_PROMISE); null bei der
+   * Ausbildung (getDiscretionPromise).
+   */
+  discretion?: string | null;
   /** Honeypot-Feld (nicht Teil des Formularzustands); der Flow liest es beim Absenden. */
   honeypotRef: Ref<HTMLInputElement>;
   phoneHref: string;
@@ -52,7 +58,11 @@ export interface ContactStepProps {
   mappe: { present: boolean; included: boolean; onToggle: () => void };
 }
 
-/** Letzter Schritt: Name, Telefon, Kontaktweg, optional E-Mail, Datenschutzhinweis und Absenden. */
+/**
+ * Letzter Schritt: Name, Telefon, Kontaktweg, optional E-Mail, dann der Zusagenblock (Diskretion und
+ * Datenschutzhinweis) und der rote Knopf, in den Vorlauf und Rücklauf aus dem Block münden (K-001: der rote
+ * Vorlauf endet in deiner Bewerbung).
+ */
 export function ContactStep({
   form,
   heading,
@@ -62,6 +72,7 @@ export function ContactStep({
   failure,
   onValid,
   onInvalid,
+  discretion = null,
   honeypotRef,
   phoneHref,
   application,
@@ -193,16 +204,16 @@ export function ContactStep({
             </div>
           </div>
         ) : (
-          <Button variant="ghost" size="sm" onClick={revealEmail} className="-ml-3 self-start">
-            <Plus aria-hidden="true" strokeWidth={2} className="size-4" />
+          <Button variant="ghost" size="sm" onClick={revealEmail} className="-ml-3 gap-2 self-start px-3">
+            <Icon name="plus" size="sm" className="text-brand" />
             E-Mail hinzufügen
           </Button>
         )}
 
         {mappe.present && (
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-md bg-surface-2 py-2 pl-4 pr-2">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-2 border-2 border-line-strong py-2 pl-4 pr-2">
             <p className="flex items-center gap-2 text-callout text-ink">
-              <FileText aria-hidden="true" strokeWidth={1.75} className="size-5 shrink-0 text-ink-muted" />
+              <Icon name="file-text" size="md" className="text-brand" />
               {mappe.included ? 'Deine Bewerbungsmappe wird mitgeschickt.' : 'Deine Bewerbungsmappe wird nicht mitgeschickt.'}
             </p>
             <Button variant="link" size="sm" onClick={mappe.onToggle} className="px-2">
@@ -233,26 +244,21 @@ export function ContactStep({
           />
         </div>
 
-        <div ref={submitAreaRef} className="flex scroll-mb-4 flex-col gap-3">
-          {/* Hinweis statt Checkbox, mit Rechtsgrundlage (ROADMAP §6; DSB-Bestätigung steht aus). */}
-          <p className="text-footnote text-ink-muted">
-            Wir verarbeiten deine Angaben für deine Bewerbung (Art. 6 Abs. 1 lit. b DSGVO). Mehr dazu in den{' '}
-            <TextLink href="/datenschutz#bewerberdaten">Datenschutzhinweisen</TextLink>.
-          </p>
-          <Button
-            type="submit"
-            size="lg"
-            fullWidth
-            aria-busy={submitting || undefined}
-            onClick={submitting ? (event) => event.preventDefault() : undefined}
-          >
-            {submitting && (
-              <span
-                aria-hidden="true"
-                className="size-4 animate-spin rounded-full border-2 border-current border-r-transparent"
-              />
-            )}
-            {submitting ? 'Wird gesendet…' : canRetry ? 'Erneut senden' : 'Bewerbung absenden'}
+        <div ref={submitAreaRef} className="flex scroll-mb-4 flex-col">
+          {/*
+            Diskretion (nicht bei Ausbildung) und Hinweis statt Checkbox mit Rechtsgrundlage (ROADMAP §6;
+            DSB-Bestätigung steht aus), direkt über dem Knopf: Wer den Knopf sieht, sieht auch die Zusage.
+          */}
+          <Zusagenblock zusage={discretion}>
+            <p className="text-footnote text-ink-2">
+              Wir verarbeiten deine Angaben für deine Bewerbung (Art. 6 Abs. 1 lit. b DSGVO). Mehr dazu in den{' '}
+              <TextLink href="/datenschutz#bewerberdaten">Datenschutzhinweisen</TextLink>.
+            </p>
+          </Zusagenblock>
+          {/* Vorlauf und Rücklauf fallen aus der Linie des Blocks in den Knopf (Button leitung="oben", 32 px). */}
+          <Button type="submit" size="lg" fullWidth leitung="oben" loading={submitting} className="mt-8">
+            {canRetry ? 'Erneut senden' : 'Bewerbung absenden'}
+            <Icon name="arrow-right" size="md" />
           </Button>
           <p role="status" className="sr-only">
             {submitting ? 'Wird gesendet…' : ''}
@@ -263,7 +269,7 @@ export function ContactStep({
               phoneHref={phoneHref}
               whatsappHref={whatsappHref}
               overrides={FAILURE_OVERRIDES}
-              className="mt-1"
+              className="mt-4"
             />
           )}
         </div>

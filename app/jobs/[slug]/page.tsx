@@ -1,27 +1,27 @@
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { ApplyFlow } from '@/components/apply';
 // Direct module imports instead of the barrels: a barrel would register every client component it
 // re-exports (Sheet, Field, MobileNav …) for this page.
-import { ApplyAnchorButton } from '@/components/jobs/ApplyAnchorButton';
 import { JobFaq } from '@/components/jobs/JobFaq';
 import { JobHeader } from '@/components/jobs/JobHeader';
 import { JobProcess } from '@/components/jobs/JobProcess';
 import { JobQuote } from '@/components/jobs/JobQuote';
 import { JobSections } from '@/components/jobs/JobSections';
 import { MoreJobs } from '@/components/jobs/MoreJobs';
-import { SalaryCard } from '@/components/jobs/SalaryCard';
+import { Pfad } from '@/components/jobs/stelle/Pfad';
+import { ANSPRECHPARTNER, STELLE_ANKER } from '@/components/jobs/stelle/stelle-text';
 import { pageTitle } from '@/components/jobs/text';
 import { Container } from '@/components/layout/Container';
+import { Section } from '@/components/layout/Section';
+import { Seitenkopf } from '@/components/seitenkopf';
 import { ContactOptions } from '@/components/site/ContactOptions';
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
-import { Button } from '@/components/ui/Button';
 import { TextLink } from '@/components/ui/TextLink';
+import { HausKlein } from '@/components/zeichnung/HausKlein';
 import { INITIATIVE_APPLY_PATH } from '@/lib/apply/params';
 import { WHATSAPP_GREETING } from '@/lib/apply/whatsapp-message';
-import { BREADCRUMB_HOME, BREADCRUMB_JOBS, COMPANY, FACTS, getTeamQuote } from '@/lib/content';
+import { COMPANY, FACTS, getTeamQuote } from '@/lib/content';
 import { applyPath, jobPath } from '@/lib/jobs/format';
 import { buildBreadcrumbJsonLd, buildJobPostingJsonLd, serializeJsonLd } from '@/lib/jobs/jsonld';
 import { ALL_JOBS, getJobByLegacySlug, getJobBySlug, getJobPageSlugs, isJobLive, type Job } from '@/lib/jobs/registry';
@@ -113,66 +113,64 @@ export default async function JobPage({ params }: { params: Params }) {
   return isOpen(job) ? <OpenJob job={job} /> : <ClosedJob job={job} />;
 }
 
+/**
+ * Offene Stelle (R5-JOBS-02, E-023), Erzählseite im Design des Einstiegs der Startseite. Tonfolge:
+ * Kopf Papier/Navy · Aufgaben Wand · Vorteile Papier · Stimme Navy · Ablauf und Bewerbung Papier ·
+ * Fragen Wand · Weitere Stellen Papier · Fuß Navy. Genau ein JobPosting (E-SEO-010) und die BreadcrumbList.
+ */
 function OpenJob({ job }: { job: Job }) {
   const jsonLd = [buildJobPostingJsonLd(job), buildBreadcrumbJsonLd(job)].filter((node) => node !== null);
   const quote = job.teamQuoteId ? getTeamQuote(job.teamQuoteId) : undefined;
-  const contactPerson = { name: COMPANY.managingDirector.name, role: COMPANY.managingDirector.title };
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} />
 
-      <Container className="pt-8 pb-section lg:pt-12">
-        <div className="lg:grid lg:grid-cols-12 lg:gap-x-12">
-          <div className="flex min-w-0 flex-col gap-16 lg:col-span-8">
-            <JobHeader job={job} />
-            <JobSections job={job} />
-            {quote && <JobQuote quote={quote} />}
-            <JobProcess audience={job.apply.questionSet} />
+      <JobHeader job={job} />
+      <JobSections job={job} />
+      {quote && <JobQuote quote={quote} />}
 
-            {/*
-              „60 Sekunden“ is the title of process step 1 right above, so the heading does not repeat it.
-              „Kein Lebenslauf“ stands once, next to the flow (at most twice per page with the FAQ).
-            */}
-            <section id="bewerben" aria-labelledby="bewerben-titel" className="flex flex-col gap-6">
-              <div className="flex flex-col gap-2">
-                <h2 id="bewerben-titel" className="text-title-2 text-ink">
+      <Section tone="papier" trenner>
+        <Container className="flex flex-col gap-section-sm">
+          <JobProcess audience={job.apply.questionSet} />
+
+          {/*
+            „60 Sekunden“ steht im Mikrotext des Kopfs und als Titel von Schritt 1 darüber, „Kein Lebenslauf“ im
+            Mikrotext des Kopfs (und in der FAQ der Ausbildung): hier darum keins von beiden ein weiteres Mal.
+          */}
+          <section
+            id={STELLE_ANKER.bewerben}
+            aria-labelledby="bewerben-titel"
+            className="grid gap-12 lg:grid-cols-12 lg:gap-x-12"
+          >
+            <div className="flex min-w-0 flex-col gap-8 lg:col-span-7">
+              <div className="flex flex-col gap-4">
+                <p className="text-etikett text-ink-muted">Bewerbung</p>
+                <h2 id="bewerben-titel" className="text-title-1 text-brand">
                   Jetzt bewerben
                 </h2>
-                <p className="max-w-prose text-body text-ink-muted">{FACTS.noCvNeeded.long}</p>
+                <p className="max-w-prose text-lead text-ink-muted">{FACTS.quickResponse.long}</p>
               </div>
               <Suspense fallback={<ApplyFallback job={job} />}>
                 <ApplyFlow initialJobId={job.id} variant="embedded" funnel="job_page" />
               </Suspense>
-            </section>
-
-            <section aria-labelledby="ansprechpartner" className="flex flex-col gap-4 lg:hidden">
-              <div className="flex flex-col gap-1">
-                <h2 id="ansprechpartner" className="text-title-3 text-ink">
-                  Lieber direkt sprechen?
-                </h2>
-                <p className="text-body text-ink-muted">
-                  {contactPerson.name}, {contactPerson.role}
-                </p>
-              </div>
-              <ContactOptions variant="inline" whatsappMessage={whatsappMessage(job)} />
-            </section>
-
-            <JobFaq job={job} />
-          </div>
-
-          <aside aria-label="Gehalt und Kontakt" className="hidden lg:col-span-4 lg:block">
-            <div className="sticky top-24 flex flex-col gap-4">
-              <SalaryCard
-                job={job}
-                size="compact"
-                action={<ApplyAnchorButton>Jetzt bewerben</ApplyAnchorButton>}
-              />
-              <ContactOptions variant="card" person={contactPerson} whatsappMessage={whatsappMessage(job)} />
             </div>
-          </aside>
-        </div>
-      </Container>
+
+            <div className="flex flex-col gap-4 lg:col-span-5 lg:pt-24">
+              <div className="flex flex-col gap-4 lg:sticky lg:top-24">
+                <h3 className="text-title-3 text-brand">Lieber direkt sprechen?</h3>
+                <ContactOptions variant="card" person={ANSPRECHPARTNER} whatsappMessage={whatsappMessage(job)} />
+              </div>
+            </div>
+          </section>
+        </Container>
+      </Section>
+
+      <Section tone="wand" trenner="62%">
+        <Container>
+          <JobFaq job={job} />
+        </Container>
+      </Section>
 
       <MoreJobs currentJob={job} />
     </>
@@ -194,26 +192,21 @@ function ApplyFallback({ job }: { job: Job }) {
 function ClosedJob({ job }: { job: Job }) {
   return (
     <>
-      <Container className="flex flex-col gap-6 pt-8 pb-section-sm lg:pt-12">
-        <Breadcrumbs
-          items={[BREADCRUMB_HOME, BREADCRUMB_JOBS, { label: job.shortTitle }]}
-        />
-        <h1 className="text-title-1 text-ink">Diese Stelle ist besetzt</h1>
-        <p className="max-w-prose text-lead text-ink-muted">
-          {isAusbildung(job) ? `Die ${job.title}` : `Die Stelle ${job.title}`} ist nicht mehr ausgeschrieben. Schau dir
-          die offenen Stellen an oder bewirb dich initiativ.
-        </p>
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-          <Button asChild size="lg">
-            <Link href={INITIATIVE_APPLY_PATH} data-primary-cta="">
-              Initiativ bewerben
-            </Link>
-          </Button>
-          <TextLink href="/jobs" standalone>
-            Alle offenen Stellen
-          </TextLink>
-        </div>
-      </Container>
+      <Pfad job={job} />
+      <Seitenkopf
+        variante="arbeit"
+        etikett={`${job.shortTitle} · ${COMPANY.address.city}`}
+        titel="Diese Stelle ist besetzt"
+        einleitung={
+          <p>
+            {isAusbildung(job) ? `Die ${job.title}` : `Die Stelle ${job.title}`} ist nicht mehr ausgeschrieben. Schau
+            dir die offenen Stellen an oder bewirb dich initiativ.
+          </p>
+        }
+        aktion={{ href: INITIATIVE_APPLY_PATH, label: 'Initiativ bewerben' }}
+        zweitweg={{ href: '/jobs', label: 'Alle offenen Stellen' }}
+        panel={<HausKlein />}
+      />
       <MoreJobs currentJob={job} title="Ähnliche Stellen" />
     </>
   );

@@ -1,0 +1,38 @@
+{
+  "label": "fertig-r5-bew-01-schmal",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T08:57:14.689Z",
+  "seiten": [
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "ansicht": "t768",
+      "schema": "light",
+      "status": 200,
+      "ms": 5442,
+      "seitenhoehe": 3154,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r5-bew-01-schmal/bewerbung__t768-light__01.webp",
+        "belege/fertig-r5-bew-01-schmal/bewerbung__t768-light__02.webp",
+        "belege/fertig-r5-bew-01-schmal/bewerbung__t768-light__03.webp",
+        "belege/fertig-r5-bew-01-schmal/bewerbung__t768-light__04.webp"
+      ]
+    }
+  ]
+}

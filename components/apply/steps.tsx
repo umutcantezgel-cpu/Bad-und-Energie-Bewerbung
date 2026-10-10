@@ -1,7 +1,8 @@
 import type { ReactNode, Ref } from 'react';
-import { ArrowRight, CircleCheck } from 'lucide-react';
+import { Icon } from '@/components/icons';
 import { Button } from '@/components/ui/Button';
 import { ChoiceCard, ChoiceGroup } from '@/components/ui/ChoiceCard';
+import { KreisGeschlossen } from '@/components/zeichnung/KreisGeschlossen';
 import type { ApplicationJobId } from '@/lib/applications/schema';
 import type { ApplyQuestion } from '@/lib/apply/questions';
 import { cn } from '@/lib/utils/cn';
@@ -16,10 +17,13 @@ export interface StepHeadingProps {
   children: ReactNode;
 }
 
-/** Frage eines Schritts. tabIndex -1: Der Flow setzt bei jedem Schrittwechsel den Fokus hierher. */
+/**
+ * Frage eines Schritts in der Stimme der Botschaft (Bricolage, Navy) wie die Überschriften des Einstiegs.
+ * tabIndex -1: Der Flow setzt bei jedem Schrittwechsel den Fokus hierher.
+ */
 export function StepHeading({ as: Tag, id, ref, children }: StepHeadingProps) {
   return (
-    <Tag ref={ref} id={id} tabIndex={-1} className={cn('text-ink outline-none', Tag === 'h2' ? 'text-title-2' : 'text-title-3')}>
+    <Tag ref={ref} id={id} tabIndex={-1} className={cn('text-brand outline-none', Tag === 'h2' ? 'text-title-2' : 'text-title-3')}>
       {children}
     </Tag>
   );
@@ -29,7 +33,7 @@ function ContinueButton({ onClick }: { onClick: () => void }) {
   return (
     <Button variant="secondary" size="lg" onClick={onClick} className="self-start">
       Weiter
-      <ArrowRight aria-hidden="true" strokeWidth={2} className="size-5" />
+      <Icon name="arrow-right" size="md" />
     </Button>
   );
 }
@@ -52,8 +56,12 @@ export function JobStep({ heading, headingId, options, selected, onSelect, onCon
         {options.map((option) => (
           <ChoiceCard
             key={option.id}
-            title={option.label}
+            title={
+              // Weiche Trennstellen erst unter 360 px: darüber bricht der Name an Leerzeichen um
+              option.labelShy ? <span className="hyphens-none max-[22.5rem]:hyphens-manual">{option.labelShy}</span> : option.label
+            }
             description={option.description}
+            icon={option.icon}
             selected={selected === option.id}
             onClick={() => onSelect(option)}
           />
@@ -96,16 +104,15 @@ export interface InlineSuccessProps {
 /**
  * Erfolg ohne Danke-Seite: nur, wenn der Browser keinen sessionStorage erlaubt und die
  * Danke-Seite die Bewerbungsnummer deshalb nicht lesen könnte. Erscheint nur nach 200 + ok:true.
+ * Wie die Danke-Seite: Vorlauf und Rücklauf schließen den Kreis um den Haken (Register `kreis-schliessen`).
  */
 export function InlineSuccess({ heading, reference, quickResponse }: InlineSuccessProps) {
   return (
     <div className="flex flex-col items-start gap-4">
-      <span aria-hidden="true" className="flex size-12 items-center justify-center rounded-full bg-success-subtle text-success">
-        <CircleCheck strokeWidth={2} className="size-6" />
-      </span>
+      <KreisGeschlossen groesse="klein" />
       {heading}
       <p className="text-body text-ink">
-        Deine Bewerbungsnummer: <strong className="font-semibold tabular-nums">{reference}</strong>
+        Deine Bewerbungsnummer: <strong className="font-mass font-semibold text-brand">{reference}</strong>
       </p>
       {quickResponse && <p className="max-w-prose text-body text-ink-muted">{quickResponse}</p>}
     </div>

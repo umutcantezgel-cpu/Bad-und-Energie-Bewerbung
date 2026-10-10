@@ -1,0 +1,132 @@
+/*
+ * Stellenseite (R5-JOBS-02, E-023): Teile um den gemeinsamen Seitenkopf (components/seitenkopf), im Design
+ * des Einstiegs der Startseite. Nur Rollen und Skalen aus app/styles/theme.css.
+ */
+
+/* ═══ Pfad über dem Kopf ═══
+   Bis 64em steht er auf der Navy-Fläche und geht nahtlos in den Navy-Block des Kopfs über (wie der Einstieg:
+   Navy direkt unter dem Seitenkopf); ab 64em auf Papier, die Navy-Fläche beginnt darunter. */
+.pfad {
+  --rand: max(var(--spacing-gutter, var(--a-5)), env(safe-area-inset-left), env(safe-area-inset-right));
+  padding: var(--a-3) var(--rand) 0;
+  background-color: var(--surface);
+  color: var(--ink);
+}
+
+@media (min-width: 64em) {
+  /* Auf Papier: die Rollen des Inverse-Bands zurück auf die des Papiers (wie der Titelblock im Seitenkopf) */
+  .pfad[data-tone] {
+    color-scheme: inherit;
+    --surface: inherit;
+    --surface-2: inherit;
+    --surface-3: inherit;
+    --ink: inherit;
+    --ink-muted: inherit;
+    --ink-2: inherit;
+    --brand: inherit;
+    --line: inherit;
+    --line-strong: inherit;
+    --focus: inherit;
+    --vorlauf: inherit;
+    --ruecklauf: inherit;
+    --waerme: inherit;
+  }
+
+  .pfad {
+    padding-top: var(--a-4);
+    padding-bottom: var(--a-2);
+  }
+}
+
+/* ═══ h1: Berufsname in Bildgröße, der Rest der h1 (m/w/d, Ort) in Textgröße darunter ═══ */
+.titelHaupt {
+  display: block;
+}
+
+.titelZusatz {
+  display: block;
+  margin-top: var(--a-3);
+  font-size: var(--text-title-3);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+/* ═══ Zeichnung im Navy-Panel ═══ */
+.kopfbild {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--a-6);
+  width: 100%;
+}
+
+/* Wärmebild: Das Haus beginnt im Bild erst unter seinem Giebelraum, darum enger an den Heizkreis */
+.kopfbildWaerme {
+  gap: var(--a-2);
+}
+
+/* Haus auf dem Heizkreis: nur ab 64em, wo die Navy-Fläche Platz hat; am Handy bleibt der Knopf im ersten Bild */
+.haus {
+  display: none;
+}
+
+@media (min-width: 64em) {
+  /* Spalte so breit wie der Heizkreis; die Fläche des Kopfs setzt sie mittig, das Haus steht links auf der Schleife */
+  .kopfbild {
+    width: auto;
+    gap: var(--a-3);
+  }
+
+  .haus {
+    display: block;
+    width: 11rem;
+    margin-left: calc(var(--paar) + var(--a-6));
+  }
+
+  .kopfbildWaerme {
+    width: 100%;
+    align-items: stretch;
+    gap: var(--a-5);
+  }
+}
+
+/* ═══ Signaturmoment „Gehalt im Heizkreis“ (KERN K-009): Das Leitungspaar des Kopfs zeichnet sich beim
+   Laden einmal zur Bewerbung. Register `erdleitung` (transform, d-2, Verzögerung 5 und 8 Takte, k-wechsel).
+   Läuft nur unter der Klasse `auftakt` aus dem Kopfskript; Grundwert ist der Endzustand (Füllart backwards),
+   reduzierte Bewegung und Seiten ohne Skript zeigen das Paar sofort vollständig. ═══ */
+@keyframes fallen {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes laufen {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* Handy und Tablet: Vorlauf und Rücklauf fallen aus dem Navy-Block senkrecht in den Knopf */
+:global(.auftakt) .kopf[data-motion~="erdleitung"] [data-zeichnung="seitenkopf-leitung"] > span {
+  transform-origin: top center;
+  animation: fallen var(--d-2) var(--k-wechsel) calc(var(--takt) * 5) backwards;
+}
+
+/* Desktop: Das Paar läuft auf Knopfhöhe von rechts durch die Navy-Fläche und über das Papier in den Flansch */
+@media (min-width: 64em) {
+  :global(.auftakt) .kopf[data-motion~="erdleitung"] [data-zeichnung="seitenkopf-leitung"] > span {
+    transform-origin: right center;
+    animation-name: laufen;
+  }
+
+  :global(.auftakt) .kopf[data-motion~="erdleitung"] [data-zeichnung="seitenkopf-leitung"] > span:first-child {
+    animation-delay: calc(var(--takt) * 8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(.auftakt) .kopf[data-motion~="erdleitung"] [data-zeichnung="seitenkopf-leitung"] > span {
+    animation: none;
+  }
+}

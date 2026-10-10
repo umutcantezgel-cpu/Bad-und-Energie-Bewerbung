@@ -1,96 +1,99 @@
+import type { MotionId } from '@/lib/motion/register';
 import { cn } from '@/lib/utils/cn';
-import { WEGWEISER } from './einstieg-text';
+import { WAERMEBAENDER } from './waermefeld';
 import styles from './einstieg.module.css';
 
-/** Id des Clip-Pfads für den Wärmepegel (eine Szene je Seite). */
-const PEGEL_ID = 'einstieg-waerme-pegel';
+const BAND = [styles.band1, styles.band2, styles.band3, styles.band4] as const;
+
+/** Leitungen der Szene (Variante 3, `wb__rohre`): Lage, Richtung und Kennung je Stück. */
+interface Leitung {
+  d: string;
+  motion: MotionId;
+  klasse?: string;
+}
+
+const VORLAUF: readonly Leitung[] = [
+  // Desktop: aus dem Knopf über den Panelrand in die Pumpe (Fortsetzung von `rohrD` in Einstieg.tsx)
+  { d: 'M0 676H50', motion: 'erdleitung-d', klasse: styles.nurDesktop },
+  { d: 'M154 662H226', motion: 'vorlauf-haus' },
+  { d: 'M128 740V756H404V733H590', motion: 'vorlauf-haus' },
+  // Verbindung zum Leitungsschacht: mobil steigt der Vorlauf aus dem Knopf hier in die Pumpe
+  { d: 'M50 728H28V800', motion: 'vorlauf-haus', klasse: styles.vlSchacht },
+];
+
+const RUECKLAUF: readonly Leitung[] = [
+  { d: 'M226 704H154', motion: 'ruecklauf-haus' },
+  { d: 'M590 733H596V774H140V740', motion: 'ruecklauf-haus' },
+  { d: 'M50 712H14V800', motion: 'ruecklauf-haus' },
+];
 
 /**
- * Haus mit Wärmepumpe (Variante 1, Zeichnung 760 × 520 Einheiten; Wegweiser aus B Runde 1).
- * Dekorativ (`aria-hidden`): der Erklärsatz T-001 unter der Szene und die Maße als echte Liste tragen
- * dieselbe Information als Text. Jedes animierte Teil trägt seine Kennung aus lib/motion/register.ts.
- * Rot ist nur Vorlauf-Linie, Blau nur Rücklauf (E-016); das Haus aus dem Logo hat den 45°-Giebel.
+ * Haus im Wärmebild (Variante 3, statischer Ersatz ohne WebGL, E-021): Szene 800 × 800 Einheiten aus
+ * _relaunch/ausbau/richtungen/3/index.html (`wb__feld`, `wb__linien`, `wb__rohre`). Vier Isothermen als
+ * weiche Flächen (kalt Navy → Rücklaufblau → Wand → Wärme → Papier), darauf das Haus aus dem Logo mit
+ * 45°-Giebel in Creme, innen Navy auf den warmen Flächen: Wärmepumpe, Heizkörper, Wanne, Fußbodenheizung,
+ * die Uhr im Giebel auf 13:30 mit Fadenkreuz. Vorlauf rot und Rücklauf blau mit einem Mantel in der Seitenfarbe.
+ *
+ * Dekorativ (`aria-hidden`): Maße, Einleitung und der Erklärsatz T-001 tragen dieselbe Information als Text.
+ * Jedes bewegte Teil trägt seine Kennung aus lib/motion/register.ts; ohne Auftakt steht der Endzustand.
  */
 export function Szene() {
-  const z = styles.z;
+  const kalt = styles.kalt;
+  const fein = styles.fein;
   return (
-    <svg className={styles.zeichnung} viewBox="0 0 760 520" aria-hidden="true" focusable="false" data-szene="einstieg">
-      {/* Sonne mit 30 Teilstrichen: 30 Tage Urlaub */}
-      <g className={styles.sonne}>
-        <circle className={z} cx="0" cy="0" r="24" />
-        <path
-          className={z}
-          d="M0.0 -36.0L0.0 -52.0M7.5 -35.2L9.6 -45.0M14.6 -32.9L18.7 -42.0M21.2 -29.1L27.0 -37.2M26.8 -24.1L34.2 -30.8M31.2 -18.0L45.0 -26.0M34.2 -11.1L43.7 -14.2M35.8 -3.8L45.7 -4.8M35.8 3.8L45.7 4.8M34.2 11.1L43.7 14.2M31.2 18.0L45.0 26.0M26.8 24.1L34.2 30.8M21.2 29.1L27.0 37.2M14.6 32.9L18.7 42.0M7.5 35.2L9.6 45.0M0.0 36.0L0.0 52.0M-7.5 35.2L-9.6 45.0M-14.6 32.9L-18.7 42.0M-21.2 29.1L-27.0 37.2M-26.8 24.1L-34.2 30.8M-31.2 18.0L-45.0 26.0M-34.2 11.1L-43.7 14.2M-35.8 3.8L-45.7 4.8M-35.8 -3.8L-45.7 -4.8M-34.2 -11.1L-43.7 -14.2M-31.2 -18.0L-45.0 -26.0M-26.8 -24.1L-34.2 -30.8M-21.2 -29.1L-27.0 -37.2M-14.6 -32.9L-18.7 -42.0M-7.5 -35.2L-9.6 -45.0"
-        />
+    <svg className={styles.szene} viewBox="0 0 800 800" aria-hidden="true" focusable="false" data-szene="einstieg">
+      {/* Wärmefeld: Bänder von kalt nach heiß, die Wärme breitet sich vom Heizkörper aus */}
+      <g className={styles.feld}>
+        {WAERMEBAENDER.map((d, i) => (
+          <path key={d.slice(0, 12)} className={cn(styles.band, BAND[i])} data-motion="waerme" d={d} />
+        ))}
       </g>
 
-      {/* Luft strömt zur Wärmepumpe (mobil größere Wirbel, am Desktop näher an der Pumpe) */}
-      <g className={styles.nurMobil}>
-        <path className={z} data-motion="luft" pathLength={1} d="M88 420A12 12 0 1 0 76 432H166" />
-        <path className={z} data-motion="luft" pathLength={1} d="M68 450A12 12 0 1 0 56 462H166" />
-        <path className={z} data-motion="luft" pathLength={1} d="M104 480A12 12 0 1 0 92 492H166" />
-      </g>
-      <g className={styles.nurDesktop}>
-        <path className={z} data-motion="luft" pathLength={1} d="M124 420A10 10 0 1 0 114 430H166" />
-        <path className={z} data-motion="luft" pathLength={1} d="M108 452A10 10 0 1 0 98 462H166" />
-        <path className={z} data-motion="luft" pathLength={1} d="M134 484A10 10 0 1 0 124 494H166" />
-      </g>
+      {/* Kalt (Creme): Giebel und Wände des Hauses, Bodenlinie bis über den Bildrand, Lüfterring */}
+      <path className={kalt} d="M168 576L400 344L632 576M184 560V740M616 560V740M0 740H2000" />
+      <circle className={kalt} cx="102" cy="691" r="29" />
 
-      {/* Wärmepumpe (Außeneinheit) */}
-      <rect className={z} x="176" y="412" width="120" height="100" rx="12" />
-      <path className={z} d="M194 512V520M278 512V520" />
-      <circle className={z} cx="236" cy="462" r="32" />
-      <g data-motion="luefter">
-        <path className={z} d="M236 462C236 448 244 438 256 438M236 462C248 469 252 481 246 491M236 462C224 469 212 467 206 457" />
-      </g>
-      <circle className={styles.voll} cx="236" cy="462" r="4.5" />
-      <path className={cn(z, styles.vl, styles.stummelVl)} d="M236 512V520" />
-      <path className={cn(z, styles.rl, styles.stummelRl)} d="M236 512V520" />
+      {/* Innen (Navy auf den warmen Flächen): Decke, Boden, Innenwand, Wärmepumpe, Heizkörper, Wanne */}
+      <path className={fein} d="M198 580H602M198 726H602M392 580V726M404 580V726" />
+      <path className={fein} d="M62 642H142A12 12 0 0 1 154 654V740H50V654A12 12 0 0 1 62 642Z" />
+      <path
+        className={fein}
+        d="M232 640H284A6 6 0 0 1 290 646V706A6 6 0 0 1 284 712H232A6 6 0 0 1 226 706V646A6 6 0 0 1 232 640ZM238.8 648V704M251.6 648V704M264.4 648V704M277.2 648V704"
+      />
+      <path className={fein} d="M468 668H568A20 20 0 0 1 568 716H468A20 20 0 0 1 468 668ZM466 642V668M458 642H474" />
 
-      {/* Haus aus dem Logo: Giebel 45°, Wärmepegel steigt vom Boden bis unter den First */}
-      <clipPath id={PEGEL_ID}>
-        <rect data-motion="waerme" x="330" y="180" width="280" height="345" />
-      </clipPath>
-      <path className={styles.hausFlaeche} clipPath={`url(#${PEGEL_ID})`} d="M340 520V320L470 190L600 320V520Z" />
-      <path className={z} d="M316 344L470 190L624 344M340 320V520M600 320V520" />
-
-      {/* Fenster mit Sprossenkreuz, Tür (mobil hoch im Anschnitt, dort entfallen sie) */}
-      <g className={styles.fenster}>
-        <rect className={z} x="520" y="352" width="48" height="48" rx="4" />
-        <path className={z} d="M544 352V400M520 376H568M522 520V448H566V520" />
-        <circle className={styles.voll} cx="557" cy="486" r="3.5" />
-      </g>
-
-      {/* Heizkörper */}
-      <rect className={z} x="392" y="428" width="84" height="60" rx="8" />
-      <path className={z} d="M413 440V476M434 440V476M455 440V476" />
-
-      {/* Vorlauf und Rücklauf im Haus (Zeichnungsmaß: 28 Einheiten Abstand), Fließpfeile */}
-      <path className={cn(z, styles.vl)} data-motion="vorlauf-haus" pathLength={1} d="M296 444H392" />
-      <path className={cn(z, styles.rl)} data-motion="ruecklauf-haus" pathLength={1} d="M392 472H296" />
-      <g data-motion="pfeile">
-        <path className={cn(z, styles.vl)} d="M358 437L365 444L358 451" />
-        <path className={cn(z, styles.rl)} d="M322 465L315 472L322 479" />
-      </g>
+      {/* Lüfter der Wärmepumpe: läuft eine halbe Umdrehung an */}
+      <path
+        className={cn(kalt, styles.luefter)}
+        data-motion="luefter"
+        d="M102 691c-6-10-4-19 3-25M102 691c11 1 18 7 18 16M102 691c-6 9-15 12-22 8"
+      />
 
       {/* Uhr im Giebel: rastet auf 13:30 ein */}
-      <circle className={z} cx="470" cy="272" r="34" />
-      <path className={cn(z, styles.zeiger, styles.zeigerStd)} data-motion="uhr" d="M470 272L484.1 257.9" />
-      <path className={cn(z, styles.zeiger)} data-motion="uhr" d="M470 272V298" />
-      <circle className={styles.voll} cx="470" cy="272" r="4" />
-      <path className={cn(z, styles.nurDesktop)} d="M494 248L560 182" />
-      <path className={cn(z, styles.nurMobil, styles.hinweis1330)} d="M446 248L428 230H412" />
+      <circle className={styles.blatt} cx="400" cy="468" r="34" />
+      <path className={fein} d="M400 438V444M430 468H424M400 498V492M370 468H376" />
+      <path className={cn(fein, styles.zeiger, styles.zeigerStd)} data-motion="uhr" d="M400 468L412.5 455.5" />
+      <path className={cn(fein, styles.zeiger)} data-motion="uhr" d="M400 468V493" />
+      <circle className={styles.achse} cx="400" cy="468" r="4" />
 
-      {/* Maßkette 35 km: vom Dach bis über den Bildrand (Desktop) */}
-      <path className={cn(z, styles.nurDesktop)} d="M570 284H900M570 272V296" />
+      {/* Messpunkt (Fadenkreuz) an der Uhr; am Desktop die Hinweislinie zum Maß „13:30“ */}
+      <g className={styles.messpunkt} data-motion="uhr">
+        <circle className={styles.mess} cx="400" cy="468" r="46" />
+        <path className={styles.mess} d="M400 414V428M400 508V522M346 468H360M440 468H454" />
+      </g>
+      <path className={cn(styles.mess, styles.nurDesktop)} d="M367.5 435.5L232 300" />
 
-      {/* Wegweiser „Wetzlar“ (B Runde 1), rechts neben dem Haus auf der Bodenlinie (Desktop) */}
-      <g className={styles.nurDesktop}>
-        <path className={z} d="M708 520V404" />
-        <path className={cn(z, styles.schild)} d="M632 434L650 416H724V452H650Z" />
-        <text className={cn(styles.schildText, 'font-display font-bold')} x="687" y="439.5" textAnchor="middle">
-          {WEGWEISER}
-        </text>
+      {/* Leitungen: zuerst der Mantel in der Seitenfarbe, darüber das Rohr */}
+      <g>
+        {[...VORLAUF, ...RUECKLAUF].map((r) => (
+          <path key={`m${r.d}`} className={cn(styles.mantel, r.motion === 'erdleitung-d' && styles.nurDesktop)} d={r.d} />
+        ))}
+        {RUECKLAUF.map((r) => (
+          <path key={r.d} className={cn(styles.rohr, styles.rl, r.klasse)} data-motion={r.motion} pathLength={1} d={r.d} />
+        ))}
+        {VORLAUF.map((r) => (
+          <path key={r.d} className={cn(styles.rohr, styles.vl, r.klasse)} data-motion={r.motion} pathLength={1} d={r.d} />
+        ))}
       </g>
     </svg>
   );

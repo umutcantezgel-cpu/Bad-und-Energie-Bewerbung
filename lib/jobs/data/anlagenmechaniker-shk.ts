@@ -44,6 +44,8 @@ export const anlagenmechanikerShk = defineJob({
     'aboveTariff',
     'vacation30',
     'friday1330',
+    // E-SEO-010: „ohne Bereitschaftszwang“ (Altstand ALT-SEO-61) im Wortlaut des Fakts (fakten-abgleich B23)
+    'noWeekendOnCall',
     'noFarAssembly',
     'ipadSmartphone',
     'paidCertifications',

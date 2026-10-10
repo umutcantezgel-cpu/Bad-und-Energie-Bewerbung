@@ -1,0 +1,48 @@
+{
+  "label": "fertig-r5-jobs-02-dunkel",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T08:58:43.792Z",
+  "seiten": [
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 24247,
+      "seitenhoehe": 11238,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r5-jobs-02-dunkel/stelle-anlagenmechaniker__m390-dark__01.webp",
+        "belege/fertig-r5-jobs-02-dunkel/stelle-anlagenmechaniker__m390-dark__02.webp",
+        "belege/fertig-r5-jobs-02-dunkel/stelle-anlagenmechaniker__m390-dark__03.webp",
+        "belege/fertig-r5-jobs-02-dunkel/stelle-anlagenmechaniker__m390-dark__04.webp",
+        "belege/fertig-r5-jobs-02-dunkel/stelle-anlagenmechaniker__m390-dark__05.webp",
+        "belege/fertig-r5-jobs-02-dunkel/stelle-anlagenmechaniker__m390-dark__06.webp",
+        "belege/fertig-r5-jobs-02-dunkel/stelle-anlagenmechaniker__m390-dark__07.webp",
+        "belege/fertig-r5-jobs-02-dunkel/stelle-anlagenmechaniker__m390-dark__08.webp",
+        "belege/fertig-r5-jobs-02-dunkel/stelle-anlagenmechaniker__m390-dark__09.webp",
+        "belege/fertig-r5-jobs-02-dunkel/stelle-anlagenmechaniker__m390-dark__10.webp",
+        "belege/fertig-r5-jobs-02-dunkel/stelle-anlagenmechaniker__m390-dark__11.webp",
+        "belege/fertig-r5-jobs-02-dunkel/stelle-anlagenmechaniker__m390-dark__12.webp",
+        "belege/fertig-r5-jobs-02-dunkel/stelle-anlagenmechaniker__m390-dark__13.webp",
+        "belege/fertig-r5-jobs-02-dunkel/stelle-anlagenmechaniker__m390-dark__14.webp"
+      ]
+    }
+  ]
+}

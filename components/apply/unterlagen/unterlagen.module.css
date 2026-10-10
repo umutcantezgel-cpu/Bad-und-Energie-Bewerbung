@@ -1,0 +1,117 @@
+/*
+ * Unterlagen einreichen (E-BEW-012, R5-UPLOAD-01) im Formsystem des Einstiegs: die Ablage als gestrichelter
+ * Rahmen in Strichstärke (Plan einer noch offenen Leitung), Icons im Kästchen mit Navy-Kontur wie die Etiketten
+ * an der Zeichnung, Größen in Martian Mono. Nur Rollen aus app/styles/theme.css.
+ */
+
+/* ═══ Ablage ═══ */
+.ablage {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  column-gap: var(--a-4);
+  row-gap: var(--a-3);
+  padding: var(--a-5);
+  border: var(--m-strich) dashed var(--line-strong);
+  border-radius: var(--radius-2);
+}
+
+/* Ohne Anbindung: sichtbar anders (K-011 „Deaktiviert“), der Grund steht als Text daneben */
+.ablage[data-zustand="aus"] {
+  background-color: var(--surface-2);
+}
+
+.ablage[data-zustand="ziehen"] {
+  border-style: solid;
+  border-color: var(--ruecklauf);
+}
+
+.kasten {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--m-ziel);
+  height: var(--m-ziel);
+  border: var(--m-strich) solid var(--brand);
+  border-radius: var(--radius-1);
+  color: var(--brand);
+}
+
+.ablage[data-zustand="aus"] .kasten {
+  border-style: dashed;
+  border-color: var(--line-strong);
+  color: var(--ink-2);
+}
+
+.ablageText {
+  display: grid;
+  row-gap: var(--a-1);
+  min-width: 0;
+}
+
+/* Wege unter der Ablage: untereinander in voller Breite, nebeneinander, sobald zwei Knöpfe Platz haben */
+.wege {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--a-3);
+}
+
+/* ═══ Liste ═══ */
+.liste {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.eintrag {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--a-3);
+  padding-block: var(--a-3);
+  border-bottom: 1px solid var(--line);
+}
+
+.eintrag:first-child {
+  border-top: 1px solid var(--line);
+}
+
+.eintragText {
+  display: grid;
+  row-gap: var(--a-1);
+  min-width: 0;
+}
+
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Fortschritt: eine Leitung in Strichstärke, die sich füllt (Register fortschritt, nur transform) */
+.balken {
+  position: relative;
+  display: block;
+  height: var(--m-strich);
+  overflow: hidden;
+  border-radius: var(--radius-voll);
+  background-color: var(--line);
+}
+
+.fuellung {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: var(--brand);
+  transform: scaleX(var(--anteil, 0));
+  transform-origin: left center;
+  transition: transform var(--d-2) var(--k-aus);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fuellung {
+    transition: none;
+  }
+}

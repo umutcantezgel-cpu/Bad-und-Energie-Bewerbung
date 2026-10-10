@@ -1,11 +1,11 @@
 import { permanentRedirect } from 'next/navigation';
-import { ShieldCheck } from 'lucide-react';
 import { ApplyFlow } from '@/components/apply';
-import { Container, Section } from '@/components/layout';
+import { BewerbungFlaeche, bewerbungKopf, DirektSprechen, KopfHaus, Regionalband } from '@/components/apply/seite';
+import { UNTERLAGEN_ANKER, Unterlagen } from '@/components/apply/unterlagen';
+import { Seitenkopf } from '@/components/seitenkopf';
 import { JsonLd } from '@/components/seo/JsonLd';
-import { ContactOptions } from '@/components/site/ContactOptions';
 import { WEBSITE_ID } from '@/components/site/site-jsonld';
-import { jobIdFromParam, legacyRedirectTarget, type SearchParamsRecord } from '@/lib/apply/params';
+import { jobIdFromParam, legacyRedirectTarget, type SearchParamsRecord, wantsDocuments } from '@/lib/apply/params';
 import { getDiscretionPromise } from '@/lib/content/process';
 import { FACTS } from '@/lib/content/facts';
 import { getFunnelOptions, getJobById } from '@/lib/jobs/registry';
@@ -42,7 +42,8 @@ function preselectedJob(params: SearchParamsRecord) {
 export default async function BewerbungPage({ searchParams }: { searchParams: Promise<SearchParamsRecord> }) {
   const params = await searchParams;
 
-  // Altes Portal: ?tab=dossier war die A4-Mappe. quiz/form/vault/direct und ?direct=true landen im Flow.
+  // Altes Portal (E-BEW-027): ?tab=dossier war die A4-Mappe (308). quiz/form/vault/direct und ?direct=true landen
+  // im Flow (200); vault/direct weisen im Kopf auf den Abschnitt „Unterlagen einreichen“ (wantsDocuments).
   const legacyTarget = legacyRedirectTarget(params);
   if (legacyTarget) permanentRedirect(legacyTarget);
 
@@ -51,6 +52,8 @@ export default async function BewerbungPage({ searchParams }: { searchParams: Pr
   // Vorausgewählte Ausbildung: meist noch Schule, also kein Arbeitgeber und keine Diskretionszusage.
   const preselected = initialJobId ? getJobById(initialJobId) : undefined;
   const discretion = getDiscretionPromise(preselected?.apply.questionSet);
+
+  const kopf = bewerbungKopf({ diskret: discretion !== null, unterlagenWunsch: wantsDocuments(params), unterlagenAnker: UNTERLAGEN_ANKER });
 
   return (
     <>
@@ -66,27 +69,36 @@ export default async function BewerbungPage({ searchParams }: { searchParams: Pr
           inLanguage: 'de-DE',
         }}
       />
-      <h1 className="sr-only">Bewerbung bei Bad und Energie</h1>
 
-      <Container size="prose" className="pb-section-sm pt-6 sm:pt-10">
-        {/* key: Ein Link auf eine andere Vorauswahl startet den Flow neu; eigene ?schritt=-Einträge nicht. */}
-        <ApplyFlow key={initialJobId ?? 'ohne-stelle'} variant="page" initialJobId={initialJobId} funnel="bewerbung" />
-      </Container>
+      {/* Kopf im Design des Einstiegs (E-023), Variante arbeit: Papier mit h1, schmale Navy-Fläche mit dem Haus;
+          am Handy ein knappes Navy-Band. Keine rote Fläche: die Hauptaktion ist der Flow selbst. */}
+      <Seitenkopf
+        variante="arbeit"
+        titelId="bewerbung-titel"
+        etikett={kopf.etikett}
+        titel={kopf.titel}
+        unterzeile={kopf.unterzeile}
+        mikrotext={kopf.mikrotext}
+        zweitweg={kopf.zweitweg}
+        masse={kopf.masse}
+        panel={<KopfHaus />}
+      />
 
-      <Section tone="subtle" spacing="compact" aria-labelledby="bewerbung-kontakt">
-        <Container size="prose" className="flex flex-col gap-5">
-          <h2 id="bewerbung-kontakt" className="text-title-3 text-ink">
-            Lieber direkt sprechen?
-          </h2>
-          {discretion && (
-            <p className="flex max-w-prose gap-3 text-body text-ink">
-              <ShieldCheck aria-hidden="true" strokeWidth={1.75} className="mt-0.5 size-5 shrink-0 text-ink-muted" />
-              {discretion}
-            </p>
-          )}
-          <ContactOptions variant="inline" whatsappMessage={whatsAppMessageFor(PATH)} />
-        </Container>
-      </Section>
+      <BewerbungFlaeche
+        flow={
+          /* key: Ein Link auf eine andere Vorauswahl startet den Flow neu; eigene ?schritt=-Einträge nicht. */
+          <ApplyFlow key={initialJobId ?? 'ohne-stelle'} variant="page" initialJobId={initialJobId} funnel="bewerbung" />
+        }
+        wege={
+          <>
+            {/* E-BEW-012/E-START-007: ehrlich abgeschaltet bis zur Anbindung in Phase 2 (R5-UPLOAD-01). */}
+            <Unterlagen />
+            <DirektSprechen diskretion={discretion} whatsappMessage={whatsAppMessageFor(PATH)} />
+          </>
+        }
+      />
+
+      <Regionalband />
     </>
   );
 }
