@@ -1,0 +1,818 @@
+{
+  "label": "v6a1-css-b4-prose",
+  "base": "http://localhost:3461",
+  "erstellt": "2026-10-10T11:14:35.441Z",
+  "dauerSekunden": 228,
+  "chromium": "Chromium 141.0.7390.37",
+  "lighthouse": "13.5.0",
+  "node": "v22.22.0",
+  "laeufeJeKombination": 3,
+  "wiederholungenBeiTechnischemFehler": 2,
+  "formfaktoren": [
+    "mobile"
+  ],
+  "aufwaermen": true,
+  "statistik": "Median (bei gerader Anzahl: Mittel der beiden mittleren Werte), min, max über die gültigen Läufe",
+  "kilobyte": "1 KB = 1024 Byte",
+  "bedingungen": {
+    "mobile": {
+      "formFactor": "mobile",
+      "drosselungsmethode": "simulate",
+      "drosselung": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "bildschirm": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      },
+      "userAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36"
+    }
+  },
+  "einstellungen": {
+    "onlyCategories": [
+      "performance",
+      "accessibility",
+      "best-practices",
+      "seo"
+    ],
+    "disableFullPageScreenshot": true,
+    "strikt_nacheinander": true,
+    "chromiumProLauf": "neu gestartet",
+    "fremdhostSperre": "host-resolver-rules: nur localhost auflösbar"
+  },
+  "budget": {
+    "perfMobilMin": 90,
+    "lcpSMax": 2.5,
+    "clsMax": 0.1,
+    "tbtMsMax": 200
+  },
+  "ergebnisse": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "haupt": true,
+      "url": "http://localhost:3461/",
+      "formfaktor": "mobile",
+      "laeufe": 3,
+      "gueltigeLaeufe": 3,
+      "median": {
+        "leistung": 69,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1713.366,
+        "lcpMs": 2900.3862,
+        "cls": 0,
+        "tbtMs": 2313.379999999999,
+        "siMs": 2029.9226366425032,
+        "ttiMs": 5395.909999999999,
+        "bytes": 469912,
+        "anfragen": 27,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 65,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1489.2399999999998,
+        "lcpMs": 2389.24,
+        "cls": 0,
+        "tbtMs": 193.06100000000038,
+        "siMs": 1891.6914094944786,
+        "ttiMs": 4066.2208999999993,
+        "bytes": 468434,
+        "anfragen": 27,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 90,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1725.5792999999999,
+        "lcpMs": 3063.3659999999995,
+        "cls": 0,
+        "tbtMs": 2740.2103499999994,
+        "siMs": 2488.2772080596546,
+        "ttiMs": 6258.6161950000005,
+        "bytes": 469917,
+        "anfragen": 27,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "div.einstieg-module__tfiXEq__einstieg > div.einstieg-module__tfiXEq__rest > div.einstieg-module__tfiXEq__handlung > p.einstieg-module__tfiXEq__lead",
+      "cpuBenchmarkMedian": 1279.5,
+      "budget": {
+        "urteil": "über Budget",
+        "verletzt": [
+          "Perf 69 < 90",
+          "LCP 2,90 s > 2,5 s",
+          "TBT 2313 ms > 200 ms"
+        ]
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 90,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1713.366,
+          "lcpMs": 3063.3659999999995,
+          "cls": 0,
+          "tbtMs": 193.06100000000038,
+          "siMs": 1891.6914094944786,
+          "ttiMs": 4066.2208999999993,
+          "bytes": 468434,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__einstieg > div.einstieg-module__tfiXEq__rest > div.einstieg-module__tfiXEq__handlung > p.einstieg-module__tfiXEq__lead",
+            "snippet": "<p class=\"einstieg-module__tfiXEq__lead\">",
+            "bezeichnung": "Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt üb…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 24,
+            "elementRenderDelay": 397
+          },
+          "rohdatei": ".roh/v6a1-css-b4-prose/lh/start-mobile-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 65,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1725.5792999999999,
+          "lcpMs": 2900.3862,
+          "cls": 0,
+          "tbtMs": 2740.2103499999994,
+          "siMs": 2488.2772080596546,
+          "ttiMs": 6258.6161950000005,
+          "bytes": 469917,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__einstieg > div.einstieg-module__tfiXEq__rest > div.einstieg-module__tfiXEq__handlung > p.einstieg-module__tfiXEq__lead",
+            "snippet": "<p class=\"einstieg-module__tfiXEq__lead\">",
+            "bezeichnung": "Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt üb…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 16,
+            "elementRenderDelay": 506
+          },
+          "rohdatei": ".roh/v6a1-css-b4-prose/lh/start-mobile-2.json",
+          "fehlversuche": [
+            "NO_NAVSTART: Something went wrong with recording the trace over your page load. Please run Lighthouse again. (NO_NAVSTART)"
+          ]
+        },
+        {
+          "n": 3,
+          "leistung": 69,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1489.2399999999998,
+          "lcpMs": 2389.24,
+          "cls": 0,
+          "tbtMs": 2313.379999999999,
+          "siMs": 2029.9226366425032,
+          "ttiMs": 5395.909999999999,
+          "bytes": 469912,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__einstieg > div.einstieg-module__tfiXEq__rest > div.einstieg-module__tfiXEq__handlung > p.einstieg-module__tfiXEq__lead",
+            "snippet": "<p class=\"einstieg-module__tfiXEq__lead\">",
+            "bezeichnung": "Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt üb…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 49,
+            "elementRenderDelay": 379
+          },
+          "rohdatei": ".roh/v6a1-css-b4-prose/lh/start-mobile-3.json"
+        }
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "haupt": true,
+      "url": "http://localhost:3461/jobs/anlagenmechaniker-shk-wetzlar",
+      "formfaktor": "mobile",
+      "laeufe": 3,
+      "gueltigeLaeufe": 3,
+      "median": {
+        "leistung": 73,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1326.658,
+        "lcpMs": 2623.9148999999998,
+        "cls": 0,
+        "tbtMs": 1093.714,
+        "siMs": 1624.88798544879,
+        "ttiMs": 4639.487000000001,
+        "bytes": 486569,
+        "anfragen": 29,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 68,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1273.9149,
+        "lcpMs": 2076.658,
+        "cls": 0,
+        "tbtMs": 840.6709999999998,
+        "siMs": 1570.7797750593645,
+        "ttiMs": 4623.529,
+        "bytes": 486569,
+        "anfragen": 29,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 79,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1402.929,
+        "lcpMs": 2735.286,
+        "cls": 0.014963045181310192,
+        "tbtMs": 2036.0425500000001,
+        "siMs": 2416.434293999369,
+        "ttiMs": 4722.757449999999,
+        "bytes": 486569,
+        "anfragen": 29,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+      "cpuBenchmarkMedian": 1165,
+      "budget": {
+        "urteil": "über Budget",
+        "verletzt": [
+          "Perf 73 < 90",
+          "LCP 2,62 s > 2,5 s",
+          "TBT 1094 ms > 200 ms"
+        ]
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 68,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1273.9149,
+          "lcpMs": 2623.9148999999998,
+          "cls": 0,
+          "tbtMs": 2036.0425500000001,
+          "siMs": 2416.434293999369,
+          "ttiMs": 4722.757449999999,
+          "bytes": 486569,
+          "anfragen": 29,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Anlagen­mechaniker SHK"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 27,
+            "elementRenderDelay": 675
+          },
+          "rohdatei": ".roh/v6a1-css-b4-prose/lh/stelle-anlagenmechaniker-mobile-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 73,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1402.929,
+          "lcpMs": 2735.286,
+          "cls": 0,
+          "tbtMs": 1093.714,
+          "siMs": 1624.88798544879,
+          "ttiMs": 4623.529,
+          "bytes": 486569,
+          "anfragen": 29,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Anlagen­mechaniker SHK"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 60,
+            "elementRenderDelay": 445
+          },
+          "rohdatei": ".roh/v6a1-css-b4-prose/lh/stelle-anlagenmechaniker-mobile-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 79,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1326.658,
+          "lcpMs": 2076.658,
+          "cls": 0.014963045181310192,
+          "tbtMs": 840.6709999999998,
+          "siMs": 1570.7797750593645,
+          "ttiMs": 4639.487000000001,
+          "bytes": 486569,
+          "anfragen": 29,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Anlagen­mechaniker SHK"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 17,
+            "elementRenderDelay": 383
+          },
+          "rohdatei": ".roh/v6a1-css-b4-prose/lh/stelle-anlagenmechaniker-mobile-3.json"
+        }
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "haupt": true,
+      "url": "http://localhost:3461/bewerbung",
+      "formfaktor": "mobile",
+      "laeufe": 3,
+      "gueltigeLaeufe": 3,
+      "median": {
+        "leistung": 72,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1273.046,
+        "lcpMs": 2659.5690000000004,
+        "cls": 0,
+        "tbtMs": 1240.5,
+        "siMs": 1505.3625127243479,
+        "ttiMs": 4901.019,
+        "bytes": 462853,
+        "anfragen": 27,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 62,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1268.897,
+        "lcpMs": 2653.3455,
+        "cls": 0,
+        "tbtMs": 328.99999999999955,
+        "siMs": 1425.6202243515752,
+        "ttiMs": 4180.045499999999,
+        "bytes": 462853,
+        "anfragen": 27,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 89,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1510.179,
+        "lcpMs": 3961.179,
+        "cls": 0.0004579140264715113,
+        "tbtMs": 1320.714,
+        "siMs": 2360.430220885811,
+        "ttiMs": 5124.329,
+        "bytes": 462853,
+        "anfragen": 28,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "div.transition-[opacity,translate] > div.flex > div.flex > p.max-w-prose",
+      "cpuBenchmarkMedian": 1430,
+      "budget": {
+        "urteil": "über Budget",
+        "verletzt": [
+          "Perf 72 < 90",
+          "LCP 2,66 s > 2,5 s",
+          "TBT 1241 ms > 200 ms"
+        ]
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 89,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1268.897,
+          "lcpMs": 2653.3455,
+          "cls": 0.0004579140264715113,
+          "tbtMs": 328.99999999999955,
+          "siMs": 1425.6202243515752,
+          "ttiMs": 4180.045499999999,
+          "bytes": 462853,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.transition-[opacity,translate] > div.flex > div.flex > p.max-w-prose",
+            "snippet": "<p class=\"max-w-prose text-body text-ink-2\" data-rahmung=\"passung\">",
+            "bezeichnung": "Finde in 60 Sekunden heraus, ob wir zu dir passen."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 232,
+            "elementRenderDelay": 412
+          },
+          "rohdatei": ".roh/v6a1-css-b4-prose/lh/bewerbung-mobile-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 72,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1273.046,
+          "lcpMs": 2659.5690000000004,
+          "cls": 0,
+          "tbtMs": 1240.5,
+          "siMs": 1505.3625127243479,
+          "ttiMs": 4901.019,
+          "bytes": 462853,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.transition-[opacity,translate] > div.flex > div.flex > p.max-w-prose",
+            "snippet": "<p class=\"max-w-prose text-body text-ink-2\" data-rahmung=\"passung\">",
+            "bezeichnung": "Finde in 60 Sekunden heraus, ob wir zu dir passen."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 184,
+            "elementRenderDelay": 518
+          },
+          "rohdatei": ".roh/v6a1-css-b4-prose/lh/bewerbung-mobile-2.json",
+          "fehlversuche": [
+            "NO_NAVSTART: Something went wrong with recording the trace over your page load. Please run Lighthouse again. (NO_NAVSTART)"
+          ]
+        },
+        {
+          "n": 3,
+          "leistung": 62,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1510.179,
+          "lcpMs": 3961.179,
+          "cls": 0,
+          "tbtMs": 1320.714,
+          "siMs": 2360.430220885811,
+          "ttiMs": 5124.329,
+          "bytes": 462853,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.transition-[opacity,translate] > div.flex > div.flex > p.max-w-prose",
+            "snippet": "<p class=\"max-w-prose text-body text-ink-2\" data-rahmung=\"passung\">",
+            "bezeichnung": "Finde in 60 Sekunden heraus, ob wir zu dir passen."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 97,
+            "elementRenderDelay": 927
+          },
+          "rohdatei": ".roh/v6a1-css-b4-prose/lh/bewerbung-mobile-3.json"
+        }
+      ]
+    },
+    {
+      "pfad": "/bewerbung/mappe",
+      "slug": "bewerbung-mappe",
+      "haupt": false,
+      "url": "http://localhost:3461/bewerbung/mappe",
+      "formfaktor": "mobile",
+      "laeufe": 3,
+      "gueltigeLaeufe": 3,
+      "median": {
+        "leistung": 67,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 69,
+        "fcpMs": 1485.2350000000001,
+        "lcpMs": 3492.8524999999995,
+        "cls": 0,
+        "tbtMs": 749.8690000000006,
+        "siMs": 1880.4431129850525,
+        "ttiMs": 4971.3805,
+        "bytes": 470892,
+        "anfragen": 32,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 64,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 69,
+        "fcpMs": 1468.187,
+        "lcpMs": 2068.187,
+        "cls": 0,
+        "tbtMs": 603,
+        "siMs": 1477.12091488422,
+        "ttiMs": 4780.893550000001,
+        "bytes": 469770,
+        "anfragen": 32,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 83,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 69,
+        "fcpMs": 1748.4465,
+        "lcpMs": 4199.4465,
+        "cls": 0.00020344940858285917,
+        "tbtMs": 1671,
+        "siMs": 1904.369232687137,
+        "ttiMs": 5652.42575,
+        "bytes": 471069,
+        "anfragen": 32,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "main#main > header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__einleitung > p",
+      "cpuBenchmarkMedian": 1087,
+      "budget": {
+        "urteil": "über Budget",
+        "verletzt": [
+          "Perf 67 < 90",
+          "LCP 3,49 s > 2,5 s",
+          "TBT 750 ms > 200 ms"
+        ]
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 64,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 69,
+          "fcpMs": 1485.2350000000001,
+          "lcpMs": 3492.8524999999995,
+          "cls": 0,
+          "tbtMs": 1671,
+          "siMs": 1904.369232687137,
+          "ttiMs": 5652.42575,
+          "bytes": 470892,
+          "anfragen": 32,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "main#main > header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__einleitung > p",
+            "snippet": "<p>",
+            "bezeichnung": "Zum Drucken oder als PDF. Die Mappe ist freiwillig: Für den ersten Schritt brau…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 21,
+            "elementRenderDelay": 716
+          },
+          "rohdatei": ".roh/v6a1-css-b4-prose/lh/bewerbung-mappe-mobile-1.json",
+          "fehlversuche": [
+            "NO_NAVSTART: Something went wrong with recording the trace over your page load. Please run Lighthouse again. (NO_NAVSTART)"
+          ]
+        },
+        {
+          "n": 2,
+          "leistung": 67,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 69,
+          "fcpMs": 1748.4465,
+          "lcpMs": 4199.4465,
+          "cls": 0,
+          "tbtMs": 749.8690000000006,
+          "siMs": 1880.4431129850525,
+          "ttiMs": 4780.893550000001,
+          "bytes": 469770,
+          "anfragen": 32,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "main#main > header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__einleitung > p",
+            "snippet": "<p>",
+            "bezeichnung": "Zum Drucken oder als PDF. Die Mappe ist freiwillig: Für den ersten Schritt brau…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 48,
+            "elementRenderDelay": 635
+          },
+          "rohdatei": ".roh/v6a1-css-b4-prose/lh/bewerbung-mappe-mobile-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 83,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 69,
+          "fcpMs": 1468.187,
+          "lcpMs": 2068.187,
+          "cls": 0.00020344940858285917,
+          "tbtMs": 603,
+          "siMs": 1477.12091488422,
+          "ttiMs": 4971.3805,
+          "bytes": 471069,
+          "anfragen": 32,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "main#main > header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__einleitung > p",
+            "snippet": "<p>",
+            "bezeichnung": "Zum Drucken oder als PDF. Die Mappe ist freiwillig: Für den ersten Schritt brau…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 44,
+            "elementRenderDelay": 387
+          },
+          "rohdatei": ".roh/v6a1-css-b4-prose/lh/bewerbung-mappe-mobile-3.json"
+        }
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "haupt": false,
+      "url": "http://localhost:3461/datenschutz",
+      "formfaktor": "mobile",
+      "laeufe": 3,
+      "gueltigeLaeufe": 3,
+      "median": {
+        "leistung": 82,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 69,
+        "fcpMs": 1251.396,
+        "lcpMs": 2717.5120499999994,
+        "cls": 0,
+        "tbtMs": 528.1720000000003,
+        "siMs": 1517.51205,
+        "ttiMs": 3658.6868000000004,
+        "bytes": 447216,
+        "anfragen": 29,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 71,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 69,
+        "fcpMs": 1238.688,
+        "lcpMs": 2151.3959999999997,
+        "cls": 0,
+        "tbtMs": 45.5,
+        "siMs": 1454.0207554205535,
+        "ttiMs": 3393.6388574999996,
+        "bytes": 446267,
+        "anfragen": 29,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 96,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 69,
+        "fcpMs": 1517.51205,
+        "lcpMs": 2738.688,
+        "cls": 0,
+        "tbtMs": 2048.9529999999995,
+        "siMs": 1976.9881849233618,
+        "ttiMs": 4775.079899999999,
+        "bytes": 447217,
+        "anfragen": 29,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "div.recht-module___s8qoq__kopfzone > div.recht-module___s8qoq__vorspann > div.recht-module___s8qoq__einleitung > p",
+      "cpuBenchmarkMedian": 1528.5,
+      "budget": {
+        "urteil": "über Budget",
+        "verletzt": [
+          "Perf 82 < 90",
+          "LCP 2,72 s > 2,5 s",
+          "TBT 528 ms > 200 ms"
+        ]
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 82,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 69,
+          "fcpMs": 1238.688,
+          "lcpMs": 2738.688,
+          "cls": 0,
+          "tbtMs": 528.1720000000003,
+          "siMs": 1454.0207554205535,
+          "ttiMs": 3658.6868000000004,
+          "bytes": 446267,
+          "anfragen": 29,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.recht-module___s8qoq__kopfzone > div.recht-module___s8qoq__vorspann > div.recht-module___s8qoq__einleitung > p",
+            "snippet": "<p>",
+            "bezeichnung": "Welche Daten wir verarbeiten, wenn du diese Website nutzt oder dich bei uns bew…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 31,
+            "elementRenderDelay": 365
+          },
+          "rohdatei": ".roh/v6a1-css-b4-prose/lh/datenschutz-mobile-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 71,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 69,
+          "fcpMs": 1251.396,
+          "lcpMs": 2151.3959999999997,
+          "cls": 0,
+          "tbtMs": 2048.9529999999995,
+          "siMs": 1976.9881849233618,
+          "ttiMs": 4775.079899999999,
+          "bytes": 447216,
+          "anfragen": 29,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.recht-module___s8qoq__kopfzone > div.recht-module___s8qoq__vorspann > div.recht-module___s8qoq__einleitung > p",
+            "snippet": "<p>",
+            "bezeichnung": "Welche Daten wir verarbeiten, wenn du diese Website nutzt oder dich bei uns bew…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 35,
+            "elementRenderDelay": 580
+          },
+          "rohdatei": ".roh/v6a1-css-b4-prose/lh/datenschutz-mobile-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 96,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 69,
+          "fcpMs": 1517.51205,
+          "lcpMs": 2717.5120499999994,
+          "cls": 0,
+          "tbtMs": 45.5,
+          "siMs": 1517.51205,
+          "ttiMs": 3393.6388574999996,
+          "bytes": 447217,
+          "anfragen": 29,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.recht-module___s8qoq__kopfzone > div.recht-module___s8qoq__vorspann > div.recht-module___s8qoq__einleitung > p",
+            "snippet": "<p>",
+            "bezeichnung": "Welche Daten wir verarbeiten, wenn du diese Website nutzt oder dich bei uns bew…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 10,
+            "elementRenderDelay": 226
+          },
+          "rohdatei": ".roh/v6a1-css-b4-prose/lh/datenschutz-mobile-3.json"
+        }
+      ]
+    }
+  ]
+}

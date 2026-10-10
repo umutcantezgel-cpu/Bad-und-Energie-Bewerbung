@@ -1,0 +1,360 @@
+{
+  "label": "v6-v6-g2-start-stellen",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T11:18:49.864Z",
+  "seiten": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 28693,
+      "seitenhoehe": 16415,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/v6-v6-g2-start-stellen/start__m390-light__01.webp",
+        "belege/v6-v6-g2-start-stellen/start__m390-light__02.webp",
+        "belege/v6-v6-g2-start-stellen/start__m390-light__03.webp",
+        "belege/v6-v6-g2-start-stellen/start__m390-light__04.webp",
+        "belege/v6-v6-g2-start-stellen/start__m390-light__05.webp",
+        "belege/v6-v6-g2-start-stellen/start__m390-light__06.webp",
+        "belege/v6-v6-g2-start-stellen/start__m390-light__07.webp",
+        "belege/v6-v6-g2-start-stellen/start__m390-light__08.webp",
+        "belege/v6-v6-g2-start-stellen/start__m390-light__09.webp",
+        "belege/v6-v6-g2-start-stellen/start__m390-light__10.webp",
+        "belege/v6-v6-g2-start-stellen/start__m390-light__11.webp",
+        "belege/v6-v6-g2-start-stellen/start__m390-light__12.webp",
+        "belege/v6-v6-g2-start-stellen/start__m390-light__13.webp",
+        "belege/v6-v6-g2-start-stellen/start__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 12248,
+      "seitenhoehe": 12596,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/v6-v6-g2-start-stellen/start__d1440-light__01.webp",
+        "belege/v6-v6-g2-start-stellen/start__d1440-light__02.webp",
+        "belege/v6-v6-g2-start-stellen/start__d1440-light__03.webp",
+        "belege/v6-v6-g2-start-stellen/start__d1440-light__04.webp",
+        "belege/v6-v6-g2-start-stellen/start__d1440-light__05.webp",
+        "belege/v6-v6-g2-start-stellen/start__d1440-light__06.webp",
+        "belege/v6-v6-g2-start-stellen/start__d1440-light__07.webp",
+        "belege/v6-v6-g2-start-stellen/start__d1440-light__08.webp",
+        "belege/v6-v6-g2-start-stellen/start__d1440-light__09.webp",
+        "belege/v6-v6-g2-start-stellen/start__d1440-light__10.webp",
+        "belege/v6-v6-g2-start-stellen/start__d1440-light__11.webp",
+        "belege/v6-v6-g2-start-stellen/start__d1440-light__12.webp",
+        "belege/v6-v6-g2-start-stellen/start__d1440-light__13.webp",
+        "belege/v6-v6-g2-start-stellen/start__d1440-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 22292,
+      "seitenhoehe": 13202,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__m390-light__01.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__m390-light__02.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__m390-light__03.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__m390-light__04.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__m390-light__05.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__m390-light__06.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__m390-light__07.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__m390-light__08.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__m390-light__09.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__m390-light__10.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__m390-light__11.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__m390-light__12.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__m390-light__13.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 10513,
+      "seitenhoehe": 9480,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__d1440-light__01.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__d1440-light__02.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__d1440-light__03.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__d1440-light__04.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__d1440-light__05.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__d1440-light__06.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__d1440-light__07.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__d1440-light__08.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__d1440-light__09.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__d1440-light__10.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-anlagenmechaniker__d1440-light__11.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "slug": "stelle-kundendienst",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 23503,
+      "seitenhoehe": 13344,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-kundendienst__m390-light__01.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-kundendienst__m390-light__02.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-kundendienst__m390-light__03.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-kundendienst__m390-light__04.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-kundendienst__m390-light__05.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-kundendienst__m390-light__06.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-kundendienst__m390-light__07.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-kundendienst__m390-light__08.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-kundendienst__m390-light__09.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-kundendienst__m390-light__10.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-kundendienst__m390-light__11.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-kundendienst__m390-light__12.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-kundendienst__m390-light__13.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-kundendienst__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "slug": "stelle-kundendienst",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 10297,
+      "seitenhoehe": 9746,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/v6-v6-g2-start-stellen/stelle-kundendienst__d1440-light__01.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-kundendienst__d1440-light__02.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-kundendienst__d1440-light__03.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-kundendienst__d1440-light__04.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-kundendienst__d1440-light__05.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-kundendienst__d1440-light__06.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-kundendienst__d1440-light__07.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-kundendienst__d1440-light__08.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-kundendienst__d1440-light__09.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-kundendienst__d1440-light__10.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-kundendienst__d1440-light__11.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "slug": "stelle-obermonteur",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 24102,
+      "seitenhoehe": 12768,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-obermonteur__m390-light__01.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-obermonteur__m390-light__02.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-obermonteur__m390-light__03.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-obermonteur__m390-light__04.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-obermonteur__m390-light__05.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-obermonteur__m390-light__06.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-obermonteur__m390-light__07.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-obermonteur__m390-light__08.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-obermonteur__m390-light__09.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-obermonteur__m390-light__10.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-obermonteur__m390-light__11.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-obermonteur__m390-light__12.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-obermonteur__m390-light__13.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-obermonteur__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "slug": "stelle-obermonteur",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 9550,
+      "seitenhoehe": 9397,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/v6-v6-g2-start-stellen/stelle-obermonteur__d1440-light__01.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-obermonteur__d1440-light__02.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-obermonteur__d1440-light__03.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-obermonteur__d1440-light__04.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-obermonteur__d1440-light__05.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-obermonteur__d1440-light__06.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-obermonteur__d1440-light__07.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-obermonteur__d1440-light__08.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-obermonteur__d1440-light__09.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-obermonteur__d1440-light__10.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-obermonteur__d1440-light__11.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-ausbildung",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 20693,
+      "seitenhoehe": 12006,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-ausbildung__m390-light__01.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-ausbildung__m390-light__02.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-ausbildung__m390-light__03.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-ausbildung__m390-light__04.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-ausbildung__m390-light__05.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-ausbildung__m390-light__06.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-ausbildung__m390-light__07.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-ausbildung__m390-light__08.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-ausbildung__m390-light__09.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-ausbildung__m390-light__10.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-ausbildung__m390-light__11.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-ausbildung__m390-light__12.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-ausbildung__m390-light__13.webp",
+        ".roh/v6-v6-g2-start-stellen/webp/stelle-ausbildung__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-ausbildung",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 8751,
+      "seitenhoehe": 8932,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/v6-v6-g2-start-stellen/stelle-ausbildung__d1440-light__01.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-ausbildung__d1440-light__02.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-ausbildung__d1440-light__03.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-ausbildung__d1440-light__04.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-ausbildung__d1440-light__05.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-ausbildung__d1440-light__06.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-ausbildung__d1440-light__07.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-ausbildung__d1440-light__08.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-ausbildung__d1440-light__09.webp",
+        "belege/v6-v6-g2-start-stellen/stelle-ausbildung__d1440-light__10.webp"
+      ]
+    }
+  ]
+}

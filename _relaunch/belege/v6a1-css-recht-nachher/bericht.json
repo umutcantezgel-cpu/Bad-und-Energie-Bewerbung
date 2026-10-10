@@ -1,0 +1,138 @@
+{
+  "label": "v6a1-css-recht-nachher",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T11:25:44.516Z",
+  "seiten": [
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 25230,
+      "seitenhoehe": 19900,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-recht-nachher/webp/datenschutz__m390-light__01.webp",
+        ".roh/v6a1-css-recht-nachher/webp/datenschutz__m390-light__02.webp",
+        ".roh/v6a1-css-recht-nachher/webp/datenschutz__m390-light__03.webp",
+        ".roh/v6a1-css-recht-nachher/webp/datenschutz__m390-light__04.webp",
+        ".roh/v6a1-css-recht-nachher/webp/datenschutz__m390-light__05.webp",
+        ".roh/v6a1-css-recht-nachher/webp/datenschutz__m390-light__06.webp",
+        ".roh/v6a1-css-recht-nachher/webp/datenschutz__m390-light__07.webp",
+        ".roh/v6a1-css-recht-nachher/webp/datenschutz__m390-light__08.webp",
+        ".roh/v6a1-css-recht-nachher/webp/datenschutz__m390-light__09.webp",
+        ".roh/v6a1-css-recht-nachher/webp/datenschutz__m390-light__10.webp",
+        ".roh/v6a1-css-recht-nachher/webp/datenschutz__m390-light__11.webp",
+        ".roh/v6a1-css-recht-nachher/webp/datenschutz__m390-light__12.webp",
+        ".roh/v6a1-css-recht-nachher/webp/datenschutz__m390-light__13.webp",
+        ".roh/v6a1-css-recht-nachher/webp/datenschutz__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 12509,
+      "seitenhoehe": 13166,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/v6a1-css-recht-nachher/datenschutz__d1440-light__01.webp",
+        "belege/v6a1-css-recht-nachher/datenschutz__d1440-light__02.webp",
+        "belege/v6a1-css-recht-nachher/datenschutz__d1440-light__03.webp",
+        "belege/v6a1-css-recht-nachher/datenschutz__d1440-light__04.webp",
+        "belege/v6a1-css-recht-nachher/datenschutz__d1440-light__05.webp",
+        "belege/v6a1-css-recht-nachher/datenschutz__d1440-light__06.webp",
+        "belege/v6a1-css-recht-nachher/datenschutz__d1440-light__07.webp",
+        "belege/v6a1-css-recht-nachher/datenschutz__d1440-light__08.webp",
+        "belege/v6a1-css-recht-nachher/datenschutz__d1440-light__09.webp",
+        "belege/v6a1-css-recht-nachher/datenschutz__d1440-light__10.webp",
+        "belege/v6a1-css-recht-nachher/datenschutz__d1440-light__11.webp",
+        "belege/v6a1-css-recht-nachher/datenschutz__d1440-light__12.webp",
+        "belege/v6a1-css-recht-nachher/datenschutz__d1440-light__13.webp",
+        "belege/v6a1-css-recht-nachher/datenschutz__d1440-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 9521,
+      "seitenhoehe": 5426,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/v6a1-css-recht-nachher/webp/impressum__m390-light__01.webp",
+        ".roh/v6a1-css-recht-nachher/webp/impressum__m390-light__02.webp",
+        ".roh/v6a1-css-recht-nachher/webp/impressum__m390-light__03.webp",
+        ".roh/v6a1-css-recht-nachher/webp/impressum__m390-light__04.webp",
+        ".roh/v6a1-css-recht-nachher/webp/impressum__m390-light__05.webp",
+        ".roh/v6a1-css-recht-nachher/webp/impressum__m390-light__06.webp",
+        ".roh/v6a1-css-recht-nachher/webp/impressum__m390-light__07.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 4335,
+      "seitenhoehe": 3690,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/v6a1-css-recht-nachher/impressum__d1440-light__01.webp",
+        "belege/v6a1-css-recht-nachher/impressum__d1440-light__02.webp",
+        "belege/v6a1-css-recht-nachher/impressum__d1440-light__03.webp",
+        "belege/v6a1-css-recht-nachher/impressum__d1440-light__04.webp",
+        "belege/v6a1-css-recht-nachher/impressum__d1440-light__05.webp"
+      ]
+    }
+  ]
+}

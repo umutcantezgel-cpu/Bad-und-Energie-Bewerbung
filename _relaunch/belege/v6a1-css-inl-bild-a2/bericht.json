@@ -1,0 +1,38 @@
+{
+  "label": "v6a1-css-inl-bild-a2",
+  "base": "http://localhost:3460",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T13:49:52.294Z",
+  "seiten": [
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 9732,
+      "seitenhoehe": 9480,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/v6a1-css-inl-bild-a2/stelle-anlagenmechaniker__d1440-light__01.webp",
+        "belege/v6a1-css-inl-bild-a2/stelle-anlagenmechaniker__d1440-light__02.webp",
+        "belege/v6a1-css-inl-bild-a2/stelle-anlagenmechaniker__d1440-light__03.webp",
+        "belege/v6a1-css-inl-bild-a2/stelle-anlagenmechaniker__d1440-light__04.webp",
+        "belege/v6a1-css-inl-bild-a2/stelle-anlagenmechaniker__d1440-light__05.webp",
+        "belege/v6a1-css-inl-bild-a2/stelle-anlagenmechaniker__d1440-light__06.webp",
+        "belege/v6a1-css-inl-bild-a2/stelle-anlagenmechaniker__d1440-light__07.webp",
+        "belege/v6a1-css-inl-bild-a2/stelle-anlagenmechaniker__d1440-light__08.webp",
+        "belege/v6a1-css-inl-bild-a2/stelle-anlagenmechaniker__d1440-light__09.webp",
+        "belege/v6a1-css-inl-bild-a2/stelle-anlagenmechaniker__d1440-light__10.webp",
+        "belege/v6a1-css-inl-bild-a2/stelle-anlagenmechaniker__d1440-light__11.webp"
+      ]
+    }
+  ]
+}

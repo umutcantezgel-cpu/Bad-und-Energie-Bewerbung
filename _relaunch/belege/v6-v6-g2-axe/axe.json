@@ -1,0 +1,765 @@
+{
+  "label": "v6-v6-g2-axe",
+  "base": "http://localhost:3450",
+  "erstellt": "2026-10-10T11:25:18.891Z",
+  "bedingungen": {
+    "werkzeug": "@axe-core/playwright 4.13.0, axe-core 4.13.0",
+    "chromium": "141.0.7390.37",
+    "tags": [
+      "wcag2a",
+      "wcag2aa",
+      "wcag21a",
+      "wcag21aa",
+      "wcag22aa"
+    ],
+    "reducedMotion": "reduce",
+    "ansichten": [
+      "m390 390×844",
+      "d1440 1440×900"
+    ],
+    "schemata": [
+      "light",
+      "dark"
+    ],
+    "vorbereitung": "goto networkidle → document.fonts.ready → scrollThrough → Zustand herstellen → Animationen beendet → axe (ganze Seite)",
+    "anfragesperre": "lib/browser.mjs (G5): POST/PUT/PATCH/DELETE → Attrappe, Tracking → 204, Fremdhosts blockiert",
+    "parallel": 3
+  },
+  "abdeckung": {
+    "grundmengeSeiten": 5,
+    "seitenlaeufe": 20,
+    "zustaende": 0,
+    "zustandslaeufe": 0,
+    "gesamtLaeufe": 20,
+    "erfolgreich": 20,
+    "fehlgeschlagen": []
+  },
+  "summenVerstossRegeln": {
+    "critical": 0,
+    "serious": 0,
+    "moderate": 0,
+    "minor": 0
+  },
+  "summenKnoten": {
+    "critical": 0,
+    "serious": 0,
+    "moderate": 0,
+    "minor": 0
+  },
+  "laufMitVerstoss": 0,
+  "laufOhneVerstoss": 20,
+  "anfragesperre": {},
+  "unklarRegeln": [
+    {
+      "id": "color-contrast",
+      "laeufe": 20,
+      "knoten": 524,
+      "seiten": [
+        "start",
+        "stelle-anlagenmechaniker",
+        "stelle-kundendienst",
+        "stelle-obermonteur",
+        "stelle-ausbildung"
+      ],
+      "ziel": ".fill-current[y=\"80\"][x=\"-64\"]",
+      "zielLauf": "start__m390-light"
+    },
+    {
+      "id": "aria-valid-attr-value",
+      "laeufe": 10,
+      "knoten": 10,
+      "seiten": [
+        "start",
+        "stelle-anlagenmechaniker",
+        "stelle-kundendienst",
+        "stelle-obermonteur",
+        "stelle-ausbildung"
+      ],
+      "ziel": "button[aria-haspopup=\"dialog\"]",
+      "zielLauf": "start__m390-light"
+    }
+  ],
+  "laeufe": [
+    {
+      "key": "start__m390-light",
+      "typ": "seite",
+      "slug": "start",
+      "titel": "start",
+      "pfad": "/",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 11836,
+      "geprueft": 34,
+      "unklar": 2,
+      "unklarRegeln": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "knoten": 1,
+          "ziel": "button[aria-haspopup=\"dialog\"]"
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 42,
+          "ziel": ".fill-current[y=\"80\"][x=\"-64\"]"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "start__m390-dark",
+      "typ": "seite",
+      "slug": "start",
+      "titel": "start",
+      "pfad": "/",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 13312,
+      "geprueft": 34,
+      "unklar": 2,
+      "unklarRegeln": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "knoten": 1,
+          "ziel": "button[aria-haspopup=\"dialog\"]"
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 42,
+          "ziel": ".fill-current[y=\"80\"][x=\"-64\"]"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "start__d1440-light",
+      "typ": "seite",
+      "slug": "start",
+      "titel": "start",
+      "pfad": "/",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 10678,
+      "geprueft": 34,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 108,
+          "ziel": ".kopf-module__gMMShq__zaehler"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "start__d1440-dark",
+      "typ": "seite",
+      "slug": "start",
+      "titel": "start",
+      "pfad": "/",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 11386,
+      "geprueft": 34,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 108,
+          "ziel": ".kopf-module__gMMShq__zaehler"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stelle-anlagenmechaniker__m390-light",
+      "typ": "seite",
+      "slug": "stelle-anlagenmechaniker",
+      "titel": "stelle-anlagenmechaniker",
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 10205,
+      "geprueft": 30,
+      "unklar": 2,
+      "unklarRegeln": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "knoten": 1,
+          "ziel": "button[aria-haspopup=\"dialog\"]"
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 17,
+          "ziel": ".zeichnung-module__deoHbq__hkWert"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stelle-anlagenmechaniker__m390-dark",
+      "typ": "seite",
+      "slug": "stelle-anlagenmechaniker",
+      "titel": "stelle-anlagenmechaniker",
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 9145,
+      "geprueft": 30,
+      "unklar": 2,
+      "unklarRegeln": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "knoten": 1,
+          "ziel": "button[aria-haspopup=\"dialog\"]"
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 17,
+          "ziel": ".zeichnung-module__deoHbq__hkWert"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stelle-anlagenmechaniker__d1440-light",
+      "typ": "seite",
+      "slug": "stelle-anlagenmechaniker",
+      "titel": "stelle-anlagenmechaniker",
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 8278,
+      "geprueft": 30,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 11,
+          "ziel": ".kopf-module__gMMShq__zaehler"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stelle-anlagenmechaniker__d1440-dark",
+      "typ": "seite",
+      "slug": "stelle-anlagenmechaniker",
+      "titel": "stelle-anlagenmechaniker",
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 8211,
+      "geprueft": 30,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 11,
+          "ziel": ".kopf-module__gMMShq__zaehler"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stelle-kundendienst__m390-light",
+      "typ": "seite",
+      "slug": "stelle-kundendienst",
+      "titel": "stelle-kundendienst",
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 10069,
+      "geprueft": 31,
+      "unklar": 2,
+      "unklarRegeln": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "knoten": 1,
+          "ziel": "button[aria-haspopup=\"dialog\"]"
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 17,
+          "ziel": ".zeichnung-module__deoHbq__hkWert"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stelle-kundendienst__m390-dark",
+      "typ": "seite",
+      "slug": "stelle-kundendienst",
+      "titel": "stelle-kundendienst",
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 9362,
+      "geprueft": 31,
+      "unklar": 2,
+      "unklarRegeln": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "knoten": 1,
+          "ziel": "button[aria-haspopup=\"dialog\"]"
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 17,
+          "ziel": ".zeichnung-module__deoHbq__hkWert"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stelle-kundendienst__d1440-light",
+      "typ": "seite",
+      "slug": "stelle-kundendienst",
+      "titel": "stelle-kundendienst",
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 9276,
+      "geprueft": 31,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 11,
+          "ziel": ".kopf-module__gMMShq__zaehler"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stelle-kundendienst__d1440-dark",
+      "typ": "seite",
+      "slug": "stelle-kundendienst",
+      "titel": "stelle-kundendienst",
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 8866,
+      "geprueft": 31,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 11,
+          "ziel": ".kopf-module__gMMShq__zaehler"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stelle-obermonteur__m390-light",
+      "typ": "seite",
+      "slug": "stelle-obermonteur",
+      "titel": "stelle-obermonteur",
+      "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 10807,
+      "geprueft": 30,
+      "unklar": 2,
+      "unklarRegeln": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "knoten": 1,
+          "ziel": "button[aria-haspopup=\"dialog\"]"
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 17,
+          "ziel": ".zeichnung-module__deoHbq__hkWert"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stelle-obermonteur__m390-dark",
+      "typ": "seite",
+      "slug": "stelle-obermonteur",
+      "titel": "stelle-obermonteur",
+      "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 10778,
+      "geprueft": 30,
+      "unklar": 2,
+      "unklarRegeln": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "knoten": 1,
+          "ziel": "button[aria-haspopup=\"dialog\"]"
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 17,
+          "ziel": ".zeichnung-module__deoHbq__hkWert"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stelle-obermonteur__d1440-light",
+      "typ": "seite",
+      "slug": "stelle-obermonteur",
+      "titel": "stelle-obermonteur",
+      "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 9442,
+      "geprueft": 30,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 11,
+          "ziel": ".kopf-module__gMMShq__zaehler"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stelle-obermonteur__d1440-dark",
+      "typ": "seite",
+      "slug": "stelle-obermonteur",
+      "titel": "stelle-obermonteur",
+      "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 8990,
+      "geprueft": 30,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 11,
+          "ziel": ".kopf-module__gMMShq__zaehler"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stelle-ausbildung__m390-light",
+      "typ": "seite",
+      "slug": "stelle-ausbildung",
+      "titel": "stelle-ausbildung",
+      "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 10095,
+      "geprueft": 30,
+      "unklar": 2,
+      "unklarRegeln": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "knoten": 1,
+          "ziel": "button[aria-haspopup=\"dialog\"]"
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 17,
+          "ziel": ".zeichnung-module__deoHbq__hkWert"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stelle-ausbildung__m390-dark",
+      "typ": "seite",
+      "slug": "stelle-ausbildung",
+      "titel": "stelle-ausbildung",
+      "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 10041,
+      "geprueft": 30,
+      "unklar": 2,
+      "unklarRegeln": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "knoten": 1,
+          "ziel": "button[aria-haspopup=\"dialog\"]"
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 17,
+          "ziel": ".zeichnung-module__deoHbq__hkWert"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stelle-ausbildung__d1440-light",
+      "typ": "seite",
+      "slug": "stelle-ausbildung",
+      "titel": "stelle-ausbildung",
+      "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 7095,
+      "geprueft": 30,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 11,
+          "ziel": ".kopf-module__gMMShq__zaehler"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stelle-ausbildung__d1440-dark",
+      "typ": "seite",
+      "slug": "stelle-ausbildung",
+      "titel": "stelle-ausbildung",
+      "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 6435,
+      "geprueft": 30,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 11,
+          "ziel": ".kopf-module__gMMShq__zaehler"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    }
+  ],
+  "regeln": []
+}
