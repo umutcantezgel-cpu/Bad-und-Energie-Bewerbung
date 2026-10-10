@@ -2,22 +2,22 @@
   "project": "Bad und Energie GmbH Lahn Dill – Karriereportal karriere.bad-energie.de",
   "directive": "v6.0-SOVEREIGN-UNIVERSAL-DYNAMIC-CORE",
   "updated": "2026-10-10",
-  "note": "Neu angelegt am 10.10.2026. Der frühere Stand (archive/state-summary-2026-10-06.json) beschrieb die alte Seite und meldete Werte, die auf dem heutigen Code nicht gemessen sind.",
+  "note": "Stand nach Zyklus 0–3 der Direktive v6.0. Alle Werte gemessen (Lighthouse 13.5 simulate, Median aus 5, Produktions-Build lokal); Belege unter _relaunch/belege/d0-basis, v6-ende, v6c-lcp-vorher, v6c-lcp-diagnose. Bericht: _relaunch/BERICHT-100.md.",
   "stack": {
     "framework": "Next.js 16 (App Router, Turbopack, Server Components)",
     "react": "19",
-    "css": "Tailwind CSS 4.3, Rollen-Tokens in app/styles/theme.css, CSS-Module je Bereich",
+    "css": "Tailwind CSS 4.3, Rollen-Tokens in app/styles/theme.css, CSS-Module je Bereich, prose nur auf den Rechtsseiten",
     "language": "TypeScript strict",
     "runtime": "Bun",
-    "tests": "Vitest, Playwright + axe (4 Projekte), Guards check:design / check:contrast / check:client-imports, test:graph",
+    "tests": "Vitest (1828), Playwright + axe (4 Projekte, 206 Tests), Guards check:design / check:contrast / check:client-imports, test:graph (ein @graph je Dokument)",
     "hosting": "Vercel (Region fra1), jeder Push auf main geht live",
-    "data": "Supabase Phase 2a (Schema in Produktion), Resend für Mails"
+    "data": "Supabase Phase 2b (Intake), Resend für Mails"
   },
   "routes": [
     { "path": "/", "index": true, "h1": "SHK-Jobs in Wetzlar. Ehrliches Handwerk. Pünktlich Feierabend." },
     { "path": "/jobs", "index": true, "h1": "Offene Stellen in Wetzlar und Umgebung" },
     { "path": "/jobs/anlagenmechaniker-shk-wetzlar", "index": true, "h1": "Anlagenmechaniker SHK (m/w/d) in Wetzlar" },
-    { "path": "/jobs/kundendiensttechniker-waermepumpe-wetzlar", "index": true, "h1": "Kundendiensttechniker SHK / Servicemonteur (m/w/d)" },
+    { "path": "/jobs/kundendiensttechniker-waermepumpe-wetzlar", "index": true, "h1": "Kundendiensttechniker Heizung & Wärmepumpe (m/w/d) in Wetzlar" },
     { "path": "/jobs/obermonteur-projektleiter-shk-wetzlar", "index": true, "h1": "Obermonteur / Projektleiter SHK (m/w/d) in Wetzlar" },
     { "path": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar", "index": true, "h1": "Ausbildung Anlagenmechaniker SHK – Einstieg 2026 noch möglich" },
     { "path": "/bewerbung", "index": true, "h1": "Jetzt bewerben." },
@@ -28,7 +28,7 @@
     { "path": "404", "index": false, "h1": "Hier hat sich eine Rohrleitung verirrt." }
   ],
   "baseline_2026_10_10": {
-    "source": "_relaunch/belege/d0-basis/lighthouse.md (Lighthouse 13.5, simulate, Median aus 5, next start lokal)",
+    "source": "_relaunch/belege/d0-basis/lighthouse.md",
     "mobile": {
       "/": { "perf": 90, "lcp_s": 3.17, "fcp_s": 1.69, "tbt_ms": 173, "cls": 0.0 },
       "/jobs": { "perf": 92, "lcp_s": 3.31, "tbt_ms": 67, "cls": 0.001 },
@@ -36,25 +36,65 @@
       "/jobs/kundendiensttechniker-waermepumpe-wetzlar": { "perf": 92, "lcp_s": 3.17, "tbt_ms": 75, "cls": 0.0 },
       "/bewerbung": { "perf": 88, "lcp_s": 3.77, "tbt_ms": 81, "cls": 0.0 }
     },
-    "desktop": "Perf 100 auf allen fünf Seiten, LCP 0,69–0,76 s, CLS 0 (Kundendienst 0,013)",
+    "desktop": "Perf 100 auf allen fünf Seiten, CLS 0 (Kundendienst 0,013)"
+  },
+  "current_2026_10_10": {
+    "source": "_relaunch/belege/v6-ende/lighthouse.md (Stand bfd2bcf)",
+    "mobile": {
+      "/": { "perf": 94, "lcp_s": 2.96, "fcp_s": 1.37, "tbt_ms": 67, "cls": 0.0 },
+      "/jobs": { "perf": 93, "lcp_s": 3.24, "fcp_s": 1.22, "tbt_ms": 54, "cls": 0.0 },
+      "/jobs/anlagenmechaniker-shk-wetzlar": { "perf": 96, "lcp_s": 2.65, "fcp_s": 1.22, "tbt_ms": 61, "cls": 0.0 },
+      "/jobs/kundendiensttechniker-waermepumpe-wetzlar": { "perf": 96, "lcp_s": 2.66, "fcp_s": 1.22, "tbt_ms": 64, "cls": 0.0 },
+      "/bewerbung": { "perf": 88, "lcp_s": 3.62, "fcp_s": 1.22, "tbt_ms": 144, "cls": 0.0 }
+    },
+    "desktop": "Perf 100 auf allen fünf Seiten, LCP 0,69–0,80 s, CLS 0,000 überall",
     "categories": "Accessibility, Best Practices, SEO je 100 auf allen Seiten",
-    "seo_gaps": [
-      "Titel-Keywords fehlen im sichtbaren Text (/jobs: Stellenangebote, Gießen; /: Heizungsbauer)",
-      "weiche Trennzeichen in h1 der Stellen",
-      "Thin Content /jobs (~263 Wörter), /bewerbung (~217)",
-      "JSON-LD in mehreren Blöcken statt einem @graph, keine WebPage-Knoten",
-      "doppelte Ankertexte mit zwei Zielen (Jetzt bewerben, Datenschutz)",
-      "robots.txt mit Host-Zeile, /bewerbung ohne lastmod"
-    ]
+    "lcp_diagnosis": "Beobachteter LCP = FCP in 100/100 Läufen; der simulierte LCP zählt auf localhost alle vor dem ersten Bild fertigen Schriften und JS-Pakete mit. Unter echter Drosselung (CPU x4, 150 ms RTT, 1,6 Mbit/s) LCP 1,26–1,94 s. Belege: _relaunch/belege/v6c-lcp-diagnose.",
+    "seo_checklist": {
+      "titles_30_60": true,
+      "descriptions_110_160": true,
+      "one_h1": true,
+      "min_500_words_indexable": true,
+      "unique_anchor_targets": true,
+      "img_alt": true,
+      "canonical_equals_sitemap": true,
+      "one_jsonld_graph_per_route": true,
+      "webpage_node_per_indexable_route": true,
+      "robots_without_host": true,
+      "sitemap_lastmod_all": true
+    }
+  },
+  "convergence": {
+    "gate": "Perf mobil >= 98 auf allen Hauptseiten, Desktop 100, CLS 0,000, SEO-Prüfliste 100 %",
+    "met": {
+      "desktop_100": true,
+      "cls_zero": true,
+      "seo_checklist": true,
+      "perf_mobile_98": false
+    },
+    "stop_reason": "Gezielte Zusatzrunde (V6-C) ohne messbaren Hebel im Code: LCP-Elemente sind im ersten Bild endgültig sichtbar. Weitere Punkte nur über Gestaltungs- oder Architekturentscheidungen: schmalerer Bricolage-Schnitt (bis −0,3 s simuliert), weniger JS vor dem ersten Bild (Framework-Sockel ~144 KB), inlineCss gemessen und verworfen (TBT +90–320 ms).",
+    "psi_production": "Nicht gemessen: PageSpeed-Insights-API 429 (Tageskontingent ohne Schlüssel)."
   },
   "decisions": [
     "Kein SearchAction: die Seite hat keine Suche (E-SEO-007)",
     "FAQPage nur auf / (ROADMAP:475); BreadcrumbList nur bei sichtbarem Pfad",
+    "Ein JSON-LD-@graph je Route mit WebPage-Knoten; Person #founder mit eigener @id (ersetzt E-SEO-006)",
+    "h1 der Stellen mit weichen Trennzeichen (Strich am Umbruch, K-005); Suchmaschinen ignorieren U+00AD",
     "Rechtstexte wörtlich; Logo-Datei bytegleich; nur belegte Fakten (lib/content/facts.ts)",
     "Kein OKLCH-Umbau der freigegebenen Farben und keine Framer Motion (YAGNI, Direktive 3.4)",
-    "Arbeit direkt auf main nach lokalen Gates (Auftraggeber 10.10.2026)"
+    "Arbeit direkt auf main nach lokalen Gates (Auftraggeber 10.10.2026); alle Branches in main gemergt",
+    "Dependabot: TypeScript 7 und ESLint 10 vorerst nicht (mit eslint-config-next 16.3.8 unverträglich)"
   ],
-  "currentPhase": "PHASE_1_GAP_DELTA_DISCOVERY",
+  "open_for_humans": [
+    "Branches claude/bold-pasteur-9gu316, claude/kind-ride-n9duod, claude/optimistic-turing-etjnl3, claude/sleepy-einstein-14fh42 auf GitHub löschen (alle 0 Commits vor main; Sitzungs-Proxy verweigert das Löschen mit 403)",
+    "Entscheidung schmalerer Bricolage-Schnitt für mobil Perf >= 98",
+    "PageSpeed Insights gegen die Produktion selbst ausführen (pagespeed.web.dev)"
+  ],
+  "known_warnings": [
+    "Vitest: vitest.config.ts mit ESM-Syntax wird als CommonJS geladen (configLoader native) – ohne Einfluss auf das Ergebnis",
+    "Playwright-WebServer: next start meldet output: standalone – Tests laufen unverändert"
+  ],
+  "currentPhase": "SMART_MAINTENANCE",
   "targets": {
     "pagespeed_mobile": 100,
     "pagespeed_desktop": 100,
