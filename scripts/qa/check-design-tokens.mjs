@@ -137,8 +137,6 @@ export const RULES = [
   {
     id: 'glass',
     find: (line) => indices(line, /(?<![\w-])backdrop-(?:blur|saturate|filter)/g),
-    /** The sticky header is the only glass surface until R4 rebuilds it (K-008: no glass). */
-    allowIn: ['components/site/HeaderBar.tsx'],
     hint: 'No glass or blur (K-008).',
   },
 ];
