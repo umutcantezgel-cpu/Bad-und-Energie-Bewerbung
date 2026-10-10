@@ -3,6 +3,8 @@ import { cn } from '@/lib/utils/cn';
 export interface PackageListItem {
   label: string;
   text: string;
+  /** Wert als Maß in Martian Mono (Standard: nur „Gehalt“ und „Vergütung“). */
+  mass?: boolean;
 }
 
 export interface PackageListProps {
@@ -19,7 +21,7 @@ export function PackageList({ items, className }: PackageListProps) {
   return (
     <dl className={cn('border-t-(length:--m-strich) border-brand', className)}>
       {items.map((item) => {
-        const mass = item.label === 'Gehalt' || item.label === 'Vergütung';
+        const mass = item.mass ?? (item.label === 'Gehalt' || item.label === 'Vergütung');
         return (
           <div key={item.label} className="flex flex-col gap-1 border-b border-line py-4 sm:grid sm:grid-cols-3 sm:gap-6">
             <dt className="text-etikett text-ink-muted sm:pt-1">{item.label}</dt>

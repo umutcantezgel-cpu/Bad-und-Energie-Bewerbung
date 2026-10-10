@@ -6,6 +6,7 @@ import { getJobSections, type JobSection } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
 import { PackageList, type PackageListItem } from './PackageList';
+import { Einblick } from './stelle/Einblick';
 import { STELLE_ANKER, paketIcon, vorteilIcon } from './stelle/stelle-text';
 import { splitLabel } from './text';
 
@@ -117,6 +118,8 @@ function Paket({ job }: { job: Job }) {
  * - Wand: die Einleitung (intro) als Lead unter „Das erwartet dich“, daneben „Das bringst du mit“
  *   (Sprungziel des Zweitwegs im Kopf). Der Kopf bleibt so kurz wie der Einstieg: Knopf über dem Falz.
  * - Papier: „Das bekommst du“, darunter „Dein Paket“ und „Auf einen Blick“ nebeneinander.
+ * Danach das Band „Einblick“ (Wand, V6-G2): Arbeit, Unterschied zu den Nachbarstellen und Einsatzgebiet, je
+ * Stelle eigen. Es steht nur auf der Seite, nicht in der JobPosting-Beschreibung.
  */
 export function JobSections({ job, className }: JobSectionsProps) {
   const sections = new Map(
@@ -194,6 +197,8 @@ export function JobSections({ job, className }: JobSectionsProps) {
           ) : null}
         </Container>
       </Section>
+
+      <Einblick job={job} />
     </div>
   );
 }

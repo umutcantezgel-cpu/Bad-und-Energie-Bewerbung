@@ -20,6 +20,7 @@ import {
   vorteilIcon,
   zeigtWaermebild,
 } from '@/components/jobs/stelle/stelle-text';
+import { einblick } from '@/components/jobs/stelle/einblick-text';
 import { WAERMEBILD_TITEL } from '@/components/zeichnung/Waermebild';
 import { FACTS } from '@/lib/content/facts';
 import { escapeHtml, formatSalaryAmount, getJobSections } from '@/lib/jobs/format';
@@ -59,7 +60,7 @@ describe('Kopf der Stellenseite: Texte und Maße (stelle-text)', () => {
       haupt: 'Ausbildung Anlagenmechaniker SHK',
       zusatz: '– Einstieg 2026 noch möglich',
     });
-    expect(kopfTitel(kd.seo.h1)).toEqual({ haupt: 'Kundendiensttechniker SHK / Servicemonteur', zusatz: '(m/w/d)' });
+    expect(kopfTitel(kd.seo.h1)).toEqual({ haupt: 'Kundendiensttechniker Heizung & Wärmepumpe', zusatz: '(m/w/d) in Wetzlar' });
     expect(kopfTitel('Ohne Zusatz')).toEqual({ haupt: 'Ohne Zusatz', zusatz: null });
     for (const job of pageJobs) {
       const { haupt, zusatz } = kopfTitel(job.seo.h1);
@@ -69,7 +70,8 @@ describe('Kopf der Stellenseite: Texte und Maße (stelle-text)', () => {
 
   it('Etikett: Anstellung und Dauer, der Ort nur, wenn die h1 ihn nicht nennt', () => {
     expect(kopfEtikett(am)).toBe('Vollzeit · Unbefristet');
-    expect(kopfEtikett(kd)).toBe('Vollzeit · Unbefristet · Wetzlar');
+    // V6-G2: Die h1 der Kundendienst-Stelle nennt Wetzlar, das Etikett darum nicht noch einmal.
+    expect(kopfEtikett(kd)).toBe('Vollzeit · Unbefristet');
     expect(kopfEtikett(azubi)).toBe('Ausbildung · 3,5 Jahre · Wetzlar');
   });
 
@@ -123,6 +125,33 @@ describe('JobHeader (Seitenkopf erzaehl)', () => {
     expect(html).toContain('data-primary-cta=""');
     expect(html).toContain('data-motion="erdleitung"');
     expect(html).toContain('data-zeichnung="seitenkopf-leitung"');
+  });
+
+  it.each(pageJobs.map((job) => [job.id, job] as const))(
+    '%s: h1 ohne weiche Trennstriche (U+00AD), <wbr> an den Wortfugen aus titleShy',
+    (_id, job) => {
+      const html = renderToStaticMarkup(createElement(JobHeader, { job }));
+      const h1 = /<h1[^>]*>([\s\S]*?)<\/h1>/.exec(html)![1];
+      expect(h1).not.toContain(SHY);
+      expect(h1).not.toContain('&shy;');
+      // Jede Wortfuge aus titleShy, deren Wort in der h1 steht, wird zu <wbr/>.
+      const fugen = job.titleShy
+        .split(/\s+/)
+        .filter((wort) => wort.includes(SHY) && job.seo.h1.includes(wort.split(SHY).join('')));
+      for (const wort of fugen) expect(h1).toContain(wort.split(SHY).join('<wbr/>'));
+      expect(fugen.length).toBeGreaterThan(0);
+    },
+  );
+
+  it('Kundendienst-h1 nennt Wärmepumpe und Wetzlar (Wörter des metaTitle), Gießen steht in der Unterzeile', () => {
+    expect(kd.seo.metaTitle).toContain('Wärmepumpe');
+    expect(kd.seo.h1).toContain('Wärmepumpe');
+    expect(kd.seo.h1).toContain('Heizung');
+    expect(kd.seo.h1).toContain(kd.location.city);
+    expect(kd.seo.metaTitle).toContain('Gießen');
+    expect(kopfUnterzeile(kd)).toContain('Gießen');
+    // JobPosting-Titel bleibt (Google Jobs, Feeds): nur die sichtbare h1 ändert sich.
+    expect(buildJobPostingJsonLd(kd)!.title).toBe('Kundendiensttechniker SHK / Servicemonteur (m/w/d)');
   });
 
   it('Kundendienst: Wärmebild als Bild mit Titel; die anderen Stellen ohne', () => {
@@ -185,14 +214,16 @@ describe('E-SEO-010: JobPosting nur aus Registry und Fakten, „ohne Bereitschaf
   });
 });
 
-describe('JobSections: sichtbare Abschnitte = Abschnitte der JobPosting-Beschreibung', () => {
+describe('JobSections: sichtbare Abschnitte = Abschnitte der JobPosting-Beschreibung, danach der Einblick', () => {
   it.each(pageJobs.map((job) => [job.id, job] as const))('%s', (_id, job) => {
     const html = renderToStaticMarkup(createElement(JobSections, { job }));
     const h2 = [...html.matchAll(/<h2[^>]*>([\s\S]*?)<\/h2>/g)].map((m) => text(m[1]));
     const erwartet = getJobSections(job)
       .filter((s) => s.heading)
       .map((s) => s.heading);
-    expect(h2).toEqual(erwartet);
+    // V6-G2: Das Band „Einblick“ steht nur auf der Seite (nicht in der JobPosting-Beschreibung) und folgt danach.
+    const zusatz = einblick(job)!;
+    expect(h2).toEqual([...erwartet, zusatz.arbeit.titel, zusatz.gebiet.titel]);
     expect(text(html)).toContain(job.intro);
     for (const item of [...job.tasks, ...job.requirements]) expect(text(html)).toContain(item);
     for (const extra of job.packageExtras) expect(text(html)).toContain(extra.text);

@@ -36,9 +36,18 @@ export function listenUnterzeile(jobs: readonly Pick<Job, 'salary'>[]): [string,
   return [alleMitGehalt ? 'Jede Stelle mit Gehaltsspanne.' : 'Ehrliches Handwerk.', 'Pünktlich Feierabend.'];
 }
 
-/** Einleitung: Fakt founded1926 mit Ort, dann Tarif und Werkzeug (Fakten aboveTariff/azubiPay und hilti/azubiToolkit). */
+/**
+ * Orte der Baustellen in der Einleitung (V6-G1: Suchbegriffe des Seitentitels in den ersten 100 Wörtern), im
+ * Wortlaut von REGION.summary („Du arbeitest in Wetzlar, Gießen und dem Lahn-Dill-Kreis …“).
+ */
+export const LISTEN_ORTE = 'Wetzlar und Gießen';
+
+/**
+ * Einleitung: „Stellenangebote im SHK-Handwerk“ (alle Stellen sind SHK, Stellendaten) mit den Orten der Baustellen
+ * und Fakt founded1926, dann Tarif und Werkzeug (Fakten aboveTariff/azubiPay und hilti/azubiToolkit).
+ */
 export const LISTEN_EINLEITUNG = schuetzeZahlen(
-  `${FACTS.founded1926.short} in ${COMPANY.address.city}. Bezahlt über Tarif und mit persönlicher Hilti-Ausstattung.`,
+  `Stellenangebote im SHK-Handwerk vom ${FACTS.founded1926.short}, mit Baustellen in ${LISTEN_ORTE}. Bezahlt über Tarif und mit persönlicher Hilti-Ausstattung.`,
 );
 
 /** Mikrotext unter dem Knopf (Fakten apply60s, noCvNeeded), wortgleich mit dem Einstieg der Startseite. */

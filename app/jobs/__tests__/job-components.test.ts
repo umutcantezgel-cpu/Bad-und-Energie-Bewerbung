@@ -6,7 +6,8 @@ import { describe, expect, it } from 'vitest';
 import { JobCard } from '@/components/jobs/JobCard';
 import { SalaryCard } from '@/components/jobs/SalaryCard';
 import { getMoreJobs } from '@/components/jobs/MoreJobs';
-import { bindSeparators, lowerFirst, pageTitle, splitLabel, withSoftHyphens } from '@/components/jobs/text';
+import { Wortfugen } from '@/components/jobs/stelle/Wortfugen';
+import { bindSeparators, lowerFirst, pageTitle, splitLabel, withSoftHyphens, wortfugen } from '@/components/jobs/text';
 import { formatSalaryAmount, jobPath } from '@/lib/jobs/format';
 import { ALL_JOBS, getActiveJobs, getJobById } from '@/lib/jobs/registry';
 
@@ -41,6 +42,26 @@ describe('withSoftHyphens', () => {
   it('replaces whole words only', () => {
     expect(withSoftHyphens('Anlagenmechanikerin', `Anlagen${SHY}mechaniker`)).toBe('Anlagenmechanikerin');
     expect(withSoftHyphens('Anlagenmechaniker, SHK', `Anlagen${SHY}mechaniker`)).toBe(`Anlagen${SHY}mechaniker, SHK`);
+  });
+});
+
+describe('wortfugen and <Wortfugen> (V6-G2: <wbr> instead of U+00AD in headings)', () => {
+  const kd = getJobById('kundendiensttechniker-shk')!;
+
+  it('splits at the joints of titleShy; the parts give the text back unchanged', () => {
+    expect(wortfugen('Kundendiensttechniker Heizung', kd.titleShy)).toEqual(['Kunden', 'dienst', 'techniker Heizung']);
+    expect(wortfugen('Ohne Fuge', kd.titleShy)).toEqual(['Ohne Fuge']);
+    for (const job of ALL_JOBS) {
+      const teile = wortfugen(job.seo.h1, job.titleShy);
+      expect(teile.join('')).toBe(job.seo.h1);
+      for (const teil of teile) expect(teil).not.toContain(SHY);
+    }
+  });
+
+  it('renders <wbr/> at the joints and no soft hyphen', () => {
+    const html = renderToStaticMarkup(createElement(Wortfugen, { text: 'Anlagenmechaniker SHK', titleShy: am.titleShy }));
+    expect(html).toBe('Anlagen<wbr/>mechaniker SHK');
+    expect(html).not.toContain(SHY);
   });
 });
 

@@ -6,6 +6,7 @@ import { INITIATIVE_APPLY_PATH } from '@/lib/apply/params';
 import { COMPANY } from '@/lib/content/company';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import { SectionHeader } from './SectionHeader';
+import { stellenEinleitung } from './stellen-text';
 
 /** Etikett über „Offene Stellen“, gezählt aus den Stellen, die gerade live sind: „4 Stellen · Wetzlar“. */
 export function stellenEtikett(anzahl: number): string {
@@ -33,7 +34,7 @@ export function JobList({ now = new Date() }: JobListProps) {
             id="stellen-title"
             eyebrow={stellenEtikett(jobs.length)}
             title="Offene Stellen"
-            lead="Jede Stelle mit Gehaltsspanne und allen Eckdaten."
+            lead={stellenEinleitung(jobs)}
           />
           <TextLink href="/jobs" standalone tone="muted">
             Alle Stellen im Überblick

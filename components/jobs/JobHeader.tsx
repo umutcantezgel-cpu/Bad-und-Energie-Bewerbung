@@ -12,7 +12,8 @@ import {
   kopfUnterzeile,
 } from './stelle/stelle-text';
 import styles from './stelle/stelle.module.css';
-import { bindSeparators, withSoftHyphens } from './text';
+import { Wortfugen } from './stelle/Wortfugen';
+import { bindSeparators } from './text';
 
 export interface JobHeaderProps {
   job: Job;
@@ -23,7 +24,7 @@ export interface JobHeaderProps {
  * Kopf der Stellenseite (R5-JOBS-02, E-023) im Design des Einstiegs der Startseite: der gemeinsame Seitenkopf
  * in der Variante `erzaehl`.
  * - Pfad (Brotkrumen, gleiche Namen wie die BreadcrumbList) über dem Kopf.
- * - Etikett (Anstellung), h1 = seo.h1 mit den weichen Trennstellen aus titleShy: Berufsname in Bildgröße,
+ * - Etikett (Anstellung), h1 = seo.h1 mit <wbr> an den Wortfugen aus titleShy (kein U+00AD im HTML, V6-G2): Berufsname in Bildgröße,
  *   „(m/w/d) …“ kleiner darunter; Unterzeile mit Rohrklammer = Kurzbeschreibung der Stelle
  *   ohne Sätze, die nur die h1 wiederholen. Die Einleitung
  *   (intro) steht als Lead im ersten Band, damit der Knopf wie im Einstieg über dem Falz bleibt.
@@ -33,7 +34,7 @@ export interface JobHeaderProps {
  */
 export function JobHeader({ job, className }: JobHeaderProps) {
   const { haupt, zusatz } = kopfTitel(job.seo.h1);
-  const mitTrennstellen = (text: string) => bindSeparators(withSoftHyphens(text, job.titleShy));
+  const mitTrennstellen = (text: string) => <Wortfugen text={bindSeparators(text)} titleShy={job.titleShy} />;
 
   return (
     <>

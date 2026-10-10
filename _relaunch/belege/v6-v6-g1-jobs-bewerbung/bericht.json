@@ -1,0 +1,135 @@
+{
+  "label": "v6-v6-g1-jobs-bewerbung",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T11:20:18.788Z",
+  "seiten": [
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 20567,
+      "seitenhoehe": 11043,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__m390-light__01.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__m390-light__02.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__m390-light__03.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__m390-light__04.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__m390-light__05.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__m390-light__06.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__m390-light__07.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__m390-light__08.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__m390-light__09.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__m390-light__10.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__m390-light__11.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__m390-light__12.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__m390-light__13.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 8464,
+      "seitenhoehe": 7328,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__d1440-light__01.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__d1440-light__02.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__d1440-light__03.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__d1440-light__04.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__d1440-light__05.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__d1440-light__06.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__d1440-light__07.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__d1440-light__08.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/stellen__d1440-light__09.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 12345,
+      "seitenhoehe": 6563,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/v6-v6-g1-jobs-bewerbung/bewerbung__m390-light__01.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/bewerbung__m390-light__02.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/bewerbung__m390-light__03.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/bewerbung__m390-light__04.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/bewerbung__m390-light__05.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/bewerbung__m390-light__06.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/bewerbung__m390-light__07.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/bewerbung__m390-light__08.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 5935,
+      "seitenhoehe": 4943,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/v6-v6-g1-jobs-bewerbung/bewerbung__d1440-light__01.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/bewerbung__d1440-light__02.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/bewerbung__d1440-light__03.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/bewerbung__d1440-light__04.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/bewerbung__d1440-light__05.webp",
+        "belege/v6-v6-g1-jobs-bewerbung/bewerbung__d1440-light__06.webp"
+      ]
+    }
+  ]
+}

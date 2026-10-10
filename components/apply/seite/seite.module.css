@@ -42,10 +42,50 @@
   width: calc(100% + var(--rand) * 2);
 }
 
+/* Erklärteil (V6-G1): ruhig, ohne eigene Fläche; Breite wie der Flow */
+.erklaerung {
+  min-width: 0;
+  max-width: var(--container-prose);
+}
+
+/* Schritte und Wegweiser: Einträge mit Haarlinie dazwischen, wie die Aufgaben der Stellenseite */
+.liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.schritt,
+.eintrag {
+  padding-block: var(--a-5);
+  border-bottom: 1px solid var(--line);
+}
+
+.schritt:first-child,
+.eintrag:first-child {
+  padding-top: var(--a-2);
+}
+
+.schritt {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: var(--a-5);
+}
+
+.eintrag {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-2);
+}
+
 @media (min-width: 64em) {
   .flaeche {
     grid-template-columns: minmax(0, 2fr) var(--a-8) minmax(20rem, 1fr);
     padding: var(--a-7) 0 var(--spacing-section) var(--rand);
+    row-gap: var(--a-8);
   }
 
   .flow {
@@ -59,8 +99,15 @@
 
   .wege {
     grid-column: 3;
-    grid-row: 1;
+    grid-row: 1 / span 2;
     padding: 0 var(--rand) 0 var(--a-8);
+  }
+
+  .erklaerung {
+    grid-column: 1;
+    grid-row: 2;
+    padding-top: var(--a-7);
+    border-top: 1px solid var(--line);
   }
 }
 
