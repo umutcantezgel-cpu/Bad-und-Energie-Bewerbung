@@ -142,6 +142,10 @@ function usePageTargets(pathname: string, enabled: boolean): PageTargets {
  * single calm line on every phone width. Both labels share one grid cell and stay laid out, so
  * the job label is measured again when the width changes (rotation, web font swap). The one not
  * shown is `invisible`, which also keeps it out of the link's accessible name.
+ *
+ * Measured only inside the ResizeObserver callback, which runs after layout (also right after
+ * observing), so reading the widths never forces a synchronous layout (V6-A3-VITALS). A web font swap
+ * changes the label's scroll width but not its box: observing it again yields a fresh first callback.
  */
 function ApplyLabel({ label }: { label: string }) {
   const fullRef = useRef<HTMLSpanElement>(null);
@@ -150,17 +154,25 @@ function ApplyLabel({ label }: { label: string }) {
   useEffect(() => {
     const full = fullRef.current;
     if (!full) return;
+    const measure = () => setFits(full.scrollWidth <= full.clientWidth);
+    if (typeof ResizeObserver === 'undefined') {
+      measure();
+      return;
+    }
+    const observer = new ResizeObserver(measure);
+    observer.observe(full);
     let active = true;
-    const measure = () => {
-      if (active) setFits(full.scrollWidth <= full.clientWidth);
-    };
-    measure();
-    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measure);
-    observer?.observe(full);
-    document.fonts?.ready.then(measure, () => {});
+    document.fonts?.ready.then(
+      () => {
+        if (!active) return;
+        observer.unobserve(full);
+        observer.observe(full);
+      },
+      () => {},
+    );
     return () => {
       active = false;
-      observer?.disconnect();
+      observer.disconnect();
     };
   }, [label]);
 

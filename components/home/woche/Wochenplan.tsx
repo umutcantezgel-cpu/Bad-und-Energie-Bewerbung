@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import {
   ACHSE,
   ARBEITSTAGE,
@@ -61,22 +62,18 @@ function Verteiler({ tage }: { tage: readonly Arbeitstag[] }) {
   );
 }
 
-/** Ein Wochentag als Heizkreis: Vorlauf hin, Bogen beim Feierabend, Rücklauf zurück. */
+/** Ein Wochentag als Heizkreis: Vorlauf hin, Rücklauf zurück; den Bogen beim Feierabend zeichnet `Boegen`. */
 function Heizkreis({ tag, i }: { tag: Arbeitstag; i: number }) {
   const von = prozent(tag.vonStunde);
   const bis = prozent(tag.bisStunde);
   const freitag = tag.kuerzel === 'Fr';
   return (
-    <g>
+    <>
       <text className={TAG} x={-spalte} y={reihenMitte(i)} dy="0.35em">
         {tag.kuerzel}
       </text>
       <line className={s.vorlauf} x1={von} x2={bis} y1={vorlaufY(i)} y2={vorlaufY(i)} />
       <line className={s.ruecklauf} x1={von} x2={bis} y1={ruecklaufY(i)} y2={ruecklaufY(i)} />
-      <svg x={bis} y={reihenMitte(i)} overflow="visible">
-        <path className={s.vorlauf} d={`M0 ${-kreis}A${kreis} ${kreis} 0 0 1 ${kreis} 0`} />
-        <path className={s.ruecklauf} d={`M${kreis} 0A${kreis} ${kreis} 0 0 1 0 ${kreis}`} />
-      </svg>
       <text
         className={freitag ? HAUPTMASS : MASSTEXT}
         x={bis}
@@ -86,17 +83,44 @@ function Heizkreis({ tag, i }: { tag: Arbeitstag; i: number }) {
       >
         {tag.bis}
       </text>
-    </g>
+    </>
   );
 }
 
-/** Haarlinie über einer Reihe, über Tagesspalte, Spur und rechten Rand. */
-function Haarlinie({ y }: { y: number }) {
+/**
+ * Bögen beim Feierabend: je Uhrzeit ein eingebettetes SVG an der Stelle der Uhrzeit (x in Prozent der Spur),
+ * darin ein Vorlauf- und ein Rücklaufpfad mit einem Bogen je Tag (Mo–Do teilen sich 16:45). Weniger Knoten
+ * als ein SVG je Tag (V6-A3-VITALS), gleiche Lage: Die Bögen überlappen weder Linien noch Maße.
+ */
+function Boegen({ tage }: { tage: readonly Arbeitstag[] }) {
+  const jeUhrzeit = new Map<number, number[]>();
+  tage.forEach((tag, i) => jeUhrzeit.set(tag.bisStunde, [...(jeUhrzeit.get(tag.bisStunde) ?? []), i]));
+  return [...jeUhrzeit].map(([stunde, reihen]) => (
+    <svg key={stunde} x={prozent(stunde)} overflow="visible">
+      <path
+        className={s.vorlauf}
+        d={reihen.map((i) => `M0 ${reihenMitte(i) - kreis}A${kreis} ${kreis} 0 0 1 ${kreis} ${reihenMitte(i)}`).join('')}
+      />
+      <path
+        className={s.ruecklauf}
+        d={reihen.map((i) => `M${kreis} ${reihenMitte(i)}A${kreis} ${kreis} 0 0 1 0 ${reihenMitte(i) + kreis}`).join('')}
+      />
+    </svg>
+  ));
+}
+
+/**
+ * Haarlinien über den Reihen, über Tagesspalte, Spur und rechten Rand: je Reihe eine Linie bis zum Ende der Spur
+ * (Prozent), die Stücke im rechten Rand (px) als ein Pfad in einem SVG am Ende der Spur.
+ */
+function Haarlinien({ ys }: { ys: readonly number[] }) {
   return (
     <>
-      <line className={s.haar} x1={-spalte} x2="100%" y1={y} y2={y} />
+      {ys.map((y) => (
+        <line key={y} className={s.haar} x1={-spalte} x2="100%" y1={y} y2={y} />
+      ))}
       <svg x="100%" overflow="visible">
-        <line className={s.haar} x1={0} x2={rechts} y1={y} y2={y} />
+        <path className={s.haar} d={ys.map((y) => `M0 ${y}H${rechts}`).join('')} />
       </svg>
     </>
   );
@@ -128,34 +152,33 @@ export function Wochenplan() {
       <title id={WOCHE_BILD_TITEL_ID}>{WOCHE_TEXT.bildTitel}</title>
       <desc id={WOCHE_BILD_TEXT_ID}>{WOCHE_TEXT.bildText}</desc>
 
-      {reihen.map((y) => (
-        <Haarlinie key={y} y={y} />
-      ))}
+      <Haarlinien ys={reihen} />
 
       <Verteiler tage={ARBEITSTAGE} />
       {ARBEITSTAGE.map((tag, i) => (
         <Heizkreis key={tag.kuerzel} tag={tag} i={i} />
       ))}
+      <Boegen tage={ARBEITSTAGE} />
 
       {FREIE_TAGE.length > 0 && (
-        <g>
+        <>
           <text className={TAG} x={-spalte} y={reihenMitte(wochenende)} dy="0.35em">
             {WOCHE_TEXT.freieTage}
           </text>
           <text className={ETIKETT} x={0} y={reihenMitte(wochenende)} dy="0.35em">
             {WOCHE_TEXT.wochenende}
           </text>
-        </g>
+        </>
       )}
 
       <line className={s.haar} x1={0} x2="100%" y1={achseY + 0.5} y2={achseY + 0.5} />
       {ACHSE.striche.map((h) => (
-        <g key={h}>
+        <Fragment key={h}>
           <line className={s.strich} x1={prozent(h)} x2={prozent(h)} y1={achseY + 1} y2={achseY + 9} />
           <text className={ACHSTEXT} x={prozent(h)} y={achseY + 22} dy="0.35em" textAnchor="middle">
             {stundeKurz(h)}
           </text>
-        </g>
+        </Fragment>
       ))}
     </svg>
   );

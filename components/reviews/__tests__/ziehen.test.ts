@@ -4,6 +4,7 @@ import {
   STILL_MS,
   WURF_MAX_KARTEN,
   ansage,
+  lageBei,
   naechsterIndex,
   rastpunkte,
   wurfGeschwindigkeit,
@@ -79,6 +80,24 @@ describe('Ziehen mit Auslaufen', () => {
   it('reduzierte Bewegung: kein Schwung, nur die nächste Karte', () => {
     const punkte = rastpunkte(KANTEN, MAX);
     expect(wurfZiel(punkte, 400, 3, false)).toBe(1);
+  });
+});
+
+describe('Lage aus dem letzten Maß (ohne DOM-Abfrage beim Scrollen)', () => {
+  // 13 Karten zu 284 px, Schritt 300 px, sichtbar 900 px: drei Karten ganz im Bild
+  const MASS = { links: KANTEN, rechts: KANTEN.map((k) => k + 284), breite: 900, max: MAX };
+  const punkte = rastpunkte(KANTEN, MAX);
+
+  it('zählt die Karten, die ganz im Bild stehen (1 px Spiel), am Anfang und am Ende', () => {
+    expect(lageBei(MASS, punkte, 0)).toEqual({ erste: 1, letzte: 3, atStart: true, atEnd: false });
+    expect(lageBei(MASS, punkte, 301)).toEqual({ erste: 2, letzte: 4, atStart: false, atEnd: false });
+    expect(lageBei(MASS, punkte, MAX)).toEqual({ erste: 11, letzte: 13, atStart: false, atEnd: true });
+  });
+
+  it('steht keine Karte ganz im Bild, zählt die nächste', () => {
+    const schmal = { ...MASS, breite: 200 };
+    expect(lageBei(schmal, punkte, 160)).toMatchObject({ erste: 2, letzte: 2 });
+    expect(lageBei({ links: [], rechts: [], breite: 0, max: 0 }, [0], 0)).toEqual({ erste: 1, letzte: 1, atStart: true, atEnd: true });
   });
 });
 

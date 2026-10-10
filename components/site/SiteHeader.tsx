@@ -14,7 +14,9 @@ export function SiteHeader() {
   return (
     <HeaderBar
       // max-w-full + object-contain: die Wortmarke wird auf 320 px kleiner, statt überzulaufen.
-      logo={<Logo priority className="h-8 min-w-0 max-w-full object-contain object-left lg:h-10" />}
+      // Sofort geladen, aber nie vor Schriften und CSS (nicht das LCP-Element). Dieselbe Dateigröße wie
+      // Menü und Fuß, damit alle drei Logos eine Datei teilen.
+      logo={<Logo eager className="h-8 min-w-0 max-w-full object-contain object-left lg:h-10" />}
       menuLogo={<Logo className="h-8 min-w-0 max-w-full object-contain object-left" />}
       phone={{ display: COMPANY.phone.display, href: COMPANY.phone.href }}
       // Text ohne Berufsangabe (E-SHELL-005); das Menü gibt es nur außerhalb des Bewerbungsflows.

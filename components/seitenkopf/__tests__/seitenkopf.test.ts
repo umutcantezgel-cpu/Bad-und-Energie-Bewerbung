@@ -72,7 +72,10 @@ describe('Seitenkopf (SEITENKOPF-01): Probeseite rendert jede Variante', () => {
     const props = PROBE[name];
     const id = props.titelId ?? 'seitenkopf-titel';
     expect(h.match(/<h1\b/g)).toHaveLength(1);
-    expect(h).toMatch(new RegExp(`^<header [^>]*aria-labelledby="${id}"`));
+    // React hebt den <link> aus dem Kopf heraus (in den <head>, hier an den Anfang); er hält das erste Bild an,
+    // bis die Marke am Ende des Kopfs geparst ist (V6-A3-VITALS, CLS durch Teildokumente)
+    expect(h).toMatch(new RegExp(`^<link rel="expect" href="#${id}-ende" blocking="render"/><header [^>]*aria-labelledby="${id}"`));
+    expect(h).toMatch(new RegExp(`<span id="${id}-ende" hidden=""></span></header>$`));
     expect(h).toMatch(new RegExp(`<h1 id="${id}"`));
     expect(h).toContain(`data-seitenkopf="${props.variante}"`);
     expect(plain(h.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)![1])).toBe(String(props.titel));

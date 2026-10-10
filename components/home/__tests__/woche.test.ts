@@ -128,9 +128,25 @@ describe('Wochenplan (Inline-SVG)', () => {
       '62.5%',
       '62.5%',
     ]);
-    // Bogen beim Feierabend: je Tag ein eingebettetes SVG an der Uhrzeit
-    expect(count(html, /<svg x="89\.5833%" y="\d+" overflow="visible">/g)).toBe(4);
-    expect(count(html, /<svg x="62\.5%" y="\d+" overflow="visible">/g)).toBe(1);
+    // Bogen beim Feierabend: je Uhrzeit ein eingebettetes SVG an der Uhrzeit, darin je Tag ein Vorlauf- und ein
+    // Rücklaufbogen in der Mitte seiner Reihe (V6-A3-VITALS: ein SVG je Uhrzeit statt je Tag)
+    const boegen = (x: string) => {
+      const svg = html.match(new RegExp(`<svg x="${x.replace('.', '\\.')}" overflow="visible">(.*?)</svg>`))?.[1] ?? '';
+      const [vorlauf, ruecklauf] = [...svg.matchAll(/<path class="([^"]+)" d="([^"]+)"/g)].map((m) => ({ klasse: m[1], d: m[2] }));
+      const mitten = (d: string, re: RegExp) => [...d.matchAll(re)].map((m) => Number(m[1]));
+      return {
+        vorlauf: mitten(vorlauf.d, new RegExp(`A${MASS.kreis} ${MASS.kreis} 0 0 1 ${MASS.kreis} (\\d+)`, 'g')),
+        ruecklauf: mitten(ruecklauf.d, new RegExp(`M${MASS.kreis} (\\d+)A`, 'g')),
+        klassen: [vorlauf.klasse, ruecklauf.klasse],
+      };
+    };
+    const mitte = (i: number) => MASS.kopf + i * MASS.reihe + MASS.reihe / 2;
+    expect(boegen('89.5833%')).toMatchObject({ vorlauf: [0, 1, 2, 3].map(mitte), ruecklauf: [0, 1, 2, 3].map(mitte) });
+    expect(boegen('62.5%')).toMatchObject({ vorlauf: [mitte(4)], ruecklauf: [mitte(4)] });
+    expect(boegen('62.5%').klassen[0]).toMatch(/vorlauf/);
+    expect(boegen('62.5%').klassen[1]).toMatch(/ruecklauf/);
+    // zwei Uhrzeiten, dazu der Verteiler; das SVG am Ende der Spur (100 %) trägt den rechten Rand der Haarlinien
+    expect(count(html, /<svg x="(?!100%)[\d.]+%" overflow="visible">/g)).toBe(2 + 1);
   });
 
   it('zeigt die Maße als Text: viermal 16:45, einmal 13:30 als Hauptmaß, Achse 07 · 10 · 13 · 16', () => {
@@ -140,6 +156,12 @@ describe('Wochenplan (Inline-SVG)', () => {
     for (const h of ['07', '10', '13', '16']) expect(html).toContain(`>${h}</text>`);
     for (const k of ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa, So']) expect(html).toContain(`>${k}</text>`);
     expect(html).toContain('>Kein Wochenend-Notdienst</text>');
+  });
+
+  it('bleibt schlank: 51 Elemente statt 80 (Bögen je Uhrzeit, Haarlinien-Rand als ein Pfad, keine leeren Gruppen)', () => {
+    const html = plan();
+    expect(count(html, /<(svg|title|desc|g|line|path|text)\b/g)).toBe(51);
+    expect(html).not.toContain('<g');
   });
 
   it('der Rücklauf-Verteiler hat je Tag eine Brücke, wo der Vorlauf kreuzt', () => {

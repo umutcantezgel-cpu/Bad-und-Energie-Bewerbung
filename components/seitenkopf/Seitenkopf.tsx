@@ -53,6 +53,12 @@
  *
  * Die h1 trägt `titelId` (Standard `seitenkopf-titel`); der Kopf zeigt mit aria-labelledby darauf. Eine h1
  * je Seite: Die Seite selbst setzt keine weitere.
+ *
+ * Erstes Bild nur mit ganzem Kopf (V6-A3-VITALS, CLS): Zeichnung und Maße stehen im DOM hinter dem Knopf, am
+ * Handy aber darüber. Malte der Browser ein Teildokument (HTML in Stücken, Parser gibt ab), stand der Knopf
+ * zuerst unter dem Titel und rutschte nach, sobald das Panel ankam (CLS 0,08 bis 0,12 in einzelnen Läufen).
+ * `<link rel="expect" blocking="render">` (React hebt es in den <head>) hält das erste Bild an, bis die Marke
+ * am Ende des Kopfs geparst ist; Browser ohne die Funktion übergehen es.
  */
 import Link from 'next/link';
 import type { ReactNode } from 'react';
@@ -148,6 +154,7 @@ export function Seitenkopf({
   const klammerAmTitel = variante === 'ruhig' && !unterzeile;
   // Das letzte Wort und der Pfeil bleiben zusammen (kein Pfeil allein auf einer Zeile)
   const zweitwegTrenn = zweitweg ? zweitweg.label.lastIndexOf(' ') : -1;
+  const endeId = `${titelId}-ende`;
 
   return (
     <header
@@ -155,6 +162,7 @@ export function Seitenkopf({
       data-seitenkopf={variante}
       aria-labelledby={titelId}
     >
+      <link rel="expect" href={`#${endeId}`} blocking="render" />
       {navy ? <div className={styles.flaeche} data-tone="inverse" aria-hidden="true" /> : null}
 
       <div className={styles.titelblock} data-tone={navy ? 'inverse' : undefined}>
@@ -224,6 +232,8 @@ export function Seitenkopf({
           ) : null}
         </div>
       ) : null}
+
+      <span id={endeId} hidden />
     </header>
   );
 }

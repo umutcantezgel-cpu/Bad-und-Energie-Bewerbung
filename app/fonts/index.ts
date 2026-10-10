@@ -19,15 +19,18 @@ import localFont from 'next/font/local';
  * Martian 400–600 bei Breite 75 %. Die weight-Angaben unten sind genau diese Bereiche: ein Gewicht
  * außerhalb (z. B. font-extrabold in Atkinson) würde auf den Rand gezogen statt neu gezeichnet.
  *
- * Vorgeladen sind genau zwei Dateien: Display-latin und Text-latin (65 KiB + 18 KiB). Die Ersatzschrift
- * (Arial mit angeglichenen Metriken) hängt nur an den latin-Aufrufen; an latin-ext hinge sie sonst vor
- * latin und finge alle Zeichen ab. Display und Text nutzen adjustFontFallback, Martian Mono eine eigene.
+ * Vorgeladen sind genau drei Dateien: Display-latin, Text-latin und Maß-latin (65 KiB + 18 KiB + 14 KiB).
+ * Die Ersatzschrift (Arial mit angeglichenen Metriken) hängt nur an den latin-Aufrufen; an latin-ext hinge
+ * sie sonst vor latin und finge alle Zeichen ab. Display und Text nutzen adjustFontFallback, Martian Mono
+ * eine eigene.
  *
- * font-display bleibt überall swap. Display und Text sind vorgeladen und kommen auf den gemessenen Wegen
- * vor dem ersten Bild an; optional hieße bei langsamem Erstbesuch Arial für die ganze Sitzung, gerade
- * im Plakat. Martian Mono wird nicht vorgeladen (14 KiB, nur Seiten mit Maßen); optional bliebe dort
- * beim Erstbesuch mobil fast immer bei der Ersatzschrift, die Maße verlören ihre Schrift. swap tauscht
- * kurze, feste Maßfelder, der Versatz ist klein (CLS gemessen in _relaunch/belege/r3-perf-01).
+ * font-display bleibt überall swap. Alle drei latin-Dateien sind vorgeladen (außer auf der 404-Seite: Next
+ * setzt beim Rendern von not-found.tsx keine Schrift-Preloads) und kommen auf den gemessenen
+ * Wegen vor dem ersten Bild an; optional hieße bei langsamem Erstbesuch Arial für die ganze Sitzung, gerade
+ * im Plakat. Martian Mono liegt im Pfad des ersten Bilds (Etikett über jeder h1, Etiketten im Fuß, Maße im
+ * Seitenkopf): ohne Vorladen fand der Browser die Datei erst nach dem ersten Layout, tauschte sie nach dem
+ * ersten Bild ein, und die Maße im Seitenkopf brachen anders um (CLS 0,015 Stellenseite mobil, 0,010
+ * Kundendienst Desktop; V6-A3-VITALS). Vorgeladen kommt sie mit den anderen beiden vor dem ersten Bild an.
  *
  * next/font verlangt wörtliche Werte in den Aufrufen; die Bereiche stehen darum ausgeschrieben.
  * Summe der sechs Dateien: 145 940 Byte = 142,5 KiB (vorher 223 864; Budget 250 KB, K-013).
@@ -113,7 +116,7 @@ const martian = localFont({
   weight: '400 800',
   style: 'normal',
   display: 'swap',
-  preload: false,
+  preload: true,
   adjustFontFallback: false,
   fallback: ['Martian Ersatz', 'ui-monospace', 'monospace'],
   variable: '--font-martian',

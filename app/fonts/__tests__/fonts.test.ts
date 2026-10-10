@@ -26,14 +26,25 @@ describe('Schriften (KERN K-005, K-013)', () => {
     expect(total).toBeLessThanOrEqual(150 * 1024);
   });
 
-  it('bindet jede Datei mit unicode-range ein und lädt genau zwei vor (Display-latin, Text-latin)', () => {
+  it('bindet jede Datei mit unicode-range ein und lädt genau drei vor (Display-, Text- und Maß-latin)', () => {
     expect(calls).toHaveLength(6);
     for (const { name, body } of calls) {
       expect(body, name).toMatch(/prop: 'unicode-range'/);
       expect(body, name).toMatch(/display: 'swap'/);
     }
+    // Martian Mono latin liegt im Pfad des ersten Bilds (Etikett über jeder h1, Maße im Seitenkopf): ohne
+    // Vorladen kam sie nach dem ersten Bild und verschob die Maße (CLS, V6-A3-VITALS). latin-ext bleibt
+    // überall ohne Vorladen, eine deutsche Seite braucht sie nicht.
     const preloaded = calls.filter((c) => /preload: true/.test(c.body)).map((c) => c.body.match(/src: '\.\/([^']+)'/)![1]);
-    expect(preloaded.sort()).toEqual(['atkinson-hyperlegible-next-latin-wght400-700.woff2', 'bricolage-grotesque-latin-opsz-wght400-800.woff2']);
+    expect(preloaded.sort()).toEqual([
+      'atkinson-hyperlegible-next-latin-wght400-700.woff2',
+      'bricolage-grotesque-latin-opsz-wght400-800.woff2',
+      'martian-mono-latin-wdth75-wght400-800.woff2',
+    ]);
+    for (const { name, body } of calls.filter((c) => c.name.endsWith('Ext'))) expect(body, name).toMatch(/preload: false/);
+    // Vorgeladen ≤ 100 KiB: die drei Dateien teilen sich den Weg vor dem ersten Bild.
+    const vorgeladen = preloaded.reduce((sum, f) => sum + statSync(path.join(FONTS, f)).size, 0);
+    expect(vorgeladen).toBeLessThanOrEqual(100 * 1024);
     for (const file of files) expect(source, file).toContain(`'./${file}'`);
   });
 

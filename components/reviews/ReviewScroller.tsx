@@ -7,14 +7,18 @@ import { IconButton } from '@/components/ui/IconButton';
 import { Rating } from '@/components/ui/Rating';
 import { cn } from '@/lib/utils/cn';
 import { REVIEW_FILTERS, filterReviewItems, replyTitle, type ReviewFilter, type ReviewItem } from './model';
+import { SternVorrat, VolleSterne, istVolleWertung } from './Sterne';
 import {
   ZIEH_SCHWELLE_PX,
   ansage,
+  lageBei,
   naechsterIndex,
   rastpunkte,
   wurfGeschwindigkeit,
   wurfZiel,
   zaehlung,
+  type Lage,
+  type ReihenMass,
   type ZugProbe,
 } from './ziehen';
 
@@ -22,14 +26,6 @@ export interface ReviewScrollerProps {
   items: readonly ReviewItem[];
   initialFilter: ReviewFilter;
   className?: string;
-}
-
-/** Sichtbare Lage: erste und letzte Karte ganz im Bild (1-basiert), Anfang und Ende der Reihe. */
-interface Lage {
-  erste: number;
-  letzte: number;
-  atStart: boolean;
-  atEnd: boolean;
 }
 
 const START: Lage = { erste: 1, letzte: 1, atStart: true, atEnd: false };
@@ -57,11 +53,15 @@ function ohneBewegung(): boolean {
  * - Pfeile und Tastatur (←/→, Pos1/Ende auf der fokussierten Reihe) springen um eine Karte.
  * - Zählung „01 / 13“ als Maß; Ansage „Stimme n von m“ für Screenreader.
  * - Inhaber-Antworten als native <details> je Karte (ohne JavaScript bedienbar).
+ * - Vermessen wird nur im ResizeObserver (nach dem Layout, ohne erzwungenes Layout); Scrollen, Pfeile und Ziehen
+ *   rechnen mit dem letzten Maß und lesen nur scrollLeft (V6-A3-VITALS, Forced Reflow).
  */
 export function ReviewScroller({ items, initialFilter, className }: ReviewScrollerProps) {
   const listId = useId();
+  const sternVorrat = `${listId}-sterne`;
   const scrollerRef = useRef<HTMLUListElement>(null);
   const punkteRef = useRef<number[]>([0]);
+  const massRef = useRef<ReihenMass>({ links: [], rechts: [], breite: 0, max: 0 });
   const zugRef = useRef<Zug | null>(null);
   const gezogenRef = useRef(false);
   const rastTimerRef = useRef<number | undefined>(undefined);
@@ -69,23 +69,11 @@ export function ReviewScroller({ items, initialFilter, className }: ReviewScroll
   const [lage, setLage] = useState<Lage>(START);
   const visible = filterReviewItems(items, filter);
 
-  const measure = useCallback(() => {
+  /** Lage aus dem letzten Maß; liest nur scrollLeft. */
+  const aktualisieren = useCallback(() => {
     const el = scrollerRef.current;
     if (!el) return;
-    const kinder = Array.from(el.children) as HTMLElement[];
-    const box = el.getBoundingClientRect();
-    const pad = parseFloat(getComputedStyle(el).scrollPaddingLeft) || 0;
-    const max = el.scrollWidth - el.clientWidth;
-    const rects = kinder.map((kind) => kind.getBoundingClientRect());
-    punkteRef.current = rastpunkte(
-      rects.map((r) => el.scrollLeft + r.left - box.left - pad),
-      max,
-    );
-    const ganz = rects.flatMap((r, i) => (r.left >= box.left - 1 && r.right <= box.right + 1 ? [i] : []));
-    const naechste = naechsterIndex(punkteRef.current, el.scrollLeft);
-    const erste = (ganz[0] ?? naechste) + 1;
-    const letzte = (ganz[ganz.length - 1] ?? naechste) + 1;
-    const next: Lage = { erste, letzte, atStart: el.scrollLeft <= 1, atEnd: el.scrollLeft >= max - 1 };
+    const next = lageBei(massRef.current, punkteRef.current, el.scrollLeft);
     setLage((prev) =>
       prev.erste === next.erste && prev.letzte === next.letzte && prev.atStart === next.atStart && prev.atEnd === next.atEnd
         ? prev
@@ -93,30 +81,44 @@ export function ReviewScroller({ items, initialFilter, className }: ReviewScroll
     );
   }, []);
 
+  /** Kanten der Karten und Rastpunkte; nur aus dem ResizeObserver aufgerufen, dort ist das Layout frisch. */
+  const vermessen = useCallback(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const box = el.getBoundingClientRect();
+    const pad = parseFloat(getComputedStyle(el).scrollPaddingLeft) || 0;
+    const rects = Array.from(el.children, (kind) => kind.getBoundingClientRect());
+    const links = rects.map((r) => el.scrollLeft + r.left - box.left);
+    const max = el.scrollWidth - el.clientWidth;
+    massRef.current = { links, rechts: rects.map((r) => el.scrollLeft + r.right - box.left), breite: box.width, max };
+    punkteRef.current = rastpunkte(
+      links.map((kante) => kante - pad),
+      max,
+    );
+    aktualisieren();
+  }, [aktualisieren]);
+
+  // Ein neuer Filter bringt neue Karten: Der Effekt beobachtet die Reihe neu, und die erste Meldung des
+  // ResizeObservers kommt nach dem Layout der neuen Karten.
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
     let timer: number | undefined;
     const onScroll = () => {
       window.clearTimeout(timer);
-      timer = window.setTimeout(measure, 80);
+      timer = window.setTimeout(aktualisieren, 80);
     };
     el.addEventListener('scroll', onScroll, { passive: true });
-    const resize = new ResizeObserver(() => measure());
+    const resize = new ResizeObserver(vermessen);
     resize.observe(el);
     return () => {
       el.removeEventListener('scroll', onScroll);
       resize.disconnect();
       window.clearTimeout(timer);
-      window.clearTimeout(rastTimerRef.current);
     };
-  }, [measure]);
+  }, [filter, vermessen, aktualisieren]);
 
-  // New filter → new cards: re-measure after the list has rendered.
-  useEffect(() => {
-    const frame = window.requestAnimationFrame(measure);
-    return () => window.cancelAnimationFrame(frame);
-  }, [filter, measure]);
+  useEffect(() => () => window.clearTimeout(rastTimerRef.current), []);
 
   /** Fährt zu Rastpunkt `index`; Snap bleibt aus, bis die Reihe steht, damit nichts dazwischen einrastet. */
   const einrasten = useCallback(
@@ -131,7 +133,7 @@ export function ReviewScroller({ items, initialFilter, className }: ReviewScroll
         window.clearTimeout(rastTimerRef.current);
         el.removeEventListener('scrollend', fertig);
         delete el.dataset.frei;
-        measure();
+        aktualisieren();
       };
       el.scrollTo({ left: ziel, behavior: sofort ? 'instant' : 'smooth' });
       if (sofort || Math.abs(el.scrollLeft - ziel) < 1) {
@@ -142,13 +144,12 @@ export function ReviewScroller({ items, initialFilter, className }: ReviewScroll
       window.clearTimeout(rastTimerRef.current);
       rastTimerRef.current = window.setTimeout(fertig, RAST_FALLBACK_MS);
     },
-    [measure],
+    [aktualisieren],
   );
 
   const move = (direction: 1 | -1) => {
     const el = scrollerRef.current;
     if (!el || (direction < 0 ? lage.atStart : lage.atEnd)) return;
-    measure();
     einrasten(naechsterIndex(punkteRef.current, el.scrollLeft) + direction);
   };
 
@@ -205,7 +206,6 @@ export function ReviewScroller({ items, initialFilter, className }: ReviewScroll
     gezogenRef.current = true;
     if (el.hasPointerCapture(event.pointerId)) el.releasePointerCapture(event.pointerId);
     delete el.dataset.ziehen;
-    measure();
     const tempo = mitWurf ? wurfGeschwindigkeit(zug.proben, undefined, event.timeStamp) : 0;
     einrasten(wurfZiel(punkteRef.current, el.scrollLeft, tempo, !ohneBewegung()));
   };
@@ -220,6 +220,7 @@ export function ReviewScroller({ items, initialFilter, className }: ReviewScroll
 
   return (
     <div className={className}>
+      <SternVorrat id={sternVorrat} />
       <div role="group" aria-label="Stimmen filtern" className="flex flex-wrap gap-2">
         {REVIEW_FILTERS.map(({ value, label }) => (
           <Chip key={value} pressed={filter === value} onClick={() => selectFilter(value)}>
@@ -266,10 +267,12 @@ export function ReviewScroller({ items, initialFilter, className }: ReviewScroll
                 {/* Same slot height in every card, so the quotes of a row start on one line. Team voices
                     have no stars; their source takes the slot instead of repeating in the caption. */}
                 <div className="flex min-h-6 items-center">
-                  {item.rating !== undefined ? (
-                    <Rating value={item.rating} size="sm" />
-                  ) : (
+                  {item.rating === undefined ? (
                     <p className="text-etikett text-ink-muted">{item.source}</p>
+                  ) : istVolleWertung(item.rating) ? (
+                    <VolleSterne vorrat={sternVorrat} />
+                  ) : (
+                    <Rating value={item.rating} size="sm" />
                   )}
                 </div>
                 <blockquote className="flex-1 text-body text-ink">

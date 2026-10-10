@@ -104,6 +104,40 @@ function ersterIndexAb(punkte: readonly number[], x: number): number {
   return i;
 }
 
+/** Vermessene Reihe: Kanten jeder Karte in Inhaltskoordinaten (bei scrollLeft 0), sichtbare Breite, größter scrollLeft. */
+export interface ReihenMass {
+  links: readonly number[];
+  rechts: readonly number[];
+  breite: number;
+  max: number;
+}
+
+/** Sichtbare Lage: erste und letzte Karte ganz im Bild (1-basiert), Anfang und Ende der Reihe. */
+export interface Lage {
+  erste: number;
+  letzte: number;
+  atStart: boolean;
+  atEnd: boolean;
+}
+
+/**
+ * Lage bei scrollLeft `x` aus der zuletzt vermessenen Reihe, ohne das DOM zu lesen (kein erzwungenes Layout
+ * beim Scrollen): Karten ganz im Bild mit 1 px Spiel; steht keine ganz im Bild, zählt die nächste Karte.
+ */
+export function lageBei(mass: ReihenMass, punkte: readonly number[], x: number): Lage {
+  const ganz: number[] = [];
+  mass.links.forEach((links, i) => {
+    if (links - x >= -1 && mass.rechts[i] - x <= mass.breite + 1) ganz.push(i);
+  });
+  const naechste = naechsterIndex(punkte, x);
+  return {
+    erste: (ganz[0] ?? naechste) + 1,
+    letzte: (ganz[ganz.length - 1] ?? naechste) + 1,
+    atStart: x <= 1,
+    atEnd: x >= mass.max - 1,
+  };
+}
+
 /** „03“: zweistellige Position für die sichtbare Zählung (Maß in Martian Mono). */
 export function zweistellig(n: number): string {
   return String(n).padStart(2, '0');
