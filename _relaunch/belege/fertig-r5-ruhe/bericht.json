@@ -2,7 +2,7 @@
   "label": "fertig-r5-ruhe",
   "base": "http://localhost:3450",
   "motion": "reduce",
-  "erstellt": "2026-10-10T09:10:19.058Z",
+  "erstellt": "2026-10-10T09:11:16.850Z",
   "seiten": [
     {
       "pfad": "/datenschutz",
@@ -10,8 +10,8 @@
       "ansicht": "m390",
       "schema": "light",
       "status": 200,
-      "ms": 12005,
-      "seitenhoehe": 20083,
+      "ms": 11987,
+      "seitenhoehe": 20107,
       "ueberlauf": {
         "horizontal": false,
         "scrollWidth": 390,
@@ -39,8 +39,8 @@
       "ansicht": "d1440",
       "schema": "light",
       "status": 200,
-      "ms": 6282,
-      "seitenhoehe": 13244,
+      "ms": 6651,
+      "seitenhoehe": 13262,
       "ueberlauf": {
         "horizontal": false,
         "scrollWidth": 1440,
@@ -61,8 +61,8 @@
       "ansicht": "m390",
       "schema": "light",
       "status": 200,
-      "ms": 6542,
-      "seitenhoehe": 5552,
+      "ms": 5837,
+      "seitenhoehe": 5575,
       "ueberlauf": {
         "horizontal": false,
         "scrollWidth": 390,
@@ -90,8 +90,8 @@
       "ansicht": "d1440",
       "schema": "light",
       "status": 200,
-      "ms": 3581,
-      "seitenhoehe": 3768,
+      "ms": 3706,
+      "seitenhoehe": 3786,
       "ueberlauf": {
         "horizontal": false,
         "scrollWidth": 1440,

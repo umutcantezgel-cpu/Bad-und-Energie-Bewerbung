@@ -46,11 +46,11 @@ export function MappeBlatt({ className }: MappeBlattProps) {
 
       {/* Maßketten: Breite unter dem Anschreiben, Höhe rechts am Lebenslauf */}
       <path className={z} d="M74 192H174M74 186V198M174 186V198" />
-      <text className={styles.blattMass} x="124" y="214" textAnchor="middle">
+      <text className={styles.blattMass} x="124" y="214" fontSize="12" textAnchor="middle">
         210
       </text>
       <path className={z} d="M222 10V146M216 10H228M216 146H228" />
-      <text className={styles.blattMass} x="0" y="0" textAnchor="middle" transform="translate(238 78) rotate(-90)">
+      <text className={styles.blattMass} x="0" y="0" fontSize="12" textAnchor="middle" transform="translate(237 78) rotate(-90)">
         297
       </text>
     </svg>
