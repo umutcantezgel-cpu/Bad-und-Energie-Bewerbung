@@ -81,9 +81,14 @@ export interface ErklaerungEingaben {
   jobs: readonly Job[];
   /** Wege, die nur im Flow stehen (status funnel_only), z. B. Quereinstieg. */
   ohneAnzeige: readonly Job[];
+  /** Stelle per ?stelle= vorgewählt: Der Flow zeigt sie als Tag mit „ändern“ statt des Schritts „Stelle“. */
+  vorausgewaehlt?: boolean;
 }
 
-export function erklaerung({ audience, jobs, ohneAnzeige }: ErklaerungEingaben): Erklaerung {
+export function erklaerung({ audience, jobs, ohneAnzeige, vorausgewaehlt = false }: ErklaerungEingaben): Erklaerung {
+  // Wo die Stelle im Flow oben zu wählen ist (components/apply/types.ts: Vorauswahl ersetzt den Schritt „Stelle“)
+  const wahlOrt = vorausgewaehlt ? 'oben über „ändern“' : 'oben im ersten Schritt';
+  const wahlKurz = vorausgewaehlt ? 'oben über „ändern“' : 'oben';
   const intro = getProcessIntro(audience);
   return {
     etikett: 'Ablauf und Wegweiser',
@@ -107,8 +112,8 @@ export function erklaerung({ audience, jobs, ohneAnzeige }: ErklaerungEingaben):
         voraussetzungen: voraussetzungen(job),
       })),
       ohneAnzeige: ohneAnzeige.map((job) => ({ id: job.id, name: bindSeparators(job.shortTitle), text: job.summary })),
-      ohneAnzeigeHinweis: 'Ohne eigene Stellenanzeige, oben im ersten Schritt wählbar.',
-      initiativ: `Passt keine Stelle, wähle oben „${INITIATIVE_OPTION.label}“.`,
+      ohneAnzeigeHinweis: `Ohne eigene Stellenanzeige, ${wahlOrt} wählbar.`,
+      initiativ: `Passt keine Stelle, wähle ${wahlKurz} „${INITIATIVE_OPTION.label}“.`,
     },
     unterlagen: {
       titel: 'Ohne Lebenslauf oder mit Unterlagen',

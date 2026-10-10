@@ -66,7 +66,7 @@ export const kundendiensttechnikerShk = defineJob({
   experienceMonths: 24,
   datePosted: '2026-03-01',
   validThrough: '2027-10-06T00:00:00',
-  updatedAt: '2026-10-08',
+  updatedAt: '2026-10-10',
   apply: { questionSet: 'fachkraft' },
   channels: { googleJobs: true, indeedFeed: true, genericFeed: true, ba: true },
   teamQuoteId: 'becker',

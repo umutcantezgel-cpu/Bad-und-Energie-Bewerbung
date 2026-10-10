@@ -110,7 +110,7 @@ export default async function BewerbungPage({ searchParams }: { searchParams: Pr
         }
         /* V6-G1: ruhiger Erklärteil im selben Abschnitt (E-023: „Kein Lebenslauf“ und „diskret“ bleiben in zwei
            Abschnitten); der Ablauf folgt der vorgewählten Stelle wie die Diskretionszusage. */
-        erklaerung={<Erklaerung audience={audience} {...wegweiserStellen(new Date())} />}
+        erklaerung={<Erklaerung audience={audience} vorausgewaehlt={initialJobId !== undefined} {...wegweiserStellen(new Date())} />}
       />
 
       <Regionalband />

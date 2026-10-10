@@ -203,7 +203,8 @@ function kundendienst(job: Job, now: Date): Einblick {
       : null,
     gebiet: {
       etikett: EINSATZGEBIET,
-      titel: `Deine Touren ab ${REGION.center.name}`,
+      // Bezugspunkt der Entfernungen, nicht der Startpunkt: Mit Firmenwagen beginnt die Tour am Wohnort (FAQ).
+      titel: `Dein Einsatzgebiet rund um ${REGION.center.name}`,
       einleitung: `Vom Firmensitz in ${REGION.center.name} ins regionale Einsatzgebiet, mit Entfernung und Fahrzeit:`,
       orte: regional.map((location) => ({ label: location.name, text: strecke(location), mass: true })),
       nachsatz: `Im ${bereichName(LAHN_DILL)} gehören außerdem ${aufzaehlung(ohne(bereich(LAHN_DILL), regional.map((l) => l.name)))} dazu.`,

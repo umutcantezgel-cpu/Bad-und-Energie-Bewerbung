@@ -99,7 +99,8 @@ describe.each(AUDIENCES)('Erklärteil (%s): jeder Satz hat eine Quelle', (audien
 
   it('Sätze aus FACTS, Ablauf, FAQ, Stellendaten und Mappe; sonst nur die geprüften eigenen Wörter', () => {
     for (const knoten of textknoten(html)) {
-      if (/^(\d+|Schritt \d+:)$/.test(knoten)) continue;
+      // Zahlen der Schritte und der nur vorgelesene Trenner zwischen Etikett und Wert
+      if (/^(\d+|Schritt \d+:|:)$/.test(knoten)) continue;
       for (const satz of saetze(knoten)) {
         expect(KORPUS.includes(satz) || EIGENE.includes(satz), `ohne Quelle: „${satz}“`).toBe(true);
       }
@@ -125,6 +126,14 @@ describe.each(AUDIENCES)('Erklärteil (%s): jeder Satz hat eine Quelle', (audien
   it('jede Zahl steht in einer Quelle', () => {
     const belegt = new Set(zahlen(KORPUS));
     for (const zahl of zahlen(sichtbar(html))) expect(belegt.has(zahl), zahl).toBe(true);
+  });
+
+  it('mit vorgewählter Stelle (?stelle=) zeigt der Hinweis auf „ändern“, denn der Schritt „Stelle“ entfällt', () => {
+    const vor = erklaerung({ ...eingaben(audience), vorausgewaehlt: true });
+    expect(text.stellen.ohneAnzeigeHinweis).toBe('Ohne eigene Stellenanzeige, oben im ersten Schritt wählbar.');
+    expect(vor.stellen.ohneAnzeigeHinweis).toBe('Ohne eigene Stellenanzeige, oben über „ändern“ wählbar.');
+    expect(vor.stellen.initiativ).toBe(`Passt keine Stelle, wähle oben über „ändern“ „${INITIATIVE_OPTION.label}“.`);
+    for (const wort of [vor.stellen.ohneAnzeigeHinweis, vor.stellen.initiativ]) expect(wort).not.toMatch(/ersten Schritt/);
   });
 
   it('Ablauf und Antwort aus lib/content: Fakt quickResponse, Schritte nach Fragenset', () => {

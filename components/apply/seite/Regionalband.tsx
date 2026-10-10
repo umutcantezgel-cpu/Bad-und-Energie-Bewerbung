@@ -43,7 +43,11 @@ export function Regionalband({ titelId = 'bewerbung-region' }: { titelId?: strin
         <div className="flex max-w-prose flex-col gap-3">
           <p className="text-body text-ink">{wochenende}</p>
           <p className="text-callout text-ink-muted">
-            <span className="text-etikett text-ink-2">{fahrzeiten.name}</span> {fahrzeiten.orte.join(' · ')}
+            <span className="text-etikett text-ink-2">
+              {fahrzeiten.name}
+              <span className="sr-only">: </span>
+            </span>{' '}
+            {fahrzeiten.orte.join(' · ')}
           </p>
         </div>
         <TextLink href={link.href} standalone className="self-start">

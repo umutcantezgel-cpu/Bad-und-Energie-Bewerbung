@@ -47,7 +47,11 @@ export function Erklaerung(eingaben: ErklaerungEingaben) {
               </TextLink>
               <p className="max-w-prose text-callout text-ink">{stelle.text}</p>
               <p className="text-callout text-ink-muted">
-                <span className="text-etikett">{stellen.voraussetzung}</span> {stelle.voraussetzungen.join(' · ')}
+                <span className="text-etikett">
+                  {stellen.voraussetzung}
+                  <span className="sr-only">: </span>
+                </span>{' '}
+                {stelle.voraussetzungen.join(' · ')}
               </p>
             </li>
           ))}
