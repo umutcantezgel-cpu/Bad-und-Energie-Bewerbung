@@ -70,7 +70,7 @@ export const LEER_KOPF = Object.freeze({
   zweitweg: Object.freeze({ href: '/jobs', label: 'Offene Stellen ansehen' }),
   fragenEtikett: 'Direkter Draht',
   fragenTitel: 'Schon beworben?',
-  fragenEinleitung: 'Ruf an oder schreib per WhatsApp und nenn deinen Namen. Dann schauen wir nach.',
+  fragenEinleitung: 'Ruf an oder schreib per WhatsApp, wir helfen dir weiter.',
 });
 
 // ---------------------------------------------------------------------------
@@ -88,7 +88,9 @@ export const ABLAUF_TEXT = Object.freeze({
 
 export const SEITEN_TEXT = Object.freeze({
   nummerTitel: 'Nummer speichern',
-  nummerText: (telefon: string) => [`Speichere unsere Nummer `, telefon, `, damit du uns erkennst, wenn wir uns melden.`] as const,
+  /** Satz um die Telefonnummer: „Speichere unsere Nummer … , damit du uns erkennst, wenn wir uns melden.“ */
+  nummerVor: 'Speichere unsere Nummer',
+  nummerNach: ', damit du uns erkennst, wenn wir uns melden.',
   nummerKnopf: 'Nummer speichern',
   unterlagenTitel: 'Unterlagen schicken',
   unterlagenText:
@@ -114,6 +116,7 @@ export const ERGAENZEN_TEXT = Object.freeze({
   sendet: 'Wird gesendet…',
   gesendet: 'Danke, deine Ergänzung ist angekommen.',
   leer: 'Tipp eine Erfahrung an oder füll mindestens ein Feld aus.',
+  leerOhneKenntnisse: 'Füll mindestens ein Feld aus.',
   plzFehler: 'Bitte gib eine fünfstellige Postleitzahl an.',
   mappeTitel: 'Bewerbungsmappe',
   mappeText: 'Anschreiben und Lebenslauf auf A4, zum Drucken oder als PDF. Auch die ist freiwillig.',
