@@ -40,6 +40,8 @@ const company: ThankYouCompany = {
   phoneDisplay: COMPANY.phone.display,
   phoneE164: COMPANY.phone.e164,
   phoneHref: COMPANY.phone.href,
+  whatsappDisplay: COMPANY.whatsapp.display,
+  whatsappE164: COMPANY.whatsapp.e164,
   email: COMPANY.email,
   street: COMPANY.address.street,
   postalCode: COMPANY.address.postalCode,
@@ -131,6 +133,16 @@ describe('Erfolgszustand (E-START-020, Register kreis-schliessen)', () => {
     expect(text).toContain(`${ABLAUF_TEXT.angaben.stelle} ${jobs['anlagenmechaniker-shk']?.label}`);
     expect(text).toContain(`${ABLAUF_TEXT.angaben.eingang} ${formatBerlinDateTime(new Date(RECORD.submittedAt))}`);
     expect(text).toContain(`${ABLAUF_TEXT.angaben.weg} per Anruf`);
+  });
+
+  it('nennt das Büro für Anrufe und die Mobilnummer für WhatsApp, die Kontaktkarte trägt beide', () => {
+    const html = erfolg();
+    expect(plain(html)).toContain(
+      'Speichere unsere Nummern, damit du uns erkennst, wenn wir uns melden: 06441 42956 für Anrufe, 0160 8834290 für WhatsApp.',
+    );
+    const vcf = decodeURIComponent(/href="data:text\/vcard;charset=utf-8,([^"]+)"/.exec(html)?.[1] ?? '');
+    expect(vcf).toContain('TEL;TYPE=WORK,VOICE:+49644142956\r\n');
+    expect(vcf).toContain('item1.TEL;TYPE=CELL:+491608834290\r\nitem1.X-ABLabel:WhatsApp\r\n');
   });
 
   it('nennt den Weg allgemein, wenn der Datensatz ihn nicht trägt', () => {

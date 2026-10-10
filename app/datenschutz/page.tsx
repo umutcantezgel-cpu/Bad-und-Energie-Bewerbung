@@ -274,7 +274,8 @@ export default function DatenschutzPage() {
         </p>
         <h3>Übermittlung in die USA</h3>
         <p>
-          Vercel und unser E-Mail-Dienstleister Resend sind Unternehmen mit Sitz in den USA. Soweit dabei
+          Vercel, unser E-Mail-Dienstleister Resend und der Betreiber unserer Bewerberdatenbank Supabase sind
+          Unternehmen mit Sitz in den USA. Soweit dabei
           personenbezogene Daten in die USA übermittelt werden, geschieht das auf Grundlage des Angemessenheitsbeschlusses
           der EU-Kommission zum EU-US Data Privacy Framework, soweit der Anbieter danach zertifiziert ist, und im Übrigen
           auf Grundlage der EU-Standardvertragsklauseln (Art. 46 Abs. 2 lit. c DSGVO).
@@ -345,10 +346,12 @@ export default function DatenschutzPage() {
 
         <h3>Wer deine Bewerbung erhält</h3>
         <p>
-          Deine Bewerbung geht per E-Mail an unser Team in Wetzlar. Sie lesen nur die Personen, die an der Auswahl
-          beteiligt sind. Hast du eine E-Mail-Adresse angegeben, bekommst du eine Eingangsbestätigung, außer die Bewerbung
-          wurde als möglicher Spam markiert. Wir verkaufen deine
-          Daten nicht und geben sie nicht an Dritte weiter. Technisch beteiligt sind nur unsere Auftragsverarbeiter:
+          Deine Bewerbung geht per E-Mail an unser Team in Wetzlar. Außerdem speichern wir sie mit deinen Ergänzungen in
+          unserer Bewerberdatenbank, damit keine Bewerbung in einem Postfach verloren geht und wir sie geordnet
+          bearbeiten können. Sie lesen nur die Personen, die an der Auswahl beteiligt sind. Hast du eine E-Mail-Adresse
+          angegeben, bekommst du eine Eingangsbestätigung, außer die Bewerbung wurde als möglicher Spam markiert. Wir
+          verkaufen deine Daten nicht und geben sie nicht an Dritte weiter. Technisch beteiligt sind nur unsere
+          Auftragsverarbeiter:
         </p>
         <ul>
           <li>
@@ -359,9 +362,13 @@ export default function DatenschutzPage() {
             <strong>Resend (USA):</strong> Versand der E-Mail mit deiner Bewerbung an unser Team und der
             Eingangsbestätigung an dich.
           </li>
+          <li>
+            <strong>Supabase Inc. (USA):</strong> Betrieb unserer Bewerberdatenbank. Die Datenbank liegt in einem
+            Rechenzentrum in Frankfurt am Main (Region eu-central-1).
+          </li>
         </ul>
         <p>
-          Beide verarbeiten die Daten nur in unserem Auftrag und nach unseren Weisungen (Art. 28 DSGVO). Zur Übermittlung
+          Alle drei verarbeiten die Daten nur in unserem Auftrag und nach unseren Weisungen (Art. 28 DSGVO). Zur Übermittlung
           in die USA siehe <a href="#datenerfassung">Hosting, Server-Logdateien und Sicherheit</a>.
         </p>
 
@@ -369,8 +376,8 @@ export default function DatenschutzPage() {
         <p>
           Führt deine Bewerbung nicht zu einer Einstellung, löschen wir deine Daten spätestens 6 Monate nach Bekanntgabe
           der Absage vollständig und unwiederbringlich (Art. 17 DSGVO in Verbindung mit § 15 Abs. 4 AGG, zur Abwehr
-          möglicher Rechtsansprüche). Kommt es zu einer Einstellung, übernehmen wir die erforderlichen Daten in deine
-          Personalakte.
+          möglicher Rechtsansprüche). Das gilt für die E-Mails und die Bewerberdatenbank gleichermaßen. Kommt es zu einer
+          Einstellung, übernehmen wir die erforderlichen Daten in deine Personalakte.
         </p>
         <p>
           <strong>Talentpool:</strong> Über die 6 Monate hinaus, höchstens 24 Monate, speichern wir deine Bewerbung nur,

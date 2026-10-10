@@ -3,7 +3,7 @@
 import type { ReactNode, RefObject } from 'react';
 import { Icon } from '@/components/icons';
 import { Button, ProgressRing } from '@/components/ui';
-import { CONTACT_PHONE } from '@/lib/data/contact';
+import { WHATSAPP } from '@/lib/data/contact';
 import { cn } from '@/lib/utils/cn';
 import styles from './mappe.module.css';
 import { sprungKlick } from './MappeStand';
@@ -128,7 +128,7 @@ export function MappeActions({
             </a>
           </Button>
           <p className="text-footnote text-ink-2">
-            Vorausgefüllter Text an <span className="whitespace-nowrap">{CONTACT_PHONE.display}</span>. Das PDF hängst du danach im Chat an.
+            Vorausgefüllter Text an <span className="whitespace-nowrap">{WHATSAPP.display}</span>. Das PDF hängst du danach im Chat an.
           </p>
         </div>
       </div>

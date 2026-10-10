@@ -150,7 +150,28 @@ describe('vCard', () => {
     expect(lines).toContain(`EMAIL;TYPE=INTERNET,WORK:${COMPANY.email}`);
     expect(lines.at(-1)).toBe('END:VCARD');
     expect(card).not.toContain('undefined');
+    expect(card).not.toContain('TYPE=CELL');
     expect(escapeVCardValue('a,b;c\\d\ne')).toBe('a\\,b\\;c\\\\d\\ne');
+  });
+
+  it('adds the WhatsApp mobile number as a CELL line with an Apple label, the office stays WORK', () => {
+    const card = buildVCard({
+      formattedName: 'Bad und Energie',
+      organization: COMPANY.legalName,
+      phone: COMPANY.phone.e164,
+      whatsapp: COMPANY.whatsapp.e164,
+    });
+    const lines = card.trimEnd().split('\r\n');
+    expect(lines).toContain('TEL;TYPE=WORK,VOICE:+49644142956');
+    expect(lines).toContain('item1.TEL;TYPE=CELL:+491608834290');
+    expect(lines[lines.indexOf('item1.TEL;TYPE=CELL:+491608834290') + 1]).toBe('item1.X-ABLabel:WhatsApp');
+    expect(lines.filter((line) => line.includes('TEL;'))).toHaveLength(2);
+  });
+
+  it('leaves the CELL line out when WhatsApp runs over the office number', () => {
+    const card = buildVCard({ formattedName: 'Bad und Energie', organization: 'X', phone: '+49 6441 42956', whatsapp: '+49644142956' });
+    expect(card).not.toContain('TYPE=CELL');
+    expect(card).not.toContain('X-ABLabel');
   });
 });
 

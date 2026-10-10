@@ -41,6 +41,15 @@ describe('llms.txt (E-SEO-014)', () => {
     }
   });
 
+  it('lists the office phone and the WhatsApp mobile number on separate lines in both files', async () => {
+    for (const route of [llms, llmsFull]) {
+      const text = await textAt(route, '2026-10-10T12:00:00Z');
+      expect(text).toContain('- Telefon: 06441 42956\n');
+      expect(text).toContain('- WhatsApp: 0160 8834290\n');
+      expect(text).not.toContain('Telefon und WhatsApp');
+    }
+  });
+
   it('answers as UTF-8 plain text', () => {
     for (const route of [llms, llmsFull]) {
       expect(route().headers.get('content-type')).toBe('text/plain; charset=utf-8');

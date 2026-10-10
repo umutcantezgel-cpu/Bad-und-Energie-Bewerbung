@@ -1,4 +1,4 @@
-import { germanIssueMessage, apiError, apiSuccess, guardFailureResponse, validationFailedResponse } from '@/lib/applications/http';
+import { germanIssueMessage, apiError, apiSuccess, guardFailureResponse, sinkFailureResponse, validationFailedResponse } from '@/lib/applications/http';
 import { normalizeApplication } from '@/lib/applications/normalize';
 import { applicationInputSchema, type ApplicationSubmitResponse } from '@/lib/applications/schema';
 import { getApplicationSink } from '@/lib/applications/sink';
@@ -10,7 +10,7 @@ import { guardJsonPost, RATE_LIMITS } from '@/lib/security';
  * POST /api/bewerbung (Vertrag C8). Reihenfolge:
  * Eingangskontrolle (CSRF, Rate-Limit, Content-Type, Body-Cap) → Schema → Normalisierung
  * (Stelle aus dem Registry, Antworten aus deren Fragenset, Telefon E.164, Kanal, Spamverdacht)
- * → Sink (E-Mail) → Token. Erfolg nur, wenn die Team-Mail angenommen wurde.
+ * → Sink (Datenbank und E-Mail bzw. nur E-Mail) → Token. Erfolg nur, wenn die Team-Mail angenommen wurde.
  *
  * Honeypot und Mindestdauer lehnen nichts ab (ein Autofill könnte den Honeypot füllen): Die
  * Bewerbung geht als „[Spamverdacht]“ ans Team, aber ohne Eingangsbestätigung an die
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     const result = await getApplicationSink().submit(application);
     if (!result.ok) {
       console.error(`[bewerbung] nicht zugestellt (${result.reason})`);
-      return apiError(result.reason === 'not_configured' ? 'SERVICE_UNAVAILABLE' : 'INTERNAL');
+      return sinkFailureResponse(result.reason);
     }
 
     const flags = [

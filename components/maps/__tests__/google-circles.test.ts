@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { HEADQUARTERS_COORDINATES, MAP_PALETTES, MAP_POIS } from '@/lib/maps/google-maps-config';
 import { FRAME_PADDING_PX, radiusCircles, type RadiusCircleOptions } from '../google-circles';
-import { createMap, type MapContext } from '../GoogleRegionMap';
+import { GOOGLE_ERROR_DIALOG_SELECTOR, createMap, mapOutcome, type MapContext } from '../GoogleRegionMap';
 import { SWITCH_RADII_KM } from '../views';
 
 /**
@@ -64,12 +64,46 @@ class FakeMarker {
   setMap() {}
 }
 
+/** Fake MutationObserver: `mutate()` delivers a batch, as when Google inserts its error dialog. */
+class FakeMutationObserver {
+  static all: FakeMutationObserver[] = [];
+  observed: { target: unknown; options?: MutationObserverInit }[] = [];
+  connected = false;
+  constructor(private readonly callback: () => void) {
+    FakeMutationObserver.all.push(this);
+  }
+  observe(target: unknown, options?: MutationObserverInit) {
+    this.observed.push({ target, options });
+    this.connected = true;
+  }
+  disconnect() {
+    this.connected = false;
+  }
+  mutate() {
+    if (this.connected) this.callback();
+  }
+}
+
+/** Fake map container: querySelector finds Google's error dialog once `dialog` is set. */
+function fakeContainer() {
+  const container = {
+    dialog: false,
+    selectors: [] as string[],
+    querySelector(selector: string) {
+      container.selectors.push(selector);
+      return container.dialog ? {} : null;
+    },
+  };
+  return container;
+}
+
 const light = MAP_PALETTES.light;
 const dark = MAP_PALETTES.dark;
 
 afterEach(() => {
   FakeCircle.all = [];
   FakeMarker.all = [];
+  FakeMutationObserver.all = [];
   vi.unstubAllGlobals();
 });
 
@@ -149,6 +183,7 @@ describe('createMap mit gestubbtem window.google', () => {
       applyRadiusRef: { current: null },
       callbacks: { current: {} },
       ready: vi.fn(),
+      fail: vi.fn(),
     };
     return ctx;
   }
@@ -188,5 +223,134 @@ describe('createMap mit gestubbtem window.google', () => {
     const place = MAP_POIS.findIndex((poi) => poi.type === 'place');
     FakeMarker.all[place].listeners.click();
     expect(onSelect).toHaveBeenCalledWith(MAP_POIS[place].id);
+  });
+
+  /*
+   * Live (karriere.bad-energie.de, 3.66.8b): BillingNotEnabledMapError ruft gm_authFailure nicht auf. Google legt
+   * seinen Dialog „Google Maps kann auf dieser Seite nicht richtig geladen werden“ in die Karte (Link auf
+   * g.co/dev/maps-no-account, button.dismissButton), etwa 0,6 s nach new Map und vor tilesloaded; die Kacheln laden trotzdem.
+   */
+  describe('Googles Fehlerdialog in der Karte (BillingNotEnabledMapError)', () => {
+    const tilesLoaded = (listenersOnce: { name: string; fn: () => void }[]) =>
+      listenersOnce.find((l) => l.name === 'tilesloaded')!.fn();
+
+    it('looks for the link to g.co/dev/maps-no-account and the .dismissButton', () => {
+      expect(GOOGLE_ERROR_DIALOG_SELECTOR).toContain('a[href*="maps-no-account"]');
+      expect(GOOGLE_ERROR_DIALOG_SELECTOR).toContain('.dismissButton');
+    });
+
+    it('fails instead of ready when the dialog is in the map at tilesloaded (no MutationObserver, as in node)', () => {
+      const { listenersOnce } = stubGoogle();
+      const ctx = context();
+      const container = fakeContainer();
+      createMap(container as unknown as HTMLDivElement, ctx);
+      container.dialog = true;
+      tilesLoaded(listenersOnce);
+      expect(container.selectors).toEqual([GOOGLE_ERROR_DIALOG_SELECTOR]);
+      expect(ctx.fail).toHaveBeenCalledTimes(1);
+      expect(ctx.ready).not.toHaveBeenCalled();
+    });
+
+    it('stays ready with a container that cannot be queried and without MutationObserver (SSR/node safety)', () => {
+      const { listenersOnce } = stubGoogle();
+      const ctx = context();
+      const teardown = createMap({} as HTMLDivElement, ctx);
+      tilesLoaded(listenersOnce);
+      expect(ctx.ready).toHaveBeenCalledTimes(1);
+      expect(ctx.fail).not.toHaveBeenCalled();
+      expect(() => teardown()).not.toThrow();
+    });
+
+    it('fails as soon as Google inserts the dialog, before the tiles, and stops watching', () => {
+      const { listenersOnce } = stubGoogle();
+      vi.stubGlobal('MutationObserver', FakeMutationObserver);
+      const ctx = context();
+      const container = fakeContainer();
+      createMap(container as unknown as HTMLDivElement, ctx);
+
+      const [observer] = FakeMutationObserver.all;
+      expect(observer.observed).toEqual([{ target: container, options: { childList: true, subtree: true } }]);
+      // Google baut die Karte auf: Mutationen ohne Dialog ändern nichts
+      observer.mutate();
+      expect(ctx.fail).not.toHaveBeenCalled();
+
+      container.dialog = true;
+      observer.mutate();
+      expect(ctx.fail).toHaveBeenCalledTimes(1);
+      expect(observer.connected).toBe(false);
+
+      tilesLoaded(listenersOnce);
+      expect(ctx.ready).not.toHaveBeenCalled();
+    });
+
+    it('still fails when the dialog comes after ready (late detection)', () => {
+      const { listenersOnce } = stubGoogle();
+      vi.stubGlobal('MutationObserver', FakeMutationObserver);
+      const ctx = context();
+      const container = fakeContainer();
+      createMap(container as unknown as HTMLDivElement, ctx);
+
+      tilesLoaded(listenersOnce);
+      expect(ctx.ready).toHaveBeenCalledTimes(1);
+      const [observer] = FakeMutationObserver.all;
+      expect(observer.connected).toBe(true);
+
+      container.dialog = true;
+      observer.mutate();
+      expect(ctx.fail).toHaveBeenCalledTimes(1);
+    });
+
+    it('disconnects the observer on teardown', () => {
+      stubGoogle();
+      vi.stubGlobal('MutationObserver', FakeMutationObserver);
+      const ctx = context();
+      const container = fakeContainer();
+      const teardown = createMap(container as unknown as HTMLDivElement, ctx);
+      const [observer] = FakeMutationObserver.all;
+      expect(observer.connected).toBe(true);
+
+      teardown();
+      expect(observer.connected).toBe(false);
+      container.dialog = true;
+      observer.mutate();
+      expect(ctx.fail).not.toHaveBeenCalled();
+    });
+  });
+});
+
+describe('mapOutcome (Ausgang eines Kartenaufbaus)', () => {
+  const setup = () => {
+    const callbacks = { current: { onReady: vi.fn(), onFail: vi.fn() } };
+    return { callbacks, outcome: mapOutcome(callbacks) };
+  };
+
+  it('reports ready once; a later failure (error dialog, gm_authFailure) still falls back', () => {
+    const { callbacks, outcome } = setup();
+    outcome.ready();
+    outcome.ready();
+    expect(callbacks.current.onReady).toHaveBeenCalledTimes(1);
+    expect(outcome.pending()).toBe(false);
+
+    outcome.fail();
+    outcome.fail();
+    expect(callbacks.current.onFail).toHaveBeenCalledTimes(1);
+  });
+
+  it('never reports ready after a failure', () => {
+    const { callbacks, outcome } = setup();
+    outcome.fail();
+    outcome.ready();
+    expect(callbacks.current.onFail).toHaveBeenCalledTimes(1);
+    expect(callbacks.current.onReady).not.toHaveBeenCalled();
+  });
+
+  it('reports nothing after unmount', () => {
+    const { callbacks, outcome } = setup();
+    outcome.cancel();
+    outcome.ready();
+    outcome.fail();
+    expect(callbacks.current.onReady).not.toHaveBeenCalled();
+    expect(callbacks.current.onFail).not.toHaveBeenCalled();
+    expect(outcome.pending()).toBe(false);
   });
 });

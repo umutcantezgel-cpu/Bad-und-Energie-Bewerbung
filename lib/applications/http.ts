@@ -5,6 +5,7 @@ import type { z } from 'zod';
 import { COMPANY } from '@/lib/content/company';
 import type { GuardFailure } from '@/lib/security';
 import type { ApiErrorCode, ApplicationSubmitResponse } from './schema';
+import type { SinkFailureReason } from './sink';
 
 /**
  * Antworten der Bewerbungs-APIs im Vertrag C8: `{ ok: true, … }` oder
@@ -79,6 +80,19 @@ export function guardFailureResponse(failure: GuardFailure): NextResponse<ApiFai
       return apiError('UNSUPPORTED_MEDIA_TYPE');
     case 'INVALID_JSON':
       return apiError('INVALID_JSON');
+  }
+}
+
+/** Ergebnis eines Sinks (lib/applications/sink.ts) im Vertrag C8. */
+export function sinkFailureResponse(reason: SinkFailureReason, options?: ApiErrorOptions): NextResponse<ApiFailureBody> {
+  switch (reason) {
+    case 'not_configured':
+    case 'unavailable':
+      return apiError('SERVICE_UNAVAILABLE', options);
+    case 'limited':
+      return apiError('RATE_LIMITED', options);
+    case 'failed':
+      return apiError('INTERNAL', options);
   }
 }
 

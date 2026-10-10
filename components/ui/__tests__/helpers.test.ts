@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils/cn';
 
 describe('isExternalHref', () => {
   it.each([
-    ['https://wa.me/49644142956', true],
+    ['https://wa.me/491608834290', true],
     ['tel:+49644142956', true],
     ['mailto:info@example.de', true],
     ['//cdn.example.de/x', true],

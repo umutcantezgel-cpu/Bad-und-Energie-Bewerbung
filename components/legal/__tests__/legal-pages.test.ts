@@ -78,6 +78,9 @@ describe('legal-data helpers', () => {
   it('formats the notice version as a German month', () => {
     expect(formatNoticeDate('2026-10')).toBe('Oktober 2026');
     expect(formatNoticeDate('2027-03')).toBe('März 2027');
+    expect(formatNoticeDate('2026-10-10')).toBe('10. Oktober 2026');
+    expect(formatNoticeDate('2026-10-01')).toBe('1. Oktober 2026');
+    expect(formatNoticeDate('2026-10-32')).toBe('2026-10-32');
     expect(formatNoticeDate('2026-13')).toBe('2026-13');
     expect(formatNoticeDate('v2')).toBe('v2');
   });

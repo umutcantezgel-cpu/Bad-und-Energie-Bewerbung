@@ -10,13 +10,11 @@ import { findCommute, formatKm, formatMinutes } from '@/lib/maps/commute';
 import { mapsConsent } from '@/lib/maps/consent';
 import { cn } from '@/lib/utils/cn';
 import { RadiusGraphic } from './RadiusGraphic';
-import { radiusStatus, zoneLabel } from './status';
-import type { RegionMapData, RegionPlace } from './types';
+import { mapsStatusText, radiusStatus, zoneLabel } from './status';
+import type { MapStatus, RegionMapData, RegionPlace } from './types';
 
 // The Google chunk (component + loader) is fetched only once it renders, i.e. after consent.
 const GoogleRegionMap = dynamic(() => import('./GoogleRegionMap'), { ssr: false });
-
-type MapStatus = 'loading' | 'ready' | 'failed';
 
 export interface RegionExplorerProps {
   data: RegionMapData;
@@ -55,6 +53,7 @@ export function RegionExplorer({ data, mapsAvailable, header, className }: Regio
   const consent = useSyncExternalStore(mapsConsent.subscribe, mapsConsent.get, serverConsent);
   const hydrated = useHydrated();
 
+  // A failure, also after ready (Google's error dialog, e.g. BillingNotEnabledMapError), brings the graphic back.
   const showGoogle = mapsAvailable && consent && mapStatus !== 'failed';
   const mapReady = showGoogle && mapStatus === 'ready';
   const selected = selectedId ? findCommute(selectedId, data.places) : undefined;
@@ -71,14 +70,7 @@ export function RegionExplorer({ data, mapsAvailable, header, className }: Regio
     setHiddenByUser(true);
   };
 
-  let status = '';
-  if (mapsAvailable && consent) {
-    if (mapStatus === 'loading') status = 'Google Maps wird geladen …';
-    if (mapStatus === 'ready') status = 'Google Maps ist geladen.';
-    if (mapStatus === 'failed') status = 'Google Maps ist gerade nicht verfügbar. Die Übersicht zeigt alle Orte.';
-  } else if (hiddenByUser) {
-    status = 'Google Maps ist ausgeblendet.';
-  }
+  const status = mapsStatusText({ mapsAvailable, consent, hiddenByUser, mapStatus });
 
   return (
     <div className={cn('flex flex-col gap-8 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-16 lg:gap-y-12', className)}>

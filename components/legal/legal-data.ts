@@ -69,11 +69,13 @@ const MONTHS = [
   'Dezember',
 ] as const;
 
-/** Fassung des Datenschutzhinweises („2026-10“) als Stand, z. B. „Oktober 2026“. */
+/** Fassung des Datenschutzhinweises als Stand: „2026-10“ → „Oktober 2026“, „2026-10-10“ → „10. Oktober 2026“. */
 export function formatNoticeDate(version: string): string {
-  const match = /^(\d{4})-(\d{2})$/.exec(version.trim());
+  const match = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(version.trim());
   const month = match ? MONTHS[Number(match[2]) - 1] : undefined;
-  return match && month ? `${month} ${match[1]}` : version;
+  const day = match?.[3] ? Number(match[3]) : undefined;
+  if (!match || !month || (day !== undefined && (day < 1 || day > 31))) return version;
+  return day ? `${day}. ${month} ${match[1]}` : `${month} ${match[1]}`;
 }
 
 /** mailto-Link, optional mit Betreff. */

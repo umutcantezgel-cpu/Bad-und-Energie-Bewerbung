@@ -7,7 +7,7 @@
  * ==============================================================================
  */
 
-import { CONTACT_PHONE, WHATSAPP_NUMBER } from '@/lib/data/contact';
+import { CONTACT_PHONE, WHATSAPP, WHATSAPP_NUMBER } from '@/lib/data/contact';
 
 export const SITE_CONFIG = {
   baseUrl: process.env.APP_URL || 'https://karriere.bad-energie.de',
@@ -39,7 +39,9 @@ export const SITE_CONFIG = {
     telephone: CONTACT_PHONE.display,
     telephoneLink: CONTACT_PHONE.e164,
     telefax: '06441 48781',
+    // WhatsApp läuft über das Mobiltelefon, nicht über das Büro (lib/data/contact.ts).
     whatsapp: WHATSAPP_NUMBER,
+    whatsappDisplay: WHATSAPP.display,
     openingHours: {
       days: ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag'],
       opens: '07:00',

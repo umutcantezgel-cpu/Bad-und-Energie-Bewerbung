@@ -1,7 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   DEFAULT_APP_URL,
+  DEFAULT_FROM_EMAIL,
   EnvError,
+  cleanEnvValue,
+  getApplicationSinkMode,
+  getSecretSource,
+  getSupabaseServiceConfig,
+  resolveIntakeTarget,
   reportServerEnv,
   checkServerEnv,
   devSecretsAllowed,
@@ -28,11 +34,20 @@ const MANAGED_VARS = [
   'APPLICATION_TOKEN_SECRET',
   'EMAIL_SIMULATION',
   'ALLOW_DEV_SECRETS',
+  'SUPABASE_URL',
+  'NEXT_PUBLIC_SUPABASE_URL',
+  'SUPABASE_SECRET_KEY',
+  'SUPABASE_SERVICE_ROLE_KEY',
+  'APPLICATION_SINK',
 ] as const;
 
 const REAL_KEY = 're_Ab3dEf9h_KlMnOpQrStUvWx';
 const SENDER = 'Bad und Energie Karriere <bewerbung@karriere.bad-energie.de>';
 const SECRET = 'a'.repeat(64);
+const SUPABASE_URL = 'https://ymynacgwkqycjcervixg.supabase.co';
+const SB_SECRET = 'sb_secret_' + 'Q'.repeat(32);
+const jwt = (role: string) =>
+  ['eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9', Buffer.from(JSON.stringify({ role })).toString('base64url'), 'c2lnbmF0dXJl'].join('.');
 
 function setEnv(vars: Partial<Record<(typeof MANAGED_VARS)[number] | 'NODE_ENV', string>>) {
   for (const [name, value] of Object.entries(vars)) vi.stubEnv(name, value);
@@ -51,6 +66,7 @@ beforeEach(() => {
   for (const name of MANAGED_VARS) vi.stubEnv(name, undefined);
   vi.stubEnv('NODE_ENV', 'development');
   vi.spyOn(console, 'error').mockImplementation(() => {});
+  vi.spyOn(console, 'info').mockImplementation(() => {});
 });
 
 afterEach(() => {
@@ -153,25 +169,39 @@ describe('getAppUrl', () => {
   });
 });
 
+describe('cleanEnvValue', () => {
+  it.each([
+    ['"re_abc"', 're_abc'],
+    ["'re_abc'", 're_abc'],
+    ['  "Bad und Energie Karriere <bewerbung@karriere.bad-energie.de>"  ', SENDER],
+    ['"Bad und Energie" <x@y.de>', '"Bad und Energie" <x@y.de>'],
+    ['"nur links', '"nur links'],
+  ])('%j → %j', (raw, cleaned) => {
+    expect(cleanEnvValue(raw)).toBe(cleaned);
+  });
+});
+
 describe('getEmailConfig', () => {
-  it('uses the default recipient and has no sender fallback, even in development', () => {
+  it('uses the default recipient and the default sender on karriere.bad-energie.de', () => {
     setEnv({ RESEND_API_KEY: REAL_KEY });
     const config = getEmailConfig();
-    expect(config.from).toBeUndefined();
+    expect(config.from).toBe(DEFAULT_FROM_EMAIL);
+    expect(config.from).toContain('@karriere.bad-energie.de>');
+    expect(config.fromSource).toBe('default');
     expect(config.notificationTo).toBe('info@bad-energie.de');
-    expect(config.missing).toEqual(['RESEND_FROM_EMAIL']);
+    expect(config.missing).toEqual([]);
     expect(JSON.stringify(config)).not.toContain('resend.dev');
     expect(console.error).not.toHaveBeenCalled();
   });
 
-  it('reports missing sender in production builds', async () => {
+  it('reports a missing API key in production builds', async () => {
     vi.resetModules();
     const fresh = await import('@/lib/env');
-    setEnv({ NODE_ENV: 'production', RESEND_API_KEY: REAL_KEY });
+    setEnv({ NODE_ENV: 'production', RESEND_FROM_EMAIL: SENDER });
     const config = fresh.getEmailConfig();
-    expect(config.from).toBeUndefined();
-    expect(config.missing).toEqual(['RESEND_FROM_EMAIL']);
-    expect(console.error).toHaveBeenCalledWith(expect.stringContaining('RESEND_FROM_EMAIL'));
+    expect(config.apiKey).toBeUndefined();
+    expect(config.missing).toEqual(['RESEND_API_KEY']);
+    expect(console.error).toHaveBeenCalledWith(expect.stringContaining('RESEND_API_KEY'));
   });
 
   it('reports missing variables on Vercel production by name only', async () => {
@@ -179,7 +209,7 @@ describe('getEmailConfig', () => {
     const fresh = await import('@/lib/env');
     setEnv({ NODE_ENV: 'production', VERCEL_ENV: 'production', RESEND_API_KEY: 're_123456789' });
     const config = fresh.getEmailConfig();
-    expect(config.missing).toEqual(['RESEND_API_KEY', 'RESEND_FROM_EMAIL']);
+    expect(config.missing).toEqual(['RESEND_API_KEY']);
     expect(console.error).toHaveBeenCalledWith(expect.stringContaining('RESEND_API_KEY'));
     expect(console.error).not.toHaveBeenCalledWith(expect.stringContaining('re_123456789'));
   });
@@ -195,16 +225,28 @@ describe('getEmailConfig', () => {
     expect(getEmailConfig()).toEqual({
       apiKey: REAL_KEY,
       from: SENDER,
+      fromSource: 'env',
       notificationTo: 'team@bad-energie.de',
       forceSimulation: false,
       missing: [],
     });
   });
 
-  it('treats an invalid sender as missing and reads the legacy recipient name', () => {
+  it('accepts values pasted with surrounding quotes', () => {
+    setEnv({ RESEND_API_KEY: `"${REAL_KEY}"`, RESEND_FROM_EMAIL: `"${SENDER}"` });
+    expect(getEmailConfig()).toMatchObject({ apiKey: REAL_KEY, from: SENDER, fromSource: 'env', missing: [] });
+  });
+
+  it('rejects keys with invisible characters instead of failing later in the Resend client', () => {
+    setEnv({ RESEND_API_KEY: `${REAL_KEY}\u200b` });
+    expect(getEmailConfig().apiKey).toBeUndefined();
+  });
+
+  it('falls back to the default sender for an invalid one and reads the legacy recipient name', () => {
     setEnv({ NODE_ENV: 'production', RESEND_FROM_EMAIL: 'kein absender', RESEND_TO_EMAIL: 'alt@bad-energie.de' });
     const config = getEmailConfig();
-    expect(config.from).toBeUndefined();
+    expect(config.from).toBe(DEFAULT_FROM_EMAIL);
+    expect(config.fromSource).toBe('default');
     expect(config.notificationTo).toBe('alt@bad-energie.de');
   });
 
@@ -243,6 +285,35 @@ describe('getSecret', () => {
     expect(getSecret('IP_HASH_SALT')).toMatch(/^dev-only-/);
   });
 
+  it('derives separate secrets from the Resend key when no own value is set (also on Vercel production)', () => {
+    setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: REAL_KEY });
+    const salt = getSecret('IP_HASH_SALT');
+    const token = getSecret('APPLICATION_TOKEN_SECRET');
+    expect(salt).toMatch(/^[0-9a-f]{64}$/);
+    expect(token).toMatch(/^[0-9a-f]{64}$/);
+    expect(salt).not.toBe(token);
+    expect(salt).not.toContain(REAL_KEY);
+    expect(getSecretSource('IP_HASH_SALT')).toBe('derived');
+    // stabil über Aufrufe und Instanzen
+    expect(getSecret('IP_HASH_SALT')).toBe(salt);
+  });
+
+  it('prefers an own value and also derives when the own value is too short', () => {
+    setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: REAL_KEY, IP_HASH_SALT: SECRET, APPLICATION_TOKEN_SECRET: 'zu-kurz' });
+    expect(getSecret('IP_HASH_SALT')).toBe(SECRET);
+    expect(getSecretSource('IP_HASH_SALT')).toBe('env');
+    expect(getSecretSource('APPLICATION_TOKEN_SECRET')).toBe('derived');
+  });
+
+  it('derives from a Supabase server key, never from a publishable or anon key', () => {
+    setEnv({ VERCEL_ENV: 'production', SUPABASE_SECRET_KEY: SB_SECRET });
+    expect(getSecretSource('IP_HASH_SALT')).toBe('derived');
+    setEnv({ SUPABASE_SECRET_KEY: undefined, SUPABASE_SERVICE_ROLE_KEY: jwt('anon') });
+    expect(getSecretSource('IP_HASH_SALT')).toBe('missing');
+    setEnv({ SUPABASE_SERVICE_ROLE_KEY: jwt('service_role') });
+    expect(getSecretSource('IP_HASH_SALT')).toBe('derived');
+  });
+
   it('throws a typed error on Vercel production when missing or too short', () => {
     setEnv({ VERCEL_ENV: 'production' });
     const missing = catchError(() => getSecret('IP_HASH_SALT'));
@@ -279,13 +350,73 @@ describe('getIndexNowSubmitToken', () => {
   });
 });
 
+describe('getSupabaseServiceConfig', () => {
+  it('reads the URL and the secret key, including the names of the Vercel integration', () => {
+    expect(getSupabaseServiceConfig()).toBeNull();
+    setEnv({ NEXT_PUBLIC_SUPABASE_URL: `${SUPABASE_URL}/`, SUPABASE_SERVICE_ROLE_KEY: jwt('service_role') });
+    expect(getSupabaseServiceConfig()).toEqual({
+      url: SUPABASE_URL,
+      secretKey: jwt('service_role'),
+      keyKind: 'service_role_jwt',
+      projectRef: 'ymynacgwkqycjcervixg',
+    });
+    setEnv({ SUPABASE_URL: SUPABASE_URL, SUPABASE_SECRET_KEY: `"${SB_SECRET}"` });
+    expect(getSupabaseServiceConfig()).toMatchObject({ secretKey: SB_SECRET, keyKind: 'secret' });
+  });
+
+  it('ignores publishable and anon keys and placeholder URLs', () => {
+    setEnv({ SUPABASE_URL: SUPABASE_URL, SUPABASE_SECRET_KEY: 'sb_publishable_abcdefghijklmnopqrstuvwxyz' });
+    expect(getSupabaseServiceConfig()).toBeNull();
+    setEnv({ SUPABASE_SECRET_KEY: jwt('anon') });
+    expect(getSupabaseServiceConfig()).toBeNull();
+    setEnv({ SUPABASE_URL: 'https://your-project.supabase.co', SUPABASE_SECRET_KEY: SB_SECRET });
+    expect(getSupabaseServiceConfig()).toBeNull();
+  });
+
+  it('requires https on Vercel production', () => {
+    setEnv({ SUPABASE_URL: 'http://127.0.0.1:54321', SUPABASE_SECRET_KEY: SB_SECRET });
+    expect(getSupabaseServiceConfig()).toMatchObject({ url: 'http://127.0.0.1:54321' });
+    setEnv({ VERCEL_ENV: 'production' });
+    expect(getSupabaseServiceConfig()).toBeNull();
+  });
+});
+
+describe('resolveIntakeTarget', () => {
+  it('uses the database automatically only on Vercel production', () => {
+    setEnv({ SUPABASE_URL: SUPABASE_URL, SUPABASE_SECRET_KEY: SB_SECRET });
+    expect(getApplicationSinkMode()).toBe('auto');
+    expect(resolveIntakeTarget()).toEqual({ kind: 'email', reason: 'not_production' });
+    setEnv({ VERCEL_ENV: 'preview' });
+    expect(resolveIntakeTarget()).toEqual({ kind: 'email', reason: 'not_production' });
+    setEnv({ VERCEL_ENV: 'production' });
+    expect(resolveIntakeTarget()).toMatchObject({ kind: 'supabase', config: { projectRef: 'ymynacgwkqycjcervixg' } });
+  });
+
+  it('can be forced with APPLICATION_SINK and switched off with APPLICATION_SINK=email', () => {
+    setEnv({ SUPABASE_URL: SUPABASE_URL, SUPABASE_SECRET_KEY: SB_SECRET, APPLICATION_SINK: 'supabase' });
+    expect(resolveIntakeTarget().kind).toBe('supabase');
+    setEnv({ VERCEL_ENV: 'production', APPLICATION_SINK: 'email' });
+    expect(resolveIntakeTarget()).toEqual({ kind: 'email', reason: 'mode_email' });
+  });
+
+  it('stays with e-mail when Supabase is not configured', () => {
+    setEnv({ VERCEL_ENV: 'production', APPLICATION_SINK: 'supabase', SUPABASE_URL: SUPABASE_URL });
+    expect(resolveIntakeTarget()).toEqual({ kind: 'email', reason: 'not_configured' });
+  });
+});
+
 describe('checkServerEnv', () => {
   it('fails on Vercel production when required variables are missing', () => {
-    setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: REAL_KEY, APP_URL: 'nope' });
+    setEnv({ VERCEL_ENV: 'production', APP_URL: 'nope' });
     const result = checkServerEnv();
     expect(result.ok).toBe(false);
-    expect(result.missing).toEqual(['RESEND_FROM_EMAIL', 'IP_HASH_SALT', 'APPLICATION_TOKEN_SECRET']);
+    expect(result.missing).toEqual(['RESEND_API_KEY', 'IP_HASH_SALT', 'APPLICATION_TOKEN_SECRET']);
     expect(result.invalid).toEqual(['APP_URL']);
+  });
+
+  it('passes on Vercel production with only the Resend key (sender and secrets have fallbacks)', () => {
+    setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: REAL_KEY });
+    expect(checkServerEnv()).toEqual({ ok: true, missing: [], invalid: [] });
   });
 
   it('passes on Vercel production when everything required is set', () => {
@@ -307,20 +438,31 @@ describe('checkServerEnv', () => {
     setEnv({ NODE_ENV: 'production' });
     expect(checkServerEnv()).toEqual({
       ok: false,
-      missing: ['RESEND_API_KEY', 'RESEND_FROM_EMAIL', 'IP_HASH_SALT', 'APPLICATION_TOKEN_SECRET'],
+      missing: ['RESEND_API_KEY', 'IP_HASH_SALT', 'APPLICATION_TOKEN_SECRET'],
       invalid: [],
     });
     setEnv({ EMAIL_SIMULATION: 'true', ALLOW_DEV_SECRETS: 'true' });
     expect(checkServerEnv().ok).toBe(true);
   });
+
+  it('reports a publishable key in the secret-key variable as invalid', () => {
+    setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: REAL_KEY, SUPABASE_SERVICE_ROLE_KEY: jwt('anon') });
+    expect(checkServerEnv()).toEqual({ ok: false, missing: [], invalid: ['SUPABASE_SERVICE_ROLE_KEY'] });
+  });
+
+  it('names missing Supabase parts when APPLICATION_SINK=supabase', () => {
+    setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: REAL_KEY, APPLICATION_SINK: 'supabase' });
+    expect(checkServerEnv()).toEqual({ ok: false, missing: ['SUPABASE_URL', 'SUPABASE_SECRET_KEY'], invalid: [] });
+  });
 });
 
 describe('reportServerEnv', () => {
   it('never throws on Vercel production and does not leak values', () => {
-    setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: REAL_KEY });
+    setEnv({ VERCEL_ENV: 'production', IP_HASH_SALT: SECRET, RESEND_FROM_EMAIL: SENDER });
     expect(reportServerEnv()).toEqual({ ok: false });
-    expect(console.error).toHaveBeenCalledWith(expect.stringContaining('RESEND_FROM_EMAIL'));
-    expect(console.error).not.toHaveBeenCalledWith(expect.stringContaining(REAL_KEY));
+    expect(console.error).toHaveBeenCalledWith(expect.stringContaining('RESEND_API_KEY'));
+    expect(console.error).toHaveBeenCalledWith(expect.stringContaining('abgelehnt (503)'));
+    expect(console.error).not.toHaveBeenCalledWith(expect.stringContaining(SECRET));
   });
 
   it('only logs elsewhere, so the API can answer with 503', () => {
@@ -339,5 +481,23 @@ describe('reportServerEnv', () => {
     });
     expect(reportServerEnv()).toEqual({ ok: true });
     expect(console.error).not.toHaveBeenCalled();
+  });
+
+  it('names fallbacks and the intake target in one info line, without values', () => {
+    setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: REAL_KEY, SUPABASE_URL: SUPABASE_URL, SUPABASE_SECRET_KEY: SB_SECRET });
+    expect(reportServerEnv()).toEqual({ ok: true });
+    const line = String(vi.mocked(console.info).mock.calls.at(-1)?.[0]);
+    expect(line).toContain('Bewerbungen: Supabase (ymynacgwkqycjcervixg, Secret Key) und E-Mail');
+    expect(line).toContain('IP_HASH_SALT abgeleitet aus RESEND_API_KEY');
+    expect(line).toContain('Absender: Standard');
+    expect(line).not.toContain(REAL_KEY);
+    expect(line).not.toContain(SB_SECRET);
+  });
+
+  it('does not claim 503 when only an optional value is invalid', () => {
+    setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: REAL_KEY, CONTACT_NOTIFICATION_EMAIL: 'a@b.de, c@d.de' });
+    expect(reportServerEnv()).toEqual({ ok: false });
+    expect(console.error).toHaveBeenCalledWith(expect.stringContaining('Ersatzwerte aktiv'));
+    expect(console.error).not.toHaveBeenCalledWith(expect.stringContaining('503'));
   });
 });

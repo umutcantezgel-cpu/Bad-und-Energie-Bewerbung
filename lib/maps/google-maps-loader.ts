@@ -8,6 +8,11 @@ import { isUsableMapsApiKey } from './keys';
  * Key resolution: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY (inlined at build) or GOOGLE_MAPS_API_KEY via
  * /api/maps/config. Without a key, on gm_authFailure, a script error or a timeout the promise
  * resolves to false and the caller keeps the typographic radius graphic.
+ *
+ * Google's refusals stay for the page view: gm_authFailure (invalid key, referrer, quota) and the
+ * error dialog that GoogleRegionMap finds in the map (BillingNotEnabledMapError, which does not
+ * call gm_authFailure). A script that failed to load (network) does not: the next attempt
+ * injects a fresh script tag.
  */
 
 declare global {
@@ -50,6 +55,16 @@ function hookAuthFailure(): void {
     notifyAuthError();
     previous?.();
   };
+}
+
+/**
+ * Google refused the project without calling gm_authFailure: its error dialog sits in the map
+ * (BillingNotEnabledMapError: "Google Maps kann auf dieser Seite nicht richtig geladen werden",
+ * "For development purposes only"). Same sticky fallback as gm_authFailure.
+ */
+export function reportGoogleMapsProjectError(): void {
+  if (!hasAuthError) console.warn('[Google Maps] Fehlerdialog von Google in der Karte: zurück zur Radius-Grafik.');
+  notifyAuthError();
 }
 
 export function onGoogleMapsAuthError(callback: () => void): () => void {
@@ -116,16 +131,35 @@ export async function resolveGoogleMapsApiKey(): Promise<string> {
   return '';
 }
 
+/**
+ * With loading=async google.maps.Map already exists when the callback runs (verified on 3.66.8b);
+ * importLibrary('maps') makes sure of it on later versions.
+ */
+async function mapsLibraryReady(): Promise<boolean> {
+  const maps = window.google?.maps;
+  if (typeof maps?.importLibrary === 'function') {
+    try {
+      await maps.importLibrary('maps');
+    } catch (err) {
+      console.warn('[Google Maps] Bibliothek „maps“ konnte nicht geladen werden:', err);
+    }
+  }
+  return Boolean(window.google?.maps?.Map);
+}
+
 function injectScript(apiKey: string): Promise<boolean> {
   return new Promise<boolean>((resolve) => {
+    // Runs until the maps library is ready, so a hanging importLibrary also ends in the fallback.
     const timer = window.setTimeout(() => {
       console.warn('[Google Maps] Zeitüberschreitung beim Laden.');
       resolve(false);
     }, LOAD_TIMEOUT_MS);
 
     window[CALLBACK_NAME] = () => {
-      window.clearTimeout(timer);
-      resolve(Boolean(window.google?.maps?.Map));
+      void mapsLibraryReady().then((ready) => {
+        window.clearTimeout(timer);
+        resolve(ready);
+      });
     };
 
     const params = new URLSearchParams({
@@ -133,6 +167,7 @@ function injectScript(apiKey: string): Promise<boolean> {
       v: 'weekly',
       language: 'de',
       region: 'DE',
+      loading: 'async',
       callback: CALLBACK_NAME,
     });
     const script = document.createElement('script');
@@ -141,7 +176,9 @@ function injectScript(apiKey: string): Promise<boolean> {
     script.onerror = () => {
       window.clearTimeout(timer);
       console.warn('[Google Maps] Skript konnte nicht geladen werden.');
-      notifyAuthError();
+      // Network failure, not a refusal by Google: no sticky flag; the next attempt starts over.
+      script.remove();
+      loaderPromise = null;
       resolve(false);
     };
     document.head.appendChild(script);

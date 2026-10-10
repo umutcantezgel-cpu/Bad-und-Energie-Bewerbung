@@ -110,9 +110,9 @@ describe('Auswahl der Stelle', () => {
 describe('Andere Wege (E-BEW-001)', () => {
   it('ein Weg ist ein Link mit Icon, Titel und erklärender Zeile; fremde Ziele im neuen Tab', () => {
     const html = renderToStaticMarkup(
-      createElement(Weg, { href: 'https://wa.me/49644142956', icon: 'message-circle', titel: 'Direkt per WhatsApp', text: 'Erklärung', neuerTab: { hinweis: 'öffnet WhatsApp' } }),
+      createElement(Weg, { href: 'https://wa.me/491608834290', icon: 'message-circle', titel: 'Direkt per WhatsApp', text: 'Erklärung', neuerTab: { hinweis: 'öffnet WhatsApp' } }),
     );
-    expect(html).toMatch(/^<a href="https:\/\/wa\.me\/49644142956" target="_blank" rel="noopener noreferrer"/);
+    expect(html).toMatch(/^<a href="https:\/\/wa\.me\/491608834290" target="_blank" rel="noopener noreferrer"/);
     expect(plain(html)).toBe('Direkt per WhatsApp (öffnet WhatsApp) Erklärung');
     expect(html).toContain('data-icon="message-circle"');
     expect(html).toContain('min-h-11');

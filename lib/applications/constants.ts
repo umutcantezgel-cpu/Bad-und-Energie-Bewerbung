@@ -53,7 +53,8 @@ export const STORAGE_KEYS = {
  * auf /datenschutz). Bei einer neuen Fassung anhängen, die alte mindestens 24 h stehen lassen:
  * Offene Tabs mit dem alten Client-Bundle senden noch deren Version.
  */
-export const PRIVACY_NOTICE_VERSIONS = ['2026-10'] as const;
+// 2026-10-10: Bewerberdatenbank (Supabase, Frankfurt) als Empfänger und Auftragsverarbeiter ergänzt.
+export const PRIVACY_NOTICE_VERSIONS = ['2026-10', '2026-10-10'] as const;
 export type PrivacyNoticeVersion = (typeof PRIVACY_NOTICE_VERSIONS)[number];
 export const PRIVACY_NOTICE_VERSION: PrivacyNoticeVersion = PRIVACY_NOTICE_VERSIONS[PRIVACY_NOTICE_VERSIONS.length - 1];
 

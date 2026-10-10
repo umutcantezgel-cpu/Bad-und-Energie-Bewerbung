@@ -86,11 +86,12 @@ export const ABLAUF_TEXT = Object.freeze({
 });
 
 export const SEITEN_TEXT = Object.freeze({
-  nummerTitel: 'Unsere Nummer',
-  /** Satz um die Telefonnummer: „Speichere unsere Nummer … , damit du uns erkennst, wenn wir uns melden.“ */
-  nummerVor: 'Speichere unsere Nummer',
-  nummerNach: ', damit du uns erkennst, wenn wir uns melden.',
-  nummerKnopf: 'Nummer speichern',
+  nummerTitel: 'Unsere Nummern',
+  /** Satz um beide Nummern: „Speichere unsere Nummern, … wenn wir uns melden: <Büro> für Anrufe, <Mobil> für WhatsApp.“ */
+  nummerVor: 'Speichere unsere Nummern, damit du uns erkennst, wenn wir uns melden:',
+  nummerAnruf: 'für Anrufe,',
+  nummerWhatsApp: 'für WhatsApp.',
+  nummerKnopf: 'Nummern speichern',
   unterlagenTitel: 'Unterlagen schicken',
   unterlagenText:
     'Wenn du Zeugnisse oder einen Lebenslauf zur Hand hast, kannst du sie per WhatsApp oder E‑Mail nachreichen. Nenn dabei deine Bewerbungsnummer',

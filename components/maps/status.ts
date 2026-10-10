@@ -1,4 +1,4 @@
-import type { RegionPlace } from './types';
+import type { MapStatus, RegionPlace } from './types';
 
 const NBSP = '\u00A0';
 
@@ -20,4 +20,26 @@ export function radiusStatus(place: Pick<RegionPlace, 'name' | 'distanceKm'>, ra
   return ring
     ? `${place.name} liegt außerhalb von ${radiusKm}${NBSP}km, aber innerhalb von ${ring}${NBSP}km.`
     : `${place.name} liegt außerhalb von ${radiusKm}${NBSP}km.`;
+}
+
+export interface MapsStatusInput {
+  /** A Maps key is configured (the consent button is shown). */
+  mapsAvailable: boolean;
+  consent: boolean;
+  /** „Karte wieder ausblenden“ was clicked in this page view. */
+  hiddenByUser: boolean;
+  mapStatus: MapStatus;
+}
+
+/**
+ * Status line under the map button (role="status"). „Geladen“ only once the tiles are there and Google shows
+ * no error dialog (GoogleRegionMap); every failure keeps the radius graphic and says so, without blaming anyone.
+ */
+export function mapsStatusText({ mapsAvailable, consent, hiddenByUser, mapStatus }: MapsStatusInput): string {
+  if (mapsAvailable && consent) {
+    if (mapStatus === 'loading') return 'Google Maps wird geladen …';
+    if (mapStatus === 'ready') return 'Google Maps ist geladen.';
+    return 'Die interaktive Karte ist gerade nicht verfügbar. Die Übersicht zeigt das Einsatzgebiet.';
+  }
+  return hiddenByUser ? 'Google Maps ist ausgeblendet.' : '';
 }

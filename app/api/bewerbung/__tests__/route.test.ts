@@ -7,6 +7,9 @@ vi.mock('@/lib/email', () => ({ dispatchApplicationEmails, dispatchApplicationFo
 const { POST } = await import('@/app/api/bewerbung/route');
 const { verifyFollowUpToken } = await import('@/lib/applications/token');
 const { getSecret } = await import('@/lib/env');
+const { EmailSink, setApplicationSinkForTests } = await import('@/lib/applications/sink');
+const { SupabaseSink } = await import('@/lib/supabase/sink');
+const { CircuitBreaker } = await import('@/lib/supabase/service');
 
 const OK = { success: true, simulated: true, teamNotification: { success: true }, userConfirmation: { success: true } };
 
@@ -244,6 +247,7 @@ describe('POST /api/bewerbung', () => {
 
   it('answers 503 instead of a fake success when production secrets are missing', async () => {
     vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('RESEND_API_KEY', '');
     vi.stubEnv('IP_HASH_SALT', '');
     const res = await post(valid());
     expect(res.status).toBe(503);
@@ -253,11 +257,25 @@ describe('POST /api/bewerbung', () => {
 
   it('answers 503 before sending when only the token secret is missing', async () => {
     vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('RESEND_API_KEY', '');
     vi.stubEnv('IP_HASH_SALT', 's'.repeat(40));
     vi.stubEnv('APPLICATION_TOKEN_SECRET', '');
     const res = await post(valid());
     expect(res.status).toBe(503);
     expect(dispatchApplicationEmails).not.toHaveBeenCalled();
+  });
+
+  it('accepts applications with only the Resend key set: the secrets are derived (live situation 2026-10-10)', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('VERCEL_ENV', 'production');
+    vi.stubEnv('IP_HASH_SALT', '');
+    vi.stubEnv('APPLICATION_TOKEN_SECRET', '');
+    vi.stubEnv('RESEND_API_KEY', 're_Ab3dEf9h_KlMnOpQrStUvWx');
+    const res = await post(valid());
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(verifyFollowUpToken(body.reference, body.followUpToken, new Date(), getSecret('APPLICATION_TOKEN_SECRET'))).toMatchObject({ ok: true });
+    expect(dispatchApplicationEmails).toHaveBeenCalledTimes(1);
   });
 
   it('answers 500 on unexpected errors and logs no personal data', async () => {
@@ -270,5 +288,46 @@ describe('POST /api/bewerbung', () => {
     expect(logged).not.toContain('max@example.org');
     expect(logged).not.toContain('Max Muster');
     expect(logged).not.toContain('0151');
+  });
+});
+
+describe('POST /api/bewerbung with the database (SupabaseSink)', () => {
+  const submitApplication = vi.fn();
+  const rpc = { submitApplication, submitFollowUp: vi.fn(), probe: vi.fn() };
+
+  beforeEach(() => {
+    submitApplication.mockReset();
+    setApplicationSinkForTests(new SupabaseSink({ rpc, breaker: new CircuitBreaker(), fallback: new EmailSink() }));
+  });
+
+  afterEach(() => setApplicationSinkForTests(null));
+
+  it('stores the application, mails the team and answers with the reference from the database', async () => {
+    submitApplication.mockImplementation(async (payload: { reference: string }) => ({
+      ok: true,
+      data: { application_id: '00000000-0000-4000-8000-000000000001', reference: payload.reference, duplicate: false, resubmitted: false },
+    }));
+    const res = await post(valid());
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(submitApplication).toHaveBeenCalledWith(expect.objectContaining({ reference: body.reference, acquisition_channel: 'indeed' }));
+    expect(sentApplication().reference).toBe(body.reference);
+    expect(verifyFollowUpToken(body.reference, body.followUpToken, new Date(), getSecret('APPLICATION_TOKEN_SECRET'))).toMatchObject({ ok: true });
+  });
+
+  it('still accepts the application via emergency mail when the database is down', async () => {
+    submitApplication.mockResolvedValue({ ok: false, kind: 'unavailable', status: 0 });
+    const res = await post(valid());
+    expect(res.status).toBe(200);
+    expect(await res.json()).toMatchObject({ ok: true });
+    expect(dispatchApplicationEmails).toHaveBeenCalledTimes(1);
+  });
+
+  it('answers 503 when the database and the emergency mail both fail', async () => {
+    submitApplication.mockResolvedValue({ ok: false, kind: 'unavailable', status: 0 });
+    dispatchApplicationEmails.mockResolvedValue({ success: false, simulated: false, teamNotification: { success: false, error: 'send_failed' }, userConfirmation: { success: false } });
+    const res = await post(valid());
+    expect(res.status).toBe(503);
+    expect(await res.json()).toMatchObject({ ok: false, code: 'SERVICE_UNAVAILABLE' });
   });
 });

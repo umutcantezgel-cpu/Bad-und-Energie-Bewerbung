@@ -73,7 +73,8 @@ describe('404-Seite (R4-404 in R5-RUHE)', () => {
     expect(whatsapp).not.toBeNull();
     const url = new URL(whatsapp![1].replace(/&amp;/g, '&'));
     expect(url.searchParams.get('text')).toBe(FEHLER_WHATSAPP);
-    expect(url.searchParams.get('phone')).toBe(COMPANY.phone.e164.replace(/\D/g, ''));
+    expect(url.searchParams.get('phone')).toBe('491608834290');
+    expect(url.searchParams.get('phone')).toBe(COMPANY.whatsapp.e164.replace(/\D/g, ''));
     expect(whatsapp![2]).toMatch(/target="_blank"/);
     expect(whatsapp![2]).toMatch(/rel="noopener noreferrer"/);
     expect(FEHLER_WHATSAPP).toMatch(/^Guten Tag Herr Demir, /);

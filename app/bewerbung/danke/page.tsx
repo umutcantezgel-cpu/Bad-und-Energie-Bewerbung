@@ -31,6 +31,8 @@ const company: ThankYouCompany = {
   phoneDisplay: COMPANY.phone.display,
   phoneE164: COMPANY.phone.e164,
   phoneHref: COMPANY.phone.href,
+  whatsappDisplay: COMPANY.whatsapp.display,
+  whatsappE164: COMPANY.whatsapp.e164,
   email: COMPANY.email,
   street: COMPANY.address.street,
   postalCode: COMPANY.address.postalCode,
