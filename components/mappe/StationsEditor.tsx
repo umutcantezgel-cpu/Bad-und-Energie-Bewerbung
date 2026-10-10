@@ -209,7 +209,7 @@ export function StationsEditor<T extends { id: string }>({
       )}
 
       {items.length < max ? (
-        <Button ref={addRef} variant="outline" onClick={add} className="self-start">
+        <Button ref={addRef} variant="outline" wrap onClick={add} className="max-w-full self-start">
           <Icon name="plus" size="md" />
           {addLabel}
         </Button>

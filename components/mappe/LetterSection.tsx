@@ -73,7 +73,7 @@ export function LetterSection({
           />
         </Field>
         {edited && (
-          <Button variant="ghost" onClick={onResetLetter} className="self-start">
+          <Button variant="ghost" wrap onClick={onResetLetter} className="max-w-full self-start">
             <Icon name="rotate-ccw" size="md" />
             Text neu aus der Vorlage erstellen
           </Button>

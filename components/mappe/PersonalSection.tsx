@@ -107,6 +107,8 @@ export function PersonalSection({ step, done, person, onChange, photoUrl, onPhot
           />
           <Button
             variant="outline"
+            wrap
+            className="max-w-full"
             aria-describedby="mappe-foto-hint"
             onClick={() => fileRef.current?.click()}
           >
@@ -114,7 +116,7 @@ export function PersonalSection({ step, done, person, onChange, photoUrl, onPhot
             {photoUrl ? 'Foto ändern' : 'Foto hinzufügen'}
           </Button>
           {photoUrl && (
-            <Button variant="ghost" onClick={() => onPhotoChange(null)}>
+            <Button variant="ghost" wrap className="max-w-full" onClick={() => onPhotoChange(null)}>
               <Icon name="trash" size="md" />
               Foto entfernen
             </Button>
