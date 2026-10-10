@@ -30,7 +30,7 @@ export function flowRoot(page: Page, variant: FlowVariant): Locator {
 /**
  * Wartet, bis React den Flow hydriert hat (vorher lösen Taps nichts aus). Der eingebettete Flow der
  * Stellenseite lädt und hydriert erst in Reichweite (V6-A2, HydrateNear): darum erst hinscrollen wie der
- * Sprung über „Jetzt bewerben“ (#bewerben), Anfang des Flows unter dem Kopf (scroll-padding-top).
+ * Sprung über „Direkt hier bewerben“ (#bewerben), Anfang des Flows unter dem Kopf (scroll-padding-top).
  */
 export async function waitForHydration(root: Locator): Promise<void> {
   await expect(root).toBeVisible();

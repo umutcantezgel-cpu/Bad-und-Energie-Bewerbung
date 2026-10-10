@@ -32,7 +32,11 @@ Alle mit `reducedMotion: 'reduce'`, Locale `de-DE`, Zeitzone `Europe/Berlin`.
   `main#main`, Schrift ≥ 12 px, axe (WCAG 2.2 AA) ohne Verstöße und Screenshot; auf Touch-Geräten
   Trefferflächen ≥ 44 px; bei 320 px Breite kein horizontaler Scroll.
 - `seo.spec.ts` (nur `desktop-light`): genau ein JobPosting je Stellenseite mit `url` = canonical,
-  keins auf `/` und `/jobs`, Feeds mit Status und Content-Type, Sitemap mit allen Stellen.
+  keins auf `/` und `/jobs`, Feeds mit Status und Content-Type, Sitemap mit allen Stellen. Dazu (V6-B)
+  je Route genau ein JSON-LD-Block mit `@graph` (auflösbare `@id`-Verweise, WebPage-`url` = canonical)
+  und ein Offline-Crawl nach Seobility-Prüfpunkten über alle Sitemap-Seiten: Titel 30–60 Zeichen,
+  Meta-Beschreibung 110–160, genau eine h1, ≥ 500 sichtbare Wörter, Canonical absolut und gleich dem
+  Sitemap-Eintrag; auf allen Routen jeder Ankertext mit genau einem Ziel und jedes `<img>` mit `alt`.
 - `apply.spec.ts`: Happy Path eingebettet und auf `/bewerbung` (≤ 3 Taps), nur Tastatur (Desktop),
   Browser-Zurück/-Vor, Entwurf nach Neuladen, 503 mit WhatsApp-Rückfallweg, Fokus auf das erste
   fehlerhafte Feld, kein Doppel-Submit, keine Personendaten in URLs, alter localStorage-Eintrag gelöscht.
