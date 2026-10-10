@@ -187,7 +187,8 @@ export function interpretFailure(status: number, body: unknown, headers?: Pick<H
   const { fieldErrors, otherErrors } = mapFieldErrors(json.fieldErrors ?? json.details);
 
   let kind: SubmitFailureKind = 'server';
-  if (status === 429 || code === 'RATE_LIMITED') kind = 'rate_limited';
+  // FOLLOW_UP_LIMIT ist kein Warten-und-erneut-Versuchen (429 nur als Statuscode): eigener Text, kein „Erneut senden“.
+  if ((status === 429 && code !== 'FOLLOW_UP_LIMIT') || code === 'RATE_LIMITED') kind = 'rate_limited';
   else if (code === 'VALIDATION_FAILED' || ((status === 400 || status === 422) && Object.keys(fieldErrors).length > 0)) {
     kind = 'validation';
   }

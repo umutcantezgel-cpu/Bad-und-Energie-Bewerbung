@@ -132,7 +132,7 @@ describe('Mappe per WhatsApp (E-BEW-020)', () => {
     expect(link).toContain('target="_blank"');
     expect(link).toContain('rel="noopener noreferrer"');
     const href = (/href="([^"]+)"/.exec(link)?.[1] ?? '').replace(/&amp;/g, '&');
-    expect(href).toMatch(/^https:\/\/api\.whatsapp\.com\/send\?phone=49644142956&text=/);
+    expect(href).toMatch(/^https:\/\/api\.whatsapp\.com\/send\?phone=491608834290&text=/);
     const message = decodeURIComponent(href.split('text=')[1]);
     expect(message).toContain('Bewerbungsmappe (Anschreiben und Lebenslauf)');
     expect(message).toContain('Die Mappe als PDF hänge ich hier im Chat an.');
@@ -141,6 +141,7 @@ describe('Mappe per WhatsApp (E-BEW-020)', () => {
 
   it('says how the PDF gets into the chat', () => {
     expect(plain(html)).toContain('Das PDF hängst du danach im Chat an.');
-    expect(plain(html)).toContain('06441 42956');
+    expect(plain(html)).toContain('Vorausgefüllter Text an 0160 8834290');
+    expect(plain(html)).not.toContain('Text an 06441 42956');
   });
 });

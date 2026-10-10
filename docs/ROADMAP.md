@@ -2,7 +2,7 @@
 
 > Von der Karriere-Microsite zur Plattform, die aktiv Bewerber findet und das Bewerben so einfach wie möglich macht. Ruhiges, typografisches Apple-Design.
 >
-> **Status:** freigegeben am 2026-10-08 · Phase 1 abgeschlossen (PR nach `main`, Merge nach Freigabe) · Phase 2 in Vorbereitung (siehe §8.1).
+> **Status:** freigegeben am 2026-10-08 · Phase 1 abgeschlossen (PR nach `main`, Merge nach Freigabe) · Phase 2a in Produktion · Phase 2b (Bewerbungen zusätzlich in der Datenbank) gebaut, aktiv, sobald Supabase in Production konfiguriert ist (Stand 2026-10-10, siehe §8.1).
 
 ---
 
@@ -145,11 +145,11 @@
 - Dazu `components/analytics/AttributionCapture.tsx`.
 
 **`lib/security/`**
-- `rate-limit.ts` (Phase 1 im Speicher, Phase 2 als Supabase-Tabelle), `request.ts` (Body-Cap 64 KB, Content-Type), `ip.ts` (HMAC-Hash).
+- `rate-limit.ts` (im Speicher, auch in 2b; die Supabase-Tabelle frühestens mit 2c, siehe §8.1), `request.ts` (Body-Cap 64 KB, Content-Type), `ip.ts` (HMAC-Hash).
 
 **`lib/env.ts`**
 - zod-Validierung der Umgebungsvariablen.
-- Fehlt in Production Pflicht-Konfiguration (`RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `IP_HASH_SALT`, `APPLICATION_TOKEN_SECRET`), protokolliert `instrumentation.ts` das beim Start. Die Seite bleibt online, die Formular-APIs antworten ehrlich mit 503.
+- Fehlt in Production Pflicht-Konfiguration, protokolliert `instrumentation.ts` das beim Start. Pflicht ist seit 2026-10-10 nur `RESEND_API_KEY`: `RESEND_FROM_EMAIL` hat einen Standard (`bewerbung@karriere.bad-energie.de`), `IP_HASH_SALT` und `APPLICATION_TOKEN_SECRET` werden ohne eigenen Wert per HMAC aus `RESEND_API_KEY` bzw. dem Supabase-Server-Key abgeleitet. Die Seite bleibt online, die Formular-APIs antworten ehrlich mit 503.
 
 ---
 
@@ -298,7 +298,7 @@ Ersetzt HeroExpressFunnel, QuizView, VaultView, FormView und BewerberCheckliste.
   - „Danke, {Vorname}.“, ein einmal gezeichneter Haken, kein Konfetti. Zusammenfassung und Timeline („Sabri Demir meldet sich“; außerhalb der Bürozeiten mit Hinweis auf die Öffnungszeiten).
   - Ergänzungen werden in Phase 1 per E-Mail mit HMAC-Token an die Bewerbungsnummer gehängt.
   - Dokumente: in Phase 1 „per WhatsApp/E-Mail nachreichen“, ab Phase 2 als Upload.
-  - „Nummer speichern“ als .vcf (Handwerker nehmen unbekannte Nummern oft nicht an).
+  - „Nummern speichern“ als .vcf mit Büro (Anrufe) und WhatsApp-Mobilnummer (Handwerker nehmen unbekannte Nummern oft nicht an).
 
 **Bewerbungsmappen-Generator `/bewerbung/mappe` (bleibt, neu gestaltet)**
 - Optionales Werkzeug **außerhalb** des Pflichtpfads, verlinkt von der Danke-Seite und aus dem Flow („Lieber mit kompletter Mappe?“).
@@ -361,6 +361,18 @@ Zwei Claude-Sessions arbeiten parallel am selben Repo. Mit dem Owner abgestimmt:
 - **2d Cockpit `/admin`:** E-Mail-OTP und TOTP, Realtime-Eingang, signierte Datei-URLs, Quellen-Report, DSGVO-Export und -Löschung.
 - **2e Stellen aus der DB:** asynchrone Registry-Getter mit `cache()` und Tag-Revalidierung, Build-Snapshot als Fallback, Editor im Cockpit, Revalidate und IndexNow per Trigger.
 
+**Stand 2b (2026-10-10): so umgesetzt** (`lib/supabase/{service,rpc,payload,sink}.ts`, `getApplicationSink` in `lib/applications/sink.ts`)
+- **Schalter `APPLICATION_SINK=auto|email|supabase`**, Standard `auto`: Datenbank nur auf Vercel Production (`VERCEL_ENV=production`), weil es genau ein Supabase-Projekt gibt. Preview, `next start`, lokal und Tests schreiben nur mit `APPLICATION_SINK=supabase` hinein. `email` ist der Notschalter (wirkt nach einem neuen Deploy). **Abweichung** von der Planung oben („Preview mit Supabase, Production bleibt bis zum Pro-Kauf beim E-Mail-Versand“): Production nutzt die Datenbank, sobald URL und Server-Key gesetzt sind.
+- **Variablen:** `SUPABASE_URL` oder `NEXT_PUBLIC_SUPABASE_URL`; `SUPABASE_SECRET_KEY` (`sb_secret_…`) oder `SUPABASE_SERVICE_ROLE_KEY` (alter JWT, nur Rolle `service_role`). Publishable- und anon-Keys werden abgelehnt und beim Start als „ungültig“ gemeldet.
+- **Stufe A, Mails weiter aus Next:** `rpc_submit_application` (bestehende RPC aus 2a, keine neue Migration) mit HMAC-Nummer und Inhalts-Hash; die Datenbank gibt die Nummer zurück, Wiederholungen bekommen die gespeicherte. Danach verschickt Next genau dieselben Mails wie der `EmailSink` (gleiche Resend-Idempotency-Keys `bewerbung:<uuid>…`). Die Team-Mail bleibt das Erfolgskriterium, solange es kein Cockpit gibt. Die Edge Functions für den Versand kommen mit 2c.
+- **Not-E-Mail:** Jeder Datenbankfehler (nicht erreichbar, Zeitlimit 5 s, falscher Key oder fehlende Funktion, `validation_failed`, unerwartet) führt zur vollständigen Bewerbung per E-Mail (`EmailSink`); scheitert auch die, 503. `reference_conflict` → ein zweiter Versuch mit Zufallsnummer. Circuit Breaker je Instanz: nach 2 Ausfällen in Folge 30 s ohne Datenbank.
+- **Ergänzungen:** `rpc_submit_follow_up`, danach die Mail. `not_found` (Bewerbung aus der E-Mail-Zeit oder per Not-E-Mail) → nur Mail. `follow_up_limit` (20 je Bewerbung, 5 je 24 h) → 429 mit eigenem Code `FOLLOW_UP_LIMIT` (kein „Erneut senden“, Verweis auf WhatsApp/E-Mail).
+- **Outbox:** Die Zeilen in `private.outbox` bleiben auf `pending`, weil Next selbst versendet. Bevor in 2c ein Outbox-Worker eingeschaltet wird, müssen diese Altzeilen abgeschlossen werden, z. B. `update private.outbox set status = 'dead', last_error_code = 'sent_by_next_2b' where status in ('pending', 'failed') and created_at < '<Go-live 2c>';`
+- **Rate-Limit bleibt im Speicher.** Den DB-Limiter (`private.rate_limit_counters`) nutzt 2b bewusst nicht: Es gibt noch keinen Aufräumjob, und die Datenschutzerklärung verspricht Zähler im Arbeitsspeicher, die nach spätestens 24 Stunden ablaufen. Verschoben nach 2c, zusammen mit Aufräumjob und angepasstem Datenschutztext. Signierte Uploads sind ebenfalls noch nicht gebaut.
+- **Löschfristen:** Die 6-Monats-Regel gilt jetzt auch für die Datenbank. Der Purge (2c) ist nicht gebaut; bis 2c bzw. zum Cockpit löscht die Administration per SQL. Das muss vor der ersten Frist stehen (frühestens etwa 6 Monate nach der ersten Absage).
+- **Datenschutz:** Fassung `2026-10-10` (Bewerberdatenbank als Empfänger, Supabase als Auftragsverarbeiter, Frankfurt `eu-central-1`, Übermittlung in die USA, Speicherdauer auch für die Datenbank). DSB-Prüfung und AVV mit Supabase stehen aus (`docs/operations/datenschutz-aenderungen.md`).
+- **Tarif:** Free pausiert nach 7 Tagen ohne Aktivität. Die Not-E-Mail fängt das technisch ab; Pro bleibt empfohlen.
+- **Betrieb:** `GET /api/status` zeigt Ziel der Bewerbungen und Ergebnis einer Datenbankprobe ohne Schreibzugriff (`docs/operations/betrieb.md` 2.6).
 
 **Infrastruktur**
 - Supabase Frankfurt (Pro, sonst pausiert das Projekt nach 7 Tagen Inaktivität).
@@ -390,7 +402,7 @@ Zwei Claude-Sessions arbeiten parallel am selben Repo. Mit dem Owner abgestimmt:
 
 **Intake**
 - `SupabaseSink` statt `EmailSink`, gleicher API-Vertrag.
-- Team-E-Mail enthält nur Referenz, Stelle, Vorname, Telefon und einen Cockpit-Link, keine Anhänge.
+- Team-E-Mail enthält nur Referenz, Stelle, Vorname, Telefon und einen Cockpit-Link, keine Anhänge (erst mit dem Cockpit; in 2b bleibt die vollständige Team-Mail).
 - Fällt die DB aus: vollständige Not-E-Mail ans Team. Wenn auch die scheitert, antwortet die API mit 503 statt einer Erfolgsmeldung.
 
 **Cockpit `/admin`**
@@ -569,7 +581,10 @@ Beispiel-Description für Anlagenmechaniker:
 - Quereinsteiger/Montagehelfer als echte Stelle (mit Gehalt)? Standard: `funnel_only`.
 - Einheitlicher Titel für Sabri Demir. Standard: „Geschäftsführer und Meister“ (laut `team.ts`).
 - Einzelaussagen bestätigen: „Übernahmegarantie“, „1 %-Privatnutzung“, „Gehalt am 1. Werktag“. Bis dahin nur dort verwenden, wo sie bereits sichtbar stehen.
-- Ist WhatsApp Business auf 06441 42956 aktiv? Wer bekommt Cockpit-Zugänge (Phase 2)? Gibt es eine Empfehlungsprämie (Phase 4)? Soll eine BA-Kooperation beantragt werden (Phase 5)?
+- ~~Ist WhatsApp Business auf 06441 42956 aktiv?~~ Geklärt 2026-10-10: WhatsApp läuft nur über die Mobilnummer 0160 8834290 (`lib/data/contact.ts` `WHATSAPP`); 06441 42956 bleibt die Nummer für Anrufe, Impressum und JSON-LD. Offen: Business- oder privates Konto (`datenschutz-aenderungen.md` O9). Wer bekommt Cockpit-Zugänge (Phase 2)? Gibt es eine Empfehlungsprämie (Phase 4)? Soll eine BA-Kooperation beantragt werden (Phase 5)?
+- Google Maps: im Google-Cloud-Projekt des Keys ein aktives Rechnungskonto verknüpfen (Live-Test 2026-10-10: `BillingNotEnabledMapError`). Bis dahin zeigt die Seite die Radius-Grafik (`docs/operations/betrieb.md` 2.4).
+- Phase 2b: AVV mit Supabase abschließen (Supabase-Dashboard, Bereich Legal/DPA) und die Datenschutz-Fassung `2026-10-10` durch die oder den DSB prüfen lassen. Löschung in der Datenbank bis 2c per SQL durch die Administration, geregelt vor der ersten Frist.
+- Eigene Werte für `IP_HASH_SALT` und `APPLICATION_TOKEN_SECRET` setzen (empfohlen, `openssl rand -hex 32`). Ohne sie werden sie aus `RESEND_API_KEY` abgeleitet. Nach jedem Deploy `GET /api/status` prüfen.
 - „100 Jahre“-Badge ab 2027 → „Seit 1926“. Das Ablaufdatum wird im Code hinterlegt.
 - Logo als Vektordatei (Text in Pfaden) und eine helle Variante für dunkle Flächen. Die SVGs in `public/images` zeigen ein anderes Signet mit Systemschrift. Standard: Raster-WebP, in Dark Mode und Inverse-Band als weiße Silhouette per CSS-Filter (`components/brand/Logo.tsx`).
 - Teamangaben mit Stichtag (Lehrjahr Weber, Betriebszugehörigkeit Koch/Becker, siehe `docs/operations/fakten-abgleich.md` B20/B21). Standard: nur zeitlose Angaben.

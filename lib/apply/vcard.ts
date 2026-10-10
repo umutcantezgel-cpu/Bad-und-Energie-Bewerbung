@@ -1,5 +1,5 @@
 /**
- * Kontaktkarte (vCard 3.0) für „Nummer speichern“ auf der Danke-Seite: Viele Handwerker
+ * Kontaktkarte (vCard 3.0) für „Nummern speichern“ auf der Danke-Seite: Viele Handwerker
  * nehmen unbekannte Nummern nicht an (ROADMAP §6). Rein, damit Server und Client gleich bauen.
  */
 
@@ -9,6 +9,8 @@ export interface VCardContact {
   organization: string;
   /** E.164, z. B. „+49644142956“. */
   phone: string;
+  /** WhatsApp-Mobilnummer in E.164, z. B. „+491608834290“; gleicht sie `phone`, entfällt die Zeile. */
+  whatsapp?: string;
   email?: string;
   street?: string;
   postalCode?: string;
@@ -30,14 +32,19 @@ export function escapeVCardValue(value: string): string {
 
 export function buildVCard(contact: VCardContact): string {
   const e = (value: string | undefined) => escapeVCardValue((value ?? '').trim());
+  const phone = contact.phone.replace(/[^\d+]/g, '');
+  const whatsapp = contact.whatsapp?.replace(/[^\d+]/g, '');
   const lines = [
     'BEGIN:VCARD',
     'VERSION:3.0',
     `N:${e(contact.formattedName)};;;;`,
     `FN:${e(contact.formattedName)}`,
     `ORG:${e(contact.organization)}`,
-    `TEL;TYPE=WORK,VOICE:${contact.phone.replace(/[^\d+]/g, '')}`,
+    `TEL;TYPE=WORK,VOICE:${phone}`,
   ];
+  // Mobilnummer für WhatsApp. Die Gruppe „item1.“ (RFC 2426) hängt das Apple-Label an; andere Programme
+  // ignorieren X-ABLabel und zeigen die Nummer als „Mobil“.
+  if (whatsapp && whatsapp !== phone) lines.push(`item1.TEL;TYPE=CELL:${whatsapp}`, 'item1.X-ABLabel:WhatsApp');
   if (contact.email) lines.push(`EMAIL;TYPE=INTERNET,WORK:${e(contact.email)}`);
   if (contact.street || contact.city) {
     lines.push(

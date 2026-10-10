@@ -56,11 +56,62 @@ export interface DispatchOptions {
    * (applicationFingerprint), damit Wiederholungen auf einer anderen Instanz denselben Key haben.
    */
   idempotencyKey?: string;
+  /**
+   * Nur Bewerbungen: Die Eingangsbestätigung nach der Antwort an den Browser senden (die Sinks
+   * übergeben `after` aus next/server). Sie geht weiterhin nur raus, wenn die Team-Mail angenommen
+   * wurde; ihr Ergebnis wertet ohnehin niemand aus. Ohne Option wird sie direkt gesendet.
+   */
+  deferConfirmation?: (task: () => Promise<unknown>) => void;
 }
+
+/** Zeitlimit je Resend-Aufruf: Der Browser gibt nach 25 s auf (lib/apply/submit.ts). */
+export const RESEND_TIMEOUT_MS = 10_000;
+/** Wartezeit vor dem einen erneuten Versuch bei vorübergehenden Fehlern. */
+const RETRY_DELAY_MS = 800;
+/**
+ * Erneut versuchen nur, wenn der erste Versuch schnell scheiterte: Mit Datenbank (5 s) und einem
+ * zweiten vollen Versuch (10 s) bleibt die Antwort so unter den 25 s des Browsers.
+ */
+const RETRY_IF_FAILED_WITHIN_MS = 5_000;
+
+/**
+ * Fehler, die an der Konfiguration liegen (Key, Absender-Domain, Kontingent): Eine Wiederholung
+ * hilft nicht, die API antwortet mit 503 und die Seite bietet Anruf und WhatsApp an.
+ * `validation_error` mit HTTP 403 heißt bei Resend „Domain nicht verifiziert“ bzw. „Testmodus“.
+ */
+const CONFIG_ERRORS = new Set([
+  'missing_api_key',
+  'invalid_api_key',
+  'restricted_api_key',
+  'suspended_api_key',
+  'invalid_from_address',
+  'monthly_quota_exceeded',
+  'daily_quota_exceeded',
+]);
+/** Vorübergehende Fehler: einmal mit demselben Idempotency-Key wiederholen (sicher, kein Doppelversand). */
+const TRANSIENT_ERRORS = new Set(['concurrent_idempotent_requests', 'rate_limit_exceeded', 'internal_server_error', 'service_unavailable']);
+
+/**
+ * Resend meldet HTTP 500 als `application_error`, das SDK ebenso Gateway-Fehler (502–504). Mit
+ * statusCode null steht derselbe Name für Netzfehler und Zeitüberschreitung: die nicht wiederholen.
+ */
+function isTransient(error: { name: string; statusCode: number | null }): boolean {
+  return TRANSIENT_ERRORS.has(error.name) || (error.name === 'application_error' && typeof error.statusCode === 'number' && error.statusCode >= 500);
+}
+
+/** Resend-Fehlertext ohne Adressen (Domains bleiben, sie erklären z. B. „domain is not verified“). */
+function redactErrorMessage(message: unknown): string {
+  return String(message ?? '')
+    .replace(/[^\s@<>()"',;:]+@[^\s@<>()"',;:]+/g, '[adresse]')
+    .replace(/\s+/g, ' ')
+    .slice(0, 200);
+}
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export function getResendClient(): {
   client: Resend | null;
-  fromEmail?: string;
+  fromEmail: string;
   toEmail: string;
   isConfigured: boolean;
   forceSimulation: boolean;
@@ -106,41 +157,62 @@ export async function sendEmail({
     return { success: false, error: 'not_configured', simulated: false };
   }
 
-  try {
-    const { data, error } = await config.client.emails.send(
-      {
-        from: sender,
-        to: Array.isArray(to) ? to : [to],
-        subject,
-        html,
-        ...(text ? { text } : {}),
-        replyTo: replyTo || undefined,
-        tags: tags?.length ? tags : undefined,
-      },
-      idempotencyKey ? { idempotencyKey } : undefined
-    );
+  const payload = {
+    from: sender,
+    to: Array.isArray(to) ? to : [to],
+    subject,
+    html,
+    ...(text ? { text } : {}),
+    replyTo: replyTo || undefined,
+    tags: tags?.length ? tags : undefined,
+  };
 
-    if (error) {
+  try {
+    const startedAt = Date.now();
+    for (let attempt = 1; ; attempt++) {
+      // Das SDK wirft nicht: Netzfehler und Zeitüberschreitung kommen als application_error zurück.
+      const { data, error } = await config.client.emails.send(payload, {
+        signal: AbortSignal.timeout(RESEND_TIMEOUT_MS),
+        ...(idempotencyKey ? { idempotencyKey } : {}),
+      });
+
+      if (!error) {
+        console.info(`[email] gesendet (${data?.id})`);
+        return { success: true, id: data?.id, simulated: false };
+      }
+
       // Gleicher Key, anderer Inhalt: Bei unseren Keys (Hash der Angaben) unterscheidet sich nur
       // z. B. die Eingangszeit. Die Mail wurde also schon zugestellt.
       if (idempotencyKey && error.name === 'invalid_idempotent_request') {
         console.info('[email] bereits versendet (Idempotency-Key bekannt)');
         return { success: true, duplicate: true, simulated: false };
       }
-      console.error(`[email] Resend-Fehler: ${error.name} (HTTP ${error.statusCode ?? '–'})`);
-      return { success: false, error: error.name || 'send_failed', simulated: false };
-    }
 
-    console.info(`[email] gesendet (${data?.id})`);
-    return { success: true, id: data?.id, simulated: false };
+      if (attempt === 1 && idempotencyKey && isTransient(error) && Date.now() - startedAt < RETRY_IF_FAILED_WITHIN_MS) {
+        console.warn(`[email] Resend-Fehler: ${error.name} (HTTP ${error.statusCode ?? '–'}), neuer Versuch`);
+        await wait(RETRY_DELAY_MS);
+        continue;
+      }
+
+      const isConfigError = CONFIG_ERRORS.has(error.name) || (error.name === 'validation_error' && error.statusCode === 403);
+      console.error(
+        `[email] Resend-Fehler: ${error.name} (HTTP ${error.statusCode ?? '–'})${isConfigError ? ' – Konfiguration prüfen' : ''}: ${redactErrorMessage(error.message)}`
+      );
+      return { success: false, error: isConfigError ? 'not_configured' : error.name || 'send_failed', simulated: false };
+    }
   } catch (err: unknown) {
     console.error(`[email] Versand fehlgeschlagen: ${err instanceof Error ? err.name : 'unknown'}`);
     return { success: false, error: 'send_failed', simulated: false };
   }
 }
 
-function settle(result: PromiseSettledResult<EmailDispatchResult>): EmailDispatchResult {
-  return result.status === 'fulfilled' ? result.value : { success: false, error: 'send_failed' };
+/** sendEmail fängt Resend-Fehler selbst ab; das hier fängt auch unerwartete Würfe (z. B. beim Rendern). */
+async function settle(mail: () => Promise<EmailDispatchResult>): Promise<EmailDispatchResult> {
+  try {
+    return await mail();
+  } catch {
+    return { success: false, error: 'send_failed' };
+  }
 }
 
 /** Resend erlaubt Schlüssel bis 256 Zeichen; der Hash bindet den Schlüssel an Empfänger und Inhalt. */
@@ -179,6 +251,10 @@ export function applicationFingerprint(app: ReferencedApplication): unknown {
 const NO_RECIPIENT: EmailDispatchResult = { success: false, error: 'no_recipient' };
 /** Keine Eingangsbestätigung bei Spamverdacht: Die Adresse ist ungeprüft und könnte fremd sein. */
 const SKIPPED_SPAM: EmailDispatchResult = { success: false, error: 'skipped_suspected_spam' };
+/** Keine Eingangsbestätigung, solange das Team die Bewerbung nicht hat (sonst „angekommen“, obwohl nicht). */
+const SKIPPED_TEAM_FAILED: EmailDispatchResult = { success: false, error: 'skipped_team_failed' };
+/** Eingangsbestätigung geht nach der Antwort raus (DispatchOptions.deferConfirmation). */
+const DEFERRED: EmailDispatchResult = { success: false, error: 'deferred' };
 
 /** Resend-Tag-Wert: nur [A-Za-z0-9_-], höchstens 256 Zeichen. */
 function tagValue(value: string): string {
@@ -186,9 +262,9 @@ function tagValue(value: string): string {
 }
 
 /**
- * Bewerbung: Benachrichtigung ans Team (Reply-To = Bewerber-E-Mail, falls vorhanden) plus
- * Eingangsbestätigung, aber nur wenn eine E-Mail angegeben wurde und kein Spamverdacht besteht
- * (die Adresse ist ungeprüft). Erfolg = Team-Mail angenommen.
+ * Bewerbung: Benachrichtigung ans Team (Reply-To = Bewerber-E-Mail, falls vorhanden), danach die
+ * Eingangsbestätigung, aber nur wenn die Team-Mail angenommen wurde, eine E-Mail angegeben ist und
+ * kein Spamverdacht besteht (die Adresse ist ungeprüft). Erfolg = Team-Mail angenommen.
  */
 export async function dispatchApplicationEmails(
   app: ReferencedApplication,
@@ -206,7 +282,7 @@ export async function dispatchApplicationEmails(
   const confirmationMail = confirmation && app.email ? { to: app.email, ...confirmation } : null;
   const fingerprint = applicationFingerprint(app);
 
-  const [teamRes, userRes] = await Promise.allSettled([
+  const teamNotification = await settle(() =>
     sendEmail({
       ...teamMail,
       replyTo: app.email || undefined,
@@ -216,19 +292,31 @@ export async function dispatchApplicationEmails(
         ...(app.suspectedSpam ? [{ name: 'spam', value: 'suspected' }] : []),
       ],
       idempotencyKey: stableIdempotencyKey(options, 'team', [teamMail.to, fingerprint]),
-    }),
-    confirmationMail
-      ? sendEmail({
+    })
+  );
+
+  let userConfirmation: EmailDispatchResult;
+  if (!confirmationMail) {
+    userConfirmation = app.email && app.suspectedSpam ? { ...SKIPPED_SPAM } : { ...NO_RECIPIENT };
+  } else if (!teamNotification.success) {
+    userConfirmation = { ...SKIPPED_TEAM_FAILED };
+  } else {
+    const sendConfirmation = () =>
+      settle(() =>
+        sendEmail({
           ...confirmationMail,
           replyTo: config.toEmail,
           tags: [{ name: 'category', value: 'application_confirmation' }, ...tags],
           idempotencyKey: stableIdempotencyKey(options, 'user', [confirmationMail.to, fingerprint]),
         })
-      : Promise.resolve(app.email && app.suspectedSpam ? { ...SKIPPED_SPAM } : { ...NO_RECIPIENT }),
-  ]);
-
-  const teamNotification = settle(teamRes);
-  const userConfirmation = settle(userRes);
+      );
+    if (options?.deferConfirmation) {
+      options.deferConfirmation(sendConfirmation);
+      userConfirmation = { ...DEFERRED };
+    } else {
+      userConfirmation = await sendConfirmation();
+    }
+  }
 
   return {
     success: teamNotification.success,

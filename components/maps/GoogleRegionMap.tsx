@@ -9,7 +9,12 @@ import {
   buildMapStyle,
   type MapPalette,
 } from '@/lib/maps/google-maps-config';
-import { hasGoogleMapsAuthError, loadGoogleMapsScript, onGoogleMapsAuthError } from '@/lib/maps/google-maps-loader';
+import {
+  hasGoogleMapsAuthError,
+  loadGoogleMapsScript,
+  onGoogleMapsAuthError,
+  reportGoogleMapsProjectError,
+} from '@/lib/maps/google-maps-loader';
 import { cn } from '@/lib/utils/cn';
 import { radiusCircles } from './google-circles';
 
@@ -30,6 +35,13 @@ export interface GoogleRegionMapProps {
 
 const READY_TIMEOUT_MS = 15_000;
 const DARK_QUERY = '(prefers-color-scheme: dark)';
+
+/**
+ * Google's dialog in the map when it refuses the project without gm_authFailure, e.g. BillingNotEnabledMapError
+ * (verified on 3.66.8b: "Google Maps kann auf dieser Seite nicht richtig geladen werden", link to
+ * http://g.co/dev/maps-no-account, button.dismissButton), plus Google's full error overlay (.gm-err-container).
+ */
+export const GOOGLE_ERROR_DIALOG_SELECTOR = 'a[href*="maps-no-account"], .dismissButton, .gm-err-container';
 
 /**
  * Google map of the service area. Only ever rendered after the 2-click consent and imported
@@ -68,48 +80,49 @@ export default function GoogleRegionMap({
   }, [radiusKm]);
 
   useEffect(() => {
-    let cancelled = false;
-    let settled = false;
+    const outcome = mapOutcome(callbacks);
     let teardown = () => {};
 
-    const fail = () => {
-      if (cancelled || settled) return;
-      settled = true;
-      callbacks.current.onFail();
-    };
-    const ready = () => {
-      if (cancelled || settled) return;
-      settled = true;
-      callbacks.current.onReady();
-    };
-
     if (hasGoogleMapsAuthError()) {
-      fail();
+      outcome.fail();
       return;
     }
-    const unsubscribeAuth = onGoogleMapsAuthError(() => {
-      settled = false;
-      fail();
-    });
-    const timeout = window.setTimeout(fail, READY_TIMEOUT_MS);
+    // gm_authFailure, or Google's error dialog reported by createMap: back to the graphic, also after ready.
+    const unsubscribeAuth = onGoogleMapsAuthError(outcome.fail);
+    const timeout = window.setTimeout(() => {
+      if (outcome.pending()) outcome.fail();
+    }, READY_TIMEOUT_MS);
 
     loadGoogleMapsScript().then((loaded) => {
       const container = containerRef.current;
-      if (cancelled) return;
+      if (!outcome.pending()) return;
       if (!loaded || !container || !window.google?.maps?.Map) {
-        fail();
+        outcome.fail();
         return;
       }
       try {
-        teardown = createMap(container, { selectedRef, applySelectionRef, radiusRef, radiiRef, applyRadiusRef, callbacks, ready });
+        teardown = createMap(container, {
+          selectedRef,
+          applySelectionRef,
+          radiusRef,
+          radiiRef,
+          applyRadiusRef,
+          callbacks,
+          ready: outcome.ready,
+          // Sticky for this page view like gm_authFailure: a remount falls back at once.
+          fail: () => {
+            reportGoogleMapsProjectError();
+            outcome.fail();
+          },
+        });
       } catch (err) {
         console.warn('[Google Maps] Karte konnte nicht erstellt werden:', err);
-        fail();
+        outcome.fail();
       }
     });
 
     return () => {
-      cancelled = true;
+      outcome.cancel();
       window.clearTimeout(timeout);
       unsubscribeAuth();
       applySelectionRef.current = null;
@@ -133,6 +146,39 @@ export default function GoogleRegionMap({
   );
 }
 
+export interface MapOutcome {
+  ready: () => void;
+  fail: () => void;
+  cancel: () => void;
+  /** Neither ready, failed nor cancelled yet. */
+  pending: () => boolean;
+}
+
+/**
+ * Outcome of one mount: ready at most once and only while pending; a failure wins even after ready, because
+ * gm_authFailure and Google's error dialog can come after tilesloaded. Nothing is reported after cancel
+ * (unmount). Exported for the test (components/maps/__tests__/google-circles.test.ts).
+ */
+export function mapOutcome(callbacks: { current: Pick<GoogleRegionMapProps, 'onReady' | 'onFail'> }): MapOutcome {
+  let state: 'pending' | 'ready' | 'failed' | 'cancelled' = 'pending';
+  return {
+    ready: () => {
+      if (state !== 'pending') return;
+      state = 'ready';
+      callbacks.current.onReady();
+    },
+    fail: () => {
+      if (state === 'failed' || state === 'cancelled') return;
+      state = 'failed';
+      callbacks.current.onFail();
+    },
+    cancel: () => {
+      state = 'cancelled';
+    },
+    pending: () => state === 'pending',
+  };
+}
+
 export interface MapContext {
   selectedRef: { current: string | null };
   applySelectionRef: { current: ((id: string | null) => void) | null };
@@ -141,6 +187,8 @@ export interface MapContext {
   applyRadiusRef: { current: ((km: number) => void) | null };
   callbacks: { current: Pick<GoogleRegionMapProps, 'onSelect'> };
   ready: () => void;
+  /** Google shows its error dialog in the map (GOOGLE_ERROR_DIALOG_SELECTOR), before or after ready. */
+  fail: () => void;
 }
 
 /**
@@ -149,7 +197,7 @@ export interface MapContext {
  */
 export function createMap(
   container: HTMLDivElement,
-  { selectedRef, applySelectionRef, radiusRef, radiiRef, applyRadiusRef, callbacks, ready }: MapContext,
+  { selectedRef, applySelectionRef, radiusRef, radiiRef, applyRadiusRef, callbacks, ready, fail }: MapContext,
 ): () => void {
   const g = window.google!.maps;
   const scheme = window.matchMedia(DARK_QUERY);
@@ -222,9 +270,28 @@ export function createMap(
 
   paintMarkers();
   scheme.addEventListener('change', paintAll);
-  const tiles = g.event.addListenerOnce(map, 'tilesloaded', ready);
+
+  // Google's error dialog came about 0.6 s after new Map, before tilesloaded (3.66.8b), and the tiles load
+  // anyway: check at tilesloaded and watch the container until teardown, so a later dialog still falls back.
+  // No MutationObserver on the server or in node tests, whose fake container has no querySelector.
+  const showsErrorDialog = () =>
+    typeof container.querySelector === 'function' && container.querySelector(GOOGLE_ERROR_DIALOG_SELECTOR) !== null;
+  const observer =
+    typeof MutationObserver === 'undefined'
+      ? null
+      : new MutationObserver(() => {
+          if (!showsErrorDialog()) return;
+          observer?.disconnect();
+          fail();
+        });
+  observer?.observe(container, { childList: true, subtree: true });
+  const tiles = g.event.addListenerOnce(map, 'tilesloaded', () => {
+    if (showsErrorDialog()) fail();
+    else ready();
+  });
 
   return () => {
+    observer?.disconnect();
     scheme.removeEventListener('change', paintAll);
     tiles.remove();
     for (const { marker } of markers) {

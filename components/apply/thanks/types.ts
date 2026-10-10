@@ -13,6 +13,9 @@ export interface ThankYouCompany {
   phoneDisplay: string;
   phoneE164: string;
   phoneHref: string;
+  /** Eigene Mobilnummer nur für WhatsApp (COMPANY.whatsapp); Anrufe laufen über phone*. */
+  whatsappDisplay: string;
+  whatsappE164: string;
   email: string;
   street: string;
   postalCode: string;

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { CONTACT_PHONE, WHATSAPP, WHATSAPP_NUMBER } from '@/lib/data/contact';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
 import {
   MAPPE_SHARE_PDF_LINE,
@@ -134,10 +135,26 @@ describe('mappe share message (E-BEW-020)', () => {
     noGaps(text);
   });
 
-  it('goes to the company number 06441 42956 as a WhatsApp link', () => {
+  it('goes to the company WhatsApp number 0160 8834290 as a WhatsApp link', () => {
     const url = buildWhatsAppUrl(buildMappeShareMessage({ name: 'Zoë & Co' }));
-    expect(url).toMatch(/^https:\/\/api\.whatsapp\.com\/send\?phone=49644142956&text=/);
+    expect(url).toMatch(/^https:\/\/api\.whatsapp\.com\/send\?phone=491608834290&text=/);
     expect(decodeURIComponent(url.split('text=')[1])).toContain('Name: Zoë & Co');
+  });
+});
+
+describe('company WhatsApp number', () => {
+  it('is the mobile number, not the office line used for calls', () => {
+    expect(WHATSAPP_NUMBER).toBe('+491608834290');
+    expect(WHATSAPP).toEqual({ display: '0160 8834290', e164: '+491608834290' });
+    expect(WHATSAPP_NUMBER).not.toBe(CONTACT_PHONE.e164);
+    expect(CONTACT_PHONE.e164).toBe('+49644142956');
+  });
+
+  it('is the default target of buildWhatsAppUrl', () => {
+    const url = buildWhatsAppUrl();
+    expect(url).toContain('phone=491608834290');
+    expect(url).not.toContain('49644142956');
+    expect(buildWhatsAppUrl('Hallo', '+49 151 2345678')).toContain('phone=491512345678');
   });
 });
 

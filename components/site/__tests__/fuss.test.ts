@@ -183,7 +183,7 @@ describe('ContactOptions im Formsystem (rückwärtskompatibel)', () => {
 
 describe('StickyApplyBar (Fuß- und Mobil-Anteil)', () => {
   // Ohne Router-Kontext gilt der Pfad „/“; vor der ersten Messung ist die Leiste verborgen (kein Aufblitzen).
-  const html = renderToStaticMarkup(createElement(StickyApplyBarClient, { jobLabels: {}, whatsappHref: 'https://api.whatsapp.com/send?phone=49644142956&text=Hallo' }));
+  const html = renderToStaticMarkup(createElement(StickyApplyBarClient, { jobLabels: {}, whatsappHref: 'https://api.whatsapp.com/send?phone=491608834290&text=Hallo' }));
 
   it('Hauptaktion rot nach /bewerbung, Vorlauf und Rücklauf fallen hinein, WhatsApp als Zweitweg im neuen Tab', () => {
     expect(html).toContain('aria-label="Schnell bewerben"');

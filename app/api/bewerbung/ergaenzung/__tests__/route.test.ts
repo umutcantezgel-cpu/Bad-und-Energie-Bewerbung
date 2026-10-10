@@ -7,6 +7,9 @@ vi.mock('@/lib/email', () => ({ dispatchApplicationEmails, dispatchApplicationFo
 const { POST } = await import('@/app/api/bewerbung/ergaenzung/route');
 const { createFollowUpToken } = await import('@/lib/applications/token');
 const { createReference } = await import('@/lib/applications/reference');
+const { EmailSink, setApplicationSinkForTests } = await import('@/lib/applications/sink');
+const { SupabaseSink } = await import('@/lib/supabase/sink');
+const { CircuitBreaker } = await import('@/lib/supabase/service');
 
 const DAY = 24 * 60 * 60 * 1000;
 let ipCounter = 0;
@@ -141,5 +144,41 @@ describe('POST /api/bewerbung/ergaenzung', () => {
     const blocked = await post(payload(), headers);
     expect(blocked.status).toBe(429);
     expect(blocked.headers.get('retry-after')).toBeTruthy();
+  });
+});
+
+describe('POST /api/bewerbung/ergaenzung with the database (SupabaseSink)', () => {
+  const submitFollowUp = vi.fn();
+  const rpc = { submitApplication: vi.fn(), submitFollowUp, probe: vi.fn() };
+
+  beforeEach(() => {
+    submitFollowUp.mockReset();
+    setApplicationSinkForTests(new SupabaseSink({ rpc, breaker: new CircuitBreaker(), fallback: new EmailSink() }));
+  });
+
+  afterEach(() => setApplicationSinkForTests(null));
+
+  it('stores the follow-up and mails it', async () => {
+    submitFollowUp.mockResolvedValue({ ok: true, data: { ok: true, duplicate: false } });
+    const res = await post(payload());
+    expect(res.status).toBe(200);
+    expect(submitFollowUp).toHaveBeenCalledTimes(1);
+    expect(dispatchApplicationFollowUpEmail).toHaveBeenCalledTimes(1);
+  });
+
+  it('mails follow-ups to applications from before the database (not_found)', async () => {
+    submitFollowUp.mockResolvedValue({ ok: false, kind: 'not_found', status: 400, code: 'P0001' });
+    const res = await post(payload());
+    expect(res.status).toBe(200);
+    expect(dispatchApplicationFollowUpEmail).toHaveBeenCalledTimes(1);
+  });
+
+  it('answers FOLLOW_UP_LIMIT (429, no Retry-After) when the database limit for follow-ups is reached', async () => {
+    submitFollowUp.mockResolvedValue({ ok: false, kind: 'follow_up_limit', status: 400, code: 'P0001' });
+    const res = await post(payload());
+    expect(res.status).toBe(429);
+    expect(res.headers.get('retry-after')).toBeNull();
+    expect(await res.json()).toMatchObject({ ok: false, code: 'FOLLOW_UP_LIMIT', message: expect.stringContaining('WhatsApp') });
+    expect(dispatchApplicationFollowUpEmail).not.toHaveBeenCalled();
   });
 });

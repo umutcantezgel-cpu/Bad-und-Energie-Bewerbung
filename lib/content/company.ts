@@ -29,8 +29,10 @@ export const COMPANY = Object.freeze({
   fax: SITE_CONFIG.contact.telefax,
   email: companyData.email,
   emailHref: `mailto:${companyData.email}`,
+  /** Eigene Mobilnummer nur für WhatsApp; Anrufe laufen über `phone` (lib/data/contact.ts). */
   whatsapp: Object.freeze({
-    display: SITE_CONFIG.contact.telephone,
+    display: SITE_CONFIG.contact.whatsappDisplay,
+    e164: SITE_CONFIG.contact.whatsapp,
     href: `https://api.whatsapp.com/send?phone=${whatsappNumber}`,
   }),
   openingHours: Object.freeze({

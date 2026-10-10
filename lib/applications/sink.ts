@@ -1,6 +1,9 @@
 import 'server-only';
 
 import { dispatchApplicationEmails, dispatchApplicationFollowUpEmail } from '@/lib/email';
+import { getSupabaseIntake } from '@/lib/supabase/service';
+import { SupabaseSink } from '@/lib/supabase/sink';
+import { runAfterResponse } from './defer';
 import { applicationContentHash } from './fingerprint';
 import { TtlLru, type TtlLruOptions } from './idempotency';
 import { referenceForKey } from './reference';
@@ -8,10 +11,17 @@ import type { NormalizedApplication, NormalizedFollowUp } from './types';
 
 /**
  * Ziel einer Bewerbung (ROADMAP §3.2). Phase 1: EmailSink (Postfach des Teams).
- * Phase 2: SupabaseSink mit demselben Vertrag (DB + Storage, Not-E-Mail bei DB-Ausfall).
+ * Phase 2: SupabaseSink mit demselben Vertrag (lib/supabase/sink.ts: Datenbank plus dieselben
+ * Mails, Not-E-Mail bei DB-Ausfall). Welcher gilt, entscheidet resolveIntakeTarget (lib/env.ts).
  */
 
-export type SinkFailureReason = 'not_configured' | 'failed';
+/**
+ * - not_configured: Versand nicht eingerichtet (503)
+ * - failed: Versand fehlgeschlagen, eine Wiederholung kann helfen (500)
+ * - unavailable: Datenbank und Not-E-Mail ausgefallen (503)
+ * - limited: zu viele Ergänzungen zu einer Bewerbung (429)
+ */
+export type SinkFailureReason = 'not_configured' | 'failed' | 'unavailable' | 'limited';
 
 export type SinkSubmitResult =
   | { ok: true; reference: string; /** Wiederholung mit gleichen Angaben, nichts neu versendet. */ duplicate?: boolean }
@@ -19,8 +29,13 @@ export type SinkSubmitResult =
 
 export type SinkFollowUpResult = { ok: true; duplicate?: boolean } | { ok: false; reason: SinkFailureReason };
 
+export interface SubmitOptions {
+  /** Nummer vorgeben statt sie aus dem Idempotency-Key abzuleiten (Not-E-Mail nach einer Nummernkollision). */
+  reference?: string;
+}
+
 export interface ApplicationSink {
-  submit(app: NormalizedApplication): Promise<SinkSubmitResult>;
+  submit(app: NormalizedApplication, options?: SubmitOptions): Promise<SinkSubmitResult>;
   followUp(followUp: NormalizedFollowUp): Promise<SinkFollowUpResult>;
 }
 
@@ -70,7 +85,7 @@ export class EmailSink implements ApplicationSink {
     this.createReference = createReference;
   }
 
-  async submit(app: NormalizedApplication): Promise<SinkSubmitResult> {
+  async submit(app: NormalizedApplication, options: SubmitOptions = {}): Promise<SinkSubmitResult> {
     const key = app.idempotencyKey;
     const content = applicationContentHash(app);
     const record = this.submissions.get(key);
@@ -82,7 +97,7 @@ export class EmailSink implements ApplicationSink {
     const running = this.inflight.get(flight);
     if (running) return running;
 
-    const delivery = this.deliver(app, content, record).finally(() => this.inflight.delete(flight));
+    const delivery = this.deliver(app, content, record, options.reference).finally(() => this.inflight.delete(flight));
     this.inflight.set(flight, delivery);
     return delivery;
   }
@@ -91,15 +106,16 @@ export class EmailSink implements ApplicationSink {
     app: NormalizedApplication,
     content: string,
     previous: SubmissionRecord | undefined,
+    givenReference: string | undefined,
   ): Promise<SinkSubmitResult> {
     // Nummer und Eingangszeit bleiben beim ersten Versuch, auch wenn sich die Angaben ändern.
-    const reference = previous?.reference ?? this.createReference(app);
+    const reference = previous?.reference ?? givenReference ?? this.createReference(app);
     const submittedAt = previous?.submittedAt ?? app.submittedAt;
     this.submissions.set(app.idempotencyKey, { reference, submittedAt, content, delivered: false }, { keepExpiry: true });
 
     const result = await dispatchApplicationEmails(
       { ...app, submittedAt, reference },
-      { idempotencyKey: `bewerbung:${app.idempotencyKey}` },
+      { idempotencyKey: `bewerbung:${app.idempotencyKey}`, deferConfirmation: runAfterResponse },
     );
     if (!result.success) return { ok: false, reason: failureReason(result.teamNotification.error) };
 
@@ -126,15 +142,29 @@ export class EmailSink implements ApplicationSink {
   }
 }
 
-let sink: ApplicationSink | null = null;
+let sink: { signature: string; sink: ApplicationSink } | null = null;
+let override: ApplicationSink | null = null;
 
-/** Sink der laufenden Instanz (ein gemeinsamer Idempotenz-Speicher je Server-Instanz). */
+/**
+ * Sink der laufenden Instanz (ein gemeinsamer Idempotenz-Speicher je Server-Instanz): SupabaseSink
+ * mit EmailSink als Not-E-Mail, wenn die Datenbank das Ziel ist (resolveIntakeTarget), sonst EmailSink.
+ */
 export function getApplicationSink(): ApplicationSink {
-  sink ??= new EmailSink();
-  return sink;
+  if (override) return override;
+  const intake = getSupabaseIntake();
+  const signature = intake?.signature ?? 'email';
+  if (sink?.signature !== signature) {
+    const email = new EmailSink();
+    sink = {
+      signature,
+      sink: intake ? new SupabaseSink({ rpc: intake.rpc, breaker: intake.breaker, fallback: email }) : email,
+    };
+  }
+  return sink.sink;
 }
 
 /** Nur für Tests: eigenen Sink setzen oder (mit `null`) zurücksetzen. */
 export function setApplicationSinkForTests(next: ApplicationSink | null): void {
-  sink = next;
+  override = next;
+  sink = null;
 }

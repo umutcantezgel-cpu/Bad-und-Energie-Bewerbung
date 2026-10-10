@@ -177,7 +177,10 @@ describe('COMPANY', () => {
   it('Stammdaten nach DIN 5008 und den letzten Fakten-Fixes', () => {
     expect(COMPANY.phone.display).toBe('06441 42956');
     expect(COMPANY.phone.href).toBe('tel:+49644142956');
-    expect(COMPANY.whatsapp.href).toBe('https://api.whatsapp.com/send?phone=49644142956');
+    // WhatsApp läuft über die Mobilnummer (Inhaber, 2026-10-10), Anrufe weiter über das Büro.
+    expect(COMPANY.whatsapp.display).toBe('0160 8834290');
+    expect(COMPANY.whatsapp.e164).toBe('+491608834290');
+    expect(COMPANY.whatsapp.href).toBe('https://api.whatsapp.com/send?phone=491608834290');
     expect(COMPANY.register).toEqual({ full: 'HRB 2449 Amtsgericht Wetzlar', number: 'HRB 2449', court: 'Amtsgericht Wetzlar' });
     expect(COMPANY.address).toMatchObject({ street: 'Siegmund-Hiepe-Str. 20', postalCode: '35578', city: 'Wetzlar' });
     expect(COMPANY.foundingYear).toBe(1926);

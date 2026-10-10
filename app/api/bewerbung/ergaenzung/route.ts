@@ -1,4 +1,4 @@
-import { apiError, apiSuccess, germanIssueMessage, guardFailureResponse, validationFailedResponse } from '@/lib/applications/http';
+import { apiError, apiSuccess, germanIssueMessage, guardFailureResponse, sinkFailureResponse, validationFailedResponse } from '@/lib/applications/http';
 import { normalizeFollowUp } from '@/lib/applications/normalize';
 import { normalizeReference } from '@/lib/applications/reference';
 import { applicationFollowUpSchema } from '@/lib/applications/schema';
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     const result = await getApplicationSink().followUp(followUp);
     if (!result.ok) {
       console.error(`[bewerbung/ergaenzung] nicht zugestellt (${result.reason})`);
-      return apiError(result.reason === 'not_configured' ? 'SERVICE_UNAVAILABLE' : 'INTERNAL');
+      return sinkFailureResponse(result.reason);
     }
 
     console.info(`[bewerbung/ergaenzung] eingegangen ${reference}${result.duplicate ? ' (Wiederholung)' : ''}`);

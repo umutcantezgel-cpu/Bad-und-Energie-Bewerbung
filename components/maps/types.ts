@@ -68,6 +68,12 @@ export interface RadiusView {
   landscape: LandscapeLine[];
 }
 
+/**
+ * The Google layer after consent: loading, ready (tiles loaded and no error dialog from Google) or failed
+ * (gm_authFailure, Google's error dialog such as BillingNotEnabledMapError, network, timeout).
+ */
+export type MapStatus = 'loading' | 'ready' | 'failed';
+
 /** Plain, serializable data the server hands to the client explorer. */
 export interface RegionMapData {
   centerName: string;

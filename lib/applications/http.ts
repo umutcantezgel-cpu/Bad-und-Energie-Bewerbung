@@ -5,6 +5,7 @@ import type { z } from 'zod';
 import { COMPANY } from '@/lib/content/company';
 import type { GuardFailure } from '@/lib/security';
 import type { ApiErrorCode, ApplicationSubmitResponse } from './schema';
+import type { SinkFailureReason } from './sink';
 
 /**
  * Antworten der Bewerbungs-APIs im Vertrag C8: `{ ok: true, … }` oder
@@ -24,6 +25,8 @@ export const API_MESSAGES: Readonly<Record<ApiErrorCode, string>> = Object.freez
   INVALID_JSON: 'Die Anfrage war ungültig. Bitte lade die Seite neu und versuch es noch einmal.',
   INVALID_TOKEN:
     'Wir konnten deine Angaben keiner Bewerbung zuordnen. Schick sie uns bitte per WhatsApp oder E-Mail und nenn deine Bewerbungsnummer.',
+  FOLLOW_UP_LIMIT:
+    'Zu dieser Bewerbung sind schon viele Ergänzungen eingegangen. Schick weitere bitte per WhatsApp oder E-Mail und nenn deine Bewerbungsnummer.',
   SERVICE_UNAVAILABLE: `Das Senden klappt gerade nicht. Bitte ruf uns an (${PHONE}) oder schreib uns per WhatsApp.`,
   INTERNAL: `Da ist etwas schiefgelaufen. Bitte versuch es noch einmal oder ruf uns an: ${PHONE}.`,
 });
@@ -36,6 +39,7 @@ const STATUS: Readonly<Record<ApiErrorCode, number>> = Object.freeze({
   UNSUPPORTED_MEDIA_TYPE: 415,
   INVALID_JSON: 400,
   INVALID_TOKEN: 403,
+  FOLLOW_UP_LIMIT: 429,
   SERVICE_UNAVAILABLE: 503,
   INTERNAL: 500,
 });
@@ -79,6 +83,19 @@ export function guardFailureResponse(failure: GuardFailure): NextResponse<ApiFai
       return apiError('UNSUPPORTED_MEDIA_TYPE');
     case 'INVALID_JSON':
       return apiError('INVALID_JSON');
+  }
+}
+
+/** Ergebnis eines Sinks (lib/applications/sink.ts) im Vertrag C8. */
+export function sinkFailureResponse(reason: SinkFailureReason, options?: ApiErrorOptions): NextResponse<ApiFailureBody> {
+  switch (reason) {
+    case 'not_configured':
+    case 'unavailable':
+      return apiError('SERVICE_UNAVAILABLE', options);
+    case 'limited':
+      return apiError('FOLLOW_UP_LIMIT', options);
+    case 'failed':
+      return apiError('INTERNAL', options);
   }
 }
 

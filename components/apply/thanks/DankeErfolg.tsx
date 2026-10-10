@@ -111,8 +111,9 @@ export function DankeErfolg({
         <div className={styles.seite}>
           <Weg titelId="danke-nummer" titel={SEITEN_TEXT.nummerTitel} icon="user-plus">
             <p className="text-body text-ink-muted">
-              {SEITEN_TEXT.nummerVor} <span className="ziffer whitespace-nowrap text-ink">{company.phoneDisplay}</span>
-              {SEITEN_TEXT.nummerNach}
+              {SEITEN_TEXT.nummerVor} <span className="ziffer whitespace-nowrap text-ink">{company.phoneDisplay}</span>{' '}
+              {SEITEN_TEXT.nummerAnruf} <span className="ziffer whitespace-nowrap text-ink">{company.whatsappDisplay}</span>{' '}
+              {SEITEN_TEXT.nummerWhatsApp}
             </p>
             <div className={styles.knoepfe}>
               <Button asChild variant="outline">
@@ -217,6 +218,7 @@ function vcardFor(company: ThankYouCompany) {
     formattedName: company.shortName,
     organization: company.legalName,
     phone: company.phoneE164,
+    whatsapp: company.whatsappE164,
     email: company.email,
     street: company.street,
     postalCode: company.postalCode,

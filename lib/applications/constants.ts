@@ -30,6 +30,8 @@ export const API_ERROR_CODES = [
   'UNSUPPORTED_MEDIA_TYPE',
   'INVALID_JSON',
   'INVALID_TOKEN',
+  /** Obergrenze der Datenbank für Ergänzungen zu einer Bewerbung (5 je 24 h, 20 insgesamt). */
+  'FOLLOW_UP_LIMIT',
   'SERVICE_UNAVAILABLE',
   'INTERNAL',
 ] as const;
@@ -53,7 +55,8 @@ export const STORAGE_KEYS = {
  * auf /datenschutz). Bei einer neuen Fassung anhängen, die alte mindestens 24 h stehen lassen:
  * Offene Tabs mit dem alten Client-Bundle senden noch deren Version.
  */
-export const PRIVACY_NOTICE_VERSIONS = ['2026-10'] as const;
+// 2026-10-10: Bewerberdatenbank (Supabase, Frankfurt) als Empfänger und Auftragsverarbeiter ergänzt.
+export const PRIVACY_NOTICE_VERSIONS = ['2026-10', '2026-10-10'] as const;
 export type PrivacyNoticeVersion = (typeof PRIVACY_NOTICE_VERSIONS)[number];
 export const PRIVACY_NOTICE_VERSION: PrivacyNoticeVersion = PRIVACY_NOTICE_VERSIONS[PRIVACY_NOTICE_VERSIONS.length - 1];
 

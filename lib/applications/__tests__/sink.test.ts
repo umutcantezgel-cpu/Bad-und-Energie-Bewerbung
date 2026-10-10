@@ -49,7 +49,7 @@ describe('EmailSink.submit', () => {
     await expect(sink.submit(application())).resolves.toEqual({ ok: true, reference: 'BE-26-AAAAAA' });
     expect(dispatchApplicationEmails).toHaveBeenCalledWith(
       expect.objectContaining({ reference: 'BE-26-AAAAAA', job: expect.objectContaining({ title: 'Initiativbewerbung' }) }),
-      { idempotencyKey: 'bewerbung:7f9c1b9e-3c0f-4d5e-9a51-1c2b3d4e5f60' },
+      expect.objectContaining({ idempotencyKey: 'bewerbung:7f9c1b9e-3c0f-4d5e-9a51-1c2b3d4e5f60' }),
     );
   });
 
@@ -134,8 +134,8 @@ describe('EmailSink.submit', () => {
     expect(first.ok && first.reference).toMatch(/^BE-26-[23456789A-HJKMNP-Z]{6}$/);
     // Beide Instanzen geben Resend denselben Basis-Key; der Rest des Keys hängt nicht an der Eingangszeit.
     expect(dispatchApplicationEmails.mock.calls.map((call) => call[1])).toEqual([
-      { idempotencyKey: 'bewerbung:7f9c1b9e-3c0f-4d5e-9a51-1c2b3d4e5f60' },
-      { idempotencyKey: 'bewerbung:7f9c1b9e-3c0f-4d5e-9a51-1c2b3d4e5f60' },
+      expect.objectContaining({ idempotencyKey: 'bewerbung:7f9c1b9e-3c0f-4d5e-9a51-1c2b3d4e5f60' }),
+      expect.objectContaining({ idempotencyKey: 'bewerbung:7f9c1b9e-3c0f-4d5e-9a51-1c2b3d4e5f60' }),
     ]);
   });
 

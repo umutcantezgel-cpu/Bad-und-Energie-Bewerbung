@@ -80,7 +80,8 @@ export function funnelOnlyLine(job: Job): string {
 export function contactLines(): string[] {
   return [
     `Ansprechpartner: ${COMPANY.managingDirector.name}, ${COMPANY.managingDirector.title}`,
-    `Telefon und WhatsApp: ${COMPANY.phone.display}`,
+    `Telefon: ${COMPANY.phone.display}`,
+    `WhatsApp: ${COMPANY.whatsapp.display}`,
     `E-Mail: ${COMPANY.email}`,
     `Erreichbar: ${COMPANY.openingHours.short}`,
     `Adresse: ${COMPANY.address.street}, ${COMPANY.address.postalCode} ${COMPANY.address.city}`,
