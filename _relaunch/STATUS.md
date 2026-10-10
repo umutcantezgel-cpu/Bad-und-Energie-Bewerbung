@@ -1,4 +1,4 @@
-STATUS · Phase R3 · Welle R3/R7 · Erfüllt 1/14 · Ausbau 0/11 · Ausnahmen 0 · Elemente 2/61 · Slop hart 51 · Jury 4,9 · Wow – · Lighthouse mobil 94 · axe 0 · Puffer 100 % · Nächster Schritt: Welle R3 Startseite (HOME-01…05, PERF-01)
+STATUS · Phase R7 (Merge) · Welle R7/R7 · Alle 12 Seiten im Design (E-023/E-024) · Muss/Soll gebaut · axe 0 · Playwright 182/182 · Lighthouse mobil A11y/BP/SEO 100, Perf 92–93 · Nächster Schritt: PR nach main, CI grün, Merge, Live-GET
 
 # Status · Rückführung und Veredelung
 
@@ -57,3 +57,5 @@ STATUS · Phase R3 · Welle R3/R7 · Erfüllt 1/14 · Ausbau 0/11 · Ausnahmen 0
 - 2026-10-09 17:45 CEST · Folgeauftrag „Ausbau auf Showcase-Niveau“ eingegangen und nach Rückfrage mit Lauf 1 zusammengelegt (E-018); Richtungswunsch B Runde 1 + A-Präzision (E-019); ab jetzt nur Opus und Haiku, Merge nach main nur auf ausdrückliches Wort (E-020). Stilkachel-Jury Runde 2 und Überarbeitung C entfallen (Sitzungslimit, durch E-019 überholt). Server nach Container-Neustart neu gestartet.
 
 - 2026-10-10 00:25 CEST · FREIGABE E-021 (volle Autonomie bis zum Merge); R1 Basis, R3-ORCH (Anker-Aliase) und R2 Fundament abgenommen (7f0c8fe, E-022: CSP ohne Hash, LCP-Rückschritt → R3-PERF-01). Welle R3 Startseite gestartet.
+
+- 2026-10-10 11:50 CEST · Fertigstellung nach E-023/E-024: alle Seiten im Design der Bilder des Auftraggebers (Variante 3), Gesamtprüfung grün (E-025), Supabase lesend geprüft (2a bereits in Produktion). PR nach main folgt.

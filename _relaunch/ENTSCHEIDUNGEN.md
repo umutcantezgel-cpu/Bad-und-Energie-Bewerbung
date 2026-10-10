@@ -257,3 +257,16 @@ Format: E-[Nr] · Datum · Gegenstand · Entscheidung · Grund · Umkehr (bei De
 - Der gebaute Einstieg (Variante 1, Strichhaus auf Papier) wird nach diesem Vorbild neu gefasst (Paket R3-EINSTIEG-V3 in FERTIG.md), statisch ohne WebGL (E-021).
 - Der gemeinsame Seitenkopf (SEITENKOPF-01) folgt bereits diesem Bild (Navy-Fläche, Wärmebild, Kästchen), damit tragen alle Seiten dasselbe Design.
 - Die Teile aus B Runde 1 (Rohrklammer, T-001, „Kreislauf zeigen“) bleiben.
+
+## E-025 · 10.10.2026 · Merge-Gate erfüllt (E-021/E-023)
+- **Lokal grün:**
+  - lint, type-check, 1556 Vitest, check:design, check:contrast, check:client-imports;
+  - Build, test:graph (12 Dokumente);
+  - Playwright 182/182 in 4 Projekten mit axe;
+  - Lighthouse mobil: A11y/BP/SEO 100, CLS ≤ 0,015, Perf 92–93 (nur Warnung).
+- **Supabase lesend:**
+  - Die 2a-Migrationen sind in der Produktion bereits eingespielt.
+  - Es gibt keine Supabase-Branches, also vermutlich keine automatische Migration beim Merge; die Einstellungen der GitHub-Integration sind über die lesenden Werkzeuge nicht einsehbar.
+  - Der Merge wendet damit nichts auf die Produktion an, eine Rückfrage ist nicht nötig.
+- **Vercel-Variablen:** vom Auftraggeber bestätigt.
+- **Ablauf:** PR nach `main`, nach grüner CI Merge-Commit.
