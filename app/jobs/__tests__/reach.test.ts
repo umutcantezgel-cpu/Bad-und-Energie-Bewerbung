@@ -7,8 +7,9 @@ import { GET as llmsFull } from '@/app/llms-full.txt/route';
 import { GET as llms } from '@/app/llms.txt/route';
 import { FACTS, isFactActive } from '@/lib/content/facts';
 import { withUtm } from '@/lib/jobs/feeds/tracking';
-import { jobUrl } from '@/lib/jobs/format';
+import { jobPath, jobUrl } from '@/lib/jobs/format';
 import { ALL_JOBS, getActiveJobs, getJobPageSlugs, isJobLive } from '@/lib/jobs/registry';
+import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
 import { getAllPortalUrls } from '@/lib/seo/indexnow';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 
@@ -19,13 +20,29 @@ describe('sitemap', () => {
   const entries = sitemap();
   const urls = entries.map((e) => e.url);
 
+  // V6-B: jede URL exakt wie der Canonical der Seite; Next rendert den der Startseite ohne Schrägstrich.
   it('lists home, /jobs, every live job page and /bewerbung', () => {
-    expect(urls).toEqual([`${base}/`, `${base}/jobs`, ...liveJobs.map(jobUrl), `${base}/bewerbung`]);
+    expect(urls).toEqual([base, `${base}/jobs`, ...liveJobs.map(jobUrl), `${base}/bewerbung`]);
+    expect(urls).toEqual([
+      getCleanCanonicalUrl('/'),
+      getCleanCanonicalUrl('/jobs'),
+      ...liveJobs.map((job) => getCleanCanonicalUrl(jobPath(job))),
+      getCleanCanonicalUrl('/bewerbung'),
+    ]);
   });
 
   it('uses the job updatedAt as lastModified', () => {
     for (const job of liveJobs) {
       expect(entries.find((e) => e.url === jobUrl(job))?.lastModified).toBe(job.updatedAt);
+    }
+  });
+
+  // Startseite, /jobs und /bewerbung (Wegweiser im Erklärteil) listen die live Stellen.
+  it('dates home, /jobs and /bewerbung with the newest updatedAt of the live jobs', () => {
+    const newest = liveJobs.map((job) => job.updatedAt).sort().at(-1);
+    expect(newest).toBeDefined();
+    for (const url of [base, `${base}/jobs`, `${base}/bewerbung`]) {
+      expect(entries.find((e) => e.url === url)?.lastModified).toBe(newest);
     }
   });
 
@@ -61,6 +78,11 @@ describe('robots', () => {
 
   it('points to the sitemap', () => {
     expect(config.sitemap).toBe(`${base}/sitemap.xml`);
+  });
+
+  // V6-B: Google ignoriert `Host:`, Seobility meldet es; die Hauptdomain steht im Canonical.
+  it('sets no host directive', () => {
+    expect(config.host).toBeUndefined();
   });
 });
 

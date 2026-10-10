@@ -138,7 +138,8 @@ export function buildJobPostingJsonLd(job: Job): JobPostingJsonLd | null {
 
 /**
  * BreadcrumbList mit denselben Labels wie die sichtbaren Breadcrumbs und den Canonical-URLs;
- * die letzte Stufe ist die Seite selbst.
+ * die letzte Stufe ist die Seite selbst. Die Seite rendert sie nur im Graphen (lib/seo/graph.ts), dort
+ * ohne eigenes @context und mit WebPage.breadcrumb als Verweis auf diese @id.
  */
 function breadcrumbList(trail: readonly { name: string; url: string }[]): BreadcrumbJsonLd {
   return {
@@ -164,9 +165,4 @@ export function buildBreadcrumbJsonLd(job: Job): BreadcrumbJsonLd {
     { name: BREADCRUMB_JOBS.label, url: getCleanCanonicalUrl(BREADCRUMB_JOBS.href) },
     { name: job.shortTitle, url: jobUrl(job) },
   ]);
-}
-
-/** JSON für <script type="application/ld+json">, mit escaptem „<“ gegen </script>-Ausbruch. */
-export function serializeJsonLd(data: unknown): string {
-  return JSON.stringify(data).replace(/</g, '\\u003c');
 }

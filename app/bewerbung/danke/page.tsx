@@ -2,10 +2,12 @@ import { getFlowJobOptions } from '@/components/apply/options';
 import { LEER_KOPF } from '@/components/apply/thanks/danke-text';
 import { ThankYouView } from '@/components/apply/thanks/ThankYouView';
 import type { ThankYouCompany, ThankYouJobs } from '@/components/apply/thanks/types';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { ContactOptions } from '@/components/site/ContactOptions';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
 import { getProcessSteps } from '@/lib/content/process';
+import { buildPageGraph } from '@/lib/seo/graph';
 import { generatePageMetadata } from '@/lib/seo/metadata';
 
 export const metadata = generatePageMetadata({
@@ -52,14 +54,18 @@ const company: ThankYouCompany = {
  */
 export default function DankePage() {
   return (
-    <ThankYouView
-      jobs={jobs}
-      processSteps={processSteps}
-      company={company}
-      quickResponse={FACTS.quickResponse.long}
-      noCvNeeded={FACTS.noCvNeeded.long}
-      bewerbenMikrotext={LEER_KOPF.mikrotext(FACTS.apply60s.value, FACTS.noCvNeeded.short)}
-      contactOptions={<ContactOptions variant="card" />}
-    />
+    <>
+      {/* noindex: der Graph trägt nur die globalen Knoten und WebPage (V6-B). */}
+      <JsonLd data={buildPageGraph({ metadata })} />
+      <ThankYouView
+        jobs={jobs}
+        processSteps={processSteps}
+        company={company}
+        quickResponse={FACTS.quickResponse.long}
+        noCvNeeded={FACTS.noCvNeeded.long}
+        bewerbenMikrotext={LEER_KOPF.mikrotext(FACTS.apply60s.value, FACTS.noCvNeeded.short)}
+        contactOptions={<ContactOptions variant="card" />}
+      />
+    </>
   );
 }

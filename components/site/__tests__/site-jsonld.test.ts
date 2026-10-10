@@ -1,17 +1,19 @@
 import { describe, expect, it } from 'vitest';
-import { ORGANIZATION_ID, buildSiteJsonLd } from '../site-jsonld';
+import { FOUNDER_ID, ORGANIZATION_ID, WEBSITE_ID, buildSiteNodes } from '../site-jsonld';
 import { COMPANY, REGION } from '@/lib/content';
 import { getActiveJobs } from '@/lib/jobs/registry';
 import { buildJobPostingJsonLd } from '@/lib/jobs/jsonld';
 
 type Node = Record<string, unknown>;
 
-describe('buildSiteJsonLd', () => {
-  const graph = buildSiteJsonLd()['@graph'];
+describe('buildSiteNodes', () => {
+  // V6-B: die globalen Knoten als Liste; jede Seite setzt sie in ihren einen @graph (lib/seo/graph.ts).
+  const graph: readonly Node[] = buildSiteNodes();
   const types = graph.map((node) => node['@type']);
 
-  it('contains only Organization, WebSite and LocalBusiness', () => {
-    expect(types).toEqual(['Organization', 'WebSite', 'LocalBusiness']);
+  it('contains only Organization, Person (founder), WebSite and LocalBusiness, without @context', () => {
+    expect(types).toEqual(['Organization', 'Person', 'WebSite', 'LocalBusiness']);
+    for (const node of graph) expect(node['@context']).toBeUndefined();
   });
 
   it('keeps the organization @id that JobPostings reference', () => {
@@ -25,30 +27,34 @@ describe('buildSiteJsonLd', () => {
   it('resolves every internal @id reference', () => {
     const ids = new Set(graph.map((node) => node['@id']));
     const refs = JSON.stringify(graph).match(/\{"@id":"[^"]+"\}/g) ?? [];
+    expect(refs.length).toBeGreaterThanOrEqual(3);
     for (const ref of refs) expect(ids).toContain(JSON.parse(ref)['@id']);
   });
 
-  it('has no job, FAQ or breadcrumb nodes', () => {
+  it('has no page, job, FAQ or breadcrumb nodes', () => {
     const json = JSON.stringify(graph);
-    for (const type of ['JobPosting', 'FAQPage', 'BreadcrumbList', 'Brand', 'SearchAction']) {
+    for (const type of ['WebPage', 'JobPosting', 'FAQPage', 'BreadcrumbList', 'Brand', 'SearchAction']) {
       expect(json).not.toContain(`"${type}"`);
     }
   });
 
-  const node = (type: string) => graph.find((n) => n['@type'] === type) as unknown as Node;
+  const node = (type: string) => graph.find((n) => n['@type'] === type) as Node;
 
-  // E-SEO-006
-  it('embeds the founder as a Person in the Organization, without its own @id', () => {
-    const founder = node('Organization').founder as Node;
-    expect(founder).toEqual({
+  // V6-B (ersetzt E-SEO-006 „eingebettet, ohne @id“): eigener Personenknoten, die Organisation verweist darauf.
+  it('describes the founder as a Person node with its own @id, referenced by Organization.founder', () => {
+    expect(FOUNDER_ID).toBe('https://bad-energie.de/#founder');
+    expect(node('Person')).toEqual({
       '@type': 'Person',
+      '@id': FOUNDER_ID,
       name: COMPANY.managingDirector.name,
       jobTitle: COMPANY.managingDirector.title,
     });
-    expect(founder['@id']).toBeUndefined();
+    expect(node('Organization').founder).toEqual({ '@id': FOUNDER_ID });
   });
 
   it('marks the career site as part of the customer website', () => {
+    expect(node('WebSite')['@id']).toBe(WEBSITE_ID);
+    expect(node('WebSite').publisher).toEqual({ '@id': ORGANIZATION_ID });
     const isPartOf = node('WebSite').isPartOf as Node;
     expect(isPartOf['@type']).toBe('WebSite');
     expect(isPartOf.url).toBe('https://bad-energie.de');
@@ -74,6 +80,6 @@ describe('buildSiteJsonLd', () => {
   });
 
   it('parses as JSON', () => {
-    expect(() => JSON.parse(JSON.stringify(buildSiteJsonLd()))).not.toThrow();
+    expect(() => JSON.parse(JSON.stringify(buildSiteNodes()))).not.toThrow();
   });
 });

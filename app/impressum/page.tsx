@@ -10,6 +10,8 @@ import {
   type LegalFact,
 } from '@/components/legal';
 import { RechtAbschnitt, RechtDokument, abschnittsNummer } from '@/components/recht';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { buildPageGraph } from '@/lib/seo/graph';
 import { generatePageMetadata } from '@/lib/seo/metadata';
 
 /*
@@ -139,7 +141,17 @@ const CHAMBER_FACTS: readonly LegalFact[] = [
   },
 ];
 
+/** noindex (legal): der eine Graph der Seite trägt nur die globalen Knoten und WebPage (V6-B). */
 export default function ImpressumPage() {
+  return (
+    <>
+      <JsonLd data={buildPageGraph({ metadata })} />
+      <Impressum />
+    </>
+  );
+}
+
+function Impressum() {
   return (
     <RechtDokument
       titel="Impressum"

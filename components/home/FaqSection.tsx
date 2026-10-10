@@ -1,17 +1,16 @@
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
-import { JsonLd } from '@/components/seo/JsonLd';
 import { Disclosure } from '@/components/ui/Disclosure';
 import { getFaqItems } from '@/lib/content/faq';
-import { buildFaqPageJsonLd } from './content';
 import { SectionHeader } from './SectionHeader';
 import { FAQ_KOPF } from './woche/abschnitte-text';
 
 /**
  * #faq (E-START-050): die fünf Fragen als exklusives natives Akkordeon (`Disclosure`, name="faq": immer nur
- * eine offen, ohne JavaScript, mit Seitensuche), dazu die einzige FAQPage der Website. Das JSON-LD trägt
- * genau den sichtbaren Wortlaut (buildFaqPageJsonLd). Ab lg: Kopf links, Fragen rechts (eigene Struktur
- * gegenüber den Nachbarabschnitten, S-12). Tonfolge E-023: Wand vor dem Schlussband.
+ * eine offen, ohne JavaScript, mit Seitensuche). Die einzige FAQPage der Website steht im Graphen der
+ * Startseite (app/page.tsx, V6-B) und trägt genau diesen Wortlaut (buildFaqPageJsonLd aus getFaqItems).
+ * Ab lg: Kopf links, Fragen rechts (eigene Struktur gegenüber den Nachbarabschnitten, S-12). Tonfolge
+ * E-023: Wand vor dem Schlussband.
  */
 export function FaqSection() {
   const items = getFaqItems();
@@ -33,7 +32,6 @@ export function FaqSection() {
             </Disclosure>
           ))}
         </div>
-        <JsonLd data={buildFaqPageJsonLd(items)} />
       </Container>
     </Section>
   );

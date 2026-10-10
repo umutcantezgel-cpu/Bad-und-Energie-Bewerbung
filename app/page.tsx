@@ -14,7 +14,11 @@ import {
   homeDescription,
 } from '@/components/home';
 import { AnchorAliases } from '@/components/home/AnchorAliases';
+import { buildFaqPageJsonLd } from '@/components/home/content';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { getFaqItems } from '@/lib/content/faq';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
+import { buildPageGraph } from '@/lib/seo/graph';
 import { generatePageMetadata } from '@/lib/seo/metadata';
 
 /** Hourly, like the feeds: expired jobs leave the job list without a deploy. */
@@ -56,6 +60,8 @@ function Alias({ ids }: { ids: readonly string[] }) {
 export default function HomePage() {
   return (
     <>
+      {/* Der eine Graph der Seite (V6-B), mit der einzigen FAQPage der Website: dieselben Fragen wie FaqSection. */}
+      <JsonLd data={buildPageGraph({ metadata: generateMetadata(), faq: buildFaqPageJsonLd(getFaqItems()) })} />
       <AnchorAliases />
       <Alias ids={['express-funnel']} />
       <Hero />

@@ -28,7 +28,8 @@ const plain = (markup: string) =>
     .replace(/&amp;/g, '&')
     .replace(/\s+/g, ' ')
     .trim();
-const text = plain(html);
+// Gelesener Text ohne Skripte: seit V6-B steht der JSON-LD-Graph der Seite vor dem Inhalt (Screenreader lesen ihn nicht).
+const text = plain(html.replace(/<script\b[\s\S]*?<\/script>/g, ''));
 
 describe('404-Seite (R4-404 in R5-RUHE)', () => {
   it('E-SHELL-025: genau eine h1 mit „Rohrleitung verirrt“, sicherer Satz ohne „wohl“, keine eigene <main>', () => {

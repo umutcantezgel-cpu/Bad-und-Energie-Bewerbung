@@ -27,7 +27,7 @@ export interface JobHeaderProps {
  *   „(m/w/d) …“ kleiner darunter; Unterzeile mit Rohrklammer = Kurzbeschreibung der Stelle
  *   ohne Sätze, die nur die h1 wiederholen. Die Einleitung
  *   (intro) steht als Lead im ersten Band, damit der Knopf wie im Einstieg über dem Falz bleibt.
- * - Roter Knopf „Jetzt bewerben“ springt zum eingebetteten Flow; Vorlauf und Rücklauf laufen aus der
+ * - Roter Knopf „Direkt hier bewerben“ springt zum eingebetteten Flow; Vorlauf und Rücklauf laufen aus der
  *   Navy-Fläche in seinen Flansch und zeichnen sich beim Laden einmal dorthin (Register `erdleitung`).
  * - Navy-Fläche: Gehalt im Heizkreis mit dem Haus darauf (Kundendienst: Wärmebild), Maße 13:30 und 35 km.
  */

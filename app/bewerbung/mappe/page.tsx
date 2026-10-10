@@ -3,8 +3,10 @@ import { MappeTool } from '@/components/mappe';
 import { MappeBlatt } from '@/components/mappe/MappeBlatt';
 import { MAPPE_KOPF } from '@/components/mappe/text';
 import { Seitenkopf } from '@/components/seitenkopf';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { ContactOptions } from '@/components/site/ContactOptions';
 import { getMappeJobOptions, getMappeRecipient, getMappeWhatsAppMessage } from '@/lib/mappe/context';
+import { buildPageGraph } from '@/lib/seo/graph';
 import { generatePageMetadata } from '@/lib/seo/metadata';
 
 export const metadata: Metadata = generatePageMetadata({
@@ -26,6 +28,8 @@ export const metadata: Metadata = generatePageMetadata({
 export default function BewerbungsmappePage() {
   return (
     <>
+      {/* noindex: der Graph trägt nur die globalen Knoten und WebPage (V6-B). */}
+      <JsonLd data={buildPageGraph({ metadata })} />
       <Seitenkopf
         variante="arbeit"
         titelId="mappe-titel"

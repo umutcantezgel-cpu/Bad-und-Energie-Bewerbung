@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { jobUrl } from '../format';
-import { buildBreadcrumbJsonLd, buildJobPostingJsonLd, serializeJsonLd } from '../jsonld';
+import { buildBreadcrumbJsonLd, buildJobPostingJsonLd } from '../jsonld';
 import { ALL_JOBS, getActiveJobs, getJobById } from '../registry';
 
 // Organization-@id aus dem globalen Graphen (components/site/site-jsonld.ts).
@@ -91,13 +91,15 @@ describe('buildBreadcrumbJsonLd', () => {
     expect(ld.itemListElement.map((i) => i.position)).toEqual([1, 2, 3]);
     expect(ld.itemListElement[1].item).toMatch(/\/jobs$/);
     expect(ld.itemListElement[2]).toMatchObject({ name: job.shortTitle, item: jobUrl(job) });
+    expect(ld['@id']).toBe(`${jobUrl(job)}#breadcrumb`);
+  });
+
+  // V6-B: die erste Stufe ist der Canonical der Startseite, so wie Next ihn rendert (ohne Schrägstrich).
+  it('die Startseite steht mit ihrer Canonical-URL im Pfad', () => {
+    const ld = buildBreadcrumbJsonLd(getJobById('obermonteur-projektleiter-shk')!);
+    expect(ld.itemListElement[0].item).toBe(new URL(jobUrl(getJobById('obermonteur-projektleiter-shk')!)).origin);
   });
 });
 
-describe('serializeJsonLd', () => {
-  it('escapt „<“ und bleibt gültiges JSON', () => {
-    const out = serializeJsonLd({ a: '</script><b>' });
-    expect(out).not.toContain('<');
-    expect(JSON.parse(out)).toEqual({ a: '</script><b>' });
-  });
-});
+// serializeJsonLd ist entfallen (V6-B): Seiten rendern nur noch über components/seo/JsonLd; dessen
+// Escape-Prüfung steht in lib/seo/__tests__/graph.test.ts.

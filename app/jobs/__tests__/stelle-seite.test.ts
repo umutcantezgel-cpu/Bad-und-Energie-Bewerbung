@@ -20,7 +20,9 @@ describe('/jobs/[slug]: offene Stelle', () => {
     const html = await render(am.slug);
     const ld = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
     expect(ld).toHaveLength(1);
-    const knoten = [ld[0]].flat();
+    // V6-B: der eine Block ist ein @graph (globale Knoten, WebPage, JobPosting, BreadcrumbList).
+    const knoten: { '@type': string }[] = ld[0]['@graph'];
+    expect(knoten.filter((k) => k['@type'] === 'WebPage')).toHaveLength(1);
     expect(knoten.filter((k) => k['@type'] === 'JobPosting')).toHaveLength(1);
     expect(knoten.filter((k) => k['@type'] === 'BreadcrumbList')).toHaveLength(1);
     expect(html.match(/<h1/g)).toHaveLength(1);

@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { FehlerSeite } from '@/components/site/fehler';
+import { buildPageGraph } from '@/lib/seo/graph';
 
 /*
  * 404 (R4-404 in R5-RUHE, E-SHELL-025/-026/-027). Status 404 setzt Next selbst. Next fügt auf 404-Seiten
@@ -13,6 +15,12 @@ export const metadata: Metadata = {
   robots: null,
 };
 
+/** Der eine Graph auch hier (V6-B): ohne Canonical nur die globalen Knoten, kein WebPage-Knoten. */
 export default function NotFound() {
-  return <FehlerSeite />;
+  return (
+    <>
+      <JsonLd data={buildPageGraph({ metadata })} />
+      <FehlerSeite />
+    </>
+  );
 }

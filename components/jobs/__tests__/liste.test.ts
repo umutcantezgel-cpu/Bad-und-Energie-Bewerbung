@@ -138,11 +138,13 @@ describe('/jobs (R5-JOBS-01)', () => {
     expect(plain(html)).toContain(`${HEIZKREIS.wert} ${HEIZKREIS.name}`);
   });
 
+  // V6-B: der eine Block ist ein @graph; seitenspezifisch darin nur WebPage und die BreadcrumbList.
   it('JSON-LD: nur die BreadcrumbList, kein JobPosting', () => {
     const html = renderSeite();
     const ld = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
     expect(ld).toHaveLength(1);
-    expect(ld[0]['@type']).toBe('BreadcrumbList');
+    const typen = (ld[0]['@graph'] as { '@type': string }[]).map((k) => k['@type']);
+    expect(typen).toEqual(['Organization', 'Person', 'WebSite', 'LocalBusiness', 'WebPage', 'BreadcrumbList']);
     expect(html).not.toContain('JobPosting');
   });
 

@@ -71,8 +71,15 @@ export function applyLabelFor(job: { shortTitle: string; category: string }): st
   return job.category === 'ausbildung' ? 'Für die Ausbildung bewerben' : `Als ${job.shortTitle} bewerben`;
 }
 
-/** Sticky bar label everywhere else, and on job pages whenever „Als … bewerben“ does not fit on one line. */
+/** Label of the way to /bewerbung (sticky bar outside job pages, menu, home, 404); always this one target. */
 export const SHORT_APPLY_LABEL = 'Jetzt bewerben';
+
+/**
+ * Sticky bar label on a job page whenever „Als … bewerben“ does not fit on one line. It jumps to the flow on
+ * the page, so it must not read „Jetzt bewerben“ (that text leads to /bewerbung; V6-B: one anchor text, one
+ * target). Shorter than SHORT_APPLY_LABEL, so it fits wherever that did.
+ */
+export const SHORT_FLOW_LABEL = 'Hier bewerben';
 
 export interface StickyApplyAction {
   href: string;

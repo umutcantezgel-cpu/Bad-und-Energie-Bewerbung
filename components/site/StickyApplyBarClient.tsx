@@ -5,7 +5,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon } from '@/components/icons';
 import styles from './fuss/leiste.module.css';
-import { FLOW_ANCHOR_ID, SHORT_APPLY_LABEL, STICKY_BAR_HIDE_SELECTOR, getStickyApplyAction, isKeyboardOpen } from './nav';
+import {
+  FLOW_ANCHOR_ID,
+  SHORT_APPLY_LABEL,
+  SHORT_FLOW_LABEL,
+  STICKY_BAR_HIDE_SELECTOR,
+  getStickyApplyAction,
+  isKeyboardOpen,
+} from './nav';
 
 export interface StickyApplyBarClientProps {
   /** Slug of each published job page → button label („Als … bewerben“). */
@@ -138,8 +145,9 @@ function usePageTargets(pathname: string, enabled: boolean): PageTargets {
 }
 
 /**
- * „Als … bewerben“ while it fits on one line, otherwise „Jetzt bewerben“, so the pill stays a
- * single calm line on every phone width. Both labels share one grid cell and stay laid out, so
+ * Job pages only (the action jumps to the flow on the page): „Als … bewerben“ while it fits on one line,
+ * otherwise „Hier bewerben“ (SHORT_FLOW_LABEL, not „Jetzt bewerben“, which leads to /bewerbung), so the pill
+ * stays a single calm line on every phone width. Both labels share one grid cell and stay laid out, so
  * the job label is measured again when the width changes (rotation, web font swap). The one not
  * shown is `invisible`, which also keeps it out of the link's accessible name.
  *
@@ -181,7 +189,7 @@ function ApplyLabel({ label }: { label: string }) {
       <span ref={fullRef} className={`col-start-1 row-start-1 overflow-hidden whitespace-nowrap${fits ? '' : ' invisible'}`}>
         {label}
       </span>
-      <span className={`col-start-1 row-start-1 whitespace-nowrap${fits ? ' invisible' : ''}`}>{SHORT_APPLY_LABEL}</span>
+      <span className={`col-start-1 row-start-1 whitespace-nowrap${fits ? ' invisible' : ''}`}>{SHORT_FLOW_LABEL}</span>
     </span>
   );
 }

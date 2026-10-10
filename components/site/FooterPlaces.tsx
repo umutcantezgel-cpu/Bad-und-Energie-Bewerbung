@@ -19,14 +19,15 @@ export function footerPlaces(): string[] {
 /**
  * Einsatzgebiet-Ortsliste im Fuß (E-SHELL-021): Etikett wie die Spaltenköpfe, eine ruhige Zeile mit den Orten
  * (Trennpunkte nie am Zeilenanfang) und der Weg zu Entfernung und Fahrzeit auf der Startseite. Nennt bewusst
- * keine Kilometerzahl (die steht im Einstieg und im Abschnitt Einsatzgebiet).
+ * keine Kilometerzahl (die steht im Einstieg und im Abschnitt Einsatzgebiet). Kopf beschreibend (V6-B): die
+ * Liste nennt Orte.
  */
 export function FooterPlaces({ className }: { className?: string }) {
   const places = footerPlaces();
   return (
     <section aria-labelledby="footer-einsatzgebiet" className={cn(styles.orteRaster, className)}>
       <h2 id="footer-einsatzgebiet" className={cn(styles.kopf, 'text-etikett text-ink-2')}>
-        Einsatzgebiet
+        Orte im Einsatzgebiet
       </h2>
       <div className={styles.orteInhalt}>
         <div className={styles.orteClip}>

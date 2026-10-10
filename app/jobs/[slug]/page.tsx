@@ -18,6 +18,7 @@ import { pageTitle } from '@/components/jobs/text';
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
 import { Seitenkopf } from '@/components/seitenkopf';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { ContactOptions } from '@/components/site/ContactOptions';
 import { TextLink } from '@/components/ui/TextLink';
 import { HausKlein } from '@/components/zeichnung/HausKlein';
@@ -25,9 +26,10 @@ import { INITIATIVE_APPLY_PATH } from '@/lib/apply/params';
 import { WHATSAPP_GREETING } from '@/lib/apply/whatsapp-message';
 import { COMPANY, FACTS, getTeamQuote } from '@/lib/content';
 import { applyPath, jobPath } from '@/lib/jobs/format';
-import { buildBreadcrumbJsonLd, buildJobPostingJsonLd, serializeJsonLd } from '@/lib/jobs/jsonld';
+import { buildBreadcrumbJsonLd, buildJobPostingJsonLd } from '@/lib/jobs/jsonld';
 import { ALL_JOBS, getJobByLegacySlug, getJobBySlug, getJobPageSlugs, isJobLive, type Job } from '@/lib/jobs/registry';
 import { fitDescription } from '@/lib/seo/descriptions';
+import { buildPageGraph } from '@/lib/seo/graph';
 import { generatePageMetadata } from '@/lib/seo/metadata';
 import { jobOgImage } from '@/lib/seo/og-image';
 
@@ -79,8 +81,12 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const { slug } = await params;
   const job = getJobBySlug(slug);
   if (!job || !hasPage(job)) return {};
+  return jobMetadata(job, isOpen(job));
+}
 
-  if (!isOpen(job)) {
+/** Metadaten der Stellenseite; dieselben speisen den WebPage-Knoten des Graphen (JobPage). */
+function jobMetadata(job: Job, open: boolean): Metadata {
+  if (!open) {
     const title = `${job.shortTitle}: Stelle besetzt`;
     return {
       ...generatePageMetadata({
@@ -109,25 +115,36 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   };
 }
 
+/**
+ * Ein Graph je Stellenseite (V6-B): offen mit genau einem JobPosting (E-SEO-010, mainEntityOfPage = WebPage)
+ * und der BreadcrumbList des sichtbaren Pfads; besetzt (noindex) nur mit dem WebPage-Knoten.
+ */
 export default async function JobPage({ params }: { params: Params }) {
   const { slug } = await params;
   const job = resolveJob(slug);
-  return isOpen(job) ? <OpenJob job={job} /> : <ClosedJob job={job} />;
+  const open = isOpen(job);
+  const graph = buildPageGraph({
+    metadata: jobMetadata(job, open),
+    ...(open ? { jobPosting: buildJobPostingJsonLd(job), breadcrumb: buildBreadcrumbJsonLd(job) } : {}),
+  });
+  return (
+    <>
+      <JsonLd data={graph} />
+      {open ? <OpenJob job={job} /> : <ClosedJob job={job} />}
+    </>
+  );
 }
 
 /**
  * Offene Stelle (R5-JOBS-02, E-023), Erzählseite im Design des Einstiegs der Startseite. Tonfolge:
  * Kopf Papier/Navy · Aufgaben Wand · Vorteile Papier · Stimme Navy · Ablauf und Bewerbung Papier ·
- * Fragen Wand · Weitere Stellen Papier · Fuß Navy. Genau ein JobPosting (E-SEO-010) und die BreadcrumbList.
+ * Fragen Wand · Weitere Stellen Papier · Fuß Navy.
  */
 function OpenJob({ job }: { job: Job }) {
-  const jsonLd = [buildJobPostingJsonLd(job), buildBreadcrumbJsonLd(job)].filter((node) => node !== null);
   const quote = job.teamQuoteId ? getTeamQuote(job.teamQuoteId) : undefined;
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} />
-
       <JobHeader job={job} />
       <JobSections job={job} />
       {quote && <JobQuote quote={quote} />}

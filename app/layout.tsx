@@ -4,13 +4,13 @@ import { Suspense } from 'react';
 import './globals.css';
 import { fontVariables } from './fonts';
 import { AttributionCapture } from '@/components/analytics/AttributionCapture';
-import { JsonLd } from '@/components/seo/JsonLd';
-import { SiteFooter, SiteHeader, StickyApplyBar, buildSiteJsonLd } from '@/components/site';
+import { SiteFooter, SiteHeader, StickyApplyBar } from '@/components/site';
 import { SkipLink } from '@/components/ui/SkipLink';
 import { ToastProvider } from '@/components/ui/Toast';
 import { HOME_DESCRIPTION, HOME_TITLE } from '@/components/home/content';
 import { COMPANY } from '@/lib/content/company';
 import { HEAD_SCRIPT } from '@/lib/motion/head-script';
+import { TITLE_TEMPLATE } from '@/lib/seo/metadata';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 import { TOKENS } from '@/lib/tokens';
 
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_CONFIG.baseUrl),
   title: {
     default: HOME_TITLE,
-    template: '%s | Bad & Energie Karriere',
+    template: TITLE_TEMPLATE,
   },
   description: HOME_DESCRIPTION,
   applicationName: 'Bad & Energie Karriere',
@@ -92,7 +92,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Suspense fallback={null}>
           <AttributionCapture />
         </Suspense>
-        <JsonLd data={buildSiteJsonLd()} />
+        {/* Kein JSON-LD hier (V6-B): Jede Seite rendert genau einen @graph (lib/seo/graph.ts) mit den globalen Knoten. */}
       </body>
     </html>
   );

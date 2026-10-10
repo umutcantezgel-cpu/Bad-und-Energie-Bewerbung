@@ -9,9 +9,11 @@ import { StellenKopf } from '@/components/jobs/liste/StellenKopf';
 import { Stellenvergleich } from '@/components/jobs/liste/Stellenvergleich';
 import { Stellenverteiler } from '@/components/jobs/liste/Stellenverteiler';
 import { pageTitle } from '@/components/jobs/text';
-import { buildJobsBreadcrumbJsonLd, serializeJsonLd } from '@/lib/jobs/jsonld';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { buildJobsBreadcrumbJsonLd } from '@/lib/jobs/jsonld';
 import { getActiveJobs, getFunnelOptions, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
 import { jobsHubDescription } from '@/lib/seo/descriptions';
+import { buildPageGraph } from '@/lib/seo/graph';
 import { generatePageMetadata } from '@/lib/seo/metadata';
 
 /** Hourly, like the feeds: expired jobs leave the list without a deploy. */
@@ -47,7 +49,10 @@ export function generateMetadata(): Metadata {
   };
 }
 
-/** Hub for all open positions. No JobPosting markup here: Google allows it on the job pages only. */
+/**
+ * Hub for all open positions. No JobPosting markup here: Google allows it on the job pages only. The page's
+ * one graph (V6-B) carries WebPage and the BreadcrumbList of the visible trail (Startseite › Stellen).
+ */
 export default function JobsPage() {
   const jobs = liveJobs(new Date());
   const funnelOnly = getFunnelOptions()
@@ -57,7 +62,7 @@ export default function JobsPage() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(buildJobsBreadcrumbJsonLd()) }} />
+      <JsonLd data={buildPageGraph({ metadata: generateMetadata(), breadcrumb: buildJobsBreadcrumbJsonLd() })} />
 
       <StellenKopf jobs={jobs} titel={H1} />
 

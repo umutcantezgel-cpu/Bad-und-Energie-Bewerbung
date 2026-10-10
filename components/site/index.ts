@@ -19,4 +19,4 @@ export {
   isFocusMode,
   type NavItem,
 } from './nav';
-export { buildSiteJsonLd, LOCAL_BUSINESS_ID, ORGANIZATION_ID, WEBSITE_ID } from './site-jsonld';
+export { buildSiteNodes, FOUNDER_ID, LOCAL_BUSINESS_ID, ORGANIZATION_ID, WEBSITE_ID } from './site-jsonld';

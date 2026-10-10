@@ -6,11 +6,15 @@ import { APPLY_PATH } from '../nav';
 /**
  * Texte und Wege des Fußes (R4-SHELL-02). Nur Stammdaten aus COMPANY und die Wege der Plattform, keine
  * neuen Aussagen. Die Spaltenköpfe stehen im DOM in Satzschreibung; die Versalien setzt `text-etikett`.
+ * V6-B: beschreibend und auf jeder Seite eindeutig (kein Kopf gleicht einer Überschrift der Seiten, z. B.
+ * „Offene Stellen“ auf der Startseite). Betrieb: Anschrift und Öffnungszeiten am Sitz (COMPANY.address.city);
+ * Kontakt: Wege zum Betrieb; Stellen: nur die live Stellen. Kurz genug, dass jeder Kopf ab 1024 px einzeilig
+ * bleibt und die Spalten bündig beginnen.
  */
 export const FUSS_SPALTEN = {
-  betrieb: { id: 'footer-betrieb', titel: 'Betrieb' },
-  kontakt: { id: 'footer-kontakt', titel: 'Kontakt' },
-  stellen: { id: 'footer-stellen', titel: 'Stellen' },
+  betrieb: { id: 'footer-betrieb', titel: `Betrieb in ${COMPANY.address.city}` },
+  kontakt: { id: 'footer-kontakt', titel: 'Kontakt zum Betrieb' },
+  stellen: { id: 'footer-stellen', titel: 'Aktuelle Stellen' },
   rechtliches: { id: 'footer-rechtliches', titel: 'Rechtliches' },
 } as const;
 

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   NAV_ITEMS,
+  SHORT_APPLY_LABEL,
+  SHORT_FLOW_LABEL,
   STICKY_BAR_HIDE_SELECTOR,
   applyLabelFor,
   focusModeExitLabel,
@@ -114,6 +116,26 @@ describe('getStickyApplyAction', () => {
 
   it('hide selector covers the flow anchor and marked CTAs', () => {
     expect(STICKY_BAR_HIDE_SELECTOR).toBe('#bewerben, [data-primary-cta]');
+  });
+});
+
+// V6-B: ein Ankertext zeigt auf genau ein Ziel. „Jetzt bewerben“ führt immer nach /bewerbung; der Ersatz für
+// „Als … bewerben“ auf Stellenseiten springt zum Flow und heißt darum anders, und er ist nicht länger.
+describe('SHORT_FLOW_LABEL', () => {
+  it('differs from „Jetzt bewerben“ and fits wherever that did', () => {
+    expect(SHORT_FLOW_LABEL).toBe('Hier bewerben');
+    expect(SHORT_FLOW_LABEL).not.toBe(SHORT_APPLY_LABEL);
+    expect(SHORT_FLOW_LABEL.length).toBeLessThanOrEqual(SHORT_APPLY_LABEL.length);
+  });
+
+  it('„Jetzt bewerben“ never jumps to the flow on the page', () => {
+    for (const path of ['/', '/jobs', '/datenschutz', ...getActiveJobs().map(jobPath)]) {
+      for (const flowOnPage of [true, false]) {
+        const action = getStickyApplyAction(path, labels, flowOnPage);
+        if (action?.label === SHORT_APPLY_LABEL) expect(action.href).toBe('/bewerbung');
+        if (action?.inPageFlow) expect(action.label).not.toBe(SHORT_APPLY_LABEL);
+      }
+    }
   });
 });
 

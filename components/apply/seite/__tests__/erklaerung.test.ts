@@ -217,7 +217,9 @@ describe('Seite /bewerbung mit Erklärteil (V6-G1)', () => {
   });
 
   it('E-023: „Lebenslauf“, „diskret“, „60“, „Fernmontage“, „35 km“ und „13:30“ in höchstens zwei Abschnitten', async () => {
-    const html = await seite();
+    // Sichtbarer Text: ohne Skripte. Seit V6-B steht der eine JSON-LD-Graph (mit den Öffnungszeiten des
+    // LocalBusiness, „13:30“) vor dem Kopf; er ist kein sichtbarer Abschnitt, wie im Test darüber.
+    const html = (await seite()).replace(/<script[\s\S]*?<\/script>/g, '');
     const flaeche = html.indexOf('data-bewerbung-flaeche');
     const region = html.indexOf('data-regionalband');
     const abschnitte = { kopf: html.slice(0, flaeche), flaeche: html.slice(flaeche, region), region: html.slice(region) };

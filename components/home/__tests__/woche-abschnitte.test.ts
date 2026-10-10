@@ -117,10 +117,12 @@ describe('FaqSection (#faq, E-START-050)', () => {
     expect(html).not.toMatch(/<details[^>]* open=""/);
   });
 
+  // V6-B: Die FAQPage steht im einen Graphen der Startseite (app/page.tsx, buildFaqPageJsonLd(getFaqItems()),
+  // geprüft in lib/seo/__tests__/graph.test.ts), nicht mehr als eigener Block im Abschnitt; der Wortlaut bleibt.
   it('das JSON-LD trägt genau den sichtbaren Wortlaut (unverändert)', () => {
-    const json = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1] ?? '';
-    const data = JSON.parse(json);
-    expect(data).toEqual(buildFaqPageJsonLd(items));
+    expect(html).not.toContain('application/ld+json');
+    const data = buildFaqPageJsonLd(items);
+    expect(data.mainEntity).toHaveLength(items.length);
     const visible = decode(html);
     for (const q of data.mainEntity) {
       expect(visible).toContain(`>${q.name}</span>`);

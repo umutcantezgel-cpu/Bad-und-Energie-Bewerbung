@@ -6,6 +6,22 @@ import { DEFAULT_OG_IMAGE, type OgImage } from './og-image';
 export const BASE_URL = SITE_CONFIG.baseUrl;
 export const LOGO_URL = `${BASE_URL}/images/bad-energie-lahn-dill-logo-transparent.webp`;
 
+/** Title template of the root layout (app/layout.tsx); a plain page title is set inside it. */
+export const TITLE_TEMPLATE = '%s | Bad & Energie Karriere';
+
+/**
+ * The <title> Next renders for a page's metadata title under the root layout: `absolute` as is,
+ * a plain string (or a `default`) inside TITLE_TEMPLATE. The JSON-LD WebPage `name` (lib/seo/graph.ts)
+ * comes from here, so it never differs from the title tag.
+ */
+export function documentTitle(title: Metadata['title']): string | undefined {
+  if (!title) return undefined;
+  const templated = (text: string) => TITLE_TEMPLATE.replace('%s', () => text);
+  if (typeof title === 'string') return templated(title);
+  if ('absolute' in title) return title.absolute;
+  return templated(title.default);
+}
+
 export function validateTitleLength(title: string): boolean {
   return title.length <= 65; // SERP display budget
 }

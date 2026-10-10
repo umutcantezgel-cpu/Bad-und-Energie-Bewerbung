@@ -161,8 +161,9 @@ export function RegionExplorer({ data, mapsAvailable, header, className }: Regio
               ) : (
                 <>
                   Erst nach dem Klick lädt Google Maps und erhält dabei Daten wie deine IP-Adresse, siehe{' '}
+                  {/* Eigener Wortlaut (V6-B): „Datenschutz“ im Fuß führt auf /datenschutz, dieser Link zum Abschnitt der Karte. */}
                   <TextLink href="/datenschutz#google-maps" tone="muted">
-                    Datenschutz
+                    Datenschutzhinweise zur Karte
                   </TextLink>
                   .
                 </>

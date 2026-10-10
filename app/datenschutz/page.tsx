@@ -11,10 +11,12 @@ import {
   type LegalFact,
 } from '@/components/legal';
 import { RechtAbschnitt, RechtDokument, abschnittsNummer } from '@/components/recht';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { TextLink } from '@/components/ui/TextLink';
 import { PRIVACY_NOTICE_VERSION } from '@/lib/applications/schema';
 import { DISCRETION_PROMISE } from '@/lib/content';
 import { MAPS_CONSENT_KEY } from '@/lib/maps/consent';
+import { buildPageGraph } from '@/lib/seo/graph';
 import { generatePageMetadata } from '@/lib/seo/metadata';
 
 /*
@@ -144,7 +146,17 @@ const privacyMail = (
   <a href={mailtoHref(LEGAL_ENTITY.privacyEmail)}>{LEGAL_ENTITY.privacyEmail}</a>
 );
 
+/** noindex (legal): der eine Graph der Seite trägt nur die globalen Knoten und WebPage (V6-B). */
 export default function DatenschutzPage() {
+  return (
+    <>
+      <JsonLd data={buildPageGraph({ metadata })} />
+      <Datenschutzerklaerung />
+    </>
+  );
+}
+
+function Datenschutzerklaerung() {
   return (
     <RechtDokument
       // Weiche Trennstelle: das 20-Buchstaben-Wort bricht bei 320 px als „Datenschutz-/erklärung“

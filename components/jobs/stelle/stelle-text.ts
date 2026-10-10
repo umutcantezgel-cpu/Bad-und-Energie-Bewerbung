@@ -15,8 +15,12 @@ const NBSP = ' ';
 /** Sprungziele der Seite: der Zweitweg im Kopf zeigt auf die Aufgaben, die Hauptaktion auf den Flow. */
 export const STELLE_ANKER = { aufgaben: 'aufgaben', bewerben: 'bewerben' } as const;
 
-/** Hauptaktion im Kopf: springt zum eingebetteten Flow (#bewerben), wie „Jetzt bewerben“ im Einstieg. */
-export const KOPF_AKTION = { href: `#${STELLE_ANKER.bewerben}`, label: 'Jetzt bewerben' } as const;
+/**
+ * Hauptaktion im Kopf: springt zum eingebetteten Flow (#bewerben). Eigener Wortlaut (V6-B): „Jetzt bewerben“
+ * führt auf jeder Seite nach /bewerbung (Menü, StickyApplyBar außerhalb der Stellenseiten), ein Ankertext
+ * zeigt auf genau ein Ziel.
+ */
+export const KOPF_AKTION = { href: `#${STELLE_ANKER.bewerben}`, label: 'Direkt hier bewerben' } as const;
 
 /** Zweitweg im Kopf (unterstrichener Textlink mit Pfeil nach unten). */
 export const KOPF_ZWEITWEG = { href: `#${STELLE_ANKER.aufgaben}`, label: 'Aufgaben ansehen' } as const;

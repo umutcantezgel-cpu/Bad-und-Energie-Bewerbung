@@ -21,6 +21,7 @@ import {
   zeigtWaermebild,
 } from '@/components/jobs/stelle/stelle-text';
 import { einblick } from '@/components/jobs/stelle/einblick-text';
+import { SHORT_APPLY_LABEL } from '@/components/site/nav';
 import { WAERMEBILD_TITEL } from '@/components/zeichnung/Waermebild';
 import { FACTS } from '@/lib/content/facts';
 import { escapeHtml, formatSalaryAmount, getJobSections } from '@/lib/jobs/format';
@@ -84,7 +85,9 @@ describe('Kopf der Stellenseite: Texte und Maße (stelle-text)', () => {
   });
 
   it('Hauptaktion springt zum Flow, Zweitweg zu den Aufgaben, Mikrotext aus den Fakten', () => {
-    expect(KOPF_AKTION).toEqual({ href: `#${STELLE_ANKER.bewerben}`, label: 'Jetzt bewerben' });
+    // V6-B: eigener Wortlaut, „Jetzt bewerben“ führt überall nach /bewerbung (ein Ankertext, ein Ziel).
+    expect(KOPF_AKTION).toEqual({ href: `#${STELLE_ANKER.bewerben}`, label: 'Direkt hier bewerben' });
+    expect(KOPF_AKTION.label).not.toBe(SHORT_APPLY_LABEL);
     expect(STELLE_ANKER.bewerben).toBe('bewerben');
     expect(KOPF_ZWEITWEG.href).toBe(`#${STELLE_ANKER.aufgaben}`);
     expect(KOPF_MIKROTEXT).toBe(`Dauert ca. ${FACTS.apply60s.value}${NBSP}Sekunden. ${FACTS.noCvNeeded.short}.`);
@@ -207,7 +210,10 @@ describe('E-SEO-010: JobPosting nur aus Registry und Fakten, „ohne Bereitschaf
   it('genau ein JobPosting je Stellenseite (eine Quelle in der Route), keines auf der Startseite', () => {
     const route = readFileSync(path.resolve(__dirname, '../[slug]/page.tsx'), 'utf8');
     expect(route.match(/buildJobPostingJsonLd\(/g)).toHaveLength(1);
-    expect(route.match(/application\/ld\+json/g)).toHaveLength(1);
+    // V6-B: ein JSON-LD-Block je Route, gerendert über JsonLd mit genau einem Graphen.
+    expect(route.match(/<JsonLd\b/g)).toHaveLength(1);
+    expect(route.match(/buildPageGraph\(/g)).toHaveLength(1);
+    expect(route).not.toMatch(/application\/ld\+json/);
     const start = readFileSync(path.resolve(__dirname, '../../page.tsx'), 'utf8');
     expect(start).not.toMatch(/JobPosting/);
   });

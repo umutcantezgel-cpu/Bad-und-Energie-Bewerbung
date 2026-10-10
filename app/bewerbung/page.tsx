@@ -4,12 +4,11 @@ import { BewerbungFlaeche, bewerbungKopf, DirektSprechen, Erklaerung, KopfHaus, 
 import { UNTERLAGEN_ANKER, Unterlagen } from '@/components/apply/unterlagen';
 import { Seitenkopf } from '@/components/seitenkopf';
 import { JsonLd } from '@/components/seo/JsonLd';
-import { WEBSITE_ID } from '@/components/site/site-jsonld';
 import { jobIdFromParam, legacyRedirectTarget, type SearchParamsRecord, wantsDocuments } from '@/lib/apply/params';
 import { getDiscretionPromise } from '@/lib/content/process';
 import { FACTS } from '@/lib/content/facts';
 import { getActiveJobs, getFunnelOptions, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
-import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
+import { buildPageGraph } from '@/lib/seo/graph';
 import { generatePageMetadata } from '@/lib/seo/metadata';
 import { whatsAppMessageFor } from '@/lib/utils/whatsapp-utils';
 
@@ -58,7 +57,6 @@ export default async function BewerbungPage({ searchParams }: { searchParams: Pr
   const legacyTarget = legacyRedirectTarget(params);
   if (legacyTarget) permanentRedirect(legacyTarget);
 
-  const url = getCleanCanonicalUrl(PATH);
   const initialJobId = preselectedJob(params);
   // Vorausgewählte Ausbildung: meist noch Schule, also kein Arbeitgeber und keine Diskretionszusage.
   const preselected = initialJobId ? getJobById(initialJobId) : undefined;
@@ -69,18 +67,8 @@ export default async function BewerbungPage({ searchParams }: { searchParams: Pr
 
   return (
     <>
-      <JsonLd
-        data={{
-          '@context': 'https://schema.org',
-          '@type': 'WebPage',
-          '@id': `${url}#webpage`,
-          url,
-          name: TITLE,
-          description: DESCRIPTION,
-          isPartOf: { '@id': WEBSITE_ID },
-          inLanguage: 'de-DE',
-        }}
-      />
+      {/* Der eine Graph der Seite (V6-B): globale Knoten und WebPage aus denselben Metadaten wie Title und Canonical. */}
+      <JsonLd data={buildPageGraph({ metadata })} />
 
       {/* Kopf im Design des Einstiegs (E-023), Variante arbeit: Papier mit h1, schmale Navy-Fläche mit dem Haus;
           am Handy ein knappes Navy-Band. Keine rote Fläche: die Hauptaktion ist der Flow selbst. */}

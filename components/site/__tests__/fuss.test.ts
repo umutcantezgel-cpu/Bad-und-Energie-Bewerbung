@@ -9,7 +9,16 @@ import { getActiveJobs } from '@/lib/jobs/registry';
 import { MOTION_IDS } from '@/lib/motion/register';
 import { DEFAULT_WHATSAPP_MESSAGE } from '@/lib/utils/whatsapp-utils';
 import { ContactOptions } from '../ContactOptions';
-import { BEWERBERDATEN_ANKER, FussSchmal, FussVoll, KUNDEN_WEBSITE, RECHTS_LINKS, fussKontakte, pflichtzeile } from '../fuss';
+import {
+  BEWERBERDATEN_ANKER,
+  FUSS_SPALTEN,
+  FussSchmal,
+  FussVoll,
+  KUNDEN_WEBSITE,
+  RECHTS_LINKS,
+  fussKontakte,
+  pflichtzeile,
+} from '../fuss';
 import { OpeningHoursText } from '../OpeningHoursText';
 import { StickyApplyBarClient } from '../StickyApplyBarClient';
 
@@ -47,9 +56,22 @@ describe('Fuß: Navy-Band im Design des Einstiegs (R4-SHELL-02, E-023)', () => {
     expect(voll).toContain('data-logo=""');
     expect(hrefs(voll)).toContain('/');
     expect(vollText).toContain('zur Startseite');
-    for (const titel of ['Betrieb', 'Kontakt', 'Stellen', 'Rechtliches', 'Einsatzgebiet']) {
+    // V6-B: beschreibende, eindeutige Köpfe; Ort aus COMPANY.
+    const koepfe = [
+      `Betrieb in ${COMPANY.address.city}`,
+      'Kontakt zum Betrieb',
+      'Aktuelle Stellen',
+      'Rechtliches',
+      'Orte im Einsatzgebiet',
+    ];
+    expect(Object.values(FUSS_SPALTEN).map((s) => s.titel)).toEqual(koepfe.slice(0, 4));
+    for (const titel of koepfe) {
       expect(voll).toMatch(new RegExp(`<h2 id="footer-[a-z]+" class="[^"]*text-etikett[^"]*">${titel}</h2>`));
     }
+    const h2 = [...voll.matchAll(/<h2\b[^>]*>([^<]*)<\/h2>/g)].map((m) => m[1]);
+    expect(h2).toEqual(koepfe);
+    // Kein Kopf gleicht einer Überschrift der Seiten (Startseite: „Offene Stellen“, „Häufige Fragen“ …).
+    expect(h2).not.toContain('Offene Stellen');
   });
 
   it('nennt Firma, Anschrift und Öffnungszeiten aus COMPANY, Ziffern in Bricolage', () => {

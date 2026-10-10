@@ -53,7 +53,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: PRIVATE_PATHS,
       },
     ],
+    // Kein `host` (V6-B): Google ignoriert die Direktive, Seobility meldet sie; die Hauptdomain steht im Canonical.
     sitemap: `${baseUrl}/sitemap.xml`,
-    host: baseUrl,
   };
 }

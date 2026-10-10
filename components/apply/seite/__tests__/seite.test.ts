@@ -108,17 +108,20 @@ describe('Seite /bewerbung (R5-BEW-01)', () => {
     expect(html).not.toContain('data-primary-cta=""');
   });
 
+  // V6-B: der WebPage-Knoten steht jetzt im einen Graphen der Seite (mit den globalen Knoten); Erwartungen gleich.
   it('JSON-LD bleibt ein WebPage-Knoten ohne BreadcrumbList (E-BEW-029)', async () => {
     const html = await seite();
     const blocks = [...html.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
     expect(blocks).toHaveLength(1);
-    expect(blocks[0]).toMatchObject({
+    const pages = blocks[0]['@graph'].filter((node: { '@type': string }) => node['@type'] === 'WebPage');
+    expect(pages).toHaveLength(1);
+    expect(pages[0]).toMatchObject({
       '@type': 'WebPage',
       inLanguage: 'de-DE',
       name: `Bewerben in ${FACTS.apply60s.value} Sekunden – ohne Lebenslauf | Bad & Energie`,
     });
-    expect(blocks[0]['@id']).toMatch(/\/bewerbung#webpage$/);
-    expect(blocks[0].isPartOf['@id']).toMatch(/#website$/);
+    expect(pages[0]['@id']).toMatch(/\/bewerbung#webpage$/);
+    expect(pages[0].isPartOf['@id']).toMatch(/#website$/);
     expect(JSON.stringify(blocks[0])).not.toMatch(/breadcrumb/i);
   });
 
