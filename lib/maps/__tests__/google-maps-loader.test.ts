@@ -109,6 +109,26 @@ describe('loadGoogleMapsScript', () => {
     await expect(loaded).resolves.toBe(false);
   });
 
+  it('starts over after a timeout when only the bootstrap arrived (main.js failed, loading=async)', async () => {
+    const { win, scripts } = stubBrowser();
+    const loader = await freshLoader();
+    const first = loader.loadGoogleMapsScript();
+    await flush();
+    // Bootstrap ist da, main.js nicht: google.maps ohne Map.
+    win.google = { maps: {} };
+    vi.advanceTimersByTime(10_000);
+    await expect(first).resolves.toBe(false);
+    expect(scripts[0].removed).toBe(true);
+    expect(win.google).toBeUndefined();
+
+    const second = loader.loadGoogleMapsScript();
+    await flush();
+    expect(scripts).toHaveLength(2);
+    win.google = { maps: { Map: class {} } };
+    win[CALLBACK]?.();
+    await expect(second).resolves.toBe(true);
+  });
+
   it('a failed script load (network) is not sticky: the tag goes and the next attempt injects a new one', async () => {
     const { win, scripts } = stubBrowser();
     const loader = await freshLoader();

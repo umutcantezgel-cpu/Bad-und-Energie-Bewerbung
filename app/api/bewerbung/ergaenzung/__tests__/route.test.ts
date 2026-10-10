@@ -173,12 +173,12 @@ describe('POST /api/bewerbung/ergaenzung with the database (SupabaseSink)', () =
     expect(dispatchApplicationFollowUpEmail).toHaveBeenCalledTimes(1);
   });
 
-  it('answers 429 with Retry-After when the database limit for follow-ups is reached', async () => {
+  it('answers FOLLOW_UP_LIMIT (429, no Retry-After) when the database limit for follow-ups is reached', async () => {
     submitFollowUp.mockResolvedValue({ ok: false, kind: 'follow_up_limit', status: 400, code: 'P0001' });
     const res = await post(payload());
     expect(res.status).toBe(429);
-    expect(res.headers.get('retry-after')).toBe('86400');
-    expect(await res.json()).toMatchObject({ ok: false, code: 'RATE_LIMITED', message: expect.stringContaining('WhatsApp') });
+    expect(res.headers.get('retry-after')).toBeNull();
+    expect(await res.json()).toMatchObject({ ok: false, code: 'FOLLOW_UP_LIMIT', message: expect.stringContaining('WhatsApp') });
     expect(dispatchApplicationFollowUpEmail).not.toHaveBeenCalled();
   });
 });

@@ -494,6 +494,26 @@ describe('reportServerEnv', () => {
     expect(line).not.toContain(SB_SECRET);
   });
 
+  it('reports 503 when the Resend key is invalid, even though the secrets have a source', () => {
+    setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: `${REAL_KEY}\u200b`, SUPABASE_URL: SUPABASE_URL, SUPABASE_SECRET_KEY: SB_SECRET });
+    expect(reportServerEnv()).toEqual({ ok: false });
+    expect(console.error).toHaveBeenCalledWith(expect.stringContaining('abgelehnt (503)'));
+    expect(console.error).toHaveBeenCalledWith(expect.stringContaining('ungültig: RESEND_API_KEY'));
+  });
+
+  it('does not claim 503 when APPLICATION_SINK=supabase lacks configuration (applications go by e-mail)', () => {
+    setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: REAL_KEY, APPLICATION_SINK: 'supabase' });
+    expect(reportServerEnv()).toEqual({ ok: false });
+    expect(console.error).toHaveBeenCalledWith(expect.stringContaining('Supabase unvollständig, Bewerbungen nur per E-Mail'));
+    expect(console.error).not.toHaveBeenCalledWith(expect.stringContaining('503'));
+  });
+
+  it('names the variable the derivation key really came from', () => {
+    setEnv({ VERCEL_ENV: 'production', SUPABASE_URL: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY: jwt('service_role') });
+    reportServerEnv();
+    expect(String(vi.mocked(console.info).mock.calls.at(-1)?.[0])).toContain('IP_HASH_SALT abgeleitet aus SUPABASE_SERVICE_ROLE_KEY');
+  });
+
   it('does not claim 503 when only an optional value is invalid', () => {
     setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: REAL_KEY, CONTACT_NOTIFICATION_EMAIL: 'a@b.de, c@d.de' });
     expect(reportServerEnv()).toEqual({ ok: false });

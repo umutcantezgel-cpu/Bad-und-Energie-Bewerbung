@@ -187,8 +187,19 @@ function serverKey(value: string | undefined): string | undefined {
   return value.startsWith('sb_secret_') || jwtRole(value) === 'service_role' ? value : undefined;
 }
 
+type SupabaseKeyName = 'SUPABASE_SECRET_KEY' | 'SUPABASE_SERVICE_ROLE_KEY';
+
+/** Server-Key von Supabase samt der Variable, aus der er kommt (für Logs). */
+function supabaseServerKeyEntry(): { name: SupabaseKeyName; value: string } | undefined {
+  for (const name of ['SUPABASE_SECRET_KEY', 'SUPABASE_SERVICE_ROLE_KEY'] as const) {
+    const value = serverKey(readVar(name).value);
+    if (value) return { name, value };
+  }
+  return undefined;
+}
+
 function supabaseServerKey(): string | undefined {
-  return serverKey(readVar('SUPABASE_SECRET_KEY').value) ?? serverKey(readVar('SUPABASE_SERVICE_ROLE_KEY').value);
+  return supabaseServerKeyEntry()?.value;
 }
 
 /**
@@ -196,11 +207,10 @@ function supabaseServerKey(): string | undefined {
  * ohnehin keinen Versand), sonst der Supabase-Server-Key. Beide sind lange Zufallswerte und
  * liegen nur auf dem Server.
  */
-function derivationMaster(): { name: 'RESEND_API_KEY' | 'SUPABASE_SECRET_KEY'; value: string } | undefined {
+function derivationMaster(): { name: 'RESEND_API_KEY' | SupabaseKeyName; value: string } | undefined {
   const resend = readVar('RESEND_API_KEY').value;
   if (resend) return { name: 'RESEND_API_KEY', value: resend };
-  const supabase = supabaseServerKey();
-  return supabase ? { name: 'SUPABASE_SECRET_KEY', value: supabase } : undefined;
+  return supabaseServerKeyEntry();
 }
 
 function resolveSecret(name: SecretName): { value?: string; source: SecretSource; invalid: boolean; from?: string } {
@@ -370,12 +380,19 @@ export function reportServerEnv(): { ok: boolean } {
     missing.length > 0 && `fehlt: ${missing.join(', ')}`,
     invalid.length > 0 && `ungültig: ${invalid.join(', ')}`,
   ].filter(Boolean);
-  // 503 nur, wenn wirklich eine Pflichtangabe fehlt; ungültige optionale Werte haben einen Ersatz.
-  const blocking = missing.length > 0;
+  // 503 nur, wenn Bewerbungen wirklich scheitern: kein Resend-Key (fehlt oder ungültig, es gibt
+  // keinen Ersatz) oder ein Geheimnis ohne eigenen Wert und ohne Hauptschlüssel. Alles andere
+  // (ungültige optionale Werte, unvollständiges Supabase) hat einen Ersatz.
+  const blocking =
+    (!emailSimulationAllowed() && !readVar('RESEND_API_KEY').value) ||
+    SECRET_NAMES.some((name) => resolveSecret(name).source === 'missing');
+  const supabaseIncomplete = missing.includes('SUPABASE_URL') || missing.includes('SUPABASE_SECRET_KEY');
   const scope = isVercelProduction()
     ? blocking
       ? 'PRODUKTION – Bewerbungen werden abgelehnt (503)'
-      : 'PRODUKTION – Ersatzwerte aktiv'
+      : supabaseIncomplete
+        ? 'PRODUKTION – Supabase unvollständig, Bewerbungen nur per E-Mail'
+        : 'PRODUKTION – Ersatzwerte aktiv'
     : 'lokal';
   console.error(`[env] Server-Konfiguration unvollständig, ${scope} (${parts.join('; ')})`);
   return { ok };

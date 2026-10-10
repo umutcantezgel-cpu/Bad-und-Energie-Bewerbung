@@ -30,6 +30,8 @@ export const API_ERROR_CODES = [
   'UNSUPPORTED_MEDIA_TYPE',
   'INVALID_JSON',
   'INVALID_TOKEN',
+  /** Obergrenze der Datenbank für Ergänzungen zu einer Bewerbung (5 je 24 h, 20 insgesamt). */
+  'FOLLOW_UP_LIMIT',
   'SERVICE_UNAVAILABLE',
   'INTERNAL',
 ] as const;

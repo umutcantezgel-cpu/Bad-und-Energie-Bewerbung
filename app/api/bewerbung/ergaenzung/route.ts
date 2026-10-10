@@ -16,10 +16,6 @@ import { guardJsonPost, RATE_LIMITS } from '@/lib/security';
 const EXPIRED_MESSAGE =
   'Der Link zum Ergänzen ist abgelaufen. Schick uns deine Angaben bitte per WhatsApp oder E-Mail und nenn deine Bewerbungsnummer.';
 const EMPTY_MESSAGE = 'Bitte gib mindestens eine Ergänzung an.';
-const LIMIT_MESSAGE =
-  'Zu dieser Bewerbung sind schon viele Ergänzungen eingegangen. Schick weitere bitte per WhatsApp oder E-Mail und nenn deine Bewerbungsnummer.';
-/** Obergrenze der Datenbank: 5 Ergänzungen je Bewerbung in 24 Stunden (rpc_submit_follow_up). */
-const LIMIT_RETRY_AFTER_SEC = 24 * 60 * 60;
 
 export async function POST(request: Request) {
   try {
@@ -47,10 +43,7 @@ export async function POST(request: Request) {
     const result = await getApplicationSink().followUp(followUp);
     if (!result.ok) {
       console.error(`[bewerbung/ergaenzung] nicht zugestellt (${result.reason})`);
-      return sinkFailureResponse(
-        result.reason,
-        result.reason === 'limited' ? { message: LIMIT_MESSAGE, retryAfterSec: LIMIT_RETRY_AFTER_SEC } : undefined,
-      );
+      return sinkFailureResponse(result.reason);
     }
 
     console.info(`[bewerbung/ergaenzung] eingegangen ${reference}${result.duplicate ? ' (Wiederholung)' : ''}`);

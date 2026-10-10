@@ -191,6 +191,39 @@ describe('sendEmail with Resend configured', () => {
     }
   });
 
+  it('retries a Resend 5xx reported as application_error, but not a network error or timeout', async () => {
+    vi.useFakeTimers();
+    try {
+      send
+        .mockResolvedValueOnce({ data: null, error: { name: 'application_error', statusCode: 502, message: 'Bad gateway' }, headers: null })
+        .mockResolvedValueOnce({ data: { id: 'email_3' }, error: null, headers: null });
+      const pending = sendEmail({ ...message, idempotencyKey: 'k' });
+      await vi.runAllTimersAsync();
+      expect(await pending).toMatchObject({ success: true, id: 'email_3' });
+
+      send.mockReset();
+      send.mockResolvedValue({ data: null, error: { name: 'application_error', statusCode: null, message: 'fetch failed' }, headers: null });
+      expect(await sendEmail({ ...message, idempotencyKey: 'k' })).toMatchObject({ success: false, error: 'application_error' });
+      expect(send).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('does not retry when the first attempt failed slowly (keeps the answer within the browser budget)', async () => {
+    vi.useFakeTimers();
+    try {
+      send.mockImplementation(async () => {
+        vi.advanceTimersByTime(6_000);
+        return { data: null, error: { name: 'internal_server_error', statusCode: 500, message: 'x' }, headers: null };
+      });
+      expect(await sendEmail({ ...message, idempotencyKey: 'k' })).toMatchObject({ success: false, error: 'internal_server_error' });
+      expect(send).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('does not retry without an idempotency key, and only once', async () => {
     vi.useFakeTimers();
     try {
@@ -323,6 +356,32 @@ describe('dispatchApplicationEmails', () => {
     expect(result.teamNotification.error).toBe('application_error');
     expect(result.userConfirmation).toEqual({ success: false, error: 'skipped_team_failed' });
     expect(send).toHaveBeenCalledTimes(1);
+  });
+
+  it('hands the confirmation to deferConfirmation (after the response) once the team mail was accepted', async () => {
+    stubEnv({ NODE_ENV: 'production', RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER });
+    send.mockResolvedValue({ data: { id: 'email_x' }, error: null, headers: null });
+    const deferred: Array<() => Promise<unknown>> = [];
+
+    const result = await dispatchApplicationEmails(application, { idempotencyKey: 'bewerbung:abc', deferConfirmation: (task) => deferred.push(task) });
+    expect(result.success).toBe(true);
+    expect(result.userConfirmation).toEqual({ success: false, error: 'deferred' });
+    expect(send).toHaveBeenCalledTimes(1);
+
+    expect(deferred).toHaveLength(1);
+    await expect(deferred[0]()).resolves.toMatchObject({ success: true });
+    expect(send).toHaveBeenCalledTimes(2);
+    expect(send.mock.calls[1][0]).toMatchObject({ to: [RECIPIENT] });
+    expect(send.mock.calls[1][1].idempotencyKey).toMatch(/^bewerbung:abc:user:[0-9a-f]{16}$/);
+  });
+
+  it('defers nothing when the team mail failed', async () => {
+    stubEnv({ NODE_ENV: 'production', RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER });
+    send.mockResolvedValue({ data: null, error: { name: 'invalid_api_key', statusCode: 403, message: 'API key is invalid' }, headers: null });
+    const deferConfirmation = vi.fn();
+    const result = await dispatchApplicationEmails(application, { idempotencyKey: 'k', deferConfirmation });
+    expect(result.teamNotification.error).toBe('not_configured');
+    expect(deferConfirmation).not.toHaveBeenCalled();
   });
 
   it('sends the confirmation only after the team mail was accepted', async () => {

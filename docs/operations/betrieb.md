@@ -162,6 +162,7 @@ Stand 2026-10-10: Der Live-Test zeigte `BillingNotEnabledMapError`. Offener Owne
    | Feld | Erwartet in Production | Sonst |
    |---|---|---|
    | `ok` | `true` (HTTP 200) | `false` (HTTP 503): eines der Felder unten passt nicht |
+   | `accepting` | `true` | `false`: Bewerbungen werden abgelehnt (Resend-Key oder Geheimnisse fehlen). `true` bei `ok: false` heißt: Bewerbungen kommen an, aber nur per Not-E-Mail |
    | `environment` | `production` | `preview`, `development` oder `other`: falsche Adresse oder fehlende Vercel-Systemvariablen |
    | `email.status` | `ready` (Resend-Key gesetzt) | `not_configured`: `RESEND_API_KEY` fehlt oder ist ungültig. `simulated` gibt es nur in Preview und lokal |
    | `email.sender`, `email.senderDomain` | `default` (oder `env`) und `karriere.bad-energie.de` | andere Domain: Sie muss in Resend verifiziert sein (2.1) |
@@ -170,7 +171,7 @@ Stand 2026-10-10: Der Live-Test zeigte `BillingNotEnabledMapError`. Offener Owne
    | `applications.database` | `ok` | `unavailable` (nicht erreichbar, Zeitlimit, Projekt pausiert), `misconfigured` (Key falsch, Funktion fehlt, Rechte fehlen), andere Werte wie `unexpected` |
    | `maps.configured` | `true`, wenn ein Maps-Key gesetzt ist | sagt nichts über die Abrechnung bei Google (2.4) |
 
-   Der Endpunkt nennt keine Werte und keine Adressen, nur die Absender-Domain. Für die Datenbankprobe ruft er `rpc_submit_follow_up` mit leerer Nutzlast auf: Die Datenbank muss mit `validation_failed` antworten, geschrieben wird nichts. Das Ergebnis gilt 5 Minuten je Server-Instanz. Steht `database` nicht auf `ok`, meldet der Endpunkt 503, obwohl Bewerbungen per Not-E-Mail weiter ankommen. `ok: true` heißt noch nicht, dass Resend den Versand annimmt (Domain, Kontingent); das zeigt erst die Testbewerbung.
+   Der Endpunkt nennt keine Werte und keine Adressen, nur die Absender-Domain. Für die Datenbankprobe ruft er `rpc_submit_follow_up` mit leerer Nutzlast auf: Die Datenbank muss mit `validation_failed` antworten, geschrieben wird nichts. Das Ergebnis gilt 5 Minuten je Server-Instanz. Steht `database` nicht auf `ok`, meldet der Endpunkt 503; Bewerbungen kommen dann per Not-E-Mail weiter an (`accepting: true`). `ok: true` heißt noch nicht, dass Resend den Versand annimmt (Domain, Kontingent); das zeigt erst die Testbewerbung.
 3. In den Logs (siehe 3.1) steht beim Start die Zeile `[env] Bewerbungen: …`. Es darf **keine** Zeile `[env] Server-Konfiguration unvollständig …` stehen.
 4. **Testbewerbung** über `https://karriere.bad-energie.de/bewerbung?stelle=initiativ`, Name mit „Test“, Kontaktweg E-Mail, eigene Adresse. Prüfen:
    - Die Danke-Seite zeigt eine Bewerbungsnummer `BE-26-…`.
@@ -216,12 +217,13 @@ Vercel → Projekt → **Logs**. Die Zeilen enthalten keine personenbezogenen Da
 | Log-Zeile | Bedeutung | Was tun |
 |---|---|---|
 | `[env] Bewerbungen: Supabase (<ref>, Secret Key) und E-Mail` bzw. `[env] Bewerbungen: nur E-Mail (<grund>)`, dahinter z. B. `; IP_HASH_SALT abgeleitet aus RESEND_API_KEY` oder `; Absender: Standard (karriere.bad-energie.de)` | Infozeile bei jedem Start: Ziel der Bewerbungen (Gründe für „nur E-Mail“: `APPLICATION_SINK=email`, `Supabase nicht konfiguriert`, `nicht Vercel Production`) und aktive Ersatzwerte | prüfen, ob das Ziel stimmt; eigene Geheimnisse sind empfohlen (2.2) |
-| `[env] Server-Konfiguration unvollständig, PRODUKTION – Bewerbungen werden abgelehnt (503) (fehlt: …; ungültig: …)` | Eine Pflichtvariable fehlt: `RESEND_API_KEY`, die Geheimnisse nur, wenn sie sich nicht ableiten lassen (nur Namen). Ausnahme: Bei `APPLICATION_SINK=supabase` ohne URL oder Server-Key stehen auch `SUPABASE_URL` bzw. `SUPABASE_SECRET_KEY` unter „fehlt“; Bewerbungen gehen dann trotzdem per E-Mail | Variable setzen, neu deployen |
-| `[env] Server-Konfiguration unvollständig, PRODUKTION – Ersatzwerte aktiv (ungültig: …)` | Nichts Nötiges fehlt, aber Werte sind ungültig und werden ersetzt: Geheimnis zu kurz → abgeleitet, Absender → Standard, Supabase-Key ist ein Publishable- oder anon-Key → nur E-Mail. **Ausnahme:** Steht `RESEND_API_KEY` unter „ungültig“, gibt es keinen Ersatz; Production lehnt Bewerbungen dann trotz dieser Zeile mit 503 ab | Wert korrigieren oder löschen, neu deployen |
+| `[env] Server-Konfiguration unvollständig, PRODUKTION – Bewerbungen werden abgelehnt (503) (fehlt: …; ungültig: …)` | `RESEND_API_KEY` fehlt oder ist ungültig, oder ein Geheimnis fehlt und lässt sich nicht ableiten (nur Namen) | Variable setzen, neu deployen |
+| `[env] Server-Konfiguration unvollständig, PRODUKTION – Ersatzwerte aktiv (ungültig: …)` | Nichts Nötiges fehlt, aber Werte sind ungültig und werden ersetzt: Geheimnis zu kurz → abgeleitet, Absender → Standard, Supabase-Key ist ein Publishable- oder anon-Key → nur E-Mail | Wert korrigieren oder löschen, neu deployen |
+| `[env] Server-Konfiguration unvollständig, PRODUKTION – Supabase unvollständig, Bewerbungen nur per E-Mail (fehlt: …)` | `APPLICATION_SINK=supabase`, aber `SUPABASE_URL` bzw. `SUPABASE_SECRET_KEY` fehlen; Bewerbungen gehen per E-Mail | URL und Server-Key setzen oder `APPLICATION_SINK` löschen, neu deployen |
 | `[bewerbung] eingegangen BE-26-… (<stelle>, <kanal>)` | Bewerbung angenommen; Zusätze „Spamverdacht: …“ oder „Wiederholung“ möglich | nichts |
 | `[bewerbung] nicht konfiguriert: <VARIABLE>` | Geheimnis fehlt und lässt sich nicht ableiten, Antwort 503 | Variable setzen, neu deployen |
 | `[bewerbung] nicht zugestellt (not_configured)` | Resend-Key fehlt oder Resend meldet einen Konfigurationsfehler (Key ungültig, eingeschränkt oder gesperrt, Absender-Domain nicht verifiziert bzw. Testmodus, Kontingent erschöpft), Antwort 503 | Zeile `[email] Resend-Fehler … – Konfiguration prüfen` daneben lesen, 2.1 und 2.2 prüfen |
-| `[bewerbung] nicht zugestellt (failed)` | Resend hat abgelehnt oder war nicht erreichbar (vorübergehende Fehler auch nach dem zweiten Versuch), Antwort 500. Mit Datenbank nur, wenn die Bewerbung gespeichert ist (Zeile `[bewerbung] gespeichert …` davor); scheitert dagegen die Not-E-Mail, steht dort `unavailable` | Zeile `[email] Resend-Fehler` daneben und die Resend-Logs ansehen |
+| `[bewerbung] nicht zugestellt (failed)` | Resend hat abgelehnt oder war nicht erreichbar (vorübergehende Fehler auch nach dem zweiten Versuch), Antwort 500. Bei Ergänzungen zu Bewerbungen, die nicht in der Datenbank stehen, ebenso. Mit Datenbank nur, wenn die Bewerbung gespeichert ist (Zeile `[bewerbung] gespeichert …` davor); scheitert dagegen die Not-E-Mail, steht dort `unavailable` | Zeile `[email] Resend-Fehler` daneben und die Resend-Logs ansehen |
 | `[bewerbung] nicht zugestellt (unavailable)` | Datenbank ausgefallen und Not-E-Mail gescheitert, Antwort 503 | die Zeilen davor lesen |
 | `[bewerbung] Datenbank: <art> (<code>) – Not-E-Mail ans Team` | Datenbank nicht nutzbar (`unavailable`, `misconfigured`, `validation_failed`, `unexpected` oder `circuit_open` ohne Code nach zwei Ausfällen in Folge). Folgt keine Zeile `Not-E-Mail fehlgeschlagen`, kam die Bewerbung vollständig per Mail, steht aber nicht in der Datenbank | `/api/status` aufrufen; bei `misconfigured` Key und Migrationen prüfen; bei `unavailable` den Supabase-Status ansehen (pausiertes Projekt?) |
 | `[bewerbung] Not-E-Mail fehlgeschlagen (<grund>)` | Auch die Not-E-Mail ging nicht raus, Antwort 503 | Zeile `[email] Resend-Fehler` daneben lesen |
@@ -229,9 +231,9 @@ Vercel → Projekt → **Logs**. Die Zeilen enthalten keine personenbezogenen Da
 | `[bewerbung] APPLICATION_SINK=supabase, aber Supabase ist nicht vollständig konfiguriert – nur E-Mail` | Datenbank erzwungen, aber URL oder Server-Key fehlt | URL und Key setzen oder `APPLICATION_SINK` löschen, neu deployen |
 | `[bewerbung/ergaenzung] Bewerbung nicht in der Datenbank – nur per E-Mail` | Info: Ergänzung zu einer Bewerbung aus der E-Mail-Zeit oder per Not-E-Mail | nichts |
 | `[bewerbung/ergaenzung] Datenbank: <art> – nur per E-Mail` | Datenbank gestört, die Ergänzung kam per Mail | wie bei der Not-E-Mail |
-| `[bewerbung/ergaenzung] nicht zugestellt (limited)` | Zu dieser Bewerbung liegen schon 20 Ergänzungen vor oder 5 in 24 Stunden (Grenze der Datenbank), Antwort 429 | nichts; die Person wird auf WhatsApp oder E-Mail verwiesen |
+| `[bewerbung/ergaenzung] nicht zugestellt (limited)` | Zu dieser Bewerbung liegen schon 20 Ergänzungen vor oder 5 in 24 Stunden (Grenze der Datenbank), Antwort 429 mit Code `FOLLOW_UP_LIMIT` | nichts; die Person wird auf WhatsApp oder E-Mail verwiesen |
 | `[email] Resend-Fehler: <code> (HTTP <status>) – Konfiguration prüfen: <meldung>` | Konfigurationsfehler bei Resend, z. B. `invalid_api_key`, `invalid_from_address`, Kontingent oder `validation_error` mit HTTP 403 (Domain nicht verifiziert oder Testmodus). Die Meldung stammt von Resend, Adressen stehen als `[adresse]` | Key, Domain-Verifizierung, Absender und Kontingent in Resend prüfen |
-| `[email] Resend-Fehler: <code> (HTTP <status>), neuer Versuch` | Vorübergehender Fehler (`rate_limit_exceeded`, `internal_server_error`, `service_unavailable`, `concurrent_idempotent_requests`); nach 800 ms ein zweiter Versuch mit demselben Idempotency-Key | nichts, solange keine Fehlerzeile folgt |
+| `[email] Resend-Fehler: <code> (HTTP <status>), neuer Versuch` | Vorübergehender Fehler (`rate_limit_exceeded`, `internal_server_error`, `service_unavailable`, `concurrent_idempotent_requests`, `application_error` mit HTTP 5xx), der erste Versuch scheiterte in weniger als 5 Sekunden; nach 800 ms ein zweiter Versuch mit demselben Idempotency-Key | nichts, solange keine Fehlerzeile folgt |
 | `[email] Resend-Fehler: <code> (HTTP <status>): <meldung>` | anderer Fehlercode von Resend | Resend-Logs ansehen |
 | `[bewerbung/ergaenzung] …` | dasselbe für Ergänzungen | wie oben |
 | `[csp] report <direktive> blockiert <quelle> auf <pfad>` | CSP-Meldung (Report-Only) | siehe 3.3 |
@@ -258,10 +260,11 @@ Andere Antworten zum Vergleich:
 
 | Status | Bedeutung |
 |---|---|
-| 500 (`INTERNAL`) | Konfiguration vollständig, aber der Versand ist gescheitert, meist bei Resend (vorübergehende Fehler auch nach dem zweiten Versuch; Netzfehler und Zeitüberschreitungen werden nicht wiederholt). Die Oberfläche bietet „Erneut senden“, Anruf und WhatsApp an. |
-| 429 (`RATE_LIMITED`) | Zu viele Versuche aus demselben Netz (Bewerbungen 5 je 10 Minuten und 20 je Tag, Ergänzungen 10 je Stunde). Die Zähler liegen im Arbeitsspeicher und gelten je Server-Instanz. Bei Ergänzungen auch: Zu dieser Bewerbung liegen schon 20 Ergänzungen vor oder 5 in 24 Stunden (Grenze der Datenbank, `Retry-After` ein Tag); die Meldung bittet, weitere per WhatsApp oder E-Mail mit der Bewerbungsnummer zu schicken. |
+| 500 (`INTERNAL`) | Konfiguration vollständig, aber der Versand ist gescheitert, meist bei Resend (vorübergehende Fehler auch nach dem zweiten Versuch; Netzfehler, Zeitüberschreitungen und langsame Fehler werden nicht wiederholt). Die Oberfläche bietet „Erneut senden“, Anruf und WhatsApp an. |
+| 429 (`RATE_LIMITED`) | Zu viele Versuche aus demselben Netz (Bewerbungen 5 je 10 Minuten und 20 je Tag, Ergänzungen 10 je Stunde). Die Zähler liegen im Arbeitsspeicher und gelten je Server-Instanz. |
+| 429 (`FOLLOW_UP_LIMIT`) | Nur bei Ergänzungen: Zu dieser Bewerbung liegen schon 20 Ergänzungen vor oder 5 in 24 Stunden (Grenze der Datenbank). Die Meldung bittet, weitere per WhatsApp oder E-Mail mit der Bewerbungsnummer zu schicken; „Erneut senden“ gibt es dafür nicht. |
 | 403 (`CSRF_FAILED` bzw. `INVALID_TOKEN`) | Anfrage kam nicht von der eigenen Seite bzw. Ergänzungs-Link ungültig oder abgelaufen |
-| 503 bei `/api/status` | Der Status meldet ein Problem; die Felder lesen (2.6). Steht nur `applications.database` nicht auf `ok`, kommen Bewerbungen per Not-E-Mail weiter an |
+| 503 bei `/api/status` | Der Status meldet ein Problem; die Felder lesen (2.6). Steht `accepting` auf `true`, kommen Bewerbungen per Not-E-Mail weiter an |
 | 503 bei `/api/indexnow` | Nur IndexNow ist nicht eingerichtet (2.3); Bewerbungen sind nicht betroffen |
 
 ### 3.3 CSP-Meldungen

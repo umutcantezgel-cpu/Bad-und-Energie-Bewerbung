@@ -7,7 +7,7 @@ import { applicationContentHash } from '@/lib/applications/fingerprint';
 import { normalizeApplication, normalizeFollowUp } from '@/lib/applications/normalize';
 import { applicationFollowUpSchema, applicationInputSchema } from '@/lib/applications/schema';
 import type { ReferencedApplication } from '@/lib/applications/types';
-import { ATTRIBUTION_COLUMNS, toFollowUpPayload, toSubmitApplicationPayload } from '@/lib/supabase/payload';
+import { ATTRIBUTION_COLUMNS, cleanText, toFollowUpPayload, toSubmitApplicationPayload } from '@/lib/supabase/payload';
 
 /**
  * Vertrag TS ↔ Intake-RPC: rpc_submit_application und rpc_submit_follow_up lehnen jeden
@@ -115,6 +115,20 @@ describe('toSubmitApplicationPayload', () => {
     for (const field of ['firstName', 'shortTitle', '"status"', 'display', '"valid"', '"country"', 'idempotencyKey', 'utmSource']) {
       expect(json).not.toContain(field);
     }
+  });
+});
+
+describe('cleanText', () => {
+  it('removes characters Postgres cannot store and keeps tabs, line breaks and emoji', () => {
+    expect(cleanText('A\u0000nna\u0007')).toBe('Anna');
+    expect(cleanText('Zeile 1\nZeile 2\tTab 👍')).toBe('Zeile 1\nZeile 2\tTab 👍');
+    expect(cleanText('kaputt \ud800 ende')).toBe('kaputt \ufffd ende');
+  });
+
+  it('is applied to every string in the payload (e.g. a cover letter pasted from a PDF)', () => {
+    const app = application({ mappe: { coverLetter: 'Hallo\u0000 Welt', skills: ['Löten\u0001'], careerStations: [], educationStations: [] } });
+    const payload = toSubmitApplicationPayload(app, applicationContentHash(app));
+    expect(payload.mappe).toMatchObject({ coverLetter: 'Hallo Welt', skills: ['Löten'] });
   });
 });
 

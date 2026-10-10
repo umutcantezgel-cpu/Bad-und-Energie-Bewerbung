@@ -3,6 +3,7 @@ import 'server-only';
 import { dispatchApplicationEmails, dispatchApplicationFollowUpEmail } from '@/lib/email';
 import { getSupabaseIntake } from '@/lib/supabase/service';
 import { SupabaseSink } from '@/lib/supabase/sink';
+import { runAfterResponse } from './defer';
 import { applicationContentHash } from './fingerprint';
 import { TtlLru, type TtlLruOptions } from './idempotency';
 import { referenceForKey } from './reference';
@@ -28,8 +29,13 @@ export type SinkSubmitResult =
 
 export type SinkFollowUpResult = { ok: true; duplicate?: boolean } | { ok: false; reason: SinkFailureReason };
 
+export interface SubmitOptions {
+  /** Nummer vorgeben statt sie aus dem Idempotency-Key abzuleiten (Not-E-Mail nach einer Nummernkollision). */
+  reference?: string;
+}
+
 export interface ApplicationSink {
-  submit(app: NormalizedApplication): Promise<SinkSubmitResult>;
+  submit(app: NormalizedApplication, options?: SubmitOptions): Promise<SinkSubmitResult>;
   followUp(followUp: NormalizedFollowUp): Promise<SinkFollowUpResult>;
 }
 
@@ -79,7 +85,7 @@ export class EmailSink implements ApplicationSink {
     this.createReference = createReference;
   }
 
-  async submit(app: NormalizedApplication): Promise<SinkSubmitResult> {
+  async submit(app: NormalizedApplication, options: SubmitOptions = {}): Promise<SinkSubmitResult> {
     const key = app.idempotencyKey;
     const content = applicationContentHash(app);
     const record = this.submissions.get(key);
@@ -91,7 +97,7 @@ export class EmailSink implements ApplicationSink {
     const running = this.inflight.get(flight);
     if (running) return running;
 
-    const delivery = this.deliver(app, content, record).finally(() => this.inflight.delete(flight));
+    const delivery = this.deliver(app, content, record, options.reference).finally(() => this.inflight.delete(flight));
     this.inflight.set(flight, delivery);
     return delivery;
   }
@@ -100,15 +106,16 @@ export class EmailSink implements ApplicationSink {
     app: NormalizedApplication,
     content: string,
     previous: SubmissionRecord | undefined,
+    givenReference: string | undefined,
   ): Promise<SinkSubmitResult> {
     // Nummer und Eingangszeit bleiben beim ersten Versuch, auch wenn sich die Angaben ändern.
-    const reference = previous?.reference ?? this.createReference(app);
+    const reference = previous?.reference ?? givenReference ?? this.createReference(app);
     const submittedAt = previous?.submittedAt ?? app.submittedAt;
     this.submissions.set(app.idempotencyKey, { reference, submittedAt, content, delivered: false }, { keepExpiry: true });
 
     const result = await dispatchApplicationEmails(
       { ...app, submittedAt, reference },
-      { idempotencyKey: `bewerbung:${app.idempotencyKey}` },
+      { idempotencyKey: `bewerbung:${app.idempotencyKey}`, deferConfirmation: runAfterResponse },
     );
     if (!result.success) return { ok: false, reason: failureReason(result.teamNotification.error) };
 

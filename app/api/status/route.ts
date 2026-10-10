@@ -7,7 +7,8 @@ export const dynamic = 'force-dynamic';
 /**
  * GET /api/status: Betriebsstatus ohne Werte (lib/status.ts). Zum Prüfen nach einem Deploy oder
  * nach einer Änderung der Umgebungsvariablen, ohne eine Testbewerbung abzuschicken.
- * HTTP 200, wenn Bewerbungen angenommen werden können, sonst 503.
+ * HTTP 200, wenn alles bereit ist, sonst 503 (auch wenn nur die Datenbank streikt; ob Bewerbungen
+ * dann per Not-E-Mail weiter ankommen, steht in `accepting`).
  */
 export async function GET() {
   try {

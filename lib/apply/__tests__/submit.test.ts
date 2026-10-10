@@ -243,6 +243,15 @@ describe('describeFailure', () => {
     expect(describeFailure(failure(500, { ok: false, code: 'INTERNAL', message: 'Noch einmal.' })).action).toBe('retry');
   });
 
+  it('shows the follow-up limit as a final message without retry (429 is only the status code)', () => {
+    const limit = 'Zu dieser Bewerbung sind schon viele Ergänzungen eingegangen. Schick weitere bitte per WhatsApp oder E-Mail und nenn deine Bewerbungsnummer.';
+    const result = failure(429, { ok: false, code: 'FOLLOW_UP_LIMIT', message: limit });
+    expect(result.kind).toBe('server');
+    expect(describeFailure(result)).toEqual({ detail: limit, action: 'none' });
+    expect(describeFailure(failure(429, { ok: false, code: 'FOLLOW_UP_LIMIT' })).detail).toMatch(/per WhatsApp oder E-Mail/);
+    expect(failure(429, { ok: false, code: 'RATE_LIMITED', message: 'x' }).kind).toBe('rate_limited');
+  });
+
   it('falls back to its own text when the server sends no message, and to the generic text without a code', () => {
     expect(describeFailure(failure(403, { ok: false, code: 'INVALID_TOKEN' })).detail).toMatch(/keiner Bewerbung zuordnen/);
     expect(describeFailure(failure(502, null))).toEqual({

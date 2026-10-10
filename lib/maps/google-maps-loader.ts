@@ -152,6 +152,13 @@ function injectScript(apiKey: string): Promise<boolean> {
     // Runs until the maps library is ready, so a hanging importLibrary also ends in the fallback.
     const timer = window.setTimeout(() => {
       console.warn('[Google Maps] Zeitüberschreitung beim Laden.');
+      // With loading=async our tag is only Google's bootstrap; it loads main.js itself, and a failure
+      // there never reaches script.onerror. Start over on the next attempt unless the API arrived.
+      if (!window.google?.maps?.Map) {
+        script.remove();
+        Reflect.deleteProperty(window, 'google');
+        loaderPromise = null;
+      }
       resolve(false);
     }, LOAD_TIMEOUT_MS);
 

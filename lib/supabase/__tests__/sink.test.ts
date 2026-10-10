@@ -100,9 +100,10 @@ describe('SupabaseSink.submit', () => {
 
     const payload = rpc.submitApplication.mock.calls[0][0];
     expect(payload).toMatchObject({ reference: expected, idempotency_key: KEY, content_hash: applicationContentHash(app), email: 'max@example.org' });
-    expect(dispatchApplicationEmails).toHaveBeenCalledWith(expect.objectContaining({ reference: expected }), {
-      idempotencyKey: `bewerbung:${KEY}`,
-    });
+    expect(dispatchApplicationEmails).toHaveBeenCalledWith(
+      expect.objectContaining({ reference: expected }),
+      expect.objectContaining({ idempotencyKey: `bewerbung:${KEY}`, deferConfirmation: expect.any(Function) }),
+    );
     expect(fallbackSubmit).not.toHaveBeenCalled();
   });
 
@@ -143,6 +144,29 @@ describe('SupabaseSink.submit', () => {
     expect(result).toEqual({ ok: true, reference: second });
   });
 
+  it('uses the last tried reference for the emergency mail after a collision, never the taken one', async () => {
+    const { rpc, sink, fallbackSubmit } = setup();
+    const app = application();
+    const taken = referenceForKey(KEY, app.submittedAt);
+    rpc.submitApplication.mockResolvedValueOnce(failure('reference_conflict', 400, 'P0001')).mockResolvedValueOnce(failure('unavailable', 0));
+
+    const result = await sink.submit(app);
+    const tried = rpc.submitApplication.mock.calls[1][0].reference;
+    expect(result).toEqual({ ok: true, reference: tried });
+    expect(tried).not.toBe(taken);
+    expect(fallbackSubmit).toHaveBeenCalledWith(app, { reference: tried });
+  });
+
+  it('uses a fresh reference after a second collision', async () => {
+    const { rpc, sink } = setup();
+    const app = application();
+    rpc.submitApplication.mockResolvedValue(failure('reference_conflict', 400, 'P0001'));
+    const result = await sink.submit(app);
+    const tried = rpc.submitApplication.mock.calls.map((call) => call[0].reference);
+    expect(result.ok && result.reference).toMatch(REFERENCE_PATTERN);
+    expect(tried).not.toContain(result.ok && result.reference);
+  });
+
   it.each([
     ['unavailable', 0],
     ['misconfigured', 404],
@@ -155,7 +179,7 @@ describe('SupabaseSink.submit', () => {
 
     const result = await sink.submit(app);
     expect(result).toEqual({ ok: true, reference: referenceForKey(KEY, app.submittedAt) });
-    expect(fallbackSubmit).toHaveBeenCalledWith(app);
+    expect(fallbackSubmit).toHaveBeenCalledWith(app, undefined);
     expect(dispatchApplicationEmails).toHaveBeenCalledTimes(1);
     expect(logged()).toContain(`Datenbank: ${kind}`);
     expect(logged()).toContain('Not-E-Mail');
@@ -237,6 +261,13 @@ describe('SupabaseSink.followUp', () => {
     await expect(sink.followUp(followUp())).resolves.toEqual({ ok: true });
     expect(fallbackFollowUp).toHaveBeenCalledTimes(1);
     expect(dispatchApplicationFollowUpEmail).toHaveBeenCalledTimes(1);
+  });
+
+  it('reports a transient mail failure for follow-ups to older applications like the EmailSink (500, not 503)', async () => {
+    const { rpc, sink } = setup();
+    rpc.submitFollowUp.mockResolvedValue(failure('not_found', 400, 'P0001'));
+    dispatchApplicationFollowUpEmail.mockResolvedValue({ success: false, error: 'send_failed' });
+    await expect(sink.followUp(followUp())).resolves.toEqual({ ok: false, reason: 'failed' });
   });
 
   it('reports the follow-up limit without sending a mail', async () => {

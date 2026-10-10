@@ -54,6 +54,7 @@ describe('getStatusReport', () => {
     const report = await getStatusReport();
     expect(report).toEqual({
       ok: false,
+      accepting: false,
       environment: 'production',
       email: { status: 'not_configured', sender: 'default', senderDomain: 'karriere.bad-energie.de' },
       secrets: { ipHashSalt: 'missing', applicationTokenSecret: 'missing' },
@@ -92,7 +93,8 @@ describe('getStatusReport', () => {
 
     probe.mockResolvedValue({ ok: false, kind: 'misconfigured', status: 401 });
     const later = await getStatusReport(1_000 + PROBE_TTL_MS + 1);
-    expect(later).toMatchObject({ ok: false, applications: { target: 'supabase', database: 'misconfigured' } });
+    // Datenbank kaputt: nicht ok, aber Bewerbungen kommen per Not-E-Mail weiter an.
+    expect(later).toMatchObject({ ok: false, accepting: true, applications: { target: 'supabase', database: 'misconfigured' } });
     expect(JSON.stringify(later)).not.toContain(SB_SECRET);
   });
 

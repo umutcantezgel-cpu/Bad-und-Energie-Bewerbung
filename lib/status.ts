@@ -20,8 +20,10 @@ import type { RpcErrorKind } from '@/lib/supabase/rpc';
  */
 
 export interface StatusReport {
-  /** Bewerbungen können angenommen werden (Versand bereit, Geheimnisse vorhanden, Datenbank ok oder nicht genutzt). */
+  /** Alles bereit: Bewerbungen werden angenommen und, wenn die Datenbank das Ziel ist, auch gespeichert. */
   ok: boolean;
+  /** Bewerbungen werden angenommen (Versand bereit, Geheimnisse vorhanden), notfalls nur per Not-E-Mail. */
+  accepting: boolean;
   environment: 'production' | 'preview' | 'development' | 'other';
   email: {
     status: 'ready' | 'simulated' | 'not_configured';
@@ -78,14 +80,13 @@ export async function getStatusReport(now: number = Date.now()): Promise<StatusR
   const applications: StatusReport['applications'] =
     target.kind === 'supabase' ? { target: 'supabase', ...(database ? { database } : {}) } : { target: 'email', reason: target.reason };
 
-  const ok =
-    emailStatus !== 'not_configured' &&
-    secrets.ipHashSalt !== 'missing' &&
-    secrets.applicationTokenSecret !== 'missing' &&
-    (applications.target === 'email' || applications.database === 'ok');
+  const accepting =
+    emailStatus !== 'not_configured' && secrets.ipHashSalt !== 'missing' && secrets.applicationTokenSecret !== 'missing';
+  const ok = accepting && (applications.target === 'email' || applications.database === 'ok');
 
   return {
     ok,
+    accepting,
     environment: environment(),
     email: { status: emailStatus, sender: email.fromSource, senderDomain: domainOf(email.from) },
     secrets,

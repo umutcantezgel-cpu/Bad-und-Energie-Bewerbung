@@ -56,12 +56,23 @@ export interface DispatchOptions {
    * (applicationFingerprint), damit Wiederholungen auf einer anderen Instanz denselben Key haben.
    */
   idempotencyKey?: string;
+  /**
+   * Nur Bewerbungen: Die Eingangsbestätigung nach der Antwort an den Browser senden (die Sinks
+   * übergeben `after` aus next/server). Sie geht weiterhin nur raus, wenn die Team-Mail angenommen
+   * wurde; ihr Ergebnis wertet ohnehin niemand aus. Ohne Option wird sie direkt gesendet.
+   */
+  deferConfirmation?: (task: () => Promise<unknown>) => void;
 }
 
 /** Zeitlimit je Resend-Aufruf: Der Browser gibt nach 25 s auf (lib/apply/submit.ts). */
 export const RESEND_TIMEOUT_MS = 10_000;
 /** Wartezeit vor dem einen erneuten Versuch bei vorübergehenden Fehlern. */
 const RETRY_DELAY_MS = 800;
+/**
+ * Erneut versuchen nur, wenn der erste Versuch schnell scheiterte: Mit Datenbank (5 s) und einem
+ * zweiten vollen Versuch (10 s) bleibt die Antwort so unter den 25 s des Browsers.
+ */
+const RETRY_IF_FAILED_WITHIN_MS = 5_000;
 
 /**
  * Fehler, die an der Konfiguration liegen (Key, Absender-Domain, Kontingent): Eine Wiederholung
@@ -79,6 +90,14 @@ const CONFIG_ERRORS = new Set([
 ]);
 /** Vorübergehende Fehler: einmal mit demselben Idempotency-Key wiederholen (sicher, kein Doppelversand). */
 const TRANSIENT_ERRORS = new Set(['concurrent_idempotent_requests', 'rate_limit_exceeded', 'internal_server_error', 'service_unavailable']);
+
+/**
+ * Resend meldet HTTP 500 als `application_error`, das SDK ebenso Gateway-Fehler (502–504). Mit
+ * statusCode null steht derselbe Name für Netzfehler und Zeitüberschreitung: die nicht wiederholen.
+ */
+function isTransient(error: { name: string; statusCode: number | null }): boolean {
+  return TRANSIENT_ERRORS.has(error.name) || (error.name === 'application_error' && typeof error.statusCode === 'number' && error.statusCode >= 500);
+}
 
 /** Resend-Fehlertext ohne Adressen (Domains bleiben, sie erklären z. B. „domain is not verified“). */
 function redactErrorMessage(message: unknown): string {
@@ -149,6 +168,7 @@ export async function sendEmail({
   };
 
   try {
+    const startedAt = Date.now();
     for (let attempt = 1; ; attempt++) {
       // Das SDK wirft nicht: Netzfehler und Zeitüberschreitung kommen als application_error zurück.
       const { data, error } = await config.client.emails.send(payload, {
@@ -168,7 +188,7 @@ export async function sendEmail({
         return { success: true, duplicate: true, simulated: false };
       }
 
-      if (attempt === 1 && idempotencyKey && TRANSIENT_ERRORS.has(error.name)) {
+      if (attempt === 1 && idempotencyKey && isTransient(error) && Date.now() - startedAt < RETRY_IF_FAILED_WITHIN_MS) {
         console.warn(`[email] Resend-Fehler: ${error.name} (HTTP ${error.statusCode ?? '–'}), neuer Versuch`);
         await wait(RETRY_DELAY_MS);
         continue;
@@ -233,6 +253,8 @@ const NO_RECIPIENT: EmailDispatchResult = { success: false, error: 'no_recipient
 const SKIPPED_SPAM: EmailDispatchResult = { success: false, error: 'skipped_suspected_spam' };
 /** Keine Eingangsbestätigung, solange das Team die Bewerbung nicht hat (sonst „angekommen“, obwohl nicht). */
 const SKIPPED_TEAM_FAILED: EmailDispatchResult = { success: false, error: 'skipped_team_failed' };
+/** Eingangsbestätigung geht nach der Antwort raus (DispatchOptions.deferConfirmation). */
+const DEFERRED: EmailDispatchResult = { success: false, error: 'deferred' };
 
 /** Resend-Tag-Wert: nur [A-Za-z0-9_-], höchstens 256 Zeichen. */
 function tagValue(value: string): string {
@@ -279,14 +301,21 @@ export async function dispatchApplicationEmails(
   } else if (!teamNotification.success) {
     userConfirmation = { ...SKIPPED_TEAM_FAILED };
   } else {
-    userConfirmation = await settle(() =>
-      sendEmail({
-        ...confirmationMail,
-        replyTo: config.toEmail,
-        tags: [{ name: 'category', value: 'application_confirmation' }, ...tags],
-        idempotencyKey: stableIdempotencyKey(options, 'user', [confirmationMail.to, fingerprint]),
-      })
-    );
+    const sendConfirmation = () =>
+      settle(() =>
+        sendEmail({
+          ...confirmationMail,
+          replyTo: config.toEmail,
+          tags: [{ name: 'category', value: 'application_confirmation' }, ...tags],
+          idempotencyKey: stableIdempotencyKey(options, 'user', [confirmationMail.to, fingerprint]),
+        })
+      );
+    if (options?.deferConfirmation) {
+      options.deferConfirmation(sendConfirmation);
+      userConfirmation = { ...DEFERRED };
+    } else {
+      userConfirmation = await sendConfirmation();
+    }
   }
 
   return {

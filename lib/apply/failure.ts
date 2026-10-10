@@ -37,6 +37,7 @@ const FALLBACK: Readonly<Record<ApiErrorCode, string>> = {
   UNSUPPORTED_MEDIA_TYPE: RELOAD,
   INVALID_JSON: RELOAD,
   INVALID_TOKEN: 'Wir konnten deine Angaben keiner Bewerbung zuordnen. Schick sie uns bitte per WhatsApp oder E-Mail.',
+  FOLLOW_UP_LIMIT: 'Zu dieser Bewerbung sind schon viele Ergänzungen eingegangen. Schick weitere bitte per WhatsApp oder E-Mail.',
   SERVICE_UNAVAILABLE: 'Das Senden klappt gerade nicht. Bitte ruf uns an oder schreib uns per WhatsApp.',
   INTERNAL: 'Da ist etwas schiefgelaufen. Bitte versuch es noch einmal oder melde dich direkt bei uns.',
 };
@@ -49,6 +50,7 @@ const ACTION: Readonly<Record<ApiErrorCode, FailureAction>> = {
   UNSUPPORTED_MEDIA_TYPE: 'reload',
   INVALID_JSON: 'reload',
   INVALID_TOKEN: 'none',
+  FOLLOW_UP_LIMIT: 'none',
   SERVICE_UNAVAILABLE: 'retry',
   INTERNAL: 'retry',
 };

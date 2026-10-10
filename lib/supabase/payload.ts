@@ -54,6 +54,26 @@ export type SubmitFollowUpPayload = {
   mappe?: Mappe;
 };
 
+// Steuerzeichen außer Tab und Zeilenumbruch sowie einzelne UTF-16-Surrogate: jsonb lehnt U+0000
+// und ungepaarte Surrogate ab, die Bewerbung ginge sonst jedes Mal nur als Not-E-Mail ans Team.
+const CONTROL_CHARACTERS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g;
+const LONE_SURROGATES = /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g;
+
+/** Text so bereinigen, dass Postgres (jsonb, text) ihn speichert. */
+export function cleanText(value: string): string {
+  return value.replace(CONTROL_CHARACTERS, '').replace(LONE_SURROGATES, '\uFFFD');
+}
+
+/** Alle Zeichenketten einer Nutzlast bereinigen (Objekte und Listen rekursiv). */
+function cleanDeep<T>(value: T): T {
+  if (typeof value === 'string') return cleanText(value) as T;
+  if (Array.isArray(value)) return value.map(cleanDeep) as T;
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, entry]) => [key, cleanDeep(entry)])) as T;
+  }
+  return value;
+}
+
 export function toAttributionPayload(attribution: Attribution): Partial<Record<AttributionColumn, string>> {
   const payload: Partial<Record<AttributionColumn, string>> = {};
   for (const [field, column] of Object.entries(ATTRIBUTION_COLUMNS) as Array<[keyof Attribution, AttributionColumn]>) {
@@ -65,7 +85,7 @@ export function toAttributionPayload(attribution: Attribution): Partial<Record<A
 
 /** Bewerbung mit Nummer → rpc_submit_application. `contentHash` = applicationContentHash (32 hex). */
 export function toSubmitApplicationPayload(app: ReferencedApplication, contentHash: string): SubmitApplicationPayload {
-  return {
+  return cleanDeep<SubmitApplicationPayload>({
     reference: app.reference,
     idempotency_key: app.idempotencyKey,
     content_hash: contentHash,
@@ -88,12 +108,12 @@ export function toSubmitApplicationPayload(app: ReferencedApplication, contentHa
     suspected_spam: app.suspectedSpam,
     spam_signals: [...app.spamSignals],
     ...(app.fillDurationMs !== undefined ? { fill_duration_ms: app.fillDurationMs } : {}),
-  };
+  });
 }
 
 /** Ergänzung → rpc_submit_follow_up. */
 export function toFollowUpPayload(followUp: NormalizedFollowUp): SubmitFollowUpPayload {
-  return {
+  return cleanDeep<SubmitFollowUpPayload>({
     reference: followUp.reference,
     idempotency_key: followUp.idempotencyKey,
     received_at: followUp.receivedAt.toISOString(),
@@ -101,5 +121,5 @@ export function toFollowUpPayload(followUp: NormalizedFollowUp): SubmitFollowUpP
     ...(followUp.postalCode ? { postal_code: followUp.postalCode } : {}),
     ...(followUp.message ? { message: followUp.message } : {}),
     ...(followUp.mappe ? { mappe: followUp.mappe } : {}),
-  };
+  });
 }

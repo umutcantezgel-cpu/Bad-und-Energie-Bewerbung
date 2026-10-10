@@ -2,6 +2,7 @@ import 'server-only';
 
 import { applicationContentHash } from '@/lib/applications/fingerprint';
 import { TtlLru, type TtlLruOptions } from '@/lib/applications/idempotency';
+import { runAfterResponse } from '@/lib/applications/defer';
 import { createReference, referenceForKey } from '@/lib/applications/reference';
 import type { ApplicationSink, SinkFailureReason, SinkFollowUpResult, SinkSubmitResult } from '@/lib/applications/sink';
 import type { NormalizedApplication, NormalizedFollowUp } from '@/lib/applications/types';
@@ -76,7 +77,8 @@ export class SupabaseSink implements ApplicationSink {
   private async store(app: NormalizedApplication, content: string, flight: string): Promise<SinkSubmitResult> {
     if (this.breaker.isOpen()) return this.emergency(app, 'circuit_open');
 
-    let reference = referenceForKey(app.idempotencyKey, app.submittedAt);
+    const derived = referenceForKey(app.idempotencyKey, app.submittedAt);
+    let reference = derived;
     let result = await this.rpc.submitApplication(toSubmitApplicationPayload({ ...app, reference }, content));
     if (!result.ok && result.kind === 'reference_conflict') {
       // Praktisch ausgeschlossen (HMAC, 31^6); dann einmal mit einer Zufallsnummer.
@@ -86,14 +88,18 @@ export class SupabaseSink implements ApplicationSink {
 
     if (!result.ok) {
       if (isOutage(result.kind)) this.breaker.recordFailure();
-      return this.emergency(app, result.kind, result.code ?? String(result.status));
+      // Nach einer Kollision nie die vergebene Nummer mailen: Ergänzungen mit ihr landeten bei einer
+      // anderen Bewerbung. Also die zuletzt versuchte Nummer, bei zweiter Kollision eine neue.
+      const emergencyReference =
+        result.kind === 'reference_conflict' ? createReference(app.submittedAt) : reference === derived ? undefined : reference;
+      return this.emergency(app, result.kind, result.code ?? String(result.status), emergencyReference);
     }
     this.breaker.recordSuccess();
 
     const stored = result.data;
     const mail = await dispatchApplicationEmails(
       { ...app, reference: stored.reference },
-      { idempotencyKey: `bewerbung:${app.idempotencyKey}` },
+      { idempotencyKey: `bewerbung:${app.idempotencyKey}`, deferConfirmation: runAfterResponse },
     );
     if (!mail.success) {
       // Gespeichert, aber das Team weiß noch nichts: Fehler melden, damit der Browser es erneut
@@ -108,9 +114,9 @@ export class SupabaseSink implements ApplicationSink {
       : { ok: true, reference: stored.reference };
   }
 
-  private async emergency(app: NormalizedApplication, kind: string, code?: string): Promise<SinkSubmitResult> {
+  private async emergency(app: NormalizedApplication, kind: string, code?: string, reference?: string): Promise<SinkSubmitResult> {
     console.error(`[bewerbung] Datenbank: ${kind}${code ? ` (${code})` : ''} – Not-E-Mail ans Team`);
-    const result = await this.fallback.submit(app);
+    const result = await this.fallback.submit(app, reference ? { reference } : undefined);
     if (result.ok) return result;
     console.error(`[bewerbung] Not-E-Mail fehlgeschlagen (${result.reason})`);
     return { ok: false, reason: result.reason === 'not_configured' ? 'not_configured' : 'unavailable' };
@@ -151,7 +157,8 @@ export class SupabaseSink implements ApplicationSink {
     if (kind === 'not_found') console.info('[bewerbung/ergaenzung] Bewerbung nicht in der Datenbank – nur per E-Mail');
     else console.error(`[bewerbung/ergaenzung] Datenbank: ${kind} – nur per E-Mail`);
     const result = await this.fallback.followUp(followUp);
-    if (result.ok) return result;
+    // not_found ist der normale Weg für ältere Bewerbungen: Fehler wie beim EmailSink melden.
+    if (result.ok || kind === 'not_found') return result;
     return { ok: false, reason: result.reason === 'not_configured' ? 'not_configured' : 'unavailable' };
   }
 }
