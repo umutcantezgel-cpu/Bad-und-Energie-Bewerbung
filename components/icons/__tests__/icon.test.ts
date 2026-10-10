@@ -247,23 +247,21 @@ describe('Icon', () => {
     for (const name of FAMILIE) expect(ICON_NAMES).toContain(name);
   });
 
-  it('hat für jedes heute genutzte lucide-Icon eine gleichwertige Glyphe', () => {
+  it('hat lucide vollständig ersetzt: kein Import mehr, keine Abhängigkeit, jede Ersatz-Glyphe existiert', () => {
     const used = new Set<string>();
-    for (const dir of ['components', 'app']) {
+    for (const dir of ['components', 'app', 'lib']) {
       for (const file of codeFiles(path.join(ROOT, dir))) {
+        if (file.includes(`${path.sep}__tests__${path.sep}`)) continue;
         const source = readFileSync(file, 'utf8');
-        for (const m of source.matchAll(/import\s*\{([^}]*)\}\s*from\s*'lucide-react'/g)) {
-          for (const part of m[1].split(',')) {
-            const name = part.trim().replace(/^type\s+/, '').split(/\s+as\s+/)[0];
-            if (name && name !== 'LucideIcon') used.add(name);
-          }
-        }
+        for (const m of source.matchAll(/from\s*'lucide-react'/g)) used.add(`${path.relative(ROOT, file)}:${m.index}`);
       }
     }
-    expect(used.size).toBeGreaterThan(0);
-    for (const name of used) {
-      expect(LUCIDE_ERSATZ, `lucide ${name} ohne Ersatz`).toHaveProperty(name);
-      expect(ICON_NAMES).toContain(LUCIDE_ERSATZ[name as keyof typeof LUCIDE_ERSATZ] as IconName);
+    expect([...used], 'lucide-react wird noch importiert').toEqual([]);
+    const pkg = JSON.parse(readFileSync(path.join(ROOT, 'package.json'), 'utf8')) as Record<string, Record<string, string> | undefined>;
+    expect(pkg.dependencies?.['lucide-react']).toBeUndefined();
+    expect(pkg.devDependencies?.['lucide-react']).toBeUndefined();
+    for (const [lucide, ersatz] of Object.entries(LUCIDE_ERSATZ)) {
+      expect(ICON_NAMES, `Ersatz für lucide ${lucide}`).toContain(ersatz as IconName);
     }
   });
 });

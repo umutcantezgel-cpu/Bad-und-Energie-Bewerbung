@@ -461,6 +461,7 @@ export function ApplyFlowClient({
         firstName,
         jobId: current.jobId,
         submittedAt: new Date().toISOString(),
+        contactChannel: payload.contactChannel,
       });
       if (stored) {
         // page: replace, damit Zurück nicht in den abgeschickten Flow führt (die Schritte haben eigene

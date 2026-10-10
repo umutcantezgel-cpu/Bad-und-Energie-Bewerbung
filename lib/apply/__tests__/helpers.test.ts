@@ -230,6 +230,9 @@ describe('session records', () => {
     expect(parseSubmitted(JSON.stringify({ ...record, submittedAt: Date.parse(record.submittedAt) }))).toEqual(record);
     expect(parseSubmitted(JSON.stringify({ ...record, reference: '' }))).toBeNull();
     expect(parseSubmitted('kaputt')).toBeNull();
+    // E-START-020: Der gewählte Rückmeldeweg reist mit; unbekannte Werte fallen weg.
+    expect(parseSubmitted(JSON.stringify({ ...record, contactChannel: "phone" }))).toEqual({ ...record, contactChannel: "phone" });
+    expect(parseSubmitted(JSON.stringify({ ...record, contactChannel: "fax" }))).toEqual(record);
   });
 
   it('accepts only a Mappe with content', () => {
