@@ -1,5 +1,6 @@
 import { COMPANY } from '@/lib/content/company';
-import { EMPLOYER, HQ_LOCATION } from '@/lib/jobs/employer';
+import { REGION } from '@/lib/content/region';
+import { EMPLOYER } from '@/lib/jobs/employer';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 
 /**
@@ -28,6 +29,28 @@ const geo = {
   longitude: COMPANY.geo.longitude,
 } as const;
 
+/**
+ * Einsatzgebiet (E-SEO-009): die drei Kreise aus `SITE_CONFIG.serviceRegions` (dieselben wie
+ * `REGION.areas` und /llms-full.txt) mit Radius, Namen und Orten. Der Mittelpunkt ist der
+ * Firmensitz, wenn der Kreis die Postleitzahl des Sitzes trägt (Kernzone und 35-km-Kreis, Fakt
+ * `radius35` misst vom Sitz), sonst der Ort der Ortstabelle mit dieser Postleitzahl (Gießen).
+ */
+function areaMidpoint(postalCode: string) {
+  if (postalCode === COMPANY.address.postalCode) return geo;
+  const place = REGION.locations.find((location) => location.postalCode === postalCode);
+  return place ? { '@type': 'GeoCoordinates', latitude: place.latitude, longitude: place.longitude } : geo;
+}
+
+export function buildAreaServed() {
+  return SITE_CONFIG.serviceRegions.map((area) => ({
+    '@type': 'GeoCircle',
+    name: area.name,
+    geoMidpoint: areaMidpoint(area.postalCode),
+    geoRadius: area.radiusKm * 1000,
+    description: `Orte: ${area.cities.join(', ')}.`,
+  }));
+}
+
 export function buildSiteJsonLd() {
   return {
     '@context': 'https://schema.org',
@@ -41,6 +64,12 @@ export function buildSiteJsonLd() {
         logo: EMPLOYER.logoUrl,
         sameAs: [COMPANY.website],
         foundingDate: String(COMPANY.foundingYear),
+        // E-SEO-006: eine Person, eingebettet (kein eigener Knoten); Titel nach lib/data/team.ts (A5 offen).
+        founder: {
+          '@type': 'Person',
+          name: COMPANY.managingDirector.name,
+          jobTitle: COMPANY.managingDirector.title,
+        },
         address: postalAddress,
         contactPoint: {
           '@type': 'ContactPoint',
@@ -59,6 +88,12 @@ export function buildSiteJsonLd() {
         description: `Offizielles Karriereportal der ${COMPANY.name} in ${COMPANY.address.city}.`,
         inLanguage: 'de-DE',
         publisher: { '@id': ORGANIZATION_ID },
+        // E-SEO-006: Die Karriereseite gehört zur Website für Kunden (eingebettet, ohne eigene @id).
+        isPartOf: {
+          '@type': 'WebSite',
+          url: SITE_CONFIG.consumerUrl,
+          name: COMPANY.legalName,
+        },
       },
       {
         '@type': 'LocalBusiness',
@@ -77,11 +112,7 @@ export function buildSiteJsonLd() {
         address: postalAddress,
         geo,
         foundingDate: String(COMPANY.foundingYear),
-        areaServed: {
-          '@type': 'GeoCircle',
-          geoMidpoint: geo,
-          geoRadius: HQ_LOCATION.radiusKm * 1000,
-        },
+        areaServed: buildAreaServed(),
         openingHoursSpecification: COMPANY.openingHours.spec.map((spec) => ({
           '@type': 'OpeningHoursSpecification',
           dayOfWeek: [...spec.days],
