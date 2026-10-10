@@ -33,6 +33,8 @@ export interface ThankYouViewProps {
   quickResponse: string;
   /** Fakt noCvNeeded. */
   noCvNeeded: string;
+  /** Mikrotext unter „Jetzt bewerben“ im Leerzustand (Fakten apply60s und noCvNeeded). */
+  bewerbenMikrotext: string;
   /** Server-gerenderte Kontaktwege (ContactOptions). */
   contactOptions?: ReactNode;
 }
