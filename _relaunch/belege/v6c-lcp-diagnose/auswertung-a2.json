@@ -1,0 +1,1268 @@
+{
+ "stelle-kundendienst-mobile": {
+  "obsFCP": 210,
+  "obsLCP": 210,
+  "simFCP": 1221,
+  "simLCP": 2656,
+  "fcpTrace": 210,
+  "kandidaten": [
+   {
+    "t": 210,
+    "idx": 1,
+    "nodeId": 16,
+    "size": 73336,
+    "type": "text"
+   }
+  ],
+  "invalid": [],
+  "aufgaben": [
+   {
+    "start": 34,
+    "ms": 2,
+    "was": "",
+    "skripte": ""
+   },
+   {
+    "start": 37,
+    "ms": 34,
+    "was": "",
+    "skripte": ""
+   },
+   {
+    "start": 76,
+    "ms": 6,
+    "was": "ParseHTML 6.0",
+    "skripte": ""
+   },
+   {
+    "start": 82,
+    "ms": 5,
+    "was": "",
+    "skripte": ""
+   },
+   {
+    "start": 87,
+    "ms": 5,
+    "was": "ParseAuthorStyleSheet 1.5",
+    "skripte": ""
+   },
+   {
+    "start": 92,
+    "ms": 4,
+    "was": "ParseAuthorStyleSheet 1.0",
+    "skripte": ""
+   },
+   {
+    "start": 99,
+    "ms": 10,
+    "was": "ParseHTML 10.1, RunMicrotasks 0.0, EvaluateScript 1.4, v8.compile 0.6",
+    "skripte": "kundendiensttechniker-waermepumpe-wetzlar kundendiensttechniker-waermepumpe-wetzlar kundendiensttechniker-waermepumpe-wetzlar"
+   },
+   {
+    "start": 109,
+    "ms": 85,
+    "was": "FireAnimationFrame 0.6, FunctionCall 0.5, UpdateLayoutTree 26.4, Layout 52.2, PrePaint 1.6, Paint 2.3, Commit 0.2",
+    "skripte": ""
+   },
+   {
+    "start": 196,
+    "ms": 9,
+    "was": "ParseHTML 8.8, EvaluateScript 6.3, v8.compile 6.0",
+    "skripte": "kundendiensttechniker-waermepumpe-wetzlar kundendiensttechniker-waermepumpe-wetzlar kundendiensttechniker-waermepumpe-wetzlar"
+   },
+   {
+    "start": 213,
+    "ms": 15,
+    "was": "UpdateLayoutTree 13.4, Layout 0.3, PrePaint 0.4, Paint 0.6, Commit 0.1",
+    "skripte": ""
+   },
+   {
+    "start": 232,
+    "ms": 3,
+    "was": "EvaluateScript 1.8, v8.compile 0.7",
+    "skripte": "2jplq76lyr-68.js"
+   },
+   {
+    "start": 235,
+    "ms": 5,
+    "was": "EvaluateScript 4.5, v8.compile 4.2, RunMicrotasks 0.0",
+    "skripte": "1xfqfaoak6c3v.js"
+   },
+   {
+    "start": 240,
+    "ms": 54,
+    "was": "EvaluateScript 53.0, v8.compile 6.8, RunMicrotasks 45.9, FunctionCall 1.3",
+    "skripte": "0a37caasaw7-7.js"
+   }
+  ],
+  "ressourcen": [
+   {
+    "url": "/_next/static/media/atkinson_hyperlegible_next_latin_wght400_700-s.p.2",
+    "start": 56,
+    "prio": "High",
+    "rb": "non_blocking",
+    "ende": 71
+   },
+   {
+    "url": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+    "start": 40,
+    "prio": "VeryHigh",
+    "ende": 86
+   },
+   {
+    "url": "/_next/static/chunks/3z3ftcyfc97go.css",
+    "start": 62,
+    "prio": "VeryHigh",
+    "rb": "blocking",
+    "ende": 90
+   },
+   {
+    "url": "/_next/static/chunks/1p7gm8aryjihe.css",
+    "start": 62,
+    "prio": "VeryHigh",
+    "rb": "blocking",
+    "ende": 96
+   },
+   {
+    "url": "/_next/static/media/bricolage_grotesque_latin_opsz_wght400_800-s.p.0fw",
+    "start": 61,
+    "prio": "High",
+    "rb": "non_blocking",
+    "ende": 96
+   },
+   {
+    "url": "/_next/static/media/martian_mono_latin_wdth75_wght400_800.p.14d1dnky2i",
+    "start": 61,
+    "prio": "High",
+    "rb": "non_blocking",
+    "ende": 97
+   },
+   {
+    "url": "/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbad-energie-lahn-dill-log",
+    "start": 65,
+    "prio": "Low",
+    "ende": 195
+   },
+   {
+    "url": "/_next/static/chunks/3_pz_xyhj63hd.js",
+    "start": 62,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 196
+   },
+   {
+    "url": "/_next/static/chunks/0dk_14w2_fmo8.js",
+    "start": 62,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 206
+   },
+   {
+    "url": "/_next/static/chunks/turbopack-0m8cu2vmsu_9t.js",
+    "start": 63,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 207
+   },
+   {
+    "url": "/_next/static/chunks/2jplq76lyr-68.js",
+    "start": 64,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 208
+   },
+   {
+    "url": "/_next/static/chunks/1xfqfaoak6c3v.js",
+    "start": 63,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 209
+   },
+   {
+    "url": "/_next/static/chunks/1gipmzxwfhwcx.js",
+    "start": 64,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 210
+   },
+   {
+    "url": "/_next/static/chunks/2g-8f2extdvpa.js",
+    "start": 64,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 210
+   },
+   {
+    "url": "/_next/static/chunks/0a37caasaw7-7.js",
+    "start": 62,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 211
+   },
+   {
+    "url": "/_next/static/chunks/2dwaa78mx8rtk.js",
+    "start": 65,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 212
+   },
+   {
+    "url": "/_next/static/chunks/3fntmmi971322.js",
+    "start": 64,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 212
+   },
+   {
+    "url": "/_next/static/chunks/3z0cg5ur7-5bk.js",
+    "start": 64,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 212
+   },
+   {
+    "url": "/favicon.ico",
+    "start": 327,
+    "prio": "High",
+    "ende": 341
+   },
+   {
+    "url": "/?_rsc=wPL8qNn1dTKoku6j",
+    "start": 393,
+    "prio": "Low",
+    "ende": 441
+   },
+   {
+    "url": "/jobs?_rsc=wPL8qNn1dTKoku6j",
+    "start": 394,
+    "prio": "Low",
+    "ende": 447
+   },
+   {
+    "url": "/_next/static/chunks/1egrvupacnknt.css",
+    "start": 442,
+    "prio": "VeryHigh",
+    "rb": "non_blocking",
+    "ende": 449
+   },
+   {
+    "url": "/_next/static/chunks/3we4q1tbljkxo.js",
+    "start": 412,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 450
+   },
+   {
+    "url": "/_next/static/chunks/0unkab3jvpx2f.js",
+    "start": 413,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 451
+   },
+   {
+    "url": "/_next/static/chunks/0owh9yqn24ixz.js",
+    "start": 415,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 451
+   },
+   {
+    "url": "/_next/static/chunks/3sayrze_4co_y.js",
+    "start": 414,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 452
+   },
+   {
+    "url": "/?_rsc=jQZvX8ssry7YsWms",
+    "start": 445,
+    "prio": "Low",
+    "ende": 498
+   },
+   {
+    "url": "/?_rsc=no8PK36liXH8fjEg",
+    "start": 446,
+    "prio": "Low",
+    "ende": 504
+   },
+   {
+    "url": "/jobs?_rsc=8DhzhhVWQaNkLkOJ",
+    "start": 448,
+    "prio": "Low",
+    "ende": 510
+   },
+   {
+    "url": "/_next/static/chunks/08apq3n2baeyq.js",
+    "start": 498,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 530
+   },
+   {
+    "url": "/_next/static/chunks/1ye5g_3vgc9jw.js",
+    "start": 499,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 531
+   }
+  ],
+  "lcpElement": null,
+  "lcpSnippet": "",
+  "teile": "timeToFirstByte 17, elementRenderDelay 193",
+  "pw": [
+   {
+    "paint": "first-paint",
+    "t": 192
+   },
+   {
+    "paint": "first-contentful-paint",
+    "t": 192
+   },
+   {
+    "t": 192,
+    "render": 192,
+    "size": 73336,
+    "el": "header.seitenkopf-module__g14wBq__kopf.seitenkopf-module__g14wBq__erzaehl.seitenkopf-module__g14wBq__mitAktion > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel.seitenkopf-module__g14wBq__titel.text-display.text-brand > span.stelle-module__CTu8JG__titelHaupt",
+    "text": "Kunden­dienst­techniker Heizung & Wärmepumpe",
+    "opJetzt": 1
+   }
+  ]
+ },
+ "stelle-kundendienst-desktop": {
+  "obsFCP": 279,
+  "obsLCP": 279,
+  "simFCP": 350,
+  "simLCP": 698,
+  "fcpTrace": 279,
+  "kandidaten": [
+   {
+    "t": 279,
+    "idx": 1,
+    "nodeId": 13,
+    "size": 212494,
+    "type": "text"
+   }
+  ],
+  "invalid": [],
+  "aufgaben": [
+   {
+    "start": 42,
+    "ms": 37,
+    "was": "",
+    "skripte": ""
+   },
+   {
+    "start": 79,
+    "ms": 2,
+    "was": "UpdateLayoutTree 0.1",
+    "skripte": ""
+   },
+   {
+    "start": 81,
+    "ms": 4,
+    "was": "",
+    "skripte": ""
+   },
+   {
+    "start": 89,
+    "ms": 11,
+    "was": "ParseHTML 10.5, ParseAuthorStyleSheet 3.1, EvaluateScript 0.6, v8.compile 0.2",
+    "skripte": "kundendiensttechniker-waermepumpe-wetzlar"
+   },
+   {
+    "start": 101,
+    "ms": 5,
+    "was": "",
+    "skripte": ""
+   },
+   {
+    "start": 108,
+    "ms": 12,
+    "was": "ParseHTML 11.3, RunMicrotasks 0.1, EvaluateScript 3.7, v8.compile 3.0",
+    "skripte": "kundendiensttechniker-waermepumpe-wetzlar kundendiensttechniker-waermepumpe-wetzlar kundendiensttechniker-waermepumpe-wetzlar kundendiensttechniker-waermepumpe-wetzlar"
+   },
+   {
+    "start": 123,
+    "ms": 96,
+    "was": "FireAnimationFrame 1.0, FunctionCall 1.0, UpdateLayoutTree 33.6, Layout 53.5, PrePaint 2.1, Paint 2.7, Commit 1.3",
+    "skripte": ""
+   },
+   {
+    "start": 220,
+    "ms": 21,
+    "was": "ParseHTML 5.6, EvaluateScript 3.9, v8.compile 3.8, UpdateLayoutTree 13.9, Layout 0.5",
+    "skripte": "kundendiensttechniker-waermepumpe-wetzlar kundendiensttechniker-waermepumpe-wetzlar"
+   },
+   {
+    "start": 246,
+    "ms": 3,
+    "was": "PrePaint 0.4, Paint 1.0, Commit 0.1",
+    "skripte": ""
+   },
+   {
+    "start": 251,
+    "ms": 2,
+    "was": "EvaluateScript 2.2, v8.compile 0.4, RunMicrotasks 0.0",
+    "skripte": "turbopack-0m8cu2vmsu_9t.js"
+   },
+   {
+    "start": 254,
+    "ms": 6,
+    "was": "EvaluateScript 5.7, v8.compile 5.5, RunMicrotasks 0.0",
+    "skripte": "0a37caasaw7-7.js"
+   },
+   {
+    "start": 260,
+    "ms": 46,
+    "was": "EvaluateScript 46.2, v8.compile 3.3, RunMicrotasks 42.7",
+    "skripte": "1xfqfaoak6c3v.js"
+   },
+   {
+    "start": 307,
+    "ms": 7,
+    "was": "EvaluateScript 6.2, v8.compile 1.0, RunMicrotasks 4.9, FunctionCall 1.4",
+    "skripte": "2jplq76lyr-68.js"
+   }
+  ],
+  "ressourcen": [
+   {
+    "url": "/_next/static/media/atkinson_hyperlegible_next_latin_wght400_700-s.p.2",
+    "start": 56,
+    "prio": "High",
+    "rb": "non_blocking",
+    "ende": 85
+   },
+   {
+    "url": "/_next/static/chunks/3z3ftcyfc97go.css",
+    "start": 58,
+    "prio": "VeryHigh",
+    "rb": "blocking",
+    "ende": 86
+   },
+   {
+    "url": "/_next/static/chunks/1p7gm8aryjihe.css",
+    "start": 58,
+    "prio": "VeryHigh",
+    "rb": "blocking",
+    "ende": 87
+   },
+   {
+    "url": "/_next/static/media/bricolage_grotesque_latin_opsz_wght400_800-s.p.0fw",
+    "start": 57,
+    "prio": "High",
+    "rb": "non_blocking",
+    "ende": 88
+   },
+   {
+    "url": "/_next/static/media/martian_mono_latin_wdth75_wght400_800.p.14d1dnky2i",
+    "start": 58,
+    "prio": "High",
+    "rb": "non_blocking",
+    "ende": 88
+   },
+   {
+    "url": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+    "start": 44,
+    "prio": "VeryHigh",
+    "ende": 106
+   },
+   {
+    "url": "/_next/static/chunks/3_pz_xyhj63hd.js",
+    "start": 58,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 120
+   },
+   {
+    "url": "/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbad-energie-lahn-dill-log",
+    "start": 62,
+    "prio": "Low",
+    "ende": 220
+   },
+   {
+    "url": "/_next/static/chunks/0dk_14w2_fmo8.js",
+    "start": 59,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 220
+   },
+   {
+    "url": "/_next/static/chunks/turbopack-0m8cu2vmsu_9t.js",
+    "start": 60,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 242
+   },
+   {
+    "url": "/_next/static/chunks/2g-8f2extdvpa.js",
+    "start": 60,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 243
+   },
+   {
+    "url": "/_next/static/chunks/0a37caasaw7-7.js",
+    "start": 59,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 243
+   },
+   {
+    "url": "/_next/static/chunks/1xfqfaoak6c3v.js",
+    "start": 59,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 244
+   },
+   {
+    "url": "/_next/static/chunks/1gipmzxwfhwcx.js",
+    "start": 61,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 244
+   },
+   {
+    "url": "/_next/static/chunks/2jplq76lyr-68.js",
+    "start": 60,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 245
+   },
+   {
+    "url": "/_next/static/chunks/3fntmmi971322.js",
+    "start": 61,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 245
+   },
+   {
+    "url": "/_next/static/chunks/3z0cg5ur7-5bk.js",
+    "start": 61,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 245
+   },
+   {
+    "url": "/_next/static/chunks/2dwaa78mx8rtk.js",
+    "start": 62,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 246
+   },
+   {
+    "url": "/favicon.ico",
+    "start": 350,
+    "prio": "High",
+    "ende": 365
+   },
+   {
+    "url": "/?_rsc=wPL8qNn1dTKoku6j",
+    "start": 414,
+    "prio": "Low",
+    "ende": 451
+   },
+   {
+    "url": "/jobs?_rsc=wPL8qNn1dTKoku6j",
+    "start": 415,
+    "prio": "Low",
+    "ende": 457
+   },
+   {
+    "url": "/_next/static/chunks/1egrvupacnknt.css",
+    "start": 452,
+    "prio": "VeryHigh",
+    "rb": "non_blocking",
+    "ende": 498
+   },
+   {
+    "url": "/bewerbung?_rsc=wPL8qNn1dTKoku6j",
+    "start": 415,
+    "prio": "Low",
+    "ende": 499
+   },
+   {
+    "url": "/_next/static/chunks/3we4q1tbljkxo.js",
+    "start": 418,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 508
+   },
+   {
+    "url": "/_next/static/chunks/3sayrze_4co_y.js",
+    "start": 420,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 508
+   },
+   {
+    "url": "/_next/static/chunks/0unkab3jvpx2f.js",
+    "start": 419,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 509
+   },
+   {
+    "url": "/_next/static/chunks/0owh9yqn24ixz.js",
+    "start": 420,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 509
+   },
+   {
+    "url": "/?_rsc=jQZvX8ssry7YsWms",
+    "start": 455,
+    "prio": "Low",
+    "ende": 536
+   },
+   {
+    "url": "/?_rsc=no8PK36liXH8fjEg",
+    "start": 455,
+    "prio": "Low",
+    "ende": 542
+   },
+   {
+    "url": "/jobs?_rsc=8DhzhhVWQaNkLkOJ",
+    "start": 460,
+    "prio": "Low",
+    "ende": 544
+   },
+   {
+    "url": "/_next/static/chunks/08apq3n2baeyq.js",
+    "start": 537,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 567
+   },
+   {
+    "url": "/_next/static/chunks/1ye5g_3vgc9jw.js",
+    "start": 538,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 568
+   },
+   {
+    "url": "/bewerbung?_rsc=LLvTbYvfiHlvWiFQ",
+    "start": 507,
+    "prio": "Low",
+    "ende": 572
+   }
+  ],
+  "lcpElement": null,
+  "lcpSnippet": "",
+  "teile": "timeToFirstByte 23, elementRenderDelay 256",
+  "pw": [
+   {
+    "paint": "first-paint",
+    "t": 280
+   },
+   {
+    "paint": "first-contentful-paint",
+    "t": 280
+   },
+   {
+    "t": 280,
+    "render": 280,
+    "size": 217404,
+    "el": "header.seitenkopf-module__g14wBq__kopf.seitenkopf-module__g14wBq__erzaehl.seitenkopf-module__g14wBq__mitAktion > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel.seitenkopf-module__g14wBq__titel.text-display.text-brand > span.stelle-module__CTu8JG__titelHaupt",
+    "text": "Kunden­dienst­techniker Heizung & Wärmepumpe",
+    "opJetzt": 1
+   }
+  ]
+ },
+ "bewerbung-mobile": {
+  "obsFCP": 281,
+  "obsLCP": 281,
+  "simFCP": 1266,
+  "simLCP": 3671,
+  "fcpTrace": 281,
+  "kandidaten": [
+   {
+    "t": 281,
+    "idx": 1,
+    "nodeId": 7,
+    "size": 14950,
+    "type": "text"
+   }
+  ],
+  "invalid": [],
+  "aufgaben": [
+   {
+    "start": 63,
+    "ms": 60,
+    "was": "",
+    "skripte": ""
+   },
+   {
+    "start": 124,
+    "ms": 4,
+    "was": "UpdateLayoutTree 3.3",
+    "skripte": ""
+   },
+   {
+    "start": 135,
+    "ms": 13,
+    "was": "ParseHTML 12.8, ParseAuthorStyleSheet 1.8, EvaluateScript 4.5, v8.compile 3.9",
+    "skripte": "bewerbung bewerbung bewerbung"
+   },
+   {
+    "start": 152,
+    "ms": 82,
+    "was": "ParseHTML 0.0, UpdateLayoutTree 11.3, Layout 70.0",
+    "skripte": ""
+   },
+   {
+    "start": 235,
+    "ms": 7,
+    "was": "Layout 0.2, PrePaint 1.7, Paint 3.0, Commit 0.1",
+    "skripte": ""
+   },
+   {
+    "start": 254,
+    "ms": 3,
+    "was": "EvaluateScript 3.1, v8.compile 0.5, RunMicrotasks 0.0",
+    "skripte": "turbopack-0m8cu2vmsu_9t.js"
+   },
+   {
+    "start": 261,
+    "ms": 5,
+    "was": "EvaluateScript 4.9, v8.compile 4.6, RunMicrotasks 0.0",
+    "skripte": "1xfqfaoak6c3v.js"
+   },
+   {
+    "start": 266,
+    "ms": 58,
+    "was": "EvaluateScript 57.6, v8.compile 5.4, RunMicrotasks 52.0",
+    "skripte": "0a37caasaw7-7.js"
+   }
+  ],
+  "ressourcen": [
+   {
+    "url": "/_next/static/media/atkinson_hyperlegible_next_latin_wght400_700-s.p.2",
+    "start": 86,
+    "prio": "High",
+    "rb": "non_blocking",
+    "ende": 124
+   },
+   {
+    "url": "/_next/static/chunks/3z3ftcyfc97go.css",
+    "start": 110,
+    "prio": "VeryHigh",
+    "rb": "blocking",
+    "ende": 131
+   },
+   {
+    "url": "/_next/static/chunks/1p7gm8aryjihe.css",
+    "start": 110,
+    "prio": "VeryHigh",
+    "rb": "blocking",
+    "ende": 132
+   },
+   {
+    "url": "/_next/static/media/bricolage_grotesque_latin_opsz_wght400_800-s.p.0fw",
+    "start": 90,
+    "prio": "High",
+    "rb": "non_blocking",
+    "ende": 132
+   },
+   {
+    "url": "/_next/static/media/martian_mono_latin_wdth75_wght400_800.p.14d1dnky2i",
+    "start": 91,
+    "prio": "High",
+    "rb": "non_blocking",
+    "ende": 133
+   },
+   {
+    "url": "/bewerbung",
+    "start": 66,
+    "prio": "VeryHigh",
+    "ende": 149
+   },
+   {
+    "url": "/_next/static/chunks/3_pz_xyhj63hd.js",
+    "start": 111,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 151
+   },
+   {
+    "url": "/_next/static/chunks/0dk_14w2_fmo8.js",
+    "start": 111,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 151
+   },
+   {
+    "url": "/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbad-energie-lahn-dill-log",
+    "start": 113,
+    "prio": "Low",
+    "ende": 235
+   },
+   {
+    "url": "/_next/static/chunks/turbopack-0m8cu2vmsu_9t.js",
+    "start": 111,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 246
+   },
+   {
+    "url": "/_next/static/chunks/2g-8f2extdvpa.js",
+    "start": 111,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 246
+   },
+   {
+    "url": "/_next/static/chunks/2jplq76lyr-68.js",
+    "start": 112,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 247
+   },
+   {
+    "url": "/_next/static/chunks/3fntmmi971322.js",
+    "start": 112,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 247
+   },
+   {
+    "url": "/_next/static/chunks/1xfqfaoak6c3v.js",
+    "start": 111,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 247
+   },
+   {
+    "url": "/_next/static/chunks/0a37caasaw7-7.js",
+    "start": 111,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 248
+   },
+   {
+    "url": "/_next/static/chunks/3z0cg5ur7-5bk.js",
+    "start": 112,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 249
+   },
+   {
+    "url": "/_next/static/chunks/3we4q1tbljkxo.js",
+    "start": 112,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 249
+   },
+   {
+    "url": "/_next/static/chunks/1gipmzxwfhwcx.js",
+    "start": 112,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 250
+   },
+   {
+    "url": "/_next/static/chunks/0unkab3jvpx2f.js",
+    "start": 112,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 250
+   },
+   {
+    "url": "/_next/static/chunks/3sayrze_4co_y.js",
+    "start": 113,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 251
+   },
+   {
+    "url": "/_next/static/chunks/0owh9yqn24ixz.js",
+    "start": 113,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 252
+   },
+   {
+    "url": "/favicon.ico",
+    "start": 387,
+    "prio": "High",
+    "ende": 400
+   },
+   {
+    "url": "/?_rsc=TteUNM7zh51Swpk6",
+    "start": 435,
+    "prio": "Low",
+    "ende": 446
+   },
+   {
+    "url": "/_next/static/chunks/1egrvupacnknt.css",
+    "start": 447,
+    "prio": "VeryHigh",
+    "rb": "non_blocking",
+    "ende": 456
+   },
+   {
+    "url": "/?_rsc=kcC8X7X8FFFD1mN5",
+    "start": 450,
+    "prio": "Low",
+    "ende": 475
+   },
+   {
+    "url": "/?_rsc=2jzTunPA_cf6yR__",
+    "start": 450,
+    "prio": "Low",
+    "ende": 479
+   },
+   {
+    "url": "/_next/static/chunks/08apq3n2baeyq.js",
+    "start": 476,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 487
+   },
+   {
+    "url": "/_next/static/chunks/1ye5g_3vgc9jw.js",
+    "start": 477,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 488
+   }
+  ],
+  "lcpElement": null,
+  "lcpSnippet": "",
+  "teile": "timeToFirstByte 44, elementRenderDelay 237",
+  "pw": [
+   {
+    "paint": "first-paint",
+    "t": 208
+   },
+   {
+    "paint": "first-contentful-paint",
+    "t": 208
+   },
+   {
+    "t": 208,
+    "render": 208,
+    "size": 14950,
+    "el": "div.transition-[opacity,translate].duration-d2.ease-aus > div.flex.flex-col.gap-6 > div.flex.flex-col.gap-2 > p.max-w-prose.text-body.text-ink-2",
+    "text": "Finde in 60 Sekunden heraus, ob wir zu dir passen.",
+    "opJetzt": 1
+   }
+  ]
+ },
+ "bewerbung-desktop": {
+  "obsFCP": 298,
+  "obsLCP": 298,
+  "simFCP": 340,
+  "simLCP": 766,
+  "fcpTrace": 298,
+  "kandidaten": [
+   {
+    "t": 298,
+    "idx": 1,
+    "nodeId": 8,
+    "size": 24360,
+    "type": "text"
+   }
+  ],
+  "invalid": [],
+  "aufgaben": [
+   {
+    "start": 49,
+    "ms": 46,
+    "was": "",
+    "skripte": ""
+   },
+   {
+    "start": 101,
+    "ms": 3,
+    "was": "ParseHTML 3.3, ParseAuthorStyleSheet 1.6",
+    "skripte": ""
+   },
+   {
+    "start": 104,
+    "ms": 2,
+    "was": "",
+    "skripte": ""
+   },
+   {
+    "start": 128,
+    "ms": 3,
+    "was": "ParseAuthorStyleSheet 0.7",
+    "skripte": ""
+   },
+   {
+    "start": 132,
+    "ms": 3,
+    "was": "EvaluateScript 3.0, v8.compile 2.7",
+    "skripte": "bewerbung"
+   },
+   {
+    "start": 135,
+    "ms": 10,
+    "was": "ParseHTML 10.0",
+    "skripte": ""
+   },
+   {
+    "start": 145,
+    "ms": 78,
+    "was": "UpdateLayoutTree 23.7, Layout 48.1, PrePaint 0.9, Paint 2.1, Commit 1.1",
+    "skripte": ""
+   },
+   {
+    "start": 225,
+    "ms": 9,
+    "was": "ParseHTML 8.4, EvaluateScript 4.6, v8.compile 4.4",
+    "skripte": "bewerbung bewerbung"
+   },
+   {
+    "start": 244,
+    "ms": 9,
+    "was": "UpdateLayoutTree 3.5, Layout 2.9, PrePaint 0.4, Paint 1.2, Commit 0.1",
+    "skripte": ""
+   },
+   {
+    "start": 255,
+    "ms": 2,
+    "was": "EvaluateScript 2.2, v8.compile 0.4, RunMicrotasks 0.0",
+    "skripte": "turbopack-0m8cu2vmsu_9t.js"
+   },
+   {
+    "start": 258,
+    "ms": 6,
+    "was": "EvaluateScript 5.8, v8.compile 5.5, RunMicrotasks 0.0",
+    "skripte": "1xfqfaoak6c3v.js"
+   },
+   {
+    "start": 267,
+    "ms": 51,
+    "was": "EvaluateScript 51.0, v8.compile 8.9, RunMicrotasks 41.8",
+    "skripte": "0a37caasaw7-7.js"
+   },
+   {
+    "start": 318,
+    "ms": 5,
+    "was": "EvaluateScript 4.2, v8.compile 0.2, RunMicrotasks 3.9, FunctionCall 1.4",
+    "skripte": "1gipmzxwfhwcx.js"
+   }
+  ],
+  "ressourcen": [
+   {
+    "url": "/_next/static/chunks/3z3ftcyfc97go.css",
+    "start": 64,
+    "prio": "VeryHigh",
+    "rb": "blocking",
+    "ende": 97
+   },
+   {
+    "url": "/_next/static/media/atkinson_hyperlegible_next_latin_wght400_700-s.p.2",
+    "start": 53,
+    "prio": "High",
+    "rb": "non_blocking",
+    "ende": 98
+   },
+   {
+    "url": "/_next/static/media/martian_mono_latin_wdth75_wght400_800.p.14d1dnky2i",
+    "start": 54,
+    "prio": "High",
+    "rb": "non_blocking",
+    "ende": 98
+   },
+   {
+    "url": "/_next/static/media/bricolage_grotesque_latin_opsz_wght400_800-s.p.0fw",
+    "start": 54,
+    "prio": "High",
+    "rb": "non_blocking",
+    "ende": 100
+   },
+   {
+    "url": "/bewerbung",
+    "start": 51,
+    "prio": "VeryHigh",
+    "ende": 105
+   },
+   {
+    "url": "/_next/static/chunks/1p7gm8aryjihe.css",
+    "start": 66,
+    "prio": "VeryHigh",
+    "rb": "blocking",
+    "ende": 131
+   },
+   {
+    "url": "/_next/static/chunks/3_pz_xyhj63hd.js",
+    "start": 67,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 132
+   },
+   {
+    "url": "/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbad-energie-lahn-dill-log",
+    "start": 76,
+    "prio": "Low",
+    "ende": 224
+   },
+   {
+    "url": "/_next/static/chunks/0dk_14w2_fmo8.js",
+    "start": 67,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 234
+   },
+   {
+    "url": "/_next/static/chunks/turbopack-0m8cu2vmsu_9t.js",
+    "start": 72,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 235
+   },
+   {
+    "url": "/_next/static/chunks/1xfqfaoak6c3v.js",
+    "start": 71,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 236
+   },
+   {
+    "url": "/_next/static/chunks/2g-8f2extdvpa.js",
+    "start": 73,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 236
+   },
+   {
+    "url": "/_next/static/chunks/3fntmmi971322.js",
+    "start": 74,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 237
+   },
+   {
+    "url": "/_next/static/chunks/2jplq76lyr-68.js",
+    "start": 73,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 237
+   },
+   {
+    "url": "/_next/static/chunks/0a37caasaw7-7.js",
+    "start": 67,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 238
+   },
+   {
+    "url": "/_next/static/chunks/1gipmzxwfhwcx.js",
+    "start": 75,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 239
+   },
+   {
+    "url": "/_next/static/chunks/3z0cg5ur7-5bk.js",
+    "start": 74,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 240
+   },
+   {
+    "url": "/_next/static/chunks/3sayrze_4co_y.js",
+    "start": 76,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 240
+   },
+   {
+    "url": "/_next/static/chunks/3we4q1tbljkxo.js",
+    "start": 75,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 241
+   },
+   {
+    "url": "/_next/static/chunks/0unkab3jvpx2f.js",
+    "start": 75,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 241
+   },
+   {
+    "url": "/_next/static/chunks/0owh9yqn24ixz.js",
+    "start": 76,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 243
+   },
+   {
+    "url": "/favicon.ico",
+    "start": 374,
+    "prio": "High",
+    "ende": 406
+   },
+   {
+    "url": "/favicon.ico",
+    "start": 409,
+    "prio": "High",
+    "ende": 418
+   },
+   {
+    "url": "/?_rsc=TteUNM7zh51Swpk6",
+    "start": 415,
+    "prio": "Low",
+    "ende": 427
+   },
+   {
+    "url": "/_next/static/chunks/1egrvupacnknt.css",
+    "start": 428,
+    "prio": "VeryHigh",
+    "rb": "non_blocking",
+    "ende": 436
+   },
+   {
+    "url": "/?_rsc=kcC8X7X8FFFD1mN5",
+    "start": 431,
+    "prio": "Low",
+    "ende": 446
+   },
+   {
+    "url": "/?_rsc=2jzTunPA_cf6yR__",
+    "start": 431,
+    "prio": "Low",
+    "ende": 452
+   },
+   {
+    "url": "/_next/static/chunks/08apq3n2baeyq.js",
+    "start": 447,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 457
+   },
+   {
+    "url": "/_next/static/chunks/1ye5g_3vgc9jw.js",
+    "start": 448,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 457
+   }
+  ],
+  "lcpElement": null,
+  "lcpSnippet": "",
+  "teile": "timeToFirstByte 23, elementRenderDelay 275",
+  "pw": [
+   {
+    "paint": "first-paint",
+    "t": 228
+   },
+   {
+    "paint": "first-contentful-paint",
+    "t": 228
+   },
+   {
+    "t": 228,
+    "render": 228,
+    "size": 27342,
+    "el": "div.seite-module__w-dExq__wege > section#unterlagen.flex.scroll-mt-24.flex-col > div.flex.flex-col.gap-2 > p.max-w-prose.text-callout.text-ink-muted",
+    "text": "Lebenslauf, Gesellenbrief oder Zeugnisse sind will",
+    "opJetzt": 1
+   }
+  ]
+ }
+}

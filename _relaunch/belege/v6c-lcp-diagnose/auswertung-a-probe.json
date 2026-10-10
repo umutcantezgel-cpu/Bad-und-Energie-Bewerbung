@@ -1,0 +1,300 @@
+{
+ "bewerbung-mobile": {
+  "obsFCP": 226,
+  "obsLCP": 226,
+  "simFCP": 1213,
+  "simLCP": 3636,
+  "fcpTrace": 226,
+  "kandidaten": [
+   {
+    "t": 226,
+    "idx": 1,
+    "nodeId": 7,
+    "size": 14950,
+    "type": "text"
+   }
+  ],
+  "invalid": [],
+  "aufgaben": [
+   {
+    "start": 53,
+    "ms": 24,
+    "was": "",
+    "skripte": ""
+   },
+   {
+    "start": 84,
+    "ms": 6,
+    "was": "",
+    "skripte": ""
+   },
+   {
+    "start": 97,
+    "ms": 3,
+    "was": "ParseAuthorStyleSheet 2.6",
+    "skripte": ""
+   },
+   {
+    "start": 100,
+    "ms": 3,
+    "was": "ParseAuthorStyleSheet 1.1",
+    "skripte": ""
+   },
+   {
+    "start": 105,
+    "ms": 15,
+    "was": "ParseHTML 14.2, EvaluateScript 7.5, v8.compile 7.3",
+    "skripte": "bewerbung bewerbung"
+   },
+   {
+    "start": 119,
+    "ms": 71,
+    "was": "UpdateLayoutTree 36.6, Layout 28.9, PrePaint 1.1, Paint 2.6, Commit 0.3",
+    "skripte": ""
+   },
+   {
+    "start": 201,
+    "ms": 3,
+    "was": "UpdateLayoutTree 0.7, Layout 0.2, PrePaint 0.2, Paint 2.0, Commit 0.1",
+    "skripte": ""
+   },
+   {
+    "start": 206,
+    "ms": 2,
+    "was": "EvaluateScript 2.1, v8.compile 0.3, RunMicrotasks 0.0",
+    "skripte": "turbopack-0m8cu2vmsu_9t.js"
+   },
+   {
+    "start": 209,
+    "ms": 8,
+    "was": "EvaluateScript 8.1, v8.compile 7.9, RunMicrotasks 0.0",
+    "skripte": "0a37caasaw7-7.js"
+   },
+   {
+    "start": 218,
+    "ms": 42,
+    "was": "EvaluateScript 41.5, v8.compile 5.6, RunMicrotasks 35.5",
+    "skripte": "1xfqfaoak6c3v.js"
+   }
+  ],
+  "ressourcen": [
+   {
+    "url": "/bewerbung",
+    "start": 57,
+    "prio": "VeryHigh",
+    "ende": 81
+   },
+   {
+    "url": "/_next/static/media/atkinson_hyperlegible_next_latin_wght400_700-s.p.2",
+    "start": 60,
+    "prio": "High",
+    "rb": "non_blocking",
+    "ende": 92
+   },
+   {
+    "url": "/_next/static/media/martian_mono_latin_wdth75_wght400_800.p.14d1dnky2i",
+    "start": 62,
+    "prio": "High",
+    "rb": "non_blocking",
+    "ende": 93
+   },
+   {
+    "url": "/_next/static/media/bricolage_grotesque_latin_opsz_wght400_800-s.p.0fw",
+    "start": 62,
+    "prio": "High",
+    "rb": "non_blocking",
+    "ende": 93
+   },
+   {
+    "url": "/_next/static/chunks/3z3ftcyfc97go.css",
+    "start": 74,
+    "prio": "VeryHigh",
+    "rb": "blocking",
+    "ende": 100
+   },
+   {
+    "url": "/_next/static/chunks/1p7gm8aryjihe.css",
+    "start": 75,
+    "prio": "VeryHigh",
+    "rb": "blocking",
+    "ende": 102
+   },
+   {
+    "url": "/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbad-energie-lahn-dill-log",
+    "start": 76,
+    "prio": "Low",
+    "ende": 192
+   },
+   {
+    "url": "/_next/static/chunks/3_pz_xyhj63hd.js",
+    "start": 75,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 192
+   },
+   {
+    "url": "/_next/static/chunks/0dk_14w2_fmo8.js",
+    "start": 75,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 192
+   },
+   {
+    "url": "/_next/static/chunks/turbopack-0m8cu2vmsu_9t.js",
+    "start": 75,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 193
+   },
+   {
+    "url": "/_next/static/chunks/2g-8f2extdvpa.js",
+    "start": 75,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 195
+   },
+   {
+    "url": "/_next/static/chunks/0a37caasaw7-7.js",
+    "start": 75,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 195
+   },
+   {
+    "url": "/_next/static/chunks/2jplq76lyr-68.js",
+    "start": 76,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 196
+   },
+   {
+    "url": "/_next/static/chunks/1xfqfaoak6c3v.js",
+    "start": 75,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 196
+   },
+   {
+    "url": "/_next/static/chunks/3fntmmi971322.js",
+    "start": 76,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 196
+   },
+   {
+    "url": "/_next/static/chunks/3z0cg5ur7-5bk.js",
+    "start": 76,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 197
+   },
+   {
+    "url": "/_next/static/chunks/1gipmzxwfhwcx.js",
+    "start": 76,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 198
+   },
+   {
+    "url": "/_next/static/chunks/3we4q1tbljkxo.js",
+    "start": 76,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 199
+   },
+   {
+    "url": "/_next/static/chunks/0unkab3jvpx2f.js",
+    "start": 76,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 200
+   },
+   {
+    "url": "/_next/static/chunks/3sayrze_4co_y.js",
+    "start": 76,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 200
+   },
+   {
+    "url": "/_next/static/chunks/0owh9yqn24ixz.js",
+    "start": 76,
+    "prio": "Low",
+    "rb": "potentially_blocking",
+    "ende": 201
+   },
+   {
+    "url": "/favicon.ico",
+    "start": 321,
+    "prio": "High",
+    "ende": 345
+   },
+   {
+    "url": "/favicon.ico",
+    "start": 348,
+    "prio": "High",
+    "ende": 356
+   },
+   {
+    "url": "/?_rsc=TteUNM7zh51Swpk6",
+    "start": 352,
+    "prio": "Low",
+    "ende": 362
+   },
+   {
+    "url": "/_next/static/chunks/1egrvupacnknt.css",
+    "start": 363,
+    "prio": "VeryHigh",
+    "rb": "non_blocking",
+    "ende": 370
+   },
+   {
+    "url": "/?_rsc=kcC8X7X8FFFD1mN5",
+    "start": 366,
+    "prio": "Low",
+    "ende": 386
+   },
+   {
+    "url": "/?_rsc=2jzTunPA_cf6yR__",
+    "start": 366,
+    "prio": "Low",
+    "ende": 389
+   },
+   {
+    "url": "/_next/static/chunks/08apq3n2baeyq.js",
+    "start": 387,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 395
+   },
+   {
+    "url": "/_next/static/chunks/1ye5g_3vgc9jw.js",
+    "start": 387,
+    "prio": "Low",
+    "rb": "non_blocking",
+    "ende": 397
+   }
+  ],
+  "lcpElement": null,
+  "lcpSnippet": "",
+  "teile": "timeToFirstByte 38, elementRenderDelay 187",
+  "pw": [
+   {
+    "paint": "first-paint",
+    "t": 208
+   },
+   {
+    "paint": "first-contentful-paint",
+    "t": 208
+   },
+   {
+    "t": 208,
+    "render": 208,
+    "size": 14950,
+    "el": "div.transition-[opacity,translate].duration-d2.ease-aus > div.flex.flex-col.gap-6 > div.flex.flex-col.gap-2 > p.max-w-prose.text-body.text-ink-2",
+    "text": "Finde in 60 Sekunden heraus, ob wir zu dir passen.",
+    "opJetzt": 1
+   }
+  ]
+ }
+}
