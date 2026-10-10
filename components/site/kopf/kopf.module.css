@@ -27,6 +27,13 @@
   color: var(--brand);
 }
 
+/* Fokusmodus (Bewerbungsflow): Der Kopf läuft nicht mit. Der Flow hat seinen eigenen Rückweg und
+   Fortschrittsstrang; ein mitlaufender Kopf verdeckte beim Sprung zum ersten Fehlerfeld den
+   Zurück-Knopf (axe target-size) und nähme am Handy Platz vom Formular. */
+.kopf[data-fokus] {
+  position: relative;
+}
+
 /* Beim Scrollen trennt eine Linie im Strich der Zeichnung (3 px, Haar) den Kopf vom Inhalt */
 .kopf[data-scrolled]::after {
   content: "";

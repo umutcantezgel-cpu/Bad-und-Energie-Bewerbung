@@ -95,14 +95,15 @@ function Paket({ job }: { job: Job }) {
   return (
     <dl className="flex flex-col">
       {job.packageExtras.map((extra) => (
-        <div key={extra.label} className="flex gap-4 border-b border-line py-4 last:border-b-0 last:pb-0 first:pt-0">
-          <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center text-brand">
-            <Icon name={paketIcon(extra.label)} size="lg" />
-          </span>
-          <div className="flex min-w-0 flex-col gap-1">
-            <dt className="text-etikett text-ink-muted">{extra.label}</dt>
-            <dd className="text-body text-ink">{extra.text}</dd>
-          </div>
+        // dl > div > dt + dd (axe definition-list): das Icon steht im dt und hängt links in den Einzug.
+        <div key={extra.label} className="flex min-w-0 flex-col gap-1 border-b border-line py-4 pl-15 last:border-b-0 last:pb-0 first:pt-0">
+          <dt className="relative text-etikett text-ink-muted">
+            <span aria-hidden="true" className="absolute top-0 -left-15 flex size-11 items-center justify-center text-brand">
+              <Icon name={paketIcon(extra.label)} size="lg" />
+            </span>
+            {extra.label}
+          </dt>
+          <dd className="text-body text-ink">{extra.text}</dd>
         </div>
       ))}
     </dl>
