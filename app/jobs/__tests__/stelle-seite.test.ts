@@ -2,7 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import JobPage from '@/app/jobs/[slug]/page';
 import { INITIATIVE_APPLY_PATH } from '@/lib/apply/params';
-import { getJobById } from '@/lib/jobs/registry';
+import { getActiveJobs, getJobById } from '@/lib/jobs/registry';
 
 const azubi = getJobById('ausbildung-anlagenmechaniker-shk')!;
 const am = getJobById('anlagenmechaniker-shk')!;
@@ -26,6 +26,35 @@ describe('/jobs/[slug]: offene Stelle', () => {
     expect(html.match(/<h1/g)).toHaveLength(1);
     expect(html).toMatch(/<section[^>]*id="bewerben"/);
     expect(html).toContain('data-tone="inverse"');
+  });
+});
+
+/** Sichtbare Wörter der Seite (ohne Skripte, SVG und Tags), wie die Wortzählung im Paket V6-G2. */
+function woerter(html: string): string[] {
+  const text = html
+    .replace(/<script\b[\s\S]*?<\/script>/g, ' ')
+    .replace(/<svg\b[\s\S]*?<\/svg>/g, ' ')
+    .replace(/<wbr\/?>/g, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replaceAll('&amp;', '&')
+    .replace(/­/g, '');
+  return text.match(/[\p{L}\p{N}][\p{L}\p{N}.\-–]*/gu) ?? [];
+}
+
+describe('/jobs/[slug]: SEO im sichtbaren Text (V6-G2)', () => {
+  const offen = getActiveJobs().filter((job) => job.status === 'published');
+
+  it.each(offen.map((job) => [job.id, job] as const))('%s: Fokus-Keyword in den ersten 100 Wörtern, alle Wörter des Titels sichtbar', async (_id, job) => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-10T12:00:00Z'));
+    const alle = woerter(await render(job.slug));
+    const klein = (w: string) => w.toLocaleLowerCase('de-DE').replace(/[.–-]+$/, '');
+    const erste = new Set(alle.slice(0, 100).map(klein));
+    for (const wort of job.seo.primaryKeyword.split(/\s+/)) expect(erste.has(klein(wort)), `${job.id}: ${wort}`).toBe(true);
+    const sichtbar = new Set(alle.map(klein));
+    const titel = job.seo.metaTitle.match(/[\p{L}\p{N}]{2,}/gu) ?? [];
+    for (const wort of titel.filter((w) => !/^(m|w|d)$/.test(w))) expect(sichtbar.has(klein(wort)), `${job.id}: ${wort}`).toBe(true);
+    expect(alle.length, job.id).toBeGreaterThanOrEqual(650);
   });
 });
 

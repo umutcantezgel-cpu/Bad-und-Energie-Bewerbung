@@ -16,7 +16,8 @@ export const kundendiensttechnikerShk = defineJob({
     metaTitle: 'Kundendiensttechniker Heizung & Wärmepumpe – Wetzlar/Gießen',
     metaDescription:
       'Kundendiensttechniker SHK (m/w/d) in Wetzlar: Wärmepumpen-Service, 3.800–4.900 €, eigenes Servicefahrzeug, kein Wochenend-Notdienst. In 60 Sek. bewerben.',
-    h1: 'Kundendiensttechniker SHK / Servicemonteur (m/w/d)',
+    // V6-G2: Wörter des metaTitle („Heizung“, „Wärmepumpe“, Ort) in der h1; title (JobPosting) bleibt.
+    h1: 'Kundendiensttechniker Heizung & Wärmepumpe (m/w/d) in Wetzlar',
     primaryKeyword: 'Kundendiensttechniker Wetzlar',
     secondaryKeywords: [
       'Kundendiensttechniker Wärmepumpe',
@@ -25,7 +26,9 @@ export const kundendiensttechnikerShk = defineJob({
       'Servicetechniker Wärmepumpe',
     ],
   },
-  summary: 'Du wartest Wärmepumpen und nimmst sie in Betrieb, mit eigenem Servicefahrzeug, iPad und Smartphone.',
+  // „Gießen“ aus dem metaTitle in den ersten 100 Wörtern (Unterzeile im Kopf); Gebiet wie Fakt radius35.
+  summary:
+    'Du wartest Wärmepumpen rund um Wetzlar und Gießen und nimmst sie in Betrieb, mit eigenem Servicefahrzeug, iPad und Smartphone.',
   intro:
     'Als Kundendiensttechniker übernimmst du Wartung, Inbetriebnahme und Diagnose moderner Wärmepumpensysteme von Buderus, Bosch, NIBE, Alpha Innotec und Viessmann. Außerdem betreust du öffentliche Liegenschaften des Lahn-Dill-Kreises. Deine Touren sind fair geplant, einen Wochenend-Notdienst gibt es nicht.',
   tasks: [
