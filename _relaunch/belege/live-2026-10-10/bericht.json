@@ -1,0 +1,150 @@
+{
+  "label": "live-2026-10-10",
+  "base": "https://karriere.bad-energie.de",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T10:18:27.663Z",
+  "seiten": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 26526,
+      "seitenhoehe": 16469,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/live-2026-10-10/start__m390-light__01.webp",
+        "belege/live-2026-10-10/start__m390-light__02.webp",
+        "belege/live-2026-10-10/start__m390-light__03.webp",
+        "belege/live-2026-10-10/start__m390-light__04.webp",
+        "belege/live-2026-10-10/start__m390-light__05.webp",
+        "belege/live-2026-10-10/start__m390-light__06.webp",
+        "belege/live-2026-10-10/start__m390-light__07.webp",
+        "belege/live-2026-10-10/start__m390-light__08.webp",
+        "belege/live-2026-10-10/start__m390-light__09.webp",
+        "belege/live-2026-10-10/start__m390-light__10.webp",
+        "belege/live-2026-10-10/start__m390-light__11.webp",
+        "belege/live-2026-10-10/start__m390-light__12.webp",
+        "belege/live-2026-10-10/start__m390-light__13.webp",
+        "belege/live-2026-10-10/start__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 11001,
+      "seitenhoehe": 12488,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/live-2026-10-10/start__d1440-light__01.webp",
+        "belege/live-2026-10-10/start__d1440-light__02.webp",
+        "belege/live-2026-10-10/start__d1440-light__03.webp",
+        "belege/live-2026-10-10/start__d1440-light__04.webp",
+        "belege/live-2026-10-10/start__d1440-light__05.webp",
+        "belege/live-2026-10-10/start__d1440-light__06.webp",
+        "belege/live-2026-10-10/start__d1440-light__07.webp",
+        "belege/live-2026-10-10/start__d1440-light__08.webp",
+        "belege/live-2026-10-10/start__d1440-light__09.webp",
+        "belege/live-2026-10-10/start__d1440-light__10.webp",
+        "belege/live-2026-10-10/start__d1440-light__11.webp",
+        "belege/live-2026-10-10/start__d1440-light__12.webp",
+        "belege/live-2026-10-10/start__d1440-light__13.webp",
+        "belege/live-2026-10-10/start__d1440-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "slug": "stelle-kundendienst",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 18480,
+      "seitenhoehe": 11515,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/live-2026-10-10/webp/stelle-kundendienst__m390-light__01.webp",
+        ".roh/live-2026-10-10/webp/stelle-kundendienst__m390-light__02.webp",
+        ".roh/live-2026-10-10/webp/stelle-kundendienst__m390-light__03.webp",
+        ".roh/live-2026-10-10/webp/stelle-kundendienst__m390-light__04.webp",
+        ".roh/live-2026-10-10/webp/stelle-kundendienst__m390-light__05.webp",
+        ".roh/live-2026-10-10/webp/stelle-kundendienst__m390-light__06.webp",
+        ".roh/live-2026-10-10/webp/stelle-kundendienst__m390-light__07.webp",
+        ".roh/live-2026-10-10/webp/stelle-kundendienst__m390-light__08.webp",
+        ".roh/live-2026-10-10/webp/stelle-kundendienst__m390-light__09.webp",
+        ".roh/live-2026-10-10/webp/stelle-kundendienst__m390-light__10.webp",
+        ".roh/live-2026-10-10/webp/stelle-kundendienst__m390-light__11.webp",
+        ".roh/live-2026-10-10/webp/stelle-kundendienst__m390-light__12.webp",
+        ".roh/live-2026-10-10/webp/stelle-kundendienst__m390-light__13.webp",
+        ".roh/live-2026-10-10/webp/stelle-kundendienst__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "slug": "stelle-kundendienst",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 7792,
+      "seitenhoehe": 8384,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/live-2026-10-10/stelle-kundendienst__d1440-light__01.webp",
+        "belege/live-2026-10-10/stelle-kundendienst__d1440-light__02.webp",
+        "belege/live-2026-10-10/stelle-kundendienst__d1440-light__03.webp",
+        "belege/live-2026-10-10/stelle-kundendienst__d1440-light__04.webp",
+        "belege/live-2026-10-10/stelle-kundendienst__d1440-light__05.webp",
+        "belege/live-2026-10-10/stelle-kundendienst__d1440-light__06.webp",
+        "belege/live-2026-10-10/stelle-kundendienst__d1440-light__07.webp",
+        "belege/live-2026-10-10/stelle-kundendienst__d1440-light__08.webp",
+        "belege/live-2026-10-10/stelle-kundendienst__d1440-light__09.webp",
+        "belege/live-2026-10-10/stelle-kundendienst__d1440-light__10.webp"
+      ]
+    }
+  ]
+}

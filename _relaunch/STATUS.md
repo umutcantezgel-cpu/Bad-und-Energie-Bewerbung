@@ -1,4 +1,4 @@
-STATUS · Phase R7 (Merge) · Welle R7/R7 · Alle 12 Seiten im Design (E-023/E-024) · Muss/Soll gebaut · axe 0 · Playwright 182/182 · Lighthouse mobil A11y/BP/SEO 100, Perf 92–93 · Nächster Schritt: PR nach main, CI grün, Merge, Live-GET
+STATUS · ABGESCHLOSSEN · Live seit 10.10.2026 10:17 UTC (main e2b3cb1, PR #9) · Alle 12 Seiten im Design Variante 3 (E-024) · Muss/Soll gebaut · CI grün · Playwright 182/182 · Lighthouse A11y/BP/SEO 100 · Folgearbeit: LCP < 2,5 s, Kann-Elemente, Showcase-Ausbau, Menschen-Punkte (MENSCHEN.md)
 
 # Status · Rückführung und Veredelung
 
@@ -59,3 +59,5 @@ STATUS · Phase R7 (Merge) · Welle R7/R7 · Alle 12 Seiten im Design (E-023/E-0
 - 2026-10-10 00:25 CEST · FREIGABE E-021 (volle Autonomie bis zum Merge); R1 Basis, R3-ORCH (Anker-Aliase) und R2 Fundament abgenommen (7f0c8fe, E-022: CSP ohne Hash, LCP-Rückschritt → R3-PERF-01). Welle R3 Startseite gestartet.
 
 - 2026-10-10 11:50 CEST · Fertigstellung nach E-023/E-024: alle Seiten im Design der Bilder des Auftraggebers (Variante 3), Gesamtprüfung grün (E-025), Supabase lesend geprüft (2a bereits in Produktion). PR nach main folgt.
+
+- 2026-10-10 12:20 CEST · PR #9 gemergt (e2b3cb1) und live; Live-GET aller Routen 200, 404 korrekt (E-026).

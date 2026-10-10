@@ -1,4 +1,9 @@
-# Bericht · Rückführung, Veredelung und Fertigstellung (Stand 10.10.2026)
+# Bericht · Rückführung, Veredelung und Fertigstellung (Stand 10.10.2026, live)
+
+**Live seit 10.10.2026, 10:17 UTC** auf https://karriere.bad-energie.de: PR #9, Merge-Commit e2b3cb1.
+- Alle 15 geprüften Routen liefern 200, eine unbekannte Route 404.
+- Bilder der Live-Seite: `belege/live-2026-10-10/`.
+- Details: ENTSCHEIDUNGEN E-026.
 
 ## Ergebnis in drei Sätzen
 1. Alle 12 Seiten der Karriereseite tragen das Design aus den Bildern des Auftraggebers (Variante 3, E-024):

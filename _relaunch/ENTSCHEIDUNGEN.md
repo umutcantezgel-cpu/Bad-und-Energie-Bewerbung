@@ -270,3 +270,17 @@ Format: E-[Nr] · Datum · Gegenstand · Entscheidung · Grund · Umkehr (bei De
   - Der Merge wendet damit nichts auf die Produktion an, eine Rückfrage ist nicht nötig.
 - **Vercel-Variablen:** vom Auftraggeber bestätigt.
 - **Ablauf:** PR nach `main`, nach grüner CI Merge-Commit.
+
+## E-026 · 10.10.2026 · Merge nach main und Live-Prüfung
+- **Freigabe:** Der Auftraggeber schrieb: „Okay, dann push bitte alles auf Main, dass es auf der Live-Domain sozusagen sichtbar wird.“
+- **CI auf dem Head 72564de grün:**
+  - Qualität mit Lint, Tests, Build, E2E und Lighthouse;
+  - gitleaks;
+  - Vercel-Vorschau.
+  - Davor hatte die CI einen Überlauf der Mappe bei 320 px gefunden; die Korrektur ist 72564de.
+- **Merge:** PR #9 per Merge-Commit e2b3cb1 auf `main`, 10.10.2026 10:16 UTC. Vercel-Produktion live nach etwa 1 Minute.
+- **Live-GET** (karriere.bad-energie.de, nur lesend):
+  - 200 auf `/`, `/jobs`, die 4 Stellenseiten, `/bewerbung`, `/bewerbung/mappe`, `/bewerbung/danke`, `/datenschutz`, `/impressum`, `/sitemap.xml`, `/robots.txt`, `/llms.txt`, `/opengraph-image`;
+  - 404 auf einer unbekannten Route.
+  - Im HTML stehen „100 Jahre Meisterbetrieb“ und „Kreislauf zeigen“; kein Google-Fonts-Abruf, keine Inter mehr.
+- **Bilder:** `belege/live-2026-10-10/`.

@@ -1,5 +1,4 @@
-# Prüfpunkt (gemeinsamer Lauf; FREIGABE E-021; beschleunigt E-023; Design E-024)
-- Phase: R7 Merge. Alle Pakete gebaut und committet; Gesamtprüfung grün (E-025); BERICHT.md geschrieben.
-- Nächster exakter Schritt: PR `claude/kind-ride-n9duod → main` anlegen, PR-Ereignisse abonnieren, CI (Quality + gitleaks) grün abwarten, Merge-Commit, danach GET-Prüfung live (karriere.bad-energie.de) aller Routen ohne Formularsendung, Statuszeile.
-- Supabase: 2a-Migrationen bereits in Produktion, keine Branches (vermutlich keine automatische Migration; Integrationseinstellungen nicht einsehbar).
-- Server: keine laufenden (Dev-Server :3450 beendet; Build im Repo-.next).
+# Prüfpunkt
+- Lauf ABGESCHLOSSEN: PR #9 gemergt (main e2b3cb1), live seit 10.10.2026 10:17 UTC, Live-GET grün (E-026).
+- Offen nur Folgearbeit (BERICHT.md „Folgearbeit“) und die Punkte für Menschen (MENSCHEN.md): DSB-Bestätigung M-019, Rechtsprüfung E-RECHT-005, zwei Textvorschläge.
+- Neue Arbeit startet als frische Änderung von main (Branch claude/kind-ride-n9duod ist auf main vorgespult).
