@@ -1,0 +1,41 @@
+{
+  "label": "fertig-r5-jobs-01-dunkel",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T08:54:50.534Z",
+  "seiten": [
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 9507,
+      "seitenhoehe": 5583,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r5-jobs-01-dunkel/stellen__m390-dark__01.webp",
+        "belege/fertig-r5-jobs-01-dunkel/stellen__m390-dark__02.webp",
+        "belege/fertig-r5-jobs-01-dunkel/stellen__m390-dark__03.webp",
+        "belege/fertig-r5-jobs-01-dunkel/stellen__m390-dark__04.webp",
+        "belege/fertig-r5-jobs-01-dunkel/stellen__m390-dark__05.webp",
+        "belege/fertig-r5-jobs-01-dunkel/stellen__m390-dark__06.webp",
+        "belege/fertig-r5-jobs-01-dunkel/stellen__m390-dark__07.webp"
+      ]
+    }
+  ]
+}

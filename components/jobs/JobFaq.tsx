@@ -9,17 +9,21 @@ export interface JobFaqProps {
 }
 
 /**
- * Three matching questions as native <details>. Deliberately without FAQPage markup:
- * FAQPage structured data lives on the home page only (ROADMAP §10).
+ * Drei passende Fragen als natives <details>, Kopf wie die Abschnitte der Startseite (Etikett, h2 in
+ * Bricolage und Marken-Navy); ab lg Kopf links, Fragen rechts. Bewusst ohne FAQPage-Markup: FAQPage steht
+ * nur auf der Startseite (ROADMAP §10).
  */
 export function JobFaq({ job, className }: JobFaqProps) {
   const items = getFaqItems(JOB_FAQ_IDS[job.apply.questionSet]);
   return (
-    <section aria-labelledby="stelle-faq" className={cn('flex flex-col gap-4', className)}>
-      <h2 id="stelle-faq" className="text-title-3 text-ink">
-        Häufige Fragen
-      </h2>
-      <div className="border-t border-line">
+    <section aria-labelledby="stelle-faq" className={cn('grid gap-8 lg:grid-cols-12 lg:gap-x-12', className)}>
+      <div className="flex flex-col gap-4 lg:col-span-4">
+        <p className="text-etikett text-ink-muted">Fragen</p>
+        <h2 id="stelle-faq" className="text-title-1 text-brand">
+          Häufige Fragen
+        </h2>
+      </div>
+      <div className="border-t-(length:--m-strich) border-brand lg:col-span-8">
         {items.map((item) => (
           <Disclosure key={item.id} name={`faq-${job.id}`} summary={item.question}>
             <p className="max-w-prose">{item.answer}</p>

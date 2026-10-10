@@ -1,0 +1,57 @@
+{
+  "label": "fertig-r3-einstieg-v3-b",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T09:10:13.370Z",
+  "seiten": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m430",
+      "schema": "light",
+      "status": 200,
+      "ms": 11973,
+      "seitenhoehe": 15929,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r3-einstieg-v3-b/start__m430-light__01.webp",
+        "belege/fertig-r3-einstieg-v3-b/start__m430-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "d1920",
+      "schema": "light",
+      "status": 200,
+      "ms": 6250,
+      "seitenhoehe": 12751,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r3-einstieg-v3-b/start__d1920-light__01.webp",
+        "belege/fertig-r3-einstieg-v3-b/start__d1920-light__02.webp"
+      ]
+    }
+  ]
+}

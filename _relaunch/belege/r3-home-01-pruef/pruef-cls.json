@@ -1,0 +1,31 @@
+{
+  "mode": "cls",
+  "erstellt": "2026-10-09T23:08:04.960Z",
+  "laeufe": [
+    {
+      "vp": "m390",
+      "cls": 0,
+      "shifts": [],
+      "lcp": {
+        "tag": "SPAN",
+        "text": "in Wetzlar.",
+        "t": 436
+      }
+    },
+    {
+      "vp": "d1440",
+      "cls": 0.0005680456593203446,
+      "shifts": [
+        {
+          "v": 0.0005680456593203446,
+          "src": "#text.,SPAN.einstieg-module__tfiXEq__wert font-mass text-brand,SPAN.einstieg-module__tfiXEq__name text-etikett text-ink-2,LI.einstieg-module__tfiXEq__mass einstieg-module__tfiXEq__mass35"
+        }
+      ],
+      "lcp": {
+        "tag": "SPAN",
+        "text": "in Wetzlar.",
+        "t": 396
+      }
+    }
+  ]
+}

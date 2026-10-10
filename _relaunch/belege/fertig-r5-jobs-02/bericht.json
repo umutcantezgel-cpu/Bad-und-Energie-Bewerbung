@@ -1,0 +1,44 @@
+{
+  "label": "fertig-r5-jobs-02",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T09:06:51.247Z",
+  "seiten": [
+    {
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "slug": "stelle-kundendienst",
+      "ansicht": "t768",
+      "schema": "light",
+      "status": 200,
+      "ms": 13761,
+      "seitenhoehe": 9937,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r5-jobs-02/stelle-kundendienst__t768-light__01.webp",
+        "belege/fertig-r5-jobs-02/stelle-kundendienst__t768-light__02.webp",
+        "belege/fertig-r5-jobs-02/stelle-kundendienst__t768-light__03.webp",
+        "belege/fertig-r5-jobs-02/stelle-kundendienst__t768-light__04.webp",
+        "belege/fertig-r5-jobs-02/stelle-kundendienst__t768-light__05.webp",
+        "belege/fertig-r5-jobs-02/stelle-kundendienst__t768-light__06.webp",
+        "belege/fertig-r5-jobs-02/stelle-kundendienst__t768-light__07.webp",
+        "belege/fertig-r5-jobs-02/stelle-kundendienst__t768-light__08.webp",
+        "belege/fertig-r5-jobs-02/stelle-kundendienst__t768-light__09.webp",
+        "belege/fertig-r5-jobs-02/stelle-kundendienst__t768-light__10.webp"
+      ]
+    }
+  ]
+}

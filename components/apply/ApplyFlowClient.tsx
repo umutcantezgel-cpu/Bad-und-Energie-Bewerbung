@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useId, useReducer, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, type SubmitErrorHandler } from 'react-hook-form';
+import { mitZiffern } from '@/components/home/einstieg/ziffern';
 import { Button } from '@/components/ui/Button';
-import { StepHeader } from '@/components/ui/StepHeader';
 import { Tag } from '@/components/ui/Tag';
 import { getAttribution } from '@/lib/attribution/store';
 import type { ApplicationJobId } from '@/lib/applications/constants';
@@ -42,7 +42,9 @@ import { cn } from '@/lib/utils/cn';
 import { ContactStep } from './ContactStep';
 import { FlowShortcuts } from './FlowShortcuts';
 import { InlineSuccess, JobStep, QuestionStep, StepHeading } from './steps';
-import type { ApplyFlowProps, FlowContact, FlowJobOption } from './types';
+import { Fortschrittsstrang } from './strang/Fortschrittsstrang';
+import { passungsSatz, schrittNamen } from './strang/strang-text';
+import type { ApplyFlowProps, FlowContact, FlowJobOption, FlowZusagen } from './types';
 
 export const THANK_YOU_PATH = '/bewerbung/danke';
 
@@ -57,6 +59,10 @@ export interface ApplyFlowClientProps extends ApplyFlowProps {
   contact: FlowContact;
   /** Satz unter der Kontaktfrage (Fakt quickResponse). */
   quickResponse?: string;
+  /** Diskretionszusage je Fragenset für den Kontaktschritt (E-BEW-004). */
+  zusagen?: FlowZusagen;
+  /** Sekunden aus dem Fakt apply60s für die Passungs-Rahmung (E-START-013); ohne Wert keine Rahmung. */
+  sekunden?: string;
 }
 
 type SubmitState =
@@ -86,6 +92,8 @@ export function ApplyFlowClient({
   options,
   contact,
   quickResponse,
+  zusagen,
+  sekunden,
   initialJobId,
   variant = 'page',
   funnel,
@@ -453,6 +461,7 @@ export function ApplyFlowClient({
         firstName,
         jobId: current.jobId,
         submittedAt: new Date().toISOString(),
+        contactChannel: payload.contactChannel,
       });
       if (stored) {
         // page: replace, damit Zurück nicht in den abgeschickten Flow führt (die Schritte haben eigene
@@ -487,12 +496,26 @@ export function ApplyFlowClient({
   const canGoBack = previousStepOf(state, state.step) !== null;
   const answered = isStepAnswered(state, state.step);
   const jobLabel = jobOption?.summaryLabel ?? null;
+  // Passungs-Rahmung (E-START-013) nur über dem ersten Schritt auf /bewerbung; die Stellenseite nennt die
+  // 60 Sekunden schon im Ablauf darüber.
+  const rahmung = isPage && sekunden && current === 1 && submit.status !== 'done' ? passungsSatz(sekunden) : null;
 
-  const heading = (text: string) => (
-    <StepHeading as={headingAs} id={headingId} ref={headingRef}>
-      {text}
-    </StepHeading>
-  );
+  const heading = (text: string) => {
+    const titel = (
+      <StepHeading as={headingAs} id={headingId} ref={headingRef}>
+        {text}
+      </StepHeading>
+    );
+    if (!rahmung) return titel;
+    return (
+      <div className="flex flex-col gap-2">
+        <p className="max-w-prose text-body text-ink-2" data-rahmung="passung">
+          {mitZiffern(rahmung)}
+        </p>
+        {titel}
+      </div>
+    );
+  };
 
   let body;
   if (submit.status === 'done') {
@@ -525,6 +548,7 @@ export function ApplyFlowClient({
         failure={submit.status === 'error' ? submit.failure : null}
         onValid={onValid}
         onInvalid={onInvalid}
+        discretion={zusagen?.[state.questionSet] ?? null}
         honeypotRef={honeypotRef}
         phoneHref={contact.phoneHref}
         application={{ jobLabel, questionSet: state.questionSet, answers: state.answers }}
@@ -555,9 +579,9 @@ export function ApplyFlowClient({
     <div ref={containerRef} data-apply-flow={variant} className={cn('flex flex-col gap-8', className)}>
       {!done && (
         <div className="flex flex-col gap-4">
-          <StepHeader current={current} total={steps.length} onBack={canGoBack ? handleBack : undefined} />
+          <Fortschrittsstrang schritte={schrittNamen(steps)} aktuell={current} onBack={canGoBack ? handleBack : undefined} />
           {jobOption && state.step !== JOB_STEP && (
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               <Tag>
                 <span className="sr-only">Stelle: </span>
                 {jobOption.summaryLabel}
@@ -571,10 +595,18 @@ export function ApplyFlowClient({
         </div>
       )}
 
-      {/* Schrittwechsel: kurzes Einblenden per @starting-style (nicht beim ersten Laden; bei reduzierter Bewegung nur Überblendung). */}
+      {/*
+        Schrittwechsel (E-BEW-003, Register `fortschritt`): Die neue Frage kommt mit dem Strang, 8 px von unten
+        und eingeblendet in d-2 (240 ms), per @starting-style ohne JS-Paket; nicht beim ersten Laden. Bei
+        reduzierter Bewegung kein Versatz, und die globale Regel setzt den Wechsel sofort.
+      */}
       <div
         key={done ? 'done' : state.step}
-        className={cn('transition duration-step ease-standard', session.ready && 'starting:translate-y-2 starting:opacity-0')}
+        data-motion="fortschritt"
+        className={cn(
+          'transition-[opacity,translate] duration-d2 ease-aus',
+          session.ready && 'starting:opacity-0 motion-safe:starting:translate-y-2',
+        )}
       >
         {body}
       </div>
@@ -586,6 +618,7 @@ export function ApplyFlowClient({
           questionSet={state.questionSet}
           answers={state.answers}
           showMappeLink={isPage}
+          headingAs={headingAs}
         />
       )}
     </div>

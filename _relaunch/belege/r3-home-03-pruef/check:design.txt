@@ -1,0 +1,4 @@
+$ node scripts/qa/check-design-tokens.mjs
+Notes (not blocking): 68 off-scale spacing classes in 37 files (K-007), 2 numeric durations/delays (K-009); motion register 19 ids, 12 in use. Run with --notes for the list.
+Design guard passed: 284 files checked.
+check:design exit 0

@@ -1,0 +1,5971 @@
+{
+  "label": "P0-SLOP-01",
+  "base": "http://localhost:3500",
+  "erstellt": "2026-10-09T07:56:01.085Z",
+  "bedingungen": {
+    "ansicht": "d1440 hell",
+    "warten": "networkidle + scrollThrough (scroll-behavior: auto) + 300 ms",
+    "http": "GET über Playwright APIRequestContext, maxRedirects 0 (Linkziele, alte Pfade), nur Basisadresse",
+    "altUrls": "_relaunch/.roh/P0-SLOP-01/alt-urls.json"
+  },
+  "zusammenfassung": {
+    "seiten": 12,
+    "status": {
+      "200": 11,
+      "404": 1
+    },
+    "ohneTitle": 0,
+    "ohneDescription": 0,
+    "titelLaengen": {
+      "/": 51,
+      "/jobs": 56,
+      "/jobs/anlagenmechaniker-shk-wetzlar": 54,
+      "/jobs/kundendiensttechniker-waermepumpe-wetzlar": 59,
+      "/jobs/obermonteur-projektleiter-shk-wetzlar": 51,
+      "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar": 53,
+      "/bewerbung": 57,
+      "/bewerbung/danke": 50,
+      "/bewerbung/mappe": 50,
+      "/datenschutz": 45,
+      "/impressum": 34,
+      "/gibt-es-nicht-404": 45
+    },
+    "beschreibungLaengen": {
+      "/": 140,
+      "/jobs": 155,
+      "/jobs/anlagenmechaniker-shk-wetzlar": 147,
+      "/jobs/kundendiensttechniker-waermepumpe-wetzlar": 153,
+      "/jobs/obermonteur-projektleiter-shk-wetzlar": 151,
+      "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar": 145,
+      "/bewerbung": 141,
+      "/bewerbung/danke": 111,
+      "/bewerbung/mappe": 140,
+      "/datenschutz": 151,
+      "/impressum": 148,
+      "/gibt-es-nicht-404": 81
+    },
+    "ohneCanonical": 1,
+    "canonicalPfadAbweichend": 1,
+    "canonicalHosts": [
+      "karriere.bad-energie.de",
+      "localhost:3500"
+    ],
+    "noindexSeiten": [
+      "/bewerbung/danke",
+      "/bewerbung/mappe",
+      "/datenschutz",
+      "/impressum",
+      "/gibt-es-nicht-404"
+    ],
+    "ogUnvollstaendig": 1,
+    "twitterUnvollstaendig": 0,
+    "mitHreflang": 0,
+    "jsonldBloecke": 19,
+    "jsonldUngueltig": 0,
+    "jsonldTypen": [
+      "FAQPage",
+      "Organization",
+      "WebSite",
+      "LocalBusiness",
+      "BreadcrumbList",
+      "JobPosting",
+      "WebPage"
+    ],
+    "seitenOhneJsonld": [],
+    "h1Nicht1": [],
+    "bilderGesamt": 12,
+    "bilderAltFehlt": 0,
+    "bilderAltLeerMitLeerraum": 0,
+    "bilderDekorativ": 0,
+    "linksGeprueft": 228,
+    "linksAnker": 45,
+    "linksIntern": 183,
+    "linksNichtOk": 0,
+    "linksWeiterleitung": 0,
+    "einzigartigeLinkziele": 12,
+    "sitemapEintraege": 7,
+    "sitemapStatus": 200,
+    "grundmengeOhneSitemap": 5,
+    "sitemapOhneGrundmenge": 0,
+    "robotsStatus": 200,
+    "robotsBlockiertGrundmenge": 0,
+    "altUrls": {
+      "gesamt": 24,
+      "ok": 15,
+      "weiterleitung": 1,
+      "ankerFehlen": 8,
+      "nichtErreichbar": 0
+    }
+  },
+  "sitemap": {
+    "status": 200,
+    "inhaltstyp": "application/xml",
+    "eintraege": 7,
+    "hosts": [
+      "karriere.bad-energie.de"
+    ],
+    "ohneGrundmenge": [],
+    "grundmengeOhneSitemap": [
+      "/bewerbung/danke",
+      "/bewerbung/mappe",
+      "/datenschutz",
+      "/impressum",
+      "/gibt-es-nicht-404"
+    ],
+    "urls": [
+      {
+        "loc": "https://karriere.bad-energie.de/",
+        "pfad": "/",
+        "status": 200,
+        "inGrundmenge": true,
+        "noindexAufSeite": false,
+        "canonicalPfadGleich": true
+      },
+      {
+        "loc": "https://karriere.bad-energie.de/jobs",
+        "pfad": "/jobs",
+        "status": 200,
+        "inGrundmenge": true,
+        "noindexAufSeite": false,
+        "canonicalPfadGleich": true
+      },
+      {
+        "loc": "https://karriere.bad-energie.de/jobs/anlagenmechaniker-shk-wetzlar",
+        "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+        "status": 200,
+        "inGrundmenge": true,
+        "noindexAufSeite": false,
+        "canonicalPfadGleich": true
+      },
+      {
+        "loc": "https://karriere.bad-energie.de/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+        "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+        "status": 200,
+        "inGrundmenge": true,
+        "noindexAufSeite": false,
+        "canonicalPfadGleich": true
+      },
+      {
+        "loc": "https://karriere.bad-energie.de/jobs/obermonteur-projektleiter-shk-wetzlar",
+        "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+        "status": 200,
+        "inGrundmenge": true,
+        "noindexAufSeite": false,
+        "canonicalPfadGleich": true
+      },
+      {
+        "loc": "https://karriere.bad-energie.de/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+        "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+        "status": 200,
+        "inGrundmenge": true,
+        "noindexAufSeite": false,
+        "canonicalPfadGleich": true
+      },
+      {
+        "loc": "https://karriere.bad-energie.de/bewerbung",
+        "pfad": "/bewerbung",
+        "status": 200,
+        "inGrundmenge": true,
+        "noindexAufSeite": false,
+        "canonicalPfadGleich": true
+      }
+    ]
+  },
+  "robots": {
+    "status": 200,
+    "inhaltstyp": "text/plain",
+    "bytes": 772,
+    "gruppen": 4,
+    "sitemapZeilen": [
+      "https://karriere.bad-energie.de/sitemap.xml"
+    ],
+    "sitemapZeilenMitBasis": [
+      "/sitemap.xml"
+    ],
+    "sternGruppe": {
+      "agenten": [
+        "*"
+      ],
+      "allow": [
+        "/"
+      ],
+      "disallow": [
+        "/api/",
+        "/admin/"
+      ]
+    },
+    "gruppenAuszug": [
+      {
+        "agenten": [
+          "Googlebot",
+          "Bingbot",
+          "DuckDuckBot"
+        ],
+        "allow": [
+          "/"
+        ],
+        "disallow": [
+          "/api/",
+          "/admin/"
+        ]
+      },
+      {
+        "agenten": [
+          "GPTBot",
+          "ChatGPT-User",
+          "OAI-SearchBot",
+          "Google-Extended",
+          "anthropic-ai",
+          "ClaudeBot",
+          "PerplexityBot",
+          "CCBot",
+          "Applebot-Extended",
+          "Amazonbot",
+          "Cohere-ai",
+          "YouBot"
+        ],
+        "allow": [
+          "/"
+        ],
+        "disallow": [
+          "/api/",
+          "/admin/"
+        ]
+      },
+      {
+        "agenten": [
+          "SemrushBot",
+          "PetalBot",
+          "DotBot",
+          "MJ12bot",
+          "BLEXBot",
+          "DataForSeoBot",
+          "MegaIndex",
+          "Bytespider"
+        ],
+        "allow": [],
+        "disallow": [
+          "/"
+        ]
+      },
+      {
+        "agenten": [
+          "*"
+        ],
+        "allow": [
+          "/"
+        ],
+        "disallow": [
+          "/api/",
+          "/admin/"
+        ]
+      }
+    ],
+    "blockiertGrundmenge": []
+  },
+  "abgleichSitemapGrundmenge": [
+    {
+      "pfad": "/",
+      "inSitemap": true,
+      "noindex": false,
+      "status": 200,
+      "blockiertFuerStern": false,
+      "widerspruch": null
+    },
+    {
+      "pfad": "/jobs",
+      "inSitemap": true,
+      "noindex": false,
+      "status": 200,
+      "blockiertFuerStern": false,
+      "widerspruch": null
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "inSitemap": true,
+      "noindex": false,
+      "status": 200,
+      "blockiertFuerStern": false,
+      "widerspruch": null
+    },
+    {
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "inSitemap": true,
+      "noindex": false,
+      "status": 200,
+      "blockiertFuerStern": false,
+      "widerspruch": null
+    },
+    {
+      "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "inSitemap": true,
+      "noindex": false,
+      "status": 200,
+      "blockiertFuerStern": false,
+      "widerspruch": null
+    },
+    {
+      "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "inSitemap": true,
+      "noindex": false,
+      "status": 200,
+      "blockiertFuerStern": false,
+      "widerspruch": null
+    },
+    {
+      "pfad": "/bewerbung",
+      "inSitemap": true,
+      "noindex": false,
+      "status": 200,
+      "blockiertFuerStern": false,
+      "widerspruch": null
+    },
+    {
+      "pfad": "/bewerbung/danke",
+      "inSitemap": false,
+      "noindex": true,
+      "status": 200,
+      "blockiertFuerStern": false,
+      "widerspruch": null
+    },
+    {
+      "pfad": "/bewerbung/mappe",
+      "inSitemap": false,
+      "noindex": true,
+      "status": 200,
+      "blockiertFuerStern": false,
+      "widerspruch": null
+    },
+    {
+      "pfad": "/datenschutz",
+      "inSitemap": false,
+      "noindex": true,
+      "status": 200,
+      "blockiertFuerStern": false,
+      "widerspruch": null
+    },
+    {
+      "pfad": "/impressum",
+      "inSitemap": false,
+      "noindex": true,
+      "status": 200,
+      "blockiertFuerStern": false,
+      "widerspruch": null
+    },
+    {
+      "pfad": "/gibt-es-nicht-404",
+      "inSitemap": false,
+      "noindex": true,
+      "status": 404,
+      "blockiertFuerStern": false,
+      "widerspruch": null
+    }
+  ],
+  "linkBefunde": [
+    {
+      "seite": "/",
+      "art": "anker",
+      "href": "#main",
+      "text": "Zum Inhalt springen",
+      "fundstelle": "a.sr-only",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/",
+      "text": "Bad und Energie GmbH Lahn Dill, zur Startseite",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Stellen",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/#vorteile",
+      "text": "Vorteile",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/#ablauf",
+      "text": "Ablauf",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(3) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/#faq",
+      "text": "FAQ",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(4) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Bewerben",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > div.hidden.shrink-0:nth-of-type(1) > a.relative.inline-flex:nth-of-type(2)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Jetzt bewerben",
+      "fundstelle": "header.flex.flex-col > div.mt-2.flex > div.flex.flex-wrap > a.relative.inline-flex:nth-of-type(1)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "anker",
+      "href": "#stellen",
+      "text": "Offene Stellen ansehen",
+      "fundstelle": "header.flex.flex-col > div.mt-2.flex > div.flex.flex-wrap > a.rounded-xs.underline:nth-of-type(2)",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Alle Stellen im Überblick",
+      "fundstelle": "section#stellen > div.mx-auto.box-content > div.flex.flex-wrap > a.rounded-xs.underline",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "text": "Anlagenmechaniker SHK",
+      "fundstelle": "li:nth-of-type(1) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "text": "Kundendiensttechniker",
+      "fundstelle": "li:nth-of-type(2) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "text": "Obermonteur / Projektleiter",
+      "fundstelle": "li:nth-of-type(3) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "text": "Ausbildung Anlagenmechaniker",
+      "fundstelle": "li:nth-of-type(4) > article.rounded-lg.bg-surface-2 > h3.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/bewerbung?stelle=initiativ",
+      "text": "Initiativ bewerben",
+      "fundstelle": "section#stellen > div.mx-auto.box-content > p.mt-8.text-body > a.rounded-xs.underline",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "text": "Seite zur Ausbildung",
+      "fundstelle": "div.mx-auto.box-content > div.flex.max-w-3xl > p.max-w-prose.text-lead > a.rounded-xs.underline",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Jetzt bewerben",
+      "fundstelle": "div.mx-auto.box-content > div.mt-12.flex:nth-of-type(2) > div.shrink-0 > a.relative.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Jetzt bewerben",
+      "fundstelle": "section.py-section.bg-surface:nth-of-type(8) > div.mx-auto.box-content > div.self-start:nth-of-type(2) > a.relative.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "text": "Anlagenmechaniker SHK",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "text": "Kundendiensttechniker",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "text": "Obermonteur / Projektleiter",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(3) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "text": "Ausbildung Anlagenmechaniker",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(4) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Alle Stellen",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(5) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/impressum",
+      "text": "Impressum",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/datenschutz",
+      "text": "Datenschutz",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Jetzt bewerben",
+      "fundstelle": "aside.fixed.inset-x-0 > div.mx-auto.flex > a.relative.inline-flex:nth-of-type(1)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "anker",
+      "href": "#main",
+      "text": "Zum Inhalt springen",
+      "fundstelle": "a.sr-only",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/",
+      "text": "Bad und Energie GmbH Lahn Dill, zur Startseite",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Stellen",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/#vorteile",
+      "text": "Vorteile",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/#ablauf",
+      "text": "Ablauf",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(3) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/#faq",
+      "text": "FAQ",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(4) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Bewerben",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > div.hidden.shrink-0:nth-of-type(1) > a.relative.inline-flex:nth-of-type(2)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/",
+      "text": "Startseite",
+      "fundstelle": "nav > ol.flex.flex-wrap > li.inline-flex.items-center:nth-of-type(1) > a.relative.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "text": "Anlagenmechaniker SHK",
+      "fundstelle": "li:nth-of-type(1) > article.rounded-lg.bg-surface-2 > h2.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "text": "Kundendiensttechniker",
+      "fundstelle": "li:nth-of-type(2) > article.rounded-lg.bg-surface-2 > h2.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "text": "Obermonteur / Projektleiter",
+      "fundstelle": "li:nth-of-type(3) > article.rounded-lg.bg-surface-2 > h2.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "text": "Ausbildung Anlagenmechaniker",
+      "fundstelle": "li:nth-of-type(4) > article.rounded-lg.bg-surface-2 > h2.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/bewerbung?stelle=quereinsteiger-montagehelfer-shk-wetzlar",
+      "text": "Quereinstieg / Montagehelfer",
+      "fundstelle": "div.flex.flex-col:nth-of-type(1) > p.max-w-prose.text-body:nth-of-type(2) > span > a.rounded-xs.underline",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/bewerbung?stelle=initiativ",
+      "text": "Initiativ bewerben",
+      "fundstelle": "section.py-section-sm:nth-of-type(2) > div.mx-auto.box-content > div.flex.flex-col:nth-of-type(1) > a.relative.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "text": "Anlagenmechaniker SHK",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "text": "Kundendiensttechniker",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "text": "Obermonteur / Projektleiter",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(3) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "text": "Ausbildung Anlagenmechaniker",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(4) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Alle Stellen",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(5) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/impressum",
+      "text": "Impressum",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/datenschutz",
+      "text": "Datenschutz",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Jetzt bewerben",
+      "fundstelle": "aside.fixed.inset-x-0 > div.mx-auto.flex > a.relative.inline-flex:nth-of-type(1)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "anker",
+      "href": "#main",
+      "text": "Zum Inhalt springen",
+      "fundstelle": "a.sr-only",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/",
+      "text": "Bad und Energie GmbH Lahn Dill, zur Startseite",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Stellen",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/#vorteile",
+      "text": "Vorteile",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/#ablauf",
+      "text": "Ablauf",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(3) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/#faq",
+      "text": "FAQ",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(4) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Bewerben",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > div.hidden.shrink-0:nth-of-type(1) > a.relative.inline-flex:nth-of-type(2)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/",
+      "text": "Startseite",
+      "fundstelle": "nav > ol.flex.flex-wrap > li.inline-flex.items-center:nth-of-type(1) > a.relative.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Stellen",
+      "fundstelle": "nav > ol.flex.flex-wrap > li.inline-flex.items-center:nth-of-type(2) > a.relative.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "anker",
+      "href": "#bewerben",
+      "text": "Jetzt bewerben",
+      "fundstelle": "div.grid.duration-step:nth-of-type(2) > div.-m-1.min-h-0 > div.pt-5 > a.relative.inline-flex",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Alle offenen Stellen",
+      "fundstelle": "section.py-section.bg-surface-2 > div.mx-auto.box-content > div.flex.flex-wrap > a.rounded-xs.underline",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "text": "Kundendiensttechniker",
+      "fundstelle": "li:nth-of-type(1) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "text": "Obermonteur / Projektleiter",
+      "fundstelle": "li:nth-of-type(2) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "text": "Ausbildung Anlagenmechaniker",
+      "fundstelle": "li:nth-of-type(3) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "text": "Anlagenmechaniker SHK",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "text": "Kundendiensttechniker",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "text": "Obermonteur / Projektleiter",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(3) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "text": "Ausbildung Anlagenmechaniker",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(4) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Alle Stellen",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(5) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/impressum",
+      "text": "Impressum",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/datenschutz",
+      "text": "Datenschutz",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "art": "anker",
+      "href": "#bewerben",
+      "text": "Als Anlagenmechaniker SHK bewerbenJetzt bewerben",
+      "fundstelle": "aside.fixed.inset-x-0 > div.mx-auto.flex > a.relative.inline-flex:nth-of-type(1)",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "anker",
+      "href": "#main",
+      "text": "Zum Inhalt springen",
+      "fundstelle": "a.sr-only",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/",
+      "text": "Bad und Energie GmbH Lahn Dill, zur Startseite",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Stellen",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/#vorteile",
+      "text": "Vorteile",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/#ablauf",
+      "text": "Ablauf",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(3) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/#faq",
+      "text": "FAQ",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(4) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Bewerben",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > div.hidden.shrink-0:nth-of-type(1) > a.relative.inline-flex:nth-of-type(2)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/",
+      "text": "Startseite",
+      "fundstelle": "nav > ol.flex.flex-wrap > li.inline-flex.items-center:nth-of-type(1) > a.relative.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Stellen",
+      "fundstelle": "nav > ol.flex.flex-wrap > li.inline-flex.items-center:nth-of-type(2) > a.relative.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "anker",
+      "href": "#bewerben",
+      "text": "Jetzt bewerben",
+      "fundstelle": "div.grid.duration-step:nth-of-type(2) > div.-m-1.min-h-0 > div.pt-5 > a.relative.inline-flex",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Alle offenen Stellen",
+      "fundstelle": "section.py-section.bg-surface-2 > div.mx-auto.box-content > div.flex.flex-wrap > a.rounded-xs.underline",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "text": "Anlagenmechaniker SHK",
+      "fundstelle": "li:nth-of-type(1) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "text": "Obermonteur / Projektleiter",
+      "fundstelle": "li:nth-of-type(2) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "text": "Ausbildung Anlagenmechaniker",
+      "fundstelle": "li:nth-of-type(3) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "text": "Anlagenmechaniker SHK",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "text": "Kundendiensttechniker",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "text": "Obermonteur / Projektleiter",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(3) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "text": "Ausbildung Anlagenmechaniker",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(4) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Alle Stellen",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(5) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/impressum",
+      "text": "Impressum",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "intern",
+      "href": "/datenschutz",
+      "text": "Datenschutz",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "art": "anker",
+      "href": "#bewerben",
+      "text": "Als Kundendiensttechniker bewerbenJetzt bewerben",
+      "fundstelle": "aside.fixed.inset-x-0 > div.mx-auto.flex > a.relative.inline-flex:nth-of-type(1)",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "anker",
+      "href": "#main",
+      "text": "Zum Inhalt springen",
+      "fundstelle": "a.sr-only",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/",
+      "text": "Bad und Energie GmbH Lahn Dill, zur Startseite",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Stellen",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/#vorteile",
+      "text": "Vorteile",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/#ablauf",
+      "text": "Ablauf",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(3) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/#faq",
+      "text": "FAQ",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(4) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Bewerben",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > div.hidden.shrink-0:nth-of-type(1) > a.relative.inline-flex:nth-of-type(2)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/",
+      "text": "Startseite",
+      "fundstelle": "nav > ol.flex.flex-wrap > li.inline-flex.items-center:nth-of-type(1) > a.relative.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Stellen",
+      "fundstelle": "nav > ol.flex.flex-wrap > li.inline-flex.items-center:nth-of-type(2) > a.relative.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "anker",
+      "href": "#bewerben",
+      "text": "Jetzt bewerben",
+      "fundstelle": "div.grid.duration-step:nth-of-type(2) > div.-m-1.min-h-0 > div.pt-5 > a.relative.inline-flex",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Alle offenen Stellen",
+      "fundstelle": "section.py-section.bg-surface-2 > div.mx-auto.box-content > div.flex.flex-wrap > a.rounded-xs.underline",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "text": "Anlagenmechaniker SHK",
+      "fundstelle": "li:nth-of-type(1) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "text": "Kundendiensttechniker",
+      "fundstelle": "li:nth-of-type(2) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "text": "Ausbildung Anlagenmechaniker",
+      "fundstelle": "li:nth-of-type(3) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "text": "Anlagenmechaniker SHK",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "text": "Kundendiensttechniker",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "text": "Obermonteur / Projektleiter",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(3) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "text": "Ausbildung Anlagenmechaniker",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(4) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Alle Stellen",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(5) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/impressum",
+      "text": "Impressum",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "intern",
+      "href": "/datenschutz",
+      "text": "Datenschutz",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "art": "anker",
+      "href": "#bewerben",
+      "text": "Als Obermonteur / Projektleiter bewerbenJetzt bewe",
+      "fundstelle": "aside.fixed.inset-x-0 > div.mx-auto.flex > a.relative.inline-flex:nth-of-type(1)",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "anker",
+      "href": "#main",
+      "text": "Zum Inhalt springen",
+      "fundstelle": "a.sr-only",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/",
+      "text": "Bad und Energie GmbH Lahn Dill, zur Startseite",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Stellen",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/#vorteile",
+      "text": "Vorteile",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/#ablauf",
+      "text": "Ablauf",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(3) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/#faq",
+      "text": "FAQ",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(4) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Bewerben",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > div.hidden.shrink-0:nth-of-type(1) > a.relative.inline-flex:nth-of-type(2)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/",
+      "text": "Startseite",
+      "fundstelle": "nav > ol.flex.flex-wrap > li.inline-flex.items-center:nth-of-type(1) > a.relative.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Stellen",
+      "fundstelle": "nav > ol.flex.flex-wrap > li.inline-flex.items-center:nth-of-type(2) > a.relative.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "anker",
+      "href": "#bewerben",
+      "text": "Jetzt bewerben",
+      "fundstelle": "div.grid.duration-step:nth-of-type(2) > div.-m-1.min-h-0 > div.pt-5 > a.relative.inline-flex",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Alle offenen Stellen",
+      "fundstelle": "section.py-section.bg-surface-2 > div.mx-auto.box-content > div.flex.flex-wrap > a.rounded-xs.underline",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "text": "Anlagenmechaniker SHK",
+      "fundstelle": "li:nth-of-type(1) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "text": "Kundendiensttechniker",
+      "fundstelle": "li:nth-of-type(2) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "text": "Obermonteur / Projektleiter",
+      "fundstelle": "li:nth-of-type(3) > article.rounded-lg.text-ink > h3.text-title-3.text-ink > a",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "text": "Anlagenmechaniker SHK",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "text": "Kundendiensttechniker",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "text": "Obermonteur / Projektleiter",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(3) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "text": "Ausbildung Anlagenmechaniker",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(4) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Alle Stellen",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(5) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/impressum",
+      "text": "Impressum",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "intern",
+      "href": "/datenschutz",
+      "text": "Datenschutz",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "art": "anker",
+      "href": "#bewerben",
+      "text": "Für die Ausbildung bewerbenJetzt bewerben",
+      "fundstelle": "aside.fixed.inset-x-0 > div.mx-auto.flex > a.relative.inline-flex:nth-of-type(1)",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/bewerbung",
+      "art": "anker",
+      "href": "#main",
+      "text": "Zum Inhalt springen",
+      "fundstelle": "a.sr-only",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/bewerbung",
+      "art": "intern",
+      "href": "/",
+      "text": "Bad und Energie GmbH Lahn Dill, zur Startseite",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex:nth-of-type(1)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/bewerbung",
+      "art": "intern",
+      "href": "/",
+      "text": "Abbrechen",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.relative.inline-flex:nth-of-type(2)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/bewerbung",
+      "art": "intern",
+      "href": "/bewerbung/mappe",
+      "text": "Lieber mit kompletter Bewerbungsmappe?",
+      "fundstelle": "div.mx-auto.box-content > div.flex.flex-col > div.flex.flex-col:nth-of-type(3) > a.rounded-xs.underline:nth-of-type(2)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/bewerbung",
+      "art": "intern",
+      "href": "/impressum",
+      "text": "Impressum",
+      "fundstelle": "nav > ul.flex.gap-6 > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/bewerbung",
+      "art": "intern",
+      "href": "/datenschutz",
+      "text": "Datenschutz",
+      "fundstelle": "nav > ul.flex.gap-6 > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/bewerbung/danke",
+      "art": "anker",
+      "href": "#main",
+      "text": "Zum Inhalt springen",
+      "fundstelle": "a.sr-only",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/bewerbung/danke",
+      "art": "intern",
+      "href": "/",
+      "text": "Bad und Energie GmbH Lahn Dill, zur Startseite",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex:nth-of-type(1)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/bewerbung/danke",
+      "art": "intern",
+      "href": "/",
+      "text": "Zur Startseite",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.relative.inline-flex:nth-of-type(2)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/bewerbung/danke",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Jetzt bewerben",
+      "fundstelle": "div.mx-auto.box-content > div.flex.flex-col > div.flex.flex-wrap:nth-of-type(2) > a.relative.inline-flex:nth-of-type(1)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/bewerbung/danke",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Offene Stellen ansehen",
+      "fundstelle": "div.mx-auto.box-content > div.flex.flex-col > div.flex.flex-wrap:nth-of-type(2) > a.rounded-xs.underline:nth-of-type(2)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/bewerbung/danke",
+      "art": "intern",
+      "href": "/impressum",
+      "text": "Impressum",
+      "fundstelle": "nav > ul.flex.gap-6 > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/bewerbung/danke",
+      "art": "intern",
+      "href": "/datenschutz",
+      "text": "Datenschutz",
+      "fundstelle": "nav > ul.flex.gap-6 > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/bewerbung/mappe",
+      "art": "anker",
+      "href": "#main",
+      "text": "Zum Inhalt springen",
+      "fundstelle": "a.sr-only",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/bewerbung/mappe",
+      "art": "intern",
+      "href": "/",
+      "text": "Bad und Energie GmbH Lahn Dill, zur Startseite",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex:nth-of-type(1)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/bewerbung/mappe",
+      "art": "intern",
+      "href": "/",
+      "text": "Zur Startseite",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.relative.inline-flex:nth-of-type(2)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/bewerbung/mappe",
+      "art": "intern",
+      "href": "/impressum",
+      "text": "Impressum",
+      "fundstelle": "nav > ul.flex.gap-6 > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/bewerbung/mappe",
+      "art": "intern",
+      "href": "/datenschutz",
+      "text": "Datenschutz",
+      "fundstelle": "nav > ul.flex.gap-6 > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "anker",
+      "href": "#main",
+      "text": "Zum Inhalt springen",
+      "fundstelle": "a.sr-only",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "intern",
+      "href": "/",
+      "text": "Bad und Energie GmbH Lahn Dill, zur Startseite",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Stellen",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "intern",
+      "href": "/#vorteile",
+      "text": "Vorteile",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "intern",
+      "href": "/#ablauf",
+      "text": "Ablauf",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(3) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "intern",
+      "href": "/#faq",
+      "text": "FAQ",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(4) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Bewerben",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > div.hidden.shrink-0:nth-of-type(1) > a.relative.inline-flex:nth-of-type(2)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "intern",
+      "href": "/",
+      "text": "Startseite",
+      "fundstelle": "nav.print-hidden > ol.flex.flex-wrap > li.inline-flex.items-center:nth-of-type(1) > a.relative.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "anker",
+      "href": "#verantwortlicher",
+      "text": "Verantwortlicher",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(1) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "anker",
+      "href": "#ueberblick",
+      "text": "Kurz gesagt",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(2) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "anker",
+      "href": "#rechtsgrundlagen",
+      "text": "Rechtsgrundlagen",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(3) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "anker",
+      "href": "#datenerfassung",
+      "text": "Hosting und Sicherheit",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(4) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "anker",
+      "href": "#bewerberdaten",
+      "text": "Bewerbung",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(5) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "anker",
+      "href": "#entwurf",
+      "text": "Entwurf im Browser",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(6) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "anker",
+      "href": "#herkunft",
+      "text": "Herkunftsmessung",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(7) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "anker",
+      "href": "#google-maps",
+      "text": "Google Maps",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(8) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "anker",
+      "href": "#kontakt",
+      "text": "Telefon, E-Mail, WhatsApp",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(9) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "anker",
+      "href": "#cookies-analyse",
+      "text": "Cookies und Schriften",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(10) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "anker",
+      "href": "#betroffenenrechte",
+      "text": "Deine Rechte",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(11) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "anker",
+      "href": "#aufsichtsbehoerde",
+      "text": "Aufsichtsbehörde",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(12) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "anker",
+      "href": "#herkunft",
+      "text": "Herkunftsmessung",
+      "fundstelle": "section#bewerberdaten > ul:nth-of-type(1) > li:nth-of-type(7) > a",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "anker",
+      "href": "#datenerfassung",
+      "text": "Schutz vor Missbrauch",
+      "fundstelle": "section#bewerberdaten > ul:nth-of-type(1) > li:nth-of-type(8) > a",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "anker",
+      "href": "#datenerfassung",
+      "text": "Hosting, Server-Logdateien und Sicherheit",
+      "fundstelle": "section#bewerberdaten > p:nth-of-type(7) > a",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "anker",
+      "href": "#entwurf",
+      "text": "Entwurf und Bewerbungsmappe im Browser",
+      "fundstelle": "section#cookies-analyse > p:nth-of-type(1) > a:nth-of-type(1)",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "anker",
+      "href": "#google-maps",
+      "text": "Google Maps",
+      "fundstelle": "section#cookies-analyse > p:nth-of-type(1) > a:nth-of-type(2)",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "intern",
+      "href": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "text": "Anlagenmechaniker SHK",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "intern",
+      "href": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "text": "Kundendiensttechniker",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "intern",
+      "href": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "text": "Obermonteur / Projektleiter",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(3) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "intern",
+      "href": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "text": "Ausbildung Anlagenmechaniker",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(4) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Alle Stellen",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(5) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "intern",
+      "href": "/impressum",
+      "text": "Impressum",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "intern",
+      "href": "/datenschutz",
+      "text": "Datenschutz",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/datenschutz",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Jetzt bewerben",
+      "fundstelle": "aside.fixed.inset-x-0 > div.mx-auto.flex > a.relative.inline-flex:nth-of-type(1)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "anker",
+      "href": "#main",
+      "text": "Zum Inhalt springen",
+      "fundstelle": "a.sr-only",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "intern",
+      "href": "/",
+      "text": "Bad und Energie GmbH Lahn Dill, zur Startseite",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Stellen",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "intern",
+      "href": "/#vorteile",
+      "text": "Vorteile",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/impressum",
+      "art": "intern",
+      "href": "/#ablauf",
+      "text": "Ablauf",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(3) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/impressum",
+      "art": "intern",
+      "href": "/#faq",
+      "text": "FAQ",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(4) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/impressum",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Bewerben",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > div.hidden.shrink-0:nth-of-type(1) > a.relative.inline-flex:nth-of-type(2)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "intern",
+      "href": "/",
+      "text": "Startseite",
+      "fundstelle": "nav.print-hidden > ol.flex.flex-wrap > li.inline-flex.items-center:nth-of-type(1) > a.relative.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "anker",
+      "href": "#anbieter",
+      "text": "Anbieter",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(1) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "anker",
+      "href": "#kontakt",
+      "text": "Kontakt",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(2) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "anker",
+      "href": "#register",
+      "text": "Register und Umsatzsteuer",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(3) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "anker",
+      "href": "#verantwortlich",
+      "text": "Verantwortlich für den Inhalt",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(4) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "anker",
+      "href": "#kammer",
+      "text": "Handwerkskammer",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(5) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "anker",
+      "href": "#streitbeilegung",
+      "text": "Streitbeilegung",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(6) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "anker",
+      "href": "#haftung",
+      "text": "Haftung",
+      "fundstelle": "nav.rounded-lg.bg-surface-2 > ol.mt-2.flex > li:nth-of-type(7) > a.flex.min-h-11",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "intern",
+      "href": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "text": "Anlagenmechaniker SHK",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "intern",
+      "href": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "text": "Kundendiensttechniker",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "intern",
+      "href": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "text": "Obermonteur / Projektleiter",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(3) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "intern",
+      "href": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "text": "Ausbildung Anlagenmechaniker",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(4) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Alle Stellen",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(5) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "intern",
+      "href": "/impressum",
+      "text": "Impressum",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "intern",
+      "href": "/datenschutz",
+      "text": "Datenschutz",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/impressum",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Jetzt bewerben",
+      "fundstelle": "aside.fixed.inset-x-0 > div.mx-auto.flex > a.relative.inline-flex:nth-of-type(1)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/gibt-es-nicht-404",
+      "art": "anker",
+      "href": "#main",
+      "text": "Zum Inhalt springen",
+      "fundstelle": "a.sr-only",
+      "ok": true,
+      "grund": null
+    },
+    {
+      "seite": "/gibt-es-nicht-404",
+      "art": "intern",
+      "href": "/",
+      "text": "Bad und Energie GmbH Lahn Dill, zur Startseite",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > a.-mx-1.inline-flex",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/gibt-es-nicht-404",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Stellen",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/gibt-es-nicht-404",
+      "art": "intern",
+      "href": "/#vorteile",
+      "text": "Vorteile",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/gibt-es-nicht-404",
+      "art": "intern",
+      "href": "/#ablauf",
+      "text": "Ablauf",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(3) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/gibt-es-nicht-404",
+      "art": "intern",
+      "href": "/#faq",
+      "text": "FAQ",
+      "fundstelle": "nav.hidden > ul.flex.items-center > li:nth-of-type(4) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null,
+      "ankerVorhanden": true
+    },
+    {
+      "seite": "/gibt-es-nicht-404",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Bewerben",
+      "fundstelle": "header.sticky.top-0 > div.mx-auto.box-content > div.hidden.shrink-0:nth-of-type(1) > a.relative.inline-flex:nth-of-type(2)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/gibt-es-nicht-404",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Jetzt bewerben",
+      "fundstelle": "section.py-section > div.mx-auto.box-content > div.mt-2.flex > a.relative.inline-flex:nth-of-type(1)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/gibt-es-nicht-404",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Offene Stellen",
+      "fundstelle": "section.py-section > div.mx-auto.box-content > div.mt-2.flex > a.relative.inline-flex:nth-of-type(2)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/gibt-es-nicht-404",
+      "art": "intern",
+      "href": "/",
+      "text": "Zur Startseite",
+      "fundstelle": "main#main > section.py-section > div.mx-auto.box-content > a.rounded-xs.underline",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/gibt-es-nicht-404",
+      "art": "intern",
+      "href": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "text": "Anlagenmechaniker SHK",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/gibt-es-nicht-404",
+      "art": "intern",
+      "href": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "text": "Kundendiensttechniker",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/gibt-es-nicht-404",
+      "art": "intern",
+      "href": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "text": "Obermonteur / Projektleiter",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(3) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/gibt-es-nicht-404",
+      "art": "intern",
+      "href": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "text": "Ausbildung Anlagenmechaniker",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(4) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/gibt-es-nicht-404",
+      "art": "intern",
+      "href": "/jobs",
+      "text": "Alle Stellen",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(5) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/gibt-es-nicht-404",
+      "art": "intern",
+      "href": "/impressum",
+      "text": "Impressum",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(1) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/gibt-es-nicht-404",
+      "art": "intern",
+      "href": "/datenschutz",
+      "text": "Datenschutz",
+      "fundstelle": "nav > ul.flex.flex-col > li:nth-of-type(2) > a.inline-flex.min-h-11",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    },
+    {
+      "seite": "/gibt-es-nicht-404",
+      "art": "intern",
+      "href": "/bewerbung",
+      "text": "Jetzt bewerben",
+      "fundstelle": "aside.fixed.inset-x-0 > div.mx-auto.flex > a.relative.inline-flex:nth-of-type(1)",
+      "status": 200,
+      "ort": null,
+      "ok": true,
+      "weiterleitung": false,
+      "grund": null
+    }
+  ],
+  "altUrls": [
+    {
+      "eintrag": "/",
+      "pfad": "/",
+      "anker": null,
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 161129,
+      "kette": [
+        {
+          "url": "/",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/",
+      "weiterleitung": false,
+      "ergebnis": "ok"
+    },
+    {
+      "eintrag": "/bewerbung",
+      "pfad": "/bewerbung",
+      "anker": null,
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 54764,
+      "kette": [
+        {
+          "url": "/bewerbung",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/bewerbung",
+      "weiterleitung": false,
+      "ergebnis": "ok"
+    },
+    {
+      "eintrag": "/bewerbung?tab=quiz",
+      "pfad": "/bewerbung?tab=quiz",
+      "anker": null,
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 54809,
+      "kette": [
+        {
+          "url": "/bewerbung?tab=quiz",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/bewerbung?tab=quiz",
+      "weiterleitung": false,
+      "ergebnis": "ok"
+    },
+    {
+      "eintrag": "/bewerbung?tab=vault",
+      "pfad": "/bewerbung?tab=vault",
+      "anker": null,
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 54812,
+      "kette": [
+        {
+          "url": "/bewerbung?tab=vault",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/bewerbung?tab=vault",
+      "weiterleitung": false,
+      "ergebnis": "ok"
+    },
+    {
+      "eintrag": "/bewerbung?tab=form",
+      "pfad": "/bewerbung?tab=form",
+      "anker": null,
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 54809,
+      "kette": [
+        {
+          "url": "/bewerbung?tab=form",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/bewerbung?tab=form",
+      "weiterleitung": false,
+      "ergebnis": "ok"
+    },
+    {
+      "eintrag": "/bewerbung?tab=dossier",
+      "pfad": "/bewerbung?tab=dossier",
+      "anker": null,
+      "status": 308,
+      "ort": "/bewerbung/mappe",
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": null,
+      "kette": [
+        {
+          "url": "/bewerbung?tab=dossier",
+          "status": 308,
+          "ort": "/bewerbung/mappe"
+        },
+        {
+          "url": "/bewerbung/mappe",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/bewerbung/mappe",
+      "weiterleitung": true,
+      "ergebnis": "Weiterleitung 308 → /bewerbung/mappe"
+    },
+    {
+      "eintrag": "/bewerbung?direct=true",
+      "pfad": "/bewerbung?direct=true",
+      "anker": null,
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 54818,
+      "kette": [
+        {
+          "url": "/bewerbung?direct=true",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/bewerbung?direct=true",
+      "weiterleitung": false,
+      "ergebnis": "ok"
+    },
+    {
+      "eintrag": "/datenschutz",
+      "pfad": "/datenschutz",
+      "anker": null,
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 108010,
+      "kette": [
+        {
+          "url": "/datenschutz",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/datenschutz",
+      "weiterleitung": false,
+      "ergebnis": "ok"
+    },
+    {
+      "eintrag": "/datenschutz#bewerberdaten",
+      "pfad": "/datenschutz",
+      "anker": "bewerberdaten",
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 108010,
+      "kette": [
+        {
+          "url": "/datenschutz",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/datenschutz",
+      "weiterleitung": false,
+      "ankerVorhanden": true,
+      "ankerPruefungAuf": "/datenschutz",
+      "ergebnis": "ok"
+    },
+    {
+      "eintrag": "/impressum",
+      "pfad": "/impressum",
+      "anker": null,
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 63654,
+      "kette": [
+        {
+          "url": "/impressum",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/impressum",
+      "weiterleitung": false,
+      "ergebnis": "ok"
+    },
+    {
+      "eintrag": "/llms.txt",
+      "pfad": "/llms.txt",
+      "anker": null,
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/plain; charset=utf-8",
+      "bytes": 3787,
+      "kette": [
+        {
+          "url": "/llms.txt",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/llms.txt",
+      "weiterleitung": false,
+      "ergebnis": "ok"
+    },
+    {
+      "eintrag": "/llms-full.txt",
+      "pfad": "/llms-full.txt",
+      "anker": null,
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/plain; charset=utf-8",
+      "bytes": 14265,
+      "kette": [
+        {
+          "url": "/llms-full.txt",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/llms-full.txt",
+      "weiterleitung": false,
+      "ergebnis": "ok"
+    },
+    {
+      "eintrag": "/298d966b7e4f4a43981cb8e30da6b5b5.txt",
+      "pfad": "/298d966b7e4f4a43981cb8e30da6b5b5.txt",
+      "anker": null,
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/plain; charset=UTF-8",
+      "bytes": 33,
+      "kette": [
+        {
+          "url": "/298d966b7e4f4a43981cb8e30da6b5b5.txt",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/298d966b7e4f4a43981cb8e30da6b5b5.txt",
+      "weiterleitung": false,
+      "ergebnis": "ok"
+    },
+    {
+      "eintrag": "/#express-funnel",
+      "pfad": "/",
+      "anker": "express-funnel",
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 161129,
+      "kette": [
+        {
+          "url": "/",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/",
+      "weiterleitung": false,
+      "ankerVorhanden": false,
+      "ankerPruefungAuf": "/",
+      "ergebnis": "Anker fehlt"
+    },
+    {
+      "eintrag": "/#stellen",
+      "pfad": "/",
+      "anker": "stellen",
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 161129,
+      "kette": [
+        {
+          "url": "/",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/",
+      "weiterleitung": false,
+      "ankerVorhanden": true,
+      "ankerPruefungAuf": "/",
+      "ergebnis": "ok"
+    },
+    {
+      "eintrag": "/#gehalt",
+      "pfad": "/",
+      "anker": "gehalt",
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 161129,
+      "kette": [
+        {
+          "url": "/",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/",
+      "weiterleitung": false,
+      "ankerVorhanden": false,
+      "ankerPruefungAuf": "/",
+      "ergebnis": "Anker fehlt"
+    },
+    {
+      "eintrag": "/#karriere-paket",
+      "pfad": "/",
+      "anker": "karriere-paket",
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 161129,
+      "kette": [
+        {
+          "url": "/",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/",
+      "weiterleitung": false,
+      "ankerVorhanden": false,
+      "ankerPruefungAuf": "/",
+      "ergebnis": "Anker fehlt"
+    },
+    {
+      "eintrag": "/#benefits",
+      "pfad": "/",
+      "anker": "benefits",
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 161129,
+      "kette": [
+        {
+          "url": "/",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/",
+      "weiterleitung": false,
+      "ankerVorhanden": false,
+      "ankerPruefungAuf": "/",
+      "ergebnis": "Anker fehlt"
+    },
+    {
+      "eintrag": "/#ausstattung",
+      "pfad": "/",
+      "anker": "ausstattung",
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 161129,
+      "kette": [
+        {
+          "url": "/",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/",
+      "weiterleitung": false,
+      "ankerVorhanden": false,
+      "ankerPruefungAuf": "/",
+      "ergebnis": "Anker fehlt"
+    },
+    {
+      "eintrag": "/#wechsel-prozess",
+      "pfad": "/",
+      "anker": "wechsel-prozess",
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 161129,
+      "kette": [
+        {
+          "url": "/",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/",
+      "weiterleitung": false,
+      "ankerVorhanden": false,
+      "ankerPruefungAuf": "/",
+      "ergebnis": "Anker fehlt"
+    },
+    {
+      "eintrag": "/#einsatzgebiet",
+      "pfad": "/",
+      "anker": "einsatzgebiet",
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 161129,
+      "kette": [
+        {
+          "url": "/",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/",
+      "weiterleitung": false,
+      "ankerVorhanden": true,
+      "ankerPruefungAuf": "/",
+      "ergebnis": "ok"
+    },
+    {
+      "eintrag": "/#bewertungen",
+      "pfad": "/",
+      "anker": "bewertungen",
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 161129,
+      "kette": [
+        {
+          "url": "/",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/",
+      "weiterleitung": false,
+      "ankerVorhanden": false,
+      "ankerPruefungAuf": "/",
+      "ergebnis": "Anker fehlt"
+    },
+    {
+      "eintrag": "/#kontakt",
+      "pfad": "/",
+      "anker": "kontakt",
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 161129,
+      "kette": [
+        {
+          "url": "/",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/",
+      "weiterleitung": false,
+      "ankerVorhanden": false,
+      "ankerPruefungAuf": "/",
+      "ergebnis": "Anker fehlt"
+    },
+    {
+      "eintrag": "/#faq",
+      "pfad": "/",
+      "anker": "faq",
+      "status": 200,
+      "ort": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "bytes": 161129,
+      "kette": [
+        {
+          "url": "/",
+          "status": 200,
+          "ort": null
+        }
+      ],
+      "endstatus": 200,
+      "endpfad": "/",
+      "weiterleitung": false,
+      "ankerVorhanden": true,
+      "ankerPruefungAuf": "/",
+      "ergebnis": "ok"
+    }
+  ],
+  "seiten": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "status": 200,
+      "endUrl": "/",
+      "weitergeleitet": false,
+      "urlGeaendertNachLaden": false,
+      "robotsHeader": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "sprache": "de",
+      "titel": {
+        "text": "SHK Jobs Wetzlar: Anlagenmechaniker & Heizungsbauer",
+        "laenge": 51
+      },
+      "beschreibung": {
+        "text": "SHK-Jobs in Wetzlar: Anlagenmechaniker, Kundendienst, Obermonteur & Ausbildung. 30 Tage Urlaub, freitags ab 13:30 frei. In 60 Sek. bewerben.",
+        "laenge": 140
+      },
+      "canonical": {
+        "anzahl": 1,
+        "href": "https://karriere.bad-energie.de",
+        "absolut": true,
+        "host": "karriere.bad-energie.de",
+        "pfad": "/",
+        "pfadGleichSeite": true
+      },
+      "robots": {
+        "meta": "index, follow",
+        "googlebot": "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1",
+        "header": null,
+        "noindex": false
+      },
+      "og": {
+        "werte": {
+          "og:title": [
+            "SHK Jobs Wetzlar: Anlagenmechaniker & Heizungsbauer"
+          ],
+          "og:description": [
+            "SHK-Jobs in Wetzlar: Anlagenmechaniker, Kundendienst, Obermonteur & Ausbildung. 30 Tage Urlaub, freitags ab 13:30 frei. In 60 Sek. bewerben."
+          ],
+          "og:url": [
+            "https://karriere.bad-energie.de"
+          ],
+          "og:site_name": [
+            "Bad und Energie GmbH Lahn Dill"
+          ],
+          "og:locale": [
+            "de_DE"
+          ],
+          "og:image": [
+            "https://karriere.bad-energie.de/opengraph-image?eb2cfa3c47c4d578"
+          ],
+          "og:image:type": [
+            "image/png"
+          ],
+          "og:image:width": [
+            "1200"
+          ],
+          "og:image:height": [
+            "630"
+          ],
+          "og:image:alt": [
+            "Bad und Energie GmbH Lahn Dill: SHK-Jobs in Wetzlar"
+          ],
+          "og:type": [
+            "website"
+          ]
+        },
+        "anzahlKeys": 11,
+        "fehlend": []
+      },
+      "twitter": {
+        "werte": {
+          "twitter:card": [
+            "summary_large_image"
+          ],
+          "twitter:title": [
+            "SHK Jobs Wetzlar: Anlagenmechaniker & Heizungsbauer"
+          ],
+          "twitter:description": [
+            "SHK-Jobs in Wetzlar: Anlagenmechaniker, Kundendienst, Obermonteur & Ausbildung. 30 Tage Urlaub, freitags ab 13:30 frei. In 60 Sek. bewerben."
+          ],
+          "twitter:image": [
+            "https://karriere.bad-energie.de/opengraph-image?eb2cfa3c47c4d578"
+          ],
+          "twitter:image:alt": [
+            "Bad und Energie GmbH Lahn Dill: SHK-Jobs in Wetzlar"
+          ],
+          "twitter:image:type": [
+            "image/png"
+          ],
+          "twitter:image:width": [
+            "1200"
+          ],
+          "twitter:image:height": [
+            "630"
+          ]
+        },
+        "anzahlKeys": 8,
+        "fehlend": []
+      },
+      "hreflang": [],
+      "alternates": [],
+      "jsonld": {
+        "anzahl": 2,
+        "ungueltig": 0,
+        "typen": [
+          "FAQPage",
+          "Organization",
+          "WebSite",
+          "LocalBusiness"
+        ],
+        "bloecke": [
+          {
+            "nr": 1,
+            "gueltig": true,
+            "context": "https://schema.org",
+            "typen": [
+              "FAQPage"
+            ],
+            "typenVerschachtelt": [
+              "FAQPage",
+              "Question",
+              "Answer"
+            ],
+            "bytes": 1927
+          },
+          {
+            "nr": 2,
+            "gueltig": true,
+            "context": "https://schema.org",
+            "typen": [
+              "Organization",
+              "WebSite",
+              "LocalBusiness"
+            ],
+            "typenVerschachtelt": [
+              "Organization",
+              "PostalAddress",
+              "ContactPoint",
+              "WebSite",
+              "LocalBusiness",
+              "GeoCoordinates",
+              "GeoCircle",
+              "OpeningHoursSpecification"
+            ],
+            "bytes": 2460
+          }
+        ]
+      },
+      "ueberschriften": {
+        "h1Anzahl": 1,
+        "h1": [
+          {
+            "text": "SHK-Jobs in Wetzlar. Ehrliches Handwerk. Pünktlich Feierabend.",
+            "sichtbar": true
+          }
+        ],
+        "gesamt": 28,
+        "ebenenspruenge": 0
+      },
+      "bilder": {
+        "gesamt": 1,
+        "mitAlt": 1,
+        "dekorativ": 0,
+        "altFehlt": 0,
+        "altLeerMitLeerraum": 0,
+        "fehlend": [],
+        "dekorativListe": [],
+        "svgMitRoleImg": [
+          {
+            "fundstelle": "div.grid.items-start:nth-of-type(2) > div.flex.flex-col:nth-of-type(1) > div.relative.mx-auto > svg",
+            "name": "Einsatzgebiet: 35 km um Wetzlar"
+          },
+          {
+            "fundstelle": "figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg",
+            "name": "5,0 von 5 Sternen"
+          },
+          {
+            "fundstelle": "figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg",
+            "name": "5,0 von 5 Sternen"
+          },
+          {
+            "fundstelle": "figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg",
+            "name": "5,0 von 5 Sternen"
+          },
+          {
+            "fundstelle": "figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg",
+            "name": "5,0 von 5 Sternen"
+          },
+          {
+            "fundstelle": "figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg",
+            "name": "5,0 von 5 Sternen"
+          },
+          {
+            "fundstelle": "figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg",
+            "name": "5,0 von 5 Sternen"
+          },
+          {
+            "fundstelle": "figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg",
+            "name": "5,0 von 5 Sternen"
+          },
+          {
+            "fundstelle": "figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg",
+            "name": "5,0 von 5 Sternen"
+          },
+          {
+            "fundstelle": "figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg",
+            "name": "5,0 von 5 Sternen"
+          },
+          {
+            "fundstelle": "figure.flex.w-full > div.flex.min-h-5 > span.inline-flex.items-center > svg",
+            "name": "5,0 von 5 Sternen"
+          }
+        ]
+      },
+      "sonstigeMeta": [
+        "theme-color",
+        "theme-color",
+        "color-scheme",
+        "application-name",
+        "author",
+        "keywords",
+        "publisher",
+        "geo.region",
+        "geo.placename",
+        "geo.position",
+        "ICBM",
+        "format-detection",
+        "next-size-adjust"
+      ],
+      "links": {
+        "gesamt": 34,
+        "nachArt": {
+          "anker": 2,
+          "intern": 24,
+          "tel": 3,
+          "absolut": 3,
+          "mailto": 2
+        },
+        "extern": [
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20eine%20Stelle%20bei%20Bad%20und%20Energie.",
+          "https://bad-energie.de",
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20eine%20Stelle%20bei%20Bad%20und%20Energie."
+        ]
+      },
+      "fehler": [],
+      "gesperrt": 0,
+      "idsAnzahl": 34
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "status": 200,
+      "endUrl": "/jobs",
+      "weitergeleitet": false,
+      "urlGeaendertNachLaden": false,
+      "robotsHeader": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "sprache": "de",
+      "titel": {
+        "text": "Stellenangebote SHK Wetzlar & Gießen – alle offenen Jobs",
+        "laenge": 56
+      },
+      "beschreibung": {
+        "text": "Offene SHK-Jobs in Wetzlar & Gießen: Anlagenmechaniker, Kundendienst, Obermonteur, Ausbildung. 30 Tage Urlaub, freitags ab 13:30 frei. In 60 Sek. bewerben.",
+        "laenge": 155
+      },
+      "canonical": {
+        "anzahl": 1,
+        "href": "https://karriere.bad-energie.de/jobs",
+        "absolut": true,
+        "host": "karriere.bad-energie.de",
+        "pfad": "/jobs",
+        "pfadGleichSeite": true
+      },
+      "robots": {
+        "meta": "index, follow",
+        "googlebot": "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1",
+        "header": null,
+        "noindex": false
+      },
+      "og": {
+        "werte": {
+          "og:title": [
+            "Stellenangebote SHK Wetzlar & Gießen – alle offenen Jobs"
+          ],
+          "og:description": [
+            "Offene SHK-Jobs in Wetzlar & Gießen: Anlagenmechaniker, Kundendienst, Obermonteur, Ausbildung. 30 Tage Urlaub, freitags ab 13:30 frei. In 60 Sek. bewerben."
+          ],
+          "og:url": [
+            "https://karriere.bad-energie.de/jobs"
+          ],
+          "og:site_name": [
+            "Bad und Energie GmbH Lahn Dill"
+          ],
+          "og:locale": [
+            "de_DE"
+          ],
+          "og:image": [
+            "https://karriere.bad-energie.de/opengraph-image"
+          ],
+          "og:image:type": [
+            "image/png"
+          ],
+          "og:image:width": [
+            "1200"
+          ],
+          "og:image:height": [
+            "630"
+          ],
+          "og:image:alt": [
+            "Bad und Energie GmbH Lahn Dill: SHK-Jobs in Wetzlar"
+          ],
+          "og:type": [
+            "website"
+          ]
+        },
+        "anzahlKeys": 11,
+        "fehlend": []
+      },
+      "twitter": {
+        "werte": {
+          "twitter:card": [
+            "summary_large_image"
+          ],
+          "twitter:title": [
+            "Stellenangebote SHK Wetzlar & Gießen – alle offenen Jobs"
+          ],
+          "twitter:description": [
+            "Offene SHK-Jobs in Wetzlar & Gießen: Anlagenmechaniker, Kundendienst, Obermonteur, Ausbildung. 30 Tage Urlaub, freitags ab 13:30 frei. In 60 Sek. bewerben."
+          ],
+          "twitter:image": [
+            "https://karriere.bad-energie.de/opengraph-image"
+          ],
+          "twitter:image:alt": [
+            "Bad und Energie GmbH Lahn Dill: SHK-Jobs in Wetzlar"
+          ],
+          "twitter:image:type": [
+            "image/png"
+          ],
+          "twitter:image:width": [
+            "1200"
+          ],
+          "twitter:image:height": [
+            "630"
+          ]
+        },
+        "anzahlKeys": 8,
+        "fehlend": []
+      },
+      "hreflang": [],
+      "alternates": [],
+      "jsonld": {
+        "anzahl": 2,
+        "ungueltig": 0,
+        "typen": [
+          "BreadcrumbList",
+          "Organization",
+          "WebSite",
+          "LocalBusiness"
+        ],
+        "bloecke": [
+          {
+            "nr": 1,
+            "gueltig": true,
+            "context": "https://schema.org",
+            "typen": [
+              "BreadcrumbList"
+            ],
+            "typenVerschachtelt": [
+              "BreadcrumbList",
+              "ListItem"
+            ],
+            "bytes": 327
+          },
+          {
+            "nr": 2,
+            "gueltig": true,
+            "context": "https://schema.org",
+            "typen": [
+              "Organization",
+              "WebSite",
+              "LocalBusiness"
+            ],
+            "typenVerschachtelt": [
+              "Organization",
+              "PostalAddress",
+              "ContactPoint",
+              "WebSite",
+              "LocalBusiness",
+              "GeoCoordinates",
+              "GeoCircle",
+              "OpeningHoursSpecification"
+            ],
+            "bytes": 2460
+          }
+        ]
+      },
+      "ueberschriften": {
+        "h1Anzahl": 1,
+        "h1": [
+          {
+            "text": "Offene Stellen in Wetzlar und Umgebung",
+            "sichtbar": true
+          }
+        ],
+        "gesamt": 10,
+        "ebenenspruenge": 0
+      },
+      "bilder": {
+        "gesamt": 1,
+        "mitAlt": 1,
+        "dekorativ": 0,
+        "altFehlt": 0,
+        "altLeerMitLeerraum": 0,
+        "fehlend": [],
+        "dekorativListe": [],
+        "svgMitRoleImg": []
+      },
+      "sonstigeMeta": [
+        "theme-color",
+        "theme-color",
+        "color-scheme",
+        "application-name",
+        "author",
+        "keywords",
+        "publisher",
+        "geo.region",
+        "geo.placename",
+        "geo.position",
+        "ICBM",
+        "format-detection",
+        "next-size-adjust"
+      ],
+      "links": {
+        "gesamt": 30,
+        "nachArt": {
+          "anker": 1,
+          "intern": 21,
+          "tel": 3,
+          "absolut": 3,
+          "mailto": 2
+        },
+        "extern": [
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20eine%20Stelle%20bei%20Bad%20und%20Energie.",
+          "https://bad-energie.de",
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20eine%20Stelle%20bei%20Bad%20und%20Energie."
+        ]
+      },
+      "fehler": [],
+      "gesperrt": 0,
+      "idsAnzahl": 7
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "status": 200,
+      "endUrl": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "weitergeleitet": false,
+      "urlGeaendertNachLaden": false,
+      "robotsHeader": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "sprache": "de",
+      "titel": {
+        "text": "Anlagenmechaniker SHK (m/w/d) Job Wetzlar – Wärmepumpe",
+        "laenge": 54
+      },
+      "beschreibung": {
+        "text": "Anlagenmechaniker SHK in Wetzlar: Wärmepumpen & Bäder im 35-km-Umkreis, 3.600–4.600 €, 30 Tage Urlaub, freitags ab 13:30 frei. In 60 Sek. bewerben.",
+        "laenge": 147
+      },
+      "canonical": {
+        "anzahl": 1,
+        "href": "https://karriere.bad-energie.de/jobs/anlagenmechaniker-shk-wetzlar",
+        "absolut": true,
+        "host": "karriere.bad-energie.de",
+        "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+        "pfadGleichSeite": true
+      },
+      "robots": {
+        "meta": "index, follow",
+        "googlebot": "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1",
+        "header": null,
+        "noindex": false
+      },
+      "og": {
+        "werte": {
+          "og:title": [
+            "Anlagenmechaniker SHK (m/w/d) Job Wetzlar – Wärmepumpe"
+          ],
+          "og:description": [
+            "Anlagenmechaniker SHK in Wetzlar: Wärmepumpen & Bäder im 35-km-Umkreis, 3.600–4.600 €, 30 Tage Urlaub, freitags ab 13:30 frei. In 60 Sek. bewerben."
+          ],
+          "og:url": [
+            "https://karriere.bad-energie.de/jobs/anlagenmechaniker-shk-wetzlar"
+          ],
+          "og:site_name": [
+            "Bad und Energie GmbH Lahn Dill"
+          ],
+          "og:locale": [
+            "de_DE"
+          ],
+          "og:image": [
+            "https://karriere.bad-energie.de/jobs/anlagenmechaniker-shk-wetzlar/opengraph-image?v=2026-10-08"
+          ],
+          "og:image:type": [
+            "image/png"
+          ],
+          "og:image:width": [
+            "1200"
+          ],
+          "og:image:height": [
+            "630"
+          ],
+          "og:image:alt": [
+            "Anlagenmechaniker SHK (m/w/d) bei Bad und Energie in Wetzlar, 3.600–4.600 € / Monat"
+          ],
+          "og:type": [
+            "website"
+          ]
+        },
+        "anzahlKeys": 11,
+        "fehlend": []
+      },
+      "twitter": {
+        "werte": {
+          "twitter:card": [
+            "summary_large_image"
+          ],
+          "twitter:title": [
+            "Anlagenmechaniker SHK (m/w/d) Job Wetzlar – Wärmepumpe"
+          ],
+          "twitter:description": [
+            "Anlagenmechaniker SHK in Wetzlar: Wärmepumpen & Bäder im 35-km-Umkreis, 3.600–4.600 €, 30 Tage Urlaub, freitags ab 13:30 frei. In 60 Sek. bewerben."
+          ],
+          "twitter:image": [
+            "https://karriere.bad-energie.de/jobs/anlagenmechaniker-shk-wetzlar/opengraph-image?v=2026-10-08"
+          ],
+          "twitter:image:alt": [
+            "Anlagenmechaniker SHK (m/w/d) bei Bad und Energie in Wetzlar, 3.600–4.600 € / Monat"
+          ],
+          "twitter:image:type": [
+            "image/png"
+          ],
+          "twitter:image:width": [
+            "1200"
+          ],
+          "twitter:image:height": [
+            "630"
+          ]
+        },
+        "anzahlKeys": 8,
+        "fehlend": []
+      },
+      "hreflang": [],
+      "alternates": [],
+      "jsonld": {
+        "anzahl": 2,
+        "ungueltig": 0,
+        "typen": [
+          "JobPosting",
+          "BreadcrumbList",
+          "Organization",
+          "WebSite",
+          "LocalBusiness"
+        ],
+        "bloecke": [
+          {
+            "nr": 1,
+            "gueltig": true,
+            "context": null,
+            "typen": [
+              "JobPosting",
+              "BreadcrumbList"
+            ],
+            "typenVerschachtelt": [
+              "JobPosting",
+              "PropertyValue",
+              "Organization",
+              "Place",
+              "PostalAddress",
+              "MonetaryAmount",
+              "QuantitativeValue",
+              "EducationalOccupationalCredential",
+              "OccupationalExperienceRequirements",
+              "BreadcrumbList",
+              "ListItem"
+            ],
+            "bytes": 4933
+          },
+          {
+            "nr": 2,
+            "gueltig": true,
+            "context": "https://schema.org",
+            "typen": [
+              "Organization",
+              "WebSite",
+              "LocalBusiness"
+            ],
+            "typenVerschachtelt": [
+              "Organization",
+              "PostalAddress",
+              "ContactPoint",
+              "WebSite",
+              "LocalBusiness",
+              "GeoCoordinates",
+              "GeoCircle",
+              "OpeningHoursSpecification"
+            ],
+            "bytes": 2460
+          }
+        ]
+      },
+      "ueberschriften": {
+        "h1Anzahl": 1,
+        "h1": [
+          {
+            "text": "Anlagen­mechaniker SHK (m/w/d) in Wetzlar",
+            "sichtbar": true
+          }
+        ],
+        "gesamt": 22,
+        "ebenenspruenge": 0
+      },
+      "bilder": {
+        "gesamt": 1,
+        "mitAlt": 1,
+        "dekorativ": 0,
+        "altFehlt": 0,
+        "altLeerMitLeerraum": 0,
+        "fehlend": [],
+        "dekorativListe": [],
+        "svgMitRoleImg": []
+      },
+      "sonstigeMeta": [
+        "theme-color",
+        "theme-color",
+        "color-scheme",
+        "application-name",
+        "author",
+        "keywords",
+        "publisher",
+        "geo.region",
+        "geo.placename",
+        "geo.position",
+        "ICBM",
+        "format-detection",
+        "next-size-adjust"
+      ],
+      "links": {
+        "gesamt": 34,
+        "nachArt": {
+          "anker": 3,
+          "intern": 19,
+          "tel": 4,
+          "absolut": 5,
+          "mailto": 3
+        },
+        "extern": [
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20m%C3%B6chte%20mich%20bei%20Bad%20und%20Energie%20bewerben.%0AStelle%3A%20Anlagenmechaniker%20SHK",
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20die%20Stelle%20als%20Anlagenmechaniker%20SHK.",
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20die%20Stelle%20als%20Anlagenmechaniker%20SHK.",
+          "https://bad-energie.de",
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20eine%20Stelle%20bei%20Bad%20und%20Energie."
+        ]
+      },
+      "fehler": [],
+      "gesperrt": 0,
+      "idsAnzahl": 23
+    },
+    {
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "slug": "stelle-kundendienst",
+      "status": 200,
+      "endUrl": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "weitergeleitet": false,
+      "urlGeaendertNachLaden": false,
+      "robotsHeader": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "sprache": "de",
+      "titel": {
+        "text": "Kundendiensttechniker Heizung & Wärmepumpe – Wetzlar/Gießen",
+        "laenge": 59
+      },
+      "beschreibung": {
+        "text": "Kundendiensttechniker SHK (m/w/d) in Wetzlar: Wärmepumpen-Service, 3.800–4.900 €, eigenes Servicefahrzeug, kein Wochenend-Notdienst. In 60 Sek. bewerben.",
+        "laenge": 153
+      },
+      "canonical": {
+        "anzahl": 1,
+        "href": "https://karriere.bad-energie.de/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+        "absolut": true,
+        "host": "karriere.bad-energie.de",
+        "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+        "pfadGleichSeite": true
+      },
+      "robots": {
+        "meta": "index, follow",
+        "googlebot": "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1",
+        "header": null,
+        "noindex": false
+      },
+      "og": {
+        "werte": {
+          "og:title": [
+            "Kundendiensttechniker Heizung & Wärmepumpe – Wetzlar/Gießen"
+          ],
+          "og:description": [
+            "Kundendiensttechniker SHK (m/w/d) in Wetzlar: Wärmepumpen-Service, 3.800–4.900 €, eigenes Servicefahrzeug, kein Wochenend-Notdienst. In 60 Sek. bewerben."
+          ],
+          "og:url": [
+            "https://karriere.bad-energie.de/jobs/kundendiensttechniker-waermepumpe-wetzlar"
+          ],
+          "og:site_name": [
+            "Bad und Energie GmbH Lahn Dill"
+          ],
+          "og:locale": [
+            "de_DE"
+          ],
+          "og:image": [
+            "https://karriere.bad-energie.de/jobs/kundendiensttechniker-waermepumpe-wetzlar/opengraph-image?v=2026-10-08"
+          ],
+          "og:image:type": [
+            "image/png"
+          ],
+          "og:image:width": [
+            "1200"
+          ],
+          "og:image:height": [
+            "630"
+          ],
+          "og:image:alt": [
+            "Kundendiensttechniker (m/w/d) bei Bad und Energie in Wetzlar, 3.800–4.900 € / Monat"
+          ],
+          "og:type": [
+            "website"
+          ]
+        },
+        "anzahlKeys": 11,
+        "fehlend": []
+      },
+      "twitter": {
+        "werte": {
+          "twitter:card": [
+            "summary_large_image"
+          ],
+          "twitter:title": [
+            "Kundendiensttechniker Heizung & Wärmepumpe – Wetzlar/Gießen"
+          ],
+          "twitter:description": [
+            "Kundendiensttechniker SHK (m/w/d) in Wetzlar: Wärmepumpen-Service, 3.800–4.900 €, eigenes Servicefahrzeug, kein Wochenend-Notdienst. In 60 Sek. bewerben."
+          ],
+          "twitter:image": [
+            "https://karriere.bad-energie.de/jobs/kundendiensttechniker-waermepumpe-wetzlar/opengraph-image?v=2026-10-08"
+          ],
+          "twitter:image:alt": [
+            "Kundendiensttechniker (m/w/d) bei Bad und Energie in Wetzlar, 3.800–4.900 € / Monat"
+          ],
+          "twitter:image:type": [
+            "image/png"
+          ],
+          "twitter:image:width": [
+            "1200"
+          ],
+          "twitter:image:height": [
+            "630"
+          ]
+        },
+        "anzahlKeys": 8,
+        "fehlend": []
+      },
+      "hreflang": [],
+      "alternates": [],
+      "jsonld": {
+        "anzahl": 2,
+        "ungueltig": 0,
+        "typen": [
+          "JobPosting",
+          "BreadcrumbList",
+          "Organization",
+          "WebSite",
+          "LocalBusiness"
+        ],
+        "bloecke": [
+          {
+            "nr": 1,
+            "gueltig": true,
+            "context": null,
+            "typen": [
+              "JobPosting",
+              "BreadcrumbList"
+            ],
+            "typenVerschachtelt": [
+              "JobPosting",
+              "PropertyValue",
+              "Organization",
+              "Place",
+              "PostalAddress",
+              "MonetaryAmount",
+              "QuantitativeValue",
+              "EducationalOccupationalCredential",
+              "OccupationalExperienceRequirements",
+              "BreadcrumbList",
+              "ListItem"
+            ],
+            "bytes": 5004
+          },
+          {
+            "nr": 2,
+            "gueltig": true,
+            "context": "https://schema.org",
+            "typen": [
+              "Organization",
+              "WebSite",
+              "LocalBusiness"
+            ],
+            "typenVerschachtelt": [
+              "Organization",
+              "PostalAddress",
+              "ContactPoint",
+              "WebSite",
+              "LocalBusiness",
+              "GeoCoordinates",
+              "GeoCircle",
+              "OpeningHoursSpecification"
+            ],
+            "bytes": 2460
+          }
+        ]
+      },
+      "ueberschriften": {
+        "h1Anzahl": 1,
+        "h1": [
+          {
+            "text": "Kunden­dienst­techniker SHK / Service­monteur (m/w/d)",
+            "sichtbar": true
+          }
+        ],
+        "gesamt": 22,
+        "ebenenspruenge": 0
+      },
+      "bilder": {
+        "gesamt": 1,
+        "mitAlt": 1,
+        "dekorativ": 0,
+        "altFehlt": 0,
+        "altLeerMitLeerraum": 0,
+        "fehlend": [],
+        "dekorativListe": [],
+        "svgMitRoleImg": []
+      },
+      "sonstigeMeta": [
+        "theme-color",
+        "theme-color",
+        "color-scheme",
+        "application-name",
+        "author",
+        "keywords",
+        "publisher",
+        "geo.region",
+        "geo.placename",
+        "geo.position",
+        "ICBM",
+        "format-detection",
+        "next-size-adjust"
+      ],
+      "links": {
+        "gesamt": 34,
+        "nachArt": {
+          "anker": 3,
+          "intern": 19,
+          "tel": 4,
+          "absolut": 5,
+          "mailto": 3
+        },
+        "extern": [
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20m%C3%B6chte%20mich%20bei%20Bad%20und%20Energie%20bewerben.%0AStelle%3A%20Kundendiensttechniker",
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20die%20Stelle%20als%20Kundendiensttechniker.",
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20die%20Stelle%20als%20Kundendiensttechniker.",
+          "https://bad-energie.de",
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20eine%20Stelle%20bei%20Bad%20und%20Energie."
+        ]
+      },
+      "fehler": [],
+      "gesperrt": 0,
+      "idsAnzahl": 23
+    },
+    {
+      "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "slug": "stelle-obermonteur",
+      "status": 200,
+      "endUrl": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "weitergeleitet": false,
+      "urlGeaendertNachLaden": false,
+      "robotsHeader": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "sprache": "de",
+      "titel": {
+        "text": "Obermonteur / Projektleiter SHK Job Wetzlar (m/w/d)",
+        "laenge": 51
+      },
+      "beschreibung": {
+        "text": "Obermonteur / Projektleiter SHK (m/w/d) in Wetzlar: Bäder & Heizungsprojekte eigenverantwortlich leiten, 4.400–5.600 €, 30 Tage Urlaub. Jetzt bewerben.",
+        "laenge": 151
+      },
+      "canonical": {
+        "anzahl": 1,
+        "href": "https://karriere.bad-energie.de/jobs/obermonteur-projektleiter-shk-wetzlar",
+        "absolut": true,
+        "host": "karriere.bad-energie.de",
+        "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+        "pfadGleichSeite": true
+      },
+      "robots": {
+        "meta": "index, follow",
+        "googlebot": "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1",
+        "header": null,
+        "noindex": false
+      },
+      "og": {
+        "werte": {
+          "og:title": [
+            "Obermonteur / Projektleiter SHK Job Wetzlar (m/w/d)"
+          ],
+          "og:description": [
+            "Obermonteur / Projektleiter SHK (m/w/d) in Wetzlar: Bäder & Heizungsprojekte eigenverantwortlich leiten, 4.400–5.600 €, 30 Tage Urlaub. Jetzt bewerben."
+          ],
+          "og:url": [
+            "https://karriere.bad-energie.de/jobs/obermonteur-projektleiter-shk-wetzlar"
+          ],
+          "og:site_name": [
+            "Bad und Energie GmbH Lahn Dill"
+          ],
+          "og:locale": [
+            "de_DE"
+          ],
+          "og:image": [
+            "https://karriere.bad-energie.de/jobs/obermonteur-projektleiter-shk-wetzlar/opengraph-image?v=2026-10-08"
+          ],
+          "og:image:type": [
+            "image/png"
+          ],
+          "og:image:width": [
+            "1200"
+          ],
+          "og:image:height": [
+            "630"
+          ],
+          "og:image:alt": [
+            "Obermonteur / Projektleiter (m/w/d) bei Bad und Energie in Wetzlar, 4.400–5.600 € / Monat"
+          ],
+          "og:type": [
+            "website"
+          ]
+        },
+        "anzahlKeys": 11,
+        "fehlend": []
+      },
+      "twitter": {
+        "werte": {
+          "twitter:card": [
+            "summary_large_image"
+          ],
+          "twitter:title": [
+            "Obermonteur / Projektleiter SHK Job Wetzlar (m/w/d)"
+          ],
+          "twitter:description": [
+            "Obermonteur / Projektleiter SHK (m/w/d) in Wetzlar: Bäder & Heizungsprojekte eigenverantwortlich leiten, 4.400–5.600 €, 30 Tage Urlaub. Jetzt bewerben."
+          ],
+          "twitter:image": [
+            "https://karriere.bad-energie.de/jobs/obermonteur-projektleiter-shk-wetzlar/opengraph-image?v=2026-10-08"
+          ],
+          "twitter:image:alt": [
+            "Obermonteur / Projektleiter (m/w/d) bei Bad und Energie in Wetzlar, 4.400–5.600 € / Monat"
+          ],
+          "twitter:image:type": [
+            "image/png"
+          ],
+          "twitter:image:width": [
+            "1200"
+          ],
+          "twitter:image:height": [
+            "630"
+          ]
+        },
+        "anzahlKeys": 8,
+        "fehlend": []
+      },
+      "hreflang": [],
+      "alternates": [],
+      "jsonld": {
+        "anzahl": 2,
+        "ungueltig": 0,
+        "typen": [
+          "JobPosting",
+          "BreadcrumbList",
+          "Organization",
+          "WebSite",
+          "LocalBusiness"
+        ],
+        "bloecke": [
+          {
+            "nr": 1,
+            "gueltig": true,
+            "context": null,
+            "typen": [
+              "JobPosting",
+              "BreadcrumbList"
+            ],
+            "typenVerschachtelt": [
+              "JobPosting",
+              "PropertyValue",
+              "Organization",
+              "Place",
+              "PostalAddress",
+              "MonetaryAmount",
+              "QuantitativeValue",
+              "EducationalOccupationalCredential",
+              "OccupationalExperienceRequirements",
+              "BreadcrumbList",
+              "ListItem"
+            ],
+            "bytes": 4932
+          },
+          {
+            "nr": 2,
+            "gueltig": true,
+            "context": "https://schema.org",
+            "typen": [
+              "Organization",
+              "WebSite",
+              "LocalBusiness"
+            ],
+            "typenVerschachtelt": [
+              "Organization",
+              "PostalAddress",
+              "ContactPoint",
+              "WebSite",
+              "LocalBusiness",
+              "GeoCoordinates",
+              "GeoCircle",
+              "OpeningHoursSpecification"
+            ],
+            "bytes": 2460
+          }
+        ]
+      },
+      "ueberschriften": {
+        "h1Anzahl": 1,
+        "h1": [
+          {
+            "text": "Ober­monteur / Projekt­leiter SHK (m/w/d) in Wetzlar",
+            "sichtbar": true
+          }
+        ],
+        "gesamt": 22,
+        "ebenenspruenge": 0
+      },
+      "bilder": {
+        "gesamt": 1,
+        "mitAlt": 1,
+        "dekorativ": 0,
+        "altFehlt": 0,
+        "altLeerMitLeerraum": 0,
+        "fehlend": [],
+        "dekorativListe": [],
+        "svgMitRoleImg": []
+      },
+      "sonstigeMeta": [
+        "theme-color",
+        "theme-color",
+        "color-scheme",
+        "application-name",
+        "author",
+        "keywords",
+        "publisher",
+        "geo.region",
+        "geo.placename",
+        "geo.position",
+        "ICBM",
+        "format-detection",
+        "next-size-adjust"
+      ],
+      "links": {
+        "gesamt": 34,
+        "nachArt": {
+          "anker": 3,
+          "intern": 19,
+          "tel": 4,
+          "absolut": 5,
+          "mailto": 3
+        },
+        "extern": [
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20m%C3%B6chte%20mich%20bei%20Bad%20und%20Energie%20bewerben.%0AStelle%3A%20Obermonteur%20%2F%20Projektleiter",
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20die%20Stelle%20als%20Obermonteur%20%2F%20Projektleiter.",
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20die%20Stelle%20als%20Obermonteur%20%2F%20Projektleiter.",
+          "https://bad-energie.de",
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20eine%20Stelle%20bei%20Bad%20und%20Energie."
+        ]
+      },
+      "fehler": [],
+      "gesperrt": 0,
+      "idsAnzahl": 23
+    },
+    {
+      "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-ausbildung",
+      "status": 200,
+      "endUrl": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "weitergeleitet": false,
+      "urlGeaendertNachLaden": false,
+      "robotsHeader": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "sprache": "de",
+      "titel": {
+        "text": "Ausbildung Anlagenmechaniker SHK Wetzlar (m/w/d) 2026",
+        "laenge": 53
+      },
+      "beschreibung": {
+        "text": "Ausbildung Anlagenmechaniker SHK in Wetzlar – Einstieg 2026 noch möglich: eigenes Hilti-Werkzeugset, 1.050–1.400 € im Monat, Fahrtkostenzuschuss.",
+        "laenge": 145
+      },
+      "canonical": {
+        "anzahl": 1,
+        "href": "https://karriere.bad-energie.de/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+        "absolut": true,
+        "host": "karriere.bad-energie.de",
+        "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+        "pfadGleichSeite": true
+      },
+      "robots": {
+        "meta": "index, follow",
+        "googlebot": "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1",
+        "header": null,
+        "noindex": false
+      },
+      "og": {
+        "werte": {
+          "og:title": [
+            "Ausbildung Anlagenmechaniker SHK Wetzlar (m/w/d) 2026"
+          ],
+          "og:description": [
+            "Ausbildung Anlagenmechaniker SHK in Wetzlar – Einstieg 2026 noch möglich: eigenes Hilti-Werkzeugset, 1.050–1.400 € im Monat, Fahrtkostenzuschuss."
+          ],
+          "og:url": [
+            "https://karriere.bad-energie.de/jobs/ausbildung-anlagenmechaniker-shk-wetzlar"
+          ],
+          "og:site_name": [
+            "Bad und Energie GmbH Lahn Dill"
+          ],
+          "og:locale": [
+            "de_DE"
+          ],
+          "og:image": [
+            "https://karriere.bad-energie.de/jobs/ausbildung-anlagenmechaniker-shk-wetzlar/opengraph-image?v=2026-10-08"
+          ],
+          "og:image:type": [
+            "image/png"
+          ],
+          "og:image:width": [
+            "1200"
+          ],
+          "og:image:height": [
+            "630"
+          ],
+          "og:image:alt": [
+            "Ausbildung Anlagenmechaniker (m/w/d) bei Bad und Energie in Wetzlar, 1.050–1.400 € / Monat"
+          ],
+          "og:type": [
+            "website"
+          ]
+        },
+        "anzahlKeys": 11,
+        "fehlend": []
+      },
+      "twitter": {
+        "werte": {
+          "twitter:card": [
+            "summary_large_image"
+          ],
+          "twitter:title": [
+            "Ausbildung Anlagenmechaniker SHK Wetzlar (m/w/d) 2026"
+          ],
+          "twitter:description": [
+            "Ausbildung Anlagenmechaniker SHK in Wetzlar – Einstieg 2026 noch möglich: eigenes Hilti-Werkzeugset, 1.050–1.400 € im Monat, Fahrtkostenzuschuss."
+          ],
+          "twitter:image": [
+            "https://karriere.bad-energie.de/jobs/ausbildung-anlagenmechaniker-shk-wetzlar/opengraph-image?v=2026-10-08"
+          ],
+          "twitter:image:alt": [
+            "Ausbildung Anlagenmechaniker (m/w/d) bei Bad und Energie in Wetzlar, 1.050–1.400 € / Monat"
+          ],
+          "twitter:image:type": [
+            "image/png"
+          ],
+          "twitter:image:width": [
+            "1200"
+          ],
+          "twitter:image:height": [
+            "630"
+          ]
+        },
+        "anzahlKeys": 8,
+        "fehlend": []
+      },
+      "hreflang": [],
+      "alternates": [],
+      "jsonld": {
+        "anzahl": 2,
+        "ungueltig": 0,
+        "typen": [
+          "JobPosting",
+          "BreadcrumbList",
+          "Organization",
+          "WebSite",
+          "LocalBusiness"
+        ],
+        "bloecke": [
+          {
+            "nr": 1,
+            "gueltig": true,
+            "context": null,
+            "typen": [
+              "JobPosting",
+              "BreadcrumbList"
+            ],
+            "typenVerschachtelt": [
+              "JobPosting",
+              "PropertyValue",
+              "Organization",
+              "Place",
+              "PostalAddress",
+              "MonetaryAmount",
+              "QuantitativeValue",
+              "EducationalOccupationalCredential",
+              "BreadcrumbList",
+              "ListItem"
+            ],
+            "bytes": 4327
+          },
+          {
+            "nr": 2,
+            "gueltig": true,
+            "context": "https://schema.org",
+            "typen": [
+              "Organization",
+              "WebSite",
+              "LocalBusiness"
+            ],
+            "typenVerschachtelt": [
+              "Organization",
+              "PostalAddress",
+              "ContactPoint",
+              "WebSite",
+              "LocalBusiness",
+              "GeoCoordinates",
+              "GeoCircle",
+              "OpeningHoursSpecification"
+            ],
+            "bytes": 2460
+          }
+        ]
+      },
+      "ueberschriften": {
+        "h1Anzahl": 1,
+        "h1": [
+          {
+            "text": "Ausbildung Anlagen­mechaniker SHK – Einstieg 2026 noch möglich",
+            "sichtbar": true
+          }
+        ],
+        "gesamt": 22,
+        "ebenenspruenge": 0
+      },
+      "bilder": {
+        "gesamt": 1,
+        "mitAlt": 1,
+        "dekorativ": 0,
+        "altFehlt": 0,
+        "altLeerMitLeerraum": 0,
+        "fehlend": [],
+        "dekorativListe": [],
+        "svgMitRoleImg": []
+      },
+      "sonstigeMeta": [
+        "theme-color",
+        "theme-color",
+        "color-scheme",
+        "application-name",
+        "author",
+        "keywords",
+        "publisher",
+        "geo.region",
+        "geo.placename",
+        "geo.position",
+        "ICBM",
+        "format-detection",
+        "next-size-adjust"
+      ],
+      "links": {
+        "gesamt": 34,
+        "nachArt": {
+          "anker": 3,
+          "intern": 19,
+          "tel": 4,
+          "absolut": 5,
+          "mailto": 3
+        },
+        "extern": [
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20m%C3%B6chte%20mich%20bei%20Bad%20und%20Energie%20bewerben.%0AStelle%3A%20Ausbildung%20Anlagenmechaniker",
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20die%20Ausbildung%20zum%20Anlagenmechaniker%20SHK.",
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20die%20Ausbildung%20zum%20Anlagenmechaniker%20SHK.",
+          "https://bad-energie.de",
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20eine%20Stelle%20bei%20Bad%20und%20Energie."
+        ]
+      },
+      "fehler": [],
+      "gesperrt": 0,
+      "idsAnzahl": 21
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "status": 200,
+      "endUrl": "/bewerbung?schritt=stelle",
+      "weitergeleitet": false,
+      "urlGeaendertNachLaden": true,
+      "robotsHeader": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "sprache": "de",
+      "titel": {
+        "text": "Bewerben in 60 Sekunden – ohne Lebenslauf | Bad & Energie",
+        "laenge": 57
+      },
+      "beschreibung": {
+        "text": "Bewirb dich in ca. 60 Sekunden bei Bad und Energie in Wetzlar: ein paar kurze Fragen, Name und Telefon. Kein Lebenslauf nötig, 100 % diskret.",
+        "laenge": 141
+      },
+      "canonical": {
+        "anzahl": 1,
+        "href": "http://localhost:3500/bewerbung",
+        "absolut": true,
+        "host": "localhost:3500",
+        "pfad": "/bewerbung",
+        "pfadGleichSeite": true
+      },
+      "robots": {
+        "meta": "index, follow",
+        "googlebot": "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1",
+        "header": null,
+        "noindex": false
+      },
+      "og": {
+        "werte": {
+          "og:title": [
+            "Bewerben in 60 Sekunden – ohne Lebenslauf | Bad & Energie"
+          ],
+          "og:description": [
+            "Bewirb dich in ca. 60 Sekunden bei Bad und Energie in Wetzlar: ein paar kurze Fragen, Name und Telefon. Kein Lebenslauf nötig, 100 % diskret."
+          ],
+          "og:url": [
+            "http://localhost:3500/bewerbung"
+          ],
+          "og:site_name": [
+            "Bad und Energie GmbH Lahn Dill"
+          ],
+          "og:locale": [
+            "de_DE"
+          ],
+          "og:image": [
+            "http://localhost:3500/opengraph-image"
+          ],
+          "og:image:type": [
+            "image/png"
+          ],
+          "og:image:width": [
+            "1200"
+          ],
+          "og:image:height": [
+            "630"
+          ],
+          "og:image:alt": [
+            "Bad und Energie GmbH Lahn Dill: SHK-Jobs in Wetzlar"
+          ],
+          "og:type": [
+            "website"
+          ]
+        },
+        "anzahlKeys": 11,
+        "fehlend": []
+      },
+      "twitter": {
+        "werte": {
+          "twitter:card": [
+            "summary_large_image"
+          ],
+          "twitter:title": [
+            "Bewerben in 60 Sekunden – ohne Lebenslauf | Bad & Energie"
+          ],
+          "twitter:description": [
+            "Bewirb dich in ca. 60 Sekunden bei Bad und Energie in Wetzlar: ein paar kurze Fragen, Name und Telefon. Kein Lebenslauf nötig, 100 % diskret."
+          ],
+          "twitter:image": [
+            "http://localhost:3500/opengraph-image"
+          ],
+          "twitter:image:alt": [
+            "Bad und Energie GmbH Lahn Dill: SHK-Jobs in Wetzlar"
+          ],
+          "twitter:image:type": [
+            "image/png"
+          ],
+          "twitter:image:width": [
+            "1200"
+          ],
+          "twitter:image:height": [
+            "630"
+          ]
+        },
+        "anzahlKeys": 8,
+        "fehlend": []
+      },
+      "hreflang": [],
+      "alternates": [],
+      "jsonld": {
+        "anzahl": 2,
+        "ungueltig": 0,
+        "typen": [
+          "WebPage",
+          "Organization",
+          "WebSite",
+          "LocalBusiness"
+        ],
+        "bloecke": [
+          {
+            "nr": 1,
+            "gueltig": true,
+            "context": "https://schema.org",
+            "typen": [
+              "WebPage"
+            ],
+            "typenVerschachtelt": [
+              "WebPage"
+            ],
+            "bytes": 437
+          },
+          {
+            "nr": 2,
+            "gueltig": true,
+            "context": "https://schema.org",
+            "typen": [
+              "Organization",
+              "WebSite",
+              "LocalBusiness"
+            ],
+            "typenVerschachtelt": [
+              "Organization",
+              "PostalAddress",
+              "ContactPoint",
+              "WebSite",
+              "LocalBusiness",
+              "GeoCoordinates",
+              "GeoCircle",
+              "OpeningHoursSpecification"
+            ],
+            "bytes": 2410
+          }
+        ]
+      },
+      "ueberschriften": {
+        "h1Anzahl": 1,
+        "h1": [
+          {
+            "text": "Bewerbung bei Bad und Energie",
+            "sichtbar": true
+          }
+        ],
+        "gesamt": 3,
+        "ebenenspruenge": 0
+      },
+      "bilder": {
+        "gesamt": 1,
+        "mitAlt": 1,
+        "dekorativ": 0,
+        "altFehlt": 0,
+        "altLeerMitLeerraum": 0,
+        "fehlend": [],
+        "dekorativListe": [],
+        "svgMitRoleImg": []
+      },
+      "sonstigeMeta": [
+        "theme-color",
+        "theme-color",
+        "color-scheme",
+        "application-name",
+        "author",
+        "keywords",
+        "publisher",
+        "geo.region",
+        "geo.placename",
+        "geo.position",
+        "ICBM",
+        "format-detection",
+        "next-size-adjust"
+      ],
+      "links": {
+        "gesamt": 10,
+        "nachArt": {
+          "anker": 1,
+          "intern": 5,
+          "absolut": 2,
+          "tel": 1,
+          "mailto": 1
+        },
+        "extern": [
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20m%C3%B6chte%20mich%20bei%20Bad%20und%20Energie%20bewerben.",
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20habe%20eine%20kurze%20Frage%20zu%20den%20Bewerbungsschritten%20bei%20Bad%20und%20Energie%20in%20Wetzlar."
+        ]
+      },
+      "fehler": [],
+      "gesperrt": 0,
+      "idsAnzahl": 11
+    },
+    {
+      "pfad": "/bewerbung/danke",
+      "slug": "bewerbung-danke",
+      "status": 200,
+      "endUrl": "/bewerbung/danke",
+      "weitergeleitet": false,
+      "urlGeaendertNachLaden": false,
+      "robotsHeader": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "sprache": "de",
+      "titel": {
+        "text": "Danke für deine Bewerbung | Bad & Energie Karriere",
+        "laenge": 50
+      },
+      "beschreibung": {
+        "text": "Bestätigung deiner Bewerbung bei Bad und Energie: Bewerbungsnummer, nächste Schritte und optionale Ergänzungen.",
+        "laenge": 111
+      },
+      "canonical": {
+        "anzahl": 1,
+        "href": "https://karriere.bad-energie.de/bewerbung/danke",
+        "absolut": true,
+        "host": "karriere.bad-energie.de",
+        "pfad": "/bewerbung/danke",
+        "pfadGleichSeite": true
+      },
+      "robots": {
+        "meta": "noindex, follow",
+        "googlebot": "noindex, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1",
+        "header": null,
+        "noindex": true
+      },
+      "og": {
+        "werte": {
+          "og:title": [
+            "Danke für deine Bewerbung"
+          ],
+          "og:description": [
+            "Bestätigung deiner Bewerbung bei Bad und Energie: Bewerbungsnummer, nächste Schritte und optionale Ergänzungen."
+          ],
+          "og:url": [
+            "https://karriere.bad-energie.de/bewerbung/danke"
+          ],
+          "og:site_name": [
+            "Bad und Energie GmbH Lahn Dill"
+          ],
+          "og:locale": [
+            "de_DE"
+          ],
+          "og:image": [
+            "https://karriere.bad-energie.de/opengraph-image"
+          ],
+          "og:image:type": [
+            "image/png"
+          ],
+          "og:image:width": [
+            "1200"
+          ],
+          "og:image:height": [
+            "630"
+          ],
+          "og:image:alt": [
+            "Bad und Energie GmbH Lahn Dill: SHK-Jobs in Wetzlar"
+          ],
+          "og:type": [
+            "website"
+          ]
+        },
+        "anzahlKeys": 11,
+        "fehlend": []
+      },
+      "twitter": {
+        "werte": {
+          "twitter:card": [
+            "summary_large_image"
+          ],
+          "twitter:title": [
+            "Danke für deine Bewerbung"
+          ],
+          "twitter:description": [
+            "Bestätigung deiner Bewerbung bei Bad und Energie: Bewerbungsnummer, nächste Schritte und optionale Ergänzungen."
+          ],
+          "twitter:image": [
+            "https://karriere.bad-energie.de/opengraph-image"
+          ],
+          "twitter:image:alt": [
+            "Bad und Energie GmbH Lahn Dill: SHK-Jobs in Wetzlar"
+          ],
+          "twitter:image:type": [
+            "image/png"
+          ],
+          "twitter:image:width": [
+            "1200"
+          ],
+          "twitter:image:height": [
+            "630"
+          ]
+        },
+        "anzahlKeys": 8,
+        "fehlend": []
+      },
+      "hreflang": [],
+      "alternates": [],
+      "jsonld": {
+        "anzahl": 1,
+        "ungueltig": 0,
+        "typen": [
+          "Organization",
+          "WebSite",
+          "LocalBusiness"
+        ],
+        "bloecke": [
+          {
+            "nr": 1,
+            "gueltig": true,
+            "context": "https://schema.org",
+            "typen": [
+              "Organization",
+              "WebSite",
+              "LocalBusiness"
+            ],
+            "typenVerschachtelt": [
+              "Organization",
+              "PostalAddress",
+              "ContactPoint",
+              "WebSite",
+              "LocalBusiness",
+              "GeoCoordinates",
+              "GeoCircle",
+              "OpeningHoursSpecification"
+            ],
+            "bytes": 2460
+          }
+        ]
+      },
+      "ueberschriften": {
+        "h1Anzahl": 1,
+        "h1": [
+          {
+            "text": "Deine Bewerbung",
+            "sichtbar": true
+          }
+        ],
+        "gesamt": 1,
+        "ebenenspruenge": 0
+      },
+      "bilder": {
+        "gesamt": 1,
+        "mitAlt": 1,
+        "dekorativ": 0,
+        "altFehlt": 0,
+        "altLeerMitLeerraum": 0,
+        "fehlend": [],
+        "dekorativListe": [],
+        "svgMitRoleImg": []
+      },
+      "sonstigeMeta": [
+        "theme-color",
+        "theme-color",
+        "color-scheme",
+        "application-name",
+        "author",
+        "publisher",
+        "geo.region",
+        "geo.placename",
+        "geo.position",
+        "ICBM",
+        "format-detection",
+        "next-size-adjust"
+      ],
+      "links": {
+        "gesamt": 10,
+        "nachArt": {
+          "anker": 1,
+          "intern": 6,
+          "tel": 1,
+          "absolut": 1,
+          "mailto": 1
+        },
+        "extern": [
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20eine%20Stelle%20bei%20Bad%20und%20Energie."
+        ]
+      },
+      "fehler": [],
+      "gesperrt": 0,
+      "idsAnzahl": 2
+    },
+    {
+      "pfad": "/bewerbung/mappe",
+      "slug": "bewerbung-mappe",
+      "status": 200,
+      "endUrl": "/bewerbung/mappe",
+      "weitergeleitet": false,
+      "urlGeaendertNachLaden": false,
+      "robotsHeader": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "sprache": "de",
+      "titel": {
+        "text": "Bewerbungsmappe erstellen | Bad & Energie Karriere",
+        "laenge": 50
+      },
+      "beschreibung": {
+        "text": "Anschreiben und Lebenslauf auf A4 für deine Bewerbung bei Bad und Energie in Wetzlar: ausfüllen, als PDF speichern oder drucken. Freiwillig.",
+        "laenge": 140
+      },
+      "canonical": {
+        "anzahl": 1,
+        "href": "https://karriere.bad-energie.de/bewerbung/mappe",
+        "absolut": true,
+        "host": "karriere.bad-energie.de",
+        "pfad": "/bewerbung/mappe",
+        "pfadGleichSeite": true
+      },
+      "robots": {
+        "meta": "noindex, follow",
+        "googlebot": "noindex, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1",
+        "header": null,
+        "noindex": true
+      },
+      "og": {
+        "werte": {
+          "og:title": [
+            "Bewerbungsmappe erstellen"
+          ],
+          "og:description": [
+            "Anschreiben und Lebenslauf auf A4 für deine Bewerbung bei Bad und Energie in Wetzlar: ausfüllen, als PDF speichern oder drucken. Freiwillig."
+          ],
+          "og:url": [
+            "https://karriere.bad-energie.de/bewerbung/mappe"
+          ],
+          "og:site_name": [
+            "Bad und Energie GmbH Lahn Dill"
+          ],
+          "og:locale": [
+            "de_DE"
+          ],
+          "og:image": [
+            "https://karriere.bad-energie.de/opengraph-image"
+          ],
+          "og:image:type": [
+            "image/png"
+          ],
+          "og:image:width": [
+            "1200"
+          ],
+          "og:image:height": [
+            "630"
+          ],
+          "og:image:alt": [
+            "Bad und Energie GmbH Lahn Dill: SHK-Jobs in Wetzlar"
+          ],
+          "og:type": [
+            "website"
+          ]
+        },
+        "anzahlKeys": 11,
+        "fehlend": []
+      },
+      "twitter": {
+        "werte": {
+          "twitter:card": [
+            "summary_large_image"
+          ],
+          "twitter:title": [
+            "Bewerbungsmappe erstellen"
+          ],
+          "twitter:description": [
+            "Anschreiben und Lebenslauf auf A4 für deine Bewerbung bei Bad und Energie in Wetzlar: ausfüllen, als PDF speichern oder drucken. Freiwillig."
+          ],
+          "twitter:image": [
+            "https://karriere.bad-energie.de/opengraph-image"
+          ],
+          "twitter:image:alt": [
+            "Bad und Energie GmbH Lahn Dill: SHK-Jobs in Wetzlar"
+          ],
+          "twitter:image:type": [
+            "image/png"
+          ],
+          "twitter:image:width": [
+            "1200"
+          ],
+          "twitter:image:height": [
+            "630"
+          ]
+        },
+        "anzahlKeys": 8,
+        "fehlend": []
+      },
+      "hreflang": [],
+      "alternates": [],
+      "jsonld": {
+        "anzahl": 1,
+        "ungueltig": 0,
+        "typen": [
+          "Organization",
+          "WebSite",
+          "LocalBusiness"
+        ],
+        "bloecke": [
+          {
+            "nr": 1,
+            "gueltig": true,
+            "context": "https://schema.org",
+            "typen": [
+              "Organization",
+              "WebSite",
+              "LocalBusiness"
+            ],
+            "typenVerschachtelt": [
+              "Organization",
+              "PostalAddress",
+              "ContactPoint",
+              "WebSite",
+              "LocalBusiness",
+              "GeoCoordinates",
+              "GeoCircle",
+              "OpeningHoursSpecification"
+            ],
+            "bytes": 2460
+          }
+        ]
+      },
+      "ueberschriften": {
+        "h1Anzahl": 1,
+        "h1": [
+          {
+            "text": "Bewerbungsmappe erstellen",
+            "sichtbar": true
+          }
+        ],
+        "gesamt": 15,
+        "ebenenspruenge": 0
+      },
+      "bilder": {
+        "gesamt": 1,
+        "mitAlt": 1,
+        "dekorativ": 0,
+        "altFehlt": 0,
+        "altLeerMitLeerraum": 0,
+        "fehlend": [],
+        "dekorativListe": [],
+        "svgMitRoleImg": []
+      },
+      "sonstigeMeta": [
+        "theme-color",
+        "theme-color",
+        "color-scheme",
+        "application-name",
+        "author",
+        "publisher",
+        "geo.region",
+        "geo.placename",
+        "geo.position",
+        "ICBM",
+        "format-detection",
+        "next-size-adjust"
+      ],
+      "links": {
+        "gesamt": 5,
+        "nachArt": {
+          "anker": 1,
+          "intern": 4
+        },
+        "extern": []
+      },
+      "fehler": [],
+      "gesperrt": 0,
+      "idsAnzahl": 34
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "status": 200,
+      "endUrl": "/datenschutz",
+      "weitergeleitet": false,
+      "urlGeaendertNachLaden": false,
+      "robotsHeader": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "sprache": "de",
+      "titel": {
+        "text": "Datenschutzerklärung | Bad & Energie Karriere",
+        "laenge": 45
+      },
+      "beschreibung": {
+        "text": "Datenschutz bei Bad und Energie in Wetzlar: Bewerbungsdaten, Entwurf im Browser, Herkunftsmessung ohne Cookies, Google Maps per Klick und deine Rechte.",
+        "laenge": 151
+      },
+      "canonical": {
+        "anzahl": 1,
+        "href": "https://karriere.bad-energie.de/datenschutz",
+        "absolut": true,
+        "host": "karriere.bad-energie.de",
+        "pfad": "/datenschutz",
+        "pfadGleichSeite": true
+      },
+      "robots": {
+        "meta": "noindex, follow",
+        "googlebot": "noindex, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1",
+        "header": null,
+        "noindex": true
+      },
+      "og": {
+        "werte": {
+          "og:title": [
+            "Datenschutzerklärung"
+          ],
+          "og:description": [
+            "Datenschutz bei Bad und Energie in Wetzlar: Bewerbungsdaten, Entwurf im Browser, Herkunftsmessung ohne Cookies, Google Maps per Klick und deine Rechte."
+          ],
+          "og:url": [
+            "https://karriere.bad-energie.de/datenschutz"
+          ],
+          "og:site_name": [
+            "Bad und Energie GmbH Lahn Dill"
+          ],
+          "og:locale": [
+            "de_DE"
+          ],
+          "og:image": [
+            "https://karriere.bad-energie.de/opengraph-image"
+          ],
+          "og:image:type": [
+            "image/png"
+          ],
+          "og:image:width": [
+            "1200"
+          ],
+          "og:image:height": [
+            "630"
+          ],
+          "og:image:alt": [
+            "Bad und Energie GmbH Lahn Dill: SHK-Jobs in Wetzlar"
+          ],
+          "og:type": [
+            "website"
+          ]
+        },
+        "anzahlKeys": 11,
+        "fehlend": []
+      },
+      "twitter": {
+        "werte": {
+          "twitter:card": [
+            "summary_large_image"
+          ],
+          "twitter:title": [
+            "Datenschutzerklärung"
+          ],
+          "twitter:description": [
+            "Datenschutz bei Bad und Energie in Wetzlar: Bewerbungsdaten, Entwurf im Browser, Herkunftsmessung ohne Cookies, Google Maps per Klick und deine Rechte."
+          ],
+          "twitter:image": [
+            "https://karriere.bad-energie.de/opengraph-image"
+          ],
+          "twitter:image:alt": [
+            "Bad und Energie GmbH Lahn Dill: SHK-Jobs in Wetzlar"
+          ],
+          "twitter:image:type": [
+            "image/png"
+          ],
+          "twitter:image:width": [
+            "1200"
+          ],
+          "twitter:image:height": [
+            "630"
+          ]
+        },
+        "anzahlKeys": 8,
+        "fehlend": []
+      },
+      "hreflang": [],
+      "alternates": [],
+      "jsonld": {
+        "anzahl": 1,
+        "ungueltig": 0,
+        "typen": [
+          "Organization",
+          "WebSite",
+          "LocalBusiness"
+        ],
+        "bloecke": [
+          {
+            "nr": 1,
+            "gueltig": true,
+            "context": "https://schema.org",
+            "typen": [
+              "Organization",
+              "WebSite",
+              "LocalBusiness"
+            ],
+            "typenVerschachtelt": [
+              "Organization",
+              "PostalAddress",
+              "ContactPoint",
+              "WebSite",
+              "LocalBusiness",
+              "GeoCoordinates",
+              "GeoCircle",
+              "OpeningHoursSpecification"
+            ],
+            "bytes": 2460
+          }
+        ]
+      },
+      "ueberschriften": {
+        "h1Anzahl": 1,
+        "h1": [
+          {
+            "text": "Datenschutzerklärung",
+            "sichtbar": true
+          }
+        ],
+        "gesamt": 33,
+        "ebenenspruenge": 0
+      },
+      "bilder": {
+        "gesamt": 1,
+        "mitAlt": 1,
+        "dekorativ": 0,
+        "altFehlt": 0,
+        "altLeerMitLeerraum": 0,
+        "fehlend": [],
+        "dekorativListe": [],
+        "svgMitRoleImg": []
+      },
+      "sonstigeMeta": [
+        "theme-color",
+        "theme-color",
+        "color-scheme",
+        "application-name",
+        "author",
+        "publisher",
+        "geo.region",
+        "geo.placename",
+        "geo.position",
+        "ICBM",
+        "format-detection",
+        "next-size-adjust"
+      ],
+      "links": {
+        "gesamt": 48,
+        "nachArt": {
+          "anker": 18,
+          "intern": 15,
+          "tel": 5,
+          "mailto": 6,
+          "absolut": 4
+        },
+        "extern": [
+          "https://policies.google.com/privacy",
+          "https://datenschutz.hessen.de",
+          "https://bad-energie.de",
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20eine%20Stelle%20bei%20Bad%20und%20Energie."
+        ]
+      },
+      "fehler": [],
+      "gesperrt": 0,
+      "idsAnzahl": 30
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "status": 200,
+      "endUrl": "/impressum",
+      "weitergeleitet": false,
+      "urlGeaendertNachLaden": false,
+      "robotsHeader": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "sprache": "de",
+      "titel": {
+        "text": "Impressum | Bad & Energie Karriere",
+        "laenge": 34
+      },
+      "beschreibung": {
+        "text": "Anbieterkennzeichnung nach § 5 DDG und Handwerksordnung der Bad und Energie GmbH Lahn Dill in Wetzlar: Kontakt, Handelsregister und Handwerkskammer.",
+        "laenge": 148
+      },
+      "canonical": {
+        "anzahl": 1,
+        "href": "https://karriere.bad-energie.de/impressum",
+        "absolut": true,
+        "host": "karriere.bad-energie.de",
+        "pfad": "/impressum",
+        "pfadGleichSeite": true
+      },
+      "robots": {
+        "meta": "noindex, follow",
+        "googlebot": "noindex, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1",
+        "header": null,
+        "noindex": true
+      },
+      "og": {
+        "werte": {
+          "og:title": [
+            "Impressum"
+          ],
+          "og:description": [
+            "Anbieterkennzeichnung nach § 5 DDG und Handwerksordnung der Bad und Energie GmbH Lahn Dill in Wetzlar: Kontakt, Handelsregister und Handwerkskammer."
+          ],
+          "og:url": [
+            "https://karriere.bad-energie.de/impressum"
+          ],
+          "og:site_name": [
+            "Bad und Energie GmbH Lahn Dill"
+          ],
+          "og:locale": [
+            "de_DE"
+          ],
+          "og:image": [
+            "https://karriere.bad-energie.de/opengraph-image"
+          ],
+          "og:image:type": [
+            "image/png"
+          ],
+          "og:image:width": [
+            "1200"
+          ],
+          "og:image:height": [
+            "630"
+          ],
+          "og:image:alt": [
+            "Bad und Energie GmbH Lahn Dill: SHK-Jobs in Wetzlar"
+          ],
+          "og:type": [
+            "website"
+          ]
+        },
+        "anzahlKeys": 11,
+        "fehlend": []
+      },
+      "twitter": {
+        "werte": {
+          "twitter:card": [
+            "summary_large_image"
+          ],
+          "twitter:title": [
+            "Impressum"
+          ],
+          "twitter:description": [
+            "Anbieterkennzeichnung nach § 5 DDG und Handwerksordnung der Bad und Energie GmbH Lahn Dill in Wetzlar: Kontakt, Handelsregister und Handwerkskammer."
+          ],
+          "twitter:image": [
+            "https://karriere.bad-energie.de/opengraph-image"
+          ],
+          "twitter:image:alt": [
+            "Bad und Energie GmbH Lahn Dill: SHK-Jobs in Wetzlar"
+          ],
+          "twitter:image:type": [
+            "image/png"
+          ],
+          "twitter:image:width": [
+            "1200"
+          ],
+          "twitter:image:height": [
+            "630"
+          ]
+        },
+        "anzahlKeys": 8,
+        "fehlend": []
+      },
+      "hreflang": [],
+      "alternates": [],
+      "jsonld": {
+        "anzahl": 1,
+        "ungueltig": 0,
+        "typen": [
+          "Organization",
+          "WebSite",
+          "LocalBusiness"
+        ],
+        "bloecke": [
+          {
+            "nr": 1,
+            "gueltig": true,
+            "context": "https://schema.org",
+            "typen": [
+              "Organization",
+              "WebSite",
+              "LocalBusiness"
+            ],
+            "typenVerschachtelt": [
+              "Organization",
+              "PostalAddress",
+              "ContactPoint",
+              "WebSite",
+              "LocalBusiness",
+              "GeoCoordinates",
+              "GeoCircle",
+              "OpeningHoursSpecification"
+            ],
+            "bytes": 2460
+          }
+        ]
+      },
+      "ueberschriften": {
+        "h1Anzahl": 1,
+        "h1": [
+          {
+            "text": "Impressum",
+            "sichtbar": true
+          }
+        ],
+        "gesamt": 12,
+        "ebenenspruenge": 0
+      },
+      "bilder": {
+        "gesamt": 1,
+        "mitAlt": 1,
+        "dekorativ": 0,
+        "altFehlt": 0,
+        "altLeerMitLeerraum": 0,
+        "fehlend": [],
+        "dekorativListe": [],
+        "svgMitRoleImg": []
+      },
+      "sonstigeMeta": [
+        "theme-color",
+        "theme-color",
+        "color-scheme",
+        "application-name",
+        "author",
+        "publisher",
+        "geo.region",
+        "geo.placename",
+        "geo.position",
+        "ICBM",
+        "format-detection",
+        "next-size-adjust"
+      ],
+      "links": {
+        "gesamt": 34,
+        "nachArt": {
+          "anker": 8,
+          "intern": 15,
+          "tel": 4,
+          "mailto": 3,
+          "absolut": 4
+        },
+        "extern": [
+          "https://bad-energie.de",
+          "https://www.hwk-wiesbaden.de",
+          "https://bad-energie.de",
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20eine%20Stelle%20bei%20Bad%20und%20Energie."
+        ]
+      },
+      "fehler": [],
+      "gesperrt": 0,
+      "idsAnzahl": 20
+    },
+    {
+      "pfad": "/gibt-es-nicht-404",
+      "slug": "fehler-404",
+      "status": 404,
+      "endUrl": "/gibt-es-nicht-404",
+      "weitergeleitet": false,
+      "urlGeaendertNachLaden": false,
+      "robotsHeader": null,
+      "inhaltstyp": "text/html; charset=utf-8",
+      "sprache": "de",
+      "titel": {
+        "text": "Seite nicht gefunden | Bad & Energie Karriere",
+        "laenge": 45
+      },
+      "beschreibung": {
+        "text": "Diese Seite gibt es nicht. Hier geht es zu den offenen Stellen und zur Bewerbung.",
+        "laenge": 81
+      },
+      "canonical": {
+        "anzahl": 0,
+        "href": null,
+        "absolut": null,
+        "host": null,
+        "pfad": "/null",
+        "pfadGleichSeite": false
+      },
+      "robots": {
+        "meta": "noindex",
+        "googlebot": null,
+        "header": null,
+        "noindex": true
+      },
+      "og": {
+        "werte": {
+          "og:title": [
+            "Seite nicht gefunden | Bad & Energie Karriere"
+          ],
+          "og:description": [
+            "Diese Seite gibt es nicht. Hier geht es zu den offenen Stellen und zur Bewerbung."
+          ],
+          "og:site_name": [
+            "Bad und Energie GmbH Lahn Dill"
+          ],
+          "og:locale": [
+            "de_DE"
+          ],
+          "og:image": [
+            "https://karriere.bad-energie.de/opengraph-image?eb2cfa3c47c4d578"
+          ],
+          "og:image:type": [
+            "image/png"
+          ],
+          "og:image:width": [
+            "1200"
+          ],
+          "og:image:height": [
+            "630"
+          ],
+          "og:image:alt": [
+            "Bad und Energie GmbH Lahn Dill: SHK-Jobs in Wetzlar"
+          ],
+          "og:type": [
+            "website"
+          ]
+        },
+        "anzahlKeys": 10,
+        "fehlend": [
+          "og:url"
+        ]
+      },
+      "twitter": {
+        "werte": {
+          "twitter:card": [
+            "summary_large_image"
+          ],
+          "twitter:title": [
+            "Seite nicht gefunden | Bad & Energie Karriere"
+          ],
+          "twitter:description": [
+            "Diese Seite gibt es nicht. Hier geht es zu den offenen Stellen und zur Bewerbung."
+          ],
+          "twitter:image": [
+            "https://karriere.bad-energie.de/opengraph-image?eb2cfa3c47c4d578"
+          ],
+          "twitter:image:alt": [
+            "Bad und Energie GmbH Lahn Dill: SHK-Jobs in Wetzlar"
+          ],
+          "twitter:image:type": [
+            "image/png"
+          ],
+          "twitter:image:width": [
+            "1200"
+          ],
+          "twitter:image:height": [
+            "630"
+          ]
+        },
+        "anzahlKeys": 8,
+        "fehlend": []
+      },
+      "hreflang": [],
+      "alternates": [],
+      "jsonld": {
+        "anzahl": 1,
+        "ungueltig": 0,
+        "typen": [
+          "Organization",
+          "WebSite",
+          "LocalBusiness"
+        ],
+        "bloecke": [
+          {
+            "nr": 1,
+            "gueltig": true,
+            "context": "https://schema.org",
+            "typen": [
+              "Organization",
+              "WebSite",
+              "LocalBusiness"
+            ],
+            "typenVerschachtelt": [
+              "Organization",
+              "PostalAddress",
+              "ContactPoint",
+              "WebSite",
+              "LocalBusiness",
+              "GeoCoordinates",
+              "GeoCircle",
+              "OpeningHoursSpecification"
+            ],
+            "bytes": 2460
+          }
+        ]
+      },
+      "ueberschriften": {
+        "h1Anzahl": 1,
+        "h1": [
+          {
+            "text": "Diese Seite gibt es nicht.",
+            "sichtbar": true
+          }
+        ],
+        "gesamt": 4,
+        "ebenenspruenge": 0
+      },
+      "bilder": {
+        "gesamt": 1,
+        "mitAlt": 1,
+        "dekorativ": 0,
+        "altFehlt": 0,
+        "altLeerMitLeerraum": 0,
+        "fehlend": [],
+        "dekorativListe": [],
+        "svgMitRoleImg": []
+      },
+      "sonstigeMeta": [
+        "theme-color",
+        "theme-color",
+        "color-scheme",
+        "application-name",
+        "author",
+        "publisher",
+        "geo.region",
+        "geo.placename",
+        "geo.position",
+        "ICBM",
+        "format-detection",
+        "next-size-adjust"
+      ],
+      "links": {
+        "gesamt": 23,
+        "nachArt": {
+          "anker": 1,
+          "intern": 17,
+          "tel": 2,
+          "mailto": 1,
+          "absolut": 2
+        },
+        "extern": [
+          "https://bad-energie.de",
+          "https://api.whatsapp.com/send?phone=49644142956&text=Guten%20Tag%20Herr%20Demir%2C%20ich%20interessiere%20mich%20f%C3%BCr%20eine%20Stelle%20bei%20Bad%20und%20Energie."
+        ]
+      },
+      "fehler": [
+        {
+          "kind": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "gesperrt": 0,
+      "idsAnzahl": 6
+    }
+  ]
+}

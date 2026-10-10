@@ -1,0 +1,277 @@
+/*
+ * Rechtsseiten (R5-RECHT-01, E-023): ruhig, Papier, Satzspiegel ≤ 84 rem (K-007). Der Kopf ist der gemeinsame
+ * Seitenkopf `ruhig`; hier stehen Pfad, Druckknopf, Trenner, Verzeichnis, Kapitel und der Druck.
+ * Nur Rollen und Skalen aus app/styles/theme.css.
+ */
+
+/* ═══ Druck (E-RECHT-013): benannte Seite mit Rand; app/globals.css setzt margin 0 für alle Seiten ═══ */
+@page recht {
+  size: A4;
+  margin: 18mm 18mm 20mm;
+}
+
+.dokument {
+  --rand: max(var(--spacing-gutter, var(--a-5)), env(safe-area-inset-left), env(safe-area-inset-right));
+  --spiegel: calc(var(--container-satz) + var(--rand) * 2);
+  page: recht;
+  padding-bottom: var(--a-10);
+}
+
+/* ═══ Kopf: Pfad und Seitenkopf im Satzspiegel ═══ */
+.kopfzone {
+  max-width: var(--spiegel);
+  margin-inline: auto;
+}
+
+.pfad {
+  padding: var(--a-5) var(--rand) 0;
+}
+
+/* Der Seitenkopf `ruhig` steht direkt unter dem Pfad: weniger Luft oben als ohne Pfad */
+.kopf > div:first-of-type {
+  padding-top: var(--a-6);
+}
+
+/* Der Kopf endet mit der Stand-Zeile; Einleitung und Knopf folgen im Vorspann. Doppelte Klasse, damit die
+   Werte des Seitenkopfs (Restzeile ab 64em, Luft unten) sicher zurücktreten. */
+.kopfzone > .kopf {
+  grid-template-rows: none;
+  padding-bottom: 0;
+}
+
+/* Einleitung und Druckknopf: in der Spalte des Kopfs */
+.vorspann {
+  display: grid;
+  justify-items: start;
+  row-gap: var(--a-5);
+  padding: var(--a-5) var(--rand) 0;
+}
+
+.einleitung {
+  max-width: 38rem;
+  font-size: var(--text-lead);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* Reservierter Platz für den Druckknopf (erscheint erst im Browser) */
+.druckzeile {
+  min-height: var(--m-ziel);
+}
+
+.druck {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--a-2);
+  min-height: var(--m-ziel);
+  padding: 0 var(--a-4);
+  border: var(--m-strich) solid var(--brand);
+  background-color: var(--surface);
+  color: var(--ink);
+  font-size: var(--text-callout);
+  font-weight: 700;
+  line-height: 1.2;
+  transition: border-color var(--d-1) var(--k-ein);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .druck:hover {
+    border-color: var(--ruecklauf);
+    transition: border-color var(--d-2) var(--k-aus);
+  }
+}
+
+/* ═══ Trenner: das Leitungspaar randlos quer über die Seite ═══ */
+.trenner {
+  margin-top: var(--a-7);
+}
+
+/* ═══ Körper: Verzeichnis und Text ═══ */
+.koerper {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--a-8);
+  max-width: var(--spiegel);
+  margin-inline: auto;
+  padding: var(--a-7) var(--rand) 0;
+}
+
+/* Verzeichnis: am Handy Karte auf der Wand */
+.inhalt {
+  padding: var(--a-5);
+  border-radius: var(--radius-2);
+  background-color: var(--surface-2);
+}
+
+.inhaltListe {
+  display: flex;
+  flex-direction: column;
+  margin: var(--a-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.inhaltLink {
+  display: flex;
+  align-items: baseline;
+  gap: var(--a-3);
+  padding-block: var(--a-2);
+  min-height: var(--m-ziel);
+  box-sizing: border-box;
+  align-content: center;
+  color: var(--ink);
+  font-size: var(--text-callout);
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.inhaltLink > :last-child {
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: var(--m-strich);
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color var(--d-1) var(--k-ein);
+}
+
+.inhaltNummer {
+  flex: none;
+  min-width: 2ch;
+  color: var(--ink-2);
+  font-size: var(--text-footnote);
+  font-weight: 600;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .inhaltLink:hover > :last-child {
+    text-decoration-color: var(--ruecklauf);
+    transition: text-decoration-color var(--d-2) var(--k-aus);
+  }
+
+  .inhaltLink:hover .inhaltNummer {
+    color: var(--brand);
+  }
+}
+
+/* ═══ Text und Kapitel ═══ */
+.text {
+  min-width: 0;
+}
+
+.abschnitt {
+  margin-top: var(--a-9);
+  scroll-margin-top: calc(var(--m-kopf) + var(--a-5));
+}
+
+.abschnitt:first-child {
+  margin-top: 0;
+}
+
+/* h2 im SectionHeader-Muster: Nummer als Etikett darüber, Überschrift in Bricolage und Marken-Navy.
+   Am Handy eine Stufe kleiner: „Verbraucherstreitbeilegung“ (26 Buchstaben) passt so auch ohne Trennwörterbuch
+   in 280 px; overflow-wrap bleibt das letzte Netz. */
+.abschnitt h2 {
+  margin-top: 0;
+  margin-bottom: var(--a-5);
+  font-family: var(--font-display);
+  font-size: var(--text-title-3);
+  line-height: 1.1;
+  color: var(--brand);
+  overflow-wrap: break-word;
+}
+
+@media (min-width: 37.5em) {
+  .abschnitt h2 {
+    font-size: var(--text-title-2);
+  }
+}
+
+.abschnitt h3 {
+  margin-top: var(--a-6);
+  margin-bottom: var(--a-2);
+  font-family: var(--font-display);
+  font-size: var(--text-title-3);
+  line-height: 1.15;
+  color: var(--brand);
+}
+
+.abschnittNummer {
+  display: block;
+  margin-bottom: var(--a-2);
+  color: var(--ink-2);
+  font-size: var(--text-footnote);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+/* ═══ Desktop: Verzeichnis als mitlaufende Spalte links an der Leitung, Text rechts ═══ */
+@media (min-width: 64em) {
+  .koerper {
+    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+    column-gap: var(--a-10);
+    padding-top: var(--a-8);
+  }
+
+  .inhalt {
+    padding: 0 0 0 var(--a-5);
+    border-radius: 0;
+    background-color: transparent;
+    border-left: var(--m-strich) solid var(--line-strong);
+  }
+
+  .inhaltSpalte {
+    align-self: start;
+  }
+
+  .vorspann {
+    padding-top: var(--a-6);
+  }
+}
+
+/* Mitlaufend nur, wenn das ganze Verzeichnis ins Fenster passt */
+@media (min-width: 64em) and (min-height: 44rem) {
+  .inhaltSpalte {
+    position: sticky;
+    top: calc(var(--m-kopf) + var(--a-6));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .druck,
+  .inhaltLink > :last-child {
+    transition: none;
+  }
+}
+
+/* Druck: nur der Text, Kapitel auf voller Breite, keine Seitenbrüche direkt nach einer Überschrift */
+@media print {
+  .dokument {
+    padding-bottom: 0;
+  }
+
+  .kopf > div:first-of-type {
+    padding-top: 0;
+  }
+
+  .vorspann {
+    padding-inline: 0;
+  }
+
+  .koerper {
+    display: block;
+    max-width: none;
+    padding: var(--a-5) 0 0;
+  }
+
+  .kopfzone {
+    max-width: none;
+  }
+
+  .abschnitt {
+    margin-top: var(--a-7);
+  }
+
+  .abschnitt h2,
+  .abschnitt h3 {
+    break-after: avoid;
+  }
+}

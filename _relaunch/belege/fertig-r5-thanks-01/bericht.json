@@ -1,0 +1,57 @@
+{
+  "label": "fertig-r5-thanks-01",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T09:19:41.576Z",
+  "seiten": [
+    {
+      "pfad": "/bewerbung/danke",
+      "slug": "bewerbung-danke",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 3899,
+      "seitenhoehe": 1614,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/fertig-r5-thanks-01/webp/bewerbung-danke__m390-light__01.webp",
+        ".roh/fertig-r5-thanks-01/webp/bewerbung-danke__m390-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung/danke",
+      "slug": "bewerbung-danke",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 2937,
+      "seitenhoehe": 1584,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r5-thanks-01/bewerbung-danke__d1440-light__01.webp",
+        "belege/fertig-r5-thanks-01/bewerbung-danke__d1440-light__02.webp"
+      ]
+    }
+  ]
+}

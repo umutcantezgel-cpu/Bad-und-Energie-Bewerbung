@@ -1,3 +1,4 @@
+import type { IconName } from '@/components/icons';
 import type { ApplicationJobId } from '@/lib/applications/schema';
 import type { QuestionSetId } from '@/lib/apply/questions';
 
@@ -22,11 +23,18 @@ export interface FlowJobOption {
   slug: string | null;
   /** Text der Auswahlkarte und des Tags. */
   label: string;
+  /** Sichtbarer Text der Auswahlkarte mit weichen Trennstellen (aus titleShy); sonst `label`. */
+  labelShy?: string;
   /** Kurzform in Zusammenfassung und WhatsApp-Text. */
   summaryLabel: string;
   description?: string;
   questionSet: QuestionSetId;
+  /** Familien-Icon der Auswahlkarte (STELLEN_ICON nach Stellenart). */
+  icon?: IconName;
 }
+
+/** Diskretionszusage je Fragenset (getDiscretionPromise; bei der Ausbildung null). */
+export type FlowZusagen = Readonly<Partial<Record<QuestionSetId, string | null>>>;
 
 /** Kontaktwege für Fehlerfall und Abkürzungen (aus COMPANY). */
 export interface FlowContact {

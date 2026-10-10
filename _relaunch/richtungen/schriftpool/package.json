@@ -1,0 +1,27 @@
+{
+  "name": "relaunch-schriftpool",
+  "private": true,
+  "description": "Offene Schriften (OFL) für die Stilkacheln in P2; nur lokal. Lizenzen liegen je Paket bei (LICENSE).",
+  "dependencies": {
+    "@fontsource-variable/archivo": "5.3.0",
+    "@fontsource-variable/bricolage-grotesque": "5.3.0",
+    "@fontsource-variable/atkinson-hyperlegible-next": "5.3.0",
+    "@fontsource-variable/fraunces": "5.3.0",
+    "@fontsource-variable/newsreader": "5.3.0",
+    "@fontsource-variable/martian-mono": "5.3.0",
+    "@fontsource-variable/jetbrains-mono": "5.3.0",
+    "@fontsource-variable/ibm-plex-sans": "5.3.0",
+    "@fontsource/ibm-plex-mono": "5.3.0",
+    "@fontsource-variable/schibsted-grotesk": "5.3.0",
+    "@fontsource-variable/hanken-grotesk": "5.3.0",
+    "@fontsource-variable/familjen-grotesk": "5.3.0",
+    "@fontsource-variable/literata": "5.3.0",
+    "@fontsource-variable/source-serif-4": "5.3.0",
+    "@fontsource-variable/public-sans": "5.3.0",
+    "@fontsource-variable/onest": "5.3.1",
+    "@fontsource-variable/recursive": "5.3.0",
+    "@fontsource-variable/big-shoulders-display": "5.3.0",
+    "@fontsource-variable/rethink-sans": "5.3.0",
+    "@fontsource-variable/gabarito": "5.3.0"
+  }
+}

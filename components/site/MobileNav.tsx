@@ -1,124 +1,177 @@
 'use client';
 
-import { Suspense, lazy, useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, MessageCircle, Phone, X } from 'lucide-react';
-import type { SheetProps } from '@/components/ui/Sheet';
-import { buttonVariants, iconButtonVariants } from '@/components/ui/variants';
-import { APPLY_PATH, NAV_ITEMS, isCurrentNavItem } from './nav';
+import { Icon } from '@/components/icons';
+import { MenueZeichen } from './kopf/MenueZeichen';
+import styles from './kopf/kopf.module.css';
+import { zeigeVertraulich, type KopfMarke, type KopfVertraulich, type OffeneStellen } from './kopf/typen';
+import { APPLY_PATH, NAV_ITEMS, SHORT_APPLY_LABEL, isCurrentNavItem } from './nav';
 
 export interface MobileNavProps {
   phone: { display: string; href: string };
-  /** WhatsApp link with the prefilled message, built on the server. */
+  /** WhatsApp-Link mit vorbefülltem Text, auf dem Server gebaut. */
   whatsappHref: string;
+  /** Logo im Menükopf (auf der Plakette, da das Menü ein Navy-Band ist). */
+  logo?: ReactNode;
+  offeneStellen?: OffeneStellen | null;
+  marke?: KopfMarke | null;
+  vertraulich?: KopfVertraulich | null;
   className?: string;
 }
 
-const contactLinkClass =
-  'flex min-h-12 items-center gap-3 rounded-xs text-body font-medium text-ink underline-offset-4 hover:underline';
-const MENU_BUTTON_CLASS = `${iconButtonVariants()} -mr-2.5`;
-const APPLY_CLASS = buttonVariants({ size: 'lg', fullWidth: true });
+/** Id des Menüdialogs; es gibt genau einen Seitenkopf. */
+export const MENU_ID = 'kopf-menue';
+/** Ab hier zeigt der Kopf die Navigation selbst; ein offenes Menü schließt sich. */
+const DESKTOP_QUERY = '(min-width: 64em)';
+
+/*
+ * Ohne Skript öffnen moderne Browser den Dialog über Invoker Commands (commandfor/command); mit Skript
+ * übernimmt onClick (preventDefault) und hält den Zustand in React. React kennt die Attribute nicht und
+ * reicht sie klein geschrieben durch.
+ */
+const oeffnenOhneSkript = { commandfor: MENU_ID, command: 'show-modal' } as Record<string, string>;
+const schliessenOhneSkript = { commandfor: MENU_ID, command: 'close' } as Record<string, string>;
 
 /**
- * Stand-in when the sheet chunk cannot load (offline, or a tab older than the last deploy):
- * the same links in a plain native dialog. Without it the rejected import would reach
- * app/global-error.tsx, since this menu lives in the root layout.
+ * Menü unter 64em (E-SHELL-011…013, E-SHELL-001/002/004/005): natives `<dialog>` mit showModal(), also
+ * Fokusfalle und inerter Hintergrund; Escape, Klick auf den Hintergrund und „Schließen“ schließen, der
+ * Fokus kehrt zum Menüknopf zurück, die Seite dahinter scrollt nicht (kopf.module.css). Gestaltet als
+ * Navy-Band wie die Fläche des Einstiegs: Die Einträge zweigen vom Leitungspaar ab, das Paar fällt in
+ * „Jetzt bewerben“.
  */
-function FallbackSheet({ open, onOpenChange, title, children, footer, closeLabel = 'Schließen' }: SheetProps) {
+export function MobileNav({ phone, whatsappHref, logo, offeneStellen, marke, vertraulich, className }: MobileNavProps) {
+  const pathname = usePathname();
+  // Das Menü merkt sich die Seite, auf der es geöffnet wurde: Ein Seitenwechsel (Link, Browser-Zurück)
+  // schließt es damit ohne eigenen Effekt.
+  const [offenAuf, setOffenAuf] = useState<string | null>(null);
+  const open = offenAuf !== null && offenAuf === pathname;
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const titleId = useId();
+  const knopfRef = useRef<HTMLButtonElement>(null);
+  const schliessenRef = useRef<HTMLButtonElement>(null);
 
+  const close = useCallback(() => setOffenAuf(null), []);
+
+  // Zustand → Dialog: showModal() setzt Fokusfalle und Hintergrund; close() gibt den Fokus zurück.
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-    if (open && !dialog.open) dialog.showModal();
-    else if (!open && dialog.open) dialog.close();
+    if (open && !dialog.open) {
+      dialog.showModal();
+      schliessenRef.current?.focus();
+    } else if (!open && dialog.open) {
+      dialog.close();
+    }
   }, [open]);
 
-  return (
-    <dialog
-      ref={dialogRef}
-      aria-labelledby={titleId}
-      onClose={() => onOpenChange(false)}
-      className="mx-auto mt-auto mb-0 w-full max-w-full rounded-t-xl bg-surface px-6 pt-4 pb-6 text-ink backdrop:backdrop-brightness-50 md:my-auto md:max-w-lg md:rounded-xl"
-    >
-      <div className="flex items-start justify-between gap-4 pb-2">
-        <h2 id={titleId} className="pt-2.5 text-title-3 text-ink">
-          {title}
-        </h2>
-        <button type="button" aria-label={closeLabel} onClick={() => onOpenChange(false)} className={MENU_BUTTON_CLASS}>
-          <X aria-hidden="true" strokeWidth={1.75} className="size-6" />
-        </button>
-      </div>
-      {children}
-      {footer && <div className="mt-6 border-t border-line pt-4">{footer}</div>}
-    </dialog>
-  );
-}
+  // Wechsel auf Desktop-Breite (Drehen, Fenster) schließt das Menü; dort zeigt der Kopf die Navigation.
+  useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return;
+    const query = window.matchMedia(DESKTOP_QUERY);
+    const onChange = () => {
+      if (query.matches) close();
+    };
+    query.addEventListener('change', onChange);
+    return () => query.removeEventListener('change', onChange);
+  }, [close]);
 
-// The sheet (dialog logic, close icon, cn) loads on first use; the menu button warms it up.
-const loadSheet = () => import('@/components/ui/Sheet');
-const prefetchSheet = () => {
-  loadSheet().catch(() => {});
-};
-const Sheet = lazy(() =>
-  loadSheet().then(
-    (module) => ({ default: module.Sheet }),
-    () => ({ default: FallbackSheet }),
-  ),
-);
+  /** Escape, Schließen-Knopf oder Formular: Dialog ist zu, Fokus zurück auf den Menüknopf. */
+  const onDialogClose = () => {
+    close();
+    knopfRef.current?.focus({ preventScroll: true });
+  };
 
-/** Menu button below lg; opens a sheet with the page links, phone, WhatsApp and the primary action. */
-export function MobileNav({ phone, whatsappHref, className }: MobileNavProps) {
-  const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const pathname = usePathname();
-  const close = () => setOpen(false);
+  /**
+   * Klick neben das Band (auf den abgedunkelten Hintergrund) schließt: Der Inhalt füllt den Dialog
+   * ganz aus, darum trifft ein Klick den Dialog selbst nur über ::backdrop.
+   */
+  const onDialogClick = (event: MouseEvent<HTMLDialogElement>) => {
+    if (event.target === dialogRef.current) close();
+  };
+
+  const vertraulichText = zeigeVertraulich(vertraulich, pathname) ? vertraulich!.text : null;
 
   return (
     <div className={className}>
       <button
+        ref={knopfRef}
         type="button"
         aria-label="Menü"
         aria-haspopup="dialog"
         aria-expanded={open}
-        onPointerEnter={prefetchSheet}
-        onFocus={prefetchSheet}
-        onClick={() => {
-          setMounted(true);
-          setOpen(true);
+        aria-controls={MENU_ID}
+        className={styles.menueKnopf}
+        data-motion="flaeche"
+        {...oeffnenOhneSkript}
+        onClick={(event) => {
+          event.preventDefault();
+          setOffenAuf(pathname);
         }}
-        className={MENU_BUTTON_CLASS}
       >
-        <Menu aria-hidden="true" strokeWidth={1.75} className="size-6" />
+        <MenueZeichen zustand="zu" />
       </button>
 
-      {mounted && (
-        <Suspense fallback={null}>
-          <Sheet
-            open={open}
-            onOpenChange={setOpen}
-            title="Menü"
-            footer={
-              <Link href={APPLY_PATH} onClick={close} className={APPLY_CLASS}>
-                Jetzt bewerben
+      <dialog
+        ref={dialogRef}
+        id={MENU_ID}
+        aria-label="Menü"
+        data-tone="inverse"
+        data-motion="menue-oeffnen"
+        className={styles.menue}
+        onClose={onDialogClose}
+        onClick={onDialogClick}
+      >
+        <div className={styles.innen}>
+          <div className={styles.menueKopf}>
+            {logo ? (
+              <Link href="/" aria-label="Bad und Energie GmbH Lahn Dill, zur Startseite" className={styles.logo} onClick={close}>
+                {logo}
               </Link>
-            }
-          >
+            ) : (
+              <span />
+            )}
+            <button
+              ref={schliessenRef}
+              type="button"
+              aria-label="Menü schließen"
+              className={styles.menueKnopf}
+              data-motion="flaeche"
+              {...schliessenOhneSkript}
+              onClick={(event) => {
+                event.preventDefault();
+                close();
+              }}
+            >
+              <MenueZeichen zustand="offen" />
+            </button>
+          </div>
+
+          <div className={styles.leitung} data-motion="menue-leitung">
+            {marke ? <p className={`${styles.menueMarke} text-etikett`}>{marke.lang}</p> : null}
+
             <nav aria-label="Hauptnavigation">
-              <ul className="flex flex-col">
-                {NAV_ITEMS.map((item) => {
+              <ul className={styles.menueListe}>
+                {NAV_ITEMS.map((item, i) => {
                   const current = isCurrentNavItem(item, pathname);
+                  const zaehler = item.href === '/jobs' ? offeneStellen : null;
                   return (
-                    <li key={item.href}>
+                    <li key={item.href} data-motion="menue-eintrag" style={{ '--i': i } as CSSProperties}>
                       <Link
                         href={item.href}
                         onClick={close}
                         aria-current={current ? 'page' : undefined}
-                        className="flex min-h-14 items-center rounded-xs text-title-2 text-ink"
+                        className={`${styles.eintrag} text-title-1`}
                       >
                         {item.label}
+                        {zaehler ? (
+                          <>
+                            <span className={`${styles.eintragZahl} text-etikett`} aria-hidden="true">
+                              {zaehler.anzahl} offen
+                            </span>
+                            <span className="sr-only"> ({zaehler.text})</span>
+                          </>
+                        ) : null}
                       </Link>
                     </li>
                   );
@@ -126,21 +179,32 @@ export function MobileNav({ phone, whatsappHref, className }: MobileNavProps) {
               </ul>
             </nav>
 
-            <div className="mt-6 flex flex-col border-t border-line pt-4">
-              <a href={phone.href} className={contactLinkClass}>
-                <Phone aria-hidden="true" strokeWidth={1.75} className="size-5 text-ink-muted" />
-                <span className="tabular-nums">{phone.display}</span>
+            <div className={styles.menueKontakt}>
+              <a href={phone.href} className={styles.kontakt}>
+                <Icon name="phone" size="lg" className={styles.ikon} />
+                <span className="ziffer">{phone.display}</span>
                 <span className="sr-only"> anrufen</span>
               </a>
-              <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className={contactLinkClass}>
-                <MessageCircle aria-hidden="true" strokeWidth={1.75} className="size-5 text-ink-muted" />
+              <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className={styles.kontakt}>
+                <Icon name="message-circle" size="lg" className={styles.ikon} />
                 WhatsApp
                 <span className="sr-only"> (öffnet in neuem Tab)</span>
               </a>
+              {vertraulichText ? (
+                <p className={styles.vertraulich}>
+                  <Icon name="shield-check" size="md" className={styles.ikon} />
+                  <span>{vertraulichText}</span>
+                </p>
+              ) : null}
             </div>
-          </Sheet>
-        </Suspense>
-      )}
+          </div>
+
+          <Link href={APPLY_PATH} onClick={close} className={styles.aktion} data-motion="druck">
+            {SHORT_APPLY_LABEL}
+            <Icon name="arrow-right" size="md" />
+          </Link>
+        </div>
+      </dialog>
     </div>
   );
 }

@@ -1,0 +1,1916 @@
+{
+  "label": "r2-fundament-r2",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-09T21:42:07.419Z",
+  "seiten": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 15162,
+      "seitenhoehe": 11800,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/start__m390-light__01.webp",
+        "belege/r2-fundament-r2/start__m390-light__02.webp",
+        "belege/r2-fundament-r2/start__m390-light__03.webp",
+        "belege/r2-fundament-r2/start__m390-light__04.webp",
+        "belege/r2-fundament-r2/start__m390-light__05.webp",
+        "belege/r2-fundament-r2/start__m390-light__06.webp",
+        "belege/r2-fundament-r2/start__m390-light__07.webp",
+        "belege/r2-fundament-r2/start__m390-light__08.webp",
+        "belege/r2-fundament-r2/start__m390-light__09.webp",
+        "belege/r2-fundament-r2/start__m390-light__10.webp",
+        "belege/r2-fundament-r2/start__m390-light__11.webp",
+        "belege/r2-fundament-r2/start__m390-light__12.webp",
+        "belege/r2-fundament-r2/start__m390-light__13.webp",
+        "belege/r2-fundament-r2/start__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 14700,
+      "seitenhoehe": 11800,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/start__m390-dark__01.webp",
+        "belege/r2-fundament-r2/start__m390-dark__02.webp",
+        "belege/r2-fundament-r2/start__m390-dark__03.webp",
+        "belege/r2-fundament-r2/start__m390-dark__04.webp",
+        "belege/r2-fundament-r2/start__m390-dark__05.webp",
+        "belege/r2-fundament-r2/start__m390-dark__06.webp",
+        "belege/r2-fundament-r2/start__m390-dark__07.webp",
+        "belege/r2-fundament-r2/start__m390-dark__08.webp",
+        "belege/r2-fundament-r2/start__m390-dark__09.webp",
+        "belege/r2-fundament-r2/start__m390-dark__10.webp",
+        "belege/r2-fundament-r2/start__m390-dark__11.webp",
+        "belege/r2-fundament-r2/start__m390-dark__12.webp",
+        "belege/r2-fundament-r2/start__m390-dark__13.webp",
+        "belege/r2-fundament-r2/start__m390-dark__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m430",
+      "schema": "light",
+      "status": 200,
+      "ms": 16071,
+      "seitenhoehe": 11495,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/start__m430-light__01.webp",
+        "belege/r2-fundament-r2/start__m430-light__02.webp",
+        "belege/r2-fundament-r2/start__m430-light__03.webp",
+        "belege/r2-fundament-r2/start__m430-light__04.webp",
+        "belege/r2-fundament-r2/start__m430-light__05.webp",
+        "belege/r2-fundament-r2/start__m430-light__06.webp",
+        "belege/r2-fundament-r2/start__m430-light__07.webp",
+        "belege/r2-fundament-r2/start__m430-light__08.webp",
+        "belege/r2-fundament-r2/start__m430-light__09.webp",
+        "belege/r2-fundament-r2/start__m430-light__10.webp",
+        "belege/r2-fundament-r2/start__m430-light__11.webp",
+        "belege/r2-fundament-r2/start__m430-light__12.webp",
+        "belege/r2-fundament-r2/start__m430-light__13.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m430",
+      "schema": "dark",
+      "status": 200,
+      "ms": 14909,
+      "seitenhoehe": 11495,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/start__m430-dark__01.webp",
+        "belege/r2-fundament-r2/start__m430-dark__02.webp",
+        "belege/r2-fundament-r2/start__m430-dark__03.webp",
+        "belege/r2-fundament-r2/start__m430-dark__04.webp",
+        "belege/r2-fundament-r2/start__m430-dark__05.webp",
+        "belege/r2-fundament-r2/start__m430-dark__06.webp",
+        "belege/r2-fundament-r2/start__m430-dark__07.webp",
+        "belege/r2-fundament-r2/start__m430-dark__08.webp",
+        "belege/r2-fundament-r2/start__m430-dark__09.webp",
+        "belege/r2-fundament-r2/start__m430-dark__10.webp",
+        "belege/r2-fundament-r2/start__m430-dark__11.webp",
+        "belege/r2-fundament-r2/start__m430-dark__12.webp",
+        "belege/r2-fundament-r2/start__m430-dark__13.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 6425,
+      "seitenhoehe": 9337,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/start__d1440-light__01.webp",
+        "belege/r2-fundament-r2/start__d1440-light__02.webp",
+        "belege/r2-fundament-r2/start__d1440-light__03.webp",
+        "belege/r2-fundament-r2/start__d1440-light__04.webp",
+        "belege/r2-fundament-r2/start__d1440-light__05.webp",
+        "belege/r2-fundament-r2/start__d1440-light__06.webp",
+        "belege/r2-fundament-r2/start__d1440-light__07.webp",
+        "belege/r2-fundament-r2/start__d1440-light__08.webp",
+        "belege/r2-fundament-r2/start__d1440-light__09.webp",
+        "belege/r2-fundament-r2/start__d1440-light__10.webp",
+        "belege/r2-fundament-r2/start__d1440-light__11.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 6393,
+      "seitenhoehe": 9337,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/start__d1440-dark__01.webp",
+        "belege/r2-fundament-r2/start__d1440-dark__02.webp",
+        "belege/r2-fundament-r2/start__d1440-dark__03.webp",
+        "belege/r2-fundament-r2/start__d1440-dark__04.webp",
+        "belege/r2-fundament-r2/start__d1440-dark__05.webp",
+        "belege/r2-fundament-r2/start__d1440-dark__06.webp",
+        "belege/r2-fundament-r2/start__d1440-dark__07.webp",
+        "belege/r2-fundament-r2/start__d1440-dark__08.webp",
+        "belege/r2-fundament-r2/start__d1440-dark__09.webp",
+        "belege/r2-fundament-r2/start__d1440-dark__10.webp",
+        "belege/r2-fundament-r2/start__d1440-dark__11.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 5061,
+      "seitenhoehe": 3726,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/stellen__m390-light__01.webp",
+        "belege/r2-fundament-r2/stellen__m390-light__02.webp",
+        "belege/r2-fundament-r2/stellen__m390-light__03.webp",
+        "belege/r2-fundament-r2/stellen__m390-light__04.webp",
+        "belege/r2-fundament-r2/stellen__m390-light__05.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 5261,
+      "seitenhoehe": 3726,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/stellen__m390-dark__01.webp",
+        "belege/r2-fundament-r2/stellen__m390-dark__02.webp",
+        "belege/r2-fundament-r2/stellen__m390-dark__03.webp",
+        "belege/r2-fundament-r2/stellen__m390-dark__04.webp",
+        "belege/r2-fundament-r2/stellen__m390-dark__05.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "m430",
+      "schema": "light",
+      "status": 200,
+      "ms": 5527,
+      "seitenhoehe": 3607,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/stellen__m430-light__01.webp",
+        "belege/r2-fundament-r2/stellen__m430-light__02.webp",
+        "belege/r2-fundament-r2/stellen__m430-light__03.webp",
+        "belege/r2-fundament-r2/stellen__m430-light__04.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "m430",
+      "schema": "dark",
+      "status": 200,
+      "ms": 5163,
+      "seitenhoehe": 3607,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/stellen__m430-dark__01.webp",
+        "belege/r2-fundament-r2/stellen__m430-dark__02.webp",
+        "belege/r2-fundament-r2/stellen__m430-dark__03.webp",
+        "belege/r2-fundament-r2/stellen__m430-dark__04.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 2729,
+      "seitenhoehe": 2363,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/stellen__d1440-light__01.webp",
+        "belege/r2-fundament-r2/stellen__d1440-light__02.webp",
+        "belege/r2-fundament-r2/stellen__d1440-light__03.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 2656,
+      "seitenhoehe": 2363,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/stellen__d1440-dark__01.webp",
+        "belege/r2-fundament-r2/stellen__d1440-dark__02.webp",
+        "belege/r2-fundament-r2/stellen__d1440-dark__03.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 10339,
+      "seitenhoehe": 7791,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-light__01.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-light__02.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-light__03.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-light__04.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-light__05.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-light__06.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-light__07.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-light__08.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-light__09.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-light__10.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 10093,
+      "seitenhoehe": 7791,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-dark__01.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-dark__02.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-dark__03.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-dark__04.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-dark__05.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-dark__06.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-dark__07.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-dark__08.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-dark__09.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m390-dark__10.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "ansicht": "m430",
+      "schema": "light",
+      "status": 200,
+      "ms": 9943,
+      "seitenhoehe": 7603,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m430-light__01.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m430-light__02.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m430-light__03.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m430-light__04.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m430-light__05.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m430-light__06.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m430-light__07.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m430-light__08.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m430-light__09.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "ansicht": "m430",
+      "schema": "dark",
+      "status": 200,
+      "ms": 10510,
+      "seitenhoehe": 7603,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m430-dark__01.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m430-dark__02.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m430-dark__03.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m430-dark__04.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m430-dark__05.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m430-dark__06.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m430-dark__07.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m430-dark__08.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__m430-dark__09.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 4655,
+      "seitenhoehe": 5975,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__d1440-light__01.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__d1440-light__02.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__d1440-light__03.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__d1440-light__04.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__d1440-light__05.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__d1440-light__06.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__d1440-light__07.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 4574,
+      "seitenhoehe": 5975,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__d1440-dark__01.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__d1440-dark__02.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__d1440-dark__03.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__d1440-dark__04.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__d1440-dark__05.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__d1440-dark__06.webp",
+        "belege/r2-fundament-r2/stelle-anlagenmechaniker__d1440-dark__07.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "slug": "stelle-kundendienst",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 9748,
+      "seitenhoehe": 7921,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-light__01.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-light__02.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-light__03.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-light__04.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-light__05.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-light__06.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-light__07.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-light__08.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-light__09.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-light__10.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "slug": "stelle-kundendienst",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 10463,
+      "seitenhoehe": 7921,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-dark__02.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-dark__03.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-dark__04.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-dark__05.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-dark__06.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-dark__07.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-dark__08.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-dark__09.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m390-dark__10.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "slug": "stelle-kundendienst",
+      "ansicht": "m430",
+      "schema": "light",
+      "status": 200,
+      "ms": 10597,
+      "seitenhoehe": 7619,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m430-light__01.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m430-light__02.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m430-light__03.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m430-light__04.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m430-light__05.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m430-light__06.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m430-light__07.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m430-light__08.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m430-light__09.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "slug": "stelle-kundendienst",
+      "ansicht": "m430",
+      "schema": "dark",
+      "status": 200,
+      "ms": 9922,
+      "seitenhoehe": 7619,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m430-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m430-dark__02.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m430-dark__03.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m430-dark__04.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m430-dark__05.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m430-dark__06.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m430-dark__07.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m430-dark__08.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__m430-dark__09.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "slug": "stelle-kundendienst",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 4639,
+      "seitenhoehe": 6070,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/stelle-kundendienst__d1440-light__01.webp",
+        "belege/r2-fundament-r2/stelle-kundendienst__d1440-light__02.webp",
+        "belege/r2-fundament-r2/stelle-kundendienst__d1440-light__03.webp",
+        "belege/r2-fundament-r2/stelle-kundendienst__d1440-light__04.webp",
+        "belege/r2-fundament-r2/stelle-kundendienst__d1440-light__05.webp",
+        "belege/r2-fundament-r2/stelle-kundendienst__d1440-light__06.webp",
+        "belege/r2-fundament-r2/stelle-kundendienst__d1440-light__07.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "slug": "stelle-kundendienst",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 4501,
+      "seitenhoehe": 6070,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__d1440-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__d1440-dark__02.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__d1440-dark__03.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__d1440-dark__04.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__d1440-dark__05.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__d1440-dark__06.webp",
+        ".roh/r2-fundament-r2/webp/stelle-kundendienst__d1440-dark__07.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "slug": "stelle-obermonteur",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 10180,
+      "seitenhoehe": 7761,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-light__01.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-light__02.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-light__03.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-light__04.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-light__05.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-light__06.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-light__07.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-light__08.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-light__09.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-light__10.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "slug": "stelle-obermonteur",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 9743,
+      "seitenhoehe": 7761,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-dark__02.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-dark__03.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-dark__04.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-dark__05.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-dark__06.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-dark__07.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-dark__08.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-dark__09.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m390-dark__10.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "slug": "stelle-obermonteur",
+      "ansicht": "m430",
+      "schema": "light",
+      "status": 200,
+      "ms": 9643,
+      "seitenhoehe": 7522,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m430-light__01.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m430-light__02.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m430-light__03.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m430-light__04.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m430-light__05.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m430-light__06.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m430-light__07.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m430-light__08.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m430-light__09.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "slug": "stelle-obermonteur",
+      "ansicht": "m430",
+      "schema": "dark",
+      "status": 200,
+      "ms": 9920,
+      "seitenhoehe": 7522,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m430-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m430-dark__02.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m430-dark__03.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m430-dark__04.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m430-dark__05.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m430-dark__06.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m430-dark__07.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m430-dark__08.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__m430-dark__09.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "slug": "stelle-obermonteur",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 4711,
+      "seitenhoehe": 5959,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/stelle-obermonteur__d1440-light__01.webp",
+        "belege/r2-fundament-r2/stelle-obermonteur__d1440-light__02.webp",
+        "belege/r2-fundament-r2/stelle-obermonteur__d1440-light__03.webp",
+        "belege/r2-fundament-r2/stelle-obermonteur__d1440-light__04.webp",
+        "belege/r2-fundament-r2/stelle-obermonteur__d1440-light__05.webp",
+        "belege/r2-fundament-r2/stelle-obermonteur__d1440-light__06.webp",
+        "belege/r2-fundament-r2/stelle-obermonteur__d1440-light__07.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/obermonteur-projektleiter-shk-wetzlar",
+      "slug": "stelle-obermonteur",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 4687,
+      "seitenhoehe": 5959,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__d1440-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__d1440-dark__02.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__d1440-dark__03.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__d1440-dark__04.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__d1440-dark__05.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__d1440-dark__06.webp",
+        ".roh/r2-fundament-r2/webp/stelle-obermonteur__d1440-dark__07.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-ausbildung",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 9229,
+      "seitenhoehe": 7144,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m390-light__01.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m390-light__02.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m390-light__03.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m390-light__04.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m390-light__05.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m390-light__06.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m390-light__07.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m390-light__08.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m390-light__09.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-ausbildung",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 9060,
+      "seitenhoehe": 7144,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m390-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m390-dark__02.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m390-dark__03.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m390-dark__04.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m390-dark__05.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m390-dark__06.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m390-dark__07.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m390-dark__08.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m390-dark__09.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-ausbildung",
+      "ansicht": "m430",
+      "schema": "light",
+      "status": 200,
+      "ms": 9289,
+      "seitenhoehe": 6883,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m430-light__01.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m430-light__02.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m430-light__03.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m430-light__04.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m430-light__05.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m430-light__06.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m430-light__07.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m430-light__08.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-ausbildung",
+      "ansicht": "m430",
+      "schema": "dark",
+      "status": 200,
+      "ms": 9255,
+      "seitenhoehe": 6883,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m430-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m430-dark__02.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m430-dark__03.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m430-dark__04.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m430-dark__05.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m430-dark__06.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m430-dark__07.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__m430-dark__08.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-ausbildung",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 4172,
+      "seitenhoehe": 5300,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/stelle-ausbildung__d1440-light__01.webp",
+        "belege/r2-fundament-r2/stelle-ausbildung__d1440-light__02.webp",
+        "belege/r2-fundament-r2/stelle-ausbildung__d1440-light__03.webp",
+        "belege/r2-fundament-r2/stelle-ausbildung__d1440-light__04.webp",
+        "belege/r2-fundament-r2/stelle-ausbildung__d1440-light__05.webp",
+        "belege/r2-fundament-r2/stelle-ausbildung__d1440-light__06.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/ausbildung-anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-ausbildung",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 4285,
+      "seitenhoehe": 5300,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__d1440-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__d1440-dark__02.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__d1440-dark__03.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__d1440-dark__04.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__d1440-dark__05.webp",
+        ".roh/r2-fundament-r2/webp/stelle-ausbildung__d1440-dark__06.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 2720,
+      "seitenhoehe": 1380,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/bewerbung__m390-light__01.webp",
+        "belege/r2-fundament-r2/bewerbung__m390-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 2768,
+      "seitenhoehe": 1380,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/bewerbung__m390-dark__01.webp",
+        "belege/r2-fundament-r2/bewerbung__m390-dark__02.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "ansicht": "m430",
+      "schema": "light",
+      "status": 200,
+      "ms": 2766,
+      "seitenhoehe": 1356,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/bewerbung__m430-light__01.webp",
+        "belege/r2-fundament-r2/bewerbung__m430-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "ansicht": "m430",
+      "schema": "dark",
+      "status": 200,
+      "ms": 2544,
+      "seitenhoehe": 1356,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/bewerbung__m430-dark__01.webp",
+        "belege/r2-fundament-r2/bewerbung__m430-dark__02.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 1906,
+      "seitenhoehe": 1376,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/bewerbung__d1440-light__01.webp",
+        "belege/r2-fundament-r2/bewerbung__d1440-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 1990,
+      "seitenhoehe": 1376,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/bewerbung__d1440-dark__01.webp",
+        "belege/r2-fundament-r2/bewerbung__d1440-dark__02.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung/danke",
+      "slug": "bewerbung-danke",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 2259,
+      "seitenhoehe": 899,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/bewerbung-danke__m390-light__01.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-danke__m390-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung/danke",
+      "slug": "bewerbung-danke",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 2342,
+      "seitenhoehe": 899,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/bewerbung-danke__m390-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-danke__m390-dark__02.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung/danke",
+      "slug": "bewerbung-danke",
+      "ansicht": "m430",
+      "schema": "light",
+      "status": 200,
+      "ms": 2195,
+      "seitenhoehe": 932,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/bewerbung-danke__m430-light__01.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung/danke",
+      "slug": "bewerbung-danke",
+      "ansicht": "m430",
+      "schema": "dark",
+      "status": 200,
+      "ms": 2196,
+      "seitenhoehe": 932,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/bewerbung-danke__m430-dark__01.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung/danke",
+      "slug": "bewerbung-danke",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 1566,
+      "seitenhoehe": 900,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/bewerbung-danke__d1440-light__01.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung/danke",
+      "slug": "bewerbung-danke",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 1619,
+      "seitenhoehe": 900,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/bewerbung-danke__d1440-dark__01.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung/mappe",
+      "slug": "bewerbung-mappe",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 6662,
+      "seitenhoehe": 5087,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "Hinzufügen",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m390-light__01.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m390-light__02.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m390-light__03.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m390-light__04.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m390-light__05.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m390-light__06.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m390-light__07.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung/mappe",
+      "slug": "bewerbung-mappe",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 7021,
+      "seitenhoehe": 5087,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "Hinzufügen",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m390-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m390-dark__02.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m390-dark__03.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m390-dark__04.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m390-dark__05.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m390-dark__06.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m390-dark__07.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung/mappe",
+      "slug": "bewerbung-mappe",
+      "ansicht": "m430",
+      "schema": "light",
+      "status": 200,
+      "ms": 6971,
+      "seitenhoehe": 5124,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "Hinzufügen",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m430-light__01.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m430-light__02.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m430-light__03.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m430-light__04.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m430-light__05.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m430-light__06.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung/mappe",
+      "slug": "bewerbung-mappe",
+      "ansicht": "m430",
+      "schema": "dark",
+      "status": 200,
+      "ms": 6746,
+      "seitenhoehe": 5124,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "Hinzufügen",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m430-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m430-dark__02.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m430-dark__03.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m430-dark__04.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m430-dark__05.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__m430-dark__06.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung/mappe",
+      "slug": "bewerbung-mappe",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 3220,
+      "seitenhoehe": 3540,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/bewerbung-mappe__d1440-light__01.webp",
+        "belege/r2-fundament-r2/bewerbung-mappe__d1440-light__02.webp",
+        "belege/r2-fundament-r2/bewerbung-mappe__d1440-light__03.webp",
+        "belege/r2-fundament-r2/bewerbung-mappe__d1440-light__04.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung/mappe",
+      "slug": "bewerbung-mappe",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 3121,
+      "seitenhoehe": 3540,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__d1440-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__d1440-dark__02.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__d1440-dark__03.webp",
+        ".roh/r2-fundament-r2/webp/bewerbung-mappe__d1440-dark__04.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 18585,
+      "seitenhoehe": 18355,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-light__01.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-light__02.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-light__03.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-light__04.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-light__05.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-light__06.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-light__07.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-light__08.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-light__09.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-light__10.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-light__11.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-light__12.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-light__13.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 17973,
+      "seitenhoehe": 18355,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-dark__02.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-dark__03.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-dark__04.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-dark__05.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-dark__06.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-dark__07.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-dark__08.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-dark__09.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-dark__10.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-dark__11.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-dark__12.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-dark__13.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m390-dark__14.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "ansicht": "m430",
+      "schema": "light",
+      "status": 200,
+      "ms": 19895,
+      "seitenhoehe": 17244,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-light__01.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-light__02.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-light__03.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-light__04.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-light__05.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-light__06.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-light__07.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-light__08.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-light__09.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-light__10.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-light__11.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-light__12.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-light__13.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "ansicht": "m430",
+      "schema": "dark",
+      "status": 200,
+      "ms": 20467,
+      "seitenhoehe": 17244,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-dark__02.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-dark__03.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-dark__04.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-dark__05.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-dark__06.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-dark__07.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-dark__08.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-dark__09.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-dark__10.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-dark__11.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-dark__12.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-dark__13.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__m430-dark__14.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 9102,
+      "seitenhoehe": 14240,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/datenschutz__d1440-light__01.webp",
+        "belege/r2-fundament-r2/datenschutz__d1440-light__02.webp",
+        "belege/r2-fundament-r2/datenschutz__d1440-light__03.webp",
+        "belege/r2-fundament-r2/datenschutz__d1440-light__04.webp",
+        "belege/r2-fundament-r2/datenschutz__d1440-light__05.webp",
+        "belege/r2-fundament-r2/datenschutz__d1440-light__06.webp",
+        "belege/r2-fundament-r2/datenschutz__d1440-light__07.webp",
+        "belege/r2-fundament-r2/datenschutz__d1440-light__08.webp",
+        "belege/r2-fundament-r2/datenschutz__d1440-light__09.webp",
+        "belege/r2-fundament-r2/datenschutz__d1440-light__10.webp",
+        "belege/r2-fundament-r2/datenschutz__d1440-light__11.webp",
+        "belege/r2-fundament-r2/datenschutz__d1440-light__12.webp",
+        "belege/r2-fundament-r2/datenschutz__d1440-light__13.webp",
+        "belege/r2-fundament-r2/datenschutz__d1440-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 9376,
+      "seitenhoehe": 14240,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/datenschutz__d1440-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__d1440-dark__02.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__d1440-dark__03.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__d1440-dark__04.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__d1440-dark__05.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__d1440-dark__06.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__d1440-dark__07.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__d1440-dark__08.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__d1440-dark__09.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__d1440-dark__10.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__d1440-dark__11.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__d1440-dark__12.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__d1440-dark__13.webp",
+        ".roh/r2-fundament-r2/webp/datenschutz__d1440-dark__14.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 5816,
+      "seitenhoehe": 4266,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/impressum__m390-light__01.webp",
+        ".roh/r2-fundament-r2/webp/impressum__m390-light__02.webp",
+        ".roh/r2-fundament-r2/webp/impressum__m390-light__03.webp",
+        ".roh/r2-fundament-r2/webp/impressum__m390-light__04.webp",
+        ".roh/r2-fundament-r2/webp/impressum__m390-light__05.webp",
+        ".roh/r2-fundament-r2/webp/impressum__m390-light__06.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 5952,
+      "seitenhoehe": 4266,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/impressum__m390-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/impressum__m390-dark__02.webp",
+        ".roh/r2-fundament-r2/webp/impressum__m390-dark__03.webp",
+        ".roh/r2-fundament-r2/webp/impressum__m390-dark__04.webp",
+        ".roh/r2-fundament-r2/webp/impressum__m390-dark__05.webp",
+        ".roh/r2-fundament-r2/webp/impressum__m390-dark__06.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "ansicht": "m430",
+      "schema": "light",
+      "status": 200,
+      "ms": 5809,
+      "seitenhoehe": 4233,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/impressum__m430-light__01.webp",
+        ".roh/r2-fundament-r2/webp/impressum__m430-light__02.webp",
+        ".roh/r2-fundament-r2/webp/impressum__m430-light__03.webp",
+        ".roh/r2-fundament-r2/webp/impressum__m430-light__04.webp",
+        ".roh/r2-fundament-r2/webp/impressum__m430-light__05.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "ansicht": "m430",
+      "schema": "dark",
+      "status": 200,
+      "ms": 5767,
+      "seitenhoehe": 4233,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/impressum__m430-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/impressum__m430-dark__02.webp",
+        ".roh/r2-fundament-r2/webp/impressum__m430-dark__03.webp",
+        ".roh/r2-fundament-r2/webp/impressum__m430-dark__04.webp",
+        ".roh/r2-fundament-r2/webp/impressum__m430-dark__05.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 2851,
+      "seitenhoehe": 2941,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/impressum__d1440-light__01.webp",
+        "belege/r2-fundament-r2/impressum__d1440-light__02.webp",
+        "belege/r2-fundament-r2/impressum__d1440-light__03.webp",
+        "belege/r2-fundament-r2/impressum__d1440-light__04.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 2826,
+      "seitenhoehe": 2941,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/impressum__d1440-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/impressum__d1440-dark__02.webp",
+        ".roh/r2-fundament-r2/webp/impressum__d1440-dark__03.webp",
+        ".roh/r2-fundament-r2/webp/impressum__d1440-dark__04.webp"
+      ]
+    },
+    {
+      "pfad": "/gibt-es-nicht-404",
+      "slug": "fehler-404",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 404,
+      "ms": 2950,
+      "seitenhoehe": 1660,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [
+        {
+          "kind": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/fehler-404__m390-light__01.webp",
+        ".roh/r2-fundament-r2/webp/fehler-404__m390-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/gibt-es-nicht-404",
+      "slug": "fehler-404",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 404,
+      "ms": 2903,
+      "seitenhoehe": 1660,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [
+        {
+          "kind": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/fehler-404__m390-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/fehler-404__m390-dark__02.webp"
+      ]
+    },
+    {
+      "pfad": "/gibt-es-nicht-404",
+      "slug": "fehler-404",
+      "ansicht": "m430",
+      "schema": "light",
+      "status": 404,
+      "ms": 2813,
+      "seitenhoehe": 1638,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [
+        {
+          "kind": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/fehler-404__m430-light__01.webp",
+        ".roh/r2-fundament-r2/webp/fehler-404__m430-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/gibt-es-nicht-404",
+      "slug": "fehler-404",
+      "ansicht": "m430",
+      "schema": "dark",
+      "status": 404,
+      "ms": 2963,
+      "seitenhoehe": 1638,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 430,
+        "clientWidth": 430,
+        "clipped": []
+      },
+      "fehler": [
+        {
+          "kind": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/fehler-404__m430-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/fehler-404__m430-dark__02.webp"
+      ]
+    },
+    {
+      "pfad": "/gibt-es-nicht-404",
+      "slug": "fehler-404",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 404,
+      "ms": 1973,
+      "seitenhoehe": 1197,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [
+        {
+          "kind": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r2-fundament-r2/fehler-404__d1440-light__01.webp",
+        "belege/r2-fundament-r2/fehler-404__d1440-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/gibt-es-nicht-404",
+      "slug": "fehler-404",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 404,
+      "ms": 1910,
+      "seitenhoehe": 1197,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [
+        {
+          "kind": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r2-fundament-r2/webp/fehler-404__d1440-dark__01.webp",
+        ".roh/r2-fundament-r2/webp/fehler-404__d1440-dark__02.webp"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "label": "fertig-r5-jobs-01",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T08:56:38.451Z",
+  "seiten": [
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 9873,
+      "seitenhoehe": 5583,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r5-jobs-01/stellen__m390-light__01.webp",
+        "belege/fertig-r5-jobs-01/stellen__m390-light__02.webp",
+        "belege/fertig-r5-jobs-01/stellen__m390-light__03.webp",
+        "belege/fertig-r5-jobs-01/stellen__m390-light__04.webp",
+        "belege/fertig-r5-jobs-01/stellen__m390-light__05.webp",
+        "belege/fertig-r5-jobs-01/stellen__m390-light__06.webp",
+        "belege/fertig-r5-jobs-01/stellen__m390-light__07.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 5110,
+      "seitenhoehe": 3886,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r5-jobs-01/stellen__d1440-light__01.webp",
+        "belege/fertig-r5-jobs-01/stellen__d1440-light__02.webp",
+        "belege/fertig-r5-jobs-01/stellen__d1440-light__03.webp",
+        "belege/fertig-r5-jobs-01/stellen__d1440-light__04.webp",
+        "belege/fertig-r5-jobs-01/stellen__d1440-light__05.webp"
+      ]
+    }
+  ]
+}

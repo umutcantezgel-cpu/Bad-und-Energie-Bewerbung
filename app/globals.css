@@ -10,23 +10,38 @@
 @source not "../supabase";
 @source not "../**/__tests__";
 @source not "../README.md";
+@source not "../_relaunch";
+
+/* Ersatzschrift für Martian Mono (app/fonts): lokale Arial-Familie, auf die Breite 75 % abgeglichen
+   (Ziffer 0,5 em statt 0,556 em; Oberlänge 1,0 und Unterlänge 0,2 em wie Martian Mono). */
+@font-face {
+  font-family: "Martian Ersatz";
+  src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Helvetica"), local("Roboto");
+  size-adjust: 90%;
+  ascent-override: 111%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
 
 @layer base {
   html {
     font-family: var(--font-sans);
+    /* Dokumenthintergrund = Papier (dunkel: Nacht): kein weißer Rand beim Überziehen */
+    background-color: var(--surface);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    /* Eigene :active-Zustände statt grauer Tipp-Markierung (siehe unten) */
     -webkit-tap-highlight-color: transparent;
-    /* Anchors and focused fields clear the sticky header (WCAG 2.4.11) */
-    scroll-padding-top: 72px;
+    /* Anker und fokussierte Felder bleiben unter dem Kopf sichtbar (WCAG 2.4.11) */
+    scroll-padding-top: calc(var(--m-kopf) + var(--a-4));
   }
 
-  /* …and the sticky apply bar below lg, on pages that render it (not in focus mode) */
+  /* …und über der StickyApplyBar unter lg, auf Seiten, die sie zeigen (nicht im Fokusmodus) */
   @media (width < 64rem) {
     html:has([data-sticky-apply-bar]) {
-      scroll-padding-bottom: 96px;
+      scroll-padding-bottom: calc(var(--m-leiste) + var(--a-4));
     }
   }
 
@@ -41,6 +56,7 @@
     color: var(--ink);
     font-size: var(--text-body);
     line-height: var(--text-body--line-height);
+    font-kerning: normal;
   }
 
   [data-tone="inverse"] {
@@ -48,20 +64,39 @@
     color: var(--ink);
   }
 
+  /* Fokus (K-011): 3 px Linie mit 3 px Abstand in Rücklaufblau, ≥ 3:1 auf jeder Fläche */
   :focus-visible {
-    outline: 2px solid var(--focus);
-    outline-offset: 2px;
+    outline: var(--m-strich) solid var(--focus);
+    outline-offset: var(--m-strich);
   }
 
-  /* Own @supports: Tailwind's color-mix fallback would be solid ink behind ink text */
-  @supports (color: color-mix(in oklab, red, red)) {
-    ::selection {
-      background-color: color-mix(in oklab, var(--ink) 16%, transparent);
+  /* Markierung in Wärme mit Navy-Schrift (dunkel: Glut mit Creme) */
+  ::selection {
+    background-color: var(--waerme);
+    color: var(--brand);
+  }
+
+  /* Druck-Rückmeldung (Register „druck“, K-009/K-011 „Aktiv“): 1 px nach unten, nur an Elementen mit
+     der Kennung und nur ohne reduzierte Bewegung (Z-09: reduziert keine Positionsänderung; der
+     Farbwechsel auf accent-press bleibt). Alles andere behält seine eigenen :active-Zustände.
+     :where() hält die Spezifität bei 0, eigene Zustände der Komponenten gehen vor. */
+  @media (prefers-reduced-motion: no-preference) {
+    :where([data-motion~="druck"]):active {
+      transform: translateY(1px);
     }
   }
 
   h1, h2, h3, h4, h5, h6 {
     text-wrap: balance;
+  }
+
+  /* Lange Wörter in Überschriften (Komposita wie „Anlagenmechaniker“) trennen mit Trennstrich, statt
+     mitten im Wort ohne Strich umzubrechen (K-005, Z-13); erst ab 10 Zeichen, je Teil mindestens 4.
+     overflow-wrap (PageHeader: wrap-break-word) bleibt das letzte Netz. */
+  :where(h1, h2, h3):lang(de) {
+    -webkit-hyphens: auto;
+    hyphens: auto;
+    hyphenate-limit-chars: 10 4 4;
   }
 
   p {
@@ -86,19 +121,22 @@
     display: none !important;
   }
 
-  /* Only crossfades survive: animations stop, transitions are limited to opacity. */
+  /* Reduzierte Bewegung (K-009): alles steht sofort im Endzustand. Abläufe enden nach 0,01 ms
+     (Ereignisse wie animationend feuern weiter), Übergänge springen, Verzögerungen entfallen. */
   @media (prefers-reduced-motion: reduce) {
     *, ::before, ::after {
       animation-duration: 0.01ms !important;
+      animation-delay: 0s !important;
       animation-iteration-count: 1 !important;
-      transition-property: opacity !important;
+      transition-duration: 0.01ms !important;
+      transition-delay: 0s !important;
       scroll-behavior: auto !important;
     }
-  }
 
-  @media print {
-    :root {
-      color-scheme: light;
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+      animation: none !important;
     }
   }
 }
@@ -124,7 +162,7 @@
 /* Typography plugin colors follow the semantic roles, so light, dark and inverse need no prose-invert. */
 @utility prose {
   --tw-prose-body: var(--ink);
-  --tw-prose-headings: var(--ink);
+  --tw-prose-headings: var(--brand);
   --tw-prose-lead: var(--ink-muted);
   --tw-prose-links: var(--ink);
   --tw-prose-bold: var(--ink);

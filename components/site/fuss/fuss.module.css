@@ -1,0 +1,325 @@
+/*
+ * Fuß (R4-SHELL-02, E-023): das Navy-Band am Ende jeder Seite, aus einem Guss mit dem Einstieg der Startseite.
+ * Oben läuft das Leitungspaar (components/zeichnung/Leitungstrenner) quer durch das Band; Spaltenköpfe als
+ * Mono-Etikett (text-etikett), Ziffern in Bricolage (ziffer), Links mit dem Unterstrich aus Variante 1.
+ *
+ * Nur Rollen aus app/styles/theme.css (--brand, --ink, --line …): im Band (data-tone="inverse") Creme auf Navy,
+ * Vorlauf und Rücklauf hell. Eine Strichstärke (--m-strich), Abstände aus der Skala --a-*.
+ */
+
+.fuss {
+  position: relative;
+  overflow-x: clip;
+}
+
+/* Leitungspaar als oberer Abschluss: randlos, mit Luft zum Navy-Rand und zum Inhalt */
+.trenner {
+  margin-top: var(--a-6);
+}
+
+.inhalt {
+  padding-block: var(--a-7) var(--a-6);
+}
+
+/* Unter lg steht die StickyApplyBar fest am unteren Rand (hasStickyApplyBar in ../nav): die letzte Zeile
+   bleibt frei (Höhe der Leiste plus sichere Zone). */
+.reserve {
+  padding-bottom: calc(var(--m-leiste) + var(--a-6) + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 64em) {
+  .reserve {
+    padding-bottom: 0;
+  }
+}
+
+/* ═══ Kopfzeile des Fußes: Logo auf der Plakette, rechts der Weg zur Kunden-Website ═══ */
+.marke {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--a-5) var(--a-7);
+  padding-bottom: var(--a-6);
+  border-bottom: 1px solid var(--line);
+}
+
+.logoLink {
+  display: inline-flex;
+  border-radius: var(--radius-1, 4px);
+}
+
+/* ═══ Spalten ═══ */
+.spalten {
+  display: grid;
+  gap: var(--a-6);
+  padding-block: var(--a-6);
+}
+
+@media (min-width: 40em) {
+  .spalten {
+    row-gap: var(--a-7);
+    padding-block: var(--a-7);
+  }
+}
+
+@media (min-width: 40em) {
+  .spalten {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64em) {
+  .spalten {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--spacing-bundsteg, var(--a-5));
+  }
+
+  .betrieb {
+    grid-column: span 3;
+  }
+
+  .kontakt {
+    grid-column: span 3;
+  }
+
+  .stellen {
+    grid-column: span 3;
+  }
+
+  .rechtliches {
+    grid-column: span 3;
+  }
+}
+
+.spalte {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Spaltenkopf: Mono-Etikett wie die Namen der Maße im Einstieg */
+.kopf {
+  margin-bottom: var(--a-3);
+}
+
+.liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adresse {
+  font-style: normal;
+  font-size: var(--text-callout);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.firma {
+  display: block;
+  margin-bottom: var(--a-1);
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.zeiten {
+  margin-top: var(--a-4);
+  font-size: var(--text-callout);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.zeitenName {
+  display: block;
+  margin-bottom: var(--a-1);
+}
+
+/* ═══ Links: Unterstrich aus Variante 1 (Register „unterstrich“), Druck 1 px („druck“) ═══ */
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--a-3);
+  min-height: var(--m-ziel);
+  max-width: 100%;
+  color: var(--ink);
+  font-size: var(--text-callout);
+  line-height: 1.3;
+  text-decoration: none;
+}
+
+.ikon {
+  color: var(--brand);
+}
+
+.text {
+  position: relative;
+  padding-block: var(--a-1);
+}
+
+.text::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--m-strich);
+  background-color: var(--brand);
+  border-radius: var(--radius-voll, 999px);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--d-1) var(--k-ein);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .link:hover .text::after {
+    transform: scaleX(1);
+    transition: transform var(--d-2) var(--k-aus);
+  }
+}
+
+/* Hervorgehobene Wege („Alle Stellen“, Kunden-Website): fett und dauerhaft unterstrichen wie der Zweitweg
+   des Einstiegs; Hover färbt den Strich im Rücklauf. */
+.stark {
+  font-weight: 700;
+}
+
+.stark .text::after {
+  transform: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .stark:hover .text::after {
+    background-color: var(--ruecklauf);
+  }
+}
+
+.pfeil {
+  color: var(--brand);
+}
+
+.unterzeile {
+  display: block;
+  margin-top: var(--a-1);
+  color: var(--ink-2);
+  font-size: var(--text-footnote);
+}
+
+/* Kunden-Website: Link oben, Domain als Ziel-Hinweis darunter */
+.kunde {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+@media (min-width: 40em) {
+  .kunde {
+    align-items: flex-end;
+    text-align: right;
+  }
+}
+
+/* ═══ Ortsliste (E-SHELL-021) und Fußzeile ═══ */
+.orte {
+  padding-block: var(--a-6);
+  border-top: 1px solid var(--line);
+}
+
+.orteRaster {
+  display: grid;
+  gap: 0 var(--a-6);
+}
+
+@media (min-width: 64em) {
+  .orteRaster {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--spacing-bundsteg, var(--a-5));
+  }
+
+  .orteRaster > .kopf {
+    grid-column: span 3;
+    padding-top: var(--a-1);
+  }
+
+  .orteInhalt {
+    grid-column: span 9;
+  }
+}
+
+.orteInhalt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--a-2);
+  min-width: 0;
+}
+
+/* Trennpunkte stehen im Zwischenraum vor jedem Ort; am Zeilenanfang liegt der Punkt im negativen Rand der
+   Liste und wird abgeschnitten. So beginnt und endet keine Zeile mit einem Punkt. */
+.orteClip {
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.orteListe {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: var(--a-1);
+  margin: 0 0 0 calc(var(--a-5) * -1);
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-callout);
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.orteListe > li {
+  position: relative;
+  padding-left: var(--a-5);
+}
+
+.orteListe > li::before {
+  content: "·" / "";
+  position: absolute;
+  left: calc(var(--a-5) / 2);
+  transform: translateX(-50%);
+  color: var(--ink-2);
+}
+
+.sitz {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.sitzZusatz {
+  font-weight: 400;
+  color: var(--ink-2);
+}
+
+.zeile {
+  padding-block: var(--a-5);
+  border-top: 1px solid var(--line);
+  font-size: var(--text-footnote);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+/* ═══ Schmaler Fuß im Fokusmodus (/bewerbung…) ═══ */
+.schmal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--a-2) var(--a-6);
+  padding-block: var(--a-5) var(--a-6);
+}
+
+.schmalWege {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--a-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

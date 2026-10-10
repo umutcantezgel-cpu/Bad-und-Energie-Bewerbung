@@ -1,6 +1,6 @@
 # Datenschutzerklärung und Impressum: Änderungen zur Prüfung
 
-Stand: 2026-10-08 · Schritt 1.3 der Roadmap (§5 „Datenschutz/Impressum“, §9.7) · Fassung `PRIVACY_NOTICE_VERSION = '2026-10'`
+Stand: 2026-10-08, ergänzt 2026-10-10 (Schriftnamen, Druck) · Schritt 1.3 der Roadmap (§5 „Datenschutz/Impressum“, §9.7) · Fassung `PRIVACY_NOTICE_VERSION = '2026-10'`
 
 Beide Seiten sind jetzt ruhige Server-Komponenten (`app/datenschutz/page.tsx`, `app/impressum/page.tsx`, Bausteine in `components/legal/`). Diese Liste markiert **jede inhaltliche Änderung** der Datenschutzerklärung gegenüber der bisherigen Fassung, damit der oder die Datenschutzbeauftragte sie prüfen kann. Sie ist keine Rechtsberatung; die Texte sind Entwürfe nach bestem Wissen, abgeleitet aus dem, was der Code tatsächlich tut.
 
@@ -12,6 +12,7 @@ Legende: **NEU** = neuer Absatz · **GEÄNDERT** = Aussage geändert · **ENTFER
 
 - **Anrede** von „Sie“ auf „du“ umgestellt, wie auf der ganzen Website. Inhaltlich nichts geändert.
 - **Darstellung:** keine Suche, keine Akkordeons, kein Druck-Button, keine Kacheln. Inhaltsverzeichnis mit Ankern (auf großen Bildschirmen seitlich mitlaufend), Text in einer Spalte, druckbar über die Druckfunktion des Browsers.
+- **Darstellung ab 2026-10-10 (R5-RECHT-01, E-RECHT-013):** Kopf im Design der Website (Etikett „Rechtliches“, Überschrift, Rohrklammer an der Stand-Zeile), nummerierte Kapitel und Verzeichnis. Neu ist ein Knopf „Drucken oder als PDF speichern“ (öffnet den Druckdialog des Browsers; erscheint nur mit JavaScript). Die Druckansicht zeigt den Text mit Seitenrand, ohne Kopf, Fuß und Verzeichnis (eigene Druckseite; die Bewerbungsmappe behält ihren randlosen Druck). Kein Wort des Rechtstexts geändert außer der Schriftnamen-Korrektur in 2.10.
 - **Anker:** Die bisherigen Anker bleiben gültig (`#verantwortlicher`, `#rechtsgrundlagen`, `#datenerfassung`, `#bewerberdaten`, `#cookies-analyse`, `#betroffenenrechte`, `#aufsichtsbehoerde`). Neu: `#ueberblick`, `#entwurf`, `#herkunft`, `#google-maps` (verlinkt von der Karte), `#kontakt`.
 - **ENTFERNT (Werbe- und Zierelemente ohne Rechtsinhalt, teils nicht belegbar):** Kopfleiste „DSGVO und § 26 BDSG Rechtsstand“, „Dokumentenversion 4.2.1“, „Auditierte Verschlüsselung (TLS 1.3)“, „Serverstandort Frankfurt am Main (Hessen)“; Kacheln „100% DSGVO & BDSG“, „100% Lokale Fonts“, „256 Bit SSL und TLS“, „§ 26 BDSG Diskretion – Garantierter Kündigungsschutz und Sperrvermerk“; Plakette „Verifiziert Sicher“, „Meisterbetrieb seit 1926“. „Garantierter Kündigungsschutz“ und „auditiert“ waren nicht belegbar.
 - **Formatierung:** Bindestriche ergänzt (E-Mail, Datenschutz-Grundverordnung, Server-Logdateien, Gustav-Stresemann-Ring). HBDI-Telefon/-Fax nach DIN 5008 (`+49 611 1408-0`, `+49 611 1408-900`), gleiche Nummern.
@@ -98,6 +99,7 @@ Legende: **NEU** = neuer Absatz · **GEÄNDERT** = Aussage geändert · **ENTFER
 - **ENTFERNT Webanalyse und Cookiesteuerung:** bisher „Technologien, um das Nutzerverhalten aggregiert zu verstehen … gekürzte IP … Tracking-Cookies erst nach Einwilligung im Einwilligungsdialog“. Die Website hat keine Analyse und kein Cookie-Banner mehr (`CookieConsent` ist entfernt).
 - **NEU:** „Diese Website setzt keine Cookies und nutzt keine Tracking-Pixel und keine Analyse- oder Statistik-Tools. Deshalb gibt es auch kein Cookie-Banner.“ Verweis auf die zwei Speicherungen (Entwurf, Google Maps).
 - **GEÄNDERT Schriften:** bisher „lokal auf unseren eigenen Servern in der Bundesrepublik Deutschland … Übertragung der IP-Adresse an externe Server vollständig ausgeschlossen“. Neu: Inter wird beim Erstellen eingebunden (`next/font`) und vom Hoster mit den Seiten ausgeliefert; keine Verbindung zu Google Fonts oder anderen Dritten. (Die Seiten liegen bei Vercel, nicht auf eigenen Servern.)
+- **GEÄNDERT 2026-10-10, Faktenkorrektur der Schriftnamen (M-019, E-022, R5-RECHT-01):** Die Website nutzt nicht mehr Inter, sondern **Bricolage Grotesque, Atkinson Hyperlegible Next und Martian Mono**, selbst gehostet über `next/font/local` (Dateien in `app/fonts`, Lizenzen in `app/fonts/LIZENZEN.md`). Der Absatz lautet jetzt: „Wir nutzen die Schriften Bricolage Grotesque, Atkinson Hyperlegible Next und Martian Mono. Sie werden beim Erstellen der Website eingebunden und von unserem Hoster zusammen mit den Seiten ausgeliefert. Dein Browser stellt dafür keine Verbindung zu Google Fonts oder anderen Dritten her.“ Geändert sind nur die Schriftnamen und die Zahl („Schrift … wird“ → „Schriften … werden“); die Aussage (selbst gehostet, keine Übermittlung an Dritte) bleibt. Die Fassung bleibt `2026-10` (Stand „Oktober 2026“), die Korrektur liegt im selben Monat. **Bitte durch den Datenschutzbeauftragten bestätigen.**
 - **Hinweis Phase 3:** Werbe-Pixel nach Einwilligung (Roadmap §7) machen diesen Abschnitt und ein Einwilligungs-Banner nötig.
 
 ### 2.11 Deine Rechte (`#betroffenenrechte`) · UNVERÄNDERT
@@ -142,6 +144,7 @@ Bewusst **nicht** geändert, bitte prüfen:
 
 - `components/apply/ContactStep.tsx`: „Mit dem Absenden gelten unsere Datenschutzhinweise.“ klang nach Einwilligung oder Vertragsbestandteil. **Umgesetzt:** „Wir verarbeiten deine Angaben für deine Bewerbung (Art. 6 Abs. 1 lit. b DSGVO). Mehr dazu in den Datenschutzhinweisen.“ mit Link auf `#bewerberdaten` (Roadmap §6: Hinweis mit Rechtsgrundlage statt Checkbox, DSB-Bestätigung ausstehend).
 - `app/globals.css` setzt `@page { margin: 0 }` für alle Seiten. Beim Drucken von Datenschutz und Impressum fehlt dadurch der Seitenrand oben und unten. Vorschlag: Standardrand für alle Seiten und `margin: 0` nur für die Bewerbungsmappe (benannte Seite).
+  **Umgesetzt 2026-10-10 (R5-RECHT-01):** Datenschutz und Impressum drucken auf der benannten Seite `recht` mit Rand (`components/recht/recht.module.css`); `app/globals.css` bleibt unverändert.
 
 ## 6. Checkliste „Bitte durch DSB prüfen“
 
@@ -164,6 +167,7 @@ Bewusst **nicht** geändert, bitte prüfen:
 - [ ] 2.8 Google Maps: Einwilligung per Klick, Speicherung `be:maps-consent:v1`, Widerruf, Angaben zu Google und DPF
 - [ ] 2.9 Kontakt ohne Kontaktformular (O5) und WhatsApp-Absatz (O6)
 - [ ] 2.10 „Keine Cookies, keine Pixel, keine Analyse“ und Schriften-Absatz
+- [ ] 2.10 Schriftnamen-Korrektur vom 2026-10-10 (Bricolage Grotesque, Atkinson Hyperlegible Next, Martian Mono statt Inter; M-019)
 - [ ] 2.11 Ergänzungen bei den Rechten (Google-Maps-Widerruf, Kontaktzeile)
 - [ ] 1 Anrede „du“ in Datenschutzerklärung und Impressum
 - [ ] 3 Impressum: DDG-Verweise (geändert), OS-Satz entfernt, § 36 VSBG (Prüfpunkt)

@@ -1,0 +1,1082 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Feierabend – Stilkachel Richtung C · Bad &amp; Energie</title>
+<meta name="description" content="Stilkachel Richtung C „Feierabend“ für das Karriereportal der Bad &amp; Energie GmbH in Wetzlar: Zeit als Gestaltungsachse.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%2214%22%20fill%3D%22%23F6F2E9%22%20stroke%3D%22%230C1A72%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M5.7%2011.2A12%2012%200%200%201%2022.1%205.1%22%20fill%3D%22none%22%20stroke%3D%22%230C1A72%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
+<link rel="preload" href="fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/hanken-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<script>(function(){var r=document.documentElement;r.className+=' js';if(!matchMedia('(prefers-reduced-motion: reduce)').matches){r.className+=' bew';window.__sn=setTimeout(function(){r.className+=' bew-fertig'},2000)}})()</script>
+<style>
+/* ── Schriften: selbst gehostet, OFL, Teilmengen latin + latin-ext ─────────────── */
+@font-face{font-family:"Newsreader Variable";font-style:normal;font-display:swap;font-weight:200 800;src:url(fonts/newsreader-latin-opsz-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Newsreader Variable";font-style:normal;font-display:swap;font-weight:200 800;src:url(fonts/newsreader-latin-ext-wght-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Hanken Grotesk Variable";font-style:normal;font-display:swap;font-weight:100 900;src:url(fonts/hanken-grotesk-latin-wght-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Hanken Grotesk Variable";font-style:normal;font-display:swap;font-weight:100 900;src:url(fonts/hanken-grotesk-latin-ext-wght-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+/* Ersatzschriften über Systemschriften mit angeglichenen Metriken (kein Sprung beim Laden) */
+@font-face{font-family:"Newsreader Ersatz";src:local("Times New Roman"),local("Liberation Serif"),local("Times");size-adjust:107%;ascent-override:68.7%;descent-override:24.8%;line-gap-override:0%}
+@font-face{font-family:"Hanken Ersatz";src:local("Arial"),local("Liberation Sans"),local("Helvetica");size-adjust:99%;ascent-override:101%;descent-override:30.6%;line-gap-override:0%}
+
+/* ── Tokens ─────────────────────────────────────────────────────────────────────
+   Farbe: Rollen, hell = „Tag“, dunkel = „Abend“ (eigene Komposition, nicht invertiert).
+   Skalen: 10 Abstände, 8 Schriftgrößen, 4 Dauern, 4 Kurven, 3 Radien. */
+:root{
+  color-scheme:light dark;
+  --f-display:"Newsreader Variable","Newsreader Ersatz",Georgia,"Times New Roman",serif;
+  --f-text:"Hanken Grotesk Variable","Hanken Ersatz",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --fs-1:.8125rem; --fs-2:.9375rem; --fs-3:clamp(1rem,.95rem + .25vw,1.125rem);
+  --fs-4:clamp(1.1875rem,1.06rem + .6vw,1.5rem); --fs-5:clamp(1.375rem,1.12rem + 1.1vw,2rem);
+  --fs-6:clamp(2rem,1.3rem + 2.8vw,3.5rem); --fs-7:clamp(2.75rem,1.45rem + 5.2vw,5.75rem);
+  --a1:.25rem; --a2:.5rem; --a3:.75rem; --a4:1rem; --a5:1.5rem; --a6:2rem; --a7:3rem; --a8:4rem; --a9:6rem; --a10:8rem;
+  --d1:160ms; --d2:320ms; --d3:640ms; --d4:1100ms;
+  --k1:cubic-bezier(.16,1,.3,1); --k2:cubic-bezier(.65,0,.35,1); --k3:cubic-bezier(.32,0,.67,0); --k4:linear;
+  --r1:6px; --r2:999px; --r3:14px;
+  --rand:clamp(1rem,.4rem + 3.2vw,4.5rem); --bund:clamp(1rem,.7rem + 1.2vw,1.5rem);
+}
+:root{--papier:#F6F2E9;--papier-tief:#ECE6D8;--tinte:#0C1A72;--tinte-leise:#454E84;--skala:#6A73A8;--haar:#D4CDBB;--abend:#8A5300;--signal:#D60000;--signal-druck:#A80000;--signal-text:#FFFFFF;--nacht:#0B1230;--fokus:#0C1A72;--flaeche-karte:#F6F2E9;--halo:#ECE6D8}
+@media (prefers-color-scheme:dark){:root{--papier:#0B1230;--papier-tief:#131C46;--tinte:#F1ECE0;--tinte-leise:#A9B0D2;--skala:#7F89C0;--haar:#27316A;--abend:#F0B650;--signal:#D60000;--signal-druck:#B50000;--signal-text:#FFFFFF;--nacht:#0B1230;--fokus:#F1ECE0;--flaeche-karte:#0B1230;--halo:#131C46}}
+[data-ton="invers"]{--papier:var(--nacht);--tinte:#F1ECE0;--tinte-leise:#B4BAD8;--haar:#2A3470;--abend:#F0B650;--fokus:#F1ECE0;--papier-tief:#131C46;--skala:#8A94C8}
+@media (prefers-color-scheme:dark){[data-ton="invers"]{--papier:#F6F2E9;--tinte:#0C1A72;--tinte-leise:#454E84;--haar:#D4CDBB;--abend:#8A5300;--fokus:#0C1A72;--papier-tief:#ECE6D8;--skala:#6A73A8}}
+
+/* ── Grundlagen ──────────────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:var(--a6);scroll-behavior:smooth}
+body{margin:0;background:var(--papier);color:var(--tinte);font-family:var(--f-text);font-size:var(--fs-3);line-height:var(--lh-text);font-kerning:normal;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;font-synthesis:none}
+h1,h2,h3,h4,p,ul,ol,dl,dd,dt,figure,blockquote{margin:0}
+ul,ol{padding:0;list-style:none}
+img,svg{display:block;max-width:100%}
+a{color:inherit}
+button,input{font:inherit;color:inherit}
+p{text-wrap:pretty;hyphens:auto;-webkit-hyphens:auto}
+h1,h2,h3{text-wrap:balance}
+abbr{text-decoration:none}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+:focus-visible{outline:3px solid var(--fokus);outline-offset:3px;border-radius:2px}
+.skip{position:absolute;left:var(--a4);top:-5rem;z-index:20;background:var(--tinte);color:var(--papier);padding:var(--a3) var(--a4);border-radius:var(--r1);min-height:44px;display:inline-flex;align-items:center;font-weight:600}
+.skip:focus{top:var(--a3)}
+.wrap{width:100%;max-width:calc(80rem + 2*var(--rand));margin-inline:auto;padding-inline:var(--rand)}
+.nb{white-space:nowrap}
+.zahl{font-variant-numeric:tabular-nums lining-nums;font-feature-settings:"tnum" 1,"lnum" 1}
+
+/* ── Schrift-Rollen ──────────────────────────────────────────────────────────── */
+.eyebrow{display:flex;align-items:center;gap:var(--a3);font:600 var(--fs-1)/1.3 var(--f-text);letter-spacing:.14em;text-transform:uppercase;color:var(--tinte-leise)}
+.eyebrow::before{content:"";flex:none;width:2.5rem;border-top:2px solid var(--tinte);border-radius:2px}
+h1,h2,h3,.disp{font-family:var(--f-display);font-weight:360;font-optical-sizing:auto;font-variant-numeric:tabular-nums lining-nums}
+h2{font-size:var(--fs-6);line-height:1;letter-spacing:-.02em}
+h3{font-size:var(--fs-5);line-height:1.1;letter-spacing:-.012em;font-weight:400}
+.lead{font-size:var(--fs-4);line-height:1.5;max-width:34em}
+.leise{color:var(--tinte-leise)}
+.klein{font-size:var(--fs-2);line-height:1.5}
+.mikro{font-size:var(--fs-2);color:var(--tinte-leise);line-height:1.5}
+
+/* ── Kopf ─────────────────────────────────────────────────────────────────────── */
+.kopf{border-bottom:1px solid var(--haar)}
+.kopf__in{display:flex;align-items:center;justify-content:space-between;gap:var(--a4);min-height:4.5rem;padding-block:var(--a3)}
+.marke{display:inline-flex;min-height:44px;align-items:center}
+.plakette{display:block;padding:0}
+.plakette img{width:clamp(9.5rem,8rem + 7vw,15rem);height:auto;aspect-ratio:662/121}
+@media (prefers-color-scheme:dark){.plakette{background:#F6F2E9;border-radius:var(--r1);padding:.4rem .75rem}}
+.nav{display:flex;align-items:center;gap:var(--a5)}
+.nav a{display:inline-flex;align-items:center;min-height:44px;font-weight:600;font-size:var(--fs-2);text-decoration:none;position:relative}
+.nav a:not(.tel)::after{content:"";position:absolute;left:0;right:0;bottom:.55rem;border-top:2px solid var(--tinte);transform:scaleX(0);transform-origin:left;transition:transform var(--d2) var(--k1)}
+@media (hover:hover) and (pointer:fine){.nav a:hover::after{transform:scaleX(1)}}
+.nav a.tel{border:1.5px solid var(--tinte);border-radius:var(--r2);padding:0 var(--a4);font-variant-numeric:tabular-nums}
+@media (hover:hover) and (pointer:fine){.nav a.tel:hover{background:var(--tinte);color:var(--papier)}}
+.nav .nur-gross{display:none}
+@media (min-width:48em){.nav .nur-gross{display:inline-flex}}
+
+/* ── Knopf (die eine Hauptaktion) ────────────────────────────────────────────── */
+.btn{--btn-bg:var(--signal);position:relative;isolation:isolate;display:inline-flex;align-items:center;gap:var(--a3);min-height:3.5rem;padding:0 var(--a6);border:0;border-radius:var(--r2);background:var(--btn-bg);color:var(--signal-text);font:600 1.0625rem/1 var(--f-text);text-decoration:none;cursor:pointer;transition:transform var(--d1) var(--k1)}
+.btn::after{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:var(--signal-druck);opacity:0;transition:opacity var(--d1) var(--k1)}
+.btn svg{width:1.25rem;height:1.25rem;flex:none}
+@media (hover:hover) and (pointer:fine){.btn:hover::after,.btn.ist-hover::after{opacity:1}}
+.btn:active,.btn.ist-druck{transform:scale(.97)}
+.btn.ist-druck::after{opacity:1}
+.btn.ist-fokus{outline:3px solid var(--fokus);outline-offset:3px}
+.btn[aria-disabled="true"]{background:var(--papier-tief);color:var(--tinte-leise);box-shadow:inset 0 0 0 1.5px var(--haar);cursor:not-allowed}
+.btn[aria-disabled="true"]::after{display:none}
+.btn.laedt .lade{display:block}
+.lade{display:none;width:1.25rem;height:1.25rem}
+.btn--leise{--btn-bg:transparent;color:var(--tinte);box-shadow:inset 0 0 0 1.5px var(--tinte)}
+.btn--leise::after{background:var(--tinte);opacity:0}
+@media (hover:hover) and (pointer:fine){.btn--leise:hover{color:var(--papier)}.btn--leise:hover::after{opacity:1}}
+.textlink{display:inline-flex;align-items:center;min-height:44px;font-weight:600;text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:.3em;text-decoration-color:var(--tinte)}
+@media (hover:hover) and (pointer:fine){.textlink:hover{text-decoration-thickness:3px}}
+
+/* ── 1 · Erster Bildschirm ───────────────────────────────────────────────────── */
+.start{padding-block:var(--a6) var(--a8)}
+.start__in{display:grid;grid-template-columns:minmax(0,1fr);row-gap:var(--a5)}
+.start__kopf{min-width:0}
+.start__rest,.start__tafel{min-width:0}
+.start h1{margin-top:var(--a4);font-size:var(--fs-7);line-height:.95;letter-spacing:-.03em;font-weight:350}
+.h1-a{display:block}
+.h1-b{display:block;margin-top:var(--a4);font-size:max(.4em,1.375rem);line-height:1.12;letter-spacing:-.012em;color:var(--tinte-leise);font-weight:380}
+.h1-b>span{display:block}
+.start .lead{margin-top:var(--a3)}
+.aktion{display:flex;flex-wrap:wrap;align-items:center;gap:var(--a3) var(--a5);margin-top:var(--a6)}
+.start .mikro{margin-top:var(--a3)}
+.zeittafel{margin-top:var(--a3);border-top:1px solid var(--haar)}
+.zeittafel li{display:grid;grid-template-columns:5.75rem 1fr;align-items:baseline;column-gap:var(--a4);padding-block:var(--a2);border-bottom:1px solid var(--haar)}
+.zeittafel b{font:360 1.5rem/1 var(--f-display);text-align:right;letter-spacing:-.01em}
+.zeittafel span{font-size:var(--fs-2);color:var(--tinte-leise)}
+@media (min-width:64em){
+  .start{padding-block:var(--a6) var(--a8)}
+  .start__in{grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--bund);row-gap:0;align-items:start}
+  .start__kopf{grid-column:1/span 6;grid-row:1}
+  .start__rest{grid-column:1/span 6;grid-row:2}
+  .start__tafel{grid-column:1/span 6;grid-row:3;margin-top:var(--a5)}
+  .start__bogen{grid-column:7/span 6;grid-row:1/span 3;align-self:center}
+  .start .lead{margin-top:var(--a5)}
+}
+
+/* Tagesbogen */
+.bogen{container-type:inline-size;position:relative;width:100%;max-width:41rem;margin-inline:auto}
+.bogen__svg{width:100%;height:auto;overflow:visible}
+.bogen__scheibe{position:relative}
+.bogen__mitte{position:absolute;left:50%;top:50%;transform:translate(-50%,-46%);display:flex;flex-direction:column;align-items:center;text-align:center;width:52cqw}
+.mitte__a{font:600 clamp(.8125rem,3.3cqw,1.0625rem)/1.2 var(--f-text);letter-spacing:.12em;text-transform:uppercase;color:var(--tinte-leise)}
+.mitte__z{font-family:var(--f-display);font-weight:330;font-size:clamp(3.25rem,18.5cqw,7.75rem);line-height:.92;letter-spacing:-.035em;color:var(--tinte);font-variant-numeric:tabular-nums lining-nums;margin-block:.04em .06em}
+.mitte__b{font:400 clamp(1.0625rem,4.4cqw,1.75rem)/1.1 var(--f-display);color:var(--abend);letter-spacing:-.005em}
+.scheibe{fill:var(--papier-tief)}
+.rand-kreis{fill:none;stroke:var(--skala);stroke-width:1.5px;vector-effect:non-scaling-stroke}
+.teil{fill:none;stroke:var(--skala);stroke-width:1.5px;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.punkte{fill:none;stroke-linecap:round;vector-effect:non-scaling-stroke;stroke-width:2px}
+.bd-mododo{stroke:var(--tinte-leise);stroke-dasharray:.1 6}
+.bd-abend{stroke:var(--abend);stroke-dasharray:.1 6;stroke-width:2.4px}
+.bd-band{fill:none;stroke:var(--tinte);opacity:.09}
+.bd-fr{fill:none;stroke:var(--tinte);stroke-width:2.6;stroke-linecap:round}
+.bd-zeiger{transform:rotate(22.5deg);transform-origin:0 0}
+.bd-zeiger line{stroke:var(--tinte);stroke-width:2.6;stroke-linecap:round}
+.bd-zeiger .kopf-punkt{fill:var(--tinte)}
+.bd-rast{transform-box:fill-box;transform-origin:center;fill:none;stroke:var(--tinte);stroke-width:1.5px;vector-effect:non-scaling-stroke}
+.bd-marke{fill:none;stroke:var(--tinte);stroke-width:1.5px;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.bd-t{font:500 12.5px var(--f-display);fill:var(--tinte);font-variant-numeric:tabular-nums lining-nums;letter-spacing:-.01em}
+.bd-t--leise{fill:var(--tinte-leise)}
+.bd-t--abend{fill:var(--abend);font-weight:600}
+.legende{display:flex;flex-wrap:wrap;gap:var(--a2) var(--a5);margin-top:var(--a4);font-size:var(--fs-2);color:var(--tinte-leise)}
+.legende li{display:flex;align-items:center;gap:var(--a2)}
+.legende svg{width:2rem;height:.75rem;flex:none;overflow:visible}
+.legende .ls-fr{stroke:var(--tinte);stroke-width:2.6;stroke-linecap:round}
+.legende .ls-md{stroke:var(--tinte-leise);stroke-width:2;stroke-linecap:round;stroke-dasharray:.1 6}
+.legende .ls-ab{stroke:var(--abend);stroke-width:2.4;stroke-linecap:round;stroke-dasharray:.1 6}
+.bogen__fuss{margin-top:var(--a3);font-size:var(--fs-1);color:var(--tinte-leise);line-height:1.45}
+
+/* Bewegung: Startzustände hängen nur an .bew (Inline-Skript im Kopf, nicht bei reduzierter Bewegung) oder .neu (Wiederholung) */
+.bd-fr,.bd-band{stroke-dasharray:1;stroke-dashoffset:0;transition:stroke-dashoffset var(--d4) var(--k2)}
+.bd-zeiger{transition:transform var(--d4) var(--k2)}
+.bd-rast{transition:transform var(--d1) var(--k1) var(--d4),opacity var(--d1) var(--k1) var(--d4)}
+.bd-abend-gruppe,.rast-text{transition:opacity var(--d2) var(--k1) calc(var(--d4) + var(--d1))}
+.bew:not(.lauf):not(.bew-fertig) .bd-fr,.bew:not(.lauf):not(.bew-fertig) .bd-band,.neu .bd-fr,.neu .bd-band{stroke-dashoffset:1}
+.bew:not(.lauf):not(.bew-fertig) .bd-zeiger,.neu .bd-zeiger{transform:rotate(-75deg)}
+.bew:not(.lauf):not(.bew-fertig) .bd-rast,.neu .bd-rast{opacity:0;transform:scale(.4)}
+.bew:not(.lauf):not(.bew-fertig) .bd-abend-gruppe,.bew:not(.lauf):not(.bew-fertig) .rast-text,.neu .bd-abend-gruppe,.neu .rast-text{opacity:0}
+.neu *{transition:none!important}
+.bew-fertig *{transition:none!important}
+
+/* ── 2 · Jahresleiste (Trenner) ──────────────────────────────────────────────── */
+.jahre{padding-block:var(--a6) var(--a7)}
+.jahre svg{width:100%;height:2.25rem;overflow:visible}
+.jahre .j-t{fill:none;stroke:var(--skala);stroke-width:1.5px;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.jahre .j-d{stroke:var(--tinte)}
+.jahre__zeile{display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;gap:var(--a2) var(--a4);margin-top:var(--a3)}
+.jahre__j{font:350 var(--fs-5)/1 var(--f-display);font-variant-numeric:tabular-nums lining-nums;letter-spacing:-.01em}
+.jahre__z{text-align:center;font-size:var(--fs-2);color:var(--tinte-leise)}
+@media (max-width:40em){.jahre__zeile{grid-template-columns:1fr 1fr}.jahre__z{grid-column:1/-1;grid-row:2;text-align:left}.jahre__j:last-child{text-align:right}}
+.jahre__skala{clip-path:inset(-8px 0 -8px 0)}
+.bew:not(.bew-fertig) [data-reveal]:not(.da) .jahre__skala{clip-path:inset(-8px 100% -8px 0)}
+.bew:not(.bew-fertig) [data-reveal].da .jahre__skala{transition:clip-path var(--d3) var(--k1)}
+
+/* ── 3 · Stellen ─────────────────────────────────────────────────────────────── */
+.stellen{padding-block:var(--a8) var(--a9)}
+.stellen__kopf{display:grid;gap:var(--a4) var(--bund)}
+.stellen h2{margin-top:var(--a4)}
+.stellen__kopf .lead{max-width:30em}
+@media (min-width:64em){.stellen__kopf{grid-template-columns:repeat(12,minmax(0,1fr));align-items:end}.stellen__kopf>div:first-child{grid-column:1/span 6}.stellen__kopf>.lead{grid-column:8/span 5}}
+.spannen{position:relative;margin-top:var(--a7);border-top:2px solid var(--tinte)}
+.stelle{position:relative;display:grid;gap:var(--a3) var(--bund);padding-block:var(--a5);border-bottom:1px solid var(--haar)}
+.stelle h3{font-size:var(--fs-5);line-height:1.1}
+.stelle p{font-size:var(--fs-2);color:var(--tinte-leise);max-width:34em;margin-top:var(--a2)}
+.stelle .stelle__gehalt{font:360 var(--fs-5)/1 var(--f-display);color:var(--tinte);max-width:none;margin-top:0;letter-spacing:-.01em;white-space:nowrap}
+.stelle .stelle__gehalt small{font:500 var(--fs-2)/1 var(--f-text);color:var(--tinte-leise);letter-spacing:0;margin-left:.35em}
+.spanne{position:relative;height:1.25rem;margin-top:var(--a3)}
+.spanne::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1.5px solid var(--skala)}
+.spanne b{position:absolute;top:50%;height:.5rem;border-left:1.5px solid var(--skala);transform:translateY(-50%)}
+.spanne .balken{position:absolute;top:50%;height:.75rem;transform:translateY(-50%);border-radius:var(--r2);background:var(--tinte)}
+.achse-skala{position:relative;height:1.5rem;font-size:var(--fs-1);color:var(--tinte-leise);font-variant-numeric:tabular-nums}
+.achse-skala span{position:absolute;top:.25rem;white-space:nowrap}
+.spannen__kopf{display:none}
+@media (min-width:56em){
+  .stelle{grid-template-columns:minmax(0,1fr) 46%;align-items:center}
+  .spannen__kopf{display:grid;grid-template-columns:minmax(0,1fr) 46%;gap:var(--bund);padding-top:var(--a2)}
+  .spannen__kopf .achse-skala{grid-column:2}
+  .stelle .spanne{margin-top:var(--a3)}
+}
+.stelle__kopf{min-width:0}
+
+/* ── 4 · Einsatzgebiet (zurückgeführt: Radius-Umschalter, Pendelrechner) ──── */
+.gebiet{background:var(--papier-tief);padding-block:var(--a8) var(--a9);--flaeche-karte:var(--papier);--halo:var(--papier-tief)}
+.gebiet__kopf{display:grid;gap:var(--a4) var(--bund)}
+.gebiet h2{margin-top:var(--a4)}
+.h2-b{display:block;color:var(--tinte-leise)}
+.gebiet__kopf .lead{max-width:30em}
+.gebiet__werk{display:grid;gap:var(--a6) var(--bund);margin-top:var(--a7)}
+@media (min-width:64em){
+  .gebiet__kopf{grid-template-columns:repeat(12,minmax(0,1fr));align-items:end}
+  .gebiet__kopf>div:first-child{grid-column:1/span 7}
+  .gebiet__kopf>.lead{grid-column:8/span 5}
+  .gebiet__werk{grid-template-columns:repeat(12,minmax(0,1fr));align-items:start}
+  .karte-wrap{grid-column:1/span 7}
+  .panel{grid-column:8/span 5}
+}
+.karte{container-type:inline-size;position:relative;width:100%;max-width:40rem;margin-inline:auto}
+.karte svg{width:100%;height:auto;overflow:visible}
+.karte__fuss{display:flex;flex-wrap:wrap;gap:var(--a2) var(--a5);margin-top:var(--a3);font-size:var(--fs-2);color:var(--tinte-leise)}
+.karte__fuss li{display:flex;align-items:center;gap:var(--a2)}
+.karte__fuss svg{width:1rem;height:1rem;flex:none}
+.k-flaeche{fill:var(--flaeche-karte);transition:transform var(--d2) var(--k2)}
+.k-ring{fill:none;stroke:var(--skala);stroke-width:1.5px;vector-effect:non-scaling-stroke;transition:transform var(--d2) var(--k2),opacity var(--d2) var(--k2)}
+.k-ring.aktiv{stroke:var(--tinte);stroke-width:2px}
+.k-rahmen{fill:none;stroke:var(--skala);stroke-width:1.5px;vector-effect:non-scaling-stroke}
+.k-teil{fill:none;stroke:var(--skala);stroke-width:1.5px;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.k-text{font:600 11px var(--f-text);fill:var(--tinte-leise);paint-order:stroke;stroke:var(--halo);stroke-width:4px;stroke-linejoin:round}
+.k-ringlabel{transition:transform var(--d2) var(--k2),opacity var(--d2) var(--k2);text-anchor:middle;dominant-baseline:central}
+.k-hand{fill:none;stroke:var(--tinte);stroke-width:2px;stroke-linecap:round;vector-effect:non-scaling-stroke;transition:transform var(--d2) var(--k2),opacity var(--d2)}
+.k-ort{cursor:pointer;transition:transform var(--d2) var(--k2),opacity var(--d2) var(--k2)}
+.k-ort .punkt{fill:var(--flaeche-karte);stroke:var(--tinte);stroke-width:1.5px;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center;transition:transform var(--d2) var(--k1)}
+.k-ort.kern .punkt{fill:var(--tinte)}
+.k-ort.aus{opacity:.28;cursor:not-allowed}
+.k-ort.gewaehlt .punkt{transform:scale(1.7);fill:var(--tinte)}
+.k-ort .treffer{fill:transparent}
+.k-ort text{font:600 12px var(--f-text);fill:var(--tinte);paint-order:stroke;stroke:var(--halo);stroke-width:4px;stroke-linejoin:round;opacity:0;transition:opacity var(--d2) var(--k2)}
+.k-ort.beschriftet text{opacity:1}
+.k-ort.links text{text-anchor:end;transform:translateX(-14px)}
+.k-sitz .innen{fill:var(--tinte)}
+.k-sitz .aussen{fill:none;stroke:var(--tinte);stroke-width:1.5px;vector-effect:non-scaling-stroke}
+#radius{margin-top:var(--a6)!important}
+@container (min-width:520px){.k-text{font-size:6.6px;stroke-width:3px}.k-ort text{font-size:7px;stroke-width:3px}}
+.panel{min-width:0}
+.karte-wrap fieldset{margin:0;padding:0;border:0;min-width:0}
+.karte-wrap legend{padding:0;font:600 var(--fs-1)/1.3 var(--f-text);letter-spacing:.14em;text-transform:uppercase;color:var(--tinte-leise);margin-bottom:var(--a3)}
+.seg{display:inline-flex;border:1.5px solid var(--tinte);border-radius:var(--r2);overflow:hidden}
+.seg label{position:relative;display:block}
+.seg input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer;width:100%;height:100%}
+.seg span{display:flex;align-items:center;justify-content:center;min-width:5.25rem;min-height:2.75rem;padding:0 var(--a4);font-weight:600;font-variant-numeric:tabular-nums;transition:opacity var(--d1) var(--k1)}
+.seg label+label span{border-left:1.5px solid var(--tinte)}
+.seg input:checked+span{background:var(--tinte);color:var(--papier)}
+.seg label:has(input:focus-visible){outline:3px solid var(--fokus);outline-offset:3px;border-radius:var(--r2);z-index:1}
+@media (hover:hover) and (pointer:fine){.seg input:not(:checked):hover+span{background:var(--papier)}}
+.hinweis{margin-top:var(--a3);font-size:var(--fs-2);color:var(--tinte-leise);max-width:28em}
+.wahl{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:var(--a4) var(--a5);margin-top:var(--a6);padding-block:var(--a5);border-block:2px solid var(--tinte)}
+.wahl[hidden]{display:none}
+.wahl__ort{grid-column:1/-1;font:360 var(--fs-5)/1.1 var(--f-display);letter-spacing:-.012em}
+.wahl__ort small{display:block;margin-top:var(--a1);font:600 var(--fs-1)/1.3 var(--f-text);letter-spacing:.14em;text-transform:uppercase;color:var(--tinte-leise)}
+.wahl__zahlen{display:grid;gap:var(--a1)}
+.wahl__zahlen p{display:flex;align-items:baseline;gap:.35em;font-family:var(--f-display);font-weight:340;font-size:clamp(2.5rem,1.9rem + 2.6vw,4rem);line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums lining-nums}
+.wahl__zahlen small{font:500 var(--fs-3)/1 var(--f-text);letter-spacing:0;color:var(--tinte-leise)}
+.minuten{width:clamp(6.5rem,5rem + 8vw,8.5rem);height:auto}
+.m-rand{fill:none;stroke:var(--skala);stroke-width:1.5px;vector-effect:non-scaling-stroke}
+.m-bogen{fill:none;stroke:var(--tinte);stroke-width:3.6;stroke-linecap:round;stroke-dasharray:1;transform:rotate(-90deg);transition:stroke-dashoffset var(--d2) var(--k2)}
+.m-zeiger{transition:transform var(--d2) var(--k2)}
+.m-zeiger line{stroke:var(--tinte);stroke-width:2px;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.m-zeiger circle{fill:var(--tinte)}
+.m-tick{stroke:var(--skala);stroke-width:1.5px;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.orte{width:100%;margin-top:var(--a5);border-collapse:collapse;font-variant-numeric:tabular-nums}
+.orte caption{text-align:left;padding:0 var(--a3) var(--a2);font:600 var(--fs-1)/1.3 var(--f-text);letter-spacing:.14em;text-transform:uppercase;color:var(--tinte-leise)}
+.orte th,.orte td{padding:0;border-top:1px solid var(--haar);text-align:left;font-weight:400}
+.orte thead th{border-top:0;padding-bottom:var(--a2);font:600 var(--fs-1)/1.3 var(--f-text);letter-spacing:.08em;text-transform:uppercase;color:var(--tinte-leise)}
+.orte td,.orte thead th:not(:first-child){text-align:right}
+.orte tbody th,.orte td{height:3rem}
+.orte{margin-inline:calc(-1*var(--a3));width:calc(100% + 2*var(--a3))}
+.orte th:first-child,.orte td:last-child{padding-inline:var(--a3)}
+.orte td{padding-left:var(--a3)}
+.orte .o-name{display:flex;align-items:center;gap:var(--a2);min-height:3rem;width:100%;padding:0;border:0;background:none;text-align:left;font-weight:600;cursor:pointer}
+
+.orte .o-name small{font-weight:400;font-size:var(--fs-1);color:var(--tinte-leise)}
+.orte .o-nr{flex:none;width:.6rem;height:.6rem;border:1.5px solid var(--tinte);border-radius:50%}
+.orte .kern .o-nr{background:var(--tinte)}
+.orte tr[data-gewaehlt="true"] th,.orte tr[data-gewaehlt="true"] td{background:var(--papier);box-shadow:none}
+.orte tr.aus{color:var(--tinte-leise)}
+.orte tr.aus .o-name{cursor:not-allowed;font-weight:400}
+@media (hover:hover) and (pointer:fine){.orte tr:not(.aus):hover th,.orte tr:not(.aus):hover td{background:var(--papier)}}
+.orte .o-name:focus-visible{outline-offset:-3px}
+@media (max-width:40em){.orte .o-name small:not(.o-grund){position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.orte thead th{letter-spacing:.04em}.orte td{padding-left:var(--a2)}}
+
+/* ── 5 · Bewerben (Inverse-Band) ─────────────────────────────────────────────── */
+.bewerben{background:var(--papier);color:var(--tinte);padding-block:var(--a9)}
+.bewerben__in{display:grid;gap:var(--a6) var(--bund)}
+.bewerben h2{font-size:var(--fs-7);line-height:.95;letter-spacing:-.03em;font-weight:350;margin-top:var(--a4)}
+.bewerben .eyebrow::before{border-color:var(--tinte)}
+.bewerben .lead{margin-top:var(--a5)}
+.kanaele{display:grid;gap:var(--a5);align-content:start}
+.schritte{border-top:2px solid var(--tinte)}
+.schritte li{display:grid;grid-template-columns:3.25rem 1fr;gap:var(--a3) var(--a4);padding-block:var(--a4);border-bottom:1px solid var(--haar)}
+.schritt__n{font:340 var(--fs-6)/.9 var(--f-display);letter-spacing:-.03em}
+.schritte h3{font:400 var(--fs-4)/1.2 var(--f-display);letter-spacing:-.01em}
+.schritte p{margin-top:var(--a2);font-size:var(--fs-2);color:var(--tinte-leise);max-width:34em}
+.diskret{display:flex;gap:var(--a3);align-items:flex-start;font-size:var(--fs-2);line-height:1.5}
+.diskret .ico{flex:none;margin-top:.1em;color:var(--abend)}
+.tel-gross{display:block;font:340 clamp(2.25rem,1.4rem + 3.8vw,4.25rem)/1 var(--f-display);letter-spacing:-.03em;text-decoration:none;font-variant-numeric:tabular-nums lining-nums}
+.kanaele dt{font:600 var(--fs-1)/1.3 var(--f-text);letter-spacing:.14em;text-transform:uppercase;color:var(--tinte-leise)}
+.kanaele dd{margin-top:var(--a1)}
+.kanaele .zeile{padding-top:var(--a4);border-top:1px solid var(--haar)}
+@media (min-width:64em){.bewerben__in{grid-template-columns:repeat(12,minmax(0,1fr));align-items:end}.bewerben__in>div:first-child{grid-column:1/span 7}.kanaele{grid-column:8/span 5}}
+
+/* ── 6 · Gestaltungssystem (ruhig, dokumentierend) ──────────────────────────── */
+.system{padding-block:var(--a8) var(--a9);border-top:2px solid var(--tinte)}
+.system__kopf{max-width:44rem}
+.system__kopf h2{margin-top:var(--a4)}
+.system__kopf p{margin-top:var(--a4);color:var(--tinte-leise)}
+.sys{margin-top:var(--a8);padding-top:var(--a4);border-top:1px solid var(--tinte)}
+.sys-nav{margin-top:var(--a5)}
+.sys-nav ol{display:flex;flex-wrap:wrap;gap:var(--a1) var(--a5)}
+.sys-nav a{display:inline-flex;align-items:center;min-height:44px;font-weight:600;font-size:var(--fs-2);text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:.3em}
+.sys__nr{font:600 var(--fs-1)/1.3 var(--f-text);letter-spacing:.14em;text-transform:uppercase;color:var(--tinte-leise)}
+.sys h3{font-size:var(--fs-6);line-height:1;letter-spacing:-.02em;font-weight:350;margin-top:var(--a3)}
+.sys__raster{display:grid;gap:var(--a5) var(--bund);margin-top:var(--a5)}
+.sys__raster>*{min-width:0}
+@media (min-width:64em){.sys__raster{grid-template-columns:repeat(12,minmax(0,1fr))}.sys__raster>.s-4{grid-column:span 4}.sys__raster>.s-5{grid-column:span 5}.sys__raster>.s-6{grid-column:span 6}.sys__raster>.s-7{grid-column:span 7}.sys__raster>.s-8{grid-column:span 8}.sys__raster>.s-12{grid-column:1/-1}}
+.leitidee{font:350 var(--fs-6)/1.08 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
+.leitidee .nb{white-space:normal}
+.sys h4{font:600 var(--fs-1)/1.3 var(--f-text);letter-spacing:.14em;text-transform:uppercase;color:var(--tinte-leise);margin-bottom:var(--a3)}
+.sys p+p{margin-top:var(--a3)}
+.sys p{max-width:44rem}
+.sys .probe p,.sys .meldung{max-width:none}
+.bew-probe{width:100%;max-width:26rem}
+.ableitung{counter-reset:abl}
+.ableitung li{position:relative;padding-left:var(--a7);counter-increment:abl}
+.ableitung li+li{margin-top:var(--a4)}
+.ableitung li::before{content:counter(abl);position:absolute;left:0;top:-.1em;font:340 var(--fs-5)/1 var(--f-display);font-variant-numeric:tabular-nums lining-nums}
+.probe{padding:var(--a5);border:1.5px solid var(--tinte);border-radius:var(--r3)}
+.probe h4{color:var(--tinte)}
+.tabelle{width:100%;border-collapse:collapse;font-size:var(--fs-2);font-variant-numeric:tabular-nums}
+.tabelle th,.tabelle td{padding:var(--a3) var(--a3) var(--a3) 0;border-top:1px solid var(--haar);text-align:left;vertical-align:top;font-weight:400}
+.tabelle thead th{border-top:0;border-bottom:2px solid var(--tinte);font:600 var(--fs-1)/1.3 var(--f-text);letter-spacing:.08em;text-transform:uppercase;color:var(--tinte-leise)}
+.tabelle tbody th{font-weight:600}
+.tabelle code,.kenn{font:500 .875em/1.3 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--papier-tief);border-radius:4px;padding:.1em .4em;white-space:nowrap}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-inline:calc(-1*var(--rand));padding-inline:var(--rand)}
+.scroll:focus-visible{outline-offset:-3px}
+.scroll .tabelle{min-width:44rem}
+/* Schriften */
+.muster-gross{font-family:var(--f-display);font-weight:330;font-size:clamp(4rem,2rem + 12vw,10rem);line-height:.9;letter-spacing:-.04em;font-variant-numeric:tabular-nums lining-nums}
+.alphabet{font-family:var(--f-display);font-size:var(--fs-5);line-height:1.3;word-break:break-word}
+.stufen{display:grid;gap:0;margin-top:var(--a4)}
+.stufe{display:grid;gap:var(--a2) var(--bund);padding-block:var(--a3);border-top:1px solid var(--haar);align-items:baseline}
+@media (min-width:56em){.stufe{grid-template-columns:11rem minmax(0,1fr) 14rem}}
+.stufe__name{font:600 var(--fs-1)/1.3 var(--f-text);letter-spacing:.08em;text-transform:uppercase;color:var(--tinte-leise)}
+.stufe__werte{font-size:var(--fs-1);color:var(--tinte-leise);line-height:1.45;font-variant-numeric:tabular-nums}
+.stufe__probe{min-width:0;overflow-wrap:anywhere}
+.stufe__probe.t-num{font:330 clamp(2.75rem,2rem + 4vw,5rem)/.95 var(--f-display);letter-spacing:-.035em}
+.stufe__probe.t-h1{font:350 var(--fs-7)/.95 var(--f-display);letter-spacing:-.03em}
+.stufe__probe.t-h2{font:350 var(--fs-6)/1 var(--f-display);letter-spacing:-.02em}
+.stufe__probe.t-h3{font:400 var(--fs-5)/1.1 var(--f-display);letter-spacing:-.012em}
+.stufe__probe.t-lead{font:400 var(--fs-4)/1.5 var(--f-text)}
+.stufe__probe.t-body{font:400 var(--fs-3)/1.6 var(--f-text)}
+.stufe__probe.t-klein{font:400 var(--fs-2)/1.5 var(--f-text)}
+.stufe__probe.t-eyebrow{font:600 var(--fs-1)/1.3 var(--f-text);letter-spacing:.14em;text-transform:uppercase}
+/* Palette */
+.paletten{display:grid;gap:var(--a4)}
+.pal{display:grid;grid-template-columns:1fr;gap:var(--a2) var(--a4);padding-block:var(--a3);border-top:1px solid var(--haar);align-items:center}
+@media (min-width:56em){.pal{grid-template-columns:11rem 1fr 1fr 1.4fr}}
+.pal__rolle{font-weight:600}
+.pal__rolle small{display:block;font-weight:400;font-size:var(--fs-1);color:var(--tinte-leise)}
+.pal__chip{display:flex;align-items:center;gap:var(--a3)}
+.pal__chip i{display:block;flex:none;width:2.75rem;height:2.75rem;border-radius:var(--r1);box-shadow:inset 0 0 0 1px rgba(127,127,127,.45)}
+.pal__chip span{font-variant-numeric:tabular-nums;font-size:var(--fs-2);line-height:1.35}
+.pal__chip span b{display:block;font-size:var(--fs-1);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--tinte-leise)}
+.pal__use{font-size:var(--fs-2);color:var(--tinte-leise)}
+.kontrast{width:100%;border-collapse:collapse;font-size:var(--fs-2);font-variant-numeric:tabular-nums}
+.kontrast th,.kontrast td{padding:var(--a2) var(--a3) var(--a2) 0;border-top:1px solid var(--haar);text-align:left;vertical-align:middle;font-weight:400}
+.kontrast thead th{border-top:0;border-bottom:2px solid var(--tinte);font:600 var(--fs-1)/1.3 var(--f-text);letter-spacing:.08em;text-transform:uppercase;color:var(--tinte-leise)}
+.kontrast .probe-aa{display:inline-flex;align-items:center;justify-content:center;min-width:5rem;padding:0 .6rem;height:2.25rem;white-space:nowrap;border-radius:var(--r1);font:600 var(--fs-2)/1 var(--f-text);box-shadow:inset 0 0 0 1px rgba(127,127,127,.35)}
+.kontrast .probe-gr{display:inline-block;min-width:5rem;height:2.25rem;border-radius:var(--r1);box-shadow:inset 0 0 0 1px rgba(127,127,127,.35);position:relative}
+.kontrast .probe-gr::after{content:"";position:absolute;left:.6rem;right:.6rem;top:50%;border-top:3px solid currentColor;border-radius:3px}
+.kontrast .wert{display:flex;align-items:center;gap:var(--a2);flex-wrap:wrap}
+.kontrast .wert b{font-weight:600}
+.ok{display:inline-block;padding:.1em .5em;border-radius:var(--r2);font:600 var(--fs-1)/1.4 var(--f-text);border:1.5px solid var(--tinte)}
+/* Raster */
+.raster-demo{display:grid;grid-template-columns:repeat(var(--sp),minmax(0,1fr));column-gap:var(--bund);height:7.5rem;position:relative}
+:root{--sp:4}@media (min-width:40em){:root{--sp:8}}@media (min-width:64em){:root{--sp:12}}
+.raster-demo span{display:flex;align-items:flex-end;justify-content:center;background:color-mix(in srgb,var(--skala) 30%,transparent);border-radius:2px 2px 0 0;color:var(--tinte);font-size:var(--fs-1);font-weight:600;padding-bottom:var(--a1);font-variant-numeric:tabular-nums}
+.raster-demo span:nth-child(n+5){display:none}
+@media (min-width:40em){.raster-demo span:nth-child(n+5){display:flex}.raster-demo span:nth-child(n+9){display:none}}
+@media (min-width:64em){.raster-demo span:nth-child(n+9){display:flex}}
+.raster-maße{display:flex;flex-wrap:wrap;gap:var(--a2) var(--a6);margin-top:var(--a3);font-size:var(--fs-2);color:var(--tinte-leise);font-variant-numeric:tabular-nums}
+.skala-abst{display:grid;gap:var(--a2)}
+.skala-abst li{display:grid;grid-template-columns:3.25rem 4.5rem 1fr;align-items:center;gap:var(--a3);font-size:var(--fs-2);font-variant-numeric:tabular-nums}
+.skala-abst b{font-weight:600}
+.skala-abst i{display:block;height:.75rem;background:var(--tinte);border-radius:2px}
+.raster-ueber{position:fixed;inset:0;z-index:30;pointer-events:none;display:none}
+.raster-an .raster-ueber{display:block}
+.raster-ueber .wrap{height:100%}
+.raster-ueber .g{display:grid;grid-template-columns:repeat(var(--sp),minmax(0,1fr));column-gap:var(--bund);height:100%}
+.raster-ueber .g span{background:color-mix(in srgb,var(--skala) 26%,transparent);box-shadow:inset 1px 0 0 var(--tinte),inset -1px 0 0 var(--tinte)}
+.raster-ueber .g span:nth-child(n+5){display:none}
+@media (min-width:40em){.raster-ueber .g span:nth-child(n+5){display:block}.raster-ueber .g span:nth-child(n+9){display:none}}
+@media (min-width:64em){.raster-ueber .g span:nth-child(n+9){display:block}}
+.btn-klein{display:inline-flex;align-items:center;gap:var(--a2);min-height:2.75rem;padding:0 var(--a4);border:1.5px solid var(--tinte);border-radius:var(--r2);background:transparent;color:var(--tinte);font:600 var(--fs-2)/1 var(--f-text);cursor:pointer;position:relative;isolation:isolate;transition:transform var(--d1) var(--k1)}
+.btn-klein::after{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:var(--tinte);opacity:0;transition:opacity var(--d1) var(--k1)}
+@media (hover:hover) and (pointer:fine){.btn-klein:hover{color:var(--papier)}.btn-klein:hover::after{opacity:1}}
+.btn-klein:active{transform:scale(.97)}
+.btn-klein[aria-pressed="true"]{background:var(--tinte);color:var(--papier)}
+/* Formen */
+.formen{display:grid;gap:var(--a6) var(--bund)}
+.bau svg{width:100%;height:auto;max-width:22rem}
+.bau .g-raster{stroke:var(--haar);stroke-width:1;fill:none;vector-effect:non-scaling-stroke}
+.bau .g-live{stroke:var(--skala);stroke-width:1.5;fill:none;stroke-dasharray:4 4;vector-effect:non-scaling-stroke}
+.bau .g-hilf{stroke:var(--skala);stroke-width:1.5;fill:none;vector-effect:non-scaling-stroke}
+.bau .g-form{stroke:var(--tinte);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.bau .g-punkt{fill:var(--abend)}
+.regeln li{padding-block:var(--a3);border-top:1px solid var(--haar)}
+.regeln li:first-child{border-top:0;padding-top:0}
+.regeln b{font-weight:600}
+.icons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:2px solid var(--tinte)}
+@media (min-width:40em){.icons{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.icons li{display:flex;flex-direction:column;align-items:flex-start;gap:var(--a3);padding:var(--a5) var(--a3) var(--a5) 0;border-bottom:1px solid var(--haar)}
+.ico{width:3rem;height:3rem;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ico--s{width:1.5rem;height:1.5rem}
+.icons b{font-weight:600;font-size:var(--fs-2)}
+.icons small{font-size:var(--fs-1);color:var(--tinte-leise);display:block}
+.groessen{display:flex;align-items:flex-end;gap:var(--a5);margin-top:var(--a4);color:var(--tinte)}
+.groessen figure{display:grid;gap:var(--a1);justify-items:center;font-size:var(--fs-1);color:var(--tinte-leise)}
+/* Bewegungsregister */
+.reg-tokens{display:grid;gap:var(--a5) var(--bund);margin-top:var(--a6)}
+@media (min-width:48em){.reg-tokens{grid-template-columns:1fr 1fr}}
+.tok li{display:grid;grid-template-columns:5rem 1fr;gap:var(--a3);padding-block:var(--a2);border-top:1px solid var(--haar);font-size:var(--fs-2);font-variant-numeric:tabular-nums}
+.tok b{font-weight:600}
+.probe-bogen{display:grid;gap:var(--a4);justify-items:start;align-content:start}
+.probe-bogen svg{width:100%;max-width:26rem;height:auto;overflow:visible}
+.probe-bogen .bd-zeiger line{stroke-width:2.6}
+.pr-zahl{font-family:var(--f-display);font-weight:330;font-size:52px;letter-spacing:-.03em;fill:var(--tinte);font-variant-numeric:tabular-nums lining-nums}
+/* Zustände */
+.zustaende{display:grid;grid-template-columns:repeat(auto-fill,minmax(14.5rem,1fr));gap:var(--a6) var(--bund);margin-top:var(--a5)}
+.zust{display:grid;gap:var(--a3);align-content:start;padding-top:var(--a3);border-top:1px solid var(--haar)}
+.zust h4{margin:0}
+.zust p{font-size:var(--fs-2);color:var(--tinte-leise)}
+.meldung{display:flex;gap:var(--a3);align-items:flex-start;font-size:var(--fs-2);line-height:1.45;color:var(--tinte)}
+.meldung svg{width:1.5rem;height:1.5rem;flex:none}
+.meldung--fehler{padding-left:var(--a3);border-left:3px solid var(--tinte)}
+.meldung--erfolg{padding-left:var(--a3);border-left:3px solid var(--tinte)}
+/* Fuß */
+.fuss{border-top:1px solid var(--haar);padding-block:var(--a6);font-size:var(--fs-2);color:var(--tinte-leise)}
+.fuss .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:var(--a2) var(--a6)}
+/* Dunkelmodus: eigene Komposition (Tönung des Bandes etwas stärker, Scheibe als eigene Fläche) */
+@media (prefers-color-scheme:dark){.bd-band{opacity:.14}}
+@media print{:root{--papier:#fff;--papier-tief:#f1efe9;--tinte:#0C1A72;--tinte-leise:#454E84;--skala:#6A73A8;--haar:#cfcfcf;--abend:#8A5300}.raster-ueber,.skip{display:none}.start{break-after:page}}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition-duration:.01ms!important;transition-delay:0s!important;animation:none!important}
+}
+
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="i-waermepumpe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.25"/><circle cx="12" cy="12" r="1.6"/><path d="M12 10.4A5.2 5.2 0 0 1 17 8.2M13.4 12.8A5.2 5.2 0 0 1 12 18M10.6 12.8A5.2 5.2 0 0 1 7 8.2"/></symbol><symbol id="i-bad" viewBox="0 0 24 24"><path d="M12 2.75L17.29 12.68A6 6 0 1 1 6.71 12.68Z"/><path d="M9 15.7A3.2 3.2 0 0 0 11.6 18.3"/></symbol><symbol id="i-heizung" viewBox="0 0 24 24"><path d="M12 21.5A6.75 6.75 0 0 1 5.25 14.75A8 8 0 0 1 9.1 8A3.6 3.6 0 0 0 10.6 11.2A9 9 0 0 1 13 2.5A12.5 12.5 0 0 1 18.75 14.75A6.75 6.75 0 0 1 12 21.5Z"/><path d="M9.6 16.6A2.4 2.4 0 0 0 14.4 16.6"/></symbol><symbol id="i-werkzeug" viewBox="0 0 24 24"><path d="M17.2 3.2A4.4 4.4 0 0 0 12.1 9.1L4.6 16.6A2 2 0 0 0 7.4 19.4L14.9 11.9A4.4 4.4 0 0 0 20.8 6.8L18 9.6L14.4 6Z"/></symbol><symbol id="i-fahrzeug" viewBox="0 0 24 24"><path d="M2.75 17.5V8.5a1.25 1.25 0 0 1 1.25-1.25H13.5V17.5M13.5 10.25H17.3L21.25 14V17.5"/><circle cx="7" cy="17.5" r="2.25"/><circle cx="17.25" cy="17.5" r="2.25"/></symbol><symbol id="i-uhr" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.25"/><path d="M12 12L14.8 9.2M12 12V17.2"/><path d="M12 4.4V5.6M19.6 12H18.4M4.4 12H5.6"/></symbol><symbol id="i-standort" viewBox="0 0 24 24"><path d="M12 21.5L17.26 11.88A6 6 0 1 0 6.74 11.88Z"/><circle cx="12" cy="9" r="2.2"/></symbol><symbol id="i-nachricht" viewBox="0 0 24 24"><path d="M3.5 20.5L4.01 14.4A8.5 8.5 0 1 1 9.09 19.49Z"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01"/></symbol><symbol id="i-pfeil" viewBox="0 0 24 24"><path d="M4 12H19M13.5 6.5L19 12L13.5 17.5"/></symbol><symbol id="i-lade" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" stroke-dasharray="14 8" /></symbol><symbol id="i-ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.25"/><path d="M7.8 12.4L10.6 15.2L16.4 9"/></symbol><symbol id="i-achtung" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.25"/><path d="M12 7.2V12.8M12 16.6h.01"/></symbol></defs></svg>
+<a class="skip" href="#inhalt">Zum Inhalt springen</a>
+<div class="raster-ueber" aria-hidden="true"><div class="wrap"><div class="g"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div></div>
+
+<header class="kopf">
+  <div class="wrap kopf__in">
+    <a class="marke" href="#inhalt" aria-label="Bad &amp; Energie GmbH Lahn-Dill, zum Seitenanfang"><span class="plakette"><img src="logo.png" width="662" height="121" alt="Bad &amp; Energie GmbH Lahn-Dill"></span></a>
+    <nav class="nav" aria-label="Bereiche dieser Seite">
+      <a class="nur-gross" href="#stellen">Stellen</a>
+      <a class="nur-gross" href="#einsatzgebiet">Einsatzgebiet</a>
+      <a class="nur-gross" href="#system">Gestaltungssystem</a>
+      <a class="tel" href="tel:+49644142956">06441 42956</a>
+    </nav>
+  </div>
+</header>
+
+<main id="inhalt">
+
+<!-- 1 · Erster Bildschirm -->
+<section class="start" aria-labelledby="start-h">
+  <div class="wrap start__in">
+    <div class="start__kopf">
+      <p class="eyebrow">Seit 1926 · Wetzlar</p>
+      <h1 id="start-h"><span class="h1-a">SHK-Jobs in Wetzlar.</span> <span class="h1-b"><span>Ehrliches Handwerk.</span> <span>Pünktlich Feierabend.</span></span></h1>
+    </div>
+    <div class="start__rest">
+      <p class="lead">Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt über Tarif und mit persönlicher Hilti-Ausstattung.</p>
+      <div class="aktion">
+        <a class="btn" href="/bewerbung" data-motion="taste">Jetzt bewerben <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-pfeil"/></svg></a>
+        <a class="textlink" href="#einsatzgebiet">Arbeitsweg prüfen</a>
+      </div>
+      <p class="mikro">Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.</p>
+    </div>
+    <div class="start__bogen">
+      <figure class="bogen" id="bogen" aria-label="Tagesbogen: Arbeitszeit Montag bis Donnerstag 07:00 bis 16:45 Uhr, Freitag 07:00 bis 13:30 Uhr">
+        <div class="bogen__scheibe">
+          <svg class="bogen__svg" viewBox="-176 -152 352 304" aria-hidden="true" focusable="false">
+  <circle class="scheibe" r="130"/>
+  <circle class="rand-kreis" r="130"/>
+  <path class="teil" d="M0 129L0 117M-8.44 128.72L-8.21 125.23M-16.84 127.9L-16.38 124.43M-25.17 126.52L-24.48 123.09M-33.39 124.6L-31.58 117.84M-41.47 122.15L-40.34 118.84M-49.37 119.18L-48.03 115.95M-57.06 115.7L-55.51 112.56M-64.5 111.72L-61 105.66M-71.67 107.26L-69.72 104.35M-78.53 102.34L-76.4 99.57M-85.06 96.99L-82.75 94.36M-91.22 91.22L-86.27 86.27M-96.99 85.06L-94.36 82.75M-102.34 78.53L-99.57 76.4M-107.26 71.67L-104.35 69.72M-111.72 64.5L-105.66 61M-115.7 57.06L-112.56 55.51M-119.18 49.37L-115.95 48.03M-122.15 41.47L-118.84 40.34M-124.6 33.39L-117.84 31.58M-126.52 25.17L-123.09 24.48M-127.9 16.84L-124.43 16.38M-128.72 8.44L-125.23 8.21M-129 0L-117 0M-128.72 -8.44L-125.23 -8.21M-127.9 -16.84L-124.43 -16.38M-126.52 -25.17L-123.09 -24.48M-124.6 -33.39L-117.84 -31.58M-122.15 -41.47L-118.84 -40.34M-119.18 -49.37L-115.95 -48.03M-115.7 -57.06L-112.56 -55.51M-111.72 -64.5L-105.66 -61M-107.26 -71.67L-104.35 -69.72M-102.34 -78.53L-99.57 -76.4M-96.99 -85.06L-94.36 -82.75M-91.22 -91.22L-86.27 -86.27M-85.06 -96.99L-82.75 -94.36M-78.53 -102.34L-76.4 -99.57M-71.67 -107.26L-69.72 -104.35M-64.5 -111.72L-61 -105.66M-57.06 -115.7L-55.51 -112.56M-49.37 -119.18L-48.03 -115.95M-41.47 -122.15L-40.34 -118.84M-33.39 -124.6L-31.58 -117.84M-25.17 -126.52L-24.48 -123.09M-16.84 -127.9L-16.38 -124.43M-8.44 -128.72L-8.21 -125.23M0 -129L0 -117M8.44 -128.72L8.21 -125.23M16.84 -127.9L16.38 -124.43M25.17 -126.52L24.48 -123.09M33.39 -124.6L31.58 -117.84M41.47 -122.15L40.34 -118.84M49.37 -119.18L48.03 -115.95M57.06 -115.7L55.51 -112.56M64.5 -111.72L61 -105.66M71.67 -107.26L69.72 -104.35M78.53 -102.34L76.4 -99.57M85.06 -96.99L82.75 -94.36M91.22 -91.22L86.27 -86.27M96.99 -85.06L94.36 -82.75M102.34 -78.53L99.57 -76.4M107.26 -71.67L104.35 -69.72M111.72 -64.5L105.66 -61M115.7 -57.06L112.56 -55.51M119.18 -49.37L115.95 -48.03M122.15 -41.47L118.84 -40.34M124.6 -33.39L117.84 -31.58M126.52 -25.17L123.09 -24.48M127.9 -16.84L124.43 -16.38M128.72 -8.44L125.23 -8.21M129 0L117 0M128.72 8.44L125.23 8.21M127.9 16.84L124.43 16.38M126.52 25.17L123.09 24.48M124.6 33.39L117.84 31.58M122.15 41.47L118.84 40.34M119.18 49.37L115.95 48.03M115.7 57.06L112.56 55.51M111.72 64.5L105.66 61M107.26 71.67L104.35 69.72M102.34 78.53L99.57 76.4M96.99 85.06L94.36 82.75M91.22 91.22L86.27 86.27M85.06 96.99L82.75 94.36M78.53 102.34L76.4 99.57M71.67 107.26L69.72 104.35M64.5 111.72L61 105.66M57.06 115.7L55.51 112.56M49.37 119.18L48.03 115.95M41.47 122.15L40.34 118.84M33.39 124.6L31.58 117.84M25.17 126.52L24.48 123.09M16.84 127.9L16.38 124.43M8.44 128.72L8.21 125.23"/>
+  <path class="bd-marke" d="M-113.98 -30.54L-133.3 -35.72M45.16 -109.02L52.81 -127.5M111.74 -37.93L130.68 -44.36"/>
+  <path class="punkte bd-mododo" d="M-109.15 -29.25A113 113 0 0 1 107 -36.32"/>
+  <g class="bd-abend-gruppe"><path class="punkte bd-abend" d="M39.8 -96.08A104 104 0 1 1 -100.46 -26.92"/></g>
+  <path class="bd-band" pathLength="1" stroke-width="14" d="M-93.69 -25.11A97 97 0 0 1 37.12 -89.62"/>
+  <path class="bd-fr" pathLength="1" d="M-100.46 -26.92A104 104 0 0 1 39.8 -96.08"/>
+  <g class="bd-zeiger" data-motion="bogen-lauf"><line x1="0" y1="-80" x2="0" y2="-104"/><circle class="kopf-punkt" cx="0" cy="-104" r="4.4"/></g>
+  <circle class="bd-rast" data-motion="bogen-rast" cx="39.8" cy="-96.08" r="10"/>
+  <text class="bd-t bd-t--leise" x="0" y="-146" text-anchor="middle" dominant-baseline="central">12</text><text class="bd-t bd-t--leise" x="146" y="0" text-anchor="middle" dominant-baseline="central">18</text><text class="bd-t bd-t--leise" x="0" y="146" text-anchor="middle" dominant-baseline="central">0</text><text class="bd-t bd-t--leise" x="-146" y="0" text-anchor="middle" dominant-baseline="central">6</text>
+  <text class="bd-t " x="-142.96" y="-38.31" text-anchor="end" dominant-baseline="central">07:00</text><text class="bd-t " x="140.15" y="-47.57" text-anchor="start" dominant-baseline="central">16:45</text><text class="bd-t bd-t--abend" x="60.2" y="-135.2" text-anchor="start" dominant-baseline="central">Fr</text>
+  
+</svg>
+          <p class="bogen__mitte"><span class="mitte__a">Freitags ab</span><span class="mitte__z">13:30</span><span class="mitte__b rast-text">Uhr Feierabend</span></p>
+        </div>
+        <figcaption>
+          <ul class="legende">
+            <li><svg viewBox="0 0 32 12" aria-hidden="true"><line class="ls-md" x1="2" y1="6" x2="30" y2="6"/></svg>Mo–Do 07:00–16:45 Uhr</li>
+            <li><svg viewBox="0 0 32 12" aria-hidden="true"><line class="ls-fr" x1="2" y1="6" x2="30" y2="6"/></svg>Fr 07:00–13:30 Uhr</li>
+            <li><svg viewBox="0 0 32 12" aria-hidden="true"><line class="ls-ab" x1="2" y1="6" x2="30" y2="6"/></svg>Feierabend</li>
+          </ul>
+          <p class="bogen__fuss">24-Stunden-Zifferblatt: oben 12 Uhr, unten Mitternacht.</p>
+        </figcaption>
+      </figure>
+    </div>
+    <div class="start__tafel">
+      <ul class="zeittafel" aria-label="Kennzahlen">
+        <li><b class="zahl">30</b><span>Tage Urlaub</span></li>
+        <li><b class="zahl">35 km</b><span>Einsatzradius</span></li>
+        <li><b class="zahl">1926</b><span>Gegründet</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 2 · Jahresleiste (Trenner) -->
+<section class="jahre" aria-label="Meisterbetrieb seit 1926">
+  <div class="wrap" data-reveal>
+    <div data-motion="jahre-auftritt" class="jahre__skala"><svg viewBox="0 0 1000 36" preserveAspectRatio="none" role="img" aria-labelledby="jahre-t"><title id="jahre-t">Skala von 1926 bis 2026: 101 Teilstriche, einer je Jahr, lange Striche bei den Jahrzehnten</title><path class="j-t" d="M10 36V28M20 36V28M30 36V28M50 36V28M60 36V28M70 36V28M80 36V28M90 36V28M100 36V28M110 36V28M120 36V28M130 36V28M150 36V28M160 36V28M170 36V28M180 36V28M190 36V28M200 36V28M210 36V28M220 36V28M230 36V28M250 36V28M260 36V28M270 36V28M280 36V28M290 36V28M300 36V28M310 36V28M320 36V28M330 36V28M350 36V28M360 36V28M370 36V28M380 36V28M390 36V28M400 36V28M410 36V28M420 36V28M430 36V28M450 36V28M460 36V28M470 36V28M480 36V28M490 36V28M500 36V28M510 36V28M520 36V28M530 36V28M550 36V28M560 36V28M570 36V28M580 36V28M590 36V28M600 36V28M610 36V28M620 36V28M630 36V28M650 36V28M660 36V28M670 36V28M680 36V28M690 36V28M700 36V28M710 36V28M720 36V28M730 36V28M750 36V28M760 36V28M770 36V28M780 36V28M790 36V28M800 36V28M810 36V28M820 36V28M830 36V28M850 36V28M860 36V28M870 36V28M880 36V28M890 36V28M900 36V28M910 36V28M920 36V28M930 36V28M950 36V28M960 36V28M970 36V28M980 36V28M990 36V28"/><path class="j-t j-d" d="M0 36V6M40 36V18M140 36V18M240 36V18M340 36V18M440 36V18M540 36V18M640 36V18M740 36V18M840 36V18M940 36V18M1000 36V6"/></svg></div>
+    <div class="jahre__zeile"><span class="jahre__j">1926</span><span class="jahre__z">100 Jahre Meisterbetrieb (1926–2026)</span><span class="jahre__j">2026</span></div>
+  </div>
+</section>
+
+<!-- 3 · Stellen (Besucheraufgabe 1) -->
+<section class="stellen" id="stellen" aria-labelledby="stellen-h">
+  <div class="wrap">
+    <div class="stellen__kopf">
+      <div><p class="eyebrow">Offene Stellen</p><h2 id="stellen-h">Was du verdienst. <span class="h2-b">Wann du Feierabend hast.</span></h2></div>
+      <p class="lead">Feste Arbeitszeiten: Montag bis Donnerstag von 07:00 bis 16:45 Uhr, Freitag von 07:00 bis 13:30 Uhr.</p>
+    </div>
+    <div class="spannen">
+      <div class="spannen__kopf" aria-hidden="true"><div class="achse-skala"><span style="left:0">0 €</span><span style="left:33.33%;transform:translateX(-50%)">2.000 €</span><span style="left:66.66%;transform:translateX(-50%)">4.000 €</span><span style="right:0">6.000 €</span></div></div>
+      <ul>
+<li class="stelle"><div class="stelle__kopf"><h3>Ausbildung Anlagenmechaniker</h3><p>Ausbildung 2026: Einstieg noch möglich. In 3,5 Jahren wirst du Anlagenmechaniker SHK, mit eigenem Hilti-Werkzeugset ab Tag 1.</p></div><div class="stelle__wert"><p class="stelle__gehalt"><span class="zahl">1.050–1.400 €</span><small>/ Monat</small></p><div class="spanne" aria-hidden="true"><b style="left:0%"></b><b style="left:16.67%"></b><b style="left:33.33%"></b><b style="left:50%"></b><b style="left:66.67%"></b><b style="left:83.33%"></b><b style="left:100%"></b><i class="balken" style="left:17.5%;width:5.83%"></i></div></div></li>
+<li class="stelle"><div class="stelle__kopf"><h3>Anlagenmechaniker SHK</h3><p>Du montierst Wärmepumpen und moderne Bäder in Wetzlar und Umgebung, ganz ohne Fernmontage.</p></div><div class="stelle__wert"><p class="stelle__gehalt"><span class="zahl">3.600–4.600 €</span><small>/ Monat</small></p><div class="spanne" aria-hidden="true"><b style="left:0%"></b><b style="left:16.67%"></b><b style="left:33.33%"></b><b style="left:50%"></b><b style="left:66.67%"></b><b style="left:83.33%"></b><b style="left:100%"></b><i class="balken" style="left:60%;width:16.67%"></i></div></div></li>
+<li class="stelle"><div class="stelle__kopf"><h3>Kundendiensttechniker</h3><p>Du wartest Wärmepumpen und nimmst sie in Betrieb, mit eigenem Servicefahrzeug, iPad und Smartphone.</p></div><div class="stelle__wert"><p class="stelle__gehalt"><span class="zahl">3.800–4.900 €</span><small>/ Monat</small></p><div class="spanne" aria-hidden="true"><b style="left:0%"></b><b style="left:16.67%"></b><b style="left:33.33%"></b><b style="left:50%"></b><b style="left:66.67%"></b><b style="left:83.33%"></b><b style="left:100%"></b><i class="balken" style="left:63.33%;width:18.33%"></i></div></div></li>
+<li class="stelle"><div class="stelle__kopf"><h3>Obermonteur / Projektleiter</h3><p>Du leitest Badsanierungen und Heizungsprojekte eigenverantwortlich, in direkter Abstimmung mit Sabri Demir.</p></div><div class="stelle__wert"><p class="stelle__gehalt"><span class="zahl">4.400–5.600 €</span><small>/ Monat</small></p><div class="spanne" aria-hidden="true"><b style="left:0%"></b><b style="left:16.67%"></b><b style="left:33.33%"></b><b style="left:50%"></b><b style="left:66.67%"></b><b style="left:83.33%"></b><b style="left:100%"></b><i class="balken" style="left:73.33%;width:20%"></i></div></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · Einsatzgebiet: Beispielabschnitt mit zurückgeführtem Element (Besucheraufgabe 2) -->
+<section class="gebiet" id="einsatzgebiet" aria-labelledby="gebiet-h">
+  <div class="wrap">
+    <div class="gebiet__kopf">
+      <div><p class="eyebrow">Einsatzgebiet</p><h2 id="gebiet-h">35 km um Wetzlar. <span class="h2-b">Keine Fernmontage.</span></h2></div>
+      <p class="lead">Du arbeitest in Wetzlar, Gießen und dem Lahn-Dill-Kreis, ohne Hotelübernachtungen, und bist jeden Abend pünktlich zu Hause.</p>
+    </div>
+    <div class="gebiet__werk">
+      <div class="karte-wrap">
+        <div class="karte" id="karte">
+          <svg id="karte-svg" viewBox="-150 -150 300 300" role="img" aria-labelledby="karte-t karte-b">
+  <title id="karte-t">Einsatzgebiet um Wetzlar mit Ringen bei 15, 25 und 35 km</title>
+  <desc id="karte-b">Zehn Orte liegen um den Firmensitz in Wetzlar; der weiteste, Herborn, ist 24 km entfernt. Die Tabelle daneben nennt Entfernung und Fahrzeit zu jedem Ort.</desc>
+  <circle class="k-rahmen" r="146"/><path class="k-teil" d="M0 -142L0 -132M36.75 -137.16L35.85 -133.78M71 -122.98L68 -117.78M100.41 -100.41L97.93 -97.93M122.98 -71L117.78 -68M137.16 -36.75L133.78 -35.85M142 0L132 0M137.16 36.75L133.78 35.85M122.98 71L117.78 68M100.41 100.41L97.93 97.93M71 122.98L68 117.78M36.75 137.16L35.85 133.78M0 142L0 132M-36.75 137.16L-35.85 133.78M-71 122.98L-68 117.78M-100.41 100.41L-97.93 97.93M-122.98 71L-117.78 68M-137.16 36.75L-133.78 35.85M-142 0L-132 0M-137.16 -36.75L-133.78 -35.85M-122.98 -71L-117.78 -68M-100.41 -100.41L-97.93 -97.93M-71 -122.98L-68 -117.78M-36.75 -137.16L-35.85 -133.78"/>
+  <circle class="k-flaeche" r="100" style="transform:scale(1.26)"/>
+  <circle class="k-ring" data-km="15" r="100" style="transform:scale(0.54)"/><circle class="k-ring" data-km="25" r="100" style="transform:scale(0.9)"/><circle class="k-ring aktiv" data-km="35" r="100" style="transform:scale(1.26)"/><text class="k-text k-ringlabel" data-km="15" style="transform:translate(33.25px,-42.55px)">15 km</text><text class="k-text k-ringlabel" data-km="25" style="transform:translate(55.41px,-70.92px)">25 km</text><text class="k-text k-ringlabel" data-km="35" style="transform:translate(77.57px,-99.29px)">35 km</text>
+  <path class="k-hand" d="M0 0H1" style="transform:rotate(-11.07deg) scale(46.04,1)" data-motion="ort-wahl"/>
+  <g class="k-sitz"><circle class="aussen" r="9"/></g>
+  <g data-motion="radius-wahl"><g class="k-ort kern" data-ort="wetzlar-kernstadt" style="transform:translate(0.11px,0px)"><circle class="treffer" r="13"/><circle class="punkt" r="3.4"/><text x="7" y="3.5">Wetzlar Kernstadt</text></g><g class="k-ort kern" data-ort="garbenheim" style="transform:translate(13.24px,-0.68px)"><circle class="treffer" r="13"/><circle class="punkt" r="3.4"/><text x="7" y="3.5">Garbenheim</text></g><g class="k-ort kern" data-ort="hermannstein" style="transform:translate(-1.6px,-7.28px)"><circle class="treffer" r="13"/><circle class="punkt" r="3.4"/><text x="7" y="3.5">Hermannstein</text></g><g class="k-ort kern" data-ort="steindorf" style="transform:translate(-3.74px,12.62px)"><circle class="treffer" r="13"/><circle class="punkt" r="3.4"/><text x="7" y="3.5">Steindorf</text></g><g class="k-ort kern" data-ort="nauborn" style="transform:translate(4.76px,12.62px)"><circle class="treffer" r="13"/><circle class="punkt" r="3.4"/><text x="7" y="3.5">Nauborn</text></g><g class="k-ort" data-ort="asslar" style="transform:translate(-9.39px,-10.63px)"><circle class="treffer" r="13"/><circle class="punkt" r="3.4"/><text x="7" y="3.5">Aßlar</text></g><g class="k-ort kern" data-ort="dutenhofen" style="transform:translate(25.96px,-0.68px)"><circle class="treffer" r="13"/><circle class="punkt" r="3.4"/><text x="7" y="3.5">Dutenhofen</text></g><g class="k-ort beschriftet links" data-ort="braunfels" style="transform:translate(-29.2px,19.23px)"><circle class="treffer" r="13"/><circle class="punkt" r="3.4"/><text x="7" y="3.5">Braunfels</text></g><g class="k-ort gewaehlt beschriftet" data-ort="giessen" style="transform:translate(45.18px,-8.84px)"><circle class="treffer" r="13"/><circle class="punkt" r="3.4"/><text x="7" y="3.5">Gießen</text></g><g class="k-ort beschriftet links" data-ort="herborn" style="transform:translate(-50.4px,-47.09px)"><circle class="treffer" r="13"/><circle class="punkt" r="3.4"/><text x="7" y="3.5">Herborn</text></g></g>
+  <text class="k-text" x="0" y="-152" text-anchor="middle" style="font-size:9px;stroke:none">N</text>
+</svg>
+        </div>
+        <ul class="karte__fuss">
+          <li><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="4.5" fill="var(--tinte)"/></svg>Kernzone</li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="4.5" fill="none" stroke="var(--tinte)" stroke-width="1.5"/></svg>Einsatzgebiet</li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="var(--tinte)" stroke-width="1.5"/></svg>Firmensitz Wetzlar</li>
+        </ul>
+        <fieldset id="radius" hidden>
+          <legend>Radius</legend>
+          <div class="seg" role="radiogroup" aria-label="Radius um Wetzlar">
+            <label><input type="radio" name="radius" value="15"><span>15 km</span></label>
+            <label><input type="radio" name="radius" value="25"><span>25 km</span></label>
+            <label><input type="radio" name="radius" value="35" checked><span>35 km</span></label>
+          </div>
+          <p class="hinweis">15 und 25 km sind nur Zoomstufen. Die Zusage bleibt: höchstens 35 km.</p>
+        </fieldset>
+      </div>
+      <div class="panel">
+        <div class="wahl" id="wahl" role="status" aria-live="polite" hidden>
+          <p class="wahl__ort" id="w-ort">Gießen<small id="w-zone">Einsatzgebiet</small></p>
+          <svg class="minuten" viewBox="-60 -60 120 120" aria-hidden="true" focusable="false">
+            <circle class="m-rand" r="54"/>
+            <path class="m-tick" d="M0 -54L0 -45"/><path class="m-tick" d="M27 -46.77L24.5 -42.44"/><path class="m-tick" d="M46.77 -27L42.44 -24.5"/><path class="m-tick" d="M54 0L45 0"/><path class="m-tick" d="M46.77 27L42.44 24.5"/><path class="m-tick" d="M27 46.77L24.5 42.44"/><path class="m-tick" d="M0 54L0 45"/><path class="m-tick" d="M-27 46.77L-24.5 42.44"/><path class="m-tick" d="M-46.77 27L-42.44 24.5"/><path class="m-tick" d="M-54 0L-45 0"/><path class="m-tick" d="M-46.77 -27L-42.44 -24.5"/><path class="m-tick" d="M-27 -46.77L-24.5 -42.44"/>
+            <circle id="w-bogen" class="m-bogen" r="38" pathLength="1" style="stroke-dashoffset:0.73" data-motion="ort-wahl"/>
+            <g id="w-zeiger" class="m-zeiger" style="transform:rotate(96deg)" data-motion="ort-wahl"><line x1="0" y1="0" x2="0" y2="-38"/><circle cx="0" cy="-38" r="4.2"/></g>
+          </svg>
+          <div class="wahl__zahlen"><p><span id="w-km">15</span><small>km</small></p><p><span id="w-min">16</span><small>Min. Fahrzeit</small></p></div>
+        </div>
+        <table class="orte" id="orte">
+          <caption>Wo wohnst du?</caption>
+          <thead><tr><th scope="col">Ort</th><th scope="col">Entfernung</th><th scope="col">Fahrzeit</th></tr></thead>
+          <tbody>
+<tr data-id="wetzlar-kernstadt" data-name="Wetzlar Kernstadt" data-km="1" data-min="3" data-lat="50.56499" data-lon="8.49842" data-kern="1" class="kern"><th scope="row"><span class="o-nr" aria-hidden="true"></span>Wetzlar Kernstadt <small>Firmensitz</small></th><td>1 km</td><td>3 Min.</td></tr>
+<tr data-id="garbenheim" data-name="Garbenheim" data-km="4" data-min="6" data-lat="50.5667" data-lon="8.55" data-kern="1" class="kern"><th scope="row"><span class="o-nr" aria-hidden="true"></span>Garbenheim <small>Kernzone</small></th><td>4 km</td><td>6 Min.</td></tr>
+<tr data-id="hermannstein" data-name="Hermannstein" data-km="4" data-min="7" data-lat="50.5833" data-lon="8.4917" data-kern="1" class="kern"><th scope="row"><span class="o-nr" aria-hidden="true"></span>Hermannstein <small>Kernzone</small></th><td>4 km</td><td>7 Min.</td></tr>
+<tr data-id="steindorf" data-name="Steindorf" data-km="4" data-min="7" data-lat="50.5333" data-lon="8.4833" data-kern="1" class="kern"><th scope="row"><span class="o-nr" aria-hidden="true"></span>Steindorf <small>Kernzone</small></th><td>4 km</td><td>7 Min.</td></tr>
+<tr data-id="nauborn" data-name="Nauborn" data-km="5" data-min="8" data-lat="50.5333" data-lon="8.5167" data-kern="1" class="kern"><th scope="row"><span class="o-nr" aria-hidden="true"></span>Nauborn <small>Kernzone</small></th><td>5 km</td><td>8 Min.</td></tr>
+<tr data-id="asslar" data-name="Aßlar" data-km="6" data-min="9" data-lat="50.5917" data-lon="8.4611" data-kern="0"><th scope="row"><span class="o-nr" aria-hidden="true"></span>Aßlar</th><td>6 km</td><td>9 Min.</td></tr>
+<tr data-id="dutenhofen" data-name="Dutenhofen" data-km="7" data-min="10" data-lat="50.5667" data-lon="8.6" data-kern="1" class="kern"><th scope="row"><span class="o-nr" aria-hidden="true"></span>Dutenhofen <small>Kernzone</small></th><td>7 km</td><td>10 Min.</td></tr>
+<tr data-id="braunfels" data-name="Braunfels" data-km="14" data-min="18" data-lat="50.5167" data-lon="8.3833" data-kern="0"><th scope="row"><span class="o-nr" aria-hidden="true"></span>Braunfels</th><td>14 km</td><td>18 Min.</td></tr>
+<tr data-id="giessen" data-name="Gießen" data-km="15" data-min="16" data-lat="50.5872" data-lon="8.6755" data-kern="0"><th scope="row"><span class="o-nr" aria-hidden="true"></span>Gießen</th><td>15 km</td><td>16 Min.</td></tr>
+<tr data-id="herborn" data-name="Herborn" data-km="24" data-min="22" data-lat="50.6833" data-lon="8.3" data-kern="0"><th scope="row"><span class="o-nr" aria-hidden="true"></span>Herborn</th><td>24 km</td><td>22 Min.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 · Ablauf und Bewerbung (Besucheraufgaben 3 und 5), Inverse-Band -->
+<section class="bewerben" id="ablauf" data-ton="invers" aria-labelledby="bew-h">
+  <div class="wrap bewerben__in">
+    <div>
+      <p class="eyebrow">In 3 Schritten zu deinem neuen Job</p>
+      <h2 id="bew-h">Bewirb dich bei uns.</h2>
+      <p class="lead">Wir respektieren deine Zeit und deine aktuelle Anstellung. Sabri Demir meldet sich schnellstmöglich bei dir.</p>
+      <div class="aktion"><a class="btn" href="/bewerbung" data-motion="taste">Jetzt bewerben <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-pfeil"/></svg></a></div>
+      <p class="mikro" style="margin-top:var(--a3)">Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.</p>
+    </div>
+    <div class="kanaele">
+      <ol class="schritte">
+        <li><span class="schritt__n zahl" aria-hidden="true">1</span><div><h3><span class="sr-only">Schritt 1: </span>Bewerben in 60 Sekunden</h3><p>Ein paar kurze Fragen beantworten oder Sabri Demir direkt per WhatsApp schreiben.</p></div></li>
+        <li><span class="schritt__n zahl" aria-hidden="true">2</span><div><h3><span class="sr-only">Schritt 2: </span>Kennenlernen in der Werkstatt</h3><p>Wir treffen uns diskret nach deinem Feierabend oder am Wochenende in der Werkstatt in Wetzlar und sprechen offen über Lohn, Touren und deine Wünsche.</p></div></li>
+        <li><span class="schritt__n zahl" aria-hidden="true">3</span><div><h3><span class="sr-only">Schritt 3: </span>Start mit Werkzeug und Fahrzeug</h3><p>Du bekommst deinen unbefristeten Arbeitsvertrag. Am ersten Tag stehen dein persönliches Hilti-Werkzeugset und dein Servicefahrzeug bereit.</p></div></li>
+      </ol>
+      <p class="diskret"><svg class="ico ico--s" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-uhr"/></svg><span>Dein Wechsel bleibt vertraulich: Wir kontaktieren unter keinen Umständen deinen derzeitigen Arbeitgeber.</span></p>
+      <dl>
+        <div class="zeile"><dt>Telefon</dt><dd><a class="tel-gross" href="tel:+49644142956">06441 42956</a></dd></div>
+        <div class="zeile"><dt>Erreichbar</dt><dd>Mo–Do 07:00–16:45 Uhr, Fr 07:00–13:30 Uhr</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- 6 · Gestaltungssystem -->
+<section class="system" id="system" aria-labelledby="system-h">
+  <div class="wrap">
+    <header class="system__kopf">
+      <p class="eyebrow">Stilkachel · Richtung C</p>
+      <h2 id="system-h">Gestaltungssystem „Feierabend“</h2>
+      <p>Dokumentation der Kachel. Alles Folgende ist gebaut und wird auf dieser Seite benutzt: Schriften, Farben, Raster, Formen und Bewegung. Die Zahlen sind gerechnet, nicht eingetragen.</p>
+      <nav class="sys-nav" aria-label="Teile des Gestaltungssystems"><ol><li><a href="#leitidee">Leitidee</a></li><li><a href="#schriften">Schriften</a></li><li><a href="#palette">Palette</a></li><li><a href="#raster">Raster</a></li><li><a href="#formen">Formen</a></li><li><a href="#bewegung">Bewegung</a></li><li><a href="#zustaende">Zustände</a></li></ol></nav>
+    </header>
+
+    <!-- Leitidee -->
+    <section class="sys" id="leitidee" aria-labelledby="leitidee-h">
+      <p class="sys__nr">01 · Leitidee</p>
+      <h3 id="leitidee-h">Zeit ist das Maß</h3>
+      <div class="sys__raster">
+        <div class="s-12"><p class="leitidee">„Dein Feierabend ist das Maß: Wir messen alles in Zeit – Tagesbogen bis 13:30 Uhr, Wege in Minuten, die Bewerbung in 60 Sekunden – und zeichnen es als Zifferblatt.“</p></div>
+        <div class="s-7">
+          <h4>Ableitung aus dem Markenaspekt „Respekt vor der Zeit“</h4>
+          <ol class="ableitung">
+            <li>Bad &amp; Energie verspricht keine Extras, sondern Zeit: freitags 13:30 Uhr, Montag bis Donnerstag 16:45 Uhr, nie weiter als 35 km, keine Fernmontage. Jede dieser Zusagen ist eine Uhrzeit oder eine Strecke in Minuten.</li>
+            <li>Darum ist das Zifferblatt die Grundfigur: ein Bogen für den Arbeitstag, ein Minutenbogen für jeden Arbeitsweg, eine Skala für hundert Jahre. Zahlen stehen tabellarisch wie in einem Fahrplan; die Serifenschrift mit optischer Größe trägt das Beständige, die Grotesk das Nüchterne.</li>
+            <li>Bewegung folgt demselben Gedanken: Der Bogen läuft genau einmal bis 13:30 Uhr und rastet ein. Alles andere steht still, weil Hast das Gegenteil des Versprechens wäre.</li>
+          </ol>
+        </div>
+        <div class="s-5 probe">
+          <h4>Austauschprobe: Warum passt das zu keinem Wettbewerber?</h4>
+          <p>Setze den Einstieg bei einem anderen SHK-Betrieb ein: Der Bogen endet dort nicht freitags um 13:30 Uhr, die Ringe nicht bei 35 km, die Skala nicht bei 1926. Das Motiv wäre Dekoration ohne Beleg. Ein Betrieb mit Wochenend-Notdienst oder Fernmontage könnte „Dein Feierabend ist das Maß“ nicht ehrlich zeichnen.</p>
+          <p>Ersetzt man 13:30 durch 17:00, bleibt ein hübscher Kreis ohne Aussage. Die Idee trägt nur, weil jede Zeitangabe eine belegte Zusage dieses Betriebs ist.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Schriften -->
+    <section class="sys" id="schriften" aria-labelledby="schriften-h">
+      <p class="sys__nr">02 · Schriften</p>
+      <h3 id="schriften-h">Eine Serife für die Zeit, eine Grotesk für den Rest</h3>
+      <div class="sys__raster">
+        <div class="s-7">
+          <p class="muster-gross" aria-hidden="true">07:00<br>13:30</p>
+          <p class="alphabet" style="margin-top:var(--a4)">Aa Bb Cc Dd Ee Ff Gg Hh Ää Öö Üü ß 0123456789 – „…“</p>
+        </div>
+        <div class="s-5">
+          <h4>Newsreader (Display, Ziffern)</h4>
+          <p class="klein">Variable Schrift mit Achsen für Gewicht (200–800) und optische Größe (6–72): Große Ziffern bekommen feine, kleine robuste Formen. Tabellarische Ziffern sind Standard. Lizenz: SIL Open Font License 1.1.</p>
+          <h4 style="margin-top:var(--a5)">Hanken Grotesk (Text, Bedienung)</h4>
+          <p class="klein">Variable Schrift, Gewicht 100–900, nüchtern und gut lesbar auf kleinen Schirmen. Lizenz: SIL Open Font License 1.1. Es gibt keine dritte Familie und keine Monospace.</p>
+        </div>
+        <div class="s-12">
+          <h4>Dateien (selbst gehostet, woff2, Teilmengen per unicode-range)</h4>
+          <div class="scroll" tabindex="0" role="region" aria-label="Schriftdateien, waagerecht scrollbar">
+          <table class="tabelle">
+            <thead><tr><th scope="col">Datei</th><th scope="col">Teilmenge</th><th scope="col">KB</th></tr></thead>
+            <tbody>
+              <tr><th scope="row"><code>newsreader-latin-opsz-normal.woff2</code></th><td>latin</td><td>132,0</td></tr>
+              <tr><th scope="row"><code>newsreader-latin-ext-wght-normal.woff2</code></th><td>latin-ext</td><td>36,2</td></tr>
+              <tr><th scope="row"><code>hanken-grotesk-latin-wght-normal.woff2</code></th><td>latin</td><td>34,7</td></tr>
+              <tr><th scope="row"><code>hanken-grotesk-latin-ext-wght-normal.woff2</code></th><td>latin-ext</td><td>19,6</td></tr>
+              <tr><th scope="row">Summe</th><td>vier Dateien, zwei Familien</td><td><b>222,5</b> von 250</td></tr>
+            </tbody>
+          </table>
+          </div>
+          <p class="klein leise" style="margin-top:var(--a3)">Newsreader latin-ext kommt als Schnitt ohne optische Größe (36 KB statt 87 KB), damit die Summe unter dem Budget bleibt; die Zeichen daraus kommen im Text dieser Seite nicht vor. Ersatzschriften (Times, Arial) sind per size-adjust und Überschreibungen von Ober- und Unterlänge angeglichen, damit beim Laden nichts springt.</p>
+        </div>
+        <div class="s-12">
+          <h4>Stufen (8 von höchstens 10)</h4>
+          <div class="stufen">
+            <div class="stufe"><div class="stufe__name">Ziffer</div><div class="stufe__probe t-num">13:30</div><div class="stufe__werte">Newsreader 330 · clamp 52–124 px<br>Zeilenhöhe 0,95 · Laufweite −0,035 em · tabellarisch</div></div>
+            <div class="stufe"><div class="stufe__name">H1</div><div class="stufe__probe t-h1">SHK-Jobs in Wetzlar.</div><div class="stufe__werte">Newsreader 350 · clamp 44–100 px<br>Zeilenhöhe 0,95 · Laufweite −0,03 em</div></div>
+            <div class="stufe"><div class="stufe__name">H2</div><div class="stufe__probe t-h2">35 km um Wetzlar.</div><div class="stufe__werte">Newsreader 350 · clamp 32–56 px<br>Zeilenhöhe 1,0 · Laufweite −0,02 em</div></div>
+            <div class="stufe"><div class="stufe__name">H3</div><div class="stufe__probe t-h3">Anlagenmechaniker SHK</div><div class="stufe__werte">Newsreader 400 · clamp 22–32 px<br>Zeilenhöhe 1,1 · Laufweite −0,012 em</div></div>
+            <div class="stufe"><div class="stufe__name">Einleitung</div><div class="stufe__probe t-lead">Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder.</div><div class="stufe__werte">Hanken Grotesk 400 · clamp 19–24 px<br>Zeilenhöhe 1,5 · Zeilenlänge ≤ 34 em</div></div>
+            <div class="stufe"><div class="stufe__name">Text</div><div class="stufe__probe t-body">Freitags geht es verlässlich um 13:30 Uhr ins Wochenende.</div><div class="stufe__werte">Hanken Grotesk 400 · clamp 16–18 px<br>Zeilenhöhe 1,6 · 60–75 Zeichen je Zeile</div></div>
+            <div class="stufe"><div class="stufe__name">Klein</div><div class="stufe__probe t-klein">Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.</div><div class="stufe__werte">Hanken Grotesk 400 · 15 px<br>Zeilenhöhe 1,5</div></div>
+            <div class="stufe"><div class="stufe__name">Beschriftung</div><div class="stufe__probe t-eyebrow">Seit 1926 · Wetzlar</div><div class="stufe__werte">Hanken Grotesk 600 · 13 px · Versalien<br>Laufweite +0,14 em · Zeilenhöhe 1,3</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Palette -->
+    <section class="sys" id="palette" aria-labelledby="palette-h">
+      <p class="sys__nr">03 · Palette</p>
+      <h3 id="palette-h">Acht Rollen, Tag und Abend</h3>
+      <div class="sys__raster">
+        <div class="s-12">
+          <p>Navy und Rot bleiben die Markenfarben: Navy trägt als Tinte alles, Rot gehört der einen Hauptaktion je Ansicht. Dazu zwei Papiere und ein Ton für die freie Zeit. Der Abend ist eine eigene Komposition, kein Negativ: Das Nachtblau des Logo-Navys wird zur Fläche, die Tinte zum Papier des Tages, Ocker wird Bernstein.</p>
+        </div>
+        <div class="s-12 paletten">
+          <div class="pal"><div class="pal__rolle">Papier<small>Seitenfläche</small></div><div class="pal__chip"><i style="background:#F6F2E9"></i><span><b>Tag</b><span class="zahl">#F6F2E9</span></span></div><div class="pal__chip"><i style="background:#0B1230"></i><span><b>Abend</b><span class="zahl">#0B1230</span></span></div><p class="pal__use">Tag: warmes Papier. Abend: Nachtblau des Logo-Navys.</p></div>
+          <div class="pal"><div class="pal__rolle">Papier tief<small>Band, Zifferblatt, Tabellenmarkierung</small></div><div class="pal__chip"><i style="background:#ECE6D8"></i><span><b>Tag</b><span class="zahl">#ECE6D8</span></span></div><div class="pal__chip"><i style="background:#131C46"></i><span><b>Abend</b><span class="zahl">#131C46</span></span></div><p class="pal__use">Eine Stufe tiefer als Papier; trägt die Scheibe des Zifferblatts.</p></div>
+          <div class="pal"><div class="pal__rolle">Tinte<small>Schrift, Bögen, Linien</small></div><div class="pal__chip"><i style="background:#0C1A72"></i><span><b>Tag</b><span class="zahl">#0C1A72</span></span></div><div class="pal__chip"><i style="background:#F1ECE0"></i><span><b>Abend</b><span class="zahl">#F1ECE0</span></span></div><p class="pal__use">Logo-Navy (gemessen ≈ #0C1A72) als Schriftfarbe; im Abend das Papier des Tages.</p></div>
+          <div class="pal"><div class="pal__rolle">Tinte leise<small>Zweitext, Beschriftung</small></div><div class="pal__chip"><i style="background:#454E84"></i><span><b>Tag</b><span class="zahl">#454E84</span></span></div><div class="pal__chip"><i style="background:#A9B0D2"></i><span><b>Abend</b><span class="zahl">#A9B0D2</span></span></div><p class="pal__use">Gedämpfte Tinte für Nebentexte; nie unter 4,5 : 1.</p></div>
+          <div class="pal"><div class="pal__rolle">Skala<small>Teilstriche, Hilfsringe</small></div><div class="pal__chip"><i style="background:#6A73A8"></i><span><b>Tag</b><span class="zahl">#6A73A8</span></span></div><div class="pal__chip"><i style="background:#7F89C0"></i><span><b>Abend</b><span class="zahl">#7F89C0</span></span></div><p class="pal__use">Bedeutungstragende Grafik, mindestens 3 : 1.</p></div>
+          <div class="pal"><div class="pal__rolle">Abend<small>Feierabend: Bogen und Wort</small></div><div class="pal__chip"><i style="background:#8A5300"></i><span><b>Tag</b><span class="zahl">#8A5300</span></span></div><div class="pal__chip"><i style="background:#F0B650"></i><span><b>Abend</b><span class="zahl">#F0B650</span></span></div><p class="pal__use">Ocker am Tag, Bernstein am Abend. Nur für freie Zeit.</p></div>
+          <div class="pal"><div class="pal__rolle">Signal<small>Die eine Hauptaktion je Ansicht</small></div><div class="pal__chip"><i style="background:#D60000"></i><span><b>Tag</b><span class="zahl">#D60000</span></span></div><div class="pal__chip"><i style="background:#D60000"></i><span><b>Abend</b><span class="zahl">#D60000</span></span></div><p class="pal__use">Logo-Rot (Hauptseite #D60000). Nie Schrift, nie Dekor, nie Fehlerfarbe.</p></div>
+          <div class="pal"><div class="pal__rolle">Haarlinie<small>Trennlinien (dekorativ)</small></div><div class="pal__chip"><i style="background:#D4CDBB"></i><span><b>Tag</b><span class="zahl">#D4CDBB</span></span></div><div class="pal__chip"><i style="background:#27316A"></i><span><b>Abend</b><span class="zahl">#27316A</span></span></div><p class="pal__use">Trägt keine Information; Kontrast nicht erforderlich.</p></div>
+        </div>
+        <div class="s-12">
+          <h4>Kontrast (WCAG 2.2, gerechnet: Verhältnis der relativen Leuchtdichte)</h4>
+          <div class="scroll" tabindex="0" role="region" aria-label="Kontrastwerte, waagerecht scrollbar">
+          <table class="kontrast">
+            <thead><tr><th scope="col">Paar</th><th scope="col">Einsatz</th><th scope="col">Tag</th><th scope="col">Abend</th><th scope="col">Soll</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Tinte auf Papier</th><td>Fließtext, Überschriften</td><td><span class="wert"><span class="probe-aa" style="background:#F6F2E9;color:#0C1A72">Aa 13:30</span><b class="zahl">13,36</b><span class="ok">erfüllt</span></span></td><td><span class="wert"><span class="probe-aa" style="background:#0B1230;color:#F1ECE0">Aa 13:30</span><b class="zahl">15,58</b><span class="ok">erfüllt</span></span></td><td class="zahl">≥ 4,50</td></tr>
+              <tr><th scope="row">Tinte auf Papier tief</th><td>Text auf Band und Zifferblatt</td><td><span class="wert"><span class="probe-aa" style="background:#ECE6D8;color:#0C1A72">Aa 13:30</span><b class="zahl">12,00</b><span class="ok">erfüllt</span></span></td><td><span class="wert"><span class="probe-aa" style="background:#131C46;color:#F1ECE0">Aa 13:30</span><b class="zahl">13,89</b><span class="ok">erfüllt</span></span></td><td class="zahl">≥ 4,50</td></tr>
+              <tr><th scope="row">Tinte leise auf Papier</th><td>Zweitext, Mikrotext</td><td><span class="wert"><span class="probe-aa" style="background:#F6F2E9;color:#454E84">Aa 13:30</span><b class="zahl">7,02</b><span class="ok">erfüllt</span></span></td><td><span class="wert"><span class="probe-aa" style="background:#0B1230;color:#A9B0D2">Aa 13:30</span><b class="zahl">8,59</b><span class="ok">erfüllt</span></span></td><td class="zahl">≥ 4,50</td></tr>
+              <tr><th scope="row">Tinte leise auf Papier tief</th><td>Beschriftung im Band</td><td><span class="wert"><span class="probe-aa" style="background:#ECE6D8;color:#454E84">Aa 13:30</span><b class="zahl">6,31</b><span class="ok">erfüllt</span></span></td><td><span class="wert"><span class="probe-aa" style="background:#131C46;color:#A9B0D2">Aa 13:30</span><b class="zahl">7,66</b><span class="ok">erfüllt</span></span></td><td class="zahl">≥ 4,50</td></tr>
+              <tr><th scope="row">Abend auf Papier (Schrift)</th><td>„Feierabend“ am Zifferblatt</td><td><span class="wert"><span class="probe-aa" style="background:#F6F2E9;color:#8A5300">Aa 13:30</span><b class="zahl">5,66</b><span class="ok">erfüllt</span></span></td><td><span class="wert"><span class="probe-aa" style="background:#0B1230;color:#F0B650">Aa 13:30</span><b class="zahl">10,07</b><span class="ok">erfüllt</span></span></td><td class="zahl">≥ 4,50</td></tr>
+              <tr><th scope="row">Abend auf Papier tief (Schrift)</th><td>„Feierabend“ auf der Scheibe</td><td><span class="wert"><span class="probe-aa" style="background:#ECE6D8;color:#8A5300">Aa 13:30</span><b class="zahl">5,09</b><span class="ok">erfüllt</span></span></td><td><span class="wert"><span class="probe-aa" style="background:#131C46;color:#F0B650">Aa 13:30</span><b class="zahl">8,98</b><span class="ok">erfüllt</span></span></td><td class="zahl">≥ 4,50</td></tr>
+              <tr><th scope="row">Signal-Text auf Signal</th><td>Beschriftung der Hauptaktion</td><td><span class="wert"><span class="probe-aa" style="background:#D60000;color:#FFFFFF">Aa 13:30</span><b class="zahl">5,44</b><span class="ok">erfüllt</span></span></td><td><span class="wert"><span class="probe-aa" style="background:#D60000;color:#FFFFFF">Aa 13:30</span><b class="zahl">5,44</b><span class="ok">erfüllt</span></span></td><td class="zahl">≥ 4,50</td></tr>
+              <tr><th scope="row">Signal auf Papier (Bedienelement)</th><td>Rand der Hauptaktion gegen die Fläche</td><td><span class="wert"><span class="probe-gr" aria-hidden="true" style="background:#F6F2E9;color:#D60000"></span><b class="zahl">4,87</b><span class="ok">erfüllt</span></span></td><td><span class="wert"><span class="probe-gr" aria-hidden="true" style="background:#0B1230;color:#D60000"></span><b class="zahl">3,38</b><span class="ok">erfüllt</span></span></td><td class="zahl">≥ 3,00</td></tr>
+              <tr><th scope="row">Skala auf Papier (Grafik)</th><td>Teilstriche, Ringe</td><td><span class="wert"><span class="probe-gr" aria-hidden="true" style="background:#F6F2E9;color:#6A73A8"></span><b class="zahl">4,06</b><span class="ok">erfüllt</span></span></td><td><span class="wert"><span class="probe-gr" aria-hidden="true" style="background:#0B1230;color:#7F89C0"></span><b class="zahl">5,46</b><span class="ok">erfüllt</span></span></td><td class="zahl">≥ 3,00</td></tr>
+              <tr><th scope="row">Skala auf Papier tief (Grafik)</th><td>Teilstriche auf der Scheibe</td><td><span class="wert"><span class="probe-gr" aria-hidden="true" style="background:#ECE6D8;color:#6A73A8"></span><b class="zahl">3,64</b><span class="ok">erfüllt</span></span></td><td><span class="wert"><span class="probe-gr" aria-hidden="true" style="background:#131C46;color:#7F89C0"></span><b class="zahl">4,87</b><span class="ok">erfüllt</span></span></td><td class="zahl">≥ 3,00</td></tr>
+              <tr><th scope="row">Tinte auf Papier (Fokusring)</th><td>Fokus, mindestens 3 px dick</td><td><span class="wert"><span class="probe-gr" aria-hidden="true" style="background:#F6F2E9;color:#0C1A72"></span><b class="zahl">13,36</b><span class="ok">erfüllt</span></span></td><td><span class="wert"><span class="probe-gr" aria-hidden="true" style="background:#0B1230;color:#F1ECE0"></span><b class="zahl">15,58</b><span class="ok">erfüllt</span></span></td><td class="zahl">≥ 3,00</td></tr>
+              <tr><th scope="row">Papier auf Tinte (gewähltes Segment)</th><td>Radius-Umschalter, Hover</td><td><span class="wert"><span class="probe-aa" style="background:#0C1A72;color:#F6F2E9">Aa 13:30</span><b class="zahl">13,36</b><span class="ok">erfüllt</span></span></td><td><span class="wert"><span class="probe-aa" style="background:#F1ECE0;color:#0B1230">Aa 13:30</span><b class="zahl">15,58</b><span class="ok">erfüllt</span></span></td><td class="zahl">≥ 4,50</td></tr>
+            </tbody>
+          </table>
+          </div>
+          <p class="klein leise" style="margin-top:var(--a3)">Haarlinien tragen keine Information und sind ausgenommen. Im Inverse-Band tauschen Tinte und Papier (Tag: Papier auf Nachtblau 15,58 : 1; Abend: Navy auf Papier 13,36 : 1).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Raster -->
+    <section class="sys" id="raster" aria-labelledby="raster-h">
+      <p class="sys__nr">04 · Raster</p>
+      <h3 id="raster-h">Zwölf Spalten, Abstände in Vierteln</h3>
+      <div class="sys__raster">
+        <div class="s-12">
+          <div class="raster-demo" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span></div>
+          <p class="raster-maße"><span>Spalten: 12 ab 1.024 px, 8 ab 640 px, sonst 4</span><span>Bundsteg 16–24 px</span><span>Außenrand 16–72 px</span><span>Inhaltsbreite höchstens 1.280 px</span></p>
+          <p style="margin-top:var(--a4)"><button class="btn-klein" id="raster-knopf" type="button" aria-pressed="false" hidden>Raster auf der Seite einblenden</button></p>
+        </div>
+        <div class="s-6">
+          <h4>Abstandsskala (10 von höchstens 12 Stufen)</h4>
+          <ul class="skala-abst">
+            <li><b>a1</b><span>4 px</span><i style="width:4px"></i></li>
+            <li><b>a2</b><span>8 px</span><i style="width:8px"></i></li>
+            <li><b>a3</b><span>12 px</span><i style="width:12px"></i></li>
+            <li><b>a4</b><span>16 px</span><i style="width:16px"></i></li>
+            <li><b>a5</b><span>24 px</span><i style="width:24px"></i></li>
+            <li><b>a6</b><span>32 px</span><i style="width:32px"></i></li>
+            <li><b>a7</b><span>48 px</span><i style="width:48px"></i></li>
+            <li><b>a8</b><span>64 px</span><i style="width:64px"></i></li>
+            <li><b>a9</b><span>96 px</span><i style="width:96px"></i></li>
+            <li><b>a10</b><span>128 px</span><i style="width:128px"></i></li>
+          </ul>
+        </div>
+        <div class="s-6">
+          <h4>Komposition</h4>
+          <p>Asymmetrie mit Absicht: Text sechs Spalten, Zifferblatt sechs Spalten; Stellen und Gebiet wechseln Dichte und Richtung, die Jahresleiste ist der leise Trenner dazwischen, der Ablauf das einzige dunkle Band im Tag. Mobil ist eine eigene Komposition: Überschrift, Zifferblatt, dann erst Einleitung und Hauptaktion.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Formen -->
+    <section class="sys" id="formen" aria-labelledby="formen-h">
+      <p class="sys__nr">05 · SVG-Formsystem</p>
+      <h3 id="formen-h">Alles ist Kreis und Bogen</h3>
+      <div class="sys__raster">
+        <div class="s-5 bau">
+          <svg viewBox="0 0 24 24" role="img" aria-labelledby="bau-t">
+            <title id="bau-t">Konstruktion des Uhr-Piktogramms auf dem 24er Raster mit Randzone von 2 Einheiten</title>
+            <path class="g-raster" d="M0 0V24M0 0H24"/><path class="g-raster" d="M1 0V24M0 1H24"/><path class="g-raster" d="M2 0V24M0 2H24"/><path class="g-raster" d="M3 0V24M0 3H24"/><path class="g-raster" d="M4 0V24M0 4H24"/><path class="g-raster" d="M5 0V24M0 5H24"/><path class="g-raster" d="M6 0V24M0 6H24"/><path class="g-raster" d="M7 0V24M0 7H24"/><path class="g-raster" d="M8 0V24M0 8H24"/><path class="g-raster" d="M9 0V24M0 9H24"/><path class="g-raster" d="M10 0V24M0 10H24"/><path class="g-raster" d="M11 0V24M0 11H24"/><path class="g-raster" d="M12 0V24M0 12H24"/><path class="g-raster" d="M13 0V24M0 13H24"/><path class="g-raster" d="M14 0V24M0 14H24"/><path class="g-raster" d="M15 0V24M0 15H24"/><path class="g-raster" d="M16 0V24M0 16H24"/><path class="g-raster" d="M17 0V24M0 17H24"/><path class="g-raster" d="M18 0V24M0 18H24"/><path class="g-raster" d="M19 0V24M0 19H24"/><path class="g-raster" d="M20 0V24M0 20H24"/><path class="g-raster" d="M21 0V24M0 21H24"/><path class="g-raster" d="M22 0V24M0 22H24"/><path class="g-raster" d="M23 0V24M0 23H24"/><path class="g-raster" d="M24 0V24M0 24H24"/>
+            <rect class="g-live" x="2" y="2" width="20" height="20"/>
+            <circle class="g-hilf" cx="12" cy="12" r="9.25"/><path class="g-hilf" d="M12 0V24M0 12H24"/>
+            <g class="g-form"><circle cx="12" cy="12" r="9.25"/><path d="M12 12L14.8 9.2M12 12V17.2"/><path d="M12 4.4V5.6M19.6 12H18.4M4.4 12H5.6"/></g>
+            <circle class="g-punkt" cx="12" cy="12" r=".5"/>
+          </svg>
+        </div>
+        <div class="s-7">
+          <h4>Regeln</h4>
+          <ul class="regeln">
+            <li><b>Grundgeometrie:</b> Kreis und Bogen; gerade Linien nur als Zeiger, Tangente oder Schaft. Die Formen sind Zifferblatt-Segmente.</li>
+            <li><b>Raster:</b> 24 × 24 Einheiten, Randzone 2 Einheiten; Zeichnungen wie das Zifferblatt bauen auf demselben Maß, nur größer.</li>
+            <li><b>Strichstärke:</b> eine einzige, 1,5 Einheiten (2 px bei 32 px Größe); große Zeichnungen halten 2 px mit <code class="kenn">vector-effect</code>.</li>
+            <li><b>Enden und Ecken:</b> alle rund (<code class="kenn">stroke-linecap: round</code>, <code class="kenn">stroke-linejoin: round</code>); gefüllte Flächen nur als Tönung ohne Kontur.</li>
+            <li><b>Farbe und Einbindung:</b> <code class="kenn">currentColor</code>, einmal als <code class="kenn">symbol</code> definiert, überall per <code class="kenn">use</code>; dekorativ <code class="kenn">aria-hidden</code>, bedeutungstragend <code class="kenn">role="img"</code> mit Titel. Jedes Piktogramm unter 1,5 KB.</li>
+          </ul>
+        </div>
+        <div class="s-12">
+          <h4>Acht Piktogramme</h4>
+          <ul class="icons">
+            <li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-waermepumpe"/></svg><div><b>Wärmepumpe</b><small>Gehäusekreis, drei Bogenflügel</small></div></li>
+            <li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-bad"/></svg><div><b>Bad / Tropfen</b><small>ein Kreis, zwei Tangenten</small></div></li>
+            <li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-heizung"/></svg><div><b>Heizung / Flamme</b><small>fünf Bogenstücke, Glutbogen</small></div></li>
+            <li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-werkzeug"/></svg><div><b>Werkzeug</b><small>Maulbogen, Schaft</small></div></li>
+            <li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-fahrzeug"/></svg><div><b>Servicefahrzeug</b><small>zwei Radkreise, Aufbau</small></div></li>
+            <li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-uhr"/></svg><div><b>Uhr / Feierabend</b><small>Zifferblatt, Zeiger auf 13:30</small></div></li>
+            <li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-standort"/></svg><div><b>Standort</b><small>ein Kreis, zwei Tangenten</small></div></li>
+            <li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-nachricht"/></svg><div><b>Nachricht</b><small>Sprechkreis mit Spitze</small></div></li>
+          </ul>
+          <div class="groessen" aria-hidden="true"><svg class="ico ico--s" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-uhr"/></svg><svg class="ico ico--s" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-standort"/></svg><span class="klein leise" style="align-self:center">24 px: gleiche Linie, gleiche Enden.</span></div>
+        </div>
+        <div class="s-12">
+          <h4>Trenner: die Jahresleiste</h4>
+          <p>101 Teilstriche, einer je Jahr von 1926 bis 2026; die Jahrzehnte sind länger, Anfang und Ende am längsten. Sie ist Trenner, Beleg und Zeitleiste zugleich, und sie zeigt nur das Belegte: Gründung 1926 und „100 Jahre Meisterbetrieb (1926–2026)“. Dasselbe Muster ist der Rahmen der Karte (24 Stundenstriche) und der Rand des Zifferblatts (96 Viertelstunden).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bewegung -->
+    <section class="sys" id="bewegung" aria-labelledby="bewegung-h">
+      <p class="sys__nr">06 · Bewegung</p>
+      <h3 id="bewegung-h">Ein Signaturmoment, sonst Ruhe</h3>
+      <div class="sys__raster">
+        <div class="s-7">
+          <p>Der Bogen läuft genau einmal von 07:00 bis 13:30 Uhr, in 1.100 ms, und rastet ein. Nichts läuft in Schleife, nichts blinkt, nichts hängt am Scrollen. Bewegt werden nur <code class="kenn">transform</code> und <code class="kenn">opacity</code>; das Linienzeichnen läuft über <code class="kenn">stroke-dashoffset</code> mit <code class="kenn">pathLength="1"</code>. Startzustände hängen an einer Klasse, die ein Inline-Skript vor dem ersten Rendern setzt; nach 2 s zeigt ein Zeitlimit alles, ohne JavaScript ist alles sichtbar. Bei reduzierter Bewegung gilt der Endzustand sofort.</p>
+        </div>
+        <div class="s-5 probe-bogen">
+          <div class="bew-probe" id="probe-bogen"><svg class="bogen__svg" viewBox="-176 -152 352 304" aria-hidden="true" focusable="false">
+  <circle class="scheibe" r="130"/>
+  <circle class="rand-kreis" r="130"/>
+  <path class="teil" d="M0 129L0 117M-8.44 128.72L-8.21 125.23M-16.84 127.9L-16.38 124.43M-25.17 126.52L-24.48 123.09M-33.39 124.6L-31.58 117.84M-41.47 122.15L-40.34 118.84M-49.37 119.18L-48.03 115.95M-57.06 115.7L-55.51 112.56M-64.5 111.72L-61 105.66M-71.67 107.26L-69.72 104.35M-78.53 102.34L-76.4 99.57M-85.06 96.99L-82.75 94.36M-91.22 91.22L-86.27 86.27M-96.99 85.06L-94.36 82.75M-102.34 78.53L-99.57 76.4M-107.26 71.67L-104.35 69.72M-111.72 64.5L-105.66 61M-115.7 57.06L-112.56 55.51M-119.18 49.37L-115.95 48.03M-122.15 41.47L-118.84 40.34M-124.6 33.39L-117.84 31.58M-126.52 25.17L-123.09 24.48M-127.9 16.84L-124.43 16.38M-128.72 8.44L-125.23 8.21M-129 0L-117 0M-128.72 -8.44L-125.23 -8.21M-127.9 -16.84L-124.43 -16.38M-126.52 -25.17L-123.09 -24.48M-124.6 -33.39L-117.84 -31.58M-122.15 -41.47L-118.84 -40.34M-119.18 -49.37L-115.95 -48.03M-115.7 -57.06L-112.56 -55.51M-111.72 -64.5L-105.66 -61M-107.26 -71.67L-104.35 -69.72M-102.34 -78.53L-99.57 -76.4M-96.99 -85.06L-94.36 -82.75M-91.22 -91.22L-86.27 -86.27M-85.06 -96.99L-82.75 -94.36M-78.53 -102.34L-76.4 -99.57M-71.67 -107.26L-69.72 -104.35M-64.5 -111.72L-61 -105.66M-57.06 -115.7L-55.51 -112.56M-49.37 -119.18L-48.03 -115.95M-41.47 -122.15L-40.34 -118.84M-33.39 -124.6L-31.58 -117.84M-25.17 -126.52L-24.48 -123.09M-16.84 -127.9L-16.38 -124.43M-8.44 -128.72L-8.21 -125.23M0 -129L0 -117M8.44 -128.72L8.21 -125.23M16.84 -127.9L16.38 -124.43M25.17 -126.52L24.48 -123.09M33.39 -124.6L31.58 -117.84M41.47 -122.15L40.34 -118.84M49.37 -119.18L48.03 -115.95M57.06 -115.7L55.51 -112.56M64.5 -111.72L61 -105.66M71.67 -107.26L69.72 -104.35M78.53 -102.34L76.4 -99.57M85.06 -96.99L82.75 -94.36M91.22 -91.22L86.27 -86.27M96.99 -85.06L94.36 -82.75M102.34 -78.53L99.57 -76.4M107.26 -71.67L104.35 -69.72M111.72 -64.5L105.66 -61M115.7 -57.06L112.56 -55.51M119.18 -49.37L115.95 -48.03M122.15 -41.47L118.84 -40.34M124.6 -33.39L117.84 -31.58M126.52 -25.17L123.09 -24.48M127.9 -16.84L124.43 -16.38M128.72 -8.44L125.23 -8.21M129 0L117 0M128.72 8.44L125.23 8.21M127.9 16.84L124.43 16.38M126.52 25.17L123.09 24.48M124.6 33.39L117.84 31.58M122.15 41.47L118.84 40.34M119.18 49.37L115.95 48.03M115.7 57.06L112.56 55.51M111.72 64.5L105.66 61M107.26 71.67L104.35 69.72M102.34 78.53L99.57 76.4M96.99 85.06L94.36 82.75M91.22 91.22L86.27 86.27M85.06 96.99L82.75 94.36M78.53 102.34L76.4 99.57M71.67 107.26L69.72 104.35M64.5 111.72L61 105.66M57.06 115.7L55.51 112.56M49.37 119.18L48.03 115.95M41.47 122.15L40.34 118.84M33.39 124.6L31.58 117.84M25.17 126.52L24.48 123.09M16.84 127.9L16.38 124.43M8.44 128.72L8.21 125.23"/>
+  <path class="bd-marke" d="M-113.98 -30.54L-133.3 -35.72M45.16 -109.02L52.81 -127.5M111.74 -37.93L130.68 -44.36"/>
+  <path class="punkte bd-mododo" d="M-109.15 -29.25A113 113 0 0 1 107 -36.32"/>
+  <g class="bd-abend-gruppe"><path class="punkte bd-abend" d="M39.8 -96.08A104 104 0 1 1 -100.46 -26.92"/></g>
+  <path class="bd-band" pathLength="1" stroke-width="14" d="M-93.69 -25.11A97 97 0 0 1 37.12 -89.62"/>
+  <path class="bd-fr" pathLength="1" d="M-100.46 -26.92A104 104 0 0 1 39.8 -96.08"/>
+  <g class="bd-zeiger" data-motion="bogen-probe"><line x1="0" y1="-80" x2="0" y2="-104"/><circle class="kopf-punkt" cx="0" cy="-104" r="4.4"/></g>
+  <circle class="bd-rast" data-motion="bogen-rast" cx="39.8" cy="-96.08" r="10"/>
+  <text class="bd-t bd-t--leise" x="0" y="-146" text-anchor="middle" dominant-baseline="central">12</text><text class="bd-t bd-t--leise" x="146" y="0" text-anchor="middle" dominant-baseline="central">18</text><text class="bd-t bd-t--leise" x="0" y="146" text-anchor="middle" dominant-baseline="central">0</text><text class="bd-t bd-t--leise" x="-146" y="0" text-anchor="middle" dominant-baseline="central">6</text>
+  <text class="bd-t " x="-142.96" y="-38.31" text-anchor="end" dominant-baseline="central">07:00</text><text class="bd-t " x="140.15" y="-47.57" text-anchor="start" dominant-baseline="central">16:45</text><text class="bd-t bd-t--abend" x="60.2" y="-135.2" text-anchor="start" dominant-baseline="central">Fr</text>
+  <text class="pr-zahl rast-text" x="0" y="-6" text-anchor="middle" dominant-baseline="central">13:30</text><text class="bd-t bd-t--abend rast-text" x="0" y="34" text-anchor="middle" style="font-size:15px">Feierabend</text>
+</svg></div>
+          <button class="btn-klein" id="probe-knopf" type="button" hidden>Bogen erneut laufen lassen</button>
+        </div>
+        <div class="s-12">
+          <h4>Bewegungsregister</h4>
+          <div class="scroll" tabindex="0" role="region" aria-label="Bewegungsregister, waagerecht scrollbar">
+          <table class="tabelle">
+            <thead><tr><th scope="col">Kennung <code class="kenn">data-motion</code></th><th scope="col">Zweck</th><th scope="col">Auslöser</th><th scope="col">Dauer</th><th scope="col">Kurve</th><th scope="col">Reduzierte Bewegung</th></tr></thead>
+            <tbody>
+              <tr><th scope="row"><code>bogen-lauf</code></th><td>Signatur: macht den Feierabend erlebbar. Der Tagesbogen zeichnet sich von 07:00 bis 13:30 Uhr, der Zeiger läuft mit.</td><td>Seitenaufruf, nach dem ersten Paint</td><td>d4 · 1.100 ms</td><td>k2 wechselnd</td><td>Endzustand sofort, ohne Übergang</td></tr>
+              <tr><th scope="row"><code>bogen-rast</code></th><td>Rückmeldung: Der Zeiger rastet ein, der Ring schließt sich, „Uhr Feierabend“ und der Abendbogen blenden ein.</td><td>Ende von bogen-lauf</td><td>d1 160 ms + d2 320 ms, Start nach 1.100 ms (Ende nach 1.580 ms)</td><td>k1 ausklingend</td><td>sofort sichtbar</td></tr>
+              <tr><th scope="row"><code>jahre-auftritt</code></th><td>Zusammenhang: Die Skala 1926 → 2026 wird von links enthüllt (100 Jahre als ein Strich).</td><td>Eintritt in den Bildschirm, einmal</td><td>d3 · 640 ms</td><td>k1 ausklingend</td><td>sofort sichtbar</td></tr>
+              <tr><th scope="row"><code>radius-wahl</code></th><td>Orientierung: Ringe, Fläche und Orte gleiten auf den neuen Maßstab; Beschriftungen blenden um.</td><td>Wahl 15 / 25 / 35 km</td><td>d2 · 320 ms</td><td>k2 wechselnd</td><td>Sofortzustand</td></tr>
+              <tr><th scope="row"><code>ort-wahl</code></th><td>Rückmeldung: Der Zeiger dreht zum Ort, der Minutenbogen füllt sich auf die Fahrzeit.</td><td>Wahl eines Ortes</td><td>d2 · 320 ms</td><td>k2 wechselnd</td><td>Sofortzustand</td></tr>
+              <tr><th scope="row"><code>taste</code></th><td>Rückmeldung: Druck (Skalierung 0,97) und Abdunklung beim Darüberfahren.</td><td>Aktiv, Hover nur bei Maus</td><td>d1 · 160 ms</td><td>k1 ausklingend</td><td>Abdunklung ohne Übergang, keine Skalierung</td></tr>
+              <tr><th scope="row"><code>bogen-probe</code></th><td>Probe: dieselbe Bewegung im System-Teil, auf Knopfdruck wiederholbar.</td><td>Klick auf „Bogen erneut laufen lassen“</td><td>d4 · 1.100 ms</td><td>k2 wechselnd</td><td>Endzustand sofort</td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+        <div class="s-12 reg-tokens">
+          <div><h4>Dauern (4 von höchstens 6)</h4><ul class="tok"><li><b>d1</b><span>160 ms · Rückmeldung: Druck, Hover</span></li><li><b>d2</b><span>320 ms · Zustandswechsel: Radius, Ort, Unterstreichung</span></li><li><b>d3</b><span>640 ms · Auftritt: Jahresleiste</span></li><li><b>d4</b><span>1.100 ms · Signatur: Tagesbogen</span></li></ul></div>
+          <div><h4>Kurven (4 von höchstens 4)</h4><ul class="tok"><li><b>k1</b><span>cubic-bezier(.16, 1, .3, 1) · ausklingend</span></li><li><b>k2</b><span>cubic-bezier(.65, 0, .35, 1) · wechselnd</span></li><li><b>k3</b><span>cubic-bezier(.32, 0, .67, 0) · beschleunigend (Ausgänge)</span></li><li><b>k4</b><span>linear · Fortschritt, nicht verwendet</span></li></ul></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Zustände -->
+    <section class="sys" id="zustaende" aria-labelledby="zustaende-h">
+      <p class="sys__nr">07 · Zustände</p>
+      <h3 id="zustaende-h">Die Hauptaktion in allen Zuständen</h3>
+      <div class="zustaende">
+        <div class="zust"><h4>Ruhe</h4><a class="btn" href="/bewerbung">Jetzt bewerben <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-pfeil"/></svg></a></div>
+        <div class="zust"><h4>Hover (nur Maus)</h4><span class="btn ist-hover">Jetzt bewerben <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-pfeil"/></svg></span></div>
+        <div class="zust"><h4>Fokus</h4><span class="btn ist-fokus">Jetzt bewerben <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-pfeil"/></svg></span></div>
+        <div class="zust"><h4>Gedrückt</h4><span class="btn ist-druck">Jetzt bewerben <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-pfeil"/></svg></span></div>
+        <div class="zust"><h4>Lädt</h4><span class="btn laedt" aria-busy="true">Wird gesendet <svg class="ico ico--s lade" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-lade"/></svg></span><p>Anzeige erst nach 300 ms, dann mindestens 500 ms; die Breite bleibt.</p></div>
+        <div class="zust"><h4>Deaktiviert</h4><span class="btn" aria-disabled="true">Jetzt bewerben <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-pfeil"/></svg></span><p>Grund steht als Text daneben, etwa „Bitte Telefonnummer eintragen“.</p></div>
+        <div class="zust"><h4>Fehler</h4><p class="meldung meldung--fehler"><svg class="ico ico--s" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-achtung"/></svg><span>Die Nummer ist zu kurz. Bitte mit Vorwahl eintragen oder Sabri Demir direkt anrufen: 06441 42956.</span></p></div>
+        <div class="zust"><h4>Erfolg</h4><p class="meldung meldung--erfolg"><svg class="ico ico--s" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-ok"/></svg><span>Danke, deine Bewerbung ist da. Sabri Demir meldet sich schnellstmöglich.</span></p></div>
+      </div>
+    </section>
+  </div>
+</section>
+</main>
+
+<footer class="fuss">
+  <div class="wrap"><p>Bad &amp; Energie GmbH Lahn-Dill · Siegmund-Hiepe-Str. 20 · 35578 Wetzlar</p><p>Stilkachel Richtung C „Feierabend“ · Schriften unter OFL</p></div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var d = document, R = d.documentElement;
+  var $ = function (s, e) { return (e || d).querySelector(s); };
+  var $$ = function (s, e) { return Array.prototype.slice.call((e || d).querySelectorAll(s)); };
+  if (window.__sn) clearTimeout(window.__sn);
+
+  /* bogen-lauf: nach dem ersten Paint starten (Startzustand setzt das Inline-Skript im Kopf) */
+  requestAnimationFrame(function () { requestAnimationFrame(function () { R.classList.add('lauf'); }); });
+
+  /* jahre-auftritt: einmal beim Eintritt in den Bildschirm */
+  var rv = $$('[data-reveal]');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('da'); io.unobserve(e.target); } });
+    }, { threshold: 0.6 });
+    rv.forEach(function (e) { io.observe(e); });
+  } else rv.forEach(function (e) { e.classList.add('da'); });
+
+  /* Bewegungsprobe im System-Teil */
+  var pb = $('#probe-knopf'), pd = $('#probe-bogen');
+  if (pb && pd) {
+    pb.hidden = false;
+    pb.addEventListener('click', function () {
+      pd.classList.add('neu'); void pd.getBoundingClientRect(); pd.classList.remove('neu');
+    });
+  }
+
+  /* Raster einblenden */
+  var rk = $('#raster-knopf');
+  if (rk) {
+    rk.hidden = false;
+    rk.addEventListener('click', function () {
+      var an = R.classList.toggle('raster-an');
+      rk.setAttribute('aria-pressed', an ? 'true' : 'false');
+    });
+  }
+
+  /* Pendelrechner: Radius 15 / 25 / 35 km und Ortswahl */
+  var sv = $('#karte-svg'), tb = $('#orte tbody');
+  if (!sv || !tb) return;
+  var LAT = 50.565, LON = 8.498, KX = Math.cos(LAT * Math.PI / 180) * 111.32, KY = 110.57, RP = 112;
+  var radius = 35, sel = null, winkel = 0;
+  var orte = $$('tr', tb).map(function (tr) {
+    var o = {
+      tr: tr, id: tr.dataset.id, name: tr.dataset.name, km: +tr.dataset.km, min: +tr.dataset.min,
+      kern: tr.dataset.kern === '1', x: (+tr.dataset.lon - LON) * KX, y: (LAT - +tr.dataset.lat) * KY
+    };
+    o.g = $('[data-ort="' + o.id + '"]', sv);
+    var th = tr.firstElementChild, b = d.createElement('button');
+    b.type = 'button'; b.className = 'o-name'; b.setAttribute('aria-pressed', 'false');
+    while (th.firstChild) b.appendChild(th.firstChild);
+    var gr = d.createElement('small'); gr.className = 'o-grund'; gr.hidden = true; b.appendChild(gr);
+    th.appendChild(b);
+    o.b = b; o.gr = gr;
+    b.addEventListener('click', function () { wahl(o); });
+    if (o.g) o.g.addEventListener('click', function () { if (o.km <= radius) wahl(o); });
+    return o;
+  });
+  var ringe = $$('.k-ring', sv), labels = $$('.k-ringlabel', sv), flaeche = $('.k-flaeche', sv), hand = $('.k-hand', sv);
+  var w = $('#wahl');
+
+  function render() {
+    var s = RP / radius;
+    flaeche.style.transform = 'scale(' + RP / 100 + ')';
+    ringe.forEach(function (r) {
+      var km = +r.dataset.km, k = km * s;
+      r.style.transform = 'scale(' + k / 100 + ')';
+      r.style.opacity = k > 142 ? 0 : 1;
+      r.classList.toggle('aktiv', km === radius);
+    });
+    labels.forEach(function (t) {
+      var km = +t.dataset.km, k = km * s;
+      t.style.transform = 'translate(' + k * 0.6157 + 'px,' + (-k * 0.788) + 'px)';
+      t.style.opacity = k > 138 || km === 35 && radius !== 35 ? 0 : 1;
+    });
+    orte.forEach(function (o) {
+      var px = o.x * s, py = o.y * s, aus = o.km > radius;
+      o.px = px; o.py = py; o.aus = aus;
+      o.g.style.transform = 'translate(' + px + 'px,' + py + 'px)';
+      o.g.classList.toggle('aus', aus);
+      o.g.classList.toggle('links', px < -12 || px > 70);
+      o.b.disabled = aus;
+      o.gr.hidden = !aus;
+      o.gr.textContent = aus ? 'über ' + radius + ' km' : '';
+      o.tr.classList.toggle('aus', aus);
+    });
+    orte.forEach(function (o) {
+      var frei = !o.aus && orte.every(function (p) { return p === o || p.aus || Math.hypot(p.px - o.px, p.py - o.py) > 22; });
+      o.g.classList.toggle('beschriftet', !o.aus && (o === sel || frei));
+    });
+    zeiger();
+  }
+
+  function zeiger() {
+    if (!sel) { hand.style.opacity = 0; return; }
+    var l = Math.hypot(sel.px, sel.py), a = Math.atan2(sel.py, sel.px) * 180 / Math.PI;
+    a += 360 * Math.round((winkel - a) / 360); winkel = a;
+    hand.style.transform = 'rotate(' + a + 'deg) scale(' + Math.max(l, 0.001) + ',1)';
+    hand.style.opacity = l > 8 ? 1 : 0;
+  }
+
+  function wahl(o) {
+    sel = o;
+    orte.forEach(function (p) {
+      var an = p === o;
+      p.tr.dataset.gewaehlt = an; p.b.setAttribute('aria-pressed', an); p.g.classList.toggle('gewaehlt', an);
+    });
+    if (o.g.parentNode) o.g.parentNode.appendChild(o.g);
+    $('#w-ort').firstChild.nodeValue = o.name;
+    $('#w-zone').textContent = o.kern ? (o.id === 'wetzlar-kernstadt' ? 'Firmensitz · Kernzone' : 'Kernzone') : 'Einsatzgebiet';
+    $('#w-km').firstChild.nodeValue = o.km;
+    $('#w-min').firstChild.nodeValue = o.min;
+    $('#w-bogen').style.strokeDashoffset = 1 - o.min / 60;
+    $('#w-zeiger').style.transform = 'rotate(' + o.min * 6 + 'deg)';
+    w.hidden = false;
+    render();
+  }
+
+  var rg = $('#radius');
+  rg.hidden = false;
+  $$('input', rg).forEach(function (i) {
+    i.addEventListener('change', function () {
+      radius = +i.value;
+      if (sel && sel.km > radius) {
+        var frei = orte.filter(function (o) { return o.km <= radius; });
+        wahl(frei[frei.length - 1]);
+      } else render();
+    });
+  });
+  var start = orte.filter(function (o) { return o.id === 'giessen'; })[0];
+  render();
+  if (start) wahl(start);
+})();
+
+</script>
+</body>
+</html>

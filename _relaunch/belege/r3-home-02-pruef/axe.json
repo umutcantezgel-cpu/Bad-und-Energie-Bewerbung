@@ -1,0 +1,287 @@
+{
+  "label": "r3-home-02-pruef",
+  "base": "http://localhost:3450",
+  "erstellt": "2026-10-09T23:10:26.890Z",
+  "bedingungen": {
+    "werkzeug": "@axe-core/playwright 4.13.0, axe-core 4.13.0",
+    "chromium": "141.0.7390.37",
+    "tags": [
+      "wcag2a",
+      "wcag2aa",
+      "wcag21a",
+      "wcag21aa",
+      "wcag22aa"
+    ],
+    "reducedMotion": "reduce",
+    "ansichten": [
+      "m390 390×844",
+      "d1440 1440×900"
+    ],
+    "schemata": [
+      "light",
+      "dark"
+    ],
+    "vorbereitung": "goto networkidle → document.fonts.ready → scrollThrough → Zustand herstellen → Animationen beendet → axe (ganze Seite)",
+    "anfragesperre": "lib/browser.mjs (G5): POST/PUT/PATCH/DELETE → Attrappe, Tracking → 204, Fremdhosts blockiert",
+    "parallel": 3
+  },
+  "abdeckung": {
+    "grundmengeSeiten": 2,
+    "seitenlaeufe": 8,
+    "zustaende": 0,
+    "zustandslaeufe": 0,
+    "gesamtLaeufe": 8,
+    "erfolgreich": 8,
+    "fehlgeschlagen": []
+  },
+  "summenVerstossRegeln": {
+    "critical": 0,
+    "serious": 0,
+    "moderate": 0,
+    "minor": 0
+  },
+  "summenKnoten": {
+    "critical": 0,
+    "serious": 0,
+    "moderate": 0,
+    "minor": 0
+  },
+  "laufMitVerstoss": 0,
+  "laufOhneVerstoss": 8,
+  "anfragesperre": {},
+  "unklarRegeln": [
+    {
+      "id": "color-contrast",
+      "laeufe": 4,
+      "knoten": 328,
+      "seiten": [
+        "start"
+      ],
+      "ziel": ".einstieg-module__tfiXEq__lead",
+      "zielLauf": "start__m390-light"
+    }
+  ],
+  "laeufe": [
+    {
+      "key": "start__m390-light",
+      "typ": "seite",
+      "slug": "start",
+      "titel": "start",
+      "pfad": "/",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 8310,
+      "geprueft": 34,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 51,
+          "ziel": ".einstieg-module__tfiXEq__lead"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "start__m390-dark",
+      "typ": "seite",
+      "slug": "start",
+      "titel": "start",
+      "pfad": "/",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 7905,
+      "geprueft": 34,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 51,
+          "ziel": ".einstieg-module__tfiXEq__lead"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "start__d1440-light",
+      "typ": "seite",
+      "slug": "start",
+      "titel": "start",
+      "pfad": "/",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 7007,
+      "geprueft": 34,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 113,
+          "ziel": ".px-3.hover\\:text-ink[href$=\"jobs\"]"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "start__d1440-dark",
+      "typ": "seite",
+      "slug": "start",
+      "titel": "start",
+      "pfad": "/",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 6865,
+      "geprueft": 34,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 113,
+          "ziel": ".px-3.hover\\:text-ink[href$=\"jobs\"]"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stellen__m390-light",
+      "typ": "seite",
+      "slug": "stellen",
+      "titel": "stellen",
+      "pfad": "/jobs",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 3618,
+      "geprueft": 25,
+      "unklar": 0,
+      "unklarRegeln": [],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stellen__m390-dark",
+      "typ": "seite",
+      "slug": "stellen",
+      "titel": "stellen",
+      "pfad": "/jobs",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 3282,
+      "geprueft": 25,
+      "unklar": 0,
+      "unklarRegeln": [],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stellen__d1440-light",
+      "typ": "seite",
+      "slug": "stellen",
+      "titel": "stellen",
+      "pfad": "/jobs",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 3584,
+      "geprueft": 24,
+      "unklar": 0,
+      "unklarRegeln": [],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "stellen__d1440-dark",
+      "typ": "seite",
+      "slug": "stellen",
+      "titel": "stellen",
+      "pfad": "/jobs",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 3615,
+      "geprueft": 24,
+      "unklar": 0,
+      "unklarRegeln": [],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    }
+  ],
+  "regeln": []
+}

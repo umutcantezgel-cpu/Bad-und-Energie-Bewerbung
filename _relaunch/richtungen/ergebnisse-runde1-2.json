@@ -1,0 +1,1408 @@
+{
+ "bauen-b": {
+  "fertig": true,
+  "leitidee": "Bei uns schließt sich jeder Kreis: Die Wärme geht ins Haus und kommt zurück, du fährst zur Baustelle und bist pünktlich wieder zu Hause.",
+  "austauschprobe": "Der geschlossene Kreis ist ein belegtes Versprechen (höchstens 35 km, keine Fernmontage, freitags ab 13:30 Uhr Feierabend, Meisterbetrieb seit 1926), keine Dekoration. Ein Betrieb mit Montage im ganzen Land, Wochenend-Notdienst oder offenem Einsatzgebiet könnte die Uhr im Giebel (zeigt 13:30, der Stundenzeiger liegt bei 45° in Richtung der Dachschräge) und den Wegweiser (35 km) nicht zeigen, ohne zu lügen. Ehrliche Schwachstelle: Nimmt man Uhr, Wegweiser und 1926 weg, bleibt ein austauschbares Bild aus Haus und Wärmepumpe; die Richtung trägt nur, solange diese Fakten wahr bleiben.",
+  "schriften": [
+   "Bricolage Grotesque (variabel, wght 200–800, opsz 12–96, OFL): Display für Überschriften und Kennzahlen",
+   "Atkinson Hyperlegible Next (variabel, wght 200–800, OFL): Text und Bedienelemente",
+   "IBM Plex Mono 400 (OFL): Monospace nur für Kennungen, Hexwerte und Tokens",
+   "Eingebunden als 6 woff2-Dateien (latin und latin-ext je Familie, unicode-range), 2 vorgeladen, Ersatzschriften mit size-adjust und Metrik-Overrides, Lizenzen in LIZENZEN.md"
+  ],
+  "schriftgroesse_kb": 184.3,
+  "palette": [
+   {
+    "rolle": "Putz (--grund): Wand, Grundfläche",
+    "hex": "hell #FBF7F0 / dunkel #0A1033",
+    "kontrast_hell": "Tinte auf Putz 13,84:1 (Nebentext 7,96:1)",
+    "kontrast_dunkel": "Tinte auf Putz 16,30:1 (Nebentext 10,37:1)"
+   },
+   {
+    "rolle": "Wandton (--flaeche): Zeilen-Hover, Plättchen",
+    "hex": "hell #F1E9DB / dunkel #131B4A",
+    "kontrast_hell": "Tinte 12,26:1, Nebentext 7,05:1",
+    "kontrast_dunkel": "Tinte 14,42:1, Nebentext 9,17:1"
+   },
+   {
+    "rolle": "Kaltfläche (--kalt): draußen, Fläche des Einsatzgebiets",
+    "hex": "hell #E3E9F6 / dunkel #101A4E",
+    "kontrast_hell": "Tinte 12,15:1, Nebentext 6,98:1",
+    "kontrast_dunkel": "Tinte 14,46:1, Nebentext 9,20:1"
+   },
+   {
+    "rolle": "Wärmefläche (--warm): drinnen, Haus innen und Fläche innerhalb des Radius",
+    "hex": "hell #FADCC9 / dunkel #3A1F2C",
+    "kontrast_hell": "Tinte 11,37:1, Nebentext 6,54:1",
+    "kontrast_dunkel": "Tinte 13,10:1, Nebentext 8,33:1"
+   },
+   {
+    "rolle": "Tinte (--tinte): Text, Linien, Marken-Navy (dunkel: Creme)",
+    "hex": "hell #111D6D / dunkel #F6F0E4",
+    "kontrast_hell": "13,84:1 auf Putz; als Fokusring 13,84:1 gegen Putz, 12,15:1 gegen Kaltfläche (Soll 3:1)",
+    "kontrast_dunkel": "16,30:1 auf Putz; Fokusring 16,30:1 gegen Putz, 14,46:1 gegen Kaltfläche"
+   },
+   {
+    "rolle": "Tinte 2 (--tinte-2): Nebentext",
+    "hex": "hell #3E4885 / dunkel #B9C0E8",
+    "kontrast_hell": "7,96:1 auf Putz (Soll 4,5:1)",
+    "kontrast_dunkel": "10,37:1 auf Putz"
+   },
+   {
+    "rolle": "Rand (--rand): Ränder von Bedienelementen",
+    "hex": "hell #6B74A6 / dunkel #7A84C8",
+    "kontrast_hell": "4,21:1 gegen Putz, 3,69:1 gegen Kaltfläche (Soll 3:1)",
+    "kontrast_dunkel": "5,25:1 gegen Putz, 4,66:1 gegen Kaltfläche"
+   },
+   {
+    "rolle": "Rot (--rot): Vorlauf (warm, hinaus) und die eine Hauptaktion",
+    "hex": "hell #D60000 / dunkel #FF5A4D",
+    "kontrast_hell": "Knopftext weiß auf Rot 5,44:1 (Soll 4,5:1); Rot gegen Putz 5,10:1, gegen Wärmefläche 4,18:1 (Soll 3:1)",
+    "kontrast_dunkel": "Knopftext Nachtblau auf Koralle 6,01:1; Koralle gegen Nachtblau 6,01:1, gegen Ember 4,83:1"
+   },
+   {
+    "rolle": "Rot, Hover (--rot-hover): Hauptaktion unter dem Zeiger",
+    "hex": "hell #B00000 / dunkel #FF8277",
+    "kontrast_hell": "Knopftext 7,38:1",
+    "kontrast_dunkel": "Knopftext 7,68:1"
+   },
+   {
+    "rolle": "Blau (--blau): Rücklauf (kühl, zurück), Radien, Erfolg",
+    "hex": "hell #1F57C4 / dunkel #7FAAFF",
+    "kontrast_hell": "6,11:1 gegen Putz, 5,36:1 gegen Kaltfläche, 5,02:1 gegen Wärmefläche (Soll 3:1)",
+    "kontrast_dunkel": "8,02:1 gegen Putz, 7,11:1 gegen Kaltfläche, 6,44:1 gegen Wärmefläche"
+   }
+  ],
+  "bewegung": [
+   {
+    "kennung": "kreislauf-linie",
+    "zweck": "Luft, roter Vorlauf und blauer Rücklauf zeichnen sich nacheinander (Strichzeichnen über Masken); Signaturmoment im Hero, Gesamtablauf 1.360 ms, einmal, danach Ruhe; erneut nur über den Knopf „Kreislauf zeigen“ (mobil einmal, sobald die Szene zu 60 % im Bild ist)",
+    "dauer_ms": 400,
+    "reduziert": "Endzustand sofort sichtbar"
+   },
+   {
+    "kennung": "kreislauf-luefter",
+    "zweck": "Lüfter der Wärmepumpe dreht sich einmal um 240°, sieht danach aus wie zuvor",
+    "dauer_ms": 700,
+    "reduziert": "keine Drehung"
+   },
+   {
+    "kennung": "kreislauf-waerme",
+    "zweck": "Haus füllt sich mit Wärme (Fläche blendet ein, drei Wärmewellen steigen auf)",
+    "dauer_ms": 400,
+    "reduziert": "Endzustand sofort sichtbar"
+   },
+   {
+    "kennung": "kreislauf-ueberblendung",
+    "zweck": "Reduzierte Form der Probe: ganze Zeichnung blendet ein, nur über den Knopf",
+    "dauer_ms": 240,
+    "reduziert": "ist die reduzierte Form"
+   },
+   {
+    "kennung": "radius-zoom",
+    "zweck": "Karte zoomt auf den gewählten Radius 15/25/35 km, Marken bleiben gleich groß",
+    "dauer_ms": 400,
+    "reduziert": "Sprung ohne Übergang"
+   },
+   {
+    "kennung": "radius-ring",
+    "zweck": "Kreislinie und Wärmefläche des gewählten Radius blenden ein, Ringbeschriftungen außerhalb blenden aus",
+    "dauer_ms": 240,
+    "reduziert": "Sprung ohne Übergang"
+   },
+   {
+    "kennung": "ort-marke",
+    "zweck": "Gewählter Ort wird größer und zeigt seinen Namen (Maus: auch beim Überfahren)",
+    "dauer_ms": 240,
+    "reduziert": "Sprung ohne Übergang"
+   },
+   {
+    "kennung": "ort-schlaufe",
+    "zweck": "Roter Vorlauf zeichnet sich zum Ort, blauer Rücklauf zurück: der Weg schließt sich (gesamt 760 ms)",
+    "dauer_ms": 400,
+    "reduziert": "Endzustand sofort sichtbar"
+   },
+   {
+    "kennung": "zeile-pfeil",
+    "zweck": "Pfeil der Stellenzeile rückt 4 px nach rechts (nur Maus)",
+    "dauer_ms": 240,
+    "reduziert": "keine Verschiebung"
+   },
+   {
+    "kennung": "druck",
+    "zweck": "Druck-Rückmeldung an Knöpfen, Segmenten und Orts-Chips",
+    "dauer_ms": 120,
+    "reduziert": "nur Farbwechsel, kein transform"
+   }
+  ],
+  "fotos_ok": true,
+  "ueberlauf_oder_fehler": [],
+  "offene_fragen": [
+   "Rot-Regel: Gilt „Rot nur für die eine Hauptaktion“ nur für Flächen und Text, oder darf der Vorlauf als dünne rote Linie in Zeichnungen (Hero-Szene, Karte, Trenner, Klammer) stehen? Die Richtung nutzt Rot so zusätzlich. Rückfall: Vorlauf in Navy mit Strichmuster, Rot nur am Knopf (verliert die Bedeutung warm/kalt).",
+   "distanceKm in lib/data/locations.ts: Straßenkilometer oder Luftlinie? (Herborn 24 km gegenüber etwa 19 km Luftlinie spricht für Straße.) Die Kreise der Karte sind deshalb als „ungefähre Radien“ beschriftet, die Orte werden nach distanceKm einsortiert.",
+   "Telefonnummer (06441) 42956 aus lib/data/company.ts („Dein Ort steht nicht in der Liste?“): Ist das die Nummer für Bewerber (Sabri Demir)?",
+   "Stellenliste: Die Quereinstiegsstelle (funnel_only, ohne Gehaltsspanne) steht nicht in der Liste; soll sie auf der Startseite erscheinen?",
+   "Links der Kachel (/bewerbung, /jobs/<slug>) zeigen auf Plattformrouten und lösen im statischen Kachel-Server nicht auf.",
+   "Texte der Zustandsmuster („Angekommen.“, „Telefonnummer prüfen.“, „Sendet …“, leerer Zustand) sind Muster, keine Freigabetexte; endgültige Texte gehören in TEXTVORSCHLAEGE.md.",
+   "Bricolage Grotesque ist 2024–2026 verbreitet: Falls die Jury „Standardlook mit neuer Schrift“ bemängelt, stehen im Schriftpool Alternativen bereit (z. B. Gabarito, Rethink Sans); der Charakter liegt hier in Gewicht 800, optischer Größe, Zahlen als Gestaltungsmittel und der Szene.",
+   "Randkontrast von Bedienelementen auf der Kaltfläche liegt knapp über der Schwelle (3,69:1 hell gegen Soll 3:1); bei Bedarf Rand dunkler setzen."
+  ]
+ },
+ "bauen-a": {
+  "fertig": true,
+  "leitidee": "„Sauber verlegt: Der Vorlauf führt in 60 Sekunden zu uns, der Rücklauf bringt dich pünktlich nach Hause – und jede Zahl steht als Maß an der Leitung.“",
+  "austauschprobe": "Warum passt das zu keinem Wettbewerber? Man setze einen anderen SHK-Betrieb ein und prüfe, was zerbricht. (1) Die Maße 13:30, 30, 35 km, 1926: ohne diese belegten Zusagen hat ein anderer Betrieb nichts, woran er die Leitung bemaßen kann; die Zahlen sind der Inhalt der Idee. (2) Die Farben: Rot und Blau sind die Farben dieses Logos und zugleich die der Heizungsrohre; mit anderem Logo wäre die Leitungsfarbe eine Behauptung, hier ist sie ein Beleg. (3) Das Versprechen „Rücklauf pünktlich nach Hause“: wer Fernmontage, Wochenenddienst oder lange Wege hat, kann keinen Rücklauf zeichnen, der stimmt. Restrisiko: Betriebe mit rot-blauem Logo könnten die Rohrmetapher borgen; dann entscheidet nur die Bemaßung der eigenen Zusagen.",
+  "schriften": [
+   "Archivo (variabel, Breite 62–125 %, Gewicht 100–900, SIL OFL 1.1): Display bei 68 % Breite und Gewicht 800, Text bei 100 % und 400. Dateien archivo-latin-wdth-normal.woff2 (90,1 KB) und archivo-latin-ext-wdth-normal.woff2 (86,2 KB).",
+   "Martian Mono (variabel, Breite 75–112,5 %, Gewicht 100–800, SIL OFL 1.1): Maße und Planbeschriftung, Versalien gesperrt. Dateien martian-mono-latin-wdth-normal.woff2 (38,5 KB) und martian-mono-latin-ext-wdth-normal.woff2 (24,7 KB)."
+  ],
+  "schriftgroesse_kb": 239.5,
+  "palette": [
+   {
+    "rolle": "Papier (Fläche; hell Pauspapier, dunkel Blaupause)",
+    "hex": "#F3F5F9 hell / #0A1236 dunkel",
+    "kontrast_hell": "trägt Tinte 15,58:1, Tinte gedämpft 7,38:1, Rücklauf-Blau 13,68:1, Rot als Text 5,94:1",
+    "kontrast_dunkel": "trägt Tinte 15,97:1, Tinte gedämpft 9,05:1, Rücklauf-Blau 7,51:1, Rot als Text 8,19:1"
+   },
+   {
+    "rolle": "Feld (zweite Fläche: gewählte Zeile, Radiusscheibe, Plankopf)",
+    "hex": "#E4E9F2 hell / #101B49 dunkel",
+    "kontrast_hell": "trägt Tinte 13,96:1, Tinte gedämpft 6,61:1, Blau 12,26:1, Rot als Text 5,32:1",
+    "kontrast_dunkel": "trägt Tinte 14,44:1, Tinte gedämpft 8,18:1, Blau 6,79:1, Rot als Text 7,41:1"
+   },
+   {
+    "rolle": "Linie (Raster, rein dekorativ)",
+    "hex": "#C3CADB hell / #24336B dunkel",
+    "kontrast_hell": "1,50:1 auf Papier, dekorativ, keine Anforderung",
+    "kontrast_dunkel": "1,53:1 auf Papier, dekorativ, keine Anforderung"
+   },
+   {
+    "rolle": "Linie stark (Maßlinien, Rahmen, bedeutungstragend, Grafik ≥ 3:1)",
+    "hex": "#6A7599 hell / #7A8CCB dunkel",
+    "kontrast_hell": "4,17:1 auf Papier, 3,73:1 auf Feld",
+    "kontrast_dunkel": "5,59:1 auf Papier, 5,05:1 auf Feld"
+   },
+   {
+    "rolle": "Tinte (Text)",
+    "hex": "#111A3B hell / #EAF0FF dunkel",
+    "kontrast_hell": "15,58:1 auf Papier, 13,96:1 auf Feld (AAA)",
+    "kontrast_dunkel": "15,97:1 auf Papier, 14,44:1 auf Feld (AAA)"
+   },
+   {
+    "rolle": "Tinte gedämpft (Beschriftung, zweite Textebene)",
+    "hex": "#444F72 hell / #AAB6DC dunkel",
+    "kontrast_hell": "7,38:1 auf Papier, 6,61:1 auf Feld",
+    "kontrast_dunkel": "9,05:1 auf Papier, 8,18:1 auf Feld"
+   },
+   {
+    "rolle": "Rücklauf-Blau (Marke Navy: Rücklauf, Maße, Auswahl, Links)",
+    "hex": "#0C1A72 hell / #7FA4FF dunkel (aufgehellt, Navy verschwindet auf Blaupause)",
+    "kontrast_hell": "13,68:1 auf Papier (Text und Grafik), 12,26:1 auf Feld; Papier-Text auf Blau 13,68:1",
+    "kontrast_dunkel": "7,51:1 auf Papier, 6,79:1 auf Feld; Papier-Text auf Blau 7,51:1"
+   },
+   {
+    "rolle": "Vorlauf-Rot (Marke Rot: nur die eine Hauptaktion je Ansicht und die Leitung dorthin)",
+    "hex": "#D60000 hell / #D60000 dunkel",
+    "kontrast_hell": "Weiß darauf 5,44:1; als Leitung 4,99:1 auf Papier, 4,47:1 auf Feld",
+    "kontrast_dunkel": "Weiß darauf 5,44:1; als Leitung 3,35:1 auf Papier, 3,03:1 auf Feld (Grafik ≥ 3:1)"
+   },
+   {
+    "rolle": "Rot als Text (Beschriftung „Vorlauf“)",
+    "hex": "#C00000 hell / #FF8E82 dunkel",
+    "kontrast_hell": "5,94:1 auf Papier, 5,32:1 auf Feld",
+    "kontrast_dunkel": "8,19:1 auf Papier, 7,41:1 auf Feld"
+   },
+   {
+    "rolle": "Rot gedrückt (Hauptaktion bei Hover)",
+    "hex": "#A80000 hell / #E60000 dunkel",
+    "kontrast_hell": "Weiß darauf 7,88:1",
+    "kontrast_dunkel": "Weiß darauf 4,81:1"
+   },
+   {
+    "rolle": "Rot tief (Muffe am Knopf) und Wärme (einmaliger Fluss)",
+    "hex": "#A80000 und #FF9A85, in beiden Modi gleich",
+    "kontrast_hell": "dekorativ, trägt keine Information",
+    "kontrast_dunkel": "dekorativ, trägt keine Information"
+   },
+   {
+    "rolle": "Fokusring (3 px, Abstand 3 px)",
+    "hex": "#0C1A72 hell / #CFE0FF dunkel",
+    "kontrast_hell": "13,68:1 gegen Papier",
+    "kontrast_dunkel": "13,67:1 gegen Papier"
+   }
+  ],
+  "bewegung": [
+   {
+    "kennung": "leitung-verlegen",
+    "zweck": "Signaturmoment der Startseite: Rot läuft als Vorlauf in den Knopf „Jetzt bewerben“, Blau trägt die Kernzahlen als Maßkette; Text und Knopf stehen von Anfang an. Auslöser: Seitenaufruf, einmal, Start nach 150 ms, Kurve wechselnd, nur transform, opacity und stroke-dashoffset (pathLength=1); Startzustand nur über die Inline-Skript-Klasse anim, 2-s-Sicherheitsnetz.",
+    "dauer_ms": 1200,
+    "reduziert": "Die Leitung steht sofort, Endzustand identisch; ohne JavaScript ebenso."
+   },
+   {
+    "kennung": "fluss-hauptaktion",
+    "zweck": "Rückmeldung an der Hauptaktion: Wärme läuft einmal durch den Vorlauf zum Knopf (Hover oder Tastaturfokus, ab 64 rem, nur mit Hover-Fähigkeit), Kurve linear.",
+    "dauer_ms": 900,
+    "reduziert": "Kein Lauf; der Knopf wechselt in 180 ms die Farbe."
+   },
+   {
+    "kennung": "knopf-zustand",
+    "zweck": "Hauptaktion: Farbwechsel bei Hover (180 ms, wechselnd) und sofortige Druck-Rückmeldung um 1 px (120 ms, ausklingend).",
+    "dauer_ms": 180,
+    "reduziert": "Farbwechsel sofort, keine Verschiebung."
+   },
+   {
+    "kennung": "zustand-farbe",
+    "zweck": "Übrige Bedienelemente (Navigation, Umschalter, Ortszeilen, Probe-Knöpfe): Flächenwechsel bei Hover, Fokus, Auswahl; Kurve wechselnd.",
+    "dauer_ms": 180,
+    "reduziert": "Farbwechsel sofort."
+   },
+   {
+    "kennung": "radius-wahl",
+    "zweck": "Zustandswechsel des Radius-Umschalters 15 / 25 / 35 km: gewählter Ring wird stark, die Scheibe darin blendet über; Kurve wechselnd.",
+    "dauer_ms": 320,
+    "reduziert": "Sofortzustand."
+   },
+   {
+    "kennung": "ort-route",
+    "zweck": "Die Leitung vom gewählten Wohnort zum Betrieb zeichnet sich (Plan, nicht Straße); nur nach Nutzeraktion, stroke-dashoffset, Kurve ausklingend.",
+    "dauer_ms": 560,
+    "reduziert": "Die Route steht sofort."
+   },
+   {
+    "kennung": "ort-marke",
+    "zweck": "Ring um den gewählten Ort wächst von 0,6 auf 1 (transform, opacity); beim Abwählen 180 ms beschleunigend; Kurve ausklingend.",
+    "dauer_ms": 320,
+    "reduziert": "Sofortzustand."
+   }
+  ],
+  "fotos_ok": true,
+  "ueberlauf_oder_fehler": [],
+  "offene_fragen": [
+   "Gilt „Fahrzeit bis Wetzlar“ in lib/data/locations.ts für Hin- und Rückfahrt? Der Plan nennt sie nur als Fahrzeit bis Wetzlar.",
+   "Sollen die zehn Orte um weitere Orte des Lahn-Dill-Kreises ergänzt werden? Alle liegen bis 24 km, der Bereich zwischen 24 und 35 km bleibt im Plan leer; 15 und 25 km sind nur Hilfsringe, keine Firmenaussage.",
+   "Dürfen „Vorlauf“ und „Rücklauf“ als kleine sichtbare Planbeschriftung stehen (jetzt: ja), oder genügt die Farbe? Quereinsteiger und Azubis kennen die Begriffe womöglich nicht.",
+   "Ziel der Hauptaktion ist in der Kachel ein Platzhalter (#bewerbung, im Plankopf erklärt); in der Plattform führt er nach /bewerbung.",
+   "Textabstands-Test (WCAG 1.4.12), Zoom 400 % und die Bewegungsmessung nach Z-09 (Frame-Drosselung) sind in dieser Runde nicht per Werkzeug gemessen; geprüft sind axe (0 Verstöße, hell/dunkel, 375 und 1440 px), 13 Breiten von 320 bis 1920 px ohne Überlauf und das Reflow-Verhalten.",
+   "Das Fotowerkzeug schneidet bei 12 Ausschnitten ab, die Seite ist länger (mobil 33, Desktop 16 Bildschirmhöhen): für m375 und d1440, hell und dunkel, sind die Ausschnitte ab __13 mit demselben Schnitt ergänzt und stehen nicht in bericht.json. Soll die Systemdokumentation für die Jury gekürzt oder auf eine zweite Seite ausgelagert werden?",
+   "Schriftbudget 239,5 von 250 KB nahezu ausgeschöpft; Fahrzeit und Entfernung stammen aus der Ortsliste (Straße), die Ringe sind Luftlinie auf dem Plan (schematisch)."
+  ]
+ },
+ "pruefen-b": {
+  "harte_befunde": [
+   {
+    "regel": "Inhaberentscheidung „Rot nur für die eine Hauptaktion je Ansicht“ (_richtung.md, Das Projekt) und eigene Palettenregel (index.html:652)",
+    "fundstelle": "index.html:147-148 (Klammer an der Unterzeile), 161 (Vorlauf und Wärmewellen der Szene), 213 (Trenner Heizkreis), 290 und 295 (gewählter Ort als gefüllter roter Punkt, rote Route), 433 (Fehler-Icon), 443 (Kurve); Bilder d1440-light-voll__01 (Klammer links, Szene rechts, Trenner unten), d1440-light-voll__03 (Karte), m375-light-voll__01/02",
+    "beschreibung": "Rot steht im ersten Bildschirm mehrfach neben dem Knopf (Klammer, Vorlauf, Wärmewellen, Trenner) und in der Karte als gefüllter Punkt. Die Palettenzeile sagt „Als Fläche und Beschriftung nur die eine Hauptaktion“; der rote Ortspunkt ist aber eine Fläche. Damit verliert der Knopf seine Alleinstellung. BEGRUENDUNG §12 führt das als OFFENE FRAGE 1. Solange der Auftraggeber nicht entschieden hat, ist es ein Regelverstoß, keine freigegebene Auslegung. Dunkel ist Rot zu Koralle #FF5A4D geworden.",
+    "reparatur": "Vor Runde 2 entscheiden lassen. Ohne Freigabe auf den schon beschriebenen Rückfall gehen: Vorlauf, Klammer, Trenner und Ortspunkt in Navy (Strichmuster oder Strichfolge unterscheidet Hin und Zurück), Rücklauf in Blau, Fehler-Icon in Tinte mit Text, Rot nur am Knopf. Die Wärme-Bedeutung dann über Fläche (Wärmefläche) und Beschriftung tragen. Palettenzeile 652 und BEGRUENDUNG §2, §12 anpassen."
+   },
+   {
+    "regel": "Zugänglichkeit / S-03 (WCAG 1.4.10 Reflow bei 320 px): kein abgeschnittener Text",
+    "fundstelle": "index.html:258-260 (.schlaufe-titel span span {white-space:nowrap}), Markup 562, verdeckt durch body {overflow-x:clip} (Zeile 85); nicht in fotos/bericht.json, weil das Werkzeug erst ab 375 px misst",
+    "beschreibung": "Bei 320 × 568 px ragt die H2 „Keine Fernmontage.“ bis x = 331 über den Viewport (scrollWidth 331 gegen 320) und wird rechts abgeschnitten (Prüfbild: letzte Buchstaben und Punkt fehlen). Bei 375 px kein Befund. Die Kachel meldet „0 Überlauf“, weil 320 px nicht gemessen wird und overflow-x:clip den Überlauf unsichtbar macht.",
+    "reparatur": "white-space:nowrap für die Zeilen der H2 unterhalb etwa 24 rem aufheben. Dazu weiche Trennstelle „Fern&shy;montage“ und Minimum von --t-6 auf etwa 1,625 rem senken oder Zeilen umbrechen lassen. Danach 320 × 568 prüfen (auch H1 und Messwerte), 320 px als Ansicht in kachel-fotos/overflowReport aufnehmen, overflow-x:clip nicht mehr zum Verstecken nutzen."
+   },
+   {
+    "regel": "Touch-Ziele ≥ 44 px (_richtung.md, Zugänglichkeit)",
+    "fundstelle": "index.html:111-112 und 117 (.logo, .logo img {height:2.5rem / 2.25rem}); gemessen im Hellmodus 219 × 40 px (d1440) und 197 × 36 px (m375)",
+    "beschreibung": "Der Logo-Link, ein Bedienelement der Kopfleiste, ist im Hellmodus nur 36–40 px hoch. Im Dunkelmodus erreicht ihn die Plakette (über 52 px). Alle anderen Ziele messen mindestens 44 px; die Ausnahmen sind der Telefonlink im Fließtext und die Kartenpunkte (siehe weiche Befunde).",
+    "reparatur": "Die Link-Fläche vergrößern, nicht das Logo: .logo {padding-block:.25rem} (oder min-height:var(--m-ziel) mit align-items:center), Bild unverändert lassen. Wirkung nach der Änderung messen, auch bei 375 px."
+   },
+   {
+    "regel": "Deutsch korrekt: geschütztes Leerzeichen vor Einheiten (_richtung.md, Regeln hart)",
+    "fundstelle": "index.html:563 („maximal 35 km vom Firmensitz“, aus FACTS.radius35.long); in der Dokumentation 642 („100 px“, „14 px“), 644 („250 KB“), 662 und 675 (px, rem), 698, 705 („1,5 KB“), 724 (13 Fundstellen mit ms und px), 733-734, 749, 766 sowie die Abstandsliste 673; nur für Screenreader: 548 (desc „16:45 Uhr“, „13:30 Uhr“)",
+    "beschreibung": "Rund 36 Textstellen setzen ein gewöhnliches Leerzeichen zwischen Zahl und Einheit, darunter eine Stelle im Produkttext (die Einleitung des Einsatzgebiets, Zeile 563), die im Fließtext zwischen „35“ und „km“ umbrechen kann. Der Hero (Mikrotext, Kennzahlen, Arbeitszeiten, Preise) ist korrekt gesetzt.",
+    "reparatur": "Alle Zahl-Einheit-Paare (km, Uhr, Min., Sekunden, €, %, px, rem, ms, KB) auf U+00A0 umstellen, am besten per Ersetzung (\\d) (km|Uhr|…) beim Bau; Zeile 563 aus facts.long ableiten und dabei ersetzen."
+   },
+   {
+    "regel": "S-05 Ungeordnete Werte (Schriftgrößen, Abstände, Dauern außerhalb der Tokens)",
+    "fundstelle": "index.html:95 (.mono {font-size:.875em}), 178-184 (min(var(--t-7),11cqw), 7.6cqw, 4.6cqw, 2.4cqw), 145 und 258 (gap:.35em / .3em), 209, 212, 215 (height:32px / 28px), 231, 245, 267 (min-height 4.5rem / 5.5rem / 3rem), 251 (--dach), 162, 224, 282, 285 (SVG-Text 12/13/14/16 px), 782 (setTimeout 300 / 1500 ms)",
+    "beschreibung": "getComputedStyle-Stichprobe d1440: 11,375 / 13,125 / 15,75 px (aus .mono mit .875em) und 32,57 px (aus cqw) liegen nicht auf der Skala --t-1…--t-8 (13 / 15 / 16–18 / 24 / 35 / 48 / 77 / 100 px); mobil 14,12 / 13,125 / 11,375 px. 11,4 px ist die kleinste Schrift der Seite. Daneben Maße und Zeiten außerhalb der Tokens; die Abstandsskala deckt Maße wie 28/32 px, 3 rem, 4,5 rem nicht ab. Die Kachel beansprucht „höchstens 10 Schriftstufen“ und „6 Dauern“, hält das aber nur für die Variablen ein.",
+    "reparatur": "Token --t-mono (z. B. .8125rem) statt .875em; die cqw-Größen durch zwei benannte Stufen mit @container-Schwellen ersetzen oder als Token dokumentieren; eine Maße-Skala (--m-*) für Ziele, Zeilenhöhen und Trennerhöhen anlegen; Gaps in --a-*; die JS-Sperrzeit aus --dauer-3 und --stufe ableiten. Mindestgröße für Dokumentationstext 13 px."
+   },
+   {
+    "regel": "Wahrheit: nur Fakten aus facts.ts, components/home/content.ts, locations.ts (Auftrag Gegenprüfung; _richtung.md: „Keine anderen Zahlen“)",
+    "fundstelle": "index.html:555 (vier Stellen mit Gehaltsspannen 3.600–4.600 / 3.800–4.900 / 4.400–5.600 / 1.050–1.400 €), 596 (Telefon (06441) 42956 und „ruf kurz an“), 774 (Firmenname und Anschrift), 532 und 639 (Erklärtext „So arbeitet eine Wärmepumpe …“), 594 (data-zusatz „Wohn und Gewerbegebiet“)",
+    "beschreibung": "Stellen und Gehälter stehen in lib/jobs/data/*.ts, Telefon und Anschrift in lib/data/company.ts, also nicht in den drei freigegebenen Quellen. Die Werte stimmen mit dem Repo überein (geprüft), ebenso Entfernungen und Fahrzeiten aller 10 Orte gegen locations.ts. Formal ist es trotzdem eine Quellenabweichung. Der Satz „Dein Ort steht nicht in der Liste? … ruf kurz an“ ist erfunden; ob die Hauptnummer die Bewerbernummer ist, bleibt OFFENE FRAGE 3. Der Firmenname im Fuß („Bad & Energie GmbH Lahn-Dill“) weicht von legalName („Bad und Energie GmbH Lahn Dill“) ab. Der Erklärtext zur Wärmepumpe ist frei formuliert, ohne Quelle. Der Tippfehler „Wohn und Gewerbegebiet“ stammt aus locations.ts und wird für Hermannstein angezeigt.",
+    "reparatur": "Orchestrator entscheidet förmlich (ENTSCHEIDUNGEN), ob lib/jobs/data und lib/data/company.ts als Quellen gelten; dann je Zeile Quelle in BEGRUENDUNG nennen. Sonst Stellenliste und Telefonzeile entfernen. „ruf kurz an“ und den Erklärtext streichen oder nur als Vorschlag in TEXTVORSCHLAEGE.md führen. Firmenname aus legalName (oder nur das Logo). Den Tippfehler aus locations.ts in MENSCHEN.md melden und nicht abtippen."
+   },
+   {
+    "regel": "Austauschprobe für den Signaturmoment (AUFTRAG Abschnitt 7: „Passt … ein Signaturmoment unverändert zu einem Wettbewerber, ist er Slop“)",
+    "fundstelle": "index.html:501-533 (Szene), 460-463 (Ablauf), 532 (Erklärtext); BEGRUENDUNG §3 (räumt die Schwachstelle selbst ein); Bilder d1440-light-voll__01, t768-light-voll__01",
+    "beschreibung": "Der einmalige Kreislauf (Luft, Lüfter, roter Vorlauf, Haus füllt sich, blauer Rücklauf) erklärt eine Wärmepumpe. Er könnte unverändert auf der Seite jedes SHK-Betriebs laufen. Die belegten Versprechen (13:30, 35 km, 1926) stehen daneben als statische Zahlen und sind nicht Teil der Bewegung. Für Bewerber, nicht Kunden, ist die Wärmepumpen-Erklärung zudem Randinformation.",
+    "reparatur": "Signatur an das Versprechen binden: Der Kreislauf soll der Arbeitstag oder Arbeitsweg sein (Vorlauf aus dem Haus zum Baustelle im 35-km-Ring, Rücklauf nach Hause, Uhrzeiger läuft auf 13:30 und rastet ein), statt eines Wärmepumpen-Schemas. Den Pendelrechner-Schlaufeneffekt (Vorlauf hin, Rücklauf zurück zum Ort) als eigentliche, besitzbare Signatur nach oben ziehen. Erklärtext und Lüfter streichen."
+   }
+  ],
+  "weiche_befunde": [
+   {
+    "regel": "Sichtbarkeit / Startzustand (_richtung.md: Startzustände nur über Klasse aus dem Kopf-Skript, 2-s-Sicherheitsnetz)",
+    "fundstelle": "index.html:12 (kl-bereit nur ab 704 px), 784-787 (IntersectionObserver mobil), 458-465",
+    "beschreibung": "Auf 375 × 812 und 390 × 844 steht die Szene schon beim Laden zu mehr als 60 % im Bild (Messung: erster Frame bei 150 ms mit Endzustand, 10 ms später Rücksetzen auf Startzustand, dann Neuzeichnen). Das sieht nach einem Aufblitzen aus. Auf 360 × 740 tritt es nicht auf. Es gibt mobil kein 2-s-Sicherheitsnetz für diesen Pfad (Startzustand entsteht erst über kl-lauf).",
+    "reparatur": "kl-bereit auch mobil im Kopf-Skript setzen, wenn die Szene im ersten Bildschirm liegt (Position schätzen aus innerHeight), und die Abspielklasse einmal danach setzen. Sonst den Startzustand erst nach dem Eintritt in den Viewport setzen, nie nach dem ersten Paint."
+   },
+   {
+    "regel": "Mobil als eigene Komposition / Hero-Pflichtinhalt (_richtung.md Punkt 1: vier Kernzahlen im ersten Bildschirm)",
+    "fundstelle": "m375-light-voll__01 und __02, m375-dark-voll__01 und __02; index.html:186-199",
+    "beschreibung": "Auf 375 × 812 stehen im ersten Bildschirm H1, Einleitung, Knopf und Mikrotext; die Szene ist nur als Dachspitze angeschnitten, die vier Kernzahlen kommen erst im zweiten Bildschirm als Liste mit vier gleich gebauten Zeilen. Der Hero lebt mobil von der Typografie; der Erlebniskern der Richtung (Zahlen an der Anlage) wird in die gleichförmige Liste gelegt.",
+    "reparatur": "Szene mobil höher ziehen (aspect-ratio verkleinern, Kennzahlen als Messwerte an Leitlinien) oder 13:30 groß in den ersten Bildschirm holen und nur die restlichen drei als Strang folgen lassen."
+   },
+   {
+    "regel": "Komposition: ein klarer Blickfang je Bildschirmhöhe (Gestaltungskern)",
+    "fundstelle": "d1440-light-voll__01; index.html:143, 178",
+    "beschreibung": "Auf 1440 px konkurrieren die H1 (100 px, Gewicht 800), die Zahl „13:30“ (77 px, gleiche Auszeichnung) und der rote Knopf. Die Hierarchie verläuft über Größe der Zahl, nicht über Bedeutung; „13:30“ liest fast so laut wie die H1.",
+    "reparatur": "Zahlen auf höchstens --t-6 (rund 48 px) begrenzen oder nur „13:30“ als Maßstab herausstellen und die anderen drei kleiner führen."
+   },
+   {
+    "regel": "Satz: große Größen „leicht negativ“ (Gestaltungskern)",
+    "fundstelle": "index.html:143 (H1 letter-spacing:-.025em, Gewicht 800), 246, 258, 301, 305; Bild h1_2x (Prüfaufnahme), d1440-light-voll__01, t768-light-voll__01",
+    "beschreibung": "Bei Gewicht 800 und -0,025 em berühren sich Zeichen in der H1: Bindestrich und K/J in „SHK-Jobs“, t und z sowie a und r in „Wetzlar.“. In Tabellen und Zeilentiteln ist es ähnlich eng. Das schadet der Lesbarkeit der wichtigsten Zeile.",
+    "reparatur": "Laufweite der H1 auf etwa -.01em, Zeilentitel und H2 auf -.015em; Wirkung bei 100 px und 52 px prüfen; ggf. Gewicht 700."
+   },
+   {
+    "regel": "Schriftbegründung eingehalten? (BEGRUENDUNG §5 „öffnet sich bei kleinen Größen“)",
+    "fundstelle": "index.html:360 (.leitsatz {font-variation-settings:\"opsz\" 96}), Bild d1440-light-voll__05",
+    "beschreibung": "Der Leitsatz (28–36 px) erzwingt die optische Größe 96, also die engste, kräftigste Form, im Widerspruch zur Aussage, die kleine Größe öffne sich. Die Zeilen wirken gequetscht.",
+    "reparatur": "font-variation-settings entfernen, font-optical-sizing:auto lassen."
+   },
+   {
+    "regel": "Mobil lesbar und eigene Komposition (Schriftmuster)",
+    "fundstelle": "index.html:374-377 (.stufe {grid-template-columns:5rem minmax(0,1fr)} mit drei Kindern), 639; Bilder m375-light-voll__09 bis __11",
+    "beschreibung": "Unter 44 rem hat die Stufenzeile zwei Spalten für drei Zellen; das Schriftmuster rutscht in die 5-rem-Spalte und bricht Wort für Wort um („Wir / suchen / Verstärkung“, „SHK- / Jobs“, „SEIT 1926 / · / WETZLAR“). Die geforderten Muster aller Stufen sind mobil unlesbar gesetzt. Das Prüfwerkzeug fängt es nicht, weil es keinen Überlauf gibt.",
+    "reparatur": "Mobil Muster über die volle Breite in eine eigene Zeile (grid-column:1 / -1) oder Zeile als gestapelte Karte. Danach 375 px erneut aufnehmen."
+   },
+   {
+    "regel": "Mobil als eigene Komposition: Dokumentationstabellen",
+    "fundstelle": "index.html:338 (.tab-scroll), 652, 654, 724; eigene Aufnahmen palette_m375 und bewegung_m375",
+    "beschreibung": "Auf 375 px zeigen Palette, Kontrastwerte und Bewegungsregister nur die ersten Spalten; Hex der Dunkelwerte, „Wert“ und „Dunkel“ (die berechneten Kontraste) und Dauer, Kurve, reduziert liegen hinter dem Seitwärtsscrollen. Die Bereiche sind erreichbar (role=region, tabindex=0), aber der Kern der Anforderung (berechnete Kontraste, Register) ist mobil verborgen. Kennungen brechen mitten im Wort („KREISLAU / F-LINIE“).",
+    "reparatur": "Mobil als gestapelte Blöcke je Zeile (Paar, Soll, Hell: Wert, Dunkel: Wert) und Register je Kennung als Definitionsliste; overflow-wrap für Kennungen auf anywhere nur als letzte Stufe."
+   },
+   {
+    "regel": "Bildschirmfotos belegen die Kachel (Auftrag P2: „dazu Bildschirmfotos“)",
+    "fundstelle": "fotos/*.webp; _relaunch/werkzeuge/kachel-fotos.mjs (const n = Math.min(12, …))",
+    "beschreibung": "Das Werkzeug schneidet höchstens 12 Ausschnitte. Seitenhöhe 15.812 px (d1440, gedeckt 68 %) und 23.611 px (m375, gedeckt nur 41 %). Auf 375 px enden die Fotos in der Schrifttabelle; Palette, Raster, Formsystem, Bewegungsregister und Zustände sind weder hell noch dunkel dokumentiert. Auch auf 1440 px fehlen Icons, Trenner, Register, Zustände und Fuß.",
+    "reparatur": "Limit anheben oder gezielte Elementfotos (#palette, #formen, #bewegung, #zustaende) je Ansicht und Schema aufnehmen; 320 px als Ansicht ergänzen."
+   },
+   {
+    "regel": "Bedienbarkeit: Zustände sichtbar (Gestaltungskern, Zustände)",
+    "fundstelle": "index.html:325 (.tabelle-box summary {display:flex}), 810 (det.open=false); Bilder d1440-light-voll__04, m375-light-voll__05",
+    "beschreibung": "display:flex entfernt das Aufklapp-Dreieck; mit JavaScript ist die Tabelle zugeklappt und „Alle Orte als Tabelle“ sieht aus wie eine Überschrift. Hover fehlt. Die lesbare Tabelle (Pflicht ohne JS) wird so für Mausnutzer unauffindbar.",
+    "reparatur": "Eigenes Zeichen (i-pfeil, drehbar per transform, mit data-motion) und Hover-Hintergrund; Tabelle bei großen Bildschirmen offen lassen."
+   },
+   {
+    "regel": "Typografie im Bedienelement",
+    "fundstelle": "index.html:313-314, 805; Bild m375-light-voll__05",
+    "beschreibung": "Die Ortszeilen „14 km · 18 Min.“ umbrechen mobil an der Trennmarke („14 km ·“ / „18 Min.“), und Ortskacheln haben unterschiedliche Höhe.",
+    "reparatur": "Zahl-Einheit-Paare mit white-space:nowrap, Trennzeichen entfernen und Daten als zwei Zeilen setzen oder mit gap trennen."
+   },
+   {
+    "regel": "Dokumentation stimmt mit der Umsetzung überein (Wahrheit der Begründung)",
+    "fundstelle": "index.html:616 und BEGRUENDUNG §2 („der Wegweiser nennt 35 km“) gegen 527 (Schild nennt „Wetzlar“); 572 („10 Orte sind als Punkte eingetragen“) gegen 292 (Kernstadt ausgeblendet, 9 Punkte); 31 und 652 („Abstufungsregel 100/70/50/20 % Navy“); 285 gegen 724 (ort-marke: ausklingend im Register, ease-wechsel im CSS); BEGRUENDUNG §13 („CLS 0“)",
+    "beschreibung": "Mehrere Aussagen sind falsch oder ungenau: Das Schild nennt nicht 35 km (der Radius steht als Zahl darüber). Rechnerisch ist Tinte 2 etwa 81 % Navy (nicht 70 %), Rand etwa 60 % (nicht 50 %), Linie ist ein warmes Beige und kein 20-%-Navy; dunkel sind creme-2 und rand ebenfalls nicht 70/50 %. Die ort-marke-Beschriftung nutzt ease-wechsel, das Register nennt ausklingend. Bei gedrosseltem Netz misst CLS 0,011.",
+    "reparatur": "Texte anpassen oder Werte aus der behaupteten Regel ableiten (und Kontraste neu rechnen); Kennung ort-marke im Register korrigieren."
+   },
+   {
+    "regel": "Satz und Zeilenmaße (Gestaltungskern: Display 0,9–1,1, Fließtext 1,5–1,7, 60–75 Zeichen)",
+    "fundstelle": "index.html:145 (.t2 1,15), 360 (.leitsatz 1,15), 365 (.probe strong, Display-Schrift mit Zeilenhöhe 1,6), 152 (.mikro 1,4), 166 (.szene-text 1,45), 150 (.held__lead max-width:36ch), 675 („Zeilenlänge 36–68“)",
+    "beschreibung": "Mehrere Display-Zeilen liegen bei 1,15; kurze Fließtexte bei 1,4–1,45; die Einleitung ist auf 36 Zeichen begrenzt (Soll 60–75). Die Kachel dokumentiert diese Abweichungen selbst („Display 0,95–1,15“), statt sie dem Kern anzupassen.",
+    "reparatur": "Kern-Soll einhalten oder Abweichung als Kern-Änderung begründet beim Orchestrator beantragen (KERN-Version, Protokoll)."
+   },
+   {
+    "regel": "S-08 / S-14 Standard-Anmutung mit neuer Schrift",
+    "fundstelle": "index.html:15-20, 143; Bilder d1440-light-voll__01, t768-light-voll__01; BEGRUENDUNG §10 Risiko 3",
+    "beschreibung": "Bricolage Grotesque 800 mit enger Laufweite plus Atkinson und Haus/Wärmepumpe/Sonne als Strichgrafik ist ein verbreiteter Look der Jahre 2024–2026. Die Begründung räumt es ein. Der Charakter entsteht fast nur über Gewicht und Zahlen. Die Strichgrafik (Haus, Wärmepumpe, Sonne, Windlinien) ist als Trope austauschbar (siehe Austauschprobe).",
+    "reparatur": "Vor der Wahl in Runde 2 eine zweite Display-Alternative aus dem Pool testen (BEGRUENDUNG nennt Gabarito, Rethink Sans) und die Szene stärker an das Logo-Haus und die 35-km-Fakten binden."
+   },
+   {
+    "regel": "Touch-Ziele und Bedienung (Gestaltungskern, WCAG 2.5.8)",
+    "fundstelle": "index.html:326-327 (.gebiet__tel, Textlink 32 px / 25 px hoch), 291 und 570-576 (.ort__treffer r=16, mobil etwa 18 px Durchmesser, nur Maus/Touch)",
+    "beschreibung": "Die Telefonnummer ist der wichtigste Ausweichweg der Zielgruppe („überwiegend am Telefon“) und nur als Textlink im Satz gesetzt (zulässige Ausnahme, aber schwach). Die Kartenpunkte sind mobil kleiner als 24 px und nicht per Tastatur wählbar; die Chipliste ist die gleichwertige Alternative.",
+    "reparatur": "Telefonnummer als eigene Zeile mit 44-px-Fläche (Textknopf mit i-nachricht oder neuem Telefon-Icon). Trefferradius mobil auf mindestens 24 px erhöhen."
+   },
+   {
+    "regel": "Logo unantastbar (Auftrag Einstellungen UNANTASTBAR) und Markenfarben (_richtung.md)",
+    "fundstelle": "index.html:703-704 („Die vier Elemente des Logos als Grundfiguren (neu gezeichnet)“), 76-78 (dunkel: Navy ersetzt durch Creme, Rot durch Koralle)",
+    "beschreibung": "Das Logo selbst ist unverändert (logo.png ist byte-gleich mit public/images/bad-energie-lahn-dill-logo-transparent.png, kein CSS-Filter, Plakette dunkel). Die Beschreibung „Elemente des Logos neu gezeichnet“ für Flamme, Tropfen, Sonne, Luft kann aber als Nachbildung der Logo-Piktogramme gelesen werden. Im Dunkelmodus ist außer dem Logo keine Markenfarbe mehr sichtbar (Navy und Rot wurden Creme und Koralle).",
+    "reparatur": "Formulierung ändern („Grundfiguren des Formsystems, angelehnt an die Themen des Logos“), keine Gleichsetzung mit dem Logo. Im Dunkelmodus Markenfarbe als dezenten Akzent (z. B. Navy-Fläche der Kopfleiste) als Entscheidung für den Auftraggeber vermerken."
+   },
+   {
+    "regel": "Lesbarkeit von Zahlen",
+    "fundstelle": "d1440-light-voll__02 („07:Ø0–16:45“, „1.Ø5Ø–1.4ØØ €“), m375-light-voll__02, index.html:46",
+    "beschreibung": "Atkinson Hyperlegible Next zeigt die Null mit Schrägstrich; in Uhrzeiten und Gehältern liest sich „07:00“ wie „07:Ø0“. Begründet (Eindeutigkeit), wirkt aber im deutschen Satz ungewohnt und unterscheidet Fließtextzahlen von den Display-Zahlen.",
+    "reparatur": "Prüfen, ob Atkinson Next eine Variante ohne Schrägstrich bietet; sonst für Zeiten und Preise bewusst die Display-Ziffern verwenden oder die Wirkung am Telefon-/Nutzertest festhalten (MENSCHEN.md)."
+   }
+  ],
+  "austauschprobe_bestanden": false,
+  "austauschprobe_begruendung": "Nicht bestanden, mit klarer Abstufung. Die Leitidee („Bei uns schließt sich jeder Kreis: Die Wärme geht ins Haus und kommt zurück, du fährst zur Baustelle und bist pünktlich wieder zu Hause“) besteht aus zwei Hälften. Die erste (Vor- und Rücklauf, rot und blau, Haus und Wärmepumpe) beschreibt jede Heizung, die Farbkonvention ist Branchenstandard, und das Bild (Haus, Wärmepumpe, Sonne, Windlinien) ließe sich unverändert für jeden SHK-Betrieb einsetzen; die Begründung räumt das selbst ein („Setzt man einen anderen Namen ein, bleibt ein Bild … austauschbar“). Die zweite Hälfte trägt nur über die Zahlen 13:30, 35 km, 1926; ein Betrieb mit gleichen Zusagen könnte sie wörtlich übernehmen, und für Handwerksbetriebe mit festen Zeiten und kleinem Radius gilt der Satz ebenfalls. Der Signaturmoment (einmaliger Kreislauf im Hero) erklärt die Wärmepumpe und ist von den Zusagen entkoppelt: Die Zahlen stehen statisch daneben, die Bewegung erzählt nichts über Arbeitgeber, Weg oder Feierabend. Besitzbar und bestanden ist dagegen der zweite Einsatz der Idee im Pendelrechner: Vorlauf zum gewählten Ort, Rücklauf zurück, Ring des Radius um genau Wetzlar, mit echten Orten, Entfernung und Fahrzeit. Das trägt die Austauschprobe, weil es nur mit diesem Einsatzgebiet stimmt. Reparatur: die Leitidee auf Weg und Feierabend verengen („Jeder Arbeitstag schließt sich: Haus – Baustelle im 35-km-Ring – pünktlich zurück“), das Hero-Motiv darauf umbauen (Wärmepumpen-Schema und Erklärtext entfallen) und den Signaturmoment an 13:30 und den 35-km-Ring koppeln.",
+  "uebertragbarkeit_arbeitsseiten": "Mittel bis gut, mit drei klaren Vorbehalten. Trägt gut: Rechtstexte und Listen. Ruhige Typografie auf Putz, 17,33:1 bei Tinte, kein Verlauf, kein Schatten, Gewicht 800 nur in Überschriften, Fließtext in Atkinson (Hilfe bei Sehschwäche, passt zu Telefonzielgruppe), 3-px-Fokus, Ziele ab 44 px, Zeilenlisten mit Gehalt und Pfeil; die Stellenliste und die Tabelle mit tabellarischen Ziffern lassen sich 1:1 für /jobs und Kontaktdaten nutzen. Ortschips, Segmentschalter und Ergebnisfeld sind brauchbare Auswahlmuster für Formulare (Haken, gestrichelter Rand, Text statt nur Farbe). Der axe-Lauf (WCAG A/AA/2.2, Best Practice) ergab 0 Verstöße in vier Ansichten. Vorbehalt 1: Es gibt in der Kachel kein Eingabefeld (Text, Telefon, E-Mail) mit Beschriftung, Hilfetext, Fehler und Erfolg; „Fehler“ und „Erfolg“ stehen als lose Meldungen. Der Bewerbungsflow, die wichtigste Arbeitsseite, ist damit nicht belegt. Der vorgeschlagene Fortschrittsstrang aus der mobilen Kennzahlenleiste ist nur beschrieben. Vorbehalt 2: Rot trägt hier „Vorlauf“ und die Hauptaktion, zugleich soll Fehler rot sein (Fehler-Icon, Zeile 433); Blau wäre „Erfolg“. Im Flow wäre Rot damit Aktion und Fehler zugleich und Erfolg blau statt grün. Die Rot-Regel muss vor Runde 2 entschieden sein, sonst gerät die Semantik in Formularen in Konflikt. Vorbehalt 3: Der Hero lebt von Signaturmomenten (Szene, Zahlen an der Anlage); ohne sie bleiben Putz, Tinte und Navy-Rot-Akzent ein solides, aber unauffälliges Papier, deshalb ist die Ruhe der Arbeitsseiten fast kostenlos, aber ohne eigene Handschrift. Kopf- und Display-Gewicht 800 mit enger Laufweite sollte dort auf 600 bis 700 fallen. Auch die Dokumentationsmuster (Tafeln, Register) sind mobil nicht belastbar gesetzt; das betrifft nicht die Arbeitsseiten selbst. Weitere Zustände fehlen für Chips und Segmente (Fokus, Hover nur im Code, nicht gezeigt), 404 steht nur in der Begründung. Ohne Befund geprüft: Logo byte-gleich mit der Plattformdatei und ohne Filter; Schriften 188.768 Byte (184,3 KiB), nur Bricolage Grotesque, Atkinson Hyperlegible Next, IBM Plex Mono, Dateien identisch mit dem Schriftpool, OFL-Texte vollständig; alle 36 gerechneten Kontrastangaben der Tabelle stimmen (kleinster Wert hell 3,69:1, dunkel 4,66:1, kein unterschrittenes Paar; zusätzlich ungelistete Paare wie Rot auf Kaltfläche 4,47:1 und Putz auf Blau 6,11:1 erfüllen ebenfalls, rechnerisch und per getComputedStyle über 684 Textknoten je Ansicht); keine Fremdanfragen (nur index, drei Schriften, Logo); ohne JS sichtbarer Endzustand, mit reduzierter Bewegung 0 Animationen und identischer Endzustand (m375-light-reduziert ist bis auf 1 px gleich m375-light-voll); Radius-Umschalter und Ortswahl rechnerisch korrekt (Entfernung, Fahrzeit, Status, Tastatur, Projektion um 50,565 / 8,498 stimmt mit den Koordinaten überein); Gesamtablauf 1.360 ms, nur transform, opacity, stroke-dashoffset; JS 6,2 KB; kein Verlauf, Glas, Leuchten, Zähler, Laufband."
+ },
+ "jury-b-r1-1": {
+  "design": {
+   "punkte": 7.6,
+   "belege": [
+    "m375-light-voll__01.webp, oberes Drittel: \"SHK-Jobs in Wetzlar.\" in Bricolage Grotesque, fett und eng gesetzt, Navy auf warmem Creme, darunter die Unterzeile mit rot-blauem Rohrwinkel. Das ist eigenständig und sofort wiedererkennbar. Unpräzise ist die zu enge Laufweite: Der Bindestrich in \"SHK-Jobs\" stößt an K und J.",
+    "d1440-light-voll__01.webp, rechte Bildhälfte: Haus-Szene in durchgehend gleicher Strichstärke mit Pfirsichfläche, Wärmepumpe, Heizkörper, rot-blauen Leitungen, Uhr im Giebel und Wegweiser. Kennzahlen (13:30, 35 km, 30, 1926) sitzen als Beschriftung an der Zeichnung. Das ist ein geschlossenes SVG-System in der Logo-Palette. Die Beschriftungen (\"Tage Urlaub\", \"Einsatzradius\", \"Gegründet\") sind mit etwa 11 bis 12 px sehr klein."
+   ]
+  },
+  "bedienbarkeit": {
+   "punkte": 7.6,
+   "belege": [
+    "m375-light-voll__01.webp, Mitte bis untere Mitte: Der rote Button \"Jetzt bewerben\" mit Pfeilkante liegt auf dem ersten Telefonbildschirm. Darunter steht die Mikrocopy \"Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.\", und die Hierarchie aus Eyebrow, H1, Unterzeile, Lead und Button ist eindeutig. Die Kopfzeile bietet oben rechts als einziges Ziel \"System\".",
+    "m375-dark-voll__05.webp, untere Hälfte: Große, zweispaltige Ortskarten mit Entfernung und Fahrzeit, bequem antippbar. Die Auswahl (Gießen) ist über Haken und invertierte Fläche markiert, nicht nur über Farbe. \"Alle Orte als Tabelle\" darunter sieht aber aus wie normaler Fließtext und nicht wie ein Bedienelement."
+   ]
+  },
+  "kreativitaet": {
+   "punkte": 8.2,
+   "belege": [
+    "t768-light-voll__01.webp, untere Hälfte: Die Zusagen des Betriebs stecken im Bild. Die Giebeluhr steht auf 13:30 und ist per Linie mit \"Freitags Feierabend\" verbunden, der Wegweiser \"Wetzlar\" trägt \"35 km Einsatzradius\", \"1926\" steht an der Hauswand, und Vorlauf und Rücklauf laufen rot und blau zwischen Wärmepumpe und Heizkörper. Das ist keine Dekoration, sondern ein Gedanke, den nur dieser Betrieb so zeigen kann.",
+    "d1440-light-voll__03.webp, rechte Hälfte: Die Radius-Karte mit 15, 25 und 35 km, Haus-Symbol für Wetzlar und einer rot-blauen Doppellinie zum roten Punkt Gießen führt dasselbe Hin-und-zurück-Motiv in einen nützlichen Pendelrechner weiter. Das ist Überraschung mit Sinn. Die übrigen Punkte auf der Karte sind unbeschriftet."
+   ]
+  },
+  "inhalt": {
+   "punkte": 7.5,
+   "belege": [
+    "m375-light-voll__03.webp, obere Hälfte: Die Stellenliste nennt konkrete Gehaltsspannen (Anlagenmechaniker SHK 3.600–4.600 € / Monat, Obermonteur 4.400–5.600 €, Ausbildung 1.050–1.400 € Vergütung) und spricht klar und ohne Floskeln. Das ist selten und glaubwürdig. Das Bildmaterial besteht allein aus Strichzeichnung, ohne Menschen oder Baustellen.",
+    "d1440-light-voll__04.webp, mittlere Höhe unter den Ortskarten: \"Dein Ort steht nicht in der Liste? (06441) 42956 – ruf kurz an.\" Das ist die direkte Du-Ansprache eines kleinen Meisterbetriebs, mit Telefonnummer statt Formularwand, und passt zum Ton der Hero-Zeilen (\"Ehrliches Handwerk. Pünktlich Feierabend.\"). Der Satz \"Ehrliches Handwerk\" selbst ist allgemein gehalten."
+   ]
+  },
+  "gewichtet": 7.7,
+  "schwaechen": [
+   {
+    "was": "Kein echtes Bildmaterial und keine Menschen. Die ganze Seite lebt von Strichzeichnung, es gibt kein Gesicht, kein Team, keine Baustelle, kein Fahrzeug. Bewerber im Handwerk wollen sehen, mit wem sie arbeiten, daher leiden Echtheit und Vertrauen.",
+    "wo": "d1440-light-voll__01.webp, rechte Bildhälfte (Hero), und m375-light-voll__01.webp, Fuß des Bildschirms: Die Szene ist das einzige Bild und liegt auf dem Telefon fast ganz unter der Falz.",
+    "reparatur": "Ein bis zwei ungestellte Fotos aufnehmen (Monteurin oder Monteur an der Wärmepumpe, Team am Freitag kurz vor 13:30) und im Hero oder neben der Stellenliste mit demselben 3-px-Navy-Rand und derselben Pfirsichfläche rahmen. Die Strichszene bleibt als Erklärgrafik darunter. Auf dem Telefon die Szene verkleinern, damit Haus und Uhr schon im ersten Bildschirm sichtbar sind."
+   },
+   {
+    "was": "Die Kopfzeile führt nicht zu den Zielen eines Bewerbers. Auf dem Telefon steht als einziger Link \"System\", ein Gestaltungs-Verweis ohne Nutzen für Bewerber. Auf dem Desktop bleiben \"Einsatzgebiet\" und \"System\". Es gibt weder Stellen noch Telefonnummer noch einen dauerhaften Bewerben-Button. Die Zeichenbeschriftung ist mit etwa 11 bis 12 px zu klein, und \"Alle Orte als Tabelle\" wirkt nicht wie ein Bedienelement.",
+    "wo": "m375-light-voll__01.webp, oben rechts; d1440-light-voll__01.webp, Kopfzeile oben rechts; d1440-light-voll__04.webp, Zeile \"Alle Orte als Tabelle\".",
+    "reparatur": "\"System\" aus der Kopfzeile nehmen (in die Fußzeile oder auf eine eigene Route). Stattdessen \"Stellen\", \"Einsatzgebiet\" und ein Telefon-Symbol mit (06441) 42956 anbieten und \"Jetzt bewerben\" als kompakten roten Button mitlaufen lassen. Beschriftungen in der Szene auf mindestens 14 px setzen. \"Alle Orte als Tabelle\" als Schaltfläche mit Rahmen und Pfeil-Symbol gestalten."
+   },
+   {
+    "was": "Typografische Unschärfen verwässern die Präzision. Die Display-Laufweite ist so eng, dass Zeichen kollidieren (Bindestrich in \"SHK-Jobs\", \"Heizkreis\", die Leitidee-Zeile). Atkinson mit durchgestrichener Null liest sich in Fließtext und Preisen technisch (\"6Ø Sekunden\", \"13:3Ø\", \"3.6ØØ–4.6ØØ €\"). Im System-Teil bricht auf dem Telefon die Schriftprobe in Ein-Wort-Zeilen, und lange Mono-Namen brechen mitten im Wort.",
+    "wo": "m375-light-voll__01.webp, H1 und Mikrocopy; m375-light-voll__07.webp, Leitidee-Satz; m375-light-voll__10.webp, Schriftstufen-Proben (\"Wir / suchen / Verstärkung …\"); d1920-light-voll__12.webp, Tabellenzelle \"KREISLAUF-UEBERBLENDUN G\".",
+    "reparatur": "Laufweite der Display-Schrift ab etwa 40 px nur noch leicht negativ setzen (z. B. -0,01 em) und den Bindestrich in \"SHK-Jobs\" per Kerning oder eigenem Zeichen freistellen. In Atkinson die Ziffernvariante ohne Schrägstrich-Null (font-feature-settings) einschalten, zumindest in Fließtext und Preisen. Im System-Teil die Schriftproben auf dem Telefon einspaltig unter das Etikett legen und Mono-Namen mit overflow-wrap:anywhere und breiterer Spalte setzen."
+   }
+  ]
+ },
+ "jury-b-r1-2": {
+  "design": {
+   "punkte": 7.8,
+   "belege": [
+    "d1440-light-voll__01.webp, linke Hälfte oben und Mitte: \"SHK-Jobs in Wetzlar.\" in schwerem, eng gesetztem Bricolage-Grotesque-Display in Navy auf Creme, darunter die Unterzeile mit rot/blauem Rohrwinkel und ein deutlicher Größensprung zum ruhigen Atkinson-Fließtext. Die Palette bleibt auf Navy, Creme, Rot und Blau beschränkt, und die Typografie wirkt eigenständig und präzise.",
+    "d1440-light-voll__01.webp, rechte Hälfte: Linienillustration aus Haus mit Uhr im Giebel, Wärmepumpe, Heizkörper, rot/blauen Leitungen und Wegweiser. Die Strichstärke ist durchgehend gleich, die einzige Fläche ist das warme Pfirsich im Haus, und die Kennzahlen 30 / 13:30 / 35 km sind in die Komposition eingebaut. Der Dunkelmodus (d1440-dark-voll__01.webp) ist erkennbar neu gemischt statt invertiert. Einzelne Stellen bleiben generisch (flacher Icon-Stil, kleine Beschriftungen)."
+   ]
+  },
+  "bedienbarkeit": {
+   "punkte": 7.4,
+   "belege": [
+    "m375-light-voll__01.webp, mittleres Drittel: Auf dem ersten Telefon-Bildschirm stehen H1, Unterzeile, kurzer Einleitungstext und ein großer roter Pfeil-Button \"Jetzt bewerben\" mit der Zusatzzeile \"Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.\". Die Hierarchie ist eindeutig und es gibt genau eine Hauptaktion.",
+    "m375-light-voll__03.webp, oberes bis mittleres Drittel: Die Stellenliste hat volle Breite und große Zeilen. Auf jeder Zeile stehen Titel, Gehaltsspanne, Einheit und ein Chevron, getrennt durch feine Linien. Das ist auf dem Telefon gut lesbar und gut antippbar."
+   ]
+  },
+  "kreativitaet": {
+   "punkte": 8.2,
+   "belege": [
+    "m375-light-voll__04.webp, mittleres Drittel: Das Versprechen \"35 km\" wird zur bedienbaren Zeichnung. Ein Umschalter 15/25/35 km steuert konzentrische Kreise um das Haus, und ein rot/blauer Doppelstrich (Vorlauf/Rücklauf) führt zum gewählten Ort Gießen. Das ist eine Überraschung mit Sinn, kein Dekor.",
+    "d1920-light-voll__01.webp, rechts unten und quer durch die Mitte: Der Wochenbalken Mo–Fr endet am Freitag bei 13:30 und macht \"Pünktlich Feierabend\" sichtbar. Darüber läuft der Trenner \"Heizkreis\" als rotes und blaues Rohrpaar mit 45°-Versatz. Die Leitidee (hinaus und zurück als geschlossener Kreis) trägt von Logo über Uhr im Giebel bis zu Karte und Trenner."
+   ]
+  },
+  "inhalt": {
+   "punkte": 7.5,
+   "belege": [
+    "m375-light-voll__01.webp, oberes Drittel: \"SHK-Jobs in Wetzlar.\", \"Ehrliches Handwerk. Pünktlich Feierabend.\" und \"Bezahlt über Tarif und mit persönlicher Hilti-Ausstattung.\". Der Ton ist direkt und ohne Floskeln, die Zusagen sind konkret und prüfbar.",
+    "m375-dark-voll__05.webp, oberer und mittlerer Bereich: Echte Orte mit Entfernung und Fahrzeit (Gießen 15 km · 16 Min., Herborn 24 km · 22 Min.) und die Aussage \"Gießen liegt innerhalb von 35 km.\" geben dem Pendelversprechen eine belastbare Grundlage. Es gibt jedoch kein echtes Foto von Menschen, Werkstatt oder Baustelle."
+   ]
+  },
+  "gewichtet": 7.7,
+  "schwaechen": [
+   {
+    "was": "Es gibt kein echtes Bildmaterial (keine Menschen, Werkstatt, Fahrzeuge oder Baustelle). Alles ist Illustration. Für eine Handwerks-Karriereseite fehlt damit das Gesicht des Betriebs, und die glatte Infografik wirkt eher wie ein Konzeptentwurf als wie ein Arbeitgeber.",
+    "wo": "d1440-light-voll__01.webp rechte Hälfte; m375-light-voll__01.webp unteres Drittel; durchgehend in allen gewählten Ansichten",
+    "reparatur": "Im Hero ein echtes Foto eines Monteurs oder Teams bei der Arbeit einsetzen, mit Namen und einem Zitat. Es sollte in den 45°-Giebel maskiert und im Farbraum Navy/Creme getönt sein, damit es zum System passt. Die Haus-Illustration bleibt als sekundäre Erklärgrafik darunter, und die Zusagen 13:30 / 35 km / 30 Tage stehen als Beschriftung am Foto."
+   },
+   {
+    "was": "Auf dem Telefon sind der erste Bildschirm und die Navigation schwach. Die Hero-Illustration mit den Kennzahlen 13:30, 35 km und 30 Tage liegt unter der Falz und ist unten abgeschnitten. Als einziger Navigationspunkt steht \"System\" in der Kopfzeile, ein internes Dokumentationsziel ohne Wert für Bewerber, während \"Einsatzgebiet\" auf dem Telefon fehlt.",
+    "wo": "m375-light-voll__01.webp oben rechts (Nav) und unteres Drittel (abgeschnittenes Haus); m375-dark-voll__01.webp ebenso",
+    "reparatur": "\"System\" aus der Kopfzeile in den Footer verschieben. Im Kopf ein kompaktes Menü mit \"Stellen\", \"Einsatzgebiet\" und einer Telefon-Schaltfläche anbieten. Den Hero-Abstand zwischen Einleitung und Button und unter dem Button um etwa ein Viertel kürzen, damit die Giebelspitze mit der Uhr (13:30) im ersten Bildschirm sichtbar ist und zum Weiterscrollen einlädt."
+   },
+   {
+    "was": "Auf dem Desktop ist viel Text zu klein, und manche Bedienelemente sind nicht als solche erkennbar. Die Hero-Beschriftungen (\"Einsatzradius\", \"Tage Urlaub\", \"Dauert ca. 60 Sekunden\", Kartenlabels 15/25/35 km) sind nur etwa 11–12 px groß, und \"Kreislauf zeigen\" ist ein kleiner, schwacher Button. \"Alle Orte als Tabelle\" sieht aus wie eine Überschrift, nicht wie ein ausklappbares Element. Auf dem Telefon haben die Ortskacheln ungleiche Höhen und umbrechende Zeilen (\"14 km · / 18 Min.\").",
+    "wo": "d1440-light-voll__01.webp rechts und unter dem Button; d1440-light-voll__03.webp Kartenlabels; d1440-light-voll__04.webp links Mitte (\"Alle Orte als Tabelle\"); m375-dark-voll__05.webp unten",
+    "reparatur": "Alle Nebentexte und Kartenlabels auf mindestens 14 px (Desktop) anheben und die Hero-Zusatzzeile auf Fließtextgröße setzen. \"Alle Orte als Tabelle\" als Auf-/Zuklapp-Zeile mit Pfeilsymbol und Rahmen gestalten. Die Ortskacheln mit fester Höhe, linksbündigem Inhalt und \"15 km · 16 Min.\" in einer Zeile (nicht umbrechend, ggf. Kachel über volle Breite) ausrichten."
+   }
+  ]
+ },
+ "bauen-c": {
+  "fertig": true,
+  "leitidee": "„Dein Feierabend ist das Maß: Wir messen alles in Zeit – Tagesbogen bis 13:30 Uhr, Wege in Minuten, die Bewerbung in 60 Sekunden – und zeichnen es als Zifferblatt.“",
+  "austauschprobe": "Setzt man den Einstieg bei einem anderen SHK-Betrieb ein, endet der Bogen dort nicht freitags um 13:30 Uhr, enden die Ringe nicht bei 35 km und beginnt die Skala nicht 1926. Das Motiv wäre Dekoration ohne Beleg. Ein Betrieb mit Wochenend-Notdienst oder Fernmontage könnte „Dein Feierabend ist das Maß“ nicht ehrlich zeichnen. Ersetzt man 13:30 durch 17:00, bleibt ein hübscher Kreis ohne Aussage. Die Idee trägt nur, weil jede Zeitangabe eine belegte Zusage dieses Betriebs ist (Faktenregister: friday1330, workingHours, radius35, noFarAssembly, founded1926, anniversary100).",
+  "schriften": [
+   "Newsreader Variable (Display und Ziffern; Achsen wght 200–800 und opsz 6–72; tabellarische Ziffern; OFL-1.1)",
+   "Hanken Grotesk Variable (Text und Bedienung; wght 100–900; OFL-1.1)"
+  ],
+  "schriftgroesse_kb": 222.5,
+  "palette": [
+   {
+    "rolle": "Papier (Fläche)",
+    "hex": "Tag #F6F2E9 / Abend #0B1230",
+    "kontrast_hell": "Tinte auf Papier 13,36 : 1",
+    "kontrast_dunkel": "Tinte auf Papier 15,58 : 1"
+   },
+   {
+    "rolle": "Papier tief (Zifferblatt, Band)",
+    "hex": "Tag #ECE6D8 / Abend #131C46",
+    "kontrast_hell": "Tinte darauf 12,00 : 1",
+    "kontrast_dunkel": "Tinte darauf 13,89 : 1"
+   },
+   {
+    "rolle": "Tinte (Schrift, Bögen, Linien; Logo-Navy)",
+    "hex": "Tag #0C1A72 / Abend #F1ECE0",
+    "kontrast_hell": "13,36 : 1 auf Papier, 12,00 : 1 auf Papier tief; Fokusring 13,36 : 1 (Soll 3)",
+    "kontrast_dunkel": "15,58 : 1 auf Papier, 13,89 : 1 auf Papier tief; Fokusring 15,58 : 1"
+   },
+   {
+    "rolle": "Tinte leise (Zweittext)",
+    "hex": "Tag #454E84 / Abend #A9B0D2",
+    "kontrast_hell": "7,02 : 1 auf Papier, 6,31 : 1 auf Papier tief",
+    "kontrast_dunkel": "8,59 : 1 auf Papier, 7,66 : 1 auf Papier tief"
+   },
+   {
+    "rolle": "Skala (Teilstriche, Ringe; Grafik, Soll 3 : 1)",
+    "hex": "Tag #6A73A8 / Abend #7F89C0",
+    "kontrast_hell": "4,06 : 1 auf Papier, 3,64 : 1 auf Papier tief",
+    "kontrast_dunkel": "5,46 : 1 auf Papier, 4,87 : 1 auf Papier tief"
+   },
+   {
+    "rolle": "Abend (Feierabend: Bogen und Wort; Ocker/Bernstein)",
+    "hex": "Tag #8A5300 / Abend #F0B650",
+    "kontrast_hell": "5,66 : 1 als Schrift auf Papier, 5,09 : 1 auf Papier tief",
+    "kontrast_dunkel": "10,07 : 1 auf Papier, 8,98 : 1 auf Papier tief"
+   },
+   {
+    "rolle": "Signal (nur die eine Hauptaktion je Ansicht; Logo-Rot)",
+    "hex": "Tag #D60000 / Abend #D60000 (Druckzustand #A80000 bzw. #B50000, Text #FFFFFF)",
+    "kontrast_hell": "Weiß auf Signal 5,44 : 1; Signal gegen Papier 4,87 : 1 (Soll 3)",
+    "kontrast_dunkel": "Weiß auf Signal 5,44 : 1; Signal gegen Papier 3,38 : 1 (Soll 3)"
+   },
+   {
+    "rolle": "Haarlinie (dekorativ, ohne Information)",
+    "hex": "Tag #D4CDBB / Abend #27316A",
+    "kontrast_hell": "nicht gefordert (dekorativ)",
+    "kontrast_dunkel": "nicht gefordert (dekorativ)"
+   }
+  ],
+  "bewegung": [
+   {
+    "kennung": "bogen-lauf",
+    "zweck": "Signaturmoment: Tagesbogen zeichnet sich von 07:00 bis 13:30 Uhr, Zeiger läuft mit (Dauer d4, Kurve wechselnd, Auslöser: Seitenaufruf nach dem ersten Paint)",
+    "dauer_ms": 1100,
+    "reduziert": "Endzustand sofort, Startklasse wird gar nicht gesetzt"
+   },
+   {
+    "kennung": "bogen-rast",
+    "zweck": "Rückmeldung: Zeiger rastet ein (Ring), „Uhr Feierabend“ und Abendbogen blenden ein; Start nach 1.100 ms, Ende nach 1.580 ms (d1 160 + d2 320)",
+    "dauer_ms": 480,
+    "reduziert": "sofort sichtbar"
+   },
+   {
+    "kennung": "jahre-auftritt",
+    "zweck": "Zusammenhang: Jahresleiste 1926 → 2026 wird einmal von links enthüllt (clip-path), Auslöser: Eintritt in den Bildschirm",
+    "dauer_ms": 640,
+    "reduziert": "sofort sichtbar"
+   },
+   {
+    "kennung": "radius-wahl",
+    "zweck": "Orientierung: Ringe, Fläche und Orte gleiten auf den neuen Maßstab 15 / 25 / 35 km",
+    "dauer_ms": 320,
+    "reduziert": "Sofortzustand"
+   },
+   {
+    "kennung": "ort-wahl",
+    "zweck": "Rückmeldung: Zeiger dreht zum gewählten Ort, Minutenbogen füllt sich auf die Fahrzeit",
+    "dauer_ms": 320,
+    "reduziert": "Sofortzustand"
+   },
+   {
+    "kennung": "taste",
+    "zweck": "Rückmeldung der Hauptaktion: Druck (Skalierung 0,97) und Abdunklung bei Maus-Hover",
+    "dauer_ms": 160,
+    "reduziert": "Abdunklung ohne Übergang, keine Skalierung"
+   },
+   {
+    "kennung": "bogen-probe",
+    "zweck": "Wiederholbare Probe derselben Bewegung im System-Teil (Klick auf „Bogen erneut laufen lassen“)",
+    "dauer_ms": 1100,
+    "reduziert": "Endzustand sofort"
+   }
+  ],
+  "fotos_ok": true,
+  "ueberlauf_oder_fehler": [],
+  "offene_fragen": [
+   "OFFENE FRAGE: Darf der Ton Ocker/Bernstein („freie Zeit“, erinnert an die Sonne im Logo) als dritte Akzentfarbe neben Navy und Rot stehen, oder genügt Navy plus Rot mit einer Tintenabstufung?",
+   "OFFENE FRAGE: Was bedeutet isCoreZone („Kernzone“) fachlich? Die Kachel nennt es nur als Datenbezeichnung neben dem Ort (gefüllter Punkt).",
+   "OFFENE FRAGE: Nur vier der fünf Stellen zeigen eine Gehaltsspanne (Quereinsteiger/Montagehelfer hat in lib/jobs/data keinen Wert). Soll die Liste die fünfte Stelle ohne Spanne führen? Brutto oder netto ist ebenfalls nicht belegt; die Kachel übernimmt „€ / Monat“ wie die Plattform.",
+   "OFFENE FRAGE: Sollen die neu formulierten Texte „Was du verdienst. Wann du Feierabend hast.“, „Arbeitsweg prüfen“ und der Zoomstufen-Hinweis („15 und 25 km sind nur Zoomstufen. Die Zusage bleibt: höchstens 35 km.“) als Mikrotexte direkt gelten oder als Vorschlag nach TEXTVORSCHLAEGE.md gehen?",
+   "OFFENE FRAGE: Budget-Abweichung: Newsreader latin-ext liegt ohne optische Größe vor (36,2 statt 86,6 KB), sonst wären es 272,9 KB statt 222,5 KB. Akzeptabel oder Budget anheben?",
+   "Hinweise: Hauptaktion und Stellenlinks zeigen auf Plattformrouten (/bewerbung), in der Kachel ohne Seite dahinter; das Inline-Skript im Kopf braucht in der Plattform einen CSP-Hash; axe (WCAG 2.2 AA) meldet 0 Verstöße in Hell/Dunkel bei 375 und 1440 px; Bewegungs-JS gesamt 5,8 KB roh; Server :3703 beendet, :3500/:3600 nicht berührt."
+  ]
+ },
+ "jury-a-r1-1": {
+  "design": {
+   "punkte": 7.8,
+   "belege": [
+    "d1440-light-voll__01.webp, Hero links bis Mitte: Archivo-Schmalfett-H1 \"SHK-Jobs in Wetzlar.\" über Martian-Mono-Versalien (\"SEIT 1926 · WETZLAR\") und mono gesetzten Maßzahlen rechts (13:30, 30, 35 km, 1926). Die Paarung ist eigenständig und exakt gesetzt, die Leitungen biegen mit konzentrischen Radien sauber in den roten Knopf. Die Flächenaufteilung Papier/Navy/Rot ist streng gehalten.",
+    "d1440-light-voll__12.webp, Mitte und unten: acht Icons in zwei Größen mit gleicher Strichstärke (eigene Wärmepumpe), darunter der Trenner mit Fase und Knoten, die Schraffur 45° und die Zustandsreihe Ruhe/Hover/Fokus/Gedrückt/Gesperrt am Knopf. Das ist ein geschlossenes SVG-System. Abzüge: Die Icon-Motive (Tropfen, Flamme, Schlüssel, Brief) sind für sich genommen gängig. Es gibt kein Bildmaterial, und im Dunkelmodus sitzt das Logo auf einer weißen Platte (d1440-dark-voll__01.webp, oben links)."
+   ]
+  },
+  "bedienbarkeit": {
+   "punkte": 7.3,
+   "belege": [
+    "m375-light-voll__01.webp, Mitte bis unten: Auf die ca. 56 px große H1 folgt ein Lead mit großer Zeilenhöhe, danach der volle Spaltenbreite einnehmende rote Knopf \"Jetzt bewerben\" (ca. 56 px hoch) mit der Zusage \"Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.\". Die rote Leitung an der linken Kante führt den Blick zum Knopf. Die Reihenfolge ist auf dem Telefon eindeutig und mit dem Daumen gut bedienbar.",
+    "d1440-light-voll__03.webp, links und unten rechts: Die Ortstabelle ist nach Entfernung sortiert, die gewählte Zeile (Gießen) ist hinterlegt. Die Zusammenfassung \"Wohnort Gießen · 15 km · 16 Min.\" beantwortet die Bewerberfrage \"Schaffe ich den Weg?\" sofort. Darunter wiederholt \"Bewerbung in 60 Sekunden\" den Hauptknopf. Abzüge: Die Mikrobeschriftungen sind nur ca. 11–12 px groß und blass. Die Kartenlabels im Zentrum drängen sich. Die Mobilmenü-Schaltfläche heißt \"PLAN\" (m375-light-voll__01.webp, oben rechts), was nicht selbsterklärend ist."
+   ]
+  },
+  "kreativitaet": {
+   "punkte": 8,
+   "belege": [
+    "d1440-light-voll__01.webp, rechte Hälfte: Die Leitidee Vorlauf/Rücklauf der Heizungstechnik ist die Navigation. Die rote Vorlauf-Leitung (Pfeil nach unten, Label \"← VORLAUF\") biegt direkt in den Bewerben-Knopf, die blaue Rücklauf-Leitung (Pfeil nach oben) endet mit Kappe und trägt die Maßkette der Versprechen. Diese Lösung ist branchenspezifisch und mit Sinn gebaut. Die Animation (Leitung verlegen) ist nur in der Dokumentation beschrieben und im Bild nicht zu prüfen.",
+    "d1440-light-voll__03.webp, rechte Hälfte: Die Radiuskarte ist als Einsatzplan gezeichnet. Sie zeigt Ringe bei 15/25/35 km, außerhalb eine 45°-Schraffur als \"hier wird nichts verlegt\", eine Route vom Wohnort zum Betrieb und die Maßstabsangabe \"1 Feld = 5 km\". Das ist ein überraschender, sinnvoller Signaturmoment, der Echtheit (35 km, keine Fernmontage) zeigt statt behauptet."
+   ]
+  },
+  "inhalt": {
+   "punkte": 6.7,
+   "belege": [
+    "d1440-light-voll__01.webp, Hero links und Maßkette rechts: Es werden konkrete, belegbare Zusagen genannt: \"Bezahlt über Tarif\", persönliche Hilti-Ausstattung, Freitag 13:30 Feierabend, 30 Tage Urlaub, 35 km Einsatzradius, gegründet 1926. Der Ton ist trocken und ehrlich (\"Ehrliches Handwerk. Pünktlich Feierabend.\"), ohne Phrasen. Abzug: Weder Berufsbilder (Anlagenmechaniker, Azubi) noch Gehaltsspannen sind im Einstieg benannt.",
+    "d1440-light-voll__03.webp, linke Tabelle: Echte Orte der Region (Garbenheim, Hermannstein, Aßlar, Braunfels, Gießen, Herborn) mit plausiblen Entfernungen und Fahrzeiten machen die Seite lokal und prüfbar. Abzug: Im gesamten Material (z. B. m375-light-voll__01.webp, komplette Fläche) gibt es kein einziges Foto von Menschen, Fahrzeugen oder Baustellen, nur das Logo. Das schwächt die Echtheit einer Handwerks-Karriereseite."
+   ]
+  },
+  "gewichtet": 7.6,
+  "schwaechen": [
+   {
+    "was": "Kein Bildmaterial: Der Einstieg besteht nur aus Typografie und Linien. Es gibt keine Gesichter, keinen Servicewagen, keine Baustelle, und das wirkt für einen Handwerksbetrieb distanziert.",
+    "wo": "d1440-light-voll__01.webp (Hero komplett, besonders die leere untere Drittelfläche), m375-light-voll__01.webp",
+    "reparatur": "Ein echtes Foto eines Monteurs oder Teams mit Hilti-Koffer bzw. Servicefahrzeug in Wetzlar einsetzen. Es soll in Navy duotonisiert im Planrahmen mit Maßketten-Ticks sitzen und die leere untere Heldenfläche füllen oder neben der Maßkette stehen. Ein einziges Bild genügt, solange es aus dem Betrieb stammt."
+   },
+   {
+    "was": "Mikrotypo ist zu klein und zu blass, die Karte ist im Zentrum überfüllt. Die Labels \"VORLAUF\"/\"RÜCKLAUF\", die Maßlabels (\"FREITAGS FEIERABEND\", \"TAGE URLAUB\") und die Kartenbeschriftungen liegen bei ca. 11–12 px in hellem Blaugrau. Alle zehn Orte liegen innerhalb der 24 km, drängen sich aber im Zentrum des 35-km-Kreises, und die Leader-Linien überlappen.",
+    "wo": "d1440-light-voll__01.webp (Labels an den Leitungen und rechts in der Maßkette), d1440-light-voll__03.webp (Karte, Mitte um Hermannstein/Gießen/Dutenhofen/Garbenheim), m375-light-voll__01.webp (Labels neben 13:30 und 30)",
+    "reparatur": "Mikrolabels auf mindestens 14 px bringen und von Linie stark auf Tinte wechseln. Die Karte nach dem Radius skalieren, der auch gewählt ist (Ansicht auf 25 km zoomen oder Ortslabels nur bei Wahl zeigen). Ortslabels so staffeln, dass sich keine Führungslinien kreuzen."
+   },
+   {
+    "was": "Das Logo sitzt im Dunkelmodus auf einer weißen Rechteckplatte und bricht die Blaupause-Illusion. Die mobile Menü-Schaltfläche heißt \"PLAN\" (unverständlich), und die Nav-Punkte der Kachel sind interne Begriffe statt Bewerberbegriffe.",
+    "wo": "m375-dark-voll__01.webp und d1440-dark-voll__01.webp (Kopfzeile links oben), m375-light-voll__01.webp (Schaltfläche oben rechts), d1440-light-voll__01.webp (Navigation: Leitidee, Schrift, Palette, Formen, Bewegung)",
+    "reparatur": "Eine einfarbige oder Negativ-Variante des Logos (Navy/Rot auf Papier, Weiß/Hellblau/Rot auf Blaupause) verwenden, oder die Platte bewusst als Stempel mit Feld-Rand und Eckenmarken gestalten. Die Schaltfläche in \"Menü\" umbenennen und die Navigation auf Bewerberziele wie Stellen, Einsatzgebiet, Arbeitszeit und Bewerben ausrichten."
+   }
+  ]
+ },
+ "jury-a-r1-2": {
+  "design": {
+   "punkte": 7.7,
+   "belege": [
+    "d1440-light-voll__01.webp, rechte Bildhälfte oben bis Mitte: Vorlauf (rot, Pfeil nach unten) und Rücklauf (blau, Pfeil nach oben) laufen als Rohrbögen in eine Maßkette aus Martian-Mono-Zahlen (13:30, 30, 35 km, 1926) mit Quadratknoten und 45°-Ticks. Dazu links die schmale, sehr fette Archivo-H1 „SHK-Jobs in Wetzlar.“ Die Komposition ist eigenständig und präzise, Rot hat nur 2 % Flächenanteil.",
+    "d1440-dark-voll__11.webp, Bildmitte und unten links: Der Dunkelmodus ist als Blaupause gezeichnet und nicht bloß invertiert. Die Grundgeometrie (Gerade, Bogen, Fase, Knoten, Muffe, Kappe) und das Wärmepumpen-Icon auf dem 24×24-Raster haben durchgehend dieselbe Strichstärke und eine Strichfamilie in zwei Farben. Das passt zu den acht Icons in d1440-light-voll__10.webp (oben, „Acht Icons derselben Familie“)."
+   ]
+  },
+  "bedienbarkeit": {
+   "punkte": 7.4,
+   "belege": [
+    "m375-light-voll__01.webp, Mitte bis unteres Drittel: Auf dem Telefon sind H1, Zweizeiler, Fließtext (ca. 18 px, großzügige Zeilenhöhe) und die eine rote Hauptaktion „Jetzt bewerben“ in Spaltenbreite im ersten Bildschirm. Der Mikrotext „Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.“ senkt die Hürde. Die Reihenfolge ist klar, der rote Strang führt das Auge zum Knopf.",
+    "d1440-light-voll__03.webp, untere Hälfte: Ortstabelle (Ort, Entfernung, Fahrzeit, gewählte Zeile Gießen mit Balken markiert) neben der Radiuskarte. Darunter eine Ergebnisleiste Wohnort / Entfernung / Fahrzeit mit Icons und ein erneuter „Jetzt bewerben“-Knopf mit rotem Zuleitungsstrich. Der Nutzer erfährt direkt, ob er im Einsatzgebiet liegt."
+   ]
+  },
+  "kreativitaet": {
+   "punkte": 8.6,
+   "belege": [
+    "d1440-light-voll__01.webp, Hero unten Mitte: Die Leitidee Vorlauf/Rücklauf stammt aus der Heizungstechnik. Eine rote Leitung („← VORLAUF“) führt von oben in den Knopf „Jetzt bewerben“. Eine blaue Leitung („RÜCKLAUF →“) endet in einer Kappe und trägt die Maßzahlen. Rot und Blau sind zugleich die Logofarben, die Idee hat damit einen Grund und ist nicht nur Dekoration.",
+    "d1440-light-voll__03.webp, rechte obere Hälfte: Die Einsatzradius-Scheibe (15/25/35 km, gestrichelte Ringe, Raster „1 Feld = 5 km“) zeichnet die Route Gießen zum Betrieb als Leitung. Außerhalb von 35 km liegt die 45°-Schraffur, in d1440-light-voll__10.webp (Mitte rechts) erklärt als „Fläche, auf der nichts verlegt wird“. Das ist eine überraschende Lösung mit Sinn, die einen Nutzwert erzeugt."
+   ]
+  },
+  "inhalt": {
+   "punkte": 7,
+   "belege": [
+    "d1440-light-voll__01.webp, linke Hälfte oben und Mitte: „Ehrliches Handwerk. Pünktlich Feierabend.“, „Bezahlt über Tarif und mit persönlicher Hilti-Ausstattung“ und die nachprüfbaren Zahlen Freitags 13:30 Feierabend, 30 Tage Urlaub, 35 km Einsatzradius, 1926 gegründet. Der Ton ist direkt, nennt konkrete Zusagen und kommt ohne Floskeln aus. Der Text spricht Fachleute an.",
+    "d1440-light-voll__03.webp, linke Spalte: Zehn echte Orte der Region (Wetzlar Kernstadt, Garbenheim, Hermannstein, Nauborn, Aßlar, Braunfels, Gießen, Herborn …) mit km und Fahrminuten. In d1920-light-voll__01.webp (unten links) steht ergänzend die Arbeitszeit Mo–Do 07:00–16:45, Fr 07:00–13:30 Uhr. Das wirkt echt und lokal. Es gibt aber kein einziges Foto von Menschen oder Arbeit."
+   ]
+  },
+  "gewichtet": 7.7,
+  "schwaechen": [
+   {
+    "was": "Kein fotografisches Bildmaterial und keine Menschen. Der Einstieg besteht nur aus Linien, Zahlen und Logo, daher fehlt auf einer Karriereseite im Handwerk der Beleg durch Team, Baustelle und Werkzeug.",
+    "wo": "d1440-light-voll__01.webp (Hero, rechte Seite nur Maßkette), d1920-light-voll__01.webp, m375-light-voll__01.webp (nach dem Knopf nur Zahlen)",
+    "reparatur": "Ein echtes Teamfoto oder Montagefoto (Wärmepumpe, Bad) als Planfeld im Hero einsetzen, im Duoton Navy/Papier mit dünnem Blaurahmen und 45°-Schraffurrand, an der Maßkette verankert. Den roten Vorlauf weiterhin in den Knopf führen und die Kette um eine Foto-Zeile mit Namen und Funktion ergänzen."
+   },
+   {
+    "was": "Orientierung: Die Desktop-Navigation führt Systemabschnitte (Einsatzgebiet, Leitidee, Schrift, Palette, Formen, Bewegung) statt Bewerberfragen wie Stellen, Ablauf oder Kontakt. Auf dem Telefon heißt der Menüknopf „PLAN“, das ist ohne Erklärung nicht als Menü erkennbar. Eine Kopfaktion zum Bewerben fehlt.",
+    "wo": "d1440-light-voll__01.webp und d1920-light-voll__01.webp (Kopfzeile); m375-light-voll__01.webp (oben rechts „PLAN ☰“)",
+    "reparatur": "Die Navigation auf vier Ziele kürzen (Stellen, Einsatzgebiet, Ablauf, Kontakt) und eine textliche Kopfaktion „Bewerben“ in Navy ergänzen, damit die eine rote Hauptaktion der Ansicht rot bleibt. Den mobilen Knopf mit „Menü“ beschriften, „PLAN“ nur als Unterzeile oder Icon-Metapher behalten."
+   },
+   {
+    "was": "Mikrotypografie und Karte: Die Mono-Beschriftungen im Hero (FREITAGS FEIERABEND, VORLAUF, RÜCKLAUF, ca. 11–12 px, Grau-Blau auf Papier) sind klein und blass. In der Radiuskarte kollidieren die Ortslabels im dichten Kern (Hermannstein, Gießen, Dutenhofen, Garbenheim, Betrieb Wetzlar). Im Dunkelmodus sitzt das Logo als weiße Platte auf der Blaupause und stört die sonst präzise Fläche.",
+    "wo": "d1440-light-voll__01.webp (Labels rechts der Zahlen und an den Leitungen); d1440-light-voll__03.webp (Kartenmitte); m375-dark-voll__01.webp und d1440-dark-voll__01.webp (Logo oben links)",
+    "reparatur": "Labels auf mindestens 13–14 px bei Tinte statt Linie-stark setzen. Die Karte beim ersten Zoomen auf 15 km einstellen oder dichte Orte per Sammelbeschriftung mit Leader-Liste lösen. Für den Dunkelmodus eine eigene Logo-Variante (weiß/hellblau, ohne Platte) ableiten."
+   }
+  ]
+ },
+ "pruefen-a": {
+  "harte_befunde": [
+   {
+    "regel": "Bewegung nur transform/opacity (_richtung.md Regeln hart; AUFTRAG 7 Technik)",
+    "fundstelle": "index.html:105, 116, 121, 287, 302, 317, 525 (transition auf background-color, color, border-color, stroke, stroke-width); Gegenprobe getComputedStyle d1440 hell: transitionProperty background-color x18, border-color x6, color x5, stroke x3, stroke-width x3 neben transform x14, opacity x13; Falschaussage index.html:954 („Es bewegt sich nur transform, opacity und der Strichverlauf“)",
+    "beschreibung": "Die Kachel überblendet Farben und animiert Strichstärke und Strichfarbe der Radiusringe (.pl-ring, Z. 317). Erlaubt sind nur transform, opacity und stroke-dashoffset. Die eigene Behauptung auf Blatt 7 ist damit falsch. Beim Ring-Wechsel springt außerdem stroke-dasharray (gestrichelt zu durchgezogen) sofort, während stroke-width noch läuft.",
+    "reparatur": "Farbwechsel per opacity-Überblendung einer Deckschicht (::before mit Zielfarbe) umsetzen oder bewusst als Sofortzustand führen. Die Ringe als je zwei übereinanderliegende Kreise (ruhig/gewählt) per opacity wechseln statt stroke/stroke-width zu animieren. Alternativ entscheidet der Orchestrator ausdrücklich, dass rein paint-wirksame Farb-Transitions erlaubt sind; dann Regel und Blatt 7 anpassen. Bis dahin Z. 954 und das Register korrigieren."
+   },
+   {
+    "regel": "S-05 Ungeordnete Werte: Bewegungswerte außerhalb der Tokens (AUFTRAG 7; Staffelabstände sind Tokens 30–80 ms)",
+    "fundstelle": "index.html:155–161 (Verzögerungen 150, 700, 1000, 1100 ms), 208–209 (150, 600 ms); --stagger:80ms (Z. 53) wird nirgends verwendet, obwohl Z. 981 es dokumentiert",
+    "beschreibung": "Fünf freie Verzögerungswerte (150/600/700/1000/1100 ms) stehen als nackte Zahlen im CSS und sind nicht Teil der sechs Dauer-Tokens. Der angeblich benutzte Staffel-Token ist ungenutzt; die vier Kennzahl-Knoten starten gleichzeitig, es gibt keine Staffel. Mobil laufen Teilabläufe mit --d-1…--d-4 in wechselnden Kurven, im Register steht nur „1.200 ms · wechselnd“.",
+    "reparatur": "Verzögerungen als Vielfache des Tokens ausdrücken (calc(var(--stagger) * n)) oder als benannte Skala (--v-1…) führen. Das Register um die mobilen Teilabläufe ergänzen oder die mobile Fassung auf einen Ablauf mit einer Dauerstufe zurückführen. --stagger entweder wirklich für die vier Maßknoten nutzen (höchstens 80 ms Abstand) oder aus Token-Liste und Text streichen."
+   },
+   {
+    "regel": "S-05 Schriftgrößen außerhalb der Tokens (zugleich Lesbarkeit; kleinster Token --t-1 = 12 px)",
+    "fundstelle": "index.html:310 und 354–357 (--lbl/--ringt/--klein = 11, 12, 13, 14, 15, 16, 17, 19, 21 px), 397 (.g-t 12px), 522 (.dv-t 15px); gemessen m375 (Maßstab Plan 0,536): Ortsnamen 11,3 px, Ringbeschriftung 10,2 px, „1 Feld = 5 km“ und „N“ 9,1 px; Bild m375-light-voll__03/__04, Bereich Lageplan",
+    "beschreibung": "Die Planbeschriftungen nutzen mindestens neun freie px-Werte. Sie sind als Bildinhalt gemeint, werden aber per CSS-font-size gesetzt und von einer getComputedStyle-Stichprobe erfasst. Mobil erscheinen die Texte kleiner als jede Stufe der Schriftskala (9–11 px). Das betrifft den Kernbeleg des zurückgeführten Elements (Ortsnamen, Maßstab).",
+    "reparatur": "Die Beschriftung an die Skala binden: effektive Größe = --t-2 (13 px) bzw. mindestens --t-1 (12 px), umgerechnet über den Planmaßstab (Container-Query-Einheiten oder je Breite eine Stufe, mobil etwa 24 Einheiten bei 343 px Planbreite). Beschriftung alternativ als HTML-Overlay mit Token-Größen setzen. .g-t und .dv-t an --t-1 bzw. --t-3 binden."
+   },
+   {
+    "regel": "Deutsch korrekt: geschütztes Leerzeichen vor Einheiten (_richtung.md Regeln hart)",
+    "fundstelle": "index.html:774–777 (4x „13:30 Uhr“ in der Breitenachse), 791 („60 Sekunden“ im Stufenmuster), 792 („5 km“), 824 („3 px, Abstand 3 px“ in der Kontrasttabelle)",
+    "beschreibung": "An sieben Stellen steht ein gewöhnliches Leerzeichen zwischen Zahl und Einheit; Umbruch zwischen „13:30“ und „Uhr“ ist möglich. Geringer Schaden, aber ein Verstoß gegen eine harte Regel.",
+    "reparatur": "Dort &nbsp; setzen; für Muster- und Kontrasttexte denselben Satz-Helfer wie im Rest der Seite nutzen."
+   }
+  ],
+  "weiche_befunde": [
+   {
+    "regel": "Austauschprobe / Leitidee (AUFTRAG 7)",
+    "fundstelle": "index.html:743–766 (Leitsatz, Ableitung, Probe-Tabelle), BEGRUENDUNG.md Abschnitt 3 und 8; Hero d1440-light-voll__01",
+    "beschreibung": "Der Leitsatz bleibt unverändert wahr, wenn man jeden anderen SHK-Betrieb mit 60-Sekunden-Bewerbung und pünktlichem Feierabend einsetzt; mit „Sauber verlegt“ und Maßkette passt er auch zu Elektro, Zimmerei oder Fliese. Vorlauf/Rücklauf in Rot/Blau ist der Standard-Code der Heizungstechnik, kein Merkmal von Bad & Energie. Die Probe-Tabelle bestätigt das: Zeile 3 argumentiert mit der Wahrheit der Zusagen, nicht mit der Eigenheit der Gestaltung, und BEGRUENDUNG Risiko 1 räumt die Kopierbarkeit ein. Ownable sind nur die Umsetzungen (Arbeitszeit-Streifen, Pendelplan), und die stehen unter dem generischen Hero.",
+    "reparatur": "Die Idee an etwas binden, das nur dieser Betrieb hat: Freitag 13:30 als Nullpunkt des Plans (die Arbeitswoche als maßhaltiges Bauteil, der Arbeitszeit-Streifen wandert in den ersten Bildschirm), Logo-Giebel mit den vier Piktogrammen, 1926 bis 2026 (FACTS.anniversary100, nur bis 31.12.2026). Den Leitsatz so umschreiben, dass er einen Konkurrenten nicht mehr trägt. Probe-Tabelle auf Gestaltungsmerkmale statt auf Wahrheit der Zusagen umstellen."
+   },
+   {
+    "regel": "Hero: Kennzahlen nicht als gleichförmige Kacheln (_richtung.md „Was die Kachel zeigen muss“ 1; S-12 Gleichtakt)",
+    "fundstelle": "index.html:643–648; d1440-light-voll__01, d1440-dark-voll__01, m375-light-voll__01/__02",
+    "beschreibung": "Die vier Maße sind vier Zeilen derselben Struktur und derselben Größe (76 px Zahl, 12-px-Mono-Etikett weit rechts). Sie tragen die Leitung, haben aber keine Hierarchie: 13:30 als stärkstes Versprechen hat dasselbe Gewicht wie 1926. Die Etiketten sitzen auf Desktop 60–290 px von der Zahl entfernt und sind 12 px klein.",
+    "reparatur": "13:30 als Hauptmaß setzen (größer, Etikett direkt an der Maßlinie), 30, 35 km und 1926 kleiner oder als zweite Maßebene. Etiketten auf mindestens --t-2 anheben und näher an die Zahl rücken."
+   },
+   {
+    "regel": "Verständlichkeit der Zielgruppe (BEGRUENDUNG Risiko 2)",
+    "fundstelle": "index.html:627–628 („← Vorlauf“, „Rücklauf →“, 12 px), Hero d1440-light-voll__01",
+    "beschreibung": "Die Hauptgrafik wird nur über Fachbegriffe erklärt. Quereinsteiger und Azubis (laut Briefing Zielgruppe) lesen die beiden Linien nicht, die Beschriftung ist zudem aria-hidden und klein. Mobil fehlt sie ganz.",
+    "reparatur": "Linienenden mit Klartext-Beschriftung versehen (Handlung und Ergebnis, Wortlaut über TEXTVORSCHLAEGE freigeben), den Fachbegriff als zweite Ebene führen. Die Strangfunktion auch mobil kenntlich machen."
+   },
+   {
+    "regel": "Wahrheit / ehrliche Darstellung der Karte",
+    "fundstelle": "index.html:697 (desc), 311–330 (Ringe und Punkte); Messung: Herborn 24 km Tabelle gegen 19,2 km Luftlinie im Plan, Gießen 15 gegen 12,8, Braunfels 14 gegen 9,7; d1440-light-voll__03",
+    "beschreibung": "Positionen sind korrekt äquirektangulär (Abweichung ≤ 0,1 px, Daten und Fahrzeiten stimmen mit locations.ts überein). Die Ringe 15/25/35 km sind aber Luftlinie, der Umschalter filtert nach distanceKm (Straße). Die Seite sagt das nirgends, nur BEGRUENDUNG Risiko 5. Zudem liegen alle zehn Orte unter 24 km: „25 km“ und „35 km“ unterscheiden sich im Ergebnis nicht, zwei Drittel der Scheibe bleiben leer.",
+    "reparatur": "Sichtbare Planlegende: „Ringe in Luftlinie, Tabelle in Straßenkilometern“ (vorher OFFENE FRAGE klären, was distanceKm meint). Bei 25/35 km eine Zeile „kein Ort der Liste zwischen 24 und 35 km“ oder mehr Orte aufnehmen (OFFENE FRAGE 2)."
+   },
+   {
+    "regel": "Pendelrechner: Bedienbarkeit und Zugänglichkeit (S-03 nahe)",
+    "fundstelle": "index.html:739–742 (Schriftfeld), 826ff Skript (pick()), role=\"status\" nur am Hinweis; m375-light-voll__03",
+    "beschreibung": "Bei Ortswahl ändern sich Entfernung und Fahrzeit im Schriftfeld ohne Ansage; der Status-Hinweis ändert sich nur bei Radiuswechsel oder wenn der Ort außerhalb liegt. Das Ergebnis des Rechners erreicht Screenreader nur über die Tabelle. Mobil sind acht von zehn Ortspunkte unbeschriftet und 4 px klein, Auswahl geht nur über die Tabelle.",
+    "reparatur": "Schriftfeld als aria-live=\"polite\" ausweisen oder den Hinweistext mit Ort, Entfernung und Fahrzeit füllen. Plan-Punkte entweder bewusst als nicht bedienbar dokumentieren oder mit Ziel ≥ 24 px antippbar machen."
+   },
+   {
+    "regel": "S-04 / S-05 Strichstärken und Formsystem-Aussage („eine Strichstärke“)",
+    "fundstelle": "index.html:323, 326 (1,5 px), 515 (3 px), 393–394 und 221 (Knoten/Muffe 2 px), 220 (Knoten 4 px), 889 („Leitung 4 px … Knoten, Muffe“)",
+    "beschreibung": "Das System behauptet 4/2/1 px (Zwölftel-Regel). Im Code kommen 1,5 px (Maßstab, Nordpfeil, Ortspunkte) und 3 px (Kurvenbilder) hinzu. Knoten sind im Plan 4 px, im Trenner und in der Grundgeometrie 2 px, obwohl Blatt 5 „Knoten, Muffe“ der Leitung 4 px zuordnet. Der Hero-Plan skaliert ohne vector-effect: bei 1024 px Breite werden aus 4 px Leitung 3 px.",
+    "reparatur": "Die Ausreißer auf 1 oder 2 px legen und die Zuordnung Knoten/Muffe klar schreiben (4 px im Plan, 2 px im Icon-Maßstab). Für die Leitung im Hero Stärke per vector-effect: non-scaling-stroke oder Skalierungsfaktor festhalten."
+   },
+   {
+    "regel": "S-06 / Zustände vollständig gezeigt; Zugänglichkeit der Dokumentation",
+    "fundstelle": "index.html:~1135–1175 Blatt 6 (Zeilen der Zustandsdemos, class btn--demo mit href=\"#zustaende\"), Z. 491 und 541; Blatt-6-Text zu Lade-/Fehler-/Erfolg-/Leerzustand; m375-light-voll__22 bis __26",
+    "beschreibung": "Vier der Zustandsdemos sind echte <a href=\"#zustaende\"> mit pointer-events:none: Tab-Stopps ohne Funktion, ein Screenreader liest „Ruhe“, „Hover“, „Fokus“, „Gedrückt“ als Links, und die Fokus-Demo zeigt dauerhaft einen Fokusring ohne Fokus. Es fehlen die Fokus-Demo der Ortszeile und gedrückt/deaktiviert beim Umschalter. Lade-, Fehler-, Erfolgs- und Leerzustand stehen nur als Text, nicht gezeichnet.",
+    "reparatur": "Demos als <span aria-hidden=\"true\"> oder mit inert/tabindex=\"-1\" setzen. Ortszeilen-Fokus und Umschalter-Zustände ergänzen; die vier Arbeitsseiten-Zustände als Mikro-Specimen (Leitung gestrichelt, Kappe, geschlossener Knoten) zeichnen."
+   },
+   {
+    "regel": "Farbregel „Rot nur für die eine Hauptaktion je Ansicht“ (E-016)",
+    "fundstelle": "index.html:1135–1150 (Blatt 6: fünf rote Knöpfe in einer Ansicht), Probe Blatt 7; BEGRUENDUNG.md Abschnitt 9 („Fehler als Rot-Text mit Kappe“ gegenüber „Rot steht nur dort“); d1440-light-voll__10",
+    "beschreibung": "Das Zustands-Specimen zeigt vier bis fünf rote Hauptaktionen in einem Bildschirm. Wichtiger: Die Übertragung auf Arbeitsseiten widerspricht sich selbst, denn Fehler sollen rot erscheinen, während der einzige rote Knopf je Schritt die Hauptaktion sein soll.",
+    "reparatur": "Fehlerdarstellung ohne die Aktionsfarbe festlegen (Tinte/Blau mit Kappe und Symbol, Rot nur als --rot-text-Abstufung) und in KERN K-006 klären. Das Specimen auf einen roten Knopf plus abgeblasste Zustandsvarianten reduzieren."
+   },
+   {
+    "regel": "Palette E-016: keine neuen Akzentfarben",
+    "fundstelle": "index.html:37 (--waerme:#FF9A85), 217, 523; Palettentabelle Blatt 3; Kontrast 1,88:1 auf Papier und 1,69:1 auf Feld (hell)",
+    "beschreibung": "Der Wärmefluss führt eine eigene Rolle #FF9A85 ein. Sie ist faktisch eine Rot-Abstufung und trägt keine Information (Rückmeldung zum Knopf-Hover), liegt aber nicht in der bestätigten Palette und hat im hellen Modus nur 1,88:1 gegen das Papier. Liest man E-016 streng, wäre das ein harter Befund.",
+    "reparatur": "Fluss aus vorhandenen Rollen ableiten (Papier- oder Rot-Abstufung wie --rot-text dunkel) und die Rolle aus der Palette streichen, oder die Abstufung ausdrücklich von der Freigabe bestätigen lassen."
+   },
+   {
+    "regel": "Kontraste (WCAG 2.2): Nachrechnung der angegebenen Paare",
+    "fundstelle": "Palettentabelle index.html:~824; eigene Rechnung nach WCAG-Formel (Skript im Scratchpad)",
+    "beschreibung": "Alle 17 Paare stimmen auf zwei Nachkommastellen, keine Unterschreitung: Text hell min. 5,32 (Rot-Text auf Feld), Text dunkel min. 4,81 (Weiß auf Hover-Rot #E60000), Grafik hell min. 3,73 (Linie stark auf Feld), Grafik dunkel min. 3,03 (Vorlauf-Rot auf Feld). axe (WCAG 2.2 AA + Best Practice) lieferte in m375/d1440, hell/dunkel 0 Verstöße; sichtbarer Fokus 3 px auf allen 44 geprüften Tab-Stopps. Reserve ist dünn bei dunklem Vorlauf-Rot (3,35:1 auf Papier, 3,03:1 auf Feld): der Signaturstrang wirkt in der Blaupause matt. Das Plan-Raster (1,50:1) trägt die Aussage „1 Feld = 5 km“ nur zusammen mit dem Maßstabsbalken.",
+    "reparatur": "Dunkel ein leicht helleres Vorlauf-Rot für Linien prüfen (E-016 lässt Abstufungen zu, Knopf bleibt #D60000). Bei Änderungen die Tabelle über ein Skript aus den Tokens erzeugen statt von Hand zu pflegen."
+   },
+   {
+    "regel": "Wahrheit: nur belegte Fakten (facts.ts)",
+    "fundstelle": "index.html:668 (Zeile „Sa, So“, --a:7;--b:16.75); m375-light-voll__02, d1440-light-voll__02",
+    "beschreibung": "Die schraffierte Wochenend-Fläche erstreckt sich über genau die Zeitspanne von Mo–Do (07:00–16:45). Das suggeriert ein Wochenend-Zeitfenster. Belegt ist nur „Kein Wochenend-Notdienst“ (noWeekendOnCall). Alle übrigen Texte und Zahlen (H1, HERO.lead, Mikrotext, Kennzahlen, Arbeitszeit, zehn Orte mit km/Min.) stimmen mit facts.ts, content.ts und locations.ts überein, es gibt keine erfundenen Aussagen. Logo ist byte-identisch (SHA-256 gleich), ohne Filter, Proportion 662×121 erhalten.",
+    "reparatur": "Sa/So über die ganze Achse 06–18 schraffieren oder ohne Zeitbezug zeigen."
+   },
+   {
+    "regel": "Bewegungsregister stimmt nicht mit dem Code überein (AUFTRAG 7 Register)",
+    "fundstelle": "index.html:962 (fluss-hauptaktion: „der Knopf wechselt in 180 ms die Farbe“), 551 (reduziert: transition:none), 959 (leitung-verlegen: nur 1.200 ms · wechselnd), 981 (--stagger, „höchstens vier Elemente je Staffel“)",
+    "beschreibung": "Reduziert wechselt der Knopf sofort, das Register nennt 180 ms. Der Signaturmoment wird nur mit Desktop-Werten beschrieben, mobil laufen vier Teilabläufe mit anderen Dauern und Kurven. Die Staffelaussage hat keine Entsprechung im Code. Reduzierte und volle Fassung sind in allen 12 Ausschnitten pixelgleich (geprüft), das Verhalten selbst ist in Ordnung.",
+    "reparatur": "Register aus dem Code ableiten: je data-motion alle Teilabläufe mit Dauer-Token, Kurve und reduziertem Verhalten; Staffelzeile streichen oder umsetzen."
+   },
+   {
+    "regel": "Schrift / Satz (AUFTRAG 7)",
+    "fundstelle": "index.html:627–628 (← →), Kontrasttabelle (17x „≥“), Z. 143ff und 62–68 (.display), .lead max-width 38rem; m375-light-voll__05, d1440-light-voll__01",
+    "beschreibung": "Pfeile (U+2190/2192) und „≥“ (U+2265) liegen außerhalb der unicode-range beider Schnitte und fallen auf die Systemschrift. Display bei 68 % Breite hat Wortabstand 0: „Der Werkplan hinter der Seite.“ wirkt mobil fast zusammengezogen. Die Einleitung läuft mit 49–52 Zeichen je Zeile unter dem Richtwert 60–75. Display-Schnitt mit hyphens:manual: „Datenschutzerklärung“ misst bei 56 px (--t-8) rund 353 px gegenüber 343 px Spaltenbreite bei 375 px (gemessen 227 px bei 36 px) und würde überlaufen.",
+    "reparatur": "Pfeile als Formsystem-SVG zeichnen, „≥“ ausschreiben. .display ein word-spacing von etwa .06–.1em geben. Weiche Trennstellen für lange Display-Wörter vorsehen oder --t-8 für Arbeitsseiten-H1 nicht verwenden. Einleitung auf 44–46 rem öffnen."
+   },
+   {
+    "regel": "Lesbarkeit kleiner Beschriftungen",
+    "fundstelle": "126 Textknoten mit 12 px (Messung m375), index.html:81, 143, 740 (Schriftfeld „FAHRZEIT BIS WETZLAR“ bricht mobil auf drei Zeilen, m375-light-voll__04)",
+    "beschreibung": "Mono-Versalien mit +0,12 em Sperrung bei 12 px tragen die Maße und alle Tabellenköpfe. Lange Etiketten brechen und werden schwer lesbar. BEGRUENDUNG Risiko 3 benennt das, behebt es aber nicht.",
+    "reparatur": "Etiketten auf 13 px anheben und Sperrung bei längeren Texten auf .06–.08 em senken; kürzere Wörter („Fahrzeit“)."
+   },
+   {
+    "regel": "Markentreue Kleinigkeiten",
+    "fundstelle": "index.html:1012 („Bad & Energie GmbH Lahn-Dill“), Logo-Alt Z. 589, Logo-Plakette Z. 101; m375-dark-voll__01, d1440-dark-voll__01",
+    "beschreibung": "Drei Schreibweisen des Firmennamens (Seitentext „Bad & Energie GmbH Lahn-Dill“, Logo-alt „Bad&Energie GmbH Lahn-Dill“, companyData.legalName „Bad und Energie GmbH Lahn Dill“). Im Dunkelmodus sitzt das Logo auf einer knapp gepolsterten weißen Plakette (4/8 px, bündig angeschlagen) und wirkt als harter Fremdkörper in der Blaupause. Die Plakette ist laut Vorgabe zulässig, nicht aber deren Ausführung.",
+    "reparatur": "Namen aus COMPANY beziehen und Logo-Alt wörtlich lassen. Plakette mit definierter Schutzzone (gleich 1/4 Logohöhe), Haarlinie und Papierabstand gestalten."
+   },
+   {
+    "regel": "Prüfbeleg: fotos/bericht.json deckt nur einen Teil der Ausschnitte ab",
+    "fundstelle": "fotos/bericht.json (12 Dateien je Aufnahme) gegen 33 mobile und 16 Desktop-Ausschnitte je Modus; BEGRUENDUNG.md Abschnitt 10",
+    "beschreibung": "Überlauf, Fehler und Fremdanfragen sind für m375 nur in den ersten 12 von 33 Ausschnitten belegt; __13–__33 (u. a. Palette, Formsystem, Bewegung) stehen nicht im Bericht. Eigene Gegenprobe: kein horizontaler Überlauf bei 320 und 375 px, keine Konsolenfehler, null Fremdanfragen, Schriften 239,5 KB (byte-identisch zu den Fontsource-Dateien), nur Archivo und Martian Mono.",
+    "reparatur": "kachel-fotos.mjs auf alle Ausschnitte erweitern und bericht.json vollständig schreiben, statt Ausschnitte per Hand nachzuschieben."
+   }
+  ],
+  "austauschprobe_bestanden": false,
+  "austauschprobe_begruendung": "Nicht bestanden, knapp. Der Leitsatz „Sauber verlegt: Der Vorlauf führt in 60 Sekunden zu uns, der Rücklauf bringt dich pünktlich nach Hause – und jede Zahl steht als Maß an der Leitung.“ lässt sich unverändert für jeden SHK-Betrieb mit schneller Bewerbung und festem Feierabend sprechen, und „sauber verlegt“ plus Maßkette passt ebenso zu Elektro, Zimmerei oder Fliese. Rot/Blau als Vorlauf/Rücklauf ist der Standard-Farbcode der Heizungstechnik und beweist nichts über Bad & Energie. Die eigene Probe in BEGRUENDUNG (Abschnitt 3) räumt das Risiko ein: Der Unterschied liegt in den Daten (13:30, 30, 35 km, 1926), nicht in der Idee. Ein Konkurrent würde nur die Zahlen tauschen. Für den Hero-Aufbau gilt dasselbe: Rohrpaar, Pfeile und „Vorlauf/Rücklauf“ sind SHK-Allgemeingut. Hart zu kopieren sind nur die Umsetzungen mit eigenen Daten, also Arbeitszeit-Streifen, Pendelplan mit zehn echten Orten und die Verbindung von Freitag 13:30 mit dem Plan. Repariert wird die Idee, indem sie an etwas nur hier Vorhandenes gebunden wird (Freitag 13:30 als Nullpunkt, Logo-Giebel mit den vier Piktogrammen, 100 Jahre 1926–2026), und die generische Rohrmetapher auf die zweite Ebene rückt.",
+  "uebertragbarkeit_arbeitsseiten": "Mittel bis gut, mit klaren Lücken. Was trägt: Die Struktur ist regelbasiert und nicht an Inszenierung gebunden. Rot = einzige Hauptaktion je Ansicht, Blau = Auswahl und Information, Haarlinien statt Karten, Mono-Maße rechtsbündig, Tabellen mit mobiler Stapelform, 18 px/1,6 Fließtext mit 40 rem Zeilenbreite und hyphens:auto. Die Systemblätter der Kachel sind selbst der Beleg: ruhig, dicht, ohne Signaturmoment, axe 0 Verstöße, alle Touch-Ziele ≥ 44 px, sichtbarer 3-px-Fokus, kein Scroll-Auftritt. Fortschrittsleitung mit Knoten je Schritt, Plankopf als Schriftfeld und Danke/404 als Kappe sind plausible Übertragungen. Was nicht trägt: (1) Es sind keine Feldzustände gezeichnet. Eingabefeld, Checkbox, Upload, Fehler, Laden, Erfolg und Leerzustand stehen nur als Text (Blatt 6), obwohl sie auf Arbeitsseiten die Mehrheit der Oberfläche ausmachen. (2) Die Fehlerlogik widerspricht der Farbregel („Fehler als Rot-Text“ gegen „Rot nur für die Hauptaktion“); im Bewerbungsflow konkurriert dann der Fehlertext mit dem einzigen roten Knopf. (3) Das Etikettenmuster 12 px, Mono-Versalien, +0,12 em Sperrung ist für kurze Maße gut, für lange Feldbeschriftungen und Einwilligungstexte schlecht (schon „FAHRZEIT BIS WETZLAR“ bricht mobil auf drei Zeilen). (4) Display 68 %/800 mit hyphens:manual ist für Rechtstext-Überschriften riskant: „Datenschutzerklärung“ misst bei --t-8 rund 353 px gegen 343 px Spalte bei 375 px; auf Arbeitsseiten wären --t-6/--t-7 (36 px, passt mit 227 px) zu verwenden. (5) Ohne Leitung und Rohrgrafik bleibt nur „technisches Dokumentationsdesign in Navy“; die Differenzierung entfällt auf genau den Seiten, auf denen Besucher am längsten bleiben. Für Rechtstexte reicht das (Rechtstext braucht keine Differenzierung); für den Bewerbungsflow braucht es mindestens ein gezeichnetes Fortschrittsband und Feldzustände, bevor man die Richtung freigibt."
+ },
+ "pruefen-c": {
+  "harte_befunde": [
+   {
+    "regel": "_richtung.md Z. 11 (E-016, verbindliche Palette: „neue Akzentfarben“ nicht verwenden)",
+    "fundstelle": "index.html:39–42 (--abend #8A5300 / #F0B650), Verwendung :142, :148, :158, :164, :320, :431, Hero-SVG :518/:524, Palette-Doku :763; BEGRUENDUNG.md „Risiken“ und OFFENE FRAGE 1; Bilder m375-light-voll__01 und d1440-light-voll__01 (Wort „Fr“, „Uhr Feierabend“, gepunkteter Abendbogen)",
+    "beschreibung": "Die Kachel führt mit Ocker (Tag) und Bernstein (Abend) eine dritte Akzentfarbe neben Navy und Rot ein und setzt sie an Signaturstellen ein: Freitags-Marke, „Uhr Feierabend“, Abendbogen, Legende, Diskretions-Icon. E-016 (09.10.2026, Rang 5 WÜNSCHE, nach dem Bau von _richtung.md datiert) lässt nur Abstufungen und Kontraste zu. Der Bau kennt die Vorgabe, stellt sie aber als „Entscheidung des Inhabers offen“ dar.",
+    "reparatur": "Ocker/Bernstein streichen. Abendbogen, „Fr“ und „Uhr Feierabend“ in das erlaubte Rücklauf-Blau #1F57C4 setzen (5,84:1 auf #F6F2E9, 5,24:1 auf #ECE6D8); im Dunkelmodus ein aufgehelltes Blau, z. B. #8DB0F5 (8,45:1 auf #0B1230, 7,53:1 auf #131C46). Diskretions-Icon und .g-punkt in Tinte. Die Unterscheidung Mo–Do (gepunktet, Tinte leise) und Fr (durchgezogen, Tinte) bleibt, der Abendbogen kann zusätzlich durch Strichmuster unterschieden werden. Palette-Doku und Kontrasttabelle (:763, :777–778) anpassen, BEGRUENDUNG „OFFENE FRAGE 1“ entfällt."
+   },
+   {
+    "regel": "AUFTRAG.md §7 Satz (Zeilenhöhe Fließtext 1,5–1,7); Selbstaussage der Kachel :741 „Zeilenhöhe 1,6“",
+    "fundstelle": "index.html:47 (`line-height:var(--lh-text)`, Variable nirgends definiert); betroffen u. a. :201 (.stelle p), :318 (.schritte p), :389 (.pal__use), :271 (.hinweis), :236 (.karte__fuss), :349 (.ableitung li) und alle Absätze im System-Teil; Bilder m375-light-voll__03 (Stellenbeschreibungen), __09 (Ableitung)",
+    "beschreibung": "Die Variable --lh-text ist nicht definiert, die Deklaration wird zur Laufzeit ungültig, der Body erbt `line-height: normal`. getComputedStyle (Chromium, 375 und 1440 px): body, .stelle p, .schritte p, .pal__use, .hinweis, .karte__fuss und .ableitung li stehen auf „normal“, das sind rund 1,26 bis 1,3 statt 1,5 bis 1,7. Nur .lead, .klein, .mikro und die Stufenprobe t-body setzen die Zeilenhöhe selbst. Die Typostufen-Tabelle behauptet 1,6 und stimmt damit nicht mit dem Bau überein. Das trifft genau den Fließtext, den Arbeitsseiten und Rechtstexte brauchen.",
+    "reparatur": "In :root --lh-text:1.6 und --lh-lead:1.5 (und die Display-Werte als Tokens) definieren; body und alle p, li, dd darauf stützen. Danach per getComputedStyle prüfen, dass kein Fließtext-Element „normal“ liefert, und die Stufentabelle :740–741 mit den Messwerten abgleichen."
+   },
+   {
+    "regel": "AUFTRAG.md §7 Slop S-05 hart (Werte außerhalb der Tokens, gemessen per getComputedStyle); _richtung.md/AUFTRAG Token-Obergrenzen",
+    "fundstelle": "index.html:34–36 (nur --fs-1 bis --fs-7 definiert) gegen Messung; frei gesetzte Größen u. a. :92 (.btn 1.0625rem), :123 (.zeittafel b 1.5rem), :140–142 (.mitte__a/z/b), :155/:243–249 (SVG-Text 9/11/12/12,5 px), :321 (.tel-gross), :452 (.pr-zahl 52px); Radien :… (.tabelle code 4px, raster-demo/skala-abst 2px, .o-nr 50%); Grau-Insets rgba(127,127,127,.35/.45) in .pal__chip i und .kontrast; Doku :734 „Stufen (8 von höchstens 10)“",
+    "beschreibung": "Gemessen sind 22 (375 px) bzw. 23 (1440 px) verschiedene berechnete Schriftgrößen bei höchstens 10 erlaubten Stufen und nur 7 definierten Tokens; frei u. a. 9, 11, 11,4, 12, 12,5, 13,1, 14,1, 17, 24, 36,6, 40, 47, 52, 62,6, 77 px (mobil) und 6,6, 7, 15,8, 27,6, 36,8, 64, 68, 80, 92, 116, 160 px (Desktop). Radien: neben --r1/--r2/--r3 (6/999/14 px) kommen 2 px, 4 px und 50 % vor. Farben: zwei graue RGBA-Insets und ein literales #F6F2E9 (.plakette) außerhalb der Palette; viele freie Abstände (.4rem, .35em, .6rem, .1em/.5em). Die Aussage „8 von 10 Schriftgrößen“ ist falsch.",
+    "reparatur": "Schriftgrößen auf eine echte Skala (≤ 10 Tokens) abbilden, die großen Ziffern als zwei bis drei benannte Display-Tokens führen; SVG-Text über CSS-Variablen/em statt fester px. Radien auf r1–r3, Insets auf --haar/--skala, #F6F2E9 auf var(--papier-fest). Danach per getComputedStyle-Stichprobe (Zählung der Distinct-Werte) und Lint prüfen, Doku :734 mit der gemessenen Zahl korrigieren."
+   },
+   {
+    "regel": "_richtung.md Z. 18 „eine Strichstärke“ (System-Teil) und AUFTRAG.md §7 S-04 (uneinheitliche Strichstärken)",
+    "fundstelle": "index.html:146 (.punkte 2px), :148 (.bd-abend 2.4px), :149 (.bd-band stroke 14), :150/:152 (.bd-fr, .bd-zeiger line 2.6), :281 (.m-bogen 3.6), .k-ring.aktiv/.k-hand 2px; Doku :845 „eine einzige, 1,5 Einheiten … große Zeichnungen halten 2 px“; Bilder d1440-light-voll__01 (Zifferblatt), __03 (Minutenuhr)",
+    "beschreibung": "Die Piktogramme sind einheitlich (1,5 Einheiten), die großen Zeichnungen nicht. Effektive Strichstärken gemessen bei 1440 px: Zifferblatt 1,5 / 2 / 2,4 / 4,64 px plus ein 25 px starkes Band, Minutenuhr 1,5 / 2 / 4,08 px, Karte 1,5 / 2 px. Das Formsystem verspricht genau eine Strichstärke und behauptet 2 px für große Zeichnungen; beides stimmt nicht.",
+    "reparatur": "Entweder alle Linien auf eine Stärke (z. B. 2 px mit vector-effect non-scaling-stroke) zurückführen und Betonung über Füllung, Farbe und Endpunkt leisten (Band als gefüllter Ringsektor, Freitagsbogen als Bogen mit Kopfpunkt), oder die Regel ausdrücklich und tokenisiert öffnen und die Entscheidung dem Orchestrator vorlegen. In beiden Fällen :845 und BEGRUENDUNG „Formsystem“ an den Bau anpassen."
+   },
+   {
+    "regel": "_richtung.md Z. 24 „jede Animation mit data-motion-Kennung“; AUFTRAG.md §7 Register (animiertes Element trägt die Kennung)",
+    "fundstelle": "index.html:168 (.bd-fr, .bd-band: der Signaturstrich selbst), :171 (.bd-abend-gruppe, .rast-text), :239–242 (.k-flaeche, .k-ring, .k-ringlabel; `radius-wahl` hängt nur an der Orte-Gruppe), :266 (.seg span), :419 (.btn-klein), :84 (.nav a::after), Zustände-Buttons :924–929; Register :903–909",
+    "beschreibung": "Ein Lauf durch alle Elemente mit Übergang (getComputedStyle) findet Animationen ohne data-motion bei sich oder einem Vorfahren: .bd-fr und .bd-band (die gezeichnete Signaturlinie), .bd-abend-gruppe, .rast-text, .k-flaeche, .k-ring, .k-ringlabel, .seg span, .btn-klein, die Buttons im Zustandsteil und die Unterstreichung der Navigation (d2 wird im Tokentext „Unterstreichung“ genannt, hat aber keine Registerzeile). Das Register ist damit unvollständig.",
+    "reparatur": "data-motion an jedes animierte Element setzen (bd-fr, bd-band: bogen-lauf; bd-abend-gruppe, rast-text: bogen-rast; Flächen, Ringe, Ringlabel: radius-wahl; Navigation und .btn-klein: neue Kennung „unterstreichung“ bzw. taste) und die fehlenden Zeilen ins Register aufnehmen."
+   },
+   {
+    "regel": "_richtung.md Z. 24 „Bewegung: nur transform/opacity (Linienzeichnen über stroke-dashoffset erlaubt)“",
+    "fundstelle": "index.html:188–190 (.jahre__skala, Übergang auf clip-path), BEGRUENDUNG.md „Bewegung“ („und ein clip-path für die Jahresleiste“)",
+    "beschreibung": "Die Jahresleiste wird per clip-path enthüllt. _richtung.md erlaubt nur transform, opacity und stroke-dashoffset; AUFTRAG.md §7 erlaubt clip-path nur „sparsam und gemessen“, eine Messung liegt nicht vor.",
+    "reparatur": "Enthüllung über transform/opacity lösen (Skala als Ganzes mit opacity und kurzem translateX, d3/k1) oder die Teilstriche als Strichmuster einer Linie per stroke-dashoffset zeichnen. Alternativ clip-path als Ausnahme mit Leistungsmessung im KERN-Register eintragen, das entscheidet der Orchestrator."
+   },
+   {
+    "regel": "_richtung.md Z. 26 „Touch-Ziele ≥ 44 px“",
+    "fundstelle": "index.html:321 (.tel-gross) und :663 (Telefonnummer im Ablauf-Band); gemessen 338 × 37 px bei 375 px Breite; Bild m375-light-voll__07",
+    "beschreibung": "Die Telefonnummer ist bei einer Zielgruppe, die überwiegend telefoniert, der wichtigste Direktkanal und auf dem Handy nur 37 px hoch (line-height 1, Schriftgröße 36 px). Alle übrigen Bedienelemente (Hauptknopf 56 px, Segmentschalter und Ortstasten ≥ 44 px, Navigation 44 px) erfüllen die Vorgabe.",
+    "reparatur": ".tel-gross mit min-height:44px und etwas Innenabstand oder line-height 1.2 versehen; per getBoundingClientRect bei 375 px nachmessen."
+   }
+  ],
+  "weiche_befunde": [
+   {
+    "regel": "Austauschprobe / Leitidee (AUFTRAG.md §7: „Leitidee aus Marke, Angebot und Zielgruppe“)",
+    "fundstelle": "index.html:685–698, BEGRUENDUNG.md „Leitidee“ und „Austauschprobe“",
+    "beschreibung": "Der Leitsatz „Dein Feierabend ist das Maß …“ nennt weder SHK noch Wärme, Wasser, Haus oder Lahn-Dill; spezifisch sind nur die eingesetzten Zahlen. Die Austauschprobe der Kachel tauscht Daten aus („ersetzt man 13:30 durch 17:00“), nicht die Idee. Ein Dachdecker oder Elektriker mit fester Freitagszeit könnte Tagesbogen, Fahrzeit-Zifferblatt und Jahresleiste mit eigenen Werten unverändert übernehmen. Dem Logo (Giebel, Flamme, Tropfen, Sonne, Luft; Vor- und Rücklauf in Rot und Blau) entnimmt die Richtung nichts.",
+    "reparatur": "Die Zeitfigur an etwas binden, das nur dieser Betrieb besitzt: etwa das Giebelhaus des Logos als Rahmen des Tagesbogens, Vorlauf (Rot) und Rücklauf (Blau) als Hin- und Rückweg im Minutenbogen, oder den Heizkreis als 24-Stunden-Kreislauf. Den Leitsatz um den Betriebsbezug ergänzen und die Austauschprobe mit einem erfundenen Wettbewerber-Einstieg statt mit Zahlentausch führen."
+   },
+   {
+    "regel": "_richtung.md Z. 27 „Mobil ist eine eigene Komposition“; Selbstaussage der Kachel",
+    "fundstelle": "index.html:820 („Mobil … Überschrift, Zifferblatt, dann erst Einleitung und Hauptaktion“) gegen DOM-Reihenfolge :496–546; Bilder m375-light-voll__01/__02",
+    "beschreibung": "Mobil steht tatsächlich Überschrift, Einleitung, Knopf, Mikrotext, dann das Zifferblatt, danach die Zeittafel; die Dokumentation behauptet das Gegenteil. Der Hero ist damit ein gestapelter Desktop. Das Zifferblatt beginnt bei 375 × 812 px erst bei y ≈ 640, der Bogen liegt bei y ≈ 686–760, die Ziffer 13:30 sitzt am Falz; bei 375 × 667 px liegt es ganz unter dem Falz. bogen-lauf startet beim Seitenaufruf, nicht bei Sichtbarkeit, und läuft mobil teils ungesehen.",
+    "reparatur": "Mobil das Zifferblatt direkt unter die H1 setzen (kleinere Fassung, Lead und Knopf darunter) oder die Animation per IntersectionObserver starten (2-s-Sicherheitsnetz bleibt). Aussage :820 an den Bau anpassen."
+   },
+   {
+    "regel": "E-016 Palette und Dunkelthema (_richtung.md Z. 11); S-03-Nähe (3:1 für Bedienelemente)",
+    "fundstelle": "index.html:39–42 (Papier #F6F2E9, #ECE6D8; Tinte #0C1A72 auch für Fließtext; --signal-druck #B50000 im Dunkel; Inverse-Werte #B4BAD8, #8A94C8, #2A3470), Palette-Doku :752–765, Kontrasttabelle :770–786",
+    "beschreibung": "Nachgerechnet (WCAG-Formel): alle 19 in der Kachel angegebenen Paare stimmen (13,36 / 15,58 / 12,00 / 13,89 / 7,02 / 8,59 / 6,31 / 7,66 / 5,66 / 10,07 / 5,09 / 8,98 / 5,44 / 4,87 / 3,38 / 4,06 / 5,46 / 3,64 / 4,87); eine eigene Messung aller gerenderten Textknoten (4 Ansichten) findet keinen Text unter 4,5:1 (axe meldet 0 Verstöße, aber 98 bzw. 27 „incomplete“ Kontrastprüfungen). Unterschreitungen außerhalb der Tabelle: Hover/Druck-Rot im Dunkel #B50000 gegen Nacht 2,59:1 (< 3:1) und außerhalb des erlaubten Bereichs #A80000–#B00000; Signal gegen Papier tief im Dunkel nur 3,01:1; im Dunkel bleibt Rot unverändert (3,38:1) statt „aufgehellt ≥ 4,5:1“. Das Papier entspricht weder A (#F3F5F9) noch B (#FBF7F0). Die Palette nennt „Acht Rollen“, der Bau nutzt mindestens zwölf Farbwerte; die Inverse-Werte und Druckrot fehlen in Doku und Tabelle.",
+    "reparatur": "Papier auf #FBF7F0 (Papier tief #F1E9DB) oder #F3F5F9 stellen, Kontraste neu rechnen. Dunkel: Hover/Druck aufhellen statt abdunkeln (z. B. #E01E1E, Weiß 4,8:1, gegen Nacht 3,83:1) oder Rand/Kontur ergänzen. Inverse-Band-Werte, Druck- und Fokusfarben als Rollen in die Palette aufnehmen und in die Kontrasttabelle rechnen (Ergebnisse oben: #B4BAD8 auf Nacht 9,58:1, #8A94C8 auf Nacht 6,25:1)."
+   },
+   {
+    "regel": "Wahrheit (nur Fakten aus facts.ts, content.ts, locations.ts) und Offene-Frage-Disziplin",
+    "fundstelle": "index.html:564–574 (Stellen), :652–660 (Ablauf), :581 (Lead Einsatzgebiet), :599 und :643ff (Kernzone), :625 („Wo wohnst du?“), :932 („Sabri Demir direkt anrufen: 06441 42956“), :550 (Jahresleiste); BEGRUENDUNG.md OFFENE FRAGEN 2, 3, 5",
+    "beschreibung": "Orte, Entfernungen, Fahrzeiten und die Fakten aus facts.ts/HERO sind wörtlich korrekt (zehn Orte, Positionen nach 50,565/8,498). Gehaltsspannen und Stellentexte (1.050–1.400, 3.600–4.600, 3.800–4.900, 4.400–5.600 €) sowie die drei Ablaufschritte stimmen mit lib/jobs/data/* und lib/content/process.ts überein, stehen aber außerhalb der drei genannten Quellen. Nicht als offen markiert: Lead Einsatzgebiet (aus radius35.long + noFarAssembly.long neu zusammengesetzt), „Wo wohnst du?“, „Min. Fahrzeit“, „Firmensitz Wetzlar“ sowie die Anzeige „Kernzone“ ohne belegte Bedeutung (Frage 2 nennt nur den Datenbegriff). Die Fehlermeldung nennt die Hauptnummer „Sabri Demir direkt“ (facts.ts directLine belegt nur direkte Abstimmung). Die Quereinsteiger-Stelle fehlt in der Liste „Offene Stellen“; die Ausbildungsstelle (validThrough 2026-12-31) und „100 Jahre“ (validUntil 2026-12-31) tragen keine sichtbare Ablaufmarke.",
+    "reparatur": "Quellenkanon für Stellen und Ablauf (jobs/data, process.ts) vom Orchestrator ausdrücklich zulassen oder die Zeilen als Platzhalter kennzeichnen. Fehlertext auf „oder uns anrufen“ ändern. „Kernzone“ durch einen belegten Begriff ersetzen oder bis zur Klärung ausblenden. Neue Microcopy vollständig in BEGRUENDUNG/TEXTVORSCHLAEGE listen. Fünfte Stelle ohne Spanne aufnehmen. Ablaufdaten als Kommentar am Element vermerken."
+   },
+   {
+    "regel": "Selbstaussagen der Kachel müssen dem Bau entsprechen; _richtung.md Z. 22 (Schriften nur aus dem Pool, ≤ 2 Familien plus optional Mono)",
+    "fundstelle": "index.html:715 („keine Monospace“) gegen :358 (`.tabelle code,.kenn` mit ui-monospace, 24 Textknoten); :908 (Register `taste`: „keine Skalierung“ bei reduzierter Bewegung) gegen :96 (.btn:active scale(.97)) und :470; :846 („Piktogramm unter 1,5 KB“) gegen BEGRUENDUNG „unter 0,5 KB“",
+    "beschreibung": "Dokumentation und Bau widersprechen sich: Systemschrift als Festbreite trotz „keine Monospace“ (zudem nicht aus dem Schriftpool, dort läge jetbrains-mono); bei prefers-reduced-motion bleibt die Druck-Skalierung 0,97 bestehen, nur die Dauer wird auf 0,01 ms gekürzt; unterschiedliche Größenangaben für die Piktogramme. Die Zeichen „→“ (:905) und „≥ ≤“ (Kontrasttabelle) liegen in keiner der beiden Teilmengen und fallen auf Systemschrift zurück.",
+    "reparatur": "Entweder Pool-Mono (Teilmenge latin, im Budget) einbinden oder die Aussage streichen. Unter prefers-reduced-motion .btn:active ohne transform setzen. Zahlen vereinheitlichen. „→“, „≥“, „≤“ durch Wörter oder Pool-gedeckte Zeichen ersetzen."
+   },
+   {
+    "regel": "Schriftbudget und Lizenzen (_richtung.md Z. 22)",
+    "fundstelle": "fonts/ (4 Dateien), LIZENZEN.md, index.html:12–19",
+    "beschreibung": "Geprüft und in Ordnung: Summe 222.536 Byte (222,5 KB), also ≤ 250 KB; alle vier woff2 byte-identisch mit dem Schriftpool; Newsreader (OFL) und Hanken Grotesk (OFL), keine Inter-/Space-Grotesk-/Playfair-Schrift; Lizenztexte beider Schriften vollständig; nur lokale Anfragen (index, 2 Fonts, logo.png, auch fotos/bericht.json 12/12 Aufnahmen ohne Fremdanfragen und Fehler); Logo byte-identisch mit public/images/… (sha256 gleich), natürliche Größe 662×121, kein filter/blend/opacity in der Vorfahrenkette, im Dunkelmodus auf heller Plakette (#F6F2E9). Schwäche: Newsreader latin-ext liegt ohne optische Größe vor (Abweichung von der Vorgabe, dokumentiert), Zeichen daraus würden anders gesetzt als das Latein-Gewicht.",
+    "reparatur": "Keine Pflichtreparatur. Offene Frage 6 aus BEGRUENDUNG (Budget 275 KB oder Abweichung hinnehmen) vom Orchestrator entscheiden lassen; bis dahin Abweichung im KERN K-005 vermerken."
+   },
+   {
+    "regel": "AUFTRAG.md §7 S-06 (Zustände interaktiver Elemente) und Bedienbarkeit",
+    "fundstelle": "index.html:247 (.k-ort cursor:pointer, Klick-Handler :1005 ff), :586–596 (Karte); Bilder m375-light-voll__04, d1440-light-voll__03",
+    "beschreibung": "Die Ortspunkte der Karte sind klickbar, haben aber weder Hover- noch Fokuszustand und sind nicht per Tastatur erreichbar (die Tabelle ist der barrierefreie Weg, die Karte role=img). Bei 35 km liegen acht der zehn Orte innerhalb von rund 7 km, also im Kern von etwa 25 der 126 Kartenstufen; die Punkte überdecken sich, die Trefferflächen (r = 13) bei 375 px ≈ 30 px ebenfalls. Beschriftet sind nur Braunfels, Herborn, Gießen. Kompass-N rund 10 px, Zifferblatt-Zeiten mobil rund 12 px (unter der kleinsten Stufe 13 px).",
+    "reparatur": "Hover-Zustand für Punkte (nur bei hover:hover/pointer:fine), Hinweis, dass die Tabelle die Auswahl trägt; Punkte im Kern per kleiner Versatz-Auffächerung oder Beschriftung der Auswahl lesbar halten; SVG-Text mobil auf mindestens 13 px skalieren."
+   },
+   {
+    "regel": "Zeilenlänge 60–75 Zeichen (AUFTRAG.md §7 Satz)",
+    "fundstelle": "index.html:345 (.sys p max-width:44rem), :331 (.system__kopf p); Bilder d1440-light-voll__05, __11",
+    "beschreibung": "Absätze im System-Teil laufen auf rund 85 bis 90 Zeichen je Zeile. Für Rechtstexte wäre das zu lang.",
+    "reparatur": "max-width auf 66ch bzw. 38–40em setzen; bei langen Rechtstexten gilt dieselbe Grenze."
+   },
+   {
+    "regel": "_richtung.md Ablauf Schritt 3 (Bildbelege der Kachel); AUFTRAG.md Bewegung nachweisen",
+    "fundstelle": "fotos/ (12 Ausschnitte je Aufnahme), fotos/bericht.json; Seitenhöhe 20.598 px mobil, 12.938 px Desktop",
+    "beschreibung": "Die Ausschnitte enden bei Mobil in der Schriften-Sektion (rund 9.700 von 20.600 px), bei Desktop in der Formen-Sektion. Palette (mobil), Raster, Formen (mobil), Bewegungsregister, Bewegungsprobe und Zustände sind in keiner Aufnahme zu sehen. m375-light-reduziert ist mit m375-light-voll byte-identisch (cmp 12 von 12): Es gibt kein Bild einer Startphase oder Zwischenphase der Signaturbewegung.",
+    "reparatur": "Ausschnitte nach Selektor (#palette, #formen, #bewegung, #zustaende) ergänzen; für bogen-lauf Bilder bei 0, 500 und 1.600 ms und die reduzierte Fassung aufnehmen."
+   },
+   {
+    "regel": "Zustände (AUFTRAG.md §7) und Übertragbarkeit auf Arbeitsseiten",
+    "fundstelle": "index.html:460–461 (.meldung--fehler / .meldung--erfolg), :924–933 (Zustände nur für die Hauptaktion), :39 (--haar #D4CDBB)",
+    "beschreibung": "Fehler und Erfolg sind gleich gesetzt (3-px-Balken in Tinte, gleicher Text, nur das Icon-Glyph unterscheidet sich); Rot darf nicht Fehlerfarbe sein, Grün für Erfolg ist nicht definiert. Für Eingabefelder, Auswahlkarten, Checkbox, Feldfehler und Lade-Zustand des Segmentschalters gibt es keine Zustände. Die Haarlinie #D4CDBB hat nur 1,42:1 und taugt nicht als Feldrand (3:1 nötig).",
+    "reparatur": "Fehler- und Erfolgsdarstellung unterscheiden (Erfolg mit dem nach E-016 erlaubten Grün, Fehler über Icon, fette Tinte, Position und Beschriftungstext mit Ursache und nächstem Schritt); Eingabefeld mit Rand in --skala (≥ 3:1) samt allen Zuständen in die Kachel aufnehmen."
+   }
+  ],
+  "austauschprobe_bestanden": false,
+  "austauschprobe_begruendung": "Nicht bestanden, knapp. Der Leitsatz („Dein Feierabend ist das Maß: Wir messen alles in Zeit – Tagesbogen bis 13:30 Uhr, Wege in Minuten, die Bewerbung in 60 Sekunden – und zeichnen es als Zifferblatt“) enthält nichts, was an SHK, Wärme, Wasser, das Logo oder Lahn-Dill gebunden ist; „Feierabend, Pünktlichkeit, Zeit“ ist zudem das Standardversprechen jeder Handwerks-Stellenanzeige. Das Zifferblatt ist das naheliegendste Zeitsymbol. Ein anderer SHK-Betrieb oder ein Dachdecker, Elektriker oder Tischler mit fester Freitagszeit und Einsatzradius kann Tagesbogen, Minutenbogen und Jahresleiste mit eigenen Zahlen ohne gestalterische Änderung übernehmen; nur der Datensatz wechselt. Die in der Kachel selbst geführte Austauschprobe (index.html:693–698, BEGRUENDUNG.md) tauscht ausschließlich Zahlen („13:30 durch 17:00“) und beweist deshalb nur, dass die Zahlen belegt sind, nicht dass die Idee der Marke gehört. Spezifisch bleiben die echten Daten (Fakten, zehn Orte aus locations.ts, Wetzlar-Geometrie) und die Verbindung aus Tagesbogen, Fahrzeit und 100-Jahre-Skala. Das trägt eine Markenbehauptung, aber keine Leitidee im Sinn von AUFTRAG §7. Bestehen würde die Richtung, wenn die Zeitfigur an Logo-Bestandteile gebunden würde (Giebelhaus als Rahmen, Vorlauf Rot und Rücklauf Blau als Hin- und Rückweg, Heizkreis als 24-Stunden-Kreislauf) und der Leitsatz den Betriebsbezug nennt.",
+  "uebertragbarkeit_arbeitsseiten": "Mittel bis gut als Fundament, schwach als Wiedererkennung. Trägt gut: ruhiges Papier mit Navy-Tinte (13:1), tabellarische Ziffern für Telefon, Zeiten und Gehalt, Haarlinien-Tabellen (Orte, Kontrast, Stellenliste mit gemeinsamer Skala) sind direkt auf Stellenliste, Bewerbungsflow und Rechtstexte übertragbar; der Segmentschalter mit 44-px-Zielen und sichtbarem Fokus (3 px) ersetzt Auswahlkarten; die Minutenuhr ist ein plausibler Fortschrittsring zu „Bewerbung in 60 Sekunden“; die Bewegung ist so sparsam, dass Arbeitsseiten ohne Signaturmoment auskommen (nur ein Scroll-Auftritt, kein Loop). Trägt schlecht: Die Identität hängt am Zifferblatt, an der Jahresleiste und am Abend-Ton (der selbst gegen E-016 verstößt). Ohne diese Momente bleiben warmes Papier, Navy, Newsreader über Hanken Grotesk, Haarlinien, also ein austauschbarer Editorial-Look. Konkrete Lücken: (1) Der Fließtext steht wegen der undefinierten --lh-text auf line-height normal (≈ 1,26), das würde Rechtstexte treffen; die Doku-Absätze laufen mit 85–90 Zeichen je Zeile. (2) Kein Eingabefeld, keine Checkbox, kein Feldfehler, kein Lade- oder Leerzustand in der Kachel; Fehler und Erfolg sind nur durch das Icon unterscheidbar, Rot ist als Fehlerfarbe ausgeschlossen, Grün für Erfolg nicht definiert, die Haarlinie (1,42:1) taugt nicht als Feldrand. (3) Die Zustände sind nur für die Hauptaktion durchdekliniert. (4) Newsreader (132 KB, vorgeladen) wird auf jeder Arbeitsseite geladen und bringt dort kaum etwas. Empfehlung: Vor einer Wahl Feldzustände, Fehler/Erfolg und die Zeilenhöhe in der Kachel ergänzen und eine Rechtstext-Probe (60–70 Zeichen je Zeile, 1,6 Zeilenhöhe) mitliefern, damit die Arbeitsseitentauglichkeit belegt statt behauptet ist."
+ },
+ "jury-c-r1-1": {
+  "design": {
+   "punkte": 8,
+   "belege": [
+    "d1440-light-voll__01.webp, rechte Bildhälfte und linke Überschrift: Das 24-Stunden-Zifferblatt ist eine eigens gezeichnete SVG-Figur (feine Teilstriche, durchgezogener Bogen 07:00 bis 13:30, gepunktete Ringe für Mo–Do und Feierabend in Ocker, tabellarische Riesenziffer „13:30“ in der Serife). Links steht „SHK-Jobs in Wetzlar.“ in enger optischer Größe, die zweite Zeile gedämpft. Das ist Typografie mit klarer Stufung auf warmem Papier, Navy-Tinte und genau einem roten Knopf. Es ist unverwechselbar und nicht Vorlage.",
+    "d1440-light-voll__12.webp, obere Bildhälfte (Uhr auf 24er-Raster mit ockerfarbenem Mittelpunkt) und mittlere Reihen (acht Piktogramme): Alle Zeichen haben dieselbe Strichstärke und runde Enden und sind aus Kreisen und Tangenten gebaut. Die Uhr kehrt als Piktogramm „Uhr / Feierabend“ wieder. Das ist Detailarbeit, die das Hinsehen belohnt. Abzug: Die Seite zeigt nirgends ein Foto von Betrieb oder Menschen, und die Zifferblatt-Beschriftung sitzt eng (siehe Schwächen)."
+   ]
+  },
+  "bedienbarkeit": {
+   "punkte": 7.5,
+   "belege": [
+    "m375-light-voll__01.webp, Bildmitte und Kopfzeile: Die Hierarchie ist eindeutig (H1, gedämpfte Serifenzeile, Einleitung). Danach folgt als einzige Hauptaktion die rote Pille „Jetzt bewerben →“ mit der Mikrozeile „Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.“ Die Telefonnummer steht als Pille oben rechts. Alles liegt im ersten Bildschirm, die Handlung ist ohne Suchen klar, das Zifferblatt lugt als Anreiz am unteren Rand herein.",
+    "d1440-light-voll__04.webp, linke untere und rechte Bildhälfte: Der Segmentschalter „RADIUS 15 / 25 / 35 km“ und die Ortsliste „Wo wohnst du?“ mit Entfernung und Fahrzeit in tabellarischen Spalten (gewählte Zeile hell hinterlegt) bilden einen echten Arbeitswegtest. Die Tabelle ist gut lesbar. Abzug: Das Desktop-Menü enthält den internen Punkt „Gestaltungssystem“ (d1440-light-voll__01.webp, oben rechts), und mobil gibt es nur Logo und Telefon, aber keinen Weg zu Stellen oder Einsatzgebiet."
+   ]
+  },
+  "kreativitaet": {
+   "punkte": 8.3,
+   "belege": [
+    "d1440-light-voll__03.webp, rechter oberer Bereich (Mini-Uhr mit Minutenbogen neben „15 km · 16 Min. Fahrzeit“) und linke Bildhälfte (Radar aus Ringen 15/25/35 km mit Kompassstrichen): Die Leitidee „Zeit ist das Maß“ taucht als Hero-Zifferblatt, als Radius-Karte und als Fahrzeit-Uhr wieder auf. Das ist eine durchgehaltene Idee, die an belegte Zusagen (Freitag 13:30, 35 km) gebunden ist und nicht aufgesetzt wirkt.",
+    "t768-light-voll__02.webp, Bildmitte (Jahresleiste mit 101 Teilstrichen von 1926 bis 2026 als Trenner) und unterer Bereich (Lohnspannen als Balken auf einer Skala): Der Trenner ist zugleich Beleg und Zeitleiste („100 Jahre Meisterbetrieb“). Auch die Gehaltsbalken folgen dem Skalen-Vokabular. Das sind Signaturmomente mit Sinn. Abzug: Das Wagnis bleibt leise (kein Bild, keine Menschen), daher nicht die Stufe 9."
+   ]
+  },
+  "inhalt": {
+   "punkte": 7,
+   "belege": [
+    "m375-light-voll__07.webp, untere Bildmitte (Hinweis mit Uhr-Symbol) und drei Schritte darüber: „Dein Wechsel bleibt vertraulich: Wir kontaktieren unter keinen Umständen deinen derzeitigen Arbeitgeber.“ Dazu das Kennenlernen „nach deinem Feierabend oder am Wochenende“ und „Kein Lebenslauf nötig“. Das spricht die Lage wechselwilliger Fachkräfte direkt an, im Ton des Du, nüchtern und glaubwürdig.",
+    "d1920-light-voll__02.webp, gesamtes Bild: Vier Stellen mit offen genannten Monatsspannen (1.050–1.400 € bis 4.400–5.600 €), feste Arbeitszeiten Mo–Do 07:00–16:45 und Fr bis 13:30 sowie ein benannter Ansprechpartner. Das sind konkrete, prüfbare Angaben statt Floskeln. Abzug: Es gibt keinerlei echtes Bildmaterial (kein Team, keine Werkstatt, kein Servicefahrzeug), nur Symbolik."
+   ]
+  },
+  "gewichtet": 7.8,
+  "schwaechen": [
+   {
+    "was": "Kein echtes Bildmaterial: Die Seite ist komplett symbolisch. Ein Bewerber sieht weder Werkstatt noch Servicefahrzeug noch Team. Der genannte Ansprechpartner Sabri Demir bleibt ein Name ohne Gesicht.",
+    "wo": "d1440-light-voll__01.webp (ganzer Hero), m375-light-voll__06.webp (Bereich „Sabri Demir meldet sich…“), d1920-light-voll__02.webp (Stellenliste)",
+    "reparatur": "Ein bis zwei echte Fotos einbauen, im Duoton aus Papier und Navy getönt, damit sie zum System passen: Porträt von Sabri Demir neben dem Satz „meldet sich schnellstmöglich“ in der Bewerbungssektion, außerdem das Servicefahrzeug oder die Werkstatt in Schritt 2 „Kennenlernen in der Werkstatt“. Der Hero bleibt beim Zifferblatt."
+   },
+   {
+    "was": "Die Einsatzgebiet-Karte ist im Zentrum unlesbar: Die Kernzonen-Punkte überlagern sich ohne Beschriftung. Mobil zeigen die Ortszeilen nur gefüllte oder hohle Punkte, die Legende dazu steht nicht im Blickfeld, und der Zusatz „Kernzone“ fehlt.",
+    "wo": "m375-light-voll__04.webp (unteres Drittel, Radar-Mitte), d1440-light-voll__03.webp (Kartenmitte), m375-light-voll__06.webp (Ortsliste links)",
+    "reparatur": "Die Kernzonen-Orte per Abstand oder Führungslinien entzerren oder zu einem Cluster mit Zahl („6 Orte“) bündeln. Wetzlar als Mitte beschriften. In der mobilen Liste den Text „Kern“ oder „Gebiet“ je Zeile wieder einblenden oder die Legende direkt über die Liste setzen."
+   },
+   {
+    "was": "Orientierung und Kleinschrift im ersten Bildschirm: Mobil gibt es nur Logo und Telefon, aber kein Menü. Das Desktop-Menü führt „Gestaltungssystem“, das für Bewerber ohne Wert ist. Die Zifferblatt-Legende und die Skalenzahlen (0, 6, 12, 18 gemischt mit 07:00 und 16:45) sind winzig und müssen entschlüsselt werden. „FREITAGS AB“ sitzt eng an der „13:30“.",
+    "wo": "m375-light-voll__01.webp (Kopfzeile), d1440-light-voll__01.webp (Menü oben rechts, Legende unter dem Zifferblatt, Beschriftung in der Zifferblattmitte)",
+    "reparatur": "Mobil eine Menüschaltfläche mit „Stellen, Einsatzgebiet, Bewerben“ ergänzen und „Gestaltungssystem“ aus der Bewerber-Navigation nehmen (nur in einer Dokumentationsansicht führen). Das Zifferblatt direkt am Bogen beschriften („Mo–Do bis 16:45“, „Fr bis 13:30“, „Feierabend“) und die Legende auf mindestens 14 px bringen. Die Skalenzahl „0“ durch „24“ oder „Mitternacht“ ersetzen und „FREITAGS AB“ mehr Abstand zur Ziffer geben."
+   }
+  ]
+ },
+ "jury-c-r1-2": {
+  "design": {
+   "punkte": 8,
+   "belege": [
+    "d1440-light-voll__01.webp, rechte Hälfte und linke Spalte: 24-Stunden-Zifferblatt mit feinen Skalenstrichen, Tagesbogen bis 13:30, ockerfarbenem Punktring und großer Newsreader-Ziffer, daneben die H1 in enger, optisch gesetzter Serife auf warmem Papier. Serife für die Zeit, Grotesk für den Rest, Navy-Tinte und ein einziges Rot nur für den Button: unverwechselbar und präzise. Abzug: Auf der ganzen Seite gibt es kein Foto, die Bildebene fehlt.",
+    "d1440-light-voll__09.webp (Tabelle „Acht Rollen, Tag und Abend“) und d1440-light-voll__12.webp (untere Hälfte): Farbrollen mit Hex-Werten, Ocker am Tag und Bernstein am Abend sowie acht Piktogramme mit gleicher Strichstärke und runden Enden. Farb- und SVG-System sind streng und durchgehalten; im Dunkelmodus (m375-dark-voll__02.webp, oberes Drittel) ist der Abend eine eigene Komposition und kein Negativ. Abzug: m375-light-voll__11.webp, Mitte: Die Dateitabelle läuft über den Rand, die Spalten Teilmenge und KB sind abgeschnitten."
+   ]
+  },
+  "bedienbarkeit": {
+   "punkte": 7.5,
+   "belege": [
+    "d1440-light-voll__01.webp, linke Spalte Mitte (mobil gleich in m375-light-voll__01.webp, untere Hälfte): Klare Reihenfolge von H1 über Einleitung zum roten Button „Jetzt bewerben“, daneben der Textlink „Arbeitsweg prüfen“ und darunter „Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.“ Die Hauptaktion ist eindeutig und liegt über dem Falz, die Einstiegshürde ist gesenkt.",
+    "d1440-light-voll__04.webp, rechte Spalte (mobil m375-dark-voll__05.webp, untere Hälfte): Radius-Umschalter 15/25/35 km und Ortsliste „Wo wohnst du?“ mit Entfernung und Fahrzeit je Ort, die ausgewählte Zeile ist hervorgehoben. Das ist ein verständliches Werkzeug mit direktem Nutzen. Abzug: Auf dem Telefon rückt der Spaltenkopf „FAHRZEIT“ an den rechten Rand, und die Gehaltsbalken in m375-light-voll__04.webp, oben, haben keine Achsenbeschriftung."
+   ]
+  },
+  "kreativitaet": {
+   "punkte": 8.5,
+   "belege": [
+    "d1440-light-voll__01.webp, rechte Hälfte: Die Leitidee „Zeit ist das Maß“ macht das Versprechen „Freitags ab 13:30 Uhr Feierabend“ zur Grundfigur. Der Bogen für den Arbeitstag, der gepunktete Mo–Do-Ring und die Marke „Fr“ erzählen den Vorteil als Zeichnung, nicht als Floskel. Dieselbe Figur trägt die Jahresleiste mit 101 Teilstrichen in m375-light-voll__02.webp, Mitte.",
+    "d1440-light-voll__03.webp, untere Hälfte: Die Einsatzgebiet-Karte als Ringe um Wetzlar mit Kompassstrichen, daneben ein Mini-Zifferblatt „15 km / 16 Min. Fahrzeit“ mit Minutenbogen. Aus der Anfahrt wird ein Zeitmaß, und die Idee trägt bis in die Details. Weitere Signaturmomente sind dokumentiert (d1920-light-voll__11.webp, obere Hälfte rechts: Bogen läuft einmal und rastet ein), aber im Standbild nicht überprüfbar."
+   ]
+  },
+  "inhalt": {
+   "punkte": 7,
+   "belege": [
+    "d1920-light-voll__02.webp, mittlere Spalte (auch d1440-dark-voll__02.webp): Konkrete Gehaltsspannen je Rolle (1.050–1.400 € bis 4.400–5.600 €) und feste Arbeitszeiten Mo–Do 07:00–16:45, Fr bis 13:30 Uhr. Das ist prüfbar und ehrlich, mit direkter Du-Ansprache ohne Floskeln.",
+    "m375-light-voll__07.webp, Mitte: Ablauf in drei Schritten mit Hilti-Werkzeugset und Servicefahrzeug am ersten Tag, die Zusage „Dein Wechsel bleibt vertraulich“ und eine Ansprechperson (Sabri Demir). Der Ton ist respektvoll und glaubwürdig. Abzug: Es gibt weder ein Gesicht, noch Werkstatt, Fahrzeug oder Team im Bild, und die H1 „SHK-Jobs in Wetzlar.“ ist austauschbar."
+   ]
+  },
+  "gewichtet": 7.9,
+  "schwaechen": [
+   {
+    "was": "Keine Fotografie und keine Menschen: Die Seite bleibt reine Grafik und wirkt für einen Handwerksbetrieb distanziert. Es fehlt der Echtheitsbeweis (Team, Werkstatt, Servicefahrzeug, ein Gesicht zur Ansprechperson Sabri Demir).",
+    "wo": "gesamte Seite, besonders d1440-light-voll__01.webp (Hero), m375-light-voll__07.webp (Ablauf Schritt 2 „Kennenlernen in der Werkstatt“) und d1440-light-voll__06.webp / d1440-light-voll__04.webp (leere linke Fläche im Bewerbungsband)",
+    "reparatur": "Zwei bis drei echte Fotos in der Papier-Tinte-Anmutung einsetzen (Duoton oder Navy-Tönung, Zifferblatt-Ausschnitt als Rahmen): ein Porträt von Sabri Demir neben dem Bewerbungs-Button, ein Foto der Werkstatt oder des Servicefahrzeugs bei Schritt 2 und ein Teambild im leeren Feld links im Bewerbungsband. Mehr Bilder braucht es nicht."
+   },
+   {
+    "was": "Informationstragende Kleinschrift und unvollständige Skalen: Legenden und Achsenbeschriftungen sind auf dem Desktop etwa 10–12 px klein, auf dem Telefon fehlen den Gehaltsbalken die Achsenwerte, und Tabellen laufen über den Rand.",
+    "wo": "d1440-light-voll__01.webp (Legende unter dem Zifferblatt), d1440-dark-voll__02.webp und d1920-light-voll__02.webp (Skala 0 € bis 6.000 €), m375-light-voll__04.webp (Gehaltsbalken ohne Werte), m375-dark-voll__05.webp (Spaltenkopf „FAHRZEIT“ am Rand), m375-light-voll__11.webp (Tabelle abgeschnitten)",
+    "reparatur": "Alle Texte, die etwas aussagen, auf mindestens 14 px (Legenden und Skalenwerte), die Gehaltsskala mobil mit zwei bis drei Eckwerten beschriften, und Tabellen im Gutter halten (Zeilen mit 16 px Innenabstand, Tabellen mit eigener horizontaler Bildlauffläche oder auf zwei Zeilen umbrochen)."
+   },
+   {
+    "was": "Die einzige Konversionsaktion ist nicht dauerhaft erreichbar: Im Kopf steht nur die Telefonnummer (mobil) oder ein Menü mit dem Punkt „Gestaltungssystem“ statt „Bewerben“ (Desktop), und auf dem Telefon rutscht das Zifferblatt mit dem Kernversprechen unter den ersten Bildschirm.",
+    "wo": "m375-light-voll__01.webp (Kopf und Falz), d1440-light-voll__01.webp (Navigation oben rechts), m375-light-voll__02.webp bis __09 (kein fester Bewerben-Button auf der langen Seite)",
+    "reparatur": "Im Kopf den roten Button „Jetzt bewerben“ als einzige rote Fläche führen (Telefon als Textlink daneben) und auf dem Telefon beim Scrollen eine schmale feste Leiste mit demselben Button einblenden. „Gestaltungssystem“ aus der Navigation entfernen. Auf dem Telefon das Zifferblatt verkleinern und höher setzen, damit „13:30“ im ersten Bildschirm steht, oder die Zeile „Freitags ab 13:30 Uhr Feierabend“ direkt unter die H1 ziehen."
+   }
+  ]
+ },
+ "ueberarbeiten-b": {
+  "fertig": true,
+  "leitidee": "Jeder Arbeitstag schließt sich: Haus – Baustelle im 35-km-Ring – pünktlich zurück.",
+  "austauschprobe": "Bestanden mit klarer Einschränkung. Die Szene ist nicht mehr ein Wärmepumpen-Schema, sondern der Arbeitstag: Das Giebelhaus aus dem Logo, die Uhr im Giebel läuft von 07:00 auf 13:30 und rastet ein, wenn der gestrichelte Rückweg ankommt, der durchgezogene Hinweg misst die 35-km-Maßlinie zur Baustelle (Kran über Haus), 1926 steht als Fundament unter dem Haus. Die Bewegung hängt damit an den belegten Zusagen (friday1330, radius35, founded1926, noFarAssembly). Dieselbe Schlaufe läuft im Pendelrechner mit den zehn echten Orten um Wetzlar, Entfernung und Fahrzeit weiter. Ein Betrieb mit Montage im ganzen Land, Wochenend-Notdienst oder offenem Einsatzgebiet könnte Ring und Uhr nicht zeigen, ohne zu lügen. Ehrlich bleibt: Das bloße Prinzip „hin und zurück“ gehört niemandem und steht deshalb nie ohne die belegten Werte da. Wärmepumpenschema, Lüfter und Erklärtext sind gestrichen. Alternativen zur Display-Schrift wurden getestet (Gabarito, Rethink Sans, Familjen, Schibsted, Onest, Hanken, Big Shoulders); Bricolage bleibt begründet.",
+  "schriften": [
+   "Bricolage Grotesque (Display, variabel wght 200–800, opsz 12–96, OFL); H1 800 mit −0,01 em, keine erzwungene optische Größe",
+   "Atkinson Hyperlegible Next (Text, variabel wght 200–800, OFL); Zahlen im Satz stehen wegen der Null mit Schrägstrich in der Display-Ziffer (Bricolage 500), keine Variante ohne Strich in den Fontsource-Dateien (GSUB: ccmp, frac, locl, pnum, tnum)",
+   "IBM Plex Mono 400 (OFL, nur Kennungen, Hexwerte, Tokens der Dokumentation)",
+   "6 woff2 (latin und latin-ext je Familie) = 188.768 Byte; 7 Schriftstufen 14 bis 104 px, alle gemessenen Schriftgrößen liegen auf der Skala"
+  ],
+  "schriftgroesse_kb": 184.3,
+  "palette": [
+   {
+    "rolle": "Putz (--grund)",
+    "hex": "hell #FBF7F0 / dunkel #0A1033",
+    "kontrast_hell": "Text #111D6D auf Putz 13,84:1",
+    "kontrast_dunkel": "Text #F6F0E4 auf #0A1033 16,30:1"
+   },
+   {
+    "rolle": "Tinte / Hinweg durchgezogen (--tinte, Marken-Navy)",
+    "hex": "hell #111D6D / dunkel #F6F0E4 (Creme)",
+    "kontrast_hell": "gegen Putz 13,84:1, gegen Wärmefläche 11,36:1",
+    "kontrast_dunkel": "gegen Nachtblau 16,30:1, gegen Ember 13,10:1"
+   },
+   {
+    "rolle": "Tinte 2 (Nebentext, nach Kontrast gesetzt)",
+    "hex": "hell #3E4885 / dunkel #B9C0E8",
+    "kontrast_hell": "auf Putz 7,95:1, kleinster Wert (Wärmefläche) 6,53:1",
+    "kontrast_dunkel": "auf Nachtblau 10,36:1, kleinster Wert 8,33:1"
+   },
+   {
+    "rolle": "Wandton (--flaeche)",
+    "hex": "hell #F1E9DB / dunkel #131B4A",
+    "kontrast_hell": "Text 12,26:1",
+    "kontrast_dunkel": "Text 14,41:1"
+   },
+   {
+    "rolle": "Kaltfläche (draußen, Einsatzgebiet)",
+    "hex": "hell #E3E9F6 / dunkel #101A4E",
+    "kontrast_hell": "Text 12,14:1",
+    "kontrast_dunkel": "Text 14,45:1"
+   },
+   {
+    "rolle": "Wärmefläche (drinnen, innerhalb des Radius)",
+    "hex": "hell #FADCC9 / dunkel #3A1F2C",
+    "kontrast_hell": "Text 11,36:1",
+    "kontrast_dunkel": "Text 13,10:1"
+   },
+   {
+    "rolle": "Rand (Bedienelemente, Hilfslinien)",
+    "hex": "hell #6B74A6 / dunkel #7A84C8",
+    "kontrast_hell": "gegen Putz 4,20:1, gegen Kaltfläche 3,69:1 (kleinster Grafikwert hell)",
+    "kontrast_dunkel": "gegen Nachtblau 5,25:1, gegen Kaltfläche 4,65:1 (kleinster Grafikwert dunkel)"
+   },
+   {
+    "rolle": "Blau / Rückweg gestrichelt, Erfolg (--blau)",
+    "hex": "hell #1F57C4 / dunkel #7FAAFF",
+    "kontrast_hell": "gegen Putz 6,10:1, Kaltfläche 5,36:1, Wärmefläche 5,01:1",
+    "kontrast_dunkel": "gegen Nachtblau 8,01:1, Kaltfläche 7,10:1, Ember 6,44:1"
+   },
+   {
+    "rolle": "Rot nur Hauptaktion (Knopf, --rot)",
+    "hex": "hell #D60000 / dunkel #FF5A4D (Koralle)",
+    "kontrast_hell": "weißer Knopftext 5,44:1; Fläche gegen Putz 5,09:1",
+    "kontrast_dunkel": "Knopftext #0A1033 6,01:1; Fläche gegen Nachtblau 6,01:1"
+   },
+   {
+    "rolle": "Rot, Hover",
+    "hex": "hell #B00000 / dunkel #FF8277",
+    "kontrast_hell": "Knopftext 7,37:1",
+    "kontrast_dunkel": "Knopftext 7,67:1"
+   },
+   {
+    "rolle": "Kopfband (nur dunkel, Vorschlag: Marken-Navy als Fläche)",
+    "hex": "hell = Putz #FBF7F0 / dunkel #111D6D",
+    "kontrast_hell": "Text 13,84:1",
+    "kontrast_dunkel": "Creme auf #111D6D 13,02:1; Fokusring 13,02:1"
+   },
+   {
+    "rolle": "Linie (Haarlinien ohne Aussage, bewusst unter 3:1)",
+    "hex": "hell #DDD3C2 / dunkel #26306A",
+    "kontrast_hell": "nicht gefordert (nie einziger Träger)",
+    "kontrast_dunkel": "nicht gefordert (nie einziger Träger)"
+   }
+  ],
+  "bewegung": [
+   {
+    "kennung": "kreislauf-linie",
+    "zweck": "Hinweg (0 ms), Maßlinie 35 km (60 ms) und Rückweg (660 ms) zeichnen sich nacheinander; Gesamtablauf 1.320 ms, einmal beim Laden (Zeichnung zu 30 % im Bild, auf allen Breiten), danach nur über „Kreislauf zeigen“",
+    "dauer_ms": 400,
+    "reduziert": "Endzustand sofort sichtbar"
+   },
+   {
+    "kennung": "kreislauf-zeiger",
+    "zweck": "Uhrzeiger im Giebel läuft von 07:00 auf 13:30 und rastet mit 4° Überschwingen ein, wenn der Rückweg ankommt",
+    "dauer_ms": 1100,
+    "reduziert": "Zeiger steht auf 13:30"
+   },
+   {
+    "kennung": "kreislauf-messwert",
+    "zweck": "„35 km“ (300 ms) und „13:30“ (1.020 ms) erscheinen, wenn Maßlinie und Uhr ihr Ziel erreichen",
+    "dauer_ms": 240,
+    "reduziert": "Endzustand sofort sichtbar"
+   },
+   {
+    "kennung": "kreislauf-waerme",
+    "zweck": "Wärmefläche füllt das Haus, sobald der Rückweg ankommt (ab 900 ms)",
+    "dauer_ms": 400,
+    "reduziert": "Endzustand sofort sichtbar"
+   },
+   {
+    "kennung": "kreislauf-ueberblendung",
+    "zweck": "Reduzierte Form der Probe: Zeichnung und Kennzahlen blenden über den Knopf ein",
+    "dauer_ms": 240,
+    "reduziert": "ist die reduzierte Form"
+   },
+   {
+    "kennung": "radius-zoom",
+    "zweck": "Karte zoomt auf den gewählten Radius, Marken behalten ihre Größe",
+    "dauer_ms": 400,
+    "reduziert": "Sprung ohne Übergang"
+   },
+   {
+    "kennung": "radius-ring",
+    "zweck": "Kreislinie und Wärmefläche des gewählten Radius blenden ein",
+    "dauer_ms": 240,
+    "reduziert": "Sprung ohne Übergang"
+   },
+   {
+    "kennung": "ort-marke",
+    "zweck": "Gewählter Ort wird größer und zeigt seinen Namen (Punkt ausklingend, Name wechselnd)",
+    "dauer_ms": 240,
+    "reduziert": "Sprung ohne Übergang"
+   },
+   {
+    "kennung": "ort-schlaufe",
+    "zweck": "Hinweg zeichnet sich zum gewählten Ort, Rückweg zurück (gesamt 760 ms)",
+    "dauer_ms": 400,
+    "reduziert": "Endzustand sofort sichtbar"
+   },
+   {
+    "kennung": "zeile-pfeil",
+    "zweck": "Pfeil der Stellenzeile rückt 4 px nach rechts (nur Maus)",
+    "dauer_ms": 240,
+    "reduziert": "keine Verschiebung"
+   },
+   {
+    "kennung": "tabelle-pfeil",
+    "zweck": "Pfeil der Zeile „Alle Orte als Tabelle“ dreht sich beim Auf- und Zuklappen",
+    "dauer_ms": 240,
+    "reduziert": "keine Drehung"
+   },
+   {
+    "kennung": "leiste",
+    "zweck": "Mitlaufende Bewerben-Leiste erscheint, sobald der Hero-Knopf aus dem Bild ist (nicht im System-Teil)",
+    "dauer_ms": 240,
+    "reduziert": "erscheint ohne Übergang"
+   },
+   {
+    "kennung": "druck",
+    "zweck": "Druck-Rückmeldung von Knöpfen, Segmenten und Chips",
+    "dauer_ms": 120,
+    "reduziert": "nur Farbwechsel, kein transform"
+   }
+  ],
+  "fotos_ok": true,
+  "ueberlauf_oder_fehler": [
+   "fotos/bericht.json: 16 Aufnahmen (m375, t768, d1440, d1920 vom Werkzeug plus m320 aus meiner Ergänzung), 0 Überlauf, 0 Fehler, 0 Fremdanfragen; 320 × 568: scrollWidth 320, 0 abgeschnittene Texte (Runde 1: 331 gegen 320).",
+   "Gefundene und behobene Fehler: Überlauf 322 px bei 320 durch Maß-Zeilen der Dokumentation und Strichenden der Bodenlinie, unsichtbare Ortsnamen fingen Klicks auf Kartenpunkte ab (pointer-events), Leiste breiter als 320 px, Kennungsspalte brach mitten im Wort.",
+   "Nur Messhinweis, kein Fehler: CLS 0 ungedrosselt, 0,002 auf 1440 bei gedrosseltem Netz und 4-facher CPU-Bremse (Schriftwechsel). axe-core 0 Verstöße (320/375/768/1440, hell und dunkel, reduziert), html-validate 0 Befunde."
+  ],
+  "offene_fragen": [
+   "OFFENE FRAGE 1 (Rot): Die Palettenfreigabe E-016 nennt Signalrot für Hauptaktion UND Vorlauf, die Inhaberregel „Rot nur für die eine Hauptaktion“ schließt Linien aus. Umgesetzt ist der beschriebene Rückfall (Rot nur am Knopf, Hinweg Navy durchgezogen, Rückweg Blau gestrichelt, Wärme als Fläche); gemessen 0 Rotwerte außerhalb des Knopfes. Bei Freigabe von Rot am Hinweg genügt eine Zeile (--hinweg: var(--rot)), die Dokumentation wäre anzupassen. Bitte förmlich entscheiden (ENTSCHEIDUNGEN).",
+   "OFFENE FRAGE 3 (Quellen): Stellenliste (lib/jobs/data/*: shortTitle, slug, salary) und Telefonnummer 06441 42956 (COMPANY.phone in lib/content/company.ts, von content.ts importiert) liegen außerhalb der drei genannten Quellen. KERN K-004 nennt lib/jobs/data/* ausdrücklich als Quelle der Stellen, deshalb bleiben beide mit data-quelle und Quellentabelle (BEGRUENDUNG §10) stehen; ohne förmliche Freigabe sind .stellen__liste, .kopf__tel, .gebiet__tel und der Telefon-Knopf der Leiste ohne Layoutfolgen entfernbar. Ist die Hauptnummer die Bewerbernummer?",
+   "Gesichtslosigkeit (Jury will Fotos von Monteuren und Team): widerspricht der Inhaberentscheidung „keine Fotos, kein Stock, keine KI-Bilder“ und ist nicht umgesetzt. Möglicher Weg ohne Fotos: die vier freigegebenen Teamzitate (K-014) typografisch als Band; ihre Quelle lib/content/team.ts liegt außerhalb der drei Quellen.",
+   "Dunkelmodus: Marken-Navy #111D6D als Fläche des Kopfbands ist ein Vorschlag (sonst ist außer dem Logo keine Markenfarbe sichtbar); Entscheidung beim Auftraggeber, Rücknahme = eine Zeile im Dunkelblock.",
+   "Für MENSCHEN.md (ich darf dort nicht schreiben): Tippfehler „Wohn und Gewerbegebiet“ (Hermannstein) in lib/data/locations.ts; die Kachel zeigt die character-Texte nicht und tippt ihn nicht ab. Vorschlag Nutzertest am Telefon für Zeiten und Preise in der Display-Ziffer (Atkinson hat die Null mit Schrägstrich, keine Variante ohne Strich in den Fontsource-Dateien).",
+   "distanceKm in locations.ts: Straßenkilometer oder Luftlinie? Bestimmt die Beschriftung der Radien (Karte nutzt Luftlinien-Kreise).",
+   "Orchestrator-Aufgaben außerhalb meines Schreibbereichs: kachel-fotos.mjs schneidet höchstens 12 Ausschnitte und misst erst ab 375 px; ich habe m320 und Elementfotos (el-*) über ein eigenes Skript in fotos/ ergänzt und bericht.json erweitert (aufnahmen + ergaenzung); das Werkzeug selbst ist unverändert. fotos/ ist mit 291 Dateien rund 18 MB groß.",
+   "Neue Mikrotexte (Legende „Hinweg zur Baustelle“ / „Rückweg nach Hause“, Beschriftung „Telefon“) und die Zustandsmuster-Texte sind Muster; endgültige Texte gehören in TEXTVORSCHLAEGE.md. Die Seite ist mobil sehr lang (rund 37.700 px bei 375 px, Produktteil rund 4.100 px) wegen der gestapelten Dokumentationsblöcke. Server :3702 ist beendet, :3500/:3600 und andere Kacheln unberührt, kein Git, keine Plattformdateien."
+  ]
+ },
+ "ueberarbeiten-a": {
+  "fertig": true,
+  "leitidee": "„Freitag, 13:30 Uhr ist der Nullpunkt: Die Arbeitswoche ist das Bauteil, der Giebel unseres Logos der Rahmen, und alle anderen Maße – 30 Tage, 35 Kilometer, 1926 bis 2026 – werden von dort aus abgetragen.“",
+  "austauschprobe": "Die Probe prüft jetzt die Gestaltung statt der Wahrheit der Zusagen (Tabelle auf Blatt 1). Kopierbar und bewusst nur zweite Ebene sind das rot-blaue Rohrpaar (Vorlauf/Rücklauf, Allgemeingut der Heizungstechnik) sowie Maßketten, Planraster und Mono-Maße. Nicht kopierbar sind der Giebel im 45°-Winkel mit Flamme, Tropfen, Sonne und Luft (Zeichen dieses Betriebs, Dachwinkel an der Logodatei gemessen), das Hauptmaß 13:30 mit der Arbeitswoche als erstem Bauteil (nur mit gleicher Woche übertragbar) und 1926 bis 2026 unter dem Giebel (endet 31.12.2026, dann bleibt „Gegründet 1926“). Der Pendelplan hat übertragbare Mechanik, aber einen standortgebundenen Plan. Ergebnis: tragend sind Giebel, Nullpunkt und Jahre; die Rohrmetapher steht auf der zweiten Ebene mit Klartext vor dem Fachbegriff. Restrisiko: Die Grammatik „Woche zuerst, größtes Maß vorn“ ist übertragbar, braucht aber eine ungewöhnliche Zusage als Anlass.",
+  "schriften": [
+   "Archivo (variabel, Breite 62–125 %, Gewicht 100–900, SIL OFL 1.1): Display und Text",
+   "Martian Mono (variabel, Breite 75–112,5 %, Gewicht 100–800, SIL OFL 1.1): Maße und Planbeschriftung"
+  ],
+  "schriftgroesse_kb": 239.5,
+  "palette": [
+   {
+    "rolle": "Papier (Pauspapier hell / Blaupause dunkel)",
+    "hex": "#F3F5F9 / #0A1236",
+    "kontrast_hell": "Tinte #111A3B auf Papier 15,58 : 1",
+    "kontrast_dunkel": "Tinte #EAF0FF auf Papier 15,97 : 1"
+   },
+   {
+    "rolle": "Feld",
+    "hex": "#E4E9F2 / #101B49",
+    "kontrast_hell": "Tinte auf Feld 13,96 : 1",
+    "kontrast_dunkel": "Tinte auf Feld 14,44 : 1"
+   },
+   {
+    "rolle": "Tinte gedämpft",
+    "hex": "#444F72 / #AAB6DC",
+    "kontrast_hell": "7,38 : 1 auf Papier, 6,61 : 1 auf Feld",
+    "kontrast_dunkel": "9,05 : 1 auf Papier, 8,18 : 1 auf Feld"
+   },
+   {
+    "rolle": "Rücklauf-Blau (Marken-Navy)",
+    "hex": "#0C1A72 / #7FA4FF",
+    "kontrast_hell": "13,68 : 1 auf Papier, 12,26 : 1 auf Feld",
+    "kontrast_dunkel": "7,51 : 1 auf Papier, 6,79 : 1 auf Feld"
+   },
+   {
+    "rolle": "Vorlauf-Rot, Knopf",
+    "hex": "#D60000 / #D60000",
+    "kontrast_hell": "Weiß auf Rot 5,44 : 1; Fläche gegen Papier 4,99 : 1",
+    "kontrast_dunkel": "Weiß auf Rot 5,44 : 1; Fläche gegen Papier 3,35 : 1"
+   },
+   {
+    "rolle": "Vorlauf-Linie (Abstufung nach E-016)",
+    "hex": "#D60000 / #EE4A3C",
+    "kontrast_hell": "4,99 : 1 auf Papier, 4,47 : 1 auf Feld",
+    "kontrast_dunkel": "4,93 : 1 auf Papier, 4,46 : 1 auf Feld (vorher 3,35 und 3,03)"
+   },
+   {
+    "rolle": "Rot als Text",
+    "hex": "#C00000 / #FF8E82",
+    "kontrast_hell": "5,94 : 1 auf Papier, 5,32 : 1 auf Feld",
+    "kontrast_dunkel": "8,19 : 1 auf Papier, 7,41 : 1 auf Feld"
+   },
+   {
+    "rolle": "Rot gedrückt",
+    "hex": "#A80000 / #E60000",
+    "kontrast_hell": "Weiß darauf 7,88 : 1",
+    "kontrast_dunkel": "Weiß darauf 4,81 : 1"
+   },
+   {
+    "rolle": "Linie stark",
+    "hex": "#6A7599 / #7A8CCB",
+    "kontrast_hell": "4,17 : 1 auf Papier, 3,73 : 1 auf Feld",
+    "kontrast_dunkel": "5,59 : 1 auf Papier, 5,05 : 1 auf Feld"
+   },
+   {
+    "rolle": "Fokus",
+    "hex": "#0C1A72 / #CFE0FF",
+    "kontrast_hell": "13,68 : 1 auf Papier",
+    "kontrast_dunkel": "13,67 : 1 auf Papier"
+   },
+   {
+    "rolle": "Fluss (keine eigene Rolle, ersetzt #FF9A85 Wärme)",
+    "hex": "Papier hell / Weiß dunkel",
+    "kontrast_hell": "4,99 : 1 auf Vorlauf-Linie",
+    "kontrast_dunkel": "Weiß auf Vorlauf-Linie, mindestens 3 : 1 (nur Rückmeldung)"
+   }
+  ],
+  "bewegung": [
+   {
+    "kennung": "leitung-verlegen",
+    "zweck": "Signaturmoment Desktop: Vorlauf und Rücklauf werden einmal verlegt, Rot endet im Knopf (stroke-dashoffset, wechselnd, Start nach 2 Staffelschritten = 160 ms)",
+    "dauer_ms": 1200,
+    "reduziert": "Leitung steht sofort, Endzustand identisch"
+   },
+   {
+    "kennung": "leitung-verlegen-mobil",
+    "zweck": "Dieselbe Leitung als Strang neben dem Text (sieben Teilabläufe, alle --d-4 wechselnd, Staffelschritte 0, 1, 2, 3, 5, 8, 9, gesamt etwa 1.280 ms; transform, opacity, stroke-dashoffset)",
+    "dauer_ms": 560,
+    "reduziert": "Strang steht sofort, Endzustand identisch"
+   },
+   {
+    "kennung": "massknoten-staffel",
+    "zweck": "Desktop: Abgänge, Muffen und Knoten der beiden Maßebenen erscheinen nacheinander (opacity, 2 Elemente, Abstand 80 ms, Start 480 ms)",
+    "dauer_ms": 180,
+    "reduziert": "Alle stehen sofort"
+   },
+   {
+    "kennung": "fluss-hauptaktion",
+    "zweck": "Rückmeldung: heller Abschnitt läuft einmal durch den Vorlauf zum Knopf (stroke-dashoffset, linear, nur Hover-Fähigkeit)",
+    "dauer_ms": 900,
+    "reduziert": "Kein Lauf, Fläche wechselt sofort"
+   },
+   {
+    "kennung": "knopf-zustand",
+    "zweck": "Hauptaktion: Deckschicht blendet per opacity dunkler ein (180 ms wechselnd), Druck 1 px per transform in 120 ms ausklingend",
+    "dauer_ms": 180,
+    "reduziert": "Fläche wechselt sofort, keine Verschiebung"
+   },
+   {
+    "kennung": "zustand-flaeche",
+    "zweck": "Übrige Bedienelemente: Hover per Deckschicht-opacity, Navigations-Unterstreichung per scaleX, Drücken 120 ms",
+    "dauer_ms": 180,
+    "reduziert": "Sofortzustand"
+   },
+   {
+    "kennung": "radius-wahl",
+    "zweck": "Plan folgt dem Radius: Ausschnitt, Ringe und Beschriftungen blenden per opacity über",
+    "dauer_ms": 320,
+    "reduziert": "Sofortzustand"
+   },
+   {
+    "kennung": "ort-route",
+    "zweck": "Leitung vom Wohnort zum Betrieb zeichnet sich (stroke-dashoffset, ausklingend, nur nach Nutzeraktion)",
+    "dauer_ms": 560,
+    "reduziert": "Route steht sofort"
+   },
+   {
+    "kennung": "ort-marke",
+    "zweck": "Ring um gewählten Ort wächst von 0,6 auf 1 und sein Name blendet ein (opacity, transform; ein 320 ms ausklingend, aus 180 ms beschleunigend)",
+    "dauer_ms": 320,
+    "reduziert": "Sofortzustand"
+   }
+  ],
+  "fotos_ok": true,
+  "ueberlauf_oder_fehler": [],
+  "offene_fragen": [
+   "Foto: Die Jury verlangt ein echtes Betriebsfoto im Hero, K-014 (Inhaberentscheidung) schließt Fotos aus. Die Kachel enthält darum weder Foto noch Platzhalter. Ausnahme für ein echtes Betriebsfoto (Monteur, Servicefahrzeug, Hilti-Koffer)? Dann Planfeld im Duoton Navy/Papier unter der Arbeitswoche, Beschaffung über MENSCHEN.",
+   "Bedeutung von distanceKm in lib/data/locations.ts: Straßenkilometer oder Luftlinie? Die Legende nimmt Straße an (Herborn 24 km gegenüber 19,2 km Luftlinie, Ringe sind Luftlinie).",
+   "Wortlaut der Klartext-Beschriftung an den Leitungen („Du bewirbst dich“ / „Vorlauf“, „Du kommst pünktlich heim“ / „Rücklauf“) und der Statuszeile „Zwischen 24 und 35 km liegt kein Ort der Liste“ zur Freigabe in TEXTVORSCHLAEGE.md eintragen; ich schreibe dort nicht.",
+   "Sollen weitere Orte des Lahn-Dill-Kreises zwischen 24 und 35 km aufgenommen werden? Mit zehn Orten bleibt der äußere Ring leer.",
+   "KERN K-006: Fehlerdarstellung ohne Aktionsfarbe (Kappe, Symbol, Text in --rot-text, nie #D60000) übernehmen, um den Widerspruch zu „Rot nur für die eine Hauptaktion“ aufzulösen?",
+   "Giebelzeichen (Flamme, Tropfen, Sonne, Luft als Linienzeichnung der Logo-Motive, 45°-Dach) braucht Freigabe des Auftraggebers; das Logo selbst bleibt byte-identisch.",
+   "Navigation: Die Kachel kennt nur Arbeitszeit, Einsatzgebiet, Systemblätter und die Kopfaktion „Bewerben“ (Navy). Die Plattform braucht Stellen, Einsatzgebiet, Ablauf, Kontakt laut Jury.",
+   "Das gemeinsame Werkzeug _relaunch/werkzeuge/kachel-fotos.mjs kappt bei 12 Ausschnitten und liegt außerhalb meines Schreibbereichs; hier ersetzt pruef/fotos.mjs es. Gemeinsames Werkzeug anpassen?",
+   "Browserfähigkeit (light-dark(), Container-Abfragen mit cqw, paint-order auf HTML-Text, :has()) nur in Chromium geprüft; echte Geräte (Safari, Firefox, Android), Textabstände nach WCAG 1.4.12, Zoom 400 % und Bewegungsmessung mit Frame-Drosselung (Z-09) stehen aus (MENSCHEN).",
+   "Plattform: Das Jubiläum (FACTS anniversary100) muss validUntil lesen (Kachel blendet per data-bis aus); die zwei Inline-Skripte brauchen in der Plattform einen CSP-Hash; Ziel der Hauptaktion ist in der Kachel der Platzhalter #bewerbung."
+  ]
+ }
+}

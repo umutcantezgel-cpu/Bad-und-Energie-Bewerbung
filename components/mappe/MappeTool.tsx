@@ -3,7 +3,10 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui';
+import { Leitungstrenner } from '@/components/zeichnung/Leitungstrenner';
+import { INITIATIVE_JOB_ID } from '@/lib/applications/constants';
 import { jobIdFromParam, paramForJob } from '@/lib/apply/params';
+import { buildMappeShareMessage } from '@/lib/apply/whatsapp-message';
 import { readSubmitted, removeLegacyDossier, type SubmittedApplication } from '@/lib/apply/storage';
 import {
   createEmptyEditorState,
@@ -29,13 +32,17 @@ import {
 } from '@/lib/mappe/storage';
 import type { MappeJobOption, MappeRecipient } from '@/lib/mappe/types';
 import { cn } from '@/lib/utils/cn';
+import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
 import { JobSection } from './JobSection';
 import { LetterSection } from './LetterSection';
 import { MappeActions, type MappeFeedback, type SaveStatus } from './MappeActions';
 import { MappePreview } from './MappePreview';
+import { MappeStand } from './MappeStand';
+import styles from './mappe.module.css';
 import { PersonalSection } from './PersonalSection';
 import { SkillsSection } from './SkillsSection';
 import { StationsSection } from './StationsSection';
+import { mappeStand, standText, type MappeStandWerte } from './stand';
 
 export interface MappeToolProps {
   /** Built on the server from the job registry (lib/mappe/context.ts). */
@@ -47,6 +54,7 @@ export interface MappeToolProps {
 }
 
 const SAVE_DELAY_MS = 300;
+/** The flow (components/mappe/text.ts names it for the header; kept here so COMPANY stays out of the client bundle). */
 const APPLY_PATH = '/bewerbung';
 
 /** Initial editor state from this tab: draft → handed-over mappe → empty; job from ?stelle= or the sent application. */
@@ -66,10 +74,26 @@ function applyHref(jobId: MappeEditorState['jobId'], jobs: readonly MappeJobOpti
   return param ? `${APPLY_PATH}?stelle=${encodeURIComponent(param)}` : APPLY_PATH;
 }
 
+/** „Persönliches erledigt. 1 von 5 erledigt.“ for every section whose state changed; empty when none did. */
+export function standAnsage(vorher: MappeStandWerte, jetzt: MappeStandWerte): string {
+  const wechsel = jetzt.abschnitte.filter((abschnitt, index) => abschnitt.erledigt !== vorher.abschnitte[index]?.erledigt);
+  if (wechsel.length === 0) return '';
+  const teile = wechsel.map((abschnitt) => `${abschnitt.titel} ${abschnitt.erledigt ? 'erledigt' : 'wieder offen'}.`);
+  return `${teile.join(' ')} ${standText(jetzt.erledigt, jetzt.gesamt)}.`;
+}
+
+/** Share text for WhatsApp (E-BEW-020): only real entries, the reference of an application sent from this tab. */
+function shareHref(state: MappeEditorState, jobs: readonly MappeJobOption[], submitted: SubmittedApplication | null): string {
+  const job = jobs.find((option) => option.id === state.jobId);
+  const jobLabel = job ? job.title : state.jobId === INITIATIVE_JOB_ID ? 'Initiativbewerbung' : null;
+  return buildWhatsAppUrl(buildMappeShareMessage({ reference: submitted?.reference, jobLabel, name: state.person.name }));
+}
+
 /**
  * Bewerbungsmappe (roadmap §6): optional tool outside the application path.
- * Editor left, live A4 preview right (stacked on mobile). Personal data and the
- * draft stay in sessionStorage; the photo stays in memory only.
+ * Mobile: checklist, the five editor steps, the desk (ring, main action, PDF, WhatsApp), the A4 preview.
+ * Desktop: checklist and editor left; desk and live preview right in a sticky column. Personal data and
+ * the draft stay in sessionStorage; the photo stays in memory only.
  */
 export function MappeTool({ jobs, recipient, contact, className }: MappeToolProps) {
   const router = useRouter();
@@ -91,6 +115,9 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
   const context: MappeContext = useMemo(() => ({ jobs, recipient }), [jobs, recipient]);
   const letter = resolveCoverLetter(state, context);
   const subject = letterSubject(state, jobs);
+  // Stand only from real entries (E-BEW-006/007); before hydration the empty editor shows „0 von 5“.
+  const stand = useMemo(() => mappeStand(state), [state]);
+  const standRef = useRef<MappeStandWerte | null>(null);
 
   // Restore once per mount: storage is client-only, so the static HTML renders the empty editor.
   useEffect(() => {
@@ -133,6 +160,16 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
   const announce = useCallback((text: string) => {
     setAnnouncement((current) => ({ id: current.id + 1, text }));
   }, []);
+
+  // Checks appear without reload; screen readers hear which section changed. Nothing on the restore itself.
+  useEffect(() => {
+    if (!hydrated) return;
+    const vorher = standRef.current;
+    standRef.current = stand;
+    if (!vorher) return;
+    const text = standAnsage(vorher, stand);
+    if (text) announce(text);
+  }, [stand, hydrated, announce]);
 
   function handlePhoto(file: File | null) {
     if (photoUrlRef.current) URL.revokeObjectURL(photoUrlRef.current);
@@ -200,24 +237,34 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
   }
 
   return (
-    <div className={cn('grid gap-12 lg:grid-cols-2 lg:gap-16 print:block', className)}>
-      <div className="flex min-w-0 flex-col gap-10 print-hidden">
+    <div className={cn(styles.werkbank, className)} data-mappe-werkbank="">
+      <div className={cn(styles.editor, 'print-hidden')}>
+        <MappeStand stand={stand} />
         <PersonalSection
           step={1}
+          done={stand.abschnitte[0].erledigt}
           person={state.person}
           onChange={(patch) => dispatch({ type: 'person', patch })}
           photoUrl={photoUrl}
           onPhotoChange={handlePhoto}
         />
-        <JobSection step={2} jobs={jobs} value={state.jobId} onChange={(jobId) => dispatch({ type: 'job', jobId })} />
+        <JobSection
+          step={2}
+          done={stand.abschnitte[1].erledigt}
+          jobs={jobs}
+          value={state.jobId}
+          onChange={(jobId) => dispatch({ type: 'job', jobId })}
+        />
         <SkillsSection
           step={3}
+          done={stand.abschnitte[2].erledigt}
           skills={state.skills}
           onToggle={(skill) => dispatch({ type: 'toggleSkill', skill })}
           onAdd={(skill) => dispatch({ type: 'addSkill', skill })}
         />
         <LetterSection
           step={4}
+          done={stand.abschnitte[3].erledigt}
           workStyleId={state.workStyleId}
           onWorkStyleChange={(id) => dispatch({ type: 'workStyle', id })}
           letter={letter}
@@ -227,6 +274,7 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
         />
         <StationsSection
           step={5}
+          done={stand.abschnitte[4].erledigt}
           career={state.careerStations}
           education={state.educationStations}
           onCareer={(action) => dispatch({ type: 'career', action })}
@@ -235,40 +283,37 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
         />
       </div>
 
-      <div className="flex min-w-0 flex-col gap-6 lg:sticky lg:top-20 lg:max-h-[calc(100dvh-6rem)] lg:self-start print:static print:block print:max-h-none">
+      <Leitungstrenner className={styles.trenner} />
+
+      <div className={styles.seite}>
         <MappeActions
-          className="order-last shrink-0 lg:order-first"
+          className="shrink-0"
           mode={submitted ? 'followUp' : 'apply'}
           reference={submitted?.reference}
           busy={busy}
           onPrimary={handlePrimary}
           onPrint={() => window.print()}
+          stand={stand}
+          whatsappHref={shareHref(state, jobs, submitted)}
           feedback={feedback}
           feedbackRef={feedbackRef}
           saveStatus={saveStatus}
           contact={contact}
         />
-        <div className="flex min-h-0 flex-col gap-4 print:block">
-          <div className="flex flex-col gap-1 print-hidden">
-            <h2 id="mappe-vorschau-title" className="text-title-3 text-ink">
+        <div className={styles.vorschau}>
+          <div className={cn(styles.vorschauKopf, 'print-hidden')}>
+            <h2 id="mappe-vorschau-title" className="text-title-3 text-brand">
               Vorschau
             </h2>
-            <p className="hidden text-footnote text-ink-muted lg:block">
-              Zwei Seiten: Anschreiben und Lebenslauf. Scroll in der Vorschau nach unten.
+            <p className="text-etikett text-ink-2">
+              <span className="font-mass">2</span> Seiten A4
             </p>
           </div>
           {/*
-            On lg the framed area itself scrolls inside the sticky column, so the rounded frame and its
+            On desktop the framed area itself scrolls inside the sticky column, so the rounded frame and its
             padding stay visible at both ends (a scroller around the frame cut it off flat).
           */}
-          <section
-            aria-labelledby="mappe-vorschau-title"
-            tabIndex={0}
-            className={
-              'min-h-0 rounded-lg bg-surface-2 p-3 sm:p-4 lg:overflow-y-auto lg:overscroll-contain ' +
-              'print:overflow-visible print:rounded-none print:bg-transparent print:p-0'
-            }
-          >
+          <section aria-labelledby="mappe-vorschau-title" tabIndex={0} className={cn(styles.vorschauRahmen, 'rounded-2')}>
             <MappePreview
               person={state.person}
               subject={subject}

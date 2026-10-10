@@ -1,4 +1,10 @@
-import { STORAGE_KEYS, isApplicationJobId, type ApplicationJobId } from '@/lib/applications/constants';
+import {
+  STORAGE_KEYS,
+  isApplicationJobId,
+  isContactChannel,
+  type ApplicationJobId,
+  type ContactChannel,
+} from '@/lib/applications/constants';
 import { parseMappeData } from '@/lib/applications/mappe-data';
 import type { Mappe } from '@/lib/applications/schema';
 
@@ -76,6 +82,8 @@ export interface SubmittedApplication {
   jobId: ApplicationJobId;
   /** ISO-Zeitpunkt des erfolgreichen Absendens. */
   submittedAt: string;
+  /** Gewählter Rückmeldeweg; die Danke-Seite nennt ihn (E-START-020). Fehlt bei älteren Einträgen. */
+  contactChannel?: ContactChannel;
 }
 
 function boundedText(value: unknown, max: number): string | null {
@@ -101,6 +109,7 @@ export function parseSubmitted(raw: string | null | undefined): SubmittedApplica
     firstName: boundedText(record.firstName, 100) ?? '',
     jobId: record.jobId,
     submittedAt: new Date(time).toISOString(),
+    ...(isContactChannel(record.contactChannel) ? { contactChannel: record.contactChannel } : {}),
   };
 }
 

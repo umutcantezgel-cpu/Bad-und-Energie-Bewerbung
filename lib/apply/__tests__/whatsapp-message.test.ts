@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
-import { buildApplicationMessage, buildFollowUpMessage, buildShortcutMessage } from '../whatsapp-message';
+import {
+  MAPPE_SHARE_PDF_LINE,
+  buildApplicationMessage,
+  buildFollowUpMessage,
+  buildMappeShareMessage,
+  buildShortcutMessage,
+} from '../whatsapp-message';
 
 const noGaps = (text: string) => {
   expect(text).not.toMatch(/undefined|null|NaN|\[object/);
@@ -95,6 +101,43 @@ describe('follow-up message', () => {
       'Hallo',
     ]);
     noGaps(buildFollowUpMessage({ reference: null, startDate: undefined }));
+  });
+});
+
+describe('mappe share message (E-BEW-020)', () => {
+  it('works for an empty mappe without placeholder data', () => {
+    const text = buildMappeShareMessage();
+    expect(text.split('\n')).toEqual([
+      'Guten Tag Herr Demir, hier ist meine Bewerbungsmappe (Anschreiben und Lebenslauf) für Bad und Energie.',
+      MAPPE_SHARE_PDF_LINE,
+    ]);
+    noGaps(text);
+    expect(text).not.toMatch(/Dossier|Max|Muster|Vollzeit|13:30|Koch/);
+  });
+
+  it('names the reference, the job and the name when they exist', () => {
+    const text = buildMappeShareMessage({ reference: ' BE-26-0042 ', jobLabel: 'Anlagenmechaniker SHK (m/w/d)', name: ' Erika  Muster ' });
+    expect(text.split('\n')).toEqual([
+      'Guten Tag Herr Demir, hier ist meine Bewerbungsmappe (Anschreiben und Lebenslauf) zur Bewerbung BE-26-0042.',
+      'Stelle: Anlagenmechaniker SHK (m/w/d)',
+      'Name: Erika Muster',
+      'Die Mappe als PDF hänge ich hier im Chat an.',
+    ]);
+    noGaps(text);
+  });
+
+  it('skips blank values', () => {
+    const text = buildMappeShareMessage({ reference: '  ', jobLabel: '', name: null });
+    expect(text).not.toContain('Stelle');
+    expect(text).not.toContain('Name');
+    expect(text).toContain('für Bad und Energie.');
+    noGaps(text);
+  });
+
+  it('goes to the company number 06441 42956 as a WhatsApp link', () => {
+    const url = buildWhatsAppUrl(buildMappeShareMessage({ name: 'Zoë & Co' }));
+    expect(url).toMatch(/^https:\/\/api\.whatsapp\.com\/send\?phone=49644142956&text=/);
+    expect(decodeURIComponent(url.split('text=')[1])).toContain('Name: Zoë & Co');
   });
 });
 

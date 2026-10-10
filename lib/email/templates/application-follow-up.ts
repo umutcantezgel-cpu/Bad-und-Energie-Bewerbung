@@ -8,6 +8,12 @@ import { renderEmail, type RenderedEmail } from './layout';
  * Idempotency-Key auch instanzübergreifend erkennt. Die Mail hat ohnehin ein Datum.
  */
 
+/**
+ * Das Feld „Nachricht“ der Danke-Seite nennt Wunschkonditionen (E-BEW-015, kein eigenes Feld im
+ * Schema); die Team-Mail zeigt die Ergänzung deshalb als einen Block mit dieser Beschriftung.
+ */
+export const MESSAGE_LABEL = 'Nachricht (z. B. Wunschkonditionen, Arbeitsmodell, besondere Erfahrung)';
+
 export function applicationFollowUpSubject(followUp: Pick<NormalizedFollowUp, 'reference'>): string {
   return `Ergänzung zu ${followUp.reference}`;
 }
@@ -23,15 +29,21 @@ export function renderApplicationFollowUpEmail(followUp: NormalizedFollowUp): Re
         type: 'paragraph',
         text: `Zur Bewerbung ${followUp.reference} sind neue Angaben eingegangen. Name und Kontakt stehen in der E-Mail „Neue Bewerbung ${followUp.reference}“.`,
       },
-      {
-        type: 'rows',
-        rows: [
-          { label: 'Frühester Start', value: followUp.startDate },
-          { label: 'PLZ', value: followUp.postalCode },
+      Boolean(followUp.startDate || followUp.postalCode || followUp.message) && {
+        type: 'panel',
+        title: 'Ergänzung',
+        blocks: [
+          {
+            type: 'rows',
+            rows: [
+              { label: 'Frühester Start', value: followUp.startDate },
+              { label: 'PLZ', value: followUp.postalCode },
+            ],
+          },
+          followUp.message ? { type: 'paragraph', text: MESSAGE_LABEL, muted: true } : null,
+          followUp.message ? { type: 'quote', text: followUp.message } : null,
         ],
       },
-      followUp.message ? { type: 'heading', text: 'Nachricht' } : null,
-      followUp.message ? { type: 'quote', text: followUp.message } : null,
       ...mappeBlocks(followUp.mappe),
     ],
   });

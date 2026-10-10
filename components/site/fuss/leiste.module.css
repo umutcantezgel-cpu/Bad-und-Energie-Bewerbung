@@ -1,0 +1,158 @@
+/*
+ * StickyApplyBar (R4-SHELL-02, E-023), unter lg: im System neu gefasst wie das Erdreich des Einstiegs auf dem
+ * Handy. Oben die Bodenlinie (3 px --brand), aus ihr fallen Vorlauf und Rücklauf senkrecht in die Hauptaktion,
+ * über dem Pfeil (Abstand --paar, wie im Schlussband). Daneben WhatsApp als Zweitweg mit Navy-Kontur.
+ *
+ * Erscheinen und Verschwinden über die Registerkennung am Element (data-motion): Eingang d-2 mit k-aus,
+ * Ausgang d-1 mit k-ein; nur transform und opacity. Reduzierte Bewegung: globals.css setzt die Dauer auf
+ * 0,01 ms, die Leiste steht sofort im Endzustand. Undurchsichtig: Glas und Weichzeichner gibt es nicht (K-008).
+ */
+
+.leiste {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 30;
+  background-color: var(--surface);
+  border-top: var(--m-strich) solid var(--brand);
+  padding-bottom: max(var(--a-3), env(safe-area-inset-bottom));
+  transition:
+    transform var(--d-2) var(--k-aus),
+    opacity var(--d-2) var(--k-aus);
+}
+
+.leiste[data-hidden] {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(100%);
+  transition:
+    transform var(--d-1) var(--k-ein),
+    opacity var(--d-1) var(--k-ein);
+}
+
+@media (min-width: 64em) {
+  .leiste {
+    display: none;
+  }
+}
+
+.innen {
+  display: flex;
+  align-items: center;
+  gap: var(--a-3);
+  max-width: var(--container-content, 68rem);
+  margin-inline: auto;
+  padding: var(--a-3) max(var(--spacing-gutter, var(--a-5)), env(safe-area-inset-left), env(safe-area-inset-right)) 0;
+}
+
+/* Anschluss: Bezug der beiden Leitungen, die aus der Bodenlinie in den Knopf fallen */
+.anschluss {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.leitung {
+  position: absolute;
+  bottom: 100%;
+  height: calc(var(--a-3) + var(--m-strich));
+  width: var(--m-strich);
+  pointer-events: none;
+}
+
+.vorlauf {
+  right: calc(var(--a-6) + var(--paar) - var(--m-strich) / 2);
+  background-color: var(--vorlauf);
+}
+
+.ruecklauf {
+  right: calc(var(--a-6) - var(--m-strich) / 2);
+  background-color: var(--ruecklauf);
+}
+
+/* Hauptaktion: die eine rote Fläche, gebaut wie im Einstieg (Hover und Druck als volle Deckschicht) */
+.aktion {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--a-3);
+  min-height: var(--m-knopf);
+  padding: 0 var(--a-5);
+  border-radius: var(--radius-1, 4px);
+  background-color: var(--accent);
+  color: var(--on-accent);
+  font-size: var(--text-body);
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.aktion::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: var(--accent-hover);
+  opacity: 0;
+  transition: opacity var(--d-1) var(--k-ein);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .aktion:hover::before {
+    opacity: 1;
+    transition: opacity var(--d-2) var(--k-aus);
+  }
+
+  .zweit:hover::before {
+    opacity: 1;
+    transition: opacity var(--d-2) var(--k-aus);
+  }
+}
+
+.aktion:active::before {
+  opacity: 1;
+  background-color: var(--accent-press);
+  transition: none;
+}
+
+.beschriftung {
+  min-width: 0;
+}
+
+/* Zweitweg WhatsApp: Navy-Kontur in Strichstärke, quadratisch in Knopfhöhe; Hover und Druck mit der Wand */
+.zweit {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--m-knopf);
+  height: var(--m-knopf);
+  border: var(--m-strich) solid var(--brand);
+  border-radius: var(--radius-1, 4px);
+  background-color: var(--surface);
+  color: var(--brand);
+}
+
+.zweit::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--surface-2);
+  opacity: 0;
+  transition: opacity var(--d-1) var(--k-ein);
+}
+
+.zweit:active::before {
+  opacity: 1;
+  transition: none;
+}

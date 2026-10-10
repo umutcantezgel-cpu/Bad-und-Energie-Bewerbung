@@ -1,0 +1,122 @@
+{
+  "url": "http://localhost:3803/",
+  "bedingungen": "Lighthouse 13.5, mobil Standard (Slow 4G simuliert, CPU ×4), Desktop desktopConfig; lokal ausgeliefert ohne Kompression (http-server -c-1)",
+  "laeufe": [
+    {
+      "form": "mobile",
+      "n": 0,
+      "perf": 98,
+      "a11y": 100,
+      "bp": 100,
+      "seo": 100,
+      "lcp_ms": 2252,
+      "fcp_ms": 1352,
+      "tbt_ms": 37,
+      "cls": 0,
+      "lcp_element": "null",
+      "anfragen": 7,
+      "bytes": 321302
+    },
+    {
+      "form": "mobile",
+      "n": 1,
+      "perf": 96,
+      "a11y": 100,
+      "bp": 100,
+      "seo": 100,
+      "lcp_ms": 2702,
+      "fcp_ms": 1427,
+      "tbt_ms": 42,
+      "cls": 0,
+      "lcp_element": "null",
+      "anfragen": 7,
+      "bytes": 321302
+    },
+    {
+      "form": "mobile",
+      "n": 2,
+      "perf": 98,
+      "a11y": 100,
+      "bp": 100,
+      "seo": 100,
+      "lcp_ms": 2404,
+      "fcp_ms": 1354,
+      "tbt_ms": 18,
+      "cls": 0,
+      "lcp_element": "null",
+      "anfragen": 7,
+      "bytes": 321302
+    },
+    {
+      "form": "desktop",
+      "n": 0,
+      "perf": 100,
+      "a11y": 100,
+      "bp": 100,
+      "seo": 100,
+      "lcp_ms": 567,
+      "fcp_ms": 327,
+      "tbt_ms": 0,
+      "cls": 0,
+      "lcp_element": "null",
+      "anfragen": 7,
+      "bytes": 321302
+    },
+    {
+      "form": "desktop",
+      "n": 1,
+      "perf": 100,
+      "a11y": 100,
+      "bp": 100,
+      "seo": 100,
+      "lcp_ms": 543,
+      "fcp_ms": 323,
+      "tbt_ms": 0,
+      "cls": 0,
+      "lcp_element": "null",
+      "anfragen": 7,
+      "bytes": 321302
+    },
+    {
+      "form": "desktop",
+      "n": 2,
+      "perf": 100,
+      "a11y": 100,
+      "bp": 100,
+      "seo": 100,
+      "lcp_ms": 543,
+      "fcp_ms": 323,
+      "tbt_ms": 0,
+      "cls": 0,
+      "lcp_element": "null",
+      "anfragen": 7,
+      "bytes": 321302
+    }
+  ],
+  "median": {
+    "mobile": {
+      "perf": 98,
+      "a11y": 100,
+      "bp": 100,
+      "seo": 100,
+      "lcp_ms": 2404,
+      "fcp_ms": 1354,
+      "tbt_ms": 37,
+      "cls": 0,
+      "anfragen": 7,
+      "bytes": 321302
+    },
+    "desktop": {
+      "perf": 100,
+      "a11y": 100,
+      "bp": 100,
+      "seo": 100,
+      "lcp_ms": 543,
+      "fcp_ms": 323,
+      "tbt_ms": 0,
+      "cls": 0,
+      "anfragen": 7,
+      "bytes": 321302
+    }
+  }
+}

@@ -1,0 +1,1328 @@
+/*
+ * Einstieg der Startseite nach den Bildern des Auftraggebers (R3-EINSTIEG-V3, E-024): Variante 3 „Wärmebild“
+ * (_relaunch/ausbau/richtungen/3/index.html `.held`, `.wb`, `.messwerte`), statisch ohne WebGL (E-021).
+ * Dazu aus R3: Ortsmarke mit Jubiläum (E-START-002), Erklärsatz T-001 mit „Kreislauf zeigen“, Vertrauenszeile.
+ *
+ * Nur Rollen und Skalen aus app/styles/theme.css, keine Rohfarben. Schriftfamilien kommen als Utilities aus
+ * dem Markup (font-display, font-mass, text-etikett, text-title-3), damit der Guard sie sieht.
+ *
+ * Szene: 800 × 800 Einheiten; --lage ist ihre Kantenlänge in px, --e = px je Einheit. Mobil passt --lage so,
+ * dass h1, Haus und der Knopfanfang im ersten Bildschirm stehen (höchstens 130 vw, mindestens 88 vw);
+ * am Desktop füllt die Szene die Navy-Fläche bis zur Falz, der First wird nie angeschnitten.
+ */
+
+/* ═══ Abschnitt: Papier, Wärmebild-Palette auf Papier aufgelöst (gilt dann auf Navy) ═══ */
+.held {
+  --rand: max(var(--spacing-gutter, var(--a-5)), env(safe-area-inset-left), env(safe-area-inset-right));
+  /* Isothermen kalt → heiß (Variante 3: ein Messbild, hell und dunkel gleich gelesen) */
+  --wb-1: var(--ruecklauf);
+  --wb-2: var(--surface-2);
+  --wb-3: var(--waerme);
+  --wb-4: var(--surface);
+  /* Leitungen in den Farben der Seite, Mantel in der Seitenfarbe */
+  --wb-vl: var(--vorlauf);
+  --wb-rl: var(--ruecklauf);
+  --wb-grund: var(--surface);
+  container-type: inline-size;
+  overflow-x: clip;
+  background-color: var(--surface);
+  color: var(--ink);
+}
+
+/* Dunkel: Wand und Wärme sind dort dunkle Flächen; das Messbild nimmt helle Stufen aus Creme, Papier und dem
+   Vorlauf, damit warm innen heller bleibt als kalt außen. */
+@media screen and (prefers-color-scheme: dark) {
+  .held {
+    --wb-1: color-mix(in oklch, var(--ruecklauf) 58%, var(--surface));
+    --wb-2: var(--ink);
+    --wb-3: color-mix(in oklab, var(--plakette) 80%, var(--vorlauf));
+    --wb-4: var(--plakette);
+  }
+}
+
+/* ═══ Raster (mobil zuerst): Titelblock · Bild mit Maßleiste (beide Navy) · Rest auf Papier ═══ */
+.einstieg {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  /* Szene: Bildhöhe 450 Einheiten (First bis Bildkante); Rest des Bildschirms nach Kopf, Titelblock (≈ 31,5 vw
+     + 3,7 rem), Maßleiste, Knopf und Mikrotext */
+  --lage: clamp(88vw, calc((100svh - var(--m-kopf) - 15.65rem - 31.5vw) * 1.7937), 130vw);
+  --e: calc(var(--lage) / 800);
+  /* Strich, Rohr und Mantel in Einheiten der Szene (mobil etwas kräftiger, die Szene ist klein) */
+  --strich-e: 4.5;
+  --rohr-e: 5;
+  --mantel-e: 11;
+  --leitung: calc(var(--rohr-e) * var(--e));
+  --mantel: calc((var(--mantel-e) - var(--rohr-e)) / 2 * var(--e));
+  /* Leitungspaar links: Rücklauf außen (x 14), Vorlauf innen (x 28); der Text hält Abstand */
+  --rl-x: calc(14 * var(--e));
+  --vl-x: calc(28 * var(--e));
+  --schacht: max(var(--rand), calc(28 * var(--e) + var(--a-4)));
+  --m-marke: clamp(1.5rem, calc(44 * var(--e)), 1.75rem);
+}
+
+/* ─── Titelblock ─── */
+.kopf {
+  grid-row: 1;
+  position: relative;
+  z-index: 1;
+  padding: var(--a-4) var(--rand) var(--a-3) var(--schacht);
+  background-color: var(--surface);
+  color: var(--ink);
+}
+
+.ortsmarke {
+  margin-bottom: var(--a-2);
+  text-wrap: balance;
+}
+
+/* Schmale Handys: das Jubiläum „100 Jahre Meisterbetrieb (1926–2026)“ bleibt ab 360 px auf einer Zeile */
+@media (max-width: 25.99em) {
+  .ortsmarke {
+    letter-spacing: 0.01em;
+  }
+}
+
+.titel {
+  font-weight: 800;
+  text-wrap: balance;
+}
+
+.titelHaupt {
+  display: block;
+  font-size: clamp(2.25rem, 11.2vw, 3.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+}
+
+.titelHaupt > span {
+  display: block;
+  white-space: nowrap;
+}
+
+.titelZweit {
+  position: relative;
+  display: block;
+  margin-top: var(--a-2);
+  font-size: clamp(1.0625rem, 4.63vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: -0.005em;
+}
+
+.titelZweit > span:not(.klammer) {
+  display: block;
+}
+
+/* Rohrklammer (components/zeichnung): nur am Desktop, wie im Bild des Auftraggebers */
+.klammer {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0.2em;
+  bottom: 0.2em;
+  width: var(--a-5);
+}
+
+/* ─── Bild: Navy-Fläche mit Szene, Kästchen, Ablesung und Maßen ─── */
+.bild {
+  grid-row: 2;
+  position: relative;
+  background-color: var(--surface);
+  color: var(--ink);
+  /* Linien auf Kaltem in Creme, auf den hellen Isothermen in Navy */
+  --wb-creme: var(--ink);
+  --wb-fein: var(--surface);
+}
+
+/* Mobil: der Himmel über dem First liegt hinter dem Titelblock; das Bild beginnt 4 Einheiten über dem First */
+.rahmen {
+  position: relative;
+  height: calc(450 * var(--e));
+  overflow: clip;
+}
+
+.lage {
+  position: absolute;
+  left: 0;
+  top: calc(-340 * var(--e));
+  width: var(--lage);
+  height: var(--lage);
+}
+
+.szene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.band {
+  stroke: none;
+}
+
+.band1 {
+  fill: var(--wb-1);
+}
+
+.band2 {
+  fill: var(--wb-2);
+}
+
+.band3 {
+  fill: var(--wb-3);
+}
+
+.band4 {
+  fill: var(--wb-4);
+}
+
+.kalt,
+.fein,
+.mess,
+.mantel,
+.rohr {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.kalt {
+  stroke: var(--wb-creme);
+  stroke-width: calc(var(--strich-e) * 1px);
+}
+
+.fein {
+  stroke: var(--wb-fein);
+  stroke-width: calc(var(--strich-e) * 1px);
+}
+
+.blatt {
+  fill: var(--wb-creme);
+  stroke: var(--wb-fein);
+  stroke-width: calc(var(--strich-e) * 1px);
+}
+
+.achse {
+  fill: var(--wb-fein);
+}
+
+/* Fadenkreuz und Hinweislinie: Messstrich, eine Stufe feiner als die Zeichnung */
+.mess {
+  stroke: var(--wb-creme);
+  stroke-width: calc(var(--strich-e) * 0.67px);
+}
+
+.mantel {
+  stroke: var(--wb-grund);
+  stroke-width: calc(var(--mantel-e) * 1px);
+}
+
+.rohr {
+  stroke-width: calc(var(--rohr-e) * 1px);
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 0;
+}
+
+.vl {
+  stroke: var(--wb-vl);
+}
+
+.rl {
+  stroke: var(--wb-rl);
+}
+
+.nurDesktop {
+  display: none;
+}
+
+/* Etiketten-Kästchen: Platte mit Familien-Icon (mobil ohne Beschriftung) */
+.marken {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.marke {
+  position: absolute;
+  left: calc(var(--mx) * var(--e) - var(--m-marke) / 2);
+  top: calc(var(--my) * var(--e) - var(--m-marke) / 2);
+  display: flex;
+  align-items: center;
+}
+
+.markePumpe {
+  --mx: 102;
+  --my: 614;
+}
+
+.markeHeizung {
+  --mx: 330;
+  --my: 650;
+}
+
+.markeBad {
+  --mx: 540;
+  --my: 644;
+}
+
+.platte {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: var(--m-marke);
+  height: var(--m-marke);
+  border: 2px solid var(--wb-fein);
+  border-radius: var(--radius-1);
+  background-color: var(--wb-4);
+  color: var(--wb-fein);
+}
+
+.platte > svg {
+  width: calc(var(--m-marke) - var(--a-2));
+  height: calc(var(--m-marke) - var(--a-2));
+}
+
+.glyphe {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.markeText {
+  display: none;
+  margin-left: -2px;
+  padding: var(--a-1) var(--a-2);
+  border: 2px solid var(--wb-fein);
+  border-radius: var(--radius-1);
+  background-color: var(--wb-4);
+  color: var(--wb-fein);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Ablesung am Messpunkt: 13:30 unter der Giebeluhr (mobil; am Desktop steht das Maß groß im Himmel) */
+.ablesung {
+  position: absolute;
+  left: calc(400 * var(--e));
+  top: calc(546 * var(--e));
+  transform: translate(-50%, -50%);
+  padding: var(--a-1) var(--a-2);
+  border: 2px solid var(--wb-fein);
+  border-radius: var(--radius-1);
+  background-color: var(--wb-4);
+  color: var(--wb-fein);
+  font-size: var(--text-footnote);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* ─── Maße: mobil als Leiste unter dem Bild, gesetzt als Maßkette ─── */
+.leiste {
+  position: relative;
+  padding: var(--a-3) var(--rand) var(--a-3) var(--schacht);
+  border-top: 1px solid var(--wb-1);
+}
+
+.masse {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mass {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding-right: var(--a-2);
+}
+
+.wert {
+  display: flex;
+  align-items: center;
+  gap: var(--a-1);
+  font-size: var(--text-lead);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.sonne {
+  flex: none;
+  width: 1em;
+  height: 1em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+/* Name unter der Maßlinie; Schrägstrich am Anfang jedes Maßes, am letzten auch am Ende */
+.name {
+  position: relative;
+  margin-top: var(--a-1);
+  padding-top: var(--a-1);
+  border-top: 1px solid currentColor;
+  font-size: var(--text-footnote);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.name::before,
+.massLetzt .name::after {
+  content: "";
+  position: absolute;
+  top: calc(-1 * var(--a-1));
+  height: var(--a-2);
+  border-left: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.name::before {
+  left: 0;
+}
+
+.massLetzt .name::after {
+  right: 0;
+}
+
+.trennbar {
+  hyphens: manual;
+}
+
+.jahre {
+  display: none;
+}
+
+/* ─── Leitungen (mobil): durch die Leiste und links auf Papier, Vorlauf zweigt in den Knopf ─── */
+.leitung {
+  position: absolute;
+  width: var(--leitung);
+  border-radius: var(--radius-voll);
+  pointer-events: none;
+}
+
+.leisteRl,
+.leisteVl {
+  top: -1px;
+  bottom: 0;
+  border-radius: 0;
+  outline: var(--mantel) solid var(--wb-grund);
+}
+
+.leisteRl,
+.schachtRl {
+  left: calc(var(--rl-x) - var(--leitung) / 2);
+  background-color: var(--wb-rl);
+}
+
+.leisteVl,
+.schachtVlOben,
+.schachtVlUnten {
+  left: calc(var(--vl-x) - var(--leitung) / 2);
+  background-color: var(--wb-vl);
+}
+
+/* Unten schließt sich der Kreis: Rücklauf und Vorlauf laufen in einem Bogen zusammen (Hälfte blau, Hälfte rot) */
+.schachtRl,
+.schachtVlUnten {
+  --bogen: calc((var(--vl-x) - var(--rl-x)) / 2 + var(--leitung) / 2);
+  bottom: 0;
+  width: var(--bogen);
+  border-bottom: var(--leitung) solid;
+  background-color: transparent;
+}
+
+.schachtRl {
+  top: 0;
+  border-left: var(--leitung) solid;
+  border-color: var(--wb-rl);
+  border-radius: 0 0 0 var(--bogen);
+}
+
+/* Bis zur Mitte des Knopfs (Rest beginnt mit --a-3, der Knopf ist --m-knopf hoch) und weiter bis zum Ende */
+.schachtVlOben {
+  top: 0;
+  height: calc(var(--a-3) + var(--m-knopf) / 2);
+  border-radius: 0;
+}
+
+.schachtVlUnten {
+  top: calc(var(--a-3) + var(--m-knopf) / 2);
+  left: calc((var(--rl-x) + var(--vl-x)) / 2);
+  border-right: var(--leitung) solid;
+  border-color: var(--wb-vl);
+  border-radius: 0 0 var(--bogen) 0;
+}
+
+/* ─── Rest auf Papier: mobil Knopf und Mikrotext in der Daumenzone, Einleitung danach ─── */
+.rest {
+  grid-row: 3;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: var(--a-3) var(--rand) var(--a-6) var(--schacht);
+}
+
+.handlung {
+  display: contents;
+}
+
+.lead {
+  order: 3;
+  margin-top: var(--a-5);
+  max-width: 34rem;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.aktion {
+  order: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Abzweig vom Vorlauf in den Knopf */
+.abzweig {
+  position: absolute;
+  left: calc(var(--vl-x) - var(--schacht));
+  width: calc(var(--schacht) - var(--vl-x));
+  top: calc(50% - var(--leitung) / 2);
+  height: var(--leitung);
+  background-color: var(--wb-vl);
+  transform-origin: right center;
+}
+
+/* Hauptaktion: die eine rote Fläche (E-016), Kante in Rot-Druck; Hover und Druck als Deckschicht */
+.bewerben {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--m-knopf);
+  padding: 0 var(--a-6);
+  background-color: var(--accent);
+  color: var(--on-accent);
+  font-size: var(--text-lead);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.005em;
+  text-decoration: none;
+  anchor-name: --einstieg-knopf;
+}
+
+.bewerben::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: var(--accent-hover);
+  opacity: 0;
+  transition: opacity var(--d-1) var(--k-ein);
+}
+
+.bewerben::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(-1 * var(--a-1));
+  height: var(--a-1);
+  border-radius: 0 0 var(--radius-1) var(--radius-1);
+  background-color: var(--accent-press);
+  transform-origin: top;
+  transition: transform var(--d-1) var(--k-ein);
+}
+
+.bewerben:active::before {
+  opacity: 1;
+  background-color: var(--accent-press);
+  transition: none;
+}
+
+.mikro {
+  order: 2;
+  margin-top: var(--a-3);
+  font-size: var(--text-callout);
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.zweitweg {
+  order: 4;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--m-ziel);
+  margin-top: var(--a-2);
+  font-size: var(--text-body);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--brand);
+  text-decoration-line: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: var(--a-1);
+}
+
+.zusammen {
+  white-space: nowrap;
+}
+
+.zweitwegIkon {
+  display: inline;
+  margin-left: var(--a-2);
+  vertical-align: -0.2em;
+  transition: transform var(--d-1) var(--k-aus);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .bewerben:hover::before {
+    opacity: 1;
+    transition: opacity var(--d-2) var(--k-aus);
+  }
+
+  .zweitweg:hover {
+    text-decoration-color: var(--ruecklauf);
+  }
+
+  .knopf:not([aria-disabled="true"]):hover {
+    background-color: var(--surface-2);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bewerben:active {
+    transform: translateY(3px);
+  }
+
+  .bewerben:active::after {
+    transform: scaleY(0.25);
+  }
+}
+
+/* ─── Erklärsatz T-001 und „Kreislauf zeigen“ ─── */
+.fuss {
+  order: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--a-3) var(--a-5);
+  margin-top: var(--a-6);
+}
+
+.satz {
+  max-width: 42ch;
+  font-size: var(--text-callout);
+  line-height: 1.5;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.knopf {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--a-2);
+  min-height: var(--m-ziel);
+  padding: 0 var(--a-4);
+  border: var(--m-strich) solid var(--brand);
+  background-color: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--text-callout);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.knopf:active {
+  background-color: var(--surface-3);
+}
+
+.knopf[aria-disabled="true"] {
+  border-color: var(--line-strong);
+  color: var(--ink-2);
+  cursor: default;
+}
+
+/* Nur mit Skript sichtbar; bis zur Hydration hält der Knopf seinen Platz (kein Layoutsprung) */
+.knopfWartet {
+  visibility: hidden;
+}
+
+/* Ohne Skript gibt es keinen Knopf und keinen Platzhalter (keine leere Fläche unter dem Erklärsatz) */
+@media (scripting: none) {
+  .knopf {
+    display: none;
+  }
+}
+
+/* Reduzierte Bewegung: die Zeichnung steht im Endzustand, der Knopf bleibt verborgen (Register) */
+@media (prefers-reduced-motion: reduce) {
+  .knopf {
+    display: none;
+  }
+}
+
+/* Desktop-Leitung aus dem Knopf: nur ab 64em */
+.rohrD {
+  display: none;
+}
+
+/* ═══ Vertrauenszeile (E-START-021): ruhig, statisch, alle Punkte sichtbar, kein Laufband ═══
+   Umbruch nur zwischen den Punkten (ab 37.5em); der Trennpunkt steht in der Lücke und wird am Zeilenanfang
+   von overflow abgeschnitten, damit keine Zeile mit „·“ beginnt. */
+.vertrauen {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--a-5);
+  row-gap: var(--a-1);
+  margin: 0 var(--rand);
+  padding: var(--a-4) 0 var(--a-6);
+  border-top: 1px solid var(--line);
+  overflow: hidden;
+  list-style: none;
+  font-size: var(--text-callout);
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.punkt {
+  position: relative;
+  min-width: 0;
+}
+
+.punkt::before {
+  content: "·" / "";
+  position: absolute;
+  left: calc(var(--a-5) / -2);
+  transform: translateX(-50%);
+  color: var(--ink-2);
+  font-weight: 700;
+}
+
+/* Zwei Reihen: Betrieb, Umbruch, Partner */
+.vertrauen::before {
+  content: "";
+  order: 1;
+  flex-basis: 100%;
+  height: 0;
+}
+
+.betrieb {
+  font-weight: 700;
+}
+
+.partner {
+  order: 2;
+}
+
+@media (min-width: 37.5em) {
+  .punkt {
+    white-space: nowrap;
+  }
+}
+
+/* ═══ Schmale Handys unter 360 px: Maße als 2 × 2 ═══ */
+@media (max-width: 22.49em) {
+  .masse {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: var(--a-2);
+  }
+
+  .ablesung {
+    display: none;
+  }
+}
+
+/* ═══ Tablett (600–1023): dieselbe Komposition, Titel und Szene eine Stufe größer ═══ */
+@media (min-width: 37.5em) {
+  .einstieg {
+    --lage: clamp(70vw, calc((100svh - var(--m-kopf) - 17rem - 22vw) * 1.7937), 110vw);
+    --strich-e: 3.5;
+    --rohr-e: 4.5;
+    --mantel-e: 10;
+  }
+
+  .titelHaupt {
+    font-size: clamp(3.5rem, 8.5vw, 5.5rem);
+  }
+
+  .titelZweit {
+    font-size: var(--text-title-3);
+  }
+
+  .kopf {
+    padding-top: var(--a-6);
+  }
+
+  /* Kästchen beschriftet: Wärmepumpen über dem Zeichen an der Bildkante, die anderen daneben */
+  .markeText {
+    display: block;
+  }
+
+  .markePumpe .markeText {
+    position: absolute;
+    bottom: calc(100% + var(--a-2));
+    left: calc(var(--a-2) - var(--mx) * var(--e) + var(--m-marke) / 2);
+    margin: 0;
+  }
+
+  .markeHeizung {
+    --mx: 300;
+    --my: 614;
+  }
+
+  .markeBad {
+    --mx: 548;
+    --my: 640;
+  }
+
+  .ablesung {
+    font-size: var(--text-callout);
+  }
+
+  .wert {
+    font-size: var(--text-title-3);
+  }
+
+  .name {
+    font-size: var(--text-callout);
+  }
+}
+
+/* ═══ Desktop ab 64em: Papier links, Navy-Fläche rechts vom Kopf bis zur Falz ═══ */
+@media (min-width: 64em) {
+  .einstieg {
+    --held-h: max(calc(100svh - var(--m-kopf)), 34rem);
+    /* Szene passt in die Höhe (First nie angeschnitten), mindestens 650 Einheiten breit sichtbar */
+    --lage: min(var(--held-h), calc(50cqw * 1.2308));
+    --strich-e: 3;
+    --rohr-e: 4;
+    --mantel-e: 8;
+    --m-marke: clamp(1.5rem, calc(44 * var(--e)), 1.75rem);
+    /* Zeilen: Titelblock · Handlung (beide neben der Fläche, zusammen mindestens --held-h) · Bildunterschrift */
+    grid-template-columns: var(--rand) minmax(0, 1fr) var(--a-6) 50%;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  /* Titelblock auf Papier: die Rollen des Inverse-Bands zurück auf die des Papiers */
+  .kopf[data-tone] {
+    color-scheme: inherit;
+    --surface: inherit;
+    --surface-2: inherit;
+    --surface-3: inherit;
+    --ink: inherit;
+    --ink-muted: inherit;
+    --ink-2: inherit;
+    --brand: inherit;
+    --line: inherit;
+    --line-strong: inherit;
+    --focus: inherit;
+    --vorlauf: inherit;
+    --ruecklauf: inherit;
+    --waerme: inherit;
+  }
+
+  .kopf {
+    grid-column: 2;
+    grid-row: 1;
+    padding: var(--a-7) 0 0;
+    background-color: transparent;
+  }
+
+  .titelHaupt {
+    font-size: min(var(--text-plakat), calc(10svh + 2rem));
+  }
+
+  .titelZweit {
+    margin-top: var(--a-2);
+    padding-left: var(--a-6);
+    font-size: min(var(--text-title-3), calc(3svh + 0.75rem));
+  }
+
+  .klammer {
+    display: block;
+  }
+
+  /* Rest löst sich ins Raster auf: Handlung links neben der Fläche, Erklärsatz als Bildunterschrift unter ihr */
+  .rest {
+    display: contents;
+  }
+
+  .handlung {
+    grid-column: 2;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--a-6) 0 var(--a-7);
+  }
+
+  .lead,
+  .aktion,
+  .mikro,
+  .zweitweg {
+    order: 0;
+  }
+
+  .lead {
+    margin-top: 0;
+    max-width: 30em;
+  }
+
+  .aktion {
+    margin-top: var(--a-8);
+  }
+
+  .zweitweg {
+    margin-top: var(--a-2);
+  }
+
+  .fuss {
+    grid-column: 4;
+    grid-row: 3;
+    margin-top: 0;
+    padding: var(--a-4) var(--rand) 0 var(--a-6);
+  }
+
+  .leitung,
+  .abzweig {
+    display: none;
+  }
+
+  /* Navy-Fläche über beide Zeilen; die Szene steht auf der Falz */
+  .bild {
+    grid-column: 4;
+    grid-row: 1 / 3;
+    min-height: var(--held-h);
+    overflow: clip;
+    anchor-name: --einstieg-flaeche;
+  }
+
+  .rahmen {
+    position: absolute;
+    inset: 0;
+    height: auto;
+  }
+
+  .lage {
+    top: auto;
+    bottom: 0;
+  }
+
+  .nurDesktop {
+    display: inline;
+  }
+
+  .ablesung {
+    display: none;
+  }
+
+  /* Maße als Einblendung im kalten Himmel: 30 · 35 km · 1926 als Maßkette, 13:30 groß mit Hinweislinie zur Uhr */
+  .leiste {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: var(--lage);
+    padding: max(var(--a-6), calc(56 * var(--e))) var(--a-6) 0 calc(44 * var(--e));
+    border: 0;
+    pointer-events: none;
+  }
+
+  .masse {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .mass {
+    padding-right: 0;
+  }
+
+  .wert {
+    font-size: var(--text-title-2);
+  }
+
+  .sonne {
+    width: 0.9em;
+    height: 0.9em;
+    stroke-width: 2;
+  }
+
+  .name {
+    padding-right: var(--a-7);
+    font-size: var(--text-callout);
+  }
+
+  .mass1330 {
+    position: absolute;
+    left: calc(232 * var(--e));
+    top: calc(300 * var(--e));
+    transform: translate(-100%, -100%);
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .mass1330 .wert {
+    font-size: var(--text-numeral);
+  }
+
+  .mass1330 .name {
+    padding: 0;
+    border-top: 0;
+  }
+
+  .mass1330 .name::before {
+    display: none;
+  }
+
+  /* Jubiläumsjahr: 2026 am Ende der Maßlinie von 1926, auf der Zeile des Namens */
+  .massLetzt .name {
+    padding-right: calc(var(--a-7) + var(--a-6));
+  }
+
+  .jahre {
+    display: block;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    color: var(--ink-2);
+    font-size: var(--text-footnote);
+    line-height: 1.6;
+  }
+
+  /* Vorlauf aus dem Knopf in die Pumpe (Szene y 676 = 124 Einheiten über der Falz der Fläche) */
+  .rohrD {
+    display: block;
+    position: absolute;
+    z-index: 0;
+    left: calc(anchor(--einstieg-knopf right) - var(--a-2));
+    right: anchor(--einstieg-flaeche left);
+    top: calc(anchor(--einstieg-knopf center) - 3px);
+    bottom: calc(anchor(--einstieg-flaeche bottom) + 124 * var(--e) - 3px);
+    pointer-events: none;
+  }
+
+  .rohrSvg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .rohrD line,
+  .rohrD path {
+    fill: none;
+    stroke: var(--wb-vl);
+    stroke-width: calc(var(--rohr-e) * var(--e));
+    stroke-linecap: round;
+    stroke-dasharray: 1 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Ohne Ankerpositionierung keine Desktop-Leitung (sie fände den Knopf nicht) */
+@supports not (anchor-name: --a) {
+  .rohrD {
+    display: none !important;
+  }
+}
+
+/* Flache Laptops (bis 720 px Höhe): engerer Satz, die Szene folgt der Höhe */
+@media (min-width: 64em) and (max-height: 45em) {
+  .kopf {
+    padding-top: var(--a-5);
+  }
+
+  .titelZweit > span:not(.klammer) {
+    display: inline;
+  }
+
+  .aktion {
+    margin-top: var(--a-6);
+  }
+
+  .handlung {
+    padding-top: var(--a-4);
+  }
+}
+
+/* Große Bildschirme: der Strich bleibt bei rund 3 px */
+@media (min-width: 100em) and (min-height: 60em) {
+  .einstieg {
+    --strich-e: 2.5;
+    --rohr-e: 3.25;
+    --mantel-e: 6.5;
+  }
+}
+
+/* ═══ Auftakt: der Kreislauf läuft einmal an (Ende 1.120 ms) ═══
+   Unter der Klasse `auftakt` aus dem Kopfskript (lib/motion/head-script.ts) und erneut, wenn „Kreislauf zeigen“
+   data-kreislauf="lauf" setzt. Folge: der Vorlauf läuft vom Knopf ins Haus, dann breitet sich die Wärme aus,
+   der Rücklauf kehrt zurück, zuletzt rastet die Uhr auf 13:30 ein.
+   Desktop: Knopf → Pumpe 0–600 · Lüfter 0–400 · Vorlauf im Haus 600–1.000 · Wärme 480–1.120 · Rücklauf
+   640–1.040 · Uhr 880–1.120. Mobil: Abzweig 0–120 · Schacht 120–360 · Pumpe 360–480 · dann wie Desktop,
+   Rücklauf und Schacht nach unten 880–1.120.
+   Füllart backwards: Endwert = Grundwert; ohne Skript, mit reduzierter Bewegung (globals.css) und nach dem
+   Sicherheitsnetz (2 s) steht sofort der Endzustand. */
+@keyframes zeichnen {
+  from {
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes zeichnenRueck {
+  from {
+    stroke-dashoffset: -1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes halb {
+  from {
+    transform: rotate(-180deg);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+@keyframes stunde {
+  from {
+    transform: rotate(-15deg);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+@keyframes waermeEin {
+  from {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes einrasten {
+  from {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes wachsen {
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+@keyframes abzweigen {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+.luefter {
+  transform-origin: 102px 691px;
+}
+
+.zeiger {
+  transform-origin: 400px 468px;
+}
+
+/* Die Wärme breitet sich vom Heizkörper aus */
+.band {
+  transform-origin: 258px 676px;
+}
+
+.messpunkt {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.schachtVlOben,
+.leisteVl {
+  transform-origin: bottom;
+}
+
+.schachtVlUnten,
+.schachtRl,
+.leisteRl {
+  transform-origin: top;
+}
+
+:global(.auftakt) .held [data-motion="luefter"],
+.held[data-kreislauf="lauf"] [data-motion="luefter"] {
+  animation: halb var(--d-3) var(--k-wechsel) backwards;
+}
+
+/* Wärme: heiß zuerst, die kühleren Isothermen wachsen nach außen */
+:global(.auftakt) .held .band4[data-motion="waerme"],
+.held[data-kreislauf="lauf"] .band4[data-motion="waerme"] {
+  animation: waermeEin var(--d-3) var(--k-aus) calc(var(--takt) * 6) backwards;
+}
+
+:global(.auftakt) .held .band3[data-motion="waerme"],
+.held[data-kreislauf="lauf"] .band3[data-motion="waerme"] {
+  animation: waermeEin var(--d-3) var(--k-aus) calc(var(--takt) * 7) backwards;
+}
+
+:global(.auftakt) .held .band2[data-motion="waerme"],
+.held[data-kreislauf="lauf"] .band2[data-motion="waerme"] {
+  animation: waermeEin var(--d-3) var(--k-aus) calc(var(--takt) * 8) backwards;
+}
+
+:global(.auftakt) .held .band1[data-motion="waerme"],
+.held[data-kreislauf="lauf"] .band1[data-motion="waerme"] {
+  animation: waermeEin var(--d-3) var(--k-aus) calc(var(--takt) * 9) backwards;
+}
+
+/* Vorlauf im Haus: zur Heizung und zur Fußbodenheizung, nach der Leitung aus dem Knopf */
+:global(.auftakt) .held [data-motion="vorlauf-haus"],
+.held[data-kreislauf="lauf"] [data-motion="vorlauf-haus"] {
+  animation: zeichnen var(--d-3) var(--k-wechsel) var(--d-4) backwards;
+}
+
+/* Mobil steigt der Vorlauf aus dem Schacht in die Pumpe (Pfad von hinten gezeichnet) */
+:global(.auftakt) .held .vlSchacht[data-motion="vorlauf-haus"],
+.held[data-kreislauf="lauf"] .vlSchacht[data-motion="vorlauf-haus"] {
+  animation: zeichnenRueck var(--d-1) linear calc(var(--d-2) + var(--d-1)) backwards;
+}
+
+:global(.auftakt) .held [data-motion="ruecklauf-haus"],
+.held[data-kreislauf="lauf"] [data-motion="ruecklauf-haus"] {
+  animation: zeichnen var(--d-3) var(--k-wechsel) calc(var(--takt) * 8) backwards;
+}
+
+/* Mobil: Abzweig aus dem Knopf, Schacht und Leiste hinauf zur Pumpe; Rücklauf und Fortsetzung nach unten */
+:global(.auftakt) .held .abzweig[data-motion="erdleitung"],
+.held[data-kreislauf="lauf"] .abzweig[data-motion="erdleitung"] {
+  animation: abzweigen var(--d-1) var(--k-wechsel) backwards;
+}
+
+:global(.auftakt) .held .schachtVlOben[data-motion="erdleitung"],
+.held[data-kreislauf="lauf"] .schachtVlOben[data-motion="erdleitung"] {
+  animation: wachsen var(--d-1) linear var(--d-1) backwards;
+}
+
+:global(.auftakt) .held .leisteVl[data-motion="erdleitung"],
+.held[data-kreislauf="lauf"] .leisteVl[data-motion="erdleitung"] {
+  animation: wachsen var(--d-1) linear var(--d-2) backwards;
+}
+
+:global(.auftakt) .held .leisteRl[data-motion="erdleitung"],
+.held[data-kreislauf="lauf"] .leisteRl[data-motion="erdleitung"] {
+  animation: wachsen var(--d-1) linear calc(var(--takt) * 11) backwards;
+}
+
+:global(.auftakt) .held .schachtRl[data-motion="erdleitung"],
+.held[data-kreislauf="lauf"] .schachtRl[data-motion="erdleitung"] {
+  animation: wachsen var(--d-1) var(--k-aus) calc(var(--takt) * 11 + var(--d-1)) backwards;
+}
+
+:global(.auftakt) .held .schachtVlUnten[data-motion="erdleitung"],
+.held[data-kreislauf="lauf"] .schachtVlUnten[data-motion="erdleitung"] {
+  animation: wachsen var(--d-1) var(--k-aus) calc(var(--takt) * 11 + var(--d-1)) backwards;
+}
+
+/* Desktop: Knopf → Bogen → Steigleitung → Bogen → über den Panelrand in die Pumpe */
+:global(.auftakt) .held .rohrD1[data-motion="erdleitung-d"],
+.held[data-kreislauf="lauf"] .rohrD1[data-motion="erdleitung-d"] {
+  animation: zeichnen var(--d-1) linear backwards;
+}
+
+:global(.auftakt) .held .rohrD2[data-motion="erdleitung-d"],
+.held[data-kreislauf="lauf"] .rohrD2[data-motion="erdleitung-d"] {
+  animation: zeichnen var(--d-1) linear var(--d-1) backwards;
+}
+
+:global(.auftakt) .held .rohrD3[data-motion="erdleitung-d"],
+.held[data-kreislauf="lauf"] .rohrD3[data-motion="erdleitung-d"] {
+  animation: zeichnen var(--d-1) linear var(--d-2) backwards;
+}
+
+:global(.auftakt) .held .rohrD4[data-motion="erdleitung-d"],
+.held[data-kreislauf="lauf"] .rohrD4[data-motion="erdleitung-d"] {
+  animation: zeichnen var(--d-1) linear calc(var(--d-2) + var(--d-1)) backwards;
+}
+
+:global(.auftakt) .held .nurDesktop[data-motion="erdleitung-d"],
+.held[data-kreislauf="lauf"] .nurDesktop[data-motion="erdleitung-d"] {
+  animation: zeichnen var(--d-1) var(--k-aus) calc(var(--d-2) + var(--d-2)) backwards;
+}
+
+/* Schlusstakt: die Uhr rastet auf 13:30 ein, das Fadenkreuz misst */
+:global(.auftakt) .held [data-motion="uhr"],
+.held[data-kreislauf="lauf"] [data-motion="uhr"] {
+  animation: halb var(--d-2) var(--k-aus) calc(var(--takt) * 11) backwards;
+}
+
+:global(.auftakt) .held .zeigerStd[data-motion="uhr"],
+.held[data-kreislauf="lauf"] .zeigerStd[data-motion="uhr"] {
+  animation-name: stunde;
+}
+
+:global(.auftakt) .held .messpunkt[data-motion="uhr"],
+.held[data-kreislauf="lauf"] .messpunkt[data-motion="uhr"] {
+  animation-name: einrasten;
+}
+
+/* ═══ Druck: Einstieg ohne Mindesthöhe; Farben kommen aus den hellen Rollen (theme.css) ═══ */
+@media print {
+  .einstieg {
+    min-height: 0;
+  }
+
+  .bild {
+    print-color-adjust: exact;
+    break-inside: avoid;
+  }
+
+  .knopf,
+  .rohrD,
+  .leitung,
+  .abzweig {
+    display: none;
+  }
+}

@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { Suspense } from 'react';
-import { Inter } from 'next/font/google';
 import './globals.css';
+import { fontVariables } from './fonts';
 import { AttributionCapture } from '@/components/analytics/AttributionCapture';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { SiteFooter, SiteHeader, StickyApplyBar, buildSiteJsonLd } from '@/components/site';
@@ -10,14 +10,9 @@ import { SkipLink } from '@/components/ui/SkipLink';
 import { ToastProvider } from '@/components/ui/Toast';
 import { HOME_DESCRIPTION, HOME_TITLE } from '@/components/home/content';
 import { COMPANY } from '@/lib/content/company';
+import { HEAD_SCRIPT } from '@/lib/motion/head-script';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
-
-// Self-hosted at build time by next/font (no request to Google from the browser).
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter',
-});
+import { TOKENS } from '@/lib/tokens';
 
 // Footer and sticky apply bar read the job registry (isJobLive): regenerate every page at least
 // hourly, so a job past its validThrough disappears from them without a deploy. The lowest
@@ -25,9 +20,10 @@ const inter = Inter({
 export const revalidate = 3600;
 
 export const viewport: Viewport = {
+  // Papier und Nacht (KERN K-006), gleich dem Dokumenthintergrund in globals.css (Spiegel: lib/tokens).
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#FFFFFF' },
-    { media: '(prefers-color-scheme: dark)', color: '#0B0F17' },
+    { media: '(prefers-color-scheme: light)', color: TOKENS.themeColor.light },
+    { media: '(prefers-color-scheme: dark)', color: TOKENS.themeColor.dark },
   ],
   colorScheme: 'light dark',
 };
@@ -75,7 +71,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="de" className={inter.variable}>
+    // suppressHydrationWarning: das Kopfskript setzt vor dem ersten Bild die Klasse „auftakt“ auf <html>.
+    <html lang="de" className={fontVariables} suppressHydrationWarning>
+      <head>
+        {/* Kopfskript (E-013): vor dem ersten Rendern; CSP-Hash in lib/motion/head-script.ts (HEAD_SCRIPT_SHA256). */}
+        <script dangerouslySetInnerHTML={{ __html: HEAD_SCRIPT }} />
+      </head>
       <body className="flex min-h-dvh flex-col">
         {/* Context and live regions only; the toast UI loads with the first toast (Mappe undo). */}
         <ToastProvider>

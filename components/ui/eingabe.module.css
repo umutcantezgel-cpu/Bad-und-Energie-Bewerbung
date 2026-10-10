@@ -1,0 +1,70 @@
+/*
+ * Eingabe-Bausteine (R4-UI-01): was sich mit Utilities nicht sauber sagen lässt.
+ * Nur Rollen und Skalen aus app/styles/theme.css (--m-strich, --a-*, --d-*, --k-*, --takt).
+ *
+ * Laden (KERN K-011 „Lädt“, Register `fortschritt`): kein Spinner, ein Strich läuft durch den Knopf
+ * wie Wasser durch die Leitung. Die Anzeige erscheint erst nach 4 Takten (320 ms ≥ 300 ms), der Knopf
+ * behält seine Breite (die Beschriftung bleibt unsichtbar stehen). Bei reduzierter Bewegung steht
+ * der Strich still über die ganze Breite.
+ */
+
+/* Spur höchstens 10 rem breit, mittig; in schmalen Knöpfen mit dem Innenabstand --a-5 */
+.laden {
+  position: absolute;
+  inset-inline: max(var(--a-5), calc(50% - 5rem));
+  top: 50%;
+  height: var(--m-strich);
+  margin-top: calc(var(--m-strich) / -2);
+  overflow: hidden;
+  border-radius: var(--m-strich);
+  opacity: 0;
+  animation: erscheinen var(--d-1) var(--k-aus) calc(var(--takt) * 4) forwards;
+}
+
+/* Die Spur: dieselbe Farbe wie die Schrift, zurückgenommen */
+.laden::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: currentColor;
+  opacity: 0.32;
+}
+
+.strich {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 40%;
+  border-radius: inherit;
+  background-color: currentColor;
+  animation: laufen calc(var(--d-4) * 2) var(--k-wechsel) infinite;
+}
+
+@keyframes erscheinen {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes laufen {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(250%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .laden {
+    animation: none;
+    opacity: 1;
+  }
+
+  .strich {
+    width: 100%;
+    animation: none;
+    transform: none;
+  }
+}

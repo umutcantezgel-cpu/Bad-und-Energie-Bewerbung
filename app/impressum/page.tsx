@@ -3,15 +3,13 @@ import type { ReactNode } from 'react';
 import {
   CHAMBER,
   LEGAL_ENTITY,
-  LegalDocument,
   LegalFactLink,
   LegalFacts,
-  LegalSection,
   displayUrl,
   mailtoHref,
   type LegalFact,
 } from '@/components/legal';
-import { TextLink } from '@/components/ui/TextLink';
+import { RechtAbschnitt, RechtDokument, abschnittsNummer } from '@/components/recht';
 import { generatePageMetadata } from '@/lib/seo/metadata';
 
 /*
@@ -40,13 +38,15 @@ const SECTIONS: Record<SectionId, { title: string; toc?: string }> = {
   haftung: { title: 'Haftung für Inhalte und Links', toc: 'Haftung' },
 };
 
-const TOC = (Object.keys(SECTIONS) as SectionId[]).map((id) => ({ id, label: SECTIONS[id].toc ?? SECTIONS[id].title }));
+const SECTION_IDS = Object.keys(SECTIONS) as SectionId[];
+const TOC = SECTION_IDS.map((id) => ({ id, label: SECTIONS[id].toc ?? SECTIONS[id].title }));
 
+/** Kapitel mit derselben laufenden Nummer wie im Inhaltsverzeichnis (Darstellung R5-RECHT-01). */
 function Chapter({ id, children }: { id: SectionId; children: ReactNode }) {
   return (
-    <LegalSection id={id} title={SECTIONS[id].title}>
+    <RechtAbschnitt id={id} titel={SECTIONS[id].title} nummer={abschnittsNummer(SECTION_IDS.indexOf(id))}>
       {children}
-    </LegalSection>
+    </RechtAbschnitt>
   );
 }
 
@@ -141,11 +141,11 @@ const CHAMBER_FACTS: readonly LegalFact[] = [
 
 export default function ImpressumPage() {
   return (
-    <LegalDocument
-      title="Impressum"
-      breadcrumb="Impressum"
-      lead={`Angaben nach § 5 DDG und Handwerksordnung für die ${LEGAL_ENTITY.name}.`}
-      toc={TOC}
+    <RechtDokument
+      titel="Impressum"
+      pfad="Impressum"
+      einleitung={<p>{`Angaben nach § 5 DDG und Handwerksordnung für die ${LEGAL_ENTITY.name}.`}</p>}
+      inhalt={TOC}
     >
       <Chapter id="anbieter">
         <LegalFacts items={PROVIDER} />
@@ -189,6 +189,6 @@ export default function ImpressumPage() {
           Inhalte umgehend entfernen.
         </p>
       </Chapter>
-    </LegalDocument>
+    </RechtDokument>
   );
 }

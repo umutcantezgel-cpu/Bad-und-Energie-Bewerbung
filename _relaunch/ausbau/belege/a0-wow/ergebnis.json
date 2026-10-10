@@ -1,0 +1,226 @@
+[
+ {
+  "id": "S1",
+  "seite": "Start m390",
+  "n": 5,
+  "ueberraschung": 5,
+  "begehrlichkeit": 6,
+  "vertrauen": 6,
+  "median_ue_be": 5.5,
+  "einzel": [
+   {
+    "id": "S1",
+    "erster_satz": "Freitags Feierabend um 13:30 und 30 Tage Urlaub, das les ich sofort. Ein SHK-Betrieb in Wetzlar, der so was groß hinschreibt, ist nicht schlecht.",
+    "ueberraschung": 4,
+    "begehrlichkeit": 6,
+    "vertrauen": 6,
+    "angebot_in_einem_satz": "Ein SHK-Betrieb aus Wetzlar sucht Verstärkung für Wärmepumpen, Heizungen und Bäder, bezahlt über Tarif, mit Freitags Feierabend um 13:30.",
+    "konkretes_merkmal": "13:30 Freitags Feierabend unten links, groß und fett, direkt neben den 30 Tagen Urlaub."
+   },
+   {
+    "id": "S1",
+    "erster_satz": "Die suchen Leute, und Freitag um halb zwei ist Feierabend, das les ich sofort.",
+    "ueberraschung": 5,
+    "begehrlichkeit": 7,
+    "vertrauen": 6,
+    "angebot_in_einem_satz": "Handwerkern in Wetzlar für Wärmepumpen, Heizungen und Bäder: über Tarif bezahlt, mit Hilti-Ausstattung und Freitags Feierabend um 13:30.",
+    "konkretes_merkmal": "„13:30 Freitags Feierabend“ in großer Zahl unten im ersten Bildschirm."
+   },
+   {
+    "id": "S1",
+    "erster_satz": "Feierabend um halb zwei am Freitag, das schreibt keiner einfach so hin, da steckt was dahinter.",
+    "ueberraschung": 5,
+    "begehrlichkeit": 7,
+    "vertrauen": 7,
+    "angebot_in_einem_satz": "Handwerkern in Wetzlar eine Stelle mit Tarif, persönlicher Hilti-Ausstattung und Freitagsfeierabend um 13:30, Bewerbung in ca. 60 Sekunden.",
+    "konkretes_merkmal": "'Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.' direkt unter dem roten Knopf 'Jetzt bewerben'."
+   },
+   {
+    "id": "S1",
+    "erster_satz": "Ehrliches Handwerk, pünktlich Feierabend. Das klingt nach einem Betrieb, der seine Leute kennt.",
+    "ueberraschung": 5,
+    "begehrlichkeit": 6,
+    "vertrauen": 6,
+    "angebot_in_einem_satz": "SHK-Stellen in Wetzlar mit Bezahlung über Tarif, Hilti-Ausstattung und einer Bewerbung in etwa 60 Sekunden ohne Lebenslauf.",
+    "konkretes_merkmal": "'Pünktlich Feierabend.' als letzte Zeile der großen Überschrift, in Grau"
+   },
+   {
+    "id": "S1",
+    "erster_satz": "Freitags Feierabend um halb zwei, groß da unten. Das ist das, was hängen bleibt.",
+    "ueberraschung": 5,
+    "begehrlichkeit": 6,
+    "vertrauen": 6,
+    "angebot_in_einem_satz": "Ein Handwerksbetrieb aus Wetzlar sucht Verstärkung für Wärmepumpen, Heizungen und Bäder, bezahlt über Tarif und mit Hilti-Ausstattung.",
+    "konkretes_merkmal": "13:30 Freitags Feierabend, groß und fett unten links im ersten Bildschirm"
+   }
+  ]
+ },
+ {
+  "id": "S2",
+  "seite": "Start d1440",
+  "n": 5,
+  "ueberraschung": 4,
+  "begehrlichkeit": 6,
+  "vertrauen": 7,
+  "median_ue_be": 5,
+  "einzel": [
+   {
+    "id": "S2",
+    "erster_satz": "Ja, sieht ordentlich aus. Seit 1926 und 35 km Umkreis, das steht gleich da, das wirkt echt.",
+    "ueberraschung": 3,
+    "begehrlichkeit": 6,
+    "vertrauen": 7,
+    "angebot_in_einem_satz": "Ein alteingesessener Betrieb in Wetzlar bietet SHK-Leuten Stellen für Wärmepumpen, Heizungen und Bäder mit Freitags Feierabend.",
+    "konkretes_merkmal": "Die Zahlenreihe 13:30 / 30 / 35 km / 1926 unter dem roten Button, vier Zahlen in einer Zeile."
+   },
+   {
+    "id": "S2",
+    "erster_satz": "Am Rechner dieselbe Seite, ruhiger und mit mehr Zahlen unten, aber der große Satz oben ist kleiner.",
+    "ueberraschung": 4,
+    "begehrlichkeit": 6,
+    "vertrauen": 6,
+    "angebot_in_einem_satz": "Handwerkern in Wetzlar für Wärmepumpen, Heizungen und Bäder: über Tarif bezahlt, mit Hilti-Ausstattung.",
+    "konkretes_merkmal": "Vier Zahlen in einer Reihe unter dem roten Knopf: 13:30, 30, 35 km, 1926, wobei 35 km und 1926 auf dem Handy im ersten Bildschirm fehlen."
+   },
+   {
+    "id": "S2",
+    "erster_satz": "Pünktlich Feierabend, das klingt nach jemandem, der seine Leute kennt. Die 13:30 fallen sofort auf.",
+    "ueberraschung": 4,
+    "begehrlichkeit": 6,
+    "vertrauen": 7,
+    "angebot_in_einem_satz": "Handwerkern in Wetzlar eine Stelle mit Feierabend um 13:30 am Freitag, 30 Tagen Urlaub und einem Einzugsradius von 35 km.",
+    "konkretes_merkmal": "13:30 Freitags Feierabend, groß als erste Zahl in der Zahlenreihe unten."
+   },
+   {
+    "id": "S2",
+    "erster_satz": "Pünktlich Feierabend, das höre ich gern, und Freitag 13:30 steht schön groß da.",
+    "ueberraschung": 4,
+    "begehrlichkeit": 6,
+    "vertrauen": 7,
+    "angebot_in_einem_satz": "Stellen bei einem Handwerksbetrieb in Wetzlar, der Freitag um 13:30 Feierabend und 30 Tage Urlaub bietet.",
+    "konkretes_merkmal": "13:30 Freitags Feierabend als große Zahl in der Zahlenreihe unten"
+   },
+   {
+    "id": "S2",
+    "erster_satz": "Gleiche Seite, nur breiter. Die Zahlen unten bleiben hängen: 13:30, 30 Tage, 35 km, 1926.",
+    "ueberraschung": 5,
+    "begehrlichkeit": 6,
+    "vertrauen": 7,
+    "angebot_in_einem_satz": "Ein Betrieb in Wetzlar bietet Handwerkern Stellen bei Wärmepumpen und Bädern mit Tarif, Hilti-Ausstattung und Freitag um 13:30 Feierabend.",
+    "konkretes_merkmal": "Die Zahlenreihe 13:30 · 30 · 35 km · 1926 unter dem roten Knopf"
+   }
+  ]
+ },
+ {
+  "id": "S3",
+  "seite": "Stelle m390",
+  "n": 5,
+  "ueberraschung": 3,
+  "begehrlichkeit": 5,
+  "vertrauen": 6,
+  "median_ue_be": 4,
+  "einzel": [
+   {
+    "id": "S3",
+    "erster_satz": "Gut, Anlagenmechaniker, und das Gehalt steht gleich oben: 3.600 bis 4.600 Euro. Das mag ich, keine Ausreden.",
+    "ueberraschung": 3,
+    "begehrlichkeit": 5,
+    "vertrauen": 7,
+    "angebot_in_einem_satz": "Vollzeit als Anlagenmechaniker SHK in Wetzlar, 3.600 bis 4.600 Euro im Monat, unbefristet, Baustellen im Umkreis von 35 km.",
+    "konkretes_merkmal": "Der Gehaltskasten 3.600–4.600 € Gehalt pro Monat, groß, direkt unter dem Titel und vor dem Fließtext."
+   },
+   {
+    "id": "S3",
+    "erster_satz": "Okay, Anlagenmechaniker in Wetzlar, der Lohn steht gleich oben, das kann ich lesen.",
+    "ueberraschung": 3,
+    "begehrlichkeit": 5,
+    "vertrauen": 6,
+    "angebot_in_einem_satz": "Einem Anlagenmechaniker SHK in Wetzlar wird eine Vollzeitstelle, unbefristet, mit 3.600 bis 4.600 Euro im Monat angeboten, Einsatz im 35-km-Umkreis.",
+    "konkretes_merkmal": "3.600–4.600 € im grauen Kasten direkt unter dem Titel; der rote Knopf „Jetzt bewerben“ klebt unten am Rand."
+   },
+   {
+    "id": "S3",
+    "erster_satz": "Gehalt steht gleich groß da, und unten klebt der rote Knopf. Das ist klar, so muss es sein.",
+    "ueberraschung": 3,
+    "begehrlichkeit": 6,
+    "vertrauen": 6,
+    "angebot_in_einem_satz": "Einem Anlagenmechaniker SHK: Vollzeit, unbefristet, 3.600 bis 4.600 Euro im Monat, Baustellen höchstens 35 km um Wetzlar.",
+    "konkretes_merkmal": "Der rote Knopf 'Jetzt bewerben' klebt unten am Bildschirm, daneben ein Chat-Symbol, ab 500 ms sichtbar."
+   },
+   {
+    "id": "S3",
+    "erster_satz": "Das Gehalt steht im grauen Kasten direkt unter dem Titel, das lese ich sofort, und unten bleibt der rote Knopf stehen.",
+    "ueberraschung": 3,
+    "begehrlichkeit": 5,
+    "vertrauen": 6,
+    "angebot_in_einem_satz": "Vollzeit, unbefristet, Einsatz bis 35 km um Wetzlar als Anlagenmechaniker SHK, 3.600 bis 4.600 Euro im Monat.",
+    "konkretes_merkmal": "Gehaltskasten 3.600–4.600 € im Monat unter dem Titel, darunter ein roter Balken 'Jetzt bewerben', der ab dem zweiten Bild am unteren Rand klebt"
+   },
+   {
+    "id": "S3",
+    "erster_satz": "Gehalt steht gleich oben, 3.600 bis 4.600, und die Hersteller sind namentlich genannt. Das ist ehrlich.",
+    "ueberraschung": 4,
+    "begehrlichkeit": 5,
+    "vertrauen": 7,
+    "angebot_in_einem_satz": "Ein SHK-Betrieb in Wetzlar sucht einen Anlagenmechaniker in Vollzeit, unbefristet, mit 3.600 bis 4.600 Euro im Monat und Einsätzen bis 35 km um den Firmensitz.",
+    "konkretes_merkmal": "Graue Gehaltsbox 3.600 bis 4.600 € direkt unter dem Titel, ohne Umweg"
+   }
+  ]
+ },
+ {
+  "id": "S4",
+  "seite": "Stelle d1440",
+  "n": 5,
+  "ueberraschung": 3,
+  "begehrlichkeit": 5,
+  "vertrauen": 7,
+  "median_ue_be": 4,
+  "einzel": [
+   {
+    "id": "S4",
+    "erster_satz": "Ein Ansprechpartner mit Telefonnummer, da weiß ich, wen ich anrufe. Das ist eine richtige Firma, kein Formular ins Leere.",
+    "ueberraschung": 3,
+    "begehrlichkeit": 6,
+    "vertrauen": 7,
+    "angebot_in_einem_satz": "Vollzeit-Stelle als Anlagenmechaniker SHK in Wetzlar mit festem Ansprechpartner zum direkten Anrufen.",
+    "konkretes_merkmal": "Die Kontaktkarte rechts unter dem Gehalt mit Ansprechpartner, Telefonnummer und E-Mail-Adresse."
+   },
+   {
+    "id": "S4",
+    "erster_satz": "Gleiche Stelle am Rechner: Gehalt, roter Knopf und Ansprechpartner rechts, ordentlich, nur kam es erst nach einer halben Sekunde.",
+    "ueberraschung": 3,
+    "begehrlichkeit": 4,
+    "vertrauen": 7,
+    "angebot_in_einem_satz": "Dieselbe Anlagenmechaniker-Stelle, am Rechner mit den Anforderungen links und einer Kontaktkarte rechts.",
+    "konkretes_merkmal": "Kontaktkarte mit Telefon- und Mail-Symbol rechts unter dem roten Knopf, neben dem Gehalt."
+   },
+   {
+    "id": "S4",
+    "erster_satz": "3.600 bis 4.600 Euro steht gleich oben rechts, das ist gut. Aber der Text ist mir zu lang.",
+    "ueberraschung": 3,
+    "begehrlichkeit": 5,
+    "vertrauen": 7,
+    "angebot_in_einem_satz": "Einem Anlagenmechaniker SHK in Wetzlar eine Vollzeitstelle mit 3.600 bis 4.600 Euro und Arbeit an Wärmepumpen und Bädern.",
+    "konkretes_merkmal": "Das Gehalt 3.600–4.600 € groß oben rechts in der Seitenleiste, direkt über dem roten Knopf 'Jetzt bewerben'."
+   },
+   {
+    "id": "S4",
+    "erster_satz": "Gehalt steht gleich oben rechts, und der rote Knopf darunter. Das ist eine Stelle und keine Werbung.",
+    "ueberraschung": 3,
+    "begehrlichkeit": 4,
+    "vertrauen": 7,
+    "angebot_in_einem_satz": "Eine Vollzeitstelle als Anlagenmechaniker SHK in Wetzlar für 3.600 bis 4.600 Euro im Monat, Bewerbung über den roten Knopf.",
+    "konkretes_merkmal": "Gehaltskasten 3.600–4.600 € rechts oben, darunter der rote Knopf 'Jetzt bewerben'"
+   },
+   {
+    "id": "S4",
+    "erster_satz": "Rechts das Gehalt im grauen Kasten, darunter der rote Knopf und gleich die Kontaktkarte. So macht man das.",
+    "ueberraschung": 5,
+    "begehrlichkeit": 5,
+    "vertrauen": 8,
+    "angebot_in_einem_satz": "Der SHK-Betrieb sucht in Wetzlar einen Anlagenmechaniker in Vollzeit, unbefristet, mit 3.600 bis 4.600 Euro im Monat und direktem Kontakt rechts.",
+    "konkretes_merkmal": "Graue Kontaktkarte rechts mit Telefon und E-Mail, neben dem roten Bewerben-Knopf"
+   }
+  ]
+ }
+]

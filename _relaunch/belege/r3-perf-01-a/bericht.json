@@ -1,0 +1,234 @@
+{
+  "label": "r3-perf-01-a",
+  "base": "http://localhost:3460",
+  "motion": "reduce",
+  "erstellt": "2026-10-09T23:09:19.961Z",
+  "seiten": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 13681,
+      "seitenhoehe": 11800,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-perf-01-a/start__m390-light__01.webp",
+        "belege/r3-perf-01-a/start__m390-light__02.webp",
+        "belege/r3-perf-01-a/start__m390-light__03.webp",
+        "belege/r3-perf-01-a/start__m390-light__04.webp",
+        "belege/r3-perf-01-a/start__m390-light__05.webp",
+        "belege/r3-perf-01-a/start__m390-light__06.webp",
+        "belege/r3-perf-01-a/start__m390-light__07.webp",
+        "belege/r3-perf-01-a/start__m390-light__08.webp",
+        "belege/r3-perf-01-a/start__m390-light__09.webp",
+        "belege/r3-perf-01-a/start__m390-light__10.webp",
+        "belege/r3-perf-01-a/start__m390-light__11.webp",
+        "belege/r3-perf-01-a/start__m390-light__12.webp",
+        "belege/r3-perf-01-a/start__m390-light__13.webp",
+        "belege/r3-perf-01-a/start__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 6130,
+      "seitenhoehe": 9337,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-perf-01-a/start__d1440-light__01.webp",
+        "belege/r3-perf-01-a/start__d1440-light__02.webp",
+        "belege/r3-perf-01-a/start__d1440-light__03.webp",
+        "belege/r3-perf-01-a/start__d1440-light__04.webp",
+        "belege/r3-perf-01-a/start__d1440-light__05.webp",
+        "belege/r3-perf-01-a/start__d1440-light__06.webp",
+        "belege/r3-perf-01-a/start__d1440-light__07.webp",
+        "belege/r3-perf-01-a/start__d1440-light__08.webp",
+        "belege/r3-perf-01-a/start__d1440-light__09.webp",
+        "belege/r3-perf-01-a/start__d1440-light__10.webp",
+        "belege/r3-perf-01-a/start__d1440-light__11.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 9243,
+      "seitenhoehe": 7791,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-perf-01-a/stelle-anlagenmechaniker__m390-light__01.webp",
+        "belege/r3-perf-01-a/stelle-anlagenmechaniker__m390-light__02.webp",
+        "belege/r3-perf-01-a/stelle-anlagenmechaniker__m390-light__03.webp",
+        "belege/r3-perf-01-a/stelle-anlagenmechaniker__m390-light__04.webp",
+        "belege/r3-perf-01-a/stelle-anlagenmechaniker__m390-light__05.webp",
+        "belege/r3-perf-01-a/stelle-anlagenmechaniker__m390-light__06.webp",
+        "belege/r3-perf-01-a/stelle-anlagenmechaniker__m390-light__07.webp",
+        "belege/r3-perf-01-a/stelle-anlagenmechaniker__m390-light__08.webp",
+        "belege/r3-perf-01-a/stelle-anlagenmechaniker__m390-light__09.webp",
+        "belege/r3-perf-01-a/stelle-anlagenmechaniker__m390-light__10.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 4524,
+      "seitenhoehe": 5975,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-perf-01-a/stelle-anlagenmechaniker__d1440-light__01.webp",
+        "belege/r3-perf-01-a/stelle-anlagenmechaniker__d1440-light__02.webp",
+        "belege/r3-perf-01-a/stelle-anlagenmechaniker__d1440-light__03.webp",
+        "belege/r3-perf-01-a/stelle-anlagenmechaniker__d1440-light__04.webp",
+        "belege/r3-perf-01-a/stelle-anlagenmechaniker__d1440-light__05.webp",
+        "belege/r3-perf-01-a/stelle-anlagenmechaniker__d1440-light__06.webp",
+        "belege/r3-perf-01-a/stelle-anlagenmechaniker__d1440-light__07.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 2673,
+      "seitenhoehe": 1380,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-perf-01-a/bewerbung__m390-light__01.webp",
+        "belege/r3-perf-01-a/bewerbung__m390-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 1847,
+      "seitenhoehe": 1376,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-perf-01-a/bewerbung__d1440-light__01.webp",
+        "belege/r3-perf-01-a/bewerbung__d1440-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 17791,
+      "seitenhoehe": 18355,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/r3-perf-01-a/webp/datenschutz__m390-light__01.webp",
+        ".roh/r3-perf-01-a/webp/datenschutz__m390-light__02.webp",
+        ".roh/r3-perf-01-a/webp/datenschutz__m390-light__03.webp",
+        ".roh/r3-perf-01-a/webp/datenschutz__m390-light__04.webp",
+        ".roh/r3-perf-01-a/webp/datenschutz__m390-light__05.webp",
+        ".roh/r3-perf-01-a/webp/datenschutz__m390-light__06.webp",
+        ".roh/r3-perf-01-a/webp/datenschutz__m390-light__07.webp",
+        ".roh/r3-perf-01-a/webp/datenschutz__m390-light__08.webp",
+        ".roh/r3-perf-01-a/webp/datenschutz__m390-light__09.webp",
+        ".roh/r3-perf-01-a/webp/datenschutz__m390-light__10.webp",
+        ".roh/r3-perf-01-a/webp/datenschutz__m390-light__11.webp",
+        ".roh/r3-perf-01-a/webp/datenschutz__m390-light__12.webp",
+        ".roh/r3-perf-01-a/webp/datenschutz__m390-light__13.webp",
+        ".roh/r3-perf-01-a/webp/datenschutz__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 9811,
+      "seitenhoehe": 14240,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/r3-perf-01-a/datenschutz__d1440-light__01.webp",
+        "belege/r3-perf-01-a/datenschutz__d1440-light__02.webp",
+        "belege/r3-perf-01-a/datenschutz__d1440-light__03.webp",
+        "belege/r3-perf-01-a/datenschutz__d1440-light__04.webp",
+        "belege/r3-perf-01-a/datenschutz__d1440-light__05.webp",
+        "belege/r3-perf-01-a/datenschutz__d1440-light__06.webp",
+        "belege/r3-perf-01-a/datenschutz__d1440-light__07.webp",
+        "belege/r3-perf-01-a/datenschutz__d1440-light__08.webp",
+        "belege/r3-perf-01-a/datenschutz__d1440-light__09.webp",
+        "belege/r3-perf-01-a/datenschutz__d1440-light__10.webp",
+        "belege/r3-perf-01-a/datenschutz__d1440-light__11.webp",
+        "belege/r3-perf-01-a/datenschutz__d1440-light__12.webp",
+        "belege/r3-perf-01-a/datenschutz__d1440-light__13.webp",
+        "belege/r3-perf-01-a/datenschutz__d1440-light__14.webp"
+      ]
+    }
+  ]
+}

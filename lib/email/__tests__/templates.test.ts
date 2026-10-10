@@ -1,13 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
 import type { NormalizedFollowUp, ReferencedApplication } from '@/lib/applications/types';
+import { LEGAL_ENTITY } from '@/components/legal/legal-data';
 import {
+  EMAIL_COLORS,
+  MESSAGE_LABEL,
   cleanSubject,
   greetingName,
   renderApplicationConfirmationEmail,
   renderApplicationFollowUpEmail,
   renderApplicationTeamEmail,
   renderEmail,
+  type RenderedEmail,
 } from '@/lib/email/templates';
 
 const XSS = '<script>alert(1)</script>';
@@ -289,3 +293,81 @@ describe('layout helpers', () => {
     expect(renderApplicationTeamEmail(full).html).not.toMatch(/text-transform:\s*uppercase/);
   });
 });
+
+// E-BEW-025: Pflichtangaben im Fuß, wortgleich zum Impressum (LEGAL_ENTITY).
+describe('mandatory footer', () => {
+  const followUp: NormalizedFollowUp = { reference: 'BE-26-K7M4QX', idempotencyKey: 'h', receivedAt: new Date(), message: 'Hallo' };
+  const mails: Array<[string, RenderedEmail]> = [
+    ['team (Fachkraft)', renderApplicationTeamEmail(full)],
+    ['team (Ausbildung)', renderApplicationTeamEmail({ ...base, job: { ...base.job, id: 'ausbildung-anlagenmechaniker-shk', questionSet: 'ausbildung' } })],
+    ['team (Quereinstieg)', renderApplicationTeamEmail({ ...base, job: { ...base.job, id: 'quereinsteiger-montagehelfer', questionSet: 'quereinstieg' } })],
+    ['team (Spamverdacht)', renderApplicationTeamEmail({ ...base, suspectedSpam: true, spamSignals: ['honeypot'] })],
+    ['confirmation', renderApplicationConfirmationEmail(full)],
+    ['follow-up with Mappe', renderApplicationFollowUpEmail({ ...followUp, mappe: full.mappe })],
+  ];
+
+  it.each(mails)('%s names company, address, managing director and register in HTML and text', (_, mail) => {
+    const lines = [
+      LEGAL_ENTITY.name,
+      `${LEGAL_ENTITY.street} · ${LEGAL_ENTITY.postalCodeCity}`,
+      `Geschäftsführer: ${LEGAL_ENTITY.managingDirector}`,
+      `Registergericht: ${LEGAL_ENTITY.registerCourt} · Registernummer: ${LEGAL_ENTITY.registerNumber}`,
+    ];
+    for (const line of lines) {
+      expect(mail.text).toContain(line);
+      expect(mail.html).toContain(line);
+    }
+    expect(mail.text).toContain('Geschäftsführer: Diplomingenieur Sabri Demir');
+  });
+});
+
+describe('palette (Einstieg design)', () => {
+  const mail = renderApplicationTeamEmail(full);
+
+  it('uses system fonts only, no web fonts', () => {
+    expect(mail.html).not.toContain('Inter');
+    expect(mail.html).not.toMatch(/@font-face|fonts\.googleapis/);
+  });
+
+  it('frames the card with a navy head, the red supply line and the blue return line', () => {
+    expect(mail.html).toContain(`background-color: ${EMAIL_COLORS.brand}`);
+    expect(mail.html).toContain(`background-color: ${EMAIL_COLORS.accent}`);
+    expect(mail.html).toContain(`background-color: ${EMAIL_COLORS.ruecklauf}`);
+  });
+
+  it('uses red only as a line, never as a text colour or a button face', () => {
+    expect(mail.html).not.toMatch(new RegExp(`(?<!-)color: ${EMAIL_COLORS.accent}`));
+    const button = mail.html.match(/<a href="[^"]*" style="display: inline-block;[^"]*"/)?.[0] ?? '';
+    expect(button).toContain(EMAIL_COLORS.onBrand);
+    expect(mail.html).toMatch(new RegExp(`border-radius: 4px; background-color: ${EMAIL_COLORS.brand};`));
+  });
+});
+
+// E-BEW-015 (Mail-Anteil): Ergänzung und Wunschkonditionen als ein Block in der Team-Mail.
+describe('follow-up block', () => {
+  const mail = renderApplicationFollowUpEmail({
+    reference: 'BE-26-K7M4QX',
+    idempotencyKey: 'h',
+    receivedAt: new Date(),
+    startDate: '01.12.2026',
+    postalCode: '35578',
+    message: 'Gern Vollzeit, Firmenwagen wäre schön.',
+  });
+
+  it('groups start date, postcode and message under „Ergänzung“', () => {
+    const block = mail.text.slice(mail.text.indexOf('Ergänzung\n='));
+    expect(block).toContain('Frühester Start: 01.12.2026');
+    expect(block).toContain('PLZ: 35578');
+    expect(block).toContain(MESSAGE_LABEL);
+    expect(block).toContain('Gern Vollzeit, Firmenwagen wäre schön.');
+    expect(MESSAGE_LABEL).toContain('Wunschkonditionen');
+    expect(mail.html).toContain('>Ergänzung<');
+  });
+
+  it('leaves the block out when nothing but the Mappe was added', () => {
+    const onlyMappe = renderApplicationFollowUpEmail({ reference: 'BE-26-K7M4QX', idempotencyKey: 'h', receivedAt: new Date(), mappe: full.mappe });
+    expect(onlyMappe.text).not.toContain('Ergänzung\n=');
+    expect(onlyMappe.text).toContain('Bewerbungsmappe');
+  });
+});
+

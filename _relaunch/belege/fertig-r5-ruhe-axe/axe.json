@@ -1,0 +1,465 @@
+{
+  "label": "fertig-r5-ruhe-axe",
+  "base": "http://localhost:3450",
+  "erstellt": "2026-10-10T09:18:17.342Z",
+  "bedingungen": {
+    "werkzeug": "@axe-core/playwright 4.13.0, axe-core 4.13.0",
+    "chromium": "141.0.7390.37",
+    "tags": [
+      "wcag2a",
+      "wcag2aa",
+      "wcag21a",
+      "wcag21aa",
+      "wcag22aa"
+    ],
+    "reducedMotion": "reduce",
+    "ansichten": [
+      "m375 375×812",
+      "d1440 1440×900"
+    ],
+    "schemata": [
+      "light",
+      "dark"
+    ],
+    "vorbereitung": "goto networkidle → document.fonts.ready → scrollThrough → Zustand herstellen → Animationen beendet → axe (ganze Seite)",
+    "anfragesperre": "lib/browser.mjs (G5): POST/PUT/PATCH/DELETE → Attrappe, Tracking → 204, Fremdhosts blockiert",
+    "parallel": 2
+  },
+  "abdeckung": {
+    "grundmengeSeiten": 3,
+    "seitenlaeufe": 12,
+    "zustaende": 0,
+    "zustandslaeufe": 0,
+    "gesamtLaeufe": 12,
+    "erfolgreich": 12,
+    "fehlgeschlagen": []
+  },
+  "summenVerstossRegeln": {
+    "critical": 0,
+    "serious": 0,
+    "moderate": 0,
+    "minor": 0
+  },
+  "summenKnoten": {
+    "critical": 0,
+    "serious": 0,
+    "moderate": 0,
+    "minor": 0
+  },
+  "laufMitVerstoss": 0,
+  "laufOhneVerstoss": 12,
+  "anfragesperre": {},
+  "unklarRegeln": [
+    {
+      "id": "color-contrast",
+      "laeufe": 8,
+      "knoten": 20,
+      "seiten": [
+        "datenschutz",
+        "impressum",
+        "fehler-404"
+      ],
+      "ziel": ".kopf-module__gMMShq__zaehler",
+      "zielLauf": "datenschutz__d1440-light"
+    },
+    {
+      "id": "aria-valid-attr-value",
+      "laeufe": 6,
+      "knoten": 6,
+      "seiten": [
+        "datenschutz",
+        "impressum",
+        "fehler-404"
+      ],
+      "ziel": "button[aria-haspopup=\"dialog\"]",
+      "zielLauf": "datenschutz__m375-light"
+    }
+  ],
+  "laeufe": [
+    {
+      "key": "datenschutz__m375-light",
+      "typ": "seite",
+      "slug": "datenschutz",
+      "titel": "datenschutz",
+      "pfad": "/datenschutz",
+      "ansicht": "m375",
+      "schema": "light",
+      "status": 200,
+      "ms": 8406,
+      "geprueft": 28,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "knoten": 1,
+          "ziel": "button[aria-haspopup=\"dialog\"]"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "datenschutz__m375-dark",
+      "typ": "seite",
+      "slug": "datenschutz",
+      "titel": "datenschutz",
+      "pfad": "/datenschutz",
+      "ansicht": "m375",
+      "schema": "dark",
+      "status": 200,
+      "ms": 8411,
+      "geprueft": 28,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "knoten": 1,
+          "ziel": "button[aria-haspopup=\"dialog\"]"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "datenschutz__d1440-light",
+      "typ": "seite",
+      "slug": "datenschutz",
+      "titel": "datenschutz",
+      "pfad": "/datenschutz",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 6248,
+      "geprueft": 28,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 3,
+          "ziel": ".kopf-module__gMMShq__zaehler"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "datenschutz__d1440-dark",
+      "typ": "seite",
+      "slug": "datenschutz",
+      "titel": "datenschutz",
+      "pfad": "/datenschutz",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 6578,
+      "geprueft": 28,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 3,
+          "ziel": ".kopf-module__gMMShq__zaehler"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "impressum__m375-light",
+      "typ": "seite",
+      "slug": "impressum",
+      "titel": "impressum",
+      "pfad": "/impressum",
+      "ansicht": "m375",
+      "schema": "light",
+      "status": 200,
+      "ms": 4437,
+      "geprueft": 27,
+      "unklar": 2,
+      "unklarRegeln": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "knoten": 1,
+          "ziel": "button[aria-haspopup=\"dialog\"]"
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 1,
+          "ziel": "#recht-titel"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "impressum__m375-dark",
+      "typ": "seite",
+      "slug": "impressum",
+      "titel": "impressum",
+      "pfad": "/impressum",
+      "ansicht": "m375",
+      "schema": "dark",
+      "status": 200,
+      "ms": 4367,
+      "geprueft": 27,
+      "unklar": 2,
+      "unklarRegeln": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "knoten": 1,
+          "ziel": "button[aria-haspopup=\"dialog\"]"
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 1,
+          "ziel": "#recht-titel"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "impressum__d1440-light",
+      "typ": "seite",
+      "slug": "impressum",
+      "titel": "impressum",
+      "pfad": "/impressum",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 4149,
+      "geprueft": 27,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 3,
+          "ziel": ".kopf-module__gMMShq__zaehler"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "impressum__d1440-dark",
+      "typ": "seite",
+      "slug": "impressum",
+      "titel": "impressum",
+      "pfad": "/impressum",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 200,
+      "ms": 3837,
+      "geprueft": 27,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 3,
+          "ziel": ".kopf-module__gMMShq__zaehler"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 0
+    },
+    {
+      "key": "fehler-404__m375-light",
+      "typ": "seite",
+      "slug": "fehler-404",
+      "titel": "fehler-404",
+      "pfad": "/gibt-es-nicht-404",
+      "ansicht": "m375",
+      "schema": "light",
+      "status": 404,
+      "ms": 4033,
+      "geprueft": 26,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "knoten": 1,
+          "ziel": "button[aria-haspopup=\"dialog\"]"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 1
+    },
+    {
+      "key": "fehler-404__m375-dark",
+      "typ": "seite",
+      "slug": "fehler-404",
+      "titel": "fehler-404",
+      "pfad": "/gibt-es-nicht-404",
+      "ansicht": "m375",
+      "schema": "dark",
+      "status": 404,
+      "ms": 4042,
+      "geprueft": 26,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "knoten": 1,
+          "ziel": "button[aria-haspopup=\"dialog\"]"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 1
+    },
+    {
+      "key": "fehler-404__d1440-light",
+      "typ": "seite",
+      "slug": "fehler-404",
+      "titel": "fehler-404",
+      "pfad": "/gibt-es-nicht-404",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 404,
+      "ms": 3793,
+      "geprueft": 25,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 3,
+          "ziel": ".kopf-module__gMMShq__zaehler"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 1
+    },
+    {
+      "key": "fehler-404__d1440-dark",
+      "typ": "seite",
+      "slug": "fehler-404",
+      "titel": "fehler-404",
+      "pfad": "/gibt-es-nicht-404",
+      "ansicht": "d1440",
+      "schema": "dark",
+      "status": 404,
+      "ms": 3800,
+      "geprueft": 25,
+      "unklar": 1,
+      "unklarRegeln": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "knoten": 3,
+          "ziel": ".kopf-module__gMMShq__zaehler"
+        }
+      ],
+      "verstoesse": [],
+      "summe": {
+        "critical": 0,
+        "serious": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "nachweis": null,
+      "anfragesperre": [],
+      "konsolenfehler": 1
+    }
+  ],
+  "regeln": []
+}

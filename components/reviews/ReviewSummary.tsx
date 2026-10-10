@@ -45,13 +45,13 @@ export function ReviewSummary({ className }: ReviewSummaryProps) {
       <span aria-hidden="true" className="inline-flex">
         <Rating value={averageRating} size="sm" />
       </span>
-      {/* tabular-nums on the figures only: Inter's tnum would widen the hyphen in „Google-Bewertungen“. */}
+      {/* Figures in Bricolage digits (`ziffer`, Variante 1): Atkinson draws the zero with a slash. */}
       <span>
-        <span className="font-semibold tabular-nums">{formatRating(averageRating)}</span>
+        <span className="ziffer font-semibold">{formatRating(averageRating)}</span>
         <span className="sr-only"> von 5 Sternen</span>
         <span className="text-ink-muted">
           {' · '}
-          <span className="tabular-nums">{count.format(totalReviews)}</span> {noun}
+          <span className="ziffer">{count.format(totalReviews)}</span> {noun}
           {' · '}Stand: {formatAsOf(asOf)}
         </span>
       </span>

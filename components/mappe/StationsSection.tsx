@@ -47,6 +47,8 @@ const EDUCATION_FIELDS: readonly StationField<EducationStationDraft>[] = [
 
 export interface StationsSectionProps {
   step: number;
+  /** Mappe-Stand: mindestens eine nicht leere Station. */
+  done?: boolean;
   career: readonly CareerStationDraft[];
   education: readonly EducationStationDraft[];
   onCareer: (action: ListAction<CareerStationDraft>) => void;
@@ -54,11 +56,12 @@ export interface StationsSectionProps {
   announce: (message: string) => void;
 }
 
-export function StationsSection({ step, career, education, onCareer, onEducation, announce }: StationsSectionProps) {
+export function StationsSection({ step, done, career, education, onCareer, onEducation, announce }: StationsSectionProps) {
   return (
     <EditorSection
       id="mappe-lebenslauf"
       step={step}
+      done={done}
       title="Berufserfahrung und Ausbildung"
       description="Neueste Station zuerst. Was du leer lässt, erscheint nicht im Lebenslauf."
     >

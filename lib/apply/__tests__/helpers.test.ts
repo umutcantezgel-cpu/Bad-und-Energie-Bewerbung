@@ -5,7 +5,7 @@ import { getFunnelOptions } from '@/lib/jobs/registry';
 import { CONTACT_MESSAGES, contactResolver, validateContact } from '../contact-schema';
 import { editDistance, suggestEmail } from '../email-suggest';
 import { formatBerlinDateTime, isWithinOpeningHours } from '../office-hours';
-import { carryOverQuery, jobIdFromParam, legacyRedirectTarget, paramForJob } from '../params';
+import { carryOverQuery, jobIdFromParam, legacyRedirectTarget, paramForJob, wantsDocuments } from '../params';
 import { isPlausiblePhone, normalizePhoneInput } from '../phone';
 import { parseMappe, parseSubmitted, readSubmitted, writeSubmitted, type StorageLike } from '../storage';
 import { buildVCard, escapeVCardValue } from '../vcard';
@@ -181,6 +181,27 @@ describe('URL params', () => {
     expect(legacyRedirectTarget({ direct: 'true' })).toBeNull();
     expect(carryOverQuery({ a: ['1', '2'], tab: 'x', b: undefined })).toBe('?a=1&a=2');
   });
+
+  it('redirects ?tab=dossier case-insensitively and keeps ?stelle=, ignores unknown values (E-BEW-027)', () => {
+    expect(legacyRedirectTarget({ tab: ' DOSSIER ' })).toBe('/bewerbung/mappe');
+    expect(legacyRedirectTarget({ tab: ['dossier', 'vault'], stelle: 'initiativ' })).toBe('/bewerbung/mappe?stelle=initiativ');
+    // Mehrfachwerte: Der erste zählt, wie beim Altstand (searchParams.get).
+    expect(legacyRedirectTarget({ tab: ['vault', 'dossier'] })).toBeNull();
+    for (const tab of ['', 'bogus', 'hub', '%', undefined]) expect(legacyRedirectTarget({ tab })).toBeNull();
+    expect(legacyRedirectTarget({})).toBeNull();
+  });
+
+  it('recognises the old document-vault links (E-BEW-027, E-START-007)', () => {
+    expect(wantsDocuments({ tab: 'vault' })).toBe(true);
+    expect(wantsDocuments({ tab: 'Direct' })).toBe(true);
+    expect(wantsDocuments({ direct: 'true' })).toBe(true);
+    expect(wantsDocuments({ direct: ['1', 'false'] })).toBe(true);
+    expect(wantsDocuments({ tab: 'quiz' })).toBe(false);
+    expect(wantsDocuments({ tab: 'form', direct: 'false' })).toBe(false);
+    expect(wantsDocuments({ direct: '' })).toBe(false);
+    expect(wantsDocuments({ direct: '0' })).toBe(false);
+    expect(wantsDocuments({ stelle: 'initiativ' })).toBe(false);
+  });
 });
 
 describe('session records', () => {
@@ -209,6 +230,9 @@ describe('session records', () => {
     expect(parseSubmitted(JSON.stringify({ ...record, submittedAt: Date.parse(record.submittedAt) }))).toEqual(record);
     expect(parseSubmitted(JSON.stringify({ ...record, reference: '' }))).toBeNull();
     expect(parseSubmitted('kaputt')).toBeNull();
+    // E-START-020: Der gewählte Rückmeldeweg reist mit; unbekannte Werte fallen weg.
+    expect(parseSubmitted(JSON.stringify({ ...record, contactChannel: "phone" }))).toEqual({ ...record, contactChannel: "phone" });
+    expect(parseSubmitted(JSON.stringify({ ...record, contactChannel: "fax" }))).toEqual(record);
   });
 
   it('accepts only a Mappe with content', () => {

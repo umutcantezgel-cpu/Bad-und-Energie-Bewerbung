@@ -1,0 +1,118 @@
+/*
+ * Bewerbungsseite /bewerbung (R5-BEW-01, E-023) unter dem Seitenkopf `arbeit`.
+ *
+ * Arbeitsfläche: am Handy der Flow zuerst, darunter die anderen Wege (Unterlagen, direkt sprechen). Ab 64em
+ * das Raster des Seitenkopfs `arbeit` (Rand · 2fr · --a-8 · 1fr bis zur Kante): Der Flow steht unter der h1,
+ * die anderen Wege in der Spalte der Navy-Fläche, bündig mit deren Inhalt. Ändert sich das Raster des Kopfs,
+ * bleibt die Seite heil; nur die Bündigkeit wandert.
+ * Nur Rollen und Skalen aus app/styles/theme.css.
+ */
+
+.flaeche {
+  --rand: max(var(--spacing-gutter, var(--a-5)), env(safe-area-inset-left), env(safe-area-inset-right));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--a-7);
+  /* oben ohne Polster: Der Seitenkopf endet am Handy schon mit --a-6 unter dem Zweitweg */
+  padding: 0 var(--rand) var(--spacing-section-sm);
+}
+
+.flow {
+  min-width: 0;
+  max-width: var(--container-prose);
+}
+
+.wege {
+  display: grid;
+  align-content: start;
+  row-gap: var(--a-8);
+  min-width: 0;
+  max-width: var(--container-prose);
+}
+
+/* Haus im schmalen Navy-Band des Kopfs: kleiner als der Standard (15rem), damit der Kopf nicht höher wird als
+   sein Text und der Flow früher beginnt. Spezifischer als .hausKlein in components/zeichnung. */
+.haus[data-zeichnung] {
+  width: 11rem;
+}
+
+/* Am Handy trennt ein Leitungspaar Flow und Wege (randlos wie zwischen den Abschnitten der Startseite) */
+.trenner {
+  margin-inline: calc(var(--rand) * -1);
+  width: calc(100% + var(--rand) * 2);
+}
+
+@media (min-width: 64em) {
+  .flaeche {
+    grid-template-columns: minmax(0, 2fr) var(--a-8) minmax(20rem, 1fr);
+    padding: var(--a-7) 0 var(--spacing-section) var(--rand);
+  }
+
+  .flow {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .trenner {
+    display: none;
+  }
+
+  .wege {
+    grid-column: 3;
+    grid-row: 1;
+    padding: 0 var(--rand) 0 var(--a-8);
+  }
+}
+
+/* ═══ Regionalband (E-BEW-008) ═══ */
+.region {
+  display: grid;
+  row-gap: var(--a-7);
+}
+
+.regionMasse {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--a-6) var(--a-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.regionMass {
+  display: grid;
+  align-content: start;
+  row-gap: var(--a-2);
+  min-width: 0;
+}
+
+.standort {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  column-gap: var(--a-4);
+}
+
+/* Etikett-Kästchen wie an der Zeichnung des Einstiegs: Navy-Kontur in Strichstärke */
+.kasten {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--m-ziel);
+  height: var(--m-ziel);
+  border: var(--m-strich) solid var(--brand);
+  border-radius: var(--radius-1);
+  color: var(--brand);
+}
+
+@media (min-width: 48em) {
+  .regionMasse {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--a-7);
+  }
+
+  .standort {
+    grid-column: auto;
+  }
+}

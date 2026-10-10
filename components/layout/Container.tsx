@@ -1,21 +1,22 @@
 import type { ComponentPropsWithRef } from 'react';
 import { cn } from '@/lib/utils/cn';
 
-export type ContainerSize = 'prose' | 'content' | 'wide';
+export type ContainerSize = 'prose' | 'content' | 'wide' | 'satz';
 
 const SIZE: Record<ContainerSize, string> = {
   prose: 'max-w-prose',
   content: 'max-w-content',
   wide: 'max-w-wide',
+  satz: 'max-w-satz',
 };
 
 export interface ContainerProps extends ComponentPropsWithRef<'div'> {
-  /** prose 40rem · content 68rem · wide 80rem (content area, gutters excluded). */
+  /** prose 40rem · content 68rem · wide 80rem · satz 84rem (Satzspiegel K-007; content area, gutters excluded). */
   size?: ContainerSize;
   as?: 'div' | 'header' | 'footer' | 'main' | 'nav';
 }
 
-/** Centered column with the fluid side gutter. */
+/** Centered column with the fluid side gutter (Seitenrand K-007). */
 export function Container({ size = 'content', as: Component = 'div', className, ...props }: ContainerProps) {
   return <Component className={cn('mx-auto box-content px-gutter', SIZE[size], className)} {...props} />;
 }

@@ -1,0 +1,1112 @@
+{
+  "url": "http://localhost:3702/",
+  "erstellt": "2026-10-09T12:39:15.223Z",
+  "aufnahmen": [
+    {
+      "ansicht": "m375",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m375-light-voll__01.webp",
+        "m375-light-voll__02.webp",
+        "m375-light-voll__03.webp",
+        "m375-light-voll__04.webp",
+        "m375-light-voll__05.webp",
+        "m375-light-voll__06.webp",
+        "m375-light-voll__07.webp",
+        "m375-light-voll__08.webp",
+        "m375-light-voll__09.webp",
+        "m375-light-voll__10.webp",
+        "m375-light-voll__11.webp",
+        "m375-light-voll__12.webp"
+      ]
+    },
+    {
+      "ansicht": "m375",
+      "schema": "light",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m375-light-reduziert__01.webp",
+        "m375-light-reduziert__02.webp",
+        "m375-light-reduziert__03.webp",
+        "m375-light-reduziert__04.webp",
+        "m375-light-reduziert__05.webp",
+        "m375-light-reduziert__06.webp",
+        "m375-light-reduziert__07.webp",
+        "m375-light-reduziert__08.webp",
+        "m375-light-reduziert__09.webp",
+        "m375-light-reduziert__10.webp",
+        "m375-light-reduziert__11.webp",
+        "m375-light-reduziert__12.webp"
+      ]
+    },
+    {
+      "ansicht": "m375",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m375-dark-voll__01.webp",
+        "m375-dark-voll__02.webp",
+        "m375-dark-voll__03.webp",
+        "m375-dark-voll__04.webp",
+        "m375-dark-voll__05.webp",
+        "m375-dark-voll__06.webp",
+        "m375-dark-voll__07.webp",
+        "m375-dark-voll__08.webp",
+        "m375-dark-voll__09.webp",
+        "m375-dark-voll__10.webp",
+        "m375-dark-voll__11.webp",
+        "m375-dark-voll__12.webp"
+      ]
+    },
+    {
+      "ansicht": "m375",
+      "schema": "dark",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 375,
+        "clientWidth": 375,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m375-dark-reduziert__01.webp",
+        "m375-dark-reduziert__02.webp",
+        "m375-dark-reduziert__03.webp",
+        "m375-dark-reduziert__04.webp",
+        "m375-dark-reduziert__05.webp",
+        "m375-dark-reduziert__06.webp",
+        "m375-dark-reduziert__07.webp",
+        "m375-dark-reduziert__08.webp",
+        "m375-dark-reduziert__09.webp",
+        "m375-dark-reduziert__10.webp",
+        "m375-dark-reduziert__11.webp",
+        "m375-dark-reduziert__12.webp"
+      ]
+    },
+    {
+      "ansicht": "t768",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "t768-light-voll__01.webp",
+        "t768-light-voll__02.webp",
+        "t768-light-voll__03.webp",
+        "t768-light-voll__04.webp",
+        "t768-light-voll__05.webp",
+        "t768-light-voll__06.webp",
+        "t768-light-voll__07.webp",
+        "t768-light-voll__08.webp",
+        "t768-light-voll__09.webp",
+        "t768-light-voll__10.webp",
+        "t768-light-voll__11.webp",
+        "t768-light-voll__12.webp"
+      ]
+    },
+    {
+      "ansicht": "t768",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "t768-dark-voll__01.webp",
+        "t768-dark-voll__02.webp",
+        "t768-dark-voll__03.webp",
+        "t768-dark-voll__04.webp",
+        "t768-dark-voll__05.webp",
+        "t768-dark-voll__06.webp",
+        "t768-dark-voll__07.webp",
+        "t768-dark-voll__08.webp",
+        "t768-dark-voll__09.webp",
+        "t768-dark-voll__10.webp",
+        "t768-dark-voll__11.webp",
+        "t768-dark-voll__12.webp"
+      ]
+    },
+    {
+      "ansicht": "d1440",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "d1440-light-voll__01.webp",
+        "d1440-light-voll__02.webp",
+        "d1440-light-voll__03.webp",
+        "d1440-light-voll__04.webp",
+        "d1440-light-voll__05.webp",
+        "d1440-light-voll__06.webp",
+        "d1440-light-voll__07.webp",
+        "d1440-light-voll__08.webp",
+        "d1440-light-voll__09.webp",
+        "d1440-light-voll__10.webp",
+        "d1440-light-voll__11.webp",
+        "d1440-light-voll__12.webp"
+      ]
+    },
+    {
+      "ansicht": "d1440",
+      "schema": "light",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "d1440-light-reduziert__01.webp",
+        "d1440-light-reduziert__02.webp",
+        "d1440-light-reduziert__03.webp",
+        "d1440-light-reduziert__04.webp",
+        "d1440-light-reduziert__05.webp",
+        "d1440-light-reduziert__06.webp",
+        "d1440-light-reduziert__07.webp",
+        "d1440-light-reduziert__08.webp",
+        "d1440-light-reduziert__09.webp",
+        "d1440-light-reduziert__10.webp",
+        "d1440-light-reduziert__11.webp",
+        "d1440-light-reduziert__12.webp"
+      ]
+    },
+    {
+      "ansicht": "d1440",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "d1440-dark-voll__01.webp",
+        "d1440-dark-voll__02.webp",
+        "d1440-dark-voll__03.webp",
+        "d1440-dark-voll__04.webp",
+        "d1440-dark-voll__05.webp",
+        "d1440-dark-voll__06.webp",
+        "d1440-dark-voll__07.webp",
+        "d1440-dark-voll__08.webp",
+        "d1440-dark-voll__09.webp",
+        "d1440-dark-voll__10.webp",
+        "d1440-dark-voll__11.webp",
+        "d1440-dark-voll__12.webp"
+      ]
+    },
+    {
+      "ansicht": "d1440",
+      "schema": "dark",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "d1440-dark-reduziert__01.webp",
+        "d1440-dark-reduziert__02.webp",
+        "d1440-dark-reduziert__03.webp",
+        "d1440-dark-reduziert__04.webp",
+        "d1440-dark-reduziert__05.webp",
+        "d1440-dark-reduziert__06.webp",
+        "d1440-dark-reduziert__07.webp",
+        "d1440-dark-reduziert__08.webp",
+        "d1440-dark-reduziert__09.webp",
+        "d1440-dark-reduziert__10.webp",
+        "d1440-dark-reduziert__11.webp",
+        "d1440-dark-reduziert__12.webp"
+      ]
+    },
+    {
+      "ansicht": "d1920",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "d1920-light-voll__01.webp",
+        "d1920-light-voll__02.webp",
+        "d1920-light-voll__03.webp",
+        "d1920-light-voll__04.webp",
+        "d1920-light-voll__05.webp",
+        "d1920-light-voll__06.webp",
+        "d1920-light-voll__07.webp",
+        "d1920-light-voll__08.webp",
+        "d1920-light-voll__09.webp",
+        "d1920-light-voll__10.webp",
+        "d1920-light-voll__11.webp",
+        "d1920-light-voll__12.webp"
+      ]
+    },
+    {
+      "ansicht": "d1920",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1920,
+        "clientWidth": 1920,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "d1920-dark-voll__01.webp",
+        "d1920-dark-voll__02.webp",
+        "d1920-dark-voll__03.webp",
+        "d1920-dark-voll__04.webp",
+        "d1920-dark-voll__05.webp",
+        "d1920-dark-voll__06.webp",
+        "d1920-dark-voll__07.webp",
+        "d1920-dark-voll__08.webp",
+        "d1920-dark-voll__09.webp",
+        "d1920-dark-voll__10.webp",
+        "d1920-dark-voll__11.webp",
+        "d1920-dark-voll__12.webp"
+      ]
+    },
+    {
+      "ansicht": "m320",
+      "schema": "light",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 320,
+        "clientWidth": 320,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m320-light-voll__01.webp",
+        "m320-light-voll__02.webp",
+        "m320-light-voll__03.webp",
+        "m320-light-voll__04.webp",
+        "m320-light-voll__05.webp",
+        "m320-light-voll__06.webp",
+        "m320-light-voll__07.webp",
+        "m320-light-voll__08.webp",
+        "m320-light-voll__09.webp",
+        "m320-light-voll__10.webp",
+        "m320-light-voll__11.webp",
+        "m320-light-voll__12.webp"
+      ]
+    },
+    {
+      "ansicht": "m320",
+      "schema": "light",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 320,
+        "clientWidth": 320,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": []
+    },
+    {
+      "ansicht": "m320",
+      "schema": "dark",
+      "bewegung": "no-preference",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 320,
+        "clientWidth": 320,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": [
+        "m320-dark-voll__01.webp",
+        "m320-dark-voll__02.webp",
+        "m320-dark-voll__03.webp",
+        "m320-dark-voll__04.webp",
+        "m320-dark-voll__05.webp",
+        "m320-dark-voll__06.webp",
+        "m320-dark-voll__07.webp",
+        "m320-dark-voll__08.webp",
+        "m320-dark-voll__09.webp",
+        "m320-dark-voll__10.webp",
+        "m320-dark-voll__11.webp",
+        "m320-dark-voll__12.webp"
+      ]
+    },
+    {
+      "ansicht": "m320",
+      "schema": "dark",
+      "bewegung": "reduce",
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 320,
+        "clientWidth": 320,
+        "clipped": []
+      },
+      "fehler": [],
+      "fremdanfragen": [],
+      "dateien": []
+    }
+  ],
+  "ergaenzung": {
+    "erzeugt": "2026-10-09T12:41:51.137Z",
+    "hinweis": "kachel-fotos.mjs schneidet höchstens 12 Ausschnitte und misst erst ab 375 px; diese Ergänzung nimmt 320 px als Ansicht (m320, derselbe Überlaufbericht) und Elementfotos je Abschnitt auf (Dateien el-*).",
+    "elementfotos": [
+      {
+        "ansicht": "m375",
+        "schema": "light",
+        "abschnitt": "hero",
+        "selektor": ".held",
+        "hoehePx": 1051,
+        "ausschnitte": 1,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-light-hero__01.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "light",
+        "abschnitt": "stellen",
+        "selektor": "#stellen",
+        "hoehePx": 946,
+        "ausschnitte": 1,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-light-stellen__01.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "light",
+        "abschnitt": "gebiet",
+        "selektor": "#einsatzgebiet",
+        "hoehePx": 1980,
+        "ausschnitte": 2,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-light-gebiet__01.webp",
+          "el-m375-light-gebiet__02.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "light",
+        "abschnitt": "leitidee",
+        "selektor": "#leitidee",
+        "hoehePx": 2020,
+        "ausschnitte": 2,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-light-leitidee__01.webp",
+          "el-m375-light-leitidee__02.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "light",
+        "abschnitt": "schriften",
+        "selektor": "#schriften",
+        "hoehePx": 5020,
+        "ausschnitte": 5,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-light-schriften__01.webp",
+          "el-m375-light-schriften__02.webp",
+          "el-m375-light-schriften__03.webp",
+          "el-m375-light-schriften__04.webp",
+          "el-m375-light-schriften__05.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "light",
+        "abschnitt": "palette",
+        "selektor": "#palette",
+        "hoehePx": 10340,
+        "ausschnitte": 9,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-light-palette__01.webp",
+          "el-m375-light-palette__02.webp",
+          "el-m375-light-palette__03.webp",
+          "el-m375-light-palette__04.webp",
+          "el-m375-light-palette__05.webp",
+          "el-m375-light-palette__06.webp",
+          "el-m375-light-palette__07.webp",
+          "el-m375-light-palette__08.webp",
+          "el-m375-light-palette__09.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "light",
+        "abschnitt": "raster",
+        "selektor": "#raster",
+        "hoehePx": 2044,
+        "ausschnitte": 2,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-light-raster__01.webp",
+          "el-m375-light-raster__02.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "light",
+        "abschnitt": "formen",
+        "selektor": "#formen",
+        "hoehePx": 3521,
+        "ausschnitte": 3,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-light-formen__01.webp",
+          "el-m375-light-formen__02.webp",
+          "el-m375-light-formen__03.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "light",
+        "abschnitt": "bewegung",
+        "selektor": "#bewegung",
+        "hoehePx": 7320,
+        "ausschnitte": 6,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-light-bewegung__01.webp",
+          "el-m375-light-bewegung__02.webp",
+          "el-m375-light-bewegung__03.webp",
+          "el-m375-light-bewegung__04.webp",
+          "el-m375-light-bewegung__05.webp",
+          "el-m375-light-bewegung__06.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "light",
+        "abschnitt": "zustaende",
+        "selektor": "#zustaende",
+        "hoehePx": 2329,
+        "ausschnitte": 2,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-light-zustaende__01.webp",
+          "el-m375-light-zustaende__02.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "light",
+        "abschnitt": "fuss",
+        "selektor": ".fuss",
+        "hoehePx": 269,
+        "ausschnitte": 1,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-light-fuss__01.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "dark",
+        "abschnitt": "hero",
+        "selektor": ".held",
+        "hoehePx": 1051,
+        "ausschnitte": 1,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-dark-hero__01.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "dark",
+        "abschnitt": "stellen",
+        "selektor": "#stellen",
+        "hoehePx": 946,
+        "ausschnitte": 1,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-dark-stellen__01.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "dark",
+        "abschnitt": "gebiet",
+        "selektor": "#einsatzgebiet",
+        "hoehePx": 1980,
+        "ausschnitte": 2,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-dark-gebiet__01.webp",
+          "el-m375-dark-gebiet__02.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "dark",
+        "abschnitt": "leitidee",
+        "selektor": "#leitidee",
+        "hoehePx": 2020,
+        "ausschnitte": 2,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-dark-leitidee__01.webp",
+          "el-m375-dark-leitidee__02.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "dark",
+        "abschnitt": "schriften",
+        "selektor": "#schriften",
+        "hoehePx": 5020,
+        "ausschnitte": 5,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-dark-schriften__01.webp",
+          "el-m375-dark-schriften__02.webp",
+          "el-m375-dark-schriften__03.webp",
+          "el-m375-dark-schriften__04.webp",
+          "el-m375-dark-schriften__05.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "dark",
+        "abschnitt": "palette",
+        "selektor": "#palette",
+        "hoehePx": 10340,
+        "ausschnitte": 9,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-dark-palette__01.webp",
+          "el-m375-dark-palette__02.webp",
+          "el-m375-dark-palette__03.webp",
+          "el-m375-dark-palette__04.webp",
+          "el-m375-dark-palette__05.webp",
+          "el-m375-dark-palette__06.webp",
+          "el-m375-dark-palette__07.webp",
+          "el-m375-dark-palette__08.webp",
+          "el-m375-dark-palette__09.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "dark",
+        "abschnitt": "raster",
+        "selektor": "#raster",
+        "hoehePx": 2044,
+        "ausschnitte": 2,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-dark-raster__01.webp",
+          "el-m375-dark-raster__02.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "dark",
+        "abschnitt": "formen",
+        "selektor": "#formen",
+        "hoehePx": 3521,
+        "ausschnitte": 3,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-dark-formen__01.webp",
+          "el-m375-dark-formen__02.webp",
+          "el-m375-dark-formen__03.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "dark",
+        "abschnitt": "bewegung",
+        "selektor": "#bewegung",
+        "hoehePx": 7320,
+        "ausschnitte": 6,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-dark-bewegung__01.webp",
+          "el-m375-dark-bewegung__02.webp",
+          "el-m375-dark-bewegung__03.webp",
+          "el-m375-dark-bewegung__04.webp",
+          "el-m375-dark-bewegung__05.webp",
+          "el-m375-dark-bewegung__06.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "dark",
+        "abschnitt": "zustaende",
+        "selektor": "#zustaende",
+        "hoehePx": 2329,
+        "ausschnitte": 2,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-dark-zustaende__01.webp",
+          "el-m375-dark-zustaende__02.webp"
+        ]
+      },
+      {
+        "ansicht": "m375",
+        "schema": "dark",
+        "abschnitt": "fuss",
+        "selektor": ".fuss",
+        "hoehePx": 269,
+        "ausschnitte": 1,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-m375-dark-fuss__01.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "light",
+        "abschnitt": "hero",
+        "selektor": ".held",
+        "hoehePx": 657,
+        "ausschnitte": 1,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-light-hero__01.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "light",
+        "abschnitt": "stellen",
+        "selektor": "#stellen",
+        "hoehePx": 767,
+        "ausschnitte": 1,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-light-stellen__01.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "light",
+        "abschnitt": "gebiet",
+        "selektor": "#einsatzgebiet",
+        "hoehePx": 2058,
+        "ausschnitte": 3,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-light-gebiet__01.webp",
+          "el-d1440-light-gebiet__02.webp",
+          "el-d1440-light-gebiet__03.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "light",
+        "abschnitt": "leitidee",
+        "selektor": "#leitidee",
+        "hoehePx": 1147,
+        "ausschnitte": 2,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-light-leitidee__01.webp",
+          "el-d1440-light-leitidee__02.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "light",
+        "abschnitt": "schriften",
+        "selektor": "#schriften",
+        "hoehePx": 2931,
+        "ausschnitte": 4,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-light-schriften__01.webp",
+          "el-d1440-light-schriften__02.webp",
+          "el-d1440-light-schriften__03.webp",
+          "el-d1440-light-schriften__04.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "light",
+        "abschnitt": "palette",
+        "selektor": "#palette",
+        "hoehePx": 3007,
+        "ausschnitte": 4,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-light-palette__01.webp",
+          "el-d1440-light-palette__02.webp",
+          "el-d1440-light-palette__03.webp",
+          "el-d1440-light-palette__04.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "light",
+        "abschnitt": "raster",
+        "selektor": "#raster",
+        "hoehePx": 1484,
+        "ausschnitte": 2,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-light-raster__01.webp",
+          "el-d1440-light-raster__02.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "light",
+        "abschnitt": "formen",
+        "selektor": "#formen",
+        "hoehePx": 2112,
+        "ausschnitte": 3,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-light-formen__01.webp",
+          "el-d1440-light-formen__02.webp",
+          "el-d1440-light-formen__03.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "light",
+        "abschnitt": "bewegung",
+        "selektor": "#bewegung",
+        "hoehePx": 3638,
+        "ausschnitte": 4,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-light-bewegung__01.webp",
+          "el-d1440-light-bewegung__02.webp",
+          "el-d1440-light-bewegung__03.webp",
+          "el-d1440-light-bewegung__04.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "light",
+        "abschnitt": "zustaende",
+        "selektor": "#zustaende",
+        "hoehePx": 1129,
+        "ausschnitte": 2,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-light-zustaende__01.webp",
+          "el-d1440-light-zustaende__02.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "light",
+        "abschnitt": "fuss",
+        "selektor": ".fuss",
+        "hoehePx": 165,
+        "ausschnitte": 1,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-light-fuss__01.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "dark",
+        "abschnitt": "hero",
+        "selektor": ".held",
+        "hoehePx": 657,
+        "ausschnitte": 1,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-dark-hero__01.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "dark",
+        "abschnitt": "stellen",
+        "selektor": "#stellen",
+        "hoehePx": 767,
+        "ausschnitte": 1,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-dark-stellen__01.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "dark",
+        "abschnitt": "gebiet",
+        "selektor": "#einsatzgebiet",
+        "hoehePx": 2058,
+        "ausschnitte": 3,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-dark-gebiet__01.webp",
+          "el-d1440-dark-gebiet__02.webp",
+          "el-d1440-dark-gebiet__03.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "dark",
+        "abschnitt": "leitidee",
+        "selektor": "#leitidee",
+        "hoehePx": 1147,
+        "ausschnitte": 2,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-dark-leitidee__01.webp",
+          "el-d1440-dark-leitidee__02.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "dark",
+        "abschnitt": "schriften",
+        "selektor": "#schriften",
+        "hoehePx": 2931,
+        "ausschnitte": 4,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-dark-schriften__01.webp",
+          "el-d1440-dark-schriften__02.webp",
+          "el-d1440-dark-schriften__03.webp",
+          "el-d1440-dark-schriften__04.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "dark",
+        "abschnitt": "palette",
+        "selektor": "#palette",
+        "hoehePx": 3007,
+        "ausschnitte": 4,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-dark-palette__01.webp",
+          "el-d1440-dark-palette__02.webp",
+          "el-d1440-dark-palette__03.webp",
+          "el-d1440-dark-palette__04.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "dark",
+        "abschnitt": "raster",
+        "selektor": "#raster",
+        "hoehePx": 1484,
+        "ausschnitte": 2,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-dark-raster__01.webp",
+          "el-d1440-dark-raster__02.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "dark",
+        "abschnitt": "formen",
+        "selektor": "#formen",
+        "hoehePx": 2112,
+        "ausschnitte": 3,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-dark-formen__01.webp",
+          "el-d1440-dark-formen__02.webp",
+          "el-d1440-dark-formen__03.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "dark",
+        "abschnitt": "bewegung",
+        "selektor": "#bewegung",
+        "hoehePx": 3638,
+        "ausschnitte": 4,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-dark-bewegung__01.webp",
+          "el-d1440-dark-bewegung__02.webp",
+          "el-d1440-dark-bewegung__03.webp",
+          "el-d1440-dark-bewegung__04.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "dark",
+        "abschnitt": "zustaende",
+        "selektor": "#zustaende",
+        "hoehePx": 1129,
+        "ausschnitte": 2,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-dark-zustaende__01.webp",
+          "el-d1440-dark-zustaende__02.webp"
+        ]
+      },
+      {
+        "ansicht": "d1440",
+        "schema": "dark",
+        "abschnitt": "fuss",
+        "selektor": ".fuss",
+        "hoehePx": 165,
+        "ausschnitte": 1,
+        "abgedeckt": true,
+        "fehler": 0,
+        "fremdanfragen": 0,
+        "dateien": [
+          "el-d1440-dark-fuss__01.webp"
+        ]
+      }
+    ]
+  }
+}

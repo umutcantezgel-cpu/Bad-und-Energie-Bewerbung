@@ -1,0 +1,39 @@
+{
+  "label": "fertig-r5-apply-01-dunkel",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T08:58:28.779Z",
+  "seiten": [
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "ansicht": "m390",
+      "schema": "dark",
+      "status": 200,
+      "ms": 11489,
+      "seitenhoehe": 3643,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r5-apply-01-dunkel/bewerbung__m390-dark__01.webp",
+        "belege/fertig-r5-apply-01-dunkel/bewerbung__m390-dark__02.webp",
+        "belege/fertig-r5-apply-01-dunkel/bewerbung__m390-dark__03.webp",
+        "belege/fertig-r5-apply-01-dunkel/bewerbung__m390-dark__04.webp",
+        "belege/fertig-r5-apply-01-dunkel/bewerbung__m390-dark__05.webp"
+      ]
+    }
+  ]
+}

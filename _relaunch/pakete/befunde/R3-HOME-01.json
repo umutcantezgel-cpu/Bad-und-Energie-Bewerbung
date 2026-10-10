@@ -1,0 +1,105 @@
+{
+ "bestanden": false,
+ "zusammenfassung": "Das Paket R3-HOME-01 ist handwerklich sehr gut gebaut. Bei 390, 430, 768, 1024, 1280×720, 1440 und 1920 trifft der Einstieg Variante 1 fast deckungsgleich, im hellen wie im dunklen Schema; Wegweiser, T-001, Rohrklammer und „Kreislauf zeigen“ folgen B Runde 1. Bewegung, Register, Zugänglichkeit (axe 0, Fokus sichtbar, 44-px-Ziele), LCP und CLS stimmen. Zwei harte Befunde verhindern die Abnahme. (1) „Keine Fernmontage“ in der Vertrauenszeile bringt den Fakt noFarAssembly auf drei Stellen der Seite. Das verletzt die Abnahme von E-START-021, und kein Pass verlangt den Punkt dort. (2) Bei 320 px Breite in der Höhenstufe B (z. B. 320×693, 320×700, 340×720) wird der Zweitweg-Pfeil am Bildrand abgeschnitten, und die Erdleitungen kreuzen die Beschriftung „EINSATZRADIUS“.\n\nAbnahme je E-ID:\n- E-START-002: erfüllt. „100 Jahre Meisterbetrieb (1926–2026)“ steht im ersten Bildschirm (start__m390-light__01.webp, start__d1440-light__01.webp). Mit dem Stichtag 2027-01-01 zeigt der Einstieg „Seit 1926 · Wetzlar“, geprüft per Vitest in einstieg.test.ts und einstieg-text.test.ts.\n- E-START-010: im Paketanteil erfüllt.\n  - „Diskretion“ steht oberhalb von #ablauf (HTML-Position 22758 gegenüber 89296).\n  - Die Partner stehen in der abgestuften Fassung, die Pauschalform „Zertifizierter Fachpartner“ kommt nicht vor (0 Treffer).\n  - Feste Baustellen und „15 Leute“ sind auffindbar.\n  - Offen auf Seitenebene: Die Aussage „Meilenstein 2026“ steht derzeit nicht auf `/`. Das hängt an R3-HOME-04.\n- E-START-011: erfüllt. „Innungsbetrieb“ steht ohne Prozentzahl in der Vertrauenszeile (Suche „% Innung“: 0 Treffer).\n- E-START-021: teilweise erfüllt.\n  - Erfüllt: statisch, kein Laufband (marquee 0), alle Punkte sichtbar, bei 1440 und 1920 genau zwei Zeilen.\n  - Nicht erfüllt: „kein Fakt öfter als zweimal auf der Seite“. noFarAssembly steht dreimal (vermeidbar), discretion mindestens dreimal (Konflikt zwischen den Pässen).\n- Brief: erfüllt.\n  - Genau eine h1. Die Plakatgröße beträgt 76,15 px bei 390.\n  - h1, Szene und „Jetzt bewerben“ stehen bei 390×844 im ersten Bildschirm, ebenso der Mikrotext (Unterkante 829).\n  - Die Szene ist Inline-SVG mit aria-hidden. Das LCP-Element ist die h1 (Span „in Wetzlar.“).\n  - CLS: 0 bei m390, 0,0006 bei d1440.\n  - Der Auftakt endet nach 1.120 ms; alle laufenden Animationen hängen an data-motion-Kennungen. Bei reduzierter Bewegung steht der Endzustand.\n  - Die Insel ist nur der Knopf (Quelltext 2,4 KB). aria-disabled ist während des Laufs im Browser bestätigt.\n  - Rot erscheint nur als Hauptaktion und Vorlauf. Nur Rollen-Token, keine Hexwerte.\n  - HERO, HERO_STATS, content.ts und lib/ sind unverändert.\n\nBelege: /home/user/Bad-und-Energie-Bewerbung/_relaunch/belege/r3-home-01-pruef/ mit bericht.json, axe.md, pruef-layout.json, pruef-extra.json, pruef-bewegung.json, pruef-ohnejs.json, pruef-tastatur.json, pruef-cls.json, den Bildern start__*.webp und den Bildern pruef__*.png.",
+ "pruefergebnisse": "- bun run lint: grün (exit 0).\n- bun run type-check: grün (exit 0).\n- bun run test: rot (exit 1).\n  - 84/85 Dateien grün, 1203/1206 Tests grün.\n  - Die 3 Fehler liegen alle in der fremden Datei app/fonts/__tests__/fonts.test.ts. Grund sind neue, nicht versionierte woff2-Dateien in app/fonts (Stand 23:02–23:03; die Fortschrittsdatei R3-PERF-01.log liegt vor, Zuordnung zu diesem Paket vermutet).\n  - Die Paket-Tests allein (bunx vitest run components/home/__tests__/einstieg components/zeichnung) sind grün: 4 Dateien, 37 Tests.\n- bun run check:design: grün (286 Dateien; Hinweise nicht blockierend).\n- bun run check:contrast: grün (alle 351 Paare).\n- bun run check:client-imports: grün (35 Client-Module).\n- screens.mjs (m375, m390, t768, d1440, d1920 × hell/dunkel, --belege alle): 10 Aufnahmen, Überlauf 0, Fehler 0.\n- axe.mjs (m390 und d1440, hell und dunkel): 0 Verstöße in 4 Läufen.\n- Eigener Prüflauf (scratchpad/pruef.mjs, extra.mjs, crop*.mjs, alle über _relaunch/werkzeuge/lib/browser.mjs mit Anfragesperre):\n  - scrollWidth gleich Ansichtsbreite von 320 bis 1920. Die Seite scrollt nicht horizontal, aber bei 320 in Stufe B wird Inhalt abgeschnitten (siehe Befund).\n  - CLS 0 / 0,0006. LCP ist die h1.\n  - Abläufe: 19 am Desktop, 9 mobil beim frühen Messpunkt (nach dem Klick auf den Knopf 15). Alle hängen an data-motion, Ende 1.120 ms.\n  - Knopf: aria-disabled=\"true\" während des Laufs und danach entfernt. Die Taste Enter löst ihn aus. Fokusring 3 px solid rgb(31,87,196), Abstand 3 px.\n  - Ohne JS ist der Knopf visibility:hidden.\n  - Tastatur: „Jetzt bewerben“ und „Offene Stellen ansehen“ zeigen den Fokusring hell und dunkel (Bilder pruef__*-fokus__*.png).",
+ "befunde": [
+  {
+   "schwere": "hart",
+   "datei": "components/home/einstieg/einstieg-text.ts",
+   "beschreibung": "Die Vertrauenszeile nimmt FACTS.noFarAssembly.short („Keine Fernmontage“) auf. Damit steht der Fakt dreimal auf `/`: in der Vertrauenszeile, in der Gebiet-Überschrift REGION.headline („35 km um Wetzlar. Keine Fernmontage.“) und in der FAQ („Gibt es Fernmontagen …? Nein. Unsere Baustellen liegen ausnahmslos …“). Das verletzt die Abnahme von E-START-021 („kein Fakt öfter als zweimal auf der Seite“) und die Brief-Regel „Fakten nur einmal bis zweimal je Seite“. Die Begründung des Baumeisters („der Pass verlangt beide in der Vertrauenszeile“) trifft für Fernmontage nicht zu: E-START-010 „Entscheidung: Verschmelzen (Diskretion, Partner und 1926 in die Vertrauenszeile …)“ nennt Fernmontage nicht. Die Abnahme von E-START-010 verlangt nur, dass die Aussage auf `/` auffindbar ist, und das ist sie über Gebiet und FAQ schon.",
+   "beleg": "Textsuche im ausgelieferten HTML von http://localhost:3450/ (ohne Skripte): „Fernmontage“ 3 Treffer (Zeile 23 Vertrauenszeile, Zeile 92 Gebiet, Zeile 253 FAQ). Quelle: einstieg-text.ts in vertrauenspunkte(), punkte.push({ id: 'fernmontage', … FACTS.noFarAssembly.short }). Pass: _relaunch/atlas/paesse-start.md E-START-010 (Entscheidung, Abnahme) und E-START-021 (Abnahme).",
+   "vorschlag": "Den Punkt „fernmontage“ aus vertrauenspunkte() streichen und den Test in einstieg-text.test.ts anpassen (toHaveLength(6), kein noFarAssembly). Die Aussage über feste Baustellen bleibt über REGION.headline und die FAQ auffindbar, E-START-010 bleibt erfüllt."
+  },
+  {
+   "schwere": "hart",
+   "datei": "components/home/einstieg/einstieg.module.css",
+   "beschreibung": "Bei 320–340 px Breite in der Höhenstufe B (Höhe etwa 680–807 px, z. B. 320×693 = iPhone 12/13 mini mit Anzeigezoom, 320×700, 320×780, 340×720) bricht die mobile Komposition:\n(a) Die Spalte des Zweitwegs ist nur 57 px breit; „ansehen“ plus Pfeil ist 81 px breit, ragt bis x = 324 hinaus und wird von overflow-x: clip am Bildrand abgeschnitten (Pfeil angeschnitten), dazu entsteht ein dreizeiliger Link.\n(b) Die mobilen Erdleitungen (Vorlauf x 114, Rücklauf x 126 bzw. 130/142 bei 340) laufen mitten durch die Beschriftung „EINSATZRADIUS“ (x 20–140).\n(c) Bei 320×693 liegt „Jetzt bewerben“ mit der Unterkante 715 und der Mikrotext mit 769 unterhalb des ersten Bildschirms.\nDer Brief verlangt die Prüfung bei 320 ohne Überlauf, und der Bericht behauptet „nirgends ist Text abgeschnitten“; geprüft wurde aber nur 320×568 (Stufe D, dort in Ordnung).",
+   "beleg": "Bilder _relaunch/belege/r3-home-01-pruef/pruef__320x700-light__zweitweg.png (Pfeil abgeschnitten, rote und blaue Leitung durch „EINSATZRADI|U|S“), pruef__340x720-light__erster.png, pruef__320x693-light__erster.png. Messdaten pruef-extra.json: 320x700 zweitW 57, zweitRight 300, inhaltRight 324; crop2.mjs: 320×693 vlX 114, rlX 126, Beschriftung 35 km 20–140, kreuztName true; 340×720 kreuztName true. Ursache: Die Stufe B (max-height 50.49em, --s 0.56, --uhr 0.79) gilt auch bei 320 px Breite, und `.boden .aktion` hat min-width calc(var(--dx) + 236px * var(--s) + …), wodurch die Zweitweg-Spalte auf 57 px schrumpft.",
+   "vorschlag": "Für max-width 22.49em (oder unter etwa 22em) in Höhenstufe B eine eigene Stufe vorsehen: kleineres --s bzw. --uhr, damit die Fallstelle rechts der Beschriftung „EINSATZRADIUS“ liegt, oder die Maße 35 km/1926 wie in Stufe C unter die Hauptaktion setzen. Den Zweitweg dort in eine eigene Zeile unter die Hauptaktion legen (grid-column 1 / -1). Dann bei 320×693, 320×700 und 340×720 mit Bild prüfen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/einstieg/einstieg-text.ts",
+   "beschreibung": "Diskretion steht auf der Seite mindestens dreimal: Vertrauenszeile „100 % Diskretion“, Ablauf „100 % Diskretion“ mit „vertraulich“ und „diskret“, FAQ „Diskretion ist für uns selbstverständlich …“. Die Pässe erzwingen das: E-START-010 verlangt Diskretion oberhalb von #ablauf, E-START-027 die Zusage im Ablauf, E-START-050 legt die FAQ fest. Die Vertrauenszeile wiederholt außerdem wörtlich die Hervorhebung des Ablaufs.",
+   "beleg": "Textsuche: „Diskretion“ 3 Treffer (Zeilen 22, 169, 246), dazu „diskret“ 2 Treffer und „vertraulich“ 1 Treffer. Offene Frage 2 des Baumeisters.",
+   "vorschlag": "Der Orchestrator sollte entscheiden und eine Ausnahme für discretion festhalten, oder R3-HOME-05 nimmt die Diskretion im Ablauf auf eine Stelle zurück."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/einstieg/Einstieg.tsx",
+   "beschreibung": "Am Desktop zeigt der erste Bildschirm „100 Jahre Meisterbetrieb“ zweimal: als Ortsmarke „100 JAHRE MEISTERBETRIEB (1926–2026)“ über der h1 und als Beschriftung der Jahres-Maßkette unter dem Fundament (mit 1926 … 2026). Damit ist der Fakt anniversary100 schon im Einstieg bei seiner Höchstzahl, und er wirkt doppelt. In Variante 1 stand oben „Seit 1926 · Wetzlar“.",
+   "beleg": "start__d1440-light__01.webp, start__d1920-light__01.webp, pruef__d1024-light__erster.png. Textsuche „100 Jahre“: 2 Treffer (Zeilen 8 und 12).",
+   "vorschlag": "Die Beschriftung der Jahres-Maßkette im Jubiläumsjahr kürzen, z. B. nur die Kette 1926 bis 2026 ohne Wortlaut. Die Ortsmarke behält den Wortlaut, den E-START-002 verlangt."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/einstieg/einstieg.module.css",
+   "beschreibung": "Erklärsatz T-001 und „Kreislauf zeigen“ liegen auf allen Desktopgrößen unter dem ersten Bildschirm. In B Runde 1 stehen sie im ersten Bildschirm rechts unter der Szene. Wer den Knopf anscrollt, sieht den Schlusstakt der Uhr im Giebel unter Umständen nicht mehr.",
+   "beleg": "pruef-layout.json: d1440 Satz y 901 (Bildschirm 900), d1920 Satz y 1081 (Bildschirm 1080), d1280×720 Satz y 721. Bild pruef__d1440-light-bewegung__knopf.png. Vorbild: _relaunch/belege/auftraggeber/2026-10-09-1501-kachel-b-runde1-d1440.webp.",
+   "vorschlag": "Am Desktop den Fuß (.fuss) mit Satz und Knopf in den ersten Bildschirm holen, z. B. als Zeile neben Mikrotext und Zweitweg unter der Szene, oder den unteren Abstand des Einstiegs verringern."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/einstieg/einstieg.module.css",
+   "beschreibung": "Ohne JavaScript bleibt am Platz des unsichtbaren Knopfs eine leere Fläche (44 px plus Abstand) zwischen Erklärsatz und Vertrauenszeile.",
+   "beleg": "pruef__m390-light-ohnejs__fuss.png; pruef-ohnejs.json: Knopf 180×44, hidden/flex.",
+   "vorschlag": "@media (scripting: none) { .knopf { display: none; } } ergänzen. Den Platzhalter mit visibility nur für den Fall „Skript lädt noch“ behalten."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/einstieg/einstieg.module.css",
+   "beschreibung": "Erster Bildschirm bei weiteren Größen: Bei 320×640 (Stufe C) liegt „Jetzt bewerben“ 1 px unter der Falz und der Mikrotext bei 696. Bei 340×720 und 360×640 liegt der Mikrotext unter der Falz. Bei 600×900 liegt die Hauptaktion bei 910. Bei 340×720 sind die Strahlen der Sonne links angeschnitten. Der Brief fordert das nur für 390×844, die Aussage des Berichts „überall im ersten Bildschirm“ stimmt so aber nicht.",
+   "beleg": "pruef-extra.json (aktionBottom und mikroBottom je Größe); pruef__320x640-light__erster.png, pruef__600x900-light__erster.png.",
+   "vorschlag": "Höhenstufen für schmale Breiten und für 600–1023 px nachschärfen und im Bericht genau angeben, welche Größen geprüft wurden."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/einstieg/Einstieg.tsx",
+   "beschreibung": "In der Liste der Maße stehen Wert und Name ohne trennendes Leerzeichen im DOM. Im Textinhalt ergibt das „13:30Freitags Feierabend“ bzw. „35 kmEinsatzradius“, etwa beim Kopieren oder im Lesemodus. Screenreader trennen die Flex-Elemente in der Regel trotzdem.",
+   "beleg": "einstieg.test.ts erwartet `${stat.value}${stat.label}` ohne Leerzeichen; Einstieg.tsx, Elemente <li className={styles.mass…}> mit zwei <span>.",
+   "vorschlag": "Zwischen Wert und Name ein {' '} einfügen; flex-direction: column hält die Darstellung gleich. Den Test anpassen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "app/fonts/__tests__/fonts.test.ts",
+   "beschreibung": "Fremde Datei, nicht dieses Paket: 3 Tests sind rot, weil in app/fonts neue, nicht versionierte woff2-Dateien liegen (Arbeitsstand eines Parallelpakets; die Fortschrittsdatei R3-PERF-01.log liegt vor, Zuordnung vermutet). Deshalb ist bun run test insgesamt rot.",
+   "beleg": "checks/test.log: „FAIL app/fonts/__tests__/fonts.test.ts … expected [ …(7) ] to deeply equal [ …(6) ]“; git status: ?? app/fonts/*-wght400-*.woff2.",
+   "vorschlag": "Dem Orchestrator bzw. dem Paket in app/fonts (vermutlich R3-PERF-01) melden; vor dem Merge erneut bun run test laufen lassen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/Hero.tsx",
+   "beschreibung": "Bei 1920 steht der Einstieg mit dem Rand --rand (64 px) über die volle Breite, während Kopf (max-w-wide) und Folgeabschnitte (Container) mittig sitzen. Das Logo beginnt bei etwa 323 px, der Text bei 64 px; bei 1440 sind es 22 px Versatz, wie der Baumeister meldet. Das entspricht Variante 1, wirkt bei 1920 aber deutlich versetzt.",
+   "beleg": "start__d1920-light__01.webp (Kopf gegenüber h1), start__d1440-light__02.webp (Folgeabschnitt beginnt bei x 176).",
+   "vorschlag": "In R4 die Kante von Kopf und Einstieg angleichen, entweder den Kopf randbündig wie in Variante 1 oder den Einstieg auf den Satzspiegel begrenzen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/einstieg/einstieg-text.ts",
+   "beschreibung": "Der Wechsel des Jubiläums richtet sich nach UTC (isFactActive vergleicht toISOString) und nach der Seitenerneuerung (revalidate 3600). Am 01.01.2027 kann die Seite bis etwa 1–2 Uhr Berliner Zeit noch das Jubiläum zeigen. Der Baumeister meldet das selbst.",
+   "beleg": "lib/content/facts.ts:278–282; app/page.tsx:21 revalidate = 3600.",
+   "vorschlag": "Dem Orchestrator melden (facts.ts gehört ihm): Vergleich in Europe/Berlin oder validUntil mit Zeitzone."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/__tests__/einstieg-bewegung.test.ts",
+   "beschreibung": "Das React-Verhalten der Insel ist nicht als Unit-Test abgesichert: aria-disabled während der Dauer, Rücksetzen nach dauerMs, kein Neustart bei einem zweiten Klick während des Laufs, Sichtbarkeit erst nach der Hydration. Getestet ist nur kreislaufStarten. Im Browser habe ich das Verhalten bestätigt.",
+   "beleg": "pruef-bewegung.json: während des Laufs „disabled“: „true“, danach null, Taste Enter löst aus.",
+   "vorschlag": "Einen kleinen Test mit Fake-Timern für KreislaufKnopf ergänzen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/einstieg/einstieg.module.css",
+   "beschreibung": "Im CSS-Modul stehen einige freie Maße außerhalb der Skalen: 18rem, 34rem, 24rem, 27rem, 44rem, 42ch, max(4rem, calc(0.25rem + 14svh)), 15px/14px am Schild, font-weight 600, letter-spacing -0.02em. Sie sind aus Variante 1 übernommen und vom Guard für CSS-Module nicht erfasst. Keine Farbverstöße.",
+   "beleg": "einstieg.module.css Zeilen 84, 175, 419, 705, 710, 846–847, 879–883, 929, 965.",
+   "vorschlag": "Wiederkehrende Maße (z. B. Breite der Hauptaktion 18rem) als lokale Variablen mit Kommentar zur Herkunft benennen oder in theme.css aufnehmen lassen."
+  },
+  {
+   "schwere": "weich",
+   "datei": "components/home/einstieg/Vertrauenszeile.tsx",
+   "beschreibung": "Abhängigkeit auf Seitenebene: Die Abnahme von E-START-010 („jede der fünf Aussagen auffindbar“) ist derzeit nicht vollständig, weil die Aussage „Meilenstein 2026“ (neuer Hauptstandort) nicht auf `/` steht. Sie gehört zu R3-HOME-04 (components/home/betrieb/Meilenstein.tsx gibt es, sie wird aber noch nicht gerendert). Die Entscheidung des Baumeisters, Meilenstein und „15“ nicht in die Vertrauenszeile zu nehmen, ist durch den Pass gedeckt („AboutSection … bleiben Fundorte“).",
+   "beleg": "Textsuche: „Meilenstein“ 0 Treffer, „umgezogen“ 0 Treffer, „15 Leute“ 1 Treffer (Zeile 175).",
+   "vorschlag": "Nach dem Einbau von R3-HOME-04 die Abnahme von E-START-010 auf Seitenebene erneut prüfen."
+  }
+ ]
+}

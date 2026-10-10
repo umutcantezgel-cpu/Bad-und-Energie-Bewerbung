@@ -5,6 +5,7 @@ import robots from '@/app/robots';
 import sitemap from '@/app/sitemap';
 import { GET as llmsFull } from '@/app/llms-full.txt/route';
 import { GET as llms } from '@/app/llms.txt/route';
+import { FACTS, isFactActive } from '@/lib/content/facts';
 import { withUtm } from '@/lib/jobs/feeds/tracking';
 import { jobUrl } from '@/lib/jobs/format';
 import { ALL_JOBS, getActiveJobs, getJobPageSlugs, isJobLive } from '@/lib/jobs/registry';
@@ -77,7 +78,10 @@ describe('llms.txt', () => {
 
   it('drops claims the fact registry does not back', async () => {
     for (const text of [await llms().text(), await llmsFull().text()]) {
-      expect(text).not.toMatch(/Wäscheservice|bezahlt ins Wochenende|§ 26 BDSG|Diplomingenieur|100 Jahre/);
+      expect(text).not.toMatch(/Wäscheservice|bezahlt ins Wochenende|§ 26 BDSG|Diplomingenieur/);
+      // „100 Jahre“ nur im Wortlaut des Fakts anniversary100 und nur bis zu seinem validUntil (E-SEO-014)
+      const jubilaeum = isFactActive('anniversary100', new Date()) ? FACTS.anniversary100.short : null;
+      expect(jubilaeum ? text.replaceAll(jubilaeum, '') : text).not.toContain('100 Jahre');
       expect(text).not.toContain('­');
     }
   });

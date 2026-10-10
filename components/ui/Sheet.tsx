@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useId, useRef, type ReactNode } from 'react';
-import { X } from 'lucide-react';
+import { Icon } from '@/components/icons';
 import { cn } from '@/lib/utils/cn';
 import { IconButton } from './IconButton';
 
@@ -22,7 +22,8 @@ export interface SheetProps {
 /**
  * Modal sheet on a native <dialog>: bottom sheet on mobile, centered panel
  * from md. Focus trap, inert background and Esc come from showModal(); this
- * adds backdrop click, scroll lock and focus return.
+ * adds backdrop click, scroll lock and focus return. Formsystem: Radius 24 (äußerer Bogen eines
+ * Leitungspaars), der eine Schatten der schwebenden Ebenen, Titel in Marken-Navy, Icon der eigenen Familie.
  */
 export function Sheet({
   open,
@@ -85,21 +86,23 @@ export function Sheet({
         if (pressStartedOnBackdrop.current && event.target === event.currentTarget) onOpenChange(false);
         pressStartedOnBackdrop.current = false;
       }}
+      // Register „menue-oeffnen“: Eingang d-2 mit k-aus, Ausgang d-1 mit k-ein (opacity, transform)
+      data-motion="menue-oeffnen"
       className={cn(
         // Preflight resets the UA `margin: auto` of <dialog>; mx-auto centres the md+ panel again.
-        'mx-auto mt-auto mb-0 w-full max-w-full overscroll-contain rounded-t-xl bg-surface p-0 text-ink shadow-lg ring-1 ring-line',
-        'md:my-auto md:max-w-lg md:rounded-xl',
-        'transition transition-discrete duration-sheet ease-emphasized',
+        'mx-auto mt-auto mb-0 w-full max-w-full overscroll-contain rounded-t-3 bg-surface p-0 text-ink shadow-lg ring-1 ring-line',
+        'md:my-auto md:max-w-lg md:rounded-3',
+        'transition transition-discrete duration-d2 ease-aus not-open:duration-d1 not-open:ease-ein',
         'translate-y-full opacity-0 open:translate-y-0 open:opacity-100 starting:open:translate-y-full starting:open:opacity-0',
         'md:translate-y-4 md:open:translate-y-0 md:starting:open:translate-y-4',
-        'backdrop:backdrop-brightness-50 backdrop:transition backdrop:transition-discrete backdrop:duration-sheet',
+        'backdrop:backdrop-brightness-50 backdrop:transition backdrop:transition-discrete backdrop:duration-d2',
         'backdrop:opacity-0 open:backdrop:opacity-100 starting:open:backdrop:opacity-0',
         className,
       )}
     >
       <div className="sticky top-0 z-10 flex items-start justify-between gap-4 bg-surface px-6 pt-4 pb-2">
         <div className={cn('flex flex-col gap-1 pt-2.5', hideTitle && 'sr-only')}>
-          <h2 id={titleId} className="text-title-3 text-ink">
+          <h2 id={titleId} className="text-title-3 text-brand">
             {title}
           </h2>
           {description && (
@@ -109,7 +112,7 @@ export function Sheet({
           )}
         </div>
         <IconButton aria-label={closeLabel} onClick={() => onOpenChange(false)} className="-mr-2.5 ml-auto">
-          <X aria-hidden="true" strokeWidth={1.75} className="size-6" />
+          <Icon name="x" size="lg" />
         </IconButton>
       </div>
       <div className="px-6 pb-6" style={footer ? undefined : { paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>

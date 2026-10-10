@@ -1,0 +1,3 @@
+$ node scripts/qa/check-client-imports.mjs
+check-client-imports: 35 client modules checked, no zod/@hookform/resolvers in the browser graph.
+check:client-imports exit 0

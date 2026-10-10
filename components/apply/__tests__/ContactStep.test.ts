@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 
 import { contactResolver, EMPTY_CONTACT, type ContactFormInput, type ContactFormValues } from '@/lib/apply/contact-schema';
 import { interpretApplicationResponse, type SubmitFailure } from '@/lib/apply/submit';
+import { DISCRETION_PROMISE, getDiscretionPromise } from '@/lib/content/process';
 import { ContactStep } from '../ContactStep';
 import { SubmitErrorPanel } from '../SubmitErrorPanel';
 
@@ -16,7 +17,7 @@ function failure(status: number, body: unknown): SubmitFailure {
   return result;
 }
 
-function renderContactStep(current: SubmitFailure | null): string {
+function renderContactStep(current: SubmitFailure | null, discretion: string | null = null): string {
   function Harness() {
     const form = useForm<ContactFormInput, unknown, ContactFormValues>({ resolver: contactResolver, defaultValues: EMPTY_CONTACT });
     return createElement(ContactStep, {
@@ -26,6 +27,7 @@ function renderContactStep(current: SubmitFailure | null): string {
       submitting: false,
       failure: current,
       onValid: () => {},
+      discretion,
       honeypotRef: createRef<HTMLInputElement>(),
       phoneHref: 'tel:+49644142956',
       application: { jobLabel: 'Anlagenmechaniker SHK', questionSet: 'fachkraft', answers: {} },
@@ -36,6 +38,48 @@ function renderContactStep(current: SubmitFailure | null): string {
 }
 
 const count = (html: string, text: string) => html.split(text).length - 1;
+const plain = (html: string) => html.replace(/<[^>]+>/g, '').replace(/&#x27;/g, "'").replace(/\s+/g, ' ');
+
+describe('ContactStep · Diskretionszusage (E-BEW-004)', () => {
+  it('steht für Fachkraft und Quereinstieg wortgleich mit Schild direkt über dem Absenden-Knopf', () => {
+    for (const set of ['fachkraft', 'quereinstieg'] as const) {
+      const zusage = getDiscretionPromise(set);
+      expect(zusage, set).toBe(DISCRETION_PROMISE);
+      const html = renderContactStep(null, zusage);
+      const block = html.match(/<p[^>]*data-zusage="diskretion"[^>]*>(.*?)<\/p>/)?.[1] ?? '';
+      expect(plain(block).trim()).toBe(DISCRETION_PROMISE);
+      expect(block).toContain('data-icon="shield-check"');
+      // Reihenfolge im DOM: Zusage, Datenschutzhinweis, Knopf; nichts dazwischen, das scrollen ließe.
+      const zusageAt = html.indexOf('data-zusage="diskretion"');
+      const hinweisAt = html.indexOf('Art. 6 Abs. 1 lit. b DSGVO');
+      const knopfAt = html.indexOf('type="submit"');
+      expect(zusageAt).toBeGreaterThan(-1);
+      expect(zusageAt).toBeLessThan(hinweisAt);
+      expect(hinweisAt).toBeLessThan(knopfAt);
+      expect(html.slice(zusageAt, knopfAt)).not.toMatch(/<input|<fieldset/);
+      expect(html).not.toMatch(/garantiert|§ 26|100\s?%/);
+    }
+  });
+
+  it('entfällt bei der Ausbildung', () => {
+    const zusage = getDiscretionPromise('ausbildung');
+    expect(zusage).toBeNull();
+    const html = renderContactStep(null, zusage);
+    expect(html).not.toContain('data-zusage');
+    expect(plain(html)).not.toContain(DISCRETION_PROMISE);
+    expect(html).toContain('Art. 6 Abs. 1 lit. b DSGVO');
+  });
+
+  it('der Knopf ist die eine rote Hauptaktion, in die Vorlauf und Rücklauf münden', () => {
+    const html = renderContactStep(null, DISCRETION_PROMISE);
+    const knopf = html.match(/<button[^>]*type="submit"[^>]*>/)?.[0] ?? '';
+    expect(knopf).toContain('bg-accent');
+    expect(knopf).toContain('after:border-l-vorlauf');
+    expect(knopf).toContain('after:border-r-ruecklauf');
+    // Genau eine rote Fläche im Schritt (Rot nur Hauptaktion, E-016)
+    expect(html.match(/(?<![\w:-])bg-accent(?![\w-])/g)).toHaveLength(1);
+  });
+});
 
 describe('ContactStep', () => {
   it('has one retry affordance: the primary button says "Erneut senden" when retrying can help', () => {

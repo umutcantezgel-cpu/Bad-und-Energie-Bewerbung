@@ -20,6 +20,15 @@ export function stepProgress(current: number, total: number): number {
   return total > 0 ? clamp(current / total, 0, 1) : 0;
 }
 
+/**
+ * Positions (0–1) of the step marks on the progress strand: one at the start and one at the end of
+ * every step, e.g. 4 → [0, 0.25, 0.5, 0.75, 1]. Empty for no steps.
+ */
+export function stepMarks(total: number): number[] {
+  const n = Number.isFinite(total) ? Math.max(0, Math.floor(total)) : 0;
+  return n > 0 ? Array.from({ length: n + 1 }, (_, i) => i / n) : [];
+}
+
 /** Joins id references for aria-describedby; non-strings (e.g. `hint && hintId` with no hint) are dropped. */
 export function joinIds(...ids: unknown[]): string | undefined {
   const joined = ids.filter((id): id is string => typeof id === 'string' && id.trim() !== '').join(' ');

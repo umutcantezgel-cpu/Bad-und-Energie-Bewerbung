@@ -1,21 +1,488 @@
 /*
- * A4 sheet of the Bewerbungsmappe (roadmap §6).
- * Screen: paper preview, zoomed to the column width (--mappe-scale is set from JS;
- *   the values below are only the fallback until hydration).
- * Print: the sheets are the only content (everything else is print-hidden) at real size.
- *   @page { size: A4; margin: 0 } comes from app/globals.css, so the page padding is the
- *   margin and browsers print no URL/date header.
- * Type sizes are in pt because they describe paper, not the fluid screen scale.
+ * Bewerbungsmappe /bewerbung/mappe (R5-MAPPE-01, E-023) unter dem Seitenkopf `arbeit`.
+ * Bildschirm: nur Rollen und Skalen aus app/styles/theme.css (Papier, Wand, Navy, Vorlauf, Rücklauf).
+ * Blatt (A4-Vorschau und Druck): eigene Druck-Tokenskala in pt und mm (E-011, S-05), siehe „Blatt“ unten.
  */
 
+/* ═══ Werkbank: am Handy Checkliste, Editor, Pult, Vorschau untereinander; ab 64em Editor links, Pult und
+   Vorschau rechts in einer haftenden Spalte ═══ */
+.werkbank {
+  --rand: max(var(--spacing-gutter, var(--a-5)), env(safe-area-inset-left), env(safe-area-inset-right));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--a-7);
+  /* oben ohne Polster: Der Seitenkopf endet am Handy schon mit --a-6 unter der Einleitung */
+  padding: 0 var(--rand) var(--spacing-section-sm);
+}
+
+/* Am Handy trennt ein Leitungspaar Editor und Pult (randlos wie zwischen den Abschnitten der Startseite) */
+.trenner {
+  margin-inline: calc(var(--rand) * -1);
+  width: calc(100% + var(--rand) * 2);
+}
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-8);
+  min-width: 0;
+  max-width: var(--container-prose);
+}
+
+.seite {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-7);
+  min-width: 0;
+}
+
+.vorschau {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-4);
+  min-width: 0;
+}
+
+.vorschauKopf {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--a-2) var(--a-4);
+}
+
+/* Der Tisch unter den Blättern: Wand, die Blätter liegen weiß darauf */
+.vorschauRahmen {
+  min-height: 0;
+  padding: var(--a-3);
+  background-color: var(--surface-2);
+}
+
+.vorschauRahmen:focus-visible {
+  outline: var(--m-strich) solid var(--focus);
+  outline-offset: var(--m-strich);
+}
+
+@media (min-width: 37.5em) {
+  .vorschauRahmen {
+    padding: var(--a-4);
+  }
+}
+
+@media (min-width: 64em) {
+  .werkbank {
+    grid-template-columns: minmax(0, 1fr) var(--a-8) minmax(0, 1fr);
+    align-items: start;
+    padding: var(--a-7) var(--rand) var(--spacing-section);
+  }
+
+  .editor {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .trenner {
+    display: none;
+  }
+
+  .seite {
+    grid-column: 3;
+    grid-row: 1;
+    gap: var(--a-5);
+  }
+
+  .vorschau {
+    gap: var(--a-3);
+  }
+}
+
+/* Ab 56em Höhe haften Pult und Vorschau unter dem Kopf; die Vorschau scrollt in sich, das Pult bleibt ganz
+   sichtbar. Darunter (Laptops, 1280 × 800, 1366 × 768) bliebe der Vorschau unter dem Pult zu wenig Höhe: Dann läuft
+   die Spalte mit der Seite, und die Blätter stehen in voller Höhe neben dem Editor. */
+@media (min-width: 64em) and (min-height: 56em) {
+  .seite {
+    position: sticky;
+    top: calc(var(--m-kopf) + var(--a-4));
+    max-height: calc(100dvh - var(--m-kopf) - var(--a-4) - var(--a-5));
+  }
+
+  .vorschau {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .vorschauRahmen {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+/* ═══ Checkliste (E-BEW-006): Stand und Sprungmarken ═══ */
+.stand {
+  display: grid;
+  row-gap: var(--a-4);
+  padding: var(--a-5);
+}
+
+.standKopf {
+  display: grid;
+  row-gap: var(--a-1);
+}
+
+.standListe {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.standListe > li {
+  border-bottom: 1px solid var(--line);
+}
+
+.standEintrag {
+  display: grid;
+  grid-template-columns: var(--a-5) var(--a-5) minmax(0, 1fr) auto auto;
+  align-items: center;
+  column-gap: var(--a-3);
+  min-height: var(--m-ziel);
+  padding: var(--a-2) 0;
+  color: var(--ink);
+  font-size: var(--text-callout);
+  font-weight: 700;
+  line-height: 1.3;
+  text-decoration: none;
+}
+
+/* Marke: offen ein leerer Kreis (Planpunkt), erledigt der Haken auf Navy */
+.standMarke {
+  display: grid;
+  place-items: center;
+  width: var(--a-5);
+  height: var(--a-5);
+  border: var(--m-strich) solid var(--line-strong);
+  border-radius: var(--radius-voll);
+  color: var(--surface);
+}
+
+.standEintrag[data-erledigt] .standMarke {
+  border-color: var(--brand);
+  background-color: var(--brand);
+}
+
+.standNummer {
+  color: var(--ink-2);
+  font-weight: 600;
+  text-align: center;
+}
+
+.standTitel {
+  min-width: 0;
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: var(--m-strich);
+  text-underline-offset: 0.25em;
+}
+
+.standZustand {
+  color: var(--ink-2);
+}
+
+.standEintrag[data-erledigt] .standZustand {
+  color: var(--brand);
+}
+
+.standPfeil {
+  color: var(--ink-2);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .standEintrag:hover .standTitel {
+    text-decoration-color: var(--ruecklauf);
+  }
+
+  .standEintrag:hover .standPfeil {
+    color: var(--ruecklauf);
+  }
+}
+
+/* ═══ Abschnitte des Editors: Etikett mit Nummer und Zustand, h2 Navy ═══ */
+.abschnitt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-5);
+  padding-top: var(--a-7);
+  border-top: 1px solid var(--line);
+  /* Sprung aus der Checkliste: das Etikett bleibt unter dem haftenden Kopf sichtbar */
+  scroll-margin-top: var(--a-4);
+}
+
+/* Der erste Abschnitt folgt auf die Checkliste: keine Linie, der Kartenrand trennt schon */
+.stand + .abschnitt {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.abschnittEtikett {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--a-1) var(--a-2);
+}
+
+.abschnittZustand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--a-1);
+}
+
+.abschnitt[data-erledigt] .abschnittZustand {
+  color: var(--brand);
+}
+
+.abschnittHaken {
+  color: var(--brand);
+}
+
+/* ═══ Pult: Ring, Hauptaktion, Zweitwege ═══
+   Schmal (Handy, Spalte unter 30rem): Ring links, daneben „Als Nächstes“; darunter der Knopf, in den das Paar
+   senkrecht vom unteren Scheitel des Rings fällt. Breit: Knopf rechts neben dem Ring, das Paar läuft waagerecht
+   vom rechten Scheitel hinein; „Als Nächstes“ darunter. Der Ring ist ProgressRing md (7rem, Rand = --m-strich). */
+.pult {
+  container: pult / inline-size;
+  display: flex;
+  flex-direction: column;
+  padding: var(--a-5);
+}
+
+/* Nur Kinder mit Inhalt bekommen Abstand (leere Live-Regionen bleiben im DOM, ohne Platz) */
+.pult > :not(:first-child):not(:empty) {
+  margin-top: var(--a-5);
+}
+
+.pultOben {
+  --ring: 7rem;
+  display: grid;
+  grid-template-columns: var(--ring) minmax(0, 1fr);
+  grid-template-areas:
+    "ring naechster"
+    "haupt haupt";
+  align-items: center;
+  column-gap: var(--a-5);
+}
+
+.pultRing {
+  grid-area: ring;
+  display: flex;
+}
+
+.pultNaechster {
+  grid-area: naechster;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--a-1);
+  min-width: 0;
+}
+
+/* Abstand = Länge des Paars (--a-6) minus Rand des Rings: das Paar trifft die Mittellinie des Rings */
+.pultHaupt {
+  grid-area: haupt;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--a-2);
+  margin-top: calc(var(--a-6) - var(--m-strich));
+}
+
+.pultKnopf {
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Das Paar mittig unter dem Ring: Mitte 3.5rem, Paar = --paar + Strich breit */
+.pult .pultKnopf::after {
+  right: auto;
+  left: calc(var(--ring) / 2 - (var(--paar) + var(--m-strich)) / 2);
+  height: var(--a-6);
+}
+
+.pultSprung {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--m-ziel);
+  color: var(--ink);
+  font-size: var(--text-callout);
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration-line: underline;
+  text-decoration-thickness: var(--m-strich);
+  text-underline-offset: 0.25em;
+}
+
+.pultSprungIkon {
+  margin-left: var(--a-1);
+  flex-shrink: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pultSprung:hover {
+    text-decoration-color: var(--ruecklauf);
+  }
+}
+
+.pultWege {
+  display: grid;
+  gap: var(--a-4);
+}
+
+.pultWeg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-2);
+  min-width: 0;
+}
+
+@container pult (min-width: 30rem) {
+  .pultOben {
+    grid-template-areas:
+      "ring haupt"
+      "naechster naechster";
+    align-items: start;
+    column-gap: calc(var(--a-6) - var(--m-strich));
+  }
+
+  /* Knopfmitte auf Höhe der Ringmitte */
+  .pultHaupt {
+    margin-top: 0;
+    padding-top: calc((var(--ring) - var(--m-knopf)) / 2);
+  }
+
+  .pultKnopf {
+    width: auto;
+    min-width: 18rem;
+  }
+
+  .pult .pultKnopf::after {
+    top: 50%;
+    bottom: auto;
+    left: auto;
+    right: 100%;
+    width: var(--a-6);
+    height: calc(var(--paar) + var(--m-strich));
+    transform: translateY(-50%);
+    border-inline: 0;
+    border-block: var(--m-strich) solid;
+    border-top-color: var(--vorlauf);
+    border-bottom-color: var(--ruecklauf);
+  }
+
+  .pultNaechster {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--a-3);
+    margin-top: var(--a-4);
+  }
+
+}
+
+/* Zweitwege nebeneinander erst, wenn beide Beschriftungen einzeilig passen; schmaler untereinander */
+@container pult (min-width: 36rem) {
+  .pultWege {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--a-4);
+  }
+
+  .pult .pultWegKnopf {
+    white-space: nowrap;
+  }
+}
+
+/* ═══ Zeichnung im Seitenkopf: zwei eingemessene A4-Blätter (MappeBlatt) ═══ */
+.blatt {
+  display: block;
+  width: 100%;
+  max-width: 15rem;
+  height: auto;
+  overflow: visible;
+}
+
+.blattStrich {
+  fill: none;
+  stroke-width: var(--m-strich);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.blattLinie {
+  stroke: var(--brand);
+}
+
+.blattVorlauf {
+  stroke: var(--vorlauf);
+}
+
+.blattRuecklauf {
+  stroke: var(--ruecklauf);
+}
+
+.blattWaerme {
+  fill: var(--waerme);
+  stroke: none;
+}
+
+.blattMass {
+  fill: var(--brand);
+  font-family: var(--font-mass);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+/*
+ * ═══ Blatt: A4-Vorschau und Druck (roadmap §6) ═══
+ * Bildschirm: Papiervorschau, auf die Spaltenbreite gezoomt (--mappe-scale setzt MappePreview aus JS; die Werte
+ *   unten gelten nur bis zur Hydrierung).
+ * Druck: die Blätter sind der einzige Inhalt (alles andere ist print-hidden), in echter Größe.
+ *   @page { size: A4; margin: 0 } kommt aus app/globals.css; der Seitenrand ist das Polster des Blatts,
+ *   und der Browser druckt keine Kopfzeile mit Adresse und Datum.
+ * Druck-Tokenskala (E-011, S-05): Schriftgrößen in pt und Maße in mm, weil sie Papier beschreiben, nicht die
+ * fließende Bildschirmskala. Nur diese Variablen tragen Werte; die Regeln darunter nennen nur Tokens.
+ */
 .frame {
+  --blatt-breite: 210mm;
+  --blatt-hoehe: 297mm;
+  /* Ein Hauch unter 297 mm im Druck: füllt das Blatt (Fuß unten), ohne eine leere Seite anzuhängen */
+  --blatt-hoehe-druck: 296mm;
+  /* Satzspiegel nach DIN 5008 (links breiter für die Lochung) */
+  --blatt-rand-oben: 20mm;
+  --blatt-rand-rechts: 20mm;
+  --blatt-rand-unten: 18mm;
+  --blatt-rand-links: 25mm;
+  --blatt-spalte-zeit: 38mm;
+  --blatt-spalte-abstand: 6mm;
+  --blatt-foto-breite: 35mm;
+  --blatt-foto-hoehe: 45mm;
+  --blatt-foto-radius: 1.5mm;
+  /* Schriftstufen: Name · Betreff groß · Überschrift · Text · klein */
+  --blatt-schrift-name: 22pt;
+  --blatt-schrift-gross: 12pt;
+  --blatt-schrift-kopf: 11pt;
+  --blatt-schrift-text: 10.5pt;
+  --blatt-schrift-klein: 9pt;
+  --blatt-zeile-name: 1.15;
+  --blatt-zeile-kopf: 1.35;
+  --blatt-zeile-text: 1.5;
+  --blatt-zeile-klein: 1.45;
   --mappe-scale: 0.42;
   overflow-x: auto;
 }
 
-@media (width >= 64rem) {
+@media (min-width: 64em) {
   .frame {
-    --mappe-scale: 0.56;
+    --mappe-scale: 0.62;
   }
 }
 
@@ -23,20 +490,27 @@
   zoom: var(--mappe-scale);
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  width: 210mm;
+  gap: var(--a-6);
+  width: var(--blatt-breite);
 }
 
-/* Paper stays white in dark mode, like the printout: the light roles from app/styles/theme.css. */
+/*
+ * Das Blatt bleibt im dunklen Thema weiß wie der Ausdruck: die hellen Rollen aus KERN K-006 (theme.css, Druck)
+ * fest auf dem Blatt. Hexwerte, weil Primitive (--p-*) nur theme.css nennen darf; sie spiegeln --p-weiss,
+ * --p-wand, --p-sand, --p-tinte, --p-tinte-2, --p-navy, --p-haar und --p-rand (OFFENER PUNKT: ein Ton
+ * „blatt“ in theme.css würde den Spiegel ersetzen).
+ */
 .paper {
   color-scheme: light;
   --surface: #FFFFFF;
-  --surface-2: #F5F6F8;
-  --surface-3: #ECEEF2;
-  --ink: #0A1E3A;
-  --ink-muted: #5F6878;
-  --line: #E3E6EB;
-  --line-strong: #7D8696;
+  --surface-2: #F1E9DB;
+  --surface-3: #E9DFCC;
+  --ink: #111A3B;
+  --ink-muted: #454C78;
+  --ink-2: #454C78;
+  --brand: #111D6D;
+  --line: #DDD3C2;
+  --line-strong: #6B74A6;
   background-color: var(--surface);
   color: var(--ink);
 }
@@ -45,53 +519,55 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  width: 210mm;
-  min-height: 297mm;
-  padding: 20mm 20mm 18mm 25mm;
+  width: var(--blatt-breite);
+  min-height: var(--blatt-hoehe);
+  padding: var(--blatt-rand-oben) var(--blatt-rand-rechts) var(--blatt-rand-unten) var(--blatt-rand-links);
   border: 1px solid var(--line);
-  font-size: 10.5pt;
-  line-height: 1.5;
+  font-size: var(--blatt-schrift-text);
+  line-height: var(--blatt-zeile-text);
   overflow-wrap: anywhere;
 }
 
 .small {
-  font-size: 9pt;
-  line-height: 1.45;
+  font-size: var(--blatt-schrift-klein);
+  line-height: var(--blatt-zeile-klein);
 }
 
 .large {
-  font-size: 12pt;
-  line-height: 1.35;
-  font-weight: 600;
+  font-size: var(--blatt-schrift-gross);
+  line-height: var(--blatt-zeile-kopf);
+  font-weight: 700;
 }
 
 .name {
-  font-size: 22pt;
-  line-height: 1.15;
-  font-weight: 600;
+  color: var(--brand);
+  font-size: var(--blatt-schrift-name);
+  line-height: var(--blatt-zeile-name);
+  font-weight: 700;
   letter-spacing: -0.01em;
 }
 
 .heading {
-  font-size: 11pt;
-  line-height: 1.35;
-  font-weight: 600;
+  color: var(--brand);
+  font-size: var(--blatt-schrift-kopf);
+  line-height: var(--blatt-zeile-kopf);
+  font-weight: 700;
 }
 
-/* Lebenslauf rows: period | details */
+/* Lebenslauf-Zeilen: Zeitraum | Angaben */
 .row {
   display: grid;
-  grid-template-columns: 38mm minmax(0, 1fr);
-  column-gap: 6mm;
+  grid-template-columns: var(--blatt-spalte-zeit) minmax(0, 1fr);
+  column-gap: var(--blatt-spalte-abstand);
   break-inside: avoid;
 }
 
 .photo {
-  width: 35mm;
-  height: 45mm;
+  width: var(--blatt-foto-breite);
+  height: var(--blatt-foto-hoehe);
   flex-shrink: 0;
   object-fit: cover;
-  border-radius: 1.5mm;
+  border-radius: var(--blatt-foto-radius);
 }
 
 .letter {
@@ -99,13 +575,35 @@
   text-wrap: pretty;
 }
 
-/* Empty fields on screen: a dashed hint, never printed. */
+/* Leere Felder am Bildschirm: gestrichelter Hinweis, nie gedruckt */
 .placeholder {
   color: var(--ink-muted);
   border-bottom: 1px dashed var(--line-strong);
 }
 
 @media print {
+  .werkbank {
+    display: block;
+    padding: 0;
+  }
+
+  .seite {
+    position: static;
+    display: block;
+    max-height: none;
+  }
+
+  .trenner {
+    display: none;
+  }
+
+  .vorschauRahmen {
+    overflow: visible;
+    padding: 0;
+    border-radius: 0;
+    background-color: transparent;
+  }
+
   .frame {
     --mappe-scale: 1;
     overflow: visible;
@@ -118,12 +616,11 @@
   }
 
   .page {
-    width: 210mm;
-    /* A hair under 297mm: fills the sheet (footer at the bottom) without spilling a blank page. */
-    min-height: 296mm;
+    width: var(--blatt-breite);
+    min-height: var(--blatt-hoehe-druck);
     border: 0;
     break-after: page;
-    /* Overflowing content keeps the page margins on the next sheet. */
+    /* Überlaufender Inhalt behält die Ränder auf dem nächsten Blatt */
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
   }

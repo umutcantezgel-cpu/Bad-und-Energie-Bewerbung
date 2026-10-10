@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { Plus } from 'lucide-react';
+import { Icon } from '@/components/icons';
 import { Button, Chip, Field, Input } from '@/components/ui';
 import { canAddSkill } from '@/lib/mappe/editor';
 import { MAPPE_LIMITS, SKILL_OPTIONS } from '@/lib/mappe/options';
@@ -9,6 +9,8 @@ import { EditorSection } from './EditorSection';
 
 export interface SkillsSectionProps {
   step: number;
+  /** Mappe-Stand: mindestens ein Schwerpunkt. */
+  done?: boolean;
   skills: readonly string[];
   onToggle: (skill: string) => void;
   onAdd: (skill: string) => void;
@@ -16,7 +18,7 @@ export interface SkillsSectionProps {
 
 const PRESET = new Set<string>(SKILL_OPTIONS);
 
-export function SkillsSection({ step, skills, onToggle, onAdd }: SkillsSectionProps) {
+export function SkillsSection({ step, done, skills, onToggle, onAdd }: SkillsSectionProps) {
   const [custom, setCustom] = useState('');
   const [error, setError] = useState<string | null>(null);
   const customSkills = skills.filter((skill) => !PRESET.has(skill));
@@ -42,6 +44,7 @@ export function SkillsSection({ step, skills, onToggle, onAdd }: SkillsSectionPr
     <EditorSection
       id="mappe-schwerpunkte"
       step={step}
+      done={done}
       title="Schwerpunkte"
       description="Tipp alles an, worin du schon selbstständig gearbeitet hast."
     >
@@ -54,9 +57,9 @@ export function SkillsSection({ step, skills, onToggle, onAdd }: SkillsSectionPr
               pressed={pressed}
               disabled={!pressed && full}
               onClick={() => onToggle(skill)}
-              // Long skills wrap: rounded-lg instead of a pill keeps two-line chips calm, and on
+              // Long skills wrap: rounded-2 instead of a pill keeps two-line chips calm, and on
               // phones every chip takes the full width, so the list reads as one even column.
-              className="max-w-full shrink rounded-lg py-2 text-left max-sm:w-full"
+              className="max-w-full shrink rounded-2 py-2 text-left max-sm:w-full"
             >
               {skill}
             </Chip>
@@ -80,13 +83,13 @@ export function SkillsSection({ step, skills, onToggle, onAdd }: SkillsSectionPr
             />
             {/* Icon only on phones, so the text field keeps most of the row; the name stays „Hinzufügen“. */}
             <Button type="submit" variant="secondary" size="lg" disabled={full} className="max-sm:w-13 max-sm:px-0">
-              <Plus aria-hidden="true" strokeWidth={1.75} className="size-5" />
+              <Icon name="plus" size="md" />
               <span className="max-sm:sr-only">Hinzufügen</span>
             </Button>
           </div>
         </Field>
       </form>
-      <p className="text-footnote tabular-nums text-ink-muted">
+      <p className="text-footnote tabular-nums text-ink-2">
         {skills.length} von {MAPPE_LIMITS.skills} gewählt
       </p>
     </EditorSection>

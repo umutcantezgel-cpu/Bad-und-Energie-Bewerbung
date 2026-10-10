@@ -39,6 +39,7 @@
   "exclude": [
     "node_modules",
     "ms-reusable-components",
-    "coday-seo-toolkit"
+    "coday-seo-toolkit",
+    "_relaunch"
   ]
 }

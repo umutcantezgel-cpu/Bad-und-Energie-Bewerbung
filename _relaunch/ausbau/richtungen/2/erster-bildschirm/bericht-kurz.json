@@ -1,0 +1,207 @@
+{
+  "url": "http://localhost:3802/",
+  "hinweis": "Wie erster-bildschirm.mjs (CDP-Screencast, Bild je Zeitpunkt), für kurze Fenster: m390s = 390×664 (Safari mit Leisten), m375se = 375×553 (iPhone SE mit Leisten).",
+  "zeiten_ms": [
+    0,
+    250,
+    500,
+    750,
+    1000,
+    1250,
+    1500
+  ],
+  "aufnahmen": [
+    {
+      "ansicht": "m390s",
+      "breite": 390,
+      "hoehe": 664,
+      "schema": "light",
+      "bewegung": "no-preference",
+      "bilder": [
+        {
+          "ms": 0,
+          "datei": "m390s-light-voll__t0000.webp",
+          "bild_ab_ms": null
+        },
+        {
+          "ms": 250,
+          "datei": "m390s-light-voll__t0250.webp",
+          "bild_ab_ms": 250
+        },
+        {
+          "ms": 500,
+          "datei": "m390s-light-voll__t0500.webp",
+          "bild_ab_ms": 499
+        },
+        {
+          "ms": 750,
+          "datei": "m390s-light-voll__t0750.webp",
+          "bild_ab_ms": 749
+        },
+        {
+          "ms": 1000,
+          "datei": "m390s-light-voll__t1000.webp",
+          "bild_ab_ms": 982
+        },
+        {
+          "ms": 1250,
+          "datei": "m390s-light-voll__t1250.webp",
+          "bild_ab_ms": 1250
+        },
+        {
+          "ms": 1500,
+          "datei": "m390s-light-voll__t1500.webp",
+          "bild_ab_ms": 1498
+        }
+      ],
+      "streifen": "m390s-light-voll__streifen.webp",
+      "screencast_bilder": 90,
+      "fehler": [],
+      "gesperrt": []
+    },
+    {
+      "ansicht": "m390s",
+      "breite": 390,
+      "hoehe": 664,
+      "schema": "light",
+      "bewegung": "reduce",
+      "bilder": [
+        {
+          "ms": 0,
+          "datei": "m390s-light-reduziert__t0000.webp",
+          "bild_ab_ms": null
+        },
+        {
+          "ms": 250,
+          "datei": "m390s-light-reduziert__t0250.webp",
+          "bild_ab_ms": 102
+        },
+        {
+          "ms": 500,
+          "datei": "m390s-light-reduziert__t0500.webp",
+          "bild_ab_ms": 102
+        },
+        {
+          "ms": 750,
+          "datei": "m390s-light-reduziert__t0750.webp",
+          "bild_ab_ms": 102
+        },
+        {
+          "ms": 1000,
+          "datei": "m390s-light-reduziert__t1000.webp",
+          "bild_ab_ms": 102
+        },
+        {
+          "ms": 1250,
+          "datei": "m390s-light-reduziert__t1250.webp",
+          "bild_ab_ms": 102
+        },
+        {
+          "ms": 1500,
+          "datei": "m390s-light-reduziert__t1500.webp",
+          "bild_ab_ms": 102
+        }
+      ],
+      "streifen": "m390s-light-reduziert__streifen.webp",
+      "screencast_bilder": 4,
+      "fehler": [],
+      "gesperrt": []
+    },
+    {
+      "ansicht": "m375se",
+      "breite": 375,
+      "hoehe": 553,
+      "schema": "light",
+      "bewegung": "no-preference",
+      "bilder": [
+        {
+          "ms": 0,
+          "datei": "m375se-light-voll__t0000.webp",
+          "bild_ab_ms": null
+        },
+        {
+          "ms": 250,
+          "datei": "m375se-light-voll__t0250.webp",
+          "bild_ab_ms": 234
+        },
+        {
+          "ms": 500,
+          "datei": "m375se-light-voll__t0500.webp",
+          "bild_ab_ms": 499
+        },
+        {
+          "ms": 750,
+          "datei": "m375se-light-voll__t0750.webp",
+          "bild_ab_ms": 750
+        },
+        {
+          "ms": 1000,
+          "datei": "m375se-light-voll__t1000.webp",
+          "bild_ab_ms": 1000
+        },
+        {
+          "ms": 1250,
+          "datei": "m375se-light-voll__t1250.webp",
+          "bild_ab_ms": 1250
+        },
+        {
+          "ms": 1500,
+          "datei": "m375se-light-voll__t1500.webp",
+          "bild_ab_ms": 1333
+        }
+      ],
+      "streifen": "m375se-light-voll__streifen.webp",
+      "screencast_bilder": 77,
+      "fehler": [],
+      "gesperrt": []
+    },
+    {
+      "ansicht": "m375se",
+      "breite": 375,
+      "hoehe": 553,
+      "schema": "light",
+      "bewegung": "reduce",
+      "bilder": [
+        {
+          "ms": 0,
+          "datei": "m375se-light-reduziert__t0000.webp",
+          "bild_ab_ms": null
+        },
+        {
+          "ms": 250,
+          "datei": "m375se-light-reduziert__t0250.webp",
+          "bild_ab_ms": 99
+        },
+        {
+          "ms": 500,
+          "datei": "m375se-light-reduziert__t0500.webp",
+          "bild_ab_ms": 99
+        },
+        {
+          "ms": 750,
+          "datei": "m375se-light-reduziert__t0750.webp",
+          "bild_ab_ms": 99
+        },
+        {
+          "ms": 1000,
+          "datei": "m375se-light-reduziert__t1000.webp",
+          "bild_ab_ms": 99
+        },
+        {
+          "ms": 1250,
+          "datei": "m375se-light-reduziert__t1250.webp",
+          "bild_ab_ms": 99
+        },
+        {
+          "ms": 1500,
+          "datei": "m375se-light-reduziert__t1500.webp",
+          "bild_ab_ms": 99
+        }
+      ],
+      "streifen": "m375se-light-reduziert__streifen.webp",
+      "screencast_bilder": 3,
+      "fehler": [],
+      "gesperrt": []
+    }
+  ]
+}

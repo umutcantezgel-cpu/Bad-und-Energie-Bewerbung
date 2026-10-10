@@ -1,4 +1,5 @@
-import { Card } from '@/components/ui/Card';
+import { Container } from '@/components/layout/Container';
+import { Section } from '@/components/layout/Section';
 import type { TeamQuote } from '@/lib/content';
 import { cn } from '@/lib/utils/cn';
 
@@ -7,34 +8,41 @@ export interface JobQuoteProps {
   className?: string;
 }
 
-/** Typographic team testimonial (no photos): quote, monogram, name and role. */
+/**
+ * Stimme aus dem Team als Navy-Band (Inverse-Band, Tonfolge der Stellenseite): das Zitat groß in Bricolage,
+ * davor ein Vorlauf-Strich als Marke, darunter Monogramm im Markenrand, Name und Rolle. Typografisch, ohne Foto.
+ */
 export function JobQuote({ quote, className }: JobQuoteProps) {
   const titleId = `zitat-${quote.id}`;
   return (
-    <Card as="section" padding="lg" aria-labelledby={titleId} className={cn('flex flex-col gap-6', className)}>
-      <h2 id={titleId} className="text-callout font-medium text-ink-muted">
-        Aus dem Team
-      </h2>
-      <figure className="flex flex-col gap-6">
-        <blockquote>
-          <p className="max-w-prose text-title-3 font-medium text-ink">„{quote.quote}“</p>
-        </blockquote>
-        <figcaption className="flex items-center gap-3">
-          <span
-            aria-hidden="true"
-            className="flex size-11 shrink-0 items-center justify-center rounded-full bg-surface-3 text-callout font-semibold text-ink"
-          >
-            {quote.initials}
-          </span>
-          <span className="flex flex-col">
-            <span className="text-callout font-medium text-ink">{quote.name}</span>
-            <span className="text-footnote text-ink-muted">
-              {quote.role}
-              {quote.experience ? ` · ${quote.experience}` : ''}
+    <Section tone="band" aria-labelledby={titleId} className={className}>
+      <Container className="flex flex-col gap-8">
+        <h2 id={titleId} className="text-etikett text-ink-2">
+          Aus dem Team
+        </h2>
+        <figure className="flex flex-col gap-8">
+          <blockquote className={cn('relative max-w-4xl pl-6 sm:pl-8')}>
+            {/* Vorlauf als senkrechte Leitung am Zitat (dekorativ) */}
+            <span aria-hidden="true" className="absolute top-[0.2em] bottom-[0.2em] left-0 w-(--m-strich) rounded-voll bg-vorlauf" />
+            <p className="text-title-2 text-balance text-brand">„{quote.quote}“</p>
+          </blockquote>
+          <figcaption className="flex items-center gap-4 pl-6 sm:pl-8">
+            <span
+              aria-hidden="true"
+              className="flex size-12 shrink-0 items-center justify-center rounded-voll border-(length:--m-strich) border-brand font-mass text-callout font-semibold text-brand"
+            >
+              {quote.initials}
             </span>
-          </span>
-        </figcaption>
-      </figure>
-    </Card>
+            <span className="flex flex-col">
+              <span className="text-body font-bold text-ink">{quote.name}</span>
+              <span className="text-callout text-ink-2">
+                {quote.role}
+                {quote.experience ? ` · ${quote.experience}` : ''}
+              </span>
+            </span>
+          </figcaption>
+        </figure>
+      </Container>
+    </Section>
   );
 }

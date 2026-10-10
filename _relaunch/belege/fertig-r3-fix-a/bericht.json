@@ -1,0 +1,81 @@
+{
+  "label": "fertig-r3-fix-a",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T08:36:49.069Z",
+  "seiten": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 28122,
+      "seitenhoehe": 16248,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r3-fix-a/start__m390-light__01.webp",
+        "belege/fertig-r3-fix-a/start__m390-light__02.webp",
+        "belege/fertig-r3-fix-a/start__m390-light__03.webp",
+        "belege/fertig-r3-fix-a/start__m390-light__04.webp",
+        "belege/fertig-r3-fix-a/start__m390-light__05.webp",
+        "belege/fertig-r3-fix-a/start__m390-light__06.webp",
+        "belege/fertig-r3-fix-a/start__m390-light__07.webp",
+        "belege/fertig-r3-fix-a/start__m390-light__08.webp",
+        "belege/fertig-r3-fix-a/start__m390-light__09.webp",
+        "belege/fertig-r3-fix-a/start__m390-light__10.webp",
+        "belege/fertig-r3-fix-a/start__m390-light__11.webp",
+        "belege/fertig-r3-fix-a/start__m390-light__12.webp",
+        "belege/fertig-r3-fix-a/start__m390-light__13.webp",
+        "belege/fertig-r3-fix-a/start__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 14104,
+      "seitenhoehe": 12500,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r3-fix-a/start__d1440-light__01.webp",
+        "belege/fertig-r3-fix-a/start__d1440-light__02.webp",
+        "belege/fertig-r3-fix-a/start__d1440-light__03.webp",
+        "belege/fertig-r3-fix-a/start__d1440-light__04.webp",
+        "belege/fertig-r3-fix-a/start__d1440-light__05.webp",
+        "belege/fertig-r3-fix-a/start__d1440-light__06.webp",
+        "belege/fertig-r3-fix-a/start__d1440-light__07.webp",
+        "belege/fertig-r3-fix-a/start__d1440-light__08.webp",
+        "belege/fertig-r3-fix-a/start__d1440-light__09.webp",
+        "belege/fertig-r3-fix-a/start__d1440-light__10.webp",
+        "belege/fertig-r3-fix-a/start__d1440-light__11.webp",
+        "belege/fertig-r3-fix-a/start__d1440-light__12.webp",
+        "belege/fertig-r3-fix-a/start__d1440-light__13.webp",
+        "belege/fertig-r3-fix-a/start__d1440-light__14.webp"
+      ]
+    }
+  ]
+}

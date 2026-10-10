@@ -1,0 +1,668 @@
+{
+  "label": "r2-fundament-r2",
+  "base": "http://localhost:3450",
+  "erstellt": "2026-10-09T21:55:12.397Z",
+  "dauerSekunden": 103,
+  "chromium": "Chromium 141.0.7390.37",
+  "lighthouse": "13.5.0",
+  "node": "v22.22.0",
+  "laeufeJeKombination": 5,
+  "wiederholungenBeiTechnischemFehler": 2,
+  "formfaktoren": [
+    "mobile"
+  ],
+  "aufwaermen": true,
+  "statistik": "Median (bei gerader Anzahl: Mittel der beiden mittleren Werte), min, max über die gültigen Läufe",
+  "kilobyte": "1 KB = 1024 Byte",
+  "bedingungen": {
+    "mobile": {
+      "formFactor": "mobile",
+      "drosselungsmethode": "simulate",
+      "drosselung": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "bildschirm": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      },
+      "userAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36"
+    }
+  },
+  "einstellungen": {
+    "onlyCategories": [
+      "performance",
+      "accessibility",
+      "best-practices",
+      "seo"
+    ],
+    "disableFullPageScreenshot": true,
+    "strikt_nacheinander": true,
+    "chromiumProLauf": "neu gestartet",
+    "fremdhostSperre": "host-resolver-rules: nur localhost auflösbar"
+  },
+  "budget": {
+    "perfMobilMin": 90,
+    "lcpSMax": 2.5,
+    "clsMax": 0.1,
+    "tbtMsMax": 200
+  },
+  "ergebnisse": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "haupt": true,
+      "url": "http://localhost:3450/",
+      "formfaktor": "mobile",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 92,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 913.1223,
+        "lcpMs": 3358.4614999999994,
+        "cls": 0,
+        "tbtMs": 76.3247,
+        "siMs": 913.1223,
+        "ttiMs": 3408.3250999999996,
+        "bytes": 400690,
+        "anfragen": 24,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 92,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 909.6410000000001,
+        "lcpMs": 3328.68345,
+        "cls": 0,
+        "tbtMs": 54.43885,
+        "siMs": 909.6410000000001,
+        "ttiMs": 3399.0259,
+        "bytes": 400505,
+        "anfragen": 24,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 92,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 920.0558000000001,
+        "lcpMs": 3426.0837,
+        "cls": 0,
+        "tbtMs": 86.67949999999996,
+        "siMs": 920.0558000000001,
+        "ttiMs": 3470.6337000000003,
+        "bytes": 401826,
+        "anfragen": 24,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "div.mx-auto > header.flex > h1#hero-title > span.block",
+      "cpuBenchmarkMedian": 2471,
+      "budget": {
+        "urteil": "über Budget",
+        "verletzt": [
+          "LCP 3,36 s > 2,5 s"
+        ]
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 92,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 913.1223,
+          "lcpMs": 3328.68345,
+          "cls": 0,
+          "tbtMs": 54.43885,
+          "siMs": 913.1223,
+          "ttiMs": 3455.1834500000004,
+          "bytes": 400690,
+          "anfragen": 24,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.mx-auto > header.flex > h1#hero-title > span.block",
+            "snippet": "<span class=\"block text-ink-muted\">",
+            "bezeichnung": "Ehrliches Handwerk. Pünktlich Feierabend."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 12,
+            "elementRenderDelay": 161
+          },
+          "rohdatei": ".roh/r2-fundament-r2/lh/start-mobile-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 92,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 920.0558000000001,
+          "lcpMs": 3426.0837,
+          "cls": 0,
+          "tbtMs": 61.5,
+          "siMs": 920.0558000000001,
+          "ttiMs": 3470.6337000000003,
+          "bytes": 400685,
+          "anfragen": 24,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.mx-auto > header.flex > h1#hero-title > span.block",
+            "snippet": "<span class=\"block text-ink-muted\">",
+            "bezeichnung": "Ehrliches Handwerk. Pünktlich Feierabend."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 15,
+            "elementRenderDelay": 177
+          },
+          "rohdatei": ".roh/r2-fundament-r2/lh/start-mobile-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 92,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 913.3833999999999,
+          "lcpMs": 3367.0750999999996,
+          "cls": 0,
+          "tbtMs": 84.5,
+          "siMs": 913.3833999999999,
+          "ttiMs": 3408.3250999999996,
+          "bytes": 400774,
+          "anfragen": 24,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.mx-auto > header.flex > h1#hero-title > span.block",
+            "snippet": "<span class=\"block text-ink-muted\">",
+            "bezeichnung": "Ehrliches Handwerk. Pünktlich Feierabend."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 13,
+            "elementRenderDelay": 166
+          },
+          "rohdatei": ".roh/r2-fundament-r2/lh/start-mobile-3.json"
+        },
+        {
+          "n": 4,
+          "leistung": 92,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 911.3506,
+          "lcpMs": 3355.0259000000005,
+          "cls": 0,
+          "tbtMs": 76.3247,
+          "siMs": 911.3506,
+          "ttiMs": 3399.0259,
+          "bytes": 401826,
+          "anfragen": 24,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.mx-auto > header.flex > h1#hero-title > span.block",
+            "snippet": "<span class=\"block text-ink-muted\">",
+            "bezeichnung": "Ehrliches Handwerk. Pünktlich Feierabend."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 11,
+            "elementRenderDelay": 156
+          },
+          "rohdatei": ".roh/r2-fundament-r2/lh/start-mobile-4.json"
+        },
+        {
+          "n": 5,
+          "leistung": 92,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 909.6410000000001,
+          "lcpMs": 3358.4614999999994,
+          "cls": 0,
+          "tbtMs": 86.67949999999996,
+          "siMs": 909.6410000000001,
+          "ttiMs": 3407.7115000000003,
+          "bytes": 400505,
+          "anfragen": 24,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.mx-auto > header.flex > h1#hero-title > span.block",
+            "snippet": "<span class=\"block text-ink-muted\">",
+            "bezeichnung": "Ehrliches Handwerk. Pünktlich Feierabend."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 15,
+            "elementRenderDelay": 156
+          },
+          "rohdatei": ".roh/r2-fundament-r2/lh/start-mobile-5.json"
+        }
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "haupt": true,
+      "url": "http://localhost:3450/jobs/anlagenmechaniker-shk-wetzlar",
+      "formfaktor": "mobile",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 91,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 912.9783,
+        "lcpMs": 3522.3650499999994,
+        "cls": 0,
+        "tbtMs": 75.21164999999996,
+        "siMs": 1102.190496371605,
+        "ttiMs": 3670.31505,
+        "bytes": 436575,
+        "anfragen": 27,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 90,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 908.8896,
+        "lcpMs": 2869.5814,
+        "cls": 0,
+        "tbtMs": 46,
+        "siMs": 919.5814,
+        "ttiMs": 3625.8221000000003,
+        "bytes": 436575,
+        "anfragen": 27,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 95,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 919.5814,
+        "lcpMs": 3557.3344000000006,
+        "cls": 0,
+        "tbtMs": 108.51085000000023,
+        "siMs": 1130.1404752819146,
+        "ttiMs": 3697.6174500000006,
+        "bytes": 436575,
+        "anfragen": 27,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "div.lg:grid > div.flex > header.flex > p.max-w-prose",
+      "cpuBenchmarkMedian": 2497.5,
+      "budget": {
+        "urteil": "über Budget",
+        "verletzt": [
+          "LCP 3,52 s > 2,5 s"
+        ]
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 94,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 912.9783,
+          "lcpMs": 3012.9782999999993,
+          "cls": 0,
+          "tbtMs": 108.51085000000023,
+          "siMs": 1102.190496371605,
+          "ttiMs": 3697.6174500000006,
+          "bytes": 436575,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.lg:grid > div.flex > header.flex > p.max-w-prose",
+            "snippet": "<p class=\"max-w-prose text-lead text-ink\">",
+            "bezeichnung": "Als Anlagenmechaniker SHK montierst und modernisierst du Wärmepumpensysteme von…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 12,
+            "elementRenderDelay": 155
+          },
+          "rohdatei": ".roh/r2-fundament-r2/lh/stelle-anlagenmechaniker-mobile-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 95,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 919.5814,
+          "lcpMs": 2869.5814,
+          "cls": 0,
+          "tbtMs": 56.209299999999985,
+          "siMs": 919.5814,
+          "ttiMs": 3625.8221000000003,
+          "bytes": 436575,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.lg:grid > div.flex > header.flex > p.max-w-prose",
+            "snippet": "<p class=\"max-w-prose text-lead text-ink\">",
+            "bezeichnung": "Als Anlagenmechaniker SHK montierst und modernisierst du Wärmepumpensysteme von…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 12,
+            "elementRenderDelay": 156
+          },
+          "rohdatei": ".roh/r2-fundament-r2/lh/stelle-anlagenmechaniker-mobile-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 90,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 909.5767000000001,
+          "lcpMs": 3522.3650499999994,
+          "cls": 0,
+          "tbtMs": 75.21164999999996,
+          "siMs": 1087.960182131042,
+          "ttiMs": 3670.31505,
+          "bytes": 436575,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.lg:grid > div.flex > header.flex > p.max-w-prose",
+            "snippet": "<p class=\"max-w-prose text-lead text-ink\">",
+            "bezeichnung": "Als Anlagenmechaniker SHK montierst und modernisierst du Wärmepumpensysteme von…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 15,
+            "elementRenderDelay": 180
+          },
+          "rohdatei": ".roh/r2-fundament-r2/lh/stelle-anlagenmechaniker-mobile-3.json"
+        },
+        {
+          "n": 4,
+          "leistung": 91,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 915.4818,
+          "lcpMs": 3527.2226999999993,
+          "cls": 0,
+          "tbtMs": 46,
+          "siMs": 1106.0191578113586,
+          "ttiMs": 3660.8727,
+          "bytes": 436575,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.lg:grid > div.flex > header.flex > p.max-w-prose",
+            "snippet": "<p class=\"max-w-prose text-lead text-ink\">",
+            "bezeichnung": "Als Anlagenmechaniker SHK montierst und modernisierst du Wärmepumpensysteme von…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 13,
+            "elementRenderDelay": 155
+          },
+          "rohdatei": ".roh/r2-fundament-r2/lh/stelle-anlagenmechaniker-mobile-4.json"
+        },
+        {
+          "n": 5,
+          "leistung": 90,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 908.8896,
+          "lcpMs": 3557.3344000000006,
+          "cls": 0,
+          "tbtMs": 80,
+          "siMs": 1130.1404752819146,
+          "ttiMs": 3685.4844000000007,
+          "bytes": 436575,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.lg:grid > div.flex > header.flex > p.max-w-prose",
+            "snippet": "<p class=\"max-w-prose text-lead text-ink\">",
+            "bezeichnung": "Als Anlagenmechaniker SHK montierst und modernisierst du Wärmepumpensysteme von…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 13,
+            "elementRenderDelay": 151
+          },
+          "rohdatei": ".roh/r2-fundament-r2/lh/stelle-anlagenmechaniker-mobile-5.json"
+        }
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "haupt": true,
+      "url": "http://localhost:3450/bewerbung",
+      "formfaktor": "mobile",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 93,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 914.3461,
+        "lcpMs": 3220.4716,
+        "cls": 0,
+        "tbtMs": 68.5,
+        "siMs": 914.3461,
+        "ttiMs": 3699.9379500000005,
+        "bytes": 450578,
+        "anfragen": 30,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 92,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 908.9392,
+        "lcpMs": 3090.4087999999997,
+        "cls": 0,
+        "tbtMs": 64,
+        "siMs": 908.9392,
+        "ttiMs": 3664.7691499999996,
+        "bytes": 450539,
+        "anfragen": 30,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 94,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 943.01,
+        "lcpMs": 3290.519149999999,
+        "cls": 0,
+        "tbtMs": 86.50000000000045,
+        "siMs": 943.01,
+        "ttiMs": 3731.7650000000012,
+        "bytes": 450578,
+        "anfragen": 30,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "div.flex > div.transition > div.flex > h2#_R_qnpfddb_-step",
+      "cpuBenchmarkMedian": 2459,
+      "budget": {
+        "urteil": "über Budget",
+        "verletzt": [
+          "LCP 3,22 s > 2,5 s"
+        ]
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 92,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 943.01,
+          "lcpMs": 3281.5149999999994,
+          "cls": 0,
+          "tbtMs": 72.5,
+          "siMs": 943.01,
+          "ttiMs": 3731.7650000000012,
+          "bytes": 450539,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.flex > div.transition > div.flex > h2#_R_qnpfddb_-step",
+            "snippet": "<h2 id=\"_R_qnpfddb_-step\" tabindex=\"-1\" class=\"text-ink outline-none text-title-2\">",
+            "bezeichnung": "Für welche Stelle interessierst du dich?"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 21,
+            "elementRenderDelay": 174
+          },
+          "rohdatei": ".roh/r2-fundament-r2/lh/bewerbung-mobile-1.json",
+          "fehlversuche": [
+            "NO_NAVSTART: Something went wrong with recording the trace over your page load. Please run Lighthouse again. (NO_NAVSTART)"
+          ]
+        },
+        {
+          "n": 2,
+          "leistung": 93,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 908.9392,
+          "lcpMs": 3090.4087999999997,
+          "cls": 0,
+          "tbtMs": 68.5,
+          "siMs": 908.9392,
+          "ttiMs": 3700.9587999999994,
+          "bytes": 450578,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.flex > div.transition > div.flex > h2#_R_qnpfddb_-step",
+            "snippet": "<h2 id=\"_R_qnpfddb_-step\" tabindex=\"-1\" class=\"text-ink outline-none text-title-2\">",
+            "bezeichnung": "Für welche Stelle interessierst du dich?"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 21,
+            "elementRenderDelay": 119
+          },
+          "rohdatei": ".roh/r2-fundament-r2/lh/bewerbung-mobile-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 92,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 914.3461,
+          "lcpMs": 3290.519149999999,
+          "cls": 0,
+          "tbtMs": 86.50000000000045,
+          "siMs": 914.3461,
+          "ttiMs": 3664.7691499999996,
+          "bytes": 450578,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.flex > div.transition > div.flex > h2#_R_qnpfddb_-step",
+            "snippet": "<h2 id=\"_R_qnpfddb_-step\" tabindex=\"-1\" class=\"text-ink outline-none text-title-2\">",
+            "bezeichnung": "Für welche Stelle interessierst du dich?"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 24,
+            "elementRenderDelay": 126
+          },
+          "rohdatei": ".roh/r2-fundament-r2/lh/bewerbung-mobile-3.json"
+        },
+        {
+          "n": 4,
+          "leistung": 93,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 912.3144,
+          "lcpMs": 3220.4716,
+          "cls": 0,
+          "tbtMs": 66,
+          "siMs": 912.3144,
+          "ttiMs": 3695.0716000000007,
+          "bytes": 450578,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.flex > div.transition > div.flex > h2#_R_qnpfddb_-step",
+            "snippet": "<h2 id=\"_R_qnpfddb_-step\" tabindex=\"-1\" class=\"text-ink outline-none text-title-2\">",
+            "bezeichnung": "Für welche Stelle interessierst du dich?"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 17,
+            "elementRenderDelay": 138
+          },
+          "rohdatei": ".roh/r2-fundament-r2/lh/bewerbung-mobile-4.json"
+        },
+        {
+          "n": 5,
+          "leistung": 94,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 941.5253,
+          "lcpMs": 3108.2879499999995,
+          "cls": 0,
+          "tbtMs": 64,
+          "siMs": 941.5253,
+          "ttiMs": 3699.9379500000005,
+          "bytes": 450578,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.flex > div.transition > div.flex > h2#_R_qnpfddb_-step",
+            "snippet": "<h2 id=\"_R_qnpfddb_-step\" tabindex=\"-1\" class=\"text-ink outline-none text-title-2\">",
+            "bezeichnung": "Für welche Stelle interessierst du dich?"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 23,
+            "elementRenderDelay": 121
+          },
+          "rohdatei": ".roh/r2-fundament-r2/lh/bewerbung-mobile-5.json"
+        }
+      ]
+    }
+  ]
+}

@@ -1,12 +1,14 @@
 'use client';
 
-import { RotateCcw } from 'lucide-react';
+import { Icon } from '@/components/icons';
 import { Button, ChoiceCard, ChoiceGroup, Field, Textarea } from '@/components/ui';
 import { MAPPE_LIMITS, WORK_STYLES, type WorkStyleId } from '@/lib/mappe/options';
 import { EditorSection } from './EditorSection';
 
 export interface LetterSectionProps {
   step: number;
+  /** Mappe-Stand: Arbeitsstil gewählt oder eigener Text. */
+  done?: boolean;
   workStyleId: WorkStyleId | null;
   onWorkStyleChange: (id: WorkStyleId) => void;
   /** The letter as shown in the preview (template or edited text). */
@@ -19,6 +21,7 @@ export interface LetterSectionProps {
 
 export function LetterSection({
   step,
+  done,
   workStyleId,
   onWorkStyleChange,
   letter,
@@ -30,11 +33,12 @@ export function LetterSection({
     <EditorSection
       id="mappe-anschreiben"
       step={step}
+      done={done}
       title="Arbeitsstil und Anschreiben"
       description="Aus Stelle, Schwerpunkten und Arbeitsstil entsteht dein Anschreiben. Danach kannst du es frei ändern."
     >
       <div className="flex flex-col gap-4">
-        <h3 id="mappe-arbeitsstil-title" className="text-body font-semibold text-ink">
+        <h3 id="mappe-arbeitsstil-title" className="text-body font-bold text-ink">
           Was zeichnet deinen Arbeitsstil aus?
         </h3>
         <ChoiceGroup labelledBy="mappe-arbeitsstil-title">
@@ -69,8 +73,8 @@ export function LetterSection({
           />
         </Field>
         {edited && (
-          <Button variant="ghost" onClick={onResetLetter} className="self-start">
-            <RotateCcw aria-hidden="true" strokeWidth={1.75} className="size-5" />
+          <Button variant="ghost" wrap onClick={onResetLetter} className="max-w-full self-start">
+            <Icon name="rotate-ccw" size="md" />
             Text neu aus der Vorlage erstellen
           </Button>
         )}

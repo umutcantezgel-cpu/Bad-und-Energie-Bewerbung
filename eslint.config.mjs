@@ -13,6 +13,7 @@ export default defineConfig([
       "coday-seo-toolkit/**",
       ".next/**",
       "node_modules/**",
+      "_relaunch/**",
     ],
   },
   {

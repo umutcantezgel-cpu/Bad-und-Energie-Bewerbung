@@ -1,0 +1,56 @@
+/*
+ * Arbeitswoche als Heizkreisverteiler (Variante 1 .woche, B Runde 1 figure.woche).
+ * Nur Rollen und Tokens (KERN K-004, K-006, K-010): eine Strichstärke --m-strich, Haarlinien 1 px nur als
+ * Raster, Vorlauf rot, Rücklauf blau, Maße in Martian Mono (75 %). Das SVG hat keine viewBox, also skaliert
+ * weder Strich noch Schrift mit der Breite; die Lage auf der Zeitachse steht in Prozent der Spur.
+ */
+
+.plan {
+  overflow: visible;
+}
+
+.plan :where(path, line) {
+  fill: none;
+  stroke-width: var(--m-strich);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.vorlauf {
+  stroke: var(--vorlauf);
+}
+
+.ruecklauf {
+  stroke: var(--ruecklauf);
+}
+
+/* Verteiler: stumpfe Enden, damit die Brückenlücke im Rücklauf genau drei Striche breit bleibt */
+.plan .verteiler {
+  stroke-linecap: butt;
+}
+
+/* Raster und Achse: Haarlinien */
+.plan .haar {
+  stroke: var(--line);
+  stroke-width: 1px;
+  stroke-linecap: butt;
+}
+
+.plan .strich {
+  stroke: var(--ink-muted);
+  stroke-width: 1px;
+  stroke-linecap: butt;
+}
+
+/* Schrift im Plan kommt aus den Utilities im Markup (text-etikett, font-mass, text-callout; KERN K-005).
+   Hier steht nur, was die Utilities nicht tragen: die Größe des Hauptmaßes. */
+.feierabend {
+  font-size: var(--text-title-2);
+}
+
+/* Unter 360 px ist die Spur schmal: „Kein Wochenend-Notdienst“ ohne Sperrung, damit es im Raster bleibt */
+@media (max-width: 22.49em) {
+  .frei {
+    letter-spacing: 0;
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "label": "fertig-r5-ruhe-vorher",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T08:58:22.277Z",
+  "seiten": [
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 19588,
+      "seitenhoehe": 19037,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r5-ruhe-vorher/datenschutz__m390-light__01.webp",
+        "belege/fertig-r5-ruhe-vorher/datenschutz__m390-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/datenschutz",
+      "slug": "datenschutz",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 5952,
+      "seitenhoehe": 12785,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r5-ruhe-vorher/datenschutz__d1440-light__01.webp",
+        "belege/fertig-r5-ruhe-vorher/datenschutz__d1440-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 6797,
+      "seitenhoehe": 4868,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r5-ruhe-vorher/impressum__m390-light__01.webp",
+        "belege/fertig-r5-ruhe-vorher/impressum__m390-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 3745,
+      "seitenhoehe": 3188,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r5-ruhe-vorher/impressum__d1440-light__01.webp",
+        "belege/fertig-r5-ruhe-vorher/impressum__d1440-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/gibt-es-nicht-404",
+      "slug": "fehler-404",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 404,
+      "ms": 5119,
+      "seitenhoehe": 2349,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [
+        {
+          "kind": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r5-ruhe-vorher/fehler-404__m390-light__01.webp",
+        "belege/fertig-r5-ruhe-vorher/fehler-404__m390-light__02.webp"
+      ]
+    },
+    {
+      "pfad": "/gibt-es-nicht-404",
+      "slug": "fehler-404",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 404,
+      "ms": 3488,
+      "seitenhoehe": 1529,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [
+        {
+          "kind": "console",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r5-ruhe-vorher/fehler-404__d1440-light__01.webp",
+        "belege/fertig-r5-ruhe-vorher/fehler-404__d1440-light__02.webp"
+      ]
+    }
+  ]
+}

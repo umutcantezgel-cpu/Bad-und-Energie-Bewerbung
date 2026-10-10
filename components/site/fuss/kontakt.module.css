@@ -1,0 +1,47 @@
+/*
+ * ContactOptions (R4-SHELL-02, E-023) im Formsystem des Einstiegs: Icons der eigenen Familie im Kästchen mit
+ * Navy-Kontur (3 px, Radius 4) wie die Etiketten an der Zeichnung, Kanalnamen als Mono-Etikett, Unterstrich in
+ * Strichstärke. Nur Rollen; im Inverse-Band (Schlussband) Creme auf Navy.
+ */
+
+.reihe span {
+  text-decoration-thickness: var(--m-strich);
+}
+
+.kasten {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--m-ziel);
+  height: var(--m-ziel);
+  border: var(--m-strich) solid var(--brand);
+  border-radius: var(--radius-1, 4px);
+  color: var(--brand);
+}
+
+/* Inline: fette Textlinks mit Unterstrich in Strichstärke wie der Zweitweg des Einstiegs */
+.inline {
+  text-decoration-line: underline;
+  text-decoration-thickness: var(--m-strich);
+  text-underline-offset: 0.25em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .inline:hover {
+    text-decoration-color: var(--ruecklauf);
+  }
+}
+
+/* Ansprechpartner: Name und Rolle in der Rohrklammer wie die Unterzeile des Einstiegs */
+.person {
+  position: relative;
+  padding-left: var(--a-6);
+}
+
+.klammer {
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  bottom: 0.15em;
+}

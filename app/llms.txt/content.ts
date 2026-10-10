@@ -25,16 +25,37 @@ export function funnelOnlyJobs(): Job[] {
     .filter((job) => job !== undefined);
 }
 
-/** Company-wide statements; pending (unconfirmed) and expired facts are skipped. */
+/**
+ * Company-wide statements; pending (unconfirmed) and expired facts are skipped. Pay, contract,
+ * Hilti kit and workwear came back with E-SEO-014 (all backed, not pending).
+ */
 const EMPLOYER_FACT_IDS: readonly FactId[] = [
   'founded1926',
   'employees15',
+  'aboveTariff',
+  'permanentContract',
   'workingHours',
   'vacation30',
+  'hilti',
+  'workwear',
   'radius35',
   'noFarAssembly',
   'partners5',
 ];
+
+/**
+ * Who the company is, for the lead sentence: until the end of the anniversary year
+ * „100 Jahre Meisterbetrieb (1926–2026)“ (fact `anniversary100`, validUntil), then
+ * „Meisterbetrieb seit 1926“.
+ */
+export function companyClaim(now: Date): string {
+  return isFactActive('anniversary100', now) ? FACTS.anniversary100.short : FACTS.founded1926.short;
+}
+
+/** Chamber and guild, as in the imprint („Handwerkskammer Wiesbaden, Innung …“). */
+export function chamberLine(): string {
+  return `${COMPANY.hwk}, ${COMPANY.innung}`;
+}
 
 export function employerFacts(now: Date): string[] {
   return EMPLOYER_FACT_IDS.filter((id) => isFactActive(id, now) && !FACTS[id].pending).map((id) => FACTS[id].long);

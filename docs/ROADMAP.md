@@ -155,43 +155,43 @@
 
 ## 4. Säule A: Design-System im Apple-Stil (typografisch)
 
-**Farbe**
-- Navy `#0A1E3A` ist die Schriftfarbe (Ink). Crimson `#C51E1E` ist **ausschließlich** die Farbe der Primäraktion (Weiß auf Crimson: 5,87:1).
-- Hydro-Blau nur für Focus-Ringe, Eco-Grün nur für Erfolg.
-- Ausgewählte Optionen zeigen Ink mit Haken, nie Rot.
-- Neutrale Grauskala mit leichtem Navy-Ton.
-- Semantische Tokens: `surface`, `surface-2`, `surface-3`, `ink`, `ink-muted`, `line`, `line-strong`, `accent`, `focus`, `success`, `danger`.
-- **Light und Dark Mode** über `prefers-color-scheme`. Dazu ein Inverse-Scope `[data-tone="inverse"]` für das Abschluss-CTA-Band.
+> **Abgelöst durch KERN 1.0, siehe `_relaunch/KERN.md`** (K-004 bis K-010, Freigabe E-021, Farben E-016, Bewegung E-013). Die Werte unten sind die tatsächlich umgesetzten (Paket R2-FUND-01, Quelle `app/styles/theme.css`, Spiegel `lib/tokens/index.ts`). Wo dieser Abschnitt und KERN abweichen, gilt KERN.
 
-**Typografie**
-- **Inter Variable** über `next/font` (selbst gehostet, DSGVO-sicher).
-- Fluide Skala: footnote 13 · callout 15 · body 16–17 · lead 18–21 · title-3/2/1 · display 39–72 · numeral 48–104 mit tabellarischen Ziffern.
-- Gewichte 400/500/600/700. 800/900, `font-mono` und schwere Versal-Eyebrows sind verboten.
-- Inputs ≥ 17 px (verhindert iOS-Zoom). `text-wrap: balance`/`pretty`. Weiche Trennung (`titleShy`) für lange Berufsnamen.
+**Farbe** (Primitive `--p-*` nur in `theme.css`, Rollen hell · dunkel · Inverse-Band · Druck)
+- Fläche Papier `#FBF7F0` (dunkel Nacht `#0A1033`), Wand `#F1E9DB` (dunkel `#131B4A`), Wärme `#FADCC9` (dunkel Glut `#47445B`); `theme-color` hell/dunkel = Papier/Nacht.
+- Schrift Tinte `#111A3B` (dunkel Creme `#F6F0E4`), Nebentext Tinte 2 `#454C78` (dunkel `#B9C0E8`), Marke Navy `#111D6D` für Überschriften und Maße (`brand`, dunkel Creme).
+- Rot `#D60000` **nur** als Knopffläche der einen Hauptaktion (Hover `#B00000`, Druck `#A80000`, Weiß darauf 5,44:1) und als dünne Vorlauf-Linie (dunkel `#FF6B5F`). Blau `#1F57C4` für Rücklauf und Fokus (dunkel `#86AEFF`). Grün nur für Erfolg.
+- Rollen: `surface`, `surface-2`, `surface-3`, `surface-raised`, `ink`, `ink-muted`, `ink-2`, `brand`, `line`, `line-strong`, `accent`, `accent-hover`, `accent-press`, `on-accent`, `focus`, `vorlauf`, `ruecklauf`, `waerme`, `wand`, `plakette`, `success*`, `danger*`.
+- Inverse-Band `[data-tone="inverse"]`: Navy-Fläche `#111D6D` mit Creme-Schrift (dunkel `#16237A`). Druck immer hell, Papier weiß.
+- Logo: Original ohne Filter; dunkel und im Band auf einer Papier-Plakette (G8, K-006).
+
+**Typografie** (`next/font/local`, `app/fonts/`, OFL, 223 864 Byte, zwei Dateien vorgeladen)
+- Bricolage Grotesque (Display 800, −0,01 em; `--font-display`), Atkinson Hyperlegible Next (Text; `--font-sans`), Martian Mono nur für Maße (Breite 75 %, tabellarisch; `--font-mass`). Inter entfällt.
+- Skala (10 Stufen, `clamp` mit rem-Anteil): footnote 14 · callout 15–16 · body 17–20 · lead 19–24 · title-3 20–30 · title-2 24–36 · title-1 32–56 (= numeral) · display 52–120 mobil/Tablet (390 px: 60,6 px; unter 360 px 40–52), 64–168 ab 64 em, am längsten Wort „Feierabend.“ gemessen (`app/fonts/__tests__/display.test.ts`) · plakat (nur die Plakatzeile „SHK-Jobs / in Wetzlar.“, Werte aus Variante 1: 60–120 mobil, 390 px 76 px, Höhenstufen B–D, 64–192 ab 64 em). Überschriften h1–h3 trennen deutsch (`hyphens: auto`, ab 10 Zeichen).
+- `font-mass` (Maße) und `text-etikett` (Mono-Versalien +0,06 em) sind die einzigen Wege zu Mono und Versalien; `ziffer` setzt Ziffern im Fließtext in Bricolage (Atkinson zeichnet die Null mit Schrägstrich); `font-mono`, `font-serif`, `uppercase`, `font-[…]` bleiben verboten. 800 nur über die Display-Stufen.
+- Inputs ≥ 17 px. `text-wrap: balance`/`pretty`. Weiche Trennung (`titleShy`) für lange Berufsnamen.
 
 **Raum und Flächen**
-- 8-pt-Raster. Section-Abstand `clamp(4rem…8rem)`. Container `prose` 40rem, `content` 68rem, `wide` 80rem.
-- Radien 6/10/14/20/28/full.
-- Nur 3 Schatten. Karten heben sich über die Fläche (`surface-2`) ab, nicht über Schatten.
+- Abstandsskala 11 Stufen 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 · 80 · 96 · 128 px (`--a-1…--a-11`, Tailwind 1 · 2 · 3 · 4 · 6 · 8 · 12 · 16 · 20 · 24 · 32). Seitenrand `clamp(1.25rem, 4vw, 4rem)`, Bundsteg `clamp(1rem, 2.2vw, 1.5rem)`, Satzspiegel ≤ 84 rem (`max-w-satz`). Leitungspaar `--paar` 12 px, Strich `--m-strich` 3 px.
+- Radien 4 · 12 · 24 · 999 px (`rounded-1/-2/-3/-voll`; die alten Namen zeigen darauf). Ein Schatten (`shadow-lg`, nur schwebende Ebenen).
 - **Entfernt werden:** Glas, Double-Bezel, Glow, Shimmer, Blobs, Gradient-Body, Golden-Grid.
 
-**Motion**
-- Bewegung nur als Feedback: Press-Scale 0,98, Step-Wechsel 220 ms, Sheet 280 ms, CSS `@starting-style`, Header-Hairline per Scroll-Timeline.
-- **Verboten:** pulse/ping/marquee/shimmer/tilt/spotlight/count-up/Konfetti/Parallax/Scroll-Reveal.
-- Bei `prefers-reduced-motion` nur Crossfades.
-- Das Paket `motion` wird entfernt, sobald alle Nutzer ersetzt sind (spart ca. 30–40 KB JS).
+**Motion** (CSS zuerst, `lib/motion/`, keine Bibliothek)
+- Dauern `--d-1` 120 · `--d-2` 240 · `--d-3` 400 · `--d-4` 600 ms, Takt 80 ms, Kurven `--k-aus` (.16,1,.3,1), `--k-wechsel` (.65,0,.35,1), `--k-ein` (.32,0,.67,0). Eingänge d-2/aus, Ausgänge d-1/ein.
+- Register `lib/motion/register.ts` (19 Kennungen aus K-009); jedes animierte Element trägt `data-motion`, der Guard prüft die Kennung. Kopfskript setzt `auftakt` vor dem ersten Bild (2-s-Sicherheitsnetz). Sein sha256 steht als `HEAD_SCRIPT_SHA256` in `lib/motion/head-script.ts`, bewusst nicht in der CSP: ein Hash schaltet `'unsafe-inline'` ab und sperrte die Inline-Skripte von Next; bis zur Nonce-Strategie deckt `'unsafe-inline'` alle ab (`lib/motion/__tests__/csp.test.ts`).
+- **Verboten:** Schleifen, Laufbänder, Zähler, Konfetti, Parallax, Scroll-Auftritte auf jedem Abschnitt.
+- Bei `prefers-reduced-motion` steht alles sofort im Endzustand.
 
 **Barrierefreiheit (WCAG 2.2 AA)**
-- Globaler `:focus-visible`-Ring. `scroll-padding` für Sticky-Header und -Bar (2.4.11).
-- Touch-Ziele ≥ 44 px, Auswahlkarten ≥ 64 px.
+- Globaler `:focus-visible`: 3 px Linie, 3 px Abstand, Fokusblau. `scroll-padding` für Kopf und StickyApplyBar (2.4.11).
+- Touch-Ziele ≥ 44 px, Auswahlkarten ≥ 64 px. Eigene `:active`-Rückmeldung statt Tipp-Markierung; der 1-px-Druck gilt nur für `[data-motion~="druck"]` und nur ohne reduzierte Bewegung.
 - Konsistente Hilfe: Telefon und WhatsApp immer an derselben Stelle (3.2.6).
 - `autocomplete` an allen Feldern. Skip-Link.
 - Das draggable WhatsApp-Widget fällt weg (verstößt gegen 2.5.7).
 
 **Dateien**
-- `app/styles/theme.css`: `@theme` mit den Primitiven, semantische `:root`- und Dark-Variablen, `@theme inline`-Mapping.
-- `app/globals.css` wird neu geschrieben. `lib/tokens/index.ts` enthält Dauern, z-Index und Breakpoints für JS.
-- **Fallstrick:** `lib/utils/cn.ts` braucht `extendTailwindMerge` mit den eigenen `text-*`-Größen. Sonst verschluckt `cn()` Klassen wie `text-ink` und `text-display`.
+- `app/styles/theme.css`: Primitive, Rollen (hell, dunkel, Band, Druck), `@theme inline`-Mapping, Schrift-Utilities. `app/globals.css`: Grundregeln (Fokus, Auswahl, reduzierte Bewegung). `app/fonts/`: Schriften und Lizenzen. `lib/tokens/index.ts`: Dauern, Kurven, Abstände für JS. `lib/motion/`: Register, Abfragen, Kopfskript. `components/icons/`: eigene Icon-Familie (ersetzt lucide).
+- **Fallstrick:** `lib/utils/cn.ts` braucht `extendTailwindMerge` mit allen eigenen Namen. Sonst verschluckt `cn()` Klassen wie `text-ink` und `text-display`.
 
 **Komponenten (`components/ui/`, cva + `@radix-ui/react-slot`, standardmäßig Server-Komponenten)**
 
@@ -201,8 +201,8 @@
 | Gelöscht | Tabs, Tooltip, ToggleSwitch, ProgressGauge, Divider, AnimateIn, StaggerContainer, AnimatedNumber, GradientText, RotatingText, SpotlightCard, TiltCard, BackToTop, Modal (wird durch Sheet ersetzt), layout/Grid/Stack/Cluster/LayoutClientWidgets |
 
 **Guard-Skripte**
-- `scripts/qa/check-design-tokens.mjs` lässt den Build fehlschlagen bei `text-[`, `font-mono`, `font-black`, `animate-ping|pulse|marquee`, Hex-Farben in `className` und Rohpaletten (`slate-`, `sky-` …).
-- `scripts/qa/check-contrast.mjs` prüft alle Text/Fläche-Paare in beiden Modi.
+- `scripts/qa/check-design-tokens.mjs` lässt den Build fehlschlagen bei `text-[`, `font-mono`/`font-serif`, `font-[`, `font-black`/`font-extrabold`, `animate-ping|pulse|bounce|marquee`, `duration-[`/`delay-[`/`ease-[`, Hex-Farben in `className`, Rohpaletten, `--p-*` außerhalb von `theme.css`, weiteren Schatten und Radien, Umfärbe-Filtern (`invert`, `brightness-*`) und `data-motion`-Kennungen, die im Register fehlen. Abstände außerhalb der Skala meldet er als Hinweis.
+- `scripts/qa/check-contrast.mjs` prüft alle Text-, Linien- und Flächenpaare hell, dunkel, im Inverse-Band und im Druck.
 
 ---
 

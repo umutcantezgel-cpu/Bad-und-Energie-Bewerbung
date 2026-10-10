@@ -1,0 +1,346 @@
+[
+ {
+  "pruefer": "gegen-regeln",
+  "korrekturen": [
+   {
+    "eid": "E-START-038",
+    "feld": "Priorität",
+    "bisher": "Kann (Pass Z. 676 und Übersicht Z. 52), Entscheidung Verschmelzen, 'werden trotzdem gebaut'",
+    "neu": "Soll; Entscheidung Verschmelzen bleibt. Grund neu: Inhalte mit klarem Besuchernutzen (zehn Ortsbeschreibungen ALT-START-365 bis -374, Einstufung Kerngebiet/Regionales Einsatzgebiet) und interaktives Element (Pin-Klick, Standortwahl ALT-START-265, -379). Zurückgestellt oder nicht zurückgeführt wird nichts, es gibt keinen Beleg für eine bewusste Entfernung.",
+    "regel": "AUFTRAG Abschnitt 8: Soll = Inhalte mit klarem Besuchernutzen und interaktive Elemente, Kann = nur 'Dekoration ohne eigene Aufgabe'; 'Jede Kann-Einstufung prüft ein frischer Gegenprüfer'. Abschnitt 10/Z-02: Kann entsteht nur nach AUSBAUSTUFE (Standard Voll), also würden die Soll-Zeilen 365-374 trotz Entscheidung 'Verschmelzen' still entfallen. Präzedenz E-014 (E-START-016, E-START-033, E-SHELL-019: Interaktives mit eigener Aufgabe nicht Kann). 'Unbelegt' begründet Zurückstellen oder Nicht-Zurückführen, nicht Kann (_restaurator.md Z. 8, 11).",
+    "beleg": "paesse-start.md:668-682 (Kategorie Interaktives, Aufgabe 'Ort wählen und Details sehen', Z. 676 räumt selbst ein: 'Der Atlas schlägt für ALT-START-365 bis -374 Soll vor … werden trotzdem gebaut'). Ausgangsstand: lib/data/locations.ts:25,37,49,61,73,85 (`character` = die Beschreibungen, Owner-Daten) wird in app, components, lib nirgends gelesen (Grep); lib/content/region.ts:6-15, 27-36 reicht `character` nicht durch; components/maps/types.ts:5-10 und RegionMap.tsx:28-39 tragen weder `character` noch `isCoreZone` ins Client-Objekt; RadiusGraphic.tsx:27-31 (role=\"img\") und :65-67 (Punkte ohne Klick); RegionExplorer.tsx:148-159 (Ergebnisfeld nur km und Min.). GET http://localhost:3500/: 0 Treffer für 'Kerngebiet', 'Regionales Einsatzgebiet', 'Schlossstadt', 'Kundendienstgebiet'. docs/ROADMAP.md:236 nennt 'Ortsliste mit km und Fahrzeit' und streicht die Beschreibungen nicht ausdrücklich. Altstand: alt-start.md:429-438 (ALT-START-365 bis -374), InteractiveMap.tsx:492-547.",
+    "schwere": "hart"
+   },
+   {
+    "eid": "E-START-031",
+    "feld": "Priorität",
+    "bisher": "Übersichtstabelle paesse-start.md:45 'Soll'; Passtext Z. 564 'Muss (korrigiert nach E-014)'; Verteilungszeile Z. 72 'Muss 17 · Soll 27 · Kann 12', 'verloren 15 · geschwächt 20'",
+    "neu": "Übersicht 'Muss'. Alle E-014-Korrekturen in beiden Übersichtstabellen und in den Verteilungszeilen nachziehen: paesse-start.md E-START-008, 010, 021, 049 (Soll nach Muss), E-START-016 (Kann nach Soll), E-START-030 (Zustand verloren nach geschwächt), E-START-033 (siehe dort); paesse-shell-recht-seo.md E-SHELL-018, E-RECHT-018, E-SEO-021 (Soll nach Muss), E-SHELL-019 (Kann nach Soll), E-SHELL-012 (Zustand geschwächt, Entscheidung Verschmelzen), E-RECHT-005 (Entscheidung Verschmelzen). Verteilungszeile Start laut Passtexten: Muss 22 · Soll 24 · Kann 10; verloren 14 · geschwächt 21 · verschoben 21. Verteilung Shell/Recht/SEO laut Passtexten: Muss 33 · Soll 27 · Kann 15; Zustand verloren 10 · geschwächt 15 · verschoben 50.",
+    "regel": "E-014: 'Gegenprüfung P1-GEGEN-01 … vollständig übernommen'; Übersicht muss dem Passtext folgen (_restaurator.md Z. 38: Tabelle 'Übersicht' je Pass; Konsistenzlauf gegenpruefung-p1.md:13 verlangte 0 Abweichungen). Die Tabelle speist Zählung, VERLUSTLISTE und Z-02.",
+    "beleg": "paesse-start.md:45 gegen :564; Verteilung :72; Konsistenzlauf (Übersicht gegen Passtext, alle drei Dateien) ergab 15 Abweichungen, 14 davon nicht nachgezogene E-014-Zeilen; gegenpruefung-p1.md:213-229 (Reparaturliste) und :229 (Auswirkung auf die Verteilung).",
+    "schwere": "hart"
+   },
+   {
+    "eid": "E-START-033",
+    "feld": "Priorität",
+    "bisher": "Übersichtstabelle paesse-start.md:47 'Kann'; Passtext Z. 596 'Soll (korrigiert nach E-014; vorher Kann)'",
+    "neu": "Übersicht 'Soll' (Sammelnachführung siehe E-START-031).",
+    "regel": "E-014 (Korrektur 'E-START-016/033 und E-SHELL-019 auf Soll' übernommen) und Übersicht = Passtext.",
+    "beleg": "paesse-start.md:47 gegen :596; gegenpruefung-p1.md:73 und :226. Sachlich bestätigt: Am Ausgangsstand gibt es nur den 35-km-Kreis (RadiusGraphic.tsx:38-45), keine Ringe für 15 und 25 km, also Zustand 'verloren' zutreffend.",
+    "schwere": "hart"
+   },
+   {
+    "eid": "E-BEW-029",
+    "feld": "Zustand",
+    "bisher": "Zustand 'verschoben', Entscheidung 'Keine Rückführung nötig (vollständig verschoben)', Unsicherheit 'OFFENE FRAGE … BreadcrumbList verloren oder bewusst entfallen?'; derselbe Pass sagt 'teilweise verloren: BreadcrumbList'",
+    "neu": "Zustand 'geschwächt (BreadcrumbList bewusst nicht: Markup nur bei sichtbarem Pfad; der Fokus-Header zeigt keinen)'. Entscheidung 'Keine Rückführung nötig' ohne den Zusatz '(vollständig verschoben)'. Unsicherheit 'keine', die Frage ist durch die Regel beantwortet. E-BEW-029 wird Leitpass für den Brotkrumen-Knoten von /bewerbung (Muss), E-SEO-008 verweist darauf.",
+    "regel": "Prüfauftrag: Jede 'Keine Rückführung nötig' bei Muss muss am Ausgangsstand belegt sein, sonst harte Korrektur; _restaurator.md Z. 10: Fehlt ein Teil der Aufgabe, ist der Zustand 'geschwächt'. Die Auflage aus gegenpruefung-p1.md:134 ist nicht umgesetzt.",
+    "beleg": "GET http://localhost:3500/bewerbung: 0 Treffer 'BreadcrumbList', genau 1 WebPage; app/bewerbung/page.tsx:46-58 (nur WebPage); components/site/HeaderBar.tsx:76-79 (Fokusmodus: nur Logo und Austritt); lib/content/breadcrumbs.ts:1-4 (Markup entspricht dem sichtbaren Pfad); Altstand ALT-BEW-254 (alt-bewerbung.md); Pass paesse-bewerbung.md:497, 503, 508.",
+    "schwere": "hart"
+   },
+   {
+    "eid": "E-SEO-010",
+    "feld": "Entscheidung",
+    "bisher": "Muss, 'Keine Rückführung nötig (vollständig verschoben)'; Abnahme verlangt, dass jede belegte Aussage aus ALT-SEO-61 bis -68 eine Entsprechung hat; Unsicherheit nennt 'ohne Bereitschaftszwang' als ohne Entsprechung",
+    "neu": "Verschmelzen (kleine Ergänzung): Fakt `noWeekendOnCall` in benefitFactIds der Stelle Anlagenmechaniker aufnehmen (lib/jobs/data/anlagenmechaniker-shk.ts), damit die belegte Aussage aus ALT-SEO-61 im JobPosting wiederkehrt; Zustand 'verschoben, eine belegte Aussage fehlt'. Alternative: Aussage ausdrücklich als nicht übernommen führen und den Zusatz 'vollständig' streichen. Die 23 Altstand-Benefits sind alle belegt entsprechend vorhanden, die übrigen Felder stimmen.",
+    "regel": "Prüfauftrag: 'Keine Rückführung nötig' bei Muss nur mit Beleg am Ausgangsstand; die eigene Abnahme des Passes ist am Ausgangsstand nicht erfüllt. _restaurator.md Z. 10 (fehlender Teil führt zu 'geschwächt' und Variante).",
+    "beleg": "GET http://localhost:3500/jobs/anlagenmechaniker-shk-wetzlar: jobBenefits mit 11 Einträgen ohne Notdienst oder Bereitschaft, die Seite enthält weder 'Notdienst' noch 'Bereitschaft'; lib/jobs/data/anlagenmechaniker-shk.ts:43-52 (kein noWeekendOnCall), kundendiensttechniker-shk.ts:47 (nur dort); lib/content/facts.ts:140-144 (belegt, kein pending); lib/jobs/jsonld.ts:127-128; Altstand ALT-SEO-61 (app/layout.tsx:271-272); Pass paesse-shell-recht-seo.md:1124, 1127, 1129.",
+    "schwere": "hart"
+   },
+   {
+    "eid": "E-SEO-008",
+    "feld": "Zustand",
+    "bisher": "Übersicht Z. 84 'verschoben'; Passtext 'verschoben, in zwei Teilen entfallen'; Entscheidung 'Keine Rückführung nötig (vollständig verschoben)'; Priorität Kann, in /bewerbung-Brotkrumen doppelt zu E-BEW-029 (Muss)",
+    "neu": "Zustand 'geschwächt (bewusst, dokumentiert)'; Entscheidung 'Keine Rückführung nötig' mit Zusatz '(entfallene Teile bewusst: noindex-Rechtsseiten, BreadcrumbList nur bei sichtbarem Pfad)' statt '(vollständig verschoben)'. Kann bleibt für Rechtsseiten-Knoten und das Wurzel-Duplikat; der /bewerbung-Breadcrumb führt E-BEW-029.",
+    "regel": "Zustand muss mit dem Passtext und der Entscheidungsklammer übereinstimmen (E-014 Konsistenz, _restaurator.md Z. 10); keine Doppelpriorität für denselben Knoten (Q1 in gegenpruefung-p1.md:195). Kann selbst bestätigt: WebPage lebt, die entfallenen Teile sind belegt gewollt.",
+    "beleg": "paesse-shell-recht-seo.md:84, 1086, 1091-1092; docs/operations/datenschutz-aenderungen.md:18, 114 (JSON-LD der Rechtsseiten entfällt zusammen mit noindex); lib/content/breadcrumbs.ts:1-4; GET /bewerbung (kein BreadcrumbList, 1 WebPage); app/bewerbung/page.tsx:46-58.",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-START-034",
+    "feld": "Zustand",
+    "bisher": "Zustand 'verschoben', Entscheidung 'vollständig verschoben bis auf Satellit'",
+    "neu": "Zustand 'geschwächt (Stilregeln und Hell/Dunkel leben; Umschalter und Satellit entfallen, als Kann bewusst)'; Priorität Kann und Entscheidung 'Keine Rückführung nötig' bleiben, Klammer 'ohne Umschalter und Satellit'.",
+    "regel": "_restaurator.md Z. 10: Fehlt ein Teil der Aufgabe, 'geschwächt'; Auflage aus gegenpruefung-p1.md:74 ist nicht umgesetzt. Kann bestätigt: Stilwahl ist Geschmack ohne Bewerbungsaufgabe, die Stilregeln leben.",
+    "beleg": "components/maps/GoogleRegionMap.tsx:122-135, 177-184, 193 (Systemmodus folgt live, kein Umschalter, disableDefaultUI); lib/maps/google-maps-config.ts:56-96 (Paletten), 99-116 (buildMapStyle: Symbole, Parzellen, Nachbarschaften, POIs, Nahverkehr aus); Altstand ALT-START-255, -375, -376; paesse-start.md:607, 613.",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-START-035",
+    "feld": "Atlas-Nachtrag",
+    "bisher": "Abnahme nennt Vollbild und Zentrieren nur als erreichbar per Tastatur; Kartenrahmen und Vollbild-Zustand des Altstands nicht festgehalten",
+    "neu": "Abnahme ergänzen: 'Vollbild lässt sich per Esc und Knopf verlassen, der Zustand folgt `fullscreenchange`.' Im Pass vermerken: Kartenrahmen-Maße des Altstands (640 px Höhe, mindestens 580 px, Radius 3xl, Rahmen, Schatten) sind Gestaltung (Freiraum von E-START-032), der Esc-Defekt des Altstands kommt nicht zurück. Beides ist kein eigenes Element.",
+    "regel": "Zugänglichkeit/Z-11: Vollbild ohne Austritt ist eine Falle; Technikdetail ohne Besucheraufgabe gehört in die Abnahme des Hostpasses, nicht in ein neues Element.",
+    "beleg": "Altstand components/maps/InteractiveMap.tsx:46-48 (height '640px'), :238-247 (toggleFullscreen setzt isFullscreen ohne fullscreenchange-Hörer, nach Esc bleibt fixed inset-0 z-50 stehen), :250-255 (Rahmenklassen, minHeight 580 px); Ausgangsstand RegionExplorer.tsx:64 (aspect-square max-w-md).",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-SEO-014",
+    "feld": "Atlas-Nachtrag",
+    "bisher": "Abnahme nennt nur '200 text/plain'; Antwort-Header der Textrouten nicht festgehalten",
+    "neu": "Abnahme ergänzen: 'Content-Type text/plain; charset=utf-8 und Cache-Control s-maxage=3600 (revalidate 3600) bei beiden Routen'. Kein eigenes Element: Technikdetail, gleichwertige Zwischenspeicherung.",
+    "regel": "Technikdetail ohne Besucheraufgabe gehört in die Abnahme des Hostpasses.",
+    "beleg": "Altstand app/llms.txt/route.ts:43-44 und app/llms-full.txt/route.ts:61-62 ('text/plain; charset=utf-8', 'public, s-maxage=3600, stale-while-revalidate=86400'); Ausgangsstand app/llms.txt/content.ts:11 (TEXT_HEADERS), route.ts:17-18 (force-static, revalidate 3600); gemessen auf :3500 'content-type: text/plain; charset=utf-8', 'cache-control: s-maxage=3600, stale-while-revalidate=31532400', auf :3600 'public, s-maxage=3600, stale-while-revalidate=86400'.",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-SEO-003",
+    "feld": "Atlas-Nachtrag",
+    "bisher": "Abnahme nennt Robots, Canonical, Sitemap; die OpenGraph- und Twitter-Objekte der Rechtsseiten sind nicht ausgewiesen",
+    "neu": "Abnahme ergänzen: 'og:title, og:description, og:url, og:site_name, og:locale, og:image (1200 × 630 mit alt) und twitter:card summary_large_image mit Titel, Beschreibung und Bild stehen auf /datenschutz und /impressum.' Die Objekte des Altstands sind Teilwerte von ALT-SEO-03 und -04, kein eigenes Element.",
+    "regel": "Zuordnung: Teilwerte bestehender Atlaszeilen gehören in die Abnahme des Passes, der die Zeile führt (Zuordnungsprüfung _restaurator.md Z. 35).",
+    "beleg": "Altstand app/datenschutz/layout.tsx:13-37 und app/impressum/page.tsx:17-41; Ausgangsstand gemessen GET http://localhost:3500/datenschutz und /impressum (alle og:- und twitter:-Felder vorhanden, Bild und Alt-Text gesetzt, robots 'noindex, follow'); paesse-shell-recht-seo.md:1006, 1015; alt-shell-recht-seo.md:224-225.",
+    "schwere": "weich"
+   }
+  ],
+  "kann_reste_urteil": [
+   {
+    "rest": "OpenGraph/Twitter-Objekte von /datenschutz und /impressum (Altstand app/datenschutz/layout.tsx:13-37, app/impressum/page.tsx:17-41)",
+    "prioritaet": "kein Element",
+    "begruendung": "Teilwerte der Atlaszeilen ALT-SEO-03 und -04 (Pass E-SEO-003, dessen Quelle dieselben Fundstellen nennt). Der Ausgangsstand liefert Titel, Beschreibung, URL, Seitenname, Sprache, Typ, Bild 1200 × 630 mit Alt-Text und die Twitter-Karte vollständig (gemessen auf :3500). Beide Seiten stehen auf noindex, die Vorschaukarten haben keine eigene Besucheraufgabe, es ging nichts verloren. Nur eine Abnahmezeile in E-SEO-003."
+   },
+   {
+    "rest": "LocalBusiness hasMap, vollständige URL (Altstand app/layout.tsx:187)",
+    "prioritaet": "kein Element",
+    "begruendung": "Feld des LocalBusiness-Knotens (ALT-SEO-16, im Pass E-SEO-009 als lebend geführt). Wert in beiden Ständen identisch: 'https://maps.google.com/?q=Bad+und+Energie+GmbH+Lahn+Dill+Wetzlar' (gemessen im HTML von :3500 und :3600; components/site/site-jsonld.ts:76, lib/seo/site-config.ts:50). Nichts verloren, keine Besucheraufgabe."
+   },
+   {
+    "rest": "Antwort-Header der Textrouten /llms.txt und /llms-full.txt (Content-Type, Cache-Control)",
+    "prioritaet": "kein Element",
+    "begruendung": "Technikdetail ohne Besucheraufgabe. Content-Type ist identisch ('text/plain; charset=utf-8'). Cache-Control ist im Altstand explizit 'public, s-maxage=3600, stale-while-revalidate=86400', im Ausgangsstand aus revalidate=3600 abgeleitet ('s-maxage=3600, stale-while-revalidate=31532400'); die Zwischenspeicherung ist gleichwertig. Eine Abnahmezeile in E-SEO-014 genügt; E-SEO-020 regelt Cache-Regeln für statische Dateien, nicht diese Routen."
+   },
+   {
+    "rest": "next/font-Ladeoptionen preload und adjustFontFallback (Altstand app/layout.tsx:9-15)",
+    "prioritaet": "kein Element",
+    "begruendung": "Beide Optionen standen im Altstand auf true, das sind die Standardwerte von next/font; der Ausgangsstand ruft Inter ohne die Optionen auf (app/layout.tsx:15-19) und erhält dieselbe Wirkung. Die Schriftquelle ist über ALT-RECHT-75 (Pass E-RECHT-019, Quelle app/layout.tsx:2-15) erfasst; der Wechsel von Plus Jakarta Sans zu Inter ist Gestaltung (E-010 S-08, KERN K-005), die Ladeoptionen werden dort ohnehin neu geregelt (Auftrag Abschnitt 7: Preload, Ersatzschrift mit size-adjust)."
+   },
+   {
+    "rest": "Kartenrahmen InteractiveMap (Maße, Vollbild-Zustand ohne Esc; Altstand components/maps/InteractiveMap.tsx:40-52, 237-256)",
+    "prioritaet": "kein Element",
+    "begruendung": "Die Maße (Höhe 640 px, mindestens 580 px, Radius 3xl, Rahmen, Schatten) sind Gestaltung und fallen unter den Freiraum von E-START-032. 'Vollbild ohne Esc' ist ein Altstand-Defekt: toggleFullscreen setzt isFullscreen ohne fullscreenchange-Hörer, nach Esc bleibt der Rahmen als fixed inset-0 z-50 stehen. Das kommt nicht zurück; die Vollbild-Funktion selbst führt E-START-035 (Kann, bestätigt), mit Esc-Austritt in der Abnahme."
+   },
+   {
+    "rest": "Projektion der Vektor-Pins (Altstand components/maps/InteractiveMap.tsx:493-510)",
+    "prioritaet": "kein Element",
+    "begruendung": "Technikdetail ohne Besucheraufgabe: Der Altstand rechnete mit Faktoren (lat × 110 × 3,5, lng × 70 × 4,2, Begrenzung auf 12–88 % und 10–90 %), also nicht maßstäblich. Der Ausgangsstand projiziert maßstäblich (lib/maps/projection.ts:47-71, Test projection.test.ts; RegionMap.tsx:14-19) und nennt die Bindung in E-START-033 und E-START-036. Die Interaktion 'Pin anklicken' führt E-START-038 (jetzt Soll)."
+   }
+  ]
+ },
+ {
+  "pruefer": "gegen-wahrheit",
+  "korrekturen": [
+   {
+    "eid": "E-START-033",
+    "feld": "Abnahme",
+    "bisher": "Die Grafik enthält Ringe für 15, 25 und 35 km mit Beschriftung; Gießen (15 km) liegt auf dem inneren Ring; in der Google-Karte (mit Schlüsselattrappe) liegen Kreise für 15, 25 und 35 km um den Firmensitz",
+    "neu": "Die Grafik enthält Ringe für 15, 25 und 35 km um den Firmensitz im Maßstab der Grafik (Luftlinie, Beschriftung nennt „Luftlinie“); Gießen liegt innerhalb des 15-km-Rings (Luftlinie 12,8 km, die Tabelle nennt 15 km Straße), Herborn zwischen dem 15- und dem 25-km-Ring (19,2 km Luftlinie, Tabelle 24 km); in der Google-Ebene liegen Kreise für 15, 25 und 35 km um den Firmensitz (Test mit gestubbtem window.google, siehe E-START-056).",
+    "regel": "Abnahme muss ohne Verfälschung erfüllbar sein (Linse Wahrheit und Machbarkeit; Wahrheitsregel: nichts erfinden). Die Grafik projiziert die Orte nach Koordinaten maßstabsgetreu; die Tabellenwerte sind Straßenwerte ohne Routing.",
+    "beleg": "lib/maps/projection.ts:47-71 (Projektion nach lat/lng, unitsPerKm = Radius / 35); components/maps/RegionMap.tsx:28-36 (projection.project je Ort); components/maps/graphic.ts:6-8 (Größe 360, Rand 20); lib/data/locations.ts (Gießen 50.5872 / 8.6755 mit distanceKm 15, Herborn 50.6833 / 8.3 mit 24); Nachrechnung per Haversine: Gießen 12,75 km = 58,3 SVG-Einheiten, 15-km-Ring = 68,6 Einheiten; _relaunch/atlas/paesse-start.md:600.",
+    "schwere": "hart"
+   },
+   {
+    "eid": "E-START-038",
+    "feld": "Abnahme",
+    "bisher": "… nennt Entfernung, Fahrzeit, Einstufung und die Kurzbeschreibung des Ortes (alle zehn Beschreibungen wörtlich aus den Daten); …",
+    "neu": "… nennt Entfernung, Fahrzeit, Einstufung und die Kurzbeschreibung des Ortes (sieben Lagebeschreibungen wörtlich aus den Daten: Wetzlar Kernstadt, Hermannstein, Garbenheim, Dutenhofen, Steindorf, Aßlar, Herborn); die drei Geschäftsaussagen – Nauborn „mit vielen Wärmepumpenmodernisierungen“, Braunfels „mit anspruchsvollen Sanierungsobjekten“, Gießen „wichtiges Kundendienstgebiet“ – erscheinen erst nach Bestätigung des Inhabers (neuer Eintrag in MENSCHEN.md und fakten-abgleich); bis dahin steht ihr Wortlaut in keinem gerenderten HTML (Test); …",
+    "regel": "Nur belegte Aussagen ausspielen (docs/operations/fakten-abgleich.md: „Es wird nichts erfunden“; pending und unbelegt nicht ausspielen). Der Pass nennt die Beschreibungen selbst „Kundenmarketing und kein Beleg für Aufträge“ (nicht als Tatsachenbehauptung ausbauen) und verlangt sie in der Abnahme trotzdem wörtlich.",
+    "beleg": "lib/data/locations.ts:49 (Nauborn), :109 (Braunfels), :121 (Gießen); _relaunch/atlas/paesse-start.md:673 (Wesenskern) und :680 (Abnahme); docs/operations/fakten-abgleich.md:5; Ausgangsstand rendert `character` bisher nicht (lib/content/region.ts:5-14, 29-43).",
+    "schwere": "hart"
+   },
+   {
+    "eid": "E-START-031",
+    "feld": "Priorität",
+    "bisher": "Übersichtstabelle: Soll (paesse-start.md:45)",
+    "neu": "Muss (korrigiert nach E-014; vorher Soll), wie im Passtext",
+    "regel": "Übersichtstabelle und Passtext müssen übereinstimmen (Konsistenzlauf GEGEN-01, Messbedingungen letzter Punkt); E-014 übernimmt Muss für E-START-031. Die Verteilungszeile paesse-start.md:72 ist mitzuziehen.",
+    "beleg": "_relaunch/atlas/paesse-start.md:45 gegen :564; ENTSCHEIDUNGEN.md:86",
+    "schwere": "hart"
+   },
+   {
+    "eid": "E-START-033",
+    "feld": "Priorität",
+    "bisher": "Übersichtstabelle: Kann (paesse-start.md:47); Passtext-Grund: „Zusatzwerkzeug ohne Geschäftswert“",
+    "neu": "Übersichtstabelle: Soll. Grund: interaktives Element mit eigener Besucheraufgabe (Nähe greifbar machen), Beispielabschnitt im Richtungsauftrag (korrigiert nach E-014; vorher Kann)",
+    "regel": "Übersicht gleich Passtext; Priorität und Grund dürfen sich nicht widersprechen (GEGEN-01 §3.2 begründet Soll mit der eigenen Aufgabe, nicht mit fehlendem Geschäftswert).",
+    "beleg": "_relaunch/atlas/paesse-start.md:47 und :596; _relaunch/atlas/gegenpruefung-p1.md:73",
+    "schwere": "hart"
+   },
+   {
+    "eid": "E-START-056",
+    "feld": "Abnahme",
+    "bisher": "… mit Schlüsselattrappe und gesperrtem Google-Host zeigt Playwright nach Einwilligung bei Skriptfehler, window.gm_authFailure() und Zeitgrenze den Statustext und die sichtbare Grafik, die Seite bleibt bedienbar (Test zu ergänzen)",
+    "neu": "Testweg festlegen: eigene Build-Variante mit NEXT_PUBLIC_GOOGLE_MAPS_API_KEY-Attrappe für einen zweiten E2E-Webserver oder Komponententest mit gestubbtem window.google.maps (dafür DOM-Umgebung in Vitest ergänzen). Gilt ebenso für die Abnahmen „mit Schlüsselattrappe“ von E-START-032, -033, -034, -035 und -038.",
+    "regel": "Abnahme muss prüfbar sein (Linse Machbarkeit): der Knopf „Interaktive Karte laden“ wird beim Rendern der statischen Startseite entschieden, der vorhandene E2E-Aufbau startet nur einen Build ohne Schlüssel.",
+    "beleg": "playwright.config.ts:54-57 (ein Webserver `next start`, reuseExistingServer false); vitest.config.ts:12 (environment 'node'); components/maps/RegionMap.tsx:47 und lib/maps/keys.ts:11-13 (mapsAvailable zur Renderzeit); GET / am Ausgangsstand: kein Knopf",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-START-024",
+    "feld": "Wesenskern",
+    "bisher": "… mit Hinweis je Stufe („Gezielte Vertiefung in Wärmepumpentechnik mit persönlichem Meistermentor“ · „Selbstständige Baustellenabwicklung ohne Mikromanagement & eigener Firmenwagen“ · „Höchste Tarifstufe, …“ · „Mitgestaltung der Betriebsplanung, …“); Ladezustand des Konfigurators nicht genannt",
+    "neu": "Die Stufenhinweise sind Altstand-Wortlaut, nicht Beleg: ohne Fakt oder Stellendaten sind „persönlicher Meistermentor“, „eigener Firmenwagen“ (Fahrzeug nur rollenbezogen, B7) und „Höchste Tarifstufe“; sie kommen nicht als Aussage zurück. Ladezustand: „Vorteils-Paket wird vorbereitet...“ (ALT-START-150), kommt nicht zurück (Serverrendering, KERN K-011).",
+    "regel": "Wesenskern wörtlich und vollständig, unbelegte Altstand-Aussagen ausdrücklich als solche führen (Wahrheitsregel; fakten-abgleich B7, B8).",
+    "beleg": "_relaunch/altstand/main/components/pricing/pricing.constants.ts:52-71; components/pricing/SalaryCalculator.tsx:158-160; components/pricing/SalaryCalculatorClientWrapper.tsx:10-14; lib/content/facts.ts:110-114 (vehicle); lib/jobs/data/obermonteur-projektleiter-shk.ts:56-58 (belegte Stufenzeilen); _relaunch/atlas/alt-start.md:166",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-START-024",
+    "feld": "Ziel",
+    "bisher": "components/home/BenefitGrid.tsx (Umschalter), Datenquelle components/jobs/PackageList.tsx und lib/jobs/data; Freiraum: Umschalter (Fachkraft, Kundendienst, Obermonteur, Ausbildung) mit Erfahrungsfilter",
+    "neu": "components/home/BenefitGrid.tsx; Rollen Anlagenmechaniker, Kundendienst, Obermonteur, weil BenefitLead „Für Fachkräfte“ sagt und die Ausbildung nur verlinkt (befristet, ohne iPad, B9) – oder BenefitLead wird mit angepasst; Datenquelle ist `job.packageExtras` aus der Registry (PackageList stellt nur dar), als reine Daten vom Server an die Client-Insel; „Erfahrungsfilter“ entfällt, weil es dafür außer zwei Obermonteur-Zeilen keine belegten Stufendaten gibt.",
+    "regel": "Ziel muss die Aufgabe ohne Unbelegtes tragen (Linse Machbarkeit); Client-Bundle-Regel scripts/qa/check-client-imports.mjs; E-012 bleibt unberührt.",
+    "beleg": "components/home/BenefitGrid.tsx:38-46 (BenefitLead); docs/operations/fakten-abgleich.md B9; components/jobs/PackageList.tsx:1-30; lib/jobs/data/anlagenmechaniker-shk.ts:53-57 und obermonteur-projektleiter-shk.ts:55-59 (packageExtras)",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-START-024",
+    "feld": "Abnahme",
+    "bisher": "Rollenwechsel ändert die Paketzeilen ohne Seitenwechsel; jeder Satz stammt aus Stellendaten oder Fakten (Textvergleich im Test)",
+    "neu": "… ; pending-Fakten (takeoverGuarantee, privateCarOnePercent, payFirstWorkday) erscheinen nur bei den Stellen aus `onlyForJobIds`, payFirstWorkday nirgends (Test)",
+    "regel": "pending-Fakten nicht ausspielen (FactPending in lib/content/facts.ts; fakten-abgleich A1 bis A3). Eine neue Komponente außerhalb der Registry-Seiten würde den Registry-Test sonst umgehen.",
+    "beleg": "lib/content/facts.ts:222-248; docs/operations/fakten-abgleich.md A1-A3; _relaunch/atlas/paesse-start.md:456",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-START-035",
+    "feld": "Abnahme",
+    "bisher": "Mit geladener Karte sind Vollbild und Zentrieren per Tastatur erreichbar",
+    "neu": "… erreichbar; Vollbild endet per Esc und per Knopf, der Knopfzustand folgt dem tatsächlichen Zustand (fullscreenchange), es bleibt kein hängender Vollflächenzustand; wo die Fullscreen-API fehlt (Annahme: iPhone-Safari, nicht geprüft), CSS-Vollfläche mit Schließen-Knopf, Esc und Fokusrückgabe",
+    "regel": "Kein Tastaturfallen-Zustand (WCAG 2.1.2); Altstand-Fehler nicht zurückführen. Der Kann-Rest „Vollbild-Zustand ohne Esc“ wird als Abnahme dieses Kann-Elements geführt, nicht als eigenes Element.",
+    "beleg": "_relaunch/altstand/main/components/maps/InteractiveMap.tsx:237-247 (setIsFullscreen ohne fullscreenchange), :252-255 (fixed inset-0 z-50 bei isFullscreen); components/maps/GoogleRegionMap.tsx:131 (disableDefaultUI: true, kein fullscreenControl); _relaunch/atlas/paesse-start.md:632",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-START-032",
+    "feld": "Entscheidung",
+    "bisher": "Neu interpretieren (Standard ist eine geografisch lesbare SVG-Karte ohne Fremdanfrage, Google per Zwei-Klick bleibt Option)",
+    "neu": "Neu interpretieren (Standard bleibt die Radiusgrafik ohne Fremdanfrage; Flusslinien und Straßen nur, wenn Geodatenquelle und Lizenz geklärt sind (F7, E-START-036), sonst keine geokorrekt wirkende Handskizze; Google per Zwei-Klick bleibt Option)",
+    "regel": "Keine unbelegte Geografie ausspielen; Abhängigkeit zwischen Pässen benennen. Die Abnahme von E-START-032 bleibt davon unberührt erfüllbar.",
+    "beleg": "_relaunch/atlas/paesse-start.md:581 und :583 (Gestaltung „Flusslinien und Straßen“), :650 (E-START-036: Datenquelle und Lizenz offen); _relaunch/altstand/main/components/maps/InteractiveMap.tsx:429-459 (schematische Handskizze, nicht geokorrekt); lib/maps/projection.ts:47-71",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-START-047",
+    "feld": "Abnahme",
+    "bisher": "/llms.txt nennt 1926, 15 Mitarbeiter, 30 Tage und 35 km",
+    "neu": "/llms.txt nennt „seit 1926“, „15 Mitarbeiter“, „30 Arbeitstage bezahlter Erholungsurlaub“ (FACTS.vacation30.long) und „maximal 35 km“; Prüfstrings aus den Fakten ableiten, nicht als Freitext „30 Tage“",
+    "regel": "Abnahme gegen den tatsächlichen Wortlaut prüfen (Linse Wahrheit): ein Test auf den Freitext „30 Tage“ schlägt an.",
+    "beleg": "GET http://localhost:3500/llms.txt (Zeile „30 Arbeitstage bezahlter Erholungsurlaub pro Kalenderjahr.“, 0 Treffer für „30 Tage“); lib/content/facts.ts:54-60; _relaunch/atlas/paesse-start.md:824",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-SEO-006",
+    "feld": "Ziel",
+    "bisher": "components/site/site-jsonld.ts (Organization um `founder` (eingebettet) und `geo` ergänzen, WebSite um `isPartOf` ergänzen)",
+    "neu": "components/site/site-jsonld.ts (Organization um `founder` ergänzen, WebSite um `isPartOf`); `geo` bleibt im LocalBusiness, wo es mit denselben Koordinaten schon steht; Zustand „es fehlen die Geo-Koordinaten“ streichen",
+    "regel": "Ziel muss gültiges schema.org-Markup tragen (Linse Machbarkeit): Organization kennt kein `geo` (das gehört zu Place und LocalBusiness); der Altstand führte es doppelt.",
+    "beleg": "components/site/site-jsonld.ts:25-29 und :78 (geo am LocalBusiness), :36-53 (Organization); GET /: LocalBusiness.geo 50.56499 / 8.49842; _relaunch/altstand/main/app/layout.tsx:109-112 (geo an Organization), :196 (geo am LocalBusiness); _relaunch/atlas/paesse-shell-recht-seo.md:1054 und :1061",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-SEO-009",
+    "feld": "Wesenskern",
+    "bisher": "`hasMap` maps.google.com",
+    "neu": "`hasMap` „https://maps.google.com/?q=Bad+und+Energie+GmbH+Lahn+Dill+Wetzlar“ (unverändert im Ausgangsstand, SITE_CONFIG.contact.googleMapsUrl)",
+    "regel": "Wesenskern wörtlich mit Fundstelle; Kann-Rest „hasMap vollständige URL“ erledigt damit, kein eigenes Element.",
+    "beleg": "_relaunch/altstand/main/app/layout.tsx:187; components/site/site-jsonld.ts:76; lib/seo/site-config.ts:50; GET /: hasMap mit derselben URL; _relaunch/atlas/paesse-shell-recht-seo.md:1104",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-SEO-010",
+    "feld": "Abnahme",
+    "bisher": "… jede belegte Aussage der Altstand-Listen (ALT-SEO-61 bis -68) hat eine Entsprechung (Textvergleich im Test)",
+    "neu": "… jede belegte Aussage hat eine Entsprechung, ausgenommen „ohne Bereitschaftszwang“ (Anlagenmechaniker), solange das Stellenpaket nicht entscheidet; oder `noWeekendOnCall` wird in `benefitFactIds` der Stelle Anlagenmechaniker aufgenommen (B23 beachten)",
+    "regel": "Abnahme und Unsicherheit desselben Passes dürfen sich nicht widersprechen: „ohne Bereitschaftszwang“ ist durch den Fakt noWeekendOnCall belegt, hat aber bei dieser Stelle keine Entsprechung.",
+    "beleg": "lib/jobs/data/anlagenmechaniker-shk.ts:43-52 (kein noWeekendOnCall), lib/jobs/data/kundendiensttechniker-shk.ts:47; _relaunch/atlas/paesse-shell-recht-seo.md:1127 und :1129",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-SEO-014",
+    "feld": "Atlas-Nachtrag",
+    "bisher": "Bindungen: „EMPLOYER_FACT_IDS (app/llms.txt/content.ts:21-29 …)“; Abnahme: „beide Dateien antworten 200 text/plain“",
+    "neu": "Fundstelle app/llms.txt/content.ts:29-41 (Liste und employerFacts). Antwortkopf wörtlich ergänzen: Altstand Content-Type „text/plain; charset=utf-8“ und Cache-Control „public, s-maxage=3600, stale-while-revalidate=86400“ (beide Routen); Ausgangsstand Content-Type „text/plain; charset=utf-8“ (TEXT_HEADERS) und Cache-Control „s-maxage=3600, stale-while-revalidate=31532400“ aus revalidate = 3600. Technikdetail ohne Besucheraufgabe, bleibt erhalten; Abnahme um „; charset=utf-8“ ergänzen.",
+    "regel": "Fundstellen müssen stimmen; Wesenskern wörtlich mit Fundstelle. Kann-Rest „Antwort-Header“ wird hier erledigt, kein eigenes Element.",
+    "beleg": "app/llms.txt/content.ts:11, :29-41; _relaunch/altstand/main/app/llms.txt/route.ts:41-46 und app/llms-full.txt/route.ts:59-64; HEAD http://localhost:3500/llms-full.txt und GET /llms.txt; _relaunch/atlas/paesse-shell-recht-seo.md:1186",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-BEW-006",
+    "feld": "Abnahme",
+    "bisher": "Leere Mappe zeigt „0 von 5 erledigt“, jeder Eintrag springt zum Abschnitt und setzt den Fokus auf das erste Feld, Eingaben setzen Haken ohne Neuladen; keine Beispiel- oder Platzhalterdaten",
+    "neu": "… ; „erledigt“ je Abschnitt festlegen (Vorschlag: Persönliches = Name vorhanden, Stelle = Stelle gewählt, Schwerpunkte = mindestens einer, Arbeitsstil und Anschreiben = Arbeitsstil gewählt oder eigener Text, Berufserfahrung und Ausbildung = mindestens eine nicht leere Station); die Vorlage des Anschreibens zählt nicht als Eintrag",
+    "regel": "Abnahme muss eindeutig prüfbar sein (Linse Machbarkeit); Stand nur aus echten Eingaben, nicht aus der Vorlage (Wahrheitsregel, wie isMappeEmpty).",
+    "beleg": "lib/mappe/editor.ts:124-141 (templateLetter und resolveCoverLetter: Anschreiben folgt der Vorlage), :144-153 (isMappeEmpty: „Nichts eingetragen, was über die reine Vorlage hinausgeht“); components/mappe/MappeTool.tsx:206-229 (fünf Schritte); _relaunch/atlas/paesse-bewerbung.md:138",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-BEW-029",
+    "feld": "Zustand",
+    "bisher": "verschoben (… teilweise verloren: BreadcrumbList); Entscheidung „Keine Rückführung nötig (vollständig verschoben)“; Unsicherheit mit OFFENER FRAGE zur BreadcrumbList",
+    "neu": "geschwächt, bewusst (BreadcrumbList entfällt, weil der Fokus-Header keinen sichtbaren Pfad zeigt und Markup dem sichtbaren Pfad entsprechen muss); Entscheidung „Keine Rückführung nötig (verschoben bis auf die BreadcrumbList, bewusst)“; Unsicherheit: Frage beantwortet, nur die Gestaltungsoption „sichtbarer Pfad im Fokus-Header“ bleibt",
+    "regel": "Auflage aus GEGEN-01 §3.4 (E-BEW-029) nicht eingearbeitet; „vollständig verschoben“ widerspricht „verloren: BreadcrumbList“ im selben Pass.",
+    "beleg": "_relaunch/atlas/paesse-bewerbung.md:497, :503, :508; _relaunch/atlas/gegenpruefung-p1.md:134; lib/content/breadcrumbs.ts:1-4; Messung GET /bewerbung: Knoten WebPage, Organization, WebSite, LocalBusiness",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-START-034",
+    "feld": "Zustand",
+    "bisher": "verschoben (… Satellit entfällt …); Entscheidung „Keine Rückführung nötig (vollständig verschoben bis auf Satellit …)“; Übersichtszeile: verschoben",
+    "neu": "geschwächt (Satellit bewusst nicht zurückgeführt, Hell und Dunkel nach Systemmodus statt Umschalter); Entscheidung „Keine Rückführung nötig (verschoben bis auf Satellit, bewusst)“; Übersichtszeile paesse-start.md:48 entsprechend",
+    "regel": "Auflage aus GEGEN-01 §3.2 (E-START-034): Zustand ehrlich „geschwächt, Satellit bewusst nicht“; „vollständig … bis auf“ ist in sich widersprüchlich.",
+    "beleg": "_relaunch/atlas/paesse-start.md:48, :607, :613; _relaunch/atlas/gegenpruefung-p1.md:74; components/maps/GoogleRegionMap.tsx:27 und :123; lib/maps/google-maps-config.ts:71-96, :99-116",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-START-038",
+    "feld": "Wesenskern",
+    "bisher": "Das Einblenden des Panels (`animate-in`, InteractiveMap.tsx:556) war im Altstand wirkungslos (kein tw-animate-css).",
+    "neu": "… wirkungslos (`tw-animate-css` steht in package.json:50, ist aber in app/globals.css nicht eingebunden; die gebaute CSS enthält kein `animate-in`). Pin-Lage der Vektoransicht (InteractiveMap.tsx:497-509): lineare Näherung mit Klemmung auf 12–88 % und 10–90 %; Gießen (102 % auf 90 %) und Herborn (4,5 % und −8,3 % auf 12 % und 10 %) sitzen am Rand. Kommt nicht zurück: die Grafik des Ausgangsstands projiziert maßstabsgetreu (lib/maps/projection.ts, Test projection.test.ts); Kann-Rest „Projektion der Vektor-Pins“ damit erledigt.",
+    "regel": "Wesenskern wörtlich und mit richtiger Begründung; Technikdetail ohne Besucheraufgabe wird dokumentiert, nicht als Element geführt.",
+    "beleg": "_relaunch/altstand/main/package.json:50; _relaunch/altstand/main/app/globals.css:1; _relaunch/altstand/main/.next/static/chunks/2tmj62npe0_vu.css (0 Treffer für animate-in); _relaunch/altstand/main/components/maps/InteractiveMap.tsx:497-510; lib/maps/__tests__/projection.test.ts; _relaunch/atlas/paesse-start.md:673",
+    "schwere": "weich"
+   },
+   {
+    "eid": "E-SEO-003",
+    "feld": "Atlas-Nachtrag",
+    "bisher": "Wesenskern nennt nur Titel, Beschreibung und Indexierung der Rechtsseiten",
+    "neu": "Wesenskern ergänzen: Altstand openGraph je Rechtsseite (title, description, url, siteName „Bad und Energie GmbH Lahn Dill“, locale de_DE, type website, Bild = Logo mit deklarierten 1200×630, alt „Datenschutzerklärung der Bad und Energie GmbH Lahn Dill in Wetzlar“ bzw. „Impressum der Bad und Energie GmbH Lahn Dill in Wetzlar“, type image/webp) und twitter (summary_large_image, title, description, images [Logo]). Ausgangsstand: og:* und twitter:* vollständig, Bild /opengraph-image 1200×630 PNG, noindex; nichts zurückzuführen, kein eigenes Element.",
+    "regel": "Nichts still weglassen: Kann-Rest „OpenGraph/Twitter-Objekte der Rechtsseiten“ im vorhandenen Pass dokumentieren, nicht als neues Element.",
+    "beleg": "_relaunch/altstand/main/app/datenschutz/layout.tsx:13-37; _relaunch/altstand/main/app/impressum/page.tsx:17-41; GET http://localhost:3500/datenschutz und /impressum (og:image …/opengraph-image, 1200×630, robots noindex, follow); lib/seo/metadata.ts:51-66; _relaunch/atlas/paesse-shell-recht-seo.md:1003-1016",
+    "schwere": "weich"
+   }
+  ],
+  "kann_reste_urteil": [
+   {
+    "rest": "OpenGraph/Twitter-Objekte von /datenschutz und /impressum (app/datenschutz/layout.tsx:13-37, app/impressum/page.tsx:17-41)",
+    "prioritaet": "kein Element",
+    "begruendung": "Teil der Seitenmetadaten, die E-SEO-003 (Quelle deckt die Zeilen) und E-SEO-005 führen. Der Ausgangsstand liefert für beide Seiten og:* und twitter:* vollständig mit echtem 1200×630-PNG und noindex (gemessen), der Altstand deklarierte das Logo nur als 1200×630 (E-SEO-005: tatsächlich 662×121). Es geht nichts verloren; Besucheraufgabe nur die Link-Vorschau einer Rechtsseite. Als Atlas-Nachtrag in E-SEO-003 festhalten (Korrektur oben)."
+   },
+   {
+    "rest": "LocalBusiness hasMap vollständige URL (app/layout.tsx:187)",
+    "prioritaet": "kein Element",
+    "begruendung": "Der Wert „https://maps.google.com/?q=Bad+und+Energie+GmbH+Lahn+Dill+Wetzlar“ lebt unverändert im Ausgangsstand (components/site/site-jsonld.ts:76, lib/seo/site-config.ts:50, im HTML von / gemessen). E-SEO-009 (Soll) nennt hasMap bereits im Gegenstück; nur der Wesenskern kürzt auf „maps.google.com“. Wortlaut vervollständigen (Korrektur oben), kein eigenes Element."
+   },
+   {
+    "rest": "Antwort-Header der Textrouten /llms.txt und /llms-full.txt (Content-Type, Cache-Control)",
+    "prioritaet": "kein Element",
+    "begruendung": "Technikdetail ohne Besucheraufgabe. Content-Type bleibt „text/plain; charset=utf-8“ (app/llms.txt/content.ts:11), Cache-Control ist im Ausgangsstand die stündliche ISR-Voreinstellung aus revalidate = 3600 (gemessen: s-maxage=3600, stale-while-revalidate=31532400) statt Altstand „public, s-maxage=3600, stale-while-revalidate=86400“. E-SEO-014 deckt „200 text/plain“ und revalidate ab; Wortlaut als Nachtrag dort (Korrektur oben)."
+   },
+   {
+    "rest": "next/font-Ladeoptionen preload und adjustFontFallback (app/layout.tsx:9-15)",
+    "prioritaet": "kein Element",
+    "begruendung": "Beide Optionen stehen im Altstand auf den dokumentierten Standardwerten (preload: true, adjustFontFallback: true für next/font/google; node_modules/next/dist/docs/01-app/03-api-reference/02-components/font.md:184-186 und :208-211). Der Ausgangsstand (Inter mit subsets, display, variable; app/layout.tsx:13-17) erbt dieselben Standardwerte, es gibt nichts zurückzuführen. Die Schriftwahl selbst ist Typografie-Entscheidung von P3 (E-009, S-08); neue Schrift mit Standardwerten laden, damit das CLS-Budget hält."
+   },
+   {
+    "rest": "Kartenrahmen InteractiveMap (Maße, Vollbild-Zustand ohne Esc; components/maps/InteractiveMap.tsx:40-52, 237-256)",
+    "prioritaet": "kein Element",
+    "begruendung": "Maße (height 640 px, minHeight 580 px, Rundung, Rahmen) sind Gestaltung nach KERN, die Hauptfläche des Ausgangsstands ist eine quadratische Grafik (RegionExplorer.tsx:64). Der Vollbild-Zustand ohne Esc-Abgleich (setIsFullscreen ohne fullscreenchange, :237-247) ist ein Altstand-Fehler, dessen Aufgabe in E-START-035 (Kann) lebt; dort als Abnahme-Zusatz geführt (Korrektur oben). Keine Muss- oder Soll-Wirkung."
+   },
+   {
+    "rest": "Projektion der Vektor-Pins (components/maps/InteractiveMap.tsx:493-510)",
+    "prioritaet": "kein Element",
+    "begruendung": "Technikdetail: lineare Näherung mit Klemmung 12–88 % und 10–90 %, die Gießen und Herborn an den Rand zwang (nachgerechnet: Gießen 102 % auf 90 %, Herborn 4,5 % und −8,3 % auf 12 % und 10 %). Die Aufgabe (Orte in der Karte verorten) liegt in E-START-038 und E-START-039, der Ausgangsstand projiziert maßstabsgetreu und getestet (lib/maps/projection.ts:47-71, lib/maps/__tests__/projection.test.ts). Im Wesenskern von E-START-038 vermerken (Korrektur oben)."
+   }
+  ]
+ }
+]

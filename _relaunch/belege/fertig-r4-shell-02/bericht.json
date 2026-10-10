@@ -1,0 +1,199 @@
+{
+  "label": "fertig-r4-shell-02",
+  "base": "http://localhost:3450",
+  "motion": "reduce",
+  "erstellt": "2026-10-10T08:34:30.602Z",
+  "seiten": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 23471,
+      "seitenhoehe": 16240,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r4-shell-02/start__m390-light__01.webp",
+        "belege/fertig-r4-shell-02/start__m390-light__02.webp",
+        "belege/fertig-r4-shell-02/start__m390-light__03.webp",
+        "belege/fertig-r4-shell-02/start__m390-light__04.webp",
+        "belege/fertig-r4-shell-02/start__m390-light__05.webp",
+        "belege/fertig-r4-shell-02/start__m390-light__06.webp",
+        "belege/fertig-r4-shell-02/start__m390-light__07.webp",
+        "belege/fertig-r4-shell-02/start__m390-light__08.webp",
+        "belege/fertig-r4-shell-02/start__m390-light__09.webp",
+        "belege/fertig-r4-shell-02/start__m390-light__10.webp",
+        "belege/fertig-r4-shell-02/start__m390-light__11.webp",
+        "belege/fertig-r4-shell-02/start__m390-light__12.webp",
+        "belege/fertig-r4-shell-02/start__m390-light__13.webp",
+        "belege/fertig-r4-shell-02/start__m390-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 13040,
+      "seitenhoehe": 12492,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r4-shell-02/start__d1440-light__01.webp",
+        "belege/fertig-r4-shell-02/start__d1440-light__02.webp",
+        "belege/fertig-r4-shell-02/start__d1440-light__03.webp",
+        "belege/fertig-r4-shell-02/start__d1440-light__04.webp",
+        "belege/fertig-r4-shell-02/start__d1440-light__05.webp",
+        "belege/fertig-r4-shell-02/start__d1440-light__06.webp",
+        "belege/fertig-r4-shell-02/start__d1440-light__07.webp",
+        "belege/fertig-r4-shell-02/start__d1440-light__08.webp",
+        "belege/fertig-r4-shell-02/start__d1440-light__09.webp",
+        "belege/fertig-r4-shell-02/start__d1440-light__10.webp",
+        "belege/fertig-r4-shell-02/start__d1440-light__11.webp",
+        "belege/fertig-r4-shell-02/start__d1440-light__12.webp",
+        "belege/fertig-r4-shell-02/start__d1440-light__13.webp",
+        "belege/fertig-r4-shell-02/start__d1440-light__14.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 14840,
+      "seitenhoehe": 8506,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r4-shell-02/stelle-anlagenmechaniker__m390-light__01.webp",
+        "belege/fertig-r4-shell-02/stelle-anlagenmechaniker__m390-light__02.webp",
+        "belege/fertig-r4-shell-02/stelle-anlagenmechaniker__m390-light__03.webp",
+        "belege/fertig-r4-shell-02/stelle-anlagenmechaniker__m390-light__04.webp",
+        "belege/fertig-r4-shell-02/stelle-anlagenmechaniker__m390-light__05.webp",
+        "belege/fertig-r4-shell-02/stelle-anlagenmechaniker__m390-light__06.webp",
+        "belege/fertig-r4-shell-02/stelle-anlagenmechaniker__m390-light__07.webp",
+        "belege/fertig-r4-shell-02/stelle-anlagenmechaniker__m390-light__08.webp",
+        "belege/fertig-r4-shell-02/stelle-anlagenmechaniker__m390-light__09.webp",
+        "belege/fertig-r4-shell-02/stelle-anlagenmechaniker__m390-light__10.webp",
+        "belege/fertig-r4-shell-02/stelle-anlagenmechaniker__m390-light__11.webp"
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 7050,
+      "seitenhoehe": 6318,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r4-shell-02/stelle-anlagenmechaniker__d1440-light__01.webp",
+        "belege/fertig-r4-shell-02/stelle-anlagenmechaniker__d1440-light__02.webp",
+        "belege/fertig-r4-shell-02/stelle-anlagenmechaniker__d1440-light__03.webp",
+        "belege/fertig-r4-shell-02/stelle-anlagenmechaniker__d1440-light__04.webp",
+        "belege/fertig-r4-shell-02/stelle-anlagenmechaniker__d1440-light__05.webp",
+        "belege/fertig-r4-shell-02/stelle-anlagenmechaniker__d1440-light__06.webp",
+        "belege/fertig-r4-shell-02/stelle-anlagenmechaniker__d1440-light__07.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "ansicht": "m390",
+      "schema": "light",
+      "status": 200,
+      "ms": 13114,
+      "seitenhoehe": 4868,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "clipped": [
+          {
+            "tag": "span",
+            "text": "06441 42956",
+            "clipX": true,
+            "offRight": 0
+          }
+        ]
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        ".roh/fertig-r4-shell-02/webp/impressum__m390-light__01.webp",
+        ".roh/fertig-r4-shell-02/webp/impressum__m390-light__02.webp",
+        ".roh/fertig-r4-shell-02/webp/impressum__m390-light__03.webp",
+        ".roh/fertig-r4-shell-02/webp/impressum__m390-light__04.webp",
+        ".roh/fertig-r4-shell-02/webp/impressum__m390-light__05.webp",
+        ".roh/fertig-r4-shell-02/webp/impressum__m390-light__06.webp"
+      ]
+    },
+    {
+      "pfad": "/impressum",
+      "slug": "impressum",
+      "ansicht": "d1440",
+      "schema": "light",
+      "status": 200,
+      "ms": 5143,
+      "seitenhoehe": 3188,
+      "ueberlauf": {
+        "horizontal": false,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "clipped": []
+      },
+      "fehler": [],
+      "gesperrt": [],
+      "ausschnitte": [
+        "belege/fertig-r4-shell-02/impressum__d1440-light__01.webp",
+        "belege/fertig-r4-shell-02/impressum__d1440-light__02.webp",
+        "belege/fertig-r4-shell-02/impressum__d1440-light__03.webp",
+        "belege/fertig-r4-shell-02/impressum__d1440-light__04.webp"
+      ]
+    }
+  ]
+}

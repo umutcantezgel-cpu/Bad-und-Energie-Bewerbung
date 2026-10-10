@@ -1,0 +1,215 @@
+{
+  "m320": {
+    "overflow": {
+      "horizontal": false,
+      "scrollWidth": 320,
+      "clientWidth": 320,
+      "clipped": [
+        {
+          "tag": "span",
+          "text": "Offene Stellen ansehen",
+          "clipX": false,
+          "offRight": 4
+        },
+        {
+          "tag": "span",
+          "text": "ansehen",
+          "clipX": false,
+          "offRight": 4
+        }
+      ]
+    },
+    "section": {
+      "height": 2403,
+      "width": 320,
+      "wide": [],
+      "h1": 1
+    },
+    "small": [
+      {
+        "tag": "a",
+        "type": "",
+        "name": "06441 42956",
+        "w": 108,
+        "h": 22
+      }
+    ],
+    "footerSmall": [],
+    "requests": [],
+    "errors": []
+  },
+  "m390": {
+    "overflow": {
+      "horizontal": false,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "clipped": []
+    },
+    "section": {
+      "height": 2234,
+      "width": 390,
+      "wide": [],
+      "h1": 1
+    },
+    "small": [
+      {
+        "tag": "a",
+        "type": "",
+        "name": "06441 42956",
+        "w": 109,
+        "h": 22
+      }
+    ],
+    "footerSmall": [],
+    "requests": [],
+    "errors": []
+  },
+  "m430": {
+    "overflow": {
+      "horizontal": false,
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "clipped": []
+    },
+    "section": {
+      "height": 2206,
+      "width": 430,
+      "wide": [],
+      "h1": 1
+    },
+    "small": [
+      {
+        "tag": "a",
+        "type": "",
+        "name": "06441 42956",
+        "w": 110,
+        "h": 22
+      }
+    ],
+    "footerSmall": [],
+    "requests": [],
+    "errors": []
+  },
+  "d1440": {
+    "overflow": {
+      "horizontal": false,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "clipped": []
+    },
+    "section": {
+      "height": 1721,
+      "width": 1440,
+      "wide": [],
+      "h1": 1
+    },
+    "small": [
+      {
+        "tag": "a",
+        "type": "",
+        "name": "06441 42956",
+        "w": 127,
+        "h": 26
+      }
+    ],
+    "footerSmall": [],
+    "requests": [],
+    "errors": []
+  },
+  "d1920": {
+    "overflow": {
+      "horizontal": false,
+      "scrollWidth": 1920,
+      "clientWidth": 1920,
+      "clipped": []
+    },
+    "section": {
+      "height": 1731,
+      "width": 1920,
+      "wide": [],
+      "h1": 1
+    },
+    "small": [
+      {
+        "tag": "a",
+        "type": "",
+        "name": "06441 42956",
+        "w": 127,
+        "h": 26
+      }
+    ],
+    "footerSmall": [],
+    "requests": [],
+    "errors": []
+  },
+  "interaktion390": {
+    "tabStops": [
+      {
+        "tag": "INPUT",
+        "type": "radio",
+        "name": "_R_56atmmlb_-radius",
+        "value": "35",
+        "labelOutline": "solid 0px rgb(251, 247, 240) off 0px"
+      }
+    ],
+    "clipAncestor": {
+      "tag": "DIV",
+      "cls": "flex max-w-sm overflow-hidden rounded-2 border-2 border-brand",
+      "overflow": "hidden"
+    },
+    "afterArrowLeft": {
+      "value": "25",
+      "checked": true,
+      "title": "Einsatzgebiet: 25 km Luftlinie um Wetzlar"
+    },
+    "afterArrowLeft2": {
+      "value": "15",
+      "title": "Einsatzgebiet: 15 km Luftlinie um Wetzlar"
+    },
+    "placeFocus": {
+      "tag": "INPUT",
+      "type": "radio",
+      "value": "loc-wetzlar-mitte",
+      "label": "Wetzlar Kernstadt1 km, 3 Min.",
+      "outline": "solid 0px"
+    },
+    "afterSpace": "Wetzlar Kernstadt\n\nEntfernung ca.\n1 km\nFahrzeit bis Wetzlar ca.\n3 Min.\n\nWetzlar Kernstadt liegt innerhalb von 15 km.\n\nKERNGEBIET\nFirmensitz Siegmund-Hiepe-Str. 20 und historische Altstadt",
+    "giessen15": {
+      "live": "Gießen\n\nEntfernung ca.\n15 km\nFahrzeit bis Wetzlar ca.\n16 Min.\n\nGießen liegt innerhalb von 15 km.\n\nREGIONALES EINSATZGEBIET",
+      "row": "Gießen35390 · Regionales Einsatzgebiet15 km16 Min.",
+      "vorlauf": 1,
+      "ruecklauf": 1,
+      "desc": "Plan mit Wetzlar in der Mitte und Kreisen für 15 km Luftlinie. Lahn, Dill, A45 und B49 sind schematisch eingezeichnet. Im Ausschnitt liegen Garbenheim, Hermannstein, Steindorf, Nauborn, Aßlar, Dutenhofen, Braunfels, Gießen, Herborn. Gewählt: Gießen. Entfernung und Fahrzeit stehen in der Ortsliste."
+    },
+    "giessen35": {
+      "live": "Gießen\n\nEntfernung ca.\n15 km\nFahrzeit bis Wetzlar ca.\n16 Min.\n\nGießen liegt innerhalb von 35 km.\n\nREGIONALES EINSATZGEBIET",
+      "vorlauf": 1
+    },
+    "hermannstein": {
+      "live": "Hermannstein\n\nEntfernung ca.\n4 km\nFahrzeit bis Wetzlar ca.\n7 Min.\n\nHermannstein liegt innerhalb von 35 km.\n\nKERNGEBIET\nWohn und Gewerbegebiet an der B277 und A480",
+      "vorlauf": 0,
+      "selectedRing": 1
+    },
+    "herborn15": {
+      "live": "Herborn\n\nEntfernung ca.\n24 km\nFahrzeit bis Wetzlar ca.\n22 Min.\n\nHerborn liegt außerhalb von 15 km, aber innerhalb von 25 km.\n\nREGIONALES EINSATZGEBIET\nHistorische Fachwerkstadt an der A45",
+      "vorlauf": 1,
+      "desc": "Plan mit Wetzlar in der Mitte und Kreisen für 15 km Luftlinie. Lahn, Dill, A45 und B49 sind schematisch eingezeichnet. Im Ausschnitt liegen Garbenheim, Hermannstein, Steindorf, Nauborn, Aßlar, Dutenhofen, Braunfels, Gießen, Herborn. Gewählt: Herborn. Entfernung und Fahrzeit stehen in der Ortsliste."
+    },
+    "route": {
+      "href": "https://www.google.com/maps/dir/?api=1&destination=50.56499,8.49842",
+      "target": "_blank",
+      "rel": "noopener noreferrer",
+      "h": 44
+    },
+    "requests": []
+  },
+  "nojs": {
+    "cards": 10,
+    "radios": 13,
+    "svg": true,
+    "table": 10,
+    "hint": "Wähle deinen Ort, dann siehst du Entfernung und Fahrzeit bis Wetzlar.",
+    "werkstatt": true,
+    "afterClick": "Wähle deinen Ort, dann siehst du Entfernung und Fahrzeit bis Wetzlar."
+  }
+}

@@ -1,0 +1,134 @@
+{
+ "ansicht": {
+  "name": "m320",
+  "width": 320,
+  "height": 568,
+  "isMobile": true,
+  "hasTouch": true,
+  "deviceScaleFactor": 2
+ },
+ "base": "http://localhost:3450",
+ "erstellt": "2026-10-09T21:52:55.256Z",
+ "seiten": [
+  {
+   "slug": "start",
+   "schema": "light",
+   "h1": {
+    "px": "47.2px",
+    "zeilen": 6,
+    "breite": 280,
+    "spalte": 280
+   },
+   "ueberlauf": {
+    "horizontal": false,
+    "clipped": []
+   },
+   "fehler": []
+  },
+  {
+   "slug": "start",
+   "schema": "dark",
+   "h1": {
+    "px": "47.2px",
+    "zeilen": 6,
+    "breite": 280,
+    "spalte": 280
+   },
+   "ueberlauf": {
+    "horizontal": false,
+    "clipped": []
+   },
+   "fehler": []
+  },
+  {
+   "slug": "stellen",
+   "schema": "light",
+   "h1": {
+    "px": "32px",
+    "zeilen": 3,
+    "breite": 280,
+    "spalte": 280
+   },
+   "ueberlauf": {
+    "horizontal": false,
+    "clipped": []
+   },
+   "fehler": []
+  },
+  {
+   "slug": "stellen",
+   "schema": "dark",
+   "h1": {
+    "px": "32px",
+    "zeilen": 3,
+    "breite": 280,
+    "spalte": 280
+   },
+   "ueberlauf": {
+    "horizontal": false,
+    "clipped": []
+   },
+   "fehler": []
+  },
+  {
+   "slug": "stelle-anlagenmechaniker",
+   "schema": "light",
+   "h1": {
+    "px": "32px",
+    "zeilen": 3,
+    "breite": 280,
+    "spalte": 280
+   },
+   "ueberlauf": {
+    "horizontal": false,
+    "clipped": []
+   },
+   "fehler": []
+  },
+  {
+   "slug": "stelle-anlagenmechaniker",
+   "schema": "dark",
+   "h1": {
+    "px": "32px",
+    "zeilen": 3,
+    "breite": 280,
+    "spalte": 280
+   },
+   "ueberlauf": {
+    "horizontal": false,
+    "clipped": []
+   },
+   "fehler": []
+  },
+  {
+   "slug": "bewerbung",
+   "schema": "light",
+   "h1": {
+    "px": "17px",
+    "zeilen": 0,
+    "breite": 240,
+    "spalte": 1
+   },
+   "ueberlauf": {
+    "horizontal": false,
+    "clipped": []
+   },
+   "fehler": []
+  },
+  {
+   "slug": "bewerbung",
+   "schema": "dark",
+   "h1": {
+    "px": "17px",
+    "zeilen": 0,
+    "breite": 240,
+    "spalte": 1
+   },
+   "ueberlauf": {
+    "horizontal": false,
+    "clipped": []
+   },
+   "fehler": []
+  }
+ ]
+}

@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 /**
- * WCAG 2.2 contrast check for the semantic color roles in app/styles/theme.css.
- * Resolves the cascade for light, dark and the inverse band in both modes,
- * checks that the inverse band stands apart from the page surfaces and that raised cards are
- * lighter than the surface-2 sections they sit on,
- * prints a table and exits 1 if any pair is below its minimum.
+ * WCAG 2.2 contrast check for the semantic color roles in app/styles/theme.css (KERN K-006).
+ * Resolves the cascade (roles → var() → primitives) for light, dark, the inverse band in both
+ * modes and print (also with a dark preference: print must stay light), then checks
+ *   - text pairs ≥ 4.5 (1.4.3) and graphics/controls ≥ 3 (1.4.11),
+ *   - the inverse band stands apart from the page surfaces (screen only),
+ *   - raised cards are lighter than the surface-2 sections they sit on.
+ * Prints a table and exits 1 if any pair is below its minimum.
  *
  * Usage: node scripts/qa/check-contrast.mjs
  */
@@ -13,29 +15,50 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const THEME_FILE = path.join(ROOT, 'app/styles/theme.css');
+export const THEME_FILE = path.join(ROOT, 'app/styles/theme.css');
 
-const TEXT = 4.5; // 1.4.3 body text
-const UI = 3; // 1.4.11 non-text (focus ring, control borders)
+export const TEXT = 4.5; // 1.4.3 body text
+export const UI = 3; // 1.4.11 non-text (focus ring, control borders, the Vorlauf/Rücklauf lines)
 /**
  * Minimum luminance ratio between the inverse band's surface and the page surfaces it sits
  * between (surface, surface-2) in the same mode. Not a WCAG rule: it keeps the closing band
- * from merging with the FAQ and the footer (it did in dark mode when both were #121826).
+ * from merging with the FAQ and the footer.
  */
-const SEPARATION = 1.1;
+export const SEPARATION = 1.1;
 const SEPARATED_FROM = ['surface', 'surface-2'];
 
 const SURFACES = ['surface', 'surface-2', 'surface-3', 'surface-raised'];
-const TEXT_ROLES = ['ink', 'ink-muted', 'danger', 'success'];
+// Text roles on every surface: body, secondary text, headings and measures (brand), states.
+const TEXT_ROLES = ['ink', 'ink-muted', 'ink-2', 'brand', 'danger', 'success'];
 // Focus ring and control borders sit on every surface (inputs inside cards, segmented tracks).
 const UI_ROLES = ['focus', 'line-strong'];
+// The pipe pair (Vorlauf red, Rücklauf blue) runs over paper, wall and the warm house.
+const PIPE_GROUNDS = ['surface', 'surface-2', 'waerme'];
+const PIPE_ROLES = ['vorlauf', 'ruecklauf'];
 
-/** [foreground, background, minimum]: every role × every surface, plus fills and tinted alerts. */
-const PAIRS = [
+const ALL_MODES = ['light', 'dark', 'inverse light', 'inverse dark', 'print', 'print dark', 'print inverse'];
+
+/**
+ * [foreground, background, minimum, modes?]: every role × every surface, plus fills, the pipe pair
+ * and tinted alerts. `modes` limits a pair to some modes (default: all).
+ */
+export const PAIRS = [
   ...TEXT_ROLES.flatMap((fg) => SURFACES.map((bg) => [fg, bg, TEXT])),
   ...UI_ROLES.flatMap((fg) => SURFACES.map((bg) => [fg, bg, UI])),
+  ...PIPE_ROLES.flatMap((fg) => PIPE_GROUNDS.map((bg) => [fg, bg, UI])),
+  // Text, headings, measures and the focus ring on the warm house.
+  ['ink', 'waerme', TEXT],
+  ['brand', 'waerme', TEXT],
+  ['focus', 'waerme', UI],
   ['on-accent', 'accent', TEXT],
   ['on-accent', 'accent-hover', TEXT],
+  ['on-accent', 'accent-press', TEXT],
+  // The red button against the page (V1 measured 3.34 in dark). In the navy band the white label
+  // identifies the button (1.4.11 needs no boundary for a text button), so the band is not listed.
+  // Red on the band is only ~2.7:1, so the fill alone would not read as a surface there: the primary
+  // action in the band stays a Papier/Creme button (as today) or gets an `ink` (Creme) border, which
+  // the text pairs above already hold at ≥ 4.5 (note for R3/R4; test: check-contrast.test.ts).
+  ['accent', 'surface', UI, ['light', 'dark', 'print', 'print dark']],
   ['danger', 'danger-subtle', TEXT],
   ['ink', 'danger-subtle', TEXT],
   ['success', 'success-subtle', TEXT],
@@ -45,11 +68,15 @@ const PAIRS = [
 const ROOT_SELECTOR = ':root';
 const INVERSE_SELECTOR = '[data-tone=inverse]';
 
-const MODES = [
-  { name: 'light', selector: ROOT_SELECTOR, dark: false },
-  { name: 'dark', selector: ROOT_SELECTOR, dark: true },
-  { name: 'inverse light', selector: INVERSE_SELECTOR, dark: false },
-  { name: 'inverse dark', selector: INVERSE_SELECTOR, dark: true },
+export const MODES = [
+  { name: 'light', selector: ROOT_SELECTOR, dark: false, print: false },
+  { name: 'dark', selector: ROOT_SELECTOR, dark: true, print: false },
+  { name: 'inverse light', selector: INVERSE_SELECTOR, dark: false, print: false },
+  { name: 'inverse dark', selector: INVERSE_SELECTOR, dark: true, print: false },
+  // Print is always light: dark mode and the band are screen-only.
+  { name: 'print', selector: ROOT_SELECTOR, dark: false, print: true },
+  { name: 'print dark', selector: ROOT_SELECTOR, dark: true, print: true },
+  { name: 'print inverse', selector: INVERSE_SELECTOR, dark: true, print: true },
 ];
 
 // --- minimal CSS walker -----------------------------------------------------
@@ -60,7 +87,7 @@ function matchingBrace(src, open) {
     if (src[i] === '{') depth++;
     else if (src[i] === '}' && --depth === 0) return i;
   }
-  throw new Error(`Unbalanced braces in ${path.relative(ROOT, THEME_FILE)}`);
+  throw new Error('check-contrast: unbalanced braces in theme.css');
 }
 
 function declarations(body) {
@@ -101,25 +128,39 @@ function normalizeSelector(s) {
   return s.replace(/["'\s]/g, '');
 }
 
-function mediaMatches(conditions, env) {
-  return conditions.every((condition) =>
-    condition.split(/\s+and\s+/).every((raw) => {
+/**
+ * true/false for the color-relevant media features; null for anything else (widths, motion …),
+ * which must not carry color roles.
+ */
+export function mediaMatches(conditions, env) {
+  let result = true;
+  for (const condition of conditions) {
+    for (const raw of condition.split(/\s+and\s+/)) {
       const part = raw.trim().replace(/\s+/g, ' ');
-      if (part === 'screen' || part === 'all') return true;
-      if (part === 'print') return false;
-      if (part === '(prefers-color-scheme: dark)') return env.dark;
-      if (part === '(prefers-color-scheme: light)') return !env.dark;
-      throw new Error(`check-contrast: unsupported media condition "${part}"`);
-    }),
-  );
+      if (part === 'all') continue;
+      if (part === 'screen') result &&= !env.print;
+      else if (part === 'print') result &&= env.print;
+      else if (part === '(prefers-color-scheme: dark)') result &&= env.dark;
+      else if (part === '(prefers-color-scheme: light)') result &&= !env.dark;
+      else return null;
+    }
+  }
+  return result;
 }
 
-function resolveScope(rules, selector, env, inherited = new Map()) {
+function resolveScope(rules, selector, env, colorKeys, inherited = new Map()) {
   const vars = new Map(inherited);
   for (const rule of rules) {
-    if (rule.selectors.includes(selector) && mediaMatches(rule.media, env)) {
-      for (const [k, v] of rule.decls) vars.set(k, v);
+    if (!rule.selectors.includes(selector)) continue;
+    const match = mediaMatches(rule.media, env);
+    if (match === null) {
+      const colored = [...rule.decls.keys()].filter((k) => colorKeys.has(k) || k.startsWith('--p-'));
+      if (colored.length > 0) {
+        throw new Error(`check-contrast: unsupported media condition "${rule.media.join(' and ')}" sets ${colored.join(', ')}`);
+      }
+      continue;
     }
+    if (match) for (const [k, v] of rule.decls) vars.set(k, v);
   }
   return vars;
 }
@@ -135,7 +176,7 @@ function resolveValue(value, vars, theme, depth = 0) {
   return resolveValue(next.trim(), vars, theme, depth + 1);
 }
 
-function parseColor(value) {
+export function parseColor(value) {
   const hex = value.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
   if (hex) {
     const h = hex[1].length === 3 ? [...hex[1]].map((c) => c + c).join('') : hex[1];
@@ -146,7 +187,7 @@ function parseColor(value) {
   throw new Error(`check-contrast: cannot parse opaque color "${value}"`);
 }
 
-function luminance([r, g, b]) {
+export function luminance([r, g, b]) {
   const lin = (c) => {
     const s = c / 255;
     return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
@@ -154,87 +195,115 @@ function luminance([r, g, b]) {
   return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
 }
 
-function contrast(a, b) {
+export function contrast(a, b) {
   const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
   return (hi + 0.05) / (lo + 0.05);
 }
 
-// --- run -----------------------------------------------------------------------
+// --- check ---------------------------------------------------------------------
 
-const css = readFileSync(THEME_FILE, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
-const { rules, theme } = walk(css, [], { rules: [], theme: new Map() });
+/**
+ * Runs every check on a theme stylesheet. Returns the table rows, the failure count and a
+ * resolver (`role(modeName, role)` → color value) for tests.
+ */
+export function checkTheme(cssText) {
+  const css = cssText.replace(/\/\*[\s\S]*?\*\//g, '');
+  const { rules, theme } = walk(css, [], { rules: [], theme: new Map() });
+  // Role names come from the utilities (--color-x: var(--x)); they must never hide in width queries.
+  const colorKeys = new Set(
+    [...theme.entries()]
+      .filter(([k]) => k.startsWith('--color-'))
+      .map(([, v]) => v.match(/^var\(\s*(--[\w-]+)/)?.[1])
+      .filter(Boolean),
+  );
 
-const rows = [];
-let failures = 0;
+  const scope = (mode) => {
+    const env = { dark: mode.dark, print: mode.print };
+    const rootVars = resolveScope(rules, ROOT_SELECTOR, env, colorKeys);
+    return mode.selector === ROOT_SELECTOR ? rootVars : resolveScope(rules, mode.selector, env, colorKeys, rootVars);
+  };
+  const role = (modeName, name) => {
+    const mode = MODES.find((m) => m.name === modeName);
+    if (!mode) throw new Error(`check-contrast: unknown mode ${modeName}`);
+    return resolveValue(`var(--${name})`, scope(mode), theme);
+  };
 
-for (const mode of MODES) {
-  const env = { dark: mode.dark };
-  const rootVars = resolveScope(rules, ROOT_SELECTOR, env);
-  const vars = mode.selector === ROOT_SELECTOR ? rootVars : resolveScope(rules, mode.selector, env, rootVars);
+  const rows = [];
+  let failures = 0;
 
-  for (const [fg, bg, min] of PAIRS) {
-    const fgValue = resolveValue(`var(--${fg})`, vars, theme);
-    const bgValue = resolveValue(`var(--${bg})`, vars, theme);
-    const ratio = contrast(parseColor(fgValue), parseColor(bgValue));
-    const pass = ratio >= min;
-    if (!pass) failures++;
-    rows.push([mode.name, `${fg} / ${bg}`, `${fgValue} on ${bgValue}`, ratio.toFixed(2), `${min}`, pass ? 'ok' : 'FAIL']);
+  for (const mode of MODES) {
+    const vars = scope(mode);
+    for (const [fg, bg, min, modes] of PAIRS) {
+      if (modes && !modes.includes(mode.name)) continue;
+      const fgValue = resolveValue(`var(--${fg})`, vars, theme);
+      const bgValue = resolveValue(`var(--${bg})`, vars, theme);
+      const ratio = contrast(parseColor(fgValue), parseColor(bgValue));
+      const pass = ratio >= min;
+      if (!pass) failures++;
+      rows.push([mode.name, `${fg} / ${bg}`, `${fgValue} on ${bgValue}`, ratio.toFixed(2), `${min}`, pass ? 'ok' : 'FAIL']);
+    }
   }
-}
 
-for (const dark of [false, true]) {
-  const env = { dark };
-  const page = resolveScope(rules, ROOT_SELECTOR, env);
-  const inverse = resolveScope(rules, INVERSE_SELECTOR, env, page);
-  const band = resolveValue('var(--surface)', inverse, theme);
-  for (const role of SEPARATED_FROM) {
-    const pageValue = resolveValue(`var(--${role})`, page, theme);
-    const ratio = contrast(parseColor(band), parseColor(pageValue));
-    const pass = ratio >= SEPARATION;
+  for (const dark of [false, true]) {
+    const page = scope(MODES.find((m) => m.selector === ROOT_SELECTOR && m.dark === dark && !m.print));
+    const inverse = scope(MODES.find((m) => m.selector === INVERSE_SELECTOR && m.dark === dark && !m.print));
+    const band = resolveValue('var(--surface)', inverse, theme);
+    for (const name of SEPARATED_FROM) {
+      const pageValue = resolveValue(`var(--${name})`, page, theme);
+      const ratio = contrast(parseColor(band), parseColor(pageValue));
+      const pass = ratio >= SEPARATION;
+      if (!pass) failures++;
+      rows.push([
+        `separation ${dark ? 'dark' : 'light'}`,
+        `inverse surface / ${name}`,
+        `${band} vs ${pageValue}`,
+        ratio.toFixed(2),
+        `${SEPARATION}`,
+        pass ? 'ok' : 'FAIL',
+      ]);
+    }
+  }
+
+  // Elevation: cards on a surface-2 section use surface-raised and must be lighter than the section
+  // in every mode (in dark mode `surface` is darker than surface-2 and made cards look cut out).
+  for (const mode of MODES) {
+    const vars = scope(mode);
+    const raised = resolveValue('var(--surface-raised)', vars, theme);
+    const section = resolveValue('var(--surface-2)', vars, theme);
+    const pass = luminance(parseColor(raised)) > luminance(parseColor(section));
     if (!pass) failures++;
     rows.push([
-      `separation ${dark ? 'dark' : 'light'}`,
-      `inverse surface / ${role}`,
-      `${band} vs ${pageValue}`,
-      ratio.toFixed(2),
-      `${SEPARATION}`,
+      `elevation ${mode.name}`,
+      'surface-raised / surface-2',
+      `${raised} vs ${section}`,
+      contrast(parseColor(raised), parseColor(section)).toFixed(2),
+      'lighter',
       pass ? 'ok' : 'FAIL',
     ]);
   }
+
+  return { rows, failures, role };
 }
 
-// Elevation: cards on a surface-2 section use surface-raised and must be lighter than the section in
-// every mode (in dark mode `surface` is darker than surface-2 and made cards look cut out).
-for (const mode of MODES) {
-  const env = { dark: mode.dark };
-  const rootVars = resolveScope(rules, ROOT_SELECTOR, env);
-  const vars = mode.selector === ROOT_SELECTOR ? rootVars : resolveScope(rules, mode.selector, env, rootVars);
-  const raised = resolveValue('var(--surface-raised)', vars, theme);
-  const section = resolveValue('var(--surface-2)', vars, theme);
-  const pass = luminance(parseColor(raised)) > luminance(parseColor(section));
-  if (!pass) failures++;
-  rows.push([
-    `elevation ${mode.name}`,
-    'surface-raised / surface-2',
-    `${raised} vs ${section}`,
-    contrast(parseColor(raised), parseColor(section)).toFixed(2),
-    'lighter',
-    pass ? 'ok' : 'FAIL',
-  ]);
+function main() {
+  const { rows, failures } = checkTheme(readFileSync(THEME_FILE, 'utf8'));
+  const header = ['mode', 'pair', 'values', 'ratio', 'min', 'result'];
+  const widths = header.map((h, i) => Math.max(h.length, ...rows.map((r) => r[i].length)));
+  const line = (cells) => cells.map((c, i) => (i === 3 || i === 4 ? c.padStart(widths[i]) : c.padEnd(widths[i]))).join('  ').trimEnd();
+
+  console.log(`Contrast check: ${path.relative(ROOT, THEME_FILE)} (${ALL_MODES.join(', ')})\n`);
+  console.log(line(header));
+  console.log(widths.map((w) => '-'.repeat(w)).join('  '));
+  for (const row of rows) console.log(line(row));
+  console.log('');
+
+  if (failures > 0) {
+    console.error(`${failures} pair(s) below the WCAG minimum.`);
+    process.exit(1);
+  }
+  console.log(
+    `All ${rows.length} pairs pass (text ≥ ${TEXT}, UI and lines ≥ ${UI}, band separation ≥ ${SEPARATION}, raised cards lighter than surface-2).`,
+  );
 }
 
-const header = ['mode', 'pair', 'values', 'ratio', 'min', 'result'];
-const widths = header.map((h, i) => Math.max(h.length, ...rows.map((r) => r[i].length)));
-const line = (cells) => cells.map((c, i) => (i === 3 || i === 4 ? c.padStart(widths[i]) : c.padEnd(widths[i]))).join('  ').trimEnd();
-
-console.log(`Contrast check: ${path.relative(ROOT, THEME_FILE)}\n`);
-console.log(line(header));
-console.log(widths.map((w) => '-'.repeat(w)).join('  '));
-for (const row of rows) console.log(line(row));
-console.log('');
-
-if (failures > 0) {
-  console.error(`${failures} pair(s) below the WCAG minimum.`);
-  process.exit(1);
-}
-console.log(`All ${rows.length} pairs pass (text ≥ ${TEXT}, UI ≥ ${UI}, band separation ≥ ${SEPARATION}, raised cards lighter than surface-2).`);
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();

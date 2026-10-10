@@ -1,0 +1,70 @@
+{
+  "mode": "bewegung",
+  "erstellt": "2026-10-09T23:07:35.966Z",
+  "laeufe": [
+    {
+      "vp": "m390",
+      "fruehe": {
+        "auftakt": true,
+        "anzahl": 9,
+        "ohneKennung": [],
+        "ende": 1120
+      },
+      "vorher": {
+        "vis": "visible",
+        "disabled": null,
+        "h": 44,
+        "w": 179.984375,
+        "name": "Kreislauf zeigen"
+      },
+      "waehrend": {
+        "disabled": "true",
+        "lauf": "lauf",
+        "anzahl": 15,
+        "auftakt": false,
+        "ohneKennung": [],
+        "ende": 1120
+      },
+      "nachher": {
+        "disabled": null
+      },
+      "tastatur": {
+        "disabled": "true",
+        "outline": "solid 3px rgb(31, 87, 196) off 3px"
+      },
+      "errors": []
+    },
+    {
+      "vp": "d1440",
+      "fruehe": {
+        "auftakt": true,
+        "anzahl": 19,
+        "ohneKennung": [],
+        "ende": 1120
+      },
+      "vorher": {
+        "vis": "visible",
+        "disabled": null,
+        "h": 44,
+        "w": 187.46875,
+        "name": "Kreislauf zeigen"
+      },
+      "waehrend": {
+        "disabled": "true",
+        "lauf": "lauf",
+        "anzahl": 19,
+        "auftakt": false,
+        "ohneKennung": [],
+        "ende": 1120
+      },
+      "nachher": {
+        "disabled": null
+      },
+      "tastatur": {
+        "disabled": "true",
+        "outline": "solid 3px rgb(31, 87, 196) off 3px"
+      },
+      "errors": []
+    }
+  ]
+}

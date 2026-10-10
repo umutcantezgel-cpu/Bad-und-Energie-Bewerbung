@@ -1,0 +1,431 @@
+{
+  "url": "http://localhost:3803/",
+  "erstellt": "2026-10-09T20:07:55.983Z",
+  "umgebung": "Chromium headless (Playwright 1.56, Chromium 141), WebGL über SwiftShader (Software), lokal ohne Netzdrosselung",
+  "groessen": {
+    "inline_skripte_roh": 7637,
+    "inline_skripte_gzip": 3321,
+    "modul_roh": 16198,
+    "modul_gzip": 6352,
+    "js_gesamt_gzip": 9673,
+    "feld_png": 59769,
+    "html_roh": 74299,
+    "html_gzip": 21275,
+    "schriften_dateien": 6,
+    "schriften_bytes": 223864,
+    "schriften_geladen_latin_bytes": 149376
+  },
+  "kontextverlust": {
+    "bis_auftakt_ms": 157,
+    "vorher": {
+      "klassen": "js wb-gl-moeglich wb-auftakt wb-gl wb-laeuft",
+      "s": {
+        "bilder": 12,
+        "zustand": "auftakt",
+        "kontexte": 1,
+        "freigaben": 0,
+        "verlust": 0,
+        "dauer": 1100,
+        "start": 117
+      },
+      "canvas": true
+    },
+    "sofort": {
+      "ereignis_nach_ms": 4,
+      "canvas_nach_ereignis_entfernt": true,
+      "klassen_nach_ereignis": "js wb-gl-moeglich wb-ohne-gl"
+    },
+    "nachher": {
+      "klassen": "js wb-gl-moeglich wb-ohne-gl",
+      "s": {
+        "bilder": 32,
+        "zustand": "ersatz",
+        "kontexte": 1,
+        "freigaben": 0,
+        "verlust": 1,
+        "dauer": 1100,
+        "start": 117
+      },
+      "canvas": false
+    },
+    "band_deckkraft": [
+      "1",
+      "1",
+      "1",
+      "1"
+    ],
+    "fehler": []
+  },
+  "pause_ausserhalb": {
+    "bilder_beim_wegscrollen": 1,
+    "bilder_in_1000ms_ausserhalb": 0,
+    "nach_rueckkehr": {
+      "klassen": "js wb-gl-moeglich wb-gl wb-laeuft",
+      "s": {
+        "bilder": 70,
+        "zustand": "ruhe",
+        "kontexte": 1,
+        "freigaben": 0,
+        "verlust": 0,
+        "dauer": 1100,
+        "start": 113,
+        "ende": 2426
+      },
+      "canvas": true
+    },
+    "fehler": []
+  },
+  "pause_verborgen": {
+    "bilder_in_1000ms_verborgen": 0,
+    "nach_rueckkehr": {
+      "klassen": "js wb-gl-moeglich wb-gl wb-laeuft",
+      "s": {
+        "bilder": 71,
+        "zustand": "ruhe",
+        "kontexte": 1,
+        "freigaben": 0,
+        "verlust": 0,
+        "dauer": 1100,
+        "start": 96,
+        "ende": 2339
+      },
+      "canvas": true
+    }
+  },
+  "framezeiten_4x": [
+    {
+      "phase": "auftakt",
+      "laeufe": [
+        {
+          "phase": "auftakt",
+          "dauer_ms": 928,
+          "bilder": 56,
+          "erwartet": 55,
+          "verworfen": 0,
+          "anteil_verworfen_prozent": 0,
+          "median_ms": 16.7,
+          "p95_ms": 16.7,
+          "max_ms": 16.8,
+          "long_animation_frames": [],
+          "zeichnungen": 58,
+          "fehler": []
+        },
+        {
+          "phase": "auftakt",
+          "dauer_ms": 875,
+          "bilder": 52,
+          "erwartet": 51,
+          "verworfen": 0,
+          "anteil_verworfen_prozent": 0,
+          "median_ms": 16.7,
+          "p95_ms": 16.8,
+          "max_ms": 16.8,
+          "long_animation_frames": [],
+          "zeichnungen": 56,
+          "fehler": []
+        },
+        {
+          "phase": "auftakt",
+          "dauer_ms": 936,
+          "bilder": 56,
+          "erwartet": 55,
+          "verworfen": 0,
+          "anteil_verworfen_prozent": 0,
+          "median_ms": 16.7,
+          "p95_ms": 16.8,
+          "max_ms": 16.8,
+          "long_animation_frames": [],
+          "zeichnungen": 60,
+          "fehler": []
+        },
+        {
+          "phase": "auftakt",
+          "dauer_ms": 893,
+          "bilder": 53,
+          "erwartet": 52,
+          "verworfen": 0,
+          "anteil_verworfen_prozent": 0,
+          "median_ms": 16.7,
+          "p95_ms": 16.8,
+          "max_ms": 16.8,
+          "long_animation_frames": [],
+          "zeichnungen": 57,
+          "fehler": []
+        },
+        {
+          "phase": "auftakt",
+          "dauer_ms": 940,
+          "bilder": 56,
+          "erwartet": 55,
+          "verworfen": 0,
+          "anteil_verworfen_prozent": 0,
+          "median_ms": 16.7,
+          "p95_ms": 16.8,
+          "max_ms": 16.8,
+          "long_animation_frames": [],
+          "zeichnungen": 60,
+          "fehler": []
+        }
+      ],
+      "anteil_median_prozent": 0,
+      "anteil_max_prozent": 0,
+      "verworfen_summe": 0,
+      "erwartet_summe": 268
+    },
+    {
+      "phase": "zeigen",
+      "laeufe": [
+        {
+          "phase": "zeigen",
+          "dauer_ms": 2662,
+          "bilder": 160,
+          "erwartet": 159,
+          "verworfen": 0,
+          "anteil_verworfen_prozent": 0,
+          "median_ms": 16.7,
+          "p95_ms": 16.7,
+          "max_ms": 16.8,
+          "long_animation_frames": [],
+          "zeichnungen": 109,
+          "fehler": []
+        },
+        {
+          "phase": "zeigen",
+          "dauer_ms": 2647,
+          "bilder": 158,
+          "erwartet": 157,
+          "verworfen": 0,
+          "anteil_verworfen_prozent": 0,
+          "median_ms": 16.7,
+          "p95_ms": 16.8,
+          "max_ms": 16.8,
+          "long_animation_frames": [],
+          "zeichnungen": 107,
+          "fehler": []
+        },
+        {
+          "phase": "zeigen",
+          "dauer_ms": 2645,
+          "bilder": 159,
+          "erwartet": 158,
+          "verworfen": 0,
+          "anteil_verworfen_prozent": 0,
+          "median_ms": 16.7,
+          "p95_ms": 16.8,
+          "max_ms": 16.8,
+          "long_animation_frames": [],
+          "zeichnungen": 106,
+          "fehler": []
+        },
+        {
+          "phase": "zeigen",
+          "dauer_ms": 2641,
+          "bilder": 159,
+          "erwartet": 158,
+          "verworfen": 0,
+          "anteil_verworfen_prozent": 0,
+          "median_ms": 16.7,
+          "p95_ms": 16.7,
+          "max_ms": 16.8,
+          "long_animation_frames": [],
+          "zeichnungen": 109,
+          "fehler": []
+        },
+        {
+          "phase": "zeigen",
+          "dauer_ms": 2640,
+          "bilder": 158,
+          "erwartet": 157,
+          "verworfen": 0,
+          "anteil_verworfen_prozent": 0,
+          "median_ms": 16.7,
+          "p95_ms": 16.7,
+          "max_ms": 16.8,
+          "long_animation_frames": [],
+          "zeichnungen": 108,
+          "fehler": []
+        }
+      ],
+      "anteil_median_prozent": 0,
+      "anteil_max_prozent": 0,
+      "verworfen_summe": 0,
+      "erwartet_summe": 789
+    }
+  ],
+  "freigabe_heap": {
+    "heap_nach_aufwaermen": 2091404,
+    "heap_nach_10_zyklen": 2215604,
+    "zuwachs_prozent": 5.94,
+    "status_vorher": {
+      "klassen": "js wb-gl-moeglich wb-laeuft wb-gl",
+      "s": {
+        "bilder": 121,
+        "zustand": "ruhe",
+        "kontexte": 2,
+        "freigaben": 1,
+        "verlust": 0,
+        "dauer": 1100,
+        "start": 125,
+        "ende": 1280
+      },
+      "canvas": true
+    },
+    "status_nachher": {
+      "klassen": "js wb-gl-moeglich wb-laeuft wb-gl",
+      "s": {
+        "bilder": 630,
+        "zustand": "ruhe",
+        "kontexte": 12,
+        "freigaben": 11,
+        "verlust": 0,
+        "dauer": 1100,
+        "start": 125,
+        "ende": 1280
+      },
+      "canvas": true
+    },
+    "canvas_nach_ruhe": true
+  },
+  "kontrast_schrift_ueber_szene": [
+    {
+      "ansicht": "m390",
+      "textfelder": 5,
+      "aufnahmen": [
+        250,
+        500,
+        750,
+        1000,
+        1250,
+        1500,
+        2500,
+        "zone-0",
+        "zone-1",
+        "zone-2"
+      ],
+      "kleinster_kontrast": 13.84,
+      "wo": {
+        "t": 250,
+        "text": "Seit 1926 · Wetzlar",
+        "x": 34,
+        "y": 72,
+        "farbe": [
+          17,
+          29,
+          109
+        ]
+      }
+    },
+    {
+      "ansicht": "m375",
+      "textfelder": 5,
+      "aufnahmen": [
+        250,
+        500,
+        750,
+        1000,
+        1250,
+        1500,
+        2500,
+        "zone-0",
+        "zone-1",
+        "zone-2"
+      ],
+      "kleinster_kontrast": 13.84,
+      "wo": {
+        "t": 250,
+        "text": "Seit 1926 · Wetzlar",
+        "x": 33,
+        "y": 72,
+        "farbe": [
+          17,
+          29,
+          109
+        ]
+      }
+    },
+    {
+      "ansicht": "m430",
+      "textfelder": 5,
+      "aufnahmen": [
+        250,
+        500,
+        750,
+        1000,
+        1250,
+        1500,
+        2500,
+        "zone-0",
+        "zone-1",
+        "zone-2"
+      ],
+      "kleinster_kontrast": 13.84,
+      "wo": {
+        "t": 250,
+        "text": "Seit 1926 · Wetzlar",
+        "x": 35,
+        "y": 72,
+        "farbe": [
+          17,
+          29,
+          109
+        ]
+      }
+    },
+    {
+      "ansicht": "m320",
+      "textfelder": 5,
+      "aufnahmen": [
+        250,
+        500,
+        750,
+        1000,
+        1250,
+        1500,
+        2500,
+        "zone-0",
+        "zone-1",
+        "zone-2"
+      ],
+      "kleinster_kontrast": 13.84,
+      "wo": {
+        "t": 250,
+        "text": "Seit 1926 · Wetzlar",
+        "x": 26,
+        "y": 72,
+        "farbe": [
+          17,
+          29,
+          109
+        ]
+      }
+    },
+    {
+      "ansicht": "t768",
+      "textfelder": 5,
+      "aufnahmen": [
+        250,
+        500,
+        750,
+        1000,
+        1250,
+        1500,
+        2500,
+        "zone-0",
+        "zone-1",
+        "zone-2"
+      ],
+      "kleinster_kontrast": 13.84,
+      "wo": {
+        "t": 250,
+        "text": "Seit 1926 · Wetzlar",
+        "x": 369,
+        "y": 112,
+        "farbe": [
+          17,
+          29,
+          109
+        ]
+      }
+    }
+  ]
+}

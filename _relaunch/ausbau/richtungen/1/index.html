@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SHK-Jobs in Wetzlar · Richtung 1 „Der Kreislauf läuft an“</title>
+<meta name="description" content="Prototyp des ersten Bildschirms der Startseite: Haus mit Wärmepumpe, der Kreislauf läuft einmal an, der Vorlauf endet in der Bewerbung.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#FBF7F0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B1236" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%23FBF7F0%27/%3E%3Cpath d=%27M5 15 16 4l11 11M8 12v15h16V12%27 fill=%27none%27 stroke=%27%23111D6D%27 stroke-width=%273%27 stroke-linejoin=%27round%27/%3E%3Cpath d=%27M11 19h10%27 stroke=%27%23D60000%27 stroke-width=%273%27/%3E%3Cpath d=%27M11 23h10%27 stroke=%27%231F57C4%27 stroke-width=%273%27/%3E%3C/svg%3E">
+<link rel="preload" href="fonts/bricolage-grotesque-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<script>!function(e){if(!matchMedia("(prefers-reduced-motion: reduce)").matches){e.classList.add("auftakt");setTimeout(function(){e.classList.add("ruhe")},2e3)}}(document.documentElement)</script>
+<style>
+/* ═══ Schriften: selbst gehostet, Teilmengen latin + latin-ext (Fontsource 5.3.0, OFL) ═══ */
+@font-face{font-family:"Bricolage Grotesque";font-style:normal;font-display:swap;font-weight:200 800;src:url(fonts/bricolage-grotesque-latin-ext-opsz-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Bricolage Grotesque";font-style:normal;font-display:swap;font-weight:200 800;src:url(fonts/bricolage-grotesque-latin-opsz-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Atkinson Hyperlegible Next";font-style:normal;font-display:swap;font-weight:200 800;src:url(fonts/atkinson-hyperlegible-next-latin-ext-wght-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Atkinson Hyperlegible Next";font-style:normal;font-display:swap;font-weight:200 800;src:url(fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Martian Mono";font-style:normal;font-display:swap;font-weight:100 800;font-stretch:75% 112.5%;src:url(fonts/martian-mono-latin-ext-wdth-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Martian Mono";font-style:normal;font-display:swap;font-weight:100 800;font-stretch:75% 112.5%;src:url(fonts/martian-mono-latin-wdth-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+/* Ersatzschriften mit angeglichenen Metriken: kein Springen beim Schriftwechsel */
+@font-face{font-family:"Bricolage Ersatz";src:local("Arial Bold"),local("Arial-BoldMT"),local("Liberation Sans Bold"),local("Helvetica Bold");font-weight:600 800;size-adjust:91.5%;ascent-override:101.6%;descent-override:29.5%;line-gap-override:0%}
+@font-face{font-family:"Bricolage Ersatz";src:local("Arial"),local("ArialMT"),local("Liberation Sans"),local("Helvetica");font-weight:200 599;size-adjust:91.5%;ascent-override:101.6%;descent-override:29.5%;line-gap-override:0%}
+@font-face{font-family:"Atkinson Ersatz";src:local("Arial"),local("ArialMT"),local("Liberation Sans"),local("Helvetica");font-weight:200 599;size-adjust:98.5%;ascent-override:99.5%;descent-override:32.5%;line-gap-override:0%}
+@font-face{font-family:"Atkinson Ersatz";src:local("Arial Bold"),local("Arial-BoldMT"),local("Liberation Sans Bold"),local("Helvetica Bold");font-weight:600 800;size-adjust:98.5%;ascent-override:99.5%;descent-override:32.5%;line-gap-override:0%}
+@font-face{font-family:"Martian Ersatz";src:local("Courier New"),local("CourierNewPSMT"),local("Liberation Mono"),local("Courier");size-adjust:116.6%;ascent-override:85.8%;descent-override:17.2%;line-gap-override:0%}
+
+/* ═══ Tokens: Skalen, keine Wertesammlung ═══ */
+:root{
+  color-scheme:light dark;
+  /* Palette (E-016); dunkel aus derselben Familie. Glut = #FADCC9 zu 25 % auf Nacht (1,95:1 zur Fläche) */
+  --p-papier:#FBF7F0; --p-wand:#F1E9DB; --p-waerme:#FADCC9;
+  --p-navy:#111D6D; --p-tinte:#111A3B; --p-tinte-2:#454C78; --p-haar:#DDD3C2;
+  --p-rot:#D60000; --p-rot-hover:#B00000; --p-rot-druck:#A80000; --p-blau:#1F57C4; --p-weiss:#FFFFFF;
+  --p-nacht:#0B1236; --p-nacht-2:#151E4F; --p-glut:#47445B; --p-creme:#F6F0E4; --p-creme-2:#BDC2E0; --p-haar-d:#2A356B;
+  --p-rot-hell:#FF6B5F; --p-blau-hell:#86AEFF;
+  /* Rollen (hell) */
+  --flaeche:var(--p-papier); --flaeche-2:var(--p-wand); --waerme:var(--p-waerme);
+  --tinte:var(--p-tinte); --tinte-2:var(--p-tinte-2); --display:var(--p-navy); --strich:var(--p-navy); --haar:var(--p-haar);
+  --vorlauf:var(--p-rot); --ruecklauf:var(--p-blau);
+  --aktion:var(--p-rot); --aktion-hover:var(--p-rot-hover); --aktion-druck:var(--p-rot-druck); --aktion-text:var(--p-weiss);
+  --fokus:var(--p-blau); --plakette:transparent; --logo-linie:var(--p-navy);
+  /* Schriftgrößen: 7 Stufen, fließend mit rem-Anteil (Display mit eigener Desktop-Stufe) */
+  --t-1:.875rem;                                        /* 14     Planbeschriftung, Etiketten */
+  --t-2:clamp(.9375rem,.89rem + .2vw,1rem);             /* 15–16  Mikrotext, Navigation */
+  --t-3:clamp(1.0625rem,1rem + .3vw,1.25rem);           /* 17–20  Fließtext */
+  --t-4:clamp(1.25rem,1.05rem + .85vw,1.875rem);        /* 20–30  Zweitzeile, Stellentitel */
+  --t-5:clamp(1.5rem,1.25rem + 1vw,2.25rem);            /* 24–36  Maße */
+  --t-6:clamp(2rem,1.5rem + 2vw,3.5rem);                /* 32–56  Hauptmaß 13:30, H2 */
+  --t-7:clamp(3.75rem,.25rem + 18.5vw,7.5rem);          /* 60–120 H1 (mobil, Tablet) */
+  /* Abstände: 11 Stufen */
+  --a-1:.25rem; --a-2:.5rem; --a-3:.75rem; --a-4:1rem; --a-5:1.5rem; --a-6:2rem; --a-7:3rem; --a-8:4rem; --a-9:5rem; --a-10:6rem; --a-11:8rem;
+  /* Maße; --paar = Abstand des Leitungspaars außerhalb der Zeichnung */
+  --m-ziel:2.75rem; --m-knopf:3.5rem; --m-kopf:3.5rem; --m-strich:3px; --paar:var(--a-3);
+  /* Radien: 4 Stufen (--r-3 = --r-2 + --paar: äußerer Bogen eines Paars) */
+  --r-1:4px; --r-2:12px; --r-3:24px; --r-voll:999px;
+  /* Bewegung: 4 Dauern, 1 Takt, 3 Kurven + linear */
+  --d-1:120ms; --d-2:240ms; --d-3:400ms; --d-4:600ms;
+  --takt:80ms;
+  --k-aus:cubic-bezier(.16,1,.3,1); --k-wechsel:cubic-bezier(.65,0,.35,1); --k-ein:cubic-bezier(.32,0,.67,0);
+  /* Raster */
+  --rand:max(var(--a-4),env(safe-area-inset-left),env(safe-area-inset-right));
+  --satz:84rem;
+  /* Zeichnung: viewBox 760 × 520; --s = px je Einheit, in festen Stufen, damit jede Linie 3 px bleibt */
+  --s:.58; --uhr:.9; --versatz:0px;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --flaeche:var(--p-nacht); --flaeche-2:var(--p-nacht-2); --waerme:var(--p-glut);
+    --tinte:var(--p-creme); --tinte-2:var(--p-creme-2); --display:var(--p-creme); --strich:var(--p-creme); --haar:var(--p-haar-d);
+    --vorlauf:var(--p-rot-hell); --ruecklauf:var(--p-blau-hell);
+    --fokus:var(--p-blau-hell); --plakette:var(--p-papier);
+  }
+}
+
+/* ═══ Grundlagen ═══ */
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--flaeche);-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:var(--a-4)}
+body{margin:0;background:var(--flaeche);color:var(--tinte);font:400 var(--t-3)/1.55 "Atkinson Hyperlegible Next","Atkinson Ersatz",system-ui,sans-serif;-webkit-tap-highlight-color:transparent;font-kerning:normal}
+h1,h2,h3,p,ul,ol{margin:0}
+h1{font-size:inherit}
+ul,ol{padding:0;list-style:none}
+a{color:inherit}
+img,svg{display:block}
+main{overflow-x:clip}
+::selection{background:var(--waerme);color:var(--tinte)}
+:focus-visible{outline:var(--m-strich) solid var(--fokus);outline-offset:var(--m-strich)}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+/* Ziffern in der Display-Schrift (Atkinson zeichnet die Null mit Schrägstrich), Gewicht wie der umgebende Text */
+.ziffer{font-family:"Bricolage Grotesque","Bricolage Ersatz",sans-serif;font-weight:inherit;font-variant-numeric:tabular-nums}
+.mono{font-family:"Martian Mono","Martian Ersatz",ui-monospace,monospace;font-stretch:87.5%;font-weight:500}
+.caps{text-transform:uppercase;letter-spacing:.06em}
+.sprung{position:absolute;left:var(--rand);top:var(--a-2);z-index:20;padding:var(--a-3) var(--a-4);background:var(--flaeche);color:var(--tinte);font-weight:700;text-decoration:none;border:var(--m-strich) solid var(--strich);border-radius:var(--r-1);transform:translateY(-200%)}
+.sprung:focus-visible{transform:none}
+.ikon{width:1.5rem;height:1.5rem;fill:none;stroke:currentColor;stroke-width:var(--m-strich);stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ikon path{vector-effect:non-scaling-stroke}
+
+/* ═══ Kopf ═══ */
+.kopf{position:relative;z-index:5;display:flex;align-items:center;gap:var(--a-2);min-height:var(--m-kopf);padding:env(safe-area-inset-top) var(--rand) 0}
+.logo{position:relative;display:inline-flex;align-items:center;min-height:var(--m-ziel);margin-right:auto;border-radius:var(--r-1);background:var(--plakette);padding:0 var(--a-1)}
+.logo img{height:1.875rem;width:auto}
+.kopf-nav{display:none}
+.kopf-nav ul{display:flex;gap:var(--a-1)}
+.kopf-nav a,.tel,.menue-knopf{position:relative;display:inline-flex;align-items:center;gap:var(--a-2);min-height:var(--m-ziel);min-width:var(--m-ziel);padding:0 var(--a-3);border-radius:var(--r-1);color:var(--tinte);font-size:var(--t-2);font-weight:700;text-decoration:none}
+.tel{justify-content:center;padding:0}
+/* mobil steht nur der Hörer; die Nummer bleibt für Screenreader im Namen („06441 42956 anrufen“) */
+.kopf .tel-nummer{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.menue-knopf,.menue-zu{position:relative;isolation:isolate;font:inherit;font-size:var(--t-2);font-weight:700;color:var(--tinte);background:none;border:var(--m-strich) solid var(--strich);cursor:pointer}
+.menue-zu{display:inline-flex;align-items:center;border-radius:var(--r-1);min-height:var(--m-ziel);padding:0 var(--a-3)}
+/* Hover-Rückmeldungen: Unterstrich in Navy/Creme oder Fläche; Eingang d-2 mit k-aus, Ausgang d-1 mit k-ein. Rot bleibt dem Knopf. */
+.kopf-nav a::after,.tel::after,.logo::after{content:"";position:absolute;left:var(--a-3);right:var(--a-3);bottom:var(--a-2);height:var(--m-strich);background:var(--strich);transform:scaleX(0);transform-origin:left;transition:transform var(--d-1) var(--k-ein)}
+.tel::after{left:0;right:0}
+.logo::after{left:var(--a-1);right:var(--a-1);bottom:0;background:var(--logo-linie)}
+.menue-knopf::before,.menue-zu::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--flaeche-2);opacity:0;transition:opacity var(--d-1) var(--k-ein)}
+@media (hover:hover) and (pointer:fine){
+  .kopf-nav a:hover::after,.tel:hover::after,.logo:hover::after{transform:scaleX(1);transition:transform var(--d-2) var(--k-aus)}
+  .menue-knopf:hover::before,.menue-zu:hover::before{opacity:1;transition:opacity var(--d-2) var(--k-aus)}
+}
+.kopf-nav a:active,.tel:active,.menue-knopf:active,.menue-zu:active,.logo:active{transform:translateY(1px)}
+
+/* Handy-Menü: Popover (ohne Skript bedienbar), vollflächig, mit dem Leitungspaar */
+.menue{margin:0;padding:0;border:0;background:var(--flaeche);color:var(--tinte)}
+@supports selector(:popover-open){
+  .menue{position:fixed;inset:0;width:100%;height:100dvh;max-width:none;max-height:none;overflow:auto;opacity:0;transform:translateY(calc(var(--a-4) * -1));
+    transition:opacity var(--d-1) var(--k-ein),transform var(--d-1) var(--k-ein),display var(--d-1) allow-discrete,overlay var(--d-1) allow-discrete}
+  .menue:popover-open{opacity:1;transform:none;
+    transition:opacity var(--d-2) var(--k-aus),transform var(--d-2) var(--k-aus),display var(--d-2) allow-discrete,overlay var(--d-2) allow-discrete}
+  @starting-style{.menue:popover-open{opacity:0;transform:translateY(calc(var(--a-4) * -1))}}
+  .menue::backdrop{background:var(--flaeche)}
+}
+.menue-innen{position:relative;display:grid;grid-template-rows:auto 1fr auto;min-height:100%;padding:env(safe-area-inset-top) var(--rand) calc(var(--a-6) + env(safe-area-inset-bottom))}
+.menue-innen nav{align-self:center}
+.menue-kopf{display:flex;align-items:center;justify-content:space-between;min-height:var(--m-kopf)}
+.menue-liste{position:relative;padding:var(--a-6) 0 var(--a-6) var(--a-7)}
+/* Leitungspaar im Menü (Abstand --paar): läuft von oben in die Hauptaktion; jeder Eintrag ein Abgang in Navy */
+.menue-innen::before,.menue-innen::after{content:"";position:absolute;top:calc(var(--m-kopf) + env(safe-area-inset-top));bottom:calc(var(--a-6) + env(safe-area-inset-bottom) + var(--m-knopf));width:var(--m-strich);transform-origin:top}
+.menue-innen::before{left:calc(var(--rand) + var(--a-2));background:var(--ruecklauf)}
+.menue-innen::after{left:calc(var(--rand) + var(--a-2) + var(--paar));background:var(--vorlauf)}
+.menue-liste a{position:relative;display:flex;align-items:center;min-height:var(--a-8);font:800 var(--t-6)/1 "Bricolage Grotesque","Bricolage Ersatz",sans-serif;letter-spacing:-.01em;color:var(--display);text-decoration:none}
+.menue-liste a::before{content:"";position:absolute;left:calc(var(--a-2) + var(--paar) - var(--a-7));width:calc(var(--a-7) - var(--a-3) - var(--a-2) - var(--paar));height:var(--m-strich);background:var(--strich)}
+.menue-fuss{display:grid;gap:var(--a-3);justify-items:start}
+.menue-fuss .tel{gap:var(--a-3);padding:0;margin-left:var(--a-7)}
+.menue-fuss .aktion{min-width:100%}
+@media (prefers-reduced-motion:no-preference){
+  .menue:popover-open .menue-innen::before,.menue:popover-open .menue-innen::after{animation:fall var(--d-2) var(--k-aus) backwards}
+  .menue:popover-open .menue-liste li{animation:einschub var(--d-1) var(--k-aus) backwards;animation-delay:calc(var(--takt) * var(--i,0) / 2)}
+}
+
+/* ═══ Einstieg – mobile Komposition ═══
+   Raster: Text oben, Bild (füllt den Rest, Zeichnung unten verankert), Erdreich mit Hauptaktion unten in der Daumenzone. */
+.einstieg{position:relative;display:grid;grid-template-columns:[voll-start] var(--rand) [inhalt-start] minmax(0,1fr) [inhalt-end] var(--rand) [voll-end];
+  grid-template-rows:auto minmax(var(--bild-min),1fr) auto;
+  min-height:calc(100svh - var(--m-kopf));overflow-x:clip;padding-bottom:var(--a-4);container-type:inline-size;
+  --dx:calc(var(--uhr) * 100cqw - 470px * var(--s) - var(--versatz));
+  --bild-min:calc(280px * var(--s) + var(--t-6) * 1.1 + var(--a-1) + var(--t-1) * 1.1 + var(--a-3));
+  --boden-oben:var(--a-9)}
+.text{grid-column:inhalt;grid-row:1;padding-top:var(--a-1)}
+.ortsmarke{font-size:var(--t-1);color:var(--tinte-2);margin-bottom:var(--a-2)}
+.titel{color:var(--display)}
+.titel-haupt{display:block;font:800 var(--t-7)/.92 "Bricolage Grotesque","Bricolage Ersatz",sans-serif;letter-spacing:-.01em}
+.titel-haupt span{display:block;white-space:nowrap}
+.titel-zweit{position:relative;display:block;margin-top:var(--a-3);padding-left:var(--a-6);font:700 var(--t-4)/1.12 "Bricolage Grotesque","Bricolage Ersatz",sans-serif;color:var(--tinte-2);text-wrap:balance}
+.titel-zweit span:not(.klammer){display:block}
+/* Rohrklammer aus B Runde 1: Vorlauf oben, Rücklauf unten, Bogen --r-2 */
+.klammer{position:absolute;left:0;top:.2em;bottom:.2em;width:var(--a-5)}
+.klammer::before,.klammer::after{content:"";position:absolute;left:0;right:0;height:50%;border-left:var(--m-strich) solid}
+.klammer::before{top:0;border-top:var(--m-strich) solid;border-color:var(--vorlauf);border-top-left-radius:var(--r-2)}
+.klammer::after{bottom:0;border-bottom:var(--m-strich) solid;border-color:var(--ruecklauf);border-bottom-left-radius:var(--r-2)}
+.lead{margin-top:var(--a-4);max-width:34rem;font-size:var(--t-2);line-height:1.5;text-wrap:pretty}
+
+/* Bild: das Haus mit Wärmepumpe, an der Bodenlinie verankert (--dy aus der Bildhöhe 100cqh). --s in Stufen, Lage über --dx */
+.bild{grid-column:voll;grid-row:2;position:relative;container-type:size;margin-top:var(--a-2);overflow-x:clip;--dy:calc(100cqh - 520px * var(--s));--zx:var(--dx);--zy:var(--dy)}
+.rahmen{position:absolute;inset:0;overflow:clip}
+.zeichnung{position:absolute;left:var(--zx);top:var(--zy);width:calc(760px * var(--s));height:calc(520px * var(--s));overflow:visible;--sw:calc(3 / var(--s))}
+.zeichnung .z{fill:none;stroke:var(--strich);stroke-width:var(--sw);stroke-linecap:round;stroke-linejoin:round}
+.zeichnung .voll{fill:var(--strich);stroke:none}
+.zeichnung .vl{stroke:var(--vorlauf)}
+.zeichnung .rl{stroke:var(--ruecklauf)}
+.haus-flaeche{fill:var(--waerme);stroke:none}
+.sonne{transform:translate(var(--sonne-x),var(--sonne-y));--sonne-x:43px;--sonne-y:331px}
+/* Anschlüsse der Pumpe: das Paar verlässt die Pumpe im Abstand --paar (in Einheiten: --paar / --s) */
+.stummel-vl{transform:translateX(calc(var(--paar) / var(--s) / -2))}
+.stummel-rl{transform:translateX(calc(var(--paar) / var(--s) / 2))}
+.nur-desktop{display:none}
+.fundament{position:absolute;left:calc(var(--dx) + 330px * var(--s));top:calc(var(--dy) + 520px * var(--s) + var(--m-strich));width:calc(280px * var(--s));height:var(--a-3);background:var(--flaeche-2);border:var(--m-strich) solid var(--strich);border-top:0}
+.kette{position:absolute;height:var(--a-3);border-inline:var(--m-strich) solid var(--strich)}
+.kette::before{content:"";position:absolute;left:0;right:0;top:50%;height:var(--m-strich);transform:translateY(-50%);background:var(--strich)}
+.kette--35{left:var(--rand);width:calc(var(--dx) + 236px * var(--s) - var(--paar) / 2 - var(--a-3) - var(--rand));top:calc(var(--dy) + 520px * var(--s) + var(--a-3))}
+.jahre{display:none}
+
+/* Erdreich: Bodenlinie, Maße an der Zeichnung (Bezug Bodenlinie), Leitungen in die Hauptaktion */
+.boden{grid-column:voll;grid-row:3;position:relative;border-top:var(--m-strich) solid var(--strich);padding:var(--boden-oben) var(--rand) 0;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:var(--a-4);row-gap:var(--a-2);
+  --dy:calc(-520px * var(--s) - var(--m-strich))}
+/* Maße an der Zeichnung: echtes HTML in Tokengrößen */
+.masse{position:absolute;inset:0;pointer-events:none}
+.mass{position:absolute;left:calc(var(--dx) + var(--x) * var(--s) * 1px);top:calc(var(--dy) + var(--y) * var(--s) * 1px);display:flex;flex-direction:column;line-height:1.1;white-space:nowrap}
+.mass-wert{font-family:"Martian Mono","Martian Ersatz",ui-monospace,monospace;font-stretch:75%;font-weight:600;font-size:var(--t-5);color:var(--display);letter-spacing:-.02em}
+.mass-name{font-family:"Martian Mono","Martian Ersatz",ui-monospace,monospace;font-stretch:75%;font-weight:500;font-size:var(--t-1);text-transform:uppercase;letter-spacing:.06em;color:var(--tinte-2);margin-top:var(--a-1)}
+.mass--1330 .mass-wert{font-size:var(--t-6)}
+.mass--1330{--x:406;--y:240;transform:translate(-100%,-100%);align-items:flex-end;text-align:right}
+.mass--30{--x:104;--y:331;transform:translateY(-50%)}
+.mass--35{left:var(--rand);--y:520}
+.mass--1926{--x:340;--y:520}
+.mass--35,.mass--1926{top:calc(var(--dy) + var(--y) * var(--s) * 1px + var(--a-6))}
+.erdleitung{position:absolute;top:0;width:var(--m-strich);height:var(--boden-oben);transform-origin:top}
+.erdleitung--vl{left:calc(var(--dx) + 236px * var(--s) - var(--paar) / 2 - var(--m-strich) / 2);background:var(--vorlauf)}
+.erdleitung--rl{left:calc(var(--dx) + 236px * var(--s) + var(--paar) / 2 - var(--m-strich) / 2);background:var(--ruecklauf);transform-origin:bottom}
+.erdleitung-d{display:none}
+.aktion{position:relative;z-index:1;display:inline-flex;align-items:center;justify-content:space-between;gap:var(--a-4);min-height:var(--m-knopf);padding:0 var(--a-5);border-radius:var(--r-1);background:var(--aktion);color:var(--aktion-text);font:700 var(--t-3)/1.2 "Atkinson Hyperlegible Next","Atkinson Ersatz",sans-serif;text-decoration:none;isolation:isolate}
+.boden .aktion{grid-row:1;grid-column:1;min-width:calc(var(--dx) + 236px * var(--s) + var(--paar) / 2 + var(--a-6) - var(--rand))}
+/* Hover #B00000, Druck #A80000, jeweils volle Deckkraft (E-016) */
+.aktion::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:var(--aktion-hover);opacity:0;transition:opacity var(--d-1) var(--k-ein)}
+@media (hover:hover) and (pointer:fine){.aktion:hover::before{opacity:1;transition:opacity var(--d-2) var(--k-aus)}}
+.aktion:active{transform:translateY(1px)}
+.aktion:active::before{opacity:1;background:var(--aktion-druck);transition:none}
+.aktion .ikon{width:1.25rem;height:1.25rem}
+.zweitweg{display:inline-flex;align-items:center;gap:var(--a-2);min-height:var(--m-ziel);font-size:var(--t-2);font-weight:700;line-height:1.2;color:var(--tinte);text-decoration:underline;text-decoration-thickness:var(--m-strich);text-underline-offset:.25em;border-radius:var(--r-1)}
+.zweitweg .ikon{display:inline;width:1.125rem;height:1.125rem;margin-left:var(--a-1);vertical-align:-.2em}
+@media (hover:hover) and (pointer:fine){.zweitweg:hover{text-decoration-color:var(--ruecklauf)}}
+.zweitweg:active{transform:translateY(1px)}
+.mikro{grid-column:1 / -1;grid-row:2;font-size:var(--t-2);color:var(--tinte-2)}
+.boden .zweitweg{grid-column:2;grid-row:1;text-wrap:balance}
+
+/* ═══ Stufen nach Breite: Maßstab der Zeichnung (mobil, Tablet) ═══ */
+@media (max-width:22.49em){:root{--t-7:clamp(3rem,.25rem + 17.5vw,3.75rem)} .kopf .logo img{height:1.5rem}}
+@media (min-width:22.5em){:root{--s:.68}}                    /* 360–419: 375, 390 */
+@media (min-width:26.25em){:root{--s:.74}}                   /* 420–599: 430 */
+@media (min-width:37.5em){:root{--s:.9;--uhr:.8}           /* 600–1023: Tablet */
+  .text{padding-top:var(--a-5)}
+  .lead{font-size:var(--t-3)}}
+/* Handy hoch: das Haus ist rechts angeschnitten; Fenster und Tür lägen im Schnitt und entfallen */
+@media (max-width:37.49em){.fenster{display:none}}
+
+/* ═══ Stufen nach Höhe (mobil, Tablet): erster Bildschirm mit Hauptaktion und Mikrotext in der Daumenzone ═══
+   B 680–807 px (390 × 750, 430 × 740, 360 × 780): kleineres Haus ganz im Bild, alle Maße an der Zeichnung.
+   C 600–679 px (390 × 664, 393 × 659, 375 × 667): Haus kleiner; 35 km und 1926 rücken unter die Hauptaktion.
+   D unter 600 px (375 × 553, 320 × 568): das ganze Haus klein (Stufe .4 bzw. .34), Uhr auf 13:30 bleibt im Bild;
+     alle vier Maße als Schriftfeld unter der Hauptaktion. Telefon quer (unter 450 px Höhe) bleibt ein Bildlauf. */
+@media (max-width:63.99em) and (max-height:50.49em){
+  :root{--s:.56;--uhr:.79;--t-7:clamp(3.25rem,.25rem + 16.5vw,4.25rem)}
+  .text{padding-top:0}
+  .ortsmarke{margin-bottom:var(--a-1)}
+  .titel-zweit{margin-top:var(--a-2)}
+  .lead{margin-top:var(--a-3)}
+  .bild{margin-top:0}
+  .fenster{display:inline}
+}
+@media (max-width:63.99em) and (max-height:42.49em){
+  :root{--s:.5;--t-7:clamp(3rem,.25rem + 15vw,3.75rem)}
+}
+/* C (Erdreich): unter 680 px Höhe, und auf breiten, flachen Fenstern (Tablet quer geteilt) schon ab Stufe B */
+@media (max-width:63.99em) and (max-height:42.49em),(min-width:37.5em) and (max-width:63.99em) and (max-height:50.49em){
+  .einstieg{--boden-oben:var(--a-6)}
+  .kette--35{display:none}
+  .masse{position:static;grid-column:1 / -1;grid-row:3;display:flex;flex-wrap:wrap;gap:var(--a-3) var(--a-6);margin-top:var(--a-4)}
+  .mass--35,.mass--1926{position:static}
+}
+@media (min-width:37.5em) and (max-width:63.99em) and (max-height:50.49em){:root{--s:.5;--uhr:.66} .lead{font-size:var(--t-2)}}
+@media (max-width:63.99em) and (max-height:37.49em){
+  :root{--s:.4;--t-7:clamp(2.5rem,.25rem + 12vw,3rem)}
+  .einstieg{--bild-min:calc(330px * var(--s) + var(--a-2));--boden-oben:var(--a-5)}
+  .lead{line-height:1.4;margin-top:var(--a-2)}
+  .sonne,.hinweis-1330{display:none}
+  .masse{display:grid;grid-template-columns:repeat(2,max-content);justify-content:start}
+  .mass--1330,.mass--30{position:static;transform:none;align-items:flex-start;text-align:left}
+}
+/* 320 × 568: Haus noch etwas kleiner, Knopf schmaler, damit „Offene Stellen ansehen“ in drei Zeilen bleibt */
+@media (max-width:22.49em) and (max-height:37.49em){
+  :root{--s:.34;--t-7:clamp(2.5rem,.25rem + 11vw,3rem)}
+  .einstieg{--boden-oben:var(--a-4)}
+  .boden{column-gap:var(--a-3)}
+  .boden .aktion{padding:0 var(--a-4);gap:var(--a-3)}
+}
+
+/* ═══ Desktop: eigene Komposition ab 64em ═══
+   Schrift links oben, das Haus als große Geste rechts, Bodenlinie quer über die Seite, Hauptaktion im Erdreich. */
+@media (min-width:64em){
+  :root{--m-kopf:4.5rem;--rand:max(var(--a-8),env(safe-area-inset-left));--s:.8;--t-7:clamp(4rem,.25rem + 8.6vw,12rem)}
+  .kopf-nav{display:block;margin-right:var(--a-4)}
+  .tel{padding:0 var(--a-3)}
+  .kopf .tel-nummer{position:static;width:auto;height:auto;overflow:visible;clip-path:none}
+  .menue-knopf{display:none}
+  .logo img{height:2.25rem}
+  .einstieg{grid-template-rows:1fr auto;padding-bottom:var(--a-6);--dx:calc(100cqw - 760px * var(--s) - var(--versatz))}
+  .text{grid-row:1;padding-top:var(--a-7);padding-bottom:var(--a-7);max-width:44rem}
+  .lead{font-size:var(--t-3);max-width:24rem;margin-top:var(--a-5)}
+  .titel-zweit{margin-top:var(--a-4)}
+  .bild{grid-row:1;align-self:end;height:0;margin:0;--zx:auto;--zy:auto}
+  .rahmen{inset:auto var(--versatz) 0 auto;width:calc(760px * var(--s));height:calc(520px * var(--s));overflow:visible}
+  .zeichnung{left:0;top:0}
+  .sonne{--sonne-x:284px;--sonne-y:177px}
+  .nur-desktop{display:inline}
+  g.nur-mobil,path.nur-mobil{display:none}
+  .nur-mobil{display:none}
+  .mass--1330{--x:560;--y:182;right:var(--rand);top:calc(var(--dy) + var(--y) * var(--s) * 1px + var(--m-strich) / 2);transform:translateY(-100%);align-items:flex-end;text-align:right;padding-bottom:var(--a-2);border-bottom:var(--m-strich) solid var(--strich)}
+  .mass--30{--x:350;--y:177;transform:translateY(-100%)}
+  .mass--35{left:auto;right:var(--rand);top:calc(var(--dy) + var(--y) * var(--s) * 1px - var(--a-3));--y:284;transform:translateY(-100%);align-items:flex-end;text-align:right}
+  .mass--1926{--x:330;--y:520;top:calc(var(--dy) + var(--y) * var(--s) * 1px + var(--a-5) + var(--a-6) + var(--a-2))}
+  .kette--35{display:none}
+  .jahre{display:block;position:absolute;left:calc(var(--dx) + 330px * var(--s));width:calc(280px * var(--s));top:calc(var(--dy) + 520px * var(--s) + var(--a-5));font-size:var(--t-1);line-height:1.1;color:var(--tinte-2)}
+  .jahre .kette{display:block;position:relative;width:100%;margin-top:var(--a-2)}
+  .jahre-text{display:flex;justify-content:center;white-space:nowrap}
+  .jahre-ende{display:block;text-align:right;margin-top:var(--a-2);color:var(--tinte)}
+  .boden{grid-row:2;padding:var(--a-6) var(--rand) 0;display:flex;flex-wrap:wrap;align-items:center;align-content:start;column-gap:var(--a-6);row-gap:var(--a-1)}
+  .boden::before{content:"";order:1;flex-basis:100%;height:0}
+  .boden .mikro{order:2}
+  .boden .zweitweg{order:3}
+  .boden .aktion{flex:0 0 18rem;min-width:18rem}
+  /* Flansch in Navy: hier münden Vorlauf und Rücklauf */
+  .boden .aktion::after{content:"";position:absolute;right:calc(var(--m-strich) * -2);top:var(--a-2);bottom:var(--a-2);width:calc(var(--m-strich) * 2);background:var(--strich);border-radius:0 var(--r-1) var(--r-1) 0}
+  .erdleitung{display:none}
+  /* Erdleitungen am Desktop. Lage aus Tokens: Fallstelle = Pumpenanschluss (236 ∓ --paar/2), Höhe = --a-6 + --m-knopf.
+     Zeichnungswerte im SVG (px): Vorlauf y 54 = --a-6 + --m-knopf/2 − --paar/2, Rücklauf y 66 = … + --paar/2,
+     Bogen --r-2 (12) und --r-3 (24) konzentrisch, Versatz 1,5 = --m-strich/2. */
+  .erdleitung-d{display:block;position:absolute;top:0;left:calc(var(--rand) + 18rem);overflow:hidden;height:calc(var(--a-6) + var(--m-knopf))}
+  .erdleitung-d--vl{width:calc(100% - var(--versatz) - var(--rand) - 18rem - var(--s) * 524px - var(--paar) / 2 + var(--m-strich) / 2)}
+  .erdleitung-d--rl{width:calc(100% - var(--versatz) - var(--rand) - 18rem - var(--s) * 524px + var(--paar) / 2 + var(--m-strich) / 2)}
+  .erdleitung-d line,.erdleitung-d path{fill:none;stroke-width:var(--m-strich)}
+  .erdleitung-d--vl line,.erdleitung-d--vl path{stroke:var(--vorlauf)}
+  .erdleitung-d--rl line,.erdleitung-d--rl path{stroke:var(--ruecklauf)}
+}
+/* Schmaler Desktop (1024–1279) und flache Laptops: Haus um --a-7 nach links, damit „35 km“ rechts neben der Dachschräge Platz hat */
+@media (min-width:64em) and (max-width:79.99em){:root{--versatz:var(--a-7)} .mass--30{--x:200;--y:235;transform:none}}
+@media (min-width:80em){:root{--s:1}}                           /* 1366 × 768 */
+@media (min-width:80em) and (min-height:50em){:root{--s:1.2}}   /* 1280 × 800 */
+@media (min-width:90em) and (min-height:56em){:root{--s:1.4}}   /* 1440 × 900 */
+@media (min-width:80em){.lead{max-width:27rem}}
+@media (min-width:105em) and (min-height:62em){:root{--s:1.55}} /* 1680 × 1050 */
+@media (min-width:120em) and (min-height:66em){:root{--s:1.7}}  /* 1920 × 1080 */
+/* Flache Laptops (bis 720 px Höhe: 1280 × 720, 1366 × 650): Stufe .8, H1 nach Höhe begrenzt, engere Abstände */
+@media (min-width:64em) and (max-height:45em){
+  :root{--s:.8;--versatz:var(--a-7);--t-7:clamp(4rem,.25rem + min(8.6vw,14svh),12rem)}
+  .text{padding-top:var(--a-5);padding-bottom:var(--a-4)}
+  .titel-zweit{margin-top:var(--a-3)}
+  .lead{margin-top:var(--a-4)}
+}
+
+/* ═══ Anschluss: die Woche als Heizkreisverteiler ═══ */
+.woche{position:relative;padding:var(--a-10) var(--rand) var(--a-8);max-width:calc(var(--satz) + 2 * var(--a-8));margin:0 auto}
+/* Leitungstrenner aus B Runde 1: das Paar läuft quer durch die Seite, mit 45°-Versatz um --paar */
+.trenner{position:absolute;top:var(--a-6);left:calc(50% - 50vw);width:100vw;height:calc(var(--paar) * 2 + var(--m-strich))}
+.trenner path{fill:none;stroke-width:var(--m-strich);stroke-linejoin:round}
+.trenner .vl{stroke:var(--vorlauf)}
+.trenner .rl{stroke:var(--ruecklauf)}
+.woche-kopf{display:grid;gap:var(--a-4);max-width:44rem}
+.h2{font:800 var(--t-6)/1 "Bricolage Grotesque","Bricolage Ersatz",sans-serif;letter-spacing:-.01em;color:var(--display);text-wrap:balance}
+.woche-kopf p{color:var(--tinte-2);text-wrap:pretty}
+.plan{--spalte:var(--a-7);--luecke:var(--a-4);--rechts:var(--a-8);--x0:calc((100% - var(--rechts)) / 12);position:relative;margin-top:var(--a-7);padding-top:var(--a-7);
+  --reihe:calc(var(--a-8) + 1px);--h-vl:calc(var(--a-7) + 5 * var(--reihe) - var(--a-8) / 2 - var(--a-5) / 2 + var(--m-strich) - var(--paar));--h-rl:calc(var(--a-7) + 5 * var(--reihe) - var(--a-8) / 2 + var(--a-5) / 2)}
+/* Leitungspaar: kommt vom linken Rand; der Rücklauf-Verteiler steht genau auf 07:00, der Vorlauf-Verteiler --paar davor */
+.verteiler{position:absolute;z-index:1;top:0;left:calc(var(--spalte) + var(--luecke));right:0;bottom:0;pointer-events:none}
+.zulauf{position:absolute;right:auto;border:var(--m-strich) solid;border-left:0;border-bottom:0;left:-100vw}
+.zulauf--vl{top:var(--paar);width:calc(100vw + var(--x0) - var(--paar) + var(--m-strich) / 2);height:var(--h-vl);border-color:var(--vorlauf);border-radius:0 var(--r-2) 0 0}
+.zulauf--rl{top:0;width:calc(100vw + var(--x0) + var(--m-strich) / 2);height:var(--h-rl);border-color:var(--ruecklauf);border-radius:0 var(--r-3) 0 0}
+.tage{position:relative}
+.tag{position:relative;display:grid;grid-template-columns:var(--spalte) minmax(0,1fr);column-gap:var(--luecke);align-items:center;min-height:var(--a-8);border-top:1px solid var(--haar)}
+.tag-name{font-weight:700;color:var(--tinte);font-size:var(--t-2)}
+.spur{position:relative;height:var(--a-8);margin-right:var(--rechts)}
+/* Heizkreis: beginnt genau bei --von (07:00) und kehrt bei --bis um */
+.kreis{position:absolute;z-index:2;top:50%;left:calc((var(--von) - 6) / 12 * 100%);width:calc((var(--bis) - var(--von)) / 12 * 100%);height:var(--a-5);transform:translateY(-50%);border:var(--m-strich) solid;border-left:0;border-color:var(--vorlauf) var(--vorlauf) var(--ruecklauf);border-radius:0 var(--r-voll) var(--r-voll) 0}
+.kreis::before,.kreis::after{content:"";position:absolute;top:calc(var(--m-strich) * -1);height:var(--m-strich);background:var(--vorlauf)}
+.kreis::before{left:calc(var(--paar) * -1);width:var(--paar)}
+/* Brücke: der Vorlauf kreuzt den Rücklauf-Verteiler (07:00) ohne Verbindung */
+.kreis::after{left:calc(var(--m-strich) * -2);width:calc(var(--m-strich) * 4);box-shadow:0 calc(var(--m-strich) * -1.5) 0 0 var(--flaeche),0 calc(var(--m-strich) * 1.5) 0 0 var(--flaeche)}
+.ende{position:absolute;top:50%;left:calc((var(--bis) - 6) / 12 * 100% + var(--a-3));transform:translateY(-50%);font-size:var(--t-1);color:var(--tinte)}
+.tag--fr .ende{font-size:var(--t-5);color:var(--display);font-stretch:75%;font-weight:600}
+.tag--frei .spur{display:flex;align-items:center;margin-right:0}
+.frei{font-size:var(--t-1);color:var(--tinte-2)}
+.achse{position:relative;height:var(--a-7);margin:0 var(--rechts) 0 calc(var(--spalte) + var(--luecke));border-top:1px solid var(--haar);font-size:var(--t-1);color:var(--tinte-2)}
+.achse span{position:absolute;top:var(--a-3);left:calc((var(--h) - 6) / 12 * 100%);transform:translateX(-50%)}
+.achse span::before{content:"";position:absolute;left:50%;top:calc(var(--a-3) * -1);height:var(--a-2);border-left:1px solid var(--tinte-2)}
+
+/* ═══ Offene Stellen ═══ */
+.stellen{padding:0 var(--rand) var(--a-10);max-width:calc(var(--satz) + 2 * var(--a-8));margin:0 auto}
+.stellen-liste{margin-top:var(--a-5);border-top:var(--m-strich) solid var(--strich)}
+.stelle a{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:var(--a-1) var(--a-4);min-height:var(--a-8);padding:var(--a-4) 0;border-bottom:1px solid var(--haar);color:var(--tinte);text-decoration:none}
+.stelle-titel{font:700 var(--t-4)/1.15 "Bricolage Grotesque","Bricolage Ersatz",sans-serif;color:var(--display)}
+.stelle-geld{grid-column:1;font-size:var(--t-1);color:var(--tinte-2)}
+.stelle .ikon{grid-column:2;grid-row:1 / span 2;color:var(--display)}
+@media (hover:hover) and (pointer:fine){.stelle a:hover .stelle-titel{text-decoration:underline;text-decoration-thickness:var(--m-strich);text-underline-offset:.15em}}
+.stelle a:active{transform:translateY(1px)}
+
+/* ═══ Auftakt: der Kreislauf läuft einmal an (Ende 1.120 ms, nur mit Klasse aus dem Kopfskript) ═══
+   Pumpe 0–400 · Vorlauf 160–560 · Wärme 320–920 · Rücklauf 480–880 · Leitungen in den Knopf 320–1.120 · Pfeile 720–960 · Uhr rastet 880–1.120 ein */
+/* Füllart backwards: Endwert = Grundwert, nach dem Auftakt hält keine Animation mehr einen Wert fest */
+@keyframes zeichnen{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes einblenden{from{opacity:0}to{opacity:1}}
+@keyframes halb{from{transform:rotate(-180deg)}to{transform:none}}
+@keyframes stunde{from{transform:rotate(-15deg)}to{transform:none}}
+@keyframes steigen{from{transform:translateY(345px)}to{transform:none}}
+@keyframes fall{from{transform:scaleY(0)}to{transform:none}}
+@keyframes einschub{from{opacity:0;transform:translateX(calc(var(--a-4) * -1))}to{opacity:1;transform:none}}
+[data-motion="luefter"]{transform-origin:236px 462px}
+.zeiger{transform-origin:470px 272px}
+.auftakt [data-motion="luft"]{stroke-dasharray:1 1;animation:zeichnen var(--d-2) var(--k-aus) backwards}
+.auftakt [data-motion="luft"]:nth-child(2){animation-delay:calc(var(--takt) / 2)}
+.auftakt [data-motion="luft"]:nth-child(3){animation-delay:var(--takt)}
+.auftakt [data-motion="luefter"]{animation:halb var(--d-3) var(--k-wechsel) backwards}
+.auftakt [data-motion="vorlauf-haus"]{stroke-dasharray:1 1;animation:zeichnen var(--d-3) var(--k-wechsel) calc(var(--takt) * 2) backwards}
+.auftakt [data-motion="waerme"]{animation:steigen var(--d-4) var(--k-aus) calc(var(--takt) * 4) backwards}
+.auftakt [data-motion="ruecklauf-haus"]{stroke-dasharray:1 1;animation:zeichnen var(--d-3) var(--k-wechsel) calc(var(--takt) * 6) backwards}
+.auftakt [data-motion="erdleitung"]{animation:fall var(--d-2) var(--k-wechsel) calc(var(--takt) * 5) backwards}
+.auftakt [data-motion="erdleitung"].erdleitung--rl{animation-delay:calc(var(--takt) * 8)}
+.auftakt [data-motion="erdleitung-d"]{stroke-dasharray:1 1}
+.auftakt .erdleitung-d--vl .fall-d{animation:zeichnen var(--d-1) linear calc(var(--takt) * 4) backwards}
+.auftakt .erdleitung-d--vl .bogen-d{animation:zeichnen var(--d-1) linear calc(var(--takt) * 4 + var(--d-1)) backwards}
+.auftakt .erdleitung-d--vl .lauf-d{animation:zeichnen var(--d-2) var(--k-aus) calc(var(--takt) * 4 + var(--d-2)) backwards}
+.auftakt .erdleitung-d--rl .lauf-d{animation:zeichnen var(--d-2) var(--k-ein) calc(var(--takt) * 8) backwards}
+.auftakt .erdleitung-d--rl .bogen-d{animation:zeichnen var(--d-1) linear calc(var(--takt) * 8 + var(--d-2)) backwards}
+.auftakt .erdleitung-d--rl .fall-d{animation:zeichnen var(--d-1) linear calc(var(--takt) * 8 + var(--d-2) + var(--d-1)) backwards}
+.auftakt [data-motion="pfeile"]{animation:einblenden var(--d-2) var(--k-aus) calc(var(--takt) * 9) backwards}
+.auftakt [data-motion="uhr"]{animation:halb var(--d-2) var(--k-aus) calc(var(--takt) * 11) backwards}
+.auftakt .zeiger--std[data-motion="uhr"]{animation-name:stunde}
+/* Sicherheitsnetz (E-013): nach 2 s setzt das Kopfskript „ruhe“; was dann noch läuft, steht sofort im Endzustand */
+.ruhe .einstieg [data-motion],.ruhe .einstieg [data-motion] *{animation:none!important}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+
+/* ═══ Druck: alle Rollen auf die hellen Primitiven, Papier weiß ═══ */
+@media print{
+  :root{--flaeche:var(--p-weiss);--flaeche-2:var(--p-wand);--waerme:var(--p-waerme);--tinte:var(--p-tinte);--tinte-2:var(--p-tinte-2);--display:var(--p-navy);--strich:var(--p-navy);--haar:var(--p-haar);
+    --vorlauf:var(--p-rot);--ruecklauf:var(--p-blau);--fokus:var(--p-blau);--plakette:transparent}
+  .kopf-nav,.menue-knopf,.menue,.sprung{display:none!important}
+  .einstieg{min-height:0}
+}
+</style>
+</head>
+<body>
+<a class="sprung" href="#inhalt">Zum Inhalt springen</a>
+
+<header class="kopf">
+  <a class="logo" href="/" aria-label="Bad und Energie GmbH Lahn Dill, zur Startseite" data-motion="unterstrich"><img src="logo.png" alt="Bad und Energie GmbH Lahn Dill" width="662" height="121"></a>
+  <nav class="kopf-nav" aria-label="Hauptnavigation">
+    <ul>
+      <li><a href="/jobs" data-motion="unterstrich">Stellen</a></li>
+      <li><a href="/#vorteile" data-motion="unterstrich">Vorteile</a></li>
+      <li><a href="/#ablauf" data-motion="unterstrich">Ablauf</a></li>
+      <li><a href="/#faq" data-motion="unterstrich">FAQ</a></li>
+    </ul>
+  </nav>
+  <a class="tel" href="tel:+49644142956" data-motion="unterstrich"><svg class="ikon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h3l1.5 4.5-2 1.5a10 10 0 0 0 5.5 5.5l1.5-2L21 14v3a3 3 0 0 1-3 3A15 15 0 0 1 4 6a3 3 0 0 1 3-3z"/></svg><span class="tel-nummer ziffer">06441&nbsp;42956</span><span class="sr-only"> anrufen</span></a>
+  <button class="menue-knopf" type="button" popovertarget="menue" data-motion="flaeche">Menü</button>
+</header>
+
+<div class="menue" id="menue" popover data-motion="menue-oeffnen">
+  <div class="menue-innen" data-motion="menue-leitung">
+    <div class="menue-kopf">
+      <a class="logo" href="/" aria-label="Bad und Energie GmbH Lahn Dill, zur Startseite" data-motion="unterstrich"><img src="logo.png" alt="Bad und Energie GmbH Lahn Dill" width="662" height="121"></a>
+      <button class="menue-zu" type="button" popovertarget="menue" popovertargetaction="hide" data-motion="flaeche">Schließen</button>
+    </div>
+    <nav aria-label="Hauptnavigation (Menü)">
+      <ul class="menue-liste">
+        <li style="--i:0" data-motion="menue-eintrag"><a href="/jobs">Stellen</a></li>
+        <li style="--i:1" data-motion="menue-eintrag"><a href="/#vorteile">Vorteile</a></li>
+        <li style="--i:2" data-motion="menue-eintrag"><a href="/#ablauf">Ablauf</a></li>
+        <li style="--i:3" data-motion="menue-eintrag"><a href="/#faq">FAQ</a></li>
+      </ul>
+    </nav>
+    <div class="menue-fuss">
+      <a class="tel" href="tel:+49644142956" data-motion="unterstrich"><svg class="ikon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h3l1.5 4.5-2 1.5a10 10 0 0 0 5.5 5.5l1.5-2L21 14v3a3 3 0 0 1-3 3A15 15 0 0 1 4 6a3 3 0 0 1 3-3z"/></svg><span class="tel-nummer ziffer">06441&nbsp;42956</span><span class="sr-only"> anrufen</span></a>
+      <a class="aktion" href="/bewerbung" data-motion="druck">Jetzt bewerben<svg class="ikon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+  </div>
+</div>
+
+<main id="inhalt">
+<section class="einstieg" aria-labelledby="einstieg-titel">
+  <div class="text">
+    <p class="ortsmarke mono caps">Seit&nbsp;1926 · Wetzlar</p>
+    <h1 class="titel" id="einstieg-titel">
+      <span class="titel-haupt"><span>SHK-Jobs</span> <span>in Wetzlar.</span></span>
+      <span class="titel-zweit"><span class="klammer" aria-hidden="true"></span><span>Ehrliches Handwerk.</span> <span>Pünktlich Feierabend.</span></span>
+    </h1>
+    <p class="lead">Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt über Tarif und mit persönlicher Hilti-Ausstattung.</p>
+  </div>
+
+  <div class="bild">
+    <div class="rahmen">
+      <svg class="zeichnung" viewBox="0 0 760 520" aria-hidden="true" focusable="false">
+        <!-- Sonne mit 30 Teilstrichen: 30 Tage Urlaub -->
+        <g class="sonne">
+          <circle class="z" cx="0" cy="0" r="24"/>
+          <path class="z" d="M0.0 -36.0L0.0 -52.0M7.5 -35.2L9.6 -45.0M14.6 -32.9L18.7 -42.0M21.2 -29.1L27.0 -37.2M26.8 -24.1L34.2 -30.8M31.2 -18.0L45.0 -26.0M34.2 -11.1L43.7 -14.2M35.8 -3.8L45.7 -4.8M35.8 3.8L45.7 4.8M34.2 11.1L43.7 14.2M31.2 18.0L45.0 26.0M26.8 24.1L34.2 30.8M21.2 29.1L27.0 37.2M14.6 32.9L18.7 42.0M7.5 35.2L9.6 45.0M0.0 36.0L0.0 52.0M-7.5 35.2L-9.6 45.0M-14.6 32.9L-18.7 42.0M-21.2 29.1L-27.0 37.2M-26.8 24.1L-34.2 30.8M-31.2 18.0L-45.0 26.0M-34.2 11.1L-43.7 14.2M-35.8 3.8L-45.7 4.8M-35.8 -3.8L-45.7 -4.8M-34.2 -11.1L-43.7 -14.2M-31.2 -18.0L-45.0 -26.0M-26.8 -24.1L-34.2 -30.8M-21.2 -29.1L-27.0 -37.2M-14.6 -32.9L-18.7 -42.0M-7.5 -35.2L-9.6 -45.0"/>
+        </g>
+        <!-- Luft strömt zur Wärmepumpe -->
+        <g class="nur-mobil">
+          <path class="z" data-motion="luft" pathLength="1" d="M88 420A12 12 0 1 0 76 432H166"/>
+          <path class="z" data-motion="luft" pathLength="1" d="M68 450A12 12 0 1 0 56 462H166"/>
+          <path class="z" data-motion="luft" pathLength="1" d="M104 480A12 12 0 1 0 92 492H166"/>
+        </g>
+        <g class="nur-desktop">
+          <path class="z" data-motion="luft" pathLength="1" d="M124 420A10 10 0 1 0 114 430H166"/>
+          <path class="z" data-motion="luft" pathLength="1" d="M108 452A10 10 0 1 0 98 462H166"/>
+          <path class="z" data-motion="luft" pathLength="1" d="M134 484A10 10 0 1 0 124 494H166"/>
+        </g>
+        <!-- Wärmepumpe (Außeneinheit) -->
+        <rect class="z" x="176" y="412" width="120" height="100" rx="12"/>
+        <path class="z" d="M194 512V520M278 512V520"/>
+        <circle class="z" cx="236" cy="462" r="32"/>
+        <g data-motion="luefter">
+          <path class="z" d="M236 462C236 448 244 438 256 438M236 462C248 469 252 481 246 491M236 462C224 469 212 467 206 457"/>
+        </g>
+        <circle class="voll" cx="236" cy="462" r="4.5"/>
+        <path class="z vl stummel-vl" d="M236 512V520"/>
+        <path class="z rl stummel-rl" d="M236 512V520"/>
+        <!-- Haus aus dem Logo: Giebel 45° -->
+        <clipPath id="waerme-pegel"><rect class="pegel" data-motion="waerme" x="330" y="180" width="280" height="345"/></clipPath>
+        <path class="haus-flaeche" clip-path="url(#waerme-pegel)" d="M340 520V320L470 190L600 320V520Z"/>
+        <path class="z" d="M316 344L470 190L624 344M340 320V520M600 320V520"/>
+        <!-- Fenster mit Sprossenkreuz, Tür -->
+        <g class="fenster">
+          <rect class="z" x="520" y="352" width="48" height="48" rx="4"/>
+          <path class="z" d="M544 352V400M520 376H568M522 520V448H566V520"/>
+          <circle class="voll" cx="557" cy="486" r="3.5"/>
+        </g>
+        <!-- Heizkörper -->
+        <rect class="z" x="392" y="428" width="84" height="60" rx="8"/>
+        <path class="z" d="M413 440V476M434 440V476M455 440V476"/>
+        <!-- Vorlauf und Rücklauf im Haus (Zeichnungsmaß: 28 Einheiten Abstand) -->
+        <path class="z vl" data-motion="vorlauf-haus" pathLength="1" d="M296 444H392"/>
+        <path class="z rl" data-motion="ruecklauf-haus" pathLength="1" d="M392 472H296"/>
+        <g data-motion="pfeile">
+          <path class="z vl" d="M358 437L365 444L358 451"/>
+          <path class="z rl" d="M322 465L315 472L322 479"/>
+        </g>
+        <!-- Uhr im Giebel: 13:30 -->
+        <circle class="z" cx="470" cy="272" r="34"/>
+        <path class="z zeiger zeiger--std" data-motion="uhr" d="M470 272L484.1 257.9"/>
+        <path class="z zeiger zeiger--min" data-motion="uhr" d="M470 272V298"/>
+        <circle class="voll" cx="470" cy="272" r="4"/>
+        <path class="z nur-desktop" d="M494 248L560 182"/>
+        <path class="z nur-mobil hinweis-1330" d="M446 248L428 230H412"/>
+        <!-- Maßkette 35 km: vom Dach bis über den Bildrand -->
+        <path class="z nur-desktop kette-35-d" d="M570 284H900M570 272V296"/>
+      </svg>
+    </div>
+    <div class="fundament" aria-hidden="true"></div>
+    <div class="kette kette--35" aria-hidden="true"></div>
+    <p class="jahre" data-bis="2026-12-31"><span class="jahre-text mono caps" aria-hidden="true">100&nbsp;Jahre Meisterbetrieb</span><span class="kette" aria-hidden="true"></span><span class="jahre-ende mono" aria-hidden="true">2026</span><span class="sr-only">100&nbsp;Jahre Meisterbetrieb (1926–2026)</span></p>
+  </div>
+
+  <div class="boden">
+    <ul class="masse">
+      <li class="mass mass--1330"><span class="mass-wert">13:30</span><span class="mass-name">Freitags Feierabend</span></li>
+      <li class="mass mass--30"><span class="mass-wert">30</span><span class="mass-name">Tage Urlaub</span></li>
+      <li class="mass mass--35"><span class="mass-wert">35&nbsp;km</span><span class="mass-name">Einsatzradius</span></li>
+      <li class="mass mass--1926"><span class="mass-wert">1926</span><span class="mass-name">Gegründet</span></li>
+    </ul>
+    <span class="erdleitung erdleitung--vl" data-motion="erdleitung" aria-hidden="true"></span>
+    <span class="erdleitung erdleitung--rl" data-motion="erdleitung" aria-hidden="true"></span>
+    <svg class="erdleitung-d erdleitung-d--vl" aria-hidden="true" focusable="false">
+      <line class="fall-d" data-motion="erdleitung-d" pathLength="1" x1="100%" y1="0" x2="100%" y2="42" transform="translate(-1.5 0)"/>
+      <svg x="100%" overflow="visible"><path class="bogen-d" data-motion="erdleitung-d" pathLength="1" d="M-1.5 42A12 12 0 0 1 -13.5 54"/></svg>
+      <line class="lauf-d" data-motion="erdleitung-d" pathLength="1" x1="100%" y1="54" x2="0" y2="54" transform="translate(-13.5 0)"/>
+    </svg>
+    <svg class="erdleitung-d erdleitung-d--rl" aria-hidden="true" focusable="false">
+      <line class="lauf-d" data-motion="erdleitung-d" pathLength="1" x1="0" y1="66" x2="100%" y2="66" transform="translate(-25.5 0)"/>
+      <svg x="100%" overflow="visible"><path class="bogen-d" data-motion="erdleitung-d" pathLength="1" d="M-25.5 66A24 24 0 0 0 -1.5 42"/></svg>
+      <line class="fall-d" data-motion="erdleitung-d" pathLength="1" x1="100%" y1="42" x2="100%" y2="0" transform="translate(-1.5 0)"/>
+    </svg>
+    <a class="aktion" href="/bewerbung" data-motion="druck">Jetzt bewerben<svg class="ikon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <p class="mikro">Dauert ca. <span class="ziffer">60</span>&nbsp;Sekunden. Kein Lebenslauf nötig.</p>
+    <a class="zweitweg" href="#stellen"><span>Offene Stellen ansehen<svg class="ikon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></span></a>
+  </div>
+</section>
+
+<section class="woche" aria-labelledby="woche-titel">
+  <svg class="trenner" aria-hidden="true" focusable="false">
+    <svg x="18%" overflow="visible">
+      <path class="vl" d="M-4000 1.5H0L12 13.5H4000"/>
+      <path class="rl" d="M-4000 13.5H-5L7 25.5H4000"/>
+    </svg>
+  </svg>
+  <div class="woche-kopf">
+    <h2 class="h2" id="woche-titel">Freitags ab 13:30&nbsp;Uhr Feierabend</h2>
+    <p>Feste Arbeitszeiten: Montag bis Donnerstag von <span class="ziffer">07:00</span> bis <span class="ziffer">16:45</span>&nbsp;Uhr, Freitag von <span class="ziffer">07:00</span> bis <span class="ziffer">13:30</span>&nbsp;Uhr.</p>
+  </div>
+  <div class="plan">
+    <div class="verteiler" aria-hidden="true"><span class="zulauf zulauf--rl"></span><span class="zulauf zulauf--vl"></span></div>
+    <ol class="tage">
+      <li class="tag" style="--von:7;--bis:16.75"><span class="tag-name">Mo</span><span class="spur" aria-hidden="true"><span class="kreis"></span><span class="ende mono">16:45</span></span><span class="sr-only">07:00–16:45&nbsp;Uhr</span></li>
+      <li class="tag" style="--von:7;--bis:16.75"><span class="tag-name">Di</span><span class="spur" aria-hidden="true"><span class="kreis"></span><span class="ende mono">16:45</span></span><span class="sr-only">07:00–16:45&nbsp;Uhr</span></li>
+      <li class="tag" style="--von:7;--bis:16.75"><span class="tag-name">Mi</span><span class="spur" aria-hidden="true"><span class="kreis"></span><span class="ende mono">16:45</span></span><span class="sr-only">07:00–16:45&nbsp;Uhr</span></li>
+      <li class="tag" style="--von:7;--bis:16.75"><span class="tag-name">Do</span><span class="spur" aria-hidden="true"><span class="kreis"></span><span class="ende mono">16:45</span></span><span class="sr-only">07:00–16:45&nbsp;Uhr</span></li>
+      <li class="tag tag--fr" style="--von:7;--bis:13.5"><span class="tag-name">Fr</span><span class="spur" aria-hidden="true"><span class="kreis"></span><span class="ende mono">13:30</span></span><span class="sr-only">07:00–13:30&nbsp;Uhr</span></li>
+      <li class="tag tag--frei"><span class="tag-name">Sa, So</span><span class="spur"><span class="frei mono caps">Kein Wochenend-Notdienst</span></span></li>
+    </ol>
+    <div class="achse mono" aria-hidden="true"><span style="--h:7">07</span><span style="--h:10">10</span><span style="--h:13">13</span><span style="--h:16">16</span></div>
+  </div>
+</section>
+
+<section class="stellen" id="stellen" aria-labelledby="stellen-titel">
+  <h2 class="h2" id="stellen-titel">Offene Stellen</h2>
+  <ul class="stellen-liste">
+    <li class="stelle"><a href="/jobs/anlagenmechaniker-shk-wetzlar"><span class="stelle-titel">Anlagenmechaniker SHK</span><span class="stelle-geld mono">3.600–4.600&nbsp;€ / Monat</span><svg class="ikon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li>
+    <li class="stelle"><a href="/jobs/kundendiensttechniker-waermepumpe-wetzlar"><span class="stelle-titel">Kundendiensttechniker</span><span class="stelle-geld mono">3.800–4.900&nbsp;€ / Monat</span><svg class="ikon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li>
+    <li class="stelle"><a href="/jobs/obermonteur-projektleiter-shk-wetzlar"><span class="stelle-titel">Obermonteur / Projektleiter</span><span class="stelle-geld mono">4.400–5.600&nbsp;€ / Monat</span><svg class="ikon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li>
+    <li class="stelle"><a href="/jobs/ausbildung-anlagenmechaniker-shk-wetzlar"><span class="stelle-titel">Ausbildung Anlagenmechaniker</span><span class="stelle-geld mono">1.050–1.400&nbsp;€ / Monat</span><svg class="ikon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li>
+  </ul>
+</section>
+</main>
+</body>
+</html>
