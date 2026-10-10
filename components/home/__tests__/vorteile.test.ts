@@ -225,6 +225,13 @@ describe('Zusagen und Werkzeug & Fuhrpark (E-START-025, -026)', () => {
     expect(renderGrid()).toContain(`<h3 id="${ZUSAGEN_ID}"`);
   });
 
+  it('equipment rows carry the label box with a family icon (as at the hero drawing)', () => {
+    const html = renderGrid();
+    const block = html.slice(html.indexOf('id="ausstattung"'));
+    expect(block.match(/data-zeichnung="etikettkasten"/g)).toHaveLength(GERAETE.length);
+    GERAETE.forEach((geraet, i) => expect(block).toContain(`0${i + 1} · ${geraet.etikett}`));
+  });
+
   it('equipment: Hilti, vehicle, measurement tools, iPad from the facts, workwear below', () => {
     expect(GERAETE.map((g) => g.id)).toEqual(['hilti', 'vehicle', 'measurementTools', 'ipadSmartphone']);
     for (const geraet of GERAETE) {
