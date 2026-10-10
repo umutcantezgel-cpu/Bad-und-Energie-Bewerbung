@@ -1,0 +1,2094 @@
+{
+  "label": "v6-ende",
+  "base": "http://localhost:3471",
+  "erstellt": "2026-10-10T18:04:13.682Z",
+  "dauerSekunden": 386,
+  "chromium": "Chromium 141.0.7390.37",
+  "lighthouse": "13.5.0",
+  "node": "v22.22.0",
+  "laeufeJeKombination": 5,
+  "wiederholungenBeiTechnischemFehler": 2,
+  "formfaktoren": [
+    "mobile",
+    "desktop"
+  ],
+  "aufwaermen": true,
+  "statistik": "Median (bei gerader Anzahl: Mittel der beiden mittleren Werte), min, max über die gültigen Läufe",
+  "kilobyte": "1 KB = 1024 Byte",
+  "bedingungen": {
+    "mobile": {
+      "formFactor": "mobile",
+      "drosselungsmethode": "simulate",
+      "drosselung": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "bildschirm": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      },
+      "userAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36"
+    },
+    "desktop": {
+      "formFactor": "desktop",
+      "drosselungsmethode": "simulate",
+      "drosselung": {
+        "rttMs": 40,
+        "throughputKbps": 10240,
+        "requestLatencyMs": 0,
+        "downloadThroughputKbps": 0,
+        "uploadThroughputKbps": 0,
+        "cpuSlowdownMultiplier": 1
+      },
+      "bildschirm": {
+        "mobile": false,
+        "width": 1350,
+        "height": 940,
+        "deviceScaleFactor": 1,
+        "disabled": false
+      },
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+    }
+  },
+  "einstellungen": {
+    "onlyCategories": [
+      "performance",
+      "accessibility",
+      "best-practices",
+      "seo"
+    ],
+    "disableFullPageScreenshot": true,
+    "strikt_nacheinander": true,
+    "chromiumProLauf": "neu gestartet",
+    "fremdhostSperre": "host-resolver-rules: nur localhost auflösbar"
+  },
+  "budget": {
+    "perfMobilMin": 90,
+    "lcpSMax": 2.5,
+    "clsMax": 0.1,
+    "tbtMsMax": 200
+  },
+  "ergebnisse": [
+    {
+      "pfad": "/",
+      "slug": "start",
+      "haupt": true,
+      "url": "http://localhost:3471/",
+      "formfaktor": "mobile",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 94,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1372.2105999999999,
+        "lcpMs": 2958.3159000000014,
+        "cls": 0,
+        "tbtMs": 67.49999999999977,
+        "siMs": 1479.1634334219452,
+        "ttiMs": 3837.5825000000004,
+        "bytes": 476343,
+        "anfragen": 28,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 94,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1365.1747,
+        "lcpMs": 2947.7620499999994,
+        "cls": 0,
+        "tbtMs": 59,
+        "siMs": 1450.8903570485818,
+        "ttiMs": 3736.4867499999996,
+        "bytes": 475585,
+        "anfragen": 28,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 94,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1386.3504000000003,
+        "lcpMs": 2979.5256000000018,
+        "cls": 0,
+        "tbtMs": 102.89470000000006,
+        "siMs": 1714.3695924776196,
+        "ttiMs": 3992.2760000000007,
+        "bytes": 476527,
+        "anfragen": 28,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "div.einstieg-module__tfiXEq__einstieg > div.einstieg-module__tfiXEq__rest > div.einstieg-module__tfiXEq__handlung > p.einstieg-module__tfiXEq__lead",
+      "cpuBenchmarkMedian": 2097.5,
+      "budget": {
+        "urteil": "über Budget",
+        "verletzt": [
+          "LCP 2,96 s > 2,5 s"
+        ]
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 94,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1386.3504000000003,
+          "lcpMs": 2979.5256000000018,
+          "cls": 0,
+          "tbtMs": 90.49999999999955,
+          "siMs": 1626.52845033317,
+          "ttiMs": 3992.2760000000007,
+          "bytes": 476524,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__einstieg > div.einstieg-module__tfiXEq__rest > div.einstieg-module__tfiXEq__handlung > p.einstieg-module__tfiXEq__lead",
+            "snippet": "<p class=\"einstieg-module__tfiXEq__lead\">",
+            "bezeichnung": "Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt üb…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 20,
+            "elementRenderDelay": 260
+          },
+          "rohdatei": ".roh/v6-ende/lh/start-mobile-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 94,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1372.7820000000002,
+          "lcpMs": 2959.1730000000002,
+          "cls": 0,
+          "tbtMs": 66.5,
+          "siMs": 1714.3695924776196,
+          "ttiMs": 3857.205000000001,
+          "bytes": 475585,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__einstieg > div.einstieg-module__tfiXEq__rest > div.einstieg-module__tfiXEq__handlung > p.einstieg-module__tfiXEq__lead",
+            "snippet": "<p class=\"einstieg-module__tfiXEq__lead\">",
+            "bezeichnung": "Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt üb…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 19,
+            "elementRenderDelay": 266
+          },
+          "rohdatei": ".roh/v6-ende/lh/start-mobile-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 94,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1372.2105999999999,
+          "lcpMs": 2958.3159000000014,
+          "cls": 0,
+          "tbtMs": 102.89470000000006,
+          "siMs": 1479.1634334219452,
+          "ttiMs": 3822.876500000001,
+          "bytes": 476343,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__einstieg > div.einstieg-module__tfiXEq__rest > div.einstieg-module__tfiXEq__handlung > p.einstieg-module__tfiXEq__lead",
+            "snippet": "<p class=\"einstieg-module__tfiXEq__lead\">",
+            "bezeichnung": "Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt üb…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 19,
+            "elementRenderDelay": 224
+          },
+          "rohdatei": ".roh/v6-ende/lh/start-mobile-3.json"
+        },
+        {
+          "n": 4,
+          "leistung": 94,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1365.1747,
+          "lcpMs": 2947.7620499999994,
+          "cls": 0,
+          "tbtMs": 59,
+          "siMs": 1450.8903570485818,
+          "ttiMs": 3736.4867499999996,
+          "bytes": 476527,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__einstieg > div.einstieg-module__tfiXEq__rest > div.einstieg-module__tfiXEq__handlung > p.einstieg-module__tfiXEq__lead",
+            "snippet": "<p class=\"einstieg-module__tfiXEq__lead\">",
+            "bezeichnung": "Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt üb…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 19,
+            "elementRenderDelay": 232
+          },
+          "rohdatei": ".roh/v6-ende/lh/start-mobile-4.json"
+        },
+        {
+          "n": 5,
+          "leistung": 94,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1368.113,
+          "lcpMs": 2952.169500000002,
+          "cls": 0,
+          "tbtMs": 67.49999999999977,
+          "siMs": 1467.3514359368937,
+          "ttiMs": 3837.5825000000004,
+          "bytes": 476343,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__einstieg > div.einstieg-module__tfiXEq__rest > div.einstieg-module__tfiXEq__handlung > p.einstieg-module__tfiXEq__lead",
+            "snippet": "<p class=\"einstieg-module__tfiXEq__lead\">",
+            "bezeichnung": "Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt üb…"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 14,
+            "elementRenderDelay": 223
+          },
+          "rohdatei": ".roh/v6-ende/lh/start-mobile-5.json"
+        }
+      ]
+    },
+    {
+      "pfad": "/",
+      "slug": "start",
+      "haupt": true,
+      "url": "http://localhost:3471/",
+      "formfaktor": "desktop",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 384.9152,
+        "lcpMs": 803.8303999999998,
+        "cls": 0,
+        "tbtMs": 0,
+        "siMs": 496.9427804517701,
+        "ttiMs": 803.8303999999999,
+        "bytes": 480409,
+        "anfragen": 30,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 370.09760000000006,
+        "lcpMs": 719.874,
+        "cls": 0,
+        "tbtMs": 0,
+        "siMs": 471.0418518200388,
+        "ttiMs": 719.874,
+        "bytes": 478909,
+        "anfragen": 30,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 389.937,
+        "lcpMs": 820.3568,
+        "cls": 0,
+        "tbtMs": 2,
+        "siMs": 503.7863564293112,
+        "ttiMs": 820.3568,
+        "bytes": 480411,
+        "anfragen": 30,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "div.einstieg-module__tfiXEq__kopf > h1#hero-title > span.einstieg-module__tfiXEq__titelHaupt > span",
+      "cpuBenchmarkMedian": 2107,
+      "budget": {
+        "urteil": "ok",
+        "verletzt": []
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 380.42590000000007,
+          "lcpMs": 812.8517999999998,
+          "cls": 0,
+          "tbtMs": 2,
+          "siMs": 500.4111911580236,
+          "ttiMs": 812.8517999999999,
+          "bytes": 478909,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__kopf > h1#hero-title > span.einstieg-module__tfiXEq__titelHaupt > span",
+            "snippet": "<span>",
+            "bezeichnung": "in Wetzlar."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 18,
+            "elementRenderDelay": 312
+          },
+          "rohdatei": ".roh/v6-ende/lh/start-desktop-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 389.6784,
+          "lcpMs": 820.3568,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 496.9427804517701,
+          "ttiMs": 820.3568,
+          "bytes": 480409,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__kopf > h1#hero-title > span.einstieg-module__tfiXEq__titelHaupt > span",
+            "snippet": "<span>",
+            "bezeichnung": "in Wetzlar."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 22,
+            "elementRenderDelay": 274
+          },
+          "rohdatei": ".roh/v6-ende/lh/start-desktop-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 370.09760000000006,
+          "lcpMs": 776.1952000000002,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 503.7863564293112,
+          "ttiMs": 776.1952000000003,
+          "bytes": 480411,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__kopf > h1#hero-title > span.einstieg-module__tfiXEq__titelHaupt > span",
+            "snippet": "<span>",
+            "bezeichnung": "in Wetzlar."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 14,
+            "elementRenderDelay": 283
+          },
+          "rohdatei": ".roh/v6-ende/lh/start-desktop-3.json"
+        },
+        {
+          "n": 4,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 389.937,
+          "lcpMs": 719.874,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 471.0418518200388,
+          "ttiMs": 719.874,
+          "bytes": 480410,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__kopf > h1#hero-title > span.einstieg-module__tfiXEq__titelHaupt > span",
+            "snippet": "<span>",
+            "bezeichnung": "in Wetzlar."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 13,
+            "elementRenderDelay": 223
+          },
+          "rohdatei": ".roh/v6-ende/lh/start-desktop-4.json"
+        },
+        {
+          "n": 5,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 384.9152,
+          "lcpMs": 803.8303999999998,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 491.9506869440985,
+          "ttiMs": 803.8303999999999,
+          "bytes": 479465,
+          "anfragen": 30,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.einstieg-module__tfiXEq__kopf > h1#hero-title > span.einstieg-module__tfiXEq__titelHaupt > span",
+            "snippet": "<span>",
+            "bezeichnung": "in Wetzlar."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 14,
+            "elementRenderDelay": 307
+          },
+          "rohdatei": ".roh/v6-ende/lh/start-desktop-5.json"
+        }
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "haupt": true,
+      "url": "http://localhost:3471/jobs",
+      "formfaktor": "mobile",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 93,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1216.3972,
+        "lcpMs": 3240.7758999999996,
+        "cls": 0,
+        "tbtMs": 53.80140000000006,
+        "siMs": 1216.3972,
+        "ttiMs": 3409.0958000000005,
+        "bytes": 429106,
+        "anfragen": 27,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 93,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1215.0133,
+        "lcpMs": 2649.1257000000005,
+        "cls": 0,
+        "tbtMs": 43.00000000000023,
+        "siMs": 1215.0133,
+        "ttiMs": 3334.519950000001,
+        "bytes": 427969,
+        "anfragen": 27,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 96,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1219.8506,
+        "lcpMs": 3261.0724,
+        "cls": 0,
+        "tbtMs": 113.00000000000045,
+        "siMs": 1219.8506,
+        "ttiMs": 3431.625700000001,
+        "bytes": 429108,
+        "anfragen": 27,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "main#main > header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel",
+      "cpuBenchmarkMedian": 2112.5,
+      "budget": {
+        "urteil": "über Budget",
+        "verletzt": [
+          "LCP 3,24 s > 2,5 s"
+        ]
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 93,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1216.3972,
+          "lcpMs": 3251.5958000000005,
+          "cls": 0,
+          "tbtMs": 53.80140000000006,
+          "siMs": 1216.3972,
+          "ttiMs": 3409.0958000000005,
+          "bytes": 429108,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "main#main > header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel",
+            "snippet": "<h1 id=\"seitenkopf-titel\" class=\"seitenkopf-module__g14wBq__titel text-display text-brand\">",
+            "bezeichnung": "Offene Stellen in Wetzlar und Umgebung"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 16,
+            "elementRenderDelay": 226
+          },
+          "rohdatei": ".roh/v6-ende/lh/stellen-mobile-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 96,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1216.0838,
+          "lcpMs": 2649.1257000000005,
+          "cls": 0,
+          "tbtMs": 62.49999999999977,
+          "siMs": 1216.0838,
+          "ttiMs": 3431.625700000001,
+          "bytes": 427969,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "main#main > header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel",
+            "snippet": "<h1 id=\"seitenkopf-titel\" class=\"seitenkopf-module__g14wBq__titel text-display text-brand\">",
+            "bezeichnung": "Offene Stellen in Wetzlar und Umgebung"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 12,
+            "elementRenderDelay": 177
+          },
+          "rohdatei": ".roh/v6-ende/lh/stellen-mobile-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 95,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1215.0133,
+          "lcpMs": 2797.51995,
+          "cls": 0,
+          "tbtMs": 113.00000000000045,
+          "siMs": 1215.0133,
+          "ttiMs": 3334.519950000001,
+          "bytes": 429106,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "main#main > header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel",
+            "snippet": "<h1 id=\"seitenkopf-titel\" class=\"seitenkopf-module__g14wBq__titel text-display text-brand\">",
+            "bezeichnung": "Offene Stellen in Wetzlar und Umgebung"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 14,
+            "elementRenderDelay": 210
+          },
+          "rohdatei": ".roh/v6-ende/lh/stellen-mobile-3.json"
+        },
+        {
+          "n": 4,
+          "leistung": 93,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1219.3816,
+          "lcpMs": 3261.0724,
+          "cls": 0,
+          "tbtMs": 53.5,
+          "siMs": 1219.3816,
+          "ttiMs": 3418.5724,
+          "bytes": 429107,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "main#main > header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel",
+            "snippet": "<h1 id=\"seitenkopf-titel\" class=\"seitenkopf-module__g14wBq__titel text-display text-brand\">",
+            "bezeichnung": "Offene Stellen in Wetzlar und Umgebung"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 13,
+            "elementRenderDelay": 177
+          },
+          "rohdatei": ".roh/v6-ende/lh/stellen-mobile-4.json"
+        },
+        {
+          "n": 5,
+          "leistung": 93,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1219.8506,
+          "lcpMs": 3240.7758999999996,
+          "cls": 0,
+          "tbtMs": 43.00000000000023,
+          "siMs": 1219.8506,
+          "ttiMs": 3398.2758999999996,
+          "bytes": 427970,
+          "anfragen": 27,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "main#main > header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel",
+            "snippet": "<h1 id=\"seitenkopf-titel\" class=\"seitenkopf-module__g14wBq__titel text-display text-brand\">",
+            "bezeichnung": "Offene Stellen in Wetzlar und Umgebung"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 15,
+            "elementRenderDelay": 185
+          },
+          "rohdatei": ".roh/v6-ende/lh/stellen-mobile-5.json"
+        }
+      ]
+    },
+    {
+      "pfad": "/jobs",
+      "slug": "stellen",
+      "haupt": true,
+      "url": "http://localhost:3471/jobs",
+      "formfaktor": "desktop",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 337.4286,
+        "lcpMs": 694.335175,
+        "cls": 0,
+        "tbtMs": 0,
+        "siMs": 361.99713233540285,
+        "ttiMs": 696.8256775000001,
+        "bytes": 453699,
+        "anfragen": 32,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 332.3258,
+        "lcpMs": 674.84995,
+        "cls": 0,
+        "tbtMs": 0,
+        "siMs": 339.3033006915955,
+        "ttiMs": 676.84995,
+        "bytes": 452759,
+        "anfragen": 32,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 352.6201,
+        "lcpMs": 705.5000499999999,
+        "cls": 0,
+        "tbtMs": 0,
+        "siMs": 377.5651344013796,
+        "ttiMs": 706.535765,
+        "bytes": 453843,
+        "anfragen": 32,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "main#main > header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel",
+      "cpuBenchmarkMedian": 2161.5,
+      "budget": {
+        "urteil": "ok",
+        "verletzt": []
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 332.3258,
+          "lcpMs": 702.07015,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 339.3033006915955,
+          "ttiMs": 703.3282950000001,
+          "bytes": 453843,
+          "anfragen": 32,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "main#main > header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel",
+            "snippet": "<h1 id=\"seitenkopf-titel\" class=\"seitenkopf-module__g14wBq__titel text-display text-brand\">",
+            "bezeichnung": "Offene Stellen in Wetzlar und Umgebung"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 16,
+            "elementRenderDelay": 201
+          },
+          "rohdatei": ".roh/v6-ende/lh/stellen-desktop-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 333.2333,
+          "lcpMs": 674.84995,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 342.2001406797944,
+          "ttiMs": 676.84995,
+          "bytes": 452759,
+          "anfragen": 32,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "main#main > header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel",
+            "snippet": "<h1 id=\"seitenkopf-titel\" class=\"seitenkopf-module__g14wBq__titel text-display text-brand\">",
+            "bezeichnung": "Offene Stellen in Wetzlar und Umgebung"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 11,
+            "elementRenderDelay": 194
+          },
+          "rohdatei": ".roh/v6-ende/lh/stellen-desktop-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 340.4456,
+          "lcpMs": 693.2798,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 365.95327900302505,
+          "ttiMs": 696.24094,
+          "bytes": 453842,
+          "anfragen": 32,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "main#main > header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel",
+            "snippet": "<h1 id=\"seitenkopf-titel\" class=\"seitenkopf-module__g14wBq__titel text-display text-brand\">",
+            "bezeichnung": "Offene Stellen in Wetzlar und Umgebung"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 14,
+            "elementRenderDelay": 243
+          },
+          "rohdatei": ".roh/v6-ende/lh/stellen-desktop-3.json"
+        },
+        {
+          "n": 4,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 352.6201,
+          "lcpMs": 694.335175,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 377.5651344013796,
+          "ttiMs": 696.8256775000001,
+          "bytes": 453699,
+          "anfragen": 32,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "main#main > header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel",
+            "snippet": "<h1 id=\"seitenkopf-titel\" class=\"seitenkopf-module__g14wBq__titel text-display text-brand\">",
+            "bezeichnung": "Offene Stellen in Wetzlar und Umgebung"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 16,
+            "elementRenderDelay": 267
+          },
+          "rohdatei": ".roh/v6-ende/lh/stellen-desktop-4.json"
+        },
+        {
+          "n": 5,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 337.4286,
+          "lcpMs": 705.5000499999999,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 361.99713233540285,
+          "ttiMs": 706.535765,
+          "bytes": 453021,
+          "anfragen": 32,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "main#main > header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel",
+            "snippet": "<h1 id=\"seitenkopf-titel\" class=\"seitenkopf-module__g14wBq__titel text-display text-brand\">",
+            "bezeichnung": "Offene Stellen in Wetzlar und Umgebung"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 15,
+            "elementRenderDelay": 222
+          },
+          "rohdatei": ".roh/v6-ende/lh/stellen-desktop-5.json"
+        }
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "haupt": true,
+      "url": "http://localhost:3471/jobs/anlagenmechaniker-shk-wetzlar",
+      "formfaktor": "mobile",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 96,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1218.8704,
+        "lcpMs": 2653.3055999999997,
+        "cls": 0,
+        "tbtMs": 60.5,
+        "siMs": 1218.8704,
+        "ttiMs": 3782.83899,
+        "bytes": 492456,
+        "anfragen": 31,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 95,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1213.9912,
+        "lcpMs": 2642.4889999999996,
+        "cls": 0,
+        "tbtMs": 41,
+        "siMs": 1213.9912,
+        "ttiMs": 3610.3949599999996,
+        "bytes": 492415,
+        "anfragen": 31,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 96,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1229.842,
+        "lcpMs": 2819.763,
+        "cls": 0,
+        "tbtMs": 107.9956000000002,
+        "siMs": 1229.842,
+        "ttiMs": 3909.130420000001,
+        "bytes": 492456,
+        "anfragen": 31,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+      "cpuBenchmarkMedian": 2049,
+      "budget": {
+        "urteil": "über Budget",
+        "verletzt": [
+          "LCP 2,65 s > 2,5 s"
+        ]
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 96,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1217.6276,
+          "lcpMs": 2651.4413999999997,
+          "cls": 0,
+          "tbtMs": 60.5,
+          "siMs": 1217.6276,
+          "ttiMs": 3782.83899,
+          "bytes": 492456,
+          "anfragen": 31,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Anlagen­mechaniker SHK"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 14,
+            "elementRenderDelay": 185
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-anlagenmechaniker-mobile-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 95,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1229.842,
+          "lcpMs": 2819.763,
+          "cls": 0,
+          "tbtMs": 41,
+          "siMs": 1229.842,
+          "ttiMs": 3620.1695500000005,
+          "bytes": 492456,
+          "anfragen": 31,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Anlagen­mechaniker SHK"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 15,
+            "elementRenderDelay": 209
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-anlagenmechaniker-mobile-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 96,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1213.9912,
+          "lcpMs": 2642.4889999999996,
+          "cls": 0,
+          "tbtMs": 107.9956000000002,
+          "siMs": 1213.9912,
+          "ttiMs": 3909.130420000001,
+          "bytes": 492456,
+          "anfragen": 31,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Anlagen­mechaniker SHK"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 13,
+            "elementRenderDelay": 176
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-anlagenmechaniker-mobile-3.json"
+        },
+        {
+          "n": 4,
+          "leistung": 95,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1229.3731,
+          "lcpMs": 2819.0596499999997,
+          "cls": 0,
+          "tbtMs": 67,
+          "siMs": 1229.3731,
+          "ttiMs": 3801.2372525,
+          "bytes": 492415,
+          "anfragen": 31,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Anlagen­mechaniker SHK"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 16,
+            "elementRenderDelay": 213
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-anlagenmechaniker-mobile-4.json"
+        },
+        {
+          "n": 5,
+          "leistung": 96,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1218.8704,
+          "lcpMs": 2653.3055999999997,
+          "cls": 0,
+          "tbtMs": 52,
+          "siMs": 1218.8704,
+          "ttiMs": 3610.3949599999996,
+          "bytes": 492456,
+          "anfragen": 31,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Anlagen­mechaniker SHK"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 14,
+            "elementRenderDelay": 198
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-anlagenmechaniker-mobile-5.json"
+        }
+      ]
+    },
+    {
+      "pfad": "/jobs/anlagenmechaniker-shk-wetzlar",
+      "slug": "stelle-anlagenmechaniker",
+      "haupt": true,
+      "url": "http://localhost:3471/jobs/anlagenmechaniker-shk-wetzlar",
+      "formfaktor": "desktop",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 346.1452,
+        "lcpMs": 702.0152,
+        "cls": 0,
+        "tbtMs": 0,
+        "siMs": 353.6611274345096,
+        "ttiMs": 703.27256,
+        "bytes": 486981,
+        "anfragen": 33,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 334.49957387090274,
+        "lcpMs": 566.464925,
+        "cls": 0,
+        "tbtMs": 0,
+        "siMs": 347.60022889551794,
+        "ttiMs": 569.1858525,
+        "bytes": 486981,
+        "anfragen": 33,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 347.8371,
+        "lcpMs": 731.9095378978234,
+        "cls": 0,
+        "tbtMs": 1.5,
+        "siMs": 427.2383168669501,
+        "ttiMs": 743.9991477418052,
+        "bytes": 486982,
+        "anfragen": 33,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+      "cpuBenchmarkMedian": 2000.5,
+      "budget": {
+        "urteil": "ok",
+        "verletzt": []
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 334.49957387090274,
+          "lcpMs": 710.8742542740796,
+          "cls": 0,
+          "tbtMs": 1.5,
+          "siMs": 371.831068475233,
+          "ttiMs": 743.9991477418052,
+          "bytes": 486981,
+          "anfragen": 33,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Anlagen­mechaniker SHK"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 17,
+            "elementRenderDelay": 249
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-anlagenmechaniker-desktop-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 347.8371,
+          "lcpMs": 566.464925,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 347.8371,
+          "ttiMs": 569.1858525,
+          "bytes": 486982,
+          "anfragen": 33,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Anlagen­mechaniker SHK"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 17,
+            "elementRenderDelay": 196
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-anlagenmechaniker-desktop-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 346.1452,
+          "lcpMs": 604.7541000000001,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 347.60022889551794,
+          "ttiMs": 607.1077300000002,
+          "bytes": 486981,
+          "anfragen": 33,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Anlagen­mechaniker SHK"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 13,
+            "elementRenderDelay": 204
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-anlagenmechaniker-desktop-3.json"
+        },
+        {
+          "n": 4,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 336.2944,
+          "lcpMs": 702.0152,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 353.6611274345096,
+          "ttiMs": 703.27256,
+          "bytes": 486981,
+          "anfragen": 33,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Anlagen­mechaniker SHK"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 14,
+            "elementRenderDelay": 218
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-anlagenmechaniker-desktop-4.json"
+        },
+        {
+          "n": 5,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 347.6625930844705,
+          "lcpMs": 731.9095378978234,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 427.2383168669501,
+          "ttiMs": 732.6511027249351,
+          "bytes": 486981,
+          "anfragen": 33,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Anlagen­mechaniker SHK"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 21,
+            "elementRenderDelay": 309
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-anlagenmechaniker-desktop-5.json"
+        }
+      ]
+    },
+    {
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "slug": "stelle-kundendienst",
+      "haupt": false,
+      "url": "http://localhost:3471/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "formfaktor": "mobile",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 96,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1215.7608,
+        "lcpMs": 2657.1160499999996,
+        "cls": 0,
+        "tbtMs": 64,
+        "siMs": 1217.2514,
+        "ttiMs": 3785.1212350000005,
+        "bytes": 494771,
+        "anfragen": 31,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 92,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1214.7486,
+        "lcpMs": 2647.8897,
+        "cls": 0,
+        "tbtMs": 51,
+        "siMs": 1215.2598,
+        "ttiMs": 3768.286145,
+        "bytes": 494771,
+        "anfragen": 31,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 96,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1221.4107,
+        "lcpMs": 3274.6412,
+        "cls": 0,
+        "tbtMs": 78.5,
+        "siMs": 1234.6713047770722,
+        "ttiMs": 3794.728765,
+        "bytes": 494771,
+        "anfragen": 31,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+      "cpuBenchmarkMedian": 1964,
+      "budget": {
+        "urteil": "über Budget",
+        "verletzt": [
+          "LCP 2,66 s > 2,5 s"
+        ]
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 96,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1217.2514,
+          "lcpMs": 2650.8771,
+          "cls": 0,
+          "tbtMs": 65,
+          "siMs": 1217.2514,
+          "ttiMs": 3785.1212350000005,
+          "bytes": 494771,
+          "anfragen": 31,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kunden­dienst­techniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 14,
+            "elementRenderDelay": 186
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-kundendienst-mobile-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 96,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1215.2598,
+          "lcpMs": 2647.8897,
+          "cls": 0,
+          "tbtMs": 51,
+          "siMs": 1215.2598,
+          "ttiMs": 3768.286145,
+          "bytes": 494771,
+          "anfragen": 31,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kunden­dienst­techniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 12,
+            "elementRenderDelay": 175
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-kundendienst-mobile-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 96,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1221.4107,
+          "lcpMs": 2657.1160499999996,
+          "cls": 0,
+          "tbtMs": 61.5,
+          "siMs": 1221.4107,
+          "ttiMs": 3785.8039925000003,
+          "bytes": 494771,
+          "anfragen": 31,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kunden­dienst­techniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 15,
+            "elementRenderDelay": 201
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-kundendienst-mobile-3.json"
+        },
+        {
+          "n": 4,
+          "leistung": 92,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1215.7608,
+          "lcpMs": 3274.6412,
+          "cls": 0,
+          "tbtMs": 64,
+          "siMs": 1215.7608,
+          "ttiMs": 3780.77542,
+          "bytes": 494771,
+          "anfragen": 31,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kunden­dienst­techniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 14,
+            "elementRenderDelay": 197
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-kundendienst-mobile-4.json"
+        },
+        {
+          "n": 5,
+          "leistung": 95,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1214.7486,
+          "lcpMs": 2797.1229,
+          "cls": 0,
+          "tbtMs": 78.5,
+          "siMs": 1234.6713047770722,
+          "ttiMs": 3794.728765,
+          "bytes": 494771,
+          "anfragen": 31,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kunden­dienst­techniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 16,
+            "elementRenderDelay": 228
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-kundendienst-mobile-5.json"
+        }
+      ]
+    },
+    {
+      "pfad": "/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "slug": "stelle-kundendienst",
+      "haupt": false,
+      "url": "http://localhost:3471/jobs/kundendiensttechniker-waermepumpe-wetzlar",
+      "formfaktor": "desktop",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 336.081,
+        "lcpMs": 690.14825,
+        "cls": 0,
+        "tbtMs": 1,
+        "siMs": 342.3563654198786,
+        "ttiMs": 692.693225,
+        "bytes": 489297,
+        "anfragen": 33,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 335.046,
+        "lcpMs": 563.9502,
+        "cls": 0,
+        "tbtMs": 0,
+        "siMs": 337.0960651576646,
+        "ttiMs": 687.5502,
+        "bytes": 489127,
+        "anfragen": 33,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 345.9668,
+        "lcpMs": 714.2317499999999,
+        "cls": 0,
+        "tbtMs": 3,
+        "siMs": 359.7294385385257,
+        "ttiMs": 748.122,
+        "bytes": 489298,
+        "anfragen": 33,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+      "cpuBenchmarkMedian": 2102.5,
+      "budget": {
+        "urteil": "ok",
+        "verletzt": []
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 335.561,
+          "lcpMs": 714.2317499999999,
+          "cls": 0,
+          "tbtMs": 2.5,
+          "siMs": 337.8936888521119,
+          "ttiMs": 748.122,
+          "bytes": 489298,
+          "anfragen": 33,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kunden­dienst­techniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 12,
+            "elementRenderDelay": 212
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-kundendienst-desktop-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 335.046,
+          "lcpMs": 707.3305000000003,
+          "cls": 0,
+          "tbtMs": 3,
+          "siMs": 342.3563654198786,
+          "ttiMs": 723.0920000000002,
+          "bytes": 489297,
+          "anfragen": 33,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kunden­dienst­techniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 14,
+            "elementRenderDelay": 221
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-kundendienst-desktop-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 345.9668,
+          "lcpMs": 563.9502,
+          "cls": 0,
+          "tbtMs": 1,
+          "siMs": 354.77643996515997,
+          "ttiMs": 687.5502,
+          "bytes": 489127,
+          "anfragen": 33,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kunden­dienst­techniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 15,
+            "elementRenderDelay": 221
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-kundendienst-desktop-3.json"
+        },
+        {
+          "n": 4,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 345.799,
+          "lcpMs": 690.14825,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 359.7294385385257,
+          "ttiMs": 692.693225,
+          "bytes": 489250,
+          "anfragen": 33,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kunden­dienst­techniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 16,
+            "elementRenderDelay": 241
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-kundendienst-desktop-4.json"
+        },
+        {
+          "n": 5,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 336.081,
+          "lcpMs": 686.64175,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 337.0960651576646,
+          "ttiMs": 689.093775,
+          "bytes": 489297,
+          "anfragen": 33,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "header.seitenkopf-module__g14wBq__kopf > div.seitenkopf-module__g14wBq__titelblock > h1#seitenkopf-titel > span.stelle-module__CTu8JG__titelHaupt",
+            "snippet": "<span class=\"stelle-module__CTu8JG__titelHaupt\">",
+            "bezeichnung": "Kunden­dienst­techniker Heizung & Wärmepumpe"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 19,
+            "elementRenderDelay": 208
+          },
+          "rohdatei": ".roh/v6-ende/lh/stelle-kundendienst-desktop-5.json"
+        }
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "haupt": true,
+      "url": "http://localhost:3471/bewerbung",
+      "formfaktor": "mobile",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 88,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1215.6464,
+        "lcpMs": 3624.67035,
+        "cls": 0,
+        "tbtMs": 143.5,
+        "siMs": 1215.6464,
+        "ttiMs": 3880.1703499999994,
+        "bytes": 464115,
+        "anfragen": 28,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 87,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1210.5394000000001,
+        "lcpMs": 2938.5639,
+        "cls": 0,
+        "tbtMs": 102.5,
+        "siMs": 1210.5394000000001,
+        "ttiMs": 3828.959099999999,
+        "bytes": 464115,
+        "anfragen": 28,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 93,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 1274.4469,
+        "lcpMs": 3673.4695999999994,
+        "cls": 0,
+        "tbtMs": 187,
+        "siMs": 1274.4469,
+        "ttiMs": 3947.38965,
+        "bytes": 464115,
+        "anfragen": 29,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "div.transition-[opacity,translate] > div.flex > div.flex > p.max-w-prose",
+      "cpuBenchmarkMedian": 1992.5,
+      "budget": {
+        "urteil": "über Budget",
+        "verletzt": [
+          "Perf 88 < 90",
+          "LCP 3,62 s > 2,5 s"
+        ]
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 88,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1274.4469,
+          "lcpMs": 3624.67035,
+          "cls": 0,
+          "tbtMs": 144.5,
+          "siMs": 1274.4469,
+          "ttiMs": 3880.1703499999994,
+          "bytes": 464115,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.transition-[opacity,translate] > div.flex > div.flex > p.max-w-prose",
+            "snippet": "<p class=\"max-w-prose text-body text-ink-2\" data-rahmung=\"passung\">",
+            "bezeichnung": "Finde in 60 Sekunden heraus, ob wir zu dir passen."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 39,
+            "elementRenderDelay": 212
+          },
+          "rohdatei": ".roh/v6-ende/lh/bewerbung-mobile-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 88,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1215.6464,
+          "lcpMs": 3673.4695999999994,
+          "cls": 0,
+          "tbtMs": 125.5,
+          "siMs": 1215.6464,
+          "ttiMs": 3909.0195999999987,
+          "bytes": 464115,
+          "anfragen": 29,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.transition-[opacity,translate] > div.flex > div.flex > p.max-w-prose",
+            "snippet": "<p class=\"max-w-prose text-body text-ink-2\" data-rahmung=\"passung\">",
+            "bezeichnung": "Finde in 60 Sekunden heraus, ob wir zu dir passen."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 34,
+            "elementRenderDelay": 229
+          },
+          "rohdatei": ".roh/v6-ende/lh/bewerbung-mobile-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 87,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1218.5931,
+          "lcpMs": 3633.88965,
+          "cls": 0,
+          "tbtMs": 187,
+          "siMs": 1218.5931,
+          "ttiMs": 3947.38965,
+          "bytes": 464115,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.transition-[opacity,translate] > div.flex > div.flex > p.max-w-prose",
+            "snippet": "<p class=\"max-w-prose text-body text-ink-2\" data-rahmung=\"passung\">",
+            "bezeichnung": "Finde in 60 Sekunden heraus, ob wir zu dir passen."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 34,
+            "elementRenderDelay": 198
+          },
+          "rohdatei": ".roh/v6-ende/lh/bewerbung-mobile-3.json"
+        },
+        {
+          "n": 4,
+          "leistung": 89,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1210.5394000000001,
+          "lcpMs": 3620.8090999999995,
+          "cls": 0,
+          "tbtMs": 102.5,
+          "siMs": 1210.5394000000001,
+          "ttiMs": 3828.959099999999,
+          "bytes": 464115,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.transition-[opacity,translate] > div.flex > div.flex > p.max-w-prose",
+            "snippet": "<p class=\"max-w-prose text-body text-ink-2\" data-rahmung=\"passung\">",
+            "bezeichnung": "Finde in 60 Sekunden heraus, ob wir zu dir passen."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 37,
+            "elementRenderDelay": 204
+          },
+          "rohdatei": ".roh/v6-ende/lh/bewerbung-mobile-4.json"
+        },
+        {
+          "n": 5,
+          "leistung": 93,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 1213.5639,
+          "lcpMs": 2938.5639,
+          "cls": 0,
+          "tbtMs": 143.5,
+          "siMs": 1213.5639,
+          "ttiMs": 3874.895850000001,
+          "bytes": 464115,
+          "anfragen": 29,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.transition-[opacity,translate] > div.flex > div.flex > p.max-w-prose",
+            "snippet": "<p class=\"max-w-prose text-body text-ink-2\" data-rahmung=\"passung\">",
+            "bezeichnung": "Finde in 60 Sekunden heraus, ob wir zu dir passen."
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 31,
+            "elementRenderDelay": 194
+          },
+          "rohdatei": ".roh/v6-ende/lh/bewerbung-mobile-5.json"
+        }
+      ]
+    },
+    {
+      "pfad": "/bewerbung",
+      "slug": "bewerbung",
+      "haupt": true,
+      "url": "http://localhost:3471/bewerbung",
+      "formfaktor": "desktop",
+      "laeufe": 5,
+      "gueltigeLaeufe": 5,
+      "median": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 335.2256,
+        "lcpMs": 739.6448,
+        "cls": 0,
+        "tbtMs": 0,
+        "siMs": 335.2256,
+        "ttiMs": 740.8254400000001,
+        "bytes": 453874,
+        "anfragen": 29,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "min": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 328.9845,
+        "lcpMs": 733.94925,
+        "cls": 0,
+        "tbtMs": 0,
+        "siMs": 328.9845,
+        "ttiMs": 734.1485250000001,
+        "bytes": 453874,
+        "anfragen": 28,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "max": {
+        "leistung": 100,
+        "barrierefreiheit": 100,
+        "bestPractices": 100,
+        "seo": 100,
+        "fcpMs": 339.971,
+        "lcpMs": 756.0109499999999,
+        "cls": 0,
+        "tbtMs": 0,
+        "siMs": 353.9705303331064,
+        "ttiMs": 756.882535,
+        "bytes": 453874,
+        "anfragen": 29,
+        "drittanbieterBytes": 0,
+        "fremdeAnfragen": 0
+      },
+      "lcpElement": "div.transition-[opacity,translate] > div.flex > div.flex > h2#_R_2qnpfddb_-step",
+      "cpuBenchmarkMedian": 1994,
+      "budget": {
+        "urteil": "ok",
+        "verletzt": []
+      },
+      "einzel": [
+        {
+          "n": 1,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 338.86340000000007,
+          "lcpMs": 756.0109499999999,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 353.9705303331064,
+          "ttiMs": 756.882535,
+          "bytes": 453874,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.transition-[opacity,translate] > div.flex > div.flex > h2#_R_2qnpfddb_-step",
+            "snippet": "<h2 id=\"_R_2qnpfddb_-step\" tabindex=\"-1\" class=\"text-brand outline-none text-title-2\">",
+            "bezeichnung": "Für welche Stelle interessierst du dich?"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 39,
+            "elementRenderDelay": 286
+          },
+          "rohdatei": ".roh/v6-ende/lh/bewerbung-desktop-1.json"
+        },
+        {
+          "n": 2,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 333.7498,
+          "lcpMs": 736.5621500000002,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 333.7498,
+          "ttiMs": 737.5558950000002,
+          "bytes": 453874,
+          "anfragen": 28,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.transition-[opacity,translate] > div.flex > div.flex > h2#_R_2qnpfddb_-step",
+            "snippet": "<h2 id=\"_R_2qnpfddb_-step\" tabindex=\"-1\" class=\"text-brand outline-none text-title-2\">",
+            "bezeichnung": "Für welche Stelle interessierst du dich?"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 40,
+            "elementRenderDelay": 230
+          },
+          "rohdatei": ".roh/v6-ende/lh/bewerbung-desktop-2.json"
+        },
+        {
+          "n": 3,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 335.2256,
+          "lcpMs": 739.6448,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 335.2256,
+          "ttiMs": 740.8254400000001,
+          "bytes": 453874,
+          "anfragen": 29,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.transition-[opacity,translate] > div.flex > div.flex > h2#_R_2qnpfddb_-step",
+            "snippet": "<h2 id=\"_R_2qnpfddb_-step\" tabindex=\"-1\" class=\"text-brand outline-none text-title-2\">",
+            "bezeichnung": "Für welche Stelle interessierst du dich?"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 35,
+            "elementRenderDelay": 235
+          },
+          "rohdatei": ".roh/v6-ende/lh/bewerbung-desktop-3.json"
+        },
+        {
+          "n": 4,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 339.971,
+          "lcpMs": 733.94925,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 339.971,
+          "ttiMs": 734.1485250000001,
+          "bytes": 453874,
+          "anfragen": 29,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.transition-[opacity,translate] > div.flex > div.flex > h2#_R_2qnpfddb_-step",
+            "snippet": "<h2 id=\"_R_2qnpfddb_-step\" tabindex=\"-1\" class=\"text-brand outline-none text-title-2\">",
+            "bezeichnung": "Für welche Stelle interessierst du dich?"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 27,
+            "elementRenderDelay": 226
+          },
+          "rohdatei": ".roh/v6-ende/lh/bewerbung-desktop-4.json",
+          "fehlversuche": [
+            "NO_NAVSTART: Something went wrong with recording the trace over your page load. Please run Lighthouse again. (NO_NAVSTART)"
+          ]
+        },
+        {
+          "n": 5,
+          "leistung": 100,
+          "barrierefreiheit": 100,
+          "bestPractices": 100,
+          "seo": 100,
+          "fcpMs": 328.9845,
+          "lcpMs": 742.722875,
+          "cls": 0,
+          "tbtMs": 0,
+          "siMs": 328.9845,
+          "ttiMs": 743.0474875000001,
+          "bytes": 453874,
+          "anfragen": 29,
+          "drittanbieterBytes": 0,
+          "fremdeAnfragen": 0,
+          "lcpElement": {
+            "selector": "div.transition-[opacity,translate] > div.flex > div.flex > h2#_R_2qnpfddb_-step",
+            "snippet": "<h2 id=\"_R_2qnpfddb_-step\" tabindex=\"-1\" class=\"text-brand outline-none text-title-2\">",
+            "bezeichnung": "Für welche Stelle interessierst du dich?"
+          },
+          "lcpTeileMs": {
+            "timeToFirstByte": 35,
+            "elementRenderDelay": 216
+          },
+          "rohdatei": ".roh/v6-ende/lh/bewerbung-desktop-5.json"
+        }
+      ]
+    }
+  ]
+}
