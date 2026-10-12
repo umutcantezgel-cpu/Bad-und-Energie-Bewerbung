@@ -10,17 +10,15 @@ import {
   DIRECTION_ADVERBS,
   DISTANCE_BAND_KM,
   RING_RADII_KM,
-  averageSpeedKmh,
   compareToMedian,
   directionFromHeadquarters,
-  distanceBand,
-  fasterRoutes,
   groupStats,
   kreisStats,
   neighborsOf,
   rankByDistance,
-  ringCounts,
-  ringKm,
+  roadBandCounts,
+  roadBandFloorKm,
+  roadBandKm,
 } from '../derive';
 import { MEASUREMENT } from '../measurement';
 import {
@@ -87,11 +85,11 @@ const eachPage = places.map((place, i) => [place.id, place, pages[i]] as const);
 
 describe('Gate U1: eigene Werte', () => {
   it.each(eachPage)('%s zeigt ≥ 8 eigene Werte', (_id, _place, page) => {
-    const surface = [wholeText(page), page.etikett, ...page.masse.map((m) => m.wert)].join(' ');
+    const surface = [wholeText(page), page.etikett, ...page.unterzeile, ...page.masse.map((m) => m.wert)].join(' ');
     expect(page.values.length).toBeGreaterThanOrEqual(GATE.minValues);
     for (const value of page.values) expect(surface, `${page.placeId}: ${value.label}`).toContain(value.value);
     const labels = page.values.map((v) => v.label);
-    for (const label of ['Strecke', 'Fahrzeit', 'Luftlinie', 'Richtung', 'Ring', 'PLZ', 'Kreis', 'Nachbar 1', 'Nachbar 2']) {
+    for (const label of ['Strecke', 'Fahrzeit', 'Luftlinie', 'Richtung', 'PLZ', 'Kreis', 'Nachbar 1', 'Abstand 1', 'Nachbar 2', 'Abstand 2']) {
       expect(labels).toContain(label);
     }
   });
@@ -162,7 +160,7 @@ function allowedNumbers(place: Place): Set<string> {
   const addFrom = (text: string) => numbersIn(text).forEach((n) => allowed.add(n));
 
   // Gebiet und Messung
-  add(MAX_ROAD_KM, ...RING_RADII_KM, ...Object.values(DISTANCE_BAND_KM), places.length, getKreise().length);
+  add(MAX_ROAD_KM, ...RING_RADII_KM, ...RING_RADII_KM.map(roadBandFloorKm), ...Object.values(DISTANCE_BAND_KM), places.length, getKreise().length);
   addFrom(MEASUREMENT.measuredOn.split('-').map(Number).join(' '));
   addFrom(`${SITE_CONFIG.headquarters.streetAddress} ${SITE_CONFIG.headquarters.postalCode}`);
   // Fakten und Stellen
@@ -180,13 +178,11 @@ function allowedNumbers(place: Place): Set<string> {
   const kreisRank = rankByDistance(place, kreisGroup.places);
   const areaRank = rankByDistance(place, places);
   const median = compareToMedian(place, kreisGroup);
-  add(averageSpeedKmh(place), ringKm(place), fasterRoutes(place, places));
+  add(roadBandKm(place));
   add(kreisGroup.count, kreisGroup.medianMinutes, median.diffMinutes);
   add(kreisRank.closer, kreisRank.farther, kreisRank.same, kreisRank.total);
   add(areaRank.closer, areaRank.total);
   add(places.filter((p) => p.homeMap).length);
-  const longer = places.filter((p) => distanceBand(p) === 'weit');
-  add(longer.length, longer.filter((p) => averageSpeedKmh(p) > averageSpeedKmh(place)).length);
   for (const n of neighborsOf(place, places)) {
     add(n.airKm, Math.abs(n.minutes - place.commute.minutes), Math.abs(n.distanceKm - place.commute.distanceKm));
   }
@@ -210,7 +206,7 @@ function allowedNumbers(place: Place): Set<string> {
 describe('Gate U5: jede Zahl hat eine Quelle', () => {
   it.each(eachPage)('%s nennt nur belegte Zahlen', (_id, place, page) => {
     const allowed = allowedNumbers(place);
-    const text = [wholeText(page), page.meta.title, page.meta.description, page.meta.h1, page.etikett, ...page.masse.map((m) => m.wert)].join(' ');
+    const text = [wholeText(page), page.meta.title, page.meta.description, page.meta.h1, page.etikett, ...page.unterzeile, ...page.masse.map((m) => m.wert)].join(' ');
     const unknown = numbersIn(text).filter((n) => !allowed.has(n));
     expect(unknown, `${page.placeId}: Zahlen ohne Quelle`).toEqual([]);
   });
@@ -221,13 +217,17 @@ describe('Gate U5: jede Zahl hat eine Quelle', () => {
     for (const kreis of getKreise()) {
       const group = kreisStats(kreis.id, places);
       [group.count, group.medianMinutes, group.medianKm].forEach((v) => addNumber(allowed, v));
-      Object.values(ringCounts(group.places)).forEach((v) => addNumber(allowed, v));
+      Object.values(roadBandCounts(group.places)).forEach((v) => addNumber(allowed, v));
     }
     const area = groupStats(places);
     addNumber(allowed, area.medianMinutes);
-    Object.values(ringCounts(places)).forEach((v) => addNumber(allowed, v));
+    addNumber(allowed, area.medianKm);
+    Object.values(roadBandCounts(places)).forEach((v) => addNumber(allowed, v));
     addNumber(allowed, getHubKreise().length);
-    const texts = [...kreisPages, hubPage].map((page) => [allText(page.sections), page.meta.title, page.meta.description, page.meta.h1].join(' '));
+    // Dazu Etikett, Maße und Zweitweg im Seitenkopf (E-028)
+    const texts = [...kreisPages, hubPage].map((page) =>
+      [allText(page.sections), page.meta.title, page.meta.description, page.meta.h1, page.etikett, page.zweitweg.label, ...page.masse.flatMap((m) => [m.wert, m.name])].join(' '),
+    );
     texts.push(...hubPage.kleineKreise.map((section) => allText([section])));
     const unknown = texts.flatMap((text) => numbersIn(text)).filter((n) => !allowed.has(n));
     expect(unknown).toEqual([]);
@@ -236,8 +236,19 @@ describe('Gate U5: jede Zahl hat eine Quelle', () => {
 
 describe('Gate U6: nur bestätigte Fakten, keine festen Arbeitszeiten', () => {
   const everyText = [
-    ...pages.flatMap((page) => [wholeText(page), page.meta.title, page.meta.description, page.meta.h1, page.etikett, page.whatsappGreeting]),
-    ...kreisPages.flatMap((page) => [allText(page.sections), page.meta.title, page.meta.description, page.meta.h1]),
+    ...pages.flatMap((page) => [wholeText(page), page.meta.title, page.meta.description, page.meta.h1, page.etikett, ...page.unterzeile, page.whatsappGreeting]),
+    ...kreisPages.flatMap((page) => [
+      allText(page.sections),
+      page.meta.title,
+      page.meta.description,
+      page.meta.h1,
+      page.etikett,
+      page.whatsappGreeting,
+      ...page.masse.flatMap((m) => [m.wert, m.name]),
+    ]),
+    ...pages.map((page) => page.routeLabel),
+    hubPage.etikett,
+    ...hubPage.masse.flatMap((m) => [m.wert, m.name]),
     allText(hubPage.sections),
     ...hubPage.kleineKreise.map((section) => allText([section])),
     hubPage.meta.title,

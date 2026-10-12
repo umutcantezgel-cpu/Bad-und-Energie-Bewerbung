@@ -1,5 +1,6 @@
 import { MEASURED_PLACES, MEASUREMENT, type MeasuredPlace } from './measurement';
-import { STADTTEIL_PARENT_ID, definePlace, slugifyPlaceName, type Place } from './schema';
+import { HOME_MAP_LOCATION_IDS, slugifyPlaceName } from './home-map';
+import { STADTTEIL_PARENT_ID, definePlace, type Place } from './schema';
 
 /**
  * Alle Orte der lokalen Seiten, gebaut aus den aufgenommenen Kandidaten der Messung
@@ -11,21 +12,9 @@ import { STADTTEIL_PARENT_ID, definePlace, slugifyPlaceName, type Place } from '
 export const PLACES_UPDATED_AT = '2026-10-12';
 
 /**
- * Die 10 Punkte der Startseitenkarte (lib/data/locations.ts) mit ihrer bisherigen ID. lib/places liest die
- * Datei bewusst nicht: Sie soll später aus `homeMap` abgeleitet werden (Plan „Übergang“).
+ * Die 10 Punkte der Startseitenkarte mit ihrer bisherigen ID stehen zod-frei in home-map.ts: lib/data/locations.ts
+ * leitet die Karte der Startseite von dort ab (Plan „Übergang“), auch für das Client-Bundle der Google-Karte.
  */
-const HOME_MAP_LOCATION_IDS: Readonly<Record<string, string>> = Object.freeze({
-  wetzlar: 'loc-wetzlar-mitte',
-  hermannstein: 'loc-hermannstein',
-  nauborn: 'loc-nauborn',
-  garbenheim: 'loc-garbenheim',
-  dutenhofen: 'loc-dutenhofen',
-  steindorf: 'loc-steindorf',
-  asslar: 'loc-asslar',
-  braunfels: 'loc-braunfels',
-  giessen: 'loc-giessen',
-  herborn: 'loc-herborn',
-});
 
 /** Commit der Kurzbeschreibungen in lib/data/locations.ts (`git log -1 --format=%h -- lib/data/locations.ts`). */
 export const CHARACTER_SOURCE = 'lib/data/locations.ts@075aa71';
@@ -45,16 +34,33 @@ const APPROVED_CHARACTERS: Readonly<Record<string, string>> = Object.freeze({
   herborn: 'Historische Fachwerkstadt an der A45',
 });
 
+/**
+ * Pflege einzelner Orte ohne neue Messung (docs/operations/orte-pflegen.md): Status (pending, merged, archived) mit
+ * Grund, neuer Slug mit dem alten in `redirectFrom` (Slug-Sperre), eigenes `updatedAt`. Leer, solange alle Orte
+ * wie gemessen veröffentlicht sind; das Schema prüft jeden Eintrag beim Laden.
+ */
+export interface PlaceOverride {
+  status?: Place['status'];
+  statusNote?: string;
+  slug?: string;
+  redirectFrom?: readonly string[];
+  updatedAt?: string;
+}
+
+export const PLACE_OVERRIDES: Readonly<Record<string, PlaceOverride>> = Object.freeze({});
+
 function toPlace(measured: MeasuredPlace): Place {
   if (measured.distanceKm == null || measured.minutes == null) {
     throw new Error(`Ort „${measured.id}“ ist aufgenommen, hat aber keine Strecke`);
   }
-  const slug = slugifyPlaceName(measured.name);
+  const override = PLACE_OVERRIDES[measured.id] ?? {};
+  const slug = override.slug ?? slugifyPlaceName(measured.name);
   const character = APPROVED_CHARACTERS[measured.id];
   const legacyLocationId = HOME_MAP_LOCATION_IDS[measured.id];
   return definePlace({
     id: measured.id,
     slug,
+    redirectFrom: [...(override.redirectFrom ?? [])],
     name: measured.name,
     kind: measured.kind,
     kreisId: measured.kreisId as Place['kreisId'],
@@ -74,9 +80,10 @@ function toPlace(measured: MeasuredPlace): Place {
     },
     character: character ? { text: character, source: CHARACTER_SOURCE } : undefined,
     legacyLocationId,
-    status: 'published',
-    homeMap: legacyLocationId !== undefined,
-    updatedAt: PLACES_UPDATED_AT,
+    status: override.status ?? 'published',
+    ...(override.statusNote ? { statusNote: override.statusNote } : {}),
+    homeMap: legacyLocationId !== undefined && (override.status ?? 'published') === 'published',
+    updatedAt: override.updatedAt ?? PLACES_UPDATED_AT,
   });
 }
 

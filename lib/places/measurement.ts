@@ -26,6 +26,8 @@ export interface MeasuredPlace {
   /** Messpunkt, wenn er anders heißt als der Ort (Verwaltungssitz der Gemeinde). */
   seat?: string;
   osm: string;
+  /** Name des OSM-Objekts der Verortung (Gegenprobe: muss der amtliche Name sein, siehe osmSpelling). */
+  osmName?: string;
   airKm: number;
   /** Fehlt, wenn der Kandidat schon an der Luftlinie scheitert. */
   distanceKm?: number | null;
@@ -40,6 +42,8 @@ interface MessungFile {
   headquarters: { address: string; lat: number; lng: number };
   maxRoadKm: number;
   kreise: Record<string, string>;
+  /** Abweichende Schreibweise in OSM: amtlicher Name → Name in OSM. */
+  osmSpelling: Record<string, string>;
   places: MeasuredPlace[];
 }
 
@@ -55,6 +59,8 @@ export const MEASUREMENT = Object.freeze({
   headquarters: Object.freeze({ ...RAW.headquarters }),
   /** Kreis-ID → amtlicher Name, wie OSM ihn liefert. */
   kreise: Object.freeze({ ...RAW.kreise }) as Readonly<Record<string, string>>,
+  /** Amtlicher Name → Schreibweise in OSM (z. B. Münchholzhausen → „Müchholzhausen“). */
+  osmSpelling: Object.freeze({ ...RAW.osmSpelling }) as Readonly<Record<string, string>>,
 });
 
 /** Alle Kandidaten, auch die nicht aufgenommenen (Spalte „aufgenommen: nein“ im Protokoll). */

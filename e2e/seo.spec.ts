@@ -1,5 +1,5 @@
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
-import { LIVE_JOB_SLUGS, PUBLISHED_JOBS, ROUTES, channelJobSlugs, waitForSettled } from './support/site';
+import { LIVE_JOB_SLUGS, LOCAL_PAGES, PUBLISHED_JOBS, ROUTES, channelJobSlugs, waitForSettled } from './support/site';
 
 /**
  * Strukturierte Daten, Feeds und Sitemap (ROADMAP §9, §10, §14), dazu ein Offline-Crawl nach den
@@ -91,6 +91,18 @@ test('Sitemap listet alle Stellen-URLs', async ({ request }) => {
   expect(locs).not.toContain('/bewerbung/mappe');
 });
 
+test('Sitemap listet die Gebietsseite, jeden Kreis-Hub und jeden veröffentlichten Ort (E-028)', async ({ request }) => {
+  const response = await request.get('/sitemap.xml');
+  const xml = await response.text();
+  const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => new URL(match[1]).pathname);
+  for (const page of LOCAL_PAGES) expect(locs, page.path).toContain(page.path);
+  // Weiterleitungen (Kreise ohne eigene Seite) stehen nicht darin
+  expect(locs).not.toContain('/einsatzgebiet/hochtaunuskreis');
+  expect(locs).not.toContain('/einsatzgebiet/landkreis-marburg-biedenkopf');
+  // lastmod nie „heute“ als Platzhalter: jedes Datum JJJJ-MM-TT
+  for (const m of xml.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)) expect(m[1]).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+});
+
 /** Alle <loc> der Sitemap, unverändert (absolute URLs). */
 async function sitemapLocs(request: APIRequestContext): Promise<string[]> {
   const response = await request.get('/sitemap.xml');
@@ -120,7 +132,8 @@ for (const route of ROUTES) {
     const refs = JSON.stringify(graph).match(/\{"@id":"[^"]+"\}/g) ?? [];
     for (const ref of refs) expect(ids, `Verweis ${ref}`).toContain(JSON.parse(ref)['@id']);
 
-    const pages = graph.filter((node) => node['@type'] === 'WebPage');
+    // Der Seitenknoten: WebPage, auf den Übersichten unter /einsatzgebiet die Unterart CollectionPage (E-028)
+    const pages = graph.filter((node) => node['@type'] === 'WebPage' || node['@type'] === 'CollectionPage');
     const canonical = await canonicalOf(page);
     if (canonical) {
       expect(pages).toHaveLength(1);
@@ -184,15 +197,22 @@ async function crawl(page: Page): Promise<CrawlResult> {
   });
 }
 
+/**
+ * Pfad einer absoluten URL. Canonical und Sitemap werden über den Pfad verglichen: Die Sitemap ist beim Build statisch
+ * entstanden (Basis-URL des Builds), dynamische Seiten wie /bewerbung lesen APP_URL erst zur Laufzeit (in CI
+ * http://localhost:3400). In Produktion sind beide gleich; der Vergleich der Herkunft gehört nicht zu diesem Test.
+ */
+const pathOf = (url: string | null) => (url && /^https?:\/\//.test(url) ? new URL(url).pathname : null);
+
 test('Seobility: jede indexierbare Route steht mit ihrem Canonical in der Sitemap', async ({ page, request }) => {
-  const locs = await sitemapLocs(request);
+  const locs = (await sitemapLocs(request)).map(pathOf);
   for (const route of ROUTES.filter((r) => r.status === 200)) {
     await page.goto(route.path);
     const robots = await page.locator('meta[name="robots"]').getAttribute('content');
     if (/noindex/.test(robots ?? '')) continue;
     const canonical = await canonicalOf(page);
     expect(canonical, `${route.path}: Canonical`).toMatch(/^https?:\/\//);
-    expect(locs, `${route.path}: Canonical ${canonical} in der Sitemap`).toContain(canonical);
+    expect(locs, `${route.path}: Canonical ${canonical} in der Sitemap`).toContain(pathOf(canonical));
   }
 });
 
@@ -201,13 +221,15 @@ test.describe('Seobility-Crawl der indexierbaren Seiten (V6-B)', () => {
     test.setTimeout(120_000);
     const locs = await sitemapLocs(request);
     expect(locs.length).toBeGreaterThan(3);
+    // Seit den lokalen Seiten (E-028) rund 70 Seiten: Zeit je Seite statt fester Grenze
+    test.setTimeout(60_000 + locs.length * 6_000);
     const findings: string[] = [];
     for (const loc of locs) {
       const path = new URL(loc).pathname;
       const response = await page.goto(path);
       expect(response?.status(), path).toBe(200);
       const canonical = await canonicalOf(page);
-      if (canonical !== loc) findings.push(`${path}: Canonical ${canonical} ≠ Sitemap ${loc}`);
+      if (pathOf(canonical) !== path) findings.push(`${path}: Canonical ${canonical} ≠ Sitemap ${loc}`);
       if (!/^https?:\/\//.test(canonical ?? '')) findings.push(`${path}: Canonical nicht absolut`);
 
       const result = await crawl(page);

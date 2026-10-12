@@ -9,26 +9,71 @@ import { FACTS, isFactActive } from '@/lib/content/facts';
 import { withUtm } from '@/lib/jobs/feeds/tracking';
 import { jobPath, jobUrl } from '@/lib/jobs/format';
 import { ALL_JOBS, getActiveJobs, getJobPageSlugs, isJobLive } from '@/lib/jobs/registry';
+import {
+  EINSATZGEBIET_PATH,
+  getAllPlaces,
+  getHubKreise,
+  getKreisPlaces,
+  getKreise,
+  getPublishedPlaces,
+  kreisPath,
+  placePath,
+} from '@/lib/places/registry';
 import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
+import { getIndexablePages } from '@/lib/seo/indexable-pages';
 import { getAllPortalUrls } from '@/lib/seo/indexnow';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 
 const base = SITE_CONFIG.baseUrl.replace(/\/+$/, '');
 const liveJobs = getActiveJobs().filter((job) => isJobLive(job, new Date()));
 
+/** Erwartete lokale Seiten aus den Registries (E-028): Gebietsseite, Kreis-Hubs, alle veröffentlichten Orte. */
+const localPaths = [EINSATZGEBIET_PATH, ...getHubKreise().map(kreisPath), ...getPublishedPlaces().map(placePath)];
+const newest = (dates: readonly string[]) => [...dates].sort().at(-1);
+
 describe('sitemap', () => {
   const entries = sitemap();
   const urls = entries.map((e) => e.url);
 
   // V6-B: jede URL exakt wie der Canonical der Seite; Next rendert den der Startseite ohne Schrägstrich.
-  it('lists home, /jobs, every live job page and /bewerbung', () => {
-    expect(urls).toEqual([base, `${base}/jobs`, ...liveJobs.map(jobUrl), `${base}/bewerbung`]);
+  it('lists home, /jobs, every live job page, /bewerbung and every local page, from the registries', () => {
+    expect(urls).toEqual([
+      base,
+      `${base}/jobs`,
+      ...liveJobs.map(jobUrl),
+      `${base}/bewerbung`,
+      ...localPaths.map((path) => `${base}${path}`),
+    ]);
     expect(urls).toEqual([
       getCleanCanonicalUrl('/'),
       getCleanCanonicalUrl('/jobs'),
       ...liveJobs.map((job) => getCleanCanonicalUrl(jobPath(job))),
       getCleanCanonicalUrl('/bewerbung'),
+      ...localPaths.map(getCleanCanonicalUrl),
     ]);
+    expect(new Set(urls).size).toBe(urls.length);
+    // 7 Kernseiten und Stellen, dazu Gebietsseite, Kreis-Hubs und Orte (vor den Themenseiten 67)
+    expect(urls).toHaveLength(3 + liveJobs.length + 1 + getHubKreise().length + getPublishedPlaces().length);
+  });
+
+  it('is the list of lib/seo/indexable-pages.ts (one place for every page type)', () => {
+    expect(urls).toEqual(getIndexablePages().map((page) => page.url));
+  });
+
+  it('dates places with their updatedAt, Kreis hubs and /einsatzgebiet with the newest child, never with today', () => {
+    const date = (path: string) => entries.find((e) => e.url === `${base}${path}`)?.lastModified;
+    for (const place of getPublishedPlaces()) expect(date(placePath(place))).toBe(place.updatedAt);
+    for (const kreis of getHubKreise()) {
+      expect(date(kreisPath(kreis))).toBe(newest(getKreisPlaces(kreis.id).map((place) => place.updatedAt)));
+    }
+    expect(date(EINSATZGEBIET_PATH)).toBe(newest(getPublishedPlaces().map((place) => place.updatedAt)));
+    for (const entry of entries) expect(String(entry.lastModified)).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it('leaves out redirects: Kreise without a hub, merged or archived places and legacy slugs', () => {
+    for (const kreis of getKreise().filter((k) => !k.hasHub)) expect(urls).not.toContain(`${base}${EINSATZGEBIET_PATH}/${kreis.slug}`);
+    for (const place of getAllPlaces().filter((p) => p.status !== 'published')) expect(urls).not.toContain(`${base}${placePath(place)}`);
+    for (const slug of getAllPlaces().flatMap((p) => p.redirectFrom)) expect(urls).not.toContain(`${base}${EINSATZGEBIET_PATH}/${slug}`);
   });
 
   it('uses the job updatedAt as lastModified', () => {
@@ -119,12 +164,13 @@ describe('llms.txt', () => {
 });
 
 describe('IndexNow URL list', () => {
-  it('matches the registry: home, /jobs, job pages, /bewerbung', () => {
+  it('matches the registries: home, /jobs, job pages, /bewerbung, local pages', () => {
     expect(getAllPortalUrls()).toEqual([
       `${base}/`,
       `${base}/jobs`,
       ...getJobPageSlugs().map((slug) => `${base}/jobs/${slug}`),
       `${base}/bewerbung`,
+      ...localPaths.map((path) => `${base}${path}`),
     ]);
   });
 });

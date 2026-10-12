@@ -1,14 +1,15 @@
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 
 import { ALL_PLACES } from './data';
+import { EINSATZGEBIET_PATH } from './home-map';
 import { KREIS_DEFS, KREIS_IDS, type KreisDef, type KreisId } from './kreise';
 import type { Place } from './schema';
 
 export type { Place };
 export type { KreisId };
 
-/** Hub des Einsatzgebiets; Orte und Kreis-Hubs liegen flach darunter (/einsatzgebiet/<slug>). */
-export const EINSATZGEBIET_PATH = '/einsatzgebiet';
+/** Hub des Einsatzgebiets; Orte und Kreis-Hubs liegen flach darunter (/einsatzgebiet/<slug>). Zod-frei in home-map.ts. */
+export { EINSATZGEBIET_PATH };
 
 /** Ein Kreis bekommt eine eigene Seite erst ab so vielen veröffentlichten Orten (Plan „Seitenarchitektur“). */
 export const KREIS_HUB_MIN_PLACES = 3;
@@ -70,6 +71,18 @@ export function getPublishedPlaces(): Place[] {
   return [...PUBLISHED].sort(compareByDistance);
 }
 
+/**
+ * Veröffentlichter Ort zu einem Namen aus den Ortslisten der Website (REGION.areas, Fuß, Startseite): gleicher Name
+ * oder eindeutig verlängert („Heuchelheim“ → „Heuchelheim an der Lahn“). Ohne Treffer (z. B. Dillenburg, über 35 km
+ * Straße) keine Seite und kein Link.
+ */
+export function findPublishedPlaceByName(name: string): Place | undefined {
+  const exact = PUBLISHED.find((place) => place.name === name);
+  if (exact) return exact;
+  const longer = PUBLISHED.filter((place) => place.name.startsWith(`${name} `));
+  return longer.length === 1 ? longer[0] : undefined;
+}
+
 export function getPlaceById(id: string): Place | undefined {
   return ALL_PLACES.find((place) => place.id === id);
 }
@@ -129,6 +142,20 @@ export function getStadtteile(parentId: string): Place[] {
 /** Alle Segmente mit eigener Seite unter /einsatzgebiet: Orte und Kreis-Hubs (generateStaticParams). */
 export function getEinsatzgebietPageSlugs(): string[] {
   return [...getPlacePageSlugs(), ...getHubKreise().map((kreis) => kreis.slug)];
+}
+
+/**
+ * Alle Segmente mit Route unter /einsatzgebiet (generateStaticParams): Seiten (Orte, Kreis-Hubs) und Weiterleitungen
+ * (alte Slugs aus `redirectFrom`, Kreise ohne Hub). Ein gesperrter Slug (slugs.lock.json) liefert nie 404.
+ */
+export function getEinsatzgebietRouteSlugs(): string[] {
+  return [
+    ...new Set([
+      ...getEinsatzgebietPageSlugs(),
+      ...ALL_PLACES.flatMap((place) => place.redirectFrom),
+      ...KREIS_IDS.map((id) => KREIS_DEFS[id].slug),
+    ]),
+  ];
 }
 
 const baseUrl = () => SITE_CONFIG.baseUrl.replace(/\/+$/, '');

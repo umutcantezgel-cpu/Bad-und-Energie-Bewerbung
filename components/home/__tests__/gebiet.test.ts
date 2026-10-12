@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { COMPANY } from '@/lib/content/company';
 import { REGION } from '@/lib/content/region';
-import { ORT_FEHLT, ROUTE_LABEL, WERKSTATT, headlineSaetze, routeUrl, weitereOrte } from '../gebiet/gebiet-text';
+import { ALLE_ORTE_LINK, ORT_FEHLT, ROUTE_LABEL, WERKSTATT, headlineSaetze, routeUrl, weitereOrte, weitereOrteMitSeite } from '../gebiet/gebiet-text';
 import { WeitereOrte } from '../gebiet/WeitereOrte';
 import { Werkstatt } from '../gebiet/Werkstatt';
 
@@ -11,7 +11,9 @@ describe('Werkstatt (E-START-030, E-START-040)', () => {
   const html = renderToStaticMarkup(createElement(Werkstatt));
 
   it('shows the workshop with address and „Material direkt am Lager einladen“', () => {
-    expect(html).toContain('Zentrale Werkstatt &amp; Logistiklager');
+    // „Werkstatt“ ist nicht belegt (fakten-abgleich B31): der belegte Wortlaut
+    expect(html).toContain('Firmensitz &amp; Lager');
+    expect(html).not.toContain('Werkstatt');
     expect(html).toContain(COMPANY.address.street);
     expect(html).toContain(COMPANY.address.postalCode);
     expect(html).toContain('Material direkt am Lager einladen');
@@ -24,6 +26,10 @@ describe('Werkstatt (E-START-030, E-START-040)', () => {
 
   it('links the route as a plain link: new tab, no referrer, target coordinates, no tracking', () => {
     const url = routeUrl();
+    // Ortsseiten geben den Messpunkt als Start mit (E-028)
+    expect(routeUrl(COMPANY.geo, { latitude: 50.68324, longitude: 8.30313 })).toBe(
+      `https://www.google.com/maps/dir/?api=1&origin=50.68324,8.30313&destination=${COMPANY.geo.latitude},${COMPANY.geo.longitude}`,
+    );
     expect(url).toBe(`https://www.google.com/maps/dir/?api=1&destination=${COMPANY.geo.latitude},${COMPANY.geo.longitude}`);
     expect(url).not.toMatch(/utm_|gclid|fbclid/);
     const link = html.match(/<a [^>]*href="https:\/\/www\.google\.com\/maps\/dir\/[^"]*"[^>]*>/)?.[0] ?? '';
@@ -46,7 +52,7 @@ describe('Weitere Orte (E-START-029)', () => {
     for (const name of ['Solms', 'Lahnau', 'Hüttenberg', 'Biebertal', 'Wettenberg', 'Ehringshausen']) expect(html).toContain(name);
   });
 
-  it('does not name Hohenahr (B17 open)', () => {
+  it('does not name Hohenahr (not in REGION.areas; it has its own page under /einsatzgebiet)', () => {
     expect(html).not.toContain('Hohenahr');
   });
 
@@ -73,6 +79,25 @@ describe('Weitere Orte (E-START-029)', () => {
   it('ends no wrapped line with a separator: each place carries its dot in front', () => {
     expect(html).not.toContain('·');
     expect(html.match(/rounded-full bg-brand/g)).toHaveLength(weitereOrte().length);
+  });
+
+  // E-028: Orte mit eigener Seite sind Links dorthin (Strecke und Fahrzeit stehen dort), dazu der Weg zur Gebietsseite.
+  it('links every place to its own page (Dillenburg, 38 km by road, is gone since 2026-10-12)', () => {
+    const orte = weitereOrteMitSeite();
+    expect(orte.map((o) => o.name)).toEqual(weitereOrte());
+    for (const ort of orte) {
+      expect(ort.href, ort.name).toBeDefined();
+      expect(html).toContain(`href="${ort.href}"`);
+    }
+    expect(weitereOrte()).not.toContain('Dillenburg');
+    expect(orte.find((o) => o.name === 'Heuchelheim')?.href).toBe('/einsatzgebiet/heuchelheim-an-der-lahn');
+  });
+
+  it('links „Alle Orte im Einsatzgebiet“ to /einsatzgebiet, place links with a target of at least 44 px', () => {
+    expect(ALLE_ORTE_LINK).toEqual({ href: '/einsatzgebiet', label: 'Alle Orte im Einsatzgebiet' });
+    expect(html).toContain('href="/einsatzgebiet"');
+    expect(html).toContain('Alle Orte im Einsatzgebiet');
+    for (const link of html.match(/<a [^>]*href="\/einsatzgebiet\/[^"]+"[^>]*>/g) ?? []) expect(link).toMatch(/\bmin-h-11\b/);
   });
 });
 

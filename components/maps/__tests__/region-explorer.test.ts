@@ -34,3 +34,26 @@ describe('RegionExplorer ohne JavaScript', () => {
     expect(caption).not.toMatch(/\d+\s?km/);
   });
 });
+
+/** Gebietsseite (E-028): alle gemessenen Orte, darum eine Auswahlliste statt Kärtchen; die Startseite bleibt bei 10. */
+describe('RegionExplorer mit allen Orten', () => {
+  it('shows a select (alphabetical, with distance and drive time) above MAX_PLACE_CARDS places, no table when asked', async () => {
+    const { GEBIET_MAP_DATA } = await import('@/components/einsatzgebiet/karte');
+    const { MAX_PLACE_CARDS } = await import('../RegionExplorer');
+    expect(GEBIET_MAP_DATA.places.length).toBeGreaterThan(MAX_PLACE_CARDS);
+    const html = renderToStaticMarkup(createElement(RegionExplorer, { data: GEBIET_MAP_DATA, mapsAvailable: false, table: false }));
+    expect(html).toMatch(/<select[^>]*\bdisabled\b/);
+    expect(html.match(/<option /g)).toHaveLength(GEBIET_MAP_DATA.places.length + 1);
+    expect(html).not.toContain('Alle Orte als Tabelle');
+    expect(html).not.toContain('Interaktive Karte laden');
+    for (const place of GEBIET_MAP_DATA.places) expect(place.href).toMatch(/^\/einsatzgebiet\/[a-z0-9-]+$/);
+  });
+
+  it('keeps the home map at 10 places with cards, each with its place page', () => {
+    const home = buildRegionMapData();
+    expect(home.places).toHaveLength(10);
+    const html = renderToStaticMarkup(createElement(RegionExplorer, { data: home, mapsAvailable: true }));
+    expect(html).not.toContain('<select');
+    for (const place of home.places) expect(place.href).toMatch(/^\/einsatzgebiet\/[a-z0-9-]+$/);
+  });
+});

@@ -27,6 +27,9 @@ const KERN_K009 = [
   'pfeile',
   // E-027: ersetzt 'uhr' (13:30); der Zirkel rastet auf 35 km ein
   'radius-einrasten',
+  // E-028: Signaturen der lokalen Seiten (Ortsseiten und Gebietsseite)
+  'pendel-zeichnen',
+  'ringe-zeichnen',
   'menue-oeffnen',
   'menue-leitung',
   'menue-eintrag',
@@ -81,7 +84,7 @@ describe('Bewegungsregister', () => {
 
   it('beendet den Auftakt nach höchstens 1.120 ms; die Uhr rastet zuletzt ein', () => {
     const auftakt = MOTION_IDS.filter((id) => MOTION_REGISTER[id].ausloeser.includes('auftakt'));
-    expect(auftakt.length).toBe(9);
+    expect(auftakt.length).toBe(11);
     for (const id of auftakt) {
       const entry = MOTION_REGISTER[id];
       expect(entry.endeMs, id).toBeDefined();
@@ -95,7 +98,17 @@ describe('Bewegungsregister', () => {
   });
 
   it('hält Signaturmomente auf Erzählseiten (K-011)', () => {
-    for (const id of ['luft', 'luefter', 'vorlauf-haus', 'waerme', 'radius-einrasten', 'kreislauf-zeigen', 'seitenwechsel'] as MotionId[]) {
+    for (const id of [
+      'luft',
+      'luefter',
+      'vorlauf-haus',
+      'waerme',
+      'radius-einrasten',
+      'pendel-zeichnen',
+      'ringe-zeichnen',
+      'kreislauf-zeigen',
+      'seitenwechsel',
+    ] as MotionId[]) {
       expect(MOTION_REGISTER[id].seitenart, id).toBe('erzaehlseiten');
     }
     expect(MOTION_REGISTER.fortschritt.seitenart).toBe('alle');
@@ -119,6 +132,25 @@ describe('Bewegungsregister', () => {
     expect(zirkel.endeMs).toBe(AUFTAKT_ENDE_MS);
     expect(zirkel.reduziert).toMatch(/stehen auf 35 km/);
     expect(`${zirkel.zweck} ${zirkel.reduziert}`).not.toMatch(/13:30|Feierabend|Freitag/);
+  });
+
+  it('Signaturen der lokalen Seiten (E-028): nur stroke-dashoffset, einmal, vor dem Schlusstakt fertig, reduziert statisch', () => {
+    const pendel = MOTION_REGISTER['pendel-zeichnen'];
+    expect(pendel.eigenschaften).toEqual(['stroke-dashoffset']);
+    expect(pendel.ausloeser).toEqual(['auftakt']);
+    // Vorlauf hin, dann Rücklauf zurück: zwei Teile, der zweite startet nach dem ersten
+    expect(pendel.verzoegerungTakte).toHaveLength(2);
+    expect(pendel.verzoegerungTakte[1]).toBeGreaterThan(pendel.verzoegerungTakte[0]);
+    expect(pendel.endeMs!).toBeLessThanOrEqual(AUFTAKT_ENDE_MS);
+    expect(pendel.reduziert).toMatch(/stehen/);
+
+    const ringe = MOTION_REGISTER['ringe-zeichnen'];
+    expect(ringe.eigenschaften).toEqual(['stroke-dashoffset']);
+    // 15 → 25 → 35 km: drei Ringe, gleichmäßig gestaffelt
+    expect(ringe.verzoegerungTakte).toHaveLength(3);
+    expect(ringe.verzoegerungTakte).toEqual([...ringe.verzoegerungTakte].sort((a, b) => a - b));
+    expect(ringe.zweck).toMatch(/15.*25.*35/);
+    expect(ringe.endeMs!).toBeLessThanOrEqual(AUFTAKT_ENDE_MS);
   });
 
   it('erkennt Kennungen', () => {

@@ -1,5 +1,6 @@
 import { BREADCRUMB_HOME, BREADCRUMB_JOBS } from '@/lib/content/breadcrumbs';
 import { FACTS } from '@/lib/content/facts';
+import { breadcrumbList, type BreadcrumbJsonLd } from '@/lib/seo/breadcrumbs-jsonld';
 import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
 import { EMPLOYER } from './employer';
 import { jobUrl, toHtmlDescription } from './format';
@@ -48,12 +49,7 @@ export interface JobPostingJsonLd {
   jobStartDate?: string;
 }
 
-export interface BreadcrumbJsonLd {
-  '@context': 'https://schema.org';
-  '@type': 'BreadcrumbList';
-  '@id': string;
-  itemListElement: { '@type': 'ListItem'; position: number; name: string; item: string }[];
-}
+export type { BreadcrumbJsonLd } from '@/lib/seo/breadcrumbs-jsonld';
 
 const EMPLOYMENT_TYPE: Record<Job['employment']['kind'], string | string[]> = {
   vollzeit: 'FULL_TIME',
@@ -134,20 +130,6 @@ export function toJobPostingNode(job: Job): JobPostingJsonLd | null {
 export function buildJobPostingJsonLd(job: Job): JobPostingJsonLd | null {
   if (!job.channels.googleJobs) return null;
   return toJobPostingNode(job);
-}
-
-/**
- * BreadcrumbList mit denselben Labels wie die sichtbaren Breadcrumbs und den Canonical-URLs;
- * die letzte Stufe ist die Seite selbst. Die Seite rendert sie nur im Graphen (lib/seo/graph.ts), dort
- * ohne eigenes @context und mit WebPage.breadcrumb als Verweis auf diese @id.
- */
-function breadcrumbList(trail: readonly { name: string; url: string }[]): BreadcrumbJsonLd {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    '@id': `${trail[trail.length - 1].url}#breadcrumb`,
-    itemListElement: trail.map((step, i) => ({ '@type': 'ListItem', position: i + 1, name: step.name, item: step.url })),
-  };
 }
 
 /** Start › Stellen (für /jobs). */

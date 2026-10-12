@@ -1,7 +1,8 @@
 # CI für karriere.bad-energie.de (ROADMAP §9 „Tests und CI“).
 #
-# quality: Lint, Typen, Unit-Tests, Design-Guard, Kontrast, Build, Graph-Check, Playwright,
-#          Lighthouse CI. Jeder Schritt ruft ein Skript aus package.json auf.
+# quality: Lint, Typen, Unit-Tests, Design-Guard, Kontrast, Build, Graph-Check, Arbeitszeit- und
+#          Einzigartigkeits-Check, Playwright, Lighthouse CI. Jeder Schritt ruft ein Skript aus package.json
+#          auf, check-uniqueness direkt (scripts/qa/check-uniqueness.mjs).
 # secrets: gitleaks auf den neuen Commits jedes Pushs bzw. Pull Requests.
 #
 # Bewusst minimale Rechte: Der Workflow liest nur den Code. Actions sind auf
@@ -95,6 +96,10 @@ jobs:
 
       - name: Keine festen Arbeitszeiten im HTML (check-claims)
         run: bun run test:claims
+
+      # Gate U3 am ausgelieferten HTML der Ortsseiten (Jaccard ≤ 0,45 je Paar, lib/places/__tests__/gate.test.ts).
+      - name: Ortsseiten ohne Beinahe-Duplikate (check-uniqueness)
+        run: node scripts/qa/check-uniqueness.mjs
 
       # E2E läuft gegen den Production-Build (playwright.config.ts startet `next start` auf
       # Port 3400). Die Simulation verschickt keine E-Mails, ALLOW_DEV_SECRETS erlaubt den

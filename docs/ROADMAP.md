@@ -102,6 +102,7 @@
 | `/bewerbung/danke` | Bestätigung, Timeline, optionale Ergänzungen, Kontakt als .vcf | noindex | 1 |
 | `/bewerbung/mappe` | Bewerbungsmappen-Generator (A4, Druck/PDF), optionales Werkzeug | noindex | 1 |
 | `/feeds/indeed.xml`, `/feeds/jobs.xml`, `/feeds/jobs.json` | Jobbörsen- und Aggregator-Feeds aus dem Registry | – | 1 |
+| `/einsatzgebiet`, `/einsatzgebiet/[slug]` | Lokale Seiten (E-028): Gebietsseite, 4 Kreis-Hubs, 55 Ortsseiten aus gemessenen Daten, ohne JobPosting (siehe §10) | ja | PR2 |
 | `/admin/**` | Recruiter-Cockpit (Magic Link, Allowlist) | noindex | 2 |
 | `/lp/[slug]` | Social-Ads-Landingpages, erster Flow-Schritt above the fold | noindex | 3 |
 | `/talentpool` (+ `/bestaetigen`, `/verwalten`) | Job-Alarm mit Double-Opt-in (24 Monate, wie im bestehenden Datenschutztext) | ja | 4 |
@@ -114,7 +115,7 @@
 - `ausbildung-anlagenmechaniker-shk-wetzlar`
 - Quereinstieg/Montagehelfer: zunächst `funnel_only`, also wählbar im Flow, aber ohne Seite, Schema und Feed.
 
-**Keine Stadt-Duplikate** der Stellenseiten. Google bewertet sie als Doorway-Pages, und Indeed straft Location-Blasting ab.
+**Keine Stadt-Duplikate** der Stellenseiten (keine Stelle × Ort). Google bewertet sie als Doorway-Pages, und Indeed straft Location-Blasting ab. Die Ortsseiten unter `/einsatzgebiet` (E-028) sind keine Kopien der Stellen: eigene, gemessene Werte je Ort, kein JobPosting, Einzigartigkeits-Gate vor jedem Merge.
 
 ### 3.2 Neue Module (Single Source of Truth)
 
@@ -486,7 +487,20 @@ Beispiel-Description für Anlagenmechaniker:
 - Organization, WebSite und LocalBusiness bleiben global.
 - JobPosting nur auf den Stellenseiten. FAQPage nur auf `/`.
 - Die doppelte AIAnswerBox-Microdata entfällt.
-- Sitemap, `llms.txt` und `llms-full.txt` werden aus dem Registry erzeugt.
+- Sitemap, `llms.txt` und `llms-full.txt` werden aus den Registries erzeugt (eine Liste: `lib/seo/indexable-pages.ts`).
+
+### 10.1 Lokale Seiten (E-028, PR2)
+
+Auftrag des Inhabers (2026-10-12): die Zahl der indexierbaren Seiten verzehnfachen, mit Seiten, die gestalterisch beeindrucken und nur Belegtes sagen. Umsetzung nach dem Plan „Lokale SEO-Seiten“:
+
+- **Seiten:** `/einsatzgebiet` (Gebietsseite), 4 Kreis-Hubs ab 3 Orten (Lahn-Dill-Kreis, Landkreis Gießen, Landkreis Limburg-Weilburg, Wetteraukreis), 55 Ortsseiten (Gemeinden, Wetzlar und 8 Stadtteile). Kreise unter 3 Orten (Marburg-Biedenkopf, Hochtaunuskreis) sind Abschnitte der Gebietsseite; ihre Segmente leiten per 308 dorthin. Sitemap: 7 → **67** URLs (Themenseiten folgen in PR3).
+- **Daten:** gemessen mit OpenStreetMap und OSRM (`docs/operations/orte-messung.md@b0749f2`), nur Orte mit ≤ 35 km Straße. Die Karte der Startseite und `/jobs` zeigen seitdem dieselben km und Minuten wie die Ortsseiten; der Firmensitz steht auf den OSM-Koordinaten des Hauses (50.5525, 8.47465).
+- **Texte:** nur aus `lib/places/text.ts` (Ortswerte, `derive.ts`, Fakten per ID, Gehälter aus dem Stellen-Registry). Das Einzigartigkeits-Gate (U1–U8) prüft jede Seite; besteht ein Ort nicht, wird er `merged` und geht im Kreis auf.
+- **Seitenart Erzählseite:** Seitenkopf mit Navy-Zeichnung (Ortsseite: Pendelweg in echter Richtung mit Maßkette, Bewegung `pendel-zeichnen`; Kreis-Hub: senkrechte Entfernungsleiste; Gebietsseite: Ringe 15/25/35 km, Bewegung `ringe-zeichnen`), Plan auf dem Server, Entfernungsleiste 0–35 km, Stellen mit Gehalt, Nachbarorte, Faktenband, Kontakt mit WhatsApp-Gruß je Ort.
+- **SEO-Technik:** Title, Description, h1 und Keyword aus dem Textmodell (eindeutig, U8), Canonical auf sich selbst, eigenes OG-Bild je Ort („27 km bis zum Firmensitz“). JSON-LD: Ortsseite = WebPage mit `spatialCoverage` → Place (PLZ, Ort, Hessen, DE, Kreis als AdministrativeArea; ohne Straße und Koordinaten) und BreadcrumbList; Hubs = CollectionPage mit ItemList und BreadcrumbList. Kein JobPosting, kein LocalBusiness je Ort, keine FAQPage. `check-graph.mjs` prüft das im Build, dazu „jede indexierbare Seite steht in der Sitemap“.
+- **Verlinkung:** Startseite („Auch bei uns im Einsatz“ als Links, „Alle Orte im Einsatzgebiet“, Explorer „Mehr zu {Ort}“), Fuß (Orte als Links, Entfernung und Fahrzeit → `/einsatzgebiet`), `/jobs` (Einsatzgebiet → `/einsatzgebiet`), jede Stellenseite genau ein Link „Arbeitsweg von deinem Ort prüfen“.
+- **Pflege:** `docs/operations/orte-pflegen.md` (neu messen, aufnehmen, zusammenlegen, Slug-Sperre, Weiterleitungen).
+- **Ausrollen:** Search Console beobachten; > 30 % „Gecrawlt – zurzeit nicht indexiert“ oder „Duplikat“ in einer Charge stoppt weitere Chargen, Ortsseiten ohne Impressionen nach 120 Tagen gehen im Kreis-Hub auf (308).
 
 ---
 

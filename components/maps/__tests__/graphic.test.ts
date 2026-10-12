@@ -35,9 +35,11 @@ describe('graphicLabels', () => {
     });
   });
 
+  // Braunfels liegt seit der Messung (Firmensitz laut OpenStreetMap) 7,3 km Luftlinie entfernt: innerhalb von 8 km,
+  // wo der Plan nur Punkte zeigt (MIN_LABEL_FRACTION).
   it('labels the outer towns when nothing is selected', () => {
     const texts = graphicLabels(frame, null).map((l) => l.text);
-    expect(texts).toEqual(expect.arrayContaining(['Wetzlar', 'Gießen', 'Herborn', 'Braunfels']));
+    expect(texts).toEqual(expect.arrayContaining(['Wetzlar', 'Gießen', 'Herborn']));
   });
 
   it('keeps the centre label clear of the centre house (half size + stroke + 4 units of air)', () => {

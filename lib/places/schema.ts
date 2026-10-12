@@ -31,19 +31,8 @@ const PINNED_SOURCE = /^[\w./-]+@[0-9a-f]{7,40}$/;
 
 const HQ = { lat: MEASUREMENT.headquarters.lat, lng: MEASUREMENT.headquarters.lng };
 
-/** Ortsname → Slug: ä→ae, ö→oe, ü→ue, ß→ss, Klammern und Satzzeichen fallen weg. „Allendorf (Lumda)“ → „allendorf-lumda“. */
-export function slugifyPlaceName(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/ä/g, 'ae')
-    .replace(/ö/g, 'oe')
-    .replace(/ü/g, 'ue')
-    .replace(/ß/g, 'ss')
-    .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
+/** Slug-Regel zod-frei in home-map.ts (auch die Startseitenkarte im Client braucht sie). */
+export { slugifyPlaceName } from './home-map';
 
 const slug = z.string().regex(SLUG, 'Slug: nur a–z, 0–9 und einzelne Bindestriche (ASCII)');
 const isoDate = z

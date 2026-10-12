@@ -125,8 +125,11 @@ export const INITIATIV = Object.freeze({
   auchMoeglich: 'Auch möglich:',
 });
 
-/** Einsatzgebiet: Weg zur Karte mit Pendelrechner auf der Startseite (Wortlaut wie im Fuß). */
-export const GEBIET_LINK = Object.freeze({ href: '/#einsatzgebiet', label: 'Entfernung und Fahrzeit zu deinem Ort' });
+/**
+ * Einsatzgebiet: Weg zur Gebietsseite mit allen gemessenen Orten, Entfernung und Fahrzeit (E-028; vorher die Karte
+ * der Startseite). Wortlaut und Ziel wie im Fuß (FOOTER_GEBIET_LINK): ein Ankertext, ein Ziel.
+ */
+export const GEBIET_LINK = Object.freeze({ href: '/einsatzgebiet', label: 'Entfernung und Fahrzeit zu deinem Ort' });
 
 /** Persönlicher Draht im Initiativband (wie das Schlussband der Startseite), Name und Rolle aus COMPANY. */
 export const KONTAKT = Object.freeze({

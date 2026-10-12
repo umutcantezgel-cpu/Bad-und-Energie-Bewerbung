@@ -1,5 +1,4 @@
-import { jobUrl } from '@/lib/jobs/format';
-import { getJobPageSlugs } from '@/lib/jobs/registry';
+import { getIndexNowUrls } from './indexable-pages';
 import { SITE_CONFIG } from './site-config';
 
 // IndexNow-Keys sind per Protokoll öffentlich (Prüfdatei public/<key>.txt). Der Key kommt nur aus
@@ -7,14 +6,12 @@ import { SITE_CONFIG } from './site-config';
 // dieses Modul frei von Server-Abhängigkeiten bleibt.
 
 /**
- * Portal URLs from the job registry: home, /jobs, every job page and /bewerbung.
- * Job pages include closed ones (status archived), so search engines pick up their noindex
- * quickly. Legal pages are noindex and left out.
+ * Portal URLs from the one list of indexable pages (lib/seo/indexable-pages.ts): home, /jobs, every job page,
+ * /bewerbung and the local pages under /einsatzgebiet (E-028). Job pages include closed ones (status archived), so
+ * search engines pick up their noindex quickly. Legal pages are noindex and left out.
  */
 export function getAllPortalUrls(): string[] {
-  const base = SITE_CONFIG.baseUrl.replace(/\/+$/, '');
-  const jobPages = getJobPageSlugs().map((slug) => jobUrl({ slug }));
-  return [`${base}/`, `${base}/jobs`, ...jobPages, `${base}/bewerbung`];
+  return getIndexNowUrls();
 }
 
 export function getIndexNowPayload(apiKey: string, urls?: string[] | string) {

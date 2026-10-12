@@ -20,7 +20,10 @@ import { getFaqItems } from '@/lib/content/faq';
 import { jobPath, jobUrl } from '@/lib/jobs/format';
 import { buildBreadcrumbJsonLd, buildJobPostingJsonLd, buildJobsBreadcrumbJsonLd } from '@/lib/jobs/jsonld';
 import { getActiveJobs, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
+import { buildEinsatzgebietItemListJsonLd, buildKreisItemListJsonLd, buildPlaceJsonLd, kreisPfad, pfadJsonLd, placePfad } from '@/lib/places/jsonld';
+import { getHubKreise, getPlaceBySlug, kreisPath, placePath } from '@/lib/places/registry';
 import { getCleanCanonicalUrl } from '../canonical-links';
+import { getIndexablePages } from '../indexable-pages';
 import { buildPageGraph, fragmentId, type PageGraph } from '../graph';
 import { TITLE_TEMPLATE, documentTitle, generatePageMetadata } from '../metadata';
 
@@ -181,6 +184,61 @@ describe('buildPageGraph', () => {
   });
 });
 
+describe('lokale Seiten (E-028): WebPage mit Place, CollectionPage mit ItemList', () => {
+  const sitemap = new Set(getIndexablePages().map((page) => page.url));
+
+  it('Ortsseite: WebPage mit spatialCoverage → Place (PLZ, Ort, Hessen, DE, Kreis), ohne Straße und Koordinaten', () => {
+    const place = getPlaceBySlug('hermannstein')!;
+    const metadata = generatePageMetadata({ title: 'Ort', description: 'Ort', path: placePath(place) });
+    const graph = buildPageGraph({ metadata, breadcrumb: pfadJsonLd(placePfad(place)), place: buildPlaceJsonLd(place) });
+    expectSoundGraph(graph);
+    const page = expectWebPage(graph, metadata);
+    const [ort] = ofType(graph, 'Place');
+    expect(page.spatialCoverage).toEqual({ '@id': ort['@id'] });
+    expect(ort['@id']).toBe(fragmentId(getCleanCanonicalUrl(placePath(place)), 'place'));
+    expect(ort).toEqual({
+      '@type': 'Place',
+      '@id': ort['@id'],
+      name: 'Hermannstein',
+      address: { '@type': 'PostalAddress', postalCode: '35586', addressLocality: 'Wetzlar', addressRegion: 'Hessen', addressCountry: 'DE' },
+      containedInPlace: { '@type': 'AdministrativeArea', name: 'Lahn-Dill-Kreis' },
+    });
+    expect(ofType(graph, 'LocalBusiness')).toHaveLength(1);
+    expect(ofType(graph, 'JobPosting')).toHaveLength(0);
+  });
+
+  it('Kreis-Hub und Gebietsseite: CollectionPage mit mainEntity → ItemList, jede url in der Sitemap', () => {
+    for (const [pfad, itemList, breadcrumb] of [
+      ...getHubKreise().map((kreis) => [kreisPath(kreis), buildKreisItemListJsonLd(kreis), pfadJsonLd(kreisPfad(kreis))] as const),
+      ['/einsatzgebiet', buildEinsatzgebietItemListJsonLd(), undefined] as const,
+    ]) {
+      const metadata = generatePageMetadata({ title: 'Hub', description: 'Hub', path: pfad });
+      const graph = buildPageGraph({ metadata, itemList, ...(breadcrumb ? { breadcrumb } : {}) });
+      expectSoundGraph(graph);
+      expect(ofType(graph, 'WebPage')).toHaveLength(0);
+      const [page] = ofType(graph, 'CollectionPage');
+      expect(page.url).toBe(getCleanCanonicalUrl(pfad));
+      const [list] = ofType(graph, 'ItemList');
+      expect(page.mainEntity).toEqual({ '@id': list['@id'] });
+      const items = list.itemListElement as { position: number; url: string }[];
+      expect(list.numberOfItems).toBe(items.length);
+      items.forEach((item, i) => {
+        expect(item.position).toBe(i + 1);
+        expect(sitemap.has(item.url), item.url).toBe(true);
+      });
+      expect(ofType(graph, 'Place')).toHaveLength(0);
+    }
+  });
+
+  it('noindex: Place und ItemList bleiben ohne Rich Result, der Graph bleibt gültig', () => {
+    const place = getPlaceBySlug('herborn')!;
+    const metadata = generatePageMetadata({ title: 'Ort', description: 'Ort', path: placePath(place), noindex: true });
+    const graph = buildPageGraph({ metadata, breadcrumb: pfadJsonLd(placePfad(place)), place: buildPlaceJsonLd(place) });
+    expectSoundGraph(graph);
+    expect(ofType(graph, 'BreadcrumbList')).toHaveLength(0);
+  });
+});
+
 describe('Graph je Seite (V6-B)', () => {
   it('/ trägt WebPage und die einzige FAQPage (@id /#faq) mit dem sichtbaren Wortlaut', () => {
     const metadata = homeMetadata();
@@ -308,7 +366,7 @@ describe('Quellen: je Seite ein Aufruf, das Layout ohne JSON-LD', () => {
   });
 
   it('nur der Graph baut den WebPage-Knoten (keine zweite Quelle in den Seiten)', () => {
-    for (const datei of SEITEN) expect(quelle(datei)).not.toMatch(/'@type':\s*'WebPage'|#webpage/);
-    expect(quelle('lib/seo/graph.ts')).toMatch(/'@type': 'WebPage'/);
+    for (const datei of SEITEN) expect(quelle(datei)).not.toMatch(/'@type':\s*'WebPage'|'CollectionPage'|#webpage/);
+    expect(quelle('lib/seo/graph.ts')).toMatch(/'@type': itemList \? 'CollectionPage' : 'WebPage'/);
   });
 });

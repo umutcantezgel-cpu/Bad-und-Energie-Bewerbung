@@ -12,6 +12,8 @@ export interface RegionLocation {
   latitude: number;
   longitude: number;
   isCoreZone: boolean;
+  /** Ortsseite unter /einsatzgebiet (gleiche Messung wie hier). */
+  href: string;
 }
 
 export interface RegionArea {
@@ -33,11 +35,15 @@ const locations: readonly RegionLocation[] = Object.freeze(
         latitude: l.latitude,
         longitude: l.longitude,
         isCoreZone: l.isCoreZone,
+        href: l.placePath,
       }),
     ),
 );
 
-/** Einsatzgebiet: Zentrum Wetzlar, 35 km Radius, Orte mit Distanz und Fahrzeit aus lib/data/locations.ts. */
+/**
+ * Einsatzgebiet: Zentrum Wetzlar (Firmensitz laut OpenStreetMap), 35 km Radius, die 10 Orte der Startseitenkarte
+ * mit gemessener Strecke und Fahrzeit (lib/data/locations.ts, abgeleitet aus lib/places).
+ */
 export const REGION = Object.freeze({
   center: Object.freeze({
     name: companyData.city,

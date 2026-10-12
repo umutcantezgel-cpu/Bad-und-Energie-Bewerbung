@@ -32,10 +32,10 @@ const geo = {
 } as const;
 
 /**
- * Einsatzgebiet (E-SEO-009): die drei Kreise aus `SITE_CONFIG.serviceRegions` (dieselben wie
- * `REGION.areas` und /llms-full.txt) mit Radius, Namen und Orten. Der Mittelpunkt ist der
- * Firmensitz, wenn der Kreis die Postleitzahl des Sitzes trägt (Kernzone und 35-km-Kreis, Fakt
- * `radius35` misst vom Sitz), sonst der Ort der Ortstabelle mit dieser Postleitzahl (Gießen).
+ * Einsatzgebiet (E-SEO-009, seit E-028 ein Kreis): „Umkreis von 35 km um Wetzlar“ aus `SITE_CONFIG.serviceRegions`
+ * (dieselben Orte wie `REGION.areas`) mit Radius, Namen und Orten. Der Mittelpunkt ist der Firmensitz, wenn der Kreis
+ * die Postleitzahl des Sitzes trägt (Fakt `radius35` misst vom Sitz), sonst der Ort der Ortstabelle mit dieser
+ * Postleitzahl.
  */
 function areaMidpoint(postalCode: string) {
   if (postalCode === COMPANY.address.postalCode) return geo;

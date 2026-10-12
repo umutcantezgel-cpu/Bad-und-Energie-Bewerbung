@@ -21,6 +21,20 @@ export interface RadiusGraphicProps {
   onSelect?: (id: string) => void;
   titleId: string;
   descId: string;
+  /**
+   * Places drawn in full and named (pages under /einsatzgebiet: the places of a Kreis, or a place and its
+   * neighbours); all others stay small, hollow and unnamed. Omitted: every place as on the home map.
+   */
+  emphasizeIds?: readonly string[];
+  /** Text of <desc>; omitted: the generated description with every place in the frame (home map). */
+  description?: string;
+  /** Places named first after the selected one and the centre (overview /einsatzgebiet: the larger towns). */
+  labelPriority?: readonly string[];
+  /**
+   * Emphasized places that need not carry a name (Kreis-Hub Lahn-Dill-Kreis: Wetzlar's Stadtteile around the house,
+   * which the centre label and the table name). All other emphasized places are always named.
+   */
+  unnamedIds?: readonly string[];
   className?: string;
 }
 
@@ -37,9 +51,32 @@ const lineProps = { strokeWidth: STRICH, vectorEffect: 'non-scaling-stroke' as c
  * Leitungspaar an Wetzlar: Vorlauf rot hin, Rücklauf blau zurück. Rot und Blau nur als Linie (E-016).
  * Keine Kacheln, keine Fremdanfrage, keine Bewegung (Umschalten wechselt die Ansicht sofort).
  */
-export function RadiusGraphic({ data, view, selectedId, onSelect, titleId, descId, className }: RadiusGraphicProps) {
+export function RadiusGraphic({
+  data,
+  view,
+  selectedId,
+  onSelect,
+  titleId,
+  descId,
+  emphasizeIds,
+  description,
+  labelPriority,
+  unnamedIds = [],
+  className,
+}: RadiusGraphicProps) {
   const { size, origin, radius } = view;
-  const frame = labelFrame(data, view);
+  const emphasized = (id: string) => !emphasizeIds || emphasizeIds.includes(id) || id === selectedId;
+  const fullFrame = labelFrame(data, view);
+  // Gedämpfte Orte bekommen keinen Namen; ihre Punkte dürfen unter einem Namen liegen (klein und hohl).
+  // Hervorgehobene Orte (Seiten unter /einsatzgebiet) tragen alle ihren Namen, nötigenfalls mit Hinweislinie.
+  const frame = emphasizeIds
+    ? {
+        ...fullFrame,
+        places: fullFrame.places.filter((place) => emphasized(place.id)),
+        mustLabel: fullFrame.places.filter((place) => emphasized(place.id) && !unnamedIds.includes(place.id)).map((place) => place.id),
+        priority: labelPriority,
+      }
+    : { ...fullFrame, priority: labelPriority };
   const labels = graphicLabels(frame, selectedId);
   const rings = ringLabels(view);
   const selectedIndex = data.places.findIndex((place) => place.id === selectedId);
@@ -64,11 +101,12 @@ export function RadiusGraphic({ data, view, selectedId, onSelect, titleId, descI
       {/* E-023: Die Zusage (35 km) steht in der Überschrift und am Ring; Titel und Beschreibung wiederholen sie nicht. */}
       <title id={titleId}>{`Plan des Einsatzgebiets um ${data.centerName}, Kreise in Luftlinie`}</title>
       <desc id={descId}>
-        {`${data.centerName} in der Mitte. ` +
-          (view.radiusKm === data.radiusKm ? 'Ausschnitt: das ganze Einsatzgebiet. ' : `Ausschnitt: ${view.radiusKm} km um ${data.centerName}. `) +
-          `Lahn, Dill, A45 und B49 sind schematisch eingezeichnet. Im Ausschnitt liegen ${inFrameNames.join(', ')}. ` +
-          (selectedPlace ? `Gewählt: ${selectedPlace.name}. ` : '') +
-          'Entfernung und Fahrzeit stehen in der Ortsliste.'}
+        {description ??
+          `${data.centerName} in der Mitte. ` +
+            (view.radiusKm === data.radiusKm ? 'Ausschnitt: das ganze Einsatzgebiet. ' : `Ausschnitt: ${view.radiusKm} km um ${data.centerName}. `) +
+            `Lahn, Dill, A45 und B49 sind schematisch eingezeichnet. Im Ausschnitt liegen ${inFrameNames.join(', ')}. ` +
+            (selectedPlace ? `Gewählt: ${selectedPlace.name}. ` : '') +
+            'Entfernung und Fahrzeit stehen in der Ortsliste.'}
       </desc>
 
       {/* Wärmefläche: alles innerhalb des gewählten Radius */}
@@ -141,6 +179,19 @@ export function RadiusGraphic({ data, view, selectedId, onSelect, titleId, descI
         if (!point?.inFrame || place.atCenter) return null;
         const { x, y } = point.drawn;
         const isSelected = place.id === selectedId;
+        if (!emphasized(place.id)) {
+          return (
+            <circle
+              key={place.id}
+              cx={x}
+              cy={y}
+              r={3}
+              className="fill-surface-raised stroke-ink-muted"
+              strokeWidth={1.5}
+              vectorEffect="non-scaling-stroke"
+            />
+          );
+        }
         return (
           <g key={place.id}>
             {isSelected && (
@@ -181,8 +232,28 @@ export function RadiusGraphic({ data, view, selectedId, onSelect, titleId, descI
             {ring.text}
           </text>
         ))}
+        {labels.map((label) =>
+          label.leader ? (
+            <line
+              key={`${label.id}-leader`}
+              x1={label.leader.x1}
+              y1={label.leader.y1}
+              x2={label.leader.x2}
+              y2={label.leader.y2}
+              className="stroke-ink-muted"
+              strokeWidth={1.5}
+              strokeLinecap="round"
+              vectorEffect="non-scaling-stroke"
+              aria-hidden="true"
+            />
+          ) : null,
+        )}
         {labels.map((label) => {
           const emphasized = label.id === CENTER_LABEL_ID || label.id === selectedId;
+          // Halo in der Farbe der Fläche darunter: Wärme im Ring, außerhalb (Ecken des Rahmens) die Kartenfläche
+          const inRing = [label.box.x0, label.box.x1].every((x) =>
+            [label.box.y0, label.box.y1].every((y) => Math.hypot(x - origin.x, y - origin.y) <= radius),
+          );
           return (
             <text
               key={label.id}
@@ -191,7 +262,11 @@ export function RadiusGraphic({ data, view, selectedId, onSelect, titleId, descI
               textAnchor={label.anchor}
               dominantBaseline="central"
               strokeWidth={4}
-              className={cn('fill-ink text-callout sm:text-footnote', emphasized ? 'font-bold' : 'font-medium')}
+              className={cn(
+                'fill-ink text-callout sm:text-footnote',
+                emphasized ? 'font-bold' : 'font-medium',
+                !inRing && 'stroke-surface-raised',
+              )}
             >
               {label.text}
             </text>

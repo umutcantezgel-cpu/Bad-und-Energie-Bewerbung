@@ -31,7 +31,7 @@ describe('Orts-Schema', () => {
   it('übernimmt genau die aufgenommenen Kandidaten der Messung', () => {
     const included = MEASURED_PLACES.filter((m) => m.included);
     expect(ALL_PLACES.map((p) => p.id)).toEqual(included.map((m) => m.id));
-    expect(ALL_PLACES).toHaveLength(55);
+    expect(ALL_PLACES).toHaveLength(54);
     for (const place of ALL_PLACES) {
       const measured = included.find((m) => m.id === place.id)!;
       expect(place.commute.distanceKm, place.id).toBe(measured.distanceKm);
@@ -41,6 +41,27 @@ describe('Orts-Schema', () => {
       expect(place.seat, place.id).toBe(measured.seat);
       expect(place.commute.source).toBe(MEASUREMENT_SOURCE);
       expect(place.updatedAt).toBe('2026-10-12');
+    }
+  });
+
+  it('Gegenprobe Name: Jeder aufgenommene Ort ist in OSM unter seinem amtlichen Namen verortet', () => {
+    // Fehlerbild 2026-10-12: „Allendorf (Lumda)“ war als Gießener Stadtteil „Allendorf“ verortet (PLZ 35398, 14 km).
+    for (const measured of MEASURED_PLACES.filter((m) => m.included)) {
+      const expected = MEASUREMENT.osmSpelling[measured.name] ?? measured.name;
+      expect(measured.osmName, measured.id).toBe(expected);
+    }
+    expect(MEASURED_PLACES.find((m) => m.id === 'allendorf-lumda')).toMatchObject({ postalCode: '35469', included: false });
+  });
+
+  it('Gegenprobe PLZ: keine zwei Orte teilen eine PLZ, und keine Gemeinde trägt eine PLZ von Gießen oder Wetzlar', () => {
+    const codes = ALL_PLACES.map((p) => p.postalCode);
+    expect(new Set(codes).size).toBe(codes.length);
+    // Postleitzahlbereiche der beiden Städte mit mehreren PLZ im Gebiet (Deutsche Post): 35390–35398 Gießen,
+    // 35576–35586 Wetzlar mit seinen Stadtteilen. Eine andere Gemeinde in diesem Bereich ist falsch verortet.
+    const inRange = (code: string, from: number, to: number) => Number(code) >= from && Number(code) <= to;
+    for (const place of ALL_PLACES) {
+      if (inRange(place.postalCode, 35390, 35398)) expect(place.id, place.postalCode).toBe('giessen');
+      if (inRange(place.postalCode, 35576, 35586)) expect(place.id === 'wetzlar' || place.parentId === 'wetzlar', place.id).toBe(true);
     }
   });
 

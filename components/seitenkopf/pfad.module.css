@@ -1,0 +1,72 @@
+/*
+ * Pfad über dem Seitenkopf `erzaehl` (Stellenseiten, Ortsseiten, Kreis- und Gebietsseite): bis 64em auf der
+ * Navy-Fläche, nahtlos in den Navy-Block des Kopfs (wie der Einstieg: Navy direkt unter dem Seitenkopf); ab 64em
+ * auf Papier, die Navy-Fläche beginnt darunter. Nur Rollen und Skalen aus app/styles/theme.css.
+ */
+.pfad {
+  --rand: max(var(--spacing-gutter, var(--a-5)), env(safe-area-inset-left), env(safe-area-inset-right));
+  padding: var(--a-3) var(--rand) 0;
+  background-color: var(--surface);
+  color: var(--ink);
+}
+
+@media (min-width: 64em) {
+  /* Auf Papier: die Rollen des Inverse-Bands zurück auf die des Papiers (wie der Titelblock im Seitenkopf) */
+  .pfad[data-tone] {
+    color-scheme: inherit;
+    --surface: inherit;
+    --surface-2: inherit;
+    --surface-3: inherit;
+    --ink: inherit;
+    --ink-muted: inherit;
+    --ink-2: inherit;
+    --brand: inherit;
+    --line: inherit;
+    --line-strong: inherit;
+    --focus: inherit;
+    --vorlauf: inherit;
+    --ruecklauf: inherit;
+    --waerme: inherit;
+  }
+
+  .pfad {
+    padding-top: var(--a-4);
+    padding-bottom: var(--a-2);
+  }
+}
+
+/* Unter 40em nur „‹ Elternseite“, ab 40em der ganze Pfad */
+.lang {
+  display: none;
+}
+
+.zurueck {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--a-1);
+  min-height: 2.75rem;
+  font-size: var(--text-callout);
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .zurueck:hover {
+    color: var(--ink);
+    text-decoration-thickness: 2px;
+    text-decoration-color: var(--ruecklauf);
+  }
+}
+
+@media (min-width: 40em) {
+  .kurz {
+    display: none;
+  }
+
+  .lang {
+    display: block;
+  }
+}

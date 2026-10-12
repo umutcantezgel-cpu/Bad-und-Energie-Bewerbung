@@ -1,0 +1,731 @@
+/*
+ * Lokale Seiten (E-028): Orts-, Kreis- und Gebietsseite als Erzählseiten im Design der Stellenseiten und des
+ * Einstiegs: Navy-Seitenkopf mit Zeichnung, Papier- und Wandabschnitte mit Leitungstrennern, Maße in Martian Mono.
+ * Nur Rollen und Skalen aus app/styles/theme.css.
+ */
+
+/* ═══ Seitenkopf: Leitungspaar zeichnet sich in den Knopf (Register `erdleitung`, wie die Stellenseite) ═══ */
+@keyframes fallen {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes laufen {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+:global(.auftakt) .kopf[data-motion~="erdleitung"] [data-zeichnung="seitenkopf-leitung"] > span {
+  transform-origin: top center;
+  animation: fallen var(--d-2) var(--k-wechsel) calc(var(--takt) * 5) backwards;
+}
+
+@media (min-width: 64em) {
+  :global(.auftakt) .kopf[data-motion~="erdleitung"] [data-zeichnung="seitenkopf-leitung"] > span {
+    transform-origin: right center;
+    animation-name: laufen;
+  }
+
+  :global(.auftakt) .kopf[data-motion~="erdleitung"] [data-zeichnung="seitenkopf-leitung"] > span:first-child {
+    animation-delay: calc(var(--takt) * 8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(.auftakt) .kopf[data-motion~="erdleitung"] [data-zeichnung="seitenkopf-leitung"] > span {
+    animation: none;
+  }
+}
+
+/* ═══ h1: Name in Bildgröße, nach dem breitesten Stück auf die Spalte gesetzt (titel.ts), der Rest in title-3 ═══ */
+.titelName {
+  display: block;
+  font-size: min(var(--text-display), 14cqi, calc(96cqi / var(--stueck)));
+  overflow-wrap: normal;
+}
+
+.titelKlein {
+  display: block;
+  font-size: var(--text-title-3);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.titelVor {
+  margin-bottom: var(--a-2);
+}
+
+.titelNach {
+  margin-top: var(--a-3);
+}
+
+/* ═══ Abschnittsköpfe: h2 nach dem breitesten Wort auf die Spalte (Rohrklammer 2rem abgezogen) ═══ */
+.abschnittskopf {
+  container-type: inline-size;
+  width: 100%;
+}
+
+.passend {
+  font-size: min(var(--text-title-1), calc((96cqi - 2rem) / var(--stueck)));
+}
+
+/* ═══ Zeichnung im Navy-Panel ═══ */
+.kopfbild {
+  display: grid;
+  justify-items: start;
+  width: 100%;
+}
+
+@media (min-width: 64em) {
+  .kopfbild {
+    justify-items: center;
+  }
+}
+
+/* ═══ Abschnitte ═══ */
+.zweiSpalten {
+  display: grid;
+  gap: var(--a-8);
+}
+
+@media (min-width: 64em) {
+  .zweiSpalten {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: var(--a-9);
+    align-items: start;
+  }
+
+  .zweiSpaltenKarte {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-5);
+}
+
+.absatz {
+  max-width: 38rem;
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.absatzErst {
+  font-size: var(--text-lead);
+  line-height: 1.5;
+}
+
+/* Hinweis zur Messung: ehrlich, klein, mit Maßkette-Strich links */
+.hinweis {
+  display: flex;
+  gap: var(--a-3);
+  max-width: 38rem;
+  padding-left: var(--a-4);
+  border-left: var(--m-strich) solid var(--line-strong);
+  font-size: var(--text-callout);
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+.weg {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--a-2);
+  align-self: flex-start;
+  min-height: var(--m-ziel);
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .weg:hover {
+    text-decoration-thickness: var(--m-strich);
+    text-decoration-color: var(--ruecklauf);
+  }
+}
+
+/* ═══ Plan (RadiusGraphic) im Rahmen wie auf der Startseite ═══ */
+.plan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-3);
+  margin: 0;
+  width: 100%;
+  max-width: 34rem;
+}
+
+@media (min-width: 64em) {
+  .plan {
+    position: sticky;
+    top: calc(var(--m-kopf) + var(--a-5));
+    justify-self: end;
+  }
+}
+
+.planRahmen {
+  position: relative;
+  aspect-ratio: 1;
+  width: 100%;
+  overflow: hidden;
+  border: 2px solid var(--brand);
+  border-radius: var(--radius-2);
+  background-color: var(--surface-raised);
+}
+
+.planLegende {
+  max-width: 38rem;
+  font-size: var(--text-footnote);
+  line-height: 1.45;
+  color: var(--ink-muted);
+}
+
+/* ═══ Entfernungsleiste im Abschnitt Arbeitsweg ═══ */
+.leistenBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-5);
+  padding-top: var(--a-7);
+  border-top: 1px solid var(--line);
+}
+
+/* ═══ Nachbarorte und Ortskarten ═══ */
+.ortsKarten {
+  display: grid;
+  gap: var(--a-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Tablet zweispaltig; ab 64em steht die Liste in der schmalen rechten Spalte und wird wieder einspaltig */
+@media (min-width: 37.5em) and (max-width: 63.99em) {
+  .ortsKarten {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Breit (Kreise ohne eigene Seite auf der Gebietsseite): bis zu drei Spalten */
+@media (min-width: 64em) {
+  .ortsKartenBreit {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Stadtteile der Stadtseite: Text, darunter die Karten über die ganze Breite */
+.stadtteile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-6);
+}
+
+/* Nachbarorte, darunter abgesetzt die Orte derselben Richtung bzw. des kleinen Kreises */
+.kartenStapel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-6);
+}
+
+.kartenGruppe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-3);
+}
+
+.ortsKarte {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--a-4);
+  row-gap: var(--a-1);
+  min-height: var(--a-9);
+  height: 100%;
+  padding: var(--a-4) var(--a-5);
+  border: 2px solid var(--line-strong);
+  border-radius: var(--radius-2);
+  background-color: var(--surface-raised);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.ortsKarte:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ortsKarte:hover {
+    border-color: var(--brand);
+  }
+}
+
+.ortsKarteName {
+  font-family: var(--font-display);
+  font-size: var(--text-title-3);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--brand);
+}
+
+.ortsKarteWerte {
+  grid-column: 1;
+  /* Immer untereinander: Luftlinie und Strecke brechen sonst je nach Namenslänge verschieden um */
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-1);
+  font-family: var(--font-mass);
+  font-size: var(--text-footnote);
+  font-stretch: 75%;
+  color: var(--ink-muted);
+}
+
+.ortsKartePfeil {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  color: var(--brand);
+}
+
+/* Weiterführende Wege (Kreis, Gebiet) */
+.wege {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-2) var(--a-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ═══ Faktenband (inverse) ═══ */
+.fakten {
+  display: grid;
+  gap: var(--a-7) var(--a-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 48em) {
+  .fakten {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64em) {
+  .faktenVier {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .faktenDrei {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Je Fakt zwei Zeilen im Raster der Liste (subgrid): Etiketten auf einer Höhe, die Sätze beginnen auf einer Höhe */
+.fakt {
+  display: grid;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  row-gap: var(--a-4);
+  align-items: start;
+  justify-items: start;
+  padding-top: var(--a-5);
+  border-top: var(--m-strich) solid var(--brand);
+}
+
+/* Lange Kurzformen („Einsatzgebiet maximal 35 km um Wetzlar“) brechen im Kästchen um, statt die Spalte zu sprengen */
+.fakt [data-zeichnung="etikettkasten"] {
+  max-width: 100%;
+  white-space: normal;
+  line-height: 1.3;
+}
+
+.faktText {
+  max-width: 30rem;
+  font-size: var(--text-body);
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+/* ═══ Kontakt ═══ */
+.kontakt {
+  display: grid;
+  gap: var(--a-7);
+}
+
+@media (min-width: 64em) {
+  .kontakt {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: var(--a-9);
+    align-items: start;
+  }
+}
+
+/* ═══ Ortstabelle (Kreis-Hub) ═══ */
+.tabelleRahmen {
+  overflow-x: auto;
+}
+
+.tabelle {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-callout);
+}
+
+.tabelle th,
+.tabelle td {
+  padding: var(--a-1) var(--a-3);
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.tabelle thead th {
+  padding-top: var(--a-2);
+  padding-bottom: var(--a-2);
+  border-bottom: var(--m-strich) solid var(--brand);
+  font-family: var(--font-mass);
+  font-size: var(--text-footnote);
+  font-stretch: 75%;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.tabelle th:first-child,
+.tabelle td:first-child {
+  padding-left: 0;
+}
+
+.tabelle th:last-child,
+.tabelle td:last-child {
+  padding-right: 0;
+}
+
+.zahl {
+  font-family: var(--font-mass);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.tabelle thead th.zahl {
+  text-align: right;
+}
+
+.tabellenLink {
+  display: inline-flex;
+  align-items: center;
+  min-width: var(--m-ziel);
+  min-height: var(--m-ziel);
+  font-weight: 700;
+  color: var(--brand);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tabellenLink:hover {
+    text-decoration-thickness: var(--m-strich);
+    text-decoration-color: var(--ruecklauf);
+  }
+}
+
+.tabellenLink:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-1);
+}
+
+/* Strecke mit Balken auf der 35-km-Skala (ab 48em): Spur fein, gefüllt bis zum Wert, Punkt am Ende */
+.strecke {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--a-4);
+}
+
+.balken {
+  display: none;
+}
+
+@media (min-width: 48em) {
+  .balken {
+    position: relative;
+    display: block;
+    width: clamp(8rem, 18vw, 16rem);
+    height: var(--m-strich);
+    background-color: var(--line);
+  }
+
+  .balken::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: calc(var(--anteil) * 100%);
+    background-color: var(--brand);
+  }
+
+  .balken::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: calc(var(--anteil) * 100%);
+    width: var(--a-2);
+    height: var(--a-2);
+    border-radius: var(--radius-voll);
+    background-color: var(--brand);
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Spalte PLZ erst ab 30em, am Handy steht sie unter dem Namen */
+.plzSpalte {
+  display: none;
+}
+
+.plzUnter {
+  display: block;
+  font-family: var(--font-mass);
+  font-size: var(--text-footnote);
+  font-stretch: 75%;
+  color: var(--ink-muted);
+}
+
+@media (min-width: 30em) {
+  .plzSpalte {
+    display: table-cell;
+  }
+
+  .plzUnter {
+    display: none;
+  }
+}
+
+/* ═══ Kreiskarten (Gebietsseite) ═══ */
+.kreisKarten {
+  display: grid;
+  gap: var(--a-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 48em) {
+  .kreisKarten {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.kreisKarte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-4);
+  height: 100%;
+  padding: var(--a-6);
+  border-radius: var(--radius-2);
+  background-color: var(--surface-raised);
+  border: 2px solid var(--line-strong);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kreisKarte:hover {
+    border-color: var(--brand);
+  }
+}
+
+.kreisKarte:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.kreisKarteName {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--a-4);
+  font-family: var(--font-display);
+  font-size: var(--text-title-2);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--brand);
+}
+
+.kreisKarteMasse {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-4) var(--a-7);
+}
+
+/* Kreise ohne eigene Seite: Abschnitt auf der Gebietsseite */
+.kleinerKreis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-4);
+  padding-top: var(--a-6);
+  border-top: 1px solid var(--line);
+  scroll-margin-top: calc(var(--m-kopf) + var(--a-5));
+}
+
+/* ═══ Ortsverzeichnis A–Z (Gebietsseite) ═══ */
+.verzeichnis {
+  columns: 1;
+  column-gap: var(--a-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 37.5em) {
+  .verzeichnis {
+    columns: 2;
+  }
+}
+
+@media (min-width: 64em) {
+  .verzeichnis {
+    columns: 3;
+  }
+}
+
+.buchstabe {
+  break-inside: avoid;
+  padding-bottom: var(--a-5);
+}
+
+.buchstabeKopf {
+  display: block;
+  padding-bottom: var(--a-1);
+  border-bottom: var(--m-strich) solid var(--brand);
+  font-family: var(--font-mass);
+  font-size: var(--text-title-3);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--brand);
+}
+
+.buchstabeListe {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.eintrag {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--a-4);
+  min-height: var(--m-ziel);
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.eintragName {
+  font-weight: 700;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+}
+
+.eintragWerte {
+  font-family: var(--font-mass);
+  font-size: var(--text-footnote);
+  font-stretch: 75%;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .eintrag:hover .eintragName {
+    text-decoration-thickness: var(--m-strich);
+    text-decoration-color: var(--ruecklauf);
+  }
+}
+
+.eintrag:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-1);
+}
+
+/* ═══ Gebietsplan im Seitenkopf der Gebietsseite (Navy): Ringe ziehen sich auf (Register `ringe-zeichnen`) ═══ */
+.gebietsplan {
+  display: block;
+  width: min(100%, 26rem);
+  height: auto;
+  overflow: visible;
+}
+
+.planRing {
+  fill: none;
+  stroke: var(--brand);
+  stroke-width: 2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.planRingFlaeche {
+  fill: var(--surface-2);
+}
+
+.planPunkt {
+  fill: var(--brand);
+}
+
+.planRadius {
+  fill: none;
+  stroke: var(--brand);
+  stroke-width: 2;
+  stroke-dasharray: 2 6;
+  stroke-linecap: round;
+}
+
+.planHaus {
+  fill: var(--waerme);
+  stroke: var(--brand);
+  stroke-width: 2.4;
+  stroke-linejoin: round;
+}
+
+.planWert {
+  fill: var(--brand);
+  font-family: var(--font-mass);
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+@keyframes ringZiehen {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+/* 15, dann 25, dann 35 km: Verzögerung 2, 4, 6 Takte, je d-3 mit k-aus (Ende 880 ms) */
+:global(.auftakt) [data-motion="ringe-zeichnen"] {
+  animation: ringZiehen var(--d-3) var(--k-aus) calc(var(--takt) * (2 + 2 * var(--ring))) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(.auftakt) [data-motion="ringe-zeichnen"] {
+    animation: none;
+  }
+}

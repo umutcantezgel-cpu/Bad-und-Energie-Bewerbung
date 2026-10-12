@@ -5,7 +5,9 @@
  * - Stellendaten (lib/jobs/data): Aufgaben, Anforderungen, Berufserfahrung, Ausbildungsdauer;
  * - lib/content/facts.ts: Wortlaut der Fakten paidCertifications, measurementTools, travelAllowance,
  *   driversLicenseGrant, takeoverGuarantee (nur Ausbildung, dort freigegeben);
- * - lib/content/region.ts: Orte mit Entfernung und Fahrzeit, Bereiche des Einsatzgebiets;
+ * - lib/content/region.ts: Orte mit Entfernung und Fahrzeit;
+ * - lib/places (Ortsvermessung): Orte je Kreis mit eigener Ortsseite, nach Strecke (seit E-028; vorher drei Bereiche
+ *   aus SITE_CONFIG.serviceRegions mit Dillenburg, das 38 km Straße entfernt liegt);
  * - lib/content/faq.ts, Frage „heizsysteme“: Badpartner und Fußbodenheizungen.
  * Faktenregel E-023: Das Band erklärt Arbeit, Region und Unterschiede. Ein Fakt aus „Das bekommst du“ oder „Dein
  * Paket“ steht hier höchstens als zweite Nennung; 35 km, Fernmontage, Arbeitszeit, Fahrzeug und iPad gar nicht.
@@ -13,15 +15,23 @@
  */
 import { FACTS } from '@/lib/content/facts';
 import { getFaqItem } from '@/lib/content/faq';
-import { REGION, type RegionArea, type RegionLocation } from '@/lib/content/region';
+import { REGION, type RegionLocation } from '@/lib/content/region';
 import { formatNumber, jobPath } from '@/lib/jobs/format';
 import { getJobById, isJobLive, type Job, type JobId } from '@/lib/jobs/registry';
+import { DISTANCE_BAND_KM } from '@/lib/places/derive';
+import { getHubKreise, getKreisById, getKreisPlaces, getStadtteile } from '@/lib/places/registry';
 import { lowerFirst } from '../text';
 
 const NBSP = ' ';
 
 /** Ids der Überschriften im Band. */
 export const EINBLICK_ANKER = { arbeit: 'stelle-arbeit', gebiet: 'stelle-gebiet' } as const;
+
+/**
+ * Weg zur Gebietsseite unter den Orten des Einsatzgebiets (E-028): genau ein Link je Stellenseite. Dort stehen alle
+ * gemessenen Orte mit Strecke und Fahrzeit; die Stellenseiten selbst bleiben ohne Stadt-Duplikate.
+ */
+export const ARBEITSWEG_LINK = Object.freeze({ href: '/einsatzgebiet', label: 'Arbeitsweg von deinem Ort prüfen' });
 
 /** Link auf eine andere Stelle mit beschreibendem Ankertext. */
 export interface Verweis {
@@ -69,23 +79,34 @@ function ort(name: string): RegionLocation {
   return found;
 }
 
-/** Bereich aus REGION.areas (SITE_CONFIG.serviceRegions). */
-function bereich(name: string): RegionArea {
-  const found = REGION.areas.find((area) => area.name === name);
-  if (!found) throw new Error(`einblick-text: Bereich „${name}“ fehlt in REGION.areas`);
-  return found;
+/** Kreis des Firmensitzes und der Kreis mit Gießen (Kreis-Hubs unter /einsatzgebiet). */
+const LAHN_DILL = 'lahn-dill-kreis';
+const GIESSEN = 'landkreis-giessen';
+/** Zeile der Kernstadt mit ihren Stadtteilen. */
+export const KERNGEBIET = `${REGION.center.name} und Stadtteile`;
+
+/** Name eines Kreises für den Text („Lahn-Dill-Kreis“, „Landkreis Gießen“). */
+function kreisName(kreisId: string): string {
+  const kreis = getKreisById(kreisId);
+  if (!kreis) throw new Error(`einblick-text: Kreis „${kreisId}“ ohne veröffentlichten Ort`);
+  return kreis.shortName;
 }
 
-const KERNGEBIET = 'Wetzlar Kernstadt und Stadtteile';
-const GIESSEN_UMLAND = 'Gießen und Umland';
-const LAHN_DILL = 'Lahn Dill Kreis';
+/**
+ * Gemeinden eines Kreises mit eigener Ortsseite, nach Strecke; ohne die genannten. `nah`: nur unter 20 km Straße
+ * (Entfernungsbänder „nah“ und „mittel“), `max`: höchstens so viele.
+ */
+export function kreisOrte(kreisId: string, { ohne = [], nah = false, max }: { ohne?: readonly string[]; nah?: boolean; max?: number } = {}): string[] {
+  const names = getKreisPlaces(kreisId)
+    .filter((place) => place.kind === 'gemeinde' && (!nah || place.commute.distanceKm < DISTANCE_BAND_KM.weit))
+    .map((place) => place.name)
+    .filter((name) => !ohne.includes(name));
+  return max === undefined ? names : names.slice(0, max);
+}
 
-/** Schreibweise der Bereichsnamen im Text („Lahn Dill Kreis“ → „Lahn-Dill-Kreis“). */
-const bereichName = (name: string) => (name === LAHN_DILL ? 'Lahn-Dill-Kreis' : name);
-
-/** Orte eines Bereichs, die noch nicht mit Entfernung in der Ortsliste derselben Seite stehen. */
-function ohne(area: RegionArea, schonGenannt: readonly string[]): string[] {
-  return area.cities.filter((city) => !schonGenannt.includes(city));
+/** Die Stadtteile der Kernstadt mit eigener Ortsseite, nach Strecke. */
+export function kerngebietOrte(): string[] {
+  return getStadtteile('wetzlar').map((place) => place.name);
 }
 
 /** „A, B und C“. */
@@ -168,7 +189,7 @@ function anlagenmechaniker(job: Job, now: Date): Einblick {
       titel: `Deine Baustellen rund um ${REGION.center.name}`,
       einleitung: 'Entfernung und Fahrzeit vom Firmensitz in die Stadtteile im Kerngebiet:',
       orte: kern.map((location) => ({ label: location.name, text: strecke(location), mass: true })),
-      nachsatz: `${GIESSEN_UMLAND} gehören ebenfalls dazu, mit ${aufzaehlung(ohne(bereich(GIESSEN_UMLAND), ['Gießen']))}.`,
+      nachsatz: `Der ${kreisName(GIESSEN)} gehört ebenfalls dazu, mit ${aufzaehlung(kreisOrte(GIESSEN, { nah: true }))}.`,
     },
   };
 }
@@ -207,7 +228,7 @@ function kundendienst(job: Job, now: Date): Einblick {
       titel: `Dein Einsatzgebiet rund um ${REGION.center.name}`,
       einleitung: `Vom Firmensitz in ${REGION.center.name} ins regionale Einsatzgebiet, mit Entfernung und Fahrzeit:`,
       orte: regional.map((location) => ({ label: location.name, text: strecke(location), mass: true })),
-      nachsatz: `Im ${bereichName(LAHN_DILL)} gehören außerdem ${aufzaehlung(ohne(bereich(LAHN_DILL), regional.map((l) => l.name)))} dazu.`,
+      nachsatz: `Im ${kreisName(LAHN_DILL)} gehören außerdem ${aufzaehlung(kreisOrte(LAHN_DILL, { nah: true, ohne: regional.map((l) => l.name) }))} dazu.`,
     },
   };
 }
@@ -242,12 +263,15 @@ function obermonteur(job: Job, now: Date): Einblick {
     gebiet: {
       etikett: EINSATZGEBIET,
       titel: 'Wo deine Baustellen liegen',
-      einleitung: `Das Einsatzgebiet reicht vom Kerngebiet um den Firmensitz bis in den ${bereichName(LAHN_DILL)}.`,
-      orte: [KERNGEBIET, GIESSEN_UMLAND, LAHN_DILL].map((name) => ({
-        label: bereichName(name),
-        text: aufzaehlung(bereich(name).cities),
-        mass: false,
-      })),
+      einleitung: `Das Einsatzgebiet reicht vom Kerngebiet um den Firmensitz über den ${kreisName(LAHN_DILL)} bis in die Nachbarkreise, zum Beispiel:`,
+      orte: [
+        { label: KERNGEBIET, text: aufzaehlung(kerngebietOrte()), mass: false },
+        ...getHubKreise().map((kreis) => ({
+          label: kreis.shortName,
+          text: aufzaehlung(kreisOrte(kreis.id, { max: 5 })),
+          mass: false,
+        })),
+      ],
       nachsatz: null,
     },
   };

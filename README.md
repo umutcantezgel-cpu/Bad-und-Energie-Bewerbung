@@ -35,12 +35,14 @@ Alle Inhalte kommen aus zwei typisierten Quellen im Repo: dem **Stellen-Registry
 | `/` | Startseite: Einstieg, offene Stellen, Vorteile, Einsatzgebiet mit Karte, Ablauf, Über uns und Stimmen, FAQ | ja |
 | `/jobs` | Übersicht aller Stellen (ohne JobPosting-Markup) | ja |
 | `/jobs/[slug]` | Stellenseite mit JobPosting- und Breadcrumb-JSON-LD, Gehaltsspanne, Teamzitat und eingebettetem Flow (`#bewerben`), eigenes OG-Bild. Besetzte oder abgelaufene Stellen zeigen „Besetzt“ (noindex, ohne JobPosting). Alte Slugs leiten dauerhaft um. | ja |
+| `/einsatzgebiet` | Gebietsseite (E-028): alle 55 gemessenen Orte im 35-km-Gebiet mit Strecke und Fahrzeit, Plan mit Ringen, Explorer aller Orte, Kreise und Verzeichnis A–Z. JSON-LD: CollectionPage mit ItemList und BreadcrumbList | ja |
+| `/einsatzgebiet/[slug]` | Ortsseite (55 Orte und Wetzlarer Stadtteile) oder Kreis-Hub (Lahn-Dill-Kreis, Landkreis Gießen, Landkreis Limburg-Weilburg, Wetteraukreis). Ortsseite: Pendelweg, Arbeitsweg mit Plan und Entfernungsleiste, Stellen mit Gehalt, Nachbarorte, eigenes OG-Bild; JSON-LD WebPage mit Place (ohne Straße) und BreadcrumbList. Kreise ohne Hub (Marburg-Biedenkopf, Hochtaunuskreis) und alte Slugs leiten dauerhaft (308) um | ja |
 | `/bewerbung` | Der eine Bewerbungsflow. `?stelle=<slug>` bzw. `?stelle=initiativ` wählt vor, UTM-Parameter und `ref` werden erfasst. Alte `?tab=`-Links des Vorgängerportals werden umgeleitet. | ja |
 | `/bewerbung/danke` | Bestätigung mit Bewerbungsnummer, optionale Ergänzungen, „Nummern speichern“ als `.vcf` (Büro für Anrufe, Mobilnummer für WhatsApp) | noindex |
 | `/bewerbung/mappe` | Bewerbungsmappen-Generator (A4-Vorschau, Druck/PDF), optional | noindex |
 | `/datenschutz`, `/impressum` | Rechtstexte | noindex |
 | `/feeds/indeed.xml`, `/feeds/jobs.xml`, `/feeds/jobs.json` | Feeds für Indeed, Aggregatoren und das Widget auf bad-energie.de, stündlich neu erzeugt | – |
-| `/sitemap.xml`, `/llms.txt`, `/llms-full.txt` | Aus dem Registry erzeugt, stündlich neu | – |
+| `/sitemap.xml`, `/llms.txt`, `/llms-full.txt` | Aus den Registries erzeugt (Stellen, Orte; eine Liste in `lib/seo/indexable-pages.ts`), stündlich neu | – |
 | `/robots.txt` | Crawler-Regeln, sperrt `/api/` und `/admin/` | – |
 | `POST /api/bewerbung` | Nimmt eine Bewerbung an | – |
 | `POST /api/bewerbung/ergaenzung` | Ergänzungen und Mappe zu einer abgeschickten Bewerbung (Token) | – |
@@ -56,8 +58,9 @@ Vorgesehen, aber noch nicht gebaut: `/admin` (Phase 2d), `/lp/[slug]` (Phase 3),
 | Modul | Inhalt |
 |---|---|
 | `lib/jobs/` | Job-Domänenmodell mit zod (`schema.ts`), eine Datei je Stelle in `data/`, `registry.ts` (`getActiveJobs`, `getJobBySlug`, `getFunnelOptions` …), `jsonld.ts`, Feed-Builder in `feeds/`, Stellen-IDs in `ids.ts`, Slug-Sperre `slugs.lock.json` |
+| `lib/places/` | Orte der lokalen Seiten (E-028): Messung `data/messung.json` (OpenStreetMap, OSRM), zod-Schema, `registry.ts` (Orte, Kreise, Routen, Weiterleitungen), `derive.ts` (Richtung, Ring, Rang, Median, Nachbarn), `text.ts` (alle Texte der Orts-, Kreis- und Gebietsseiten), `jsonld.ts` (Pfad, Place, ItemList), `home-map.ts` (zod-frei, Karte der Startseite), Slug-Sperre `slugs.lock.json`; Einzigartigkeits-Gate in `__tests__/gate.test.ts` |
 | `lib/content/` | Fakten-Registry `facts.ts` (jede Aussage mit ID und Quelle), dazu `faq`, `process`, `region`, `team`, `company`, `breadcrumbs` |
-| `lib/data/` | Stammdaten (Firma, Kontakt, Orte, Bewertungen, Team), aus denen `lib/content` liest |
+| `lib/data/` | Stammdaten (Firma, Kontakt, Orte, Bewertungen, Team), aus denen `lib/content` liest. Die 10 Orte der Startseitenkarte (`locations.ts`) kommen seit E-028 aus der Messung (`lib/places/home-map.ts`) |
 | `lib/applications/` | Bewerbungsvertrag: zod-Schema (`schema.ts`), Konstanten ohne zod für den Browser (`constants.ts`), Normalisierung, `sink.ts` (`ApplicationSink`, `EmailSink`, Auswahl des Ziels über `getApplicationSink`), Bewerbungsnummer (`reference.ts`), Ergänzungs-Token (`token.ts`), Idempotenz, Antwortformat (`http.ts`) |
 | `lib/apply/` | Flow-Logik im Browser: Fragen je Fragenset, Schrittfolge, Entwurf in `sessionStorage`, Absenden, Fehlertexte, WhatsApp-Fallback, vCard, Bürozeiten, URL-Parameter |
 | `lib/mappe/` | Mappe-Editor, Anschreiben-Vorlage, Stationen, Speicher, Nachreichen an eine Bewerbung |
@@ -66,7 +69,7 @@ Vorgesehen, aber noch nicht gebaut: `/admin` (Phase 2d), `/lp/[slug]` (Phase 3),
 | `lib/security/` | `guardJsonPost` (Herkunft → Rate-Limit → Content-Type und Body-Größe), Rate-Limit, IP-Hash, Herkunftsprüfung, CSP-Meldungen |
 | `lib/env.ts` | zod-Prüfung der Umgebungsvariablen, abgeleitete HMAC-Geheimnisse, Standardabsender, Ziel der Bewerbungen (`resolveIntakeTarget`), Start-Check, Dev-Fallbacks |
 | `lib/status.ts` | Betriebsstatus für `GET /api/status` (nur Zustände, keine Werte) |
-| `lib/seo/` | Metadaten, Canonicals, OG-Bilder, IndexNow, `site-config.ts` |
+| `lib/seo/` | Metadaten, Canonicals, OG-Bilder, der eine JSON-LD-Graph je Seite (`graph.ts`), BreadcrumbList (`breadcrumbs-jsonld.ts`), Liste aller indexierbaren Seiten (`indexable-pages.ts` für Sitemap, IndexNow, `llms.txt`), IndexNow, `site-config.ts` |
 | `lib/maps/` | 2-Klick-Einwilligung, Maps-Loader, Fahrzeiten, Projektion der Radius-Grafik |
 | `lib/tokens/`, `lib/utils/` | Design-Tokens für JS, `cn()`, CSRF-Prüfung, WhatsApp-Links |
 | `lib/supabase/` | Phase 2b: Service-Client mit Secret Key und Circuit Breaker (`service.ts`), Aufrufe der Intake-RPCs mit Zeitlimit und Fehlerklassen (`rpc.ts`), Abbildung der Bewerbung auf die RPC-Nutzlast (`payload.ts`), `SupabaseSink` (`sink.ts`). `client.ts` und `server.ts` (Publishable Key, für das Cockpit) sind noch ungenutzt |
@@ -81,7 +84,10 @@ Vorgesehen, aber noch nicht gebaut: `/admin` (Phase 2d), `/lp/[slug]` (Phase 3),
 | `jobs/` | Bausteine der Stellenseite und JobCard |
 | `apply/` | `ApplyFlow` (eingebettet auf `/bewerbung` und `/jobs/[slug]`), Schritte, Kontaktschritt, Fehlerpanel, Danke-Seite (`thanks/`) |
 | `mappe/` | Mappe-Werkzeug und A4-Vorschau |
-| `maps/` | Typografische Radius-Grafik mit Ortsliste, Google-Karte per 2-Klick |
+| `maps/` | Typografische Radius-Grafik mit Ortsliste (auf dem Server auch ohne Client-Code nutzbar, `emphasizeIds` für hervorgehobene Orte), Explorer (Kärtchen bis 12 Orte, sonst Auswahlliste), Google-Karte per 2-Klick |
+| `einsatzgebiet/` | Orts-, Kreis- und Gebietsseite (E-028): Bausteine, Pläne, h1 nach gemessener Wortbreite (`titel.ts`) |
+| `zeichnung/` | Wiederkehrende Strichzeichnungen, dazu `Pendelweg` (Arbeitsweg in echter Richtung) und `Entfernungsleiste` (Skala 0–35 km) |
+| `seitenkopf/` | Gemeinsamer Seitenkopf und Pfad (Brotkrumen) der Unterseiten |
 | `reviews/` | Ruhiges Bewertungs-Karussell (Scroll-Snap, kein Autoplay) |
 | `legal/` | Bausteine für Datenschutz und Impressum |
 | `layout/`, `brand/`, `seo/`, `analytics/` | Section/Container, Logo, `JsonLd`, `AttributionCapture` |
@@ -123,11 +129,12 @@ Wie das Team die Mails liest und Ergänzungen zuordnet: [`docs/operations/betrie
 
 ## 4. Reichweite
 
-- **Stellenseiten:** eine statische Seite je veröffentlichter Stelle, keine Stadt-Duplikate. Seiten, Sitemap, Feeds und `llms.txt` werden stündlich neu erzeugt, abgelaufene Stellen fallen ohne Deploy heraus.
-- **JSON-LD:** JobPosting nur auf `/jobs/[slug]`, mit `url`, `directApply`, `baseSalary`, `validThrough` und `hiringOrganization`. Organization, WebSite und LocalBusiness global, FAQPage nur auf `/`. Prüfung: `bun run test:graph`.
+- **Stellenseiten:** eine statische Seite je veröffentlichter Stelle; Stellenseiten bekommen keine Stadt-Duplikate (keine Stelle × Ort). Seiten, Sitemap, Feeds und `llms.txt` werden stündlich neu erzeugt, abgelaufene Stellen fallen ohne Deploy heraus.
+- **Lokale Seiten (E-028):** `/einsatzgebiet`, 4 Kreis-Hubs und 55 Ortsseiten aus gemessenen Daten (OpenStreetMap, OSRM, [`docs/operations/orte-messung.md`](docs/operations/orte-messung.md)), ohne JobPosting und ohne LocalBusiness je Ort. Jede Ortsseite hat eigene Werte (Strecke, Fahrzeit, Luftlinie, Richtung, Ring, Nachbarn, Rang im Kreis). Das Einzigartigkeits-Gate (`lib/places/__tests__/gate.test.ts`, U1–U8) prüft vor jedem Merge: ≥ 8 eigene Werte, ≥ 90 Wörter Ortstext, Jaccard ≤ 0,45 je Seitenpaar, keine Vorlagensätze, jede Zahl mit Quelle, keine festen Arbeitszeiten, ≥ 3 eingehende Links, eindeutige Titel. Pflege: [`docs/operations/orte-pflegen.md`](docs/operations/orte-pflegen.md).
+- **JSON-LD:** ein `@graph` je Seite. JobPosting nur auf `/jobs/[slug]`, mit `url`, `directApply`, `baseSalary`, `validThrough` und `hiringOrganization`. Organization, WebSite und LocalBusiness global, FAQPage nur auf `/`. Ortsseiten: WebPage mit `spatialCoverage` → Place (PLZ, Ort, Kreis, ohne Straße und Koordinaten); Kreis- und Gebietsseite: CollectionPage mit ItemList. Prüfung: `bun run test:graph` (auch: jede indexierbare Seite steht in der Sitemap).
 - **Feeds:** `/feeds/indeed.xml` (Indeed), `/feeds/jobs.xml` (Jooble, Talent.com, Adzuna, Careerjet, Kimeta), `/feeds/jobs.json` (schema.org JobPosting, per CORS von bad-energie.de lesbar). Alle Links tragen `utm_source=<Feed>`.
 - **Sitemap und robots:** nur indexierbare Seiten; `/api/` und `/admin/` sind gesperrt. `proxy.ts` blockt nur benannte SEO-Scraper; Feeds, Sitemap, `robots.txt`, `llms*.txt` und die IndexNow-Datei sind ausgenommen.
-- **IndexNow:** `POST /api/indexnow` mit `Authorization: Bearer <INDEXNOW_SUBMIT_TOKEN>` meldet ohne Body Startseite, `/jobs`, alle Stellenseiten und `/bewerbung`.
+- **IndexNow:** `POST /api/indexnow` mit `Authorization: Bearer <INDEXNOW_SUBMIT_TOKEN>` meldet ohne Body Startseite, `/jobs`, alle Stellenseiten, `/bewerbung` und die lokalen Seiten (Liste aus `lib/seo/indexable-pages.ts`).
 - **`llms.txt` / `llms-full.txt`:** Kurz- und Langfassung für KI-Suchmaschinen, aus Registry und Fakten erzeugt.
 - **Manuelle Kanäle:** Jobbörse der Bundesagentur für Arbeit und HWK-Lehrstellenbörse mit getrackten Links, siehe [`docs/operations/stellenboersen.md`](docs/operations/stellenboersen.md).
 
@@ -218,6 +225,7 @@ Die vollständige Go-live-Checkliste mit Befehlen zum Erzeugen der Geheimnisse, 
 ## 9. Stellen pflegen und Stellenbörsen
 
 - **Stellen anlegen, ändern, verlängern, schließen:** [`docs/operations/stellen-pflegen.md`](docs/operations/stellen-pflegen.md). Jede Stelle ist eine TypeScript-Datei in `lib/jobs/data/`; die Tests prüfen Schema, Slugs, Gehalt und Ablaufdatum vor dem Merge.
+- **Orte der lokalen Seiten neu messen, aufnehmen, zusammenlegen, umbenennen:** [`docs/operations/orte-pflegen.md`](docs/operations/orte-pflegen.md).
 - **Stellenbörsen und Reichweite:** [`docs/operations/stellenboersen.md`](docs/operations/stellenboersen.md) mit getrackten Links für BA und HWK, Indeed-Aufnahme, Aggregatoren, Search Console und dem Widget für bad-energie.de.
 
 ## 10. Roadmap und Stand

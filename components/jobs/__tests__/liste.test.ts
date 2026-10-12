@@ -199,11 +199,12 @@ describe('/jobs (R5-JOBS-01)', () => {
     expect(plain(html)).toContain('Sprich direkt mit Sabri Demir');
   });
 
-  it('Einsatzgebiet im Bestandswortlaut, mit dem Weg zur Karte', () => {
+  it('Einsatzgebiet im Bestandswortlaut, mit dem Weg zur Gebietsseite (E-028)', () => {
     const html = renderSeite();
     expect(plain(/<h2 id="einsatzgebiet"[^>]*>(.*?)<\/h2>/.exec(html)![1])).toBe(REGION.headline);
     expect(html).toContain(REGION.summary);
-    expect(html).toContain('href="/#einsatzgebiet"');
+    expect(html).toContain('href="/einsatzgebiet"');
+    expect(html).not.toContain('href="/#einsatzgebiet"');
   });
 
   it('Rot nur an den Hauptaktionen: Kopf und Initiativband markieren sie mit data-primary-cta', () => {

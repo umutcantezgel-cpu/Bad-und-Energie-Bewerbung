@@ -21,7 +21,15 @@ import { fileURLToPath } from 'url';
  * 4. At most 1 AggregateRating per document.
  * 5. FAQPage only on "/" (at most one there), none on any other page.
  * 6. noindex documents carry nothing that triggers a rich result (BreadcrumbList, JobPosting, FAQPage).
- * 7. JobPosting only on job pages /jobs/<slug> (ROADMAP §7, §10):
+ * 7. Local pages under /einsatzgebiet (E-028): every indexable one carries exactly one BreadcrumbList (the visible
+ *    path). Place pages (/einsatzgebiet/<slug> with a plain WebPage) carry exactly one Place, referenced by
+ *    WebPage.spatialCoverage: name, address with postalCode, addressLocality, addressRegion and addressCountry, NO
+ *    streetAddress and NO geo (a place is not a business address; the one LocalBusiness stays in Wetzlar), and
+ *    containedInPlace an AdministrativeArea (the Kreis). Hubs (/einsatzgebiet and Kreis hubs) are a CollectionPage
+ *    whose mainEntity is an ItemList; every ListItem has position i+1 and a url that is in the sitemap. Place and
+ *    ItemList appear nowhere else.
+ * 8. Every indexable document with a canonical is in the sitemap (.next/server/app/sitemap.xml.body), when built.
+ * 9. JobPosting only on job pages /jobs/<slug> (ROADMAP §7, §10):
  *    - none on "/", "/jobs", "/bewerbung" or any other page,
  *    - exactly one on every indexable job page, none on a noindex job page ("besetzt"),
  *    - required properties: title, description, datePosted, hiringOrganization (with name),
@@ -32,7 +40,10 @@ import { fileURLToPath } from 'url';
  */
 
 const APP_OUTPUT_DIR = path.resolve(process.cwd(), '.next/server/app');
+const SITEMAP_FILE = path.join(APP_OUTPUT_DIR, 'sitemap.xml.body');
 const JOB_PAGE = /^\/jobs\/[^/]+$/;
+/** Gebietsseite und alles flach darunter (Orte und Kreis-Hubs). */
+const LOCAL_PAGE = /^\/einsatzgebiet(?:\/[^/]+)?$/;
 const SCRIPT_RE = /<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
 const SKIPPED_ROUTES = new Set(['/_global-error']);
 const GLOBAL_TYPES = ['Organization', 'Person', 'WebSite', 'LocalBusiness'];
@@ -154,6 +165,51 @@ function nestedIds(value, top = true) {
   return [...own, ...Object.values(value).flatMap((child) => nestedIds(child, false))];
 }
 
+/** Problems of a top-level Place node of a place page (E-028); empty when valid. */
+export function placeProblems(node) {
+  const problems = [];
+  if (!nonEmptyString(node.name)) problems.push('Place without name');
+  const address = node.address;
+  if (!address || typeof address !== 'object') {
+    problems.push('Place without address');
+  } else {
+    for (const key of ['postalCode', 'addressLocality', 'addressRegion', 'addressCountry']) {
+      if (!nonEmptyString(address[key])) problems.push(`Place address without ${key}`);
+    }
+    if (address.streetAddress !== undefined) problems.push('Place must not carry a streetAddress (no business address per place)');
+  }
+  if (node.geo !== undefined) problems.push('Place must not carry geo (no coordinates of a business per place)');
+  const area = node.containedInPlace;
+  if (!area || typeof area !== 'object' || !hasType(area, 'AdministrativeArea') || !nonEmptyString(area.name)) {
+    problems.push('Place.containedInPlace must be an AdministrativeArea with a name (the Kreis)');
+  }
+  return problems;
+}
+
+/** Problems of an ItemList node of a hub (E-028): positions 1…n, every url in the sitemap (if known). */
+export function itemListProblems(node, sitemapUrls) {
+  const problems = [];
+  const items = Array.isArray(node.itemListElement) ? node.itemListElement : [];
+  if (items.length === 0) problems.push('ItemList without itemListElement');
+  if (node.numberOfItems !== undefined && node.numberOfItems !== items.length) {
+    problems.push(`ItemList numberOfItems ${node.numberOfItems} differs from ${items.length} elements`);
+  }
+  items.forEach((item, i) => {
+    if (!item || !hasType(item, 'ListItem')) problems.push(`ItemList element ${i + 1} is not a ListItem`);
+    if (item?.position !== i + 1) problems.push(`ItemList element ${i + 1} has position ${item?.position}`);
+    if (!nonEmptyString(item?.url)) problems.push(`ItemList element ${i + 1} without url`);
+    else if (sitemapUrls && !sitemapUrls.has(item.url)) problems.push(`ItemList url ${item.url} is not in the sitemap`);
+  });
+  return problems;
+}
+
+/** <loc> values of the prerendered sitemap, or null before a build. */
+export function readSitemapUrls(file = SITEMAP_FILE) {
+  if (!fs.existsSync(file)) return null;
+  const xml = fs.readFileSync(file, 'utf8');
+  return new Set([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => decodeEntities(m[1].trim())));
+}
+
 /** Problems of a single JobPosting node; empty when valid. */
 export function jobPostingProblems(node, canonical, pageId) {
   const problems = [];
@@ -242,6 +298,13 @@ export function graphProblems(root, html, globalIds = {}) {
   for (const other of pages.filter((node) => node !== page)) {
     if (refTo(other.isPartOf) !== pageId) problems.push(`${other['@type']} must point to the WebPage via isPartOf`);
   }
+  const byId = (id) => graph.find((node) => node?.['@id'] === id);
+  if (hasType(page, 'CollectionPage') && !hasType(byId(refTo(page.mainEntity)) ?? {}, 'ItemList')) {
+    problems.push('CollectionPage.mainEntity must reference an ItemList');
+  }
+  if (page.spatialCoverage !== undefined && !hasType(byId(refTo(page.spatialCoverage)) ?? {}, 'Place')) {
+    problems.push('WebPage.spatialCoverage must reference a Place');
+  }
 
   const crumbs = graph.filter((node) => hasType(node, 'BreadcrumbList'));
   if (crumbs.length > 1) problems.push(`expected at most 1 BreadcrumbList, found ${crumbs.length}`);
@@ -271,6 +334,8 @@ function runGraphCheck() {
   let checked = 0;
   let jobPagesWithPosting = 0;
   let webPages = 0;
+  let localPages = 0;
+  const sitemapUrls = readSitemapUrls();
   const globalIds = {};
   const fail = (relativePath, message) => {
     console.error(`❌ [${relativePath}] ${message}`);
@@ -324,6 +389,32 @@ function runGraphCheck() {
       if (rich.length > 0) fail(relativePath, `noindex page must not carry ${rich.map((n) => n['@type']).join(', ')}`);
     }
 
+    const canonical = canonicalOf(content);
+    if (sitemapUrls && canonical && !noindex && !sitemapUrls.has(canonical)) {
+      fail(relativePath, `indexable page ${canonical} is not in the sitemap`);
+    }
+
+    const placesInGraph = nodes.filter((n) => hasType(n, 'Place'));
+    const itemLists = nodes.filter((n) => hasType(n, 'ItemList'));
+    if (LOCAL_PAGE.test(route) && canonical && !noindex) {
+      localPages++;
+      const crumbs = nodes.filter((n) => hasType(n, 'BreadcrumbList'));
+      if (crumbs.length !== 1) fail(relativePath, `local page needs exactly 1 BreadcrumbList (visible path), found ${crumbs.length}`);
+      const pageNode = nodes.find((n) => n.url === canonical && WEB_PAGE_TYPES.some((type) => hasType(n, type)));
+      if (pageNode && hasType(pageNode, 'CollectionPage')) {
+        if (itemLists.length !== 1) fail(relativePath, `hub needs exactly 1 ItemList, found ${itemLists.length}`);
+        if (placesInGraph.length > 0) fail(relativePath, 'hub must not carry a Place');
+        for (const list of itemLists) for (const problem of itemListProblems(list, sitemapUrls)) fail(relativePath, problem);
+      } else {
+        if (placesInGraph.length !== 1) fail(relativePath, `place page needs exactly 1 Place, found ${placesInGraph.length}`);
+        if (itemLists.length > 0) fail(relativePath, 'place page must not carry an ItemList');
+        for (const place of placesInGraph) for (const problem of placeProblems(place)) fail(relativePath, problem);
+      }
+    } else {
+      if (placesInGraph.length > 0) fail(relativePath, `Place is only allowed on /einsatzgebiet/<slug> (found on ${route})`);
+      if (itemLists.length > 0) fail(relativePath, `ItemList is only allowed on the Einsatzgebiet hubs (found on ${route})`);
+    }
+
     const postings = nodes.filter((n) => hasType(n, 'JobPosting'));
     if (!JOB_PAGE.test(route)) {
       if (postings.length > 0) {
@@ -342,7 +433,6 @@ function runGraphCheck() {
       continue;
     }
     jobPagesWithPosting++;
-    const canonical = canonicalOf(content);
     for (const problem of jobPostingProblems(postings[0], canonical, pageId)) fail(relativePath, `JobPosting: ${problem}`);
     if (!postings[0].validThrough) console.warn(`⚠️  [${relativePath}] JobPosting without validThrough`);
   }
@@ -354,7 +444,8 @@ function runGraphCheck() {
 
   console.log(
     `✅ All ${checked} HTML documents passed JSON-LD graph checks: one @graph each, ${webPages} WebPage nodes = canonical, ` +
-      `${jobPagesWithPosting} job pages with a valid JobPosting, global @ids ${JSON.stringify(globalIds)}.`,
+      `${jobPagesWithPosting} job pages with a valid JobPosting, ${localPages} local pages (Place/ItemList), ` +
+      `${sitemapUrls ? `${sitemapUrls.size} sitemap URLs` : 'no sitemap'}, global @ids ${JSON.stringify(globalIds)}.`,
   );
 }
 

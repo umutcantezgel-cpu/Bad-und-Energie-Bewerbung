@@ -18,7 +18,8 @@ const azubi = getJobById('ausbildung-anlagenmechaniker-shk')!;
 
 /** Text of each crumb in the first Breadcrumbs nav of the markup. */
 function visibleCrumbs(html: string): string[] {
-  const nav = /<nav aria-label="Brotkrümelnavigation">(.*?)<\/nav>/.exec(html)?.[1] ?? '';
+  // Der ganze Pfad (mit <ol>); am Handy steht davor nur der Weg eine Stufe zurück (components/seitenkopf/Pfad.tsx)
+  const nav = [...html.matchAll(/<nav aria-label="Brotkrümelnavigation"[^>]*>(.*?)<\/nav>/g)].map((m) => m[1]).find((inner) => inner.includes('<ol')) ?? '';
   return [...nav.matchAll(/<li[^>]*>(.*?)<\/li>/g)].map((m) => m[1].replace(/<[^>]+>/g, ''));
 }
 

@@ -59,7 +59,7 @@ Indeed übernimmt Stellen kostenlos aus XML-Feeds von Arbeitgeber-Websites, ents
 
 1. Im Indeed-Arbeitgeberkonto (oder über den Indeed-Support für Arbeitgeber) anfragen, dass die Stellen der Karriereseite per XML-Feed übernommen werden. Angeben: Firmenname „Bad und Energie GmbH Lahn Dill“, Karriereseite `https://karriere.bad-energie.de/jobs`, Feed `https://karriere.bad-energie.de/feeds/indeed.xml`.
 2. **Keine zusätzlichen manuellen Indeed-Anzeigen** für dieselben Stellen anlegen. Indeed wertet doppelte Anzeigen ab.
-3. Eine Stelle hat genau einen Standort (Wetzlar). Keine Kopien für Gießen, Herborn usw. anlegen: Indeed straft Location-Blasting ab, Google wertet Stadt-Duplikate als Doorway-Pages.
+3. Eine Stelle hat genau einen Standort (Wetzlar). Keine Kopien für Gießen, Herborn usw. anlegen: Indeed straft Location-Blasting ab, Google wertet Stadt-Duplikate als Doorway-Pages. Die Ortsseiten unter `/einsatzgebiet` (E-028) sind keine solchen Kopien: Sie tragen kein JobPosting, sondern gemessene Strecken und Fahrzeiten, und gehen nicht in die Feeds.
 4. Nach der Aufnahme stichprobenartig prüfen: Titel, Gehaltsspanne, Link mit `utm_source=indeed`.
 
 Wenn Indeed für die organische Aufnahme eine Bezahl-Option oder „Indeed Apply“ verlangt, bitte nicht selbst abschließen, sondern mit dem Owner klären.
@@ -119,7 +119,15 @@ Nach jedem Deploy mit neuen oder geänderten Stellen:
 
 Eine geschlossene Stelle (`status: 'archived'`) zeigt „Besetzt“ mit `noindex` und ohne JobPosting. Google nimmt sie nach dem nächsten Crawl aus Google for Jobs; mit der URL-Prüfung geht es schneller.
 
-IndexNow (Bing, Yandex u. a.) wird über `POST /api/indexnow` mit Bearer-Token ausgelöst. Ohne Body werden Startseite, `/jobs`, alle Stellenseiten und `/bewerbung` gemeldet.
+IndexNow (Bing, Yandex u. a.) wird über `POST /api/indexnow` mit Bearer-Token ausgelöst. Ohne Body meldet es die Liste aus `lib/seo/indexable-pages.ts` (`getIndexNowUrls`), dieselbe Quelle wie die Sitemap:
+
+| Gruppe | URLs (Produktion) |
+|---|---|
+| Kern | `https://karriere.bad-energie.de/`, `/jobs`, `/bewerbung` |
+| Stellen | jede Stellenseite `/jobs/<slug>`, auch besetzte (damit ihr `noindex` schnell ankommt) |
+| Einsatzgebiet (E-028) | `/einsatzgebiet`, die Kreis-Hubs `/einsatzgebiet/lahn-dill-kreis`, `/einsatzgebiet/landkreis-giessen`, `/einsatzgebiet/landkreis-limburg-weilburg`, `/einsatzgebiet/wetteraukreis` und jede veröffentlichte Ortsseite `/einsatzgebiet/<slug>` (55, Liste in `lib/places/slugs.lock.json`) |
+
+Weiterleitungen (`/einsatzgebiet/landkreis-marburg-biedenkopf`, `/einsatzgebiet/hochtaunuskreis`, alte Slugs) stehen weder in der Sitemap noch in IndexNow. Nach einer neuen Messung oder neuen Orten (`docs/operations/orte-pflegen.md`) einmal IndexNow auslösen und die Sitemap in der Search Console neu einreichen.
 
 ## e) Widget „Wir stellen ein“ auf bad-energie.de
 

@@ -56,9 +56,12 @@ export const companyData: CompanyData = {
     friday: 'Freitag von 07:00 bis 13:30 Uhr',
     note: 'Büro erreichbar zu diesen Zeiten. Keine Notdienst Pflicht am Wochenende.',
   },
+  // Firmensitz Siegmund-Hiepe-Str. 20 laut OpenStreetMap (Nominatim), Ziel jeder Messung der Ortsseiten:
+  // lib/places/data/messung.json `headquarters`, Protokoll docs/operations/orte-messung.md@b0749f2. Bis
+  // 2026-10-12 standen hier die Koordinaten der Wetzlarer Kernstadt (50.56499, 8.49842), nicht die des Hauses.
   geo: {
-    latitude: 50.56499,
-    longitude: 8.49842,
+    latitude: 50.5525,
+    longitude: 8.47465,
   },
   milestone2026:
     'Meilenstein 2026: Durch das stetige Wachstum unseres Betriebes war ein Umzug in eine neue und größere Betriebsstätte unausweichlich. Der Hauptstandort wurde in die Siegmund-Hiepe-Str. 20 in Wetzlar verlagert für ein moderneres Büro und ein größeres Lager. Die Bad & Energie GmbH hat sich zum führenden Spezialisten für Wärmepumpen in der Region etabliert. Zusätzlich besteht die Partnerschaft als Fachbetrieb für den Lahn-Dill-Kreis zur Betreuung und Instandhaltung öffentlicher Einrichtungen. Zurzeit sind 15 Mitarbeiter im Betrieb tätig und arbeiten stetig daran, die Heizungen und Bäder der Kunden zu modernisieren. Dabei gilt: ‚Schöner Wohnen mit Top-Qualität‘.',

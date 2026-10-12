@@ -8,7 +8,10 @@ import { getActiveJobs } from '@/lib/jobs/registry';
 import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
 import { buildPageGraph, type PageGraph } from '@/lib/seo/graph';
 import { documentTitle, generatePageMetadata } from '@/lib/seo/metadata';
-import { graphProblems, jobPostingProblems } from '../check-graph.mjs';
+import { graphProblems, itemListProblems, jobPostingProblems, placeProblems } from '../check-graph.mjs';
+import { buildKreisItemListJsonLd, buildPlaceJsonLd, kreisPfad, pfadJsonLd, placePfad } from '@/lib/places/jsonld';
+import { getHubKreise, getPlaceBySlug, kreisPath, placePath } from '@/lib/places/registry';
+import { getIndexablePages } from '@/lib/seo/indexable-pages';
 
 type Node = Record<string, unknown>;
 
@@ -132,5 +135,58 @@ describe('check-graph: graphProblems (V6-B)', () => {
     expect(jobPostingProblems({ ...posting, mainEntityOfPage: undefined }, canonical, `${canonical}#webpage`).join('\n')).toMatch(
       /mainEntityOfPage must reference the WebPage node/,
     );
+  });
+});
+
+describe('check-graph: lokale Seiten (E-028)', () => {
+  const herborn = getPlaceBySlug('herborn')!;
+  const kreis = getHubKreise()[0];
+  const sitemap = new Set(getIndexablePages().map((page) => page.url));
+
+  it('der Graph einer Ortsseite und eines Kreis-Hubs besteht; Place und ItemList einzeln geprüft', () => {
+    const ort = fixture(placePath(herborn), { breadcrumb: pfadJsonLd(placePfad(herborn)), place: buildPlaceJsonLd(herborn) });
+    expect(problems(ort.graph, ort.html)).toEqual([]);
+    expect(placeProblems(node(clone(ort.graph), 'Place'))).toEqual([]);
+
+    const hub = fixture(kreisPath(kreis), { breadcrumb: pfadJsonLd(kreisPfad(kreis)), itemList: buildKreisItemListJsonLd(kreis) });
+    expect(problems(hub.graph, hub.html)).toEqual([]);
+    expect(itemListProblems(node(clone(hub.graph), 'ItemList'), sitemap)).toEqual([]);
+  });
+
+  it('Place: meldet streetAddress, geo, fehlende PLZ und einen Kreis ohne AdministrativeArea', () => {
+    const place = { ...buildPlaceJsonLd(herborn) } as Node;
+    place.address = { ...(place.address as Node), streetAddress: 'Hauptstraße 1' };
+    delete (place.address as Node).postalCode;
+    place.geo = { '@type': 'GeoCoordinates', latitude: 50.68, longitude: 8.3 };
+    place.containedInPlace = { '@type': 'Place', name: 'Lahn-Dill-Kreis' };
+    const text = placeProblems(place).join('\n');
+    expect(text).toMatch(/streetAddress/);
+    expect(text).toMatch(/geo/);
+    expect(text).toMatch(/without postalCode/);
+    expect(text).toMatch(/AdministrativeArea/);
+  });
+
+  it('ItemList: meldet falsche Positionen, Anzahl und URLs außerhalb der Sitemap', () => {
+    const list = JSON.parse(JSON.stringify(buildKreisItemListJsonLd(kreis))) as Node;
+    const items = list.itemListElement as Node[];
+    items[0].position = 7;
+    items[1].url = 'https://example.org/nicht-in-der-sitemap';
+    list.numberOfItems = 1;
+    const text = itemListProblems(list, sitemap).join('\n');
+    expect(text).toMatch(/position 7/);
+    expect(text).toMatch(/not in the sitemap/);
+    expect(text).toMatch(/numberOfItems/);
+  });
+
+  it('CollectionPage ohne ItemList und spatialCoverage ohne Place werden gemeldet', () => {
+    const hub = fixture(kreisPath(kreis), { itemList: buildKreisItemListJsonLd(kreis) });
+    const ohneListe = clone(hub.graph);
+    ohneListe['@graph'] = ohneListe['@graph'].filter((n) => n['@type'] !== 'ItemList');
+    expect(problems(ohneListe, hub.html).join('\n')).toMatch(/CollectionPage.mainEntity must reference an ItemList|unresolved @id/);
+
+    const ort = fixture(placePath(herborn), { place: buildPlaceJsonLd(herborn) });
+    const falsch = clone(ort.graph);
+    node(falsch, 'Place')['@type'] = 'City';
+    expect(problems(falsch, ort.html)).toContain('WebPage.spatialCoverage must reference a Place');
   });
 });

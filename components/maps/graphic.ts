@@ -1,4 +1,4 @@
-import { layoutLabels, type Box, type PlacedLabel } from '@/lib/maps/labels';
+import { boxesOverlap, layoutLabels, type Box, type PlacedLabel } from '@/lib/maps/labels';
 import { pointOnCircle, type SvgPoint } from '@/lib/maps/projection';
 import type { RadiusView, RegionMapData, ViewRing } from './types';
 
@@ -90,6 +90,13 @@ export function clearOfHouse(points: readonly SvgPoint[], origin: SvgPoint, skip
 
 /** Ring labels sit just inside each ring, a little west of south, where no place and no line runs. */
 const RING_LABEL_ANGLE = 100;
+/**
+ * Where a ring label may move when a dot lies under it (it read „15, km“ with a place between the words): along its
+ * ring, nearest first. The home map keeps its labels at RING_LABEL_ANGLE, where none of its ten places lies.
+ */
+const RING_LABEL_FALLBACK_ANGLES = [90, 80, 110, 120, 70, 60, 130, 140, 50, 40, 150, 160, 30, 20, 170, 180, 190, 200, 350, 340, 210, 220, 330, 320, 230, 240, 310, 300] as const;
+/** Half the square kept free around a dot for a ring label (dot 4.5 + stroke + air). */
+const RING_LABEL_DOT_CLEARANCE = 7;
 /** Ring labels: Martian Mono at 13 units (75 % width, tabular); 0.66 em per glyph keeps the estimate safe. */
 export const RING_LABEL_FONT_SIZE = 13;
 const RING_LABEL_CHAR_WIDTH = 0.66;
@@ -102,22 +109,44 @@ export interface RingLabel {
   box: Box;
 }
 
-/** „15 km“, „25 km“, „35 km“ on their rings (straight-line distance, see the caption). */
-export function ringLabels(view: Pick<RadiusView, 'origin' | 'rings'>): RingLabel[] {
-  return view.rings.map((ring) => {
-    const at = pointOnCircle(view.origin, ring.r, RING_LABEL_ANGLE);
+/**
+ * „15 km“, „25 km“, „35 km“ on their rings (straight-line distance, see the caption). With the view's points the
+ * labels keep clear of every drawn dot: a label that would cover one moves along its ring (RING_LABEL_FALLBACK_ANGLES).
+ */
+export function ringLabels(view: Pick<RadiusView, 'origin' | 'rings'> & { size?: number; points?: RadiusView['points'] }): RingLabel[] {
+  const dots = (view.points ?? []).filter((p) => p.inFrame).map((p) => squareAround(p.drawn, RING_LABEL_DOT_CLEARANCE));
+  const fixed: Box[] = [centerBox(view.origin)];
+  const inFrame = (box: Box) => view.size === undefined || (box.x0 >= 0 && box.y0 >= 0 && box.x1 <= view.size && box.y1 <= view.size);
+  const placed: RingLabel[] = [];
+  for (const ring of view.rings) {
     const text = `${ring.km}\u00A0km`;
-    const x = at.x + 4;
-    const y = at.y - 11;
     const width = [...text].length * RING_LABEL_CHAR_WIDTH * RING_LABEL_FONT_SIZE;
-    return {
-      km: ring.km,
-      text,
-      x,
-      y,
-      box: { x0: x - 2, y0: y - RING_LABEL_FONT_SIZE / 2 - 1, x1: x + width + 2, y1: y + RING_LABEL_FONT_SIZE / 2 + 1 },
+    const at = (angle: number, inset = 12): RingLabel => {
+      // Default angle: as always (just inside the ring, starting a little east of the point). Other angles: the
+      // label centred just inside the ring (or just outside, inset < 0).
+      const point = angle === RING_LABEL_ANGLE && inset === 12 ? pointOnCircle(view.origin, ring.r, angle) : pointOnCircle(view.origin, ring.r - inset, angle);
+      const x = angle === RING_LABEL_ANGLE && inset === 12 ? point.x + 4 : round1(point.x - width / 2);
+      const y = angle === RING_LABEL_ANGLE && inset === 12 ? point.y - 11 : point.y;
+      return {
+        km: ring.km,
+        text,
+        x,
+        y,
+        box: { x0: x - 2, y0: y - RING_LABEL_FONT_SIZE / 2 - 1, x1: x + width + 2, y1: y + RING_LABEL_FONT_SIZE / 2 + 1 },
+      };
     };
-  });
+    const hits = (label: RingLabel) => dots.filter((box) => boxesOverlap(box, label.box)).length;
+    const blocked = (label: RingLabel) =>
+      !inFrame(label.box) || [...fixed, ...placed.map((l) => l.box)].some((box) => boxesOverlap(box, label.box));
+    const candidates = [RING_LABEL_ANGLE, ...RING_LABEL_FALLBACK_ANGLES].flatMap((angle) => [at(angle), at(angle, -12), at(angle, 22)]);
+    // Erst ohne Punkt darunter; sonst die Lage mit den wenigsten Punkten (dichte Mitte)
+    const label =
+      candidates.find((c) => !blocked(c) && hits(c) === 0) ??
+      [...candidates].filter((c) => !blocked(c)).sort((a, b) => hits(a) - hits(b))[0] ??
+      at(RING_LABEL_ANGLE);
+    placed.push(label);
+  }
+  return placed;
 }
 
 /** Rings of a view: the switch radii up to the chosen one, in SVG units. */
@@ -160,6 +189,35 @@ export interface LabelFrame {
    * them, only a label without any other room may cross a line (its halo keeps it readable).
    */
   softObstacles?: readonly Box[];
+  /** Named first after the selected place and the centre, in this order (overview: the larger towns). */
+  priority?: readonly string[];
+  /**
+   * Must be named (pages under /einsatzgebiet: the emphasized places), also close to the centre; without room next
+   * to the dot a little further out, with a leader line.
+   */
+  mustLabel?: readonly string[];
+}
+
+/** A placed label; labels set further out than usual carry a leader line from their dot. */
+export interface GraphicLabel extends PlacedLabel {
+  leader?: { x1: number; y1: number; x2: number; y2: number };
+}
+
+/** Distances tried for a must-label without room next to its dot (then it gets a leader line). */
+const LEADER_GAPS = [14, 22, 32, 44, 58, 74, 92, 112] as const;
+
+/** Leader from the edge of the dot to the nearest point of the label box. */
+function leaderLine(dot: SvgPoint, box: Box): GraphicLabel['leader'] {
+  const tx = Math.min(Math.max(dot.x, box.x0), box.x1);
+  const ty = Math.min(Math.max(dot.y, box.y0), box.y1);
+  const d = Math.hypot(tx - dot.x, ty - dot.y) || 1;
+  const start = 6;
+  return {
+    x1: round1(dot.x + ((tx - dot.x) / d) * start),
+    y1: round1(dot.y + ((ty - dot.y) / d) * start),
+    x2: round1(tx),
+    y2: round1(ty),
+  };
 }
 
 /** Free disc around the house in which the landscape lines stop (SVG units; see RadiusGraphic). */
@@ -198,7 +256,9 @@ export function polylineBoxes(
 export function labelFrame(data: Pick<RegionMapData, 'centerName' | 'places'>, view: RadiusView): LabelFrame {
   const places = view.points.flatMap((point, i) => {
     const place = data.places[i];
-    return point.inFrame && place ? [{ id: place.id, name: place.name, x: point.drawn.x, y: point.drawn.y, atCenter: place.atCenter }] : [];
+    return point.inFrame && place
+      ? [{ id: place.id, name: place.shortName ?? place.name, x: point.drawn.x, y: point.drawn.y, atCenter: place.atCenter }]
+      : [];
   });
   const obstacles = [
     ...ringLabels(view).map((label) => label.box),
@@ -237,13 +297,23 @@ const SELECTED_EXTRA_GAPS = [0, 6, 12] as const;
  * label or the centre house. The selected label also keeps clear of the other dots, moving a
  * little further out if needed, and covers one only as a last resort.
  */
-export function graphicLabels(data: LabelFrame, selectedId: string | null): PlacedLabel[] {
+export function graphicLabels(data: LabelFrame, selectedId: string | null): GraphicLabel[] {
   const outer = data.places.filter((place) => !place.atCenter);
   const selected = outer.find((place) => place.id === selectedId);
   const distance = (p: SvgPoint) => Math.hypot(p.x - data.origin.x, p.y - data.origin.y);
   const minDistance = data.radius * MIN_LABEL_FRACTION;
   const unselected = outer.filter((place) => place !== selected);
-  const rest = unselected.filter((place) => distance(place) >= minDistance).sort((a, b) => distance(b) - distance(a));
+  const priority = data.priority ?? [];
+  // Priority places are always named too (with a leader line if need be)
+  const must = new Set([...(data.mustLabel ?? []), ...priority]);
+  // Priority first (in its order), then the must-labels, then the rest from the outside in
+  const rank = (place: FramePlace) => {
+    const p = priority.indexOf(place.id);
+    return p >= 0 ? p : must.has(place.id) ? priority.length : priority.length + 1;
+  };
+  const rest = unselected
+    .filter((place) => must.has(place.id) || priority.includes(place.id) || distance(place) >= minDistance)
+    .sort((a, b) => rank(a) - rank(b) || distance(b) - distance(a));
 
   const fixed = [centerBox(data.origin), ...(data.obstacles ?? [])];
   const base = { size: data.size, fontSize: LABEL_FONT_SIZE, gap: LABEL_GAP, dotRadius: DOT_CLEARANCE };
@@ -297,15 +367,40 @@ export function graphicLabels(data: LabelFrame, selectedId: string | null): Plac
   };
   const taken = [...reserved, ...(centerLabel ? [centerLabel.box] : [])];
   const candidates = rest.map((place) => ({ id: place.id, text: place.name, x: place.x, y: place.y }));
-  // First off the lines; places without such room get a second try that may cross a line.
-  const clear = layoutLabels(candidates, { ...restOptions, obstacles: [...taken, ...soft] });
-  const crossing = layoutLabels(
-    candidates.filter((c) => !clear.some((label) => label.id === c.id)),
-    { ...restOptions, obstacles: [...taken, ...clear.map((label) => label.box)] },
-  );
-  const others = [...clear, ...crossing].sort(
+  // Priority places first, both passes; then the rest. Each group: first off the lines; places without such room get
+  // a second try that may cross a line.
+  const placedSoFar: PlacedLabel[] = [];
+  const isPriority = (c: { id: string }) => priority.includes(c.id);
+  for (const group of [candidates.filter(isPriority), candidates.filter((c) => !isPriority(c))]) {
+    if (group.length === 0) continue;
+    const blockedBy = () => [...taken, ...placedSoFar.map((label) => label.box)];
+    const clear = layoutLabels(group, { ...restOptions, extraDots: [...restOptions.extraDots, ...candidates.filter((c) => !group.includes(c))], obstacles: [...blockedBy(), ...soft] });
+    placedSoFar.push(...clear);
+    const crossing = layoutLabels(
+      group.filter((c) => !clear.some((label) => label.id === c.id)),
+      { ...restOptions, extraDots: [...restOptions.extraDots, ...candidates.filter((c) => !group.includes(c))], obstacles: blockedBy() },
+    );
+    placedSoFar.push(...crossing);
+  }
+  const others: GraphicLabel[] = [...placedSoFar].sort(
     (a, b) => candidates.findIndex((c) => c.id === a.id) - candidates.findIndex((c) => c.id === b.id),
   );
+
+  // Must-labels still without a name: further out with a leader line, first clear of the dots, then over one
+  const missing = candidates.filter((c) => must.has(c.id) && !others.some((label) => label.id === c.id));
+  for (const candidate of missing) {
+    const blocked = [...taken, ...others.map((label) => label.box)];
+    const dotsAround = [data.origin, ...unselected.filter((place) => place.id !== candidate.id), ...(selected ? [selected] : [])];
+    let placed: PlacedLabel | undefined;
+    for (const ignoreDots of [false, true]) {
+      for (const gap of LEADER_GAPS) {
+        [placed] = layoutLabels([{ ...candidate, gap, ignoreDots }], { ...base, extraDots: dotsAround, obstacles: blocked });
+        if (placed) break;
+      }
+      if (placed) break;
+    }
+    if (placed) others.push({ ...placed, leader: leaderLine(candidate, placed.box) });
+  }
 
   return [...(selectedLabel ? [selectedLabel] : []), ...(centerLabel ? [centerLabel] : []), ...others];
 }

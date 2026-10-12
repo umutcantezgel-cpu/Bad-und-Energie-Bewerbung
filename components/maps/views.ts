@@ -1,4 +1,4 @@
-import { REGION } from '@/lib/content/region';
+import { REGION, type RegionLocation } from '@/lib/content/region';
 import { regionalLocations } from '@/lib/data/locations';
 import { CENTER_MERGE_KM } from '@/lib/maps/google-maps-config';
 import { createRadiusProjection, haversineKm } from '@/lib/maps/projection';
@@ -31,6 +31,20 @@ export function placeCharacter(id: string): string | null {
   return regionalLocations.find((location) => location.id === id)?.character ?? null;
 }
 
+/**
+ * A place for the graphic and the explorer. The home map passes REGION.locations (10 places, lib/data/locations.ts);
+ * the pages under /einsatzgebiet pass the measured places of lib/places (components/einsatzgebiet/karte.ts) with
+ * their own description and the link to their page.
+ */
+export interface MapLocation extends Omit<RegionLocation, 'href'> {
+  /** Short description; omitted: placeCharacter(id) (home map, M-016). */
+  character?: string | null;
+  /** Page of the place (/einsatzgebiet/<slug>); the explorer links it as „Mehr zu …“. */
+  href?: string;
+  /** Shorter name for the plan label; omitted: the name. */
+  shortName?: string;
+}
+
 const center = { lat: REGION.center.latitude, lng: REGION.center.longitude };
 
 /** Same spot as the headquarters (e.g. "Wetzlar Kernstadt"): drawn as the house in the middle. */
@@ -38,17 +52,19 @@ function isAtCenter(location: { latitude: number; longitude: number }): boolean 
   return haversineKm(center, { lat: location.latitude, lng: location.longitude }) < CENTER_MERGE_KM;
 }
 
-/** REGION.locations with what the explorer shows: rating (Kerngebiet) and short description. */
-export function regionPlaces(): RegionPlace[] {
-  return REGION.locations.map((location) => ({
+/** The places with what the explorer shows: rating (Kerngebiet), short description and page link. */
+export function regionPlaces(locations: readonly MapLocation[] = REGION.locations): RegionPlace[] {
+  return locations.map((location) => ({
     id: location.id,
     name: location.name,
     postalCode: location.postalCode,
     distanceKm: location.distanceKm,
     commuteMinutes: location.commuteMinutes,
     isCoreZone: location.isCoreZone,
-    character: placeCharacter(location.id),
+    character: location.character === undefined ? placeCharacter(location.id) : location.character,
     atCenter: isAtCenter(location),
+    ...(location.href ? { href: location.href } : {}),
+    ...(location.shortName ? { shortName: location.shortName } : {}),
   }));
 }
 
@@ -56,22 +72,26 @@ export function regionPlaces(): RegionPlace[] {
 const FRAME_MARGIN = 6;
 
 /** One view: the chosen ring fills the frame (zoom), places at their true relative positions. */
-export function radiusView(radiusKm: number, radii: readonly number[] = SWITCH_RADII_KM): RadiusView {
+export function radiusView(
+  radiusKm: number,
+  radii: readonly number[] = SWITCH_RADII_KM,
+  locations: readonly MapLocation[] = REGION.locations,
+): RadiusView {
   const projection = createRadiusProjection({ center, radiusKm, size: GRAPHIC_SIZE, padding: GRAPHIC_PADDING });
-  const raw = REGION.locations.map((location) => {
+  const raw = locations.map((location) => {
     const { x, y } = projection.projectRaw({ lat: location.latitude, lng: location.longitude });
     const inFrame = x >= FRAME_MARGIN && y >= FRAME_MARGIN && x <= projection.size - FRAME_MARGIN && y <= projection.size - FRAME_MARGIN;
     return { id: location.id, x, y, inFrame };
   });
   // The headquarters place is the house itself and places outside the frame are not drawn: both stay put.
-  const fixed = raw.map((p, i) => !p.inFrame || isAtCenter(REGION.locations[i]));
+  const fixed = raw.map((p, i) => !p.inFrame || isAtCenter(locations[i]));
   const drawn = clearOfHouse(raw, projection.origin, fixed);
   const points = raw.map((p, i) => ({ ...p, drawn: drawn[i] }));
   const rings = ringsFor(radii, radiusKm, projection.unitsPerKm);
   const base = { origin: projection.origin, rings };
   const landscape = projectLandscape(projection, {
     dots: points.filter((p) => p.inFrame).map((p) => p.drawn),
-    obstacles: [centerBox(projection.origin), ...ringLabels(base).map((label) => label.box)],
+    obstacles: [centerBox(projection.origin), ...ringLabels({ ...base, size: projection.size, points }).map((label) => label.box)],
   });
   return {
     radiusKm,
@@ -85,13 +105,16 @@ export function radiusView(radiusKm: number, radii: readonly number[] = SWITCH_R
   };
 }
 
-/** Everything the explorer needs; built once per server process. */
-export function buildRegionMapData(): RegionMapData {
+/**
+ * Everything the explorer needs; built once per server process. Without arguments the home map (REGION.locations,
+ * 10 places); the pages under /einsatzgebiet pass their places (sorted by distance, like REGION.locations).
+ */
+export function buildRegionMapData(locations: readonly MapLocation[] = REGION.locations): RegionMapData {
   return {
     centerName: REGION.center.name,
     radiusKm: REGION.radiusKm,
     radii: SWITCH_RADII_KM,
-    places: regionPlaces(),
-    views: SWITCH_RADII_KM.map((radiusKm) => radiusView(radiusKm)),
+    places: regionPlaces(locations),
+    views: SWITCH_RADII_KM.map((radiusKm) => radiusView(radiusKm, SWITCH_RADII_KM, locations)),
   };
 }

@@ -7,9 +7,12 @@ import { Einblick } from '@/components/jobs/stelle/Einblick';
 import {
   BADPARTNER,
   EINBLICK_ANKER,
+  KERNGEBIET,
   aufzaehlung,
   einblick,
   erfahrung,
+  kerngebietOrte,
+  kreisOrte,
   type Einblick as EinblickInhalt,
   type Verweis,
 } from '@/components/jobs/stelle/einblick-text';
@@ -19,6 +22,7 @@ import { getFaqItem } from '@/lib/content/faq';
 import { REGION } from '@/lib/content/region';
 import { jobPath } from '@/lib/jobs/format';
 import { getJobById, getJobBySlug, getJobPageSlugs, type Job } from '@/lib/jobs/registry';
+import { findPublishedPlaceByName, getHubKreise, getPublishedPlaces } from '@/lib/places/registry';
 
 /**
  * V6-G2: Herkunft der Texte im Band „Einblick“ (components/jobs/stelle/einblick-text.ts). Jede Zahl, jeder Ort,
@@ -94,8 +98,9 @@ describe('Einblick: Herkunft', () => {
     }
   });
 
-  it('Orte mit Entfernung und Fahrzeit entsprechen REGION.locations; Bereiche listen genau ihre Orte', () => {
-    const bereiche = new Map(REGION.areas.map((a) => [a.name.replace('Lahn Dill Kreis', 'Lahn-Dill-Kreis'), a]));
+  it('Orte mit Entfernung und Fahrzeit entsprechen REGION.locations; Kreise nennen nur ihre Orte mit Ortsseite', () => {
+    const kreise = new Map(getHubKreise().map((k) => [k.shortName, k]));
+    const published = getPublishedPlaces();
     for (const job of pageJobs) {
       for (const o of inhalt(job).gebiet.orte) {
         const location = REGION.locations.find((l) => l.name === o.label);
@@ -103,17 +108,23 @@ describe('Einblick: Herkunft', () => {
           const km = `${location.distanceKm}${NBSP}km`;
           const min = `${location.commuteMinutes}${NBSP}Min.`;
           expect([`${km} · ${min}`, `${min} · ${km}`], `${job.id}: ${o.label}`).toContain(o.text);
+        } else if (o.label === KERNGEBIET) {
+          expect(o.text).toBe(aufzaehlung(kerngebietOrte()));
         } else {
-          const area = bereiche.get(o.label);
-          expect(area, `${job.id}: ${o.label}`).toBeDefined();
-          expect(o.text).toBe(aufzaehlung(area!.cities));
+          const kreis = kreise.get(o.label);
+          expect(kreis, `${job.id}: ${o.label}`).toBeDefined();
+          expect(o.text).toBe(aufzaehlung(kreisOrte(kreis!.id, { max: 5 })));
+          for (const name of o.text.split(/, | und /)) {
+            expect(published.find((p) => p.name === name)?.kreisId, `${job.id}: ${name}`).toBe(kreis!.id);
+          }
         }
       }
       const nachsatz = inhalt(job).gebiet.nachsatz;
       if (nachsatz) {
-        const alleOrte = new Set(REGION.areas.flatMap((a) => a.cities));
         const genannt = nachsatz.match(/(?:mit|außerdem) (.+?)(?: dazu)?\.$/)![1].split(/, | und /);
-        for (const name of genannt) expect(alleOrte.has(name), `${job.id}: ${name}`).toBe(true);
+        // Jeder genannte Ort hat eine Ortsseite (Dillenburg, 38 km Straße, stand bis 2026-10-12 hier)
+        for (const name of genannt) expect(findPublishedPlaceByName(name), `${job.id}: ${name}`).toBeDefined();
+        expect(nachsatz).not.toContain('Dillenburg');
       }
     }
   });
@@ -244,5 +255,15 @@ describe('<Einblick>: Band auf der Wand mit h2/h3 und Ortsliste als Maße', () =
     for (const satz of saetze(e)) expect(text).toContain(satz.replaceAll(NBSP, ' '));
     for (const v of e.vergleich!.teile) if (typeof v !== 'string') expect(html).toContain(`href="${v.href}"`);
     if (e.gebiet.orte.some((o) => o.mass)) expect(html).toContain('font-mass');
+  });
+});
+
+describe('<Einblick>: genau ein Weg zur Gebietsseite je Stellenseite (E-028)', () => {
+  it.each(pageJobs.map((job) => [job.id, job] as const))('%s', (_id, job) => {
+    const html = renderToStaticMarkup(createElement(Einblick, { job, now: NOW }));
+    expect(html.match(/href="\/einsatzgebiet"/g)).toHaveLength(1);
+    expect(html).toContain('Arbeitsweg von deinem Ort prüfen');
+    // Keine Ortsseite verlinkt: Die Stellenseiten bleiben ohne Stadt-Duplikate (ROADMAP §10)
+    expect(html).not.toMatch(/href="\/einsatzgebiet\//);
   });
 });

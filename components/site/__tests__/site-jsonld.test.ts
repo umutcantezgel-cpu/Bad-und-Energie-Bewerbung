@@ -3,6 +3,7 @@ import { FOUNDER_ID, ORGANIZATION_ID, WEBSITE_ID, buildSiteNodes } from '../site
 import { COMPANY, REGION } from '@/lib/content';
 import { getActiveJobs } from '@/lib/jobs/registry';
 import { buildJobPostingJsonLd } from '@/lib/jobs/jsonld';
+import { findPublishedPlaceByName } from '@/lib/places/registry';
 
 type Node = Record<string, unknown>;
 
@@ -62,21 +63,17 @@ describe('buildSiteNodes', () => {
   });
 
   // E-SEO-009
-  it('serves three named circles from the region data, 35 000 m around the head office', () => {
+  it('serves one circle, „Umkreis von 35 km um Wetzlar“, around the head office (fact radius35)', () => {
     const circles = node('LocalBusiness').areaServed as Node[];
-    expect(circles).toHaveLength(3);
-    expect(circles.map((c) => c.name)).toEqual(REGION.areas.map((area) => area.name));
-    expect(circles.map((c) => c.geoRadius)).toEqual(REGION.areas.map((area) => area.radiusKm * 1000));
-    REGION.areas.forEach((area, index) => {
-      for (const city of area.cities) expect(circles[index].description).toContain(city);
-    });
-
-    const outer = circles.find((c) => c.geoRadius === 35_000) as Node;
-    expect(outer.geoMidpoint).toMatchObject({ latitude: COMPANY.geo.latitude, longitude: COMPANY.geo.longitude });
-
-    const giessen = REGION.locations.find((l) => l.name === 'Gießen');
-    expect(circles[1].geoMidpoint).toMatchObject({ latitude: giessen?.latitude, longitude: giessen?.longitude });
-    expect(JSON.stringify(circles)).not.toContain('Hohenahr');
+    expect(circles).toHaveLength(1);
+    const [circle] = circles;
+    expect(circle.name).toBe('Umkreis von 35 km um Wetzlar');
+    expect(circle.geoRadius).toBe(35_000);
+    expect(circle.geoMidpoint).toMatchObject({ latitude: COMPANY.geo.latitude, longitude: COMPANY.geo.longitude });
+    for (const city of REGION.areas[0].cities) expect(circle.description).toContain(city);
+    // Jeder genannte Ort hat eine Ortsseite (Dillenburg, 38 km Straße, stand bis 2026-10-12 hier)
+    for (const city of REGION.areas[0].cities) expect(findPublishedPlaceByName(city), city).toBeDefined();
+    expect(JSON.stringify(circles)).not.toContain('Dillenburg');
   });
 
   it('parses as JSON', () => {

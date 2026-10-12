@@ -6,23 +6,23 @@
  * - Nur Ortsdaten (Messung), Werte aus derive.ts, Fakten aus lib/content/facts.ts (per ID) und Gehälter aus
  *   der Stellen-Registry. Keine Einwohnerzahlen, keine Sehenswürdigkeiten, keine Straßen außer in den
  *   freigegebenen Kurzbeschreibungen.
- * - Satzbau folgt echten Datenlagen (Entfernungsband, Ring, Richtung, Art des Orts, Kreis, Messpunkt, Rang im
+ * - Satzbau folgt echten Datenlagen (Entfernungsband, Streckenstufe, Richtung, Art des Orts, Kreis, Messpunkt, Rang im
  *   Kreis, Median, Nachbarorte, Startseitenkarte), nie einer Zufallsauswahl von Synonymen.
  * - `ort`-Blöcke sagen etwas, das nur für diesen Ort gilt; `gemeinsam`-Blöcke stehen auf jeder Ortsseite gleich
  *   (Stellen, Fakten-Band, Messhinweis, Kontakt).
  * - Keine Arbeitszeit-Uhrzeiten: Es gilt nur der Fakt flexibleHours (fakten-abgleich B28).
+ * - „Ring“ heißen nur die Kreise der Pläne, und die zeigen die Luftlinie. Stufen der Straßenstrecke heißen
+ *   „bis 15 km Strecke“, „16 bis 25 km“, „26 bis 35 km“ (roadBandLabel); so widerspricht kein Satz der Zeichnung.
  */
 import { FACTS, type FactId } from '@/lib/content/facts';
-import { formatNumber, formatSalaryAmount, formatSalaryRange } from '@/lib/jobs/format';
+import { formatNumber } from '@/lib/jobs/format';
 import { getActiveJobs, type Job } from '@/lib/jobs/registry';
 import { fitDescription } from '@/lib/seo/descriptions';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 
 import {
   DIRECTION_ADVERBS,
-  DISTANCE_BAND_KM,
   RING_RADII_KM,
-  averageSpeedKmh,
   bearingDeg,
   compareToMedian,
   detourCategory,
@@ -30,15 +30,14 @@ import {
   directionOf,
   directionToHeadquarters,
   distanceBand,
-  fasterRoutes,
   groupStats,
   kreisStats,
   neighborsOf,
   quadrantOf,
   rankByDistance,
-  ringCounts,
-  ringKm,
-  speedCategory,
+  roadBandCounts,
+  roadBandFloorKm,
+  roadBandKm,
   type Direction,
   type GroupStats,
   type MedianComparison,
@@ -48,6 +47,7 @@ import {
 import { MEASUREMENT } from './measurement';
 import {
   EINSATZGEBIET_PATH,
+  KREIS_HUB_MIN_PLACES,
   compareByDistance,
   getHubKreise,
   getKreise,
@@ -97,10 +97,17 @@ export interface Mass {
   name: string;
 }
 
+/**
+ * Wo ein Link auf der Ortsseite steht: Nachbarorte (Karten), weitere Orte derselben Richtung bzw. des kleinen Kreises
+ * (eigene Zeile „Weiter in dieser Richtung“), Stadtteile, Elternort, Kreis, Gebietsseite.
+ */
+export type LinkGruppe = 'nachbar' | 'richtung' | 'kreisort' | 'stadtteil' | 'eltern' | 'kreis' | 'gebiet';
+
 /** Interner Link einer Seite (Gate U7: eingehende Links, Klicktiefe). */
 export interface PageLink {
   href: string;
   label: string;
+  gruppe?: LinkGruppe;
 }
 
 /** Ein Wert, der nur zu diesem Ort gehört (Gate U1). */
@@ -135,10 +142,6 @@ export function formatMin(minutes: number): string {
   return `${formatNumber(minutes)}${NBSP}min`;
 }
 
-export function formatSpeed(kmh: number): string {
-  return `${formatNumber(kmh)}${NBSP}km/h`;
-}
-
 const MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
 
 /** '2026-10-12' → '12. Oktober 2026'. */
@@ -167,8 +170,12 @@ const NEIGHBOR_WORD = 'vier';
 /** Ab so wenig Kilometern Abstand zur 35-km-Grenze liegt ein Ort „am Rand“ des Gebiets. */
 const EDGE_MARGIN_KM = 3;
 
-/** Fakten im Band (inverse) jeder Ortsseite; dazu die Kreis-Fakten (countyPartner im Lahn-Dill-Kreis). */
-export const BAND_FACT_IDS: readonly FactId[] = Object.freeze(['radius35', 'flexibleHours', 'vacation30']);
+/**
+ * Fakten im Band (inverse) jeder Seite unter /einsatzgebiet; dazu die Kreis-Fakten (countyPartner im Lahn-Dill-Kreis).
+ * Nicht radius35: Das Gebiet ist schon Thema der Seite. noFarAssembly passt zum Arbeitsweg („jeden Abend zu Hause“).
+ * flexibleHours steht zuletzt: Belegt ist nur die Kurzform, der Fakt hat keinen weiteren Satz.
+ */
+export const BAND_FACT_IDS: readonly FactId[] = Object.freeze(['noFarAssembly', 'vacation30', 'flexibleHours']);
 
 /** Satzanfang der WhatsApp-Nachricht, wie DEFAULT_WHATSAPP_MESSAGE in lib/utils/whatsapp-utils.ts. */
 export const GREETING_START = `Guten Tag Herr ${SITE_CONFIG.founder.familyName}, `;
@@ -187,8 +194,8 @@ interface PlaceContext {
   published: readonly Place[];
   dirFromHq: Direction;
   dirToHq: Direction;
-  ring: number;
-  speed: number;
+  /** Streckenstufe (15, 25 oder 35 km Straße), nur für den Satzbau. */
+  band: number;
   neighbors: Neighbor[];
   kreisStats: GroupStats;
   kreisRank: Rank;
@@ -215,8 +222,7 @@ function placeContext(place: Place, jobs: readonly Job[]): PlaceContext {
     published,
     dirFromHq: directionFromHeadquarters(place),
     dirToHq: directionToHeadquarters(place),
-    ring: ringKm(place),
-    speed: averageSpeedKmh(place),
+    band: roadBandKm(place),
     neighbors: neighborsOf(place, published, NEIGHBOR_COUNT),
     kreisStats: stats,
     kreisRank: rankByDistance(place, stats.places),
@@ -266,37 +272,40 @@ function leadBlocks(c: PlaceContext): TextBlock[] {
     ];
   }
   const adverb = DIRECTION_ADVERBS[c.dirFromHq];
+  // Weite Wege (ab 20 km Straße): Satzbau nach Kreis und Streckenstufe; jede Zahl ist Straße, die Luftlinie nennt
+  // der Arbeitsweg.
+  const outer = c.band === MAX_ROAD_KM;
   if (kreis.id === headquartersKreisId()) {
-    if (c.ring < MAX_ROAD_KM) {
+    if (!outer) {
       return [
         ort(
-          `${name} liegt ${adverb} von ${HQ_CITY} und wie der Firmensitz ${kreis.dative}: ${km}, noch im Ring bis ${formatKm(c.ring)}. Die Fahrt dauert rund ${minutes}.`,
+          `${name} liegt ${adverb} von ${HQ_CITY} und wie der Firmensitz ${kreis.dative}: ${km} Straße, rund ${minutes} Fahrt.`,
         ),
       ];
     }
     return [
       ort(
-        `Wie der Firmensitz gehört ${name} zum ${kreis.name}, liegt aber ${adverb} im äußeren Ring bis ${formatKm(c.ring)}: ${km}, rund ${minutes}.`,
+        `Wie der Firmensitz gehört ${name} zum ${kreis.name}, liegt aber ${adverb} schon weit draußen: ${km} Straße, rund ${minutes}.`,
       ),
     ];
   }
-  if (c.ring < MAX_ROAD_KM) {
+  if (!outer) {
     return [
       ort(
-        `${name}, ${adverb} von ${HQ_CITY}, gehört schon zum ${kreis.name}. Bis zum Firmensitz sind es trotzdem nur ${km}, rund ${minutes}: noch im Ring bis ${formatKm(c.ring)}.`,
+        `${name}, ${adverb} von ${HQ_CITY}, gehört schon zum ${kreis.name}. Bis zum Firmensitz sind es trotzdem nur ${km} Straße, rund ${minutes}.`,
       ),
     ];
   }
   if (MAX_ROAD_KM - place.commute.distanceKm <= EDGE_MARGIN_KM) {
     return [
       ort(
-        `Mit ${km} Straße liegt ${name} am ${EDGE_PREFIX[c.dirFromHq]}rand des Einsatzgebiets, die Grenze sind ${formatKm(MAX_ROAD_KM)}. Rund ${minutes} dauert die Fahrt nach ${HQ_CITY}.`,
+        `Mit ${km} Straße liegt ${name} am ${EDGE_PREFIX[c.dirFromHq]}rand des Einsatzgebiets, die Grenze sind ${formatKm(MAX_ROAD_KM)} Straße. Rund ${minutes} dauert die Fahrt nach ${HQ_CITY}.`,
       ),
     ];
   }
   return [
     ort(
-      `${name} ${kreis.dative} ist ${km} vom Firmensitz entfernt. Mit rund ${minutes} Fahrt liegt der Ort ${adverb} von ${HQ_CITY} im äußeren Ring bis ${formatKm(c.ring)}.`,
+      `${name} ${kreis.dative} ist ${km} Straße vom Firmensitz entfernt. Mit rund ${minutes} Fahrt liegt der Ort ${adverb} von ${HQ_CITY} im äußeren Teil des Einsatzgebiets.`,
     ),
   ];
 }
@@ -335,6 +344,7 @@ function routeSentence(c: PlaceContext): string {
 
   const detour = {
     direkt: `: ${km} Straße bei ${air} Luftlinie, fast ohne Umweg.`,
+    leicht: `: ${km} Straße bei ${air} Luftlinie.`,
     normal: `, ${air} Luftlinie oder ${km} auf der Straße.`,
     umweg: `: Luftlinie nur ${air}, doch die Straße macht mit ${km} einen deutlichen Bogen.`,
   }[detourCategory(place)];
@@ -342,63 +352,29 @@ function routeSentence(c: PlaceContext): string {
   return `${direction}${detour}`;
 }
 
-/** Tempo der gemessenen Route: Satzbau nach Tempo-Stufe, Länge und Ring. */
-function speedSentence(c: PlaceContext): string {
-  const { place } = c;
-  const km = formatKm(place.commute.distanceKm);
-  const minutes = formatMinutes(place.commute.minutes);
-  const speed = formatSpeed(c.speed);
-
-  switch (speedCategory(place)) {
-    case 'gemaechlich':
-      return `Auf so kurzen Wegen bleibt der Schnitt niedrig: ${speed} laut Routenplaner.`;
-    case 'mittel': {
-      if (distanceBand(place) !== 'weit') return `Der Routenplaner rechnet im Schnitt mit ${speed}.`;
-      // Vergleich mit allen Wegen ab 20 km: wie viele davon schneller sind.
-      const longer = c.published.filter((p) => p.id !== place.id && distanceBand(p) === 'weit');
-      const faster = longer.filter((p) => averageSpeedKmh(p) > c.speed).length;
-      const vergleich = `auf ${faster} der ${longer.length + 1} Wege ab ${formatKm(DISTANCE_BAND_KM.weit)} geht es schneller`;
-      return faster * 2 > longer.length
-        ? `Für ${km} ist das eher gemächlich: im Schnitt ${speed}, ${vergleich}.`
-        : `Im Schnitt sind das ${speed}; ${vergleich}.`;
-    }
-    case 'zuegig':
-      if (place.commute.minutes === place.commute.distanceKm) {
-        return `Für ${km} rechnet der Routenplaner genau ${minutes}: ein Kilometer pro Minute, also ${speed}.`;
-      }
-      return c.ring < MAX_ROAD_KM
-        ? `Im Schnitt sind das ${speed}, ein zügiger Weg.`
-        : `Trotz der ${km} bleibt es bei ${minutes}, im Schnitt sind ${speed} drin.`;
-    case 'schnell': {
-      const faster = fasterRoutes(place, c.published);
-      const total = c.published.length;
-      return faster === 0
-        ? `Mit ${speed} im Schnitt hat der Weg aus ${place.name} das höchste Tempo aller ${total} Orte im Einsatzgebiet.`
-        : `Mit ${speed} im Schnitt gehört der Weg aus ${place.name} zu den schnellsten: Nur ${faster} der ${total} Orte ${numerus(faster, 'kommt', 'kommen')} auf mehr.`;
-    }
-  }
-}
-
-/** Messpunkt, wo er vom Ortsnamen abweicht (Verwaltungssitz) oder ein Stadtteil-Mittelpunkt ist. */
+/**
+ * Messpunkt, wo er vom Ortsnamen abweicht oder ein Stadtteil-Mittelpunkt ist. Der Messpunkt einer Gemeinde ist ihr
+ * `admin_centre` in OpenStreetMap; gegen die Anschrift des Rathauses ist er nicht geprüft, darum „laut OpenStreetMap“.
+ */
 function measuringPointSentence(c: PlaceContext): string | null {
   const { place } = c;
   if (place.kind === 'stadtteil') return `Gemessen ab dem Ortsmittelpunkt, den OpenStreetMap für ${place.name} führt.`;
   if (place.kind === 'stadt') return `Gemessen ab der Ortsmitte, die OpenStreetMap für ${place.name} führt.`;
   if (!place.seat) return null;
-  if (c.ring === RING_RADII_KM[0]) {
-    return `Messpunkt ist ${place.seat}, der Verwaltungssitz von ${place.name}. In anderen Ortsteilen kann der Weg kürzer oder länger sein.`;
+  if (c.band === RING_RADII_KM[0]) {
+    return `Gemessen ab ${place.seat} (Hauptort laut OpenStreetMap). In anderen Ortsteilen von ${place.name} kann der Weg kürzer oder länger sein.`;
   }
-  if (c.ring < MAX_ROAD_KM) {
-    return `Gemessen ab ${place.seat}, dem Verwaltungssitz der Gemeinde ${place.name}. Andere Ortsteile liegen näher oder weiter.`;
+  if (c.band < MAX_ROAD_KM) {
+    return `Messpunkt ist ${place.seat}, laut OpenStreetMap der Hauptort von ${place.name}. Andere Ortsteile liegen näher oder weiter.`;
   }
-  return `Die Messung startet in ${place.seat}, dem Verwaltungssitz. Aus anderen Ortsteilen von ${place.name} prüfst du deine Strecke am besten selbst im Routenplaner.`;
+  return `Die Messung startet in ${place.seat}, dem Hauptort laut OpenStreetMap. Aus anderen Ortsteilen von ${place.name} prüfst du deine Strecke am besten selbst im Routenplaner.`;
 }
 
 /** Ehrlicher Hinweis zur Messung, auf jeder Ortsseite gleich. */
 export const MEASUREMENT_NOTE = `Gemessen am ${formatMeasuredOn(MEASUREMENT.measuredOn)} mit OpenStreetMap (OSRM): Richtwert ohne Berufsverkehr.`;
 
 function arbeitswegBlocks(c: PlaceContext): TextBlock[] {
-  const blocks = [ort(routeSentence(c)), ort(speedSentence(c))];
+  const blocks = [ort(routeSentence(c))];
   const point = measuringPointSentence(c);
   if (point) blocks.push(ort(point));
   blocks.push(gemeinsam(MEASUREMENT_NOTE));
@@ -410,18 +386,22 @@ function arbeitswegBlocks(c: PlaceContext): TextBlock[] {
 /** Satz „Fahrt ab Wohnort“ aus dem Fakt vehicle (Plan: unter den Stellen, für den Kundendienst). */
 const VEHICLE_FROM_HOME = FACTS.vehicle.long.split(/(?<=\.)\s+/).find((sentence) => sentence.includes('Wohnort')) ?? FACTS.vehicle.long;
 
+/**
+ * Einleitung über der Stellenliste: Zahl der Stellen und dass jede ihr Gehalt bzw. ihre Vergütung nennt. Die Beträge
+ * stehen einmal, in der Liste darunter (JobAbgaenge), nicht noch einmal im Fließtext.
+ */
 function stellenBlocks(jobs: readonly Job[]): TextBlock[] {
   if (jobs.length === 0) {
     return [gemeinsam('Gerade ist keine Stelle ausgeschrieben. Eine Initiativbewerbung ist jederzeit möglich.')];
   }
-  // Alle Gehälter im Monat: die Einheit einmal vorne, sonst je Stelle.
-  const monthly = jobs.every((job) => !job.salary || job.salary.unit === 'MONTH');
-  const list = jobs.map((job) => {
-    const salary = monthly ? formatSalaryAmount(job) : formatSalaryRange(job);
-    return salary ? `${job.shortTitle} ${salary}` : job.shortTitle;
-  });
-  const offen = `Offen ${numerus(jobs.length, 'ist', 'sind')} ${jobs.length} ${numerus(jobs.length, 'Stelle', 'Stellen')}`;
-  const blocks = [gemeinsam(`${offen}, ${monthly ? 'Gehalt im Monat' : 'mit Gehalt'}: ${joinList(list)}.`)];
+  const paid = jobs.filter((job) => job.salary);
+  const trainee = paid.filter((job) => job.employment.kind === 'ausbildung').length;
+  const pay = trainee === 0 ? 'Gehalt' : trainee === paid.length ? 'Vergütung' : 'Gehalt bzw. Vergütung';
+  const lead =
+    jobs.length === 1
+      ? `Offen ist eine Stelle${paid.length === 1 ? `, mit ${pay}` : ''}:`
+      : `Offen sind ${jobs.length} Stellen${paid.length === jobs.length ? `, jede mit ${pay}` : ''}:`;
+  const blocks = [gemeinsam(lead)];
   if (jobs.some((job) => job.category === 'kundendienst')) {
     blocks.push(gemeinsam(`Im Kundendienst gilt: ${VEHICLE_FROM_HOME}`, ['vehicle']));
   }
@@ -431,14 +411,29 @@ function stellenBlocks(jobs: readonly Job[]): TextBlock[] {
 // ─── Nachbarorte ────────────────────────────────────────────────────────────
 
 /**
- * „Lollar (26 km)“; steckt im Namen schon eine Klammer, kommt der Wert hinein: „Allendorf (Lumda, 14 km)“.
+ * Name mit Wert: „Lollar (26 km)“. Trägt der Name selbst eine Klammer („Waldbrunn (Westerwald)“), folgt der Wert mit
+ * „mit“, damit er nicht wie ein Teil des Namens liest: „Waldbrunn (Westerwald) mit 27 km“.
  */
 export function labeled(name: string, value: string): string {
-  const inner = name.match(/^(.*) \((.+)\)$/);
-  return inner ? `${inner[1]} (${inner[2]}, ${value})` : `${name} (${value})`;
+  return / \(.+\)$/.test(name) ? `${name} mit ${value}` : `${name} (${value})`;
 }
 
-const neighborItem = (neighbor: Neighbor) => labeled(neighbor.place.name, formatAirKm(neighbor.airKm));
+/**
+ * Nachbarorte mit ihrer Luftlinie zum Ort der Seite. Der erste Wert eines Satzes sagt, wovon er zählt („Garbenheim
+ * (2,8 km von Lahnau)“), die folgenden nur die Zahl: Neben „näher am Firmensitz“ liest sich eine nackte Zahl sonst
+ * wie die Strecke zum Firmensitz.
+ */
+function neighborItems(place: Place): (neighbor: Neighbor) => string {
+  let first = true;
+  // In der Klammer ohne den Zusatz des Namens: „(5,4 km von Waldbrunn)“ statt doppelter Klammer.
+  const reference = place.name.replace(/ \(.+\)$/, '');
+  return (neighbor) => {
+    const air = formatAirKm(neighbor.airKm);
+    const value = first ? `${air} von ${reference}` : air;
+    first = false;
+    return labeled(neighbor.place.name, value);
+  };
+}
 
 /** Wo die vier nächsten Orte im Vergleich zum Firmensitz liegen: näher, gleich weit, weiter weg. */
 function neighborPositionSentence(c: PlaceContext): string {
@@ -448,6 +443,7 @@ function neighborPositionSentence(c: PlaceContext): string {
   const same = neighbors.filter((n) => n.distanceKm === km);
   const farther = neighbors.filter((n) => n.distanceKm > km);
   const target = place.kind === 'gemeinde' ? HQ_CITY : 'zum Firmensitz';
+  const neighborItem = neighborItems(place);
 
   if (closer.length === 0 && same.length === 0) {
     return `${place.name} liegt näher am Firmensitz als alle ${NEIGHBOR_WORD} Nachbarorte: ${joinList(neighbors.map(neighborItem))}.`;
@@ -520,11 +516,13 @@ function kreisBorderSentences(c: PlaceContext): string[] {
       ([kreisId, names], i) => `${joinList(names)} ${i === 0 ? `${numerus(names.length, 'gehört', 'gehören')} ` : ''}zum ${kreisName(kreisId)}`,
     );
     sentences.push(`Über die Kreisgrenze: ${parts.join(', ')}.`);
-  } else if (others.length === 1) {
-    const [[kreisId, names]] = others;
-    sentences.push(`Nebenan beginnt der ${kreisName(kreisId)}: ${joinList(names)}.`);
   } else {
-    sentences.push(`Nebenan beginnen ${joinList(others.map(([kreisId, names]) => `der ${kreisName(kreisId)} mit ${joinList(names)}`))}.`);
+    // „Langgöns gehört schon zum Landkreis Gießen.“ bzw. „A gehört schon zum X, B zum Y.“
+    const parts = others.map(
+      ([kreisId, names], i) =>
+        `${joinList(names)} ${i === 0 ? `${numerus(names.length, 'gehört', 'gehören')} schon ` : ''}zum ${kreisName(kreisId)}`,
+    );
+    sentences.push(`${parts.join(', ')}.`);
   }
   return sentences;
 }
@@ -668,17 +666,16 @@ function kreisRankSentences(c: PlaceContext): string[] {
     : [sentence];
 }
 
-/** Fahrzeit gegen den Median des Kreises. */
+/** Fahrzeit gegen den Median des Kreises: „Mit 11 Minuten liegt Lahnau 2 Minuten unter der mittleren Fahrzeit …“. */
 function kreisMedianSentence(c: PlaceContext): string {
   const { place, kreis, kreisMedian: m } = c;
+  const own = formatMinutes(place.commute.minutes);
   const median = formatMinutes(m.medianMinutes);
-  if (m.relation === 'schneller') {
-    return `Aus ${place.name} bist du ${formatMinutes(m.diffMinutes)} schneller am Firmensitz als die mittlere Fahrzeit ${kreis.genitive} (Median: ${median}).`;
+  if (m.relation === 'gleich') {
+    return `Mit ${own} liegt ${place.name} genau auf der mittleren Fahrzeit ${kreis.dative}.`;
   }
-  if (m.relation === 'langsamer') {
-    return `Die mittlere Fahrzeit ${kreis.genitive} liegt bei ${median} (Median), aus ${place.name} sind es ${formatMinutes(m.diffMinutes)} mehr.`;
-  }
-  return `${place.name} liegt mit ${formatMinutes(place.commute.minutes)} genau auf der mittleren Fahrzeit ${kreis.genitive} (Median).`;
+  const where = m.relation === 'schneller' ? 'unter' : 'über';
+  return `Mit ${own} liegt ${place.name} ${formatMinutes(m.diffMinutes)} ${where} der mittleren Fahrzeit ${kreis.dative} (${median}).`;
 }
 
 /** Kreise ohne Hub (< 3 Orte): Vergleich mit dem anderen Ort des Kreises. */
@@ -725,15 +722,13 @@ function stadtteilRankSentence(c: PlaceContext): string | null {
   return `Unter den ${n} ${city} Stadtteilen ${numerus(r.closer, 'hat', 'haben')} ${r.closer} einen kürzeren Weg als ${place.name}, ${r.farther} einen längeren${same}.`;
 }
 
-/** Startseitenkarte: freigegebene Kurzbeschreibung oder nur der Hinweis auf den Punkt. */
-function homeMapSentence(c: PlaceContext): string | null {
+/**
+ * Freigegebene Kurzbeschreibung (MENSCHEN M-016), wörtlich als eigener Satz. Orte ohne freigegebene Beschreibung
+ * bekommen keinen Ersatz: Ein Verweis auf die Karte der Startseite sagt dem Leser nichts.
+ */
+function characterSentence(c: PlaceContext): string | null {
   const { place } = c;
-  if (place.character) return `Auf der Karte der Startseite steht ${place.name} für „${place.character.text}“.`;
-  if (place.homeMap) {
-    const count = c.published.filter((p) => p.homeMap).length;
-    return `${place.name} ist einer der ${count} Orte auf der Karte der Startseite.`;
-  }
-  return null;
+  return place.character ? `${place.name} in Stichworten: ${place.character.text}.` : null;
 }
 
 function kreisBlocks(c: PlaceContext): TextBlock[] {
@@ -743,8 +738,8 @@ function kreisBlocks(c: PlaceContext): TextBlock[] {
   else if (c.kreis.hasHub) sentences.push(...kreisRankSentences(c));
   if (c.kreis.hasHub) sentences.push(kreisMedianSentence(c));
   else sentences.push(...smallKreisSentences(c));
-  const homeMap = homeMapSentence(c);
-  if (homeMap) sentences.push(homeMap);
+  const character = characterSentence(c);
+  if (character) sentences.push(character);
   return sentences.map((text) => ort(text));
 }
 
@@ -752,7 +747,9 @@ function kreisBlocks(c: PlaceContext): TextBlock[] {
 
 /** Fakten im Band einer Ortsseite oder eines Kreis-Hubs. */
 export function bandFactIds(kreis: Pick<Kreis, 'factIds'>): FactId[] {
-  return [...BAND_FACT_IDS, ...kreis.factIds.filter((id) => !BAND_FACT_IDS.includes(id))];
+  const last = BAND_FACT_IDS[BAND_FACT_IDS.length - 1];
+  const kreisFacts = kreis.factIds.filter((id) => !BAND_FACT_IDS.includes(id));
+  return [...BAND_FACT_IDS.slice(0, -1), ...kreisFacts, last];
 }
 
 /** Band (Etikettkasten): je Fakt die Kurzform; den ganzen Satz liefert FACTS[id].long über `factIds`. */
@@ -780,8 +777,10 @@ export interface PlacePageText {
   meta: PageMeta;
   /** Etikett über der h1: „35614 Aßlar · Lahn-Dill-Kreis“. */
   etikett: string;
-  /** Maße im Seitenkopf: Strecke, Fahrzeit, Luftlinie, Richtung, Ring. */
+  /** Maße im Seitenkopf: Strecke, Fahrzeit, Luftlinie, Richtung. */
   masse: Mass[];
+  /** Unterzeile mit Rohrklammer im Seitenkopf, gleich der des Teilen-Bilds: „Rund 26 Minuten Fahrt. Flexible Arbeitszeiten.“ */
+  unterzeile: readonly string[];
   /** Abschnitte in Seitenreihenfolge; leere Abschnitte fallen weg. */
   sections: TextSection<PlaceSectionId>[];
   bandFactIds: FactId[];
@@ -791,6 +790,21 @@ export interface PlacePageText {
   values: PlaceDataValue[];
   /** Interne Links: Nachbarorte, Stadt bzw. Stadtteile, Kreis, Gebietsseite. */
   links: PageLink[];
+  /** Linktext der Route ab Ortsmitte in Google Maps (neuer Tab). */
+  routeLabel: string;
+}
+
+/**
+ * Unterzeile der Ortsseite in zwei Sätzen: die Fahrzeit und der Fakt flexibleHours. Steht im Seitenkopf (Rohrklammer)
+ * und auf dem Teilen-Bild (ogPlaceText), damit beide dasselbe sagen.
+ */
+export function placeSubline(place: Pick<Place, 'commute'>): readonly string[] {
+  return Object.freeze([`Rund ${formatMinutes(place.commute.minutes)} Fahrt.`, FACTS.flexibleHours.long]);
+}
+
+/** Linktext der Route ab dem Ort zum Firmensitz (Google Maps, ohne Tracking). */
+export function routeLabel(place: Pick<Place, 'name'>): string {
+  return `Route ab ${place.name} in Google Maps`;
 }
 
 /** Gehaltsspanne der Fachkräfte-Stellen (ohne Ausbildung) für Meta-Texte: „3.600–5.600 €“. */
@@ -834,9 +848,10 @@ function placeMetaRaw(c: PlaceContext): PageMeta {
     const minKm = st.length > 0 ? st[0].commute.distanceKm : place.commute.distanceKm;
     const maxKm = st.length > 0 ? st[st.length - 1].commute.distanceKm : place.commute.distanceKm;
     return {
-      // Nicht „SHK Jobs Wetzlar“: Das Keyword gehört der Startseite (ROADMAP §10). Fokus: Stadtteile und Werkstatt.
-      title: `${place.name} und Stadtteile: ${minKm} bis ${formatKm(maxKm)} zur Werkstatt`,
-      h1: `${place.name} und seine Stadtteile: dein Weg zur Werkstatt`,
+      // Nicht „SHK Jobs Wetzlar“: Das Keyword gehört der Startseite (ROADMAP §10). Fokus: Stadtteile und Firmensitz
+      // (Büro und Lager laut REGION.milestone; „Werkstatt“ ist nicht belegt).
+      title: `${place.name} und Stadtteile: ${minKm} bis ${formatKm(maxKm)} zum Firmensitz`,
+      h1: `${place.name} und seine Stadtteile: dein Weg zum Firmensitz`,
       primaryKeyword: `Arbeitsweg ${place.name} Stadtteile`,
       description: fitDescription(
         `${place.name} und ${st.length} Stadtteile: ${minKm} bis ${formatKm(maxKm)} zum Firmensitz in der ${STREET}. ${upperFirst(salaryPart)}${PERKS}.`,
@@ -866,12 +881,12 @@ function placeValues(c: PlaceContext): PlaceDataValue[] {
     { label: 'Fahrzeit', value: formatMinutes(place.commute.minutes) },
     { label: 'Luftlinie', value: formatAirKm(place.commute.airKm) },
     { label: 'Richtung', value: c.dirFromHq },
-    { label: 'Ring', value: formatKm(c.ring) },
-    { label: 'Tempo', value: formatSpeed(c.speed) },
     { label: 'PLZ', value: place.postalCode },
     { label: 'Kreis', value: c.kreis.name },
   ];
-  c.neighbors.forEach((neighbor, i) => values.push({ label: `Nachbar ${i + 1}`, value: neighborItem(neighbor) }));
+  c.neighbors.forEach((neighbor, i) =>
+    values.push({ label: `Nachbar ${i + 1}`, value: neighbor.place.name }, { label: `Abstand ${i + 1}`, value: formatAirKm(neighbor.airKm) }),
+  );
   if (place.seat) values.push({ label: 'Messpunkt', value: place.seat });
   return values;
 }
@@ -897,17 +912,17 @@ export function getPlacePageText(place: Place, options: PlaceTextOptions = {}): 
     { id: 'kontakt', heading: 'Direkt fragen', blocks: kontaktBlocks() },
   ];
   // Jeder Ort, den der Text nennt, ist verlinkt: Nachbarn, Orte derselben Richtung, im kleinen Kreis der andere Ort.
-  const named = [
-    ...c.neighbors.map((n) => n.place),
-    ...sectorSentence(c).named,
-    ...(c.kreis.hasHub ? [] : c.kreisStats.places.filter((p) => p.id !== place.id)),
-  ];
+  // Die Stadtseite nennt ihre Stadtteile im eigenen Abschnitt; dort stehen sie einmal, nicht noch als Nachbarn.
+  const stadtteilIds = new Set(place.kind === 'stadt' ? c.stadtteile.map((s) => s.id) : []);
+  const link = (p: Place, gruppe: LinkGruppe): PageLink => ({ href: placePath(p), label: p.name, gruppe });
   const links: PageLink[] = [
-    ...named.map((p) => ({ href: placePath(p), label: p.name })),
-    ...(place.kind === 'stadt' ? c.stadtteile.map((s) => ({ href: placePath(s), label: s.name })) : []),
-    ...(place.parentId ? [parentLink(place.parentId)].filter((link): link is PageLink => link !== null) : []),
-    { href: kreisPath(c.kreis), label: c.kreis.shortName },
-    { href: EINSATZGEBIET_PATH, label: EINSATZGEBIET_LINK_LABEL },
+    ...c.neighbors.filter((n) => !stadtteilIds.has(n.place.id)).map((n) => link(n.place, 'nachbar')),
+    ...sectorSentence(c).named.filter((p) => !stadtteilIds.has(p.id)).map((p) => link(p, 'richtung')),
+    ...(c.kreis.hasHub ? [] : c.kreisStats.places.filter((p) => p.id !== place.id).map((p) => link(p, 'kreisort'))),
+    ...c.stadtteile.filter((s) => stadtteilIds.has(s.id)).map((s) => link(s, 'stadtteil')),
+    ...(place.parentId ? [parentLink(place.parentId)].filter((l): l is PageLink => l !== null) : []),
+    { href: kreisPath(c.kreis), label: c.kreis.shortName, gruppe: 'kreis' },
+    { href: EINSATZGEBIET_PATH, label: EINSATZGEBIET_LINK_LABEL, gruppe: 'gebiet' },
   ];
   return {
     placeId: place.id,
@@ -922,13 +937,14 @@ export function getPlacePageText(place: Place, options: PlaceTextOptions = {}): 
       { wert: formatMin(place.commute.minutes), name: 'Fahrzeit' },
       { wert: formatAirKm(place.commute.airKm), name: 'Luftlinie' },
       { wert: c.dirFromHq, name: 'Richtung ab Firmensitz' },
-      { wert: formatKm(c.ring), name: 'Ring' },
     ],
+    unterzeile: placeSubline(place),
     sections: sections.filter((section) => section.blocks.length > 0),
     bandFactIds: bandFactIds(c.kreis),
     whatsappGreeting: whatsappGreeting(place),
     values: placeValues(c),
     links: links.filter((link, i) => links.findIndex((other) => other.href === link.href) === i),
+    routeLabel: routeLabel(place),
   };
 }
 
@@ -937,32 +953,120 @@ export const EINSATZGEBIET_LINK_LABEL = 'Alle Orte im Einsatzgebiet';
 
 function parentLink(parentId: string): PageLink | null {
   const parent = getPlaceById(parentId);
-  return parent?.status === 'published' ? { href: placePath(parent), label: parent.name } : null;
+  return parent?.status === 'published' ? { href: placePath(parent), label: parent.name, gruppe: 'eltern' } : null;
 }
 
 // ─── Kreis-Hub ──────────────────────────────────────────────────────────────
 
-export type KreisSectionId = 'lead' | 'zahlen' | 'orte' | 'band';
+export type KreisSectionId = 'lead' | 'zahlen' | 'orte' | 'stellen' | 'band' | 'kontakt';
+
+/** Eine Zeile der Ortstabelle eines Kreises (Kreis-Hub) bzw. des Ortsverzeichnisses (Gebietsseite). */
+export interface PlaceRow {
+  placeId: string;
+  name: string;
+  href: string;
+  postalCode: string;
+  /** '27 km' */
+  km: string;
+  /** '26 min' */
+  min: string;
+  distanceKm: number;
+  minutes: number;
+}
 
 export interface KreisPageText {
   kreisId: string;
   path: string;
   meta: PageMeta;
+  /** Etikett über der h1: „26 Orte · 2 bis 35 km“. */
+  etikett: string;
+  /** Maße im Seitenkopf: nächster und weitester Ort, mittlere Fahrzeit, Zahl der Orte. */
+  masse: Mass[];
+  /** Zweitweg im Kopf: zur Ortstabelle. */
+  zweitweg: PageLink;
   sections: TextSection<KreisSectionId>[];
+  /** Orte des Kreises nach Strecke (Tabelle, Plan, Entfernungsleiste). */
+  rows: PlaceRow[];
   bandFactIds: FactId[];
+  /** Vorbereitete WhatsApp-Nachricht (steht im Link, nicht auf der Seite). */
+  whatsappGreeting: string;
   /** Alle Orte des Kreises und die Gebietsseite. */
   links: PageLink[];
 }
 
-/** „Bis 15 km: 4 Orte, bis 25 km: 6, bis 35 km: 3.“ ohne leere Ringe. */
-function ringSentence(places: readonly Place[]): string {
-  const counts = ringCounts(places);
+/** Anker der Ortstabelle auf Kreis-Hub und Gebietsseite. */
+export const ORTE_ANKER = 'orte';
+
+export function placeRow(place: Place): PlaceRow {
+  return {
+    placeId: place.id,
+    name: place.name,
+    href: placePath(place),
+    postalCode: place.postalCode,
+    km: formatKm(place.commute.distanceKm),
+    min: formatMin(place.commute.minutes),
+    distanceKm: place.commute.distanceKm,
+    minutes: place.commute.minutes,
+  };
+}
+
+/** WhatsApp-Nachricht eines Kreis-Hubs: „… ich komme aus dem Lahn-Dill-Kreis und …“. */
+export function kreisWhatsappGreeting(kreis: Pick<Kreis, 'dative'>): string {
+  return `${GREETING_START}ich komme aus ${kreis.dative.replace(/^im /, 'dem ')} ${GREETING_END}`;
+}
+
+/** Kontakt der Kreis-Hubs: wie auf den Ortsseiten, ohne Ortsnamen in der Nachricht. */
+const KREIS_KONTAKT_TEXT = `Lieber erst fragen? Schreib ${CONTACT_NAME} per WhatsApp oder ruf an.`;
+
+/** Streckenstufe als Text: „bis 15 km“, „16 bis 25 km“, „26 bis 35 km“ (Straße, siehe roadBandKm). */
+export function roadBandLabel(bandKm: number): string {
+  const floor = roadBandFloorKm(bandKm);
+  return floor === 0 ? `bis ${formatKm(bandKm)}` : `${floor} bis ${formatKm(bandKm)}`;
+}
+
+/**
+ * Orte je Streckenstufe, ausdrücklich als Strecke (Straße) und ohne „Ring“: „Bis 15 km Strecke: 18 Orte, 16 bis 25 km:
+ * 14, 26 bis 35 km: 23.“ Die Stufen sind getrennte Bänder, keine laufenden Summen; leere Stufen fallen weg.
+ */
+function roadBandSentence(places: readonly Place[]): string {
+  const counts = roadBandCounts(places);
   const filled = RING_RADII_KM.filter((radius) => counts[radius] > 0);
   if (filled.length === 1) {
-    const radius = filled[0];
-    return `${numerus(places.length, 'Der Ort liegt', `Alle ${places.length} Orte liegen`)} im Ring bis ${formatKm(radius)}.`;
+    const label = roadBandLabel(filled[0]);
+    return places.length === 1
+      ? `Der Ort liegt ${label} Strecke vom Firmensitz entfernt.`
+      : `Alle ${places.length} Orte liegen ${label} Strecke vom Firmensitz entfernt.`;
   }
-  return `${filled.map((radius, i) => `${i === 0 ? 'Bis' : 'bis'} ${formatKm(radius)}: ${counts[radius]} ${numerus(counts[radius], 'Ort', 'Orte')}`).join(', ')}.`;
+  const parts = filled.map((radius, i) =>
+    i === 0
+      ? `${upperFirst(roadBandLabel(radius))} Strecke: ${counts[radius]} ${numerus(counts[radius], 'Ort', 'Orte')}`
+      : `${roadBandLabel(radius)}: ${counts[radius]}`,
+  );
+  return `${parts.join(', ')}.`;
+}
+
+/**
+ * Was die Ringe des Plans zeigen (Gebietsseite): Luftlinie, der weiteste Ort in Luftlinie und, wenn der äußere Ring
+ * leer bleibt, warum: Die Grenze von 35 km gilt für die Straße, und die ist länger als die Luftlinie.
+ */
+function airRingSentence(places: readonly Place[]): string {
+  const farthest = [...places].sort((a, b) => b.commute.airKm - a.commute.airKm || a.name.localeCompare(b.name, 'de'))[0];
+  const air = farthest.commute.airKm;
+  const ring = RING_RADII_KM.find((radius) => air <= radius) ?? MAX_ROAD_KM;
+  const first = `Die drei Ringe im Plan messen die Luftlinie um den Firmensitz; am weitesten liegt ${farthest.name} mit ${formatAirKm(air)}.`;
+  return ring < MAX_ROAD_KM
+    ? `${first} Außerhalb des Rings bei ${formatKm(ring)} liegt kein Ort, denn die Grenze von ${formatKm(MAX_ROAD_KM)} gilt für die Straße, und die ist länger als die Luftlinie.`
+    : first;
+}
+
+/** Spanne der Luftlinie einer Gruppe: „In Luftlinie, wie im Plan, sind es 20,1 bis 23,4 km.“ */
+function airSpanSentence(places: readonly Place[]): string {
+  const airs = places.map((place) => place.commute.airKm);
+  const min = Math.min(...airs);
+  const max = Math.max(...airs);
+  return min === max
+    ? `In Luftlinie, wie im Plan, sind es ${formatAirKm(min)}.`
+    : `In Luftlinie, wie im Plan, sind es ${formatAirKm(min).replace(`${NBSP}km`, '')} bis ${formatAirKm(max)}.`;
 }
 
 const placeListItem = (place: Place) =>
@@ -985,9 +1089,20 @@ export function getKreisPageText(kreis: Kreis, options: PlaceTextOptions = {}): 
   if (kreis.id === headquartersKreisId()) {
     blocks.push(ort(`Der Firmensitz in der ${STREET} liegt selbst ${kreis.dative}.`));
   }
+  const median = formatMinutes(stats.medianMinutes);
   return {
     kreisId: kreis.id,
     path: kreisPath(kreis),
+    etikett: `${places.length}${NBSP}Orte · ${nearest.commute.distanceKm} bis ${formatKm(farthest.commute.distanceKm)}`,
+    masse: [
+      { wert: formatKm(nearest.commute.distanceKm), name: `Nächster Ort: ${nearest.name}` },
+      { wert: formatKm(farthest.commute.distanceKm), name: `Weitester Ort: ${farthest.name}` },
+      { wert: formatMin(stats.medianMinutes), name: 'Mittlere Fahrzeit' },
+      { wert: formatKm(stats.medianKm), name: 'Mittlere Strecke' },
+    ],
+    zweitweg: { href: `#${ORTE_ANKER}`, label: `Alle ${places.length}${NBSP}Orte ansehen` },
+    rows: places.map(placeRow),
+    whatsappGreeting: kreisWhatsappGreeting(kreis),
     meta: plainMeta({
       title: `SHK-Jobs ${kreis.shortName}: ${places.length} Orte bis ${formatKm(MAX_ROAD_KM)}`,
       h1: `SHK-Jobs ${kreis.dative}`,
@@ -1005,9 +1120,10 @@ export function getKreisPageText(kreis: Kreis, options: PlaceTextOptions = {}): 
         heading: 'Wege in Zahlen',
         blocks: [
           ort(
-            `Die mittlere Fahrzeit (Median) liegt bei ${formatMinutes(stats.medianMinutes)}, die mittlere Strecke bei ${formatKm(stats.medianKm)}. Am schnellsten ${numerus(stats.fastest.length, 'ist', 'sind')} ${names(stats.fastest)} mit ${formatMinutes(stats.fastest[0].commute.minutes)}.`,
+            `Die mittlere Fahrzeit (Median) liegt bei ${median}, die mittlere Strecke bei ${formatKm(stats.medianKm)}. Am schnellsten ${numerus(stats.fastest.length, 'ist', 'sind')} ${names(stats.fastest)} mit ${formatMinutes(stats.fastest[0].commute.minutes)}.`,
           ),
-          ort(ringSentence(places)),
+          ort(roadBandSentence(places)),
+          ort(airSpanSentence(places)),
           gemeinsam(MEASUREMENT_NOTE),
         ],
       },
@@ -1016,7 +1132,9 @@ export function getKreisPageText(kreis: Kreis, options: PlaceTextOptions = {}): 
         heading: `Alle Orte ${kreis.dative}`,
         blocks: [ort(`Nach Strecke: ${joinList(places.map(placeListItem))}.`)],
       },
+      { id: 'stellen', heading: 'Offene Stellen', blocks: stellenBlocks(jobs) },
       { id: 'band', heading: 'Was überall gilt', blocks: bandBlocks(kreis) },
+      { id: 'kontakt', heading: 'Direkt fragen', blocks: [gemeinsam(KREIS_KONTAKT_TEXT)] },
     ],
     bandFactIds: bandFactIds(kreis),
     links: [
@@ -1042,11 +1160,37 @@ export function kreisSectionText(kreis: Kreis): TextSection<string> {
 
 // ─── Gebietsseite /einsatzgebiet ────────────────────────────────────────────
 
+const ZAHLWORT = ['null', 'ein', 'zwei', 'drei', 'vier', 'fünf', 'sechs', 'sieben', 'acht', 'neun', 'zehn', 'elf', 'zwölf'];
+
+/**
+ * Kreise ohne eigene Seite (weniger als KREIS_HUB_MIN_PLACES Orte): „Nur zwei Orte im Gebiet, deshalb ohne eigene
+ * Kreisseite: Landkreis Marburg-Biedenkopf und Hochtaunuskreis.“ Bei verschiedenen Zahlen steht sie je Kreis dabei.
+ */
+function smallKreiseSentence(small: readonly Kreis[]): string {
+  const counts = new Set(small.map((kreis) => kreis.placeCount));
+  if (counts.size === 1) {
+    const [n] = counts;
+    const zahl = n === 1 ? 'ein Ort' : `${ZAHLWORT[n] ?? n} Orte`;
+    return `${small.length > 1 ? 'Je nur' : 'Nur'} ${zahl} im Gebiet, deshalb ohne eigene Kreisseite: ${joinList(small.map((k) => k.name))}.`;
+  }
+  return `Weniger als ${ZAHLWORT[KREIS_HUB_MIN_PLACES]} Orte im Gebiet, deshalb ohne eigene Kreisseite: ${joinList(
+    small.map((k) => `${k.name} (${k.placeCount} ${numerus(k.placeCount, 'Ort', 'Orte')})`),
+  )}.`;
+}
+
 export type EinsatzgebietSectionId = 'lead' | 'ringe' | 'kreise' | 'band';
 
 export interface EinsatzgebietPageText {
   path: string;
   meta: PageMeta;
+  /** Etikett über der h1: „55 Orte · 6 Kreise“. */
+  etikett: string;
+  /** Maße im Seitenkopf: Radius, nächster und weitester Ort, mittlere Fahrzeit. */
+  masse: Mass[];
+  /** Alle Orte nach Strecke (Verzeichnis, Plan). */
+  rows: PlaceRow[];
+  /** Zweitweg im Kopf: zum Verzeichnis aller Orte. */
+  zweitweg: PageLink;
   sections: TextSection<EinsatzgebietSectionId>[];
   /** Kreise ohne Hub als eigene Abschnitte (Anker = Kreis-Slug). */
   kleineKreise: TextSection<string>[];
@@ -1065,6 +1209,15 @@ export function getEinsatzgebietPageText(options: PlaceTextOptions = {}): Einsat
 
   return {
     path: EINSATZGEBIET_PATH,
+    etikett: `${places.length}${NBSP}Orte · ${kreise.length}${NBSP}Kreise`,
+    masse: [
+      { wert: formatKm(stats.nearest[0].commute.distanceKm), name: `Nächster Ort: ${stats.nearest[0].name}` },
+      { wert: formatKm(stats.farthest[0].commute.distanceKm), name: `Weitester Ort: ${stats.farthest[stats.farthest.length - 1].name}` },
+      { wert: formatMin(stats.medianMinutes), name: 'Mittlere Fahrzeit' },
+      { wert: formatKm(stats.medianKm), name: 'Mittlere Strecke' },
+    ],
+    rows: places.map(placeRow),
+    zweitweg: { href: `#${ORTE_ANKER}`, label: `Alle ${places.length}${NBSP}Orte ansehen` },
     meta: plainMeta({
       title: `Einsatzgebiet ${formatKm(MAX_ROAD_KM)} um ${HQ_CITY}: alle ${places.length} Orte`,
       h1: `Unser Einsatzgebiet: ${places.length} Orte bis ${formatKm(MAX_ROAD_KM)} um ${HQ_CITY}`,
@@ -1090,7 +1243,8 @@ export function getEinsatzgebietPageText(options: PlaceTextOptions = {}): Einsat
         id: 'ringe',
         heading: 'Drei Ringe um den Firmensitz',
         blocks: [
-          ort(ringSentence(places)),
+          ort(airRingSentence(places)),
+          ort(roadBandSentence(places)),
           ort(`Die mittlere Fahrzeit aller Orte (Median) liegt bei ${formatMinutes(stats.medianMinutes)}.`),
           gemeinsam(MEASUREMENT_NOTE),
         ],
@@ -1100,16 +1254,10 @@ export function getEinsatzgebietPageText(options: PlaceTextOptions = {}): Einsat
         heading: 'Die Kreise',
         blocks: [
           ort(`${hubs.length} Kreise haben eine eigene Seite: ${joinList(hubs.map(kreisItem))}.`),
-          ...(kreise.length > hubs.length
-            ? [
-                ort(
-                  `Mit weniger Orten stehen hier: ${joinList(kreise.filter((k) => !k.hasHub).map(kreisItem))}.`,
-                ),
-              ]
-            : []),
+          ...(kreise.length > hubs.length ? [ort(smallKreiseSentence(kreise.filter((k) => !k.hasHub)))] : []),
         ],
       },
-      { id: 'band', heading: 'Was überall gilt', blocks: BAND_FACT_IDS.map((id) => gemeinsam(FACTS[id].short, [id])) },
+      { id: 'band', heading: 'Was überall gilt', blocks: bandBlocks({ factIds: [] }) },
     ],
     kleineKreise: kreise.filter((kreis) => !kreis.hasHub).map(kreisSectionText),
     links: [

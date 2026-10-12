@@ -3,41 +3,6 @@
  * des Einstiegs der Startseite. Nur Rollen und Skalen aus app/styles/theme.css.
  */
 
-/* ═══ Pfad über dem Kopf ═══
-   Bis 64em steht er auf der Navy-Fläche und geht nahtlos in den Navy-Block des Kopfs über (wie der Einstieg:
-   Navy direkt unter dem Seitenkopf); ab 64em auf Papier, die Navy-Fläche beginnt darunter. */
-.pfad {
-  --rand: max(var(--spacing-gutter, var(--a-5)), env(safe-area-inset-left), env(safe-area-inset-right));
-  padding: var(--a-3) var(--rand) 0;
-  background-color: var(--surface);
-  color: var(--ink);
-}
-
-@media (min-width: 64em) {
-  /* Auf Papier: die Rollen des Inverse-Bands zurück auf die des Papiers (wie der Titelblock im Seitenkopf) */
-  .pfad[data-tone] {
-    color-scheme: inherit;
-    --surface: inherit;
-    --surface-2: inherit;
-    --surface-3: inherit;
-    --ink: inherit;
-    --ink-muted: inherit;
-    --ink-2: inherit;
-    --brand: inherit;
-    --line: inherit;
-    --line-strong: inherit;
-    --focus: inherit;
-    --vorlauf: inherit;
-    --ruecklauf: inherit;
-    --waerme: inherit;
-  }
-
-  .pfad {
-    padding-top: var(--a-4);
-    padding-bottom: var(--a-2);
-  }
-}
-
 /* ═══ h1: Berufsname in Bildgröße, der Rest der h1 (m/w/d, Ort) in Textgröße darunter ═══ */
 .titelHaupt {
   display: block;

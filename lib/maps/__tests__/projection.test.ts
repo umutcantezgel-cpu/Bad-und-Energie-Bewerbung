@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { REGION } from '@/lib/content/region';
-import { MAP_POIS } from '../google-maps-config';
+import { CENTER_MERGE_KM, MAP_POIS } from '../google-maps-config';
 import { clampToBox, createRadiusProjection, haversineKm, pointOnCircle } from '../projection';
 
 const center = { lat: REGION.center.latitude, lng: REGION.center.longitude };
@@ -98,9 +98,10 @@ describe('helpers', () => {
     expect(clampToBox({ x: -5, y: 400 }, 360, 10)).toEqual({ x: 10, y: 350 });
   });
 
-  it('haversineKm: Wetzlar → Gießen is about 13 km as the crow flies', () => {
+  // Firmensitz laut OpenStreetMap (Messung E-028) → Ortsmitte Gießen: 14,6 km Luftlinie wie in messung.json.
+  it('haversineKm: Firmensitz → Gießen is about 15 km as the crow flies', () => {
     const giessen = REGION.locations.find((l) => l.id === 'loc-giessen')!;
-    expect(haversineKm(center, { lat: giessen.latitude, lng: giessen.longitude })).toBeCloseTo(12.8, 0);
+    expect(haversineKm(center, { lat: giessen.latitude, lng: giessen.longitude })).toBeCloseTo(14.6, 0);
     expect(haversineKm(center, center)).toBe(0);
   });
 
@@ -111,11 +112,15 @@ describe('helpers', () => {
 });
 
 describe('MAP_POIS', () => {
+  // Seit der Messung (E-028) liegt der Firmensitz auf dem Haus Siegmund-Hiepe-Str. 20, nicht mehr auf der Ortsmitte:
+  // Die Wetzlarer Kernstadt (2,3 km östlich) ist ein eigener Punkt, kein Ort fällt mit dem Firmensitz zusammen.
   it('starts with the headquarters and merges places at the same spot', () => {
     expect(MAP_POIS[0]).toMatchObject({ type: 'headquarters', coordinates: { lat: center.lat, lng: center.lng } });
     const ids = MAP_POIS.map((poi) => poi.id);
-    expect(ids).not.toContain('loc-wetzlar-mitte');
     expect(new Set(ids).size).toBe(ids.length);
-    expect(MAP_POIS.length).toBe(REGION.locations.length);
+    const merged = REGION.locations.filter((l) => haversineKm(center, { lat: l.latitude, lng: l.longitude }) < CENTER_MERGE_KM);
+    expect(merged).toEqual([]);
+    expect(ids).toContain('loc-wetzlar-mitte');
+    expect(MAP_POIS.length).toBe(REGION.locations.length + 1 - merged.length);
   });
 });

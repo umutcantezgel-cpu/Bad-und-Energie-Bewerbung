@@ -180,7 +180,7 @@ describe('applicant confirmation', () => {
     expect(mail.text).toContain('Bewerbungsnummer: BE-26-K7M4QX');
     expect(mail.text).toContain('Wir melden uns schnellstmöglich per E-Mail bei dir.');
     expect(mail.text).toContain('1. Bewerben in 60 Sekunden (erledigt)');
-    expect(mail.text).toContain('2. Kennenlernen in der Werkstatt');
+    expect(mail.text).toContain('2. Kennenlernen am Firmensitz');
     // Anrufe über das Büro, WhatsApp über die Mobilnummer (lib/data/contact.ts).
     expect(mail.text).toContain('Telefon: 06441 42956');
     expect(mail.text).toContain('WhatsApp: 0160 8834290');

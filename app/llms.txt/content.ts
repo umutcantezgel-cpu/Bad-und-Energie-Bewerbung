@@ -1,6 +1,9 @@
 import { COMPANY, FACTS, isFactActive, type FactId } from '@/lib/content';
 import { applyUrl, formatSalaryRange, jobMetaTags, jobUrl } from '@/lib/jobs/format';
 import { getActiveJobs, getFunnelOptions, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
+import { getHubKreise, getKreise, getKreisPlaces, getPublishedPlaces, kreisUrl, placeUrl } from '@/lib/places/registry';
+import { MEASUREMENT_NOTE } from '@/lib/places/text';
+import { einsatzgebietPages } from '@/lib/seo/indexable-pages';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 
 /**
@@ -91,4 +94,27 @@ export function contactLines(): string[] {
 
 export function citationHint(): string {
   return `Bitte als Quelle angeben: „${COMPANY.legalName}, Karriereportal (${baseUrl()})“. Gehälter und Vorteile nur so wiedergeben, wie sie auf der jeweiligen Stellenseite stehen.`;
+}
+
+/** Gebietsseite (lib/seo/indexable-pages.ts): eine Zeile in /llms.txt (E-028). */
+export function einsatzgebietLine(): string {
+  const [hub] = einsatzgebietPages();
+  const places = getPublishedPlaces();
+  return `[Einsatzgebiet: ${places.length} Orte mit Strecke und Fahrzeit](${hub.url}): ${getKreise().length} Kreise, ${getHubKreise().length} davon mit eigener Seite, jede Ortsseite mit gemessener Strecke und Fahrzeit zum Firmensitz`;
+}
+
+/** Abschnitt Einsatzgebiet in /llms-full.txt: je Kreis die Orte nach Strecke mit km, Minuten und Ortsseite. */
+export function einsatzgebietBlocks(): string[] {
+  const [hub] = einsatzgebietPages();
+  return [
+    `Gemessene Strecke und Fahrzeit zum Firmensitz, je Kreis nach Strecke. ${MEASUREMENT_NOTE} Übersicht: ${hub.url}`,
+    '',
+    ...getKreise().flatMap((kreis) => [
+      `### ${kreis.name}${kreis.hasHub ? ` (${kreisUrl(kreis)})` : ''}`,
+      ...getKreisPlaces(kreis.id).map(
+        (place) => `- ${place.name} (${place.postalCode}): ${place.commute.distanceKm} km, ${place.commute.minutes} Minuten, ${placeUrl(place)}`,
+      ),
+      '',
+    ]),
+  ];
 }

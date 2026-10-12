@@ -6,7 +6,6 @@ import {
   RING_RADII_KM,
   airKm,
   airKmBetween,
-  averageSpeedKmh,
   bearingDeg,
   compareToMedian,
   detourCategory,
@@ -14,7 +13,6 @@ import {
   directionOf,
   directionToHeadquarters,
   distanceBand,
-  fasterRoutes,
   groupStats,
   kreisStats,
   median,
@@ -22,9 +20,10 @@ import {
   oppositeDirection,
   quadrantOf,
   rankByDistance,
-  ringCounts,
-  ringKm,
-  speedCategory,
+  planRingKm,
+  roadBandCounts,
+  roadBandFloorKm,
+  roadBandKm,
 } from '../derive';
 import { getPlaceById, getPublishedPlaces } from '../registry';
 
@@ -66,29 +65,36 @@ describe('derive: Ringe und Stufen', () => {
     expect([...RING_RADII_KM]).toEqual([...SWITCH_RADII_KM]);
   });
 
-  it('kleinster Ring, der die Strecke fasst', () => {
-    expect(ringKm(place('steindorf'))).toBe(15);
-    expect(ringKm(place('heuchelheim-an-der-lahn'))).toBe(15);
-    expect(ringKm(place('biebertal'))).toBe(25);
-    expect(ringKm(place('mittenaar'))).toBe(25);
-    expect(ringKm(place('bad-endbach'))).toBe(35);
-    expect(ringCounts(places)).toEqual({ 15: 18, 25: 14, 35: 23 });
+  it('Streckenstufe: kleinste Stufe, die die Straßenstrecke fasst (nicht die Luftlinie)', () => {
+    expect(roadBandKm(place('steindorf'))).toBe(15);
+    expect(roadBandKm(place('heuchelheim-an-der-lahn'))).toBe(15);
+    expect(roadBandKm(place('biebertal'))).toBe(25);
+    expect(roadBandKm(place('mittenaar'))).toBe(25);
+    expect(roadBandKm(place('bad-endbach'))).toBe(35);
+    // Herborn: Straße in der äußeren Stufe, Luftlinie im Ring bis 25 km
+    expect(roadBandKm(place('herborn'))).toBe(35);
+    expect(place('herborn').commute.airKm).toBeLessThan(25);
+    expect(roadBandCounts(places)).toEqual({ 15: 17, 25: 14, 35: 23 });
+    expect([0, 16, 26]).toEqual(RING_RADII_KM.map(roadBandFloorKm));
   });
 
-  it('Entfernungsband, Tempo und Umweg aus den Messwerten', () => {
+  it('Ring des Plans: Luftlinie mit Rand für die Namen', () => {
+    expect(planRingKm([place('steindorf')])).toBe(15);
+    expect(planRingKm([place('herborn')])).toBe(25);
+    expect(planRingKm([place('breitscheid')])).toBe(35);
+    expect(planRingKm(places)).toBe(35);
+  });
+
+  it('Entfernungsband und Umweg aus den Messwerten', () => {
     expect(distanceBand(place('asslar'))).toBe('nah');
     expect(distanceBand(place('leun'))).toBe('mittel');
     expect(distanceBand(place('waldsolms'))).toBe('weit');
     expect(airKm(place('asslar'))).toBe(4.5);
-    expect(averageSpeedKmh(place('asslar'))).toBe(40);
-    expect(speedCategory(place('wetzlar'))).toBe('gemaechlich');
-    expect(speedCategory(place('asslar'))).toBe('mittel');
-    expect(speedCategory(place('lollar'))).toBe('zuegig');
-    expect(speedCategory(place('rockenberg'))).toBe('schnell');
     expect(detourCategory(place('braunfels'))).toBe('direkt');
+    // Weilburg: 21 km Straße bei 16,6 km Luftlinie (Faktor 1,27) ist nicht „fast ohne Umweg“
+    expect(detourCategory(place('weilburg'))).toBe('leicht');
     expect(detourCategory(place('solms'))).toBe('normal');
     expect(detourCategory(place('hermannstein'))).toBe('umweg');
-    expect(fasterRoutes(place('rockenberg'), places)).toBe(0);
   });
 });
 

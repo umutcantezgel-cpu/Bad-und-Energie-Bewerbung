@@ -2,7 +2,7 @@
 
 Stand: 2026-10-12 · erzeugt mit `node scripts/places/measure.mjs` · Daten: `lib/places/data/messung.json`
 
-Quelle aller Strecken, Fahrzeiten, Postleitzahlen und Kreise auf den Ortsseiten (`/einsatzgebiet/…`). Die Seite nennt nur, was hier steht. **Freigabe des Inhabers:** offen (Liste prüfen, Orte streichen oder bestätigen).
+Quelle aller Strecken, Fahrzeiten, Postleitzahlen und Kreise auf den Ortsseiten (`/einsatzgebiet/…`). Die Seite nennt nur, was hier steht. **Freigabe des Inhabers:** offen (Liste prüfen, Orte streichen oder bestätigen). Bis zur Freigabe werden die Ortsseiten nicht gemergt (Plan „Messmethode“, Schritt 4; `docs/ROADMAP.md`).
 
 ## Methode
 
@@ -12,11 +12,16 @@ Quelle aller Strecken, Fahrzeiten, Postleitzahlen und Kreise auf den Ortsseiten 
 - **Strecke und Fahrzeit:** OSRM-Routenplaner (OpenStreetMap, Profil Auto, ohne Verkehrslage), Messpunkt → Firmensitz. Gerundet auf ganze Kilometer und ganze Minuten.
 - **Regeln:** Aufgenommen wird nur, was höchstens 35 km Straße entfernt liegt (Fakt `radius35`). Gegenprobe: Straßenstrecke ≥ 0,95 × Luftlinie.
 - **Schreibweise:** Münchholzhausen heißt in OSM „Müchholzhausen“; die Seite nennt den amtlichen Namen.
-- **Grenzen:** Die Fahrzeit ist ein Richtwert ohne Berufsverkehr. Gemeinden mit mehreren Ortsteilen werden ab dem Verwaltungssitz gemessen; einzelne Ortsteile können näher oder weiter liegen.
+- **Gegenprobe Name:** Das OSM-Objekt muss den amtlichen Namen tragen (Feld `osmName` in `messung.json`, Test in `lib/places/__tests__/schema.test.ts`). Gesucht wird mit dem vollen Namen samt Klammerzusatz.
+- **Grenzen:** Die Fahrzeit ist ein Richtwert ohne Berufsverkehr. Gemeinden mit mehreren Ortsteilen werden ab dem Verwaltungssitz gemessen; einzelne Ortsteile können näher oder weiter liegen. Der Verwaltungssitz ist der Ort, den OpenStreetMap als `admin_centre` der Gemeinde führt; er ist nicht gegen die Anschrift des Rathauses geprüft.
+
+## Korrekturen
+
+- **2026-10-12, Allendorf (Lumda):** Die erste Messung hatte den Gießener Stadtteil Allendorf verortet (OSM-Name „Allendorf“, relation/13774226, PLZ 35398, 14 km). Neu verortet über die Gemeindegrenze (OSM relation/418611, Verwaltungssitz Allendorf (Lumda), PLZ 35469) und neu gemessen: 38 km Straße, 34 Minuten. Damit liegt die Stadt außerhalb der 35 km und hat keine Seite.
 
 ## Ergebnis
 
-55 Orte aufgenommen.
+54 Orte aufgenommen.
 
 ### Lahn-Dill-Kreis
 
@@ -58,7 +63,7 @@ Quelle aller Strecken, Fahrzeiten, Postleitzahlen und Kreise auf den Ortsseiten 
 
 | Ort | Messpunkt | Art | PLZ | km (Straße) | Minuten | Luftlinie km | aufgenommen |
 |---|---|---|---|---|---|---|---|
-| Allendorf (Lumda) | – | gemeinde | 35398 | 14 | 18 | 10.5 | ja |
+| Allendorf (Lumda) | – | gemeinde | 35469 | 38 | 34 | 28.3 | nein: Straße 38 km > 35 km |
 | Biebertal | Rodheim-Bieber | gemeinde | 35444 | 16 | 21 | 11.5 | ja |
 | Buseck | Großen-Buseck | gemeinde | 35418 | 31 | 28 | 22.9 | ja |
 | Fernwald | Steinbach | gemeinde | 35463 | 26 | 25 | 21.5 | ja |

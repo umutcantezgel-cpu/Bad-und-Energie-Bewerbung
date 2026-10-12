@@ -1,135 +1,84 @@
+import { HOME_MAP_PLACES } from '@/lib/places/home-map';
+
+/**
+ * Die 10 Orte der Startseitenkarte (Einsatzgebiet, Pendelrechner, Stellenliste), abgeleitet aus den gemessenen
+ * Ortsdaten (lib/places/home-map.ts, dieselben Orte wie `homeMap` in der Registry): Strecke, Fahrzeit, PLZ und
+ * Koordinaten sind dieselben wie auf den Ortsseiten (docs/operations/orte-messung.md@b0749f2, OSRM). Bis
+ * 2026-10-12 standen hier eigene, ungemessene Werte; die Messung hat sie ersetzt (Plan „Übergang“). Zod-frei, weil
+ * die Google-Karte (Client) über lib/content/region.ts hierher reicht.
+ *
+ * Hier bleiben nur Angaben der Startseite, die die Messung nicht kennt: die bisherige ID (Tests, Explorer), der
+ * Anzeigename („Wetzlar Kernstadt“), die Einstufung als Kerngebiet und die Kurzbeschreibung. Die drei
+ * Betriebsaussagen (Nauborn, Braunfels, Gießen) bleiben zurückgehalten (MENSCHEN M-016, components/maps/views.ts).
+ */
 export interface RegionalLocation {
   id: string;
   name: string;
   slug: string;
   plz: string;
+  /** Straßenstrecke Ortsmitte → Firmensitz, ganze km (Messung). */
   distanceKm: number;
+  /** Fahrzeit ohne Verkehrslage, ganze Minuten (Messung). */
   commuteMinutes: number;
   latitude: number;
   longitude: number;
   isCoreZone: boolean;
   character: string;
+  /** Ortsseite /einsatzgebiet/<slug>. */
+  placePath: string;
 }
 
-export const regionalLocations: RegionalLocation[] = [
-  {
-    id: 'loc-wetzlar-mitte',
+interface HomeMapEntry {
+  name: string;
+  slug: string;
+  isCoreZone: boolean;
+  character: string;
+}
+
+/** Startseitenangaben je bisheriger ID (Stand lib/data/locations.ts@075aa71). */
+const HOME_MAP: Readonly<Record<string, HomeMapEntry>> = Object.freeze({
+  'loc-wetzlar-mitte': {
     name: 'Wetzlar Kernstadt',
     slug: 'wetzlar-kernstadt',
-    plz: '35578',
-    distanceKm: 1,
-    commuteMinutes: 3,
-    latitude: 50.56499,
-    longitude: 8.49842,
     isCoreZone: true,
     character: 'Firmensitz Siegmund-Hiepe-Str. 20 und historische Altstadt',
   },
-  {
-    id: 'loc-hermannstein',
-    name: 'Hermannstein',
-    slug: 'hermannstein',
-    plz: '35586',
-    distanceKm: 4,
-    commuteMinutes: 7,
-    latitude: 50.5833,
-    longitude: 8.4917,
-    isCoreZone: true,
-    character: 'Wohn und Gewerbegebiet an der B277 und A480',
-  },
-  {
-    id: 'loc-nauborn',
+  'loc-hermannstein': { name: 'Hermannstein', slug: 'hermannstein', isCoreZone: true, character: 'Wohn und Gewerbegebiet an der B277 und A480' },
+  'loc-nauborn': {
     name: 'Nauborn',
     slug: 'nauborn',
-    plz: '35580',
-    distanceKm: 5,
-    commuteMinutes: 8,
-    latitude: 50.5333,
-    longitude: 8.5167,
     isCoreZone: true,
     character: 'Einfamilienhausgebiete mit vielen Wärmepumpenmodernisierungen',
   },
-  {
-    id: 'loc-garbenheim',
-    name: 'Garbenheim',
-    slug: 'garbenheim',
-    plz: '35583',
-    distanceKm: 4,
-    commuteMinutes: 6,
-    latitude: 50.5667,
-    longitude: 8.5500,
-    isCoreZone: true,
-    character: 'Lahnauen und ruhige Wohnsiedlungen',
-  },
-  {
-    id: 'loc-dutenhofen',
-    name: 'Dutenhofen',
-    slug: 'dutenhofen',
-    plz: '35582',
-    distanceKm: 7,
-    commuteMinutes: 10,
-    latitude: 50.5667,
-    longitude: 8.6000,
-    isCoreZone: true,
-    character: 'Verbindung nach Gießen über die B49',
-  },
-  {
-    id: 'loc-steindorf',
-    name: 'Steindorf',
-    slug: 'steindorf',
-    plz: '35581',
-    distanceKm: 4,
-    commuteMinutes: 7,
-    latitude: 50.5333,
-    longitude: 8.4833,
-    isCoreZone: true,
-    character: 'Traditionelle Wohnsiedlungen und Neubauviertel',
-  },
-  {
-    id: 'loc-asslar',
-    name: 'Aßlar',
-    slug: 'asslar',
-    plz: '35614',
-    distanceKm: 6,
-    commuteMinutes: 9,
-    latitude: 50.5917,
-    longitude: 8.4611,
-    isCoreZone: false,
-    character: 'Industrie und Wohnstandort im Dilltal',
-  },
-  {
-    id: 'loc-braunfels',
+  'loc-garbenheim': { name: 'Garbenheim', slug: 'garbenheim', isCoreZone: true, character: 'Lahnauen und ruhige Wohnsiedlungen' },
+  'loc-dutenhofen': { name: 'Dutenhofen', slug: 'dutenhofen', isCoreZone: true, character: 'Verbindung nach Gießen über die B49' },
+  'loc-steindorf': { name: 'Steindorf', slug: 'steindorf', isCoreZone: true, character: 'Traditionelle Wohnsiedlungen und Neubauviertel' },
+  'loc-asslar': { name: 'Aßlar', slug: 'asslar', isCoreZone: false, character: 'Industrie und Wohnstandort im Dilltal' },
+  'loc-braunfels': {
     name: 'Braunfels',
     slug: 'braunfels',
-    plz: '35619',
-    distanceKm: 14,
-    commuteMinutes: 18,
-    latitude: 50.5167,
-    longitude: 8.3833,
     isCoreZone: false,
     character: 'Schlossstadt mit anspruchsvollen Sanierungsobjekten',
   },
-  {
-    id: 'loc-giessen',
-    name: 'Gießen',
-    slug: 'giessen',
-    plz: '35390',
-    distanceKm: 15,
-    commuteMinutes: 16,
-    latitude: 50.5872,
-    longitude: 8.6755,
-    isCoreZone: false,
-    character: 'Universitätsstadt und wichtiges Kundendienstgebiet',
-  },
-  {
-    id: 'loc-herborn',
-    name: 'Herborn',
-    slug: 'herborn',
-    plz: '35745',
-    distanceKm: 24,
-    commuteMinutes: 22,
-    latitude: 50.6833,
-    longitude: 8.3000,
-    isCoreZone: false,
-    character: 'Historische Fachwerkstadt an der A45',
-  },
-];
+  'loc-giessen': { name: 'Gießen', slug: 'giessen', isCoreZone: false, character: 'Universitätsstadt und wichtiges Kundendienstgebiet' },
+  'loc-herborn': { name: 'Herborn', slug: 'herborn', isCoreZone: false, character: 'Historische Fachwerkstadt an der A45' },
+});
+
+export const regionalLocations: RegionalLocation[] = HOME_MAP_PLACES.map((place) => {
+  const id = place.legacyLocationId;
+  const entry = HOME_MAP[id];
+  if (!entry) throw new Error(`Ort ${place.id} steht auf der Startseitenkarte, aber ohne Eintrag in lib/data/locations.ts`);
+  return {
+    id,
+    name: entry.name,
+    slug: entry.slug,
+    plz: place.postalCode,
+    distanceKm: place.distanceKm,
+    commuteMinutes: place.minutes,
+    latitude: place.lat,
+    longitude: place.lng,
+    isCoreZone: entry.isCoreZone,
+    character: entry.character,
+    placePath: place.path,
+  };
+});

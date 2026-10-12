@@ -56,3 +56,25 @@ describe('llms.txt (E-SEO-014)', () => {
     }
   });
 });
+
+describe('Einsatzgebiet in llms.txt und llms-full.txt (E-028)', () => {
+  it('llms.txt: genau eine Zeile zur Gebietsseite', async () => {
+    const { getPublishedPlaces } = await import('@/lib/places/registry');
+    const text = await textAt(llms, '2026-10-12T12:00:00Z');
+    const zeilen = text.split('\n').filter((line) => line.includes('/einsatzgebiet'));
+    expect(zeilen).toHaveLength(1);
+    expect(zeilen[0]).toContain(`[Einsatzgebiet: ${getPublishedPlaces().length} Orte mit Strecke und Fahrzeit]`);
+  });
+
+  it('llms-full.txt: je Kreis die Orte nach Strecke mit km, Minuten und Ortsseite', async () => {
+    const { getKreise, getKreisPlaces, placeUrl } = await import('@/lib/places/registry');
+    const text = await textAt(llmsFull, '2026-10-12T12:00:00Z');
+    for (const kreis of getKreise()) {
+      expect(text).toContain(`### ${kreis.name}`);
+      for (const place of getKreisPlaces(kreis.id)) {
+        expect(text).toContain(`- ${place.name} (${place.postalCode}): ${place.commute.distanceKm} km, ${place.commute.minutes} Minuten, ${placeUrl(place)}`);
+      }
+    }
+    expect(text).toContain('Gemessen am 12. Oktober 2026 mit OpenStreetMap (OSRM)');
+  });
+});

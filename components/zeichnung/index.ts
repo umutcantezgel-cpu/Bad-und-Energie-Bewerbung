@@ -19,3 +19,7 @@ export { Rohrklammer } from './Rohrklammer';
 export type { RohrklammerProps } from './Rohrklammer';
 export { WAERMEBILD_TITEL, Waermebild } from './Waermebild';
 export type { WaermebildProps } from './Waermebild';
+export { Entfernungsleiste, senkrechteLage } from './Entfernungsleiste';
+export type { EntfernungsleisteProps, LeistenOrt } from './Entfernungsleiste';
+export { PENDELWEG_RAHMEN, Pendelweg, pendelLage } from './Pendelweg';
+export type { PendelwegProps } from './Pendelweg';

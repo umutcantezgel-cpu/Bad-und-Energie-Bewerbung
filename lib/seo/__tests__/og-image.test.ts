@@ -4,8 +4,10 @@ import { describe, expect, it } from 'vitest';
 import { FACTS } from '@/lib/content';
 import { formatSalaryAmount } from '@/lib/jobs/format';
 import { getActiveJobs, getJobBySlug } from '@/lib/jobs/registry';
-import { OG_TITLE_BOX, fitTitle, ogHomeText, ogJobText, splitSentences, splitTitle } from '@/lib/seo/og-image';
-import { renderHomeImage, renderJobImage } from '@/lib/seo/og-render';
+import { OG_TITLE_BOX, fitTitle, ogHomeText, ogJobText, ogPlaceText, placeOgImage, splitSentences, splitTitle } from '@/lib/seo/og-image';
+import { renderHomeImage, renderJobImage, renderPlaceImage } from '@/lib/seo/og-render';
+import { getPlaceBySlug, getPublishedPlaces, placePath } from '@/lib/places/registry';
+import { getPlacePageText } from '@/lib/places/text';
 
 const plain = (text: string) => text.replace(/ /g, ' ');
 const ROOT = path.resolve(__dirname, '../../..');
@@ -107,4 +109,31 @@ describe('share image assets', () => {
       expect(png.readUInt32BE(20)).toBe(630);
     }
   }, 30_000);
+});
+
+describe('place share image text (E-028)', () => {
+  it.each(getPublishedPlaces().map((place) => [place.id, place] as const))('%s: h1 and etikett of the page, road distance in the loop', (_id, place) => {
+    const page = getPlacePageText(place);
+    const text = ogPlaceText({ etikett: page.etikett, h1: page.meta.h1, distanceKm: place.commute.distanceKm, minutes: place.commute.minutes });
+    expect(text.distance).toEqual({ value: `${place.commute.distanceKm} km`, name: 'bis zum Firmensitz' });
+    expect(text.title.join(' ').replace(/- /g, '-')).toContain(place.name.split(' ')[0]);
+    expect(text.title.length).toBeLessThanOrEqual(3);
+    expect(text.subline).toEqual([`Rund ${place.commute.minutes} Minuten Fahrt.`, FACTS.flexibleHours.long]);
+    for (const t of text.texts) expect(t).not.toMatch(/13[:.]30|pünktlich|Feierabend|\u00A0/);
+  });
+
+  it('links the image per place with a versioned url and an alt that names the distance', () => {
+    const herborn = getPlaceBySlug('herborn')!;
+    const image = placeOgImage({ path: placePath(herborn), name: herborn.name, updatedAt: herborn.updatedAt, distanceKm: herborn.commute.distanceKm });
+    expect(image.url).toBe(`/einsatzgebiet/herborn/opengraph-image?v=${herborn.updatedAt}`);
+    expect(image.alt).toContain('27 km bis zum Firmensitz');
+  });
+
+  it('renders a PNG', async () => {
+    const herborn = getPlaceBySlug('herborn')!;
+    const page = getPlacePageText(herborn);
+    const response = await renderPlaceImage(ogPlaceText({ etikett: page.etikett, h1: page.meta.h1, distanceKm: 27, minutes: 26 }));
+    expect(response.headers.get('content-type')).toBe('image/png');
+    expect((await response.arrayBuffer()).byteLength).toBeGreaterThan(10_000);
+  });
 });

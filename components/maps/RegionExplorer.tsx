@@ -22,8 +22,15 @@ export interface RegionExplorerProps {
   mapsAvailable: boolean;
   /** Section heading (server-rendered): first on phones, across both columns from lg. */
   header?: ReactNode;
+  /** „Alle Orte als Tabelle“ under the choice (default). The Einsatzgebiet page lists the places itself. */
+  table?: boolean;
+  /** Places the plan names first (overview /einsatzgebiet: the larger towns); omitted: from the outside in. */
+  labelPriority?: readonly string[];
   className?: string;
 }
+
+/** Up to this many places the choice is a grid of cards (home map: 10); more get a select (Einsatzgebiet: all). */
+export const MAX_PLACE_CARDS = 12;
 
 const serverConsent = () => false;
 const NBSP = '\u00A0';
@@ -44,7 +51,7 @@ function useHydrated(): boolean {
  * („Wo wohnst du?“) and all places as a table. Phones: heading, switch, plan, result, places, table (the
  * result sits right under the plan, as in B Runde 1). From lg: the plan stays in the right column (sticky).
  */
-export function RegionExplorer({ data, mapsAvailable, header, className }: RegionExplorerProps) {
+export function RegionExplorer({ data, mapsAvailable, header, table = true, labelPriority, className }: RegionExplorerProps) {
   const id = useId();
   const [radiusKm, setRadiusKm] = useState(data.radiusKm);
   const [selectedId, setSelectedId] = useState('');
@@ -91,17 +98,28 @@ export function RegionExplorer({ data, mapsAvailable, header, className }: Regio
 
         <CommuteResult className="order-4" data={data} selected={selected} radiusKm={radiusKm} interactive={hydrated} />
 
-        <PlaceChoice
-          className="order-5"
-          name={`${id}-ort`}
-          places={data.places}
-          radiusKm={radiusKm}
-          selectedId={selected?.id ?? ''}
-          disabled={!hydrated}
-          onSelect={setSelectedId}
-        />
+        {data.places.length > MAX_PLACE_CARDS ? (
+          <PlaceSelect
+            className="order-5"
+            id={`${id}-auswahl`}
+            places={data.places}
+            selectedId={selected?.id ?? ''}
+            disabled={!hydrated}
+            onSelect={setSelectedId}
+          />
+        ) : (
+          <PlaceChoice
+            className="order-5"
+            name={`${id}-ort`}
+            places={data.places}
+            radiusKm={radiusKm}
+            selectedId={selected?.id ?? ''}
+            disabled={!hydrated}
+            onSelect={setSelectedId}
+          />
+        )}
 
-        <PlaceTable className="order-6" data={data} selected={selected} />
+        {table && <PlaceTable className="order-6" data={data} selected={selected} />}
       </div>
 
       {/* Tablet: the plan keeps a readable size instead of filling 700 px (sm–lg). */}
@@ -114,6 +132,7 @@ export function RegionExplorer({ data, mapsAvailable, header, className }: Regio
             onSelect={setSelectedId}
             titleId={`${id}-title`}
             descId={`${id}-desc`}
+            labelPriority={labelPriority}
             className={cn(mapReady && 'invisible')}
           />
           {showGoogle && (
@@ -295,6 +314,50 @@ function PlaceChoice({ name, places, radiusKm, selectedId, disabled, onSelect, c
   );
 }
 
+interface PlaceSelectProps {
+  id: string;
+  places: readonly RegionPlace[];
+  selectedId: string;
+  disabled?: boolean;
+  onSelect: (id: string) => void;
+  className?: string;
+}
+
+/**
+ * „Wo wohnst du?“ for many places (Einsatzgebiet: all measured places): a native select in alphabetical order, each
+ * option with distance and drive time. Before hydration (and without JavaScript) it is disabled like the cards.
+ */
+function PlaceSelect({ id, places, selectedId, disabled, onSelect, className }: PlaceSelectProps) {
+  const sorted = [...places].sort((a, b) => a.name.localeCompare(b.name, 'de'));
+  return (
+    <div className={cn('flex flex-col gap-3', className)}>
+      <label htmlFor={id} className="text-title-3 text-brand">
+        Wo wohnst du?
+      </label>
+      <div className="relative max-w-md">
+        <select
+          id={id}
+          value={selectedId}
+          disabled={disabled}
+          onChange={(event) => onSelect(event.target.value)}
+          className={cn(
+            'min-h-12 w-full cursor-pointer appearance-none rounded-2 border-2 border-brand bg-surface-raised py-3 pr-12 pl-4 text-body text-ink',
+            'focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-focus disabled:cursor-default',
+          )}
+        >
+          <option value="">Ort wählen</option>
+          {sorted.map((place) => (
+            <option key={place.id} value={place.id}>
+              {`${place.name} (${formatKm(place.distanceKm)}, ${formatMinutes(place.commuteMinutes)})`}
+            </option>
+          ))}
+        </select>
+        <Icon name="chevron-down" size="md" className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-brand" />
+      </div>
+    </div>
+  );
+}
+
 interface CommuteResultProps {
   data: RegionMapData;
   selected: RegionPlace | undefined;
@@ -333,6 +396,12 @@ function CommuteResult({ data, selected, radiusKm, interactive, className }: Com
             <span className="text-etikett text-ink-2">{zoneLabel(selected)}</span>
             {selected.character && <span>{selected.character}</span>}
           </p>
+          {selected.href && (
+            <TextLink href={selected.href} standalone className="self-start">
+              {`Mehr zu ${selected.name}`}
+              <Icon name="arrow-right" size="sm" className="shrink-0" />
+            </TextLink>
+          )}
         </div>
       ) : (
         <p className="text-callout text-ink-muted">

@@ -59,9 +59,10 @@ export const SITE_CONFIG = {
     addressLocality: 'Wetzlar',
     addressRegion: 'Hessen',
     addressCountry: 'DE',
+    // Wie lib/data/company.ts: OpenStreetMap, docs/operations/orte-messung.md@b0749f2
     geo: {
-      latitude: 50.56499,
-      longitude: 8.49842,
+      latitude: 50.5525,
+      longitude: 8.47465,
     },
   },
 
@@ -94,25 +95,33 @@ export const SITE_CONFIG = {
     'Ausbildung zum Anlagenmechaniker SHK seit 1926',
   ],
 
-  // Regionale Einsatzgebiete (max. 35 km Radius, keine Fernmontagen)
+  // Einsatzgebiet: ein Kreis von 35 km um den Firmensitz (Fakt radius35, fakten-abgleich B29). Bis 2026-10-12 standen
+  // hier drei Kreise („Gießen und Umland“ 20 km, „Lahn Dill Kreis“ mit Dillenburg, 38 km Straße). Jeder Ort hat eine
+  // Ortsseite unter /einsatzgebiet (lib/places, Test in components/site/__tests__/site-jsonld.test.ts).
   serviceRegions: [
     {
-      name: 'Wetzlar Kernstadt und Stadtteile',
-      postalCode: '35578',
-      radiusKm: 15,
-      cities: ['Wetzlar', 'Hermannstein', 'Nauborn', 'Garbenheim', 'Steindorf', 'Dutenhofen', 'Münchholzhausen'],
-    },
-    {
-      name: 'Gießen und Umland',
-      postalCode: '35390',
-      radiusKm: 20,
-      cities: ['Gießen', 'Wettenberg', 'Heuchelheim', 'Linden', 'Pohlheim', 'Biebertal'],
-    },
-    {
-      name: 'Lahn Dill Kreis',
+      name: 'Umkreis von 35 km um Wetzlar',
       postalCode: '35578',
       radiusKm: 35,
-      cities: ['Aßlar', 'Solms', 'Braunfels', 'Ehringshausen', 'Hüttenberg', 'Lahnau', 'Herborn', 'Dillenburg', 'Schöffengrund'],
+      cities: [
+        'Wetzlar',
+        'Gießen',
+        'Herborn',
+        'Weilburg',
+        'Butzbach',
+        'Aßlar',
+        'Solms',
+        'Braunfels',
+        'Lahnau',
+        'Hüttenberg',
+        'Ehringshausen',
+        'Schöffengrund',
+        'Wettenberg',
+        'Heuchelheim',
+        'Linden',
+        'Pohlheim',
+        'Biebertal',
+      ],
     },
   ],
 };

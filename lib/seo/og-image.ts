@@ -249,6 +249,58 @@ export function ogJobText(job: OgJob, open: boolean): OgJobText {
   };
 }
 
+export interface OgPlaceText extends OgFrameText {
+  /** h1 font size in px, fitted to the left column (fitTitle). */
+  titleSize: number;
+  /** Value and name in the heating loop: the road distance to the headquarters. */
+  distance: { value: string; name: string };
+}
+
+/** What a place share image needs (lib/places text model and measurement), without importing lib/places here. */
+export interface OgPlace {
+  /** Etikett of the page („35745 Herborn · Lahn-Dill-Kreis“). */
+  etikett: string;
+  /** h1 of the page („SHK-Jobs für Herborn“). */
+  h1: string;
+  distanceKm: number;
+  minutes: number;
+}
+
+/**
+ * Content of a place share image (E-028): the page's etikett and h1, „Rund 26 Minuten Fahrt.“ and the fact
+ * flexibleHours at the bracket, the road distance in the heating loop („27 km“, „bis zum Firmensitz“).
+ */
+export function ogPlaceText(place: OgPlace): OgPlaceText {
+  const etikett = versal(plain(place.etikett));
+  const fitted = fitTitle(plain(place.h1));
+  const subline = [`Rund ${place.minutes} Minuten Fahrt.`, FACTS.flexibleHours.long];
+  const microcopy = plain(`Dauert ca. ${FACTS.apply60s.value} Sekunden. ${FACTS.noCvNeeded.short}.`);
+  const distance = { value: `${place.distanceKm} km`, name: 'bis zum Firmensitz' };
+  return {
+    etikett,
+    title: fitted.lines,
+    titleSize: fitted.size,
+    subline,
+    action: ACTION,
+    microcopy,
+    distance,
+    texts: [etikett, ...fitted.lines, ...subline, ACTION, microcopy, distance.value, distance.name],
+  };
+}
+
+/**
+ * Share image of a place page: its own app/einsatzgebiet/[slug]/opengraph-image route with a per-place alt. The
+ * query changes with every new measurement (updatedAt), so WhatsApp and Co. fetch the new card.
+ */
+export function placeOgImage(place: { path: string; name: string; updatedAt: string; distanceKm: number }): OgImage {
+  return {
+    url: `${place.path}/opengraph-image?v=${place.updatedAt}`,
+    ...OG_IMAGE_SIZE,
+    type: OG_IMAGE_TYPE,
+    alt: `SHK-Jobs für ${place.name}: ${place.distanceKm} km bis zum Firmensitz von ${COMPANY.shortName} in ${COMPANY.address.city}`,
+  };
+}
+
 /**
  * The root image app/opengraph-image.tsx. Pages without their own image link it explicitly
  * (see generatePageMetadata), so its alt is defined here and imported by the image file.

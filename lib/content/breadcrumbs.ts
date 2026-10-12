@@ -4,3 +4,5 @@
  */
 export const BREADCRUMB_HOME = Object.freeze({ label: 'Startseite', href: '/' });
 export const BREADCRUMB_JOBS = Object.freeze({ label: 'Stellen', href: '/jobs' });
+/** Gebietsseite /einsatzgebiet: zweite Stufe aller Orts- und Kreisseiten (E-028). */
+export const BREADCRUMB_EINSATZGEBIET = Object.freeze({ label: 'Einsatzgebiet', href: '/einsatzgebiet' });

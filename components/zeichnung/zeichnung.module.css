@@ -371,3 +371,348 @@
     background-color: transparent;
   }
 }
+
+/* ═══ Pendelweg (Ortsseiten, E-028): Haus, Ort, Leitungspaar und Maßkette in echter Richtung ═══
+   240 × 176 Einheiten; bei 22,5rem Breite ist der Strich (2 Einheiten) 3 px. Kein vector-effect: Das Paar
+   zeichnet sich über stroke-dashoffset (pathLength 1), das nur ohne non-scaling-stroke verlässlich misst. */
+/* Feste Skala (35 km = äußerer Bogen): ganze Breite des Bilds, höchstens 30rem (eine Einheit 1,5–1,7 px) */
+.pendelweg {
+  width: min(100%, 28.125rem);
+}
+
+@media (min-width: 64em) {
+  .pendelweg {
+    width: min(100%, 30rem);
+  }
+}
+
+/* Zirkel des Leitmotivs (E-027): 35 km fest in der Linienfarbe, 15 und 25 km gepunktet und leise */
+.pendelGrenze {
+  stroke: var(--brand);
+}
+
+.pendelStufe {
+  stroke: var(--line-strong);
+  stroke-dasharray: 0.1 7;
+}
+
+.pendelSchenkel {
+  stroke: var(--line-strong);
+}
+
+.pendelSkala {
+  fill: var(--ink-2);
+  font-family: var(--font-mass);
+  font-weight: 500;
+}
+
+/* Halo in der Farbe der Fläche: Linien laufen nie durch die Schrift */
+.pendelHalo {
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+/* Ring um den Punkt mit Fläche, damit Bogen und Schenkel unter ihm aufhören */
+.pendelPunktRing {
+  fill: var(--surface);
+}
+
+.pendelSchrift {
+  fill: var(--ink);
+  font-family: var(--font-sans);
+  font-weight: 700;
+}
+
+.pendelWert {
+  fill: var(--brand);
+  font-family: var(--font-mass);
+  font-weight: 600;
+}
+
+.pendelOrt {
+  fill: var(--brand);
+}
+
+.pendelHaus {
+  fill: var(--waerme);
+  stroke: var(--brand);
+  stroke-linejoin: round;
+}
+
+/* Grundwert ist der Endzustand: ohne Skript und reduziert steht das Paar vollständig */
+.pendelZug {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+@keyframes pendelZiehen {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+/* Register `pendel-zeichnen`: Vorlauf ab 4 Takten, Rücklauf ab 7 Takten, je d-3 mit k-wechsel (Ende 960 ms) */
+:global(.auftakt) [data-motion="pendel-zeichnen"].pendelVorlauf {
+  animation: pendelZiehen var(--d-3) var(--k-wechsel) calc(var(--takt) * 4) backwards;
+}
+
+:global(.auftakt) [data-motion="pendel-zeichnen"].pendelRuecklauf {
+  animation: pendelZiehen var(--d-3) var(--k-wechsel) calc(var(--takt) * 7) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(.auftakt) [data-motion="pendel-zeichnen"] {
+    animation: none;
+  }
+}
+
+/* ═══ Entfernungsleiste (E-028): Strecke auf der Skala 0–35 km, Werte in Martian Mono ═══ */
+.leiste {
+  margin: 0;
+  color: var(--ink);
+}
+
+/* Waagerecht (Ortsseite): Punkte über der Skala, gleich weite Orte gestapelt */
+.leisteWaagerecht {
+  /* Ein Kilometer ist am Handy rund 8 px breit: Punkte so groß, dass Nachbarwerte nicht überlappen */
+  --punkt: 0.5rem;
+  --luft: 0.25rem;
+  --marke: 3rem;
+  padding-inline: var(--a-5);
+}
+
+@media (min-width: 48em) {
+  .leisteWaagerecht {
+    --punkt: 0.75rem;
+  }
+}
+
+.lwFeld {
+  position: relative;
+  height: calc(var(--stapel) * (var(--punkt) + var(--luft)) + var(--marke) + var(--a-5));
+}
+
+@media (min-width: 48em) {
+  .leisteWaagerecht {
+    --marke: 2rem;
+  }
+}
+
+.lwPunkt {
+  position: absolute;
+  bottom: calc(var(--stufe) * (var(--punkt) + var(--luft)) + var(--a-2));
+  width: var(--punkt);
+  height: var(--punkt);
+  margin-left: calc(var(--punkt) / -2);
+  border: 1.5px solid var(--brand);
+  border-radius: var(--radius-voll);
+  background-color: var(--surface);
+}
+
+.lwPunktAktuell {
+  background-color: var(--brand);
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Name und Wert des Orts über seinem Stapel: anteilig verschoben (0 km links bündig, 35 km rechts bündig) */
+.lwMarke {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--a-1);
+  max-width: 100%;
+  transform: translateX(calc(var(--anteil) * -100%));
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Hinweislinie von der Marke bis knapp über den Punkt des Orts */
+.lwLeitung {
+  position: absolute;
+  top: calc(var(--marke) + var(--a-1));
+  bottom: calc((var(--stufe) + 1) * (var(--punkt) + var(--luft)) + var(--a-2));
+  width: var(--m-strich);
+  margin-left: calc(var(--m-strich) / -2);
+  background-color: var(--brand);
+}
+
+.lwMarkeName {
+  font-family: var(--font-display);
+  font-size: var(--text-lead);
+  font-weight: 800;
+  color: var(--brand);
+}
+
+@media (min-width: 48em) {
+  .lwMarkeName {
+    font-size: var(--text-title-3);
+  }
+
+  .lwMarke {
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--a-2);
+  }
+}
+
+.lwMarkeWert {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--brand);
+}
+
+.lwSkala {
+  position: relative;
+  height: var(--a-7);
+  border-top: var(--m-strich) solid var(--brand);
+}
+
+.lwStrich {
+  position: absolute;
+  top: 0;
+  width: var(--m-strich);
+  height: var(--a-2);
+  margin-left: calc(var(--m-strich) / -2);
+  background-color: var(--brand);
+}
+
+.lwRing {
+  height: var(--a-3);
+}
+
+/* Alle Orte des Gebiets als leise Striche über der Skala (kleine Kreise auf der Ortsseite) */
+.lwHintergrund {
+  position: absolute;
+  bottom: 100%;
+  width: 1px;
+  height: var(--a-3);
+  background-color: var(--line-strong);
+}
+
+.lwWert {
+  position: absolute;
+  top: calc(100% + var(--a-1));
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--text-footnote);
+  font-stretch: 75%;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.lwRing .lwWert {
+  color: var(--brand);
+  font-weight: 600;
+}
+
+/* Senkrecht (Kreis-Hub, Navy): Leitungspaar von 0 km oben bis 35 km unten, jeder Ort zweigt ab */
+.leisteSenkrecht {
+  --wertspalte: 2.5rem;
+  --rohr: calc(var(--paar) + var(--m-strich) * 2);
+  --abgang: 4rem;
+  position: relative;
+  width: 100%;
+  max-width: 24rem;
+  height: calc(var(--zeilen) * var(--zeile));
+}
+
+.lsPaar {
+  position: absolute;
+  top: calc(var(--zeile) / 2);
+  bottom: calc(var(--zeile) / 2);
+  left: calc(var(--wertspalte) + var(--a-2));
+  width: var(--rohr);
+  border-left: var(--m-strich) solid var(--vorlauf);
+  border-right: var(--m-strich) solid var(--ruecklauf);
+}
+
+.lsStrich {
+  position: absolute;
+  left: 0;
+  width: calc(var(--wertspalte) + var(--a-2));
+  height: 0;
+}
+
+.lsWert {
+  position: absolute;
+  right: var(--a-3);
+  top: 0;
+  transform: translateY(-50%);
+  font-size: var(--text-footnote);
+  font-stretch: 75%;
+  line-height: 1;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.lsStrich::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: calc(var(--m-strich) / -2);
+  width: var(--a-2);
+  height: var(--m-strich);
+  background-color: var(--ink-2);
+}
+
+.lsRing .lsWert {
+  color: var(--brand);
+  font-weight: 600;
+}
+
+.lsRing::after {
+  width: var(--a-3);
+  background-color: var(--brand);
+}
+
+.lsAbgaenge {
+  position: absolute;
+  top: 0;
+  left: calc(var(--wertspalte) + var(--a-2) + var(--rohr));
+  width: var(--abgang);
+  height: 100%;
+  overflow: visible;
+}
+
+.lsAbgang {
+  fill: none;
+  stroke: var(--ink-2);
+  stroke-width: 2px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.lsAbgangAktuell {
+  stroke: var(--brand);
+  stroke-width: var(--m-strich);
+}
+
+.lsName {
+  position: absolute;
+  left: calc(var(--wertspalte) + var(--a-2) + var(--rohr) + var(--abgang) + var(--a-1));
+  right: 0;
+  height: var(--zeile);
+  overflow: hidden;
+  font-size: var(--text-footnote);
+  font-weight: 700;
+  line-height: var(--zeile);
+  color: var(--ink);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.lsKm {
+  font-weight: 500;
+  font-stretch: 75%;
+  color: var(--ink-2);
+}
+
+.lsAktuell {
+  color: var(--brand);
+}

@@ -21,6 +21,8 @@ export const MOTION_IDS = [
   'erdleitung-d',
   'pfeile',
   'radius-einrasten',
+  'pendel-zeichnen',
+  'ringe-zeichnen',
   'menue-oeffnen',
   'menue-leitung',
   'menue-eintrag',
@@ -178,6 +180,32 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
     reduziert: 'Zirkel und Bogen stehen auf 35 km.',
     seitenart: 'erzaehlseiten',
     endeMs: 1120,
+  },
+  'pendel-zeichnen': {
+    zweck:
+      'Signatur der Ortsseiten (E-028): Der Arbeitsweg zeichnet sich einmal im Seitenkopf, der Vorlauf rot vom ' +
+      'Firmensitz zum Ort, danach der Rücklauf blau zurück (Pendelweg).',
+    ausloeser: ['auftakt'],
+    eigenschaften: ['stroke-dashoffset'],
+    dauer: ['d-3'],
+    verzoegerungTakte: [4, 7],
+    kurve: ['k-wechsel'],
+    reduziert: 'Vorlauf und Rücklauf stehen vollständig zwischen Firmensitz und Ort.',
+    seitenart: 'erzaehlseiten',
+    endeMs: 960,
+  },
+  'ringe-zeichnen': {
+    zweck:
+      'Signatur der Gebietsseite (E-028): Die Ringe des Einsatzgebiets ziehen sich einmal um den Firmensitz auf, ' +
+      'erst 15, dann 25, dann 35 km.',
+    ausloeser: ['auftakt'],
+    eigenschaften: ['stroke-dashoffset'],
+    dauer: ['d-3'],
+    verzoegerungTakte: [2, 4, 6],
+    kurve: ['k-aus'],
+    reduziert: 'Alle drei Ringe stehen.',
+    seitenart: 'erzaehlseiten',
+    endeMs: 880,
   },
   'menue-oeffnen': {
     zweck: 'Das Menü als eigener Moment (Popover, @starting-style).',

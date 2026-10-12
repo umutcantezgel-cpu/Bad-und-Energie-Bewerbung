@@ -70,7 +70,7 @@ describe('Ergebnis der Ortswahl', () => {
 
   it('says whether the place lies within the chosen radius', () => {
     expect(radiusStatus(giessen, 35, data.radii)).toBe('Gießen liegt innerhalb von 35 km.');
-    expect(radiusStatus(herborn, 15, data.radii)).toBe('Herborn liegt außerhalb von 15 km, aber innerhalb von 25 km.');
+    expect(radiusStatus(herborn, 15, data.radii)).toBe('Herborn liegt außerhalb von 15 km, aber innerhalb von 35 km.');
   });
 
   it('names the rating from the data', () => {
@@ -78,7 +78,8 @@ describe('Ergebnis der Ortswahl', () => {
     expect(zoneLabel(data.places.find((p) => p.id === 'loc-nauborn')!)).toBe('Kerngebiet');
   });
 
-  it('keeps the drive time and distance of Gießen as in the table (15 km, 16 Min.)', () => {
-    expect([giessen.distanceKm, giessen.commuteMinutes]).toEqual([15, 16]);
+  // Seit E-028 gemessen (docs/operations/orte-messung.md, OSRM): dieselben Werte wie auf der Ortsseite /einsatzgebiet/giessen.
+  it('keeps the drive time and distance of Gießen as measured (19 km, 21 Min.)', () => {
+    expect([giessen.distanceKm, giessen.commuteMinutes]).toEqual([19, 21]);
   });
 });

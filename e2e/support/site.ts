@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page, type TestInfo } from '@playwright/test';
 import { ALL_JOBS, getActiveJobs, getChannelJobs, isJobLive } from '../../lib/jobs/registry';
+import { EINSATZGEBIET_PATH, getHubKreise, getPublishedPlaces, kreisPath, placePath } from '../../lib/places/registry';
 
 /** WCAG 2.2 AA (ROADMAP §9): axe meldet 0 Verstöße. */
 export const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] as const;
@@ -25,12 +26,32 @@ export interface SiteRoute {
   status: number;
 }
 
-/** Jede Route der Phase 1, dazu die 404-Seite. */
+/**
+ * Lokale Seiten (E-028) aus dem Registry: Gebietsseite, Kreis-Hubs und alle veröffentlichten Orte. Alle laufen in
+ * e2e/local-pages.spec.ts (nur mobile-light); ROUTES nimmt fünf Stichproben für axe in allen vier Projekten.
+ */
+export const LOCAL_PAGES: readonly { path: string; name: string }[] = [
+  { path: EINSATZGEBIET_PATH, name: 'Einsatzgebiet' },
+  ...getHubKreise().map((kreis) => ({ path: kreisPath(kreis), name: kreis.shortName })),
+  ...getPublishedPlaces().map((place) => ({ path: placePath(place), name: place.name })),
+];
+
+/** Stichproben der lokalen Seiten: Gebietsseite, ein Kreis-Hub, ein Ort, ein Stadtteil, die Stadt Wetzlar. */
+export const LOCAL_SAMPLES = [
+  '/einsatzgebiet',
+  '/einsatzgebiet/lahn-dill-kreis',
+  '/einsatzgebiet/herborn',
+  '/einsatzgebiet/hermannstein',
+  '/einsatzgebiet/wetzlar',
+] as const;
+
+/** Jede Route der Phase 1, dazu die Stichproben der lokalen Seiten und die 404-Seite. */
 export const ROUTES: readonly SiteRoute[] = [
   { path: '/', status: 200 },
   { path: '/jobs', status: 200 },
   ...PUBLISHED_JOBS.map((job) => ({ path: `/jobs/${job.slug}`, status: 200 })),
   { path: '/bewerbung', status: 200 },
+  ...LOCAL_SAMPLES.map((path) => ({ path, status: 200 })),
   { path: `/bewerbung?stelle=${MAIN_JOB_SLUG}`, status: 200 },
   { path: '/bewerbung/danke', status: 200 },
   { path: '/bewerbung/mappe', status: 200 },

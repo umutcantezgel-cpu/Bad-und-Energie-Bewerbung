@@ -282,9 +282,40 @@
 .orteListe > li::before {
   content: "·" / "";
   position: absolute;
+  top: 50%;
   left: calc(var(--a-5) / 2);
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   color: var(--ink-2);
+}
+
+/* Orte mit eigener Seite (E-028): Link mit Trefferfläche ≥ 44 × 44 px (kurze Namen wie „Leun“ über min-width, der Text
+   darin mittig, damit die Abstände zu den Trennpunkten links und rechts gleich bleiben); die Fläche reicht seitlich in
+   den Abstand */
+.ortLink {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--m-ziel);
+  min-height: var(--m-ziel);
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+}
+
+.ortLink::after {
+  content: "";
+  position: absolute;
+  inset: 0 calc(var(--a-2) * -1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ortLink:hover {
+    color: var(--ink);
+    text-decoration-thickness: var(--m-strich);
+    text-decoration-color: var(--ruecklauf);
+  }
 }
 
 .sitz {

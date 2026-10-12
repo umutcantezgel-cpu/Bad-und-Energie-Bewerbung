@@ -94,11 +94,41 @@ export function quadrantOf(direction: Direction): Quadrant {
   return direction.startsWith('Nord') ? 'nord' : 'sued';
 }
 
-/** Kleinster Ring des Radius-Schalters, der die Straßenstrecke fasst (15, 25 oder 35 km). */
-export function ringKm(place: Pick<Place, 'commute'>): number {
-  const ring = RING_RADII_KM.find((radius) => place.commute.distanceKm <= radius);
-  if (ring === undefined) throw new RangeError(`Strecke ${place.commute.distanceKm} km liegt außerhalb aller Ringe`);
-  return ring;
+/**
+ * Streckenstufe: die kleinste der Stufen 15, 25 und 35 km, die die Straßenstrecke fasst. Gemessen auf der Straße,
+ * nicht in Luftlinie: Die Ringe der Pläne (Radius-Schalter, Gebietsplan) zeigen die Luftlinie und heißen darum allein
+ * „Ring“; im Text heißt die Stufe „bis 15 km Strecke“, „16 bis 25 km“, „26 bis 35 km“ (roadBandLabel).
+ */
+export function roadBandKm(place: Pick<Place, 'commute'>): number {
+  const band = RING_RADII_KM.find((radius) => place.commute.distanceKm <= radius);
+  if (band === undefined) throw new RangeError(`Strecke ${place.commute.distanceKm} km liegt außerhalb aller Stufen`);
+  return band;
+}
+
+/** Untergrenze einer Streckenstufe in ganzen km (Messwerte sind ganze km): 0, 16, 26. */
+export function roadBandFloorKm(bandKm: number): number {
+  const index = RING_RADII_KM.indexOf(bandKm);
+  if (index < 0) throw new RangeError(`Keine Streckenstufe ${bandKm} km`);
+  return index === 0 ? 0 : RING_RADII_KM[index - 1] + 1;
+}
+
+/** Zahl der Orte je Streckenstufe (15/25/35 km Straße). */
+export function roadBandCounts(places: readonly Place[]): Record<number, number> {
+  const counts: Record<number, number> = Object.fromEntries(RING_RADII_KM.map((radius) => [radius, 0]));
+  for (const place of places) counts[roadBandKm(place)] += 1;
+  return counts;
+}
+
+/** Luft um den äußersten Punkt eines Plans, damit sein Name noch in den Rahmen passt (km). */
+export const PLAN_MARGIN_KM = 2;
+
+/**
+ * Ring des Plans, der alle Orte in Luftlinie fasst (mit Rand für die Namen): 15, 25 oder 35 km. Die Pläne zeigen die
+ * Luftlinie; so liegen auf der Ortsseite der Ort und seine Nachbarn sicher im Ausschnitt.
+ */
+export function planRingKm(places: readonly Pick<Place, 'commute'>[]): number {
+  const farthest = Math.max(0, ...places.map((place) => place.commute.airKm));
+  return RING_RADII_KM.find((radius) => farthest + PLAN_MARGIN_KM <= radius) ?? RING_RADII_KM[RING_RADII_KM.length - 1];
 }
 
 export type DistanceBand = 'nah' | 'mittel' | 'weit';
@@ -114,34 +144,19 @@ export function distanceBand(place: Pick<Place, 'commute'>): DistanceBand {
   return 'weit';
 }
 
-/** Durchschnittstempo der gemessenen Route in ganzen km/h (Strecke ÷ Fahrzeit). */
-export function averageSpeedKmh(place: Pick<Place, 'commute'>): number {
-  return Math.round((place.commute.distanceKm * 60) / place.commute.minutes);
-}
-
-export type SpeedCategory = 'gemaechlich' | 'mittel' | 'zuegig' | 'schnell';
-
-/** Tempo-Stufe aus averageSpeedKmh: < 40, 40–59, 60–64, ≥ 65 km/h (60 km/h = ein Kilometer pro Minute). */
-export function speedCategory(place: Pick<Place, 'commute'>): SpeedCategory {
-  const speed = averageSpeedKmh(place);
-  if (speed < 40) return 'gemaechlich';
-  if (speed < 60) return 'mittel';
-  if (speed < 65) return 'zuegig';
-  return 'schnell';
-}
-
 /** Straßenstrecke ÷ Luftlinie (≥ 0,95 laut Schema). */
 export function detourFactor(place: Pick<Place, 'commute'>): number {
   const { distanceKm, airKm: air } = place.commute;
   return air > 0 ? distanceKm / air : 1;
 }
 
-export type DetourCategory = 'direkt' | 'normal' | 'umweg';
+export type DetourCategory = 'direkt' | 'leicht' | 'normal' | 'umweg';
 
-/** < 1,3 fast gerade, 1,3–1,49 üblich, ≥ 1,5 deutlicher Umweg der Straße. */
+/** Bis 1,15 fast gerade („fast ohne Umweg“), bis 1,29 leicht, 1,3–1,49 üblich, ab 1,5 deutlicher Umweg der Straße. */
 export function detourCategory(place: Pick<Place, 'commute'>): DetourCategory {
   const factor = detourFactor(place);
-  if (factor < 1.3) return 'direkt';
+  if (factor <= 1.15) return 'direkt';
+  if (factor < 1.3) return 'leicht';
   if (factor < 1.5) return 'normal';
   return 'umweg';
 }
@@ -277,17 +292,4 @@ export function compareToMedian(place: Pick<Place, 'commute'>, stats: Pick<Group
     diffMinutes: Math.abs(diff),
     medianMinutes: stats.medianMinutes,
   };
-}
-
-/** Zahl der Orte je Ring (15/25/35 km) nach dem kleinsten passenden Ring. */
-export function ringCounts(places: readonly Place[]): Record<number, number> {
-  const counts: Record<number, number> = Object.fromEntries(RING_RADII_KM.map((radius) => [radius, 0]));
-  for (const place of places) counts[ringKm(place)] += 1;
-  return counts;
-}
-
-/** Wie viele Orte der Gruppe ein höheres Durchschnittstempo haben. */
-export function fasterRoutes(place: Place, group: readonly Place[]): number {
-  const speed = averageSpeedKmh(place);
-  return group.filter((other) => other.id !== place.id && averageSpeedKmh(other) > speed).length;
 }

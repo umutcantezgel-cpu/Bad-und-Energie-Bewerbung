@@ -1,9 +1,10 @@
+import { Icon } from '@/components/icons';
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
 import { TextLink } from '@/components/ui/TextLink';
 import type { Job } from '@/lib/jobs/registry';
 import { PackageList } from '../PackageList';
-import { EINBLICK_ANKER, einblick, type Textteil } from './einblick-text';
+import { ARBEITSWEG_LINK, EINBLICK_ANKER, einblick, type Textteil } from './einblick-text';
 
 export interface EinblickProps {
   job: Job;
@@ -31,7 +32,8 @@ function Fliesstext({ teile }: { teile: readonly Textteil[] }) {
 /**
  * Band „Einblick“ der Stellenseite (V6-G2) auf der Wand, zwischen „Das bekommst du“ (Papier) und der Stimme
  * aus dem Team (Navy): links Arbeit und Abläufe mit dem Unterschied zu den Nachbarstellen (Karte mit
- * Markenrand), rechts das Einsatzgebiet mit Entfernung und Fahrzeit als Maße. Texte aus einblick-text.ts.
+ * Markenrand), rechts das Einsatzgebiet mit Entfernung und Fahrzeit als Maße und dem Weg zur Gebietsseite
+ * (ARBEITSWEG_LINK, E-028). Texte aus einblick-text.ts.
  */
 export function Einblick({ job, now }: EinblickProps) {
   const inhalt = einblick(job, now);
@@ -77,6 +79,10 @@ export function Einblick({ job, now }: EinblickProps) {
           </div>
           <PackageList items={gebiet.orte} />
           {gebiet.nachsatz ? <p className="max-w-prose text-body text-ink-muted">{gebiet.nachsatz}</p> : null}
+          <TextLink href={ARBEITSWEG_LINK.href} standalone className="self-start">
+            {ARBEITSWEG_LINK.label}
+            <Icon name="arrow-right" size="sm" className="shrink-0" />
+          </TextLink>
         </section>
       </Container>
     </Section>

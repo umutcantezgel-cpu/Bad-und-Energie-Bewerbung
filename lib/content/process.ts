@@ -26,8 +26,9 @@ const APPLY_STEP: ProcessStep = {
 const MEET_STEP: ProcessStep = {
   id: 'kennenlernen',
   number: 2,
-  title: 'Kennenlernen in der Werkstatt',
-  text: 'Wir treffen uns diskret nach deinem Feierabend oder am Wochenende in der Werkstatt in Wetzlar und sprechen offen über Lohn, Touren und deine Wünsche.',
+  // „Werkstatt“ ist nicht belegt (fakten-abgleich B31): bis zur Antwort des Inhabers „am Firmensitz“.
+  title: 'Kennenlernen am Firmensitz',
+  text: 'Wir treffen uns diskret nach deinem Feierabend oder am Wochenende am Firmensitz in Wetzlar und sprechen offen über Lohn, Touren und deine Wünsche.',
   highlight: '100 % Diskretion',
 };
 
@@ -35,8 +36,8 @@ const MEET_STEP: ProcessStep = {
 const MEET_STEP_AUSBILDUNG: ProcessStep = {
   id: 'kennenlernen',
   number: 2,
-  title: 'Kennenlernen in der Werkstatt',
-  text: 'Wir lernen uns in der Werkstatt in Wetzlar kennen und sprechen offen über die Ausbildung und deine Fragen.',
+  title: 'Kennenlernen am Firmensitz',
+  text: 'Wir lernen uns am Firmensitz in Wetzlar kennen und sprechen offen über die Ausbildung und deine Fragen.',
   highlight: 'Unverbindlich',
 };
 

@@ -44,7 +44,8 @@ describe('Formate (DIN 5008)', () => {
     expect(joinList(['A', 'B'])).toBe('A und B');
     expect(joinList(['A', 'B', 'C'])).toBe('A, B und C');
     expect(labeled('Lollar', '26 km')).toBe('Lollar (26 km)');
-    expect(labeled('Allendorf (Lumda)', '14 km')).toBe('Allendorf (Lumda, 14 km)');
+    // Ein Name mit eigener Klammer bekommt den Wert mit „mit“, nicht in seine Klammer (liest sich sonst als Teil des Namens)
+    expect(labeled('Waldbrunn (Westerwald)', '27 km')).toBe('Waldbrunn (Westerwald) mit 27 km');
   });
 });
 
@@ -57,7 +58,8 @@ describe('Ortsseite: Kopf und Metadaten', () => {
     expect(asslar.etikett).toBe('35614 Aßlar · Lahn-Dill-Kreis');
     expect(asslar.path).toBe('/einsatzgebiet/asslar');
     expect(plain(asslar.meta.description)).toContain('8 km und rund 12 Minuten');
-    expect(asslar.masse.map((m) => m.name)).toEqual(['Strecke', 'Fahrzeit', 'Luftlinie', 'Richtung ab Firmensitz', 'Ring']);
+    expect(asslar.masse.map((m) => m.name)).toEqual(['Strecke', 'Fahrzeit', 'Luftlinie', 'Richtung ab Firmensitz']);
+    expect(asslar.unterzeile.map(plain)).toEqual(['Rund 12 Minuten Fahrt.', FACTS.flexibleHours.long]);
   });
 
   it('Stadtteile: Titel zum Firmensitz, Etikett mit Wetzlar', () => {
@@ -67,9 +69,9 @@ describe('Ortsseite: Kopf und Metadaten', () => {
     expect(hermannstein.links.map((l) => l.href)).toContain('/einsatzgebiet/wetzlar');
   });
 
-  it('Wetzlar: Stadtteile und Werkstatt statt Startseiten-Keyword', () => {
+  it('Wetzlar: Stadtteile und Firmensitz statt Startseiten-Keyword', () => {
     const wetzlar = page('wetzlar');
-    expect(wetzlar.meta.title).toBe('Wetzlar und Stadtteile: 2 bis 11 km zur Werkstatt');
+    expect(wetzlar.meta.title).toBe('Wetzlar und Stadtteile: 2 bis 11 km zum Firmensitz');
     expect(wetzlar.meta.h1).not.toMatch(/SHK/);
     expect(section(wetzlar, 'stadtteile')).toBeDefined();
     expect(text(wetzlar, 'stadtteile')).toContain('8 Stadtteile');
@@ -108,13 +110,14 @@ describe('Ortsseite: Abschnitte', () => {
     expect(text(page('nauborn'), 'arbeitsweg')).toContain('Ortsmittelpunkt');
   });
 
-  it('Stellen: alle mit Gehalt, Kundendienst mit „Fahrt ab Wohnort“ aus dem Fakt vehicle', () => {
+  it('Stellen: kurze Einleitung ohne Beträge (die nennt die Liste), Kundendienst mit „Fahrt ab Wohnort“', () => {
     const stellen = section(page('asslar'), 'stellen')!;
     const all = plain(stellen.blocks.map((b) => b.text).join(' '));
-    for (const job of jobs) {
-      expect(all).toContain(job.shortTitle);
-      expect(all).toContain(plain(formatSalaryAmount(job)!));
-    }
+    expect(stellen.blocks[0].text).toBe(`Offen sind ${jobs.length} Stellen, jede mit Gehalt bzw. Vergütung:`);
+    for (const job of jobs) expect(all).not.toContain(plain(formatSalaryAmount(job)!));
+    expect(text(page('asslar', { jobs: jobs.filter((j) => j.employment.kind !== 'ausbildung').slice(0, 1) }), 'stellen')).toMatch(
+      /^Offen ist eine Stelle, mit Gehalt:/,
+    );
     const vehicle = stellen.blocks.find((b) => b.factIds?.includes('vehicle'))!;
     expect(vehicle.text).toContain('Wohnort');
     expect(FACTS.vehicle.long).toContain(vehicle.text.replace('Im Kundendienst gilt: ', ''));
@@ -127,10 +130,10 @@ describe('Ortsseite: Abschnitte', () => {
     expect(empty.meta.description).not.toContain('€');
   });
 
-  it('Band: radius35, flexibleHours, vacation30, im Lahn-Dill-Kreis dazu countyPartner', () => {
-    expect(BAND_FACT_IDS).toEqual(['radius35', 'flexibleHours', 'vacation30']);
-    expect(page('asslar').bandFactIds).toEqual(['radius35', 'flexibleHours', 'vacation30', 'countyPartner']);
-    expect(page('giessen').bandFactIds).toEqual(['radius35', 'flexibleHours', 'vacation30']);
+  it('Band: noFarAssembly, vacation30, im Lahn-Dill-Kreis countyPartner, zuletzt flexibleHours (ohne weiteren Satz)', () => {
+    expect(BAND_FACT_IDS).toEqual(['noFarAssembly', 'vacation30', 'flexibleHours']);
+    expect(page('asslar').bandFactIds).toEqual(['noFarAssembly', 'vacation30', 'countyPartner', 'flexibleHours']);
+    expect(page('giessen').bandFactIds).toEqual(['noFarAssembly', 'vacation30', 'flexibleHours']);
     expect(section(page('asslar'), 'band')!.blocks.map((b) => b.text)).toContain(FACTS.countyPartner.short);
   });
 
@@ -145,8 +148,9 @@ describe('Ortsseite: Abschnitte', () => {
   });
 
   it('Kurzbeschreibungen nur, wo freigegeben; zurückgehaltene erscheinen nirgends', () => {
-    expect(text(page('garbenheim'), 'kreis')).toContain('„Lahnauen und ruhige Wohnsiedlungen“');
-    expect(text(page('nauborn'), 'kreis')).toContain('Karte der Startseite');
+    expect(text(page('garbenheim'), 'kreis')).toContain('Garbenheim in Stichworten: Lahnauen und ruhige Wohnsiedlungen.');
+    // Kein Verweis auf die Startseite, kein Ersatztext für zurückgehaltene Beschreibungen
+    for (const p of allPages) expect(sectionText(p.sections)).not.toContain('Startseite');
     const withheld = regionalLocations.filter((l) => ['loc-nauborn', 'loc-braunfels', 'loc-giessen'].includes(l.id));
     for (const p of allPages) for (const location of withheld) expect(sectionText(p.sections)).not.toContain(location.character);
   });
@@ -209,11 +213,55 @@ describe('Kreis-Hubs und Gebietsseite', () => {
   it('Gebietsseite: alle Kreise, alle Orte, Ringe und Abschnitte für Kreise ohne Hub', () => {
     const hub = getEinsatzgebietPageText({ jobs });
     const all = plain(sectionText(hub.sections));
-    expect(all).toContain('55 Orte in 6 Kreisen');
-    expect(all).toContain('Bis 15 km: 18 Orte, bis 25 km: 14 Orte, bis 35 km: 23 Orte.');
+    expect(all).toContain('54 Orte in 6 Kreisen');
+    expect(all).toContain('Bis 15 km Strecke: 17 Orte, 16 bis 25 km: 14, 26 bis 35 km: 23.');
+    expect(all).toContain('Die drei Ringe im Plan messen die Luftlinie um den Firmensitz; am weitesten liegt Beselich mit 27,0 km.');
+    expect(all).toContain('Je nur zwei Orte im Gebiet, deshalb ohne eigene Kreisseite: Landkreis Marburg-Biedenkopf und Hochtaunuskreis.');
     for (const kreis of getKreise()) expect(all).toContain(kreis.name);
     expect(hub.kleineKreise.map((s) => s.id)).toEqual(['landkreis-marburg-biedenkopf', 'hochtaunuskreis']);
     expect(plain(sectionText(hub.kleineKreise))).toContain('Grävenwiesbach (27 km, 26 Minuten) und Weilrod (33 km, 35 Minuten)');
-    expect(hub.links).toHaveLength(getHubKreise().length + 55);
+    expect(hub.links).toHaveLength(getHubKreise().length + 54);
+  });
+});
+
+describe('Review Phase 2: ein Maß je Wort, keine Füllsätze', () => {
+  const kreisPages = getHubKreise().map((kreis) => getKreisPageText(kreis, { jobs }));
+  const hub = getEinsatzgebietPageText({ jobs });
+
+  it('„Ring“ steht nur für die Kreise der Pläne (Luftlinie), nie für die Straßenstrecke', () => {
+    for (const p of allPages) {
+      expect(sectionText(p.sections), p.placeId).not.toMatch(/\bRing/);
+      expect(p.masse.map((m) => m.name)).not.toContain('Ring');
+    }
+    for (const p of kreisPages) expect(sectionText(p.sections), p.kreisId).not.toMatch(/\bRing/);
+    for (const s of plain(sectionText(hub.sections)).split(/(?<=\.)\s+/).filter((x) => /\bRing/.test(x))) {
+      expect(s).toMatch(/Luftlinie|Rings bei/);
+    }
+    const herborn = plain(text(page('herborn'), 'lead'));
+    expect(herborn).toContain('27 km Straße');
+    const wetterau = plain(sectionText(getKreisPageText(getKreisById('wetteraukreis')!, { jobs }).sections));
+    expect(wetterau).toContain('Alle 3 Orte liegen 26 bis 35 km Strecke vom Firmensitz entfernt.');
+    expect(wetterau).toMatch(/In Luftlinie, wie im Plan, sind es \d+,\d bis \d+,\d km\./);
+  });
+
+  it('kein Tempo (km/h), „fast ohne Umweg“ nur bis Faktor 1,15', () => {
+    for (const p of allPages) expect(sectionText(p.sections), p.placeId).not.toMatch(/km\/h|Routenplaner rechnet im Schnitt/);
+    expect(text(page('weilburg'), 'arbeitsweg')).not.toContain('fast ohne Umweg');
+    expect(text(page('braunfels'), 'arbeitsweg')).toContain('fast ohne Umweg');
+  });
+
+  it('Nachbarn: der erste Abstand nennt, wovon er zählt; Klammern nie doppelt', () => {
+    expect(plain(text(page('lahnau'), 'nachbarn'))).toContain('Garbenheim (2,8 km von Lahnau)');
+    expect(plain(text(page('waldbrunn-westerwald'), 'nachbarn'))).toContain('(5,4 km von Waldbrunn)');
+    for (const p of allPages) expect(sectionText(p.sections), p.placeId).not.toMatch(/\([^()]*\([^()]*\)[^()]*\)/);
+  });
+
+  it('Fahrzeit gegen den Median, Kreisgrenze und Messpunkt in klarem Deutsch', () => {
+    expect(plain(text(page('lahnau'), 'kreis'))).toContain(
+      'Mit 11 Minuten liegt Lahnau 2 Minuten unter der mittleren Fahrzeit im Lahn-Dill-Kreis (13 Minuten).',
+    );
+    expect(plain(text(page('butzbach'), 'nachbarn'))).toContain('Langgöns gehört schon zum Landkreis Gießen.');
+    expect(plain(text(page('lahnau'), 'arbeitsweg'))).toContain('Gemessen ab Dorlar (Hauptort laut OpenStreetMap).');
+    for (const p of allPages) expect(sectionText(p.sections), p.placeId).not.toMatch(/Verwaltungssitz|Nebenan beginn/);
   });
 });

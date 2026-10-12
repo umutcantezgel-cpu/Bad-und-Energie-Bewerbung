@@ -10,8 +10,12 @@ export interface RegionPlace extends CommutePlace {
    * the three business claims wait for the owner (MENSCHEN M-016, E-START-038).
    */
   character: string | null;
-  /** Same spot as the headquarters (e.g. "Wetzlar Kernstadt"): drawn as the center house. */
+  /** Same spot as the headquarters (closer than CENTER_MERGE_KM): drawn as the center house. */
   atCenter: boolean;
+  /** Page of the place under /einsatzgebiet, where one exists („Mehr zu …“ in the explorer result). */
+  href?: string;
+  /** Shorter name for the plan label („Heuchelheim“ for „Heuchelheim an der Lahn“); omitted: the name. */
+  shortName?: string;
 }
 
 /** Position of a place in one radius view. */

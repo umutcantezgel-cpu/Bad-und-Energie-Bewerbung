@@ -8,6 +8,8 @@
         "http://localhost:3410/",
         "http://localhost:3410/jobs",
         "http://localhost:3410/jobs/anlagenmechaniker-shk-wetzlar",
+        "http://localhost:3410/einsatzgebiet",
+        "http://localhost:3410/einsatzgebiet/herborn",
         "http://localhost:3410/bewerbung?stelle=anlagenmechaniker-shk-wetzlar"
       ],
       "numberOfRuns": 3,

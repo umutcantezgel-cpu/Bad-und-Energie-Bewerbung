@@ -17,7 +17,7 @@ import {
   HAUS_ZIRKEL,
   HAUS_ZULEITUNG,
 } from './og-haus';
-import { OG_COLOR as C, OG_IMAGE_SIZE, versal, type OgHomeText, type OgJobText } from './og-image';
+import { OG_COLOR as C, OG_IMAGE_SIZE, versal, type OgHomeText, type OgJobText, type OgPlaceText } from './og-image';
 
 /**
  * Teilen-Bilder im Design des Einstiegs (Variante 3, Bilder des Auftraggebers vom 10.10.): links Papier
@@ -456,8 +456,8 @@ export async function renderHomeImage(text: OgHomeText): Promise<ImageResponse> 
 // ── Stellen ────────────────────────────────────────────────────────────────────────────────────────
 
 /** Heizkreis (Variante 2): Vorlauf oben um die Zahl, Rücklauf unten zurück, links Zu- und Abgang im Paarabstand. */
-function Heizkreis({ value, name }: OgJobText['salary']) {
-  const valueSize = value.length > 14 ? 44 : 50;
+function Heizkreis({ value, name, gross = false }: OgJobText['salary'] & { gross?: boolean }) {
+  const valueSize = gross ? 88 : value.length > 14 ? 44 : 50;
   const nameSize = 17;
   const pad = { top: 30, right: 40, bottom: 30, left: 12 + 32 };
   const height = pad.top + valueSize + (name ? 14 + nameSize : 0) + pad.bottom;
@@ -525,6 +525,27 @@ export async function renderJobImage(text: OgJobText): Promise<ImageResponse> {
       action={text.action}
       microcopy={text.microcopy}
       panel={<Heizkreis {...text.salary} />}
+    />
+  ));
+}
+
+// ── Orte ───────────────────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Teilen-Bild einer Ortsseite (E-028) im Rahmen der Stellenbilder: Etikett und h1 der Seite, Fahrzeit und
+ * „Flexible Arbeitszeiten.“ an der Rohrklammer, im Heizkreis die Straßenstrecke („27 km bis zum Firmensitz“).
+ */
+export async function renderPlaceImage(text: OgPlaceText): Promise<ImageResponse> {
+  return respond((logo) => (
+    <Frame
+      logo={logo}
+      etikett={text.etikett}
+      title={text.title}
+      titleSize={text.titleSize}
+      subline={text.subline}
+      action={text.action}
+      microcopy={text.microcopy}
+      panel={<Heizkreis value={text.distance.value} name={text.distance.name} gross />}
     />
   ));
 }

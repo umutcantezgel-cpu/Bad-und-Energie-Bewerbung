@@ -70,6 +70,21 @@ const WETZLAR = ['Blasbach', 'Dutenhofen', 'Garbenheim', 'Hermannstein', 'Münch
 /** Abweichende Schreibweise in OSM (Stand der Messung): amtlicher Name → Name in OSM. */
 const OSM_SPELLING = { Münchholzhausen: 'Müchholzhausen' };
 
+/**
+ * Einzelne Korrekturen nach der Messung, mit Datum (stehen im Protokoll). Der Wert steht korrigiert in messung.json;
+ * die übrigen Orte bleiben wie gemessen.
+ */
+const CORRECTIONS = [
+  {
+    date: '2026-10-12',
+    name: 'Allendorf (Lumda)',
+    text:
+      'Die erste Messung hatte den Gießener Stadtteil Allendorf verortet (OSM-Name „Allendorf“, relation/13774226, PLZ 35398, 14 km). ' +
+      'Neu verortet über die Gemeindegrenze (OSM relation/418611, Verwaltungssitz Allendorf (Lumda), PLZ 35469) und neu ' +
+      'gemessen: 38 km Straße, 34 Minuten. Damit liegt die Stadt außerhalb der 35 km und hat keine Seite.',
+  },
+];
+
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 let lastNominatim = 0;
 
@@ -116,16 +131,21 @@ const SETTLEMENT_TYPES = new Set(['city', 'town', 'village', 'municipality', 'su
 async function locate(name, { county, city }) {
   const plain = OSM_SPELLING[name] ?? name.replace(/\s*\(.*\)$/, '');
   const params = new URLSearchParams({ format: 'jsonv2', addressdetails: '1', limit: '8', countrycodes: 'de' });
-  params.set('q', city ? `${plain}, ${city}` : `${plain}, ${county}`);
+  // Voller amtlicher Name in der Suche: ohne Klammerzusatz findet Nominatim gleichnamige Ortsteile anderer Gemeinden.
+  const query = OSM_SPELLING[name] ?? name;
+  params.set('q', city ? `${query}, ${city}` : `${query}, ${county}`);
   const results = await nominatim(`/search?${params}`);
   const fits = (r) => {
     const a = r.address ?? {};
     if (!SETTLEMENT_TYPES.has(r.addresstype) && r.type !== 'administrative') return false;
+    // Das OSM-Objekt muss den amtlichen Namen tragen (bzw. seine Schreibweise in OSM): „Allendorf (Lumda)“ ist
+    // nicht der Gießener Stadtteil „Allendorf“, auch wenn beide im Landkreis Gießen liegen (Korrektur 2026-10-12).
+    if (r.name !== (OSM_SPELLING[name] ?? name)) return false;
     if (city) {
       const inCity = [a.municipality, a.city, a.town].includes(city);
       return inCity && [a.suburb, a.city_district, a.village, a.quarter, a.hamlet].includes(plain);
     }
-    return a.county === county && [a.city, a.town, a.village, a.municipality].some((v) => v && (v === plain || v === name));
+    return a.county === county;
   };
   // Ortsknoten (Stadt, Dorf) vor der Gemeindefläche: Er liegt in der Ortsmitte und trägt meist die PLZ.
   const match =
@@ -144,6 +164,7 @@ async function locate(name, { county, city }) {
     seat: seat?.name ?? null,
     postcode: postcode ?? null,
     osm,
+    osmName: match.name,
     county: match.address?.county ?? null,
   };
 }
@@ -209,6 +230,7 @@ async function main() {
         postalCode: located.postcode,
         ...(located.seat && located.seat !== job.name ? { seat: located.seat } : {}),
         osm: located.osm,
+        osmName: located.osmName,
         airKm: Math.round(air * 10) / 10,
         ...(road ? { distanceKm: road.km, minutes: road.minutes } : {}),
       };
@@ -231,6 +253,7 @@ async function main() {
     headquarters: { address: 'Siegmund-Hiepe-Str. 20, 35578 Wetzlar', ...hq },
     maxRoadKm: MAX_ROAD_KM,
     kreise: KREISE,
+    osmSpelling: OSM_SPELLING,
     places,
   };
   fs.mkdirSync(path.dirname(OUT_JSON), { recursive: true });
@@ -253,7 +276,7 @@ function renderMarkdown(r) {
 
 Stand: ${r.measuredOn} · erzeugt mit \`node scripts/places/measure.mjs\` · Daten: \`lib/places/data/messung.json\`
 
-Quelle aller Strecken, Fahrzeiten, Postleitzahlen und Kreise auf den Ortsseiten (\`/einsatzgebiet/…\`). Die Seite nennt nur, was hier steht. **Freigabe des Inhabers:** offen (Liste prüfen, Orte streichen oder bestätigen).
+Quelle aller Strecken, Fahrzeiten, Postleitzahlen und Kreise auf den Ortsseiten (\`/einsatzgebiet/…\`). Die Seite nennt nur, was hier steht. **Freigabe des Inhabers:** offen (Liste prüfen, Orte streichen oder bestätigen). Bis zur Freigabe werden die Ortsseiten nicht gemergt (Plan „Messmethode“, Schritt 4; \`docs/ROADMAP.md\`).
 
 ## Methode
 
@@ -263,7 +286,12 @@ Quelle aller Strecken, Fahrzeiten, Postleitzahlen und Kreise auf den Ortsseiten 
 - **Strecke und Fahrzeit:** OSRM-Routenplaner (OpenStreetMap, Profil Auto, ohne Verkehrslage), Messpunkt → Firmensitz. Gerundet auf ganze Kilometer und ganze Minuten.
 - **Regeln:** Aufgenommen wird nur, was höchstens ${r.maxRoadKm} km Straße entfernt liegt (Fakt \`radius35\`). Gegenprobe: Straßenstrecke ≥ 0,95 × Luftlinie.
 - **Schreibweise:** ${Object.entries(OSM_SPELLING).map(([name, osm]) => `${name} heißt in OSM „${osm}“`).join('; ')}; die Seite nennt den amtlichen Namen.
-- **Grenzen:** Die Fahrzeit ist ein Richtwert ohne Berufsverkehr. Gemeinden mit mehreren Ortsteilen werden ab dem Verwaltungssitz gemessen; einzelne Ortsteile können näher oder weiter liegen.
+- **Gegenprobe Name:** Das OSM-Objekt muss den amtlichen Namen tragen (Feld \`osmName\` in \`messung.json\`, Test in \`lib/places/__tests__/schema.test.ts\`). Gesucht wird mit dem vollen Namen samt Klammerzusatz.
+- **Grenzen:** Die Fahrzeit ist ein Richtwert ohne Berufsverkehr. Gemeinden mit mehreren Ortsteilen werden ab dem Verwaltungssitz gemessen; einzelne Ortsteile können näher oder weiter liegen. Der Verwaltungssitz ist der Ort, den OpenStreetMap als \`admin_centre\` der Gemeinde führt; er ist nicht gegen die Anschrift des Rathauses geprüft.
+
+## Korrekturen
+
+${CORRECTIONS.map((c) => `- **${c.date}, ${c.name}:** ${c.text}`).join('\n')}
 
 ## Ergebnis
 
