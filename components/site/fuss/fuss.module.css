@@ -288,15 +288,18 @@
   color: var(--ink-2);
 }
 
-/* Orte mit eigener Seite (E-028): Link so breit wie sein Name, damit alle Abstände zu den Trennpunkten gleich sind
-   (Review Phase 2, Punkt 20). Die Trefferfläche ≥ 44 × 44 px liefert ::after: mittig über dem Namen, seitlich
-   --a-2 in den Abstand, bei kurzen Namen („Leun“, „Lich“) mindestens 44 px breit; sie reicht nie bis zum Trennpunkt. */
+/* Orte mit eigener Seite (E-028): Der Link selbst ist mindestens 44 × 44 px groß, kurze Namen („Lich“, „Aßlar“)
+   stehen darin mittig. Eine Trefferfläche nur aus ::after reicht nicht: Am Zeilenanfang und -ende schneidet .orteClip
+   sie ab (CI 2026-10-12: „Aßlar“ am Zeilenanfang bei 328–364 px Breite, nur 35 px treffbar). ::after verbreitert die
+   Fläche zusätzlich um --a-2 in den Abstand, wo Platz ist; sie reicht nie bis zum Trennpunkt. */
 .ortLink {
   position: relative;
   /* Über dem nächsten Listenpunkt: Dessen Einzug (Trennpunkt) läge sonst auf der rechten Hälfte der Trefferfläche */
   z-index: 1;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-width: var(--m-ziel);
   min-height: var(--m-ziel);
   color: inherit;
   text-decoration-line: underline;
@@ -307,11 +310,7 @@
 .ortLink::after {
   content: "";
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: max(calc(100% + var(--a-2) * 2), var(--m-ziel));
-  transform: translateX(-50%);
+  inset: 0 calc(var(--a-2) * -1);
 }
 
 @media (hover: hover) and (pointer: fine) {
