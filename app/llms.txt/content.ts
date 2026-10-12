@@ -3,7 +3,9 @@ import { applyUrl, formatSalaryRange, jobMetaTags, jobUrl } from '@/lib/jobs/for
 import { getActiveJobs, getFunnelOptions, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
 import { getHubKreise, getKreise, getKreisPlaces, getPublishedPlaces, kreisUrl, placeUrl } from '@/lib/places/registry';
 import { MEASUREMENT_NOTE } from '@/lib/places/text';
-import { einsatzgebietPages } from '@/lib/seo/indexable-pages';
+import { einsatzgebietPages, themenPages } from '@/lib/seo/indexable-pages';
+import { getThemen } from '@/lib/themen/registry';
+import { themaKarte } from '@/lib/themen/text';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 
 /**
@@ -116,5 +118,30 @@ export function einsatzgebietBlocks(): string[] {
       ),
       '',
     ]),
+  ];
+}
+
+/** Themenseiten (lib/seo/indexable-pages.ts, Gruppe `themen`): eine Zeile in /llms.txt (E-028). */
+export function themenLine(): string {
+  const [hub] = themenPages();
+  return `[Arbeiten bei uns: ${getThemen()
+    .map((thema) => thema.name)
+    .join(', ')}](${hub.url}): je Thema eine Seite, nur mit belegten Angaben`;
+}
+
+/** Abschnitt Arbeiten bei uns in /llms-full.txt: je Thema die Seite und ihr belegter Kernsatz (wie auf dem Hub). */
+export function themenBlocks(now: Date): string[] {
+  const [hub, ...seiten] = themenPages(now);
+  const jobs = liveJobs(now);
+  return [
+    `Übersicht: ${hub.url}`,
+    '',
+    ...getThemen().map((thema, i) => {
+      const karte = themaKarte(thema.id, { jobs, now });
+      // Klammer als Fließtext („gegründet 1926“), nicht Wert und Etikett aneinander („1926 Gegründet“)
+      const wert = karte.klammer ? ` (${karte.klammer})` : '';
+      return `- ${thema.name}${wert}: ${karte.satz.text} ${seiten[i].url}`.replace(/\u00A0/g, ' ');
+    }),
+    '',
   ];
 }

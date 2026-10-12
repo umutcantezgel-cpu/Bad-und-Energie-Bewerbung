@@ -78,3 +78,26 @@ describe('Einsatzgebiet in llms.txt und llms-full.txt (E-028)', () => {
     expect(text).toContain('Gemessen am 12. Oktober 2026 mit OpenStreetMap (OSRM)');
   });
 });
+
+describe('Themenseiten in llms.txt und llms-full.txt (E-028)', () => {
+  it('llms.txt: genau eine Zeile zum Themen-Hub mit allen Themen', async () => {
+    const { getThemen } = await import('@/lib/themen/registry');
+    const text = await textAt(llms, '2026-10-12T12:00:00Z');
+    const zeilen = text.split('\n').filter((line) => line.includes('/arbeiten-bei-uns'));
+    expect(zeilen).toHaveLength(1);
+    for (const thema of getThemen()) expect(zeilen[0]).toContain(thema.name);
+  });
+
+  it('llms-full.txt: Abschnitt „Arbeiten bei uns“ mit je einer Zeile und URL pro Thema, ohne feste Arbeitszeit', async () => {
+    const { getThemen, themaUrl } = await import('@/lib/themen/registry');
+    const text = await textAt(llmsFull, '2026-10-12T12:00:00Z');
+    const abschnitt = text.slice(text.indexOf('## 6. Arbeiten bei uns'), text.indexOf('## 7. Daten und Feeds'));
+    expect(abschnitt.length).toBeGreaterThan(100);
+    for (const thema of getThemen()) {
+      const zeile = abschnitt.split('\n').find((line) => line.startsWith(`- ${thema.name}`));
+      expect(zeile, thema.name).toBeDefined();
+      expect(zeile).toContain(themaUrl(thema));
+    }
+    expect(abschnitt).not.toMatch(/13:30|16:45|pünktlich| /);
+  });
+});

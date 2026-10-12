@@ -10,7 +10,7 @@ import { findCommute, formatKm, formatMinutes } from '@/lib/maps/commute';
 import { mapsConsent } from '@/lib/maps/consent';
 import { cn } from '@/lib/utils/cn';
 import { RadiusGraphic } from './RadiusGraphic';
-import { mapsStatusText, radiusStatus, zoneLabel } from './status';
+import { mapsStatusText, outsideRing, radiusStatus, zoneLabel } from './status';
 import type { MapStatus, RegionMapData, RegionPlace } from './types';
 
 // The Google chunk (component + loader) is fetched only once it renders, i.e. after consent.
@@ -26,6 +26,11 @@ export interface RegionExplorerProps {
   table?: boolean;
   /** Places the plan names first (overview /einsatzgebiet: the larger towns); omitted: from the outside in. */
   labelPriority?: readonly string[];
+  /**
+   * The rating „Kerngebiet“ / „Regionales Einsatzgebiet“ in the result and the table (home map, ALT-START-362).
+   * The overview /einsatzgebiet leaves it out: its places carry no such rating anywhere else (Kritik 2).
+   */
+  zones?: boolean;
   className?: string;
 }
 
@@ -51,7 +56,7 @@ function useHydrated(): boolean {
  * („Wo wohnst du?“) and all places as a table. Phones: heading, switch, plan, result, places, table (the
  * result sits right under the plan, as in B Runde 1). From lg: the plan stays in the right column (sticky).
  */
-export function RegionExplorer({ data, mapsAvailable, header, table = true, labelPriority, className }: RegionExplorerProps) {
+export function RegionExplorer({ data, mapsAvailable, header, table = true, labelPriority, zones = true, className }: RegionExplorerProps) {
   const id = useId();
   const [radiusKm, setRadiusKm] = useState(data.radiusKm);
   const [selectedId, setSelectedId] = useState('');
@@ -96,7 +101,7 @@ export function RegionExplorer({ data, mapsAvailable, header, table = true, labe
           onChange={setRadiusKm}
         />
 
-        <CommuteResult className="order-4" data={data} selected={selected} radiusKm={radiusKm} interactive={hydrated} />
+        <CommuteResult className="order-4" data={data} selected={selected} radiusKm={radiusKm} interactive={hydrated} zones={zones} />
 
         {data.places.length > MAX_PLACE_CARDS ? (
           <PlaceSelect
@@ -119,7 +124,7 @@ export function RegionExplorer({ data, mapsAvailable, header, table = true, labe
           />
         )}
 
-        {table && <PlaceTable className="order-6" data={data} selected={selected} />}
+        {table && <PlaceTable className="order-6" data={data} selected={selected} zones={zones} />}
       </div>
 
       {/* Tablet: the plan keeps a readable size instead of filling 700 px (sm–lg). */}
@@ -270,7 +275,7 @@ function PlaceChoice({ name, places, radiusKm, selectedId, disabled, onSelect, c
       <legend className="mb-3 p-0 text-title-3 text-brand">Wo wohnst du?</legend>
       <ul className="m-0 grid list-none grid-cols-2 gap-2 p-0 sm:grid-cols-3 lg:grid-cols-2">
         {places.map((place) => {
-          const outside = place.distanceKm > radiusKm;
+          const outside = outsideRing(place, radiusKm);
           const checked = place.id === selectedId;
           return (
             <li key={place.id} className="grid">
@@ -295,7 +300,7 @@ function PlaceChoice({ name, places, radiusKm, selectedId, disabled, onSelect, c
                 />
                 <span className="text-callout font-bold leading-tight">
                   {place.name}
-                  {outside && <span className="sr-only">{` (außerhalb von ${radiusKm}${NBSP}km)`}</span>}
+                  {outside && <span className="sr-only">{` (in Luftlinie außerhalb von ${radiusKm}${NBSP}km)`}</span>}
                 </span>
                 <span
                   className={cn('flex flex-wrap gap-x-3 font-mass text-footnote', checked ? 'text-surface' : 'text-ink-muted')}
@@ -364,6 +369,8 @@ interface CommuteResultProps {
   radiusKm: number;
   /** False before hydration (and without JavaScript): no choice possible, so no request to choose. */
   interactive: boolean;
+  /** Shows the rating „Kerngebiet“ / „Regionales Einsatzgebiet“ (home map). */
+  zones: boolean;
   className?: string;
 }
 
@@ -371,7 +378,7 @@ interface CommuteResultProps {
  * Result of the choice (aria-live): distance and drive time as Maßketten (components/zeichnung, as at the
  * Einstieg), ring, rating, short description.
  */
-function CommuteResult({ data, selected, radiusKm, interactive, className }: CommuteResultProps) {
+function CommuteResult({ data, selected, radiusKm, interactive, zones, className }: CommuteResultProps) {
   return (
     <div
       aria-live="polite"
@@ -381,9 +388,9 @@ function CommuteResult({ data, selected, radiusKm, interactive, className }: Com
       {selected ? (
         <div className="flex flex-col gap-4">
           <p className="text-title-3 text-brand">{selected.name}</p>
-          {/* Maßketten wie am Einstieg: Wert, Maßlinie, Name; im DOM „15 km Entfernung ca.“ */}
+          {/* Maßketten wie am Einstieg: Wert, Maßlinie, Name; im DOM „27 km Strecke ca.“ (wie auf den Ortsseiten) */}
           <p className="m-0 flex flex-wrap items-start gap-x-8 gap-y-6">
-            <Masskette className="min-w-0 flex-1 basis-32" groesse="gross" wert={formatKm(selected.distanceKm)} name="Entfernung ca." />
+            <Masskette className="min-w-0 flex-1 basis-32" groesse="gross" wert={formatKm(selected.distanceKm)} name="Strecke ca." />
             <Masskette
               className="min-w-0 flex-1 basis-32"
               groesse="gross"
@@ -392,10 +399,12 @@ function CommuteResult({ data, selected, radiusKm, interactive, className }: Com
             />
           </p>
           <p className="text-callout font-semibold text-ink">{radiusStatus(selected, radiusKm, data.radii)}</p>
-          <p className="flex flex-col gap-1 text-callout text-ink-muted">
-            <span className="text-etikett text-ink-2">{zoneLabel(selected)}</span>
-            {selected.character && <span>{selected.character}</span>}
-          </p>
+          {(zones || selected.character) && (
+            <p className="flex flex-col gap-1 text-callout text-ink-muted">
+              {zones && <span className="text-etikett text-ink-2">{zoneLabel(selected)}</span>}
+              {selected.character && <span>{selected.character}</span>}
+            </p>
+          )}
           {selected.href && (
             <TextLink href={selected.href} standalone className="self-start">
               {`Mehr zu ${selected.name}`}
@@ -417,11 +426,12 @@ function CommuteResult({ data, selected, radiusKm, interactive, className }: Com
 interface PlaceTableProps {
   data: RegionMapData;
   selected: RegionPlace | undefined;
+  zones: boolean;
   className?: string;
 }
 
 /** All places with postal code, rating, distance and drive time; the chosen row is marked. */
-function PlaceTable({ data, selected, className }: PlaceTableProps) {
+function PlaceTable({ data, selected, zones, className }: PlaceTableProps) {
   return (
     <details className={cn('group', className)}>
       <summary className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-1 font-semibold text-ink">
@@ -460,7 +470,7 @@ function PlaceTable({ data, selected, className }: PlaceTableProps) {
                     </span>
                     <span className="block text-footnote text-ink-muted">
                       <span className="ziffer">{place.postalCode}</span>
-                      {` · ${zoneLabel(place)}`}
+                      {zones && ` · ${zoneLabel(place)}`}
                     </span>
                   </th>
                   <td className="py-3 pr-4 text-right font-mass text-ink">{formatKm(place.distanceKm)}</td>

@@ -15,8 +15,9 @@ export interface EntfernungsleisteProps {
   /** Hervorgehobener Ort (Ortsseite): größerer Punkt mit Namen und Wert. */
   aktuellId?: string;
   /**
-   * Waagerecht: Strecken aller Orte des Gebiets als leise Striche auf der Skala (Kreise mit nur zwei Orten, damit die
-   * Leiste nicht leer wirkt).
+   * Strecken aller Orte des Gebiets als leise Striche: waagerecht auf der Skala (Ortsseiten kleiner Kreise), senkrecht
+   * als Sprossen im Leitungspaar (Kreis-Hubs). So wirkt die Leiste bei wenigen Orten nicht leer, und die Lage des
+   * Kreises im Gebiet ist zu sehen.
    */
   hintergrundKm?: readonly number[];
   /** Ende der Skala in km (Gebietsregel, Fakt radius35). */
@@ -120,10 +121,19 @@ export function Entfernungsleiste({
         role="img"
         aria-label={titel}
         data-zeichnung="entfernungsleiste"
-        style={{ '--zeilen': zeilen, '--zeile': `${ZEILE_REM}rem` } as CSSProperties}
+        style={{ '--zeilen': zeilen, '--zeile-min': `${ZEILE_REM}rem` } as CSSProperties}
       >
         {/* Skala: Leitungspaar von 0 km (oben, Firmensitz) bis 35 km (unten) */}
         <span className={styles.lsPaar} aria-hidden="true" />
+        {/* Alle Orte des Gebiets als leise Sprossen im Paar */}
+        {[...new Set(hintergrundKm)].map((km) => (
+          <span
+            key={`h${km}`}
+            className={styles.lsHintergrund}
+            style={{ top: `calc(var(--zeile) / 2 + ${Math.min(km, maxKm) / maxKm} * (100% - var(--zeile)))` }}
+            aria-hidden="true"
+          />
+        ))}
         {striche.map((km) => (
           <span
             key={km}

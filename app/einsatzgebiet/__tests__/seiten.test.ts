@@ -112,7 +112,7 @@ describe('Routen und Segmentkonfiguration', () => {
     for (const slug of getEinsatzgebietPageSlugs()) expect(slugs).toContain(slug);
     for (const kreis of getKreise()) expect(slugs).toContain(kreis.slug);
     for (const slug of getAllPlaces().flatMap((place) => place.redirectFrom)) expect(slugs).toContain(slug);
-    // 55 Orte, 4 Kreis-Hubs, 2 Kreise ohne Hub (308)
+    // 54 Orte, 4 Kreis-Hubs, 2 Kreise ohne Hub (308)
     expect(slugs).toHaveLength(getPublishedPlaces().length + getKreise().length);
   });
 

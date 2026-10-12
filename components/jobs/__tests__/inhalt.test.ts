@@ -7,6 +7,7 @@ import { Einsatzgebiet } from '@/components/jobs/liste/Einsatzgebiet';
 import { Initiativband } from '@/components/jobs/liste/Initiativband';
 import { StellenKopf } from '@/components/jobs/liste/StellenKopf';
 import { Stellenvergleich } from '@/components/jobs/liste/Stellenvergleich';
+import { ARBEITEN_LINK } from '@/lib/themen/registry';
 import { Stellenverteiler } from '@/components/jobs/liste/Stellenverteiler';
 import {
   ABLAUF_VARIANTEN,
@@ -101,6 +102,8 @@ const EIGENE = [
   ALLTAG.orte.titel,
   ALLTAG.orte.einleitung,
   GEBIET_LINK.label,
+  // Weg zum Themen-Hub (E-028) unter dem Vergleich
+  ARBEITEN_LINK.label,
   ABLAUF_VARIANTEN.titel,
   ...ABLAUF_VARIANTEN.eintraege.map((eintrag) => eintrag.name),
   // Bestand von JobProcess (Stellenseiten): Etikett über dem Ablauf

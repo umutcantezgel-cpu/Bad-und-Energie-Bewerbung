@@ -76,6 +76,17 @@ export function clampToBox(point: SvgPoint, size: number, inset = 0): SvgPoint {
   return { x: clamp(point.x), y: clamp(point.y) };
 }
 
+/**
+ * Distance in km in the plane of the radius projection (the same local equirectangular frame as `projectRaw`): the
+ * distance at which a place is drawn from the centre. Within 50 km it differs from `haversineKm` by a few metres, but
+ * a dot and the ring it is compared with always agree (Breitscheid: 24,99 km haversine, drawn just beyond 25 km).
+ */
+export function planeKm(center: LatLng, point: LatLng): number {
+  const eastKm = (point.lng - center.lng) * KM_PER_DEGREE * Math.cos(toRadians(center.lat));
+  const northKm = (point.lat - center.lat) * KM_PER_DEGREE;
+  return Math.hypot(eastKm, northKm);
+}
+
 /** Great-circle distance in km (haversine). */
 export function haversineKm(a: LatLng, b: LatLng): number {
   const dLat = toRadians(b.lat - a.lat);

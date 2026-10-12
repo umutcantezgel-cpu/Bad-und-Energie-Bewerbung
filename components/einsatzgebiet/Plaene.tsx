@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 import { RadiusGraphic } from '@/components/maps/RadiusGraphic';
 import { ringLabels } from '@/components/maps/graphic';
 import type { RadiusView } from '@/components/maps/types';
-import { PLAN_LEGENDE, PLAN_LEGENDE_STADTTEILE } from './einsatzgebiet-text';
+import { HAUS_NAME, PLAN_LEGENDE, PLAN_LEGENDE_STADTTEILE } from './einsatzgebiet-text';
 import styles from './einsatzgebiet.module.css';
 import { GEBIET_MAP_DATA, gebietView } from './karte';
 
@@ -15,6 +15,8 @@ export interface OrtPlanProps {
   emphasizeIds: readonly string[];
   /** Hervorgehobene Orte, die keinen Namen brauchen (Stadtteile von Wetzlar am Haus); die Legende sagt es. */
   ohneNamen?: readonly string[];
+  /** Zusatz der Legende, wenn Orte ohne Namen bleiben; ohne Angabe der Satz des Kreis-Hubs (PLAN_LEGENDE_STADTTEILE). */
+  legendeOhneNamen?: string;
   /** Eindeutiger Präfix der Ids von <title> und <desc>. */
   id: string;
   beschreibung: string;
@@ -25,7 +27,15 @@ export interface OrtPlanProps {
  * kein 'use client'): alle Orte an ihrer echten Lage, die Ringe, Lahn, Dill, A45 und B49 schematisch. Auf der
  * Ortsseite hängt der Ort mit dem Leitungspaar am Firmensitz.
  */
-export function OrtPlan({ view, selectedId = null, emphasizeIds, ohneNamen = [], id, beschreibung }: OrtPlanProps) {
+export function OrtPlan({
+  view,
+  selectedId = null,
+  emphasizeIds,
+  ohneNamen = [],
+  legendeOhneNamen = PLAN_LEGENDE_STADTTEILE,
+  id,
+  beschreibung,
+}: OrtPlanProps) {
   return (
     <figure className={styles.plan}>
       <div className={styles.planRahmen}>
@@ -35,14 +45,25 @@ export function OrtPlan({ view, selectedId = null, emphasizeIds, ohneNamen = [],
           selectedId={selectedId}
           emphasizeIds={emphasizeIds}
           unnamedIds={ohneNamen}
+          centerLabel={hausName(emphasizeIds, ohneNamen)}
+          allFilled
           titleId={`${id}-titel`}
           descId={`${id}-beschreibung`}
           description={beschreibung}
         />
       </div>
-      <figcaption className={styles.planLegende}>{ohneNamen.length > 0 ? `${PLAN_LEGENDE} ${PLAN_LEGENDE_STADTTEILE}` : PLAN_LEGENDE}</figcaption>
+      <figcaption className={styles.planLegende}>{ohneNamen.length > 0 ? `${PLAN_LEGENDE} ${legendeOhneNamen}` : PLAN_LEGENDE}</figcaption>
     </figure>
   );
+}
+
+/**
+ * Name am Haus: „Wetzlar“ wie auf der Startseite; „Firmensitz“ (wie am Pendelweg), wenn der Ort Wetzlar selbst mit
+ * Namen auf dem Plan steht, damit nicht zweimal „Wetzlar“ nebeneinander steht.
+ */
+export function hausName(emphasizeIds: readonly string[], ohneNamen: readonly string[] = []): string | undefined {
+  const stadt = GEBIET_MAP_DATA.places.find((place) => place.name === GEBIET_MAP_DATA.centerName && !place.atCenter);
+  return stadt && emphasizeIds.includes(stadt.id) && !ohneNamen.includes(stadt.id) ? HAUS_NAME : undefined;
 }
 
 /** Giebel 45° (K-010) wie das Haus in der Mitte des Plans, hier 1,5-fach. */

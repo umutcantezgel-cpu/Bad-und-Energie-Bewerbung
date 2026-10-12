@@ -8,6 +8,7 @@ import { jobPath } from '@/lib/jobs/format';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
 import { FooterPlaces } from '../FooterPlaces';
+import { FooterThemen } from '../FooterThemen';
 import { OpeningHoursText } from '../OpeningHoursText';
 import { ALLE_STELLEN, FUSS_SPALTEN, KUNDEN_WEBSITE, RECHTS_LINKS, fussKontakte, pflichtzeile } from './fuss-text';
 import { FussLink } from './FussLink';
@@ -36,7 +37,8 @@ export interface FussVollProps {
  * und dem Weg zur Kunden-Website (E-SHELL-008); vier Spalten Betrieb (Anschrift, Öffnungszeiten) · Kontakt
  * (Telefon, WhatsApp, E-Mail; E-SHELL-005) · Stellen (E-SHELL-020) · Rechtliches (mit „Datenschutz für
  * Bewerbende“, E-RECHT-008); darunter die Ortsliste (E-SHELL-021) und die Fußzeile mit Register und Innung
- * (E-RECHT-007, E-SHELL-018). Keine rote Fläche: die Hauptaktion steht auf der Seite selbst.
+ * (E-RECHT-007, E-SHELL-018); über der Ortsliste die Themenseiten
+ * (E-028, /arbeiten-bei-uns). Keine rote Fläche: die Hauptaktion steht auf der Seite selbst.
  */
 export function FussVoll({ year, now = new Date() }: FussVollProps) {
   // Wie Stellenseiten und Sitemap: eine Stelle nach validThrough bekommt keinen Fußlink mehr.
@@ -115,6 +117,7 @@ export function FussVoll({ year, now = new Date() }: FussVollProps) {
           </Spalte>
         </div>
 
+        <FooterThemen className={styles.orte} />
         <FooterPlaces className={styles.orte} />
 
         <p className={styles.zeile}>

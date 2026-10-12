@@ -4,6 +4,7 @@ import { Section } from '@/components/layout/Section';
 import { TextLink } from '@/components/ui/TextLink';
 import { jobPath } from '@/lib/jobs/format';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
+import { ARBEITEN_LINK } from '@/lib/themen/registry';
 import { SectionHeader } from './SectionHeader';
 import { Ausstattung } from './vorteile/Ausstattung';
 import { PaketKonfigurator } from './vorteile/PaketKonfigurator';
@@ -82,7 +83,14 @@ export function BenefitGrid({ now = new Date() }: BenefitGridProps) {
         )}
 
         <Zusagen />
-        <Ausstattung />
+        <div className="flex flex-col gap-6">
+          <Ausstattung />
+          {/* Themen-Hub (E-028): Gehalt, Ausstattung je Stelle, Wärmepumpen, Betrieb und diskreter Wechsel im Detail */}
+          <TextLink href={ARBEITEN_LINK.href} standalone className="self-start">
+            {ARBEITEN_LINK.label}
+            <Icon name="arrow-right" size="sm" className="shrink-0" />
+          </TextLink>
+        </div>
       </Container>
     </Section>
   );

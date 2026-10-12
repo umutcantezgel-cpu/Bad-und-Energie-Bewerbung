@@ -288,15 +288,15 @@
   color: var(--ink-2);
 }
 
-/* Orte mit eigener Seite (E-028): Link mit Trefferfläche ≥ 44 × 44 px (kurze Namen wie „Leun“ über min-width, der Text
-   darin mittig, damit die Abstände zu den Trennpunkten links und rechts gleich bleiben); die Fläche reicht seitlich in
-   den Abstand */
+/* Orte mit eigener Seite (E-028): Link so breit wie sein Name, damit alle Abstände zu den Trennpunkten gleich sind
+   (Review Phase 2, Punkt 20). Die Trefferfläche ≥ 44 × 44 px liefert ::after: mittig über dem Namen, seitlich
+   --a-2 in den Abstand, bei kurzen Namen („Leun“, „Lich“) mindestens 44 px breit; sie reicht nie bis zum Trennpunkt. */
 .ortLink {
   position: relative;
+  /* Über dem nächsten Listenpunkt: Dessen Einzug (Trennpunkt) läge sonst auf der rechten Hälfte der Trefferfläche */
+  z-index: 1;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  min-width: var(--m-ziel);
   min-height: var(--m-ziel);
   color: inherit;
   text-decoration-line: underline;
@@ -307,7 +307,11 @@
 .ortLink::after {
   content: "";
   position: absolute;
-  inset: 0 calc(var(--a-2) * -1);
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: max(calc(100% + var(--a-2) * 2), var(--m-ziel));
+  transform: translateX(-50%);
 }
 
 @media (hover: hover) and (pointer: fine) {

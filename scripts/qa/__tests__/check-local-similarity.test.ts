@@ -1,0 +1,117 @@
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { afterAll, describe, expect, it } from 'vitest';
+import {
+  DEFAULT_DIR,
+  MAX_JACCARD,
+  REPORT_PAIRS,
+  comparePages,
+  findHtmlFiles,
+  isPlacePage,
+  jaccard,
+  jsonLdTypes,
+  mainText,
+  shingles,
+  tokens,
+} from '../check-local-similarity.mjs';
+
+/** Ein vorgerendertes Dokument wie von `next build`: ein @graph im Kopf, Kopf und Fuß um <main>. */
+const doc = (types: string[], main: string) =>
+  `<!DOCTYPE html><html><head><script type="application/ld+json">${JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': types.map((type) => ({ '@type': type })),
+  })}</script></head><body><header>Menü Stellen Bewerben</header><main id="inhalt">${main}</main><footer>Impressum Datenschutz</footer></body></html>`;
+
+const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'local-similarity-'));
+afterAll(() => fs.rmSync(tmp, { recursive: true, force: true }));
+
+describe('check-local-similarity: Gate U3 am gebauten HTML (Review Phase 2, Punkt 15)', () => {
+  it('Grenze und Ausgabeordner wie im Gate und im Build', () => {
+    expect(MAX_JACCARD).toBe(0.45);
+    expect(REPORT_PAIRS).toBe(5);
+    expect(DEFAULT_DIR.split(path.sep).join('/')).toBe('.next/server/app/einsatzgebiet');
+  });
+
+  it('liest nur den sichtbaren Text im <main>: ohne Skripte, Stile, SVG, Kommentare, Kopf und Fuß', () => {
+    const html = doc(
+      ['WebPage', 'Place'],
+      '<h1>SHK-Jobs für Aßlar</h1><script>var x="geheim"</script><style>.a{}</style>' +
+        '<svg role="img"><title>Plan</title><text>Lahn</text></svg><p>8&nbsp;km bis zum&#x20;Firmensitz &amp; Lager</p><!-- Kommentar -->',
+    );
+    expect(mainText(html)).toBe('SHK-Jobs für Aßlar 8 km bis zum Firmensitz & Lager');
+    expect(mainText('<p>ohne main</p>')).toBe('');
+  });
+
+  it('Wörter wie im Gate: Kleinschreibung, Zahlen mit Komma oder Punkt bleiben ein Wort', () => {
+    expect(tokens('Luftlinie 4,5 km, Gehalt 3.600 €')).toEqual(['luftlinie', '4,5', 'km', 'gehalt', '3.600']);
+    expect(shingles('a b c d e f').size).toBe(2);
+    expect([...shingles('a b c')]).toEqual(['a b c']);
+    expect(shingles('').size).toBe(0);
+    expect(jaccard(new Set(['x', 'y']), new Set(['y', 'z']))).toBeCloseTo(1 / 3, 5);
+    expect(jaccard(new Set(), new Set())).toBe(0);
+  });
+
+  it('Ortsseite = JSON-LD mit Place und ohne CollectionPage; Kreis-Hubs und Weiterleitungen zählen nicht', () => {
+    expect(jsonLdTypes(doc(['WebPage', 'Place', 'BreadcrumbList'], ''))).toEqual(new Set(['WebPage', 'Place', 'BreadcrumbList']));
+    expect(isPlacePage(doc(['WebPage', 'Place'], 'x'))).toBe(true);
+    expect(isPlacePage(doc(['CollectionPage', 'ItemList'], 'x'))).toBe(false);
+    expect(isPlacePage('<html><body>NEXT_REDIRECT;replace;/einsatzgebiet#hochtaunuskreis;308;</body></html>')).toBe(false);
+    expect(isPlacePage('<script type="application/ld+json">{kaputt</script>')).toBe(false);
+  });
+
+  it('sortiert alle Paare, meldet die über 0,45 und den Anteil gemeinsamer Wendungen', () => {
+    const gemeinsam = 'offen sind vier stellen jede mit gehalt bzw vergütung im kundendienst';
+    const pages = [
+      { name: 'a', text: `${gemeinsam} aßlar liegt nördlich` },
+      { name: 'b', text: `${gemeinsam} solms liegt westlich` },
+      { name: 'c', text: 'ganz anderer text ohne jede überschneidung mit den anderen seiten' },
+    ];
+    const result = comparePages(pages);
+    expect(result.pairs).toHaveLength(3);
+    expect(result.pairs[0]).toMatchObject({ a: 'a', b: 'b' });
+    expect(result.pairs[0].value).toBeGreaterThan(MAX_JACCARD);
+    expect(result.tooSimilar.map((p: { a: string; b: string }) => `${p.a}/${p.b}`)).toEqual(['a/b']);
+    expect(result.commonShare).toBeGreaterThan(0);
+    expect(result.maxCommonShare).toBeLessThanOrEqual(1);
+  });
+
+  it('findet .html rekursiv; ein fehlender Ordner ergibt keine Dateien', () => {
+    fs.mkdirSync(path.join(tmp, 'tief'), { recursive: true });
+    fs.writeFileSync(path.join(tmp, 'b.html'), '');
+    fs.writeFileSync(path.join(tmp, 'b.rsc'), '');
+    fs.writeFileSync(path.join(tmp, 'tief', 'a.html'), '');
+    expect(findHtmlFiles(tmp).map((file: string) => path.relative(tmp, file))).toEqual(['b.html', path.join('tief', 'a.html')]);
+    expect(findHtmlFiles(path.join(tmp, 'fehlt'))).toEqual([]);
+  });
+
+  const script = path.resolve(__dirname, '../check-local-similarity.mjs');
+  const run = (dir: string) => spawnSync(process.execPath, [script, dir], { encoding: 'utf8' });
+
+  it('CLI: ohne gebaute Seiten Exit 1 mit klarer Meldung (eine leere Prüfung ist nie grün)', () => {
+    const empty = fs.mkdtempSync(path.join(tmp, 'leer-'));
+    const result = run(empty);
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('No prerendered .html found');
+  });
+
+  it('CLI: grün unter der Grenze, rot darüber, mit den ähnlichsten Paaren', () => {
+    const ok = fs.mkdtempSync(path.join(tmp, 'ok-'));
+    const words = (seed: string) => Array.from({ length: 40 }, (_, i) => `${seed}${i}`).join(' ');
+    fs.writeFileSync(path.join(ok, 'asslar.html'), doc(['WebPage', 'Place'], `<p>Aßlar ${words('a')}</p>`));
+    fs.writeFileSync(path.join(ok, 'solms.html'), doc(['WebPage', 'Place'], `<p>Solms ${words('s')}</p>`));
+    fs.writeFileSync(path.join(ok, 'lahn-dill-kreis.html'), doc(['CollectionPage', 'ItemList'], `<p>Aßlar ${words('a')}</p>`));
+    const green = run(ok);
+    expect(green.status).toBe(0);
+    expect(green.stdout).toContain('2 place pages (1 other document(s) skipped)');
+
+    const bad = fs.mkdtempSync(path.join(tmp, 'rot-'));
+    fs.writeFileSync(path.join(bad, 'herborn.html'), doc(['WebPage', 'Place'], `<p>Herborn ${words('x')}</p>`));
+    fs.writeFileSync(path.join(bad, 'sinn.html'), doc(['WebPage', 'Place'], `<p>Sinn ${words('x')}</p>`));
+    const red = run(bad);
+    expect(red.status).toBe(1);
+    expect(red.stdout).toMatch(/❌ 0\.\d{3} {2}herborn ↔ sinn/);
+    expect(red.stderr).toContain('1 pair(s) above 0.45');
+  });
+});

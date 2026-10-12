@@ -14,7 +14,7 @@ export function generateMetadata(): Metadata {
 }
 
 /**
- * Gebietsseite /einsatzgebiet (E-028): alle 55 Orte im 35-km-Gebiet mit gemessener Strecke und Fahrzeit, die
+ * Gebietsseite /einsatzgebiet (E-028): alle veröffentlichten Orte (54) bis 35 km Straße mit gemessener Strecke und Fahrzeit, die
  * Kreis-Hubs, die Kreise ohne eigene Seite als Abschnitte und der Explorer aller Orte. Ein Graph (V6-B):
  * CollectionPage mit der ItemList der Unterseiten und die BreadcrumbList des sichtbaren Pfads.
  */

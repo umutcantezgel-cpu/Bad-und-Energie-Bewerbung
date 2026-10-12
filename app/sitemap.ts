@@ -6,7 +6,8 @@ import { getIndexablePages } from '@/lib/seo/indexable-pages';
  * pages, /bewerbung and the local pages under /einsatzgebiet. Left out on purpose: /datenschutz and /impressum
  * (noindex), /bewerbung/danke and /bewerbung/mappe (noindex), closed or expired job pages (noindex), redirects, feeds
  * and /api. Every URL is the page's canonical exactly as rendered (the root without a trailing slash, V6-B). Dates are
- * the sources' own `updatedAt` (jobs, places); nothing is invented, never „now“.
+ * the sources' own `updatedAt` (jobs, places); pages that list the live jobs (home, /jobs, /bewerbung and the local
+ * pages) take the newer of their own date and the newest live job. Nothing is invented, never „now“.
  */
 /** Hourly, like the feeds: expired job pages leave the sitemap without a deploy. */
 export const revalidate = 3600;

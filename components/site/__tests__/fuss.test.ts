@@ -62,6 +62,7 @@ describe('Fuß: Navy-Band im Design des Einstiegs (R4-SHELL-02, E-023)', () => {
       'Kontakt zum Betrieb',
       'Aktuelle Stellen',
       'Rechtliches',
+      'Arbeiten bei uns',
       'Orte im Einsatzgebiet',
     ];
     expect(Object.values(FUSS_SPALTEN).map((s) => s.titel)).toEqual(koepfe.slice(0, 4));

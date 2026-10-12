@@ -30,10 +30,11 @@ export const PENDELWEG_SKALA = Object.freeze({ maxKm: 35, radius: 158, stufen: [
 /** Halbe Öffnung der Zirkelbögen um den Kurs. */
 const BOGEN_GRAD = 30;
 /**
- * Kürzester gezeichneter Weg als Anteil der Skala: Haus, Punkt und Paar brauchen Platz. Steindorf (2 km) und Aßlar
- * (8 km) stehen darum gleich weit vom Haus, beide innerhalb des 15-km-Bogens; die Zahl an der Kette ist die Messung.
+ * Kürzester gezeichneter Weg als Anteil der Skala (rund 10 km): Haus, Punkt, Paar und Maßkette brauchen Platz.
+ * Steindorf (2 km) und Solms (7 km) stehen darum gleich weit vom Haus, beide innerhalb des 15-km-Bogens; die Zahl an
+ * der Kette ist die Messung.
  */
-export const PENDELWEG_MIN_ANTEIL = 0.25;
+export const PENDELWEG_MIN_ANTEIL = 0.3;
 
 /** Giebel 45° wie das Haus in der Mitte des Plans (RadiusGraphic CENTER_HOUSE, K-010), hier 1,25-fach. */
 const HAUS = 'M-8 7V-1L0 -9L8 -1V7Z';
@@ -78,6 +79,15 @@ export interface Bogen {
   d: string;
 }
 
+/** Freistellung (Maske): Rechteck um eine Schrift, um seine Mitte gedreht; Bögen und Schenkel setzen dort aus. */
+export interface Freistellung {
+  x: number;
+  y: number;
+  breite: number;
+  hoehe: number;
+  winkel: number;
+}
+
 export interface PendelLage {
   haus: Punkt;
   ort: Punkt;
@@ -94,6 +104,8 @@ export interface PendelLage {
   nord: Punkt;
   /** Belegte Flächen (Haus, Punkt, Schriften, Kette, Wert); liegen im Rahmen und überdecken einander nicht. */
   kaesten: Kasten[];
+  /** Flächen der Schriften, in denen Bögen und Schenkel aussetzen (wie ein Halo, nur breiter): keine Linie durch Schrift. */
+  frei: Freistellung[];
   hoehe: number;
 }
 
@@ -181,6 +193,18 @@ function huelle(kaesten: readonly Kasten[]): Kasten {
   };
 }
 
+/**
+ * Unter dieser Strecke (km Straße) nur der 35-km-Bogen: Der Weg ist mit der Mindestlänge länger als maßstäblich, und
+ * neben den Bögen 15 und 25 km sähe Wetzlar (3 km) wie 10 km aus (Kritik 2, P3).
+ */
+export const PENDELWEG_NAH_KM = 10;
+
+/** Bögen des Zirkels für eine Strecke: 15, 25 und 35 km, auf kurzen Wegen nur 35 km. */
+export function pendelStufen(strasseKm: number): readonly number[] {
+  const { stufen, maxKm } = PENDELWEG_SKALA;
+  return strasseKm < PENDELWEG_NAH_KM ? stufen.filter((km) => km === maxKm) : stufen;
+}
+
 /** Länge des gezeichneten Wegs in Einheiten: maßstäblich auf der 35-km-Skala, mindestens PENDELWEG_MIN_ANTEIL. */
 export function pendelLaenge(strasseKm: number): number {
   const { maxKm, radius } = PENDELWEG_SKALA;
@@ -193,7 +217,8 @@ export function pendelLaenge(strasseKm: number): number {
  * Werten 15, 25, 35 km auf der anderen; dann wird alles im Rahmen mittig gesetzt, der Nordpfeil in eine freie Ecke.
  */
 export function pendelLage(kursGrad: number, ort: string, sitz = 'Firmensitz', strasseKm = 0): PendelLage {
-  const { radius, maxKm, stufen } = PENDELWEG_SKALA;
+  const { radius, maxKm } = PENDELWEG_SKALA;
+  const stufen = pendelStufen(strasseKm);
   const v = aufKreis(kursGrad, 1);
   const r = pendelLaenge(strasseKm);
   const haus = { x: 0, y: 0 };
@@ -210,16 +235,20 @@ export function pendelLage(kursGrad: number, ort: string, sitz = 'Firmensitz', s
   const a = { x: v.x * kuerzung + versatz.x, y: v.y * kuerzung + versatz.y };
   const b = { x: punkt.x - v.x * kuerzung + versatz.x, y: punkt.y - v.y * kuerzung + versatz.y };
   const strich = { x: n.x * 6, y: n.y * 6 };
-  let winkel = (Math.atan2(v.y, v.x) * 180) / Math.PI;
-  if (winkel > 90) winkel -= 180;
-  if (winkel <= -90) winkel += 180;
   const wertText = `${strasseKm}${NBSP}km`;
-  const mitte = { x: (a.x + b.x) / 2 + n.x * WERT_ABSTAND * seite, y: (a.y + b.y) / 2 + n.y * WERT_ABSTAND * seite };
-  const rad = (winkel * Math.PI) / 180;
   const wb = breiteVon(wertText);
   const wh = SCHRIFT * 1.2;
+  // Wert gedreht wie der Weg, mittig an der Kette. Ist die Kette kürzer als der Wert (kurze Wege), steht er waagerecht
+  // daneben, so weit weg, dass er weder die Kette noch ihre Endstriche berührt.
+  const kurz = Math.hypot(b.x - a.x, b.y - a.y) < wb + 6;
+  let winkel = kurz ? 0 : (Math.atan2(v.y, v.x) * 180) / Math.PI;
+  if (winkel > 90) winkel -= 180;
+  if (winkel <= -90) winkel += 180;
+  const rad = (winkel * Math.PI) / 180;
   const kw = Math.abs(Math.cos(rad)) * wb + Math.abs(Math.sin(rad)) * wh;
   const kh = Math.abs(Math.sin(rad)) * wb + Math.abs(Math.cos(rad)) * wh;
+  const wertAbstand = kurz ? 7 + (Math.abs(n.x) * kw + Math.abs(n.y) * kh) / 2 : WERT_ABSTAND;
+  const mitte = { x: (a.x + b.x) / 2 + n.x * wertAbstand * seite, y: (a.y + b.y) / 2 + n.y * wertAbstand * seite };
   const wert = {
     text: wertText,
     zeilen: [wertText],
@@ -253,17 +282,22 @@ export function pendelLage(kursGrad: number, ort: string, sitz = 'Firmensitz', s
       : schriftNeben(`${km}`, p, aussen, 9, SCHRIFT_SKALA);
   });
 
-  // Leitung und Bögen als Hindernisse für die beiden Namen
+  // Hindernisse für die beiden Namen: das Leitungspaar fest (nie Schrift auf Vorlauf und Rücklauf), Bögen und Schenkel
+  // weich (lieber frei; sonst setzen sie unter der Schrift aus, siehe `frei`)
   const leitung = octilinear(haus, punkt);
-  const linien = [
-    ...leitung.slice(1).flatMap((q, i) => laengs(leitung[i], q, 5)),
+  const leitungKaesten = leitung.slice(1).flatMap((q, i) => laengs(leitung[i], q, 6));
+  const zirkelKaesten = [
     ...laengs(schenkelA, schenkelB, 2),
     ...stufen.flatMap((km) => {
       const rb = (radius * km) / maxKm;
       return Array.from({ length: 13 }, (_, i) => um(aufKreis(kursGrad - BOGEN_GRAD + i * 5, rb), 2));
     }),
   ];
+  const linien = [...leitungKaesten, ...zirkelKaesten];
   const fest = [um(haus, 12), um(punkt, 11), wert.kasten, ...ketteKaesten, ...skala.map((s) => s.kasten)];
+  const hart = [...fest, ...leitungKaesten];
+  /** Acht Richtungen (Norden, Nordosten …) für weitere Lagen der Namen. */
+  const acht = Array.from({ length: 8 }, (_, i) => aufKreis(i * 45, 1));
 
   // Ortsname: hinter dem Punkt (in Wegrichtung), sonst quer zum Weg auf der Seite ohne Kette, sonst gegenüber
   const ohneKette = { x: -n.x * seite, y: -n.y * seite };
@@ -276,6 +310,7 @@ export function pendelLage(kursGrad: number, ort: string, sitz = 'Firmensitz', s
     schriftInnen(ort, punkt, ohneKette, 18, v, zeilen),
     schriftNeben(ort, punkt, mitKette, 30, SCHRIFT, zeilen),
     schriftInnen(ort, punkt, mitKette, 30, v, zeilen),
+    ...acht.map((u) => schriftNeben(ort, punkt, u, 18, SCHRIFT, zeilen)),
   ]);
   // Hausname: hinter dem Haus (gegen den Weg), sonst quer
   const hausKandidaten = [
@@ -286,6 +321,8 @@ export function pendelLage(kursGrad: number, ort: string, sitz = 'Firmensitz', s
     schriftNeben(sitz, haus, { x: -v.x * 0.7 + mitKette.x * 0.7, y: -v.y * 0.7 + mitKette.y * 0.7 }, 18),
     // Unter bzw. über dem Haus, zum Weg hin ausgerichtet: braucht keinen Platz hinter dem Haus
     ...[26, -26].map((dy) => schrift(sitz, haus.x - Math.sign(v.x || 1) * 10, haus.y + dy, v.x >= 0 ? 'start' : 'end')),
+    // Sonst ringsum, erst nah, dann weiter
+    ...[18, 28].flatMap((abstand) => acht.map((u) => schriftNeben(sitz, haus, u, abstand))),
   ];
   const passtInsBild = (kaesten: readonly Kasten[]) => {
     const h = huelle(kaesten);
@@ -296,7 +333,7 @@ export function pendelLage(kursGrad: number, ort: string, sitz = 'Firmensitz', s
   suche: for (const weich of [true, false]) {
     for (const o of ortKandidaten) {
       for (const h of hausKandidaten) {
-        const hindernisse = weich ? [...fest, ...linien] : fest;
+        const hindernisse = weich ? [...hart, ...zirkelKaesten] : hart;
         if (hindernisse.some((k) => ueberlappen(k, o.kasten) || ueberlappen(k, h.kasten))) continue;
         if (ueberlappen(o.kasten, h.kasten)) continue;
         if (!passtInsBild([...fest, ...linien, o.kasten, h.kasten])) continue;
@@ -309,6 +346,21 @@ export function pendelLage(kursGrad: number, ort: string, sitz = 'Firmensitz', s
 
   const kaesten = [...fest, ortSchrift.kasten, hausSchrift.kasten];
   const alles = huelle([...kaesten, ...linien]);
+  const LUFT_SCHRIFT = 3;
+  const freiUm = (k: Kasten): Freistellung => ({
+    x: (k.x0 + k.x1) / 2,
+    y: (k.y0 + k.y1) / 2,
+    breite: k.x1 - k.x0 + 2 * LUFT_SCHRIFT,
+    hoehe: k.y1 - k.y0 + 2 * LUFT_SCHRIFT,
+    winkel: 0,
+  });
+  const frei: Freistellung[] = [
+    freiUm(ortSchrift.kasten),
+    freiUm(hausSchrift.kasten),
+    ...skala.map((wertAmSchenkel) => freiUm(wertAmSchenkel.kasten)),
+    // Der Wert gedreht wie seine Schrift
+    { x: wert.x, y: wert.y, breite: wb + 2 * LUFT_SCHRIFT, hoehe: wh + 2 * LUFT_SCHRIFT, winkel },
+  ];
   const d = { x: (W - (alles.x1 - alles.x0)) / 2 - alles.x0, y: (H - (alles.y1 - alles.y0)) / 2 - alles.y0 };
   const belegt = [...kaesten, ...linien].map((k) => verschieben(k, d));
 
@@ -339,6 +391,7 @@ export function pendelLage(kursGrad: number, ort: string, sitz = 'Firmensitz', s
     skala: skala.map(s),
     nord: { x: (nordKasten.x0 + nordKasten.x1) / 2, y: nordKasten.y0 },
     kaesten: kaesten.map((k) => verschieben(k, d)),
+    frei: frei.map((f) => ({ ...f, x: round1(f.x + d.x), y: round1(f.y + d.y), breite: round1(f.breite), hoehe: round1(f.hoehe), winkel: round1(f.winkel) })),
     hoehe: H,
   };
 }
@@ -355,6 +408,8 @@ export function pendelLage(kursGrad: number, ort: string, sitz = 'Firmensitz', s
 export function Pendelweg({ ort, kursGrad, strasseKm, sitz = 'Firmensitz', titel, className }: PendelwegProps) {
   const lage = pendelLage(kursGrad, ort, sitz, strasseKm);
   const { haus, ort: punkt, kette, wert, nord, schenkel } = lage;
+  // Eine Zeichnung je Seite; die Id hängt am Ort, damit sie ohne Zustand eindeutig bleibt
+  const maskeId = `pendelweg-frei-${[...ort].map((c) => (/[a-z0-9]/i.test(c) ? c : '-')).join('')}`;
   const paar = pendelPaths(haus, punkt);
   const linie = (a: Punkt, b: Punkt) => `M${round1(a.x)} ${round1(a.y)}L${round1(b.x)} ${round1(b.y)}`;
   const versetzt = (q: Punkt, s: Punkt, f: number) => ({ x: q.x + s.x * f, y: q.y + s.y * f });
@@ -367,21 +422,40 @@ export function Pendelweg({ ort, kursGrad, strasseKm, sitz = 'Firmensitz', titel
       data-zeichnung="pendelweg"
       {...(titel ? { role: 'img', 'aria-label': titel } : { 'aria-hidden': true })}
     >
+      {/* Freistellung: Bögen und Schenkel setzen unter jeder Schrift aus (keine Linie durch einen Namen oder Wert) */}
+      <mask id={maskeId} maskUnits="userSpaceOnUse" x={0} y={0} width={W} height={lage.hoehe}>
+        <rect width={W} height={lage.hoehe} fill="white" />
+        {lage.frei.map((f, i) => (
+          <rect
+            key={i}
+            x={round1(f.x - f.breite / 2)}
+            y={round1(f.y - f.hoehe / 2)}
+            width={f.breite}
+            height={f.hoehe}
+            rx={3}
+            transform={f.winkel ? `rotate(${f.winkel} ${f.x} ${f.y})` : undefined}
+            fill="black"
+          />
+        ))}
+      </mask>
+
       {/* Zirkel: Bögen 15 und 25 km gepunktet, 35 km (Grenze des Einsatzgebiets) fest, Schenkel mit Teilstrich */}
-      {lage.boegen.map((bogen) => (
+      <g mask={`url(#${maskeId})`}>
+        {lage.boegen.map((bogen) => (
+          <path
+            key={bogen.km}
+            d={bogen.d}
+            strokeWidth={STRICH}
+            className={cn(styles.strich, bogen.km === PENDELWEG_SKALA.maxKm ? styles.pendelGrenze : styles.pendelStufe)}
+            data-bogen={bogen.km}
+          />
+        ))}
         <path
-          key={bogen.km}
-          d={bogen.d}
-          strokeWidth={STRICH}
-          className={cn(styles.strich, bogen.km === PENDELWEG_SKALA.maxKm ? styles.pendelGrenze : styles.pendelStufe)}
-          data-bogen={bogen.km}
+          className={cn(styles.strich, styles.pendelSchenkel)}
+          strokeWidth={STRICH / 2}
+          d={`${linie(schenkel.a, schenkel.b)}${linie(versetzt(schenkel.b, schenkel.strich, -1), versetzt(schenkel.b, schenkel.strich, 1))}`}
         />
-      ))}
-      <path
-        className={cn(styles.strich, styles.pendelSchenkel)}
-        strokeWidth={STRICH / 2}
-        d={`${linie(schenkel.a, schenkel.b)}${linie(versetzt(schenkel.b, schenkel.strich, -1), versetzt(schenkel.b, schenkel.strich, 1))}`}
-      />
+      </g>
       <g className={styles.pendelSkala} fontSize={12} dominantBaseline="central">
         {lage.skala.map((wert) => (
           <text key={wert.text} x={wert.x} y={wert.y} textAnchor={wert.anker}>

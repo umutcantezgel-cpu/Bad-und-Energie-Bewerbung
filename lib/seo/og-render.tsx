@@ -531,6 +531,22 @@ export async function renderJobImage(text: OgJobText): Promise<ImageResponse> {
 
 // ── Orte ───────────────────────────────────────────────────────────────────────────────────────────
 
+/** Längstes Etikett, das auf dem Teilen-Bild in einer Zeile steht (Martian-Versalien, linke Spalte). */
+export const OG_ETIKETT_MAX = 36;
+
+/**
+ * Etikett des Teilen-Bilds in einer Zeile: „35080 BAD ENDBACH · LANDKREIS MARBURG-BIEDENKOPF“ brach am Bindestrich um.
+ * Erst der Kreis ohne „Landkreis“ („35799 MERENBERG · LIMBURG-WEILBURG“), ist es dann noch zu lang, nur Postleitzahl
+ * und Ort („35080 BAD ENDBACH“). Die Seite selbst behält ihr ganzes Etikett.
+ */
+export function ogEtikett(etikett: string, max = OG_ETIKETT_MAX): string {
+  if (etikett.length <= max) return etikett;
+  const kurz = etikett.replace(/ · LANDKREIS /i, ' · ');
+  if (kurz.length <= max) return kurz;
+  const trenner = etikett.lastIndexOf(' · ');
+  return trenner > 0 ? etikett.slice(0, trenner) : etikett;
+}
+
 /**
  * Teilen-Bild einer Ortsseite (E-028) im Rahmen der Stellenbilder: Etikett und h1 der Seite, Fahrzeit und
  * „Flexible Arbeitszeiten.“ an der Rohrklammer, im Heizkreis die Straßenstrecke („27 km bis zum Firmensitz“).
@@ -539,7 +555,7 @@ export async function renderPlaceImage(text: OgPlaceText): Promise<ImageResponse
   return respond((logo) => (
     <Frame
       logo={logo}
-      etikett={text.etikett}
+      etikett={ogEtikett(text.etikett)}
       title={text.title}
       titleSize={text.titleSize}
       subline={text.subline}

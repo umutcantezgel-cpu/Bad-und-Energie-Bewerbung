@@ -14,7 +14,7 @@ import {
   directionFromHeadquarters,
   groupStats,
   kreisStats,
-  neighborsOf,
+  placeNeighbors,
   rankByDistance,
   roadBandCounts,
   roadBandFloorKm,
@@ -47,9 +47,11 @@ import { jaccard, maxSkeletonShare, numbersIn, sentences, shingles, skeleton, wo
  * veröffentlichten Orte. Besteht ein Ort nicht, bekommt er status 'merged' mit Grund und geht in der Kreis- bzw.
  * Gebietsseite auf; die Grenzwerte werden nie gelockert, um einen Ort zu halten.
  *
- * Gemessen am 2026-10-12 (55 Orte): Jaccard ganz max 0,368, nur `ort` max 0,210, `ort` min 146 Wörter und min
- * 64,9 % des Haupttexts, häufigstes Satzgerüst auf 25,5 % der Seiten (nur Ortsname ersetzt) bzw. 27,3 % (alle
+ * Gemessen am 2026-10-12 nach dem Review (54 Orte): Jaccard ganz max 0,280, nur `ort` max 0,191, `ort` min 124 Wörter
+ * und min 74,1 % des Haupttexts, häufigstes Satzgerüst auf 20,4 % der Seiten (nur Ortsname ersetzt) bzw. 27,8 % (alle
  * Namen, Kreise und Richtungen ersetzt). Alle Werte liegen unter den Planwerten; keiner musste kalibriert werden.
+ * Das gebaute HTML (mit Stellenkarten, Faktenband, Kontakt) prüft scripts/qa/check-local-similarity.mjs mit derselben
+ * Grenze 0,45; dort liegt das ähnlichste Paar (Herborn/Sinn) höher, weil der gemeinsame Seitenrahmen mitzählt.
  */
 const GATE = Object.freeze({
   /** U1: eigene Werte je Seite. */
@@ -183,7 +185,7 @@ function allowedNumbers(place: Place): Set<string> {
   add(kreisRank.closer, kreisRank.farther, kreisRank.same, kreisRank.total);
   add(areaRank.closer, areaRank.total);
   add(places.filter((p) => p.homeMap).length);
-  for (const n of neighborsOf(place, places)) {
+  for (const n of placeNeighbors(place, places)) {
     add(n.airKm, Math.abs(n.minutes - place.commute.minutes), Math.abs(n.distanceKm - place.commute.distanceKm));
   }
   for (const other of kreisGroup.places) {

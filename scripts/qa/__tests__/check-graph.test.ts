@@ -12,6 +12,8 @@ import { graphProblems, itemListProblems, jobPostingProblems, placeProblems } fr
 import { buildKreisItemListJsonLd, buildPlaceJsonLd, kreisPfad, pfadJsonLd, placePfad } from '@/lib/places/jsonld';
 import { getHubKreise, getPlaceBySlug, kreisPath, placePath } from '@/lib/places/registry';
 import { getIndexablePages } from '@/lib/seo/indexable-pages';
+import { arbeitenPfad, buildThemenItemListJsonLd, pfadJsonLd as themenPfadJsonLd, themaPfad } from '@/lib/themen/jsonld';
+import { ARBEITEN_PATH, getThemen, themaPath } from '@/lib/themen/registry';
 
 type Node = Record<string, unknown>;
 
@@ -188,5 +190,24 @@ describe('check-graph: lokale Seiten (E-028)', () => {
     const falsch = clone(ort.graph);
     node(falsch, 'Place')['@type'] = 'City';
     expect(problems(falsch, ort.html)).toContain('WebPage.spatialCoverage must reference a Place');
+  });
+});
+
+describe('check-graph: Themenseiten (E-028)', () => {
+  const sitemap = new Set(getIndexablePages().map((page) => page.url));
+
+  it('Hub als CollectionPage mit ItemList der Themen, jedes Thema als WebPage mit BreadcrumbList', () => {
+    const hub = fixture(ARBEITEN_PATH, { breadcrumb: themenPfadJsonLd(arbeitenPfad()), itemList: buildThemenItemListJsonLd() });
+    expect(problems(hub.graph, hub.html)).toEqual([]);
+    expect(node(clone(hub.graph), 'CollectionPage')).toBeDefined();
+    expect(itemListProblems(node(clone(hub.graph), 'ItemList'), sitemap)).toEqual([]);
+
+    for (const thema of getThemen()) {
+      const seite = fixture(themaPath(thema), { breadcrumb: themenPfadJsonLd(themaPfad(thema)) });
+      expect(problems(seite.graph, seite.html), thema.slug).toEqual([]);
+      const graph = clone(seite.graph)['@graph'];
+      expect(graph.filter((n) => n['@type'] === 'WebPage')).toHaveLength(1);
+      expect(graph.filter((n) => ['ItemList', 'Place', 'JobPosting', 'FAQPage'].includes(String(n['@type'])))).toEqual([]);
+    }
   });
 });

@@ -75,13 +75,16 @@ export function GebietSeite({ text }: GebietSeiteProps) {
       <div className={styles.kopf} data-motion="erdleitung">
         <Seitenkopf
           variante="erzaehl"
+          bildBreit
           etikett={text.etikett}
           titel={<OrtTitel h1={text.meta.h1} name={hauptteil(text.meta.h1)} />}
           einleitung={lead ? <Absaetze blocks={lead.blocks} /> : null}
           aktion={{ href: APPLY_PATH, label: SHORT_APPLY_LABEL }}
           mikrotext={LISTEN_MIKROTEXT}
           zweitweg={text.zweitweg}
-          masse={text.masse}
+          // Am Handy nur die beiden Mittelwerte (eine Zeile); Nächster und Weitester Ort stehen in der Einleitung
+          masse={text.masse.map((mass, i) => (i < 2 ? { ...mass, nurBreit: true } : mass))}
+          masseZweispaltig
           panel={
             <Gebietsplan
               titel={`Plan des Einsatzgebiets: ${text.rows.length} Orte in ${kreise.length} Kreisen um den Firmensitz, Ringe 15, 25 und 35 km in Luftlinie`}
@@ -99,6 +102,7 @@ export function GebietSeite({ text }: GebietSeiteProps) {
               mapsAvailable={false}
               table={false}
               labelPriority={GEBIET_LABEL_PRIORITY}
+              zones={false}
               header={
                 <div className={styles.text}>
                   <Abschnittskopf id={titelId('ringe')} eyebrow={ETIKETT.ringe} title={ringeAbschnitt.heading} klammer />

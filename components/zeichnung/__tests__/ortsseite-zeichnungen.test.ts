@@ -3,11 +3,21 @@ import path from 'node:path';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import { octilinear } from '@/components/maps/graphic';
 import { MOTION_IDS } from '@/lib/motion/register';
 import { HEADQUARTERS, bearingDeg } from '@/lib/places/derive';
 import { getKreisPlaces, getPublishedPlaces } from '@/lib/places/registry';
 import { Entfernungsleiste, senkrechteLage } from '../Entfernungsleiste';
-import { PENDELWEG_MIN_ANTEIL, PENDELWEG_RAHMEN, PENDELWEG_SKALA, Pendelweg, pendelLage, pendelLaenge, type Kasten } from '../Pendelweg';
+import {
+  PENDELWEG_MIN_ANTEIL,
+  PENDELWEG_NAH_KM,
+  PENDELWEG_RAHMEN,
+  PENDELWEG_SKALA,
+  Pendelweg,
+  pendelLage,
+  pendelLaenge,
+  type Kasten,
+} from '../Pendelweg';
 
 const ueberlappen = (a: Kasten, b: Kasten) => a.x0 < b.x1 - 0.5 && b.x0 < a.x1 - 0.5 && a.y0 < b.y1 - 0.5 && b.y0 < a.y1 - 0.5;
 const imRahmen = (k: Kasten, hoehe: number) => k.x0 >= 0 && k.y0 >= 0 && k.x1 <= PENDELWEG_RAHMEN.breite && k.y1 <= hoehe;
@@ -25,6 +35,49 @@ describe('Pendelweg (E-028)', () => {
     expect(ueberlappen(lage.ortSchrift.kasten, lage.hausSchrift.kasten)).toBe(false);
     expect(ueberlappen(lage.ortSchrift.kasten, lage.wert.kasten)).toBe(false);
     expect(ueberlappen(lage.hausSchrift.kasten, lage.wert.kasten)).toBe(false);
+  });
+
+  it.each(faelle)('%s: kein Name und kein Wert auf Vorlauf und Rücklauf; Bögen setzen unter jeder Schrift aus', (name, kurs, km) => {
+    const lage = pendelLage(kurs, name, 'Firmensitz', km);
+    const route = octilinear(lage.haus, lage.ort);
+    // Punkte des Paars (Abstand ±3,5 zur Mitte, Strich 1): Stichproben entlang der Strecke, ohne Haus und Punkt
+    const proben = route.slice(1).flatMap((b, i) => {
+      const a = route[i];
+      const n = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 2));
+      return Array.from({ length: n + 1 }, (_, j) => ({ x: a.x + ((b.x - a.x) * j) / n, y: a.y + ((b.y - a.y) * j) / n }));
+    });
+    const frei = proben.filter((p) => Math.hypot(p.x - lage.haus.x, p.y - lage.haus.y) > 14 && Math.hypot(p.x - lage.ort.x, p.y - lage.ort.y) > 12);
+    for (const schrift of [lage.ortSchrift, lage.hausSchrift]) {
+      const k = schrift.kasten;
+      for (const p of frei) {
+        const innen = p.x > k.x0 - 4 && p.x < k.x1 + 4 && p.y > k.y0 - 4 && p.y < k.y1 + 4;
+        expect(innen, `${schrift.text} auf dem Paar bei ${p.x.toFixed(1)}/${p.y.toFixed(1)}`).toBe(false);
+      }
+    }
+    // Der Wert ist gedreht: im eigenen Rahmen der Schrift prüfen (13 Einheiten, 0,6 em je Zeichen)
+    const { wert } = lage;
+    const rad = (-wert.winkel * Math.PI) / 180;
+    for (const p of frei) {
+      const dx = (p.x - wert.x) * Math.cos(rad) - (p.y - wert.y) * Math.sin(rad);
+      const dy = (p.x - wert.x) * Math.sin(rad) + (p.y - wert.y) * Math.cos(rad);
+      const innen = Math.abs(dx) < (wert.text.length * 13 * 0.6) / 2 + 4 && Math.abs(dy) < (13 * 1.2) / 2 + 4;
+      expect(innen, `${wert.text} auf dem Paar bei ${p.x.toFixed(1)}/${p.y.toFixed(1)}`).toBe(false);
+    }
+    // Freistellung: Ortsname, Firmensitz, Wert und die Werte am Schenkel
+    expect(lage.frei).toHaveLength(3 + lage.skala.length);
+    const html = renderToStaticMarkup(createElement(Pendelweg, { ort: name, kursGrad: kurs, strasseKm: km }));
+    expect(html).toMatch(/<mask id="pendelweg-frei-[^"]+"/);
+    // Kurze Wege (unter PENDELWEG_NAH_KM) nur mit dem 35-km-Bogen, sonst alle drei, der erste unter der Maske
+    const ersterBogen = km < PENDELWEG_NAH_KM ? 35 : 15;
+    expect(html).toMatch(new RegExp(`<g mask="url\\(#pendelweg-frei-[^)]+\\)"><path[^>]*data-bogen="${ersterBogen}"`));
+    expect(html.includes('data-bogen="15"')).toBe(km >= PENDELWEG_NAH_KM);
+  });
+
+  it('kurze Wege: der Wert steht waagerecht neben der Kette statt gedreht über sie hinaus', () => {
+    const kurz = pendelLage(225, 'Steindorf', 'Firmensitz', 2);
+    expect(kurz.wert.winkel).toBe(0);
+    const lang = pendelLage(225, 'Villmar', 'Firmensitz', 34);
+    expect(Math.abs(lang.wert.winkel)).toBeGreaterThan(30);
   });
 
   it('robust für jede Richtung: auch lange Namen bleiben im Rahmen und frei', () => {
@@ -99,6 +152,18 @@ describe('Entfernungsleiste (E-028)', () => {
     expect(Math.max(...reihen)).toBeLessThanOrEqual(zeilen - 1);
     expect(Math.min(...reihen)).toBeGreaterThanOrEqual(0);
     expect(lage.map((l) => l.id)).toEqual([...ldk].sort((a, b) => a.km - b.km || a.name.localeCompare(b.name, 'de')).map((o) => o.id));
+  });
+
+  it('senkrecht mit Hintergrund: alle Orte des Gebiets als leise Sprossen im Paar (kleine Kreise, Punkt 25)', () => {
+    const wetterau = getKreisPlaces('wetteraukreis').map((p) => ({ id: p.id, name: p.name, km: p.commute.distanceKm }));
+    const alle = getPublishedPlaces().map((p) => p.commute.distanceKm);
+    const html = renderToStaticMarkup(
+      createElement(Entfernungsleiste, { orte: wetterau, ausrichtung: 'senkrecht', hintergrundKm: alle, titel: 'Wetteraukreis' }),
+    );
+    expect(html.match(/class="[^"]*lsHintergrund/g)).toHaveLength(new Set(alle).size);
+    // Ohne Hintergrund keine Sprossen
+    const ohne = renderToStaticMarkup(createElement(Entfernungsleiste, { orte: wetterau, ausrichtung: 'senkrecht', titel: 'Wetteraukreis' }));
+    expect(ohne).not.toMatch(/lsHintergrund/);
   });
 
   it('waagerecht: Skala 0–35 km mit den Ringen, der hervorgehobene Ort mit Namen und Wert, role="img"', () => {

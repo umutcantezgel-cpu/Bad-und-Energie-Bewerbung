@@ -2,18 +2,20 @@
 
 Stand: 2026-10-12 · erzeugt mit `node scripts/places/measure.mjs` · Daten: `lib/places/data/messung.json`
 
-Quelle aller Strecken, Fahrzeiten, Postleitzahlen und Kreise auf den Ortsseiten (`/einsatzgebiet/…`). Die Seite nennt nur, was hier steht. **Freigabe des Inhabers:** offen (Liste prüfen, Orte streichen oder bestätigen). Bis zur Freigabe werden die Ortsseiten nicht gemergt (Plan „Messmethode“, Schritt 4; `docs/ROADMAP.md`).
+Quelle aller Strecken, Fahrzeiten, Postleitzahlen und Kreise auf den Ortsseiten (`/einsatzgebiet/…`). Die Seite nennt nur, was hier steht.
+
+**Freigabe des Inhabers:** Der Inhaber gibt diese Liste mit dem Merge des Pull Requests frei, der die Ortsseiten bringt. Nach `main` gemergt wird nur mit seiner ausdrücklichen Zustimmung. Im Branch sind alle aufgenommenen Orte veröffentlicht, und alle gehen mit dem Merge in einem Schritt live, nicht in Chargen (Entscheidung in `docs/ROADMAP.md` §10.1). Streicht er Orte, bekommen sie vor dem Merge einen Eintrag mit Grund in `PLACE_OVERRIDES` (`lib/places/data.ts`, Ablauf in `docs/operations/orte-pflegen.md`). Offen bis dahin: `docs/operations/fakten-abgleich.md` B32.
 
 ## Methode
 
 - **Firmensitz:** Siegmund-Hiepe-Str. 20, 35578 Wetzlar (OSM: 50.5525, 8.47465).
 - **Kandidaten:** alle Gemeinden der Kreise um Wetzlar und die Wetzlarer Stadtteile (Liste im Skript).
-- **Verortung:** Nominatim (OpenStreetMap). Messpunkt ist bei Gemeinden der Verwaltungssitz (`admin_centre` der Gemeindegrenze in OSM, Spalte „Messpunkt“, wenn er anders heißt als die Gemeinde), bei Wetzlarer Stadtteilen der Ortsmittelpunkt in OSM. Kreis und Postleitzahl kommen aus den OSM-Adressdaten; ein Kandidat zählt nur, wenn OSM den erwarteten Kreis bestätigt.
+- **Verortung:** Nominatim (OpenStreetMap). Messpunkt ist bei Gemeinden der Hauptort laut OpenStreetMap (`admin_centre` der Gemeindegrenze, Spalte „Messpunkt“, wenn er anders heißt als die Gemeinde), bei Wetzlarer Stadtteilen der Ortsmittelpunkt in OSM. Kreis und Postleitzahl kommen aus den OSM-Adressdaten; ein Kandidat zählt nur, wenn OSM den erwarteten Kreis bestätigt.
 - **Strecke und Fahrzeit:** OSRM-Routenplaner (OpenStreetMap, Profil Auto, ohne Verkehrslage), Messpunkt → Firmensitz. Gerundet auf ganze Kilometer und ganze Minuten.
 - **Regeln:** Aufgenommen wird nur, was höchstens 35 km Straße entfernt liegt (Fakt `radius35`). Gegenprobe: Straßenstrecke ≥ 0,95 × Luftlinie.
 - **Schreibweise:** Münchholzhausen heißt in OSM „Müchholzhausen“; die Seite nennt den amtlichen Namen.
 - **Gegenprobe Name:** Das OSM-Objekt muss den amtlichen Namen tragen (Feld `osmName` in `messung.json`, Test in `lib/places/__tests__/schema.test.ts`). Gesucht wird mit dem vollen Namen samt Klammerzusatz.
-- **Grenzen:** Die Fahrzeit ist ein Richtwert ohne Berufsverkehr. Gemeinden mit mehreren Ortsteilen werden ab dem Verwaltungssitz gemessen; einzelne Ortsteile können näher oder weiter liegen. Der Verwaltungssitz ist der Ort, den OpenStreetMap als `admin_centre` der Gemeinde führt; er ist nicht gegen die Anschrift des Rathauses geprüft.
+- **Grenzen:** Die Fahrzeit ist ein Richtwert ohne Berufsverkehr. Gemeinden mit mehreren Ortsteilen werden ab dem Hauptort gemessen; einzelne Ortsteile können näher oder weiter liegen. Der Hauptort ist der Ort, den OpenStreetMap als `admin_centre` der Gemeinde führt. Er ist nicht gegen die Anschrift des Rathauses geprüft; die Ortsseiten nennen ihn darum „Hauptort laut OpenStreetMap“, nicht Verwaltungssitz.
 
 ## Korrekturen
 

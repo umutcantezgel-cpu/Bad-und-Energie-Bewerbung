@@ -23,6 +23,7 @@ import {
   funnelOnlyLine,
   jobMetaLine,
   liveJobs,
+  themenBlocks,
 } from '../llms.txt/content';
 
 export const dynamic = 'force-static';
@@ -98,13 +99,15 @@ export function GET(): Response {
     `${REGION.headline} ${REGION.summary}`,
     '',
     ...einsatzgebietBlocks(),
-    '## 6. Daten und Feeds',
+    '## 6. Arbeiten bei uns',
+    ...themenBlocks(now),
+    '## 7. Daten und Feeds',
     `- Alle Stellen: ${base}/jobs`,
     `- JSON (schema.org JobPosting): ${base}/feeds/jobs.json`,
     `- Sitemap: ${base}/sitemap.xml`,
     `- Kurzfassung: ${base}/llms.txt`,
     '',
-    '## 7. Zitationshinweis',
+    '## 8. Zitationshinweis',
     citationHint(),
     '',
   ];

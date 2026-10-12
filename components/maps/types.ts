@@ -10,6 +10,11 @@ export interface RegionPlace extends CommutePlace {
    * the three business claims wait for the owner (MENSCHEN M-016, E-START-038).
    */
   character: string | null;
+  /**
+   * Straight-line distance to the centre in km as drawn (lib/maps/projection planeKm, three decimals), the measure of the rings: the radius switch, the hollow
+   * dots and the status of the result go by it, so dot, ring and sentence never disagree (Kritik 2, P1-1).
+   */
+  airKm: number;
   /** Same spot as the headquarters (closer than CENTER_MERGE_KM): drawn as the center house. */
   atCenter: boolean;
   /** Page of the place under /einsatzgebiet, where one exists („Mehr zu …“ in the explorer result). */

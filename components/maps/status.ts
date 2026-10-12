@@ -8,18 +8,22 @@ export function zoneLabel(place: Pick<RegionPlace, 'isCoreZone'>): string {
 }
 
 /**
- * Where a place lies relative to the chosen radius, by the distance of the place list (`distanceKm`, the
- * owner's figure, read as the road distance; KERN „Markierte Annahmen“), as the visitor reads it on the
- * card. The rings of the plan are drawn in straight-line distance; with today's data both agree (Gießen
- * 15 km / 12,8 km Luftlinie inside the 15 km ring, Herborn 24 km / 19,2 km between 15 and 25 km). The
- * hollow dots of the plan use the same rule, so dot, card and result never contradict each other.
+ * Where a place lies relative to the chosen radius, in straight-line distance (`airKm`), the measure of the rings
+ * („Radius um Wetzlar“, caption „Kreise in Luftlinie“). The hollow dots of the plan use the same rule (RadiusGraphic),
+ * so dot, ring and sentence never disagree: Herborn (27 km Strecke, 18,9 km Luftlinie) lies inside the 25 km ring.
+ * The road distance and the drive time stand above the sentence.
  */
-export function radiusStatus(place: Pick<RegionPlace, 'name' | 'distanceKm'>, radiusKm: number, radii: readonly number[]): string {
-  if (place.distanceKm <= radiusKm) return `${place.name} liegt innerhalb von ${radiusKm}${NBSP}km.`;
-  const ring = radii.find((km) => place.distanceKm <= km);
+export function radiusStatus(place: Pick<RegionPlace, 'name' | 'airKm'>, radiusKm: number, radii: readonly number[]): string {
+  if (place.airKm <= radiusKm) return `${place.name} liegt in Luftlinie innerhalb von ${radiusKm}${NBSP}km.`;
+  const ring = radii.find((km) => place.airKm <= km);
   return ring
-    ? `${place.name} liegt außerhalb von ${radiusKm}${NBSP}km, aber innerhalb von ${ring}${NBSP}km.`
-    : `${place.name} liegt außerhalb von ${radiusKm}${NBSP}km.`;
+    ? `${place.name} liegt in Luftlinie außerhalb von ${radiusKm}${NBSP}km, aber innerhalb von ${ring}${NBSP}km.`
+    : `${place.name} liegt in Luftlinie außerhalb von ${radiusKm}${NBSP}km.`;
+}
+
+/** Whether a place lies beyond the chosen ring (straight line): drawn hollow, the card dashed. */
+export function outsideRing(place: Pick<RegionPlace, 'airKm'>, radiusKm: number): boolean {
+  return place.airKm > radiusKm;
 }
 
 export interface MapsStatusInput {

@@ -610,8 +610,10 @@
   font-weight: 600;
 }
 
-/* Senkrecht (Kreis-Hub, Navy): Leitungspaar von 0 km oben bis 35 km unten, jeder Ort zweigt ab */
+/* Senkrecht (Kreis-Hub, Navy): Leitungspaar von 0 km oben bis 35 km unten, jeder Ort zweigt ab. Eine Zeile je Ort
+   (--zeile-min); am Desktop mindestens 24rem hoch, damit kleine Kreise (3 Orte, 10 Zeilen) die Fläche füllen. */
 .leisteSenkrecht {
+  --zeile: var(--zeile-min);
   --wertspalte: 2.5rem;
   --rohr: calc(var(--paar) + var(--m-strich) * 2);
   --abgang: 4rem;
@@ -619,6 +621,12 @@
   width: 100%;
   max-width: 24rem;
   height: calc(var(--zeilen) * var(--zeile));
+}
+
+@media (min-width: 64em) {
+  .leisteSenkrecht {
+    --zeile: max(var(--zeile-min), calc(24rem / var(--zeilen)));
+  }
 }
 
 .lsPaar {
@@ -629,6 +637,16 @@
   width: var(--rohr);
   border-left: var(--m-strich) solid var(--vorlauf);
   border-right: var(--m-strich) solid var(--ruecklauf);
+}
+
+/* Alle Orte des Gebiets als Sprossen im Paar, leise (Linienfarbe), damit die Orte des Kreises vorne bleiben */
+.lsHintergrund {
+  position: absolute;
+  left: calc(var(--wertspalte) + var(--a-2) + var(--m-strich));
+  width: var(--paar);
+  height: 0;
+  border-top: 2px solid var(--line-strong);
+  transform: translateY(-1px);
 }
 
 .lsStrich {

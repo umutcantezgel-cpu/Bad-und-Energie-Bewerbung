@@ -28,6 +28,9 @@ import { fileURLToPath } from 'url';
  *    containedInPlace an AdministrativeArea (the Kreis). Hubs (/einsatzgebiet and Kreis hubs) are a CollectionPage
  *    whose mainEntity is an ItemList; every ListItem has position i+1 and a url that is in the sitemap. Place and
  *    ItemList appear nowhere else.
+ *    Topic pages under /arbeiten-bei-uns (E-028): every indexable one carries exactly one BreadcrumbList. The hub
+ *    /arbeiten-bei-uns is a CollectionPage whose mainEntity is the ItemList of the topics (rules as above); a topic page
+ *    /arbeiten-bei-uns/<thema> is a plain WebPage without ItemList. Neither carries a Place.
  * 8. Every indexable document with a canonical is in the sitemap (.next/server/app/sitemap.xml.body), when built.
  * 9. JobPosting only on job pages /jobs/<slug> (ROADMAP §7, §10):
  *    - none on "/", "/jobs", "/bewerbung" or any other page,
@@ -44,6 +47,9 @@ const SITEMAP_FILE = path.join(APP_OUTPUT_DIR, 'sitemap.xml.body');
 const JOB_PAGE = /^\/jobs\/[^/]+$/;
 /** Gebietsseite und alles flach darunter (Orte und Kreis-Hubs). */
 const LOCAL_PAGE = /^\/einsatzgebiet(?:\/[^/]+)?$/;
+/** Themen-Hub und die Themen flach darunter (E-028). */
+const THEMEN_HUB = '/arbeiten-bei-uns';
+const THEMEN_PAGE = /^\/arbeiten-bei-uns(?:\/[^/]+)?$/;
 const SCRIPT_RE = /<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
 const SKIPPED_ROUTES = new Set(['/_global-error']);
 const GLOBAL_TYPES = ['Organization', 'Person', 'WebSite', 'LocalBusiness'];
@@ -335,6 +341,7 @@ function runGraphCheck() {
   let jobPagesWithPosting = 0;
   let webPages = 0;
   let localPages = 0;
+  let themenPages = 0;
   const sitemapUrls = readSitemapUrls();
   const globalIds = {};
   const fail = (relativePath, message) => {
@@ -410,9 +417,25 @@ function runGraphCheck() {
         if (itemLists.length > 0) fail(relativePath, 'place page must not carry an ItemList');
         for (const place of placesInGraph) for (const problem of placeProblems(place)) fail(relativePath, problem);
       }
+    } else if (THEMEN_PAGE.test(route) && canonical && !noindex) {
+      themenPages++;
+      const crumbs = nodes.filter((n) => hasType(n, 'BreadcrumbList'));
+      if (crumbs.length !== 1) fail(relativePath, `topic page needs exactly 1 BreadcrumbList (visible path), found ${crumbs.length}`);
+      if (placesInGraph.length > 0) fail(relativePath, 'topic page must not carry a Place');
+      const pageNode = nodes.find((n) => n.url === canonical && WEB_PAGE_TYPES.some((type) => hasType(n, type)));
+      if (route === THEMEN_HUB) {
+        if (!pageNode || !hasType(pageNode, 'CollectionPage')) fail(relativePath, 'topic hub must be a CollectionPage');
+        if (itemLists.length !== 1) fail(relativePath, `topic hub needs exactly 1 ItemList, found ${itemLists.length}`);
+        for (const list of itemLists) for (const problem of itemListProblems(list, sitemapUrls)) fail(relativePath, problem);
+      } else {
+        if (!pageNode || !hasType(pageNode, 'WebPage')) fail(relativePath, 'topic page must be a plain WebPage');
+        if (itemLists.length > 0) fail(relativePath, 'topic page must not carry an ItemList');
+      }
     } else {
       if (placesInGraph.length > 0) fail(relativePath, `Place is only allowed on /einsatzgebiet/<slug> (found on ${route})`);
-      if (itemLists.length > 0) fail(relativePath, `ItemList is only allowed on the Einsatzgebiet hubs (found on ${route})`);
+      if (itemLists.length > 0) {
+        fail(relativePath, `ItemList is only allowed on the Einsatzgebiet hubs and /arbeiten-bei-uns (found on ${route})`);
+      }
     }
 
     const postings = nodes.filter((n) => hasType(n, 'JobPosting'));
@@ -445,6 +468,7 @@ function runGraphCheck() {
   console.log(
     `✅ All ${checked} HTML documents passed JSON-LD graph checks: one @graph each, ${webPages} WebPage nodes = canonical, ` +
       `${jobPagesWithPosting} job pages with a valid JobPosting, ${localPages} local pages (Place/ItemList), ` +
+      `${themenPages} topic pages (hub with ItemList), ` +
       `${sitemapUrls ? `${sitemapUrls.size} sitemap URLs` : 'no sitemap'}, global @ids ${JSON.stringify(globalIds)}.`,
   );
 }

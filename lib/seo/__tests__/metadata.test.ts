@@ -72,6 +72,7 @@ describe('generatePageMetadata: share image', () => {
   // A new image file needs a decision in its page: ogImage 'file' or an explicit image.
   it('knows every image file under app/', () => {
     expect(findImageFiles(path.join(ROOT, 'app')).sort()).toEqual([
+      'app/arbeiten-bei-uns/[thema]/opengraph-image.tsx',
       'app/einsatzgebiet/[slug]/opengraph-image.tsx',
       'app/jobs/[slug]/opengraph-image.tsx',
       'app/opengraph-image.tsx',

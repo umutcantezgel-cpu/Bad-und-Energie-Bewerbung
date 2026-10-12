@@ -6,8 +6,11 @@ import messung from './data/messung.json';
  * in einem Client-Modul laufen dürfte; die Form der Rohdaten prüft data.ts beim Laden.
  */
 
-/** Commit, der Messung und Protokoll festhält. Neue Messung: neuer Commit, neuer Wert hier. */
-export const MEASUREMENT_COMMIT = 'b0749f2';
+/**
+ * Commit, der Messung und Protokoll festhält. Neue Messung: neuer Commit, neuer Wert hier. 83c9e1c enthält die Korrektur
+ * zu Allendorf (Lumda) vom 2026-10-12 (54 Orte); die Werte aller veröffentlichten Orte sind dieselben wie in b0749f2.
+ */
+export const MEASUREMENT_COMMIT = '83c9e1c';
 
 /** Quelle jeder veröffentlichten Strecke (Muster im Schema: orte-messung.md@<sha>). */
 export const MEASUREMENT_SOURCE = `docs/operations/orte-messung.md@${MEASUREMENT_COMMIT}`;
@@ -23,7 +26,7 @@ export interface MeasuredPlace {
   lat: number;
   lng: number;
   postalCode: string;
-  /** Messpunkt, wenn er anders heißt als der Ort (Verwaltungssitz der Gemeinde). */
+  /** Messpunkt, wenn er anders heißt als der Ort (Hauptort der Gemeinde laut OpenStreetMap, `admin_centre`). */
   seat?: string;
   osm: string;
   /** Name des OSM-Objekts der Verortung (Gegenprobe: muss der amtliche Name sein, siehe osmSpelling). */

@@ -4,6 +4,7 @@ import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
 import { TextLink } from '@/components/ui/TextLink';
 import type { Job } from '@/lib/jobs/registry';
+import { ARBEITEN_LINK } from '@/lib/themen/registry';
 import { VERGLEICH, stellenprofil, vergleichEinleitung } from './inhalt-text';
 import styles from './liste.module.css';
 
@@ -66,6 +67,11 @@ export function Stellenvergleich({ jobs }: StellenvergleichProps) {
             </li>
           ))}
         </ul>
+        {/* Themen-Hub (E-028): Gehalt, Fahrzeug und Werkzeug, Wärmepumpen, Betrieb, diskreter Wechsel */}
+        <TextLink href={ARBEITEN_LINK.href} standalone className="self-start">
+          {ARBEITEN_LINK.label}
+          <Icon name="arrow-right" size="sm" className="shrink-0" />
+        </TextLink>
       </Container>
     </Section>
   );

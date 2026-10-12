@@ -11,7 +11,7 @@ import { TextLink } from '@/components/ui/TextLink';
 import { Entfernungsleiste } from '@/components/zeichnung/Entfernungsleiste';
 import { Pendelweg } from '@/components/zeichnung/Pendelweg';
 import type { Job } from '@/lib/jobs/registry';
-import { HEADQUARTERS, airKmBetween, bearingDeg, neighborsOf } from '@/lib/places/derive';
+import { HEADQUARTERS, airKmBetween, bearingDeg } from '@/lib/places/derive';
 import { pfadItems, placePfad } from '@/lib/places/jsonld';
 import {
   EINSATZGEBIET_PATH,
@@ -33,9 +33,9 @@ import {
 } from '@/lib/places/text';
 import { cn } from '@/lib/utils/cn';
 import { Abschnittskopf, Absaetze, Faktenband, Kontakt, Messhinweis, OrtsKarten, bloecke, kartenWerte, titelId, type OrtsKarteDaten } from './Bausteine';
-import { ETIKETT, NEUER_TAB, planBeschreibungOrt, inDerselbenRichtung } from './einsatzgebiet-text';
+import { ETIKETT, NEUER_TAB, PLAN_LEGENDE_STADTTEILE_STADT, planBeschreibungOrt, inDerselbenRichtung } from './einsatzgebiet-text';
 import styles from './einsatzgebiet.module.css';
-import { placeView } from './karte';
+import { ortPlanOrte, placeView } from './karte';
 import { OrtTitel } from './OrtTitel';
 import { OrtPlan } from './Plaene';
 
@@ -45,6 +45,9 @@ export interface OrtSeiteProps {
   /** Die Stellen, die gerade live sind (dieselben, aus denen `text` gebaut ist). */
   jobs: readonly Job[];
 }
+
+/** Höchstabstand (Luftlinie ab dem Ort) der Karten „Ebenfalls Richtung …“. */
+const RICHTUNG_KARTEN_MAX_KM = 10;
 
 const abschnitt = (text: PlacePageText, id: PlaceSectionId): TextSection<PlaceSectionId> | undefined =>
   text.sections.find((section) => section.id === id);
@@ -65,7 +68,8 @@ export function OrtSeite({ place, text, jobs }: OrtSeiteProps) {
   const kreisAbschnitt = abschnitt(text, 'kreis');
   const band = abschnitt(text, 'band');
   const kontakt = abschnitt(text, 'kontakt');
-  const nachbarOrte = neighborsOf(place, published, 4);
+  // Plan: der Ort, seine vier Nachbarn und auf der Stadtseite alle Stadtteile (dieselben Nachbarn wie im Text)
+  const planOrte = ortPlanOrte(place, published);
   const kreisOrte = getKreisPlaces(place.kreisId);
 
   // Ortskarten nach der Gruppe ihres Links (lib/places/text.ts): die Nachbarn mit Abstand, darunter abgesetzt die
@@ -74,7 +78,7 @@ export function OrtSeite({ place, text, jobs }: OrtSeiteProps) {
     id: p.id,
     name: p.name,
     href: placePath(p),
-    werte: kartenWerte(p.commute.distanceKm, p.commute.minutes, mitAbstand ? airKmBetween(place, p) : undefined),
+    werte: kartenWerte(p.commute.distanceKm, p.commute.minutes, mitAbstand ? { km: airKmBetween(place, p), von: place.name } : undefined),
   });
   const orteDerGruppe = (...gruppen: LinkGruppe[]) =>
     text.links
@@ -82,7 +86,12 @@ export function OrtSeite({ place, text, jobs }: OrtSeiteProps) {
       .map((link) => published.find((p) => placePath(p) === link.href))
       .filter((p): p is Place => p !== undefined && p.id !== place.id);
   const karten = orteDerGruppe('nachbar').map((p) => karte(p, true));
-  const richtungKarten = orteDerGruppe('richtung').map((p) => karte(p, true));
+  // „Ebenfalls Richtung …“ als Karte nur für Orte in der Nähe; weiter entfernte stehen als schlichter Link darunter
+  // (Kritik 2: Lich als Karte auf der Seite von Dutenhofen, Hermannstein auf der von Bad Endbach). Jeder Ort, den der
+  // Text nennt, bleibt verlinkt.
+  const richtungOrte = orteDerGruppe('richtung');
+  const richtungKarten = richtungOrte.filter((p) => airKmBetween(place, p) <= RICHTUNG_KARTEN_MAX_KM).map((p) => karte(p, true));
+  const richtungWeit = richtungOrte.filter((p) => airKmBetween(place, p) > RICHTUNG_KARTEN_MAX_KM);
   const kreisKarten = orteDerGruppe('kreisort').map((p) => karte(p, true));
   const stadtteilKarten = orteDerGruppe('stadtteil').map((p) => karte(p, false));
   const eltern = place.parentId ? getPlaceById(place.parentId) : undefined;
@@ -94,6 +103,7 @@ export function OrtSeite({ place, text, jobs }: OrtSeiteProps) {
       <div className={styles.kopf} data-motion="erdleitung">
         <Seitenkopf
           variante="erzaehl"
+          bildBreit
           etikett={text.etikett}
           titel={<OrtTitel h1={text.meta.h1} name={place.name} />}
           einleitung={lead ? <Absaetze blocks={lead.blocks} /> : null}
@@ -101,7 +111,8 @@ export function OrtSeite({ place, text, jobs }: OrtSeiteProps) {
           mikrotext={LISTEN_MIKROTEXT}
           zweitweg={listenZweitweg(jobs.length)}
           unterzeile={text.unterzeile.join(' ')}
-          masse={text.masse}
+          // Am Handy ohne die Richtung: Der Pendelweg mit Nordpfeil zeigt sie, der Abschnitt Arbeitsweg nennt sie
+          masse={text.masse.map((mass, i) => (i === 3 ? { ...mass, nurBreit: true } : mass))}
           panel={
             <div className={styles.kopfbild}>
               <Pendelweg ort={place.name} kursGrad={bearingDeg(HEADQUARTERS, place)} strasseKm={place.commute.distanceKm} />
@@ -133,11 +144,17 @@ export function OrtSeite({ place, text, jobs }: OrtSeiteProps) {
               </a>
             </div>
             <OrtPlan
-              view={placeView(place, nachbarOrte.map((n) => n.place))}
+              view={placeView(place, [...planOrte.nachbarn, ...planOrte.stadtteile])}
               selectedId={place.id}
-              emphasizeIds={[place.id, ...nachbarOrte.map((n) => n.place.id)]}
+              emphasizeIds={planOrte.ids}
+              ohneNamen={planOrte.ohneNamen}
+              legendeOhneNamen={PLAN_LEGENDE_STADTTEILE_STADT}
               id={`plan-${place.id}`}
-              beschreibung={planBeschreibungOrt(place.name, nachbarOrte.map((n) => n.place.name))}
+              beschreibung={planBeschreibungOrt(
+                place.name,
+                planOrte.nachbarn.map((p) => p.name),
+                planOrte.stadtteile.map((p) => p.name),
+              )}
             />
           </div>
           <div className={styles.leistenBlock}>
@@ -187,10 +204,22 @@ export function OrtSeite({ place, text, jobs }: OrtSeiteProps) {
               </div>
               <div className={styles.kartenStapel}>
                 {karten.length > 0 ? <OrtsKarten orte={karten} label={nachbarn.heading} /> : null}
-                {richtungKarten.length > 0 ? (
+                {richtungOrte.length > 0 ? (
                   <div className={styles.kartenGruppe}>
                     <p className="text-etikett text-ink-2">{inDerselbenRichtung(place)}</p>
-                    <OrtsKarten orte={richtungKarten} label={inDerselbenRichtung(place)} />
+                    {richtungKarten.length > 0 ? <OrtsKarten orte={richtungKarten} label={inDerselbenRichtung(place)} /> : null}
+                    {richtungWeit.length > 0 ? (
+                      <ul className={styles.wege} aria-label={`${inDerselbenRichtung(place)}, weiter entfernt`}>
+                        {richtungWeit.map((p) => (
+                          <li key={p.id}>
+                            <TextLink href={placePath(p)} standalone>
+                              {p.name}
+                              <Icon name="arrow-right" size="sm" className="shrink-0" />
+                            </TextLink>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
                   </div>
                 ) : null}
                 {kreisKarten.length > 0 ? (

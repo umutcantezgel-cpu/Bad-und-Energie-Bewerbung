@@ -5,12 +5,12 @@ import {
   LANDSCAPE_LABEL_FONT_SIZE,
   RING_LABEL_FONT_SIZE,
   SELECTED_RING_RADIUS,
-  graphicLabels,
-  labelFrame,
   pendelPaths,
+  planLabels,
   ringLabels,
 } from './graphic';
-import type { RadiusView, RegionMapData } from './types';
+import { outsideRing } from './status';
+import type { RadiusView, RegionMapData, RegionPlace } from './types';
 
 export interface RadiusGraphicProps {
   data: RegionMapData;
@@ -35,6 +35,16 @@ export interface RadiusGraphicProps {
    * which the centre label and the table name). All other emphasized places are always named.
    */
   unnamedIds?: readonly string[];
+  /**
+   * Name at the house instead of the centre's name (pages under /einsatzgebiet: „Firmensitz“ when the town of the
+   * centre is a place on the plan with its own name, so „Wetzlar“ does not stand twice side by side).
+   */
+  centerLabel?: string;
+  /**
+   * Every emphasized place filled (pages under /einsatzgebiet: all places lie in the area). Omitted: hollow beyond the
+   * chosen ring in straight-line distance, as the ring is drawn (home map, explorer).
+   */
+  allFilled?: boolean;
   className?: string;
 }
 
@@ -47,7 +57,7 @@ const lineProps = { strokeWidth: STRICH, vectorEffect: 'non-scaling-stroke' as c
 /**
  * Einsatzgebiet als Plan (E-START-032/-033/-036/-038): der gewählte Ring füllt den Rahmen (Wärme-
  * fläche), die kleineren Ringe gepunktet, Lahn, Dill, A45 und B49 schematisch darunter, Orte an
- * ihrer echten Lage, das Haus der Werkstatt in der Mitte. Der gewählte Ort hängt mit dem
+ * ihrer echten Lage, das Haus des Firmensitzes in der Mitte. Der gewählte Ort hängt mit dem
  * Leitungspaar an Wetzlar: Vorlauf rot hin, Rücklauf blau zurück. Rot und Blau nur als Linie (E-016).
  * Keine Kacheln, keine Fremdanfrage, keine Bewegung (Umschalten wechselt die Ansicht sofort).
  */
@@ -62,22 +72,16 @@ export function RadiusGraphic({
   description,
   labelPriority,
   unnamedIds = [],
+  centerLabel,
+  allFilled = false,
   className,
 }: RadiusGraphicProps) {
   const { size, origin, radius } = view;
   const emphasized = (id: string) => !emphasizeIds || emphasizeIds.includes(id) || id === selectedId;
-  const fullFrame = labelFrame(data, view);
-  // Gedämpfte Orte bekommen keinen Namen; ihre Punkte dürfen unter einem Namen liegen (klein und hohl).
-  // Hervorgehobene Orte (Seiten unter /einsatzgebiet) tragen alle ihren Namen, nötigenfalls mit Hinweislinie.
-  const frame = emphasizeIds
-    ? {
-        ...fullFrame,
-        places: fullFrame.places.filter((place) => emphasized(place.id)),
-        mustLabel: fullFrame.places.filter((place) => emphasized(place.id) && !unnamedIds.includes(place.id)).map((place) => place.id),
-        priority: labelPriority,
-      }
-    : { ...fullFrame, priority: labelPriority };
-  const labels = graphicLabels(frame, selectedId);
+  const { labels, hiddenLandscape } = planLabels(data, view, { selectedId, emphasizeIds, unnamedIds, labelPriority, centerLabel });
+  const inFrameNames = data.places
+    .filter((place, i) => view.points[i]?.inFrame && !place.atCenter && emphasized(place.id))
+    .map((place) => place.shortName ?? place.name);
   const rings = ringLabels(view);
   const selectedIndex = data.places.findIndex((place) => place.id === selectedId);
   const selectedPlace = selectedIndex >= 0 ? data.places[selectedIndex] : null;
@@ -85,10 +89,9 @@ export function RadiusGraphic({
   const centerSelected = selectedPlace?.atCenter ?? false;
   const pendel =
     selectedPlace && selectedPoint?.inFrame && !selectedPlace.atCenter ? pendelPaths(origin, selectedPoint.drawn) : null;
-  const inFrameNames = frame.places.filter((place) => !place.atCenter).map((place) => place.name);
-  // Hohl = außerhalb des gewählten Radius, nach der Entfernung der Ortsliste (wie radiusStatus in status.ts),
-  // damit Punkt, Kärtchen und Ergebnis dasselbe sagen. Die Lage des Punkts folgt der Luftlinie.
-  const outside = (distanceKm: number) => distanceKm > view.radiusKm;
+  // Hohl = außerhalb des gewählten Rings in Luftlinie (wie radiusStatus in status.ts): genau die Punkte jenseits des
+  // gezeichneten Kreises, damit Punkt, Ring und Ergebnis dasselbe sagen (Kritik 2: Herborn lag hohl im 25-km-Kreis).
+  const outside = (place: RegionPlace) => !allFilled && outsideRing(place, view.radiusKm);
   const maskId = `${titleId}-landschaft`;
 
   return (
@@ -148,7 +151,8 @@ export function RadiusGraphic({
       <g aria-hidden="true" paintOrder="stroke" strokeLinejoin="round" className="stroke-waerme">
         {view.landscape.map(
           (line) =>
-            line.label && (
+            line.label &&
+            !hiddenLandscape.includes(line.id) && (
               <text
                 key={line.id}
                 x={line.label.x}
@@ -201,7 +205,7 @@ export function RadiusGraphic({
               cx={x}
               cy={y}
               r={isSelected ? 5.5 : 4.5}
-              className={outside(place.distanceKm) ? 'fill-surface-raised stroke-brand' : 'fill-brand stroke-waerme'}
+              className={outside(place) ? 'fill-surface-raised stroke-brand' : 'fill-brand stroke-waerme'}
               strokeWidth={2}
               vectorEffect="non-scaling-stroke"
             />
@@ -209,7 +213,7 @@ export function RadiusGraphic({
         );
       })}
 
-      {/* Haus der Werkstatt in der Mitte */}
+      {/* Haus des Firmensitzes in der Mitte */}
       <path
         d={CENTER_HOUSE}
         transform={`translate(${origin.x} ${origin.y})`}

@@ -191,6 +191,15 @@ export function neighborsOf(place: Place, places: readonly Place[], n = 4): Neig
     }));
 }
 
+/**
+ * Nachbarorte einer Ortsseite (Text, Karten und Plan): die n nächsten Orte in Luftlinie. Eine Stadt zählt ihre eigenen
+ * Stadtteile nicht mit; die haben ihren eigenen Abschnitt (Kritik 2: Wetzlar nannte Garbenheim, Nauborn, Hermannstein
+ * und Naunheim seine „Nachbarorte“). Nachbarn von Wetzlar sind die Orte ringsum.
+ */
+export function placeNeighbors(place: Place, places: readonly Place[], n = 4): Neighbor[] {
+  return neighborsOf(place, place.kind === 'stadt' ? places.filter((other) => other.parentId !== place.id) : places, n);
+}
+
 /** Median; bei gerader Anzahl der Mittelwert der beiden mittleren Werte. */
 export function median(values: readonly number[]): number {
   if (values.length === 0) throw new RangeError('median: keine Werte');

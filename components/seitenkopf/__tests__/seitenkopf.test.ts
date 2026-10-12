@@ -140,3 +140,38 @@ describe('Seitenkopf (SEITENKOPF-01): Probeseite rendert jede Variante', () => {
     }
   });
 });
+
+describe('Seitenkopf: Maße am Handy und zweispaltig (lokale Seiten, Review Phase 2 Punkt 29)', () => {
+  const basis: SeitenkopfProps = {
+    variante: 'erzaehl',
+    etikett: '54 Orte · 6 Kreise',
+    titel: 'Unser Einsatzgebiet',
+    aktion: { href: '/bewerbung', label: 'Jetzt bewerben' },
+    masse: [
+      { wert: '2 km', name: 'Nächster Ort: Steindorf', nurBreit: true },
+      { wert: '35 km', name: 'Weitester Ort: Bad Endbach', nurBreit: true },
+      { wert: '23 min', name: 'Mittlere Fahrzeit' },
+      { wert: '22 km', name: 'Mittlere Strecke' },
+    ],
+    masseZweispaltig: true,
+  };
+
+  it('Maße mit nurBreit stehen im DOM, am Handy ausgeblendet; zweispaltig ab Desktop', () => {
+    const html = render(basis);
+    expect(html.match(/massNurBreit/g)).toHaveLength(2);
+    expect(html).toMatch(/class="[^"]*masseZweispaltig/);
+    expect(plain(html)).toContain('Weitester Ort: Bad Endbach');
+    expect(css).toMatch(/@media \(max-width: 37\.49em\) \{\s*\.massNurBreit \{\s*display: none;/);
+    expect(css).toMatch(/\.masseZweispaltig \{\s*display: grid;\s*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\);/);
+  });
+
+  it('bildBreit: am Tablet steht die Zeichnung über den Maßen (eine Spalte)', () => {
+    expect(render({ ...basis, bildBreit: true })).toMatch(/<header class="[^"]*bildBreit/);
+    expect(css).toMatch(/@media \(min-width: 37\.5em\) and \(max-width: 63\.99em\) \{\s*\.bildBreit \.panel \{\s*grid-template-columns: minmax\(0, 1fr\);/);
+  });
+
+  it('ohne die Optionen bleibt alles wie bisher', () => {
+    const html = render({ ...basis, masse: basis.masse!.map(({ wert, name }) => ({ wert, name })), masseZweispaltig: false });
+    expect(html).not.toMatch(/massNurBreit|masseZweispaltig|bildBreit/);
+  });
+});

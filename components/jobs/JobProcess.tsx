@@ -5,6 +5,11 @@ import { cn } from '@/lib/utils/cn';
 
 export interface JobProcessProps {
   audience: ProcessAudience;
+  /**
+   * Diskretionszusage unter den Schritten (Standard an; bei der Ausbildung nie). Die Themenseite „Diskret wechseln“
+   * nennt sie schon im Kopf und schaltet sie hier ab, damit der Satz nicht zweimal auf der Seite steht.
+   */
+  zusage?: boolean;
   className?: string;
 }
 
@@ -35,10 +40,10 @@ function Leitungsstrang() {
  * Etikett, h2 mit Rohrklammer, Schritte mit Nummer in Martian Mono am Leitungsstrang, darunter die
  * Diskretionszusage (nicht bei der Ausbildung).
  */
-export function JobProcess({ audience, className }: JobProcessProps) {
+export function JobProcess({ audience, zusage = true, className }: JobProcessProps) {
   const steps = getProcessSteps(audience);
   const intro = getProcessIntro(audience);
-  const discretion = getDiscretionPromise(audience);
+  const discretion = zusage ? getDiscretionPromise(audience) : null;
   return (
     <section aria-labelledby="stelle-ablauf" className={cn('flex flex-col gap-12', className)}>
       <div className="flex max-w-3xl flex-col gap-4">

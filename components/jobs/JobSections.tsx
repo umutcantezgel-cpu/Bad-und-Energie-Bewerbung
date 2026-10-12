@@ -3,6 +3,8 @@ import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
 import { FACTS } from '@/lib/content/facts';
 import { getJobSections, type JobSection } from '@/lib/jobs/format';
+import { GEHALT_VERGLEICH_LINK } from '@/lib/themen/registry';
+import { TextLink } from '@/components/ui/TextLink';
 import type { Job } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
 import { PackageList, type PackageListItem } from './PackageList';
@@ -191,6 +193,11 @@ export function JobSections({ job, className }: JobSectionsProps) {
                 <section aria-labelledby={headingId('eckdaten')} className="flex flex-col gap-6 sm:pt-8">
                   <Ueberschrift id="eckdaten">{eckdaten.heading}</Ueberschrift>
                   <PackageList items={toRows(eckdaten.items ?? [])} />
+                  {/* Themenseite Gehalt (E-028): alle Spannen nebeneinander, genau ein Link je Stellenseite */}
+                  <TextLink href={GEHALT_VERGLEICH_LINK.href} standalone className="self-start">
+                    {GEHALT_VERGLEICH_LINK.label}
+                    <Icon name="arrow-right" size="sm" className="shrink-0" />
+                  </TextLink>
                 </section>
               ) : null}
             </div>

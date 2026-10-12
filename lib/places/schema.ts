@@ -14,7 +14,10 @@ export const PLACE_KINDS = ['stadt', 'stadtteil', 'gemeinde'] as const;
 /** published: eigene Seite · pending: gemessen, noch nicht freigegeben · merged/archived: 308 auf die Kreis- bzw. Gebietsseite. */
 export const PLACE_STATUSES = ['published', 'pending', 'merged', 'archived'] as const;
 
-/** Gebietsregel (Fakt radius35, Inhaber 2026-10-12): höchstens 35 km Straße bis zum Firmensitz. */
+/**
+ * Auswahl der Ortsseiten: höchstens 35 km Straße bis zum Firmensitz. Der Fakt radius35 (Inhaber 2026-10-12) sagt nur
+ * „Umkreis von 35 km um Wetzlar“; ob Straße oder Luftlinie gemeint ist, ist offen (fakten-abgleich B33).
+ */
 export const MAX_ROAD_KM = MEASUREMENT.maxRoadKm;
 /** Gegenprobe der Messung: Straßenstrecke ≥ 0,95 × Luftlinie (gerundete km dürfen knapp darunter liegen). */
 export const MIN_ROAD_TO_AIR = 0.95;
@@ -73,7 +76,7 @@ export const PlaceSchema = z
     postalCode: z.string().regex(/^\d{5}$/, 'PLZ mit 5 Ziffern'),
     lat: z.number().min(-90).max(90),
     lng: z.number().min(-180).max(180),
-    /** Messpunkt, wenn er anders heißt als der Ort (Verwaltungssitz der Gemeinde). */
+    /** Messpunkt, wenn er anders heißt als der Ort (Hauptort der Gemeinde laut OpenStreetMap, `admin_centre`). */
     seat: z.string().min(2).optional(),
     /** OSM-Objekt der Verortung, z. B. „relation/13783388“. */
     osm: z.string().regex(/^(?:node|way|relation)\/\d+$/).optional(),

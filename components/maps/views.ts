@@ -1,7 +1,7 @@
 import { REGION, type RegionLocation } from '@/lib/content/region';
 import { regionalLocations } from '@/lib/data/locations';
 import { CENTER_MERGE_KM } from '@/lib/maps/google-maps-config';
-import { createRadiusProjection, haversineKm } from '@/lib/maps/projection';
+import { createRadiusProjection, haversineKm, planeKm } from '@/lib/maps/projection';
 import { GRAPHIC_PADDING, GRAPHIC_SIZE, centerBox, clearOfHouse, ringLabels, ringsFor } from './graphic';
 import { projectLandscape } from './landscape';
 import type { RadiusView, RegionMapData, RegionPlace } from './types';
@@ -60,6 +60,8 @@ export function regionPlaces(locations: readonly MapLocation[] = REGION.location
     postalCode: location.postalCode,
     distanceKm: location.distanceKm,
     commuteMinutes: location.commuteMinutes,
+    // Luftlinie in der Ebene des Plans (wie gezeichnet), damit hohler Punkt und Ring nie auseinanderfallen
+    airKm: Math.round(planeKm(center, { lat: location.latitude, lng: location.longitude }) * 1000) / 1000,
     isCoreZone: location.isCoreZone,
     character: location.character === undefined ? placeCharacter(location.id) : location.character,
     atCenter: isAtCenter(location),

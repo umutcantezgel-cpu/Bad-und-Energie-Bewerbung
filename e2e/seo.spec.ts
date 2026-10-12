@@ -1,5 +1,5 @@
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
-import { LIVE_JOB_SLUGS, LOCAL_PAGES, PUBLISHED_JOBS, ROUTES, channelJobSlugs, waitForSettled } from './support/site';
+import { LIVE_JOB_SLUGS, LOCAL_PAGES, PUBLISHED_JOBS, ROUTES, THEMEN_PAGES, channelJobSlugs, waitForSettled } from './support/site';
 
 /**
  * Strukturierte Daten, Feeds und Sitemap (ROADMAP §9, §10, §14), dazu ein Offline-Crawl nach den
@@ -101,6 +101,12 @@ test('Sitemap listet die Gebietsseite, jeden Kreis-Hub und jeden veröffentlicht
   expect(locs).not.toContain('/einsatzgebiet/landkreis-marburg-biedenkopf');
   // lastmod nie „heute“ als Platzhalter: jedes Datum JJJJ-MM-TT
   for (const m of xml.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)) expect(m[1]).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+});
+
+test('Sitemap listet den Themen-Hub und jede Themenseite (E-028)', async ({ request }) => {
+  const response = await request.get('/sitemap.xml');
+  const locs = [...(await response.text()).matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => new URL(match[1]).pathname);
+  for (const page of THEMEN_PAGES) expect(locs, page.path).toContain(page.path);
 });
 
 /** Alle <loc> der Sitemap, unverändert (absolute URLs). */

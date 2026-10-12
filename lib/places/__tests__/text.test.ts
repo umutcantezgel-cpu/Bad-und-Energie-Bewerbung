@@ -16,7 +16,9 @@ import {
   getKreisPageText,
   getPlacePageText,
   joinList,
+  kontaktText,
   labeled,
+  measurementNote,
   sectionText,
   whatsappGreeting,
   type PlacePageText,
@@ -94,13 +96,21 @@ describe('Ortsseite: Abschnitte', () => {
     ]);
   });
 
-  it('Arbeitsweg: Messung ehrlich benannt, auf jeder Seite gleich', () => {
+  it('Arbeitsweg: Messung ehrlich benannt, mit Datum, Werkzeug und Ortsnamen', () => {
     expect(MEASUREMENT_NOTE).toContain('OpenStreetMap');
     expect(MEASUREMENT_NOTE).toContain('ohne Berufsverkehr');
-    for (const p of allPages) {
-      const blocks = section(p, 'arbeitsweg')!.blocks;
-      expect(blocks.at(-1)).toEqual({ kind: 'gemeinsam', text: MEASUREMENT_NOTE });
+    // Nennt ein Satz davor den Startpunkt, steht der Hinweis ohne Namen; sonst mit dem Ortsnamen in der Mitte.
+    for (const place of getPublishedPlaces()) {
+      const blocks = section(page(place.id), 'arbeitsweg')!.blocks;
+      expect(blocks.at(-1)).toEqual({ kind: 'gemeinsam', text: measurementNote(place, blocks.length > 2) });
+      expect(blocks.filter((b) => b.text.includes(place.name)).length, place.id).toBeLessThanOrEqual(2);
     }
+    expect(plain(measurementNote({ name: 'Herborn' }))).toBe(
+      'Richtwert ohne Berufsverkehr, für Herborn gemessen am 12. Oktober 2026 mit OpenStreetMap (OSRM).',
+    );
+    expect(measurementNote({ name: 'Nauborn' }, true)).toBe(MEASUREMENT_NOTE);
+    expect(section(page('herborn'), 'arbeitsweg')!.blocks.at(-1)!.text).toContain('für Herborn');
+    expect(section(page('nauborn'), 'arbeitsweg')!.blocks.at(-1)!.text).toBe(MEASUREMENT_NOTE);
   });
 
   it('Messpunkt: Verwaltungssitz wird genannt, wo er anders heißt', () => {
@@ -110,18 +120,21 @@ describe('Ortsseite: Abschnitte', () => {
     expect(text(page('nauborn'), 'arbeitsweg')).toContain('Ortsmittelpunkt');
   });
 
-  it('Stellen: kurze Einleitung ohne Beträge (die nennt die Liste), Kundendienst mit „Fahrt ab Wohnort“', () => {
+  it('Stellen: kurze Einleitung ohne Beträge (die nennt die Liste); „Fahrt ab Wohnort“ nur auf den Kreis-Hubs', () => {
     const stellen = section(page('asslar'), 'stellen')!;
     const all = plain(stellen.blocks.map((b) => b.text).join(' '));
-    expect(stellen.blocks[0].text).toBe(`Offen sind ${jobs.length} Stellen, jede mit Gehalt bzw. Vergütung:`);
+    expect(stellen.blocks[0].text).toBe(`Offen sind ${['null', 'ein', 'zwei', 'drei', 'vier', 'fünf', 'sechs'][jobs.length] ?? jobs.length} Stellen, jede mit Gehalt bzw. Vergütung:`);
     for (const job of jobs) expect(all).not.toContain(plain(formatSalaryAmount(job)!));
     expect(text(page('asslar', { jobs: jobs.filter((j) => j.employment.kind !== 'ausbildung').slice(0, 1) }), 'stellen')).toMatch(
       /^Offen ist eine Stelle, mit Gehalt:/,
     );
-    const vehicle = stellen.blocks.find((b) => b.factIds?.includes('vehicle'))!;
+    expect(stellen.blocks.every((b) => b.kind === 'gemeinsam')).toBe(true);
+    // Auf 54 Ortsseiten wäre der Satz derselbe (Ähnlichkeit der gebauten Seiten); der Kreis-Hub trägt ihn.
+    for (const p of allPages) expect(section(p, 'stellen')!.blocks.some((b) => b.factIds?.includes('vehicle')), p.placeId).toBe(false);
+    const hubStellen = getKreisPageText(getKreisById('lahn-dill-kreis')!, { jobs }).sections.find((s) => s.id === 'stellen')!;
+    const vehicle = hubStellen.blocks.find((b) => b.factIds?.includes('vehicle'))!;
     expect(vehicle.text).toContain('Wohnort');
     expect(FACTS.vehicle.long).toContain(vehicle.text.replace('Im Kundendienst gilt: ', ''));
-    expect(stellen.blocks.every((b) => b.kind === 'gemeinsam')).toBe(true);
   });
 
   it('ohne offene Stellen: ehrlicher Hinweis, keine Gehaltsspanne in der Description', () => {
@@ -144,7 +157,12 @@ describe('Ortsseite: Abschnitte', () => {
     expect(DEFAULT_WHATSAPP_MESSAGE.startsWith('Guten Tag Herr Demir, ')).toBe(true);
     expect(DEFAULT_WHATSAPP_MESSAGE.endsWith('interessiere mich für eine Stelle bei Bad und Energie.')).toBe(true);
     expect(page('lich').whatsappGreeting).toContain('ich komme aus Lich');
-    expect(text(page('lich'), 'kontakt')).toContain('Sabri Demir');
+    // Der sichtbare Text zitiert genau das Stück der Nachricht, das den Ort nennt; den Namen trägt der Kontaktblock.
+    expect(text(page('lich'), 'kontakt')).toBe(kontaktText({ name: 'Lich' }));
+    for (const place of getPublishedPlaces()) {
+      const quoted = /„(.+)“/.exec(kontaktText(place))![1];
+      expect(whatsappGreeting(place)).toContain(quoted);
+    }
   });
 
   it('Kurzbeschreibungen nur, wo freigegeben; zurückgehaltene erscheinen nirgends', () => {
@@ -161,13 +179,15 @@ describe('Ortsseite: Satzbau folgt den Daten', () => {
     expect(text(page('asslar'), 'lead')).toMatch(/^Aus Aßlar ist der Weg kurz/);
     expect(text(page('giessen'), 'lead')).toMatch(/^Gießen liegt östlich von Wetzlar/);
     expect(text(page('hermannstein'), 'lead')).toMatch(/gehört mit der Postleitzahl 35586 zur Stadt Wetzlar/);
-    expect(text(page('bad-endbach'), 'lead')).toContain('am Nordrand des Einsatzgebiets');
+    // Kritik 2, P1-3: keine Grenze des Betriebs („die Grenze sind 35 km Straße“), nur die Auswahl dieser Seiten
+    expect(text(page('bad-endbach'), 'lead')).toContain('zu den entferntesten Orten auf diesen Seiten: Eine eigene Seite bekommt jeder Ort bis 35\u00A0km Straße');
+    for (const p of allPages) expect(sectionText(p.sections)).not.toMatch(/Grenze (sind|von) 35/);
     expect(text(page('herborn'), 'lead')).toMatch(/^Wie der Firmensitz gehört Herborn zum Lahn-Dill-Kreis/);
     expect(text(page('weilburg'), 'lead')).toContain('gehört schon zum Landkreis Limburg-Weilburg');
   });
 
   it('Kreis: kleiner Kreis vergleicht mit dem anderen Ort', () => {
-    expect(plain(text(page('lohra'), 'kreis'))).toContain('Lohra ist 5 km näher am Firmensitz, braucht laut Routenplaner aber 2 Minuten länger als Bad Endbach.');
+    expect(plain(text(page('lohra'), 'kreis'))).toContain('Lohra liegt 5 km näher am Firmensitz als Bad Endbach, laut Routenplaner dauert die Fahrt von hier aber 2 Minuten länger.');
     expect(text(page('lohra'), 'kreis')).not.toContain('Median');
   });
 
@@ -261,7 +281,7 @@ describe('Review Phase 2: ein Maß je Wort, keine Füllsätze', () => {
       'Mit 11 Minuten liegt Lahnau 2 Minuten unter der mittleren Fahrzeit im Lahn-Dill-Kreis (13 Minuten).',
     );
     expect(plain(text(page('butzbach'), 'nachbarn'))).toContain('Langgöns gehört schon zum Landkreis Gießen.');
-    expect(plain(text(page('lahnau'), 'arbeitsweg'))).toContain('Gemessen ab Dorlar (Hauptort laut OpenStreetMap).');
+    expect(plain(text(page('lahnau'), 'arbeitsweg'))).toContain('Startpunkt ist Dorlar (Hauptort laut OpenStreetMap).');
     for (const p of allPages) expect(sectionText(p.sections), p.placeId).not.toMatch(/Verwaltungssitz|Nebenan beginn/);
   });
 });

@@ -2,6 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page, type TestInfo } from '@playwright/test';
 import { ALL_JOBS, getActiveJobs, getChannelJobs, isJobLive } from '../../lib/jobs/registry';
 import { EINSATZGEBIET_PATH, getHubKreise, getPublishedPlaces, kreisPath, placePath } from '../../lib/places/registry';
+import { ARBEITEN_NAME, ARBEITEN_PATH, getThemen, themaPath } from '../../lib/themen/registry';
 
 /** WCAG 2.2 AA (ROADMAP §9): axe meldet 0 Verstöße. */
 export const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] as const;
@@ -45,13 +46,25 @@ export const LOCAL_SAMPLES = [
   '/einsatzgebiet/wetzlar',
 ] as const;
 
-/** Jede Route der Phase 1, dazu die Stichproben der lokalen Seiten und die 404-Seite. */
+/**
+ * Themenseiten (E-028) aus dem Registry: Hub und die fünf Themen; alle laufen in e2e/themen-pages.spec.ts (nur
+ * mobile-light), ROUTES nimmt den Hub und die Gehaltsseite als Stichproben für axe in allen vier Projekten.
+ */
+export const THEMEN_PAGES: readonly { path: string; name: string }[] = [
+  { path: ARBEITEN_PATH, name: ARBEITEN_NAME },
+  ...getThemen().map((thema) => ({ path: themaPath(thema), name: thema.name })),
+];
+
+export const THEMEN_SAMPLES = [ARBEITEN_PATH, `${ARBEITEN_PATH}/gehalt`] as const;
+
+/** Jede Route der Phase 1, dazu die Stichproben der lokalen Seiten und der Themenseiten und die 404-Seite. */
 export const ROUTES: readonly SiteRoute[] = [
   { path: '/', status: 200 },
   { path: '/jobs', status: 200 },
   ...PUBLISHED_JOBS.map((job) => ({ path: `/jobs/${job.slug}`, status: 200 })),
   { path: '/bewerbung', status: 200 },
   ...LOCAL_SAMPLES.map((path) => ({ path, status: 200 })),
+  ...THEMEN_SAMPLES.map((path) => ({ path, status: 200 })),
   { path: `/bewerbung?stelle=${MAIN_JOB_SLUG}`, status: 200 },
   { path: '/bewerbung/danke', status: 200 },
   { path: '/bewerbung/mappe', status: 200 },

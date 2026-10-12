@@ -8,8 +8,10 @@
  *   freigegebenen Kurzbeschreibungen.
  * - Satzbau folgt echten Datenlagen (Entfernungsband, Streckenstufe, Richtung, Art des Orts, Kreis, Messpunkt, Rang im
  *   Kreis, Median, Nachbarorte, Startseitenkarte), nie einer Zufallsauswahl von Synonymen.
- * - `ort`-Blöcke sagen etwas, das nur für diesen Ort gilt; `gemeinsam`-Blöcke stehen auf jeder Ortsseite gleich
- *   (Stellen, Fakten-Band, Messhinweis, Kontakt).
+ * - `ort`-Blöcke sagen etwas, das nur für diesen Ort gilt; `gemeinsam`-Blöcke stehen auf jeder Ortsseite (Stellen,
+ *   Fakten-Band, Messhinweis, Kontakt), Messhinweis und Kontakt mit dem Ortsnamen. Gemeinsamer Text bleibt kurz: Das
+ *   gebaute HTML prüft scripts/qa/check-local-similarity.mjs (Jaccard ≤ 0,45 je Paar), und dort zählen auch
+ *   Stellenkarten, Faktenband und Kontaktblock mit.
  * - Keine Arbeitszeit-Uhrzeiten: Es gilt nur der Fakt flexibleHours (fakten-abgleich B28).
  * - „Ring“ heißen nur die Kreise der Pläne, und die zeigen die Luftlinie. Stufen der Straßenstrecke heißen
  *   „bis 15 km Strecke“, „16 bis 25 km“, „26 bis 35 km“ (roadBandLabel); so widerspricht kein Satz der Zeichnung.
@@ -32,7 +34,7 @@ import {
   distanceBand,
   groupStats,
   kreisStats,
-  neighborsOf,
+  placeNeighbors,
   quadrantOf,
   rankByDistance,
   roadBandCounts,
@@ -158,6 +160,8 @@ export function joinList(items: readonly string[]): string {
 
 const numerus = (count: number, singular: string, plural: string) => (count === 1 ? singular : plural);
 const upperFirst = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+/** Zahlwörter bis zwölf (DIN 5008: kleine Zahlen im Fließtext ausgeschrieben). */
+const ZAHLWORT = ['null', 'ein', 'zwei', 'drei', 'vier', 'fünf', 'sechs', 'sieben', 'acht', 'neun', 'zehn', 'elf', 'zwölf'];
 const lowerFirst = (text: string) => text.charAt(0).toLowerCase() + text.slice(1);
 
 /** Straße des Firmensitzes für Fließtext: „Siegmund-Hiepe-Straße“ (aus der Fakten-Adresse, ohne Hausnummer). */
@@ -167,7 +171,7 @@ const HQ_CITY = SITE_CONFIG.headquarters.addressLocality;
 const CONTACT_NAME = `${SITE_CONFIG.founder.givenName} ${SITE_CONFIG.founder.familyName}`;
 const NEIGHBOR_COUNT = 4;
 const NEIGHBOR_WORD = 'vier';
-/** Ab so wenig Kilometern Abstand zur 35-km-Grenze liegt ein Ort „am Rand“ des Gebiets. */
+/** Ab so wenig Kilometern unter 35 km Straße gehört ein Ort zu den entferntesten mit eigener Seite. */
 const EDGE_MARGIN_KM = 3;
 
 /**
@@ -223,7 +227,7 @@ function placeContext(place: Place, jobs: readonly Job[]): PlaceContext {
     dirFromHq: directionFromHeadquarters(place),
     dirToHq: directionToHeadquarters(place),
     band: roadBandKm(place),
-    neighbors: neighborsOf(place, published, NEIGHBOR_COUNT),
+    neighbors: placeNeighbors(place, published, NEIGHBOR_COUNT),
     kreisStats: stats,
     kreisRank: rankByDistance(place, stats.places),
     kreisMedian: compareToMedian(place, stats),
@@ -296,10 +300,12 @@ function leadBlocks(c: PlaceContext): TextBlock[] {
       ),
     ];
   }
+  // Kritik 2, P1-3: Ob die 35 km des Fakts radius35 Straße oder Luftlinie meinen, ist offen (fakten-abgleich B33).
+  // Der Satz beschreibt deshalb, wie diese Seiten ihre Orte auswählen, keine Grenze des Betriebs.
   if (MAX_ROAD_KM - place.commute.distanceKm <= EDGE_MARGIN_KM) {
     return [
       ort(
-        `Mit ${km} Straße liegt ${name} am ${EDGE_PREFIX[c.dirFromHq]}rand des Einsatzgebiets, die Grenze sind ${formatKm(MAX_ROAD_KM)} Straße. Rund ${minutes} dauert die Fahrt nach ${HQ_CITY}.`,
+        `${name} liegt ${adverb} von ${HQ_CITY}, ${km} Straße vom Firmensitz entfernt, und gehört damit zu den entferntesten Orten auf diesen Seiten: Eine eigene Seite bekommt jeder Ort bis ${formatKm(MAX_ROAD_KM)} Straße. Rund ${minutes} dauert die Fahrt.`,
       ),
     ];
   }
@@ -309,18 +315,6 @@ function leadBlocks(c: PlaceContext): TextBlock[] {
     ),
   ];
 }
-
-/** Vorsilbe für „Nordrand“, „Südwestrand“ usw. */
-const EDGE_PREFIX: Readonly<Record<Direction, string>> = Object.freeze({
-  Norden: 'Nord',
-  Nordosten: 'Nordost',
-  Osten: 'Ost',
-  Südosten: 'Südost',
-  Süden: 'Süd',
-  Südwesten: 'Südwest',
-  Westen: 'West',
-  Nordwesten: 'Nordwest',
-});
 
 // ─── Arbeitsweg ─────────────────────────────────────────────────────────────
 
@@ -358,11 +352,11 @@ function routeSentence(c: PlaceContext): string {
  */
 function measuringPointSentence(c: PlaceContext): string | null {
   const { place } = c;
-  if (place.kind === 'stadtteil') return `Gemessen ab dem Ortsmittelpunkt, den OpenStreetMap für ${place.name} führt.`;
-  if (place.kind === 'stadt') return `Gemessen ab der Ortsmitte, die OpenStreetMap für ${place.name} führt.`;
+  if (place.kind === 'stadtteil') return `Startpunkt ist der Ortsmittelpunkt, den OpenStreetMap für ${place.name} führt.`;
+  if (place.kind === 'stadt') return `Startpunkt ist die Ortsmitte, die OpenStreetMap für ${place.name} führt.`;
   if (!place.seat) return null;
   if (c.band === RING_RADII_KM[0]) {
-    return `Gemessen ab ${place.seat} (Hauptort laut OpenStreetMap). In anderen Ortsteilen von ${place.name} kann der Weg kürzer oder länger sein.`;
+    return `Startpunkt ist ${place.seat} (Hauptort laut OpenStreetMap). In anderen Ortsteilen von ${place.name} kann der Weg kürzer oder länger sein.`;
   }
   if (c.band < MAX_ROAD_KM) {
     return `Messpunkt ist ${place.seat}, laut OpenStreetMap der Hauptort von ${place.name}. Andere Ortsteile liegen näher oder weiter.`;
@@ -370,14 +364,25 @@ function measuringPointSentence(c: PlaceContext): string | null {
   return `Die Messung startet in ${place.seat}, dem Hauptort laut OpenStreetMap. Aus anderen Ortsteilen von ${place.name} prüfst du deine Strecke am besten selbst im Routenplaner.`;
 }
 
-/** Ehrlicher Hinweis zur Messung, auf jeder Ortsseite gleich. */
+/** Ehrlicher Hinweis zur Messung (Kreis-Hubs, Gebietsseite, llms-full.txt). */
 export const MEASUREMENT_NOTE = `Gemessen am ${formatMeasuredOn(MEASUREMENT.measuredOn)} mit OpenStreetMap (OSRM): Richtwert ohne Berufsverkehr.`;
+
+/**
+ * Derselbe Hinweis auf der Ortsseite. Nennt kein Satz davor den Startpunkt (Gemeinden, deren Hauptort wie die Gemeinde
+ * heißt), steht der Ortsname in der Mitte: gleiche Angaben (Datum, Werkzeug, Richtwert), aber kein Satz, der auf allen
+ * Ortsseiten wortgleich steht (scripts/qa/check-local-similarity.mjs). Sonst MEASUREMENT_NOTE, damit der Name nicht
+ * zweimal hintereinander steht.
+ */
+export function measurementNote(place: Pick<Place, 'name'>, startpunktGenannt = false): string {
+  if (startpunktGenannt) return MEASUREMENT_NOTE;
+  return `Richtwert ohne Berufsverkehr, für ${place.name} gemessen am ${formatMeasuredOn(MEASUREMENT.measuredOn)} mit OpenStreetMap (OSRM).`;
+}
 
 function arbeitswegBlocks(c: PlaceContext): TextBlock[] {
   const blocks = [ort(routeSentence(c))];
   const point = measuringPointSentence(c);
   if (point) blocks.push(ort(point));
-  blocks.push(gemeinsam(MEASUREMENT_NOTE));
+  blocks.push(gemeinsam(measurementNote(c.place, point !== null)));
   return blocks;
 }
 
@@ -388,9 +393,11 @@ const VEHICLE_FROM_HOME = FACTS.vehicle.long.split(/(?<=\.)\s+/).find((sentence)
 
 /**
  * Einleitung über der Stellenliste: Zahl der Stellen und dass jede ihr Gehalt bzw. ihre Vergütung nennt. Die Beträge
- * stehen einmal, in der Liste darunter (JobAbgaenge), nicht noch einmal im Fließtext.
+ * stehen einmal, in der Liste darunter (JobAbgaenge), nicht noch einmal im Fließtext. Den Satz „Fahrt ab Wohnort“
+ * (Fakt vehicle) tragen nur die Kreis-Hubs: Auf 54 Ortsseiten wäre er derselbe Satz und hübe die Ähnlichkeit der
+ * gebauten Seiten (scripts/qa/check-local-similarity.mjs) über die Grenze.
  */
-function stellenBlocks(jobs: readonly Job[]): TextBlock[] {
+function stellenBlocks(jobs: readonly Job[], { vehicle = true }: { vehicle?: boolean } = {}): TextBlock[] {
   if (jobs.length === 0) {
     return [gemeinsam('Gerade ist keine Stelle ausgeschrieben. Eine Initiativbewerbung ist jederzeit möglich.')];
   }
@@ -400,9 +407,9 @@ function stellenBlocks(jobs: readonly Job[]): TextBlock[] {
   const lead =
     jobs.length === 1
       ? `Offen ist eine Stelle${paid.length === 1 ? `, mit ${pay}` : ''}:`
-      : `Offen sind ${jobs.length} Stellen${paid.length === jobs.length ? `, jede mit ${pay}` : ''}:`;
+      : `Offen sind ${ZAHLWORT[jobs.length] ?? jobs.length} Stellen${paid.length === jobs.length ? `, jede mit ${pay}` : ''}:`;
   const blocks = [gemeinsam(lead)];
-  if (jobs.some((job) => job.category === 'kundendienst')) {
+  if (vehicle && jobs.some((job) => job.category === 'kundendienst')) {
     blocks.push(gemeinsam(`Im Kundendienst gilt: ${VEHICLE_FROM_HOME}`, ['vehicle']));
   }
   return blocks;
@@ -442,15 +449,14 @@ function neighborPositionSentence(c: PlaceContext): string {
   const closer = neighbors.filter((n) => n.distanceKm < km);
   const same = neighbors.filter((n) => n.distanceKm === km);
   const farther = neighbors.filter((n) => n.distanceKm > km);
-  const target = place.kind === 'gemeinde' ? HQ_CITY : 'zum Firmensitz';
   const neighborItem = neighborItems(place);
 
   if (closer.length === 0 && same.length === 0) {
     return `${place.name} liegt näher am Firmensitz als alle ${NEIGHBOR_WORD} Nachbarorte: ${joinList(neighbors.map(neighborItem))}.`;
   }
   if (farther.length === 0 && same.length === 0) {
-    const toward = place.kind === 'gemeinde' ? `nach ${target}` : target;
-    return `Alle ${NEIGHBOR_WORD} Nachbarorte haben es näher ${toward} als ${place.name}: ${joinList(neighbors.map(neighborItem))}.`;
+    // „liegen näher“, nicht „haben es näher“: Orte fahren nicht (Kritik 2, P2-7)
+    return `Alle ${NEIGHBOR_WORD} Nachbarorte liegen näher am Firmensitz als ${place.name}: ${joinList(neighbors.map(neighborItem))}.`;
   }
   const parts: string[] = [];
   if (closer.length > 0) {
@@ -466,30 +472,29 @@ function neighborPositionSentence(c: PlaceContext): string {
 /** Himmelsrichtung von `from` nach `to` als Adverb: „nordwestlich“. */
 const adverbBetween = (from: Place, to: Place) => DIRECTION_ADVERBS[directionOf(bearingDeg(from, to))];
 
-/** Der nächste Nachbar im Vergleich: Strecke und Fahrzeit zum Firmensitz. */
+/**
+ * Der nächste Nachbar im Vergleich: Strecke und Fahrzeit zum Firmensitz. Ein Satzbau für alle Fälle, „Aus Rockenberg,
+ * 4,6 km östlich, sind es …“ (Kritik 2, P2-7: „Rockenberg braucht genauso 27 Minuten“ machte den Ort zur Person, und
+ * drei Muster standen nebeneinander). Die Lage bezieht sich auf den Ort der Seite.
+ */
 function nearestNeighborSentence(c: PlaceContext): string {
   const { place } = c;
   const nearest = c.neighbors[0];
   const dm = nearest.minutes - place.commute.minutes;
   const dk = nearest.distanceKm - place.commute.distanceKm;
-  const other = nearest.place.name;
-  const where = `${formatAirKm(nearest.airKm)} ${adverbBetween(place, nearest.place)}`;
+  const aus = `Aus ${nearest.place.name}, ${formatAirKm(nearest.airKm)} ${adverbBetween(place, nearest.place)},`;
   const theirKm = formatKm(nearest.distanceKm);
   const theirMinutes = formatMinutes(nearest.minutes);
 
-  if (dm === 0) return `${other}, ${where} von ${place.name}, braucht genauso ${theirMinutes} zum Firmensitz.`;
+  if (dm === 0) return `${aus} sind es ebenfalls ${theirMinutes} zum Firmensitz.`;
   if (dm < 0 && dk < 0) {
-    return -dm <= 3
-      ? `Aus ${other}, ${where} von ${place.name}, sind es ${theirKm} und ${theirMinutes} zum Firmensitz: nur ${formatMinutes(-dm)} weniger.`
-      : `Wer im ${where} gelegenen ${other} wohnt, ist nach ${theirMinutes} am Firmensitz, ${formatMinutes(-dm)} früher als aus ${place.name}.`;
+    return `${aus} sind es ${theirKm} und ${theirMinutes} zum Firmensitz: ${-dm <= 3 ? 'nur ' : ''}${formatMinutes(-dm)} weniger als aus ${place.name}.`;
   }
   if (dm < 0) {
-    return `${other} liegt ${where} und hat mit ${theirKm} ${dk === 0 ? 'die gleiche' : 'eine längere'} Strecke, ist laut Routenplaner aber ${formatMinutes(-dm)} schneller am Firmensitz.`;
+    return `${aus} ist die Strecke mit ${theirKm} ${dk === 0 ? 'gleich lang' : 'länger'}, laut Routenplaner bist du aber ${formatMinutes(-dm)} früher am Firmensitz.`;
   }
-  if (dk > 0) {
-    return `Wer in ${other} wohnt, ${where} von ${place.name}, braucht ${theirMinutes} zum Firmensitz: ${formatMinutes(dm)} mehr.`;
-  }
-  return `${other} liegt ${where} und hat mit ${theirKm} ${dk === 0 ? 'die gleiche' : 'eine kürzere'} Strecke, braucht laut Routenplaner aber ${formatMinutes(dm)} länger.`;
+  if (dk > 0) return `${aus} sind es ${theirKm} und ${theirMinutes} zum Firmensitz: ${formatMinutes(dm)} mehr als aus ${place.name}.`;
+  return `${aus} ist die Strecke mit ${theirKm} ${dk === 0 ? 'gleich lang' : 'kürzer'}, laut Routenplaner dauert die Fahrt aber ${formatMinutes(dm)} länger.`;
 }
 
 /**
@@ -597,7 +602,7 @@ function sectorSentence(c: PlaceContext): { text: string; named: Place[] } {
   const before = prev ?? first;
   const beforeClause = before.commute.distanceKm === place.commute.distanceKm ? `gleich weit ${item(before)}` : `direkt davor ${item(before)}`;
   return {
-    text: `Von den ${sector.length} Orten ${dir} sind ${r.closer} näher am Firmensitz als ${place.name}, ${beforeClause}; am weitesten draußen liegt ${item(last)}.`,
+    text: `${dir} liegen ${r.closer} von ${sector.length} Orten näher als ${place.name}, ${beforeClause}; ganz außen liegt ${item(last)}.`,
     named: [before, last],
   };
 }
@@ -645,18 +650,21 @@ function kreisRankSentences(c: PlaceContext): string[] {
   }
   if (r.farther === 0) return [`${place.name} teilt sich mit ${sameNames} den längsten Weg ${kreis.genitive}: je ${km}.`];
 
+  // Kurze Sätze mit dem Ortsnamen in der Mitte: Gleich weite Orte eines Kreises bekommen sonst wortgleiche Sätze.
   let sentence: string;
   if (r.closer === 1 && r.farther === 1 && r.same === 0) {
     const [before, after] = c.kreisStats.places.filter((p) => p.id !== place.id);
     sentence = `${place.name} liegt ${kreis.dative} in der Mitte: ${before.name} ist näher am Firmensitz, ${after.name} weiter weg.`;
   } else if (r.closer <= quarter) {
-    sentence = `Von den ${r.total} Orten ${kreis.dative} ${numerus(r.closer, 'hat', 'haben')} nur ${r.closer} einen kürzeren Weg zum Firmensitz, ${r.farther} einen längeren.`;
+    sentence = `Nur ${numerus(r.closer, 'einer', String(r.closer))} der ${r.total} Orte ${kreis.genitive} ${numerus(r.closer, 'hat', 'haben')} einen kürzeren Weg als ${place.name}.`;
   } else if (r.closer < r.farther) {
-    sentence = `${place.name} gehört zur näheren Hälfte ${kreis.genitive}: ${r.closer} Orte haben einen kürzeren Weg, ${r.farther} einen längeren.`;
+    sentence = `${place.name} gehört zur näheren Hälfte ${kreis.genitive}: ${r.closer} Orte liegen näher, ${r.farther} weiter weg.`;
   } else if (r.farther <= quarter) {
-    sentence = `Nur ${r.farther} der ${r.total} Orte ${kreis.genitive} ${numerus(r.farther, 'liegt', 'liegen')} noch weiter vom Firmensitz entfernt als ${place.name}, ${r.closer} näher.`;
+    sentence = `Einen noch längeren Weg als ${place.name} ${numerus(r.farther, 'hat', 'haben')} ${kreis.dative} nur ${numerus(r.farther, 'einer', String(r.farther))} von ${r.total} Orten.`;
+  } else if (r.closer === r.farther) {
+    sentence = `${place.name} liegt ${kreis.dative} in der Mitte: Je ${r.closer} Orte liegen näher und weiter weg.`;
   } else {
-    sentence = `${r.closer} der ${r.total} Orte ${kreis.genitive} ${numerus(r.closer, 'liegt', 'liegen')} näher an ${HQ_CITY}, ${r.farther} weiter weg.`;
+    sentence = `${place.name} gehört zur ferneren Hälfte ${kreis.genitive}: ${r.closer} Orte liegen näher, ${r.farther} weiter weg.`;
   }
   // Gleich weite Nachbarorte nennt schon der Abschnitt „Orte rund um …“.
   const neighborIds = new Set(c.neighbors.map((n) => n.place.id));
@@ -685,21 +693,24 @@ function smallKreisSentences(c: PlaceContext): string[] {
   const others = all.filter((p) => p.id !== place.id);
   if (others.length === 0) return [`${upperFirst(kreis.dative)} ist ${place.name} der einzige Ort im Einsatzgebiet.`];
   const sentences = [
-    `${upperFirst(kreis.dative)} ${numerus(all.length, 'liegt', 'liegen')} nur ${all.length} Orte innerhalb von ${formatKm(MAX_ROAD_KM)} Straße: ${joinList(all.map((p) => p.name))}.`,
+    `${upperFirst(kreis.dative)} ${numerus(all.length, 'liegt', 'liegen')} nur ${ZAHLWORT[all.length] ?? all.length} Orte innerhalb von ${formatKm(MAX_ROAD_KM)} Straße: ${joinList(all.map((p) => p.name))}.`,
   ];
   for (const other of others) {
     const dk = other.commute.distanceKm - place.commute.distanceKm;
     const dm = other.commute.minutes - place.commute.minutes;
+    // Orte fahren nicht: die Fahrt dauert länger, nicht „der Ort braucht länger“ (Kritik 2, P2-7)
     if (dk < 0 && dm > 0) {
-      sentences.push(`${other.name} ist ${formatKm(-dk)} näher am Firmensitz, braucht laut Routenplaner aber ${formatMinutes(dm)} länger.`);
+      sentences.push(
+        `${other.name} liegt ${formatKm(-dk)} näher am Firmensitz, laut Routenplaner dauert die Fahrt von dort aber ${formatMinutes(dm)} länger.`,
+      );
     } else if (dk > 0 && dm < 0) {
       sentences.push(
-        `${place.name} ist ${formatKm(dk)} näher am Firmensitz, braucht laut Routenplaner aber ${formatMinutes(-dm)} länger als ${other.name}.`,
+        `${place.name} liegt ${formatKm(dk)} näher am Firmensitz als ${other.name}, laut Routenplaner dauert die Fahrt von hier aber ${formatMinutes(-dm)} länger.`,
       );
     } else {
-      const strecke = dk === 0 ? 'liegt gleich weit' : `liegt ${formatKm(Math.abs(dk))} ${dk < 0 ? 'näher' : 'weiter'}`;
-      const zeit = dm === 0 ? 'braucht gleich lang' : `braucht ${formatMinutes(Math.abs(dm))} ${dm < 0 ? 'weniger' : 'mehr'}`;
-      sentences.push(`${other.name} ${strecke} und ${zeit}.`);
+      const strecke = dk === 0 ? 'gleich lang' : `${formatKm(Math.abs(dk))} ${dk < 0 ? 'kürzer' : 'länger'}`;
+      const zeit = dm === 0 ? 'gleich lang' : `${formatMinutes(Math.abs(dm))} ${dm < 0 ? 'kürzer' : 'länger'}`;
+      sentences.push(`Aus ${other.name} ist die Strecke ${strecke} und die Fahrt ${zeit}.`);
     }
   }
   return sentences;
@@ -758,13 +769,16 @@ function bandBlocks(kreis: Pick<Kreis, 'factIds'>): TextBlock[] {
 }
 
 /**
- * Sichtbarer Text des Kontakts. Die vorbereitete Nachricht (whatsappGreeting) steht im WhatsApp-Link, nicht
- * auf der Seite, und zählt darum nicht zum Seitentext.
+ * Sichtbarer Text des Kontakts: was in der vorbereiteten WhatsApp-Nachricht (whatsappGreeting) schon steht. Die
+ * Nachricht selbst steht im Link, nicht auf der Seite. Den Ansprechpartner nennt der Kontaktblock darunter
+ * (ContactOptions). Der Ortsname unterbricht den Text, der sonst auf jeder Ortsseite gleich wäre.
  */
-const KONTAKT_TEXT = `Lieber erst fragen? Schreib ${CONTACT_NAME} per WhatsApp, die Nachricht nennt schon deinen Ort.`;
+export function kontaktText(place: Pick<Place, 'name'>): string {
+  return `Lieber erst fragen? In der WhatsApp-Nachricht steht schon „ich komme aus ${place.name}“.`;
+}
 
-function kontaktBlocks(): TextBlock[] {
-  return [gemeinsam(KONTAKT_TEXT)];
+function kontaktBlocks(place: Place): TextBlock[] {
+  return [gemeinsam(kontaktText(place))];
 }
 
 // ─── Ortsseite ──────────────────────────────────────────────────────────────
@@ -904,12 +918,12 @@ export function getPlacePageText(place: Place, options: PlaceTextOptions = {}): 
   const sections: TextSection<PlaceSectionId>[] = [
     { id: 'lead', heading: meta.h1, blocks: leadBlocks(c) },
     { id: 'arbeitsweg', heading: `Dein Weg aus ${name}`, blocks: arbeitswegBlocks(c) },
-    { id: 'stellen', heading: 'Offene Stellen', blocks: stellenBlocks(c.jobs) },
+    { id: 'stellen', heading: 'Offene Stellen', blocks: stellenBlocks(c.jobs, { vehicle: false }) },
     { id: 'nachbarn', heading: `Orte rund um ${name}`, blocks: nachbarnBlocks(c) },
     { id: 'stadtteile', heading: `Die Stadtteile von ${name}`, blocks: place.kind === 'stadt' ? stadtteileBlocks(c) : [] },
     { id: 'kreis', heading: place.kind === 'stadtteil' ? `${name} in ${HQ_CITY}` : `${name} ${c.kreis.dative}`, blocks: kreisBlocks(c) },
     { id: 'band', heading: 'Was überall gilt', blocks: bandBlocks(c.kreis) },
-    { id: 'kontakt', heading: 'Direkt fragen', blocks: kontaktBlocks() },
+    { id: 'kontakt', heading: 'Direkt fragen', blocks: kontaktBlocks(place) },
   ];
   // Jeder Ort, den der Text nennt, ist verlinkt: Nachbarn, Orte derselben Richtung, im kleinen Kreis der andere Ort.
   // Die Stadtseite nennt ihre Stadtteile im eigenen Abschnitt; dort stehen sie einmal, nicht noch als Nachbarn.
@@ -1047,7 +1061,8 @@ function roadBandSentence(places: readonly Place[]): string {
 
 /**
  * Was die Ringe des Plans zeigen (Gebietsseite): Luftlinie, der weiteste Ort in Luftlinie und, wenn der äußere Ring
- * leer bleibt, warum: Die Grenze von 35 km gilt für die Straße, und die ist länger als die Luftlinie.
+ * leer bleibt, warum: Eine eigene Seite bekommt jeder Ort bis 35 km Straße, und die Straße ist länger als die
+ * Luftlinie. Das beschreibt die Auswahl dieser Seiten, keine Grenze des Betriebs (fakten-abgleich B33).
  */
 function airRingSentence(places: readonly Place[]): string {
   const farthest = [...places].sort((a, b) => b.commute.airKm - a.commute.airKm || a.name.localeCompare(b.name, 'de'))[0];
@@ -1055,7 +1070,7 @@ function airRingSentence(places: readonly Place[]): string {
   const ring = RING_RADII_KM.find((radius) => air <= radius) ?? MAX_ROAD_KM;
   const first = `Die drei Ringe im Plan messen die Luftlinie um den Firmensitz; am weitesten liegt ${farthest.name} mit ${formatAirKm(air)}.`;
   return ring < MAX_ROAD_KM
-    ? `${first} Außerhalb des Rings bei ${formatKm(ring)} liegt kein Ort, denn die Grenze von ${formatKm(MAX_ROAD_KM)} gilt für die Straße, und die ist länger als die Luftlinie.`
+    ? `${first} Außerhalb des Rings bei ${formatKm(ring)} liegt kein Ort: Eine eigene Seite bekommt jeder Ort bis ${formatKm(MAX_ROAD_KM)} Straße, und die Straße ist länger als die Luftlinie.`
     : first;
 }
 
@@ -1160,8 +1175,6 @@ export function kreisSectionText(kreis: Kreis): TextSection<string> {
 
 // ─── Gebietsseite /einsatzgebiet ────────────────────────────────────────────
 
-const ZAHLWORT = ['null', 'ein', 'zwei', 'drei', 'vier', 'fünf', 'sechs', 'sieben', 'acht', 'neun', 'zehn', 'elf', 'zwölf'];
-
 /**
  * Kreise ohne eigene Seite (weniger als KREIS_HUB_MIN_PLACES Orte): „Nur zwei Orte im Gebiet, deshalb ohne eigene
  * Kreisseite: Landkreis Marburg-Biedenkopf und Hochtaunuskreis.“ Bei verschiedenen Zahlen steht sie je Kreis dabei.
@@ -1183,7 +1196,7 @@ export type EinsatzgebietSectionId = 'lead' | 'ringe' | 'kreise' | 'band';
 export interface EinsatzgebietPageText {
   path: string;
   meta: PageMeta;
-  /** Etikett über der h1: „55 Orte · 6 Kreise“. */
+  /** Etikett über der h1: „54 Orte · 6 Kreise“. */
   etikett: string;
   /** Maße im Seitenkopf: Radius, nächster und weitester Ort, mittlere Fahrzeit. */
   masse: Mass[];
@@ -1253,7 +1266,8 @@ export function getEinsatzgebietPageText(options: PlaceTextOptions = {}): Einsat
         id: 'kreise',
         heading: 'Die Kreise',
         blocks: [
-          ort(`${hubs.length} Kreise haben eine eigene Seite: ${joinList(hubs.map(kreisItem))}.`),
+          // DIN 5008: kein Satzanfang mit Ziffer, kleine Zahlen ausgeschrieben
+          ort(`${upperFirst(ZAHLWORT[hubs.length] ?? String(hubs.length))} Kreise haben eine eigene Seite: ${joinList(hubs.map(kreisItem))}.`),
           ...(kreise.length > hubs.length ? [ort(smallKreiseSentence(kreise.filter((k) => !k.hasHub)))] : []),
         ],
       },

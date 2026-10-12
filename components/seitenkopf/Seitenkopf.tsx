@@ -80,6 +80,11 @@ export interface SeitenkopfMass {
   wert: string;
   /** Name in Versalien (text-etikett), z. B. „Freitags Feierabend“. */
   name: string;
+  /**
+   * Nur ab 37.5em (Tablet, Desktop): am Handy ausgeblendet, damit der Knopf nicht unter den Navy-Block rutscht. Nur für
+   * Maße, die die Seite auch im Text oder in der Zeichnung nennt.
+   */
+  nurBreit?: boolean;
 }
 
 export interface SeitenkopfProps {
@@ -102,6 +107,16 @@ export interface SeitenkopfProps {
   zweitweg?: SeitenkopfLink;
   /** Maße an der Zeichnung (Martian Mono mit Maßlinie), höchstens vier. */
   masse?: readonly SeitenkopfMass[];
+  /**
+   * Maße am Desktop in zwei gleich breiten Spalten, lange Namen brechen um („Weitester Ort: Bad Endbach“). Für vier
+   * Maße mit langen Namen (Gebiets- und Kreisseite), die sonst in drei Zeilen unter die Zeichnung laufen.
+   */
+  masseZweispaltig?: boolean;
+  /**
+   * Die Zeichnung braucht die ganze Breite des Panels (Pendelweg, Gebietsplan, senkrechte Entfernungsleiste): am Tablet
+   * steht sie über den Maßen statt daneben, wo sie sonst auf wenige Pixel schrumpft.
+   */
+  bildBreit?: boolean;
   /** Zeichnung der Seite auf der Navy-Fläche (components/zeichnung). Entfällt in `ruhig`. */
   panel?: ReactNode;
   /** Weitere Inhalte unter der Aktion auf Papier (z. B. Sprungmarken); selten nötig. */
@@ -143,6 +158,8 @@ export function Seitenkopf({
   mikrotext,
   zweitweg,
   masse,
+  masseZweispaltig = false,
+  bildBreit = false,
   panel,
   children,
   className,
@@ -158,7 +175,7 @@ export function Seitenkopf({
 
   return (
     <header
-      className={cn(styles.kopf, styles[variante], aktion && navy && styles.mitAktion, className)}
+      className={cn(styles.kopf, styles[variante], aktion && navy && styles.mitAktion, bildBreit && styles.bildBreit, className)}
       data-seitenkopf={variante}
       aria-labelledby={titelId}
     >
@@ -222,9 +239,9 @@ export function Seitenkopf({
         <div className={styles.panel} data-tone="inverse">
           {mitPanel ? <div className={styles.bild}>{panel}</div> : null}
           {mitMassen ? (
-            <ul className={styles.masse}>
+            <ul className={cn(styles.masse, masseZweispaltig && styles.masseZweispaltig)}>
               {masse.slice(0, 4).map((mass) => (
-                <li key={`${mass.wert}-${mass.name}`} className={styles.mass}>
+                <li key={`${mass.wert}-${mass.name}`} className={cn(styles.mass, mass.nurBreit && styles.massNurBreit)}>
                   <Masskette wert={mass.wert} name={mass.name} />
                 </li>
               ))}

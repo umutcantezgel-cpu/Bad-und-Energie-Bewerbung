@@ -1,7 +1,7 @@
 import { buildRegionMapData, type MapLocation } from '@/components/maps/views';
 import type { RadiusView, RegionMapData } from '@/components/maps/types';
-import { planRingKm } from '@/lib/places/derive';
-import { getPublishedPlaces, placePath, type Place } from '@/lib/places/registry';
+import { placeNeighbors, planRingKm } from '@/lib/places/derive';
+import { getPublishedPlaces, getStadtteile, placePath, type Place } from '@/lib/places/registry';
 
 /**
  * Plan der Seiten unter /einsatzgebiet (Server): alle veröffentlichten Orte mit gemessener Strecke und Fahrzeit,
@@ -61,4 +61,31 @@ export function gebietView(radiusKm: number): RadiusView {
  */
 export function placeView(place: Place, nachbarn: readonly Place[] = []): RadiusView {
   return gebietView(planRingKm([place, ...nachbarn]));
+}
+
+/** Die Orte im Plan einer Ortsseite neben dem Ort selbst. */
+export interface OrtPlanOrte {
+  /** Die vier nächsten Orte (eine Stadt ohne ihre eigenen Stadtteile, lib/places/derive placeNeighbors). */
+  nachbarn: Place[];
+  /**
+   * Nur Stadtseite: alle Stadtteile, als volle Punkte hervorgehoben (Kritik 2: Wetzlar zeigte nur vier, als
+   * „Nachbarorte“). Um das Haus ist für acht Namen kein Platz: Sie tragen einen Namen, wo Platz ist; die Legende
+   * verweist auf den Abschnitt „Die Stadtteile von …“.
+   */
+  stadtteile: Place[];
+  /** Alle hervorgehobenen Orte: der Ort, die Nachbarn, die Stadtteile. */
+  ids: string[];
+  /** Hervorgehobene Orte ohne Pflicht zum Namen (die Stadtteile). */
+  ohneNamen: string[];
+}
+
+export function ortPlanOrte(place: Place, published: readonly Place[] = getPublishedPlaces()): OrtPlanOrte {
+  const nachbarn = placeNeighbors(place, published, 4).map((n) => n.place);
+  const stadtteile = place.kind === 'stadt' ? getStadtteile(place.id) : [];
+  return {
+    nachbarn,
+    stadtteile,
+    ids: [place.id, ...nachbarn.map((p) => p.id), ...stadtteile.map((p) => p.id)],
+    ohneNamen: stadtteile.map((p) => p.id),
+  };
 }

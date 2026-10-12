@@ -126,6 +126,13 @@
   min-width: 0;
 }
 
+/* Maße mit `nurBreit`: am Handy ausgeblendet (Text oder Zeichnung nennen sie schon) */
+@media (max-width: 37.49em) {
+  .massNurBreit {
+    display: none;
+  }
+}
+
 /* ═══ Leitungspaar: am Handy senkrecht aus der Navy-Fläche in den Knopf (Vorlauf links, Rücklauf rechts) ═══ */
 .leitung {
   position: relative;
@@ -323,6 +330,13 @@
   }
 }
 
+/* Breite Zeichnung (lokale Seiten): am Tablet über den Maßen, nicht daneben */
+@media (min-width: 37.5em) and (max-width: 63.99em) {
+  .bildBreit .panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* ═══ Desktop: Papier links, Navy-Fläche rechts; das Paar läuft auf Knopfhöhe in den Flansch ═══
    Zeilen: 1 Titelblock · 2 Einleitung · 3 Aktion (Knopf oben, darauf das Paar) · 4 Rest (Maße auf Navy) */
 @media (min-width: 64em) {
@@ -330,8 +344,12 @@
     grid-template-columns:
       [voll-start] var(--rand) [inhalt-start text-start] minmax(0, 1.15fr) [text-end] var(--a-8)
       [panel-start] minmax(0, 1fr) [panel-end inhalt-end voll-end];
-    /* Zeile 4 hält unten mindestens --a-8 Luft, auch wenn die Seite ohne Knopf mit der Einleitung endet */
-    grid-template-rows: auto auto auto minmax(var(--a-8), 1fr);
+    /* Zeile 4 hält unten mindestens --a-8 Luft, auch wenn die Seite ohne Knopf mit der Einleitung endet.
+       Zeile 1 (Titelblock) wächst nie über ihren Inhalt: Ist die Zeichnung (Zeilen 1–2) höher als Titel und
+       Einleitung, geht der Rest in Zeile 2 unter die Einleitung, nicht zwischen h1 und Einleitung (Kritik 2: am
+       Kreis-Hub Lahn-Dill-Kreis standen bei 1440 px rund 200 px Leere unter der h1). Fester Höchstwert 0, damit die
+       Verteilung des Platzes über Zeilen hinweg Zeile 1 auslässt. */
+    grid-template-rows: minmax(min-content, 0) auto auto minmax(var(--a-8), 1fr);
     padding-bottom: 0;
   }
 
@@ -473,6 +491,13 @@
     flex-wrap: wrap;
     gap: var(--a-5) var(--a-7);
     margin-top: calc(var(--a-7) + var(--m-knopf) + var(--a-6));
+  }
+
+  /* Zweispaltig (vier Maße mit langen Namen): gleich breite Spalten, Namen brechen um */
+  .masseZweispaltig {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--a-6);
   }
 
   /* Ohne Knopf: die Maße stehen direkt unter der Zeichnung */

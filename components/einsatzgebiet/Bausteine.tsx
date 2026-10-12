@@ -65,20 +65,41 @@ export function bloecke(section: TextSection | undefined): { ort: TextBlock[]; g
   return { ort: blocks.filter((b) => b.kind === 'ort'), gemeinsam: blocks.filter((b) => b.kind === 'gemeinsam') };
 }
 
-/** Band „Was überall gilt“ (Inverse): je Fakt das Etiketten-Kästchen mit Kurzform und der ganze Satz darunter. */
+/**
+ * Fakten ohne eigenen Satz (der lange Text ist nur die Kurzform mit Punkt) tragen den Satz eines belegten
+ * Begleitfakts, wie die Zusage „Flexible Arbeitszeiten“ auf der Startseite (components/home/vorteile/vorteile-text.ts
+ * ZUSAGEN): „Keine unbezahlten Überstunden.“ Keine neue Aussage, nur die Paarung der Startseite.
+ */
+export const FAKT_BEGLEITER: Readonly<Partial<Record<FactId, FactId>>> = Object.freeze({ flexibleHours: 'noUnpaidOvertime' });
+
+/** Satz unter dem Kästchen: der eigene lange Text, sonst der des Begleitfakts; null, wenn keiner belegt ist. */
+export function faktSatz(factId: FactId): string | null {
+  const eigen = FACTS[factId].long;
+  if (eigen !== `${FACTS[factId].short}.`) return eigen;
+  const begleiter = FAKT_BEGLEITER[factId];
+  return begleiter ? FACTS[begleiter].long : null;
+}
+
+/**
+ * Band „Was überall gilt“ (Inverse): je Fakt das Etiketten-Kästchen mit Kurzform und der Satz darunter, in einem
+ * Raster mit Unterzeilen (subgrid): Kästchen auf einer Höhe, Sätze auf einer Höhe. Fehlt einem Fakt der Satz, steht
+ * das Band nur mit Kästchen, damit kein Platz leer bleibt.
+ */
 export function Faktenband({ section, factIds }: { section: TextSection; factIds: readonly FactId[] }) {
   const id = titelId(section.id);
+  const saetze = factIds.map(faktSatz);
+  const mitSatz = saetze.every((satz) => satz !== null);
   return (
     <Section tone="band" aria-labelledby={id}>
       <Container className="flex flex-col gap-section-sm">
         <Abschnittskopf id={id} eyebrow={ETIKETT.band} title={section.heading} />
-        <ul className={cn(styles.fakten, factIds.length >= 4 ? styles.faktenVier : styles.faktenDrei)}>
-          {factIds.map((factId) => (
+        <ul className={cn(styles.fakten, factIds.length >= 4 ? styles.faktenVier : styles.faktenDrei, !mitSatz && styles.faktenKurz)}>
+          {factIds.map((factId, i) => (
             <li key={factId} className={styles.fakt}>
               <Etikettkasten icon={vorteilIcon(factId)} className="whitespace-normal">
                 {FACTS[factId].short}
               </Etikettkasten>
-              {FACTS[factId].long !== `${FACTS[factId].short}.` ? <p className={styles.faktText}>{FACTS[factId].long}</p> : null}
+              {mitSatz ? <p className={styles.faktText}>{saetze[i]}</p> : null}
             </li>
           ))}
         </ul>
@@ -105,7 +126,7 @@ export interface OrtsKarteDaten {
   id: string;
   name: string;
   href: string;
-  /** Werte in Martian Mono, z. B. „4,5 km Luftlinie“, „27 km · 26 min zum Firmensitz“. */
+  /** Werte in Martian Mono, z. B. „4,5 km von Lahnau“, „27 km · 26 min zum Firmensitz“. */
   werte: readonly string[];
 }
 
@@ -119,9 +140,7 @@ export function OrtsKarten({ orte, label, breit = false }: { orte: readonly Orts
             <span className={styles.ortsKarteName}>{ort.name}</span>
             <span className={styles.ortsKarteWerte}>
               {ort.werte.map((wert) => (
-                <span key={wert} className="whitespace-nowrap">
-                  {wert}
-                </span>
+                <span key={wert}>{wert}</span>
               ))}
             </span>
             <Icon name="arrow-right" size="md" className={styles.ortsKartePfeil} />
@@ -132,10 +151,21 @@ export function OrtsKarten({ orte, label, breit = false }: { orte: readonly Orts
   );
 }
 
-/** Werte einer Ortskarte: Strecke und Fahrzeit zum Firmensitz, dazu optional die Luftlinie vom aktuellen Ort. */
-export function kartenWerte(distanceKm: number, minutes: number, luftlinieKm?: number): string[] {
-  const weg = `${formatKm(distanceKm)} · ${formatMin(minutes)}`;
-  return luftlinieKm === undefined ? [weg] : [`${formatAirKm(luftlinieKm)} Luftlinie`, weg];
+/** Abstand einer Ortskarte vom aktuellen Ort (Luftlinie). */
+export interface KartenAbstand {
+  km: number;
+  /** Der aktuelle Ort: „5,8 km von Bad Endbach“. */
+  von: string;
+}
+
+/**
+ * Werte einer Ortskarte, jeder mit seinem Bezugspunkt (Kritik 2, P2-2: „5,8 km Luftlinie“ galt ab dem Ort, „31 km ·
+ * 34 min“ bis zum Firmensitz, ohne dass die Karte es sagte): optional der Abstand vom aktuellen Ort, dann Strecke und
+ * Fahrzeit zum Firmensitz.
+ */
+export function kartenWerte(distanceKm: number, minutes: number, abstand?: KartenAbstand): string[] {
+  const weg = `${formatKm(distanceKm)} · ${formatMin(minutes)} zum Firmensitz`;
+  return abstand === undefined ? [weg] : [`${formatAirKm(abstand.km)} von ${abstand.von}`, weg];
 }
 
 export interface TabellenZeile {
@@ -189,7 +219,7 @@ export function Ortstabelle({ zeilen, caption }: { zeilen: readonly TabellenZeil
                     style={{ '--anteil': Math.min(zeile.distanceKm, SKALA_KM) / SKALA_KM } as CSSProperties}
                     aria-hidden="true"
                   />
-                  {zeile.km}
+                  <span className={styles.kmWert}>{zeile.km}</span>
                 </span>
               </td>
               <td className={cn(styles.zahl, 'text-ink')}>{zeile.min}</td>

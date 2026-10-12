@@ -124,7 +124,7 @@ export function MappeActions({
             <a href={whatsappHref} target="_blank" rel="noopener noreferrer" data-mappe-whatsapp="">
               <Icon name="message-circle" size="md" />
               Per WhatsApp schicken
-              <span className="sr-only"> (öffnet WhatsApp in einem neuen Tab)</span>
+              <span className="sr-only"> (öffnet WhatsApp in neuem Tab)</span>
             </a>
           </Button>
           <p className="text-footnote text-ink-2">

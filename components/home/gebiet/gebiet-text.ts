@@ -72,7 +72,7 @@ export const WEITERE_ORTE_TITLE = 'Auch bei uns im Einsatz';
 
 export interface WeitererOrt {
   name: string;
-  /** Ortsseite unter /einsatzgebiet; fehlt, wenn der Ort keine hat (Dillenburg: über 35 km Straße). */
+  /** Ortsseite unter /einsatzgebiet; fehlt, wenn der Ort keine hat (seit E-028 hat jeder Ort aus REGION.areas eine). */
   href?: string;
 }
 

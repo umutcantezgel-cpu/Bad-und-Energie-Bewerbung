@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { RadiusGraphic } from '../RadiusGraphic';
 import { radiusStatus, zoneLabel } from '../status';
+import { GEBIET_MAP_DATA } from '@/components/einsatzgebiet/karte';
 import { buildRegionMapData } from '../views';
 
 const data = buildRegionMapData();
@@ -64,13 +65,45 @@ describe('RadiusGraphic', () => {
   });
 });
 
+describe('hohle Punkte: genau die Orte jenseits des gezeichneten Rings', () => {
+  // Kritik 2, P1-1: Herborn (27 km Strecke, 18,9 km Luftlinie) lag hohl im 25-km-Kreis, Grävenwiesbach, Sinn, Butzbach
+  // und Villmar ebenso. Hohl heißt jetzt: der Punkt liegt außerhalb des Kreises, den der Plan zeichnet.
+  it.each([
+    ['Startseite', data],
+    ['Gebietsseite', GEBIET_MAP_DATA],
+  ] as const)('%s: hohl ⇔ außerhalb des Kreises, und der Satz sagt dasselbe', (_name, mapData) => {
+    for (const view of mapData.views) {
+      const html = renderToStaticMarkup(createElement(RadiusGraphic, { data: mapData, view, selectedId: null, titleId: 't', descId: 'd' }));
+      const hollow = new Set(
+        [...html.matchAll(/<circle cx="([\d.]+)" cy="([\d.]+)" r="4.5" class="fill-surface-raised stroke-brand"/g)].map((m) => `${m[1]},${m[2]}`),
+      );
+      const filled = new Set(
+        [...html.matchAll(/<circle cx="([\d.]+)" cy="([\d.]+)" r="4.5" class="fill-brand stroke-waerme"/g)].map((m) => `${m[1]},${m[2]}`),
+      );
+      mapData.places.forEach((place, i) => {
+        const point = view.points[i];
+        if (!point.inFrame || place.atCenter) return;
+        const at = `${point.drawn.x},${point.drawn.y}`;
+        const outsideCircle = Math.hypot(point.x - view.origin.x, point.y - view.origin.y) > view.radius;
+        expect(hollow.has(at) || filled.has(at), `${view.radiusKm} km: ${place.name} gezeichnet`).toBe(true);
+        expect(hollow.has(at), `${view.radiusKm} km: ${place.name}`).toBe(outsideCircle);
+        expect(radiusStatus(place, view.radiusKm, mapData.radii).includes('außerhalb'), `${view.radiusKm} km: ${place.name}`).toBe(outsideCircle);
+      });
+    }
+  });
+});
+
 describe('Ergebnis der Ortswahl', () => {
   const giessen = data.places.find((p) => p.id === 'loc-giessen')!;
   const herborn = data.places.find((p) => p.id === 'loc-herborn')!;
 
-  it('says whether the place lies within the chosen radius', () => {
-    expect(radiusStatus(giessen, 35, data.radii)).toBe('Gießen liegt innerhalb von 35 km.');
-    expect(radiusStatus(herborn, 15, data.radii)).toBe('Herborn liegt außerhalb von 15 km, aber innerhalb von 35 km.');
+  it('says whether the place lies within the chosen ring, in straight-line distance like the rings', () => {
+    expect(radiusStatus(giessen, 35, data.radii)).toBe('Gießen liegt in Luftlinie innerhalb von 35\u00A0km.');
+    // Herborn: 24 km in der Ortsliste, rund 19 km Luftlinie, also im 25-km-Ring (Kritik 2: Karte und Satz widersprachen sich)
+    expect(herborn.airKm).toBeGreaterThan(15);
+    expect(herborn.airKm).toBeLessThan(25);
+    expect(radiusStatus(herborn, 15, data.radii)).toBe('Herborn liegt in Luftlinie außerhalb von 15\u00A0km, aber innerhalb von 25\u00A0km.');
+    expect(radiusStatus(herborn, 25, data.radii)).toBe('Herborn liegt in Luftlinie innerhalb von 25\u00A0km.');
   });
 
   it('names the rating from the data', () => {

@@ -8,10 +8,11 @@ import { APPLY_PATH, SHORT_APPLY_LABEL } from '@/components/site/nav';
 import { Entfernungsleiste } from '@/components/zeichnung/Entfernungsleiste';
 import type { Job } from '@/lib/jobs/registry';
 import { kreisPfad, pfadItems } from '@/lib/places/jsonld';
-import { getKreisPlaces, type Kreis } from '@/lib/places/registry';
+import { getKreisPlaces, getPublishedPlaces, type Kreis } from '@/lib/places/registry';
 import { ORTE_ANKER, type KreisPageText, type KreisSectionId, type TextSection } from '@/lib/places/text';
+import { cn } from '@/lib/utils/cn';
 import { Abschnittskopf, Absaetze, Faktenband, Kontakt, Messhinweis, Ortstabelle, bloecke, titelId } from './Bausteine';
-import { ETIKETT, planBeschreibungKreis } from './einsatzgebiet-text';
+import { ETIKETT, leisteLegende, planBeschreibungKreis } from './einsatzgebiet-text';
 import styles from './einsatzgebiet.module.css';
 import { gebietView } from './karte';
 import { OrtTitel } from './OrtTitel';
@@ -44,6 +45,8 @@ export function KreisSeite({ kreis, text, jobs }: KreisSeiteProps) {
     .filter((place) => place.kind !== 'gemeinde')
     .map((place) => place.id);
   const stellenBloecke = bloecke(stellen);
+  // Alle Orte des Gebiets als leise Sprossen in der Leiste: zeigt, wo der Kreis im Gebiet liegt
+  const alleKm = getPublishedPlaces().map((place) => place.commute.distanceKm);
 
   return (
     <>
@@ -51,13 +54,16 @@ export function KreisSeite({ kreis, text, jobs }: KreisSeiteProps) {
       <div className={styles.kopf} data-motion="erdleitung">
         <Seitenkopf
           variante="erzaehl"
+          bildBreit
           etikett={text.etikett}
           titel={<OrtTitel h1={text.meta.h1} name={kreis.name} />}
           einleitung={lead ? <Absaetze blocks={lead.blocks} /> : null}
           aktion={{ href: APPLY_PATH, label: SHORT_APPLY_LABEL }}
           mikrotext={LISTEN_MIKROTEXT}
           zweitweg={text.zweitweg}
-          masse={text.masse}
+          // Am Handy ohne Nächsten und Weitesten Ort: Die Leiste darüber zeigt beide als erste und letzte Zeile
+          masse={text.masse.map((mass, i) => (i < 2 ? { ...mass, nurBreit: true } : mass))}
+          masseZweispaltig
           panel={
             <div className={styles.kopfbild}>
               {/* Auf jeder Breite senkrecht: jeder Ort zweigt an seiner Strecke vom Leitungspaar ab, mit Namen (eine
@@ -65,8 +71,12 @@ export function KreisSeite({ kreis, text, jobs }: KreisSeiteProps) {
               <Entfernungsleiste
                 ausrichtung="senkrecht"
                 orte={text.rows.map((row) => ({ id: row.placeId, name: row.name, km: row.distanceKm }))}
-                titel={`Die ${text.rows.length} Orte ${kreis.dative} auf der Skala bis 35 km, nach Strecke zum Firmensitz`}
+                hintergrundKm={alleKm}
+                titel={`Die ${text.rows.length} Orte ${kreis.dative} auf der Skala bis 35 km, nach Strecke zum Firmensitz; leise Striche: alle ${alleKm.length} Orte des Gebiets`}
               />
+              <p className={cn(styles.leisteLegende, 'text-etikett text-ink-2')} aria-hidden="true">
+                {leisteLegende(alleKm.length)}
+              </p>
             </div>
           }
         />

@@ -125,7 +125,8 @@ IndexNow (Bing, Yandex u. a.) wird über `POST /api/indexnow` mit Bearer-Token a
 |---|---|
 | Kern | `https://karriere.bad-energie.de/`, `/jobs`, `/bewerbung` |
 | Stellen | jede Stellenseite `/jobs/<slug>`, auch besetzte (damit ihr `noindex` schnell ankommt) |
-| Einsatzgebiet (E-028) | `/einsatzgebiet`, die Kreis-Hubs `/einsatzgebiet/lahn-dill-kreis`, `/einsatzgebiet/landkreis-giessen`, `/einsatzgebiet/landkreis-limburg-weilburg`, `/einsatzgebiet/wetteraukreis` und jede veröffentlichte Ortsseite `/einsatzgebiet/<slug>` (55, Liste in `lib/places/slugs.lock.json`) |
+| Einsatzgebiet (E-028) | `/einsatzgebiet`, die Kreis-Hubs `/einsatzgebiet/lahn-dill-kreis`, `/einsatzgebiet/landkreis-giessen`, `/einsatzgebiet/landkreis-limburg-weilburg`, `/einsatzgebiet/wetteraukreis` und jede veröffentlichte Ortsseite `/einsatzgebiet/<slug>` (54, Liste in `lib/places/slugs.lock.json`) |
+| Themen (E-028) | `/arbeiten-bei-uns` und die fünf Themenseiten `/arbeiten-bei-uns/gehalt`, `/fahrzeug-und-werkzeug`, `/waermepumpen`, `/betrieb`, `/diskret-wechseln` (Liste in `lib/themen/registry.ts`) |
 
 Weiterleitungen (`/einsatzgebiet/landkreis-marburg-biedenkopf`, `/einsatzgebiet/hochtaunuskreis`, alte Slugs) stehen weder in der Sitemap noch in IndexNow. Nach einer neuen Messung oder neuen Orten (`docs/operations/orte-pflegen.md`) einmal IndexNow auslösen und die Sitemap in der Search Console neu einreichen.
 

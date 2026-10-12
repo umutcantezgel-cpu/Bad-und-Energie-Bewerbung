@@ -50,7 +50,7 @@ export function Werkstatt({ id = 'werkstatt-titel', className }: { id?: string; 
       >
         {ROUTE_LABEL}
         <Icon name="arrow-right" size="sm" />
-        <span className="sr-only"> (öffnet in einem neuen Tab)</span>
+        <span className="sr-only"> (öffnet in neuem Tab)</span>
       </a>
     </section>
   );

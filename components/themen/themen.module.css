@@ -1,0 +1,1155 @@
+/*
+ * Themenseiten (E-028): Hub /arbeiten-bei-uns und fünf Themen als Erzählseiten im Design der Stellen- und Ortsseiten:
+ * Navy-Seitenkopf mit der Zeichnung der Seite, Papier-, Wand- und Navy-Abschnitte mit Leitungstrennern, Maße und
+ * Beträge in Martian Mono, Etiketten-Kästchen. Nur Rollen und Skalen aus app/styles/theme.css.
+ */
+
+/* ═══ Seitenkopf: Leitungspaar zeichnet sich in den Knopf (Register `erdleitung`, wie Stellen- und Ortsseiten) ═══ */
+@keyframes fallen {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes laufen {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+:global(.auftakt) .kopf[data-motion~="erdleitung"] [data-zeichnung="seitenkopf-leitung"] > span {
+  transform-origin: top center;
+  animation: fallen var(--d-2) var(--k-wechsel) calc(var(--takt) * 5) backwards;
+}
+
+@media (min-width: 64em) {
+  :global(.auftakt) .kopf[data-motion~="erdleitung"] [data-zeichnung="seitenkopf-leitung"] > span {
+    transform-origin: right center;
+    animation-name: laufen;
+  }
+
+  :global(.auftakt) .kopf[data-motion~="erdleitung"] [data-zeichnung="seitenkopf-leitung"] > span:first-child {
+    animation-delay: calc(var(--takt) * 8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(.auftakt) .kopf[data-motion~="erdleitung"] [data-zeichnung="seitenkopf-leitung"] > span {
+    animation: none;
+  }
+}
+
+/* h1 in Bildgröße, nach dem breitesten Wort auf die Spalte gesetzt (components/einsatzgebiet/titel.ts) */
+.titel {
+  display: block;
+  font-size: min(var(--text-display), 14cqi, calc(96cqi / var(--stueck)));
+  overflow-wrap: normal;
+}
+
+/* ═══ Abschnittsköpfe: h2 nach dem breitesten Wort auf die Spalte (Rohrklammer 2rem abgezogen) ═══ */
+.abschnittskopf {
+  container-type: inline-size;
+  width: 100%;
+}
+
+.passend {
+  font-size: min(var(--text-title-1), calc((96cqi - 2rem) / var(--stueck)));
+}
+
+/* ═══ Text ═══ */
+.zweiSpalten {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--a-8);
+}
+
+@media (min-width: 64em) {
+  .zweiSpalten {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: var(--a-9);
+    align-items: start;
+  }
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-5);
+}
+
+.absatz {
+  max-width: 38rem;
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.absatzErst {
+  font-size: var(--text-lead);
+  line-height: 1.5;
+}
+
+/* Stellen als Überschrift-Link (Karten): 44 px hohe Trefferfläche, Unterstrich wie TextLink */
+.stellenLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--m-ziel);
+  border-radius: var(--radius-1);
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .stellenLink:hover {
+    text-decoration-thickness: var(--m-strich);
+    text-decoration-color: var(--ruecklauf);
+  }
+}
+
+/* Angaben als dl > div > dt + dd */
+.angaben {
+  display: grid;
+  gap: var(--a-4);
+  margin: 0;
+}
+
+.angaben > div {
+  display: grid;
+  gap: var(--a-1);
+}
+
+.angaben dd {
+  margin: 0;
+  font-size: var(--text-callout);
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+/* ═══ Themen als Leitungsabgänge (Hub): Vorlauf links, Rücklauf rechts ═══ */
+.abgaenge {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.abgaenge::before,
+.abgaenge::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--m-strich);
+  border-radius: var(--radius-voll);
+}
+
+.abgaenge::before {
+  left: 0;
+  background-color: var(--vorlauf);
+}
+
+.abgaenge::after {
+  right: 0;
+  background-color: var(--ruecklauf);
+}
+
+.abgang {
+  position: relative;
+  padding-inline: var(--a-4);
+}
+
+@media (min-width: 40em) {
+  .abgang {
+    padding-inline: var(--a-5);
+  }
+}
+
+.stummelVor,
+.stummelRueck {
+  position: absolute;
+  top: 50%;
+  width: var(--a-4);
+  height: var(--m-strich);
+  transform: translateY(-50%);
+}
+
+@media (min-width: 40em) {
+  .stummelVor,
+  .stummelRueck {
+    width: var(--a-5);
+  }
+}
+
+.stummelVor {
+  left: 0;
+  border-radius: 0 var(--radius-voll) var(--radius-voll) 0;
+  background-color: var(--vorlauf);
+}
+
+.stummelRueck {
+  right: 0;
+  border-radius: var(--radius-voll) 0 0 var(--radius-voll);
+  background-color: var(--ruecklauf);
+}
+
+.abgangZeile {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  column-gap: var(--a-4);
+  row-gap: var(--a-3);
+  align-items: center;
+  padding: var(--a-5) var(--a-2) var(--a-5) var(--a-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.abgangFlaeche {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--surface-2);
+  opacity: 0;
+  transition: opacity var(--d-1) var(--k-ein);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .abgang:hover .abgangFlaeche {
+    opacity: 1;
+    transition: opacity var(--d-2) var(--k-aus);
+  }
+}
+
+.abgangIkon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: start;
+  width: var(--m-ziel);
+  height: var(--m-ziel);
+  border: var(--m-strich) solid var(--brand);
+  border-radius: var(--radius-1);
+  color: var(--brand);
+}
+
+.abgangText {
+  display: grid;
+  gap: var(--a-2);
+  min-width: 0;
+}
+
+.abgangSatz {
+  max-width: 40rem;
+  font-size: var(--text-callout);
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+.abgangWert {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-1);
+  margin: 0;
+}
+
+@media (min-width: 48em) {
+  .abgangZeile {
+    grid-template-columns: auto minmax(0, 1fr) minmax(11rem, auto) auto;
+    column-gap: var(--a-6);
+  }
+
+  .abgangWert {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
+
+/* ═══ Weitere Themen: Karten ═══ */
+.karten {
+  display: grid;
+  gap: var(--a-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 37.5em) {
+  .karten {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.karte {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  column-gap: var(--a-3);
+  row-gap: var(--a-1);
+  align-items: center;
+  min-height: var(--a-9);
+  height: 100%;
+  padding: var(--a-4) var(--a-5);
+  border: 2px solid var(--line-strong);
+  border-radius: var(--radius-2);
+  background-color: var(--surface-raised);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.karte:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .karte:hover {
+    border-color: var(--brand);
+  }
+}
+
+.karteIkon {
+  grid-row: 1 / span 2;
+  display: flex;
+  align-self: start;
+  padding-top: 0.15em;
+  color: var(--brand);
+}
+
+.karteName {
+  font-family: var(--font-display);
+  font-size: var(--text-title-3);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--brand);
+}
+
+.karteWert {
+  grid-column: 2;
+  font-family: var(--font-mass);
+  font-size: var(--text-footnote);
+  font-stretch: 75%;
+  color: var(--ink-muted);
+}
+
+.kartePfeil {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  color: var(--brand);
+}
+
+/* ═══ Band auf Navy: Etiketten-Kästchen mit Satz ═══ */
+.kaesten {
+  display: grid;
+  gap: var(--a-7) var(--a-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 48em) {
+  .kaesten {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64em) {
+  .kaestenVier {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .kaestenDrei {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Je Eintrag zwei Zeilen im Raster der Liste (subgrid): Kästchen auf einer Höhe, Sätze auf einer Höhe */
+.kasten {
+  display: grid;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  row-gap: var(--a-4);
+  align-items: start;
+  justify-items: start;
+  padding-top: var(--a-5);
+  border-top: var(--m-strich) solid var(--brand);
+}
+
+.kaestenKurz .kasten {
+  grid-row: span 1;
+  grid-template-rows: auto;
+}
+
+.kasten [data-zeichnung="etikettkasten"] {
+  max-width: 100%;
+  white-space: normal;
+  line-height: 1.3;
+}
+
+.kastenText {
+  max-width: 30rem;
+  font-size: var(--text-body);
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+/* ═══ Kontakt ═══ */
+.kontakt {
+  display: grid;
+  gap: var(--a-7);
+}
+
+@media (min-width: 64em) {
+  .kontakt {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: var(--a-9);
+    align-items: start;
+  }
+}
+
+/* ═══ Verteiler (Kopf des Hubs): ein Abgang je Thema zwischen Vorlauf und Rücklauf ═══ */
+.verteiler {
+  width: 100%;
+  max-width: 32rem;
+}
+
+.verteilerKopf {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--a-3);
+}
+
+.verteilerListe {
+  position: relative;
+  display: grid;
+  gap: var(--a-2);
+  margin: 0;
+  padding: var(--a-4) 0;
+  list-style: none;
+}
+
+.verteilerListe::before,
+.verteilerListe::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--m-strich);
+  border-radius: var(--radius-voll);
+}
+
+.verteilerListe::before {
+  left: 0;
+  background-color: var(--vorlauf);
+}
+
+.verteilerListe::after {
+  right: 0;
+  background-color: var(--ruecklauf);
+}
+
+.verteilerKreis {
+  display: grid;
+  grid-template-columns: var(--a-4) fit-content(62%) minmax(var(--a-3), 1fr) auto var(--a-4);
+  align-items: center;
+}
+
+@media (min-width: 37.5em) {
+  .verteilerListe {
+    gap: var(--a-4);
+  }
+
+  .verteilerKasten {
+    min-height: var(--a-7);
+    padding: var(--a-2) var(--a-3);
+  }
+}
+
+@media (min-width: 30em) {
+  .verteilerKreis {
+    grid-template-columns: var(--a-5) fit-content(65%) minmax(var(--a-4), 1fr) auto var(--a-5);
+  }
+}
+
+.verteilerVor,
+.verteilerRueck {
+  height: var(--m-strich);
+}
+
+.verteilerVor {
+  grid-column: 1;
+  background-color: var(--vorlauf);
+}
+
+.verteilerRueck {
+  grid-column: 5;
+  background-color: var(--ruecklauf);
+}
+
+.verteilerKasten {
+  grid-column: 2;
+  min-width: 0;
+  line-height: 1.25;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--a-2);
+  min-height: var(--a-6);
+  padding: var(--a-1) var(--a-2);
+  border: var(--m-strich) solid var(--brand);
+  background-color: var(--surface);
+}
+
+.verteilerLinie {
+  grid-column: 3;
+  height: 0;
+  margin-inline: var(--a-2);
+  border-top: 1px dashed var(--line-strong);
+}
+
+.verteilerWert {
+  grid-column: 4;
+  padding-inline-end: var(--a-2);
+  font-size: var(--text-callout);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ═══ Gehaltsleiter (Kopf der Gehaltsseite): Spannen auf einer Euro-Skala ═══ */
+.leiter {
+  display: grid;
+  gap: var(--a-3);
+  width: 100%;
+  max-width: 34rem;
+}
+
+.leiterListe {
+  display: grid;
+  gap: var(--a-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.leiterZeile {
+  display: grid;
+  gap: var(--a-2);
+}
+
+.leiterSpur {
+  position: relative;
+  display: block;
+  height: var(--a-6);
+  /* Planpapier: senkrechte Haarlinien an jedem vollen Tausender (--teile = Abschnitte der Skala) */
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--line) 0 1px,
+    transparent 1px calc(100% / var(--teile))
+  );
+  border-right: 1px solid var(--line);
+}
+
+.leiterPaar {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--von) * 100%);
+  width: calc((var(--bis) - var(--von)) * 100%);
+  height: calc(var(--paar) + var(--m-strich) * 2);
+  transform: translateY(-50%);
+  border-top: var(--m-strich) solid var(--vorlauf);
+  border-bottom: var(--m-strich) solid var(--ruecklauf);
+}
+
+/* Flansche an Anfang und Ende der Spanne */
+.leiterPaar::before,
+.leiterPaar::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--a-1) * -1 - var(--m-strich));
+  bottom: calc(var(--a-1) * -1 - var(--m-strich));
+  width: var(--m-strich);
+  border-radius: var(--radius-voll);
+  background-color: var(--brand);
+}
+
+.leiterPaar::before {
+  left: calc(var(--m-strich) * -1);
+}
+
+.leiterPaar::after {
+  right: calc(var(--m-strich) * -1);
+}
+
+.leiterBetrag {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--bis) * 100% + var(--a-3));
+  transform: translateY(-50%);
+  padding-inline: var(--a-1);
+  background-color: var(--surface);
+  font-size: var(--text-callout);
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.leiterBetragLinks {
+  left: auto;
+  right: calc((1 - var(--von)) * 100% + var(--a-3));
+}
+
+@media (min-width: 64em) {
+  .leiterBetrag {
+    font-size: var(--text-lead);
+  }
+}
+
+.leiterKopf {
+  margin-bottom: var(--a-2);
+}
+
+.leiterSkala {
+  position: relative;
+  height: calc(var(--a-3) + var(--a-2) + 1.2em);
+  font-size: var(--text-footnote);
+}
+
+/* Maßlinie mit Endstrichen wie die Maßkette */
+.leiterMass {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--a-3);
+  border-inline: var(--m-strich) solid var(--brand);
+}
+
+.leiterMass::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: var(--m-strich);
+  transform: translateY(-50%);
+  background-color: var(--brand);
+}
+
+.leiterMarke {
+  position: absolute;
+  top: calc(var(--a-3) + var(--a-2));
+  left: calc(var(--lage) * 100%);
+  transform: translateX(-50%);
+  font-stretch: 75%;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.leiterMarke:nth-child(2) {
+  transform: none;
+}
+
+.leiterMarke:last-child {
+  transform: translateX(-100%);
+}
+
+/* Unter 30em (480 px) nur jede zweite Marke: Die Haarlinien des Planpapiers zeigen die übrigen Tausender */
+@media (max-width: 29.99em) {
+  .leiterMarkeBreit {
+    display: none;
+  }
+}
+
+/* ═══ Zeitkette (Kopf der Seite „Der Betrieb“): Haus und Maßkette 1926 → 2026 ═══ */
+.zeitbild {
+  display: grid;
+  justify-items: center;
+  gap: var(--a-6);
+  width: 100%;
+  max-width: 30rem;
+}
+
+.zeitHaus {
+  width: min(100%, 13rem);
+}
+
+.zeitkette {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "von spanne bis"
+    "linie linie linie"
+    "vonName . bisName";
+  align-items: end;
+  column-gap: var(--a-3);
+  row-gap: var(--a-2);
+  width: 100%;
+  margin: 0;
+}
+
+.zeitVon,
+.zeitBis {
+  font-size: var(--text-numeral);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.zeitVon {
+  grid-area: von;
+}
+
+.zeitBis {
+  grid-area: bis;
+  text-align: right;
+}
+
+.zeitSpanne {
+  grid-area: spanne;
+  justify-self: center;
+  padding-bottom: 0.15em;
+  font-size: var(--text-title-3);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.zeitLinie {
+  grid-area: linie;
+  position: relative;
+  height: var(--a-4);
+  border-inline: var(--m-strich) solid var(--brand);
+}
+
+.zeitLinie::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: var(--m-strich);
+  transform: translateY(-50%);
+  background-color: var(--brand);
+}
+
+.zeitVonName {
+  grid-area: vonName;
+  align-self: start;
+}
+
+.zeitBisName {
+  grid-area: bisName;
+  align-self: start;
+  text-align: right;
+}
+
+/* ═══ Servicefahrzeug und Absperrung (Köpfe): Kästchen am Bild ab 26rem, darunter als Reihe ═══ */
+.fahrzeug,
+.absperrung {
+  position: relative;
+  width: 100%;
+  max-width: 34rem;
+  container-type: inline-size;
+}
+
+.fahrzeugEtiketten,
+.absperrungEtiketten {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-2);
+  padding-top: var(--a-3);
+}
+
+@container (min-width: 26rem) {
+  .fahrzeugEtiketten,
+  .absperrungEtiketten {
+    position: absolute;
+    inset: 0;
+    display: block;
+    padding: 0;
+  }
+
+  .fahrzeugEtikett,
+  .absperrungEtikett {
+    position: absolute;
+  }
+
+  .fzSortimo {
+    left: 31%;
+    top: 0;
+  }
+
+  .fzHilti {
+    left: 31%;
+    top: 90%;
+  }
+
+  .fzMess {
+    left: 64%;
+    top: 90%;
+  }
+
+  .abDu {
+    left: 1%;
+    top: 52%;
+  }
+
+  .abArbeitgeber {
+    left: 33.75%;
+    top: 7%;
+    transform: translateX(-50%);
+  }
+
+  .abZiel {
+    left: 85.4%;
+    top: 12%;
+    transform: translateX(-50%);
+  }
+}
+
+/* Blindflansch: zwei Scheiben in der Fläche, damit nichts durchscheint */
+.flansch {
+  fill: var(--surface);
+}
+
+/* ═══ Gehalt: Spannen je Stelle ═══ */
+.spannen {
+  display: grid;
+  gap: var(--a-7) var(--a-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 48em) {
+  .spannen {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.spanne {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: var(--a-5);
+}
+
+.spanneBetrag {
+  font-size: var(--text-title-2);
+  white-space: nowrap;
+}
+
+.spanneText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-3);
+}
+
+/* Kästchen mit Satz auf Papier (Ausbildung) */
+.kaestchenListe {
+  display: grid;
+  gap: var(--a-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.kaestchen {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--a-3);
+  padding-top: var(--a-5);
+  border-top: var(--m-strich) solid var(--brand);
+}
+
+.kaestchen [data-zeichnung="etikettkasten"],
+.position [data-zeichnung="etikettkasten"] {
+  max-width: 100%;
+  white-space: normal;
+  line-height: 1.3;
+}
+
+/* ═══ Fahrzeug und Werkzeug: Stückliste und Pakete je Stelle ═══ */
+.stueckliste {
+  display: grid;
+  gap: var(--a-7) var(--a-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 48em) {
+  .stueckliste {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64em) {
+  .stueckliste {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.position {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--a-3);
+  padding-top: var(--a-5);
+  border-top: var(--m-strich) solid var(--brand);
+}
+
+.positionText {
+  max-width: 34rem;
+  font-size: var(--text-callout);
+  line-height: 1.55;
+  color: var(--ink-muted);
+}
+
+.giltFuer {
+  margin-top: var(--a-1);
+  line-height: 1.4;
+}
+
+.giltFuerStellen {
+  color: var(--ink);
+}
+
+.pakete {
+  display: grid;
+  gap: var(--a-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 48em) {
+  .pakete {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Ungerade Zahl: die letzte Karte über beide Spalten, kein leerer halber Platz (Kritik 2: Ausbildung allein) */
+  .pakete > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+
+.paket {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-4);
+  padding: var(--a-4) var(--a-5) var(--a-5);
+  border: var(--m-strich) solid var(--brand);
+  border-radius: var(--radius-2);
+  background-color: var(--surface);
+}
+
+.paketText {
+  font-size: var(--text-callout);
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+.paketZeilen {
+  display: grid;
+  gap: var(--a-4);
+  margin: 0;
+}
+
+.paketZeile {
+  display: grid;
+  gap: var(--a-1);
+}
+
+.paketZeile dd {
+  margin: 0;
+  font-size: var(--text-callout);
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.paketBetrag {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--a-1) var(--a-2);
+  margin-top: auto;
+}
+
+.aufgaben {
+  display: grid;
+  gap: var(--a-2);
+  margin: 0;
+  padding-left: 1.1em;
+  list-style: disc;
+  font-size: var(--text-callout);
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.aufgaben li::marker {
+  color: var(--brand);
+}
+
+/* ═══ Wärmepumpen: Marken und Partnerstufen ═══ */
+/* Umbruch mit Wachsen statt Raster: Die letzte Reihe füllt die Breite, kein Schild steht allein in einer halben Reihe
+   (Kritik 2: Viessmann allein am Handy) */
+.marken {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Typenschild je Marke: Rahmen im Strich, Name in Bricolage */
+.marke {
+  flex: 1 1 10rem;
+  display: flex;
+  align-items: center;
+  gap: var(--a-3);
+  min-width: 0;
+  min-height: var(--a-9);
+  padding: var(--a-3) var(--a-4);
+  border: var(--m-strich) solid var(--brand);
+  border-radius: var(--radius-1);
+  background-color: var(--surface);
+  color: var(--brand);
+  font-family: var(--font-display);
+  font-size: var(--text-lead);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.partner {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--m-strich) solid var(--brand);
+}
+
+@media (min-width: 48em) {
+  .partner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--a-8);
+  }
+}
+
+.partnerZeile {
+  display: grid;
+  align-content: start;
+  gap: var(--a-1);
+  padding-block: var(--a-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.partnerZusatz {
+  font-size: var(--text-callout);
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+/* ═══ Der Betrieb: Personen und Steckbrief ═══ */
+.personen {
+  display: grid;
+  gap: var(--a-4) var(--a-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 37.5em) {
+  .personen {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.person {
+  display: flex;
+  align-items: center;
+  gap: var(--a-4);
+}
+
+.monogramm {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--a-7);
+  height: var(--a-7);
+  border: var(--m-strich) solid var(--brand);
+  border-radius: var(--radius-voll);
+  color: var(--brand);
+  font-size: var(--text-callout);
+  font-weight: 600;
+}
+
+.steckbrief {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-4);
+  padding: var(--a-5) var(--a-6) var(--a-6);
+  border-radius: var(--radius-2);
+  background-color: var(--surface-2);
+}
+
+@media (min-width: 64em) {
+  .steckbrief {
+    margin-top: var(--a-2);
+  }
+}
+
+/* ═══ Der Betrieb: Partner-Säulen auf Navy (Name in Bricolage, belegter Zusatz darunter) ═══ */
+.saeulen {
+  display: grid;
+  gap: var(--a-6) var(--a-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 48em) {
+  .saeulen {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64em) {
+  .saeulen {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.saeule {
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-2);
+  padding-top: var(--a-4);
+  border-top: var(--m-strich) solid var(--brand);
+}
+
+.saeuleNummer {
+  margin-bottom: var(--a-1);
+}
+
+.saeuleName {
+  font-family: var(--font-display);
+  font-size: var(--text-title-3);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--brand);
+  text-wrap: balance;
+}
+
+.saeuleZusatz {
+  max-width: 30rem;
+  font-size: var(--text-callout);
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
