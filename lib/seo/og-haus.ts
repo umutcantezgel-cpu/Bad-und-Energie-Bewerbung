@@ -33,15 +33,36 @@ export const HAUS_FEIN: readonly string[] = [
 export const HAUS_FBH_X: readonly number[] = [414, 430, 446, 462, 478, 494, 510, 526, 542, 558, 574, 590];
 export const HAUS_FBH_Y = 733;
 
-/** Uhr im Giebel auf 13:30, mit Fadenkreuz (Messpunkt). */
-export const HAUS_UHR = {
+/**
+ * Zirkelzeichen im Giebel (Leitmotiv „35 km“, E-027; ersetzt die Uhr auf 13:30): eine Scheibe als Einsatzgebiet,
+ * darin der Innenring (Kernzone) und der Mittelpunkt (Firmensitz Wetzlar), der Radius unter 45° nach oben links
+ * bis an den Rand; außen das Fadenkreuz (Messpunkt). Dieselbe Marke steht in der Szene des Einstiegs
+ * (components/home/einstieg/Szene.tsx), im kleinen Haus, im Wärmebild und in der Glyphe `radius`.
+ *
+ * Am Desktop des Einstiegs läuft der Radius als Hinweislinie weiter bis an den großen Bogen „35 km“ im Himmel:
+ * Kreis um den Mittelpunkt durch den Endpunkt der Linie (232 | 300), nur zwischen den beiden Traufen.
+ */
+export const HAUS_ZIRKEL = {
   cx: 400,
   cy: 468,
   r: 34,
-  striche: 'M400 438L400 444M430 468L424 468M400 498L400 492M370 468L376 468',
-  zeiger: 'M400 468L412.5 455.5M400 468V493.16',
+  /** Innenring: Kernzone (15 von 35 km, auf die Scheibe r 34 umgerechnet). */
+  ringR: 15,
+  /** Radius vom Mittelpunkt an den Rand der Scheibe (45° nach oben links). */
+  radius: 'M400 468L375.96 443.96',
+  /** Pfeil am Rand der Scheibe (Spitze r 32): Der Radius zeigt nach außen, kein Uhrzeiger. */
+  radiusPfeil: 'M379.84 456.09L377.37 445.37L388.09 447.84',
   kreuzR: 46,
   kreuz: 'M400 414V428M400 508V522M346 468H360M440 468H454',
+  /** Hinweislinie: vom Rand der Scheibe auf dem Radius weiter bis an den Bogen, mit Pfeil am Bogen. */
+  leitlinie: 'M375.96 443.96L232 300',
+  pfeil: 'M236.1 313.4L232 300L245.4 304.1',
+  /** Endpunkt der Hinweislinie auf dem Bogen; dort hängt das Maß „35 km“. */
+  ende: { x: 232, y: 300 },
+  /** Bogen r = 168 · √2 um den Mittelpunkt, vom Endpunkt nach rechts bis zur rechten und nach links bis zur linken Traufe. */
+  bogenR: 237.59,
+  bogenRechts: 'M232 300A237.59 237.59 0 0 1 618.14 562.14',
+  bogenLinks: 'M232 300A237.59 237.59 0 0 0 181.86 562.14',
 } as const;
 
 /** Rücklauf (blau) und Vorlauf (rot) mit Mantel in Papier; der letzte Vorlauf verlässt die Wärmepumpe nach links. */

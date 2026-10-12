@@ -71,17 +71,12 @@ export function kopfUnterzeile(job: Pick<Job, 'summary' | 'seo'>): string {
 }
 
 /**
- * Maße an der Zeichnung (Variante 1: Maßketten für die Arbeitszeit und das Einsatzgebiet): „13:30 Freitags
- * Feierabend“, wenn die Stelle den Fakt führt, und der Radius aus den Stellendaten.
+ * Maße an der Zeichnung (Variante 1: Maßkette für das Einsatzgebiet): der Radius aus den Stellendaten. Die
+ * Arbeitszeit hat kein Maß mehr: Sie ist flexibel (Fakt flexibleHours), feste Uhrzeiten nennt die Seite nicht
+ * (fakten-abgleich B28; bis 2026-10-12 stand hier „13:30 Freitags Feierabend“).
  */
-export function kopfMasse(job: Pick<Job, 'benefitFactIds' | 'location'>): SeitenkopfMass[] {
-  const masse: SeitenkopfMass[] = [];
-  const freitag = FACTS.friday1330;
-  if (job.benefitFactIds.includes('friday1330') && freitag.value && freitag.label) {
-    masse.push({ wert: freitag.value, name: freitag.label });
-  }
-  masse.push({ wert: `${job.location.radiusKm}${NBSP}km`, name: 'Einsatzradius' });
-  return masse;
+export function kopfMasse(job: Pick<Job, 'location'>): SeitenkopfMass[] {
+  return [{ wert: `${job.location.radiusKm}${NBSP}km`, name: 'Einsatzradius' }];
 }
 
 /** Das Wärmebild (Variante 3, statisch) gehört zur Wärmepumpen-Stelle im Kundendienst. */
@@ -99,10 +94,10 @@ export const ANSPRECHPARTNER = { name: COMPANY.managingDirector.name, role: COMP
 const VORTEIL_ICON: Partial<Record<FactId, IconName>> = {
   aboveTariff: 'banknote',
   vacation30: 'calendar-off',
-  friday1330: 'uhr',
+  flexibleHours: 'uhr',
   noWeekendOnCall: 'shield-check',
   noFarAssembly: 'standort',
-  radius35: 'map',
+  radius35: 'radius',
   ipadSmartphone: 'tablet-smartphone',
   paidCertifications: 'graduation-cap',
   permanentContract: 'file-check',

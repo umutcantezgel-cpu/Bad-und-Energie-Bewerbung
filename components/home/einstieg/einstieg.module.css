@@ -209,10 +209,23 @@
   fill: var(--wb-fein);
 }
 
-/* Fadenkreuz und Hinweislinie: Messstrich, eine Stufe feiner als die Zeichnung */
+/* Fadenkreuz, Hinweislinie und Bogen: Messstrich, eine Stufe feiner als die Zeichnung */
 .mess {
   stroke: var(--wb-creme);
   stroke-width: calc(var(--strich-e) * 0.67px);
+}
+
+/* Zirkelzeichen (E-027): Innenring der Kernzone im Messstrich auf der Scheibe */
+.ring {
+  fill: none;
+  stroke: var(--wb-fein);
+  stroke-width: calc(var(--strich-e) * 0.67px);
+}
+
+/* Der Bogen „35 km“ wird wie eine Leitung gezeichnet (pathLength 1): im Endzustand steht er ganz */
+.bogen {
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 0;
 }
 
 .mantel {
@@ -305,7 +318,7 @@
   white-space: nowrap;
 }
 
-/* Ablesung am Messpunkt: 13:30 unter der Giebeluhr (mobil; am Desktop steht das Maß groß im Himmel) */
+/* Ablesung am Messpunkt: „35 km“ unter dem Zirkel (mobil; am Desktop hängt das Maß groß am Bogen im Himmel) */
 .ablesung {
   position: absolute;
   left: calc(400 * var(--e));
@@ -332,7 +345,8 @@
 
 .masse {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* Drei Maße; das erste trägt das längere Etikett „Einsatzgebiet rund um Wetzlar“ */
+  grid-template-columns: minmax(0, 1.25fr) repeat(2, minmax(0, 1fr));
   margin: 0;
   padding: 0;
   list-style: none;
@@ -398,6 +412,11 @@
 
 .trennbar {
   hyphens: manual;
+}
+
+/* Etikett am Radius in zwei festen Zeilen: „Einsatzgebiet“ / „rund um Wetzlar“ */
+.zeile {
+  display: block;
 }
 
 .jahre {
@@ -932,7 +951,8 @@
     display: none;
   }
 
-  /* Maße als Einblendung im kalten Himmel: 30 · 35 km · 1926 als Maßkette, 13:30 groß mit Hinweislinie zur Uhr */
+  /* Maße als Einblendung im kalten Himmel: 30 · 1926 als Maßkette, „35 km“ groß am Ende der Hinweislinie, die
+     vom Zirkel im Giebel als Radius bis an den Bogen läuft (Endpunkt 232 | 300, das Maß 14 Einheiten davor) */
   .leiste {
     position: absolute;
     left: 0;
@@ -968,25 +988,25 @@
     font-size: var(--text-callout);
   }
 
-  .mass1330 {
+  .massRadius {
     position: absolute;
-    left: calc(232 * var(--e));
-    top: calc(300 * var(--e));
+    left: calc(218 * var(--e));
+    top: calc(286 * var(--e));
     transform: translate(-100%, -100%);
     align-items: flex-end;
     text-align: right;
   }
 
-  .mass1330 .wert {
+  .massRadius .wert {
     font-size: var(--text-numeral);
   }
 
-  .mass1330 .name {
+  .massRadius .name {
     padding: 0;
     border-top: 0;
   }
 
-  .mass1330 .name::before {
+  .massRadius .name::before {
     display: none;
   }
 
@@ -1073,9 +1093,10 @@
 /* ═══ Auftakt: der Kreislauf läuft einmal an (Ende 1.120 ms) ═══
    Unter der Klasse `auftakt` aus dem Kopfskript (lib/motion/head-script.ts) und erneut, wenn „Kreislauf zeigen“
    data-kreislauf="lauf" setzt. Folge: der Vorlauf läuft vom Knopf ins Haus, dann breitet sich die Wärme aus,
-   der Rücklauf kehrt zurück, zuletzt rastet die Uhr auf 13:30 ein.
+   der Rücklauf kehrt zurück, zuletzt rastet der Zirkel auf 35 km ein (der Radius klappt auf, am Desktop öffnet
+   sich der Bogen vom Ende der Hinweislinie nach beiden Seiten).
    Desktop: Knopf → Pumpe 0–600 · Lüfter 0–400 · Vorlauf im Haus 600–1.000 · Wärme 480–1.120 · Rücklauf
-   640–1.040 · Uhr 880–1.120. Mobil: Abzweig 0–120 · Schacht 120–360 · Pumpe 360–480 · dann wie Desktop,
+   640–1.040 · Zirkel 880–1.120. Mobil: Abzweig 0–120 · Schacht 120–360 · Pumpe 360–480 · dann wie Desktop,
    Rücklauf und Schacht nach unten 880–1.120.
    Füllart backwards: Endwert = Grundwert; ohne Skript, mit reduzierter Bewegung (globals.css) und nach dem
    Sicherheitsnetz (2 s) steht sofort der Endzustand. */
@@ -1109,9 +1130,9 @@
   }
 }
 
-@keyframes stunde {
+@keyframes aufklappen {
   from {
-    transform: rotate(-15deg);
+    transform: rotate(45deg);
   }
 
   to {
@@ -1167,7 +1188,8 @@
   transform-origin: 102px 691px;
 }
 
-.zeiger {
+/* Der Radius klappt um den Mittelpunkt des Zirkels auf */
+.arm {
   transform-origin: 400px 468px;
 }
 
@@ -1292,20 +1314,21 @@
   animation: zeichnen var(--d-1) var(--k-aus) calc(var(--d-2) + var(--d-2)) backwards;
 }
 
-/* Schlusstakt: die Uhr rastet auf 13:30 ein, das Fadenkreuz misst */
-:global(.auftakt) .held [data-motion="uhr"],
-.held[data-kreislauf="lauf"] [data-motion="uhr"] {
-  animation: halb var(--d-2) var(--k-aus) calc(var(--takt) * 11) backwards;
+/* Schlusstakt: der Zirkel rastet auf 35 km ein. Der Radius klappt auf, das Fadenkreuz misst, am Desktop öffnet
+   sich der Bogen vom Ende der Hinweislinie nach beiden Seiten (gleiche Dauer und Verzögerung, Register) */
+:global(.auftakt) .held [data-motion="radius-einrasten"],
+.held[data-kreislauf="lauf"] [data-motion="radius-einrasten"] {
+  animation: aufklappen var(--d-2) var(--k-aus) calc(var(--takt) * 11) backwards;
 }
 
-:global(.auftakt) .held .zeigerStd[data-motion="uhr"],
-.held[data-kreislauf="lauf"] .zeigerStd[data-motion="uhr"] {
-  animation-name: stunde;
-}
-
-:global(.auftakt) .held .messpunkt[data-motion="uhr"],
-.held[data-kreislauf="lauf"] .messpunkt[data-motion="uhr"] {
+:global(.auftakt) .held .messpunkt[data-motion="radius-einrasten"],
+.held[data-kreislauf="lauf"] .messpunkt[data-motion="radius-einrasten"] {
   animation-name: einrasten;
+}
+
+:global(.auftakt) .held .bogen[data-motion="radius-einrasten"],
+.held[data-kreislauf="lauf"] .bogen[data-motion="radius-einrasten"] {
+  animation-name: zeichnen;
 }
 
 /* ═══ Druck: Einstieg ohne Mindesthöhe; Farben kommen aus den hellen Rollen (theme.css) ═══ */

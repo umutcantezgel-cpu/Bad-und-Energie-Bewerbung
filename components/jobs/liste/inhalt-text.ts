@@ -13,14 +13,15 @@ import type { Job } from '@/lib/jobs/registry';
  *
  * Faktenverteilung (E-023: ein Fakt in höchstens zwei Abschnitten; die Bestandsabschnitte zählen mit):
  * - 35 km steht als Maß im Kopf und in REGION.headline: Der Vergleich lässt Aufgaben mit dem Radius weg.
- * - 13:30 steht im Heizkreis des Kopfs und hier in der Arbeitswoche (workingHours), sonst nirgends.
+ * - „Flexible Arbeitszeiten“ steht in der Unterzeile des Kopfs und hier in der Arbeitszeit, sonst nirgends; feste
+ *   Uhrzeiten nennt die Seite nicht (fakten-abgleich B28).
  * - Hilti, Servicefahrzeug und „unbefristet“ stehen im Ablauf (Schritt 3) und je einmal in Kopf oder Liste.
  * - „Kein Lebenslauf“ steht im Mikrotext des Kopfs und im Initiativband, darum in keinem neuen Abschnitt.
  */
 
 const NBSP = ' ';
 
-/** „16:45 Uhr“ und „15 km“ brechen nicht zwischen Zahl und Einheit (K-012). */
+/** „15 km“ und „16 Min.“ brechen nicht zwischen Zahl und Einheit (K-012). */
 function zusammen(text: string): string {
   return text.replace(/(\d) (?=Uhr|km|Min\.)/g, `$1${NBSP}`);
 }
@@ -99,14 +100,14 @@ export interface Ort {
 
 /**
  * Abschnitt Einsatzgebiet (Bestand: REGION.headline als h2, REGION.summary als Einleitung, Weg zur Karte), dazu
- * die Arbeitswoche (Fakten workingHours, noWeekendOnCall), Betrieb und Team (REGION.milestone mit employees15)
+ * die Arbeitszeit (Fakten flexibleHours, noUnpaidOvertime, noWeekendOnCall), Betrieb und Team (REGION.milestone mit employees15)
  * und die Orte mit Entfernung und Fahrzeit bis Wetzlar (REGION.locations aus lib/data/locations.ts).
  */
 export const ALLTAG = Object.freeze({
   etikett: 'Arbeitsalltag und Einsatzgebiet',
   woche: Object.freeze({
-    titel: 'Arbeitswoche',
-    text: zusammen(`${FACTS.workingHours.long} ${FACTS.noWeekendOnCall.long}`),
+    titel: 'Arbeitszeit',
+    text: zusammen(`${FACTS.flexibleHours.long} ${FACTS.noUnpaidOvertime.long} ${FACTS.noWeekendOnCall.long}`),
   }),
   betrieb: Object.freeze({
     titel: 'Betrieb und Team',

@@ -34,7 +34,7 @@ const EMPLOYER_FACT_IDS: readonly FactId[] = [
   'employees15',
   'aboveTariff',
   'permanentContract',
-  'workingHours',
+  'flexibleHours',
   'vacation30',
   'hilti',
   'workwear',
@@ -83,7 +83,8 @@ export function contactLines(): string[] {
     `Telefon: ${COMPANY.phone.display}`,
     `WhatsApp: ${COMPANY.whatsapp.display}`,
     `E-Mail: ${COMPANY.email}`,
-    `Erreichbar: ${COMPANY.openingHours.short}`,
+    // Bürozeiten, keine Arbeitszeit (fakten-abgleich B28)
+    `Büro erreichbar: ${COMPANY.openingHours.short}`,
     `Adresse: ${COMPANY.address.street}, ${COMPANY.address.postalCode} ${COMPANY.address.city}`,
   ];
 }

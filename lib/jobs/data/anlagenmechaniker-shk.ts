@@ -15,7 +15,7 @@ export const anlagenmechanikerShk = defineJob({
   seo: {
     metaTitle: 'Anlagenmechaniker SHK (m/w/d) Job Wetzlar – Wärmepumpe',
     metaDescription:
-      'Anlagenmechaniker SHK in Wetzlar: Wärmepumpen & Bäder im 35-km-Umkreis, 3.600–4.600 €, 30 Tage Urlaub, freitags ab 13:30 frei. In 60 Sek. bewerben.',
+      'Anlagenmechaniker SHK in Wetzlar: Wärmepumpen & Bäder im 35-km-Umkreis, 3.600–4.600 €, 30 Tage Urlaub, flexible Arbeitszeiten. In 60 Sek. bewerben.',
     h1: 'Anlagenmechaniker SHK (m/w/d) in Wetzlar',
     primaryKeyword: 'Anlagenmechaniker SHK Wetzlar',
     secondaryKeywords: [
@@ -28,7 +28,7 @@ export const anlagenmechanikerShk = defineJob({
   },
   summary: 'Du montierst Wärmepumpen und moderne Bäder in Wetzlar und Umgebung, ganz ohne Fernmontage.',
   intro:
-    'Als Anlagenmechaniker SHK montierst und modernisierst du Wärmepumpensysteme von Buderus, Bosch, NIBE, Alpha Innotec und Viessmann sowie hochwertige Bäder. Deine Baustellen liegen in Wetzlar, Gießen und dem Lahn-Dill-Kreis, maximal 35 km vom Firmensitz entfernt.',
+    'Als Anlagenmechaniker SHK montierst und modernisierst du Wärmepumpensysteme von Buderus, Bosch, NIBE, Alpha Innotec und Viessmann sowie hochwertige Bäder. Deine Baustellen liegen im Umkreis von 35 km um Wetzlar.',
   tasks: [
     'Montage, Inbetriebnahme und hydraulischer Abgleich von Wärmepumpen',
     'Heizungsmodernisierung im Neubau und im Bestand',
@@ -43,7 +43,7 @@ export const anlagenmechanikerShk = defineJob({
   benefitFactIds: [
     'aboveTariff',
     'vacation30',
-    'friday1330',
+    'flexibleHours',
     // E-SEO-010: „ohne Bereitschaftszwang“ (Altstand ALT-SEO-61) im Wortlaut des Fakts (fakten-abgleich B23)
     'noWeekendOnCall',
     'noFarAssembly',
@@ -64,8 +64,8 @@ export const anlagenmechanikerShk = defineJob({
   experienceMonths: 12,
   datePosted: '2026-03-01',
   validThrough: '2027-10-06T00:00:00',
-  updatedAt: '2026-10-08',
+  updatedAt: '2026-10-12',
   apply: { questionSet: 'fachkraft' },
   channels: { googleJobs: true, indeedFeed: true, genericFeed: true, ba: true },
-  teamQuoteId: 'koch',
+  // Zitat Koch ausgeblendet, bis der Inhaber ein neues freigibt (fakten-abgleich B30).
 });

@@ -131,7 +131,7 @@
 - **Jobs bleiben in Phase 1–4 typisiertes TypeScript im Git.** Bei 4–6 Stellen ist der Git-Review ein Vorteil, und die Seiten und Feeds sind statisch und immer verfügbar. Eine Migration in eine Supabase-Tabelle mit demselben zod-Schema ist in Phase 5 möglich, ohne dass sich die Aufrufer ändern.
 
 **`lib/content/`** – Fakten-Registry und Texte
-- `facts.ts`: jeder USP mit ID (`friday1330`, `vacation30`, `radius35`, `founded1926`, `employees15`, `hilti`, `vehicle`, `noWeekendOnCall`, `partners5`, …) und `short`/`long`/`source`.
+- `facts.ts`: jeder USP mit ID (`flexibleHours`, `vacation30`, `radius35`, `founded1926`, `employees15`, `hilti`, `vehicle`, `noWeekendOnCall`, `partners5`, …) und `short`/`long`/`source`.
 - Daneben `faq.ts`, `process.ts`, `region.ts` (aus `locations.ts`) und später `landing-pages.ts`.
 - Komponenten referenzieren nur Fakt-IDs. Damit kann kein Text Fakten erfinden, und jeder USP erscheint höchstens zweimal pro Seite.
 
@@ -167,7 +167,7 @@
 
 **Typografie** (`next/font/local`, `app/fonts/`, OFL, 223 864 Byte, zwei Dateien vorgeladen)
 - Bricolage Grotesque (Display 800, −0,01 em; `--font-display`), Atkinson Hyperlegible Next (Text; `--font-sans`), Martian Mono nur für Maße (Breite 75 %, tabellarisch; `--font-mass`). Inter entfällt.
-- Skala (10 Stufen, `clamp` mit rem-Anteil): footnote 14 · callout 15–16 · body 17–20 · lead 19–24 · title-3 20–30 · title-2 24–36 · title-1 32–56 (= numeral) · display 52–120 mobil/Tablet (390 px: 60,6 px; unter 360 px 40–52), 64–168 ab 64 em, am längsten Wort „Feierabend.“ gemessen (`app/fonts/__tests__/display.test.ts`) · plakat (nur die Plakatzeile „SHK-Jobs / in Wetzlar.“, Werte aus Variante 1: 60–120 mobil, 390 px 76 px, Höhenstufen B–D, 64–192 ab 64 em). Überschriften h1–h3 trennen deutsch (`hyphens: auto`, ab 10 Zeichen).
+- Skala (10 Stufen, `clamp` mit rem-Anteil): footnote 14 · callout 15–16 · body 17–20 · lead 19–24 · title-3 20–30 · title-2 24–36 · title-1 32–56 (= numeral) · display 52–120 mobil/Tablet (390 px: 60,6 px; unter 360 px 40–52), 64–168 ab 64 em, am Referenzwort „Feierabend.“ gemessen; „Arbeitszeiten.“ (Zweitzeile der H1) steht nur in title-3 (`app/fonts/__tests__/display.test.ts`) · plakat (nur die Plakatzeile „SHK-Jobs / in Wetzlar.“, Werte aus Variante 1: 60–120 mobil, 390 px 76 px, Höhenstufen B–D, 64–192 ab 64 em). Überschriften h1–h3 trennen deutsch (`hyphens: auto`, ab 10 Zeichen).
 - `font-mass` (Maße) und `text-etikett` (Mono-Versalien +0,06 em) sind die einzigen Wege zu Mono und Versalien; `ziffer` setzt Ziffern im Fließtext in Bricolage (Atkinson zeichnet die Null mit Schrägstrich); `font-mono`, `font-serif`, `uppercase`, `font-[…]` bleiben verboten. 800 nur über die Display-Stufen.
 - Inputs ≥ 17 px. `text-wrap: balance`/`pretty`. Weiche Trennung (`titleShy`) für lange Berufsnamen.
 
@@ -228,7 +228,7 @@
    - Eyebrow „Seit 1926 · Wetzlar“, zweiteilige H1, ein Lead-Satz (≤ 30 Wörter).
    - „Jetzt bewerben“ plus Textlink „Offene Stellen“.
    - Mikrocopy: „Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.“
-   - 4 StatTiles: **13:30** Freitags Feierabend · **30** Tage Urlaub · **35 km** Radius · **1926**.
+   - 3 Maße: **35 km** Einsatzgebiet rund um Wetzlar (Leitmotiv E-027, groß am Zirkel im Giebel) · **30** Tage Urlaub · **1926**. Keine Uhrzeit: Die Arbeitszeiten sind flexibel (fakten-abgleich B28).
 2. **Offene Stellen:** JobCards führen auf die Stellenseiten. Dazu ein Link zum Job-Alarm (ab Phase 4).
 3. **Vorteile:** max. 8 typografische Kacheln. Fasst Benefits, Ausstattung und Gehaltsrechner-Fakten zusammen.
 4. **Einsatzgebiet:**
@@ -471,7 +471,7 @@ Muster (Title ≤ 60 Zeichen, Description ≤ 155 Zeichen):
 
 | Seite | Title | H1 |
 |---|---|---|
-| Startseite | SHK Jobs Wetzlar: Anlagenmechaniker & Heizungsbauer | SHK-Jobs in Wetzlar. Ehrliches Handwerk. Pünktlich Feierabend. |
+| Startseite | SHK Jobs Wetzlar: Anlagenmechaniker & Heizungsbauer | SHK-Jobs in Wetzlar. Ehrliches Handwerk. Flexible Arbeitszeiten. |
 | /jobs | Stellenangebote SHK Wetzlar & Gießen – alle offenen Jobs | Offene Stellen in Wetzlar und Umgebung |
 | Anlagenmechaniker | Anlagenmechaniker SHK (m/w/d) Job Wetzlar – Wärmepumpe | Anlagenmechaniker SHK (m/w/d) in Wetzlar |
 | Kundendienst | Kundendiensttechniker Heizung & Wärmepumpe – Wetzlar/Gießen | Kundendiensttechniker SHK / Servicemonteur (m/w/d) |
@@ -480,7 +480,7 @@ Muster (Title ≤ 60 Zeichen, Description ≤ 155 Zeichen):
 | /bewerbung | Bewerben in 60 Sekunden – ohne Lebenslauf \| Bad & Energie | (sr-only) Bewerbung bei Bad und Energie |
 
 Beispiel-Description für Anlagenmechaniker:
-> Anlagenmechaniker SHK in Wetzlar: Wärmepumpen & Bäder im 35-km-Umkreis, 3.600–4.600 €, 30 Tage Urlaub, freitags ab 13:30 frei. In 60 Sek. bewerben.
+> Anlagenmechaniker SHK in Wetzlar: Wärmepumpen & Bäder im 35-km-Umkreis, 3.600–4.600 €, 30 Tage Urlaub, flexible Arbeitszeiten. In 60 Sek. bewerben.
 
 **Strukturierte Daten**
 - Organization, WebSite und LocalBusiness bleiben global.

@@ -12,8 +12,11 @@ import {
   PROCESS_STEPS,
   REGION,
   TEAM_QUOTES,
+  TEAM_PROFILES,
+  TEAM_QUOTES_ON_HOLD,
   TEAM_QUOTE_IDS,
   getFact,
+  getReleasedQuote,
   getDiscretionPromise,
   getFaqItems,
   getProcessIntro,
@@ -23,7 +26,8 @@ import {
 } from '..';
 
 const REQUIRED_FACTS = [
-  'friday1330',
+  'flexibleHours',
+  'noUnpaidOvertime',
   'vacation30',
   'radius35',
   'founded1926',
@@ -65,7 +69,6 @@ describe('FACTS', () => {
   });
 
   it('Kennzahlen entsprechen den Quellen', () => {
-    expect(FACTS.friday1330.value).toBe('13:30');
     expect(FACTS.vacation30.value).toBe('30');
     expect(FACTS.radius35.value).toBe('35 km');
     expect(FACTS.founded1926.value).toBe(String(companyData.foundingYear));
@@ -98,6 +101,20 @@ describe('FAQ', () => {
     }
   });
 
+  it('Arbeitszeit nach dem Inhaber (2026-10-12, fakten-abgleich B28/B29): flexibel, ohne Uhrzeit und ohne Kennzahl', () => {
+    expect(isFactId('friday1330')).toBe(false);
+    expect(isFactId('workingHours')).toBe(false);
+    expect(FACTS.flexibleHours).toMatchObject({ short: 'Flexible Arbeitszeiten', long: 'Flexible Arbeitszeiten.' });
+    expect(FACTS.flexibleHours.value).toBeUndefined();
+    expect(FACTS.flexibleHours.label).toBeUndefined();
+    expect(FACTS.radius35.long).toBe('Alle Baustellen liegen im Umkreis von 35 km um Wetzlar.');
+    expect(FACTS.noUnpaidOvertime.long).toBe('Keine unbezahlten Überstunden.');
+    expect(FACTS.noFarAssembly.long).toBe('Keine Fernmontagen und keine Hotelübernachtungen: Du bist jeden Abend zu Hause.');
+    for (const id of ['flexibleHours', 'radius35', 'noUnpaidOvertime', 'noFarAssembly'] as const) {
+      expect(FACTS[id].source, id).toBe('docs/operations/fakten-abgleich.md@699dcfb');
+    }
+  });
+
   it('drei FAQ je Fragenset', () => {
     for (const ids of Object.values(JOB_FAQ_IDS)) expect(getFaqItems(ids)).toHaveLength(3);
   });
@@ -110,6 +127,14 @@ describe('FAQ', () => {
     const answer = FAQ_ITEMS.find((f) => f.id === 'fernmontage')?.answer ?? '';
     expect(answer).toContain('jeden Abend');
     expect(answer).not.toMatch(/ausgeschlossen|Nachmittag/);
+  });
+
+  it('Fernmontage-Frage: 35 km rundum, „jeden Abend zu Hause“ ohne „pünktlich“, ohne Uhrzeit (B28, B29)', () => {
+    const fernmontage = FAQ_ITEMS.find((f) => f.id === 'fernmontage')!;
+    expect(fernmontage.answer).toBe(
+      'Nein. Unsere Baustellen liegen alle im Umkreis von 35 km um Wetzlar. Du bist jeden Abend zu Hause, und am Wochenende hast du frei.',
+    );
+    expect(fernmontage.factIds).toEqual(['radius35', 'noFarAssembly', 'noWeekendOnCall']);
   });
 });
 
@@ -148,6 +173,13 @@ describe('REGION', () => {
     for (const l of REGION.locations) expect(l.distanceKm).toBeLessThanOrEqual(REGION.radiusKm);
   });
 
+  it('Einsatzgebiet: 35 km rundum, auch die Nachbarkreise; „jeden Abend zu Hause“ ohne „pünktlich“ (B28, B29)', () => {
+    expect(REGION.summary).toBe(
+      'Du arbeitest in Wetzlar, Gießen, im Lahn-Dill-Kreis und in den Nachbarkreisen, ohne Hotelübernachtungen, und bist jeden Abend zu Hause.',
+    );
+    expect(REGION.summary).not.toMatch(/pünktlich/);
+  });
+
   it('Meilenstein hat genau zwei Sätze', () => {
     expect(REGION.milestone.text.split(/(?<=\.)\s+(?=[A-ZÄÖÜ])/)).toHaveLength(2);
     expect(REGION.milestone.text).toContain('Siegmund-Hiepe-Str. 20');
@@ -156,20 +188,35 @@ describe('REGION', () => {
 });
 
 describe('TEAM_QUOTES', () => {
-  it('vier echte Zitate aus lib/data/team.ts', () => {
+  it('nur die freigegebenen echten Zitate aus lib/data/team.ts; Demir und Koch sind ausgeblendet (B30)', () => {
     expect(Object.keys(TEAM_QUOTES)).toEqual([...TEAM_QUOTE_IDS]);
-    expect(Object.values(TEAM_QUOTES).map((q) => q.quote).sort()).toEqual(teamData.map((m) => m.quote).sort());
-    expect(TEAM_QUOTES.demir).toMatchObject({ name: 'Sabri Demir', initials: 'SD', role: 'Geschäftsführer und Meister' });
-    expect(TEAM_QUOTES.koch.name).toBe('Alexander Koch');
+    expect([...TEAM_QUOTE_IDS]).toEqual(['becker', 'weber']);
+    const freigegeben = teamData.filter((m) => !m.quoteOnHold).map((m) => m.quote);
+    expect(Object.values(TEAM_QUOTES).map((q) => q.quote).sort()).toEqual(freigegeben.sort());
     expect(TEAM_QUOTES.becker.name).toBe('Marc Becker');
     expect(TEAM_QUOTES.weber.name).toBe('Jonas Weber');
+    expect(TEAM_QUOTES_ON_HOLD.map((q) => q.id)).toEqual(['demir', 'koch']);
+    for (const q of TEAM_QUOTES_ON_HOLD) expect(q.reason, q.id).toMatch(/^B30: /);
+    expect(getReleasedQuote('demir')).toBeUndefined();
+    expect(getReleasedQuote('koch')).toBeUndefined();
+    expect(getReleasedQuote('becker')).toBe(TEAM_QUOTES.becker);
+  });
+
+  it('kein gezeigtes Zitat nennt eine feste Uhrzeit oder Feierabend', () => {
+    for (const q of Object.values(TEAM_QUOTES)) expect(q.quote, q.id).not.toMatch(/\d:\d|Feierabend|pünktlich/i);
+  });
+
+  it('Profile ohne Zitat bleiben für alle vier (Name und Rolle, z. B. Geschäftsführer im Impressum)', () => {
+    expect(TEAM_PROFILES.demir).toMatchObject({ name: 'Sabri Demir', initials: 'SD', role: 'Geschäftsführer und Meister' });
+    expect(TEAM_PROFILES.koch.name).toBe('Alexander Koch');
+    expect(Object.values(TEAM_PROFILES).some((p) => 'quote' in p)).toBe(false);
   });
 
   it('zeigt nur zeitlose Angaben (kein Lehrjahr, keine Dauer ohne Stichtag)', () => {
     expect(TEAM_QUOTES.weber).toMatchObject({ role: 'Auszubildender', experience: 'Seit August 2024 im Betrieb' });
-    expect(TEAM_QUOTES.koch).toMatchObject({ role: 'Obermonteur Wärmepumpen', experience: undefined });
+    expect(TEAM_PROFILES.koch).toMatchObject({ role: 'Obermonteur Wärmepumpen', experience: undefined });
     expect(TEAM_QUOTES.becker.experience).toBeUndefined();
-    expect(TEAM_QUOTES.demir.experience).toBe('Über 25 Jahre Handwerkserfahrung');
+    expect(TEAM_PROFILES.demir.experience).toBe('Über 25 Jahre Handwerkserfahrung');
   });
 });
 

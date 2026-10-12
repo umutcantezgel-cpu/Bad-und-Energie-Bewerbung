@@ -33,18 +33,16 @@ describe('Regionalband (E-BEW-008): Fakten aus facts.ts, Link auf das Einsatzgeb
     expect(REGIONALBAND.titel).toBe(`${FACTS.noFarAssembly.short}.`);
     expect(text).toContain(REGION.summary);
     expect(text).toContain(`${FACTS.radius35.value} Einsatzradius`);
-    expect(text).toContain(`${FACTS.friday1330.value} Freitags Feierabend`);
-    for (const mass of REGIONALBAND.masse) {
-      if ('detail' in mass && mass.detail) expect(FACTS.workingHours.short).toContain(normal(mass.detail));
-    }
-    expect(text).toContain('Mo–Do 07:00–16:45 Uhr');
+    // Arbeitszeit ohne Uhrzeit (fakten-abgleich B28): flexibel, dazu das freie Wochenende
+    expect(REGIONALBAND.masse.map((mass) => mass.name)).toEqual(['Einsatzradius']);
+    expect(text).toContain(`${FACTS.flexibleHours.long} ${FACTS.noWeekendOnCall.long}`);
+    expect(text).not.toMatch(/\d{2}:\d{2}|Feierabend|pünktlich/i);
     expect(text).toContain(`${COMPANY.address.street} ${COMPANY.address.postalCode} ${COMPANY.address.city}`);
   });
 
-  it('verlinkt /#einsatzgebiet und hält die Zeitspanne zusammen', () => {
+  it('verlinkt /#einsatzgebiet und bindet „35 km“', () => {
     expect(html).toContain('href="/#einsatzgebiet"');
-    expect(html).toContain('07:00⁠–⁠16:45 Uhr');
-    expect(html).toContain('35 km');
+    expect(html).toContain('35\u00a0km');
   });
 
   it('steht auf Wand mit Leitungstrenner und benannt über die h2', () => {

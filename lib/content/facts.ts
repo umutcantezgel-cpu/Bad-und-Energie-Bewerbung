@@ -17,7 +17,7 @@ interface FactBody {
   short: string;
   /** Ganzer Satz für Fließtext und Stellenbeschreibungen. */
   long: string;
-  /** Kennzahl für StatTiles, z. B. '13:30'. */
+  /** Kennzahl für StatTiles, z. B. '35 km'. */
   value?: string;
   /** Beschriftung zur Kennzahl. */
   label?: string;
@@ -34,22 +34,17 @@ interface FactBody {
 }
 
 const RAW_FACTS = {
-  friday1330: {
-    short: 'Freitags ab 13:30 Uhr Feierabend',
-    long: 'Freitags geht es verlässlich um 13:30 Uhr ins Wochenende.',
-    value: '13:30',
-    label: 'Freitags Feierabend',
-    source: 'lib/data/company.ts@393df01',
-  },
-  workingHours: {
-    short: 'Mo–Do 07:00–16:45 Uhr, Fr 07:00–13:30 Uhr',
-    long: 'Feste Arbeitszeiten: Montag bis Donnerstag von 07:00 bis 16:45 Uhr, Freitag von 07:00 bis 13:30 Uhr.',
-    source: 'lib/data/company.ts@393df01',
+  // Inhaber 2026-10-12 (B28): flexible Arbeitszeiten, keine festen Endzeiten. Was „flexibel“ konkret heißt,
+  // ist nicht belegt, darum ohne Kennzahl und ohne Uhrzeit.
+  flexibleHours: {
+    short: 'Flexible Arbeitszeiten',
+    long: 'Flexible Arbeitszeiten.',
+    source: 'docs/operations/fakten-abgleich.md@699dcfb',
   },
   noUnpaidOvertime: {
     short: 'Keine unbezahlten Überstunden',
-    long: 'Geregelte Arbeitszeiten ohne unbezahlte Überstunden.',
-    source: 'app/page.tsx@393df01',
+    long: 'Keine unbezahlten Überstunden.',
+    source: 'docs/operations/fakten-abgleich.md@699dcfb',
   },
   vacation30: {
     short: '30 Tage Urlaub',
@@ -60,15 +55,15 @@ const RAW_FACTS = {
   },
   radius35: {
     short: 'Einsatzgebiet maximal 35 km um Wetzlar',
-    long: 'Alle Baustellen liegen in Wetzlar, Gießen und dem Lahn-Dill-Kreis, maximal 35 km vom Firmensitz entfernt.',
+    long: 'Alle Baustellen liegen im Umkreis von 35 km um Wetzlar.',
     value: '35 km',
     label: 'Radius',
-    source: 'lib/seo/site-config.ts@393df01',
+    source: 'docs/operations/fakten-abgleich.md@699dcfb',
   },
   noFarAssembly: {
     short: 'Keine Fernmontage',
-    long: 'Keine Fernmontagen und keine Hotelübernachtungen: Du bist jeden Abend pünktlich zu Hause.',
-    source: 'app/page.tsx@393df01',
+    long: 'Keine Fernmontagen und keine Hotelübernachtungen: Du bist jeden Abend zu Hause.',
+    source: 'docs/operations/fakten-abgleich.md@699dcfb',
   },
   founded1926: {
     short: 'Meisterbetrieb seit 1926',

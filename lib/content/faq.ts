@@ -48,9 +48,10 @@ export const FAQ_ITEMS: readonly FaqItem[] = Object.freeze([
     id: 'fernmontage',
     question: 'Gibt es Fernmontagen oder Wochenendarbeit?',
     answer:
-      // Wie noFarAssembly und noWeekendOnCall: „jeden Abend“, „am Wochenende frei“ (fakten-abgleich.md B23).
-      'Nein. Unsere Baustellen liegen ausnahmslos in Wetzlar, Gießen und dem Lahn-Dill-Kreis. Du bist jeden Abend pünktlich zu Hause, und am Wochenende hast du frei. Freitags ist ab 13:30 Uhr Wochenende.',
-    factIds: ['noFarAssembly', 'noWeekendOnCall', 'friday1330'],
+      // Wie radius35, noFarAssembly und noWeekendOnCall: 35 km rundum, „jeden Abend“ ohne „pünktlich“,
+      // „am Wochenende frei“ (fakten-abgleich.md B23, B28, B29).
+      'Nein. Unsere Baustellen liegen alle im Umkreis von 35 km um Wetzlar. Du bist jeden Abend zu Hause, und am Wochenende hast du frei.',
+    factIds: ['radius35', 'noFarAssembly', 'noWeekendOnCall'],
   },
 ] satisfies FaqItem[]);
 

@@ -5,6 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { googleCustomerReviews, googleOverviewStats, teamRecruitingReviews } from '@/lib/data/reviews.data';
 import { TEAM_QUOTES } from '@/lib/content/team';
+import { teamData } from '@/lib/data/team';
 import { REVIEW_ITEMS, REVIEW_STATS, TEAM_REVIEW_IDS } from '../data';
 import { REVIEW_FILTERS, filterReviewItems, interleave, replyTitle } from '../model';
 import { ReviewCarousel } from '../ReviewCarousel';
@@ -29,11 +30,16 @@ describe('review items', () => {
     }
   });
 
-  it('team voices come only from the approved quotes, without the section quote of Sabri Demir', () => {
+  it('team voices come only from the released quotes; Demir and Koch are on hold (fakten-abgleich B30)', () => {
     const team = filterReviewItems(REVIEW_ITEMS, 'team');
-    expect(TEAM_REVIEW_IDS).toEqual(['koch', 'becker', 'weber']);
+    expect(TEAM_REVIEW_IDS).toEqual(['becker', 'weber']);
     expect(team.map((i) => i.quote)).toEqual(TEAM_REVIEW_IDS.map((id) => TEAM_QUOTES[id].quote));
-    expect(team.map((i) => i.name)).toEqual(['Alexander Koch', 'Marc Becker', 'Jonas Weber']);
+    expect(team.map((i) => i.name)).toEqual(['Marc Becker', 'Jonas Weber']);
+    // The quotes on hold (13:30, Feierabend) never reach the carousel, not even as raw text.
+    for (const member of teamData.filter((m) => m.quoteOnHold)) {
+      expect(REVIEW_ITEMS.some((i) => i.quote === member.quote || i.name === member.name.replace(/^Diplomingenieur\s+/, ''))).toBe(false);
+    }
+    expect(JSON.stringify(REVIEW_ITEMS.filter((i) => i.kind === 'team'))).not.toMatch(/13:30|Feierabend/);
     // Unconfirmed „Mitarbeiter Stimme“ entries (fakten-abgleich.md B22) never reach the page.
     for (const unconfirmed of teamRecruitingReviews) {
       expect(REVIEW_ITEMS.some((i) => i.id === unconfirmed.id || i.quote === unconfirmed.text)).toBe(false);

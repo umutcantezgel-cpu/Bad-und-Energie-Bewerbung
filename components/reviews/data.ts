@@ -1,5 +1,5 @@
 import { googleCustomerReviews, googleOverviewStats, type GoogleReview } from '@/lib/data/reviews.data';
-import { TEAM_QUOTES, TEAM_QUOTE_IDS, type TeamQuote } from '@/lib/content/team';
+import { TEAM_QUOTES, TEAM_QUOTE_IDS, type TeamMemberId, type TeamQuote, type TeamQuoteId } from '@/lib/content/team';
 import { interleave, type ReviewItem } from './model';
 
 /**
@@ -26,12 +26,13 @@ function fromTeam(quote: TeamQuote): ReviewItem {
 }
 
 /**
- * Team voices: only the four approved quotes from lib/content/team (ROADMAP §1). The
+ * Team voices: only the released quotes from lib/content/team (ROADMAP §1). The
  * „Mitarbeiter Stimme“ entries in reviews.data.ts are not confirmed and stay out
- * (fakten-abgleich.md B22). Sabri Demir's quote leads the „Über uns“ section right above the
- * carousel, so it is not repeated here.
+ * (fakten-abgleich.md B22). The quotes of Sabri Demir and Alexander Koch name fixed end times and
+ * are on hold until the owner releases new ones (B30); TEAM_QUOTE_IDS already leaves them out.
+ * Sabri Demir's quote, once released, leads the „Über uns“ section, so it is never repeated here.
  */
-export const TEAM_REVIEW_IDS = TEAM_QUOTE_IDS.filter((id) => id !== 'demir');
+export const TEAM_REVIEW_IDS: readonly TeamQuoteId[] = TEAM_QUOTE_IDS.filter((id: TeamMemberId) => id !== 'demir');
 
 /** "Alle" alternates customer reviews and team voices so both appear in the first cards. */
 export const REVIEW_ITEMS: readonly ReviewItem[] = Object.freeze(

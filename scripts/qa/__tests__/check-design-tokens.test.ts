@@ -86,7 +86,7 @@ describe('check-design-tokens: motion register (K-009)', () => {
   });
 
   it('finds literal ids in JSX, objects and CSS selectors', () => {
-    expect(motionIdsIn('<path data-motion="uhr" />').map((m: { id: string }) => m.id)).toEqual(['uhr']);
+    expect(motionIdsIn('<path data-motion="radius-einrasten" />').map((m: { id: string }) => m.id)).toEqual(['radius-einrasten']);
     expect(motionIdsIn("<g data-motion={'luft'}>").map((m: { id: string }) => m.id)).toEqual(['luft']);
     expect(motionIdsIn("{ 'data-motion': 'druck' }").map((m: { id: string }) => m.id)).toEqual(['druck']);
     expect(motionIdsIn('.auftakt [data-motion="waerme"], [data-motion=pfeile] {').map((m: { id: string }) => m.id)).toEqual([
@@ -97,7 +97,9 @@ describe('check-design-tokens: motion register (K-009)', () => {
   });
 
   it('flags ids that are missing from the register', () => {
-    expect(checkMotionLine('<path data-motion="uhr" />', known)).toEqual([]);
+    expect(checkMotionLine('<path data-motion="radius-einrasten" />', known)).toEqual([]);
+    // E-027: die Uhr auf 13:30 ist aus dem Register gestrichen
+    expect(checkMotionLine('<path data-motion="uhr" />', known)).toHaveLength(1);
     const findings = checkMotionLine('<div data-motion="konfetti" />', known);
     expect(findings).toHaveLength(1);
     expect(findings[0].rule.id).toBe('motion-register');

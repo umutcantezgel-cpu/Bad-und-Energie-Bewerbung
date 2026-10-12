@@ -15,15 +15,17 @@ describe('root share image text (hero of the home page)', () => {
 
   it('breaks the h1 after its first word and the subline after each sentence', () => {
     expect(splitTitle('SHK-Jobs in Wetzlar.')).toEqual(['SHK-Jobs', 'in Wetzlar.']);
-    expect(splitSentences('Ehrliches Handwerk. Pünktlich Feierabend.')).toEqual(['Ehrliches Handwerk.', 'Pünktlich Feierabend.']);
+    expect(splitSentences('Ehrliches Handwerk. Flexible Arbeitszeiten.')).toEqual(['Ehrliches Handwerk.', 'Flexible Arbeitszeiten.']);
     expect(text.title).toEqual(['SHK-Jobs', 'in Wetzlar.']);
-    expect(text.subline).toEqual(['Ehrliches Handwerk.', 'Pünktlich Feierabend.']);
+    expect(text.subline).toEqual(['Ehrliches Handwerk.', 'Flexible Arbeitszeiten.']);
   });
 
   it('takes every figure from the fact registry', () => {
-    expect(text.clock).toEqual({ value: FACTS.friday1330.value, name: FACTS.friday1330.label });
-    expect(text.measures.map((m) => m.value)).toEqual([FACTS.vacation30.value, FACTS.radius35.value, FACTS.founded1926.value]);
-    expect(text.measures.map((m) => m.name)).toEqual(['Tage Urlaub', 'Einsatzradius', 'Gegründet']);
+    // Leitmotiv „35 km“ (E-027): der Radius mit Hinweislinie zum Zirkel im Giebel, wie im Einstieg; keine Uhrzeit
+    expect(text.radius).toEqual({ value: FACTS.radius35.value, name: 'Einsatzgebiet rund um Wetzlar' });
+    expect(text.measures.map((m) => m.value)).toEqual([FACTS.vacation30.value, FACTS.founded1926.value]);
+    expect(text.measures.map((m) => m.name)).toEqual(['Tage Urlaub', 'Gegründet']);
+    expect(text.texts.join(' ')).not.toMatch(/13:30|Feierabend|pünktlich/i);
     expect(text.etikett).toBe('SEIT 1926 · WETZLAR');
     expect(text.microcopy).toContain(`${FACTS.apply60s.value} Sekunden`);
     expect(text.action).toBe('Jetzt bewerben');

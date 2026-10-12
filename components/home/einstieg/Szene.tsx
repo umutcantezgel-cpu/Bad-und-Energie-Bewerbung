@@ -1,4 +1,5 @@
 import type { MotionId } from '@/lib/motion/register';
+import { HAUS_ZIRKEL as Z } from '@/lib/seo/og-haus';
 import { cn } from '@/lib/utils/cn';
 import { WAERMEBAENDER } from './waermefeld';
 import styles from './einstieg.module.css';
@@ -32,7 +33,9 @@ const RUECKLAUF: readonly Leitung[] = [
  * _relaunch/ausbau/richtungen/3/index.html (`wb__feld`, `wb__linien`, `wb__rohre`). Vier Isothermen als
  * weiche Flächen (kalt Navy → Rücklaufblau → Wand → Wärme → Papier), darauf das Haus aus dem Logo mit
  * 45°-Giebel in Creme, innen Navy auf den warmen Flächen: Wärmepumpe, Heizkörper, Wanne, Fußbodenheizung,
- * die Uhr im Giebel auf 13:30 mit Fadenkreuz. Vorlauf rot und Rücklauf blau mit einem Mantel in der Seitenfarbe.
+ * im Giebel das Zirkelzeichen mit Fadenkreuz (Leitmotiv „35 km“, E-027: Scheibe, Kernzone, Mittelpunkt, Radius).
+ * Am Desktop läuft der Radius als Hinweislinie weiter an den großen Bogen im Himmel, an dem das Maß „35 km“
+ * hängt. Vorlauf rot und Rücklauf blau mit einem Mantel in der Seitenfarbe.
  *
  * Dekorativ (`aria-hidden`): Maße, Einleitung und der Erklärsatz T-001 tragen dieselbe Information als Text.
  * Jedes bewegte Teil trägt seine Kennung aus lib/motion/register.ts; ohne Auftakt steht der Endzustand.
@@ -69,19 +72,22 @@ export function Szene() {
         d="M102 691c-6-10-4-19 3-25M102 691c11 1 18 7 18 16M102 691c-6 9-15 12-22 8"
       />
 
-      {/* Uhr im Giebel: rastet auf 13:30 ein */}
-      <circle className={styles.blatt} cx="400" cy="468" r="34" />
-      <path className={fein} d="M400 438V444M430 468H424M400 498V492M370 468H376" />
-      <path className={cn(fein, styles.zeiger, styles.zeigerStd)} data-motion="uhr" d="M400 468L412.5 455.5" />
-      <path className={cn(fein, styles.zeiger)} data-motion="uhr" d="M400 468V493" />
-      <circle className={styles.achse} cx="400" cy="468" r="4" />
+      {/* Am Desktop: der Bogen „35 km“ um den Mittelpunkt, im Himmel zwischen den Traufen; öffnet sich vom Radius aus */}
+      <path className={cn(styles.mess, styles.bogen, styles.nurDesktop)} data-motion="radius-einrasten" pathLength={1} d={Z.bogenRechts} />
+      <path className={cn(styles.mess, styles.bogen, styles.nurDesktop)} data-motion="radius-einrasten" pathLength={1} d={Z.bogenLinks} />
 
-      {/* Messpunkt (Fadenkreuz) an der Uhr; am Desktop die Hinweislinie zum Maß „13:30“ */}
-      <g className={styles.messpunkt} data-motion="uhr">
-        <circle className={styles.mess} cx="400" cy="468" r="46" />
-        <path className={styles.mess} d="M400 414V428M400 508V522M346 468H360M440 468H454" />
+      {/* Zirkelzeichen im Giebel: Scheibe (Einsatzgebiet), Kernzone, Radius, Mittelpunkt (Wetzlar) */}
+      <circle className={styles.blatt} cx={Z.cx} cy={Z.cy} r={Z.r} />
+      <circle className={styles.ring} cx={Z.cx} cy={Z.cy} r={Z.ringR} />
+      <path className={cn(fein, styles.arm)} data-motion="radius-einrasten" d={`${Z.radius}${Z.radiusPfeil}`} />
+      <circle className={styles.achse} cx={Z.cx} cy={Z.cy} r="4.5" />
+
+      {/* Messpunkt (Fadenkreuz) am Zirkel; am Desktop die Hinweislinie auf dem Radius bis an den Bogen */}
+      <g className={styles.messpunkt} data-motion="radius-einrasten">
+        <circle className={styles.mess} cx={Z.cx} cy={Z.cy} r={Z.kreuzR} />
+        <path className={styles.mess} d={Z.kreuz} />
       </g>
-      <path className={cn(styles.mess, styles.nurDesktop)} d="M367.5 435.5L232 300" />
+      <path className={cn(styles.mess, styles.nurDesktop)} d={`${Z.leitlinie}${Z.pfeil}`} />
 
       {/* Leitungen: zuerst der Mantel in der Seitenfarbe, darüber das Rohr */}
       <g>

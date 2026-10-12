@@ -1,6 +1,7 @@
 import { INITIATIVE_APPLY_PATH } from '@/lib/apply/params';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
+import { formatSalaryAmount } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/registry';
 
 /**
@@ -9,7 +10,9 @@ import type { Job } from '@/lib/jobs/registry';
  * components/jobs/__tests__/liste.test.ts.
  *
  * Faktenverteilung im Kopf (ein Abschnitt nennt jeden Fakt einmal):
- * - 13:30 steht im Heizkreis der Zeichnung, nicht noch einmal in Unterzeile oder Einleitung;
+ * - die Gehaltsspanne der Fachkraft-Stellen steht im Heizkreis der Zeichnung (bis 2026-10-12 stand dort 13:30;
+ *   feste Uhrzeiten nennt die Seite nicht mehr, fakten-abgleich B28);
+ * - „Flexible Arbeitszeiten.“ (Fakt flexibleHours) steht in der Unterzeile;
  * - 30 Tage und 35 km stehen als Maße an der Zeichnung; „35 km“ kehrt nur in REGION.headline (Einsatzgebiet) wieder;
  * - 1926 steht in der Einleitung (Fakt founded1926), darum nicht als Maß.
  */
@@ -30,15 +33,16 @@ export function listenEtikett(anzahl: number): string {
 /**
  * Unterzeile mit Rohrklammer (zwei Sätze, je eine Zeile). „Jede Stelle mit Gehaltsspanne.“ nur, wenn jede
  * Stelle der Liste eine Spanne trägt; sonst die Marke „Ehrliches Handwerk.“ (Zweitzeile der Startseite).
+ * Der zweite Satz ist der Fakt flexibleHours, wie in der h1 der Startseite.
  */
 export function listenUnterzeile(jobs: readonly Pick<Job, 'salary'>[]): [string, string] {
   const alleMitGehalt = jobs.length > 0 && jobs.every((job) => job.salary !== undefined && job.salary !== null);
-  return [alleMitGehalt ? 'Jede Stelle mit Gehaltsspanne.' : 'Ehrliches Handwerk.', 'Pünktlich Feierabend.'];
+  return [alleMitGehalt ? 'Jede Stelle mit Gehaltsspanne.' : 'Ehrliches Handwerk.', FACTS.flexibleHours.long];
 }
 
 /**
  * Orte der Baustellen in der Einleitung (V6-G1: Suchbegriffe des Seitentitels in den ersten 100 Wörtern), im
- * Wortlaut von REGION.summary („Du arbeitest in Wetzlar, Gießen und dem Lahn-Dill-Kreis …“).
+ * Wortlaut von REGION.summary („Du arbeitest in Wetzlar, Gießen, im Lahn-Dill-Kreis …“).
  */
 export const LISTEN_ORTE = 'Wetzlar und Gießen';
 
@@ -60,14 +64,40 @@ export function listenZweitweg(anzahl: number): { href: string; label: string } 
   return { href: '#stellen', label: `Alle ${anzahl}${NBSP}Stellen ansehen` };
 }
 
-/** Der Heizkreis der Zeichnung: Freitag 13:30 (Fakt friday1330). */
-export const HEIZKREIS = Object.freeze({ wert: FACTS.friday1330.value ?? '13:30', name: FACTS.friday1330.label ?? '' });
+export interface ListenMass {
+  wert: string;
+  name: string;
+}
 
-/** Die Maße an der Zeichnung: 30 Tage Urlaub, 35 km Einsatzradius (Fakten vacation30, radius35). */
-export const LISTEN_MASSE = Object.freeze([
-  { wert: schuetzeZahlen(FACTS.vacation30.value ?? ''), name: FACTS.vacation30.label ?? '' },
-  { wert: schuetzeZahlen(FACTS.radius35.value ?? ''), name: 'Einsatzradius' },
-]);
+/** Name unter der Spanne im Heizkreis (wie „Gehalt pro Monat“ auf den Stellenseiten, SalaryCard). */
+export const HEIZKREIS_NAME = 'Gehalt pro Monat, Fachkräfte';
+
+const URLAUB_MASS: ListenMass = { wert: schuetzeZahlen(FACTS.vacation30.value ?? ''), name: FACTS.vacation30.label ?? '' };
+const RADIUS_MASS: ListenMass = { wert: schuetzeZahlen(FACTS.radius35.value ?? ''), name: 'Einsatzradius' };
+
+/**
+ * Die Gehaltsspanne der Fachkraft-Stellen, die gerade live sind: kleinstes Minimum bis größtes Maximum der
+ * Monatsgehälter aus den Stellendaten („3.600–5.600 €“). Die Ausbildung hat eine Vergütung und gehört nicht in
+ * die Spanne. null, wenn keine Fachkraft-Stelle ein Monatsgehalt nennt.
+ */
+export function fachkraftSpanne(jobs: readonly Pick<Job, 'salary' | 'category'>[]): string | null {
+  const gehaelter = jobs.flatMap((job) => (job.category !== 'ausbildung' && job.salary?.unit === 'MONTH' ? [job.salary] : []));
+  if (gehaelter.length === 0) return null;
+  const min = Math.min(...gehaelter.map((g) => g.min));
+  const max = Math.max(...gehaelter.map((g) => g.max));
+  return formatSalaryAmount({ salary: { ...gehaelter[0], min, max } });
+}
+
+/**
+ * Zeichnung des Kopfs: im Heizkreis die Gehaltsspanne der Fachkraft-Stellen, daneben die Maße 30 Tage Urlaub
+ * und 35 km Einsatzradius (Fakten vacation30, radius35). Ohne Spanne trägt der Heizkreis den Radius, der dann
+ * nicht noch einmal als Maß steht.
+ */
+export function listenZeichnung(jobs: readonly Pick<Job, 'salary' | 'category'>[]): { heizkreis: ListenMass; masse: readonly ListenMass[] } {
+  const spanne = fachkraftSpanne(jobs);
+  if (spanne) return { heizkreis: { wert: spanne, name: HEIZKREIS_NAME }, masse: [URLAUB_MASS, RADIUS_MASS] };
+  return { heizkreis: RADIUS_MASS, masse: [URLAUB_MASS] };
+}
 
 /**
  * Etiketten-Kästchen an der Zeichnung (Variante 3): die drei Gewerke, in denen der Betrieb Verstärkung sucht

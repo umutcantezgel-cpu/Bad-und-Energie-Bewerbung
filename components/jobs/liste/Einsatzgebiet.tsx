@@ -16,7 +16,7 @@ function saetze(text: string): string[] {
 /**
  * Arbeitsalltag und Einsatzgebiet auf der Stellenliste (Ton Papier, nach dem Stellenvergleich auf Wand):
  * REGION.headline und REGION.summary im Bestandswortlaut mit dem Weg zur Karte mit Pendelrechner auf der
- * Startseite, darunter Arbeitswoche, Betrieb und Team und die Orte mit Entfernung und Fahrzeit (inhalt-text.ts).
+ * Startseite, darunter Arbeitszeit, Betrieb und Team und die Orte mit Entfernung und Fahrzeit (inhalt-text.ts).
  * Überschrift im Muster des SectionHeader (Etikett, h2 in Bricolage und Navy), Einleitung und Weg rechts daneben.
  */
 export function Einsatzgebiet() {

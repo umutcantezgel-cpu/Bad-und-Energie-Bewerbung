@@ -9,8 +9,9 @@ export interface HausKleinProps {
 
 /**
  * Kleines Haus aus der Szene des Einstiegs (für schmale Köpfe, Navy-Band, 240 × 200 Einheiten): Giebel 45°
- * aus dem Logo mit Wärmefüllung, Uhr im Giebel auf 13:30, Heizkörper, davor die Wärmepumpe; Vorlauf (oben)
- * und Rücklauf (unten) im Paarabstand 12 laufen ins Haus. Strich 3 px bei jeder Größe
+ * aus dem Logo mit Wärmefüllung, im Giebel das Zirkelzeichen des Leitmotivs „35 km“ (E-027: Kreis, Innenring,
+ * Mittelpunkt, Radius nach oben links; wie im Einstieg und im OG-Haus), Heizkörper, davor die Wärmepumpe;
+ * Vorlauf (oben) und Rücklauf (unten) im Paarabstand 12 laufen ins Haus. Strich 3 px bei jeder Größe
  * (vector-effect: non-scaling-stroke), Breite setzt der Aufrufer (Standard 15rem). Ohne Bewegung.
  */
 export function HausKlein({ titel, className }: HausKleinProps) {
@@ -27,9 +28,10 @@ export function HausKlein({ titel, className }: HausKleinProps) {
       {/* Haus: Wärmefüllung, Giebel 45° mit Traufe, Wände */}
       <path className={styles.waermeFlaeche} d="M88 192V112L152 48L216 112V192Z" />
       <path className={z} d="M72 128L152 48L232 128M88 112V192M216 112V192" />
-      {/* Uhr im Giebel auf 13:30 */}
+      {/* Zirkelzeichen im Giebel: Einsatzgebiet, Kernzone, Radius, Mittelpunkt (Wetzlar) */}
       <circle className={z} cx="152" cy="110" r="18" />
-      <path className={z} d="M152 110V124M152 110L161 101" />
+      <circle className={z} cx="152" cy="110" r="8" />
+      <path className={z} d="M152 110L139.27 97.27" />
       <circle className={styles.voll} cx="152" cy="110" r="3" />
       {/* Heizkörper */}
       <rect className={z} x="164" y="146" width="36" height="28" rx="4" />

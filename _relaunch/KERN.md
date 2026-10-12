@@ -9,11 +9,11 @@ Version: 1.1 (09.10.2026; 1.0 nach FREIGABE E-021, 1.1: K-004 CSP nach E-022). M
 5. Das Ergebnis geht nach bestandenem Merge-Gate (E-021) auf `main` und ist damit live.
 
 ## K-001 Leitidee
-**Jede Zusage ist eingemessen: Das Haus aus dem Logo läuft als Anlage an, die Uhr im Giebel rastet auf 13:30 ein, und der rote Vorlauf endet in deiner Bewerbung.**
-Austauschprobe: Ein anderer Betrieb kann Uhr 13:30, Radius 35 km, Giebel des Logos und 1926–2026 nicht zeigen, ohne zu lügen; tragend sind die belegten Zusagen, nicht das Allerweltsbild Haus + Wärmepumpe.
+**Jede Zusage ist eingemessen: Das Haus aus dem Logo läuft als Anlage an, der Zirkel im Giebel rastet auf 35 km ein, und der rote Vorlauf endet in deiner Bewerbung.**
+Austauschprobe (E-027, ersetzt die Uhr auf 13:30): Ein anderer Betrieb kann 35 km, Leitung und Radius, Giebel des Logos und 1926–2026 nicht zeigen, ohne zu lügen; jede Ortsseite zeigt ihre Strecke auf derselben 35-km-Skala. Tragend sind die belegten Zusagen, nicht das Allerweltsbild Haus + Wärmepumpe.
 
 ## K-002 Marke, Zielgruppe, fünf Besucheraufgaben
-**Marke (Annahme, abgeleitet aus Inhalten):** Bad & Energie GmbH Lahn-Dill – SHK-Meisterbetrieb in Wetzlar, gegründet 1926, 15 Leute; Schwerpunkt Wärmepumpen, Heizung und moderne Bäder; Fachbetrieb des Lahn-Dill-Kreises; Partner Buderus, Bosch, NIBE, Alpha Innotec und Viessmann. Gefühl: ehrliches Handwerk, Verlässlichkeit, Stolz auf gutes Werkzeug, Nähe (höchstens 35 km), Respekt vor der Zeit der Leute (Freitag 13:30 Feierabend), Diskretion beim Wechsel.
+**Marke (Annahme, abgeleitet aus Inhalten):** Bad & Energie GmbH Lahn-Dill – SHK-Meisterbetrieb in Wetzlar, gegründet 1926, 15 Leute; Schwerpunkt Wärmepumpen, Heizung und moderne Bäder; Fachbetrieb des Lahn-Dill-Kreises; Partner Buderus, Bosch, NIBE, Alpha Innotec und Viessmann. Gefühl: ehrliches Handwerk, Verlässlichkeit, Stolz auf gutes Werkzeug, Nähe (höchstens 35 km), Respekt vor der Zeit der Leute (flexible Arbeitszeiten, keine unbezahlten Überstunden, kein Wochenend-Notdienst; fakten-abgleich B28), Diskretion beim Wechsel.
 
 **Zielgruppe:** SHK-Fachkräfte (Anlagenmechaniker, Kundendiensttechniker, Obermonteure/Projektleiter), Auszubildende und Quereinsteiger im Umkreis von 35 km um Wetzlar (Lahn-Dill-Kreis, Gießen); meist in fester Anstellung und vorsichtig beim Wechsel; überwiegend am Telefon unterwegs, oft nach Feierabend; schätzen klare Fakten (Gehalt, Arbeitszeit, Fahrzeug, Werkzeug) mehr als Werbesprache.
 
@@ -105,8 +105,8 @@ Giebel 45° und Kreis; Raster 24 × 24 (Rand 2); eine Strichstärke 3 px (`--m-s
 
 ## K-012 Inhalte, Ton, Mikrotexte 
 - **Wahrheit:** Jede Arbeitgeber-Aussage kommt aus `lib/content/facts.ts`. Dort markierte Fakten mit `pending` erscheinen nur, wo die Basis es erlaubt; `validUntil` wird beachtet (Jubiläum bis 31.12.2026). Was nicht im Register steht, wird nicht behauptet. Das gilt für Zahlen, Auszeichnungen, Zitate und Bewertungen; offene Belege stehen in MENSCHEN.md (M-003, M-007…M-015).
-- **Ton:** du-Anrede, kurze Hauptsätze, Fakt vor Adjektiv („Freitags ab 13:30 Uhr Feierabend“ statt „attraktive Arbeitszeiten“). Handwerkersprache ohne Jargon-Überhöhung. Keine KI-Floskeln (S-13: „nahtlos“, „innovativ“, „ganzheitlich“, „maßgeschneidert“, „Entdecken Sie …“, „auf das nächste Level“), keine Superlative ohne Beleg.
-- **Typografie im Text:** „…“ als Anführungszeichen, Gedankenstrich –, Halbgeviert für Bereiche (07:00–16:45 Uhr), geschütztes Leerzeichen vor Einheiten und in Zahl-Wort-Paaren (35 km, 13:30 Uhr, 30 Tage). `lang="de"` und `hyphens: auto` im Fließtext; weiche Trennstellen für lange Berufsnamen (`titleShy`).
+- **Ton:** du-Anrede, kurze Hauptsätze, Fakt vor Adjektiv („Keine unbezahlten Überstunden“ statt „attraktive Arbeitszeiten“). Handwerkersprache ohne Jargon-Überhöhung. Keine KI-Floskeln (S-13: „nahtlos“, „innovativ“, „ganzheitlich“, „maßgeschneidert“, „Entdecken Sie …“, „auf das nächste Level“), keine Superlative ohne Beleg.
+- **Typografie im Text:** „…“ als Anführungszeichen, Gedankenstrich –, Halbgeviert für Bereiche (3.600–4.600 €, 1926–2026), geschütztes Leerzeichen vor Einheiten und in Zahl-Wort-Paaren (35 km, 16 Min., 30 Tage). `lang="de"` und `hyphens: auto` im Fließtext; weiche Trennstellen für lange Berufsnamen (`titleShy`).
 - **Knöpfe sagen, was passiert:** „Jetzt in 60 Sekunden bewerben“, „Mappe als PDF speichern“, „Route in Google Maps öffnen“; nie „Absenden“, „Mehr“ oder „Klicken Sie hier“.
 - **Fehlertexte:** was passiert ist, was jetzt zu tun ist, und der Direktweg (Telefon/WhatsApp mit Sabri Demir).
 - **Mikrotexte** ändert der Lauf direkt (TEXTE = Mikrotexte direkt). Längere Texte gehen als Vorschlag nach `TEXTVORSCHLAEGE.md`. Rechtstexte bleiben wörtlich.

@@ -10,7 +10,6 @@ import {
   JobList,
   ProcessTimeline,
   RegionSection,
-  WeekSection,
   homeDescription,
 } from '@/components/home';
 import { AnchorAliases } from '@/components/home/AnchorAliases';
@@ -65,7 +64,6 @@ export default function HomePage() {
       <AnchorAliases />
       <Alias ids={['express-funnel']} />
       <Hero />
-      <WeekSection />
       <Alias ids={['karriere-paket', 'gehalt']} />
       <JobList />
       <Alias ids={['benefits']} />

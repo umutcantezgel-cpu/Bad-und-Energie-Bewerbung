@@ -1,5 +1,5 @@
 /*
- * Stellenliste /jobs (R5-JOBS-01, E-023): Kopf aus components/seitenkopf (erzaehl, Heizkreis 13:30), die Stellen
+ * Stellenliste /jobs (R5-JOBS-01, E-023): Kopf aus components/seitenkopf (erzaehl, Heizkreis mit Gehaltsspanne), die Stellen
  * als Leitungsabgänge (Variante 2 „Verteiler“) und das Initiativband in Navy (wie das Schlussband der Startseite).
  * Nur Rollen und Skalen aus app/styles/theme.css; eine Strichstärke (--m-strich), Paarabstand --paar.
  * Bewegung nur Rückmeldung (Arbeitsseite, K-011): Fläche beim Hover (Register `flaeche`), 1 px beim Druck (`druck`).
@@ -55,7 +55,7 @@
   }
 }
 
-/* ═══ Zeichnung im Navy-Panel: Heizkreis mit 13:30, darunter die Gewerke als Etiketten-Kästchen ═══ */
+/* ═══ Zeichnung im Navy-Panel: Heizkreis mit der Gehaltsspanne, darunter die Gewerke als Etiketten-Kästchen ═══ */
 .zeichnung {
   container-type: inline-size;
   display: grid;
@@ -64,10 +64,11 @@
   width: 100%;
 }
 
-/* 13:30 in Bildgröße, an die Breite des Panels gekoppelt: abzüglich der Innenabstände des Heizkreises
-   (--paar + --a-6 links, --a-7 rechts) passt die Zahl bei 320 px ohne Überlauf; „13:30“ ist knapp 2,9 em breit */
+/* Spanne in Bildgröße auf einer Zeile, an die Breite des Panels gekoppelt: abzüglich der Innenabstände des
+   Heizkreises (--paar + --a-6 links, --a-7 rechts) passt „3.600–5.600 €“ (gut 7 em in Martian Mono) bei 320 px
+   ohne Überlauf; wird sie länger, bricht sie am Halbgeviertstrich (text-wrap: balance im Heizkreis) */
 .zahl {
-  font-size: min(9rem, calc((100cqi - var(--a-6) - var(--a-7) - var(--paar)) / 3));
+  font-size: min(4.5rem, calc((100cqi - var(--a-6) - var(--a-7) - var(--paar)) / 7.6));
   letter-spacing: -0.03em;
 }
 

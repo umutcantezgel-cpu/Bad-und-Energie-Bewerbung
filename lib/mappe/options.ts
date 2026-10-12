@@ -27,6 +27,8 @@ export interface WorkStyle {
   description: string;
   /** Satz, der ins Anschreiben übernommen und als `mappe.workStyle` gesendet wird. */
   value: string;
+  /** Frühere Wortlaute von `value`: gespeicherte Entwürfe finden so ihre Auswahl wieder. */
+  legacyValues?: readonly string[];
 }
 
 export const WORK_STYLES: readonly WorkStyle[] = Object.freeze([
@@ -48,8 +50,11 @@ export const WORK_STYLES: readonly WorkStyle[] = Object.freeze([
     id: 'team',
     title: 'Teamgeist und Zuverlässigkeit',
     description: 'Gute Stimmung auf Montage, klare Kommunikation mit dem Meister und verlässliche Absprachen.',
-    value:
+    // Ohne „pünktlicher Feierabend“: Die Seite verspricht keine festen Endzeiten (fakten-abgleich B28).
+    value: 'Teamgeist und Verlässlichkeit: Feste Absprachen, kollegiales Miteinander und Arbeit ohne Chaos.',
+    legacyValues: [
       'Teamgeist und Verlässlichkeit: Feste Absprachen, kollegiales Miteinander und pünktlicher Feierabend ohne Chaos.',
+    ],
   },
 ]);
 
@@ -60,7 +65,8 @@ export function getWorkStyle(id: WorkStyleId | null | undefined): WorkStyle | un
 /** Arbeitsstil-Satz aus einer gespeicherten Mappe zurück auf die Auswahl abbilden. */
 export function workStyleIdFromValue(value: string | undefined): WorkStyleId | null {
   if (!value) return null;
-  return WORK_STYLES.find((style) => style.value === value.trim())?.id ?? null;
+  const text = value.trim();
+  return WORK_STYLES.find((style) => style.value === text || style.legacyValues?.includes(text))?.id ?? null;
 }
 
 /**

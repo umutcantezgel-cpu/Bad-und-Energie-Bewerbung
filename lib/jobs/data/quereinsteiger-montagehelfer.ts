@@ -26,7 +26,7 @@ export const quereinsteigerMontagehelfer = defineJob({
     'Als Quereinsteiger oder Montagehelfer unterstützt du unser Team auf der Baustelle. Mit handwerklichem Geschick, Führerschein Klasse B und intensiver Einarbeitung durch unsere Meister steigst du ins SHK-Handwerk ein.',
   tasks: ['Unterstützung des Montageteams auf der Baustelle'],
   requirements: ['Handwerkliches Geschick', 'Führerschein Klasse B'],
-  benefitFactIds: ['vacation30', 'friday1330', 'noFarAssembly', 'noUnpaidOvertime'],
+  benefitFactIds: ['vacation30', 'flexibleHours', 'noFarAssembly', 'noUnpaidOvertime'],
   packageExtras: [
     { label: 'Fahrzeug', text: 'Mitfahrt im Teamtransporter oder eigener Service-Caddy nach Absprache' },
     { label: 'Ausstattung', text: 'Vollständige Arbeitskleidung von Engelbert Strauss und Hilti-Basisausstattung' },
@@ -36,8 +36,8 @@ export const quereinsteigerMontagehelfer = defineJob({
   location: HQ_LOCATION,
   experienceMonths: 0,
   datePosted: '2026-10-08',
-  updatedAt: '2026-10-08',
+  updatedAt: '2026-10-12',
   apply: { questionSet: 'quereinstieg' },
   channels: { googleJobs: false, indeedFeed: false, genericFeed: false, ba: false },
-  teamQuoteId: 'demir',
+  // Zitat Demir ausgeblendet, bis der Inhaber ein neues freigibt (fakten-abgleich B30).
 });

@@ -76,12 +76,9 @@ describe('Kopf der Stellenseite: Texte und Maße (stelle-text)', () => {
     expect(kopfEtikett(azubi)).toBe('Ausbildung · 3,5 Jahre · Wetzlar');
   });
 
-  it('Maße aus Fakten und Stellendaten: 13:30 nur mit dem Fakt friday1330, der Radius aus der Stelle', () => {
-    expect(kopfMasse(am)).toEqual([
-      { wert: FACTS.friday1330.value, name: FACTS.friday1330.label },
-      { wert: `${am.location.radiusKm}${NBSP}km`, name: 'Einsatzradius' },
-    ]);
-    expect(kopfMasse({ ...am, benefitFactIds: ['vacation30'] }).map((m) => m.wert)).toEqual([`35${NBSP}km`]);
+  it('Maße aus den Stellendaten: nur der Radius, keine Uhrzeit (flexible Arbeitszeiten, fakten-abgleich B28)', () => {
+    expect(kopfMasse(am)).toEqual([{ wert: `${am.location.radiusKm}${NBSP}km`, name: 'Einsatzradius' }]);
+    for (const job of [am, kd, azubi]) expect(kopfMasse(job).map((m) => m.wert)).toEqual([`35${NBSP}km`]);
   });
 
   it('Hauptaktion springt zum Flow, Zweitweg zu den Aufgaben, Mikrotext aus den Fakten', () => {

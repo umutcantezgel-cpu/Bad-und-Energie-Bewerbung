@@ -8,7 +8,7 @@
  * - lib/content/region.ts: Orte mit Entfernung und Fahrzeit, Bereiche des Einsatzgebiets;
  * - lib/content/faq.ts, Frage „heizsysteme“: Badpartner und Fußbodenheizungen.
  * Faktenregel E-023: Das Band erklärt Arbeit, Region und Unterschiede. Ein Fakt aus „Das bekommst du“ oder „Dein
- * Paket“ steht hier höchstens als zweite Nennung; 35 km, Fernmontage, 13:30, Fahrzeug und iPad gar nicht.
+ * Paket“ steht hier höchstens als zweite Nennung; 35 km, Fernmontage, Arbeitszeit, Fahrzeug und iPad gar nicht.
  * Herkunft geprüft in app/jobs/__tests__/einblick.test.ts.
  */
 import { FACTS } from '@/lib/content/facts';

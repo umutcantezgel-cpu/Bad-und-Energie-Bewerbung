@@ -57,7 +57,7 @@ export function ContactOptions({ variant = 'card', whatsappMessage, person, clas
   const items = contactChannels(whatsappMessage);
   const hours = (
     <p className="text-footnote text-ink-muted">
-      <span className="font-bold text-ink">Öffnungszeiten:</span> <OpeningHoursText text={COMPANY.openingHours.short} />
+      <span className="font-bold text-ink">Büro erreichbar:</span> <OpeningHoursText text={COMPANY.openingHours.short} />
     </p>
   );
 

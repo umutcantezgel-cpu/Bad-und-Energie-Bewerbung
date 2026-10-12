@@ -9,6 +9,12 @@ import { describe, expect, it } from 'vitest';
  * opsz-normal.woff2, Gewicht 800, letter-spacing −0,01 em, font-optical-sizing auto (die opsz-Achse folgt
  * der Schriftgröße bis 96, darum wird das Wort mit wachsender Größe relativ schmaler). Breite in em je
  * Schriftgröße in px; dazwischen linear.
+ *
+ * „Flexible“ und „Arbeitszeiten.“ (Zweitzeile der h1 seit 2026-10-12, fakten-abgleich B28) mit derselben Methode
+ * gemessen: Chromium 141, app/fonts/bricolage-grotesque-latin-opsz-wght400-800.woff2 (+ latin-ext), Gewicht 800,
+ * −0,01 em, opsz auto; dieselbe Messung ergibt für „Feierabend.“, „Handwerk.“ und „Pünktlich“ die Werte unten
+ * auf vier Stellen genau. „Feierabend.“ bleibt das Referenzwort der Display-Stufe (5,12–5,55 em); es steht nicht
+ * mehr auf der Seite.
  */
 const BREITE_EM: Record<string, Record<number, number>> = {
   'Feierabend.': { 40: 5.548, 44: 5.5202, 48: 5.486, 52: 5.4585, 56: 5.4249, 60: 5.3974, 64: 5.363, 68: 5.3355, 72: 5.304, 76: 5.2724, 80: 5.242, 88: 5.18, 96: 5.118 },
@@ -16,6 +22,8 @@ const BREITE_EM: Record<string, Record<number, number>> = {
   'Pünktlich': { 40: 4.4664, 48: 4.4131, 56: 4.3616, 64: 4.3081, 72: 4.2535, 80: 4.2, 88: 4.1475, 96: 4.0931 },
   'in Wetzlar.': { 40: 4.8805, 48: 4.8236, 56: 4.7706, 64: 4.7148, 72: 4.6589, 80: 4.6029, 88: 4.5471, 96: 4.491 },
   'SHK-Jobs': { 40: 4.35, 48: 4.2965, 56: 4.245, 64: 4.1936, 72: 4.1382, 80: 4.0859, 88: 4.0336, 96: 3.9821 },
+  'Arbeitszeiten.': { 40: 6.5625, 44: 6.5302, 48: 6.4932, 52: 6.4618, 56: 6.4275, 60: 6.3964, 64: 6.3591, 68: 6.3267, 72: 6.2914, 76: 6.2572, 80: 6.2221, 88: 6.1555, 96: 6.0871 },
+  'Flexible': { 40: 3.6133, 44: 3.5938, 48: 3.569, 52: 3.5475, 56: 3.5218, 60: 3.5003, 64: 3.4756, 68: 3.4561, 72: 3.4325, 76: 3.41, 80: 3.3885, 88: 3.3413, 96: 3.2951 },
 };
 
 function wortbreite(wort: string, px: number): number {
@@ -133,6 +141,27 @@ describe('Display-Stufe passt mit dem längsten Wort in die Spalte (K-005, Z-13)
     expect(resolve('--text-display', 320, 568)).toBeCloseTo(47.2, 1);
     // das Wort lässt in der 350-px-Spalte bei 390 px noch ≥ 20 px Luft (Ersatzschrift, Schriftgrößen-Einstellung)
     expect(spalte(390, 844) - wortbreite('Feierabend.', resolve('--text-display', 390, 844))).toBeGreaterThanOrEqual(20);
+  });
+});
+
+describe('„Flexible Arbeitszeiten.“ (Zweitzeile der h1, B28) steht in title-3, nie in Display', () => {
+  it('„Arbeitszeiten.“ (6,09–6,56 em) passte in Display auf dem Handy nicht in die Spalte: darum nur title-3', () => {
+    expect(wortbreite('Arbeitszeiten.', resolve('--text-display', 390, 844))).toBeGreaterThan(spalte(390, 844));
+    expect(wortbreite('Arbeitszeiten.', resolve('--text-display', 320, 568))).toBeGreaterThan(spalte(320, 568));
+  });
+
+  it.each(BREITEN)('Breite %i px: „Arbeitszeiten.“ in title-3 bricht nie im Wort', (w) => {
+    const size = resolve('--text-title-3', w, 900);
+    // title-3 endet bei 30 px: „Arbeitszeiten.“ ist dann höchstens 197 px breit (6,56 em bei 40 px als obere Schranke)
+    expect(wortbreite('Arbeitszeiten.', size)).toBeLessThanOrEqual(spalte(w, 900));
+    expect(wortbreite('Flexible', size)).toBeLessThan(wortbreite('Arbeitszeiten.', size));
+  });
+
+  it('Einstieg und Seitenkopf setzen die Zweitzeile in title-3', () => {
+    const einstieg = readFileSync(path.resolve(__dirname, '../../../components/home/einstieg/Einstieg.tsx'), 'utf8');
+    expect(einstieg).toContain("cn(styles.titelZweit, 'text-title-3')");
+    const seitenkopf = readFileSync(path.resolve(__dirname, '../../../components/seitenkopf/Seitenkopf.tsx'), 'utf8');
+    expect(seitenkopf).toContain("cn(styles.unterzeile, styles.mitKlammer, 'text-title-3 text-ink-2')");
   });
 });
 

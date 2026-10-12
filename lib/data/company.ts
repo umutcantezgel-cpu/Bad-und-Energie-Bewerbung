@@ -50,10 +50,11 @@ export const companyData: CompanyData = {
   hwk: 'Handwerkskammer Wiesbaden',
   innung: 'Innung Sanitär-, Heizungs- und Klimatechnik Lahn-Dill',
   handelsregister: 'HRB 2449 Amtsgericht Wetzlar',
+  // Erreichbarkeit des Büros, keine Arbeitszeit: Die Arbeitszeiten sind flexibel (fakten-abgleich B28).
   openingHours: {
     weekdays: 'Montag bis Donnerstag von 07:00 bis 16:45 Uhr',
     friday: 'Freitag von 07:00 bis 13:30 Uhr',
-    note: 'Freitags pünktlich ab 13:30 Uhr ins Wochenende. Keine Notdienst Pflicht am Wochenende.',
+    note: 'Büro erreichbar zu diesen Zeiten. Keine Notdienst Pflicht am Wochenende.',
   },
   geo: {
     latitude: 50.56499,
@@ -71,7 +72,7 @@ export const companyData: CompanyData = {
   benefits: [
     'Überdurchschnittliche Vergütung deutlich über Handwerkstarif plus Urlaubs- und Weihnachtsgeld',
     '30 Tage garantierter Erholungsurlaub',
-    'Freitags ab 13:30 Uhr Feierabend',
+    'Flexible Arbeitszeiten',
     'Hilti Vollausstattung im persönlichen Werkzeugkoffer',
     'Modernes Servicefahrzeug zur privaten Nutzung',
     'Keine bundesweiten Montagen (maximal 35 km Radius)',

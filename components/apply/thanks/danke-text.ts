@@ -82,7 +82,8 @@ export const ABLAUF_TEXT = Object.freeze({
   erledigt: 'erledigt',
   rueckmeldung: 'Rückmeldung',
   angaben: Object.freeze({ stelle: 'Stelle', eingang: 'Eingegangen', weg: 'Rückmeldung' }),
-  buero: 'Gerade ist unser Büro nicht besetzt. Wir melden uns zu den Öffnungszeiten:',
+  // Bürozeiten, keine Arbeitszeit (fakten-abgleich B28)
+  buero: 'Gerade ist unser Büro nicht besetzt. Wir melden uns, sobald es wieder erreichbar ist:',
 });
 
 export const SEITEN_TEXT = Object.freeze({

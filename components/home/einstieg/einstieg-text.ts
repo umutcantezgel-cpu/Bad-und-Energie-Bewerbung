@@ -1,7 +1,7 @@
 import { COMPANY } from '@/lib/content/company';
 import { FACTS, isFactActive } from '@/lib/content/facts';
 import { PROCESS_STEPS } from '@/lib/content/process';
-import { HERO, HERO_STATS, type HeroStat } from '../content';
+import { HERO, HERO_RADIUS_LABEL, HERO_STATS, type HeroStat } from '../content';
 
 /**
  * Texte des Einstiegs (R3-HOME-01), nur aus belegten Quellen gebaut: content.ts (HERO, HERO_STATS),
@@ -63,17 +63,22 @@ export function jahreskette(now: Date): Jahreskette | null {
   return { von: String(COMPANY.foundingYear), bis };
 }
 
-/** Die vier Maße am Haus in fester Reihenfolge (HERO_STATS: 13:30, 30, 35 km, 1926). */
-export function einstiegMasse(): Record<'freitag' | 'urlaub' | 'radius' | 'gruendung', HeroStat> {
+/**
+ * Etikett am großen Maß „35 km“ (Leitmotiv E-027): Fakt radius35 („Alle Baustellen liegen im Umkreis von 35 km
+ * um Wetzlar“, fakten-abgleich B29) in Worten der Zeichnung; dasselbe Etikett trägt das OG-Bild der Startseite.
+ */
+export const RADIUS_ETIKETT = HERO_RADIUS_LABEL;
+
+/** Die drei Maße am Haus in fester Reihenfolge (HERO_STATS: 35 km, 30, 1926). */
+export function einstiegMasse(): Record<'radius' | 'urlaub' | 'gruendung', HeroStat> {
   const byId = (id: HeroStat['factId']) => {
     const stat = HERO_STATS.find((s) => s.factId === id);
     if (!stat) throw new Error(`HERO_STATS ohne ${id}`);
     return stat;
   };
   return {
-    freitag: byId('friday1330'),
-    urlaub: byId('vacation30'),
     radius: byId('radius35'),
+    urlaub: byId('vacation30'),
     gruendung: byId('founded1926'),
   };
 }
@@ -98,7 +103,7 @@ const KENNENLERNEN = PROCESS_STEPS.find((step) => step.id === 'kennenlernen');
  * Vertrauenszeile unter dem Einstieg (E-START-021, mit E-START-010 und E-START-011): ruhig, statisch,
  * alle Punkte sichtbar. Auswahl nach der Faktenverteilung E-023 (je Abschnitt eine Nennung, höchstens
  * zwei Abschnitte je Seite):
- * - nicht hier: 13:30, 30 Tage, 35 km, 1926/100 Jahre (Einstieg), Hilti (Einleitung), 15 Leute und
+ * - nicht hier: 35 km, 30 Tage, 1926/100 Jahre (Einstieg), flexible Arbeitszeiten (h1), Hilti (Einleitung), 15 Leute und
  *   Lahn-Dill-Kreis (Abschnitt Betrieb), Fahrzeug und Urlaub (Vorteile);
  * - nicht hier: „Keine Fernmontage“ (steht in REGION.headline und in der FAQ, beides Bestand);
  * - „Innungsbetrieb“ ohne Prozentzahl (E-START-011, COMPANY.innung);

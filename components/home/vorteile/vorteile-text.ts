@@ -32,7 +32,7 @@ export const bewerbenLabel = (titel: string) => `Als ${titel} bewerben`;
 
 /** Wunsch-Beschriftungen; jede ist durch die Fakten in WUNSCH_FAKTEN gedeckt. */
 export const WUNSCH_OPTIONEN: readonly WunschOption[] = [
-  { id: 'feierabend', label: 'Pünktlich Feierabend' },
+  { id: 'arbeitszeit', label: 'Flexible Arbeitszeiten' },
   { id: 'verguetung', label: 'Bezahlung über Tarif' },
   { id: 'ausstattung', label: 'Werkzeug und Fahrzeug' },
   { id: 'naehe', label: 'Baustellen in der Nähe' },
@@ -41,13 +41,14 @@ export const WUNSCH_OPTIONEN: readonly WunschOption[] = [
 /**
  * Fakten, die einen Wunsch im Paket beantworten. Eine Stelle zeigt nur die Fakten aus ihren eigenen
  * `benefitFactIds` (Registry-Test: pending nur bei `onlyForJobIds`), und nur auf Wunsch. Faktenverteilung E-023:
- * Was schon an anderer Stelle der Seite steht (13:30 und Wochenende in der Woche, Tarif und Überstunden in
- * den Zusagen, Hilti und Fahrzeug in Werkzeug & Fuhrpark, 35 km und Fernmontage im Einsatzgebiet), kommt
- * nicht ein drittes Mal ins Paket; dafür zeigt eine Verweiszeile dorthin (WUNSCH_VERWEISE).
+ * Was schon an anderer Stelle der Seite steht (Tarif, Überstunden und Wochenende in den Zusagen, Hilti und
+ * Fahrzeug in Werkzeug & Fuhrpark, 35 km und Fernmontage im Einsatzgebiet), kommt nicht ein drittes Mal ins
+ * Paket; dafür zeigt eine Verweiszeile dorthin (WUNSCH_VERWEISE). „Flexible Arbeitszeiten“ steht in der h1 und
+ * in den Zusagen, darum ebenfalls nur als Verweis.
  * `payFirstWorkday` steht bewusst nirgends (fakten-abgleich A3).
  */
 export const WUNSCH_FAKTEN: Readonly<Record<WunschId, readonly FactId[]>> = {
-  feierabend: [],
+  arbeitszeit: [],
   verguetung: [],
   ausstattung: ['privateCarOnePercent', 'fuelCard'],
   naehe: [],
@@ -62,23 +63,26 @@ export interface WunschVerweis {
   label: string;
   /** Die Stelle bekommt den Verweis nur, wenn einer dieser Fakten zu ihr gehört (keine Verallgemeinerung). */
   fakten: readonly FactId[];
-  /** Das Ziel liegt über (Arbeitswoche) oder unter dem Paket. */
+  /** Das Ziel liegt über oder unter dem Paket. */
   richtung: 'hoch' | 'runter';
 }
 
 /** Sprungziel des Unterblocks „Werkzeug & Fuhrpark“ (E-START-026: /#ausstattung springt hierher). */
 export const AUSSTATTUNG_ID = 'ausstattung';
 
+/** Sprungziel der Zusagen (Verweis aus dem Paket). */
+export const ZUSAGEN_ID = 'vorteile-zusagen';
+
 /** Verweise statt Wiederholung (E-023); Ziele sind Abschnitte bzw. Blöcke der Startseite. */
 export const WUNSCH_VERWEISE: Readonly<Record<WunschId, WunschVerweis>> = {
-  feierabend: {
+  arbeitszeit: {
     etikett: 'Arbeitszeit',
-    href: '#woche',
-    label: 'Arbeitswoche ansehen',
-    fakten: ['friday1330', 'noWeekendOnCall', 'noUnpaidOvertime'],
-    richtung: 'hoch',
+    href: `#${ZUSAGEN_ID}`,
+    label: 'Zusagen ansehen',
+    fakten: ['flexibleHours', 'noWeekendOnCall', 'noUnpaidOvertime'],
+    richtung: 'runter',
   },
-  verguetung: { etikett: 'Vergütung', href: '#vorteile-zusagen', label: 'Zusagen ansehen', fakten: ['aboveTariff'], richtung: 'runter' },
+  verguetung: { etikett: 'Vergütung', href: `#${ZUSAGEN_ID}`, label: 'Zusagen ansehen', fakten: ['aboveTariff'], richtung: 'runter' },
   ausstattung: {
     etikett: 'Ausstattung',
     href: `#${AUSSTATTUNG_ID}`,
@@ -182,37 +186,25 @@ export function paketRollen(jobs: readonly Job[], now: Date = new Date()): Paket
 /** Neutral: die Zusagen sind betriebsweite Fakten, nicht für jede Stelle einzeln belegt (kein „für alle“). */
 export const ZUSAGEN_TITEL = 'Unsere Zusagen';
 
-/** Sprungziel der Zusagen (Verweis aus dem Paket). */
-export const ZUSAGEN_ID = 'vorteile-zusagen';
-
 export interface Zusage {
   id: FactId;
   icon: IconName;
   titel: string;
   text: string;
-  /** Maß unter dem Text (font-mass), z. B. die festen Arbeitszeiten. */
+  /** Maß unter dem Text (font-mass), z. B. eine belegte Kennzahl. */
   mass?: string;
 }
 
-/** „Mo–Do 07:00–16:45 Uhr“: die Arbeitszeit ohne den Freitag (13:30 tragen Einstieg und Woche, E-023). */
-const ARBEITSZEIT_MO_DO = FACTS.workingHours.short.split(/,\s*/)[0];
-
 /**
  * Sechs Zusagen. Werkzeug, Fahrzeug und iPad stehen gesammelt in „Werkzeug & Fuhrpark“, darum
- * nicht noch einmal hier (BENEFIT_FACT_IDS ohne hilti, vehicle, ipadSmartphone). Neu ist die
- * Arbeitszeit-Zusage: „Keine unbezahlten Überstunden“ mit der festen Zeit Mo–Do als kurzes Maß (Abnahme
- * E-START-025: „07:00“ und „unbezahlten Überstunden“ in #vorteile). Den Freitag mit 13:30 trägt die
- * Arbeitswoche darüber (Faktenverteilung E-023: 13:30 nicht in den Vorteilen).
+ * nicht noch einmal hier (BENEFIT_FACT_IDS ohne hilti, vehicle, ipadSmartphone). Die Arbeitszeit-Zusage
+ * trägt zwei Fakten: „Flexible Arbeitszeiten“ (flexibleHours) als Titel, „Keine unbezahlten Überstunden.“
+ * (noUnpaidOvertime) als Text. Feste Uhrzeiten nennt die Seite nicht (fakten-abgleich B28; das Maß
+ * „Mo–Do 07:00–16:45 Uhr“ ist entfallen, die Zeiten gelten nur noch als Erreichbarkeit des Büros).
  */
 export const ZUSAGEN: readonly Zusage[] = [
   { id: 'aboveTariff', icon: 'banknote', titel: FACTS.aboveTariff.short, text: FACTS.aboveTariff.long },
-  {
-    id: 'noUnpaidOvertime',
-    icon: 'uhr',
-    titel: FACTS.noUnpaidOvertime.short,
-    text: FACTS.noUnpaidOvertime.long,
-    mass: ARBEITSZEIT_MO_DO,
-  },
+  { id: 'flexibleHours', icon: 'uhr', titel: FACTS.flexibleHours.short, text: FACTS.noUnpaidOvertime.long },
   { id: 'noWeekendOnCall', icon: 'calendar-off', titel: FACTS.noWeekendOnCall.short, text: FACTS.noWeekendOnCall.long },
   { id: 'permanentContract', icon: 'file-check', titel: FACTS.permanentContract.short, text: FACTS.permanentContract.long },
   { id: 'paidCertifications', icon: 'graduation-cap', titel: FACTS.paidCertifications.short, text: FACTS.paidCertifications.long },

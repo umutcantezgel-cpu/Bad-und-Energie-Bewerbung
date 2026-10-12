@@ -1,4 +1,4 @@
-import { HERO, HERO_STATS } from '@/components/home/content';
+import { HERO, HERO_RADIUS_LABEL, HERO_STATS } from '@/components/home/content';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
 import { SALARY_UNIT_LABEL, formatSalaryAmount, formatSalaryRange, jobMetaTags, jobPath } from '@/lib/jobs/format';
@@ -53,7 +53,7 @@ export function splitTitle(title: string): [string, string] {
   return [first, rest.join(' ')];
 }
 
-/** Two sentences on two lines („Ehrliches Handwerk.“ / „Pünktlich Feierabend.“). */
+/** Two sentences on two lines („Ehrliches Handwerk.“ / „Flexible Arbeitszeiten.“). */
 export function splitSentences(text: string): string[] {
   return text.split(/(?<=\.)\s+/).filter(Boolean);
 }
@@ -82,17 +82,18 @@ const ACTION = 'Jetzt bewerben';
 const plain = (text: string) => text.replace(/ /g, ' ');
 
 export interface OgHomeText extends OgFrameText {
-  /** 30 Tage Urlaub · 35 km Einsatzradius · 1926 Gegründet (above the house). */
+  /** 30 Tage Urlaub · 1926 Gegründet (above the house). */
   measures: readonly OgMeasure[];
-  /** 13:30 Freitags Feierabend (at the clock in the gable). */
-  clock: OgMeasure;
+  /** 35 km Einsatzgebiet rund um Wetzlar (leader line to the compass mark in the gable; motif E-027). */
+  radius: OgMeasure;
 }
 
 /** Content of the root share image: the hero of the home page (HERO, HERO_STATS, facts). */
 export function ogHomeText(): OgHomeText {
   const stats = HERO_STATS.map((stat) => ({ value: plain(stat.value), name: stat.label }));
-  const clock = stats.find((_, index) => HERO_STATS[index].factId === 'friday1330') ?? stats[0];
-  const measures = stats.filter((stat) => stat !== clock);
+  const index = Math.max(0, HERO_STATS.findIndex((stat) => stat.factId === 'radius35'));
+  const radius = { value: stats[index].value, name: HERO_RADIUS_LABEL };
+  const measures = stats.filter((_, i) => i !== index);
   const title = splitTitle(HERO.title);
   const subline = splitSentences(HERO.titleSecondLine);
   const microcopy = plain(HERO.microcopy);
@@ -104,8 +105,8 @@ export function ogHomeText(): OgHomeText {
     action: ACTION,
     microcopy,
     measures,
-    clock,
-    texts: [etikett, ...title, ...subline, ACTION, microcopy, ...stats.flatMap((s) => [s.value, s.name])],
+    radius,
+    texts: [etikett, ...title, ...subline, ACTION, microcopy, radius.value, radius.name, ...measures.flatMap((s) => [s.value, s.name])],
   };
 }
 

@@ -5,9 +5,10 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { APPLY_PATH, PRIMARY_CTA_ATTR } from '@/components/site/nav';
 import { MOTION_IDS } from '@/lib/motion/register';
+import { HAUS_ZIRKEL } from '@/lib/seo/og-haus';
 import { HERO, HERO_STATS } from '../content';
 import { Hero } from '../Hero';
-import { KREISLAUF_SATZ, vertrauenspunkte } from '../einstieg/einstieg-text';
+import { KREISLAUF_SATZ, RADIUS_ETIKETT, vertrauenspunkte } from '../einstieg/einstieg-text';
 import { WAERMEBAENDER } from '../einstieg/waermefeld';
 
 const DIR = path.resolve(__dirname, '..');
@@ -27,8 +28,11 @@ const html2026 = render(new Date('2026-10-09T09:00:00Z'));
 const html2027 = render(new Date('2027-01-01T08:00:00Z'));
 const text2026 = plain(html2026);
 
-/** Auftakt-Kennungen des Einstiegs nach Variante 3 (R3-EINSTIEG-V3): Vorlauf vom Knopf ins Haus, Wärme, Rücklauf, Uhr. */
-const AUFTAKT = ['luefter', 'erdleitung', 'erdleitung-d', 'vorlauf-haus', 'waerme', 'ruecklauf-haus', 'uhr'];
+/**
+ * Auftakt-Kennungen des Einstiegs nach Variante 3 (R3-EINSTIEG-V3): Vorlauf vom Knopf ins Haus, Wärme, Rücklauf,
+ * zuletzt rastet der Zirkel auf 35 km ein (E-027, ersetzt die Uhr auf 13:30).
+ */
+const AUFTAKT = ['luefter', 'erdleitung', 'erdleitung-d', 'vorlauf-haus', 'waerme', 'ruecklauf-haus', 'radius-einrasten'];
 
 describe('Hero / Einstieg (R3-HOME-01)', () => {
   it('genau eine h1 mit HERO.title und HERO.titleSecondLine im Wortlaut, Abschnitt zeigt darauf', () => {
@@ -67,21 +71,50 @@ describe('Hero / Einstieg (R3-HOME-01)', () => {
     expect(text2026).toContain('Offene Stellen ansehen');
   });
 
-  it('zeigt die vier Maße aus HERO_STATS als echten Text (Liste), Wert und Name getrennt; die Zeichnung ist dekorativ', () => {
-    for (const stat of HERO_STATS) {
-      // Leerzeichen im DOM zwischen Wert und Name (Kopieren, Lesemodus): „13:30 Freitags Feierabend“
-      expect(text2026).toContain(`${stat.value.replace(/\u00a0/g, ' ')} ${stat.label}`);
-    }
+  it('zeigt die drei Maße aus HERO_STATS als echten Text (Liste), Wert und Name getrennt; die Zeichnung ist dekorativ', () => {
+    const masse = html2026.match(/<ul class="[^"]*">([\s\S]*?)<\/ul>/)![1];
+    const eintraege = [...masse.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/g)].map((m) => plain(m[1]).trim());
+    // Leerzeichen im DOM zwischen Wert und Name (Kopieren, Lesemodus): „35 km Einsatzgebiet rund um Wetzlar“
+    expect(eintraege).toEqual([
+      `${HERO_STATS[0].value.replace(/\u00a0/g, ' ')} ${RADIUS_ETIKETT}`,
+      `${HERO_STATS[1].value} ${HERO_STATS[1].label}`,
+      expect.stringMatching(new RegExp(`^${HERO_STATS[2].value} ${HERO_STATS[2].label}`)),
+    ]);
+    expect(eintraege[0]).toBe('35 km Einsatzgebiet rund um Wetzlar');
     expect(html2026).toMatch(/<svg class="[^"]*" viewBox="0 0 800 800" aria-hidden="true" focusable="false" data-szene="einstieg">/);
-    // Wärmebild (Variante 3): vier Isothermen, die Uhr im Giebel, Vorlauf und Rücklauf als Leitungen
+    // Wärmebild (Variante 3): vier Isothermen, das Zirkelzeichen im Giebel, Vorlauf und Rücklauf als Leitungen
     const szene = html2026.match(/<svg[^>]*data-szene="einstieg">([\s\S]*?)<\/svg>/)![1];
     expect(szene.match(/data-motion="waerme"/g)).toHaveLength(4);
-    expect(szene.match(/data-motion="uhr"/g)!.length).toBeGreaterThanOrEqual(2);
     expect(szene).toContain('data-motion="vorlauf-haus"');
     expect(szene).toContain('data-motion="ruecklauf-haus"');
-    // Etiketten-Kästchen der drei Gewerke und die Ablesung 13:30 sind Beiwerk der Zeichnung
+    // Etiketten-Kästchen der drei Gewerke und die Ablesung „35 km“ sind Beiwerk der Zeichnung
     const marken = html2026.match(/<div class="[^"]*" aria-hidden="true">((?:(?!<\/div>)[\s\S])*Wärmepumpen[\s\S]*?)<\/div>/)!;
     for (const gewerk of ['Wärmepumpen', 'Heizungen', 'Bäder']) expect(plain(marken[1])).toContain(gewerk);
+  });
+
+  it('Leitmotiv „35 km“ (E-027): Zirkel im Giebel, Radius als Hinweislinie bis an den Bogen, keine Uhr', () => {
+    const szene = html2026.match(/<svg[^>]*data-szene="einstieg">([\s\S]*?)<\/svg>/)![1];
+    // Radius mit Pfeil (klappt auf), Fadenkreuz und die beiden Bogenhälften rasten ein
+    expect(szene.match(/data-motion="radius-einrasten"/g)).toHaveLength(4);
+    expect(szene).toContain(`d="${HAUS_ZIRKEL.radius}${HAUS_ZIRKEL.radiusPfeil}"`);
+    expect(szene).toContain(`d="${HAUS_ZIRKEL.bogenRechts}"`);
+    expect(szene).toContain(`d="${HAUS_ZIRKEL.bogenLinks}"`);
+    expect(szene).toContain(`d="${HAUS_ZIRKEL.leitlinie}${HAUS_ZIRKEL.pfeil}"`);
+    expect(szene).not.toContain('data-motion="uhr"');
+    // Die Ablesung am Zirkel (mobil) ist der Wert des Fakts radius35
+    expect(html2026).toMatch(/aria-hidden="true">35\u00a0km<\/span>/);
+    expect(text2026).not.toMatch(/13:30|16:45|Feierabend|pünktlich/i);
+  });
+
+  it('der Bogen geht durch das Ende der Hinweislinie und endet an beiden Traufen (Giebel 45°)', () => {
+    const { cx, cy, bogenR, ende } = HAUS_ZIRKEL;
+    expect(Math.hypot(ende.x - cx, ende.y - cy)).toBeCloseTo(bogenR, 1);
+    for (const d of [HAUS_ZIRKEL.bogenRechts, HAUS_ZIRKEL.bogenLinks]) {
+      const [x, y] = d.split(' ').slice(-2).map(Number);
+      expect(Math.hypot(x - cx, y - cy), d).toBeCloseTo(bogenR, 1);
+      // Traufen: linke Dachlinie x + y = 744, rechte y = x − 56 (M168 576L400 344L632 576)
+      expect(x < cx ? x + y : x - y, d).toBeCloseTo(x < cx ? 744 : 56, 1);
+    }
   });
 
   it('Bewegung: alle acht Auftakt-Kennungen an der Szene, nur Kennungen aus dem Register', () => {

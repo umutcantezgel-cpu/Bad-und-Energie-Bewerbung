@@ -39,7 +39,7 @@ export const ausbildungAnlagenmechanikerShk = defineJob({
     'Berufsschule und Gesellenprüfung, begleitet von deinen Meistern',
   ],
   requirements: ['Schulabschluss', 'Handwerkliches Geschick und Interesse an Technik', 'Zuverlässigkeit und Teamgeist'],
-  benefitFactIds: ['takeoverGuarantee', 'mentoring', 'founded1926', 'vacation30', 'friday1330', 'noFarAssembly'],
+  benefitFactIds: ['takeoverGuarantee', 'mentoring', 'founded1926', 'vacation30', 'flexibleHours', 'noFarAssembly'],
   packageExtras: [
     { label: 'Werkzeug', text: 'Eigenes Hilti-Azubi-Werkzeugset, geschenkt ab Tag 1' },
     { label: 'Mobilität', text: 'Fahrtkostenzuschuss zur Berufsschule und Zuschuss zum Pkw-Führerschein' },
@@ -52,7 +52,7 @@ export const ausbildungAnlagenmechanikerShk = defineJob({
   experienceMonths: 0,
   datePosted: '2026-03-01',
   validThrough: '2026-12-31T23:59:59+01:00',
-  updatedAt: '2026-10-08',
+  updatedAt: '2026-10-12',
   apply: { questionSet: 'ausbildung' },
   channels: { googleJobs: true, indeedFeed: true, genericFeed: true, ba: true },
   teamQuoteId: 'weber',

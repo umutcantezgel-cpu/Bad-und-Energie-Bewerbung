@@ -10,7 +10,8 @@ import { SectionHeader } from './SectionHeader';
 /**
  * #ueber-uns (R3-HOME-04, ROADMAP §5.6): der Betrieb und die Stimmen.
  * - Kopf „15 Leute. Ein Meisterbetrieb. Seit 1926.“ mit dem direkten Draht zu Sabri Demir (Fakt directLine).
- * - Zitat von Sabri Demir in der Rohrklammer, darunter der Meilenstein 2026 als Maß (E-START-031);
+ * - Zitat von Sabri Demir in der Rohrklammer (ausgeblendet bis zur Freigabe, B30), darunter der Meilenstein
+ *   2026 als Maß (E-START-031);
  *   daneben die fünf Partner-Säulen mit ihren belegten Zusätzen.
  * - Stimmen: Google-Bewertungen mit Inhaber-Antwort (E-START-043) und die freigegebenen Teamstimmen in einer
  *   Reihe zum Wischen und Ziehen (E-START-046), dazu die Google-Bewertungszeile, sobald sie datiert ist.

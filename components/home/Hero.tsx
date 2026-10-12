@@ -10,8 +10,8 @@ export interface HeroProps {
 /**
  * Einstieg der Startseite nach den Bildern des Auftraggebers (R3-EINSTIEG-V3, Variante 3 „Wärmebild“, statisch):
  * Papier links mit h1 und dem roten Knopf, die Navy-Fläche rechts mit dem Haus im Wärmebild und den Maßen; am
- * Handy ein Navy-Block oben, Knopf auf Papier darunter. Der rote Vorlauf läuft aus dem Knopf ins Haus, die Uhr
- * rastet auf 13:30 ein; „Kreislauf zeigen“ spielt das erneut ab. Darunter die Vertrauenszeile. Genau eine h1
+ * Handy ein Navy-Block oben, Knopf auf Papier darunter. Der rote Vorlauf läuft aus dem Knopf ins Haus, zuletzt
+ * rastet der Zirkel im Giebel auf 35 km ein (E-027); „Kreislauf zeigen“ spielt das erneut ab. Darunter die Vertrauenszeile. Genau eine h1
  * auf der Seite. Der Abschnitt endet bündig; den Leitungstrenner zum nächsten Abschnitt setzt die Seite.
  */
 export function Hero({ now = new Date() }: HeroProps) {

@@ -8,13 +8,13 @@ import styles from './seite.module.css';
 
 /**
  * Regionalband unter dem Flow (E-BEW-008): Vor der Entscheidung zeigt die Seite, wo und wann gearbeitet wird.
- * Keine Fernmontage, Einsatzradius und Freitags-Feierabend als Maße in Martian Mono mit Maßlinie, der Firmensitz
- * im Etikett-Kästchen, das freie Wochenende und die Fahrzeiten der Orte außerhalb der Kernzone (V6-G1), dazu der
+ * Keine Fernmontage, der Einsatzradius als Maß in Martian Mono mit Maßlinie, der Firmensitz im Etikett-Kästchen,
+ * flexible Arbeitszeiten und das freie Wochenende, die Fahrzeiten der Orte außerhalb der Kernzone (V6-G1), dazu der
  * Weg zur Karte auf der Startseite (/#einsatzgebiet). Alles aus FACTS, COMPANY und REGION (seite-text.ts). Ton
  * Wand mit Leitungstrenner, wie die Abschnitte der Startseite.
  */
 export function Regionalband({ titelId = 'bewerbung-region' }: { titelId?: string }) {
-  const { etikett, titel, einleitung, masse, standort, wochenende, fahrzeiten, link } = REGIONALBAND;
+  const { etikett, titel, einleitung, masse, standort, arbeitszeit, fahrzeiten, link } = REGIONALBAND;
   return (
     <Section tone="wand" trenner aria-labelledby={titelId} data-regionalband="">
       <Container className={styles.region}>
@@ -41,7 +41,7 @@ export function Regionalband({ titelId = 'bewerbung-region' }: { titelId?: strin
           </li>
         </ul>
         <div className="flex max-w-prose flex-col gap-3">
-          <p className="text-body text-ink">{wochenende}</p>
+          <p className="text-body text-ink">{arbeitszeit}</p>
           <p className="text-callout text-ink-muted">
             <span className="text-etikett text-ink-2">
               {fahrzeiten.name}

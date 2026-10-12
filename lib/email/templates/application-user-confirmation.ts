@@ -80,7 +80,8 @@ export function renderApplicationConfirmationEmail(app: ReferencedApplication): 
           { label: 'Telefon', value: COMPANY.phone.display, href: COMPANY.phone.href },
           { label: 'WhatsApp', value: COMPANY.whatsapp.display, href: COMPANY.whatsapp.href },
           { label: 'E-Mail', value: COMPANY.email, href: COMPANY.emailHref },
-          { label: 'Erreichbar', value: COMPANY.openingHours.short },
+          // Bürozeiten, keine Arbeitszeit (fakten-abgleich B28)
+          { label: 'Büro erreichbar', value: COMPANY.openingHours.short },
         ],
       },
     ],

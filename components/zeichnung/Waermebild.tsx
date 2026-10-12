@@ -32,9 +32,10 @@ export function Waermebild({ titel = WAERMEBILD_TITEL, etiketten = true, classNa
       <g>
         {/* Haus: Giebel 45° mit Traufe, Wände */}
         <path className={z} d="M100 220L260 60L420 220M120 200V330M400 200V330" />
-        {/* Uhr im Giebel auf 13:30 mit Fadenkreuz (Messpunkt) */}
+        {/* Zirkelzeichen im Giebel (Leitmotiv „35 km“, E-027) mit Fadenkreuz (Messpunkt) */}
         <circle className={z} cx="260" cy="150" r="26" />
-        <path className={z} d="M260 150V170M260 150L273 137M260 116V106M260 184V194M226 150H216M294 150H304" />
+        <circle className={z} cx="260" cy="150" r="11" />
+        <path className={z} d="M260 150L241.62 131.62M260 116V106M260 184V194M226 150H216M294 150H304" />
         {/* Heizkörper */}
         <rect className={z} x="168" y="250" width="60" height="48" rx="6" />
         <path className={z} d="M184 260V288M198 260V288M212 260V288" />

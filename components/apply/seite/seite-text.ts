@@ -10,13 +10,11 @@ import { REGION } from '@/lib/content/region';
 const NBSP = ' ';
 const geschuetzt = (text: string) => text.replace(/ /g, NBSP);
 /** Wert eines Fakts, der hier gebraucht wird; fehlt er, fällt es beim Laden auf statt als „undefined“ im Text. */
-function wertVon(id: 'apply60s' | 'radius35' | 'friday1330'): string {
+function wertVon(id: 'apply60s' | 'radius35'): string {
   const wert = FACTS[id].value;
   if (!wert) throw new Error(`Fakt ${id} hat keinen Wert`);
   return wert;
 }
-/** Zeitspanne „07:00–16:45 Uhr“ bricht nicht am Strich und nicht vor „Uhr“ (Wortverbinder U+2060). */
-const zusammenhalten = (text: string) => text.replace(/(\d)–(\d)/g, '$1\u2060–\u2060$2').replace(/ Uhr/g, `${NBSP}Uhr`);
 
 export interface SeitenMass {
   wert: string;
@@ -62,29 +60,27 @@ export interface RegionalMass extends SeitenMass {
   detail?: string;
 }
 
-/** Regionalband (E-BEW-008): Einsatzgebiet, Arbeitszeit, Standort und „Keine Fernmontage“, Link auf die Karte. */
+/**
+ * Regionalband (E-BEW-008): Einsatzgebiet, Arbeitszeit, Standort und „Keine Fernmontage“, Link auf die Karte.
+ * Die Arbeitszeit hat kein Maß: Sie ist flexibel (Fakt flexibleHours, fakten-abgleich B28), feste Uhrzeiten
+ * nennt die Seite nicht.
+ */
 export const REGIONALBAND = Object.freeze({
   etikett: 'Arbeitsort und Arbeitszeit',
   /** Fakt noFarAssembly. */
   titel: `${FACTS.noFarAssembly.short}.`,
-  /** REGION.summary: Wetzlar, Gießen und Lahn-Dill-Kreis, jeden Abend zu Hause (Bestand der Startseite). */
+  /** REGION.summary: Wetzlar, Gießen, Lahn-Dill-Kreis und Nachbarkreise, jeden Abend zu Hause (Bestand der Startseite). */
   einleitung: REGION.summary,
   masse: Object.freeze([
     // Fakt radius35
     { wert: geschuetzt(wertVon('radius35')), name: 'Einsatzradius' },
-    // Fakten friday1330 und workingHours (Mo–Do-Teil; der Freitag steht schon im Wert)
-    {
-      wert: wertVon('friday1330'),
-      name: 'Freitags Feierabend',
-      detail: zusammenhalten(FACTS.workingHours.short.split(', ')[0] ?? FACTS.workingHours.short),
-    },
-  ] satisfies RegionalMass[]),
+  ] as RegionalMass[]),
   standort: Object.freeze({
     name: 'Firmensitz',
     zeilen: Object.freeze([COMPANY.address.street, `${COMPANY.address.postalCode} ${COMPANY.address.city}`]),
   }),
-  /** V6-G1: Fakt noWeekendOnCall gehört zur Arbeitszeit (sonst nirgends auf /bewerbung). */
-  wochenende: FACTS.noWeekendOnCall.long,
+  /** Arbeitszeit: Fakten flexibleHours und noWeekendOnCall (V6-G1: sonst nirgends auf /bewerbung). */
+  arbeitszeit: `${FACTS.flexibleHours.long} ${FACTS.noWeekendOnCall.long}`,
   /** V6-G1: Fahrzeit bis zum Firmensitz für die Orte außerhalb der Kernzone (REGION.locations). */
   fahrzeiten: Object.freeze({
     name: `Fahrzeit bis ${REGION.center.name}`,

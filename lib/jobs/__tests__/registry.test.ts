@@ -146,14 +146,14 @@ describe('Job-Registry', () => {
     expect(FACTS.payFirstWorkday.pending?.onlyForJobIds).toEqual([]);
   });
 
-  it('Teamzitate passen zur Rolle', () => {
+  it('Teamzitate passen zur Rolle; Koch und Demir sind bis zur Freigabe ausgeblendet (fakten-abgleich B30)', () => {
     const quotes = Object.fromEntries(ALL_JOBS.map((j) => [j.id, j.teamQuoteId]));
     expect(quotes).toEqual({
-      'anlagenmechaniker-shk': 'koch',
+      'anlagenmechaniker-shk': undefined,
       'kundendiensttechniker-shk': 'becker',
-      'obermonteur-projektleiter-shk': 'koch',
+      'obermonteur-projektleiter-shk': undefined,
       'ausbildung-anlagenmechaniker-shk': 'weber',
-      'quereinsteiger-montagehelfer': 'demir',
+      'quereinsteiger-montagehelfer': undefined,
     });
     for (const job of ALL_JOBS) if (job.teamQuoteId) expect(TEAM_QUOTES[job.teamQuoteId]).toBeDefined();
   });

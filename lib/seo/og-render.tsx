@@ -13,8 +13,8 @@ import {
   HAUS_MARKEN,
   HAUS_RUECKLAUF,
   HAUS_STRICH,
-  HAUS_UHR,
   HAUS_VORLAUF,
+  HAUS_ZIRKEL,
   HAUS_ZULEITUNG,
 } from './og-haus';
 import { OG_COLOR as C, OG_IMAGE_SIZE, versal, type OgHomeText, type OgJobText } from './og-image';
@@ -23,8 +23,9 @@ import { OG_COLOR as C, OG_IMAGE_SIZE, versal, type OgHomeText, type OgJobText }
  * Teilen-Bilder im Design des Einstiegs (Variante 3, Bilder des Auftraggebers vom 10.10.): links Papier
  * mit Logo, Etikett, h1 in Bricolage 800 (Navy), Unterzeile an der Rohrklammer und dem roten Knopf,
  * dessen Vorlauf-Linie waagerecht in die Wärmepumpe im Navy-Panel rechts läuft. Im Panel das Haus im
- * Wärmebild (statisch, ohne WebGL) mit Uhr auf 13:30, Leitungen und Familien-Etiketten; die Startseite
- * trägt darüber die Maße, die Stellen die Gehaltsspanne im Heizkreis (Variante 2).
+ * Wärmebild (statisch, ohne WebGL) mit dem Zirkelzeichen im Giebel (Leitmotiv „35 km“, E-027), Leitungen und
+ * Familien-Etiketten; die Startseite trägt darüber die Maße und „35 km“ mit Hinweislinie zum Zirkel, die
+ * Stellen die Gehaltsspanne im Heizkreis (Variante 2).
  *
  * Schriften: die drei Familien der Website als feste TTF-Schnitte aus lib/seo/og-fonts (next/og liest
  * kein WOFF2 und keine variablen Achsen; Herkunft in og-fonts/LIZENZEN.md). Sie liegen im Repository und
@@ -133,13 +134,13 @@ function Haus({ zuleitung }: { zuleitung: boolean }) {
         fill={C.navy}
       />
       <path d={HAUS_STRICH.luefter} stroke={C.papier} strokeWidth={vb(STRICH)} {...round} />
-      {/* Uhr im Giebel auf 13:30, mit Fadenkreuz */}
-      <circle cx={HAUS_UHR.cx} cy={HAUS_UHR.cy} r={HAUS_UHR.kreuzR} stroke={C.papier} strokeWidth={vb(2)} fill="none" />
-      <path d={HAUS_UHR.kreuz} stroke={C.papier} strokeWidth={vb(2)} {...round} />
-      <circle cx={HAUS_UHR.cx} cy={HAUS_UHR.cy} r={HAUS_UHR.r} stroke={C.navy} strokeWidth={vb(STRICH)} fill={C.papier} />
-      <path d={HAUS_UHR.striche} stroke={C.navy} strokeWidth={vb(STRICH)} {...round} />
-      <path d={HAUS_UHR.zeiger} stroke={C.navy} strokeWidth={vb(STRICH)} {...round} />
-      <circle cx={HAUS_UHR.cx} cy={HAUS_UHR.cy} r={3} fill={C.navy} />
+      {/* Zirkelzeichen im Giebel (Einsatzgebiet, Kernzone, Radius, Mittelpunkt), mit Fadenkreuz */}
+      <circle cx={HAUS_ZIRKEL.cx} cy={HAUS_ZIRKEL.cy} r={HAUS_ZIRKEL.kreuzR} stroke={C.papier} strokeWidth={vb(2)} fill="none" />
+      <path d={HAUS_ZIRKEL.kreuz} stroke={C.papier} strokeWidth={vb(2)} {...round} />
+      <circle cx={HAUS_ZIRKEL.cx} cy={HAUS_ZIRKEL.cy} r={HAUS_ZIRKEL.r} stroke={C.navy} strokeWidth={vb(STRICH)} fill={C.papier} />
+      <circle cx={HAUS_ZIRKEL.cx} cy={HAUS_ZIRKEL.cy} r={HAUS_ZIRKEL.ringR} stroke={C.navy} strokeWidth={vb(2)} fill="none" />
+      <path d={`${HAUS_ZIRKEL.radius}${HAUS_ZIRKEL.radiusPfeil}`} stroke={C.navy} strokeWidth={vb(STRICH)} {...round} />
+      <circle cx={HAUS_ZIRKEL.cx} cy={HAUS_ZIRKEL.cy} r={4.5} fill={C.navy} />
       {/* Leitungen: Mantel in Papier, darauf Rücklauf blau und Vorlauf rot */}
       {[...HAUS_RUECKLAUF, ...vorlauf].map((d) => (
         <path key={`m${d}`} d={d} stroke={C.papier} strokeWidth={mantel} {...round} />
@@ -371,13 +372,13 @@ async function respond(frame: (logo: string | null) => ReactElement): Promise<Im
 
 // ── Startseite ─────────────────────────────────────────────────────────────────────────────────────
 
-/** Maßkette mit schrägen Endstrichen über den drei Maßen (Variante 3 `.messwerte`). */
+/** Maßkette mit schrägen Endstrichen über den Maßen (Variante 3 `.messwerte`): 30 Tage Urlaub · 1926 Gegründet. */
 function Masse({ measures }: { measures: OgHomeText['measures'] }) {
   const x0 = PANEL_X + 40;
   const top = 46;
   const valueSize = 44;
   const lineY = top + valueSize + 12;
-  const widths = [138, 156, 128];
+  const widths = [156, 156, 156].slice(0, Math.min(3, measures.length));
   const starts = widths.map((_, index) => x0 + widths.slice(0, index).reduce((sum, w) => sum + w, 0));
   const end = starts[starts.length - 1] + widths[widths.length - 1];
   const ticks = [...starts, end];
@@ -401,23 +402,26 @@ function Masse({ measures }: { measures: OgHomeText['measures'] }) {
   );
 }
 
-/** „13:30 Freitags Feierabend“ mit Leitlinie unter 45° zum Fadenkreuz an der Uhr im Giebel. */
-function Uhrzeit({ clock }: { clock: OgHomeText['clock'] }) {
+/**
+ * „35 km Einsatzgebiet rund um Wetzlar“ mit Hinweislinie unter 45° zum Fadenkreuz am Zirkel im Giebel: die Linie
+ * liegt auf dem Radius des Zirkels (Leitmotiv E-027, wie im Einstieg).
+ */
+function Einsatzgebiet({ radius }: { radius: OgHomeText['radius'] }) {
   const left = PANEL_X + 34;
   const top = 160;
   const labelBottom = top + 72 + 32;
-  // Fadenkreuz an der Uhr, Punkt oben links auf dem Kreis
-  const r = HAUS_UHR.kreuzR * S * Math.SQRT1_2;
-  const endX = px(HAUS_UHR.cx) - r;
-  const endY = py(HAUS_UHR.cy) - r;
+  // Fadenkreuz am Zirkel, Punkt oben links auf dem Kreis (Verlängerung des Radius)
+  const r = HAUS_ZIRKEL.kreuzR * S * Math.SQRT1_2;
+  const endX = px(HAUS_ZIRKEL.cx) - r;
+  const endY = py(HAUS_ZIRKEL.cy) - r;
   const startX = endX - (endY - labelBottom);
   return (
     <>
       <div style={{ position: 'absolute', left, top, display: 'flex', flexDirection: 'column' }}>
         <div style={{ fontFamily: 'Bricolage', fontWeight: 800, fontSize: 72, lineHeight: 1, color: C.weiss, letterSpacing: -0.7 }}>
-          {clock.value}
+          {radius.value}
         </div>
-        <div style={{ marginTop: 8, fontFamily: 'Atkinson', fontWeight: 700, fontSize: 18, lineHeight: 1.2, color: C.creme }}>{clock.name}</div>
+        <div style={{ marginTop: 8, fontFamily: 'Atkinson', fontWeight: 700, fontSize: 18, lineHeight: 1.2, color: C.creme }}>{radius.name}</div>
       </div>
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ position: 'absolute', left: 0, top: 0 }}>
         <path d={`M${startX} ${labelBottom}L${endX} ${endY}`} stroke={C.creme} strokeWidth={2} strokeLinecap="round" fill="none" />
@@ -439,7 +443,7 @@ export async function renderHomeImage(text: OgHomeText): Promise<ImageResponse> 
       panel={
         <>
           <Masse measures={text.measures} />
-          <Uhrzeit clock={text.clock} />
+          <Einsatzgebiet radius={text.radius} />
           <Marke icon="waermepumpe" name="Wärmepumpen" at={HAUS_MARKEN[0]} label="oben" />
           <Marke icon="flamme" name="Heizungen" at={HAUS_MARKEN[1]} label="rechts" />
           <Marke icon="tropfen" name="Bäder" at={HAUS_MARKEN[2]} label="rechts" />

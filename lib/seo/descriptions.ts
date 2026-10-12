@@ -22,7 +22,7 @@ export function fitDescription(...candidates: [string, ...string[]]): string {
 const lowerFirst = (text: string) => text.charAt(0).toLowerCase() + text.slice(1);
 
 const AREA = `${COMPANY.address.city} & Gießen`;
-const PERKS = `${FACTS.vacation30.short}, freitags ab ${FACTS.friday1330.value} frei`;
+const PERKS = `${FACTS.vacation30.short}, ${lowerFirst(FACTS.flexibleHours.short)}`;
 const APPLY = `In ${FACTS.apply60s.value} Sek. bewerben.`;
 
 /**

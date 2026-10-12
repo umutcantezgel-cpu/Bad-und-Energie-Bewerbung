@@ -13,7 +13,8 @@ describe('jobsHubDescription (/jobs)', () => {
     expect(text.length).toBeLessThanOrEqual(META_DESCRIPTION_MAX);
     for (const label of jobCategoryLabels(jobs)) expect(text).toContain(label);
     expect(text).toContain(FACTS.vacation30.short);
-    expect(text).toContain(`freitags ab ${FACTS.friday1330.value} frei`);
+    expect(text).toContain('flexible Arbeitszeiten');
+    expect(text).not.toMatch(/13:30|Feierabend|pünktlich/i);
     expect(text).toContain(`In ${FACTS.apply60s.value} Sek. bewerben.`);
   });
 

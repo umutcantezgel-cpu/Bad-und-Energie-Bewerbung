@@ -5,7 +5,7 @@ import { Rohrklammer } from '@/components/zeichnung';
 import { AUFTAKT_ENDE_MS } from '@/lib/motion/register';
 import { cn } from '@/lib/utils/cn';
 import { HERO } from '../content';
-import { KREISLAUF_KNOPF, KREISLAUF_SATZ, ZWEITWEG, einstiegMasse, jahreskette, ortsmarke } from './einstieg-text';
+import { KREISLAUF_KNOPF, KREISLAUF_SATZ, RADIUS_ETIKETT, ZWEITWEG, einstiegMasse, jahreskette, ortsmarke } from './einstieg-text';
 import { KreislaufKnopf } from './KreislaufKnopf';
 import { Szene } from './Szene';
 import { mitZiffern } from './ziffern';
@@ -17,7 +17,7 @@ function plakatzeilen(titel: string): [string, string] {
   return i < 0 ? [titel, ''] : [titel.slice(0, i), titel.slice(i + 1)];
 }
 
-/** „Ehrliches Handwerk. Pünktlich Feierabend.“ → je Satz eine Zeile. */
+/** „Ehrliches Handwerk. Flexible Arbeitszeiten.“ → je Satz eine Zeile. */
 function saetze(text: string): string[] {
   return text.split(/(?<=\.)\s+/);
 }
@@ -83,9 +83,12 @@ export interface EinstiegProps {
 /**
  * Einstieg der Startseite nach den Bildern des Auftraggebers (Variante 3 „Wärmebild“, statisch, E-024):
  * - Desktop: links auf Papier Etikett, h1, Unterzeile mit Rohrklammer, Einleitung, der rote Knopf, Mikrotext,
- *   Zweitweg; rechts die Navy-Fläche vom Kopf bis zur Falz mit den Maßen im Himmel, „13:30“ groß mit
- *   Hinweislinie zur Uhr im Giebel und dem Haus im Wärmebild. Der Vorlauf läuft aus dem Knopf in die Pumpe.
- * - Handy: ein Navy-Block (Etikett, h1 und Unterzeile weiß, das Haus, die Maße als Leiste), dann fallen
+ *   Zweitweg; rechts die Navy-Fläche vom Kopf bis zur Falz mit den Maßen im Himmel und dem Haus im Wärmebild.
+ *   Leitmotiv „35 km“ (E-027): Im Giebel steht das Zirkelzeichen, sein Radius läuft als Hinweislinie an den
+ *   großen Bogen im Himmel, daran hängt „35 km“ groß mit „Einsatzgebiet rund um Wetzlar“. Der Vorlauf läuft aus
+ *   dem Knopf in die Pumpe.
+ * - Handy: ein Navy-Block (Etikett, h1 und Unterzeile weiß, das Haus mit „35 km“ am Zirkel, die Maße als Leiste),
+ *   dann fallen
  *   Vorlauf und Rücklauf links senkrecht auf Papier; der Vorlauf zweigt in den Knopf ab.
  * Reihenfolge im DOM (Lesen, Tab): Etikett, h1, Zeichnung (dekorativ), Maße, Einleitung, Knopf, Mikrotext,
  * Zweitweg, Erklärsatz T-001 mit „Kreislauf zeigen“.
@@ -94,6 +97,8 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
   const [zeile1, zeile2] = plakatzeilen(HERO.title);
   const masse = einstiegMasse();
   const jahre = jahreskette(now);
+  // „Einsatzgebiet“ / „rund um Wetzlar“: zwei Zeilen am großen Maß und in der Leiste (nie „rund“ allein am Zeilenende)
+  const [radiusWort, ...radiusRest] = RADIUS_ETIKETT.split(' ');
   // Das letzte Wort und der Pfeil bleiben zusammen (auf 320 px sonst eine Zeile nur für den Pfeil)
   const trenn = ZWEITWEG.label.lastIndexOf(' ');
   const [zweitwegAnfang, zweitwegEnde] = [ZWEITWEG.label.slice(0, trenn), ZWEITWEG.label.slice(trenn + 1)];
@@ -128,7 +133,7 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
             <Szene />
             <Marken />
             <span className={cn(styles.ablesung, 'font-mass')} aria-hidden="true">
-              {masse.freitag.value}
+              {masse.radius.value}
             </span>
           </div>
         </div>
@@ -137,9 +142,12 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
           <span className={cn(styles.leitung, styles.leisteRl)} data-motion="erdleitung" aria-hidden="true" />
           <span className={cn(styles.leitung, styles.leisteVl)} data-motion="erdleitung" aria-hidden="true" />
           <ul className={styles.masse}>
-            <li className={cn(styles.mass, styles.mass1330)}>
-              <span className={cn(styles.wert, 'font-display')}>{masse.freitag.value}</span>{' '}
-              <span className={styles.name}>{masse.freitag.label}</span>
+            <li className={cn(styles.mass, styles.massRadius)}>
+              <span className={cn(styles.wert, 'font-display')}>{masse.radius.value}</span>{' '}
+              <span className={cn(styles.name, styles.trennbar)}>
+                <span className={styles.zeile}>{radiusWort.replace('Einsatz', 'Einsatz\u00AD')}</span>{' '}
+                <span className={styles.zeile}>{radiusRest.join(' ')}</span>
+              </span>
             </li>
             <li className={styles.mass}>
               <span className={cn(styles.wert, 'font-display')}>
@@ -147,10 +155,6 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
                 {masse.urlaub.value}
               </span>{' '}
               <span className={styles.name}>{masse.urlaub.label}</span>
-            </li>
-            <li className={styles.mass}>
-              <span className={cn(styles.wert, 'font-display')}>{masse.radius.value}</span>{' '}
-              <span className={cn(styles.name, styles.trennbar)}>{masse.radius.label.replace('Einsatz', 'Einsatz­')}</span>
             </li>
             <li className={cn(styles.mass, styles.massLetzt)}>
               <span className={cn(styles.wert, 'font-display')}>{masse.gruendung.value}</span>{' '}

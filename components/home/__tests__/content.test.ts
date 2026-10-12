@@ -1,5 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { BENEFIT_FACT_IDS, CTA, HERO, HERO_STATS, HOME_DESCRIPTION, HOME_TITLE, buildFaqPageJsonLd, homeDescription } from '../content';
+import {
+  BENEFIT_FACT_IDS,
+  CTA,
+  HERO,
+  HERO_RADIUS_LABEL,
+  HERO_STATS,
+  HOME_DESCRIPTION,
+  HOME_TITLE,
+  buildFaqPageJsonLd,
+  homeDescription,
+} from '../content';
 import { FACTS } from '@/lib/content/facts';
 import { FAQ_ITEMS } from '@/lib/content/faq';
 import { getActiveJobs } from '@/lib/jobs/registry';
@@ -16,7 +26,8 @@ describe('home copy', () => {
     const description = homeDescription(getActiveJobs());
     expect(description.length).toBeLessThanOrEqual(155);
     expect(description).toContain(FACTS.vacation30.short);
-    expect(description).toContain('13:30');
+    expect(description).toContain('flexible Arbeitszeiten');
+    expect(description).not.toMatch(/13:30|Feierabend|pünktlich/i);
     expect(description).toContain('Anlagenmechaniker, Kundendienst, Obermonteur & Ausbildung');
   });
 
@@ -28,9 +39,9 @@ describe('home copy', () => {
   it('description keeps „keine Fernmontage“ while it fits and drops the list before overflowing', () => {
     const fewer = homeDescription([{ category: 'anlagenmechaniker' }, { category: 'ausbildung' }]);
     expect(fewer).toBe(
-      'SHK-Jobs in Wetzlar: Anlagenmechaniker & Ausbildung. 30 Tage Urlaub, freitags ab 13:30 frei, keine Fernmontage. In 60 Sek. bewerben.',
+      'SHK-Jobs in Wetzlar: Anlagenmechaniker & Ausbildung. 30 Tage Urlaub, flexible Arbeitszeiten, keine Fernmontage. In 60 Sek. bewerben.',
     );
-    expect(homeDescription([])).toBe('SHK-Jobs in Wetzlar. 30 Tage Urlaub, freitags ab 13:30 frei, keine Fernmontage. In 60 Sek. bewerben.');
+    expect(homeDescription([])).toBe('SHK-Jobs in Wetzlar. 30 Tage Urlaub, flexible Arbeitszeiten, keine Fernmontage. In 60 Sek. bewerben.');
     const categories = ['anlagenmechaniker', 'kundendienst', 'projektleitung', 'ausbildung', 'helfer'] as const;
     const many = homeDescription(categories.map((category) => ({ category })));
     expect(many.length).toBeLessThanOrEqual(155);
@@ -41,19 +52,22 @@ describe('home copy', () => {
     expect(HERO.lead).not.toContain('Lahn-Dill-Kreis');
   });
 
-  it('hero H1 follows roadmap §10', () => {
-    expect(`${HERO.title} ${HERO.titleSecondLine}`).toBe('SHK-Jobs in Wetzlar. Ehrliches Handwerk. Pünktlich Feierabend.');
+  it('hero H1 follows roadmap §10 with the owner\'s correction (flexible working hours, fakten-abgleich B28)', () => {
+    expect(`${HERO.title} ${HERO.titleSecondLine}`).toBe('SHK-Jobs in Wetzlar. Ehrliches Handwerk. Flexible Arbeitszeiten.');
+    expect(HERO.titleSecondLine).toContain(FACTS.flexibleHours.long);
+    expect(HERO.titleSecondLine).not.toMatch(/Feierabend|pünktlich/i);
     expect(HERO.eyebrow).toBe('Seit 1926 · Wetzlar');
     expect(HERO.microcopy.replace(/\u00A0/g, ' ')).toBe('Dauert ca. 60 Sekunden. Kein Lebenslauf nötig.');
   });
 
-  it('shows the four key figures from the facts registry', () => {
+  it('shows three key figures from the facts registry, the radius first (motif „35 km“, E-027), no clock time', () => {
     expect(HERO_STATS.map((s) => [s.value.replace(/\u00A0/g, ' '), s.label])).toEqual([
-      ['13:30', 'Freitags Feierabend'],
-      ['30', 'Tage Urlaub'],
       ['35 km', 'Einsatzradius'],
+      ['30', 'Tage Urlaub'],
       ['1926', 'Gegründet'],
     ]);
+    expect(HERO_STATS.map((s) => s.factId)).toEqual(['radius35', 'vacation30', 'founded1926']);
+    expect(HERO_RADIUS_LABEL).toBe('Einsatzgebiet rund um Wetzlar');
   });
 
   it('uses at most 8 benefit tiles, none pending or time-limited, none repeating a hero figure', () => {

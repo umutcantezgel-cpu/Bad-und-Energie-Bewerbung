@@ -93,6 +93,9 @@ jobs:
       - name: Graph-Check (JSON-LD)
         run: bun run test:graph
 
+      - name: Keine festen Arbeitszeiten im HTML (check-claims)
+        run: bun run test:claims
+
       # E2E läuft gegen den Production-Build (playwright.config.ts startet `next start` auf
       # Port 3400). Die Simulation verschickt keine E-Mails, ALLOW_DEV_SECRETS erlaubt den
       # festen Dev-Wert der HMAC-Geheimnisse.

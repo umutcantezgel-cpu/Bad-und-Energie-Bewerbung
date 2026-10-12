@@ -25,7 +25,8 @@ const KERN_K009 = [
   'erdleitung',
   'erdleitung-d',
   'pfeile',
-  'uhr',
+  // E-027: ersetzt 'uhr' (13:30); der Zirkel rastet auf 35 km ein
+  'radius-einrasten',
   'menue-oeffnen',
   'menue-leitung',
   'menue-eintrag',
@@ -90,11 +91,11 @@ describe('Bewegungsregister', () => {
       if (entry.dauer.length === 1) expect(entry.endeMs, id).toBe(maxVerzoegerungMs(entry) + maxDauerMs(entry));
     }
     expect(Math.max(...auftakt.map((id) => MOTION_REGISTER[id].endeMs!))).toBe(AUFTAKT_ENDE_MS);
-    expect(MOTION_REGISTER.uhr.endeMs).toBe(AUFTAKT_ENDE_MS);
+    expect(MOTION_REGISTER['radius-einrasten'].endeMs).toBe(AUFTAKT_ENDE_MS);
   });
 
   it('hält Signaturmomente auf Erzählseiten (K-011)', () => {
-    for (const id of ['luft', 'luefter', 'vorlauf-haus', 'waerme', 'uhr', 'kreislauf-zeigen', 'seitenwechsel'] as MotionId[]) {
+    for (const id of ['luft', 'luefter', 'vorlauf-haus', 'waerme', 'radius-einrasten', 'kreislauf-zeigen', 'seitenwechsel'] as MotionId[]) {
       expect(MOTION_REGISTER[id].seitenart, id).toBe('erzaehlseiten');
     }
     expect(MOTION_REGISTER.fortschritt.seitenart).toBe('alle');
@@ -107,8 +108,22 @@ describe('Bewegungsregister', () => {
     }
   });
 
+  it('Leitmotiv „35 km“ (E-027): radius-einrasten ersetzt uhr, nicht länger als die Uhr, reduziert steht der Bogen', () => {
+    expect(MOTION_IDS).not.toContain('uhr' as MotionId);
+    const zirkel = MOTION_REGISTER['radius-einrasten'];
+    expect(zirkel.dauer).toEqual(['d-2']);
+    expect(zirkel.verzoegerungTakte).toEqual([11]);
+    expect(zirkel.kurve).toEqual(['k-aus']);
+    expect(zirkel.ausloeser).toEqual(['auftakt']);
+    expect(zirkel.eigenschaften).toEqual(['transform', 'opacity', 'stroke-dashoffset']);
+    expect(zirkel.endeMs).toBe(AUFTAKT_ENDE_MS);
+    expect(zirkel.reduziert).toMatch(/stehen auf 35 km/);
+    expect(`${zirkel.zweck} ${zirkel.reduziert}`).not.toMatch(/13:30|Feierabend|Freitag/);
+  });
+
   it('erkennt Kennungen', () => {
-    expect(isMotionId('uhr')).toBe(true);
+    expect(isMotionId('radius-einrasten')).toBe(true);
+    expect(isMotionId('uhr')).toBe(false);
     expect(isMotionId('konfetti')).toBe(false);
     expect(isMotionId(3)).toBe(false);
   });

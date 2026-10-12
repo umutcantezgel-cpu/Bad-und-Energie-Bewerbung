@@ -8,8 +8,9 @@ import { APPLY_PATH, PRIMARY_CTA_ATTR } from '@/components/site/nav';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
 import { REGION } from '@/lib/content/region';
-import { TEAM_QUOTES } from '@/lib/content/team';
+import { getReleasedQuote } from '@/lib/content/team';
 import { companyData } from '@/lib/data/company';
+import { teamData } from '@/lib/data/team';
 import { MOTION_IDS } from '@/lib/motion/register';
 import { AboutSection } from '../../AboutSection';
 import { CTA } from '../../content';
@@ -47,12 +48,13 @@ describe('Über uns (R3-HOME-04)', () => {
     expect(aboutText).toContain(FACTS.directLine.long);
   });
 
-  it('zeigt das freigegebene Zitat von Sabri Demir wörtlich mit Name und Rolle', () => {
-    const zitat = TEAM_QUOTES.demir;
-    expect(aboutText).toContain(`„${zitat.quote}“`);
-    expect(aboutText).toContain(zitat.name);
-    expect(aboutText).toContain(zitat.role);
-    expect(about).toContain('data-zeichnung="rohrklammer"');
+  it('blendet das Zitat von Sabri Demir aus, bis der Inhaber ein neues freigibt (fakten-abgleich B30)', () => {
+    // Das bisherige Zitat nennt „Feierabendversprechen“; die Arbeitszeiten sind flexibel (B28).
+    expect(getReleasedQuote('demir')).toBeUndefined();
+    const demir = teamData.find((m) => m.name.endsWith(' Demir'))!;
+    expect(demir.quoteOnHold).toMatch(/^B30: /);
+    expect(aboutText).not.toContain(demir.quote);
+    expect(aboutText).not.toMatch(/Feierabend/);
   });
 
   it('E-START-031: „Meilenstein 2026“, „Siegmund-Hiepe-Str. 20“, „größeres Lager“, „15 Leuten“ mit Wachstumsgrund', () => {
@@ -144,7 +146,9 @@ describe('ContactOptions (rückwärtskompatibel, R3-HOME-04)', () => {
       expect(hrefs[0]).toBe(COMPANY.phone.href);
       expect(hrefs[1]).toContain('whatsapp');
       expect(hrefs[2]).toBe(COMPANY.emailHref);
-      expect(plain(html)).toContain(`Öffnungszeiten: ${COMPANY.openingHours.short}`);
+      // Bürozeiten, keine Arbeitszeit (fakten-abgleich B28): beschriftet und für check-claims markiert
+      expect(plain(html)).toContain(`Büro erreichbar: ${COMPANY.openingHours.short}`);
+      expect(html).toContain('<span data-claims="buerozeiten">');
     }
   });
 

@@ -44,7 +44,7 @@ export const obermonteurProjektleiterShk = defineJob({
   benefitFactIds: [
     'aboveTariff',
     'vacation30',
-    'friday1330',
+    'flexibleHours',
     'privateCarOnePercent',
     'fuelCard',
     'hilti',
@@ -64,8 +64,8 @@ export const obermonteurProjektleiterShk = defineJob({
   experienceMonths: 36,
   datePosted: '2026-03-01',
   validThrough: '2027-10-06T00:00:00',
-  updatedAt: '2026-10-08',
+  updatedAt: '2026-10-12',
   apply: { questionSet: 'fachkraft' },
   channels: { googleJobs: true, indeedFeed: true, genericFeed: true, ba: true },
-  teamQuoteId: 'koch',
+  // Zitat Koch ausgeblendet, bis der Inhaber ein neues freigibt (fakten-abgleich B30).
 });

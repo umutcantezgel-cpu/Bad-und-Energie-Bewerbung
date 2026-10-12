@@ -1,6 +1,5 @@
 // Home page sections (server components), in page order.
 export * from './Hero';
-export * from './WeekSection';
 export * from './JobList';
 export * from './BenefitGrid';
 export * from './RegionSection';

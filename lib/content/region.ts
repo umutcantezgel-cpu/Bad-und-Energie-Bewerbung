@@ -48,8 +48,9 @@ export const REGION = Object.freeze({
   }),
   radiusKm: 35,
   headline: '35 km um Wetzlar. Keine Fernmontage.',
+  // 35 km rundum, auch in die Nachbarkreise (fakten-abgleich B29); „jeden Abend zu Hause“ ohne „pünktlich“ (B28).
   summary:
-    'Du arbeitest in Wetzlar, Gießen und dem Lahn-Dill-Kreis, ohne Hotelübernachtungen, und bist jeden Abend pünktlich zu Hause.',
+    'Du arbeitest in Wetzlar, Gießen, im Lahn-Dill-Kreis und in den Nachbarkreisen, ohne Hotelübernachtungen, und bist jeden Abend zu Hause.',
   locations,
   areas: Object.freeze(
     SITE_CONFIG.serviceRegions.map(

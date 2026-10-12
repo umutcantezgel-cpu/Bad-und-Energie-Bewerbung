@@ -8,15 +8,16 @@ import { salaryUnitLabel } from '@/components/jobs/JobCard';
 import { Stellenverteiler, stellenMeta } from '@/components/jobs/liste/Stellenverteiler';
 import {
   GEWERKE,
-  HEIZKREIS,
+  HEIZKREIS_NAME,
   INITIATIV,
   LEER_TEXT,
   LISTEN_EINLEITUNG,
-  LISTEN_MASSE,
   LISTEN_MIKROTEXT,
+  fachkraftSpanne,
   listenEtikett,
   listenName,
   listenUnterzeile,
+  listenZeichnung,
   listenZweitweg,
 } from '@/components/jobs/liste/liste-text';
 import { INITIATIVE_APPLY_PATH } from '@/lib/apply/params';
@@ -25,6 +26,7 @@ import { REGION } from '@/lib/content/region';
 import { formatSalaryAmount, jobPath } from '@/lib/jobs/format';
 import { getActiveJobs, getJobById, isJobLive } from '@/lib/jobs/registry';
 import { MOTION_IDS } from '@/lib/motion/register';
+import { claimsInHtml } from '../../../scripts/qa/check-claims.mjs';
 
 const NBSP = ' ';
 const SHY = '­';
@@ -62,20 +64,33 @@ describe('Texte der Stellenliste (nur aus Fakten und Stellendaten)', () => {
 
   it('„Jede Stelle mit Gehaltsspanne“ nur, wenn jede Stelle eine Spanne trägt', () => {
     const am = getJobById('anlagenmechaniker-shk')!;
-    expect(listenUnterzeile([am])).toEqual(['Jede Stelle mit Gehaltsspanne.', 'Pünktlich Feierabend.']);
-    expect(listenUnterzeile([am, { salary: undefined }])).toEqual(['Ehrliches Handwerk.', 'Pünktlich Feierabend.']);
+    expect(listenUnterzeile([am])).toEqual(['Jede Stelle mit Gehaltsspanne.', 'Flexible Arbeitszeiten.']);
+    expect(listenUnterzeile([am, { salary: undefined }])).toEqual(['Ehrliches Handwerk.', 'Flexible Arbeitszeiten.']);
     expect(listenUnterzeile([])[0]).toBe('Ehrliches Handwerk.');
+    expect(listenUnterzeile([am])[1]).toBe(FACTS.flexibleHours.long);
   });
 
-  it('Heizkreis, Maße und Mikrotext kommen aus dem Faktenregister', () => {
-    expect(HEIZKREIS).toEqual({ wert: FACTS.friday1330.value, name: FACTS.friday1330.label });
-    expect(LISTEN_MASSE.map((mass) => mass.wert.replaceAll(NBSP, ' '))).toEqual([FACTS.vacation30.value, FACTS.radius35.value]);
+  it('Heizkreis: Gehaltsspanne der Fachkraft-Stellen aus den Stellendaten (statt 13:30), Maße aus dem Faktenregister', () => {
+    const jobs = getActiveJobs();
+    const fachkraefte = jobs.filter((job) => job.category !== 'ausbildung' && job.salary);
+    const min = Math.min(...fachkraefte.map((job) => job.salary!.min));
+    const max = Math.max(...fachkraefte.map((job) => job.salary!.max));
+    expect(fachkraftSpanne(jobs)).toBe(formatSalaryAmount({ salary: { ...fachkraefte[0].salary!, min, max } }));
+    expect(fachkraftSpanne(jobs)!.replaceAll(NBSP, ' ')).toBe('3.600–5.600 €');
+    const { heizkreis, masse } = listenZeichnung(jobs);
+    expect(heizkreis).toEqual({ wert: fachkraftSpanne(jobs), name: HEIZKREIS_NAME });
+    expect(masse.map((mass) => mass.wert.replaceAll(NBSP, ' '))).toEqual([FACTS.vacation30.value, FACTS.radius35.value]);
+    // Nur die Ausbildung: keine Spanne der Fachkräfte; der Heizkreis trägt den Radius, der nicht doppelt als Maß steht
+    const nurAusbildung = listenZeichnung(jobs.filter((job) => job.category === 'ausbildung'));
+    expect(nurAusbildung.heizkreis.wert.replaceAll(NBSP, ' ')).toBe(FACTS.radius35.value);
+    expect(nurAusbildung.masse.map((mass) => mass.name)).toEqual([FACTS.vacation30.label]);
+    expect(JSON.stringify(listenZeichnung(jobs))).not.toMatch(/\d:\d|Feierabend/);
     expect(LISTEN_MIKROTEXT).toBe(`Dauert ca. 60${NBSP}Sekunden. ${FACTS.noCvNeeded.short}.`);
     expect(INITIATIV.text).toContain(FACTS.noCvNeeded.long);
     expect(INITIATIV.text).toContain(FACTS.quickResponse.long);
   });
 
-  it('Faktenverteilung im Kopf: 13:30 nur im Heizkreis, 30 Tage und 35 km nur als Maß, 1926 nur in der Einleitung', () => {
+  it('Faktenverteilung im Kopf: keine Uhrzeit, 30 Tage und 35 km nur als Maß, 1926 nur in der Einleitung', () => {
     const [satz1, satz2] = listenUnterzeile(getActiveJobs());
     const text = [satz1, satz2, LISTEN_EINLEITUNG, LISTEN_MIKROTEXT].join(' ').replaceAll(NBSP, ' ');
     expect(text).not.toContain('13:30');
@@ -135,7 +150,10 @@ describe('/jobs (R5-JOBS-01)', () => {
     expect(plain(/<h1[^>]*>(.*?)<\/h1>/.exec(html)![1])).toBe('Offene Stellen in Wetzlar und Umgebung');
     expect(html).toContain('data-seitenkopf="erzaehl"');
     expect(html).toContain('data-zeichnung="heizkreis"');
-    expect(plain(html)).toContain(`${HEIZKREIS.wert} ${HEIZKREIS.name}`);
+    const { heizkreis } = listenZeichnung(getActiveJobs());
+    expect(plain(html)).toContain(`${heizkreis.wert.replaceAll(NBSP, ' ')} ${heizkreis.name}`);
+    // Keine Arbeitszeit-Aussage im sichtbaren Text (Bürozeiten im Fuß sind markiert, check-claims)
+    expect(claimsInHtml(html)).toEqual([]);
   });
 
   // V6-B: der eine Block ist ein @graph; seitenspezifisch darin nur WebPage und die BreadcrumbList.

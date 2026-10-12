@@ -11,7 +11,7 @@ export const TOKENS = {
     d4: 600,
     /** Takt: Verzögerungen nur als Vielfache (CSS --takt) */
     takt: 80,
-    /** Längster Auftakt (Uhr rastet auf 13:30 ein) */
+    /** Längster Auftakt (Zirkel rastet auf 35 km ein, Bewegung radius-einrasten) */
     auftaktEnde: 1120,
     /** Sicherheitsnetz des Kopfskripts */
     sicherheitsnetz: 2000,

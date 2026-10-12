@@ -68,7 +68,7 @@ export function FussVoll({ year, now = new Date() }: FussVollProps) {
               <Ziffern text={`${COMPANY.address.postalCode} ${COMPANY.address.city}`} />
             </address>
             <p className={styles.zeiten}>
-              <span className={cn(styles.zeitenName, 'text-etikett')}>Öffnungszeiten</span>
+              <span className={cn(styles.zeitenName, 'text-etikett')}>Büro erreichbar</span>
               <OpeningHoursText text={COMPANY.openingHours.short} />
             </p>
           </Spalte>

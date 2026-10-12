@@ -4,8 +4,11 @@
  * scripts/qa/check-client-imports.mjs). Aufgebaut werden die Daten in ./vorteile-text.ts.
  */
 
-/** Die vier Wünsche aus dem alten Funnel („Was ist Dir … besonders wichtig?“). */
-export const WUNSCH_IDS = ['feierabend', 'verguetung', 'ausstattung', 'naehe'] as const;
+/**
+ * Die vier Wünsche aus dem alten Funnel („Was ist Dir … besonders wichtig?“). Der erste hieß „Pünktlich
+ * Feierabend“; seit 2026-10-12 „Flexible Arbeitszeiten“ (fakten-abgleich B28).
+ */
+export const WUNSCH_IDS = ['arbeitszeit', 'verguetung', 'ausstattung', 'naehe'] as const;
 export type WunschId = (typeof WUNSCH_IDS)[number];
 
 export interface WunschOption {
@@ -25,7 +28,7 @@ export interface PaketZeile {
   /** Fakt-Zeilen erscheinen nur, wenn einer ihrer Wünsche gewählt ist; Paketzeilen immer. */
   nurAufWunsch: boolean;
   /**
-   * Verweis statt Wiederholung (E-023): Die Antwort steht schon in einem anderen Block der Seite (Arbeitswoche,
+   * Verweis statt Wiederholung (E-023): Die Antwort steht schon in einem anderen Block der Seite (Zusagen,
    * Werkzeug & Fuhrpark, Einsatzgebiet). Dann ist `text` die Beschriftung des Links und `href` sein Sprungziel.
    */
   href?: string;

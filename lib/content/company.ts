@@ -1,6 +1,6 @@
 import { companyData } from '@/lib/data/company';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
-import { TEAM_QUOTES } from './team';
+import { TEAM_PROFILES } from './team';
 
 const whatsappNumber = SITE_CONFIG.contact.whatsapp.replace(/[^0-9]/g, '');
 const registerNumber = companyData.handelsregister.match(/HRB\s*\d+/)?.[0] ?? companyData.handelsregister;
@@ -61,9 +61,9 @@ export const COMPANY = Object.freeze({
   hwk: companyData.hwk,
   /** Titel nach lib/data/team.ts (ROADMAP §13, Standard bis zur Klärung). */
   managingDirector: Object.freeze({
-    name: TEAM_QUOTES.demir.name,
-    fullName: TEAM_QUOTES.demir.fullName,
-    title: TEAM_QUOTES.demir.role,
+    name: TEAM_PROFILES.demir.name,
+    fullName: TEAM_PROFILES.demir.fullName,
+    title: TEAM_PROFILES.demir.role,
   }),
   website: SITE_CONFIG.consumerUrl,
   careerUrl: SITE_CONFIG.baseUrl,

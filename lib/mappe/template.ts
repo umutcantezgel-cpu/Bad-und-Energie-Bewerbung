@@ -68,8 +68,8 @@ export function buildCoverLetter(input: CoverLetterInput): string {
   ].filter((line): line is string => line !== null);
 
   const values = isApprenticeship
-    ? 'Für meine Ausbildung wünsche ich mir einen verlässlichen Meisterbetrieb mit direkter Kommunikation, modernem Equipment und geregelten Arbeitszeiten.'
-    : 'Als Handwerker aus der Region schätze ich einen verlässlichen Meisterbetrieb mit direkter Kommunikation, modernem Equipment und geregelten Arbeitszeiten.';
+    ? 'Für meine Ausbildung wünsche ich mir einen verlässlichen Meisterbetrieb mit direkter Kommunikation, modernem Equipment und flexiblen Arbeitszeiten.'
+    : 'Als Handwerker aus der Region schätze ich einen verlässlichen Meisterbetrieb mit direkter Kommunikation, modernem Equipment und flexiblen Arbeitszeiten.';
 
   const paragraphs = [
     recipient.salutation,

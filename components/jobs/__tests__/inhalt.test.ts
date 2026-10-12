@@ -183,8 +183,10 @@ describe('Stellenvergleich: Aufgaben, Voraussetzungen und Gehalt aus den Stellen
 });
 
 describe('Arbeitsalltag und Einsatzgebiet', () => {
-  it('Arbeitswoche, Betrieb und Orte im Wortlaut von FACTS und REGION', () => {
-    expect(normal(ALLTAG.woche.text)).toBe(`${FACTS.workingHours.long} ${FACTS.noWeekendOnCall.long}`);
+  it('Arbeitszeit, Betrieb und Orte im Wortlaut von FACTS und REGION (flexibel, keine Uhrzeit; B28)', () => {
+    expect(ALLTAG.woche.titel).toBe('Arbeitszeit');
+    expect(normal(ALLTAG.woche.text)).toBe(`${FACTS.flexibleHours.long} ${FACTS.noUnpaidOvertime.long} ${FACTS.noWeekendOnCall.long}`);
+    expect(ALLTAG.woche.text).not.toMatch(/\d:\d|Feierabend|pünktlich/i);
     expect(normal(ALLTAG.betrieb.text)).toBe(REGION.milestone.text);
     expect(ALLTAG.orte.liste.map((ort) => [ort.name, normal(ort.entfernung), normal(ort.fahrzeit)])).toEqual(
       REGION.locations.map((ort) => [ort.name, `${ort.distanceKm} km`, `ca. ${ort.commuteMinutes} Min.`]),
@@ -241,12 +243,12 @@ describe('/jobs: Seitentitel und Faktenregel (V6-G1)', () => {
       kopf: render(createElement(StellenKopf, { jobs: JOBS, titel: 'Offene Stellen in Wetzlar und Umgebung' })),
       stellen: render(createElement(Stellenverteiler, { jobs: JOBS })),
       ...NEU,
-      // Öffnungszeiten im Kontaktblock sind Kontaktdaten (COMPANY.openingHours), keine Aussage über die Arbeit
-      initiativ: render(createElement(Initiativband, { auchMoeglich: [] })).replace(/Öffnungszeiten:[\s\S]*$/, ''),
+      // Bürozeiten im Kontaktblock sind Kontaktdaten (COMPANY.openingHours), keine Aussage über die Arbeit
+      initiativ: render(createElement(Initiativband, { auchMoeglich: [] })).replace(/Büro erreichbar:[\s\S]*$/, ''),
     };
     const MARKEN: Record<string, RegExp> = {
       radius35: /35[\s -]km/,
-      friday1330: /13:30/,
+      flexibleHours: /Flexible Arbeitszeiten/,
       noFarAssembly: /Fernmontage/,
       noCvNeeded: /Lebenslauf/,
       apply60s: /60[\s ]Sekunden/,

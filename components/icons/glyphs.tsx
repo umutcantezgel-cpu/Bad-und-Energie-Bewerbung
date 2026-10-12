@@ -45,8 +45,11 @@ export const GLYPH_SHAPES = {
     { cx: 7.5, cy: 16.5, r: 2 },
     { cx: 17, cy: 16.5, r: 2 },
   ],
-  /** Uhr auf 13:30 (Feierabend am Freitag) */
-  uhr: [{ cx: 12, cy: 12, r: 9 }, { d: 'M12 12l4.2-4.2M12 12v6' }],
+  /**
+   * Uhr für die Arbeitszeit, ohne bestimmte Zeit: Zeiger auf zwölf und drei wie das Ziffernblatt-Zeichen.
+   * Bis 2026-10-12 standen die Zeiger auf 13:30 (Feierabend am Freitag, entfallen; fakten-abgleich B28).
+   */
+  uhr: [{ cx: 12, cy: 12, r: 9 }, { d: 'M12 7v5h4.5' }],
   /** Standort: Giebel 45° unter einem Kreis */
   standort: [{ d: 'M12 19.9 7.05 14.95a7 7 0 1 1 9.9 0Z' }, { cx: 12, cy: 10, r: 2.5 }],
   /** Nachricht: Umschlag */
@@ -78,6 +81,11 @@ export const GLYPH_SHAPES = {
   ],
   mail: BRIEF,
   map: [{ d: 'M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20Z' }, { d: 'M9 4v13.5M15 6.5V20' }],
+  /**
+   * Zirkelzeichen des Leitmotivs „35 km“ (E-027, wie im Giebel der Szene und im OG-Haus): Einsatzgebiet als
+   * Kreis, Innenring der Kernzone, Mittelpunkt Wetzlar und der Radius unter 45° nach oben links.
+   */
+  radius: [{ cx: 12, cy: 12, r: 9 }, { cx: 12, cy: 12, r: 4 }, { d: 'M12 12 5.64 5.64' }],
   /** Sprechblase für WhatsApp und Chat, ohne Fremdlogo */
   'message-circle': [{ d: 'M12 3a9 9 0 1 1-4.6 16.7L3 21l1.3-4.4A9 9 0 0 1 12 3Z' }],
   /** Hörer (aus Variante 1) */

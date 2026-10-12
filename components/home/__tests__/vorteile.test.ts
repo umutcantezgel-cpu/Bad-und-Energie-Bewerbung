@@ -35,7 +35,7 @@ const read = (file: string) => readFileSync(path.join(dir, file), 'utf8');
 /** Server render with a fixed date (BenefitGrid filters live jobs by date). */
 const renderGrid = () => renderToStaticMarkup(createElement(BenefitGrid, { now: NOW }));
 /** Sprungziele der Verweiszeilen: Blöcke der Startseite. */
-const ZIELE = new Set(['#woche', '#einsatzgebiet', `#${AUSSTATTUNG_ID}`, `#${ZUSAGEN_ID}`]);
+const ZIELE = new Set(['#einsatzgebiet', `#${AUSSTATTUNG_ID}`, `#${ZUSAGEN_ID}`]);
 const AUSSTATTUNG_LABELS = new Set(['Werkzeug', 'Fahrzeug']);
 
 describe('Konfigurator: Rollen (E-START-024)', () => {
@@ -150,9 +150,9 @@ describe('Konfigurator: Wünsche (E-START-016)', () => {
     const am = rollen[0]!;
     expect(sichtbareZeilen(am, ['verguetung']).filter((z) => z.passt).map((z) => z.etikett)).toEqual(['Vergütung']);
     expect(sichtbareZeilen(am, ['ausstattung']).filter((z) => z.passt).map((z) => z.key)).toEqual(['verweis-ausstattung']);
-    const feierabend = sichtbareZeilen(am, ['feierabend']);
-    expect(feierabend).toHaveLength(am.zeilen.filter((z) => !z.nurAufWunsch).length + 1);
-    expect(feierabend.at(-1)).toMatchObject({ href: '#woche', richtung: 'hoch', passt: true });
+    const arbeitszeit = sichtbareZeilen(am, ['arbeitszeit']);
+    expect(arbeitszeit).toHaveLength(am.zeilen.filter((z) => !z.nurAufWunsch).length + 1);
+    expect(arbeitszeit.at(-1)).toMatchObject({ etikett: 'Arbeitszeit', href: `#${ZUSAGEN_ID}`, richtung: 'runter', passt: true });
     const kd = rollen[1]!;
     expect(sichtbareZeilen(kd, ['naehe']).filter((z) => z.passt).map((z) => z.href)).toEqual(['#einsatzgebiet']);
     const om = rollen[2]!;
@@ -163,8 +163,8 @@ describe('Konfigurator: Wünsche (E-START-016)', () => {
     ]);
   });
 
-  it('no fact a third time (E-023): the package never repeats 13:30, 35 km, Fernmontage, Tarif, Hilti or the vehicle', () => {
-    const anderswo: FactId[] = ['friday1330', 'radius35', 'noFarAssembly', 'aboveTariff', 'noWeekendOnCall', 'noUnpaidOvertime', 'hilti', 'vehicle'];
+  it('no fact a third time (E-023): the package never repeats working time, 35 km, Fernmontage, Tarif, Hilti or the vehicle', () => {
+    const anderswo: FactId[] = ['flexibleHours', 'radius35', 'noFarAssembly', 'aboveTariff', 'noWeekendOnCall', 'noUnpaidOvertime', 'hilti', 'vehicle'];
     for (const rolle of rollen) {
       const texte = sichtbareZeilen(rolle, alleWuensche).map((z) => z.text).join(' | ');
       for (const id of anderswo) expect(texte, `${rolle.id}: ${id}`).not.toContain(FACTS[id].short);
@@ -182,15 +182,21 @@ describe('Konfigurator: Wünsche (E-START-016)', () => {
   it('announces role and matches in one sentence', () => {
     const am = rollen[0]!;
     expect(paketStatus(am, sichtbareZeilen(am, []), [])).toBe('2 Zeilen im Paket als Anlagenmechaniker SHK.');
-    const mitWunsch = sichtbareZeilen(am, ['verguetung', 'feierabend']);
-    expect(paketStatus(am, mitWunsch, ['verguetung', 'feierabend'])).toBe(
+    const mitWunsch = sichtbareZeilen(am, ['verguetung', 'arbeitszeit']);
+    expect(paketStatus(am, mitWunsch, ['verguetung', 'arbeitszeit'])).toBe(
       '3 Zeilen im Paket als Anlagenmechaniker SHK. 2 passen zu deiner Auswahl.',
     );
   });
 
   it('toggles wishes in their fixed order', () => {
-    expect(wunschUmschalten(['naehe'], 'feierabend', true)).toEqual(['feierabend', 'naehe']);
-    expect(wunschUmschalten(['feierabend', 'naehe'], 'feierabend', false)).toEqual(['naehe']);
+    expect(wunschUmschalten(['naehe'], 'arbeitszeit', true)).toEqual(['arbeitszeit', 'naehe']);
+    expect(wunschUmschalten(['arbeitszeit', 'naehe'], 'arbeitszeit', false)).toEqual(['naehe']);
+  });
+
+  it('the first wish is „Flexible Arbeitszeiten“, not „Pünktlich Feierabend“ (fakten-abgleich B28)', () => {
+    expect(WUNSCH_OPTIONEN[0]).toEqual({ id: 'arbeitszeit', label: FACTS.flexibleHours.short });
+    expect(WUNSCH_VERWEISE.arbeitszeit.fakten).toEqual(['flexibleHours', 'noWeekendOnCall', 'noUnpaidOvertime']);
+    expect(JSON.stringify([WUNSCH_OPTIONEN, WUNSCH_VERWEISE])).not.toMatch(/Feierabend|pünktlich|#woche/i);
   });
 
   it('cannot pass the wishes on: /bewerbung knows no parameter for them yet (R5-BEW-01)', () => {
@@ -209,14 +215,14 @@ describe('Zusagen und Werkzeug & Fuhrpark (E-START-025, -026)', () => {
     }
   });
 
-  it('working hours only as the short measure Mo–Do; 13:30 stays with the hero and the week (E-023)', () => {
-    const zeit = ZUSAGEN.find((z) => z.id === 'noUnpaidOvertime')!;
+  it('working time without a clock: „Flexible Arbeitszeiten“ with „Keine unbezahlten Überstunden.“, no measure (B28)', () => {
+    const zeit = ZUSAGEN.find((z) => z.id === 'flexibleHours')!;
+    expect(zeit.titel).toBe(FACTS.flexibleHours.short);
     expect(zeit.text).toBe(FACTS.noUnpaidOvertime.long);
-    expect(zeit.mass).toBe('Mo–Do 07:00–16:45 Uhr');
-    expect(FACTS.workingHours.short.startsWith(zeit.mass!)).toBe(true);
+    expect(zeit.mass).toBeUndefined();
+    expect(ZUSAGEN.every((z) => z.mass === undefined)).toBe(true);
     const html = renderGrid();
-    expect(html).not.toContain(FACTS.workingHours.long);
-    expect(html).not.toContain('13:30');
+    expect(html).not.toMatch(/\d{2}:\d{2}|Feierabend|pünktlich|Mo–Do/);
   });
 
   it('the promises carry a neutral title, no „for all“ that the job data do not cover', () => {
@@ -245,9 +251,9 @@ describe('Zusagen und Werkzeug & Fuhrpark (E-START-025, -026)', () => {
 describe('BenefitGrid (#vorteile) server render', () => {
   const html = renderGrid();
 
-  it('meets the acceptance texts: 07:00, unpaid overtime, measurement tools', () => {
+  it('meets the acceptance texts: flexible working hours, unpaid overtime, measurement tools', () => {
     expect(html).toContain('id="vorteile"');
-    expect(html).toContain('07:00');
+    expect(html).toContain('Flexible Arbeitszeiten');
     expect(html).toContain('unbezahlten Überstunden');
     expect(html).toContain('Messtechnik');
     expect(html).toContain(`id="${AUSSTATTUNG_ID}"`);

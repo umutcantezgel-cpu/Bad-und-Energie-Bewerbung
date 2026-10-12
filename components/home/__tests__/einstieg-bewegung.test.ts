@@ -58,12 +58,16 @@ describe('Auftakt „Der Kreislauf läuft an“ (K-009, Register)', () => {
     }
   });
 
-  it('endet spätestens nach AUFTAKT_ENDE_MS (1.120 ms, Budget ≤ 1,5 s), mit dem Einrasten der Uhr', () => {
+  it('endet spätestens nach AUFTAKT_ENDE_MS (1.120 ms, Budget ≤ 1,5 s), mit dem Einrasten des Zirkels auf 35 km', () => {
     const ende = Math.max(...liste.map((a) => a.dauer + a.verzoegerung));
     expect(ende).toBe(AUFTAKT_ENDE_MS);
     expect(ende).toBeLessThanOrEqual(1500);
-    const uhr = liste.find((a) => a.selektor.includes('[data-motion="uhr"]'))!;
-    expect(uhr.dauer + uhr.verzoegerung).toBe(MOTION_REGISTER.uhr.endeMs);
+    const zirkel = liste.find((a) => a.selektor.includes('[data-motion="radius-einrasten"]'))!;
+    expect(zirkel.dauer + zirkel.verzoegerung).toBe(MOTION_REGISTER['radius-einrasten'].endeMs);
+    // Nicht länger als die Uhr, die es ersetzt (d-2 ab 11 Takten)
+    expect(zirkel.dauer).toBe(DAUER_MS['d-2']);
+    expect(zirkel.verzoegerung).toBe(11 * TAKT_MS);
+    expect(CSS).not.toContain('data-motion="uhr"');
     for (const delay of [...CSS.matchAll(/animation-delay:\s*([^;]+);/g)].map((m) => ms(m[1]))) {
       expect(delay).toBeLessThan(AUFTAKT_ENDE_MS);
     }

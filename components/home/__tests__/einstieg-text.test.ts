@@ -5,6 +5,7 @@ import { HERO, HERO_STATS } from '../content';
 import {
   KREISLAUF_KNOPF,
   KREISLAUF_SATZ,
+  RADIUS_ETIKETT,
   WEGWEISER,
   einstiegMasse,
   jahreskette,
@@ -45,11 +46,12 @@ describe('Einstieg-Texte (R3-HOME-01)', () => {
     expect(WEGWEISER).toBe('Wetzlar');
   });
 
-  it('die vier Maße kommen unverändert aus HERO_STATS (13:30, 30, 35 km, 1926)', () => {
+  it('die drei Maße kommen unverändert aus HERO_STATS (35 km, 30, 1926), keine Uhrzeit (E-027)', () => {
     const m = einstiegMasse();
-    expect([m.freitag, m.urlaub, m.radius, m.gruendung]).toEqual([...HERO_STATS]);
+    expect([m.radius, m.urlaub, m.gruendung]).toEqual([...HERO_STATS]);
     expect(plain(m.radius.value)).toBe('35 km');
-    expect(m.freitag.value).toBe('13:30');
+    expect(Object.values(m).map((s) => s.value).join(' ')).not.toMatch(/\d:\d/);
+    expect(RADIUS_ETIKETT).toBe('Einsatzgebiet rund um Wetzlar');
   });
 
   it('schützt Zahl-Wort-Paare mit geschütztem Leerzeichen', () => {
@@ -91,7 +93,7 @@ describe('Vertrauenszeile (E-START-021, E-START-010, E-START-011)', () => {
 
   it('wiederholt keine Fakten, die der Einstieg oder andere Abschnitte schon zweimal tragen', () => {
     const alles = texte.join(' · ');
-    for (const verboten of ['13:30', '30 Tage', '35 km', '1926', '100 Jahre', 'Hilti', '15', 'Lahn-Dill-Kreis', 'Servicefahrzeug']) {
+    for (const verboten of ['13:30', 'Arbeitszeit', '30 Tage', '35 km', '1926', '100 Jahre', 'Hilti', '15', 'Lahn-Dill-Kreis', 'Servicefahrzeug']) {
       expect(alles, verboten).not.toContain(verboten);
     }
   });

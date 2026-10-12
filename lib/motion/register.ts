@@ -20,7 +20,7 @@ export const MOTION_IDS = [
   'erdleitung',
   'erdleitung-d',
   'pfeile',
-  'uhr',
+  'radius-einrasten',
   'menue-oeffnen',
   'menue-leitung',
   'menue-eintrag',
@@ -71,7 +71,7 @@ export interface MotionEntry {
 
 export const TAKT_MS = 80;
 export const DAUER_MS: Readonly<Record<DauerToken, number>> = { 'd-1': 120, 'd-2': 240, 'd-3': 400, 'd-4': 600 };
-/** Ende des gesamten Auftakts (Uhr rastet ein); nichts läuft länger, darum kein Pause-Knopf. */
+/** Ende des gesamten Auftakts (Zirkel rastet auf 35 km ein); nichts läuft länger, darum kein Pause-Knopf. */
 export const AUFTAKT_ENDE_MS = 1120;
 
 export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
@@ -165,14 +165,17 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
     seitenart: 'erzaehlseiten',
     endeMs: 960,
   },
-  uhr: {
-    zweck: 'Schlusstakt: Der Freitag rastet auf 13:30 ein (Bindung an die Zusage).',
+  'radius-einrasten': {
+    zweck:
+      'Schlusstakt (Leitmotiv „35 km“, E-027): Der Zirkel im Giebel rastet auf 35 km ein. Der Radius klappt auf, ' +
+      'das Fadenkreuz misst, am Desktop öffnet sich der Bogen einmal vom Ende der Hinweislinie aus (Bindung an das ' +
+      'Einsatzgebiet).',
     ausloeser: ['auftakt'],
-    eigenschaften: ['transform'],
+    eigenschaften: ['transform', 'opacity', 'stroke-dashoffset'],
     dauer: ['d-2'],
     verzoegerungTakte: [11],
     kurve: ['k-aus'],
-    reduziert: 'Uhr steht auf 13:30.',
+    reduziert: 'Zirkel und Bogen stehen auf 35 km.',
     seitenart: 'erzaehlseiten',
     endeMs: 1120,
   },

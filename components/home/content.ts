@@ -25,12 +25,12 @@ function joinLabels(labels: readonly string[]): string {
 
 /**
  * Meta description (≤ 155 characters) from the jobs that are live right now and the facts
- * vacation30, friday1330, noFarAssembly, apply60s. Longer candidates drop „keine Fernmontage“,
+ * vacation30, flexibleHours, noFarAssembly, apply60s. Longer candidates drop „keine Fernmontage“,
  * then the job list, so a new job type can never push it past the limit.
  */
 export function homeDescription(liveJobs: readonly Pick<Job, 'category'>[]): string {
   const city = COMPANY.address.city;
-  const perks = `${FACTS.vacation30.short}, freitags ab ${FACTS.friday1330.value} frei`;
+  const perks = `${FACTS.vacation30.short}, ${lowerFirst(FACTS.flexibleHours.short)}`;
   const noFar = lowerFirst(FACTS.noFarAssembly.short);
   const apply = `In ${FACTS.apply60s.value} Sek. bewerben.`;
   const labels = joinLabels(jobCategoryLabels(liveJobs));
@@ -60,12 +60,15 @@ export const HOME_KEYWORDS = [
 
 export const HERO = {
   eyebrow: `Seit ${COMPANY.foundingYear} · ${COMPANY.address.city}`,
-  /** Roadmap §10: two-part H1, the second line muted. */
+  /**
+   * Roadmap §10: two-part H1, the second line muted. „Flexible Arbeitszeiten.“ is the fact flexibleHours
+   * (owner, 2026-10-12, fakten-abgleich B28): no fixed end time, no „pünktlich Feierabend“.
+   */
   title: `SHK-Jobs in ${COMPANY.address.city}.`,
-  titleSecondLine: 'Ehrliches Handwerk. Pünktlich Feierabend.',
+  titleSecondLine: `Ehrliches Handwerk. ${FACTS.flexibleHours.long}`,
   /**
    * ≤ 30 words. Facts: aboveTariff, hilti. The region is left to the „35 km“ figure below and the
-   * #einsatzgebiet section, so „Wetzlar, Gießen und dem Lahn-Dill-Kreis“ appears at most twice.
+   * #einsatzgebiet section, so the region sentence appears at most twice.
    */
   lead:
     'Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt über Tarif und mit persönlicher ' +
@@ -82,8 +85,17 @@ export interface HeroStat {
 
 const STAT_LABELS: Partial<Record<FactId, string>> = { radius35: 'Einsatzradius' };
 
-/** 13:30 Freitags Feierabend · 30 Tage Urlaub · 35 km Einsatzradius · 1926 Gegründet. */
-export const HERO_STATS: readonly HeroStat[] = (['friday1330', 'vacation30', 'radius35', 'founded1926'] as const).map(
+/**
+ * Label of the big „35 km“ in the hero and on the root share image (motif E-027): fact radius35 („Alle
+ * Baustellen liegen im Umkreis von 35 km um Wetzlar“, fakten-abgleich B29) in the words of the drawing.
+ */
+export const HERO_RADIUS_LABEL = `Einsatzgebiet rund um ${COMPANY.address.city}`;
+
+/**
+ * 35 km Einsatzradius · 30 Tage Urlaub · 1926 Gegründet. The radius leads: it is the motif of the hero
+ * (E-027, „35 km“ instead of the clock at 13:30). Working time has no figure (flexibleHours has no value).
+ */
+export const HERO_STATS: readonly HeroStat[] = (['radius35', 'vacation30', 'founded1926'] as const).map(
   (factId) => {
     const fact = FACTS[factId];
     if (!fact.value || !fact.label) throw new Error(`Fakt „${factId}“ hat keine Kennzahl`);
@@ -92,8 +104,8 @@ export const HERO_STATS: readonly HeroStat[] = (['friday1330', 'vacation30', 'ra
 );
 
 /**
- * Benefit tiles (max. 8). vacation30 and friday1330 already sit in the hero stats, so each
- * fact appears at most twice on the page.
+ * Benefit tiles (max. 8). vacation30 and radius35 already sit in the hero stats, flexibleHours in the
+ * H1, so each fact appears at most twice on the page.
  */
 export const BENEFIT_FACT_IDS = [
   'aboveTariff',

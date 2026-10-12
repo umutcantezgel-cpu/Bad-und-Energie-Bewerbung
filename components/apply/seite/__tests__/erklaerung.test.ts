@@ -181,9 +181,9 @@ describe('Erklärteil: Diskretion, Wegweiser und Unterlagen', () => {
   });
 });
 
-describe('Regionalband: Wochenende und Fahrzeiten (V6-G1)', () => {
-  it('Fakt noWeekendOnCall im Wortlaut, Fahrzeiten der Orte außerhalb der Kernzone aus REGION.locations', () => {
-    expect(REGIONALBAND.wochenende).toBe(FACTS.noWeekendOnCall.long);
+describe('Regionalband: Arbeitszeit, Wochenende und Fahrzeiten (V6-G1)', () => {
+  it('Fakten flexibleHours und noWeekendOnCall im Wortlaut, Fahrzeiten der Orte außerhalb der Kernzone aus REGION.locations', () => {
+    expect(REGIONALBAND.arbeitszeit).toBe(`${FACTS.flexibleHours.long} ${FACTS.noWeekendOnCall.long}`);
     expect(REGIONALBAND.fahrzeiten.name).toBe(`Fahrzeit bis ${REGION.center.name}`);
     expect(REGIONALBAND.fahrzeiten.orte.map(normal)).toEqual(
       REGION.locations.filter((ort) => !ort.isCoreZone).map((ort) => `${ort.name} ca. ${ort.commuteMinutes} Min.`),
