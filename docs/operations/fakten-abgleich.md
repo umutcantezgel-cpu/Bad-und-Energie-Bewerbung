@@ -1,6 +1,6 @@
 # Fakten-Abgleich (Owner-Liste)
 
-Stand: 2026-10-08, ergänzt 2026-10-10 (B27) · Schritt 1.1 der Roadmap, ergänzt nach dem Text-Review (B22–B26, D)
+Stand: 2026-10-08, ergänzt 2026-10-10 (B27) und 2026-10-12 (B28–B30) · Schritt 1.1 der Roadmap, ergänzt nach dem Text-Review (B22–B26, D)
 
 Beim Zusammenführen von Stellen und Fakten in `lib/jobs/**` und `lib/content/**` sind abweichende Formulierungen aufgefallen. Regel: Es wird nichts erfunden. Bei Widersprüchen gilt die vorsichtigste bzw. neueste Formulierung (Fakten-Fixes: HRB 2449, 1926–2026, 5 Partner-Säulen, Siegmund-Hiepe-Str. 20, 15 Mitarbeiter).
 
@@ -49,6 +49,9 @@ Diese Fakten sind in `facts.ts` mit `pending` markiert. Der Test lässt sie nur 
 | B25 | Google-Bewertungen | `reviews.data.ts` `googleOverviewStats`: 5,0 und 24 Bewertungen, ohne Datum und ohne Profil-Link (ROADMAP §13) | Bewertungszeile **ausgeblendet**, bis `asOf: 'JJJJ-MM'` gesetzt ist; dann erscheint sie mit „Stand: …“. Die 10 zitierten Google-Bewertungen bleiben im Karussell | Bitte aktuelle Zahlen, Monat der Abfrage und den Link zum Google-Profil nennen. |
 | B26 | Team-Größe im Text | Meilenstein 2026: „Zurzeit sind 15 Mitarbeiter im Betrieb tätig“ · Startseite: „15 Leute“ | Fakt `employees15`, im Text „15 Leuten“ (ROADMAP §5.6 „15 Leute“); die Zahl kommt nur noch aus `facts.ts` | Stimmt die Zahl noch? Bei Änderung nur `employees15.value` anpassen. |
 | B27 | WhatsApp-Nummer | `lib/data/contact.ts`: WhatsApp lief über die Festnetznummer 06441 42956 | **geklärt:** WhatsApp nur über 0160 8834290 (`WHATSAPP`); Anrufe, Impressum und JSON-LD weiter über 06441 42956 · Quelle: Inhaber, 2026-10-10 | ok (erledigt) |
+| B28 | Arbeitszeit | Fakten `friday1330` („Freitags ab 13:30 Uhr Feierabend“) und `workingHours` („Feste Arbeitszeiten: Mo–Do 07:00–16:45, Fr 07:00–13:30“), H1 „Pünktlich Feierabend.“, „jeden Abend pünktlich zu Hause“ | **geklärt:** flexible Arbeitszeiten, keine 35-Stunden-Woche, kein „pünktlich Feierabend“. Fakt `flexibleHours` („Flexible Arbeitszeiten“); `friday1330` und `workingHours` entfallen. Weiter gültig: kein Wochenend-Notdienst (`noWeekendOnCall`), keine unbezahlten Überstunden (`noUnpaidOvertime`), keine Fernmontage („jeden Abend zu Hause“, ohne „pünktlich“, `noFarAssembly`). Die Zeiten Mo–Do 07:00–16:45, Fr 07:00–13:30 bleiben nur als Erreichbarkeit des Büros · Quelle: Inhaber, 2026-10-12 | ok (erledigt) |
+| B29 | Einsatzgebiet | Fakt `radius35`: „Alle Baustellen liegen in Wetzlar, Gießen und dem Lahn-Dill-Kreis, maximal 35 km vom Firmensitz entfernt.“ | **geklärt:** 35 km rundum um Wetzlar, auch in die Nachbarkreise: „Alle Baustellen liegen im Umkreis von 35 km um Wetzlar.“ Orte mit Strecke und Fahrzeit nur aus der Vermessung `docs/operations/orte-messung.md` · Quelle: Inhaber, 2026-10-12 | ok (erledigt) |
+| B30 | Teamzitate mit Uhrzeit | `lib/data/team.ts`: Zitate von Sabri Demir und Stefan Koch nennen Feierabend bzw. 13:30 | ausgeblendet, bis der Inhaber neue Zitate freigibt | Neue Zitate ohne feste Uhrzeiten? |
 
 ## C. Stellentitel und Texte
 

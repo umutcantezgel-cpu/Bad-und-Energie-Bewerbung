@@ -284,3 +284,19 @@ Format: E-[Nr] · Datum · Gegenstand · Entscheidung · Grund · Umkehr (bei De
   - 404 auf einer unbekannten Route.
   - Im HTML stehen „100 Jahre Meisterbetrieb“ und „Kreislauf zeigen“; kein Google-Fonts-Abruf, keine Inter mehr.
 - **Bilder:** `belege/live-2026-10-10/`.
+
+## E-027 · 12.10.2026 · Arbeitszeit-Korrektur: Leitmotiv „35 km“ statt der Uhr auf 13:30
+- **Anlass:** Der Inhaber stellt klar: flexible Arbeitszeiten, keine 35-Stunden-Woche, kein „pünktlich Feierabend“ (fakten-abgleich B28).
+- **Folge für das Design:** Die Uhr im Giebel, die auf 13:30 einrastet (K-001, E-024), widerspricht dem Fakt und entfällt überall (Einstieg, HausKlein, Wärmebild, OG-Haus, Bewegung `uhr`).
+- **Neues Leitmotiv (Wahl des Inhabers):** das Einsatzgebiet „35 km“. Im Giebel steht ein Radius-Zirkel; die Leitlinie führt zum großen Maß „35 km“ (Fakt `radius35`). Die Bewegung `radius-einrasten` öffnet den Bogen einmal auf 35 km, reduziert steht er still.
+- **H1 der Startseite:** „Ehrliches Handwerk. Flexible Arbeitszeiten.“
+- **Austauschprobe neu:** 35 km, Leitung und Radius gibt es nur bei diesem Betrieb; jede Ortsseite zeigt ihre Strecke auf derselben Skala.
+
+## E-028 · 12.10.2026 · Lokale Seiten: Einsatzgebiet und Themen (×10)
+- **Auftrag:** zehnmal so viele indexierbare Seiten, lokal und gestalterisch auf dem Niveau der Erzählseiten (Inhaber, 12.10.2026; Plan freigegeben).
+- **Seitenarten:** Hub `/einsatzgebiet`, Kreis-Hubs (ab 3 Orten), Ortsseiten für Gemeinden, Stadt Wetzlar und Stadtteile, Themen-Hub `/arbeiten-bei-uns` mit Themenseiten aus belegten Fakten. Alle sind Erzählseiten (K-002, K-011 erweitert).
+- **Daten:** nur gemessene Orte (`docs/operations/orte-messung.md`, OpenStreetMap/OSRM, ≤ 35 km Straße). Keine Seiten Stelle × Ort, kein JobPosting außerhalb der Stellenseiten, kein LocalBusiness je Ort.
+- **Gate:** Einzigartigkeit je Ortsseite wird im Test geprüft (eigene Werte, ortsbezogener Textanteil, Shingle-Ähnlichkeit, keine erfundenen Zahlen, Verbotsliste Arbeitszeit). Seiten, die es nicht bestehen, werden Abschnitt der übergeordneten Seite statt eigener URL.
+- **Signaturmomente:** Ortsseite „Dein Weg zur Werkstatt“ (`pendel-zeichnen`), Hub `ringe-zeichnen`, Kreis-Hub Entfernungsleiste.
+- **Startseite:** Die weiteren Orte werden zu Links (löst E-START-029 „nicht klickbar“ ab), weil es jetzt ein Ziel gibt.
+
