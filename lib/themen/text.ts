@@ -25,7 +25,7 @@ import type { Job, JobId } from '@/lib/jobs/registry';
 import { EINSATZGEBIET_PATH, getPublishedPlaces } from '@/lib/places/registry';
 import { fitDescription } from '@/lib/seo/descriptions';
 
-import { ARBEITEN_PATH, getThema, getThemen, themaPath, type ThemaIcon, type ThemaId } from './registry';
+import { ARBEITEN_PATH, THEMEN_UEBERSICHT_LINK, getThema, getThemen, themaPath, type ThemaIcon, type ThemaId } from './registry';
 
 // ─── Bausteine ──────────────────────────────────────────────────────────────
 
@@ -399,7 +399,7 @@ function weitere(aktuell: ThemaId, options: TextOptions): SeitenBasis['weitere']
     karten: getThemen()
       .filter((thema) => thema.id !== aktuell)
       .map((thema) => themaKarte(thema.id, options)),
-    hub: { href: ARBEITEN_PATH, label: 'Alle Themen im Überblick' },
+    hub: { ...THEMEN_UEBERSICHT_LINK },
   };
 }
 

@@ -71,6 +71,9 @@ export function arbeitenUrl(): string {
   return getCleanCanonicalUrl(ARBEITEN_PATH);
 }
 
+/** Weg zum Hub als Abschluss einer Themenliste: Fuß (Zeile „Arbeiten bei uns“), Untermenü im Kopf, „Weitere Themen“. */
+export const THEMEN_UEBERSICHT_LINK = Object.freeze({ href: ARBEITEN_PATH, label: 'Alle Themen im Überblick' });
+
 /** Weg zum Hub von Startseite und /jobs (ein Ankertext, ein Ziel). */
 export const ARBEITEN_LINK = Object.freeze({ href: ARBEITEN_PATH, label: 'Mehr zum Arbeiten bei uns' });
 

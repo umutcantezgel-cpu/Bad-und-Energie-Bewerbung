@@ -41,8 +41,12 @@ Alle mit `reducedMotion: 'reduce'`, Locale `de-DE`, Zeitzone `Europe/Berlin`.
   Browser-Zurück/-Vor, Entwurf nach Neuladen, 503 mit WhatsApp-Rückfallweg, Fokus auf das erste
   fehlerhafte Feld, kein Doppel-Submit, keine Personendaten in URLs, alter localStorage-Eintrag gelöscht.
 - `mappe.spec.ts`: Station anlegen, Anschreiben erzeugen, mit der Mappe in den Flow und absenden.
-- `navigation.spec.ts`: Kopf-Anker der Startseite (`/#vorteile`, `/#ablauf`, `/#faq`) springen sofort zum
-  Abschnitt, auch bevor die Inseln unter der Falz hydriert sind.
+- `navigation.spec.ts`: Der Kopf-Anker `/#faq` springt sofort zum Abschnitt, auch bevor die Inseln unter der Falz
+  hydriert sind. Desktop: „Arbeiten bei uns“ und „Einsatzgebiet“ führen zu ihren Hubs (aria-current für Seite und
+  Bereich), das Untermenü öffnet beim Überfahren und per Tastatur (Tab hinein, Escape schließt), Escape schließt auch
+  das per Maus geöffnete Untermenü ohne Fokus in der Navigation (WCAG 1.4.13), nie zwei Untermenüs zugleich. Tablet
+  quer mit Touch (1180 × 820, in den Desktop-Projekten): Menüknopf statt Navigation, das Menü listet Kreis-Hubs und
+  Themen. Handy: Kreis-Hub und Thema aus dem Menü, alle Zeilen im offenen Menü ≥ 44 × 44 px (E-028).
 - `local-pages.spec.ts` (nur `mobile-light`): jede lokale Seite (E-028) aus dem Registry, also Gebietsseite,
   4 Kreis-Hubs und 54 Ortsseiten: Status 200, genau eine h1, Canonical auf sich selbst, Pfad bei 320 px und ab
   40em, kein horizontaler Scroll. axe in allen vier Projekten über die Stichproben in `ROUTES`.

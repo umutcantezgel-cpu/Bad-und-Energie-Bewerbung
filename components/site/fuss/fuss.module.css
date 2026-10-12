@@ -220,7 +220,7 @@
   }
 }
 
-/* ═══ Ortsliste (E-SHELL-021) und Fußzeile ═══ */
+/* ═══ Themen und Ortsliste (E-SHELL-021, E-028) und Fußzeile ═══ */
 .orte {
   padding-block: var(--a-6);
   border-top: 1px solid var(--line);
@@ -237,7 +237,8 @@
     column-gap: var(--spacing-bundsteg, var(--a-5));
   }
 
-  .orteRaster > .kopf {
+  .orteRaster > .kopf,
+  .orteRaster > .orteSeite {
     grid-column: span 3;
     padding-top: var(--a-1);
   }
@@ -245,6 +246,119 @@
   .orteInhalt {
     grid-column: span 9;
   }
+}
+
+/* ═══ Einsatzgebiet (E-028): alle Orte nach Kreis ═══
+   Links das Etikett mit Zahl der Orte und Kreise; rechts die Kreise als Gruppen: Kreisname (Link zum Hub) mit Mono-Maß,
+   darunter die Orte als Zeile mit Trennpunkten, am Ende der Weg zur Gebietsseite. Kreise mit eigener Seite über die
+   ganze Breite, die übrigen nebeneinander. */
+.orteSeite {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  padding-bottom: var(--a-5);
+}
+
+.orteZeile {
+  max-width: 22rem;
+  margin: 0 0 var(--a-2);
+  color: var(--ink-2);
+  font-size: var(--text-callout);
+  line-height: 1.5;
+}
+
+@media (min-width: 64em) {
+  .orteSeite {
+    padding-bottom: 0;
+  }
+
+  .orteSeite > .kopf {
+    margin-bottom: var(--a-4);
+  }
+}
+
+.kreise {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+  gap: var(--a-6);
+  align-items: start;
+  align-self: stretch;
+  margin-bottom: var(--a-3);
+}
+
+.kreis {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.kreisBreit {
+  grid-column: 1 / -1;
+}
+
+/* Kreiskopf: Name in Bricolage als Weg zum Hub, daneben die Zahl der Orte; eine Haarlinie trennt ihn von den Orten */
+.kreisKopf {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--a-3);
+  margin: 0 0 var(--a-1);
+  border-bottom: 1px solid var(--line);
+  font-size: var(--text-callout);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.kreisLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--m-ziel);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.kreisName {
+  position: relative;
+  padding-block: var(--a-1);
+}
+
+/* Hover-Strich (Kennung unterstrich): Creme, Eingang d-2/aus, Ausgang d-1/ein */
+.kreisName::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--m-strich);
+  background-color: var(--brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--d-1) var(--k-ein);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kreisLink:hover .kreisName::after {
+    transform: scaleX(1);
+    transition: transform var(--d-2) var(--k-aus);
+  }
+}
+
+.kreisMass {
+  color: var(--ink-2);
+  font-weight: 500;
+}
+
+.ortsgruppe {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.ortsgruppeEtikett {
+  margin: var(--a-4) 0 0;
+  color: var(--ink-2);
 }
 
 .orteInhalt {

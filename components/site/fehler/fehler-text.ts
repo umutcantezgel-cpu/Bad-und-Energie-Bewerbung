@@ -49,15 +49,14 @@ export const FEHLER_ZWEITWEG = Object.freeze({
 });
 
 /**
- * Weitere Wege (E-SHELL-026): Startseite, dazu Ablauf und FAQ der Startseite aus der Navigation. Stellen und
- * Bewerbung stehen schon im Kopf (Zweitweg und Hauptaktion) und werden hier nicht wiederholt.
+ * Weitere Wege (E-SHELL-026): Startseite, dazu Ablauf und FAQ der Startseite. Stellen und Bewerbung stehen schon im
+ * Kopf (Zweitweg und Hauptaktion) und werden hier nicht wiederholt. Seit E-028 stehen die Anker nicht mehr alle in der
+ * Hauptnavigation (dort „Arbeiten bei uns“ und „Einsatzgebiet“), darum hier fest.
  */
 export const FEHLER_WEGE: readonly { href: string; label: string }[] = Object.freeze([
   { href: '/', label: 'Zur Startseite' },
-  ...NAV_ITEMS.filter((item) => item.href === '/#ablauf' || item.href === '/#faq').map((item) => ({
-    href: item.href,
-    label: item.href === '/#ablauf' ? 'So läuft die Bewerbung' : 'Fragen und Antworten',
-  })),
+  { href: '/#ablauf', label: 'So läuft die Bewerbung' },
+  { href: '/#faq', label: 'Fragen und Antworten' },
 ]);
 
 /** Schneller Direktkontakt (E-SHELL-027). */

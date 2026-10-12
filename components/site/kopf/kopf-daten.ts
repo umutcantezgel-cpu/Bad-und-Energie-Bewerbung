@@ -2,7 +2,11 @@ import { FACTS, isFactActive } from '@/lib/content/facts';
 import { DISCRETION_PROMISE } from '@/lib/content/process';
 import { jobPath } from '@/lib/jobs/format';
 import { getActiveJobs, isJobLive, type Job } from '@/lib/jobs/registry';
-import type { KopfMarke, KopfVertraulich, OffeneStellen } from './typen';
+import { EINSATZGEBIET_PATH, getHubKreise, getPublishedPlaces, kreisPath, type Kreis } from '@/lib/places/registry';
+import { ORTE_ANKER } from '@/lib/places/text';
+import { THEMEN_UEBERSICHT_LINK, getThemen, themaPath } from '@/lib/themen/registry';
+import { ARBEITEN_HUB_PATH, EINSATZGEBIET_HUB_PATH } from '../nav';
+import type { KopfMarke, KopfUntermenue, KopfVertraulich, OffeneStellen } from './typen';
 
 /*
  * Daten des Seitenkopfs (R4-SHELL-01). Nur auf dem Server lesen (SiteHeader): Registry und Fakten
@@ -49,4 +53,44 @@ export function kopfVertraulich(jobs: readonly Job[] = getActiveJobs()): KopfVer
     text: DISCRETION_PROMISE,
     ohne: jobs.filter((job) => job.category === 'ausbildung').map(jobPath),
   };
+}
+
+/** Geschütztes Leerzeichen zwischen Zahl und Wort („26 Orte“, DIN 5008). */
+const NBSP = '\u00a0';
+
+/** Maß am Kreis im Untermenü: „26 Orte“ (1: „1 Ort“). */
+export function orteMass(anzahl: number): string {
+  return `${anzahl}${NBSP}${anzahl === 1 ? 'Ort' : 'Orte'}`;
+}
+
+/** Weg zum Verzeichnis A–Z der Gebietsseite (Anker ORTE_ANKER); die Zahl folgt den veröffentlichten Orten. */
+export function orteVerzeichnisWeg(anzahl = getPublishedPlaces().length) {
+  return { href: `${EINSATZGEBIET_PATH}#${ORTE_ANKER}`, label: `Alle ${anzahl}${NBSP}Orte von A bis Z` };
+}
+
+/**
+ * Untermenüs der Hauptnavigation (E-028): unter „Arbeiten bei uns“ die Themen aus lib/themen, unter „Einsatzgebiet“
+ * die Kreise mit eigener Seite (mit Zahl der Orte) und das Verzeichnis aller Orte. Alles aus den Registries, keine
+ * feste Zahl. Kopf (Desktop, aufklappend) und Menü (Handy, als kompakte Liste) bekommen dieselben Daten.
+ */
+export function kopfUntermenues(
+  kreise: readonly Kreis[] = getHubKreise(),
+  anzahlOrte: number = getPublishedPlaces().length,
+): KopfUntermenue[] {
+  return [
+    {
+      href: ARBEITEN_HUB_PATH,
+      id: 'arbeiten',
+      etikett: 'Themen',
+      wege: getThemen().map((thema) => ({ href: themaPath(thema), label: thema.name })),
+      alle: { ...THEMEN_UEBERSICHT_LINK },
+    },
+    {
+      href: EINSATZGEBIET_HUB_PATH,
+      id: 'einsatzgebiet',
+      etikett: 'Kreise',
+      wege: kreise.map((kreis) => ({ href: kreisPath(kreis), label: kreis.shortName, mass: orteMass(kreis.placeCount) })),
+      alle: orteVerzeichnisWeg(anzahlOrte),
+    },
+  ];
 }

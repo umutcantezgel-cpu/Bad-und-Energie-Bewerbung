@@ -208,13 +208,15 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
     endeMs: 880,
   },
   'menue-oeffnen': {
-    zweck: 'Das Menü als eigener Moment (Popover, @starting-style).',
-    ausloeser: ['tippen'],
+    zweck:
+      'Das Menü als eigener Moment (Popover, @starting-style); ebenso die Untermenüs der Kopf-Navigation am Desktop ' +
+      '(„Arbeiten bei uns“, „Einsatzgebiet“, E-028), deren Winkel sich dabei dreht.',
+    ausloeser: ['tippen', 'hover'],
     eigenschaften: ['opacity', 'transform'],
     dauer: ['d-2', 'd-1'],
     verzoegerungTakte: [0],
     kurve: ['k-aus', 'k-ein'],
-    reduziert: 'Menü steht sofort offen bzw. ist sofort zu.',
+    reduziert: 'Menü und Untermenü stehen sofort offen bzw. sind sofort zu, der Winkel wechselt ohne Drehung.',
     seitenart: 'alle',
   },
   'menue-leitung': {
@@ -228,7 +230,9 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
     seitenart: 'alle',
   },
   'menue-eintrag': {
-    zweck: 'Die Menüeinträge zweigen von der Leitung ab (Staffel ½ Takt, vier Einträge).',
+    zweck:
+      'Die Menüeinträge zweigen von der Leitung ab (Staffel ½ Takt, vier Einträge); die Unterseiten unter „Arbeiten ' +
+      'bei uns“ und „Einsatzgebiet“ kommen mit ihrem Eintrag (E-028).',
     ausloeser: ['zustand'],
     eigenschaften: ['opacity', 'transform'],
     dauer: ['d-1'],

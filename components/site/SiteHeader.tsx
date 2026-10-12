@@ -2,10 +2,10 @@ import { Logo } from '@/components/brand/Logo';
 import { COMPANY } from '@/lib/content/company';
 import { buildWhatsAppUrl, whatsAppMessageFor } from '@/lib/utils/whatsapp-utils';
 import { HeaderBar } from './HeaderBar';
-import { jubilaeumsMarke, kopfVertraulich, stellenZaehler } from './kopf/kopf-daten';
+import { jubilaeumsMarke, kopfUntermenues, kopfVertraulich, stellenZaehler } from './kopf/kopf-daten';
 
 /**
- * Seitenkopf (R4-SHELL-01), Server-Hülle: liest Kontakt, Stellenzahl, Jubiläum und Zusage hier,
+ * Seitenkopf (R4-SHELL-01), Server-Hülle: liest Kontakt, Stellenzahl, Jubiläum, Zusage und Untermenüs hier,
  * damit der Client-Teil nur Pfad, Scroll- und Menüzustand trägt und schlichte Zeichenketten bekommt.
  * Das Layout rendert stündlich neu (revalidate = 3600): Zähler und Marke folgen dem Stichtag ohne Deployment.
  */
@@ -26,6 +26,8 @@ export function SiteHeader() {
       offeneStellen={stellenZaehler(now)}
       marke={jubilaeumsMarke(now)}
       vertraulich={kopfVertraulich()}
+      // E-028: Themen und Kreis-Hubs als Untermenü; nur Zeichenketten, die Registries bleiben auf dem Server.
+      untermenues={kopfUntermenues()}
     />
   );
 }

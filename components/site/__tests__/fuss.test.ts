@@ -7,6 +7,8 @@ import { COMPANY } from '@/lib/content/company';
 import { jobPath } from '@/lib/jobs/format';
 import { getActiveJobs } from '@/lib/jobs/registry';
 import { MOTION_IDS } from '@/lib/motion/register';
+import { getHubKreise, getKreise, getPublishedPlaces, kreisPath, placePath } from '@/lib/places/registry';
+import { ARBEITEN_PATH, getThemen, themaPath } from '@/lib/themen/registry';
 import { DEFAULT_WHATSAPP_MESSAGE } from '@/lib/utils/whatsapp-utils';
 import { ContactOptions } from '../ContactOptions';
 import {
@@ -151,6 +153,18 @@ describe('Stellen, Ortsliste und Fußzeile', () => {
     expect(hrefs(spaeter)).toContain('/jobs');
   });
 
+  it('E-028: verlinkt jede Orts-, Kreis- und Themenseite genau einmal, damit jede Seite von überall erreichbar ist', () => {
+    const anzahl = (href: string) => hrefs(voll).filter((h) => h === href).length;
+    for (const place of getPublishedPlaces()) expect(anzahl(placePath(place)), place.slug).toBe(1);
+    for (const kreis of getKreise()) expect(anzahl(kreisPath(kreis)), kreis.slug).toBe(1);
+    expect(getHubKreise().length).toBeGreaterThan(0);
+    for (const thema of getThemen()) expect(anzahl(themaPath(thema)), thema.slug).toBe(1);
+    expect(anzahl(ARBEITEN_PATH)).toBe(1);
+    // Der schmale Fuß im Bewerbungsflow bleibt ohne diese Wege
+    expect(schmal).not.toContain('/einsatzgebiet');
+    expect(schmal).not.toContain(ARBEITEN_PATH);
+  });
+
   it('bindet die Ortsliste ein und nennt Register, Gericht und Innung (E-RECHT-007, E-SHELL-018)', () => {
     expect(voll).toContain('id="footer-einsatzgebiet"');
     expect(pflichtzeile(2026)).toBe(`© 2026 ${COMPANY.legalName} · ${COMPANY.register.full} · ${COMPANY.innung}`);
@@ -164,6 +178,7 @@ describe('Stellen, Ortsliste und Fußzeile', () => {
     for (const datei of [
       'components/site/SiteFooter.tsx',
       'components/site/FooterPlaces.tsx',
+      'components/site/FooterThemen.tsx',
       'components/site/StickyApplyBar.tsx',
       'components/site/StickyApplyBarClient.tsx',
       'components/site/ContactOptions.tsx',

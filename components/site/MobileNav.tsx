@@ -6,8 +6,14 @@ import { usePathname } from 'next/navigation';
 import { Icon } from '@/components/icons';
 import { MenueZeichen } from './kopf/MenueZeichen';
 import styles from './kopf/kopf.module.css';
-import { zeigeVertraulich, type KopfMarke, type KopfVertraulich, type OffeneStellen } from './kopf/typen';
-import { APPLY_PATH, NAV_ITEMS, SHORT_APPLY_LABEL, isCurrentNavItem } from './nav';
+import {
+  zeigeVertraulich,
+  type KopfMarke,
+  type KopfUntermenue,
+  type KopfVertraulich,
+  type OffeneStellen,
+} from './kopf/typen';
+import { APPLY_PATH, NAV_ITEMS, SHORT_APPLY_LABEL, navCurrent, subNavCurrent } from './nav';
 
 export interface MobileNavProps {
   phone: { display: string; href: string };
@@ -18,13 +24,18 @@ export interface MobileNavProps {
   offeneStellen?: OffeneStellen | null;
   marke?: KopfMarke | null;
   vertraulich?: KopfVertraulich | null;
+  /** E-028: Unterseiten der Hubs als kompakte Liste unter ihrem Eintrag. */
+  untermenues?: readonly KopfUntermenue[];
   className?: string;
 }
 
 /** Id des Menüdialogs; es gibt genau einen Seitenkopf. */
 export const MENU_ID = 'kopf-menue';
-/** Ab hier zeigt der Kopf die Navigation selbst; ein offenes Menü schließt sich. */
-const DESKTOP_QUERY = '(min-width: 64em)';
+/**
+ * Ab hier zeigt der Kopf die Navigation selbst; ein offenes Menü schließt sich. Nur mit feinem Zeiger (wie
+ * kopf.module.css): Tablets ab 64em (iPad quer, iPad Pro) haben kein Hover für die Untermenüs und behalten das Menü.
+ */
+const DESKTOP_QUERY = '(min-width: 64em) and (hover: hover) and (pointer: fine)';
 
 /*
  * Ohne Skript öffnen moderne Browser den Dialog über Invoker Commands (commandfor/command); mit Skript
@@ -35,13 +46,25 @@ const oeffnenOhneSkript = { commandfor: MENU_ID, command: 'show-modal' } as Reco
 const schliessenOhneSkript = { commandfor: MENU_ID, command: 'close' } as Record<string, string>;
 
 /**
- * Menü unter 64em (E-SHELL-011…013, E-SHELL-001/002/004/005): natives `<dialog>` mit showModal(), also
- * Fokusfalle und inerter Hintergrund; Escape, Klick auf den Hintergrund und „Schließen“ schließen, der
+ * Menü unter 64em und auf Touch-Geräten jeder Breite (E-SHELL-011…013, E-SHELL-001/002/004/005): natives
+ * `<dialog>` mit showModal(), also Fokusfalle und inerter Hintergrund; Escape, Klick auf den Hintergrund und
+ * „Schließen“ schließen, der
  * Fokus kehrt zum Menüknopf zurück, die Seite dahinter scrollt nicht (kopf.module.css). Gestaltet als
  * Navy-Band wie die Fläche des Einstiegs: Die Einträge zweigen vom Leitungspaar ab, das Paar fällt in
- * „Jetzt bewerben“.
+ * „Jetzt bewerben“. Unter „Arbeiten bei uns“ und „Einsatzgebiet“ verteilt eine Nebenleitung die Unterseiten (E-028):
+ * Themen, Kreis-Hubs und das Verzeichnis aller Orte, jede Zeile mindestens 44 px hoch. Ist das Menü höher als der
+ * Bildschirm, scrollt der Dialog selbst.
  */
-export function MobileNav({ phone, whatsappHref, logo, offeneStellen, marke, vertraulich, className }: MobileNavProps) {
+export function MobileNav({
+  phone,
+  whatsappHref,
+  logo,
+  offeneStellen,
+  marke,
+  vertraulich,
+  untermenues = [],
+  className,
+}: MobileNavProps) {
   const pathname = usePathname();
   // Das Menü merkt sich die Seite, auf der es geöffnet wurde: Ein Seitenwechsel (Link, Browser-Zurück)
   // schließt es damit ohne eigenen Effekt.
@@ -65,7 +88,7 @@ export function MobileNav({ phone, whatsappHref, logo, offeneStellen, marke, ver
     }
   }, [open]);
 
-  // Wechsel auf Desktop-Breite (Drehen, Fenster) schließt das Menü; dort zeigt der Kopf die Navigation.
+  // Wechsel auf Desktop (Fenster breiter, Maus statt Touch) schließt das Menü; dort zeigt der Kopf die Navigation.
   useEffect(() => {
     if (typeof window.matchMedia !== 'function') return;
     const query = window.matchMedia(DESKTOP_QUERY);
@@ -153,15 +176,18 @@ export function MobileNav({ phone, whatsappHref, logo, offeneStellen, marke, ver
             <nav aria-label="Hauptnavigation">
               <ul className={styles.menueListe}>
                 {NAV_ITEMS.map((item, i) => {
-                  const current = isCurrentNavItem(item, pathname);
                   const zaehler = item.href === '/jobs' ? offeneStellen : null;
+                  const unter = untermenues.find((u) => u.href === item.href);
+                  // Der Abschluss entfällt, wenn er zum Hub führt: Das tut der Eintrag selbst.
+                  const alle = unter && unter.alle.href !== item.href ? unter.alle : null;
+                  const unterwege = unter ? [...unter.wege, ...(alle ? [alle] : [])] : [];
                   return (
                     <li key={item.href} data-motion="menue-eintrag" style={{ '--i': i } as CSSProperties}>
                       <Link
                         href={item.href}
                         onClick={close}
-                        aria-current={current ? 'page' : undefined}
-                        className={`${styles.eintrag} text-title-1`}
+                        aria-current={navCurrent(item, pathname)}
+                        className={`${styles.eintrag} text-title-2`}
                       >
                         {item.label}
                         {zaehler ? (
@@ -173,6 +199,29 @@ export function MobileNav({ phone, whatsappHref, logo, offeneStellen, marke, ver
                           </>
                         ) : null}
                       </Link>
+                      {unter ? (
+                        <ul className={styles.nebenListe} aria-label={`${item.label}: ${unter.etikett}`}>
+                          {unterwege.map((weg) => (
+                            <li key={weg.href}>
+                              <Link
+                                href={weg.href}
+                                onClick={close}
+                                aria-current={subNavCurrent(weg.href, pathname)}
+                                className={weg === alle ? `${styles.nebenWeg} ${styles.nebenAlle}` : styles.nebenWeg}
+                              >
+                                <span className={styles.nebenName}>{weg.label}</span>
+                                {weg === alle ? <Icon name="arrow-right" size="md" className={styles.ikon} /> : null}
+                                {weg.mass ? (
+                                  <>
+                                    {' '}
+                                    <span className={`${styles.nebenMass} text-etikett`}>{weg.mass}</span>
+                                  </>
+                                ) : null}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
                     </li>
                   );
                 })}

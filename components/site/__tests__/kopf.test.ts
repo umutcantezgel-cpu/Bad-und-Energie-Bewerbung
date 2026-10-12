@@ -9,7 +9,17 @@ import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import { MOTION_IDS } from '@/lib/motion/register';
 import { buildWhatsAppUrl, whatsAppMessageFor } from '@/lib/utils/whatsapp-utils';
 import { HeaderBar, type HeaderBarProps } from '../HeaderBar';
-import { jubilaeumsMarke, kopfVertraulich, offeneStellen, offeneStellenText, stellenZaehler } from '../kopf/kopf-daten';
+import { EINSATZGEBIET_PATH, getHubKreise, getPublishedPlaces, kreisPath } from '@/lib/places/registry';
+import { ARBEITEN_PATH, THEMEN_UEBERSICHT_LINK, getThemen, themaPath } from '@/lib/themen/registry';
+import {
+  jubilaeumsMarke,
+  kopfUntermenues,
+  kopfVertraulich,
+  offeneStellen,
+  offeneStellenText,
+  orteMass,
+  stellenZaehler,
+} from '../kopf/kopf-daten';
 import { MenueZeichen } from '../kopf/MenueZeichen';
 import { zeigeMarkeImKopf, zeigeVertraulich } from '../kopf/typen';
 import { MENU_ID } from '../MobileNav';
@@ -37,6 +47,7 @@ function props(now: Date = STICHTAG): HeaderBarProps {
     offeneStellen: stellenZaehler(now),
     marke: jubilaeumsMarke(now),
     vertraulich: kopfVertraulich(),
+    untermenues: kopfUntermenues(),
   };
 }
 
@@ -122,13 +133,84 @@ describe('Kopf (R4-SHELL-01)', () => {
     pfad = '/jobs';
   });
 
-  it('Navigation Stellen · Vorteile · Ablauf · FAQ in Kopf und Menü, aktuelle Seite markiert', () => {
+  it('Navigation Stellen · Arbeiten bei uns · Einsatzgebiet · FAQ in Kopf und Menü, aktuelle Seite markiert', () => {
     const html = render();
     expect(html.match(/aria-label="Hauptnavigation"/g)).toHaveLength(2);
     for (const item of NAV_ITEMS) {
       expect(html.match(new RegExp(`href="${item.href}"`, 'g'))!.length).toBeGreaterThanOrEqual(2);
     }
     expect(html.match(/aria-current="page"/g)).toHaveLength(2);
+    expect(html).not.toContain('aria-current="true"');
+    // Die Anker „Vorteile“ und „Ablauf“ der Startseite stehen seit E-028 nicht mehr in der Navigation
+    expect(html).not.toContain('href="/#vorteile"');
+    expect(html).not.toContain('href="/#ablauf"');
+  });
+
+  it('E-028: Untermenüs mit allen Themen, den Kreis-Hubs und dem Verzeichnis A–Z in Kopf und Menü', () => {
+    const html = render();
+    const anzahl = (href: string) => html.match(new RegExp(`href="${href}"`, 'g'))?.length ?? 0;
+    for (const thema of getThemen()) expect(anzahl(themaPath(thema)), thema.slug).toBe(2);
+    for (const kreis of getHubKreise()) {
+      expect(anzahl(kreisPath(kreis)), kreis.slug).toBe(2);
+      expect(html).toContain(orteMass(kreis.placeCount));
+    }
+    expect(anzahl(`${EINSATZGEBIET_PATH}#orte`)).toBe(2);
+    expect(plain(html)).toContain(`Alle ${getPublishedPlaces().length} Orte von A bis Z`);
+    // „Alle Themen im Überblick“ nur im Kopf; im Menü führt der Eintrag selbst zum Hub
+    expect(plain(html).match(new RegExp(THEMEN_UEBERSICHT_LINK.label, 'g'))).toHaveLength(1);
+    expect(anzahl(ARBEITEN_PATH)).toBe(3);
+    expect(html.match(/data-unter=""/g)).toHaveLength(2);
+    expect(html).toContain('id="kopf-unter-arbeiten"');
+    expect(html).toContain('id="kopf-unter-einsatzgebiet"');
+  });
+
+  it('E-028: aria-current markiert den Bereich auf jeder Unterseite und den Unterweg auf seiner Seite', () => {
+    /** href der Links mit aria-current="page" bzw. "true", in der Reihenfolge des HTML (Kopf, dann Menü). */
+    const markiert = (html: string, wert: 'page' | 'true') =>
+      [...html.matchAll(/<a ([^>]*)>/g)]
+        .map((m) => m[1])
+        .filter((attrs) => attrs.includes(`aria-current="${wert}"`))
+        .map((attrs) => /href="([^"]+)"/.exec(attrs)![1]);
+
+    pfad = '/einsatzgebiet/herborn';
+    let html = render();
+    expect(markiert(html, 'true')).toEqual([EINSATZGEBIET_PATH, EINSATZGEBIET_PATH]);
+    expect(markiert(html, 'page')).toEqual([]);
+
+    const kreis = getHubKreise()[0];
+    pfad = kreisPath(kreis);
+    html = render();
+    expect(markiert(html, 'true')).toEqual([EINSATZGEBIET_PATH, EINSATZGEBIET_PATH]);
+    expect(markiert(html, 'page')).toEqual([kreisPath(kreis), kreisPath(kreis)]);
+
+    const thema = getThemen()[0];
+    pfad = themaPath(thema);
+    html = render();
+    expect(markiert(html, 'true')).toEqual([ARBEITEN_PATH, ARBEITEN_PATH]);
+    expect(markiert(html, 'page')).toEqual([themaPath(thema), themaPath(thema)]);
+
+    pfad = ARBEITEN_PATH;
+    html = render();
+    expect(markiert(html, 'page')).toEqual([ARBEITEN_PATH, ARBEITEN_PATH]);
+    expect(markiert(html, 'true')).toEqual([]);
+
+    // Das Verzeichnis A–Z ist ein Anker und nie „aktuell“
+    pfad = EINSATZGEBIET_PATH;
+    html = render();
+    expect(markiert(html, 'page')).toEqual([EINSATZGEBIET_PATH, EINSATZGEBIET_PATH]);
+  });
+
+  it('E-028: Untermenü-Daten kommen aus den Registries (keine feste Zahl)', () => {
+    const [arbeiten, gebiet] = kopfUntermenues();
+    expect(arbeiten.href).toBe(ARBEITEN_PATH);
+    expect(arbeiten.wege.map((weg) => weg.href)).toEqual(getThemen().map(themaPath));
+    expect(arbeiten.alle).toEqual({ ...THEMEN_UEBERSICHT_LINK });
+    expect(gebiet.href).toBe(EINSATZGEBIET_PATH);
+    expect(gebiet.wege.map((weg) => weg.href)).toEqual(getHubKreise().map(kreisPath));
+    expect(gebiet.wege.map((weg) => weg.mass)).toEqual(getHubKreise().map((k) => orteMass(k.placeCount)));
+    expect(gebiet.alle.href).toBe(`${EINSATZGEBIET_PATH}#orte`);
+    expect(orteMass(1)).toBe('1\u00a0Ort');
+    expect(orteMass(26)).toBe('26\u00a0Orte');
   });
 
   it('E-SHELL-023/005: Telefon, WhatsApp (neuer Tab, noopener, ohne Berufsangabe) und Bewerben im Kopf', () => {
@@ -209,7 +291,7 @@ describe('Quellen des Kopfs', () => {
   it('Kopf und Menü (Client) ziehen weder Registry noch Fakten ins Bündel', () => {
     for (const datei of ['HeaderBar.tsx', 'MobileNav.tsx', path.join('kopf', 'typen.ts'), path.join('kopf', 'MenueZeichen.tsx')]) {
       const quelle = readFileSync(path.join(DIR, datei), 'utf8');
-      expect(quelle, datei).not.toMatch(/from '@\/lib\/(jobs|content)\//);
+      expect(quelle, datei).not.toMatch(/from '@\/lib\/(jobs|content|places|themen)\//);
       expect(quelle, datei).not.toContain("kopf-daten'");
     }
   });

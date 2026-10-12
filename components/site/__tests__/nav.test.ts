@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  ARBEITEN_HUB_PATH,
+  EINSATZGEBIET_HUB_PATH,
   NAV_ITEMS,
   SHORT_APPLY_LABEL,
   SHORT_FLOW_LABEL,
@@ -12,9 +14,14 @@ import {
   isFocusMode,
   isKeyboardOpen,
   jobSlugFromPath,
+  navCurrent,
+  subNavCurrent,
 } from '../nav';
 import { getActiveJobs } from '@/lib/jobs/registry';
 import { jobPath } from '@/lib/jobs/format';
+import { BREADCRUMB_EINSATZGEBIET, BREADCRUMB_JOBS } from '@/lib/content/breadcrumbs';
+import { EINSATZGEBIET_PATH, getHubKreise, getPublishedPlaces, kreisPath, placePath } from '@/lib/places/registry';
+import { ARBEITEN_NAME, ARBEITEN_PATH, getThemen, themaPath } from '@/lib/themen/registry';
 
 const labels = Object.fromEntries(getActiveJobs().map((job) => [job.slug, applyLabelFor(job)]));
 
@@ -40,6 +47,52 @@ describe('focusModeExitLabel', () => {
     expect(focusModeExitLabel('/bewerbung/')).toBe('Abbrechen');
     expect(focusModeExitLabel('/bewerbung/danke')).toBe('Zur Startseite');
     expect(focusModeExitLabel('/bewerbung/mappe')).toBe('Zur Startseite');
+  });
+});
+
+// E-028: Die neuen Seiten hängen in der Hauptnavigation (Kopf, Menü), nicht nur im Fuß.
+describe('NAV_ITEMS', () => {
+  it('Stellen, Arbeiten bei uns, Einsatzgebiet und FAQ, jeweils mit dem Namen der Brotkrümel', () => {
+    expect(NAV_ITEMS.map((item) => item.label)).toEqual(['Stellen', 'Arbeiten bei uns', 'Einsatzgebiet', 'FAQ']);
+    expect(NAV_ITEMS.map((item) => item.href)).toEqual(['/jobs', ARBEITEN_PATH, EINSATZGEBIET_PATH, '/#faq']);
+    // nav.ts bleibt ohne Importe (Client-Bündel); die Pfade gleichen den Registries
+    expect(ARBEITEN_HUB_PATH).toBe(ARBEITEN_PATH);
+    expect(EINSATZGEBIET_HUB_PATH).toBe(EINSATZGEBIET_PATH);
+    // ein Ankertext, ein Ziel: gleiche Namen wie Brotkrümel und Hub
+    expect(NAV_ITEMS[0]).toEqual(BREADCRUMB_JOBS);
+    expect(NAV_ITEMS[1]).toEqual({ href: ARBEITEN_PATH, label: ARBEITEN_NAME });
+    expect(NAV_ITEMS[2]).toEqual(BREADCRUMB_EINSATZGEBIET);
+  });
+});
+
+describe('navCurrent und subNavCurrent (aria-current)', () => {
+  const [stellen, arbeiten, gebiet, faq] = NAV_ITEMS;
+
+  it('marks the hub as the page and every page below it as the current section', () => {
+    expect(navCurrent(gebiet, EINSATZGEBIET_PATH)).toBe('page');
+    expect(navCurrent(arbeiten, ARBEITEN_PATH)).toBe('page');
+    expect(navCurrent(stellen, '/jobs')).toBe('page');
+    for (const place of getPublishedPlaces()) expect(navCurrent(gebiet, placePath(place)), place.slug).toBe('true');
+    for (const kreis of getHubKreise()) expect(navCurrent(gebiet, kreisPath(kreis)), kreis.slug).toBe('true');
+    for (const thema of getThemen()) expect(navCurrent(arbeiten, themaPath(thema)), thema.slug).toBe('true');
+    for (const job of getActiveJobs()) expect(navCurrent(stellen, jobPath(job))).toBe('true');
+    expect(navCurrent(gebiet, `${EINSATZGEBIET_PATH}/`)).toBe('page');
+  });
+
+  it('marks nothing elsewhere and never an anchor', () => {
+    expect(navCurrent(gebiet, '/einsatzgebietx')).toBeUndefined();
+    expect(navCurrent(arbeiten, '/jobs')).toBeUndefined();
+    expect(navCurrent(faq, '/')).toBeUndefined();
+    expect(navCurrent(gebiet, '/')).toBeUndefined();
+  });
+
+  it('marks a sub-link only on its own page, an anchor never', () => {
+    const kreis = getHubKreise()[0];
+    expect(subNavCurrent(kreisPath(kreis), kreisPath(kreis))).toBe('page');
+    expect(subNavCurrent(kreisPath(kreis), `${kreisPath(kreis)}/`)).toBe('page');
+    expect(subNavCurrent(kreisPath(kreis), EINSATZGEBIET_PATH)).toBeUndefined();
+    expect(subNavCurrent(`${EINSATZGEBIET_PATH}#orte`, EINSATZGEBIET_PATH)).toBeUndefined();
+    expect(subNavCurrent(themaPath(getThemen()[0]), themaPath(getThemen()[1]))).toBeUndefined();
   });
 });
 

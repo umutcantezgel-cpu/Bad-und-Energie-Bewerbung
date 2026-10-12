@@ -8,10 +8,20 @@ export interface NavItem {
   label: string;
 }
 
+/** Hubs der Seiten aus E-028; gleich ARBEITEN_PATH (lib/themen) und EINSATZGEBIET_PATH (lib/places), Test nav.test.ts. */
+export const ARBEITEN_HUB_PATH = '/arbeiten-bei-uns';
+export const EINSATZGEBIET_HUB_PATH = '/einsatzgebiet';
+
+/**
+ * Hauptnavigation in Kopf und Menü (E-028, interne Verlinkung): Stellen, die beiden Hubs der neuen Seiten und die FAQ
+ * der Startseite. Bis 2026-10-12 standen hier die Anker „Vorteile“ und „Ablauf“ der Startseite; die Vorteile tragen
+ * seitdem die Themenseiten unter „Arbeiten bei uns“, der Ablauf steht auf der Startseite und auf „Diskret wechseln“.
+ * Unterseiten der Hubs kommen als Untermenü vom Server (kopf/kopf-daten.ts → KopfUntermenue).
+ */
 export const NAV_ITEMS: readonly NavItem[] = Object.freeze([
   { href: '/jobs', label: 'Stellen' },
-  { href: '/#vorteile', label: 'Vorteile' },
-  { href: '/#ablauf', label: 'Ablauf' },
+  { href: ARBEITEN_HUB_PATH, label: 'Arbeiten bei uns' },
+  { href: EINSATZGEBIET_HUB_PATH, label: 'Einsatzgebiet' },
   { href: '/#faq', label: 'FAQ' },
 ]);
 
@@ -58,6 +68,21 @@ export function isCurrentNavItem(item: NavItem, pathname: string | null | undefi
   if (item.href.includes('#')) return false;
   const path = normalize(pathname);
   return path === item.href || path.startsWith(`${item.href}/`);
+}
+
+/**
+ * aria-current of a navigation link: „page“ on its own page, „true“ on every page below it (the section, e.g.
+ * „Einsatzgebiet“ on /einsatzgebiet/herborn, „Stellen“ on a job page). So a navigation never marks two links as the
+ * current page when a sub-link (Kreis, Thema) points to the page itself.
+ */
+export function navCurrent(item: NavItem, pathname: string | null | undefined): 'page' | 'true' | undefined {
+  if (!isCurrentNavItem(item, pathname)) return undefined;
+  return normalize(pathname) === item.href ? 'page' : 'true';
+}
+
+/** aria-current of a sub-link (Untermenü): only its own page; anchors (/einsatzgebiet#orte) never. */
+export function subNavCurrent(href: string, pathname: string | null | undefined): 'page' | undefined {
+  return !href.includes('#') && normalize(pathname) === href ? 'page' : undefined;
 }
 
 /** Slug of a job page (/jobs/[slug]), otherwise null. */
