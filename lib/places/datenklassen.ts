@@ -1,3 +1,4 @@
+import { heuteInWetzlar } from './indexierung';
 import { BERUFSSCHULE, OEPNV_META, OEPNV_QUELLE } from './oepnv';
 import type { Place } from './schema';
 
@@ -61,6 +62,14 @@ export const FAHRPLAN_STAND = Object.freeze({
   werktag: OEPNV_META.werktag,
   gueltigBis: fahrplanjahrEnde(OEPNV_META.werktag),
 });
+
+/**
+ * Gelten die Fahrplandaten am Tag `now` (Kalendertag in Wetzlar) noch? Danach zeigen die Kreis-Hubs keine Sätze zu
+ * Bus und Bahn mehr, und die Ortsseiten gehen per Gate I5 auf noindex (lib/places/indexierung.ts).
+ */
+export function fahrplanAktuell(now: Date = new Date()): boolean {
+  return heuteInWetzlar(now) <= FAHRPLAN_STAND.gueltigBis;
+}
 
 /**
  * Belege eines Orts: Bus und Bahn, wenn die Fahrplandaten den Ort führen; Berufsschule, wenn dazu der Schulweg und die

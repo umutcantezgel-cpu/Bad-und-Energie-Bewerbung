@@ -51,7 +51,7 @@ import {
   type Neighbor,
   type Rank,
 } from './derive';
-import { FAHRPLAN_STAND, datenKlassen, titelStufe, type DatenKlasse, type TitelStufe } from './datenklassen';
+import { FAHRPLAN_STAND, datenKlassen, fahrplanAktuell, titelStufe, type DatenKlasse, type TitelStufe } from './datenklassen';
 import { KREIS_DEFS } from './kreise';
 import { MEASUREMENT } from './measurement';
 import {
@@ -1240,6 +1240,8 @@ function placeValues(c: PlaceContext): PlaceDataValue[] {
 export interface PlaceTextOptions {
   /** Stellen, die die Seite zeigt (live zum Renderzeitpunkt); Standard: alle veröffentlichten. */
   jobs?: readonly Job[];
+  /** Stichtag (Renderzeitpunkt) für das Ende der Fahrplandaten (Kreis-Hubs); Standard: jetzt. */
+  now?: Date;
 }
 
 /** Alle Texte einer Ortsseite. */
@@ -1528,7 +1530,9 @@ export function getKreisPageText(kreis: Kreis, options: PlaceTextOptions = {}): 
           gemeinsam(MEASUREMENT_NOTE),
         ],
       },
-      { id: 'oepnv', heading: 'Mit Bus und Bahn', blocks: kreisOepnvBlocks(kreis, places) },
+      // Nach dem Ende der Fahrplandaten (FAHRPLAN_STAND.gueltigBis) entfällt der Abschnitt samt Quellenzeile: Der Hub
+      // bleibt indexiert und soll keinen abgelaufenen Fahrplan zeigen (Prüfung E-029)
+      { id: 'oepnv', heading: 'Mit Bus und Bahn', blocks: fahrplanAktuell(options.now) ? kreisOepnvBlocks(kreis, places) : [] },
       {
         id: 'orte',
         heading: `Alle Orte ${kreis.dative}`,

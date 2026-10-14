@@ -1,6 +1,6 @@
 # Bus und Bahn für die Ortsseiten (ÖPNV-Daten)
 
-Stand: 2026-10-14 · Entscheidung E-029 (Indexierung per Gate), ROADMAP §10.1
+Stand: 2026-10-14 (Vorwarnung und Indexierung nach der Prüfung E-029) · Entscheidung E-029 (Indexierung per Gate), ROADMAP §10.1
 
 Jede Ortsseite unter `/einsatzgebiet/<ort>` zeigt neben Strecke und Fahrzeit mit dem Auto (`orte-messung.md`) zwei Datenklassen aus dem Nahverkehr:
 
@@ -76,11 +76,16 @@ Das Gate wird für eine bessere Quote nie gelockert. Fällt ein Ort durch, bekom
 
 ## Neuberechnung zum Fahrplanwechsel im Dezember
 
-Der Fahrplan wechselt jedes Jahr am zweiten Sonntag im Dezember: am **13.12.2026**, danach am **12.12.2027**. Mit dem Wechsel gelten neue Linien, Zeiten und Takte. Das Gate prüft in I5, ob die Daten zur laufenden Fahrplanperiode gehören. Rechnet niemand neu, fallen ab dem Wechsel alle Ortsseiten mit altem Stand durch und bekommen `noindex,follow`.
+Der Fahrplan wechselt jedes Jahr am zweiten Sonntag im Dezember: am **13.12.2026**, danach am **12.12.2027**. Mit dem Wechsel gelten neue Linien, Zeiten und Takte. Das Gate prüft in I5, ob die Daten zur laufenden Fahrplanperiode gehören. Rechnet niemand neu, fallen ab dem Wechsel alle Ortsseiten mit altem Stand durch und bekommen `noindex,follow`; die Kreis-Hubs bleiben indexiert, blenden aber ihren Abschnitt „Mit Bus und Bahn“ samt Quellenzeile aus (`fahrplanAktuell` in `lib/places/datenklassen.ts`), damit kein abgelaufener Fahrplan auf einer indexierten Seite steht.
+
+Vorwarnung (wie bei den Stellen, Prüfung E-029):
+
+- **Issue:** `.github/workflows/fahrplan-frische.yml` prüft täglich `lib/places/frische.ts` und hält ab 28 Tagen vor `FAHRPLAN_STAND.gueltigBis` genau ein Issue „Fahrplan-Frische: Bus und Bahn der Ortsseiten neu rechnen“ offen, mit Datum, Zahl der betroffenen Ortsseiten und den Schritten unten. Nach dem Merge der neuen Daten schließt es sich selbst.
+- **CI:** `lib/places/__tests__/frische.test.ts` schlägt 14 Tage vor dem Ende fehl (echte Uhr). Für 2026 also ab dem 28.11.2026; bis dahin sollten die Dateien mit dem neuen Fahrplan da sein.
 
 Ablauf:
 
-1. **Erinnerung:** Am 1. Dezember prüfen, ob die Neuberechnung geplant ist.
+1. **Erinnerung:** kommt automatisch als Issue (28 Tage vorher, siehe oben); die CI wird 14 Tage vorher rot.
 2. **Frische Dateien:** Weil die freien Datensätze nur etwa vier Wochen vorausreichen, enthalten sie den neuen Fahrplan erst ab etwa Mitte bis Ende November. Beide Dateien frühestens dann laden und in `calendar.txt` prüfen, ob sie über den 13.12. hinausreichen.
 3. **Stichtag im neuen Fahrplan:** ein Schultag kurz nach dem Wechsel und vor den Weihnachtsferien.
 4. **Rechnen und prüfen** wie unter „Erzeugung“, Schritte 3 bis 7.
@@ -88,6 +93,15 @@ Ablauf:
 6. Nach dem Deploy: Sitemaps in der Search Console neu einreichen und IndexNow auslösen (`stellenboersen.md` d), `betrieb.md` 2.3).
 
 Unterjährige Fahrplanänderungen (zum Beispiel neue Buslinien im Sommer) sind kein Pflichttermin. Fallen sie auf, gilt derselbe Ablauf.
+
+### Indexierung nach dem Fahrplanwechsel
+
+Fallen die Ortsseiten am Wechsel aus der Sitemap, merkt das `scripts/seo/benachrichtigen.mjs` (Workflow `indexierung.yml`): In der Gruppe Orte fehlen auf einmal mehr als die Hälfte der bekannten URLs. Der Lauf holt diese Seiten dann einzeln. Antworten sie mit `noindex` (Gate I5), 404/410 oder einer Weiterleitung, ist das eine echte Änderung: IndexNow bekommt die URLs, der Stand rückt vor, der Lauf bleibt grün. Die Stellen gehen in jedem Fall unabhängig davon an Google.
+
+Bleibt die Gruppe trotzdem gesperrt (Log „Gesperrt: Orte: … weiter indexierbar“, Exit 1), sind die Seiten noch indexierbar und fehlen nur in der Sitemap: Erst `/sitemap/orte.xml` und eine Ortsseite prüfen. Ist der Zustand gewollt und richtig, gibt es zwei Wege zurück:
+
+1. **Abwarten:** Sobald die Seiten `noindex` tragen oder wieder in der Sitemap stehen, läuft der nächste tägliche Lauf grün durch.
+2. **Stand zurücksetzen:** In GitHub unter Actions → Caches die Einträge `indexierung-stand-…` löschen (`gh cache delete --all` im Repo, oder nur die jüngsten). Der nächste Lauf kennt dann keinen alten Stand, meldet einmal alles als neu (Google: alle Stellen `URL_UPDATED`, IndexNow: alle URLs der Sitemap) und schreibt einen frischen Stand. Danach zählen nur noch echte Änderungen.
 
 ## Wo was steht
 
@@ -101,4 +115,6 @@ Unterjährige Fahrplanänderungen (zum Beispiel neue Buslinien im Sommer) sind k
 | `lib/places/schema.ts` | Schema der Datenklassen |
 | `lib/places/qualitaet.ts` | Gate I1–I6 |
 | `lib/places/data/indexierung.json` | Lock-Datei: welcher Ort indexiert wird, mit Grund |
+| `lib/places/frische.ts`, `.github/workflows/fahrplan-frische.yml` | Vorwarnung vor dem Ende der Fahrplandaten (Issue 28 Tage, CI 14 Tage vorher) |
+| `scripts/seo/benachrichtigen.mjs` | Meldungen an Google und IndexNow; Prüfung je Sitemap-Gruppe |
 | `docs/operations/orte-monitoring.md` | wöchentliche Prüfung in der Search Console |
