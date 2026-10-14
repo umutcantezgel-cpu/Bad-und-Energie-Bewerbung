@@ -41,6 +41,9 @@ Alle mit `reducedMotion: 'reduce'`, Locale `de-DE`, Zeitzone `Europe/Berlin`.
   Browser-Zurück/-Vor, Entwurf nach Neuladen, 503 mit WhatsApp-Rückfallweg, Fokus auf das erste
   fehlerhafte Feld, kein Doppel-Submit, keine Personendaten in URLs, alter localStorage-Eintrag gelöscht.
 - `mappe.spec.ts`: Station anlegen, Anschreiben erzeugen, mit der Mappe in den Flow und absenden.
+- `herkunft.spec.ts`: Herkunft ohne Browser-Speicher (Plan §D). Nach einem Einstieg über Indeed bekommt der Link auf
+  `/bewerbung` beim Kontextmenü `?herkunft=ind` und der WhatsApp-Link den sichtbaren Code „– W-IND“, ohne Cookie und
+  ohne Speicher; ein neuer Tab mit `?herkunft=ind` schickt die Bewerbung mit dem Kanal Indeed ab.
 - `navigation.spec.ts`: Der Kopf-Anker `/#faq` springt sofort zum Abschnitt, auch bevor die Inseln unter der Falz
   hydriert sind. Desktop: „Arbeiten bei uns“ und „Einsatzgebiet“ führen zu ihren Hubs (aria-current für Seite und
   Bereich), das Untermenü öffnet beim Überfahren und per Tastatur (Tab hinein, Escape schließt), Escape schließt auch
