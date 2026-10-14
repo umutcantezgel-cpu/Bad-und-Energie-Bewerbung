@@ -122,6 +122,9 @@ describe('Lageplan der Ortsseite (E-028, Pendelweg seit E-029)', () => {
     const luft = renderToStaticMarkup(createElement(Pendelweg, { ort: 'Villmar', kursGrad: 225, strasseKm: 34, luftlinieKm: 27.4 }));
     expect(luft).toContain('>LUFTLINIE<');
     expect(luft).toContain('>27,4 km<');
+    // Luftlinie immer mit einer Stelle nach dem Komma, wie das Maß im Kopf der Ortsseite (formatAirKm)
+    const glatt = renderToStaticMarkup(createElement(Pendelweg, { ort: 'Weilburg', kursGrad: 250, strasseKm: 30, luftlinieKm: 23 }));
+    expect(glatt).toContain('>23,0 km<');
     // Nahe Orte: eigene Stufe, die Leiste zeigt sie
     const nah = renderToStaticMarkup(createElement(Pendelweg, { ort: 'Steindorf', kursGrad: 225, strasseKm: 2 }));
     expect(nah).toMatch(/data-massstab-km="5"/);

@@ -10,7 +10,8 @@ export interface PendelwegProps {
   strasseKm: number;
   /**
    * Luftlinie in km (Messung, lib/places/derive.ts airKm). Mit ihr liegt der Ort maßstäblich auf dem Plan und die
-   * Maßkette nennt die Luftlinie; ohne sie gilt die Straßenstrecke (bisheriges Verhalten, Etikett „Straße“).
+   * Maßkette nennt die Luftlinie (eine Stelle nach dem Komma); ohne sie gilt die Straßenstrecke (Etikett „Straße“).
+   * Die Ortsseite übergibt sie immer: Ein Lageplan mit Maßstabsleiste zeigt die Luftlinie.
    */
   luftlinieKm?: number;
   /** Beschriftung am Haus (Standard „Firmensitz“). */
@@ -227,8 +228,9 @@ export function pendelLage(kursGrad: number, ort: string, sitz = 'Firmensitz', s
   const a = { x: v.x * kuerzung + versatz.x, y: v.y * kuerzung + versatz.y };
   const b = { x: punkt.x - v.x * kuerzung + versatz.x, y: punkt.y - v.y * kuerzung + versatz.y };
   const strich = { x: n.x * 6, y: n.y * 6 };
-  const wertKm = luftlinieKm === undefined ? strasseKm : Math.round(luftlinieKm * 10) / 10;
-  const wertText = `${String(wertKm).replace('.', ',')}${NBSP}km`;
+  // Straße in ganzen km; Luftlinie mit einer Stelle nach dem Komma wie das Maß „Luftlinie“ im Kopf (formatAirKm)
+  const wertKm = luftlinieKm === undefined ? String(strasseKm) : luftlinieKm.toFixed(1);
+  const wertText = `${wertKm.replace('.', ',')}${NBSP}km`;
   const wb = breiteVon(wertText);
   const wh = SCHRIFT * 1.2;
   // Wert gedreht wie die Verbindung, mittig an der Kette. Ist die Kette kürzer als der Wert (kurze Wege), steht er

@@ -11,7 +11,7 @@ import { TextLink } from '@/components/ui/TextLink';
 import { Entfernungsleiste } from '@/components/zeichnung/Entfernungsleiste';
 import { Pendelweg } from '@/components/zeichnung/Pendelweg';
 import type { Job } from '@/lib/jobs/registry';
-import { HEADQUARTERS, airKmBetween, bearingDeg } from '@/lib/places/derive';
+import { HEADQUARTERS, airKm, airKmBetween, bearingDeg } from '@/lib/places/derive';
 import { pfadItems, placePfad } from '@/lib/places/jsonld';
 import {
   EINSATZGEBIET_PATH,
@@ -136,7 +136,13 @@ export function OrtSeite({ place, text, jobs }: OrtSeiteProps) {
           masse={text.masse.map((mass, i) => (i === 3 ? { ...mass, nurBreit: true } : mass))}
           panel={
             <div className={styles.kopfbild}>
-              <Pendelweg ort={place.name} kursGrad={bearingDeg(HEADQUARTERS, place)} strasseKm={place.commute.distanceKm} />
+              {/* Lageplan mit Maßstabsleiste: der Ort nach der Luftlinie, wie das Maß „Luftlinie“ daneben (K-010) */}
+              <Pendelweg
+                ort={place.name}
+                kursGrad={bearingDeg(HEADQUARTERS, place)}
+                strasseKm={place.commute.distanceKm}
+                luftlinieKm={airKm(place)}
+              />
             </div>
           }
         />

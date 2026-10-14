@@ -31,6 +31,7 @@ import {
 } from '@/lib/places/registry';
 import {
   EINSATZGEBIET_LINK_LABEL,
+  formatAirKm,
   getEinsatzgebietPageText,
   getKreisPageText,
   getPlacePageText,
@@ -240,6 +241,15 @@ describe.each(placeCases)('Ortsseite %s', (_id, place: Place) => {
 
   it('zeigt die Werte des Gates (U1) sichtbar', () => {
     for (const value of text.values) expect(sichtbar, value.label).toContain(norm(value.value));
+  });
+
+  it('Lageplan im Kopf nach der Luftlinie (K-010): Etikett und Wert wie das Maß „Luftlinie“ daneben', () => {
+    const lageplan = /<svg\b[^>]*data-zeichnung="lageplan"[\s\S]*?<\/svg>/.exec(html)?.[0] ?? '';
+    expect(lageplan).not.toBe('');
+    expect(lageplan).toContain('>LUFTLINIE<');
+    expect(lageplan).not.toContain('>STRASSE<');
+    expect(lageplan).toContain(`>${formatAirKm(place.commute.airKm)}<`);
+    expect(text.masse).toContainEqual({ wert: formatAirKm(place.commute.airKm), name: 'Luftlinie' });
   });
 
   it('Route ab dem Ort in Google Maps, WhatsApp mit dem Ort in der Nachricht', () => {
