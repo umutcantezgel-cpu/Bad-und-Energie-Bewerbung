@@ -115,6 +115,23 @@ describe('Außengerät: maßstäblich aus dem Geräte-Modul (K-010)', () => {
   });
 });
 
+describe('Schrift in den Zeichnungen (Mindestgröße der Website, e2e/pages.spec.ts)', () => {
+  it('jede Schrift hat mindestens 12 Einheiten, auch die Kennbuchstaben in Symbolen (T, M)', () => {
+    const markup = [
+      html(createElement(Anlagenschema)),
+      html(createElement(Kaeltekreis)),
+      geraet({ groesse: 'S', ansicht: 'vorne', massketten: 'voll' }),
+      geraet({ groesse: 'L', ansicht: 'seite', massketten: 'voll' }),
+      html(createElement(HausschnittKlein)),
+    ].join('');
+    const groessen = [...markup.matchAll(/font-size="([\d.]+)"/g)].map((m) => Number(m[1]));
+    expect(groessen.length).toBeGreaterThan(10);
+    for (const g of groessen) expect(g).toBeGreaterThanOrEqual(12);
+    expect(markup).toMatch(/>T<\/text>/);
+    expect(markup).toMatch(/>M<\/text>/);
+  });
+});
+
 describe('Glyphe waermepumpe (K-010): Proportionen der Außeneinheit', () => {
   it('Gehäuse im Verhältnis 1.100 : 800, Ausblasöffnung links der Mitte mit dem Durchmesser des Moduls, zwei Halterungen', () => {
     const g = COMPRESS_AW_S;
