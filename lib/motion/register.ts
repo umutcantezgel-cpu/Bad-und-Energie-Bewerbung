@@ -307,10 +307,11 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
   },
   'wasser-fliesst': {
     zweck:
-      'Wasser fließt (Prozesszeichnung, E-029): Auf Vorlauf und Rücklauf wandert ein Strichmuster in Fließrichtung ' +
-      '(Überlagerungspfad, stroke-dashoffset); der Pfad ist in Fließrichtung gezeichnet, so stimmt die Richtung von selbst.',
+      'Wasser fließt (Prozesszeichnung, E-029): Auf Vorlauf und Rücklauf wandert ein Strichmuster in Fließrichtung, ' +
+      'je gerades Leitungsstück eine eigene HTML-Ebene über der Zeichnung, verschoben per transform (Compositor, ' +
+      'Prüfung E-029 Befund 10); die Stücke folgen dem Pfad in Fließrichtung, so stimmt die Richtung von selbst.',
     ausloeser: ['dauer'],
-    eigenschaften: ['stroke-dashoffset'],
+    eigenschaften: ['transform'],
     dauer: [],
     verzoegerungTakte: [0],
     kurve: ['linear'],
@@ -321,9 +322,10 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
   'kaeltemittel-fliesst': {
     zweck:
       'Das Kältemittel kreist im Außengerät (Kältekreis, Monoblock, E-029): Strichmuster in Fließrichtung auf dem ' +
-      'Kreis Verdampfer → Verdichter → Plattenwärmeübertrager → Expansionsventil.',
+      'Kreis Verdampfer → Verdichter → Plattenwärmeübertrager → Expansionsventil; wie beim Wasser je gerades Stück ' +
+      'eine eigene HTML-Ebene, verschoben per transform.',
     ausloeser: ['dauer'],
-    eigenschaften: ['stroke-dashoffset'],
+    eigenschaften: ['transform'],
     dauer: [],
     verzoegerungTakte: [0],
     kurve: ['linear'],

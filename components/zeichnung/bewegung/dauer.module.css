@@ -3,11 +3,14 @@
  * scripts/qa/check-design-tokens.mjs). Schleifen laufen nur unter [data-dauer="an"], das DauerSteuerung.tsx setzt,
  * wenn die Startbedingung gilt, und nur bei prefers-reduced-motion: no-preference.
  *
- * Ruhe ist das vollständige Standbild: Der Rotor steht hinter dem Gitter, die Überlagerungspfade sind unsichtbar
- * (keine gestrichelten Leitungen im Standbild), die festen Fließpfeile der Zeichnung bleiben stehen.
- * Bewegt werden nur transform (Rotor, eigene HTML-Ebene) und stroke-dashoffset (Wasser, Kältemittel). Kein Pulsieren,
- * kein Leuchten, kein Skalieren. Perioden wie im Register (lib/motion/register.ts): Rotor d-4 je Blattabstand,
- * Wasser 2 × d-4, Kältemittel 12 Takte.
+ * Ruhe ist das vollständige Standbild: Der Rotor steht hinter dem Gitter, die Strichmuster sind unsichtbar (keine
+ * gestrichelten Leitungen im Standbild), die festen Fließpfeile der Zeichnung bleiben stehen.
+ * Bewegt wird nur transform auf eigenen HTML-Ebenen, damit der Compositor die Schleifen ohne Neuzeichnen je Bild
+ * abspielt (Malzeit unter 2 ms, Prüfung E-029, Befund 10): der Rotor und das Strichmuster von Wasser und Kältemittel
+ * je gerades Leitungsstück (components/zeichnung/technik/Schemabild.tsx). stroke-dashoffset malte je Bild das ganze
+ * Dokument neu, transform auf SVG-Teilen innerhalb der Zeichnung ebenfalls bei jedem Bild des Hauptthreads.
+ * Kein Pulsieren, kein Leuchten, kein Skalieren. Perioden wie im Register (lib/motion/register.ts): Rotor d-4 je
+ * Blattabstand, Wasser 2 × d-4, Kältemittel 12 Takte.
  */
 
 .bereich {
@@ -92,11 +95,9 @@
   transform-origin: 50% 50%;
 }
 
-/* Überlagerungspfad auf einer Leitung, in Fließrichtung gezeichnet: in Ruhe unsichtbar */
+/* Strichmuster einer Leitung (HTML-Ebene über der Zeichnung): in Ruhe unsichtbar */
 .fluss {
   opacity: 0;
-  stroke-dasharray: 4px 12px;
-  stroke-dashoffset: 0;
 }
 
 /* Vier Blätter: ein Blattabstand (90°) je Durchgang, nahtlos */
@@ -110,14 +111,15 @@
   }
 }
 
-/* Ein Muster (16 px) je Durchgang in Laufrichtung des Pfads */
+/* Eine Periode des Musters je Durchgang in Fließrichtung (x des Stücks); --fluss-schritt ist die Periode als Anteil
+   der Breite des Strich-SVGs, gesetzt je Stück in Schemabild.tsx (Maße: lib/zeichnung/szenen/schema.ts, flussMuster) */
 @keyframes fliessen {
   from {
-    stroke-dashoffset: 16px;
+    transform: translateX(0);
   }
 
   to {
-    stroke-dashoffset: 0;
+    transform: translateX(var(--fluss-schritt));
   }
 }
 
@@ -127,13 +129,15 @@
     animation: rotorDreht var(--d-4) linear infinite;
   }
 
-  .bereich[data-dauer="an"] .fluss[data-motion="wasser-fliesst"] {
+  .bereich[data-dauer="an"] .fluss {
     opacity: 1;
+  }
+
+  .bereich[data-dauer="an"] .fluss[data-motion="wasser-fliesst"] .band {
     animation: fliessen calc(var(--d-4) * 2) linear infinite;
   }
 
-  .bereich[data-dauer="an"] .fluss[data-motion="kaeltemittel-fliesst"] {
-    opacity: 1;
+  .bereich[data-dauer="an"] .fluss[data-motion="kaeltemittel-fliesst"] .band {
     animation: fliessen calc(var(--takt) * 12) linear infinite;
   }
 }

@@ -191,8 +191,11 @@ describe('Bewegungsregister', () => {
     expect(rotor.eigenschaften).toEqual(['transform']);
     expect(rotor.schleife!.periodeMs).toBe(DAUER_MS['d-4']);
     expect(rotor.dauer).toEqual(['d-4']);
+    // Wasser und Kältemittel: das Strichmuster wandert per transform auf eigenen HTML-Ebenen (Compositor), nicht mehr
+    // per stroke-dashoffset, das je Bild neu malte (Prüfung E-029, Befund 10: Malzeit unter 2 ms)
     for (const id of ['wasser-fliesst', 'kaeltemittel-fliesst'] as MotionId[]) {
-      expect(MOTION_REGISTER[id].eigenschaften, id).toEqual(['stroke-dashoffset']);
+      expect(MOTION_REGISTER[id].eigenschaften, id).toEqual(['transform']);
+      expect(MOTION_REGISTER[id].zweck, id).toMatch(/HTML-Ebene/);
       expect(MOTION_REGISTER[id].reduziert, id).toMatch(/Fließpfeil/);
     }
   });

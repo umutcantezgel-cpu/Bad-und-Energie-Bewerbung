@@ -1,6 +1,7 @@
-import type { SchemaLeitung, SchemaPfeil, SchemaSymbol } from '@/lib/zeichnung/szenen/schema';
+import type { CSSProperties } from 'react';
+import { flussMuster, flussStrecken, flussStriche, type SchemaLeitung, type SchemaPfeil, type SchemaSymbol } from '@/lib/zeichnung/szenen/schema';
 import { SYMBOLE, type SymbolDef } from '@/lib/zeichnung/symbole';
-import { versal, type Medium } from '@/lib/zeichnung/norm';
+import { r1, versal, type Medium } from '@/lib/zeichnung/norm';
 import { cn } from '@/lib/utils/cn';
 import bewegung from '../bewegung/dauer.module.css';
 import { Symbol } from './Symbol';
@@ -14,17 +15,66 @@ const FLUSS: Record<Medium, 'wasser-fliesst' | 'kaeltemittel-fliesst'> = {
   kaeltemittel: 'kaeltemittel-fliesst',
 };
 
-/** Leitungen in Fließrichtung; mit `bewegt` liegt über jeder ein Überlagerungspfad für die Dauerbewegung. */
-export function Leitungen({ wege, bewegt }: { wege: readonly SchemaLeitung[]; bewegt: boolean }) {
+/** Leitungen in Fließrichtung (Pfad = Fließrichtung, K-003.2). */
+export function Leitungen({ wege }: { wege: readonly SchemaLeitung[] }) {
   return (
     <g data-leitungen="">
       {wege.map((w) => (
         <path key={w.key} d={w.d} className={cn(t.leitung, LEITUNG[w.medium])} data-medium={w.medium} data-weg={w.key} />
       ))}
-      {bewegt
-        ? wege.map((w) => <path key={`f${w.key}`} d={w.d} className={cn(t.fluss, bewegung.fluss)} data-motion={FLUSS[w.medium]} />)
-        : null}
     </g>
+  );
+}
+
+/** Anteil in Prozent mit drei Nachkommastellen (Lage der HTML-Ebene über der Zeichnung). */
+const anteil = (wert: number, bezug: number) => `${Math.round((wert / bezug) * 100_000) / 1000}%`;
+
+/**
+ * Strichmuster der Dauerbewegung (Prüfung E-029, Befund 10) als eigene HTML-Ebene über der Zeichnung, wie der Rotor
+ * der Außeneinheit: je gerades Stück einer Leitung ein Ausschnitt (`overflow: clip`, in Fließrichtung gedreht), darin
+ * ein SVG mit den Strichen, das dauer.module.css per `transform` um eine Periode weiterschiebt. So spielt der
+ * Compositor die Schleife ab, ohne dass der Browser je Bild neu zeichnet (Malzeit unter 2 ms); `stroke-dashoffset` auf
+ * einem Pfad in der Zeichnung malte je Bild das ganze Dokument neu. `breite` und `hoehe`: Rahmen der Zeichnung in
+ * Einheiten. Liegt in einem Element mit `position: relative` genau über dem SVG der Zeichnung.
+ */
+export function Fluss({ wege, breite, hoehe }: { wege: readonly SchemaLeitung[]; breite: number; hoehe: number }) {
+  const muster = flussMuster(breite);
+  const { periode, rand } = muster;
+  return (
+    <div className={t.flussEbene} aria-hidden="true" data-fluss="">
+      {wege.map((w) => (
+        <div key={w.key} className={cn(t.fluss, bewegung.fluss)} data-motion={FLUSS[w.medium]} data-weg={w.key}>
+          {flussStrecken(w).map((s) => {
+            const laenge = r1(s.laenge);
+            const lage: CSSProperties = {
+              left: anteil(s.von.x, breite),
+              top: anteil(s.von.y - rand, hoehe),
+              width: anteil(laenge, breite),
+              height: anteil(2 * rand, hoehe),
+              transform: `rotate(${r1(s.winkel)}deg)`,
+            };
+            const band = {
+              left: anteil(-periode, laenge),
+              width: anteil(laenge + periode, laenge),
+              '--fluss-schritt': anteil(periode, laenge + periode),
+            } as CSSProperties;
+            return (
+              <span key={r1(s.anfang)} className={t.strecke} style={lage} data-strecke="">
+                <svg
+                  className={cn(t.band, bewegung.band)}
+                  style={band}
+                  viewBox={`${-periode} ${-rand} ${r1(laenge + periode)} ${2 * rand}`}
+                  preserveAspectRatio="none"
+                  focusable="false"
+                >
+                  <path d={flussStriche(s, muster)} />
+                </svg>
+              </span>
+            );
+          })}
+        </div>
+      ))}
+    </div>
   );
 }
 

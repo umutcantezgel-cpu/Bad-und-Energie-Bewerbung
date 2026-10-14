@@ -38,6 +38,40 @@ async function tabSichtbar(page: Page, sichtbar: boolean): Promise<void> {
   }, sichtbar);
 }
 
+interface TraceEreignis {
+  name: string;
+  ph: string;
+  pid: number;
+  tid: number;
+  ts: number;
+  dur?: number;
+  args?: { name?: string };
+}
+
+/**
+ * Malzeit je Bild aus einem Performance-Trace (Prüfung E-029, Befund 10): auf dem Hauptthread der Seite (der
+ * CrRendererMain mit den meisten Ereignissen) die Dauer aller Paint-Ereignisse zwischen zwei Bildanfängen.
+ */
+function malzeitJeBild(ereignisse: readonly TraceEreignis[]): { hauptthread: number; malzeitenMs: number[] } {
+  const namen = new Map<string, string>();
+  for (const e of ereignisse) if (e.ph === 'M' && e.name === 'thread_name' && e.args?.name) namen.set(`${e.pid}:${e.tid}`, e.args.name);
+  const zahl = new Map<string, number>();
+  for (const e of ereignisse) {
+    const k = `${e.pid}:${e.tid}`;
+    if (namen.get(k) === 'CrRendererMain') zahl.set(k, (zahl.get(k) ?? 0) + 1);
+  }
+  const haupt = [...zahl.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+  const aufHaupt = ereignisse.filter((e) => `${e.pid}:${e.tid}` === haupt);
+  const anfaenge = aufHaupt.filter((e) => e.name === 'BeginMainThreadFrame').map((e) => e.ts).sort((a, b) => a - b);
+  const summen = new Map<number, number>();
+  for (const e of aufHaupt) {
+    if (e.name !== 'Paint' || e.ph !== 'X') continue;
+    const bild = anfaenge.filter((t) => t <= e.ts).at(-1) ?? 0;
+    summen.set(bild, (summen.get(bild) ?? 0) + (e.dur ?? 0) / 1000);
+  }
+  return { hauptthread: aufHaupt.length, malzeitenMs: [...summen.values()].map((ms) => Math.round(ms * 100) / 100) };
+}
+
 /** Reihenfolge, in der die Ziele mit der Tab-Taste den Fokus bekommen (Indizes in `ziele`), von oben auf der Seite. */
 async function tabFolge(page: Page, ziele: readonly Locator[], hoechstens = 80): Promise<number[]> {
   for (const [i, ziel] of ziele.entries()) await ziel.evaluate((el, n) => el.setAttribute('data-tab-ziel', String(n)), i);
@@ -181,6 +215,32 @@ test.describe('mit Bewegung (no-preference)', () => {
     await expect.poll(() => schleifenDerSeite(page)).toBe(0);
     // Angehalten ist das Standbild: keine gestrichelten Leitungen, die festen Pfeile stehen
     await expect(anlage.locator('[data-motion="wasser-fliesst"]').first()).toHaveCSS('opacity', '0');
+  });
+
+  test('Malzeit (KERN K-009): während Wasser und Kältemittel fließen, malt kein Bild 2 ms oder länger (Handy, CPU 4×)', async ({
+    page,
+    browser,
+  }) => {
+    test.skip(test.info().project.name !== 'mobile-light', 'Das Budget gilt für das Moto-G-Profil (Handy, CPU 4×).');
+    await page.goto(WAERMEPUMPEN);
+    for (const zeichnung of ['kaeltekreis', 'anlagenschema']) {
+      const bereich = page.locator(`[data-dauer]:has([data-zeichnung="${zeichnung}"])`);
+      await bereich.scrollIntoViewIfNeeded();
+      await expect(bereich).toHaveAttribute('data-dauer', 'an');
+      await expect.poll(() => schleifenLaufen(bereich)).toBe(true);
+      await page.waitForTimeout(500);
+      const cdp = await page.context().newCDPSession(page);
+      await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+      await browser.startTracing(page, { categories: ['devtools.timeline', 'disabled-by-default-devtools.timeline'] });
+      await page.waitForTimeout(3000);
+      const trace = JSON.parse((await browser.stopTracing()).toString('utf8')) as { traceEvents: TraceEreignis[] };
+      await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+      await cdp.detach();
+      const bilder = malzeitJeBild(trace.traceEvents);
+      // Der Trace hat den Hauptthread erfasst; Bilder, die der Compositor allein abspielt, malen dort nichts
+      expect(bilder.hauptthread, `${zeichnung}: Ereignisse des Hauptthreads`).toBeGreaterThan(0);
+      expect(bilder.malzeitenMs.filter((ms) => ms >= 2), `${zeichnung}: Bilder mit Malzeit ≥ 2 ms`).toEqual([]);
+    }
   });
 });
 

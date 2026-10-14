@@ -102,13 +102,18 @@ export function drehen(v: Punkt, grad: number): Punkt {
   return { x: v.x * Math.cos(w) - v.y * Math.sin(w), y: v.x * Math.sin(w) + v.y * Math.cos(w) };
 }
 
-/**
- * Leitungsweg mit Bögen (K-008: Leitungen biegen mit Radius): ein Linienzug durch `punkte`, jede Ecke als Kreisbogen
- * mit `radius` (bei kurzen Schenkeln kleiner). Der Weg läuft in der Reihenfolge der Punkte, also in Fließrichtung.
- */
-export function leitungsweg(punkte: readonly Punkt[], radius: number): string {
-  if (punkte.length < 2) throw new Error('norm: Leitungsweg braucht zwei Punkte');
-  let d = `M${p(punkte[0])}`;
+interface Bogen {
+  von: Punkt;
+  bis: Punkt;
+  r: number;
+  /** Drehwinkel der Ecke im Bogenmaß. */
+  winkel: number;
+  kreuz: number;
+}
+
+/** Je innerer Punkt des Linienzugs der Bogen an dieser Ecke, `null` bei einer geraden Ecke (gleiche Richtung). */
+function boegen(punkte: readonly Punkt[], radius: number): (Bogen | null)[] {
+  const out: (Bogen | null)[] = [];
   for (let i = 1; i < punkte.length - 1; i += 1) {
     const [a, ecke, b] = [punkte[i - 1], punkte[i], punkte[i + 1]];
     const u1 = richtung(a, ecke);
@@ -116,7 +121,7 @@ export function leitungsweg(punkte: readonly Punkt[], radius: number): string {
     const kreuz = u1.x * u2.y - u1.y * u2.x;
     const winkel = Math.acos(Math.max(-1, Math.min(1, u1.x * u2.x + u1.y * u2.y)));
     if (Math.abs(kreuz) < 1e-9 || winkel < 1e-6) {
-      d += `L${p(ecke)}`;
+      out.push(null);
       continue;
     }
     const schenkel = Math.min(Math.hypot(ecke.x - a.x, ecke.y - a.y), Math.hypot(b.x - ecke.x, b.y - ecke.y)) / 2;
@@ -124,9 +129,65 @@ export function leitungsweg(punkte: readonly Punkt[], radius: number): string {
     const r = tangente / Math.tan(winkel / 2);
     const von = { x: ecke.x - u1.x * tangente, y: ecke.y - u1.y * tangente };
     const bis = { x: ecke.x + u2.x * tangente, y: ecke.y + u2.y * tangente };
-    d += `L${p(von)}A${r1(r)} ${r1(r)} 0 0 ${kreuz > 0 ? 1 : 0} ${p(bis)}`;
+    out.push({ von, bis, r, winkel, kreuz });
+  }
+  return out;
+}
+
+/**
+ * Leitungsweg mit Bögen (K-008: Leitungen biegen mit Radius): ein Linienzug durch `punkte`, jede Ecke als Kreisbogen
+ * mit `radius` (bei kurzen Schenkeln kleiner). Der Weg läuft in der Reihenfolge der Punkte, also in Fließrichtung.
+ */
+export function leitungsweg(punkte: readonly Punkt[], radius: number): string {
+  if (punkte.length < 2) throw new Error('norm: Leitungsweg braucht zwei Punkte');
+  const b = boegen(punkte, radius);
+  let d = `M${p(punkte[0])}`;
+  for (let i = 1; i < punkte.length - 1; i += 1) {
+    const bogen = b[i - 1];
+    d += bogen ? `L${p(bogen.von)}A${r1(bogen.r)} ${r1(bogen.r)} 0 0 ${bogen.kreuz > 0 ? 1 : 0} ${p(bogen.bis)}` : `L${p(punkte[i])}`;
   }
   return `${d}L${p(punkte[punkte.length - 1])}`;
+}
+
+/** Gerades Stück eines Leitungswegs, in Fließrichtung. */
+export interface Strecke {
+  von: Punkt;
+  bis: Punkt;
+  laenge: number;
+  /** Richtung in Grad (Bildschirmkoordinaten, 0 = nach rechts, 90 = nach unten). */
+  winkel: number;
+  /** Weglänge vom Anfang der Leitung bis zum Anfang des Stücks (Bögen mitgezählt). */
+  anfang: number;
+}
+
+/**
+ * Die geraden Stücke des Leitungswegs aus `leitungsweg` (gleiche Punkte, gleicher Radius), ohne die Bögen, in
+ * Fließrichtung. Grundlage der Dauerbewegung „Wasser fließt“: Je Stück wandert ein Strichmuster per `transform`
+ * (Compositor) statt per `stroke-dashoffset` (Neuzeichnen je Bild). `anfang` hält das Muster über die Ecken im Takt.
+ */
+export function leitungsStrecken(punkte: readonly Punkt[], radius: number): Strecke[] {
+  if (punkte.length < 2) throw new Error('norm: Leitungsweg braucht zwei Punkte');
+  const b = boegen(punkte, radius);
+  const out: Strecke[] = [];
+  let start = { x: r1(punkte[0].x), y: r1(punkte[0].y) };
+  let weg = 0;
+  // Auf eine Nachkommastelle wie im Pfad (`leitungsweg`), damit Stücke und gezeichnete Linie genau übereinanderliegen
+  const rund = (q: Punkt): Punkt => ({ x: r1(q.x), y: r1(q.y) });
+  for (let i = 1; i < punkte.length; i += 1) {
+    const bogen = i < punkte.length - 1 ? b[i - 1] : null;
+    const ende = rund(bogen ? bogen.von : punkte[i]);
+    const laenge = Math.hypot(ende.x - start.x, ende.y - start.y);
+    if (laenge > 1e-6) {
+      const winkel = (Math.atan2(ende.y - start.y, ende.x - start.x) * 180) / Math.PI;
+      out.push({ von: start, bis: ende, laenge, winkel: Object.is(winkel, -0) ? 0 : winkel, anfang: weg });
+    }
+    weg += laenge;
+    if (bogen) {
+      weg += bogen.r * bogen.winkel;
+      start = rund(bogen.bis);
+    } else start = ende;
+  }
+  return out;
 }
 
 /**

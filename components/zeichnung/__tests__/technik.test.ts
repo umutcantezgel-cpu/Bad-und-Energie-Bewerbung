@@ -11,9 +11,10 @@ import { COMPRESS_AW_L } from '@/lib/zeichnung/geraete/compress-aw-l';
 import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
 import type { Aussengeraet as Geraetedaten } from '@/lib/zeichnung/geraete/typen';
 import { BOSCH_FREIGABE } from '@/lib/zeichnung/marke';
-import { ANLAGENSCHEMA_KAELTE, ANLAGENSCHEMA_LEITUNGEN } from '@/lib/zeichnung/szenen/anlagenschema';
+import { ANLAGENSCHEMA_KAELTE, ANLAGENSCHEMA_LEITUNGEN, ANLAGENSCHEMA_RAHMEN } from '@/lib/zeichnung/szenen/anlagenschema';
 import { HEIZKOERPER_LAGE, LEITUNGEN as HAUS_LEITUNGEN } from '@/lib/zeichnung/szenen/hausschnitt';
-import { KAELTEKREIS_GERAET, KAELTEKREIS_WASSER, KAELTEKREIS_WEGE } from '@/lib/zeichnung/szenen/kaeltekreis';
+import { KAELTEKREIS_GERAET, KAELTEKREIS_RAHMEN, KAELTEKREIS_WASSER, KAELTEKREIS_WEGE } from '@/lib/zeichnung/szenen/kaeltekreis';
+import { flussMuster, flussStrecken } from '@/lib/zeichnung/szenen/schema';
 import { DauerSteuerung } from '../bewegung/DauerSteuerung';
 import { Anlagenschema } from '../technik/Anlagenschema';
 import { Aussengeraet, type AussengeraetProps } from '../technik/Aussengeraet';
@@ -211,14 +212,37 @@ describe('Fließrichtung in den gezeichneten Schemata (K-003.2)', () => {
   /** Leitungen des Markups in Reihenfolge, mit Pfad und Medium. */
   const wege = (m: string) =>
     [...m.matchAll(/<path d="([^"]+)" class="[^"]*" data-medium="([a-z]+)" data-weg="([^"]+)"/g)].map((x) => ({ d: x[1], medium: x[2], key: x[3] }));
-  const fluesse = (m: string) => [...m.matchAll(/<path d="([^"]+)" class="[^"]*" data-motion="([a-z-]+)"/g)].map((x) => ({ d: x[1], id: x[2] }));
+  /** Strichmuster des Markups je Leitung: Kennung, Weg und die geraden Stücke (Lage in Prozent, Drehung in Grad). */
+  const fluesse = (m: string) =>
+    [...m.matchAll(/<div class="[^"]*" data-motion="([a-z-]+)" data-weg="([^"]+)">([\s\S]*?)<\/div>/g)].map((x) => ({
+      id: x[1],
+      key: x[2],
+      strecken: [
+        ...x[3].matchAll(
+          /<span class="[^"]*" style="left:([-\d.]+)%;top:([-\d.]+)%;width:([\d.]+)%;height:([\d.]+)%;transform:rotate\(([-\d.]+)deg\)" data-strecke="">/g,
+        ),
+      ].map((y) => ({ left: Number(y[1]), top: Number(y[2]), width: Number(y[3]), height: Number(y[4]), grad: Number(y[5]) })),
+    }));
+  /** Die geraden Stücke eines gezeichneten Pfads (M, L, A) in seiner Reihenfolge: Anfang, Länge, Richtung. */
+  const geradeImPfad = (d: string) => {
+    const stuecke: { x: number; y: number; laenge: number; grad: number }[] = [];
+    let [x, y] = [0, 0];
+    for (const [, cmd, rest] of d.matchAll(/([MLA])([^MLA]*)/g)) {
+      const n = rest.trim().split(/[\s,]+/).map(Number);
+      const [nx, ny] = cmd === 'A' ? [n[5], n[6]] : [n[0], n[1]];
+      const laenge = Math.hypot(nx - x, ny - y);
+      if (cmd === 'L' && laenge > 0.05) stuecke.push({ x, y, laenge, grad: (Math.atan2(ny - y, nx - x) * 180) / Math.PI });
+      [x, y] = [nx, ny];
+    }
+    return stuecke;
+  };
 
   it('Kältekreis und Anlagenschema zeichnen die Wege des Moduls unverändert (Pfad = Fließrichtung)', () => {
     const faelle = [
-      { m: html(createElement(Kaeltekreis, { bewegt: true })), daten: [...KAELTEKREIS_WASSER, ...KAELTEKREIS_WEGE] },
-      { m: html(createElement(Anlagenschema, { bewegt: true })), daten: [...ANLAGENSCHEMA_KAELTE, ...ANLAGENSCHEMA_LEITUNGEN] },
+      { m: html(createElement(Kaeltekreis, { bewegt: true })), daten: [...KAELTEKREIS_WASSER, ...KAELTEKREIS_WEGE], rahmen: KAELTEKREIS_RAHMEN },
+      { m: html(createElement(Anlagenschema, { bewegt: true })), daten: [...ANLAGENSCHEMA_KAELTE, ...ANLAGENSCHEMA_LEITUNGEN], rahmen: ANLAGENSCHEMA_RAHMEN },
     ];
-    for (const { m, daten } of faelle) {
+    for (const { m, daten, rahmen } of faelle) {
       const gezeichnet = wege(m);
       expect(gezeichnet.map((w) => w.key)).toEqual(daten.map((w) => w.key));
       for (const w of gezeichnet) {
@@ -226,17 +250,59 @@ describe('Fließrichtung in den gezeichneten Schemata (K-003.2)', () => {
         expect(w.d, w.key).toBe(l.d);
         expect(w.medium, w.key).toBe(l.medium);
       }
-      // Der Überlagerungspfad ist derselbe Pfad (gleiche Richtung), Wasser und Kältemittel getrennt
+      // Das Strichmuster liegt je Leitung auf jedem geraden Stück ihres Pfads, in seiner Reihenfolge und gedreht in
+      // seine Richtung (es wandert in +x des Stücks, also in Fließrichtung); Wasser und Kältemittel getrennt
+      const { rand } = flussMuster(rahmen.breite);
       const f = fluesse(m);
-      expect(f).toHaveLength(gezeichnet.length);
+      expect(f.map((x) => x.key)).toEqual(gezeichnet.map((w) => w.key));
       gezeichnet.forEach((w, i) => {
-        expect(f[i].d, w.key).toBe(w.d);
         expect(f[i].id, w.key).toBe(w.medium === 'kaeltemittel' ? 'kaeltemittel-fliesst' : 'wasser-fliesst');
+        const soll = geradeImPfad(w.d);
+        expect(soll.length, w.key).toBeGreaterThan(0);
+        expect(f[i].strecken.length, w.key).toBe(soll.length);
+        soll.forEach((g, j) => {
+          const s = f[i].strecken[j];
+          expect((s.left * rahmen.breite) / 100, `${w.key} ${j} x`).toBeCloseTo(g.x, 1);
+          expect((s.top * rahmen.hoehe) / 100 + rand, `${w.key} ${j} y`).toBeCloseTo(g.y, 1);
+          expect((s.width * rahmen.breite) / 100, `${w.key} ${j} Länge`).toBeCloseTo(g.laenge, 0);
+          expect((s.height * rahmen.hoehe) / 100, `${w.key} ${j} Höhe`).toBeCloseTo(2 * rand, 1);
+          expect(Math.abs(((s.grad - g.grad + 540) % 360) - 180), `${w.key} ${j} Richtung`).toBeLessThan(0.1);
+        });
       });
+      // Die Ebene liegt über dem SVG der Zeichnung, dekorativ
+      expect(m).toMatch(/<\/svg><div class="[^"]*" aria-hidden="true" data-fluss="">/);
     }
   });
 
-  it('der Kältekreis bleibt im Gehäuse: die Gerätegrenze ist gezeichnet, im Standbild ohne Überlagerungspfade', () => {
+  it('Strichmuster: Periode als Schritt der Bewegung, die Striche decken das Stück in jeder Lage', () => {
+    const m = html(createElement(Anlagenschema, { bewegt: true }));
+    const { periode, strich, rand } = flussMuster(ANLAGENSCHEMA_RAHMEN.breite);
+    const baender = [...m.matchAll(/<svg class="[^"]*" style="left:([-\d.]+)%;width:([\d.]+)%;--fluss-schritt:([\d.]+)%" viewBox="([^"]+)" preserveAspectRatio="none" focusable="false"><path d="([^"]+)"><\/path><\/svg>/g)];
+    expect(baender.length).toBe(ANLAGENSCHEMA_LEITUNGEN.concat(ANLAGENSCHEMA_KAELTE).reduce((n, l) => n + flussStrecken(l).length, 0));
+    for (const [, left, width, schritt, viewBox, d] of baender) {
+      const [vx, vy, vw, vh] = viewBox.split(' ').map(Number);
+      const laenge = vw - periode;
+      // Das SVG beginnt eine Periode vor dem Stück und reicht bis an sein Ende; ein Schritt ist genau eine Periode
+      expect([vx, vy, vh]).toEqual([-periode, -rand, 2 * rand]);
+      expect(Number(left)).toBeCloseTo((-periode / laenge) * 100, 2);
+      expect(Number(width)).toBeCloseTo(((laenge + periode) / laenge) * 100, 2);
+      expect(Number(schritt)).toBeCloseTo((periode / (laenge + periode)) * 100, 2);
+      // Striche im Abstand der Periode, je `strich` lang, auf der Achse; der erste liegt höchstens eine Periode vor
+      // dem Stück, der letzte beginnt vor seinem Ende: Um 0 bis eine Periode verschoben, ist jede Stelle abgedeckt
+      const x = [...d.matchAll(/M([-\d.]+) 0h([\d.]+)/g)].map((y) => {
+        expect(Number(y[2])).toBe(strich);
+        return Number(y[1]);
+      });
+      expect(d).toBe(x.map((v) => `M${v} 0h${strich}`).join(''));
+      x.slice(1).forEach((v, i) => expect(v - x[i]).toBeCloseTo(periode, 1));
+      expect(x[0]).toBeLessThanOrEqual(-periode + 0.05);
+      expect(x[0]).toBeGreaterThan(-2 * periode);
+      expect(x.at(-1)!).toBeLessThan(laenge);
+      expect(x.at(-1)! + periode).toBeGreaterThanOrEqual(laenge - 0.05);
+    }
+  });
+
+  it('der Kältekreis bleibt im Gehäuse: die Gerätegrenze ist gezeichnet, im Standbild ohne Strichmuster', () => {
     const m = html(createElement(Kaeltekreis, {}));
     const g = KAELTEKREIS_GERAET;
     expect(m).toContain(`<rect x="${g.x}" y="${g.y}" width="${g.breite}" height="${g.hoehe}" class="`);
@@ -377,9 +443,19 @@ describe('Dauerbewegung nur in einem Bereich mit DauerSteuerung (E-029)', () => 
     const regeln = [...block.matchAll(/([^{}]+)\{([^{}]*)\}/g)];
     expect(regeln.map((r) => r[1].trim())).toEqual([
       '.bereich[data-dauer="an"] .rotor[data-motion="rotor-dreht"]',
-      '.bereich[data-dauer="an"] .fluss[data-motion="wasser-fliesst"]',
-      '.bereich[data-dauer="an"] .fluss[data-motion="kaeltemittel-fliesst"]',
+      '.bereich[data-dauer="an"] .fluss',
+      '.bereich[data-dauer="an"] .fluss[data-motion="wasser-fliesst"] .band',
+      '.bereich[data-dauer="an"] .fluss[data-motion="kaeltemittel-fliesst"] .band',
     ]);
+    // Das Strichmuster wird nur sichtbar; bewegt wird allein transform (Compositor, Befund 10 der Prüfung E-029)
+    expect(regeln[1][2].trim()).toBe('opacity: 1;');
+    const keyframes = [...css.matchAll(/@keyframes (\w+) \{((?:[^{}]*\{[^{}]*\})*)\s*\}/g)];
+    expect(keyframes.map((k) => k[1])).toEqual(['rotorDreht', 'fliessen']);
+    for (const [, name, inhalt] of keyframes) {
+      const eigenschaften = [...inhalt.matchAll(/([a-z-]+):/g)].map((e) => e[1]);
+      expect(new Set(eigenschaften), name).toEqual(new Set(['transform']));
+    }
+    expect(css).not.toMatch(/stroke-dash/);
     expect(css.slice(0, css.indexOf('@media (prefers-reduced-motion: no-preference)'))).not.toMatch(/animation|infinite/);
     expect(css).toMatch(/\.knopf \{[^}]*min-width: var\(--m-ziel\);[^}]*min-height: var\(--m-ziel\);/);
     expect(quelle('app/styles/theme.css')).toMatch(/--m-ziel: 2\.75rem;/);

@@ -94,8 +94,29 @@
   stroke: var(--brand);
 }
 
-/* Überlagerungspfad der Dauerbewegung (Strichmuster aus dauer.module.css): in der Fläche über der Leitung */
-.fluss {
+/* Strichmuster der Dauerbewegung (dauer.module.css) als eigene HTML-Ebene genau über dem SVG (Schemabild.tsx, Fluss):
+   je gerades Stück ein gedrehter Ausschnitt, darin die Striche in der Fläche über der Leitung */
+.flussEbene {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.strecke {
+  position: absolute;
+  overflow: clip;
+  transform-origin: 0 50%;
+}
+
+.band {
+  position: absolute;
+  top: 0;
+  display: block;
+  height: 100%;
+  overflow: visible;
+}
+
+.band path {
   fill: none;
   stroke: var(--surface);
   stroke-width: var(--m-fein);

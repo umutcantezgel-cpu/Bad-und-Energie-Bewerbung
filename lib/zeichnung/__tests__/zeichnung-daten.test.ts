@@ -8,7 +8,7 @@ import { INNENEINHEIT } from '../geraete/inneneinheit';
 import { seitenansicht, vorderansicht } from '../geraete/ansicht';
 import { alleMasse } from '../geraete/typen';
 import { BOSCH_FREIGABE, markeErlaubt, wirksameVariante } from '../marke';
-import { GESCHAETZT, LINIENARTEN, MASSSTAB, SCHRIFTFELD, ZEICHNUNG_LINIEN, fliesspfeil, leitungsweg, masslinie } from '../norm';
+import { GESCHAETZT, LINIENARTEN, MASSSTAB, SCHRIFTFELD, ZEICHNUNG_LINIEN, fliesspfeil, leitungsStrecken, leitungsweg, masslinie } from '../norm';
 import {
   BAUTEILE,
   GERAET_LAGE,
@@ -90,6 +90,27 @@ describe('Linienarten (K-010, DIN EN ISO 128-2)', () => {
     expect(leitungsweg([{ x: 0, y: 0 }, { x: 100, y: 0 }, { x: 100, y: -50 }], 10)).toContain('A10 10 0 0 0 100 -10');
     expect(() => leitungsweg([{ x: 0, y: 0 }], 10)).toThrow();
     expect(fliesspfeil({ x: 10, y: 0 }, { x: 1, y: 0 }, 10, 6)).toBe('M10 0L0 3L0 -3Z');
+  });
+
+  it('Gerade Stücke des Leitungswegs (Strichmuster der Dauerbewegung): ohne Bögen, in Fließrichtung, Weglänge mit Bögen', () => {
+    const punkte = [{ x: 0, y: 0 }, { x: 100, y: 0 }, { x: 100, y: 50 }, { x: 100, y: 80 }, { x: 40, y: 80 }];
+    // Gleiche Punkte wie leitungsweg: M0 0 L90 0 A… 100 10 L100 50 L100 70 A… 90 80 L40 80
+    expect(leitungsweg(punkte, 10)).toBe('M0 0L90 0A10 10 0 0 1 100 10L100 50L100 70A10 10 0 0 1 90 80L40 80');
+    const s = leitungsStrecken(punkte, 10);
+    expect(s.map((x) => [x.von, x.bis, x.winkel])).toEqual([
+      [{ x: 0, y: 0 }, { x: 90, y: 0 }, 0],
+      [{ x: 100, y: 10 }, { x: 100, y: 50 }, 90],
+      [{ x: 100, y: 50 }, { x: 100, y: 70 }, 90],
+      [{ x: 90, y: 80 }, { x: 40, y: 80 }, 180],
+    ]);
+    expect(s.map((x) => x.laenge)).toEqual([90, 40, 20, 50]);
+    // Weglänge bis zum Anfang: Viertelkreis mit r = 10 zählt mit (π · 10 / 2), die gerade Ecke bei (100 | 50) nicht
+    const bogen = (Math.PI * 10) / 2;
+    expect(s[0].anfang).toBe(0);
+    expect(s[1].anfang).toBeCloseTo(90 + bogen, 6);
+    expect(s[2].anfang).toBeCloseTo(130 + bogen, 6);
+    expect(s[3].anfang).toBeCloseTo(150 + 2 * bogen, 6);
+    expect(() => leitungsStrecken([{ x: 0, y: 0 }], 10)).toThrow();
   });
 });
 

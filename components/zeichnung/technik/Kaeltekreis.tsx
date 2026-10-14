@@ -11,7 +11,7 @@ import {
   KAELTEKREIS_WEGE,
 } from '@/lib/zeichnung/szenen/kaeltekreis';
 import { cn } from '@/lib/utils/cn';
-import { Legende, Leitungen, Pfeile, Symbole } from './Schemabild';
+import { Fluss, Legende, Leitungen, Pfeile, Symbole } from './Schemabild';
 import t from './technik.module.css';
 
 export interface KaeltekreisProps {
@@ -41,40 +41,44 @@ export function Kaeltekreis({ bewegt = false, titel = KAELTEKREIS_TITEL, legende
   const druck = KAELTEKREIS_DRUCKGRENZE;
   return (
     <figure className={cn(t.schema, className)} data-zeichnung="kaeltekreis">
-      <svg
-        className={cn(t.zeichnung, t.kaeltekreisBild)}
-        viewBox={`0 0 ${breite} ${hoehe}`}
-        focusable="false"
-        {...(titel ? { role: 'img', 'aria-label': titel } : { 'aria-hidden': true })}
-      >
-        {/* Gehäuse der Außeneinheit: Grenze des Kältekreises */}
-        <rect x={g.x} y={g.y} width={g.breite} height={g.hoehe} className={t.kontur} data-geraet-grenze="" />
-        {/* Niederdruck | Hochdruck */}
-        <path d={`M${druck.x} ${druck.y0}V${druck.y1}`} className={t.mittellinie} />
-        <text x={druck.x - 12} y={druck.y0 + 10} className={cn(t.etikett, t.schemaText)} fontSize={16} textAnchor="end" dominantBaseline="central">
-          {versal('Niederdruck')}
-        </text>
-        <text x={druck.x + 12} y={druck.y0 + 10} className={cn(t.etikett, t.schemaText)} fontSize={16} textAnchor="start" dominantBaseline="central">
-          {versal('Hochdruck')}
-        </text>
-        {/* Außenluft in den Verdampfer */}
-        <path d={`M${luft.pfeil.von.x} ${luft.pfeil.von.y}H${luft.pfeil.bis.x - 12}`} className={t.fein} />
-        <path d={fliesspfeil(luft.pfeil.bis, { x: 1, y: 0 }, 12, 9)} className={t.voll} />
-        <text x={luft.x} y={luft.y} className={cn(t.etikett, t.schemaText)} fontSize={16} textAnchor="middle" dominantBaseline="central">
-          {versal(luft.wert)}
-        </text>
+      {/* Ebenen: die Zeichnung, mit `bewegt` darüber das Strichmuster als eigene HTML-Ebene (Compositor) */}
+      <div className={t.ebenen}>
+        <svg
+          className={cn(t.zeichnung, t.kaeltekreisBild)}
+          viewBox={`0 0 ${breite} ${hoehe}`}
+          focusable="false"
+          {...(titel ? { role: 'img', 'aria-label': titel } : { 'aria-hidden': true })}
+        >
+          {/* Gehäuse der Außeneinheit: Grenze des Kältekreises */}
+          <rect x={g.x} y={g.y} width={g.breite} height={g.hoehe} className={t.kontur} data-geraet-grenze="" />
+          {/* Niederdruck | Hochdruck */}
+          <path d={`M${druck.x} ${druck.y0}V${druck.y1}`} className={t.mittellinie} />
+          <text x={druck.x - 12} y={druck.y0 + 10} className={cn(t.etikett, t.schemaText)} fontSize={16} textAnchor="end" dominantBaseline="central">
+            {versal('Niederdruck')}
+          </text>
+          <text x={druck.x + 12} y={druck.y0 + 10} className={cn(t.etikett, t.schemaText)} fontSize={16} textAnchor="start" dominantBaseline="central">
+            {versal('Hochdruck')}
+          </text>
+          {/* Außenluft in den Verdampfer */}
+          <path d={`M${luft.pfeil.von.x} ${luft.pfeil.von.y}H${luft.pfeil.bis.x - 12}`} className={t.fein} />
+          <path d={fliesspfeil(luft.pfeil.bis, { x: 1, y: 0 }, 12, 9)} className={t.voll} />
+          <text x={luft.x} y={luft.y} className={cn(t.etikett, t.schemaText)} fontSize={16} textAnchor="middle" dominantBaseline="central">
+            {versal(luft.wert)}
+          </text>
 
-        <Leitungen wege={[...KAELTEKREIS_WASSER, ...KAELTEKREIS_WEGE]} bewegt={bewegt} />
-        <Pfeile pfeile={KAELTEKREIS_PFEILE} />
-        <Symbole symbole={KAELTEKREIS_SYMBOLE} />
-        {[...KAELTEKREIS_WEGE, ...KAELTEKREIS_WASSER].map((w) =>
-          w.etikett ? (
-            <text key={w.key} x={w.etikett.x} y={w.etikett.y} className={cn(t.etikett, t.schemaText)} fontSize={18} textAnchor={w.etikett.anker} dominantBaseline="central">
-              {versal(w.etikett.wert)}
-            </text>
-          ) : null,
-        )}
-      </svg>
+          <Leitungen wege={[...KAELTEKREIS_WASSER, ...KAELTEKREIS_WEGE]} />
+          <Pfeile pfeile={KAELTEKREIS_PFEILE} />
+          <Symbole symbole={KAELTEKREIS_SYMBOLE} />
+          {[...KAELTEKREIS_WEGE, ...KAELTEKREIS_WASSER].map((w) =>
+            w.etikett ? (
+              <text key={w.key} x={w.etikett.x} y={w.etikett.y} className={cn(t.etikett, t.schemaText)} fontSize={18} textAnchor={w.etikett.anker} dominantBaseline="central">
+                {versal(w.etikett.wert)}
+              </text>
+            ) : null,
+          )}
+        </svg>
+        {bewegt ? <Fluss wege={[...KAELTEKREIS_WASSER, ...KAELTEKREIS_WEGE]} breite={breite} hoehe={hoehe} /> : null}
+      </div>
       {legende ? (
         <figcaption>
           <Legende symbole={KAELTEKREIS_SYMBOLE} />

@@ -9,7 +9,7 @@ import {
   ANLAGENSCHEMA_TEXTE,
 } from '@/lib/zeichnung/szenen/anlagenschema';
 import { cn } from '@/lib/utils/cn';
-import { Legende, Leitungen, Pfeile, Symbole } from './Schemabild';
+import { Fluss, Legende, Leitungen, Pfeile, Symbole } from './Schemabild';
 import t from './technik.module.css';
 
 export interface AnlagenschemaProps {
@@ -40,37 +40,41 @@ export function Anlagenschema({ bewegt = false, titel = ANLAGENSCHEMA_TITEL, leg
   const b = ANLAGENSCHEMA_BEREICHE;
   return (
     <figure className={cn(t.schema, className)} data-zeichnung="anlagenschema">
-      <svg
-        className={cn(t.zeichnung, t.anlagenBild)}
-        viewBox={`0 0 ${breite} ${hoehe}`}
-        focusable="false"
-        {...(titel ? { role: 'img', 'aria-label': titel } : { 'aria-hidden': true })}
-      >
-        {/* Erdreich vor dem Haus, Geländelinie, Wand im Schnitt mit Wanddurchführung */}
-        <path d={schraffurLinien(0, b.gok, b.wand.x, hoehe, 14)} className={t.schraffur} />
-        <path d={`M0 ${b.gok}H${b.wand.x}`} className={t.kontur} />
-        <rect x={b.wand.x} y={b.wand.y} width={b.wand.breite} height={b.wand.hoehe} className={cn(t.kontur, t.schnitt)} />
-        <rect
-          x={b.durchfuehrung.x}
-          y={b.durchfuehrung.y}
-          width={b.durchfuehrung.breite}
-          height={b.durchfuehrung.hoehe}
-          className={cn(t.kontur, t.flaeche)}
-          data-wanddurchfuehrung=""
-        />
-        {/* Außeneinheit (Gehäuse) und Inneneinheit (Systemgrenze, Modell offen) */}
-        <rect x={b.aussen.x} y={b.aussen.y} width={b.aussen.breite} height={b.aussen.hoehe} className={t.kontur} data-bereich="aussen" />
-        <rect x={b.innen.x} y={b.innen.y} width={b.innen.breite} height={b.innen.hoehe} className={t.mittellinie} data-bereich="innen" />
-        {ANLAGENSCHEMA_TEXTE.map((text) => (
-          <text key={text.wert} x={text.x} y={text.y} className={cn(t.etikett, t.schemaText, t.halo)} fontSize={20} textAnchor={text.anker} dominantBaseline="central">
-            {versal(text.wert)}
-          </text>
-        ))}
+      {/* Ebenen: die Zeichnung, mit `bewegt` darüber das Strichmuster als eigene HTML-Ebene (Compositor) */}
+      <div className={t.ebenen}>
+        <svg
+          className={cn(t.zeichnung, t.anlagenBild)}
+          viewBox={`0 0 ${breite} ${hoehe}`}
+          focusable="false"
+          {...(titel ? { role: 'img', 'aria-label': titel } : { 'aria-hidden': true })}
+        >
+          {/* Erdreich vor dem Haus, Geländelinie, Wand im Schnitt mit Wanddurchführung */}
+          <path d={schraffurLinien(0, b.gok, b.wand.x, hoehe, 14)} className={t.schraffur} />
+          <path d={`M0 ${b.gok}H${b.wand.x}`} className={t.kontur} />
+          <rect x={b.wand.x} y={b.wand.y} width={b.wand.breite} height={b.wand.hoehe} className={cn(t.kontur, t.schnitt)} />
+          <rect
+            x={b.durchfuehrung.x}
+            y={b.durchfuehrung.y}
+            width={b.durchfuehrung.breite}
+            height={b.durchfuehrung.hoehe}
+            className={cn(t.kontur, t.flaeche)}
+            data-wanddurchfuehrung=""
+          />
+          {/* Außeneinheit (Gehäuse) und Inneneinheit (Systemgrenze, Modell offen) */}
+          <rect x={b.aussen.x} y={b.aussen.y} width={b.aussen.breite} height={b.aussen.hoehe} className={t.kontur} data-bereich="aussen" />
+          <rect x={b.innen.x} y={b.innen.y} width={b.innen.breite} height={b.innen.hoehe} className={t.mittellinie} data-bereich="innen" />
+          {ANLAGENSCHEMA_TEXTE.map((text) => (
+            <text key={text.wert} x={text.x} y={text.y} className={cn(t.etikett, t.schemaText, t.halo)} fontSize={20} textAnchor={text.anker} dominantBaseline="central">
+              {versal(text.wert)}
+            </text>
+          ))}
 
-        <Leitungen wege={[...ANLAGENSCHEMA_KAELTE, ...ANLAGENSCHEMA_LEITUNGEN]} bewegt={bewegt} />
-        <Pfeile pfeile={ANLAGENSCHEMA_PFEILE} />
-        <Symbole symbole={ANLAGENSCHEMA_SYMBOLE} />
-      </svg>
+          <Leitungen wege={[...ANLAGENSCHEMA_KAELTE, ...ANLAGENSCHEMA_LEITUNGEN]} />
+          <Pfeile pfeile={ANLAGENSCHEMA_PFEILE} />
+          <Symbole symbole={ANLAGENSCHEMA_SYMBOLE} />
+        </svg>
+        {bewegt ? <Fluss wege={[...ANLAGENSCHEMA_KAELTE, ...ANLAGENSCHEMA_LEITUNGEN]} breite={breite} hoehe={hoehe} /> : null}
+      </div>
       {legende || schriftfeld ? (
         <figcaption>
           {legende ? <Legende symbole={ANLAGENSCHEMA_SYMBOLE} /> : null}
