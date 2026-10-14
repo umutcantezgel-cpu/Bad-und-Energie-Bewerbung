@@ -102,6 +102,40 @@ export async function expectNoAxeViolations(page: Page, testInfo: TestInfo, opti
   expect(summary, `axe-Verstöße auf ${page.url()}`).toEqual([]);
 }
 
+/** Mindestgröße sichtbarer Schrift (ROADMAP §14: Schrift ≥ 12 px). */
+export const MIN_FONT_SIZE_PX = 12;
+
+/**
+ * Sichtbarer Text unter `min` px, so groß, wie er gezeichnet wird (Prüfung E-029, Befund 7): in HTML die berechnete
+ * Schriftgröße, in SVG die Schriftgröße in Einheiten mal Maßstab der Zeichnung auf dem Bildschirm (getScreenCTM,
+ * √(a² + b²), auch bei gedrehter Schrift). Die Einheiten allein sagen nichts: 34 Einheiten in einer 1200 breiten
+ * Zeichnung sind auf 350 px nur 9,9 px.
+ */
+export async function findSmallText(page: Page, scope = 'main#main', min = MIN_FONT_SIZE_PX): Promise<string[]> {
+  return page.locator(scope).evaluate((root, min) => {
+    const findings: string[] = [];
+    for (const element of root.querySelectorAll<Element>('*')) {
+      const ownText = [...element.childNodes]
+        .filter((node) => node.nodeType === Node.TEXT_NODE)
+        .map((node) => node.textContent?.trim() ?? '')
+        .join(' ')
+        .trim();
+      if (!ownText) continue;
+      if (!element.checkVisibility({ visibilityProperty: true, opacityProperty: false })) continue;
+      let size = parseFloat(getComputedStyle(element).fontSize);
+      if (element instanceof SVGGraphicsElement) {
+        const m = element.getScreenCTM();
+        if (m) size *= Math.hypot(m.a, m.b);
+      }
+      if (size < min) {
+        const zeichnung = element.closest('[data-zeichnung]')?.getAttribute('data-zeichnung');
+        findings.push(`${element.tagName.toLowerCase()}${zeichnung ? ` in ${zeichnung}` : ''} ${size.toFixed(1)}px: „${ownText.slice(0, 40)}“`);
+      }
+    }
+    return findings;
+  }, min);
+}
+
 /** Mindestgröße der Trefferfläche (ROADMAP §4, §9: Touch-Ziele ≥ 44 px). */
 export const MIN_TOUCH_TARGET_PX = 44;
 

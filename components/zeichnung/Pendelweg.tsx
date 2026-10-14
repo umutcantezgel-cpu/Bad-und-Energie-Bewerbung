@@ -466,7 +466,7 @@ export function Pendelweg({ ort, kursGrad, strasseKm, luftlinieKm, sitz = 'Firme
         d={`M${nord.x} ${nord.y + 24}V${nord.y + 2}M${nord.x - 5} ${nord.y + 7}L${nord.x} ${nord.y + 2}L${nord.x + 5} ${nord.y + 7}`}
         data-nordpfeil=""
       />
-      <text x={nord.x} y={nord.y + 34} textAnchor="middle" dominantBaseline="central" fontSize={12} className={styles.pendelSchrift}>
+      <text x={nord.x} y={nord.y + 34} textAnchor="middle" dominantBaseline="central" fontSize={SCHRIFT} className={styles.pendelSchrift}>
         N
       </text>
 
@@ -474,14 +474,14 @@ export function Pendelweg({ ort, kursGrad, strasseKm, luftlinieKm, sitz = 'Firme
       <g data-massstabsleiste="" data-teilung-km={leiste.teilung}>
         <rect x={leiste.x} y={leiste.y} width={teil} height={LEISTE.balken} strokeWidth={FEIN} className={cn(styles.pendelLinie, styles.pendelVoll)} />
         <rect x={round1(leiste.x + teil)} y={leiste.y} width={teil} height={LEISTE.balken} strokeWidth={FEIN} className={cn(styles.pendelLinie, styles.pendelPunktRing)} />
-        <g className={styles.pendelSkala} fontSize={12} dominantBaseline="central" textAnchor="middle">
+        <g className={styles.pendelSkala} fontSize={SCHRIFT} dominantBaseline="central" textAnchor="middle">
           {leiste.werte.map((km, i) => (
             <text key={km} x={round1(leiste.x + i * teil)} y={leiste.y + LEISTE.balken + 10}>
               {km}
             </text>
           ))}
           {/* Einheit hinter der letzten Zahl (die Zahlen stehen mittig unter ihren Teilstrichen) */}
-          <text x={round1(leiste.x + 2 * teil + 4 + String(leiste.werte[2]).length * 3.6)} y={leiste.y + LEISTE.balken + 10} textAnchor="start">
+          <text x={round1(leiste.x + 2 * teil + 4 + String(leiste.werte[2]).length * SCHRIFT * 0.3)} y={leiste.y + LEISTE.balken + 10} textAnchor="start">
             km
           </text>
           <text x={leiste.x} y={leiste.y + LEISTE.balken + 24} textAnchor="start" className={styles.pendelEtikett}>

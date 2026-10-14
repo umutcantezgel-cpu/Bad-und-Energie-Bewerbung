@@ -52,19 +52,43 @@ export interface Ansicht {
   kreise: Array<{ cx: number; cy: number; r: number; art: 'kontur' | 'fein' | 'verdeckt' }>;
   rotor: Rotor | null;
   masse: Masslinie[];
-  /** Hinweise mit Hinweislinie (Etiketten in Versalien): Lage des Texts und Ziel am Gerät. */
-  hinweise: Array<{ text: string; ziel: Punkt; schrift: Punkt; anker: 'start' | 'end' }>;
-  /** Ausdehnung inklusive Maße und Hinweise (für die viewBox der Zeichnung). */
+  /** Ausdehnung inklusive Maße (für die viewBox der Zeichnung). */
   rahmen: { x0: number; y0: number; x1: number; y1: number };
 }
 
-const SCHRIFT = { haupt: 48, hinweis: 32 } as const;
+const SCHRIFT = { haupt: 48 } as const;
 /** Abstand der Maßlinien vom Körper und voneinander (mm). */
 const VERSATZ = 110;
 
+/** Geschätzte Breite einer Maßzahl (Martian Mono mit 75 % Breite, mit Reserve) in Einheiten. */
+const zahlBreite = (wert: string, schrift: number) => wert.length * schrift * 0.62;
+
+/**
+ * Maßzahl, die nicht zwischen die Maßhilfslinien passt (mit einer halben Schrifthöhe Luft), steht in Leserichtung vor
+ * dem Maß (DIN 406-11). Sonst berührte sie die Hilfslinien, etwa 107 mm Randabstand bei Maßzahlen ab 56 Einheiten.
+ */
+function passend(m: Masslinie, schrift: number): Masslinie {
+  const laenge = Math.hypot(m.b.x - m.a.x, m.b.y - m.a.y);
+  const breite = zahlBreite(m.text.wert, schrift);
+  if (breite + schrift * 0.5 <= laenge) return m;
+  const u = { x: (m.b.x - m.a.x) / laenge, y: (m.b.y - m.a.y) / laenge };
+  const weg = laenge / 2 + breite / 2 + schrift * 0.25;
+  return { ...m, text: { ...m.text, x: r1(m.text.x - u.x * weg), y: r1(m.text.y - u.y * weg) } };
+}
+
+/**
+ * Waagerechte Maßzahl zwischen `x0` und `x1` halten (mit einer viertel Schrifthöhe Luft), wenn eine Maßhilfslinie
+ * einer anderen Kette durch ihre Zeile läuft: Die Zahl rückt so wenig wie nötig von der Mitte weg.
+ */
+function zwischen(m: Masslinie, schrift: number, x0: number, x1: number): Masslinie {
+  const halb = zahlBreite(m.text.wert, schrift) / 2 + schrift * 0.25;
+  const x = Math.min(Math.max(m.text.x, x0 + halb), x1 - halb);
+  return { ...m, text: { ...m.text, x: r1(x) } };
+}
+
 /** Maßlinie mit den Werten dieser Zeichnungen (45°-Striche 14, Überstand 16, Maßzahl über der Linie). */
 const ketteMit = (schrift: number) => (von: Punkt, bis: Punkt, abstand: number, wert: number) =>
-  masslinie({ von, bis, abstand, wert, strich: 14, ueberstand: 16, schriftAbstand: schrift * 0.62 });
+  passend(masslinie({ von, bis, abstand, wert, strich: 14, ueberstand: 16, schriftAbstand: schrift * 0.62 }), schrift);
 
 /** Punkt in Polarkoordinaten um den Ursprung (Grad, 0 = rechts, im Uhrzeigersinn). */
 function polar(r: number, grad: number): Punkt {
@@ -104,16 +128,11 @@ function huelle(ansicht: Omit<Ansicht, 'rahmen'>, rand: number, schrift: number 
   const ys: number[] = [0, ansicht.boden];
   for (const m of ansicht.masse) {
     // Maßzahl: grob als Kasten um die Mitte (Breite je Ziffer 0,6 em, gedreht bei senkrechten Maßen)
-    const breite = m.text.wert.length * schrift * 0.62;
+    const breite = zahlBreite(m.text.wert, schrift);
     const senkrecht = Math.abs(m.text.winkel) === 90;
     const [bx, by] = senkrecht ? [schrift * 0.6, breite / 2] : [breite / 2, schrift * 0.6];
     xs.push(m.a.x, m.b.x, m.text.x - bx, m.text.x + bx);
     ys.push(m.a.y, m.b.y, m.text.y - by, m.text.y + by);
-  }
-  for (const h of ansicht.hinweise) {
-    const breite = h.text.length * SCHRIFT.hinweis * 0.68;
-    xs.push(h.ziel.x, h.anker === 'start' ? h.schrift.x + breite : h.schrift.x - breite);
-    ys.push(h.ziel.y, h.schrift.y - 24, h.schrift.y + 24);
   }
   return { x0: Math.min(...xs) - rand, y0: Math.min(...ys) - rand, x1: Math.max(...xs) + rand, y1: Math.max(...ys) + rand };
 }
@@ -189,12 +208,12 @@ export function vorderansicht(g: Aussengeraet, { detail = 'voll', massketten = '
   const rotor: Rotor | null = { cx, cy, r: rr, nabe, blaetter: rotorBlaetter(rr, nabe, g.rotor.blaetter) };
 
   const masse: Masslinie[] = [];
-  const hinweise: Ansicht['hinweise'] = [];
   if (massketten) {
     // DIN 406: kleine Maße innen, das Gesamtmaß außen
     const zeilen = massketten === 'voll' ? 3 : 1;
     if (massketten === 'voll') {
-      masse.push(kette({ x: 0, y: boden }, { x: kond.x, y: boden }, VERSATZ, g.kondensat.vonLinks.mm));
+      // Die Hilfslinie der Halterung (Randabstand) läuft durch die Zeile des Kondensatmaßes: Zahl rechts davon
+      masse.push(zwischen(kette({ x: 0, y: boden }, { x: kond.x, y: boden }, VERSATZ, g.kondensat.vonLinks.mm), schrift, kx[0], kond.x));
       masse.push(kette({ x: 0, y: boden }, { x: kx[0], y: boden }, VERSATZ * 2, g.konsolen.randabstand.mm));
       masse.push(kette({ x: kx[0], y: boden }, { x: kx[1], y: boden }, VERSATZ * 2, g.konsolen.abstand.mm));
     }
@@ -202,7 +221,7 @@ export function vorderansicht(g: Aussengeraet, { detail = 'voll', massketten = '
     // Höhe ab Aufstellfläche wie in Bild 4
     masse.push(kette({ x: B, y: boden }, { x: B, y: 0 }, VERSATZ, H));
   }
-  const ohne = { ansicht: 'vorne' as const, breite: B, hoehe: H, boden, unterkante, kontur, fein, verdeckt, mittellinie, kreise, rotor, masse, hinweise };
+  const ohne = { ansicht: 'vorne' as const, breite: B, hoehe: H, boden, unterkante, kontur, fein, verdeckt, mittellinie, kreise, rotor, masse };
   return { ...ohne, rahmen: huelle(ohne, 24, schrift) };
 }
 
@@ -246,7 +265,6 @@ export function seitenansicht(g: Aussengeraet, { detail = 'voll', massketten = '
   }
 
   const masse: Masslinie[] = [];
-  const hinweise: Ansicht['hinweise'] = [];
   if (massketten) {
     const zeilen = massketten === 'voll' ? 2 : 1;
     masse.push(kette({ x: 0, y: 0 }, { x: T, y: 0 }, -VERSATZ, T));
@@ -254,12 +272,11 @@ export function seitenansicht(g: Aussengeraet, { detail = 'voll', massketten = '
     masse.push(kette({ x: -ue, y: boden }, { x: T + ue, y: boden }, VERSATZ * zeilen, g.tiefeMitKonsolen.mm));
     // 202 und die Höhe zählen ab der Aufstellfläche (Bild 4: Maßhilfslinie an der Unterkante der Halterungen)
     masse.push(kette({ x: T, y: boden }, { x: T, y: hy }, hl + VERSATZ, g.hydraulik.hoehe.mm));
-    if (massketten === 'voll') {
-      masse.push(kette({ x: 0, y: boden }, { x: 0, y: 0 }, -VERSATZ, H));
-      hinweise.push({ text: 'Anschlüsse Heizwasser', ziel: { x: T + hl * 0.5, y: hy - hr }, schrift: { x: T + hl * 0.5 + 60, y: hy - 260 }, anker: 'start' });
-    }
+    // Die Anschlüsse benennt das Schriftfeld (HTML): Ein Hinweis mit Hinweislinie im Bild hätte am Handy nie die
+    // Mindestgröße der Schrift erreicht (5,3 px, Prüfung E-029, Befund 7)
+    if (massketten === 'voll') masse.push(kette({ x: 0, y: boden }, { x: 0, y: 0 }, -VERSATZ, H));
   }
-  const ohne = { ansicht: 'seite' as const, breite: T, hoehe: H, boden, unterkante, kontur, fein, verdeckt, mittellinie, kreise, rotor: null, masse, hinweise };
+  const ohne = { ansicht: 'seite' as const, breite: T, hoehe: H, boden, unterkante, kontur, fein, verdeckt, mittellinie, kreise, rotor: null, masse };
   return { ...ohne, rahmen: huelle(ohne, 24, schrift) };
 }
 

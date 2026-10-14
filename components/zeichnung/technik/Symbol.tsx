@@ -7,20 +7,7 @@ export interface SymbolProps extends Lage {
   className?: string;
 }
 
-/**
- * Kennbuchstaben in Symbolen (T am Fühler, M am Stellantrieb): 12 Einheiten, die Mindestgröße der Schrift auf der
- * Website (e2e/pages.spec.ts); Martian Mono mit 75 % Breite passt in Kreis (r 7) und Kasten (14 × 12).
- */
-export const SYMBOL_SCHRIFT = 12;
-
 const form = (f: SymbolForm, i: number) => {
-  if ('text' in f) {
-    return (
-      <text key={i} x={f.x} y={f.y} className={t.schrift} fontSize={SYMBOL_SCHRIFT} textAnchor="middle" dominantBaseline="central">
-        {f.text}
-      </text>
-    );
-  }
   const klasse = 'fein' in f && f.fein ? cn(t.fein) : cn(t.kontur, t.flaeche);
   if ('d' in f) return <path key={i} d={f.d} className={f.voll ? cn(t.kontur, t.voll) : klasse} />;
   if ('cx' in f) return <circle key={i} cx={f.cx} cy={f.cy} r={f.r} className={klasse} />;

@@ -22,10 +22,12 @@ const CENTER_LABEL_GAP = CENTER_DOT_EXTENT + 4;
 export const CENTER_LABEL_ID = '__center';
 
 /**
- * Landscape labels: 12 units; road numbers in Martian Mono, river names in Atkinson. Lives here, not in
- * landscape.ts, so the client graphic does not pull the landscape anchors into its bundle.
+ * Landscape labels: 13 units (at 390 px the graphic renders at 0.96 : 1, so 12.5 px drawn; 12 units stayed at
+ * 11.5 px, below the 12 px minimum, review E-029 finding 7); road numbers in Martian Mono, river names in
+ * Atkinson. Lives here, not in landscape.ts, so the client graphic does not pull the landscape anchors into its
+ * bundle.
  */
-export const LANDSCAPE_LABEL_FONT_SIZE = 12;
+export const LANDSCAPE_LABEL_FONT_SIZE = 13;
 
 // --- Ortspunkte frei vom Haus ------------------------------------------------------------
 

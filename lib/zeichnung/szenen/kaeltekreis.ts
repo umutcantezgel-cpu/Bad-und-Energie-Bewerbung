@@ -24,7 +24,7 @@ export const KAELTEKREIS_SYMBOLE: readonly SchemaSymbol[] = [
   symbol('verdampfer', 'verdampfer', { x: 160, y: 270, massstab: S }, { wert: 'Verdampfer', x: 206, y: 300, anker: 'start' }),
   symbol('verdichter', 'verdichter', { x: 380, y: 120, massstab: S }, { wert: 'Verdichter', x: 330, y: 190, anker: 'end' }),
   symbol('verfluessiger', 'plattenwaermetauscher', { x: 600, y: 270, massstab: S }, { wert: 'Verflüssiger', x: 600, y: 352, anker: 'middle' }),
-  symbol('expansionsventil', 'expansionsventil', { x: 380, y: 420, drehung: 180, massstab: S }, { wert: 'Expansionsventil', x: 336, y: 372, anker: 'end' }),
+  symbol('expansionsventil', 'expansionsventil', { x: 380, y: 420, drehung: 180, massstab: S }, { wert: 'Expansionsventil', x: 352, y: 372, anker: 'end' }),
 ];
 
 const p = (key: string, anschluss: string) => an(KAELTEKREIS_SYMBOLE, key, anschluss);
@@ -41,20 +41,21 @@ export const KAELTEKREIS_WEGE: readonly SchemaLeitung[] = [
     'heissgas',
     'kaeltemittel',
     [p('verdichter', 'aus'), { x: 520, y: 120 }, { x: 520, y: p('verfluessiger', 'linksEin').y }, p('verfluessiger', 'linksEin')],
-    // Neben der Fallleitung zum Verflüssiger (oben stehen Verdichter und Druckgrenze)
-    { wert: 'Heißgas', x: 534, y: 176, anker: 'start' },
+    // Über dem Stück vom Verdichter zur Ecke (rechts der Fallleitung bliebe am Handy zu wenig Platz bis zum Gehäuse)
+    { wert: 'Heißgas', x: 432, y: 102, anker: 'start' },
   ),
   leitung(
     'fluessig',
     'kaeltemittel',
     [p('verfluessiger', 'linksAus'), { x: 520, y: p('verfluessiger', 'linksAus').y }, { x: 520, y: 420 }, p('expansionsventil', 'ein')],
-    { wert: 'flüssig', x: 534, y: 370, anker: 'start' },
+    // Unter der Ecke zum Expansionsventil
+    { wert: 'flüssig', x: 520, y: 448, anker: 'middle' },
   ),
   leitung(
     'nassdampf',
     'kaeltemittel',
     [p('expansionsventil', 'aus'), { x: 160, y: 420 }, p('verdampfer', 'ein')],
-    { wert: 'Nassdampf', x: 250, y: 448, anker: 'middle' },
+    { wert: 'Nassdampf', x: 236, y: 448, anker: 'middle' },
   ),
 ];
 
@@ -74,8 +75,11 @@ export const KAELTEKREIS_WASSER: readonly SchemaLeitung[] = [
   }),
 ];
 
-/** Grenze zwischen Hochdruck (rechts: Heißgas, flüssig) und Niederdruck (links: Nassdampf, Sauggas). */
-export const KAELTEKREIS_DRUCKGRENZE = Object.freeze({ x: 380, y0: 60, y1: 466 });
+/**
+ * Grenze zwischen Hochdruck (rechts: Heißgas, flüssig) und Niederdruck (links: Nassdampf, Sauggas); die Strich-Punkt-
+ * Linie reicht über das Gehäuse hinaus, darüber stehen die Etiketten (`schrift`: ihre Höhe).
+ */
+export const KAELTEKREIS_DRUCKGRENZE = Object.freeze({ x: 380, y0: 4, y1: 466, schrift: 20 });
 
 export const KAELTEKREIS_PFEILE: readonly SchemaPfeil[] = [
   pfeil('kaeltemittel', { x: 270, y: 120 }, { x: 1, y: 0 }),
@@ -86,5 +90,14 @@ export const KAELTEKREIS_PFEILE: readonly SchemaPfeil[] = [
   pfeil('ruecklauf', { x: 712, y: p('verfluessiger', 'rechtsEin').y }, { x: -1, y: 0 }),
 ];
 
-/** Außenluft tritt links in den Verdampfer (Etikett mit Pfeil außerhalb des Gehäuses). */
-export const KAELTEKREIS_LUFT = Object.freeze({ wert: 'Luft', x: 40, y: 240, pfeil: { von: { x: 18, y: 270 }, bis: { x: 108, y: 270 } } });
+/**
+ * Außenluft tritt links in den Verdampfer (Etikett mit Pfeil außerhalb des Gehäuses). Das Etikett steht senkrecht
+ * (`winkel` −90) im Rand links vom Gehäuse: Waagerecht passte es am Handy nicht zwischen Rand und Gehäuse.
+ */
+export const KAELTEKREIS_LUFT = Object.freeze({
+  wert: 'Luft',
+  x: 36,
+  y: 200,
+  winkel: -90,
+  pfeil: { von: { x: 18, y: 270 }, bis: { x: 108, y: 270 } },
+});

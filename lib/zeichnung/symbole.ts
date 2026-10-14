@@ -14,8 +14,7 @@ import { drehen, r1, type Punkt } from './norm';
 export type SymbolForm =
   | { d: string; voll?: boolean; fein?: boolean }
   | { cx: number; cy: number; r: number; fein?: boolean }
-  | { x: number; y: number; width: number; height: number; rx?: number; fein?: boolean }
-  | { text: string; x: number; y: number };
+  | { x: number; y: number; width: number; height: number; rx?: number; fein?: boolean };
 
 export interface SymbolDef {
   name: string;
@@ -25,6 +24,17 @@ export interface SymbolDef {
   halb: { x: number; y: number };
   anschluesse: Readonly<Record<string, Punkt>>;
   formen: readonly SymbolForm[];
+}
+
+/**
+ * Kennbuchstaben im Symbol (M am Stellantrieb, T am Fühler) als gezeichnete Striche um die Mitte (x | y), 6 Einheiten
+ * breit und 8 hoch: Sie gehören zum Bildzeichen wie Kreis und Dreieck und wachsen und schrumpfen mit ihm. Als Schrift
+ * hätten sie die Mindestgröße der Website nie erreicht (im Kreis mit r 7 am Handy rund 2 px, Prüfung E-029, Befund 7);
+ * den Namen jedes Symbols trägt die Legende darunter in HTML.
+ */
+export function kennbuchstabe(buchstabe: 'M' | 'T', x: number, y: number): string {
+  const [l, r, o, u] = [r1(x - 3), r1(x + 3), r1(y - 4), r1(y + 4)];
+  return buchstabe === 'M' ? `M${l} ${u}V${o}L${r1(x)} ${r1(y + 1)}L${r} ${o}V${u}` : `M${l} ${o}H${r}M${r1(x)} ${o}V${u}`;
 }
 
 /** Ventilkörper: zwei Dreiecke Spitze an Spitze (Durchgangsventil). */
@@ -98,7 +108,7 @@ export const SYMBOLE = {
       { d: 'M-7 12L0 0L7 12Z' },
       { d: 'M0 0V-10' },
       { x: -7, y: -22, width: 14, height: 12 },
-      { text: 'M', x: 0, y: -16 },
+      { d: kennbuchstabe('M', 0, -16), fein: true },
     ],
   },
   verdichter: {
@@ -134,7 +144,7 @@ export const SYMBOLE = {
     beschreibung: 'Messkreis mit T auf einer Stichleitung',
     halb: { x: 7, y: 20 },
     anschluesse: { an: { x: 0, y: 0 } },
-    formen: [{ d: 'M0 0V-7' }, { cx: 0, cy: -14, r: 7 }, { text: 'T', x: 0, y: -14 }],
+    formen: [{ d: 'M0 0V-7' }, { cx: 0, cy: -14, r: 7 }, { d: kennbuchstabe('T', 0, -14), fein: true }],
   },
   verdampfer: {
     name: 'Verdampfer (Lamellen-Wärmeübertrager, Luft)',

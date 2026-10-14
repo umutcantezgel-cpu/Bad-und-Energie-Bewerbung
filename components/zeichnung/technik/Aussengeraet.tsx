@@ -5,7 +5,7 @@ import { ansichtVon, ANSICHT_SCHRIFT, type Ansicht, type AnsichtId, type Massket
 import type { Aussengeraet as Geraetedaten } from '@/lib/zeichnung/geraete/typen';
 import { geraetTitel } from '@/lib/zeichnung/geraete/titel';
 import { wirksameVariante, type Variante } from '@/lib/zeichnung/marke';
-import { SCHRIFTFELD, r1, versal } from '@/lib/zeichnung/norm';
+import { SCHRIFTFELD, r1 } from '@/lib/zeichnung/norm';
 import { cn } from '@/lib/utils/cn';
 import bewegung from '../bewegung/dauer.module.css';
 import t from './technik.module.css';
@@ -90,14 +90,6 @@ function Masse({ a, schrift }: { a: Ansicht; schrift: number }) {
             dominantBaseline="central"
           >
             {m.text.wert}
-          </text>
-        </g>
-      ))}
-      {a.hinweise.map((h) => (
-        <g key={h.text}>
-          <path d={`M${r1(h.ziel.x)} ${r1(h.ziel.y)}L${r1(h.schrift.x)} ${r1(h.schrift.y + 18)}H${r1(h.schrift.x + (h.anker === 'start' ? 1 : -1) * h.text.length * ANSICHT_SCHRIFT.hinweis * 0.68)}`} className={t.mass} />
-          <text x={h.schrift.x} y={h.schrift.y} className={t.etikett} fontSize={ANSICHT_SCHRIFT.hinweis} textAnchor={h.anker} dominantBaseline="central">
-            {versal(h.text)}
           </text>
         </g>
       ))}
@@ -186,6 +178,11 @@ export function Aussengeraet({
             {g.name} · {ANSICHT_NAME[ansicht]}
           </span>
           <span className="text-etikett">{SCHRIFTFELD}</span>
+          {ansicht === 'seite' && massketten === 'voll' ? (
+            <span className={t.quelle}>
+              Hinten, rechts im Bild: die Anschlüsse für das Heizwasser, {g.hydraulik.hoehe.mm}&nbsp;mm über der Aufstellfläche.
+            </span>
+          ) : null}
           <span className={t.quelle}>
             Maße nach {g.quelle.titel}, Dok.-Nr. {g.quelle.dokument} ({g.quelle.ausgabe}); Form neutral gezeichnet, nicht die
             Gestaltung des Herstellers.

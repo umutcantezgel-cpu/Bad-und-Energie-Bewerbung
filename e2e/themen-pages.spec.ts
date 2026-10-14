@@ -1,11 +1,12 @@
 import { expect, test } from '@playwright/test';
-import { THEMEN_PAGES, waitForSettled } from './support/site';
+import { THEMEN_PAGES, findSmallText, waitForSettled } from './support/site';
 
 /**
  * Alle Themenseiten (E-028): Hub /arbeiten-bei-uns und die fünf Themen. Nur im Projekt mobile-light (die vier Projekte
  * laufen über die Stichproben in ROUTES, mit axe): Status 200, genau eine h1, Canonical auf sich selbst, bei 320 px der
  * kurze Pfad eine Stufe zurück, ab 40em der ganze Pfad mit der Seite als letzter Stufe, ein JSON-LD-Graph ohne
- * JobPosting und FAQPage, kein horizontaler Scroll bei 320 px.
+ * JobPosting und FAQPage, kein horizontaler Scroll bei 320 px, Schrift bei 320 und 390 px gezeichnet ≥ 12 px (auch in
+ * den Zeichnungen, Prüfung E-029, Befund 7).
  */
 
 test.beforeEach(() => {
@@ -55,5 +56,10 @@ for (const thema of THEMEN_PAGES) {
       return { scrollWidth: root.scrollWidth, width, wide };
     });
     expect(overflow.scrollWidth, `Zu breit: ${overflow.wide.join(', ')}`).toBeLessThanOrEqual(overflow.width);
+
+    // Schrift gezeichnet ≥ 12 px auf der schmalsten Breite und auf der des Handy-Projekts
+    expect(await findSmallText(page), 'Text kleiner als 12 px bei 320 px').toEqual([]);
+    await page.setViewportSize({ width: 390, height: 844 });
+    expect(await findSmallText(page), 'Text kleiner als 12 px bei 390 px').toEqual([]);
   });
 }

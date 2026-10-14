@@ -1061,9 +1061,11 @@
   min-width: 0;
 }
 
+/* Am Handy schmaler als die Vorderansicht, aber nie unter 232 px: Darunter blieben die Maßzahlen der Seitenansicht
+   (48 Einheiten in rund 930) unter 12 px (Prüfung E-029, Befund 7; Wächter in components/zeichnung/__tests__) */
 @media (max-width: 47.99em) {
   .geraetSeite {
-    max-width: 62%;
+    max-width: 26rem;
   }
 }
 

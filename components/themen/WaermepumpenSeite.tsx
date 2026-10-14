@@ -69,7 +69,8 @@ function Technik() {
         <p className={styles.absatz}>{geraetSteckbrief(COMPRESS_AW_S).text}</p>
       </div>
       <div className={styles.geraete}>
-        <Aussengeraet ansicht="vorne" massketten="voll" className={styles.geraetVorne} />
+        {/* Maßzahlen 60 Einheiten: bei 280 px Breite (320 px Bildschirm) gezeichnet 12 px (Prüfung E-029, Befund 7) */}
+        <Aussengeraet ansicht="vorne" massketten="voll" massSchrift={60} className={styles.geraetVorne} />
         <Aussengeraet ansicht="seite" massketten="voll" className={styles.geraetSeite} />
       </div>
     </Abschnitt>

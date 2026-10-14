@@ -218,15 +218,19 @@
   color: var(--ink);
 }
 
-/* Etiketten der Schemata: Größe je Breite der Fläche (die Zeichnung skaliert, die Schrift soll lesbar bleiben) */
+/* Etiketten der Schemata: Größe je Breite der Fläche (die Zeichnung skaliert, die Schrift soll lesbar bleiben). Jede
+   Stufe ist so gewählt, dass die Schrift an der schmalsten Fläche ihres Bereichs gezeichnet mindestens 12 px misst
+   (Einheiten × Breite / viewBox-Breite; Prüfung E-029, Befund 7): über 40rem ab 640 px, bis 40rem ab 416 px, bis
+   26rem ab 280 px (320 px Bildschirm abzüglich Rand). Kältekreis 860 Einheiten breit, Anlagenschema 1200.
+   Wächter: components/zeichnung/__tests__/technik.test.ts; gezeichnet gemessen in e2e/themen-pages.spec.ts. */
 .kaeltekreisBild {
-  --etikett: 15px;
-  --symbol-etikett: 14px;
+  --etikett: 17px;
+  --symbol-etikett: 17px;
 }
 
 .anlagenBild {
-  --etikett: 20px;
-  --symbol-etikett: 17px;
+  --etikett: 23px;
+  --symbol-etikett: 23px;
 }
 
 .schemaText {
@@ -235,17 +239,26 @@
 
 @container (max-width: 40rem) {
   .kaeltekreisBild {
-    --etikett: 24px;
+    --etikett: 25px;
   }
 
   .anlagenBild {
-    --etikett: 34px;
+    --etikett: 35px;
   }
 }
 
 @container (max-width: 26rem) {
   .kaeltekreisBild {
-    --etikett: 30px;
+    --etikett: 37px;
+  }
+
+  .anlagenBild {
+    --etikett: 52px;
+  }
+
+  /* So groß ohne Sperrung: Die Etiketten passen zwischen Gehäuse, Wand und Leitungen */
+  .schemaText {
+    letter-spacing: 0;
   }
 }
 

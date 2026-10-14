@@ -55,7 +55,7 @@ export const ANLAGENSCHEMA_SYMBOLE: readonly SchemaSymbol[] = [
   symbol('stw', 'fuehler', { x: 1036, y: 310, massstab: S }),
   // Verbraucher
   symbol('heizkoerper', 'heizkoerper', { x: 1080, y: 162, massstab: S }, { wert: 'Heizkörper', x: 1080, y: 220, anker: 'middle' }),
-  symbol('fussboden', 'fussbodenheizung', { x: 1100, y: 320, massstab: S }, { wert: 'Fußbodenheizung', x: 1188, y: 362, anker: 'end' }),
+  symbol('fussboden', 'fussbodenheizung', { x: 1100, y: 320, massstab: S }, { wert: 'Fußbodenheizung', x: 1140, y: 362, anker: 'end' }),
 ];
 
 /** Abzweig der Fußbodenheizung vom Heizkörper-Vorlauf hinter dem Umschaltventil. */
@@ -126,8 +126,8 @@ export const ANLAGENSCHEMA_PFEILE: readonly SchemaPfeil[] = [
 
 /** Beschriftung der Bereiche (Versalien, immer sichtbar). */
 export const ANLAGENSCHEMA_TEXTE = Object.freeze([
-  { wert: 'Außeneinheit', x: 20, y: 156, anker: 'start' as const },
-  { wert: 'Inneneinheit', x: 476, y: 56, anker: 'start' as const },
+  { wert: 'Außeneinheit', x: 20, y: 150, anker: 'start' as const },
+  { wert: 'Inneneinheit', x: 476, y: 50, anker: 'start' as const },
   { wert: 'Erdreich', x: 30, y: 600, anker: 'start' as const },
   { wert: 'Heizkreis', x: 1180, y: 104, anker: 'end' as const },
 ]);

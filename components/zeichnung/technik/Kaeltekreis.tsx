@@ -53,16 +53,24 @@ export function Kaeltekreis({ bewegt = false, titel = KAELTEKREIS_TITEL, legende
           <rect x={g.x} y={g.y} width={g.breite} height={g.hoehe} className={t.kontur} data-geraet-grenze="" />
           {/* Niederdruck | Hochdruck */}
           <path d={`M${druck.x} ${druck.y0}V${druck.y1}`} className={t.mittellinie} />
-          <text x={druck.x - 12} y={druck.y0 + 10} className={cn(t.etikett, t.schemaText)} fontSize={16} textAnchor="end" dominantBaseline="central">
+          <text x={druck.x - 12} y={druck.schrift} className={cn(t.etikett, t.schemaText)} fontSize={16} textAnchor="end" dominantBaseline="central">
             {versal('Niederdruck')}
           </text>
-          <text x={druck.x + 12} y={druck.y0 + 10} className={cn(t.etikett, t.schemaText)} fontSize={16} textAnchor="start" dominantBaseline="central">
+          <text x={druck.x + 12} y={druck.schrift} className={cn(t.etikett, t.schemaText)} fontSize={16} textAnchor="start" dominantBaseline="central">
             {versal('Hochdruck')}
           </text>
           {/* Außenluft in den Verdampfer */}
           <path d={`M${luft.pfeil.von.x} ${luft.pfeil.von.y}H${luft.pfeil.bis.x - 12}`} className={t.fein} />
           <path d={fliesspfeil(luft.pfeil.bis, { x: 1, y: 0 }, 12, 9)} className={t.voll} />
-          <text x={luft.x} y={luft.y} className={cn(t.etikett, t.schemaText)} fontSize={16} textAnchor="middle" dominantBaseline="central">
+          <text
+            x={luft.x}
+            y={luft.y}
+            transform={`rotate(${luft.winkel} ${luft.x} ${luft.y})`}
+            className={cn(t.etikett, t.schemaText)}
+            fontSize={16}
+            textAnchor="middle"
+            dominantBaseline="central"
+          >
             {versal(luft.wert)}
           </text>
 

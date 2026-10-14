@@ -15,11 +15,14 @@ import { ANLAGENSCHEMA_KAELTE, ANLAGENSCHEMA_LEITUNGEN, ANLAGENSCHEMA_RAHMEN } f
 import { HEIZKOERPER_LAGE, LEITUNGEN as HAUS_LEITUNGEN } from '@/lib/zeichnung/szenen/hausschnitt';
 import { KAELTEKREIS_GERAET, KAELTEKREIS_RAHMEN, KAELTEKREIS_WASSER, KAELTEKREIS_WEGE } from '@/lib/zeichnung/szenen/kaeltekreis';
 import { flussMuster, flussStrecken } from '@/lib/zeichnung/szenen/schema';
+import { ANSICHT_SCHRIFT, ansichtVon } from '@/lib/zeichnung/geraete/ansicht';
+import { SYMBOLE, kennbuchstabe, type SymbolId } from '@/lib/zeichnung/symbole';
 import { DauerSteuerung } from '../bewegung/DauerSteuerung';
 import { Anlagenschema } from '../technik/Anlagenschema';
 import { Aussengeraet, type AussengeraetProps } from '../technik/Aussengeraet';
 import { HausschnittKlein } from '../technik/Hausschnitt';
 import { Kaeltekreis } from '../technik/Kaeltekreis';
+import { Symbol } from '../technik/Symbol';
 
 const ROOT = path.resolve(__dirname, '../../..');
 const quelle = (rel: string) => readFileSync(path.join(ROOT, rel), 'utf8');
@@ -116,8 +119,102 @@ describe('Außengerät: maßstäblich aus dem Geräte-Modul (K-010)', () => {
   });
 });
 
-describe('Schrift in den Zeichnungen (Mindestgröße der Website, e2e/pages.spec.ts)', () => {
-  it('jede Schrift hat mindestens 12 Einheiten, auch die Kennbuchstaben in Symbolen (T, M)', () => {
+describe('Schrift in den Zeichnungen: gezeichnet mindestens 12 px an der kleinsten vorgesehenen Breite (Prüfung E-029, Befund 7)', () => {
+  /** Kleinste Breite einer Inhaltsspalte: 320 px Bildschirm abzüglich zweimal 20 px Rand. */
+  const KLEINSTE_SPALTE = 280;
+  const MINDEST_PX = 12;
+  const technik = ohneKommentare(quelle('components/zeichnung/technik/technik.module.css'));
+  /** Wert einer Eigenschaft der Regel `.klasse` im Block (ohne @container: oberste Ebene). */
+  const wert = (block: string, klasse: string, name: string) => {
+    const regel = block.match(new RegExp(`(?:^|\\n)\\s*\\.${klasse} \\{([^}]*)\\}`));
+    const treffer = regel?.[1].match(new RegExp(`${name}: ([\\d.]+)px;`));
+    return treffer ? Number(treffer[1]) : null;
+  };
+  const container = (bedingung: string) => {
+    const i = technik.indexOf(`@container (${bedingung}) {`);
+    expect(i, bedingung).toBeGreaterThan(-1);
+    const rest = technik.slice(i);
+    // Bis zur schließenden Klammer des @container-Blocks (eine Ebene tiefer: die Regeln)
+    let tiefe = 0;
+    for (let j = rest.indexOf('{'); j < rest.length; j++) {
+      if (rest[j] === '{') tiefe++;
+      if (rest[j] === '}' && --tiefe === 0) return rest.slice(0, j + 1);
+    }
+    return rest;
+  };
+  const oben = technik.replace(/@(?:container|media)[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/g, '');
+
+  it('Schemata: Etiketten je Stufe der Fläche, an ihrer schmalsten Breite gezeichnet ≥ 12 px', () => {
+    // Stufen der Fläche (Container .schema): über 40rem, bis 40rem (ab 26rem), bis 26rem (ab der kleinsten Spalte)
+    const stufen = [
+      { block: oben, ab: 40 * 16 },
+      { block: container('max-width: 40rem'), ab: 26 * 16 },
+      { block: container('max-width: 26rem'), ab: KLEINSTE_SPALTE },
+    ];
+    for (const { klasse, breite } of [
+      { klasse: 'kaeltekreisBild', breite: KAELTEKREIS_RAHMEN.breite },
+      { klasse: 'anlagenBild', breite: ANLAGENSCHEMA_RAHMEN.breite },
+    ]) {
+      for (const { block, ab } of stufen) {
+        const einheiten = wert(block, klasse, '--etikett');
+        expect(einheiten, `${klasse} ab ${ab} px`).not.toBeNull();
+        expect((einheiten! * ab) / breite, `${klasse} ab ${ab} px`).toBeGreaterThanOrEqual(MINDEST_PX);
+      }
+      // Beschriftung der Symbole erst ab 40rem sichtbar, dann ebenfalls ≥ 12 px
+      const symbol = wert(oben, klasse, '--symbol-etikett');
+      expect((symbol! * 640) / breite, `${klasse} Symbole`).toBeGreaterThanOrEqual(MINDEST_PX);
+    }
+    expect(oben).toMatch(/\.symbolText \{\s*display: none;/);
+    expect(container('min-width: 40rem')).toMatch(/\.symbolText \{\s*display: inline;/);
+    // Jede Schrift der Schemata richtet sich nach diesen Rollen (die font-size im Markup gilt nur ohne CSS)
+    for (const m of [html(createElement(Kaeltekreis)), html(createElement(Anlagenschema))]) {
+      const texte = [...m.matchAll(/<text [^>]*class="([^"]*)"/g)].map((t) => t[1]);
+      expect(texte.length).toBeGreaterThan(5);
+      for (const k of texte) expect(k).toMatch(/_(?:schemaText|symbolText)_/);
+    }
+  });
+
+  it('Kennbuchstaben in Symbolen (M, T) sind gezeichnet, keine Schrift; Symbole und Legende ohne <text>', () => {
+    for (const id of Object.keys(SYMBOLE) as SymbolId[]) {
+      const m = html(createElement('svg', null, createElement(Symbol, { id, x: 0, y: 0 })));
+      expect(m, id).not.toContain('<text');
+    }
+    expect(SYMBOLE.fuehler.formen).toContainEqual({ d: kennbuchstabe('T', 0, -14), fein: true });
+    expect(SYMBOLE.dreiwegeventil.formen).toContainEqual({ d: kennbuchstabe('M', 0, -16), fein: true });
+    // M: zwei Senkrechte und die Spitze in der Mitte; T: Balken und Stamm; beide 6 × 8 um die Mitte
+    expect(kennbuchstabe('M', 0, 0)).toBe('M-3 4V-4L0 1L3 -4V4');
+    expect(kennbuchstabe('T', 0, 0)).toBe('M-3 -4H3M0 -4V4');
+  });
+
+  it('Außeneinheit: Maßzahlen je Einsatz an der kleinsten Breite gezeichnet ≥ 12 px', () => {
+    // Kleinste Darstellungsbreite je Einsatz (gemessen, e2e prüft die gezeichnete Größe): Wärmepumpen-Seite einspaltig
+    // auf 320 px (280), Seitenansicht zweispaltig ab 48em (240), Stellenkopf am Handy (256), Einzelheit X der
+    // Startseite (mindestens 12.5rem = 200)
+    const einsaetze = [
+      { datei: 'components/themen/WaermepumpenSeite.tsx', muster: /ansicht="vorne" massketten="voll" massSchrift=\{(\d+)\}/, ansicht: 'vorne', massketten: 'voll', breite: KLEINSTE_SPALTE },
+      { datei: 'components/themen/WaermepumpenSeite.tsx', muster: /ansicht="seite" massketten="voll"(?: massSchrift=\{(\d+)\})?/, ansicht: 'seite', massketten: 'voll', breite: 240 },
+      { datei: 'components/themen/WaermepumpenSeite.tsx', muster: /panel=\{<Aussengeraet ansicht="vorne" massketten="haupt"[^>]*massSchrift=\{(\d+)\}/, ansicht: 'vorne', massketten: 'haupt', breite: KLEINSTE_SPALTE },
+      { datei: 'components/jobs/stelle/Kopfbild.tsx', muster: /<Aussengeraet ansicht="vorne" massketten="haupt"[^>]*massSchrift=\{(\d+)\}/, ansicht: 'vorne', massketten: 'haupt', breite: 256 },
+      { datei: 'components/home/einstieg/Einstieg.tsx', muster: /<Aussengeraet ansicht="vorne" massketten="haupt"[^>]*massSchrift=\{(\d+)\}/, ansicht: 'vorne', massketten: 'haupt', breite: 200 },
+    ] as const;
+    for (const e of einsaetze) {
+      const treffer = quelle(e.datei).match(e.muster);
+      expect(treffer, `${e.datei} ${e.ansicht}`).not.toBeNull();
+      const schrift = treffer![1] ? Number(treffer![1]) : ANSICHT_SCHRIFT.haupt;
+      const a = ansichtVon(COMPRESS_AW_S, e.ansicht, { detail: 'voll', massketten: e.massketten, schrift });
+      const px = (schrift * e.breite) / (a.rahmen.x1 - a.rahmen.x0);
+      expect(px, `${e.datei} ${e.ansicht} ${e.massketten}: ${schrift} Einheiten`).toBeGreaterThanOrEqual(MINDEST_PX);
+    }
+    // Die Breiten oben gelten, solange die Seite sie so setzt
+    expect(quelle('components/home/einstieg/einstieg.module.css')).toMatch(/width: max\(calc\(250 \* var\(--e\)\), 12\.5rem\);/);
+    expect(ohneKommentare(quelle('components/themen/themen.module.css'))).toMatch(/@media \(max-width: 47\.99em\) \{\s*\.geraetSeite \{\s*max-width: 26rem;/);
+    // Keine Hinweise mit Hinweislinie mehr im Bild; die Anschlüsse nennt das Schriftfeld
+    const seite = geraet({ ansicht: 'seite', massketten: 'voll' });
+    expect(seite).not.toMatch(/ANSCHLÜSSE|_etikett_/);
+    expect(seite).toContain(`die Anschlüsse für das Heizwasser, ${COMPRESS_AW_S.hydraulik.hoehe.mm}\u00a0mm über der Aufstellfläche`);
+  });
+
+  it('jede Schrift im Markup hat mindestens 12 Einheiten (Hausschnitt, Geräte, Schemata ohne CSS)', () => {
     const markup = [
       html(createElement(Anlagenschema)),
       html(createElement(Kaeltekreis)),
@@ -128,8 +225,6 @@ describe('Schrift in den Zeichnungen (Mindestgröße der Website, e2e/pages.spec
     const groessen = [...markup.matchAll(/font-size="([\d.]+)"/g)].map((m) => Number(m[1]));
     expect(groessen.length).toBeGreaterThan(10);
     for (const g of groessen) expect(g).toBeGreaterThanOrEqual(12);
-    expect(markup).toMatch(/>T<\/text>/);
-    expect(markup).toMatch(/>M<\/text>/);
   });
 });
 

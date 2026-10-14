@@ -734,7 +734,9 @@
     justify-self: start;
     position: relative;
     z-index: 1;
-    width: calc(250 * var(--e));
+    /* Nie unter 12.5rem: Die Maßzahlen (78 Einheiten in 1258) messen gezeichnet sonst unter 12 px (bei 64em waren es
+       160 px Breite und 9,9 px Schrift; Prüfung E-029, Befund 7) */
+    width: max(calc(250 * var(--e)), 12.5rem);
     margin: 0 0 calc(412 * var(--e)) calc(16 * var(--e));
     padding: 0;
     background-color: transparent;

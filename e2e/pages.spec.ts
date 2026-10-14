@@ -1,13 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { ROUTES, expectNoAxeViolations, findSmallTouchTargets, isTouch, waitForSettled } from './support/site';
+import { ROUTES, expectNoAxeViolations, findSmallText, findSmallTouchTargets, isTouch, waitForSettled } from './support/site';
 
 /**
- * Jede Route (ROADMAP §9, §14): Status, genau eine h1, Landmark main#main, Schrift ≥ 12 px,
+ * Jede Route (ROADMAP §9, §14): Status, genau eine h1, Landmark main#main, Schrift ≥ 12 px (in SVG gezeichnet),
  * axe ohne Verstöße (WCAG 2.2 AA), Screenshot als Anhang. Auf Touch-Geräten: Trefferflächen ≥ 44 px.
  * Dazu: kein horizontaler Scroll bei 320 px.
  */
-
-const MIN_FONT_SIZE_PX = 12;
 
 for (const route of ROUTES) {
   test.describe(`Seite ${route.path}`, () => {
@@ -21,23 +19,8 @@ for (const route of ROUTES) {
       await expect(page.getByRole('main')).toHaveCount(1);
       await waitForSettled(page);
 
-      // Sichtbarer Text im Hauptbereich ist nie kleiner als 12 px.
-      const tooSmall = await page.locator('main#main').evaluate((main, min) => {
-        const findings: string[] = [];
-        for (const element of main.querySelectorAll<HTMLElement>('*')) {
-          const ownText = [...element.childNodes]
-            .filter((node) => node.nodeType === Node.TEXT_NODE)
-            .map((node) => node.textContent?.trim() ?? '')
-            .join(' ')
-            .trim();
-          if (!ownText) continue;
-          if (!element.checkVisibility({ visibilityProperty: true, opacityProperty: false })) continue;
-          const size = parseFloat(getComputedStyle(element).fontSize);
-          if (size < min) findings.push(`${element.tagName.toLowerCase()} ${size}px: „${ownText.slice(0, 40)}“`);
-        }
-        return findings;
-      }, MIN_FONT_SIZE_PX);
-      expect(tooSmall, 'Text kleiner als 12 px').toEqual([]);
+      // Sichtbarer Text im Hauptbereich ist nie kleiner als 12 px, in Zeichnungen so groß, wie er gezeichnet wird.
+      expect(await findSmallText(page), 'Text kleiner als 12 px').toEqual([]);
 
       await expectNoAxeViolations(page, testInfo);
 
