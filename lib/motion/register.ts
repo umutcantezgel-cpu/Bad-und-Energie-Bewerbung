@@ -170,14 +170,14 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
   },
   'pendel-zeichnen': {
     zweck:
-      'Signatur der Ortsseiten (E-028): Der Arbeitsweg zeichnet sich einmal im Seitenkopf, der Vorlauf rot vom ' +
-      'Firmensitz zum Ort, danach der Rücklauf blau zurück (Pendelweg).',
+      'Signatur der Ortsseiten (E-028, Lageplan seit E-029): Im Seitenkopf zeichnet sich einmal die Verbindung vom ' +
+      'Firmensitz zum Ort, danach die Maßkette der Messung (keine Leitungen: Rohr nur, wo Wasser fließt).',
     ausloeser: ['auftakt'],
     eigenschaften: ['stroke-dashoffset'],
     dauer: ['d-3'],
     verzoegerungTakte: [4, 7],
     kurve: ['k-wechsel'],
-    reduziert: 'Vorlauf und Rücklauf stehen vollständig zwischen Firmensitz und Ort.',
+    reduziert: 'Verbindung und Maßkette stehen vollständig zwischen Firmensitz und Ort.',
     seitenart: 'erzaehlseiten',
     endeMs: 960,
   },

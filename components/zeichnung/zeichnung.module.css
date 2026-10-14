@@ -309,10 +309,11 @@
   }
 }
 
-/* ═══ Pendelweg (Ortsseiten, E-028): Haus, Ort, Leitungspaar und Maßkette in echter Richtung ═══
-   240 × 176 Einheiten; bei 22,5rem Breite ist der Strich (2 Einheiten) 3 px. Kein vector-effect: Das Paar
-   zeichnet sich über stroke-dashoffset (pathLength 1), das nur ohne non-scaling-stroke verlässlich misst. */
-/* Feste Skala (35 km = äußerer Bogen): ganze Breite des Bilds, höchstens 30rem (eine Einheit 1,5–1,7 px) */
+/* ═══ Lageplan der Ortsseiten (E-028, seit E-029 statt des Pendelwegs): Firmensitz, Ort, Verbindung, Maßkette,
+   Nordpfeil und Maßstabsleiste. 300 × 240 Einheiten; bei 28,125rem Breite ist eine Einheit 1,5 px, die Striche sind in
+   Einheiten gesetzt (Kontur 4/3, fein 2/3: 2 bzw. 1 px). Kein vector-effect: Verbindung und Kette zeichnen sich über
+   stroke-dashoffset (pathLength 1), das nur ohne non-scaling-stroke verlässlich misst. Enden stumpf (K-008). */
+/* Feste Breite: ganze Breite des Bilds, höchstens 30rem (eine Einheit 1,5–1,6 px) */
 .pendelweg {
   width: min(100%, 28.125rem);
 }
@@ -323,24 +324,26 @@
   }
 }
 
-/* Zirkel des Leitmotivs (E-027): 35 km fest in der Linienfarbe, 15 und 25 km gepunktet und leise */
-.pendelGrenze {
+.pendelLinie {
+  fill: none;
   stroke: var(--brand);
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
 }
 
-.pendelStufe {
-  stroke: var(--line-strong);
-  stroke-dasharray: 0.1 7;
-}
-
-.pendelSchenkel {
-  stroke: var(--line-strong);
+/* Erstes Feld der Maßstabsleiste voll in der Markenrolle */
+.pendelVoll {
+  fill: var(--brand);
 }
 
 .pendelSkala {
   fill: var(--ink-2);
   font-family: var(--font-mass);
   font-weight: 500;
+}
+
+.pendelEtikett {
+  letter-spacing: 0.06em;
 }
 
 /* Halo in der Farbe der Fläche: Linien laufen nie durch die Schrift */
@@ -351,7 +354,7 @@
   stroke-linejoin: round;
 }
 
-/* Ring um den Punkt mit Fläche, damit Bogen und Schenkel unter ihm aufhören */
+/* Ring um den Punkt mit Fläche (und zweites Feld der Maßstabsleiste) */
 .pendelPunktRing {
   fill: var(--surface);
 }
@@ -372,13 +375,14 @@
   fill: var(--brand);
 }
 
+/* Firmensitz: Giebel in der Kontur, Fläche der Umgebung (keine Wärmefläche, E-029) */
 .pendelHaus {
-  fill: var(--waerme);
+  fill: var(--surface);
   stroke: var(--brand);
-  stroke-linejoin: round;
+  stroke-linejoin: miter;
 }
 
-/* Grundwert ist der Endzustand: ohne Skript und reduziert steht das Paar vollständig */
+/* Grundwert ist der Endzustand: ohne Skript und reduziert stehen Verbindung und Kette vollständig */
 .pendelZug {
   stroke-dasharray: 1;
   stroke-dashoffset: 0;
@@ -390,12 +394,12 @@
   }
 }
 
-/* Register `pendel-zeichnen`: Vorlauf ab 4 Takten, Rücklauf ab 7 Takten, je d-3 mit k-wechsel (Ende 960 ms) */
-:global(.auftakt) [data-motion="pendel-zeichnen"].pendelVorlauf {
+/* Register `pendel-zeichnen`: Verbindung ab 4 Takten, Maßkette ab 7 Takten, je d-3 mit k-wechsel (Ende 960 ms) */
+:global(.auftakt) [data-motion="pendel-zeichnen"].pendelVerbindung {
   animation: pendelZiehen var(--d-3) var(--k-wechsel) calc(var(--takt) * 4) backwards;
 }
 
-:global(.auftakt) [data-motion="pendel-zeichnen"].pendelRuecklauf {
+:global(.auftakt) [data-motion="pendel-zeichnen"].pendelKette {
   animation: pendelZiehen var(--d-3) var(--k-wechsel) calc(var(--takt) * 7) backwards;
 }
 
