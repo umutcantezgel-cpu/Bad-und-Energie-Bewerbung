@@ -264,6 +264,13 @@
   gap: var(--a-3);
 }
 
+/* Lange Namen (Plattenwärmeübertrager) trennen statt über den Rand zu laufen */
+.legendeName {
+  min-width: 0;
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
 .legendeZeichen {
   flex: none;
   width: var(--a-6);

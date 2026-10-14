@@ -83,7 +83,7 @@ export function kopfMasse(job: Pick<Job, 'location'>): SeitenkopfMass[] {
 /**
  * Zeichnung im Navy-Panel des Stellenkopfs (E-029), nach dem Beruf: Der Kundendienst arbeitet an der Außeneinheit
  * (Gerät von vorn mit Maßketten, der Rotor dreht unter der Startbedingung), Anlagenmechaniker und Ausbildung an der
- * ganzen Anlage (Anlagenschema, statisch, mit Legende); alle anderen Stellen zeigen den kleinen Hausschnitt.
+ * ganzen Anlage (Anlagenschema, statisch, beschriftet); alle anderen Stellen zeigen den kleinen Hausschnitt.
  */
 export type KopfZeichnung = 'aussengeraet' | 'anlagenschema' | 'hausschnitt';
 

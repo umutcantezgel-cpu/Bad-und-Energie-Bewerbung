@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import type { SchemaLeitung, SchemaPfeil, SchemaSymbol } from '@/lib/zeichnung/szenen/schema';
 import { SYMBOLE, type SymbolDef } from '@/lib/zeichnung/symbole';
 import { versal, type Medium } from '@/lib/zeichnung/norm';
@@ -57,7 +56,7 @@ export function Symbole({ symbole }: { symbole: readonly SchemaSymbol[] }) {
 }
 
 /** Legende der verwendeten Symbole (HTML, auf jeder Breite lesbar): kleines Zeichen und Name. */
-export function Legende({ symbole, extra }: { symbole: readonly SchemaSymbol[]; extra?: ReactNode }) {
+export function Legende({ symbole }: { symbole: readonly SchemaSymbol[] }) {
   const ids = [...new Set(symbole.map((s) => s.id))];
   return (
     <ul className={t.legende} aria-label="Legende">
@@ -70,11 +69,10 @@ export function Legende({ symbole, extra }: { symbole: readonly SchemaSymbol[]; 
             <svg className={t.legendeZeichen} viewBox="-30 -30 60 60" aria-hidden="true" focusable="false">
               <Symbol id={id} x={0} y={0} massstab={massstab} />
             </svg>
-            <span>{def.name}</span>
+            <span className={t.legendeName}>{def.name}</span>
           </li>
         );
       })}
-      {extra}
     </ul>
   );
 }

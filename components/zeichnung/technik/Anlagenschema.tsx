@@ -17,7 +17,10 @@ export interface AnlagenschemaProps {
   bewegt?: boolean;
   /** Zugänglicher Name; `null` macht die Zeichnung dekorativ. */
   titel?: string | null;
+  /** Legende der Symbole unter der Zeichnung (auf jeder Breite lesbar). */
   legende?: boolean;
+  /** Schriftfeld: `voll` mit Hinweis zur Inneneinheit, `kurz` nur die Art der Zeichnung (Stellenkopf), oder keins. */
+  schriftfeld?: 'voll' | 'kurz' | false;
   className?: string;
 }
 
@@ -32,7 +35,7 @@ export const ANLAGENSCHEMA_TITEL =
  * als 45°-Schraffur, Wand als Schnittfläche mit Wanddurchführung, Inneneinheit als Systemgrenze (Strich-Punkt, Modell
  * offen). Die Beschriftung der Symbole steht auf breiten Flächen, die Legende darunter auf jeder Breite.
  */
-export function Anlagenschema({ bewegt = false, titel = ANLAGENSCHEMA_TITEL, legende = true, className }: AnlagenschemaProps) {
+export function Anlagenschema({ bewegt = false, titel = ANLAGENSCHEMA_TITEL, legende = true, schriftfeld = 'voll', className }: AnlagenschemaProps) {
   const { breite, hoehe } = ANLAGENSCHEMA_RAHMEN;
   const b = ANLAGENSCHEMA_BEREICHE;
   return (
@@ -68,20 +71,21 @@ export function Anlagenschema({ bewegt = false, titel = ANLAGENSCHEMA_TITEL, leg
         <Pfeile pfeile={ANLAGENSCHEMA_PFEILE} />
         <Symbole symbole={ANLAGENSCHEMA_SYMBOLE} />
       </svg>
-      {legende ? (
+      {legende || schriftfeld ? (
         <figcaption>
-          <Legende
-            symbole={ANLAGENSCHEMA_SYMBOLE}
-            extra={
-              <li className={t.legendePunkt}>
-                <span className="text-etikett">{SCHRIFTFELD_SCHEMA}</span>
-              </li>
-            }
-          />
-          <p className={t.quelle}>
-            Typische Anordnung, kein bestimmtes Modell: Die Inneneinheit steht als Systemgrenze (Strich-Punkt), ihre Maße folgen,
-            wenn das Modell feststeht.
-          </p>
+          {legende ? <Legende symbole={ANLAGENSCHEMA_SYMBOLE} /> : null}
+          {schriftfeld ? (
+            <div className={t.schriftfeld}>
+              <span className="text-etikett">{SCHRIFTFELD_SCHEMA}</span>
+              {schriftfeld === 'voll' ? (
+                <span className={t.quelle}>
+                  Typische Anordnung, kein bestimmtes Modell: Die Inneneinheit steht als Systemgrenze (Strich-Punkt), ihre Maße
+                  folgen, wenn das Modell feststeht. Sicherheitsventil und Ausdehnungsgefäß sind zum Wärmeerzeuger hin nicht
+                  absperrbar.
+                </span>
+              ) : null}
+            </div>
+          ) : null}
         </figcaption>
       ) : null}
     </figure>

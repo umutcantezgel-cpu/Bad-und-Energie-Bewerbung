@@ -95,6 +95,17 @@ function pruefePfade(name: string, wege: readonly Weg[]) {
   }
 }
 
+/** Weg entlang einer Leitung bis zum Punkt q (in Fließrichtung); null, wenn q nicht auf der Leitung liegt. */
+function lauflaenge(w: Weg, q: Punkt): number | null {
+  let summe = 0;
+  for (let i = 1; i < w.punkte.length; i += 1) {
+    const [a, b] = [w.punkte[i - 1], w.punkte[i]];
+    if (aufStueck(q, a, b)) return summe + Math.hypot(q.x - a.x, q.y - a.y);
+    summe += Math.hypot(b.x - a.x, b.y - a.y);
+  }
+  return null;
+}
+
 const imRechteck = (q: Punkt, r: { x: number; y: number; breite: number; hoehe: number }) =>
   q.x >= r.x && q.x <= r.x + r.breite && q.y >= r.y && q.y <= r.y + r.hoehe;
 
@@ -154,6 +165,14 @@ describe('Kältekreis (Monoblock, E-029)', () => {
     expect(lage('verdampfer').x).toBeLessThan(KAELTEKREIS_DRUCKGRENZE.x);
     expect(lage('verfluessiger').x).toBeGreaterThan(KAELTEKREIS_DRUCKGRENZE.x);
     const etiketten = Object.fromEntries(KAELTEKREIS_WEGE.map((w) => [w.key, w.etikett!.wert]));
+    // Etiketten am Heizwasser enden vor dem Rahmen (nichts ragt hinaus, auch nicht der Buchstabenabstand); die
+    // Kältemittel-Etiketten stehen im Gehäuse
+    for (const w of KAELTEKREIS_WASSER) {
+      expect(w.etikett!.anker, w.key).toBe('end');
+      expect(w.etikett!.x, w.key).toBeLessThan(KAELTEKREIS_RAHMEN.breite);
+      expect(w.etikett!.x, w.key).toBeGreaterThan(KAELTEKREIS_GERAET.x + KAELTEKREIS_GERAET.breite);
+    }
+    for (const w of KAELTEKREIS_WEGE) expect(imRechteck(w.etikett!, KAELTEKREIS_GERAET), w.key).toBe(true);
     expect(etiketten).toEqual({ sauggas: 'Sauggas', heissgas: 'Heißgas', fluessig: 'flüssig', nassdampf: 'Nassdampf' });
   });
 
@@ -239,6 +258,31 @@ describe('Anlagenschema (Luft/Wasser, Monoblock)', () => {
     const rl = ANLAGENSCHEMA_LEITUNGEN.find((x) => x.key === 'ruecklauf-heizkreis')!;
     const lageRl = ANLAGENSCHEMA_SYMBOLE.find((x) => x.key === 'absperrung-rl')!.lage;
     expect(rl.punkte.slice(1).some((b, i) => aufStueck(lageRl, rl.punkte[i], b))).toBe(true);
+  });
+
+  it('DIN EN 12828: Sicherheitsventil und Ausdehnungsgefäß sind vom Wärmeerzeuger nicht absperrbar', () => {
+    const vl = ANLAGENSCHEMA_LEITUNGEN.find((x) => x.key === 'vorlauf-erzeuger')!;
+    const rl = ANLAGENSCHEMA_LEITUNGEN.find((x) => x.key === 'ruecklauf-heizkreis')!;
+    const lage = (key: string) => ANLAGENSCHEMA_SYMBOLE.find((x) => x.key === key)!.lage;
+    // Vorlauf (vom Erzeuger aus): das Sicherheitsventil vor der Absperrung
+    const sv = lauflaenge(vl, s('sicherheitsventil', 'ein'));
+    const absperrVl = lauflaenge(vl, lage('absperrung-vl'));
+    expect(sv).not.toBeNull();
+    expect(absperrVl).not.toBeNull();
+    expect(sv!).toBeLessThan(absperrVl!);
+    // Rücklauf (zum Erzeuger hin): das Ausdehnungsgefäß hinter der Absperrung, also näher am Erzeuger
+    const mag = lauflaenge(rl, s('ausdehnung', 'ein'));
+    const absperrRl = lauflaenge(rl, lage('absperrung-rl'));
+    expect(mag).not.toBeNull();
+    expect(absperrRl).not.toBeNull();
+    expect(mag!).toBeGreaterThan(absperrRl!);
+    // Kein weiteres Absperrventil zwischen Erzeuger und den beiden
+    for (const sym of ANLAGENSCHEMA_SYMBOLE.filter((x) => x.id === 'absperrventil')) {
+      const aufVl = lauflaenge(vl, sym.lage);
+      if (aufVl !== null) expect(aufVl, sym.key).toBeGreaterThan(sv!);
+      const aufRl = lauflaenge(rl, sym.lage);
+      if (aufRl !== null) expect(aufRl, sym.key).toBeLessThan(mag!);
+    }
   });
 
   it('feste Fließpfeile in Fließrichtung für Vorlauf, Rücklauf und Kältemittel', () => {

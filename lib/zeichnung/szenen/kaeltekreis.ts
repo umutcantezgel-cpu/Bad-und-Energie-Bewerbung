@@ -12,7 +12,8 @@
  */
 import { an, leitung, pfeil, symbol, type SchemaLeitung, type SchemaPfeil, type SchemaSymbol } from './schema';
 
-export const KAELTEKREIS_RAHMEN = Object.freeze({ breite: 760, hoehe: 520 });
+/** Rechts läuft das Heizwasser aus dem Gehäuse; die Etiketten Vorlauf und Rücklauf stehen innerhalb des Rahmens. */
+export const KAELTEKREIS_RAHMEN = Object.freeze({ breite: 860, hoehe: 520 });
 
 /** Gehäuse der Außeneinheit (Grenze des Kältekreises). */
 export const KAELTEKREIS_GERAET = Object.freeze({ x: 70, y: 40, breite: 610, hoehe: 440 });
@@ -34,19 +35,20 @@ export const KAELTEKREIS_WEGE: readonly SchemaLeitung[] = [
     'sauggas',
     'kaeltemittel',
     [p('verdampfer', 'aus'), { x: 160, y: 120 }, p('verdichter', 'ein')],
-    { wert: 'Sauggas', x: 250, y: 100, anker: 'middle' },
+    { wert: 'Sauggas', x: 250, y: 102, anker: 'middle' },
   ),
   leitung(
     'heissgas',
     'kaeltemittel',
     [p('verdichter', 'aus'), { x: 520, y: 120 }, { x: 520, y: p('verfluessiger', 'linksEin').y }, p('verfluessiger', 'linksEin')],
-    { wert: 'Heißgas', x: 474, y: 100, anker: 'middle' },
+    // Neben der Fallleitung zum Verflüssiger (oben stehen Verdichter und Druckgrenze)
+    { wert: 'Heißgas', x: 534, y: 176, anker: 'start' },
   ),
   leitung(
     'fluessig',
     'kaeltemittel',
     [p('verfluessiger', 'linksAus'), { x: 520, y: p('verfluessiger', 'linksAus').y }, { x: 520, y: 420 }, p('expansionsventil', 'ein')],
-    { wert: 'flüssig', x: 474, y: 448, anker: 'middle' },
+    { wert: 'flüssig', x: 534, y: 370, anker: 'start' },
   ),
   leitung(
     'nassdampf',
@@ -60,15 +62,15 @@ export const KAELTEKREIS_WEGE: readonly SchemaLeitung[] = [
 export const KAELTEKREIS_WASSER: readonly SchemaLeitung[] = [
   leitung('vorlauf', 'vorlauf', [p('verfluessiger', 'rechtsAus'), { x: KAELTEKREIS_RAHMEN.breite, y: p('verfluessiger', 'rechtsAus').y }], {
     wert: 'Vorlauf',
-    x: 716,
+    x: KAELTEKREIS_RAHMEN.breite - 6,
     y: p('verfluessiger', 'rechtsAus').y - 22,
-    anker: 'middle',
+    anker: 'end',
   }),
   leitung('ruecklauf', 'ruecklauf', [{ x: KAELTEKREIS_RAHMEN.breite, y: p('verfluessiger', 'rechtsEin').y }, p('verfluessiger', 'rechtsEin')], {
     wert: 'Rücklauf',
-    x: 716,
+    x: KAELTEKREIS_RAHMEN.breite - 6,
     y: p('verfluessiger', 'rechtsEin').y + 34,
-    anker: 'middle',
+    anker: 'end',
   }),
 ];
 
@@ -80,8 +82,8 @@ export const KAELTEKREIS_PFEILE: readonly SchemaPfeil[] = [
   pfeil('kaeltemittel', { x: 520, y: 200 }, { x: 0, y: 1 }),
   pfeil('kaeltemittel', { x: 520, y: 370 }, { x: 0, y: 1 }),
   pfeil('kaeltemittel', { x: 250, y: 420 }, { x: -1, y: 0 }),
-  pfeil('vorlauf', { x: 700, y: p('verfluessiger', 'rechtsAus').y }, { x: 1, y: 0 }),
-  pfeil('ruecklauf', { x: 654, y: p('verfluessiger', 'rechtsEin').y }, { x: -1, y: 0 }),
+  pfeil('vorlauf', { x: 790, y: p('verfluessiger', 'rechtsAus').y }, { x: 1, y: 0 }),
+  pfeil('ruecklauf', { x: 712, y: p('verfluessiger', 'rechtsEin').y }, { x: -1, y: 0 }),
 ];
 
 /** Außenluft tritt links in den Verdampfer (Etikett mit Pfeil außerhalb des Gehäuses). */

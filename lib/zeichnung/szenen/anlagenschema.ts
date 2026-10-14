@@ -1,8 +1,9 @@
 /**
  * Anlagenschema einer Luft/Wasser-Wärmepumpe in Monoblock-Bauweise (KERN K-010, E-029) als Fließschema mit
  * Normsymbolen: Außeneinheit (Kältekreis vereinfacht, Plattenwärmeübertrager) → Erdleitung und Wanddurchführung →
- * Inneneinheit (Absperrung, Sicherheitsventil, Vorlauffühler, Umwälzpumpe, Rückschlagventil, 3-Wege-Ventil, Speicher,
- * Ausdehnungsgefäß) → Heizkörper und Fußbodenheizung.
+ * Inneneinheit (Sicherheitsventil, Absperrung, Vorlauffühler, Umwälzpumpe, Rückschlagventil, 3-Wege-Ventil, Speicher,
+ * Ausdehnungsgefäß) → Heizkörper und Fußbodenheizung. Sicherheitsventil und Ausdehnungsgefäß sitzen zwischen
+ * Wärmeerzeuger und Absperrung (DIN EN 12828: vom Wärmeerzeuger nicht absperrbar).
  *
  * Fließrichtung (K-003.2): Der Vorlauf beginnt am Plattenwärmeübertrager der Außeneinheit (Wärmeerzeuger) und endet an
  * den Verbrauchern; der Rücklauf beginnt an den Verbrauchern und endet am Plattenwärmeübertrager. Die Inneneinheit ist
@@ -31,17 +32,19 @@ export const ANLAGENSCHEMA_SYMBOLE: readonly SchemaSymbol[] = [
   symbol('verdichter', 'verdichter', { x: 184, y: 214, massstab: S }),
   symbol('expansionsventil', 'expansionsventil', { x: 184, y: 400, drehung: 180, massstab: S }),
   symbol('pwt', 'plattenwaermetauscher', { x: 260, y: 300, massstab: S }),
-  // Inneneinheit, Vorlauf
-  symbol('absperrung-vl', 'absperrventil', { x: 560, y: 150, massstab: S }),
-  symbol('sicherheitsventil', 'sicherheitsventil', { x: 610, y: 126, massstab: S }, { wert: 'SV', x: 584, y: 104, anker: 'end' }),
+  // Inneneinheit, Vorlauf: das Sicherheitsventil vor der ersten Absperrung (DIN EN 12828: vom Wärmeerzeuger nicht
+  // absperrbar), dahinter Absperrung, Vorlauffühler, Pumpe, Rückschlagventil und Umschaltventil
+  symbol('sicherheitsventil', 'sicherheitsventil', { x: 548, y: 126, massstab: S }, { wert: 'SV', x: 522, y: 104, anker: 'end' }),
+  symbol('absperrung-vl', 'absperrventil', { x: 600, y: 150, massstab: S }),
   symbol('fuehler', 'fuehler', { x: 662, y: 150, massstab: S }),
   symbol('pumpe', 'pumpe', { x: 724, y: 150, massstab: S }, { wert: 'Pumpe', x: 724, y: 204, anker: 'middle' }),
   symbol('rueckschlag', 'rueckschlagventil', { x: 786, y: 150, massstab: S }),
   symbol('umschaltventil', 'dreiwegeventil', { x: 850, y: 150, massstab: S }),
   symbol('speicher', 'speicher', { x: 850, y: 342, massstab: S }, { wert: 'Speicher', x: 850, y: 420, anker: 'middle' }),
-  // Inneneinheit, Rücklauf
-  symbol('ausdehnung', 'ausdehnungsgefaess', { x: 650, y: 410, massstab: S }, { wert: 'MAG', x: 690, y: 404, anker: 'start' }),
-  symbol('absperrung-rl', 'absperrventil', { x: 560, y: 450, massstab: S }),
+  // Inneneinheit, Rücklauf (Fließrichtung nach links): erst die Absperrung, dann das Ausdehnungsgefäß, damit es zum
+  // Wärmeerzeuger hin nicht absperrbar ist (DIN EN 12828)
+  symbol('absperrung-rl', 'absperrventil', { x: 690, y: 450, massstab: S }),
+  symbol('ausdehnung', 'ausdehnungsgefaess', { x: 580, y: 410, massstab: S }, { wert: 'MAG', x: 604, y: 404, anker: 'start' }),
   // Verbraucher
   symbol('heizkoerper', 'heizkoerper', { x: 1080, y: 162, massstab: S }, { wert: 'Heizkörper', x: 1080, y: 220, anker: 'middle' }),
   symbol('fussboden', 'fussbodenheizung', { x: 1090, y: 320, massstab: S }, { wert: 'Fußbodenheizung', x: 1188, y: 372, anker: 'end' }),
@@ -96,7 +99,7 @@ export const ANLAGENSCHEMA_PFEILE: readonly SchemaPfeil[] = [
   pfeil('vorlauf', { x: 990, y: 150 }, { x: 1, y: 0 }),
   pfeil('vorlauf', { x: 990, y: p('fussboden', 'ein').y }, { x: 1, y: 0 }),
   pfeil('ruecklauf', { x: 1160, y: 300 }, { x: 0, y: 1 }),
-  pfeil('ruecklauf', { x: 700, y: 450 }, { x: -1, y: 0 }),
+  pfeil('ruecklauf', { x: 750, y: 450 }, { x: -1, y: 0 }),
   pfeil('kaeltemittel', { x: 150, y: 214 }, { x: 1, y: 0 }),
   pfeil('kaeltemittel', { x: 150, y: 400 }, { x: -1, y: 0 }),
 ];

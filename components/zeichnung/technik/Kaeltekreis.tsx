@@ -77,20 +77,16 @@ export function Kaeltekreis({ bewegt = false, titel = KAELTEKREIS_TITEL, legende
       </svg>
       {legende ? (
         <figcaption>
-          <Legende
-            symbole={KAELTEKREIS_SYMBOLE}
-            extra={
-              <li className={t.legendePunkt}>
-                <span className="text-etikett">{SCHRIFTFELD_SCHEMA}</span>
-              </li>
-            }
-          />
-          <p className={t.quelle}>
-            Außeneinheit in Monoblock-Bauweise: Der Kältekreis bleibt im Gerät, ins Haus gehen nur Vorlauf und Rücklauf.
-            Kältemittel im Beispielgerät: {COMPRESS_AW_S.kaeltemittel.name} (Propan),{' '}
-            {COMPRESS_AW_S.kaeltemittel.fuellmengeKg.toLocaleString('de-DE')}&nbsp;kg laut {COMPRESS_AW_S.quelle.titel}. Vereinfacht: ohne
-            4-Wege-Ventil zum Abtauen, ohne Sammler und Filter.
-          </p>
+          <Legende symbole={KAELTEKREIS_SYMBOLE} />
+          <div className={t.schriftfeld}>
+            <span className="text-etikett">{SCHRIFTFELD_SCHEMA}</span>
+            <span className={t.quelle}>
+              Außeneinheit in Monoblock-Bauweise: Der Kältekreis bleibt im Gerät, ins Haus gehen nur Vorlauf und Rücklauf.
+              Kältemittel im Beispielgerät: {COMPRESS_AW_S.kaeltemittel.name} (Propan),{' '}
+              {COMPRESS_AW_S.kaeltemittel.fuellmengeKg.toLocaleString('de-DE')}&nbsp;kg laut {COMPRESS_AW_S.quelle.titel}. Vereinfacht:
+              ohne 4-Wege-Ventil zum Abtauen, ohne Sammler und Filter.
+            </span>
+          </div>
         </figcaption>
       ) : null}
     </figure>

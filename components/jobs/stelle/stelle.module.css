@@ -35,7 +35,7 @@
 /* Außeneinheit: am Handy schmaler, damit der Knopf nah am Kopf bleibt */
 .kopfGeraet {
   width: 100%;
-  max-width: 20rem;
+  max-width: 16rem;
 }
 
 /* Anlagenschema und Hausschnitt nur ab 64em, wo die Navy-Fläche Platz hat; am Handy bleibt der Knopf im ersten Bild */

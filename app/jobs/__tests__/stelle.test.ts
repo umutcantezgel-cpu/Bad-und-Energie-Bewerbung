@@ -26,6 +26,7 @@ import { ANLAGENSCHEMA_TITEL } from '@/components/zeichnung/technik/Anlagenschem
 import { geraetTitel } from '@/components/zeichnung/technik/Aussengeraet';
 import { DAUER_IDS } from '@/lib/motion/register';
 import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
+import { SCHRIFTFELD_SCHEMA } from '@/lib/zeichnung/norm';
 import { FACTS } from '@/lib/content/facts';
 import { PAY_ON_REQUEST, escapeHtml, getJobSections } from '@/lib/jobs/format';
 import { buildJobPostingJsonLd } from '@/lib/jobs/jsonld';
@@ -184,12 +185,15 @@ describe('JobHeader (Seitenkopf erzaehl)', () => {
     expect(kdHtml).toMatch(/data-dauer="aus">[\s\S]*data-motion="rotor-dreht"[\s\S]*Anhalten<\/button>/);
     expect(kdHtml.match(/data-motion="rotor-dreht"/g)).toHaveLength(1);
     expect(kdHtml).not.toMatch(/<canvas|data-zeichnung="waermebild"/);
-    // Anlagenmechaniker und Ausbildung: Anlagenschema statisch mit Legende; ohne Dauerbewegung
+    // Anlagenmechaniker und Ausbildung: Anlagenschema statisch und beschriftet, mit kurzem Schriftfeld; ohne Dauerbewegung
     for (const job of [am, azubi]) {
       const html = renderToStaticMarkup(createElement(JobHeader, { job }));
       expect(html, job.id).toContain('data-stelle-kopfbild="anlagenschema"');
       expect(html, job.id).toContain(`aria-label="${escapeHtml(ANLAGENSCHEMA_TITEL)}"`);
-      expect(html, job.id).toContain('aria-label="Legende"');
+      for (const bereich of ['AUSSENEINHEIT', 'INNENEINHEIT', 'HEIZKREIS', 'ERDREICH']) expect(html, job.id).toContain(`>${bereich}</text>`);
+      expect(html, job.id).toContain(`>${SCHRIFTFELD_SCHEMA}</span>`);
+      // Die Legende steht auf der Wärmepumpen-Seite; im Kopf hielte sie den Lohn-Block unter dem ersten Bild
+      expect(html, job.id).not.toContain('aria-label="Legende"');
       for (const id of DAUER_IDS) expect(html, job.id).not.toContain(`data-motion="${id}"`);
     }
     // Alle anderen, ausdrücklich der Obermonteur: der kleine Hausschnitt, dekorativ, ohne das alte Haus
