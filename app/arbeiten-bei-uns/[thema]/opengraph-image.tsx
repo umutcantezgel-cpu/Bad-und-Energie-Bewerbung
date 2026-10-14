@@ -9,8 +9,8 @@ import { liveJobs } from '../seo';
 
 /**
  * Teilen-Bild einer Themenseite (E-028) im Rahmen der Stellenbilder: Etikett und h1 der Seite, zwei kurze
- * Zeilen an der Rohrklammer, im Heizkreis der Kennwert der Seite. Die Seite verlinkt es mit eigenem alt (themaOgImage);
- * dieses alt gilt nur ohne. Der Hub nutzt das Standardbild.
+ * Zeilen als Unterzeile, über dem Hausschnitt der Kennwert der Seite als Maß (E-029). Die Seite verlinkt es mit
+ * eigenem alt (themaOgImage); dieses alt gilt nur ohne. Der Hub nutzt das Standardbild.
  */
 export const alt = `Arbeiten bei ${COMPANY.shortName} in ${COMPANY.address.city}`;
 export const size = OG_IMAGE_SIZE;

@@ -3,29 +3,30 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { ReactElement, ReactNode } from 'react';
 import { ImageResponse } from 'next/og';
-import { GLYPH_SHAPES, type IconName } from '@/components/icons/glyphs';
 import { COMPANY } from '@/lib/content/company';
+import { r1, type Medium } from '@/lib/zeichnung/norm';
 import {
-  HAUS_BAENDER,
-  HAUS_FBH_X,
-  HAUS_FBH_Y,
-  HAUS_FEIN,
-  HAUS_MARKEN,
-  HAUS_RUECKLAUF,
-  HAUS_STRICH,
-  HAUS_VORLAUF,
-  HAUS_ZIRKEL,
-  HAUS_ZULEITUNG,
+  OG_BAUTEILE,
+  OG_ERDLEITUNG_Y,
+  OG_GERAET,
+  OG_GIEBEL_MASS,
+  OG_HAUS_RAHMEN,
+  OG_HEIZKOERPER,
+  OG_INNENEINHEIT,
+  OG_PUMPE,
+  ogLeitungen,
+  ogPfeile,
 } from './og-haus';
 import { OG_COLOR as C, OG_IMAGE_SIZE, versal, type OgHomeText, type OgJobText, type OgPlaceText } from './og-image';
 
 /**
- * Teilen-Bilder im Design des Einstiegs (Variante 3, Bilder des Auftraggebers vom 10.10.): links Papier
- * mit Logo, Etikett, h1 in Bricolage 800 (Navy), Unterzeile an der Rohrklammer und dem roten Knopf,
- * dessen Vorlauf-Linie waagerecht in die Wärmepumpe im Navy-Panel rechts läuft. Im Panel das Haus im
- * Wärmebild (statisch, ohne WebGL) mit dem Zirkelzeichen im Giebel (Leitmotiv „35 km“, E-027), Leitungen und
- * Familien-Etiketten; die Startseite trägt darüber die Maße und „35 km“ mit Hinweislinie zum Zirkel, die
- * Stellen „Lohn auf Anfrage“ im Heizkreis (Variante 2; seit E-030 ohne Betrag).
+ * Teilen-Bilder im Design des Einstiegs: links Papier mit Logo, Etikett, h1 in Bricolage 800 (Navy), Unterzeile und
+ * dem roten Knopf; rechts das Navy-Panel mit dem Hausschnitt aus lib/zeichnung (Technische Zeichnung 2.0, E-029):
+ * Erdreich als 45°-Schraffur, Außeneinheit maßstäblich, Erdleitung durch die Wanddurchführung, Inneneinheit als
+ * Symbol, Flachheizkörper. Der Vorlauf läuft von der Außeneinheit links aus dem Panel, über Bogen und Steigleitung in
+ * den Knopf (K-001). Die Startseite trägt darüber die Maße (35 km, 30 Tage, 1926) und „35 km“ als Maß im Giebel; die
+ * Stellen-, Orts- und Themenbilder ihren Kennwert als Maßkette (Linienart mass, 45°-Begrenzungsstriche) statt des
+ * Heizkreises. Keine Rohrklammer, kein Wärmebild, kein Zirkel.
  *
  * Schriften: die drei Familien der Website als feste TTF-Schnitte aus lib/seo/og-fonts (next/og liest
  * kein WOFF2 und keine variablen Achsen; Herkunft in og-fonts/LIZENZEN.md). Sie liegen im Repository und
@@ -34,26 +35,35 @@ import { OG_COLOR as C, OG_IMAGE_SIZE, versal, type OgHomeText, type OgJobText, 
  */
 
 const { width: W, height: H } = OG_IMAGE_SIZE;
-/** Navy-Panel rechts (Variante 3: Papier links, Navy rechts). */
+/** Navy-Panel rechts (Papier links, Navy rechts). */
 const PANEL_X = 660;
 const PANEL_W = W - PANEL_X;
 /** Linke Spalte. */
 const LEFT = 64;
-/** Ausschnitt der Szene (viewBox 0 0 800 800): Haus und Wärmepumpe, unten angeschnitten wie im Einstieg. */
-const VB = { x: 0, y: 330, w: 680, h: 470 } as const;
-const S = PANEL_W / VB.w;
-const HOUSE_TOP = H - VB.h * S;
+/** Hausschnitt über die ganze Breite des Panels, unten bündig (Haus, Gerät und Erdreich wie im Einstieg). */
+const S = PANEL_W / OG_HAUS_RAHMEN.breite;
+const HOUSE_TOP = H - OG_HAUS_RAHMEN.hoehe * S;
 /** Szene → Bild. */
-const px = (x: number) => PANEL_X + (x - VB.x) * S;
-const py = (y: number) => HOUSE_TOP + (y - VB.y) * S;
-/** Strichstärken im Bild (px) → viewBox-Einheiten. */
+const px = (x: number) => PANEL_X + x * S;
+const py = (y: number) => HOUSE_TOP + y * S;
+/** Strichstärken im Bild (px) → Einheiten des Schnitts. */
 const vb = (pixels: number) => pixels / S;
 
-/** Die Zuleitung liegt auf Höhe des Knopfs: Der Vorlauf läuft gerade aus dem Knopf in die Wärmepumpe. */
-const PIPE_Y = py(HAUS_ZULEITUNG.y);
 const BUTTON = { left: LEFT, width: 276, height: 64 } as const;
-const BUTTON_TOP = PIPE_Y - BUTTON.height / 2;
-const STRICH = 3;
+const BUTTON_TOP = 500;
+/** Der Vorlauf verlässt das Panel auf Höhe der Erdleitung und steigt kurz vor dem Panel zum Knopf (wie am Desktop). */
+const ERD_Y = py(OG_ERDLEITUNG_Y);
+const KNOPF_Y = BUTTON_TOP + BUTTON.height / 2;
+const STEIG_X = PANEL_X - 40;
+const BOGEN = 12;
+const LEITUNG = 3;
+
+/**
+ * Rollen auf Navy (app/styles/theme.css, [data-tone="inverse"]): Kontur Creme, Vorlauf und Rücklauf in den hellen
+ * Linienfarben, Schraffur in line-strong, Schnittflächen in surface-2.
+ */
+const NAVY = { kontur: C.creme, vorlauf: '#FF6B5F', ruecklauf: '#86AEFF', schraffur: '#8E97D6', schnitt: '#1A2878', flaeche: C.navy } as const;
+const MEDIUM: Record<Medium, string> = { vorlauf: NAVY.vorlauf, ruecklauf: NAVY.ruecklauf, kaeltemittel: NAVY.kontur };
 
 type FontWeight = 400 | 600 | 700 | 800;
 type LoadedFont = { name: string; data: Buffer; weight: FontWeight; style: 'normal' };
@@ -99,130 +109,104 @@ function loadAssets() {
 
 // ── Zeichnung ──────────────────────────────────────────────────────────────────────────────────────
 
-const round = { strokeLinecap: 'round', strokeLinejoin: 'round', fill: 'none' } as const;
+const stumpf = { strokeLinecap: 'butt', strokeLinejoin: 'miter', fill: 'none' } as const;
 
-/** Haus im Wärmebild, Ausschnitt VB, unten am Panel; die Zuleitung nur, wenn ein Knopf sie speist. */
-function Haus({ zuleitung }: { zuleitung: boolean }) {
-  const vorlauf = zuleitung ? [...HAUS_VORLAUF, HAUS_ZULEITUNG.d] : [...HAUS_VORLAUF];
-  const pipe = vb(3.5);
-  const mantel = vb(9);
+/** Linienarten im Bild (px wie auf der Website, umgerechnet in Einheiten des Schnitts). */
+const kontur = { ...stumpf, stroke: NAVY.kontur, strokeWidth: vb(2) } as const;
+const fein = { ...stumpf, stroke: NAVY.kontur, strokeWidth: vb(1) } as const;
+
+/**
+ * Hausschnitt aus lib/zeichnung/szenen/hausschnitt.ts (über og-haus.ts), unten am Panel; mit Knopf läuft der Vorlauf
+ * links aus dem Schnitt.
+ */
+function Haus({ knopf }: { knopf: boolean }) {
+  const g = OG_GERAET;
+  const a = g.ansicht;
+  const ie = OG_INNENEINHEIT;
+  const hk = OG_HEIZKOERPER;
+  const lamellen = Array.from({ length: hk.lamellen }, (_, i) => r1(hk.x + ((i + 1) * hk.breite) / (hk.lamellen + 1)));
+  const leitungen = [...ogLeitungen(knopf)].sort((x, y) => Number(Boolean(x.mantel)) - Number(Boolean(y.mantel)));
+  // Gerät in mm: Strich in mm, damit er im Bild 2 bzw. 1 px misst
+  const mm = (pixels: number) => vb(pixels) / g.massstab;
   return (
     <svg
       width={PANEL_W}
-      height={VB.h * S}
-      viewBox={`${VB.x} ${VB.y} ${VB.w} ${VB.h}`}
+      height={OG_HAUS_RAHMEN.hoehe * S}
+      viewBox={`0 0 ${OG_HAUS_RAHMEN.breite} ${OG_HAUS_RAHMEN.hoehe}`}
       style={{ position: 'absolute', left: PANEL_X, top: HOUSE_TOP }}
     >
-      {HAUS_BAENDER.map((d, index) => (
-        <path key={d.slice(0, 12)} d={d} fill={[C.blau, C.wand, C.waerme, C.papier][index]} />
+      <path d={OG_BAUTEILE.schraffur} {...stumpf} stroke={NAVY.schraffur} strokeWidth={vb(1)} />
+      <path d={OG_BAUTEILE.graben} {...fein} fill={NAVY.flaeche} />
+      {[OG_BAUTEILE.dach, OG_BAUTEILE.decke, OG_BAUTEILE.bodenplatte, ...OG_BAUTEILE.waende].map((d) => (
+        <path key={d.slice(0, 16)} d={d} {...kontur} fill={NAVY.schnitt} />
       ))}
-      <path d={HAUS_STRICH.giebel} stroke={C.papier} strokeWidth={vb(STRICH)} {...round} />
-      <path d={HAUS_STRICH.waende} stroke={C.papier} strokeWidth={vb(STRICH)} {...round} />
-      <path d={HAUS_STRICH.erde} stroke={C.papier} strokeWidth={vb(STRICH)} {...round} />
-      {HAUS_FEIN.map((d) => (
-        <path key={d.slice(0, 12)} d={d} stroke={C.navy} strokeWidth={vb(STRICH)} {...round} />
+      <path d={OG_BAUTEILE.gelaende} {...kontur} />
+      {/* Außeneinheit maßstäblich (1 : 10), einfache Detailstufe */}
+      <g transform={`translate(${g.lage.x} ${g.lage.y}) scale(${g.massstab})`}>
+        {a.kontur.map((d) => (
+          <path key={d} d={d} {...kontur} strokeWidth={mm(2)} fill={NAVY.flaeche} />
+        ))}
+        {a.fein.map((d) => (
+          <path key={d} d={d} {...fein} strokeWidth={mm(1)} />
+        ))}
+        {a.kreise.map((k) => (
+          <circle key={`${k.cx}-${k.r}`} cx={k.cx} cy={k.cy} r={k.r} {...(k.art === 'fein' ? fein : kontur)} strokeWidth={mm(k.art === 'fein' ? 1 : 2)} />
+        ))}
+        {a.rotor ? <path d={a.rotor.blaetter} transform={`translate(${a.rotor.cx} ${a.rotor.cy})`} {...fein} strokeWidth={mm(1)} /> : null}
+      </g>
+      {OG_BAUTEILE.sockel.map((d) => (
+        <path key={d} d={d} {...kontur} fill={NAVY.schnitt} />
       ))}
-      {HAUS_FBH_X.map((cx) => (
-        <circle key={cx} cx={cx} cy={HAUS_FBH_Y} r={3} stroke={C.navy} strokeWidth={vb(2)} fill="none" />
+      <path d={OG_BAUTEILE.durchfuehrung} {...kontur} fill={NAVY.flaeche} />
+      {/* Inneneinheit als Symbol (Systemgrenze Strich-Punkt) mit Umwälzpumpe; Flachheizkörper */}
+      <rect x={ie.x} y={ie.y} width={ie.breite} height={ie.hoehe} {...fein} fill={NAVY.flaeche} strokeDasharray={[16, 4, 2, 4].map(vb).join(' ')} />
+      <g transform={`translate(${ie.pumpe.x} ${ie.pumpe.y}) scale(${OG_PUMPE.massstab})`}>
+        {OG_PUMPE.formen.map((f, i) =>
+          'cx' in f ? (
+            <circle key={i} cx={f.cx} cy={f.cy} r={f.r} {...kontur} strokeWidth={vb(2) / OG_PUMPE.massstab} fill={NAVY.flaeche} />
+          ) : (
+            <path key={i} d={f.d} {...kontur} strokeWidth={vb(2) / OG_PUMPE.massstab} />
+          ),
+        )}
+      </g>
+      <rect x={hk.x} y={hk.y} width={hk.breite} height={hk.hoehe} {...kontur} fill={NAVY.flaeche} />
+      <path d={lamellen.map((x) => `M${x} ${hk.y}V${hk.y + hk.hoehe}`).join('')} {...fein} />
+      {/* Leitungen in Fließrichtung; an der Kreuzung liegt die vordere mit einem Mantel in der Fläche darüber */}
+      {leitungen.map((l) => (
+        <g key={l.id}>
+          {knopf && l.mantel ? <path d={l.mantel} {...stumpf} stroke={NAVY.flaeche} strokeWidth={vb(LEITUNG + 8)} /> : null}
+          <path d={l.d} fill="none" stroke={MEDIUM[l.medium]} strokeWidth={vb(LEITUNG)} strokeLinecap="butt" strokeLinejoin="round" />
+        </g>
       ))}
-      <circle
-        cx={HAUS_STRICH.luefterKreis.cx}
-        cy={HAUS_STRICH.luefterKreis.cy}
-        r={HAUS_STRICH.luefterKreis.r}
-        stroke={C.papier}
-        strokeWidth={vb(STRICH)}
-        fill={C.navy}
-      />
-      <path d={HAUS_STRICH.luefter} stroke={C.papier} strokeWidth={vb(STRICH)} {...round} />
-      {/* Zirkelzeichen im Giebel (Einsatzgebiet, Kernzone, Radius, Mittelpunkt), mit Fadenkreuz */}
-      <circle cx={HAUS_ZIRKEL.cx} cy={HAUS_ZIRKEL.cy} r={HAUS_ZIRKEL.kreuzR} stroke={C.papier} strokeWidth={vb(2)} fill="none" />
-      <path d={HAUS_ZIRKEL.kreuz} stroke={C.papier} strokeWidth={vb(2)} {...round} />
-      <circle cx={HAUS_ZIRKEL.cx} cy={HAUS_ZIRKEL.cy} r={HAUS_ZIRKEL.r} stroke={C.navy} strokeWidth={vb(STRICH)} fill={C.papier} />
-      <circle cx={HAUS_ZIRKEL.cx} cy={HAUS_ZIRKEL.cy} r={HAUS_ZIRKEL.ringR} stroke={C.navy} strokeWidth={vb(2)} fill="none" />
-      <path d={`${HAUS_ZIRKEL.radius}${HAUS_ZIRKEL.radiusPfeil}`} stroke={C.navy} strokeWidth={vb(STRICH)} {...round} />
-      <circle cx={HAUS_ZIRKEL.cx} cy={HAUS_ZIRKEL.cy} r={4.5} fill={C.navy} />
-      {/* Leitungen: Mantel in Papier, darauf Rücklauf blau und Vorlauf rot */}
-      {[...HAUS_RUECKLAUF, ...vorlauf].map((d) => (
-        <path key={`m${d}`} d={d} stroke={C.papier} strokeWidth={mantel} {...round} />
-      ))}
-      {HAUS_RUECKLAUF.map((d) => (
-        <path key={`r${d}`} d={d} stroke={C.blau} strokeWidth={pipe} {...round} />
-      ))}
-      {vorlauf.map((d) => (
-        <path key={`v${d}`} d={d} stroke={C.rot} strokeWidth={pipe} {...round} />
+      {ogPfeile(knopf).map((p) => (
+        <path key={p.d} d={p.d} fill={MEDIUM[p.medium]} />
       ))}
     </svg>
   );
 }
 
-function Glyph({ name, size }: { name: IconName; size: number }) {
-  const shapes = GLYPH_SHAPES[name] as ReadonlyArray<Record<string, unknown>>;
+/** Maßlinie nach DIN 406 (Linienart mass, 1 px): Linie mit 45°-Begrenzungsstrichen an beiden Enden. */
+function Masslinie({ width, color }: { width: number; color: string }) {
+  const h = 12;
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24">
-      {shapes.map((shape, index) => {
-        const common = { stroke: C.navy, strokeWidth: 2, ...round };
-        if ('d' in shape) {
-          return <path key={index} {...common} d={shape.d as string} transform={shape.transform as string | undefined} />;
-        }
-        if ('cx' in shape) {
-          return <circle key={index} {...common} cx={shape.cx as number} cy={shape.cy as number} r={shape.r as number} />;
-        }
-        return (
-          <rect
-            key={index}
-            {...common}
-            x={shape.x as number}
-            y={shape.y as number}
-            width={shape.width as number}
-            height={shape.height as number}
-            rx={shape.rx as number | undefined}
-          />
-        );
-      })}
+    <svg width={width + 2 * h} height={h} viewBox={`${-h} 0 ${width + 2 * h} ${h}`} style={{ display: 'flex', marginLeft: -h }}>
+      <path d={`M0 ${h / 2}H${width}`} stroke={color} strokeWidth={1} fill="none" />
+      {[0, width].map((x) => (
+        <path key={x} d={`M${x - h / 2} ${h}L${x + h / 2} 0`} stroke={color} strokeWidth={1} strokeLinecap="butt" fill="none" />
+      ))}
     </svg>
   );
 }
 
-const KASTEN = {
-  display: 'flex',
-  alignItems: 'center',
-  backgroundColor: C.papier,
-  color: C.navy,
-  border: `2px solid ${C.navy}`,
-  borderRadius: 4,
-} as const;
-
-/** Etiketten-Kästchen an der Szene: Familien-Icon auf Plakette, Name in Martian-Versalien. */
-function Marke({ icon, name, at, label }: { icon: IconName; name: string; at: { x: number; y: number }; label: 'oben' | 'rechts' }) {
-  const plate = 32;
-  const left = px(at.x) - plate / 2;
-  const top = py(at.y) - plate / 2;
-  const text = (
-    <div style={{ ...KASTEN, fontFamily: 'Martian', fontWeight: 600, fontSize: 14, letterSpacing: 0.8, padding: '5px 8px', lineHeight: 1 }}>
-      {versal(name)}
-    </div>
-  );
+/** Vorlauf von der Außeneinheit zum Knopf: vom Rand des Panels auf Höhe der Erdleitung, Bogen, Steigleitung, Bogen. */
+function VorlaufZumKnopf() {
+  const ende = BUTTON.left + BUTTON.width - 2;
+  const d =
+    `M${PANEL_X} ${ERD_Y}H${STEIG_X + BOGEN}A${BOGEN} ${BOGEN} 0 0 1 ${STEIG_X} ${ERD_Y - BOGEN}` +
+    `V${KNOPF_Y + BOGEN}A${BOGEN} ${BOGEN} 0 0 0 ${STEIG_X - BOGEN} ${KNOPF_Y}H${ende}`;
   return (
-    <>
-      <div style={{ ...KASTEN, position: 'absolute', left, top, width: plate, height: plate, justifyContent: 'center' }}>
-        <Glyph name={icon} size={22} />
-      </div>
-      {label === 'oben' ? (
-        <div style={{ position: 'absolute', left: PANEL_X + 12, top: top - 34, display: 'flex' }}>{text}</div>
-      ) : (
-        <div style={{ position: 'absolute', left: left + plate + 4, top: top + 2, display: 'flex' }}>{text}</div>
-      )}
-    </>
-  );
-}
-
-/** Rohrklammer: Vorlauf oben, Rücklauf unten, Bögen r 12, 3 px (components/zeichnung/Rohrklammer). */
-function Rohrklammer({ height }: { height: number }) {
-  const mid = height / 2;
-  return (
-    <svg width={24} height={height} viewBox={`0 0 24 ${height}`} style={{ position: 'absolute', left: 0, top: 0 }}>
-      <path d={`M22.5 1.5H13.5A12 12 0 0 0 1.5 13.5V${mid}`} stroke={C.rot} strokeWidth={STRICH} {...round} />
-      <path d={`M1.5 ${mid}V${height - 13.5}A12 12 0 0 0 13.5 ${height - 1.5}H22.5`} stroke={C.blau} strokeWidth={STRICH} {...round} />
+    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ position: 'absolute', left: 0, top: 0 }}>
+      <path d={d} stroke={C.rot} strokeWidth={LEITUNG} strokeLinecap="butt" strokeLinejoin="round" fill="none" />
     </svg>
   );
 }
@@ -256,9 +240,9 @@ function Frame({ logo, etikett, title, titleSize, subline, action, microcopy, pa
         fontFamily: 'Atkinson',
       }}
     >
-      {/* Navy-Panel mit Haus */}
+      {/* Navy-Panel mit dem Hausschnitt */}
       <div style={{ position: 'absolute', left: PANEL_X, top: 0, width: PANEL_W, height: H, backgroundColor: C.navy, display: 'flex' }} />
-      <Haus zuleitung={action !== null} />
+      <Haus knopf={action !== null} />
       {panel}
 
       {/* Linke Spalte auf Papier */}
@@ -292,8 +276,7 @@ function Frame({ logo, etikett, title, titleSize, subline, action, microcopy, pa
             <div key={line}>{line}</div>
           ))}
         </div>
-        <div style={{ display: 'flex', position: 'relative', marginTop: 22, paddingLeft: 36, height: sublineHeight }}>
-          <Rohrklammer height={sublineHeight} />
+        <div style={{ display: 'flex', position: 'relative', marginTop: 22, height: sublineHeight }}>
           <div
             style={{
               display: 'flex',
@@ -303,7 +286,7 @@ function Frame({ logo, etikett, title, titleSize, subline, action, microcopy, pa
               fontWeight: 700,
               fontSize: sublineSize,
               lineHeight: 1.12,
-              color: C.navy,
+              color: C.tinte2,
             }}
           >
             {subline.map((line) => (
@@ -315,17 +298,8 @@ function Frame({ logo, etikett, title, titleSize, subline, action, microcopy, pa
 
       {action ? (
         <>
-          {/* Vorlauf: aus dem Knopf waagerecht ins Panel, dort weiter in die Wärmepumpe */}
-          <div
-            style={{
-              position: 'absolute',
-              left: BUTTON.left + BUTTON.width - 2,
-              top: PIPE_Y - STRICH / 2,
-              width: PANEL_X - BUTTON.left - BUTTON.width + 4,
-              height: STRICH,
-              backgroundColor: C.rot,
-            }}
-          />
+          {/* Vorlauf: aus der Außeneinheit über die Erdleitung und die Steigleitung in den Knopf (K-001) */}
+          <VorlaufZumKnopf />
           <div
             style={{
               position: 'absolute',
@@ -372,61 +346,62 @@ async function respond(frame: (logo: string | null) => ReactElement): Promise<Im
 
 // ── Startseite ─────────────────────────────────────────────────────────────────────────────────────
 
-/** Maßkette mit schrägen Endstrichen über den Maßen (Variante 3 `.messwerte`): 30 Tage Urlaub · 1926 Gegründet. */
-function Masse({ measures }: { measures: OgHomeText['measures'] }) {
+/**
+ * Die Maße über dem Hausschnitt wie im Einstieg: 35 km Einsatzgebiet, 30 Tage Urlaub, 1926 Gegründet; je Maß der Wert,
+ * darunter die Maßlinie (1 px, 45°-Striche am Anfang jedes Maßes und am Ende der Kette), darunter der Name.
+ */
+function Masse({ measures }: { measures: readonly OgHomeText['measures'][number][] }) {
   const x0 = PANEL_X + 40;
-  const top = 46;
+  const top = 40;
   const valueSize = 44;
-  const lineY = top + valueSize + 12;
-  const widths = [156, 156, 156].slice(0, Math.min(3, measures.length));
+  const lineY = top + valueSize + 10;
+  const widths = [190, 140, 150].slice(0, Math.min(3, measures.length));
   const starts = widths.map((_, index) => x0 + widths.slice(0, index).reduce((sum, w) => sum + w, 0));
-  const end = starts[starts.length - 1] + widths[widths.length - 1];
+  const end = starts[starts.length - 1] + widths[widths.length - 1] - 20;
   const ticks = [...starts, end];
   return (
     <>
-      <svg width={PANEL_W} height={40} viewBox={`0 0 ${PANEL_W} 40`} style={{ position: 'absolute', left: PANEL_X, top: lineY - 20 }}>
-        <path d={`M${x0 - PANEL_X} 20H${end - PANEL_X}`} stroke={C.creme} strokeWidth={2} fill="none" />
+      <svg width={PANEL_W} height={20} viewBox={`0 0 ${PANEL_W} 20`} style={{ position: 'absolute', left: PANEL_X, top: lineY - 10 }}>
+        <path d={`M${x0 - PANEL_X} 10H${end - PANEL_X}`} stroke={C.creme} strokeWidth={1} fill="none" />
         {ticks.map((x) => (
-          <path key={x} d={`M${x - PANEL_X - 6} 26L${x - PANEL_X + 6} 14`} stroke={C.creme} strokeWidth={2} strokeLinecap="round" />
+          <path key={x} d={`M${x - PANEL_X - 6} 16L${x - PANEL_X + 6} 4`} stroke={C.creme} strokeWidth={1} strokeLinecap="butt" />
         ))}
       </svg>
       {measures.slice(0, 3).map((measure, index) => (
-        <div key={measure.name} style={{ position: 'absolute', left: starts[index] + 6, top, display: 'flex', flexDirection: 'column' }}>
+        <div
+          key={measure.name}
+          style={{ position: 'absolute', left: starts[index] + 4, top, width: widths[index] - 16, display: 'flex', flexDirection: 'column' }}
+        >
           <div style={{ fontFamily: 'Bricolage', fontWeight: 800, fontSize: valueSize, lineHeight: 1, color: C.weiss, letterSpacing: -0.4 }}>
             {measure.value}
           </div>
-          <div style={{ marginTop: 24, fontFamily: 'Atkinson', fontWeight: 700, fontSize: 18, color: C.creme }}>{measure.name}</div>
+          <div style={{ marginTop: 22, fontFamily: 'Atkinson', fontWeight: 700, fontSize: 17, lineHeight: 1.2, color: C.creme }}>{measure.name}</div>
         </div>
       ))}
     </>
   );
 }
 
-/**
- * „35 km Einsatzgebiet rund um Wetzlar“ mit Hinweislinie unter 45° zum Fadenkreuz am Zirkel im Giebel: die Linie
- * liegt auf dem Radius des Zirkels (Leitmotiv E-027, wie im Einstieg).
- */
-function Einsatzgebiet({ radius }: { radius: OgHomeText['radius'] }) {
-  const left = PANEL_X + 34;
-  const top = 160;
-  const labelBottom = top + 72 + 32;
-  // Fadenkreuz am Zirkel, Punkt oben links auf dem Kreis (Verlängerung des Radius)
-  const r = HAUS_ZIRKEL.kreuzR * S * Math.SQRT1_2;
-  const endX = px(HAUS_ZIRKEL.cx) - r;
-  const endY = py(HAUS_ZIRKEL.cy) - r;
-  const startX = endX - (endY - labelBottom);
+/** „35 km“ als Maß in Schrift im Giebel (Leitmotiv E-027, seit E-029 ohne Zirkel), mit Maßlinie darunter. */
+function GiebelMass({ value }: { value: string }) {
+  const breite = 112;
   return (
-    <>
-      <div style={{ position: 'absolute', left, top, display: 'flex', flexDirection: 'column' }}>
-        <div style={{ fontFamily: 'Bricolage', fontWeight: 800, fontSize: 72, lineHeight: 1, color: C.weiss, letterSpacing: -0.7 }}>
-          {radius.value}
-        </div>
-        <div style={{ marginTop: 8, fontFamily: 'Atkinson', fontWeight: 700, fontSize: 18, lineHeight: 1.2, color: C.creme }}>{radius.name}</div>
+    <div
+      style={{
+        position: 'absolute',
+        left: px(OG_GIEBEL_MASS.x) - breite / 2,
+        top: py(OG_GIEBEL_MASS.y) - 22,
+        width: breite,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
+      <div style={{ fontFamily: 'Martian', fontWeight: 600, fontSize: 26, lineHeight: 1, color: C.creme }}>{value}</div>
+      <div style={{ display: 'flex', marginTop: 4 }}>
+        <Masslinie width={breite - 8} color={C.creme} />
       </div>
-      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ position: 'absolute', left: 0, top: 0 }}>
-        <path d={`M${startX} ${labelBottom}L${endX} ${endY}`} stroke={C.creme} strokeWidth={2} strokeLinecap="round" fill="none" />
-      </svg>
-    </>
+    </div>
   );
 }
 
@@ -442,11 +417,8 @@ export async function renderHomeImage(text: OgHomeText): Promise<ImageResponse> 
       microcopy={text.microcopy}
       panel={
         <>
-          <Masse measures={text.measures} />
-          <Einsatzgebiet radius={text.radius} />
-          <Marke icon="waermepumpe" name="Wärmepumpen" at={HAUS_MARKEN[0]} label="oben" />
-          <Marke icon="flamme" name="Heizungen" at={HAUS_MARKEN[1]} label="rechts" />
-          <Marke icon="tropfen" name="Bäder" at={HAUS_MARKEN[2]} label="rechts" />
+          <Masse measures={[text.radius, ...text.measures]} />
+          <GiebelMass value={text.radius.value} />
         </>
       }
     />
@@ -455,61 +427,27 @@ export async function renderHomeImage(text: OgHomeText): Promise<ImageResponse> 
 
 // ── Stellen ────────────────────────────────────────────────────────────────────────────────────────
 
-/** Heizkreis (Variante 2): Vorlauf oben um die Zahl, Rücklauf unten zurück, links Zu- und Abgang im Paarabstand. */
-function Heizkreis({ value, name, gross = false }: OgJobText['salary'] & { gross?: boolean }) {
-  const valueSize = gross ? 88 : value.length > 14 ? 44 : 50;
-  const nameSize = 17;
-  const pad = { top: 30, right: 40, bottom: 30, left: 12 + 32 };
-  const height = pad.top + valueSize + (name ? 14 + nameSize : 0) + pad.bottom;
-  const half = height / 2;
-  const vorlauf = '#FF6B5F';
-  const ruecklauf = '#86AEFF';
+/**
+ * Kennwert über dem Hausschnitt (seit E-029 statt des Heizkreises um die Zahl): Wert in Martian Mono, darunter die
+ * Maßlinie nach DIN 406, darunter der Name in Versalien. „Lohn auf Anfrage“ bei den Stellen (E-030), die Straßenstrecke
+ * bei den Orten, der Kennwert bei den Themen.
+ */
+function Kennwert({ value, name, gross = false }: OgJobText['salary'] & { gross?: boolean }) {
+  const valueSize = gross ? 80 : value.length > 14 ? 42 : 50;
+  const breite = Math.min(PANEL_W - 80, Math.round(value.length * valueSize * 0.62));
   return (
-    <div style={{ position: 'absolute', left: PANEL_X, top: 64, width: PANEL_W, display: 'flex', justifyContent: 'center' }}>
-      <div
-        style={{
-          position: 'relative',
-          display: 'flex',
-          flexDirection: 'column',
-          height,
-          padding: `${pad.top}px ${pad.right}px ${pad.bottom}px ${pad.left}px`,
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            top: 0,
-            height: half,
-            borderTop: `${STRICH}px solid ${vorlauf}`,
-            borderLeft: `${STRICH}px solid ${vorlauf}`,
-            borderRight: `${STRICH}px solid ${vorlauf}`,
-            borderRadius: '24px 24px 0 0',
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            left: 12,
-            right: 0,
-            top: half,
-            height: half,
-            borderBottom: `${STRICH}px solid ${ruecklauf}`,
-            borderLeft: `${STRICH}px solid ${ruecklauf}`,
-            borderRight: `${STRICH}px solid ${ruecklauf}`,
-            borderRadius: '0 0 24px 24px',
-          }}
-        />
-        <div style={{ fontFamily: 'Martian', fontWeight: 600, fontSize: valueSize, lineHeight: 1, letterSpacing: -0.02 * valueSize, color: C.creme }}>
-          {value}
-        </div>
-        {name ? (
-          <div style={{ marginTop: 14, fontFamily: 'Martian', fontWeight: 600, fontSize: nameSize, lineHeight: 1, letterSpacing: 1, color: C.creme2 }}>
-            {versal(name)}
-          </div>
-        ) : null}
+    <div style={{ position: 'absolute', left: PANEL_X + 40, top: 48, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ fontFamily: 'Martian', fontWeight: 600, fontSize: valueSize, lineHeight: 1, letterSpacing: -0.02 * valueSize, color: C.creme }}>
+        {value}
       </div>
+      <div style={{ display: 'flex', marginTop: 10 }}>
+        <Masslinie width={breite} color={C.creme} />
+      </div>
+      {name ? (
+        <div style={{ marginTop: 10, fontFamily: 'Martian', fontWeight: 600, fontSize: 17, lineHeight: 1, letterSpacing: 1, color: C.creme2 }}>
+          {versal(name)}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -524,7 +462,7 @@ export async function renderJobImage(text: OgJobText): Promise<ImageResponse> {
       subline={text.subline}
       action={text.action}
       microcopy={text.microcopy}
-      panel={<Heizkreis {...text.salary} />}
+      panel={<Kennwert {...text.salary} />}
     />
   ));
 }
@@ -549,7 +487,7 @@ export function ogEtikett(etikett: string, max = OG_ETIKETT_MAX): string {
 
 /**
  * Teilen-Bild einer Ortsseite (E-028) im Rahmen der Stellenbilder: Etikett und h1 der Seite, Fahrzeit und
- * „Flexible Arbeitszeiten.“ an der Rohrklammer, im Heizkreis die Straßenstrecke („27 km bis zum Firmensitz“).
+ * „Flexible Arbeitszeiten.“ als Unterzeile, als Kennwert die Straßenstrecke („27 km bis zum Firmensitz“).
  */
 export async function renderPlaceImage(text: OgPlaceText): Promise<ImageResponse> {
   return respond((logo) => (
@@ -561,7 +499,7 @@ export async function renderPlaceImage(text: OgPlaceText): Promise<ImageResponse
       subline={text.subline}
       action={text.action}
       microcopy={text.microcopy}
-      panel={<Heizkreis value={text.distance.value} name={text.distance.name} gross />}
+      panel={<Kennwert value={text.distance.value} name={text.distance.name} gross />}
     />
   ));
 }
