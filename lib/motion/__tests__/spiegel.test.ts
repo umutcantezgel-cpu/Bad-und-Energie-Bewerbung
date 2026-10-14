@@ -57,6 +57,27 @@ describe('Spiegel theme.css ↔ lib/tokens', () => {
     expect(TOKENS.strich).toBe(3);
   });
 
+  it('Linienarten der Zeichnungen (K-010, E-029): Leitung 3 · Kontur 2 · fein 1 · Maß 1 · verdeckt · Mittellinie · Icon 2', () => {
+    const { linien } = TOKENS;
+    expect(px(cssVar('--m-leitung'))).toBe(linien.leitung);
+    expect(px(cssVar('--m-kontur'))).toBe(linien.kontur);
+    expect(px(cssVar('--m-fein'))).toBe(linien.fein);
+    expect(px(cssVar('--m-mass'))).toBe(linien.mass);
+    expect(px(cssVar('--m-verdeckt'))).toBe(linien.verdeckt);
+    expect(px(cssVar('--m-mittellinie'))).toBe(linien.mittellinie);
+    expect(px(cssVar('--m-icon'))).toBe(linien.icon);
+    const muster = (name: string) => cssVar(name).split(/\s+/).map(px);
+    expect(muster('--m-verdeckt-muster')).toEqual([...linien.verdecktMuster]);
+    expect(muster('--m-mittellinie-muster')).toEqual([...linien.mittellinieMuster]);
+    // Werte der Tabelle in KERN K-010; die Leitung behält die Stärke des alten Strichs (--m-strich)
+    expect([linien.leitung, linien.kontur, linien.fein, linien.mass, linien.icon]).toEqual([3, 2, 1, 1, 2]);
+    expect(linien.leitung).toBe(TOKENS.strich);
+    // Strich-Punkt: langer Strich, Lücke, Punkt, Lücke; gestrichelt: Strich und Lücke
+    expect(linien.mittellinieMuster).toHaveLength(4);
+    expect(linien.mittellinieMuster[0]).toBeGreaterThan(linien.mittellinieMuster[2]);
+    expect(linien.verdecktMuster).toHaveLength(2);
+  });
+
   it('vier Radien und ein Schatten (K-008)', () => {
     expect(px(cssVar('--radius-1'))).toBe(TOKENS.radius.r1);
     expect(px(cssVar('--radius-2'))).toBe(TOKENS.radius.r2);
