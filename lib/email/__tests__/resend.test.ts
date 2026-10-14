@@ -413,3 +413,48 @@ describe('dispatchApplicationFollowUpEmail', () => {
     expect(send.mock.calls[0][1].idempotencyKey).toMatch(/^ergaenzung:hash:follow-up:[0-9a-f]{16}$/);
   });
 });
+
+describe('CONTACT_NOTIFICATION_EMAIL als Liste (Sofortmeldung, P0-4)', () => {
+  const TEAM = 'info@bad-energie.de, chef@bad-energie.de';
+
+  it('schickt die Team-Mail in einem Versand an alle Adressen, die Eingangsbestätigung antwortet nur ans Hauptpostfach', async () => {
+    stubEnv({ NODE_ENV: 'production', RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER, CONTACT_NOTIFICATION_EMAIL: TEAM });
+    send.mockResolvedValue({ data: { id: 'email_x' }, error: null, headers: null });
+
+    const result = await dispatchApplicationEmails(application, { idempotencyKey: 'bewerbung:liste' });
+
+    expect(result.success).toBe(true);
+    expect(send).toHaveBeenCalledTimes(2);
+    expect(send.mock.calls[0][0]).toMatchObject({ to: ['info@bad-energie.de', 'chef@bad-energie.de'], replyTo: RECIPIENT });
+    expect(send.mock.calls[1][0]).toMatchObject({ to: [RECIPIENT], replyTo: 'info@bad-energie.de' });
+    // Logs nennen weder Team-Adressen noch die der Bewerberin.
+    expect(loggedText()).not.toMatch(/chef@|info@|bewerberin@/);
+  });
+
+  it('Ergänzungen gehen an dieselbe Liste', async () => {
+    stubEnv({ NODE_ENV: 'production', RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER, CONTACT_NOTIFICATION_EMAIL: TEAM });
+    send.mockResolvedValue({ data: { id: 'email_f' }, error: null, headers: null });
+    await dispatchApplicationFollowUpEmail({ reference: 'BE-26-K7M4QX', idempotencyKey: 'hash', receivedAt: new Date(), postalCode: '35578' });
+    expect(send.mock.calls[0][0]).toMatchObject({ to: ['info@bad-energie.de', 'chef@bad-energie.de'] });
+  });
+
+  it('eine ungültige Adresse in der Liste: Team-Mail an den Ersatz info@bad-energie.de statt an eine halbe Liste', async () => {
+    stubEnv({
+      NODE_ENV: 'production',
+      RESEND_API_KEY: REAL_KEY,
+      RESEND_FROM_EMAIL: SENDER,
+      CONTACT_NOTIFICATION_EMAIL: 'chef@bad-energie.de, kein-postfach',
+    });
+    send.mockResolvedValue({ data: { id: 'email_x' }, error: null, headers: null });
+    await dispatchApplicationEmails({ ...application, email: undefined });
+    expect(send.mock.calls[0][0]).toMatchObject({ to: ['info@bad-energie.de'] });
+  });
+
+  it('getResendClient: Liste ohne Dubletten, Hauptpostfach vorn und nie eine leere Empfängerliste', async () => {
+    const { getResendClient } = await import('@/lib/email/resend');
+    stubEnv({ CONTACT_NOTIFICATION_EMAIL: 'Chef@Bad-Energie.de, info@bad-energie.de, chef@bad-energie.de' });
+    expect(getResendClient()).toMatchObject({ toEmails: ['Chef@Bad-Energie.de', 'info@bad-energie.de'], replyToEmail: 'Chef@Bad-Energie.de' });
+    stubEnv({ CONTACT_NOTIFICATION_EMAIL: ' , ' });
+    expect(getResendClient()).toMatchObject({ toEmails: ['info@bad-energie.de'], replyToEmail: 'info@bad-energie.de' });
+  });
+});

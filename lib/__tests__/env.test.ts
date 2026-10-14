@@ -12,7 +12,9 @@ import {
   checkServerEnv,
   devSecretsAllowed,
   emailSimulationAllowed,
+  funnelEventsEnabled,
   getAppUrl,
+  MAX_NOTIFICATION_RECIPIENTS,
   getEmailConfig,
   getIndexNowKey,
   getIndexNowSubmitToken,
@@ -39,6 +41,7 @@ const MANAGED_VARS = [
   'SUPABASE_SECRET_KEY',
   'SUPABASE_SERVICE_ROLE_KEY',
   'APPLICATION_SINK',
+  'FUNNEL_EVENTS',
 ] as const;
 
 const REAL_KEY = 're_Ab3dEf9h_KlMnOpQrStUvWx';
@@ -188,7 +191,7 @@ describe('getEmailConfig', () => {
     expect(config.from).toBe(DEFAULT_FROM_EMAIL);
     expect(config.from).toContain('@karriere.bad-energie.de>');
     expect(config.fromSource).toBe('default');
-    expect(config.notificationTo).toBe('info@bad-energie.de');
+    expect(config.notificationTo).toEqual(['info@bad-energie.de']);
     expect(config.missing).toEqual([]);
     expect(JSON.stringify(config)).not.toContain('resend.dev');
     expect(console.error).not.toHaveBeenCalled();
@@ -226,7 +229,7 @@ describe('getEmailConfig', () => {
       apiKey: REAL_KEY,
       from: SENDER,
       fromSource: 'env',
-      notificationTo: 'team@bad-energie.de',
+      notificationTo: ['team@bad-energie.de'],
       forceSimulation: false,
       missing: [],
     });
@@ -247,7 +250,7 @@ describe('getEmailConfig', () => {
     const config = getEmailConfig();
     expect(config.from).toBe(DEFAULT_FROM_EMAIL);
     expect(config.fromSource).toBe('default');
-    expect(config.notificationTo).toBe('alt@bad-energie.de');
+    expect(config.notificationTo).toEqual(['alt@bad-energie.de']);
   });
 
   it('forces simulation only where simulation is allowed', () => {
@@ -255,6 +258,89 @@ describe('getEmailConfig', () => {
     expect(getEmailConfig().forceSimulation).toBe(true);
     setEnv({ VERCEL_ENV: 'production' });
     expect(getEmailConfig().forceSimulation).toBe(false);
+  });
+});
+
+describe('CONTACT_NOTIFICATION_EMAIL als kommagetrennte Liste (P0-4)', () => {
+  it('liest mehrere Adressen, jede einzeln getrimmt, in der angegebenen Reihenfolge', () => {
+    setEnv({ CONTACT_NOTIFICATION_EMAIL: ' info@bad-energie.de ,chef@bad-energie.de,  buero@bad-energie.de ' });
+    expect(getEmailConfig().notificationTo).toEqual(['info@bad-energie.de', 'chef@bad-energie.de', 'buero@bad-energie.de']);
+  });
+
+  it('nimmt Anführungszeichen um den ganzen Wert, leere Einträge und Dubletten heraus', () => {
+    setEnv({ CONTACT_NOTIFICATION_EMAIL: '"info@bad-energie.de,, Info@Bad-Energie.de, chef@bad-energie.de,"' });
+    expect(getEmailConfig().notificationTo).toEqual(['info@bad-energie.de', 'chef@bad-energie.de']);
+  });
+
+  it.each([
+    ['eine kaputte Adresse', 'info@bad-energie.de, kein-postfach'],
+    ['Semikolon statt Komma', 'info@bad-energie.de; chef@bad-energie.de'],
+    ['Anzeigename (nur beim Absender erlaubt)', 'Team <info@bad-energie.de>'],
+    ['nur Kommas', ' , ,'],
+    [`mehr als ${MAX_NOTIFICATION_RECIPIENTS} Adressen`, Array.from({ length: MAX_NOTIFICATION_RECIPIENTS + 1 }, (_, i) => `a${i}@bad-energie.de`).join(',')],
+  ])('%s: ganze Variable ungültig, Ersatz info@bad-energie.de, Start-Check nennt nur den Namen', (_name, value) => {
+    setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: REAL_KEY, CONTACT_NOTIFICATION_EMAIL: value });
+    expect(getEmailConfig().notificationTo).toEqual(['info@bad-energie.de']);
+    expect(checkServerEnv()).toEqual({ ok: false, missing: [], invalid: ['CONTACT_NOTIFICATION_EMAIL'] });
+    reportServerEnv();
+    const logs = [...vi.mocked(console.error).mock.calls, ...vi.mocked(console.info).mock.calls].flat().map(String).join('\n');
+    expect(logs).toContain('ungültig: CONTACT_NOTIFICATION_EMAIL');
+    expect(logs).not.toMatch(/@bad-energie\.de/);
+  });
+
+  it(`erlaubt genau ${MAX_NOTIFICATION_RECIPIENTS} Adressen`, () => {
+    const adressen = Array.from({ length: MAX_NOTIFICATION_RECIPIENTS }, (_, i) => `a${i}@bad-energie.de`);
+    setEnv({ CONTACT_NOTIFICATION_EMAIL: adressen.join(', ') });
+    expect(getEmailConfig().notificationTo).toEqual(adressen);
+  });
+
+  it('der alte Name RESEND_TO_EMAIL folgt derselben Regel und gilt nur ohne CONTACT_NOTIFICATION_EMAIL', () => {
+    setEnv({ RESEND_TO_EMAIL: 'alt@bad-energie.de, chef@bad-energie.de' });
+    expect(getEmailConfig().notificationTo).toEqual(['alt@bad-energie.de', 'chef@bad-energie.de']);
+    setEnv({ CONTACT_NOTIFICATION_EMAIL: 'neu@bad-energie.de' });
+    expect(getEmailConfig().notificationTo).toEqual(['neu@bad-energie.de']);
+  });
+
+  it('Start-Log nennt die Zahl der Empfänger, nie die Adressen', () => {
+    setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: REAL_KEY, CONTACT_NOTIFICATION_EMAIL: 'info@bad-energie.de, chef@bad-energie.de' });
+    reportServerEnv();
+    const info = String(vi.mocked(console.info).mock.calls.at(-1)?.[0]);
+    expect(info).toContain('Team-Mail an 2 Adressen');
+    expect(info).not.toContain('@');
+  });
+});
+
+describe('funnelEventsEnabled (FUNNEL_EVENTS, Standard aus bis M-034)', () => {
+  it('ist ohne Wert, mit „false“ und mit Platzhaltern aus', () => {
+    expect(funnelEventsEnabled()).toBe(false);
+    setEnv({ FUNNEL_EVENTS: 'false' });
+    expect(funnelEventsEnabled()).toBe(false);
+    setEnv({ FUNNEL_EVENTS: '' });
+    expect(funnelEventsEnabled()).toBe(false);
+  });
+
+  it('ist nur mit genau „true“ an (auch in Anführungszeichen aus dem Dashboard)', () => {
+    setEnv({ FUNNEL_EVENTS: 'true' });
+    expect(funnelEventsEnabled()).toBe(true);
+    setEnv({ FUNNEL_EVENTS: '"true"' });
+    expect(funnelEventsEnabled()).toBe(true);
+  });
+
+  it('ungültige Werte schalten nicht ein und stehen im Start-Check als ungültig', () => {
+    for (const value of ['TRUE', '1', 'ja', 'on']) {
+      setEnv({ FUNNEL_EVENTS: value });
+      expect(funnelEventsEnabled()).toBe(false);
+      expect(checkServerEnv().invalid).toContain('FUNNEL_EVENTS');
+    }
+  });
+
+  it('der Start-Log sagt, wenn Ereignisse an sind', () => {
+    setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: REAL_KEY, FUNNEL_EVENTS: 'true' });
+    reportServerEnv();
+    expect(String(vi.mocked(console.info).mock.calls.at(-1)?.[0])).toContain('Ereignisse an (nur Log)');
+    setEnv({ FUNNEL_EVENTS: 'false' });
+    reportServerEnv();
+    expect(String(vi.mocked(console.info).mock.calls.at(-1)?.[0])).not.toContain('Ereignisse');
   });
 });
 
@@ -515,7 +601,8 @@ describe('reportServerEnv', () => {
   });
 
   it('does not claim 503 when only an optional value is invalid', () => {
-    setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: REAL_KEY, CONTACT_NOTIFICATION_EMAIL: 'a@b.de, c@d.de' });
+    // Seit P0-4 ist die Liste erlaubt; ungültig bleibt eine Liste mit einer kaputten Adresse.
+    setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: REAL_KEY, CONTACT_NOTIFICATION_EMAIL: 'a@b.de, kein-postfach' });
     expect(reportServerEnv()).toEqual({ ok: false });
     expect(console.error).toHaveBeenCalledWith(expect.stringContaining('Ersatzwerte aktiv'));
     expect(console.error).not.toHaveBeenCalledWith(expect.stringContaining('503'));

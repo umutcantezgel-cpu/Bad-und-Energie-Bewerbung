@@ -49,6 +49,21 @@ const optional = <T extends z.ZodType>(schema: T) =>
 const ADDRESS = String.raw`[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+`;
 // „adresse@domain.de“ oder „Anzeigename <adresse@domain.de>“
 const SENDER_PATTERN = new RegExp(`^(?:${ADDRESS}|[^<>]+<${ADDRESS}>)$`);
+/** Höchstzahl der Empfänger der Team-Mail (Resend erlaubt 50 je Mail; mehr braucht ein Betrieb nicht). */
+export const MAX_NOTIFICATION_RECIPIENTS = 10;
+/**
+ * Kommagetrennte Liste, z. B. „info@bad-energie.de, chef@bad-energie.de“. Jede Adresse wird einzeln geprüft;
+ * ist eine davon ungültig, gilt die ganze Variable als ungültig (Start-Check meldet sie, es greift der Ersatz).
+ * Leere Einträge (doppeltes oder abschließendes Komma) fallen weg, doppelte Adressen ebenso (ohne Rücksicht auf
+ * Groß- und Kleinschreibung, die erste Schreibweise bleibt). Die erste Adresse ist das Hauptpostfach.
+ */
+const emailList = z
+  .string()
+  .transform((value) => value.split(',').map((entry) => entry.trim()).filter(Boolean))
+  .pipe(z.array(z.email()).min(1).max(MAX_NOTIFICATION_RECIPIENTS))
+  .transform((addresses) =>
+    addresses.filter((address, index) => addresses.findIndex((other) => other.toLowerCase() === address.toLowerCase()) === index),
+  );
 const secret = z.string().min(MIN_SECRET_LENGTH);
 const httpUrl = z.url({ protocol: /^https?$/ });
 // Server-Schlüssel von Supabase: neuer Secret Key (sb_secret_…) oder alter service_role-JWT.
@@ -59,9 +74,9 @@ const serverEnvSchema = z.object({
   // Nur druckbares ASCII: ein unsichtbares Zeichen (z. B. aus einer Kopie) ließe `new Resend()` werfen.
   RESEND_API_KEY: optional(z.string().regex(/^re_[\x21-\x7E]{8,}$/)),
   RESEND_FROM_EMAIL: optional(z.string().regex(SENDER_PATTERN)),
-  CONTACT_NOTIFICATION_EMAIL: optional(z.email()),
+  CONTACT_NOTIFICATION_EMAIL: optional(emailList),
   // Alter Name von CONTACT_NOTIFICATION_EMAIL, wird nur noch als Fallback gelesen.
-  RESEND_TO_EMAIL: optional(z.email()),
+  RESEND_TO_EMAIL: optional(emailList),
   // Öffentlicher IndexNow-Prüfschlüssel (Protokoll: 8–128 Zeichen a–z, A–Z, 0–9, „-“).
   INDEXNOW_KEY: optional(z.string().regex(/^[A-Za-z0-9-]{8,128}$/)),
   INDEXNOW_SUBMIT_TOKEN: optional(secret),
@@ -75,6 +90,8 @@ const serverEnvSchema = z.object({
   SUPABASE_SECRET_KEY: optional(z.string().regex(SUPABASE_SERVER_KEY)),
   SUPABASE_SERVICE_ROLE_KEY: optional(z.string().regex(SUPABASE_SERVER_KEY)),
   APPLICATION_SINK: optional(z.enum(['auto', 'email', 'supabase'])),
+  // Cookielose Ereignisse des Bewerbungsflows (POST /api/e). Standard aus, bis der Datenschutz freigibt (M-034).
+  FUNNEL_EVENTS: optional(z.enum(['true', 'false'])),
 });
 
 export type ServerEnv = z.output<typeof serverEnvSchema>;
@@ -130,7 +147,8 @@ export interface EmailConfig {
   from: string;
   /** `default`: RESEND_FROM_EMAIL fehlt oder ist ungültig, es gilt DEFAULT_FROM_EMAIL. */
   fromSource: 'env' | 'default';
-  notificationTo: string;
+  /** Empfänger der Team-Mails, nie leer; der erste ist das Hauptpostfach (Antwortadresse der Eingangsbestätigung). */
+  notificationTo: string[];
   /** Erzwingt Simulation (EMAIL_SIMULATION=true), nur wo emailSimulationAllowed() gilt. */
   forceSimulation: boolean;
   /** Fehlende oder ungültige Variablen, ohne die kein echter Versand möglich ist. */
@@ -139,14 +157,16 @@ export interface EmailConfig {
 
 let reportedEmailConfig = false;
 
+/** CONTACT_NOTIFICATION_EMAIL, sonst der alte Name RESEND_TO_EMAIL, sonst info@bad-energie.de. */
+function notificationRecipients(): string[] {
+  return readVar('CONTACT_NOTIFICATION_EMAIL').value ?? readVar('RESEND_TO_EMAIL').value ?? [DEFAULT_NOTIFICATION_EMAIL];
+}
+
 /** Ohne RESEND_FROM_EMAIL gilt DEFAULT_FROM_EMAIL; ohne RESEND_API_KEY wird nur simuliert oder abgelehnt. */
 export function getEmailConfig(): EmailConfig {
   const apiKey = readVar('RESEND_API_KEY').value;
   const configuredFrom = readVar('RESEND_FROM_EMAIL').value;
-  const notificationTo =
-    readVar('CONTACT_NOTIFICATION_EMAIL').value ??
-    readVar('RESEND_TO_EMAIL').value ??
-    DEFAULT_NOTIFICATION_EMAIL;
+  const notificationTo = notificationRecipients();
 
   const missing: EmailConfig['missing'] = [];
   if (!apiKey) missing.push('RESEND_API_KEY');
@@ -254,6 +274,15 @@ export function getIndexNowKey(): string | undefined {
 /** Bearer-Token für POST /api/indexnow. Ohne Wert bleibt der Endpunkt deaktiviert. */
 export function getIndexNowSubmitToken(): string | undefined {
   return readVar('INDEXNOW_SUBMIT_TOKEN').value;
+}
+
+/**
+ * Cookielose Ereignisse des Bewerbungsflows (POST /api/e, lib/attribution/ereignisse.ts). Nur mit
+ * FUNNEL_EVENTS=true an; ohne Wert, mit „false“ oder ungültigem Wert aus. Die Seite reicht den Schalter als
+ * Meta-Element ins HTML, der Browser sendet nur dann.
+ */
+export function funnelEventsEnabled(): boolean {
+  return readVar('FUNNEL_EVENTS').value === 'true';
 }
 
 // ---------------------------------------------------------------------------
@@ -371,6 +400,9 @@ export function reportServerEnv(): { ok: boolean } {
       return resolved.source === 'derived' ? [`${name} abgeleitet aus ${resolved.from}`] : [];
     }),
     ...(readVar('RESEND_API_KEY').value && !readVar('RESEND_FROM_EMAIL').value ? ['Absender: Standard (karriere.bad-energie.de)'] : []),
+    // Nur die Zahl, nie die Adressen.
+    ...(notificationRecipients().length > 1 ? [`Team-Mail an ${notificationRecipients().length} Adressen`] : []),
+    ...(funnelEventsEnabled() ? ['Ereignisse an (nur Log)'] : []),
   ];
   console.info(`[env] ${notes.join('; ')}`);
 
