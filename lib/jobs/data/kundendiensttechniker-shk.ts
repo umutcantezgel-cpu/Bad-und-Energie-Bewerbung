@@ -15,7 +15,7 @@ export const kundendiensttechnikerShk = defineJob({
   seo: {
     metaTitle: 'Kundendiensttechniker Heizung & Wärmepumpe – Wetzlar/Gießen',
     metaDescription:
-      'Kundendiensttechniker SHK (m/w/d) in Wetzlar: Wärmepumpen-Service, 3.800–4.900 €, eigenes Servicefahrzeug, kein Wochenend-Notdienst. In 60 Sek. bewerben.',
+      'Kundendiensttechniker SHK (m/w/d) in Wetzlar: Wärmepumpen-Service, über Tarif, eigenes Servicefahrzeug, kein Wochenend-Notdienst. In 60 Sek. bewerben.',
     // V6-G2: Wörter des metaTitle („Heizung“, „Wärmepumpe“, Ort) in der h1; title (JobPosting) bleibt.
     h1: 'Kundendiensttechniker Heizung & Wärmepumpe (m/w/d) in Wetzlar',
     primaryKeyword: 'Kundendiensttechniker Wetzlar',
@@ -26,6 +26,7 @@ export const kundendiensttechnikerShk = defineJob({
       'Servicetechniker Wärmepumpe',
     ],
   },
+  alsoKnownAs: ['Servicetechniker Wärmepumpe', 'Kundendienstmonteur', 'Wartungsmonteur Heizung'],
   // „Gießen“ aus dem metaTitle in den ersten 100 Wörtern (Unterzeile im Kopf); Gebiet wie Fakt radius35.
   summary:
     'Du wartest Wärmepumpen rund um Wetzlar und Gießen und nimmst sie in Betrieb, mit eigenem Servicefahrzeug, iPad und Smartphone.',
@@ -60,14 +61,17 @@ export const kundendiensttechnikerShk = defineJob({
     { label: 'Vergütung', text: 'Höchste Facharbeiter-Einstufung mit Qualitätsprämien' },
   ],
   employment: { kind: 'vollzeit', permanent: true, start: 'nach-absprache' },
-  salary: { min: 3800, max: 4900, unit: 'MONTH', currency: 'EUR' },
+  pay: 'auf-anfrage',
   location: HQ_LOCATION,
   education: { credentialCategory: 'professional certificate', label: 'Abgeschlossene Ausbildung im SHK-Handwerk' },
   experienceMonths: 24,
   datePosted: '2026-03-01',
-  validThrough: '2027-10-06T00:00:00',
-  updatedAt: '2026-10-12',
+  validThrough: '2027-01-12T00:00:00',
+  updatedAt: '2026-10-14',
   apply: { questionSet: 'fachkraft' },
   channels: { googleJobs: true, indeedFeed: true, genericFeed: true, ba: true },
+  // Kundendienstmonteur/in (Gas- u. Wasserinstallation) und Wartungsmonteur/in (Heizung, Lüftung, Klima): KldB 25132;
+  // der Umsteigeschlüssel nennt dazu keinen eindeutigen ISCO-Code (lib/jobs/berufe.ts).
+  beruf: { kldb: '25132' },
   teamQuoteId: 'becker',
 });

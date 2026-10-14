@@ -53,7 +53,8 @@ function onlyGraph(element: ReactNode): PageGraph {
 }
 
 const nodes = (graph: PageGraph) => graph['@graph'] as readonly Node[];
-const ofType = (graph: PageGraph, type: string) => nodes(graph).filter((node) => node['@type'] === type);
+/** Knoten eines Typs; `@type` darf eine Liste sein (LocalBusiness, Plan §C4). */
+const ofType = (graph: PageGraph, type: string) => nodes(graph).filter((node) => [node['@type']].flat().includes(type));
 const webPage = (graph: PageGraph) => {
   const pages = ofType(graph, 'WebPage');
   expect(pages).toHaveLength(1);
@@ -81,6 +82,7 @@ function expectSoundGraph(graph: PageGraph) {
   expect(ofType(graph, 'Person').map((n) => n['@id'])).toEqual([FOUNDER_ID]);
   expect(ofType(graph, 'WebSite').map((n) => n['@id'])).toEqual([WEBSITE_ID]);
   expect(ofType(graph, 'LocalBusiness').map((n) => n['@id'])).toEqual([LOCAL_BUSINESS_ID]);
+  expect(ofType(graph, 'LocalBusiness')[0]['@type']).toEqual(['LocalBusiness', 'HVACBusiness', 'Plumber']);
   expect(ofType(graph, 'Organization')[0].founder).toEqual({ '@id': FOUNDER_ID });
 }
 
@@ -144,7 +146,13 @@ describe('buildPageGraph', () => {
   it('eine Wurzel mit @context und @graph: globale Knoten, dann WebPage', () => {
     const graph = buildPageGraph({ metadata });
     expectSoundGraph(graph);
-    expect(nodes(graph).map((n) => n['@type'])).toEqual(['Organization', 'Person', 'WebSite', 'LocalBusiness', 'WebPage']);
+    expect(nodes(graph).map((n) => n['@type'])).toEqual([
+      'Organization',
+      'Person',
+      'WebSite',
+      ['LocalBusiness', 'HVACBusiness', 'Plumber'],
+      'WebPage',
+    ]);
     const page = expectWebPage(graph, metadata);
     expect(page.name).toBe('Titel der Seite | Bad & Energie Karriere');
     expect(page.breadcrumb).toBeUndefined();

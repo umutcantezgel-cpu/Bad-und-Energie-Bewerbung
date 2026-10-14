@@ -54,26 +54,26 @@ function props(now: Date = STICHTAG): HeaderBarProps {
 const render = (p: HeaderBarProps = props()) => renderToStaticMarkup(createElement(HeaderBar, p));
 
 describe('E-SHELL-002 · Zähler „Aktuell offene Stellen“', () => {
-  it('zählt die live Stellen am Stichtag (heute 4)', () => {
+  it('zählt die live Stellen am Stichtag (seit 2026-10-14: 8, fakten-abgleich S2–S5)', () => {
     const live = getActiveJobs().filter((job) => isJobLive(job, STICHTAG)).length;
     expect(offeneStellen(STICHTAG)).toBe(live);
-    expect(offeneStellen(STICHTAG)).toBe(4);
+    expect(offeneStellen(STICHTAG)).toBe(8);
   });
 
   it('sinkt, sobald eine Stelle abläuft (Ausbildung 2026 endet am 31.12.2026)', () => {
-    expect(offeneStellen(new Date('2027-01-02T12:00:00Z'))).toBe(3);
+    expect(offeneStellen(new Date('2027-01-02T12:00:00Z'))).toBe(7);
   });
 
   it('zeigt ohne live Stelle keinen Zähler und spricht Ein- und Mehrzahl richtig', () => {
     expect(stellenZaehler(STICHTAG, [])).toBeNull();
-    expect(stellenZaehler(STICHTAG)).toEqual({ anzahl: 4, text: 'aktuell 4 offene Stellen' });
+    expect(stellenZaehler(STICHTAG)).toEqual({ anzahl: 8, text: 'aktuell 8 offene Stellen' });
     expect(offeneStellenText(1)).toBe('aktuell 1 offene Stelle');
   });
 
   it('steht am Eintrag „Stellen“ in Kopf und Menü, sichtbar als Zahl und für Screenreader als Satz', () => {
     const html = render();
-    expect(html.match(/aktuell 4 offene Stellen/g)).toHaveLength(2);
-    expect(html).toContain('4 offen');
+    expect(html.match(/aktuell 8 offene Stellen/g)).toHaveLength(2);
+    expect(html).toContain('8 offen');
   });
 });
 

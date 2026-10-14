@@ -8,7 +8,14 @@ import { getActiveJobs } from '@/lib/jobs/registry';
 import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
 import { buildPageGraph, type PageGraph } from '@/lib/seo/graph';
 import { documentTitle, generatePageMetadata } from '@/lib/seo/metadata';
-import { graphProblems, itemListProblems, jobPostingProblems, placeProblems } from '../check-graph.mjs';
+import {
+  LOCAL_BUSINESS_TYPES,
+  carriesNumber,
+  graphProblems,
+  itemListProblems,
+  jobPostingProblems,
+  placeProblems,
+} from '../check-graph.mjs';
 import { buildKreisItemListJsonLd, buildPlaceJsonLd, kreisPfad, pfadJsonLd, placePfad } from '@/lib/places/jsonld';
 import { getHubKreise, getPlaceBySlug, kreisPath, placePath } from '@/lib/places/registry';
 import { getIndexablePages } from '@/lib/seo/indexable-pages';
@@ -30,7 +37,8 @@ function fixture(path: string, extra: Omit<Parameters<typeof buildPageGraph>[0],
 }
 
 const clone = (graph: PageGraph): { '@context': string; '@graph': Node[] } => JSON.parse(JSON.stringify(graph));
-const node = (graph: { '@graph': Node[] }, type: string) => graph['@graph'].find((n) => n['@type'] === type)!;
+/** Erster Knoten des Typs; `@type` darf eine Liste sein (LocalBusiness, Plan §C4). */
+const node = (graph: { '@graph': Node[] }, type: string) => graph['@graph'].find((n) => [n['@type']].flat().includes(type))!;
 const problems = (root: unknown, html: string) => graphProblems(root, html).problems;
 
 describe('check-graph: graphProblems (V6-B)', () => {
@@ -137,6 +145,91 @@ describe('check-graph: graphProblems (V6-B)', () => {
     expect(jobPostingProblems({ ...posting, mainEntityOfPage: undefined }, canonical, `${canonical}#webpage`).join('\n')).toMatch(
       /mainEntityOfPage must reference the WebPage node/,
     );
+  });
+});
+
+describe('check-graph: Entität (Plan §C4)', () => {
+  it('LocalBusiness trägt genau die Typen LocalBusiness, HVACBusiness und Plumber; Organization.sameAs ist eine Liste', () => {
+    expect(LOCAL_BUSINESS_TYPES).toEqual(['LocalBusiness', 'HVACBusiness', 'Plumber']);
+    const { graph, html } = fixture('/jobs');
+    const graphClone = clone(graph);
+    expect(node(graphClone, 'LocalBusiness')['@type']).toEqual(LOCAL_BUSINESS_TYPES);
+    expect(node(graphClone, 'HVACBusiness')).toBe(node(graphClone, 'Plumber'));
+    const sameAs = node(graphClone, 'Organization').sameAs as string[];
+    expect(Array.isArray(sameAs) && sameAs.length > 0).toBe(true);
+    expect(problems(graph, html)).toEqual([]);
+  });
+
+  it('meldet einen einzelnen Typ, eine andere Reihenfolge und sameAs als Text oder ohne https', () => {
+    const { graph, html } = fixture('/jobs');
+    for (const types of ['LocalBusiness', ['HVACBusiness', 'LocalBusiness', 'Plumber'], ['LocalBusiness', 'HVACBusiness']]) {
+      const falsch = clone(graph);
+      node(falsch, 'LocalBusiness')['@type'] = types;
+      expect(problems(falsch, html).join('\n'), JSON.stringify(types)).toMatch(/LocalBusiness @type must be/);
+    }
+    const text = clone(graph);
+    node(text, 'Organization').sameAs = 'https://bad-energie.de';
+    expect(problems(text, html)).toContain('Organization.sameAs must be a non-empty array');
+    const leer = clone(graph);
+    node(leer, 'Organization').sameAs = [];
+    expect(problems(leer, html)).toContain('Organization.sameAs must be a non-empty array');
+    const http = clone(graph);
+    node(http, 'Organization').sameAs = ['https://bad-energie.de', 'http://example.org'];
+    expect(problems(http, html)).toEqual(['Organization.sameAs entry "http://example.org" is not an https URL']);
+  });
+});
+
+describe('check-graph: JobPosting ohne Betrag und mit Beruf (E-030, Plan §C2)', () => {
+  const canonicalOf = (job: (typeof jobs)[number]) => getCleanCanonicalUrl(jobPath(job));
+  const jobs = getActiveJobs();
+  const posting = (job: (typeof jobs)[number]) =>
+    node(clone(fixture(jobPath(job), { jobPosting: buildJobPostingJsonLd(job) }).graph), 'JobPosting');
+
+  it('jede veröffentlichte Stelle besteht, keine trägt baseSalary', () => {
+    expect(jobs.length).toBeGreaterThan(4);
+    for (const job of jobs) {
+      const ld = posting(job);
+      expect(ld, job.id).not.toHaveProperty('baseSalary');
+      expect(jobPostingProblems(ld, canonicalOf(job), `${canonicalOf(job)}#webpage`), job.id).toEqual([]);
+    }
+  });
+
+  it('meldet baseSalary oder estimatedSalary mit Zahl, auch als Text', () => {
+    const job = jobs[0];
+    const ld = posting(job);
+    const id = `${canonicalOf(job)}#webpage`;
+    const mitBetrag = {
+      ...ld,
+      baseSalary: { '@type': 'MonetaryAmount', currency: 'EUR', value: { '@type': 'QuantitativeValue', minValue: 3600, unitText: 'MONTH' } },
+    };
+    expect(jobPostingProblems(mitBetrag, canonicalOf(job), id).join('\n')).toMatch(/baseSalary carries an amount/);
+    expect(jobPostingProblems({ ...ld, estimatedSalary: '3.600 € im Monat' }, canonicalOf(job), id).join('\n')).toMatch(
+      /estimatedSalary carries an amount/,
+    );
+    // Ohne Zahl kein Betrag (E-030 verbietet die Zahl, nicht das Wort)
+    expect(jobPostingProblems({ ...ld, baseSalary: { '@type': 'MonetaryAmount', currency: 'EUR' } }, canonicalOf(job), id)).toEqual([]);
+  });
+
+  it('meldet fehlenden Beruf, Branche, Aufgaben, Arbeitgeber und sameAs ohne Liste', () => {
+    const job = jobs[0];
+    const ld = posting(job);
+    const id = `${canonicalOf(job)}#webpage`;
+    for (const key of ['occupationalCategory', 'industry', 'responsibilities', 'employerOverview']) {
+      expect(jobPostingProblems({ ...ld, [key]: ' ' }, canonicalOf(job), id), key).toEqual([`missing ${key} (Plan §C2)`]);
+    }
+    const org = ld.hiringOrganization as Node;
+    expect(jobPostingProblems({ ...ld, hiringOrganization: { ...org, sameAs: 'https://bad-energie.de' } }, canonicalOf(job), id)).toEqual([
+      'hiringOrganization.sameAs must be a non-empty array',
+    ]);
+  });
+
+  it('carriesNumber: Zahl oder Ziffer irgendwo im Wert', () => {
+    expect(carriesNumber(3600)).toBe(true);
+    expect(carriesNumber({ value: { maxValue: '4.600' } })).toBe(true);
+    expect(carriesNumber([{ unitText: 'MONTH' }, 0])).toBe(true);
+    expect(carriesNumber({ '@type': 'MonetaryAmount', currency: 'EUR', value: { unitText: 'MONTH' } })).toBe(false);
+    expect(carriesNumber(undefined)).toBe(false);
+    expect(carriesNumber('auf Anfrage')).toBe(false);
   });
 });
 

@@ -12,7 +12,8 @@ import { fileURLToPath } from 'url';
  *    hiringOrganization) resolves to a node of the same graph.
  * 2. Global nodes: exactly one Organization, Person, WebSite and LocalBusiness, with the same @ids in every
  *    document; Organization.founder → Person, WebSite.publisher and LocalBusiness.parentOrganization →
- *    Organization.
+ *    Organization. Types may be arrays (Plan §C4): the LocalBusiness node is typed exactly
+ *    ['LocalBusiness', 'HVACBusiness', 'Plumber']. Organization.sameAs is a non-empty array of https URLs.
  * 3. Page node: with a <link rel="canonical"> exactly one WebPage node (WebPage or a subtype) carrying a
  *    `url`; url = canonical, @id = canonical#webpage (URL normal form), name = <title>, description = meta
  *    description, isPartOf → WebSite, about → Organization. Further WebPage subtypes (the FAQPage on "/")
@@ -35,9 +36,11 @@ import { fileURLToPath } from 'url';
  * 9. JobPosting only on job pages /jobs/<slug> (ROADMAP §7, §10):
  *    - none on "/", "/jobs", "/bewerbung" or any other page,
  *    - exactly one on every indexable job page, none on a noindex job page ("besetzt"),
- *    - required properties: title, description, datePosted, hiringOrganization (with name),
- *      jobLocation, baseSalary (currency + value), directApply === true,
- *      url identical to the page's <link rel="canonical">, mainEntityOfPage → the WebPage node.
+ *    - required properties: title, description, datePosted, hiringOrganization (with name and sameAs as an array of
+ *      https URLs), jobLocation, directApply === true, occupationalCategory, industry, responsibilities and
+ *      employerOverview (Plan §C2), url identical to the page's <link rel="canonical">, mainEntityOfPage → the WebPage
+ *      node,
+ *    - no pay amount (E-030, „Lohn auf Anfrage“ for every job): no number anywhere in baseSalary or estimatedSalary.
  * Prerendered redirects (legacy slugs) are skipped, and so is _global-error: it replaces the root layout
  * after a crash and is served with status 500, never indexed.
  */
@@ -53,6 +56,12 @@ const THEMEN_PAGE = /^\/arbeiten-bei-uns(?:\/[^/]+)?$/;
 const SCRIPT_RE = /<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
 const SKIPPED_ROUTES = new Set(['/_global-error']);
 const GLOBAL_TYPES = ['Organization', 'Person', 'WebSite', 'LocalBusiness'];
+/** The one business node carries these types, in this order (Plan §C4). */
+export const LOCAL_BUSINESS_TYPES = ['LocalBusiness', 'HVACBusiness', 'Plumber'];
+/** JobPosting properties of Plan §C2 that every posting carries as a non-empty string. */
+const JOB_POSTING_TEXTS = ['occupationalCategory', 'industry', 'responsibilities', 'employerOverview'];
+/** Properties that would carry a pay amount (E-030: none of them may hold a number). */
+const PAY_PROPERTIES = ['baseSalary', 'estimatedSalary'];
 const RICH_TYPES = ['BreadcrumbList', 'JobPosting', 'FAQPage'];
 /** schema.org WebPage and its subtypes. */
 const WEB_PAGE_TYPES = [
@@ -163,6 +172,21 @@ const nonEmptyString = (v) => typeof v === 'string' && v.trim().length > 0;
 const fragmentId = (url, fragment) => new URL(`#${fragment}`, url).href;
 const refTo = (value) => (value && typeof value === 'object' ? value['@id'] : undefined);
 
+/** True when a value (or anything nested in it) is a number or a string with a digit: a pay amount (E-030). */
+export function carriesNumber(value) {
+  if (typeof value === 'number') return true;
+  if (typeof value === 'string') return /\d/.test(value);
+  if (Array.isArray(value)) return value.some(carriesNumber);
+  if (value && typeof value === 'object') return Object.values(value).some(carriesNumber);
+  return false;
+}
+
+/** sameAs as Plan §C4 wants it: a non-empty array of https URLs (one entity, several profiles). */
+function sameAsProblems(sameAs, owner) {
+  if (!Array.isArray(sameAs) || sameAs.length === 0) return [`${owner}.sameAs must be a non-empty array`];
+  return sameAs.filter((url) => typeof url !== 'string' || !/^https:\/\/\S+$/.test(url)).map((url) => `${owner}.sameAs entry "${url}" is not an https URL`);
+}
+
 /** Every nested object carrying an @id below the graph nodes (references and embedded nodes). */
 function nestedIds(value, top = true) {
   if (Array.isArray(value)) return value.flatMap((item) => nestedIds(item, false));
@@ -224,13 +248,16 @@ export function jobPostingProblems(node, canonical, pageId) {
   }
   const org = node.hiringOrganization;
   if (!org || typeof org !== 'object' || !nonEmptyString(org.name)) problems.push('missing hiringOrganization.name');
+  else problems.push(...sameAsProblems(org.sameAs, 'hiringOrganization'));
+  for (const key of JOB_POSTING_TEXTS) {
+    if (!nonEmptyString(node[key])) problems.push(`missing ${key} (Plan §C2)`);
+  }
+  for (const key of PAY_PROPERTIES) {
+    if (carriesNumber(node[key])) problems.push(`${key} carries an amount (E-030: Lohn auf Anfrage, no number)`);
+  }
   const locations = Array.isArray(node.jobLocation) ? node.jobLocation : [node.jobLocation];
   if (!node.jobLocation || locations.some((l) => !l || typeof l !== 'object' || !l.address)) {
     problems.push('missing jobLocation.address');
-  }
-  const salary = node.baseSalary;
-  if (!salary || typeof salary !== 'object' || !nonEmptyString(salary.currency) || !salary.value) {
-    problems.push('missing baseSalary (currency + value)');
   }
   if (node.directApply !== true) problems.push('directApply must be true (flow is embedded on the page)');
   if (!canonical) problems.push('page has no <link rel="canonical">');
@@ -273,6 +300,11 @@ export function graphProblems(root, html, globalIds = {}) {
     else if (globalIds[type] !== id) problems.push(`${type} @id "${id}" differs from "${globalIds[type]}" in other documents`);
   }
   const orgId = single.Organization?.['@id'];
+  if (single.Organization) problems.push(...sameAsProblems(single.Organization.sameAs, 'Organization'));
+  const businessTypes = single.LocalBusiness?.['@type'];
+  if (single.LocalBusiness && JSON.stringify(businessTypes) !== JSON.stringify(LOCAL_BUSINESS_TYPES)) {
+    problems.push(`LocalBusiness @type must be ${JSON.stringify(LOCAL_BUSINESS_TYPES)}, found ${JSON.stringify(businessTypes)}`);
+  }
   if (refTo(single.Organization?.founder) !== single.Person?.['@id']) problems.push('Organization.founder must reference the Person node');
   if (refTo(single.WebSite?.publisher) !== orgId) problems.push('WebSite.publisher must reference the Organization');
   if (refTo(single.LocalBusiness?.parentOrganization) !== orgId) {

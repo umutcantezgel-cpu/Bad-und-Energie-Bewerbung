@@ -1,5 +1,5 @@
 /*
- * Stellenliste /jobs (R5-JOBS-01, E-023): Kopf aus components/seitenkopf (erzaehl, Heizkreis mit Gehaltsspanne), die Stellen
+ * Stellenliste /jobs (R5-JOBS-01, E-023): Kopf aus components/seitenkopf (erzaehl, Heizkreis mit dem Radius), die Stellen
  * als Leitungsabgänge (Variante 2 „Verteiler“) und das Initiativband in Navy (wie das Schlussband der Startseite).
  * Nur Rollen und Skalen aus app/styles/theme.css; eine Strichstärke (--m-strich), Paarabstand --paar.
  * Bewegung nur Rückmeldung (Arbeitsseite, K-011): Fläche beim Hover (Register `flaeche`), 1 px beim Druck (`druck`).
@@ -55,7 +55,7 @@
   }
 }
 
-/* ═══ Zeichnung im Navy-Panel: Heizkreis mit der Gehaltsspanne, darunter die Gewerke als Etiketten-Kästchen ═══ */
+/* ═══ Zeichnung im Navy-Panel: Heizkreis mit dem Einsatzradius (seit E-030 ohne Betrag), darunter die Gewerke ═══ */
 .zeichnung {
   container-type: inline-size;
   display: grid;
@@ -195,7 +195,7 @@
     "titel titel"
     "meta meta"
     "text text"
-    "gehalt pfeil";
+    "lohn pfeil";
   align-items: end;
   column-gap: var(--a-4);
   padding: var(--a-5) var(--a-4);
@@ -286,8 +286,8 @@
   line-height: 1.5;
 }
 
-.gehalt {
-  grid-area: gehalt;
+.lohn {
+  grid-area: lohn;
   margin-top: var(--a-5);
 }
 
@@ -313,9 +313,9 @@
   .kreis {
     grid-template-columns: minmax(0, 1fr) minmax(14rem, auto) auto;
     grid-template-areas:
-      "titel gehalt pfeil"
-      "meta gehalt pfeil"
-      "text gehalt pfeil";
+      "titel lohn pfeil"
+      "meta lohn pfeil"
+      "text lohn pfeil";
     align-items: center;
     column-gap: var(--a-7);
     padding: var(--a-6) var(--a-5) var(--a-6) var(--a-6);
@@ -327,7 +327,7 @@
     align-self: start;
   }
 
-  .gehalt {
+  .lohn {
     margin-top: 0;
   }
 

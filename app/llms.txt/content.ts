@@ -1,5 +1,5 @@
 import { COMPANY, FACTS, isFactActive, type FactId } from '@/lib/content';
-import { applyUrl, formatSalaryRange, jobMetaTags, jobUrl } from '@/lib/jobs/format';
+import { applyUrl, jobMetaTags, jobUrl, payLabel } from '@/lib/jobs/format';
 import { getActiveJobs, getFunnelOptions, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
 import { getHubKreise, getKreise, getKreisPlaces, getPublishedPlaces, kreisUrl, placeUrl } from '@/lib/places/registry';
 import { MEASUREMENT_NOTE } from '@/lib/places/text';
@@ -32,11 +32,12 @@ export function funnelOnlyJobs(): Job[] {
 
 /**
  * Company-wide statements; pending (unconfirmed) and expired facts are skipped. Pay, contract,
- * Hilti kit and workwear came back with E-SEO-014 (all backed, not pending).
+ * Hilti kit and workwear came back with E-SEO-014 (all backed, not pending); pay on request with E-030.
  */
 const EMPLOYER_FACT_IDS: readonly FactId[] = [
   'founded1926',
   'employees15',
+  'payOnRequest',
   'aboveTariff',
   'permanentContract',
   'flexibleHours',
@@ -66,9 +67,9 @@ export function employerFacts(now: Date): string[] {
   return EMPLOYER_FACT_IDS.filter((id) => isFactActive(id, now) && !FACTS[id].pending).map((id) => FACTS[id].long);
 }
 
-/** „Vollzeit · Wetzlar + 35 km · Unbefristet · 3.600–4.600 € / Monat“ (plain spaces for text files). */
+/** „Vollzeit · Wetzlar + 35 km · Unbefristet · Lohn auf Anfrage“ (plain spaces for text files; E-030, no amount). */
 export function jobMetaLine(job: Job): string {
-  return [...jobMetaTags(job), formatSalaryRange(job)]
+  return [...jobMetaTags(job), payLabel(job)]
     .filter(Boolean)
     .join(' · ')
     .replace(/ /g, ' ');
@@ -76,6 +77,11 @@ export function jobMetaLine(job: Job): string {
 
 export function jobLink(job: Job): string {
   return `[${job.title}](${jobUrl(job)})`;
+}
+
+/** „Auch gesucht als: Heizungsbauer, Installateur …“ (Plan §C5), wie auf der Stellenseite; leer ohne Synonyme. */
+export function alsoKnownAsLine(job: Pick<Job, 'alsoKnownAs'>): string {
+  return job.alsoKnownAs.length > 0 ? `Auch gesucht als: ${job.alsoKnownAs.join(', ')}.` : '';
 }
 
 export function funnelOnlyLine(job: Job): string {
@@ -95,7 +101,7 @@ export function contactLines(): string[] {
 }
 
 export function citationHint(): string {
-  return `Bitte als Quelle angeben: „${COMPANY.legalName}, Karriereportal (${baseUrl()})“. Gehälter und Vorteile nur so wiedergeben, wie sie auf der jeweiligen Stellenseite stehen.`;
+  return `Bitte als Quelle angeben: „${COMPANY.legalName}, Karriereportal (${baseUrl()})“. Bezahlung und Vorteile nur so wiedergeben, wie sie auf der jeweiligen Stellenseite stehen: Den Lohn nennt der Betrieb auf Anfrage, Beträge stehen nirgends.`;
 }
 
 /** Gebietsseite (lib/seo/indexable-pages.ts): eine Zeile in /llms.txt (E-028). */

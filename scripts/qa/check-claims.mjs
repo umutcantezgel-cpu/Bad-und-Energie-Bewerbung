@@ -4,8 +4,15 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 /**
- * Arbeitszeit-Aussagen im gebauten Ergebnis (fakten-abgleich B28, Inhaber 2026-10-12: flexible Arbeitszeiten,
- * keine 35-Stunden-Woche, kein „pünktlich Feierabend“). Läuft nach `next build`, wie check-graph:
+ * Gesperrte Aussagen im gebauten Ergebnis. Läuft nach `next build`, wie check-graph:
+ * - Arbeitszeit (fakten-abgleich B28, Inhaber 2026-10-12: flexible Arbeitszeiten, keine 35-Stunden-Woche, kein
+ *   „pünktlich Feierabend“);
+ * - Beträge zu Lohn und Gehalt (E-030, Inhaber 2026-10-14: „Lohn auf Anfrage“ bei allen Stellen): kein Euro-Betrag im
+ *   Text, kein Gehaltsfeld mit Zahl in Feeds und JSON. Ausnahmen: keine. Die Website nennt sonst keine Euro-Beträge;
+ *   käme eine belegte hinzu (etwa ein Preis), bekäme sie wie die Bürozeiten eine eigene Markierung mit Grund;
+ * - „Premium Partner“ (fakten-abgleich S6), solange der Fakt boschPremiumPartner in lib/content/facts.ts `pending`
+ *   trägt (Urkunde fehlt, M-020).
+ *
  *
  *   node scripts/qa/check-claims.mjs
  *
@@ -35,6 +42,19 @@ const APP_OUTPUT_DIR = path.resolve(process.cwd(), '.next/server/app');
  */
 export const FORBIDDEN_CLAIMS =
   /(?<![\dT:])(?:13:30|16:45)(?!:\d)|pünktlich\s+(?:zu\s+Hause|Feierabend|ins\s+Wochenende)|Feste\s+Arbeitszeiten|35[- ]?(?:Std|Stunden)|Wochenstunden/gi;
+
+/**
+ * Euro-Beträge (E-030): „3.600 €“, „1.050–1.400 €“, „3.600 € - 4.600 €“, „€ 12,50“, „15 Euro“, „4600 EUR“. Zahlen ohne
+ * Währung (km, Minuten, Jahre) und „EUR“ ohne Zahl zählen nicht.
+ */
+export const FORBIDDEN_PAY =
+  /\d[\d.,]*\s*(?:[–-]\s*\d[\d.,]*\s*)?(?:€|Euro\b|EUR\b)|(?:€|\bEUR)\s*\d[\d.,]*/gi;
+
+/** „Premium Partner“ in jeder Schreibweise (Bindestrich, Leerzeichen, Groß/Klein). */
+export const PREMIUM_PARTNER = /Premium[\s-]*Partner/gi;
+
+/** Gehaltsfelder in Feeds und JSON (Indeed <salary>, Aggregatoren <salarymin>, JobPosting baseSalary …). */
+const PAY_FIELD = /^(?:salary\w*|baseSalary|estimatedSalary|minValue|maxValue)$/i;
 
 /** Markierung der Bürozeiten im HTML: `data-claims="buerozeiten"`. */
 export const OFFICE_HOURS_MARK = 'buerozeiten';
@@ -107,13 +127,59 @@ export function visibleText(html) {
   return normalize(decodeEntities([text, ...attributes].join(' ')));
 }
 
-/** Fundstellen mit etwas Umgebung, je Treffer ein Eintrag. */
-export function findClaims(text) {
-  const found = [];
-  for (const match of text.matchAll(FORBIDDEN_CLAIMS)) {
+/**
+ * Ist der Fakt boschPremiumPartner noch offen? Gelesen aus dem Quelltext von lib/content/facts.ts (das Skript läuft ohne
+ * TypeScript): `pending` im Eintrag oder kein Eintrag (dann gibt es keinen Beleg) sperrt den Wortlaut.
+ */
+export function premiumPartnerPending(factsSource) {
+  const start = factsSource.indexOf('boschPremiumPartner:');
+  if (start === -1) return true;
+  const end = factsSource.indexOf('source:', start);
+  return /\bpending:/.test(factsSource.slice(start, end === -1 ? undefined : end));
+}
+
+const FACTS_FILE = path.resolve(process.cwd(), 'lib/content/facts.ts');
+const PREMIUM_PENDING = fs.existsSync(FACTS_FILE) ? premiumPartnerPending(fs.readFileSync(FACTS_FILE, 'utf8')) : true;
+
+function collect(text, pattern, found) {
+  for (const match of text.matchAll(pattern)) {
     const from = Math.max(0, match.index - 50);
     const to = Math.min(text.length, match.index + match[0].length + 50);
-    found.push({ claim: match[0], context: text.slice(from, to) });
+    found.push({ at: match.index, claim: match[0], context: text.slice(from, to) });
+  }
+}
+
+/**
+ * Fundstellen mit etwas Umgebung, je Treffer ein Eintrag: Arbeitszeit, Euro-Beträge und, solange der Fakt offen ist,
+ * „Premium Partner“. `premiumPending` nur für Tests; sonst gilt der Stand von lib/content/facts.ts.
+ */
+export function findClaims(text, { premiumPending = PREMIUM_PENDING } = {}) {
+  const found = [];
+  collect(text, FORBIDDEN_CLAIMS, found);
+  collect(text, FORBIDDEN_PAY, found);
+  if (premiumPending) collect(text, PREMIUM_PARTNER, found);
+  // In Textreihenfolge, wie bisher
+  return found.sort((a, b) => a.at - b.at).map(({ claim, context }) => ({ claim, context }));
+}
+
+/** Gehaltsfelder mit Zahl in einem JSON-Wert (Feeds): `{ baseSalary: { value: { minValue: 3600 } } }`. */
+export function payFieldsInJson(value, found = []) {
+  if (Array.isArray(value)) {
+    for (const item of value) payFieldsInJson(item, found);
+  } else if (value && typeof value === 'object') {
+    for (const [key, child] of Object.entries(value)) {
+      if (PAY_FIELD.test(key) && /\d/.test(JSON.stringify(child))) found.push({ claim: key, context: JSON.stringify(child).slice(0, 100) });
+      else payFieldsInJson(child, found);
+    }
+  }
+  return found;
+}
+
+/** Gehaltselemente mit Zahl in XML-Feeds: `<salary>…</salary>`, `<salarymin>3600</salarymin>`. */
+export function payFieldsInXml(xml) {
+  const found = [];
+  for (const match of xml.matchAll(/<(salary\w*)\b[^>]*>([\s\S]*?)<\/\1>/gi)) {
+    if (/\d/.test(match[2])) found.push({ claim: `<${match[1]}>`, context: match[0].slice(0, 100) });
   }
   return found;
 }
@@ -140,7 +206,16 @@ export function claimsInTextBody(body, kind) {
   }
   const lines = text.split('\n').filter((line) => !OFFICE_HOURS_LINE.test(line));
   const joined = lines.join('\n');
-  return findClaims(kind === 'xml' ? visibleText(joined) : normalize(decodeEntities(joined)));
+  const found = findClaims(kind === 'xml' ? visibleText(joined) : normalize(decodeEntities(joined)));
+  if (kind === 'xml') found.push(...payFieldsInXml(body));
+  if (kind === 'json') {
+    try {
+      found.push(...payFieldsInJson(JSON.parse(body)));
+    } catch {
+      // kein gültiges JSON: der Text oben ist schon geprüft
+    }
+  }
+  return found;
 }
 
 function findFiles(dir, files = []) {
@@ -154,7 +229,7 @@ function findFiles(dir, files = []) {
 }
 
 function runClaimsCheck() {
-  console.log('🔍 Checking prerendered output for working-time claims (fakten-abgleich B28)...');
+  console.log('🔍 Checking prerendered output for working-time claims (B28), pay amounts (E-030) and pending awards (S6)...');
   const files = findFiles(APP_OUTPUT_DIR);
   if (files.length === 0) {
     console.log('ℹ️  No prerendered output found. Run "next build" first.');
@@ -179,12 +254,16 @@ function runClaimsCheck() {
 
   if (errorCount > 0) {
     console.error(
-      `\n🚨 Found ${errorCount} working-time claim(s). Working hours are flexible: no fixed times, no „pünktlich …“,` +
-        ' no weekly hours. Office hours only inside data-claims="buerozeiten".',
+      `\n🚨 Found ${errorCount} blocked claim(s). Working hours are flexible: no fixed times, no „pünktlich …“, no weekly` +
+        ' hours (office hours only inside data-claims="buerozeiten"). No pay amounts: Lohn auf Anfrage (E-030).' +
+        (PREMIUM_PENDING ? ' No „Premium Partner“ while the fact boschPremiumPartner is pending (M-020).' : ''),
     );
     process.exit(1);
   }
-  console.log(`✅ ${pages} HTML documents and ${bodies} text routes carry no fixed working times (office hours only where marked).`);
+  console.log(
+    `✅ ${pages} HTML documents and ${bodies} text routes carry no fixed working times (office hours only where marked), no pay amounts` +
+      `${PREMIUM_PENDING ? ' and no „Premium Partner“ (pending)' : ''}.`,
+  );
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) runClaimsCheck();

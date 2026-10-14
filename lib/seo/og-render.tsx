@@ -25,7 +25,7 @@ import { OG_COLOR as C, OG_IMAGE_SIZE, versal, type OgHomeText, type OgJobText, 
  * dessen Vorlauf-Linie waagerecht in die Wärmepumpe im Navy-Panel rechts läuft. Im Panel das Haus im
  * Wärmebild (statisch, ohne WebGL) mit dem Zirkelzeichen im Giebel (Leitmotiv „35 km“, E-027), Leitungen und
  * Familien-Etiketten; die Startseite trägt darüber die Maße und „35 km“ mit Hinweislinie zum Zirkel, die
- * Stellen die Gehaltsspanne im Heizkreis (Variante 2).
+ * Stellen „Lohn auf Anfrage“ im Heizkreis (Variante 2; seit E-030 ohne Betrag).
  *
  * Schriften: die drei Familien der Website als feste TTF-Schnitte aus lib/seo/og-fonts (next/og liest
  * kein WOFF2 und keine variablen Achsen; Herkunft in og-fonts/LIZENZEN.md). Sie liegen im Repository und

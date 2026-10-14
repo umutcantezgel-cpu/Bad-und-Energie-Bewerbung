@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { FOUNDER_ID, ORGANIZATION_ID, WEBSITE_ID, buildSiteNodes } from '../site-jsonld';
+import { FOUNDER_ID, LOCAL_BUSINESS_TYPES, ORGANIZATION_ID, WEBSITE_ID, buildSiteNodes } from '../site-jsonld';
 import { COMPANY, REGION } from '@/lib/content';
+import { PROFILE } from '@/lib/content/profile';
+import { SAME_AS } from '@/lib/jobs/employer';
 import { getActiveJobs } from '@/lib/jobs/registry';
+import { SITE_CONFIG } from '@/lib/seo/site-config';
 import { buildJobPostingJsonLd } from '@/lib/jobs/jsonld';
 import { findPublishedPlaceByName } from '@/lib/places/registry';
 
@@ -13,7 +16,7 @@ describe('buildSiteNodes', () => {
   const types = graph.map((node) => node['@type']);
 
   it('contains only Organization, Person (founder), WebSite and LocalBusiness, without @context', () => {
-    expect(types).toEqual(['Organization', 'Person', 'WebSite', 'LocalBusiness']);
+    expect(types).toEqual(['Organization', 'Person', 'WebSite', ['LocalBusiness', 'HVACBusiness', 'Plumber']]);
     for (const node of graph) expect(node['@context']).toBeUndefined();
   });
 
@@ -22,6 +25,8 @@ describe('buildSiteNodes', () => {
     for (const job of getActiveJobs()) {
       const posting = buildJobPostingJsonLd(job);
       if (posting) expect(posting.hiringOrganization['@id']).toBe(ORGANIZATION_ID);
+      // Plan §C4: dieselbe sameAs-Liste wie der Organization-Knoten
+      if (posting) expect(posting.hiringOrganization.sameAs).toEqual(node('Organization').sameAs);
     }
   });
 
@@ -39,7 +44,33 @@ describe('buildSiteNodes', () => {
     }
   });
 
-  const node = (type: string) => graph.find((n) => n['@type'] === type) as Node;
+  const node = (type: string) => graph.find((n) => [n['@type']].flat().includes(type)) as Node;
+
+  // Plan §C4: ein Betrieb mit den Untertypen für Heizung/Klima und Sanitär, als Liste
+  it('types the business as LocalBusiness, HVACBusiness and Plumber in one node', () => {
+    expect(LOCAL_BUSINESS_TYPES).toEqual(['LocalBusiness', 'HVACBusiness', 'Plumber']);
+    expect(node('LocalBusiness')['@type']).toEqual(['LocalBusiness', 'HVACBusiness', 'Plumber']);
+    expect(node('HVACBusiness')).toBe(node('LocalBusiness'));
+    expect(node('Plumber')).toBe(node('LocalBusiness'));
+    expect(node('LocalBusiness').parentOrganization).toEqual({ '@id': ORGANIZATION_ID });
+  });
+
+  // Plan §C4, M-030: sameAs als Liste aus der Website für Kunden und den geprüften Profilen, ohne Dopplungen
+  it('lists sameAs as an array: customer website first, then every checked profile from lib/content/profile.ts', () => {
+    const sameAs = node('Organization').sameAs as string[];
+    expect(Array.isArray(sameAs)).toBe(true);
+    expect(sameAs).toEqual([...SAME_AS]);
+    expect(sameAs[0]).toBe(SITE_CONFIG.consumerUrl);
+    for (const profil of PROFILE) expect(sameAs).toContain(profil.url);
+    expect(new Set(sameAs).size).toBe(sameAs.length);
+    for (const url of sameAs) expect(url).toMatch(/^https:\/\/\S+$/);
+  });
+
+  // fakten-abgleich B1: die ungenutzte USt-IdNr. widersprach dem Impressum und ist entfallen
+  it('carries no VAT ID', () => {
+    expect(JSON.stringify(graph)).not.toMatch(/vatID|DE301642296/);
+    expect(SITE_CONFIG).not.toHaveProperty('vatID');
+  });
 
   // V6-B (ersetzt E-SEO-006 „eingebettet, ohne @id“): eigener Personenknoten, die Organisation verweist darauf.
   it('describes the founder as a Person node with its own @id, referenced by Organization.founder', () => {

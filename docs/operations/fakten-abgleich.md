@@ -1,6 +1,6 @@
 # Fakten-Abgleich (Owner-Liste)
 
-Stand: 2026-10-08, ergänzt 2026-10-10 (B27) und 2026-10-12 (B28–B33) · Schritt 1.1 der Roadmap, ergänzt nach dem Text-Review (B22–B26, D)
+Stand: 2026-10-08, ergänzt 2026-10-10 (B27), 2026-10-12 (B28–B33) und 2026-10-14 (S1–S7) · Schritt 1.1 der Roadmap, ergänzt nach dem Text-Review (B22–B26, D)
 
 Beim Zusammenführen von Stellen und Fakten in `lib/jobs/**` und `lib/content/**` sind abweichende Formulierungen aufgefallen. Regel: Es wird nichts erfunden. Bei Widersprüchen gilt die vorsichtigste bzw. neueste Formulierung (Fakten-Fixes: HRB 2449, 1926–2026, 5 Partner-Säulen, Siegmund-Hiepe-Str. 20, 15 Mitarbeiter).
 
@@ -22,7 +22,7 @@ Diese Fakten sind in `facts.ts` mit `pending` markiert. Der Test lässt sie nur 
 
 | # | Thema | Fundstellen (Wortlaut) | Im Registry | Frage |
 |---|---|---|---|---|
-| B1 | USt-IdNr. | `site-config.ts` `vatID: 'DE301642296'` (auch im E-Mail-Footer) · Impressum, Datenschutz, Footer: „DE 346 648 448“ | nicht übernommen | Welche Nummer stimmt? `site-config.ts` und E-Mail-Footer müssen angepasst werden (nicht Teil von 1.1). |
+| B1 | USt-IdNr. | `site-config.ts` `vatID: 'DE301642296'` (auch im E-Mail-Footer) · Impressum, Datenschutz, Footer: „DE 346 648 448“ | nicht übernommen; das ungenutzte `vatID` ist seit 2026-10-14 aus `site-config.ts` entfernt (Widerspruch aufgelöst, Plan §C4) | Welche Nummer stimmt? Der E-Mail-Footer muss noch angepasst werden. |
 | B2 | Firmenname im JobPosting | alte JobPostings: „Bad & Energie GmbH“ · `company.ts`, Impressum: „Bad und Energie GmbH Lahn Dill“ | rechtlicher Name „Bad und Energie GmbH Lahn Dill“ | – |
 | B3 | Partner-Säulen | TrustStrip: „5 Partner-Säulen: Buderus, Bosch, NIBE, Alpha Innotec, Viessmann“ (5 Marken) · `company.ts`: Buderus & Bosch als eine Säule + NIBE + Alpha Innotec + Viessmann + Lahn-Dill-Kreis | Zahl 5, Liste aus `company.ts` | Wie werden die 5 Säulen gezählt? |
 | B4 | Bewerbungsdauer | „unter 60 Sekunden“ (Hero, ProcessSteps, QuickApply) · „120 Sekunden“ (HeroExpressFunnel) · „in zwei Minuten“ (FAQ) · „unter zwei Minuten“ (`/bewerbung`) · „unter 30 Sekunden“ (Upload) | „ca. 60 Sekunden“ (neuer Flow, ROADMAP §2); FAQ-Antwort ohne Zahl | – |
@@ -64,14 +64,14 @@ Diese Fakten sind in `facts.ts` mit `pending` markiert. Der Test lässt sie nur 
 | C2 | Kundendienst | JSON-LD „Kundendiensttechniker SHK / Servicemonteur (m/w/d)“ · Funnel „Kundendiensttechniker Wärmepumpe“ · Quiz „Kundendienstmonteur SHK“ · Gehaltsrechner „Kundendienstmonteur und Servicetechniker“ | JSON-LD-Titel |
 | C3 | Obermonteur | JSON-LD „Obermonteur / Projektleiter SHK & Badsanierung (m/w/d)“ · llms-full „Obermonteur und Bauleitender Handwerker für anspruchsvolle Bäder“ | JSON-LD-Titel |
 | C4 | Ausbildung | JSON-LD „Auszubildender zum Anlagenmechaniker SHK 2026“ · Karte/Footer „Ausbildung zum Anlagenmechaniker SHK 2026“ | Titel (Schema, Feeds) „Ausbildung zum Anlagenmechaniker SHK (m/w/d)“ ohne Jahr; „2026“ in Meta-Title und H1 |
-| C5 | Quereinstieg | „Quereinsteiger und Montagehelfer“ · „Montagehelfer und Quereinsteiger“ · Footer „Quereinsteiger Haustechnik und Montagehelfer“ | „Quereinsteiger und Montagehelfer SHK (m/w/d)“, `funnel_only`, ohne Gehalt |
+| C5 | Quereinstieg | „Quereinsteiger und Montagehelfer“ · „Montagehelfer und Quereinsteiger“ · Footer „Quereinsteiger Haustechnik und Montagehelfer“ | „Quereinsteiger und Montagehelfer SHK (m/w/d)“, seit 2026-10-14 veröffentlicht, Lohn auf Anfrage (S3) |
 
 **Bitte prüfen:**
 - **Anforderungen** („Das bringst du mit“): Die Quellen nennen nur Abschluss, Berufserfahrung in Monaten (12/24/36/0) und für Helfer den Führerschein Klasse B. Die übrigen Punkte sind aus Arbeitsstil-Texten (Quiz) und Zitaten abgeleitet.
 - **Führerschein für Fachkräfte:** Ein Führerschein Klasse B ist für Fachkräfte nirgends als Pflicht genannt und steht deshalb nicht in den Anforderungen. Soll er dort stehen?
-- **Gehaltsspannen** stammen aus den bisherigen JobPostings: 3.600–4.600 €, 3.800–4.900 €, 4.400–5.600 € und 1.050–1.400 € (Ausbildung, über alle Lehrjahre?). Sie sind jetzt sichtbar (Owner-Entscheidung). Bitte bestätigen, dass sie aktuell sind.
+- **Gehaltsspannen:** entfallen seit 2026-10-14. Alle Stellen nennen „Lohn auf Anfrage“ (S1, E-030); die bisherigen Spannen aus den alten JobPostings stehen nirgends mehr.
 - **Startdatum:** Für Fachkräfte nennt keine Quelle einen Start. Im Registry steht deshalb „nach Absprache“. Soll dort „ab sofort“ stehen?
-- **BERUFENET-ID:** `ba.berufenetId` ist leer. Die ID bitte bei der BA nachschlagen und nicht schätzen.
+- **BERUFENET-ID:** `beruf.berufenetId` ist leer. Die ID bitte bei der BA nachschlagen und nicht schätzen. KldB 2010 und ISCO-08 sind nachgeschlagen (Quellen in `lib/jobs/berufe.ts`).
 
 ## D. Texte im Bewerbungsflow (bitte freigeben)
 
@@ -80,3 +80,17 @@ Diese Fakten sind in `facts.ts` mit `pending` markiert. Der Test lässt sie nur 
 | D1 | Fachkräfte: „Was trifft auf dich zu?“ | „Geselle, unter 2 Jahren“ · „Geselle, 2–5 Jahre“ · „Geselle, über 5 Jahre“ · „Meister oder Techniker“ · „Andere Ausbildung“ | Wie ROADMAP §6. „oder Quereinstieg“ entfällt, Quereinstieg hat ein eigenes Fragenset. |
 | D2 | Quereinstieg: „Was machst du aktuell?“ | „Im Handwerk (anderes Gewerk)“ · „In einer anderen Branche“ · „Gerade etwas anderes“ | Neu formuliert (Flow-Review); bitte bestätigen. |
 | D3 | Datenschutz-Hinweis über „Bewerbung absenden“ | „Wir verarbeiten deine Angaben für deine Bewerbung (Art. 6 Abs. 1 lit. b DSGVO). Mehr dazu in den Datenschutzhinweisen.“ | ROADMAP §6: Hinweis statt Checkbox; DSB-Bestätigung steht aus (siehe `datenschutz-aenderungen.md` §5). |
+
+## E. Stellen und Lohn (Inhaber, 2026-10-14)
+
+Antworten des Inhabers vom 14.10.2026 (Plan „Bewerber-Maschine“, Tabelle „Entscheidungen des Inhabers“). Umsetzung in `lib/jobs/data/*.ts` und `lib/content/facts.ts`.
+
+| # | Thema | Antwort des Inhabers | Im Registry | Offen |
+|---|---|---|---|---|
+| S1 | Gehalt | **„Lohn auf Anfrage“ bei allen Stellen** (E-030). Hinweis auf den Verlust des Vorsprungs bei der Gehaltstransparenz und auf die Gehaltsfilter von Google wurde gegeben. Die Fakten ohne Zahl bleiben: über Tarif, Urlaubs- und Weihnachtsgeld, Prämien | Fakt `payOnRequest`; `pay: 'auf-anfrage'` je Stelle, kein `salary`, kein `baseSalary`, keine Beträge in Feeds und Texten (`check-claims`, `check-graph` Regel 9). Vor dem Gespräch die Spanne nennen (EU-Entgelttransparenz, `stellen-pflegen.md`) | – |
+| S2 | Ausbildung 2027 | Start nach Absprache, Vergütung „über Tarif, plus Prämien“ wie 2026 (beantwortet B5 für 2027) | eigene Stelle `ausbildung-anlagenmechaniker-shk-2027` (SHK-AZ-2027-06). Die Stelle 2026 läuft bis 31.12.2026 und verweist schon jetzt auf sie (`nachfolger`); danach `archived`. Die Übernahmegarantie (A1) bleibt bis zur Bestätigung auf die Stelle 2026 beschränkt | A1 |
+| S3 | Quereinsteiger und Montagehelfer | veröffentlichen, Lohn auf Anfrage (M-026 erledigt) | `status: 'published'`, Seite, JobPosting, Feeds | – |
+| S4 | Schülerpraktikum | Dauer nach Absprache mit der Schule, **kein Wort zu Geld** | Stelle `schuelerpraktikum-shk` (`pay: 'keine-angabe'`, `INTERN`), Fragenset `ausbildung` | M-027: Mindestalter, Ansprechperson |
+| S5 | Bürofachkraft | Voll- oder Teilzeit; Aufgaben: Telefon und Terminplanung für Monteure und Kundendienst; Angebote, Auftragsbestätigungen und Rechnungen schreiben; Material beim Großhandel bestellen und Lieferungen prüfen; allgemeine Verwaltung (Ablage, Post, Zuarbeit für die Geschäftsführung) | Stelle `buerofachkraft` (`FULL_TIME` + `PART_TIME`), Fragenset `buero`. „Das bringst du mit“ ist ausgeblendet, bis M-038 beantwortet ist. Vorteile nur betriebsweit belegt (`flexibleHours`, `vacation30`, `founded1926`, `employees15`) | M-038: Anforderungen, Stundenrahmen bei Teilzeit. Gelten 30 Tage Urlaub auch im Büro? |
+| S6 | Bosch Premium Partner | „Bosch Premium Partner“ | Fakt `boschPremiumPartner` mit `pending` (auf keiner Seite); `check-claims` sperrt „Premium Partner“ im gebauten Ergebnis, bis die Urkunde vorliegt | M-020: Urkunde und Wortlaut |
+| S7 | Neue `job_id` in der Datenbank (Absprache E-012) | – | Migration `supabase/migrations/20261014095643_neue_stellen.sql` erweitert die CHECK-Listen `job_id` und `question_set` von `public.applications` (nur ergänzend). Eingespielt wird von Hand durch die Phase-2-Session (`db.yml` testet nur lokal); bis dahin greift für die neuen Stellen die Not-E-Mail | Einspielen durch die Phase-2-Session |

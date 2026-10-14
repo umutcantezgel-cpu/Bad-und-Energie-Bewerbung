@@ -1,4 +1,3 @@
-import { formatNumber } from '../format';
 import type { Job } from '../schema';
 
 /** Entfernt Steuerzeichen, die in XML 1.0 verboten sind. */
@@ -34,24 +33,21 @@ export function datePart(value: string): string {
   return value.slice(0, 10);
 }
 
-const SALARY_PERIOD: Record<NonNullable<Job['salary']>['unit'], string> = {
-  MONTH: 'pro Monat',
-  HOUR: 'pro Stunde',
-  YEAR: 'pro Jahr',
+const FEED_JOB_TYPE: Record<Job['employment']['kind'], string> = {
+  vollzeit: 'fulltime',
+  teilzeit: 'parttime',
+  // Indeed nimmt mehrere Jobtypen durch Komma getrennt.
+  'voll-oder-teilzeit': 'fulltime, parttime',
+  ausbildung: 'apprenticeship',
+  praktikum: 'internship',
 };
 
-/** Gehalt als Klartext für Jobbörsen, ohne Sonderleerzeichen: '3.600 € - 4.600 € pro Monat'. */
-export function salaryText(job: Job): string | null {
-  if (!job.salary) return null;
-  const { min, max, unit } = job.salary;
-  const amount = min === max ? `${formatNumber(min)} €` : `${formatNumber(min)} € - ${formatNumber(max)} €`;
-  return `${amount} ${SALARY_PERIOD[unit]}`;
-}
-
-/** Indeed-/Aggregator-Jobtyp. */
+/**
+ * Indeed-/Aggregator-Jobtyp. Ein Gehaltsfeld gibt es in keinem Feed (E-030: Lohn auf Anfrage); die Beschreibung nennt
+ * „Lohn: auf Anfrage“ wie die Seite.
+ */
 export function feedJobType(job: Job): string {
-  if (job.employment.kind === 'ausbildung') return 'apprenticeship';
-  return job.employment.kind === 'teilzeit' ? 'parttime' : 'fulltime';
+  return FEED_JOB_TYPE[job.employment.kind];
 }
 
 export const XML_DECLARATION = '<?xml version="1.0" encoding="utf-8"?>';

@@ -1,6 +1,6 @@
 import { Icon } from '@/components/icons';
 import { Card, CardLink } from '@/components/ui/Card';
-import { SALARY_UNIT_LABEL, employmentLabel, formatSalaryAmount, formatSalaryRange, jobMetaTags, jobPath, locationLabel } from '@/lib/jobs/format';
+import { employmentLabel, jobMetaTags, jobPath, locationLabel, payLabel } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
 import { bindSeparators, withSoftHyphens } from './text';
@@ -12,17 +12,11 @@ export interface JobCardProps {
   /**
    * `karte` (default): card on surface-2, used on /jobs and in „Weitere Stellen“.
    * `abgang`: one row of a manifold (Variante 1/2 „Stellen als Leitungsabgänge“): the red supply
-   * line enters from the left, the blue return leaves to the right, salary in font-mass. The
-   * vertical lines come from <JobAbgaenge>, so use this variant inside it.
+   * line enters from the left, the blue return leaves to the right, „Lohn auf Anfrage“ in its own
+   * column (E-030, no amount). The vertical lines come from <JobAbgaenge>, so use this variant inside it.
    */
   variant?: 'karte' | 'abgang';
   className?: string;
-}
-
-/** „Gehalt / Monat“ bzw. „Vergütung / Monat“ (B Runde 1), the unit under the salary figure. */
-export function salaryUnitLabel(job: Pick<Job, 'salary' | 'employment'>): string | null {
-  if (!job.salary) return null;
-  return `${job.employment.kind === 'ausbildung' ? 'Vergütung' : 'Gehalt'} / ${SALARY_UNIT_LABEL[job.salary.unit]}`;
 }
 
 /** Whole card links to the job page. Server Component, no client JS. */
@@ -31,7 +25,7 @@ export function JobCard({ job, headingLevel = 'h3', variant = 'karte', className
 
   const Heading = headingLevel;
   const [kind] = jobMetaTags(job);
-  const salary = formatSalaryRange(job);
+  const pay = payLabel(job);
 
   return (
     <Card as="article" interactive className={cn('flex h-full flex-col gap-3', className)}>
@@ -46,7 +40,7 @@ export function JobCard({ job, headingLevel = 'h3', variant = 'karte', className
           <span className="text-ink-muted">
             {kind} · {locationLabel(job)}
           </span>
-          {salary && <span className="font-mass font-medium text-ink">{salary}</span>}
+          {pay && <span className="font-medium text-ink">{pay}</span>}
         </p>
         <span aria-hidden="true" className="inline-flex items-center gap-1 self-start text-callout font-medium text-ink">
           Zur Stelle
@@ -58,15 +52,14 @@ export function JobCard({ job, headingLevel = 'h3', variant = 'karte', className
 }
 
 /**
- * One manifold row. Mobile: title, employment, salary (the unit stays with its figure); from md the salary
- * gets its own column and the employment sits under the title.
+ * One manifold row. Mobile: title, employment, „Lohn auf Anfrage“; from md the pay line gets its own column and the
+ * employment sits under the title. The school internship says nothing about money, so its row has no pay line.
  * The whole row is the link: CardLink's ::after stretches over the inner row (its nearest positioned
  * ancestor, arrow included); the hover surface sits behind the text in the row's own stacking context
  * (isolate, -z-10). Hover shows the wall surface, press moves the row by 1 px („flaeche“, „druck“).
  */
 function JobAbgang({ job, headingLevel: Heading = 'h3', className }: Omit<JobCardProps, 'variant'>) {
-  const amount = formatSalaryAmount(job);
-  const unit = salaryUnitLabel(job);
+  const pay = payLabel(job);
 
   return (
     <article className={cn('group/abgang relative px-4 sm:px-6', className)}>
@@ -96,10 +89,9 @@ function JobAbgang({ job, headingLevel: Heading = 'h3', className }: Omit<JobCar
             <span className="font-sans text-callout font-normal text-ink-muted">(m/w/d)</span>
           </Heading>
           <p className="text-etikett text-ink-muted md:col-start-1 md:row-start-2">{employmentLabel(job)}</p>
-          {amount && (
-            <p className="mt-2 flex flex-col gap-1 md:col-start-2 md:row-span-2 md:row-start-1 md:mt-0 md:self-center">
-              <span className="font-mass text-lead font-medium text-brand">{amount}</span>
-              {unit && <span className="text-etikett text-ink-muted">{unit}</span>}
+          {pay && (
+            <p className="mt-2 text-body font-medium text-brand md:col-start-2 md:row-span-2 md:row-start-1 md:mt-0 md:self-center">
+              {pay}
             </p>
           )}
         </div>

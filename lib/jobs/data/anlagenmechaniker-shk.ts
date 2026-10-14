@@ -2,7 +2,7 @@ import { HQ_LOCATION } from '../employer';
 import { defineJob } from '../schema';
 
 // Quellen (Stand 393df01): JobPosting SHK-WP-2026-01 (app/layout.tsx), Stellenkarte 01 (app/page.tsx),
-// ROLE_CONFIGS.anlagenmechaniker (components/pricing/pricing.constants.ts).
+// ROLE_CONFIGS.anlagenmechaniker (components/pricing/pricing.constants.ts). Lohn auf Anfrage (E-030, fakten-abgleich S1).
 export const anlagenmechanikerShk = defineJob({
   id: 'anlagenmechaniker-shk',
   referenceCode: 'SHK-WP-2026-01',
@@ -15,7 +15,7 @@ export const anlagenmechanikerShk = defineJob({
   seo: {
     metaTitle: 'Anlagenmechaniker SHK (m/w/d) Job Wetzlar – Wärmepumpe',
     metaDescription:
-      'Anlagenmechaniker SHK in Wetzlar: Wärmepumpen & Bäder im 35-km-Umkreis, 3.600–4.600 €, 30 Tage Urlaub, flexible Arbeitszeiten. In 60 Sek. bewerben.',
+      'Anlagenmechaniker SHK in Wetzlar: Wärmepumpen & Bäder im 35-km-Umkreis, über Tarif, 30 Tage Urlaub, flexible Arbeitszeiten. In 60 Sek. bewerben.',
     h1: 'Anlagenmechaniker SHK (m/w/d) in Wetzlar',
     primaryKeyword: 'Anlagenmechaniker SHK Wetzlar',
     secondaryKeywords: [
@@ -26,6 +26,9 @@ export const anlagenmechanikerShk = defineJob({
       'Anlagenmechaniker Gießen',
     ],
   },
+  // Übliche Bezeichnungen derselben Arbeit (KldB 34212 laut Schlüsselverzeichnis der BA: Heizungsbauer/in,
+  // Wasserinstallateur/in; BIBB: Installateur/in), sichtbar als „Auch gesucht als“.
+  alsoKnownAs: ['Heizungsbauer', 'Installateur', 'Sanitärinstallateur', 'Heizungsinstallateur'],
   summary: 'Du montierst Wärmepumpen und moderne Bäder in Wetzlar und Umgebung, ganz ohne Fernmontage.',
   intro:
     'Als Anlagenmechaniker SHK montierst und modernisierst du Wärmepumpensysteme von Buderus, Bosch, NIBE, Alpha Innotec und Viessmann sowie hochwertige Bäder. Deine Baustellen liegen im Umkreis von 35 km um Wetzlar.',
@@ -58,14 +61,15 @@ export const anlagenmechanikerShk = defineJob({
     { label: 'Vergütung', text: 'Facharbeitervergütung deutlich über Handwerkstarif' },
   ],
   employment: { kind: 'vollzeit', permanent: true, start: 'nach-absprache' },
-  salary: { min: 3600, max: 4600, unit: 'MONTH', currency: 'EUR' },
+  pay: 'auf-anfrage',
   location: HQ_LOCATION,
   education: { credentialCategory: 'professional certificate', label: 'Abgeschlossene Ausbildung im SHK-Handwerk' },
   experienceMonths: 12,
   datePosted: '2026-03-01',
-  validThrough: '2027-10-06T00:00:00',
-  updatedAt: '2026-10-12',
+  validThrough: '2027-01-12T00:00:00',
+  updatedAt: '2026-10-14',
   apply: { questionSet: 'fachkraft' },
   channels: { googleJobs: true, indeedFeed: true, genericFeed: true, ba: true },
+  beruf: { kldb: '34212', isco: '7126' },
   // Zitat Koch ausgeblendet, bis der Inhaber ein neues freigibt (fakten-abgleich B30).
 });

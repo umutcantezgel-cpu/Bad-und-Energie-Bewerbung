@@ -1,10 +1,8 @@
 import Link from 'next/link';
 import { Fragment } from 'react';
 import { Icon } from '@/components/icons';
-import { salaryUnitLabel } from '@/components/jobs/JobCard';
 import { bindSeparators, withSoftHyphens } from '@/components/jobs/text';
-import { Masskette } from '@/components/zeichnung/Masskette';
-import { employmentLabel, formatSalaryAmount, jobPath, startLabel } from '@/lib/jobs/format';
+import { employmentLabel, jobPath, payLabel, startLabel } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
 import { LEER_TEXT, listenName } from './liste-text';
@@ -28,8 +26,8 @@ export function stellenMeta(job: Pick<Job, 'employment'>): string[] {
 /**
  * Verteiler der Stellenliste (Variante 2 „Stellen als Leitungsabgänge“): links fällt der rote Vorlauf, rechts
  * steigt der blaue Rücklauf, jede Stelle ist ein Heizkreis dazwischen. Je Zeile Titel (Link auf die
- * Stellenseite, die ganze Zeile ist Trefferfläche), Anstellung und Beginn, die Kurzbeschreibung und das
- * Gehalt als Maß in Martian Mono mit Maßlinie (Spanne und Einheit nur aus den Stellendaten).
+ * Stellenseite, die ganze Zeile ist Trefferfläche), Anstellung und Beginn, die Kurzbeschreibung und „Lohn auf
+ * Anfrage“ (E-030: kein Betrag, kein Maß; beim Schülerpraktikum nichts zu Geld).
  * Server-Komponente; Bewegung nur als Rückmeldung (Register `flaeche`, `druck`).
  */
 export function Stellenverteiler({ jobs, headingLevel: Heading = 'h2', className }: StellenverteilerProps) {
@@ -40,8 +38,7 @@ export function Stellenverteiler({ jobs, headingLevel: Heading = 'h2', className
   return (
     <ul className={cn(styles.verteiler, className)} aria-label={listenName(jobs.length)}>
       {jobs.map((job) => {
-        const betrag = formatSalaryAmount(job);
-        const einheit = salaryUnitLabel(job);
+        const lohn = payLabel(job);
         return (
           <li key={job.id} className={styles.abgang}>
             <article className={styles.kreis} data-motion="druck">
@@ -61,11 +58,7 @@ export function Stellenverteiler({ jobs, headingLevel: Heading = 'h2', className
                 ))}
               </p>
               <p className={cn(styles.text, 'text-ink')}>{job.summary}</p>
-              {betrag ? (
-                <p className={styles.gehalt}>
-                  <Masskette wert={betrag} name={einheit ?? undefined} />
-                </p>
-              ) : null}
+              {lohn ? <p className={cn(styles.lohn, 'text-callout font-medium text-brand')}>{lohn}</p> : null}
               <Icon name="arrow-right" size="lg" className={styles.pfeil} />
             </article>
           </li>

@@ -11,10 +11,10 @@ export interface KopfbildProps {
 }
 
 /**
- * Zeichnung im Navy-Panel des Stellenkopfs (Variante 2 + 1): die Gehaltsspanne in Bildgröße im Heizkreis,
- * ab 64em mit dem Haus aus dem Einstieg darauf (Variante 2: „Haus oben an der Schleife“; dekorativ).
- * Auf der Wärmepumpen-Stelle im Kundendienst steht statt des Hauses das Wärmebild aus Variante 3 (statisch,
- * ohne WebGL, role="img" mit Titel) unter dem Heizkreis, der dann eine Stufe kleiner ist.
+ * Zeichnung im Navy-Panel des Stellenkopfs (Variante 2 + 1): der Block „Lohn auf Anfrage“ (E-030, ohne Betrag),
+ * ab 64em mit dem Haus aus dem Einstieg darüber (dekorativ). Auf der Wärmepumpen-Stelle im Kundendienst steht statt
+ * des Hauses das Wärmebild aus Variante 3 (statisch, ohne WebGL, role="img" mit Titel) unter dem Block, der dann eine
+ * Stufe kleiner ist.
  */
 export function Kopfbild({ job }: KopfbildProps) {
   const waerme = zeigtWaermebild(job);

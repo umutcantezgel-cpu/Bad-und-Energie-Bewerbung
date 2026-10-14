@@ -11,7 +11,7 @@ import { ALLTAG } from '@/components/jobs/liste/inhalt-text';
 import { listenUnterzeile, listenZeichnung } from '@/components/jobs/liste/liste-text';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS, FACT_IDS } from '@/lib/content/facts';
-import { FAQ_ITEMS } from '@/lib/content/faq';
+import { FAQ_ITEMS, STELLEN_FAQ_ITEMS } from '@/lib/content/faq';
 import { REGION } from '@/lib/content/region';
 import { TEAM_QUOTES } from '@/lib/content/team';
 import { companyData } from '@/lib/data/company';
@@ -23,23 +23,40 @@ import { ogHomeText } from '@/lib/seo/og-image';
 import { claimsInHtml, claimsInTextBody, findClaims } from '../../../scripts/qa/check-claims.mjs';
 
 /**
- * Arbeitszeit-Aussagen an der Quelle (Inhaber 2026-10-12, fakten-abgleich B28): flexible Arbeitszeiten, keine
- * festen Endzeiten, kein „pünktlich Feierabend“, keine Wochenstunden. Dieselbe Verbotsliste prüft
+ * Gesperrte Aussagen an der Quelle: Arbeitszeit (Inhaber 2026-10-12, fakten-abgleich B28: flexible Arbeitszeiten,
+ * keine festen Endzeiten, kein „pünktlich Feierabend“, keine Wochenstunden), Euro-Beträge (E-030: Lohn auf Anfrage)
+ * und „Premium Partner“, solange der Fakt boschPremiumPartner offen ist (S6). Dieselben Listen prüft
  * scripts/qa/check-claims.mjs nach dem Build am vorgerenderten HTML; hier fällt ein Fehler schon vor dem Build auf.
  */
 
-const claims = (text: string) => findClaims(text.replace(/[  ]/g, ' ').replace(/⁠/g, ''));
+const claims = (text: string, premiumPending = true) =>
+  findClaims(text.replace(/[  ]/g, ' ').replace(/⁠/g, ''), { premiumPending });
 
 afterEach(() => {
   vi.useRealTimers();
 });
 
 describe('Keine festen Arbeitszeiten in Fakten, Stellen und Texten (B28)', () => {
-  it('kein Fakt nennt eine feste Arbeitszeit, „pünktlich …“ oder Wochenstunden', () => {
+  it('kein Fakt nennt eine feste Arbeitszeit, „pünktlich …“, Wochenstunden oder einen Euro-Betrag', () => {
     for (const id of FACT_IDS) {
       const { short, long, value, label, list } = FACTS[id];
-      expect(claims([short, long, value, label, ...(list ?? [])].join(' ')), id).toEqual([]);
+      // Der offene Fakt selbst ist die eine Stelle, an der der gesperrte Wortlaut stehen darf (nie ausgespielt).
+      expect(claims([short, long, value, label, ...(list ?? [])].join(' '), id !== 'boschPremiumPartner'), id).toEqual([]);
     }
+    expect(FACTS.boschPremiumPartner.pending).toBeDefined();
+    expect(claims(FACTS.boschPremiumPartner.long).map((c) => c.claim)).toEqual(['Premium Partner']);
+  });
+
+  it('E-030: keine Stelle, kein Fakt und keine Frage nennt einen Betrag zu Lohn oder Gehalt', () => {
+    for (const job of ALL_JOBS) {
+      expect(job.salary, job.id).toBeUndefined();
+      expect(claims(JSON.stringify(job)).map((c) => c.claim), job.id).toEqual([]);
+      expect(claims(toPlainDescription(job)).map((c) => c.claim), job.id).toEqual([]);
+    }
+    for (const item of [...FAQ_ITEMS, ...STELLEN_FAQ_ITEMS]) expect(claims(`${item.question} ${item.answer}`), item.id).toEqual([]);
+    expect(claims(companyData.benefits.join(' '))).toEqual([]);
+    // Die Prüfung greift: ein Betrag würde gemeldet
+    expect(claims('Gehalt 3.600–4.600 € im Monat').map((c) => c.claim)).toEqual(['3.600–4.600 €']);
   });
 
   it('jede Stelle führt flexibleHours, keine nennt eine feste Arbeitszeit (Daten, Beschreibung, Meta)', () => {
@@ -52,7 +69,7 @@ describe('Keine festen Arbeitszeiten in Fakten, Stellen und Texten (B28)', () =>
   });
 
   it('FAQ, Einsatzgebiet, freigegebene Teamzitate, Mappe und Rohdaten ohne feste Arbeitszeit', () => {
-    for (const item of FAQ_ITEMS) expect(claims(`${item.question} ${item.answer}`), item.id).toEqual([]);
+    for (const item of [...FAQ_ITEMS, ...STELLEN_FAQ_ITEMS]) expect(claims(`${item.question} ${item.answer}`), item.id).toEqual([]);
     expect(claims(`${REGION.headline} ${REGION.summary} ${REGION.milestone.text}`)).toEqual([]);
     for (const quote of Object.values(TEAM_QUOTES)) expect(claims(quote.quote), quote.id).toEqual([]);
     for (const style of WORK_STYLES) expect(claims(style.value), style.id).toEqual([]);
@@ -71,7 +88,7 @@ describe('Keine festen Arbeitszeiten in Fakten, Stellen und Texten (B28)', () =>
       ...WUNSCH_OPTIONEN.map((w) => w.label),
       ...ZUSAGEN.flatMap((z) => [z.titel, z.text, z.mass ?? '']),
       ...listenUnterzeile(getActiveJobs()),
-      JSON.stringify(listenZeichnung(getActiveJobs())),
+      JSON.stringify(listenZeichnung()),
       ALLTAG.woche.titel,
       ALLTAG.woche.text,
       JSON.stringify(REGIONALBAND),

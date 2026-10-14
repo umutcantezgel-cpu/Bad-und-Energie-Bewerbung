@@ -3,8 +3,9 @@ import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
 /**
  * Themenseiten (E-028, Plan „Seitenarchitektur“: Themen-Hub und Themen): der Hub /arbeiten-bei-uns und fünf Themen
  * flach darunter. Feste Liste ohne Datenbank: Jede Seite baut ihren Text aus lib/content/facts.ts (per ID), den
- * Stellen im Registry (Gehälter, Pakete, Aufgaben) und den freigegebenen Inhalten (Ablauf, FAQ, Team), siehe
- * lib/themen/text.ts. Ein veröffentlichter Slug bleibt (Test themen.test.ts sperrt die Liste).
+ * Stellen im Registry (Bezahlung, Pakete, Aufgaben) und den freigegebenen Inhalten (Ablauf, FAQ, Team), siehe
+ * lib/themen/text.ts. Ein veröffentlichter Slug bleibt (Test themen.test.ts sperrt die Liste): Das Thema `gehalt` heißt
+ * seit E-030 „Bezahlung und Extras“ und nennt keine Beträge mehr, behält aber seine Adresse.
  */
 
 export const ARBEITEN_PATH = '/arbeiten-bei-uns';
@@ -29,13 +30,13 @@ export interface Thema {
   updatedAt: string;
 }
 
-/** Stand aller Themenseiten: angelegt 2026-10-12 (fakten-abgleich B28–B31 eingearbeitet). */
-export const THEMEN_STAND = '2026-10-12';
+/** Stand aller Themenseiten: angelegt 2026-10-12 (fakten-abgleich B28–B31), Lohn auf Anfrage seit 2026-10-14 (E-030). */
+export const THEMEN_STAND = '2026-10-14';
 
 const THEMEN: readonly Thema[] = Object.freeze(
   (
     [
-      { id: 'gehalt', name: 'Gehalt', icon: 'banknote' },
+      { id: 'gehalt', name: 'Bezahlung und Extras', icon: 'banknote' },
       { id: 'fahrzeug-und-werkzeug', name: 'Fahrzeug und Werkzeug', icon: 'werkzeug' },
       { id: 'waermepumpen', name: 'Wärmepumpen', icon: 'waermepumpe' },
       { id: 'betrieb', name: 'Der Betrieb', icon: 'users' },
@@ -77,5 +78,5 @@ export const THEMEN_UEBERSICHT_LINK = Object.freeze({ href: ARBEITEN_PATH, label
 /** Weg zum Hub von Startseite und /jobs (ein Ankertext, ein Ziel). */
 export const ARBEITEN_LINK = Object.freeze({ href: ARBEITEN_PATH, label: 'Mehr zum Arbeiten bei uns' });
 
-/** Weg von jeder Stellenseite zur Gehaltsseite (genau einmal je Stellenseite, unter „Auf einen Blick“). */
-export const GEHALT_VERGLEICH_LINK = Object.freeze({ href: `${ARBEITEN_PATH}/gehalt`, label: 'Gehälter aller Stellen im Vergleich' });
+/** Weg von jeder Stellenseite zur Seite „Bezahlung und Extras“ (genau einmal je Stellenseite, unter „Auf einen Blick“). */
+export const BEZAHLUNG_LINK = Object.freeze({ href: `${ARBEITEN_PATH}/gehalt`, label: 'Bezahlung und Extras aller Stellen' });

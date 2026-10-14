@@ -97,13 +97,48 @@ const LICENSE_B: ApplyQuestion<'licenseB'> = {
   ],
 };
 
+/** Bürofachkraft (2026-10-14): Erfahrung im Büro, ohne nach Abschlüssen zu fragen (Anforderungen offen, M-038). */
+const OFFICE_EXPERIENCE: ApplyQuestion<'officeExperience'> = {
+  key: 'officeExperience',
+  slug: 'buero',
+  title: 'Hast du Erfahrung im Büro?',
+  summaryLabel: 'Erfahrung im Büro',
+  options: [
+    { id: 'ja', label: 'Ja' },
+    { id: 'etwas', label: 'Etwas' },
+    { id: 'nein', label: 'Nein' },
+  ],
+};
+
+/** Bürofachkraft: Wunsch Voll- oder Teilzeit (die Stelle bietet beides). */
+const WORKLOAD: ApplyQuestion<'workload'> = {
+  key: 'workload',
+  slug: 'umfang',
+  title: 'Voll- oder Teilzeit?',
+  summaryLabel: 'Wunsch',
+  options: [
+    { id: 'vollzeit', label: 'Vollzeit' },
+    { id: 'teilzeit', label: 'Teilzeit' },
+    { id: 'egal', label: 'Beides passt' },
+  ],
+};
+
 export const QUESTION_SETS: Readonly<Record<QuestionSetId, readonly ApplyQuestion[]>> = Object.freeze({
   fachkraft: Object.freeze([QUALIFICATION, START]),
   ausbildung: Object.freeze([SCHOOL_STATUS]),
   quereinstieg: Object.freeze([BACKGROUND, LICENSE_B, START]),
+  buero: Object.freeze([OFFICE_EXPERIENCE, WORKLOAD]),
 });
 
-const ALL_QUESTIONS: readonly ApplyQuestion[] = [QUALIFICATION, START, SCHOOL_STATUS, BACKGROUND, LICENSE_B];
+const ALL_QUESTIONS: readonly ApplyQuestion[] = [
+  QUALIFICATION,
+  START,
+  SCHOOL_STATUS,
+  BACKGROUND,
+  LICENSE_B,
+  OFFICE_EXPERIENCE,
+  WORKLOAD,
+];
 
 export function getQuestions(set: QuestionSetId): readonly ApplyQuestion[] {
   return QUESTION_SETS[set] ?? QUESTION_SETS.fachkraft;

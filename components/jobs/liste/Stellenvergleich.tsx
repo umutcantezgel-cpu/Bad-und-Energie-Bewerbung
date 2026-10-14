@@ -15,7 +15,8 @@ export interface StellenvergleichProps {
 
 /**
  * „Alle offenen Jobs im Vergleich“ (V6-G1, Ton Wand): je Stelle der volle Titel, die Aufgaben, die harten
- * Voraussetzungen und die Gehaltsspanne aus den Stellendaten, dazu der Weg zur Stellenanzeige. Karten mit
+ * Voraussetzungen (nur belegte; offene wie bei der Bürofachkraft fehlen) und „Lohn auf Anfrage“ (E-030, ohne Betrag),
+ * dazu der Weg zur Stellenanzeige. Karten mit
  * Markenkante wie „Das bekommst du“ der Stellenseite, Beschriftungen als Etikett (dl > div > dt + dd).
  */
 export function Stellenvergleich({ jobs }: StellenvergleichProps) {
@@ -42,20 +43,22 @@ export function Stellenvergleich({ jobs }: StellenvergleichProps) {
                       </ul>
                     </dd>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <dt className="text-etikett text-ink-muted">{VERGLEICH.voraussetzung}</dt>
-                    <dd>
-                      <ul className={styles.punkte}>
-                        {profil.voraussetzungen.map((punkt) => (
-                          <li key={punkt}>{punkt}</li>
-                        ))}
-                      </ul>
-                    </dd>
-                  </div>
-                  {profil.gehalt ? (
+                  {profil.voraussetzungen.length > 0 ? (
+                    <div className="flex flex-col gap-2">
+                      <dt className="text-etikett text-ink-muted">{VERGLEICH.voraussetzung}</dt>
+                      <dd>
+                        <ul className={styles.punkte}>
+                          {profil.voraussetzungen.map((punkt) => (
+                            <li key={punkt}>{punkt}</li>
+                          ))}
+                        </ul>
+                      </dd>
+                    </div>
+                  ) : null}
+                  {profil.lohn ? (
                     <div className="flex flex-col gap-1">
-                      <dt className="text-etikett text-ink-muted">{profil.gehalt.label}</dt>
-                      <dd className="font-mass text-callout text-ink">{profil.gehalt.wert}</dd>
+                      <dt className="text-etikett text-ink-muted">{VERGLEICH.bezahlung}</dt>
+                      <dd className="text-callout text-ink">{profil.lohn}</dd>
                     </div>
                   ) : null}
                 </dl>
@@ -67,7 +70,7 @@ export function Stellenvergleich({ jobs }: StellenvergleichProps) {
             </li>
           ))}
         </ul>
-        {/* Themen-Hub (E-028): Gehalt, Fahrzeug und Werkzeug, Wärmepumpen, Betrieb, diskreter Wechsel */}
+        {/* Themen-Hub (E-028): Bezahlung und Extras, Fahrzeug und Werkzeug, Wärmepumpen, Betrieb, diskreter Wechsel */}
         <TextLink href={ARBEITEN_LINK.href} standalone className="self-start">
           {ARBEITEN_LINK.label}
           <Icon name="arrow-right" size="sm" className="shrink-0" />

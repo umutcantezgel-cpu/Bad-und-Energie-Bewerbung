@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { companyData } from '@/lib/data/company';
+import { ALL_JOBS, getJobById } from '@/lib/jobs/registry';
 import { regionalLocations } from '@/lib/data/locations';
 import { teamData } from '@/lib/data/team';
 import {
@@ -10,6 +11,7 @@ import {
   FAQ_ITEMS,
   JOB_FAQ_IDS,
   PROCESS_STEPS,
+  STELLEN_FAQ_ITEMS,
   REGION,
   TEAM_QUOTES,
   TEAM_PROFILES,
@@ -115,12 +117,68 @@ describe('FAQ', () => {
     }
   });
 
-  it('drei FAQ je Fragenset', () => {
-    for (const ids of Object.values(JOB_FAQ_IDS)) expect(getFaqItems(ids)).toHaveLength(3);
+  // Plan §C5: FAQ je Stelle ausgebaut (vorher drei je Fragenset). Ebenso streng: jede Art hat ihre feste Liste, jede ID
+  // löst auf, keine doppelt, jede Art mit Bezahlung hat genau eine Frage dazu, das Schülerpraktikum keine.
+  it('Fragen je Art der Stelle: feste Liste, eindeutig, genau eine Frage zur Bezahlung (Praktikum keine)', () => {
+    expect(JOB_FAQ_IDS).toEqual({
+      anlagenmechaniker: ['lohn', 'diskreter-wechsel', 'firmenfahrzeug', 'fernmontage', 'antwortzeit'],
+      kundendienst: ['lohn', 'diskreter-wechsel', 'firmenfahrzeug', 'fernmontage', 'antwortzeit'],
+      projektleitung: ['lohn', 'diskreter-wechsel', 'firmenfahrzeug', 'fernmontage', 'antwortzeit'],
+      ausbildung: ['lohn-ausbildung', 'berufsschule', 'fuehrerschein-ausbildung', 'lebenslauf', 'fernmontage'],
+      helfer: ['lohn-quereinstieg', 'quereinstieg', 'lebenslauf', 'fernmontage', 'antwortzeit'],
+      buero: ['lohn-buero', 'buero-umfang', 'diskreter-wechsel', 'lebenslauf', 'antwortzeit'],
+      praktikum: [
+        'praktikum-inhalt',
+        'praktikum-dauer',
+        'praktikum-ausbildung',
+        'praktikum-bewerbung',
+        'heizsysteme',
+        'fernmontage',
+        'lebenslauf',
+        'antwortzeit',
+      ],
+    });
+    for (const [art, ids] of Object.entries(JOB_FAQ_IDS)) {
+      expect(getFaqItems(ids), art).toHaveLength(ids.length);
+      expect(new Set(ids).size, art).toBe(ids.length);
+      expect(ids.filter((id) => id.startsWith('lohn')), art).toHaveLength(art === 'praktikum' ? 0 : 1);
+    }
   });
 
   it('Fachkräfte-Stellen ohne Lebenslauf-Frage (steht auf der Stellenseite schon über dem Flow)', () => {
-    expect(JOB_FAQ_IDS.fachkraft).not.toContain('lebenslauf');
+    for (const art of ['anlagenmechaniker', 'kundendienst', 'projektleitung'] as const) expect(JOB_FAQ_IDS[art]).not.toContain('lebenslauf');
+  });
+
+  it('Fragen der Stellenseiten: Du-Form, belegte Fakten (nie offen), kein Betrag (E-030)', () => {
+    expect(new Set(STELLEN_FAQ_ITEMS.map((f) => f.id)).size).toBe(STELLEN_FAQ_ITEMS.length);
+    for (const item of STELLEN_FAQ_ITEMS) {
+      expect(item.answer, item.id).not.toMatch(OLD_ADDRESS);
+      expect(`${item.question} ${item.answer}`, item.id).not.toMatch(/\d\s*(?:€|Euro)|€/);
+      for (const factId of item.factIds) {
+        expect(FACTS[factId], `${item.id}: ${factId}`).toBeDefined();
+        expect(FACTS[factId].pending, `${item.id}: ${factId}`).toBeUndefined();
+      }
+    }
+    const antwort = (id: string) => STELLEN_FAQ_ITEMS.find((f) => f.id === id)!.answer;
+    expect(antwort('lohn')).toBe(`${FACTS.payOnRequest.long} ${FACTS.aboveTariff.long}`);
+    for (const id of ['lohn', 'lohn-ausbildung', 'lohn-quereinstieg', 'lohn-buero']) expect(antwort(id)).toContain('auf Anfrage');
+    // Fürs Büro ist keine Tarifaussage belegt (fakten-abgleich S5)
+    expect(antwort('lohn-buero')).not.toMatch(/Tarif/);
+    expect(antwort('antwortzeit')).toBe(FACTS.quickResponse.long);
+    expect(antwort('praktikum-dauer')).toBe('Das stimmen wir mit dir und deiner Schule ab.');
+    // Praktikum: Inhalt im Wortlaut der Aufgaben, die Ausbildung mit der Dauer der Ausbildungsstellen, kein Wort zu Geld
+    const praktikum = getJobById('schuelerpraktikum-shk')!;
+    expect(antwort('praktikum-inhalt')).toContain(praktikum.tasks[0]);
+    expect(antwort('praktikum-inhalt')).toContain(praktikum.tasks[1].replace(/^Kennenlernen der /, 'die '));
+    for (const job of ALL_JOBS.filter((j) => j.employment.kind === 'ausbildung')) {
+      expect(antwort('praktikum-ausbildung'), job.id).toContain(`${String((job.employment.durationMonths ?? 0) / 12).replace('.', ',')} Jahre`);
+    }
+    for (const id of JOB_FAQ_IDS.praktikum) {
+      const item = getFaqItems([id])[0];
+      expect(`${item.question} ${item.answer}`, id).not.toMatch(/Lohn|Gehalt|Vergütung|verdien|bezahl|Tarif|Prämie|Zuschuss|Geld/i);
+    }
+    // Unbelegtes fehlt: keine Wochenstunden, keine Probezeit, kein Name einer Berufsschule (M-024)
+    expect(STELLEN_FAQ_ITEMS.map((f) => `${f.question} ${f.answer}`).join(' ')).not.toMatch(/Probezeit|Stunden pro Woche|Wochenstunden|Schule in /);
   });
 
   it('Wochenende so stark wie der Fakt noWeekendOnCall, nicht stärker', () => {

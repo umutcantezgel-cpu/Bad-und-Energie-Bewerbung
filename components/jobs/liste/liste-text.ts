@@ -1,7 +1,6 @@
 import { INITIATIVE_APPLY_PATH } from '@/lib/apply/params';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
-import { formatSalaryAmount } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/registry';
 
 /**
@@ -10,10 +9,10 @@ import type { Job } from '@/lib/jobs/registry';
  * components/jobs/__tests__/liste.test.ts.
  *
  * Faktenverteilung im Kopf (ein Abschnitt nennt jeden Fakt einmal):
- * - die Gehaltsspanne der Fachkraft-Stellen steht im Heizkreis der Zeichnung (bis 2026-10-12 stand dort 13:30;
- *   feste Uhrzeiten nennt die Seite nicht mehr, fakten-abgleich B28);
- * - „Flexible Arbeitszeiten.“ (Fakt flexibleHours) steht in der Unterzeile;
- * - 30 Tage und 35 km stehen als Maße an der Zeichnung; „35 km“ kehrt nur in REGION.headline (Einsatzgebiet) wieder;
+ * - im Heizkreis der Zeichnung steht der Einsatzradius 35 km (bis 2026-10-12 stand dort 13:30, bis 2026-10-14 die
+ *   Gehaltsspanne der Fachkräfte; seit E-030 nennt keine Seite mehr einen Betrag);
+ * - „Lohn auf Anfrage.“ (Fakt payOnRequest) und „Flexible Arbeitszeiten.“ (Fakt flexibleHours) stehen in der Unterzeile;
+ * - 30 Tage stehen als Maß an der Zeichnung; „35 km“ kehrt nur in REGION.headline (Einsatzgebiet) wieder;
  * - 1926 steht in der Einleitung (Fakt founded1926), darum nicht als Maß.
  */
 
@@ -31,13 +30,13 @@ export function listenEtikett(anzahl: number): string {
 }
 
 /**
- * Unterzeile mit Rohrklammer (zwei Sätze, je eine Zeile). „Jede Stelle mit Gehaltsspanne.“ nur, wenn jede
- * Stelle der Liste eine Spanne trägt; sonst die Marke „Ehrliches Handwerk.“ (Zweitzeile der Startseite).
- * Der zweite Satz ist der Fakt flexibleHours, wie in der h1 der Startseite.
+ * Unterzeile mit Rohrklammer (zwei Sätze, je eine Zeile). „Lohn auf Anfrage.“ (Fakt payOnRequest, E-030), wenn eine
+ * Stelle der Liste etwas zur Bezahlung sagt; sonst die Marke „Ehrliches Handwerk.“ (Zweitzeile der Startseite). Der
+ * zweite Satz ist der Fakt flexibleHours, wie in der h1 der Startseite.
  */
-export function listenUnterzeile(jobs: readonly Pick<Job, 'salary'>[]): [string, string] {
-  const alleMitGehalt = jobs.length > 0 && jobs.every((job) => job.salary !== undefined && job.salary !== null);
-  return [alleMitGehalt ? 'Jede Stelle mit Gehaltsspanne.' : 'Ehrliches Handwerk.', FACTS.flexibleHours.long];
+export function listenUnterzeile(jobs: readonly Pick<Job, 'pay'>[]): [string, string] {
+  const mitLohn = jobs.some((job) => job.pay === 'auf-anfrage');
+  return [mitLohn ? `${FACTS.payOnRequest.short}.` : 'Ehrliches Handwerk.', FACTS.flexibleHours.long];
 }
 
 /**
@@ -48,10 +47,13 @@ export const LISTEN_ORTE = 'Wetzlar und Gießen';
 
 /**
  * Einleitung: „Stellenangebote im SHK-Handwerk“ (alle Stellen sind SHK, Stellendaten) mit den Orten der Baustellen
- * und Fakt founded1926, dann Tarif und Werkzeug (Fakten aboveTariff/azubiPay und hilti/azubiToolkit).
+ * und Fakt founded1926, dann Tarif und Werkzeug für die Stellen auf der Baustelle (Fakten aboveTariff/azubiPay,
+ * Paketzeile „Vergütung“ des Quereinstiegs; hilti/azubiToolkit und Hilti-Basisausstattung, je ab dem ersten Tag laut
+ * Ablauf). Seit 2026-10-14 gibt es auch das Büro (keine Tarifaussage belegt, S5) und das Schülerpraktikum (kein Wort zu
+ * Geld, S4): Darum nennt der Satz, für wen er gilt.
  */
 export const LISTEN_EINLEITUNG = schuetzeZahlen(
-  `Stellenangebote im SHK-Handwerk vom ${FACTS.founded1926.short}, mit Baustellen in ${LISTEN_ORTE}. Bezahlt über Tarif und mit persönlicher Hilti-Ausstattung.`,
+  `Stellenangebote im SHK-Handwerk vom ${FACTS.founded1926.short}, mit Baustellen in ${LISTEN_ORTE}. Fachkräfte, Azubis und Quereinsteiger bezahlen wir über Tarif, mit Hilti-Ausstattung ab dem ersten Tag.`,
 );
 
 /** Mikrotext unter dem Knopf (Fakten apply60s, noCvNeeded), wortgleich mit dem Einstieg der Startseite. */
@@ -69,33 +71,14 @@ export interface ListenMass {
   name: string;
 }
 
-/** Name unter der Spanne im Heizkreis (wie „Gehalt pro Monat“ auf den Stellenseiten, SalaryCard). */
-export const HEIZKREIS_NAME = 'Gehalt pro Monat, Fachkräfte';
-
 const URLAUB_MASS: ListenMass = { wert: schuetzeZahlen(FACTS.vacation30.value ?? ''), name: FACTS.vacation30.label ?? '' };
 const RADIUS_MASS: ListenMass = { wert: schuetzeZahlen(FACTS.radius35.value ?? ''), name: 'Einsatzradius' };
 
 /**
- * Die Gehaltsspanne der Fachkraft-Stellen, die gerade live sind: kleinstes Minimum bis größtes Maximum der
- * Monatsgehälter aus den Stellendaten („3.600–5.600 €“). Die Ausbildung hat eine Vergütung und gehört nicht in
- * die Spanne. null, wenn keine Fachkraft-Stelle ein Monatsgehalt nennt.
+ * Zeichnung des Kopfs: im Heizkreis der Einsatzradius 35 km (Fakt radius35), daneben das Maß 30 Tage Urlaub (Fakt
+ * vacation30). Bis 2026-10-14 stand im Heizkreis die Gehaltsspanne der Fachkräfte; seit E-030 gibt es keinen Betrag.
  */
-export function fachkraftSpanne(jobs: readonly Pick<Job, 'salary' | 'category'>[]): string | null {
-  const gehaelter = jobs.flatMap((job) => (job.category !== 'ausbildung' && job.salary?.unit === 'MONTH' ? [job.salary] : []));
-  if (gehaelter.length === 0) return null;
-  const min = Math.min(...gehaelter.map((g) => g.min));
-  const max = Math.max(...gehaelter.map((g) => g.max));
-  return formatSalaryAmount({ salary: { ...gehaelter[0], min, max } });
-}
-
-/**
- * Zeichnung des Kopfs: im Heizkreis die Gehaltsspanne der Fachkraft-Stellen, daneben die Maße 30 Tage Urlaub
- * und 35 km Einsatzradius (Fakten vacation30, radius35). Ohne Spanne trägt der Heizkreis den Radius, der dann
- * nicht noch einmal als Maß steht.
- */
-export function listenZeichnung(jobs: readonly Pick<Job, 'salary' | 'category'>[]): { heizkreis: ListenMass; masse: readonly ListenMass[] } {
-  const spanne = fachkraftSpanne(jobs);
-  if (spanne) return { heizkreis: { wert: spanne, name: HEIZKREIS_NAME }, masse: [URLAUB_MASS, RADIUS_MASS] };
+export function listenZeichnung(): { heizkreis: ListenMass; masse: readonly ListenMass[] } {
   return { heizkreis: RADIUS_MASS, masse: [URLAUB_MASS] };
 }
 

@@ -1,6 +1,6 @@
 # Stellenbörsen und Reichweite
 
-Stand: 2026-10-08 · Schritt 1.6 der Roadmap (§7)
+Stand: 2026-10-14 · Schritt 1.6 der Roadmap (§7), neue Stellen und „Lohn auf Anfrage“ (fakten-abgleich S1–S5, E-030)
 
 Alle Stellen kommen aus dem Registry (`lib/jobs/data/*.ts`, siehe `stellen-pflegen.md`). Seiten, Schema und Feeds aktualisieren sich mit jedem Deploy von selbst. Manuell gepflegt werden nur die Börsen ohne Feed: **Bundesagentur für Arbeit** und **HWK-Lehrstellenbörse**.
 
@@ -13,7 +13,7 @@ Alle Stellen kommen aus dem Registry (`lib/jobs/data/*.ts`, siehe `stellen-pfleg
 | HWK-Lehrstellenbörse | Ausbildungsplatz von Hand einstellen | je Ausbildungsstelle | `hwk` |
 | Website bad-energie.de | Widget aus `/feeds/jobs.json` | einmalig | `jobs-json` |
 
-Die Feeds enthalten nur Stellen, die veröffentlicht sind, deren `validThrough` noch nicht erreicht ist und deren Kanal-Flag (`channels.indeedFeed`, `channels.genericFeed`) gesetzt ist. Sie werden stündlich neu erzeugt. Quereinstieg/Montagehelfer ist `funnel_only` und erscheint in keinem Kanal.
+Die Feeds enthalten nur Stellen, die veröffentlicht sind, deren `validThrough` noch nicht erreicht ist und deren Kanal-Flag (`channels.indeedFeed`, `channels.genericFeed`) gesetzt ist. Sie werden stündlich neu erzeugt. Seit 2026-10-14 sind auch Quereinstieg/Montagehelfer, Ausbildung 2027, Bürofachkraft und Schülerpraktikum veröffentlicht und in allen Kanälen. **Kein Kanal nennt einen Betrag** (E-030): kein Gehaltsfeld in den Feeds, kein `baseSalary` im JobPosting; die Beschreibung sagt „Lohn: auf Anfrage“ (das Schülerpraktikum nichts zu Geld).
 
 Feed-Adressen (Produktion):
 
@@ -34,13 +34,21 @@ Ein Test (`app/jobs/__tests__/reach.test.ts`) prüft, dass für jede veröffentl
 | Anlagenmechaniker SHK für Wärmepumpen & Heizungstechnik (m/w/d) | SHK-WP-2026-01 | `https://karriere.bad-energie.de/jobs/anlagenmechaniker-shk-wetzlar?utm_source=arbeitsagentur&utm_medium=jobboard&utm_campaign=anlagenmechaniker-shk` |
 | Kundendiensttechniker SHK / Servicemonteur (m/w/d) | SHK-KD-2026-02 | `https://karriere.bad-energie.de/jobs/kundendiensttechniker-waermepumpe-wetzlar?utm_source=arbeitsagentur&utm_medium=jobboard&utm_campaign=kundendiensttechniker-shk` |
 | Obermonteur / Projektleiter SHK & Badsanierung (m/w/d) | SHK-PL-2026-03 | `https://karriere.bad-energie.de/jobs/obermonteur-projektleiter-shk-wetzlar?utm_source=arbeitsagentur&utm_medium=jobboard&utm_campaign=obermonteur-projektleiter-shk` |
-| Ausbildung zum Anlagenmechaniker SHK (m/w/d) | SHK-AZ-2026-04 | `https://karriere.bad-energie.de/jobs/ausbildung-anlagenmechaniker-shk-wetzlar?utm_source=arbeitsagentur&utm_medium=jobboard&utm_campaign=ausbildung-anlagenmechaniker-shk` |
+| Ausbildung zum Anlagenmechaniker SHK (m/w/d), Einstieg 2026 | SHK-AZ-2026-04 | `https://karriere.bad-energie.de/jobs/ausbildung-anlagenmechaniker-shk-wetzlar?utm_source=arbeitsagentur&utm_medium=jobboard&utm_campaign=ausbildung-anlagenmechaniker-shk` |
+| Ausbildung zum Anlagenmechaniker SHK (m/w/d), Start 2027 | SHK-AZ-2027-06 | `https://karriere.bad-energie.de/jobs/ausbildung-anlagenmechaniker-shk-2027-wetzlar?utm_source=arbeitsagentur&utm_medium=jobboard&utm_campaign=ausbildung-anlagenmechaniker-shk-2027` |
+| Quereinsteiger und Montagehelfer SHK (m/w/d) | SHK-QE-2026-05 | `https://karriere.bad-energie.de/jobs/quereinsteiger-montagehelfer-shk-wetzlar?utm_source=arbeitsagentur&utm_medium=jobboard&utm_campaign=quereinsteiger-montagehelfer` |
+| Bürofachkraft (m/w/d) in Voll- oder Teilzeit | SHK-BU-2026-08 | `https://karriere.bad-energie.de/jobs/buerofachkraft-wetzlar?utm_source=arbeitsagentur&utm_medium=jobboard&utm_campaign=buerofachkraft` |
+| Schülerpraktikum Anlagenmechaniker SHK (m/w/d) | SHK-PR-2026-07 | `https://karriere.bad-energie.de/jobs/schuelerpraktikum-shk-wetzlar?utm_source=arbeitsagentur&utm_medium=jobboard&utm_campaign=schuelerpraktikum-shk` |
 
 ### HWK-Lehrstellenbörse (`utm_source=hwk`)
 
+Ausbildungsplätze immer; das Schülerpraktikum nur, wenn die Börse Praktikumsplätze führt (bei der Kammer nachfragen).
+
 | Stelle | Referenz | Link |
 |---|---|---|
-| Ausbildung zum Anlagenmechaniker SHK (m/w/d) | SHK-AZ-2026-04 | `https://karriere.bad-energie.de/jobs/ausbildung-anlagenmechaniker-shk-wetzlar?utm_source=hwk&utm_medium=jobboard&utm_campaign=ausbildung-anlagenmechaniker-shk` |
+| Ausbildung zum Anlagenmechaniker SHK (m/w/d), Einstieg 2026 | SHK-AZ-2026-04 | `https://karriere.bad-energie.de/jobs/ausbildung-anlagenmechaniker-shk-wetzlar?utm_source=hwk&utm_medium=jobboard&utm_campaign=ausbildung-anlagenmechaniker-shk` |
+| Ausbildung zum Anlagenmechaniker SHK (m/w/d), Start 2027 | SHK-AZ-2027-06 | `https://karriere.bad-energie.de/jobs/ausbildung-anlagenmechaniker-shk-2027-wetzlar?utm_source=hwk&utm_medium=jobboard&utm_campaign=ausbildung-anlagenmechaniker-shk-2027` |
+| Schülerpraktikum Anlagenmechaniker SHK (m/w/d) | SHK-PR-2026-07 | `https://karriere.bad-energie.de/jobs/schuelerpraktikum-shk-wetzlar?utm_source=hwk&utm_medium=jobboard&utm_campaign=schuelerpraktikum-shk` |
 
 ### Indeed (`utm_source=indeed`, nur zur Kontrolle)
 
@@ -51,7 +59,11 @@ Der Indeed-Feed setzt diese Links selbst. Sie stehen hier, damit man im Feed und
 | Anlagenmechaniker SHK | `https://karriere.bad-energie.de/jobs/anlagenmechaniker-shk-wetzlar?utm_source=indeed&utm_medium=jobboard&utm_campaign=anlagenmechaniker-shk` |
 | Kundendiensttechniker | `https://karriere.bad-energie.de/jobs/kundendiensttechniker-waermepumpe-wetzlar?utm_source=indeed&utm_medium=jobboard&utm_campaign=kundendiensttechniker-shk` |
 | Obermonteur / Projektleiter | `https://karriere.bad-energie.de/jobs/obermonteur-projektleiter-shk-wetzlar?utm_source=indeed&utm_medium=jobboard&utm_campaign=obermonteur-projektleiter-shk` |
-| Ausbildung Anlagenmechaniker | `https://karriere.bad-energie.de/jobs/ausbildung-anlagenmechaniker-shk-wetzlar?utm_source=indeed&utm_medium=jobboard&utm_campaign=ausbildung-anlagenmechaniker-shk` |
+| Ausbildung Anlagenmechaniker 2026 | `https://karriere.bad-energie.de/jobs/ausbildung-anlagenmechaniker-shk-wetzlar?utm_source=indeed&utm_medium=jobboard&utm_campaign=ausbildung-anlagenmechaniker-shk` |
+| Ausbildung Anlagenmechaniker 2027 | `https://karriere.bad-energie.de/jobs/ausbildung-anlagenmechaniker-shk-2027-wetzlar?utm_source=indeed&utm_medium=jobboard&utm_campaign=ausbildung-anlagenmechaniker-shk-2027` |
+| Quereinstieg / Montagehelfer | `https://karriere.bad-energie.de/jobs/quereinsteiger-montagehelfer-shk-wetzlar?utm_source=indeed&utm_medium=jobboard&utm_campaign=quereinsteiger-montagehelfer` |
+| Bürofachkraft | `https://karriere.bad-energie.de/jobs/buerofachkraft-wetzlar?utm_source=indeed&utm_medium=jobboard&utm_campaign=buerofachkraft` |
+| Schülerpraktikum SHK | `https://karriere.bad-energie.de/jobs/schuelerpraktikum-shk-wetzlar?utm_source=indeed&utm_medium=jobboard&utm_campaign=schuelerpraktikum-shk` |
 
 ## a) Indeed: Karriereseite indexieren lassen
 
@@ -60,7 +72,7 @@ Indeed übernimmt Stellen kostenlos aus XML-Feeds von Arbeitgeber-Websites, ents
 1. Im Indeed-Arbeitgeberkonto (oder über den Indeed-Support für Arbeitgeber) anfragen, dass die Stellen der Karriereseite per XML-Feed übernommen werden. Angeben: Firmenname „Bad und Energie GmbH Lahn Dill“, Karriereseite `https://karriere.bad-energie.de/jobs`, Feed `https://karriere.bad-energie.de/feeds/indeed.xml`.
 2. **Keine zusätzlichen manuellen Indeed-Anzeigen** für dieselben Stellen anlegen. Indeed wertet doppelte Anzeigen ab.
 3. Eine Stelle hat genau einen Standort (Wetzlar). Keine Kopien für Gießen, Herborn usw. anlegen: Indeed straft Location-Blasting ab, Google wertet Stadt-Duplikate als Doorway-Pages. Die Ortsseiten unter `/einsatzgebiet` (E-028) sind keine solchen Kopien: Sie tragen kein JobPosting, sondern gemessene Strecken und Fahrzeiten, und gehen nicht in die Feeds.
-4. Nach der Aufnahme stichprobenartig prüfen: Titel, Gehaltsspanne, Link mit `utm_source=indeed`.
+4. Nach der Aufnahme stichprobenartig prüfen: Titel, Link mit `utm_source=indeed` und dass Indeed **kein geschätztes Gehalt** zeigt. Schätzt Indeed eines, im Arbeitgeberkonto prüfen, ob es sich ausblenden lässt; nicht durch eine eigene Zahl ersetzen (E-030).
 
 Wenn Indeed für die organische Aufnahme eine Bezahl-Option oder „Indeed Apply“ verlangt, bitte nicht selbst abschließen, sondern mit dem Owner klären.
 
@@ -73,19 +85,20 @@ Die HR-BA-XML-Schnittstelle braucht einen Kooperationsvertrag und ein Zertifikat
 1. Auf `arbeitsagentur.de` als Arbeitgeber anmelden (kostenloses Arbeitgeberkonto; bei der ersten Anmeldung prüft der Arbeitgeber-Service das Unternehmen).
 2. Je Stelle ein Stellenangebot anlegen. Texte **aus der jeweiligen Stellenseite übernehmen**, nichts ergänzen:
    - Titel: `title` der Stelle (siehe Tabelle oben), ohne Jahreszahl.
-   - Beruf: die passende BERUFENET-Bezeichnung auswählen, z. B. „Anlagenmechaniker/in – Sanitär-, Heizungs- und Klimatechnik“. Die ID danach in `ba.berufenetId` der Stelle eintragen (nicht schätzen).
+   - Beruf: die passende BERUFENET-Bezeichnung auswählen, z. B. „Anlagenmechaniker/in – Sanitär-, Heizungs- und Klimatechnik“. Die Berufsgattung steht schon in `beruf.kldb` der Stelle (KldB 2010, `lib/jobs/berufe.ts`); die BERUFENET-ID danach in `beruf.berufenetId` eintragen (nicht schätzen).
    - Arbeitsort: Siegmund-Hiepe-Str. 20, 35578 Wetzlar. Ein Standort je Anzeige.
-   - Arbeitszeit, Befristung, Gehaltsspanne: wie auf der Stellenseite unter „Auf einen Blick“.
-   - Ausbildung: als **Ausbildungsplatz** anlegen, nicht als Arbeitsstelle.
+   - Arbeitszeit und Befristung: wie auf der Stellenseite unter „Auf einen Blick“. Die Bürofachkraft mit Vollzeit **und** Teilzeit.
+   - Gehalt: **keine Zahl** (E-030, „Lohn auf Anfrage“). Verlangt das Formular eine Angabe, „nach Vereinbarung“ wählen bzw. das Feld leer lassen.
+   - Ausbildung: als **Ausbildungsplatz** anlegen, nicht als Arbeitsstelle. Das Schülerpraktikum als **Praktikum**; ohne jedes Wort zu Geld.
    - Bewerbungsweg: Online-Bewerbung mit dem getrackten Link aus der Tabelle oben.
    - Veröffentlichung bis: spätestens das `validThrough`-Datum der Stelle.
-3. Bei jeder Änderung der Stelle im Repo (Text, Gehalt, Verlängerung, Schließen) die BA-Anzeige am selben Tag anpassen oder beenden.
+3. Bei jeder Änderung der Stelle im Repo (Text, Verlängerung, Schließen) die BA-Anzeige am selben Tag anpassen oder beenden. Spätestens zum `validThrough` (höchstens 90 Tage nach `updatedAt`, siehe `stellen-pflegen.md`) die Laufzeit verlängern oder die Anzeige beenden.
 
 ### Lehrstellenbörse der Handwerkskammer Wiesbaden
 
 1. Bei der Ausbildungsberatung der Handwerkskammer Wiesbaden nach dem Zugang zur Lehrstellenbörse fragen (für Mitgliedsbetriebe kostenlos; viele Kammern nutzen dafür den „Lehrstellen-Radar“).
-2. Den Ausbildungsplatz mit dem `hwk`-Link aus der Tabelle oben eintragen. Ausbildungsbeginn: „nach Absprache“, wie auf der Stellenseite.
-3. Die Stelle läuft im Registry bis 31.12.2026 (`validThrough`), weil die Texte „Einstieg 2026“ nennen. Spätestens dann die Anzeige beenden oder für 2027 neu anlegen (Owner-Frage B5 in `fakten-abgleich.md`).
+2. Die Ausbildungsplätze mit den `hwk`-Links aus der Tabelle oben eintragen. Ausbildungsbeginn: „nach Absprache“, wie auf der Stellenseite.
+3. Die Ausbildung 2026 läuft im Registry bis 31.12.2026 (`validThrough`), weil die Texte „Einstieg 2026“ nennen; ihre Anzeige dann beenden. Die Ausbildung 2027 (SHK-AZ-2027-06, fakten-abgleich S2) ist ihre Nachfolgerin und ab sofort einzutragen.
 
 ## c) Aggregatoren mit `/feeds/jobs.xml`
 
@@ -99,7 +112,7 @@ Bei jedem Anbieter einmalig den Feed `https://karriere.bad-energie.de/feeds/jobs
 | Careerjet | Feed über das Formular für Website-Betreiber einreichen. |
 | Kimeta | Kimeta durchsucht Karriereseiten selbst; Feed trotzdem per Kontaktformular melden. |
 
-Der Feed enthält je Stelle Titel, Link (mit `utm_source=jobs-xml`), Referenz, Adresse, Radius, HTML-Beschreibung, Jobtyp, Datum, Ablaufdatum und das Gehalt als Text und strukturiert (`salarymin`, `salarymax`, `salarycurrency`, `salaryperiod`).
+Der Feed enthält je Stelle Titel, Link (mit `utm_source=jobs-xml`), Referenz, Adresse, Radius (nur bei Stellen mit Baustellen), HTML-Beschreibung, Jobtyp, Datum und Ablaufdatum. Gehaltsfelder (`salary`, `salarymin` …) enthält er nicht (E-030); `bun run test:claims` prüft das nach jedem Build.
 
 Verlangt ein Anbieter ein eigenes Format oder eine eigene Feed-Adresse, nichts umbauen, sondern an die Entwicklung melden. `buildGenericXml()` kann eine eigene `utm_source` je Partner erzeugen.
 
@@ -165,4 +178,4 @@ Wichtig:
 - **Kein JobPosting-JSON-LD auf bad-energie.de einbauen.** Google erlaubt das Markup nur auf der Seite, auf der man sich bewirbt; doppelte JobPostings können zum Ausschluss aus Google for Jobs führen.
 - Die Links enthalten `utm_source=jobs-json`. So sind Bewerbungen über die Kunden-Website erkennbar.
 - Die Content-Security-Policy von bad-energie.de muss `connect-src https://karriere.bad-energie.de` erlauben.
-- Gehalt (`baseSalary.value.minValue`/`maxValue`) und Ort stehen ebenfalls im JSON, falls das Widget sie anzeigen soll.
+- Ort und Anstellungsart stehen ebenfalls im JSON, falls das Widget sie anzeigen soll. Ein Gehalt steht nicht darin (E-030, „Lohn auf Anfrage“).

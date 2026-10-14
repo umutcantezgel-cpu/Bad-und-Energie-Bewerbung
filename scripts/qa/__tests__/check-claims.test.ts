@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
@@ -9,6 +11,9 @@ import {
   claimsInHtml,
   claimsInTextBody,
   findClaims,
+  payFieldsInJson,
+  payFieldsInXml,
+  premiumPartnerPending,
   stripMarked,
   visibleText,
 } from '../check-claims.mjs';
@@ -119,5 +124,75 @@ describe('check-claims: Text-Routen (llms.txt, Feeds)', () => {
     const json = JSON.stringify({ jobs: [{ description: 'Du bist jeden Abend pünktlich zu Hause.' }], updated: '2026-10-12T13:30:00Z' });
     expect(claimsInTextBody(json, 'json').map((c: { claim: string }) => c.claim)).toEqual(['pünktlich zu Hause']);
     expect(claimsInTextBody('{"jobs":[{"description":"Flexible Arbeitszeiten."}]}', 'json')).toEqual([]);
+  });
+});
+
+describe('check-claims: Beträge zu Lohn und Gehalt (E-030, Lohn auf Anfrage)', () => {
+  const pay = (text: string) => findClaims(text, { premiumPending: false }).map((c: { claim: string }) => c.claim);
+
+  it('findet Euro-Beträge in jeder Schreibweise, auch als Spanne', () => {
+    expect(pay('Gehalt 3.600–4.600 € im Monat')).toEqual(['3.600–4.600 €']);
+    expect(pay('Vergütung 1.050 - 1.400 €')).toEqual(['1.050 - 1.400 €']);
+    expect(pay('ab 3600€ brutto')).toEqual(['3600€']);
+    expect(pay('Stundenlohn € 15,50')).toEqual(['€ 15,50']);
+    expect(pay('rund 4.000 Euro')).toEqual(['4.000 Euro']);
+    expect(pay('Gehalt: 4600 EUR')).toEqual(['4600 EUR']);
+    expect(pay('3.600 € - 4.600 € pro Monat')).toEqual(['3.600 €', '4.600 €']);
+  });
+
+  it('lässt Zahlen ohne Währung, „EUR“ ohne Zahl und „Lohn auf Anfrage“ stehen', () => {
+    for (const text of [
+      'Lohn auf Anfrage',
+      'Alle Baustellen liegen im Umkreis von 35 km um Wetzlar.',
+      '30 Tage Urlaub',
+      'Seit 1926 in Wetzlar',
+      'Hilti-22-V-Akku-Flotte',
+      'Währung EUR',
+      '0160 8834290',
+    ]) {
+      expect(pay(text), text).toEqual([]);
+    }
+  });
+
+  it('findet Gehaltsfelder mit Zahl in Feeds (XML und JSON), auch ohne Währung im Text', () => {
+    const xml = '<job><salarymin>3600</salarymin><salary><![CDATA[auf Anfrage]]></salary></job>';
+    expect(payFieldsInXml(xml).map((c: { claim: string }) => c.claim)).toEqual(['<salarymin>']);
+    expect(payFieldsInXml('<job><title>Monteur</title></job>')).toEqual([]);
+    const ld = { '@type': 'JobPosting', baseSalary: { '@type': 'MonetaryAmount', value: { minValue: 3600 } } };
+    expect(payFieldsInJson([ld]).map((c: { claim: string }) => c.claim)).toEqual(['baseSalary']);
+    expect(payFieldsInJson({ title: 'Lohn auf Anfrage', industry: 'Sanitär-, Heizungs- und Klimatechnik' })).toEqual([]);
+    expect(claimsInTextBody(JSON.stringify([ld]), 'json').map((c: { claim: string }) => c.claim)).toEqual(['baseSalary']);
+    expect(
+      claimsInTextBody('<source><job><salary>3.600 € pro Monat</salary></job></source>', 'xml').map((c: { claim: string }) => c.claim),
+    ).toEqual(['3.600 €', '<salary>']);
+  });
+
+  it('im HTML: sichtbarer Text und Attribute; das JSON-LD prüft check-graph (Regel 9)', () => {
+    expect(claimsOf('<p>Gehalt: 3.600–4.600&nbsp;€</p>')).toEqual(['3.600–4.600 €']);
+    expect(claimsOf('<meta name="description" content="SHK-Job, 4.000 € im Monat"/>')).toEqual(['4.000 €']);
+    expect(claimsOf('<script type="application/ld+json">{"salaryCurrency":"EUR","minValue":3600}</script><p>Lohn auf Anfrage</p>')).toEqual(
+      [],
+    );
+  });
+});
+
+describe('check-claims: „Premium Partner“ bleibt gesperrt, solange der Fakt offen ist (fakten-abgleich S6, M-020)', () => {
+  it('liest den Stand aus lib/content/facts.ts: offen oder fehlend sperrt, belegt gibt frei', () => {
+    const offen = "boschPremiumPartner: {\n    short: 'x',\n    pending: { onlyForJobIds: [] },\n    source: 'a@b',\n  },";
+    const belegt = "boschPremiumPartner: {\n    short: 'x',\n    source: 'docs/urkunde.md@abc1234',\n  },\n  andererFakt: { pending: {} },";
+    expect(premiumPartnerPending(offen)).toBe(true);
+    expect(premiumPartnerPending(belegt)).toBe(false);
+    expect(premiumPartnerPending("vacation30: { short: '30 Tage Urlaub' }")).toBe(true);
+    expect(premiumPartnerPending(readFileSync(path.resolve(process.cwd(), 'lib/content/facts.ts'), 'utf8'))).toBe(true);
+  });
+
+  it('findet jede Schreibweise, solange gesperrt; mit Beleg ist der Wortlaut frei', () => {
+    for (const text of ['Bosch Premium Partner', 'Premium-Partner von Bosch', 'BOSCH PREMIUMPARTNER']) {
+      expect(findClaims(text, { premiumPending: true }), text).toHaveLength(1);
+      expect(findClaims(text, { premiumPending: false }), text).toEqual([]);
+    }
+    // Ohne Angabe gilt der Stand von facts.ts (offen): gesperrt, auch in Attributen
+    expect(findClaims('Wir sind Bosch Premium Partner.')).toHaveLength(1);
+    expect(claimsOf('<img alt="Bosch Premium Partner"/>')).toEqual(['Premium Partner']);
   });
 });

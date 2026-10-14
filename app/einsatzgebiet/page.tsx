@@ -6,7 +6,7 @@ import { getEinsatzgebietPageText } from '@/lib/places/text';
 import { buildPageGraph } from '@/lib/seo/graph';
 import { einsatzgebietGraphInput, einsatzgebietMetadata, liveJobs } from './seo';
 
-/** Stündlich wie /jobs: Die Description nennt die Gehaltsspanne der Stellen, die gerade live sind. */
+/** Stündlich wie /jobs: Die Seite nennt die Stellen, die gerade live sind (seit E-030 ohne Gehaltsspanne). */
 export const revalidate = 3600;
 
 export function generateMetadata(): Metadata {

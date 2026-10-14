@@ -7,11 +7,22 @@ import { META_DESCRIPTION_MAX, fitDescription, jobsHubDescription } from '../des
 const liveAt = (date: Date) => getActiveJobs().filter((job) => isJobLive(job, date));
 
 describe('jobsHubDescription (/jobs)', () => {
+  // Seit 2026-10-14 sind es sieben Stellenarten (fakten-abgleich S2–S5): Die Liste passt nicht mehr in 155 Zeichen und
+  // entfällt nach der Regel „falls back …“ unten. Mit den vier Arten von vorher steht sie wörtlich darin.
+  const VIER = ['anlagenmechaniker-shk', 'kundendiensttechniker-shk', 'obermonteur-projektleiter-shk', 'ausbildung-anlagenmechaniker-shk'];
+  const vier = (date: Date) => liveAt(date).filter((job) => VIER.includes(job.id));
+
   it('names every live job type and the facts, within 155 characters', () => {
-    const jobs = liveAt(new Date());
+    const jobs = vier(new Date('2026-10-14T12:00:00Z'));
     const text = jobsHubDescription(jobs);
     expect(text.length).toBeLessThanOrEqual(META_DESCRIPTION_MAX);
+    expect(jobCategoryLabels(jobs)).toHaveLength(4);
     for (const label of jobCategoryLabels(jobs)) expect(text).toContain(label);
+    const alle = jobsHubDescription(liveAt(new Date('2026-10-14T12:00:00Z')));
+    expect(jobCategoryLabels(liveAt(new Date('2026-10-14T12:00:00Z')))).toHaveLength(7);
+    expect(alle.length).toBeLessThanOrEqual(META_DESCRIPTION_MAX);
+    expect(alle).toMatch(/^Offene SHK-Jobs in Wetzlar & Gießen\. /);
+    expect(alle).not.toMatch(/€|Gehalt/);
     expect(text).toContain(FACTS.vacation30.short);
     expect(text).toContain('flexible Arbeitszeiten');
     expect(text).not.toMatch(/13:30|Feierabend|pünktlich/i);
@@ -21,7 +32,8 @@ describe('jobsHubDescription (/jobs)', () => {
   it('drops an expired job type', () => {
     const azubi = ALL_JOBS.find((job) => job.category === 'ausbildung')!;
     const after = new Date(new Date(azubi.validThrough!).getTime() + 24 * 60 * 60 * 1000);
-    expect(jobsHubDescription(liveAt(after))).not.toContain(JOB_CATEGORY_LABEL.ausbildung);
+    expect(jobsHubDescription(vier(new Date(azubi.datePosted)))).toContain(JOB_CATEGORY_LABEL.ausbildung);
+    expect(jobsHubDescription(vier(after))).not.toContain(JOB_CATEGORY_LABEL.ausbildung);
   });
 
   it('falls back to the text without the list when the list does not fit', () => {

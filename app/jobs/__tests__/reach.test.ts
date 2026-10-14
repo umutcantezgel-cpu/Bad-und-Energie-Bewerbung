@@ -7,7 +7,7 @@ import { GET as llmsFull } from '@/app/llms-full.txt/route';
 import { GET as llms } from '@/app/llms.txt/route';
 import { FACTS, isFactActive } from '@/lib/content/facts';
 import { withUtm } from '@/lib/jobs/feeds/tracking';
-import { jobPath, jobUrl } from '@/lib/jobs/format';
+import { PAY_ON_REQUEST, jobPath, jobUrl } from '@/lib/jobs/format';
 import { ALL_JOBS, getActiveJobs, getJobPageSlugs, isJobLive } from '@/lib/jobs/registry';
 import {
   EINSATZGEBIET_PATH,
@@ -24,6 +24,7 @@ import { getIndexablePages } from '@/lib/seo/indexable-pages';
 import { getAllPortalUrls } from '@/lib/seo/indexnow';
 import { ARBEITEN_PATH, getThemen, themaPath } from '@/lib/themen/registry';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
+import { claimsInTextBody } from '../../../scripts/qa/check-claims.mjs';
 
 const base = SITE_CONFIG.baseUrl.replace(/\/+$/, '');
 const liveJobs = getActiveJobs().filter((job) => isJobLive(job, new Date()));
@@ -139,15 +140,27 @@ describe('robots', () => {
 });
 
 describe('llms.txt', () => {
-  it('lists every live job with link and salary, Quereinstieg only as flow option', async () => {
+  it('lists every live job with link, „Lohn auf Anfrage“ (E-030) and its synonyms; the Quereinstieg with its own page', async () => {
     const res = llms();
     expect(res.headers.get('content-type')).toBe('text/plain; charset=utf-8');
     const text = await res.text();
     for (const job of liveJobs) {
-      expect(text).toContain(`[${job.title}](${jobUrl(job)})`);
+      const zeile = text.split('\n').find((line) => line.startsWith(`- [${job.title}](${jobUrl(job)})`));
+      expect(zeile, job.id).toBeDefined();
+      // Das Schülerpraktikum sagt nichts zu Geld (fakten-abgleich S4)
+      if (job.pay === 'auf-anfrage') expect(zeile, job.id).toContain(PAY_ON_REQUEST);
+      else expect(zeile, job.id).not.toMatch(/Lohn|Gehalt|Vergütung/);
+      if (job.alsoKnownAs.length > 0) expect(zeile, job.id).toContain(`Auch gesucht als: ${job.alsoKnownAs.join(', ')}.`);
     }
-    expect(text).toContain('Quereinsteiger und Montagehelfer SHK (m/w/d)');
-    expect(text).not.toContain(`/jobs/quereinsteiger`);
+    // Seit 2026-10-14 veröffentlicht (fakten-abgleich S3): mit eigener Seite, nicht mehr nur als Option im Flow
+    expect(text).toContain(`/jobs/quereinsteiger-montagehelfer-shk-wetzlar`);
+    expect(text).not.toContain('Ohne eigene Stellenseite');
+    expect(liveJobs.map((job) => job.id)).toEqual(
+      expect.arrayContaining(['ausbildung-anlagenmechaniker-shk-2027', 'quereinsteiger-montagehelfer', 'buerofachkraft', 'schuelerpraktikum-shk']),
+    );
+    expect(text).not.toMatch(/Gehaltsspanne/);
+    expect(claimsInTextBody(text, 'txt')).toEqual([]);
+    expect(claimsInTextBody(await llmsFull().text(), 'txt')).toEqual([]);
   });
 
   it('drops claims the fact registry does not back', async () => {

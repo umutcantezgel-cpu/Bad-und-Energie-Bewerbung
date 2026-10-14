@@ -42,9 +42,9 @@ export function liveJobs(now: Date = new Date()): Job[] {
 
 /**
  * Lokale Seiten (E-028): jede veröffentlichte Ortsseite, die Kreis-Hubs (jüngstes Datum ihrer Orte) und die
- * Gebietsseite (jüngstes Datum aller Orte). Orts- und Kreisseiten listen die live Stellen mit Gehalt, die Gebietsseite
- * nennt deren Gehaltsspanne: Ihr Datum ist darum das jüngere aus dem `updatedAt` der Orte und dem jüngsten `updatedAt`
- * der live Stellen (Review Phase 2, Punkt 27). Ohne live Stelle zählen nur die Orte.
+ * Gebietsseite (jüngstes Datum aller Orte). Orts-, Kreis- und Gebietsseite nennen die live Stellen: Ihr Datum ist darum
+ * das jüngere aus dem `updatedAt` der Orte und dem jüngsten `updatedAt` der live Stellen (Review Phase 2, Punkt 27).
+ * Ohne live Stelle zählen nur die Orte. Seit E-030 nennt keine Seite einen Betrag.
  */
 export function einsatzgebietPages(now: Date = new Date()): IndexablePage[] {
   const jobsDate = newest(liveJobs(now).map((job) => job.updatedAt));
@@ -55,12 +55,12 @@ export function einsatzgebietPages(now: Date = new Date()): IndexablePage[] {
   return [page('einsatzgebiet', EINSATZGEBIET_PATH, dated(places)), ...kreise, ...orte];
 }
 
-/** Themen, deren Seite die live Stellen nennt (Gehalt, Pakete, Aufgaben); die übrigen hängen nur an Fakten. */
+/** Themen, deren Seite die live Stellen nennt (Bezahlung, Pakete, Aufgaben); die übrigen hängen nur an Fakten. */
 const THEMEN_MIT_STELLEN: ReadonlySet<ThemaId> = new Set(['gehalt', 'fahrzeug-und-werkzeug', 'waermepumpen']);
 
 /**
  * Themenseiten (E-028): der Hub /arbeiten-bei-uns und die fünf Themen. Datum ist der Stand der Texte (THEMEN_STAND);
- * Hub, Gehalt, Fahrzeug und Wärmepumpen nennen die live Stellen und nehmen das jüngere Datum der live Stellen dazu.
+ * Hub, Bezahlung, Fahrzeug und Wärmepumpen nennen die live Stellen und nehmen das jüngere Datum der live Stellen dazu.
  */
 export function themenPages(now: Date = new Date()): IndexablePage[] {
   const jobsDate = newest(liveJobs(now).map((job) => job.updatedAt));

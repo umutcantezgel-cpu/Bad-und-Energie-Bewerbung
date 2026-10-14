@@ -25,6 +25,7 @@ const processSteps = {
   fachkraft: getProcessSteps('fachkraft'),
   ausbildung: getProcessSteps('ausbildung'),
   quereinstieg: getProcessSteps('quereinstieg'),
+  buero: getProcessSteps('buero'),
 };
 
 const company: ThankYouCompany = {
