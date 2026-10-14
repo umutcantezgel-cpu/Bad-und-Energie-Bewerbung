@@ -127,9 +127,14 @@ export function RegionExplorer({ data, mapsAvailable, header, table = true, labe
         {table && <PlaceTable className="order-6" data={data} selected={selected} zones={zones} />}
       </div>
 
-      {/* Tablet: the plan keeps a readable size instead of filling 700 px (sm–lg). */}
+      {/* Tablet: the plan keeps a readable size instead of filling 700 px (sm–lg). Under 22rem it runs edge to edge
+          (graphic.ts KARTE_RANDLOS_REM): within the gutters it would draw its names below 12 px. The square is the content box
+          then, so the borders above and below do not shrink the drawing. */}
       <figure className="order-3 m-0 flex w-full flex-col gap-3 sm:mx-auto sm:max-w-lg lg:sticky lg:top-24 lg:mx-0 lg:max-w-none">
-        <div className="relative aspect-square w-full overflow-hidden rounded-2 border-2 border-brand bg-surface-raised">
+        <div
+          className="karte-rahmen relative aspect-square w-full overflow-hidden rounded-2 border-2 border-brand bg-surface-raised max-[22rem]:-mx-gutter max-[22rem]:box-content max-[22rem]:w-auto max-[22rem]:rounded-none max-[22rem]:border-x-0"
+          data-karte-rahmen=""
+        >
           <RadiusGraphic
             data={data}
             view={view}

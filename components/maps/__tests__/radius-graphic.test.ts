@@ -1,9 +1,24 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import { Gebietsplan, OrtPlan } from '@/components/einsatzgebiet/Plaene';
+import {
+  GRAPHIC_SIZE,
+  KARTE_MIN_PX,
+  KARTE_RANDLOS_REM,
+  KARTE_SCHRIFT_SCHMAL,
+  KARTE_STUFE_REM,
+  LABEL_FONT_SIZE,
+  LANDSCAPE_LABEL_FONT_SIZE,
+  LANDSCAPE_LABEL_LAYOUT_SIZE,
+  RING_LABEL_FONT_SIZE,
+  RING_LABEL_LAYOUT_SIZE,
+} from '../graphic';
 import { RadiusGraphic } from '../RadiusGraphic';
 import { radiusStatus, zoneLabel } from '../status';
-import { GEBIET_MAP_DATA } from '@/components/einsatzgebiet/karte';
+import { GEBIET_MAP_DATA, gebietView } from '@/components/einsatzgebiet/karte';
 import { buildRegionMapData } from '../views';
 
 const data = buildRegionMapData();
@@ -114,5 +129,76 @@ describe('Ergebnis der Ortswahl', () => {
   // Seit E-028 gemessen (docs/operations/orte-messung.md, OSRM): dieselben Werte wie auf der Ortsseite /einsatzgebiet/giessen.
   it('keeps the drive time and distance of Gießen as measured (19 km, 21 Min.)', () => {
     expect([giessen.distanceKm, giessen.commuteMinutes]).toEqual([19, 21]);
+  });
+});
+
+describe('Schrift der Pläne gezeichnet ≥ 12 px (Prüfung E-029, Runde 2, Befund 7)', () => {
+  const root = path.resolve(__dirname, '../../..');
+  const lies = (datei: string) => readFileSync(path.join(root, datei), 'utf8');
+  /** Gezeichnete Größe in px: Einheiten mal Breite des Plans durch die Kante des viewBox. */
+  const px = (einheiten: number, breitePx: number) => (einheiten * breitePx) / GRAPHIC_SIZE;
+  const REM = 16;
+  // Schmalste gezeichnete Breiten bei 320 px: der Gebietsplan im Seitenkopf 280 px, der Plan randlos 320 px; ab der
+  // Randlos-Stufe im Seitenrand mindestens 22rem − 2 × 20 px − 2 × 2 px Rahmen
+  const GEBIETSPLAN_MIN = 280;
+  const PLAN_MIN = Math.min(320, KARTE_RANDLOS_REM * REM - 2 * 20 - 2 * 2);
+
+  it('rechnet die Größen so, dass jede Stufe auf ihrer schmalsten Breite 12 px erreicht', () => {
+    expect(px(KARTE_SCHRIFT_SCHMAL, GEBIETSPLAN_MIN)).toBeGreaterThanOrEqual(KARTE_MIN_PX);
+    expect(px(RING_LABEL_FONT_SIZE, KARTE_STUFE_REM * REM)).toBeGreaterThanOrEqual(KARTE_MIN_PX);
+    expect(px(LANDSCAPE_LABEL_FONT_SIZE, KARTE_STUFE_REM * REM)).toBeGreaterThanOrEqual(KARTE_MIN_PX);
+    // Ortsnamen: text-callout (mindestens 15 px = 15 Einheiten) auf dem schmalsten Plan
+    expect(px(LABEL_FONT_SIZE, PLAN_MIN)).toBeGreaterThanOrEqual(KARTE_MIN_PX);
+    // Die Anordnung rechnet mit der größeren Schrift
+    expect(RING_LABEL_LAYOUT_SIZE).toBe(Math.max(RING_LABEL_FONT_SIZE, KARTE_SCHRIFT_SCHMAL));
+    expect(LANDSCAPE_LABEL_LAYOUT_SIZE).toBe(Math.max(LANDSCAPE_LABEL_FONT_SIZE, KARTE_SCHRIFT_SCHMAL));
+    // Vorher (13 Einheiten bei 276 px) wäre die Prüfung gescheitert
+    expect(px(13, 276)).toBeLessThan(KARTE_MIN_PX);
+  });
+
+  it('die Stufen im CSS sind die aus graphic.ts', () => {
+    const css = lies('app/globals.css');
+    expect(css).toMatch(/@utility karte-rahmen \{\s*container: karte \/ inline-size;\s*\}/);
+    const fein = css.match(/@utility karte-fein \{([\s\S]*?)\n\}/)![1];
+    expect(fein).toContain(`@container karte (min-width: ${KARTE_STUFE_REM}rem)`);
+    expect(fein).toContain(`font-size: ${RING_LABEL_FONT_SIZE}px;`);
+    expect(RING_LABEL_FONT_SIZE).toBe(LANDSCAPE_LABEL_FONT_SIZE);
+    // Randlos unter 22rem: Startseite und Gebietsseite (RegionExplorer), Ortsseiten und Kreis-Hubs (OrtPlan)
+    const explorer = lies('components/maps/RegionExplorer.tsx');
+    for (const klasse of ['-mx-gutter', 'box-content', 'w-auto', 'border-x-0']) expect(explorer).toContain(`max-[${KARTE_RANDLOS_REM}rem]:${klasse}`);
+    const modul = lies('components/einsatzgebiet/einsatzgebiet.module.css');
+    const randlos = modul.match(new RegExp(`@media \\(max-width: ${KARTE_RANDLOS_REM - 0.01}em\\) \\{\\s*\\.planRahmen \\{([^}]*)\\}`))![1];
+    expect(randlos).toContain('margin-inline: calc(-1 * var(--spacing-gutter));');
+    expect(randlos).toContain('box-sizing: content-box;');
+    expect(randlos).toContain('border-inline-width: 0;');
+  });
+
+  it('Ring- und Landschaftsnamen tragen 16 Einheiten und die Stufe, die Ortsnamen die Textstufen', () => {
+    const html = render(35, 'loc-herborn');
+    const texte = [...html.matchAll(/<text ([^>]*)>([^<]*)<\/text>/g)];
+    expect(texte.length).toBeGreaterThan(8);
+    for (const [, attribute, inhalt] of texte) {
+      if (/km$/.test(inhalt) || ['Lahn', 'Dill', 'A45', 'B49'].includes(inhalt)) {
+        expect(attribute, inhalt).toContain(`font-size="${KARTE_SCHRIFT_SCHMAL}"`);
+        expect(attribute, inhalt).toMatch(/class="karte-fein /);
+      } else {
+        expect(attribute, inhalt).toMatch(/class="[^"]*text-callout sm:text-footnote/);
+        expect(attribute, inhalt).not.toContain('font-size=');
+      }
+    }
+  });
+
+  it('OrtPlan und Gebietsplan sind Container `karte`, die Ringwerte des Gebietsplans in 16 Einheiten', () => {
+    const view = gebietView(GEBIET_MAP_DATA.radiusKm);
+    const ort = renderToStaticMarkup(createElement(OrtPlan, { view, emphasizeIds: [], id: 'o', beschreibung: 'Plan' }));
+    expect(ort).toMatch(/<div class="[^"]*karte-rahmen" data-karte-rahmen="">/);
+    const kopf = renderToStaticMarkup(createElement(Gebietsplan, { titel: 'Gebietsplan' }));
+    expect(kopf).toMatch(/^<div class="[^"]*karte-rahmen" data-karte-rahmen=""><svg /);
+    const werte = [...kopf.matchAll(/<text ([^>]*)>([^<]*)<\/text>/g)];
+    expect(werte.map(([, , text]) => text)).toEqual(['15\u00A0km', '25\u00A0km', '35\u00A0km']);
+    for (const [, attribute] of werte) {
+      expect(attribute).toContain(`font-size="${KARTE_SCHRIFT_SCHMAL}"`);
+      expect(attribute).toMatch(/class="[^"]* karte-fein"/);
+    }
   });
 });

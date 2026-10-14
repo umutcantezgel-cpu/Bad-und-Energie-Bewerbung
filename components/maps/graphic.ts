@@ -6,8 +6,31 @@ import type { RadiusView, RegionMapData, ViewRing } from './types';
 export const GRAPHIC_SIZE = 360;
 /** Room around the chosen ring for the outermost labels. */
 export const GRAPHIC_PADDING = 20;
-/** Labels render at 15 units on phones and 13 units from sm; the layout reserves the larger size. */
-const LABEL_FONT_SIZE = 15;
+
+// --- Schrift nach der schmalsten gezeichneten Breite (Prüfung E-029, Runde 2, Befund 7) ------
+
+/** Mindestgröße gezeichneter Schrift in px (ROADMAP §9, e2e findSmallText). */
+export const KARTE_MIN_PX = 12;
+/**
+ * Ortsnamen: 15 Einheiten am Handy (text-callout, 15–16 px), ab sm 14 (text-footnote); die Anordnung rechnet mit 15.
+ * Gezeichnet 12 px ab 288 px Breite: Darum steht der Plan unter KARTE_RANDLOS_REM randlos über die ganze
+ * Bildschirmbreite (mit Seitenrand wäre er bei 320 px nur 276 px breit, die Namen 11,5 px), darüber ist er mindestens
+ * 308 px breit.
+ */
+export const LABEL_FONT_SIZE = 15;
+/** Unter dieser Bildschirmbreite steht der Plan randlos (ohne Seitenrand und ohne Rahmen links und rechts). */
+export const KARTE_RANDLOS_REM = 22;
+/**
+ * Ring- und Landschaftsnamen unter der Containerstufe KARTE_STUFE_REM: 16 Einheiten, gezeichnet 12 px ab 270 px Breite
+ * (der Gebietsplan im Seitenkopf ist bei 320 px nur 280 px breit). 13 Einheiten ergaben bei 276 px nur 9,97 px.
+ */
+export const KARTE_SCHRIFT_SCHMAL = 16;
+/**
+ * Containerstufe (21rem = 336 px gezeichnete Breite): darüber stehen Ring- und Landschaftsnamen in 13 Einheiten
+ * (12,1 px bei 336 px). Die Regel steht als Utility `karte-fein` in app/globals.css, der Container heißt `karte`
+ * (Utility `karte-rahmen`: RegionExplorer, OrtPlan, Gebietsplan). Die Anordnung rechnet mit der größeren Schrift.
+ */
+export const KARTE_STUFE_REM = 21;
 const LABEL_GAP = 7;
 const DOT_CLEARANCE = 4;
 /**
@@ -22,12 +45,14 @@ const CENTER_LABEL_GAP = CENTER_DOT_EXTENT + 4;
 export const CENTER_LABEL_ID = '__center';
 
 /**
- * Landscape labels: 13 units (at 390 px the graphic renders at 0.96 : 1, so 12.5 px drawn; 12 units stayed at
- * 11.5 px, below the 12 px minimum, review E-029 finding 7); road numbers in Martian Mono, river names in
- * Atkinson. Lives here, not in landscape.ts, so the client graphic does not pull the landscape anchors into its
- * bundle.
+ * Landscape labels: 13 units from the container step KARTE_STUFE_REM (12.1 px at 336 px), below it
+ * KARTE_SCHRIFT_SCHMAL; the layout reserves the larger size (LANDSCAPE_LABEL_LAYOUT_SIZE). Road numbers in Martian
+ * Mono, river names in Atkinson. Lives here, not in landscape.ts, so the client graphic does not pull the landscape
+ * anchors into its bundle.
  */
 export const LANDSCAPE_LABEL_FONT_SIZE = 13;
+/** Size the landscape layout reserves: the larger of the two drawn sizes. */
+export const LANDSCAPE_LABEL_LAYOUT_SIZE = Math.max(LANDSCAPE_LABEL_FONT_SIZE, KARTE_SCHRIFT_SCHMAL);
 
 // --- Ortspunkte frei vom Haus ------------------------------------------------------------
 
@@ -99,8 +124,13 @@ const RING_LABEL_ANGLE = 100;
 const RING_LABEL_FALLBACK_ANGLES = [90, 80, 110, 120, 70, 60, 130, 140, 50, 40, 150, 160, 30, 20, 170, 180, 190, 200, 350, 340, 210, 220, 330, 320, 230, 240, 310, 300] as const;
 /** Half the square kept free around a dot for a ring label (dot 4.5 + stroke + air). */
 const RING_LABEL_DOT_CLEARANCE = 7;
-/** Ring labels: Martian Mono at 13 units (75 % width, tabular); 0.66 em per glyph keeps the estimate safe. */
+/**
+ * Ring labels: Martian Mono (75 % width, tabular) at 13 units from the container step KARTE_STUFE_REM, below it
+ * KARTE_SCHRIFT_SCHMAL; the boxes reserve the larger size. 0.66 em per glyph keeps the estimate safe.
+ */
 export const RING_LABEL_FONT_SIZE = 13;
+/** Size the ring label boxes reserve: the larger of the two drawn sizes. */
+export const RING_LABEL_LAYOUT_SIZE = Math.max(RING_LABEL_FONT_SIZE, KARTE_SCHRIFT_SCHMAL);
 const RING_LABEL_CHAR_WIDTH = 0.66;
 
 export interface RingLabel {
@@ -122,7 +152,7 @@ export function ringLabels(view: Pick<RadiusView, 'origin' | 'rings'> & { size?:
   const placed: RingLabel[] = [];
   for (const ring of view.rings) {
     const text = `${ring.km}\u00A0km`;
-    const width = [...text].length * RING_LABEL_CHAR_WIDTH * RING_LABEL_FONT_SIZE;
+    const width = [...text].length * RING_LABEL_CHAR_WIDTH * RING_LABEL_LAYOUT_SIZE;
     const at = (angle: number, inset = 12): RingLabel => {
       // Default angle: as always (just inside the ring, starting a little east of the point). Other angles: the
       // label centred just inside the ring (or just outside, inset < 0).
@@ -134,7 +164,7 @@ export function ringLabels(view: Pick<RadiusView, 'origin' | 'rings'> & { size?:
         text,
         x,
         y,
-        box: { x0: x - 2, y0: y - RING_LABEL_FONT_SIZE / 2 - 1, x1: x + width + 2, y1: y + RING_LABEL_FONT_SIZE / 2 + 1 },
+        box: { x0: x - 2, y0: y - RING_LABEL_LAYOUT_SIZE / 2 - 1, x1: x + width + 2, y1: y + RING_LABEL_LAYOUT_SIZE / 2 + 1 },
       };
     };
     const hits = (label: RingLabel) => dots.filter((box) => boxesOverlap(box, label.box)).length;

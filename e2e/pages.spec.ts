@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { ROUTES, expectNoAxeViolations, findSmallText, findSmallTouchTargets, isTouch, waitForSettled } from './support/site';
+import { ROUTES, expectNoAxeViolations, findSmallPlanText, findSmallText, findSmallTouchTargets, isTouch, waitForSettled } from './support/site';
 
 /**
  * Jede Route (ROADMAP §9, §14): Status, genau eine h1, Landmark main#main, Schrift ≥ 12 px (in SVG gezeichnet),
@@ -59,6 +59,39 @@ test.describe('Schmale Bildschirme (320 px)', () => {
         return { scrollWidth: root.scrollWidth, width, wide };
       });
       expect(overflow.scrollWidth, `Zu breit: ${overflow.wide.join(', ')}`).toBeLessThanOrEqual(overflow.width);
+    });
+  }
+});
+
+/**
+ * Pläne des Einsatzgebiets (Prüfung E-029, Runde 2, Befund 7): Orts-, Ring- und Landschaftsnamen gezeichnet nie unter
+ * 12 px, auf jeder Breite von 320 bis 1440 px in 16-px-Schritten und an den Stufen (randlos unter 22rem, Containerstufe
+ * 21rem, Raster ab 64em). Gemessen wie findSmallText: Schriftgröße mal getScreenCTM. Die Breiten setzt der Test selbst,
+ * darum läuft er einmal (mobile-light).
+ */
+const PLAN_SEITEN = ['/', '/einsatzgebiet', '/einsatzgebiet/lahn-dill-kreis', '/einsatzgebiet/herborn'] as const;
+const PLAN_BREITEN = [
+  ...new Set([...Array.from({ length: 71 }, (_, i) => 320 + i * 16), 335, 336, 351, 352, 360, 375, 1023, 1024, 1040]),
+].sort((a, b) => a - b);
+
+test.describe('Pläne: Schrift auf jeder Breite gezeichnet ≥ 12 px', () => {
+  test.beforeEach(() => {
+    test.skip(test.info().project.name !== 'mobile-light', 'Die Breiten setzt der Test selbst; ein Projekt genügt.');
+  });
+
+  for (const pfad of PLAN_SEITEN) {
+    test(`Pläne auf ${pfad}`, async ({ page }) => {
+      await page.setViewportSize({ width: 320, height: 800 });
+      await page.goto(pfad);
+      await waitForSettled(page);
+      const funde: string[] = [];
+      for (const breite of PLAN_BREITEN) {
+        await page.setViewportSize({ width: breite, height: 800 });
+        const { gemessen, funde: klein } = await findSmallPlanText(page);
+        expect(gemessen, `${breite} px: keine Namen gemessen`).toBeGreaterThan(0);
+        funde.push(...klein.map((fund) => `${breite} px: ${fund}`));
+      }
+      expect(funde, 'Schrift im Plan kleiner als 12 px').toEqual([]);
     });
   }
 });

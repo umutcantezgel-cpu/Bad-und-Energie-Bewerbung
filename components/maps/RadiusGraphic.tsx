@@ -1,9 +1,8 @@
 import { cn } from '@/lib/utils/cn';
 import {
   CENTER_LABEL_ID,
+  KARTE_SCHRIFT_SCHMAL,
   LANDSCAPE_CLEAR,
-  LANDSCAPE_LABEL_FONT_SIZE,
-  RING_LABEL_FONT_SIZE,
   SELECTED_RING_RADIUS,
   pendelPaths,
   planLabels,
@@ -160,8 +159,8 @@ export function RadiusGraphic({
                 textAnchor={line.label.anchor}
                 dominantBaseline="central"
                 strokeWidth={4}
-                fontSize={LANDSCAPE_LABEL_FONT_SIZE}
-                className={cn('fill-ink-muted', line.kind === 'strasse' ? 'font-mass font-medium' : 'font-medium')}
+                fontSize={KARTE_SCHRIFT_SCHMAL}
+                className={cn('karte-fein fill-ink-muted', line.kind === 'strasse' ? 'font-mass font-medium' : 'font-medium')}
               >
                 {line.name}
               </text>
@@ -221,7 +220,9 @@ export function RadiusGraphic({
         {...lineProps}
       />
 
-      {/* Ringe und Orte beschriftet, mit Halo in Wärme, damit Linien darunter nicht durch die Schrift laufen */}
+      {/* Ringe und Orte beschriftet, mit Halo in Wärme, damit Linien darunter nicht durch die Schrift laufen. Schrift in
+          Einheiten, gezeichnet nie unter 12 px (graphic.ts KARTE_*): Ring- und Landschaftsnamen 16 Einheiten, ab der
+          Containerstufe 13 (karte-fein); Ortsnamen 15, ab sm 14, der Plan wird dafür nie schmaler als 288 px. */}
       <g paintOrder="stroke" strokeLinejoin="round" className="stroke-waerme">
         {rings.map((ring) => (
           <text
@@ -230,8 +231,8 @@ export function RadiusGraphic({
             y={ring.y}
             dominantBaseline="central"
             strokeWidth={4}
-            fontSize={RING_LABEL_FONT_SIZE}
-            className="fill-brand font-mass font-semibold"
+            fontSize={KARTE_SCHRIFT_SCHMAL}
+            className="karte-fein fill-brand font-mass font-semibold"
           >
             {ring.text}
           </text>

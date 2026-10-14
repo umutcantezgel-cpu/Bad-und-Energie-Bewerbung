@@ -147,6 +147,19 @@
   margin: 0;
 }
 
+/* Pläne des Einsatzgebiets (components/maps/graphic.ts KARTE_*, Prüfung E-029, Runde 2, Befund 7): Schrift in
+   Einheiten des viewBox 360, gezeichnet nie unter 12 px. Der Rahmen ist der Container `karte`; Ring- und
+   Landschaftsnamen tragen 16 Einheiten als Attribut, ab 21rem gezeichneter Breite 13 Einheiten (12,1 px). */
+@utility karte-rahmen {
+  container: karte / inline-size;
+}
+
+@utility karte-fein {
+  @container karte (min-width: 21rem) {
+    font-size: 13px;
+  }
+}
+
 @utility print-hidden {
   @media print {
     display: none !important;

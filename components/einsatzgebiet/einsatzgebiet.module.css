@@ -285,6 +285,19 @@
   background-color: var(--surface-raised);
 }
 
+/* Unter 22rem randlos (components/maps/graphic.ts KARTE_RANDLOS_REM): im Seitenrand wäre der Plan bei 320 px nur
+   276 px breit und die Ortsnamen gezeichnet 11,5 px groß. Das Quadrat ist dann die Inhaltsfläche, damit der Rahmen oben
+   und unten die Zeichnung nicht verkleinert. */
+@media (max-width: 21.99em) {
+  .planRahmen {
+    box-sizing: content-box;
+    width: auto;
+    margin-inline: calc(-1 * var(--spacing-gutter));
+    border-inline-width: 0;
+    border-radius: 0;
+  }
+}
+
 .planLegende {
   max-width: 38rem;
   font-size: var(--text-footnote);
@@ -784,8 +797,12 @@
 
 /* ═══ Gebietsplan im Seitenkopf der Gebietsseite (Navy): Ringe ziehen sich auf (Register `ringe-zeichnen`) ═══ */
 .gebietsplan {
-  display: block;
   width: min(100%, 26rem);
+}
+
+.gebietsplan > svg {
+  display: block;
+  width: 100%;
   height: auto;
   overflow: visible;
 }

@@ -1,7 +1,8 @@
 import type { CSSProperties } from 'react';
 import { RadiusGraphic } from '@/components/maps/RadiusGraphic';
-import { ringLabels } from '@/components/maps/graphic';
+import { KARTE_SCHRIFT_SCHMAL, ringLabels } from '@/components/maps/graphic';
 import type { RadiusView } from '@/components/maps/types';
+import { cn } from '@/lib/utils/cn';
 import { HAUS_NAME, PLAN_LEGENDE, PLAN_LEGENDE_STADTTEILE } from './einsatzgebiet-text';
 import styles from './einsatzgebiet.module.css';
 import { GEBIET_MAP_DATA, gebietView } from './karte';
@@ -38,7 +39,7 @@ export function OrtPlan({
 }: OrtPlanProps) {
   return (
     <figure className={styles.plan}>
-      <div className={styles.planRahmen}>
+      <div className={cn(styles.planRahmen, 'karte-rahmen')} data-karte-rahmen="">
         <RadiusGraphic
           data={GEBIET_MAP_DATA}
           view={view}
@@ -84,38 +85,49 @@ export function Gebietsplan({ titel }: GebietsplanProps) {
   const { size, origin } = view;
   const werte = ringLabels(view);
 
+  // Der Rahmen ist der Container `karte`: Die Ringwerte stehen in 16 Einheiten, ab 21rem gezeichneter Breite in 13
+  // (graphic.ts KARTE_*); bei 320 px ist der Plan 280 px breit, bei 1024 px 323 px.
   return (
-    <svg className={styles.gebietsplan} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={titel} focusable="false">
-      <circle cx={origin.x} cy={origin.y} r={view.radius} className={styles.planRingFlaeche} />
-      {view.rings.map((ring, i) => (
-        <circle
-          key={ring.km}
-          cx={origin.x}
-          cy={origin.y}
-          r={ring.r}
-          pathLength={1}
-          transform={`rotate(-90 ${origin.x} ${origin.y})`}
-          className={styles.planRing}
-          style={{ '--ring': i } as CSSProperties}
-          data-motion="ringe-zeichnen"
+    <div className={cn(styles.gebietsplan, 'karte-rahmen')} data-karte-rahmen="">
+      <svg viewBox={`0 0 ${size} ${size}`} role="img" aria-label={titel} focusable="false">
+        <circle cx={origin.x} cy={origin.y} r={view.radius} className={styles.planRingFlaeche} />
+        {view.rings.map((ring, i) => (
+          <circle
+            key={ring.km}
+            cx={origin.x}
+            cy={origin.y}
+            r={ring.r}
+            pathLength={1}
+            transform={`rotate(-90 ${origin.x} ${origin.y})`}
+            className={styles.planRing}
+            style={{ '--ring': i } as CSSProperties}
+            data-motion="ringe-zeichnen"
+          />
+        ))}
+        {GEBIET_MAP_DATA.places.map((place, i) => {
+          const p = view.points[i];
+          if (!p?.inFrame) return null;
+          return <circle key={place.id} cx={p.drawn.x} cy={p.drawn.y} r={4} className={styles.planPunkt} />;
+        })}
+        {/* Radius des Zirkels (Leitmotiv „35 km“, E-027): vom Haus nach oben links bis an den äußeren Ring */}
+        <path
+          d={`M${origin.x} ${origin.y}L${Math.round((origin.x - view.radius * Math.SQRT1_2) * 10) / 10} ${Math.round((origin.y - view.radius * Math.SQRT1_2) * 10) / 10}`}
+          className={styles.planRadius}
         />
-      ))}
-      {GEBIET_MAP_DATA.places.map((place, i) => {
-        const p = view.points[i];
-        if (!p?.inFrame) return null;
-        return <circle key={place.id} cx={p.drawn.x} cy={p.drawn.y} r={4} className={styles.planPunkt} />;
-      })}
-      {/* Radius des Zirkels (Leitmotiv „35 km“, E-027): vom Haus nach oben links bis an den äußeren Ring */}
-      <path
-        d={`M${origin.x} ${origin.y}L${Math.round((origin.x - view.radius * Math.SQRT1_2) * 10) / 10} ${Math.round((origin.y - view.radius * Math.SQRT1_2) * 10) / 10}`}
-        className={styles.planRadius}
-      />
-      <path d={HAUS} transform={`translate(${origin.x} ${origin.y}) scale(1.5)`} className={styles.planHaus} />
-      {werte.map((wert) => (
-        <text key={wert.km} x={wert.x} y={wert.y} dominantBaseline="central" fontSize={13} className={styles.planWert}>
-          {wert.text}
-        </text>
-      ))}
-    </svg>
+        <path d={HAUS} transform={`translate(${origin.x} ${origin.y}) scale(1.5)`} className={styles.planHaus} />
+        {werte.map((wert) => (
+          <text
+            key={wert.km}
+            x={wert.x}
+            y={wert.y}
+            dominantBaseline="central"
+            fontSize={KARTE_SCHRIFT_SCHMAL}
+            className={cn(styles.planWert, 'karte-fein')}
+          >
+            {wert.text}
+          </text>
+        ))}
+      </svg>
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 import { layoutLabels, type Box } from '@/lib/maps/labels';
 import type { LatLng, RadiusProjection, SvgPoint } from '@/lib/maps/projection';
-import { LANDSCAPE_LABEL_FONT_SIZE, octilinearChain, pathData } from './graphic';
+import { LANDSCAPE_LABEL_LAYOUT_SIZE, octilinearChain, pathData } from './graphic';
 import type { LandscapeId, LandscapeLine } from './types';
 
 /**
@@ -126,7 +126,7 @@ export function projectLandscape(
     for (const at of candidates) {
       const [hit] = layoutLabels([{ id: line.id, text: line.name, x: at.x, y: at.y }], {
         size,
-        fontSize: LANDSCAPE_LABEL_FONT_SIZE,
+        fontSize: LANDSCAPE_LABEL_LAYOUT_SIZE,
         charWidth: LABEL_CHAR_WIDTH,
         gap: 5,
         dotRadius: 7,

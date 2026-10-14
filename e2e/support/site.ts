@@ -136,6 +136,28 @@ export async function findSmallText(page: Page, scope = 'main#main', min = MIN_F
   }, min);
 }
 
+/**
+ * Schrift der Pläne des Einsatzgebiets (Rahmen mit `data-karte-rahmen`: Startseite, Gebietsseite, Kreis-Hubs,
+ * Ortsseiten, Seitenkopf der Gebietsseite), so groß, wie sie gezeichnet wird. Gibt die Zahl der gemessenen Namen mit
+ * zurück, damit eine Prüfung ohne Plan nicht leer besteht.
+ */
+export async function findSmallPlanText(page: Page, min = MIN_FONT_SIZE_PX): Promise<{ gemessen: number; funde: string[] }> {
+  return page.locator('main#main').evaluate((root, min) => {
+    const funde: string[] = [];
+    let gemessen = 0;
+    for (const text of root.querySelectorAll<SVGTextElement>('[data-karte-rahmen] svg text')) {
+      if (!text.checkVisibility({ visibilityProperty: true, opacityProperty: false })) continue;
+      const m = text.getScreenCTM();
+      if (!m) continue;
+      gemessen += 1;
+      const size = parseFloat(getComputedStyle(text).fontSize) * Math.hypot(m.a, m.b);
+      const breite = Math.round(text.ownerSVGElement!.getBoundingClientRect().width);
+      if (size < min) funde.push(`${size.toFixed(2)}px „${text.textContent?.trim()}“ (Plan ${breite} px breit)`);
+    }
+    return { gemessen, funde };
+  }, min);
+}
+
 /** Mindestgröße der Trefferfläche (ROADMAP §4, §9: Touch-Ziele ≥ 44 px). */
 export const MIN_TOUCH_TARGET_PX = 44;
 
