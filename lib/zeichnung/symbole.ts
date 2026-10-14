@@ -88,8 +88,8 @@ export const SYMBOLE = {
     formen: [{ x: -16, y: -30, width: 32, height: 60, rx: 12 }, { d: 'M-16 2H8L-8 7L8 12L-8 17L8 22H-16', fein: true }],
   },
   dreiwegeventil: {
-    name: '3-Wege-Ventil (Umschaltventil)',
-    beschreibung: 'Drei Ventildreiecke um einen Punkt, darüber der Stellantrieb (M)',
+    name: '3-Wege-Ventil (Umschalten, Mischen)',
+    beschreibung: 'Drei Ventildreiecke um einen Punkt, darüber der Stellantrieb (M); als Mischer kommt die Beimischung von unten (b)',
     halb: { x: 12, y: 22 },
     anschluesse: { ein: { x: -12, y: 0 }, a: { x: 12, y: 0 }, b: { x: 0, y: 12 } },
     formen: [

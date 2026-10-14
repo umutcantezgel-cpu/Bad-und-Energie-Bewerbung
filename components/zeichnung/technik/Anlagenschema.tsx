@@ -26,8 +26,8 @@ export interface AnlagenschemaProps {
 
 export const ANLAGENSCHEMA_TITEL =
   'Anlagenschema einer Luft/Wasser-Wärmepumpe: Der Vorlauf kommt aus der Außeneinheit, läuft in der Erdleitung durch ' +
-  'die Wand zur Inneneinheit mit Umwälzpumpe und Umschaltventil und weiter zu Heizkörper, Fußbodenheizung und Speicher; ' +
-  'der Rücklauf fließt zurück zur Außeneinheit.';
+  'die Wand zur Inneneinheit mit Umwälzpumpe und Umschaltventil und weiter zu Heizkörper, Speicher und über Mischer, ' +
+  'Pumpe und Sicherheitstemperaturwächter zur Fußbodenheizung; der Rücklauf fließt zurück zur Außeneinheit.';
 
 /**
  * Anlagenschema (KERN K-010, E-029): Fließschema mit Normsymbolen nach DIN EN ISO 10628-2, Leitungen in Fließrichtung
@@ -81,7 +81,8 @@ export function Anlagenschema({ bewegt = false, titel = ANLAGENSCHEMA_TITEL, leg
                 <span className={t.quelle}>
                   Typische Anordnung, kein bestimmtes Modell: Die Inneneinheit steht als Systemgrenze (Strich-Punkt), ihre Maße
                   folgen, wenn das Modell feststeht. Sicherheitsventil und Ausdehnungsgefäß sind zum Wärmeerzeuger hin nicht
-                  absperrbar.
+                  absperrbar. Die Fußbodenheizung hat einen gemischten Kreis mit eigener Pumpe; der Fühler im Vorlauf ist der
+                  Sicherheitstemperaturwächter (DIN EN 1264-4).
                 </span>
               ) : null}
             </div>

@@ -3,7 +3,10 @@
  * Normsymbolen: Außeneinheit (Kältekreis vereinfacht, Plattenwärmeübertrager) → Erdleitung und Wanddurchführung →
  * Inneneinheit (Sicherheitsventil, Absperrung, Vorlauffühler, Umwälzpumpe, Rückschlagventil, 3-Wege-Ventil, Speicher,
  * Ausdehnungsgefäß) → Heizkörper und Fußbodenheizung. Sicherheitsventil und Ausdehnungsgefäß sitzen zwischen
- * Wärmeerzeuger und Absperrung (DIN EN 12828: vom Wärmeerzeuger nicht absperrbar).
+ * Wärmeerzeuger und Absperrung (DIN EN 12828: vom Wärmeerzeuger nicht absperrbar). Die Außeneinheit liefert bis 75 °C
+ * Vorlauf (Bosch 6721864591, Tab. 5); die Fußbodenheizung hängt darum an einem gemischten Kreis: 3-Wege-Mischer mit
+ * Beimischung aus ihrem Rücklauf, eigene Pumpe und Sicherheitstemperaturwächter im Vorlauf (DIN EN 1264-4: Begrenzung
+ * der Vorlauftemperatur, Estrichschutz).
  *
  * Fließrichtung (K-003.2): Der Vorlauf beginnt am Plattenwärmeübertrager der Außeneinheit (Wärmeerzeuger) und endet an
  * den Verbrauchern; der Rücklauf beginnt an den Verbrauchern und endet am Plattenwärmeübertrager. Die Inneneinheit ist
@@ -45,10 +48,18 @@ export const ANLAGENSCHEMA_SYMBOLE: readonly SchemaSymbol[] = [
   // Wärmeerzeuger hin nicht absperrbar ist (DIN EN 12828)
   symbol('absperrung-rl', 'absperrventil', { x: 690, y: 450, massstab: S }),
   symbol('ausdehnung', 'ausdehnungsgefaess', { x: 580, y: 410, massstab: S }, { wert: 'MAG', x: 604, y: 404, anker: 'start' }),
+  // Gemischter Kreis der Fußbodenheizung: Mischer (Beimischung von unten aus dem Rücklauf), Pumpe, Sicherheits-
+  // temperaturwächter (Fühler, schaltet die Pumpe ab), erst dann die Fußbodenheizung
+  symbol('mischer', 'dreiwegeventil', { x: 940, y: 310, massstab: S }),
+  symbol('pumpe-fbh', 'pumpe', { x: 992, y: 310, massstab: S }),
+  symbol('stw', 'fuehler', { x: 1036, y: 310, massstab: S }),
   // Verbraucher
   symbol('heizkoerper', 'heizkoerper', { x: 1080, y: 162, massstab: S }, { wert: 'Heizkörper', x: 1080, y: 220, anker: 'middle' }),
-  symbol('fussboden', 'fussbodenheizung', { x: 1090, y: 320, massstab: S }, { wert: 'Fußbodenheizung', x: 1188, y: 372, anker: 'end' }),
+  symbol('fussboden', 'fussbodenheizung', { x: 1100, y: 320, massstab: S }, { wert: 'Fußbodenheizung', x: 1188, y: 362, anker: 'end' }),
 ];
+
+/** Abzweig der Fußbodenheizung vom Heizkörper-Vorlauf hinter dem Umschaltventil. */
+const ABZWEIG_FBH = { x: 900, y: 150 };
 
 const p = (key: string, anschluss: string) => an(ANLAGENSCHEMA_SYMBOLE, key, anschluss);
 
@@ -63,7 +74,8 @@ export const ANLAGENSCHEMA_LEITUNGEN: readonly SchemaLeitung[] = [
     p('umschaltventil', 'ein'),
   ]),
   leitung('vorlauf-heizkoerper', 'vorlauf', [p('umschaltventil', 'a'), p('heizkoerper', 'ein')]),
-  leitung('vorlauf-fussboden', 'vorlauf', [{ x: 930, y: 150 }, { x: 930, y: p('fussboden', 'ein').y }, p('fussboden', 'ein')]),
+  // Durch Mischer (ein → a), Pumpe und Sicherheitstemperaturwächter zur Fußbodenheizung
+  leitung('vorlauf-fussboden', 'vorlauf', [ABZWEIG_FBH, { x: ABZWEIG_FBH.x, y: p('mischer', 'ein').y }, p('fussboden', 'ein')]),
   leitung('vorlauf-speicher', 'vorlauf', [
     p('umschaltventil', 'b'),
     { x: 850, y: 232 },
@@ -82,6 +94,13 @@ export const ANLAGENSCHEMA_LEITUNGEN: readonly SchemaLeitung[] = [
     p('pwt', 'rechtsEin'),
   ]),
   leitung('ruecklauf-fussboden', 'ruecklauf', [p('fussboden', 'aus'), { x: 1160, y: p('fussboden', 'aus').y }]),
+  // Beimischung: ein Teil des Rücklaufs der Fußbodenheizung zurück in den Mischer (Anschluss b, von unten)
+  leitung('ruecklauf-beimischung', 'ruecklauf', [
+    { x: 1152, y: p('fussboden', 'aus').y },
+    { x: 1152, y: 400 },
+    { x: p('mischer', 'b').x, y: 400 },
+    p('mischer', 'b'),
+  ]),
   leitung('ruecklauf-speicher', 'ruecklauf', [p('speicher', 'wendelAus'), { x: 776, y: p('speicher', 'wendelAus').y }, { x: 776, y: 450 }]),
 ];
 
@@ -97,7 +116,8 @@ export const ANLAGENSCHEMA_PFEILE: readonly SchemaPfeil[] = [
   pfeil('vorlauf', { x: 398, y: 512 }, { x: 1, y: 0 }),
   pfeil('ruecklauf', { x: 380, y: 532 }, { x: -1, y: 0 }),
   pfeil('vorlauf', { x: 990, y: 150 }, { x: 1, y: 0 }),
-  pfeil('vorlauf', { x: 990, y: p('fussboden', 'ein').y }, { x: 1, y: 0 }),
+  pfeil('vorlauf', { x: ABZWEIG_FBH.x, y: 240 }, { x: 0, y: 1 }),
+  pfeil('ruecklauf', { x: 1040, y: 400 }, { x: -1, y: 0 }),
   pfeil('ruecklauf', { x: 1160, y: 300 }, { x: 0, y: 1 }),
   pfeil('ruecklauf', { x: 750, y: 450 }, { x: -1, y: 0 }),
   pfeil('kaeltemittel', { x: 150, y: 214 }, { x: 1, y: 0 }),

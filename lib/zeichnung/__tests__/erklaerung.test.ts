@@ -54,6 +54,8 @@ describe('Erklärtext zur Wärmepumpe (E-029, AEO)', () => {
     expect(t).toMatch(/Erdleitung[\s\S]*Wanddurchführung[\s\S]*Inneneinheit/);
     expect(t).toMatch(/Rücklauf[\s\S]*zurück zur Außeneinheit/);
     for (const bauteil of ['Umwälzpumpe', 'Sicherheitsventil', 'Ausdehnungsgefäß', 'Umschaltventil', 'Speicher']) expect(t).toContain(bauteil);
+    // Gemischter Kreis der Fußbodenheizung wie im Anlagenschema (DIN EN 1264-4)
+    expect(t).toMatch(/Fußbodenheizung[\s\S]*Mischer[\s\S]*Pumpe[\s\S]*Sicherheitstemperaturwächter/);
   });
 
   it('Steckbrief: jede Zahl aus dem Geräte-Modul, mit geschütztem Leerzeichen vor der Einheit und der Fundstelle', () => {

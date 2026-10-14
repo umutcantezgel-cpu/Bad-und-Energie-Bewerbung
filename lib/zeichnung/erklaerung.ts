@@ -65,8 +65,10 @@ export const HEIZWASSER: ErklaerSatz = {
   text:
     'Der Vorlauf läuft in der Erdleitung unter der Frostgrenze durch die Wanddurchführung zur Inneneinheit. Dort sitzen ' +
     'Umwälzpumpe, Sicherheitsventil, Ausdehnungsgefäß und das Umschaltventil: Es schickt das Wasser zu Heizkörpern und ' +
-    'Fußbodenheizung oder in den Speicher für das Warmwasser. Der Rücklauf bringt das abgekühlte Wasser zurück zur ' +
-    'Außeneinheit.',
+    'Fußbodenheizung oder in den Speicher für das Warmwasser. Die Fußbodenheizung hat einen eigenen gemischten Kreis: ' +
+    'Ein Mischer gibt Wasser aus ihrem Rücklauf dazu, eine zweite Pumpe fördert, und ein Sicherheitstemperaturwächter ' +
+    'schaltet ab, wenn der Vorlauf zu heiß wird. So nimmt der Estrich keinen Schaden. Der Rücklauf bringt das ' +
+    'abgekühlte Wasser zurück zur Außeneinheit.',
   quelle: 'zeichnung:anlagenschema',
 };
 

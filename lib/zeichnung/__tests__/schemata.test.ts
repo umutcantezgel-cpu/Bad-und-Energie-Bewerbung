@@ -218,11 +218,38 @@ describe('Anlagenschema (Luft/Wasser, Monoblock)', () => {
     const quellen = [s('heizkoerper', 'aus'), s('fussboden', 'aus'), s('speicher', 'wendelAus')];
     const zurueck = ruecklauf.find((l) => gleich(l.punkte.at(-1)!, s('pwt', 'rechtsEin')));
     expect(zurueck?.key).toBe('ruecklauf-heizkreis');
-    for (const l of ruecklauf) {
+    // Einzige Ausnahme: die Beimischung zweigt vom Rücklauf der Fußbodenheizung ab und endet im Mischer (Anschluss b)
+    const beimischung = ruecklauf.filter((l) => gleich(l.punkte.at(-1)!, s('mischer', 'b')));
+    expect(beimischung.map((l) => l.key)).toEqual(['ruecklauf-beimischung']);
+    const fbhRuecklauf = ruecklauf.find((l) => gleich(l.punkte[0], s('fussboden', 'aus')))!;
+    expect(fbhRuecklauf.punkte.slice(1).some((b, i) => aufStueck(beimischung[0].punkte[0], fbhRuecklauf.punkte[i], b))).toBe(true);
+    for (const l of ruecklauf.filter((x) => !beimischung.includes(x))) {
       expect(quellen.some((q) => gleich(q, l.punkte[0])), `${l.key} Anfang`).toBe(true);
       const ende = l.punkte.at(-1)!;
       expect(l === zurueck || aufAndererLeitung(ende, 'ruecklauf', l.key), `${l.key} Ende`).toBe(true);
     }
+  });
+
+  it('DIN EN 1264-4: die Fußbodenheizung hängt hinter Mischer, Pumpe und Sicherheitstemperaturwächter (Vorlauf bis 75 °C)', () => {
+    const lage = (key: string) => ANLAGENSCHEMA_SYMBOLE.find((x) => x.key === key)!;
+    expect(lage('mischer').id).toBe('dreiwegeventil');
+    expect(lage('pumpe-fbh').id).toBe('pumpe');
+    expect(lage('stw').id).toBe('fuehler');
+    // Jeder Vorlauf, der an der Fußbodenheizung endet, läuft in dieser Reihenfolge durch Mischer (ein → a), Pumpe
+    // (ein → aus) und Wächter; erst dann kommt der Eintritt der Fußbodenheizung
+    const zurFbh = vorlauf.filter((l) => gleich(l.punkte.at(-1)!, s('fussboden', 'ein')));
+    expect(zurFbh).toHaveLength(1);
+    const l = zurFbh[0];
+    const folge = [s('mischer', 'ein'), s('mischer', 'a'), s('pumpe-fbh', 'ein'), s('pumpe-fbh', 'aus'), s('stw', 'an'), s('fussboden', 'ein')].map((q) =>
+      lauflaenge(l, q),
+    );
+    for (const wert of folge) expect(wert).not.toBeNull();
+    for (let i = 1; i < folge.length; i += 1) expect(folge[i]!, `Stelle ${i}`).toBeGreaterThan(folge[i - 1]!);
+    // Abzweig hinter dem Umschaltventil (Heizseite), also vom Heizkörper-Vorlauf
+    expect(aufAndererLeitung(l.punkte[0], 'vorlauf', l.key)).toBe(true);
+    // Der Heizkörper bekommt das Wasser ohne Mischer, der Mischer sitzt nur im Kreis der Fußbodenheizung
+    const hk = vorlauf.find((x) => gleich(x.punkte.at(-1)!, s('heizkoerper', 'ein')))!;
+    for (const key of ['mischer', 'pumpe-fbh', 'stw']) expect(lauflaenge(hk, lage(key).lage), key).toBeNull();
   });
 
   it('Erdleitung unter der Geländeoberkante durch die Wanddurchführung; Kältemittel nur in der Außeneinheit', () => {
