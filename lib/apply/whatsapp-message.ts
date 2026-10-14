@@ -130,7 +130,9 @@ export function buildMappeShareMessage(input: MappeShareMessageInput = {}): stri
 /**
  * Sichtbarer Code je Kanal, den der Browser beim Antippen eines WhatsApp-Links als letzte Zeile „– W-…“ anhängt
  * (lib/attribution/klick.ts mit mitHerkunftscode aus lib/utils/whatsapp-utils.ts). So sieht das Team in WhatsApp,
- * woher eine Bewerbung kommt, ohne Cookie und ohne Kennung; die Person sieht den Code vor dem Senden.
+ * woher eine Bewerbung kommt, ohne Cookie und ohne Kennung; die Person sieht den Code vor dem Senden. Nur mit dem
+ * Schalter FUNNEL_EVENTS (lib/attribution/schalter.ts): Die Datenschutzerklärung nennt den Code erst mit der Freigabe
+ * (M-034, Entwurf in docs/operations/datenschutz-aenderungen.md 2.9).
  *
  * | Code   | Herkunft                                      |
  * |--------|-----------------------------------------------|
@@ -149,7 +151,8 @@ export function buildMappeShareMessage(input: MappeShareMessageInput = {}): stri
  * | W-DIR  | direkt auf die Website (kein Signal)          |
  * | W-SON  | sonstige Quelle (QR-Code, Flyer, Website)     |
  *
- * Ohne Code kam die Nachricht nicht über einen Link dieser Website (Nummer abgetippt, ohne JavaScript).
+ * Ohne Code kam die Nachricht nicht über einen Link dieser Website (Nummer abgetippt, ohne JavaScript) oder der
+ * Schalter war aus.
  */
 export const WHATSAPP_HERKUNFTSCODES: Readonly<Record<AcquisitionChannel, string>> = Object.freeze(
   Object.fromEntries(ACQUISITION_CHANNELS.map((channel) => [channel, `${WHATSAPP_CODE_PRAEFIX}${HERKUNFT_CODES[channel]}`])) as Record<

@@ -6,7 +6,8 @@ import { ATTRIBUTION_LIMITS, sanitizeHost, sanitizePath, sanitizeToken } from '.
  * Liest die Attribution aus der Einstiegs-URL und dem Referrer (rein, ohne Browser-APIs).
  * Gespeichert wird nur, was für die Kanal-Zuordnung nötig ist: utm_*, ref, der Host des
  * Referrers (nie die volle URL) und der Pfad der Einstiegsseite ohne Query.
- * Hat die Adresse kein eigenes Signal, zählt `?herkunft=` (Kanal aus einem internen Link, link.ts).
+ * Hat die Adresse kein eigenes Signal, zählt `?herkunft=` (Kanal aus einem internen Link, link.ts), aber nur mit
+ * Schalter (`herkunft`, schalter.ts): Die Datenschutzerklärung nennt den Parameter erst mit der Freigabe (M-034).
  */
 
 export interface CaptureInput {
@@ -14,6 +15,8 @@ export interface CaptureInput {
   url: string;
   /** `document.referrer`; leer bei Direktaufruf. */
   referrer?: string | null;
+  /** `?herkunft=` lesen (Schalter FUNNEL_EVENTS an, schalter.ts); Standard aus. */
+  herkunft?: boolean;
 }
 
 const PARAMS = [
@@ -59,7 +62,7 @@ function isSameSite(referrerHost: string, pageHost: string): boolean {
   return site !== null && (referrer === site || referrer.endsWith(`.${site}`));
 }
 
-export function attributionFromUrl({ url, referrer }: CaptureInput): Attribution {
+export function attributionFromUrl({ url, referrer, herkunft = false }: CaptureInput): Attribution {
   const page = parseUrl(url);
   if (!page) return {};
 
@@ -77,7 +80,7 @@ export function attributionFromUrl({ url, referrer }: CaptureInput): Attribution
 
   // Herkunft aus einem internen Link (neuer Tab, Neuladen): nur ohne eigenes Signal. Wer den Link von außen
   // bekommt (fremder Referrer) oder mit UTM bzw. ref aufruft, kommt über diesen Weg, nicht über den alten Kanal.
-  if (Object.keys(result).length === 0) {
+  if (herkunft && Object.keys(result).length === 0) {
     Object.assign(result, attributionAusHerkunft(page.searchParams.get(HERKUNFT_PARAM)));
   }
 

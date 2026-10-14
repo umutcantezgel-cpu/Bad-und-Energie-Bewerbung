@@ -1,5 +1,6 @@
 import type { Attribution } from '@/lib/applications/schema';
 import { attributionFromUrl, type CaptureInput } from './capture';
+import { ereignisseAktiv } from './schalter';
 
 /**
  * Attribution der aktuellen Seitenladung (ROADMAP §3.2, §9.6), nur im Arbeitsspeicher.
@@ -7,8 +8,9 @@ import { attributionFromUrl, type CaptureInput } from './capture';
  * Bewusst KEINE Cookies, kein localStorage und kein sessionStorage: Nach § 25 TDDDG bräuchte
  * das Speichern auf dem Endgerät eine Einwilligung, weil die Kanal-Messung nicht unbedingt
  * erforderlich ist. Die Werte leben deshalb nur in diesem Modul und sind nach einem Reload
- * oder in einem neuen Tab weg. Clientseitige Navigation (Next.js-Links) behält sie; öffnet jemand
- * „Jetzt bewerben“ in einem neuen Tab, trägt der Link den Kanal als `?herkunft=` (link.ts, klick.ts).
+ * oder in einem neuen Tab weg. Clientseitige Navigation (Next.js-Links) behält sie. Erst mit dem Schalter
+ * FUNNEL_EVENTS (schalter.ts, Freigabe M-034) trägt ein Bewerbungslink in einem neuen Tab den Kanal als `?herkunft=`
+ * (link.ts, klick.ts), und nur dann wird der Parameter gelesen; so lange gilt der Wortlaut von /datenschutz#herkunft.
  *
  * First Touch: Es zählt der erste Aufruf je Seitenladung; spätere Aufrufe ändern nichts.
  */
@@ -22,10 +24,11 @@ function freeze(attribution: Attribution): Attribution {
 
 /**
  * Lädt den Link-Beobachter nach (klick.ts, eigenes Bündel nach dem ersten Rendern): Herkunft an Bewerbungslinks,
- * Code an WhatsApp-Links, Ereignisse bei Klicks auf WhatsApp und Telefon. Einmal je Seitenladung, nur im Browser.
+ * Code an WhatsApp-Links, Ereignisse bei Klicks auf WhatsApp und Telefon. Einmal je Seitenladung, nur im Browser und
+ * nur mit Schalter: Ohne ihn hätte der Beobachter nichts zu tun.
  */
 function beobachteLinksEinmal(): void {
-  if (linksBeobachtet || typeof document === 'undefined') return;
+  if (linksBeobachtet || typeof document === 'undefined' || !ereignisseAktiv()) return;
   linksBeobachtet = true;
   import('./klick')
     .then(({ beobachteLinks }) => beobachteLinks(document, getAttribution))
@@ -37,7 +40,7 @@ function beobachteLinksEinmal(): void {
 /** Merkt sich die Attribution der Einstiegsseite (einmal je Seitenladung). */
 export function captureAttribution(input: CaptureInput): Attribution {
   if (captured) return captured;
-  captured = freeze(attributionFromUrl(input));
+  captured = freeze(attributionFromUrl({ ...input, herkunft: input.herkunft ?? ereignisseAktiv() }));
   beobachteLinksEinmal();
   return captured;
 }

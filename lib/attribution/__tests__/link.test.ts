@@ -120,14 +120,20 @@ describe('Parameter ?herkunft= (link.ts)', () => {
   });
 });
 
-describe('capture.ts liest ?herkunft= nur ohne eigenes Signal', () => {
+describe('capture.ts liest ?herkunft= nur mit Schalter (M-034) und nur ohne eigenes Signal', () => {
+  it('ohne Schalter (Standard, so steht es in /datenschutz#herkunft): ?herkunft= wird nicht gelesen', () => {
+    expect(attributionFromUrl({ url: `${ORIGIN}/bewerbung?herkunft=ind` })).toEqual({ landingPath: '/bewerbung' });
+    expect(attributionFromUrl({ url: `${ORIGIN}/bewerbung?herkunft=ind`, herkunft: false })).toEqual({ landingPath: '/bewerbung' });
+    expect(attributionFromUrl({ url: `${ORIGIN}/bewerbung?herkunft=ind`, herkunft: true })).toEqual({ utmSource: 'indeed', landingPath: '/bewerbung' });
+  });
+
   it('Rundweg: Kanal der Einstiegsseite → Link mit Herkunft → neuer Tab → derselbe Kanal (außer direkt)', () => {
     for (const channel of ACQUISITION_CHANNELS) {
       const einstieg = EINSTIEG[channel];
       expect(deriveChannel(einstieg), channel).toBe(channel);
       const link = mitHerkunft('/bewerbung?stelle=initiativ', herkunftParameter(channel, HERKUNFT_CODES[channel], einstieg), ORIGIN);
       // Neuer Tab: Referrer ist die eigene Seite (zählt nicht), es gilt nur die Adresse.
-      const neu = attributionFromUrl({ url: `${ORIGIN}${link}`, referrer: `${ORIGIN}/jobs/anlagenmechaniker-shk-wetzlar` });
+      const neu = attributionFromUrl({ url: `${ORIGIN}${link}`, referrer: `${ORIGIN}/jobs/anlagenmechaniker-shk-wetzlar`, herkunft: true });
       expect(deriveChannel(neu), channel).toBe(channel);
       expect(neu.landingPath).toBe('/bewerbung');
     }
@@ -136,26 +142,26 @@ describe('capture.ts liest ?herkunft= nur ohne eigenes Signal', () => {
   it('trägt nur den Kanal: keine Kampagne, kein Referrer, keine Einstiegsseite der ersten Seite', () => {
     const link = mitHerkunft('/bewerbung', herkunftParameter('indeed', 'IND', EINSTIEG.indeed), ORIGIN);
     expect(link).toBe('/bewerbung?herkunft=ind');
-    expect(attributionFromUrl({ url: `${ORIGIN}${link}` })).toEqual({ utmSource: 'indeed', landingPath: '/bewerbung' });
+    expect(attributionFromUrl({ url: `${ORIGIN}${link}`, herkunft: true })).toEqual({ utmSource: 'indeed', landingPath: '/bewerbung' });
   });
 
   it('UTM, ref oder ein fremder Referrer gehen vor: Wer den Link weitergeschickt bekommt, kommt über seinen Weg', () => {
-    expect(attributionFromUrl({ url: `${ORIGIN}/bewerbung?herkunft=ind&utm_source=qr`, referrer: '' })).toEqual({
+    expect(attributionFromUrl({ url: `${ORIGIN}/bewerbung?herkunft=ind&utm_source=qr`, referrer: '', herkunft: true })).toEqual({
       utmSource: 'qr',
       landingPath: '/bewerbung',
     });
-    expect(attributionFromUrl({ url: `${ORIGIN}/bewerbung?herkunft=ind&ref=koch` })).toEqual({ ref: 'koch', landingPath: '/bewerbung' });
-    expect(attributionFromUrl({ url: `${ORIGIN}/bewerbung?herkunft=ind`, referrer: 'https://l.facebook.com/' })).toEqual({
+    expect(attributionFromUrl({ url: `${ORIGIN}/bewerbung?herkunft=ind&ref=koch`, herkunft: true })).toEqual({ ref: 'koch', landingPath: '/bewerbung' });
+    expect(attributionFromUrl({ url: `${ORIGIN}/bewerbung?herkunft=ind`, referrer: 'https://l.facebook.com/', herkunft: true })).toEqual({
       referrerHost: 'l.facebook.com',
       landingPath: '/bewerbung',
     });
-    expect(attributionFromUrl({ url: `${ORIGIN}/bewerbung?herkunft=quatsch` })).toEqual({ landingPath: '/bewerbung' });
+    expect(attributionFromUrl({ url: `${ORIGIN}/bewerbung?herkunft=quatsch`, herkunft: true })).toEqual({ landingPath: '/bewerbung' });
   });
 
   it('der Speicher bleibt der Arbeitsspeicher: getAttribution ohne Fenster leer, kein Cookie, kein Storage', () => {
     expect(getAttribution()).toEqual({});
     // Code ohne Kommentare (die Kommentare erklären gerade, warum es keinen Cookie und keinen Storage gibt).
-    const quellen = ['link.ts', 'capture.ts', 'store.ts', 'klick.ts', 'ereignisse.ts'].map((datei) =>
+    const quellen = ['link.ts', 'capture.ts', 'store.ts', 'klick.ts', 'ereignisse.ts', 'schalter.ts'].map((datei) =>
       readFileSync(path.join(process.cwd(), 'lib/attribution', datei), 'utf8')
         .replace(/\/\*[\s\S]*?\*\//g, '')
         .replace(/^\s*\/\/.*$/gm, ''),

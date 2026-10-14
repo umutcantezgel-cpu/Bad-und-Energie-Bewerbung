@@ -12,6 +12,7 @@ import type { AcquisitionChannel } from './channel';
  * Getragen wird nur der Kanalcode (HERKUNFT_CODES in channel.ts), nie Kampagne, Referrer oder Einstiegsseite. Eine
  * Empfehlung trägt ihren Code `ref=` weiter, sonst ginge der Empfehler verloren. „direct“ trägt nichts.
  * capture.ts liest den Parameter nur, wenn die Adresse kein eigenes Signal hat (utm_*, ref, fremder Referrer).
+ * Angehängt und gelesen wird er nur mit dem Schalter FUNNEL_EVENTS (schalter.ts, Freigabe M-034).
  *
  * Bewusst ohne Import von channel.ts: capture.ts läuft im Root-Layout auf jeder Seite und bleibt klein. Ein Test
  * prüft, dass jeder Code hier zu genau dem Kanal führt, den channel.ts ihm zuordnet.

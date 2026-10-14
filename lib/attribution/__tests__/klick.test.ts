@@ -51,11 +51,17 @@ describe('bearbeiteHref: was der Browser öffnet', () => {
   });
 });
 
-/** Ein Dokument als Attrappe: sammelt die Beobachter und löst Ereignisse auf einem Link aus. */
-function attrappe(pfad = '/jobs/anlagenmechaniker-shk-wetzlar', suche = '') {
+/**
+ * Ein Dokument als Attrappe: sammelt die Beobachter und löst Ereignisse auf einem Link aus. `schalter` ist das
+ * Meta-Element des Schalters FUNNEL_EVENTS (an, aus oder fehlt).
+ */
+function attrappe(pfad = '/jobs/anlagenmechaniker-shk-wetzlar', suche = '', schalter: 'an' | 'aus' | null = 'an') {
   const beobachter = new Map<string, (event: Event) => void>();
   const optionen: unknown[] = [];
+  const meta = (selector: string) =>
+    schalter !== null && selector === 'meta[name="be-ereignisse"]' ? { getAttribute: (name: string) => (name === 'content' ? schalter : null) } : null;
   const doc: BeobachterDokument = {
+    querySelector: meta as unknown as Document['querySelector'],
     addEventListener: (typ, fn, opt) => {
       beobachter.set(typ, fn);
       optionen.push(opt);
@@ -101,6 +107,20 @@ describe('beobachteLinks: ein Beobachter für die ganze Seite', () => {
     const whatsapp = link(WA);
     whatsapp.ausloesen('touchstart');
     expect(textVon(whatsapp.href() ?? '')).toMatch(/\n– W-IND$/);
+  });
+
+  it('ohne Schalter (Standard bis M-034) bleibt jeder Link, wie er ist: kein ?herkunft=, kein Code in WhatsApp', () => {
+    for (const schalter of ['aus', null] as const) {
+      const { doc, link } = attrappe('/jobs/anlagenmechaniker-shk-wetzlar', '', schalter);
+      beobachteLinks(doc, () => INDEED);
+      const bewerben = link('/bewerbung?stelle=anlagenmechaniker-shk-wetzlar');
+      for (const typ of ['contextmenu', 'click', 'auxclick', 'touchstart', 'dragstart']) bewerben.ausloesen(typ, { button: 1 });
+      expect(bewerben.href(), String(schalter)).toBe('/bewerbung?stelle=anlagenmechaniker-shk-wetzlar');
+      const whatsapp = link(WA);
+      whatsapp.ausloesen('touchstart');
+      whatsapp.ausloesen('click');
+      expect(whatsapp.href(), String(schalter)).toBe(WA);
+    }
   });
 
   it('liest die Attribution erst beim Benutzen und lässt Links ohne Herkunft unverändert', () => {

@@ -4,6 +4,7 @@ import { buildWhatsAppUrl, mitHerkunftscode } from '@/lib/utils/whatsapp-utils';
 import { deriveChannel, HERKUNFT_CODES } from './channel';
 import { sendeEreignis, stelleAusAdresse } from './ereignisse';
 import { herkunftParameter, mitHerkunft } from './link';
+import { ereignisseAktiv } from './schalter';
 
 /**
  * Ein Beobachter für alle Links der Seite (Delegation am Dokument, Capture-Phase), eingerichtet beim ersten Erfassen
@@ -13,7 +14,10 @@ import { herkunftParameter, mitHerkunft } from './link';
  * - Interne Links auf /bewerbung (und die Mappe) bekommen `?herkunft=…` bzw. `ref=…` (link.ts): Der Kanal gilt so
  *   auch in einem neuen Tab, ohne Cookie und ohne Speicher im Browser.
  * - WhatsApp-Links an unsere Nummer bekommen den sichtbaren Code „– W-…“ als letzte Zeile (Plan §D).
- * - Ein Klick auf WhatsApp oder Telefon zählt als Ereignis, wenn der Schalter an ist (ereignisse.ts).
+ * - Ein Klick auf WhatsApp oder Telefon zählt als Ereignis (ereignisse.ts).
+ *
+ * Alles nur mit dem Schalter FUNNEL_EVENTS (schalter.ts, Freigabe M-034): Ohne ihn bleibt jeder Link, wie er ist,
+ * so wie es /datenschutz#herkunft beschreibt.
  *
  * Next-Links navigieren beim normalen Klick im Client mit ihrer eigenen Adresse, dort bleibt die Attribution ohnehin
  * im Arbeitsspeicher. Für neuen Tab (Strg-/Mittelklick), Kontextmenü, langes Tippen und Ziehen gilt das geänderte
@@ -71,7 +75,7 @@ interface ZielElement {
 /** Ereignisse, vor denen ein Link geöffnet, kopiert oder gezogen werden kann. */
 const VORBEREITEN = ['click', 'auxclick', 'contextmenu', 'touchstart', 'dragstart'] as const;
 
-export interface BeobachterDokument {
+export interface BeobachterDokument extends Pick<Document, 'querySelector'> {
   addEventListener(type: string, listener: (event: Event) => void, options?: AddEventListenerOptions): void;
   removeEventListener(type: string, listener: (event: Event) => void, options?: EventListenerOptions): void;
   location: Pick<Location, 'origin' | 'pathname' | 'search'>;
@@ -84,6 +88,8 @@ export interface BeobachterDokument {
 export function beobachteLinks(doc: BeobachterDokument, quelle: () => Attribution): () => void {
   const behandeln = (event: Event) => {
     try {
+      // Schalter je Ereignis gelesen: Das Meta-Element kommt aus dem Root-Layout und ändert sich nicht ohne Neuladen.
+      if (!ereignisseAktiv(doc)) return;
       const anker = (event.target as ZielElement | null)?.closest?.('a[href]');
       const href = anker?.getAttribute('href');
       if (!anker || !href) return;

@@ -127,4 +127,20 @@ describe('store', () => {
 
     expect(getAttribution()).toEqual({ utmSource: 'hwk', referrerHost: 'www.google.de', landingPath: '/jobs' });
   });
+
+  it('liest ?herkunft= nur mit dem Schalter FUNNEL_EVENTS im HTML (M-034), sonst nicht', () => {
+    const mitSchalter = (schalter: 'an' | null) => ({
+      referrer: '',
+      querySelector: (selector: string) =>
+        schalter && selector === 'meta[name="be-ereignisse"]' ? { getAttribute: (name: string) => (name === 'content' ? schalter : null) } : null,
+    });
+    vi.stubGlobal('window', { location: { href: `${PAGE}/bewerbung?herkunft=ind` } });
+
+    vi.stubGlobal('document', mitSchalter(null));
+    expect(getAttribution()).toEqual({ landingPath: '/bewerbung' });
+
+    resetAttributionForTests();
+    vi.stubGlobal('document', mitSchalter('an'));
+    expect(getAttribution()).toEqual({ utmSource: 'indeed', landingPath: '/bewerbung' });
+  });
 });
