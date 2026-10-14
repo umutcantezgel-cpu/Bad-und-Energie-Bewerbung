@@ -1,0 +1,784 @@
+{
+  "_kommentar": "Erzeugt mit scripts/places/oepnv-gegenprobe.mjs. Gegenprobe der spätesten Verbindung je Ort und Ziel aus oepnv.json gegen Transitous; Fußwege bleiben außen vor (eigene Gehzeiten der Gegenprobe). Jede Abweichung trägt einen geprüften Hinweis (HINWEISE im Skript).",
+  "quelle": "Transitous (api.transitous.org), Routenplaner MOTIS, Fahrplandaten über DELFI; nur Nah- und Regionalverkehr",
+  "abgerufenAm": "2026-10-14",
+  "werktag": "2026-10-27",
+  "vergleiche": [
+    {
+      "ort": "herborn",
+      "ziel": "betrieb",
+      "ankunftBis": "07:30",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "06:25",
+        "ab": "Herborn Bahnhof",
+        "linien": [
+          "RE99",
+          "10"
+        ],
+        "ankunft": "07:04",
+        "umstiege": 1
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "06:25",
+        "ab": "Herborn Bahnhof",
+        "linien": [
+          "RE99",
+          "10"
+        ],
+        "ankunft": "07:05",
+        "umstiege": 1
+      },
+      "ergebnis": "gleich",
+      "abweichungMin": 0
+    },
+    {
+      "ort": "herborn",
+      "ziel": "schule",
+      "ankunftBis": "07:45",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "06:39",
+        "ab": "Herborn Bahnhof",
+        "linien": [
+          "RB40",
+          "24"
+        ],
+        "ankunft": "07:26",
+        "umstiege": 1
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "06:39",
+        "ab": "Herborn Bahnhof",
+        "linien": [
+          "RB40",
+          "24"
+        ],
+        "ankunft": "07:27",
+        "umstiege": 1
+      },
+      "ergebnis": "gleich",
+      "abweichungMin": 0
+    },
+    {
+      "ort": "bischoffen",
+      "ziel": "betrieb",
+      "ankunftBis": "07:30",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "05:07",
+        "ab": "Bischoffen Herborner Straße",
+        "linien": [
+          "X37",
+          "RE99",
+          "185"
+        ],
+        "ankunft": "06:31",
+        "umstiege": 2
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "05:07",
+        "ab": "Bischoffen Herborner Straße",
+        "linien": [
+          "X37",
+          "RE99",
+          "185"
+        ],
+        "ankunft": "06:36",
+        "umstiege": 2
+      },
+      "ergebnis": "gleich",
+      "abweichungMin": 0
+    },
+    {
+      "ort": "bischoffen",
+      "ziel": "schule",
+      "ankunftBis": "07:45",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "06:07",
+        "ab": "Bischoffen Herborner Straße",
+        "linien": [
+          "X37",
+          "RB40",
+          "24"
+        ],
+        "ankunft": "07:26",
+        "umstiege": 2
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "06:07",
+        "ab": "Bischoffen Herborner Straße",
+        "linien": [
+          "X37",
+          "RB40",
+          "24"
+        ],
+        "ankunft": "07:27",
+        "umstiege": 2
+      },
+      "ergebnis": "gleich",
+      "abweichungMin": 0
+    },
+    {
+      "ort": "giessen",
+      "ziel": "betrieb",
+      "ankunftBis": "07:30",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "06:23",
+        "ab": "Gießen Marktplatz",
+        "linien": [
+          "5",
+          "RB40",
+          "185"
+        ],
+        "ankunft": "07:16",
+        "umstiege": 2
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "06:23",
+        "ab": "Gießen Marktplatz",
+        "linien": [
+          "5",
+          "RB40",
+          "185"
+        ],
+        "ankunft": "07:21",
+        "umstiege": 2
+      },
+      "ergebnis": "gleich",
+      "abweichungMin": 0
+    },
+    {
+      "ort": "giessen",
+      "ziel": "schule",
+      "ankunftBis": "07:45",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "06:45",
+        "ab": "Gießen Marktplatz",
+        "linien": [
+          "7",
+          "24"
+        ],
+        "ankunft": "07:35",
+        "umstiege": 1
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "06:49",
+        "ab": "Gießen Mühlstraße",
+        "linien": [
+          "24"
+        ],
+        "ankunft": "07:36",
+        "umstiege": 0
+      },
+      "ergebnis": "abweichend",
+      "abweichungMin": -4,
+      "hinweis": "Dieselbe Fahrt Bus 24 (Gießen Mühlstraße 06:49, Schützenstraße 06:51). Die Gegenprobe geht 8 Minuten zu Fuß zur Mühlstraße und los um 06:41; die eigene Rechnung fährt ab Marktplatz 06:45 mit Bus 7 zur Schützenstraße und geht erst um 06:44 los. Abweichung nur im Zugang, nicht im Fahrplan."
+    },
+    {
+      "ort": "braunfels",
+      "ziel": "betrieb",
+      "ankunftBis": "07:30",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "06:53",
+        "ab": "Braunfels Busbahnhof",
+        "linien": [
+          "185"
+        ],
+        "ankunft": "07:13",
+        "umstiege": 0
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "06:53",
+        "ab": "Braunfels Busbahnhof",
+        "linien": [
+          "185"
+        ],
+        "ankunft": "07:15",
+        "umstiege": 0
+      },
+      "ergebnis": "gleich",
+      "abweichungMin": 0
+    },
+    {
+      "ort": "braunfels",
+      "ziel": "schule",
+      "ankunftBis": "07:45",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "06:53",
+        "ab": "Braunfels Busbahnhof",
+        "linien": [
+          "185",
+          "10"
+        ],
+        "ankunft": "07:35",
+        "umstiege": 1
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "06:53",
+        "ab": "Braunfels Busbahnhof",
+        "linien": [
+          "185",
+          "10"
+        ],
+        "ankunft": "07:36",
+        "umstiege": 1
+      },
+      "ergebnis": "gleich",
+      "abweichungMin": 0
+    },
+    {
+      "ort": "greifenstein",
+      "ziel": "betrieb",
+      "ankunftBis": "07:30",
+      "unsere": {
+        "moeglich": false
+      },
+      "gegenprobe": {
+        "moeglich": false
+      },
+      "ergebnis": "gleich"
+    },
+    {
+      "ort": "greifenstein",
+      "ziel": "schule",
+      "ankunftBis": "07:45",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "06:24",
+        "ab": "Greifenstein Feuerwehr",
+        "linien": [
+          "206",
+          "RB40",
+          "24"
+        ],
+        "ankunft": "07:26",
+        "umstiege": 2
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "06:24",
+        "ab": "Greifenstein Feuerwehr",
+        "linien": [
+          "206",
+          "RB40",
+          "24"
+        ],
+        "ankunft": "07:27",
+        "umstiege": 2
+      },
+      "ergebnis": "gleich",
+      "abweichungMin": 0
+    },
+    {
+      "ort": "weilrod",
+      "ziel": "betrieb",
+      "ankunftBis": "07:30",
+      "unsere": {
+        "moeglich": false
+      },
+      "gegenprobe": {
+        "moeglich": false
+      },
+      "ergebnis": "gleich"
+    },
+    {
+      "ort": "weilrod",
+      "ziel": "schule",
+      "ankunftBis": "07:45",
+      "unsere": {
+        "moeglich": false
+      },
+      "gegenprobe": {
+        "moeglich": false
+      },
+      "ergebnis": "gleich"
+    },
+    {
+      "ort": "naunheim",
+      "ziel": "betrieb",
+      "ankunftBis": "07:30",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "06:26",
+        "ab": "Wetzlar-Naunheim Schulplatz",
+        "linien": [
+          "24",
+          "24",
+          "10"
+        ],
+        "ankunft": "07:04",
+        "umstiege": 2
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "06:26",
+        "ab": "Wetzlar-Naunheim Schulplatz",
+        "linien": [
+          "24",
+          "24",
+          "10"
+        ],
+        "ankunft": "07:05",
+        "umstiege": 2
+      },
+      "ergebnis": "gleich",
+      "abweichungMin": 0
+    },
+    {
+      "ort": "naunheim",
+      "ziel": "schule",
+      "ankunftBis": "07:45",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "07:26",
+        "ab": "Wetzlar-Naunheim Schulplatz",
+        "linien": [
+          "24"
+        ],
+        "ankunft": "07:37",
+        "umstiege": 0
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "07:26",
+        "ab": "Wetzlar-Naunheim Schulplatz",
+        "linien": [
+          "24"
+        ],
+        "ankunft": "07:38",
+        "umstiege": 0
+      },
+      "ergebnis": "gleich",
+      "abweichungMin": 0
+    },
+    {
+      "ort": "wetzlar",
+      "ziel": "betrieb",
+      "ankunftBis": "07:30",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "07:05",
+        "ab": "Wetzlar Neues Rathaus",
+        "linien": [
+          "185"
+        ],
+        "ankunft": "07:16",
+        "umstiege": 0
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "06:53",
+        "ab": "Wetzlar Leitzplatz",
+        "linien": [
+          "170",
+          "185"
+        ],
+        "ankunft": "07:21",
+        "umstiege": 1
+      },
+      "ergebnis": "abweichend",
+      "abweichungMin": 12,
+      "hinweis": "Dieselbe Fahrt Bus 185 (Wetzlar Bahnhof/ZOB 07:00, Braunfelser Straße 07:09). Die Gegenprobe geht 15 Minuten zum Leitzplatz und fährt mit Bus 170 zum ZOB (los 06:38); die eigene Rechnung geht 13 Minuten zum Neuen Rathaus und steigt dort in den Bus 185 (los 06:51). Abweichung nur im Zugang."
+    },
+    {
+      "ort": "wetzlar",
+      "ziel": "schule",
+      "ankunftBis": "07:45",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "07:22",
+        "ab": "Wetzlar Leitzplatz",
+        "linien": [
+          "10"
+        ],
+        "ankunft": "07:35",
+        "umstiege": 0
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "07:22",
+        "ab": "Wetzlar Leitzplatz",
+        "linien": [
+          "10"
+        ],
+        "ankunft": "07:36",
+        "umstiege": 0
+      },
+      "ergebnis": "gleich",
+      "abweichungMin": 0
+    },
+    {
+      "ort": "steindorf",
+      "ziel": "betrieb",
+      "ankunftBis": "07:30",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "07:16",
+        "ab": "Wetzlar-Steindorf Kirchplatz",
+        "linien": [
+          "10"
+        ],
+        "ankunft": "07:26",
+        "umstiege": 0
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "07:16",
+        "ab": "Wetzlar-Steindorf Kirchplatz",
+        "linien": [
+          "10"
+        ],
+        "ankunft": "07:28",
+        "umstiege": 0
+      },
+      "ergebnis": "gleich",
+      "abweichungMin": 0
+    },
+    {
+      "ort": "steindorf",
+      "ziel": "schule",
+      "ankunftBis": "07:45",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "07:16",
+        "ab": "Wetzlar-Steindorf Kirchplatz",
+        "linien": [
+          "10"
+        ],
+        "ankunft": "07:35",
+        "umstiege": 0
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "07:16",
+        "ab": "Wetzlar-Steindorf Kirchplatz",
+        "linien": [
+          "10"
+        ],
+        "ankunft": "07:36",
+        "umstiege": 0
+      },
+      "ergebnis": "gleich",
+      "abweichungMin": 0
+    },
+    {
+      "ort": "solms",
+      "ziel": "betrieb",
+      "ankunftBis": "07:30",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "06:56",
+        "ab": "Solms-Burgsolms Post",
+        "linien": [
+          "185"
+        ],
+        "ankunft": "07:22",
+        "umstiege": 0
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "06:57",
+        "ab": "Solms-Burgsolms Hüttenplatz",
+        "linien": [
+          "185"
+        ],
+        "ankunft": "07:24",
+        "umstiege": 0
+      },
+      "ergebnis": "abweichend",
+      "abweichungMin": -1,
+      "hinweis": "Dieselbe Fahrt Bus 185 (an Wetzlar Braunfelser Straße 07:15), Einstieg an verschiedenen Haltestellen in Burgsolms: eigene Rechnung Post 06:56, Gegenprobe Hüttenplatz 06:57. Abweichung nur im Zugang."
+    },
+    {
+      "ort": "solms",
+      "ziel": "schule",
+      "ankunftBis": "07:45",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "07:12",
+        "ab": "Solms-Burgsolms Bahnhof",
+        "linien": [
+          "RB45",
+          "10"
+        ],
+        "ankunft": "07:40",
+        "umstiege": 1
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "07:12",
+        "ab": "Solms-Burgsolms Bahnhof",
+        "linien": [
+          "RB45",
+          "10"
+        ],
+        "ankunft": "07:41",
+        "umstiege": 1
+      },
+      "ergebnis": "gleich",
+      "abweichungMin": 0
+    },
+    {
+      "ort": "lich",
+      "ziel": "betrieb",
+      "ankunftBis": "07:30",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "05:58",
+        "ab": "Lich Friedhof",
+        "linien": [
+          "X34",
+          "RB40",
+          "185"
+        ],
+        "ankunft": "07:16",
+        "umstiege": 2
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "05:58",
+        "ab": "Lich Friedhof",
+        "linien": [
+          "X34",
+          "RB40",
+          "185"
+        ],
+        "ankunft": "07:21",
+        "umstiege": 2
+      },
+      "ergebnis": "gleich",
+      "abweichungMin": 0
+    },
+    {
+      "ort": "lich",
+      "ziel": "schule",
+      "ankunftBis": "07:45",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "06:14",
+        "ab": "Lich Garbenteicher Straße",
+        "linien": [
+          "EV",
+          "24"
+        ],
+        "ankunft": "07:35",
+        "umstiege": 1
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "06:14",
+        "ab": "Lich Garbenteicher Straße",
+        "linien": [
+          "EV",
+          "RE99",
+          "24"
+        ],
+        "ankunft": "07:27",
+        "umstiege": 2
+      },
+      "ergebnis": "abweichend",
+      "abweichungMin": 0,
+      "hinweis": "Gleiche erste Fahrt (EV 06:14 nach Gießen Bahnhof). Bei gleichem Losgehen nimmt die eigene Rechnung die Verbindung mit weniger Umstiegen (Bus 24 ab Gießen, an 07:35), die Gegenprobe die schnellere (RE99 und Bus 24 über Wetzlar, an 07:27). Abweichung in der Auswahlregel, nicht im Fahrplan."
+    },
+    {
+      "ort": "weilburg",
+      "ziel": "betrieb",
+      "ankunftBis": "07:30",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "06:21",
+        "ab": "Weilburg Bahnhof",
+        "linien": [
+          "RE25",
+          "185"
+        ],
+        "ankunft": "07:16",
+        "umstiege": 1
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "06:21",
+        "ab": "Weilburg Bahnhof",
+        "linien": [
+          "RE25",
+          "185"
+        ],
+        "ankunft": "07:21",
+        "umstiege": 1
+      },
+      "ergebnis": "gleich",
+      "abweichungMin": 0
+    },
+    {
+      "ort": "weilburg",
+      "ziel": "schule",
+      "ankunftBis": "07:45",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "06:55",
+        "ab": "Weilburg Bahnhof",
+        "linien": [
+          "RB45",
+          "10"
+        ],
+        "ankunft": "07:40",
+        "umstiege": 1
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "06:55",
+        "ab": "Weilburg Bahnhof",
+        "linien": [
+          "RB45",
+          "10"
+        ],
+        "ankunft": "07:41",
+        "umstiege": 1
+      },
+      "ergebnis": "gleich",
+      "abweichungMin": 0
+    },
+    {
+      "ort": "butzbach",
+      "ziel": "betrieb",
+      "ankunftBis": "07:30",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "06:24",
+        "ab": "Butzbach Bahnhof",
+        "linien": [
+          "RB41",
+          "RB40",
+          "185"
+        ],
+        "ankunft": "07:16",
+        "umstiege": 2
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "06:24",
+        "ab": "Butzbach Bahnhof",
+        "linien": [
+          "RB41",
+          "RB40",
+          "185"
+        ],
+        "ankunft": "07:21",
+        "umstiege": 2
+      },
+      "ergebnis": "gleich",
+      "abweichungMin": 0
+    },
+    {
+      "ort": "butzbach",
+      "ziel": "schule",
+      "ankunftBis": "07:45",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "06:24",
+        "ab": "Butzbach Bahnhof",
+        "linien": [
+          "RB41",
+          "24"
+        ],
+        "ankunft": "07:35",
+        "umstiege": 1
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "06:24",
+        "ab": "Butzbach Bahnhof",
+        "linien": [
+          "RB41",
+          "RB40",
+          "12"
+        ],
+        "ankunft": "07:10",
+        "umstiege": 2
+      },
+      "ergebnis": "abweichend",
+      "abweichungMin": 0,
+      "hinweis": "Gleiche erste Fahrt (RB41 06:24 nach Gießen). Bei gleichem Losgehen nimmt die eigene Rechnung die Verbindung mit weniger Umstiegen (Bus 24 ab Gießen, an 07:35), die Gegenprobe die schnellere (RB40 und Bus 12 über Wetzlar, an 07:10). Abweichung in der Auswahlregel, nicht im Fahrplan."
+    },
+    {
+      "ort": "graevenwiesbach",
+      "ziel": "betrieb",
+      "ankunftBis": "07:30",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "04:37",
+        "ab": "Grävenwiesbach Bahnhof",
+        "linien": [
+          "RB15",
+          "S5",
+          "RB41",
+          "RB40",
+          "185"
+        ],
+        "ankunft": "07:16",
+        "umstiege": 4
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "05:18",
+        "ab": "Grävenwiesbach Bahnhof",
+        "linien": [
+          "X89",
+          "RE25",
+          "185"
+        ],
+        "ankunft": "07:21",
+        "umstiege": 2
+      },
+      "ergebnis": "abweichend",
+      "abweichungMin": -41,
+      "hinweis": "Umstieg in Weilburg: X89 an ZOB 06:17, RE25 ab Bahnhof 06:21. Die Gegenprobe rechnet 3 Minuten Fußweg (109 m zwischen ihren Haltepositionen), die eigene Rechnung 4 Minuten (260 m Weg zum Bahnhofspunkt von gtfs.de) plus 1 Minute Puffer und verwirft den Umstieg. Darum geht die eigene späteste Verbindung früher los (04:29 über Frankfurt, 4 Umstiege) als die der Gegenprobe (05:08 über Weilburg, 2 Umstiege). Die eigene Rechnung ist hier vorsichtiger als nötig."
+    },
+    {
+      "ort": "graevenwiesbach",
+      "ziel": "schule",
+      "ankunftBis": "07:45",
+      "unsere": {
+        "moeglich": true,
+        "abfahrt": "05:18",
+        "ab": "Grävenwiesbach Bahnhof",
+        "linien": [
+          "X89",
+          "RB45",
+          "10"
+        ],
+        "ankunft": "07:40",
+        "umstiege": 2
+      },
+      "gegenprobe": {
+        "moeglich": true,
+        "abfahrt": "05:18",
+        "ab": "Grävenwiesbach Bahnhof",
+        "linien": [
+          "X89",
+          "RE25",
+          "12"
+        ],
+        "ankunft": "07:10",
+        "umstiege": 2
+      },
+      "ergebnis": "abweichend",
+      "abweichungMin": 0,
+      "hinweis": "Gleiche erste Fahrt (X89 05:18). Wie beim Betrieb verwirft die eigene Rechnung den Umstieg in Weilburg auf den RE25 06:21 (4 Minuten Fußweg plus 1 Minute Puffer) und nimmt die RB45 06:55; an 07:40 statt 07:10."
+    }
+  ]
+}
