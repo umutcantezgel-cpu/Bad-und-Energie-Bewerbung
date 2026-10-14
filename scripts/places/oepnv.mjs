@@ -410,6 +410,10 @@ const schluessel = (v) => v.teile.map((t) => `${t.fahrt.id}:${t.von}-${t.bis}`).
  * `ankunftBisS` (bei Gleichstand weniger Umstiege, dann frühere Ankunft) und die nicht überholten Verbindungen mit
  * Ankunft im ZAEHLFENSTER. Verbindungen, die länger dauern als der direkte Fußweg, zählen nicht.
  *
+ * Eine Regel für beide Angaben (Prüfung E-029): Zur Abfahrt der spätesten Verbindung steht in `verbindungen` genau
+ * diese Variante, nicht die schnellere mit mehr Umstiegen aus dem Profil. Sonst nennt die Seite für dieselbe Abfahrt
+ * zwei Ankunftszeiten („an der Schule um 7:35“ und darunter „6:14 Uhr (an 7:26)“).
+ *
  * @param {any} fahrplan
  * @param {{ quellen: { stop: number, s: number }[], zielStops: Map<number, number>, ankunftBisS: number,
  *   luftlinieM: number, direktWegM?: number | null }} ziel
@@ -450,7 +454,10 @@ export function weg(fahrplan, { quellen, zielStops, ankunftBisS, luftlinieM, dir
         a.ankunft - b.ankunft ||
         (schluessel(a) < schluessel(b) ? -1 : schluessel(a) > schluessel(b) ? 1 : 0),
     );
+  // Das Profil hat je Losgehen höchstens eine Verbindung; zur Abfahrt der spätesten tritt diese an ihre Stelle.
+  const gewaehlt = passend[0];
   const verbindungen = profil
+    .map((v) => (gewaehlt && v.losgehen === gewaehlt.losgehen ? gewaehlt : v))
     .filter((v) => v.ankunft >= ZAEHLFENSTER.vonS && v.ankunft <= ZAEHLFENSTER.bisS)
     .map((v) => ({
       losgehen: formatClock(v.losgehen),

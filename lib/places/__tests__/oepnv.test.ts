@@ -157,6 +157,21 @@ describe('oepnv.json: Plausibilität', () => {
     }
   });
 
+  it('eine Abfahrt, eine Ankunft: steht die späteste Verbindung in der Liste, dann mit derselben Ankunft und Umstiegen', () => {
+    let gefunden = 0;
+    for (const { id, ziel, weg } of WEGE) {
+      const s = weg.spaeteste;
+      if (!s) continue;
+      // Gleiches Losgehen = dieselbe Abfahrt (das Profil hat je Losgehen höchstens eine Verbindung)
+      for (const v of weg.verbindungen.filter((x) => x.losgehen === s.losgehen)) {
+        gefunden++;
+        expect(v, `${id} ${ziel}`).toEqual({ losgehen: s.losgehen, abfahrt: s.abfahrt, ankunft: s.ankunft, umstiege: s.umstiege });
+      }
+    }
+    // Die meisten spätesten Verbindungen kommen im Zählfenster an und stehen damit auch in der Liste
+    expect(gefunden).toBeGreaterThan(WEGE.length / 2);
+  });
+
   it('nicht möglich nur mit Grund; die meisten Orte sind mit Bus und Bahn erreichbar', () => {
     const ohne = WEGE.filter((w) => !w.weg.moeglich);
     for (const { id, ziel, weg } of ohne) expect(weg.grund, `${id} ${ziel}`).toMatch(/^(Keine|Zu Fuß)/);

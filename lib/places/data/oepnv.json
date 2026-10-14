@@ -450,8 +450,8 @@
           {
             "losgehen": "05:23",
             "abfahrt": "05:29",
-            "ankunft": "07:26",
-            "umstiege": 3
+            "ankunft": "07:35",
+            "umstiege": 2
           },
           {
             "losgehen": "05:53",
@@ -545,8 +545,8 @@
           {
             "losgehen": "05:34",
             "abfahrt": "05:35",
-            "ankunft": "07:13",
-            "umstiege": 3
+            "ankunft": "07:16",
+            "umstiege": 2
           },
           {
             "losgehen": "06:12",
@@ -1619,8 +1619,8 @@
           {
             "losgehen": "06:20",
             "abfahrt": "06:27",
-            "ankunft": "07:26",
-            "umstiege": 2
+            "ankunft": "07:35",
+            "umstiege": 1
           },
           {
             "losgehen": "06:45",
@@ -1785,8 +1785,8 @@
           {
             "losgehen": "06:17",
             "abfahrt": "06:24",
-            "ankunft": "07:26",
-            "umstiege": 2
+            "ankunft": "07:35",
+            "umstiege": 1
           },
           {
             "losgehen": "06:33",
@@ -2303,8 +2303,8 @@
           {
             "losgehen": "06:17",
             "abfahrt": "06:19",
-            "ankunft": "07:26",
-            "umstiege": 2
+            "ankunft": "07:35",
+            "umstiege": 1
           }
         ]
       }
@@ -4119,8 +4119,8 @@
           {
             "losgehen": "06:06",
             "abfahrt": "06:11",
-            "ankunft": "07:26",
-            "umstiege": 3
+            "ankunft": "07:35",
+            "umstiege": 2
           },
           {
             "losgehen": "06:42",
@@ -4477,8 +4477,8 @@
           {
             "losgehen": "06:03",
             "abfahrt": "06:14",
-            "ankunft": "07:26",
-            "umstiege": 2
+            "ankunft": "07:35",
+            "umstiege": 1
           },
           {
             "losgehen": "06:23",
@@ -4657,8 +4657,8 @@
           {
             "losgehen": "06:05",
             "abfahrt": "06:12",
-            "ankunft": "07:26",
-            "umstiege": 2
+            "ankunft": "07:35",
+            "umstiege": 1
           },
           {
             "losgehen": "06:36",
@@ -4756,8 +4756,8 @@
           {
             "losgehen": "06:18",
             "abfahrt": "06:24",
-            "ankunft": "07:13",
-            "umstiege": 2
+            "ankunft": "07:16",
+            "umstiege": 1
           },
           {
             "losgehen": "06:52",
@@ -5039,8 +5039,8 @@
           {
             "losgehen": "06:00",
             "abfahrt": "06:02",
-            "ankunft": "07:26",
-            "umstiege": 3
+            "ankunft": "07:35",
+            "umstiege": 2
           },
           {
             "losgehen": "06:30",
@@ -5229,8 +5229,8 @@
           {
             "losgehen": "06:34",
             "abfahrt": "06:41",
-            "ankunft": "07:26",
-            "umstiege": 2
+            "ankunft": "07:35",
+            "umstiege": 1
           },
           {
             "losgehen": "07:03",
@@ -5503,8 +5503,8 @@
           {
             "losgehen": "05:35",
             "abfahrt": "05:37",
-            "ankunft": "07:13",
-            "umstiege": 3
+            "ankunft": "07:16",
+            "umstiege": 2
           },
           {
             "losgehen": "06:34",
@@ -6122,8 +6122,8 @@
           {
             "losgehen": "05:41",
             "abfahrt": "05:48",
-            "ankunft": "07:26",
-            "umstiege": 3
+            "ankunft": "07:35",
+            "umstiege": 2
           },
           {
             "losgehen": "05:52",
@@ -6820,8 +6820,8 @@
           {
             "losgehen": "05:51",
             "abfahrt": "05:57",
-            "ankunft": "07:26",
-            "umstiege": 3
+            "ankunft": "07:35",
+            "umstiege": 2
           },
           {
             "losgehen": "05:56",
@@ -7683,8 +7683,8 @@
           {
             "losgehen": "05:53",
             "abfahrt": "05:58",
-            "ankunft": "07:26",
-            "umstiege": 2
+            "ankunft": "07:35",
+            "umstiege": 1
           },
           {
             "losgehen": "06:16",
@@ -7941,8 +7941,8 @@
           {
             "losgehen": "05:45",
             "abfahrt": "05:59",
-            "ankunft": "07:13",
-            "umstiege": 2
+            "ankunft": "07:16",
+            "umstiege": 1
           },
           {
             "losgehen": "06:18",
@@ -8116,8 +8116,8 @@
           {
             "losgehen": "05:11",
             "abfahrt": "05:12",
-            "ankunft": "07:13",
-            "umstiege": 4
+            "ankunft": "07:16",
+            "umstiege": 3
           }
         ]
       },
@@ -8184,8 +8184,8 @@
           {
             "losgehen": "05:11",
             "abfahrt": "05:12",
-            "ankunft": "07:19",
-            "umstiege": 4
+            "ankunft": "07:40",
+            "umstiege": 2
           }
         ]
       }
@@ -8448,8 +8448,8 @@
           {
             "losgehen": "06:08",
             "abfahrt": "06:21",
-            "ankunft": "07:13",
-            "umstiege": 2
+            "ankunft": "07:16",
+            "umstiege": 1
           },
           {
             "losgehen": "06:42",
@@ -8627,8 +8627,8 @@
           {
             "losgehen": "05:23",
             "abfahrt": "05:25",
-            "ankunft": "07:13",
-            "umstiege": 3
+            "ankunft": "07:16",
+            "umstiege": 2
           },
           {
             "losgehen": "05:48",
@@ -8848,8 +8848,8 @@
           {
             "losgehen": "05:41",
             "abfahrt": "05:45",
-            "ankunft": "07:13",
-            "umstiege": 3
+            "ankunft": "07:16",
+            "umstiege": 2
           },
           {
             "losgehen": "05:49",
@@ -9119,8 +9119,8 @@
           {
             "losgehen": "06:14",
             "abfahrt": "06:16",
-            "ankunft": "07:26",
-            "umstiege": 3
+            "ankunft": "07:35",
+            "umstiege": 1
           },
           {
             "losgehen": "06:44",

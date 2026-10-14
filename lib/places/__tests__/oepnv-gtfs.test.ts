@@ -302,6 +302,29 @@ describe('oepnv.mjs: weg() an einem kleinen Netz', () => {
     expect(w).not.toHaveProperty('direktZuFussMin');
   });
 
+  it('eine Regel für beide Angaben: zur Abfahrt der spätesten Verbindung nennt die Liste dieselbe Ankunft und Umstiege', () => {
+    // Gleiche Abfahrt 06:50 zweimal: direkt und langsam (an 07:25) oder mit Umstieg in „Knoten“ schneller (an 07:15).
+    const zweiWege = {
+      stops: [stop('Dorf', 50.6, 8.4), stop('Zentrum', 50.56, 8.48), stop('Knoten', 50.58, 8.44)],
+      routes: [
+        { id: 'nv:1', short: 'EV', long: '', type: 3 },
+        { id: 'nv:2', short: '24', long: '', type: 3 },
+        { id: 'nv:3', short: '12', long: '', type: 3 },
+      ],
+      trips: [
+        { id: 'x', route: 0, stops: [0, 1], arr: [h('06:50'), h('07:25')], dep: [h('06:50'), h('07:25')], board: [true, true], alight: [true, true] },
+        { id: 'y', route: 1, stops: [0, 2], arr: [h('06:50'), h('07:00')], dep: [h('06:50'), h('07:00')], board: [true, true], alight: [true, true] },
+        { id: 'z', route: 2, stops: [2, 1], arr: [h('07:05'), h('07:15')], dep: [h('07:05'), h('07:15')], board: [true, true], alight: [true, true] },
+      ],
+    };
+    const w = weg(baueFahrplan(zweiWege), { quellen: [{ stop: 0, s: 120 }], zielStops: ziele, ankunftBisS: h('07:30'), luftlinieM: 9000 });
+    // Späteste: bei gleichem Losgehen weniger Umstiege (direkt, an 07:30 mit Fußweg)
+    expect(w.spaeteste).toMatchObject({ losgehen: '06:48', abfahrt: '06:50', ankunft: '07:30', umstiege: 0 });
+    // Die Liste nennt zu dieser Abfahrt dieselbe Variante, nicht die schnellere mit Umstieg (an 07:20)
+    const gleicheAbfahrt = w.verbindungen.filter((v: { losgehen: string }) => v.losgehen === w.spaeteste!.losgehen);
+    expect(gleicheAbfahrt).toEqual([{ losgehen: '06:48', abfahrt: '06:50', ankunft: '07:30', umstiege: 0 }]);
+  });
+
   it('ohne Verbindung bis zur Frist: nicht möglich, mit der frühesten Ankunft als Grund', () => {
     const w = weg(fp, { quellen: [{ stop: 0, s: 120 }], zielStops: ziele, ankunftBisS: h('06:15'), luftlinieM: 9000 });
     expect(w).toMatchObject({ moeglich: false, grund: 'Keine Verbindung mit Ankunft bis 06:15; die früheste kommt um 06:25 an' });
