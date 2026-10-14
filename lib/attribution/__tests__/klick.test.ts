@@ -115,6 +115,41 @@ describe('beobachteLinks: ein Beobachter für die ganze Seite', () => {
     expect(bewerben.href()).toBe('/bewerbung?herkunft=such');
   });
 
+  it('zählt Klicks auf WhatsApp und Telefon als Ereignis mit Stelle aus der Adresse, wenn der Schalter an ist', () => {
+    const sendBeacon = vi.fn((_url: string, _body?: unknown) => true);
+    vi.stubGlobal('navigator', { sendBeacon });
+    vi.stubGlobal('document', { querySelector: () => ({ getAttribute: () => 'an' }) });
+    const { doc, link } = attrappe('/jobs/anlagenmechaniker-shk-wetzlar');
+    beobachteLinks(doc, () => INDEED);
+
+    link(WA).ausloesen('click');
+    link('tel:+49644142956').ausloesen('auxclick', { button: 1 });
+    // Kein Öffnen: Kontextmenü, Tippen, Rechtsklick, andere Links
+    link(WA).ausloesen('contextmenu');
+    link(WA).ausloesen('touchstart');
+    link('tel:+49644142956').ausloesen('auxclick', { button: 2 });
+    link('/bewerbung').ausloesen('click');
+    link('mailto:info@bad-energie.de').ausloesen('click');
+
+    expect(sendBeacon).toHaveBeenCalledTimes(2);
+    const gesendet = sendBeacon.mock.calls.map((call) => JSON.parse(String(call[1])));
+    expect(gesendet).toEqual([
+      { ereignis: 'whatsapp_klick', stelle: 'anlagenmechaniker-shk-wetzlar', kanal: expect.any(String) },
+      { ereignis: 'telefon_klick', stelle: 'anlagenmechaniker-shk-wetzlar', kanal: expect.any(String) },
+    ]);
+  });
+
+  it('zählt nichts ohne Schalter', () => {
+    const sendBeacon = vi.fn(() => true);
+    vi.stubGlobal('navigator', { sendBeacon });
+    vi.stubGlobal('document', { querySelector: () => null });
+    const { doc, link } = attrappe();
+    beobachteLinks(doc, () => INDEED);
+    link(WA).ausloesen('click');
+    link('tel:+49644142956').ausloesen('click');
+    expect(sendBeacon).not.toHaveBeenCalled();
+  });
+
   it('wirft nie, auch nicht ohne Link oder mit kaputter Attribution', () => {
     const { doc, beobachter } = attrappe();
     beobachteLinks(doc, () => {

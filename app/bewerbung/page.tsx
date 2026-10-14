@@ -4,9 +4,11 @@ import { BewerbungFlaeche, bewerbungKopf, DirektSprechen, Erklaerung, KopfHaus, 
 import { UNTERLAGEN_ANKER, UnterlagenZeile } from '@/components/apply/unterlagen';
 import { Seitenkopf } from '@/components/seitenkopf';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { EREIGNIS_META } from '@/lib/attribution/ereignisse';
 import { jobIdFromParam, legacyRedirectTarget, type SearchParamsRecord, wantsDocuments } from '@/lib/apply/params';
 import { getDiscretionPromise } from '@/lib/content/process';
 import { FACTS } from '@/lib/content/facts';
+import { funnelEventsEnabled } from '@/lib/env';
 import { getActiveJobs, getFunnelOptions, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
 import { buildPageGraph } from '@/lib/seo/graph';
 import { generatePageMetadata } from '@/lib/seo/metadata';
@@ -69,6 +71,10 @@ export default async function BewerbungPage({ searchParams }: { searchParams: Pr
     <>
       {/* Der eine Graph der Seite (V6-B): globale Knoten und WebPage aus denselben Metadaten wie Title und Canonical. */}
       <JsonLd data={buildPageGraph({ metadata })} />
+
+      {/* Schalter FUNNEL_EVENTS (Standard aus, M-034) für den Browser: Nur mit diesem Meta-Element sendet der Flow
+          cookielose Ereignisse an /api/e (lib/attribution/ereignisse.ts). React setzt es in den <head>. */}
+      {funnelEventsEnabled() ? <meta name={EREIGNIS_META} content="an" /> : null}
 
       {/* Kopf im Design des Einstiegs (E-023), Variante arbeit: Papier mit h1, schmale Navy-Fläche mit dem Haus;
           am Handy ein knappes Navy-Band. Keine rote Fläche: die Hauptaktion ist der Flow selbst. */}

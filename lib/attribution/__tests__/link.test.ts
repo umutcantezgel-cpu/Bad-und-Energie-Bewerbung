@@ -155,7 +155,7 @@ describe('capture.ts liest ?herkunft= nur ohne eigenes Signal', () => {
   it('der Speicher bleibt der Arbeitsspeicher: getAttribution ohne Fenster leer, kein Cookie, kein Storage', () => {
     expect(getAttribution()).toEqual({});
     // Code ohne Kommentare (die Kommentare erklären gerade, warum es keinen Cookie und keinen Storage gibt).
-    const quellen = ['link.ts', 'capture.ts', 'store.ts', 'klick.ts'].map((datei) =>
+    const quellen = ['link.ts', 'capture.ts', 'store.ts', 'klick.ts', 'ereignisse.ts'].map((datei) =>
       readFileSync(path.join(process.cwd(), 'lib/attribution', datei), 'utf8')
         .replace(/\/\*[\s\S]*?\*\//g, '')
         .replace(/^\s*\/\/.*$/gm, ''),

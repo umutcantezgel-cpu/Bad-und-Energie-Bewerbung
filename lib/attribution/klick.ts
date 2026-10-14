@@ -2,6 +2,7 @@ import type { Attribution } from '@/lib/applications/schema';
 import { WHATSAPP_NUMBER } from '@/lib/data/contact';
 import { buildWhatsAppUrl, mitHerkunftscode } from '@/lib/utils/whatsapp-utils';
 import { deriveChannel, HERKUNFT_CODES } from './channel';
+import { sendeEreignis, stelleAusAdresse } from './ereignisse';
 import { herkunftParameter, mitHerkunft } from './link';
 
 /**
@@ -12,6 +13,7 @@ import { herkunftParameter, mitHerkunft } from './link';
  * - Interne Links auf /bewerbung (und die Mappe) bekommen `?herkunft=…` bzw. `ref=…` (link.ts): Der Kanal gilt so
  *   auch in einem neuen Tab, ohne Cookie und ohne Speicher im Browser.
  * - WhatsApp-Links an unsere Nummer bekommen den sichtbaren Code „– W-…“ als letzte Zeile (Plan §D).
+ * - Ein Klick auf WhatsApp oder Telefon zählt als Ereignis, wenn der Schalter an ist (ereignisse.ts).
  *
  * Next-Links navigieren beim normalen Klick im Client mit ihrer eigenen Adresse, dort bleibt die Attribution ohnehin
  * im Arbeitsspeicher. Für neuen Tab (Strg-/Mittelklick), Kontextmenü, langes Tippen und Ziehen gilt das geänderte
@@ -89,6 +91,14 @@ export function beobachteLinks(doc: BeobachterDokument, quelle: () => Attributio
       const origin = doc.location.origin;
       const neu = bearbeiteHref(href, quelle(), origin);
       if (neu !== href) anker.setAttribute('href', neu);
+
+      // Gezählt wird nur, was den Link wirklich öffnet: Klick, Tastatur (Enter löst click aus) und Mittelklick.
+      const oeffnet = event.type === 'click' || (event.type === 'auxclick' && (event as MouseEvent).button === 1);
+      if (!oeffnet) return;
+      const art = linkArt(href);
+      if (art === 'whatsapp' || art === 'telefon') {
+        sendeEreignis({ ereignis: art === 'whatsapp' ? 'whatsapp_klick' : 'telefon_klick', stelle: stelleAusAdresse(doc.location) });
+      }
     } catch {
       // Ein Fehler hier darf nie einen Link blockieren.
     }
