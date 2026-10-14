@@ -9,9 +9,10 @@ import { Entfernungsleiste } from '@/components/zeichnung/Entfernungsleiste';
 import type { Job } from '@/lib/jobs/registry';
 import { kreisPfad, pfadItems } from '@/lib/places/jsonld';
 import { getKreisPlaces, getPublishedPlaces, type Kreis } from '@/lib/places/registry';
-import { ORTE_ANKER, type KreisPageText, type KreisSectionId, type TextSection } from '@/lib/places/text';
+import { OEPNV_QUELLE } from '@/lib/places/oepnv';
+import { OEPNV_QUELLENZEILE, ORTE_ANKER, type KreisPageText, type KreisSectionId, type TextSection } from '@/lib/places/text';
 import { cn } from '@/lib/utils/cn';
-import { Abschnittskopf, Absaetze, Faktenband, Kontakt, Messhinweis, Ortstabelle, bloecke, titelId } from './Bausteine';
+import { Abschnittskopf, Absaetze, Faktenband, Kontakt, Messhinweis, Ortstabelle, Quellenzeile, bloecke, titelId } from './Bausteine';
 import { ETIKETT, leisteLegende, planBeschreibungKreis } from './einsatzgebiet-text';
 import styles from './einsatzgebiet.module.css';
 import { gebietView } from './karte';
@@ -29,12 +30,13 @@ const abschnitt = (text: KreisPageText, id: KreisSectionId): TextSection<KreisSe
 
 /**
  * Kreis-Hub (E-028). Tonfolge: Pfad und Kopf (Navy mit der senkrechten Entfernungsleiste: jeder Ort zweigt an seiner
- * Strecke vom Leitungspaar ab) · Wege in Zahlen mit dem Plan, die Orte des Kreises hervorgehoben · Ortstabelle Wand ·
- * Stellen Papier · Band Navy · Kontakt Papier.
+ * Strecke vom Leitungspaar ab) · Wege in Zahlen mit dem Plan, die Orte des Kreises hervorgehoben, darunter Bus und
+ * Bahn im Kreis · Ortstabelle Wand · Stellen Papier · Band Navy · Kontakt Papier.
  */
 export function KreisSeite({ kreis, text, jobs }: KreisSeiteProps) {
   const lead = abschnitt(text, 'lead');
   const zahlen = abschnitt(text, 'zahlen');
+  const oepnv = abschnitt(text, 'oepnv');
   const orte = abschnitt(text, 'orte');
   const stellen = abschnitt(text, 'stellen');
   const band = abschnitt(text, 'band');
@@ -91,6 +93,16 @@ export function KreisSeite({ kreis, text, jobs }: KreisSeiteProps) {
               {zahlenBloecke.gemeinsam.map((block) => (
                 <Messhinweis key={block.text} text={block.text} />
               ))}
+              {/* Bus und Bahn im Kreis (Plan §B): Zusammenfassung der Orte, die Einzelheiten auf jeder Ortsseite */}
+              {oepnv ? (
+                <section aria-labelledby={titelId('oepnv')} className={styles.text}>
+                  <h3 id={titelId('oepnv')} className={styles.frage}>
+                    {oepnv.heading}
+                  </h3>
+                  <Absaetze blocks={oepnv.blocks} />
+                  <Quellenzeile text={OEPNV_QUELLENZEILE} lizenz={{ label: OEPNV_QUELLE.lizenz, href: OEPNV_QUELLE.lizenzUrl }} />
+                </section>
+              ) : null}
             </div>
             <OrtPlan
               view={gebietView(35)}

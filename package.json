@@ -21,7 +21,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "playwright test",
-    "lighthouse": "npx --yes @lhci/cli@0.15.1 autorun"
+    "lighthouse": "npx --yes @lhci/cli@0.15.1 autorun",
+    "orte:gate": "bun scripts/places/orte-gate.ts"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.3.3",

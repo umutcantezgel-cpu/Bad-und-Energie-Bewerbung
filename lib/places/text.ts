@@ -3,9 +3,14 @@
  * JSX, geprüft in lib/places/__tests__/text.test.ts und vom Einzigartigkeits-Gate (gate.test.ts).
  *
  * Regeln:
- * - Nur Ortsdaten (Messung), Werte aus derive.ts, Fakten aus lib/content/facts.ts (per ID) und Gehälter aus
- *   der Stellen-Registry. Keine Einwohnerzahlen, keine Sehenswürdigkeiten, keine Straßen außer in den
- *   freigegebenen Kurzbeschreibungen.
+ * - Nur Ortsdaten (Messung), Werte aus derive.ts, Fakten aus lib/content/facts.ts (per ID), die Stellen aus der
+ *   Stellen-Registry (seit E-030 ohne Betrag) und die Datenklassen aus lib/places/datenklassen.ts: Bus und Bahn sowie
+ *   der Weg zur Berufsschule (lib/places/data/oepnv.json, berufsschule.json). Keine Einwohnerzahlen, keine
+ *   Sehenswürdigkeiten, keine Straßen außer in den freigegebenen Kurzbeschreibungen, den Haltestellennamen und der
+ *   Anschrift der Berufsschule.
+ * - Blöcke aus einer Datenklasse tragen sie in `daten` (Gate I2/I3, lib/places/qualitaet.ts); Blöcke, die eine Frage
+ *   beantworten, tragen sie in `frage` (sichtbar als Zwischenüberschrift, ohne FAQPage-Markup: FAQPage gibt es nur
+ *   auf der Startseite, scripts/qa/check-graph.mjs Regel 5).
  * - Satzbau folgt echten Datenlagen (Entfernungsband, Streckenstufe, Richtung, Art des Orts, Kreis, Messpunkt, Rang im
  *   Kreis, Median, Nachbarorte, Startseitenkarte), nie einer Zufallsauswahl von Synonymen.
  * - `ort`-Blöcke sagen etwas, das nur für diesen Ort gilt; `gemeinsam`-Blöcke stehen auf jeder Ortsseite (Stellen,
@@ -46,7 +51,21 @@ import {
   type Neighbor,
   type Rank,
 } from './derive';
+import { FAHRPLAN_STAND, datenKlassen, titelStufe, type DatenKlasse, type TitelStufe } from './datenklassen';
+import { KREIS_DEFS } from './kreise';
 import { MEASUREMENT } from './measurement';
+import {
+  BERUFSSCHULE,
+  OEPNV_META,
+  OEPNV_QUELLE,
+  type OepnvHaltestelle,
+  type OepnvKurzverbindung,
+  type OepnvOrt,
+  type OepnvTeilstrecke,
+  type OepnvVerbindung,
+  type OepnvVerkehrsmittel,
+  type OepnvWeg,
+} from './oepnv';
 import {
   EINSATZGEBIET_PATH,
   KREIS_HUB_MIN_PLACES,
@@ -70,12 +89,18 @@ const NBSP = ' ';
 
 export type BlockKind = 'ort' | 'gemeinsam';
 
+export type { DatenKlasse, TitelStufe };
+
 export interface TextBlock {
   /** `ort`: gilt nur für diese Seite · `gemeinsam`: steht auf allen Seiten der Art gleich. */
   kind: BlockKind;
   text: string;
   /** Fakten, deren Wortlaut der Block trägt. */
   factIds?: readonly FactId[];
+  /** Datenklasse, aus der jeder Satz des Blocks stammt (Gate I2/I3); fehlt bei Messung, Lage, Fakten und Kontakt. */
+  daten?: DatenKlasse;
+  /** Frage, die der Block beantwortet; die Seite setzt sie als Zwischenüberschrift über den Block. */
+  frage?: string;
 }
 
 export interface TextSection<Id extends string = string> {
@@ -119,6 +144,13 @@ export interface PlaceDataValue {
 }
 
 const ort = (text: string, factIds?: readonly FactId[]): TextBlock => ({ kind: 'ort', text, ...(factIds ? { factIds } : {}) });
+/** Ortsblock aus einer Datenklasse, optional als Antwort auf eine Frage. */
+const ausDaten = (daten: DatenKlasse, text: string, frage?: string): TextBlock => ({
+  kind: 'ort',
+  text,
+  daten,
+  ...(frage ? { frage } : {}),
+});
 const gemeinsam = (text: string, factIds?: readonly FactId[]): TextBlock => ({
   kind: 'gemeinsam',
   text,
@@ -208,6 +240,9 @@ interface PlaceContext {
   /** Stadtteile von Wetzlar (für Stadt und Stadtteile), nach Strecke. */
   stadtteile: Place[];
   jobs: readonly Job[];
+  /** Datenklassen außer der Geometrie (datenklassen.ts) und die Titelstufe, die aus ihnen folgt. */
+  klassen: DatenKlasse[];
+  stufe: TitelStufe;
 }
 
 /** Kreis des Firmensitzes: der Kreis des Orts Wetzlar laut Messung. */
@@ -234,6 +269,8 @@ function placeContext(place: Place, jobs: readonly Job[]): PlaceContext {
     areaRank: rankByDistance(place, published),
     stadtteile: parentId ? getStadtteile(parentId) : [],
     jobs,
+    klassen: datenKlassen(place),
+    stufe: titelStufe(datenKlassen(place)),
   };
 }
 
@@ -385,6 +422,252 @@ function arbeitswegBlocks(c: PlaceContext): TextBlock[] {
   blocks.push(gemeinsam(measurementNote(c.place, point !== null)));
   return blocks;
 }
+
+// ─── Bus und Bahn ───────────────────────────────────────────────────────────
+
+/** '06:25' → '6:25': Stunde ohne führende Null, wie „7:30 Uhr“ im Plan. */
+export function formatUhrzeit(hhmm: string): string {
+  return `${Number(hhmm.slice(0, 2))}:${hhmm.slice(3, 5)}`;
+}
+
+/** '06:25' → '6:25 Uhr' mit geschütztem Leerzeichen. */
+export function formatUhr(hhmm: string): string {
+  return `${formatUhrzeit(hhmm)}${NBSP}Uhr`;
+}
+
+/** Fußweg in Metern: '150 m', '1.230 m'. */
+export function formatMeter(meter: number): string {
+  return `${formatNumber(meter)}${NBSP}m`;
+}
+
+/** Ansatz der Rechnung (scripts/places/oepnv.mjs): Ankunft bis 7:30 Uhr am Firmensitz, bis 7:45 Uhr an der Schule. */
+export const ANKUNFT_BETRIEB = OEPNV_META.betrieb.ankunftBis;
+export const ANKUNFT_SCHULE = OEPNV_META.schule.ankunftBis;
+
+/** Zählfenster der Verbindungen am Morgen in vollen Stunden: „06:00–08:00“ → [6, 8]. */
+const ZAEHLFENSTER = String(OEPNV_META.methode.zaehlfenster)
+  .split(/[–-]/)
+  .map((uhr) => Number(uhr.trim().slice(0, 2)));
+
+/** Fahrzeug je Verkehrsmittel mit dem Artikel im Dativ („mit dem Bus 12“, „mit der Straßenbahn 1“). */
+const FAHRZEUG: Readonly<Record<OepnvVerkehrsmittel, { name: string; dativ: 'dem' | 'der' }>> = Object.freeze({
+  bus: { name: 'Bus', dativ: 'dem' },
+  bahn: { name: 'Zug', dativ: 'dem' },
+  tram: { name: 'Straßenbahn', dativ: 'der' },
+  'u-bahn': { name: 'U-Bahn', dativ: 'der' },
+  bedarf: { name: 'Rufbus', dativ: 'dem' },
+  faehre: { name: 'Fähre', dativ: 'der' },
+  sonstige: { name: 'Linie', dativ: 'der' },
+});
+
+/** „Bus 12“, „Zug RE99“: Fahrzeug und Linie mit geschütztem Leerzeichen (Fahrplanliste der Ortsseite). */
+export function fahrzeugName(teil: Pick<OepnvTeilstrecke, 'linie' | 'verkehrsmittel'>): string {
+  return `${FAHRZEUG[teil.verkehrsmittel].name}${NBSP}${teil.linie}`;
+}
+
+/** „dem Bus 12“. */
+function fahrzeug(teil: Pick<OepnvTeilstrecke, 'linie' | 'verkehrsmittel'>): string {
+  return `${FAHRZEUG[teil.verkehrsmittel].dativ} ${fahrzeugName(teil)}`;
+}
+
+export function mitFahrzeug(teil: Pick<OepnvTeilstrecke, 'linie' | 'verkehrsmittel'>): string {
+  return `mit ${fahrzeug(teil)}`;
+}
+
+/** Zahl der Umstiege im Dativ: „ohne Umstieg“, „mit einem Umstieg“, „mit zwei Umstiegen“. */
+function mitUmstiegen(anzahl: number): string {
+  if (anzahl === 0) return 'ohne Umstieg';
+  if (anzahl === 1) return 'mit einem Umstieg';
+  return `mit ${ZAHLWORT[anzahl] ?? anzahl} Umstiegen`;
+}
+
+/** Umstiege einer Reihe von Verbindungen: „jede mit einem Umstieg“, „mit einem bis zwei Umstiegen“, „ohne oder mit einem Umstieg“. */
+function umstiegeDerReihe(verbindungen: readonly OepnvKurzverbindung[]): string {
+  const werte = [...new Set(verbindungen.map((v) => v.umstiege))].sort((a, b) => a - b);
+  const min = werte[0];
+  const max = werte[werte.length - 1];
+  if (werte.length === 1) return min === 0 ? 'alle ohne Umstieg' : `jede ${mitUmstiegen(min)}`;
+  if (min === 0) return max === 1 ? 'ohne oder mit einem Umstieg' : `ohne oder mit bis zu ${ZAHLWORT[max] ?? max} Umstiegen`;
+  return `mit ${min === 1 ? 'einem' : (ZAHLWORT[min] ?? min)} bis ${ZAHLWORT[max] ?? max} Umstiegen`;
+}
+
+/**
+ * Satzbau der Fahrplan-Antworten (Gate I4 und U4): Zwischen zwei Angaben dieses Orts (Haltestelle, Abfahrt, Fußweg,
+ * Tür zu Tür) stehen höchstens vier feste Wörter, und jede Antwort ist ein Satz, der die Haltestellen des Orts trägt.
+ * Orte einer Richtung fahren ab dem ersten Umstieg oft mit denselben Zügen und Bussen und kommen zur selben Zeit an;
+ * darum nennt der Satz nach dem ersten Umstieg nur noch die Fahrzeuge. Den ganzen Verlauf mit allen Haltestellen und
+ * Zeiten zeigt die Liste daneben (components/einsatzgebiet/Fahrplan.tsx).
+ */
+function verbindungSatz(v: OepnvVerbindung, frist: string, ankunft: string, vergleich = ''): string {
+  const [erste, ...weitere] = v.teilstrecken;
+  const zuFuss = v.gehMinStart > 0 ? `${formatMinutes(v.gehMinStart)} zu Fuß zur Haltestelle ${v.ab}` : `ab der Haltestelle ${v.ab}`;
+  const fahrt = `um ${formatUhr(erste.abfahrt)} ${mitFahrzeug(erste)} bis ${erste.an}`;
+  const umstiege = weitere.length > 0 ? `, dann mit ${joinList(weitere.map(fahrzeug))}` : ' ohne Umstieg';
+  return `Um ${formatUhr(v.losgehen)}, für die Ankunft bis ${formatUhr(frist)}: ${zuFuss}, ${fahrt}${umstiege}; ${ankunft} um ${formatUhr(v.ankunft)}, ${formatMinutes(v.reisezeitMin)} Tür zu Tür${vergleich}.`;
+}
+
+/** Früheste Ankunft, wenn bis zur Frist keine Verbindung ankommt: aus der Liste am Morgen, sonst aus dem Grund der Datei. */
+export function fruehesteAnkunft(weg: OepnvWeg): string | null {
+  return weg.verbindungen[0]?.ankunft ?? /früheste kommt um (\d{2}:\d{2}) an/.exec(weg.grund ?? '')?.[1] ?? null;
+}
+
+/**
+ * Keine Verbindung bis zur Frist: die früheste mit Abfahrt, Ankunft und Umstiegen; kommt auch zwischen 6 und 8 Uhr keine
+ * an, steht das dabei und die früheste Ankunft aus dem Grund der Datei.
+ */
+function keineVerbindung(weg: OepnvWeg): string {
+  const erste = weg.verbindungen[0];
+  if (erste) {
+    return `Nein, die früheste Verbindung fährt um ${formatUhr(erste.abfahrt)} und ist um ${formatUhr(erste.ankunft)} da, ${mitUmstiegen(erste.umstiege)}`;
+  }
+  const frueh = fruehesteAnkunft(weg);
+  const fenster = `zwischen ${ZAEHLFENSTER[0]} und ${ZAEHLFENSTER[1]}${NBSP}Uhr kommt keine Verbindung an`;
+  return frueh ? `Nein, ${fenster}, die früheste ist erst um ${formatUhr(frueh)} da` : `Nein, ${fenster}`;
+}
+
+/**
+ * Ohne Verbindung bis zur Frist: der nächste Nachbarort (Luftlinie), aus dem eine fährt, mit Abfahrt, Haltestelle,
+ * erstem Fahrzeug und Ankunft. Er zeigt, wo die nächste Verbindung beginnt; eine Empfehlung ist das nicht.
+ */
+function nachbarMitVerbindung(c: PlaceContext, ziel: 'betrieb' | 'schule'): string | null {
+  const nachbar = c.neighbors.find((n) => n.place.oepnv?.[ziel].moeglich && n.place.oepnv[ziel].spaeteste);
+  const v = nachbar?.place.oepnv?.[ziel].spaeteste;
+  if (!nachbar || !v) return null;
+  return `Aus ${labeled(nachbar.place.name, formatAirKm(nachbar.airKm))}: Abfahrt ${formatUhr(v.abfahrt)} ab ${v.ab} ${mitFahrzeug(v.teilstrecken[0])}, Ankunft ${formatUhr(v.ankunft)}.`;
+}
+
+/**
+ * Die Verbindungen mit Ankunft im Zählfenster (6 bis 8 Uhr) als Paare aus Abfahrt und Ankunft, dazu ihre Umstiege. Die
+ * Abfahrten sind die des Orts; die Ankunftszeiten teilt er oft mit den Orten derselben Strecke. Nach Zahl und Umstiegen
+ * steht dasselbe Satzgerüst auf höchstens jeder neunten Seite (Gate U4).
+ */
+function morgensSatz(weg: OepnvWeg): string | null {
+  const reihe = weg.verbindungen;
+  if (!weg.moeglich || reihe.length === 0) return null;
+  const paare = reihe.map((v) => `${formatUhr(v.abfahrt)} (an ${formatUhrzeit(v.ankunft)})`);
+  if (reihe.length === 1) {
+    const einzige = reihe[0].ankunft === weg.spaeteste?.ankunft ? 'nur diese' : 'nur eine';
+    return `Abfahrt ${paare[0]}, ${einzige} Verbindung, ${mitUmstiegen(reihe[0].umstiege)}.`;
+  }
+  return `Abfahrt ${joinList(paare)}, ${umstiegeDerReihe(reihe)}.`;
+}
+
+/** Haltestellen nah am Startpunkt der Messung mit ihrem Fußweg. */
+function haltestellenSatz(place: Place, haltestellen: readonly OepnvHaltestelle[]): string | null {
+  if (haltestellen.length === 0) return null;
+  const mitte = place.kind === 'stadtteil' ? 'Am Ortsmittelpunkt' : place.seat ? `In ${place.seat}` : 'An der Ortsmitte';
+  const liste = haltestellen.map((h, i) => `${h.name} (${formatMeter(h.wegM)}${i === 0 ? ' zu Fuß' : ''})`);
+  return `${mitte}: ${joinList(liste)}.`;
+}
+
+/** Fragen über den Antworten (Zwischenüberschriften der Ortsseite); die Frist steht in der Frage, nicht in der Antwort. */
+export const OEPNV_FRAGEN = Object.freeze({
+  los: (name: string) => `Wann musst du in ${name} los?`,
+  ohneAuto: (name: string, bis: string) => `Kommst du aus ${name} bis ${formatUhr(bis)} mit Bus und Bahn hin?`,
+  morgens: (von: number, bis: number) => `Was kommt zwischen ${von} und ${bis}${NBSP}Uhr an?`,
+  haltestelle: 'Wo ist die nächste Haltestelle?',
+  nachbar: (bis: string) => `Aus welchem Nachbarort geht es bis ${formatUhr(bis)}?`,
+  schule: 'Welche Berufsschule ist zuständig?',
+  schulweg: (name: string) => `Wann musst du in ${name} zur Schule los?`,
+  schulwegOhne: (name: string, bis: string) => `Kommst du aus ${name} bis ${formatUhr(bis)} zur Schule?`,
+  schulMorgens: 'Welche Verbindungen gibt es am Morgen?',
+});
+
+/**
+ * Bus und Bahn zum Firmensitz (Datenklasse oepnv): die späteste Verbindung mit Ankunft bis 7:30 Uhr, die Verbindungen
+ * am Morgen und die Haltestellen am Startpunkt. Gibt es keine Verbindung bis 7:30 Uhr, ist genau das die Auskunft, mit
+ * der frühesten Ankunft und der Fahrzeit mit dem Auto (Plan §B).
+ */
+function oepnvBlocks(c: PlaceContext, oepnv: OepnvOrt): TextBlock[] {
+  const { place } = c;
+  const weg = oepnv.betrieb;
+  const auto = `mit dem Auto ${formatMinutes(place.commute.minutes)}`;
+  const blocks: TextBlock[] = [];
+  if (weg.moeglich && weg.spaeteste) {
+    const zuFuss = weg.direktZuFussMin ? `, zu Fuß ${formatMinutes(weg.direktZuFussMin)}` : '';
+    blocks.push(ausDaten('oepnv', verbindungSatz(weg.spaeteste, weg.ankunftBis, 'am Firmensitz', `, ${auto}${zuFuss}`), OEPNV_FRAGEN.los(place.name)));
+  } else {
+    blocks.push(ausDaten('oepnv', `${keineVerbindung(weg)}; ${auto}.`, OEPNV_FRAGEN.ohneAuto(place.name, weg.ankunftBis)));
+    const nachbar = nachbarMitVerbindung(c, 'betrieb');
+    if (nachbar) blocks.push(ausDaten('oepnv', nachbar, OEPNV_FRAGEN.nachbar(weg.ankunftBis)));
+  }
+  const morgens = morgensSatz(weg);
+  if (morgens) blocks.push(ausDaten('oepnv', morgens, OEPNV_FRAGEN.morgens(ZAEHLFENSTER[0], ZAEHLFENSTER[1])));
+  const halte = haltestellenSatz(place, oepnv.startHaltestellen);
+  if (halte) blocks.push(ausDaten('oepnv', halte, OEPNV_FRAGEN.haltestelle));
+  return blocks;
+}
+
+// ─── Berufsschule ───────────────────────────────────────────────────────────
+
+const SCHULE = BERUFSSCHULE.schule;
+
+/**
+ * Zuständigkeit laut Verordnung: für jeden Wohnort dieselbe Schule, weil der Ausbildungsort zählt. Der Wohnort steht in
+ * der Mitte, damit der Satz nicht auf allen Ortsseiten wortgleich ist (wie measurementNote). Status `laut-verordnung`,
+ * bis der Inhaber bestätigt (MENSCHEN M-024).
+ */
+export function berufsschuleZustaendig(place: Pick<Place, 'name' | 'kind'>): string {
+  const { grundstufe, fachstufe } = BERUFSSCHULE.stufen;
+  const stufen = grundstufe === fachstufe ? 'Grund- und Fachstufe' : `Grundstufe ${grundstufe}, Fachstufe ${fachstufe}`;
+  const bestaetigung = BERUFSSCHULE.status === 'bestaetigt' ? 'Der Betrieb hat das bestätigt.' : 'Bestätigt hat der Betrieb das noch nicht.';
+  // In Wetzlar und seinen Stadtteilen ist der Wohnort zugleich die Stadt des Ausbildungsorts
+  const wohnort = place.kind === 'gemeinde' ? `nicht ${place.name} als Wohnort` : 'nicht der Stadtteil, in dem du wohnst';
+  return `Laut Fachklassenverordnung die ${SCHULE.name}, ${SCHULE.strasse}, für ${stufen}: Es zählt der Ausbildungsort, ${wohnort}. ${bestaetigung}`;
+}
+
+/** Fakt zum Schulweg in der Ausbildung: Fahrtkostenzuschuss zur Berufsschule (travelAllowance). */
+export const AZUBI_WEG_FACT_IDS: readonly FactId[] = Object.freeze(['travelAllowance']);
+
+/**
+ * Weg zur Berufsschule (Datenklasse berufsschule): späteste Verbindung mit Ankunft bis 7:45 Uhr und der Vergleich mit dem
+ * Weg zum Firmensitz; ohne Verbindung die früheste Ankunft.
+ */
+function schulwegBlock(c: PlaceContext, oepnv: OepnvOrt): TextBlock {
+  const { place } = c;
+  const weg = oepnv.schule;
+  if (!weg.moeglich || !weg.spaeteste) {
+    const nachbar = nachbarMitVerbindung(c, 'schule');
+    return ausDaten('berufsschule', `${keineVerbindung(weg)}.${nachbar ? ` ${nachbar}` : ''}`, OEPNV_FRAGEN.schulwegOhne(place.name, weg.ankunftBis));
+  }
+  const betrieb = oepnv.betrieb.spaeteste;
+  const diff = betrieb ? weg.spaeteste.reisezeitMin - betrieb.reisezeitMin : null;
+  const vergleich =
+    diff === null ? '' : diff === 0 ? ', so lange wie zum Firmensitz' : `, ${formatMinutes(Math.abs(diff))} ${diff > 0 ? 'mehr' : 'weniger'} als zum Firmensitz`;
+  const zuFuss = weg.direktZuFussMin ? `, zu Fuß ${formatMinutes(weg.direktZuFussMin)}` : '';
+  return ausDaten('berufsschule', verbindungSatz(weg.spaeteste, weg.ankunftBis, 'an der Schule', `${vergleich}${zuFuss}`), OEPNV_FRAGEN.schulweg(place.name));
+}
+
+function schuleBlocks(c: PlaceContext, oepnv: OepnvOrt): TextBlock[] {
+  const morgens = morgensSatz(oepnv.schule);
+  return [
+    { ...gemeinsam(berufsschuleZustaendig(c.place)), frage: OEPNV_FRAGEN.schule },
+    schulwegBlock(c, oepnv),
+    ...(morgens && oepnv.schule.verbindungen.length > 1 ? [ausDaten('berufsschule', morgens, OEPNV_FRAGEN.schulMorgens)] : []),
+    gemeinsam(AZUBI_WEG_FACT_IDS.map((id) => FACTS[id].long).join(' '), AZUBI_WEG_FACT_IDS),
+  ];
+}
+
+// ─── Quellen der Datenklassen (Bildunterschriften, nicht im Fließtext) ──────
+
+/** Bearbeitungshinweis aus oepnv.json ohne den Skriptpfad in Klammern (CC BY 4.0, Abschnitt 3 a). */
+const BEARBEITUNG = OEPNV_QUELLE.bearbeitung.replace(/\s*\([^)]*\)\s*$/, '');
+
+/**
+ * Namensnennung unter Bus und Bahn: Werktag und Stand, dazu der Wortlaut aus oepnv.json (CC BY 4.0 verlangt Urheber,
+ * Lizenz und Hinweis auf die Bearbeitung; den Link auf die Lizenz setzt die Seite). Die Fristen 7:30 und 7:45 Uhr nennen
+ * die Antworten selbst. Steht als Quellenzeile unter den Angaben, nicht im Ortstext.
+ */
+export const OEPNV_QUELLENZEILE = `Fahrplan für ${OEPNV_META.wochentag}, ${formatMeasuredOn(OEPNV_META.werktag)}, Datenstand ${formatMeasuredOn(FAHRPLAN_STAND.stand)}: ${OEPNV_QUELLE.namensnennung}. ${BEARBEITUNG}.`;
+
+/** Kurzform des Gesetzblatts aus dem Titel der Verordnung: „GVBl. Hessen 2026 Nr. 21“. */
+const GESETZBLATT = (() => {
+  const treffer = /GVBl\.\s*(\d{4})\s*Nr\.\s*(\d+)/.exec(BERUFSSCHULE.quellen[0]?.titel ?? '');
+  return treffer ? `GVBl. Hessen ${treffer[1]} Nr.${NBSP}${treffer[2]}` : (BERUFSSCHULE.quellen[0]?.titel ?? '');
+})();
+
+/** Fundstellen der Zuständigkeit und der Ansatz für den Schulweg (Unterrichtsbeginn nicht belegt). */
+export const BERUFSSCHULE_QUELLENZEILE = `Zuständigkeit: Fachklassenverordnung (${GESETZBLATT}) und Schulbezirkssatzung ${KREIS_DEFS[BERUFSSCHULE.ausbildungsort.kreisId].genitive}. ${BERUFSSCHULE.unterrichtsbeginn ? `Unterrichtsbeginn ${formatUhr(BERUFSSCHULE.unterrichtsbeginn)}.` : 'Der Unterrichtsbeginn ist nicht belegt.'} Fahrplan wie oben.`;
 
 // ─── Stellen ────────────────────────────────────────────────────────────────
 
@@ -756,6 +1039,14 @@ function kreisBlocks(c: PlaceContext): TextBlock[] {
 
 // ─── Band und Kontakt ───────────────────────────────────────────────────────
 
+/**
+ * Fakten ohne eigenen Satz (der lange Text ist nur die Kurzform mit Punkt) tragen im Band den Satz eines belegten
+ * Begleitfakts, wie die Zusage „Flexible Arbeitszeiten“ auf der Startseite (components/home/vorteile/vorteile-text.ts
+ * ZUSAGEN): „Keine unbezahlten Überstunden.“ Keine neue Aussage, nur die Paarung der Startseite. Steht hier, weil das
+ * Gate (I6) jeden Fakt prüft, den die Seite zeigt, auch den Begleiter (components/einsatzgebiet/Bausteine.tsx).
+ */
+export const FAKT_BEGLEITER: Readonly<Partial<Record<FactId, FactId>>> = Object.freeze({ flexibleHours: 'noUnpaidOvertime' });
+
 /** Fakten im Band einer Ortsseite oder eines Kreis-Hubs. */
 export function bandFactIds(kreis: Pick<Kreis, 'factIds'>): FactId[] {
   const last = BAND_FACT_IDS[BAND_FACT_IDS.length - 1];
@@ -783,7 +1074,17 @@ function kontaktBlocks(place: Place): TextBlock[] {
 
 // ─── Ortsseite ──────────────────────────────────────────────────────────────
 
-export type PlaceSectionId = 'lead' | 'arbeitsweg' | 'stellen' | 'nachbarn' | 'stadtteile' | 'kreis' | 'band' | 'kontakt';
+export type PlaceSectionId =
+  | 'lead'
+  | 'arbeitsweg'
+  | 'oepnv'
+  | 'schule'
+  | 'stellen'
+  | 'nachbarn'
+  | 'stadtteile'
+  | 'kreis'
+  | 'band'
+  | 'kontakt';
 
 export interface PlacePageText {
   placeId: string;
@@ -806,6 +1107,9 @@ export interface PlacePageText {
   links: PageLink[];
   /** Linktext der Route ab Ortsmitte in Google Maps (neuer Tab). */
   routeLabel: string;
+  /** Datenklassen außer der Geometrie, aus denen die Seite schöpft (Gate I2), und die Titelstufe, die aus ihnen folgt. */
+  datenKlassen: DatenKlasse[];
+  titelStufe: TitelStufe;
 }
 
 /**
@@ -843,9 +1147,6 @@ function placeMeta(c: PlaceContext): PageMeta {
 
 function placeMetaRaw(c: PlaceContext): PageMeta {
   const { place } = c;
-  const km = formatKm(place.commute.distanceKm);
-  const minutes = formatMinutes(place.commute.minutes);
-
   if (place.kind === 'stadt') {
     const st = c.stadtteile;
     const minKm = st.length > 0 ? st[0].commute.distanceKm : place.commute.distanceKm;
@@ -862,6 +1163,21 @@ function placeMetaRaw(c: PlaceContext): PageMeta {
       ),
     };
   }
+  return c.stufe === 'arbeitsweg' ? arbeitswegMeta(place) : shkJobsMeta(place);
+}
+
+/**
+ * Metadaten einer Gemeinde- oder Stadtteilseite für eine Titelstufe; die Seite nimmt die Stufe aus ihren Datenklassen
+ * (titelStufe in datenklassen.ts). Wetzlar selbst behält seinen Titel mit den Stadtteilen.
+ */
+export function ortMeta(place: Place, stufe: TitelStufe): PageMeta {
+  return plainMeta(stufe === 'arbeitsweg' ? arbeitswegMeta(place) : shkJobsMeta(place));
+}
+
+/** Titelstufe „SHK-Jobs“ erst mit Einsatzdaten des Betriebs am Ort (MENSCHEN M-023): belegt durch echte Baustellen. */
+function shkJobsMeta(place: Place): PageMeta {
+  const km = formatKm(place.commute.distanceKm);
+  const minutes = formatMinutes(place.commute.minutes);
   const titleTail = place.kind === 'stadtteil' ? `${km} zum Firmensitz` : `${km} bis ${HQ_CITY}`;
   const where = place.kind === 'stadtteil' ? `zum Firmensitz in ${HQ_CITY}` : `bis zum Firmensitz in ${HQ_CITY}`;
   return {
@@ -872,6 +1188,35 @@ function placeMetaRaw(c: PlaceContext): PageMeta {
       `SHK-Jobs für ${place.name}: ${km} und rund ${minutes} ${where}, gemessen mit OpenStreetMap. ${upperFirst(PERKS)}.`,
       `SHK-Jobs für ${place.name}: ${km} und rund ${minutes} ${where}. ${upperFirst(PERKS)}.`,
     ),
+  };
+}
+
+/** Title der Titelstufe „Arbeitsweg“ (Plan §B): „Arbeitsweg Aßlar – Wetzlar: Auto und Bus“. */
+export function arbeitswegTitel(place: Pick<Place, 'name'>): string {
+  return `Arbeitsweg ${place.name} – ${HQ_CITY}: Auto und Bus`;
+}
+
+/**
+ * Metadaten der Titelstufe „Arbeitsweg“, solange keine Einsatzdaten vorliegen (M-023): Was die Seite belegt, ist der
+ * Weg, nicht die Baustellen am Ort. Die Description nennt Strecke, Fahrzeit und die späteste Verbindung mit Bus und
+ * Bahn, ohne Bus und Bahn nur die Auskunft, dass bis 7:30 Uhr keine ankommt.
+ */
+function arbeitswegMeta(place: Place): PageMeta {
+  const weg = place.oepnv?.betrieb;
+  const bus =
+    weg?.moeglich && weg.spaeteste
+      ? `mit Bus und Bahn los um ${formatUhr(weg.spaeteste.losgehen)}, an ${formatUhr(weg.spaeteste.ankunft)}`
+      : weg
+        ? `mit Bus und Bahn keine Ankunft bis ${formatUhr(weg.ankunftBis)}`
+        : null;
+  const ziel = place.kind === 'stadtteil' ? `Firmensitz in ${HQ_CITY}` : HQ_CITY;
+  const kopf = `Arbeitsweg ${place.name} – ${ziel}: ${formatKm(place.commute.distanceKm)}, rund ${formatMinutes(place.commute.minutes)} mit dem Auto`;
+  const kandidaten = [...(bus ? [`${kopf}, ${bus}. ${upperFirst(PERKS)}.`, `${kopf}, ${bus}.`] : []), `${kopf}. ${upperFirst(PERKS)}.`, `${kopf}.`];
+  return {
+    title: arbeitswegTitel(place),
+    h1: place.kind === 'stadtteil' ? `Von ${place.name} zur Arbeit am Firmensitz` : `Von ${place.name} zur Arbeit nach ${HQ_CITY}`,
+    primaryKeyword: `Arbeitsweg ${place.name} ${HQ_CITY}`,
+    description: fitDescription(...(kandidaten as [string, ...string[]])),
   };
 }
 
@@ -905,6 +1250,8 @@ export function getPlacePageText(place: Place, options: PlaceTextOptions = {}): 
   const sections: TextSection<PlaceSectionId>[] = [
     { id: 'lead', heading: meta.h1, blocks: leadBlocks(c) },
     { id: 'arbeitsweg', heading: `Dein Weg aus ${name}`, blocks: arbeitswegBlocks(c) },
+    { id: 'oepnv', heading: `Mit Bus und Bahn aus ${name}`, blocks: place.oepnv ? oepnvBlocks(c, place.oepnv) : [] },
+    { id: 'schule', heading: `Zur Berufsschule aus ${name}`, blocks: place.oepnv ? schuleBlocks(c, place.oepnv) : [] },
     { id: 'stellen', heading: 'Offene Stellen', blocks: stellenBlocks(c.jobs, { vehicle: false }) },
     { id: 'nachbarn', heading: `Orte rund um ${name}`, blocks: nachbarnBlocks(c) },
     { id: 'stadtteile', heading: `Die Stadtteile von ${name}`, blocks: place.kind === 'stadt' ? stadtteileBlocks(c) : [] },
@@ -946,6 +1293,8 @@ export function getPlacePageText(place: Place, options: PlaceTextOptions = {}): 
     values: placeValues(c),
     links: links.filter((link, i) => links.findIndex((other) => other.href === link.href) === i),
     routeLabel: routeLabel(place),
+    datenKlassen: c.klassen,
+    titelStufe: c.stufe,
   };
 }
 
@@ -959,7 +1308,7 @@ function parentLink(parentId: string): PageLink | null {
 
 // ─── Kreis-Hub ──────────────────────────────────────────────────────────────
 
-export type KreisSectionId = 'lead' | 'zahlen' | 'orte' | 'stellen' | 'band' | 'kontakt';
+export type KreisSectionId = 'lead' | 'zahlen' | 'oepnv' | 'orte' | 'stellen' | 'band' | 'kontakt';
 
 /** Eine Zeile der Ortstabelle eines Kreises (Kreis-Hub) bzw. des Ortsverzeichnisses (Gebietsseite). */
 export interface PlaceRow {
@@ -1074,6 +1423,57 @@ function airSpanSentence(places: readonly Place[]): string {
 const placeListItem = (place: Place) =>
   labeled(place.name, `${formatKm(place.commute.distanceKm)}, ${formatMinutes(place.commute.minutes)}`);
 
+/** Tür zu Tür der spätesten Verbindung zum Firmensitz bzw. zur Schule; null ohne Verbindung bis zur Frist. */
+const reisezeit = (place: Place, ziel: 'betrieb' | 'schule'): number | null =>
+  place.oepnv?.[ziel].moeglich && place.oepnv[ziel].spaeteste ? place.oepnv[ziel].spaeteste.reisezeitMin : null;
+
+/**
+ * Bus und Bahn im Kreis (Kreis-Hub, Datenklassen oepnv und berufsschule): aus wie vielen Orten eine Verbindung bis
+ * 7:30 Uhr ankommt, aus welchen nicht, der kürzeste und der längste Weg Tür zu Tür und dasselbe zur Berufsschule.
+ */
+function kreisOepnvBlocks(kreis: Kreis, places: readonly Place[]): TextBlock[] {
+  const mitDaten = places.filter((place) => place.oepnv);
+  if (mitDaten.length === 0) return [];
+  const anteil = (zahl: number) =>
+    zahl === mitDaten.length ? `Aus allen ${zahl} Orten ${kreis.genitive}` : `Aus ${zahl} der ${mitDaten.length} Orte ${kreis.genitive}`;
+  const names = (list: readonly Place[]) => joinList(list.map((p) => p.name));
+  const blocks: TextBlock[] = [];
+
+  const betrieb = mitDaten.filter((place) => reisezeit(place, 'betrieb') !== null);
+  const ohne = mitDaten.filter((place) => reisezeit(place, 'betrieb') === null);
+  blocks.push(
+    ausDaten(
+      'oepnv',
+      `${anteil(betrieb.length)} kommst du an einem Werktag mit Bus und Bahn bis ${formatUhr(ANKUNFT_BETRIEB)} zum Firmensitz${ohne.length > 0 ? `, nicht aus ${names(ohne)}` : ''}.`,
+    ),
+  );
+  if (betrieb.length > 1) {
+    const zeiten = betrieb.map((place) => reisezeit(place, 'betrieb')!);
+    const min = Math.min(...zeiten);
+    const max = Math.max(...zeiten);
+    const mit = (wert: number) => betrieb.filter((place) => reisezeit(place, 'betrieb') === wert).sort((a, b) => a.name.localeCompare(b.name, 'de'));
+    blocks.push(
+      ausDaten(
+        'oepnv',
+        `Am kürzesten ist der Weg Tür zu Tür aus ${names(mit(min))} mit ${formatMinutes(min)}, am längsten aus ${names(mit(max))} mit ${formatMinutes(max)}.`,
+      ),
+    );
+  }
+  const schule = mitDaten.filter((place) => reisezeit(place, 'schule') !== null);
+  if (schule.length > 0) {
+    const zeiten = schule.map((place) => reisezeit(place, 'schule')!);
+    const min = Math.min(...zeiten);
+    const schnell = schule.filter((place) => reisezeit(place, 'schule') === min).sort((a, b) => a.name.localeCompare(b.name, 'de'));
+    blocks.push(
+      ausDaten(
+        'berufsschule',
+        `${anteil(schule.length)} erreichst du die ${SCHULE.name} bis ${formatUhr(ANKUNFT_SCHULE)}, am schnellsten aus ${names(schnell)} mit ${formatMinutes(min)} Tür zu Tür.`,
+      ),
+    );
+  }
+  return blocks;
+}
+
 export function getKreisPageText(kreis: Kreis, options: PlaceTextOptions = {}): KreisPageText {
   const places = getKreisPlaces(kreis.id);
   const stats = groupStats(places);
@@ -1114,7 +1514,7 @@ export function getKreisPageText(kreis: Kreis, options: PlaceTextOptions = {}): 
         `SHK-Jobs ${kreis.dative}: ${places.length} Orte mit ${formatKm(nearest.commute.distanceKm)} bis ${formatKm(farthest.commute.distanceKm)} zum Firmensitz in ${HQ_CITY}. ${upperFirst(PERKS)}.`,
       ),
     }),
-    sections: [
+    sections: ([
       { id: 'lead', heading: `SHK-Jobs ${kreis.dative}`, blocks },
       {
         id: 'zahlen',
@@ -1128,6 +1528,7 @@ export function getKreisPageText(kreis: Kreis, options: PlaceTextOptions = {}): 
           gemeinsam(MEASUREMENT_NOTE),
         ],
       },
+      { id: 'oepnv', heading: 'Mit Bus und Bahn', blocks: kreisOepnvBlocks(kreis, places) },
       {
         id: 'orte',
         heading: `Alle Orte ${kreis.dative}`,
@@ -1136,7 +1537,7 @@ export function getKreisPageText(kreis: Kreis, options: PlaceTextOptions = {}): 
       { id: 'stellen', heading: 'Offene Stellen', blocks: stellenBlocks(jobs) },
       { id: 'band', heading: 'Was überall gilt', blocks: bandBlocks(kreis) },
       { id: 'kontakt', heading: 'Direkt fragen', blocks: [gemeinsam(KREIS_KONTAKT_TEXT)] },
-    ],
+    ] satisfies TextSection<KreisSectionId>[]).filter((section) => section.blocks.length > 0),
     bandFactIds: bandFactIds(kreis),
     links: [
       ...places.map((place) => ({ href: placePath(place), label: place.name })),

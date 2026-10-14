@@ -83,7 +83,7 @@ export function isPlacePage(html) {
   return types.has('Place') && !types.has('CollectionPage');
 }
 
-/** Wörter und Zahlen in Kleinschreibung, wie lib/places/__tests__/gate-metrics.ts tokens(). */
+/** Wörter und Zahlen in Kleinschreibung, wie lib/places/metriken.ts tokens(). */
 export function tokens(text) {
   return text.toLocaleLowerCase('de-DE').match(/[\p{L}\p{N}]+(?:[.,]\p{N}+)*/gu) ?? [];
 }

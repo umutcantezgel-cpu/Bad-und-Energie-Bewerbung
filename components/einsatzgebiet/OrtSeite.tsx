@@ -24,18 +24,35 @@ import {
   placePath,
   type Place,
 } from '@/lib/places/registry';
+import { OEPNV_QUELLE } from '@/lib/places/oepnv';
 import {
+  BERUFSSCHULE_QUELLENZEILE,
   EINSATZGEBIET_LINK_LABEL,
+  OEPNV_QUELLENZEILE,
   type LinkGruppe,
   type PlacePageText,
   type PlaceSectionId,
   type TextSection,
 } from '@/lib/places/text';
 import { cn } from '@/lib/utils/cn';
-import { Abschnittskopf, Absaetze, Faktenband, Kontakt, Messhinweis, OrtsKarten, bloecke, kartenWerte, titelId, type OrtsKarteDaten } from './Bausteine';
-import { ETIKETT, NEUER_TAB, PLAN_LEGENDE_STADTTEILE_STADT, planBeschreibungOrt, inDerselbenRichtung } from './einsatzgebiet-text';
+import {
+  Abschnittskopf,
+  Absaetze,
+  Antworten,
+  Faktenband,
+  Kontakt,
+  Messhinweis,
+  OrtsKarten,
+  Quellenzeile,
+  bloecke,
+  kartenWerte,
+  titelId,
+  type OrtsKarteDaten,
+} from './Bausteine';
+import { ETIKETT, FAHRPLAN, NEUER_TAB, PLAN_LEGENDE_STADTTEILE_STADT, planBeschreibungOrt, inDerselbenRichtung } from './einsatzgebiet-text';
 import styles from './einsatzgebiet.module.css';
 import { ortPlanOrte, placeView } from './karte';
+import { Fahrplan } from './Fahrplan';
 import { OrtTitel } from './OrtTitel';
 import { OrtPlan } from './Plaene';
 
@@ -54,7 +71,8 @@ const abschnitt = (text: PlacePageText, id: PlaceSectionId): TextSection<PlaceSe
 
 /**
  * Ortsseite (E-028), Erzählseite im Design der Stellenseite. Tonfolge: Pfad und Kopf Papier/Navy (Pendelweg) ·
- * Arbeitsweg Papier (Ortsblöcke, Plan, Entfernungsleiste, Messhinweis, Route) · Stellen Wand · Nachbarorte, Stadtteile
+ * Arbeitsweg Papier (Ortsblöcke, Plan, Entfernungsleiste, Messhinweis, Route) · Bus und Bahn Wand (Fragen und Antworten,
+ * Fahrplanliste, Quelle) · Berufsschule Papier (dasselbe für den Schulweg) · Stellen Wand · Nachbarorte, Stadtteile
  * und Kreis Papier · Band Navy (Fakten) · Kontakt Papier · Fuß Navy. Jeder Satz kommt aus lib/places/text.ts.
  */
 export function OrtSeite({ place, text, jobs }: OrtSeiteProps) {
@@ -62,6 +80,9 @@ export function OrtSeite({ place, text, jobs }: OrtSeiteProps) {
   const published = getPublishedPlaces();
   const lead = abschnitt(text, 'lead');
   const arbeitsweg = bloecke(abschnitt(text, 'arbeitsweg'));
+  const oepnv = abschnitt(text, 'oepnv');
+  const schule = abschnitt(text, 'schule');
+  const zumBetrieb = place.oepnv?.betrieb.spaeteste;
   const stellen = abschnitt(text, 'stellen');
   const nachbarn = abschnitt(text, 'nachbarn');
   const stadtteile = abschnitt(text, 'stadtteile');
@@ -173,7 +194,37 @@ export function OrtSeite({ place, text, jobs }: OrtSeiteProps) {
         </Container>
       </Section>
 
-      {/* Stellen: alle live Stellen mit Gehalt (gemeinsam) */}
+      {/* Bus und Bahn zum Firmensitz (Plan §B): Antworten aus den Fahrplandaten, daneben die späteste Verbindung */}
+      {oepnv ? (
+        <Section id="bus-und-bahn" tone="wand" trenner="62%" aria-labelledby={titelId('oepnv')}>
+          <Container className="flex flex-col gap-section-sm">
+            <div className={styles.zweiSpalten}>
+              <div className={styles.text}>
+                <Abschnittskopf id={titelId('oepnv')} eyebrow={ETIKETT.oepnv} title={oepnv.heading} klammer />
+                <Antworten blocks={oepnv.blocks} />
+              </div>
+              {zumBetrieb ? <Fahrplan verbindung={zumBetrieb} titel={FAHRPLAN.betrieb} /> : null}
+            </div>
+            <Quellenzeile text={OEPNV_QUELLENZEILE} lizenz={{ label: OEPNV_QUELLE.lizenz, href: OEPNV_QUELLE.lizenzUrl }} />
+          </Container>
+        </Section>
+      ) : null}
+
+      {/* Berufsschule: zuständig laut Verordnung (gemeinsam), der Schulweg des Orts und der Fakt für Azubis. Ohne eigene
+          Kennwerte: Zur Schule fahren Nachbarorte oft mit denselben Zügen, die Werte stünden auf ihren Seiten gleich. */}
+      {schule ? (
+        <Section id="berufsschule" tone="papier" trenner aria-labelledby={titelId('schule')}>
+          <Container className="flex flex-col gap-section-sm">
+            <div className={styles.text}>
+              <Abschnittskopf id={titelId('schule')} eyebrow={ETIKETT.schule} title={schule.heading} klammer />
+              <Antworten blocks={schule.blocks} />
+            </div>
+            <Quellenzeile text={BERUFSSCHULE_QUELLENZEILE} />
+          </Container>
+        </Section>
+      ) : null}
+
+      {/* Stellen: alle live Stellen, Lohn auf Anfrage (gemeinsam) */}
       {stellen ? (
         <Section id="stellen" tone="wand" trenner="62%" aria-labelledby={titelId('stellen')}>
           <Container className="flex flex-col gap-section-sm">

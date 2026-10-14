@@ -4,8 +4,17 @@ import { FACTS } from '@/lib/content/facts';
 import { getActiveJobs } from '@/lib/jobs/registry';
 import { findClaims } from '../../../scripts/qa/check-claims.mjs';
 import { DEFAULT_WHATSAPP_MESSAGE } from '@/lib/utils/whatsapp-utils';
+import { OEPNV_QUELLE } from '../oepnv';
 import { getHubKreise, getKreisById, getKreise, getPlaceById, getPublishedPlaces } from '../registry';
 import {
+  BERUFSSCHULE_QUELLENZEILE,
+  OEPNV_QUELLENZEILE,
+  fahrzeugName,
+  formatMeter,
+  formatUhr,
+  formatUhrzeit,
+  mitFahrzeug,
+  ortMeta,
   BAND_FACT_IDS,
   MEASUREMENT_NOTE,
   formatAirKm,
@@ -30,6 +39,17 @@ const section = (p: PlacePageText, id: string) => p.sections.find((s) => s.id ==
 const text = (p: PlacePageText, id: string) => (section(p, id)?.blocks ?? []).map((b) => b.text).join(' ');
 const plain = (value: string) => value.replace(/ /g, ' ');
 const allPages = getPublishedPlaces().map((place) => getPlacePageText(place, { jobs }));
+/** Alle Haltestellennamen der Fahrplandaten, die längsten zuerst. */
+const HALTESTELLEN = [
+  ...new Set(
+    getPublishedPlaces().flatMap((place) => {
+      const o = place.oepnv;
+      if (!o) return [];
+      const wege = [o.betrieb.spaeteste, o.schule.spaeteste].filter((v) => v !== undefined);
+      return [...o.startHaltestellen.map((h) => h.name), ...wege.flatMap((v) => v.teilstrecken.flatMap((t) => [t.ab, t.an]))];
+    }),
+  ),
+].sort((a, b) => b.length - a.length);
 
 describe('Formate (DIN 5008)', () => {
   it('Zahlen, Einheiten und Datum', () => {
@@ -52,21 +72,31 @@ describe('Formate (DIN 5008)', () => {
 });
 
 describe('Ortsseite: Kopf und Metadaten', () => {
-  it('Aßlar: Title, h1, Keyword und Etikett', () => {
+  // Titelstufe „Arbeitsweg“ (Plan §B, M-023): ohne Einsatzdaten nennt keine Ortsseite „SHK-Jobs {Ort}“
+  it('Aßlar: Title, h1, Keyword und Etikett in der Titelstufe „Arbeitsweg“', () => {
     const asslar = page('asslar');
-    expect(asslar.meta.title).toBe('SHK-Jobs Aßlar: 8 km bis Wetzlar');
-    expect(asslar.meta.h1).toBe('SHK-Jobs für Aßlar');
-    expect(asslar.meta.primaryKeyword).toBe('SHK Jobs Aßlar');
+    expect(asslar.titelStufe).toBe('arbeitsweg');
+    expect(asslar.meta.title).toBe('Arbeitsweg Aßlar – Wetzlar: Auto und Bus');
+    expect(asslar.meta.h1).toBe('Von Aßlar zur Arbeit nach Wetzlar');
+    expect(asslar.meta.primaryKeyword).toBe('Arbeitsweg Aßlar Wetzlar');
     expect(asslar.etikett).toBe('35614 Aßlar · Lahn-Dill-Kreis');
     expect(asslar.path).toBe('/einsatzgebiet/asslar');
-    expect(plain(asslar.meta.description)).toContain('8 km und rund 12 Minuten');
+    expect(plain(asslar.meta.description)).toBe(
+      'Arbeitsweg Aßlar – Wetzlar: 8 km, rund 12 Minuten mit dem Auto, mit Bus und Bahn los um 6:25 Uhr, an 7:16 Uhr. Flexible Arbeitszeiten, 30 Tage Urlaub.',
+    );
+    for (const p of allPages) {
+      expect(p.titelStufe, p.placeId).toBe('arbeitsweg');
+      for (const text of [p.meta.title, p.meta.h1, p.meta.primaryKeyword]) expect(text, p.placeId).not.toMatch(/SHK[\s-]Jobs/i);
+    }
     expect(asslar.masse.map((m) => m.name)).toEqual(['Strecke', 'Fahrzeit', 'Luftlinie', 'Richtung ab Firmensitz']);
     expect(asslar.unterzeile.map(plain)).toEqual(['Rund 12 Minuten Fahrt.', FACTS.flexibleHours.long]);
   });
 
-  it('Stadtteile: Titel zum Firmensitz, Etikett mit Wetzlar', () => {
+  it('Stadtteile: Titel und h1 zum Firmensitz, Etikett mit Wetzlar', () => {
     const hermannstein = page('hermannstein');
-    expect(hermannstein.meta.title).toBe('SHK-Jobs Hermannstein: 6 km zum Firmensitz');
+    expect(hermannstein.meta.title).toBe('Arbeitsweg Hermannstein – Wetzlar: Auto und Bus');
+    expect(hermannstein.meta.h1).toBe('Von Hermannstein zur Arbeit am Firmensitz');
+    expect(plain(hermannstein.meta.description)).toMatch(/^Arbeitsweg Hermannstein – Firmensitz in Wetzlar: 6 km, rund 10 Minuten mit dem Auto/);
     expect(hermannstein.etikett).toBe('35586 Wetzlar-Hermannstein · Stadtteil');
     expect(hermannstein.links.map((l) => l.href)).toContain('/einsatzgebiet/wetzlar');
   });
@@ -83,10 +113,12 @@ describe('Ortsseite: Kopf und Metadaten', () => {
 
 describe('Ortsseite: Abschnitte', () => {
   it('feste Reihenfolge, leere Abschnitte fallen weg', () => {
-    expect(page('asslar').sections.map((s) => s.id)).toEqual(['lead', 'arbeitsweg', 'stellen', 'nachbarn', 'kreis', 'band', 'kontakt']);
+    expect(page('asslar').sections.map((s) => s.id)).toEqual(['lead', 'arbeitsweg', 'oepnv', 'schule', 'stellen', 'nachbarn', 'kreis', 'band', 'kontakt']);
     expect(page('wetzlar').sections.map((s) => s.id)).toEqual([
       'lead',
       'arbeitsweg',
+      'oepnv',
+      'schule',
       'stellen',
       'nachbarn',
       'stadtteile',
@@ -251,8 +283,10 @@ describe('Review Phase 2: ein Maß je Wort, keine Füllsätze', () => {
   const hub = getEinsatzgebietPageText({ jobs });
 
   it('„Ring“ steht nur für die Kreise der Pläne (Luftlinie), nie für die Straßenstrecke', () => {
+    // Haltestellen heißen, wie der Verkehrsverbund sie nennt („Wetzlar Neustadt (Ring)“): Eigennamen, keine Strecke
+    const ohneHaltestellen = (text: string) => HALTESTELLEN.reduce((rest, name) => rest.split(name).join(''), text);
     for (const p of allPages) {
-      expect(sectionText(p.sections), p.placeId).not.toMatch(/\bRing/);
+      expect(ohneHaltestellen(sectionText(p.sections)), p.placeId).not.toMatch(/\bRing/);
       expect(p.masse.map((m) => m.name)).not.toContain('Ring');
     }
     for (const p of kreisPages) expect(sectionText(p.sections), p.kreisId).not.toMatch(/\bRing/);
@@ -285,5 +319,115 @@ describe('Review Phase 2: ein Maß je Wort, keine Füllsätze', () => {
     expect(plain(text(page('butzbach'), 'nachbarn'))).toContain('Langgöns gehört schon zum Landkreis Gießen.');
     expect(plain(text(page('lahnau'), 'arbeitsweg'))).toContain('Startpunkt ist Dorlar (Hauptort laut OpenStreetMap).');
     for (const p of allPages) expect(sectionText(p.sections), p.placeId).not.toMatch(/Verwaltungssitz|Nebenan beginn/);
+  });
+});
+
+describe('Bus und Bahn und Berufsschule (Plan §B): Antworten aus den Daten', () => {
+  const oepnv = (id: string) => section(page(id), 'oepnv')!;
+  const schule = (id: string) => section(page(id), 'schule')!;
+
+  it('Formate: Uhrzeit ohne führende Null, geschützte Leerzeichen vor Uhr, m und in „Bus 12“', () => {
+    expect(formatUhrzeit('06:25')).toBe('6:25');
+    expect(formatUhr('07:30')).toBe('7:30\u00A0Uhr');
+    expect(formatMeter(1230)).toBe('1.230\u00A0m');
+    expect(fahrzeugName({ linie: '12', verkehrsmittel: 'bus' })).toBe('Bus\u00A012');
+    expect(mitFahrzeug({ linie: 'RE99', verkehrsmittel: 'bahn' })).toBe('mit dem Zug\u00A0RE99');
+    expect(mitFahrzeug({ linie: '1', verkehrsmittel: 'tram' })).toBe('mit der Straßenbahn\u00A01');
+  });
+
+  it('Aßlar: späteste Verbindung mit Haltestelle, erstem Fahrzeug, Umstiegen, Ankunft und Tür zu Tür', () => {
+    const bus = oepnv('asslar');
+    expect(bus.heading).toBe('Mit Bus und Bahn aus Aßlar');
+    expect(bus.blocks.map((b) => b.frage)).toEqual(['Wann musst du in Aßlar los?', 'Was kommt zwischen 6 und 8\u00A0Uhr an?', 'Wo ist die nächste Haltestelle?']);
+    expect(plain(bus.blocks[0].text)).toBe(
+      'Um 6:25 Uhr, für die Ankunft bis 7:30 Uhr: 13 Minuten zu Fuß zur Haltestelle Aßlar Gesamtschule, um 6:38 Uhr mit dem Bus 12 bis Wetzlar Carolinenhütte, dann mit dem Bus 185; am Firmensitz um 7:16 Uhr, 51 Minuten Tür zu Tür, mit dem Auto 12 Minuten.',
+    );
+    expect(plain(bus.blocks[1].text)).toBe('Abfahrt 5:58 Uhr (an 6:31), 6:18 Uhr (an 7:04), 6:38 Uhr (an 7:16) und 7:15 Uhr (an 7:50), jede mit einem Umstieg.');
+    expect(plain(bus.blocks[2].text)).toBe('An der Ortsmitte: Aßlar Grundschule (150 m zu Fuß), Aßlar Mittelstraße (320 m) und Aßlar Bachstraße (500 m).');
+    for (const block of bus.blocks) expect(block).toMatchObject({ kind: 'ort', daten: 'oepnv' });
+  });
+
+  it('ohne Verbindung bis 7:30 Uhr ist genau das die Auskunft, mit der frühesten Ankunft, dem Auto und dem Nachbarort mit Verbindung', () => {
+    const greifenstein = oepnv('greifenstein');
+    expect(greifenstein.blocks[0].frage).toBe('Kommst du aus Greifenstein bis 7:30\u00A0Uhr mit Bus und Bahn hin?');
+    expect(plain(greifenstein.blocks[0].text)).toBe('Nein, die früheste Verbindung fährt um 6:24 Uhr und ist um 7:50 Uhr da, mit zwei Umstiegen; mit dem Auto 27 Minuten.');
+    expect(plain(greifenstein.blocks[1].text)).toBe('Aus Sinn (4,4 km): Abfahrt 6:13 Uhr ab Sinn Firma Haas + Sohn mit dem Bus 530, Ankunft 7:04 Uhr.');
+    const weilrod = oepnv('weilrod');
+    // Kein Bus im Zählfenster: die früheste Ankunft aus dem Grund der Datei („die früheste kommt um 08:16 an“)
+    expect(plain(weilrod.blocks[0].text)).toBe('Nein, zwischen 6 und 8 Uhr kommt keine Verbindung an, die früheste ist erst um 8:16 Uhr da; mit dem Auto 35 Minuten.');
+    expect(plain(schule('weilrod').blocks[1].text)).toContain('die früheste ist erst um 8:20 Uhr da. Aus Grävenwiesbach (7,6 km): Abfahrt 5:18 Uhr ab Grävenwiesbach Bahnhof mit dem Bus X89');
+    // Ohne Verbindung keine Liste der Verbindungen am Morgen
+    for (const id of ['greifenstein', 'weilrod']) expect(oepnv(id).blocks.map((b) => b.frage)).not.toContain('Was kommt zwischen 6 und 8\u00A0Uhr an?');
+  });
+
+  it('nahe Orte nennen den Fußweg, ohne Umstieg steht „ohne Umstieg“', () => {
+    expect(plain(oepnv('nauborn').blocks[0].text)).toContain('mit dem Auto 9 Minuten, zu Fuß 47 Minuten.');
+    expect(plain(oepnv('braunfels').blocks[0].text)).toContain('mit dem Bus 185 bis Wetzlar Braunfelser Straße ohne Umstieg; am Firmensitz um');
+    expect(plain(oepnv('steindorf').blocks[1].text)).toMatch(/, alle ohne Umstieg\.$/);
+  });
+
+  it('Berufsschule: zuständig laut Verordnung (gemeinsam, mit Wohnort), Schulweg mit Vergleich zum Firmensitz, der Fakt Fahrtkosten', () => {
+    const azubi = schule('asslar');
+    expect(azubi.heading).toBe('Zur Berufsschule aus Aßlar');
+    expect(azubi.blocks[0]).toMatchObject({ kind: 'gemeinsam', frage: 'Welche Berufsschule ist zuständig?' });
+    expect(plain(azubi.blocks[0].text)).toBe(
+      'Laut Fachklassenverordnung die Werner-von-Siemens-Schule Wetzlar, Dammstraße 62, für Grund- und Fachstufe: Es zählt der Ausbildungsort, nicht Aßlar als Wohnort. Bestätigt hat der Betrieb das noch nicht.',
+    );
+    expect(plain(schule('nauborn').blocks[0].text)).toContain('nicht der Stadtteil, in dem du wohnst');
+    expect(azubi.blocks[1]).toMatchObject({ kind: 'ort', daten: 'berufsschule', frage: 'Wann musst du in Aßlar zur Schule los?' });
+    expect(plain(azubi.blocks[1].text)).toBe(
+      'Um 6:49 Uhr, für die Ankunft bis 7:45 Uhr: 10 Minuten zu Fuß zur Haltestelle Aßlar Bahnhof, um 6:59 Uhr mit dem Zug RB40 bis Wetzlar Bahnhof, dann mit dem Bus 24; an der Schule um 7:26 Uhr, 37 Minuten Tür zu Tür, 14 Minuten weniger als zum Firmensitz.',
+    );
+    expect(plain(schule('wetzlar').blocks[1].text)).toContain('so lange wie zum Firmensitz');
+    expect(azubi.blocks.at(-1)).toEqual({ kind: 'gemeinsam', text: FACTS.travelAllowance.long, factIds: ['travelAllowance'] });
+  });
+
+  it('Quellenzeilen: Namensnennung und Bearbeitung wörtlich aus oepnv.json, Fundstellen der Zuständigkeit, nichts im Ortstext', () => {
+    expect(OEPNV_QUELLENZEILE).toContain(OEPNV_QUELLE.namensnennung);
+    expect(OEPNV_QUELLENZEILE).toContain(OEPNV_QUELLE.lizenz);
+    expect(OEPNV_QUELLENZEILE).toContain('Auf das Gebiet um Wetzlar und einen Werktag gefiltert und mit eigenem Routing ausgewertet.');
+    expect(OEPNV_QUELLENZEILE).not.toContain('scripts/');
+    expect(plain(OEPNV_QUELLENZEILE)).toContain('Dienstag, 27. Oktober 2026, Datenstand 10. Oktober 2026');
+    expect(plain(BERUFSSCHULE_QUELLENZEILE)).toBe(
+      'Zuständigkeit: Fachklassenverordnung (GVBl. Hessen 2026 Nr. 21) und Schulbezirkssatzung des Lahn-Dill-Kreises. Der Unterrichtsbeginn ist nicht belegt. Fahrplan wie oben.',
+    );
+    for (const p of allPages) expect(sectionText(p.sections), p.placeId).not.toContain('gtfs.de');
+  });
+
+  it('jede Ortsseite: zwei Datenklassen, jeder Datenblock ein Ortsblock, keine leeren Fragen, keine FAQPage-Wörter', () => {
+    for (const p of allPages) {
+      expect(p.datenKlassen, p.placeId).toEqual(['oepnv', 'berufsschule']);
+      const bloecke = [...section(p, 'oepnv')!.blocks, ...section(p, 'schule')!.blocks];
+      for (const block of bloecke) {
+        if (block.daten) expect(block.kind, p.placeId).toBe('ort');
+        if (block.frage !== undefined) expect(block.frage, p.placeId).toMatch(/\?$/);
+      }
+      expect(bloecke.filter((b) => b.daten === 'oepnv').length, p.placeId).toBeGreaterThanOrEqual(2);
+      expect(bloecke.filter((b) => b.daten === 'berufsschule').length, p.placeId).toBeGreaterThanOrEqual(1);
+    }
+  });
+
+  it('Titelstufe „SHK-Jobs“ ist vorbereitet und greift erst mit Einsatzdaten (M-023)', () => {
+    const asslar = getPlaceById('asslar')!;
+    expect(ortMeta(asslar, 'arbeitsweg').title).toBe('Arbeitsweg Aßlar – Wetzlar: Auto und Bus');
+    const shk = ortMeta(asslar, 'shk-jobs');
+    expect(shk.title).toBe('SHK-Jobs Aßlar: 8 km bis Wetzlar');
+    expect(shk.h1).toBe('SHK-Jobs für Aßlar');
+    expect(shk.primaryKeyword).toBe('SHK Jobs Aßlar');
+    expect(ortMeta(getPlaceById('hermannstein')!, 'shk-jobs').title).toBe('SHK-Jobs Hermannstein: 6 km zum Firmensitz');
+  });
+
+  it('Kreis-Hubs: Zusammenfassung ihrer Orte für Bus und Bahn und den Schulweg', () => {
+    const ldk = getKreisPageText(getKreisById('lahn-dill-kreis')!, { jobs });
+    const bus = ldk.sections.find((s) => s.id === 'oepnv')!;
+    expect(ldk.sections.map((s) => s.id)).toEqual(['lead', 'zahlen', 'oepnv', 'orte', 'stellen', 'band', 'kontakt']);
+    expect(bus.blocks.map((b) => plain(b.text))).toEqual([
+      'Aus 25 der 26 Orte des Lahn-Dill-Kreises kommst du an einem Werktag mit Bus und Bahn bis 7:30 Uhr zum Firmensitz, nicht aus Greifenstein.',
+      'Am kürzesten ist der Weg Tür zu Tür aus Steindorf mit 16 Minuten, am längsten aus Bischoffen mit 92 Minuten.',
+      'Aus allen 26 Orten des Lahn-Dill-Kreises erreichst du die Werner-von-Siemens-Schule Wetzlar bis 7:45 Uhr, am schnellsten aus Naunheim mit 12 Minuten Tür zu Tür.',
+    ]);
+    expect(bus.blocks.map((b) => b.daten)).toEqual(['oepnv', 'oepnv', 'berufsschule']);
+    const giessen = getKreisPageText(getKreisById('landkreis-giessen')!, { jobs }).sections.find((s) => s.id === 'oepnv')!;
+    expect(plain(giessen.blocks[0].text)).toBe('Aus allen 12 Orten des Landkreises Gießen kommst du an einem Werktag mit Bus und Bahn bis 7:30 Uhr zum Firmensitz.');
   });
 });

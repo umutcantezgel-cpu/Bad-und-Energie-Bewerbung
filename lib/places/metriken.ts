@@ -1,6 +1,8 @@
 /**
- * Messgrößen des Einzigartigkeits-Gates (gate.test.ts): Wörter, 5-Wort-Shingles, Jaccard und Satzgerüste.
- * Liegt neben den Tests, weil nur das Gate sie braucht; kein Seiten-Code importiert dieses Modul.
+ * Messgrößen des Gates der Ortsseiten: Wörter, 5-Wort-Shingles, Jaccard und Satzgerüste. Seit E-029 rechnet das
+ * Indexierungs-Gate (lib/places/qualitaet.ts) mit ihnen, darum liegen sie nicht mehr neben den Tests
+ * (früher lib/places/__tests__/gate-metrics.ts). Kein Seiten-Code importiert dieses Modul; scripts/qa/
+ * check-local-similarity.mjs zählt Wörter und Shingles am gebauten HTML genauso.
  */
 
 /** Wörter und Zahlen in Kleinschreibung; „4,5“ und „3.600“ bleiben ein Token. */
