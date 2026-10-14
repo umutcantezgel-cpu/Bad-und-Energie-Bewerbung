@@ -96,9 +96,10 @@ describe('ProcessTimeline (#ablauf, E-START-027)', () => {
     expect(html).toContain('w-6');
   });
 
-  it('Icon aus der eigenen Familie statt lucide', () => {
+  it('Icon aus der eigenen Familie statt lucide (Linienart icon, 2 px seit E-029)', () => {
     expect(html).not.toContain('lucide');
-    expect(html).toContain('stroke-width="3"');
+    expect(html).toContain('stroke-width="2"');
+    expect(html).toContain('stroke-width:var(--m-icon, 2px)');
   });
 });
 

@@ -5,11 +5,11 @@ import { renderGlyph, type IconName } from './glyphs';
 const SIZE = { sm: 16, md: 20, lg: 24, xl: 36 } as const;
 
 /**
- * Glyphen, die auch bei 16 px (sm) lesbar bleiben. Der Strich ist bei jeder Größe 3 px; bei 16 px liegen
- * Linien mit 5 Rastereinheiten Abstand nur noch 0,3 px auseinander (Menü, Drucker, Datei, Kalender,
- * Geldschein, Wärmepumpe …) und laufen zu; im Kreis mit Ausrufezeichen verschmilzt der Punkt mit dem
- * Ring. Belegt im Kontaktbogen 16/20/24 px (_relaunch/belege/r2-fundament-r2/icons-kontaktbogen-dpr1.webp
- * und -dpr2.webp). Alle anderen ab md; die Familien-Icons sind für 24 px gezeichnet.
+ * Glyphen, die auch bei 16 px (sm) lesbar bleiben. Belegt ist die Liste im Kontaktbogen 16/20/24 px mit dem
+ * 3-px-Strich (_relaunch/belege/r2-fundament-r2/icons-kontaktbogen-dpr1.webp und -dpr2.webp): bei 16 px liefen
+ * Linien mit 5 Rastereinheiten Abstand zu (Menü, Drucker, Datei, Kalender, Geldschein, Wärmepumpe …). Seit E-029 ist
+ * der Strich 2 px (--m-icon); die Liste bleibt die vorsichtige Auswahl, bis ein neuer Kontaktbogen sie erweitert.
+ * Alle anderen ab md; die Familien-Icons sind für 24 px gezeichnet.
  */
 export const KLEIN_LESBAR = [
   'arrow-right',
@@ -60,9 +60,9 @@ export function iconPx(name: IconName, size: IconSize = 'lg'): number {
 
 /**
  * Icon der eigenen Familie (KERN K-010, ersetzt lucide-react). Server-Komponente ohne Zustand.
- * Strich 3 px (--m-strich) unabhängig von der Größe, runde Enden, Farbe aus currentColor.
- * overflow: visible, weil die runden Enden am Rand 2 bei 16 px 0,17 px über die Box ragen
- * (Kappe 1,5 px = 2,25 Rastereinheiten) und sonst abgeschnitten würden.
+ * Linienart `icon` (E-029): Strich 2 px (--m-icon) unabhängig von der Größe, runde Enden (die einzigen runden Enden
+ * des Formsystems: Bedienzeichen), Farbe aus currentColor. overflow: visible, damit eine runde Kappe am Rand 2 bei
+ * 16 px nie abgeschnitten wird.
  */
 export function Icon<N extends IconName>({ name, size = 'lg', title, style, ...rest }: IconProps<N>) {
   const px = iconPx(name, size);
@@ -75,14 +75,14 @@ export function Icon<N extends IconName>({ name, size = 'lg', title, style, ...r
       height={px}
       fill="none"
       stroke="currentColor"
-      strokeWidth={3}
+      strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
       focusable="false"
       data-icon={name}
       {...a11y}
       {...rest}
-      style={{ strokeWidth: 'var(--m-strich, 3px)', flexShrink: 0, overflow: 'visible', ...style }}
+      style={{ strokeWidth: 'var(--m-icon, 2px)', flexShrink: 0, overflow: 'visible', ...style }}
     >
       {title ? <title>{title}</title> : null}
       {renderGlyph(name)}

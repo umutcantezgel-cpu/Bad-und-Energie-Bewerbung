@@ -5,6 +5,7 @@ import { createElement, type ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { Hero } from '@/components/home/Hero';
+import { GLYPH_SHAPES } from '@/components/icons/glyphs';
 import { DAUER_IDS } from '@/lib/motion/register';
 import { COMPRESS_AW_L } from '@/lib/zeichnung/geraete/compress-aw-l';
 import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
@@ -111,6 +112,30 @@ describe('Außengerät: maßstäblich aus dem Geräte-Modul (K-010)', () => {
     // Ohne Leitungen zur Bewerbung und ohne Bewegung
     expect(m).not.toMatch(/data-weg="[^"]*knopf/);
     expect(m).not.toContain('data-motion');
+  });
+});
+
+describe('Glyphe waermepumpe (K-010): Proportionen der Außeneinheit', () => {
+  it('Gehäuse im Verhältnis 1.100 : 800, Ausblasöffnung links der Mitte mit dem Durchmesser des Moduls, zwei Halterungen', () => {
+    const g = COMPRESS_AW_S;
+    const formen = GLYPH_SHAPES.waermepumpe as readonly Record<string, number | string>[];
+    const gehaeuse = formen.find((f) => 'width' in f) as { x: number; y: number; width: number; height: number };
+    const [oeffnung, nabe] = formen.filter((f) => 'r' in f) as Array<{ cx: number; cy: number; r: number }>;
+    const k = gehaeuse.width / g.breite.mm;
+    expect(gehaeuse.height / k).toBeGreaterThan(g.hoehe.mm * 0.98);
+    expect(gehaeuse.height / k).toBeLessThan(g.hoehe.mm * 1.02);
+    expect((oeffnung.cx - gehaeuse.x) / k).toBeGreaterThan(g.ausblas.mitteX.mm * 0.97);
+    expect((oeffnung.cx - gehaeuse.x) / k).toBeLessThan(g.ausblas.mitteX.mm * 1.03);
+    expect((oeffnung.cx - gehaeuse.x) / k).toBeLessThan(g.breite.mm / 2);
+    expect((2 * oeffnung.r) / k).toBeGreaterThan(g.ausblas.durchmesser.mm * 0.95);
+    expect((2 * oeffnung.r) / k).toBeLessThan(g.ausblas.durchmesser.mm * 1.05);
+    expect(nabe.r).toBeLessThan(oeffnung.r / 2);
+    // Halterungen bei 107 und 107 + 881 mm, unter dem Gehäuse; kein Lüfter mit Blättern mehr
+    const fuesse = [...String((formen.find((f) => 'd' in f) as { d: string }).d).matchAll(/M(-?\d*\.?\d+) (-?\d*\.?\d+)/g)].map((m) => Number(m[1]));
+    expect(fuesse).toHaveLength(2);
+    expect((fuesse[0] - gehaeuse.x) / k).toBeCloseTo(g.konsolen.randabstand.mm, -1);
+    expect((fuesse[1] - fuesse[0]) / k).toBeCloseTo(g.konsolen.abstand.mm, -1);
+    expect(formen.some((f) => 'transform' in f)).toBe(false);
   });
 });
 

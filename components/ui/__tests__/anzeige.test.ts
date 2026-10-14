@@ -142,12 +142,14 @@ describe('Anzeige-Bausteine im Formsystem', () => {
     expect(klickbar).toContain('hover:bg-surface-3');
   });
 
-  it('Disclosure und Breadcrumbs zeichnen mit der eigenen Icon-Familie (Strich 3)', () => {
+  it('Disclosure und Breadcrumbs zeichnen mit der eigenen Icon-Familie (Linienart icon, 2 px seit E-029)', () => {
     const d = html(createElement(Disclosure, { summary: 'Frage' } as DisclosureProps, 'Antwort'));
     expect(d).toContain('data-motion="flaeche"');
-    expect(d).toContain('stroke-width="3"');
+    expect(d).toContain('stroke-width="2"');
+    expect(d).toContain('stroke-width:var(--m-icon, 2px)');
     const b = html(createElement(Breadcrumbs, { items: [{ label: 'Startseite', href: '/' }, { label: 'Datenschutz' }] }));
-    expect(b).toContain('stroke-width="3"');
+    expect(b).toContain('stroke-width="2"');
+    expect(b).toContain('stroke-width:var(--m-icon, 2px)');
     expect(b).toContain('aria-current="page"');
   });
 
