@@ -60,7 +60,8 @@ test('ohne Schalter (Standard bis M-034): Links bleiben unverändert, ?herkunft=
   await fillContact(flow);
   await taps.tap(submitButton(flow));
   await expect.poll(() => attribution, { message: 'Bewerbung abgeschickt' }).not.toBeNull();
-  expect(attribution).toEqual({ landingPath: '/bewerbung' });
+  // Nur, was der Flow selbst weiß (Einstiegsseite, eigener Funnel), kein Kanal aus ?herkunft=
+  expect(attribution).toEqual({ landingPath: '/bewerbung', funnel: 'bewerbung' });
 });
 
 /**
