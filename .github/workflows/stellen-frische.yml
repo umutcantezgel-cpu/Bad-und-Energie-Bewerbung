@@ -1,0 +1,74 @@
+# Stellen-Frische (Plan §C3): Jede veröffentlichte Stelle läuft höchstens 90 Tage nach `updatedAt` (Schema in
+# lib/jobs/schema.ts). Täglich prüft dieser Workflow, welche Stelle in weniger als 28 Tagen abläuft oder schon
+# abgelaufen und abgelöst ist (lib/jobs/frische.ts), und hält dafür genau ein Issue offen. Ist nichts mehr zu tun,
+# schließt er es. Die CI schlägt erst 14 Tage vor dem Ablauf fehl; die Erinnerung kommt doppelt so früh.
+#
+# Bewusst minimale Rechte: Code lesen und Issues schreiben, sonst nichts. Kein Deploy, kein Push.
+
+name: Stellen-Frische
+
+on:
+  schedule:
+    # Täglich 05:17 UTC (vor Arbeitsbeginn in Wetzlar), nicht zur vollen Stunde.
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  frische:
+    name: Ablauf der Stellen prüfen
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Bun einrichten
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - name: Abhängigkeiten installieren
+        run: bun install --frozen-lockfile
+
+      - name: Bericht erzeugen
+        id: bericht
+        run: |
+          bun -e "
+            const { FRISCHE_ISSUE_TITEL, frischeBericht, frischeText } = await import('./lib/jobs/frische.ts');
+            const now = new Date();
+            const text = frischeText(frischeBericht(now), now);
+            await Bun.write('frische.md', text);
+            console.log('titel=' + FRISCHE_ISSUE_TITEL);
+            console.log('offen=' + (text === '' ? 'nein' : 'ja'));
+          " >> "$GITHUB_OUTPUT"
+          cat frische.md
+
+      - name: Issue anlegen, aktualisieren oder schließen
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITEL: ${{ steps.bericht.outputs.titel }}
+          OFFEN: ${{ steps.bericht.outputs.offen }}
+        run: |
+          nummer="$(gh issue list --state open --search "\"$TITEL\" in:title" --json number,title \
+            --jq "map(select(.title == env.TITEL)) | .[0].number // empty")"
+          if [ "$OFFEN" = "ja" ]; then
+            if [ -n "$nummer" ]; then
+              gh issue edit "$nummer" --body-file frische.md
+            else
+              gh issue create --title "$TITEL" --body-file frische.md
+            fi
+          elif [ -n "$nummer" ]; then
+            gh issue close "$nummer" --comment "Keine Stelle läuft in den nächsten 28 Tagen ab, keine abgelöste Stelle ist offen."
+          fi
