@@ -300,3 +300,78 @@ Format: E-[Nr] · Datum · Gegenstand · Entscheidung · Grund · Umkehr (bei De
 - **Signaturmomente:** Ortsseite „Dein Weg zur Werkstatt“ (`pendel-zeichnen`), Hub `ringe-zeichnen`, Kreis-Hub Entfernungsleiste.
 - **Startseite:** Die weiteren Orte werden zu Links (löst E-START-029 „nicht klickbar“ ab), weil es jetzt ein Ziel gibt.
 
+## E-029 · 14.10.2026 · Denkprotokoll: Technische Zeichnung 2.0, Dauerbewegung, Bosch-Sperre und Indexierung per Gate (Inhaber)
+- **Anlass:**
+  - Der Inhaber hält die SVGs für ungenau und verspielt, also für unseriös. Er wünscht akkurate, dauerhaft animierte Produktzeichnungen, zum Beispiel eine Bosch-Wärmepumpe. Der Betrieb braucht dringend Mitarbeiter; die Karriereseite hat oberste Priorität.
+  - Befund der Bestandsaufnahme vom 14.10.2026 (sieben Analysen, nur lesend):
+    - Die Hero-Szene ist fachlich falsch: Das Außengerät ist etwa 1,4-fach zu groß, hat ein Windrad statt eines Lüftergitters und keine Hydraulik. Der Vorlauf fließt aus dem Bewerben-Knopf **in** die Pumpe. Der Heizkörper misst 1,1 × 1,2 m, die Wanne 2,5 m, und sie schwebt.
+    - Die Wärmepumpe ist viermal verschieden gezeichnet (Einstieg, HausKlein, Wärmebild, Icon), jedes Mal mit mittigem Propeller statt Ausblasöffnung mit Gitter.
+    - Effekte ohne Aussage: halber Lüfterdreh, Pop-Skalierungen, Knopf „Kreislauf zeigen“. Die Rohr-Metapher liegt auf fast jedem Element (Überschriften, Trenner, Gehalt, Diskretion).
+    - Die 59 Seiten unter `/einsatzgebiet` sind 82 % aller indexierbaren URLs. Die 54 Ortsseiten entstehen aus Pendel-Geometrie und folgen dem Muster „SHK-Jobs {Ort}“ – das passt zu Googles Beschreibung von Doorway- und Massenseiten.
+- **Antworten des Inhabers vom 14.10.2026** (Rückfragen zum Plan „Bewerber-Maschine“; in Anführungszeichen der Wortlaut der Antworten, wie im Plan festgehalten):
+  - Fotos: „keine“. Die Grafiken tragen die Seite, K-014 bleibt.
+  - Bosch: „Bosch Premium Partner“.
+  - Stil: „Technikzeichnung + animierte Produkt-SVGs“.
+  - Animation: „läuft dauerhaft“.
+  - Gerät: „Compress 5800i/6800i AW“.
+  - Zugänge: „Google Business Profile, Search Console“; kein Werbebudget.
+  - Ortsseiten: „massiv ausbauen, Risiko nahe 0 %“. Auf den Planentwurf, alle 54 Ortsseiten vorübergehend auf `noindex` zu setzen: kein Herausnehmen, sondern „mach, dass sie bestehen“.
+  - Ablauf: alles am Stück, P0 bis P2 in einem Durchgang.
+- **Ziel:** Zeichnungen, die ein SHK-Meister ohne Einwand abnimmt (Maße, Fließrichtung, Normsymbole); Bewegung, die zeigt, wie die Anlage läuft, ohne Barrierefreiheit, Akku und LCP zu belasten; kein Urheber-, Marken- oder Designrisiko; Ortsseiten, die als eigenständige Seiten bestehen statt als Massenware.
+- **Wege (Zeichnung und Bewegung):**
+  1. *Bosch-Bilder aus dem Netz nachzeichnen oder vektorisieren und animieren.* Schnell und dem Gerät ähnlich. Rechtlich der riskanteste Weg: Bearbeitung geschützter Lichtbilder und technischer Darstellungen (§§ 2 Abs. 1 Nr. 7, 23, 72 UrhG), Verstoß gegen die Bosch-Nutzungsbedingungen für digitale Inhalte (Ziffer 7.2: „zeichnerische Verfälschung“ nur mit schriftlicher Zustimmung), Logo ohne Erlaubnis (BGH I ZR 33/10).
+  2. *Bestehendes Formsystem nachschärfen:* Maßstab und Fließrichtung korrigieren, 3-px-Strich, Rohr-Metapher und einmaliger Auftakt bleiben. Klein und sicher, erfüllt aber weder „Technikzeichnung“ noch „läuft dauerhaft“; der Eindruck „verspielt“ bleibt.
+  3. *Technische Zeichnung 2.0:* Linienarten nach DIN EN ISO 128-2 (an den Bildschirm angepasst), Maßstab als Daten in `lib/zeichnung/` (1 Einheit = 1 mm bzw. 10 mm), Symbole nach DIN EN ISO 10628-2, Gerätemaße aus der Bosch-Installationsanleitung (nur die Zahlen), eine neutrale Fassung sofort und die Markenfassung hinter einem per Test gesperrten Schalter. Dauerbewegung nur in Produkt- und Prozesszeichnungen, mit Startbedingungen und Anhalten-Knopf.
+  4. *Fotos oder Video eigener Anlagen.* Am glaubwürdigsten, vom Inhaber aber ausgeschlossen („keine“). Für das Google-Unternehmensprofil bleiben eigene Fotos empfohlen; K-014 gilt für die Website.
+- **Wege (Ortsseiten):**
+  - a) Alle 54 Ortsseiten vorübergehend `noindex,follow` (Planentwurf): Risiko sofort nahe 0, vom Inhaber abgelehnt.
+  - b) Gate ohne neue Daten: Heute bestünde kein Ort die Bedingung I2 (zwei Datenklassen außer der Geometrie); das Ergebnis wäre Weg a.
+  - c) Gate plus echte Daten für alle 54 Orte im selben Release: Bus und Bahn aus gtfs.de (CC BY 4.0) und der Weg zur zuständigen Berufsschule laut Verordnung. Wer trotzdem durchfällt, bekommt automatisch `noindex,follow`.
+- **Bewertung:** Weg 3 erfüllt den Wunsch des Inhabers und den Nordstern (präzise, Bewegung mit Bedeutung), ist rechtlich sauber, prüfbar (viewBox gleich Maßen, Enden, Rollenfarben, Fließrichtung, Budgets) und umkehrbar. Risiken sind Malkosten der Schleifen auf schwachen Handys, WCAG 2.2.2 und der LCP; die Gegenmaßnahmen stehen unter Entscheidung 2. Aufwand hoch. Für die Ortsseiten ist Weg c der einzige, der „kein Herausnehmen“ und „Risiko nahe 0“ zugleich bedient. Das Restrisiko ist kleiner, aber nicht exakt 0.
+- **Entscheidung:** Weg 3 und Weg c.
+  1. **Technische Zeichnung 2.0** (KERN 1.2, K-010): Rohr nur, wo Wasser oder Kältemittel fließt. Jede Zeichnung ist entweder eine maßstäbliche technische Zeichnung oder ein Fließschema mit Normsymbolen. Gerät: Bosch Compress 5800i/6800i AW, Außeneinheit AW 4|5|7 OR-S mit 1.100 × 800 × 540 mm (Installationsanleitung 6721840669) bzw. AW 10|12 OR-T mit 1.350 × 1.100 × 540 mm (Installationsanleitung 6721842854); übernommen werden nur Maße, nichts wird abgepaust. Der Vorlauf läuft von der Anlage **zum** Bewerben-Knopf.
+  2. **Dauerbewegung** (K-003.5, K-009): nur in Produkt- und Prozesszeichnungen (Rotor, Wasser, Kältemittel). Eine Schleife läuft nur, wenn alles zutrifft: JS ist geladen, die Zeichnung ist sichtbar, der Tab ist sichtbar, keine reduzierte Bewegung gewünscht, nicht angehalten. Sonst steht ein vollständiges Standbild mit festen Fließpfeilen. Ein Knopf „Anhalten“/„Abspielen“ (44 × 44 px) hält alle Schleifen der Seite an, ohne Speicher im Browser (WCAG 2.2.2). Bewegt werden nur `transform`, `opacity` und `stroke-dashoffset`; kein Pulsieren, Leuchten oder Skalieren.
+  3. **Bosch-Sperre:** Bis zur schriftlichen Erlaubnis gibt es nur die neutrale, maßgenaue Fassung. Logo, Anker und Ring-Diffusor erscheinen erst, wenn `lib/zeichnung/marke.ts` `BOSCH_FREIGABE.erteilt` mit Belegpfad enthält (M-021); ein Test sperrt den Schalter. „Premium Partner“ steht in Text und Badge erst mit Urkunde und Wortlaut (M-020): Der Fakt `boschPremiumPartner` ist `pending`, `check-claims` verbietet den Wortlaut bis dahin.
+  4. **Indexierung per Gate** (ROADMAP §10.1): Eine Ortsseite ist nur indexierbar, wenn I1 bis I6 gelten. Das Ergebnis steht in einer Lock-Datei (`lib/places/data/indexierung.json`), die ein Test gegen die Berechnung prüft. Wer durchfällt, bekommt `noindex,follow`, bleibt erreichbar und fällt aus Sitemap, IndexNow, `llms.txt` und den ItemLists der Hubs. Der Fuß verlinkt nur noch die Kreis-Hubs und „Alle Orte“. Die Sitemap wird nach Gruppen geteilt (Kern, Stellen, Orte, Themen), damit die Ortsseiten in der Search Console getrennt messbar sind.
+- **Was E-029 aufhebt oder ersetzt:**
+  - **E-024:** Das Wärmebild entfällt (keine Verläufe, keine Isothermen). Navy-Fläche, Kästchen und Maße bleiben.
+  - **E-027, teilweise:** Der Radius-Zirkel im Giebel und das Einrasten (`radius-einrasten`, Skalierung) entfallen. „35 km“ bleibt als Maß in Schrift im Giebel, das Leitmotiv Einsatzgebiet bleibt. Die Arbeitszeit-Korrektur und die H1 bleiben unberührt.
+  - **E-028, Ziel:** „Zehnmal so viele indexierbare Seiten“ wird ersetzt durch „indexiert wird, was das Gate besteht“. Messgröße ist der Anteil indexierter Ortsseiten in der Search Console; breiter wird es erst ab 70 % (`docs/operations/orte-monitoring.md`). Seitenarten und Datenregeln von E-028 bleiben; die Ortsseite zeigt einen Lageplan mit Nordpfeil und Maßstabsleiste statt des Pendelwegs.
+  - **E-021, Gestaltung je Seite:** Das Wärmebild auf der Wärmepumpen-Stelle und der Knopf „Kreislauf zeigen“ entfallen (an seine Stelle tritt „Anhalten“/„Abspielen“). Rohrklammer, Leitungstrenner, Verteiler und Absperrung weichen Etikett, h1, Flächenwechsel, Liste und Typografie (Kopf und Stellen in P1, Rest in P2). Fortschrittsstrang und Leitungspaar im Bewerbungsflow bleiben, weil sie eine Funktion haben.
+  - **K-003.5 „Lassen: Schleifen“** und ROADMAP §4 „Verboten: Schleifen“ gelten nicht mehr für Produkt- und Prozesszeichnungen; für alles andere gelten sie weiter.
+- **Umkehrprobe:**
+  - Dauerbewegung: Der Schalter `data-dauer` (`components/zeichnung/bewegung/DauerSteuerung.tsx`) zeigt auf „aus“ jede Zeichnung als vollständiges Standbild. `infinite` steht nur in `components/zeichnung/bewegung/dauer.module.css` (Guard-Regel `endlos`); der Rückbau entfernt diese Datei und die drei `dauer`-Kennungen aus dem Register.
+  - Indexierung: Die Lock-Datei des Gates legt je Ort fest, ob er indexiert wird; jede Änderung steht als Diff im PR. Das Gate wird dafür nie gelockert (G7).
+  - Marke: `BOSCH_FREIGABE.erteilt` bleibt `false`, dann bleibt die neutrale Fassung.
+  - Formsystem: Revert der Commits von W1. Wärmebild, Zirkel und alte Szene liegen in der Git-Historie (`2f34ae9`).
+- **Folgen zweiter Ordnung:**
+  - Die Prüfungen werden strenger, keine wird gelockert (G7): `register.test.ts` (jede `dauer`-Kennung pausierbar, nur auf Erzählseiten, Periode ≥ 400 ms), neu `dauer.test.ts` (alle Kombinationen der Startbedingung), Guard-Regel `endlos`, neu `technik.test.ts` (viewBox gleich Maßen, Box des eingesetzten Geräts 110 × 80, stumpfe Enden, nur Rollenfarben, Vorlauf beginnt am Wärmeerzeuger, Marke nur mit Freigabe, Budgets per zlib, `dauer` nur mit `DauerSteuerung`), neu `e2e/bewegung.spec.ts`, `check-claims` („Premium Partner“), `check-graph` („noindex steht nicht in der Sitemap“), Lock-Test des Gates. `zeichnung.test.ts` und `zeichnungen-seitenkopf.test.ts` werden auf die Linienarten aus `lib/zeichnung/norm.ts` umgeschrieben, genauso streng.
+  - Playwright bleibt bei `reducedMotion: 'reduce'`; die Bewegung bekommt einen eigenen Lauf mit `no-preference`.
+  - Leistung: Messung vorher und nachher (`lh.mjs`, Median aus 5). Der LCP darf nicht schlechter werden (K-013).
+  - Fachliche Abnahme der Zeichnungen durch einen Meister mit Unterschrift (M-037).
+  - Ortsseiten: Der Fahrplanwechsel im Dezember erzwingt eine Neuberechnung (`docs/operations/orte-oepnv.md`), die Search Console wird wöchentlich geprüft (`docs/operations/orte-monitoring.md`), gtfs.de und DELFI e.V. werden namentlich genannt. Einsatzdaten (M-023) heben die Ortsseiten später auf die Titelstufe „SHK-Jobs {Ort}“.
+  - Bosch: Die Anfrage ist vorbereitet (`docs/inhaber/bosch-anfrage.md`). Ohne Antwort bleibt die neutrale Fassung dauerhaft.
+
+## E-030 · 14.10.2026 · Lohn auf Anfrage bei allen Stellen (Inhaber)
+- **Entscheidung des Inhabers (14.10.2026):** „Lohn auf Anfrage“ bei ALLEN Stellen. Dazu für die neuen Stellen: Ausbildung 2027 mit Vergütung „über Tarif, plus Prämien“ wie 2026; Schülerpraktikum: „kein Wort zu Geld“.
+- **Hinweis an den Inhaber, vor der Entscheidung gegeben:**
+  1. *Gehaltstransparenz als Vorsprung:* Laut Wettbewerbsanalyse vom 14.10.2026 nennen im Umkreis wenige SHK-Betriebe Beträge; die sichtbaren Spannen waren ein echter Vorsprung. Er fällt weg. Portale wie StepStone zeigen bei Anzeigen ohne Zahl eigene Gehaltsschätzungen.
+  2. *Google for Jobs:* `baseSalary` ist ein empfohlenes Feld. Ohne Betrag zeigt der Eintrag keine Gehaltsangabe und kann bei Suchen und Filtern nach Gehalt fehlen (Hinweis auf die Gehaltsfilter von Google).
+  3. *Recht:* Die EU-Entgelttransparenz-Richtlinie (EU) 2023/970 verlangt Angaben zum Einstiegsentgelt oder seiner Spanne vor dem Vorstellungsgespräch (Art. 5), nicht zwingend in der Anzeige. Deutschland hat die Umsetzungsfrist 07.06.2026 verpasst; die Umsetzung ist nach Stand der Recherche bis Anfang 2027 geplant. „Auf Anfrage“ ist damit zulässig, wenn der Betrieb die Spanne auf Nachfrage bzw. vor dem Gespräch nennt. Der Hinweis für den Betrieb steht in `docs/operations/stellen-pflegen.md`.
+- **Umsetzung (Plan §H):**
+  - Nirgends steht mehr ein Euro-Betrag zu Lohn oder Gehalt: Stellenseiten, Karten, Liste und Vergleich, Startseite, Ortsseiten (auch Meta-Texte), Themenseiten, OG-Bilder, `llms.txt` und `llms-full.txt`. Die Themenseite `/arbeiten-bei-uns/gehalt` wird zu „Bezahlung und Extras“ ohne Beträge; Slug und Weiterleitung bleiben stabil.
+  - Überall gilt derselbe Text „Lohn auf Anfrage“. Daneben bleiben die belegten Fakten ohne Zahl: über Tarif mit Urlaubs- und Weihnachtsgeld (`aboveTariff`), rollenbezogene Prämien, 30 Tage Urlaub (`vacation30`). Neuer Fakt `payOnRequest`.
+  - Datenmodell: `pay: 'auf-anfrage'` ist Pflicht und schließt `salary` aus; `pay: 'keine-angabe'` gibt es nur beim Praktikum.
+  - JobPosting ohne `baseSalary`; die Feeds lassen das Gehaltsfeld weg bzw. leer, wo das Format es erlaubt.
+  - Im Bewerbungsflow steht statt des Gehalts eine kurze Zeile mit Zusatzleistungen („über Tarif · 30 Tage Urlaub“).
+  - Die Prüfungen bleiben genauso streng, nur auf die neue Regel: Tests prüfen „kein Betrag vorhanden, ‚Lohn auf Anfrage‘ vorhanden“ statt „Betrag vorhanden“. `check-graph` Regel 9: Kein JobPosting enthält eine Zahl in einem Gehaltsfeld. `check-claims`: Euro-Beträge zu Lohn oder Gehalt sind im gebauten Ergebnis verboten.
+- **Was E-030 aufhebt:**
+  - K-014 „Gehaltsspannen sichtbar“ und ROADMAP §1 „Gehalt: Spannen sichtbar auf Stellenseiten, im Schema und in den Feeds“.
+  - Aus E-021: „Gehaltsspanne in Bildgröße im Heizkreis“ und „Stellen als Leitungsabgänge mit Gehalt“; aus K-009 das Signaturmoment „Gehalt im Heizkreis“. An die Stelle von Heizkreis und Gehaltsleiter tritt ein ruhiger Block „Lohn auf Anfrage · über Tarif · Urlaubs- und Weihnachtsgeld“.
+  - M-026 (Gehalt Quereinsteiger) ist damit erledigt; die Stelle wird ohne Betrag veröffentlicht.
+- **Umkehr:** Der Inhaber bestätigt aktuelle Spannen; sie kommen je Stelle mit `pay: 'spanne'` und `salary` zurück (Ausgangswerte in `lib/jobs/data/*.ts@2f34ae9` und `docs/operations/fakten-abgleich.md` Abschnitt C). Damit kehren `baseSalary`, die Gehaltsfelder der Feeds und K-014 „Gehaltsspannen sichtbar“ zurück. Die Regeln in `check-claims` und `check-graph` werden dann an `pay` gebunden, nicht gelöscht (G7).
+- **Folgen zweiter Ordnung:**
+  - Bewerber fragen öfter nach dem Lohn. Deshalb gibt es je Stelle eine FAQ „Bezahlung“ (Antwort: auf Anfrage, über Tarif, Zusatzleistungen), und die schnelle Rückmeldung wird wichtiger (M-007, M-029).
+  - Der Betrieb braucht je Stelle eine Spanne, die er am Telefon bzw. vor dem Kennenlernen nennt (Richtlinie, Art. 5).
+  - Google-for-Jobs-Einträge erscheinen ohne Gehalt. Vorschlag: Impressionen und Klicks je Stelle in der Search Console vorher und nachher vergleichen und dem Inhaber nach acht Wochen erneut vorlegen.
+
