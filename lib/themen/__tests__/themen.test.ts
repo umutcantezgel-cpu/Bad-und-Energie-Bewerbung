@@ -7,7 +7,6 @@ import { DISCRETION_PROMISE, getProcessSteps } from '@/lib/content/process';
 import { REGION } from '@/lib/content/region';
 import { TEAM_PROFILES, TEAM_QUOTES } from '@/lib/content/team';
 import { WHATSAPP_GREETING } from '@/lib/apply/whatsapp-message';
-import { formatNumber } from '@/lib/jobs/format';
 import { ALL_JOBS, getActiveJobs, isJobLive, type Job } from '@/lib/jobs/registry';
 import { getEinsatzgebietPageText, getKreisPageText, getPlacePageText } from '@/lib/places/text';
 import { getHubKreise, getPublishedPlaces } from '@/lib/places/registry';
@@ -21,10 +20,9 @@ import { ARBEITEN_PATH, THEMA_IDS, getThema, getThemaBySlug, getThemen, themaPat
 import {
   alleQuellen,
   alleTexte,
-  fachkraftSpanne,
   faktErlaubt,
-  gehaltsleiter,
   getArbeitenPageText,
+  mitLohn,
   getThemaPageText,
   saetze,
   stellenMitFakt,
@@ -33,8 +31,9 @@ import {
 } from '../text';
 
 /**
- * Themenseiten (E-028): nur belegte Aussagen (Fakten per ID, bestätigt und gültig), Gehälter nur aus den live Stellen,
- * keine Zahl ohne Quelle, keine Arbeitszeit-Uhrzeit (fakten-abgleich B28), eindeutige Title, Descriptions und h1.
+ * Themenseiten (E-028): nur belegte Aussagen (Fakten per ID, bestätigt und gültig), kein Betrag zu Lohn oder Gehalt
+ * (E-030: Lohn auf Anfrage), keine Zahl ohne Quelle, keine Arbeitszeit-Uhrzeit (fakten-abgleich B28), eindeutige Title,
+ * Descriptions und h1.
  */
 
 const NOW = new Date('2026-10-12T10:00:00Z');
@@ -92,20 +91,20 @@ describe('Texte der Themenseiten: nur Belegtes', () => {
     }
   });
 
-  it('offene Fakten stehen auf keiner Themenseite (A1 Übernahme, A2 1 %, A3 Gehalt am 1. Werktag)', () => {
+  it('offene Fakten stehen auf keiner Themenseite (A1 Übernahme, A2 1 %, A3 Gehalt am 1. Werktag, S6 Premium Partner)', () => {
     const offen = FACT_IDS.filter((id) => FACTS[id].pending);
-    expect(offen.sort()).toEqual(['payFirstWorkday', 'privateCarOnePercent', 'takeoverGuarantee']);
+    expect(offen.sort()).toEqual(['boschPremiumPartner', 'payFirstWorkday', 'privateCarOnePercent', 'takeoverGuarantee']);
     for (const seite of SEITEN) {
       const text = plain(alleTexte(seite).join(' '));
       for (const id of offen) {
         expect(text, `${seite.path}: ${id}`).not.toContain(FACTS[id].short);
         expect(text, `${seite.path}: ${id}`).not.toContain(FACTS[id].long);
       }
-      expect(text).not.toMatch(/1[- ]?%|Werktag|Übernahmegarantie|garantiert/);
+      expect(text).not.toMatch(/1[- ]?%|Werktag|Übernahmegarantie|garantiert|Premium[\s-]*Partner/i);
     }
   });
 
-  it('keine festen Arbeitszeiten, kein „pünktlich …“, keine Wochenstunden (B28)', () => {
+  it('keine festen Arbeitszeiten, kein „pünktlich …“, keine Wochenstunden (B28), kein Euro-Betrag (E-030)', () => {
     for (const seite of SEITEN) {
       expect(findClaims(plain(alleTexte(seite).join(' '))), seite.path).toEqual([]);
       expect(plain(alleTexte(seite).join(' ')), seite.path).not.toMatch(/pünktlich|Feste Arbeitszeit|Wochenstunden/i);
@@ -130,7 +129,6 @@ describe('Texte der Themenseiten: nur Belegtes', () => {
       JSON.stringify(FAQ_ITEMS),
       JSON.stringify(TEAM_PROFILES),
       JSON.stringify(TEAM_QUOTES),
-      ...JOBS.flatMap((job) => (job.salary ? [formatNumber(job.salary.min), formatNumber(job.salary.max)] : [])),
     ].join(' ');
     const erlaubt = new Set(plain(quellen).match(/\d[\d.,]*\d|\d/g) ?? []);
     // Gezählt statt abgeschrieben: Stellen, Orte, Themen, Schritte, Jahre seit der Gründung (bis zum Meilenstein)
@@ -146,27 +144,33 @@ describe('Texte der Themenseiten: nur Belegtes', () => {
     }
   });
 
-  it('Gehälter nur aus den live Stellen: Spanne, Leiter und Karten', () => {
-    expect(fachkraftSpanne(JOBS)).toBe('3.600–5.600\u00A0€');
-    const leiter = gehaltsleiter(JOBS)!;
-    expect(leiter.zeilen.map((z) => z.jobId).sort()).toEqual(JOBS.filter((j) => j.salary).map((j) => j.id).sort());
-    for (const zeile of leiter.zeilen) {
-      const job = JOBS.find((j) => j.id === zeile.jobId)!;
-      expect([zeile.min, zeile.max]).toEqual([job.salary!.min, job.salary!.max]);
-      expect(zeile.min).toBeGreaterThanOrEqual(leiter.von);
-      expect(zeile.max).toBeLessThanOrEqual(leiter.bis);
-    }
+  it('Bezahlung und Extras (E-030): Lohn auf Anfrage bei jeder Stelle mit Lohn, je Stelle Anstellung und Anzeige, kein Betrag', () => {
+    // Das Schülerpraktikum sagt nichts zu Geld und steht deshalb nicht auf der Seite
+    expect(mitLohn(JOBS).map((j) => j.id)).toEqual(JOBS.filter((j) => j.pay === 'auf-anfrage').map((j) => j.id));
+    expect(JOBS.filter((j) => j.pay === 'keine-angabe').map((j) => j.id)).toEqual(['schuelerpraktikum-shk']);
     const gehalt = getThemaPageText('gehalt', { jobs: JOBS, now: NOW });
     if (gehalt.id !== 'gehalt') throw new Error('falsche Seite');
-    expect(gehalt.spannen.karten.map((k) => k.jobId)).toEqual(JOBS.map((j) => j.id));
+    expect(gehalt.meta.h1).toBe('Bezahlung und Extras');
+    expect(gehalt.lohn.titel).toBe(FACTS.payOnRequest.short);
+    expect(gehalt.og.wert).toBe('auf Anfrage');
+    expect(gehalt.jeStelle.karten.map((k) => k.jobId)).toEqual(mitLohn(JOBS).map((j) => j.id));
+    for (const karte of gehalt.jeStelle.karten) {
+      const job = JOBS.find((j) => j.id === karte.jobId)!;
+      expect(karte.verguetung, job.id).toBe(job.packageExtras.find((extra) => extra.label === 'Vergütung')?.text ?? null);
+      // Voraussetzung wie in der Anzeige; offene Anforderungen (Bürofachkraft, M-038) bleiben leer
+      for (const punkt of karte.voraussetzung) expect([job.education?.label, ...job.requirements], job.id).toContain(punkt);
+      if (job.requirementsOpen) expect(karte.voraussetzung.filter((p) => p !== job.education?.label), job.id).toEqual([]);
+    }
     expect(gehalt.ausbildung).not.toBeNull();
+    expect(findClaims(plain(alleTexte(gehalt).join(' ')))).toEqual([]);
+    expect(plain(alleTexte(gehalt).join(' '))).not.toMatch(/€|\bEuro\b|brutto|Gehaltsspanne/);
   });
 
   it('Tankkarte (B8), iPad (B9) und Azubi-Set nur mit den Stellen, zu denen sie gehören', () => {
     const namen = (id: FactId) => stellenMitFakt(id, JOBS).map((job) => job.id);
     expect(namen('fuelCard').sort()).toEqual(['kundendiensttechniker-shk', 'obermonteur-projektleiter-shk']);
     expect(namen('ipadSmartphone').sort()).toEqual(['anlagenmechaniker-shk', 'kundendiensttechniker-shk']);
-    expect(namen('azubiToolkit')).toEqual(['ausbildung-anlagenmechaniker-shk']);
+    expect(namen('azubiToolkit')).toEqual(['ausbildung-anlagenmechaniker-shk', 'ausbildung-anlagenmechaniker-shk-2027']);
     const fahrzeug = getThemaPageText('fahrzeug-und-werkzeug', { jobs: JOBS, now: NOW });
     if (fahrzeug.id !== 'fahrzeug-und-werkzeug') throw new Error('falsche Seite');
     for (const position of fahrzeug.stueckliste.positionen) {
@@ -174,7 +178,7 @@ describe('Texte der Themenseiten: nur Belegtes', () => {
     }
   });
 
-  it('ohne live Stelle: keine Gehaltszahl, keine Stellenliste, Seiten bauen weiter', () => {
+  it('ohne live Stelle: kein Betrag, keine Stellenliste, Seiten bauen weiter', () => {
     const spaeter = new Date('2031-01-01T00:00:00Z');
     const ohne = seiten([], spaeter);
     for (const seite of ohne) {
@@ -183,8 +187,10 @@ describe('Texte der Themenseiten: nur Belegtes', () => {
     }
     const gehalt = getThemaPageText('gehalt', { jobs: [], now: spaeter });
     if (gehalt.id !== 'gehalt') throw new Error('falsche Seite');
-    expect(gehalt.leiter).toBeNull();
-    expect(gehalt.spannen.karten).toEqual([]);
+    expect(gehalt.jeStelle.karten).toEqual([]);
+    expect(gehalt.ausbildung).toBeNull();
+    expect(gehalt.zweitweg.href).toBe('#dazu');
+    expect(gehalt.lohn.titel).toBe(FACTS.payOnRequest.short);
     expect(getArbeitenPageText({ jobs: [], now: spaeter }).stellen).toBeNull();
   });
 
@@ -265,6 +271,8 @@ describe('Pfad und strukturierte Daten', () => {
     expect(list['@id']).toBe(`${getCleanCanonicalUrl(ARBEITEN_PATH)}#itemlist`);
     expect(list.itemListElement.map((e) => e.url)).toEqual(getThemen().map((t) => getCleanCanonicalUrl(themaPath(t))));
     expect(list.itemListElement.map((e) => e.position)).toEqual([1, 2, 3, 4, 5]);
-    expect(getThema('gehalt').name).toBe('Gehalt');
+    // E-030: Name ohne „Gehalt“, der veröffentlichte Slug bleibt
+    expect(getThema('gehalt').name).toBe('Bezahlung und Extras');
+    expect(themaPath(getThema('gehalt'))).toBe(`${ARBEITEN_PATH}/gehalt`);
   });
 });

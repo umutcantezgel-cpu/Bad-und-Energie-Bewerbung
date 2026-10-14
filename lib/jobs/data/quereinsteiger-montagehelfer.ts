@@ -1,14 +1,14 @@
 import { HQ_LOCATION } from '../employer';
 import { defineJob } from '../schema';
 
-// funnel_only: im Bewerbungsflow wählbar, aber ohne Seite, Schema und Feed (ROADMAP §3.1).
-// Kein Gehalt, weil keine Quelle eines nennt. Quellen (Stand 393df01): HeroExpressFunnel, QuizView,
+// Seit 2026-10-14 veröffentlicht, mit Seite, JobPosting und Feeds (Inhaber, fakten-abgleich S3); vorher funnel_only.
+// Lohn auf Anfrage wie bei allen Stellen (E-030). Quellen (Stand 393df01): HeroExpressFunnel, QuizView,
 // ROLE_CONFIGS.helfer (pricing.constants.ts), Footer.
 export const quereinsteigerMontagehelfer = defineJob({
   id: 'quereinsteiger-montagehelfer',
   referenceCode: 'SHK-QE-2026-05',
   slug: 'quereinsteiger-montagehelfer-shk-wetzlar',
-  status: 'funnel_only',
+  status: 'published',
   category: 'helfer',
   title: 'Quereinsteiger und Montagehelfer SHK (m/w/d)',
   titleShy: 'Quer\u00ADeinsteiger und Montage\u00ADhelfer SHK (m/w/d)',
@@ -21,6 +21,7 @@ export const quereinsteigerMontagehelfer = defineJob({
     primaryKeyword: 'Quereinsteiger SHK Wetzlar',
     secondaryKeywords: ['Montagehelfer Wetzlar', 'Helfer Heizung Sanitär Wetzlar'],
   },
+  alsoKnownAs: ['Helfer Sanitär und Heizung', 'Installateurhelfer', 'Heizungsbauerhelfer'],
   summary: 'Mit handwerklichem Geschick und Führerschein Klasse B steigst du ins SHK-Handwerk ein, mit intensiver Einarbeitung.',
   intro:
     'Als Quereinsteiger oder Montagehelfer unterstützt du unser Team auf der Baustelle. Mit handwerklichem Geschick, Führerschein Klasse B und intensiver Einarbeitung durch unsere Meister steigst du ins SHK-Handwerk ein.',
@@ -33,11 +34,15 @@ export const quereinsteigerMontagehelfer = defineJob({
     { label: 'Vergütung', text: 'Faire, übertarifliche Bezahlung' },
   ],
   employment: { kind: 'vollzeit', permanent: true, start: 'nach-absprache' },
+  pay: 'auf-anfrage',
   location: HQ_LOCATION,
   experienceMonths: 0,
   datePosted: '2026-10-08',
-  updatedAt: '2026-10-12',
+  validThrough: '2027-01-12T00:00:00',
+  updatedAt: '2026-10-14',
   apply: { questionSet: 'quereinstieg' },
-  channels: { googleJobs: false, indeedFeed: false, genericFeed: false, ba: false },
+  channels: { googleJobs: true, indeedFeed: true, genericFeed: true, ba: true },
+  // Heizungsbauerhelfer/in, Klempner- und Installateurhelfer/in: KldB 34201, ISCO-08 9313 (lib/jobs/berufe.ts).
+  beruf: { kldb: '34201', isco: '9313' },
   // Zitat Demir ausgeblendet, bis der Inhaber ein neues freigibt (fakten-abgleich B30).
 });

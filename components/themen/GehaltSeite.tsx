@@ -1,36 +1,46 @@
 import Link from 'next/link';
 import { bindSeparators, withSoftHyphens } from '@/components/jobs/text';
 import { Etikettkasten } from '@/components/zeichnung/Etikettkasten';
-import { Heizkreis } from '@/components/zeichnung/Heizkreis';
 import { getThema } from '@/lib/themen/registry';
 import { themaPfad } from '@/lib/themen/jsonld';
 import { geschuetzt, type GehaltPageText } from '@/lib/themen/text';
 import { Abschnitt, Kaestenband, Kontakt, Saetze, WeitereThemen } from './Bausteine';
-import { Gehaltsleiter } from './Gehaltsleiter';
 import { ThemaKopf } from './ThemaKopf';
 import styles from './themen.module.css';
 
 /**
- * Themenseite Gehalt (E-028). Tonfolge: Kopf Papier/Navy (Gehaltsleiter: jede live Stelle auf einer Euro-Skala) ·
- * Spannen je Stelle Papier (je Stelle der Heizkreis mit der Spanne, Voraussetzung und Vergütung aus der Anzeige) · Was
+ * „Lohn auf Anfrage“ im Navy-Panel des Kopfs (E-030, Plan §A: ein ruhiger Block statt der Gehaltsleiter mit Beträgen):
+ * Etikett, die Aussage in Bricolage, darunter die belegten Fakten ohne Zahl.
+ */
+function LohnBlock({ lohn }: { lohn: GehaltPageText['lohn'] }) {
+  return (
+    <div className="flex max-w-sm flex-col gap-3 border-t-(length:--m-strich) border-brand pt-4" data-zeichnung="lohn">
+      <p className="text-etikett text-ink-2">{lohn.etikett}</p>
+      <p className="text-title-1 text-brand">{lohn.titel}</p>
+      <ul className="flex flex-col gap-1 text-body text-ink">
+        {lohn.zeilen.map((zeile) => (
+          <li key={zeile}>{geschuetzt(zeile)}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/**
+ * Themenseite „Bezahlung und Extras“ (E-028, seit E-030 ohne Beträge; Slug `gehalt` bleibt). Tonfolge: Kopf Papier/Navy
+ * (Block „Lohn auf Anfrage“) · Extras je Stelle Papier (Anstellung, Voraussetzung und Vergütung aus der Anzeige) · Was
  * dazukommt Navy · Ausbildung Papier (nur mit live Ausbildungsstelle) · Weitere Themen Wand · Kontakt Papier.
  */
 export function GehaltSeite({ text }: { text: GehaltPageText }) {
   return (
     <>
-      <ThemaKopf
-        text={text}
-        pfad={themaPfad(getThema('gehalt'))}
-        bildBreit
-        panel={text.leiter ? <Gehaltsleiter leiter={text.leiter} /> : null}
-      />
+      <ThemaKopf text={text} pfad={themaPfad(getThema('gehalt'))} panel={<LohnBlock lohn={text.lohn} />} />
 
-      {text.spannen.karten.length > 0 ? (
-        <Abschnitt kopf={text.spannen.kopf} trenner klammer>
-          <ul className={styles.spannen} aria-label={text.spannen.kopf.heading}>
-            {text.spannen.karten.map((karte) => (
+      {text.jeStelle.karten.length > 0 ? (
+        <Abschnitt kopf={text.jeStelle.kopf} trenner klammer>
+          <ul className={styles.spannen} aria-label={text.jeStelle.kopf.heading}>
+            {text.jeStelle.karten.map((karte) => (
               <li key={karte.jobId} className={styles.spanne}>
-                <Heizkreis wert={<span className={styles.spanneBetrag}>{karte.betrag}</span>} name={karte.einheit} />
                 <div className={styles.spanneText}>
                   <h3 className="text-title-3 text-brand">
                     <Link href={karte.href} className={styles.stellenLink} data-motion="druck">

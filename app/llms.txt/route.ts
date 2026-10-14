@@ -7,6 +7,7 @@ import {
   citationHint,
   companyClaim,
   contactLines,
+  alsoKnownAsLine,
   einsatzgebietLine,
   employerFacts,
   funnelOnlyJobs,
@@ -31,13 +32,13 @@ export function GET(): Response {
   const lines = [
     `# ${COMPANY.legalName}: Karriere`,
     '',
-    `> Karriereportal der ${COMPANY.legalName}, ${companyClaim(now)} in ${COMPANY.address.city} für Wärmepumpen, Heizung und Bad. Alle offenen Stellen mit Gehaltsspanne. ${FACTS.apply60s.long} ${FACTS.noCvNeeded.long}`,
+    `> Karriereportal der ${COMPANY.legalName}, ${companyClaim(now)} in ${COMPANY.address.city} für Wärmepumpen, Heizung und Bad. Alle offenen Stellen mit Aufgaben und Eckdaten. ${FACTS.payOnRequest.long} ${FACTS.apply60s.long} ${FACTS.noCvNeeded.long}`,
     '',
     FACTS.radius35.long,
     '',
     '## Offene Stellen',
     ...(jobs.length > 0
-      ? jobs.map((job) => `- ${jobLink(job)}: ${jobMetaLine(job)}. ${job.summary}`)
+      ? jobs.map((job) => `- ${jobLink(job)}: ${jobMetaLine(job)}. ${job.summary} ${alsoKnownAsLine(job)}`.trimEnd())
       : ['- Zurzeit ist keine Stelle ausgeschrieben. Initiativbewerbungen sind möglich.']),
     ...extra.map((job) => `- ${funnelOnlyLine(job)}`),
     '',

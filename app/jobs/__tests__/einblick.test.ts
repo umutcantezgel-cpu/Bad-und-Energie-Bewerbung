@@ -22,12 +22,13 @@ import { getFaqItem } from '@/lib/content/faq';
 import { REGION } from '@/lib/content/region';
 import { jobPath } from '@/lib/jobs/format';
 import { getJobById, getJobBySlug, getJobPageSlugs, type Job } from '@/lib/jobs/registry';
+import { defineJob, type JobInput } from '@/lib/jobs/schema';
 import { findPublishedPlaceByName, getHubKreise, getPublishedPlaces } from '@/lib/places/registry';
 
 /**
  * V6-G2: Herkunft der Texte im Band „Einblick“ (components/jobs/stelle/einblick-text.ts). Jede Zahl, jeder Ort,
- * jede Erfahrungsangabe und jeder Faktsatz stammt aus Stellendaten, FACTS, REGION oder der FAQ; die Texte der
- * vier Stellen teilen keine 8-Wort-Folge.
+ * jede Erfahrungsangabe und jeder Faktsatz stammt aus Stellendaten, FACTS, REGION oder der FAQ; die Texte aller
+ * Stellen mit Seite teilen keine 8-Wort-Folge (seit 2026-10-14 acht Stellen, fakten-abgleich S2–S5).
  */
 
 const NOW = new Date('2026-10-10T12:00:00Z');
@@ -39,6 +40,11 @@ const am = getJobById('anlagenmechaniker-shk')!;
 const kd = getJobById('kundendiensttechniker-shk')!;
 const om = getJobById('obermonteur-projektleiter-shk')!;
 const azubi = getJobById('ausbildung-anlagenmechaniker-shk')!;
+const azubi27 = getJobById('ausbildung-anlagenmechaniker-shk-2027')!;
+const qe = getJobById('quereinsteiger-montagehelfer')!;
+const buero = getJobById('buerofachkraft')!;
+const praktikum = getJobById('schuelerpraktikum-shk')!;
+const isVerweis = (teil: unknown): teil is Verweis => typeof teil !== 'string';
 
 const inhalt = (job: Job): EinblickInhalt => einblick(job, NOW)!;
 
@@ -73,16 +79,21 @@ function sichtbar(html: string): string {
     .replace(/­/g, '');
 }
 
-describe('Einblick: für jede Stellenseite, nicht für den Quereinstieg', () => {
+describe('Einblick: für jede Stellenseite, nicht für funnel_only', () => {
   it('jede Stelle mit Seite hat Arbeit, Vergleich und Gebiet; funnel_only hat keinen Einblick', () => {
-    expect(pageJobs).toHaveLength(4);
+    expect(pageJobs).toHaveLength(8);
     for (const job of pageJobs) {
       const e = inhalt(job);
       expect(e.arbeit.punkte.length, job.id).toBeGreaterThanOrEqual(3);
       expect(e.vergleich, job.id).not.toBeNull();
       expect(e.gebiet.orte.length, job.id).toBeGreaterThanOrEqual(3);
     }
-    expect(einblick(getJobById('quereinsteiger-montagehelfer')!, NOW)).toBeNull();
+    const funnelOnly = defineJob({
+      ...(qe as unknown as JobInput),
+      status: 'funnel_only',
+      channels: { googleJobs: false, indeedFeed: false, genericFeed: false, ba: false },
+    });
+    expect(einblick(funnelOnly, NOW)).toBeNull();
   });
 });
 
@@ -139,10 +150,16 @@ describe('Einblick: Herkunft', () => {
     for (const job of pageJobs) {
       const vergleich = inhalt(job).vergleich!;
       const text = vergleich.teile.map((t) => (typeof t === 'string' ? t : t.label)).join('');
-      for (const teil of vergleich.teile) {
-        if (typeof teil === 'string') continue;
-        const ziel = pageJobs.find((j) => jobPath(j) === teil.href)!;
-        expect(text, `${job.id} → ${ziel.id}`).toContain(erfahrung(ziel));
+      const ziele = vergleich.teile.filter(isVerweis).map((teil) => pageJobs.find((j) => jobPath(j) === teil.href)!);
+      // Ein Vergleich als Laufbahn nennt die Erfahrung jeder verlinkten Stelle, die welche verlangt. Die Bürofachkraft
+      // verweist auf die Kollegen draußen, nicht auf einen Wechsel; Ausbildung und Praktikum verlangen keine.
+      for (const ziel of ziele) {
+        if ((ziel.experienceMonths ?? 0) > 0 && job.id !== buero.id) expect(text, `${job.id} → ${ziel.id}`).toContain(erfahrung(ziel));
+      }
+      // Jede genannte Erfahrung ist die einer verlinkten Stelle oder die der Stelle selbst
+      const belegt = [...ziele, ...((job.experienceMonths ?? 0) > 0 ? [job] : [])].map(erfahrung);
+      for (const [genannt] of text.matchAll(/\b(?:ein|zwei|drei|vier|fünf|sechs) Jahre?\b/g)) {
+        expect(belegt, `${job.id}: ${genannt}`).toContain(genannt);
       }
     }
   });
@@ -163,6 +180,36 @@ describe('Einblick: Herkunft', () => {
     expect(azText).toContain('feste Übernahme garantiert');
     expect(azubi.benefitFactIds).toContain('takeoverGuarantee');
     expect(FACTS.takeoverGuarantee.pending?.onlyForJobIds).toContain(azubi.id);
+
+    // Ausbildung 2027: Fahrtkosten und Führerschein wie im Paket, die Übernahmegarantie gilt nur für 2026 (A1)
+    const az27Text = klartext(inhalt(azubi27));
+    const mobil27 = azubi27.packageExtras.find((e) => e.label === 'Mobilität')!.text;
+    expect(az27Text).toContain(FACTS.travelAllowance.short);
+    expect(mobil27).toContain(FACTS.travelAllowance.short);
+    expect(az27Text).toContain(FACTS.driversLicenseGrant.short);
+    expect(mobil27).toContain('Pkw-Führerschein');
+    expect(az27Text).not.toMatch(/Übernahme|garantiert/);
+    expect(FACTS.takeoverGuarantee.pending?.onlyForJobIds).not.toContain(azubi27.id);
+
+    // Büro: „moderneres Büro, größeres Lager“ aus REGION.milestone, die Aufgaben aus der Stelle (fakten-abgleich S5)
+    expect(REGION.milestone.text).toContain('moderneres Büro, größeres Lager');
+    const bueroText = klartext(inhalt(buero));
+    expect(bueroText).toContain('unser Büro moderner und das Lager größer');
+    for (const wort of ['Angebote', 'Rechnungen', 'Großhandel', 'Ablage', 'Post', 'Geschäftsführung', 'Telefon']) {
+      expect(buero.tasks.join(' '), wort).toContain(wort);
+      expect(bueroText, wort).toContain(wort);
+    }
+
+    // Praktikum: Meisterbetrieb aus founded1926, Wärmepumpen-Spezialist aus REGION.milestone, kein Wort zu Geld (S4)
+    const prText = klartext(inhalt(praktikum));
+    expect(FACTS.founded1926.long).toContain('Innungs-Meisterbetrieb');
+    expect(prText).toContain('Innungs-Meisterbetrieb');
+    expect(REGION.milestone.text).toContain('Wärmepumpen-Spezialist');
+    expect(prText).not.toMatch(/Lohn|Gehalt|Vergütung|verdien|bezahl|Geld|Prämie|Zuschuss|€|Euro/i);
+
+    // Quereinstieg: Anforderung im Wortlaut der Stelle, Schwerpunkte aus der FAQ „heizsysteme“
+    expect(klartext(inhalt(qe))).toContain(qe.requirements.find((r) => r.includes('Geschick'))!);
+    expect(getFaqItem('heizsysteme').answer).toContain('Fußbodenheizungen');
   });
 
   it('Badpartner und Fußbodenheizungen aus der FAQ „heizsysteme“, Heizungsbauer aus den Suchwörtern der Stelle', () => {
@@ -206,17 +253,23 @@ describe('Einblick: Verweise', () => {
 
   it('abgelaufene Nachbarstellen fallen weg', () => {
     const spaeter = new Date('2027-10-07T00:00:00Z');
-    expect(einblick(kd, spaeter)!.vergleich).toBeNull();
-    expect(einblick(om, spaeter)!.vergleich).toBeNull();
-    expect(einblick(am, spaeter)!.vergleich).toBeNull();
-    expect(einblick(azubi, spaeter)!.vergleich).toBeNull();
-    // Nur die Ausbildung ist abgelaufen: Die Fachkraft-Stellen verweisen weiter aufeinander.
-    expect(einblick(am, new Date('2027-01-15T00:00:00Z'))!.vergleich).not.toBeNull();
+    for (const job of pageJobs) expect(einblick(job, spaeter)!.vergleich, job.id).toBeNull();
+    // Nur die Ausbildung 2026 ist abgelaufen: Die Fachkraft-Stellen verweisen weiter aufeinander, die Ausbildung 2027
+    // nur noch auf das Praktikum, Quereinstieg und Praktikum auf die Ausbildung 2027.
+    const januar = new Date('2027-01-05T00:00:00Z');
+    expect(einblick(am, januar)!.vergleich).not.toBeNull();
+    const ziele = (job: Job) => einblick(job, januar)!.vergleich!.teile.filter(isVerweis).map((v) => v.href);
+    expect(ziele(azubi27)).toEqual([jobPath(praktikum)]);
+    expect(ziele(qe)).toContain(jobPath(azubi27));
+    expect(ziele(praktikum)).toEqual([jobPath(azubi27)]);
+    for (const job of pageJobs) {
+      if (job.id !== azubi.id) expect(einblick(job, januar)!.vergleich?.teile.filter(isVerweis).map((v) => v.href) ?? [], job.id).not.toContain(jobPath(azubi));
+    }
   });
 });
 
 describe('Einblick: eigener Text je Stelle (V6-G2)', () => {
-  it('die Bänder der vier Stellen teilen keine 8-Wort-Folge', () => {
+  it('die Bänder aller Stellen teilen keine 8-Wort-Folge', () => {
     for (const a of pageJobs) {
       for (const b of pageJobs) {
         if (a === b) continue;

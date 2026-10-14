@@ -43,7 +43,13 @@ describe('Schrittnamen (Leitungspaar, Screenreader)', () => {
   it('Fachkraft: Stelle, Erfahrung, Start, Kontakt', () => {
     const steps = getSteps({ ...initFlowState(), showJobStep: true });
     expect(schrittNamen(steps)).toEqual(['Stelle', 'Erfahrung', 'Start', 'Kontakt']);
-    expect(Object.keys(SCHRITTNAMEN)).toHaveLength(7);
+    // Stelle, die fünf Fragen der Sets Fachkraft/Ausbildung/Quereinstieg, die zwei des Büros (S5) und Kontakt
+    expect(Object.keys(SCHRITTNAMEN)).toHaveLength(9);
+  });
+
+  it('Büro (fakten-abgleich S5): Stelle, Büro, Umfang, Kontakt', () => {
+    const steps = getSteps({ ...initFlowState({ questionSet: 'buero' }), questionSet: 'buero', showJobStep: true });
+    expect(schrittNamen(steps)).toEqual(['Stelle', 'Büro', 'Umfang', 'Kontakt']);
   });
 });
 

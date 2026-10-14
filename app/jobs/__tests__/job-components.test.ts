@@ -4,15 +4,21 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { JobCard } from '@/components/jobs/JobCard';
-import { SalaryCard } from '@/components/jobs/SalaryCard';
+import { SalaryCard, lohnZusatz } from '@/components/jobs/SalaryCard';
 import { getMoreJobs } from '@/components/jobs/MoreJobs';
 import { bindSeparators, lowerFirst, pageTitle, splitLabel, withSoftHyphens } from '@/components/jobs/text';
-import { formatSalaryAmount, jobPath } from '@/lib/jobs/format';
+import { FACTS } from '@/lib/content/facts';
+import { PAY_ON_REQUEST, jobPath } from '@/lib/jobs/format';
 import { ALL_JOBS, getActiveJobs, getJobById } from '@/lib/jobs/registry';
+import { findClaims } from '../../../scripts/qa/check-claims.mjs';
 
 const SHY = '­';
 const am = getJobById('anlagenmechaniker-shk')!;
 const azubi = getJobById('ausbildung-anlagenmechaniker-shk')!;
+const praktikum = getJobById('schuelerpraktikum-shk')!;
+const buero = getJobById('buerofachkraft')!;
+/** Kein Betrag zu Lohn oder Gehalt (E-030), dieselbe Prüfung wie check-claims nach dem Build. */
+const ohneBetrag = (html: string) => findClaims(html.replace(/<[^>]*>/g, ' ').replace(/\u00A0/g, ' '), { premiumPending: false });
 
 describe('bindSeparators', () => {
   it('glues a spaced slash or dash to the word before it', () => {
@@ -69,7 +75,7 @@ describe('JobCard', () => {
     expect(source).not.toMatch(/\buse(State|Effect|Ref|Context)\b/);
   });
 
-  it('renders one link to the job page, the heading level, meta line and salary', () => {
+  it('renders one link to the job page, the heading level, meta line and „Lohn auf Anfrage“ (E-030)', () => {
     const html = renderToStaticMarkup(createElement(JobCard, { job: am, headingLevel: 'h2' }));
     expect(html).toMatch(/^<article/);
     expect(html.match(/<a /g)).toHaveLength(1);
@@ -77,7 +83,14 @@ describe('JobCard', () => {
     expect(html).toMatch(/<h2[^>]*><a [^>]*>Anlagenmechaniker SHK<\/a>/);
     expect(html).toContain(am.summary);
     expect(html).toContain('Vollzeit');
-    expect(html).toContain(formatSalaryAmount(am)!);
+    expect(html).toContain(PAY_ON_REQUEST);
+    expect(ohneBetrag(html)).toEqual([]);
+  });
+
+  it('the school internship card says nothing about money', () => {
+    const html = renderToStaticMarkup(createElement(JobCard, { job: praktikum }));
+    expect(html).toContain(`href="${jobPath(praktikum)}"`);
+    expect(html).not.toMatch(/Lohn|Gehalt|Vergütung|Tarif|€/);
   });
 
   it('defaults to h3', () => {
@@ -87,18 +100,33 @@ describe('JobCard', () => {
   });
 });
 
-describe('SalaryCard', () => {
-  it('shows exactly the salary range of the job (parity with JobPosting.baseSalary)', () => {
-    const html = renderToStaticMarkup(createElement(SalaryCard, { job: am }));
-    expect(html).toContain(formatSalaryAmount(am)!);
-    expect(html).toContain('Gehalt pro Monat');
-    const azubiHtml = renderToStaticMarkup(createElement(SalaryCard, { job: azubi }));
-    expect(azubiHtml).toContain('Vergütung pro Monat');
+describe('SalaryCard (Block „Lohn auf Anfrage“, E-030)', () => {
+  it('shows „Lohn auf Anfrage“ and what the job states about pay, never an amount', () => {
+    for (const job of ALL_JOBS.filter((j) => j.pay === 'auf-anfrage')) {
+      const html = renderToStaticMarkup(createElement(SalaryCard, { job }));
+      expect(html, job.id).toContain('data-stelle-lohn');
+      expect(html, job.id).toContain(PAY_ON_REQUEST);
+      const zusatz = lohnZusatz(job);
+      if (zusatz) expect(html, job.id).toContain(zusatz);
+      expect(ohneBetrag(html), job.id).toEqual([]);
+      expect(html, job.id).not.toMatch(/pro Monat|Gehaltsspanne|brutto/);
+    }
   });
 
-  it('renders nothing without a salary', () => {
-    const helper = getJobById('quereinsteiger-montagehelfer')!;
-    expect(renderToStaticMarkup(createElement(SalaryCard, { job: helper }))).toBe('');
+  it('the addition comes from the facts or the job ad: aboveTariff, else the package line „Vergütung“', () => {
+    expect(lohnZusatz(am)).toBe(am.benefitFactIds.includes('aboveTariff') ? FACTS.aboveTariff.short : null);
+    expect(lohnZusatz(azubi)).toBe(
+      azubi.benefitFactIds.includes('aboveTariff')
+        ? FACTS.aboveTariff.short
+        : azubi.packageExtras.find((extra) => extra.label === 'Vergütung')!.text,
+    );
+    // Bürofachkraft (S5): nichts belegt außer „Lohn auf Anfrage“
+    expect(lohnZusatz(buero)).toBeNull();
+    expect(lohnZusatz(praktikum)).toBeNull();
+  });
+
+  it('renders nothing for the school internship (no word on money)', () => {
+    expect(renderToStaticMarkup(createElement(SalaryCard, { job: praktikum }))).toBe('');
   });
 });
 
@@ -108,7 +136,9 @@ describe('getMoreJobs', () => {
     expect(more.map((j) => j.id)).not.toContain(am.id);
     expect(more.every((j) => j.status === 'published')).toBe(true);
     expect(more).toHaveLength(getActiveJobs().length - 1);
-    // Same question set first: the other skilled-worker jobs before the apprenticeship.
-    expect(more.at(-1)?.id).toBe('ausbildung-anlagenmechaniker-shk');
+    // Same question set first: the other skilled-worker jobs before all others, then registry order.
+    expect(more.slice(0, 2).map((j) => j.id)).toEqual(['kundendiensttechniker-shk', 'obermonteur-projektleiter-shk']);
+    expect(more.slice(2).every((j) => j.apply.questionSet !== am.apply.questionSet)).toBe(true);
+    expect(more.slice(2).map((j) => j.id)).toEqual(getActiveJobs().filter((j) => j.apply.questionSet !== 'fachkraft').map((j) => j.id));
   });
 });

@@ -2,7 +2,7 @@ import { bindSeparators } from '@/components/jobs/text';
 import { FACTS } from '@/lib/content/facts';
 import { getProcessSteps } from '@/lib/content/process';
 import { REGION } from '@/lib/content/region';
-import { formatSalaryRange, jobCategoryLabels, jobPath } from '@/lib/jobs/format';
+import { jobCategoryLabels, jobPath, payLabel } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/registry';
 
 /**
@@ -46,13 +46,12 @@ export const VERGLEICH = Object.freeze({
   titel: 'Alle offenen Jobs im Vergleich',
   aufgaben: 'Aufgaben',
   voraussetzung: 'Voraussetzung',
-  gehalt: 'Gehaltsspanne',
-  verguetung: 'Ausbildungsvergütung',
+  bezahlung: 'Bezahlung',
 });
 
 /** Einleitung aus den Stellenarten der Liste: „Anlagenmechaniker, Kundendienst, Obermonteur oder Ausbildung: …“. */
 export function vergleichEinleitung(jobs: readonly Pick<Job, 'category'>[]): string {
-  return `${aufzaehlung(jobCategoryLabels(jobs), 'oder')}: Die Stellen unterscheiden sich in Aufgaben, Voraussetzungen und Gehalt. Alle Angaben stammen aus der jeweiligen Stellenanzeige.`;
+  return `${aufzaehlung(jobCategoryLabels(jobs), 'oder')}: Die Stellen unterscheiden sich in Aufgaben und Voraussetzungen. Alle Angaben stammen aus der jeweiligen Stellenanzeige.`;
 }
 
 export interface Stellenprofil {
@@ -60,9 +59,10 @@ export interface Stellenprofil {
   /** Voller Titel mit weichen Trennstellen (titleShy), Schrägstrich bleibt am Zeilenende. */
   titel: string;
   aufgaben: readonly string[];
-  /** Ausbildung und Erfahrung: die ersten zwei Anforderungen der Stellenanzeige. */
+  /** Ausbildung und Erfahrung: die ersten zwei Anforderungen der Stellenanzeige (leer, solange sie offen sind). */
   voraussetzungen: readonly string[];
-  gehalt: { label: string; wert: string } | null;
+  /** „Lohn auf Anfrage“ (E-030); null beim Schülerpraktikum, das nichts zu Geld sagt. */
+  lohn: string | null;
   link: { href: string; label: string };
 }
 
@@ -77,13 +77,12 @@ export function stellenanzeigeLabel(job: Pick<Job, 'shortTitle'>): string {
 }
 
 export function stellenprofil(job: Job): Stellenprofil {
-  const wert = formatSalaryRange(job);
   return {
     id: job.id,
     titel: bindSeparators(job.titleShy),
     aufgaben: job.tasks.filter((aufgabe) => !nenntRadius(aufgabe)),
     voraussetzungen: voraussetzungen(job),
-    gehalt: wert ? { label: job.employment.kind === 'ausbildung' ? VERGLEICH.verguetung : VERGLEICH.gehalt, wert } : null,
+    lohn: payLabel(job),
     link: { href: jobPath(job), label: stellenanzeigeLabel(job) },
   };
 }

@@ -27,7 +27,15 @@ import { WHATSAPP_GREETING } from '@/lib/apply/whatsapp-message';
 import { COMPANY, FACTS, getTeamQuote } from '@/lib/content';
 import { applyPath, jobPath } from '@/lib/jobs/format';
 import { buildBreadcrumbJsonLd, buildJobPostingJsonLd } from '@/lib/jobs/jsonld';
-import { ALL_JOBS, getJobByLegacySlug, getJobBySlug, getJobPageSlugs, isJobLive, type Job } from '@/lib/jobs/registry';
+import {
+  ALL_JOBS,
+  getJobByLegacySlug,
+  getJobBySlug,
+  getJobPageSlugs,
+  getLiveSuccessor,
+  isJobLive,
+  type Job,
+} from '@/lib/jobs/registry';
 import { fitDescription } from '@/lib/seo/descriptions';
 import { buildPageGraph } from '@/lib/seo/graph';
 import { generatePageMetadata } from '@/lib/seo/metadata';
@@ -67,13 +75,21 @@ function resolveJob(slug: string): Job {
 }
 
 const isAusbildung = (job: Job) => job.category === 'ausbildung';
+const isPraktikum = (job: Job) => job.category === 'praktikum';
 
 /** „Ausbildung zum Anlagenmechaniker SHK (m/w/d)“ → „Ausbildung zum Anlagenmechaniker SHK“. */
 const withoutGenderTag = (title: string) => title.replace(/\s*\(m\/w\/d\)\s*$/, '');
 
-/** „… für die Stelle als Kundendiensttechniker.“ bzw. „… für die Ausbildung zum Anlagenmechaniker SHK.“ */
+/**
+ * „… für die Stelle als Kundendiensttechniker.“, „… für die Ausbildung zum Anlagenmechaniker SHK.“ bzw. „… für das
+ * Schülerpraktikum Anlagenmechaniker SHK.“
+ */
 function whatsappMessage(job: Job): string {
-  const subject = isAusbildung(job) ? `die ${withoutGenderTag(job.title)}` : `die Stelle als ${job.shortTitle}`;
+  const subject = isAusbildung(job)
+    ? `die ${withoutGenderTag(job.title)}`
+    : isPraktikum(job)
+      ? `das ${withoutGenderTag(job.title)}`
+      : `die Stelle als ${job.shortTitle}`;
   return `${WHATSAPP_GREETING} ich interessiere mich für ${subject}.`;
 }
 
@@ -151,7 +167,11 @@ function OpenJob({ job }: { job: Job }) {
 
       <Section tone="papier" trenner>
         <Container className="flex flex-col gap-section-sm">
-          <JobProcess audience={job.apply.questionSet} />
+          {/*
+            Das Schülerpraktikum nutzt das Fragenset der Ausbildung, aber deren Ablauf (Azubi-Werkzeugset ab Tag 1) gilt
+            für ein Praktikum nicht: dort ohne Ablauf, bis der Inhaber ihn nennt (M-027).
+          */}
+          {isPraktikum(job) ? null : <JobProcess audience={job.apply.questionSet} />}
 
           {/*
             „60 Sekunden“ steht im Mikrotext des Kopfs und als Titel von Schritt 1 darüber, „Kein Lebenslauf“ im
@@ -201,14 +221,22 @@ function ApplyFallback({ job }: { job: Job }) {
   return (
     <p className="text-body text-ink-muted">
       <TextLink href={applyPath(job)}>
-        {isAusbildung(job) ? 'Bewerbung für die Ausbildung öffnen' : `Bewerbung als ${job.shortTitle} öffnen`}
+        {isAusbildung(job)
+          ? 'Bewerbung für die Ausbildung öffnen'
+          : isPraktikum(job)
+            ? 'Bewerbung für das Schülerpraktikum öffnen'
+            : `Bewerbung als ${job.shortTitle} öffnen`}
       </TextLink>
     </p>
   );
 }
 
-/** Archived or expired: noindex, no JobPosting, links to similar jobs and an initiative application. */
+/**
+ * Archived or expired: noindex, no JobPosting, links to similar jobs and an initiative application. A job replaced by
+ * its successor (Ausbildung 2026 → 2027, `nachfolger`) points to the new posting instead of the initiative application.
+ */
 function ClosedJob({ job }: { job: Job }) {
+  const nachfolger = getLiveSuccessor(job, new Date());
   return (
     <>
       <Pfad job={job} />
@@ -218,11 +246,17 @@ function ClosedJob({ job }: { job: Job }) {
         titel="Diese Stelle ist besetzt"
         einleitung={
           <p>
-            {isAusbildung(job) ? `Die ${job.title}` : `Die Stelle ${job.title}`} ist nicht mehr ausgeschrieben. Schau
-            dir die offenen Stellen an oder bewirb dich initiativ.
+            {isAusbildung(job) ? `Die ${job.title}` : `Die Stelle ${job.title}`} ist nicht mehr ausgeschrieben.{' '}
+            {nachfolger
+              ? 'Bewirb dich auf die neue Ausschreibung oder schau dir die offenen Stellen an.'
+              : 'Schau dir die offenen Stellen an oder bewirb dich initiativ.'}
           </p>
         }
-        aktion={{ href: INITIATIVE_APPLY_PATH, label: 'Initiativ bewerben' }}
+        aktion={
+          nachfolger
+            ? { href: jobPath(nachfolger), label: `Zur ${nachfolger.shortTitle}` }
+            : { href: INITIATIVE_APPLY_PATH, label: 'Initiativ bewerben' }
+        }
         zweitweg={{ href: '/jobs', label: 'Alle offenen Stellen' }}
         panel={<HausKlein />}
       />

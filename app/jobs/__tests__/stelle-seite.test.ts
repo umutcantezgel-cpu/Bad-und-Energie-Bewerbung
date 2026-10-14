@@ -2,10 +2,13 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import JobPage from '@/app/jobs/[slug]/page';
 import { INITIATIVE_APPLY_PATH } from '@/lib/apply/params';
+import { jobPath } from '@/lib/jobs/format';
 import { getActiveJobs, getJobById } from '@/lib/jobs/registry';
 
 const azubi = getJobById('ausbildung-anlagenmechaniker-shk')!;
 const am = getJobById('anlagenmechaniker-shk')!;
+const azubi27 = getJobById('ausbildung-anlagenmechaniker-shk-2027')!;
+const tagNach = (job: typeof am) => new Date(new Date(job.validThrough!).getTime() + 24 * 60 * 60 * 1000);
 
 async function render(slug: string): Promise<string> {
   return renderToStaticMarkup(await JobPage({ params: Promise.resolve({ slug }) }));
@@ -62,14 +65,29 @@ describe('/jobs/[slug]: SEO im sichtbaren Text (V6-G2)', () => {
 describe('/jobs/[slug]: besetzte Stelle', () => {
   it('Kopf „Diese Stelle ist besetzt“ mit Initiativbewerbung, ohne JobPosting', async () => {
     vi.useFakeTimers({ toFake: ['Date'] });
-    vi.setSystemTime(new Date(new Date(azubi.validThrough!).getTime() + 24 * 60 * 60 * 1000));
-    const html = await render(azubi.slug);
+    // Nach dem Ablauf aller Stellen: keine Nachfolgerin live, also Initiativbewerbung
+    vi.setSystemTime(tagNach(am));
+    const html = await render(am.slug);
     expect(html).not.toContain('JobPosting');
     expect(html.match(/<h1/g)).toHaveLength(1);
     expect(html).toMatch(/<h1[^>]*>Diese Stelle ist besetzt<\/h1>/);
     expect(html).toContain('data-seitenkopf="arbeit"');
     expect(html).toContain(`href="${INITIATIVE_APPLY_PATH.replace(/&/g, '&amp;')}"`);
+    expect(html).toContain('bewirb dich initiativ');
     expect(html).toContain('href="/jobs"');
     expect(html).toContain('Brotkrümelnavigation');
+  });
+
+  it('Ausbildung 2026 nach dem 31.12.: Knopf zur Nachfolgerin (Ausbildung 2027) statt Initiativbewerbung', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(tagNach(azubi));
+    expect(azubi.nachfolger).toBe(azubi27.id);
+    const html = await render(azubi.slug);
+    expect(html).not.toContain('JobPosting');
+    expect(html).toMatch(/<h1[^>]*>Diese Stelle ist besetzt<\/h1>/);
+    expect(html).toContain(`href="${jobPath(azubi27)}"`);
+    expect(html).toContain(`Zur ${azubi27.shortTitle}`);
+    expect(html).toContain('Bewirb dich auf die neue Ausschreibung');
+    expect(html).not.toContain(`href="${INITIATIVE_APPLY_PATH.replace(/&/g, '&amp;')}"`);
   });
 });

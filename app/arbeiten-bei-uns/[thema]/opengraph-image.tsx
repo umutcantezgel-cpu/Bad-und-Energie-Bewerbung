@@ -17,7 +17,7 @@ export const size = OG_IMAGE_SIZE;
 export const contentType = OG_IMAGE_TYPE;
 export const dynamicParams = false;
 
-/** Stündlich wie die Seite: Die Gehaltsspanne im Bild folgt den live Stellen. */
+/** Stündlich wie die Seite: Kennwerte im Bild, die von den live Stellen abhängen, folgen ihnen. */
 export const revalidate = 3600;
 
 export function generateStaticParams(): { thema: string }[] {

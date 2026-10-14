@@ -4,16 +4,13 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import JobsPage from '@/app/jobs/page';
-import { salaryUnitLabel } from '@/components/jobs/JobCard';
 import { Stellenverteiler, stellenMeta } from '@/components/jobs/liste/Stellenverteiler';
 import {
   GEWERKE,
-  HEIZKREIS_NAME,
   INITIATIV,
   LEER_TEXT,
   LISTEN_EINLEITUNG,
   LISTEN_MIKROTEXT,
-  fachkraftSpanne,
   listenEtikett,
   listenName,
   listenUnterzeile,
@@ -23,7 +20,7 @@ import {
 import { INITIATIVE_APPLY_PATH } from '@/lib/apply/params';
 import { FACTS } from '@/lib/content/facts';
 import { REGION } from '@/lib/content/region';
-import { formatSalaryAmount, jobPath } from '@/lib/jobs/format';
+import { PAY_ON_REQUEST, jobPath, payLabel } from '@/lib/jobs/format';
 import { getActiveJobs, getJobById, isJobLive } from '@/lib/jobs/registry';
 import { MOTION_IDS } from '@/lib/motion/register';
 import { claimsInHtml } from '../../../scripts/qa/check-claims.mjs';
@@ -62,29 +59,28 @@ describe('Texte der Stellenliste (nur aus Fakten und Stellendaten)', () => {
     expect(listenName(1)).toBe('1 offene Stelle');
   });
 
-  it('„Jede Stelle mit Gehaltsspanne“ nur, wenn jede Stelle eine Spanne trägt', () => {
+  it('„Lohn auf Anfrage.“, sobald eine Stelle der Liste etwas zur Bezahlung sagt (E-030); sonst die Marke', () => {
     const am = getJobById('anlagenmechaniker-shk')!;
-    expect(listenUnterzeile([am])).toEqual(['Jede Stelle mit Gehaltsspanne.', 'Flexible Arbeitszeiten.']);
-    expect(listenUnterzeile([am, { salary: undefined }])).toEqual(['Ehrliches Handwerk.', 'Flexible Arbeitszeiten.']);
+    const praktikum = getJobById('schuelerpraktikum-shk')!;
+    expect(listenUnterzeile([am])).toEqual(['Lohn auf Anfrage.', 'Flexible Arbeitszeiten.']);
+    expect(listenUnterzeile([praktikum, am])[0]).toBe(`${FACTS.payOnRequest.short}.`);
+    // Nur das Schülerpraktikum (kein Wort zu Geld) oder keine Stelle: „Ehrliches Handwerk.“
+    expect(listenUnterzeile([praktikum])).toEqual(['Ehrliches Handwerk.', 'Flexible Arbeitszeiten.']);
     expect(listenUnterzeile([])[0]).toBe('Ehrliches Handwerk.');
     expect(listenUnterzeile([am])[1]).toBe(FACTS.flexibleHours.long);
   });
 
-  it('Heizkreis: Gehaltsspanne der Fachkraft-Stellen aus den Stellendaten (statt 13:30), Maße aus dem Faktenregister', () => {
-    const jobs = getActiveJobs();
-    const fachkraefte = jobs.filter((job) => job.category !== 'ausbildung' && job.salary);
-    const min = Math.min(...fachkraefte.map((job) => job.salary!.min));
-    const max = Math.max(...fachkraefte.map((job) => job.salary!.max));
-    expect(fachkraftSpanne(jobs)).toBe(formatSalaryAmount({ salary: { ...fachkraefte[0].salary!, min, max } }));
-    expect(fachkraftSpanne(jobs)!.replaceAll(NBSP, ' ')).toBe('3.600–5.600 €');
-    const { heizkreis, masse } = listenZeichnung(jobs);
-    expect(heizkreis).toEqual({ wert: fachkraftSpanne(jobs), name: HEIZKREIS_NAME });
-    expect(masse.map((mass) => mass.wert.replaceAll(NBSP, ' '))).toEqual([FACTS.vacation30.value, FACTS.radius35.value]);
-    // Nur die Ausbildung: keine Spanne der Fachkräfte; der Heizkreis trägt den Radius, der nicht doppelt als Maß steht
-    const nurAusbildung = listenZeichnung(jobs.filter((job) => job.category === 'ausbildung'));
-    expect(nurAusbildung.heizkreis.wert.replaceAll(NBSP, ' ')).toBe(FACTS.radius35.value);
-    expect(nurAusbildung.masse.map((mass) => mass.name)).toEqual([FACTS.vacation30.label]);
-    expect(JSON.stringify(listenZeichnung(jobs))).not.toMatch(/\d:\d|Feierabend/);
+  it('Heizkreis: der Einsatzradius statt eines Betrags (E-030, bis 2026-10-12 13:30), Maße aus dem Faktenregister', () => {
+    const { heizkreis, masse } = listenZeichnung();
+    expect(heizkreis.wert.replaceAll(NBSP, ' ')).toBe(FACTS.radius35.value);
+    expect(heizkreis.name).toBe('Einsatzradius');
+    // Der Radius steht nicht doppelt als Maß
+    expect(masse.map((mass) => mass.wert.replaceAll(NBSP, ' '))).toEqual([FACTS.vacation30.value]);
+    expect(masse.map((mass) => mass.name)).toEqual([FACTS.vacation30.label]);
+    expect(JSON.stringify(listenZeichnung())).not.toMatch(/\d:\d|Feierabend|€|Gehalt/);
+    // Tarif nur für die Stellen, die ihn belegen: nicht fürs Büro (S5), nichts zu Geld beim Praktikum (S4)
+    expect(LISTEN_EINLEITUNG).toContain('Fachkräfte, Azubis und Quereinsteiger bezahlen wir über Tarif');
+    expect(LISTEN_EINLEITUNG).not.toMatch(/€|\d\.\d{3}/);
     expect(LISTEN_MIKROTEXT).toBe(`Dauert ca. 60${NBSP}Sekunden. ${FACTS.noCvNeeded.short}.`);
     expect(INITIATIV.text).toContain(FACTS.noCvNeeded.long);
     expect(INITIATIV.text).toContain(FACTS.quickResponse.long);
@@ -111,21 +107,23 @@ describe('Texte der Stellenliste (nur aus Fakten und Stellendaten)', () => {
 });
 
 describe('Stellenverteiler (Variante 2, Leitungsabgänge)', () => {
-  const jobs = live(new Date('2026-10-10T12:00:00+02:00'));
+  const jobs = live(new Date('2026-10-14T12:00:00+02:00'));
 
-  it('je Stelle ein Link auf die Stellenseite, Gehalt und Einheit gleich den Stellendaten', () => {
+  it('je Stelle ein Link auf die Stellenseite und „Lohn auf Anfrage“ wie in den Stellendaten, kein Betrag (E-030)', () => {
     const html = renderToStaticMarkup(createElement(Stellenverteiler, { jobs }));
+    expect(jobs).toHaveLength(8);
     expect(html.match(/<a /g)).toHaveLength(jobs.length);
     expect(html.match(/<h2/g)).toHaveLength(jobs.length);
     expect(html).toContain(`aria-label="${listenName(jobs.length)}"`);
     for (const job of jobs) {
       expect(html).toContain(`href="${jobPath(job)}"`);
-      expect(html).toContain(formatSalaryAmount(job)!);
-      expect(html).toContain(salaryUnitLabel(job)!);
       expect(html).toContain(job.summary);
     }
-    // Gehalt als Maß in Martian Mono (Maßkette)
-    expect(html.match(/data-zeichnung="masskette"/g)).toHaveLength(jobs.length);
+    // Je Stelle mit Lohnangabe einmal „Lohn auf Anfrage“, ohne Maßkette; das Schülerpraktikum ohne
+    expect(html.split(`>${PAY_ON_REQUEST}<`).length - 1).toBe(jobs.filter((job) => payLabel(job) !== null).length);
+    expect(jobs.filter((job) => payLabel(job) === null).map((job) => job.id)).toEqual(['schuelerpraktikum-shk']);
+    expect(html).not.toContain('data-zeichnung="masskette"');
+    expect(claimsInHtml(html)).toEqual([]);
   });
 
   it('Meta-Zeile: Trennpunkt steht am Anfang eines Teils, nie am Zeilenende', () => {
@@ -150,7 +148,7 @@ describe('/jobs (R5-JOBS-01)', () => {
     expect(plain(/<h1[^>]*>(.*?)<\/h1>/.exec(html)![1])).toBe('Offene Stellen in Wetzlar und Umgebung');
     expect(html).toContain('data-seitenkopf="erzaehl"');
     expect(html).toContain('data-zeichnung="heizkreis"');
-    const { heizkreis } = listenZeichnung(getActiveJobs());
+    const { heizkreis } = listenZeichnung();
     expect(plain(html)).toContain(`${heizkreis.wert.replaceAll(NBSP, ' ')} ${heizkreis.name}`);
     // Keine Arbeitszeit-Aussage im sichtbaren Text (Bürozeiten im Fuß sind markiert, check-claims)
     expect(claimsInHtml(html)).toEqual([]);
@@ -161,8 +159,8 @@ describe('/jobs (R5-JOBS-01)', () => {
     const html = renderSeite();
     const ld = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
     expect(ld).toHaveLength(1);
-    const typen = (ld[0]['@graph'] as { '@type': string }[]).map((k) => k['@type']);
-    expect(typen).toEqual(['Organization', 'Person', 'WebSite', 'LocalBusiness', 'WebPage', 'BreadcrumbList']);
+    const typen = (ld[0]['@graph'] as { '@type': string | string[] }[]).map((k) => k['@type']);
+    expect(typen).toEqual(['Organization', 'Person', 'WebSite', ['LocalBusiness', 'HVACBusiness', 'Plumber'], 'WebPage', 'BreadcrumbList']);
     expect(html).not.toContain('JobPosting');
   });
 
@@ -174,8 +172,10 @@ describe('/jobs (R5-JOBS-01)', () => {
     expect(vorher).toContain(`href="${jobPath(azubi)}"`);
     expect(vorher).toContain(listenName(live(new Date()).length));
 
-    vi.setSystemTime(new Date('2027-01-15T12:00:00+01:00'));
+    // Nach dem 31.12.2026 und vor dem Ablauf der übrigen Stellen (validThrough 12.01.2027)
+    vi.setSystemTime(new Date('2027-01-05T12:00:00+01:00'));
     const nachher = renderSeite();
+    expect(live(new Date())).toHaveLength(live(new Date('2026-10-10T12:00:00+02:00')).length - 1);
     expect(nachher).not.toContain(`href="${jobPath(azubi)}"`);
     expect(nachher).toContain(listenName(live(new Date()).length));
     expect(plain(nachher)).toContain(plain(listenEtikett(live(new Date()).length)));
@@ -194,8 +194,10 @@ describe('/jobs (R5-JOBS-01)', () => {
     const html = renderSeite();
     expect(html).toContain('id="initiativ"');
     expect(html).toContain(`href="${INITIATIVE_APPLY_PATH}"`);
-    const quereinstieg = getJobById('quereinsteiger-montagehelfer');
-    if (quereinstieg?.status === 'funnel_only') expect(html).toContain(`stelle=${quereinstieg.slug}`);
+    // Der Quereinstieg ist seit 2026-10-14 eine eigene Stelle (fakten-abgleich S3), nicht mehr nur ein Weg im Flow
+    const quereinstieg = getJobById('quereinsteiger-montagehelfer')!;
+    expect(quereinstieg.status).toBe('published');
+    expect(html).toContain(`href="${jobPath(quereinstieg)}"`);
     expect(plain(html)).toContain('Sprich direkt mit Sabri Demir');
   });
 

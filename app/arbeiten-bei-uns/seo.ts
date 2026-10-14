@@ -16,7 +16,7 @@ import type { OgImage } from '@/lib/seo/og-image';
  * FAQPage.
  */
 
-/** Stellen, die gerade live sind: Die Seiten nennen sie mit Gehalt (stündlich neu, wie /jobs). */
+/** Stellen, die gerade live sind: Die Seiten nennen sie mit „Lohn auf Anfrage“ (stündlich neu, wie /jobs). */
 export function liveJobs(now = new Date()): Job[] {
   return getActiveJobs().filter((job) => isJobLive(job, now));
 }

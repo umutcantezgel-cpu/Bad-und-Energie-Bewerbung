@@ -4,8 +4,9 @@
  * JSX, gebaut nur aus belegten Quellen:
  * - Stellendaten (lib/jobs/data): Aufgaben, Anforderungen, Berufserfahrung, Ausbildungsdauer;
  * - lib/content/facts.ts: Wortlaut der Fakten paidCertifications, measurementTools, travelAllowance,
- *   driversLicenseGrant, takeoverGuarantee (nur Ausbildung, dort freigegeben);
- * - lib/content/region.ts: Orte mit Entfernung und Fahrzeit;
+ *   driversLicenseGrant, takeoverGuarantee (nur Ausbildung 2026, dort freigegeben), founded1926 (Praktikum, ohne Jahr);
+ * - lib/content/region.ts: Orte mit Entfernung und Fahrzeit; REGION.milestone („moderneres Büro, größeres Lager“,
+ *   „Wärmepumpen-Spezialist“) für Büro und Praktikum;
  * - lib/places (Ortsvermessung): Orte je Kreis mit eigener Ortsseite, nach Strecke (seit E-028; vorher drei Bereiche
  *   aus SITE_CONFIG.serviceRegions mit Dillenburg, das 38 km Straße entfernt liegt);
  * - lib/content/faq.ts, Frage „heizsysteme“: Badpartner und Fußbodenheizungen.
@@ -127,10 +128,14 @@ export function erfahrung(job: Pick<Job, 'experienceMonths'>): string {
   return `${wort} ${jahre === 1 ? 'Jahr' : 'Jahre'}`;
 }
 
+/** Ausbildungsdauer in Jahren: 42 Monate → „3,5“. */
+function jahre(job: Pick<Job, 'employment'>): string {
+  return formatNumber((job.employment.durationMonths ?? 0) / 12).replace(/,50$/, ',5');
+}
+
 /** Ausbildungsdauer im Dativ: 42 Monate → „3,5 Jahren“. */
 function dauer(job: Pick<Job, 'employment'>): string {
-  const jahre = (job.employment.durationMonths ?? 0) / 12;
-  return `${formatNumber(jahre).replace(/,50$/, ',5')} Jahren`;
+  return `${jahre(job)} Jahren`;
 }
 
 /** Eine andere Stelle, nur wenn sie gerade live ist (sonst entfällt der Verweis). */
@@ -348,14 +353,222 @@ function ausbildung(job: Job, now: Date): Einblick {
   };
 }
 
-const EINBLICKE: Partial<Record<JobId, (job: Job, now: Date) => Einblick>> = {
+/** Die Ausbildungsstelle, auf die Quereinstieg und Praktikum verweisen: 2027, solange sie live ist, sonst 2026. */
+function offeneAusbildung(now: Date): Job | null {
+  return lebendig('ausbildung-anlagenmechaniker-shk-2027', now) ?? lebendig('ausbildung-anlagenmechaniker-shk', now);
+}
+
+/**
+ * Ausbildung 2027 (fakten-abgleich S2): eigener Wortlaut neben der Ausbildung 2026. Ohne Übernahmegarantie (A1 gilt
+ * bis zur Bestätigung nur für die Stelle 2026), ohne Jahreszahl (Zahlen im Band nur aus REGION und der Dauer).
+ */
+function ausbildung2027(job: Job, now: Date): Einblick {
+  const praktikum = lebendig('schuelerpraktikum-shk', now);
+  const frueher = lebendig('ausbildung-anlagenmechaniker-shk', now);
+  const teile: Textteil[] = [];
+  if (praktikum) {
+    teile.push(
+      'Du bist dir noch nicht sicher, ob das Handwerk zu dir passt? Im ',
+      verweis(praktikum, 'Schülerpraktikum im SHK-Handwerk'),
+      ' lernst du die Arbeit vorher kennen.',
+    );
+  }
+  if (frueher) {
+    teile.push(`${praktikum ? ' ' : ''}Willst du lieber gleich anfangen? Der `, verweis(frueher, 'Einstieg noch in diesem Jahr'), ' ist weiterhin möglich.');
+  }
+
+  return {
+    arbeit: {
+      etikett: 'Ausbildung',
+      titel: 'Dein Weg zum Gesellenbrief',
+      einleitung: `Nach ${dauer(job)} legst du die Gesellenprüfung ab. Bis dahin lernst du abwechselnd im Betrieb und in der Berufsschule; den Starttermin stimmen wir mit dir ab.`,
+      punkte: [
+        {
+          titel: 'Wärmepumpe und Heizung',
+          text: 'Auf den Baustellen lernst du, Wärmepumpen und Heizungen einzubauen und in Betrieb zu nehmen, zuerst an der Seite der Gesellen.',
+        },
+        {
+          titel: 'Bad und Sanitär',
+          text: 'Bei Badsanierungen installierst du die Sanitärtechnik und siehst, wie ein modernes Bad Schritt für Schritt entsteht.',
+        },
+        {
+          titel: 'Schule und Prüfung',
+          text: `Auf Berufsschule und Prüfungen bereiten dich deine Meister vor. ${FACTS.travelAllowance.short} und ${FACTS.driversLicenseGrant.short} gehören dazu.`,
+        },
+      ],
+    },
+    vergleich: teile.length > 0 ? { titel: 'Erst reinschauen oder früher starten?', teile } : null,
+    gebiet: {
+      etikett: 'Anfahrt',
+      titel: 'Vom Wohnort in den Betrieb',
+      einleitung: `Für Azubis zählt der tägliche Weg. So lange fährst du aus diesen Orten zum Betrieb in ${REGION.center.name}:`,
+      orte: ['Steindorf', 'Garbenheim', 'Hermannstein', 'Braunfels', 'Aßlar'].map(ort).map((location) => ({
+        label: location.name,
+        text: fahrzeit(location),
+        mass: true,
+      })),
+      nachsatz: null,
+    },
+  };
+}
+
+/** Quereinstieg (fakten-abgleich S3): Einarbeitung, Baustellen des Teams, Weg in Ausbildung oder Fachkraft-Stelle. */
+function quereinstieg(job: Job, now: Date): Einblick {
+  const az = offeneAusbildung(now);
+  const am = lebendig('anlagenmechaniker-shk', now);
+  const teile: Textteil[] = [];
+  if (az) {
+    teile.push('Möchtest du den Beruf von Grund auf lernen, mit Gesellenprüfung am Ende? Dann passt die ', verweis(az, 'Ausbildung zum Anlagenmechaniker SHK'), '.');
+  }
+  if (am) {
+    teile.push(
+      `${az ? ' ' : ''}Bist du schon Geselle im SHK-Handwerk, schau dir die `,
+      verweis(am, 'Stelle für Gesellen in der Montage'),
+      ` an; sie setzt ${erfahrung(am)} Berufserfahrung voraus.`,
+    );
+  }
+  const geschick = job.requirements.find((anforderung) => /Geschick/.test(anforderung));
+  if (!geschick) throw new Error('einblick-text: Quereinstieg ohne Anforderung „Handwerkliches Geschick“');
+
+  return {
+    arbeit: {
+      etikett: 'Quereinstieg',
+      titel: 'So steigst du ein',
+      einleitung: `Eine SHK-Ausbildung brauchst du für den Einstieg nicht. ${geschick} zählt, den Rest zeigen dir unsere Meister.`,
+      punkte: [
+        { titel: 'Im Montageteam', text: 'Auf der Baustelle unterstützt du Gesellen und Meister und packst dort mit an, wo das Team dich braucht.' },
+        {
+          titel: 'Wärmepumpe, Heizung, Bad',
+          text: 'Das Team baut vor allem Wärmepumpen und Fußbodenheizungen ein und saniert Bäder schlüsselfertig.',
+        },
+        { titel: 'Einarbeitung', text: 'Deine Einarbeitung ist intensiv: Neues lernst du Schritt für Schritt bei der Arbeit im Team.' },
+      ],
+    },
+    vergleich: teile.length > 0 ? { titel: 'Ausbildung oder Fachkraft?', teile } : null,
+    gebiet: {
+      etikett: EINSATZGEBIET,
+      titel: 'Wo das Team im Einsatz ist',
+      einleitung: `Die Baustellen liegen rund um ${REGION.center.name}. Fahrzeit und Entfernung vom Firmensitz, zum Beispiel:`,
+      orte: ['Steindorf', 'Nauborn', 'Braunfels', 'Dutenhofen', 'Herborn'].map(ort).map((location) => ({
+        label: location.name,
+        text: fahrzeit(location),
+        mass: true,
+      })),
+      nachsatz: null,
+    },
+  };
+}
+
+/**
+ * Bürofachkraft (fakten-abgleich S5): die vier Aufgaben aus der Antwort des Inhabers, das Büro aus REGION.milestone
+ * („moderneres Büro, größeres Lager“), die Kolleginnen und Kollegen draußen als Verweis. Anforderungen offen (M-038).
+ */
+function buero(_job: Job, now: Date): Einblick {
+  const am = lebendig('anlagenmechaniker-shk', now);
+  const kd = lebendig('kundendiensttechniker-shk', now);
+  const ziele = [
+    am && { job: am, vor: 'in der', label: 'Montage von Wärmepumpen und Bädern' },
+    kd && { job: kd, vor: 'im', label: 'Kundendienst an Wärmepumpen' },
+  ].filter((ziel): ziel is { job: Job; vor: string; label: string } => Boolean(ziel));
+  const teile: Textteil[] =
+    ziele.length > 0
+      ? [
+          'Die Termine verteilst du auf die Kolleginnen und Kollegen draußen: auf die Gesellen ',
+          ...ziele.flatMap((ziel, i) => [`${i > 0 ? ' und ' : ''}${ziel.vor} `, verweis(ziel.job, ziel.label)]),
+          '. Am Telefon bist du für sie die Verbindung zu unseren Kunden.',
+        ]
+      : [];
+
+  return {
+    arbeit: {
+      etikett: 'Im Büro',
+      titel: 'Was über deinen Schreibtisch geht',
+      einleitung: `Nach dem Umzug an den neuen Firmensitz ist unser Büro moderner und das Lager größer. Von hier aus hältst du den Betrieb in ${REGION.center.name} am Laufen.`,
+      punkte: [
+        { titel: 'Angebote und Rechnungen', text: 'Du schreibst Angebote, bestätigst Aufträge und stellst die Rechnungen.' },
+        { titel: 'Material', text: 'Was die Baustellen brauchen, bestellst du beim Großhandel. Kommt die Lieferung, prüfst du sie.' },
+        { titel: 'Verwaltung', text: 'Ablage und Post erledigst du, und der Geschäftsführung arbeitest du zu.' },
+      ],
+    },
+    vergleich: teile.length > 0 ? { titel: 'Büro und Baustelle', teile } : null,
+    gebiet: {
+      etikett: 'Arbeitsweg',
+      titel: 'Dein Weg ins Büro',
+      einleitung: `Das Büro liegt am Firmensitz in ${REGION.center.name}. Entfernung und Fahrzeit aus diesen Orten:`,
+      orte: ['Wetzlar Kernstadt', 'Hermannstein', 'Aßlar', 'Dutenhofen', 'Gießen'].map(ort).map((location) => ({
+        label: location.name,
+        text: strecke(location),
+        mass: true,
+      })),
+      nachsatz: null,
+    },
+  };
+}
+
+/**
+ * Schülerpraktikum (fakten-abgleich S4): was du siehst, der Betrieb (FACTS.founded1926 ohne Jahreszahl,
+ * REGION.milestone) und der Weg in die Ausbildung. Kein Wort zu Geld; Dauer nach Absprache mit der Schule.
+ */
+function praktikum(_job: Job, now: Date): Einblick {
+  const az = offeneAusbildung(now);
+  const meisterbetrieb = /^(.+?) in /.exec(FACTS.founded1926.long)?.[1];
+  if (!meisterbetrieb) throw new Error('einblick-text: Fakt founded1926 nennt den Meisterbetrieb nicht mehr');
+
+  return {
+    arbeit: {
+      etikett: 'Praktikum',
+      titel: 'Was du im Praktikum erlebst',
+      einleitung: 'Im Praktikum bist du nah dran an der echten Arbeit und merkst, ob dir das Handwerk liegt.',
+      punkte: [
+        { titel: 'Wärmepumpe und Heizung', text: 'Du schaust zu, wie Wärmepumpen und Heizungen eingebaut und in Betrieb genommen werden.' },
+        { titel: 'Bad', text: 'Bei einer Badsanierung siehst du, wie aus einem alten Bad ein neues wird.' },
+        {
+          titel: 'Betrieb',
+          text: `Du lernst einen ${meisterbetrieb} kennen, der als Wärmepumpen-Spezialist Heizungen und Bäder modernisiert.`,
+        },
+        {
+          titel: 'Ausbildung',
+          text: 'Nebenbei erfährst du, wie eine Ausbildung bei uns abläuft: mit Meistern und Gesellen im Betrieb, dazu die Berufsschule.',
+        },
+      ],
+    },
+    vergleich: az
+      ? {
+          titel: 'Und nach dem Praktikum?',
+          teile: [
+            'Gefällt dir die Arbeit, kannst du danach in die ',
+            verweis(az, 'Ausbildung im SHK-Handwerk'),
+            ` einsteigen. Bis zur Gesellenprüfung dauert sie ${jahre(az)} Jahre.`,
+          ],
+        }
+      : null,
+    gebiet: {
+      etikett: 'Anfahrt',
+      titel: 'Kurze Wege zum Praktikum',
+      einleitung: `Entfernung und Fahrzeit zum Betrieb in ${REGION.center.name}, für Orte ganz in der Nähe:`,
+      orte: ['Steindorf', 'Wetzlar Kernstadt', 'Garbenheim', 'Nauborn'].map(ort).map((location) => ({
+        label: location.name,
+        text: strecke(location),
+        mass: true,
+      })),
+      nachsatz: null,
+    },
+  };
+}
+
+const EINBLICKE: Record<JobId, (job: Job, now: Date) => Einblick> = {
   'anlagenmechaniker-shk': anlagenmechaniker,
   'kundendiensttechniker-shk': kundendienst,
   'obermonteur-projektleiter-shk': obermonteur,
   'ausbildung-anlagenmechaniker-shk': ausbildung,
+  'ausbildung-anlagenmechaniker-shk-2027': ausbildung2027,
+  'quereinsteiger-montagehelfer': quereinstieg,
+  buerofachkraft: buero,
+  'schuelerpraktikum-shk': praktikum,
 };
 
-/** Einblick der Stelle; null für Stellen ohne Seite (Quereinstieg, funnel_only). */
+/** Einblick der Stelle; null für Stellen ohne Seite (funnel_only). Jede Stelle mit Seite hat einen eigenen Text. */
 export function einblick(job: Job, now: Date = new Date()): Einblick | null {
-  return EINBLICKE[job.id]?.(job, now) ?? null;
+  if (job.status === 'funnel_only') return null;
+  return EINBLICKE[job.id](job, now);
 }

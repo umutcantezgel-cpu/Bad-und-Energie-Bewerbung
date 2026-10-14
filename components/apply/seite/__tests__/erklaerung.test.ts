@@ -13,7 +13,7 @@ import { FACTS } from '@/lib/content/facts';
 import { getFaqItems } from '@/lib/content/faq';
 import { DISCRETION_PROMISE, getProcessIntro, getProcessSteps, type ProcessAudience } from '@/lib/content/process';
 import { REGION } from '@/lib/content/region';
-import { formatSalaryRange, jobPath } from '@/lib/jobs/format';
+import { jobPath, payLabel } from '@/lib/jobs/format';
 import { ALL_JOBS, getActiveJobs, getFunnelOptions, getJobById, getJobPageSlugs, isJobLive } from '@/lib/jobs/registry';
 
 /**
@@ -29,7 +29,7 @@ vi.mock('@/components/apply', () => ({
 }));
 
 const STICHTAG = new Date('2026-10-10T12:00:00+02:00');
-const AUDIENCES: ProcessAudience[] = ['fachkraft', 'ausbildung', 'quereinstieg'];
+const AUDIENCES: ProcessAudience[] = ['fachkraft', 'ausbildung', 'quereinstieg', 'buero'];
 
 function eingaben(audience: ProcessAudience): ErklaerungEingaben {
   return {
@@ -71,7 +71,7 @@ const KORPUS = normal(
       ...getProcessSteps(audience).flatMap((step) => [String(step.number), step.title, step.text]),
     ]),
     ...getFaqItems().map((faq) => faq.answer),
-    ...ALL_JOBS.flatMap((job) => [job.title, job.shortTitle, job.summary, ...job.requirements, formatSalaryRange(job) ?? '']),
+    ...ALL_JOBS.flatMap((job) => [job.title, job.shortTitle, job.summary, ...job.requirements, payLabel(job) ?? '']),
     MAPPE_KOPF.titel,
     MAPPE_KOPF.unterzeile,
     MAPPE_KOPF.einleitung,

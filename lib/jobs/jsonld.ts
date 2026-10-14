@@ -1,7 +1,9 @@
 import { BREADCRUMB_HOME, BREADCRUMB_JOBS } from '@/lib/content/breadcrumbs';
+import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
 import { breadcrumbList, type BreadcrumbJsonLd } from '@/lib/seo/breadcrumbs-jsonld';
 import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
+import { berufKategorie } from './berufe';
 import { EMPLOYER } from './employer';
 import { jobUrl, toHtmlDescription } from './format';
 import type { Job } from './schema';
@@ -23,7 +25,7 @@ export interface JobPostingJsonLd {
     '@type': 'Organization';
     '@id': string;
     name: string;
-    sameAs: string;
+    sameAs: readonly string[];
     logo: string;
   };
   jobLocation: {
@@ -37,12 +39,15 @@ export interface JobPostingJsonLd {
       addressCountry: string;
     };
   };
-  baseSalary?: {
-    '@type': 'MonetaryAmount';
-    currency: string;
-    value: { '@type': 'QuantitativeValue'; minValue: number; maxValue: number; unitText: string };
-  };
   directApply: boolean;
+  /** Beruf nach ISCO-08 bzw. KldB 2010 (lib/jobs/berufe.ts). */
+  occupationalCategory: string;
+  industry: string;
+  /** Aufgaben im Wortlaut der Seite („Das erwartet dich“). */
+  responsibilities: string;
+  /** Anforderungen im Wortlaut der Seite; fehlt, solange sie offen sind (requirementsOpen). */
+  qualifications?: string;
+  employerOverview: string;
   educationRequirements?: { '@type': 'EducationalOccupationalCredential'; credentialCategory: string } | NoRequirements;
   experienceRequirements?: { '@type': 'OccupationalExperienceRequirements'; monthsOfExperience: number } | NoRequirements;
   jobBenefits?: string;
@@ -54,12 +59,22 @@ export type { BreadcrumbJsonLd } from '@/lib/seo/breadcrumbs-jsonld';
 const EMPLOYMENT_TYPE: Record<Job['employment']['kind'], string | string[]> = {
   vollzeit: 'FULL_TIME',
   teilzeit: 'PART_TIME',
+  'voll-oder-teilzeit': ['FULL_TIME', 'PART_TIME'],
   ausbildung: ['FULL_TIME', 'OTHER'],
+  praktikum: 'INTERN',
 };
+
+/** Branche des Betriebs (Gewerk der Innung; das Büro arbeitet für denselben Betrieb). */
+export const INDUSTRY = 'Sanitär-, Heizungs- und Klimatechnik';
+
+/** Wer der Arbeitgeber ist, aus belegten Fakten (founded1926, employees15, heatPumpBrands). */
+export function employerOverview(): string {
+  return `${COMPANY.legalName}: ${FACTS.founded1926.long} ${FACTS.employees15.long} ${FACTS.heatPumpBrands.long}`;
+}
 
 /**
  * JobPosting-Knoten ohne Kanalprüfung (für Feeds). Nur für veröffentlichte Stellen;
- * alles andere ergibt null.
+ * alles andere ergibt null. E-030: ohne baseSalary, die Beschreibung nennt „Lohn: auf Anfrage“.
  */
 export function toJobPostingNode(job: Job): JobPostingJsonLd | null {
   if (job.status !== 'published') return null;
@@ -93,21 +108,14 @@ export function toJobPostingNode(job: Job): JobPostingJsonLd | null {
       },
     },
     directApply: true,
+    occupationalCategory: berufKategorie(job.beruf),
+    industry: INDUSTRY,
+    responsibilities: job.tasks.join('; '),
+    employerOverview: employerOverview(),
   };
 
   if (job.validThrough) node.validThrough = job.validThrough;
-  if (job.salary) {
-    node.baseSalary = {
-      '@type': 'MonetaryAmount',
-      currency: job.salary.currency,
-      value: {
-        '@type': 'QuantitativeValue',
-        minValue: job.salary.min,
-        maxValue: job.salary.max,
-        unitText: job.salary.unit,
-      },
-    };
-  }
+  if (job.requirements.length > 0) node.qualifications = job.requirements.join('; ');
   if (job.education) {
     node.educationRequirements = {
       '@type': 'EducationalOccupationalCredential',

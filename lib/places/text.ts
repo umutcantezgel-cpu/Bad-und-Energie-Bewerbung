@@ -821,15 +821,6 @@ export function routeLabel(place: Pick<Place, 'name'>): string {
   return `Route ab ${place.name} in Google Maps`;
 }
 
-/** Gehaltsspanne der Fachkräfte-Stellen (ohne Ausbildung) für Meta-Texte: „3.600–5.600 €“. */
-function skilledSalarySpan(jobs: readonly Job[]): string | null {
-  const salaries = jobs.filter((job) => job.employment.kind !== 'ausbildung' && job.salary?.unit === 'MONTH').map((job) => job.salary!);
-  if (salaries.length === 0) return null;
-  const min = Math.min(...salaries.map((s) => s.min));
-  const max = Math.max(...salaries.map((s) => s.max));
-  return `${formatNumber(min)}–${formatNumber(max)}${NBSP}€`;
-}
-
 const PERKS = `${lowerFirst(FACTS.flexibleHours.short)}, ${FACTS.vacation30.short}`;
 
 /**
@@ -854,8 +845,6 @@ function placeMetaRaw(c: PlaceContext): PageMeta {
   const { place } = c;
   const km = formatKm(place.commute.distanceKm);
   const minutes = formatMinutes(place.commute.minutes);
-  const salary = skilledSalarySpan(c.jobs);
-  const salaryPart = salary ? `Gehalt ${salary} im Monat, ` : '';
 
   if (place.kind === 'stadt') {
     const st = c.stadtteile;
@@ -868,9 +857,8 @@ function placeMetaRaw(c: PlaceContext): PageMeta {
       h1: `${place.name} und seine Stadtteile: dein Weg zum Firmensitz`,
       primaryKeyword: `Arbeitsweg ${place.name} Stadtteile`,
       description: fitDescription(
-        `${place.name} und ${st.length} Stadtteile: ${minKm} bis ${formatKm(maxKm)} zum Firmensitz in der ${STREET}. ${upperFirst(salaryPart)}${PERKS}.`,
-        `${place.name} und ${st.length} Stadtteile: ${minKm} bis ${formatKm(maxKm)} zum Firmensitz. ${upperFirst(salaryPart)}${PERKS}.`,
         `${place.name} und ${st.length} Stadtteile: ${minKm} bis ${formatKm(maxKm)} zum Firmensitz in der ${STREET}. ${upperFirst(PERKS)}.`,
+        `${place.name} und ${st.length} Stadtteile: ${minKm} bis ${formatKm(maxKm)} zum Firmensitz. ${upperFirst(PERKS)}.`,
       ),
     };
   }
@@ -881,8 +869,7 @@ function placeMetaRaw(c: PlaceContext): PageMeta {
     h1: `SHK-Jobs für ${place.name}`,
     primaryKeyword: `SHK Jobs ${place.name}`,
     description: fitDescription(
-      `SHK-Jobs für ${place.name}: ${km} und rund ${minutes} ${where}, gemessen mit OpenStreetMap. ${upperFirst(salaryPart)}${PERKS}.`,
-      `SHK-Jobs für ${place.name}: ${km} und rund ${minutes} ${where}. ${upperFirst(salaryPart)}${PERKS}.`,
+      `SHK-Jobs für ${place.name}: ${km} und rund ${minutes} ${where}, gemessen mit OpenStreetMap. ${upperFirst(PERKS)}.`,
       `SHK-Jobs für ${place.name}: ${km} und rund ${minutes} ${where}. ${upperFirst(PERKS)}.`,
     ),
   };
@@ -1093,7 +1080,6 @@ export function getKreisPageText(kreis: Kreis, options: PlaceTextOptions = {}): 
   const nearest = stats.nearest[0];
   const farthest = stats.farthest[stats.farthest.length - 1];
   const jobs = options.jobs ?? getActiveJobs();
-  const salary = skilledSalarySpan(jobs);
   const names = (list: readonly Place[]) => joinList(list.map((p) => p.name));
 
   const blocks: TextBlock[] = [
@@ -1123,8 +1109,8 @@ export function getKreisPageText(kreis: Kreis, options: PlaceTextOptions = {}): 
       h1: `SHK-Jobs ${kreis.dative}`,
       primaryKeyword: `SHK Jobs ${kreis.shortName}`,
       description: fitDescription(
-        `SHK-Jobs ${kreis.dative}: ${places.length} Orte, ${nearest.commute.distanceKm} bis ${formatKm(farthest.commute.distanceKm)} zum Firmensitz in ${HQ_CITY}. ${salary ? `Gehalt ${salary} im Monat, ` : ''}${PERKS}.`,
-        `SHK-Jobs ${kreis.dative}: ${places.length} Orte, ${nearest.commute.distanceKm} bis ${formatKm(farthest.commute.distanceKm)} zum Firmensitz. ${salary ? `Gehalt ${salary} im Monat, ` : ''}${PERKS}.`,
+        `SHK-Jobs ${kreis.dative}: ${places.length} Orte, ${nearest.commute.distanceKm} bis ${formatKm(farthest.commute.distanceKm)} zum Firmensitz in ${HQ_CITY}. ${upperFirst(PERKS)}.`,
+        `SHK-Jobs ${kreis.dative}: ${places.length} Orte, ${nearest.commute.distanceKm} bis ${formatKm(farthest.commute.distanceKm)} zum Firmensitz. ${upperFirst(PERKS)}.`,
         `SHK-Jobs ${kreis.dative}: ${places.length} Orte mit ${formatKm(nearest.commute.distanceKm)} bis ${formatKm(farthest.commute.distanceKm)} zum Firmensitz in ${HQ_CITY}. ${upperFirst(PERKS)}.`,
       ),
     }),
@@ -1217,7 +1203,6 @@ export function getEinsatzgebietPageText(options: PlaceTextOptions = {}): Einsat
   const hubs = getHubKreise();
   const stats = groupStats(places);
   const jobs = options.jobs ?? getActiveJobs();
-  const salary = skilledSalarySpan(jobs);
   const kreisItem = (kreis: Kreis) => `${kreis.name} (${kreis.placeCount} ${numerus(kreis.placeCount, 'Ort', 'Orte')})`;
 
   return {
@@ -1236,9 +1221,8 @@ export function getEinsatzgebietPageText(options: PlaceTextOptions = {}): Einsat
       h1: `Unser Einsatzgebiet: ${places.length} Orte bis ${formatKm(MAX_ROAD_KM)} um ${HQ_CITY}`,
       primaryKeyword: `Einsatzgebiet SHK ${HQ_CITY}`,
       description: fitDescription(
-        `${places.length} Orte in ${kreise.length} Kreisen, jeder mit gemessener Strecke und Fahrzeit zum Firmensitz in ${HQ_CITY}. ${salary ? `Gehalt ${salary} im Monat, ` : ''}${PERKS}.`,
-        `${places.length} Orte in ${kreise.length} Kreisen mit gemessener Fahrzeit zum Firmensitz in ${HQ_CITY}. ${salary ? `Gehalt ${salary} im Monat, ` : ''}${PERKS}.`,
         `${places.length} Orte in ${kreise.length} Kreisen, jeder mit gemessener Strecke und Fahrzeit zum Firmensitz in ${HQ_CITY}. ${upperFirst(PERKS)}.`,
+        `${places.length} Orte in ${kreise.length} Kreisen mit gemessener Fahrzeit zum Firmensitz in ${HQ_CITY}. ${upperFirst(PERKS)}.`,
       ),
     }),
     sections: [

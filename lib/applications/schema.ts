@@ -31,7 +31,9 @@ export const contactChannelSchema = z.enum(CONTACT_CHANNELS);
 const INVALID_ANSWER = 'Diese Angabe ist ungültig.';
 
 /** Option id of one question (lib/apply/questions.ts); anything else is rejected. */
-const answerSchema = (key: 'qualification' | 'schoolStatus' | 'background' | 'start'): z.ZodOptional<z.ZodString> =>
+const answerSchema = (
+  key: 'qualification' | 'schoolStatus' | 'background' | 'start' | 'officeExperience' | 'workload',
+): z.ZodOptional<z.ZodString> =>
   z
     .string()
     .max(60)
@@ -49,6 +51,9 @@ export const applicationAnswersSchema = z
     background: answerSchema('background'),
     licenseB: z.enum(['yes', 'no']).optional(),
     start: answerSchema('start'),
+    // Fragenset `buero` (Bürofachkraft, 2026-10-14): nur ergänzend, Absprache E-012 (fakten-abgleich S7).
+    officeExperience: answerSchema('officeExperience'),
+    workload: answerSchema('workload'),
   })
   .strict();
 export type ApplicationAnswers = z.infer<typeof applicationAnswersSchema>;

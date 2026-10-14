@@ -5,7 +5,8 @@ import { defineJob } from '../schema';
 // servicesData 'ausbildung' (lib/data/services.ts), ROLE_CONFIGS.azubi (pricing.constants.ts).
 // Owner-Entscheidung: „Ausbildung 2026 – Einstieg noch möglich“, Start nach Absprache.
 // Titel ohne Jahr (Google: keine Daten im JobPosting-Titel); „2026“ steht in metaTitle, h1 und Texten,
-// deshalb endet die Ausschreibung spätestens am 31.12.2026 (fakten-abgleich.md B5).
+// deshalb endet die Ausschreibung spätestens am 31.12.2026 (fakten-abgleich.md B5). Nachfolgerin ist die Ausbildung 2027
+// (fakten-abgleich S2): Sie läuft schon jetzt, diese Stelle endet geplant und wird danach `archived`.
 export const ausbildungAnlagenmechanikerShk = defineJob({
   id: 'ausbildung-anlagenmechaniker-shk',
   referenceCode: 'SHK-AZ-2026-04',
@@ -14,11 +15,12 @@ export const ausbildungAnlagenmechanikerShk = defineJob({
   category: 'ausbildung',
   title: 'Ausbildung zum Anlagenmechaniker SHK (m/w/d)',
   titleShy: 'Ausbildung zum Anlagen\u00ADmechaniker SHK (m/w/d)',
-  shortTitle: 'Ausbildung Anlagenmechaniker',
+  // Mit Jahr, damit Listen und Flow sie von der Nachfolgerin 2027 unterscheiden (der Titel bleibt ohne Jahr).
+  shortTitle: 'Ausbildung Anlagenmechaniker 2026',
   seo: {
     metaTitle: 'Ausbildung Anlagenmechaniker SHK Wetzlar (m/w/d) 2026',
     metaDescription:
-      'Ausbildung Anlagenmechaniker SHK in Wetzlar – Einstieg 2026 noch möglich: eigenes Hilti-Werkzeugset, 1.050–1.400 € im Monat, Fahrtkostenzuschuss.',
+      'Ausbildung Anlagenmechaniker SHK in Wetzlar – Einstieg 2026 noch möglich: eigenes Hilti-Werkzeugset, Vergütung über Tarif, Fahrtkostenzuschuss.',
     h1: 'Ausbildung Anlagenmechaniker SHK – Einstieg 2026 noch möglich',
     primaryKeyword: 'Ausbildung Anlagenmechaniker SHK Wetzlar',
     secondaryKeywords: [
@@ -28,6 +30,7 @@ export const ausbildungAnlagenmechanikerShk = defineJob({
       'Azubi Anlagenmechaniker Lahn-Dill',
     ],
   },
+  alsoKnownAs: ['Ausbildung Heizungsbauer', 'Ausbildung Installateur', 'Ausbildung Sanitärinstallateur'],
   summary: 'Ausbildung 2026: Einstieg noch möglich. In 3,5 Jahren wirst du Anlagenmechaniker SHK, mit eigenem Hilti-Werkzeugset ab Tag 1.',
   // „Einstieg 2026“ steht schon in der h1; „von Anfang an mit“ im Vorteil `mentoring` und in Ablauf-Schritt 3.
   intro:
@@ -46,14 +49,17 @@ export const ausbildungAnlagenmechanikerShk = defineJob({
     { label: 'Vergütung', text: 'Ausbildungsvergütung über Tarif, plus Prämien' },
   ],
   employment: { kind: 'ausbildung', permanent: false, start: 'nach-absprache', durationMonths: 42 },
-  salary: { min: 1050, max: 1400, unit: 'MONTH', currency: 'EUR' },
+  pay: 'auf-anfrage',
   location: HQ_LOCATION,
   education: { credentialCategory: 'high school', label: 'Schulabschluss' },
   experienceMonths: 0,
   datePosted: '2026-03-01',
   validThrough: '2026-12-31T23:59:59+01:00',
-  updatedAt: '2026-10-12',
+  updatedAt: '2026-10-14',
   apply: { questionSet: 'ausbildung' },
   channels: { googleJobs: true, indeedFeed: true, genericFeed: true, ba: true },
+  // Auszubildende zählen mit ihrem Zielberuf (Schlüsselverzeichnis der BA): KldB 34212, ISCO-08 7126.
+  beruf: { kldb: '34212', isco: '7126' },
+  nachfolger: 'ausbildung-anlagenmechaniker-shk-2027',
   teamQuoteId: 'weber',
 });

@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { COMPANY } from '@/lib/content/company';
 import { getFaqItems } from '@/lib/content/faq';
-import { formatSalaryAmount, jobPath } from '@/lib/jobs/format';
+import { PAY_ON_REQUEST, jobPath } from '@/lib/jobs/format';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import { DISCRETION_PROMISE, PROCESS_INTRO, getProcessSteps } from '@/lib/content/process';
 import { buildFaqPageJsonLd } from '../content';
@@ -151,14 +151,14 @@ describe('JobList (#stellen, E-START-023)', () => {
     expect(html).toContain(`<p class="text-etikett text-ink-muted">${stellenEtikett(live.length)}</p>`);
   });
 
-  it('Papier mit Leitungstrenner; vier Zeilen mit Gehalt aus job.salary und benannter Liste', () => {
+  it('Papier mit Leitungstrenner; je live Stelle eine Zeile mit „Lohn auf Anfrage“ (E-030) und benannter Liste', () => {
     expect(html).toMatch(/<section class="[^"]*relative[^"]*"[^>]*id="stellen"/);
     expect(html).not.toMatch(/<section class="[^"]*bg-surface-2/);
     expect(html).toContain('data-zeichnung="leitungstrenner"');
     expect(html).toContain(`aria-label="${live.length} offene Stellen"`);
-    for (const job of live) {
-      expect(html).toContain(`href="${jobPath(job)}"`);
-      expect(html).toContain(`>${formatSalaryAmount(job)}<`);
-    }
+    for (const job of live) expect(html).toContain(`href="${jobPath(job)}"`);
+    // Je Stelle mit Lohnangabe einmal „Lohn auf Anfrage“; das Schülerpraktikum sagt nichts zu Geld
+    expect(html.split(`>${PAY_ON_REQUEST}<`).length - 1).toBe(live.filter((job) => job.pay === 'auf-anfrage').length);
+    expect(html).not.toMatch(/€|Gehalt \/ Monat/);
   });
 });

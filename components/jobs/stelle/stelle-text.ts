@@ -73,10 +73,11 @@ export function kopfUnterzeile(job: Pick<Job, 'summary' | 'seo'>): string {
 /**
  * Maße an der Zeichnung (Variante 1: Maßkette für das Einsatzgebiet): der Radius aus den Stellendaten. Die
  * Arbeitszeit hat kein Maß mehr: Sie ist flexibel (Fakt flexibleHours), feste Uhrzeiten nennt die Seite nicht
- * (fakten-abgleich B28; bis 2026-10-12 stand hier „13:30 Freitags Feierabend“).
+ * (fakten-abgleich B28; bis 2026-10-12 stand hier „13:30 Freitags Feierabend“). Ohne Baustellen (Büro) kein Maß.
  */
 export function kopfMasse(job: Pick<Job, 'location'>): SeitenkopfMass[] {
-  return [{ wert: `${job.location.radiusKm}${NBSP}km`, name: 'Einsatzradius' }];
+  const { radiusKm } = job.location;
+  return radiusKm ? [{ wert: `${radiusKm}${NBSP}km`, name: 'Einsatzradius' }] : [];
 }
 
 /** Das Wärmebild (Variante 3, statisch) gehört zur Wärmepumpen-Stelle im Kundendienst. */

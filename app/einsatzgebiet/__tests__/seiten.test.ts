@@ -60,7 +60,7 @@ function graphOf(element: ReactNode): PageGraph {
   return graphs[0];
 }
 
-const ofType = (graph: PageGraph, type: string) => (graph['@graph'] as unknown as Node[]).filter((node) => node['@type'] === type);
+const ofType = (graph: PageGraph, type: string) => (graph['@graph'] as unknown as Node[]).filter((node) => [node['@type']].flat().includes(type));
 
 /** Text der Stufen im ersten Pfad (Brotkrümelnavigation). */
 function visibleCrumbs(html: string): string[] {

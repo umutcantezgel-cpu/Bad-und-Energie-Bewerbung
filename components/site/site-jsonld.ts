@@ -1,6 +1,6 @@
 import { COMPANY } from '@/lib/content/company';
 import { REGION } from '@/lib/content/region';
-import { EMPLOYER } from '@/lib/jobs/employer';
+import { EMPLOYER, SAME_AS } from '@/lib/jobs/employer';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 
 /**
@@ -15,6 +15,12 @@ export const FOUNDER_ID = `${SITE_CONFIG.consumerUrl}/#founder`;
 
 const careerBase = SITE_CONFIG.baseUrl.replace(/\/+$/, '');
 export const WEBSITE_ID = `${careerBase}/#website`;
+
+/**
+ * Typen des Betriebs (Plan §C4): LocalBusiness mit den beiden schema.org-Untertypen für Heizung/Klima (HVACBusiness) und
+ * Sanitär (Plumber); scripts/qa/check-graph.mjs prüft Typen als Liste.
+ */
+export const LOCAL_BUSINESS_TYPES = ['LocalBusiness', 'HVACBusiness', 'Plumber'] as const;
 
 const postalAddress = {
   '@type': 'PostalAddress',
@@ -66,7 +72,8 @@ export function buildSiteNodes() {
       legalName: COMPANY.legalName,
       url: COMPANY.website,
       logo: EMPLOYER.logoUrl,
-      sameAs: [COMPANY.website],
+      // Website für Kunden und jedes geprüfte Profil (lib/content/profile.ts), dieselbe Liste wie im JobPosting
+      sameAs: [...SAME_AS],
       foundingDate: String(COMPANY.foundingYear),
       // V6-B (statt E-SEO-006): der Gründer als eigener Personenknoten, hier nur die Referenz.
       founder: { '@id': FOUNDER_ID },
@@ -103,7 +110,7 @@ export function buildSiteNodes() {
       },
     },
     {
-      '@type': 'LocalBusiness',
+      '@type': [...LOCAL_BUSINESS_TYPES],
       '@id': LOCAL_BUSINESS_ID,
       name: COMPANY.name,
       legalName: COMPANY.legalName,

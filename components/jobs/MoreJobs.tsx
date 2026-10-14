@@ -27,7 +27,7 @@ export function getMoreJobs(currentJob: Job | undefined, now: Date = new Date())
 
 /**
  * Band mit den übrigen offenen Stellen als Leitungsabgänge wie #stellen der Startseite (Vorlauf links,
- * Rücklauf rechts, Gehalt als Maß), mit Leitungstrenner, h2 und Link auf /jobs.
+ * Rücklauf rechts, „Lohn auf Anfrage“ je Zeile), mit Leitungstrenner, h2 und Link auf /jobs.
  */
 export function MoreJobs({ currentJob, title = 'Weitere Stellen', now, tone = 'papier', className }: MoreJobsProps) {
   const jobs = getMoreJobs(currentJob, now);

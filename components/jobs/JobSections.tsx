@@ -3,7 +3,7 @@ import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
 import { FACTS } from '@/lib/content/facts';
 import { getJobSections, type JobSection } from '@/lib/jobs/format';
-import { GEHALT_VERGLEICH_LINK } from '@/lib/themen/registry';
+import { BEZAHLUNG_LINK } from '@/lib/themen/registry';
 import { TextLink } from '@/components/ui/TextLink';
 import type { Job } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
@@ -30,6 +30,15 @@ function toRows(items: readonly string[]): PackageListItem[] {
 }
 
 const headingId = (id: SectionId) => `stelle-${id}`;
+
+/**
+ * „Auch gesucht als: Heizungsbauer, Installateur …“ (Plan §C5): die üblichen Bezeichnungen derselben Arbeit aus den
+ * Stellendaten (`alsoKnownAs`), sichtbar unter der Einleitung, damit Suche und Antwortmaschinen die Stelle auch unter
+ * diesen Namen finden. Nur auf der Seite, nicht in der JobPosting-Beschreibung.
+ */
+export function auchGesuchtAls(job: Pick<Job, 'alsoKnownAs'>): string | null {
+  return job.alsoKnownAs.length > 0 ? `Auch gesucht als: ${job.alsoKnownAs.join(', ')}` : null;
+}
 
 /** h2 eines Abschnitts in Bricolage und Marken-Navy: `gross` wie die Abschnittsköpfe der Startseite (title-1). */
 function Ueberschrift({ id, children, gross = false }: { id: SectionId; children: string; gross?: boolean }) {
@@ -130,6 +139,7 @@ export function JobSections({ job, className }: JobSectionsProps) {
       .map((s) => [s.id, s] as const),
   );
   const intro = job.intro;
+  const synonyme = auchGesuchtAls(job);
   const aufgaben = sections.get('aufgaben');
   const anforderungen = sections.get('anforderungen');
   const vorteile = sections.get('vorteile');
@@ -148,6 +158,7 @@ export function JobSections({ job, className }: JobSectionsProps) {
                   {aufgaben.heading}
                 </Ueberschrift>
                 <p className="max-w-prose text-body text-ink-muted md:text-lead">{intro}</p>
+                {synonyme ? <p className="max-w-prose text-callout text-ink-muted">{synonyme}</p> : null}
               </div>
               <Aufgaben items={aufgaben.items ?? []} />
             </section>
@@ -193,11 +204,14 @@ export function JobSections({ job, className }: JobSectionsProps) {
                 <section aria-labelledby={headingId('eckdaten')} className="flex flex-col gap-6 sm:pt-8">
                   <Ueberschrift id="eckdaten">{eckdaten.heading}</Ueberschrift>
                   <PackageList items={toRows(eckdaten.items ?? [])} />
-                  {/* Themenseite Gehalt (E-028): alle Spannen nebeneinander, genau ein Link je Stellenseite */}
-                  <TextLink href={GEHALT_VERGLEICH_LINK.href} standalone className="self-start">
-                    {GEHALT_VERGLEICH_LINK.label}
-                    <Icon name="arrow-right" size="sm" className="shrink-0" />
-                  </TextLink>
+                  {/* Themenseite „Bezahlung und Extras“ (E-028, E-030): genau ein Link je Stellenseite; nicht beim
+                      Schülerpraktikum, das nichts zu Geld sagt */}
+                  {job.pay === 'auf-anfrage' ? (
+                    <TextLink href={BEZAHLUNG_LINK.href} standalone className="self-start">
+                      {BEZAHLUNG_LINK.label}
+                      <Icon name="arrow-right" size="sm" className="shrink-0" />
+                    </TextLink>
+                  ) : null}
                 </section>
               ) : null}
             </div>

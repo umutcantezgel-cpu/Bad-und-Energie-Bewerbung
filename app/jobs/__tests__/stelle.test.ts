@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { JobHeader } from '@/components/jobs/JobHeader';
 import { JobSections } from '@/components/jobs/JobSections';
 import { MoreJobs } from '@/components/jobs/MoreJobs';
-import { SalaryCard, salaryLabel } from '@/components/jobs/SalaryCard';
+import { SalaryCard, lohnZusatz } from '@/components/jobs/SalaryCard';
 import {
   KOPF_AKTION,
   KOPF_MIKROTEXT,
@@ -24,15 +24,18 @@ import { einblick } from '@/components/jobs/stelle/einblick-text';
 import { SHORT_APPLY_LABEL } from '@/components/site/nav';
 import { WAERMEBILD_TITEL } from '@/components/zeichnung/Waermebild';
 import { FACTS } from '@/lib/content/facts';
-import { escapeHtml, formatSalaryAmount, getJobSections } from '@/lib/jobs/format';
+import { PAY_ON_REQUEST, escapeHtml, getJobSections } from '@/lib/jobs/format';
 import { buildJobPostingJsonLd } from '@/lib/jobs/jsonld';
 import { getActiveJobs, getJobById, getJobPageSlugs, getJobBySlug, type Job } from '@/lib/jobs/registry';
+import { findClaims } from '../../../scripts/qa/check-claims.mjs';
 
 const SHY = '­';
 const NBSP = ' ';
 const am = getJobById('anlagenmechaniker-shk')!;
 const kd = getJobById('kundendiensttechniker-shk')!;
 const azubi = getJobById('ausbildung-anlagenmechaniker-shk')!;
+const buero = getJobById('buerofachkraft')!;
+const praktikum = getJobById('schuelerpraktikum-shk')!;
 const pageJobs = getJobPageSlugs()
   .map((slug) => getJobBySlug(slug))
   .filter((job): job is Job => job !== undefined);
@@ -74,11 +77,16 @@ describe('Kopf der Stellenseite: Texte und Maße (stelle-text)', () => {
     // V6-G2: Die h1 der Kundendienst-Stelle nennt Wetzlar, das Etikett darum nicht noch einmal.
     expect(kopfEtikett(kd)).toBe('Vollzeit · Unbefristet');
     expect(kopfEtikett(azubi)).toBe('Ausbildung · 3,5 Jahre · Wetzlar');
+    expect(kopfEtikett(buero)).toBe('Voll- oder Teilzeit');
+    expect(kopfEtikett(praktikum)).toBe('Praktikum');
   });
 
   it('Maße aus den Stellendaten: nur der Radius, keine Uhrzeit (flexible Arbeitszeiten, fakten-abgleich B28)', () => {
     expect(kopfMasse(am)).toEqual([{ wert: `${am.location.radiusKm}${NBSP}km`, name: 'Einsatzradius' }]);
     for (const job of [am, kd, azubi]) expect(kopfMasse(job).map((m) => m.wert)).toEqual([`35${NBSP}km`]);
+    // Das Büro hat keine Baustellen: kein Einsatzradius
+    expect(buero.location.radiusKm).toBeUndefined();
+    expect(kopfMasse(buero)).toEqual([]);
   });
 
   it('Hauptaktion springt zum Flow, Zweitweg zu den Aufgaben, Mikrotext aus den Fakten', () => {
@@ -112,13 +120,21 @@ describe('Kopf der Stellenseite: Texte und Maße (stelle-text)', () => {
 });
 
 describe('JobHeader (Seitenkopf erzaehl)', () => {
-  it.each(pageJobs.map((job) => [job.id, job] as const))('%s: eine h1 im Wortlaut von seo.h1, Gehalt im Heizkreis', (_id, job) => {
+  it.each(pageJobs.map((job) => [job.id, job] as const))('%s: eine h1 im Wortlaut von seo.h1, „Lohn auf Anfrage“ statt Betrag', (_id, job) => {
     const html = renderToStaticMarkup(createElement(JobHeader, { job }));
     expect(html.match(/<h1/g)).toHaveLength(1);
     expect(h1Of(html)).toBe(job.seo.h1);
     expect(html).toContain('data-seitenkopf="erzaehl"');
-    expect(html).toContain('data-zeichnung="heizkreis"');
-    expect(text(html)).toContain(text(formatSalaryAmount(job)!));
+    // E-030: kein Heizkreis um eine Spanne, sondern der Block „Lohn auf Anfrage“; das Praktikum sagt nichts zu Geld
+    expect(html).not.toContain('data-zeichnung="heizkreis"');
+    if (job.pay === 'auf-anfrage') {
+      expect(html).toContain('data-stelle-lohn');
+      expect(text(html)).toContain(PAY_ON_REQUEST);
+    } else {
+      expect(html).not.toContain('data-stelle-lohn');
+      expect(text(html)).not.toMatch(/Lohn|Gehalt|Vergütung|Tarif/);
+    }
+    expect(findClaims(text(html), { premiumPending: true })).toEqual([]);
     expect(text(html)).toContain(kopfUnterzeile(job));
     // Hauptaktion zum Flow, eine rote Fläche; Signatur über die Register-Kennung erdleitung
     expect(html).toContain(`href="#${STELLE_ANKER.bewerben}"`);
@@ -164,14 +180,21 @@ describe('JobHeader (Seitenkopf erzaehl)', () => {
   });
 });
 
-describe('SalaryCard (Gehalt im Heizkreis)', () => {
-  it('zeigt genau die Spanne der Stelle (Gleichheit mit JobPosting.baseSalary)', () => {
+describe('SalaryCard (Block „Lohn auf Anfrage“, E-030)', () => {
+  it('gleich mit dem JobPosting: „Lohn auf Anfrage“ in Seite und Beschreibung, kein baseSalary, kein Betrag', () => {
     for (const job of pageJobs) {
       const html = renderToStaticMarkup(createElement(SalaryCard, { job }));
       const ld = buildJobPostingJsonLd(job)!;
-      expect(text(html)).toContain(text(formatSalaryAmount(job)!));
-      expect(ld.baseSalary?.value).toMatchObject({ minValue: job.salary!.min, maxValue: job.salary!.max });
-      expect(text(html)).toContain(salaryLabel(job)!);
+      expect(ld, job.id).not.toHaveProperty('baseSalary');
+      if (job.pay === 'auf-anfrage') {
+        expect(text(html), job.id).toContain(PAY_ON_REQUEST);
+        expect(ld.description, job.id).toContain(`Lohn: ${PAY_ON_REQUEST.replace(/^Lohn /, '')}`);
+        const zusatz = lohnZusatz(job);
+        if (zusatz) expect(text(html), job.id).toContain(zusatz);
+      } else {
+        expect(html, job.id).toBe('');
+      }
+      expect(findClaims(text(html), { premiumPending: true }), job.id).toEqual([]);
     }
   });
 });
@@ -234,12 +257,15 @@ describe('JobSections: sichtbare Abschnitte = Abschnitte der JobPosting-Beschrei
 });
 
 describe('MoreJobs: Leitungsabgänge wie #stellen der Startseite', () => {
-  it('listet die anderen Stellen mit Gehalt und Link, ohne die aktuelle', () => {
-    const now = new Date('2026-10-10T00:00:00Z');
+  it('listet die anderen Stellen mit „Lohn auf Anfrage“ und Link, ohne die aktuelle', () => {
+    const now = new Date('2026-10-14T12:00:00Z');
     const html = renderToStaticMarkup(createElement(MoreJobs, { currentJob: am, now }));
     expect(html).not.toContain(`href="/jobs/${am.slug}"`);
-    expect(html).toContain(`href="/jobs/${kd.slug}"`);
-    expect(text(html)).toContain(text(formatSalaryAmount(kd)!));
+    for (const job of pageJobs.filter((j) => j.id !== am.id)) expect(html, job.id).toContain(`href="/jobs/${job.slug}"`);
+    // Je Stelle mit Lohnangabe einmal „Lohn auf Anfrage“; das Praktikum ohne
+    const anzahl = text(html).split(PAY_ON_REQUEST).length - 1;
+    expect(anzahl).toBe(pageJobs.filter((j) => j.id !== am.id && j.pay === 'auf-anfrage').length);
+    expect(findClaims(text(html), { premiumPending: true })).toEqual([]);
     expect(html).toMatch(/<h2[^>]*id="weitere-stellen"/);
   });
 });

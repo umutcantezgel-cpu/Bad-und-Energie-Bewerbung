@@ -22,7 +22,7 @@ import { FACTS } from '@/lib/content/facts';
 import { getFaqItems } from '@/lib/content/faq';
 import { DISCRETION_PROMISE, getProcessIntro, getProcessSteps, type ProcessAudience } from '@/lib/content/process';
 import { REGION } from '@/lib/content/region';
-import { formatSalaryRange, jobPath } from '@/lib/jobs/format';
+import { PAY_ON_REQUEST, jobPath, payLabel } from '@/lib/jobs/format';
 import { ALL_JOBS, getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 
 /**
@@ -33,7 +33,7 @@ import { ALL_JOBS, getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 
 const STICHTAG = new Date('2026-10-10T12:00:00+02:00');
 const JOBS = getActiveJobs().filter((job) => isJobLive(job, STICHTAG));
-const AUDIENCES: ProcessAudience[] = ['fachkraft', 'ausbildung', 'quereinstieg'];
+const AUDIENCES: ProcessAudience[] = ['fachkraft', 'ausbildung', 'quereinstieg', 'buero'];
 
 /** Wie der Leser es sieht: geschützte Leerzeichen als Leerzeichen, ohne weiche Trennstellen und Wortverbinder. */
 const normal = (text: string) =>
@@ -81,7 +81,7 @@ const KORPUS = normal(
       job.intro,
       ...job.tasks,
       ...job.requirements,
-      formatSalaryRange(job) ?? '',
+      payLabel(job) ?? '',
     ]),
   ].join('\n'),
 );
@@ -92,8 +92,7 @@ const EIGENE = [
   VERGLEICH.titel,
   VERGLEICH.aufgaben,
   VERGLEICH.voraussetzung,
-  VERGLEICH.gehalt,
-  VERGLEICH.verguetung,
+  VERGLEICH.bezahlung,
   ...saetze(vergleichEinleitung(JOBS)),
   ...JOBS.map((job) => normal(stellenanzeigeLabel(job))),
   ALLTAG.etikett,
@@ -134,7 +133,9 @@ describe('Herkunft: jeder Satz der neuen Abschnitte hat eine Quelle', () => {
 
   it('eigene Wörter enthalten keine Zahl und keine Superlative', () => {
     for (const wort of EIGENE) {
-      expect(wort, wort).not.toMatch(/\d/);
+      // Stellennamen in den Linktexten stammen aus den Stellendaten (shortTitle, etwa „Ausbildung Anlagenmechaniker 2026“)
+      const eigen = JOBS.reduce((text, job) => text.replace(normal(job.shortTitle), ''), wort);
+      expect(eigen, wort).not.toMatch(/\d/);
       expect(wort, wort).not.toMatch(/\b(beste[nrs]?|größte[nrs]?|top|einzigartig|perfekt|garantiert)\b/i);
     }
   });
@@ -147,14 +148,14 @@ describe('Herkunft: jeder Satz der neuen Abschnitte hat eine Quelle', () => {
   });
 });
 
-describe('Stellenvergleich: Aufgaben, Voraussetzungen und Gehalt aus den Stellendaten', () => {
-  it('Einleitung: die Stellenarten der Liste, sonst nur zwei geprüfte eigene Sätze', () => {
+describe('Stellenvergleich: Aufgaben, Voraussetzungen und „Lohn auf Anfrage“ aus den Stellendaten', () => {
+  it('Einleitung: die Stellenarten der Liste, sonst nur zwei geprüfte eigene Sätze (seit E-030 ohne „Gehalt“)', () => {
     expect(vergleichEinleitung(JOBS)).toBe(
-      'Anlagenmechaniker, Kundendienst, Obermonteur oder Ausbildung: Die Stellen unterscheiden sich in Aufgaben, Voraussetzungen und Gehalt. Alle Angaben stammen aus der jeweiligen Stellenanzeige.',
+      'Anlagenmechaniker, Kundendienst, Obermonteur, Ausbildung, Quereinstieg, Büro oder Praktikum: Die Stellen unterscheiden sich in Aufgaben und Voraussetzungen. Alle Angaben stammen aus der jeweiligen Stellenanzeige.',
     );
   });
 
-  it('je Stelle die Aufgaben (ohne Einsatzradius), die ersten zwei Anforderungen und die Gehaltsspanne', () => {
+  it('je Stelle die Aufgaben (ohne Einsatzradius), die ersten zwei Anforderungen und „Lohn auf Anfrage“, kein Betrag', () => {
     for (const job of JOBS) {
       const profil = stellenprofil(job);
       expect(profil.aufgaben.length).toBeGreaterThan(0);
@@ -162,10 +163,13 @@ describe('Stellenvergleich: Aufgaben, Voraussetzungen und Gehalt aus den Stellen
         expect(job.tasks).toContain(aufgabe);
         expect(aufgabe).not.toContain(`${REGION.radiusKm}-km`);
       }
+      // Offene Anforderungen (Bürofachkraft M-038, Praktikum M-027) fehlen, statt erfunden zu werden
       expect(profil.voraussetzungen).toEqual(job.requirements.slice(0, 2));
-      expect(profil.gehalt?.wert).toBe(formatSalaryRange(job));
-      expect(profil.gehalt?.label).toBe(job.employment.kind === 'ausbildung' ? VERGLEICH.verguetung : VERGLEICH.gehalt);
+      if (job.requirementsOpen) expect(profil.voraussetzungen, job.id).toEqual([]);
+      expect(profil.lohn).toBe(job.pay === 'auf-anfrage' ? PAY_ON_REQUEST : null);
     }
+    expect(sichtbar(NEU.vergleich)).not.toMatch(/€|Gehaltsspanne|Ausbildungsvergütung/);
+    expect(NEU.vergleich.match(/<dt[^>]*>Voraussetzung<\/dt>/g)).toHaveLength(JOBS.filter((job) => job.requirements.length > 0).length);
   });
 
   it('je Stelle ein beschreibender Link auf die Stellenseite, kein Linktext zweimal', () => {
@@ -229,7 +233,10 @@ describe('/jobs: Seitentitel und Faktenregel (V6-G1)', () => {
   });
 
   it('die Einleitung nennt nur Belegtes: SHK-Stellen, Gründungsjahr, Orte aus REGION.summary', () => {
-    expect(JOBS.every((job) => job.title.includes('SHK'))).toBe(true);
+    // Jede Stelle gehört zum SHK-Handwerk: im Titel oder, beim Büro, als Stelle im SHK-Meisterbetrieb (Stellendaten)
+    for (const job of JOBS) {
+      expect(job.title.includes('SHK') || job.seo.metaDescription.includes('SHK-Meisterbetrieb'), job.id).toBe(true);
+    }
     expect(normal(LISTEN_EINLEITUNG)).toContain(FACTS.founded1926.short);
     for (const ort of LISTEN_ORTE.split(' und ')) expect(REGION.summary).toContain(ort);
   });

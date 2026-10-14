@@ -48,6 +48,21 @@ describe('question sets', () => {
     expect(optionIds('licenseB')).toEqual(['yes', 'no']);
   });
 
+  // Bürofachkraft (fakten-abgleich S5): Erfahrung im Büro und Wunsch Voll-/Teilzeit, nicht nach Abschlüssen (M-038 offen)
+  it('buero: office experience, then workload; no qualification, no start step', () => {
+    expect(ids('buero')).toEqual(['officeExperience', 'workload']);
+    expect(getQuestion('officeExperience')?.title).toBe('Hast du Erfahrung im Büro?');
+    expect(optionIds('officeExperience')).toEqual(['ja', 'etwas', 'nein']);
+    expect(getQuestion('workload')?.title).toBe('Voll- oder Teilzeit?');
+    expect(optionIds('workload')).toEqual(['vollzeit', 'teilzeit', 'egal']);
+    expect(getQuestion('workload')?.options.map((option) => option.label)).toEqual(['Vollzeit', 'Teilzeit', 'Beides passt']);
+    expect(describeAnswers('buero', { officeExperience: 'etwas', workload: 'teilzeit' })).toEqual([
+      { key: 'officeExperience', label: 'Erfahrung im Büro', value: 'Etwas' },
+      { key: 'workload', label: 'Wunsch', value: 'Teilzeit' },
+    ]);
+    expect(applicationAnswersSchema.safeParse({ officeExperience: 'viel' }).success).toBe(false);
+  });
+
   it('every question has a unique URL slug and unique option ids', () => {
     const all = Object.values(QUESTION_SETS).flat();
     const slugs = new Set(all.map((q) => q.slug));
@@ -71,6 +86,10 @@ describe('question sets', () => {
     expect(questionSetFor(INITIATIVE_JOB_ID, options)).toBe('fachkraft');
     expect(questionSetFor('ausbildung-anlagenmechaniker-shk', options)).toBe('ausbildung');
     expect(questionSetFor('quereinsteiger-montagehelfer', options)).toBe('quereinstieg');
+    expect(questionSetFor('buerofachkraft', options)).toBe('buero');
+    // Das Schülerpraktikum fragt wie die Ausbildung nach der Schule (fakten-abgleich S4)
+    expect(questionSetFor('schuelerpraktikum-shk', options)).toBe('ausbildung');
+    expect(questionSetFor('ausbildung-anlagenmechaniker-shk-2027', options)).toBe('ausbildung');
     expect(questionSetFor(null, options)).toBe('fachkraft');
   });
 });

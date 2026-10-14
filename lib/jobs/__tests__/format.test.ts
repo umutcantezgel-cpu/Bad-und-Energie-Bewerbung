@@ -1,15 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 import {
+  PAY_ON_REQUEST,
   applyPath,
   employmentLabel,
-  formatEuro,
   formatNumber,
-  formatSalaryRange,
   getJobSections,
   jobMetaTags,
   jobPath,
   jobUrl,
+  locationLabel,
+  payLabel,
   startLabel,
   toHtmlDescription,
   toPlainDescription,
@@ -20,28 +21,23 @@ import type { Job } from '../schema';
 const am = getJobById('anlagenmechaniker-shk')!;
 const azubi = getJobById('ausbildung-anlagenmechaniker-shk')!;
 const qe = getJobById('quereinsteiger-montagehelfer')!;
+const buero = getJobById('buerofachkraft')!;
+const praktikum = getJobById('schuelerpraktikum-shk')!;
 
-describe('formatEuro', () => {
-  it('formatiert de-DE mit geschütztem Leerzeichen vor €', () => {
-    expect(formatEuro(3600)).toBe('3.600\u00A0€');
-    expect(formatEuro(1050)).toBe('1.050\u00A0€');
-    expect(formatEuro(950)).toBe('950\u00A0€');
-    expect(formatEuro(1234567)).toBe('1.234.567\u00A0€');
-    expect(formatEuro(14.5)).toBe('14,50\u00A0€');
-  });
-
-  it('formatNumber gruppiert Tausender', () => {
+describe('formatNumber', () => {
+  it('gruppiert Tausender und schreibt Dezimalen mit Komma (Maße, nie Beträge)', () => {
     expect(formatNumber(4600)).toBe('4.600');
     expect(formatNumber(-1200)).toBe('-1.200');
+    expect(formatNumber(3.5)).toBe('3,50');
   });
 });
 
-describe('Gehalt und Beschäftigung', () => {
-  it('formatSalaryRange', () => {
-    expect(formatSalaryRange(am)).toBe('3.600–4.600\u00A0€ / Monat');
-    expect(formatSalaryRange(azubi)).toBe('1.050–1.400\u00A0€ / Monat');
-    expect(formatSalaryRange(qe)).toBeNull();
-    expect(formatSalaryRange({ salary: { min: 15, max: 15, unit: 'HOUR', currency: 'EUR' } })).toBe('15\u00A0€ / Stunde');
+describe('Lohn und Beschäftigung', () => {
+  // E-030: ein Text für alle Stellen, aus dem Fakt payOnRequest; das Schülerpraktikum sagt nichts zu Geld.
+  it('payLabel: „Lohn auf Anfrage“ bei jeder Stelle außer dem Schülerpraktikum', () => {
+    expect(PAY_ON_REQUEST).toBe('Lohn auf Anfrage');
+    for (const job of [am, azubi, qe, buero]) expect(payLabel(job), job.id).toBe('Lohn auf Anfrage');
+    expect(payLabel(praktikum)).toBeNull();
   });
 
   it('employmentLabel, startLabel und Meta-Tags', () => {
@@ -51,6 +47,11 @@ describe('Gehalt und Beschäftigung', () => {
     expect(startLabel({ employment: { ...am.employment, start: '2026-08-01' } })).toBe('Ab 1. August 2026');
     expect(startLabel({ employment: { ...am.employment, start: 'sofort' } })).toBe('Ab sofort');
     expect(jobMetaTags(am)).toEqual(['Vollzeit', 'Wetzlar + 35\u00A0km', 'Unbefristet']);
+    expect(employmentLabel(buero)).toBe('Voll- oder Teilzeit');
+    expect(employmentLabel(praktikum)).toBe('Praktikum');
+    // Büro ohne Baustellen: Arbeitsort Wetzlar, ohne Radius
+    expect(locationLabel(buero)).toBe('Wetzlar');
+    expect(jobMetaTags(buero)).toEqual(['Voll- oder Teilzeit', 'Wetzlar']);
   });
 });
 
@@ -74,15 +75,35 @@ describe('Beschreibungen', () => {
       'eckdaten',
       'bewerben',
     ]);
-    expect(getJobSections(qe).find((s) => s.id === 'eckdaten')?.items?.some((i) => i.startsWith('Gehalt'))).toBe(false);
+    const eckdaten = (job: Job) => getJobSections(job).find((s) => s.id === 'eckdaten')?.items ?? [];
+    expect(eckdaten(am)).toEqual([
+      'Lohn: auf Anfrage',
+      'Anstellung: Vollzeit · Unbefristet',
+      'Start: Nach Absprache',
+      'Einsatzort: Siegmund-Hiepe-Str. 20, 35578 Wetzlar, Baustellen im Umkreis von 35 km',
+    ]);
+    expect(eckdaten(praktikum)).toEqual([
+      'Anstellung: Praktikum',
+      'Start: Nach Absprache',
+      'Dauer: nach Absprache mit deiner Schule',
+      'Einsatzort: Siegmund-Hiepe-Str. 20, 35578 Wetzlar, Baustellen im Umkreis von 35 km',
+    ]);
+    expect(eckdaten(buero)).toContain('Arbeitsort: Siegmund-Hiepe-Str. 20, 35578 Wetzlar');
+    for (const job of [am, azubi, qe, buero, praktikum]) {
+      expect(eckdaten(job).some((item) => /^(Gehalt|Vergütung):/.test(item)), job.id).toBe(false);
+    }
+    // Offene Anforderungen (M-038): kein Abschnitt „Das bringst du mit“
+    expect(getJobSections(buero).map((s) => s.id)).toEqual(['intro', 'aufgaben', 'vorteile', 'eckdaten', 'bewerben']);
   });
 
-  it('HTML enthält Inhalt und Gehalt der Seite', () => {
+  it('HTML enthält den Inhalt der Seite und „Lohn: auf Anfrage“, nie einen Betrag (E-030)', () => {
     const html = toHtmlDescription(am);
     expect(html).toContain('<ul>');
     expect(html).toContain(am.tasks[0]);
-    expect(html).toContain('3.600–4.600\u00A0€ / Monat');
+    expect(html).toContain('<li>Lohn: auf Anfrage</li>');
     expect(html).toContain('Das bringst du mit');
+    for (const job of [am, azubi, qe, buero, praktikum]) expect(toHtmlDescription(job), job.id).not.toMatch(/€|\bEuro\b|\bEUR\b/);
+    expect(toHtmlDescription(praktikum)).not.toContain('Lohn');
   });
 
   it('HTML escapt Sonderzeichen', () => {

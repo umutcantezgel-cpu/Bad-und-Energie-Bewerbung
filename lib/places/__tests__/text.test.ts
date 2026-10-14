@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { regionalLocations } from '@/lib/data/locations';
 import { FACTS } from '@/lib/content/facts';
-import { formatSalaryAmount } from '@/lib/jobs/format';
 import { getActiveJobs } from '@/lib/jobs/registry';
+import { findClaims } from '../../../scripts/qa/check-claims.mjs';
 import { DEFAULT_WHATSAPP_MESSAGE } from '@/lib/utils/whatsapp-utils';
 import { getHubKreise, getKreisById, getKreise, getPlaceById, getPublishedPlaces } from '../registry';
 import {
@@ -120,13 +120,15 @@ describe('Ortsseite: Abschnitte', () => {
     expect(text(page('nauborn'), 'arbeitsweg')).toContain('Ortsmittelpunkt');
   });
 
-  it('Stellen: kurze Einleitung ohne Beträge (die nennt die Liste); „Fahrt ab Wohnort“ nur auf den Kreis-Hubs', () => {
+  it('Stellen: kurze Einleitung ohne Beträge und ohne Gehalt (E-030); „Fahrt ab Wohnort“ nur auf den Kreis-Hubs', () => {
     const stellen = section(page('asslar'), 'stellen')!;
     const all = plain(stellen.blocks.map((b) => b.text).join(' '));
-    expect(stellen.blocks[0].text).toBe(`Offen sind ${['null', 'ein', 'zwei', 'drei', 'vier', 'fünf', 'sechs'][jobs.length] ?? jobs.length} Stellen, jede mit Gehalt bzw. Vergütung:`);
-    for (const job of jobs) expect(all).not.toContain(plain(formatSalaryAmount(job)!));
+    const zahlwort = ['null', 'ein', 'zwei', 'drei', 'vier', 'fünf', 'sechs', 'sieben', 'acht', 'neun', 'zehn'][jobs.length] ?? jobs.length;
+    expect(stellen.blocks[0].text).toBe(`Offen sind ${zahlwort} Stellen:`);
+    expect(findClaims(all, { premiumPending: true })).toEqual([]);
+    expect(all).not.toMatch(/Gehalt|Vergütung|€/);
     expect(text(page('asslar', { jobs: jobs.filter((j) => j.employment.kind !== 'ausbildung').slice(0, 1) }), 'stellen')).toMatch(
-      /^Offen ist eine Stelle, mit Gehalt:/,
+      /^Offen ist eine Stelle:/,
     );
     expect(stellen.blocks.every((b) => b.kind === 'gemeinsam')).toBe(true);
     // Auf 54 Ortsseiten wäre der Satz derselbe (Ähnlichkeit der gebauten Seiten); der Kreis-Hub trägt ihn.

@@ -28,7 +28,7 @@ export const SITE_CONFIG = {
   foundingDate: '1926',
   currenciesAccepted: 'EUR',
   paymentAccepted: 'Überweisung, Rechnung',
-  vatID: 'DE301642296',
+  // Keine USt-IdNr. hier: Die frühere `vatID` war ungenutzt und widersprach dem Impressum (fakten-abgleich B1, Plan §C4).
   handelsregister: 'HRB 2449 Amtsgericht Wetzlar',
   hwk: 'Handwerkskammer Wiesbaden',
   innung: 'Innung Sanitär-, Heizungs- und Klimatechnik Lahn-Dill',

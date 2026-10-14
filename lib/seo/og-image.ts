@@ -1,7 +1,7 @@
 import { HERO, HERO_RADIUS_LABEL, HERO_STATS } from '@/components/home/content';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
-import { SALARY_UNIT_LABEL, formatSalaryAmount, formatSalaryRange, jobMetaTags, jobPath } from '@/lib/jobs/format';
+import { jobMetaTags, jobPath, payLabel } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/schema';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 
@@ -115,17 +115,14 @@ export interface OgJobText extends Omit<OgFrameText, 'action'> {
   action: string | null;
   /** h1 font size in px, fitted to the left column (fitTitle). */
   titleSize: number;
-  /** Value and name in the heating loop: the salary range, or the closed state. */
+  /**
+   * Value and name in the heating loop: „Lohn auf Anfrage“ (E-030, never an amount), the employment kind when the job
+   * says nothing about pay (school internship), or the closed state.
+   */
   salary: { value: string; name: string | null };
 }
 
-type OgJob = Pick<Job, 'shortTitle' | 'titleShy' | 'salary' | 'employment' | 'location'>;
-
-/** „Gehalt pro Monat“ bzw. „Vergütung pro Monat“ (wie SalaryCard der Stellenseite). */
-function salaryName(job: Pick<Job, 'salary' | 'employment'>): string | null {
-  if (!job.salary) return null;
-  return `${job.employment.kind === 'ausbildung' ? 'Vergütung' : 'Gehalt'} pro ${SALARY_UNIT_LABEL[job.salary.unit]}`;
-}
+type OgJob = Pick<Job, 'shortTitle' | 'titleShy' | 'pay' | 'employment' | 'location'>;
 
 const SOFT_HYPHEN = '\u00AD';
 
@@ -217,7 +214,7 @@ const careerDomain = () => SITE_CONFIG.baseUrl.replace(/^https?:\/\//, '').repla
 
 /**
  * Content of a job share image: label with place and radius, the short title as h1, „(m/w/d)“ and
- * the employment tags at the bracket, the salary range in the heating loop (job registry only).
+ * the employment tags at the bracket, „Lohn auf Anfrage“ in the heating loop (E-030, job registry only).
  * A closed job says so in the loop, without button and supply line, and points to the job list.
  */
 export function ogJobText(job: OgJob, open: boolean): OgJobText {
@@ -227,12 +224,8 @@ export function ogJobText(job: OgJob, open: boolean): OgJobText {
   // „Ausbildung · 3,5 Jahre“ ohne das Wort, das schon in der h1 steht.
   const tags = job.shortTitle.includes(kind) ? rest : [kind, ...rest];
   const subline = ['(m/w/d)', ...(tags.length > 0 ? [tags.join(' · ')] : [])];
-  const amount = open ? formatSalaryAmount(job) : null;
-  const salary = !open
-    ? { value: 'Stelle besetzt', name: null }
-    : amount
-      ? { value: plain(amount), name: salaryName(job) }
-      : { value: kind, name: null };
+  const lohn = open ? payLabel(job) : null;
+  const salary = !open ? { value: 'Stelle besetzt', name: null } : lohn ? { value: lohn, name: null } : { value: kind, name: null };
   const action = open ? ACTION : null;
   const microcopy = open
     ? plain(`Dauert ca. ${FACTS.apply60s.value} Sekunden. ${FACTS.noCvNeeded.short}.`)
@@ -319,10 +312,10 @@ export const DEFAULT_OG_IMAGE: Readonly<OgImage> = Object.freeze({
  * fetch the new card instead of their cached one.
  */
 export function jobOgImage(
-  job: Pick<Job, 'slug' | 'shortTitle' | 'updatedAt' | 'location' | 'salary'>,
+  job: Pick<Job, 'slug' | 'shortTitle' | 'updatedAt' | 'location' | 'pay'>,
   open: boolean,
 ): OgImage {
-  const salary = open ? formatSalaryRange(job) : null;
+  const salary = open ? payLabel(job) : null;
   const subject = `${job.shortTitle} (m/w/d) bei ${COMPANY.shortName} in ${job.location.city}`;
   return {
     url: `${jobPath(job)}/opengraph-image?v=${job.updatedAt}${open ? '' : '-besetzt'}`,

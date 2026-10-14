@@ -4,15 +4,18 @@ import {
   FACTS,
   FAQ_ITEMS,
   PROCESS_INTRO,
+  STELLEN_FAQ_ITEMS,
   REGION,
   getProcessSteps,
   type ProcessAudience,
 } from '@/lib/content';
+import { berufKategorie } from '@/lib/jobs/berufe';
 import { jobUrl, toPlainDescription } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/registry';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 import {
   TEXT_HEADERS,
+  alsoKnownAsLine,
   baseUrl,
   chamberLine,
   citationHint,
@@ -32,12 +35,13 @@ export const revalidate = 3600;
 const START_LABEL: Record<Exclude<ProcessAudience, 'fachkraft'>, string> = {
   ausbildung: 'Start in der Ausbildung',
   quereinstieg: 'Start im Quereinstieg',
+  buero: 'Start im Büro',
 };
 
-/** Step 3 differs for apprentices and career changers; listed only if such a job is open. */
+/** Step 3 differs for apprentices, career changers and the office; listed only if such a job is open. */
 function startVariants(jobs: readonly Job[]): string[] {
   const audiences = new Set(jobs.map((job) => job.apply.questionSet));
-  const lines = (['ausbildung', 'quereinstieg'] as const)
+  const lines = (['ausbildung', 'quereinstieg', 'buero'] as const)
     .filter((audience) => audiences.has(audience))
     .map((audience) => `${START_LABEL[audience]}: ${getProcessSteps(audience)[2].text}`);
   return lines.length > 0 ? [...lines, ''] : [];
@@ -56,6 +60,8 @@ export function GET(): Response {
     `- Stellenseite: ${jobUrl(job)}`,
     `- Referenz: ${job.referenceCode}`,
     `- Eckdaten: ${jobMetaLine(job)}`,
+    `- Beruf: ${berufKategorie(job.beruf)}`,
+    ...(job.alsoKnownAs.length > 0 ? [`- ${alsoKnownAsLine(job)}`] : []),
     '',
     toPlainDescription(job).replace(/ /g, ' '),
     '',
@@ -95,6 +101,8 @@ export function GET(): Response {
     '## 4. Häufige Fragen',
     '',
     ...FAQ_ITEMS.flatMap((item) => [`### ${item.question}`, item.answer, '']),
+    // Fragen der Stellenseiten (Plan §C5): Bezahlung auf Anfrage, Berufsschule, Quereinstieg, Büro, Praktikum
+    ...STELLEN_FAQ_ITEMS.flatMap((item) => [`### ${item.question}`, item.answer, '']),
     '## 5. Einsatzgebiet',
     `${REGION.headline} ${REGION.summary}`,
     '',

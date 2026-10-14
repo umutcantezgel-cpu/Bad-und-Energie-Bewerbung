@@ -33,6 +33,7 @@ const processSteps = {
   fachkraft: getProcessSteps('fachkraft'),
   ausbildung: getProcessSteps('ausbildung'),
   quereinstieg: getProcessSteps('quereinstieg'),
+  buero: getProcessSteps('buero'),
 };
 const company: ThankYouCompany = {
   shortName: COMPANY.shortName,
@@ -183,6 +184,15 @@ describe('Freiwillige Ergänzung (E-START-015, E-BEW-015)', () => {
     const html = erfolg({ record: { ...RECORD, jobId: 'ausbildung-anlagenmechaniker-shk' } });
     expect(html).not.toContain(ERGAENZEN_TEXT.kenntnisseFrage);
     expect(html).toContain(ERGAENZEN_TEXT.nachricht);
+  });
+
+  it('Büro (fakten-abgleich S5): ohne Baustellen-Kenntnisse, mit dem eigenen Ablauf (Start nach Absprache)', () => {
+    const html = erfolg({ record: { ...RECORD, jobId: 'buerofachkraft' } });
+    expect(html).not.toContain(ERGAENZEN_TEXT.kenntnisseFrage);
+    expect(html).toContain(ERGAENZEN_TEXT.nachricht);
+    const text = plain(html);
+    for (const step of getProcessSteps('buero').filter((step) => step.id !== 'bewerben')) expect(text).toContain(step.title);
+    expect(text).not.toContain(getProcessSteps('fachkraft')[2].title);
   });
 
   it('nennt am Feld „Nachricht“ die Wunschkonditionen', () => {

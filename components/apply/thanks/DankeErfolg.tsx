@@ -168,7 +168,8 @@ export function DankeErfolg({
               reference={record.reference}
               followUpToken={record.followUpToken}
               phoneHref={company.phoneHref}
-              kenntnisse={questionSet !== 'ausbildung'}
+              // Die Chips sind Baustellen-Kenntnisse (Wärmepumpe, Bad …): nicht für Ausbildung, Praktikum und Büro
+              kenntnisse={questionSet === 'fachkraft' || questionSet === 'quereinstieg'}
             />
           </div>
           <div className={styles.ergaenzenSeite}>

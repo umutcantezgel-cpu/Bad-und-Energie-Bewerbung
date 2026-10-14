@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
+import { FACTS } from '@/lib/content/facts';
+import { ISCO, KLDB } from '../berufe';
 import { jobUrl } from '../format';
-import { buildBreadcrumbJsonLd, buildJobPostingJsonLd } from '../jsonld';
+import { INDUSTRY, buildBreadcrumbJsonLd, buildJobPostingJsonLd, employerOverview } from '../jsonld';
 import { ALL_JOBS, getActiveJobs, getJobById } from '../registry';
+import { defineJob, type JobInput } from '../schema';
 
 // Organization-@id aus dem globalen Graphen (components/site/site-jsonld.ts).
 const GLOBAL_ORG_ID = 'https://bad-energie.de/#organization';
@@ -22,8 +25,10 @@ describe('buildJobPostingJsonLd', () => {
       '@type': 'Organization',
       '@id': GLOBAL_ORG_ID,
       name: 'Bad und Energie GmbH Lahn Dill',
-      sameAs: 'https://bad-energie.de',
+      // Plan §C4: sameAs als Liste (Website für Kunden und geprüfte Profile aus lib/content/profile.ts)
+      sameAs: expect.arrayContaining(['https://bad-energie.de']),
     });
+    expect(Array.isArray(ld.hiringOrganization.sameAs)).toBe(true);
     expect(ld.hiringOrganization.logo).toMatch(/^https:\/\/.+\.(webp|png|svg)$/);
     expect(ld.jobLocation).toEqual({
       '@type': 'Place',
@@ -41,14 +46,26 @@ describe('buildJobPostingJsonLd', () => {
     expect(ld.validThrough).toBe(job.validThrough);
     expect(ld.employmentType).toBeDefined();
     expect(ld.identifier).toEqual({ '@type': 'PropertyValue', name: 'Bad und Energie GmbH Lahn Dill', value: job.referenceCode });
-    expect(ld.baseSalary).toEqual({
-      '@type': 'MonetaryAmount',
-      currency: 'EUR',
-      value: { '@type': 'QuantitativeValue', minValue: job.salary!.min, maxValue: job.salary!.max, unitText: 'MONTH' },
-    });
+    // E-030: kein baseSalary, nirgends eine Zahl zu Lohn oder Gehalt
+    expect(ld).not.toHaveProperty('baseSalary');
+    expect(ld).not.toHaveProperty('estimatedSalary');
+    expect(JSON.stringify(ld)).not.toMatch(/€|"(?:min|max)Value"|MonetaryAmount/);
     expect(ld.directApply).toBe(true);
-    expect(ld.educationRequirements).toMatchObject({ '@type': 'EducationalOccupationalCredential' });
-    expect(ld.experienceRequirements).toBeDefined();
+    if (job.education) expect(ld.educationRequirements).toMatchObject({ '@type': 'EducationalOccupationalCredential' });
+    else expect(ld).not.toHaveProperty('educationRequirements');
+    if (job.experienceMonths !== undefined) expect(ld.experienceRequirements).toBeDefined();
+    else expect(ld).not.toHaveProperty('experienceRequirements');
+
+    // Plan §C2: Beruf, Branche, Aufgaben, Anforderungen und Arbeitgeber, aus Stellendaten und Fakten
+    expect(ld.occupationalCategory).toBe(
+      job.beruf.isco ? `ISCO-08 ${job.beruf.isco}: ${ISCO[job.beruf.isco]}` : `KldB 2010 ${job.beruf.kldb}: ${KLDB[job.beruf.kldb]}`,
+    );
+    expect(ld.industry).toBe(INDUSTRY);
+    expect(ld.responsibilities).toBe(job.tasks.join('; '));
+    if (job.requirements.length > 0) expect(ld.qualifications).toBe(job.requirements.join('; '));
+    else expect(ld).not.toHaveProperty('qualifications');
+    expect(ld.employerOverview).toBe(employerOverview());
+    expect(ld.description).toContain(job.pay === 'auf-anfrage' ? 'Lohn: auf Anfrage' : 'Dauer:');
 
     // URL = Canonical
     expect(ld.url).toBe(jobUrl(job));
@@ -68,9 +85,45 @@ describe('buildJobPostingJsonLd', () => {
     expect(ld.experienceRequirements).toEqual({ '@type': 'OccupationalExperienceRequirements', monthsOfExperience: 24 });
   });
 
+  it('Bürofachkraft: FULL_TIME und PART_TIME, ohne Anforderungen, solange sie offen sind (M-038)', () => {
+    const ld = buildJobPostingJsonLd(getJobById('buerofachkraft')!)!;
+    expect(ld.employmentType).toEqual(['FULL_TIME', 'PART_TIME']);
+    expect(ld).not.toHaveProperty('qualifications');
+    expect(ld).not.toHaveProperty('educationRequirements');
+    expect(ld).not.toHaveProperty('experienceRequirements');
+    expect(ld.occupationalCategory).toBe('ISCO-08 4120: Sekretariatskräfte (allgemein)');
+  });
+
+  it('Schülerpraktikum: INTERN, keine Erfahrung nötig, kein Wort zu Geld', () => {
+    const ld = buildJobPostingJsonLd(getJobById('schuelerpraktikum-shk')!)!;
+    expect(ld.employmentType).toBe('INTERN');
+    expect(ld.experienceRequirements).toBe('no requirements');
+    expect(ld.description).not.toMatch(/Lohn|Gehalt|Vergütung|Tarif/);
+  });
+
+  it('Kundendienst: ohne eindeutigen ISCO-Code steht die KldB-Berufsgattung', () => {
+    expect(buildJobPostingJsonLd(getJobById('kundendiensttechniker-shk')!)!.occupationalCategory).toBe(
+      'KldB 2010 25132: Technische Servicekräfte in Wartung und Instandhaltung – fachlich ausgerichtete Tätigkeiten',
+    );
+    expect(buildJobPostingJsonLd(getJobById('anlagenmechaniker-shk')!)!.occupationalCategory).toBe(
+      'ISCO-08 7126: Bauspengler und Sanitär- und Heizungsinstallateure',
+    );
+  });
+
+  it('employerOverview aus belegten Fakten', () => {
+    expect(employerOverview()).toBe(
+      `Bad und Energie GmbH Lahn Dill: ${FACTS.founded1926.long} ${FACTS.employees15.long} ${FACTS.heatPumpBrands.long}`,
+    );
+  });
+
   it('kein JobPosting für funnel_only, archivierte oder für Google abgeschaltete Stellen', () => {
     const am = getJobById('anlagenmechaniker-shk')!;
-    expect(buildJobPostingJsonLd(getJobById('quereinsteiger-montagehelfer')!)).toBeNull();
+    const funnelOnly = defineJob({
+      ...(getJobById('quereinsteiger-montagehelfer')! as unknown as JobInput),
+      status: 'funnel_only',
+      channels: { googleJobs: false, indeedFeed: false, genericFeed: false, ba: false },
+    });
+    expect(buildJobPostingJsonLd(funnelOnly)).toBeNull();
     expect(buildJobPostingJsonLd({ ...am, status: 'archived' })).toBeNull();
     expect(buildJobPostingJsonLd({ ...am, channels: { ...am.channels, googleJobs: false } })).toBeNull();
   });

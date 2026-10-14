@@ -12,6 +12,7 @@ import {
 } from '../content';
 import { FACTS } from '@/lib/content/facts';
 import { FAQ_ITEMS } from '@/lib/content/faq';
+import { jobCategoryLabels } from '@/lib/jobs/format';
 import { getActiveJobs } from '@/lib/jobs/registry';
 
 const words = (text: string) => text.trim().split(/\s+/).length;
@@ -27,8 +28,13 @@ describe('home copy', () => {
     expect(description.length).toBeLessThanOrEqual(155);
     expect(description).toContain(FACTS.vacation30.short);
     expect(description).toContain('flexible Arbeitszeiten');
-    expect(description).not.toMatch(/13:30|Feierabend|pünktlich/i);
-    expect(description).toContain('Anlagenmechaniker, Kundendienst, Obermonteur & Ausbildung');
+    expect(description).not.toMatch(/13:30|Feierabend|pünktlich|€|Gehalt/i);
+    // Seit 2026-10-14 sind es sieben Stellenarten (fakten-abgleich S2–S5): Die Liste passt nicht mehr in 155 Zeichen
+    // und entfällt nach der Regel unten; mit den vier Arten von vorher steht sie wörtlich darin.
+    expect(jobCategoryLabels(getActiveJobs())).toHaveLength(7);
+    expect(description).toBe(homeDescription([]));
+    const vier = (['anlagenmechaniker', 'kundendienst', 'projektleitung', 'ausbildung'] as const).map((category) => ({ category }));
+    expect(homeDescription(vier)).toContain('Anlagenmechaniker, Kundendienst, Obermonteur & Ausbildung');
   });
 
   it('layout fallback description names no job, so it cannot outlive a validThrough', () => {

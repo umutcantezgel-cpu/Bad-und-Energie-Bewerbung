@@ -5,10 +5,11 @@ import type { ApplyFlowClientProps } from './ApplyFlowClient';
 import { getFlowJobOptions } from './options';
 import type { ApplyFlowProps, FlowZusagen } from './types';
 
-/** Diskretionszusage je Fragenset: Fachkraft und Quereinstieg ja, Ausbildung nein (E-BEW-004). */
+/** Diskretionszusage je Fragenset: Fachkraft, Quereinstieg und Büro ja, Ausbildung nein (E-BEW-004). */
 const ZUSAGEN: FlowZusagen = Object.freeze({
   fachkraft: getDiscretionPromise('fachkraft'),
   quereinstieg: getDiscretionPromise('quereinstieg'),
+  buero: getDiscretionPromise('buero'),
   ausbildung: getDiscretionPromise('ausbildung'),
 });
 

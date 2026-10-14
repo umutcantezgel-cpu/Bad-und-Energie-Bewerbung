@@ -3,7 +3,7 @@
  * gekürzt und in Du-Form. Schritt 3 hängt vom Fragenset ab.
  */
 
-export type ProcessAudience = 'fachkraft' | 'ausbildung' | 'quereinstieg';
+export type ProcessAudience = 'fachkraft' | 'ausbildung' | 'quereinstieg' | 'buero';
 
 export interface ProcessStep {
   id: 'bewerben' | 'kennenlernen' | 'start';
@@ -41,10 +41,17 @@ const MEET_STEP_AUSBILDUNG: ProcessStep = {
   highlight: 'Unverbindlich',
 };
 
+/** Fürs Büro (Bürofachkraft, fakten-abgleich S5): diskret wie bei den Fachkräften, ohne Touren. */
+const MEET_STEP_BUERO: ProcessStep = {
+  ...MEET_STEP,
+  text: 'Wir treffen uns diskret nach deinem Feierabend oder am Wochenende am Firmensitz in Wetzlar und sprechen offen über Lohn, Aufgaben und deine Wünsche.',
+};
+
 const MEET_STEPS: Record<ProcessAudience, ProcessStep> = {
   fachkraft: MEET_STEP,
   ausbildung: MEET_STEP_AUSBILDUNG,
   quereinstieg: MEET_STEP,
+  buero: MEET_STEP_BUERO,
 };
 
 const START_STEPS: Record<ProcessAudience, ProcessStep> = {
@@ -69,6 +76,14 @@ const START_STEPS: Record<ProcessAudience, ProcessStep> = {
     text: 'Am ersten Tag stehen deine Arbeitskleidung und die Hilti-Basisausstattung bereit, dazu eine intensive Einarbeitung.',
     highlight: 'Sicherer Start',
   },
+  // Büro: Werkzeug und Fahrzeug gehören nicht dazu; Beginn und Umfang (Voll- oder Teilzeit) sind nach Absprache.
+  buero: {
+    id: 'start',
+    number: 3,
+    title: 'Start nach Absprache',
+    text: 'Wann du anfängst und ob in Voll- oder Teilzeit, stimmen wir im Gespräch mit dir ab.',
+    highlight: 'Nach Absprache',
+  },
 };
 
 export const PROCESS_STEPS: readonly ProcessStep[] = Object.freeze([APPLY_STEP, MEET_STEP, START_STEPS.fachkraft]);
@@ -88,6 +103,7 @@ const PROCESS_INTROS: Record<ProcessAudience, ProcessIntro> = {
   fachkraft: PROCESS_INTRO,
   ausbildung: Object.freeze({ title: 'In 3 Schritten zu deiner Ausbildung', text: 'Wir respektieren deine Zeit.' }),
   quereinstieg: PROCESS_INTRO,
+  buero: PROCESS_INTRO,
 };
 
 export const DISCRETION_PROMISE =

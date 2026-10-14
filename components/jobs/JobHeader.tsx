@@ -29,7 +29,7 @@ export interface JobHeaderProps {
  *   (intro) steht als Lead im ersten Band, damit der Knopf wie im Einstieg über dem Falz bleibt.
  * - Roter Knopf „Direkt hier bewerben“ springt zum eingebetteten Flow; Vorlauf und Rücklauf laufen aus der
  *   Navy-Fläche in seinen Flansch und zeichnen sich beim Laden einmal dorthin (Register `erdleitung`).
- * - Navy-Fläche: Gehalt im Heizkreis mit dem Haus darauf (Kundendienst: Wärmebild), Maß 35 km.
+ * - Navy-Fläche: Haus (Kundendienst: Wärmebild) und der Block „Lohn auf Anfrage“ (E-030), Maß 35 km.
  */
 export function JobHeader({ job, className }: JobHeaderProps) {
   const { haupt, zusatz } = kopfTitel(job.seo.h1);

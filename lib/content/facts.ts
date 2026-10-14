@@ -92,6 +92,13 @@ const RAW_FACTS = {
     long: 'Vergütung deutlich über dem regionalen Handwerkstarif, dazu Urlaubs- und Weihnachtsgeld.',
     source: 'lib/data/company.ts@393df01',
   },
+  // Inhaber 2026-10-14 (E-030, fakten-abgleich S1): bei allen Stellen „Lohn auf Anfrage“, nirgends ein Betrag. Die
+  // belegten Fakten ohne Zahl (aboveTariff, azubiPay, Prämien in den Paketzeilen) bleiben daneben stehen.
+  payOnRequest: {
+    short: 'Lohn auf Anfrage',
+    long: 'Den Lohn nennen wir dir auf Anfrage.',
+    source: 'docs/operations/fakten-abgleich.md@a73bc7f',
+  },
   permanentContract: {
     short: 'Unbefristeter Arbeitsvertrag',
     long: 'Du bekommst einen unbefristeten Arbeitsvertrag.',
@@ -231,6 +238,17 @@ const RAW_FACTS = {
       note: 'ROADMAP §13: „1 %-Privatnutzung“ bestätigen.',
     },
     source: 'app/page.tsx@393df01',
+  },
+  // Inhaber 2026-10-14 (fakten-abgleich S6): „Bosch Premium Partner“. Ohne Urkunde kein Beleg (K-012, M-020): auf keiner
+  // Seite, und scripts/qa/check-claims.mjs sperrt den Wortlaut im gebauten Ergebnis, solange `pending` steht.
+  boschPremiumPartner: {
+    short: 'Bosch Premium Partner',
+    long: 'Wir sind Bosch Premium Partner.',
+    pending: {
+      onlyForJobIds: [],
+      note: 'M-020: Urkunde und Wortlaut „Premium Partner“ aus dem Bosch-Partnerportal fehlen. Bis dahin auf keiner Seite.',
+    },
+    source: 'docs/operations/fakten-abgleich.md@a73bc7f',
   },
   payFirstWorkday: {
     short: 'Gehalt am 1. Werktag',

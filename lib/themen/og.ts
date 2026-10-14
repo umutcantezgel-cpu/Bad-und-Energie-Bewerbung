@@ -8,9 +8,9 @@ const plain = (text: string) => text.replace(/ /g, ' ');
 const ACTION = 'Jetzt bewerben';
 
 /**
- * Teilen-Bild einer Themenseite (E-028) im Rahmen der Stellenbilder (renderJobImage, Heizkreis in Stellengröße, damit
- * auch eine Gehaltsspanne passt): Etikett und h1 der Seite, zwei kurze Zeilen an der Rohrklammer, im Heizkreis der
- * Kennwert der Seite („3.600–5.600 €“, „22 V“, „5 Marken“, „1926“, „100 %“). Alles aus dem Textmodell.
+ * Teilen-Bild einer Themenseite (E-028) im Rahmen der Stellenbilder (renderJobImage, Heizkreis in Stellengröße):
+ * Etikett und h1 der Seite, zwei kurze Zeilen an der Rohrklammer, im Heizkreis der Kennwert der Seite („auf Anfrage“
+ * seit E-030, „22 V“, „5 Marken“, „1926“, „100 %“). Alles aus dem Textmodell.
  */
 export function ogThemaText(text: Pick<SeitenBasis, 'etikett' | 'meta' | 'og'>): OgJobText {
   const etikett = versal(plain(text.etikett));

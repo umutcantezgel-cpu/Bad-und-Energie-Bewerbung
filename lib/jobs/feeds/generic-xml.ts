@@ -3,7 +3,7 @@ import { jobUrl, toHtmlDescription } from '../format';
 import { getChannelJobs } from '../registry';
 import type { Job } from '../schema';
 import { withUtm } from './tracking';
-import { XML_DECLARATION, datePart, element, escapeXml, feedJobType, salaryText } from './xml';
+import { XML_DECLARATION, datePart, element, escapeXml, feedJobType } from './xml';
 
 export interface GenericFeedOptions {
   publisher?: string;
@@ -14,11 +14,9 @@ export interface GenericFeedOptions {
   source?: string;
 }
 
-const SALARY_PERIOD = { MONTH: 'month', HOUR: 'hour', YEAR: 'year' } as const;
-
 /**
- * Aggregator-Feed (Jooble, Talent.com, Adzuna, Careerjet, Kimeta): <jobs>/<job> mit
- * strukturiertem Gehalt und ISO-Daten. Enthält Stellen mit `channels.genericFeed`.
+ * Aggregator-Feed (Jooble, Talent.com, Adzuna, Careerjet, Kimeta): <jobs>/<job> mit ISO-Daten, ohne Gehaltsfelder
+ * (E-030: Lohn auf Anfrage). Enthält Stellen mit `channels.genericFeed`.
  */
 export function buildGenericXml(jobs: readonly Job[], options: GenericFeedOptions = {}): string {
   const {
@@ -29,7 +27,6 @@ export function buildGenericXml(jobs: readonly Job[], options: GenericFeedOption
   } = options;
 
   const items = getChannelJobs(jobs, 'genericFeed', lastBuildDate).map((job) => {
-    const salary = salaryText(job);
     const fields = [
       element('title', job.title),
       element('url', withUtm(jobUrl(job), { source, campaign: job.id })),
@@ -40,22 +37,13 @@ export function buildGenericXml(jobs: readonly Job[], options: GenericFeedOption
       element('region', job.location.region),
       element('postalcode', job.location.postalCode),
       element('country', job.location.country),
-      element('radiuskm', job.location.radiusKm, 'text'),
+      ...(job.location.radiusKm ? [element('radiuskm', job.location.radiusKm, 'text')] : []),
       element('description', toHtmlDescription(job)),
       element('jobtype', feedJobType(job)),
       element('date', job.datePosted, 'text'),
       element('updated', job.updatedAt, 'text'),
       ...(job.validThrough ? [element('expirationdate', datePart(job.validThrough), 'text')] : []),
     ];
-    if (job.salary && salary) {
-      fields.push(
-        element('salary', salary),
-        element('salarymin', job.salary.min, 'text'),
-        element('salarymax', job.salary.max, 'text'),
-        element('salarycurrency', job.salary.currency, 'text'),
-        element('salaryperiod', SALARY_PERIOD[job.salary.unit], 'text'),
-      );
-    }
     return `<job id="${escapeXml(job.id)}">${fields.join('')}</job>`;
   });
 

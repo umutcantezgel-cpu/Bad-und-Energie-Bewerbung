@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { FACTS } from '@/lib/content';
-import { formatSalaryAmount } from '@/lib/jobs/format';
+import { PAY_ON_REQUEST } from '@/lib/jobs/format';
 import { getActiveJobs, getJobBySlug } from '@/lib/jobs/registry';
 import { OG_TITLE_BOX, fitTitle, ogHomeText, ogJobText, ogPlaceText, placeOgImage, splitSentences, splitTitle } from '@/lib/seo/og-image';
 import { renderHomeImage, renderJobImage, renderPlaceImage } from '@/lib/seo/og-render';
@@ -62,15 +62,23 @@ describe('job share image text', () => {
   const job = getJobBySlug('anlagenmechaniker-shk-wetzlar');
   const azubi = getJobBySlug('ausbildung-anlagenmechaniker-shk-wetzlar');
 
-  it('puts the salary range from the registry into the heating loop', () => {
+  it('puts „Lohn auf Anfrage“ into the heating loop, never an amount (E-030)', () => {
     if (!job || !azubi) throw new Error('Stellen fehlen in der Registry');
     const text = ogJobText(job, true);
-    expect(text.salary).toEqual({ value: plain(formatSalaryAmount(job) ?? ''), name: 'Gehalt pro Monat' });
+    expect(text.salary).toEqual({ value: PAY_ON_REQUEST, name: null });
     expect(text.etikett).toBe('STELLE · WETZLAR + 35 KM');
     expect(text.subline).toEqual(['(m/w/d)', 'Vollzeit · Unbefristet']);
     expect(text.action).toBe('Jetzt bewerben');
-    expect(ogJobText(azubi, true).salary.name).toBe('Vergütung pro Monat');
+    expect(ogJobText(azubi, true).salary).toEqual({ value: PAY_ON_REQUEST, name: null });
     expect(ogJobText(azubi, true).subline).toEqual(['(m/w/d)', '3,5 Jahre']);
+    for (const open of getActiveJobs()) expect(ogJobText(open, true).texts.join(' '), open.id).not.toMatch(/€|\d\.\d{3}|pro Monat/);
+  });
+
+  it('the school internship says nothing about money: the loop names the kind of job (fakten-abgleich S4)', () => {
+    const praktikum = getJobBySlug('schuelerpraktikum-shk-wetzlar');
+    if (!praktikum) throw new Error('Praktikum fehlt in der Registry');
+    expect(ogJobText(praktikum, true).salary).toEqual({ value: 'Praktikum', name: null });
+    expect(ogJobText(praktikum, true).texts.join(' ')).not.toMatch(/Lohn|Gehalt|Vergütung/);
   });
 
   it('says a closed job is filled, without button and without salary', () => {

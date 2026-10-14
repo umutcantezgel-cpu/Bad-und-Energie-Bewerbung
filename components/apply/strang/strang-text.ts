@@ -16,6 +16,8 @@ export const SCHRITTNAMEN: Readonly<Record<typeof JOB_STEP | AnswerKey | typeof 
   schoolStatus: 'Schule',
   background: 'Tätigkeit',
   licenseB: 'Führerschein',
+  officeExperience: 'Büro',
+  workload: 'Umfang',
   kontakt: 'Kontakt',
 });
 
@@ -75,5 +77,7 @@ export const STELLEN_ICON: Readonly<Record<JobCategory | 'initiativ', IconName>>
   projektleitung: 'users',
   ausbildung: 'graduation-cap',
   helfer: 'werkzeug',
+  buero: 'file-text',
+  praktikum: 'user-plus',
   initiativ: 'nachricht',
 });

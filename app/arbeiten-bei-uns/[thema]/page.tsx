@@ -13,7 +13,7 @@ type Params = Promise<{ thema: string }>;
 /** Nur die fünf Themen; alles andere ist ein 404 ohne Serverlauf. */
 export const dynamicParams = false;
 
-/** Stündlich neu: Gehalt, Fahrzeug und Wärmepumpen nennen die live Stellen (wie /jobs und die Stellenseiten). */
+/** Stündlich neu: Bezahlung, Fahrzeug und Wärmepumpen nennen die live Stellen (wie /jobs und die Stellenseiten). */
 export const revalidate = 3600;
 
 export function generateStaticParams(): { thema: string }[] {

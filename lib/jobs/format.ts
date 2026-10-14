@@ -1,6 +1,6 @@
 import { FACTS } from '@/lib/content/facts';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
-import type { Job, SalaryUnit } from './schema';
+import type { Job } from './schema';
 
 const NBSP = '\u00A0';
 const MONTHS = [
@@ -18,12 +18,6 @@ const MONTHS = [
   'Dezember',
 ];
 
-export const SALARY_UNIT_LABEL: Readonly<Record<SalaryUnit, string>> = Object.freeze({
-  MONTH: 'Monat',
-  HOUR: 'Stunde',
-  YEAR: 'Jahr',
-});
-
 /** de-DE ohne Intl, damit Server, Browser und Tests identisch formatieren: 3600 → '3.600', 12.5 → '12,50'. */
 export function formatNumber(n: number): string {
   const negative = n < 0;
@@ -32,22 +26,15 @@ export function formatNumber(n: number): string {
   return `${negative ? '-' : ''}${grouped}${dec ? `,${dec}` : ''}`;
 }
 
-/** '3.600 €' mit geschütztem Leerzeichen vor dem Euro-Zeichen. */
-export function formatEuro(n: number): string {
-  return `${formatNumber(n)}${NBSP}€`;
-}
+/**
+ * Der eine Text zur Bezahlung (E-030, Fakt payOnRequest): „Lohn auf Anfrage“, auf Seite, in Schema-Beschreibung, Feeds
+ * und Teilen-Bildern gleich. Nirgends steht ein Betrag.
+ */
+export const PAY_ON_REQUEST = FACTS.payOnRequest.short;
 
-/** '3.600–4.600 €' oder null. */
-export function formatSalaryAmount(job: Pick<Job, 'salary'>): string | null {
-  if (!job.salary) return null;
-  const { min, max } = job.salary;
-  return min === max ? formatEuro(min) : `${formatNumber(min)}–${formatNumber(max)}${NBSP}€`;
-}
-
-/** '3.600–4.600 € / Monat' oder null. */
-export function formatSalaryRange(job: Pick<Job, 'salary'>): string | null {
-  const amount = formatSalaryAmount(job);
-  return amount && job.salary ? `${amount} / ${SALARY_UNIT_LABEL[job.salary.unit]}` : null;
+/** „Lohn auf Anfrage“; null beim Schülerpraktikum, das gar nichts zu Geld sagt (pay „keine-angabe“). */
+export function payLabel(job: Pick<Job, 'pay'>): string | null {
+  return job.pay === 'auf-anfrage' ? PAY_ON_REQUEST : null;
 }
 
 function formatDuration(months: number): string {
@@ -64,7 +51,9 @@ function formatGermanDate(isoDate: string): string {
 const KIND_LABEL: Record<Job['employment']['kind'], string> = {
   vollzeit: 'Vollzeit',
   teilzeit: 'Teilzeit',
+  'voll-oder-teilzeit': 'Voll- oder Teilzeit',
   ausbildung: 'Ausbildung',
+  praktikum: 'Praktikum',
 };
 
 /** Kurzname je Stellenart für Aufzählungen in Meta-Texten („Anlagenmechaniker, Kundendienst, …“). */
@@ -74,6 +63,8 @@ export const JOB_CATEGORY_LABEL: Readonly<Record<Job['category'], string>> = Obj
   projektleitung: 'Obermonteur',
   ausbildung: 'Ausbildung',
   helfer: 'Quereinstieg',
+  buero: 'Büro',
+  praktikum: 'Praktikum',
 });
 
 /** Kurznamen der Stellenarten in Reihenfolge der Stellen, ohne Dopplungen. */
@@ -98,9 +89,10 @@ export function startLabel(job: Pick<Job, 'employment'>): string {
   return `Ab ${formatGermanDate(start)}`;
 }
 
-/** 'Wetzlar + 35 km' */
+/** 'Wetzlar + 35 km', ohne Baustellenradius (Büro) nur 'Wetzlar'. */
 export function locationLabel(job: Pick<Job, 'location'>): string {
-  return `${job.location.city} + ${job.location.radiusKm}${NBSP}km`;
+  const { city, radiusKm } = job.location;
+  return radiusKm ? `${city} + ${radiusKm}${NBSP}km` : city;
 }
 
 /** Meta-Zeile im Seitenkopf: Vollzeit · Wetzlar + 35 km · Unbefristet. */
@@ -144,18 +136,25 @@ export interface JobSection {
  * Seite, JSON-LD-Beschreibung und Feeds bauen darauf auf, damit der Inhalt überall gleich ist.
  */
 export function getJobSections(job: Job): JobSection[] {
+  const { street, postalCode, city, radiusKm } = job.location;
   const eckdaten = [
+    // E-030: „Lohn: auf Anfrage“, nie ein Betrag; das Schülerpraktikum sagt nichts zu Geld.
+    ...(job.pay === 'auf-anfrage' ? ['Lohn: auf Anfrage'] : []),
     `Anstellung: ${employmentLabel(job)}`,
     `Start: ${startLabel(job)}`,
-    `Einsatzort: ${job.location.street}, ${job.location.postalCode} ${job.location.city}, Baustellen im Umkreis von ${job.location.radiusKm} km`,
+    ...(job.employment.durationNote ? [`Dauer: ${job.employment.durationNote}`] : []),
+    radiusKm
+      ? `Einsatzort: ${street}, ${postalCode} ${city}, Baustellen im Umkreis von ${radiusKm} km`
+      : `Arbeitsort: ${street}, ${postalCode} ${city}`,
   ];
-  const salary = formatSalaryRange(job);
-  if (salary) eckdaten.unshift(`${job.employment.kind === 'ausbildung' ? 'Vergütung' : 'Gehalt'}: ${salary}`);
 
   const sections: JobSection[] = [
     { id: 'intro', heading: null, text: job.intro },
     { id: 'aufgaben', heading: 'Das erwartet dich', items: [...job.tasks] },
-    { id: 'anforderungen', heading: 'Das bringst du mit', items: [...job.requirements] },
+    // Ohne belegte Anforderungen (requirementsOpen, M-038) kein Abschnitt: nichts erfinden.
+    ...(job.requirements.length > 0
+      ? [{ id: 'anforderungen', heading: 'Das bringst du mit', items: [...job.requirements] } satisfies JobSection]
+      : []),
     { id: 'vorteile', heading: 'Das bekommst du', items: job.benefitFactIds.map((id) => FACTS[id].long) },
   ];
   if (job.packageExtras.length > 0) {

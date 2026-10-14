@@ -4,11 +4,12 @@
  *
  * Regeln (ROADMAP §1, fakten-abgleich):
  * - Jeder Satz mit Aussage ist ein `Satz` mit Quelle: ein Fakt aus lib/content/facts.ts (per ID, nur bestätigt und
- *   gültig, nie `pending`), eine Stelle aus dem Registry (Gehalt, Paket, Aufgaben, Voraussetzungen; nur live), der
+ *   gültig, nie `pending`), eine Stelle aus dem Registry (Bezahlung, Paket, Aufgaben, Voraussetzungen; nur live), der
  *   Ablauf und die Diskretionszusage (lib/content/process.ts), eine FAQ-Antwort (lib/content/faq.ts), ein freigegebenes
  *   Teamprofil oder -zitat, die Stammdaten (lib/content/company.ts, REGION.milestone) oder die gemessenen Orte. Eigene
  *   Wörter sind nur Beschriftungen (Etiketten, Überschriften, Linktexte), ohne Zahl und ohne Zusage.
- * - Gehälter nur aus `job.salary` der live Stellen; Zahlen nur aus den Quellen (Test: jede Zahl der Seite steht dort).
+ * - Kein Betrag (E-030): Zur Bezahlung steht „Lohn auf Anfrage“ (Fakt payOnRequest) mit den belegten Fakten ohne Zahl;
+ *   das Schülerpraktikum sagt nichts zu Geld. Zahlen nur aus den Quellen (Test: jede Zahl der Seite steht dort).
  * - Keine Arbeitszeit-Uhrzeiten, kein „pünktlich …“, keine Wochenstunden (B28): Es gilt nur flexibleHours.
  * - Nicht verwendet, solange offen: payFirstWorkday (A3), takeoverGuarantee (A1), privateCarOnePercent (A2).
  *   Tankkarte (B8) und iPad (B9) stehen nur mit den Stellen, zu denen sie gehören. Kein „Werkstatt“ (B31).
@@ -20,7 +21,7 @@ import { getFaqItem, type FaqId } from '@/lib/content/faq';
 import { DISCRETION_PROMISE, getProcessSteps, type ProcessStep } from '@/lib/content/process';
 import { REGION } from '@/lib/content/region';
 import { TEAM_PROFILES, getReleasedQuote, type TeamMemberId, type TeamQuote } from '@/lib/content/team';
-import { employmentLabel, formatNumber, formatSalaryAmount, jobPath } from '@/lib/jobs/format';
+import { employmentLabel, jobPath, payLabel } from '@/lib/jobs/format';
 import type { Job, JobId } from '@/lib/jobs/registry';
 import { EINSATZGEBIET_PATH, getPublishedPlaces } from '@/lib/places/registry';
 import { fitDescription } from '@/lib/seo/descriptions';
@@ -112,7 +113,7 @@ export interface ThemaKarte {
   wertName?: string;
   /** Kennwert mit Einheit für den Verteiler im Kopf des Hubs („5 Marken“, „seit 1926“). */
   kurz?: string;
-  /** Kennwert als Klammer im Fließtext (llms-full.txt): „gegründet 1926“, „3.600–5.600 € pro Monat für Fachkräfte“. */
+  /** Kennwert als Klammer im Fließtext (llms-full.txt): „gegründet 1926“, „Lohn auf Anfrage“. */
   klammer?: string;
 }
 
@@ -242,25 +243,14 @@ export interface TextOptions {
 
 const istAusbildung = (job: Pick<Job, 'employment'>) => job.employment.kind === 'ausbildung';
 
-/** „Gehalt pro Monat“ bzw. „Vergütung pro Monat“ (wie SalaryCard). */
-export function gehaltName(job: Pick<Job, 'employment'>): string {
-  return `${istAusbildung(job) ? 'Vergütung' : 'Gehalt'} pro Monat`;
+/** Live Stellen, die etwas zur Bezahlung sagen („Lohn auf Anfrage“); das Schülerpraktikum nicht (E-030). */
+export function mitLohn(jobs: readonly Job[]): Job[] {
+  return jobs.filter((job) => payLabel(job) !== null);
 }
 
-/** Live Stellen mit Monatsgehalt. */
-function mitGehalt(jobs: readonly Job[]): Job[] {
-  return jobs.filter((job) => job.salary?.unit === 'MONTH');
-}
-
-/** Spanne der Fachkraft-Stellen: „3.600–5.600 €“ (geschützt vor €); null ohne Fachkraft-Stelle mit Gehalt. */
-export function fachkraftSpanne(jobs: readonly Job[]): string | null {
-  const salaries = mitGehalt(jobs)
-    .filter((job) => !istAusbildung(job))
-    .map((job) => job.salary!);
-  if (salaries.length === 0) return null;
-  const min = Math.min(...salaries.map((s) => s.min));
-  const max = Math.max(...salaries.map((s) => s.max));
-  return `${formatNumber(min)}–${formatNumber(max)}${NBSP}€`;
+/** „Offen ist eine Stelle.“ bzw. „Offen sind acht Stellen.“ (Zahl gezählt, nicht abgeschrieben). */
+function offeneStellen(jobs: readonly Job[]): Satz {
+  return satz(jobs.length === 1 ? 'Offen ist eine Stelle.' : `Offen sind ${zahlwort(jobs.length)} Stellen.`, ...jobs.map(sq));
 }
 
 /** „Ausbildung zum Anlagenmechaniker SHK (m/w/d)“ → „Ausbildung zum Anlagenmechaniker SHK“. */
@@ -283,7 +273,7 @@ function verweis(job: Job): StellenVerweis {
 /** Ende der WhatsApp-Nachricht je Seite (nach „Guten Tag Herr Demir,“). */
 const WHATSAPP_ANLIEGEN: Readonly<Record<ThemaId | 'hub', string>> = Object.freeze({
   hub: 'ich habe eine Frage zur Arbeit bei Bad und Energie',
-  gehalt: 'ich habe eine Frage zum Gehalt bei Bad und Energie',
+  gehalt: 'ich habe eine Frage zum Lohn bei Bad und Energie',
   'fahrzeug-und-werkzeug': 'ich habe eine Frage zu Fahrzeug und Werkzeug bei Bad und Energie',
   waermepumpen: 'ich interessiere mich für die Arbeit an Wärmepumpen bei Bad und Energie',
   betrieb: 'ich möchte Bad und Energie als Arbeitgeber kennenlernen',
@@ -297,7 +287,7 @@ export function whatsappNachricht(id: ThemaId | 'hub'): string {
 
 const KONTAKT_TITEL: Readonly<Record<ThemaId | 'hub', string>> = Object.freeze({
   hub: 'Direkt fragen',
-  gehalt: 'Fragen zum Gehalt',
+  gehalt: 'Fragen zum Lohn',
   'fahrzeug-und-werkzeug': 'Fragen zur Ausstattung',
   waermepumpen: 'Fragen zu Wärmepumpen',
   betrieb: 'Den Betrieb kennenlernen',
@@ -332,18 +322,15 @@ export function themaKarte(id: ThemaId, { jobs, now = new Date() }: TextOptions)
   const basis = { id, href: themaPath(thema), name: thema.name, icon: thema.icon };
   switch (id) {
     case 'gehalt': {
-      const spanne = fachkraftSpanne(jobs);
-      const alleMitGehalt = jobs.length > 0 && jobs.every((job) => job.salary);
+      // E-030: kein Betrag; der Kennwert ist die Aussage selbst („Lohn auf Anfrage“)
+      const lohn = FACTS[erlaubt('payOnRequest', now)];
       return {
         ...basis,
-        satz: alleMitGehalt
-          ? satz(
-              `${FACTS[erlaubt('aboveTariff', now)].long} Jede offene Stelle nennt ihr Gehalt als Spanne pro Monat.`,
-              fq('aboveTariff'),
-              ...jobs.map(sq),
-            )
-          : satz(FACTS[erlaubt('aboveTariff', now)].long, fq('aboveTariff')),
-        ...(spanne ? { wert: spanne, wertName: 'Gehalt pro Monat, Fachkräfte', kurz: spanne, klammer: `${spanne} pro Monat für Fachkräfte` } : {}),
+        satz: satz(`${lohn.long} ${FACTS[erlaubt('aboveTariff', now)].long}`, fq('payOnRequest'), fq('aboveTariff')),
+        wert: 'auf Anfrage',
+        wertName: 'Lohn',
+        kurz: lohn.short,
+        klammer: lohn.short,
       };
     }
     case 'fahrzeug-und-werkzeug': {
@@ -418,7 +405,6 @@ export interface ArbeitenPageText extends SeitenBasis {
 export function getArbeitenPageText(options: TextOptions): ArbeitenPageText {
   const { jobs, now = new Date() } = options;
   const themen = getThemen();
-  const spanne = fachkraftSpanne(jobs);
   const marken = FACTS.heatPumpBrands.list?.length ?? 0;
   const gesamt = getThemen().map((thema) => themaKarte(thema.id, options));
 
@@ -429,16 +415,12 @@ export function getArbeitenPageText(options: TextOptions): ArbeitenPageText {
       h1: 'Arbeiten bei Bad und Energie',
       primaryKeyword: 'Arbeiten bei Bad und Energie',
       description: fitDescription(
-        ...([
-          spanne
-            ? `Gehalt ${spanne} im Monat, Servicefahrzeug, Hilti-Ausstattung, Wärmepumpen von ${marken} Marken und ein diskreter Wechsel: Arbeiten bei uns in Wetzlar.`
-            : null,
-          `Gehalt, Servicefahrzeug, Hilti-Ausstattung, Wärmepumpen von ${marken} Marken und ein diskreter Wechsel: Arbeiten bei Bad und Energie in Wetzlar.`,
-        ].filter((d): d is string => d !== null) as [string, ...string[]]),
+        `${FACTS.payOnRequest.short}, Servicefahrzeug, Hilti-Ausstattung, Wärmepumpen von ${marken} Marken und ein diskreter Wechsel: Arbeiten bei Bad und Energie in Wetzlar.`,
+        `${FACTS.payOnRequest.short}, Servicefahrzeug, Hilti-Ausstattung, Wärmepumpen von ${marken} Marken und ein diskreter Wechsel: Arbeiten bei uns in Wetzlar.`,
       ),
     }),
     etikett: `Seit ${COMPANY.foundingYear} · ${COMPANY.address.city}`,
-    unterzeile: ['Was wir zahlen, womit du arbeitest', 'und wie du zu uns wechselst.'],
+    unterzeile: ['Wie wir bezahlen, womit du arbeitest', 'und wie du zu uns wechselst.'],
     einleitung: [
       satz(`${FACTS[erlaubt('founded1926', now)].long} ${FACTS[erlaubt('employees15', now)].long}`, fq('founded1926'), fq('employees15')),
       satz(`${FACTS[erlaubt('radius35', now)].long} ${FACTS[erlaubt('directLine', now)].long}`, fq('radius35'), fq('directLine')),
@@ -450,14 +432,14 @@ export function getArbeitenPageText(options: TextOptions): ArbeitenPageText {
     zweitweg: { href: '#themen', label: `Alle ${zahlwort(themen.length)} Themen ansehen` },
     whatsapp: whatsappNachricht('hub'),
     kontakt: kontakt('hub'),
-    og: { wert: String(COMPANY.foundingYear), name: 'Gegründet in Wetzlar', zeilen: ['Gehalt, Fahrzeug, Werkzeug.', `${FACTS.vacation30.short}.`] },
+    og: { wert: String(COMPANY.foundingYear), name: 'Gegründet in Wetzlar', zeilen: ['Lohn, Fahrzeug, Werkzeug.', `${FACTS.vacation30.short}.`] },
     themen: {
       kopf: {
         id: 'themen',
         etikett: 'Themen',
         heading: 'Die Themen im Überblick',
         lead: satz(
-          'Je Thema eine eigene Seite: mit den Gehältern und Paketen aus den Stellenanzeigen, den Partnern des Betriebs und dem Ablauf deines Wechsels.',
+          'Je Thema eine eigene Seite: mit Bezahlung und Paketen aus den Stellenanzeigen, den Partnern des Betriebs und dem Ablauf deines Wechsels.',
           ...jobs.map(sq),
           fq('partners5'),
           'ablauf:bewerben',
@@ -472,178 +454,100 @@ export function getArbeitenPageText(options: TextOptions): ArbeitenPageText {
     stellen:
       jobs.length > 0
         ? {
-            kopf: {
-              id: 'stellen',
-              etikett: 'Stellen',
-              heading: 'Offene Stellen',
-              lead: satz(
-                jobs.length === 1
-                  ? 'Offen ist eine Stelle, mit Gehalt bzw. Vergütung.'
-                  : `Offen sind ${zahlwort(jobs.length)} Stellen, jede mit Gehalt bzw. Vergütung.`,
-                ...jobs.map(sq),
-              ),
-            },
+            kopf: { id: 'stellen', etikett: 'Stellen', heading: 'Offene Stellen', lead: offeneStellen(jobs) },
           }
         : null,
     weitere: { kopf: { id: 'weitere', etikett: 'Themen', heading: 'Die Themen im Überblick' }, karten: gesamt },
   };
 }
 
-// ─── Gehalt ─────────────────────────────────────────────────────────────────
+// ─── Bezahlung und Extras (Slug „gehalt“) ───────────────────────────────────
 
-/** Eine Zeile der Gehaltsleiter (Zeichnung im Kopf): Spanne einer Stelle auf der gemeinsamen Skala. */
-export interface LeiterZeile {
-  jobId: JobId;
-  name: string;
-  min: number;
-  max: number;
-  /** „3.600–4.600 €“ */
-  betrag: string;
-  einheit: string;
-}
-
-export interface Gehaltsleiter {
-  zeilen: readonly LeiterZeile[];
-  /** Skala in Euro: volle Tausender um alle Spannen. */
-  von: number;
-  bis: number;
-  schritte: readonly number[];
-}
-
-export interface SpannenKarte extends StellenVerweis {
-  betrag: string;
-  einheit: string;
+/** Eine Stelle auf der Seite „Bezahlung und Extras“: Anstellung, Voraussetzung und Paketzeile „Vergütung“, kein Betrag. */
+export interface LohnKarte extends StellenVerweis {
   anstellung: string;
-  /** Abschluss und Berufserfahrung, wie in der Stellenanzeige. */
+  /** Abschluss und Berufserfahrung, wie in der Stellenanzeige (leer, solange die Anforderungen offen sind). */
   voraussetzung: readonly string[];
-  /** Paketzeile „Vergütung“ der Stelle. */
+  /** Paketzeile „Vergütung“ der Stelle („über Tarif, plus Prämien“). */
   verguetung: string | null;
 }
 
 export interface GehaltPageText extends SeitenBasis {
-  leiter: Gehaltsleiter | null;
-  spannen: { kopf: Kopfzeile; karten: readonly SpannenKarte[] };
+  /** Zeichnung im Kopf (Plan §A): „Lohn auf Anfrage“ und darunter die belegten Fakten ohne Zahl. */
+  lohn: { etikett: string; titel: string; zeilen: readonly string[] };
+  jeStelle: { kopf: Kopfzeile; karten: readonly LohnKarte[] };
   dazu: { kopf: Kopfzeile; kaesten: readonly Kasten[] };
   ausbildung: { kopf: Kopfzeile; saetze: readonly Satz[]; kaesten: readonly Kasten[] } | null;
 }
 
-export function gehaltsleiter(jobs: readonly Job[]): Gehaltsleiter | null {
-  const zeilen = mitGehalt(jobs)
-    .map(
-      (job): LeiterZeile => ({
-        jobId: job.id,
-        name: job.shortTitle,
-        min: job.salary!.min,
-        max: job.salary!.max,
-        betrag: formatSalaryAmount(job)!,
-        einheit: gehaltName(job),
-      }),
-    )
-    .sort((a, b) => a.min - b.min || a.max - b.max);
-  if (zeilen.length === 0) return null;
-  const von = Math.floor(Math.min(...zeilen.map((z) => z.min)) / 1000) * 1000;
-  const bis = Math.ceil(Math.max(...zeilen.map((z) => z.max)) / 1000) * 1000;
-  const schritte = Array.from({ length: (bis - von) / 1000 + 1 }, (_, i) => von + i * 1000);
-  return { zeilen, von, bis, schritte };
-}
-
-function spannenKarte(job: Job): SpannenKarte {
+function lohnKarte(job: Job): LohnKarte {
   const erfahrung = job.requirements.find((r) => /Berufserfahrung/.test(r));
   return {
     ...verweis(job),
-    betrag: formatSalaryAmount(job)!,
-    einheit: gehaltName(job),
     anstellung: employmentLabel(job),
     voraussetzung: [job.education?.label, erfahrung].filter((t): t is string => Boolean(t)),
     verguetung: job.packageExtras.find((extra) => extra.label === 'Vergütung')?.text ?? null,
   };
 }
 
+/**
+ * Seite „Bezahlung und Extras“ (bis E-030 „Gehalt“ mit Spannen je Stelle; Slug und Adresse bleiben): Lohn auf Anfrage
+ * bei jeder Stelle, die etwas zur Bezahlung sagt, dazu die Fakten ohne Zahl (über Tarif, Urlaubs- und
+ * Weihnachtsgeld, 30 Tage Urlaub) und je Stelle Anstellung, Voraussetzung und Paketzeile „Vergütung“.
+ */
 export function getGehaltPageText(options: TextOptions): GehaltPageText {
   const { jobs, now = new Date() } = options;
-  const gehalt = mitGehalt(jobs);
-  const spanne = fachkraftSpanne(jobs);
-  const azubi = gehalt.find(istAusbildung);
-  const azubiBetrag = azubi ? formatSalaryAmount(azubi) : null;
+  const lohnStellen = mitLohn(jobs);
+  const azubi = lohnStellen.find(istAusbildung);
+  const lohn = FACTS[erlaubt('payOnRequest', now)];
   const tarif = FACTS[erlaubt('aboveTariff', now)];
   const urlaub = FACTS[erlaubt('vacation30', now)];
-  const alleMitGehalt = jobs.length > 0 && gehalt.length === jobs.length;
-
-  const einleitung: Satz[] = [];
-  if (alleMitGehalt) {
-    einleitung.push(
-      satz(
-        jobs.length === 1
-          ? 'Die offene Stelle nennt ihr Gehalt als Spanne pro Monat.'
-          : `Jede der ${zahlwort(jobs.length)} offenen Stellen nennt ihr Gehalt als Spanne pro Monat.`,
-        ...jobs.map(sq),
-      ),
-    );
-  }
-  if (azubi && azubiBetrag) einleitung.push(satz(`In der Ausbildung sind es ${azubiBetrag} Vergütung im Monat.`, sq(azubi)));
-  if (einleitung.length === 0) einleitung.push(satz(tarif.long, fq('aboveTariff')));
-
   const dauer = azubi ? employmentLabel(azubi).split(' · ')[1] : undefined;
 
   return {
     path: themaPath(getThema('gehalt')),
     meta: plainMeta({
-      title: spanne ? `Gehalt bei Bad und Energie: ${spanne} im Monat` : 'Gehalt und Vergütung bei Bad und Energie in Wetzlar',
-      h1: 'Was du bei uns verdienst',
-      primaryKeyword: 'Gehalt SHK Wetzlar',
+      title: 'Bezahlung und Extras bei Bad und Energie in Wetzlar',
+      h1: 'Bezahlung und Extras',
+      primaryKeyword: 'Bezahlung SHK Wetzlar',
       description: fitDescription(
-        ...([
-          spanne && azubiBetrag
-            ? `Gehalt für Fachkräfte ${spanne} im Monat, Ausbildung ${azubiBetrag}. ${tarif.short}, ${urlaub.short}.`
-            : null,
-          spanne ? `Gehalt für Fachkräfte ${spanne} im Monat, offen genannt für jede Stelle. ${tarif.short}, ${urlaub.short}.` : null,
-          `Gehalt und Vergütung bei Bad und Energie in Wetzlar: ${tarif.short}, ${urlaub.short}, ${lowerFirst(FACTS.noUnpaidOvertime.short)}.`,
-        ].filter((d): d is string => d !== null) as [string, ...string[]]),
+        `${lohn.short} bei jeder Stelle: ${tarif.short}, ${urlaub.short} und ${lowerFirst(FACTS.noUnpaidOvertime.short)}. Bezahlung und Extras in Wetzlar.`,
+        `${lohn.short}: ${tarif.short}, ${urlaub.short}, ${lowerFirst(FACTS.noUnpaidOvertime.short)}. Bezahlung und Extras bei Bad und Energie.`,
       ),
     }),
-    etikett: `Gehalt · ${COMPANY.address.city}`,
-    // „Fachkräfte:“ davor: Die Ausbildung liegt darunter (Kritik 2, P2-5); ihre Vergütung nennt die Einleitung
-    unterzeile: spanne ? [`Fachkräfte: ${spanne} im Monat.`, `${tarif.short}.`] : [`${tarif.short}.`],
-    einleitung,
-    masse: [
-      ...(gehalt.length > 0 ? [{ wert: String(gehalt.length), name: gehalt.length === 1 ? 'Stelle mit Gehalt' : 'Stellen mit Gehalt' }] : []),
-      ...masseAus('vacation30'),
-    ],
-    zweitweg: gehalt.length > 0 ? { href: '#spannen', label: 'Spannen je Stelle ansehen' } : { href: '#dazu', label: 'Was dazukommt' },
+    etikett: `Bezahlung · ${COMPANY.address.city}`,
+    unterzeile: [`${lohn.short}.`, `${tarif.short}.`],
+    einleitung: [satz(`${lohn.long} ${tarif.long}`, fq('payOnRequest'), fq('aboveTariff'))],
+    masse: masseAus('vacation30'),
+    zweitweg:
+      lohnStellen.length > 0 ? { href: '#je-stelle', label: 'Extras je Stelle ansehen' } : { href: '#dazu', label: 'Was dazukommt' },
     whatsapp: whatsappNachricht('gehalt'),
     kontakt: kontakt('gehalt'),
-    og: {
-      ...(spanne ? { wert: spanne, name: 'Gehalt pro Monat, Fachkräfte' } : { wert: urlaub.value ?? '', name: urlaub.label ?? '' }),
-      zeilen: ['Gehalt je Stelle.', `${urlaub.short}.`],
-    },
-    leiter: gehaltsleiter(jobs),
-    spannen: {
+    og: { wert: 'auf Anfrage', name: 'Lohn', zeilen: [`${urlaub.short}.`, 'Extras je Stelle.'] },
+    lohn: { etikett: 'Bezahlung', titel: lohn.short, zeilen: [tarif.short, urlaub.short] },
+    jeStelle: {
       kopf: {
-        id: 'spannen',
+        id: 'je-stelle',
         etikett: 'Je Stelle',
-        heading: 'Die Spannen je Stelle',
-        lead: satz('Gehalt, Anstellung und Voraussetzung, wie sie in den Stellenanzeigen stehen.', ...gehalt.map(sq)),
+        heading: 'Extras je Stelle',
+        lead: satz('Anstellung, Voraussetzung und Vergütung, wie sie in den Stellenanzeigen stehen.', ...lohnStellen.map(sq)),
       },
-      karten: gehalt.map(spannenKarte),
+      karten: lohnStellen.map(lohnKarte),
     },
     dazu: {
-      kopf: { id: 'dazu', etikett: 'Zum Gehalt', heading: 'Was dazukommt' },
+      kopf: { id: 'dazu', etikett: 'Zum Lohn', heading: 'Was dazukommt' },
       kaesten: (['aboveTariff', 'vacation30', 'flexibleHours', 'permanentContract'] as const).map((id) => faktKasten(id, now)),
     },
-    ausbildung:
-      azubi && azubiBetrag
-        ? {
-            kopf: { id: 'ausbildung', etikett: 'Ausbildung', heading: 'Vergütung in der Ausbildung' },
-            saetze: [
-              satz(
-                `${dauer ? `Die ${ohneGenderTag(azubi.title)} dauert ${dauer}. ` : ''}Die Vergütung liegt bei ${azubiBetrag} im Monat.`,
-                sq(azubi),
-              ),
-              satz(FACTS[erlaubt('azubiPay', now)].long, fq('azubiPay')),
-            ],
-            kaesten: (['travelAllowance', 'driversLicenseGrant'] as const).map((id) => faktKasten(id, now)),
-          }
-        : null,
+    ausbildung: azubi
+      ? {
+          kopf: { id: 'ausbildung', etikett: 'Ausbildung', heading: 'Vergütung in der Ausbildung' },
+          saetze: [
+            satz(`${dauer ? `Die ${ohneGenderTag(azubi.title)} dauert ${dauer}. ` : ''}${lohn.long}`, sq(azubi), fq('payOnRequest')),
+            satz(FACTS[erlaubt('azubiPay', now)].long, fq('azubiPay')),
+          ],
+          kaesten: (['travelAllowance', 'driversLicenseGrant'] as const).map((id) => faktKasten(id, now)),
+        }
+      : null,
     weitere: weitere('gehalt', options),
   };
 }
@@ -726,7 +630,7 @@ function fahrzeugZeile(jobs: readonly Job[], now: Date): { text: string; stellen
   return { text: stellen.length === jobs.length ? `${fahrzeug.short}.` : `${fahrzeug.short} je nach Stelle.`, stellen };
 }
 
-/** Paketzeilen, die Ausstattung betreffen (Vergütung steht auf der Gehaltsseite). */
+/** Paketzeilen, die Ausstattung betreffen (Vergütung steht auf der Seite „Bezahlung und Extras“). */
 const AUSSTATTUNG_ZEILEN = ['Fahrzeug', 'Werkzeug', 'Mobilität', 'Ausstattung'] as const;
 
 /** Vorteile der Stelle, die Ausstattung betreffen, mit Etikett (bestätigt; pending nie, auch nicht je Stelle). */
@@ -849,7 +753,11 @@ export interface WpStelle extends StellenVerweis {
   /** Satz der Stellen-Einleitung mit „Wärmepumpe“ (Wortlaut der Anzeige), sonst null. */
   einleitung: string | null;
   aufgaben: readonly string[];
-  betrag: string | null;
+  /**
+   * Seit E-030 kein Betrag mehr: immer null. Die Felder bleiben nur, bis components/themen/WaermepumpenSeite.tsx
+   * (Paket Zeichnung 2.0) sie nicht mehr liest; dann entfallen sie.
+   */
+  betrag: null;
   einheit: string;
 }
 
@@ -873,8 +781,8 @@ export function getWaermepumpenPageText(options: TextOptions): WaermepumpenPageT
       ...verweis(job),
       einleitung: saetze(job.intro).find((s) => WP.test(s)) ?? null,
       aufgaben,
-      betrag: formatSalaryAmount(job),
-      einheit: gehaltName(job),
+      betrag: null,
+      einheit: '',
     }));
   const [, spezialist] = meilensteinSaetze();
   const am = jobs.find((job) => job.category === 'anlagenmechaniker');
@@ -1108,17 +1016,7 @@ export function getDiskretPageText(options: TextOptions): DiskretPageText {
     stellen:
       jobs.length > 0
         ? {
-            kopf: {
-              id: 'stellen',
-              etikett: 'Stellen',
-              heading: 'Wohin du wechseln kannst',
-              lead: satz(
-                jobs.length === 1
-                  ? 'Offen ist eine Stelle, mit Gehalt bzw. Vergütung.'
-                  : `Offen sind ${zahlwort(jobs.length)} Stellen, jede mit Gehalt bzw. Vergütung.`,
-                ...jobs.map(sq),
-              ),
-            },
+            kopf: { id: 'stellen', etikett: 'Stellen', heading: 'Wohin du wechseln kannst', lead: offeneStellen(jobs) },
           }
         : null,
     fragen: {

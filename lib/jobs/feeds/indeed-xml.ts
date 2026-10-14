@@ -3,7 +3,7 @@ import { jobUrl, toHtmlDescription } from '../format';
 import { getChannelJobs } from '../registry';
 import type { Job } from '../schema';
 import { withUtm } from './tracking';
-import { XML_DECLARATION, datePart, element, escapeXml, feedJobType, salaryText, toRfc822 } from './xml';
+import { XML_DECLARATION, datePart, element, escapeXml, feedJobType, toRfc822 } from './xml';
 
 export interface IndeedFeedOptions {
   publisher?: string;
@@ -12,7 +12,10 @@ export interface IndeedFeedOptions {
   lastBuildDate?: Date;
 }
 
-/** Indeed-XML (<source>/<job>) mit allen veröffentlichten Stellen, die `channels.indeedFeed` gesetzt haben. */
+/**
+ * Indeed-XML (<source>/<job>) mit allen veröffentlichten Stellen, die `channels.indeedFeed` gesetzt haben. Ohne
+ * <salary> (E-030: Lohn auf Anfrage; das Feld ist bei Indeed optional, leer heißt: keine Angabe).
+ */
 export function buildIndeedXml(jobs: readonly Job[], options: IndeedFeedOptions = {}): string {
   const {
     publisher = EMPLOYER.legalName,
@@ -21,7 +24,6 @@ export function buildIndeedXml(jobs: readonly Job[], options: IndeedFeedOptions 
   } = options;
 
   const items = getChannelJobs(jobs, 'indeedFeed', lastBuildDate).map((job) => {
-    const salary = salaryText(job);
     const fields = [
       element('title', job.title),
       element('date', toRfc822(new Date(`${job.datePosted}T00:00:00Z`))),
@@ -34,7 +36,6 @@ export function buildIndeedXml(jobs: readonly Job[], options: IndeedFeedOptions 
       element('postalcode', job.location.postalCode),
       element('streetaddress', job.location.street),
       element('description', toHtmlDescription(job)),
-      ...(salary ? [element('salary', salary)] : []),
       element('jobtype', feedJobType(job)),
       ...(job.validThrough ? [element('expirationdate', datePart(job.validThrough))] : []),
     ];

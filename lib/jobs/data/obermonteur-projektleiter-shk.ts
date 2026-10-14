@@ -16,7 +16,7 @@ export const obermonteurProjektleiterShk = defineJob({
   seo: {
     metaTitle: 'Obermonteur / Projektleiter SHK Job Wetzlar (m/w/d)',
     metaDescription:
-      'Obermonteur / Projektleiter SHK (m/w/d) in Wetzlar: Bäder & Heizungsprojekte eigenverantwortlich leiten, 4.400–5.600 €, 30 Tage Urlaub. Jetzt bewerben.',
+      'Obermonteur / Projektleiter SHK (m/w/d) in Wetzlar: Bäder & Heizungsprojekte eigenverantwortlich leiten, über Tarif, 30 Tage Urlaub. Jetzt bewerben.',
     h1: 'Obermonteur / Projektleiter SHK (m/w/d) in Wetzlar',
     primaryKeyword: 'Obermonteur SHK Wetzlar',
     secondaryKeywords: [
@@ -26,6 +26,7 @@ export const obermonteurProjektleiterShk = defineJob({
       'Obermonteur Heizung Gießen',
     ],
   },
+  alsoKnownAs: ['Bauleitender Monteur', 'Bauleiter SHK'],
   summary: 'Du leitest Badsanierungen und Heizungsprojekte eigenverantwortlich, in direkter Abstimmung mit Sabri Demir.',
   intro:
     'Als Obermonteur oder Projektleiter führst du anspruchsvolle Badsanierungen und Heizungsmodernisierungen im Lahn-Dill-Kreis eigenverantwortlich. Du organisierst deine Baustellen frei und führst dein Team kollegial.',
@@ -58,14 +59,16 @@ export const obermonteurProjektleiterShk = defineJob({
     { label: 'Mitgestalten', text: 'Mit Meister- oder Technikerabschluss gestaltest du die Betriebsplanung mit' },
   ],
   employment: { kind: 'vollzeit', permanent: true, start: 'nach-absprache' },
-  salary: { min: 4400, max: 5600, unit: 'MONTH', currency: 'EUR' },
+  pay: 'auf-anfrage',
   location: HQ_LOCATION,
   education: { credentialCategory: 'professional certificate', label: 'Abgeschlossene Ausbildung im SHK-Handwerk' },
   experienceMonths: 36,
   datePosted: '2026-03-01',
-  validThrough: '2027-10-06T00:00:00',
-  updatedAt: '2026-10-12',
+  validThrough: '2027-01-12T00:00:00',
+  updatedAt: '2026-10-14',
   apply: { questionSet: 'fachkraft' },
   channels: { googleJobs: true, indeedFeed: true, genericFeed: true, ba: true },
+  // „Bauleitende/r Monteur/in (Gas- u. Wasserinstallation)“: KldB 34293 (Aufsicht), ISCO-08 3123 (lib/jobs/berufe.ts).
+  beruf: { kldb: '34293', isco: '3123' },
   // Zitat Koch ausgeblendet, bis der Inhaber ein neues freigibt (fakten-abgleich B30).
 });

@@ -42,7 +42,7 @@ function graphOf(element: ReactNode): PageGraph {
   return graphs[0];
 }
 
-const ofType = (graph: PageGraph, type: string) => (graph['@graph'] as unknown as Node[]).filter((node) => node['@type'] === type);
+const ofType = (graph: PageGraph, type: string) => (graph['@graph'] as unknown as Node[]).filter((node) => [node['@type']].flat().includes(type));
 
 function visibleCrumbs(html: string): string[] {
   const nav = [...html.matchAll(/<nav aria-label="Brotkrümelnavigation"[^>]*>(.*?)<\/nav>/g)].map((m) => m[1]).find((inner) => inner.includes('<ol')) ?? '';
@@ -110,6 +110,13 @@ describe('Routen unter /arbeiten-bei-uns', () => {
     expect(html).toContain(`href="${ARBEITEN_PATH}"`);
     expect(html).toContain(`text=${encodeURIComponent(WHATSAPP_GREETING)}`);
     expect(claimsInHtml(html)).toEqual([]);
-    if (id === 'gehalt') for (const job of jobs) expect(html).toContain(`href="${jobPath(job)}"`);
+    if (id === 'gehalt') {
+      // „Bezahlung und Extras“ (E-030): jede live Stelle mit Lohn auf Anfrage; das Schülerpraktikum sagt nichts zu Geld
+      for (const job of jobs) {
+        if (job.pay === 'auf-anfrage') expect(html, job.id).toContain(`href="${jobPath(job)}"`);
+        else expect(html, job.id).not.toContain(`href="${jobPath(job)}"`);
+      }
+      expect(jobs.some((job) => job.pay === 'keine-angabe')).toBe(true);
+    }
   });
 });
