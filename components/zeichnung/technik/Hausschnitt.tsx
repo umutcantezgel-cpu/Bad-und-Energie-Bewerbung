@@ -37,6 +37,8 @@ export interface HausschnittInhaltProps {
   pfeilKlasse?: (pfeil: Pfeil) => string | undefined;
   /** Bewegungskennung der Fließpfeile (Auftakt). */
   pfeilMotion?: MotionId;
+  /** Schraffur des Erdreichs mit doppeltem Abstand (kleine Einsätze). */
+  grob?: boolean;
 }
 
 /**
@@ -45,7 +47,7 @@ export interface HausschnittInhaltProps {
  * Bodenplatte, Dach als Schnittflächen), Sockel, Außeneinheit (verschachtelte Zeichnung mit viewBox in mm, 110 × 80
  * Einheiten), Inneneinheit als Symbol, Flachheizkörper, Leitungen in Fließrichtung mit festen Pfeilen.
  */
-export function HausschnittInhalt({ knopf = false, einzelheit = false, leitungKlasse, leitungMotion, pfeilKlasse, pfeilMotion }: HausschnittInhaltProps) {
+export function HausschnittInhalt({ knopf = false, einzelheit = false, leitungKlasse, leitungMotion, pfeilKlasse, pfeilMotion, grob = false }: HausschnittInhaltProps) {
   const leitungen = LEITUNGEN.filter((l) => knopf || !l.nur);
   const pfeile = PFEILE.filter((p) => knopf || !p.nur);
   const ie = INNENEINHEIT_LAGE;
@@ -55,7 +57,7 @@ export function HausschnittInhalt({ knopf = false, einzelheit = false, leitungKl
   return (
     <g data-hausschnitt="">
       {/* Erdreich (Schnitt), Rohrgraben mit Sandbett, Geländelinie */}
-      <path d={BAUTEILE.schraffur} className={t.schraffur} />
+      <path d={grob ? BAUTEILE.schraffurGrob : BAUTEILE.schraffur} className={t.schraffur} />
       <path d={BAUTEILE.graben} className={cn(t.fein, t.flaeche)} />
       {/* Haus im Schnitt */}
       <path d={BAUTEILE.dach} className={cn(t.kontur, t.schnitt)} />
@@ -129,6 +131,8 @@ export function HausschnittInhalt({ knopf = false, einzelheit = false, leitungKl
 export interface HausschnittKleinProps {
   /** Zugänglicher Name (role="img"); ohne Titel dekorativ. */
   titel?: string;
+  /** Schraffur mit doppeltem Abstand für schmale Einsätze (HausKlein, rund 11–15rem). */
+  grob?: boolean;
   className?: string;
 }
 
@@ -136,10 +140,10 @@ export interface HausschnittKleinProps {
 const KLEIN_VIEWBOX = `60 0 ${HAUSSCHNITT_RAHMEN.breite - 40} ${HAUSSCHNITT_RAHMEN.hoehe}`;
 
 /**
- * Kleiner Hausschnitt (Stellenkopf Obermonteur, Seite „Der Betrieb“): derselbe Schnitt wie im Einstieg, ohne
- * Leitungen zur Bewerbung und ohne Bewegung. Breite setzt der Aufrufer.
+ * Kleiner Hausschnitt (Stellenkopf Obermonteur und weitere Stellen, über HausKlein auch Bewerbung, Danke und „Der
+ * Betrieb“): derselbe Schnitt wie im Einstieg, ohne Leitungen zur Bewerbung und ohne Bewegung. Breite setzt der Aufrufer.
  */
-export function HausschnittKlein({ titel, className }: HausschnittKleinProps) {
+export function HausschnittKlein({ titel, grob = false, className }: HausschnittKleinProps) {
   return (
     <svg
       className={cn(t.zeichnung, t.beschnitten, className)}
@@ -149,7 +153,7 @@ export function HausschnittKlein({ titel, className }: HausschnittKleinProps) {
       {...(titel ? { role: 'img' } : { 'aria-hidden': true })}
     >
       {titel ? <title>{titel}</title> : null}
-      <HausschnittInhalt />
+      <HausschnittInhalt grob={grob} />
     </svg>
   );
 }

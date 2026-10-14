@@ -215,6 +215,8 @@ export const BAUTEILE = {
   gelaende: `M0 ${GOK}H${HAUS.links}M${HAUS.rechts} ${GOK}H${RAND_RECHTS}`,
   /** 45°-Schraffur des Erdreichs (fein, 1 px); Haus, Fundament und Graben decken sie ab. */
   schraffur: schraffurLinien(0, GOK, RAND_RECHTS, HAUSSCHNITT_RAHMEN.hoehe, SCHRAFFUR.abstandHaus),
+  /** Dieselbe Schraffur mit doppeltem Abstand für kleine Einsätze (unter rund 16rem Breite stünden die Linien dicht). */
+  schraffurGrob: schraffurLinien(0, GOK, RAND_RECHTS, HAUSSCHNITT_RAHMEN.hoehe, SCHRAFFUR.abstandHaus * 2),
   /** Wanddurchführung (Futterrohr) im Fundament für beide Leitungen. */
   durchfuehrung: `M${HAUS.links - 4} ${ERD.ruecklauf - 10}H${HAUS.links + HAUS.wand + 4}V${ERD.vorlauf + 10}H${HAUS.links - 4}Z`,
   /** Betonsockel unter den Bodenhalterungen (geschaetzt). */

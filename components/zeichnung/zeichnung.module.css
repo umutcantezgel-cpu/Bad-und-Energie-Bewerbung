@@ -62,11 +62,6 @@
   stroke: none;
 }
 
-.waermeFlaeche {
-  fill: var(--waerme);
-  stroke: none;
-}
-
 /* Schild des Wegweisers in der Fläche der Umgebung: der Pfosten verschwindet dahinter */
 .schild {
   fill: var(--surface);
@@ -97,13 +92,14 @@
   font-size: var(--text-numeral);
 }
 
+/* Maßlinie nach DIN 406 (E-029): Linienart mass, Maßhilfslinien an den Enden, Begrenzungsstriche unter 45° */
 .mkLinie {
   position: relative;
   display: block;
   align-self: stretch;
   height: var(--a-3);
   margin-top: var(--a-1);
-  border-inline: var(--m-strich) solid var(--brand);
+  border-inline: var(--m-mass) solid var(--brand);
 }
 
 .mkLinie::before {
@@ -112,9 +108,25 @@
   left: 0;
   right: 0;
   top: 50%;
-  height: var(--m-strich);
+  height: var(--m-mass);
   transform: translateY(-50%);
   background-color: var(--brand);
+}
+
+.mkStrich {
+  position: absolute;
+  top: 50%;
+  height: var(--a-3);
+  border-left: var(--m-mass) solid var(--brand);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.mkStrich:first-child {
+  left: 0;
+}
+
+.mkStrich:last-child {
+  right: 0;
 }
 
 .mkName {
