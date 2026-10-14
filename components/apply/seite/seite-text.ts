@@ -3,8 +3,9 @@
  * Regionalband (E-BEW-008). Nur aus FACTS, COMPANY und REGION; Mikrotexte direkt (K-012), keine neuen Zusagen.
  */
 import { COMPANY } from '@/lib/content/company';
-import { FACTS } from '@/lib/content/facts';
+import { FACTS, JE_NACH_STELLE, offenBei } from '@/lib/content/facts';
 import { REGION } from '@/lib/content/region';
+import type { Job } from '@/lib/jobs/schema';
 
 /** Geschütztes Leerzeichen zwischen Zahl und Einheit (K-012: 35 km, 60 s). */
 const NBSP = ' ';
@@ -66,33 +67,61 @@ export interface RegionalMass extends SeitenMass {
   detail?: string;
 }
 
-/**
- * Regionalband (E-BEW-008): Einsatzgebiet, Arbeitszeit, Standort und „Keine Fernmontage“, Link auf die Karte.
- * Die Arbeitszeit hat kein Maß: Sie ist flexibel (Fakt flexibleHours, fakten-abgleich B28), feste Uhrzeiten
- * nennt die Seite nicht.
- */
-export const REGIONALBAND = Object.freeze({
-  etikett: 'Arbeitsort und Arbeitszeit',
-  /** Fakt noFarAssembly. */
-  titel: `${FACTS.noFarAssembly.short}.`,
-  /** REGION.summary: Wetzlar, Gießen, Lahn-Dill-Kreis und Nachbarkreise, jeden Abend zu Hause (Bestand der Startseite). */
-  einleitung: REGION.summary,
-  masse: Object.freeze([
-    // Fakt radius35
-    { wert: geschuetzt(wertVon('radius35')), name: 'Einsatzradius' },
-  ] as RegionalMass[]),
-  standort: Object.freeze({
-    name: 'Firmensitz',
-    zeilen: Object.freeze([COMPANY.address.street, `${COMPANY.address.postalCode} ${COMPANY.address.city}`]),
-  }),
-  /** Arbeitszeit: Fakten flexibleHours und noWeekendOnCall (V6-G1: sonst nirgends auf /bewerbung). */
-  arbeitszeit: `${FACTS.flexibleHours.long} ${FACTS.noWeekendOnCall.long}`,
-  /** V6-G1: Fahrzeit bis zum Firmensitz für die Orte außerhalb der Kernzone (REGION.locations). */
-  fahrzeiten: Object.freeze({
-    name: `Fahrzeit bis ${REGION.center.name}`,
-    orte: Object.freeze(
-      REGION.locations.filter((ort) => !ort.isCoreZone).map((ort) => `${ort.name} ca.${NBSP}${ort.commuteMinutes}${NBSP}Min.`),
-    ),
-  }),
-  link: Object.freeze({ href: '/#einsatzgebiet', label: 'Einsatzgebiet ansehen' }),
+/** Stelle, für die das Regionalband spricht: Kategorie (Fakt offenFuer) und Arbeitsort (Einsatzgebiet ja oder nein). */
+export type RegionalStelle = Pick<Job, 'category' | 'location'>;
+
+export interface RegionalbandText {
+  etikett: string;
+  titel: string;
+  /** REGION.summary; null, wenn keine der Stellen auf Baustellen im Umkreis arbeitet (Büro am Firmensitz). */
+  einleitung: string | null;
+  masse: readonly RegionalMass[];
+  standort: { name: string; zeilen: readonly string[] };
+  arbeitszeit: string;
+  fahrzeiten: { name: string; orte: readonly string[] };
+  link: { href: string; label: string };
+}
+
+const STANDORT = Object.freeze({
+  name: 'Firmensitz',
+  zeilen: Object.freeze([COMPANY.address.street, `${COMPANY.address.postalCode} ${COMPANY.address.city}`]),
 });
+
+/** V6-G1: Fahrzeit bis zum Firmensitz für die Orte außerhalb der Kernzone (REGION.locations). */
+const FAHRZEITEN = Object.freeze({
+  name: `Fahrzeit bis ${REGION.center.name}`,
+  orte: Object.freeze(REGION.locations.filter((ort) => !ort.isCoreZone).map((ort) => `${ort.name} ca.${NBSP}${ort.commuteMinutes}${NBSP}Min.`)),
+});
+
+/**
+ * Regionalband (E-BEW-008): Einsatzgebiet, Arbeitszeit, Standort und „Keine Fernmontage“, Link auf die Karte, für die
+ * Stellen, um die es geht: die vorgewählte Stelle, ohne Vorauswahl alle offenen (Sammelfläche, Prüfung E-029, Runde 2).
+ * - Die Arbeitszeit hat kein Maß: Sie ist flexibel (Fakt flexibleHours, fakten-abgleich B28), feste Uhrzeiten nennt die
+ *   Seite nicht. Ist der Fakt für eine der Stellen offen (Büro, S5), steht „Je nach Stelle …“; gilt er für keine, fehlt er.
+ * - Arbeiten alle Stellen am Firmensitz (Ort ohne `radiusKm`, Bürofachkraft), entfallen Einsatzgebiet, 35 km und
+ *   „Keine Fernmontage“: Arbeitsort ist der Firmensitz.
+ */
+export function regionalband(stellen: readonly RegionalStelle[]): RegionalbandText {
+  const amFirmensitz = stellen.length > 0 && stellen.every((stelle) => stelle.location.radiusKm === undefined);
+  const offen = offenBei('flexibleHours', stellen);
+  const flexibel =
+    offen.length === 0
+      ? `${FACTS.flexibleHours.long} `
+      : offen.length < stellen.length
+        ? `${JE_NACH_STELLE.charAt(0).toUpperCase()}${JE_NACH_STELLE.slice(1)} ${FACTS.flexibleHours.long.charAt(0).toLowerCase()}${FACTS.flexibleHours.long.slice(1)} `
+        : '';
+  return {
+    etikett: 'Arbeitsort und Arbeitszeit',
+    /** Fakt noFarAssembly; am Firmensitz der Arbeitsort aus COMPANY. */
+    titel: amFirmensitz ? `Arbeitsort: ${STANDORT.name} in ${COMPANY.address.city}.` : `${FACTS.noFarAssembly.short}.`,
+    /** REGION.summary: Wetzlar, Gießen, Lahn-Dill-Kreis und Nachbarkreise, jeden Abend zu Hause (Bestand der Startseite). */
+    einleitung: amFirmensitz ? null : REGION.summary,
+    // Fakt radius35
+    masse: amFirmensitz ? [] : [{ wert: geschuetzt(wertVon('radius35')), name: 'Einsatzradius' }],
+    standort: STANDORT,
+    /** Arbeitszeit: Fakten flexibleHours (siehe oben) und noWeekendOnCall (V6-G1: sonst nirgends auf /bewerbung). */
+    arbeitszeit: `${flexibel}${FACTS.noWeekendOnCall.long}`,
+    fahrzeiten: FAHRZEITEN,
+    link: { href: '/#einsatzgebiet', label: 'Einsatzgebiet ansehen' },
+  };
+}

@@ -312,3 +312,19 @@ export function isFactActive(id: FactId, date: Date): boolean {
   if (!validUntil) return true;
   return date.toISOString().slice(0, 10) <= validUntil;
 }
+
+/**
+ * Sammelflächen (Prüfung E-029, Runde 2): Seiten und Dateien, die über mehrere Stellen zugleich sprechen (Ortsseiten
+ * und ihre Descriptions, /jobs, /bewerbung ohne Stelle, Themenseiten, llms.txt). Ein Fakt mit `offenFuer` steht dort
+ * nur mit Stellenbezug („je nach Stelle“) oder gar nicht, solange eine gezeigte Stelle in einer offenen Kategorie
+ * liegt. Die Stellenseite selbst sperrt ihn schon über das Schema (lib/jobs/schema.ts).
+ *
+ * Ergebnis: die gezeigten Stellen, für die der Fakt offen ist; leer heißt, er gilt für alle.
+ */
+export function offenBei<T extends { category: JobCategory }>(id: FactId, stellen: readonly T[]): T[] {
+  const offen = FACTS[id].offenFuer;
+  return offen ? stellen.filter((stelle) => offen.kategorien.includes(stelle.category)) : [];
+}
+
+/** Stellenbezug auf Sammelflächen, wie auf der Seite „Bezahlung und Extras“. */
+export const JE_NACH_STELLE = 'je nach Stelle';

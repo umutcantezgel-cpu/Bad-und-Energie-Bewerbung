@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GET as llmsFull } from '@/app/llms-full.txt/route';
 import { GET as llms } from '@/app/llms.txt/route';
-import { COMPANY, FACTS } from '@/lib/content';
+import { COMPANY, FACTS, FACT_IDS, offenBei } from '@/lib/content';
+import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 
 /** E-SEO-014: the short file carries the backed employer lines the old file had, all from fact ids. */
 
@@ -23,6 +24,26 @@ describe('llms.txt (E-SEO-014)', () => {
     expect(text).toContain(FACTS.hilti.long);
     expect(text).toContain(FACTS.workwear.long);
     expect(text).toContain(`${COMPANY.hwk}, ${COMPANY.innung}`);
+  });
+
+  it('facts open for a live job (offenFuer, office S5) only with the jobs they are open for, in both files (Runde 2)', async () => {
+    const offene = FACT_IDS.filter((id) => FACTS[id].offenFuer);
+    expect(offene.length).toBeGreaterThan(0);
+    for (const route of [llms, llmsFull]) {
+      const text = await textAt(route, '2026-10-20T12:00:00Z');
+      // llms.txt: „## Arbeitgeber“, llms-full.txt: „## 1. Arbeitgeber“
+      const arbeitgeber = text.split(/^## (?:1\. )?Arbeitgeber$/m)[1]?.split('\n## ')[0] ?? '';
+      const stellen = getActiveJobs().filter((job) => isJobLive(job, new Date('2026-10-20T12:00:00Z')));
+      for (const id of offene) {
+        const offen = offenBei(id, stellen);
+        const zeile = arbeitgeber.split('\n').find((line) => line.startsWith(`- ${FACTS[id].long}`));
+        expect(zeile, id).toBeDefined();
+        if (offen.length === 0) expect(zeile, id).toBe(`- ${FACTS[id].long}`);
+        else expect(zeile, id).toBe(`- ${FACTS[id].long} Je nach Stelle; offen bei: ${offen.map((job) => job.shortTitle).join(', ')}.`);
+      }
+      // Die Bürostelle ist live: mindestens ein Fakt trägt die Einschränkung
+      expect(arbeitgeber).toContain('offen bei: Bürofachkraft');
+    }
   });
 
   it('names the anniversary in the lead sentence until 31.12.2026, not after', async () => {

@@ -29,6 +29,18 @@ describe('jobsHubDescription (/jobs)', () => {
     expect(text).toContain(`In ${FACTS.apply60s.value} Sek. bewerben.`);
   });
 
+  it('Urlaub und Arbeitszeit nur „je nach Stelle“, solange die Bürostelle live ist (offenFuer, S5, Runde 2)', () => {
+    const alle = liveAt(new Date('2026-10-14T12:00:00Z'));
+    expect(alle.some((job) => job.category === 'buero')).toBe(true);
+    const text = jobsHubDescription(alle);
+    expect(text).toBe(
+      `Offene SHK-Jobs in Wetzlar & Gießen. ${FACTS.noFarAssembly.short}, je nach Stelle ${FACTS.vacation30.short} und flexible Arbeitszeiten. In ${FACTS.apply60s.value} Sek. bewerben.`,
+    );
+    expect(text).not.toContain(`${FACTS.vacation30.short}, flexible Arbeitszeiten`);
+    // Ohne Bürostelle ohne Zusatz
+    expect(jobsHubDescription(alle.filter((job) => job.category !== 'buero'))).not.toContain('je nach Stelle');
+  });
+
   it('drops an expired job type', () => {
     const azubi = ALL_JOBS.find((job) => job.category === 'ausbildung')!;
     const after = new Date(new Date(azubi.validThrough!).getTime() + 24 * 60 * 60 * 1000);

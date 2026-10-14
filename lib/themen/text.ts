@@ -16,7 +16,7 @@
  */
 import { WHATSAPP_GREETING } from '@/lib/apply/whatsapp-message';
 import { COMPANY } from '@/lib/content/company';
-import { FACTS, isFactActive, type FactId } from '@/lib/content/facts';
+import { FACTS, JE_NACH_STELLE, isFactActive, offenBei, type FactId } from '@/lib/content/facts';
 import { getFaqItem, type FaqId } from '@/lib/content/faq';
 import { DISCRETION_PROMISE, getProcessSteps, type ProcessStep } from '@/lib/content/process';
 import { REGION } from '@/lib/content/region';
@@ -159,6 +159,7 @@ export function zahlwort(n: number): string {
 }
 
 const lowerFirst = (text: string) => text.charAt(0).toLocaleLowerCase('de-DE') + text.slice(1);
+const upperFirst = (text: string) => text.charAt(0).toLocaleUpperCase('de-DE') + text.slice(1);
 const ohnePunkt = (text: string) => text.replace(/\.$/, '');
 /** Geschütztes Leerzeichen nach einer Zahl (DIN 5008: „35 km“, „15 Mitarbeiter“ brechen nicht um). */
 export const geschuetzt = (text: string) => text.replace(/(\d) /g, `$1${NBSP}`);
@@ -327,11 +328,13 @@ export function themaKarte(id: ThemaId, { jobs, now = new Date() }: TextOptions)
   const basis = { id, href: themaPath(thema), name: thema.name, icon: thema.icon };
   switch (id) {
     case 'gehalt': {
-      // E-030: kein Betrag; der Kennwert ist die Aussage selbst („Lohn auf Anfrage“)
+      // E-030: kein Betrag; der Kennwert ist die Aussage selbst („Lohn auf Anfrage“). Der Tarif „je nach Stelle“,
+      // solange er für eine gezeigte Stelle offen ist (Büro, S5; Sammelfläche, Prüfung E-029, Runde 2)
       const lohn = FACTS[erlaubt('payOnRequest', now)];
+      const tarif = FACTS[erlaubt('aboveTariff', now)].long;
       return {
         ...basis,
-        satz: satz(`${lohn.long} ${FACTS[erlaubt('aboveTariff', now)].long}`, fq('payOnRequest'), fq('aboveTariff')),
+        satz: satz(`${lohn.long} ${offenBei('aboveTariff', jobs).length > 0 ? jeNachStelleSatz(tarif) : tarif}`, fq('payOnRequest'), fq('aboveTariff')),
         wert: 'auf Anfrage',
         wertName: 'Lohn',
         kurz: lohn.short,
@@ -399,6 +402,36 @@ function masseAus(...ids: FactId[]): Mass[] {
   return ids.map((id) => ({ wert: geschuetzt(FACTS[id].value ?? ''), name: FACTS[id].label ?? FACTS[id].short }));
 }
 
+/**
+ * Sammelflächen (Prüfung E-029, Runde 2): Ein Fakt, der nicht für jede gezeigte Stelle gilt, steht mit „je nach
+ * Stelle“, wie in der Description der Seite „Bezahlung und Extras“. Satz: „Je nach Stelle: …“; Kurzform und Maß:
+ * „… je nach Stelle“.
+ */
+function jeNachStelleSatz(text: string): string {
+  return `${upperFirst(JE_NACH_STELLE)}: ${text}`;
+}
+
+function jeNachStelleKurz(text: string): string {
+  return `${text} ${JE_NACH_STELLE}`;
+}
+
+/** Maß eines Fakts, mit „je nach Stelle“ am Namen, wenn er nicht für jede gezeigte Stelle gilt. */
+function massAus(id: FactId, jeStelle: boolean): Mass {
+  const [mass] = masseAus(id);
+  return jeStelle ? { ...mass, name: jeNachStelleKurz(mass.name) } : mass;
+}
+
+/**
+ * Kästchen einer Zusage auf einer Sammelfläche: Ist der Fakt für eine gezeigte Stelle offen (offenBei), steht darunter,
+ * zu welchen Stellen er gehört (die ihn nennen), wie bei „Was dazukommt“.
+ */
+function zusageKasten(id: FactId, jobs: readonly Job[], now: Date): Kasten {
+  const kasten = faktKasten(id, now);
+  if (offenBei(id, jobs).length === 0) return kasten;
+  const mit = stellenMitZusatz(id, jobs);
+  return { ...kasten, giltFuer: mit.map((job) => job.shortTitle), quellen: [...kasten.quellen, ...mit.map(sq)] };
+}
+
 // ─── Hub /arbeiten-bei-uns ──────────────────────────────────────────────────
 
 export interface ArbeitenPageText extends SeitenBasis {
@@ -431,13 +464,21 @@ export function getArbeitenPageText(options: TextOptions): ArbeitenPageText {
       satz(`${FACTS[erlaubt('radius35', now)].long} ${FACTS[erlaubt('directLine', now)].long}`, fq('radius35'), fq('directLine')),
     ],
     masse: [
-      ...masseAus(erlaubt('employees15', now), erlaubt('vacation30', now)),
+      ...masseAus(erlaubt('employees15', now)),
+      massAus(erlaubt('vacation30', now), offenBei('vacation30', jobs).length > 0),
       { wert: geschuetzt(FACTS[erlaubt('radius35', now)].value ?? ''), name: 'Einsatzradius' },
     ],
     zweitweg: { href: '#themen', label: `Alle ${zahlwort(themen.length)} Themen ansehen` },
     whatsapp: whatsappNachricht('hub'),
     kontakt: kontakt('hub'),
-    og: { wert: String(COMPANY.foundingYear), name: 'Gegründet in Wetzlar', zeilen: ['Lohn, Fahrzeug, Werkzeug.', `${FACTS.vacation30.short}.`] },
+    og: {
+      wert: String(COMPANY.foundingYear),
+      name: 'Gegründet in Wetzlar',
+      zeilen: [
+        'Lohn, Fahrzeug, Werkzeug.',
+        `${offenBei('vacation30', jobs).length > 0 ? jeNachStelleKurz(FACTS.vacation30.short) : FACTS.vacation30.short}.`,
+      ],
+    },
     themen: {
       kopf: {
         id: 'themen',
@@ -454,7 +495,8 @@ export function getArbeitenPageText(options: TextOptions): ArbeitenPageText {
     },
     zusagen: {
       kopf: { id: 'zusagen', etikett: 'Zusagen', heading: 'Unsere Zusagen' },
-      kaesten: (['flexibleHours', 'vacation30', 'noWeekendOnCall', 'noFarAssembly'] as const).map((id) => faktKasten(id, now)),
+      // Offen fürs Büro (S5): flexibleHours und vacation30 mit den Stellen, zu denen sie gehören
+      kaesten: (['flexibleHours', 'vacation30', 'noWeekendOnCall', 'noFarAssembly'] as const).map((id) => zusageKasten(id, jobs, now)),
     },
     stellen:
       jobs.length > 0
@@ -537,6 +579,11 @@ export function getGehaltPageText(options: TextOptions): GehaltPageText {
   const tarif = FACTS[erlaubt('aboveTariff', now)];
   const urlaub = FACTS[erlaubt('vacation30', now)];
   const dauer = azubi ? employmentLabel(azubi).split(' · ')[1] : undefined;
+  // Kopf der Seite (Sammelfläche, Prüfung E-029, Runde 2): Tarif und Urlaub „je nach Stelle“, sobald sie nicht jede
+  // gezeigte Stelle nennt (Büro offen, S5), wie die Kästchen „Was dazukommt“ mit „Gehört zu“
+  const jeStelle = (id: FactId) => lohnStellen.length > 0 && stellenMitZusatz(id, lohnStellen).length < lohnStellen.length;
+  const tarifKurz = jeStelle('aboveTariff') ? jeNachStelleKurz(tarif.short) : tarif.short;
+  const urlaubKurz = jeStelle('vacation30') ? jeNachStelleKurz(urlaub.short) : urlaub.short;
 
   return {
     path: themaPath(getThema('gehalt')),
@@ -551,15 +598,17 @@ export function getGehaltPageText(options: TextOptions): GehaltPageText {
       ),
     }),
     etikett: `Bezahlung · ${COMPANY.address.city}`,
-    unterzeile: [`${lohn.short}.`, `${tarif.short}.`],
-    einleitung: [satz(`${lohn.long} ${tarif.long}`, fq('payOnRequest'), fq('aboveTariff'))],
-    masse: masseAus('vacation30'),
+    unterzeile: [`${lohn.short}.`, `${jeStelle('aboveTariff') ? jeNachStelleSatz(tarif.short) : tarif.short}.`],
+    einleitung: [
+      satz(`${lohn.long} ${jeStelle('aboveTariff') ? jeNachStelleSatz(tarif.long) : tarif.long}`, fq('payOnRequest'), fq('aboveTariff')),
+    ],
+    masse: [massAus('vacation30', jeStelle('vacation30'))],
     zweitweg:
       lohnStellen.length > 0 ? { href: '#je-stelle', label: 'Extras je Stelle ansehen' } : { href: '#dazu', label: 'Was dazukommt' },
     whatsapp: whatsappNachricht('gehalt'),
     kontakt: kontakt('gehalt'),
     og: { wert: 'auf Anfrage', name: 'Lohn', zeilen: [`${urlaub.short} je nach Stelle.`, 'Extras je Stelle.'] },
-    lohn: { etikett: 'Bezahlung', titel: lohn.short, zeilen: [tarif.short, urlaub.short] },
+    lohn: { etikett: 'Bezahlung', titel: lohn.short, zeilen: [tarifKurz, urlaubKurz] },
     jeStelle: {
       kopf: {
         id: 'je-stelle',

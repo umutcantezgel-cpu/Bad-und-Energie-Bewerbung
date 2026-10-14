@@ -256,16 +256,21 @@ export interface OgPlace {
   h1: string;
   distanceKm: number;
   minutes: number;
+  /**
+   * Second line of the page's subline (placeSubline): the fact flexibleHours, „Je nach Stelle …“ while a shown job
+   * leaves it open (office, fakten-abgleich S5). Taken from the page so that both say the same.
+   */
+  arbeitszeit: string;
 }
 
 /**
- * Content of a place share image (E-028): the page's etikett and h1, „Rund 26 Minuten Fahrt.“ and the fact
- * flexibleHours below the h1, the road distance as the key figure („27 km“, „bis zum Firmensitz“).
+ * Content of a place share image (E-028): the page's etikett and h1, „Rund 26 Minuten Fahrt.“ and the working-time
+ * line of the page below the h1, the road distance as the key figure („27 km“, „bis zum Firmensitz“).
  */
 export function ogPlaceText(place: OgPlace): OgPlaceText {
   const etikett = versal(plain(place.etikett));
   const fitted = fitTitle(plain(place.h1));
-  const subline = [`Rund ${place.minutes} Minuten Fahrt.`, FACTS.flexibleHours.long];
+  const subline = [`Rund ${place.minutes} Minuten Fahrt.`, plain(place.arbeitszeit)];
   const microcopy = plain(`Dauert ca. ${FACTS.apply60s.value} Sekunden. ${FACTS.noCvNeeded.short}.`);
   const distance = { value: `${place.distanceKm} km`, name: 'bis zum Firmensitz' };
   return {

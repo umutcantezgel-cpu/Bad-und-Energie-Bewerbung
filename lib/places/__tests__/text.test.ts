@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { regionalLocations } from '@/lib/data/locations';
-import { FACTS } from '@/lib/content/facts';
+import { FACTS, offenBei } from '@/lib/content/facts';
 import { getActiveJobs } from '@/lib/jobs/registry';
 import { findClaims } from '../../../scripts/qa/check-claims.mjs';
 import { DEFAULT_WHATSAPP_MESSAGE } from '@/lib/utils/whatsapp-utils';
@@ -15,6 +15,7 @@ import {
   formatUhrzeit,
   mitFahrzeug,
   ortMeta,
+  BAND_ERSATZ,
   BAND_FACT_IDS,
   MEASUREMENT_NOTE,
   formatAirKm,
@@ -81,15 +82,23 @@ describe('Ortsseite: Kopf und Metadaten', () => {
     expect(asslar.meta.primaryKeyword).toBe('Arbeitsweg Aßlar Wetzlar');
     expect(asslar.etikett).toBe('35614 Aßlar · Lahn-Dill-Kreis');
     expect(asslar.path).toBe('/einsatzgebiet/asslar');
+    // Die Bürostelle ist live: flexible Arbeitszeiten und 30 Tage Urlaub sind fürs Büro offen (S5). „Je nach Stelle …“
+    // passt nicht mehr in 155 Zeichen, also die Zusage, die für jede Stelle gilt (Prüfung E-029, Runde 2)
     expect(plain(asslar.meta.description)).toBe(
+      'Arbeitsweg Aßlar – Wetzlar: 8 km, rund 12 Minuten mit dem Auto, mit Bus und Bahn los um 6:25 Uhr, an 7:16 Uhr. Keine Fernmontage.',
+    );
+    // Ohne Bürostelle wie bisher
+    const ohneBuero = page('asslar', { jobs: jobs.filter((job) => job.category !== 'buero') });
+    expect(plain(ohneBuero.meta.description)).toBe(
       'Arbeitsweg Aßlar – Wetzlar: 8 km, rund 12 Minuten mit dem Auto, mit Bus und Bahn los um 6:25 Uhr, an 7:16 Uhr. Flexible Arbeitszeiten, 30 Tage Urlaub.',
     );
+    expect(ohneBuero.unterzeile.map(plain)).toEqual(['Rund 12 Minuten Fahrt.', FACTS.flexibleHours.long]);
     for (const p of allPages) {
       expect(p.titelStufe, p.placeId).toBe('arbeitsweg');
       for (const text of [p.meta.title, p.meta.h1, p.meta.primaryKeyword]) expect(text, p.placeId).not.toMatch(/SHK[\s-]Jobs/i);
     }
     expect(asslar.masse.map((m) => m.name)).toEqual(['Strecke', 'Fahrzeit', 'Luftlinie', 'Richtung ab Firmensitz']);
-    expect(asslar.unterzeile.map(plain)).toEqual(['Rund 12 Minuten Fahrt.', FACTS.flexibleHours.long]);
+    expect(asslar.unterzeile.map(plain)).toEqual(['Rund 12 Minuten Fahrt.', 'Je nach Stelle flexible Arbeitszeiten.']);
   });
 
   it('Stadtteile: Titel und h1 zum Firmensitz, Etikett mit Wetzlar', () => {
@@ -179,9 +188,46 @@ describe('Ortsseite: Abschnitte', () => {
 
   it('Band: noFarAssembly, vacation30, im Lahn-Dill-Kreis countyPartner, zuletzt flexibleHours (ohne weiteren Satz)', () => {
     expect(BAND_FACT_IDS).toEqual(['noFarAssembly', 'vacation30', 'flexibleHours']);
-    expect(page('asslar').bandFactIds).toEqual(['noFarAssembly', 'vacation30', 'countyPartner', 'flexibleHours']);
-    expect(page('giessen').bandFactIds).toEqual(['noFarAssembly', 'vacation30', 'flexibleHours']);
+    // Ohne Bürostelle gelten alle drei für jede gezeigte Stelle
+    const ohneBuero = { jobs: jobs.filter((job) => job.category !== 'buero') };
+    expect(page('asslar', ohneBuero).bandFactIds).toEqual(['noFarAssembly', 'vacation30', 'countyPartner', 'flexibleHours']);
+    expect(page('giessen', ohneBuero).bandFactIds).toEqual(['noFarAssembly', 'vacation30', 'flexibleHours']);
     expect(section(page('asslar'), 'band')!.blocks.map((b) => b.text)).toContain(FACTS.countyPartner.short);
+  });
+
+  it('„Was überall gilt“ mit der Bürostelle: nur Fakten, die für jede gezeigte Stelle gelten, dafür noWeekendOnCall (Runde 2)', () => {
+    expect(jobs.some((job) => job.category === 'buero')).toBe(true);
+    expect(BAND_ERSATZ).toBe('noWeekendOnCall');
+    expect(page('asslar').bandFactIds).toEqual(['noFarAssembly', 'countyPartner', 'noWeekendOnCall']);
+    expect(page('giessen').bandFactIds).toEqual(['noFarAssembly', 'noWeekendOnCall']);
+    for (const p of allPages) {
+      for (const id of p.bandFactIds) expect(offenBei(id, jobs), `${p.placeId}: ${id}`).toEqual([]);
+      const band = section(p, 'band')!.blocks.map((b) => b.text);
+      expect(band, p.placeId).not.toContain(FACTS.vacation30.short);
+      expect(band, p.placeId).not.toContain(FACTS.flexibleHours.short);
+    }
+  });
+
+  it('Sammelfläche: Urlaub und Arbeitszeit nur mit „Je nach Stelle“, solange die Bürostelle live ist (Runde 2)', () => {
+    const seiten = [
+      ...allPages.map((p) => ({ id: p.placeId, meta: p.meta, unterzeile: p.unterzeile })),
+      ...getHubKreise().map((k) => ({ id: k.id, meta: getKreisPageText(k, { jobs }).meta, unterzeile: [] as readonly string[] })),
+      { id: 'einsatzgebiet', meta: getEinsatzgebietPageText({ jobs }).meta, unterzeile: [] as readonly string[] },
+    ];
+    for (const s of seiten) {
+      const text = plain(s.meta.description);
+      // Jeder Satz mit Urlaub oder Arbeitszeit beginnt mit „Je nach Stelle“
+      for (const satz of text.split(/(?<=\.) /)) {
+        if ([FACTS.flexibleHours.short, FACTS.vacation30.short].some((kurz) => satz.toLowerCase().includes(kurz.toLowerCase()))) {
+          expect(satz, `${s.id}: ${text}`).toMatch(/^Je nach Stelle /);
+        }
+      }
+      expect(text.length, s.id).toBeGreaterThanOrEqual(110);
+      for (const zeile of s.unterzeile) expect(plain(zeile), s.id).not.toBe(FACTS.flexibleHours.long);
+    }
+    // Ohne Bürostelle steht die Zusage ohne Zusatz
+    const ohneBuero = jobs.filter((job) => job.category !== 'buero');
+    expect(plain(getKreisPageText(getHubKreise()[0], { jobs: ohneBuero }).meta.description)).toMatch(/\. Flexible Arbeitszeiten, 30 Tage Urlaub\.$/);
   });
 
   it('Kontakt: WhatsApp-Gruß mit Ort, im Wortlaut der Standardnachricht', () => {

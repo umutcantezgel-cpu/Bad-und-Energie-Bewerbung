@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GET as llmsFull } from '@/app/llms-full.txt/route';
 import { GET as llms } from '@/app/llms.txt/route';
-import { REGIONALBAND } from '@/components/apply/seite/seite-text';
+import { regionalband } from '@/components/apply/seite/seite-text';
 import { HERO, HERO_RADIUS_LABEL, HERO_STATS, homeDescription } from '@/components/home/content';
 import { Hero } from '@/components/home/Hero';
 import { WUNSCH_OPTIONEN, ZUSAGEN } from '@/components/home/vorteile/vorteile-text';
@@ -93,7 +93,8 @@ describe('Keine festen Arbeitszeiten in Fakten, Stellen und Texten (B28)', () =>
       JSON.stringify(listenZeichnung()),
       ALLTAG.woche.titel,
       ALLTAG.woche.text,
-      JSON.stringify(REGIONALBAND),
+      JSON.stringify(regionalband(getActiveJobs())),
+      ...getActiveJobs().map((job) => JSON.stringify(regionalband([job]))),
       ...ogHomeText().texts,
     ];
     for (const text of texte) expect(claims(text), text).toEqual([]);

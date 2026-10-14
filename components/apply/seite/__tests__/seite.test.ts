@@ -6,7 +6,8 @@ import { FACTS } from '@/lib/content/facts';
 import { getDiscretionPromise } from '@/lib/content/process';
 import { REGION } from '@/lib/content/region';
 import { UNTERLAGEN_ZEILE_TEXT } from '@/components/apply/unterlagen';
-import { bewerbungKopf, DirektSprechen, Regionalband, REGIONALBAND, UNTERLAGEN_ZWEITWEG } from '..';
+import { getFunnelOptions, getJobById, type Job } from '@/lib/jobs/registry';
+import { bewerbungKopf, DirektSprechen, Regionalband, regionalband, UNTERLAGEN_ZWEITWEG } from '..';
 
 // Der Flow ist Sache von R5-APPLY-01 und braucht den App-Router; hier genügt sein Platzhalter.
 vi.mock('@/components/apply', () => ({
@@ -25,20 +26,59 @@ async function seite(searchParams: Record<string, string | string[]> = {}) {
   return renderToStaticMarkup(element);
 }
 
+/** Alle im Flow wählbaren Stellen (ohne Vorauswahl), dazu einzelne Stellen (Vorauswahl per ?stelle=). */
+const alleStellen: Job[] = getFunnelOptions(new Date('2026-10-20T12:00:00Z')).map((option) => getJobById(option.id)!);
+const stelle = (id: string) => getJobById(id)!;
+
 describe('Regionalband (E-BEW-008): Fakten aus facts.ts, Link auf das Einsatzgebiet', () => {
-  const html = renderToStaticMarkup(createElement(Regionalband));
+  const html = renderToStaticMarkup(createElement(Regionalband, { stellen: [stelle('anlagenmechaniker-shk')] }));
   const text = normal(plain(html));
 
   it('zeigt keine Fernmontage, Einsatzgebiet, Arbeitszeiten und Ort wortgleich aus FACTS, REGION und COMPANY', () => {
     expect(html).toMatch(/<h2 id="bewerbung-region"[^>]*>Keine Fernmontage\.<\/h2>/);
-    expect(REGIONALBAND.titel).toBe(`${FACTS.noFarAssembly.short}.`);
+    const band = regionalband([stelle('anlagenmechaniker-shk')]);
+    expect(band.titel).toBe(`${FACTS.noFarAssembly.short}.`);
     expect(text).toContain(REGION.summary);
     expect(text).toContain(`${FACTS.radius35.value} Einsatzradius`);
     // Arbeitszeit ohne Uhrzeit (fakten-abgleich B28): flexibel, dazu das freie Wochenende
-    expect(REGIONALBAND.masse.map((mass) => mass.name)).toEqual(['Einsatzradius']);
+    expect(band.masse.map((mass) => mass.name)).toEqual(['Einsatzradius']);
     expect(text).toContain(`${FACTS.flexibleHours.long} ${FACTS.noWeekendOnCall.long}`);
     expect(text).not.toMatch(/\d{2}:\d{2}|Feierabend|pünktlich/i);
     expect(text).toContain(`${COMPANY.address.street} ${COMPANY.address.postalCode} ${COMPANY.address.city}`);
+  });
+
+  it('ohne Vorauswahl (alle Stellen, Büro live): flexible Arbeitszeiten nur „je nach Stelle“ (Fakt offenFuer, S5)', () => {
+    expect(alleStellen.some((job) => job.category === 'buero')).toBe(true);
+    const band = regionalband(alleStellen);
+    expect(band.arbeitszeit).toBe(`Je nach Stelle flexible Arbeitszeiten. ${FACTS.noWeekendOnCall.long}`);
+    expect(band.titel).toBe(`${FACTS.noFarAssembly.short}.`);
+    expect(band.einleitung).toBe(REGION.summary);
+    const text = normal(plain(renderToStaticMarkup(createElement(Regionalband, { stellen: alleStellen }))));
+    expect(text).not.toContain(`${FACTS.flexibleHours.long} ${FACTS.noWeekendOnCall.long}`);
+    expect(text).toContain('Je nach Stelle flexible Arbeitszeiten.');
+  });
+
+  it('Bürofachkraft vorgewählt: Arbeitsort Firmensitz, ohne Einsatzgebiet, ohne 35 km und ohne flexible Arbeitszeiten', () => {
+    const buero = stelle('buerofachkraft');
+    expect(buero.location.radiusKm).toBeUndefined();
+    const band = regionalband([buero]);
+    expect(band.titel).toBe(`Arbeitsort: Firmensitz in ${COMPANY.address.city}.`);
+    expect(band.einleitung).toBeNull();
+    expect(band.masse).toEqual([]);
+    expect(band.arbeitszeit).toBe(FACTS.noWeekendOnCall.long);
+    const text = normal(plain(renderToStaticMarkup(createElement(Regionalband, { stellen: [buero] }))));
+    expect(text).not.toContain(REGION.summary);
+    expect(text).not.toMatch(/Einsatzradius|35 km|Fernmontage|Flexible Arbeitszeiten/);
+    expect(text).toContain(`${COMPANY.address.street} ${COMPANY.address.postalCode} ${COMPANY.address.city}`);
+  });
+
+  it('/bewerbung?stelle=buerofachkraft-wetzlar: das Regionalband der Bürostelle (Seite gerendert)', async () => {
+    const html = await seite({ stelle: 'buerofachkraft-wetzlar' });
+    const band = normal(plain(html.slice(html.indexOf('data-regionalband'))));
+    expect(band).toContain(`Arbeitsort: Firmensitz in ${COMPANY.address.city}.`);
+    expect(band).not.toMatch(/Einsatzradius|Flexible Arbeitszeiten|Fernmontage/);
+    const ohne = await seite();
+    expect(normal(plain(ohne.slice(ohne.indexOf('data-regionalband'))))).toContain('Je nach Stelle flexible Arbeitszeiten.');
   });
 
   it('verlinkt /#einsatzgebiet und bindet „35 km“', () => {

@@ -122,11 +122,19 @@ describe('share image assets', () => {
 describe('place share image text (E-028)', () => {
   it.each(getPublishedPlaces().map((place) => [place.id, place] as const))('%s: h1 and etikett of the page, road distance in the loop', (_id, place) => {
     const page = getPlacePageText(place);
-    const text = ogPlaceText({ etikett: page.etikett, h1: page.meta.h1, distanceKm: place.commute.distanceKm, minutes: place.commute.minutes });
+    const text = ogPlaceText({
+      etikett: page.etikett,
+      h1: page.meta.h1,
+      distanceKm: place.commute.distanceKm,
+      minutes: place.commute.minutes,
+      arbeitszeit: page.unterzeile[1],
+    });
     expect(text.distance).toEqual({ value: `${place.commute.distanceKm} km`, name: 'bis zum Firmensitz' });
     expect(text.title.join(' ').replace(/- /g, '-')).toContain(place.name.split(' ')[0]);
     expect(text.title.length).toBeLessThanOrEqual(3);
-    expect(text.subline).toEqual([`Rund ${place.commute.minutes} Minuten Fahrt.`, FACTS.flexibleHours.long]);
+    // Dieselbe Arbeitszeit-Zeile wie die Seite: Die Bürostelle ist live, flexibleHours ist fürs Büro offen (S5)
+    expect(text.subline).toEqual([`Rund ${place.commute.minutes} Minuten Fahrt.`, `Je nach Stelle ${FACTS.flexibleHours.long.charAt(0).toLowerCase()}${FACTS.flexibleHours.long.slice(1)}`]);
+    expect(text.subline[1]).toBe(page.unterzeile[1].replace(/\u00A0/g, ' '));
     for (const t of text.texts) expect(t).not.toMatch(/13[:.]30|pünktlich|Feierabend|\u00A0/);
   });
 
@@ -140,7 +148,7 @@ describe('place share image text (E-028)', () => {
   it('renders a PNG', async () => {
     const herborn = getPlaceBySlug('herborn')!;
     const page = getPlacePageText(herborn);
-    const response = await renderPlaceImage(ogPlaceText({ etikett: page.etikett, h1: page.meta.h1, distanceKm: 27, minutes: 26 }));
+    const response = await renderPlaceImage(ogPlaceText({ etikett: page.etikett, h1: page.meta.h1, distanceKm: 27, minutes: 26, arbeitszeit: page.unterzeile[1] }));
     expect(response.headers.get('content-type')).toBe('image/png');
     expect((await response.arrayBuffer()).byteLength).toBeGreaterThan(10_000);
   });

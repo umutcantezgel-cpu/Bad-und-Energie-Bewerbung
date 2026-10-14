@@ -1,5 +1,5 @@
 import { COMPANY } from '@/lib/content/company';
-import { FACTS } from '@/lib/content/facts';
+import { FACTS, JE_NACH_STELLE, offenBei } from '@/lib/content/facts';
 import { jobCategoryLabels } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/schema';
 
@@ -28,6 +28,20 @@ const PERKS = `${FACTS.vacation30.short}, ${lowerFirst(FACTS.flexibleHours.short
 const APPLY = `In ${FACTS.apply60s.value} Sek. bewerben.`;
 
 /**
+ * Urlaub und Arbeitszeit für die gezeigten Stellen: ohne Zusatz, wenn beide für jede gelten; sonst „Je nach Stelle …“
+ * (Sammelfläche, lib/content/facts.ts offenBei: fürs Büro offen, fakten-abgleich S5).
+ */
+function perks(liveJobs: readonly Pick<Job, 'category'>[]): { satz: string; mitFernmontage: string } {
+  const offen = (['vacation30', 'flexibleHours'] as const).some((id) => offenBei(id, liveJobs).length > 0);
+  if (!offen) return { satz: PERKS, mitFernmontage: `${PERKS}, ${lowerFirst(FACTS.noFarAssembly.short)}` };
+  const liste = `${lowerFirst(FACTS.vacation30.short)} und ${lowerFirst(FACTS.flexibleHours.short)}`;
+  return {
+    satz: `${JE_NACH_STELLE.charAt(0).toUpperCase()}${JE_NACH_STELLE.slice(1)} ${liste}`,
+    mitFernmontage: `${FACTS.noFarAssembly.short}, ${JE_NACH_STELLE} ${liste}`,
+  };
+}
+
+/**
  * Meta description of /jobs, built from the live jobs and the fact registry: names the open job
  * types while they fit into 155 characters, otherwise the same text without the list.
  */
@@ -36,8 +50,6 @@ export function jobsHubDescription(liveJobs: readonly Pick<Job, 'category'>[]): 
   if (labels.length === 0) {
     return fitDescription(`SHK-Jobs in ${AREA}: Initiativbewerbung jederzeit möglich. ${PERKS}. ${APPLY}`);
   }
-  return fitDescription(
-    `Offene SHK-Jobs in ${AREA}: ${labels.join(', ')}. ${PERKS}. ${APPLY}`,
-    `Offene SHK-Jobs in ${AREA}. ${PERKS}, ${lowerFirst(FACTS.noFarAssembly.short)}. ${APPLY}`,
-  );
+  const { satz, mitFernmontage } = perks(liveJobs);
+  return fitDescription(`Offene SHK-Jobs in ${AREA}: ${labels.join(', ')}. ${satz}. ${APPLY}`, `Offene SHK-Jobs in ${AREA}. ${mitFernmontage}. ${APPLY}`);
 }

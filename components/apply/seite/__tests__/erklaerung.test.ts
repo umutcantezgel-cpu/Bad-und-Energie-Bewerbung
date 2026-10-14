@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { INITIATIVE_OPTION, getFlowJobOptions } from '@/components/apply/options';
 import { Erklaerung } from '@/components/apply/seite/Erklaerung';
 import { erklaerung, type ErklaerungEingaben } from '@/components/apply/seite/erklaerung-text';
-import { REGIONALBAND } from '@/components/apply/seite/seite-text';
+import { regionalband } from '@/components/apply/seite/seite-text';
 import { UNTERLAGEN_ANKER } from '@/components/apply/unterlagen/unterlagen-text';
 import { MAPPE_KOPF } from '@/components/mappe/text';
 import { MAPPE_PATH } from '@/lib/apply/params';
@@ -215,9 +215,10 @@ describe('Erklärteil: Diskretion, Wegweiser und Unterlagen', () => {
 
 describe('Regionalband: Arbeitszeit, Wochenende und Fahrzeiten (V6-G1)', () => {
   it('Fakten flexibleHours und noWeekendOnCall im Wortlaut, Fahrzeiten der Orte außerhalb der Kernzone aus REGION.locations', () => {
-    expect(REGIONALBAND.arbeitszeit).toBe(`${FACTS.flexibleHours.long} ${FACTS.noWeekendOnCall.long}`);
-    expect(REGIONALBAND.fahrzeiten.name).toBe(`Fahrzeit bis ${REGION.center.name}`);
-    expect(REGIONALBAND.fahrzeiten.orte.map(normal)).toEqual(
+    const band = regionalband([getJobById('anlagenmechaniker-shk')!]);
+    expect(band.arbeitszeit).toBe(`${FACTS.flexibleHours.long} ${FACTS.noWeekendOnCall.long}`);
+    expect(band.fahrzeiten.name).toBe(`Fahrzeit bis ${REGION.center.name}`);
+    expect(band.fahrzeiten.orte.map(normal)).toEqual(
       REGION.locations.filter((ort) => !ort.isCoreZone).map((ort) => `${ort.name} ca. ${ort.commuteMinutes} Min.`),
     );
   });

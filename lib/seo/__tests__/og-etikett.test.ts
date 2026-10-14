@@ -15,7 +15,7 @@ describe('Teilen-Bild der Ortsseiten: Etikett in einer Zeile', () => {
 
   it.each(getPublishedPlaces().map((place) => [place.id, place] as const))('%s: höchstens OG_ETIKETT_MAX Zeichen, beginnt mit der Postleitzahl', (_id, place) => {
     const page = getPlacePageText(place);
-    const { etikett } = ogPlaceText({ etikett: page.etikett, h1: page.meta.h1, distanceKm: place.commute.distanceKm, minutes: place.commute.minutes });
+    const { etikett } = ogPlaceText({ etikett: page.etikett, h1: page.meta.h1, distanceKm: place.commute.distanceKm, minutes: place.commute.minutes, arbeitszeit: page.unterzeile[1] });
     const kurz = ogEtikett(etikett);
     expect(kurz.length).toBeLessThanOrEqual(OG_ETIKETT_MAX);
     expect(kurz.startsWith(place.postalCode)).toBe(true);

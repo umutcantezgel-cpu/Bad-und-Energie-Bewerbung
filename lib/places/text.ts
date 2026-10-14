@@ -21,7 +21,7 @@
  * - „Ring“ heißen nur die Kreise der Pläne, und die zeigen die Luftlinie. Stufen der Straßenstrecke heißen
  *   „bis 15 km Strecke“, „16 bis 25 km“, „26 bis 35 km“ (roadBandLabel); so widerspricht kein Satz der Zeichnung.
  */
-import { FACTS, type FactId } from '@/lib/content/facts';
+import { FACTS, JE_NACH_STELLE, offenBei, type FactId } from '@/lib/content/facts';
 import { formatNumber } from '@/lib/jobs/format';
 import { getActiveJobs, type Job } from '@/lib/jobs/registry';
 import { fitDescription } from '@/lib/seo/descriptions';
@@ -212,6 +212,42 @@ const EDGE_MARGIN_KM = 3;
  * flexibleHours steht zuletzt: Belegt ist nur die Kurzform, der Fakt hat keinen weiteren Satz.
  */
 export const BAND_FACT_IDS: readonly FactId[] = Object.freeze(['noFarAssembly', 'vacation30', 'flexibleHours']);
+
+/**
+ * Das Band heißt „Was überall gilt“: Ein Fakt, der für eine gezeigte Stelle offen ist (`offenFuer`, Urlaub und
+ * Arbeitszeit fürs Büro, fakten-abgleich S5), fällt dort weg (Prüfung E-029, Runde 2). An seine Stelle tritt einmal
+ * dieser Fakt, belegt für den ganzen Betrieb (B28), damit das Band nicht auf ein Kästchen schrumpft.
+ */
+export const BAND_ERSATZ: FactId = 'noWeekendOnCall';
+
+/** Gilt der Fakt für alle gezeigten Stellen? (Sammelfläche, lib/content/facts.ts offenBei) */
+const giltFuerAlle = (id: FactId, jobs: readonly Job[]) => offenBei(id, jobs).length === 0;
+
+/**
+ * Zusagen am Ende der Descriptions: „flexible Arbeitszeiten, 30 Tage Urlaub“, mit „Je nach Stelle“ davor, solange eine
+ * gezeigte Stelle sie offen lässt (Bürofachkraft, fakten-abgleich S5), wie auf der Seite „Bezahlung und Extras“.
+ */
+export function zusagenKurz(jobs: readonly Job[]): string {
+  const liste = `${lowerFirst(FACTS.flexibleHours.short)}, ${FACTS.vacation30.short}`;
+  return (['flexibleHours', 'vacation30'] as const).every((id) => giltFuerAlle(id, jobs)) ? liste : `${JE_NACH_STELLE} ${liste}`;
+}
+
+/**
+ * Schlusssätze der Descriptions in der Reihenfolge der Kandidaten: die Zusagen (zusagenKurz); sind sie eingeschränkt
+ * und dadurch länger, danach die kurze Zusage, die für jede Stelle gilt („Keine Fernmontage“), bevor der Satz ganz
+ * entfällt.
+ */
+function zusagenSaetze(jobs: readonly Job[]): string[] {
+  const zusagen = upperFirst(zusagenKurz(jobs));
+  return zusagen.startsWith(upperFirst(JE_NACH_STELLE)) && giltFuerAlle('noFarAssembly', jobs)
+    ? [`${zusagen}.`, `${FACTS.noFarAssembly.short}.`]
+    : [`${zusagen}.`];
+}
+
+/** Kandidaten für fitDescription: jeder Satzanfang mit dem ersten Schlusssatz, dann jeder mit dem nächsten. */
+function kandidaten(anfaenge: readonly string[], jobs: readonly Job[]): [string, ...string[]] {
+  return zusagenSaetze(jobs).flatMap((schluss) => anfaenge.map((anfang) => `${anfang} ${schluss}`)) as [string, ...string[]];
+}
 
 /** Satzanfang der WhatsApp-Nachricht, wie DEFAULT_WHATSAPP_MESSAGE in lib/utils/whatsapp-utils.ts. */
 export const GREETING_START = `Guten Tag Herr ${SITE_CONFIG.founder.familyName}, `;
@@ -1047,16 +1083,23 @@ function kreisBlocks(c: PlaceContext): TextBlock[] {
  */
 export const FAKT_BEGLEITER: Readonly<Partial<Record<FactId, FactId>>> = Object.freeze({ flexibleHours: 'noUnpaidOvertime' });
 
-/** Fakten im Band einer Ortsseite oder eines Kreis-Hubs. */
-export function bandFactIds(kreis: Pick<Kreis, 'factIds'>): FactId[] {
+/**
+ * Fakten im Band einer Ortsseite oder eines Kreis-Hubs: nur, was für alle gezeigten Stellen gilt; fällt einer weg,
+ * steht BAND_ERSATZ vor dem letzten.
+ */
+export function bandFactIds(kreis: Pick<Kreis, 'factIds'>, jobs: readonly Job[] = getActiveJobs()): FactId[] {
+  const gilt = (id: FactId) => giltFuerAlle(id, jobs);
   const last = BAND_FACT_IDS[BAND_FACT_IDS.length - 1];
-  const kreisFacts = kreis.factIds.filter((id) => !BAND_FACT_IDS.includes(id));
-  return [...BAND_FACT_IDS.slice(0, -1), ...kreisFacts, last];
+  const vorne = BAND_FACT_IDS.slice(0, -1).filter(gilt);
+  const schluss = gilt(last) ? [last] : [];
+  const ersatz = vorne.length + schluss.length < BAND_FACT_IDS.length && gilt(BAND_ERSATZ) ? [BAND_ERSATZ] : [];
+  const kreisFacts = kreis.factIds.filter((id) => !BAND_FACT_IDS.includes(id) && id !== BAND_ERSATZ && gilt(id));
+  return [...vorne, ...kreisFacts, ...ersatz, ...schluss];
 }
 
 /** Band (Etikettkasten): je Fakt die Kurzform; den ganzen Satz liefert FACTS[id].long über `factIds`. */
-function bandBlocks(kreis: Pick<Kreis, 'factIds'>): TextBlock[] {
-  return bandFactIds(kreis).map((id) => gemeinsam(FACTS[id].short, [id]));
+function bandBlocks(kreis: Pick<Kreis, 'factIds'>, jobs: readonly Job[]): TextBlock[] {
+  return bandFactIds(kreis, jobs).map((id) => gemeinsam(FACTS[id].short, [id]));
 }
 
 /**
@@ -1113,19 +1156,21 @@ export interface PlacePageText {
 }
 
 /**
- * Unterzeile der Ortsseite in zwei Sätzen: die Fahrzeit und der Fakt flexibleHours. Steht im Seitenkopf (Rohrklammer)
- * und auf dem Teilen-Bild (ogPlaceText), damit beide dasselbe sagen.
+ * Unterzeile der Ortsseite in zwei Sätzen: die Fahrzeit und der Fakt flexibleHours, mit „Je nach Stelle“, solange eine
+ * gezeigte Stelle ihn offen lässt (Büro, S5). Steht im Seitenkopf (Rohrklammer) und auf dem Teilen-Bild (ogPlaceText
+ * bekommt sie von der Seite), damit beide dasselbe sagen.
  */
-export function placeSubline(place: Pick<Place, 'commute'>): readonly string[] {
-  return Object.freeze([`Rund ${formatMinutes(place.commute.minutes)} Fahrt.`, FACTS.flexibleHours.long]);
+export function placeSubline(place: Pick<Place, 'commute'>, jobs: readonly Job[] = getActiveJobs()): readonly string[] {
+  const arbeitszeit = giltFuerAlle('flexibleHours', jobs)
+    ? FACTS.flexibleHours.long
+    : `${upperFirst(JE_NACH_STELLE)} ${lowerFirst(FACTS.flexibleHours.long)}`;
+  return Object.freeze([`Rund ${formatMinutes(place.commute.minutes)} Fahrt.`, arbeitszeit]);
 }
 
 /** Linktext der Route ab dem Ort zum Firmensitz (Google Maps, ohne Tracking). */
 export function routeLabel(place: Pick<Place, 'name'>): string {
   return `Route ab ${place.name} in Google Maps`;
 }
-
-const PERKS = `${lowerFirst(FACTS.flexibleHours.short)}, ${FACTS.vacation30.short}`;
 
 /**
  * Metadaten mit normalen Leerzeichen: Title und Description landen in SERP, OG und JSON-LD; die Längen-
@@ -1158,24 +1203,29 @@ function placeMetaRaw(c: PlaceContext): PageMeta {
       h1: `${place.name} und seine Stadtteile: dein Weg zum Firmensitz`,
       primaryKeyword: `Arbeitsweg ${place.name} Stadtteile`,
       description: fitDescription(
-        `${place.name} und ${st.length} Stadtteile: ${minKm} bis ${formatKm(maxKm)} zum Firmensitz in der ${STREET}. ${upperFirst(PERKS)}.`,
-        `${place.name} und ${st.length} Stadtteile: ${minKm} bis ${formatKm(maxKm)} zum Firmensitz. ${upperFirst(PERKS)}.`,
+        ...kandidaten(
+          [
+            `${place.name} und ${st.length} Stadtteile: ${minKm} bis ${formatKm(maxKm)} zum Firmensitz in der ${STREET}.`,
+            `${place.name} und ${st.length} Stadtteile: ${minKm} bis ${formatKm(maxKm)} zum Firmensitz.`,
+          ],
+          c.jobs,
+        ),
       ),
     };
   }
-  return c.stufe === 'arbeitsweg' ? arbeitswegMeta(place) : shkJobsMeta(place);
+  return c.stufe === 'arbeitsweg' ? arbeitswegMeta(place, c.jobs) : shkJobsMeta(place, c.jobs);
 }
 
 /**
  * Metadaten einer Gemeinde- oder Stadtteilseite für eine Titelstufe; die Seite nimmt die Stufe aus ihren Datenklassen
  * (titelStufe in datenklassen.ts). Wetzlar selbst behält seinen Titel mit den Stadtteilen.
  */
-export function ortMeta(place: Place, stufe: TitelStufe): PageMeta {
-  return plainMeta(stufe === 'arbeitsweg' ? arbeitswegMeta(place) : shkJobsMeta(place));
+export function ortMeta(place: Place, stufe: TitelStufe, jobs: readonly Job[] = getActiveJobs()): PageMeta {
+  return plainMeta(stufe === 'arbeitsweg' ? arbeitswegMeta(place, jobs) : shkJobsMeta(place, jobs));
 }
 
 /** Titelstufe „SHK-Jobs“ erst mit Einsatzdaten des Betriebs am Ort (MENSCHEN M-023): belegt durch echte Baustellen. */
-function shkJobsMeta(place: Place): PageMeta {
+function shkJobsMeta(place: Place, jobs: readonly Job[]): PageMeta {
   const km = formatKm(place.commute.distanceKm);
   const minutes = formatMinutes(place.commute.minutes);
   const titleTail = place.kind === 'stadtteil' ? `${km} zum Firmensitz` : `${km} bis ${HQ_CITY}`;
@@ -1185,8 +1235,10 @@ function shkJobsMeta(place: Place): PageMeta {
     h1: `SHK-Jobs für ${place.name}`,
     primaryKeyword: `SHK Jobs ${place.name}`,
     description: fitDescription(
-      `SHK-Jobs für ${place.name}: ${km} und rund ${minutes} ${where}, gemessen mit OpenStreetMap. ${upperFirst(PERKS)}.`,
-      `SHK-Jobs für ${place.name}: ${km} und rund ${minutes} ${where}. ${upperFirst(PERKS)}.`,
+      ...kandidaten(
+        [`SHK-Jobs für ${place.name}: ${km} und rund ${minutes} ${where}, gemessen mit OpenStreetMap.`, `SHK-Jobs für ${place.name}: ${km} und rund ${minutes} ${where}.`],
+        jobs,
+      ),
     ),
   };
 }
@@ -1201,7 +1253,7 @@ export function arbeitswegTitel(place: Pick<Place, 'name'>): string {
  * Weg, nicht die Baustellen am Ort. Die Description nennt Strecke, Fahrzeit und die späteste Verbindung mit Bus und
  * Bahn, ohne Bus und Bahn nur die Auskunft, dass bis 7:30 Uhr keine ankommt.
  */
-function arbeitswegMeta(place: Place): PageMeta {
+function arbeitswegMeta(place: Place, jobs: readonly Job[]): PageMeta {
   const weg = place.oepnv?.betrieb;
   const bus =
     weg?.moeglich && weg.spaeteste
@@ -1211,12 +1263,17 @@ function arbeitswegMeta(place: Place): PageMeta {
         : null;
   const ziel = place.kind === 'stadtteil' ? `Firmensitz in ${HQ_CITY}` : HQ_CITY;
   const kopf = `Arbeitsweg ${place.name} – ${ziel}: ${formatKm(place.commute.distanceKm)}, rund ${formatMinutes(place.commute.minutes)} mit dem Auto`;
-  const kandidaten = [...(bus ? [`${kopf}, ${bus}. ${upperFirst(PERKS)}.`, `${kopf}, ${bus}.`] : []), `${kopf}. ${upperFirst(PERKS)}.`, `${kopf}.`];
+  const zusagen = zusagenSaetze(jobs);
+  const liste = [
+    ...(bus ? [...zusagen.map((z) => `${kopf}, ${bus}. ${z}`), `${kopf}, ${bus}.`] : []),
+    ...zusagen.map((z) => `${kopf}. ${z}`),
+    `${kopf}.`,
+  ];
   return {
     title: arbeitswegTitel(place),
     h1: place.kind === 'stadtteil' ? `Von ${place.name} zur Arbeit am Firmensitz` : `Von ${place.name} zur Arbeit nach ${HQ_CITY}`,
     primaryKeyword: `Arbeitsweg ${place.name} ${HQ_CITY}`,
-    description: fitDescription(...(kandidaten as [string, ...string[]])),
+    description: fitDescription(...(liste as [string, ...string[]])),
   };
 }
 
@@ -1258,7 +1315,7 @@ export function getPlacePageText(place: Place, options: PlaceTextOptions = {}): 
     { id: 'nachbarn', heading: `Orte rund um ${name}`, blocks: nachbarnBlocks(c) },
     { id: 'stadtteile', heading: `Die Stadtteile von ${name}`, blocks: place.kind === 'stadt' ? stadtteileBlocks(c) : [] },
     { id: 'kreis', heading: place.kind === 'stadtteil' ? `${name} in ${HQ_CITY}` : `${name} ${c.kreis.dative}`, blocks: kreisBlocks(c) },
-    { id: 'band', heading: 'Was überall gilt', blocks: bandBlocks(c.kreis) },
+    { id: 'band', heading: 'Was überall gilt', blocks: bandBlocks(c.kreis, c.jobs) },
     { id: 'kontakt', heading: 'Direkt fragen', blocks: kontaktBlocks(place) },
   ];
   // Jeder Ort, den der Text nennt, ist verlinkt: Nachbarn, Orte derselben Richtung, im kleinen Kreis der andere Ort.
@@ -1288,9 +1345,9 @@ export function getPlacePageText(place: Place, options: PlaceTextOptions = {}): 
       { wert: formatAirKm(place.commute.airKm), name: 'Luftlinie' },
       { wert: c.dirFromHq, name: 'Richtung ab Firmensitz' },
     ],
-    unterzeile: placeSubline(place),
+    unterzeile: placeSubline(place, c.jobs),
     sections: sections.filter((section) => section.blocks.length > 0),
-    bandFactIds: bandFactIds(c.kreis),
+    bandFactIds: bandFactIds(c.kreis, c.jobs),
     whatsappGreeting: whatsappGreeting(place),
     values: placeValues(c),
     links: links.filter((link, i) => links.findIndex((other) => other.href === link.href) === i),
@@ -1511,9 +1568,14 @@ export function getKreisPageText(kreis: Kreis, options: PlaceTextOptions = {}): 
       h1: `SHK-Jobs ${kreis.dative}`,
       primaryKeyword: `SHK Jobs ${kreis.shortName}`,
       description: fitDescription(
-        `SHK-Jobs ${kreis.dative}: ${places.length} Orte, ${nearest.commute.distanceKm} bis ${formatKm(farthest.commute.distanceKm)} zum Firmensitz in ${HQ_CITY}. ${upperFirst(PERKS)}.`,
-        `SHK-Jobs ${kreis.dative}: ${places.length} Orte, ${nearest.commute.distanceKm} bis ${formatKm(farthest.commute.distanceKm)} zum Firmensitz. ${upperFirst(PERKS)}.`,
-        `SHK-Jobs ${kreis.dative}: ${places.length} Orte mit ${formatKm(nearest.commute.distanceKm)} bis ${formatKm(farthest.commute.distanceKm)} zum Firmensitz in ${HQ_CITY}. ${upperFirst(PERKS)}.`,
+        ...kandidaten(
+          [
+            `SHK-Jobs ${kreis.dative}: ${places.length} Orte, ${nearest.commute.distanceKm} bis ${formatKm(farthest.commute.distanceKm)} zum Firmensitz in ${HQ_CITY}.`,
+            `SHK-Jobs ${kreis.dative}: ${places.length} Orte, ${nearest.commute.distanceKm} bis ${formatKm(farthest.commute.distanceKm)} zum Firmensitz.`,
+            `SHK-Jobs ${kreis.dative}: ${places.length} Orte mit ${formatKm(nearest.commute.distanceKm)} bis ${formatKm(farthest.commute.distanceKm)} zum Firmensitz in ${HQ_CITY}.`,
+          ],
+          jobs,
+        ),
       ),
     }),
     sections: ([
@@ -1539,10 +1601,10 @@ export function getKreisPageText(kreis: Kreis, options: PlaceTextOptions = {}): 
         blocks: [ort(`Nach Strecke: ${joinList(places.map(placeListItem))}.`)],
       },
       { id: 'stellen', heading: 'Offene Stellen', blocks: stellenBlocks(jobs) },
-      { id: 'band', heading: 'Was überall gilt', blocks: bandBlocks(kreis) },
+      { id: 'band', heading: 'Was überall gilt', blocks: bandBlocks(kreis, jobs) },
       { id: 'kontakt', heading: 'Direkt fragen', blocks: [gemeinsam(KREIS_KONTAKT_TEXT)] },
     ] satisfies TextSection<KreisSectionId>[]).filter((section) => section.blocks.length > 0),
-    bandFactIds: bandFactIds(kreis),
+    bandFactIds: bandFactIds(kreis, jobs),
     links: [
       ...places.map((place) => ({ href: placePath(place), label: place.name })),
       { href: EINSATZGEBIET_PATH, label: EINSATZGEBIET_LINK_LABEL },
@@ -1626,8 +1688,13 @@ export function getEinsatzgebietPageText(options: PlaceTextOptions = {}): Einsat
       h1: `Unser Einsatzgebiet: ${places.length} Orte bis ${formatKm(MAX_ROAD_KM)} um ${HQ_CITY}`,
       primaryKeyword: `Einsatzgebiet SHK ${HQ_CITY}`,
       description: fitDescription(
-        `${places.length} Orte in ${kreise.length} Kreisen, jeder mit gemessener Strecke und Fahrzeit zum Firmensitz in ${HQ_CITY}. ${upperFirst(PERKS)}.`,
-        `${places.length} Orte in ${kreise.length} Kreisen mit gemessener Fahrzeit zum Firmensitz in ${HQ_CITY}. ${upperFirst(PERKS)}.`,
+        ...kandidaten(
+          [
+            `${places.length} Orte in ${kreise.length} Kreisen, jeder mit gemessener Strecke und Fahrzeit zum Firmensitz in ${HQ_CITY}.`,
+            `${places.length} Orte in ${kreise.length} Kreisen mit gemessener Fahrzeit zum Firmensitz in ${HQ_CITY}.`,
+          ],
+          jobs,
+        ),
       ),
     }),
     sections: [
@@ -1660,7 +1727,7 @@ export function getEinsatzgebietPageText(options: PlaceTextOptions = {}): Einsat
           ...(kreise.length > hubs.length ? [ort(smallKreiseSentence(kreise.filter((k) => !k.hasHub)))] : []),
         ],
       },
-      { id: 'band', heading: 'Was überall gilt', blocks: bandBlocks({ factIds: [] }) },
+      { id: 'band', heading: 'Was überall gilt', blocks: bandBlocks({ factIds: [] }, jobs) },
     ],
     kleineKreise: kreise.filter((kreis) => !kreis.hasHub).map(kreisSectionText),
     links: [

@@ -49,6 +49,13 @@ function wegweiserStellen(now: Date): { jobs: Job[]; ohneAnzeige: Job[] } {
   };
 }
 
+/** Ohne Vorauswahl spricht das Regionalband für alle Stellen, die im Flow wählbar sind (live und funnel_only). */
+function regionalStellen(now: Date): Job[] {
+  return getFunnelOptions(now)
+    .map((option) => getJobById(option.id))
+    .filter((job) => job !== undefined);
+}
+
 export default async function BewerbungPage({ searchParams }: { searchParams: Promise<SearchParamsRecord> }) {
   const params = await searchParams;
 
@@ -103,7 +110,8 @@ export default async function BewerbungPage({ searchParams }: { searchParams: Pr
         erklaerung={<Erklaerung audience={audience} vorausgewaehlt={initialJobId !== undefined} {...wegweiserStellen(new Date())} />}
       />
 
-      <Regionalband />
+      {/* Arbeitsort und Arbeitszeit der vorgewählten Stelle, ohne Vorauswahl aller offenen (Fakt offenFuer: Büro S5) */}
+      <Regionalband stellen={preselected ? [preselected] : regionalStellen(new Date())} />
     </>
   );
 }

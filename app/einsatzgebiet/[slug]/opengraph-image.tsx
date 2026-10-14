@@ -26,6 +26,12 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   if (!place || place.status !== 'published') notFound();
   const text = getPlacePageText(place, { jobs: liveJobs() });
   return renderPlaceImage(
-    ogPlaceText({ etikett: text.etikett, h1: text.meta.h1, distanceKm: place.commute.distanceKm, minutes: place.commute.minutes }),
+    ogPlaceText({
+      etikett: text.etikett,
+      h1: text.meta.h1,
+      distanceKm: place.commute.distanceKm,
+      minutes: place.commute.minutes,
+      arbeitszeit: text.unterzeile[1],
+    }),
   );
 }

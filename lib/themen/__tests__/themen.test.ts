@@ -185,6 +185,39 @@ describe('Texte der Themenseiten: nur Belegtes', () => {
     expect(plain(alleTexte(gehalt).join(' '))).not.toMatch(/€|\bEuro\b|brutto|Gehaltsspanne/);
   });
 
+  it('Sammelfläche (Runde 2): Kopf der Gehalt-Seite und Hub nennen Tarif und Urlaub „je nach Stelle“, solange das Büro live ist', () => {
+    expect(JOBS.some((j) => j.category === 'buero')).toBe(true);
+    const gehalt = getThemaPageText('gehalt', { jobs: JOBS, now: NOW });
+    if (gehalt.id !== 'gehalt') throw new Error('falsche Seite');
+    expect(gehalt.unterzeile).toEqual([`${FACTS.payOnRequest.short}.`, `Je nach Stelle: ${FACTS.aboveTariff.short}.`]);
+    expect(gehalt.einleitung.map((s) => s.text)).toEqual([`${FACTS.payOnRequest.long} Je nach Stelle: ${FACTS.aboveTariff.long}`]);
+    expect(gehalt.masse.map((m) => plain(m.name))).toEqual([`${FACTS.vacation30.label} je nach Stelle`]);
+    expect(gehalt.lohn.zeilen).toEqual([`${FACTS.aboveTariff.short} je nach Stelle`, `${FACTS.vacation30.short} je nach Stelle`]);
+    // Ohne Stelle mit offener Kategorie und nur mit Stellen, die beides nennen: ohne Zusatz
+    const beide = mitLohn(JOBS).filter((j) => stellenMitZusatz('aboveTariff', [j]).length > 0 && stellenMitZusatz('vacation30', [j]).length > 0);
+    expect(beide.length).toBeGreaterThan(0);
+    const ohne = getThemaPageText('gehalt', { jobs: beide, now: NOW });
+    if (ohne.id !== 'gehalt') throw new Error('falsche Seite');
+    expect(ohne.unterzeile).toEqual([`${FACTS.payOnRequest.short}.`, `${FACTS.aboveTariff.short}.`]);
+    expect(ohne.lohn.zeilen).toEqual([FACTS.aboveTariff.short, FACTS.vacation30.short]);
+
+    const hub = getArbeitenPageText({ jobs: JOBS, now: NOW });
+    expect(hub.masse.map((m) => plain(m.name))).toContain(`${FACTS.vacation30.label} je nach Stelle`);
+    expect(hub.og.zeilen).toContain(`${FACTS.vacation30.short} je nach Stelle.`);
+    for (const kasten of hub.zusagen.kaesten) {
+      const id = (['flexibleHours', 'vacation30', 'noWeekendOnCall', 'noFarAssembly'] as const).find((f) => FACTS[f].short === kasten.titel)!;
+      if (FACTS[id].offenFuer) {
+        expect(kasten.giltFuer, id).toEqual(stellenMitZusatz(id, JOBS).map((j) => j.shortTitle));
+        for (const j of JOBS.filter((j) => j.category === 'buero')) expect(kasten.giltFuer, id).not.toContain(j.shortTitle);
+      } else {
+        expect(kasten.giltFuer, id).toBeUndefined();
+      }
+    }
+    // Karte „Bezahlung und Extras“ (Hub, Weitere Themen, llms-full.txt)
+    const karte = hub.themen.karten.find((k) => k.id === 'gehalt')!;
+    expect(karte.satz.text).toBe(`${FACTS.payOnRequest.long} Je nach Stelle: ${FACTS.aboveTariff.long}`);
+  });
+
   it('Tankkarte (B8), iPad (B9) und Azubi-Set nur mit den Stellen, zu denen sie gehören', () => {
     const namen = (id: FactId) => stellenMitFakt(id, JOBS).map((job) => job.id);
     expect(namen('fuelCard').sort()).toEqual(['kundendiensttechniker-shk', 'obermonteur-projektleiter-shk']);

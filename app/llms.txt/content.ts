@@ -1,4 +1,4 @@
-import { COMPANY, FACTS, isFactActive, type FactId } from '@/lib/content';
+import { COMPANY, FACTS, isFactActive, offenBei, type FactId } from '@/lib/content';
 import { applyUrl, jobMetaTags, jobUrl, payLabel } from '@/lib/jobs/format';
 import { getActiveJobs, getFunnelOptions, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
 import { istOrtIndexierbar } from '@/lib/places/indexierung';
@@ -65,8 +65,16 @@ export function chamberLine(): string {
   return `${COMPANY.hwk}, ${COMPANY.innung}`;
 }
 
-export function employerFacts(now: Date): string[] {
-  return EMPLOYER_FACT_IDS.filter((id) => isFactActive(id, now) && !FACTS[id].pending).map((id) => FACTS[id].long);
+/**
+ * Statements across all jobs that are open now (live and funnel_only). A fact that is not confirmed for some of them
+ * (`offenFuer`, e.g. holidays and hours for the office, fakten-abgleich S5) carries the jobs it is open for, so an AI
+ * answer cannot pin it on the office job (Prüfung E-029, Runde 2).
+ */
+export function employerFacts(now: Date, stellen: readonly Job[] = [...liveJobs(now), ...funnelOnlyJobs()]): string[] {
+  return EMPLOYER_FACT_IDS.filter((id) => isFactActive(id, now) && !FACTS[id].pending).map((id) => {
+    const offen = offenBei(id, stellen);
+    return offen.length === 0 ? FACTS[id].long : `${FACTS[id].long} Je nach Stelle; offen bei: ${offen.map((job) => job.shortTitle).join(', ')}.`;
+  });
 }
 
 /** „Vollzeit · Wetzlar + 35 km · Unbefristet · Lohn auf Anfrage“ (plain spaces for text files; E-030, no amount). */
