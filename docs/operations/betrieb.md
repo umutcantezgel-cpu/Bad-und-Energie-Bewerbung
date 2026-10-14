@@ -1,6 +1,6 @@
 # Betrieb: Go-live und laufender Betrieb
 
-Stand: 2026-10-10 · Phase 2b (Bewerbungen kommen per E-Mail und zusätzlich in die Datenbank, sobald Supabase konfiguriert ist; das Postfach bleibt bis zum Cockpit die Arbeitsablage)
+Stand: 2026-10-10, ergänzt 2026-10-14 (Verweise auf `docs/inhaber/` und `orte-monitoring.md`) · Phase 2b (Bewerbungen kommen per E-Mail und zusätzlich in die Datenbank, sobald Supabase konfiguriert ist; das Postfach bleibt bis zum Cockpit die Arbeitsablage)
 
 Diese Anleitung richtet sich an alle, die die Website live schalten und Bewerbungen bearbeiten. Technischer Hintergrund: [README](../../README.md), Plan: [ROADMAP](../ROADMAP.md).
 
@@ -196,13 +196,15 @@ Mehrere Tests aus dem Büro zählen gegen dasselbe Rate-Limit (5 Bewerbungen je 
 
 Ablauf und Prüfpunkte: [`stellenboersen.md` d)](stellenboersen.md#d-google-search-console). Kurz: Domain-Property anlegen, Sitemap `https://karriere.bad-energie.de/sitemap.xml` einreichen, jede Stellenseite im [Test für Rich-Suchergebnisse](https://search.google.com/test/rich-results) prüfen (genau eine gültige „Stellenanzeige“), per URL-Prüfung die Indexierung beantragen, danach den Bericht „Stellenanzeigen“ beobachten.
 
+Seit 2026-10-14 (E-029): Schritt für Schritt für den Inhaber, mit Bestätigung per DNS, allen Sitemaps aus `robots.txt`, Service-Account für die Google Indexing API und Import in die Bing Webmaster Tools, in [`docs/inhaber/checkliste-offsite.md`](../inhaber/checkliste-offsite.md) (Schritt 1 und 2). Die Ortsseiten werden danach jede Woche nach [`orte-monitoring.md`](orte-monitoring.md) geprüft.
+
 ### 2.8 Indeed
 
 Aufnahme der Karriereseite per Feed `https://karriere.bad-energie.de/feeds/indeed.xml` im Indeed-Arbeitgeberkonto anfragen: [`stellenboersen.md` a)](stellenboersen.md#a-indeed-karriereseite-indexieren-lassen). Keine zusätzlichen manuellen Anzeigen für dieselben Stellen, keine Bezahloption ohne Rücksprache mit dem Owner.
 
 ### 2.9 Bundesagentur für Arbeit und HWK
 
-Jede veröffentlichte Stelle im Arbeitgeberportal der BA einstellen, die Ausbildung zusätzlich in der HWK-Lehrstellenbörse, jeweils mit dem getrackten Link: [`stellenboersen.md` b)](stellenboersen.md#b-bundesagentur-für-arbeit-und-hwk-lehrstellenbörse-manuell). Ändert sich eine Stelle im Repo, die Anzeigen am selben Tag nachziehen.
+Jede veröffentlichte Stelle im Arbeitgeberportal der BA einstellen, die Ausbildung zusätzlich in der HWK-Lehrstellenbörse, jeweils mit dem getrackten Link: [`stellenboersen.md` b)](stellenboersen.md#b-bundesagentur-für-arbeit-und-hwk-lehrstellenbörse-manuell). Ändert sich eine Stelle im Repo, die Anzeigen am selben Tag nachziehen. Konto anlegen und Stellen einstellen aus Sicht des Inhabers: [`docs/inhaber/checkliste-offsite.md`](../inhaber/checkliste-offsite.md), Schritt 3 und 4 (MENSCHEN M-040).
 
 ### 2.10 Monitoring
 
