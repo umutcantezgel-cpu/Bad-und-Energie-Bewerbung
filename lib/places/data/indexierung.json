@@ -1,0 +1,277 @@
+{
+  "_kommentar": "Lock-Datei des Indexierungs-Gates (E-029, ROADMAP §10.1): Je Ortsseite, ob sie indexiert wird, bis wann ihre Daten gelten (I5) und warum sie durchfällt. Erzeugt mit bun run orte:gate aus lib/places/qualitaet.ts; lib/places/__tests__/qualitaet.test.ts erzwingt den Gleichstand. Von Hand nur das Feld zurueckgenommen pflegen (120-Tage-Regel, docs/operations/orte-monitoring.md), danach orte:gate neu laufen lassen.",
+  "gate": "lib/places/qualitaet.ts",
+  "zurueckgenommen": {},
+  "orte": {
+    "asslar": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "bad-endbach": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "beselich": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "biebertal": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "bischoffen": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "blasbach": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "braunfels": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "breitscheid": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "buseck": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "butzbach": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "dutenhofen": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "ehringshausen": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "fernwald": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "garbenheim": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "giessen": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "graevenwiesbach": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "greifenstein": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "herborn": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "hermannstein": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "heuchelheim-an-der-lahn": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "hohenahr": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "huettenberg": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "lahnau": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "langgoens": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "leun": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "lich": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "linden": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "loehnberg": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "lohra": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "lollar": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "mengerskirchen": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "merenberg": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "mittenaar": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "muenchholzhausen": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "muenzenberg": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "nauborn": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "naunheim": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "pohlheim": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "rockenberg": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "schoeffengrund": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "siegbach": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "sinn": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "solms": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "staufenberg": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "steindorf": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "villmar": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "waldbrunn-westerwald": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "waldsolms": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "weilburg": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "weilmuenster": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "weilrod": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "weinbach": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "wettenberg": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    },
+    "wetzlar": {
+      "indexierbar": true,
+      "gueltigBis": "2026-12-12",
+      "gruende": []
+    }
+  }
+}

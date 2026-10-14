@@ -1,8 +1,10 @@
 import { COMPANY, FACTS, isFactActive, type FactId } from '@/lib/content';
 import { applyUrl, jobMetaTags, jobUrl, payLabel } from '@/lib/jobs/format';
 import { getActiveJobs, getFunnelOptions, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
-import { getHubKreise, getKreise, getKreisPlaces, getPublishedPlaces, kreisUrl, placeUrl } from '@/lib/places/registry';
-import { MEASUREMENT_NOTE } from '@/lib/places/text';
+import { istOrtIndexierbar } from '@/lib/places/indexierung';
+import { OEPNV_QUELLE } from '@/lib/places/oepnv';
+import { getHubKreise, getKreise, getKreisPlaces, getPublishedPlaces, kreisUrl, placeUrl, type Place } from '@/lib/places/registry';
+import { ANKUNFT_BETRIEB, MEASUREMENT_NOTE, formatUhr, formatUhrzeit } from '@/lib/places/text';
 import { einsatzgebietPages, themenPages } from '@/lib/seo/indexable-pages';
 import { getThemen } from '@/lib/themen/registry';
 import { themaKarte } from '@/lib/themen/text';
@@ -111,17 +113,35 @@ export function einsatzgebietLine(): string {
   return `[Einsatzgebiet: ${places.length} Orte mit Strecke und Fahrzeit](${hub.url}): ${getKreise().length} Kreise, ${getHubKreise().length} davon mit eigener Seite, jede Ortsseite mit gemessener Strecke und Fahrzeit zum Firmensitz`;
 }
 
-/** Abschnitt Einsatzgebiet in /llms-full.txt: je Kreis die Orte nach Strecke mit km, Minuten und Ortsseite. */
-export function einsatzgebietBlocks(): string[] {
-  const [hub] = einsatzgebietPages();
+/** Bus und Bahn eines Orts für /llms-full.txt: „Bus und Bahn: los 6:25, an 7:16“ bzw. „keine Ankunft bis 7:30“. */
+function busZeile(place: Place): string {
+  const weg = place.oepnv?.betrieb;
+  if (!weg) return '';
+  return weg.moeglich && weg.spaeteste
+    ? `, Bus und Bahn: los ${formatUhrzeit(weg.spaeteste.losgehen)}, an ${formatUhrzeit(weg.spaeteste.ankunft)}`
+    : `, Bus und Bahn: keine Ankunft bis ${formatUhrzeit(weg.ankunftBis)}`;
+}
+
+/**
+ * Abschnitt Einsatzgebiet in /llms-full.txt: je Kreis die Orte nach Strecke mit km, Minuten, Ortsseite und Bus und
+ * Bahn. Nur Ortsseiten, die das Gate bestehen (E-029, Plan §B: raus aus llms.txt); mit Fahrplandaten die Namensnennung
+ * nach CC BY 4.0.
+ */
+export function einsatzgebietBlocks(now: Date = new Date()): string[] {
+  const [hub] = einsatzgebietPages(now);
+  const plain = (text: string) => text.replace(/\u00A0/g, ' ');
   return [
-    `Gemessene Strecke und Fahrzeit zum Firmensitz, je Kreis nach Strecke. ${MEASUREMENT_NOTE} Übersicht: ${hub.url}`,
+    plain(`Gemessene Strecke und Fahrzeit zum Firmensitz, je Kreis nach Strecke. ${MEASUREMENT_NOTE} Übersicht: ${hub.url}`),
+    plain(`Bus und Bahn: späteste Verbindung mit Ankunft bis ${formatUhr(ANKUNFT_BETRIEB)} am Firmensitz an einem Werktag. Daten: ${OEPNV_QUELLE.namensnennung} (${OEPNV_QUELLE.lizenzUrl}), Stand ${OEPNV_QUELLE.stand}.`),
     '',
     ...getKreise().flatMap((kreis) => [
       `### ${kreis.name}${kreis.hasHub ? ` (${kreisUrl(kreis)})` : ''}`,
-      ...getKreisPlaces(kreis.id).map(
-        (place) => `- ${place.name} (${place.postalCode}): ${place.commute.distanceKm} km, ${place.commute.minutes} Minuten, ${placeUrl(place)}`,
-      ),
+      ...getKreisPlaces(kreis.id)
+        .filter((place) => istOrtIndexierbar(place, now))
+        .map(
+          (place) =>
+            `- ${place.name} (${place.postalCode}): ${place.commute.distanceKm} km, ${place.commute.minutes} Minuten, ${placeUrl(place)}${busZeile(place)}`,
+        ),
       '',
     ]),
   ];

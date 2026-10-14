@@ -32,7 +32,11 @@ import { fileURLToPath } from 'url';
  *    Topic pages under /arbeiten-bei-uns (E-028): every indexable one carries exactly one BreadcrumbList. The hub
  *    /arbeiten-bei-uns is a CollectionPage whose mainEntity is the ItemList of the topics (rules as above); a topic page
  *    /arbeiten-bei-uns/<thema> is a plain WebPage without ItemList. Neither carries a Place.
- * 8. Every indexable document with a canonical is in the sitemap (.next/server/app/sitemap.xml.body), when built.
+ * 8. Every indexable document with a canonical is in the sitemap, when built. Since E-029 /sitemap.xml is a sitemap index
+ *    (.next/server/app/sitemap.xml.body) of the group sitemaps /sitemap/<id>.xml (.next/server/app/sitemap/<id>.xml.body);
+ *    a plain <urlset> is read as before.
+ * 10. No noindex document is in the sitemap (E-029, Plan §B): a place page that fails the gate carries
+ *    `noindex,follow` and must have left the sitemap; the same holds for every other noindex page.
  * 9. JobPosting only on job pages /jobs/<slug> (ROADMAP §7, §10):
  *    - none on "/", "/jobs", "/bewerbung" or any other page,
  *    - exactly one on every indexable job page, none on a noindex job page ("besetzt"),
@@ -233,11 +237,36 @@ export function itemListProblems(node, sitemapUrls) {
   return problems;
 }
 
-/** <loc> values of the prerendered sitemap, or null before a build. */
-export function readSitemapUrls(file = SITEMAP_FILE) {
+/** <loc> values of a sitemap file: the page URLs of a <urlset>, the sitemap URLs of a <sitemapindex>. */
+export function sitemapLocs(xml) {
+  const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => decodeEntities(m[1].trim()));
+  return { index: /<sitemapindex\b/.test(xml), locs };
+}
+
+/**
+ * Page URLs of the prerendered sitemap, or null before a build. A sitemap index is followed one level deep: each child
+ * /sitemap/<id>.xml is read from its prerendered body next to the index (`<app dir>/<path>.body`). A missing child is an
+ * error, not an empty list: an index that points nowhere would hide every page.
+ */
+export function readSitemapUrls(file = SITEMAP_FILE, appDir = path.dirname(file)) {
   if (!fs.existsSync(file)) return null;
-  const xml = fs.readFileSync(file, 'utf8');
-  return new Set([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => decodeEntities(m[1].trim())));
+  const { index, locs } = sitemapLocs(fs.readFileSync(file, 'utf8'));
+  if (!index) return new Set(locs);
+  const urls = new Set();
+  for (const loc of locs) {
+    const child = path.join(appDir, `${new URL(loc).pathname.replace(/^\//, '')}.body`);
+    if (!fs.existsSync(child)) throw new Error(`sitemap index points to ${loc}, but ${path.relative(process.cwd(), child)} is missing`);
+    const inner = sitemapLocs(fs.readFileSync(child, 'utf8'));
+    if (inner.index) throw new Error(`${loc} is a sitemap index itself; only one level is allowed`);
+    for (const url of inner.locs) urls.add(url);
+  }
+  return urls;
+}
+
+/** Rule 10 (E-029): a noindex document whose canonical is listed in the sitemap. */
+export function noindexInSitemapProblem(canonical, noindex, sitemapUrls) {
+  if (!sitemapUrls || !canonical || !noindex) return null;
+  return sitemapUrls.has(canonical) ? `noindex page ${canonical} is listed in the sitemap` : null;
 }
 
 /** Problems of a single JobPosting node; empty when valid. */
@@ -374,6 +403,7 @@ function runGraphCheck() {
   let webPages = 0;
   let localPages = 0;
   let themenPages = 0;
+  let noindexPages = 0;
   const sitemapUrls = readSitemapUrls();
   const globalIds = {};
   const fail = (relativePath, message) => {
@@ -431,6 +461,13 @@ function runGraphCheck() {
     const canonical = canonicalOf(content);
     if (sitemapUrls && canonical && !noindex && !sitemapUrls.has(canonical)) {
       fail(relativePath, `indexable page ${canonical} is not in the sitemap`);
+    }
+    const noindexListed = noindexInSitemapProblem(canonical, noindex, sitemapUrls);
+    if (noindexListed) {
+      noindexPages++;
+      fail(relativePath, noindexListed);
+    } else if (noindex) {
+      noindexPages++;
     }
 
     const placesInGraph = nodes.filter((n) => hasType(n, 'Place'));
@@ -500,7 +537,7 @@ function runGraphCheck() {
   console.log(
     `✅ All ${checked} HTML documents passed JSON-LD graph checks: one @graph each, ${webPages} WebPage nodes = canonical, ` +
       `${jobPagesWithPosting} job pages with a valid JobPosting, ${localPages} local pages (Place/ItemList), ` +
-      `${themenPages} topic pages (hub with ItemList), ` +
+      `${themenPages} topic pages (hub with ItemList), ${noindexPages} noindex documents (none in the sitemap), ` +
       `${sitemapUrls ? `${sitemapUrls.size} sitemap URLs` : 'no sitemap'}, global @ids ${JSON.stringify(globalIds)}.`,
   );
 }

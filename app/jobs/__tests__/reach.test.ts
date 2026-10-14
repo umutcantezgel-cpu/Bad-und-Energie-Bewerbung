@@ -2,13 +2,15 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import robots from '@/app/robots';
-import sitemap from '@/app/sitemap';
+import { GET as gruppenSitemap, generateStaticParams as sitemapDateien } from '@/app/sitemap/[datei]/route';
+import { GET as sitemapIndex } from '@/app/sitemap.xml/route';
 import { GET as llmsFull } from '@/app/llms-full.txt/route';
 import { GET as llms } from '@/app/llms.txt/route';
 import { FACTS, isFactActive } from '@/lib/content/facts';
 import { withUtm } from '@/lib/jobs/feeds/tracking';
 import { PAY_ON_REQUEST, jobPath, jobUrl } from '@/lib/jobs/format';
 import { ALL_JOBS, getActiveJobs, getJobPageSlugs, isJobLive } from '@/lib/jobs/registry';
+import { istOrtIndexierbar } from '@/lib/places/indexierung';
 import {
   EINSATZGEBIET_PATH,
   getAllPlaces,
@@ -20,7 +22,7 @@ import {
   placePath,
 } from '@/lib/places/registry';
 import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
-import { getIndexablePages } from '@/lib/seo/indexable-pages';
+import { SITEMAP_GRUPPEN, getIndexablePages, sitemapPages, sitemapUrl } from '@/lib/seo/indexable-pages';
 import { getAllPortalUrls } from '@/lib/seo/indexnow';
 import { ARBEITEN_PATH, getThemen, themaPath } from '@/lib/themen/registry';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
@@ -29,48 +31,108 @@ import { claimsInTextBody } from '../../../scripts/qa/check-claims.mjs';
 const base = SITE_CONFIG.baseUrl.replace(/\/+$/, '');
 const liveJobs = getActiveJobs().filter((job) => isJobLive(job, new Date()));
 
-/** Erwartete lokale Seiten aus den Registries (E-028): Gebietsseite, Kreis-Hubs, alle veröffentlichten Orte. */
-const localPaths = [EINSATZGEBIET_PATH, ...getHubKreise().map(kreisPath), ...getPublishedPlaces().map(placePath)];
+/**
+ * Erwartete lokale Seiten aus den Registries (E-028): Gebietsseite, Kreis-Hubs und jeder veröffentlichte Ort, der heute
+ * das Gate besteht (E-029, lib/places/indexierung.ts). Sitemap und IndexNow rechnen mit „jetzt“ wie die live Stellen;
+ * dass im Fahrplanjahr alle 54 Orte darin stehen, prüft lib/seo/__tests__/indexable-pages.test.ts mit festem Stichtag.
+ */
+const indexierbareOrte = getPublishedPlaces().filter((place) => istOrtIndexierbar(place, new Date()));
+const localPaths = [EINSATZGEBIET_PATH, ...getHubKreise().map(kreisPath), ...indexierbareOrte.map(placePath)];
 /** Themenseiten (E-028): Hub und die fünf Themen aus lib/themen/registry.ts. */
 const themenPaths = [ARBEITEN_PATH, ...getThemen().map(themaPath)];
 const newest = (dates: readonly string[]) => [...dates].sort().at(-1);
 
+/** Eine Gruppen-Sitemap abrufen wie Next: Route-Handler mit dem Dateinamen als Segment (app/sitemap/[datei]/route.ts). */
+const abrufen = (datei: string) => gruppenSitemap(new Request(`${base}/sitemap/${datei}`), { params: Promise.resolve({ datei }) });
+const xmlText = (value: string) => value.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, '&');
+/** Einträge einer <urlset> in der Form, die app/sitemap/[datei]/route.ts schreibt: <url>, <loc>, optional <lastmod>. */
+const eintraege = (xml: string) =>
+  [...xml.matchAll(/<url>\n<loc>([^<]+)<\/loc>\n(?:<lastmod>([^<]+)<\/lastmod>\n)?<\/url>\n/g)].map((m) => ({
+    url: xmlText(m[1]),
+    ...(m[2] ? { lastModified: xmlText(m[2]) } : {}),
+  }));
+
+/** Die vier Gruppen-Sitemaps (E-029), wie der Build sie vorrendert: je Datei aus generateStaticParams die Antwort. */
+const gruppen = await Promise.all(
+  sitemapDateien().map(async ({ datei }) => {
+    const res = await abrufen(datei);
+    const xml = await res.text();
+    return { id: datei.replace(/\.xml$/, ''), status: res.status, contentType: res.headers.get('content-type'), xml, entries: eintraege(xml) };
+  }),
+);
+const gruppe = (id: string) => gruppen.find((g) => g.id === id)!.entries.map((e) => e.url);
+
 describe('sitemap', () => {
-  const entries = sitemap();
+  const entries = gruppen.flatMap((g) => g.entries);
   const urls = entries.map((e) => e.url);
 
+  it('is split by group (E-029): kern, stellen, orte and themen, each at /sitemap/<id>.xml', () => {
+    expect(sitemapDateien()).toEqual([{ datei: 'kern.xml' }, { datei: 'stellen.xml' }, { datei: 'orte.xml' }, { datei: 'themen.xml' }]);
+    expect(SITEMAP_GRUPPEN.map((g) => sitemapUrl(g.id))).toEqual(['kern', 'stellen', 'orte', 'themen'].map((id) => `${base}/sitemap/${id}.xml`));
+    expect(gruppe('kern')).toEqual([base, `${base}/jobs`, `${base}/bewerbung`]);
+    expect(gruppe('stellen')).toEqual(liveJobs.map(jobUrl));
+    expect(gruppe('orte')).toEqual(localPaths.map((path) => `${base}${path}`));
+    expect(gruppe('themen')).toEqual(themenPaths.map((path) => `${base}${path}`));
+  });
+
+  it('every group sitemap is a <urlset> as XML, one <url> per page and nothing else', () => {
+    for (const g of gruppen) {
+      expect(g.status, g.id).toBe(200);
+      expect(g.contentType, g.id).toBe('application/xml; charset=utf-8');
+      expect(g.xml, g.id).toMatch(/^<\?xml version="1.0" encoding="UTF-8"\?>\n<urlset xmlns="http:\/\/www.sitemaps.org\/schemas\/sitemap\/0.9">\n/);
+      expect(g.xml.endsWith('</urlset>\n'), g.id).toBe(true);
+      expect(g.xml.match(/<url>/g)?.length ?? 0, g.id).toBe(g.entries.length);
+      expect(g.entries.length, g.id).toBeGreaterThan(0);
+      expect(g.xml, g.id).not.toContain('<sitemapindex');
+    }
+  });
+
+  it('an unknown file is a 404, not an empty sitemap', async () => {
+    for (const datei of ['alles.xml', 'orte', 'orte.xml.xml', 'kern.txt']) expect((await abrufen(datei)).status, datei).toBe(404);
+  });
+
   // V6-B: jede URL exakt wie der Canonical der Seite; Next rendert den der Startseite ohne Schrägstrich.
-  it('lists home, /jobs, every live job page, /bewerbung, every local page and the topic pages, from the registries', () => {
-    expect(urls).toEqual([
-      base,
-      `${base}/jobs`,
-      ...liveJobs.map(jobUrl),
-      `${base}/bewerbung`,
-      ...localPaths.map((path) => `${base}${path}`),
-      ...themenPaths.map((path) => `${base}${path}`),
-    ]);
+  it('lists home, /jobs, /bewerbung, every live job page, every local page and the topic pages, from the registries', () => {
     expect(urls).toEqual([
       getCleanCanonicalUrl('/'),
       getCleanCanonicalUrl('/jobs'),
-      ...liveJobs.map((job) => getCleanCanonicalUrl(jobPath(job))),
       getCleanCanonicalUrl('/bewerbung'),
+      ...liveJobs.map((job) => getCleanCanonicalUrl(jobPath(job))),
       ...localPaths.map(getCleanCanonicalUrl),
       ...themenPaths.map(getCleanCanonicalUrl),
     ]);
     expect(new Set(urls).size).toBe(urls.length);
-    // 7 Kernseiten und Stellen, Gebietsseite, Kreis-Hubs und Orte, dazu Themen-Hub und Themen (7 + 1 + 4 + 54 + 6 = 72)
-    expect(urls).toHaveLength(3 + liveJobs.length + 1 + getHubKreise().length + getPublishedPlaces().length + 1 + getThemen().length);
+    // Kernseiten und Stellen, Gebietsseite, Kreis-Hubs und die Orte, die das Gate bestehen, Themen-Hub und Themen
+    expect(urls).toHaveLength(3 + liveJobs.length + 1 + getHubKreise().length + indexierbareOrte.length + 1 + getThemen().length);
   });
 
-  it('is the list of lib/seo/indexable-pages.ts (one place for every page type)', () => {
-    expect(urls).toEqual(getIndexablePages().map((page) => page.url));
+  it('is the list of lib/seo/indexable-pages.ts (one place for every page type), group by group', () => {
+    expect([...urls].sort()).toEqual(getIndexablePages().map((page) => page.url).sort());
+    for (const { id } of SITEMAP_GRUPPEN) expect(gruppe(id)).toEqual(sitemapPages(id).map((page) => page.url));
+  });
+
+  it('/sitemap.xml is the index of the group sitemaps, each with the newest date of its pages', async () => {
+    const xml = await sitemapIndex().text();
+    expect(xml).toMatch(/^<\?xml version="1.0" encoding="UTF-8"\?>\n<sitemapindex xmlns="http:\/\/www.sitemaps.org\/schemas\/sitemap\/0.9">/);
+    const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+    expect(locs).toEqual(SITEMAP_GRUPPEN.filter((g) => sitemapPages(g.id).length > 0).map((g) => sitemapUrl(g.id)));
+    for (const { id } of SITEMAP_GRUPPEN) {
+      const dates = sitemapPages(id).flatMap((p) => (p.lastModified ? [p.lastModified] : []));
+      if (dates.length > 0) expect(xml).toContain(`<loc>${sitemapUrl(id)}</loc><lastmod>${newest(dates)}</lastmod>`);
+    }
+    expect(xml).not.toContain('<url>');
+  });
+
+  it('place pages leave the sitemap when the gate says noindex (here: after the timetable year, I5); hubs stay', () => {
+    const spaeter = sitemapPages('orte', new Date('2026-12-20T10:00:00Z')).map((p) => p.path);
+    expect(spaeter).toEqual([EINSATZGEBIET_PATH, ...getHubKreise().map(kreisPath)]);
   });
 
   // Die lokalen Seiten listen die live Stellen mit Gehalt (Review Phase 2, Punkt 27): das jüngere Datum zählt.
   it('dates local pages with the newer of their places\' updatedAt and the newest live job, never with today', () => {
     const date = (path: string) => entries.find((e) => e.url === `${base}${path}`)?.lastModified;
     const jobs = liveJobs.map((job) => job.updatedAt);
-    for (const place of getPublishedPlaces()) expect(date(placePath(place))).toBe(newest([place.updatedAt, ...jobs]));
+    for (const place of indexierbareOrte) expect(date(placePath(place))).toBe(newest([place.updatedAt, ...jobs]));
     for (const kreis of getHubKreise()) {
       expect(date(kreisPath(kreis))).toBe(newest([...getKreisPlaces(kreis.id).map((place) => place.updatedAt), ...jobs]));
     }

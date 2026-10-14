@@ -4,6 +4,7 @@ import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
 import type { ItemListJsonLd, PlaceJsonLd } from '@/lib/seo/graph';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 
+import { istOrtIndexierbar } from './indexierung';
 import {
   EINSATZGEBIET_PATH,
   getHubKreise,
@@ -106,19 +107,26 @@ function itemList(path: string, name: string, entries: readonly { name: string; 
   };
 }
 
-/** Kreis-Hub: seine Orte nach Strecke, wie die Tabelle der Seite. */
-export function buildKreisItemListJsonLd(kreis: Kreis): ItemListJsonLd {
+/**
+ * Kreis-Hub: seine Orte nach Strecke, wie die Tabelle der Seite, aber nur die indexierbaren (E-029): Jede URL der
+ * ItemList steht in der Sitemap (scripts/qa/check-graph.mjs Regel 7). Die Tabelle der Seite verlinkt weiter alle Orte.
+ */
+export function buildKreisItemListJsonLd(kreis: Kreis, now: Date = new Date()): ItemListJsonLd {
   return itemList(
     kreisPath(kreis),
     `Orte ${kreis.dative}`,
-    getKreisPlaces(kreis.id).map((place) => ({ name: place.name, path: placePath(place) })),
+    getKreisPlaces(kreis.id)
+      .filter((place) => istOrtIndexierbar(place, now))
+      .map((place) => ({ name: place.name, path: placePath(place) })),
   );
 }
 
-/** Gebietsseite: die Kreis-Hubs, dann alle Ortsseiten nach Strecke. */
-export function buildEinsatzgebietItemListJsonLd(): ItemListJsonLd {
+/** Gebietsseite: die Kreis-Hubs, dann alle indexierbaren Ortsseiten nach Strecke. */
+export function buildEinsatzgebietItemListJsonLd(now: Date = new Date()): ItemListJsonLd {
   return itemList(EINSATZGEBIET_PATH, 'Kreise und Orte im Einsatzgebiet', [
     ...getHubKreise().map((kreis) => ({ name: kreis.shortName, path: kreisPath(kreis) })),
-    ...getPublishedPlaces().map((place) => ({ name: place.name, path: placePath(place) })),
+    ...getPublishedPlaces()
+      .filter((place) => istOrtIndexierbar(place, now))
+      .map((place) => ({ name: place.name, path: placePath(place) })),
   ]);
 }

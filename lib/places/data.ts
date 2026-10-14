@@ -1,11 +1,13 @@
 import { MEASURED_PLACES, MEASUREMENT, type MeasuredPlace } from './measurement';
 import { HOME_MAP_LOCATION_IDS, slugifyPlaceName } from './home-map';
+import { getOepnv } from './oepnv';
 import { STADTTEIL_PARENT_ID, definePlace, type Place } from './schema';
 
 /**
  * Alle Orte der lokalen Seiten, gebaut aus den aufgenommenen Kandidaten der Messung
  * (lib/places/data/messung.json, Protokoll docs/operations/orte-messung.md). Hier steht nichts, was nicht
- * aus der Messung oder aus freigegebenen Texten stammt: keine Einwohnerzahlen, keine Sehenswürdigkeiten.
+ * aus der Messung, aus freigegebenen Texten oder aus den Fahrplandaten (lib/places/data/oepnv.json, Quelle gtfs.de)
+ * stammt: keine Einwohnerzahlen, keine Sehenswürdigkeiten.
  */
 
 /** Stand der Ortsdaten (Tag der Messung und der Freigabe der Liste). */
@@ -79,6 +81,8 @@ function toPlace(measured: MeasuredPlace): Place {
       source: MEASUREMENT.source,
     },
     character: character ? { text: character, source: CHARACTER_SOURCE } : undefined,
+    // Bus und Bahn zum Betrieb und zur Berufsschule (Plan §B); Quelle, Lizenz und Stand im Kopf der Datei
+    oepnv: getOepnv(measured.id),
     legacyLocationId,
     status: override.status ?? 'published',
     ...(override.statusNote ? { statusNote: override.statusNote } : {}),

@@ -1,12 +1,19 @@
 import { expect, test } from '@playwright/test';
+import { istOrtIndexierbar } from '../lib/places/indexierung';
+import { OEPNV_QUELLE } from '../lib/places/oepnv';
+import { getPublishedPlaces, placePath } from '../lib/places/registry';
 import { LOCAL_PAGES, waitForSettled } from './support/site';
 
 /**
  * Alle lokalen Seiten (E-028): Gebietsseite, Kreis-Hubs und jede veröffentlichte Ortsseite. Nur im Projekt
  * mobile-light (die vier Projekte laufen über die Stichproben in ROUTES, mit axe): Status 200, genau eine h1,
- * Canonical auf sich selbst, bei 320 px der kurze Pfad eine Stufe zurück, ab 40em der ganze Pfad mit der Seite als
- * letzter Stufe, kein horizontaler Scroll bei 320 px.
+ * Canonical auf sich selbst, Robots wie das Gate (E-029: eine Ortsseite `index, follow`, wenn sie es besteht, sonst
+ * `noindex, follow`; Gebietsseite und Kreis-Hubs immer `index, follow`), auf Ortsseiten die Abschnitte zu Bus und Bahn
+ * und zur Berufsschule mit Link auf die Lizenz der Fahrplandaten, bei 320 px der kurze Pfad eine Stufe zurück, ab 40em
+ * der ganze Pfad mit der Seite als letzter Stufe, kein horizontaler Scroll bei 320 px.
  */
+
+const ORTE = new Map(getPublishedPlaces().map((place) => [placePath(place), place]));
 
 test.beforeEach(() => {
   test.skip(test.info().project.name !== 'mobile-light', 'Alle lokalen Seiten laufen einmal (mobile-light).');
@@ -23,6 +30,15 @@ for (const local of LOCAL_PAGES) {
 
     const canonical = await page.locator('link[rel="canonical"]').getAttribute('href');
     expect(new URL(canonical!).pathname).toBe(local.path);
+
+    const ort = ORTE.get(local.path);
+    const robots = await page.locator('meta[name="robots"]').getAttribute('content');
+    expect(robots, 'Robots wie das Gate').toBe(!ort || istOrtIndexierbar(ort, new Date()) ? 'index, follow' : 'noindex, follow');
+    if (ort) {
+      await expect(page.getByRole('heading', { level: 2, name: `Mit Bus und Bahn aus ${ort.name}` })).toHaveCount(1);
+      await expect(page.getByRole('heading', { level: 2, name: `Zur Berufsschule aus ${ort.name}` })).toHaveCount(1);
+      await expect(page.locator(`a[href="${OEPNV_QUELLE.lizenzUrl}"]`)).toHaveCount(1);
+    }
 
     // Unter 40em nur der Weg eine Stufe zurück („‹ Lahn-Dill-Kreis“), ab 40em der ganze Pfad (Review Phase 2, Punkt 26)
     const pfad = page.getByRole('navigation', { name: 'Brotkrümelnavigation' });

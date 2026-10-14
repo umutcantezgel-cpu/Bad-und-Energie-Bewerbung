@@ -12,7 +12,8 @@ export const FOOTER_THEMEN_LINK = THEMEN_UEBERSICHT_LINK;
 
 /**
  * Themenzeile im Fuß (E-028): Etikett wie die Spaltenköpfe, die fünf Themenseiten als ruhige Zeile mit Trennpunkten
- * (wie die Ortsliste darunter) und der Weg zum Hub /arbeiten-bei-uns. Jede Seite ist so höchstens zwei Klicks entfernt.
+ * und der Weg zum Hub /arbeiten-bei-uns. Jede Themenseite ist so höchstens zwei Klicks entfernt. Darunter stehen die
+ * Kreis-Hubs (FooterPlaces).
  */
 export function FooterThemen({ className }: { className?: string }) {
   return (

@@ -77,6 +77,19 @@ describe('Einsatzgebiet in llms.txt und llms-full.txt (E-028)', () => {
     }
     expect(text).toContain('Gemessen am 12. Oktober 2026 mit OpenStreetMap (OSRM)');
   });
+
+  it('llms-full.txt: Bus und Bahn je Ort mit Namensnennung (CC BY 4.0), nur Ortsseiten, die das Gate bestehen (E-029)', async () => {
+    const { getPlaceById, getPublishedPlaces, placeUrl } = await import('@/lib/places/registry');
+    const text = await textAt(llmsFull, '2026-10-12T12:00:00Z');
+    expect(text).toContain('Daten: © gtfs.de, CC BY 4.0, Datenbasis DELFI e.V. und OpenStreetMap-Mitwirkende (https://creativecommons.org/licenses/by/4.0/deed.de)');
+    expect(text).toContain(`- Aßlar (35614): 8 km, 12 Minuten, ${placeUrl(getPlaceById('asslar')!)}, Bus und Bahn: los 6:25, an 7:16`);
+    expect(text).toContain(`${placeUrl(getPlaceById('greifenstein')!)}, Bus und Bahn: keine Ankunft bis 7:30`);
+    expect(text).not.toMatch(/\u00A0/);
+    // Nach dem Fahrplanjahr der Daten (I5) steht keine Ortsseite mehr darin, Hub und Kreis-Hubs bleiben
+    const spaeter = await textAt(llmsFull, '2026-12-20T12:00:00Z');
+    for (const place of getPublishedPlaces()) expect(spaeter).not.toContain(`${placeUrl(place)},`);
+    expect(spaeter).toContain('/einsatzgebiet/lahn-dill-kreis');
+  });
 });
 
 describe('Themenseiten in llms.txt und llms-full.txt (E-028)', () => {

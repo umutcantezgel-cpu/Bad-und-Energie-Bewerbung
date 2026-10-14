@@ -275,7 +275,9 @@ export const PlaceSchema = z
     character: CharacterSchema.optional(),
     /**
      * Bus und Bahn zum Betrieb und zur Berufsschule aus lib/places/data/oepnv.json (lib/places/oepnv.ts); Quelle,
-     * Lizenz und Stand stehen im Kopf der Datei (OEPNV_QUELLE). Optional, bis die Ortsseiten sie zeigen.
+     * Lizenz und Stand stehen im Kopf der Datei (OEPNV_QUELLE). data.ts setzt das Feld für jeden gemessenen Ort.
+     * Optional bleibt es für neue Orte ohne Fahrplandaten: Die fallen am Gate durch (I2) und stehen mit
+     * `noindex,follow` (lib/places/qualitaet.ts).
      */
     oepnv: OepnvOrtSchema.optional(),
     /** ID in lib/data/locations.ts (Karte der Startseite), solange es die Datei gibt. */

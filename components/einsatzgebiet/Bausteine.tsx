@@ -8,9 +8,9 @@ import { Section } from '@/components/layout/Section';
 import { ContactOptions } from '@/components/site/ContactOptions';
 import { Etikettkasten } from '@/components/zeichnung/Etikettkasten';
 import { FACTS, type FactId } from '@/lib/content/facts';
-import { formatAirKm, formatKm, formatMin, type TextBlock, type TextSection } from '@/lib/places/text';
+import { FAKT_BEGLEITER, formatAirKm, formatKm, formatMin, type TextBlock, type TextSection } from '@/lib/places/text';
 import { cn } from '@/lib/utils/cn';
-import { ANSPRECHPARTNER, ETIKETT, TABELLE } from './einsatzgebiet-text';
+import { ANSPRECHPARTNER, ETIKETT, NEUER_TAB, TABELLE } from './einsatzgebiet-text';
 import { breitestesStueckEm } from './titel';
 import styles from './einsatzgebiet.module.css';
 
@@ -49,6 +49,53 @@ export function Absaetze({ blocks, lead = false }: { blocks: readonly TextBlock[
   );
 }
 
+/**
+ * Blöcke mit Frage (Bus und Bahn, Berufsschule) als Zwischenüberschrift und Antwort, die übrigen als Absatz. Sichtbare
+ * Fragen ohne FAQPage-Markup: FAQPage steht nur auf der Startseite (scripts/qa/check-graph.mjs Regel 5).
+ */
+export function Antworten({ blocks }: { blocks: readonly TextBlock[] }) {
+  return (
+    <>
+      {blocks.map((block) =>
+        block.frage ? (
+          <div key={block.text} className={styles.antwort}>
+            <h3 className={styles.frage}>{block.frage}</h3>
+            <p className={styles.absatz}>{block.text}</p>
+          </div>
+        ) : (
+          <p key={block.text} className={styles.absatz}>
+            {block.text}
+          </p>
+        ),
+      )}
+    </>
+  );
+}
+
+/**
+ * Quellenzeile unter Daten: Namensnennung und Stand, bei CC BY 4.0 mit Link auf die Lizenz (an der Stelle, an der die
+ * Lizenz im Wortlaut steht). Wortlaut aus lib/places/text.ts, der ihn aus den Daten liest.
+ */
+export function Quellenzeile({ text, lizenz }: { text: string; lizenz?: { label: string; href: string } }) {
+  const at = lizenz ? text.indexOf(lizenz.label) : -1;
+  return (
+    <p className={styles.quelle}>
+      {lizenz && at >= 0 ? (
+        <>
+          {text.slice(0, at)}
+          <a href={lizenz.href} target="_blank" rel="noopener noreferrer" className={styles.quelleLink}>
+            {lizenz.label}
+            <span className="sr-only">{NEUER_TAB}</span>
+          </a>
+          {text.slice(at + lizenz.label.length)}
+        </>
+      ) : (
+        text
+      )}
+    </p>
+  );
+}
+
 /** Hinweis zur Messung (gemeinsamer Block): klein, mit Strich links. */
 export function Messhinweis({ text }: { text: string }) {
   return (
@@ -65,12 +112,8 @@ export function bloecke(section: TextSection | undefined): { ort: TextBlock[]; g
   return { ort: blocks.filter((b) => b.kind === 'ort'), gemeinsam: blocks.filter((b) => b.kind === 'gemeinsam') };
 }
 
-/**
- * Fakten ohne eigenen Satz (der lange Text ist nur die Kurzform mit Punkt) tragen den Satz eines belegten
- * Begleitfakts, wie die Zusage „Flexible Arbeitszeiten“ auf der Startseite (components/home/vorteile/vorteile-text.ts
- * ZUSAGEN): „Keine unbezahlten Überstunden.“ Keine neue Aussage, nur die Paarung der Startseite.
- */
-export const FAKT_BEGLEITER: Readonly<Partial<Record<FactId, FactId>>> = Object.freeze({ flexibleHours: 'noUnpaidOvertime' });
+/** Begleitfakten des Bands (lib/places/text.ts, dort prüft das Gate I6 auch sie). */
+export { FAKT_BEGLEITER };
 
 /** Satz unter dem Kästchen: der eigene lange Text, sonst der des Begleitfakts; null, wenn keiner belegt ist. */
 export function faktSatz(factId: FactId): string | null {

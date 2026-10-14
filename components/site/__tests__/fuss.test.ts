@@ -7,7 +7,7 @@ import { COMPANY } from '@/lib/content/company';
 import { jobPath } from '@/lib/jobs/format';
 import { getActiveJobs } from '@/lib/jobs/registry';
 import { MOTION_IDS } from '@/lib/motion/register';
-import { getHubKreise, getKreise, getPublishedPlaces, kreisPath, placePath } from '@/lib/places/registry';
+import { EINSATZGEBIET_PATH, getHubKreise, getKreise, getPublishedPlaces, kreisPath, placePath } from '@/lib/places/registry';
 import { ARBEITEN_PATH, getThemen, themaPath } from '@/lib/themen/registry';
 import { BEWERBUNG_WHATSAPP_MESSAGE, DEFAULT_WHATSAPP_MESSAGE } from '@/lib/utils/whatsapp-utils';
 import { ContactOptions } from '../ContactOptions';
@@ -153,11 +153,16 @@ describe('Stellen, Ortsliste und Fußzeile', () => {
     expect(hrefs(spaeter)).toContain('/jobs');
   });
 
-  it('E-028: verlinkt jede Orts-, Kreis- und Themenseite genau einmal, damit jede Seite von überall erreichbar ist', () => {
+  it('E-029: verlinkt jeden Kreis-Hub, die Gebietsseite und jede Themenseite genau einmal, keine einzelne Ortsseite', () => {
     const anzahl = (href: string) => hrefs(voll).filter((h) => h === href).length;
-    for (const place of getPublishedPlaces()) expect(anzahl(placePath(place)), place.slug).toBe(1);
-    for (const kreis of getKreise()) expect(anzahl(kreisPath(kreis)), kreis.slug).toBe(1);
+    // Plan §B: Kreis-Hubs und „Alle Orte im Einsatzgebiet“ statt 54 Ortslinks in jedem Fuß; die Orte erreicht man über
+    // die Gebietsseite (ein Klick aus dem Kopf) und die Kreis-Hubs (ein Klick von hier).
+    for (const place of getPublishedPlaces()) expect(anzahl(placePath(place)), place.slug).toBe(0);
     expect(getHubKreise().length).toBeGreaterThan(0);
+    for (const kreis of getHubKreise()) expect(anzahl(kreisPath(kreis)), kreis.slug).toBe(1);
+    for (const kreis of getKreise().filter((k) => !k.hasHub)) expect(anzahl(kreisPath(kreis)), kreis.slug).toBe(0);
+    expect(anzahl(EINSATZGEBIET_PATH)).toBe(1);
+    expect(hrefs(voll).filter((h) => h.startsWith(EINSATZGEBIET_PATH))).toHaveLength(getHubKreise().length + 1);
     for (const thema of getThemen()) expect(anzahl(themaPath(thema)), thema.slug).toBe(1);
     expect(anzahl(ARBEITEN_PATH)).toBe(1);
     // Der schmale Fuß im Bewerbungsflow bleibt ohne diese Wege

@@ -15,7 +15,10 @@ type Params = Promise<{ slug: string }>;
 /** Nur bekannte Segmente; alles andere ist ein 404 ohne Serverlauf. */
 export const dynamicParams = false;
 
-/** Stündlich neu: Die Seiten nennen die live Stellen mit Gehalt (wie /jobs und die Stellenseiten). */
+/**
+ * Stündlich neu: Die Seiten nennen die live Stellen (wie /jobs, seit E-030 ohne Betrag), und eine Ortsseite fällt nach
+ * dem Fahrplanjahr ihrer Daten ohne Deploy auf `noindex,follow` (Gate I5, E-029, app/einsatzgebiet/seo.ts).
+ */
 export const revalidate = 3600;
 
 /**
@@ -51,7 +54,7 @@ function graphInput(route: Exclude<EinsatzgebietRoute, { type: 'redirect' }>, jo
 
 /**
  * Ortsseite (Ort oder Stadtteil) bzw. Kreis-Hub unter /einsatzgebiet/<slug> (E-028). Kein JobPosting (nur auf
- * /jobs/<slug>), kein LocalBusiness je Ort, keine FAQPage.
+ * /jobs/<slug>), kein LocalBusiness je Ort, keine FAQPage (auch nicht für die Fragen zu Bus und Bahn, E-029).
  */
 export default async function EinsatzgebietSlugPage({ params }: { params: Params }) {
   const { slug } = await params;

@@ -18,6 +18,8 @@ export const ETIKETT = Object.freeze({
   stadt: 'Stadt',
   band: 'Für jeden Ort',
   kontakt: 'Kontakt',
+  oepnv: 'Nahverkehr',
+  schule: 'Berufsschule',
   zahlen: 'Fahrzeiten',
   orte: 'Orte',
   ringe: 'Plan',
@@ -41,6 +43,9 @@ export const PLAN_LEGENDE_STADTTEILE_STADT = `Volle Punkte ohne Namen sind Stadt
 export function leisteLegende(alleOrte: number): string {
   return `Striche im Paar: alle ${alleOrte} Orte`;
 }
+
+/** Bildtitel der Kennwerte zur spätesten Verbindung (components/einsatzgebiet/Fahrplan.tsx). */
+export const FAHRPLAN = Object.freeze({ betrieb: 'Späteste Verbindung zum Firmensitz' });
 
 /** Spaltenköpfe der Ortstabelle. */
 export const TABELLE = Object.freeze({ ort: 'Ort', plz: 'PLZ', km: 'Strecke', min: 'Fahrzeit' });

@@ -1,26 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { HOME_KEYWORDS, HOME_TITLE, homeDescription } from '@/components/home/content';
 import { FACTS, FACT_IDS, isFactId } from '@/lib/content/facts';
-import { formatNumber } from '@/lib/jobs/format';
 import { ALL_JOBS, getActiveJobs } from '@/lib/jobs/registry';
 import { jobsHubDescription } from '@/lib/seo/descriptions';
-import { SITE_CONFIG } from '@/lib/seo/site-config';
-import {
-  DIRECTIONS,
-  DIRECTION_ADVERBS,
-  DISTANCE_BAND_KM,
-  RING_RADII_KM,
-  compareToMedian,
-  directionFromHeadquarters,
-  groupStats,
-  kreisStats,
-  placeNeighbors,
-  rankByDistance,
-  roadBandCounts,
-  roadBandFloorKm,
-  roadBandKm,
-} from '../derive';
-import { MEASUREMENT } from '../measurement';
+import { DIRECTIONS, DIRECTION_ADVERBS, groupStats, kreisStats, roadBandCounts } from '../derive';
+import { FORBIDDEN_HOURS, GATE, addNumber, belegteZahlen, seitenFakten } from '../qualitaet';
 import {
   EINSATZGEBIET_PATH,
   getHubKreise,
@@ -31,7 +15,7 @@ import {
   kreisPath,
   placePath,
 } from '../registry';
-import { MAX_ROAD_KM, type Place } from '../schema';
+import type { Place } from '../schema';
 import {
   getEinsatzgebietPageText,
   getKreisPageText,
@@ -40,37 +24,20 @@ import {
   type PlacePageText,
   type TextSection,
 } from '../text';
-import { jaccard, maxSkeletonShare, numbersIn, sentences, shingles, skeleton, wordCount } from './gate-metrics';
+import { jaccard, maxSkeletonShare, numbersIn, sentences, shingles, skeleton, wordCount } from '../metriken';
 
 /**
  * Einzigartigkeits-Gate der Ortsseiten (Plan „Einzigartigkeits-Gate“, U1–U8). Läuft auf dem Textmodell aller
- * veröffentlichten Orte. Besteht ein Ort nicht, bekommt er status 'merged' mit Grund und geht in der Kreis- bzw.
- * Gebietsseite auf; die Grenzwerte werden nie gelockert, um einen Ort zu halten.
+ * veröffentlichten Orte. Seit E-029 ist U1–U8 die Bedingung I1 des Indexierungs-Gates (lib/places/qualitaet.ts, Schwellen
+ * GATE und die verbotenen Arbeitszeiten von dort, ihre Werte hält qualitaet.test.ts fest): Dieser Test prüft die
+ * Ortsseiten als Ganzes, das Gate je Ort für die Lock-Datei. Die Grenzwerte werden nie gelockert, um einen Ort zu halten.
  *
- * Gemessen am 2026-10-12 nach dem Review (54 Orte): Jaccard ganz max 0,280, nur `ort` max 0,191, `ort` min 124 Wörter
- * und min 74,1 % des Haupttexts, häufigstes Satzgerüst auf 20,4 % der Seiten (nur Ortsname ersetzt) bzw. 27,8 % (alle
- * Namen, Kreise und Richtungen ersetzt). Alle Werte liegen unter den Planwerten; keiner musste kalibriert werden.
- * Das gebaute HTML (mit Stellenkarten, Faktenband, Kontakt) prüft scripts/qa/check-local-similarity.mjs mit derselben
- * Grenze 0,45; dort liegt das ähnlichste Paar (Herborn/Sinn) höher, weil der gemeinsame Seitenrahmen mitzählt.
+ * Gemessen am 2026-10-14 mit Bus und Bahn sowie Berufsschule (54 Orte): Jaccard ganz max 0,247, nur `ort` max 0,177
+ * (Sinn/Herborn), häufigstes Satzgerüst auf 20,4 % der Seiten (nur Ortsname ersetzt) bzw. 27,8 % (alle Namen, Kreise und
+ * Richtungen ersetzt); die Fahrplansätze tragen die Haltestellen des Orts und bleiben darunter. Das gebaute HTML (mit
+ * Stellenkarten, Faktenband, Kontakt) prüft scripts/qa/check-local-similarity.mjs mit der Grenze aus I4 (0,40).
  */
-const GATE = Object.freeze({
-  /** U1: eigene Werte je Seite. */
-  minValues: 8,
-  /** U2: Wörter in `ort`-Blöcken und ihr Anteil am Haupttext (ort + gemeinsam). */
-  minOrtWords: 90,
-  minOrtShare: 0.35,
-  /** U3: Jaccard über 5-Wort-Shingles je Seitenpaar. */
-  maxJaccardWhole: 0.45,
-  maxJaccardOrt: 0.3,
-  /** U4: Anteil der Seiten mit demselben `ort`-Satzgerüst, in beiden Lesarten (siehe unten). */
-  maxSkeletonShare: 0.3,
-  /** U7: eingehende Links je Orts- und Kreisseite, Klicktiefe ab der Startseite. */
-  minInboundLinks: 3,
-  maxClickDepth: 3,
-});
-
-/** Verbotene Arbeitszeit-Aussagen (fakten-abgleich B28): nur flexibleHours gilt. */
-const FORBIDDEN = [/13[:.]30/, /16[:.]45/, /pünktlich/i, /feste arbeitszeit/i, /35[\s -]*(?:std|stunden)/i, /feierabend/i];
+const FORBIDDEN = FORBIDDEN_HOURS;
 
 const jobs = getActiveJobs();
 const places = getPublishedPlaces();
@@ -149,66 +116,17 @@ describe('Gate U4: keine Vorlagensätze', () => {
   });
 });
 
-/** Zahlen, wie die Texte sie schreiben: ganze Zahlen nach formatNumber, Luftlinien mit einer Nachkommastelle. */
-function addNumber(set: Set<string>, value: number): void {
-  set.add(formatNumber(value));
-  set.add(value.toFixed(1).replace('.', ','));
-}
-
-/** Allowlist einer Ortsseite, unabhängig vom Text aus Daten, derive, Fakten und Stellen gebaut. */
-function allowedNumbers(place: Place): Set<string> {
-  const allowed = new Set<string>();
-  const add = (...values: number[]) => values.forEach((v) => addNumber(allowed, v));
-  const addFrom = (text: string) => numbersIn(text).forEach((n) => allowed.add(n));
-
-  // Gebiet und Messung
-  add(MAX_ROAD_KM, ...RING_RADII_KM, ...RING_RADII_KM.map(roadBandFloorKm), ...Object.values(DISTANCE_BAND_KM), places.length, getKreise().length);
-  addFrom(MEASUREMENT.measuredOn.split('-').map(Number).join(' '));
-  addFrom(`${SITE_CONFIG.headquarters.streetAddress} ${SITE_CONFIG.headquarters.postalCode}`);
-  // Fakten und Stellen
-  for (const id of FACT_IDS) addFrom(`${FACTS[id].short} ${FACTS[id].long} ${FACTS[id].value ?? ''}`);
-  add(jobs.length);
-  for (const job of jobs) if (job.salary) add(job.salary.min, job.salary.max);
-  // Messwerte aller Orte (Listen nennen andere Orte mit ihrer Strecke)
-  for (const p of places) {
-    add(p.commute.distanceKm, p.commute.minutes, p.commute.airKm);
-    allowed.add(p.postalCode);
-  }
-  if (place.character) addFrom(place.character.text);
-  // Abgeleitete Werte dieses Orts
-  const kreisGroup = kreisStats(place.kreisId, places);
-  const kreisRank = rankByDistance(place, kreisGroup.places);
-  const areaRank = rankByDistance(place, places);
-  const median = compareToMedian(place, kreisGroup);
-  add(roadBandKm(place));
-  add(kreisGroup.count, kreisGroup.medianMinutes, median.diffMinutes);
-  add(kreisRank.closer, kreisRank.farther, kreisRank.same, kreisRank.total);
-  add(areaRank.closer, areaRank.total);
-  add(places.filter((p) => p.homeMap).length);
-  for (const n of placeNeighbors(place, places)) {
-    add(n.airKm, Math.abs(n.minutes - place.commute.minutes), Math.abs(n.distanceKm - place.commute.distanceKm));
-  }
-  for (const other of kreisGroup.places) {
-    add(Math.abs(other.commute.minutes - place.commute.minutes), Math.abs(other.commute.distanceKm - place.commute.distanceKm));
-  }
-  const sector = places.filter((p) => directionFromHeadquarters(p) === directionFromHeadquarters(place));
-  const sectorRank = rankByDistance(place, sector);
-  add(sector.length, sector.length - 1, sectorRank.closer, sectorRank.farther, sectorRank.same);
-  const parentId = place.kind === 'stadt' ? place.id : place.parentId;
-  if (parentId) {
-    const stadtteile = getStadtteile(parentId);
-    const r = place.kind === 'stadtteil' ? rankByDistance(place, stadtteile) : null;
-    add(stadtteile.length, ...(r ? [r.closer, r.farther, r.same] : []));
-    const stats = groupStats(stadtteile);
-    add(stats.fastest[0].commute.minutes, stats.slowest[0].commute.minutes);
-  }
-  return allowed;
-}
+/**
+ * Allowlist einer Ortsseite, unabhängig vom Text aus Daten, derive, Fakten, Stellen und den Datenklassen gebaut. Seit
+ * E-029 rechnet das Indexierungs-Gate mit derselben Liste (lib/places/qualitaet.ts, I1), darum steht sie dort.
+ */
+const allowedNumbers = (place: Place) => belegteZahlen(place, places, jobs);
 
 describe('Gate U5: jede Zahl hat eine Quelle', () => {
   it.each(eachPage)('%s nennt nur belegte Zahlen', (_id, place, page) => {
     const allowed = allowedNumbers(place);
-    const text = [wholeText(page), page.meta.title, page.meta.description, page.meta.h1, page.etikett, ...page.unterzeile, ...page.masse.map((m) => m.wert)].join(' ');
+    const fragen = page.sections.flatMap((s) => s.blocks.flatMap((b) => (b.frage ? [b.frage] : [])));
+    const text = [wholeText(page), page.meta.title, page.meta.description, page.meta.h1, page.etikett, ...page.unterzeile, ...page.masse.map((m) => m.wert), ...fragen].join(' ');
     const unknown = numbersIn(text).filter((n) => !allowed.has(n));
     expect(unknown, `${page.placeId}: Zahlen ohne Quelle`).toEqual([]);
   });
@@ -220,6 +138,8 @@ describe('Gate U5: jede Zahl hat eine Quelle', () => {
       const group = kreisStats(kreis.id, places);
       [group.count, group.medianMinutes, group.medianKm].forEach((v) => addNumber(allowed, v));
       Object.values(roadBandCounts(group.places)).forEach((v) => addNumber(allowed, v));
+      // Bus und Bahn im Kreis: Zahl der Orte mit Verbindung bis zur Frist, zum Firmensitz und zur Schule
+      for (const ziel of ['betrieb', 'schule'] as const) addNumber(allowed, group.places.filter((p) => p.oepnv?.[ziel].moeglich).length);
     }
     const area = groupStats(places);
     addNumber(allowed, area.medianMinutes);
@@ -238,7 +158,16 @@ describe('Gate U5: jede Zahl hat eine Quelle', () => {
 
 describe('Gate U6: nur bestätigte Fakten, keine festen Arbeitszeiten', () => {
   const everyText = [
-    ...pages.flatMap((page) => [wholeText(page), page.meta.title, page.meta.description, page.meta.h1, page.etikett, ...page.unterzeile, page.whatsappGreeting]),
+    ...pages.flatMap((page) => [
+      wholeText(page),
+      page.meta.title,
+      page.meta.description,
+      page.meta.h1,
+      page.etikett,
+      ...page.unterzeile,
+      page.whatsappGreeting,
+      ...page.sections.flatMap((s) => s.blocks.flatMap((b) => (b.frage ? [b.frage] : []))),
+    ]),
     ...kreisPages.flatMap((page) => [
       allText(page.sections),
       page.meta.title,
@@ -272,6 +201,8 @@ describe('Gate U6: nur bestätigte Fakten, keine festen Arbeitszeiten', () => {
       expect(FACTS[id].pending, id).toBeUndefined();
     }
     for (const page of pages) for (const id of page.bandFactIds) expect(FACT_IDS).toContain(id);
+    // Auch die Begleitfakten des Bands (FAKT_BEGLEITER) und die Fakten der Berufsschule: bestätigt (I6)
+    for (const page of pages) for (const id of seitenFakten(page)) expect(FACTS[id].pending, `${page.placeId}: ${id}`).toBeUndefined();
   });
 });
 

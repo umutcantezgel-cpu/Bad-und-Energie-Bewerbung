@@ -1,6 +1,8 @@
 /**
- * Messgrößen des Einzigartigkeits-Gates (gate.test.ts): Wörter, 5-Wort-Shingles, Jaccard und Satzgerüste.
- * Liegt neben den Tests, weil nur das Gate sie braucht; kein Seiten-Code importiert dieses Modul.
+ * Messgrößen des Gates der Ortsseiten: Wörter, 5-Wort-Shingles, Jaccard und Satzgerüste. Seit E-029 rechnet das
+ * Indexierungs-Gate (lib/places/qualitaet.ts) mit ihnen, darum liegen sie nicht mehr neben den Tests
+ * (früher lib/places/__tests__/gate-metrics.ts). Kein Seiten-Code importiert dieses Modul; scripts/qa/
+ * check-local-similarity.mjs zählt Wörter und Shingles am gebauten HTML genauso.
  */
 
 /** Wörter und Zahlen in Kleinschreibung; „4,5“ und „3.600“ bleiben ein Token. */
@@ -42,7 +44,7 @@ export function numbersIn(text: string): string[] {
 /** Sätze an Satzzeichen mit folgendem Leerraum; geschützte Leerzeichen zählen als Leerraum. */
 export function sentences(text: string): string[] {
   return text
-    .replace(/ /g, ' ')
+    .replace(/\u00a0/g, ' ')
     .split(/(?<=[.!?])\s+/)
     .map((s) => s.trim())
     .filter(Boolean);
@@ -55,7 +57,7 @@ const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\
  * „Heuchelheim an der Lahn“ vor „Heuchelheim“ greift.
  */
 export function skeleton(sentence: string, names: readonly string[], placeholder = '⟨ORT⟩'): string {
-  let out = sentence.replace(/ /g, ' ');
+  let out = sentence.replace(/\u00a0/g, ' ');
   for (const name of [...names].sort((a, b) => b.length - a.length)) {
     out = out.replace(new RegExp(`(?<![\\p{L}-])${escapeRegExp(name)}(?![\\p{L}-])`, 'gu'), placeholder);
   }
