@@ -1,0 +1,90 @@
+# Indexierung (Plan §C1): meldet neue, geänderte und entfernte Seiten automatisch an Suchmaschinen.
+#
+# - Google Indexing API: nur Stellenseiten /jobs/<slug> (URL_UPDATED bzw. URL_DELETED).
+# - IndexNow (Bing u. a.): alle geänderten URLs über das vorhandene POST /api/indexnow.
+# Das Skript scripts/seo/benachrichtigen.mjs vergleicht /sitemap.xml und /feeds/jobs.json der Live-Seite mit dem
+# letzten Stand (actions/cache) und gibt nur Zählwerte aus, nie URLs oder Geheimnisse.
+#
+# Auslöser: erfolgreicher Production-Deploy (Vercel meldet deployment_status), täglich um 05:17 UTC und von Hand
+# (wahlweise als Trockenlauf). Geheimnisse liegen im GitHub-Environment „indexierung“:
+#   GOOGLE_INDEXING_SA_KEY  JSON-Schlüssel des Service-Accounts (Inhaber der Search-Console-Property, M-032)
+#   INDEXNOW_SUBMIT_TOKEN   derselbe Wert wie in Vercel (lib/env.ts)
+# Fehlt eines, überspringt das Skript dieses Ziel mit Hinweis; der Lauf bleibt grün.
+#
+# Bewusst minimale Rechte: Der Workflow liest nur den Code und das Ereignis des Deploys.
+
+name: Indexierung
+
+on:
+  deployment_status:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+    inputs:
+      trocken:
+        description: "Trockenlauf: nur zählen, nichts melden, Stand nicht ändern"
+        type: boolean
+        default: false
+
+# Nie zwei Läufe gleichzeitig: Beide würden denselben Stand lesen und doppelt melden.
+concurrency:
+  group: indexierung
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  deployments: read
+
+env:
+  SITE_URL: https://karriere.bad-energie.de
+  STAND_DATEI: .indexierung/stand.json
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  melden:
+    name: Indexing API und IndexNow
+    # Nur nach einem erfolgreichen Deploy in die Vercel-Umgebung „Production“ (bei mehreren Projekten heißt sie
+    # „Production – <Projekt>“); Vorschauen melden nichts.
+    if: >-
+      github.event_name != 'deployment_status' ||
+      (github.event.deployment_status.state == 'success' && startsWith(github.event.deployment.environment, 'Production'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: indexierung
+    steps:
+      - name: Checkout (nur das Skript)
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: scripts/seo
+          persist-credentials: false
+
+      - name: Node einrichten
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      # Jeder Lauf speichert seinen Stand unter einem neuen Schlüssel; geladen wird der jüngste.
+      - name: Letzten Stand laden
+        uses: actions/cache/restore@v6
+        with:
+          path: .indexierung
+          key: indexierung-stand-${{ github.run_id }}
+          restore-keys: indexierung-stand-
+
+      - name: Melden
+        run: node scripts/seo/benachrichtigen.mjs
+        env:
+          INDEXIERUNG_TROCKEN: ${{ github.event_name == 'workflow_dispatch' && inputs.trocken && 'true' || 'false' }}
+          GOOGLE_INDEXING_SA_KEY: ${{ secrets.GOOGLE_INDEXING_SA_KEY }}
+          INDEXNOW_SUBMIT_TOKEN: ${{ secrets.INDEXNOW_SUBMIT_TOKEN }}
+
+      # Auch nach einem teilweisen Fehler: Der Stand enthält nur, was angenommen wurde.
+      - name: Stand sichern
+        if: always() && hashFiles('.indexierung/stand.json') != ''
+        uses: actions/cache/save@v6
+        with:
+          path: .indexierung
+          key: indexierung-stand-${{ github.run_id }}
