@@ -1,0 +1,77 @@
+{
+  "_kommentar": "Zuständige Berufsschule für Azubis zum Anlagenmechaniker SHK bei Bad und Energie (Plan §B, Paket W2a). Geprüft aus Verordnung und Satzung, nicht vom Betrieb bestätigt: Status laut-verordnung, Bestätigung durch den Inhaber offen (MENSCHEN M-024). Gelesen von lib/places/oepnv.ts, Ziel des Schulwegs in scripts/places/oepnv.mjs.",
+  "beruf": "Anlagenmechaniker/-in für Sanitär-, Heizungs- und Klimatechnik",
+  "status": "laut-verordnung",
+  "bestaetigung": "offen (MENSCHEN M-024): Der Inhaber bestätigt, welche Schule seine Azubis besuchen.",
+  "geprueftAm": "2026-10-14",
+  "massgeblich": "ausbildungsort",
+  "ausbildungsort": {
+    "gemeinde": "Wetzlar",
+    "kreisId": "lahn-dill-kreis",
+    "schulbezirk": "Schulbezirk II der Berufsschulen im Lahn-Dill-Kreis"
+  },
+  "geltung": "Für alle Wohnorte dieselbe Schule: Maßgebend ist der Ausbildungsort Wetzlar, nicht der Wohnort und nicht der Kreis des Wohnorts.",
+  "schule": {
+    "name": "Werner-von-Siemens-Schule Wetzlar",
+    "strasse": "Dammstraße 62",
+    "postleitzahl": "35576",
+    "ort": "Wetzlar",
+    "lat": 50.57684,
+    "lng": 8.51333,
+    "koordinatenQuelle": "OpenStreetMap node/2391469752 (amenity=school, Nominatim, abgerufen 2026-10-14)",
+    "adresseQuelle": "https://siemensschule-wetzlar.de/impressum/ (abgerufen 2026-10-14)",
+    "website": "https://siemensschule-wetzlar.de/"
+  },
+  "stufen": {
+    "grundstufe": "Werner-von-Siemens-Schule Wetzlar",
+    "fachstufe": "Werner-von-Siemens-Schule Wetzlar"
+  },
+  "unterrichtsbeginn": null,
+  "ankunftBis": "07:45",
+  "ankunftHinweis": "Unterrichtsbeginn nicht belegt (Website der Schule nennt keinen); für den Schulweg angesetzt: Ankunft an der Schule bis 07:45.",
+  "vorbehalt": "Ein regionales Berufsschulzentrum (Gewerbliche Schulen des Lahn-Dill-Kreises, Dillenburg, Blockunterricht für die Einzugsbereiche 15 und 16) wird nur zuständig, wenn das Ministerium nach § 4 Abs. 2 und 5 FachklV per Allgemeinverfügung feststellt, dass die Mindestklassengröße zwei Jahrgänge in Folge unterschritten ist. Für das Schuljahr 2026/2027 nennt der Lahn-Dill-Kreis den Beruf weder unter „Ampel Rot“ noch unter „Ampel Gelb“ (Mitteilungsvorlage MI-11/2026); eine Allgemeinverfügung dazu ist nicht bekannt.",
+  "andereAusbildungsorte": [
+    {
+      "gilt": "nur wenn der Ausbildungsbetrieb im Landkreis Gießen oder in der Stadt Gießen läge (Einzugsbereiche 11 und 12), nicht für Bad und Energie",
+      "schule": "Theodor-Litt-Schule Gießen",
+      "fundstelle": "FachklV Anlage 2, lfd. Nr. 2.5"
+    },
+    {
+      "gilt": "nur wenn der Ausbildungsbetrieb im Schulbezirk I des Lahn-Dill-Kreises (Dillenburg, Herborn, Sinn u. a.) läge, nicht für Bad und Energie",
+      "schule": "Gewerbliche Schulen Dillenburg",
+      "fundstelle": "Schulbezirkssatzung Lahn-Dill-Kreis § 1 Nr. 1 und Anlage lfd. Nr. 2"
+    }
+  ],
+  "quellen": [
+    {
+      "titel": "Verordnung über die Organisation und den Unterricht in den Fachklassen der Berufsschule (Fachklassenverordnung – FachklV) vom 1. April 2026, GVBl. 2026 Nr. 21 vom 8. April 2026",
+      "url": "https://verkuendung.hessen.de/sites/verkuendung.hessen.de/files/veroeffentlichungsplattform_plugin/published/1322/GVBl_2026_Nr_21_Regelungstext.pdf",
+      "fundstelle": "§ 3 Abs. 1 und 2 (S. 2): schulträgerübergreifende Schulbezirke nur für die Berufe und Einzugsbereiche der Anlage 2; § 4 Abs. 1, 2 und 5 (S. 2–3): Berufsschulzentren erst nach Allgemeinverfügung"
+    },
+    {
+      "titel": "FachklV Anlage 2",
+      "url": "https://verkuendung.hessen.de/sites/verkuendung.hessen.de/files/veroeffentlichungsplattform_plugin/published/1322/GVBl_2026_Nr_21_Regelungstext-Anlage-2.pdf",
+      "fundstelle": "S. 15 (PDF-Seite 1), lfd. Nr. 2 Anlagenmechaniker/-in für Sanitär-, Heizungs- und Klimatechnik: Spalte 4/5 nennt für den Einzugsbereich 15 (Lahn-Dill-Kreis) keine schulträgerübergreifende Fachklasse; Spalte 7–9: regionales Berufsschulzentrum Dillenburg für 15 und 16 (Blockunterricht)"
+    },
+    {
+      "titel": "FachklV Anlage 3 (Legende zu Anlage 2)",
+      "url": "https://verkuendung.hessen.de/sites/verkuendung.hessen.de/files/veroeffentlichungsplattform_plugin/published/1322/GVBl_2026_Nr_21_Regelungstext-Anlage-3.pdf",
+      "fundstelle": "S. 78 (PDF-Seite 1), Abschnitt A: Ordnungsnummer 15 = Lahn-Dill-Kreis, 15b = Altkreis Wetzlar"
+    },
+    {
+      "titel": "Satzung über die Bildung von Schulbezirken für die Berufsschulen im Lahn-Dill-Kreis vom 7. Februar 2011, geändert am 27. März 2023",
+      "url": "https://schulen.lahn-dill-kreis.de/wp-content/uploads/2025/12/Zusammengefuegt.pdf",
+      "fundstelle": "§ 1 Nr. 2 (S. 1–2): Wetzlar bildet mit weiteren Gemeinden den Schulbezirk II der Werner-von-Siemens-Schule Wetzlar; § 2 (S. 2): maßgebend ist der Ausbildungsort; Anlage lfd. Nr. 2 (S. 3): Grund- und Fachstufe an den Gewerblichen Schulen Dillenburg und an der Werner-von-Siemens-Schule Wetzlar"
+    },
+    {
+      "titel": "Lahn-Dill-Kreis, Mitteilungsvorlage MI-11/2026 „Zukunftsfähige Berufsschulen – Umsetzung der Fachklassenverordnung zum neuen Schuljahr 2026/2027“ vom 20. April 2026",
+      "url": "https://rim.ekom21.de/lahn-dill-kreis/sdnetrim/UGhVM0hpd2NXNFdFcExjZVawIeFEbOb5hpg8mywsXGrMu6GJ_X-xc_s2g3J9Wdtp/Mitteilungsvorlage_MI-11-2026.pdf",
+      "fundstelle": "S. 2–4: Listen „Ampel Rot“ und „Ampel Gelb“ für 2026/2027 nennen den Anlagenmechaniker SHK nicht"
+    },
+    {
+      "titel": "Website der Werner-von-Siemens-Schule Wetzlar, Seite Berufsschule",
+      "url": "https://siemensschule-wetzlar.de/berufsschule/",
+      "fundstelle": "Berufe im Anlagenbau: Anlagenmechaniker/-in Sanitär-, Heizungs- und Klimatechnik (abgerufen 2026-10-14)"
+    }
+  ]
+}
