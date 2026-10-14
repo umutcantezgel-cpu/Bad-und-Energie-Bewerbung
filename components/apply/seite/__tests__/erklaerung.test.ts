@@ -179,6 +179,22 @@ describe('Erklärteil: Diskretion, Wegweiser und Unterlagen', () => {
     }
   });
 
+  it('„Voraussetzung“ nur bei Stellen mit belegten Anforderungen, nie als leere Zeile (Bürofachkraft M-038, Praktikum M-027)', () => {
+    const { jobs } = eingaben('fachkraft');
+    const ohne = jobs.filter((job) => job.requirements.length === 0);
+    // Mindestens eine Stelle ohne Anforderungen ist live; sonst prüfte der Test nichts
+    expect(ohne.length).toBeGreaterThan(0);
+    const html = render(createElement(Erklaerung, eingaben('fachkraft')));
+    const eintraege = html.split(/<li\b/).slice(1);
+    for (const job of jobs) {
+      const eintrag = eintraege.find((li) => li.includes(`href="${jobPath(job)}"`))!;
+      expect(eintrag, job.id).toBeDefined();
+      expect(eintrag.includes('Voraussetzung'), job.id).toBe(job.requirements.length > 0);
+    }
+    // Kein Etikett ohne Wert dahinter
+    expect(html).not.toMatch(/Voraussetzung<span class="sr-only">: <\/span><\/span>\s*<\/p>/);
+  });
+
   it('Mappe und Unterlagen: beschreibende Links auf /bewerbung/mappe und #unterlagen', () => {
     const html = render(createElement(Erklaerung, eingaben('fachkraft')));
     expect(html).toMatch(new RegExp(`href="${MAPPE_PATH}"[^>]*>Bewerbungsmappe erstellen<`));

@@ -46,13 +46,16 @@ export function Erklaerung(eingaben: ErklaerungEingaben) {
                 {stelle.titel}
               </TextLink>
               <p className="max-w-prose text-callout text-ink">{stelle.text}</p>
-              <p className="text-callout text-ink-muted">
-                <span className="text-etikett">
-                  {stellen.voraussetzung}
-                  <span className="sr-only">: </span>
-                </span>{' '}
-                {stelle.voraussetzungen.join(' · ')}
-              </p>
+              {/* Ohne belegte Anforderungen (z. B. Bürofachkraft bis M-038) keine Zeile: ein leeres Etikett läse sich als „keine“ */}
+              {stelle.voraussetzungen.length > 0 ? (
+                <p className="text-callout text-ink-muted">
+                  <span className="text-etikett">
+                    {stellen.voraussetzung}
+                    <span className="sr-only">: </span>
+                  </span>{' '}
+                  {stelle.voraussetzungen.join(' · ')}
+                </p>
+              ) : null}
             </li>
           ))}
           {stellen.ohneAnzeige.map((weg) => (
