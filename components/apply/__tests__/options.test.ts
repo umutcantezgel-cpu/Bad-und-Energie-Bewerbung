@@ -27,8 +27,8 @@ describe('zusatzZeile', () => {
     }
   });
 
-  it('Büro: kein Tarif belegt (S5), nur der betriebsweite Urlaub; Praktikum: nichts', () => {
-    expect(zusatzZeile(job('buerofachkraft'))).toBe(FACTS.vacation30.short);
+  it('Büro: weder Tarif noch Urlaub belegt (S5, M-038), also keine Zeile; Praktikum: nichts', () => {
+    expect(zusatzZeile(job('buerofachkraft'))).toBeUndefined();
     expect(zusatzZeile(job('schuelerpraktikum-shk'))).toBeUndefined();
     // Ohne belegte Angabe keine Zeile
     expect(zusatzZeile({ pay: 'auf-anfrage', benefitFactIds: [], packageExtras: [] })).toBeUndefined();

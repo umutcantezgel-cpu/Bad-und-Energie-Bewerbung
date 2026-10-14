@@ -59,9 +59,11 @@ describe('Keine festen Arbeitszeiten in Fakten, Stellen und Texten (B28)', () =>
     expect(claims('Gehalt 3.600–4.600 € im Monat').map((c) => c.claim)).toEqual(['3.600–4.600 €']);
   });
 
-  it('jede Stelle führt flexibleHours, keine nennt eine feste Arbeitszeit (Daten, Beschreibung, Meta)', () => {
+  it('jede Stelle führt flexibleHours (außer wo es offen ist: Büro, S5), keine nennt eine feste Arbeitszeit (Daten, Beschreibung, Meta)', () => {
+    const offen = FACTS.flexibleHours.offenFuer?.kategorien ?? [];
+    expect(offen).toEqual(['buero']);
     for (const job of ALL_JOBS) {
-      expect(job.benefitFactIds, job.id).toContain('flexibleHours');
+      expect(job.benefitFactIds.includes('flexibleHours'), job.id).toBe(!offen.includes(job.category));
       expect(claims(JSON.stringify(job)), job.id).toEqual([]);
       expect(claims(toPlainDescription(job)), job.id).toEqual([]);
       expect(job.seo.metaDescription, job.id).not.toMatch(/Feierabend|frei\b/);

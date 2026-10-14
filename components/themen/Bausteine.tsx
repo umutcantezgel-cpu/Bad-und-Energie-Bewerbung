@@ -98,6 +98,11 @@ export function Kaestenband({ kopf, kaesten }: { kopf: Kopfzeile; kaesten: reado
                 {kasten.titel}
               </Etikettkasten>
               {mitSatz && kasten.text ? <p className={styles.kastenText}>{geschuetzt(kasten.text)}</p> : null}
+              {kasten.giltFuer ? (
+                <p className={cn(styles.giltFuer, 'text-etikett text-ink-muted')}>
+                  Gehört zu: <span className={styles.giltFuerStellen}>{kasten.giltFuer.join(' · ')}</span>
+                </p>
+              ) : null}
             </li>
           ))}
         </ul>

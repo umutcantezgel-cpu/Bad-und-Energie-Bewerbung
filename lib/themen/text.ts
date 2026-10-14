@@ -92,6 +92,11 @@ export interface Kasten {
   text: string | null;
   icon: KastenIcon;
   quellen: readonly Quelle[];
+  /**
+   * Nur bei Fakten, die nicht für jede gezeigte Stelle belegt sind (Fakt `offenFuer`, z. B. Urlaub im Büro): die live
+   * Stellen, zu denen sie gehören.
+   */
+  giltFuer?: readonly string[];
 }
 
 /** Abschnittskopf: Etikett (Versalien), h2, optional ein Lead. */
@@ -490,6 +495,35 @@ function lohnKarte(job: Job): LohnKarte {
   };
 }
 
+/** Woran eine Stelle einen Zusatz zum Lohn nennt, außer als eigenen Vorteil: „über Tarif“ in der Paketzeile „Vergütung“. */
+const ZUSATZ_PAKETZEILE: Readonly<Partial<Record<FactId, RegExp>>> = Object.freeze({
+  aboveTariff: /^Vergütung: .*(?:über Tarif|übertariflich)/i,
+});
+
+/** Stellen, die den Zusatz selbst nennen (Vorteil oder Paketzeile). */
+export function stellenMitZusatz(id: FactId, jobs: readonly Job[]): Job[] {
+  const merkmal = ZUSATZ_PAKETZEILE[id];
+  return jobs.filter(
+    (job) =>
+      job.benefitFactIds.includes(id) ||
+      (merkmal ? job.packageExtras.some((extra) => merkmal.test(`${extra.label}: ${extra.text}`)) : false),
+  );
+}
+
+/**
+ * Kästchen „Was dazukommt“ zu einem Zusatz: Nennen ihn nicht alle gezeigten Stellen (Büro offen, fakten-abgleich S5;
+ * kein unbefristeter Vertrag in der Ausbildung), steht darunter, zu welchen er gehört. Ohne Stelle mit dem Zusatz
+ * entfällt das Kästchen; ohne live Stelle stehen die Fakten allein.
+ */
+function zusatzKasten(id: FactId, stellen: readonly Job[], now: Date): Kasten | null {
+  const kasten = faktKasten(id, now);
+  if (stellen.length === 0) return kasten;
+  const mit = stellenMitZusatz(id, stellen);
+  if (mit.length === 0) return null;
+  if (mit.length === stellen.length) return { ...kasten, quellen: [...kasten.quellen, ...mit.map(sq)] };
+  return { ...kasten, giltFuer: mit.map((job) => job.shortTitle), quellen: [...kasten.quellen, ...mit.map(sq)] };
+}
+
 /**
  * Seite „Bezahlung und Extras“ (bis E-030 „Gehalt“ mit Spannen je Stelle; Slug und Adresse bleiben): Lohn auf Anfrage
  * bei jeder Stelle, die etwas zur Bezahlung sagt, dazu die Fakten ohne Zahl (über Tarif, Urlaubs- und
@@ -510,9 +544,10 @@ export function getGehaltPageText(options: TextOptions): GehaltPageText {
       title: 'Bezahlung und Extras bei Bad und Energie in Wetzlar',
       h1: 'Bezahlung und Extras',
       primaryKeyword: 'Bezahlung SHK Wetzlar',
+      // Lohn auf Anfrage gilt für jede Stelle, die Extras je nach Stelle (Büro offen: fakten-abgleich S5)
       description: fitDescription(
-        `${lohn.short} bei jeder Stelle: ${tarif.short}, ${urlaub.short} und ${lowerFirst(FACTS.noUnpaidOvertime.short)}. Bezahlung und Extras in Wetzlar.`,
-        `${lohn.short}: ${tarif.short}, ${urlaub.short}, ${lowerFirst(FACTS.noUnpaidOvertime.short)}. Bezahlung und Extras bei Bad und Energie.`,
+        `${lohn.short} bei jeder Stelle, je nach Stelle ${lowerFirst(tarif.short)} und ${urlaub.short}. Bezahlung und Extras in Wetzlar.`,
+        `${lohn.short}, je nach Stelle ${lowerFirst(tarif.short)} und ${urlaub.short}. Bezahlung und Extras bei Bad und Energie.`,
       ),
     }),
     etikett: `Bezahlung · ${COMPANY.address.city}`,
@@ -523,7 +558,7 @@ export function getGehaltPageText(options: TextOptions): GehaltPageText {
       lohnStellen.length > 0 ? { href: '#je-stelle', label: 'Extras je Stelle ansehen' } : { href: '#dazu', label: 'Was dazukommt' },
     whatsapp: whatsappNachricht('gehalt'),
     kontakt: kontakt('gehalt'),
-    og: { wert: 'auf Anfrage', name: 'Lohn', zeilen: [`${urlaub.short}.`, 'Extras je Stelle.'] },
+    og: { wert: 'auf Anfrage', name: 'Lohn', zeilen: [`${urlaub.short} je nach Stelle.`, 'Extras je Stelle.'] },
     lohn: { etikett: 'Bezahlung', titel: lohn.short, zeilen: [tarif.short, urlaub.short] },
     jeStelle: {
       kopf: {
@@ -536,7 +571,9 @@ export function getGehaltPageText(options: TextOptions): GehaltPageText {
     },
     dazu: {
       kopf: { id: 'dazu', etikett: 'Zum Lohn', heading: 'Was dazukommt' },
-      kaesten: (['aboveTariff', 'vacation30', 'flexibleHours', 'permanentContract'] as const).map((id) => faktKasten(id, now)),
+      kaesten: (['aboveTariff', 'vacation30', 'flexibleHours', 'permanentContract'] as const)
+        .map((id) => zusatzKasten(id, lohnStellen, now))
+        .filter((kasten): kasten is Kasten => kasten !== null),
     },
     ausbildung: azubi
       ? {

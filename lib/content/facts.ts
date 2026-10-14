@@ -1,10 +1,22 @@
 import { companyData } from '@/lib/data/company';
+import type { JobCategory } from '@/lib/jobs/schema';
 
 /**
  * Fakten-Registry: jede Arbeitgeber-Aussage genau einmal, mit Herkunft.
  * Komponenten, Stellen und Feeds referenzieren nur IDs. Neue Fakten nur mit
  * belegbarer Quelle im Repo; Abweichungen stehen in docs/operations/fakten-abgleich.md.
  */
+
+/**
+ * Arbeitsbedingung, die für einzelne Stellenarten nicht belegt ist (offene Frage an den Inhaber): Stellen dieser
+ * Kategorien nennen den Fakt nicht (Schema-Regel in lib/jobs/schema.ts), Übersichten wie „Bezahlung und Extras“
+ * nennen die Stellen, zu denen er gehört.
+ */
+export interface FactOffen {
+  kategorien: readonly JobCategory[];
+  /** Die offene Frage mit Fundstelle (fakten-abgleich, MENSCHEN). */
+  frage: string;
+}
 
 export interface FactPending {
   /** Stellen, auf denen die Aussage bis zur Bestätigung stehen darf (dort war sie schon sichtbar). */
@@ -26,6 +38,8 @@ interface FactBody {
   validUntil?: string;
   /** Wartet auf Owner-Bestätigung (ROADMAP §13). */
   pending?: FactPending;
+  /** Für diese Stellenarten nicht belegt (FactOffen). */
+  offenFuer?: FactOffen;
   /**
    * Fundstelle als `pfad@commit` (fester Stand: Phase 1 löscht oder schreibt mehrere Quelldateien um,
    * z. B. `git show 393df01:components/pricing/pricing.constants.ts`).
@@ -39,6 +53,8 @@ const RAW_FACTS = {
   flexibleHours: {
     short: 'Flexible Arbeitszeiten',
     long: 'Flexible Arbeitszeiten.',
+    // B28 gilt für den Betrieb; fürs Büro mit festen Erreichbarkeitszeiten ist es nicht geklärt (S5, M-038)
+    offenFuer: { kategorien: ['buero'], frage: 'fakten-abgleich S5, M-038: Gelten flexible Arbeitszeiten auch im Büro?' },
     source: 'docs/operations/fakten-abgleich.md@699dcfb',
   },
   noUnpaidOvertime: {
@@ -51,6 +67,7 @@ const RAW_FACTS = {
     long: '30 Arbeitstage bezahlter Erholungsurlaub pro Kalenderjahr.',
     value: '30',
     label: 'Tage Urlaub',
+    offenFuer: { kategorien: ['buero'], frage: 'fakten-abgleich S5, M-038: Gelten 30 Tage Urlaub auch im Büro?' },
     source: 'components/pricing/pricing.constants.ts@393df01',
   },
   radius35: {
@@ -90,6 +107,7 @@ const RAW_FACTS = {
   aboveTariff: {
     short: 'Über Tarif plus Urlaubs- und Weihnachtsgeld',
     long: 'Vergütung deutlich über dem regionalen Handwerkstarif, dazu Urlaubs- und Weihnachtsgeld.',
+    offenFuer: { kategorien: ['buero'], frage: 'fakten-abgleich S5: Tarifaussage fürs Büro nicht belegt' },
     source: 'lib/data/company.ts@393df01',
   },
   // Inhaber 2026-10-14 (E-030, fakten-abgleich S1): bei allen Stellen „Lohn auf Anfrage“, nirgends ein Betrag. Die
@@ -102,6 +120,7 @@ const RAW_FACTS = {
   permanentContract: {
     short: 'Unbefristeter Arbeitsvertrag',
     long: 'Du bekommst einen unbefristeten Arbeitsvertrag.',
+    offenFuer: { kategorien: ['buero'], frage: 'fakten-abgleich S5, M-038: Befristung der Bürostelle nicht genannt' },
     source: 'components/trust/ProcessSteps.tsx@393df01',
   },
   hilti: {

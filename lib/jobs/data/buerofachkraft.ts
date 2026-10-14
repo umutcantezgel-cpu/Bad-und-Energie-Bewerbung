@@ -3,7 +3,8 @@ import { defineJob } from '../schema';
 
 // Inhaber 2026-10-14 (fakten-abgleich S5): Bürofachkraft in Voll- oder Teilzeit, die vier Aufgaben im Wortlaut der
 // Antwort. Anforderungen und Stundenrahmen sind offen (M-038): kein Abschnitt „Das bringst du mit“, keine Ausbildung
-// und keine Berufserfahrung im JobPosting, bis der Inhaber sie nennt. Vorteile nur aus betriebsweit belegten Fakten.
+// und keine Berufserfahrung im JobPosting, bis der Inhaber sie nennt. Vorteile nur, was für den Betrieb als Ganzes
+// gilt (Gründung, Teamgröße); Urlaub, Arbeitszeit, Tarif und Befristung sind fürs Büro offen (S5, Fakt offenFuer).
 // Arbeitsort ist das Büro am Firmensitz (REGION.milestone: „moderneres Büro“), ohne Baustellenradius.
 export const buerofachkraft = defineJob({
   id: 'buerofachkraft',
@@ -35,7 +36,7 @@ export const buerofachkraft = defineJob({
   ],
   requirements: [],
   requirementsOpen: 'M-038',
-  benefitFactIds: ['flexibleHours', 'vacation30', 'founded1926', 'employees15'],
+  benefitFactIds: ['founded1926', 'employees15'],
   employment: { kind: 'voll-oder-teilzeit', permanent: false, start: 'nach-absprache' },
   pay: 'auf-anfrage',
   location: HQ_OFFICE,

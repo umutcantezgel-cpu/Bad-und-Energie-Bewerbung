@@ -26,6 +26,7 @@ import {
   getThemaPageText,
   saetze,
   stellenMitFakt,
+  stellenMitZusatz,
   type Satz,
   type SeitenBasis,
 } from '../text';
@@ -162,6 +163,24 @@ describe('Texte der Themenseiten: nur Belegtes', () => {
       if (job.requirementsOpen) expect(karte.voraussetzung.filter((p) => p !== job.education?.label), job.id).toEqual([]);
     }
     expect(gehalt.ausbildung).not.toBeNull();
+    // „Was dazukommt“: Jeder Zusatz nennt die Stellen, zu denen er gehört, sobald ihn nicht alle nennen; das Büro
+    // (S5 offen) steht bei keinem, die Ausbildung nicht beim unbefristeten Vertrag
+    const buero = JOBS.filter((j) => j.category === 'buero');
+    expect(buero.length).toBeGreaterThan(0);
+    const zusaetze = ['aboveTariff', 'vacation30', 'flexibleHours', 'permanentContract'] as const;
+    expect(gehalt.dazu.kaesten.map((k) => k.titel)).toEqual(zusaetze.map((id) => FACTS[id].short));
+    for (const [i, id] of zusaetze.entries()) {
+      const kasten = gehalt.dazu.kaesten[i];
+      const mit = stellenMitZusatz(id, mitLohn(JOBS));
+      expect(kasten.giltFuer, id).toEqual(mit.map((j) => j.shortTitle));
+      for (const j of mit) expect(FACTS[id].offenFuer?.kategorien ?? [], `${id} ${j.id}`).not.toContain(j.category);
+      for (const j of buero) expect(kasten.giltFuer, id).not.toContain(j.shortTitle);
+    }
+    expect(gehalt.dazu.kaesten[3].giltFuer).not.toContain(JOBS.find((j) => j.category === 'ausbildung')!.shortTitle);
+    // Meta und Teilen-Bild: Lohn auf Anfrage bei jeder Stelle, die Extras je nach Stelle
+    expect(gehalt.meta.description).toMatch(/je nach Stelle/);
+    expect(gehalt.meta.description).not.toMatch(/bei jeder Stelle:/);
+    expect(gehalt.og.zeilen[0]).toMatch(/je nach Stelle/);
     expect(findClaims(plain(alleTexte(gehalt).join(' ')))).toEqual([]);
     expect(plain(alleTexte(gehalt).join(' '))).not.toMatch(/€|\bEuro\b|brutto|Gehaltsspanne/);
   });

@@ -223,6 +223,9 @@ export const JobSchema = z
       if (fact.pending && !fact.pending.onlyForJobIds.includes(job.id)) {
         issue(['benefitFactIds', i], `Fakt „${factId}“ wartet auf Owner-Bestätigung: ${fact.pending.note}`);
       }
+      if (fact.offenFuer?.kategorien.includes(job.category)) {
+        issue(['benefitFactIds', i], `Fakt „${factId}“ ist für ${job.category} nicht belegt: ${fact.offenFuer.frage}`);
+      }
     });
 
     if (job.employment.kind === 'ausbildung') {

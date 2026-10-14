@@ -245,6 +245,10 @@ describe('Job-Registry', () => {
     }
     expect(FACTS.payFirstWorkday.pending?.onlyForJobIds).toEqual([]);
     expect(FACTS.boschPremiumPartner.pending?.onlyForJobIds).toEqual([]);
+    // Kein Fakt bei einer Stellenart, für die er nicht belegt ist (Bürofachkraft: fakten-abgleich S5, M-038)
+    for (const job of ALL_JOBS) {
+      for (const id of job.benefitFactIds) expect(FACTS[id].offenFuer?.kategorien ?? [], `${job.id}: ${id}`).not.toContain(job.category);
+    }
     // Übernahmegarantie (A1) bleibt bis zur Bestätigung auf die Ausbildung 2026 beschränkt
     expect(FACTS.takeoverGuarantee.pending?.onlyForJobIds).toEqual(['ausbildung-anlagenmechaniker-shk']);
     expect(az27.benefitFactIds).not.toContain('takeoverGuarantee');
@@ -316,8 +320,8 @@ describe('Job-Registry', () => {
     expect(buero.apply.questionSet).toBe('buero');
     expect(buero.location.radiusKm).toBeUndefined();
     expect(toPlainDescription(buero)).not.toContain('Das bringst du mit');
-    // Nur betriebsweit belegte Vorteile; keine Tarifaussage fürs Büro
-    expect(buero.benefitFactIds).not.toContain('aboveTariff');
+    // Nur, was für den Betrieb als Ganzes gilt; Tarif, Urlaub, Arbeitszeit und Befristung sind fürs Büro offen (S5)
+    expect(buero.benefitFactIds).toEqual(['founded1926', 'employees15']);
   });
 
   it('Schülerpraktikum (fakten-abgleich S4): Dauer nach Absprache mit der Schule, Fragenset der Ausbildung', () => {
@@ -381,6 +385,15 @@ describe('defineJob', () => {
   it('lehnt offene Owner-Fakten bei nicht freigegebenen Stellen ab', () => {
     expect(() => defineJob({ ...base, benefitFactIds: ['payFirstWorkday'] })).toThrow(/Owner-Bestätigung/);
     expect(() => defineJob({ ...base, benefitFactIds: ['boschPremiumPartner'] })).toThrow(/Owner-Bestätigung/);
+  });
+
+  it('lehnt Fakten ab, die für die Stellenart nicht belegt sind (offenFuer: Urlaub, Arbeitszeit, Tarif, Befristung im Büro)', () => {
+    for (const id of ['vacation30', 'flexibleHours', 'aboveTariff', 'permanentContract'] as const) {
+      expect(FACTS[id].offenFuer?.kategorien, id).toContain('buero');
+      expect(() => defineJob({ ...bueroInput, benefitFactIds: ['founded1926', id] }), id).toThrow(/für buero nicht belegt/);
+    }
+    // Für die Handwerksstellen bleiben sie erlaubt
+    expect(() => defineJob({ ...base, benefitFactIds: ['vacation30', 'flexibleHours'] })).not.toThrow();
   });
 
   it('lehnt funnel_only mit aktivem Kanal ab', () => {
