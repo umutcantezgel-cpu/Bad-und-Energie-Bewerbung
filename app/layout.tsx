@@ -4,6 +4,7 @@ import { Suspense } from 'react';
 import './globals.css';
 import { fontVariables } from './fonts';
 import { AttributionCapture } from '@/components/analytics/AttributionCapture';
+import { EreignisSchalter } from '@/components/analytics/EreignisSchalter';
 import { SiteFooter, SiteHeader, StickyApplyBar } from '@/components/site';
 import { SkipLink } from '@/components/ui/SkipLink';
 import { ToastProvider } from '@/components/ui/Toast';
@@ -92,6 +93,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Suspense fallback={null}>
           <AttributionCapture />
         </Suspense>
+        {/* Schalter FUNNEL_EVENTS (Standard aus, M-034) für alle Seiten; React setzt das Meta-Element in den <head>. */}
+        <EreignisSchalter />
         {/* Kein JSON-LD hier (V6-B): Jede Seite rendert genau einen @graph (lib/seo/graph.ts) mit den globalen Knoten. */}
       </body>
     </html>

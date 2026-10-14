@@ -122,14 +122,14 @@ describe('Seite /bewerbung (R5-BEW-01)', () => {
     expect(text).not.toMatch(/Hochladen|noch nicht verfügbar|Lieber mit Unterlagen bewerben/);
   });
 
-  it('reicht den Schalter FUNNEL_EVENTS als Meta-Element ins HTML, nur wenn er an ist (Standard aus)', async () => {
+  // Den Schalter FUNNEL_EVENTS reicht das Root-Layout auf jeder Seite ins HTML (EreignisSchalter, eigener Test in
+  // components/analytics/__tests__); die Seite selbst setzt kein zweites Meta-Element, auch wenn er an ist.
+  it('setzt das Meta-Element des Schalters FUNNEL_EVENTS nicht selbst (kommt genau einmal aus dem Root-Layout)', async () => {
     try {
       vi.stubEnv('FUNNEL_EVENTS', undefined);
       expect(await seite()).not.toContain('be-ereignisse');
-      vi.stubEnv('FUNNEL_EVENTS', 'false');
-      expect(await seite()).not.toContain('be-ereignisse');
       vi.stubEnv('FUNNEL_EVENTS', 'true');
-      expect((await seite()).match(/<meta name="be-ereignisse" content="an"\/>/g)).toHaveLength(1);
+      expect(await seite()).not.toContain('be-ereignisse');
     } finally {
       vi.unstubAllEnvs();
     }

@@ -278,8 +278,8 @@ export function getIndexNowSubmitToken(): string | undefined {
 
 /**
  * Cookielose Ereignisse des Bewerbungsflows (POST /api/e, lib/attribution/ereignisse.ts). Nur mit
- * FUNNEL_EVENTS=true an; ohne Wert, mit „false“ oder ungültigem Wert aus. Die Seite reicht den Schalter als
- * Meta-Element ins HTML, der Browser sendet nur dann.
+ * FUNNEL_EVENTS=true an; ohne Wert, mit „false“ oder ungültigem Wert aus. Das Root-Layout reicht den Schalter als
+ * Meta-Element ins HTML (components/analytics/EreignisSchalter.tsx), der Browser sendet nur dann.
  */
 export function funnelEventsEnabled(): boolean {
   return readVar('FUNNEL_EVENTS').value === 'true';

@@ -8,15 +8,16 @@ import { getAttribution } from './store';
  * Keine Kennung, kein Cookie, kein Speicher im Browser; der Server speichert weder IP noch User-Agent und schreibt
  * vorerst nur eine Log-Zeile (Speicher in Supabase gehört der Phase-2-Session, E-012).
  *
- * Alles hinter dem Schalter FUNNEL_EVENTS (lib/env.ts, Standard aus): Die Seite setzt dann das Meta-Element
- * `<meta name="be-ereignisse" content="an">`, ohne es sendet der Browser nichts. Freigabe durch den Datenschutz:
- * MENSCHEN.md M-034, Entwurf für die Datenschutzerklärung in docs/operations/datenschutz-aenderungen.md (2.13).
+ * Alles hinter dem Schalter FUNNEL_EVENTS (lib/env.ts, Standard aus): Das Root-Layout setzt dann auf jeder Seite das
+ * Meta-Element `<meta name="be-ereignisse" content="an">` (components/analytics/EreignisSchalter.tsx), ohne es sendet
+ * der Browser nichts. Freigabe durch den Datenschutz: MENSCHEN.md M-034, Entwurf für die Datenschutzerklärung in
+ * docs/operations/datenschutz-aenderungen.md (2.13).
  *
  * Client-tauglich (ohne zod); die strenge Prüfung auf dem Server steht in ereignis-schema.ts.
  */
 
 export const EREIGNIS_ENDPOINT = '/api/e';
-/** Name des Meta-Elements, mit dem die Seite den Schalter ins HTML reicht. */
+/** Name des Meta-Elements, mit dem das Root-Layout den Schalter ins HTML reicht. */
 export const EREIGNIS_META = 'be-ereignisse';
 
 export const EREIGNIS_NAMEN = ['flow_start', 'schritt', 'abgesendet', 'fehler', 'whatsapp_klick', 'telefon_klick'] as const;
