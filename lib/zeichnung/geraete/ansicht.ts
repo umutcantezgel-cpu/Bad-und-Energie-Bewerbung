@@ -188,8 +188,14 @@ export function vorderansicht(g: Aussengeraet, { detail = 'voll', massketten = '
   const verdeckt =
     detail === 'voll'
       ? [
-          // Verdampfer auf der Rückseite, hinter der Front
-          rechteck(g.verdampfer.rand.mm, rk + g.verdampfer.rand.mm, B - g.verdampfer.rand.mm, unterkante - g.verdampfer.rand.mm),
+          // Verdampfer auf der Rückseite, hinter der Front: nur über seine Breite (von vorn links), rechts davon liegt der
+          // Anschlussbereich mit den hydraulischen Anschlüssen (Bild 3/4)
+          rechteck(
+            g.verdampfer.vonLinks.mm,
+            rk + g.verdampfer.rand.mm,
+            g.verdampfer.vonLinks.mm + g.verdampfer.breite.mm,
+            unterkante - g.verdampfer.rand.mm,
+          ),
         ]
       : [];
   if (detail === 'voll') {

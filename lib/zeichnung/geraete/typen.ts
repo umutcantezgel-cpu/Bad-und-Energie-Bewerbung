@@ -91,7 +91,12 @@ export interface Aussengeraet {
     /** Überstand unter dem Gehäuse; höchstens so lang wie die Bodenhalterung hoch ist (der Stutzen steht nicht auf). */
     laenge: Mass;
   };
-  verdampfer: { lage: string; tiefe: Mass; rand: Mass };
+  /**
+   * Lamellenblock auf der Rückseite: Tiefe, Abstand zum Gehäuserand (oben und unten) und seine Lage in der Breite,
+   * von vorn gesehen ab dem linken Rand (`vonLinks`, `breite`). Rechts davon (von vorn) liegt der Anschlussbereich mit
+   * den hydraulischen Anschlüssen; der Verdampfer reicht nicht über die ganze Breite (Prüfung E-029, Runde 2).
+   */
+  verdampfer: { lage: string; tiefe: Mass; rand: Mass; vonLinks: Mass; breite: Mass };
   /** Runde Ausblasöffnung in der Front (Mitte von links und von oben). */
   ausblas: { mitteX: Mass; mitteY: Mass; durchmesser: Mass };
   /** Allgemeiner Axialrotor hinter dem Schutzgitter (neutrale Fassung, nicht die Form des Herstellers). */

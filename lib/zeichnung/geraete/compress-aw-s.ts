@@ -74,6 +74,11 @@ export const COMPRESS_AW_S: Aussengeraet = {
     lage: 'hinten (Bild 3: Verdampfer auf der Rückseite)',
     tiefe: schaetzung(70, 'Tiefe des Lamellenblocks nicht bemaßt'),
     rand: schaetzung(40, 'Abstand des Lamellenblocks zum Gehäuserand nicht bemaßt'),
+    // Bild 3 zeigt Verdampfer [6] und Maschinenraum mit Kondensator [1] nebeneinander; das Lamellengitter in Bild 4
+    // (Rückansicht, DK: S. 5 Fig. 3/4) liegt, am Gehäuse von 1.100 mm gemessen, 336–1.048 mm vom linken Rand, von vorn
+    // also 52–764 mm. Abgeleitet aus dem Gitter, nicht bemaßt
+    vonLinks: schaetzung(52, 'Bild 3/4 (DK: S. 5 Fig. 3/4): Lamellengitter der Rückansicht gemessen und gespiegelt, 1.100 − 1.048 mm'),
+    breite: schaetzung(712, 'Bild 3/4 (DK: S. 5 Fig. 3/4): Lamellengitter der Rückansicht gemessen, 1.048 − 336 mm'),
   },
   ausblas: {
     mitteX: schaetzung(430, 'Lage der Ausblasöffnung nicht bemaßt: links der Mitte'),

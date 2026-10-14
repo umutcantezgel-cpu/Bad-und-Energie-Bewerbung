@@ -95,6 +95,34 @@ describe('Außengerät: maßstäblich aus dem Geräte-Modul (K-010)', () => {
     expect(vorne).toContain('Außeneinheit 4–7\u00a0kW · Ansicht von vorn');
   });
 
+  it('Vorderansicht: der verdeckte Verdampfer liegt nur über seiner Breite, kein hydraulischer Anschluss darin (Runde 2)', () => {
+    for (const [groesse, g] of GROESSEN) {
+      const a = ansichtVon(g, 'vorne');
+      const rechteck = (d: string) => {
+        const n = (d.match(/-?\d*\.?\d+/g) ?? []).map(Number);
+        return { x0: n[0], y0: n[1], x1: n[2], y1: n[3] };
+      };
+      expect(a.verdeckt, groesse).toHaveLength(1);
+      const v = rechteck(a.verdeckt[0]);
+      expect(v.x0, groesse).toBe(g.verdampfer.vonLinks.mm);
+      expect(v.x1, groesse).toBe(g.verdampfer.vonLinks.mm + g.verdampfer.breite.mm);
+      // Lage aus dem Gitter abgeleitet: geschätzt, mit Fundstelle Bild 3/4
+      for (const m of [g.verdampfer.vonLinks, g.verdampfer.breite]) {
+        expect(m.geschaetzt, groesse).toBeDefined();
+        expect(m.stelle, groesse).toMatch(/Bild 3\/4/);
+      }
+      const anschluesse = a.kreise.filter((k) => k.art === 'verdeckt');
+      expect(anschluesse, groesse).toHaveLength(2);
+      for (const k of anschluesse) {
+        // Der ganze Anschlusskreis liegt rechts neben dem Verdampfer (kein Punkt im Umriss)
+        const drin = k.cx + k.r > v.x0 && k.cx - k.r < v.x1 && k.cy + k.r > v.y0 && k.cy - k.r < v.y1;
+        expect(drin, `${groesse}: Anschluss ${k.cx}/${k.cy} im Verdampfer`).toBe(false);
+        expect(k.cx - k.r, groesse).toBeGreaterThan(v.x1);
+      }
+      expect(v.x1, groesse).toBeLessThan(g.breite.mm);
+    }
+  });
+
   it('der Rotor ist eine eigene Ebene; die Kennung rotor-dreht trägt er nur mit `bewegt`', () => {
     const still = geraet({ ansicht: 'vorne' });
     const bewegt = geraet({ ansicht: 'vorne', bewegt: true });
