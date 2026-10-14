@@ -18,11 +18,15 @@ import {
   kopfUnterzeile,
   paketIcon,
   vorteilIcon,
-  zeigtWaermebild,
+  kopfZeichnung,
 } from '@/components/jobs/stelle/stelle-text';
 import { einblick } from '@/components/jobs/stelle/einblick-text';
 import { SHORT_APPLY_LABEL } from '@/components/site/nav';
-import { WAERMEBILD_TITEL } from '@/components/zeichnung/Waermebild';
+import { ANLAGENSCHEMA_TITEL } from '@/components/zeichnung/technik/Anlagenschema';
+import { geraetTitel } from '@/components/zeichnung/technik/Aussengeraet';
+import { DAUER_IDS } from '@/lib/motion/register';
+import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
+import { SCHRIFTFELD_SCHEMA } from '@/lib/zeichnung/norm';
 import { FACTS } from '@/lib/content/facts';
 import { PAY_ON_REQUEST, escapeHtml, getJobSections } from '@/lib/jobs/format';
 import { buildJobPostingJsonLd } from '@/lib/jobs/jsonld';
@@ -36,6 +40,7 @@ const kd = getJobById('kundendiensttechniker-shk')!;
 const azubi = getJobById('ausbildung-anlagenmechaniker-shk')!;
 const buero = getJobById('buerofachkraft')!;
 const praktikum = getJobById('schuelerpraktikum-shk')!;
+const obermonteur = getJobById('obermonteur-projektleiter-shk')!;
 const pageJobs = getJobPageSlugs()
   .map((slug) => getJobBySlug(slug))
   .filter((job): job is Job => job !== undefined);
@@ -107,8 +112,12 @@ describe('Kopf der Stellenseite: Texte und Maße (stelle-text)', () => {
     for (const job of pageJobs) expect(job.summary).toContain(kopfUnterzeile(job));
   });
 
-  it('Wärmebild nur auf der Kundendienst-Stelle (Wärmepumpe)', () => {
-    expect(pageJobs.filter(zeigtWaermebild).map((job) => job.slug)).toEqual(['kundendiensttechniker-waermepumpe-wetzlar']);
+  it('Zeichnung je Beruf (E-029): Außeneinheit im Kundendienst, Anlagenschema für Anlagenmechaniker und Ausbildung', () => {
+    const nach = (art: string) => pageJobs.filter((job) => kopfZeichnung(job) === art).map((job) => job.category);
+    expect(nach('aussengeraet')).toEqual(['kundendienst']);
+    expect(new Set(nach('anlagenschema'))).toEqual(new Set(['anlagenmechaniker', 'ausbildung']));
+    expect(nach('hausschnitt')).not.toContain('kundendienst');
+    for (const job of pageJobs) expect(['aussengeraet', 'anlagenschema', 'hausschnitt']).toContain(kopfZeichnung(job));
   });
 
   it('Icons: Zeichen der eigenen Familie, sonst der Haken', () => {
@@ -169,14 +178,32 @@ describe('JobHeader (Seitenkopf erzaehl)', () => {
     expect(buildJobPostingJsonLd(kd)!.title).toBe('Kundendiensttechniker SHK / Servicemonteur (m/w/d)');
   });
 
-  it('Kundendienst: Wärmebild als Bild mit Titel; die anderen Stellen ohne', () => {
+  it('Kundendienst: Außeneinheit als Bild mit Titel, der Rotor dreht nur im Bereich der DauerSteuerung; kein Wärmebild', () => {
     const kdHtml = renderToStaticMarkup(createElement(JobHeader, { job: kd }));
-    expect(kdHtml).toContain('role="img"');
-    expect(kdHtml).toContain(`aria-label="${escapeHtml(WAERMEBILD_TITEL)}"`);
-    expect(kdHtml).not.toContain('<canvas');
-    const amHtml = renderToStaticMarkup(createElement(JobHeader, { job: am }));
-    expect(amHtml).not.toContain('data-zeichnung="waermebild"');
-    expect(amHtml).toContain('data-zeichnung="haus-klein"');
+    expect(kdHtml).toContain('data-stelle-kopfbild="aussengeraet"');
+    expect(kdHtml).toContain(`role="img" aria-label="${escapeHtml(geraetTitel(COMPRESS_AW_S, 'vorne'))}"`);
+    expect(kdHtml).toMatch(/data-dauer="aus">[\s\S]*data-motion="rotor-dreht"[\s\S]*Anhalten<\/button>/);
+    expect(kdHtml.match(/data-motion="rotor-dreht"/g)).toHaveLength(1);
+    expect(kdHtml).not.toMatch(/<canvas|data-zeichnung="waermebild"/);
+    // Anlagenmechaniker und Ausbildung: Anlagenschema statisch und beschriftet, mit kurzem Schriftfeld; ohne Dauerbewegung
+    for (const job of [am, azubi]) {
+      const html = renderToStaticMarkup(createElement(JobHeader, { job }));
+      expect(html, job.id).toContain('data-stelle-kopfbild="anlagenschema"');
+      expect(html, job.id).toContain(`aria-label="${escapeHtml(ANLAGENSCHEMA_TITEL)}"`);
+      for (const bereich of ['AUSSENEINHEIT', 'INNENEINHEIT', 'HEIZKREIS', 'ERDREICH']) expect(html, job.id).toContain(`>${bereich}</text>`);
+      expect(html, job.id).toContain(`>${SCHRIFTFELD_SCHEMA}</span>`);
+      // Die Legende steht auf der Wärmepumpen-Seite; im Kopf hielte sie den Lohn-Block unter dem ersten Bild
+      expect(html, job.id).not.toContain('aria-label="Legende"');
+      for (const id of DAUER_IDS) expect(html, job.id).not.toContain(`data-motion="${id}"`);
+    }
+    // Alle anderen, ausdrücklich der Obermonteur: der kleine Hausschnitt, dekorativ, ohne das alte Haus
+    expect(kopfZeichnung(obermonteur)).toBe('hausschnitt');
+    for (const job of [obermonteur, buero, praktikum]) {
+      const html = renderToStaticMarkup(createElement(JobHeader, { job }));
+      expect(html, job.id).toContain('data-zeichnung="hausschnitt-klein"');
+      expect(html, job.id).not.toContain('data-zeichnung="haus-klein"');
+      expect(html, job.id).not.toContain('data-motion="rotor-dreht"');
+    }
   });
 });
 

@@ -3,7 +3,8 @@ import path from 'node:path';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { HausKlein, Heizkreis, OffeneLeitung, Waermebild } from '@/components/zeichnung';
+import { HausKlein, Heizkreis, OffeneLeitung } from '@/components/zeichnung';
+import { Aussengeraet } from '@/components/zeichnung/technik/Aussengeraet';
 import { MOTION_IDS } from '@/lib/motion/register';
 import { Seitenkopf, type SeitenkopfProps } from '..';
 
@@ -37,7 +38,7 @@ const PROBE: Record<string, SeitenkopfProps> = {
     titel: 'Kundendiensttechniker Wärmepumpe',
     aktion: { href: '/bewerbung', label: 'Jetzt bewerben' },
     zweitweg: { href: '/jobs', label: 'Alle Stellen ansehen' },
-    panel: createElement(Waermebild),
+    panel: createElement(Aussengeraet, { ansicht: 'vorne', schriftfeld: false }),
   },
   fehler: {
     variante: 'erzaehl',
@@ -126,8 +127,13 @@ describe('Seitenkopf (SEITENKOPF-01): Probeseite rendert jede Variante', () => {
     expect(viele.match(/data-zeichnung="masskette"/g)).toHaveLength(4);
   });
 
-  it('Unterzeile mit Rohrklammer; ruhig ohne Unterzeile fasst die h1', () => {
-    expect(html.stelle).toContain('data-zeichnung="rohrklammer"');
+  it('E-029: erzaehl und arbeit ohne Rohrklammer (Etikett und h1 tragen den Kopf); ruhig behält sie an Unterzeile bzw. h1', () => {
+    for (const name of ['stelle', 'waerme', 'fehler', 'bewerbung'] as const) {
+      expect(html[name], name).not.toContain('data-zeichnung="rohrklammer"');
+      expect(html[name], name).not.toMatch(/class="[^"]*mitKlammer/);
+    }
+    expect(plain(html.stelle)).toContain('Wärmepumpen, Heizung, Bad.');
+    expect(html.recht.match(/data-zeichnung="rohrklammer"/g)).toHaveLength(1);
     const ohne = render({ variante: 'ruhig', etikett: 'Rechtliches', titel: 'Impressum' });
     expect(ohne).toMatch(/<h1 [^>]*>(?:<span[^>]*>)<svg[^>]*data-zeichnung="rohrklammer"/);
   });

@@ -1,0 +1,139 @@
+/*
+ * Dauerbewegung (E-029, KERN K-009): die einzige Datei mit Schleifen (Guard-Regel `endlos` in
+ * scripts/qa/check-design-tokens.mjs). Schleifen laufen nur unter [data-dauer="an"], das DauerSteuerung.tsx setzt,
+ * wenn die Startbedingung gilt, und nur bei prefers-reduced-motion: no-preference.
+ *
+ * Ruhe ist das vollständige Standbild: Der Rotor steht hinter dem Gitter, die Überlagerungspfade sind unsichtbar
+ * (keine gestrichelten Leitungen im Standbild), die festen Fließpfeile der Zeichnung bleiben stehen.
+ * Bewegt werden nur transform (Rotor, eigene HTML-Ebene) und stroke-dashoffset (Wasser, Kältemittel). Kein Pulsieren,
+ * kein Leuchten, kein Skalieren. Perioden wie im Register (lib/motion/register.ts): Rotor d-4 je Blattabstand,
+ * Wasser 2 × d-4, Kältemittel 12 Takte.
+ */
+
+.bereich {
+  position: relative;
+}
+
+/* ═══ Knopf „Anhalten“ / „Abspielen“ unter der Zeichnung, rechts bündig ═══ */
+.leiste {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--a-2) var(--a-4);
+  margin-top: var(--a-2);
+}
+
+.knopf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--a-2);
+  min-width: var(--m-ziel);
+  min-height: var(--m-ziel);
+  margin-left: auto;
+  padding: 0 var(--a-3);
+  border: var(--m-kontur) solid var(--brand);
+  border-radius: var(--radius-1);
+  background-color: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--text-callout);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.zeichen {
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--m-icon);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.knopf:active {
+  background-color: var(--surface-3);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .knopf:hover {
+    background-color: var(--surface-2);
+  }
+}
+
+/* Bis zur Hydration unsichtbar, mit Platz (kein Layoutsprung); ohne Skript und reduziert gibt es keinen Knopf */
+.wartet {
+  visibility: hidden;
+}
+
+@media (scripting: none) {
+  .knopf {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .knopf {
+    display: none;
+  }
+}
+
+@media print {
+  .leiste {
+    display: none;
+  }
+}
+
+/* ═══ Teile der Zeichnungen ═══ */
+
+/* Rotor: eigene Ebene (HTML-Element über dem Gehäuse, unter dem Gitter), dreht um seine Mitte */
+.rotor {
+  transform-origin: 50% 50%;
+}
+
+/* Überlagerungspfad auf einer Leitung, in Fließrichtung gezeichnet: in Ruhe unsichtbar */
+.fluss {
+  opacity: 0;
+  stroke-dasharray: 4px 12px;
+  stroke-dashoffset: 0;
+}
+
+/* Vier Blätter: ein Blattabstand (90°) je Durchgang, nahtlos */
+@keyframes rotorDreht {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(90deg);
+  }
+}
+
+/* Ein Muster (16 px) je Durchgang in Laufrichtung des Pfads */
+@keyframes fliessen {
+  from {
+    stroke-dashoffset: 16px;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bereich[data-dauer="an"] .rotor[data-motion="rotor-dreht"] {
+    will-change: transform;
+    animation: rotorDreht var(--d-4) linear infinite;
+  }
+
+  .bereich[data-dauer="an"] .fluss[data-motion="wasser-fliesst"] {
+    opacity: 1;
+    animation: fliessen calc(var(--d-4) * 2) linear infinite;
+  }
+
+  .bereich[data-dauer="an"] .fluss[data-motion="kaeltemittel-fliesst"] {
+    opacity: 1;
+    animation: fliessen calc(var(--takt) * 12) linear infinite;
+  }
+}

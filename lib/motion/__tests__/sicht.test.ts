@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { MEDIA } from '../prefers';
-import { onceVisible } from '../sicht';
+import { beobachteSicht, beobachteTab, onceVisible } from '../sicht';
 
 type Callback = (entries: Array<{ isIntersecting: boolean }>) => void;
 
@@ -69,5 +69,61 @@ describe('onceVisible', () => {
     observers[0].cb([{ isIntersecting: true }]);
     expect(callback).not.toHaveBeenCalled();
     expect(observers[0].disconnected).toBe(true);
+  });
+});
+
+describe('beobachteSicht (Dauerbewegung: Stopp außerhalb des Sichtfelds)', () => {
+  it('meldet jeden Wechsel, gleiche Zustände nur einmal, und trennt beim Abmelden', () => {
+    const { win, observers } = fakeObserverWindow();
+    const meldungen: boolean[] = [];
+    const stop = beobachteSicht(element, (s) => meldungen.push(s), { win });
+    expect(observers[0].observed).toEqual([element]);
+    expect(observers[0].options).toEqual({ threshold: 0, rootMargin: '0px' });
+    observers[0].cb([{ isIntersecting: true }]);
+    observers[0].cb([{ isIntersecting: true }]);
+    observers[0].cb([{ isIntersecting: false }]);
+    observers[0].cb([{ isIntersecting: true }]);
+    expect(meldungen).toEqual([true, false, true]);
+    stop();
+    expect(observers[0].disconnected).toBe(true);
+  });
+
+  it('meldet auch bei reduzierter Bewegung (die Startbedingung entscheidet), ohne Observer gilt sichtbar', () => {
+    const { win, observers } = fakeObserverWindow(true);
+    const meldung = vi.fn();
+    beobachteSicht(element, meldung, { win });
+    expect(observers).toHaveLength(1);
+    expect(meldung).not.toHaveBeenCalled();
+    const ohne = vi.fn();
+    beobachteSicht(element, ohne, { win: { matchMedia: () => ({ matches: false }) as MediaQueryList } });
+    expect(ohne).toHaveBeenCalledWith(true);
+  });
+});
+
+describe('beobachteTab (Dauerbewegung: Stopp bei verstecktem Tab)', () => {
+  it('meldet sofort und bei jedem visibilitychange, meldet sich wieder ab', () => {
+    let hoerer: (() => void) | null = null;
+    const doc = {
+      visibilityState: 'visible' as DocumentVisibilityState,
+      addEventListener: (_: 'visibilitychange', h: () => void) => {
+        hoerer = h;
+      },
+      removeEventListener: () => {
+        hoerer = null;
+      },
+    };
+    const meldungen: boolean[] = [];
+    const stop = beobachteTab((s) => meldungen.push(s), doc);
+    doc.visibilityState = 'hidden';
+    hoerer!();
+    doc.visibilityState = 'visible';
+    hoerer!();
+    expect(meldungen).toEqual([true, false, true]);
+    stop();
+    expect(hoerer).toBeNull();
+    // Ohne Dokument (Server): sichtbar
+    const server = vi.fn();
+    beobachteTab(server, undefined);
+    expect(server).toHaveBeenCalledWith(true);
   });
 });

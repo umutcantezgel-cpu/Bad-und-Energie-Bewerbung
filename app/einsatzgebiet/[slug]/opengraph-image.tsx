@@ -7,8 +7,8 @@ import { renderPlaceImage } from '@/lib/seo/og-render';
 import { liveJobs } from '../seo';
 
 /**
- * Teilen-Bild einer Ortsseite (E-028) im Rahmen der Stellenbilder: h1 der Seite, im Heizkreis die Straßenstrecke
- * „27 km bis zum Firmensitz“. Die Seite verlinkt es mit eigenem alt (placeOgImage); dieses alt gilt nur ohne.
+ * Teilen-Bild einer Ortsseite (E-028) im Rahmen der Stellenbilder: h1 der Seite, als Kennwert über dem Hausschnitt
+ * die Straßenstrecke „27 km bis zum Firmensitz“ (E-029). Die Seite verlinkt es mit eigenem alt (placeOgImage); dieses alt gilt nur ohne.
  * Kreis- und Gebietsseite nutzen das Standardbild; ihre Segmente haben hier keine Route.
  */
 export const alt = `SHK-Jobs im Einsatzgebiet von ${COMPANY.shortName} in ${COMPANY.address.city}`;

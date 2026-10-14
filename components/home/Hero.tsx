@@ -8,15 +8,15 @@ export interface HeroProps {
 }
 
 /**
- * Einstieg der Startseite nach den Bildern des Auftraggebers (R3-EINSTIEG-V3, Variante 3 „Wärmebild“, statisch):
- * Papier links mit h1 und dem roten Knopf, die Navy-Fläche rechts mit dem Haus im Wärmebild und den Maßen; am
- * Handy ein Navy-Block oben, Knopf auf Papier darunter. Der rote Vorlauf läuft aus dem Knopf ins Haus, zuletzt
- * rastet der Zirkel im Giebel auf 35 km ein (E-027); „Kreislauf zeigen“ spielt das erneut ab. Darunter die Vertrauenszeile. Genau eine h1
- * auf der Seite. Der Abschnitt endet bündig; den Leitungstrenner zum nächsten Abschnitt setzt die Seite.
+ * Einstieg der Startseite (Technische Zeichnung 2.0, E-029): Papier links mit h1 und dem roten Knopf, die Navy-Fläche
+ * rechts mit dem Hausschnitt, den Maßen und der Einzelheit „X“ (Außeneinheit von vorn, der Rotor dreht mit Knopf
+ * „Anhalten“); am Handy ein Navy-Block oben, Knopf auf Papier darunter. Der rote Vorlauf läuft aus der Anlage in den
+ * Knopf, zuletzt blendet das Maß „35 km“ im Giebel ein (E-027). Darunter die Vertrauenszeile. Genau eine h1 auf der
+ * Seite. Der Abschnitt endet bündig.
  */
 export function Hero({ now = new Date() }: HeroProps) {
   return (
-    <section aria-labelledby="hero-title" className={styles.held} data-kreislauf="ruhe" data-seitenart="erzaehlseite">
+    <section aria-labelledby="hero-title" className={styles.held} data-seitenart="erzaehlseite">
       <Einstieg now={now} titleId="hero-title" />
       <Vertrauenszeile />
     </section>

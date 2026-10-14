@@ -20,13 +20,13 @@ export const titelId = (id: string) => `${id}-titel`;
 /**
  * Abschnittskopf der Themenseiten: SectionHeader der Startseite (Etikett, h2 in Bricolage, Lead), die h2 nach ihrem
  * breitesten Wort auf die Spalte gesetzt („Kündigungsfrist,“ bricht bei 320 px nicht im Wort), wie auf den Ortsseiten.
+ * Seit E-029 ohne Rohrklammer: Etikett und h2 tragen den Kopf; `klammer` bleibt für die Aufrufer, wirkt aber nicht.
  */
-export function Kopf({ kopf, klammer = false, className }: { kopf: Kopfzeile; klammer?: boolean; className?: string }) {
+export function Kopf({ kopf, className }: { kopf: Kopfzeile; klammer?: boolean; className?: string }) {
   return (
     <SectionHeader
       id={titelId(kopf.id)}
       eyebrow={kopf.etikett}
-      klammer={klammer}
       className={cn(styles.abschnittskopf, className)}
       title={
         <span className={styles.passend} style={{ '--stueck': breitestesStueckEm(kopf.heading).toFixed(3) } as CSSProperties}>
@@ -51,26 +51,30 @@ export function Saetze({ saetze, lead = false }: { saetze: readonly Satz[]; lead
   );
 }
 
-/** Abschnitt mit Kopf und Inhalt; Ton und Leitungstrenner wie die Stellenseite. */
+/**
+ * Abschnitt mit Kopf und Inhalt. Abschnitte trennt der Flächenwechsel (Papier, Wand, Navy); folgen zwei Abschnitte im
+ * selben Ton, setzt `trenner` eine feine Linie an die Oberkante (seit E-029 statt des Leitungstrenners; die Lage des
+ * Knicks, z. B. "62%", gibt es nicht mehr und wird übergangen).
+ */
 export function Abschnitt({
   kopf,
   tone = 'papier',
   trenner,
-  klammer = false,
   children,
   className,
 }: {
   kopf: Kopfzeile;
   tone?: SectionTone;
   trenner?: boolean | string;
+  /** Entfällt mit E-029 (keine Rohrklammer mehr); bleibt für die Aufrufer. */
   klammer?: boolean;
   children?: ReactNode;
   className?: string;
 }) {
   return (
-    <Section id={kopf.id} tone={tone} trenner={trenner} aria-labelledby={titelId(kopf.id)}>
+    <Section id={kopf.id} tone={tone} className={trenner ? styles.linie : undefined} aria-labelledby={titelId(kopf.id)}>
       <Container className={cn('flex flex-col gap-section-sm', className)}>
-        <Kopf kopf={kopf} klammer={klammer} />
+        <Kopf kopf={kopf} />
         {children}
       </Container>
     </Section>
@@ -143,7 +147,7 @@ export function ThemenAbgaenge({ karten, label }: { karten: readonly ThemaKarte[
 /** „Weitere Themen“ am Ende jeder Themenseite: Karten der übrigen Themen und der Weg zum Hub. */
 export function WeitereThemen({ weitere }: { weitere: SeitenBasis['weitere'] }) {
   return (
-    <Abschnitt kopf={weitere.kopf} tone="wand" trenner="62%">
+    <Abschnitt kopf={weitere.kopf} tone="wand" trenner>
       <ul className={styles.karten} aria-label={weitere.kopf.heading}>
         {weitere.karten.map((karte) => (
           <li key={karte.id}>
@@ -172,9 +176,9 @@ export function WeitereThemen({ weitere }: { weitere: SeitenBasis['weitere'] }) 
 export function Kontakt({ kontakt, whatsapp }: { kontakt: SeitenBasis['kontakt']; whatsapp: string }) {
   const id = titelId(kontakt.kopf.id);
   return (
-    <Section id={kontakt.kopf.id} tone="papier" trenner aria-labelledby={id}>
+    <Section id={kontakt.kopf.id} tone="papier" aria-labelledby={id}>
       <Container className={styles.kontakt}>
-        <SectionHeader id={id} eyebrow={kontakt.kopf.etikett} title={kontakt.kopf.heading} lead={kontakt.text} klammer />
+        <SectionHeader id={id} eyebrow={kontakt.kopf.etikett} title={kontakt.kopf.heading} lead={kontakt.text} />
         <ContactOptions variant="card" person={ANSPRECHPARTNER} whatsappMessage={whatsapp} />
       </Container>
     </Section>

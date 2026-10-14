@@ -80,9 +80,23 @@ export function kopfMasse(job: Pick<Job, 'location'>): SeitenkopfMass[] {
   return radiusKm ? [{ wert: `${radiusKm}${NBSP}km`, name: 'Einsatzradius' }] : [];
 }
 
-/** Das Wärmebild (Variante 3, statisch) gehört zur Wärmepumpen-Stelle im Kundendienst. */
-export function zeigtWaermebild(job: Pick<Job, 'category'>): boolean {
-  return job.category === 'kundendienst';
+/**
+ * Zeichnung im Navy-Panel des Stellenkopfs (E-029), nach dem Beruf: Der Kundendienst arbeitet an der Außeneinheit
+ * (Gerät von vorn mit Maßketten, der Rotor dreht unter der Startbedingung), Anlagenmechaniker und Ausbildung an der
+ * ganzen Anlage (Anlagenschema, statisch, beschriftet); alle anderen Stellen zeigen den kleinen Hausschnitt.
+ */
+export type KopfZeichnung = 'aussengeraet' | 'anlagenschema' | 'hausschnitt';
+
+export function kopfZeichnung(job: Pick<Job, 'category'>): KopfZeichnung {
+  switch (job.category) {
+    case 'kundendienst':
+      return 'aussengeraet';
+    case 'anlagenmechaniker':
+    case 'ausbildung':
+      return 'anlagenschema';
+    default:
+      return 'hausschnitt';
+  }
 }
 
 /** Ansprechpartner der Stellenseite (Kontaktkarte neben dem Flow). */

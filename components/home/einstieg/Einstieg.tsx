@@ -1,12 +1,11 @@
 import Link from 'next/link';
 import { Icon } from '@/components/icons';
 import { APPLY_PATH, SHORT_APPLY_LABEL } from '@/components/site/nav';
-import { Rohrklammer } from '@/components/zeichnung';
-import { AUFTAKT_ENDE_MS } from '@/lib/motion/register';
+import { DauerSteuerung } from '@/components/zeichnung/bewegung/DauerSteuerung';
+import { Aussengeraet } from '@/components/zeichnung/technik/Aussengeraet';
 import { cn } from '@/lib/utils/cn';
 import { HERO } from '../content';
-import { KREISLAUF_KNOPF, KREISLAUF_SATZ, RADIUS_ETIKETT, ZWEITWEG, einstiegMasse, jahreskette, ortsmarke } from './einstieg-text';
-import { KreislaufKnopf } from './KreislaufKnopf';
+import { EINZELHEIT_TEXT, EINZELHEIT_TITEL, KREISLAUF_SATZ, RADIUS_ETIKETT, ZWEITWEG, einstiegMasse, jahreskette, ortsmarke } from './einstieg-text';
 import { Szene } from './Szene';
 import { mitZiffern } from './ziffern';
 import styles from './einstieg.module.css';
@@ -32,47 +31,6 @@ function Sonne() {
   );
 }
 
-/**
- * Luft (Feld des Logos, Variante 3 `i-luft`) für die Wärmepumpe: drei Strömungslinien, zwei mit Wirbel. Das
- * Familien-Icon „waermepumpe“ liefe in der 20-px-Platte zu (Lüfter, Gehäuse und Füße).
- */
-function Luft() {
-  return (
-    <svg className={styles.glyphe} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M3 8.5h10a3 3 0 1 0-3-3M3 13.5h14a3 3 0 1 1-3 3M3 18.5h4" />
-    </svg>
-  );
-}
-
-/**
- * Etiketten-Kästchen an der Zeichnung (Variante 3): die drei Gewerke mit Luft und den Familien-Icons Flamme, Tropfen. Am Desktop
- * mit Beschriftung in Versalien, am Handy nur die Zeichen. Dekorativ: die Einleitung nennt dieselben Gewerke.
- */
-function Marken() {
-  return (
-    <div className={styles.marken} aria-hidden="true">
-      <span className={cn(styles.marke, styles.markePumpe)}>
-        <span className={styles.platte}>
-          <Luft />
-        </span>
-        <span className={cn(styles.markeText, 'text-etikett')}>Wärmepumpen</span>
-      </span>
-      <span className={cn(styles.marke, styles.markeHeizung)}>
-        <span className={styles.platte}>
-          <Icon name="flamme" size="md" />
-        </span>
-        <span className={cn(styles.markeText, 'text-etikett')}>Heizungen</span>
-      </span>
-      <span className={cn(styles.marke, styles.markeBad)}>
-        <span className={styles.platte}>
-          <Icon name="tropfen" size="md" />
-        </span>
-        <span className={cn(styles.markeText, 'text-etikett')}>Bäder</span>
-      </span>
-    </div>
-  );
-}
-
 export interface EinstiegProps {
   /** Stichtag für das Jubiläum (E-START-002); die Seite rendert stündlich neu (revalidate). */
   now: Date;
@@ -81,23 +39,22 @@ export interface EinstiegProps {
 }
 
 /**
- * Einstieg der Startseite nach den Bildern des Auftraggebers (Variante 3 „Wärmebild“, statisch, E-024):
- * - Desktop: links auf Papier Etikett, h1, Unterzeile mit Rohrklammer, Einleitung, der rote Knopf, Mikrotext,
- *   Zweitweg; rechts die Navy-Fläche vom Kopf bis zur Falz mit den Maßen im Himmel und dem Haus im Wärmebild.
- *   Leitmotiv „35 km“ (E-027): Im Giebel steht das Zirkelzeichen, sein Radius läuft als Hinweislinie an den
- *   großen Bogen im Himmel, daran hängt „35 km“ groß mit „Einsatzgebiet rund um Wetzlar“. Der Vorlauf läuft aus
- *   dem Knopf in die Pumpe.
- * - Handy: ein Navy-Block (Etikett, h1 und Unterzeile weiß, das Haus mit „35 km“ am Zirkel, die Maße als Leiste),
- *   dann fallen
- *   Vorlauf und Rücklauf links senkrecht auf Papier; der Vorlauf zweigt in den Knopf ab.
- * Reihenfolge im DOM (Lesen, Tab): Etikett, h1, Zeichnung (dekorativ), Maße, Einleitung, Knopf, Mikrotext,
- * Zweitweg, Erklärsatz T-001 mit „Kreislauf zeigen“.
+ * Einstieg der Startseite (Technische Zeichnung 2.0, E-029; Aufbau nach den Bildern des Auftraggebers, E-024):
+ * - Desktop: links auf Papier Etikett, h1, Unterzeile, Einleitung, der rote Knopf, Mikrotext, Zweitweg; rechts die
+ *   Navy-Fläche vom Kopf bis zur Falz, oben die Maße (35 km, 30 Tage, 1926), darunter der Hausschnitt. Im Himmel
+ *   links die Einzelheit „X“: die Außeneinheit von vorn mit Maßketten, deren Rotor dreht, solange die Startbedingung
+ *   gilt (Knopf „Anhalten“). Der Vorlauf läuft aus der Anlage links aus der Fläche in den Knopf.
+ * - Handy: ein Navy-Block (Etikett, h1 und Unterzeile, Hausschnitt, Maße als Leiste), dann fällt der Vorlauf links
+ *   senkrecht auf Papier und zweigt in den Knopf ab; die Einzelheit „X“ steht nach dem Knopf als eigener Block.
+ * Leitmotiv „35 km“ (E-027, seit E-029 ohne Zirkel): das Maß in Schrift im Giebel.
+ * Reihenfolge im DOM (Lesen, Tab): Etikett, h1, Zeichnung (dekorativ), Einzelheit, Maße, Einleitung, Knopf, Mikrotext,
+ * Zweitweg, Erklärsatz T-001.
  */
 export function Einstieg({ now, titleId }: EinstiegProps) {
   const [zeile1, zeile2] = plakatzeilen(HERO.title);
   const masse = einstiegMasse();
   const jahre = jahreskette(now);
-  // „Einsatzgebiet“ / „rund um Wetzlar“: zwei Zeilen am großen Maß und in der Leiste (nie „rund“ allein am Zeilenende)
+  // „Einsatzgebiet“ / „rund um Wetzlar“: zwei Zeilen am Maß (nie „rund“ allein am Zeilenende)
   const [radiusWort, ...radiusRest] = RADIUS_ETIKETT.split(' ');
   // Das letzte Wort und der Pfeil bleiben zusammen (auf 320 px sonst eine Zeile nur für den Pfeil)
   const trenn = ZWEITWEG.label.lastIndexOf(' ');
@@ -113,9 +70,6 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
             <span>{zeile1}</span> <span>{zeile2}</span>
           </span>{' '}
           <span className={cn(styles.titelZweit, 'text-title-3')}>
-            <span className={styles.klammer}>
-              <Rohrklammer />
-            </span>
             {saetze(HERO.titleSecondLine).map((satz, i) => (
               <span key={satz}>
                 {i > 0 ? ' ' : null}
@@ -126,26 +80,41 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
         </h1>
       </div>
 
-      {/* Navy-Fläche mit dem Haus im Wärmebild und den Maßen */}
+      {/* Navy-Fläche mit dem Hausschnitt, der Einzelheit und den Maßen */}
       <div className={styles.bild} data-tone="inverse">
         <div className={styles.rahmen}>
           <div className={styles.lage}>
             <Szene />
-            <Marken />
-            <span className={cn(styles.ablesung, 'font-mass')} aria-hidden="true">
+            <span className={cn(styles.ablesung, 'font-mass')} aria-hidden="true" data-motion="radius-einrasten">
               {masse.radius.value}
             </span>
           </div>
         </div>
+        <div className={styles.einzelheit} data-einzelheit="X">
+          <DauerSteuerung
+            beschriftung={
+              <span className={cn(styles.einzelheitText, 'text-etikett')}>
+                {EINZELHEIT_TEXT.split(' · ').map((teil, i) => (
+                  <span key={teil} className={styles.zusammen}>
+                    {i > 0 ? ' · ' : null}
+                    {teil}
+                  </span>
+                ))}
+              </span>
+            }
+          >
+            <Aussengeraet ansicht="vorne" massketten="haupt" bewegt titel={EINZELHEIT_TITEL} schriftfeld={false} massSchrift={78} />
+          </DauerSteuerung>
+        </div>
         <div className={styles.leiste}>
-          {/* Mobil laufen Rücklauf und Vorlauf durch die Leiste (mit Mantel in der Seitenfarbe) */}
+          {/* Mobil laufen Vorlauf und Rücklauf durch die Leiste */}
           <span className={cn(styles.leitung, styles.leisteRl)} data-motion="erdleitung" aria-hidden="true" />
           <span className={cn(styles.leitung, styles.leisteVl)} data-motion="erdleitung" aria-hidden="true" />
           <ul className={styles.masse}>
             <li className={cn(styles.mass, styles.massRadius)}>
               <span className={cn(styles.wert, 'font-display')}>{masse.radius.value}</span>{' '}
               <span className={cn(styles.name, styles.trennbar)}>
-                <span className={styles.zeile}>{radiusWort.replace('Einsatz', 'Einsatz\u00AD')}</span>{' '}
+                <span className={styles.zeile}>{radiusWort.replace('Einsatz', 'Einsatz­')}</span>{' '}
                 <span className={styles.zeile}>{radiusRest.join(' ')}</span>
               </span>
             </li>
@@ -171,7 +140,7 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
       </div>
 
       <div className={styles.rest}>
-        {/* Mobil: Leitungsschacht links; der Vorlauf zweigt auf Knopfhöhe in die Hauptaktion ab */}
+        {/* Mobil: Leitungsschacht links; der Vorlauf kommt von oben aus der Anlage und zweigt auf Knopfhöhe ab */}
         <span className={cn(styles.leitung, styles.schachtRl)} data-motion="erdleitung" aria-hidden="true" />
         <span className={cn(styles.leitung, styles.schachtVlOben)} data-motion="erdleitung" aria-hidden="true" />
         <span className={cn(styles.leitung, styles.schachtVlUnten)} data-motion="erdleitung" aria-hidden="true" />
@@ -198,26 +167,23 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
 
         <div className={styles.fuss}>
           <p className={styles.satz}>{KREISLAUF_SATZ}</p>
-          <KreislaufKnopf className={cn(styles.knopf, 'rounded-1')} wartetClassName={styles.knopfWartet} dauerMs={AUFTAKT_ENDE_MS}>
-            <Icon name="rotate-ccw" size="md" />
-            {KREISLAUF_KNOPF}
-          </KreislaufKnopf>
         </div>
       </div>
 
-      {/* Desktop: der Vorlauf aus dem Knopf, Bogen (--radius-2) nach unten und auf Pumpenhöhe über den Panelrand.
-          Lage über Ankerpositionierung am Knopf (--einstieg-knopf) und an der Pumpe (124 Einheiten über der Falz);
-          Zeichnungswerte: 3 = halbe Rohrbreite mit Reserve, 12 = --radius-2, 32 = Abstand der Steigleitung zur Fläche. */}
+      {/* Desktop: der Vorlauf aus der Anlage, vom Rand der Navy-Fläche (Höhe der Erdleitung) über Bogen, Steigleitung
+          und Bogen in den Knopf. Lage über Ankerpositionierung am Knopf (--einstieg-knopf) und an der Fläche
+          (--einstieg-flaeche); Zeichnungswerte: 3 = halbe Rohrbreite mit Reserve, 12 = --radius-2, 32 = Abstand der
+          Steigleitung zur Fläche. Jeder Pfad ist in Fließrichtung gezeichnet (von der Fläche zum Knopf). */}
       <div className={styles.rohrD} aria-hidden="true">
         <svg className={styles.rohrSvg} aria-hidden="true" focusable="false">
-          <line className={styles.rohrD1} data-motion="erdleitung-d" pathLength={1} x1="44" y1="3" x2="100%" y2="3" transform="translate(-44 0)" />
-          <svg x="100%" overflow="visible">
-            <path className={styles.rohrD2} data-motion="erdleitung-d" pathLength={1} d="M-44 3A12 12 0 0 1 -32 15" />
-          </svg>
-          <line className={styles.rohrD3} data-motion="erdleitung-d" pathLength={1} x1="100%" y1="30" x2="100%" y2="100%" transform="translate(-32 -15)" />
           <svg x="100%" y="100%" overflow="visible">
-            <path className={styles.rohrD4} data-motion="erdleitung-d" pathLength={1} d="M-32 -15A12 12 0 0 0 -20 -3H0" />
+            <path className={styles.rohrD1} data-motion="erdleitung-d" pathLength={1} d="M0 -3H-20A12 12 0 0 1 -32 -15" />
           </svg>
+          <line className={styles.rohrD2} data-motion="erdleitung-d" pathLength={1} x1="100%" y1="100%" x2="100%" y2="30" transform="translate(-32 -15)" />
+          <svg x="100%" overflow="visible">
+            <path className={styles.rohrD3} data-motion="erdleitung-d" pathLength={1} d="M-32 15A12 12 0 0 0 -44 3" />
+          </svg>
+          <line className={styles.rohrD4} data-motion="erdleitung-d" pathLength={1} x1="100%" y1="3" x2="44" y2="3" transform="translate(-44 0)" />
         </svg>
       </div>
     </div>

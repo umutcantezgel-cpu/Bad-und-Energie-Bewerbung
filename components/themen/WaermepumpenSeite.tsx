@@ -1,26 +1,98 @@
 import Link from 'next/link';
 import { bindSeparators, withSoftHyphens } from '@/components/jobs/text';
 import { Icon } from '@/components/icons';
-import { Waermebild } from '@/components/zeichnung/Waermebild';
+import { DauerSteuerung } from '@/components/zeichnung/bewegung/DauerSteuerung';
+import { Anlagenschema } from '@/components/zeichnung/technik/Anlagenschema';
+import { Aussengeraet, geraetTitel } from '@/components/zeichnung/technik/Aussengeraet';
+import { Kaeltekreis } from '@/components/zeichnung/technik/Kaeltekreis';
+import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
+import { HEIZWASSER, KAELTEKREIS_SCHRITTE, TECHNIK_ANTWORT, TECHNIK_KOPF, geraetSteckbrief } from '@/lib/zeichnung/erklaerung';
 import { themaPfad } from '@/lib/themen/jsonld';
 import { getThema } from '@/lib/themen/registry';
 import type { WaermepumpenPageText } from '@/lib/themen/text';
 import { cn } from '@/lib/utils/cn';
-import { Abschnitt, Kaestenband, Kontakt, Saetze, WeitereThemen } from './Bausteine';
+import { Abschnitt, Kaestenband, Kontakt, Saetze, WeitereThemen, titelId } from './Bausteine';
 import { ThemaKopf } from './ThemaKopf';
 import styles from './themen.module.css';
 
+/** Ids der Zwischenüberschriften im Abschnitt Technik. */
+const KAELTE_ID = titelId('kaeltekreis');
+const WASSER_ID = titelId('heizwasser');
+const GERAET_ID = titelId('aussengeraet');
+
 /**
- * Themenseite Wärmepumpen (E-028). Tonfolge: Kopf Papier/Navy (Wärmebild, statisch, Variante 3) · Die Marken Papier
- * (Etiketten-Kästchen der fünf Hersteller, darunter die Partnerstufen mit ihren belegten Zusätzen) · Je Stelle Wand
- * (die Aufgaben mit Wärmepumpen im Wortlaut der Anzeigen) · Lernen Navy · Weitere Themen Wand · Kontakt Papier.
+ * Abschnitt „Wie arbeitet eine Luft/Wasser-Wärmepumpe?“ (E-029, AEO): die Antwort zuerst, dann der Kältekreis und das
+ * Anlagenschema als bewegte Fließschemata (DauerSteuerung: nur im Sichtfeld, Knopf „Anhalten“), daneben der Text in
+ * derselben Reihenfolge wie die Zeichnung (lib/zeichnung/erklaerung.ts), zuletzt das Beispielgerät von vorn und von
+ * der Seite mit Maßketten. Reine Technik; Aussagen über den Betrieb stehen in den anderen Abschnitten (K-012).
+ */
+function Technik() {
+  return (
+    <Abschnitt kopf={TECHNIK_KOPF}>
+      <p className={cn(styles.absatz, styles.absatzErst)}>{TECHNIK_ANTWORT.text}</p>
+
+      <div className={styles.technikPaar} role="group" aria-labelledby={KAELTE_ID}>
+        <DauerSteuerung className={styles.technikBild}>
+          <Kaeltekreis bewegt />
+        </DauerSteuerung>
+        <div className={styles.text}>
+          <h3 id={KAELTE_ID} className="text-title-3 text-brand">
+            Der Kältekreis in der Außeneinheit
+          </h3>
+          <ol className={styles.schritte}>
+            {KAELTEKREIS_SCHRITTE.map((schritt) => (
+              <li key={schritt.symbol} className={styles.schritt}>
+                <span className={cn(styles.schrittName, 'text-etikett text-brand')}>{schritt.bauteil}</span>
+                <span className={styles.schrittText}>{schritt.text}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+
+      <div className={styles.technikPaar} role="group" aria-labelledby={WASSER_ID}>
+        <DauerSteuerung className={styles.technikBild}>
+          <Anlagenschema bewegt />
+        </DauerSteuerung>
+        <div className={styles.text}>
+          <h3 id={WASSER_ID} className="text-title-3 text-brand">
+            Der Weg des Heizwassers
+          </h3>
+          <p className={styles.absatz}>{HEIZWASSER.text}</p>
+        </div>
+      </div>
+
+      <div className={styles.text}>
+        <h3 id={GERAET_ID} className="text-title-3 text-brand">
+          Die Außeneinheit, maßstäblich
+        </h3>
+        <p className={styles.absatz}>{geraetSteckbrief(COMPRESS_AW_S).text}</p>
+      </div>
+      <div className={styles.geraete}>
+        <Aussengeraet ansicht="vorne" massketten="voll" className={styles.geraetVorne} />
+        <Aussengeraet ansicht="seite" massketten="voll" className={styles.geraetSeite} />
+      </div>
+    </Abschnitt>
+  );
+}
+
+/**
+ * Themenseite Wärmepumpen (E-028, Zeichnung 2.0 nach E-029). Tonfolge: Kopf Papier/Navy (Außeneinheit von vorn mit
+ * Maßketten) · Die Marken Papier (Etiketten-Kästchen der Hersteller, darunter die Partnerstufen mit ihren belegten
+ * Zusätzen) · Je Stelle Wand (die Aufgaben mit Wärmepumpen im Wortlaut der Anzeigen) · Technik Papier (Kältekreis,
+ * Anlagenschema, Gerät) · Lernen Navy · Weitere Themen Wand · Kontakt Papier.
  */
 export function WaermepumpenSeite({ text }: { text: WaermepumpenPageText }) {
   return (
     <>
-      <ThemaKopf text={text} pfad={themaPfad(getThema('waermepumpen'))} bildBreit panel={<Waermebild />} />
+      <ThemaKopf
+        text={text}
+        pfad={themaPfad(getThema('waermepumpen'))}
+        bildBreit
+        panel={<Aussengeraet ansicht="vorne" massketten="haupt" schriftfeld={false} titel={geraetTitel(COMPRESS_AW_S, 'vorne')} massSchrift={64} />}
+      />
 
-      <Abschnitt kopf={text.marken.kopf} trenner klammer>
+      <Abschnitt kopf={text.marken.kopf} trenner>
         <ul className={styles.marken} aria-label="Hersteller">
           {text.marken.namen.map((name) => (
             <li key={name} className={styles.marke}>
@@ -39,7 +111,7 @@ export function WaermepumpenSeite({ text }: { text: WaermepumpenPageText }) {
         </ul>
       </Abschnitt>
 
-      <Abschnitt kopf={text.arbeit.kopf} tone="wand" trenner="62%">
+      <Abschnitt kopf={text.arbeit.kopf} tone="wand">
         {text.arbeit.stellen.length > 0 ? (
           <ul className={styles.pakete} aria-label={text.arbeit.kopf.heading}>
             {text.arbeit.stellen.map((stelle) => (
@@ -55,12 +127,6 @@ export function WaermepumpenSeite({ text }: { text: WaermepumpenPageText }) {
                     <li key={aufgabe}>{aufgabe}</li>
                   ))}
                 </ul>
-                {stelle.betrag ? (
-                  <p className={cn(styles.paketBetrag)}>
-                    <span className="font-mass text-callout font-medium text-brand">{stelle.betrag}</span>{' '}
-                    <span className="text-etikett text-ink-muted">{stelle.einheit}</span>
-                  </p>
-                ) : null}
               </li>
             ))}
           </ul>
@@ -69,6 +135,8 @@ export function WaermepumpenSeite({ text }: { text: WaermepumpenPageText }) {
           <Saetze saetze={[text.arbeit.schluss]} />
         </div>
       </Abschnitt>
+
+      <Technik />
 
       <Kaestenband kopf={text.lernen.kopf} kaesten={text.lernen.kaesten} />
 

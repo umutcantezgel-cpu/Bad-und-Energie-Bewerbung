@@ -3,7 +3,8 @@ import { FACTS } from '@/lib/content/facts';
 import { PROCESS_STEPS } from '@/lib/content/process';
 import { HERO, HERO_STATS } from '../content';
 import {
-  KREISLAUF_KNOPF,
+  EINZELHEIT_TEXT,
+  EINZELHEIT_TITEL,
   KREISLAUF_SATZ,
   RADIUS_ETIKETT,
   WEGWEISER,
@@ -38,12 +39,18 @@ describe('Einstieg-Texte (R3-HOME-01)', () => {
     expect(jahreskette(NEUJAHR)).toBeNull();
   });
 
-  it('T-001 steht wörtlich (TEXTVORSCHLAEGE, freigegeben E-021), der Knopf sagt, was passiert', () => {
+  it('T-001 steht wörtlich (TEXTVORSCHLAEGE, freigegeben E-021); „Kreislauf zeigen“ ist mit E-029 entfallen', () => {
     expect(KREISLAUF_SATZ).toBe(
       'So arbeitet eine Wärmepumpe: Luft liefert die Wärme, der rote Vorlauf bringt sie ins Haus, der blaue Rücklauf kehrt zurück.',
     );
-    expect(KREISLAUF_KNOPF).toBe('Kreislauf zeigen');
     expect(WEGWEISER).toBe('Wetzlar');
+  });
+
+  it('Einzelheit X (E-029): Schriftfeld „Maße in mm“, zugänglicher Name aus den belegten Gerätemaßen', () => {
+    expect(EINZELHEIT_TEXT).toBe('Einzelheit X · Maße in mm');
+    expect(EINZELHEIT_TITEL).toMatch(/^Einzelheit X: Außeneinheit 4–7\u00A0kW einer Luft\/Wasser-Wärmepumpe von vorn: 1\.100\u00A0mm breit, 800\u00A0mm hoch/);
+    // Keine Marke, keine Schätzwerte im Namen
+    expect(EINZELHEIT_TITEL).not.toMatch(/Bosch|Compress|540|430/);
   });
 
   it('die drei Maße kommen unverändert aus HERO_STATS (35 km, 30, 1926), keine Uhrzeit (E-027)', () => {

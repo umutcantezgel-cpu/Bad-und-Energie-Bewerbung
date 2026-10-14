@@ -4,6 +4,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { TOKENS } from '@/lib/tokens';
+import { LINIENARTEN } from '@/lib/zeichnung/norm';
 import { Leitungstrenner, Rohrklammer } from '..';
 
 const DIR = path.resolve(__dirname, '..');
@@ -94,13 +95,20 @@ describe('Rohrklammer (R3-HOME-01, B Runde 1 / Variante 1)', () => {
 });
 
 describe('Formsystem der Zeichnungen', () => {
-  it('eine Strichstärke (--m-strich), runde Enden, nur Rollenfarben, keine Rohwerte', () => {
+  it('Linienarten aus lib/zeichnung/norm.ts (E-029): Leitung 3 px, Kontur 2 px, stumpfe Enden, nur Rollenfarben', () => {
     const css = quelle('zeichnung.module.css').replace(/\/\*[\s\S]*?\*\//g, '');
-    expect(css).toMatch(/stroke-width: var\(--m-strich\)/);
-    expect(css).toMatch(/stroke-linecap: round/);
+    // Leitungen in der Linienart `leitung`, Abgänge in `kontur`; beide aus den Tokens (theme.css)
+    expect(css).toMatch(/\.strich \{[^}]*stroke-width: var\(--m-leitung\);[^}]*stroke-linecap: butt;/);
+    expect([LINIENARTEN.leitung.px, LINIENARTEN.kontur.px]).toEqual([TOKENS.linien.leitung, TOKENS.linien.kontur]);
+    expect(LINIENARTEN.leitung.enden).toBe('butt');
+    const breiten = [...css.matchAll(/stroke-width:\s*([^;]+);/g)].map((m) => m[1].trim());
+    expect(breiten.length).toBeGreaterThan(3);
+    for (const b of breiten) expect(b).toMatch(/^(?:var\(--m-(?:leitung|kontur|fein|mass|strich)\)|calc\(var\(--m-(?:leitung|strich)\) [/+] var\(--[a-z0-9-]+\)\))$/);
+    // Runde Enden gibt es in Zeichnungen nicht mehr (nur Bedienzeichen, components/zeichnung/bewegung)
+    expect(css).not.toMatch(/stroke-linecap: round/);
     expect(css).toMatch(/stroke: var\(--vorlauf\)/);
     expect(css).toMatch(/stroke: var\(--ruecklauf\)/);
-    expect(css).not.toMatch(/#[0-9a-fA-F]{3,8}\b|--p-[a-z]|rgb\(/);
+    expect(css).not.toMatch(/#[0-9a-fA-F]{3,8}\b|--p-[a-z]|rgb\(|--wb-|iso(?:Kalt|Warm)/);
   });
 
   it('Server-Komponenten ohne Zustand und ohne lucide', () => {

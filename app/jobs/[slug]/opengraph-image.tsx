@@ -6,8 +6,8 @@ import { renderJobImage } from '@/lib/seo/og-render';
 
 /**
  * Share image of a job page (WhatsApp, Facebook, LinkedIn) in the frame of the root image: the short
- * title as h1 with the red button on paper, „Lohn auf Anfrage“ in the heating loop above the house on
- * the navy panel (variants 2 and 3; E-030, never an amount). The page links it with a per-job alt (jobOgImage in
+ * title as h1 with the red button on paper, „Lohn auf Anfrage“ as a measure above the section through the
+ * house on the navy panel (E-029, E-030: never an amount). The page links it with a per-job alt (jobOgImage in
  * lib/seo/og-image); this alt is only the fallback for links without one.
  */
 export const alt = `Stellenangebot bei ${COMPANY.shortName} in ${COMPANY.address.city}`;

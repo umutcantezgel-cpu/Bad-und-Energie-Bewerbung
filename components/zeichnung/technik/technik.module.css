@@ -1,0 +1,292 @@
+/*
+ * Technische Zeichnung 2.0 (KERN K-010, E-029): Linienarten aus app/styles/theme.css (Helfer in lib/zeichnung/norm.ts),
+ * alle mit non-scaling-stroke und stumpfen Enden; Konturen spitz, Leitungen mit runden Gelenken (Bögen kommen aus der
+ * Geometrie). Farben nur über Rollen: Kontur in der Markenrolle (auf Navy Creme), Vorlauf rot, Rücklauf blau,
+ * Kältemittel in der Markenrolle. Nur flache Flächen, keine Verläufe.
+ */
+
+/* ═══ Rahmen ═══ */
+.zeichnung {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* Ausschnitt: Erdreich und Gelände laufen über den Rahmen hinaus und werden hier abgeschnitten */
+.beschnitten {
+  overflow: hidden;
+}
+
+/* ═══ Linienarten ═══ */
+.leitung,
+.kontur,
+.fein,
+.mass,
+.verdeckt,
+.mittellinie,
+.schraffur,
+.mantel {
+  fill: none;
+  stroke-linecap: butt;
+  vector-effect: non-scaling-stroke;
+}
+
+.kontur {
+  stroke: var(--brand);
+  stroke-width: var(--m-kontur);
+  stroke-linejoin: miter;
+}
+
+.fein {
+  stroke: var(--brand);
+  stroke-width: var(--m-fein);
+  stroke-linejoin: miter;
+}
+
+.mass {
+  stroke: var(--brand);
+  stroke-width: var(--m-mass);
+  stroke-linejoin: miter;
+}
+
+.verdeckt {
+  stroke: var(--brand);
+  stroke-width: var(--m-verdeckt);
+  stroke-dasharray: var(--m-verdeckt-muster);
+  stroke-linejoin: miter;
+}
+
+.mittellinie {
+  stroke: var(--brand);
+  stroke-width: var(--m-mittellinie);
+  stroke-dasharray: var(--m-mittellinie-muster);
+  stroke-linejoin: miter;
+}
+
+/* Erdreich und Schnittflächen: 45°-Schraffur in der feinen Linie, eine Stufe leiser */
+.schraffur {
+  stroke: var(--line-strong);
+  stroke-width: var(--m-fein);
+}
+
+.leitung {
+  stroke-width: var(--m-leitung);
+  stroke-linejoin: round;
+}
+
+/* Mantel in der Fläche unter einer Leitung, die vor einer anderen liegt (Kreuzung ohne Verbindung) */
+.mantel {
+  stroke: var(--surface);
+  stroke-width: calc(var(--m-leitung) + var(--a-2));
+  stroke-linejoin: round;
+}
+
+.vorlauf {
+  stroke: var(--vorlauf);
+}
+
+.ruecklauf {
+  stroke: var(--ruecklauf);
+}
+
+.kaeltemittel {
+  stroke: var(--brand);
+}
+
+/* Überlagerungspfad der Dauerbewegung (Strichmuster aus dauer.module.css): in der Fläche über der Leitung */
+.fluss {
+  fill: none;
+  stroke: var(--surface);
+  stroke-width: var(--m-fein);
+  stroke-linecap: butt;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ═══ Flächen ═══ */
+.flaeche {
+  fill: var(--surface);
+}
+
+.schnitt {
+  fill: var(--surface-2);
+}
+
+.voll {
+  fill: var(--brand);
+  stroke: none;
+}
+
+.pfeilVorlauf {
+  fill: var(--vorlauf);
+}
+
+.pfeilRuecklauf {
+  fill: var(--ruecklauf);
+}
+
+.pfeilKaeltemittel {
+  fill: var(--brand);
+}
+
+/* ═══ Schrift: Maßzahlen und Etiketten in Martian Mono (K-005), Größe in Einheiten der Zeichnung ═══ */
+.schrift {
+  fill: var(--brand);
+  font-family: var(--font-mass);
+  font-stretch: 75%;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.etikett {
+  fill: var(--ink-2);
+  font-family: var(--font-mass);
+  font-stretch: 75%;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+/* ═══ Gerätezeichnung: drei Ebenen (Gehäuse, Rotor als eigene HTML-Ebene, Gitter davor) ═══ */
+.geraet {
+  margin: 0;
+  color: var(--ink);
+}
+
+.ebenen {
+  position: relative;
+}
+
+.ebeneOben,
+.rotorEbene {
+  position: absolute;
+  overflow: visible;
+}
+
+.ebeneOben {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.rotorEbene {
+  aspect-ratio: 1;
+  height: auto;
+}
+
+/* Schriftfeld (K-010): Benennung, Maßangabe, Herkunft der Maße */
+.schriftfeld {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-1) var(--a-4);
+  margin-top: var(--a-3);
+  padding-top: var(--a-2);
+  border-top: var(--m-fein) solid var(--line-strong);
+  color: var(--ink-2);
+}
+
+.quelle {
+  flex-basis: 100%;
+  font-size: var(--text-footnote);
+  line-height: 1.45;
+}
+
+/* ═══ Schemata: Beschriftung der Symbole nur auf breiten Flächen, die Legende trägt sie immer ═══ */
+.schema {
+  container-type: inline-size;
+  margin: 0;
+  color: var(--ink);
+}
+
+/* Etiketten der Schemata: Größe je Breite der Fläche (die Zeichnung skaliert, die Schrift soll lesbar bleiben) */
+.kaeltekreisBild {
+  --etikett: 15px;
+  --symbol-etikett: 14px;
+}
+
+.anlagenBild {
+  --etikett: 20px;
+  --symbol-etikett: 17px;
+}
+
+.schemaText {
+  font-size: var(--etikett);
+}
+
+@container (max-width: 40rem) {
+  .kaeltekreisBild {
+    --etikett: 24px;
+  }
+
+  .anlagenBild {
+    --etikett: 34px;
+  }
+}
+
+@container (max-width: 26rem) {
+  .kaeltekreisBild {
+    --etikett: 30px;
+  }
+}
+
+/* Schrift auf Schraffur: Halo in der Fläche */
+.halo {
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: calc(var(--m-leitung) * 2);
+  stroke-linejoin: round;
+}
+
+.symbolText {
+  display: none;
+  font-size: var(--symbol-etikett, 17px);
+}
+
+@container (min-width: 40rem) {
+  .symbolText {
+    display: inline;
+  }
+}
+
+.legende {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  gap: var(--a-2) var(--a-4);
+  margin: var(--a-4) 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-footnote);
+  line-height: 1.35;
+}
+
+.legendePunkt {
+  display: flex;
+  align-items: center;
+  gap: var(--a-3);
+}
+
+/* Lange Namen (Plattenwärmeübertrager) trennen statt über den Rand zu laufen */
+.legendeName {
+  min-width: 0;
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+.legendeZeichen {
+  flex: none;
+  width: var(--a-6);
+  height: var(--a-6);
+  overflow: visible;
+}
+
+@container (min-width: 40rem) {
+  .legendeZeichen {
+    width: var(--a-7);
+    height: var(--a-7);
+  }
+}
+
+@media print {
+  .fluss {
+    display: none;
+  }
+}

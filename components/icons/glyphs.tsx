@@ -1,8 +1,10 @@
 import type { ReactElement } from 'react';
+import { BEDIEN_GLYPHEN } from './bedien';
 
 /**
  * Glyphen im Formsystem (KERN K-010): Raster 24 × 24 mit Rand 2, Giebel 45° und Kreis, runde Enden,
- * eine Strichstärke (--m-strich, 3 px) über vector-effect: non-scaling-stroke, Farbe currentColor.
+ * eine Strichstärke (Linienart `icon`, --m-icon 2 px seit E-029) über vector-effect: non-scaling-stroke, Farbe
+ * currentColor.
  * Alles ist Strich, nichts Fläche: Punkte sind Striche der Länge 0,01 mit rundem Ende.
  *
  * Die acht Familien-Icons stammen aus B Runde 1 (_relaunch/ausbau/referenz/b-runde1, Sprite i-*).
@@ -20,14 +22,16 @@ const BRIEF: readonly Shape[] = [{ x: 3, y: 5, width: 18, height: 14, rx: 2.5 },
 
 export const GLYPH_SHAPES = {
   // ── Familie (B Runde 1) ──
-  /** Wärmepumpe: Gehäuse, Lüfter mit drei Blättern, Füße */
+  /**
+   * Wärmepumpe (E-029): die Außeneinheit aus lib/zeichnung/geraete/compress-aw-s.ts im Raster, Breite 19 für 1.100 mm,
+   * Höhe 13,8 für 800 mm; runde Ausblasöffnung links der Mitte (Mitte 430 mm von links, Ø 540 mm), Nabe, zwei
+   * Bodenhalterungen 107 mm vom Rand bzw. 881 mm weiter. Geprüft in components/zeichnung/__tests__/technik.test.ts.
+   */
   waermepumpe: [
-    { x: 3, y: 4, width: 18, height: 14, rx: 3 },
-    { cx: 12, cy: 11, r: 4.2 },
-    { d: BLATT },
-    { d: BLATT, transform: 'rotate(120 12 11.2)' },
-    { d: BLATT, transform: 'rotate(240 12 11.2)' },
-    { d: 'M7 18v3M17 18v3' },
+    { x: 2.5, y: 4.5, width: 19, height: 13.8, rx: 1.5 },
+    { cx: 9.9, cy: 11.4, r: 4.7 },
+    { cx: 9.9, cy: 11.4, r: 1.2 },
+    { d: 'M4.3 18.3v2M19.5 18.3v2' },
   ],
   /** Tropfen (Bad): Giebel 45° auf einem Kreis r 7 */
   tropfen: [{ d: 'M12 4.6 7.05 9.55a7 7 0 1 0 9.9 0Z' }, { d: 'M9 15.2a3.2 3.2 0 0 0 2.4 2.4' }],
@@ -98,6 +102,9 @@ export const GLYPH_SHAPES = {
   /** Gegen den Uhrzeigersinn: Bogen um den Mittelpunkt, Spitze im 45°-Winkel */
   'rotate-ccw': [{ d: 'M4.5 12a7.5 7.5 0 1 0 2.2-5.3' }, { d: 'M10.7 6.7h-4v-4' }],
   'rotate-cw': [{ d: 'M19.5 12a7.5 7.5 0 1 1-2.2-5.3' }, { d: 'M13.3 6.7h4v-4' }],
+  // Dauerbewegung (E-029): Anhalten und Abspielen
+  pause: BEDIEN_GLYPHEN.pause,
+  play: BEDIEN_GLYPHEN.play,
   'shield-check': [
     { d: 'M12 3 4.5 6v5.5c0 4.6 3.2 8.2 7.5 9.5 4.3-1.3 7.5-4.9 7.5-9.5V6Z' },
     { d: 'M8.5 12l2.5 2.5 4.5-4.5' },

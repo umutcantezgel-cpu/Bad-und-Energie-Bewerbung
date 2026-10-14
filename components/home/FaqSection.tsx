@@ -16,7 +16,7 @@ export function FaqSection() {
   const items = getFaqItems();
 
   return (
-    <Section id="faq" tone="wand" trenner aria-labelledby="faq-title">
+    <Section id="faq" tone="wand" aria-labelledby="faq-title">
       <Container className="grid gap-8 lg:grid-cols-12 lg:gap-x-8">
         <SectionHeader
           id="faq-title"

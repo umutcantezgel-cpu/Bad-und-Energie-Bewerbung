@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils/cn';
+import { HausschnittKlein } from './technik/Hausschnitt';
 import styles from './zeichnung.module.css';
 
 export interface HausKleinProps {
@@ -8,44 +9,12 @@ export interface HausKleinProps {
 }
 
 /**
- * Kleines Haus aus der Szene des Einstiegs (für schmale Köpfe, Navy-Band, 240 × 200 Einheiten): Giebel 45°
- * aus dem Logo mit Wärmefüllung, im Giebel das Zirkelzeichen des Leitmotivs „35 km“ (E-027: Kreis, Innenring,
- * Mittelpunkt, Radius nach oben links; wie im Einstieg und im OG-Haus), Heizkörper, davor die Wärmepumpe;
- * Vorlauf (oben) und Rücklauf (unten) im Paarabstand 12 laufen ins Haus. Strich 3 px bei jeder Größe
- * (vector-effect: non-scaling-stroke), Breite setzt der Aufrufer (Standard 15rem). Ohne Bewegung.
+ * Kleines Haus für schmale Köpfe (Navy-Band): seit E-029 der kleine Hausschnitt aus dem Einstieg
+ * (lib/zeichnung/szenen/hausschnitt.ts, 1 Einheit = 10 mm) mit Außeneinheit maßstäblich, Erdleitung durch die
+ * Wanddurchführung, Inneneinheit als Symbol und Flachheizkörper 600 × 1.000 mm, Leitungen in Fließrichtung. Das Haus
+ * davor (Zirkel im Giebel, Lüfter als Windrad, Heizkörper zu groß, Wärmefläche) ist entfallen. Schraffur mit doppeltem
+ * Abstand, weil die Zeichnung hier nur 11–15rem breit ist; Breite setzt der Aufrufer (Standard 15rem). Ohne Bewegung.
  */
 export function HausKlein({ titel, className }: HausKleinProps) {
-  const z = cn(styles.strich, styles.linie, styles.fest);
-  return (
-    <svg
-      className={cn(styles.svg, styles.hausKlein, className)}
-      viewBox="0 0 240 200"
-      focusable="false"
-      data-zeichnung="haus-klein"
-      {...(titel ? { role: 'img' } : { 'aria-hidden': true })}
-    >
-      {titel ? <title>{titel}</title> : null}
-      {/* Haus: Wärmefüllung, Giebel 45° mit Traufe, Wände */}
-      <path className={styles.waermeFlaeche} d="M88 192V112L152 48L216 112V192Z" />
-      <path className={z} d="M72 128L152 48L232 128M88 112V192M216 112V192" />
-      {/* Zirkelzeichen im Giebel: Einsatzgebiet, Kernzone, Radius, Mittelpunkt (Wetzlar) */}
-      <circle className={z} cx="152" cy="110" r="18" />
-      <circle className={z} cx="152" cy="110" r="8" />
-      <path className={z} d="M152 110L139.27 97.27" />
-      <circle className={styles.voll} cx="152" cy="110" r="3" />
-      {/* Heizkörper */}
-      <rect className={z} x="164" y="146" width="36" height="28" rx="4" />
-      <path className={z} d="M176 152V168M188 152V168" />
-      {/* Wärmepumpe mit Lüfter */}
-      <rect className={z} x="14" y="138" width="54" height="46" rx="8" />
-      <circle className={z} cx="41" cy="161" r="13" />
-      <path className={z} d="M41 161C41 154 45 149 51 149M41 161C47 165 48 171 45 175M41 161C35 165 30 164 27 159" />
-      <path className={z} d="M22 184V192M60 184V192" />
-      {/* Vorlauf und Rücklauf ins Haus (Paarabstand 12) */}
-      <path className={cn(styles.strich, styles.vorlauf, styles.fest)} d="M68 154H164" />
-      <path className={cn(styles.strich, styles.ruecklauf, styles.fest)} d="M164 166H68" />
-      {/* Bodenlinie */}
-      <path className={z} d="M4 192H236" />
-    </svg>
-  );
+  return <HausschnittKlein titel={titel} grob className={cn(styles.hausKlein, className)} />;
 }

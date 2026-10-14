@@ -1,4 +1,6 @@
 import { COMPANY } from '@/lib/content/company';
+import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
+import { geraetTitel } from '@/lib/zeichnung/geraete/titel';
 import { FACTS, isFactActive } from '@/lib/content/facts';
 import { PROCESS_STEPS } from '@/lib/content/process';
 import { HERO, HERO_RADIUS_LABEL, HERO_STATS, type HeroStat } from '../content';
@@ -17,14 +19,19 @@ export function schuetzeZahlen(text: string): string {
 }
 
 /**
- * Erklärsatz zur Wärmepumpe unter der Szene: TEXTVORSCHLAEGE T-001 wörtlich, vom Auftraggeber mit dem
- * Bild von B Runde 1 freigegeben (E-021). Allgemeines Fachwissen, keine Betriebsbehauptung.
+ * Erklärsatz zur Wärmepumpe unter der Zeichnung: TEXTVORSCHLAEGE T-001 wörtlich, vom Auftraggeber mit dem
+ * Bild von B Runde 1 freigegeben (E-021). Allgemeines Fachwissen, keine Betriebsbehauptung; der Hausschnitt zeigt
+ * es seit E-029 fachlich richtig (Vorlauf von der Anlage ins Haus, Rücklauf zurück).
  */
 export const KREISLAUF_SATZ =
   'So arbeitet eine Wärmepumpe: Luft liefert die Wärme, der rote Vorlauf bringt sie ins Haus, der blaue Rücklauf kehrt zurück.';
 
-/** Textknopf aus B Runde 1 (Register `kreislauf-zeigen`): sagt, was passiert. */
-export const KREISLAUF_KNOPF = 'Kreislauf zeigen';
+/**
+ * Einzelheit „X“ (E-029): Beschriftung neben dem Knopf „Anhalten“ und zugänglicher Name der Zeichnung. Maße aus dem
+ * Geräte-Modul (lib/zeichnung/geraete/compress-aw-s.ts), keine Betriebsbehauptung.
+ */
+export const EINZELHEIT_TEXT = 'Einzelheit X · Maße in mm';
+export const EINZELHEIT_TITEL = `Einzelheit X: ${geraetTitel(COMPRESS_AW_S, 'vorne')}`;
 
 /** Firmensitz (Wegweiser aus B Runde 1; die Szene nach Variante 3 zeigt keinen Wegweiser mehr). */
 export const WEGWEISER = COMPANY.address.city;
@@ -64,7 +71,7 @@ export function jahreskette(now: Date): Jahreskette | null {
 }
 
 /**
- * Etikett am großen Maß „35 km“ (Leitmotiv E-027): Fakt radius35 („Alle Baustellen liegen im Umkreis von 35 km
+ * Etikett am Maß „35 km“ (Leitmotiv E-027): Fakt radius35 („Alle Baustellen liegen im Umkreis von 35 km
  * um Wetzlar“, fakten-abgleich B29) in Worten der Zeichnung; dasselbe Etikett trägt das OG-Bild der Startseite.
  */
 export const RADIUS_ETIKETT = HERO_RADIUS_LABEL;

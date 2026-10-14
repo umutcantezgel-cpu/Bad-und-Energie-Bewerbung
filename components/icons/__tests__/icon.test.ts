@@ -149,7 +149,10 @@ describe('Icon', () => {
     expect(html).toContain('stroke="currentColor"');
     expect(html).toContain('stroke-linecap="round"');
     expect(html).toContain('stroke-linejoin="round"');
-    expect(html).toContain('stroke-width:var(--m-strich, 3px)');
+    // Linienart `icon` (E-029): 2 px, rund; nicht mehr der 3-px-Strich der Leitungen
+    expect(html).toContain('stroke-width:var(--m-icon, 2px)');
+    expect(html).toContain('stroke-width="2"');
+    expect(html).not.toContain('--m-strich');
     expect(html).toContain(`data-icon="${name}"`);
     // jede Form behält ihren Strich (non-scaling-stroke), keine Füllung, keine Pixel
     const shapes = html.match(/<(?:path|circle|rect)\b[^>]*>/g) ?? [];
@@ -168,7 +171,7 @@ describe('Icon', () => {
     expect(html.indexOf('<title>')).toBeLessThan(html.indexOf('<path'));
   });
 
-  it('lässt die runden Enden am Rand stehen (overflow visible: bei 16 px ragt die Kappe 0,17 px hinaus)', () => {
+  it('lässt die runden Enden am Rand stehen (overflow visible: eine Kappe am Rand 2 wird bei 16 px nie abgeschnitten)', () => {
     expect(render({ name: 'user-plus', size: 'sm' })).toContain('overflow:visible');
   });
 

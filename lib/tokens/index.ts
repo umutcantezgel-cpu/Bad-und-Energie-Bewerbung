@@ -38,9 +38,24 @@ export const TOKENS = {
   space: [4, 8, 12, 16, 24, 32, 48, 64, 80, 96, 128],
   /** Radien (K-008) in px; CSS rounded-1/-2/-3/-voll */
   radius: { r1: 4, r2: 12, r3: 24, voll: 999 },
-  /** Paarabstand der Leitungen und Strichstärke in px (CSS --paar, --m-strich) */
+  /** Paarabstand der Leitungen und Strichstärke in px (CSS --paar, --m-strich; Rahmen, Fokus, Fortschrittsstrang) */
   paar: 12,
   strich: 3,
+  /**
+   * Linienarten der Zeichnungen in px (K-010; CSS --m-leitung … --m-icon, Muster --m-verdeckt-muster und
+   * --m-mittellinie-muster). Enden und Verwendung in lib/zeichnung/norm.ts.
+   */
+  linien: {
+    leitung: 3,
+    kontur: 2,
+    fein: 1,
+    mass: 1,
+    verdeckt: 1,
+    mittellinie: 1,
+    icon: 2,
+    verdecktMuster: [6, 4],
+    mittellinieMuster: [16, 4, 2, 4],
+  },
   /**
    * Druck-Rückmeldung (Register „druck“): 1 px nach unten, nur ohne reduzierte Bewegung
    * (globals.css [data-motion~="druck"]:active). Ersetzt den früheren pressScale 0,98.

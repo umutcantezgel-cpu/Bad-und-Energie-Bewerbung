@@ -270,9 +270,22 @@
     --a-9: 5rem;
     --a-10: 6rem;
     --a-11: 8rem;
-    /* Paarabstand der Leitungen = --a-3; Strich 3 px für Zeichnung, Icons, Rahmen, Fokus */
+    /* Paarabstand der Leitungen = --a-3; Strich 3 px für Rahmen, Fokus und den Fortschrittsstrang im Flow */
     --paar: var(--a-3);
     --m-strich: 3px;
+    /* Linienarten der Zeichnungen (K-010, DIN EN ISO 128-2 an den Bildschirm angepasst; Helfer und Enden in
+       lib/zeichnung/norm.ts): Leitung 3 (Vorlauf, Rücklauf, Kältemittel), Kontur 2 (Gehäuse, Wände), fein 1 (Gitter,
+       Lamellen, Schraffur), Maß 1 (Maß- und Hinweislinien), verdeckt und Mittellinie je 1 mit Muster; Icon 2 nur für
+       Bedienzeichen (runde Enden). In Zeichnungen sind alle Enden stumpf. */
+    --m-leitung: 3px;
+    --m-kontur: 2px;
+    --m-fein: 1px;
+    --m-mass: 1px;
+    --m-verdeckt: 1px;
+    --m-verdeckt-muster: 6px 4px;
+    --m-mittellinie: 1px;
+    --m-mittellinie-muster: 16px 4px 2px 4px;
+    --m-icon: 2px;
     /* Touch-Ziel 44 px, Hauptaktion 56 px; Kopf 56 px (ab 64em 64 px), StickyApplyBar 80 px */
     --m-ziel: 2.75rem;
     --m-knopf: 3.5rem;

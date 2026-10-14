@@ -1,11 +1,15 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { MOTION_IDS } from '../../../lib/motion/register';
 import {
+  DAUER_CSS,
+  ENDLOS_ERLAUBT,
+  checkEndlos,
   checkLine,
   checkMotionLine,
+  endlosIn,
   motionIdsIn,
   numericMotion,
   offScaleSpacing,
@@ -106,6 +110,55 @@ describe('check-design-tokens: motion register (K-009)', () => {
     expect(findings[0].token).toBe('data-motion="konfetti"');
     expect(checkMotionLine('[data-motion="laufband"] { animation: x }', known)).toHaveLength(1);
     expect(checkMotionLine('<div data-motion="konfetti" /> {/* design-allow: Testseite */}', known)).toEqual([]);
+  });
+});
+
+describe('check-design-tokens: endlos (E-029, K-009)', () => {
+  const regel = (source: string, file: string) => checkEndlos(source, file).map((f: { token: string; line: number }) => `${f.line}:${f.token}`);
+
+  it('erlaubt Schleifen nur in den Dateien der Ausnahmeliste, jede mit Grund', () => {
+    expect(Object.keys(ENDLOS_ERLAUBT).sort()).toEqual(
+      [DAUER_CSS, 'components/ui/eingabe.module.css', 'components/apply/thanks/FollowUpForm.tsx'].sort(),
+    );
+    for (const [datei, grund] of Object.entries(ENDLOS_ERLAUBT)) {
+      expect(String(grund).length, datei).toBeGreaterThan(30);
+      expect(existsSync(path.join(ROOT, datei)), datei).toBe(true);
+    }
+    expect(DAUER_CSS).toBe('components/zeichnung/bewegung/dauer.module.css');
+  });
+
+  it('findet infinite in CSS, inline styles, animate-spin und WAAPI Infinity überall sonst, auch mit design-allow', () => {
+    expect(regel('.a { animation: x 1s linear infinite; }', 'components/home/x.module.css')).toEqual(['1:infinite']);
+    expect(regel('.a {\n  animation-iteration-count: infinite;\n}', 'app/x.css')).toEqual(['2:infinite']);
+    expect(regel("<div style={{ animation: 'x 1s infinite' }} />", 'components/x.tsx')).toEqual(['1:infinite']);
+    expect(regel('<span className="animate-spin" /> // design-allow: Lader', 'components/x.tsx')).toEqual(['1:animate-spin']);
+    expect(regel('el.animate(frames, { iterations: Infinity });', 'lib/x.ts')).toEqual(['1:iterations: Infinity']);
+    // Kommentare zählen nicht, Wortteile auch nicht
+    expect(regel('/* kein infinite hier */ .a { color: red }', 'components/x.module.css')).toEqual([]);
+    expect(regel('// infinite\nconst infiniteScroll = 1;', 'components/x.tsx')).toEqual([]);
+    expect(regel('.a { animation: laufen 1s infinite; }', 'components/ui/eingabe.module.css')).toEqual([]);
+    expect(regel('<span className="size-4 animate-spin" />', 'components/apply/thanks/FollowUpForm.tsx')).toEqual([]);
+  });
+
+  it('dauer.module.css: infinite nur unter prefers-reduced-motion: no-preference und [data-dauer="an"]', () => {
+    const gut = '@media (prefers-reduced-motion: no-preference) {\n  .bereich[data-dauer="an"] .rotor {\n    animation: r 1s linear infinite;\n  }\n}';
+    expect(regel(gut, DAUER_CSS)).toEqual([]);
+    const ohneMedia = '.bereich[data-dauer="an"] .rotor { animation: r 1s linear infinite; }';
+    expect(regel(ohneMedia, DAUER_CSS)).toEqual(['1:infinite']);
+    const ohneSchalter = '@media (prefers-reduced-motion: no-preference) {\n  .rotor { animation: r 1s linear infinite; }\n}';
+    expect(regel(ohneSchalter, DAUER_CSS)).toEqual(['2:infinite']);
+    const falscherWert = '@media (prefers-reduced-motion: no-preference) {\n  .bereich[data-dauer="aus"] .rotor { animation: r 1s infinite; }\n}';
+    expect(regel(falscherWert, DAUER_CSS)).toEqual(['2:infinite']);
+    const reduziert = '@media (prefers-reduced-motion: reduce) {\n  .bereich[data-dauer="an"] .rotor { animation: r 1s infinite; }\n}';
+    expect(regel(reduziert, DAUER_CSS)).toEqual(['2:infinite']);
+  });
+
+  it('die echten Dateien bestehen: dauer.module.css hält die Regel, der Einstieg bleibt ohne Schleife', () => {
+    const dauer = readFileSync(path.join(ROOT, DAUER_CSS), 'utf8');
+    expect(dauer).toMatch(/\binfinite\b/);
+    expect(checkEndlos(dauer, DAUER_CSS)).toEqual([]);
+    const einstieg = readFileSync(path.join(ROOT, 'components/home/einstieg/einstieg.module.css'), 'utf8');
+    expect(endlosIn(einstieg.replace(/\/\*[\s\S]*?\*\//g, ''))).toEqual([]);
   });
 });
 

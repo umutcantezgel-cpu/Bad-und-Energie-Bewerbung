@@ -1,67 +1,43 @@
-import { Etikettkasten } from '@/components/zeichnung/Etikettkasten';
-import z from '@/components/zeichnung/zeichnung.module.css';
 import { cn } from '@/lib/utils/cn';
 import styles from './themen.module.css';
 
 export interface AbsperrungProps {
-  /** Zugänglicher Name (role="img"). */
-  titel: string;
-  /** Beschriftungen: Anfang der Leitung, Abzweig, Ziel. */
+  /**
+   * Zugänglicher Name aus lib/themen/text.ts. Er beschreibt noch die alte Zeichnung (Abzweig mit Blindflansch); die
+   * Fassung seit E-029 ist echter Text und braucht keinen Bildnamen.
+   */
+  titel?: string;
+  /** Beschriftungen: Anfang des Wegs (du), wohin nichts geht (derzeitiger Arbeitgeber), Ziel (Firmensitz). */
   etiketten: { du: string; arbeitgeber: string; ziel: string };
   className?: string;
 }
 
+/** Zeilenköpfe des Laufzettels (Mikrotext, K-012). */
+export const LAUFZETTEL = Object.freeze({ von: 'Von', an: 'An', nichtAn: 'Nicht an' });
+
 /**
- * Absperrung (Signatur der Seite „Diskret wechseln“, 480 × 300 Einheiten): Vorlauf und Rücklauf laufen von dir bis
- * ins Haus mit dem Zirkelzeichen (Firmensitz Wetzlar). Der Abzweig nach oben, zu deinem derzeitigen Arbeitgeber, endet
- * an einem Blindflansch: Dort fließt nichts. Das Bild zeigt die Zusage DISCRETION_PROMISE (lib/content/process.ts) in
- * der Sprache der Zeichnungen, ohne neue Aussage. Wo der Rücklauf des Abzweigs den Vorlauf kreuzt, läuft der Vorlauf
- * mit einem Mantel in der Fläche darüber (wie im Wärmebild). Strich 3 px bei jeder Größe; steht immer auf Navy.
+ * Signatur der Seite „Diskret wechseln“ (E-028), seit E-029 als Typografie statt Absperrung und Blindflansch (Rohr nur,
+ * wo Wasser fließt): ein Laufzettel in drei Zeilen, „Von: Du“, „An: Wetzlar“, „Nicht an: Dein Arbeitgeber“. Er sagt
+ * dasselbe wie die Zusage FACTS.discretion („Wir kontaktieren unter keinen Umständen deinen derzeitigen Arbeitgeber.“,
+ * im Kopf direkt daneben), ohne neue Aussage. Zeilenköpfe in Martian Mono (Etikett), Werte in Bricolage, feine Linien
+ * zwischen den Zeilen; die letzte Zeile leiser. Echter Text (Beschreibungsliste), steht immer auf Navy.
  */
-export function Absperrung({ titel, etiketten, className }: AbsperrungProps) {
-  const l = cn(z.strich, z.linie, z.fest);
-  const vl = cn(z.strich, z.vorlauf, z.fest);
-  const rl = cn(z.strich, z.ruecklauf, z.fest);
+export function Absperrung({ etiketten, className }: AbsperrungProps) {
+  const zeilen = [
+    { kopf: LAUFZETTEL.von, wert: etiketten.du },
+    { kopf: LAUFZETTEL.an, wert: etiketten.ziel },
+    { kopf: LAUFZETTEL.nichtAn, wert: etiketten.arbeitgeber, leise: true },
+  ];
   return (
-    <div className={cn(styles.absperrung, className)} role="img" aria-label={titel} data-zeichnung="absperrung">
-      <svg className={z.svg} viewBox="0 0 480 300" aria-hidden="true" focusable="false">
-        {/* Haus (Firmensitz): Wärmefüllung, Giebel 45° mit Traufe, Wände, Zirkelzeichen, Heizkörper */}
-        <path className={z.waermeFlaeche} d="M364 262V160L410 114L456 160V262Z" />
-        <path className={l} d="M348 176L410 114L472 176M364 160V262M456 160V262" />
-        <circle className={l} cx="410" cy="166" r="16" />
-        <circle className={l} cx="410" cy="166" r="7" />
-        <path className={l} d="M410 166L398.69 154.69" />
-        <circle className={z.voll} cx="410" cy="166" r="3" />
-        <rect className={l} x="404" y="204" width="38" height="30" rx="4" />
-        <path className={l} d="M416 210V228M430 210V228" />
-        {/* Abzweig zum derzeitigen Arbeitgeber: Rücklauf zuerst, der Vorlauf kreuzt mit Mantel darüber */}
-        <path className={rl} d="M168 224V122" />
-        <path className={cn(z.strich, z.fest, z.mantel)} d="M24 212H404" />
-        <path className={vl} d="M24 212H404" />
-        <path className={vl} d="M156 212V122" />
-        <path className={rl} d="M404 224H24" />
-        {/* Absperrventil, geschlossen (gefülltes Ventilzeichen über beiden Leitungen) */}
-        <path className={cn(l, z.voll)} d="M146 150H178L162 166ZM146 182H178L162 166Z" />
-        {/* Blindflansch: zwei Scheiben, verschraubt, darüber nichts */}
-        <rect className={cn(l, styles.flansch)} x="136" y="110" width="52" height="12" rx="2" />
-        <rect className={cn(l, styles.flansch)} x="136" y="98" width="52" height="12" rx="2" />
-        <path className={l} d="M143 92V128M181 92V128" />
-        {/* Anfang der Leitung (du): zwei Endkappen */}
-        <path className={l} d="M20 204V232" />
-        {/* Bodenlinie */}
-        <path className={l} d="M4 262H476" />
-      </svg>
-      <span className={styles.absperrungEtiketten} aria-hidden="true">
-        <Etikettkasten icon="users" className={cn(styles.absperrungEtikett, styles.abDu)}>
-          {etiketten.du}
-        </Etikettkasten>
-        <Etikettkasten icon="shield-check" className={cn(styles.absperrungEtikett, styles.abArbeitgeber)}>
-          {etiketten.arbeitgeber}
-        </Etikettkasten>
-        <Etikettkasten icon="standort" className={cn(styles.absperrungEtikett, styles.abZiel)}>
-          {etiketten.ziel}
-        </Etikettkasten>
-      </span>
+    <div className={cn(styles.absperrung, className)} data-zeichnung="laufzettel">
+      <dl className={styles.laufzettel}>
+        {zeilen.map((z) => (
+          <div key={z.kopf} className={cn(styles.laufzeile, z.leise && styles.laufzeileLeise)}>
+            <dt className="text-etikett text-ink-2">{z.kopf}</dt>
+            <dd className={cn(styles.laufwert, 'font-display')}>{z.wert}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   );
 }

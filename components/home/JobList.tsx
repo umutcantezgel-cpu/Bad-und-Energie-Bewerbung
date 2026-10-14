@@ -16,7 +16,8 @@ export function stellenEtikett(anzahl: number): string {
 /**
  * #stellen (Variante 1 „Stellen als Leitungsabgänge“, B Runde 1 Stellenzeilen): every live job is a
  * circuit between the red supply line and the blue return, salary as a measure in font-mass.
- * Tonfolge E-023: paper between the week and the benefits (both on the wall), Leitungstrenner on top.
+ * Tonfolge E-023: paper between the hero and the benefits (wall); since E-029 the change of surface separates the
+ * sections, no pipe divider.
  */
 export interface JobListProps {
   /** Stichtag für „live“ (Tests); Standard: jetzt. */
@@ -27,7 +28,7 @@ export function JobList({ now = new Date() }: JobListProps) {
   const jobs = getActiveJobs().filter((job) => isJobLive(job, now));
 
   return (
-    <Section id="stellen" tone="papier" trenner aria-labelledby="stellen-title">
+    <Section id="stellen" tone="papier" aria-labelledby="stellen-title">
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
           <SectionHeader

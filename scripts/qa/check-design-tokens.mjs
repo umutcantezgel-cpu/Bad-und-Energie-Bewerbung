@@ -6,6 +6,9 @@
  * - Scans .ts/.tsx under app/, components/ and lib/ (tests excluded) line by line.
  * - Checks every literal `data-motion` id in .ts/.tsx and .css files against MOTION_IDS in
  *   lib/motion/register.ts (KERN K-009: every animated element carries its id).
+ * - Rule `endlos` (E-029): endless loops only in ENDLOS_ERLAUBT, each with its reason; in
+ *   components/zeichnung/bewegung/dauer.module.css only under [data-dauer="an"] and
+ *   prefers-reduced-motion: no-preference.
  * - Reports off-scale spacing and numeric durations as notes (not blocking yet; R3–R5 move the
  *   components onto the 11-step scale and the four durations).
  *
@@ -170,6 +173,86 @@ export function motionIdsIn(line) {
   return out;
 }
 
+// --- endless loops (E-029, KERN K-009) ------------------------------------------------
+
+/** The stylesheet of the continuous motion (rotor, water, refrigerant): the only home of product loops. */
+export const DAUER_CSS = 'components/zeichnung/bewegung/dauer.module.css';
+
+/**
+ * Files that may loop forever, each with its reason (rule `endlos`). Everything else fails: `infinite` in CSS or
+ * inline styles, Tailwind's infinite utility `animate-spin` and WAAPI `iterations: Infinity`. A design-allow
+ * comment does not lift this rule; a new exception needs an entry here and in KERN K-009.
+ */
+export const ENDLOS_ERLAUBT = Object.freeze({
+  [DAUER_CSS]:
+    'Dauerbewegung der Produkt- und Prozesszeichnungen (E-029): nur unter [data-dauer="an"] und prefers-reduced-motion: no-preference, mit Anhalten-Knopf',
+  'components/ui/eingabe.module.css': 'Ladeanzeige (K-011 Zustand „Lädt“): läuft nur, solange gesendet wird',
+  'components/apply/thanks/FollowUpForm.tsx':
+    'Ladeanzeige (animate-spin) im Nachfrage-Formular, nur während des Sendens; Wechsel auf die Ladeanzeige der Eingabe ist offen',
+});
+
+const ENDLOS_RULE = {
+  id: 'endlos',
+  hint: `Loops only in ${DAUER_CSS} (under [data-dauer="an"] and prefers-reduced-motion: no-preference) or an exception in ENDLOS_ERLAUBT with its reason (E-029, K-009).`,
+};
+
+const ENDLOS = /\binfinite\b|\banimate-spin\b|\biterations\s*:\s*Infinity\b/g;
+
+/** Positions of endless-loop tokens in a line. */
+export function endlosIn(line) {
+  return [...line.matchAll(ENDLOS)].map((m) => ({ index: m.index, token: m[0] }));
+}
+
+/**
+ * Findings of rule `endlos` for one file (source with comments). Outside the allowed files every loop token is a
+ * finding. In dauer.module.css each `infinite` must sit inside `@media (prefers-reduced-motion: no-preference)` and in
+ * a rule whose selector contains `[data-dauer="an"]`.
+ */
+export function checkEndlos(source, file) {
+  const findings = [];
+  const css = file.endsWith('.css');
+  const clean = css
+    ? stripCssComments(source)
+    : source.replace(/\/\*[\s\S]*?\*\//g, (c) => c.replace(/[^\n]/g, ' ')).replace(/(^|[^:'"`])\/\/.*$/gm, '$1');
+  const allowed = Object.prototype.hasOwnProperty.call(ENDLOS_ERLAUBT, file);
+  if (allowed && file !== DAUER_CSS) return findings;
+
+  // Block structure for the context check: a stack of preludes (selectors and at-rules) at every position
+  const stack = [];
+  let prelude = '';
+  let line = 1;
+  let col = 1;
+  for (let i = 0; i < clean.length; i += 1) {
+    const ch = clean[i];
+    if (ch === '{') {
+      stack.push(prelude.trim());
+      prelude = '';
+    } else if (ch === '}') {
+      stack.pop();
+      prelude = '';
+    } else if (ch === ';') {
+      prelude = '';
+    } else {
+      prelude += ch;
+    }
+    const rest = clean.slice(i, i + 24);
+    const hit = /^(?:infinite\b|animate-spin\b|iterations\s*:\s*Infinity\b)/.exec(rest);
+    const boundary = i === 0 || !/[\w-]/.test(clean[i - 1]);
+    if (hit && boundary) {
+      const inMedia = stack.some((p) => /^@media\b[^{]*prefers-reduced-motion:\s*no-preference/.test(p));
+      const inDauer = stack.some((p) => !p.startsWith('@') && /\[data-dauer="an"\]/.test(p));
+      if (!allowed || !(css && inMedia && inDauer)) findings.push({ line, col, rule: ENDLOS_RULE, token: hit[0] });
+    }
+    if (ch === '\n') {
+      line += 1;
+      col = 1;
+    } else {
+      col += 1;
+    }
+  }
+  return findings;
+}
+
 // --- notes (not blocking) ------------------------------------------------------------
 
 /** Tailwind spacing steps on the K-007 scale (×0.25rem): 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 · 80 · 96 · 128 px. */
@@ -267,6 +350,14 @@ function main() {
   const legacy = [];
   const notes = { spacing: [], motion: [] };
   const usedIds = new Set();
+
+  for (const file of [...files, ...cssFiles]) {
+    for (const f of checkEndlos(readFileSync(path.join(ROOT, file), 'utf8'), file)) problems.push({ file, ...f });
+  }
+  // An exception without its file is stale: remove it from ENDLOS_ERLAUBT
+  for (const file of Object.keys(ENDLOS_ERLAUBT)) {
+    if (!existsSync(path.join(ROOT, file))) problems.push({ file, line: 0, col: 0, rule: ENDLOS_RULE, token: 'ENDLOS_ERLAUBT (Datei fehlt)' });
+  }
 
   for (const file of files) {
     const lines = readFileSync(path.join(ROOT, file), 'utf8').split('\n');

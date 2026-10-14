@@ -23,7 +23,6 @@ export function RegionSection() {
             <SectionHeader
               id="einsatzgebiet-title"
               eyebrow={GEBIET_ETIKETT}
-              klammer
               title={headlineSaetze().map((satz, i) => (
                 <Fragment key={satz}>
                   {i > 0 && ' '}

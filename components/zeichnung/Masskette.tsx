@@ -16,8 +16,9 @@ export interface MasskettenProps {
 
 /**
  * Maßkette (KERN K-003 „eingemessen statt behauptet“, Einstieg `.kette`): Wert, darunter eine waagerechte
- * Maßlinie mit Endstrichen, darunter der Name. Die Linie ist dekorativ; Wert und Name stehen als Text mit
- * trennendem Leerzeichen im DOM. Farben über Rollen: auf Papier Navy, auf dem Inverse-Band Creme.
+ * Maßlinie nach DIN 406 (Linienart `mass`, 1 px, Maßhilfslinien an den Enden, Begrenzungsstriche unter 45°, E-029),
+ * darunter der Name. Die Linie ist dekorativ; Wert und Name stehen als Text mit trennendem Leerzeichen im DOM.
+ * Farben über Rollen: auf Papier Navy, auf dem Inverse-Band Creme.
  */
 export function Masskette({ wert, name, ausrichtung = 'start', groesse = 'normal', className }: MasskettenProps) {
   return (
@@ -26,7 +27,10 @@ export function Masskette({ wert, name, ausrichtung = 'start', groesse = 'normal
       data-zeichnung="masskette"
     >
       <span className={cn(styles.mkWert, groesse === 'gross' && styles.mkGross, 'font-mass text-brand')}>{wert}</span>{' '}
-      <span className={styles.mkLinie} aria-hidden="true" />
+      <span className={styles.mkLinie} aria-hidden="true">
+        <span className={styles.mkStrich} />
+        <span className={styles.mkStrich} />
+      </span>
       {name ? (
         <>
           {' '}

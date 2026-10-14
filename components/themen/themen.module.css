@@ -1,7 +1,8 @@
 /*
  * Themenseiten (E-028): Hub /arbeiten-bei-uns und fünf Themen als Erzählseiten im Design der Stellen- und Ortsseiten:
- * Navy-Seitenkopf mit der Zeichnung der Seite, Papier-, Wand- und Navy-Abschnitte mit Leitungstrennern, Maße und
- * Beträge in Martian Mono, Etiketten-Kästchen. Nur Rollen und Skalen aus app/styles/theme.css.
+ * Navy-Seitenkopf mit der Zeichnung der Seite, Papier-, Wand- und Navy-Abschnitte (Flächenwechsel; zwei gleiche Töne
+ * trennt eine feine Linie, E-029), Maße und Beträge in Martian Mono, Etiketten-Kästchen. Nur Rollen und Skalen aus
+ * app/styles/theme.css.
  */
 
 /* ═══ Seitenkopf: Leitungspaar zeichnet sich in den Knopf (Register `erdleitung`, wie Stellen- und Ortsseiten) ═══ */
@@ -46,14 +47,19 @@
   overflow-wrap: normal;
 }
 
-/* ═══ Abschnittsköpfe: h2 nach dem breitesten Wort auf die Spalte (Rohrklammer 2rem abgezogen) ═══ */
+/* ═══ Abschnittsköpfe: h2 nach dem breitesten Wort auf die Spalte ═══ */
 .abschnittskopf {
   container-type: inline-size;
   width: 100%;
 }
 
 .passend {
-  font-size: min(var(--text-title-1), calc((96cqi - 2rem) / var(--stueck)));
+  font-size: min(var(--text-title-1), calc(96cqi / var(--stueck)));
+}
+
+/* Zwei Abschnitte im selben Ton: feine Linie an der Oberkante statt Leitungstrenner (E-029) */
+.linie {
+  border-top: var(--m-fein) solid var(--line-strong);
 }
 
 /* ═══ Text ═══ */
@@ -412,56 +418,31 @@
   }
 }
 
-/* ═══ Verteiler (Kopf des Hubs): ein Abgang je Thema zwischen Vorlauf und Rücklauf ═══ */
+/* ═══ Themenliste (Kopf des Hubs, seit E-029 ohne Vorlauf und Rücklauf): je Thema Kästchen, Leitlinie, Kennwert ═══ */
 .verteiler {
   width: 100%;
   max-width: 32rem;
 }
 
-.verteilerKopf {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: var(--a-3);
-}
-
 .verteilerListe {
-  position: relative;
   display: grid;
-  gap: var(--a-2);
   margin: 0;
-  padding: var(--a-4) 0;
+  padding: 0;
   list-style: none;
-}
-
-.verteilerListe::before,
-.verteilerListe::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: var(--m-strich);
-  border-radius: var(--radius-voll);
-}
-
-.verteilerListe::before {
-  left: 0;
-  background-color: var(--vorlauf);
-}
-
-.verteilerListe::after {
-  right: 0;
-  background-color: var(--ruecklauf);
+  border-top: var(--m-fein) solid var(--line-strong);
 }
 
 .verteilerKreis {
   display: grid;
-  grid-template-columns: var(--a-4) fit-content(62%) minmax(var(--a-3), 1fr) auto var(--a-4);
+  grid-template-columns: fit-content(64%) minmax(var(--a-3), 1fr) auto;
   align-items: center;
+  padding-block: var(--a-2);
+  border-bottom: var(--m-fein) solid var(--line-strong);
 }
 
 @media (min-width: 37.5em) {
-  .verteilerListe {
-    gap: var(--a-4);
+  .verteilerKreis {
+    padding-block: var(--a-3);
   }
 
   .verteilerKasten {
@@ -470,29 +451,8 @@
   }
 }
 
-@media (min-width: 30em) {
-  .verteilerKreis {
-    grid-template-columns: var(--a-5) fit-content(65%) minmax(var(--a-4), 1fr) auto var(--a-5);
-  }
-}
-
-.verteilerVor,
-.verteilerRueck {
-  height: var(--m-strich);
-}
-
-.verteilerVor {
-  grid-column: 1;
-  background-color: var(--vorlauf);
-}
-
-.verteilerRueck {
-  grid-column: 5;
-  background-color: var(--ruecklauf);
-}
-
 .verteilerKasten {
-  grid-column: 2;
+  grid-column: 1;
   min-width: 0;
   line-height: 1.25;
   display: inline-flex;
@@ -500,20 +460,20 @@
   gap: var(--a-2);
   min-height: var(--a-6);
   padding: var(--a-1) var(--a-2);
-  border: var(--m-strich) solid var(--brand);
+  border: var(--m-kontur) solid var(--brand);
   background-color: var(--surface);
 }
 
+/* Leitlinie bis zum Kennwert: feine Linie wie eine Hinweislinie an der Zeichnung */
 .verteilerLinie {
-  grid-column: 3;
+  grid-column: 2;
   height: 0;
   margin-inline: var(--a-2);
-  border-top: 1px dashed var(--line-strong);
+  border-top: var(--m-fein) dashed var(--line-strong);
 }
 
 .verteilerWert {
-  grid-column: 4;
-  padding-inline-end: var(--a-2);
+  grid-column: 3;
   font-size: var(--text-callout);
   font-weight: 500;
   white-space: nowrap;
@@ -721,18 +681,35 @@
   grid-area: linie;
   position: relative;
   height: var(--a-4);
-  border-inline: var(--m-strich) solid var(--brand);
+  border-inline: var(--m-mass) solid var(--brand);
 }
 
+/* Maßlinie nach DIN 406 (E-029): Linienart mass, Begrenzungsstriche unter 45° */
 .zeitLinie::before {
   content: "";
   position: absolute;
   top: 50%;
   left: 0;
   right: 0;
-  height: var(--m-strich);
+  height: var(--m-mass);
   transform: translateY(-50%);
   background-color: var(--brand);
+}
+
+.zeitStrich {
+  position: absolute;
+  top: 50%;
+  height: var(--a-4);
+  border-left: var(--m-mass) solid var(--brand);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.zeitStrich:first-child {
+  left: 0;
+}
+
+.zeitStrich:last-child {
+  right: 0;
 }
 
 .zeitVonName {
@@ -746,7 +723,7 @@
   text-align: right;
 }
 
-/* ═══ Servicefahrzeug und Absperrung (Köpfe): Kästchen am Bild ab 26rem, darunter als Reihe ═══ */
+/* ═══ Servicefahrzeug (Kopf): Kästchen am Bild ab 26rem (über und unter dem Wagen), darunter als Reihe ═══ */
 .fahrzeug,
 .absperrung {
   position: relative;
@@ -755,8 +732,7 @@
   container-type: inline-size;
 }
 
-.fahrzeugEtiketten,
-.absperrungEtiketten {
+.fahrzeugEtiketten {
   display: flex;
   flex-wrap: wrap;
   gap: var(--a-2);
@@ -764,55 +740,75 @@
 }
 
 @container (min-width: 26rem) {
-  .fahrzeugEtiketten,
-  .absperrungEtiketten {
+  /* Platz über und unter der Zeichnung für die Kästchen */
+  .fahrzeug > svg {
+    margin-block: var(--a-7);
+  }
+
+  .fahrzeugEtiketten {
     position: absolute;
     inset: 0;
     display: block;
     padding: 0;
   }
 
-  .fahrzeugEtikett,
-  .absperrungEtikett {
+  .fahrzeugEtikett {
     position: absolute;
   }
 
+  /* Über der Türöffnung (Mitte der Öffnung: 330 von 640 Einheiten) */
   .fzSortimo {
-    left: 31%;
+    left: 51.6%;
     top: 0;
+    transform: translateX(-50%);
   }
 
   .fzHilti {
     left: 31%;
-    top: 90%;
+    bottom: 0;
   }
 
   .fzMess {
     left: 64%;
-    top: 90%;
-  }
-
-  .abDu {
-    left: 1%;
-    top: 52%;
-  }
-
-  .abArbeitgeber {
-    left: 33.75%;
-    top: 7%;
-    transform: translateX(-50%);
-  }
-
-  .abZiel {
-    left: 85.4%;
-    top: 12%;
-    transform: translateX(-50%);
+    bottom: 0;
   }
 }
 
-/* Blindflansch: zwei Scheiben in der Fläche, damit nichts durchscheint */
-.flansch {
-  fill: var(--surface);
+/* ═══ Laufzettel (Kopf „Diskret wechseln“, seit E-029 statt Absperrung): drei Zeilen Typografie ═══ */
+.laufzettel {
+  display: grid;
+  margin: 0;
+  border-top: var(--m-fein) solid var(--line-strong);
+}
+
+.laufzeile {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: var(--a-4);
+  padding-block: var(--a-3);
+  border-bottom: var(--m-fein) solid var(--line-strong);
+}
+
+@media (min-width: 37.5em) {
+  .laufzeile {
+    grid-template-columns: 8rem minmax(0, 1fr);
+    padding-block: var(--a-4);
+  }
+}
+
+.laufwert {
+  margin: 0;
+  color: var(--brand);
+  font-size: var(--text-title-2);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.laufzeileLeise .laufwert {
+  color: var(--ink-2);
 }
 
 /* ═══ Gehalt: Spannen je Stelle ═══ */
@@ -972,14 +968,6 @@
   color: var(--ink);
 }
 
-.paketBetrag {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--a-1) var(--a-2);
-  margin-top: auto;
-}
-
 .aufgaben {
   display: grid;
   gap: var(--a-2);
@@ -993,6 +981,90 @@
 
 .aufgaben li::marker {
   color: var(--brand);
+}
+
+/* ═══ Wärmepumpen: Technik (Kältekreis, Anlagenschema, Gerät; E-029) ═══ */
+/* Zeichnung und Text nebeneinander ab 64em (Zeichnung breiter), darunter gestapelt; die Zeichnung zuerst */
+.technikPaar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--a-6);
+  align-items: start;
+}
+
+@media (min-width: 64em) {
+  .technikPaar {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: var(--a-8);
+  }
+}
+
+.technikBild {
+  min-width: 0;
+}
+
+/* Die vier Stationen des Kältekreises: Bauteil in Versalien, Satz darunter, Nummer in Martian Mono */
+.schritte {
+  display: grid;
+  gap: var(--a-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: schritt;
+}
+
+.schritt {
+  display: grid;
+  grid-template-columns: var(--a-6) minmax(0, 1fr);
+  column-gap: var(--a-3);
+  row-gap: var(--a-1);
+  counter-increment: schritt;
+}
+
+.schritt::before {
+  content: counter(schritt);
+  grid-row: 1 / span 2;
+  color: var(--brand);
+  font-family: var(--font-mass);
+  font-size: var(--text-callout);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.schrittName {
+  line-height: 1.5;
+}
+
+.schrittText {
+  max-width: 38rem;
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+/* Beispielgerät von vorn und von rechts: im Verhältnis der Breiten (1.100 zu 540 mm plus Maßketten) */
+.geraete {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--a-7);
+  align-items: end;
+}
+
+@media (min-width: 48em) {
+  .geraete {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1.15fr);
+  }
+}
+
+.geraetVorne,
+.geraetSeite {
+  min-width: 0;
+}
+
+@media (max-width: 47.99em) {
+  .geraetSeite {
+    max-width: 62%;
+  }
 }
 
 /* ═══ Wärmepumpen: Marken und Partnerstufen ═══ */

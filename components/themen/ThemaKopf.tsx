@@ -22,7 +22,7 @@ export interface ThemaKopfProps {
 /**
  * Kopf der Themenseiten (E-028, Erzählseite wie Stellen- und Ortsseiten): Pfad, dann der Seitenkopf `erzaehl` mit
  * Etikett, h1 in Bildgröße (nach dem breitesten Wort auf die Spalte gesetzt, bricht bei 320 px nie im Wort),
- * Unterzeile an der Rohrklammer, Einleitung, „Jetzt bewerben“ (/bewerbung) und Zweitweg zum ersten Abschnitt; rechts
+ * Unterzeile (seit E-029 ohne Rohrklammer), Einleitung, „Jetzt bewerben“ (/bewerbung) und Zweitweg zum ersten Abschnitt; rechts
  * bzw. oben die Zeichnung der Seite auf Navy mit den Maßen. Das Leitungspaar läuft beim Laden in den Knopf
  * (Register `erdleitung`).
  */

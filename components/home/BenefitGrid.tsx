@@ -45,7 +45,7 @@ export function BenefitGrid({ now = new Date() }: BenefitGridProps) {
   const rollen = paketRollen(live, now);
 
   return (
-    <Section id="vorteile" tone="wand" trenner aria-labelledby="vorteile-title">
+    <Section id="vorteile" tone="wand" aria-labelledby="vorteile-title">
       <Container className="flex flex-col gap-16 md:gap-24">
         <SectionHeader
           id="vorteile-title"
