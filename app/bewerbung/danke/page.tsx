@@ -6,7 +6,8 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { ContactOptions } from '@/components/site/ContactOptions';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
-import { getProcessSteps } from '@/lib/content/process';
+import { getProcessSteps, processAudienceFor, type ProcessAudience, type ProcessStep } from '@/lib/content/process';
+import { getJobById } from '@/lib/jobs/registry';
 import { buildPageGraph } from '@/lib/seo/graph';
 import { generatePageMetadata } from '@/lib/seo/metadata';
 
@@ -17,15 +18,24 @@ export const metadata = generatePageMetadata({
   noindex: true,
 });
 
+// Ablauf je Stelle nach der Kategorie (processAudienceFor): das Schülerpraktikum ohne den Ablauf der Ausbildung.
 const jobs: ThankYouJobs = Object.fromEntries(
-  getFlowJobOptions().map((option) => [option.id, { label: option.summaryLabel, questionSet: option.questionSet }]),
+  getFlowJobOptions().map((option) => [
+    option.id,
+    {
+      label: option.summaryLabel,
+      questionSet: option.questionSet,
+      ablauf: processAudienceFor({ category: getJobById(option.id)?.category, questionSet: option.questionSet }),
+    },
+  ]),
 );
 
-const processSteps = {
+const processSteps: Record<ProcessAudience, readonly ProcessStep[]> = {
   fachkraft: getProcessSteps('fachkraft'),
   ausbildung: getProcessSteps('ausbildung'),
   quereinstieg: getProcessSteps('quereinstieg'),
   buero: getProcessSteps('buero'),
+  praktikum: getProcessSteps('praktikum'),
 };
 
 const company: ThankYouCompany = {

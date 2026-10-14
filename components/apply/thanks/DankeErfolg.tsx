@@ -48,7 +48,8 @@ export function DankeErfolg({
 }: DankeErfolgProps) {
   const job = jobs[record.jobId];
   const questionSet = job?.questionSet ?? 'fachkraft';
-  const steps = processSteps[questionSet] ?? processSteps.fachkraft;
+  // Ablauf nach der Kategorie der Stelle (Schülerpraktikum ohne Azubi-Werkzeugset), nicht nach dem Fragenset
+  const steps = processSteps[job?.ablauf ?? questionSet] ?? processSteps.fachkraft;
 
   const schritte: DankeSchritt[] = [
     {

@@ -1,10 +1,13 @@
 import type { ReactNode } from 'react';
-import type { ProcessStep } from '@/lib/content/process';
+import type { ProcessAudience, ProcessStep } from '@/lib/content/process';
 import type { QuestionSetId } from '@/lib/apply/questions';
 import type { OpeningHoursSpec } from '@/lib/apply/office-hours';
 
-/** Stellen-Anzeige je ID (inklusive Initiativbewerbung). */
-export type ThankYouJobs = Readonly<Record<string, { label: string; questionSet: QuestionSetId }>>;
+/**
+ * Stellen-Anzeige je ID (inklusive Initiativbewerbung). `ablauf` folgt der Kategorie (processAudienceFor), nicht dem
+ * Fragenset: Das Schülerpraktikum fragt wie die Ausbildung, hat aber einen eigenen Ablauf.
+ */
+export type ThankYouJobs = Readonly<Record<string, { label: string; questionSet: QuestionSetId; ablauf: ProcessAudience }>>;
 
 /** Stammdaten für Kontakt, vCard und Bürozeiten (aus COMPANY, auf dem Server zusammengestellt). */
 export interface ThankYouCompany {
@@ -29,8 +32,8 @@ export interface ThankYouCompany {
 
 export interface ThankYouViewProps {
   jobs: ThankYouJobs;
-  /** Ablauf je Fragenset (getProcessSteps). */
-  processSteps: Readonly<Record<QuestionSetId, readonly ProcessStep[]>>;
+  /** Ablauf je Zielgruppe (getProcessSteps), ausgewählt über `ThankYouJobs[…].ablauf`. */
+  processSteps: Readonly<Record<ProcessAudience, readonly ProcessStep[]>>;
   company: ThankYouCompany;
   /** Fakt quickResponse. */
   quickResponse: string;

@@ -24,7 +24,7 @@ import { TextLink } from '@/components/ui/TextLink';
 import { HausKlein } from '@/components/zeichnung/HausKlein';
 import { INITIATIVE_APPLY_PATH } from '@/lib/apply/params';
 import { WHATSAPP_GREETING } from '@/lib/apply/whatsapp-message';
-import { COMPANY, FACTS, getTeamQuote } from '@/lib/content';
+import { COMPANY, FACTS, getTeamQuote, processAudienceFor } from '@/lib/content';
 import { applyPath, jobPath } from '@/lib/jobs/format';
 import { buildBreadcrumbJsonLd, buildJobPostingJsonLd } from '@/lib/jobs/jsonld';
 import {
@@ -168,10 +168,10 @@ function OpenJob({ job }: { job: Job }) {
       <Section tone="papier" trenner>
         <Container className="flex flex-col gap-section-sm">
           {/*
-            Das Schülerpraktikum nutzt das Fragenset der Ausbildung, aber deren Ablauf (Azubi-Werkzeugset ab Tag 1) gilt
-            für ein Praktikum nicht: dort ohne Ablauf, bis der Inhaber ihn nennt (M-027).
+            Ablauf nach der Kategorie (processAudienceFor): Das Schülerpraktikum nutzt das Fragenset der Ausbildung, aber
+            nicht deren Ablauf (Azubi-Werkzeugset ab Tag 1), sondern den eigenen: Zeitraum nach Absprache mit der Schule (S4).
           */}
-          {isPraktikum(job) ? null : <JobProcess audience={job.apply.questionSet} />}
+          <JobProcess audience={processAudienceFor({ category: job.category, questionSet: job.apply.questionSet })} />
 
           {/*
             „60 Sekunden“ steht im Mikrotext des Kopfs und als Titel von Schritt 1 darüber, „Kein Lebenslauf“ im

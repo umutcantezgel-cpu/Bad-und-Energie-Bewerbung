@@ -24,6 +24,7 @@ import {
   getProcessIntro,
   getProcessSteps,
   isFactActive,
+  processAudienceFor,
   isFactId,
 } from '..';
 
@@ -209,6 +210,31 @@ describe('Ablauf', () => {
     expect(getDiscretionPromise('fachkraft')).toBe(DISCRETION_PROMISE);
     expect(getDiscretionPromise('quereinstieg')).toBe(DISCRETION_PROMISE);
     expect(getProcessSteps('fachkraft')[1].text).toContain('diskret');
+  });
+
+  it('Schülerpraktikum (S4): Ablauf nach der Kategorie, ohne Werkzeugset, ohne Geschenk, ohne Geld, ohne „Ausbildung“', () => {
+    const praktika = ALL_JOBS.filter((job) => job.category === 'praktikum');
+    expect(praktika.length).toBeGreaterThan(0);
+    for (const job of praktika) {
+      // Das Fragenset bleibt das der Ausbildung (Schule), der Ablauf nicht
+      expect(job.apply.questionSet).toBe('ausbildung');
+      expect(processAudienceFor({ category: job.category, questionSet: job.apply.questionSet })).toBe('praktikum');
+    }
+    const steps = getProcessSteps('praktikum');
+    const intro = getProcessIntro('praktikum');
+    expect(steps.map((s) => s.number)).toEqual([1, 2, 3]);
+    expect(intro.title).toBe('In 3 Schritten zu deinem Praktikum');
+    const text = [intro.title, intro.text, ...steps.flatMap((s) => [s.title, s.text, s.highlight])].join(' ');
+    expect(text).not.toMatch(/Hilti|Werkzeug|geschenkt|Ausbildung|Azubi|Lohn|Geld|Vergütung|Tarif|€|diskret|Feierabend/);
+    expect(steps[2].title).toBe('Zeitraum nach Absprache mit deiner Schule');
+    expect(steps[1].text).toContain('Schule');
+    expect(getDiscretionPromise('praktikum')).toBeNull();
+    // Alle anderen Stellen behalten den Ablauf ihres Fragensets
+    for (const job of ALL_JOBS.filter((j) => j.category !== 'praktikum')) {
+      expect(processAudienceFor({ category: job.category, questionSet: job.apply.questionSet }), job.id).toBe(job.apply.questionSet);
+    }
+    // Ohne Stelle (Initiativbewerbung) zählt das Fragenset
+    expect(processAudienceFor({ questionSet: 'fachkraft' })).toBe('fachkraft');
   });
 
   it('drei Schritte, Start je Zielgruppe', () => {

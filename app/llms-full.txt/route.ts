@@ -7,6 +7,7 @@ import {
   STELLEN_FAQ_ITEMS,
   REGION,
   getProcessSteps,
+  processAudienceFor,
   type ProcessAudience,
 } from '@/lib/content';
 import { berufKategorie } from '@/lib/jobs/berufe';
@@ -36,12 +37,16 @@ const START_LABEL: Record<Exclude<ProcessAudience, 'fachkraft'>, string> = {
   ausbildung: 'Start in der Ausbildung',
   quereinstieg: 'Start im Quereinstieg',
   buero: 'Start im Büro',
+  praktikum: 'Start im Schülerpraktikum',
 };
 
-/** Step 3 differs for apprentices, career changers and the office; listed only if such a job is open. */
+/**
+ * Step 3 differs for apprentices, career changers, the office and the school internship (by category, not by question
+ * set: the internship asks like the apprenticeship, but has its own process); listed only if such a job is open.
+ */
 function startVariants(jobs: readonly Job[]): string[] {
-  const audiences = new Set(jobs.map((job) => job.apply.questionSet));
-  const lines = (['ausbildung', 'quereinstieg', 'buero'] as const)
+  const audiences = new Set(jobs.map((job) => processAudienceFor({ category: job.category, questionSet: job.apply.questionSet })));
+  const lines = (['ausbildung', 'quereinstieg', 'buero', 'praktikum'] as const)
     .filter((audience) => audiences.has(audience))
     .map((audience) => `${START_LABEL[audience]}: ${getProcessSteps(audience)[2].text}`);
   return lines.length > 0 ? [...lines, ''] : [];

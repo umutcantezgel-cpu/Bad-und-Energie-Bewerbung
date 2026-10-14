@@ -21,19 +21,29 @@ import { formatBerlinDateTime } from '@/lib/apply/office-hours';
 import type { SubmittedApplication } from '@/lib/apply/storage';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
-import { getProcessSteps } from '@/lib/content/process';
+import { getProcessSteps, processAudienceFor, type ProcessAudience, type ProcessStep } from '@/lib/content/process';
+import { getJobById } from '@/lib/jobs/registry';
 import { SKILL_OPTIONS } from '@/lib/mappe/options';
 
 /** Danke-Seite (R5-THANKS-01): Erfolg nach Serverbestätigung, Leerzustand, freiwillige Ergänzung. */
 
+// Wie app/bewerbung/danke/page.tsx: Ablauf nach der Kategorie der Stelle
 const jobs: ThankYouJobs = Object.fromEntries(
-  getFlowJobOptions().map((option) => [option.id, { label: option.summaryLabel, questionSet: option.questionSet }]),
+  getFlowJobOptions().map((option) => [
+    option.id,
+    {
+      label: option.summaryLabel,
+      questionSet: option.questionSet,
+      ablauf: processAudienceFor({ category: getJobById(option.id)?.category, questionSet: option.questionSet }),
+    },
+  ]),
 );
-const processSteps = {
+const processSteps: Record<ProcessAudience, readonly ProcessStep[]> = {
   fachkraft: getProcessSteps('fachkraft'),
   ausbildung: getProcessSteps('ausbildung'),
   quereinstieg: getProcessSteps('quereinstieg'),
   buero: getProcessSteps('buero'),
+  praktikum: getProcessSteps('praktikum'),
 };
 const company: ThankYouCompany = {
   shortName: COMPANY.shortName,
@@ -193,6 +203,23 @@ describe('Freiwillige Ergänzung (E-START-015, E-BEW-015)', () => {
     const text = plain(html);
     for (const step of getProcessSteps('buero').filter((step) => step.id !== 'bewerben')) expect(text).toContain(step.title);
     expect(text).not.toContain(getProcessSteps('fachkraft')[2].title);
+  });
+
+  it('Schülerpraktikum (S4): eigener Ablauf, kein Azubi-Werkzeugset, nichts geschenkt, keine Kenntnisse', () => {
+    expect(jobs['schuelerpraktikum-shk']).toMatchObject({ questionSet: 'ausbildung', ablauf: 'praktikum' });
+    const html = erfolg({ record: { ...RECORD, jobId: 'schuelerpraktikum-shk' } });
+    const text = plain(html);
+    for (const step of getProcessSteps('praktikum').filter((step) => step.id !== 'bewerben')) {
+      expect(text).toContain(step.title);
+      expect(text).toContain(step.text);
+    }
+    expect(text).not.toMatch(/Hilti|Werkzeugset|geschenkt/);
+    expect(text).not.toContain(getProcessSteps('ausbildung')[2].title);
+    expect(html).not.toContain(ERGAENZEN_TEXT.kenntnisseFrage);
+    // Die Ausbildung behält ihren Ablauf
+    expect(plain(erfolg({ record: { ...RECORD, jobId: 'ausbildung-anlagenmechaniker-shk' } }))).toContain(
+      getProcessSteps('ausbildung')[2].text,
+    );
   });
 
   it('nennt am Feld „Nachricht“ die Wunschkonditionen', () => {

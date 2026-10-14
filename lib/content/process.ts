@@ -1,9 +1,11 @@
 /**
  * Ablauf in drei Schritten (aus components/trust/ProcessSteps.tsx@393df01),
- * gekürzt und in Du-Form. Schritt 3 hängt vom Fragenset ab.
+ * gekürzt und in Du-Form. Schritt 3 hängt vom Fragenset ab, beim Schülerpraktikum von der Kategorie
+ * (processAudienceFor): Es nutzt die Fragen der Ausbildung, aber nicht deren Ablauf.
  */
+import type { QuestionSet } from '@/lib/jobs/schema';
 
-export type ProcessAudience = 'fachkraft' | 'ausbildung' | 'quereinstieg' | 'buero';
+export type ProcessAudience = QuestionSet | 'praktikum';
 
 export interface ProcessStep {
   id: 'bewerben' | 'kennenlernen' | 'start';
@@ -41,6 +43,15 @@ const MEET_STEP_AUSBILDUNG: ProcessStep = {
   highlight: 'Unverbindlich',
 };
 
+/**
+ * Fürs Schülerpraktikum (fakten-abgleich S4): wie bei der Ausbildung ohne Diskretion; Beginn und Dauer stimmen wir mit
+ * der Schule ab. Kein Wort zu Geld, kein Werkzeugset (der Fakt azubiToolkit gilt nur für Azubis).
+ */
+const MEET_STEP_PRAKTIKUM: ProcessStep = {
+  ...MEET_STEP_AUSBILDUNG,
+  text: 'Wir lernen uns am Firmensitz in Wetzlar kennen, sprechen über das Praktikum und deine Fragen und stimmen den Zeitraum mit deiner Schule ab.',
+};
+
 /** Fürs Büro (Bürofachkraft, fakten-abgleich S5): diskret wie bei den Fachkräften, ohne Touren. */
 const MEET_STEP_BUERO: ProcessStep = {
   ...MEET_STEP,
@@ -52,6 +63,7 @@ const MEET_STEPS: Record<ProcessAudience, ProcessStep> = {
   ausbildung: MEET_STEP_AUSBILDUNG,
   quereinstieg: MEET_STEP,
   buero: MEET_STEP_BUERO,
+  praktikum: MEET_STEP_PRAKTIKUM,
 };
 
 const START_STEPS: Record<ProcessAudience, ProcessStep> = {
@@ -84,6 +96,14 @@ const START_STEPS: Record<ProcessAudience, ProcessStep> = {
     text: 'Wann du anfängst und ob in Voll- oder Teilzeit, stimmen wir im Gespräch mit dir ab.',
     highlight: 'Nach Absprache',
   },
+  // Praktikum: Dauer nach Absprache mit der Schule (Inhaber, S4); ohne Werkzeug, ohne Geschenk, ohne Geld
+  praktikum: {
+    id: 'start',
+    number: 3,
+    title: 'Zeitraum nach Absprache mit deiner Schule',
+    text: 'Wann dein Praktikum beginnt und wie lange es dauert, stimmen wir mit dir und deiner Schule ab.',
+    highlight: 'Nach Absprache',
+  },
 };
 
 export const PROCESS_STEPS: readonly ProcessStep[] = Object.freeze([APPLY_STEP, MEET_STEP, START_STEPS.fachkraft]);
@@ -104,10 +124,19 @@ const PROCESS_INTROS: Record<ProcessAudience, ProcessIntro> = {
   ausbildung: Object.freeze({ title: 'In 3 Schritten zu deiner Ausbildung', text: 'Wir respektieren deine Zeit.' }),
   quereinstieg: PROCESS_INTRO,
   buero: PROCESS_INTRO,
+  praktikum: Object.freeze({ title: 'In 3 Schritten zu deinem Praktikum', text: 'Wir respektieren deine Zeit.' }),
 };
 
 export const DISCRETION_PROMISE =
   'Dein Wechsel bleibt vertraulich: Wir kontaktieren unter keinen Umständen deinen derzeitigen Arbeitgeber.';
+
+/**
+ * Ablauf einer Stelle: nach der Kategorie, nicht nach dem Fragenset. Das Schülerpraktikum fragt wie die Ausbildung
+ * (Schule), bekommt aber den eigenen Ablauf ohne Azubi-Werkzeugset. Ohne Stelle (Initiativbewerbung) das Fragenset.
+ */
+export function processAudienceFor(stelle: { category?: string; questionSet: QuestionSet }): ProcessAudience {
+  return stelle.category === 'praktikum' ? 'praktikum' : stelle.questionSet;
+}
 
 export function getProcessSteps(audience: ProcessAudience = 'fachkraft'): readonly ProcessStep[] {
   return [APPLY_STEP, MEET_STEPS[audience], START_STEPS[audience]];
@@ -117,10 +146,15 @@ export function getProcessIntro(audience: ProcessAudience = 'fachkraft'): Proces
   return PROCESS_INTROS[audience];
 }
 
+/** Ausbildung und Schülerpraktikum: meist noch Schule, also kein Arbeitgeber (keine Diskretion, keine Kündigungsfrist). */
+export function ohneArbeitgeber(audience: ProcessAudience): boolean {
+  return audience === 'ausbildung' || audience === 'praktikum';
+}
+
 /**
- * Diskretionszusage nur für Menschen, die gerade angestellt sein können (Fachkräfte, Quereinstieg).
- * Wer sich auf die Ausbildung bewirbt, geht meist noch zur Schule: kein Arbeitgeber, keine Zusage.
+ * Diskretionszusage nur für Menschen, die gerade angestellt sein können (Fachkräfte, Quereinstieg, Büro).
+ * Wer sich auf die Ausbildung oder ein Schülerpraktikum bewirbt, geht meist noch zur Schule: kein Arbeitgeber, keine Zusage.
  */
 export function getDiscretionPromise(audience: ProcessAudience = 'fachkraft'): string | null {
-  return audience === 'ausbildung' ? null : DISCRETION_PROMISE;
+  return ohneArbeitgeber(audience) ? null : DISCRETION_PROMISE;
 }

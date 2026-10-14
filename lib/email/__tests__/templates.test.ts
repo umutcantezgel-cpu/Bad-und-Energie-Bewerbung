@@ -201,6 +201,16 @@ describe('applicant confirmation', () => {
     expect(mail.text).toContain('über die Ausbildung und deine Fragen');
   });
 
+  it('school internship (S4): own steps by category, no apprentice toolkit, nothing given away, no discretion', () => {
+    const mail = renderApplicationConfirmationEmail({
+      ...full,
+      job: { ...full.job, id: 'schuelerpraktikum-shk', questionSet: 'ausbildung' },
+    });
+    expect(mail.text).toContain('Zeitraum nach Absprache mit deiner Schule');
+    expect(mail.text).not.toMatch(/Hilti|Werkzeug|geschenkt/);
+    expect(mail.text).not.toContain('derzeitigen Arbeitgeber');
+  });
+
   it('keeps the discretion promise for skilled workers', () => {
     expect(renderApplicationConfirmationEmail(full).text).toContain('derzeitigen Arbeitgeber');
   });

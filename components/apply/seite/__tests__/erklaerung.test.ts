@@ -29,7 +29,7 @@ vi.mock('@/components/apply', () => ({
 }));
 
 const STICHTAG = new Date('2026-10-10T12:00:00+02:00');
-const AUDIENCES: ProcessAudience[] = ['fachkraft', 'ausbildung', 'quereinstieg', 'buero'];
+const AUDIENCES: ProcessAudience[] = ['fachkraft', 'ausbildung', 'quereinstieg', 'buero', 'praktikum'];
 
 function eingaben(audience: ProcessAudience): ErklaerungEingaben {
   return {
@@ -156,6 +156,17 @@ describe('Erklärteil: Diskretion, Wegweiser und Unterlagen', () => {
     const ausbildung = sichtbar(render(createElement(Erklaerung, eingaben('ausbildung'))));
     expect(ausbildung).not.toContain('Kündigungsfrist');
     expect(ausbildung).toContain(getProcessIntro('ausbildung').title);
+    // Schülerpraktikum (S4): eigener Ablauf, ohne Kündigungsfrist, ohne Azubi-Werkzeugset und ohne „Ausbildung“ im Titel
+    const praktikum = sichtbar(render(createElement(Erklaerung, eingaben('praktikum'))));
+    expect(praktikum).not.toContain('Kündigungsfrist');
+    expect(praktikum).toContain('In 3 Schritten zu deinem Praktikum');
+    expect(praktikum).not.toContain(getProcessIntro('ausbildung').title);
+    // Der Ablauf selbst (der Wegweiser darunter nennt die Ausbildungsstellen mit ihrem Werkzeugset zu Recht)
+    const ablauf = erklaerung(eingaben('praktikum')).ablauf;
+    expect(ablauf.hinweis).toBeNull();
+    expect([ablauf.titel, ...ablauf.schritte.flatMap((s) => [s.title, s.text, s.highlight])].join(' ')).not.toMatch(
+      /Hilti|Werkzeug|geschenkt|Ausbildung/,
+    );
   });
 
   it('je Stelle mit Anzeige ein Link, Linktext = voller Titel (bei gleichem Titel die h1 mit Jahr); Wege ohne Anzeige ohne Link, aber im Flow wählbar', () => {

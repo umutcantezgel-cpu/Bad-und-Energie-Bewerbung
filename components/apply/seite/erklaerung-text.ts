@@ -20,7 +20,7 @@ import { MAPPE_PATH } from '@/lib/apply/params';
 import { COMPANY } from '@/lib/content/company';
 import { getFaqItem } from '@/lib/content/faq';
 import { FACTS } from '@/lib/content/facts';
-import { getProcessIntro, getProcessSteps, type ProcessAudience, type ProcessStep } from '@/lib/content/process';
+import { getProcessIntro, getProcessSteps, ohneArbeitgeber, type ProcessAudience, type ProcessStep } from '@/lib/content/process';
 import { jobPath } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/registry';
 
@@ -75,7 +75,7 @@ export interface Erklaerung {
 }
 
 export interface ErklaerungEingaben {
-  /** Fragenset der vorgewählten Stelle; ohne Vorauswahl `fachkraft`. */
+  /** Ablauf der vorgewählten Stelle (processAudienceFor: Kategorie vor Fragenset); ohne Vorauswahl `fachkraft`. */
   audience: ProcessAudience;
   /** Die veröffentlichten Stellen, die gerade live sind. */
   jobs: readonly Job[];
@@ -98,8 +98,8 @@ export function erklaerung({ audience, jobs, ohneAnzeige, vorausgewaehlt = false
     ablauf: {
       titel: intro.title,
       schritte: getProcessSteps(audience),
-      // Ausbildung: meist noch Schule, also kein Arbeitgeber und keine Kündigungsfrist (wie getDiscretionPromise)
-      hinweis: audience === 'ausbildung' ? null : `Noch angestellt? ${KUENDIGUNG}`,
+      // Ausbildung und Praktikum: meist noch Schule, also kein Arbeitgeber und keine Kündigungsfrist (wie getDiscretionPromise)
+      hinweis: ohneArbeitgeber(audience) ? null : `Noch angestellt? ${KUENDIGUNG}`,
     },
     stellen: {
       titel: `Welche Stelle bei ${COMPANY.shortName} passt zu dir?`,

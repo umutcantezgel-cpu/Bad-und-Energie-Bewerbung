@@ -5,7 +5,7 @@ import { UNTERLAGEN_ANKER, UnterlagenZeile } from '@/components/apply/unterlagen
 import { Seitenkopf } from '@/components/seitenkopf';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { jobIdFromParam, legacyRedirectTarget, type SearchParamsRecord, wantsDocuments } from '@/lib/apply/params';
-import { getDiscretionPromise } from '@/lib/content/process';
+import { getDiscretionPromise, processAudienceFor } from '@/lib/content/process';
 import { FACTS } from '@/lib/content/facts';
 import { getActiveJobs, getFunnelOptions, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
 import { buildPageGraph } from '@/lib/seo/graph';
@@ -58,9 +58,10 @@ export default async function BewerbungPage({ searchParams }: { searchParams: Pr
   if (legacyTarget) permanentRedirect(legacyTarget);
 
   const initialJobId = preselectedJob(params);
-  // Vorausgewählte Ausbildung: meist noch Schule, also kein Arbeitgeber und keine Diskretionszusage.
+  // Vorausgewählte Ausbildung oder Praktikum: meist noch Schule, also kein Arbeitgeber und keine Diskretionszusage.
+  // Der Ablauf folgt der Kategorie: Das Schülerpraktikum fragt wie die Ausbildung, verspricht aber kein Werkzeugset.
   const preselected = initialJobId ? getJobById(initialJobId) : undefined;
-  const audience = preselected?.apply.questionSet ?? 'fachkraft';
+  const audience = preselected ? processAudienceFor({ category: preselected.category, questionSet: preselected.apply.questionSet }) : 'fachkraft';
   const discretion = getDiscretionPromise(audience);
 
   const kopf = bewerbungKopf({ diskret: discretion !== null, unterlagenWunsch: wantsDocuments(params), unterlagenAnker: UNTERLAGEN_ANKER });

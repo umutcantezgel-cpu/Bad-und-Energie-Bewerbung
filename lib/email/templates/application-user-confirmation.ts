@@ -1,7 +1,8 @@
 import type { ContactChannel } from '@/lib/applications/constants';
 import type { ReferencedApplication } from '@/lib/applications/types';
 import { COMPANY } from '@/lib/content/company';
-import { getDiscretionPromise, getProcessSteps } from '@/lib/content/process';
+import { getDiscretionPromise, getProcessSteps, processAudienceFor } from '@/lib/content/process';
+import { getJobById } from '@/lib/jobs/registry';
 import { renderEmail, type RenderedEmail } from './layout';
 
 /**
@@ -41,12 +42,14 @@ export function applicationConfirmationSubject(app: Pick<ReferencedApplication, 
 }
 
 export function renderApplicationConfirmationEmail(app: ReferencedApplication): RenderedEmail {
-  // Schritt 1 (Bewerben) ist mit dieser Mail erledigt; seine Beschreibung entfällt.
-  const steps = getProcessSteps(app.job.questionSet).map((step, index) =>
+  // Ablauf nach der Kategorie der Stelle aus dem Registry: das Schülerpraktikum fragt wie die Ausbildung, bekommt aber
+  // den eigenen Ablauf (kein Azubi-Werkzeugset). Schritt 1 (Bewerben) ist mit dieser Mail erledigt; seine Beschreibung entfällt.
+  const audience = processAudienceFor({ category: getJobById(app.job.id)?.category, questionSet: app.job.questionSet });
+  const steps = getProcessSteps(audience).map((step, index) =>
     index === 0 ? { title: step.title, done: true } : { title: step.title, text: step.text },
   );
-  // Ausbildung: meist Schülerinnen und Schüler ohne Arbeitgeber, also ohne Diskretionszusage.
-  const discretion = getDiscretionPromise(app.job.questionSet);
+  // Ausbildung und Praktikum: meist Schülerinnen und Schüler ohne Arbeitgeber, also ohne Diskretionszusage.
+  const discretion = getDiscretionPromise(audience);
   const name = greetingName(app.firstName);
   const greeting = name ? `Danke, ${name}.` : 'Danke für deine Bewerbung.';
 
