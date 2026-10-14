@@ -12,13 +12,16 @@ import {
   baueJwt,
   fortschreiben,
   googleMeldungen,
+  gruppeVon,
   indexNowUrls,
   istStellenseite,
   jobsAusFeed,
   lauf,
   leseServiceAccount,
   meldeIndexNow,
+  nichtMehrIndexierbar,
   nurStellen,
+  ohneGesperrte,
   parseSitemap,
   pruefePlausibel,
   vergleiche,
@@ -130,11 +133,45 @@ describe('Diff-Logik', () => {
     expect(fortschreiben(null, neu, [])).toEqual({});
   });
 
-  it('Schutz vor Fehlalarm: leere Seite oder mehr als die Hälfte auf einmal weg → Abbruch', () => {
-    expect(pruefePlausibel(alt, {})).toMatch(/keine URLs/);
-    expect(pruefePlausibel(null, neu)).toBeNull();
-    expect(pruefePlausibel(alt, neu)).toBeNull();
-    expect(pruefePlausibel(alt, { [`${B}/`]: '1|' })).toMatch(/3 von 4/);
+  it('Schutz vor Fehlalarm je Gruppe: leere Seite → Abbruch; mehr als die Hälfte einer Gruppe weg → nur diese gesperrt', () => {
+    expect(pruefePlausibel(alt, {}).abbruch).toMatch(/keine URLs/);
+    expect(pruefePlausibel(null, neu)).toEqual({ abbruch: null, gesperrt: new Map() });
+    expect(pruefePlausibel(alt, neu)).toEqual({ abbruch: null, gesperrt: new Map() });
+    // Alle Stellen weg, Kern und Orte da: nur die Stellen gesperrt
+    const nurKern = { [`${B}/`]: '1|', [`${B}/einsatzgebiet/asslar`]: '1|' };
+    expect([...pruefePlausibel(alt, nurKern).gesperrt.entries()]).toEqual([['stellen', 'Stellen: 2 von 2 bekannten URLs fehlen auf einmal und sind weiter indexierbar.']]);
+    // Erklärt (nicht mehr indexierbar): kein Verdacht
+    expect(pruefePlausibel(alt, nurKern, new Set([`${B}/jobs/a`, `${B}/jobs/b`])).gesperrt.size).toBe(0);
+  });
+
+  it('Gruppen nach dem Pfad wie die Teil-Sitemaps; gesperrte Gruppen behalten den alten Stand', () => {
+    expect(gruppeVon(`${B}/jobs`)).toBe('stellen');
+    expect(gruppeVon(`${B}/jobs/anlagenmechaniker-shk-wetzlar`)).toBe('stellen');
+    expect(gruppeVon(`${B}/einsatzgebiet/herborn`)).toBe('orte');
+    expect(gruppeVon(`${B}/einsatzgebiet`)).toBe('orte');
+    expect(gruppeVon(`${B}/arbeiten-bei-uns/gehalt`)).toBe('themen');
+    expect(gruppeVon(`${B}/`)).toBe('kern');
+    expect(gruppeVon(`${B}/jobsuche`)).toBe('kern');
+    expect(ohneGesperrte(neu, alt, [])).toBe(neu);
+    expect(ohneGesperrte({ [`${B}/`]: '2|' }, alt, ['orte', 'stellen'])).toEqual({
+      [`${B}/`]: '2|',
+      [`${B}/jobs/a`]: '1|x',
+      [`${B}/jobs/b`]: '1|y',
+      [`${B}/einsatzgebiet/asslar`]: '1|',
+    });
+  });
+
+  it('nicht mehr indexierbar: 404, 410, Weiterleitung, noindex (Meta oder Kopfzeile); sonst nicht, auch nicht bei Fehlern', async () => {
+    const seite = (status: number, body = '', headers: Record<string, string> = {}) => async () => new Response(status === 204 ? null : body, { status, headers });
+    expect(await nichtMehrIndexierbar(`${B}/x`, seite(404))).toBe(true);
+    expect(await nichtMehrIndexierbar(`${B}/x`, seite(410))).toBe(true);
+    expect(await nichtMehrIndexierbar(`${B}/x`, seite(308, '', { location: `${B}/einsatzgebiet` }))).toBe(true);
+    expect(await nichtMehrIndexierbar(`${B}/x`, seite(200, '<head><meta name="robots" content="noindex, follow"/></head>'))).toBe(true);
+    expect(await nichtMehrIndexierbar(`${B}/x`, seite(200, '<meta content="noindex,follow" name="robots">'))).toBe(true);
+    expect(await nichtMehrIndexierbar(`${B}/x`, seite(200, '<p>ok</p>', { 'x-robots-tag': 'noindex' }))).toBe(true);
+    expect(await nichtMehrIndexierbar(`${B}/x`, seite(200, '<head><meta name="robots" content="index, follow"/></head>'))).toBe(false);
+    expect(await nichtMehrIndexierbar(`${B}/x`, seite(500))).toBe(false);
+    expect(await nichtMehrIndexierbar(`${B}/x`, async () => Promise.reject(new Error('Netz')))).toBe(false);
   });
 });
 
@@ -188,8 +225,23 @@ describe('IndexNow über /api/indexnow', () => {
   });
 });
 
-/** Live-Seite und Dienste als Attrappe; protokolliert jeden Aufruf. */
-function welt({ seiten, feed, google = 200, indexnow = 200 }: { seiten: Array<[string, string?]>; feed: unknown[]; google?: number; indexnow?: number }) {
+/**
+ * Live-Seite und Dienste als Attrappe; protokolliert jeden Aufruf. `html` liefert einzelne Seiten (für die Prüfung
+ * verschwundener URLs), alle anderen Adressen antworten mit 404.
+ */
+function welt({
+  seiten,
+  feed,
+  google = 200,
+  indexnow = 200,
+  html = () => null,
+}: {
+  seiten: Array<[string, string?]>;
+  feed: unknown[];
+  google?: number;
+  indexnow?: number;
+  html?: (url: string) => string | null;
+}) {
   const aufrufe: Array<{ url: string; body?: string }> = [];
   const fetchFn = async (url: string, init: RequestInit = {}) => {
     aufrufe.push({ url, body: init.body ? String(init.body) : undefined });
@@ -198,6 +250,8 @@ function welt({ seiten, feed, google = 200, indexnow = 200 }: { seiten: Array<[s
     if (url === GOOGLE_TOKEN_URI) return Response.json({ access_token: 'zugriff-nur-im-test', expires_in: 3599 });
     if (url === GOOGLE_PUBLISH_URL) return new Response('{}', { status: google });
     if (url === `${B}/api/indexnow`) return new Response('{}', { status: indexnow });
+    const seite = html(url);
+    if (seite !== null) return new Response(seite, { status: 200, headers: { 'content-type': 'text/html' } });
     return new Response(null, { status: 404 });
   };
   return { aufrufe, fetchFn };
@@ -278,18 +332,92 @@ describe('Ein Lauf (ohne Netz)', () => {
     expect(spaeter.aufrufe.filter((a) => a.url === `${B}/api/indexnow`)).toHaveLength(0);
   });
 
-  it('kaputte oder leere Live-Seite: Abbruch ohne Meldung und ohne neuen Stand', async () => {
+  it('kaputte Sitemap und leerer Feed: Stellen gesperrt, nichts an Google, ihr Stand bleibt; ohne Antwort Abbruch', async () => {
     const datei = path.join(tmp, 'fuenf', 'stand.json');
     await lauf({ umgebung: umgebung(datei), argv: [], fetchFn: welt({ seiten: SEITEN, feed: FEED }).fetchFn, log: () => {} });
     const vorher = fs.readFileSync(datei, 'utf8');
     const log: string[] = [];
-    const leer = welt({ seiten: [[`${B}/`, '2026-10-14']], feed: [] });
+    // Die Stellenseiten gibt es weiter (200, indexierbar): Nur Sitemap und Feed sind kaputt
+    const leer = welt({ seiten: [[`${B}/`, '2026-10-14']], feed: [], html: (url) => (url.startsWith(`${B}/jobs`) ? '<html><head></head></html>' : null) });
     expect(await lauf({ umgebung: umgebung(datei), argv: [], fetchFn: leer.fetchFn, log: (z: string) => log.push(z) })).toBe(1);
-    expect(leer.aufrufe.map((a) => a.url)).toEqual([`${B}/sitemap.xml`, `${B}/feeds/jobs.json`]);
-    expect(log.join('\n')).toMatch(/Abbruch: 3 von 4 bekannten URLs fehlen/);
-    expect(fs.readFileSync(datei, 'utf8')).toBe(vorher);
+    // Sitemap und Feed, dann die drei verschwundenen Stellen-URLs einzeln, dann IndexNow nur für die geänderte Startseite
+    expect(leer.aufrufe.map((a) => a.url)).toEqual([
+      `${B}/sitemap.xml`,
+      `${B}/feeds/jobs.json`,
+      `${B}/jobs`,
+      `${B}/jobs/a`,
+      `${B}/jobs/b`,
+      `${B}/api/indexnow`,
+    ]);
+    // Stellen und /jobs fehlen, sind aber nicht als beendet belegt (weiter 200 ohne noindex): gesperrt
+    expect(log.join('\n')).toMatch(/Gesperrt: Stellen: 3 von 3 bekannten URLs fehlen auf einmal/);
+    expect(leer.aufrufe.filter((a) => a.url === GOOGLE_PUBLISH_URL)).toEqual([]);
+    expect(leer.aufrufe.filter((a) => a.url === `${B}/api/indexnow`).map((a) => JSON.parse(a.body ?? '{}').urls)).toEqual([[`${B}/`]]);
+    const davor = JSON.parse(vorher);
+    const danach = JSON.parse(fs.readFileSync(datei, 'utf8'));
+    expect(danach.ziele.google).toEqual(davor.ziele.google);
+    for (const url of [`${B}/jobs`, `${B}/jobs/a`, `${B}/jobs/b`]) expect(danach.ziele.indexnow[url]).toBe(davor.ziele.indexnow[url]);
     const kaputt = async () => new Response(null, { status: 500 });
     expect(await lauf({ umgebung: umgebung(datei), argv: [], fetchFn: kaputt, log: () => {} })).toBe(1);
+  });
+
+  describe('Fahrplanwechsel (13.12.2026): alle Ortsseiten fallen per Gate I5 aus der Sitemap', () => {
+    // Bekannter Stand wie am 14.10.: 76 URLs, davon 8 Stellen, 59 unter /einsatzgebiet (54 Orte, Gebiet, 4 Hubs)
+    const ORTE = Array.from({ length: 54 }, (_, i) => `${B}/einsatzgebiet/ort-${String(i).padStart(2, '0')}`);
+    const HUBS = [`${B}/einsatzgebiet`, ...['lahn-dill', 'giessen', 'limburg', 'wetterau'].map((k) => `${B}/einsatzgebiet/kreis-${k}`)];
+    const STELLEN = Array.from({ length: 8 }, (_, i) => `stelle-${i}`);
+    const KERN = [`${B}/`, `${B}/jobs`, `${B}/bewerbung`, `${B}/impressum`];
+    const THEMEN = Array.from({ length: 5 }, (_, i) => `${B}/arbeiten-bei-uns/thema-${i}`);
+    const vorher: Array<[string, string?]> = [...KERN, ...STELLEN.map((s) => `${B}/jobs/${s}`), ...HUBS, ...ORTE, ...THEMEN].map((u) => [u, '2026-10-14']);
+    const nachher = (stellen: string[]): Array<[string, string?]> =>
+      [...KERN, ...stellen.map((s) => `${B}/jobs/${s}`), ...HUBS.slice(0, 5), ...THEMEN].map((u) => [u, '2026-10-14']);
+    const NOINDEX = '<html><head><meta name="robots" content="noindex, follow"/></head></html>';
+    const INDEX = '<html><head><meta name="robots" content="index, follow"/></head></html>';
+
+    it('Ortsseiten mit noindex: echte Änderung, IndexNow meldet sie; eine abgelaufene Stelle geht als URL_DELETED an Google', async () => {
+      expect(vorher).toHaveLength(76);
+      const datei = path.join(tmp, 'wechsel-noindex', 'stand.json');
+      await lauf({ umgebung: umgebung(datei), argv: [], fetchFn: welt({ seiten: vorher, feed: STELLEN.map((s) => job(s)) }).fetchFn, log: () => {} });
+      const log: string[] = [];
+      // Ausbildung 2026 läuft ab (404), die Ortsseiten sind noindex
+      const ohneEine = STELLEN.slice(1);
+      const w = welt({ seiten: nachher(ohneEine), feed: ohneEine.map((s) => job(s)), html: (url) => (url.includes('/einsatzgebiet/ort-') ? NOINDEX : null) });
+      expect(await lauf({ umgebung: umgebung(datei), argv: [], fetchFn: w.fetchFn, log: (z: string) => log.push(z) })).toBe(0);
+      // 22 URLs am 13.12. (Befund), eine Stelle weniger: 21
+      expect(log.join('\n')).toContain('Live-Seite: 21 URLs, davon 7 Stellenseiten.');
+      expect(log.join('\n')).toContain('Orte: 54 URLs nicht mehr in der Sitemap, davon 54 nicht mehr indexierbar');
+      expect(log.join('\n')).not.toMatch(/Abbruch|Gesperrt/);
+      expect(w.aufrufe.filter((a) => a.url === GOOGLE_PUBLISH_URL).map((a) => JSON.parse(a.body ?? '{}'))).toEqual([
+        { url: `${B}/jobs/${STELLEN[0]}`, type: 'URL_DELETED' },
+      ]);
+      const indexnow = w.aufrufe.filter((a) => a.url === `${B}/api/indexnow`).flatMap((a) => JSON.parse(a.body ?? '{}').urls);
+      expect(indexnow).toHaveLength(55);
+      // Am nächsten Tag: nichts mehr zu tun, kein Abbruch
+      const tag2 = welt({ seiten: nachher(ohneEine), feed: ohneEine.map((s) => job(s)) });
+      expect(await lauf({ umgebung: umgebung(datei), argv: [], fetchFn: tag2.fetchFn, log: () => {} })).toBe(0);
+      expect(tag2.aufrufe.map((a) => a.url)).toEqual([`${B}/sitemap.xml`, `${B}/feeds/jobs.json`]);
+    });
+
+    it('Ortsseiten fehlen, sind aber weiter indexierbar (kaputte Sitemap): nur die Orte gesperrt, Stellen laufen weiter, Exit 1', async () => {
+      const datei = path.join(tmp, 'wechsel-kaputt', 'stand.json');
+      await lauf({ umgebung: umgebung(datei), argv: [], fetchFn: welt({ seiten: vorher, feed: STELLEN.map((s) => job(s)) }).fetchFn, log: () => {} });
+      const vorherStand = JSON.parse(fs.readFileSync(datei, 'utf8'));
+      const log: string[] = [];
+      const ohneEine = STELLEN.slice(1);
+      const w = welt({ seiten: nachher(ohneEine), feed: ohneEine.map((s) => job(s)), html: (url) => (url.includes('/einsatzgebiet/ort-') ? INDEX : null) });
+      expect(await lauf({ umgebung: umgebung(datei), argv: [], fetchFn: w.fetchFn, log: (z: string) => log.push(z) })).toBe(1);
+      expect(log.join('\n')).toContain('Gesperrt: Orte: 54 von 59 bekannten URLs fehlen auf einmal und sind weiter indexierbar.');
+      expect(log.join('\n')).not.toMatch(/https?:\/\//);
+      // Die Stelle geht trotzdem an Google, IndexNow meldet nur sie
+      expect(w.aufrufe.filter((a) => a.url === GOOGLE_PUBLISH_URL).map((a) => JSON.parse(a.body ?? '{}'))).toEqual([
+        { url: `${B}/jobs/${STELLEN[0]}`, type: 'URL_DELETED' },
+      ]);
+      expect(w.aufrufe.filter((a) => a.url === `${B}/api/indexnow`).flatMap((a) => JSON.parse(a.body ?? '{}').urls)).toEqual([`${B}/jobs/${STELLEN[0]}`]);
+      // Der Stand der Orte bleibt, die Stelle ist aus dem Stand
+      const danach = JSON.parse(fs.readFileSync(datei, 'utf8'));
+      for (const ort of ORTE) expect(danach.ziele.indexnow[ort]).toBe(vorherStand.ziele.indexnow[ort]);
+      expect(danach.ziele.google[`${B}/jobs/${STELLEN[0]}`]).toBeUndefined();
+    });
   });
 
   it('Trockenlauf zählt nur', async () => {

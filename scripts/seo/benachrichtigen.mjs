@@ -27,8 +27,13 @@ import { fileURLToPath } from 'node:url';
  * wird das Ziel mit Hinweis übersprungen und sein Stand bleibt, wie er ist; ist es später da, holt der nächste Lauf
  * alles seitdem Geänderte nach. Die Ausgabe nennt nur Zählwerte, nie URLs, Token oder Antworttexte (M-032).
  *
- * Schutz vor Fehlalarm: Liefert die Seite keine URLs oder verschwinden mehr als die Hälfte der bekannten auf einmal,
- * bricht der Lauf ab, statt massenhaft URL_DELETED zu melden (z. B. bei einer kaputten Sitemap).
+ * Schutz vor Fehlalarm: Liefert die Seite keine URLs, bricht der Lauf ab. Sonst gilt die Prüfung je Gruppe wie in den
+ * Teil-Sitemaps (Kern, Stellen, Orte, Themen): Verschwinden in einer Gruppe mehr als die Hälfte der bekannten URLs auf
+ * einmal, holt der Lauf diese Seiten einzeln. Sind sie nicht mehr indexierbar (404 oder 410, Weiterleitung, noindex),
+ * ist das eine echte Änderung und wird gemeldet (z. B. alle Ortsseiten am Fahrplanwechsel per Gate I5 auf noindex).
+ * Sind sie weiter indexierbar, ist die Sitemap kaputt: Nur diese Gruppe wird nicht gemeldet und behält ihren Stand,
+ * Exit 1; die übrigen Gruppen, vor allem die Stellen für Google, laufen weiter (Prüfung E-029). Rückweg, wenn eine
+ * Gruppe zu Recht gesperrt bleibt: docs/operations/orte-oepnv.md, „Indexierung nach dem Fahrplanwechsel“.
  */
 
 /**
@@ -178,15 +183,81 @@ export function indexNowUrls(diff) {
   return [...diff.neu, ...diff.geaendert, ...diff.entfernt];
 }
 
-/** Bricht ab, wenn die Seite leer wirkt oder zu viel auf einmal verschwindet (kaputte Sitemap statt echter Änderung). */
-export function pruefePlausibel(alt, neu) {
-  const bekannt = Object.keys(alt ?? {}).length;
-  const aktuell = Object.keys(neu).length;
-  if (aktuell === 0) return 'Die Seite liefert keine URLs (Sitemap leer oder nicht lesbar).';
-  if (bekannt === 0) return null;
-  const entfernt = Object.keys(alt).filter((url) => !(url in neu)).length;
-  if (entfernt / bekannt > MAX_ANTEIL_ENTFERNT) return `${entfernt} von ${bekannt} bekannten URLs fehlen auf einmal.`;
-  return null;
+/** Gruppen wie die Teil-Sitemaps (/sitemap/kern.xml, stellen.xml, orte.xml, themen.xml), nach dem Pfad. */
+export const GRUPPEN = Object.freeze(['kern', 'stellen', 'orte', 'themen']);
+const GRUPPEN_NAME = { kern: 'Kern', stellen: 'Stellen', orte: 'Orte', themen: 'Themen' };
+
+/** Gruppe einer URL: /jobs… Stellen, /einsatzgebiet… Orte, /arbeiten-bei-uns… Themen, sonst Kern. */
+export function gruppeVon(url) {
+  let pfad;
+  try {
+    pfad = new URL(url).pathname;
+  } catch {
+    return 'kern';
+  }
+  if (/^\/jobs(?:\/|$)/.test(pfad)) return 'stellen';
+  if (/^\/einsatzgebiet(?:\/|$)/.test(pfad)) return 'orte';
+  if (/^\/arbeiten-bei-uns(?:\/|$)/.test(pfad)) return 'themen';
+  return 'kern';
+}
+
+/**
+ * Prüft, ob die Seite leer wirkt (Abbruch) und welche Gruppen verdächtig viel auf einmal verlieren. `erklaert`: URLs,
+ * deren Verschwinden belegt ist (nicht mehr indexierbar, siehe nichtMehrIndexierbar); sie zählen nicht mit.
+ * Ergebnis: `abbruch` (Text oder null) und `gesperrt` (Gruppe → Text, nur Zählwerte).
+ * @param {Stand | null} alt
+ * @param {Stand} neu
+ * @param {Set<string>} [erklaert]
+ * @returns {{ abbruch: string | null, gesperrt: Map<string, string> }}
+ */
+export function pruefePlausibel(alt, neu, erklaert = new Set()) {
+  const gesperrt = new Map();
+  if (Object.keys(neu).length === 0) return { abbruch: 'Die Seite liefert keine URLs (Sitemap leer oder nicht lesbar).', gesperrt };
+  for (const gruppe of GRUPPEN) {
+    const bekannt = Object.keys(alt ?? {}).filter((url) => gruppeVon(url) === gruppe);
+    if (bekannt.length === 0) continue;
+    const fehlen = bekannt.filter((url) => !(url in neu) && !erklaert.has(url)).length;
+    if (fehlen / bekannt.length > MAX_ANTEIL_ENTFERNT) {
+      gesperrt.set(gruppe, `${GRUPPEN_NAME[gruppe]}: ${fehlen} von ${bekannt.length} bekannten URLs fehlen auf einmal und sind weiter indexierbar.`);
+    }
+  }
+  return { abbruch: null, gesperrt };
+}
+
+/** `<meta name="robots" content="…noindex…">` in beliebiger Attribut-Reihenfolge. */
+const NOINDEX_META = [/<meta\b[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex/i, /<meta\b[^>]*content=["'][^"']*noindex[^"']*["'][^>]*name=["']robots["']/i];
+
+/**
+ * Ist eine Seite nicht mehr indexierbar? Ja bei 404 oder 410, bei einer Weiterleitung und bei noindex (Kopfzeile
+ * X-Robots-Tag oder Meta-Element). Nein bei einer normalen Seite und wenn sie nicht lesbar ist (dann gilt die Vorsicht).
+ * @param {string} url
+ * @param {Abruf} [fetchFn]
+ */
+export async function nichtMehrIndexierbar(url, fetchFn = fetch) {
+  try {
+    const res = await fetchFn(url, { headers: { 'User-Agent': USER_AGENT }, redirect: 'manual' });
+    if (res.status === 404 || res.status === 410 || (res.status >= 300 && res.status < 400)) return true;
+    if (!res.ok) return false;
+    if (/noindex/i.test(res.headers.get('x-robots-tag') ?? '')) return true;
+    const html = await res.text();
+    return NOINDEX_META.some((muster) => muster.test(html));
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Stand zum Melden: Für gesperrte Gruppen gilt der alte Stand (nichts gemeldet, nichts vorgerückt), sonst der neue.
+ * @param {Stand} neu
+ * @param {Stand | null} alt
+ * @param {Iterable<string>} gesperrt
+ */
+export function ohneGesperrte(neu, alt, gesperrt) {
+  const sperre = new Set(gesperrt);
+  if (sperre.size === 0) return neu;
+  const stand = Object.fromEntries(Object.entries(neu).filter(([url]) => !sperre.has(gruppeVon(url))));
+  for (const [url, fp] of Object.entries(alt ?? {})) if (sperre.has(gruppeVon(url))) stand[url] = fp;
+  return stand;
 }
 
 /** Neuer Stand eines Ziels: nur angenommene URLs rücken vor (gemeldet → neuer Fingerabdruck, entfernt → gelöscht). */
@@ -379,36 +450,50 @@ export async function lauf({ umgebung = process.env, argv = process.argv.slice(2
   const neuStellen = nurStellen(neu, basis);
   log(`Live-Seite: ${Object.keys(neu).length} URLs, davon ${Object.keys(neuStellen).length} Stellenseiten.`);
 
-  // Geprüft wird die ganze Seite gegen alles Bekannte. Stellen allein dürfen auch zur Hälfte auf einmal enden
-  // (wenige Stellen, gleiche Fristen); ist die Sitemap als Ganzes plausibel, sind das echte Änderungen.
-  const problem = pruefePlausibel({ ...(alt.google ?? {}), ...(alt.indexnow ?? {}) }, neu);
-  if (problem) {
-    log(`Abbruch: ${problem} Nichts gemeldet, Stand unverändert. Erst die Live-Seite prüfen.`);
+  // Geprüft wird je Gruppe gegen alles Bekannte. Fehlt in einer Gruppe mehr als die Hälfte auf einmal, entscheidet die
+  // Seite selbst: nicht mehr indexierbar (beendete Stellen, Gate der Ortsseiten) = echte Änderung, sonst kaputt.
+  const bekannt = { ...(alt.google ?? {}), ...(alt.indexnow ?? {}) };
+  const vorab = pruefePlausibel(bekannt, neu);
+  if (vorab.abbruch) {
+    log(`Abbruch: ${vorab.abbruch} Nichts gemeldet, Stand unverändert. Erst die Live-Seite prüfen.`);
     return 1;
   }
+  const erklaert = new Set();
+  for (const gruppe of vorab.gesperrt.keys()) {
+    const fehlen = Object.keys(bekannt)
+      .filter((url) => gruppeVon(url) === gruppe && !(url in neu))
+      .sort();
+    for (const url of fehlen) if (await nichtMehrIndexierbar(url, fetchFn)) erklaert.add(url);
+    log(`${GRUPPEN_NAME[gruppe]}: ${fehlen.length} URLs nicht mehr in der Sitemap, davon ${fehlen.filter((u) => erklaert.has(u)).length} nicht mehr indexierbar (noindex, 404/410 oder Weiterleitung).`);
+  }
+  const { gesperrt } = pruefePlausibel(bekannt, neu, erklaert);
+  for (const text of gesperrt.values()) log(`Gesperrt: ${text} Diese Gruppe wird nicht gemeldet, ihr Stand bleibt; die übrigen laufen weiter.`);
 
-  const diffIndexNow = vergleiche(alt.indexnow, neu);
-  const diffGoogle = vergleiche(alt.google, neuStellen);
+  const neuIndexNow = ohneGesperrte(neu, alt.indexnow, gesperrt.keys());
+  const neuGoogle = nurStellen(ohneGesperrte(neu, alt.google, gesperrt.keys()), basis);
+  const diffIndexNow = vergleiche(alt.indexnow, neuIndexNow);
+  const diffGoogle = vergleiche(alt.google, neuGoogle);
   log(`IndexNow: ${zahlen(diffIndexNow)}.`);
   log(`Google (nur /jobs/*): ${zahlen(diffGoogle)}.`);
   if (trocken) {
     log('Trockenlauf: nichts gemeldet, Stand nicht geschrieben.');
-    return 0;
+    return gesperrt.size > 0 ? 1 : 0;
   }
 
   const stand = { indexnow: alt.indexnow, google: alt.google };
-  let fehlgeschlagen = false;
+  // Eine gesperrte Gruppe bleibt ein Fehler (der Lauf wird rot), auch wenn alles andere gemeldet ist.
+  let fehlgeschlagen = gesperrt.size > 0;
 
   const urls = indexNowUrls(diffIndexNow);
   const indexNowToken = (umgebung.INDEXNOW_SUBMIT_TOKEN ?? '').trim();
   if (urls.length === 0) {
-    stand.indexnow = neu;
+    stand.indexnow = neuIndexNow;
     log('IndexNow: nichts zu melden.');
   } else if (!indexNowToken) {
     log('IndexNow übersprungen: INDEXNOW_SUBMIT_TOKEN fehlt (Environment-Secret „indexierung“).');
   } else {
     const { angenommen, fehler } = await meldeIndexNow(urls, basis, indexNowToken, fetchFn);
-    stand.indexnow = fortschreiben(alt.indexnow, neu, angenommen);
+    stand.indexnow = fortschreiben(alt.indexnow, neuIndexNow, angenommen);
     log(`IndexNow: ${angenommen.length} von ${urls.length} URLs gemeldet${fehler.length ? `, abgelehnt mit HTTP ${fehler.join(', ')}` : ''}.`);
     if (fehler.length) fehlgeschlagen = true;
   }
@@ -416,7 +501,7 @@ export async function lauf({ umgebung = process.env, argv = process.argv.slice(2
   const meldungen = googleMeldungen(diffGoogle);
   const sa = leseServiceAccount(umgebung.GOOGLE_INDEXING_SA_KEY);
   if (meldungen.length === 0) {
-    stand.google = neuStellen;
+    stand.google = neuGoogle;
     log('Google: nichts zu melden.');
   } else if (!sa) {
     log(
@@ -428,7 +513,7 @@ export async function lauf({ umgebung = process.env, argv = process.argv.slice(2
     try {
       const token = await googleToken(sa, fetchFn);
       const { angenommen, fehler } = await meldeGoogle(meldungen, token, fetchFn);
-      stand.google = fortschreiben(alt.google, neuStellen, angenommen);
+      stand.google = fortschreiben(alt.google, neuGoogle, angenommen);
       const aktualisiert = meldungen.filter((m) => m.type === 'URL_UPDATED' && angenommen.includes(m.url)).length;
       log(
         `Google: ${angenommen.length} von ${meldungen.length} gemeldet (${aktualisiert} URL_UPDATED, ${angenommen.length - aktualisiert} URL_DELETED)${fehler.length ? `, abgelehnt mit HTTP ${fehler.join(', ')}` : ''}.`,
