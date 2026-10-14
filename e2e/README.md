@@ -24,7 +24,8 @@ bun run e2e        # = playwright test; startet `next start -p 3400` und beendet
 | `mobile-light` / `mobile-dark` | 390 × 844, Touch, DPR 2 | hell / dunkel |
 | `desktop-light` / `desktop-dark` | 1440 × 900 | hell / dunkel |
 
-Alle mit `reducedMotion: 'reduce'`, Locale `de-DE`, Zeitzone `Europe/Berlin`.
+Alle mit `reducedMotion: 'reduce'`, Locale `de-DE`, Zeitzone `Europe/Berlin`. Nur `bewegung.spec.ts` schaltet für
+seine Tests `no-preference` ein.
 
 ## Specs
 
@@ -53,6 +54,12 @@ Alle mit `reducedMotion: 'reduce'`, Locale `de-DE`, Zeitzone `Europe/Berlin`.
 - `local-pages.spec.ts` (nur `mobile-light`): jede lokale Seite (E-028) aus dem Registry, also Gebietsseite,
   4 Kreis-Hubs und 54 Ortsseiten: Status 200, genau eine h1, Canonical auf sich selbst, Pfad bei 320 px und ab
   40em, kein horizontaler Scroll. axe in allen vier Projekten über die Stichproben in `ROUTES`.
+- `bewegung.spec.ts` (nur `mobile-light` und `desktop-light`, E-029): Dauerbewegung mit `reducedMotion:
+  'no-preference'`. Auf der Startseite läuft der Rotor der Einzelheit X im Sichtfeld, „Anhalten“ hält an, „Abspielen“
+  startet wieder (Knopf ≥ 44 × 44 px, WCAG 2.2.2). Auf der Kundendienst-Stelle halten Wegscrollen und ein
+  versteckter Tab den Rotor an. Auf der Wärmepumpen-Seite fließen Wasser und Kältemittel, ein Druck hält alle
+  Schleifen der Seite an, axe ohne Verstöße.
+  Mit reduzierter Bewegung läuft nichts und der Knopf fehlt; ohne JavaScript steht das Standbild vom Server.
 - `themen-pages.spec.ts` (nur `mobile-light`): Themen-Hub `/arbeiten-bei-uns` und die fünf Themenseiten, dieselben
   Prüfungen und ein JSON-LD-Graph ohne JobPosting und FAQPage. axe über die Stichproben `/arbeiten-bei-uns` und
   `/arbeiten-bei-uns/gehalt` in `ROUTES`.

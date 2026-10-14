@@ -110,7 +110,9 @@ export const INITIATIV = Object.freeze({
 
 /**
  * Einsatzgebiet: Weg zur Gebietsseite mit allen gemessenen Orten, Entfernung und Fahrzeit (E-028; vorher die Karte
- * der Startseite). Wortlaut und Ziel wie im Fuß (FOOTER_GEBIET_LINK): ein Ankertext, ein Ziel.
+ * der Startseite). Eigener Wortlaut, weil er hier sagt, was die Gebietsseite für die Stellen bringt; der Fuß und die
+ * Ortsseiten nennen dasselbe Ziel „Alle Orte im Einsatzgebiet“ (EINSATZGEBIET_LINK_LABEL). Jeder Ankertext hat genau
+ * ein Ziel (e2e/seo.spec.ts); ein Ziel darf mehrere Ankertexte haben.
  */
 export const GEBIET_LINK = Object.freeze({ href: '/einsatzgebiet', label: 'Entfernung und Fahrzeit zu deinem Ort' });
 

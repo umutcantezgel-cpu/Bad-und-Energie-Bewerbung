@@ -21,13 +21,12 @@ export const OG_IMAGE_TYPE = 'image/png';
 /**
  * Light theme primitives of app/styles/theme.css as plain values (KERN K-006): ImageResponse cannot
  * read CSS variables. Paper left, navy panel right, red only as the supply line and the main button,
- * blue only as the return line; the heat image uses the isotherms of variant 3 (navy → blue → wall →
- * warmth → paper), never red as a surface.
+ * blue only as the return line; flat surfaces only, never red as a surface. Since E-029 there is no heat
+ * image (and no warmth colour): the panel shows the house section from lib/zeichnung (lib/seo/og-haus.ts).
  */
 export const OG_COLOR = Object.freeze({
   papier: '#FBF7F0',
   wand: '#F1E9DB',
-  waerme: '#FADCC9',
   navy: '#111D6D',
   tinte: '#111A3B',
   tinte2: '#454C78',
@@ -68,7 +67,7 @@ export interface OgFrameText {
   etikett: string;
   /** h1 in one or two lines. */
   title: readonly string[];
-  /** Lines next to the pipe bracket. */
+  /** Lines below the h1 (since E-029 without the pipe bracket). */
   subline: readonly string[];
   /** Red main action. */
   action: string;
@@ -116,7 +115,7 @@ export interface OgJobText extends Omit<OgFrameText, 'action'> {
   /** h1 font size in px, fitted to the left column (fitTitle). */
   titleSize: number;
   /**
-   * Value and name in the heating loop: „Lohn auf Anfrage“ (E-030, never an amount), the employment kind when the job
+   * Key figure above the house section (a dimension chain since E-029): „Lohn auf Anfrage“ (E-030, never an amount), the employment kind when the job
    * says nothing about pay (school internship), or the closed state.
    */
   salary: { value: string; name: string | null };
@@ -214,8 +213,8 @@ const careerDomain = () => SITE_CONFIG.baseUrl.replace(/^https?:\/\//, '').repla
 
 /**
  * Content of a job share image: label with place and radius, the short title as h1, „(m/w/d)“ and
- * the employment tags at the bracket, „Lohn auf Anfrage“ in the heating loop (E-030, job registry only).
- * A closed job says so in the loop, without button and supply line, and points to the job list.
+ * the employment tags below it, „Lohn auf Anfrage“ as the key figure (E-030, job registry only).
+ * A closed job says so in the key figure, without button and supply line, and points to the job list.
  */
 export function ogJobText(job: OgJob, open: boolean): OgJobText {
   const [kind, place, ...rest] = jobMetaTags(job).map(plain);
@@ -245,7 +244,7 @@ export function ogJobText(job: OgJob, open: boolean): OgJobText {
 export interface OgPlaceText extends OgFrameText {
   /** h1 font size in px, fitted to the left column (fitTitle). */
   titleSize: number;
-  /** Value and name in the heating loop: the road distance to the headquarters. */
+  /** Key figure (dimension chain since E-029): the road distance to the headquarters. */
   distance: { value: string; name: string };
 }
 
@@ -261,7 +260,7 @@ export interface OgPlace {
 
 /**
  * Content of a place share image (E-028): the page's etikett and h1, „Rund 26 Minuten Fahrt.“ and the fact
- * flexibleHours at the bracket, the road distance in the heating loop („27 km“, „bis zum Firmensitz“).
+ * flexibleHours below the h1, the road distance as the key figure („27 km“, „bis zum Firmensitz“).
  */
 export function ogPlaceText(place: OgPlace): OgPlaceText {
   const etikett = versal(plain(place.etikett));
