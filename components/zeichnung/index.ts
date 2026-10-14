@@ -1,8 +1,9 @@
 // Wiederkehrende Zeichnungen des Formsystems (KERN K-010), Server-Komponenten ohne Zustand.
+// Nur Zeichnungen mit zeichnung.module.css: Was technik/ braucht (HausKlein, Außeneinheit, Schemata), wird direkt aus
+// seiner Datei geholt. Sonst zöge jeder Import hier technik.module.css in das CSS der Seite (Prüfung E-029, Befund 12;
+// Wächter in __tests__/zeichnungen-seitenkopf.test.ts).
 export { Etikettkasten } from './Etikettkasten';
 export type { EtikettkastenProps } from './Etikettkasten';
-export { HausKlein } from './HausKlein';
-export type { HausKleinProps } from './HausKlein';
 export { Heizkreis } from './Heizkreis';
 export type { HeizkreisProps } from './Heizkreis';
 export { KreisGeschlossen } from './KreisGeschlossen';

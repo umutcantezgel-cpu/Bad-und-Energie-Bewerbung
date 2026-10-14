@@ -6,10 +6,10 @@ import { describe, expect, it } from 'vitest';
 import { MOTION_IDS } from '@/lib/motion/register';
 import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
 import * as zeichnung from '..';
+import { HausKlein } from '../HausKlein';
 import { Aussengeraet, geraetTitel } from '../technik/Aussengeraet';
 import {
   Etikettkasten,
-  HausKlein,
   Heizkreis,
   KreisGeschlossen,
   Leitungspaar,
@@ -68,6 +68,38 @@ describe('Zeichnungen für den Seitenkopf (SEITENKOPF-01)', () => {
     expect(html).toContain('text-etikett');
     expect(html).toMatch(/<svg [^>]*aria-hidden="true"/);
     expect(plain(html)).toBe('Wärmepumpen');
+  });
+
+  it('E-029, Befund 12: der Sammelexport zieht kein technik/ und kein technik.module.css in die Seiten', () => {
+    const wurzel = path.resolve(__dirname, '..', '..', '..');
+    const aufloesen = (von: string, ziel: string): string | null => {
+      const basis = ziel.startsWith('@/') ? path.join(wurzel, ziel.slice(2)) : path.resolve(path.dirname(von), ziel);
+      for (const kandidat of [basis, `${basis}.ts`, `${basis}.tsx`, path.join(basis, 'index.ts'), path.join(basis, 'index.tsx')]) {
+        if (existsSync(kandidat) && /\.(tsx?|css)$/.test(kandidat)) return kandidat;
+      }
+      return null;
+    };
+    // Alle Dateien, die der Sammelexport zur Laufzeit lädt (ohne `import type` und `export type`)
+    const geladen = new Set<string>();
+    const offen = [path.resolve(__dirname, '..', 'index.ts')];
+    while (offen.length > 0) {
+      const datei = offen.pop()!;
+      if (geladen.has(datei)) continue;
+      geladen.add(datei);
+      if (datei.endsWith('.css')) continue;
+      const quelle = readFileSync(datei, 'utf8');
+      for (const [, ziel] of quelle.matchAll(/^(?:import|export)(?! type\b)[^'"]*?(?:from\s+)?['"]([^'"]+)['"]/gm)) {
+        if (!ziel.startsWith('.') && !ziel.startsWith('@/')) continue;
+        const aufgeloest = aufloesen(datei, ziel);
+        if (aufgeloest) offen.push(aufgeloest);
+      }
+    }
+    const namen = [...geladen].map((d) => path.relative(wurzel, d));
+    // Gegenprobe: der Weg folgt den Exporten bis in die Einzeldateien und ihr CSS
+    expect(namen).toContain(path.join('components', 'zeichnung', 'Masskette.tsx'));
+    expect(namen).toContain(path.join('components', 'zeichnung', 'zeichnung.module.css'));
+    expect(namen.filter((n) => n.includes(`${path.sep}technik${path.sep}`) || n.endsWith('technik.module.css'))).toEqual([]);
+    expect(Object.keys(zeichnung)).not.toContain('HausKlein');
   });
 
   it('Wärmebild entfällt (E-029): an seiner Stelle die Außeneinheit, statisch ohne `bewegt`, mit Titel aus den Maßen', () => {

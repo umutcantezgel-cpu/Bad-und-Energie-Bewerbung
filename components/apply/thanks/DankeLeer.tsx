@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { SectionHeader } from '@/components/home/SectionHeader';
 import { Section } from '@/components/layout/Section';
 import { Seitenkopf } from '@/components/seitenkopf';
-import { HausKlein } from '@/components/zeichnung';
+import { HausKlein } from '@/components/zeichnung/HausKlein';
 import { DANKE_ANKER, LEER_KOPF } from './danke-text';
 import styles from './danke.module.css';
 
