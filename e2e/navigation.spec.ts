@@ -194,3 +194,23 @@ test.describe('Menü am Handy: Kreis- und Themenseiten', () => {
     expect(await findSmallTouchTargets(page, 'dialog[open]'), 'Trefferfläche kleiner als 44 × 44 px').toEqual([]);
   });
 });
+
+/**
+ * E-029 (Plan §B): Im Fuß stehen nur noch die Kreis-Hubs und „Alle Orte im Einsatzgebiet“, keine 54 Ortslinks. Jeder
+ * Weg ist mindestens 44 × 44 px groß, ein Tipp auf einen Kreis-Hub führt hin.
+ */
+test('Fuß: Kreis-Hubs und „Alle Orte im Einsatzgebiet“, jeder Weg mindestens 44 × 44 px', async ({ page }) => {
+  await page.goto('/einsatzgebiet/herborn');
+  const orte = page.getByRole('contentinfo').getByRole('navigation', { name: 'Orte im Einsatzgebiet' });
+  await expect(orte).toBeVisible();
+  const hubs = getHubKreise();
+  for (const kreis of hubs) {
+    await expect(orte.getByRole('link', { name: beginntMit(kreis.shortName) })).toHaveAttribute('href', kreisPath(kreis));
+  }
+  await expect(orte.getByRole('link', { name: 'Alle Orte im Einsatzgebiet', exact: true })).toHaveAttribute('href', EINSATZGEBIET_PATH);
+  await expect(orte.getByRole('link')).toHaveCount(hubs.length + 1);
+  expect(await findSmallTouchTargets(page, 'nav[aria-labelledby="footer-einsatzgebiet"]'), 'Trefferfläche kleiner als 44 × 44 px').toEqual([]);
+
+  await orte.getByRole('link', { name: beginntMit(hubs[0].shortName) }).click();
+  await expect(page).toHaveURL(kreisPath(hubs[0]));
+});

@@ -127,7 +127,7 @@ export interface GateOptionen {
 }
 
 const fmt = (wert: number) => wert.toFixed(3).replace('.', ',');
-const prozent = (wert: number) => `${Math.round(wert * 100)}${' '}%`;
+const prozent = (wert: number) => `${Math.round(wert * 100)}${'\u00a0'}%`;
 
 // ─── Text einer Ortsseite ───────────────────────────────────────────────────
 

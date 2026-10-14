@@ -44,7 +44,7 @@ export function numbersIn(text: string): string[] {
 /** Sätze an Satzzeichen mit folgendem Leerraum; geschützte Leerzeichen zählen als Leerraum. */
 export function sentences(text: string): string[] {
   return text
-    .replace(/ /g, ' ')
+    .replace(/\u00a0/g, ' ')
     .split(/(?<=[.!?])\s+/)
     .map((s) => s.trim())
     .filter(Boolean);
@@ -57,7 +57,7 @@ const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\
  * „Heuchelheim an der Lahn“ vor „Heuchelheim“ greift.
  */
 export function skeleton(sentence: string, names: readonly string[], placeholder = '⟨ORT⟩'): string {
-  let out = sentence.replace(/ /g, ' ');
+  let out = sentence.replace(/\u00a0/g, ' ');
   for (const name of [...names].sort((a, b) => b.length - a.length)) {
     out = out.replace(new RegExp(`(?<![\\p{L}-])${escapeRegExp(name)}(?![\\p{L}-])`, 'gu'), placeholder);
   }

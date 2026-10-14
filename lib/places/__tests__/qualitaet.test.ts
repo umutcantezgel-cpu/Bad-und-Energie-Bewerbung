@@ -113,7 +113,7 @@ describe('Gate: jede Regel greift', () => {
 
   it('I3: zu wenig Daten im Verhältnis zum Ortstext', () => {
     const lang = mitBlock(asslarPage, 'kreis', { kind: 'ort', text: 'Wort '.repeat(600).trim() + '.' });
-    expect(pruefeDaten(asslar, lang).some((g) => /^I3: \d+ % des Ortstexts aus Daten/.test(g))).toBe(true);
+    expect(pruefeDaten(asslar, lang).some((g) => /^I3: \d+\u00a0% des Ortstexts aus Daten/.test(g))).toBe(true);
   });
 
   it('I6: ein unbestätigter Fakt auf der Seite', () => {
