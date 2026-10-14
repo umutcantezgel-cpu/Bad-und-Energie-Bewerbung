@@ -26,8 +26,10 @@ function kleinerAnfang(text: string): string {
  * Anschreiben noch Lebenslauf.“ Der zweite Teil ist der Fakt noCvNeeded im Wortlaut.
  */
 export const UNTERLAGEN_ZEILE = Object.freeze({
-  vor: 'Unterlagen kannst du später per',
-  whatsapp: 'WhatsApp',
+  // „per WhatsApp“ als Ankertext: Der WhatsApp-Knopf des Flows heißt „WhatsApp“ und schickt einen anderen Text;
+  // gleiche Ankertexte mit zwei Zielen meldet der Seobility-Prüfpunkt (e2e/seo.spec.ts).
+  vor: 'Unterlagen kannst du später',
+  whatsapp: 'per WhatsApp',
   oder: 'oder',
   mail: 'E-Mail',
   // Geschütztes Leerzeichen vor dem Gedankenstrich: Keine Zeile beginnt mit „–“.

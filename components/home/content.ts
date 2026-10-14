@@ -24,23 +24,31 @@ function joinLabels(labels: readonly string[]): string {
 }
 
 /**
- * Meta description (≤ 155 characters) from the jobs that are live right now and the facts
- * vacation30, flexibleHours, noFarAssembly, apply60s. Longer candidates drop „keine Fernmontage“,
- * then the job list, so a new job type can never push it past the limit.
+ * Meta description (110–155 characters, Seobility-Prüfpunkt in e2e/seo.spec.ts) from the jobs that are live right now
+ * and the facts vacation30, flexibleHours, noFarAssembly, apply60s, radius35, noCvNeeded. Longer candidates drop
+ * „keine Fernmontage“, then shorten the job list to the first three types „& mehr“, then drop it, so a new job type
+ * can never push it past the limit.
  */
 export function homeDescription(liveJobs: readonly Pick<Job, 'category'>[]): string {
   const city = COMPANY.address.city;
   const perks = `${FACTS.vacation30.short}, ${lowerFirst(FACTS.flexibleHours.short)}`;
   const noFar = lowerFirst(FACTS.noFarAssembly.short);
-  const apply = `In ${FACTS.apply60s.value} Sek. bewerben.`;
-  const labels = joinLabels(jobCategoryLabels(liveJobs));
-  const general = `SHK-Jobs in ${city}. ${perks}, ${noFar}. ${apply}`;
+  const apply = `In ${FACTS.apply60s.value} Sek. bewerben`;
+  const allLabels = jobCategoryLabels(liveJobs);
+  const labels = joinLabels(allLabels);
+  const radius = FACTS.radius35.value ? ` und ${FACTS.radius35.value.replace(' ', NBSP)} Umkreis` : '';
+  const general = `SHK-Jobs in ${city}${radius}. ${perks}, ${noFar}. ${apply}, ${lowerFirst(FACTS.noCvNeeded.short)}.`;
   if (!labels) return fitDescription(general);
-  return fitDescription(
-    `SHK-Jobs in ${city}: ${labels}. ${perks}, ${noFar}. ${apply}`,
-    `SHK-Jobs in ${city}: ${labels}. ${perks}. ${apply}`,
-    general,
-  );
+  const candidates: [string, ...string[]] = [
+    `SHK-Jobs in ${city}: ${labels}. ${perks}, ${noFar}. ${apply}.`,
+    `SHK-Jobs in ${city}: ${labels}. ${perks}. ${apply}.`,
+  ];
+  if (allLabels.length > 3) {
+    const top = `${allLabels.slice(0, 3).join(', ')} & mehr`;
+    candidates.push(`SHK-Jobs in ${city}: ${top}. ${perks}, ${noFar}. ${apply}.`);
+  }
+  candidates.push(general);
+  return fitDescription(...candidates);
 }
 
 /**

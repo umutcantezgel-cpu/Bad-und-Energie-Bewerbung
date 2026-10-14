@@ -104,9 +104,11 @@ export function erklaerung({ audience, jobs, ohneAnzeige, vorausgewaehlt = false
     stellen: {
       titel: `Welche Stelle bei ${COMPANY.shortName} passt zu dir?`,
       voraussetzung: 'Voraussetzung',
+      // Gleicher Titel bei zwei Stellen (Ausbildung 2026 und 2027; Titel ohne Jahr, lib/jobs/schema.ts): dann die h1 mit
+      // dem Jahr, damit kein Ankertext auf zwei Ziele führt (Seobility-Prüfpunkt in e2e/seo.spec.ts).
       liste: jobs.map((job) => ({
         id: job.id,
-        titel: bindSeparators(job.titleShy),
+        titel: bindSeparators(jobs.some((other) => other.id !== job.id && other.title === job.title) ? job.seo.h1 : job.titleShy),
         href: jobPath(job),
         text: job.summary,
         voraussetzungen: voraussetzungen(job),

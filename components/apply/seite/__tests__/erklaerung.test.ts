@@ -71,7 +71,7 @@ const KORPUS = normal(
       ...getProcessSteps(audience).flatMap((step) => [String(step.number), step.title, step.text]),
     ]),
     ...getFaqItems().map((faq) => faq.answer),
-    ...ALL_JOBS.flatMap((job) => [job.title, job.shortTitle, job.summary, ...job.requirements, payLabel(job) ?? '']),
+    ...ALL_JOBS.flatMap((job) => [job.title, job.shortTitle, job.seo.h1, job.summary, ...job.requirements, payLabel(job) ?? '']),
     MAPPE_KOPF.titel,
     MAPPE_KOPF.unterzeile,
     MAPPE_KOPF.einleitung,
@@ -158,13 +158,18 @@ describe('Erklärteil: Diskretion, Wegweiser und Unterlagen', () => {
     expect(ausbildung).toContain(getProcessIntro('ausbildung').title);
   });
 
-  it('je Stelle mit Anzeige ein Link, Linktext = voller Titel; Wege ohne Anzeige ohne Link, aber im Flow wählbar', () => {
+  it('je Stelle mit Anzeige ein Link, Linktext = voller Titel (bei gleichem Titel die h1 mit Jahr); Wege ohne Anzeige ohne Link, aber im Flow wählbar', () => {
     const { jobs, ohneAnzeige } = eingaben('fachkraft');
     const html = render(createElement(Erklaerung, eingaben('fachkraft')));
+    const texte = new Set<string>();
     for (const job of jobs) {
       const link = new RegExp(`<a\\b[^>]*href="${jobPath(job)}"[^>]*>([^<]*)</a>`).exec(html);
-      expect(normal(link?.[1] ?? ''), job.id).toBe(job.title);
+      const doppelt = jobs.some((other) => other.id !== job.id && other.title === job.title);
+      expect(normal(link?.[1] ?? ''), job.id).toBe(doppelt ? job.seo.h1 : job.title);
+      texte.add(normal(link?.[1] ?? ''));
     }
+    // Kein Ankertext führt auf zwei Ziele (Seobility-Prüfpunkt in e2e/seo.spec.ts).
+    expect(texte.size).toBe(jobs.length);
     const flow = getFlowJobOptions(STICHTAG).map((option) => option.id);
     for (const job of ohneAnzeige) {
       expect(job.status).toBe('funnel_only');

@@ -5,6 +5,8 @@ import type { Job } from '@/lib/jobs/schema';
 
 /** SERP budget for meta descriptions (ROADMAP §10). */
 export const META_DESCRIPTION_MAX = 155;
+/** Untergrenze des Seobility-Prüfpunkts (e2e/seo.spec.ts, SEOBILITY.description.min). */
+export const META_DESCRIPTION_MIN = 110;
 
 /**
  * First candidate within the budget. If none fits, the last one is cut at a word boundary,

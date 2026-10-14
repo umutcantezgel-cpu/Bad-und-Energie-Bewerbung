@@ -211,7 +211,7 @@ describe('Unterlagen ohne Anbindung: eine Zeile statt Upload-Sackgasse (Plan §D
   it('WhatsApp mit vorausgefülltem Text im neuen Tab (angesagt), E-Mail mit Betreff, beide als Textlinks im Satz', () => {
     expect(html).toContain(`text=${encodeURIComponent(UNTERLAGEN_WHATSAPP_TEXT)}`);
     expect(html).toMatch(
-      /<a href="https:\/\/api\.whatsapp\.com\/send\?[^"]*"[^>]*target="_blank"[^>]*rel="noopener noreferrer"[^>]*>WhatsApp<span class="sr-only"> \(öffnet in neuem Tab\)<\/span><\/a>/,
+      /<a href="https:\/\/api\.whatsapp\.com\/send\?[^"]*"[^>]*target="_blank"[^>]*rel="noopener noreferrer"[^>]*>per WhatsApp<span class="sr-only"> \(öffnet in neuem Tab\)<\/span><\/a>/,
     );
     expect(html).toContain(`href="${COMPANY.emailHref}?subject=Bewerbungsunterlagen"`);
     expect(html.match(/<a\b/g)).toHaveLength(2);

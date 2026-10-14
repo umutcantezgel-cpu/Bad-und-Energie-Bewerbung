@@ -14,6 +14,7 @@ import { FACTS } from '@/lib/content/facts';
 import { FAQ_ITEMS } from '@/lib/content/faq';
 import { jobCategoryLabels } from '@/lib/jobs/format';
 import { getActiveJobs } from '@/lib/jobs/registry';
+import { META_DESCRIPTION_MAX, META_DESCRIPTION_MIN } from '@/lib/seo/descriptions';
 
 const words = (text: string) => text.trim().split(/\s+/).length;
 
@@ -23,16 +24,19 @@ describe('home copy', () => {
     expect(HOME_TITLE.length).toBeLessThanOrEqual(60);
   });
 
-  it('description stays within 155 characters, names the live job types and facts verbatim', () => {
+  it('description stays within 110–155 characters, names the live job types and facts verbatim', () => {
     const description = homeDescription(getActiveJobs());
-    expect(description.length).toBeLessThanOrEqual(155);
+    expect(description.length).toBeLessThanOrEqual(META_DESCRIPTION_MAX);
+    expect(description.length).toBeGreaterThanOrEqual(META_DESCRIPTION_MIN);
     expect(description).toContain(FACTS.vacation30.short);
     expect(description).toContain('flexible Arbeitszeiten');
     expect(description).not.toMatch(/13:30|Feierabend|pünktlich|€|Gehalt/i);
-    // Seit 2026-10-14 sind es sieben Stellenarten (fakten-abgleich S2–S5): Die Liste passt nicht mehr in 155 Zeichen
-    // und entfällt nach der Regel unten; mit den vier Arten von vorher steht sie wörtlich darin.
+    // Seit 2026-10-14 sind es sieben Stellenarten (fakten-abgleich S2–S5): Die volle Liste passt nicht mehr in 155
+    // Zeichen; dann stehen die ersten drei Arten mit „& mehr“ darin. Mit den vier Arten von vorher steht sie wörtlich.
     expect(jobCategoryLabels(getActiveJobs())).toHaveLength(7);
-    expect(description).toBe(homeDescription([]));
+    expect(description).toBe(
+      'SHK-Jobs in Wetzlar: Anlagenmechaniker, Kundendienst, Obermonteur & mehr. 30 Tage Urlaub, flexible Arbeitszeiten, keine Fernmontage. In 60 Sek. bewerben.',
+    );
     const vier = (['anlagenmechaniker', 'kundendienst', 'projektleitung', 'ausbildung'] as const).map((category) => ({ category }));
     expect(homeDescription(vier)).toContain('Anlagenmechaniker, Kundendienst, Obermonteur & Ausbildung');
   });
@@ -47,10 +51,14 @@ describe('home copy', () => {
     expect(fewer).toBe(
       'SHK-Jobs in Wetzlar: Anlagenmechaniker & Ausbildung. 30 Tage Urlaub, flexible Arbeitszeiten, keine Fernmontage. In 60 Sek. bewerben.',
     );
-    expect(homeDescription([])).toBe('SHK-Jobs in Wetzlar. 30 Tage Urlaub, flexible Arbeitszeiten, keine Fernmontage. In 60 Sek. bewerben.');
+    expect(homeDescription([])).toBe(
+      'SHK-Jobs in Wetzlar und 35\u00A0km Umkreis. 30 Tage Urlaub, flexible Arbeitszeiten, keine Fernmontage. In 60 Sek. bewerben, kein Lebenslauf nötig.',
+    );
     const categories = ['anlagenmechaniker', 'kundendienst', 'projektleitung', 'ausbildung', 'helfer'] as const;
     const many = homeDescription(categories.map((category) => ({ category })));
-    expect(many.length).toBeLessThanOrEqual(155);
+    expect(many.length).toBeLessThanOrEqual(META_DESCRIPTION_MAX);
+    // Jede Stufe hält auch die Untergrenze des Seobility-Prüfpunkts (e2e/seo.spec.ts).
+    for (const text of [fewer, many, homeDescription([])]) expect(text.length).toBeGreaterThanOrEqual(META_DESCRIPTION_MIN);
   });
 
   it('hero lead has at most 30 words and leaves the region to the figures below', () => {
