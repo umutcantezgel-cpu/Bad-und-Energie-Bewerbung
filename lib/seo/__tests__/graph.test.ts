@@ -20,6 +20,7 @@ import { getFaqItems } from '@/lib/content/faq';
 import { jobPath, jobUrl } from '@/lib/jobs/format';
 import { buildBreadcrumbJsonLd, buildJobPostingJsonLd, buildJobsBreadcrumbJsonLd } from '@/lib/jobs/jsonld';
 import { getActiveJobs, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
+import { FAHRPLAN_STAND } from '@/lib/places/datenklassen';
 import { buildEinsatzgebietItemListJsonLd, buildKreisItemListJsonLd, buildPlaceJsonLd, kreisPfad, pfadJsonLd, placePfad } from '@/lib/places/jsonld';
 import { getHubKreise, getPlaceBySlug, kreisPath, placePath } from '@/lib/places/registry';
 import { getCleanCanonicalUrl } from '../canonical-links';
@@ -193,7 +194,9 @@ describe('buildPageGraph', () => {
 });
 
 describe('lokale Seiten (E-028): WebPage mit Place, CollectionPage mit ItemList', () => {
-  const sitemap = new Set(getIndexablePages().map((page) => page.url));
+  // Stichtag im Fahrplanjahr der Daten: Die ItemLists nennen nur Ortsseiten, die das Gate bestehen (E-029, I5).
+  const imFahrplanjahr = new Date(`${FAHRPLAN_STAND.werktag}T12:00:00Z`);
+  const sitemap = new Set(getIndexablePages(imFahrplanjahr).map((page) => page.url));
 
   it('Ortsseite: WebPage mit spatialCoverage → Place (PLZ, Ort, Hessen, DE, Kreis), ohne Straße und Koordinaten', () => {
     const place = getPlaceBySlug('hermannstein')!;
@@ -217,8 +220,8 @@ describe('lokale Seiten (E-028): WebPage mit Place, CollectionPage mit ItemList'
 
   it('Kreis-Hub und Gebietsseite: CollectionPage mit mainEntity → ItemList, jede url in der Sitemap', () => {
     for (const [pfad, itemList, breadcrumb] of [
-      ...getHubKreise().map((kreis) => [kreisPath(kreis), buildKreisItemListJsonLd(kreis), pfadJsonLd(kreisPfad(kreis))] as const),
-      ['/einsatzgebiet', buildEinsatzgebietItemListJsonLd(), undefined] as const,
+      ...getHubKreise().map((kreis) => [kreisPath(kreis), buildKreisItemListJsonLd(kreis, imFahrplanjahr), pfadJsonLd(kreisPfad(kreis))] as const),
+      ['/einsatzgebiet', buildEinsatzgebietItemListJsonLd(imFahrplanjahr), undefined] as const,
     ]) {
       const metadata = generatePageMetadata({ title: 'Hub', description: 'Hub', path: pfad });
       const graph = buildPageGraph({ metadata, itemList, ...(breadcrumb ? { breadcrumb } : {}) });
@@ -229,6 +232,7 @@ describe('lokale Seiten (E-028): WebPage mit Place, CollectionPage mit ItemList'
       const [list] = ofType(graph, 'ItemList');
       expect(page.mainEntity).toEqual({ '@id': list['@id'] });
       const items = list.itemListElement as { position: number; url: string }[];
+      expect(items.length, pfad).toBeGreaterThan(0);
       expect(list.numberOfItems).toBe(items.length);
       items.forEach((item, i) => {
         expect(item.position).toBe(i + 1);

@@ -1,4 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { afterAll, describe, expect, it } from 'vitest';
 
 import { buildFaqPageJsonLd } from '@/components/home/content';
 import { getFaqItems } from '@/lib/content/faq';
@@ -14,15 +17,27 @@ import {
   graphProblems,
   itemListProblems,
   jobPostingProblems,
+  noindexInSitemapProblem,
   placeProblems,
+  readSitemapUrls,
+  sitemapLocs,
 } from '../check-graph.mjs';
+import { placeGraphInput } from '@/app/einsatzgebiet/seo';
+import { FAHRPLAN_STAND } from '@/lib/places/datenklassen';
+import { getPlacePageText } from '@/lib/places/text';
 import { buildKreisItemListJsonLd, buildPlaceJsonLd, kreisPfad, pfadJsonLd, placePfad } from '@/lib/places/jsonld';
 import { getHubKreise, getPlaceBySlug, kreisPath, placePath } from '@/lib/places/registry';
-import { getIndexablePages } from '@/lib/seo/indexable-pages';
+import { getIndexablePages, getSitemapIndex, sitemapIndexXml } from '@/lib/seo/indexable-pages';
 import { arbeitenPfad, buildThemenItemListJsonLd, pfadJsonLd as themenPfadJsonLd, themaPfad } from '@/lib/themen/jsonld';
 import { ARBEITEN_PATH, getThemen, themaPath } from '@/lib/themen/registry';
 
 type Node = Record<string, unknown>;
+
+/**
+ * Stichtag im Fahrplanjahr der Daten: Ortsseiten stehen nur bis zu dessen Ende in Sitemap und ItemLists (Gate I5,
+ * E-029). Die Tests hängen so nicht am Kalender; was nach dem Fahrplanjahr gilt, prüft der Block zu Regel 10.
+ */
+const IM_FAHRPLANJAHR = new Date(`${FAHRPLAN_STAND.werktag}T12:00:00Z`);
 
 /** Kopf einer gebauten Seite mit denselben Werten, die Next aus den Metadaten rendert (Entities wie React). */
 function head(path: string, title: string, description: string): string {
@@ -236,14 +251,14 @@ describe('check-graph: JobPosting ohne Betrag und mit Beruf (E-030, Plan §C2)',
 describe('check-graph: lokale Seiten (E-028)', () => {
   const herborn = getPlaceBySlug('herborn')!;
   const kreis = getHubKreise()[0];
-  const sitemap = new Set(getIndexablePages().map((page) => page.url));
+  const sitemap = new Set(getIndexablePages(IM_FAHRPLANJAHR).map((page) => page.url));
 
   it('der Graph einer Ortsseite und eines Kreis-Hubs besteht; Place und ItemList einzeln geprüft', () => {
     const ort = fixture(placePath(herborn), { breadcrumb: pfadJsonLd(placePfad(herborn)), place: buildPlaceJsonLd(herborn) });
     expect(problems(ort.graph, ort.html)).toEqual([]);
     expect(placeProblems(node(clone(ort.graph), 'Place'))).toEqual([]);
 
-    const hub = fixture(kreisPath(kreis), { breadcrumb: pfadJsonLd(kreisPfad(kreis)), itemList: buildKreisItemListJsonLd(kreis) });
+    const hub = fixture(kreisPath(kreis), { breadcrumb: pfadJsonLd(kreisPfad(kreis)), itemList: buildKreisItemListJsonLd(kreis, IM_FAHRPLANJAHR) });
     expect(problems(hub.graph, hub.html)).toEqual([]);
     expect(itemListProblems(node(clone(hub.graph), 'ItemList'), sitemap)).toEqual([]);
   });
@@ -262,7 +277,7 @@ describe('check-graph: lokale Seiten (E-028)', () => {
   });
 
   it('ItemList: meldet falsche Positionen, Anzahl und URLs außerhalb der Sitemap', () => {
-    const list = JSON.parse(JSON.stringify(buildKreisItemListJsonLd(kreis))) as Node;
+    const list = JSON.parse(JSON.stringify(buildKreisItemListJsonLd(kreis, IM_FAHRPLANJAHR))) as Node;
     const items = list.itemListElement as Node[];
     items[0].position = 7;
     items[1].url = 'https://example.org/nicht-in-der-sitemap';
@@ -274,7 +289,7 @@ describe('check-graph: lokale Seiten (E-028)', () => {
   });
 
   it('CollectionPage ohne ItemList und spatialCoverage ohne Place werden gemeldet', () => {
-    const hub = fixture(kreisPath(kreis), { itemList: buildKreisItemListJsonLd(kreis) });
+    const hub = fixture(kreisPath(kreis), { itemList: buildKreisItemListJsonLd(kreis, IM_FAHRPLANJAHR) });
     const ohneListe = clone(hub.graph);
     ohneListe['@graph'] = ohneListe['@graph'].filter((n) => n['@type'] !== 'ItemList');
     expect(problems(ohneListe, hub.html).join('\n')).toMatch(/CollectionPage.mainEntity must reference an ItemList|unresolved @id/);
@@ -302,5 +317,57 @@ describe('check-graph: Themenseiten (E-028)', () => {
       expect(graph.filter((n) => n['@type'] === 'WebPage')).toHaveLength(1);
       expect(graph.filter((n) => ['ItemList', 'Place', 'JobPosting', 'FAQPage'].includes(String(n['@type'])))).toEqual([]);
     }
+  });
+});
+
+describe('check-graph: Sitemap-Index und „noindex nicht in der Sitemap“ (E-029)', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'check-graph-sitemap-'));
+  afterAll(() => fs.rmSync(tmp, { recursive: true, force: true }));
+  const urlset = (urls: string[]) => `<urlset>${urls.map((u) => `<url><loc>${u}</loc></url>`).join('')}</urlset>`;
+
+  it('liest einen <urlset> wie bisher und folgt einem <sitemapindex> eine Ebene tief zu den Gruppen-Dateien', () => {
+    expect(sitemapLocs(urlset(['https://a.de/x']))).toEqual({ index: false, locs: ['https://a.de/x'] });
+    const plain = path.join(tmp, 'plain.xml.body');
+    fs.writeFileSync(plain, urlset(['https://a.de/', 'https://a.de/jobs']));
+    expect(readSitemapUrls(plain)).toEqual(new Set(['https://a.de/', 'https://a.de/jobs']));
+
+    const index = path.join(tmp, 'sitemap.xml.body');
+    fs.mkdirSync(path.join(tmp, 'sitemap'), { recursive: true });
+    fs.writeFileSync(path.join(tmp, 'sitemap', 'kern.xml.body'), urlset(['https://a.de/']));
+    fs.writeFileSync(path.join(tmp, 'sitemap', 'orte.xml.body'), urlset(['https://a.de/einsatzgebiet', 'https://a.de/einsatzgebiet/asslar']));
+    fs.writeFileSync(index, sitemapIndexXml([{ url: 'https://a.de/sitemap/kern.xml' }, { url: 'https://a.de/sitemap/orte.xml', lastModified: '2026-10-14' }]));
+    expect(readSitemapUrls(index)).toEqual(new Set(['https://a.de/', 'https://a.de/einsatzgebiet', 'https://a.de/einsatzgebiet/asslar']));
+    expect(readSitemapUrls(path.join(tmp, 'fehlt.xml.body'))).toBeNull();
+  });
+
+  it('ein Index auf eine fehlende Datei ist ein Fehler, keine leere Liste', () => {
+    const index = path.join(tmp, 'kaputt.xml.body');
+    fs.writeFileSync(index, sitemapIndexXml([{ url: 'https://a.de/sitemap/stellen.xml' }]));
+    expect(() => readSitemapUrls(index)).toThrow(/sitemap\/stellen\.xml.*missing/);
+  });
+
+  it('der Index der Website nennt jede Gruppe mit Seiten genau einmal', () => {
+    const xml = sitemapIndexXml(getSitemapIndex(IM_FAHRPLANJAHR));
+    const { index, locs } = sitemapLocs(xml);
+    expect(index).toBe(true);
+    expect(locs.map((loc) => new URL(loc).pathname)).toEqual(['/sitemap/kern.xml', '/sitemap/stellen.xml', '/sitemap/orte.xml', '/sitemap/themen.xml']);
+  });
+
+  it('Regel 10: noindex mit Canonical in der Sitemap wird gemeldet, sonst nicht', () => {
+    const sitemap = new Set(['https://a.de/einsatzgebiet/asslar']);
+    expect(noindexInSitemapProblem('https://a.de/einsatzgebiet/asslar', true, sitemap)).toBe('noindex page https://a.de/einsatzgebiet/asslar is listed in the sitemap');
+    expect(noindexInSitemapProblem('https://a.de/einsatzgebiet/asslar', false, sitemap)).toBeNull();
+    expect(noindexInSitemapProblem('https://a.de/einsatzgebiet/lich', true, sitemap)).toBeNull();
+    expect(noindexInSitemapProblem('https://a.de/einsatzgebiet/asslar', true, null)).toBeNull();
+  });
+
+  it('eine Ortsseite mit noindex (nach dem Fahrplanjahr) trägt nur den WebPage-Knoten: keine BreadcrumbList, kein Place', () => {
+    const herborn = getPlaceBySlug('herborn')!;
+    const input = placeGraphInput(herborn, getPlacePageText(herborn), new Date('2026-12-20T10:00:00Z'));
+    expect(input.metadata.robots).toMatchObject({ index: false, follow: true });
+    const graph = clone(buildPageGraph(input))['@graph'];
+    expect(graph.filter((n) => ['BreadcrumbList', 'Place'].includes(String(n['@type'])))).toEqual([]);
+    const heute = clone(buildPageGraph(placeGraphInput(herborn, getPlacePageText(herborn), new Date('2026-10-14T10:00:00Z'))))['@graph'];
+    expect(heute.filter((n) => ['BreadcrumbList', 'Place'].includes(String(n['@type'])))).toHaveLength(2);
   });
 });

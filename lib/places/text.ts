@@ -15,7 +15,7 @@
  *   Kreis, Median, Nachbarorte, Startseitenkarte), nie einer Zufallsauswahl von Synonymen.
  * - `ort`-Blöcke sagen etwas, das nur für diesen Ort gilt; `gemeinsam`-Blöcke stehen auf jeder Ortsseite (Stellen,
  *   Fakten-Band, Messhinweis, Kontakt), Messhinweis und Kontakt mit dem Ortsnamen. Gemeinsamer Text bleibt kurz: Das
- *   gebaute HTML prüft scripts/qa/check-local-similarity.mjs (Jaccard ≤ 0,45 je Paar), und dort zählen auch
+ *   gebaute HTML prüft scripts/qa/check-local-similarity.mjs (Jaccard ≤ 0,40 je Paar indexierbarer Seiten, I4), dort zählen
  *   Stellenkarten, Faktenband und Kontaktblock mit.
  * - Keine Arbeitszeit-Uhrzeiten: Es gilt nur der Fakt flexibleHours (fakten-abgleich B28).
  * - „Ring“ heißen nur die Kreise der Pläne, und die zeigen die Luftlinie. Stufen der Straßenstrecke heißen

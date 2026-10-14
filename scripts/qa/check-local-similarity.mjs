@@ -5,9 +5,10 @@ import { fileURLToPath } from 'node:url';
 import { decodeEntities, normalize } from './check-claims.mjs';
 
 /**
- * Ähnlichkeit der gebauten Ortsseiten (Gate U3 am ausgelieferten HTML, Review Phase 2 Punkt 15). Das Gate in
- * lib/places/__tests__/gate.test.ts misst nur das Textmodell (lib/places/text.ts). Hier zählt, was im <main> der
- * vorgerenderten Seiten steht, also auch Stellenkarten, Faktenband, Kontakt, Knöpfe und Beschriftungen.
+ * Ähnlichkeit der gebauten Ortsseiten (Gate I4 am ausgelieferten HTML, E-029; vorher U3, Review Phase 2 Punkt 15). Das
+ * Gate in lib/places/qualitaet.ts misst nur das Textmodell (lib/places/text.ts). Hier zählt, was im <main> der
+ * vorgerenderten Seiten steht, also auch Stellenkarten, Faktenband, Kontakt, Knöpfe, Fragen, Quellenzeilen und
+ * Beschriftungen.
  * Läuft nach `next build`:
  *
  *   bun run test:similarity                       # liest .next/server/app/einsatzgebiet
@@ -17,15 +18,19 @@ import { decodeEntities, normalize } from './check-claims.mjs';
  *   CollectionPage (die Kreis-Hubs); Weiterleitungen (zusammengelegte Orte, Kreise ohne Hub) haben keinen Place.
  * - Text: der Inhalt von <main> ohne Kommentare, <script>, <style>, <template>, <noscript> und <svg>; Tags werden
  *   zu Leerraum, Entitäten aufgelöst. Wörter wie im Gate (Kleinschreibung, „4,5“ und „3.600“ bleiben ein Wort).
- * - Jaccard über 5-Wort-Shingles für jedes Paar von Ortsseiten. Über 0,45 (Gate U3) schlägt die Prüfung fehl.
+ * - Verglichen werden nur indexierbare Ortsseiten (I4: „gegen indexierbare Geschwisterseiten“); eine Seite mit
+ *   `<meta name="robots" content="noindex…">` hat das Gate nicht bestanden und zählt nicht mit.
+ * - Jaccard über 5-Wort-Shingles für jedes Paar indexierbarer Ortsseiten. Über 0,40 (Gate I4) schlägt die Prüfung fehl.
  *   Ausgegeben werden die 5 ähnlichsten Paare und der Anteil der Wendungen, die auf mehr als der Hälfte der Seiten
  *   stehen (gemeinsamer Bestand: Stellen, Fakten, Kontakt).
  * - Ohne gebaute Seiten (Ordner fehlt, keine .html, weniger als zwei Ortsseiten) endet die Prüfung mit Exit 1:
- *   Eine leere Prüfung darf nicht grün sein.
+ *   Eine leere Prüfung darf nicht grün sein. Sind es Ortsseiten, aber weniger als zwei indexierbare (alle haben das
+ *   Gate nicht bestanden, etwa nach dem Fahrplanwechsel ohne neue Daten), kann keine ein Beinahe-Duplikat im Index sein:
+ *   Die Prüfung nennt das und endet mit Exit 0.
  */
 
-/** Gate U3 (lib/places/__tests__/gate.test.ts, GATE.maxJaccardWhole). */
-export const MAX_JACCARD = 0.45;
+/** Gate I4 am gebauten HTML (lib/places/qualitaet.ts, GATE.maxJaccardHtml; qualitaet.test.ts hält beide gleich). */
+export const MAX_JACCARD = 0.4;
 export const SHINGLE_SIZE = 5;
 /** So viele Paare nennt die Ausgabe, die ähnlichsten zuerst. */
 export const REPORT_PAIRS = 5;
@@ -81,6 +86,27 @@ export function jsonLdTypes(html) {
 export function isPlacePage(html) {
   const types = jsonLdTypes(html);
   return types.has('Place') && !types.has('CollectionPage');
+}
+
+/** Robots-Meta mit noindex (wie scripts/qa/check-graph.mjs): Die Seite hat das Gate nicht bestanden. */
+export function isNoindex(html) {
+  for (const tag of html.match(/<meta\b[^>]*>/gi) ?? []) {
+    const name = /\bname\s*=\s*["']([^"']*)["']/i.exec(tag)?.[1] ?? '';
+    const content = /\bcontent\s*=\s*["']([^"']*)["']/i.exec(tag)?.[1] ?? '';
+    if (/^(robots|googlebot)$/i.test(name) && /\bnoindex\b/i.test(content)) return true;
+  }
+  return false;
+}
+
+/**
+ * Ortsseite im Sinn der Prüfung: eine Seite unter /einsatzgebiet, die kein Hub ist und keine Weiterleitung. Eine
+ * Ortsseite mit noindex trägt keinen Place im Graphen (app/einsatzgebiet/seo.ts); sie zählt als Ortsseite, wird aber
+ * nicht verglichen.
+ */
+export function placePageKind(html) {
+  if (isPlacePage(html)) return isNoindex(html) ? 'noindex' : 'indexierbar';
+  const types = jsonLdTypes(html);
+  return isNoindex(html) && types.has('WebPage') && !types.has('CollectionPage') ? 'noindex' : null;
 }
 
 /** Wörter und Zahlen in Kleinschreibung, wie lib/places/metriken.ts tokens(). */
@@ -146,26 +172,37 @@ function fail(message) {
 
 function run() {
   const dir = path.resolve(process.cwd(), process.argv[2] ?? DEFAULT_DIR);
-  console.log(`🔍 Checking prerendered place pages for near-duplicates (gate U3 on the built HTML) in ${path.relative(process.cwd(), dir) || '.'} ...`);
+  console.log(`🔍 Checking prerendered place pages for near-duplicates (gate I4 on the built HTML) in ${path.relative(process.cwd(), dir) || '.'} ...`);
   const files = findHtmlFiles(dir);
   if (files.length === 0) {
     fail(`No prerendered .html found under ${dir}. Run "bun run build" first (Next.js writes the pages to .next/server/app/einsatzgebiet/<slug>.html).`);
   }
   const pages = [];
+  const noindex = [];
   let skipped = 0;
   for (const file of files) {
     const html = fs.readFileSync(file, 'utf8');
-    if (!isPlacePage(html)) {
+    const kind = placePageKind(html);
+    if (kind === null) {
       skipped += 1;
       continue;
     }
     const name = path.relative(dir, file).replace(/\.html$/, '');
+    if (kind === 'noindex') {
+      noindex.push(name);
+      continue;
+    }
     const text = mainText(html);
     if (tokens(text).length === 0) fail(`${name}: no text in <main>; the page or this check's extraction is broken.`);
     pages.push({ name, text });
   }
+  if (pages.length + noindex.length < 2) {
+    fail(`Found ${files.length} .html file(s) but only ${pages.length + noindex.length} place page(s) (JSON-LD Place without CollectionPage, or a noindex place page); nothing to compare.`);
+  }
+  if (noindex.length > 0) console.log(`ℹ️  ${noindex.length} place page(s) with noindex (gate not passed) are not compared: ${noindex.join(', ')}`);
   if (pages.length < 2) {
-    fail(`Found ${files.length} .html file(s) but only ${pages.length} place page(s) (JSON-LD Place without CollectionPage); nothing to compare.`);
+    console.log(`✅ Only ${pages.length} indexable place page(s); no near-duplicates can be in the index.`);
+    return;
   }
 
   const { pairs, tooSimilar, commonShare, maxCommonShare } = comparePages(pages);
@@ -174,10 +211,10 @@ function run() {
     console.log(`  ${pair.value > MAX_JACCARD ? '❌' : '  '} ${fmt(pair.value)}  ${pair.a} ↔ ${pair.b}`);
   }
   const summary =
-    `${pages.length} place pages (${skipped} other document(s) skipped), ${pairs.length} pairs, most similar ${fmt(pairs[0].value)}; ` +
+    `${pages.length} indexable place pages (${noindex.length} noindex, ${skipped} other document(s) skipped), ${pairs.length} pairs, most similar ${fmt(pairs[0].value)}; ` +
     `on average ${(commonShare * 100).toFixed(1)} % of a page's 5-word phrases appear on more than half of the pages (max ${(maxCommonShare * 100).toFixed(1)} %).`;
   if (tooSimilar.length > 0) {
-    console.error(`\n🚨 ${tooSimilar.length} pair(s) above ${MAX_JACCARD}. ${summary}`);
+    console.error(`\n🚨 ${tooSimilar.length} pair(s) above ${MAX_JACCARD.toFixed(2)}. ${summary}`);
     console.error('   Shorten the shared text (lib/places/text.ts, components/einsatzgebiet) or merge a place (docs/operations/orte-pflegen.md).');
     process.exit(1);
   }

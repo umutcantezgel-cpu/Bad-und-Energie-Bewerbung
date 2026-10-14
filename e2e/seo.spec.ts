@@ -1,4 +1,6 @@
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
+import { istOrtIndexierbar } from '../lib/places/indexierung';
+import { getPublishedPlaces, placePath } from '../lib/places/registry';
 import { LIVE_JOB_SLUGS, LOCAL_PAGES, PUBLISHED_JOBS, ROUTES, THEMEN_PAGES, channelJobSlugs, waitForSettled } from './support/site';
 
 /**
@@ -79,23 +81,59 @@ for (const feed of FEEDS) {
   });
 }
 
+const locsOf = (xml: string) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+
+/**
+ * Die Sitemap seit E-029: /sitemap.xml ist ein Index, der auf die Gruppen-Sitemaps /sitemap/<id>.xml zeigt (Kern,
+ * Stellen, Orte, Themen; eine leere Gruppe fehlt). Liefert jede Gruppe mit ihrem XML, nach Status und Inhaltstyp geprüft.
+ */
+async function sitemapGruppen(request: APIRequestContext): Promise<Map<string, string>> {
+  const index = await request.get('/sitemap.xml');
+  expect(index.status()).toBe(200);
+  expect(index.headers()['content-type']).toContain('xml');
+  const xml = await index.text();
+  expect(xml).toContain('<sitemapindex');
+  const pfade = locsOf(xml).map((loc) => new URL(loc).pathname);
+  for (const pfad of pfade) expect(pfad).toMatch(/^\/sitemap\/(kern|stellen|orte|themen)\.xml$/);
+  expect(pfade).toEqual(expect.arrayContaining(['/sitemap/kern.xml', '/sitemap/orte.xml', '/sitemap/themen.xml']));
+  const gruppen = new Map<string, string>();
+  for (const pfad of pfade) {
+    const response = await request.get(pfad);
+    expect(response.status(), pfad).toBe(200);
+    expect(response.headers()['content-type'], pfad).toContain('xml');
+    const body = await response.text();
+    expect(body, pfad).toContain('<urlset');
+    gruppen.set(pfad.replace(/^\/sitemap\/|\.xml$/g, ''), body);
+  }
+  return gruppen;
+}
+
+/** Alle <loc> aller Gruppen-Sitemaps, unverändert (absolute URLs). */
+async function sitemapLocs(request: APIRequestContext): Promise<string[]> {
+  return [...(await sitemapGruppen(request)).values()].flatMap(locsOf);
+}
+
 test('Sitemap listet alle Stellen-URLs', async ({ request }) => {
-  const response = await request.get('/sitemap.xml');
-  expect(response.status()).toBe(200);
-  expect(response.headers()['content-type']).toContain('xml');
-  const locs = [...(await response.text()).matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => new URL(match[1]).pathname);
+  const gruppen = await sitemapGruppen(request);
+  const locs = (await sitemapLocs(request)).map((loc) => new URL(loc).pathname);
+  const stellen = locsOf(gruppen.get('stellen') ?? '').map((loc) => new URL(loc).pathname);
   expect(LIVE_JOB_SLUGS.length).toBeGreaterThan(0);
-  for (const slug of LIVE_JOB_SLUGS) expect(locs).toContain(`/jobs/${slug}`);
+  for (const slug of LIVE_JOB_SLUGS) expect(stellen).toContain(`/jobs/${slug}`);
   // Nur indexierbare Seiten: keine Danke- oder Mappe-Seite.
   expect(locs).not.toContain('/bewerbung/danke');
   expect(locs).not.toContain('/bewerbung/mappe');
 });
 
-test('Sitemap listet die Gebietsseite, jeden Kreis-Hub und jeden veröffentlichten Ort (E-028)', async ({ request }) => {
-  const response = await request.get('/sitemap.xml');
-  const xml = await response.text();
-  const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => new URL(match[1]).pathname);
-  for (const page of LOCAL_PAGES) expect(locs, page.path).toContain(page.path);
+test('Orts-Sitemap: Gebietsseite, jeder Kreis-Hub und jeder Ort, der das Gate besteht (E-028, E-029)', async ({ request }) => {
+  const xml = (await sitemapGruppen(request)).get('orte') ?? '';
+  const locs = locsOf(xml).map((loc) => new URL(loc).pathname);
+  // Ortsseiten mit noindex,follow (Gate nicht bestanden oder Fahrplanjahr der Daten vorbei) stehen nicht darin
+  const ohneIndex = new Set(getPublishedPlaces().filter((place) => !istOrtIndexierbar(place, new Date())).map(placePath));
+  for (const page of LOCAL_PAGES) {
+    if (ohneIndex.has(page.path)) expect(locs, page.path).not.toContain(page.path);
+    else expect(locs, page.path).toContain(page.path);
+  }
+  for (const pfad of locs) expect(pfad).toMatch(/^\/einsatzgebiet(\/|$)/);
   // Weiterleitungen (Kreise ohne eigene Seite) stehen nicht darin
   expect(locs).not.toContain('/einsatzgebiet/hochtaunuskreis');
   expect(locs).not.toContain('/einsatzgebiet/landkreis-marburg-biedenkopf');
@@ -104,17 +142,9 @@ test('Sitemap listet die Gebietsseite, jeden Kreis-Hub und jeden veröffentlicht
 });
 
 test('Sitemap listet den Themen-Hub und jede Themenseite (E-028)', async ({ request }) => {
-  const response = await request.get('/sitemap.xml');
-  const locs = [...(await response.text()).matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => new URL(match[1]).pathname);
+  const locs = locsOf((await sitemapGruppen(request)).get('themen') ?? '').map((loc) => new URL(loc).pathname);
   for (const page of THEMEN_PAGES) expect(locs, page.path).toContain(page.path);
 });
-
-/** Alle <loc> der Sitemap, unverändert (absolute URLs). */
-async function sitemapLocs(request: APIRequestContext): Promise<string[]> {
-  const response = await request.get('/sitemap.xml');
-  expect(response.status()).toBe(200);
-  return [...(await response.text()).matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-}
 
 /** Ohne Auto-Wait: Die 404-Seite hat keinen Canonical, getAttribute würde bis zum Test-Timeout warten. */
 const canonicalOf = (page: Page) =>
