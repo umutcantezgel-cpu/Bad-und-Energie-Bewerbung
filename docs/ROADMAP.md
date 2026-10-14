@@ -525,7 +525,7 @@ Auftrag des Inhabers (2026-10-12): die Zahl der indexierbaren Seiten verzehnfach
 
 | Klasse | Quelle | Ebene |
 |---|---|---|
-| `oepnv`: Haltestelle, Linien, Umstiege, Ankunft bis 7:30, Takt | gtfs.de „Deutschland Nahverkehr“ (CC BY 4.0, Datenbasis DELFI e.V.), Pflege in `docs/operations/orte-oepnv.md` | Ort |
+| `oepnv`: Haltestelle, Linien, Umstiege, Ankunft bis 7:30, Takt | gtfs.de „Deutschland Nahverkehr“ und „Deutschland Regionalverkehr“ (CC BY 4.0, Datenbasis DELFI e.V.), Pflege in `docs/operations/orte-oepnv.md` | Ort |
 | `berufsschule`: Bus- und Bahnweg zur zuständigen Berufsschule | GVBl. Hessen 2026 Nr. 21, Anlage 2, und Schulbezirkssatzung; Bestätigung durch den Inhaber offen (MENSCHEN M-024) | Ort |
 | `einsaetze`: Einsätze je Jahr | Auftragsbuch; nur Bänder 5–9, 10–19, 20+, nichts unter 5 (M-023) | Ort |
 | `touren`: typische Arbeiten in dieser Richtung | Betrieb (M-023) | Richtung/Kreis |
