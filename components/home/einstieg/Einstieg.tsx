@@ -45,10 +45,12 @@ export interface EinstiegProps {
  *   links die Einzelheit „X“: die Außeneinheit von vorn mit Maßketten, deren Rotor dreht, solange die Startbedingung
  *   gilt (Knopf „Anhalten“). Der Vorlauf läuft aus der Anlage links aus der Fläche in den Knopf.
  * - Handy: ein Navy-Block (Etikett, h1 und Unterzeile, Hausschnitt, Maße als Leiste), dann fällt der Vorlauf links
- *   senkrecht auf Papier und zweigt in den Knopf ab; die Einzelheit „X“ steht nach dem Knopf als eigener Block.
+ *   senkrecht auf Papier und zweigt in den Knopf ab; die Einzelheit „X“ steht nach dem Erklärsatz als eigener Block.
  * Leitmotiv „35 km“ (E-027, seit E-029 ohne Zirkel): das Maß in Schrift im Giebel.
- * Reihenfolge im DOM (Lesen, Tab): Etikett, h1, Zeichnung (dekorativ), Einzelheit, Maße, Einleitung, Knopf, Mikrotext,
- * Zweitweg, Erklärsatz T-001.
+ * Reihenfolge im DOM (Lesen, Tab) wie am Handy: Etikett, h1, Zeichnung (dekorativ), Maße, Einleitung, Knopf,
+ * Mikrotext, Zweitweg, Erklärsatz T-001, Einzelheit mit „Anhalten“. Am Desktop setzt das Raster die Einzelheit in die
+ * Navy-Fläche (gleiche Zelle wie das Bild). So springt der Fokus nicht vom Kopf zum Pausenknopf weit unten und zurück
+ * (WCAG 2.4.3, 1.3.2), und beim schrittweisen Aufbau des HTML rutscht die Einzelheit nicht nach (CLS, K-013).
  */
 export function Einstieg({ now, titleId }: EinstiegProps) {
   const [zeile1, zeile2] = plakatzeilen(HERO.title);
@@ -89,22 +91,6 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
               {masse.radius.value}
             </span>
           </div>
-        </div>
-        <div className={styles.einzelheit} data-einzelheit="X">
-          <DauerSteuerung
-            beschriftung={
-              <span className={cn(styles.einzelheitText, 'text-etikett')}>
-                {EINZELHEIT_TEXT.split(' · ').map((teil, i) => (
-                  <span key={teil} className={styles.zusammen}>
-                    {i > 0 ? ' · ' : null}
-                    {teil}
-                  </span>
-                ))}
-              </span>
-            }
-          >
-            <Aussengeraet ansicht="vorne" massketten="haupt" bewegt titel={EINZELHEIT_TITEL} schriftfeld={false} massSchrift={78} />
-          </DauerSteuerung>
         </div>
         <div className={styles.leiste}>
           {/* Mobil laufen Vorlauf und Rücklauf durch die Leiste */}
@@ -168,6 +154,25 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
         <div className={styles.fuss}>
           <p className={styles.satz}>{KREISLAUF_SATZ}</p>
         </div>
+      </div>
+
+      {/* Einzelheit „X“ (Navy): im DOM hinter Knopf und Erklärsatz wie am Handy (Tab-Folge, WCAG 2.4.3; kein
+          Nachrutschen beim schrittweisen Aufbau, CLS); am Desktop setzt das Raster sie in den Himmel der Navy-Fläche */}
+      <div className={styles.einzelheit} data-einzelheit="X" data-tone="inverse">
+        <DauerSteuerung
+          beschriftung={
+            <span className={cn(styles.einzelheitText, 'text-etikett')}>
+              {EINZELHEIT_TEXT.split(' · ').map((teil, i) => (
+                <span key={teil} className={styles.zusammen}>
+                  {i > 0 ? ' · ' : null}
+                  {teil}
+                </span>
+              ))}
+            </span>
+          }
+        >
+          <Aussengeraet ansicht="vorne" massketten="haupt" bewegt titel={EINZELHEIT_TITEL} schriftfeld={false} massSchrift={78} />
+        </DauerSteuerung>
       </div>
 
       {/* Desktop: der Vorlauf aus der Anlage, vom Rand der Navy-Fläche (Höhe der Erdleitung) über Bogen, Steigleitung

@@ -120,6 +120,32 @@ describe('Seitenkopf (SEITENKOPF-01): Probeseite rendert jede Variante', () => {
     expect(accent).toBe(3);
   });
 
+  it('E-029: Zeichnung und Maße im DOM gleich nach dem Titel, vor Einleitung und Knopf (Tab-Folge wie am Handy, WCAG 2.4.3)', () => {
+    const h = html.stelle;
+    const titel = h.indexOf('</h1>');
+    const panel = h.search(/<div class="[^"]*" data-tone="inverse"><div class=/);
+    const leitung = h.indexOf('data-zeichnung="seitenkopf-leitung"');
+    const einleitung = h.indexOf('Du baust Wärmepumpen');
+    const knopf = h.indexOf('data-primary-cta');
+    for (const stelle of [titel, panel, leitung, einleitung, knopf]) expect(stelle).toBeGreaterThan(0);
+    expect(panel).toBeGreaterThan(titel);
+    // Alles, was am Handy über dem Knopf liegt (Zeilen 1 bis 3), steht im DOM davor: kein Nachrutschen
+    expect(leitung).toBeGreaterThan(panel);
+    expect(leitung).toBeLessThan(knopf);
+    expect(panel).toBeLessThan(einleitung);
+    expect(einleitung).toBeLessThan(knopf);
+    // Ein Bedienelement im Panel (Anhalten der Dauerbewegung) steht so in der Tab-Folge vor dem Knopf
+    const mitSteuerung = render({ ...PROBE.waerme, panel: createElement('button', { type: 'button' }, 'Anhalten') });
+    expect(mitSteuerung.indexOf('>Anhalten</button>')).toBeLessThan(mitSteuerung.indexOf('data-primary-cta'));
+    // Lage: am Handy Zeile 2 (über dem Knopf in Zeile 4), am Desktop die Spalte rechts über alle Zeilen
+    const regel = (block: string, name: string) => block.match(new RegExp(`\\n\\s*\\.${name} \\{([^}]*)\\}`))?.[1] ?? '';
+    const desktop = css.slice(css.indexOf('@media (min-width: 64em)'));
+    expect(regel(css, 'panel')).toMatch(/grid-row: 2;/);
+    expect(regel(css, 'leitung')).toMatch(/grid-row: 3;/);
+    expect(regel(css, 'aktionsblock')).toMatch(/grid-row: 4;/);
+    expect(regel(desktop, 'panel')).toMatch(/grid-column: panel-start \/ voll-end;\s*grid-row: 1 \/ -1;/);
+  });
+
   it('Maße: Wert und Name mit Leerzeichen im DOM, höchstens vier, als Liste', () => {
     expect(html.stelle).toMatch(/<ul class="[^"]*"><li/);
     expect(plain(html.stelle)).toContain('13:30 Freitags Feierabend');

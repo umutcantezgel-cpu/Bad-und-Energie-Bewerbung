@@ -38,8 +38,90 @@ async function tabSichtbar(page: Page, sichtbar: boolean): Promise<void> {
   }, sichtbar);
 }
 
+/** Reihenfolge, in der die Ziele mit der Tab-Taste den Fokus bekommen (Indizes in `ziele`), von oben auf der Seite. */
+async function tabFolge(page: Page, ziele: readonly Locator[], hoechstens = 80): Promise<number[]> {
+  for (const [i, ziel] of ziele.entries()) await ziel.evaluate((el, n) => el.setAttribute('data-tab-ziel', String(n)), i);
+  const folge: number[] = [];
+  for (let n = 0; n < hoechstens && folge.length < ziele.length; n++) {
+    await page.keyboard.press('Tab');
+    const ziel = await page.evaluate(() => document.activeElement?.closest('[data-tab-ziel]')?.getAttribute('data-tab-ziel'));
+    if (ziel != null && !folge.includes(Number(ziel))) folge.push(Number(ziel));
+  }
+  return folge;
+}
+
+/** Reihenfolge der Ziele nach ihrer Lage auf der Seite (Oberkante, von oben nach unten). */
+async function lageFolge(ziele: readonly Locator[]): Promise<number[]> {
+  const oben = await Promise.all(ziele.map((z) => z.evaluate((el) => el.getBoundingClientRect().top + window.scrollY)));
+  return oben.map((y, i) => ({ y, i })).sort((a, b) => a.y - b.y).map(({ i }) => i);
+}
+
+/**
+ * Teildokument im Kopf (Einstieg, Seitenkopf): Der Browser kann malen, bevor der ganze Kopf geparst ist. Hier steht
+ * der Kopf nacheinander nur bis zum k-ten Block im DOM; verfolgt werden die Blöcke, die Einzelheit „X“ und der Knopf.
+ * Gemeldet wird, was dann nicht dort steht, wo es am Ende steht (`bisKnopf`: nur, was am Ende bis zum Knopf steht).
+ */
+function rutscher(page: Page, umfang: 'alles' | 'bisKnopf'): Promise<string[]> {
+  return page.locator('h1').evaluate((h1, umfang) => {
+    const kopf = h1.parentElement!.parentElement!;
+    const bloecke = [...kopf.children] as HTMLElement[];
+    const knopf = kopf.querySelector<HTMLElement>('[data-primary-cta]');
+    if (!knopf) return ['kein Knopf im Kopf'];
+    const einzelheit = kopf.querySelector<HTMLElement>('div[data-einzelheit="X"]');
+    const oben = (el: HTMLElement) => (el.isConnected ? el.getBoundingClientRect().top + window.scrollY : NaN);
+    const grenze = oben(knopf);
+    const verfolgt = [...bloecke, einzelheit, knopf].filter(
+      (el): el is HTMLElement => el != null && (umfang === 'alles' || oben(el) <= grenze),
+    );
+    const ende = verfolgt.map(oben);
+    const funde: string[] = [];
+    for (let k = 1; k < bloecke.length; k++) {
+      const spaeter = bloecke.slice(k);
+      spaeter.forEach((b) => b.remove());
+      verfolgt.forEach((el, i) => {
+        const y = oben(el);
+        if (!Number.isNaN(y) && Math.abs(y - ende[i]) > 1) funde.push(`${el.className} bei ${k} Blöcken: ${Math.round(y - ende[i])} px`);
+      });
+      kopf.append(...spaeter);
+    }
+    return funde;
+  }, umfang);
+}
+
 test.describe('mit Bewegung (no-preference)', () => {
   test.use({ contextOptions: { reducedMotion: 'no-preference' } });
+
+  test('Handy: „Anhalten“ und „Jetzt bewerben“ bekommen den Fokus in der Reihenfolge, in der sie untereinander stehen (WCAG 2.4.3)', async ({
+    page,
+  }) => {
+    test.skip(test.info().project.name !== 'mobile-light', 'Die Lage untereinander gilt am Handy.');
+    const seiten = [
+      { pfad: START, anhalten: 'div[data-einzelheit="X"]' },
+      { pfad: STELLE, anhalten: '[data-stelle-kopfbild="aussengeraet"]' },
+    ];
+    for (const { pfad, anhalten } of seiten) {
+      await page.goto(pfad);
+      const ziele = [
+        page.locator(anhalten).getByRole('button', { name: 'Anhalten' }),
+        page.locator('main [data-primary-cta] a').first(),
+      ];
+      await expect(ziele[0]).toBeAttached();
+      const lage = await lageFolge(ziele);
+      expect(await tabFolge(page, ziele), pfad).toEqual(lage);
+    }
+  });
+
+  test('Handy: kommt der Kopf in Stücken an, rutscht nichts nach (CLS, K-013): Einstieg der Startseite, Seitenkopf der Stelle', async ({
+    page,
+  }) => {
+    test.skip(test.info().project.name !== 'mobile-light', 'Das Nachrutschen betraf die Lage am Handy.');
+    await page.goto(START);
+    expect(await rutscher(page, 'alles')).toEqual([]);
+    await page.goto(STELLE);
+    // Die Einleitung steht am Handy unter dem Knopf, im DOM davor (Lesefolge am Desktop); dafür hält
+    // <link rel="expect" blocking="render"> das erste Bild an (components/seitenkopf/Seitenkopf.tsx)
+    expect(await rutscher(page, 'bisKnopf')).toEqual([]);
+  });
 
   test('Startseite: der Rotor der Einzelheit X läuft im Sichtfeld; „Anhalten“ hält an, „Abspielen“ startet wieder', async ({ page }) => {
     await page.goto(START);

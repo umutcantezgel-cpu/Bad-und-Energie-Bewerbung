@@ -129,8 +129,28 @@ describe('Hero / Einstieg (R3-HOME-01, Technische Zeichnung 2.0)', () => {
     expect(text2026).not.toContain('Kreislauf zeigen');
   });
 
+  it('DOM-Reihenfolge wie am Handy: Knopf, Mikrotext, Zweitweg und Erklärsatz vor der Einzelheit mit „Anhalten“ (WCAG 2.4.3, CLS)', () => {
+    const knopf = html2026.indexOf(`${PRIMARY_CTA_ATTR}=""`);
+    const zweitweg = html2026.indexOf('href="#stellen"');
+    const satz = html2026.indexOf(KREISLAUF_SATZ);
+    // Der Block der Einzelheit (die Szene trägt am Kreis „X“ dasselbe Attribut an einem <g>)
+    const einzelheit = html2026.search(/<div [^>]*data-einzelheit="X"/);
+    const anhalten = html2026.indexOf('data-dauer-knopf=""');
+    for (const [name, stelle] of Object.entries({ knopf, zweitweg, satz, einzelheit, anhalten })) expect(stelle, name).toBeGreaterThan(0);
+    expect(knopf).toBeLessThan(zweitweg);
+    expect(zweitweg).toBeLessThan(satz);
+    expect(satz).toBeLessThan(einzelheit);
+    expect(einzelheit).toBeLessThan(anhalten);
+    // Mobil Zeile 5 (nach dem Rest in Zeile 4), am Desktop in der Zelle der Navy-Fläche
+    const css = quelle(path.join(EINSTIEG, 'einstieg.module.css')).replace(/\/\*[\s\S]*?\*\//g, '');
+    expect(css).toMatch(/\.einzelheit \{\s*grid-row: 5;/);
+    expect(css).toMatch(/\.rest \{\s*grid-row: 4;/);
+    expect(css).toMatch(/\.einzelheit \{\s*grid-column: 4;\s*grid-row: 1 \/ 3;/);
+    expect(css).toMatch(/\.bild \{\s*grid-column: 4;\s*grid-row: 1 \/ 3;/);
+  });
+
   it('Einzelheit X (E-029): Außeneinheit von vorn mit Maßketten, der Rotor dreht nur im Bereich mit DauerSteuerung', () => {
-    const einzelheit = html2026.match(/<div class="[^"]*" data-einzelheit="X">([\s\S]*?)<\/button><\/div><\/div><\/div>/)![0];
+    const einzelheit = html2026.match(/<div class="[^"]*" data-einzelheit="X" data-tone="inverse">([\s\S]*?)<\/button><\/div><\/div><\/div>/)![0];
     expect(einzelheit).toMatch(/<div class="[^"]*" data-dauer="aus">/);
     expect(einzelheit).toContain(`role="img" aria-label="${EINZELHEIT_TITEL}"`);
     expect(einzelheit).toContain(`viewBox="0 0 ${COMPRESS_AW_S.breite.mm} ${COMPRESS_AW_S.hoehe.mm}"`);

@@ -12,8 +12,11 @@
  *   Fläche in den Flansch des Knopfs.
  * - Handy: Navy-Block oben (Etikett, h1 weiß, Unterzeile, Zeichnung, Maße), darunter auf Papier der Knopf;
  *   Vorlauf und Rücklauf fallen aus dem Block senkrecht in den Knopf.
- * - Reihenfolge im DOM (Lesen, Tab): Etikett, h1, Unterzeile, Einleitung, Knopf, Mikrotext, Zweitweg,
- *   Zeichnung, Maße. Die Lage regelt das Raster in seitenkopf.module.css.
+ * - Reihenfolge im DOM (Lesen, Tab): Etikett, h1, Unterzeile, Zeichnung, Maße, Leitungspaar (dekorativ),
+ *   Einleitung, Knopf, Mikrotext, Zweitweg. Bis zum Knopf ist das die Folge am Handy; die Einleitung bleibt vor dem
+ *   Knopf wie am Desktop. Die Lage regelt das Raster in seitenkopf.module.css (am Desktop das Panel rechts). So
+ *   kommt ein Bedienelement im Panel („Anhalten“) vor dem Knopf, wo es am Handy auch steht (Prüfung E-029,
+ *   WCAG 2.4.3), und der Knopf rutscht nicht nach, wenn der Kopf in Stücken ankommt.
  *
  * Varianten
  * - `erzaehl`: wie der Einstieg, große Navy-Fläche, h1 in Bildgröße (text-display, an die Spalte gekoppelt).
@@ -56,11 +59,11 @@
  * Die h1 trägt `titelId` (Standard `seitenkopf-titel`); der Kopf zeigt mit aria-labelledby darauf. Eine h1
  * je Seite: Die Seite selbst setzt keine weitere.
  *
- * Erstes Bild nur mit ganzem Kopf (V6-A3-VITALS, CLS): Zeichnung und Maße stehen im DOM hinter dem Knopf, am
- * Handy aber darüber. Malte der Browser ein Teildokument (HTML in Stücken, Parser gibt ab), stand der Knopf
- * zuerst unter dem Titel und rutschte nach, sobald das Panel ankam (CLS 0,08 bis 0,12 in einzelnen Läufen).
- * `<link rel="expect" blocking="render">` (React hebt es in den <head>) hält das erste Bild an, bis die Marke
- * am Ende des Kopfs geparst ist; Browser ohne die Funktion übergehen es.
+ * Erstes Bild nur mit ganzem Kopf (V6-A3-VITALS, CLS): Bis E-029 standen Zeichnung und Maße im DOM hinter dem Knopf,
+ * am Handy aber darüber; malte der Browser ein Teildokument, rutschte der Knopf nach (CLS 0,08 bis 0,12). Seit der
+ * Prüfung E-029 steht alles, was am Handy über dem Knopf liegt, auch im DOM davor. `<link rel="expect"
+ * blocking="render">` (React hebt es in den <head>) bleibt als Sicherung für die Einleitung unter dem Knopf: Es hält
+ * das erste Bild an, bis die Marke am Ende des Kopfs geparst ist; Browser ohne die Funktion übergehen es.
  */
 import Link from 'next/link';
 import type { ReactNode } from 'react';
@@ -207,6 +210,34 @@ export function Seitenkopf({
         ) : null}
       </div>
 
+      {/* Zeichnung und Maße gleich nach dem Titel, wie am Handy (dort über dem Knopf): Ein Bedienelement im Panel
+          („Anhalten“ der Dauerbewegung) kommt so in der Tab-Folge vor dem Knopf, nicht danach (WCAG 2.4.3). Am
+          Desktop setzt das Raster das Panel rechts neben den Text. */}
+      {mitPanel || mitMassen ? (
+        <div className={styles.panel} data-tone="inverse">
+          {mitPanel ? <div className={styles.bild}>{panel}</div> : null}
+          {mitMassen ? (
+            <ul className={cn(styles.masse, masseZweispaltig && styles.masseZweispaltig)}>
+              {masse.slice(0, 4).map((mass) => (
+                <li key={`${mass.wert}-${mass.name}`} className={cn(styles.mass, mass.nurBreit && styles.massNurBreit)}>
+                  <Masskette wert={mass.wert} name={mass.name} />
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+      ) : null}
+
+      {/* Leitungspaar: am Handy fällt es aus der Navy-Fläche in den Knopf, am Desktop läuft es auf Knopfhöhe
+          aus der Fläche in den Flansch. Zwei Teile, damit der Abschnitt auf Navy die Inverse-Farben trägt. Im DOM
+          vor dem Knopf (Zeile 3 über Zeile 4): Kommt der Kopf in Stücken an, rutscht der Knopf nicht nach. */}
+      {aktion && navy ? (
+        <div className={styles.leitung} aria-hidden="true" data-zeichnung="seitenkopf-leitung">
+          <span className={styles.leitungPapier} />
+          <span className={styles.leitungNavy} data-tone="inverse" />
+        </div>
+      ) : null}
+
       {einleitung ? <div className={cn(styles.einleitung, 'text-ink')}>{einleitung}</div> : null}
 
       {aktion || mikrotext || zweitweg || children ? (
@@ -228,30 +259,6 @@ export function Seitenkopf({
             </Ziel>
           ) : null}
           {children}
-        </div>
-      ) : null}
-
-      {/* Leitungspaar: am Handy fällt es aus der Navy-Fläche in den Knopf, am Desktop läuft es auf Knopfhöhe
-          aus der Fläche in den Flansch. Zwei Teile, damit der Abschnitt auf Navy die Inverse-Farben trägt. */}
-      {aktion && navy ? (
-        <div className={styles.leitung} aria-hidden="true" data-zeichnung="seitenkopf-leitung">
-          <span className={styles.leitungPapier} />
-          <span className={styles.leitungNavy} data-tone="inverse" />
-        </div>
-      ) : null}
-
-      {mitPanel || mitMassen ? (
-        <div className={styles.panel} data-tone="inverse">
-          {mitPanel ? <div className={styles.bild}>{panel}</div> : null}
-          {mitMassen ? (
-            <ul className={cn(styles.masse, masseZweispaltig && styles.masseZweispaltig)}>
-              {masse.slice(0, 4).map((mass) => (
-                <li key={`${mass.wert}-${mass.name}`} className={cn(styles.mass, mass.nurBreit && styles.massNurBreit)}>
-                  <Masskette wert={mass.wert} name={mass.name} />
-                </li>
-              ))}
-            </ul>
-          ) : null}
         </div>
       ) : null}
 

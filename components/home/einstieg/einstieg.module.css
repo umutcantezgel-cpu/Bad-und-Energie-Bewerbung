@@ -179,7 +179,7 @@
   right: 0;
 }
 
-/* ─── Einzelheit „X“: mobil ein eigener Navy-Block nach dem Knopf ─── */
+/* ─── Einzelheit „X“: mobil ein eigener Navy-Block nach dem Rest (im DOM ebenfalls zuletzt) ─── */
 .einzelheit {
   grid-row: 5;
   padding: var(--a-6) var(--rand) var(--a-6) var(--schacht);
@@ -725,12 +725,17 @@
     display: none;
   }
 
-  /* Einzelheit „X“ im Himmel links über der Außeneinheit (Szene x 12 … 272, bis 262 Einheiten über dem Boden) */
+  /* Einzelheit „X“ im Himmel links über der Außeneinheit (Szene x 12 … 272, bis 262 Einheiten über dem Boden): in
+     derselben Zelle wie die Navy-Fläche, unten links an ihr ausgerichtet, über ihr gezeichnet */
   .einzelheit {
-    position: absolute;
-    left: calc(16 * var(--e));
-    bottom: calc(412 * var(--e));
+    grid-column: 4;
+    grid-row: 1 / 3;
+    align-self: end;
+    justify-self: start;
+    position: relative;
+    z-index: 1;
     width: calc(250 * var(--e));
+    margin: 0 0 calc(412 * var(--e)) calc(16 * var(--e));
     padding: 0;
     background-color: transparent;
   }
