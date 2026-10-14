@@ -7,5 +7,5 @@ export type { DirektSprechenProps } from './DirektSprechen';
 export { Erklaerung } from './Erklaerung';
 export { KopfHaus } from './KopfHaus';
 export { Regionalband } from './Regionalband';
-export { bewerbungKopf, DIREKT_TEXT, REGIONALBAND } from './seite-text';
+export { bewerbungKopf, DIREKT_TEXT, REGIONALBAND, UNTERLAGEN_ZWEITWEG } from './seite-text';
 export type { BewerbungKopf, RegionalMass, SeitenMass } from './seite-text';

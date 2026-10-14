@@ -6,9 +6,10 @@ import type { UploadAdapter, UploadDatei, UploadNachweis, UploadSitzung } from '
 import { Dateiliste } from '../Dateiliste';
 import { groesseText, pruefeDatei, UNTERLAGEN_ACCEPT, UNTERLAGEN_FEHLER, UNTERLAGEN_GRENZEN } from '../regeln';
 import { ENTFERNEN_FEHLER, erstelleSteuerung, LEERER_ZUSTAND, UEBERTRAGUNG_FEHLER, type UnterlagenEintrag } from '../steuerung';
-import { Unterlagen } from '../Unterlagen';
+import { FACTS } from '@/lib/content/facts';
+import { Unterlagen, UnterlagenZeile } from '../Unterlagen';
 import { UnterlagenAuswahl } from '../UnterlagenAuswahl';
-import { UNTERLAGEN_ANKER, UNTERLAGEN_TEXT, UNTERLAGEN_WHATSAPP_TEXT } from '../unterlagen-text';
+import { UNTERLAGEN_ANKER, UNTERLAGEN_TEXT, UNTERLAGEN_WHATSAPP_TEXT, UNTERLAGEN_ZEILE, UNTERLAGEN_ZEILE_TEXT } from '../unterlagen-text';
 
 const MIB = 1024 * 1024;
 const plain = (html: string) => html.replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/[ \t\n\r]+/g, ' ').trim();
@@ -189,40 +190,55 @@ describe('Unterlagen: Steuerung mit Attrappe (E-BEW-012 Abnahme)', () => {
   });
 });
 
-describe('Unterlagen: Abschnitt im Betrieb ohne Anbindung (E-BEW-012, E-START-007)', () => {
-  const html = renderToStaticMarkup(createElement(Unterlagen));
+describe('Unterlagen ohne Anbindung: eine Zeile statt Upload-Sackgasse (Plan §D, E-BEW-012, E-START-007)', () => {
+  const html = renderToStaticMarkup(createElement(UnterlagenZeile));
   const text = plain(html);
 
-  it('steht unter dem Anker #unterlagen mit h2 und sagt ehrlich, dass Hochladen noch nicht geht', () => {
-    expect(html).toContain(`id="${UNTERLAGEN_ANKER}"`);
-    expect(html).toMatch(/<h2 id="unterlagen-titel"[^>]*>Unterlagen einreichen<\/h2>/);
-    expect(html).toContain('data-unterlagen="aus"');
-    expect(text).toContain('Hochladen ist noch nicht verfügbar. Schick uns die Unterlagen per WhatsApp oder E-Mail.');
+  it('steht unter dem Anker #unterlagen und sagt in einem Satz, wie Unterlagen kommen und dass kein Lebenslauf nötig ist', () => {
+    expect(html).toMatch(new RegExp(`^<p id="${UNTERLAGEN_ANKER}"[^>]*data-unterlagen="zeile"`));
+    expect(html).toContain('scroll-mt-24');
+    expect(text.replace(UNTERLAGEN_ZEILE.neuerTab, '')).toBe(UNTERLAGEN_ZEILE_TEXT);
+    expect(UNTERLAGEN_ZEILE_TEXT).toBe(
+      'Unterlagen kannst du später per WhatsApp oder E-Mail schicken – für den ersten Schritt brauchst du weder Anschreiben noch Lebenslauf.',
+    );
   });
 
-  it('bietet WhatsApp mit vorausgefülltem Text und E-Mail mit Betreff, ohne Dateifeld', () => {
+  it('der zweite Teil ist der Fakt noCvNeeded im Wortlaut (K-012), nur mit kleinem Anfang nach dem Gedankenstrich', () => {
+    const fakt = FACTS.noCvNeeded.long;
+    expect(UNTERLAGEN_ZEILE.nach).toBe(`schicken – ${fakt.charAt(0).toLowerCase()}${fakt.slice(1)}`);
+  });
+
+  it('WhatsApp mit vorausgefülltem Text im neuen Tab (angesagt), E-Mail mit Betreff, beide als Textlinks im Satz', () => {
     expect(html).toContain(`text=${encodeURIComponent(UNTERLAGEN_WHATSAPP_TEXT)}`);
-    expect(html).toContain('target="_blank"');
+    expect(html).toMatch(
+      /<a href="https:\/\/api\.whatsapp\.com\/send\?[^"]*"[^>]*target="_blank"[^>]*rel="noopener noreferrer"[^>]*>WhatsApp<span class="sr-only"> \(öffnet in neuem Tab\)<\/span><\/a>/,
+    );
     expect(html).toContain(`href="${COMPANY.emailHref}?subject=Bewerbungsunterlagen"`);
+    expect(html.match(/<a\b/g)).toHaveLength(2);
+    expect(html.match(/<a\b[^>]*class="[^"]*\bunderline\b/g)).toHaveLength(2);
+  });
+
+  it('keine Sackgasse: kein Dateifeld, kein Knopf, kein abgeschalteter Kasten, keine Überschrift, kein „Upload“ oder „Hochladen“', () => {
     expect(html).not.toContain('type="file"');
-    expect(text).toContain(UNTERLAGEN_TEXT.whatsapp);
-    expect(text).toContain(UNTERLAGEN_TEXT.mail);
-  });
-
-  it('kein Erfolgs- oder Prüfstatus und kein Wort „Upload“', () => {
+    expect(html).not.toContain('<button');
+    expect(html).not.toContain('data-zustand');
+    expect(html).not.toMatch(/<h[1-6]\b/);
+    expect(text).not.toMatch(/upload|hochladen|noch nicht verfügbar/i);
     expect(html).not.toMatch(VERBOTEN);
-    expect(text).not.toMatch(/upload/i);
   });
 
-  it('mit Anbindung steht die Auswahl an ihrer Stelle (Knopf, Dateifeld, Formate)', () => {
+  it('mit Anbindung (Phase 2) steht der Abschnitt mit Auswahl (Knopf, Dateifeld, Formate) unter demselben Anker', () => {
     const { adapter } = attrappe();
     const mit = renderToStaticMarkup(createElement(Unterlagen, { auswahl: createElement(UnterlagenAuswahl, { adapter }) }));
+    expect(mit).toContain(`id="${UNTERLAGEN_ANKER}"`);
+    expect(mit).toMatch(/<h2 id="unterlagen-titel"[^>]*>Unterlagen einreichen<\/h2>/);
+    expect(plain(mit)).toContain(UNTERLAGEN_TEXT.einleitung);
     expect(mit).toContain('data-unterlagen="an"');
     expect(mit).toContain('type="file"');
     expect(mit).toContain(`accept="${UNTERLAGEN_ACCEPT}"`);
     expect(plain(mit)).toContain('Dateien auswählen');
     expect(plain(mit)).toContain('PDF, JPG, PNG, HEIC oder WebP · bis zu 5 Dateien, je höchstens 10 MB');
-    expect(plain(mit)).not.toContain(UNTERLAGEN_TEXT.hinweis);
+    expect(plain(mit)).not.toMatch(/noch nicht verfügbar/);
     expect(mit).not.toMatch(VERBOTEN);
   });
 });

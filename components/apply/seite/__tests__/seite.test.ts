@@ -5,7 +5,8 @@ import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
 import { getDiscretionPromise } from '@/lib/content/process';
 import { REGION } from '@/lib/content/region';
-import { bewerbungKopf, DirektSprechen, Regionalband, REGIONALBAND } from '..';
+import { UNTERLAGEN_ZEILE_TEXT } from '@/components/apply/unterlagen';
+import { bewerbungKopf, DirektSprechen, Regionalband, REGIONALBAND, UNTERLAGEN_ZWEITWEG } from '..';
 
 // Der Flow ist Sache von R5-APPLY-01 und braucht den App-Router; hier genügt sein Platzhalter.
 vi.mock('@/components/apply', () => ({
@@ -53,12 +54,15 @@ describe('Regionalband (E-BEW-008): Fakten aus facts.ts, Link auf das Einsatzgeb
 });
 
 describe('Kopf der Bewerbungsseite (Seitenkopf arbeit, E-023)', () => {
-  it('Unterzeile nach Diskretion, Dauer aus apply60s, Zweitweg zu den Unterlagen', () => {
+  it('Unterzeile nach Diskretion, Dauer aus apply60s, Zweitweg sagt, wie Unterlagen kommen (kein Upload-Versprechen)', () => {
     const kopf = bewerbungKopf({ diskret: true, unterlagenWunsch: false, unterlagenAnker: 'unterlagen' });
     expect(kopf.titel).toBe('Jetzt bewerben.');
     expect(kopf.unterzeile).toBe('Ohne Lebenslauf. Diskret.');
     expect(kopf.masse).toEqual([{ wert: `${FACTS.apply60s.value} s`, name: 'Ungefähre Dauer' }]);
-    expect(kopf.zweitweg).toEqual({ href: '#unterlagen', label: 'Lieber mit Unterlagen bewerben' });
+    expect(kopf.zweitweg).toEqual({ href: '#unterlagen', label: 'Unterlagen per WhatsApp oder E-Mail schicken' });
+    expect(UNTERLAGEN_ZWEITWEG).toBe(kopf.zweitweg.label);
+    // Plan §D: der Zweitweg führte bisher in die Upload-Sackgasse („Lieber mit Unterlagen bewerben“).
+    expect(kopf.zweitweg.label).not.toMatch(/bewerben|einreichen|hochladen|upload/i);
     expect(kopf.mikrotext).toBeUndefined();
     expect(bewerbungKopf({ diskret: false, unterlagenWunsch: false, unterlagenAnker: 'unterlagen' }).unterzeile).toBe(
       'Ohne Lebenslauf. Unverbindlich.',
@@ -68,7 +72,7 @@ describe('Kopf der Bewerbungsseite (Seitenkopf arbeit, E-023)', () => {
   it('alte Tresor-Links bekommen oben den Hinweis auf die Unterlagen (E-BEW-027)', () => {
     const kopf = bewerbungKopf({ diskret: true, unterlagenWunsch: true, unterlagenAnker: 'unterlagen' });
     expect(kopf.mikrotext).toBe('Du möchtest Unterlagen schicken? So geht es:');
-    expect(kopf.zweitweg.label).toBe('Unterlagen einreichen');
+    expect(kopf.zweitweg).toEqual({ href: '#unterlagen', label: UNTERLAGEN_ZWEITWEG });
   });
 });
 
@@ -100,10 +104,22 @@ describe('Seite /bewerbung (R5-BEW-01)', () => {
     expect(unterlagen).toBeGreaterThan(flow);
     expect(direkt).toBeGreaterThan(unterlagen);
     expect(region).toBeGreaterThan(direkt);
-    // Zweitweg im Kopf: von / aus „Unterlagen einreichen“ in zwei Klicks (E-START-007)
+    // Zweitweg im Kopf: von / aus der Weg zu Unterlagen in zwei Klicks (E-START-007), Ziel ist die Zeile
     expect(html).toContain('href="#unterlagen"');
+    expect(html).toMatch(/<p id="unterlagen"[^>]*data-unterlagen="zeile"/);
     // Rot nur für die Hauptaktion: Der Kopf trägt keinen eigenen Knopf, die Hauptaktion ist der Flow.
     expect(html).not.toContain('data-primary-cta=""');
+  });
+
+  it('keine Upload-Sackgasse (Plan §D): die Zeile mit WhatsApp und E-Mail statt des abgeschalteten Kastens', async () => {
+    const html = await seite();
+    const text = normal(plain(html));
+    // Ohne den Zusatz für Screenreader am WhatsApp-Link steht der Satz im Wortlaut auf der Seite.
+    expect(text.replace(' (öffnet in neuem Tab)', '')).toContain(normal(UNTERLAGEN_ZEILE_TEXT));
+    expect(html.match(/id="unterlagen"/g)).toHaveLength(1);
+    expect(html).not.toContain('data-unterlagen="aus"');
+    expect(html).not.toContain('type="file"');
+    expect(text).not.toMatch(/Hochladen|noch nicht verfügbar|Lieber mit Unterlagen bewerben/);
   });
 
   // V6-B: der WebPage-Knoten steht jetzt im einen Graphen der Seite (mit den globalen Knoten); Erwartungen gleich.
@@ -142,7 +158,7 @@ describe('Seite /bewerbung (R5-BEW-01)', () => {
     const vault = await seite({ tab: 'vault' });
     expect(vault).toContain('data-apply-flow="page"');
     expect(plain(vault)).toContain('Du möchtest Unterlagen schicken? So geht es:');
-    expect(plain(await seite({ direct: 'true' }))).toContain('Unterlagen einreichen');
+    expect(plain(await seite({ direct: 'true' }))).toContain(UNTERLAGEN_ZWEITWEG);
     const faelle: Record<string, string | string[]>[] = [{ tab: 'bogus' }, { tab: '' }, { tab: ['quiz', 'dossier'] }, { stelle: '%%%' }, { schritt: 'gibt-es-nicht' }];
     for (const params of faelle) {
       const html = await seite(params);

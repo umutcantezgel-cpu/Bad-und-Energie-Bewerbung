@@ -32,6 +32,12 @@ export interface BewerbungKopf {
 }
 
 /**
+ * Zweitweg zur Zeile über Unterlagen (UnterlagenZeile). Sagt, was dort passiert (K-012: WhatsApp oder E-Mail), statt
+ * wie bisher „Lieber mit Unterlagen bewerben“ einen Upload zu versprechen, den es nicht gibt (Plan §D, P0).
+ */
+export const UNTERLAGEN_ZWEITWEG = 'Unterlagen per WhatsApp oder E-Mail schicken';
+
+/**
  * Kopf der Bewerbungsseite (Seitenkopf, Variante `arbeit`). `diskret`: Die Zusage gilt nicht für die
  * Ausbildung (kein Arbeitgeber, getDiscretionPromise). `unterlagenWunsch`: Der Besucher kam über einen alten
  * Link des Dokumenten-Tresors (E-BEW-027) und erfährt gleich oben, wo Unterlagen hingehören.
@@ -45,7 +51,7 @@ export function bewerbungKopf({ diskret, unterlagenWunsch, unterlagenAnker }: { 
     // Fakt apply60s: „ca. 60 Sekunden“
     masse: [{ wert: `${wertVon('apply60s')}${NBSP}s`, name: 'Ungefähre Dauer' }],
     mikrotext: unterlagenWunsch ? 'Du möchtest Unterlagen schicken? So geht es:' : undefined,
-    zweitweg: { href: `#${unterlagenAnker}`, label: unterlagenWunsch ? 'Unterlagen einreichen' : 'Lieber mit Unterlagen bewerben' },
+    zweitweg: { href: `#${unterlagenAnker}`, label: UNTERLAGEN_ZWEITWEG },
   };
 }
 
