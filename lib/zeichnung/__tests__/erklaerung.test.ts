@@ -9,6 +9,7 @@ import {
 } from '../erklaerung';
 import { COMPRESS_AW_L } from '../geraete/compress-aw-l';
 import { COMPRESS_AW_S } from '../geraete/compress-aw-s';
+import { FROSTTIEFE, HAUSSCHNITT_ERDLEITUNG, HAUSSCHNITT_GOK } from '../szenen/hausschnitt';
 import { KAELTEKREIS_SYMBOLE, KAELTEKREIS_WEGE } from '../szenen/kaeltekreis';
 import { SYMBOLE } from '../symbole';
 
@@ -52,6 +53,12 @@ describe('Erklärtext zur Wärmepumpe (E-029, AEO)', () => {
     expect(t.indexOf('Vorlauf')).toBeGreaterThanOrEqual(0);
     expect(t.indexOf('Vorlauf')).toBeLessThan(t.indexOf('Rücklauf'));
     expect(t).toMatch(/Erdleitung[\s\S]*Wanddurchführung[\s\S]*Inneneinheit/);
+    // Tiefe und Frostgrenze aus dem Hausschnitt (Prüfung E-029, Runde 2): nur „unter der Frostgrenze“, weil die
+    // gezeichnete Leitung tiefer liegt als die Frosttiefe
+    const tiefe = (HAUSSCHNITT_ERDLEITUNG.vorlauf - HAUSSCHNITT_GOK) * 10;
+    expect(tiefe).toBeGreaterThan(FROSTTIEFE.mm);
+    const m = (mm: number) => `${(mm / 1000).toFixed(2).replace('.', ',')}${NBSP}m`;
+    expect(t).toContain(`Erdleitung rund ${m(tiefe)} tief, unter der Frostgrenze von ${m(FROSTTIEFE.mm)}`);
     expect(t).toMatch(/Rücklauf[\s\S]*zurück zur Außeneinheit/);
     for (const bauteil of ['Umwälzpumpe', 'Sicherheitsventil', 'Ausdehnungsgefäß', 'Umschaltventil', 'Speicher']) expect(t).toContain(bauteil);
     // Hydraulik wie im Anlagenschema (Prüfung E-029, Runde 2): Pufferspeicher trennt die Umwälzpumpe von den

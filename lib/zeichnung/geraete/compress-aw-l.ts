@@ -58,6 +58,12 @@ export const COMPRESS_AW_L: Aussengeraet = {
     vonHinten: mass(97, 'Bild 6 (DK: S. 5 Fig. 6)', 'zum unteren Bildrand, also zur Rückseite'),
     durchmesser: schaetzung(30, 'Anschlussstutzen Kondensat nicht bemaßt'),
     laenge: schaetzung(20, 'Überstand nach unten nicht bemaßt; kürzer als die Bodenhalterung hoch ist'),
+    // Fundamentplan Bild 21/22 (DK: S. 13/14 Fig. 21/22): Kondensatablauf Ø 100 mm endet frostfrei im Kiesbett
+    ableitung: {
+      rohr: mass(100, 'Bild 21/22 (DK: S. 13/14 Fig. 21/22 [5]): Kondensatablauf Ø 100 mm'),
+      tiefe: mass(900, 'Bild 21/22 (DK: S. 13/14 Fig. 21/22): 900 mm bis zum Kiesbett [4]'),
+      schotter: mass(300, 'Bild 21/22 (DK: S. 13/14 Fig. 21/22 [3]): verdichtete Schotterschicht 300 mm'),
+    },
   },
   verdampfer: {
     lage: 'hinten (Bild 3: Verdampfer auf der Rückseite)',

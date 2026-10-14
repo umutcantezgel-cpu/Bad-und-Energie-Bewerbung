@@ -16,6 +16,7 @@ import {
   OG_INNENEINHEIT,
   OG_PUMPE,
   ogLeitungen,
+  ogMantelBreite,
   ogPfeile,
 } from './og-haus';
 import { OG_COLOR as C, OG_IMAGE_SIZE, versal, type OgHomeText, type OgJobText, type OgPlaceText } from './og-image';
@@ -140,6 +141,11 @@ function Haus({ knopf }: { knopf: boolean }) {
     >
       <path d={OG_BAUTEILE.schraffur} {...stumpf} stroke={NAVY.schraffur} strokeWidth={vb(1)} />
       <path d={OG_BAUTEILE.graben} {...fein} fill={NAVY.flaeche} />
+      {/* Schotter unter den Sockeln und Kiesbett am Kondensatrohr (Kreuzschraffur wie das Erdreich) */}
+      <path d={OG_BAUTEILE.schotter} {...fein} fill={NAVY.flaeche} />
+      <path d={OG_BAUTEILE.schotterSchraffur} {...stumpf} stroke={NAVY.schraffur} strokeWidth={vb(1)} />
+      <path d={OG_BAUTEILE.kiesbett} {...fein} fill={NAVY.flaeche} />
+      <path d={OG_BAUTEILE.kiesbettSchraffur} {...stumpf} stroke={NAVY.schraffur} strokeWidth={vb(1)} />
       {[OG_BAUTEILE.dach, OG_BAUTEILE.decke, OG_BAUTEILE.bodenplatte, ...OG_BAUTEILE.waende].map((d) => (
         <path key={d.slice(0, 16)} d={d} {...kontur} fill={NAVY.schnitt} />
       ))}
@@ -160,6 +166,8 @@ function Haus({ knopf }: { knopf: boolean }) {
       {OG_BAUTEILE.sockel.map((d) => (
         <path key={d} d={d} {...kontur} fill={NAVY.schnitt} />
       ))}
+      {/* Kondensatrohr Ø 100 mm ins Kiesbett unter der Frosttiefe */}
+      <path d={OG_BAUTEILE.kondensat} {...fein} fill={NAVY.flaeche} />
       <path d={OG_BAUTEILE.durchfuehrung} {...kontur} fill={NAVY.flaeche} />
       {/* Inneneinheit als Symbol (Systemgrenze Strich-Punkt) mit Umwälzpumpe; Flachheizkörper */}
       <rect x={ie.x} y={ie.y} width={ie.breite} height={ie.hoehe} {...fein} fill={NAVY.flaeche} strokeDasharray={[16, 4, 2, 4].map(vb).join(' ')} />
@@ -181,7 +189,8 @@ function Haus({ knopf }: { knopf: boolean }) {
           <path key={l.id} d={l.d} {...stumpf} stroke={MEDIUM[l.medium]} strokeWidth={vb(1)} strokeDasharray={VERDECKT_MUSTER} />
         ) : (
           <g key={l.id}>
-            {knopf && l.mantel ? <path d={l.mantel} {...stumpf} stroke={NAVY.flaeche} strokeWidth={vb(LEITUNG + 8)} /> : null}
+            {/* Mantel in Einheiten, höchstens bis an die Nachbarleitung (Prüfung E-029, Runde 2) */}
+            {knopf && l.mantel ? <path d={l.mantel} {...stumpf} stroke={NAVY.flaeche} strokeWidth={ogMantelBreite(vb(LEITUNG))} /> : null}
             <path d={l.d} fill="none" stroke={MEDIUM[l.medium]} strokeWidth={vb(LEITUNG)} strokeLinecap="butt" strokeLinejoin="round" />
           </g>
         ),

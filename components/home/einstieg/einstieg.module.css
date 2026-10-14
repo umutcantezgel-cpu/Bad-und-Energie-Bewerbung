@@ -31,6 +31,9 @@
   --e: calc(var(--lage) / 800);
   --rohr-e: 6.5;
   --leitung: calc(var(--rohr-e) * var(--e));
+  /* Mantel an der Kreuzung (technik.module.css .mantel): Rohr plus 4 Einheiten Luft je Seite, dort setzt der Rücklauf
+     hinter dem Vorlauf zur Bewerbung aus (mantelBreite und MANTEL.luft, lib/zeichnung/szenen/hausschnitt.ts) */
+  --mantel-e: calc(var(--rohr-e) + 2 * 4);
   /* Leitungspaar links: Rücklauf außen (x 14), Vorlauf innen (x 28); der Text hält Abstand */
   --rl-x: calc(14 * var(--e));
   --vl-x: calc(28 * var(--e));
@@ -805,7 +808,7 @@
     left: calc(anchor(--einstieg-knopf right) - var(--a-2));
     right: anchor(--einstieg-flaeche left);
     top: calc(anchor(--einstieg-knopf center) - 3px);
-    bottom: calc(anchor(--einstieg-flaeche bottom) + 40 * var(--e) - 3px);
+    bottom: calc(anchor(--einstieg-flaeche bottom) + 50 * var(--e) - 3px);
     pointer-events: none;
   }
 

@@ -69,6 +69,12 @@ export const COMPRESS_AW_S: Aussengeraet = {
     vonHinten: mass(97, 'Bild 6 (DK: S. 5 Fig. 6)', 'zum unteren Bildrand, also zur Rückseite'),
     durchmesser: schaetzung(30, 'Anschlussstutzen Kondensat nicht bemaßt'),
     laenge: schaetzung(20, 'Überstand nach unten nicht bemaßt; kürzer als die Bodenhalterung hoch ist'),
+    // Kap. 5.2 (DK: S. 15): frostfreie Ableitung, „Kondensatet kan tømmes ud i en stenseng“; Bild 27 (DK: S. 16 Fig. 27)
+    ableitung: {
+      rohr: mass(100, 'Bild 27 (DK: S. 16 Fig. 27 [3]): Kondensatrohr Ø 100 mm'),
+      tiefe: mass(900, 'Bild 27 (DK: S. 16 Fig. 27): 900 mm von der Geländeoberkante bis zum Kiesbett [4]'),
+      schotter: mass(300, 'Bild 27 (DK: S. 16 Fig. 27 [2]): Schotter 300 mm unter den Betonsockeln [1]'),
+    },
   },
   verdampfer: {
     lage: 'hinten (Bild 3: Verdampfer auf der Rückseite)',

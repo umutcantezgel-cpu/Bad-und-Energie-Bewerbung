@@ -110,7 +110,7 @@ describe('Hero / Einstieg (R3-HOME-01, Technische Zeichnung 2.0)', () => {
       expect(w.medium, w.id).toBe(leitung.medium);
     }
     // Der Vorlauf zur Bewerbung verlässt das Bild am Desktop nach links (x 0), mobil nach unten bei x 28
-    expect(LEITUNGEN.find((l) => l.id === 'vorlauf-knopf-desktop')!.d).toMatch(/L0 640$/);
+    expect(LEITUNGEN.find((l) => l.id === 'vorlauf-knopf-desktop')!.d).toMatch(new RegExp(`L0 ${KNOPF_LEITUNG.desktopY}$`));
     expect(LEITUNGEN.find((l) => l.id === 'vorlauf-knopf')!.d).toMatch(new RegExp(`L${KNOPF_LEITUNG.vorlaufX} ${HAUSSCHNITT_RAHMEN.hoehe}$`));
   });
 
@@ -204,9 +204,10 @@ describe('Einstieg: Quellregeln', () => {
     const rohr = css.match(/\.rohrD \{[^}]*display: block;[^}]*\}/)![0];
     expect(rohr).toContain('left: calc(anchor(--einstieg-knopf right)');
     expect(rohr).toContain('top: calc(anchor(--einstieg-knopf center)');
-    // Erdleitung des Hausschnitts: y 640 von 680 = 40 Einheiten über der Falz der Fläche
-    expect(HAUSSCHNITT_RAHMEN.hoehe - KNOPF_LEITUNG.desktopY).toBe(40);
-    expect(rohr).toContain('bottom: calc(anchor(--einstieg-flaeche bottom) + 40 * var(--e)');
+    // Leitung zur Bewerbung im Hausschnitt: y 630 von 680 = 50 Einheiten über der Falz der Fläche (T-Stück über dem
+    // Bogen der Steigleitung, Prüfung E-029, Runde 2)
+    expect(HAUSSCHNITT_RAHMEN.hoehe - KNOPF_LEITUNG.desktopY).toBe(50);
+    expect(rohr).toContain(`bottom: calc(anchor(--einstieg-flaeche bottom) + ${HAUSSCHNITT_RAHMEN.hoehe - KNOPF_LEITUNG.desktopY} * var(--e)`);
     expect(css).toMatch(/@supports not \(anchor-name: --a\) \{\s*\.rohrD \{\s*display: none !important;/);
     // Die Pfade laufen in Fließrichtung: der erste beginnt am Rand der Fläche (x = 100 %), der letzte endet im Knopf (x 0)
     const src = quelle(path.join(EINSTIEG, 'Einstieg.tsx'));

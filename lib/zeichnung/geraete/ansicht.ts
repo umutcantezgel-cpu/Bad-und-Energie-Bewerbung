@@ -174,9 +174,10 @@ export function vorderansicht(g: Aussengeraet, { detail = 'voll', massketten = '
   ];
   const fein: string[] = [];
   const kreise: Ansicht['kreise'] = [{ cx, cy, r: R, art: 'kontur' }];
+  // Kondensatablauf an der Unterseite (330 mm vom linken Rand), sichtbar zwischen den Halterungen; auch in der einfachen
+  // Detailstufe, denn der Hausschnitt führt von ihm das Kondensatrohr ins Kiesbett (Prüfung E-029, Runde 2)
+  kontur.push(rechteck(kond.x - kond.d / 2, unterkante, kond.x + kond.d / 2, unterkante + kond.l));
   if (detail === 'voll') {
-    // Kondensatablauf an der Unterseite (330 mm vom linken Rand), sichtbar zwischen den Halterungen
-    kontur.push(rechteck(kond.x - kond.d / 2, unterkante, kond.x + kond.d / 2, unterkante + kond.l));
     // Schutzgitter: konzentrische Ringe und zwei Streben, vor dem Rotor
     const ringe = 6;
     for (let i = 1; i < ringe; i += 1) kreise.push({ cx, cy, r: r1((R * i) / ringe), art: 'fein' });

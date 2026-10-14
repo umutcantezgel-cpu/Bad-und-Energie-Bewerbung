@@ -15,20 +15,27 @@ import {
   BAUTEILE,
   GERAET_LAGE,
   GIEBEL_MASS,
-  HAUSSCHNITT_ERDLEITUNG,
   HAUSSCHNITT_RAHMEN,
   HEIZKOERPER_LAGE,
   INNENEINHEIT_LAGE,
+  KNOPF_LEITUNG,
   LEITUNGEN,
   PFEILE,
+  mantelBreite,
   type Leitung,
   type Pfeil,
 } from '@/lib/zeichnung/szenen/hausschnitt';
 import { SYMBOLE } from '@/lib/zeichnung/symbole';
 
-/** Rahmen des Hausschnitts (Einheiten) und die Höhe der Erdleitung, auf der der Vorlauf zum Knopf läuft. */
+/**
+ * Rahmen des Hausschnitts (Einheiten) und die Höhe, auf der der Vorlauf zum Knopf links aus dem Schnitt läuft (wie am
+ * Desktop: `KNOPF_LEITUNG.desktopY`, das T-Stück über dem Bogen der Steigleitung).
+ */
 export const OG_HAUS_RAHMEN = HAUSSCHNITT_RAHMEN;
-export const OG_ERDLEITUNG_Y = HAUSSCHNITT_ERDLEITUNG.vorlauf;
+export const OG_ERDLEITUNG_Y = KNOPF_LEITUNG.desktopY;
+
+/** Mantel an der Kreuzung zur Rohrstärke des Bilds (Einheiten), höchstens bis an die Nachbarleitung. */
+export { mantelBreite as ogMantelBreite };
 
 /** Schnittflächen, Erdreich und Gelände wie im Einstieg. */
 export const OG_BAUTEILE = BAUTEILE;

@@ -7,6 +7,7 @@
  */
 import { COMPRESS_AW_S } from './geraete/compress-aw-s';
 import type { Aussengeraet } from './geraete/typen';
+import { FROSTTIEFE, HAUSSCHNITT_ERDLEITUNG, HAUSSCHNITT_GOK } from './szenen/hausschnitt';
 import { KAELTEKREIS_SYMBOLE } from './szenen/kaeltekreis';
 
 const NBSP = ' ';
@@ -60,10 +61,21 @@ export const KAELTEKREIS_SCHRITTE: readonly { symbol: string; bauteil: string; t
   },
 ];
 
+/** Meter mit Komma und geschütztem Leerzeichen („0,88 m“). */
+const meter = (mm: number) => `${(mm / 1000).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}${NBSP}m`;
+
+/**
+ * Tiefe der Erdleitung (Achse des Vorlaufs) und die Frosttiefe aus dem Hausschnitt (szenen/hausschnitt.ts): Der Text
+ * nennt die Frostgrenze nur, weil die Zeichnung die Leitung darunter legt (Prüfung E-029, Runde 2).
+ */
+const ERDLEITUNG_MM = (HAUSSCHNITT_ERDLEITUNG.vorlauf - HAUSSCHNITT_GOK) * 10;
+if (ERDLEITUNG_MM <= FROSTTIEFE.mm) throw new Error('lib/zeichnung: Die Erdleitung liegt nicht unter der Frosttiefe');
+
 /** Der Weg des Heizwassers (Anlagenschema). */
 export const HEIZWASSER: ErklaerSatz = {
   text:
-    'Der Vorlauf läuft in der Erdleitung unter der Frostgrenze durch die Wanddurchführung zur Inneneinheit. Dort sitzen ' +
+    `Der Vorlauf läuft in der Erdleitung rund ${meter(ERDLEITUNG_MM)} tief, unter der Frostgrenze von ${meter(FROSTTIEFE.mm)}, ` +
+    'durch die Wanddurchführung zur Inneneinheit. Dort sitzen ' +
     'Umwälzpumpe, Sicherheitsventil, Ausdehnungsgefäß und das Umschaltventil: Es schickt das Wasser in den Speicher für ' +
     'das Warmwasser oder in den Pufferspeicher. Der Puffer trennt die Umwälzpumpe hydraulisch von den Heizkreisen, und ' +
     'jeder Heizkreis hat dahinter seine eigene Pumpe. Die Heizkörper bekommen das Wasser direkt, die Fußbodenheizung ' +

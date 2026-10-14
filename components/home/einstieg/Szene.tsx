@@ -37,6 +37,7 @@ export function Szene() {
         leitungKlasse={(l) => cn(styles.rohr, klasse(l))}
         leitungMotion={motion}
         pfeilKlasse={klasse}
+        mantelKlasse={klasse}
         pfeilMotion="pfeile"
       />
     </svg>

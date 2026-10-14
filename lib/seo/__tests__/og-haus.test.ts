@@ -3,7 +3,7 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { OG_BAUTEILE, OG_ERDLEITUNG_Y, OG_GERAET, OG_GIEBEL_MASS, OG_HAUS_RAHMEN, ogLeitungen, ogPfeile } from '@/lib/seo/og-haus';
 import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
-import { BAUTEILE, GERAET_LAGE, GIEBEL_MASS, HAUSSCHNITT_ERDLEITUNG, HAUSSCHNITT_RAHMEN, LEITUNGEN } from '@/lib/zeichnung/szenen/hausschnitt';
+import { BAUTEILE, GERAET_LAGE, GIEBEL_MASS, HAUSSCHNITT_ERDLEITUNG, HAUSSCHNITT_RAHMEN, KNOPF_LEITUNG, LEITUNGEN } from '@/lib/zeichnung/szenen/hausschnitt';
 
 const ROOT = path.resolve(__dirname, '../../..');
 const quelle = readFileSync(path.join(ROOT, 'lib/seo/og-render.tsx'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
@@ -13,7 +13,9 @@ describe('Teilen-Bilder zeichnen den Hausschnitt der Website (E-029)', () => {
     expect(OG_HAUS_RAHMEN).toBe(HAUSSCHNITT_RAHMEN);
     expect(OG_BAUTEILE).toBe(BAUTEILE);
     expect(OG_GIEBEL_MASS).toBe(GIEBEL_MASS);
-    expect(OG_ERDLEITUNG_Y).toBe(HAUSSCHNITT_ERDLEITUNG.vorlauf);
+    // Höhe, auf der der Vorlauf links aus dem Schnitt zum Knopf läuft: wie am Desktop (T-Stück über dem Bogen)
+    expect(OG_ERDLEITUNG_Y).toBe(KNOPF_LEITUNG.desktopY);
+    expect(OG_ERDLEITUNG_Y).toBeLessThan(HAUSSCHNITT_ERDLEITUNG.vorlauf);
     expect(OG_GERAET.lage).toBe(GERAET_LAGE);
     // Die Vorderansicht in mm, mit 1 : 10 eingesetzt: 1.100 × 800 mm werden 110 × 80 Einheiten
     expect(OG_GERAET.ansicht.breite * OG_GERAET.massstab).toBe(GERAET_LAGE.breite);

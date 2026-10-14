@@ -90,6 +90,11 @@ export interface Aussengeraet {
     durchmesser: Mass;
     /** Überstand unter dem Gehäuse; höchstens so lang wie die Bodenhalterung hoch ist (der Stutzen steht nicht auf). */
     laenge: Mass;
+    /**
+     * Frostfreie Ableitung des Kondensats in ein Kiesbett (Fundamentplan der Anleitung): Rohr senkrecht unter dem
+     * Ablauf, seine Tiefe bis zum Kiesbett und die Schotterschicht unter den Betonsockeln.
+     */
+    ableitung: { rohr: Mass; tiefe: Mass; schotter: Mass };
   };
   /**
    * Lamellenblock auf der Rückseite: Tiefe, Abstand zum Gehäuserand (oben und unten) und seine Lage in der Breite,

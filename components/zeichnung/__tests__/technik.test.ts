@@ -145,6 +145,21 @@ describe('Außengerät: maßstäblich aus dem Geräte-Modul (K-010)', () => {
     // Ohne Leitungen zur Bewerbung und ohne Bewegung
     expect(m).not.toMatch(/data-weg="[^"]*knopf/);
     expect(m).not.toContain('data-motion');
+    // Gründung und Kondensatweg (Prüfung E-029, Runde 2): Schotter, Kondensatrohr ins Kiesbett, kein Mantel ohne Knopf
+    for (const teil of ['data-schotter=""', 'data-kondensat=""', 'data-kiesbett=""']) expect(m).toContain(teil);
+    expect(m).not.toContain('data-mantel');
+  });
+
+  it('Startseite: Mantel nur an der Kreuzung der Leitung zur Bewerbung, in Einheiten und in der Fassung seiner Leitung', () => {
+    const m = html(createElement(Hero, {}));
+    const maentel = [...m.matchAll(/<path d="([^"]+)" class="([^"]*)" data-mantel=""/g)];
+    expect(maentel).toHaveLength(2);
+    for (const [, d, klasse] of maentel) {
+      expect(d).toMatch(/^M[\d.]+ [\d.]+H[\d.]+$/);
+      // Klasse der Linienart mantel plus die Fassung (mobil bzw. Desktop) wie die Leitung, nie non-scaling
+      expect(klasse).toMatch(/_mantel_/);
+      expect(klasse).toMatch(/_nur(?:Mobil|Desktop)_/);
+    }
   });
 });
 
@@ -399,7 +414,8 @@ describe('Linien und Farben (K-010)', () => {
   ];
 
   it('stumpfe Enden: in den Zeichnungen nie stroke-linecap round; rund nur das Bedienzeichen des Knopfs', () => {
-    expect([...technik.matchAll(/stroke-linecap:\s*([a-z]+)/g)].map((m) => m[1])).toEqual(['butt', 'butt']);
+    // Linienarten, Strichmuster der Bewegung und der Mantel an Kreuzungen (in Einheiten, eigene Regel): alle stumpf
+    expect([...technik.matchAll(/stroke-linecap:\s*([a-z]+)/g)].map((m) => m[1])).toEqual(['butt', 'butt', 'butt']);
     const rund = [...dauer.matchAll(/([^{}]+)\{[^}]*stroke-linecap:\s*round/g)].map((m) => m[1].trim());
     expect(rund).toEqual(['.zeichen']);
     for (const m of alle) {

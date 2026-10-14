@@ -25,8 +25,7 @@
 .mass,
 .verdeckt,
 .mittellinie,
-.schraffur,
-.mantel {
+.schraffur {
   fill: none;
   stroke-linecap: butt;
   vector-effect: non-scaling-stroke;
@@ -75,10 +74,15 @@
   stroke-linejoin: round;
 }
 
-/* Mantel in der Fläche unter einer Leitung, die vor einer anderen liegt (Kreuzung ohne Verbindung) */
+/* Mantel in der Fläche unter einer Leitung, die vor einer anderen liegt (Kreuzung ohne Verbindung). Breite in
+   Einheiten der Zeichnung (--mantel-e, nicht non-scaling): Rohr plus Luft je Seite, die Länge (im Pfad) endet vor der
+   Nachbarleitung (Prüfung E-029, Runde 2; MANTEL und mantelBreite in lib/zeichnung/szenen/hausschnitt.ts). Ohne
+   Angabe für eine Leitung von 3 Einheiten. */
 .mantel {
+  fill: none;
   stroke: var(--surface);
-  stroke-width: calc(var(--m-leitung) + var(--a-2));
+  stroke-width: calc(var(--mantel-e, 11) * 1px);
+  stroke-linecap: butt;
   stroke-linejoin: round;
 }
 
