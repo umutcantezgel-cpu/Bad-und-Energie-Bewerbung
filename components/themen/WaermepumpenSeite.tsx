@@ -13,7 +13,7 @@ import type { WaermepumpenPageText } from '@/lib/themen/text';
 import { cn } from '@/lib/utils/cn';
 import { Abschnitt, Kaestenband, Kontakt, Saetze, WeitereThemen, titelId } from './Bausteine';
 import { ThemaKopf } from './ThemaKopf';
-import styles from './themen.module.css';
+import styles from './stil';
 
 /** Ids der Zwischenüberschriften im Abschnitt Technik. */
 const KAELTE_ID = titelId('kaeltekreis');

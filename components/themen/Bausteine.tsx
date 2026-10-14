@@ -12,7 +12,7 @@ import { breitestesStueckEm } from '@/components/einsatzgebiet/titel';
 import { ANSPRECHPARTNER } from '@/components/jobs/stelle/stelle-text';
 import { geschuetzt, type Kasten, type Kopfzeile, type Satz, type SeitenBasis, type ThemaKarte } from '@/lib/themen/text';
 import { cn } from '@/lib/utils/cn';
-import styles from './themen.module.css';
+import styles from './stil';
 
 /** Id der h2 eines Abschnitts (aria-labelledby). */
 export const titelId = (id: string) => `${id}-titel`;

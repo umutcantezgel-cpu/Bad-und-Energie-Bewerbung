@@ -2,7 +2,7 @@ import t from '@/components/zeichnung/technik/technik.module.css';
 import { Etikettkasten } from '@/components/zeichnung/Etikettkasten';
 import { FAHRZEUG, FAHRZEUG_RAHMEN } from '@/lib/zeichnung/szenen/fahrzeug';
 import { cn } from '@/lib/utils/cn';
-import styles from './themen.module.css';
+import styles from './stil';
 
 export interface ServicefahrzeugProps {
   /** Zugänglicher Name aus lib/themen/text.ts (`zeichnung.titel`); er beschreibt genau diese Zeichnung. */

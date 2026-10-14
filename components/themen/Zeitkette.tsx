@@ -1,7 +1,7 @@
 import { HausKlein } from '@/components/zeichnung/HausKlein';
 import type { BetriebPageText } from '@/lib/themen/text';
 import { cn } from '@/lib/utils/cn';
-import styles from './themen.module.css';
+import styles from './stil';
 
 /**
  * Zeitkette (Signatur der Seite „Der Betrieb“, Navy-Panel im Kopf): der kleine Hausschnitt aus dem Einstieg (seit E-029

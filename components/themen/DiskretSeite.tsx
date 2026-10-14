@@ -11,7 +11,7 @@ import type { DiskretPageText } from '@/lib/themen/text';
 import { Absperrung } from './Absperrung';
 import { Abschnitt, Kaestenband, Kontakt, Saetze, WeitereThemen } from './Bausteine';
 import { ThemaKopf } from './ThemaKopf';
-import styles from './themen.module.css';
+import styles from './stil';
 
 /**
  * Themenseite Diskret wechseln (E-028). Tonfolge: Kopf Papier/Navy (Laufzettel seit E-029: „Von: Du“, „An: Wetzlar“,

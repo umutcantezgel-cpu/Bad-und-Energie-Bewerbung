@@ -113,6 +113,7 @@ Ruhig und typografisch, im Apple-Stil (Details: [ROADMAP §4](docs/ROADMAP.md#4-
 | `scripts/qa/check-contrast.mjs` | Kontrast aller Text- und Flächenpaare in hell, dunkel und im Inverse-Bereich |
 | `scripts/qa/check-client-imports.mjs` | zod darf nicht im Browser-Bundle landen |
 | `scripts/qa/check-graph.mjs` | Nach dem Build: JSON-LD gültig, JobPosting nur auf Stellenseiten (genau eins), Pflichtfelder, `url` = Canonical |
+| `scripts/qa/check-css-chunks.mjs` | Nach dem Build (`postbuild`): kein CSS-Preload, höchstens zwei render-blockierende Stylesheets auf `/jobs`, Stellen-, Orts- und Kreisseiten (sonst drei), `themen.module.css` nur auf den Themenseiten, technik/dauer im Budget |
 
 ## 3. Datenfluss einer Bewerbung
 
@@ -176,7 +177,7 @@ Mit `next dev` simuliert die Website den Mailversand (Log `[email] simuliert`), 
 | `bun run test` | Unit-Tests (Vitest); einzelne Bereiche mit `bunx vitest run lib/jobs` |
 | `bun run lint` / `bun run type-check` | ESLint / TypeScript |
 | `bun run check:design` / `check:contrast` / `check:client-imports` | Guard-Skripte einzeln |
-| `bun run build` | Production-Build; führt vorher über `prebuild` die drei Guard-Skripte aus |
+| `bun run build` | Production-Build; führt vorher über `prebuild` die drei Guard-Skripte aus und danach über `postbuild` die Prüfung der CSS-Ketten (`bun run check:css-chunks`) |
 | `bun run test:graph` | JSON-LD-Prüfung auf dem Build |
 | `bun run test:claims` | Keine festen Arbeitszeiten im gebauten HTML und in den Text-Routen (fakten-abgleich B28) |
 | `bun run test:similarity` | Ortsseiten unter `/einsatzgebiet` paarweise ≤ 0,45 Jaccard (5-Wort-Shingles) am gebauten HTML; nennt die 5 ähnlichsten Paare |

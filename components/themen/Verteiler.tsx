@@ -1,7 +1,7 @@
 import { Icon } from '@/components/icons';
 import type { ThemaKarte } from '@/lib/themen/text';
 import { cn } from '@/lib/utils/cn';
-import styles from './themen.module.css';
+import styles from './stil';
 
 /**
  * Themenliste (Signatur des Themen-Hubs, Navy-Panel im Kopf). Bis E-029 ein Heizkreisverteiler mit Vorlauf links und

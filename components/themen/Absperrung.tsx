@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils/cn';
-import styles from './themen.module.css';
+import styles from './stil';
 
 export interface AbsperrungProps {
   /** Beschriftungen: Anfang des Wegs (du), wohin nichts geht (derzeitiger Arbeitgeber), Ziel (Firmensitz). */

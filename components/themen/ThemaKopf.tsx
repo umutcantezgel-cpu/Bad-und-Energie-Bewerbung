@@ -8,7 +8,7 @@ import type { SeitenPfad } from '@/lib/themen/jsonld';
 import { pfadItems } from '@/lib/themen/jsonld';
 import type { SeitenBasis } from '@/lib/themen/text';
 import { Saetze } from './Bausteine';
-import styles from './themen.module.css';
+import styles from './stil';
 
 export interface ThemaKopfProps {
   text: SeitenBasis;

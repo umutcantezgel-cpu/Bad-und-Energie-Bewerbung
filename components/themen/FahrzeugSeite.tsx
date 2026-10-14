@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils/cn';
 import { Abschnitt, Kontakt, WeitereThemen } from './Bausteine';
 import { Servicefahrzeug } from './Servicefahrzeug';
 import { ThemaKopf } from './ThemaKopf';
-import styles from './themen.module.css';
+import styles from './stil';
 
 /**
  * Themenseite Fahrzeug und Werkzeug (E-028). Tonfolge: Kopf Papier/Navy (Servicefahrzeug mit offener Schiebetür) ·

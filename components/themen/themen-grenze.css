@@ -1,0 +1,12 @@
+/*
+ * Grenze vor dem CSS der Themenseiten (Prüfung E-029, Runde 2, Befund 9). Absichtlich ohne Regeln.
+ *
+ * Next fasst das CSS aller Seiten in gemeinsame Chunks zusammen (Turbopack, cssChunking `true`): Ein Chunk wächst
+ * entlang der Importreihenfolge der Seiten bis 100 kB und nimmt dabei auch Module mit, die andere Seiten nie
+ * importieren. So stand themen.module.css (20 kB) render-blockierend auf /jobs, den Orts- und Rechtsseiten. Globales
+ * CSS dagegen legt Next nie in einen Chunk von Seiten, die es nicht importieren. Diese leere globale Datei steht darum
+ * in jeder Seite unmittelbar vor themen.module.css (components/themen/stil.ts): Der gemeinsame Chunk kommt nicht an
+ * ihr vorbei, und themen.module.css landet mit ihr in einem eigenen Chunk nur für die Themenseiten.
+ *
+ * Geprüft im Build (scripts/qa/check-css-chunks.mjs) und im Quelltext (components/themen/__tests__/stil.test.ts).
+ */

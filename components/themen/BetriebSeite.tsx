@@ -10,7 +10,7 @@ import { Section } from '@/components/layout/Section';
 import { Abschnitt, Kontakt, Kopf, Saetze, WeitereThemen, titelId } from './Bausteine';
 import { ThemaKopf } from './ThemaKopf';
 import { Zeitkette } from './Zeitkette';
-import styles from './themen.module.css';
+import styles from './stil';
 
 /**
  * Themenseite Der Betrieb (E-028). Tonfolge: Kopf Papier/Navy (Haus mit Zirkelzeichen und Zeitkette 1926 → 2026) ·

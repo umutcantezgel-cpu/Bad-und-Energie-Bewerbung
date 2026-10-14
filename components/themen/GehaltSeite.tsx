@@ -6,7 +6,7 @@ import { themaPfad } from '@/lib/themen/jsonld';
 import { geschuetzt, type GehaltPageText } from '@/lib/themen/text';
 import { Abschnitt, Kaestenband, Kontakt, Saetze, WeitereThemen } from './Bausteine';
 import { ThemaKopf } from './ThemaKopf';
-import styles from './themen.module.css';
+import styles from './stil';
 
 /**
  * „Lohn auf Anfrage“ im Navy-Panel des Kopfs (E-030, Plan §A: ein ruhiger Block statt der Gehaltsleiter mit Beträgen):
