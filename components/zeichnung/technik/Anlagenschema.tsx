@@ -26,14 +26,16 @@ export interface AnlagenschemaProps {
 
 export const ANLAGENSCHEMA_TITEL =
   'Anlagenschema einer Luft/Wasser-Wärmepumpe: Der Vorlauf kommt aus der Außeneinheit, läuft in der Erdleitung durch ' +
-  'die Wand zur Inneneinheit mit Umwälzpumpe und Umschaltventil und weiter zu Heizkörper, Speicher und über Mischer, ' +
-  'Pumpe und Sicherheitstemperaturwächter zur Fußbodenheizung; der Rücklauf fließt zurück zur Außeneinheit.';
+  'die Wand zur Inneneinheit mit Erzeugerpumpe und Umschaltventil und weiter in den Speicher oder den Pufferspeicher. ' +
+  'Dahinter hat jeder Heizkreis seine eigene Pumpe: zum Heizkörper direkt, zur Fußbodenheizung über Mischer und ' +
+  'Sicherheitstemperaturwächter. Der Rücklauf fließt durch den Partikelfilter zurück zur Außeneinheit.';
 
 /**
  * Anlagenschema (KERN K-010, E-029): Fließschema mit Normsymbolen nach DIN EN ISO 10628-2, Leitungen in Fließrichtung
  * (Vorlauf vom Plattenwärmeübertrager der Außeneinheit zu den Verbrauchern, Rücklauf zurück), Bögen mit Radius. Erdreich
  * als 45°-Schraffur, Wand als Schnittfläche mit Wanddurchführung, Inneneinheit als Systemgrenze (Strich-Punkt, Modell
- * offen). Die Beschriftung der Symbole steht auf breiten Flächen, die Legende darunter auf jeder Breite.
+ * offen), dahinter Pufferspeicher und zwei Heizkreise mit je eigener Pumpe (lib/zeichnung/szenen/anlagenschema.ts). Die
+ * Beschriftung der Symbole steht auf breiten Flächen, die Legende darunter auf jeder Breite.
  */
 export function Anlagenschema({ bewegt = false, titel = ANLAGENSCHEMA_TITEL, legende = true, schriftfeld = 'voll', className }: AnlagenschemaProps) {
   const { breite, hoehe } = ANLAGENSCHEMA_RAHMEN;
@@ -85,8 +87,9 @@ export function Anlagenschema({ bewegt = false, titel = ANLAGENSCHEMA_TITEL, leg
                 <span className={t.quelle}>
                   Typische Anordnung, kein bestimmtes Modell: Die Inneneinheit steht als Systemgrenze (Strich-Punkt), ihre Maße
                   folgen, wenn das Modell feststeht. Sicherheitsventil und Ausdehnungsgefäß sind zum Wärmeerzeuger hin nicht
-                  absperrbar. Die Fußbodenheizung hat einen gemischten Kreis mit eigener Pumpe; der Fühler im Vorlauf ist der
-                  Sicherheitstemperaturwächter (DIN EN 1264-4).
+                  absperrbar. Der Pufferspeicher trennt die Erzeugerpumpe von den Pumpen der Heizkreise; jeder Heizkreis hat
+                  seine eigene Pumpe. Die Fußbodenheizung hat einen gemischten Kreis, der Fühler in ihrem Vorlauf ist der
+                  Sicherheitstemperaturwächter (DIN EN 1264-4). Im Rücklauf vor der Inneneinheit sitzt der Partikelfilter.
                 </span>
               ) : null}
             </div>

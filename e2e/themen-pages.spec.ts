@@ -101,3 +101,29 @@ test('Gehalt „Was dazukommt“: Kästchen, Satz und „Gehört zu“ überschn
     }
   }
 });
+
+/**
+ * Fließpfeile im Standbild der Schemata (Prüfung E-029, Runde 2, Befund 6): Am Handy (320 und 390 px) misst jeder Pfeil
+ * gezeichnet mindestens 10 px in Fließrichtung und 9 px quer, das Dreifache der 3-px-Leitung. Gemessen am Rechteck des
+ * gezeichneten Pfeils (mit dem Faktor --pfeil der Stufe, technik.module.css).
+ */
+test('Wärmepumpen: Fließpfeile in Kältekreis und Anlagenschema am Handy ≥ 10 × 9 px', async ({ page }) => {
+  await page.goto(`${THEMEN_PAGES.find((thema) => thema.path.endsWith('/waermepumpen'))!.path}`);
+  for (const width of [320, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await waitForSettled(page);
+    for (const zeichnung of ['kaeltekreis', 'anlagenschema']) {
+      const pfeile = await page.locator(`[data-zeichnung="${zeichnung}"] [data-pfeile] path`).evaluateAll((pfade) =>
+        pfade.map((pfad) => {
+          const rect = pfad.getBoundingClientRect();
+          return { d: pfad.getAttribute('d'), lang: Math.max(rect.width, rect.height), quer: Math.min(rect.width, rect.height) };
+        }),
+      );
+      expect(pfeile.length, `${zeichnung} ${width} px`).toBeGreaterThan(3);
+      for (const p of pfeile) {
+        expect(p.lang, `${zeichnung} ${width} px: ${p.d}`).toBeGreaterThanOrEqual(10);
+        expect(p.quer, `${zeichnung} ${width} px: ${p.d}`).toBeGreaterThanOrEqual(9);
+      }
+    }
+  }
+});

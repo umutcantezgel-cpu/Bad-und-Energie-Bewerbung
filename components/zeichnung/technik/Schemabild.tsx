@@ -78,11 +78,16 @@ export function Fluss({ wege, breite, hoehe }: { wege: readonly SchemaLeitung[];
   );
 }
 
+/**
+ * Feste Fließpfeile (Standbild). Jeder wächst um seine Spitze auf die Größe der Stufe (--pfeil in technik.module.css,
+ * je Breite der Fläche): am Handy mindestens 10 px lang und 9 px breit (Prüfung E-029, Runde 2, Befund 6). Ohne CSS
+ * steht die Grundgröße.
+ */
 export function Pfeile({ pfeile }: { pfeile: readonly SchemaPfeil[] }) {
   return (
     <g data-pfeile="">
       {pfeile.map((p) => (
-        <path key={p.d} d={p.d} className={PFEIL[p.medium]} />
+        <path key={p.d} d={p.d} className={cn(PFEIL[p.medium], t.pfeil)} style={{ transformOrigin: `${p.spitze.x}px ${p.spitze.y}px` }} />
       ))}
     </g>
   );

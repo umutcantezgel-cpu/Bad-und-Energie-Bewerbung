@@ -20,7 +20,7 @@ export const KOPFBILD_GERAET_TEXT = 'Außeneinheit · Maße in mm';
  * wählt `kopfZeichnung` nach dem Beruf:
  * - Kundendienst: die Außeneinheit von vorn mit Maßketten, der Rotor dreht im Sichtfeld (DauerSteuerung, Knopf
  *   „Anhalten“); auf jeder Breite, am Handy schmaler. Der Block steht dann eine Stufe kleiner darunter.
- * - Anlagenmechaniker und Ausbildung: das Anlagenschema, statisch, beschriftet (Außeneinheit, Inneneinheit, Heizkreis,
+ * - Anlagenmechaniker und Ausbildung: das Anlagenschema, statisch, beschriftet (Außeneinheit, Inneneinheit, Heizkreise,
  *   Erdreich) mit kurzem Schriftfeld; die Legende steht auf /arbeiten-bei-uns/waermepumpen. Erst ab 64em.
  * - alle anderen: der kleine Hausschnitt (dekorativ), ebenfalls erst ab 64em. Am Handy bleibt der Knopf im ersten Bild.
  */

@@ -11,10 +11,11 @@ import { COMPRESS_AW_L } from '@/lib/zeichnung/geraete/compress-aw-l';
 import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
 import type { Aussengeraet as Geraetedaten } from '@/lib/zeichnung/geraete/typen';
 import { BOSCH_FREIGABE } from '@/lib/zeichnung/marke';
-import { ANLAGENSCHEMA_KAELTE, ANLAGENSCHEMA_LEITUNGEN, ANLAGENSCHEMA_RAHMEN } from '@/lib/zeichnung/szenen/anlagenschema';
+import { ANLAGENSCHEMA_KAELTE, ANLAGENSCHEMA_LEITUNGEN, ANLAGENSCHEMA_PFEILE, ANLAGENSCHEMA_RAHMEN, ANLAGENSCHEMA_SYMBOLE } from '@/lib/zeichnung/szenen/anlagenschema';
 import { HEIZKOERPER_LAGE, LEITUNGEN as HAUS_LEITUNGEN } from '@/lib/zeichnung/szenen/hausschnitt';
-import { KAELTEKREIS_GERAET, KAELTEKREIS_RAHMEN, KAELTEKREIS_WASSER, KAELTEKREIS_WEGE } from '@/lib/zeichnung/szenen/kaeltekreis';
-import { flussMuster, flussStrecken } from '@/lib/zeichnung/szenen/schema';
+import { KAELTEKREIS_GERAET, KAELTEKREIS_PFEILE, KAELTEKREIS_RAHMEN, KAELTEKREIS_SYMBOLE, KAELTEKREIS_WASSER, KAELTEKREIS_WEGE } from '@/lib/zeichnung/szenen/kaeltekreis';
+import { PFEIL_GRUNDMASS, flussMuster, flussStrecken } from '@/lib/zeichnung/szenen/schema';
+import { TOKENS } from '@/lib/tokens';
 import { ANSICHT_SCHRIFT, ansichtVon } from '@/lib/zeichnung/geraete/ansicht';
 import { SYMBOLE, kennbuchstabe, type SymbolId } from '@/lib/zeichnung/symbole';
 import { DauerSteuerung } from '../bewegung/DauerSteuerung';
@@ -199,6 +200,103 @@ describe('Schrift in den Zeichnungen: gezeichnet mindestens 12 px an der kleinst
       const texte = [...m.matchAll(/<text [^>]*class="([^"]*)"/g)].map((t) => t[1]);
       expect(texte.length).toBeGreaterThan(5);
       for (const k of texte) expect(k).toMatch(/_(?:schemaText|symbolText)_/);
+    }
+  });
+
+  it('Fließpfeile der Schemata je Stufe der Fläche: an ihrer schmalsten Breite gezeichnet ≥ 10 px lang und ≥ 3 × Leitung breit (Runde 2)', () => {
+    // Wie die Schrift: Faktor --pfeil je Stufe auf die Grundgröße (szenen/schema.ts), gerechnet an der schmalsten Fläche
+    const stufen = [
+      { block: oben, ab: 40 * 16 },
+      { block: container('max-width: 40rem'), ab: 26 * 16 },
+      { block: container('max-width: 26rem'), ab: KLEINSTE_SPALTE },
+    ];
+    const faktor = (block: string, klasse: string) => {
+      const regel = block.match(new RegExp(`(?:^|\\n)\\s*\\.${klasse} \\{([^}]*)\\}`));
+      const treffer = regel?.[1].match(/--pfeil: ([\d.]+);/);
+      return treffer ? Number(treffer[1]) : null;
+    };
+    for (const { klasse, breite } of [
+      { klasse: 'kaeltekreisBild', breite: KAELTEKREIS_RAHMEN.breite },
+      { klasse: 'anlagenBild', breite: ANLAGENSCHEMA_RAHMEN.breite },
+    ]) {
+      for (const { block, ab } of stufen) {
+        const k = faktor(block, klasse);
+        expect(k, `${klasse} ab ${ab} px`).not.toBeNull();
+        const px = (einheiten: number) => (einheiten * k! * ab) / breite;
+        expect(px(PFEIL_GRUNDMASS.laenge), `${klasse} ab ${ab} px: Länge`).toBeGreaterThanOrEqual(10);
+        expect(px(PFEIL_GRUNDMASS.breite), `${klasse} ab ${ab} px: Breite`).toBeGreaterThanOrEqual(3 * TOKENS.linien.leitung);
+      }
+    }
+    // Der Faktor wirkt als scale um die Spitze: Regel .pfeil, im Markup je Pfeil transform-origin = Spitze
+    expect(oben).toMatch(/\.pfeil \{\s*scale: var\(--pfeil, 1\);/);
+    for (const [m, pfeile] of [
+      [html(createElement(Kaeltekreis)), KAELTEKREIS_PFEILE],
+      [html(createElement(Anlagenschema)), ANLAGENSCHEMA_PFEILE],
+    ] as const) {
+      for (const p of pfeile) {
+        expect(m, p.d).toContain(`d="${p.d}" class="`);
+        const tag = m.slice(m.indexOf(`d="${p.d}"`) - 1).split('>')[0];
+        expect(tag, p.d).toMatch(/class="[^"]*_pfeil_/);
+        expect(tag, p.d).toContain(`transform-origin:${p.spitze.x}px ${p.spitze.y}px`);
+        expect(p.d.startsWith(`M${p.spitze.x} ${p.spitze.y}L`), p.d).toBe(true);
+      }
+    }
+  });
+
+  it('Fließpfeile in der größten Stufe: kein Pfeil überdeckt ein Symbol oder eine andere Leitung (Runde 2)', () => {
+    /** Ecken des Pfeils, um die Spitze um k vergrößert. */
+    const ecken = (d: string, k: number) => {
+      const n = (d.match(/-?\d*\.?\d+/g) ?? []).map(Number);
+      const spitze = { x: n[0], y: n[1] };
+      return [0, 2, 4].map((i) => ({ x: spitze.x + (n[i] - spitze.x) * k, y: spitze.y + (n[i + 1] - spitze.y) * k }));
+    };
+    const huelle = (s: { id: SymbolId; lage: { x: number; y: number; massstab?: number; drehung?: number } }) => {
+      const { halb } = SYMBOLE[s.id];
+      const m = s.lage.massstab ?? 1;
+      const quer = Math.abs((s.lage.drehung ?? 0) % 180) === 90;
+      const hx = (quer ? halb.y : halb.x) * m;
+      const hy = (quer ? halb.x : halb.y) * m;
+      return { x0: s.lage.x - hx, y0: s.lage.y - hy, x1: s.lage.x + hx, y1: s.lage.y + hy };
+    };
+    for (const { name, k, pfeile, symbole, wege } of [
+      { name: 'Kältekreis', k: 2.4, pfeile: KAELTEKREIS_PFEILE, symbole: KAELTEKREIS_SYMBOLE, wege: [...KAELTEKREIS_WEGE, ...KAELTEKREIS_WASSER] },
+      { name: 'Anlagenschema', k: 3.6, pfeile: ANLAGENSCHEMA_PFEILE, symbole: ANLAGENSCHEMA_SYMBOLE, wege: [...ANLAGENSCHEMA_LEITUNGEN, ...ANLAGENSCHEMA_KAELTE] },
+    ]) {
+      // Der Faktor der kleinsten Stufe steht so auch in technik.module.css
+      expect(container('max-width: 26rem'), name).toContain(`--pfeil: ${k};`);
+      for (const p of pfeile) {
+        const e = ecken(p.d, k);
+        const box = { x0: Math.min(...e.map((q) => q.x)), y0: Math.min(...e.map((q) => q.y)), x1: Math.max(...e.map((q) => q.x)), y1: Math.max(...e.map((q) => q.y)) };
+        // Symbole: keine Überschneidung (0,5 Einheiten Spiel)
+        for (const sym of symbole) {
+          const h = huelle(sym);
+          const ueber = Math.min(box.x1, h.x1) - Math.max(box.x0, h.x0) > 0.5 && Math.min(box.y1, h.y1) - Math.max(box.y0, h.y0) > 0.5;
+          expect(ueber, `${name}: Pfeil ${p.d} über ${sym.key}`).toBe(false);
+        }
+        // Leitungen: nur die eigene (auf der die Spitze liegt) kreuzt den Pfeil
+        const eigen = (w: { punkte: readonly { x: number; y: number }[] }) =>
+          w.punkte.slice(1).some((b, i) => {
+            const a = w.punkte[i];
+            const t = (b.x - a.x) * (p.spitze.x - a.x) + (b.y - a.y) * (p.spitze.y - a.y);
+            const l2 = (b.x - a.x) ** 2 + (b.y - a.y) ** 2;
+            const q = { x: a.x + ((b.x - a.x) * t) / l2, y: a.y + ((b.y - a.y) * t) / l2 };
+            return t >= 0 && t <= l2 && Math.hypot(q.x - p.spitze.x, q.y - p.spitze.y) < 0.5;
+          });
+        for (const w of wege.filter((x) => !eigen(x))) {
+          for (let i = 1; i < w.punkte.length; i += 1) {
+            const [a, b] = [w.punkte[i - 1], w.punkte[i]];
+            const sx0 = Math.min(a.x, b.x);
+            const sx1 = Math.max(a.x, b.x);
+            const sy0 = Math.min(a.y, b.y);
+            const sy1 = Math.max(a.y, b.y);
+            // Achsparallele Stücke: liegt das Stück mehr als 0,5 Einheiten im Rechteck des Pfeils?
+            const quer = (lo: number, hi: number, z0: number, z1: number) =>
+              z0 === z1 ? z0 > lo + 0.5 && z0 < hi - 0.5 : Math.min(hi, z1) - Math.max(lo, z0) > 0.5;
+            const trifft = quer(box.x0, box.x1, sx0, sx1) && quer(box.y0, box.y1, sy0, sy1);
+            expect(trifft, `${name}: Pfeil ${p.d} über ${w.key}`).toBe(false);
+          }
+        }
+      }
     }
   });
 

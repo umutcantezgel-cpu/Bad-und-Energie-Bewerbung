@@ -64,11 +64,12 @@ export const KAELTEKREIS_SCHRITTE: readonly { symbol: string; bauteil: string; t
 export const HEIZWASSER: ErklaerSatz = {
   text:
     'Der Vorlauf läuft in der Erdleitung unter der Frostgrenze durch die Wanddurchführung zur Inneneinheit. Dort sitzen ' +
-    'Umwälzpumpe, Sicherheitsventil, Ausdehnungsgefäß und das Umschaltventil: Es schickt das Wasser zu Heizkörpern und ' +
-    'Fußbodenheizung oder in den Speicher für das Warmwasser. Die Fußbodenheizung hat einen eigenen gemischten Kreis: ' +
-    'Ein Mischer gibt Wasser aus ihrem Rücklauf dazu, eine zweite Pumpe fördert, und ein Sicherheitstemperaturwächter ' +
+    'Umwälzpumpe, Sicherheitsventil, Ausdehnungsgefäß und das Umschaltventil: Es schickt das Wasser in den Speicher für ' +
+    'das Warmwasser oder in den Pufferspeicher. Der Puffer trennt die Umwälzpumpe hydraulisch von den Heizkreisen, und ' +
+    'jeder Heizkreis hat dahinter seine eigene Pumpe. Die Heizkörper bekommen das Wasser direkt, die Fußbodenheizung ' +
+    'über einen gemischten Kreis: Ein Mischer gibt Wasser aus ihrem Rücklauf dazu, und ein Sicherheitstemperaturwächter ' +
     'schaltet ab, wenn der Vorlauf zu heiß wird. So nimmt der Estrich keinen Schaden. Der Rücklauf bringt das ' +
-    'abgekühlte Wasser zurück zur Außeneinheit.',
+    'abgekühlte Wasser durch einen Partikelfilter zurück zur Außeneinheit.',
   quelle: 'zeichnung:anlagenschema',
 };
 

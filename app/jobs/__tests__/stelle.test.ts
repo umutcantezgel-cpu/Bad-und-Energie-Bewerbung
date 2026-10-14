@@ -190,7 +190,7 @@ describe('JobHeader (Seitenkopf erzaehl)', () => {
       const html = renderToStaticMarkup(createElement(JobHeader, { job }));
       expect(html, job.id).toContain('data-stelle-kopfbild="anlagenschema"');
       expect(html, job.id).toContain(`aria-label="${escapeHtml(ANLAGENSCHEMA_TITEL)}"`);
-      for (const bereich of ['AUSSENEINHEIT', 'INNENEINHEIT', 'HEIZKREIS', 'ERDREICH']) expect(html, job.id).toContain(`>${bereich}</text>`);
+      for (const bereich of ['AUSSENEINHEIT', 'INNENEINHEIT', 'HEIZKREISE', 'ERDREICH']) expect(html, job.id).toContain(`>${bereich}</text>`);
       expect(html, job.id).toContain(`>${SCHRIFTFELD_SCHEMA}</span>`);
       // Die Legende steht auf der Wärmepumpen-Seite; im Kopf hielte sie den Lohn-Block unter dem ersten Bild
       expect(html, job.id).not.toContain('aria-label="Legende"');

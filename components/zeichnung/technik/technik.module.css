@@ -150,6 +150,12 @@
   fill: var(--brand);
 }
 
+/* Fließpfeile der Schemata: wachsen um ihre Spitze (transform-origin im Markup, Einheiten der Zeichnung) auf die
+   Größe der Stufe (--pfeil, je Breite der Fläche weiter unten) */
+.pfeil {
+  scale: var(--pfeil, 1);
+}
+
 /* ═══ Schrift: Maßzahlen und Etiketten in Martian Mono (K-005), Größe in Einheiten der Zeichnung ═══ */
 .schrift {
   fill: var(--brand);
@@ -221,16 +227,20 @@
 /* Etiketten der Schemata: Größe je Breite der Fläche (die Zeichnung skaliert, die Schrift soll lesbar bleiben). Jede
    Stufe ist so gewählt, dass die Schrift an der schmalsten Fläche ihres Bereichs gezeichnet mindestens 12 px misst
    (Einheiten × Breite / viewBox-Breite; Prüfung E-029, Befund 7): über 40rem ab 640 px, bis 40rem ab 416 px, bis
-   26rem ab 280 px (320 px Bildschirm abzüglich Rand). Kältekreis 860 Einheiten breit, Anlagenschema 1200.
-   Wächter: components/zeichnung/__tests__/technik.test.ts; gezeichnet gemessen in e2e/themen-pages.spec.ts. */
+   26rem ab 280 px (320 px Bildschirm abzüglich Rand). Kältekreis 860 Einheiten breit, Anlagenschema 1300.
+   Wächter: components/zeichnung/__tests__/technik.test.ts; gezeichnet gemessen in e2e/themen-pages.spec.ts.
+   Fließpfeile genauso (--pfeil, Faktor auf die Grundgröße 13 × 12 Einheiten): an der schmalsten Fläche der Stufe
+   mindestens 10 px lang und 9 px breit, das Dreifache der Leitung (Prüfung E-029, Runde 2, Befund 6). */
 .kaeltekreisBild {
   --etikett: 17px;
   --symbol-etikett: 17px;
+  --pfeil: 1.05;
 }
 
 .anlagenBild {
-  --etikett: 23px;
-  --symbol-etikett: 23px;
+  --etikett: 25px;
+  --symbol-etikett: 25px;
+  --pfeil: 1.6;
 }
 
 .schemaText {
@@ -240,20 +250,24 @@
 @container (max-width: 40rem) {
   .kaeltekreisBild {
     --etikett: 25px;
+    --pfeil: 1.6;
   }
 
   .anlagenBild {
-    --etikett: 35px;
+    --etikett: 38px;
+    --pfeil: 2.45;
   }
 }
 
 @container (max-width: 26rem) {
   .kaeltekreisBild {
     --etikett: 37px;
+    --pfeil: 2.4;
   }
 
   .anlagenBild {
-    --etikett: 52px;
+    --etikett: 56px;
+    --pfeil: 3.6;
   }
 
   /* So groß ohne Sperrung: Die Etiketten passen zwischen Gehäuse, Wand und Leitungen */

@@ -27,6 +27,8 @@ export interface SchemaLeitung {
 export interface SchemaPfeil {
   medium: Medium;
   d: string;
+  /** Spitze des Pfeils: Um sie wächst er je Breite der Fläche (technik.module.css, --pfeil). */
+  spitze: Punkt;
 }
 
 export const SCHEMA_BOGEN = 12;
@@ -40,8 +42,15 @@ export function leitung(key: string, medium: Medium, punkte: Punkt[], etikett?: 
   return etikett ? { ...out, etikett } : out;
 }
 
+/**
+ * Fließpfeil der Schemata in Grundgröße (13 lang, 12 breit, Einheiten). Gezeichnet wächst er je Breite der Fläche um
+ * seine Spitze (Faktor --pfeil in technik.module.css), damit er im Standbild auch am Handy mindestens 10 px lang und
+ * 9 px breit ist, das Dreifache der Leitung (Prüfung E-029, Runde 2, Befund 6).
+ */
+export const PFEIL_GRUNDMASS = Object.freeze({ laenge: 13, breite: 12 });
+
 export function pfeil(medium: Medium, spitze: Punkt, nach: Punkt): SchemaPfeil {
-  return { medium, d: fliesspfeil(spitze, nach, 16, 12) };
+  return { medium, d: fliesspfeil(spitze, nach, PFEIL_GRUNDMASS.laenge, PFEIL_GRUNDMASS.breite), spitze };
 }
 
 /**

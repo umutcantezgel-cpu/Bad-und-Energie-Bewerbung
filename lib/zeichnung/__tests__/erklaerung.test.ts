@@ -54,8 +54,11 @@ describe('Erklärtext zur Wärmepumpe (E-029, AEO)', () => {
     expect(t).toMatch(/Erdleitung[\s\S]*Wanddurchführung[\s\S]*Inneneinheit/);
     expect(t).toMatch(/Rücklauf[\s\S]*zurück zur Außeneinheit/);
     for (const bauteil of ['Umwälzpumpe', 'Sicherheitsventil', 'Ausdehnungsgefäß', 'Umschaltventil', 'Speicher']) expect(t).toContain(bauteil);
-    // Gemischter Kreis der Fußbodenheizung wie im Anlagenschema (DIN EN 1264-4)
-    expect(t).toMatch(/Fußbodenheizung[\s\S]*Mischer[\s\S]*Pumpe[\s\S]*Sicherheitstemperaturwächter/);
+    // Hydraulik wie im Anlagenschema (Prüfung E-029, Runde 2): Pufferspeicher trennt die Umwälzpumpe von den
+    // Heizkreisen, jeder Heizkreis mit eigener Pumpe, die Fußbodenheizung gemischt (DIN EN 1264-4), Filter im Rücklauf
+    expect(t).toMatch(/Pufferspeicher[\s\S]*Puffer trennt die Umwälzpumpe[\s\S]*jeder Heizkreis hat dahinter seine eigene Pumpe/);
+    expect(t).toMatch(/Fußbodenheizung[\s\S]*Mischer[\s\S]*Sicherheitstemperaturwächter/);
+    expect(t).toMatch(/Rücklauf[\s\S]*Partikelfilter zurück zur Außeneinheit/);
   });
 
   it('Steckbrief: jede Zahl aus dem Geräte-Modul, mit geschütztem Leerzeichen vor der Einheit und der Fundstelle', () => {

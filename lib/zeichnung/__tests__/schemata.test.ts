@@ -193,31 +193,32 @@ describe('Anlagenschema (Luft/Wasser, Monoblock)', () => {
 
   it('enthält die Normsymbole des Pflichtumfangs und nur Leitungen mit Anfang und Ende in Fließrichtung', () => {
     const ids = new Set(ANLAGENSCHEMA_SYMBOLE.map((x) => x.id));
-    for (const id of ['pumpe', 'absperrventil', 'rueckschlagventil', 'sicherheitsventil', 'ausdehnungsgefaess', 'plattenwaermetauscher', 'speicher', 'dreiwegeventil', 'heizkoerper', 'fussbodenheizung', 'fuehler', 'verdichter', 'expansionsventil', 'verdampfer'] as const) {
+    for (const id of ['pumpe', 'absperrventil', 'rueckschlagventil', 'sicherheitsventil', 'ausdehnungsgefaess', 'plattenwaermetauscher', 'speicher', 'dreiwegeventil', 'heizkoerper', 'fussbodenheizung', 'fuehler', 'verdichter', 'expansionsventil', 'verdampfer', 'pufferspeicher', 'partikelfilter'] as const) {
       expect(ids.has(id), id).toBe(true);
     }
     pruefePfade('Anlagenschema', [...ANLAGENSCHEMA_LEITUNGEN, ...ANLAGENSCHEMA_KAELTE]);
   });
 
-  it('Vorlauf beginnt am Plattenwärmeübertrager (Wärmeerzeuger) oder zweigt ab und endet an einem Verbraucher', () => {
+  it('Vorlauf beginnt am Wärmeerzeuger, an einem Austritt (Umschaltventil, Pufferspeicher) oder zweigt ab; er endet an einem Verbraucher bzw. im Puffer', () => {
     const erzeuger = vorlauf.find((l) => l.key === 'vorlauf-erzeuger')!;
     expect(gleich(erzeuger.punkte[0], s('pwt', 'rechtsAus'))).toBe(true);
-    const abgaenge = [s('umschaltventil', 'a'), s('umschaltventil', 'b')];
-    const ziele = [s('umschaltventil', 'ein'), s('heizkoerper', 'ein'), s('fussboden', 'ein'), s('speicher', 'wendelEin')];
+    const abgaenge = [s('umschaltventil', 'a'), s('umschaltventil', 'b'), s('puffer', 'sekundaerAus')];
+    const ziele = [s('umschaltventil', 'ein'), s('puffer', 'primaerEin'), s('heizkoerper', 'ein'), s('fussboden', 'ein'), s('speicher', 'wendelEin')];
     for (const l of vorlauf) {
       const start = l.punkte[0];
       const ende = l.punkte.at(-1)!;
       expect(l === erzeuger || abgaenge.some((a) => gleich(a, start)) || aufAndererLeitung(start, 'vorlauf', l.key), `${l.key} Anfang`).toBe(true);
       expect(ziele.some((z) => gleich(z, ende)), `${l.key} Ende`).toBe(true);
     }
-    // Jeder Verbraucher wird versorgt
+    // Jeder Verbraucher und der Puffer werden versorgt
     for (const z of ziele) expect(vorlauf.some((l) => gleich(l.punkte.at(-1)!, z))).toBe(true);
   });
 
-  it('Rücklauf beginnt am Verbraucher und endet am Plattenwärmeübertrager oder mündet in einen Rücklauf', () => {
-    const quellen = [s('heizkoerper', 'aus'), s('fussboden', 'aus'), s('speicher', 'wendelAus')];
+  it('Rücklauf beginnt an einem Verbraucher bzw. am Puffer und endet am Wärmeerzeuger, im Puffer oder mündet in einen Rücklauf', () => {
+    const quellen = [s('heizkoerper', 'aus'), s('fussboden', 'aus'), s('speicher', 'wendelAus'), s('puffer', 'primaerAus')];
+    const ziele = [s('pwt', 'rechtsEin'), s('puffer', 'sekundaerEin')];
     const zurueck = ruecklauf.find((l) => gleich(l.punkte.at(-1)!, s('pwt', 'rechtsEin')));
-    expect(zurueck?.key).toBe('ruecklauf-heizkreis');
+    expect(zurueck?.key).toBe('ruecklauf-erzeuger');
     // Einzige Ausnahme: die Beimischung zweigt vom Rücklauf der Fußbodenheizung ab und endet im Mischer (Anschluss b)
     const beimischung = ruecklauf.filter((l) => gleich(l.punkte.at(-1)!, s('mischer', 'b')));
     expect(beimischung.map((l) => l.key)).toEqual(['ruecklauf-beimischung']);
@@ -226,8 +227,60 @@ describe('Anlagenschema (Luft/Wasser, Monoblock)', () => {
     for (const l of ruecklauf.filter((x) => !beimischung.includes(x))) {
       expect(quellen.some((q) => gleich(q, l.punkte[0])), `${l.key} Anfang`).toBe(true);
       const ende = l.punkte.at(-1)!;
-      expect(l === zurueck || aufAndererLeitung(ende, 'ruecklauf', l.key), `${l.key} Ende`).toBe(true);
+      expect(ziele.some((z) => gleich(z, ende)) || aufAndererLeitung(ende, 'ruecklauf', l.key), `${l.key} Ende`).toBe(true);
     }
+  });
+
+  it('hydraulische Entkopplung (Runde 2): Pufferspeicher zwischen Erzeugerpumpe und den Pumpen der Heizkreise, je Heizkreis eine eigene Pumpe', () => {
+    const lage = (key: string) => ANLAGENSCHEMA_SYMBOLE.find((x) => x.key === key)!;
+    const pumpen = ANLAGENSCHEMA_SYMBOLE.filter((x) => x.id === 'pumpe');
+    expect(lage('puffer').id).toBe('pufferspeicher');
+    // Erzeugerseite: genau eine Pumpe, auf dem Vorlauf vom Wärmeerzeuger; das Umschaltventil (Heizen) führt in den Puffer
+    const erzeuger = vorlauf.find((l) => l.key === 'vorlauf-erzeuger')!;
+    expect(pumpen.filter((x) => lauflaenge(erzeuger, x.lage) !== null).map((x) => x.key)).toEqual(['pumpe']);
+    const heizen = vorlauf.find((l) => gleich(l.punkte[0], s('umschaltventil', 'a')))!;
+    expect(gleich(heizen.punkte.at(-1)!, s('puffer', 'primaerEin'))).toBe(true);
+    // Heizseite: jeder Vorlauf zu einem Heizkreis beginnt am Puffer (oder zweigt von einem solchen ab) …
+    const ausPuffer = (l: Weg): boolean =>
+      gleich(l.punkte[0], s('puffer', 'sekundaerAus')) ||
+      vorlauf.some((a) => a.key !== l.key && a.punkte.slice(1).some((b, i) => aufStueck(l.punkte[0], a.punkte[i], b)) && ausPuffer(a));
+    for (const ziel of ['heizkoerper', 'fussboden']) {
+      const l = vorlauf.find((x) => gleich(x.punkte.at(-1)!, s(ziel, 'ein')))!;
+      expect(ausPuffer(l), ziel).toBe(true);
+      // … und führt durch genau eine Pumpe, die nicht auf der Erzeugerseite liegt
+      const eigene = pumpen.filter((x) => lauflaenge(l, x.lage) !== null);
+      expect(eigene, ziel).toHaveLength(1);
+      expect(eigene[0].key, ziel).not.toBe('pumpe');
+      expect(lauflaenge(erzeuger, eigene[0].lage), ziel).toBeNull();
+    }
+    // Die Rückläufe der Heizkreise enden im Puffer, nie direkt am Wärmeerzeuger
+    const imPuffer = ruecklauf.filter((l) => gleich(l.punkte.at(-1)!, s('puffer', 'sekundaerEin')));
+    expect(imPuffer.map((l) => l.key)).toEqual(['ruecklauf-fussboden']);
+    const hkRuecklauf = ruecklauf.find((l) => gleich(l.punkte[0], s('heizkoerper', 'aus')))!;
+    expect(aufStueck(hkRuecklauf.punkte.at(-1)!, imPuffer[0].punkte[1], imPuffer[0].punkte[2])).toBe(true);
+    const erzeugerRl = ruecklauf.find((l) => l.key === 'ruecklauf-erzeuger')!;
+    expect(gleich(erzeugerRl.punkte[0], s('puffer', 'primaerAus'))).toBe(true);
+    // Drei Pumpen: Erzeuger und je Heizkreis eine
+    expect(pumpen.map((x) => x.key).sort()).toEqual(['pumpe', 'pumpe-fbh', 'pumpe-hk']);
+  });
+
+  it('Partikelfilter im Rücklauf vor der Inneneinheit, in Fließrichtung eingebaut (Bosch 6721109817, S. 9)', () => {
+    const filter = ANLAGENSCHEMA_SYMBOLE.find((x) => x.id === 'partikelfilter')!;
+    const rl = ANLAGENSCHEMA_LEITUNGEN.find((x) => x.key === 'ruecklauf-erzeuger')!;
+    const ein = lauflaenge(rl, s(filter.key, 'ein'));
+    const aus = lauflaenge(rl, s(filter.key, 'aus'));
+    expect(ein).not.toBeNull();
+    expect(aus).not.toBeNull();
+    expect(aus!).toBeGreaterThan(ein!);
+    // Außerhalb der Systemgrenze, bevor der Rücklauf in die Inneneinheit eintritt
+    const innen = ANLAGENSCHEMA_BEREICHE.innen;
+    const h = huelle(filter);
+    expect(h.x, 'links vom Filter beginnt erst die Inneneinheit').toBeGreaterThan(innen.x + innen.breite);
+    const eintritt = rl.punkte.slice(1).findIndex((q) => imRechteck(q, innen));
+    expect(eintritt).toBeGreaterThan(-1);
+    const bisEintritt = lauflaenge(rl, { x: innen.x + innen.breite, y: rl.punkte[eintritt + 1].y });
+    expect(bisEintritt).not.toBeNull();
+    expect(aus!).toBeLessThan(bisEintritt!);
   });
 
   it('DIN EN 1264-4: die Fußbodenheizung hängt hinter Mischer, Pumpe und Sicherheitstemperaturwächter (Vorlauf bis 75 °C)', () => {
@@ -245,16 +298,19 @@ describe('Anlagenschema (Luft/Wasser, Monoblock)', () => {
     );
     for (const wert of folge) expect(wert).not.toBeNull();
     for (let i = 1; i < folge.length; i += 1) expect(folge[i]!, `Stelle ${i}`).toBeGreaterThan(folge[i - 1]!);
-    // Abzweig hinter dem Umschaltventil (Heizseite), also vom Heizkörper-Vorlauf
-    expect(aufAndererLeitung(l.punkte[0], 'vorlauf', l.key)).toBe(true);
     // Der Heizkörper bekommt das Wasser ohne Mischer, der Mischer sitzt nur im Kreis der Fußbodenheizung
     const hk = vorlauf.find((x) => gleich(x.punkte.at(-1)!, s('heizkoerper', 'ein')))!;
     for (const key of ['mischer', 'pumpe-fbh', 'stw']) expect(lauflaenge(hk, lage(key).lage), key).toBeNull();
+    // Beimischung aus dem eigenen Rücklauf, bevor der Rücklauf des Heizkörpers dazukommt
+    const fbhRl = ruecklauf.find((x) => x.key === 'ruecklauf-fussboden')!;
+    const beimischung = ruecklauf.find((x) => x.key === 'ruecklauf-beimischung')!;
+    const hkRl = ruecklauf.find((x) => x.key === 'ruecklauf-heizkoerper')!;
+    expect(lauflaenge(fbhRl, beimischung.punkte[0])!).toBeLessThan(lauflaenge(fbhRl, hkRl.punkte.at(-1)!)!);
   });
 
   it('Erdleitung unter der Geländeoberkante durch die Wanddurchführung; Kältemittel nur in der Außeneinheit', () => {
     const b = ANLAGENSCHEMA_BEREICHE;
-    for (const key of ['vorlauf-erzeuger', 'ruecklauf-heizkreis']) {
+    for (const key of ['vorlauf-erzeuger', 'ruecklauf-erzeuger']) {
       const l = ANLAGENSCHEMA_LEITUNGEN.find((x) => x.key === key)!;
       // Das Stück durch die Wand: waagerecht, unter GOK, innerhalb der Durchführung
       const durch = l.punkte.slice(1).find((q, i) => {
@@ -282,14 +338,14 @@ describe('Anlagenschema (Luft/Wasser, Monoblock)', () => {
       expect(imRechteck(lage, ANLAGENSCHEMA_BEREICHE.innen), key).toBe(true);
     }
     expect(stuecke.some(([a, b]) => aufStueck(s('sicherheitsventil', 'ein'), a, b))).toBe(true);
-    const rl = ANLAGENSCHEMA_LEITUNGEN.find((x) => x.key === 'ruecklauf-heizkreis')!;
+    const rl = ANLAGENSCHEMA_LEITUNGEN.find((x) => x.key === 'ruecklauf-erzeuger')!;
     const lageRl = ANLAGENSCHEMA_SYMBOLE.find((x) => x.key === 'absperrung-rl')!.lage;
     expect(rl.punkte.slice(1).some((b, i) => aufStueck(lageRl, rl.punkte[i], b))).toBe(true);
   });
 
   it('DIN EN 12828: Sicherheitsventil und Ausdehnungsgefäß sind vom Wärmeerzeuger nicht absperrbar', () => {
     const vl = ANLAGENSCHEMA_LEITUNGEN.find((x) => x.key === 'vorlauf-erzeuger')!;
-    const rl = ANLAGENSCHEMA_LEITUNGEN.find((x) => x.key === 'ruecklauf-heizkreis')!;
+    const rl = ANLAGENSCHEMA_LEITUNGEN.find((x) => x.key === 'ruecklauf-erzeuger')!;
     const lage = (key: string) => ANLAGENSCHEMA_SYMBOLE.find((x) => x.key === key)!.lage;
     // Vorlauf (vom Erzeuger aus): das Sicherheitsventil vor der Absperrung
     const sv = lauflaenge(vl, s('sicherheitsventil', 'ein'));

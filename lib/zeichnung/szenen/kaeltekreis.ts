@@ -81,11 +81,15 @@ export const KAELTEKREIS_WASSER: readonly SchemaLeitung[] = [
  */
 export const KAELTEKREIS_DRUCKGRENZE = Object.freeze({ x: 380, y0: 4, y1: 466, schrift: 20 });
 
+/**
+ * Feste Fließpfeile auf geraden Stücken ohne Etikett darüber: Am Handy wächst ein Pfeil auf rund 31 × 29 Einheiten
+ * (technik.module.css, --pfeil); Sauggas und Nassdampf darum auf den senkrechten Stücken am Verdampfer.
+ */
 export const KAELTEKREIS_PFEILE: readonly SchemaPfeil[] = [
-  pfeil('kaeltemittel', { x: 270, y: 120 }, { x: 1, y: 0 }),
+  pfeil('kaeltemittel', { x: 160, y: 140 }, { x: 0, y: -1 }),
   pfeil('kaeltemittel', { x: 520, y: 200 }, { x: 0, y: 1 }),
   pfeil('kaeltemittel', { x: 520, y: 370 }, { x: 0, y: 1 }),
-  pfeil('kaeltemittel', { x: 250, y: 420 }, { x: -1, y: 0 }),
+  pfeil('kaeltemittel', { x: 160, y: 358 }, { x: 0, y: -1 }),
   pfeil('vorlauf', { x: 790, y: p('verfluessiger', 'rechtsAus').y }, { x: 1, y: 0 }),
   pfeil('ruecklauf', { x: 712, y: p('verfluessiger', 'rechtsEin').y }, { x: -1, y: 0 }),
 ];

@@ -97,6 +97,27 @@ export const SYMBOLE = {
     anschluesse: { wendelEin: { x: -16, y: 2 }, wendelAus: { x: -16, y: 22 } },
     formen: [{ x: -16, y: -30, width: 32, height: 60, rx: 12 }, { d: 'M-16 2H8L-8 7L8 12L-8 17L8 22H-16', fein: true }],
   },
+  pufferspeicher: {
+    name: 'Pufferspeicher (Trennpuffer)',
+    beschreibung:
+      'Stehender Behälter ohne Heizwendel; links die Erzeugerseite (oben ein, unten aus), rechts oben der Vorlauf der ' +
+      'Heizkreise, unten ihr Rücklauf: Er trennt die Erzeugerpumpe hydraulisch von den Pumpen der Heizkreise',
+    halb: { x: 12, y: 30 },
+    anschluesse: {
+      primaerEin: { x: -12, y: -24 },
+      primaerAus: { x: -12, y: 24 },
+      sekundaerAus: { x: 12, y: -24 },
+      sekundaerEin: { x: 0, y: 30 },
+    },
+    formen: [{ x: -12, y: -30, width: 24, height: 60, rx: 10 }],
+  },
+  partikelfilter: {
+    name: 'Partikelfilter (Schlammabscheider)',
+    beschreibung: 'Raute mit gestrichelter Siebfläche quer zur Fließrichtung, im Rücklauf vor dem Wärmeerzeuger',
+    halb: { x: 12, y: 12 },
+    anschluesse: { ein: { x: -12, y: 0 }, aus: { x: 12, y: 0 } },
+    formen: [{ d: 'M-12 0L0 -12L12 0L0 12Z' }, { d: 'M0 -9V-5M0 -2V2M0 5V9', fein: true }],
+  },
   dreiwegeventil: {
     name: '3-Wege-Ventil (Umschalten, Mischen)',
     beschreibung: 'Drei Ventildreiecke um einen Punkt, darüber der Stellantrieb (M); als Mischer kommt die Beimischung von unten (b)',
@@ -168,7 +189,10 @@ export const SYMBOLE = {
 
 export type SymbolId = keyof typeof SYMBOLE;
 
-/** Die Symbole aus KERN K-010 (Pflichtumfang); Verdampfer und Ventilator kommen für den Kältekreis dazu. */
+/**
+ * Die Symbole aus KERN K-010 (Pflichtumfang); Verdampfer und Ventilator kommen für den Kältekreis dazu, Pufferspeicher
+ * und Partikelfilter für das Anlagenschema (Prüfung E-029, Runde 2: hydraulische Entkopplung, Filter im Rücklauf).
+ */
 export const PFLICHT_SYMBOLE: readonly SymbolId[] = [
   'pumpe',
   'absperrventil',
