@@ -284,7 +284,7 @@ describe('Dauerbewegung nur in einem Bereich mit DauerSteuerung (E-029)', () => 
   });
 
   it('DauerSteuerung rendert auf dem Server das Standbild (data-dauer="aus") und den Knopf, bis zur Hydration unsichtbar', () => {
-    const m = html(createElement(DauerSteuerung, { beschriftung: 'Kältekreis', children: createElement(Kaeltekreis, { bewegt: true }) }));
+    const m = html(createElement(DauerSteuerung, { beschriftung: 'Kältekreis' }, createElement(Kaeltekreis, { bewegt: true })));
     expect(m).toMatch(/^<div class="[^"]*" data-dauer="aus">/);
     expect(dauerAusserhalb(m)).toEqual([]);
     expect(m).toMatch(/<button type="button" class="[^"]*wartet[^"]*" data-dauer-knopf=""><svg[^>]*aria-hidden="true"[^>]*><path d="M9 6v12M15 6v12"><\/path><\/svg>Anhalten<\/button>/);

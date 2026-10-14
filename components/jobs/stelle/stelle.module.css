@@ -17,7 +17,7 @@
   letter-spacing: -0.01em;
 }
 
-/* ═══ Zeichnung im Navy-Panel ═══ */
+/* ═══ Zeichnung im Navy-Panel (E-029): Außeneinheit, Anlagenschema oder kleiner Hausschnitt über dem Lohn-Block ═══ */
 .kopfbild {
   display: flex;
   flex-direction: column;
@@ -26,33 +26,41 @@
   width: 100%;
 }
 
-/* Wärmebild: Das Haus beginnt im Bild erst unter seinem Giebelraum, darum enger an den Heizkreis */
-.kopfbildWaerme {
-  gap: var(--a-2);
+/* Gerät und Schema brauchen die Breite der Fläche */
+.kopfbildBreit {
+  align-items: stretch;
+  gap: var(--a-5);
 }
 
-/* Haus auf dem Heizkreis: nur ab 64em, wo die Navy-Fläche Platz hat; am Handy bleibt der Knopf im ersten Bild */
+/* Außeneinheit: am Handy schmaler, damit der Knopf nah am Kopf bleibt */
+.kopfGeraet {
+  width: 100%;
+  max-width: 20rem;
+}
+
+/* Anlagenschema und Hausschnitt nur ab 64em, wo die Navy-Fläche Platz hat; am Handy bleibt der Knopf im ersten Bild */
+.kopfSchema,
 .haus {
   display: none;
 }
 
 @media (min-width: 64em) {
-  /* Spalte so breit wie der Heizkreis; die Fläche des Kopfs setzt sie mittig, das Haus steht links auf der Schleife */
   .kopfbild {
-    width: auto;
-    gap: var(--a-3);
+    gap: var(--a-4);
+  }
+
+  .kopfGeraet {
+    max-width: none;
+  }
+
+  .kopfSchema {
+    display: block;
   }
 
   .haus {
     display: block;
-    width: 11rem;
-    margin-left: calc(var(--paar) + var(--a-6));
-  }
-
-  .kopfbildWaerme {
     width: 100%;
-    align-items: stretch;
-    gap: var(--a-5);
+    max-width: 24rem;
   }
 }
 

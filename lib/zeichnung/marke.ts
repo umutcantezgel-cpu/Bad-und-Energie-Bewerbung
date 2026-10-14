@@ -9,7 +9,7 @@
  * 1. Die Erlaubnis als Datei unter `_relaunch/belege/` ablegen (PDF oder E-Mail als Text),
  * 2. hier `erteilt: true`, `beleg` (Pfad), `datum` und `umfang` (Web, Teilen-Bilder, Druck …) eintragen,
  * 3. die von Bosch gelieferten Vektordaten als eigenes Modul einbinden (`ebene`).
- * lib/zeichnung/__tests__/marke.test.ts sperrt den Schalter, solange der Beleg fehlt.
+ * lib/zeichnung/__tests__/zeichnung-daten.test.ts und components/zeichnung/__tests__/technik.test.ts sperren den Schalter, solange der Beleg fehlt.
  */
 
 export interface BoschFreigabe {

@@ -5,6 +5,8 @@ import { mass, schaetzung, type Aussengeraet } from './typen';
  * (KERN K-010, E-029). Grundlage ist die Installationsanleitung 6721840669 (2025/06); jeder Wert ist an der dänischen
  * Ausgabe derselben Anleitung (6721864591, 2023/06) gegengeprüft: dort Seite 5 (Fig. 4–6) und Seite 22 (Tab. 5).
  * Nur Zahlen, keine Grafik (lib/zeichnung/marke.ts). Werte ohne Bemaßung sind `geschaetzt` und begründet.
+ * Zweite Gegenprobe am 14.10.2026 (Websuche; das PDF 6721840669 war nicht abrufbar): Das Bosch-Artikeldatenblatt
+ * 8738213464 (AW 4 OR-S, Händlerausgabe) nennt ebenfalls 800 × 1.100 × 540 mm, 143 kg und 0,95 kg R290.
  *
  * Lage im Koordinatensystem der Zeichnung (components/zeichnung/technik/Aussengeraet.tsx): 1 Einheit = 1 mm,
  * Ansicht von vorn mit Ursprung oben links am Gehäuse, Ansicht von rechts mit der Front links.

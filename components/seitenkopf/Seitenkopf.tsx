@@ -1,8 +1,9 @@
 /**
  * Seitenkopf (SEITENKOPF-01, E-023): der Kopf aller Unterseiten im Design des Einstiegs der Startseite.
  * Aus `components/home/einstieg` abgeleitet, nicht kopiert: Etikett in Versalien, h1 in Bricolage 800,
- * Unterzeile mit Rohrklammer, roter Knopf „Jetzt bewerben“, in den Vorlauf und Rücklauf münden, Maße in
- * Martian Mono mit Maßlinie, und eine Navy-Fläche (Inverse-Band) mit der Strichzeichnung der Seite.
+ * Unterzeile, roter Knopf „Jetzt bewerben“, in den Vorlauf und Rücklauf münden, Maße in Martian Mono mit
+ * Maßlinie, und eine Navy-Fläche (Inverse-Band) mit der technischen Zeichnung der Seite. Seit E-029 trägt keine
+ * Rohrklammer mehr den Kopf von erzaehl und arbeit: Etikett und h1 reichen (wie im Einstieg).
  * Server-Komponente ohne Zustand und ohne Bewegung (nur `druck` am Knopf, Register lib/motion/register.ts).
  *
  * Aufbau
@@ -20,7 +21,8 @@
  * - `arbeit`: schmale Navy-Fläche, h1 kleiner (text-title-1); am Handy ein knappes Navy-Band ohne
  *   Zeichnung (die Zeichnung erst ab 37.5em). Für Bewerbung, Danke und Mappe.
  * - `ruhig`: nur Papier mit Etikett, h1 und Rohrklammer (an der Unterzeile, sonst an der h1); `panel`,
- *   `masse` und das Leitungspaar entfallen. Für Datenschutz und Impressum.
+ *   `masse` und das Leitungspaar entfallen. Für Datenschutz und Impressum (die Rechtsseiten stellen erst mit
+ *   ihrem eigenen Paket um; bis dahin bleibt die Klammer nur hier).
  *
  * Einsatz
  * ```tsx
@@ -95,7 +97,7 @@ export interface SeitenkopfProps {
   titel: ReactNode;
   /** Id der h1 (Standard `seitenkopf-titel`). */
   titelId?: string;
-  /** Unterzeile in Bricolage mit Rohrklammer (Vorlauf oben, Rücklauf unten). */
+  /** Unterzeile in Bricolage (in `ruhig` mit Rohrklammer, Vorlauf oben, Rücklauf unten). */
   unterzeile?: ReactNode;
   /** Einleitung im Fließtext (Atkinson). */
   einleitung?: ReactNode;
@@ -167,8 +169,9 @@ export function Seitenkopf({
   const navy = variante !== 'ruhig';
   const mitMassen = navy && masse !== undefined && masse.length > 0;
   const mitPanel = navy && panel !== undefined && panel !== null;
-  // Ohne Unterzeile fasst die Rohrklammer in `ruhig` die h1 selbst
+  // Rohrklammer nur noch in `ruhig` (E-029): an der Unterzeile, ohne Unterzeile an der h1
   const klammerAmTitel = variante === 'ruhig' && !unterzeile;
+  const klammerAmUnterzeile = variante === 'ruhig';
   // Das letzte Wort und der Pfeil bleiben zusammen (kein Pfeil allein auf einer Zeile)
   const zweitwegTrenn = zweitweg ? zweitweg.label.lastIndexOf(' ') : -1;
   const endeId = `${titelId}-ende`;
@@ -193,10 +196,12 @@ export function Seitenkopf({
           {titel}
         </h1>
         {unterzeile ? (
-          <p className={cn(styles.unterzeile, styles.mitKlammer, 'text-title-3 text-ink-2')}>
-            <span className={styles.klammer}>
-              <Rohrklammer />
-            </span>
+          <p className={cn(styles.unterzeile, klammerAmUnterzeile && styles.mitKlammer, 'text-title-3 text-ink-2')}>
+            {klammerAmUnterzeile ? (
+              <span className={styles.klammer}>
+                <Rohrklammer />
+              </span>
+            ) : null}
             {unterzeile}
           </p>
         ) : null}

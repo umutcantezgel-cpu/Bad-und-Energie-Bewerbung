@@ -161,7 +161,7 @@ describe('„Flexible Arbeitszeiten.“ (Zweitzeile der h1, B28) steht in title-
     const einstieg = readFileSync(path.resolve(__dirname, '../../../components/home/einstieg/Einstieg.tsx'), 'utf8');
     expect(einstieg).toContain("cn(styles.titelZweit, 'text-title-3')");
     const seitenkopf = readFileSync(path.resolve(__dirname, '../../../components/seitenkopf/Seitenkopf.tsx'), 'utf8');
-    expect(seitenkopf).toContain("cn(styles.unterzeile, styles.mitKlammer, 'text-title-3 text-ink-2')");
+    expect(seitenkopf).toContain("cn(styles.unterzeile, klammerAmUnterzeile && styles.mitKlammer, 'text-title-3 text-ink-2')");
   });
 });
 

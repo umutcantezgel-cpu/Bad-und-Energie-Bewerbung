@@ -1,13 +1,14 @@
 /*
- * Formsystem der wiederkehrenden Zeichnungen (KERN K-008, K-010; Variante 1, BEGRUENDUNG §4):
- * eine Strichstärke (--m-strich), runde Enden, Vorlauf rot oben, Rücklauf blau unten, Paarabstand --paar.
+ * Formsystem der wiederkehrenden Zeichnungen (KERN K-008, K-010; Linienarten nach E-029, lib/zeichnung/norm.ts):
+ * Leitungen in der Linienart `leitung` (--m-leitung, 3 px) mit stumpfen Enden, Bögen rund; Vorlauf rot oben,
+ * Rücklauf blau unten, Paarabstand --paar. Runde Enden gibt es nur an Bedienzeichen (--m-icon).
  * Farben nur über die Rollen (--vorlauf, --ruecklauf); hell, dunkel, Inverse-Band und Druck kommen aus theme.css.
  */
 
 .strich {
   fill: none;
-  stroke-width: var(--m-strich);
-  stroke-linecap: round;
+  stroke-width: var(--m-leitung);
+  stroke-linecap: butt;
   stroke-linejoin: round;
 }
 
@@ -194,7 +195,7 @@
   width: 15rem;
 }
 
-/* ═══ Kreis schließt sich (Register kreis-schliessen): Strich 3 px über --s, keine Skalierung des Strichs ═══ */
+/* ═══ Kreis schließt sich (Register kreis-schliessen): Linienart leitung über --s, keine Skalierung des Strichs ═══ */
 .kreis {
   --s: 1;
   width: calc(120px * var(--s));
@@ -207,8 +208,8 @@
 
 .kreisStrich {
   fill: none;
-  stroke-width: calc(var(--m-strich) / var(--s));
-  stroke-linecap: round;
+  stroke-width: calc(var(--m-leitung) / var(--s));
+  stroke-linecap: butt;
   stroke-linejoin: round;
 }
 
@@ -296,82 +297,6 @@
   }
 }
 
-/* ═══ Wärmebild (Variante 3, statisch): immer auf Navy ═══ */
-.waermebild {
-  position: relative;
-  width: 100%;
-  max-width: 34rem;
-  container-type: inline-size;
-  background-color: var(--surface);
-  color: var(--ink);
-}
-
-.isoKalt {
-  fill: var(--surface-3);
-}
-
-.isoKuehl {
-  fill: var(--ruecklauf);
-}
-
-.isoLau {
-  fill: var(--wb-lau, var(--ink-2));
-}
-
-.isoWarm {
-  fill: var(--wb-warm, var(--brand));
-}
-
-/* Mantel: Navy unter jedem Strich, damit er auf hellen Isothermen eine Kante hat */
-.mantel {
-  stroke: var(--surface);
-  stroke-width: calc(var(--m-strich) + var(--a-1));
-}
-
-/* Schmal: die Kästchen stehen als Reihe unter dem Bild (14 px Schrift passt nicht ins kleine Haus) */
-.wbEtiketten {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--a-2);
-  padding-top: var(--a-3);
-}
-
-/* Breit: die Kästchen hängen an Pumpe, Heizkörper und Wanne */
-@container (min-width: 26rem) {
-  .wbEtiketten {
-    position: absolute;
-    inset: 0;
-    display: block;
-    padding: 0;
-  }
-
-  .wbEtikett {
-    position: absolute;
-    transform: translateY(-100%);
-  }
-
-  .wbPumpe {
-    left: 2%;
-    top: 50%;
-  }
-
-  .wbHeizung {
-    left: 37%;
-    top: 66%;
-  }
-
-  .wbBad {
-    left: 57.5%;
-    top: 79%;
-  }
-}
-
-@media print {
-  .waermebild {
-    background-color: transparent;
-  }
-}
-
 /* ═══ Pendelweg (Ortsseiten, E-028): Haus, Ort, Leitungspaar und Maßkette in echter Richtung ═══
    240 × 176 Einheiten; bei 22,5rem Breite ist der Strich (2 Einheiten) 3 px. Kein vector-effect: Das Paar
    zeichnet sich über stroke-dashoffset (pathLength 1), das nur ohne non-scaling-stroke verlässlich misst. */
@@ -410,7 +335,7 @@
 .pendelHalo {
   paint-order: stroke;
   stroke: var(--surface);
-  stroke-width: 3px;
+  stroke-width: var(--m-leitung);
   stroke-linejoin: round;
 }
 
@@ -700,15 +625,15 @@
 .lsAbgang {
   fill: none;
   stroke: var(--ink-2);
-  stroke-width: 2px;
+  stroke-width: var(--m-kontur);
   stroke-linejoin: round;
-  stroke-linecap: round;
+  stroke-linecap: butt;
   vector-effect: non-scaling-stroke;
 }
 
 .lsAbgangAktuell {
   stroke: var(--brand);
-  stroke-width: var(--m-strich);
+  stroke-width: var(--m-leitung);
 }
 
 .lsName {

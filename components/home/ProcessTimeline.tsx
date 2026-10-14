@@ -46,12 +46,11 @@ export function ProcessTimeline() {
   const steps = getProcessSteps('fachkraft');
 
   return (
-    <Section id="ablauf" tone="wand" trenner aria-labelledby="ablauf-title" className="overflow-x-clip">
+    <Section id="ablauf" tone="wand" aria-labelledby="ablauf-title" className="overflow-x-clip">
       <Container>
         <SectionHeader
           id="ablauf-title"
           eyebrow={ABLAUF_KOPF.etikett}
-          klammer
           title={PROCESS_INTRO.title}
           lead={PROCESS_INTRO.text}
         />

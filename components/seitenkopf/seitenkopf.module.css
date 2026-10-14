@@ -12,9 +12,6 @@
    Zeilen: 1 Titelblock · 2 Zeichnung und Maße (beide auf Navy) · 3 Leitungspaar · 4 Aktion · 5 Einleitung */
 .kopf {
   --rand: max(var(--spacing-gutter, var(--a-5)), env(safe-area-inset-left), env(safe-area-inset-right));
-  /* Wärmebild-Palette (components/zeichnung/Waermebild): hier auf Papier aufgelöst, gilt dann auf Navy */
-  --wb-lau: var(--surface-2);
-  --wb-warm: var(--waerme);
   position: relative;
   display: grid;
   grid-template-columns: [voll-start] var(--rand) [inhalt-start] minmax(0, 1fr) [inhalt-end] var(--rand) [voll-end];
@@ -22,15 +19,6 @@
   overflow-x: clip;
   background-color: var(--surface);
   color: var(--ink);
-}
-
-/* Dunkel sind Wand und Wärme des Papiers dunkler als das Band: das Wärmebild nimmt dann seine eigenen,
-   hellen Stufen (Tinte 2, Creme), damit warm innen heller bleibt als kalt außen */
-@media screen and (prefers-color-scheme: dark) {
-  .kopf {
-    --wb-lau: initial;
-    --wb-warm: initial;
-  }
 }
 
 /* Navy-Fläche: am Handy hinter Titelblock und Zeichnung */

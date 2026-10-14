@@ -1,7 +1,8 @@
 /*
  * Themenseiten (E-028): Hub /arbeiten-bei-uns und fünf Themen als Erzählseiten im Design der Stellen- und Ortsseiten:
- * Navy-Seitenkopf mit der Zeichnung der Seite, Papier-, Wand- und Navy-Abschnitte mit Leitungstrennern, Maße und
- * Beträge in Martian Mono, Etiketten-Kästchen. Nur Rollen und Skalen aus app/styles/theme.css.
+ * Navy-Seitenkopf mit der Zeichnung der Seite, Papier-, Wand- und Navy-Abschnitte (Flächenwechsel; zwei gleiche Töne
+ * trennt eine feine Linie, E-029), Maße und Beträge in Martian Mono, Etiketten-Kästchen. Nur Rollen und Skalen aus
+ * app/styles/theme.css.
  */
 
 /* ═══ Seitenkopf: Leitungspaar zeichnet sich in den Knopf (Register `erdleitung`, wie Stellen- und Ortsseiten) ═══ */
@@ -46,14 +47,19 @@
   overflow-wrap: normal;
 }
 
-/* ═══ Abschnittsköpfe: h2 nach dem breitesten Wort auf die Spalte (Rohrklammer 2rem abgezogen) ═══ */
+/* ═══ Abschnittsköpfe: h2 nach dem breitesten Wort auf die Spalte ═══ */
 .abschnittskopf {
   container-type: inline-size;
   width: 100%;
 }
 
 .passend {
-  font-size: min(var(--text-title-1), calc((96cqi - 2rem) / var(--stueck)));
+  font-size: min(var(--text-title-1), calc(96cqi / var(--stueck)));
+}
+
+/* Zwei Abschnitte im selben Ton: feine Linie an der Oberkante statt Leitungstrenner (E-029) */
+.linie {
+  border-top: var(--m-fein) solid var(--line-strong);
 }
 
 /* ═══ Text ═══ */
@@ -972,14 +978,6 @@
   color: var(--ink);
 }
 
-.paketBetrag {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--a-1) var(--a-2);
-  margin-top: auto;
-}
-
 .aufgaben {
   display: grid;
   gap: var(--a-2);
@@ -993,6 +991,90 @@
 
 .aufgaben li::marker {
   color: var(--brand);
+}
+
+/* ═══ Wärmepumpen: Technik (Kältekreis, Anlagenschema, Gerät; E-029) ═══ */
+/* Zeichnung und Text nebeneinander ab 64em (Zeichnung breiter), darunter gestapelt; die Zeichnung zuerst */
+.technikPaar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--a-6);
+  align-items: start;
+}
+
+@media (min-width: 64em) {
+  .technikPaar {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: var(--a-8);
+  }
+}
+
+.technikBild {
+  min-width: 0;
+}
+
+/* Die vier Stationen des Kältekreises: Bauteil in Versalien, Satz darunter, Nummer in Martian Mono */
+.schritte {
+  display: grid;
+  gap: var(--a-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: schritt;
+}
+
+.schritt {
+  display: grid;
+  grid-template-columns: var(--a-6) minmax(0, 1fr);
+  column-gap: var(--a-3);
+  row-gap: var(--a-1);
+  counter-increment: schritt;
+}
+
+.schritt::before {
+  content: counter(schritt);
+  grid-row: 1 / span 2;
+  color: var(--brand);
+  font-family: var(--font-mass);
+  font-size: var(--text-callout);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.schrittName {
+  line-height: 1.5;
+}
+
+.schrittText {
+  max-width: 38rem;
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+/* Beispielgerät von vorn und von rechts: im Verhältnis der Breiten (1.100 zu 540 mm plus Maßketten) */
+.geraete {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--a-7);
+  align-items: end;
+}
+
+@media (min-width: 48em) {
+  .geraete {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1.15fr);
+  }
+}
+
+.geraetVorne,
+.geraetSeite {
+  min-width: 0;
+}
+
+@media (max-width: 47.99em) {
+  .geraetSeite {
+    max-width: 62%;
+  }
 }
 
 /* ═══ Wärmepumpen: Marken und Partnerstufen ═══ */

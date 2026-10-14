@@ -7,7 +7,7 @@
  * Einheiten des Schemas (ein Symbol ist rund 24 Einheiten groß). `anschluesse` nennt die Stellen, an denen Leitungen
  * ansetzen; `anschlussPunkt` rechnet sie nach Verschiebung und Drehung in das Schema um. Gezeichnet wird in der
  * Kontur (2 px), gefüllte Formen (Rückschlagventil, Spitze des Expansionsventils) in der Markenrolle.
- * Rendern: components/zeichnung/technik/Symbol.tsx. Prüfung: lib/zeichnung/__tests__/symbole.test.ts.
+ * Rendern: components/zeichnung/technik/Symbol.tsx. Prüfung: lib/zeichnung/__tests__/zeichnung-daten.test.ts.
  */
 import { drehen, r1, type Punkt } from './norm';
 

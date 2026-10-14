@@ -1,9 +1,12 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { createElement, type FunctionComponent, type ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { MOTION_IDS } from '@/lib/motion/register';
+import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
+import * as zeichnung from '..';
+import { Aussengeraet, geraetTitel } from '../technik/Aussengeraet';
 import {
   Etikettkasten,
   HausKlein,
@@ -13,8 +16,6 @@ import {
   Masskette,
   OFFENE_LEITUNG_TITEL,
   OffeneLeitung,
-  WAERMEBILD_TITEL,
-  Waermebild,
   fortschrittsAnteil,
   schrittstand,
 } from '..';
@@ -69,13 +70,15 @@ describe('Zeichnungen für den Seitenkopf (SEITENKOPF-01)', () => {
     expect(plain(html)).toBe('Wärmepumpen');
   });
 
-  it('Wärmebild: statisch (kein canvas, keine Bewegung), auf Navy, mit Titel und drei Etiketten', () => {
-    const html = r(Waermebild);
-    expect(html).not.toMatch(/<canvas|data-motion|<script/);
-    expect(html).toMatch(/^<div [^>]*data-tone="inverse"[^>]*role="img" aria-label="[^"]+"/);
-    expect(html).toContain(WAERMEBILD_TITEL);
-    expect(plain(html)).toBe('Wärmepumpen Heizungen Bäder');
-    expect(r(Waermebild, { etiketten: false })).not.toContain('Heizungen');
+  it('Wärmebild entfällt (E-029): an seiner Stelle die Außeneinheit, statisch ohne `bewegt`, mit Titel aus den Maßen', () => {
+    expect(Object.keys(zeichnung)).not.toContain('Waermebild');
+    expect(existsSync(path.resolve(__dirname, '..', 'Waermebild.tsx'))).toBe(false);
+    const html = r(Aussengeraet, { ansicht: 'vorne', massketten: 'haupt', schriftfeld: false, titel: geraetTitel(COMPRESS_AW_S, 'vorne') });
+    expect(html).not.toMatch(/<canvas|data-motion|<script|Gradient|data-tone/);
+    expect(html).toContain(`role="img" aria-label="${geraetTitel(COMPRESS_AW_S, 'vorne')}"`);
+    expect(html).toContain(`viewBox="0 0 ${COMPRESS_AW_S.breite.mm} ${COMPRESS_AW_S.hoehe.mm}"`);
+    // Keine Isothermen, keine Etiketten Wärmepumpen/Heizungen/Bäder mehr
+    expect(plain(html)).not.toMatch(/Heizungen|Bäder/);
   });
 
   it('Leitungspaar: Anteil je Schritt (1 von 4 = 25 %), Stand der Knoten, begrenzt', () => {

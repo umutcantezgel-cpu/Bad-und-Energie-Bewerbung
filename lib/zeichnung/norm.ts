@@ -7,7 +7,7 @@
  * Maßlinien nach DIN 406-11 mit 45°-Begrenzungsstrichen, Maßzahl über der Linie, lesbar von unten oder von rechts.
  *
  * Reines Modul ohne React: Website (components/zeichnung/technik), Hausschnitt (lib/zeichnung/szenen) und
- * Teilen-Bilder (lib/seo/og-render.tsx) rechnen mit denselben Helfern. Prüfung: lib/zeichnung/__tests__/norm.test.ts.
+ * Teilen-Bilder (lib/seo/og-render.tsx) rechnen mit denselben Helfern. Prüfung: lib/zeichnung/__tests__/zeichnung-daten.test.ts.
  */
 import { TOKENS } from '@/lib/tokens';
 

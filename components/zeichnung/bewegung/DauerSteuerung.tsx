@@ -24,7 +24,7 @@ const leer = () => () => {};
 
 export interface DauerSteuerungProps {
   /** Die bewegte Zeichnung (Server-Komponente, kommt fertig gerendert). */
-  children: ReactNode;
+  children?: ReactNode;
   /** Text links neben dem Knopf (z. B. „Einzelheit X“), vom Server. */
   beschriftung?: ReactNode;
   className?: string;

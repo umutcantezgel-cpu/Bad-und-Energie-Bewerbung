@@ -272,10 +272,11 @@ describe('BenefitGrid (#vorteile) server render', () => {
     expect(vorher).toContain(`href="#${AUSSTATTUNG_ID}"`);
   });
 
-  it('head in the pattern of the hero: label above the h2, wall surface with the pipe divider', () => {
+  it('head in the pattern of the hero: label above the h2, wall surface without pipe divider (E-029)', () => {
     expect(html).toMatch(/<section class="[^"]*bg-surface-2[^"]*"[^>]*id="vorteile"/);
     expect(html).toContain('<p class="text-etikett text-ink-muted">Vorteile</p>');
-    expect(html).toContain('data-zeichnung="leitungstrenner"');
+    expect(html).not.toContain('data-zeichnung="leitungstrenner"');
+    expect(html).not.toContain('data-zeichnung="rohrklammer"');
   });
 
   it('without JavaScript shows the default role: real radio group, checkboxes and a live region', () => {

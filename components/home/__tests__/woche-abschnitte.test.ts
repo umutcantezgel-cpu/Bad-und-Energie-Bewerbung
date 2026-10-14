@@ -1,5 +1,6 @@
-import { createElement } from 'react';
+import { createElement, type ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { prerender } from 'react-dom/static';
 import { describe, expect, it } from 'vitest';
 import { COMPANY } from '@/lib/content/company';
 import { getFaqItems } from '@/lib/content/faq';
@@ -7,11 +8,20 @@ import { PAY_ON_REQUEST, jobPath } from '@/lib/jobs/format';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import { DISCRETION_PROMISE, PROCESS_INTRO, getProcessSteps } from '@/lib/content/process';
 import { buildFaqPageJsonLd } from '../content';
+import { AboutSection } from '../AboutSection';
+import { BenefitGrid } from '../BenefitGrid';
 import { FaqSection } from '../FaqSection';
 import { ProcessTimeline } from '../ProcessTimeline';
 import { JobList, stellenEtikett } from '../JobList';
+import { RegionSection } from '../RegionSection';
 import { SectionHeader } from '../SectionHeader';
 import { ABLAUF_KOPF, FAQ_KOPF } from '../woche/abschnitte-text';
+
+/** Server-Render mit Suspense (Startseite: die Karte des Einsatzgebiets lädt nach). */
+async function vollstaendig(element: ReactElement): Promise<string> {
+  const { prelude } = await prerender(element);
+  return new Response(prelude).text();
+}
 
 const count = (html: string, re: RegExp) => (html.match(re) ?? []).length;
 const decode = (s: string) =>
@@ -36,13 +46,10 @@ describe('SectionHeader (Props nur ergänzt)', () => {
     expect(html.indexOf('<p class="text-etikett text-ink-muted">Etikett</p>')).toBeLessThan(html.indexOf('<h2'));
   });
 
-  it('klammer setzt die Rohrklammer aus components/zeichnung rein grafisch in die h2', () => {
+  it('E-029: keine Rohrklammer mehr an der h2, auch nicht mit `klammer` (Etikett und h2 tragen den Kopf)', () => {
     const html = renderToStaticMarkup(createElement(SectionHeader, { id: 'x', title: 'Zwei Zeilen', klammer: true }));
-    expect(html).toMatch(/<h2 id="x" class="text-title-1 text-brand relative pl-8"><span aria-hidden="true"/);
-    expect(html).toContain('data-zeichnung="rohrklammer"');
-    expect(html).toMatch(/class="pointer-events-none absolute top-\[0\.2em\] bottom-\[0\.2em\] left-0"/);
-    // Der zugängliche Name bleibt der Text
-    expect(html).toMatch(/<\/svg><\/span>Zwei Zeilen<\/h2>/);
+    expect(html).toContain('<h2 id="x" class="text-title-1 text-brand">Zwei Zeilen</h2>');
+    expect(html).not.toMatch(/rohrklammer|<svg|pl-8/);
   });
 });
 
@@ -81,10 +88,10 @@ describe('ProcessTimeline (#ablauf, E-START-027)', () => {
     expect(html).toMatch(/<div data-primary-cta="true" class="shrink-0"><a [^>]*href="\/bewerbung"[^>]*>Jetzt bewerben<\/a>/);
   });
 
-  it('Wand mit Leitungstrenner und Rohrklammer am Kopf; Abgänge auf der Abstandsskala (24 px)', () => {
+  it('Wand ohne Leitungstrenner und ohne Rohrklammer (E-029); Abgänge auf der Abstandsskala (24 px)', () => {
     expect(html).toMatch(/<section class="[^"]*bg-surface-2[^"]*"[^>]*id="ablauf"/);
-    expect(html).toContain('data-zeichnung="leitungstrenner"');
-    expect(html).toContain('data-zeichnung="rohrklammer"');
+    expect(html).not.toContain('data-zeichnung="leitungstrenner"');
+    expect(html).not.toContain('data-zeichnung="rohrklammer"');
     expect(html).not.toMatch(/\b[wh]-7\b/);
     expect(html).toContain('w-6');
   });
@@ -105,10 +112,10 @@ describe('FaqSection (#faq, E-START-050)', () => {
     expect(html).toContain(`>${FAQ_KOPF.einleitung}</p>`);
   });
 
-  it('Kopf im Muster des Einstiegs: Etikett „FAQ“; Wand mit Leitungstrenner (E-023)', () => {
+  it('Kopf im Muster des Einstiegs: Etikett „FAQ“; Wand, getrennt durch den Flächenwechsel (E-029)', () => {
     expect(html).toContain(`<p class="text-etikett text-ink-muted">${FAQ_KOPF.etikett}</p>`);
     expect(html).toMatch(/<section class="[^"]*bg-surface-2[^"]*"[^>]*id="faq"/);
-    expect(html).toContain('data-zeichnung="leitungstrenner"');
+    expect(html).not.toContain('data-zeichnung="leitungstrenner"');
   });
 
   it('fünf Fragen als exklusives Akkordeon (Disclosure, name="faq")', () => {
@@ -131,11 +138,26 @@ describe('FaqSection (#faq, E-START-050)', () => {
   });
 });
 
-describe('Leitungstrenner zwischen Abschnitten (E-023, über Section trenner)', () => {
-  it('jeder Abschnitt dieses Pakets trägt oben das Leitungspaar, randlos und rein grafisch', () => {
-    for (const html of [renderToStaticMarkup(createElement(ProcessTimeline)), renderToStaticMarkup(createElement(FaqSection))]) {
-      expect(html).toMatch(/<section class="[^"]*relative pt-24 md:pt-section/);
-      expect(html).toMatch(/<svg class="[^"]*pointer-events-none absolute inset-x-0 top-6 md:top-8" aria-hidden="true"[^>]*data-zeichnung="leitungstrenner"/);
+describe('Abschnitte der Startseite: Flächenwechsel statt Leitungstrenner (E-029)', () => {
+  it('kein Abschnitt trägt das Leitungspaar; die Töne wechseln (Papier, Wand) von Abschnitt zu Abschnitt', async () => {
+    const NOW = new Date('2026-10-09T12:00:00Z');
+    // Die Karte im Einsatzgebiet lädt nach (Suspense): darum der vollständige Server-Render wie in next build
+    const folge = await Promise.all(
+      [
+        createElement(JobList, { now: NOW }),
+        createElement(BenefitGrid, { now: NOW }),
+        createElement(RegionSection),
+        createElement(ProcessTimeline),
+        createElement(AboutSection),
+        createElement(FaqSection),
+      ].map(vollstaendig),
+    );
+    const toene = folge.map((html) => (/^<section class="[^"]*bg-surface-2/.test(html) ? 'wand' : 'papier'));
+    expect(toene).toEqual(['papier', 'wand', 'papier', 'wand', 'papier', 'wand']);
+    for (const html of folge) {
+      expect(html).not.toContain('data-zeichnung="leitungstrenner"');
+      expect(html).not.toContain('data-zeichnung="rohrklammer"');
+      expect(html).not.toMatch(/^<section class="[^"]*relative pt-24/);
     }
   });
 });
@@ -151,10 +173,10 @@ describe('JobList (#stellen, E-START-023)', () => {
     expect(html).toContain(`<p class="text-etikett text-ink-muted">${stellenEtikett(live.length)}</p>`);
   });
 
-  it('Papier mit Leitungstrenner; je live Stelle eine Zeile mit „Lohn auf Anfrage“ (E-030) und benannter Liste', () => {
-    expect(html).toMatch(/<section class="[^"]*relative[^"]*"[^>]*id="stellen"/);
+  it('Papier ohne Leitungstrenner; je live Stelle eine Zeile mit „Lohn auf Anfrage“ (E-030) und benannter Liste', () => {
+    expect(html).toMatch(/<section class="py-section"[^>]*id="stellen"/);
     expect(html).not.toMatch(/<section class="[^"]*bg-surface-2/);
-    expect(html).toContain('data-zeichnung="leitungstrenner"');
+    expect(html).not.toContain('data-zeichnung="leitungstrenner"');
     expect(html).toContain(`aria-label="${live.length} offene Stellen"`);
     for (const job of live) expect(html).toContain(`href="${jobPath(job)}"`);
     // Je Stelle mit Lohnangabe einmal „Lohn auf Anfrage“; das Schülerpraktikum sagt nichts zu Geld
