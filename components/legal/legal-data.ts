@@ -22,8 +22,9 @@ export const LEGAL_ENTITY = Object.freeze({
   registerCourt: COMPANY.register.court,
   registerNumber: COMPANY.register.number,
   /**
-   * Wie bisher im Impressum. Widerspricht SITE_CONFIG.vatID („DE301642296“): Owner-Frage, siehe
-   * docs/operations/datenschutz-aenderungen.md und fakten-abgleich.md B1. Nicht eigenmächtig ändern.
+   * Wie bisher im Impressum. Die frühere SITE_CONFIG.vatID („DE301642296“) widersprach und ist entfernt (Plan §C4);
+   * welche Nummer gilt, bleibt Owner-Frage, siehe docs/operations/datenschutz-aenderungen.md und fakten-abgleich.md B1.
+   * Nicht eigenmächtig ändern.
    */
   vatId: 'DE 346 648 448',
   /** Postfach für Datenschutzanfragen (bisherige Datenschutzerklärung). */
