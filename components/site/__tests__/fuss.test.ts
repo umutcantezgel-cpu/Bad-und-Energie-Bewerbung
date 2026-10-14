@@ -9,7 +9,7 @@ import { getActiveJobs } from '@/lib/jobs/registry';
 import { MOTION_IDS } from '@/lib/motion/register';
 import { getHubKreise, getKreise, getPublishedPlaces, kreisPath, placePath } from '@/lib/places/registry';
 import { ARBEITEN_PATH, getThemen, themaPath } from '@/lib/themen/registry';
-import { DEFAULT_WHATSAPP_MESSAGE } from '@/lib/utils/whatsapp-utils';
+import { BEWERBUNG_WHATSAPP_MESSAGE, DEFAULT_WHATSAPP_MESSAGE } from '@/lib/utils/whatsapp-utils';
 import { ContactOptions } from '../ContactOptions';
 import {
   BEWERBERDATEN_ANKER,
@@ -105,10 +105,10 @@ describe('E-SHELL-005 · WhatsApp-Direktweg im Fuß', () => {
     expect(vollText).toContain('WhatsApp Direktkontakt (öffnet in neuem Tab)');
   });
 
-  it('auch im schmalen Fuß des Fokusmodus, dort mit dem Text zu den Bewerbungsschritten und ohne E-Mail', () => {
+  it('auch im schmalen Fuß des Fokusmodus, dort mit dem Bewerbungssatz des Flows und ohne E-Mail', () => {
     const wege = fussKontakte({ fokus: true });
     expect(wege.map((k) => k.id)).toEqual(['phone', 'whatsapp']);
-    expect(decodeURIComponent(wege[1].href)).toContain('Bewerbungsschritten');
+    expect(decodeURIComponent(wege[1].href)).toContain(BEWERBUNG_WHATSAPP_MESSAGE);
     expect(schmal).toMatch(/<a href="https:\/\/api\.whatsapp\.com[^"]*"[^>]*target="_blank" rel="noopener noreferrer"/);
     expect(schmal).not.toContain('mailto:');
     expect(schmal).not.toContain('/jobs');

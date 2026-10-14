@@ -1,6 +1,6 @@
 # Datenschutzerklärung und Impressum: Änderungen zur Prüfung
 
-Stand: 2026-10-08, ergänzt 2026-10-10 (Schriftnamen, Druck, WhatsApp-Nummer, Bewerberdatenbank) · Schritt 1.3 der Roadmap (§5 „Datenschutz/Impressum“, §9.7) und Phase 2b (§8.1) · Fassungen `PRIVACY_NOTICE_VERSIONS = ['2026-10', '2026-10-10']`, aktuell `2026-10-10`
+Stand: 2026-10-08, ergänzt 2026-10-10 (Schriftnamen, Druck, WhatsApp-Nummer, Bewerberdatenbank) und 2026-10-14 (Entwürfe zur Prüfung, Text der Erklärung unverändert: Kanal-Kürzel im Link 2.7, WhatsApp-Kürzel 2.9, Zählung der Schritte 2.13) · Schritt 1.3 der Roadmap (§5 „Datenschutz/Impressum“, §9.7) und Phase 2b (§8.1) · Fassungen `PRIVACY_NOTICE_VERSIONS = ['2026-10', '2026-10-10']`, aktuell `2026-10-10`
 
 Beide Seiten sind jetzt ruhige Server-Komponenten (`app/datenschutz/page.tsx`, `app/impressum/page.tsx`, Bausteine in `components/legal/`). Diese Liste markiert **jede inhaltliche Änderung** der Datenschutzerklärung gegenüber der bisherigen Fassung, damit der oder die Datenschutzbeauftragte sie prüfen kann. Sie ist keine Rechtsberatung; die Texte sind Entwürfe nach bestem Wissen, abgeleitet aus dem, was der Code tatsächlich tut.
 
@@ -84,6 +84,9 @@ Legende: **NEU** = neuer Absatz · **GEÄNDERT** = Aussage geändert · **ENTFER
 - Nur im Arbeitsspeicher der geöffneten Seite, nicht auf dem Gerät gespeichert; nur mit einer Bewerbung übermittelt; Zweck: Bewerbungen pro Kanal zählen.
 - Art. 6 Abs. 1 lit. f DSGVO, Hinweis auf Widerspruch (Art. 21). Keine Cookies, keine Pixel, keine Analyse-Tools.
 - **Prüfen:** Interessenabwägung; ob das Auslesen von Adresse und Referrer ein Zugriff im Sinne von § 25 TDDDG ist (es wird nichts auf dem Gerät gespeichert).
+- **ENTWURF 2026-10-14 (Paket W4, im Code aktiv, Text der Datenschutzerklärung noch unverändert), Herkunft im Link:** Öffnet jemand von einer unserer Seiten aus das Bewerbungsformular oder die Mappe in einem neuen Tab (Strg- oder Mittelklick, Kontextmenü, langes Tippen), hängt die Seite in diesem Moment ein Kürzel des Kanals an den Link, z. B. `/bewerbung?herkunft=ind` für Indeed, bei einer Empfehlung den vorhandenen Empfehlungscode `ref=…` (`lib/attribution/link.ts`, `klick.ts`). Mit dem Kürzel geht nur der Kanal mit (einer von 14 festen Werten), nie Kampagne, verweisende Website oder Einstiegsseite. Es steht nur in der Adresse, auf dem Gerät wird nichts gespeichert. Grund: Der Satz „nach dem Neuladen oder in einem neuen Tab sind sie weg“ ließ Bewerbungen aus einem neuen Tab als „Direkt“ zählen.
+  Vorschlag für den zweiten Absatz von `#herkunft`: „Diese Angaben bleiben nur im Arbeitsspeicher der geöffneten Seite. Wir speichern sie nicht auf deinem Gerät. Öffnest du das Bewerbungsformular von unserer Seite aus in einem neuen Tab, hängen wir an diesen Link nur ein kurzes Kürzel für den Weg, über den du gekommen bist (zum Beispiel „herkunft=ind“ für Indeed). Nur wenn du dich bewirbst, gehen die Angaben zusammen mit deiner Bewerbung an uns. So zählen wir Bewerbungen pro Kanal.“
+  **Prüfen:** ob das Kürzel in der Adresse von der bisherigen Interessenabwägung (Art. 6 Abs. 1 lit. f) gedeckt ist. Ändert sich der Text, neue Fassung an `PRIVACY_NOTICE_VERSIONS` anhängen.
 
 ### 2.8 Google Maps, 2-Klick-Lösung (`#google-maps`) · NEU
 
@@ -98,6 +101,9 @@ Legende: **NEU** = neuer Absatz · **GEÄNDERT** = Aussage geändert · **ENTFER
 - **GEÄNDERT:** bisher „Kontaktformular oder E-Mail“. Neu „Telefon, E-Mail oder WhatsApp“; das Kontaktformular (LeadQuickForm) entfällt laut Roadmap §5/§9.3. Rest unverändert (Speicherung zur Bearbeitung und für Anschlussfragen, keine Weitergabe ohne Einwilligung, Art. 6 Abs. 1 lit. b).
 - **NEU WhatsApp:** Click-to-Chat-Links, teils mit vorausgefülltem Text (z. B. Bewerbungsangaben, wenn das Absenden scheitert); WhatsApp öffnet sich erst beim Antippen; der Text ist Teil der Link-Adresse; die Person sendet selbst. Anbieter WhatsApp Ireland Limited; mögliche Übermittlung an Meta Platforms, Inc. (USA); Alternative Telefon/E-Mail.
 - **Prüfen:** Anschrift von WhatsApp Ireland ergänzen; Rechtsgrundlage für Nachrichten, die über WhatsApp eingehen (Mobilnummer 0160 8834290); siehe O6 und O9.
+- **ENTWURF 2026-10-14 (Paket W4, im Code aktiv, Text noch unverändert), Herkunftscode in WhatsApp:** Beim Antippen eines WhatsApp-Links der Website hängt die Seite an den vorausgefüllten Text eine letzte Zeile mit einem Kürzel des Kanals an, z. B. „– W-IND“ für Indeed oder „– W-DIR“ für einen direkten Aufruf (Liste `WHATSAPP_HERKUNFTSCODES` in `lib/apply/whatsapp-message.ts`). Das Kürzel enthält nichts zur Person; die Person sieht es vor dem Senden und kann es löschen; es geht nur an uns, wenn sie die Nachricht selbst abschickt. Der Text im Bewerbungsflow lautet jetzt „… ich möchte mich bei Bad und Energie bewerben.“ statt „… eine kurze Frage zu den Bewerbungsschritten …“.
+  Vorschlag, Ergänzung im WhatsApp-Absatz von `#kontakt`: „Am Ende des vorausgefüllten Texts steht ein kurzes Kürzel, zum Beispiel „– W-IND“. Es zeigt uns, über welchen Weg du zu uns gefunden hast (hier: Indeed), und enthält keine Angaben zu dir. Du kannst es vor dem Absenden löschen.“
+  **Prüfen:** Rechtsgrundlage wie bei der Herkunftsmessung (Art. 6 Abs. 1 lit. f)?
 
 ### 2.10 Cookies, Analyse und Schriften (`#cookies-analyse`, bisher „Cookies, Analyse und Lokale Schriften“)
 
@@ -115,6 +121,32 @@ Legende: **NEU** = neuer Absatz · **GEÄNDERT** = Aussage geändert · **ENTFER
 ### 2.12 Beschwerde bei der Aufsichtsbehörde (`#aufsichtsbehoerde`) · UNVERÄNDERT
 
 - HBDI mit Haus- und Postanschrift, Telefon, Fax, E-Mail, Website wie bisher (nur Formatierung).
+
+### 2.13 Zählung der Schritte im Bewerbungsformular (neuer Abschnitt, Vorschlag `#ereignisse`) · ENTWURF 2026-10-14, NICHT AKTIV
+
+Stand: Der Code ist gebaut (Paket W4), aber ausgeschaltet (`FUNNEL_EVENTS`, Standard aus, `lib/env.ts`). Die Datenschutzerklärung ist **nicht** geändert. Eingeschaltet wird erst nach Freigabe durch den Datenschutzbeauftragten (MENSCHEN.md M-034) und zusammen mit dem Text unten (neue Fassung an `PRIVACY_NOTICE_VERSIONS` anhängen).
+
+Was der Code tut, wenn der Schalter an ist (`lib/attribution/ereignisse.ts`, `klick.ts`, `app/api/e/route.ts`):
+
+- Der Browser meldet sechs Ereignisse an `POST /api/e`: Formular begonnen (erste Eingabe), Schritt erreicht (vorwärts), abgesendet, Fehler beim Absenden (nur die Art: offline, Netz, Zeitüberschreitung, Eingabe, zu viele Versuche, Server), Klick auf WhatsApp, Klick auf die Telefonnummer.
+- Je Ereignis gehen mit: der Name des Ereignisses, die Stelle (falls gewählt), der Kanal als einer von 14 festen Werten (z. B. „indeed“, „direct“), beim Schritt dessen Name, beim Fehler die Art. **Nicht** dabei: Name, Telefon, E-Mail, Antworten, Kampagne, verweisende Website, Einstiegsseite, eine Kennung des Geräts oder Besuchs, Uhrzeit.
+- Übertragung per `navigator.sendBeacon` (die Seite wartet nicht darauf). Kein Cookie, nichts im `localStorage`, `sessionStorage` oder sonst auf dem Gerät.
+- Der Server prüft das Ereignis streng (nur bekannte Werte) und schreibt eine Zeile in die Server-Logs, z. B. `[ereignis] {"tag":"2026-10-14","ereignis":"schritt","kanal":"indeed","stelle":"anlagenmechaniker-shk","schritt":"kontakt"}`. In dieser Zeile stehen weder IP-Adresse noch Browser-Angaben. Der Schutz vor Missbrauch (Rate-Limit, 30 Ereignisse pro Minute) nutzt wie bei den Formularen den täglich wechselnden Hash der IP nur im Arbeitsspeicher (2.4).
+- Wie jeder Aufruf erscheint auch dieser in den allgemeinen Server-Logdateien des Hosters (2.4, Aufbewahrung laut O4).
+- Ohne Kennung lassen sich die Ereignisse nicht zu einem Besuch oder einer Person verknüpfen; ausgewertet wird die Zahl je Tag, Stelle und Kanal. Später sollen nur Tageszähler in der Bewerberdatenbank stehen (Supabase, E-012), nie die einzelnen Zeilen.
+
+Vorschlag für den neuen Abschnitt der Datenschutzerklärung (nach `#herkunft`):
+
+> **Zählung der Schritte im Bewerbungsformular**
+> Damit wir sehen, an welcher Stelle Bewerbungen abbrechen, zählt die Seite, wie oft das Formular begonnen, ein Schritt erreicht, eine Bewerbung abgeschickt wird oder das Absenden scheitert, und wie oft jemand auf WhatsApp oder unsere Telefonnummer tippt. Dabei übermittelt dein Browser nur, was passiert ist, die gewählte Stelle und über welchen Weg du gekommen bist (zum Beispiel „Indeed“ oder „direkt“). Wir erfassen keine Angaben zu dir, keine IP-Adresse in der Zählung, keine Kennung deines Geräts und setzen keine Cookies. Einzelne Aufrufe lassen sich deshalb nicht dir zuordnen; wir werten nur Summen je Tag aus.
+> Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Unser berechtigtes Interesse ist, das Bewerbungsformular einfacher zu machen. Du kannst widersprechen (Art. 21 DSGVO).
+
+**Prüfen:**
+
+- Interessenabwägung nach Art. 6 Abs. 1 lit. f; reicht ein Widerspruchsrecht, oder braucht es eine Einwilligung?
+- § 25 TDDDG: Der Browser liest keine Informationen vom Gerät aus, die nicht ohnehin für die Seite gebraucht werden (Adresse, Referrer wie in 2.7), und speichert nichts. Ist das Senden des Ereignisses ein „Zugriff“ im Sinne von § 25 Abs. 1?
+- Ob die Zeilen in den Server-Logs (Vercel) als Speicherung bis zur Löschung der Logs anzugeben sind.
+- Formulierung des Abschnitts; danach Schalter `FUNNEL_EVENTS=true` in Vercel Production setzen.
 
 ## 3. Impressum
 
@@ -174,11 +206,14 @@ Bewusst **nicht** geändert, bitte prüfen:
 - [ ] 2.5 Sperrvermerk in neuer Formulierung
 - [ ] 2.6 Entwurf und Mappe im `sessionStorage`, § 25 Abs. 2 Nr. 2 TDDDG, Löschung alter `localStorage`-Daten
 - [ ] 2.7 Herkunftsmessung: Art. 6 Abs. 1 lit. f, Interessenabwägung, Verhältnis zu § 25 TDDDG
+- [ ] 2.7 Entwurf 2026-10-14: Kanal-Kürzel `?herkunft=` im Link zum Bewerbungsformular (neuer Tab), Textvorschlag
 - [ ] 2.8 Google Maps: Einwilligung per Klick, Speicherung `be:maps-consent:v1`, Widerruf, Angaben zu Google und DPF
 - [ ] 2.9 Kontakt ohne Kontaktformular (O5) und WhatsApp-Absatz (O6 beantwortet, O9 offen)
+- [ ] 2.9 Entwurf 2026-10-14: sichtbares Kürzel „– W-…“ am Ende des vorausgefüllten WhatsApp-Texts, Textvorschlag
 - [ ] 2.10 „Keine Cookies, keine Pixel, keine Analyse“ und Schriften-Absatz
 - [ ] 2.10 Schriftnamen-Korrektur vom 2026-10-10 (Bricolage Grotesque, Atkinson Hyperlegible Next, Martian Mono statt Inter; M-019)
 - [ ] 2.11 Ergänzungen bei den Rechten (Google-Maps-Widerruf, Kontaktzeile)
+- [ ] 2.13 Entwurf 2026-10-14: Zählung der Schritte im Bewerbungsformular (`FUNNEL_EVENTS`, aus bis zur Freigabe M-034), Interessenabwägung, § 25 TDDDG, Textvorschlag
 - [ ] 1 Anrede „du“ in Datenschutzerklärung und Impressum
 - [ ] 3 Impressum: DDG-Verweise (geändert), OS-Satz entfernt, § 36 VSBG (Prüfpunkt)
 - [ ] 5 Hinweistext im Bewerbungsformular mit Art. 6 Abs. 1 lit. b DSGVO

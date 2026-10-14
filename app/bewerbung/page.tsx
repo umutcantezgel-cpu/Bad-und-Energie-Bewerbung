@@ -1,12 +1,14 @@
 import { permanentRedirect } from 'next/navigation';
 import { ApplyFlow } from '@/components/apply';
 import { BewerbungFlaeche, bewerbungKopf, DirektSprechen, Erklaerung, KopfHaus, Regionalband } from '@/components/apply/seite';
-import { UNTERLAGEN_ANKER, Unterlagen } from '@/components/apply/unterlagen';
+import { UNTERLAGEN_ANKER, UnterlagenZeile } from '@/components/apply/unterlagen';
 import { Seitenkopf } from '@/components/seitenkopf';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { EREIGNIS_META } from '@/lib/attribution/ereignisse';
 import { jobIdFromParam, legacyRedirectTarget, type SearchParamsRecord, wantsDocuments } from '@/lib/apply/params';
 import { getDiscretionPromise } from '@/lib/content/process';
 import { FACTS } from '@/lib/content/facts';
+import { funnelEventsEnabled } from '@/lib/env';
 import { getActiveJobs, getFunnelOptions, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
 import { buildPageGraph } from '@/lib/seo/graph';
 import { generatePageMetadata } from '@/lib/seo/metadata';
@@ -53,7 +55,7 @@ export default async function BewerbungPage({ searchParams }: { searchParams: Pr
   const params = await searchParams;
 
   // Altes Portal (E-BEW-027): ?tab=dossier war die A4-Mappe (308). quiz/form/vault/direct und ?direct=true landen
-  // im Flow (200); vault/direct weisen im Kopf auf den Abschnitt „Unterlagen einreichen“ (wantsDocuments).
+  // im Flow (200); vault/direct weisen im Kopf auf die Zeile zu Unterlagen (wantsDocuments).
   const legacyTarget = legacyRedirectTarget(params);
   if (legacyTarget) permanentRedirect(legacyTarget);
 
@@ -69,6 +71,10 @@ export default async function BewerbungPage({ searchParams }: { searchParams: Pr
     <>
       {/* Der eine Graph der Seite (V6-B): globale Knoten und WebPage aus denselben Metadaten wie Title und Canonical. */}
       <JsonLd data={buildPageGraph({ metadata })} />
+
+      {/* Schalter FUNNEL_EVENTS (Standard aus, M-034) für den Browser: Nur mit diesem Meta-Element sendet der Flow
+          cookielose Ereignisse an /api/e (lib/attribution/ereignisse.ts). React setzt es in den <head>. */}
+      {funnelEventsEnabled() ? <meta name={EREIGNIS_META} content="an" /> : null}
 
       {/* Kopf im Design des Einstiegs (E-023), Variante arbeit: Papier mit h1, schmale Navy-Fläche mit dem Haus;
           am Handy ein knappes Navy-Band. Keine rote Fläche: die Hauptaktion ist der Flow selbst. */}
@@ -91,8 +97,9 @@ export default async function BewerbungPage({ searchParams }: { searchParams: Pr
         }
         wege={
           <>
-            {/* E-BEW-012/E-START-007: ehrlich abgeschaltet bis zur Anbindung in Phase 2 (R5-UPLOAD-01). */}
-            <Unterlagen />
+            {/* E-BEW-012/E-START-007: bis zur Anbindung in Phase 2 kein abgeschalteter Upload-Kasten, sondern eine Zeile
+                mit WhatsApp und E-Mail (Plan §D „Upload-Sackgasse entfernen“); ab Phase 2 <Unterlagen auswahl={…} />. */}
+            <UnterlagenZeile />
             <DirektSprechen diskretion={discretion} whatsappMessage={whatsAppMessageFor(PATH)} />
           </>
         }

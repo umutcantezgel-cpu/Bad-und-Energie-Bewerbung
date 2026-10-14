@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import { NextRequest } from 'next/server';
 import { unstable_doesMiddlewareMatch } from 'next/experimental/testing/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -123,7 +125,7 @@ describe('proxy: matcher', () => {
     '/_next/image?url=%2Fimages%2Flogo.webp&w=640&q=75',
     '/favicon.ico',
     '/icon-192.png',
-    '/images/bad-energie-lahn-dill-logo.svg',
+    '/images/bad-energie-lahn-dill-logo.webp',
     '/feeds/indeed.xml',
     '/feeds/jobs.json',
     '/sitemap.xml',
@@ -135,7 +137,15 @@ describe('proxy: matcher', () => {
     expect(matches(url)).toBe(false);
   });
 
-  it.each(['/', '/bewerbung', '/jobs/anlagenmechaniker-shk', '/api/maps/config', '/api/bewerbung'])(
+  // Beispiele für statische Dateien nur mit Dateien, die es gibt (die erfundenen SVG-Logos sind gelöscht, P0-6).
+  it.each(['/favicon.ico', '/icon-192.png', '/images/bad-energie-lahn-dill-logo.webp', '/298d966b7e4f4a43981cb8e30da6b5b5.txt'])(
+    '%s liegt in public/',
+    (url) => {
+      expect(existsSync(path.join(process.cwd(), 'public', url))).toBe(true);
+    }
+  );
+
+  it.each(['/', '/bewerbung', '/jobs/anlagenmechaniker-shk', '/api/maps/config', '/api/bewerbung', '/api/e'])(
     'läuft für %s',
     (url) => {
       expect(matches(url)).toBe(true);

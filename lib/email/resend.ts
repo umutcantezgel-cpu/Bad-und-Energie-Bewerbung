@@ -112,7 +112,10 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export function getResendClient(): {
   client: Resend | null;
   fromEmail: string;
-  toEmail: string;
+  /** Empfänger der Team-Mails (CONTACT_NOTIFICATION_EMAIL als Liste), nie leer. */
+  toEmails: string[];
+  /** Hauptpostfach (erste Adresse der Liste): Antwortadresse der Eingangsbestätigung. */
+  replyToEmail: string;
   isConfigured: boolean;
   forceSimulation: boolean;
 } {
@@ -122,7 +125,8 @@ export function getResendClient(): {
   return {
     client: config.apiKey ? new Resend(config.apiKey) : null,
     fromEmail: config.from,
-    toEmail: config.notificationTo,
+    toEmails: [...config.notificationTo],
+    replyToEmail: config.notificationTo[0],
     isConfigured,
     forceSimulation: config.forceSimulation,
   };
@@ -262,9 +266,9 @@ function tagValue(value: string): string {
 }
 
 /**
- * Bewerbung: Benachrichtigung ans Team (Reply-To = Bewerber-E-Mail, falls vorhanden), danach die
- * Eingangsbestätigung, aber nur wenn die Team-Mail angenommen wurde, eine E-Mail angegeben ist und
- * kein Spamverdacht besteht (die Adresse ist ungeprüft). Erfolg = Team-Mail angenommen.
+ * Bewerbung: Benachrichtigung ans Team an alle Adressen aus CONTACT_NOTIFICATION_EMAIL (Reply-To = Bewerber-E-Mail,
+ * falls vorhanden), danach die Eingangsbestätigung, aber nur wenn die Team-Mail angenommen wurde, eine E-Mail
+ * angegeben ist und kein Spamverdacht besteht (die Adresse ist ungeprüft). Erfolg = Team-Mail angenommen.
  */
 export async function dispatchApplicationEmails(
   app: ReferencedApplication,
@@ -272,7 +276,8 @@ export async function dispatchApplicationEmails(
 ): Promise<DualDispatchResult> {
   const config = getResendClient();
   const team = renderApplicationTeamEmail(app);
-  const teamMail = { to: config.toEmail, ...team };
+  // Alle Adressen in einem Versand (eine Mail, ein Idempotency-Key): Fällt eine Adresse aus, merkt es Resend, nicht wir.
+  const teamMail = { to: config.toEmails, ...team };
   const tags: EmailTag[] = [
     { name: 'job', value: tagValue(app.job.id) },
     { name: 'channel', value: tagValue(app.channel) },
@@ -305,7 +310,8 @@ export async function dispatchApplicationEmails(
       settle(() =>
         sendEmail({
           ...confirmationMail,
-          replyTo: config.toEmail,
+          // Nur das Hauptpostfach: Antworten der Bewerber gehören ins Team-Postfach, nicht auf jedes Handy der Liste.
+          replyTo: config.replyToEmail,
           tags: [{ name: 'category', value: 'application_confirmation' }, ...tags],
           idempotencyKey: stableIdempotencyKey(options, 'user', [confirmationMail.to, fingerprint]),
         })
@@ -332,7 +338,7 @@ export async function dispatchApplicationFollowUpEmail(
   options?: DispatchOptions
 ): Promise<EmailDispatchResult> {
   const config = getResendClient();
-  const mail = { to: config.toEmail, ...renderApplicationFollowUpEmail(followUp) };
+  const mail = { to: config.toEmails, ...renderApplicationFollowUpEmail(followUp) };
   try {
     return await sendEmail({
       ...mail,

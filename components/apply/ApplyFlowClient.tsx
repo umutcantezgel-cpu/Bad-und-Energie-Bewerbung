@@ -6,6 +6,7 @@ import { useForm, type SubmitErrorHandler } from 'react-hook-form';
 import { mitZiffern } from '@/components/home/einstieg/ziffern';
 import { Button } from '@/components/ui/Button';
 import { Tag } from '@/components/ui/Tag';
+import { sendeEreignis } from '@/lib/attribution/ereignisse';
 import { getAttribution } from '@/lib/attribution/store';
 import type { ApplicationJobId } from '@/lib/applications/constants';
 import type { Mappe } from '@/lib/applications/schema';
@@ -182,6 +183,8 @@ export function ApplyFlowClient({
       focusPending.current = true;
       dispatch({ type: 'goTo', step: target });
       writeHistory(target, jobId, mode);
+      // Ereignis (nur mit FUNNEL_EVENTS): Schritt erreicht, nur beim Vorwärtsgehen (push), nicht bei Zurück.
+      if (mode === 'push') sendeEreignis({ ereignis: 'schritt', stelle: jobId, schritt: target });
     },
     [writeHistory],
   );
@@ -222,6 +225,8 @@ export function ApplyFlowClient({
 
   /** Erste Auswahl oder Eingabe merken; ein wiederhergestellter Entwurf zählt nicht als neuer Start. */
   const markInteraction = useCallback(() => {
+    // Ereignis (nur mit FUNNEL_EVENTS): erste Eingabe dieses Flows; ein wiederhergestellter Entwurf zählt nicht.
+    if (firstInteractionAt.current === null) sendeEreignis({ ereignis: 'flow_start', stelle: stateRef.current.jobId });
     firstInteractionAt.current ??= Date.now();
   }, []);
 
@@ -450,6 +455,7 @@ export function ApplyFlowClient({
     const result = await submitApplication(payload);
 
     if (result.ok) {
+      sendeEreignis({ ereignis: 'abgesendet', stelle: current.jobId });
       finished.current = true;
       if (saveTimer.current) clearTimeout(saveTimer.current);
       clearDraft();
@@ -477,6 +483,7 @@ export function ApplyFlowClient({
     }
 
     inFlight.current = false;
+    sendeEreignis({ ereignis: 'fehler', stelle: current.jobId, fehler: result.kind });
     const focusedField = result.kind === 'validation' && focusFieldErrors(result.fieldErrors);
     const onlyFieldErrors = focusedField && Object.keys(result.otherErrors).length === 0;
     setSubmit(onlyFieldErrors ? { status: 'idle' } : { status: 'error', failure: result });

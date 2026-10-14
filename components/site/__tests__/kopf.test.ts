@@ -7,7 +7,7 @@ import { DISCRETION_PROMISE } from '@/lib/content/process';
 import { jobPath } from '@/lib/jobs/format';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import { MOTION_IDS } from '@/lib/motion/register';
-import { buildWhatsAppUrl, whatsAppMessageFor } from '@/lib/utils/whatsapp-utils';
+import { BEWERBUNG_WHATSAPP_MESSAGE, buildWhatsAppUrl, whatsAppMessageFor } from '@/lib/utils/whatsapp-utils';
 import { HeaderBar, type HeaderBarProps } from '../HeaderBar';
 import { EINSATZGEBIET_PATH, getHubKreise, getPublishedPlaces, kreisPath } from '@/lib/places/registry';
 import { ARBEITEN_PATH, THEMEN_UEBERSICHT_LINK, getThemen, themaPath } from '@/lib/themen/registry';
@@ -243,7 +243,7 @@ describe('Kopf (R4-SHELL-01)', () => {
     expect(html).not.toContain('Hauptnavigation');
     expect(html).not.toContain('<dialog');
     expect(plain(html)).toContain('Abbrechen');
-    expect(decodeURIComponent(html)).toContain('Bewerbungsschritten');
+    expect(decodeURIComponent(html)).toContain(BEWERBUNG_WHATSAPP_MESSAGE);
     pfad = '/bewerbung/danke';
     expect(plain(render())).toContain('Zur Startseite');
   });

@@ -5,7 +5,7 @@ import styles from './seite.module.css';
 export interface BewerbungFlaecheProps {
   /** Der Flow (ApplyFlow, variant="page"). */
   flow: ReactNode;
-  /** Die anderen Wege: Unterlagen einreichen, direkt sprechen. */
+  /** Die anderen Wege: Zeile zu Unterlagen (WhatsApp, E-Mail), direkt sprechen. */
   wege: ReactNode;
   /** Ruhiger Erklärteil (Ablauf, Wegweiser, Unterlagen); ab 64em unter dem Flow, am Handy nach den Wegen. */
   erklaerung: ReactNode;

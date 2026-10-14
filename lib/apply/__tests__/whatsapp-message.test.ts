@@ -1,12 +1,18 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { ACQUISITION_CHANNELS, HERKUNFT_CODES } from '@/lib/attribution/channel';
 import { CONTACT_PHONE, WHATSAPP, WHATSAPP_NUMBER } from '@/lib/data/contact';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
 import {
   MAPPE_SHARE_PDF_LINE,
+  WHATSAPP_HERKUNFTSCODES,
   buildApplicationMessage,
   buildFollowUpMessage,
   buildMappeShareMessage,
   buildShortcutMessage,
+  herkunftsZeile,
+  mitHerkunftscode,
 } from '../whatsapp-message';
 
 const noGaps = (text: string) => {
@@ -164,6 +170,64 @@ describe('site-wide WhatsApp text', () => {
     expect(whatsAppMessageFor('/')).toBe(DEFAULT_WHATSAPP_MESSAGE);
     expect(whatsAppMessageFor('/jobs/ausbildung-anlagenmechaniker-shk-wetzlar')).toBe(DEFAULT_WHATSAPP_MESSAGE);
     expect(DEFAULT_WHATSAPP_MESSAGE).not.toMatch(/Anlagenmechaniker|Kundendienst|ich bin/);
-    expect(whatsAppMessageFor('/bewerbung')).toContain('Bewerbungsschritten');
+  });
+
+  it('im Bewerbungsflow eine Bewerbung statt einer „kurzen Frage“ (Plan §D), wortgleich mit der Abkürzung im Flow', async () => {
+    const { BEWERBUNG_WHATSAPP_MESSAGE, whatsAppMessageFor } = await import('@/lib/utils/whatsapp-utils');
+    expect(whatsAppMessageFor('/bewerbung')).toBe('Guten Tag Herr Demir, ich möchte mich bei Bad und Energie bewerben.');
+    expect(whatsAppMessageFor('/bewerbung?stelle=initiativ')).toBe(BEWERBUNG_WHATSAPP_MESSAGE);
+    expect(whatsAppMessageFor('/bewerbung')).not.toMatch(/Frage|Bewerbungsschritten/);
+    expect(buildShortcutMessage().split('\n')[0]).toBe(BEWERBUNG_WHATSAPP_MESSAGE);
+  });
+});
+
+describe('Herkunftscode am Ende der Nachricht (Plan §D „WhatsApp-Herkunft“)', () => {
+  it('je Kanal ein Code „W-“ plus Kurzcode, alle verschieden, 2–4 Großbuchstaben', () => {
+    expect(Object.keys(WHATSAPP_HERKUNFTSCODES).sort()).toEqual([...ACQUISITION_CHANNELS].sort());
+    for (const channel of ACQUISITION_CHANNELS) {
+      expect(WHATSAPP_HERKUNFTSCODES[channel]).toBe(`W-${HERKUNFT_CODES[channel]}`);
+      expect(WHATSAPP_HERKUNFTSCODES[channel]).toMatch(/^W-[A-Z]{2,4}$/);
+    }
+    expect(new Set(Object.values(WHATSAPP_HERKUNFTSCODES)).size).toBe(ACQUISITION_CHANNELS.length);
+    expect(WHATSAPP_HERKUNFTSCODES.indeed).toBe('W-IND');
+    expect(WHATSAPP_HERKUNFTSCODES.arbeitsagentur).toBe('W-BA');
+    expect(WHATSAPP_HERKUNFTSCODES.direct).toBe('W-DIR');
+  });
+
+  it('die Doku-Tabelle im Kommentar von whatsapp-message.ts nennt jeden Code genau einmal', () => {
+    const quelle = readFileSync(path.join(process.cwd(), 'lib/apply/whatsapp-message.ts'), 'utf8');
+    for (const code of Object.values(WHATSAPP_HERKUNFTSCODES)) {
+      expect(quelle.match(new RegExp(`^ \\* \\| ${code} +\\|`, 'gm')), code).toHaveLength(1);
+    }
+  });
+
+  it('hängt den Code als eigene, sichtbare letzte Zeile an: Gedankenstrich, geschütztes Leerzeichen, Code', () => {
+    expect(herkunftsZeile('IND')).toBe('–\u00a0W-IND');
+    const text = mitHerkunftscode(buildShortcutMessage({ jobLabel: 'Anlagenmechaniker SHK' }), 'IND');
+    expect(text.split('\n')).toEqual([
+      'Guten Tag Herr Demir, ich möchte mich bei Bad und Energie bewerben.',
+      'Stelle: Anlagenmechaniker SHK',
+      '–\u00a0W-IND',
+    ]);
+    noGaps(text);
+  });
+
+  it('nie zwei Codes: ein vorhandener Code wird ersetzt, derselbe bleibt stehen', () => {
+    const einmal = mitHerkunftscode('Hallo', 'IND');
+    expect(mitHerkunftscode(einmal, 'IND')).toBe(einmal);
+    expect(mitHerkunftscode(einmal, 'BA')).toBe('Hallo\n–\u00a0W-BA');
+  });
+
+  it('kein Code für leere Texte und unbekannte Codes', () => {
+    expect(mitHerkunftscode('', 'IND')).toBe('');
+    expect(mitHerkunftscode('   ', 'IND')).toBe('   ');
+    expect(mitHerkunftscode('Hallo', 'ind')).toBe('Hallo');
+    expect(mitHerkunftscode('Hallo', 'INDEED')).toBe('Hallo');
+    expect(mitHerkunftscode('Hallo', '')).toBe('Hallo');
+  });
+
+  it('übersteht die Kodierung in einen WhatsApp-Link', () => {
+    const url = buildWhatsAppUrl(mitHerkunftscode('Hallo', 'GFJ'));
+    expect(new URL(url).searchParams.get('text')).toBe('Hallo\n–\u00a0W-GFJ');
   });
 });

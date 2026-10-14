@@ -1,4 +1,6 @@
 import type { ApplicationAnswers, ContactChannel } from '@/lib/applications/schema';
+import { ACQUISITION_CHANNELS, HERKUNFT_CODES, type AcquisitionChannel } from '@/lib/attribution/channel';
+import { BEWERBUNG_WHATSAPP_MESSAGE, WHATSAPP_CODE_PRAEFIX } from '@/lib/utils/whatsapp-utils';
 import { describeAnswers, type QuestionSetId } from './questions';
 
 /**
@@ -50,7 +52,8 @@ function compact(lines: (string | null)[]): string {
 /** Abkürzung auf jedem Schritt: Stelle, bisherige Antworten und (falls getippt) der Name. */
 export function buildShortcutMessage(input: WhatsAppMessageInput = {}): string {
   return compact([
-    `${WHATSAPP_GREETING} ich möchte mich bei Bad und Energie bewerben.`,
+    // Derselbe Satz wie der WhatsApp-Link im Kopf des Flows (whatsAppMessageFor('/bewerbung')).
+    BEWERBUNG_WHATSAPP_MESSAGE,
     line('Stelle', input.jobLabel),
     ...answerLines(input),
     line('Name', input.name),
@@ -119,3 +122,40 @@ export function buildMappeShareMessage(input: MappeShareMessageInput = {}): stri
     MAPPE_SHARE_PDF_LINE,
   ]);
 }
+
+// ---------------------------------------------------------------------------
+// Herkunftscode am Ende der Nachricht (Plan §D „WhatsApp-Herkunft“)
+// ---------------------------------------------------------------------------
+
+/**
+ * Sichtbarer Code je Kanal, den der Browser beim Antippen eines WhatsApp-Links als letzte Zeile „– W-…“ anhängt
+ * (lib/attribution/klick.ts mit mitHerkunftscode aus lib/utils/whatsapp-utils.ts). So sieht das Team in WhatsApp,
+ * woher eine Bewerbung kommt, ohne Cookie und ohne Kennung; die Person sieht den Code vor dem Senden.
+ *
+ * | Code   | Herkunft                                      |
+ * |--------|-----------------------------------------------|
+ * | W-GFJ  | Google for Jobs                               |
+ * | W-IND  | Indeed                                        |
+ * | W-BA   | Jobbörse der Bundesagentur für Arbeit         |
+ * | W-HWK  | Lehrstellenbörse der Handwerkskammer          |
+ * | W-META | Anzeige bei Facebook oder Instagram           |
+ * | W-TIK  | Anzeige bei TikTok                            |
+ * | W-GADS | Google-Anzeige                                |
+ * | W-EMPF | Empfehlung (Link mit `ref=`)                  |
+ * | W-POOL | Job-Alarm aus dem Talent-Pool                 |
+ * | W-BOE  | andere Jobbörse oder Feed                     |
+ * | W-SUCH | Suchmaschine ohne Anzeige                     |
+ * | W-SOZ  | Social Media ohne Anzeige                     |
+ * | W-DIR  | direkt auf die Website (kein Signal)          |
+ * | W-SON  | sonstige Quelle (QR-Code, Flyer, Website)     |
+ *
+ * Ohne Code kam die Nachricht nicht über einen Link dieser Website (Nummer abgetippt, ohne JavaScript).
+ */
+export const WHATSAPP_HERKUNFTSCODES: Readonly<Record<AcquisitionChannel, string>> = Object.freeze(
+  Object.fromEntries(ACQUISITION_CHANNELS.map((channel) => [channel, `${WHATSAPP_CODE_PRAEFIX}${HERKUNFT_CODES[channel]}`])) as Record<
+    AcquisitionChannel,
+    string
+  >,
+);
+
+export { herkunftsZeile, mitHerkunftscode } from '@/lib/utils/whatsapp-utils';

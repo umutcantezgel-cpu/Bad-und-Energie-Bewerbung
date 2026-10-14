@@ -1,7 +1,8 @@
 /*
- * Unterlagen einreichen (E-BEW-012, R5-UPLOAD-01) im Formsystem des Einstiegs: die Ablage als gestrichelter
- * Rahmen in Strichstärke (Plan einer noch offenen Leitung), Icons im Kästchen mit Navy-Kontur wie die Etiketten
- * an der Zeichnung, Größen in Martian Mono. Nur Rollen aus app/styles/theme.css.
+ * Unterlagen einreichen mit Anbindung (E-BEW-012, R5-UPLOAD-01, ab Phase 2) im Formsystem des Einstiegs: die Ablage
+ * als gestrichelter Rahmen in Strichstärke, Icons im Kästchen mit Navy-Kontur wie die Etiketten an der Zeichnung,
+ * Größen in Martian Mono. Nur Rollen aus app/styles/theme.css. Den abgeschalteten Zustand („aus“) gibt es nicht
+ * mehr: Ohne Anbindung steht die Zeile (UnterlagenZeile), keine Sackgasse (Plan §D).
  */
 
 /* ═══ Ablage ═══ */
@@ -14,11 +15,6 @@
   padding: var(--a-5);
   border: var(--m-strich) dashed var(--line-strong);
   border-radius: var(--radius-2);
-}
-
-/* Ohne Anbindung: sichtbar anders (K-011 „Deaktiviert“), der Grund steht als Text daneben */
-.ablage[data-zustand="aus"] {
-  background-color: var(--surface-2);
 }
 
 .ablage[data-zustand="ziehen"] {
@@ -38,23 +34,10 @@
   color: var(--brand);
 }
 
-.ablage[data-zustand="aus"] .kasten {
-  border-style: dashed;
-  border-color: var(--line-strong);
-  color: var(--ink-2);
-}
-
 .ablageText {
   display: grid;
   row-gap: var(--a-1);
   min-width: 0;
-}
-
-/* Wege unter der Ablage: untereinander in voller Breite, nebeneinander, sobald zwei Knöpfe Platz haben */
-.wege {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
-  gap: var(--a-3);
 }
 
 /* ═══ Liste ═══ */
