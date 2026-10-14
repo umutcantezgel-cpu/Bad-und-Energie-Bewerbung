@@ -83,7 +83,9 @@ export function Abschnitt({
 
 /**
  * Band auf Navy (Inverse): je Eintrag das Etiketten-Kästchen mit Icon und Titel, der Satz darunter. Raster mit
- * Unterzeilen (subgrid): Kästchen auf einer Höhe, Sätze auf einer Höhe (Review Phase 2, Punkt 8).
+ * Unterzeilen (subgrid): Kästchen auf einer Höhe, Sätze auf einer Höhe (Review Phase 2, Punkt 8). Satz und „Gehört zu“
+ * teilen sich die zweite Zeile in einem gemeinsamen Element: Das Subgrid hat genau zwei Zeilen, ein drittes Kind
+ * läge sonst über dem Satz (Prüfung E-029, Runde 2, Befund 13).
  */
 export function Kaestenband({ kopf, kaesten }: { kopf: Kopfzeile; kaesten: readonly Kasten[] }) {
   const mitSatz = kaesten.every((kasten) => kasten.text !== null);
@@ -97,11 +99,15 @@ export function Kaestenband({ kopf, kaesten }: { kopf: Kopfzeile; kaesten: reado
               <Etikettkasten icon={kasten.icon} className="whitespace-normal">
                 {kasten.titel}
               </Etikettkasten>
-              {mitSatz && kasten.text ? <p className={styles.kastenText}>{geschuetzt(kasten.text)}</p> : null}
-              {kasten.giltFuer ? (
-                <p className={cn(styles.giltFuer, 'text-etikett text-ink-muted')}>
-                  Gehört zu: <span className={styles.giltFuerStellen}>{kasten.giltFuer.join(' · ')}</span>
-                </p>
+              {(mitSatz && kasten.text) || kasten.giltFuer ? (
+                <div className={styles.kastenFuss}>
+                  {mitSatz && kasten.text ? <p className={styles.kastenText}>{geschuetzt(kasten.text)}</p> : null}
+                  {kasten.giltFuer ? (
+                    <p className={cn(styles.giltFuer, 'text-etikett text-ink-muted')}>
+                      Gehört zu: <span className={styles.giltFuerStellen}>{kasten.giltFuer.join(' · ')}</span>
+                    </p>
+                  ) : null}
+                </div>
               ) : null}
             </li>
           ))}
