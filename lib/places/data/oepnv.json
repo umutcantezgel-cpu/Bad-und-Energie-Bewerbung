@@ -7746,7 +7746,7 @@
             }
           ]
         },
-        "verbindungenMorgens": 8,
+        "verbindungenMorgens": 7,
         "verbindungen": [
           {
             "losgehen": "05:55",
@@ -7770,12 +7770,6 @@
             "losgehen": "07:02",
             "abfahrt": "07:08",
             "ankunft": "07:18",
-            "umstiege": 0
-          },
-          {
-            "losgehen": "07:06",
-            "abfahrt": "07:08",
-            "ankunft": "07:19",
             "umstiege": 0
           },
           {
@@ -9243,7 +9237,7 @@
             }
           ]
         },
-        "verbindungenMorgens": 8,
+        "verbindungenMorgens": 7,
         "verbindungen": [
           {
             "losgehen": "05:44",
@@ -9280,12 +9274,6 @@
             "abfahrt": "07:22",
             "ankunft": "07:35",
             "umstiege": 0
-          },
-          {
-            "losgehen": "07:20",
-            "abfahrt": "07:22",
-            "ankunft": "07:46",
-            "umstiege": 1
           },
           {
             "losgehen": "07:27",

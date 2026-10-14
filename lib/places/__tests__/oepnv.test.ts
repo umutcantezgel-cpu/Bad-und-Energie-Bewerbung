@@ -172,6 +172,23 @@ describe('oepnv.json: Plausibilität', () => {
     expect(gefunden).toBeGreaterThan(WEGE.length / 2);
   });
 
+  it('je angezeigter Abfahrt eine Ankunft: Abfahrt in der Liste eindeutig, zur Abfahrt der spätesten deren Ankunft (Runde 2)', () => {
+    // Die Seite nennt je Verbindung nur Abfahrt und Ankunft (lib/places/text.ts morgensSatz): Zwei Einträge mit
+    // derselben Abfahrt lesen sich als ein Bus mit zwei Ankunftszeiten (Wetzlar → Schule, Steindorf → Betrieb).
+    let mitSpaetester = 0;
+    for (const { id, ziel, weg } of WEGE) {
+      const abfahrten = weg.verbindungen.map((v) => v.abfahrt);
+      expect(new Set(abfahrten).size, `${id} ${ziel}: ${abfahrten.join(', ')}`).toBe(abfahrten.length);
+      const s = weg.spaeteste;
+      if (!s) continue;
+      for (const v of weg.verbindungen.filter((x) => x.abfahrt === s.abfahrt)) {
+        mitSpaetester++;
+        expect({ ankunft: v.ankunft, umstiege: v.umstiege }, `${id} ${ziel}`).toEqual({ ankunft: s.ankunft, umstiege: s.umstiege });
+      }
+    }
+    expect(mitSpaetester).toBeGreaterThan(WEGE.length / 2);
+  });
+
   it('nicht möglich nur mit Grund; die meisten Orte sind mit Bus und Bahn erreichbar', () => {
     const ohne = WEGE.filter((w) => !w.weg.moeglich);
     for (const { id, ziel, weg } of ohne) expect(weg.grund, `${id} ${ziel}`).toMatch(/^(Keine|Zu Fuß)/);

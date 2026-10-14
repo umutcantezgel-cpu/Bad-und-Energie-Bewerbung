@@ -405,6 +405,25 @@ export function beschreibe(fahrplan, v) {
 const schluessel = (v) => v.teile.map((t) => `${t.fahrt.id}:${t.von}-${t.bis}`).join('|');
 
 /**
+ * Je angezeigter Abfahrt (volle Minute) eine Verbindung, in der Reihenfolge der Liste: Steht die späteste Verbindung
+ * (`gewaehlt`) darunter, gewinnt sie (dieselbe Ankunft wie im Satz darüber); sonst die frühere Ankunft, bei Gleichstand
+ * weniger Umstiege, dann die feste Reihenfolge der Fahrten.
+ */
+export function jeAbfahrt(verbindungen, gewaehlt) {
+  const besser = (a, b) => {
+    if (a === gewaehlt) return true;
+    if (b === gewaehlt) return false;
+    return (a.ankunft - b.ankunft || a.fahrten - b.fahrten || (schluessel(a) < schluessel(b) ? -1 : 1)) < 0;
+  };
+  const sieger = new Map();
+  for (const v of verbindungen) {
+    const ab = formatClock(v.abfahrt);
+    if (!sieger.has(ab) || besser(v, sieger.get(ab))) sieger.set(ab, v);
+  }
+  return verbindungen.filter((v) => sieger.get(formatClock(v.abfahrt)) === v);
+}
+
+/**
  * Weg von einem Ort zu einem Ziel. `quellen`: Start-Haltestellen mit Gehzeit; `zielStops`: Ziel-Haltestelle →
  * Gehzeit; `direktWegM`: Fußweg Ort → Ziel auf dem Wegenetz. Ergebnis: späteste Verbindung mit Ankunft bis
  * `ankunftBisS` (bei Gleichstand weniger Umstiege, dann frühere Ankunft) und die nicht überholten Verbindungen mit
@@ -413,6 +432,11 @@ const schluessel = (v) => v.teile.map((t) => `${t.fahrt.id}:${t.von}-${t.bis}`).
  * Eine Regel für beide Angaben (Prüfung E-029): Zur Abfahrt der spätesten Verbindung steht in `verbindungen` genau
  * diese Variante, nicht die schnellere mit mehr Umstiegen aus dem Profil. Sonst nennt die Seite für dieselbe Abfahrt
  * zwei Ankunftszeiten („an der Schule um 7:35“ und darunter „6:14 Uhr (an 7:26)“).
+ *
+ * Je angezeigter Abfahrt eine Ankunft (Prüfung E-029, Runde 2): Das Profil hat je Losgehen eine Verbindung, zwei
+ * Startpunkte mit verschiedenem Fußweg können aber denselben Bus nehmen und verschieden ankommen („7:22 Uhr (an 7:35),
+ * 7:22 Uhr (an 7:46)“). Die Liste nennt nur Abfahrt und Ankunft; darum bleibt je Abfahrt (volle Minute) eine
+ * Verbindung (`jeAbfahrt`).
  *
  * @param {any} fahrplan
  * @param {{ quellen: { stop: number, s: number }[], zielStops: Map<number, number>, ankunftBisS: number,
@@ -456,9 +480,10 @@ export function weg(fahrplan, { quellen, zielStops, ankunftBisS, luftlinieM, dir
     );
   // Das Profil hat je Losgehen höchstens eine Verbindung; zur Abfahrt der spätesten tritt diese an ihre Stelle.
   const gewaehlt = passend[0];
-  const verbindungen = profil
+  const imFenster = profil
     .map((v) => (gewaehlt && v.losgehen === gewaehlt.losgehen ? gewaehlt : v))
-    .filter((v) => v.ankunft >= ZAEHLFENSTER.vonS && v.ankunft <= ZAEHLFENSTER.bisS)
+    .filter((v) => v.ankunft >= ZAEHLFENSTER.vonS && v.ankunft <= ZAEHLFENSTER.bisS);
+  const verbindungen = jeAbfahrt(imFenster, gewaehlt)
     .map((v) => ({
       losgehen: formatClock(v.losgehen),
       abfahrt: formatClock(v.abfahrt),
