@@ -1,4 +1,6 @@
-STATUS · ABGESCHLOSSEN · Live seit 10.10.2026 10:17 UTC (main e2b3cb1, PR #9) · Alle 12 Seiten im Design Variante 3 (E-024) · Muss/Soll gebaut · CI grün · Playwright 182/182 · Lighthouse A11y/BP/SEO 100 · Folgearbeit: LCP < 2,5 s, Kann-Elemente, Showcase-Ausbau, Menschen-Punkte (MENSCHEN.md)
+STATUS · BEWERBER-MASCHINE IN ARBEIT (Plan vom 14.10.2026) · Entscheidungen E-029 (Technische Zeichnung 2.0, Dauerbewegung, Bosch-Sperre, Indexierung per Gate) und E-030 (Lohn auf Anfrage) · KERN 1.2 · Bau in fünf Paketen W1–W5, zusammengeführt auf `claude/epic-curie-fkohsk` · Live: main 2f34ae9 (12.10.2026, 72 indexierbare URLs) · Menschen-Punkte M-020…M-040 (MENSCHEN.md, Kurzliste `docs/inhaber/offene-angaben.md`)
+
+Vorher: STATUS · ABGESCHLOSSEN · Live seit 10.10.2026 10:17 UTC (main e2b3cb1, PR #9) · Alle 12 Seiten im Design Variante 3 (E-024) · Muss/Soll gebaut · CI grün · Playwright 182/182 · Lighthouse A11y/BP/SEO 100 · Folgearbeit: LCP < 2,5 s, Kann-Elemente, Showcase-Ausbau, Menschen-Punkte (MENSCHEN.md)
 
 # Status · Rückführung und Veredelung
 
@@ -61,3 +63,7 @@ STATUS · ABGESCHLOSSEN · Live seit 10.10.2026 10:17 UTC (main e2b3cb1, PR #9) 
 - 2026-10-10 11:50 CEST · Fertigstellung nach E-023/E-024: alle Seiten im Design der Bilder des Auftraggebers (Variante 3), Gesamtprüfung grün (E-025), Supabase lesend geprüft (2a bereits in Produktion). PR nach main folgt.
 
 - 2026-10-10 12:20 CEST · PR #9 gemergt (e2b3cb1) und live; Live-GET aller Routen 200, 404 korrekt (E-026).
+
+- 2026-10-12 · Arbeitszeit-Korrektur (B28, E-027: flexible Arbeitszeiten, Leitmotiv „35 km“), Ortsseiten und Themenseiten nach E-028 (Gebietsseite, 4 Kreis-Hubs, 54 Ortsseiten, 6 Themenseiten; 72 indexierbare URLs), Navigation mit Einsatzgebiet und „Arbeiten bei uns“ · main 2f34ae9.
+
+- 2026-10-14 · Bestandsaufnahme in sieben Analysen (Grafiken, SEO/AEO/GEO, Funnel, Wettbewerb, Bosch-Bildrecht, Projektregeln, Design): Hero fachlich falsch, Wärmepumpe viermal verschieden, Ortsseiten mit Doorway-Muster, BA-Jobbörse ohne Treffer, keine Messung, Hauptdomain ohne Link zur Karriereseite. Antworten des Inhabers und Plan „Bewerber-Maschine“ (P0–P3); E-029, E-030, KERN 1.2, MENSCHEN M-020…M-040, Inhaber-Unterlagen in `docs/inhaber/` (Paket W5). Zeitkritisch: Die Ausbildungsstelle 2026 läuft am 31.12.2026 aus; `lib/jobs/__tests__/registry.test.ts` wird ab etwa 17.12.2026 rot, wenn sie nicht vorher archiviert und durch die Ausbildung 2027 ersetzt ist (Paket W3).
