@@ -43,6 +43,55 @@ export const CHANNEL_LABELS: Readonly<Record<AcquisitionChannel, string>> = Obje
   other: 'Sonstige',
 });
 
+/**
+ * Kurzcodes je Kanal (Plan §D „Herkunft ohne Speicher“, „WhatsApp-Herkunft“). Großbuchstaben A–Z, höchstens vier
+ * Zeichen, eindeutig. Sie stehen
+ * - klein im Parameter `?herkunft=` an internen Links auf /bewerbung (lib/attribution/link.ts) und
+ * - mit „W-“ sichtbar am Ende der vorausgefüllten WhatsApp-Nachricht (lib/apply/whatsapp-message.ts).
+ *
+ * | Code | Kanal              | typische Quelle                                        |
+ * |------|--------------------|--------------------------------------------------------|
+ * | GFJ  | google_jobs        | „Bewerben“ in Google for Jobs (utm_source=google_jobs_apply) |
+ * | IND  | indeed             | Indeed (Feed oder Referrer)                            |
+ * | BA   | arbeitsagentur     | Jobbörse der Bundesagentur für Arbeit                  |
+ * | HWK  | hwk                | Lehrstellenbörse der Handwerkskammer                   |
+ * | META | meta_ads           | bezahlte Anzeige bei Facebook oder Instagram           |
+ * | TIK  | tiktok_ads         | bezahlte Anzeige bei TikTok                            |
+ * | GADS | google_ads         | Google-Anzeige                                         |
+ * | EMPF | referral           | Empfehlungscode (`ref=`)                               |
+ * | POOL | talentpool_alert   | Job-Alarm aus dem Talent-Pool                          |
+ * | BOE  | jobboard           | andere Jobbörse oder Feed (utm_medium=jobboard)        |
+ * | SUCH | organic_search     | Google, Bing, Ecosia & Co. ohne Anzeige                |
+ * | SOZ  | social             | Facebook, Instagram, WhatsApp, LinkedIn ohne Anzeige   |
+ * | DIR  | direct             | direkt aufgerufen, kein Signal                         |
+ * | SON  | other              | sonstige Quelle (z. B. QR-Code, Flyer, fremde Website) |
+ *
+ * Codes nie umbenennen: Das Team liest sie in WhatsApp, alte Nachrichten behalten ihren Code.
+ */
+export const HERKUNFT_CODES: Readonly<Record<AcquisitionChannel, string>> = Object.freeze({
+  google_jobs: 'GFJ',
+  indeed: 'IND',
+  arbeitsagentur: 'BA',
+  hwk: 'HWK',
+  meta_ads: 'META',
+  tiktok_ads: 'TIK',
+  google_ads: 'GADS',
+  referral: 'EMPF',
+  talentpool_alert: 'POOL',
+  jobboard: 'BOE',
+  organic_search: 'SUCH',
+  social: 'SOZ',
+  direct: 'DIR',
+  other: 'SON',
+});
+
+/** Kanal zu einem Code (Groß- oder Kleinschreibung egal); unbekannte Werte ergeben undefined. */
+export function channelFromHerkunftCode(code: unknown): AcquisitionChannel | undefined {
+  if (typeof code !== 'string') return undefined;
+  const wanted = code.trim().toUpperCase();
+  return ACQUISITION_CHANNELS.find((channel) => HERKUNFT_CODES[channel] === wanted);
+}
+
 export function isAcquisitionChannel(value: unknown): value is AcquisitionChannel {
   return typeof value === 'string' && (ACQUISITION_CHANNELS as readonly string[]).includes(value);
 }
@@ -92,6 +141,7 @@ const SOCIAL_SOURCES = new Set([
   'reddit',
 ]);
 const SOCIAL_MEDIA = new Set(['social', 'social-media', 'social_media', 'socialmedia', 'organic_social', 'organic-social']);
+const ORGANIC_MEDIA = new Set(['organic']);
 
 /** Suchmaschinen am Referrer-Host (ohne UTM). */
 const SEARCH_ENGINES = ['google', 'bing', 'duckduckgo', 'ecosia', 'yahoo', 'startpage', 'qwant', 'yandex', 'baidu', 'search.brave'];
@@ -173,6 +223,9 @@ export function deriveChannel(attribution: Attribution | null | undefined): Acqu
 
   // 4. Organisch
   if (!hasUtm && host && isSearchEngine(host)) return 'organic_search';
+  // utm_medium=organic ohne Quelle: Suche, Suchmaschine unbekannt. So trägt `?herkunft=such` den Kanal in einen
+  // neuen Tab (lib/attribution/link.ts). Mit Quelle bleibt es eine Kampagne („other“, z. B. google/organic).
+  if (!source && ORGANIC_MEDIA.has(medium)) return 'organic_search';
   if (SOCIAL_SOURCES.has(source) || SOCIAL_MEDIA.has(medium) || (!hasUtm && host && isSocialHost(host))) return 'social';
   if (!hasUtm && !host) return 'direct';
   return 'other';

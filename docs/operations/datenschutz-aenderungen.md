@@ -84,6 +84,9 @@ Legende: **NEU** = neuer Absatz · **GEÄNDERT** = Aussage geändert · **ENTFER
 - Nur im Arbeitsspeicher der geöffneten Seite, nicht auf dem Gerät gespeichert; nur mit einer Bewerbung übermittelt; Zweck: Bewerbungen pro Kanal zählen.
 - Art. 6 Abs. 1 lit. f DSGVO, Hinweis auf Widerspruch (Art. 21). Keine Cookies, keine Pixel, keine Analyse-Tools.
 - **Prüfen:** Interessenabwägung; ob das Auslesen von Adresse und Referrer ein Zugriff im Sinne von § 25 TDDDG ist (es wird nichts auf dem Gerät gespeichert).
+- **ENTWURF 2026-10-14 (Paket W4, im Code aktiv, Text der Datenschutzerklärung noch unverändert), Herkunft im Link:** Öffnet jemand von einer unserer Seiten aus das Bewerbungsformular oder die Mappe in einem neuen Tab (Strg- oder Mittelklick, Kontextmenü, langes Tippen), hängt die Seite in diesem Moment ein Kürzel des Kanals an den Link, z. B. `/bewerbung?herkunft=ind` für Indeed, bei einer Empfehlung den vorhandenen Empfehlungscode `ref=…` (`lib/attribution/link.ts`, `klick.ts`). Mit dem Kürzel geht nur der Kanal mit (einer von 14 festen Werten), nie Kampagne, verweisende Website oder Einstiegsseite. Es steht nur in der Adresse, auf dem Gerät wird nichts gespeichert. Grund: Der Satz „nach dem Neuladen oder in einem neuen Tab sind sie weg“ ließ Bewerbungen aus einem neuen Tab als „Direkt“ zählen.
+  Vorschlag für den zweiten Absatz von `#herkunft`: „Diese Angaben bleiben nur im Arbeitsspeicher der geöffneten Seite. Wir speichern sie nicht auf deinem Gerät. Öffnest du das Bewerbungsformular von unserer Seite aus in einem neuen Tab, hängen wir an diesen Link nur ein kurzes Kürzel für den Weg, über den du gekommen bist (zum Beispiel „herkunft=ind“ für Indeed). Nur wenn du dich bewirbst, gehen die Angaben zusammen mit deiner Bewerbung an uns. So zählen wir Bewerbungen pro Kanal.“
+  **Prüfen:** ob das Kürzel in der Adresse von der bisherigen Interessenabwägung (Art. 6 Abs. 1 lit. f) gedeckt ist. Ändert sich der Text, neue Fassung an `PRIVACY_NOTICE_VERSIONS` anhängen.
 
 ### 2.8 Google Maps, 2-Klick-Lösung (`#google-maps`) · NEU
 
@@ -98,6 +101,9 @@ Legende: **NEU** = neuer Absatz · **GEÄNDERT** = Aussage geändert · **ENTFER
 - **GEÄNDERT:** bisher „Kontaktformular oder E-Mail“. Neu „Telefon, E-Mail oder WhatsApp“; das Kontaktformular (LeadQuickForm) entfällt laut Roadmap §5/§9.3. Rest unverändert (Speicherung zur Bearbeitung und für Anschlussfragen, keine Weitergabe ohne Einwilligung, Art. 6 Abs. 1 lit. b).
 - **NEU WhatsApp:** Click-to-Chat-Links, teils mit vorausgefülltem Text (z. B. Bewerbungsangaben, wenn das Absenden scheitert); WhatsApp öffnet sich erst beim Antippen; der Text ist Teil der Link-Adresse; die Person sendet selbst. Anbieter WhatsApp Ireland Limited; mögliche Übermittlung an Meta Platforms, Inc. (USA); Alternative Telefon/E-Mail.
 - **Prüfen:** Anschrift von WhatsApp Ireland ergänzen; Rechtsgrundlage für Nachrichten, die über WhatsApp eingehen (Mobilnummer 0160 8834290); siehe O6 und O9.
+- **ENTWURF 2026-10-14 (Paket W4, im Code aktiv, Text noch unverändert), Herkunftscode in WhatsApp:** Beim Antippen eines WhatsApp-Links der Website hängt die Seite an den vorausgefüllten Text eine letzte Zeile mit einem Kürzel des Kanals an, z. B. „– W-IND“ für Indeed oder „– W-DIR“ für einen direkten Aufruf (Liste `WHATSAPP_HERKUNFTSCODES` in `lib/apply/whatsapp-message.ts`). Das Kürzel enthält nichts zur Person; die Person sieht es vor dem Senden und kann es löschen; es geht nur an uns, wenn sie die Nachricht selbst abschickt. Der Text im Bewerbungsflow lautet jetzt „… ich möchte mich bei Bad und Energie bewerben.“ statt „… eine kurze Frage zu den Bewerbungsschritten …“.
+  Vorschlag, Ergänzung im WhatsApp-Absatz von `#kontakt`: „Am Ende des vorausgefüllten Texts steht ein kurzes Kürzel, zum Beispiel „– W-IND“. Es zeigt uns, über welchen Weg du zu uns gefunden hast (hier: Indeed), und enthält keine Angaben zu dir. Du kannst es vor dem Absenden löschen.“
+  **Prüfen:** Rechtsgrundlage wie bei der Herkunftsmessung (Art. 6 Abs. 1 lit. f)?
 
 ### 2.10 Cookies, Analyse und Schriften (`#cookies-analyse`, bisher „Cookies, Analyse und Lokale Schriften“)
 
@@ -174,8 +180,10 @@ Bewusst **nicht** geändert, bitte prüfen:
 - [ ] 2.5 Sperrvermerk in neuer Formulierung
 - [ ] 2.6 Entwurf und Mappe im `sessionStorage`, § 25 Abs. 2 Nr. 2 TDDDG, Löschung alter `localStorage`-Daten
 - [ ] 2.7 Herkunftsmessung: Art. 6 Abs. 1 lit. f, Interessenabwägung, Verhältnis zu § 25 TDDDG
+- [ ] 2.7 Entwurf 2026-10-14: Kanal-Kürzel `?herkunft=` im Link zum Bewerbungsformular (neuer Tab), Textvorschlag
 - [ ] 2.8 Google Maps: Einwilligung per Klick, Speicherung `be:maps-consent:v1`, Widerruf, Angaben zu Google und DPF
 - [ ] 2.9 Kontakt ohne Kontaktformular (O5) und WhatsApp-Absatz (O6 beantwortet, O9 offen)
+- [ ] 2.9 Entwurf 2026-10-14: sichtbares Kürzel „– W-…“ am Ende des vorausgefüllten WhatsApp-Texts, Textvorschlag
 - [ ] 2.10 „Keine Cookies, keine Pixel, keine Analyse“ und Schriften-Absatz
 - [ ] 2.10 Schriftnamen-Korrektur vom 2026-10-10 (Bricolage Grotesque, Atkinson Hyperlegible Next, Martian Mono statt Inter; M-019)
 - [ ] 2.11 Ergänzungen bei den Rechten (Google-Maps-Widerruf, Kontaktzeile)

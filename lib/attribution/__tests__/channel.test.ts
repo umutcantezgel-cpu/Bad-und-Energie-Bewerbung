@@ -34,6 +34,10 @@ const CASES: Array<[string, Attribution, AcquisitionChannel]> = [
   ['Unbekannte Seite', { referrerHost: 'forum.example.org' }, 'other'],
   ['Unbekannte Kampagne', { utmSource: 'flyer', utmMedium: 'print' }, 'other'],
   ['Google-Suche mit Kampagne ohne Paid-Medium', { utmSource: 'google', utmMedium: 'organic' }, 'other'],
+  // utm_medium=organic ohne Quelle: Suchmaschine unbekannt (so trägt ?herkunft=such den Kanal, lib/attribution/link.ts)
+  ['Suche, weitergetragen über einen internen Link', { utmMedium: 'organic', landingPath: '/bewerbung' }, 'organic_search'],
+  ['organisch ohne Quelle, aber mit Empfehlungscode', { utmMedium: 'organic', ref: 'koch' }, 'referral'],
+  ['Facebook mit utm_medium=organic bleibt Social, nicht Suche', { utmSource: 'facebook', utmMedium: 'organic' }, 'social'],
 ];
 
 describe('deriveChannel', () => {

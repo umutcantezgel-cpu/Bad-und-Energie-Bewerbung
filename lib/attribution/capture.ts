@@ -1,10 +1,12 @@
 import type { Attribution } from '@/lib/applications/schema';
+import { attributionAusHerkunft, HERKUNFT_PARAM } from './link';
 import { ATTRIBUTION_LIMITS, sanitizeHost, sanitizePath, sanitizeToken } from './sanitize';
 
 /**
  * Liest die Attribution aus der Einstiegs-URL und dem Referrer (rein, ohne Browser-APIs).
  * Gespeichert wird nur, was für die Kanal-Zuordnung nötig ist: utm_*, ref, der Host des
  * Referrers (nie die volle URL) und der Pfad der Einstiegsseite ohne Query.
+ * Hat die Adresse kein eigenes Signal, zählt `?herkunft=` (Kanal aus einem internen Link, link.ts).
  */
 
 export interface CaptureInput {
@@ -71,6 +73,12 @@ export function attributionFromUrl({ url, referrer }: CaptureInput): Attribution
   if (referrerUrl && !isSameSite(referrerUrl.hostname, page.hostname)) {
     const host = sanitizeHost(referrerUrl.hostname);
     if (host) result.referrerHost = host;
+  }
+
+  // Herkunft aus einem internen Link (neuer Tab, Neuladen): nur ohne eigenes Signal. Wer den Link von außen
+  // bekommt (fremder Referrer) oder mit UTM bzw. ref aufruft, kommt über diesen Weg, nicht über den alten Kanal.
+  if (Object.keys(result).length === 0) {
+    Object.assign(result, attributionAusHerkunft(page.searchParams.get(HERKUNFT_PARAM)));
   }
 
   const landingPath = sanitizePath(page.pathname);
