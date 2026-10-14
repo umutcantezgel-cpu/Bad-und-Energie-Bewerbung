@@ -22,7 +22,7 @@ export const FEHLER_ETIKETT = 'Seite nicht gefunden';
 export const FEHLER_ETIKETT_SR = 'Fehler 404: ';
 
 /** Maß an der Zeichnung (Martian Mono mit Maßlinie): der Fehlercode in Bildgröße. */
-export const FEHLER_MASSE = Object.freeze([{ wert: '404', name: 'Fehlercode' }] as const);
+export const FEHLER_MASSE = Object.freeze([{ wert: '404', name: 'Fehlercode', groesse: 'gross' }] as const);
 
 /** h1 (TEXTVORSCHLAG zu E-SHELL-025: Altstand „Hier hat sich wohl eine Rohrleitung verirrt“ ohne „wohl“). */
 export const FEHLER_TITEL = 'Hier hat sich eine Rohrleitung verirrt.';

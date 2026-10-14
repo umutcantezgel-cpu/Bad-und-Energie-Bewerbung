@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -93,6 +93,15 @@ describe('404-Seite (R4-404 in R5-RUHE)', () => {
   it('Metadaten: Titel bleibt, robots nur das 404-noindex von Next (kein doppeltes robots-Meta)', () => {
     expect(metadata.title).toBe('Seite nicht gefunden');
     expect(metadata.robots).toBeNull();
+  });
+
+  it('Befund 8 (E-029, Runde 2): ohne eigenes CSS-Modul, sonst lädt jede Seite es als CSS-Preload vorab', () => {
+    const quelle = readFileSync(path.join(ROOT, 'components/site/fehler/FehlerSeite.tsx'), 'utf8');
+    expect(quelle).not.toMatch(/\.css['"]/);
+    expect(readdirSync(path.join(ROOT, 'components/site/fehler')).filter((datei) => datei.endsWith('.css'))).toEqual([]);
+    // Der Fehlercode bleibt in der Zahlenstufe (Masskette `gross`), das Raster am Desktop zweispaltig
+    expect(html).toMatch(/<span class="[^"]*mkGross[^"]*">404<\/span>/);
+    expect(html).toContain('lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]');
   });
 
   it('Bewegung nur mit Registerkennungen, keine lucide-Importe, Server-Komponenten', () => {

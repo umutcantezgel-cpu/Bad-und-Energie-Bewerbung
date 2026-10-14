@@ -90,6 +90,8 @@ export interface SeitenkopfMass {
    * Maße, die die Seite auch im Text oder in der Zeichnung nennt.
    */
   nurBreit?: boolean;
+  /** Größe des Werts (Masskette): `gross` in der Zahlenstufe wie die großen Maße des Einstiegs (404-Seite). */
+  groesse?: 'normal' | 'gross';
 }
 
 export interface SeitenkopfProps {
@@ -220,7 +222,7 @@ export function Seitenkopf({
             <ul className={cn(styles.masse, masseZweispaltig && styles.masseZweispaltig)}>
               {masse.slice(0, 4).map((mass) => (
                 <li key={`${mass.wert}-${mass.name}`} className={cn(styles.mass, mass.nurBreit && styles.massNurBreit)}>
-                  <Masskette wert={mass.wert} name={mass.name} />
+                  <Masskette wert={mass.wert} name={mass.name} groesse={mass.groesse} />
                 </li>
               ))}
             </ul>
