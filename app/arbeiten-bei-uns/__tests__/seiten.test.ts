@@ -110,6 +110,19 @@ describe('Routen unter /arbeiten-bei-uns', () => {
     expect(html).toContain(`href="${ARBEITEN_PATH}"`);
     expect(html).toContain(`text=${encodeURIComponent(WHATSAPP_GREETING)}`);
     expect(claimsInHtml(html)).toEqual([]);
+    if (id === 'fahrzeug-und-werkzeug') {
+      // Kopfbild Servicefahrzeug (E-029): ein Bild, sein Name beschreibt diese Zeichnung, nicht die alte mit Rohrpaar
+      expect(html.match(/data-zeichnung="servicefahrzeug"/g)).toHaveLength(1);
+      expect(html).toMatch(/role="img" aria-label="Transporter von der Seite, die Schiebetür offen[^"]*"[^>]*data-zeichnung="servicefahrzeug"/);
+      expect(html).not.toMatch(/Rohrpaar|Dachträger/);
+    }
+    if (id === 'diskret-wechseln') {
+      // Laufzettel (E-029): echter Text in drei Zeilen statt Abzweig mit Blindflansch, ohne Bildnamen
+      const zettel = /<div[^>]*data-zeichnung="laufzettel"[^>]*>([\s\S]*?)<\/dl>/.exec(html)?.[1] ?? '';
+      expect(zettel).toMatch(/<dt[^>]*>Von<\/dt><dd[^>]*>Du<\/dd>[\s\S]*<dt[^>]*>An<\/dt><dd[^>]*>Wetzlar<\/dd>[\s\S]*<dt[^>]*>Nicht an<\/dt><dd[^>]*>Dein Arbeitgeber<\/dd>/);
+      expect(zettel).not.toContain('role="img"');
+      expect(html).not.toMatch(/Blindflansch|Abzweig/);
+    }
     if (id === 'gehalt') {
       // „Bezahlung und Extras“ (E-030): jede live Stelle mit Lohn auf Anfrage; das Schülerpraktikum sagt nichts zu Geld
       for (const job of jobs) {

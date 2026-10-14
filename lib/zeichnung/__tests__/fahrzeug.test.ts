@@ -1,7 +1,10 @@
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { Servicefahrzeug, fahrzeugTitel } from '@/components/themen/Servicefahrzeug';
+import { Servicefahrzeug } from '@/components/themen/Servicefahrzeug';
+import { escapeHtml } from '@/lib/jobs/format';
+import { getActiveJobs } from '@/lib/jobs/registry';
+import { getThemaPageText } from '@/lib/themen/text';
 import { GESCHAETZT } from '../norm';
 import { FAHRZEUG, FAHRZEUG_MM, FAHRZEUG_RAHMEN } from '../szenen/fahrzeug';
 
@@ -79,9 +82,15 @@ describe('Servicefahrzeug (Seitenansicht, 1 Einheit = 10 mm, E-029)', () => {
   });
 
   it('gezeichnet ohne Rohr-Metapher: keine Leitungen, keine Wärmefläche, kein Zirkel; Linienarten der Zeichnung', () => {
-    const html = renderToStaticMarkup(createElement(Servicefahrzeug, { titel: 'alter Titel mit Rohrpaar', etiketten: ETIKETTEN }));
-    expect(html).toContain(`role="img" aria-label="${fahrzeugTitel(ETIKETTEN)}"`);
-    expect(fahrzeugTitel(ETIKETTEN)).not.toMatch(/Rohr|Dachträger|Vorlauf|Rücklauf/);
+    const seite = getThemaPageText('fahrzeug-und-werkzeug', { jobs: getActiveJobs() });
+    if (seite.id !== 'fahrzeug-und-werkzeug') throw new Error('falsche Seite');
+    const { titel } = seite.zeichnung;
+    const html = renderToStaticMarkup(createElement(Servicefahrzeug, { titel, etiketten: ETIKETTEN }));
+    expect(html).toContain(`role="img" aria-label="${escapeHtml(titel)}"`);
+    // Der Bildname aus lib/themen beschreibt diese Zeichnung: Seitenansicht, offene Schiebetür, Ausbau; kein Dachträger
+    expect(titel).toMatch(/^Transporter von der Seite, die Schiebetür offen/);
+    expect(titel).toContain(seite.zeichnung.etiketten.sortimo);
+    expect(titel).not.toMatch(/Rohr|Dachträger|Vorlauf|Rücklauf/);
     // Die Zeichnung selbst (ohne die Etiketten-Kästchen mit ihren Icons)
     const bild = html.slice(0, html.indexOf('</svg>'));
     expect(bild).not.toMatch(/vorlauf|ruecklauf|waerme|strich|rohr/i);

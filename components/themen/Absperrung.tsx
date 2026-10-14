@@ -2,11 +2,6 @@ import { cn } from '@/lib/utils/cn';
 import styles from './themen.module.css';
 
 export interface AbsperrungProps {
-  /**
-   * Zugänglicher Name aus lib/themen/text.ts. Er beschreibt noch die alte Zeichnung (Abzweig mit Blindflansch); die
-   * Fassung seit E-029 ist echter Text und braucht keinen Bildnamen.
-   */
-  titel?: string;
   /** Beschriftungen: Anfang des Wegs (du), wohin nichts geht (derzeitiger Arbeitgeber), Ziel (Firmensitz). */
   etiketten: { du: string; arbeitgeber: string; ziel: string };
   className?: string;

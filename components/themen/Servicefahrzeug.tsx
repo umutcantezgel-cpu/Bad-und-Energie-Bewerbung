@@ -5,22 +5,11 @@ import { cn } from '@/lib/utils/cn';
 import styles from './themen.module.css';
 
 export interface ServicefahrzeugProps {
-  /**
-   * Zugänglicher Name aus lib/themen/text.ts. Er beschreibt noch die alte Zeichnung (Rohrpaar auf dem Dachträger);
-   * bis er angepasst ist, gilt der Name aus `fahrzeugTitel`, der zur Zeichnung passt.
-   */
-  titel?: string;
+  /** Zugänglicher Name aus lib/themen/text.ts (`zeichnung.titel`); er beschreibt genau diese Zeichnung. */
+  titel: string;
   /** Beschriftungen an der Zeichnung, aus den Fakten (vehicle, hilti); siehe lib/themen/text.ts `zeichnung`. */
   etiketten: { sortimo: string; hilti: string; mess: string };
   className?: string;
-}
-
-/** Zugänglicher Name aus den Etiketten (belegte Ausstattung), passend zur Zeichnung. */
-export function fahrzeugTitel(etiketten: ServicefahrzeugProps['etiketten']): string {
-  return (
-    `Transporter von der Seite, die Schiebetür offen und nach hinten geschoben: dahinter der ${etiketten.sortimo} mit ` +
-    'Regalböden, Koffern und Kleinteilekästen, unten auf dem Ladeboden der Werkzeugkoffer.'
-  );
 }
 
 /**
@@ -33,11 +22,11 @@ export function fahrzeugTitel(etiketten: ServicefahrzeugProps['etiketten']): str
  * Seitenkopfs). Die Etiketten-Kästchen nennen nur belegte Ausstattung; am Handy stehen sie als Reihe unter dem Bild,
  * ab 26rem Bildbreite an ihren Stellen.
  */
-export function Servicefahrzeug({ etiketten, className }: ServicefahrzeugProps) {
+export function Servicefahrzeug({ titel, etiketten, className }: ServicefahrzeugProps) {
   const f = FAHRZEUG;
   const o = f.oeffnung;
   return (
-    <div className={cn(styles.fahrzeug, className)} role="img" aria-label={fahrzeugTitel(etiketten)} data-zeichnung="servicefahrzeug">
+    <div className={cn(styles.fahrzeug, className)} role="img" aria-label={titel} data-zeichnung="servicefahrzeug">
       <svg className={t.zeichnung} viewBox={`0 0 ${FAHRZEUG_RAHMEN.breite} ${FAHRZEUG_RAHMEN.hoehe}`} aria-hidden="true" focusable="false">
         {/* Aufbau mit ausgesparten Radläufen; Tür vorn mit Scheibe, Griff und Spiegel; Leuchten */}
         <path d={f.aufbau} className={cn(t.kontur, t.flaeche)} />

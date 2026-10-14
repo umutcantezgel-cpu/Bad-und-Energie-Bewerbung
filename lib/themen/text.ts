@@ -727,7 +727,8 @@ export function getFahrzeugPageText(options: TextOptions): FahrzeugPageText {
     },
     zitat,
     zeichnung: {
-      titel: `Transporter mit offener Schiebetür: dahinter der ${sortimo} mit Koffern und Kleinteilekästen, unten der Hilti-Koffer, auf dem Dachträger ein Rohrpaar.`,
+      // Beschreibt die Zeichnung 2.0 (components/themen/Servicefahrzeug.tsx): Ausbau hinter der Schiebetür, kein Dachträger
+      titel: `Transporter von der Seite, die Schiebetür offen und nach hinten geschoben: dahinter der ${sortimo} mit Regalböden, Koffern und Kleinteilekästen, unten auf dem Ladeboden der Werkzeugkoffer.`,
       etiketten: { sortimo, hilti: `Hilti ${volt}`, mess: FACTS[erlaubt('measurementTools', now)].short.replace(/^Moderne /, '') },
     },
     weitere: weitere('fahrzeug-und-werkzeug', options),
@@ -753,12 +754,6 @@ export interface WpStelle extends StellenVerweis {
   /** Satz der Stellen-Einleitung mit „Wärmepumpe“ (Wortlaut der Anzeige), sonst null. */
   einleitung: string | null;
   aufgaben: readonly string[];
-  /**
-   * Seit E-030 kein Betrag mehr: immer null. Die Felder bleiben nur, bis components/themen/WaermepumpenSeite.tsx
-   * (Paket Zeichnung 2.0) sie nicht mehr liest; dann entfallen sie.
-   */
-  betrag: null;
-  einheit: string;
 }
 
 export interface WaermepumpenPageText extends SeitenBasis {
@@ -781,8 +776,6 @@ export function getWaermepumpenPageText(options: TextOptions): WaermepumpenPageT
       ...verweis(job),
       einleitung: saetze(job.intro).find((s) => WP.test(s)) ?? null,
       aufgaben,
-      betrag: null,
-      einheit: '',
     }));
   const [, spezialist] = meilensteinSaetze();
   const am = jobs.find((job) => job.category === 'anlagenmechaniker');
@@ -953,8 +946,8 @@ export function getBetriebPageText(options: TextOptions): BetriebPageText {
 // ─── Diskret wechseln ───────────────────────────────────────────────────────
 
 export interface DiskretPageText extends SeitenBasis {
-  /** Zeichnung im Kopf: zugänglicher Name und Etiketten-Kästchen. */
-  zeichnung: { titel: string; etiketten: { du: string; arbeitgeber: string; ziel: string } };
+  /** Laufzettel im Kopf (echter Text, kein Bild; components/themen/Absperrung.tsx): die drei Zeilen. */
+  zeichnung: { etiketten: { du: string; arbeitgeber: string; ziel: string } };
   ablauf: { kopf: Kopfzeile };
   brauchst: { kopf: Kopfzeile; kaesten: readonly Kasten[] };
   stellen: { kopf: Kopfzeile } | null;
@@ -999,7 +992,6 @@ export function getDiskretPageText(options: TextOptions): DiskretPageText {
     kontakt: kontakt('diskret-wechseln'),
     og: { wert: diskret.short.replace(/ diskret$/, '').replace(' ', NBSP), name: 'diskret', zeilen: [`${diskret.short}.`, `${ohneLebenslauf.short}.`] },
     zeichnung: {
-      titel: `Vorlauf und Rücklauf führen von dir bis zum Firmensitz in ${COMPANY.address.city}. Der Abzweig zu deinem derzeitigen Arbeitgeber endet an einem Blindflansch und bleibt geschlossen.`,
       etiketten: { du: 'Du', arbeitgeber: 'Dein Arbeitgeber', ziel: COMPANY.address.city },
     },
     ablauf: { kopf: { id: 'ablauf', etikett: 'Ablauf', heading: 'In 3 Schritten zu deinem neuen Job' } },

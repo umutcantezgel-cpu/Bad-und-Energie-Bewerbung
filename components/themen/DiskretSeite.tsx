@@ -14,8 +14,8 @@ import { ThemaKopf } from './ThemaKopf';
 import styles from './themen.module.css';
 
 /**
- * Themenseite Diskret wechseln (E-028). Tonfolge: Kopf Papier/Navy (Absperrung: der Abzweig zum derzeitigen
- * Arbeitgeber endet am Blindflansch) · Ablauf Papier (die drei Schritte wie auf den Stellenseiten, ohne die Zusage, die
+ * Themenseite Diskret wechseln (E-028). Tonfolge: Kopf Papier/Navy (Laufzettel seit E-029: „Von: Du“, „An: Wetzlar“,
+ * „Nicht an: Dein Arbeitgeber“) · Ablauf Papier (die drei Schritte wie auf den Stellenseiten, ohne die Zusage, die
  * schon im Kopf steht) · Was du brauchst Navy · Stellen Wand (mit Gehalt) · Kündigungsfrist und Daten Papier · Weitere Themen Wand · Kontakt
  * Papier.
  */
@@ -26,7 +26,7 @@ export function DiskretSeite({ text, jobs }: { text: DiskretPageText; jobs: read
         text={text}
         pfad={themaPfad(getThema('diskret-wechseln'))}
         bildBreit
-        panel={<Absperrung titel={text.zeichnung.titel} etiketten={text.zeichnung.etiketten} />}
+        panel={<Absperrung etiketten={text.zeichnung.etiketten} />}
       />
 
       {/* Ohne eigenen Namen: JobProcess ist selbst die benannte Region („stelle-ablauf“), sonst zwei gleiche Landmarken */}
