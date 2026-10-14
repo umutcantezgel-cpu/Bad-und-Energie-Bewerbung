@@ -133,14 +133,21 @@ describe('Schrift in den Zeichnungen (Mindestgröße der Website, e2e/pages.spec
 });
 
 describe('Glyphe waermepumpe (K-010): Proportionen der Außeneinheit', () => {
-  it('Gehäuse im Verhältnis 1.100 : 800, Ausblasöffnung links der Mitte mit dem Durchmesser des Moduls, zwei Halterungen', () => {
+  it('Gehäuse im Verhältnis der Vorderansicht (oben gerundet, unten scharfkantig), Ausblasöffnung links der Mitte, zwei Halterungen', () => {
     const g = COMPRESS_AW_S;
     const formen = GLYPH_SHAPES.waermepumpe as readonly Record<string, number | string>[];
-    const gehaeuse = formen.find((f) => 'width' in f) as { x: number; y: number; width: number; height: number };
+    // Gehäuse wie vorderansicht(): von unten links hinauf, zwei Bögen an den oberen Ecken, unten keine Rundung
+    const kontur = String((formen.find((f) => 'd' in f && String(f.d).includes('A')) as { d: string }).d);
+    const t = kontur.match(/^M([\d.]+) ([\d.]+)V([\d.]+)A([\d.]+) \4 0 0 1 ([\d.]+) ([\d.]+)H([\d.]+)A\4 \4 0 0 1 ([\d.]+) \3V\2Z$/);
+    expect(t, kontur).not.toBeNull();
+    const [x0, unten, , , , oben, , x1] = t!.slice(1).map(Number);
+    const gehaeuse = { x: x0, y: oben, width: x1 - x0, height: unten - oben };
+    expect(formen.some((f) => 'width' in f)).toBe(false);
     const [oeffnung, nabe] = formen.filter((f) => 'r' in f) as Array<{ cx: number; cy: number; r: number }>;
     const k = gehaeuse.width / g.breite.mm;
-    expect(gehaeuse.height / k).toBeGreaterThan(g.hoehe.mm * 0.98);
-    expect(gehaeuse.height / k).toBeLessThan(g.hoehe.mm * 1.02);
+    const gehaeuseHoehe = g.hoehe.mm - g.konsolen.hoehe.mm;
+    expect(gehaeuse.height / k).toBeGreaterThan(gehaeuseHoehe * 0.98);
+    expect(gehaeuse.height / k).toBeLessThan(gehaeuseHoehe * 1.02);
     expect((oeffnung.cx - gehaeuse.x) / k).toBeGreaterThan(g.ausblas.mitteX.mm * 0.97);
     expect((oeffnung.cx - gehaeuse.x) / k).toBeLessThan(g.ausblas.mitteX.mm * 1.03);
     expect((oeffnung.cx - gehaeuse.x) / k).toBeLessThan(g.breite.mm / 2);
@@ -148,8 +155,10 @@ describe('Glyphe waermepumpe (K-010): Proportionen der Außeneinheit', () => {
     expect((2 * oeffnung.r) / k).toBeLessThan(g.ausblas.durchmesser.mm * 1.05);
     expect(nabe.r).toBeLessThan(oeffnung.r / 2);
     // Halterungen bei 107 und 107 + 881 mm, unter dem Gehäuse; kein Lüfter mit Blättern mehr
-    const fuesse = [...String((formen.find((f) => 'd' in f) as { d: string }).d).matchAll(/M(-?\d*\.?\d+) (-?\d*\.?\d+)/g)].map((m) => Number(m[1]));
+    const halterungen = String((formen.find((f) => 'd' in f && !String(f.d).includes('A')) as { d: string }).d);
+    const fuesse = [...halterungen.matchAll(/M(-?\d*\.?\d+) (-?\d*\.?\d+)/g)].map((m) => Number(m[1]));
     expect(fuesse).toHaveLength(2);
+    for (const m of halterungen.matchAll(/M-?\d*\.?\d+ (-?\d*\.?\d+)/g)) expect(Number(m[1])).toBe(unten);
     expect((fuesse[0] - gehaeuse.x) / k).toBeCloseTo(g.konsolen.randabstand.mm, -1);
     expect((fuesse[1] - fuesse[0]) / k).toBeCloseTo(g.konsolen.abstand.mm, -1);
     expect(formen.some((f) => 'transform' in f)).toBe(false);
@@ -237,12 +246,22 @@ describe('Fließrichtung in den gezeichneten Schemata (K-003.2)', () => {
     expect(m).toContain(`${COMPRESS_AW_S.kaeltemittel.name} (Propan), 0,95 kg`);
   });
 
-  it('der Hausschnitt zeichnet die Leitungen des Moduls; der Vorlauf beginnt unter dem Gerät', () => {
+  it('der Hausschnitt zeichnet die Leitungen des Moduls; vom Anschluss bis unter das Gelände als verdeckte Linie', () => {
     const m = html(createElement(HausschnittKlein, {}));
     const gezeichnet = wege(m);
     const ohneKnopf = HAUS_LEITUNGEN.filter((l) => !l.nur);
     expect(gezeichnet.map((w) => w.key).sort()).toEqual(ohneKnopf.map((l) => l.id).sort());
     for (const w of gezeichnet) expect(w.d).toBe(ohneKnopf.find((l) => l.id === w.key)!.d);
+    // Die Stücke hinter Gehäuse und Sockel stehen in der Linienart verdeckt, ohne Bewegung; alle anderen als Leitung
+    for (const l of ohneKnopf) {
+      const tag = m.match(new RegExp(`<path [^>]*data-weg="${l.id}"[^>]*>`))![0];
+      expect(tag.includes('data-verdeckt=""'), l.id).toBe(Boolean(l.verdeckt));
+      expect(tag, l.id).not.toContain('data-motion');
+      expect(/class="[^"]*_verdeckt_/.test(tag), l.id).toBe(Boolean(l.verdeckt));
+      expect(/class="[^"]*_leitung_/.test(tag), l.id).toBe(!l.verdeckt);
+    }
+    // Ohne die Leitungen zur Bewerbung kreuzt sich nichts, also auch kein Mantel
+    for (const l of ohneKnopf.filter((x) => x.mantel)) expect(m).not.toContain(`<path d="${l.mantel}"`);
   });
 });
 

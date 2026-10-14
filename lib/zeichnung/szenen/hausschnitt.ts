@@ -11,6 +11,9 @@
  * Fließrichtung (K-003.2): Jeder Leitungsweg ist in Fließrichtung angelegt. Der Vorlauf beginnt an der Außeneinheit
  * (Wärmeerzeuger) und läuft zur Inneneinheit, von dort zum Heizkörper; ein Abzweig läuft zur Bewerbung (Startseite:
  * links aus dem Bild in den roten Knopf). Der Rücklauf kommt vom Verbraucher zurück zur Außeneinheit.
+ *
+ * Die Anschlüsse sitzen hinten am Gerät (202 mm über der Aufstellfläche). Von vorn liegen die Leitungen dort hinter
+ * Gehäuse und Sockel: bis unter die Geländeoberkante als verdeckte Linie (`verdeckt`), erst im Erdreich voll.
  * Maße ohne Beleg tragen `geschaetzt` (Sockel, Raumhöhe, Lage der Inneneinheit); Prüfung:
  * lib/zeichnung/__tests__/zeichnung-daten.test.ts und schemata.test.ts.
  */
@@ -36,11 +39,12 @@ const SOCKEL_HOEHE = 10; // geschaetzt: Betonsockel 100 mm über Gelände (Herst
 const GERAET = {
   x: 100,
   breite: e(G.breite.mm),
+  /** Höhe ab Aufstellfläche (mit Bodenhalterungen), wie im Geräte-Modul. */
   hoehe: e(G.hoehe.mm),
-  konsole: e(G.konsolen.hoehe.mm),
 };
-const GERAET_UNTEN = GOK - SOCKEL_HOEHE - GERAET.konsole;
-const GERAET_OBEN = GERAET_UNTEN - GERAET.hoehe;
+/** Aufstellfläche: Oberkante der Sockel, Unterkante der Bodenhalterungen. */
+const AUFSTELLFLAECHE = GOK - SOCKEL_HOEHE;
+const GERAET_OBEN = AUFSTELLFLAECHE - GERAET.hoehe;
 
 /** Haus: Außenwände, Bodenplatte, Decke, Dach 45°. Alle Werte geschätzt (ein typischer eingeschossiger Schnitt). */
 const HAUS = {
@@ -73,17 +77,25 @@ const HK = {
 };
 
 /**
- * Anschlüsse der Außeneinheit (hinten, von vorn gesehen rechts; 87 und 87 + 90 mm vom rechten Rand): Die Steigleitungen
- * werden unter dem Gehäuse sichtbar. Welcher Stutzen Vorlauf und welcher Rücklauf ist, nennt Bild 4 nicht; die
- * Zuordnung hier (Vorlauf innen) ist gewählt (geschaetzt) und Teil der Abnahme (M-037).
+ * Anschlüsse der Außeneinheit hinten, von vorn gesehen rechts: 87 und 87 + 90 mm vom rechten Rand, 202 mm über der
+ * Aufstellfläche (Bild 4). Der Vorlauf (Heizwasser zur Inneneinheit) ist der äußere Stutzen, der Rücklauf der innere:
+ * Bild 28 [1] und [2] (DK: S. 16 Fig. 28), im Geräte-Modul unter `hydraulik.vorlauf`.
  */
+const AUSSEN = r1(GERAET.x + GERAET.breite - e(G.hydraulik.abstandRand.mm));
+const INNEN = r1(GERAET.x + GERAET.breite - e(G.hydraulik.abstandRand.mm + G.hydraulik.abstandZwischen.mm));
 const ANSCHLUSS = {
-  vorlauf: r1(GERAET.x + GERAET.breite - e(G.hydraulik.abstandRand.mm + G.hydraulik.abstandZwischen.mm)),
-  ruecklauf: r1(GERAET.x + GERAET.breite - e(G.hydraulik.abstandRand.mm)),
+  vorlauf: G.hydraulik.vorlauf.lage === 'aussen' ? AUSSEN : INNEN,
+  ruecklauf: G.hydraulik.vorlauf.lage === 'aussen' ? INNEN : AUSSEN,
+  y: r1(AUFSTELLFLAECHE - e(G.hydraulik.hoehe.mm)),
 };
 
-/** Tiefe der Erdleitung (frostfrei, 0,6–0,7 m; geschaetzt), Rücklauf über dem Vorlauf. */
-const ERD = { ruecklauf: GOK + 58, vorlauf: GOK + 70 };
+/**
+ * Tiefe der Erdleitung (frostfrei, 0,7–0,8 m; geschaetzt). Der Vorlauf kommt vom äußeren Stutzen und biegt höher zum
+ * Haus ab, der Rücklauf vom inneren Stutzen läuft darunter: Die Bögen liegen ineinander, nichts kreuzt sich. Nur die
+ * Leitungen zur Bewerbung (Startseite) kreuzen die Steigleitung des Rücklaufs; dort liegt der Rücklauf vorn (Mantel).
+ * Der Rücklauf von der Bewerbung (Handy) mündet höher in die Steigleitung (`ruecklaufKnopf`).
+ */
+const ERD = { vorlauf: GOK + 70, ruecklauf: GOK + 80, ruecklaufKnopf: GOK + 58 };
 /** Lage der Leitungen zur Bewerbung (Startseite): senkrecht links (mobil) bzw. waagerecht aus dem Bild (Desktop). */
 export const KNOPF_LEITUNG = Object.freeze({ vorlaufX: 28, ruecklaufX: 14, desktopY: ERD.vorlauf });
 
@@ -95,6 +107,11 @@ export interface Leitung {
   punkte: readonly Punkt[];
   /** Nur in einer Fassung: `knopf` (Startseite, Leitung zur Bewerbung), `mobil`/`desktop` (Lage des Knopfs). */
   nur?: 'knopf-mobil' | 'knopf-desktop' | 'knopf';
+  /**
+   * Stück hinter Gehäuse und Sockel (vom Anschluss bis unter die Geländeoberkante): gezeichnet in der Linienart
+   * `verdeckt`, ohne Bewegung.
+   */
+  verdeckt?: true;
   /**
    * Stück, an dem diese Leitung vor einer anderen liegt (Kreuzung ohne Verbindung): dort ein Mantel in der Fläche,
    * damit die hintere Leitung aussetzt.
@@ -110,21 +127,34 @@ const weg = (id: string, medium: Medium, punkte: Punkt[], extra: Partial<Leitung
   ...extra,
 });
 
-const VL_IE_X = IE.x + 40;
-const RL_IE_X = IE.x + 16;
+/** Abzweig des Vorlaufs zur Bewerbung: auf der Steigleitung, wo ihr Bogen zum Haus beginnt. */
+const KNOPF_ABZWEIG = { x: ANSCHLUSS.vorlauf, y: ERD.vorlauf - BOGEN };
+
+/** Steigleitungen in der Inneneinheit: der höher liegende Vorlauf innen, der Rücklauf außen herum. */
+const VL_IE_X = IE.x + 16;
+const RL_IE_X = IE.x + 40;
 
 export const LEITUNGEN: readonly Leitung[] = [
-  // Vorlauf: aus der Außeneinheit nach unten in den Rohrgraben, durch die Wanddurchführung zur Inneneinheit
+  // Vorlauf: vom Anschluss hinten am Gerät hinter Gehäuse und Sockel abwärts (verdeckt) …
+  weg(
+    'vorlauf-anschluss',
+    'vorlauf',
+    [
+      { x: ANSCHLUSS.vorlauf, y: ANSCHLUSS.y },
+      { x: ANSCHLUSS.vorlauf, y: GOK },
+    ],
+    { verdeckt: true },
+  ),
+  // … und ab der Geländeoberkante in den Rohrgraben, durch die Wanddurchführung zur Inneneinheit
   weg(
     'vorlauf-erde',
     'vorlauf',
     [
-      { x: ANSCHLUSS.vorlauf, y: GERAET_UNTEN },
+      { x: ANSCHLUSS.vorlauf, y: GOK },
       { x: ANSCHLUSS.vorlauf, y: ERD.vorlauf },
       { x: VL_IE_X, y: ERD.vorlauf },
       { x: VL_IE_X, y: HAUS.fussboden },
     ],
-    { mantel: `M${ANSCHLUSS.vorlauf} ${ERD.ruecklauf - 9}V${ERD.ruecklauf + 9}` },
   ),
   // Vorlauf von der Inneneinheit zum Heizkörper (oben angeschlossen)
   weg('vorlauf-haus', 'vorlauf', [
@@ -136,18 +166,37 @@ export const LEITUNGEN: readonly Leitung[] = [
     { x: HK.x, y: HK.y + HK.hoehe - 6 },
     { x: IE.x + IE.breite, y: HK.y + HK.hoehe - 6 },
   ]),
-  // Rücklauf: aus der Inneneinheit durch die Wanddurchführung zurück zur Außeneinheit
-  weg('ruecklauf-erde', 'ruecklauf', [
-    { x: RL_IE_X, y: HAUS.fussboden },
-    { x: RL_IE_X, y: ERD.ruecklauf },
-    { x: ANSCHLUSS.ruecklauf, y: ERD.ruecklauf },
-    { x: ANSCHLUSS.ruecklauf, y: GERAET_UNTEN },
-  ]),
-  // Abzweig zur Bewerbung: Vorlauf nach links aus dem Bild (Desktop) bzw. senkrecht nach unten (Handy)
+  // Rücklauf: aus der Inneneinheit durch die Wanddurchführung zurück zur Außeneinheit, unter dem Gelände sichtbar …
+  weg(
+    'ruecklauf-erde',
+    'ruecklauf',
+    [
+      { x: RL_IE_X, y: HAUS.fussboden },
+      { x: RL_IE_X, y: ERD.ruecklauf },
+      { x: ANSCHLUSS.ruecklauf, y: ERD.ruecklauf },
+      { x: ANSCHLUSS.ruecklauf, y: GOK },
+    ],
+    // Kreuzung mit dem Vorlauf zur Bewerbung (nur Startseite und Teilen-Bild mit Knopf): der Rücklauf liegt vorn
+    { mantel: `M${ANSCHLUSS.ruecklauf} ${ERD.vorlauf - 9}V${ERD.vorlauf + 9}` },
+  ),
+  // … und hinter Sockel und Gehäuse (verdeckt) hinauf zum Anschluss
+  weg(
+    'ruecklauf-anschluss',
+    'ruecklauf',
+    [
+      { x: ANSCHLUSS.ruecklauf, y: GOK },
+      { x: ANSCHLUSS.ruecklauf, y: ANSCHLUSS.y },
+    ],
+    { verdeckt: true },
+  ),
+  // Abzweig zur Bewerbung: Vorlauf nach links aus dem Bild (Desktop) bzw. senkrecht nach unten (Handy). Er verlässt
+  // die Steigleitung dort, wo ihr Bogen zum Haus beginnt (T-Stück mit Bogen nach links), und läuft hinter der
+  // Steigleitung des Rücklaufs durch
   weg(
     'vorlauf-knopf',
     'vorlauf',
     [
+      KNOPF_ABZWEIG,
       { x: ANSCHLUSS.vorlauf, y: ERD.vorlauf },
       { x: KNOPF_LEITUNG.vorlaufX, y: ERD.vorlauf },
       { x: KNOPF_LEITUNG.vorlaufX, y: HAUSSCHNITT_RAHMEN.hoehe },
@@ -158,19 +207,20 @@ export const LEITUNGEN: readonly Leitung[] = [
     'vorlauf-knopf-desktop',
     'vorlauf',
     [
+      KNOPF_ABZWEIG,
       { x: ANSCHLUSS.vorlauf, y: ERD.vorlauf },
       { x: 0, y: ERD.vorlauf },
     ],
     { nur: 'knopf-desktop' },
   ),
-  // Rücklauf von der Bewerbung (Handy): links herauf, unter dem Gerät in die Rücklauf-Steigleitung
+  // Rücklauf von der Bewerbung (Handy): links herauf, im Rohrgraben in die Rücklauf-Steigleitung
   weg(
     'ruecklauf-knopf',
     'ruecklauf',
     [
       { x: KNOPF_LEITUNG.ruecklaufX, y: HAUSSCHNITT_RAHMEN.hoehe },
-      { x: KNOPF_LEITUNG.ruecklaufX, y: ERD.ruecklauf },
-      { x: ANSCHLUSS.ruecklauf, y: ERD.ruecklauf },
+      { x: KNOPF_LEITUNG.ruecklaufX, y: ERD.ruecklaufKnopf },
+      { x: ANSCHLUSS.ruecklauf, y: ERD.ruecklaufKnopf },
     ],
     { nur: 'knopf-mobil' },
   ),
@@ -192,6 +242,19 @@ export const PFEILE: readonly Pfeil[] = [
   pfeil('ruecklauf', { x: 456, y: HK.y + HK.hoehe - 6 }, { x: -1, y: 0 }),
   pfeil('vorlauf', { x: 80, y: ERD.vorlauf }, { x: -1, y: 0 }, 'knopf'),
 ];
+
+/**
+ * Betonsockel unter den Bodenhalterungen (geschaetzt: 240 mm breit, 100 mm hoch), mittig unter jeder Halterung. Als
+ * Rechtecke für Zeichnung und Prüfung (keine sichtbare Leitung darin).
+ */
+export const SOCKEL_LAGE: readonly { x: number; y: number; breite: number; hoehe: number }[] = Object.freeze(
+  [G.konsolen.randabstand.mm, G.konsolen.randabstand.mm + G.konsolen.abstand.mm].map((mm) => ({
+    x: r1(GERAET.x + e(mm) - 12),
+    y: AUFSTELLFLAECHE,
+    breite: 24,
+    hoehe: SOCKEL_HOEHE,
+  })),
+);
 
 /** Erdreich und Schnittflächen (Wände, Decke, Bodenplatte, Fundament, Dach). */
 const dachAussen = (x: number) => r1(FIRST.y - HAUS.dach * Math.SQRT2 + Math.abs(x - FIRST.x));
@@ -218,11 +281,9 @@ export const BAUTEILE = {
   /** Dieselbe Schraffur mit doppeltem Abstand für kleine Einsätze (unter rund 16rem Breite stünden die Linien dicht). */
   schraffurGrob: schraffurLinien(0, GOK, RAND_RECHTS, HAUSSCHNITT_RAHMEN.hoehe, SCHRAFFUR.abstandHaus * 2),
   /** Wanddurchführung (Futterrohr) im Fundament für beide Leitungen. */
-  durchfuehrung: `M${HAUS.links - 4} ${ERD.ruecklauf - 10}H${HAUS.links + HAUS.wand + 4}V${ERD.vorlauf + 10}H${HAUS.links - 4}Z`,
-  /** Betonsockel unter den Bodenhalterungen (geschaetzt). */
-  sockel: [G.konsolen.randabstand.mm, G.konsolen.randabstand.mm + G.konsolen.abstand.mm].map(
-    (mm) => `M${r1(GERAET.x + e(mm) - 12)} ${GOK - SOCKEL_HOEHE}H${r1(GERAET.x + e(mm) + 12)}V${GOK}H${r1(GERAET.x + e(mm) - 12)}Z`,
-  ),
+  durchfuehrung: `M${HAUS.links - 4} ${ERD.vorlauf - 10}H${HAUS.links + HAUS.wand + 4}V${ERD.ruecklauf + 10}H${HAUS.links - 4}Z`,
+  /** Betonsockel unter den Bodenhalterungen (SOCKEL_LAGE). */
+  sockel: SOCKEL_LAGE.map((q) => `M${q.x} ${q.y}H${r1(q.x + q.breite)}V${q.y + q.hoehe}H${q.x}Z`),
 } as const;
 
 /** Lage der Außeneinheit (verschachtelte Zeichnung mit viewBox in mm; 110 × 80 Einheiten). */
@@ -230,10 +291,12 @@ export const GERAET_LAGE = Object.freeze({
   x: GERAET.x,
   y: GERAET_OBEN,
   breite: GERAET.breite,
+  /** Höhe ab Aufstellfläche (mit Bodenhalterungen): 800 mm = 80 Einheiten. */
   hoehe: GERAET.hoehe,
   /** Unterkante der Halterungen (auf den Sockeln). */
-  boden: GERAET_UNTEN + GERAET.konsole,
+  boden: AUFSTELLFLAECHE,
 });
+
 
 export const INNENEINHEIT_LAGE = Object.freeze({ ...IE, pumpe: { x: IE.x + IE.breite / 2, y: IE.y + IE.hoehe / 2 } });
 export const HEIZKOERPER_LAGE = Object.freeze({ ...HK, lamellen: 9 });

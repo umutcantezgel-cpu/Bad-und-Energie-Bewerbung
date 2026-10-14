@@ -39,11 +39,16 @@ export interface Aussengeraet {
   name: string;
   modelle: readonly string[];
   quelle: Quelle;
-  /** Außenmaße des Gehäuses (B × H × T). */
+  /**
+   * Außenmaße wie in der Tabelle der Anleitung (B × H × T). Die Höhe zählt ab der Aufstellfläche, also mit den
+   * Bodenhalterungen; das Gehäuse allein ist `hoehe − konsolen.hoehe` hoch (Bild 4 bemaßt ab der Unterkante der
+   * Halterungen).
+   */
   breite: Mass;
   hoehe: Mass;
   tiefe: Mass;
   tiefeMitKonsolen: Mass;
+  /** Obere Längskanten links und rechts gerundet: von vorn und hinten runde Ecken, von der Seite eine Deckellinie. */
   oberkante: { radius: Mass };
   konsolen: {
     anzahl: number;
@@ -54,12 +59,13 @@ export interface Aussengeraet {
     /** Überstand der Bodenhalterungen vorn und hinten über das Gehäuse. */
     ueberstand: Mass;
     breite: Mass;
+    /** Höhe von der Aufstellfläche bis zur Unterkante des Gehäuses. */
     hoehe: Mass;
   };
   hydraulik: {
     /** Lage der Anschlüsse in Worten. */
     lage: string;
-    /** Höhe über Unterkante Gehäuse. */
+    /** Höhe der Anschlussmitte über der Aufstellfläche (Unterkante der Bodenhalterungen). */
     hoehe: Mass;
     /** Abstand des ersten Anschlusses vom Rand (Ansicht von hinten links). */
     abstandRand: Mass;
@@ -68,12 +74,21 @@ export interface Aussengeraet {
     durchmesser: Mass;
     /** Überstand der Anschlussstutzen hinten. */
     laenge: Mass;
+    /**
+     * Welcher Stutzen der Vorlauf (Heizwasser zur Inneneinheit) ist: `aussen` am Rand (`abstandRand`), `innen` den
+     * Abstand weiter; der andere ist der Rücklauf. Mit Fundstelle.
+     */
+    vorlauf: { lage: 'aussen' | 'innen'; stelle: string };
   };
   kondensat: {
-    /** Ablauf an der Unterseite: Abstand von rechts (Ansicht von vorn) und von vorn. */
-    vonRechts: Mass;
-    vonVorn: Mass;
+    /**
+     * Ablauf an der Unterseite: Abstand vom linken Rand (Ansicht von vorn) und von der Rückseite. Bild 6 zeigt das
+     * Gerät von unten mit der Front oben; links im Bild ist dort links von vorn, unten im Bild die Rückseite.
+     */
+    vonLinks: Mass;
+    vonHinten: Mass;
     durchmesser: Mass;
+    /** Überstand unter dem Gehäuse; höchstens so lang wie die Bodenhalterung hoch ist (der Stutzen steht nicht auf). */
     laenge: Mass;
   };
   verdampfer: { lage: string; tiefe: Mass; rand: Mass };

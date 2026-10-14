@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import type { ReactElement, ReactNode } from 'react';
 import { ImageResponse } from 'next/og';
 import { COMPANY } from '@/lib/content/company';
+import { TOKENS } from '@/lib/tokens';
 import { r1, type Medium } from '@/lib/zeichnung/norm';
 import {
   OG_BAUTEILE,
@@ -48,6 +49,8 @@ const px = (x: number) => PANEL_X + x * S;
 const py = (y: number) => HOUSE_TOP + y * S;
 /** Strichstärken im Bild (px) → Einheiten des Schnitts. */
 const vb = (pixels: number) => pixels / S;
+/** Strichmuster der verdeckten Linie (px wie auf der Website) in Einheiten des Schnitts. */
+const VERDECKT_MUSTER = TOKENS.linien.verdecktMuster.map(vb).join(' ');
 
 const BUTTON = { left: LEFT, width: 276, height: 64 } as const;
 const BUTTON_TOP = 500;
@@ -172,12 +175,17 @@ function Haus({ knopf }: { knopf: boolean }) {
       <rect x={hk.x} y={hk.y} width={hk.breite} height={hk.hoehe} {...kontur} fill={NAVY.flaeche} />
       <path d={lamellen.map((x) => `M${x} ${hk.y}V${hk.y + hk.hoehe}`).join('')} {...fein} />
       {/* Leitungen in Fließrichtung; an der Kreuzung liegt die vordere mit einem Mantel in der Fläche darüber */}
-      {leitungen.map((l) => (
-        <g key={l.id}>
-          {knopf && l.mantel ? <path d={l.mantel} {...stumpf} stroke={NAVY.flaeche} strokeWidth={vb(LEITUNG + 8)} /> : null}
-          <path d={l.d} fill="none" stroke={MEDIUM[l.medium]} strokeWidth={vb(LEITUNG)} strokeLinecap="butt" strokeLinejoin="round" />
-        </g>
-      ))}
+      {leitungen.map((l) =>
+        l.verdeckt ? (
+          // Hinter Gehäuse und Sockel: verdeckte Linie (1 px, gestrichelt wie --m-verdeckt-muster)
+          <path key={l.id} d={l.d} {...stumpf} stroke={MEDIUM[l.medium]} strokeWidth={vb(1)} strokeDasharray={VERDECKT_MUSTER} />
+        ) : (
+          <g key={l.id}>
+            {knopf && l.mantel ? <path d={l.mantel} {...stumpf} stroke={NAVY.flaeche} strokeWidth={vb(LEITUNG + 8)} /> : null}
+            <path d={l.d} fill="none" stroke={MEDIUM[l.medium]} strokeWidth={vb(LEITUNG)} strokeLinecap="butt" strokeLinejoin="round" />
+          </g>
+        ),
+      )}
       {ogPfeile(knopf).map((p) => (
         <path key={p.d} d={p.d} fill={MEDIUM[p.medium]} />
       ))}

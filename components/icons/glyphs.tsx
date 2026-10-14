@@ -24,14 +24,16 @@ export const GLYPH_SHAPES = {
   // ── Familie (B Runde 1) ──
   /**
    * Wärmepumpe (E-029): die Außeneinheit aus lib/zeichnung/geraete/compress-aw-s.ts im Raster, Breite 19 für 1.100 mm,
-   * Höhe 13,8 für 800 mm; runde Ausblasöffnung links der Mitte (Mitte 430 mm von links, Ø 540 mm), Nabe, zwei
-   * Bodenhalterungen 107 mm vom Rand bzw. 881 mm weiter. Geprüft in components/zeichnung/__tests__/technik.test.ts.
+   * Gehäuse 13,4 hoch für 775 mm (800 mm ab Aufstellfläche ohne die Halterungen); wie in der Vorderansicht nur die
+   * oberen Ecken gerundet (gerundete Längskanten), unten scharfkantig. Runde Ausblasöffnung links der Mitte (Mitte
+   * 430 mm von links, Ø 540 mm), Nabe, zwei Bodenhalterungen 107 mm vom Rand bzw. 881 mm weiter (im Piktogramm
+   * länger als maßstäblich, damit sie bei 20 px sichtbar bleiben). Geprüft in components/zeichnung/__tests__/technik.test.ts.
    */
   waermepumpe: [
-    { x: 2.5, y: 4.5, width: 19, height: 13.8, rx: 1.5 },
+    { d: 'M2.5 17.9V6A1.5 1.5 0 0 1 4 4.5H20A1.5 1.5 0 0 1 21.5 6V17.9Z' },
     { cx: 9.9, cy: 11.4, r: 4.7 },
     { cx: 9.9, cy: 11.4, r: 1.2 },
-    { d: 'M4.3 18.3v2M19.5 18.3v2' },
+    { d: 'M4.3 17.9v2.4M19.5 17.9v2.4' },
   ],
   /** Tropfen (Bad): Giebel 45° auf einem Kreis r 7 */
   tropfen: [{ d: 'M12 4.6 7.05 9.55a7 7 0 1 0 9.9 0Z' }, { d: 'M9 15.2a3.2 3.2 0 0 0 2.4 2.4' }],

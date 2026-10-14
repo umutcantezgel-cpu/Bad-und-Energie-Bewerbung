@@ -3,13 +3,15 @@ import { mass, schaetzung, type Aussengeraet } from './typen';
 /**
  * Außeneinheit der Bosch Compress 5800i AW / 6800i AW, Größe S (AW 4 | 5 | 7 OR-S, 4–7 kW), als Maße mit Herkunft
  * (KERN K-010, E-029). Grundlage ist die Installationsanleitung 6721840669 (2025/06); jeder Wert ist an der dänischen
- * Ausgabe derselben Anleitung (6721864591, 2023/06) gegengeprüft: dort Seite 5 (Fig. 4–6) und Seite 22 (Tab. 5).
- * Nur Zahlen, keine Grafik (lib/zeichnung/marke.ts). Werte ohne Bemaßung sind `geschaetzt` und begründet.
+ * Ausgabe derselben Anleitung (6721864591, 2023/06) gegengeprüft: dort Seite 5 (Fig. 4–6), Seite 14 (Fig. 24,
+ * Fundamentplan), Seite 16 (Fig. 28, Zuordnung von Vor- und Rücklauf) und Seite 22 (Tab. 5). Nur Zahlen, keine Grafik
+ * (lib/zeichnung/marke.ts). Werte ohne Bemaßung sind `geschaetzt` und begründet.
  * Zweite Gegenprobe am 14.10.2026 (Websuche; das PDF 6721840669 war nicht abrufbar): Das Bosch-Artikeldatenblatt
  * 8738213464 (AW 4 OR-S, Händlerausgabe) nennt ebenfalls 800 × 1.100 × 540 mm, 143 kg und 0,95 kg R290.
  *
  * Lage im Koordinatensystem der Zeichnung (components/zeichnung/technik/Aussengeraet.tsx): 1 Einheit = 1 mm,
- * Ansicht von vorn mit Ursprung oben links am Gehäuse, Ansicht von rechts mit der Front links.
+ * Ansicht von vorn mit Ursprung oben links am Gehäuse, Ansicht von rechts mit der Front links; die Aufstellfläche
+ * (Unterkante der Bodenhalterungen) liegt bei y = Höhe, von dort zählen 202 und 802 in Bild 4.
  */
 export const COMPRESS_AW_S: Aussengeraet = {
   id: 'compress-aw-s',
@@ -28,31 +30,45 @@ export const COMPRESS_AW_S: Aussengeraet = {
     },
   },
   breite: mass(1100, 'Bild 4, Tabelle 26 (DK: S. 5 Fig. 4, S. 22 Tab. 5)'),
-  hoehe: mass(800, 'Tabelle 26 (DK: S. 22 Tab. 5)', 'Bild 4 nennt 802 mm (DK: Fig. 4)'),
+  hoehe: mass(
+    800,
+    'Tabelle 26 (DK: S. 22 Tab. 5)',
+    'Gesamthöhe ab Aufstellfläche; Bild 4 bemaßt 802 mm von der Unterkante der Bodenhalterungen (DK: S. 5 Fig. 4)',
+  ),
   tiefe: mass(540, 'Bild 5, Tabelle 26 (DK: S. 5 Fig. 5, S. 22 Tab. 5)'),
   tiefeMitKonsolen: mass(580, 'Bild 5 (DK: S. 5 Fig. 5)'),
-  oberkante: { radius: schaetzung(60, 'Gerundete Oberkante, Radius nicht bemaßt') },
+  oberkante: { radius: schaetzung(60, 'Obere Längskanten links und rechts gerundet (Bild 4, 18, 28; DK: S. 5, 11, 16), Radius nicht bemaßt') },
   konsolen: {
     anzahl: 4,
     abstand: mass(881, 'Bild 6 (DK: S. 5 Fig. 6)'),
     randabstand: mass(107, 'Bild 5 (DK: S. 5 Fig. 5)', '107 + 881 + 112 = 1100; die Gegenseite ist nicht bemaßt'),
     ueberstand: mass(20, 'Bild 5 (DK: S. 5 Fig. 5)', '580 − 540 = 2 × 20'),
     breite: schaetzung(50, 'Breite der Bodenhalterung nicht bemaßt'),
-    hoehe: schaetzung(20, 'Höhe der Bodenhalterung nicht bemaßt; Bild 4 nennt 802 mm Gesamthöhe'),
+    hoehe: schaetzung(25, 'Höhe der Bodenhalterung nicht bemaßt; in Bild 4 und Bild 17 rund ein Dreißigstel der Gesamthöhe'),
   },
   hydraulik: {
     lage: 'hinten unten links (Blick von hinten), von vorn gesehen rechts hinten',
-    hoehe: mass(202, 'Bild 4 (DK: S. 5 Fig. 4)'),
+    hoehe: mass(202, 'Bild 4 (DK: S. 5 Fig. 4)', 'Maßhilfslinie an der Unterkante der Bodenhalterungen: Höhe über der Aufstellfläche'),
     abstandRand: mass(87, 'Bild 4 (DK: S. 5 Fig. 4)', 'Lesart der Kette 87 | 90: Rand bis erster Anschluss, dann Abstand'),
     abstandZwischen: mass(90, 'Bild 4 (DK: S. 5 Fig. 4)'),
-    durchmesser: schaetzung(34, 'Bei AW 4|5|7 nicht bemaßt; AW 10|12 nennt DN 25 (Außendurchmesser rund 34 mm)'),
+    durchmesser: schaetzung(34, 'Bei AW 4|5|7 nicht bemaßt; Bild 28 nennt DN 25 (Außendurchmesser rund 34 mm)'),
     laenge: schaetzung(60, 'Überstand der Stutzen nicht bemaßt'),
+    vorlauf: {
+      lage: 'aussen',
+      stelle:
+        'Bild 28 (DK: S. 16 Fig. 28): [1] Heizwasseraustritt zur Inneneinheit (Vorlauf) am Rand, 87 mm; ' +
+        '[2] Heizwassereintritt von der Inneneinheit (Rücklauf) innen, 87 + 90 mm',
+    },
   },
   kondensat: {
-    vonRechts: mass(330, 'Bild 6 (DK: S. 5 Fig. 6)'),
-    vonVorn: mass(97, 'Bild 6 (DK: S. 5 Fig. 6)'),
+    vonLinks: mass(
+      330,
+      'Bild 6 (DK: S. 5 Fig. 6)',
+      'Ansicht von unten, Front oben: vom linken Rand; ebenso Bild 24 (DK: S. 14 Fig. 24, 107 + 223) und die Rückansichten Bild 4 und 28',
+    ),
+    vonHinten: mass(97, 'Bild 6 (DK: S. 5 Fig. 6)', 'zum unteren Bildrand, also zur Rückseite'),
     durchmesser: schaetzung(30, 'Anschlussstutzen Kondensat nicht bemaßt'),
-    laenge: schaetzung(40, 'Überstand nach unten nicht bemaßt'),
+    laenge: schaetzung(20, 'Überstand nach unten nicht bemaßt; kürzer als die Bodenhalterung hoch ist'),
   },
   verdampfer: {
     lage: 'hinten (Bild 3: Verdampfer auf der Rückseite)',

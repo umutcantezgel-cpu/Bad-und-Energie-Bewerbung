@@ -9,7 +9,19 @@ import { seitenansicht, vorderansicht } from '../geraete/ansicht';
 import { alleMasse } from '../geraete/typen';
 import { BOSCH_FREIGABE, markeErlaubt, wirksameVariante } from '../marke';
 import { GESCHAETZT, LINIENARTEN, MASSSTAB, SCHRIFTFELD, ZEICHNUNG_LINIEN, fliesspfeil, leitungsweg, masslinie } from '../norm';
-import { BAUTEILE, GERAET_LAGE, HAUSSCHNITT_RAHMEN, HEIZKOERPER_LAGE, HEIZKOERPER_MM, LEITUNGEN, PFEILE } from '../szenen/hausschnitt';
+import {
+  BAUTEILE,
+  GERAET_LAGE,
+  HAUSSCHNITT_ANSCHLUSS,
+  HAUSSCHNITT_ERDLEITUNG,
+  HAUSSCHNITT_GOK,
+  HAUSSCHNITT_RAHMEN,
+  HEIZKOERPER_LAGE,
+  HEIZKOERPER_MM,
+  LEITUNGEN,
+  PFEILE,
+  SOCKEL_LAGE,
+} from '../szenen/hausschnitt';
 import { PFLICHT_SYMBOLE, SYMBOLE, anschlussPunkt } from '../symbole';
 
 const ROOT = path.resolve(__dirname, '../../..');
@@ -116,10 +128,24 @@ describe('Gerätedaten (Bosch-Anleitungen, nur Zahlen)', () => {
     expect([g.konsolen.anzahl, g.konsolen.abstand.mm, g.konsolen.randabstand.mm]).toEqual([4, 881, 107]);
     expect(g.tiefeMitKonsolen.mm - g.tiefe.mm).toBe(2 * g.konsolen.ueberstand.mm);
     expect([g.hydraulik.hoehe.mm, g.hydraulik.abstandRand.mm, g.hydraulik.abstandZwischen.mm]).toEqual([202, 87, 90]);
-    expect([g.kondensat.vonRechts.mm, g.kondensat.vonVorn.mm]).toEqual([330, 97]);
-    expect(g.quelle).toMatchObject({ titel: 'Bosch Installationsanleitung AW 4|5|7 OR-S', dokument: '6721840669', ausgabe: '2025/06' });
+    // 202 und 802 zählen ab der Aufstellfläche (Bild 4: Maßhilfslinien an der Unterkante der Bodenhalterungen)
+    expect(g.hydraulik.hoehe.hinweis).toMatch(/Aufstellfläche/);
     expect(g.hoehe.hinweis).toMatch(/802/);
+    expect(g.hoehe.hinweis).toMatch(/ab Aufstellfläche/);
+    // Vorlauf ist der äußere Stutzen (Bild 28 [1] Austritt zur Inneneinheit), der Rücklauf der innere ([2])
+    expect(g.hydraulik.vorlauf.lage).toBe('aussen');
+    expect(g.hydraulik.vorlauf.stelle).toMatch(/Bild 28/);
+    expect(g.hydraulik.vorlauf.stelle).toMatch(/DK: S\. 16 Fig\. 28/);
+    // Kondensatablauf (Bild 6 von unten, Front oben): 330 mm vom linken Rand, 97 mm von der Rückseite; im
+    // Fundamentplan (Bild 24) liegt er 223 mm rechts der linken Halterung: 107 + 223 = 330
+    expect([g.kondensat.vonLinks.mm, g.kondensat.vonHinten.mm]).toEqual([330, 97]);
+    expect(g.kondensat.vonLinks.mm - g.konsolen.randabstand.mm).toBe(223);
+    expect(g.kondensat.vonLinks.hinweis).toMatch(/Bild 24/);
+    // Der Stutzen hängt nicht unter die Halterungen (steht nicht auf)
+    expect(g.kondensat.laenge.mm).toBeLessThanOrEqual(g.konsolen.hoehe.mm);
+    expect(g.quelle).toMatchObject({ titel: 'Bosch Installationsanleitung AW 4|5|7 OR-S', dokument: '6721840669', ausgabe: '2025/06' });
     expect(g.verdampfer.lage).toMatch(/hinten/);
+    expect(g.oberkante.radius.stelle).toMatch(/Längskanten links und rechts/);
   });
 
   it('AW 10|12 OR-T: 1.350 × 1.100 × 540 mm (Anleitung 6721842854)', () => {
@@ -127,6 +153,10 @@ describe('Gerätedaten (Bosch-Anleitungen, nur Zahlen)', () => {
     expect([g.breite.mm, g.hoehe.mm, g.tiefe.mm]).toEqual([1350, 1100, 540]);
     expect(g.quelle.dokument).toBe('6721842854');
     expect(g.konsolen.randabstand.mm * 2 + g.konsolen.abstand.mm).toBe(g.breite.mm);
+    expect([g.kondensat.vonLinks.mm, g.kondensat.vonHinten.mm]).toEqual([270, 97]);
+    expect(g.kondensat.laenge.mm).toBeLessThanOrEqual(g.konsolen.hoehe.mm);
+    expect(g.hydraulik.vorlauf.lage).toBe('aussen');
+    expect(g.hydraulik.vorlauf.stelle).toMatch(/Bild 26/);
   });
 
   it('jedes Maß nennt seine Fundstelle; nicht bemaßte Werte sind als geschätzt markiert, die Ausblasöffnung immer', () => {
@@ -146,7 +176,7 @@ describe('Gerätedaten (Bosch-Anleitungen, nur Zahlen)', () => {
       expect(g.quelle.gegenprobe?.dokument).toMatch(/^\d{10}$/);
       // Ausblasöffnung links der Mitte und ganz in der Front
       expect(g.ausblas.mitteX.mm).toBeLessThan(g.breite.mm / 2);
-      expect(g.ausblas.mitteY.mm + g.ausblas.durchmesser.mm / 2).toBeLessThan(g.hoehe.mm);
+      expect(g.ausblas.mitteY.mm + g.ausblas.durchmesser.mm / 2).toBeLessThan(g.hoehe.mm - g.konsolen.hoehe.mm);
       expect(g.rotor.durchmesser.mm).toBeLessThan(g.ausblas.durchmesser.mm);
       expect(g.rotor.blaetter).toBe(4);
     }
@@ -161,11 +191,32 @@ describe('Gerätedaten (Bosch-Anleitungen, nur Zahlen)', () => {
   it('Ansichten folgen den Maßen: Vorderansicht 1100 × 800, Seitenansicht 540, Maßketten tragen die Werte der Anleitung', () => {
     const vorne = vorderansicht(COMPRESS_AW_S, { massketten: 'voll' });
     expect([vorne.breite, vorne.hoehe]).toEqual([1100, 800]);
-    expect(vorne.kontur[0]).toBe('M0 0H1100V800H0Z');
+    // Höhe ab Aufstellfläche: Boden bei 800, das Gehäuse endet über den Halterungen (800 − 25)
+    expect([vorne.boden, vorne.unterkante]).toEqual([800, 775]);
+    // Von vorn zwei runde obere Ecken (Bild 4, 18, 28), keine Übergangslinie
+    expect(vorne.kontur[0]).toBe('M0 775V60A60 60 0 0 1 60 0H1040A60 60 0 0 1 1100 60V775Z');
+    expect(vorne.fein.some((d) => /^M0 60H1100$/.test(d))).toBe(false);
     expect(vorne.masse.map((m) => m.text.wert)).toEqual(['330', '107', '881', '1100', '800']);
+    // Kondensatablauf 330 mm vom linken Rand, Kette von links; die Höhe ab dem Boden
+    const kondVorne = vorne.masse[0];
+    expect([Math.min(kondVorne.a.x, kondVorne.b.x), Math.max(kondVorne.a.x, kondVorne.b.x)]).toEqual([0, 330]);
+    expect(vorne.kontur).toContain('M315 775H345V795H315Z');
+    const hoeheVorne = vorne.masse[4];
+    expect([Math.min(hoeheVorne.a.y, hoeheVorne.b.y), Math.max(hoeheVorne.a.y, hoeheVorne.b.y)]).toEqual([0, vorne.boden]);
+    // Anschlüsse (verdeckt) 202 mm über dem Boden
+    for (const k of vorne.kreise.filter((x) => x.art === 'verdeckt')) expect(vorne.boden - k.cy).toBe(202);
     const seite = seitenansicht(COMPRESS_AW_S, { massketten: 'voll' });
     expect(seite.breite).toBe(540);
     expect(seite.masse.map((m) => m.text.wert)).toEqual(['540', '97', '580', '202', '800']);
+    // Von der Seite ein Rechteck mit Deckellinie (Bild 14, 17, 20), keine Rundung vorn
+    expect(seite.kontur[0]).toBe('M0 0H540V775H0Z');
+    expect(seite.fein).toContain('M0 60H540');
+    // 202 von der Aufstellfläche bis zur Mitte der Anschlüsse; Kondensat 97 mm von der Rückseite, hinter der Halterung
+    const k202 = seite.masse[3];
+    expect([Math.max(k202.a.y, k202.b.y), Math.abs(k202.a.y - k202.b.y)]).toEqual([seite.boden, 202]);
+    const k97 = seite.masse[1];
+    expect([Math.min(k97.a.x, k97.b.x), Math.max(k97.a.x, k97.b.x)]).toEqual([443, 540]);
+    expect(seite.verdeckt).toContain('M428 775H458V795H428Z');
     // Kein Maß ohne Beleg: jede Maßzahl ist ein belegter Wert der Anleitung, geschätzte (Ausblasöffnung, Rotor) nie
     const belegt = new Set(alleMasse(COMPRESS_AW_S).filter(([, m]) => !m.geschaetzt).map(([, m]) => String(m.mm)));
     for (const m of [...vorne.masse, ...seite.masse]) expect(belegt, m.text.wert).toContain(m.text.wert);
@@ -217,9 +268,97 @@ describe('Hausschnitt (1 Einheit = 10 mm)', () => {
     expect(BAUTEILE.dach).toMatch(/^M/);
   });
 
+  it('Anschlüsse am Gerät wie in der Anleitung: Vorlauf außen (87 mm vom rechten Rand), Rücklauf innen (177 mm), 202 mm über der Aufstellfläche', () => {
+    const rechts = GERAET_LAGE.x + GERAET_LAGE.breite;
+    // Vorlauf näher am rechten Rand (Bild 28 [1]), Rücklauf innen ([2])
+    expect(HAUSSCHNITT_ANSCHLUSS.vorlauf).toBeGreaterThan(HAUSSCHNITT_ANSCHLUSS.ruecklauf);
+    expect(rechts - HAUSSCHNITT_ANSCHLUSS.vorlauf).toBeCloseTo(8.7, 5);
+    expect(rechts - HAUSSCHNITT_ANSCHLUSS.ruecklauf).toBeCloseTo(17.7, 5);
+    expect(GERAET_LAGE.boden - HAUSSCHNITT_ANSCHLUSS.y).toBeCloseTo(20.2, 5);
+    // Der Rücklauf (innerer Stutzen) liegt in der Erde tiefer als der Vorlauf: die Bögen liegen ineinander
+    expect(HAUSSCHNITT_ERDLEITUNG.ruecklauf).toBeGreaterThan(HAUSSCHNITT_ERDLEITUNG.vorlauf);
+  });
+
+  it('Kreuzungen: ohne die Leitungen zur Bewerbung keine; mit ihnen liegt an jeder Kreuzung eine Leitung mit Mantel vorn', () => {
+    type Stueck = { id: string; a: { x: number; y: number }; b: { x: number; y: number } };
+    const stuecke = (ls: readonly (typeof LEITUNGEN)[number][]): Stueck[] =>
+      ls.flatMap((l) => l.punkte.slice(1).map((b, i) => ({ id: l.id, a: l.punkte[i], b })));
+    const zwischen = (v: number, p: number, q: number) => v > Math.min(p, q) + 0.01 && v < Math.max(p, q) - 0.01;
+    // Echte Kreuzung: ein senkrechtes und ein waagerechtes Stück schneiden sich im Inneren beider (kein T-Stück)
+    const kreuzungen = (ls: readonly (typeof LEITUNGEN)[number][]) => {
+      const out: Array<{ ids: [string, string]; q: { x: number; y: number } }> = [];
+      const alle = stuecke(ls);
+      for (const s1 of alle) {
+        for (const s2 of alle) {
+          if (s1.id >= s2.id || s1.a.x !== s1.b.x || s2.a.y !== s2.b.y) continue;
+          const q = { x: s1.a.x, y: s2.a.y };
+          if (zwischen(q.x, s2.a.x, s2.b.x) && zwischen(q.y, s1.a.y, s1.b.y)) out.push({ ids: [s1.id, s2.id], q });
+        }
+        for (const s2 of alle) {
+          if (s1.id >= s2.id || s1.a.y !== s1.b.y || s2.a.x !== s2.b.x) continue;
+          const q = { x: s2.a.x, y: s1.a.y };
+          if (zwischen(q.x, s1.a.x, s1.b.x) && zwischen(q.y, s2.a.y, s2.b.y)) out.push({ ids: [s1.id, s2.id], q });
+        }
+      }
+      return out;
+    };
+    const sichtbar = LEITUNGEN.filter((l) => !l.verdeckt);
+    // Kleiner Hausschnitt und Teilen-Bild ohne Knopf: nichts kreuzt sich
+    expect(kreuzungen(sichtbar.filter((l) => !l.nur))).toEqual([]);
+    // Startseite: je Fassung (mobil, Desktop) kreuzt der Vorlauf zur Bewerbung die Steigleitung des Rücklaufs
+    for (const fassung of ['knopf-mobil', 'knopf-desktop'] as const) {
+      const k = kreuzungen(sichtbar.filter((l) => !l.nur || l.nur === fassung || l.nur === 'knopf'));
+      expect(k.length, fassung).toBeGreaterThan(0);
+      for (const { ids, q } of k) {
+        const mitMantel = ids.map((id) => LEITUNGEN.find((l) => l.id === id)!).filter((l) => l.mantel);
+        expect(mitMantel.length, `${fassung} ${ids.join('/')}`).toBe(1);
+        const m = mitMantel[0].mantel!.match(/^M(-?[\d.]+) (-?[\d.]+)V(-?[\d.]+)$/)!;
+        expect(Number(m[1]), ids.join('/')).toBe(q.x);
+        expect(q.y, ids.join('/')).toBeGreaterThan(Number(m[2]));
+        expect(q.y, ids.join('/')).toBeLessThan(Number(m[3]));
+      }
+    }
+  });
+
+  it('von vorn liegen die Leitungen hinter Gehäuse und Sockel verdeckt: keine sichtbare Leitung im Gerät oder in einem Sockel', () => {
+    type Rechteck = { x: number; y: number; breite: number; hoehe: number };
+    const geraet: Rechteck = { x: GERAET_LAGE.x, y: GERAET_LAGE.y, breite: GERAET_LAGE.breite, hoehe: GERAET_LAGE.hoehe };
+    expect(SOCKEL_LAGE).toHaveLength(2);
+    // Achsparalleles Stück schneidet das Innere des Rechtecks (der Rand zählt nicht)
+    const offen = (v: number, lo: number, hi: number) => v > lo && v < hi;
+    const ueberlappt = (v0: number, v1: number, lo: number, hi: number) => Math.max(v0, lo) < Math.min(v1, hi);
+    const schneidet = (a: { x: number; y: number }, b: { x: number; y: number }, r: Rechteck) => {
+      const [x0, x1] = [Math.min(a.x, b.x), Math.max(a.x, b.x)];
+      const [y0, y1] = [Math.min(a.y, b.y), Math.max(a.y, b.y)];
+      const inX = x0 === x1 ? offen(x0, r.x, r.x + r.breite) : ueberlappt(x0, x1, r.x, r.x + r.breite);
+      const inY = y0 === y1 ? offen(y0, r.y, r.y + r.hoehe) : ueberlappt(y0, y1, r.y, r.y + r.hoehe);
+      return inX && inY;
+    };
+    // Gegenprobe der Prüfung: eine Steigleitung von der Unterkante des Geräts durch den Sockel ins Erdreich fiele auf
+    const sockel = SOCKEL_LAGE[1];
+    expect(schneidet({ x: sockel.x + 5, y: GERAET_LAGE.boden - 2 }, { x: sockel.x + 5, y: HAUSSCHNITT_GOK + 40 }, sockel)).toBe(true);
+    expect(schneidet({ x: 0, y: sockel.y + 4 }, { x: sockel.x + 30, y: sockel.y + 4 }, sockel)).toBe(true);
+    expect(schneidet({ x: sockel.x + 5, y: HAUSSCHNITT_GOK }, { x: sockel.x + 5, y: HAUSSCHNITT_GOK + 40 }, sockel)).toBe(false);
+    for (const l of LEITUNGEN.filter((x) => !x.verdeckt)) {
+      for (let i = 1; i < l.punkte.length; i += 1) {
+        for (const r of [...SOCKEL_LAGE, geraet]) expect(schneidet(l.punkte[i - 1], l.punkte[i], r), `${l.id} Stück ${i}`).toBe(false);
+      }
+    }
+    // Die verdeckten Stücke führen vom Anschluss senkrecht bis zur Geländeoberkante, je eins für Vor- und Rücklauf
+    const verdeckt = LEITUNGEN.filter((x) => x.verdeckt);
+    expect(verdeckt.map((l) => l.id).sort()).toEqual(['ruecklauf-anschluss', 'vorlauf-anschluss']);
+    for (const l of verdeckt) {
+      const ys = l.punkte.map((q) => q.y).sort((a, b) => a - b);
+      expect(ys, l.id).toEqual([HAUSSCHNITT_ANSCHLUSS.y, HAUSSCHNITT_GOK]);
+      expect(new Set(l.punkte.map((q) => q.x)).size, l.id).toBe(1);
+      expect(l.nur, l.id).toBeUndefined();
+    }
+  });
+
   it('Vorlauf beginnt am Wärmeerzeuger (oder zweigt von einem Vorlauf ab), Rücklauf endet dort (oder mündet in einen Rücklauf)', () => {
     const anGeraet = (q: { x: number; y: number }) =>
-      q.x >= GERAET_LAGE.x && q.x <= GERAET_LAGE.x + GERAET_LAGE.breite && Math.abs(q.y - (GERAET_LAGE.y + GERAET_LAGE.hoehe)) < 0.5;
+      (Math.abs(q.x - HAUSSCHNITT_ANSCHLUSS.vorlauf) < 0.01 || Math.abs(q.x - HAUSSCHNITT_ANSCHLUSS.ruecklauf) < 0.01) &&
+      Math.abs(q.y - HAUSSCHNITT_ANSCHLUSS.y) < 0.01;
     const aufWeg = (q: { x: number; y: number }, medium: string, ohne: string) =>
       LEITUNGEN.filter((l) => l.medium === medium && l.id !== ohne).some((l) =>
         l.punkte.slice(1).some((b, i) => {
@@ -232,16 +371,16 @@ describe('Hausschnitt (1 Einheit = 10 mm)', () => {
     const ruecklauf = LEITUNGEN.filter((l) => l.medium === 'ruecklauf');
     expect(vorlauf.length).toBeGreaterThan(2);
     expect(ruecklauf.length).toBeGreaterThan(1);
-    const ersterVorlauf = LEITUNGEN.find((l) => l.id === 'vorlauf-erde')!;
-    expect(anGeraet(ersterVorlauf.punkte[0])).toBe(true);
+    const ersterVorlauf = LEITUNGEN.find((l) => l.id === 'vorlauf-anschluss')!;
+    expect(ersterVorlauf.punkte[0]).toEqual({ x: HAUSSCHNITT_ANSCHLUSS.vorlauf, y: HAUSSCHNITT_ANSCHLUSS.y });
     for (const l of vorlauf) {
       const start = l.punkte[0];
       expect(anGeraet(start) || aufWeg(start, 'vorlauf', l.id) || start.x === 345 + 56, l.id).toBe(true);
       // Der Pfad beginnt dort, wo die Punkte beginnen
       expect(endpunkte(l.d)[0], l.id).toEqual(start);
     }
-    const ruecklaufErde = LEITUNGEN.find((l) => l.id === 'ruecklauf-erde')!;
-    expect(anGeraet(ruecklaufErde.punkte.at(-1)!)).toBe(true);
+    const ruecklaufAnschluss = LEITUNGEN.find((l) => l.id === 'ruecklauf-anschluss')!;
+    expect(ruecklaufAnschluss.punkte.at(-1)!).toEqual({ x: HAUSSCHNITT_ANSCHLUSS.ruecklauf, y: HAUSSCHNITT_ANSCHLUSS.y });
     for (const l of ruecklauf) {
       const ende = l.punkte.at(-1)!;
       expect(anGeraet(ende) || aufWeg(ende, 'ruecklauf', l.id) || ende.x === 345 + 56, l.id).toBe(true);

@@ -3,8 +3,8 @@ import { mass, schaetzung, type Aussengeraet } from './typen';
 /**
  * Außeneinheit der Bosch Compress 5800i AW / 6800i AW, Größe L (AW 10 | 12 OR-T, 10–12 kW), als Maße mit Herkunft
  * (KERN K-010, E-029). Grundlage ist die Installationsanleitung 6721842854 (2023/10), Tabelle 5; jeder Wert ist an der
- * dänischen Ausgabe derselben Anleitung (6721864567, 2023/10) gegengeprüft: dort Seite 5 (Fig. 4–6) und Seite 23
- * (Tab. 5). Nur Zahlen, keine Grafik (lib/zeichnung/marke.ts). Werte ohne Bemaßung sind `geschaetzt` und begründet.
+ * dänischen Ausgabe derselben Anleitung (6721864567, 2023/10) gegengeprüft: dort Seite 5 (Fig. 4–6), Seite 16
+ * (Fig. 26, Zuordnung von Vor- und Rücklauf) und Seite 23 (Tab. 5). Nur Zahlen, keine Grafik (lib/zeichnung/marke.ts). Werte ohne Bemaßung sind `geschaetzt` und begründet.
  */
 export const COMPRESS_AW_L: Aussengeraet = {
   id: 'compress-aw-l',
@@ -23,31 +23,41 @@ export const COMPRESS_AW_L: Aussengeraet = {
     },
   },
   breite: mass(1350, 'Bild 4, Tabelle 5 (DK: S. 5 Fig. 4, S. 23 Tab. 5)'),
-  hoehe: mass(1100, 'Tabelle 5 (DK: S. 23 Tab. 5)', 'Bild 4 nennt 1050 mm (DK: Fig. 4); Bezug nicht eindeutig'),
+  hoehe: mass(
+    1100,
+    'Tabelle 5 (DK: S. 23 Tab. 5)',
+    'Gesamthöhe ab Aufstellfläche wie bei AW 4|5|7; Bild 4 nennt 1050 mm (DK: Fig. 4), Bezug nicht eindeutig',
+  ),
   tiefe: mass(540, 'Bild 5, Tabelle 5 (DK: S. 5 Fig. 5, S. 23 Tab. 5)'),
   tiefeMitKonsolen: mass(580, 'Bild 5 (DK: S. 5 Fig. 5)'),
-  oberkante: { radius: schaetzung(60, 'Gerundete Oberkante, Radius nicht bemaßt') },
+  oberkante: { radius: schaetzung(60, 'Obere Längskanten links und rechts gerundet (Bild 4, 26, 27; DK: S. 5, 16), Radius nicht bemaßt') },
   konsolen: {
     anzahl: 4,
     abstand: mass(1266, 'Bild 6 (DK: S. 5 Fig. 6)'),
     randabstand: mass(42, 'Bild 5 (DK: S. 5 Fig. 5)', '42 + 1266 + 42 = 1350'),
     ueberstand: mass(20, 'Bild 5 (DK: S. 5 Fig. 5)', '580 − 540 = 2 × 20'),
     breite: schaetzung(50, 'Breite der Bodenhalterung nicht bemaßt'),
-    hoehe: schaetzung(20, 'Höhe der Bodenhalterung nicht bemaßt'),
+    hoehe: schaetzung(25, 'Höhe der Bodenhalterung nicht bemaßt; gleiche Halterung wie bei AW 4|5|7 angenommen'),
   },
   hydraulik: {
     lage: 'hinten unten links (Blick von hinten), von vorn gesehen rechts hinten',
-    hoehe: mass(202, 'Bild 4 (DK: S. 5 Fig. 4)'),
+    hoehe: mass(202, 'Bild 4 (DK: S. 5 Fig. 4)', 'Höhe über der Aufstellfläche wie bei AW 4|5|7'),
     abstandRand: mass(87, 'Bild 4 (DK: S. 5 Fig. 4)', 'Lesart der Kette 87 | 90 wie bei AW 4|5|7'),
     abstandZwischen: mass(90, 'Bild 4 (DK: S. 5 Fig. 4)'),
     durchmesser: schaetzung(34, 'Bild 4 nennt DN 25; Außendurchmesser rund 34 mm'),
     laenge: schaetzung(60, 'Überstand der Stutzen nicht bemaßt'),
+    vorlauf: {
+      lage: 'aussen',
+      stelle:
+        'Bild 26 (DK: S. 16 Fig. 26): [1] Heizwasseraustritt zur Inneneinheit (Vorlauf) am Rand; ' +
+        '[2] Heizwassereintritt von der Inneneinheit (Rücklauf) innen',
+    },
   },
   kondensat: {
-    vonRechts: mass(270, 'Bild 6 (DK: S. 5 Fig. 6)', 'Bezugskante wie bei AW 4|5|7 gelesen'),
-    vonVorn: mass(97, 'Bild 6 (DK: S. 5 Fig. 6)'),
+    vonLinks: mass(270, 'Bild 6 (DK: S. 5 Fig. 6)', 'Ansicht von unten, Front oben: vom linken Rand, Lesart wie bei AW 4|5|7'),
+    vonHinten: mass(97, 'Bild 6 (DK: S. 5 Fig. 6)', 'zum unteren Bildrand, also zur Rückseite'),
     durchmesser: schaetzung(30, 'Anschlussstutzen Kondensat nicht bemaßt'),
-    laenge: schaetzung(40, 'Überstand nach unten nicht bemaßt'),
+    laenge: schaetzung(20, 'Überstand nach unten nicht bemaßt; kürzer als die Bodenhalterung hoch ist'),
   },
   verdampfer: {
     lage: 'hinten (Bild 3: Verdampfer auf der Rückseite)',

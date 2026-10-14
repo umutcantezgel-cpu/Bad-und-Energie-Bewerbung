@@ -45,7 +45,8 @@ export interface HausschnittInhaltProps {
  * Inhalt des Hausschnitts (lib/zeichnung/szenen/hausschnitt.ts) in Einheiten von 10 mm, als Gruppe für eine Zeichnung
  * mit viewBox 0 0 800 680: Erdreich geschnitten (45°-Schraffur), Rohrgraben, Haus im Schnitt (Wände, Decke,
  * Bodenplatte, Dach als Schnittflächen), Sockel, Außeneinheit (verschachtelte Zeichnung mit viewBox in mm, 110 × 80
- * Einheiten), Inneneinheit als Symbol, Flachheizkörper, Leitungen in Fließrichtung mit festen Pfeilen.
+ * Einheiten), Inneneinheit als Symbol, Flachheizkörper, Leitungen in Fließrichtung mit festen Pfeilen. Die Stücke
+ * hinter Gehäuse und Sockel (vom Anschluss hinten am Gerät bis unter das Gelände) stehen als verdeckte Linie.
  */
 export function HausschnittInhalt({ knopf = false, einzelheit = false, leitungKlasse, leitungMotion, pfeilKlasse, pfeilMotion, grob = false }: HausschnittInhaltProps) {
   const leitungen = LEITUNGEN.filter((l) => knopf || !l.nur);
@@ -94,8 +95,17 @@ export function HausschnittInhalt({ knopf = false, einzelheit = false, leitungKl
       <rect x={hk.x} y={hk.y} width={hk.breite} height={hk.hoehe} className={cn(t.kontur, t.flaeche)} data-heizkoerper="" />
       <path d={lamellen.map((x) => `M${x} ${hk.y}V${hk.y + hk.hoehe}`).join('')} className={t.fein} />
 
+      {/* Hinter Gehäuse und Sockel (vom Anschluss bis unter das Gelände): verdeckte Linie, ohne Bewegung */}
+      {leitungen
+        .filter((l) => l.verdeckt)
+        .map((l) => (
+          <path key={l.id} d={l.d} className={cn(t.verdeckt, LEITUNG[l.medium])} data-medium={l.medium} data-weg={l.id} data-verdeckt="" />
+        ))}
       {/* Leitungen in Fließrichtung; an einer Kreuzung liegt die vordere mit einem Mantel in der Fläche darüber */}
-      {[...leitungen].sort((a, b) => Number(Boolean(a.mantel)) - Number(Boolean(b.mantel))).map((l) => {
+      {leitungen
+        .filter((l) => !l.verdeckt)
+        .sort((a, b) => Number(Boolean(a.mantel)) - Number(Boolean(b.mantel)))
+        .map((l) => {
         const motion = leitungMotion?.(l);
         return (
           <g key={l.id}>
