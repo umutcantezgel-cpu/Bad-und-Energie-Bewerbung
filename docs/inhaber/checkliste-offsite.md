@@ -49,8 +49,8 @@ Die Search Console zeigt, ob Google die Stellen und Ortsseiten kennt, und meldet
 
 ### 1.2 Sitemaps einreichen
 
-1. https://karriere.bad-energie.de/robots.txt öffnen. Unten stehen eine oder mehrere Zeilen `Sitemap: https://…`.
-2. In der Search Console links **Sitemaps** → jede dieser Adressen einzeln eintragen → **Senden**. Nach der Aufteilung gibt es eine eigene Sitemap für die Ortsseiten; sie ist die, die jede Woche geprüft wird.
+1. https://karriere.bad-energie.de/robots.txt öffnen. Unten stehen fünf Zeilen `Sitemap: https://…`: der Index `…/sitemap.xml` und je eine Sitemap für Kern, Stellen, Orte und Themen (`…/sitemap/kern.xml`, `…/sitemap/stellen.xml`, `…/sitemap/orte.xml`, `…/sitemap/themen.xml`).
+2. In der Search Console links **Sitemaps** → jede dieser Adressen einzeln eintragen → **Senden**. Die Orts-Sitemap `https://karriere.bad-energie.de/sitemap/orte.xml` ist die, die jede Woche geprüft wird.
 3. Optional die Sitemap der Hauptseite einreichen: `https://bad-energie.de/sitemap.xml`.
 4. Das Datum notieren, an dem die Orts-Sitemap eingereicht wurde (Protokoll in `docs/operations/orte-monitoring.md`).
 

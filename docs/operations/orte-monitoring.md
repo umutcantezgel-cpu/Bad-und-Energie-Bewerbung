@@ -9,7 +9,7 @@ Die Ortsseiten unter `/einsatzgebiet/<ort>` sind zahlreich und ähnlich gebaut. 
 ## Voraussetzungen
 
 - Domain-Property `bad-energie.de` in der Search Console, Orts-Sitemap eingereicht (`docs/inhaber/checkliste-offsite.md`, Schritt 1). Ohne Search Console gibt es keine Daten für die Regeln unten (MENSCHEN M-032).
-- Die Sitemap ist nach Gruppen geteilt (Kern, Stellen, Orte, Themen). Die Adressen stehen in `https://karriere.bad-energie.de/robots.txt` in den Zeilen `Sitemap:`. In der Orts-Sitemap stehen nur Ortsseiten, die das Gate bestanden haben.
+- Die Sitemap ist nach Gruppen geteilt (Kern, Stellen, Orte, Themen). Die Adressen stehen in `https://karriere.bad-energie.de/robots.txt` in den Zeilen `Sitemap:`: zuerst der Index `/sitemap.xml`, dann `/sitemap/kern.xml`, `/sitemap/stellen.xml`, `/sitemap/orte.xml` und `/sitemap/themen.xml`. **Die Orts-Sitemap ist `https://karriere.bad-energie.de/sitemap/orte.xml`**; sie enthält die Gebietsseite, die Kreis-Hubs und nur die Ortsseiten, die das Gate bestanden haben.
 - Das Datum, an dem die Orts-Sitemap zum ersten Mal eingereicht wurde, steht im Protokoll unten. Ab diesem Tag zählen die 120 Tage.
 
 ## Wöchentliche Prüfung
@@ -48,7 +48,13 @@ Neue Orte (zum Beispiel die 26 Orte aus B33, falls der Umkreis Luftlinie meint) 
 
 Eine Ortsseite, die **120 Tage** nach dem ersten Einreichen in der Orts-Sitemap **keine einzige Impression** hat, wird ausgedünnt, in zwei Schritten:
 
-1. **`noindex,follow`:** In der Lock-Datei des Gates (`lib/places/data/indexierung.json`, erzeugt mit `bun run orte:gate`) als nicht indexierbar führen, mit dem Grund „120 Tage ohne Impressionen“ und dem Datum. Die Seite bleibt erreichbar, fällt aber aus Sitemap, IndexNow und `llms.txt`.
+1. **`noindex,follow`:** In der Lock-Datei des Gates (`lib/places/data/indexierung.json`) von Hand nur das Feld `zurueckgenommen` ergänzen, mit der ID des Orts (wie unter `orte`), dem Grund in Worten und dem Datum:
+   ```json
+   "zurueckgenommen": {
+     "lich": { "grund": "120 Tage ohne Impressionen", "seit": "2027-02-11" }
+   },
+   ```
+   Danach `bun run orte:gate` ausführen. Das Skript übernimmt den Eintrag, setzt den Ort auf nicht indexierbar und nennt den Grund unter `orte` („zurückgenommen seit …“). Den Diff lesen, dann `bun run test` (die Lock-Datei muss zur Rechnung passen) und den Pull Request stellen. Die Seite bleibt erreichbar, fällt aber aus Sitemap, IndexNow, `llms.txt` und den ItemLists der Kreis-Hubs. Die anderen Felder der Lock-Datei nie von Hand ändern.
 2. **308 in den Kreis-Hub:** Sobald die URL-Prüfung „Durch ‚noindex‘-Tag ausgeschlossen“ zeigt, bekommt der Ort in `PLACE_OVERRIDES` (`lib/places/data.ts`) `status: 'merged'` mit `statusNote` und `updatedAt`. Die Adresse leitet dann per 308 auf den Kreis-Hub; der Slug bleibt im Lock und liefert nie 404 (`orte-pflegen.md`).
 
 Rechenbeispiel: Wird die Orts-Sitemap am 2026-10-14 eingereicht, ist die erste Prüfung nach dieser Regel am 2027-02-11. Für Orte, die später dazukommen, zählt ihr eigenes erstes Einreichen.

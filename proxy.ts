@@ -49,8 +49,9 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Ausgenommen: Next-Assets, Icons, Bilder, Feeds, Sitemap, robots.txt, llms*.txt und
-    // die IndexNow-Schlüsseldatei (/<key>.txt), damit Crawler und Aggregatoren nie geblockt werden.
-    '/((?!_next/static|_next/image|favicon\\.ico$|icon-[^/]*\\.png$|images/|feeds/|sitemap\\.xml$|robots\\.txt$|llms\\.txt$|llms-full\\.txt$|[^/]+\\.txt$|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico)$).*)',
+    // Ausgenommen: Next-Assets, Icons, Bilder, Feeds, Sitemap-Index und Sitemaps je Gruppe (/sitemap/<id>.xml),
+    // robots.txt, llms*.txt und die IndexNow-Schlüsseldatei (/<key>.txt), damit Crawler und Aggregatoren nie
+    // geblockt werden.
+    '/((?!_next/static|_next/image|favicon\\.ico$|icon-[^/]*\\.png$|images/|feeds/|sitemap/|sitemap\\.xml$|robots\\.txt$|llms\\.txt$|llms-full\\.txt$|[^/]+\\.txt$|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico)$).*)',
   ],
 };

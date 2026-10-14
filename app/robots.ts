@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next';
+import { SITEMAP_GRUPPEN, sitemapUrl } from '@/lib/seo/indexable-pages';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 
 /**
@@ -54,6 +55,8 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     // Kein `host` (V6-B): Google ignoriert die Direktive, Seobility meldet sie; die Hauptdomain steht im Canonical.
-    sitemap: `${baseUrl}/sitemap.xml`,
+    // Erst der Index, dann jede Sitemap je Gruppe (E-029): So reicht der Inhaber jede Adresse einzeln in der Search
+    // Console ein und misst die Ortsseiten getrennt (docs/inhaber/checkliste-offsite.md 1.2, orte-monitoring.md).
+    sitemap: [`${baseUrl}/sitemap.xml`, ...SITEMAP_GRUPPEN.map(({ id }) => sitemapUrl(id))],
   };
 }

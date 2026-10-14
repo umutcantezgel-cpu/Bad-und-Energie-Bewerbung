@@ -191,8 +191,15 @@ describe('robots', () => {
     }
   });
 
-  it('points to the sitemap', () => {
-    expect(config.sitemap).toBe(`${base}/sitemap.xml`);
+  // E-029: der Index zuerst, dann jede Gruppen-Sitemap; die Inhaber-Checkliste reicht jede Zeile einzeln ein
+  it('points to the sitemap index and to every group sitemap', () => {
+    expect(config.sitemap).toEqual([
+      `${base}/sitemap.xml`,
+      `${base}/sitemap/kern.xml`,
+      `${base}/sitemap/stellen.xml`,
+      `${base}/sitemap/orte.xml`,
+      `${base}/sitemap/themen.xml`,
+    ]);
   });
 
   // V6-B: Google ignoriert `Host:`, Seobility meldet es; die Hauptdomain steht im Canonical.

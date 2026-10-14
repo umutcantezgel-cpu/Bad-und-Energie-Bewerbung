@@ -5,7 +5,7 @@ import { SITEMAP_GRUPPEN, sitemapIdAusDatei, sitemapPages, sitemapXml } from '@/
  * ROADMAP §10, E-028): /sitemap/kern.xml (Startseite, /jobs, /bewerbung), /sitemap/stellen.xml (die live Stellenseiten),
  * /sitemap/orte.xml (Einsatzgebiet, Kreis-Hubs und jede Ortsseite, die das Gate besteht) und /sitemap/themen.xml. So
  * misst die Search Console die Ortsseiten getrennt (docs/operations/orte-monitoring.md). /sitemap.xml ist der Index
- * (app/sitemap.xml/route.ts); robots.txt zeigt dorthin.
+ * (app/sitemap.xml/route.ts); robots.txt nennt den Index und jede Gruppe (app/robots.ts).
  *
  * Ein Route-Handler wie die Feeds (app/feeds/[feed]/route.ts) statt app/sitemap.ts mit generateSitemaps: Next belegt
  * mit der Metadaten-Sitemap auch dann /sitemap.xml und lässt daneben keinen eigenen Index zu. Nicht darin: /datenschutz

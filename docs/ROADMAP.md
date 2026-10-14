@@ -540,7 +540,7 @@ Berufsverkehr entfällt: Werte aus Google Routes dürfen laut Nutzungsbedingunge
 - Nicht indexierbar heißt `noindex,follow`; die Seite bleibt erreichbar.
 - Sie fällt aus Sitemap, IndexNow, `llms.txt` und den ItemLists der Hubs (`lib/seo/indexable-pages.ts`, `lib/places/jsonld.ts`).
 - `check-graph.mjs` prüft zusätzlich „noindex steht nicht in der Sitemap“.
-- **Orts-Sitemap:** `app/sitemap.ts` wird nach Gruppen geteilt (Kern, Stellen, Orte, Themen), damit die Ortsseiten in der Search Console getrennt messbar sind. Welche Sitemap-Adressen es gibt, steht in `robots.txt` (Zeilen `Sitemap:`); jede wird einzeln in der Search Console eingereicht (`docs/inhaber/checkliste-offsite.md`).
+- **Orts-Sitemap:** Die Sitemap ist nach Gruppen geteilt (Kern, Stellen, Orte, Themen), damit die Ortsseiten in der Search Console getrennt messbar sind. `app/sitemap/[datei]/route.ts` liefert `/sitemap/{kern,stellen,orte,themen}.xml`, `/sitemap.xml` ist der Index (`app/sitemap.xml/route.ts`); `app/sitemap.ts` ist entfallen, weil Next mit `generateSitemaps` `/sitemap.xml` selbst belegt und keinen eigenen Index daneben zulässt. Welche Sitemap-Adressen es gibt, steht in `robots.txt` (Zeilen `Sitemap:`, Index und jede Gruppe, `app/robots.ts`); jede wird einzeln in der Search Console eingereicht (`docs/inhaber/checkliste-offsite.md`). Der Proxy lässt `/sitemap/` wie `/feeds/` unberührt.
 
 **Titelstufen:**
 - Mit Einsatzdaten: „SHK-Jobs {Ort}“, belegt durch echte Baustellen.
@@ -633,7 +633,7 @@ Zweiter Teil der Verzehnfachung: der Themen-Hub `/arbeiten-bei-uns` und fünf Th
 
 **1.6 Reichweite**
 - `app/feeds/[feed]/route.ts`.
-- `app/sitemap.ts`, `app/robots.ts`, `llms*.txt` und `lib/seo/indexnow.ts` aus dem Registry.
+- Sitemaps (`app/sitemap.ts`, seit E-029 Index `app/sitemap.xml/route.ts` und Gruppen `app/sitemap/[datei]/route.ts`), `app/robots.ts`, `llms*.txt` und `lib/seo/indexnow.ts` aus dem Registry.
 - Metadaten aller Seiten nach Abschnitt 10.
 - `docs/operations/{stellen-pflegen,stellenboersen}.md`.
 
