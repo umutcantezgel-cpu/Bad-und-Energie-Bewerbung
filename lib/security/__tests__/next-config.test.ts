@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import { unstable_getResponseFromNextConfig } from 'next/experimental/testing/server';
 import { describe, expect, it } from 'vitest';
 import nextConfig from '@/next.config';
@@ -72,7 +74,9 @@ describe('next.config.ts headers', () => {
   });
 
   it('cacht statische Bilder unveränderlich', async () => {
-    expect((await headersFor('/images/bad-energie-lahn-dill-logo.svg')).get('cache-control')).toBe(
+    // Geprüft an einer Datei, die es gibt (die erfundenen SVG-Logos sind gelöscht, P0-6).
+    expect(existsSync(path.join(process.cwd(), 'public/images/bad-energie-lahn-dill-logo.webp'))).toBe(true);
+    expect((await headersFor('/images/bad-energie-lahn-dill-logo.webp')).get('cache-control')).toBe(
       'public, max-age=31536000, immutable'
     );
   });
