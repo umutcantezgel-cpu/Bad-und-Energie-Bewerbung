@@ -15,6 +15,9 @@ Die Gebietsseite `/einsatzgebiet`, die Kreis-Hubs und die Ortsseiten (E-028) ent
 | `lib/places/text.ts` | Alle Texte der Orts-, Kreis- und Gebietsseiten |
 | `lib/places/slugs.lock.json` | Jeder je veröffentlichte Slug unter `/einsatzgebiet` |
 | `lib/places/__tests__/gate.test.ts` | Einzigartigkeits-Gate U1–U8 |
+| `lib/places/data/oepnv.json` | Bus und Bahn je Ort und Weg zur Berufsschule (E-029). Erzeugt offline, Quelle und Neuberechnung in `orte-oepnv.md` |
+| `lib/places/qualitaet.ts` | Indexierungs-Gate I1–I6 (E-029, ROADMAP §10.1); I1 ist U1–U8 |
+| `lib/places/data/indexierung.json` | Lock-Datei des Gates: welcher Ort indexiert wird, mit Grund. Erzeugt mit `bun run orte:gate`; ein Test prüft sie gegen die Berechnung |
 
 ## Grundregeln
 
@@ -22,7 +25,9 @@ Die Gebietsseite `/einsatzgebiet`, die Kreis-Hubs und die Ortsseiten (E-028) ent
 - **Gebietsregel:** Aufgenommen wird nur, was höchstens 35 km Straße bis zum Firmensitz liegt (Fakt `radius35`). Das Schema bricht den Build sonst ab.
 - **Ein Kreis bekommt eine eigene Seite ab 3 Orten** (`KREIS_HUB_MIN_PLACES`). Darunter ist er ein Abschnitt der Gebietsseite (`/einsatzgebiet#<kreis-slug>`), sein Segment leitet per 308 dorthin.
 - **Gate vor jedem Merge:** `bun run test` (Textmodell) und nach dem Build `bun run test:similarity` (gebautes HTML, auch Stellen, Faktenband und Kontakt). Besteht ein Ort das Gate nicht, werden die Grenzwerte nie gelockert: Zuerst wird gemeinsamer Text gekürzt (Sätze, die auf jeder Ortsseite gleich stehen); reicht das nicht, bekommt der Ort `status: 'merged'` und geht im Kreis-Hub auf.
-- **Freigabe und Livegang:** Neue oder gestrichene Orte gibt der Inhaber mit dem Merge frei (nach `main` nur mit seiner ausdrücklichen Zustimmung). Search Console beobachten: > 30 % „Gecrawlt – zurzeit nicht indexiert“ oder „Duplikat“ stoppt weitere lokale Seiten (ROADMAP §10.1).
+- **Indexierung per Gate (E-029):** Eine Ortsseite wird nur indexiert, wenn sie I1–I6 besteht (unter anderem zwei Datenklassen mit Quelle außer der Geometrie, aktuelle Fahrplandaten, kein `pending`-Fakt). Wer durchfällt, bleibt erreichbar, bekommt aber `noindex,follow` und fällt aus Sitemap, IndexNow, `llms.txt` und den ItemLists. Nach jeder Änderung an Orten, Texten oder Daten `bun run orte:gate` laufen lassen und den Diff der Lock-Datei lesen. Auch hier wird nie gelockert: Ein Ort besteht durch bessere Daten, nicht durch eine niedrigere Grenze.
+- **Fahrplanwechsel:** Jedes Jahr im Dezember die ÖPNV-Daten neu berechnen, sonst fallen die Orte an I5 durch (`orte-oepnv.md`).
+- **Freigabe und Livegang:** Neue oder gestrichene Orte gibt der Inhaber mit dem Merge frei (nach `main` nur mit seiner ausdrücklichen Zustimmung). Search Console beobachten: > 30 % „Gecrawlt – zurzeit nicht indexiert“ oder „Duplikat“ stoppt weitere lokale Seiten (ROADMAP §10.1). Wöchentliche Prüfung und Protokoll: `orte-monitoring.md`.
 
 ## Neu messen
 
@@ -65,7 +70,7 @@ export const PLACE_OVERRIDES = Object.freeze({
 
 - Orte der Startseitenkarte (`HOME_MAP_LOCATION_IDS`) nicht zurückhalten, ohne die Karte anzupassen: Der Test „home-map und Registry“ schlägt sonst an.
 - Ein Slug, der schon veröffentlicht war, bleibt im Lock und liefert nie 404 (`resolveEinsatzgebietSlug` leitet um).
-- Ausdünnen nach Plan: Ortsseiten ohne Impressionen nach 120 Tagen gehen im Kreis-Hub auf (`merged`).
+- Ausdünnen nach Plan: Ortsseiten ohne Impressionen nach 120 Tagen gehen im Kreis-Hub auf, seit E-029 in zwei Schritten: erst `noindex,follow` über die Lock-Datei des Gates, nach dem nächsten Crawl `merged` (Ablauf in `orte-monitoring.md`).
 
 ## Ort umbenennen (Slug ändern)
 
@@ -81,10 +86,11 @@ export const PLACE_OVERRIDES = Object.freeze({
 ## Prüfen vor dem Merge
 
 ```bash
-bun run test            # Schema, Registry, Gate U1–U8, Routen, JSON-LD
+bun run orte:gate       # Lock-Datei des Indexierungs-Gates neu schreiben, Diff lesen
+bun run test            # Schema, Registry, Gate U1–U8 und I1–I6, Lock-Datei, Routen, JSON-LD
 bun run build           # alle Seiten statisch (generateStaticParams), OG-Bilder je Ort
-bun run test:graph      # ein @graph je Seite, Place ohne Straße, ItemList-URLs in der Sitemap
+bun run test:graph      # ein @graph je Seite, Place ohne Straße, ItemList-URLs in der Sitemap, kein noindex in der Sitemap
 bun run test:claims     # keine festen Arbeitszeiten im HTML
-bun run test:similarity # Ortsseiten paarweise ≤ 0,45 Jaccard am gebauten HTML (5 ähnlichste Paare)
+bun run test:similarity # Ortsseiten paarweise ≤ 0,45 Jaccard am gebauten HTML (5 ähnlichste Paare); für indexierbare Orte ≤ 0,40 (Gate I4)
 bunx playwright test e2e/local-pages.spec.ts --project=mobile-light   # alle Orts- und Kreisseiten bei 320 px
 ```

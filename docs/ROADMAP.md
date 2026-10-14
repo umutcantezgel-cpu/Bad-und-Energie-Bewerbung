@@ -3,6 +3,8 @@
 > Von der Karriere-Microsite zur Plattform, die aktiv Bewerber findet und das Bewerben so einfach wie möglich macht. Ruhiges, typografisches Apple-Design.
 >
 > **Status:** freigegeben am 2026-10-08 · Phase 1 abgeschlossen (PR nach `main`, Merge nach Freigabe) · Phase 2a in Produktion · Phase 2b (Bewerbungen zusätzlich in der Datenbank) gebaut, aktiv, sobald Supabase in Production konfiguriert ist (Stand 2026-10-10, siehe §8.1).
+>
+> **Ausbau 2026-10-14 „Bewerber-Maschine“** (Anlass: Der Betrieb braucht dringend Mitarbeiter, die Karriereseite soll messbar Bewerbungen bringen; Entscheidungen `_relaunch/ENTSCHEIDUNGEN.md` E-029 und E-030, KERN 1.2): 8 statt 4 Stellen, Lohn auf Anfrage bei allen Stellen, Technische Zeichnung 2.0, Ortsseiten mit Gate, Google Indexing API und cookielose Ereignisse vorgezogen. Überblick in §15.
 
 ---
 
@@ -63,9 +65,9 @@
 | KI | **Keine**. `@google/genai` und Gemini-Reste werden entfernt |
 | Inhalte | Nur bestehende Fakten. Kürzen und Umstrukturieren erlaubt. Titles und Descriptions auf das höchste Suchvolumen optimieren |
 | Bilder | Keine Fotos, kein Stock. Typografische Ästhetik |
-| Gehalt | Spannen **sichtbar** auf Stellenseiten, im Schema und in den Feeds |
+| Gehalt | ~~Spannen **sichtbar** auf Stellenseiten, im Schema und in den Feeds~~ → seit 2026-10-14 **„Lohn auf Anfrage“ bei allen Stellen** (E-030): kein Euro-Betrag auf Seiten, im Schema und in den Feeds; die belegten Zusatzleistungen bleiben ohne Zahl (über Tarif, Urlaubs- und Weihnachtsgeld, Prämien, 30 Tage Urlaub) |
 | Features erhalten | Google-Karte + Pendelrechner · Bewerbungsmappen-Generator · Bewertungs-Karussell (jeweils neu gestaltet). Der Gehaltsrechner geht in die Stellenseiten über |
-| Ausbildung | „Ausbildung 2026: Einstieg noch möglich“ |
+| Ausbildung | „Ausbildung 2026: Einstieg noch möglich“; seit 2026-10-14 zusätzlich Ausbildung 2027 (Start nach Absprache, Vergütung „über Tarif, plus Prämien“) |
 | Teamzitate | Alle 4 echt und freigegeben. Werden als typografische Testimonials genutzt |
 | Ablauf | Roadmap committen, dann Phase 1 umsetzen. Weitere Phasen schrittweise |
 
@@ -80,7 +82,7 @@
 | Zeit bis „abgeschickt“ (Rolle vorgewählt) | mehrere Minuten | **≤ 60 s**, Ziel 30–45 s |
 | Gespeicherte Bewerbungen | 0 % (nur E-Mail) | **100 %** in DB + Storage (Phase 2) |
 | Fake-Erfolg / erfundene Daten | ja | **nie**. Ehrliche Fehler mit WhatsApp/Telefon-Fallback |
-| Indexierbare Stellenseiten | 0 | 4 (+ Quereinstieg bei Bedarf) |
+| Indexierbare Stellenseiten | 0 | ~~4 (+ Quereinstieg bei Bedarf)~~ → **8** seit dem Ausbau 2026-10-14 (Anlagenmechaniker, Kundendienst, Obermonteur, Ausbildung 2026, Ausbildung 2027, Quereinsteiger/Montagehelfer, Schülerpraktikum, Bürofachkraft); nach dem Ende der Ausbildung 2026 am 31.12.2026 **7** |
 | Reichweitenkanäle | 1 (Website) | Google Jobs, Indeed, BA, Aggregatoren-Feed, Social-Landingpages, Empfehlungen, Talent-Pool |
 | Quellen-Attribution | keine | jede Bewerbung mit Kanal und Kampagne |
 | Kleinste Schrift / Schwebe-Widgets | 9–10 px / 4 | ≥ 13 px / 1 Sticky-Bar |
@@ -97,12 +99,12 @@
 |---|---|---|---|
 | `/` | Startseite (ruhig, eine Primäraktion „Jetzt bewerben“) | ja | 1 |
 | `/jobs` | Übersicht aller Stellen (Hub für SEO, **ohne** JobPosting-Markup) | ja | 1 |
-| `/jobs/[slug]` | Stellenseite mit JobPosting + Breadcrumb JSON-LD, sichtbarer Gehaltsspanne, Teamzitat und **eingebettetem Flow** (`#bewerben`) | ja | 1 |
+| `/jobs/[slug]` | Stellenseite mit JobPosting + Breadcrumb JSON-LD, Bezahlung („Lohn auf Anfrage“ mit Zusatzleistungen, E-030; bis 2026-10-14 sichtbare Gehaltsspanne), Teamzitat und **eingebettetem Flow** (`#bewerben`) | ja | 1 |
 | `/bewerbung` (`?stelle=slug`, UTM, `ref`) | Der eine Bewerbungsflow im Fokus-Modus. Die URL bleibt erhalten, alte `?tab=`-Links werden gemappt | ja | 1 |
 | `/bewerbung/danke` | Bestätigung, Timeline, optionale Ergänzungen, Kontakt als .vcf | noindex | 1 |
 | `/bewerbung/mappe` | Bewerbungsmappen-Generator (A4, Druck/PDF), optionales Werkzeug | noindex | 1 |
 | `/feeds/indeed.xml`, `/feeds/jobs.xml`, `/feeds/jobs.json` | Jobbörsen- und Aggregator-Feeds aus dem Registry | – | 1 |
-| `/einsatzgebiet`, `/einsatzgebiet/[slug]` | Lokale Seiten (E-028): Gebietsseite, 4 Kreis-Hubs, 54 Ortsseiten aus gemessenen Daten, ohne JobPosting (siehe §10.1) | ja | PR2 |
+| `/einsatzgebiet`, `/einsatzgebiet/[slug]` | Lokale Seiten (E-028): Gebietsseite, 4 Kreis-Hubs, 54 Ortsseiten aus gemessenen Daten, ohne JobPosting (siehe §10.1) | ja; Ortsseiten nur nach Gate (E-029, §10.1), sonst `noindex,follow` | PR2 |
 | `/admin/**` | Recruiter-Cockpit (Magic Link, Allowlist) | noindex | 2 |
 | `/lp/[slug]` | Social-Ads-Landingpages, erster Flow-Schritt above the fold | noindex | 3 |
 | `/talentpool` (+ `/bestaetigen`, `/verwalten`) | Job-Alarm mit Double-Opt-in (24 Monate, wie im bestehenden Datenschutztext) | ja | 4 |
@@ -114,6 +116,7 @@
 - `obermonteur-projektleiter-shk-wetzlar`
 - `ausbildung-anlagenmechaniker-shk-wetzlar`
 - Quereinstieg/Montagehelfer: zunächst `funnel_only`, also wählbar im Flow, aber ohne Seite, Schema und Feed.
+- **Seit dem Ausbau 2026-10-14:** Quereinsteiger/Montagehelfer bekommt eine eigene Seite (Lohn auf Anfrage, E-030). Neu sind Ausbildung 2027, Schülerpraktikum (`praktikum`, JobPosting `INTERN`, keine Angabe zu Geld) und Bürofachkraft (Voll- oder Teilzeit); die Ausbildung 2026 wird zum 31.12.2026 archiviert. Jede neue Stelle hat eine eigene URL, ein eigenes JobPosting und Feed-Einträge. Die verbindliche Slug-Liste ist `lib/jobs/slugs.lock.json`; neue `job_id`s brauchen eine Migration mit Absprache (E-012, MENSCHEN M-039).
 
 **Keine Stadt-Duplikate** der Stellenseiten (keine Stelle × Ort). Google bewertet sie als Doorway-Pages, und Indeed straft Location-Blasting ab. Die Ortsseiten unter `/einsatzgebiet` (E-028) sind keine Kopien der Stellen: eigene, gemessene Werte je Ort, kein JobPosting, Einzigartigkeits-Gate vor jedem Merge.
 
@@ -125,7 +128,7 @@
   - `id`, `referenceCode` (z. B. `SHK-WP-2026-01`), `slug` (mit `redirectFrom`), `status` (`published|funnel_only|draft|archived`), `category`
   - `title`, `titleShy` (mit `&shy;` für 390 px), `shortTitle`, `seo{metaTitle, metaDescription, h1, keywords}`
   - `intro`, `tasks[]`, `requirements[]`, `benefitFactIds[]`
-  - `employment{kind, permanent, start}`, `salary{min, max, unit}`, `location` (HQ, Radius 35 km), `education`, `experienceMonths`
+  - `employment{kind, permanent, start}`, `salary{min, max, unit}` (seit E-030 optional; Pflicht ist `pay`: `'auf-anfrage'` schließt `salary` aus, `'keine-angabe'` nur beim Praktikum), `location` (HQ, Radius 35 km), `education`, `experienceMonths`
   - `datePosted`, `validThrough`, `updatedAt`
   - `apply{questionSet}`, `channels{googleJobs, indeedFeed, genericFeed, ba}`, `teamQuoteId`
 - Zuordnung `employmentType`: Ausbildung → `["FULL_TIME","OTHER"]` statt reinem FULL_TIME.
@@ -180,7 +183,7 @@
 **Motion** (CSS zuerst, `lib/motion/`, keine Bibliothek)
 - Dauern `--d-1` 120 · `--d-2` 240 · `--d-3` 400 · `--d-4` 600 ms, Takt 80 ms, Kurven `--k-aus` (.16,1,.3,1), `--k-wechsel` (.65,0,.35,1), `--k-ein` (.32,0,.67,0). Eingänge d-2/aus, Ausgänge d-1/ein.
 - Register `lib/motion/register.ts` (19 Kennungen aus K-009); jedes animierte Element trägt `data-motion`, der Guard prüft die Kennung. Kopfskript setzt `auftakt` vor dem ersten Bild (2-s-Sicherheitsnetz). Sein sha256 steht als `HEAD_SCRIPT_SHA256` in `lib/motion/head-script.ts`, bewusst nicht in der CSP: ein Hash schaltet `'unsafe-inline'` ab und sperrte die Inline-Skripte von Next; bis zur Nonce-Strategie deckt `'unsafe-inline'` alle ab (`lib/motion/__tests__/csp.test.ts`).
-- **Verboten:** Schleifen, Laufbänder, Zähler, Konfetti, Parallax, Scroll-Auftritte auf jedem Abschnitt.
+- **Verboten:** Schleifen, Laufbänder, Zähler, Konfetti, Parallax, Scroll-Auftritte auf jedem Abschnitt. **Ausnahme seit E-029 (KERN 1.2, K-009):** Dauerbewegung in Produkt- und Prozesszeichnungen (Rotor, Wasser, Kältemittel), nur im Sichtfeld, bei sichtbarem Tab und ohne reduzierte Bewegung, mit Knopf „Anhalten“; `infinite` nur in `components/zeichnung/bewegung/dauer.module.css` (Guard-Regel `endlos`).
 - Bei `prefers-reduced-motion` steht alles sofort im Endzustand.
 
 **Barrierefreiheit (WCAG 2.2 AA)**
@@ -249,7 +252,7 @@
 **Entfällt auf der Startseite:** eingebetteter Hero-Funnel, TrustStrip-Marquee, AIAnswerBox (dupliziert die FAQ) und LeadQuickForm (wäre ein vierter Funnel).
 
 **Stellenseite `/jobs/[slug]`**
-- Kopf: Breadcrumbs → H1 → Meta-Tags (Vollzeit · Wetzlar + 35 km · Unbefristet) → **Gehaltsspanne als StatTile**.
+- Kopf: Breadcrumbs → H1 → Meta-Tags (Vollzeit · Wetzlar + 35 km · Unbefristet) → ~~**Gehaltsspanne als StatTile**~~ seit E-030 ein ruhiger Block „Lohn auf Anfrage · über Tarif · Urlaubs- und Weihnachtsgeld“.
 - Inhalt: „Das erwartet dich“ / „Das bringst du mit“ / „Das bekommst du“ (aus Fakt-IDs).
 - **Passendes Teamzitat:**
   - Koch → Anlagenmechaniker/Obermonteur
@@ -316,15 +319,15 @@ Ersetzt HeroExpressFunnel, QuizView, VaultView, FormView und BewerberCheckliste.
 
 | Kanal | Umsetzung | Phase |
 |---|---|---|
-| **Google for Jobs** | JobPosting nur auf `/jobs/[slug]`, mit `url`, `directApply: true` (Flow eingebettet), `identifier`, `baseSalary` (sichtbar), `validThrough`, vollständiger `jobLocation` und `hiringOrganization` per `@id`. Sitemap aus dem Registry, IndexNow mit Registry-URLs | 1 |
-| **Google Indexing API** | GitHub Action nach dem Prod-Deploy (`URL_UPDATED/DELETED`, Service-Account in Search Console) | 3 |
+| **Google for Jobs** | JobPosting nur auf `/jobs/[slug]`, mit `url`, `directApply: true` (Flow eingebettet), `identifier`, ~~`baseSalary` (sichtbar)~~ (entfällt mit E-030), `validThrough`, vollständiger `jobLocation` und `hiringOrganization` per `@id`. Sitemap aus dem Registry, IndexNow mit Registry-URLs | 1 |
+| **Google Indexing API** | **Vorgezogen (Ausbau 2026-10-14, §15):** Workflow `.github/workflows/indexierung.yml` bei Production-`deployment_status`, täglich und von Hand; `scripts/seo/benachrichtigen.mjs` (JWT über `node:crypto`, keine neue Abhängigkeit) vergleicht `/feeds/jobs.json` und `/sitemap.xml` mit dem letzten Stand. Er meldet **nur `/jobs/*`** an Google (`URL_UPDATED`/`URL_DELETED`; die API ist für JobPosting-Seiten gedacht) und alle geänderten URLs über `POST /api/indexnow` an IndexNow. Secrets `GOOGLE_INDEXING_SA_KEY` und `INDEXNOW_SUBMIT_TOKEN` als Environment-Secrets, in Logs nur Zählwerte. Voraussetzung: Search Console und Service-Account (MENSCHEN M-032) | ~~3~~ → 1 (P1) |
 | **Indeed + Aggregatoren** | `/feeds/indeed.xml` (Indeed-XML-Format), dazu `jobs.xml` und `jobs.json` für Jooble, Talent.com, Adzuna, Careerjet und Kimeta. URLs mit `utm_source=<feed>`. Bei Indeed realistisch: Career-Site-Indexierung über das Arbeitgeber-Dashboard anfragen. Eine Stelle = ein Standort | 1 (+ Anfrage durch User) |
-| **Bundesagentur für Arbeit** | Realistisch: Stellen manuell im kostenlosen BA-Arbeitgeberportal einstellen und die Ausbildung zusätzlich in der HWK-Lehrstellenbörse, jeweils mit UTM-URLs (Anleitung in `docs/operations/stellenboersen.md`). Die HR-BA-XML-Schnittstelle braucht einen Kooperationsvertrag und ein Zertifikat, deshalb nur optional in Phase 5. `ba.berufenetId` ist im Modell bereits vorgesehen | 1 (Doku) / 5 |
-| **Website des Kundenbetriebs** | `/feeds/jobs.json` mit CORS für bad-energie.de, für ein Widget „Wir stellen ein“ | 1 |
+| **Bundesagentur für Arbeit** | Realistisch: Stellen manuell im kostenlosen BA-Arbeitgeberportal einstellen und die Ausbildung zusätzlich in der HWK-Lehrstellenbörse, jeweils mit UTM-URLs (Anleitung in `docs/operations/stellenboersen.md`). Die HR-BA-XML-Schnittstelle braucht einen Kooperationsvertrag und ein Zertifikat, deshalb nur optional in Phase 5. `ba.berufenetId` ist im Modell bereits vorgesehen. Stand 2026-10-14: Die BA-Suche nach „Bad und Energie“ in Wetzlar ergab 0 Treffer; das Arbeitgeberkonto und alle Stellen sind der größte Hebel außerhalb des Codes (Schritte in `docs/inhaber/checkliste-offsite.md`, MENSCHEN M-040) | 1 (Doku) / 5 |
+| **Website des Kundenbetriebs** | `/feeds/jobs.json` mit CORS für bad-energie.de, für ein Widget „Wir stellen ein“. Seit 2026-10-14 zusätzlich ein fertiger Ticket-Text für den Dienstleister der Hauptdomain: 301 von `/ueber-uns/jobs` und `/ueber-uns/ausbildung`, Canonical-Fehler, „Karriere“ in der Hauptnavigation, CSS und Bilder in der robots.txt freigeben (`docs/inhaber/ticket-hauptdomain.md`, MENSCHEN M-036) | 1 |
 | **Social Recruiting** | `/lp/[slug]` mit Headline zum Ad-Hook, erster Flow-Schritt above the fold, Fakt-IDs, `100dvh`/Safe-Area, getestet in den In-App-Browsern von Instagram, Facebook und TikTok. Meta-, TikTok- und Google-Ads-Pixel **erst nach Marketing-Einwilligung** (vereinheitlichter `consentStore` + schlanker Banner mit gleichwertigem „Ablehnen“). Conversion-Event mit der Bewerbungsnummer als `eventID`, ohne personenbezogene Daten | 3 |
 | **Talent-Pool + Job-Alarm** | Double-Opt-in per E-Mail (Resend, `List-Unsubscribe` One-Click), Interessen-Chips. Täglicher Cron verschickt Alerts für neue Stellen. Reaktivierung 30 Tage vor Ablauf. WhatsApp zunächst als öffentlicher Kanal „Jobs bei Bad und Energie“ ohne gespeicherte Daten. Die WhatsApp Cloud API kommt nur in Phase 5 | 4 |
 | **Empfehlungen** | Code pro Mitarbeiter (wird im Cockpit erzeugt) → `/r/[code]` leitet per 302 auf die Stelle mit `ref=` weiter. Teilen per Web-Share/WhatsApp. **Keine Dritt-Kontaktdaten**, der Kandidat bewirbt sich selbst. Prämie nur, wenn der Owner eine festlegt | 4 |
-| **Messung** | Hauptkennzahl „Bewerbungen pro Kanal × Stelle“ direkt aus dem ATS, ohne Tracking-Cookies. Optional `funnel_events` ohne Kennung für die Drop-off-Analyse | 2–3 |
+| **Messung** | Hauptkennzahl „Bewerbungen pro Kanal × Stelle“ direkt aus dem ATS, ohne Tracking-Cookies. Optional `funnel_events` ohne Kennung für die Drop-off-Analyse. **Vorgezogen (Ausbau 2026-10-14, §15):** cookielose Ereignisse über `POST /api/e` (`flow_start`, `schritt`, `abgesendet`, `fehler`, `whatsapp_klick`, `telefon_klick`; keine Kennung, IP oder User-Agent, nur Tageszähler; Client per `sendBeacon`), Speicher in Supabase nach Absprache (E-012), bis dahin als Log. Hinter dem Schalter `FUNNEL_EVENTS`, aus bis zur Freigabe durch die oder den DSB samt angepasster Datenschutzerklärung (MENSCHEN M-034). Herkunft ohne Speicher im Browser über Parameter an den `/bewerbung`-Links, sichtbarer WhatsApp-Code, QR-Codes mit UTM. Kein Werbebudget, daher keine Klick-Kennungen und keine Pixel | ~~2–3~~ → 1 (P1) |
 
 **Middleware-Fix (`middleware.ts` → `proxy.ts`, Next 16)**
 - Nur noch benannte SEO-Scraper werden geblockt. Generische HTTP-Clients und `HeadlessChrome` werden freigegeben.
@@ -480,8 +483,8 @@ Muster (Title ≤ 60 Zeichen, Description ≤ 155 Zeichen):
 | Ausbildung | Ausbildung Anlagenmechaniker SHK Wetzlar (m/w/d) 2026 | Ausbildung Anlagenmechaniker SHK – Einstieg 2026 noch möglich |
 | /bewerbung | Bewerben in 60 Sekunden – ohne Lebenslauf \| Bad & Energie | (sr-only) Bewerbung bei Bad und Energie |
 
-Beispiel-Description für Anlagenmechaniker:
-> Anlagenmechaniker SHK in Wetzlar: Wärmepumpen & Bäder im 35-km-Umkreis, 3.600–4.600 €, 30 Tage Urlaub, flexible Arbeitszeiten. In 60 Sek. bewerben.
+Beispiel-Description für Anlagenmechaniker (seit E-030 ohne Euro-Betrag):
+> Anlagenmechaniker SHK in Wetzlar: Wärmepumpen & Bäder im 35-km-Umkreis, über Tarif, 30 Tage Urlaub, flexible Arbeitszeiten. In 60 Sek. bewerben.
 
 **Strukturierte Daten**
 - Organization, WebSite und LocalBusiness bleiben global.
@@ -491,22 +494,70 @@ Beispiel-Description für Anlagenmechaniker:
 
 ### 10.1 Lokale Seiten (E-028, PR2)
 
-Auftrag des Inhabers (2026-10-12): die Zahl der indexierbaren Seiten verzehnfachen, mit Seiten, die gestalterisch beeindrucken und nur Belegtes sagen. Umsetzung nach dem Plan „Lokale SEO-Seiten“:
+Auftrag des Inhabers (2026-10-12): die Zahl der indexierbaren Seiten verzehnfachen, mit Seiten, die gestalterisch beeindrucken und nur Belegtes sagen. Umsetzung nach dem Plan „Lokale SEO-Seiten“ (Stand 2026-10-12; die Änderungen vom 2026-10-14 stehen unten unter „Gate, Stufen und Orts-Sitemap“):
+
+> **Abgelöst am 2026-10-14 (E-029):** Das Ziel „verzehnfachen“ entfällt. Indexiert wird, was das Gate besteht; gemessen wird der Anteil indexierter Ortsseiten in der Search Console. Der Inhaber will die Ortsseiten massiv ausbauen, ohne sie herauszunehmen („mach, dass sie bestehen“): Alle 54 Orte bekommen im selben Release echte Bus- und Bahn- sowie Berufsschuldaten.
 
 - **Seiten:** `/einsatzgebiet` (Gebietsseite), 4 Kreis-Hubs ab 3 Orten (Lahn-Dill-Kreis, Landkreis Gießen, Landkreis Limburg-Weilburg, Wetteraukreis), 54 Ortsseiten (45 Gemeinden, Wetzlar und 8 Stadtteile). Kreise unter 3 Orten (Marburg-Biedenkopf, Hochtaunuskreis) sind Abschnitte der Gebietsseite; ihre Segmente leiten per 308 dorthin. Sitemap: 7 → **66** URLs (7 + 1 + 4 + 54); mit den Themenseiten (§10.2) **72**. Allendorf (Lumda) hat keine Seite: Die erste Messung hatte den Gießener Stadtteil verortet, neu gemessen liegt die Stadt 38 km entfernt (`orte-messung.md`, Korrekturen).
 - **Daten:** gemessen mit OpenStreetMap und OSRM (`docs/operations/orte-messung.md@83c9e1c`, mit der Korrektur zu Allendorf (Lumda)), nur Orte mit ≤ 35 km Straße. Die Karte der Startseite und `/jobs` zeigen seitdem dieselben km und Minuten wie die Ortsseiten; der Firmensitz steht auf den OSM-Koordinaten des Hauses (50.5525, 8.47465).
-- **Texte:** nur aus `lib/places/text.ts` (Ortswerte, `derive.ts`, Fakten per ID, Gehälter aus dem Stellen-Registry). Das Einzigartigkeits-Gate (U1–U8) prüft jede Seite; besteht ein Ort nicht, wird er `merged` und geht im Kreis auf.
-- **Seitenart Erzählseite:** Seitenkopf mit Navy-Zeichnung (Ortsseite: Pendelweg in echter Richtung mit Maßkette, Bewegung `pendel-zeichnen`; Kreis-Hub: senkrechte Entfernungsleiste; Gebietsseite: Ringe 15/25/35 km, Bewegung `ringe-zeichnen`), Plan auf dem Server, Entfernungsleiste 0–35 km, Stellen mit Gehalt, Nachbarorte, Faktenband, Kontakt mit WhatsApp-Gruß je Ort.
+- **Texte:** nur aus `lib/places/text.ts` (Ortswerte, `derive.ts`, Fakten per ID, ~~Gehälter aus dem Stellen-Registry~~ seit E-030 „Lohn auf Anfrage“ ohne Betrag, auch in den Meta-Texten). Das Einzigartigkeits-Gate (U1–U8) prüft jede Seite; besteht ein Ort nicht, wird er `merged` und geht im Kreis auf. Seit E-029 ist U1–U8 die Bedingung I1 des Indexierungs-Gates (unten).
+- **Seitenart Erzählseite:** Seitenkopf mit Navy-Zeichnung (Ortsseite: Pendelweg in echter Richtung mit Maßkette, Bewegung `pendel-zeichnen`; Kreis-Hub: senkrechte Entfernungsleiste; Gebietsseite: Ringe 15/25/35 km, Bewegung `ringe-zeichnen`), Plan auf dem Server, Entfernungsleiste 0–35 km, Stellen mit Gehalt, Nachbarorte, Faktenband, Kontakt mit WhatsApp-Gruß je Ort. Seit E-029: Lageplan mit Nordpfeil und Maßstabsleiste statt Pendelweg (Linienarten nach KERN K-010); seit E-030: Stellen ohne Betrag.
 - **SEO-Technik:** Title, Description, h1 und Keyword aus dem Textmodell (eindeutig, U8), Canonical auf sich selbst, eigenes OG-Bild je Ort („27 km bis zum Firmensitz“). JSON-LD: Ortsseite = WebPage mit `spatialCoverage` → Place (PLZ, Ort, Hessen, DE, Kreis als AdministrativeArea; ohne Straße und Koordinaten) und BreadcrumbList; Hubs = CollectionPage mit ItemList und BreadcrumbList. Kein JobPosting, kein LocalBusiness je Ort, keine FAQPage. `check-graph.mjs` prüft das im Build, dazu „jede indexierbare Seite steht in der Sitemap“.
-- **Verlinkung:** Startseite („Auch bei uns im Einsatz“ als Links, „Alle Orte im Einsatzgebiet“, Explorer „Mehr zu {Ort}“), Fuß (Orte als Links, Entfernung und Fahrzeit → `/einsatzgebiet`), `/jobs` (Einsatzgebiet → `/einsatzgebiet`), jede Stellenseite genau ein Link „Arbeitsweg von deinem Ort prüfen“.
+- **Verlinkung:** Startseite („Auch bei uns im Einsatz“ als Links, „Alle Orte im Einsatzgebiet“, Explorer „Mehr zu {Ort}“), Fuß (Orte als Links, Entfernung und Fahrzeit → `/einsatzgebiet`; seit E-029 nur noch die Kreis-Hubs und „Alle Orte“ statt 54 Einzellinks, gegen das Doorway-Signal), `/jobs` (Einsatzgebiet → `/einsatzgebiet`), jede Stellenseite genau ein Link „Arbeitsweg von deinem Ort prüfen“.
 - **Pflege:** `docs/operations/orte-pflegen.md` (neu messen, aufnehmen, zusammenlegen, Slug-Sperre, Weiterleitungen).
 - **Freigabe:** Der Inhaber gibt die Ortsliste (`docs/operations/orte-messung.md`, 54 Orte) mit dem Merge des PR frei. Nach `main` gemergt wird nur mit seiner ausdrücklichen Zustimmung; streicht er Orte, bekommen sie vorher einen Eintrag in `PLACE_OVERRIDES` (`fakten-abgleich.md` B32).
 - **Ausrollen (Entscheidung 2026-10-12): alle Orte in einem Schritt statt in Chargen.** Der Plan sah Chargen vor (zuerst rund 19 URLs, dann je 2–4 Wochen Search Console). Der Inhaber hat die Verzehnfachung jetzt beauftragt; deshalb gehen Gebietsseite, Kreis-Hubs und alle 54 Ortsseiten mit dem Merge zusammen live. Die Sicherungen des Plans bleiben:
-  - **Stopp-Regel:** Meldet die Search Console nach dem Livegang für > 30 % der Ortsseiten „Gecrawlt – zurzeit nicht indexiert“ oder „Duplikat“, kommen keine weiteren lokalen Seiten dazu, bis die Ursache geklärt ist.
-  - **Ausdünnen:** Ortsseiten ohne Impressionen nach 120 Tagen gehen im Kreis-Hub auf (308).
-  - **Prüfung vor jedem Merge:** Gate U1–U8 auf dem Textmodell (`bun run test`) und dieselbe Grenze am gebauten HTML (`bun run test:similarity`, Jaccard ≤ 0,45 je Paar von Ortsseiten, nach `bun run build`).
+  - **Stopp-Regel:** Meldet die Search Console nach dem Livegang für > 30 % der Ortsseiten „Gecrawlt – zurzeit nicht indexiert“ oder „Duplikat“, kommen keine weiteren lokalen Seiten dazu, bis die Ursache geklärt ist. Wöchentliche Prüfung nach `docs/operations/orte-monitoring.md`.
+  - **Ausdünnen:** Ortsseiten ohne Impressionen nach 120 Tagen gehen im Kreis-Hub auf (308). Seit E-029 in zwei Schritten: erst `noindex,follow`, nach dem nächsten Crawl die 308 in den Kreis-Hub (`docs/operations/orte-monitoring.md`).
+  - **Prüfung vor jedem Merge:** Gate U1–U8 auf dem Textmodell (`bun run test`) und dieselbe Grenze am gebauten HTML (`bun run test:similarity`, Jaccard ≤ 0,45 je Paar von Ortsseiten, nach `bun run build`). Seit E-029 strenger, siehe I4 unten.
+
+#### Gate, Stufen und Orts-Sitemap (E-029, 2026-10-14)
+
+**Gate** (`lib/places/qualitaet.ts`, Metriken in `lib/places/metriken.ts`). Eine Ortsseite ist nur indexierbar, wenn **alle** Bedingungen gelten:
+- **I1:** U1–U8 wie bisher.
+- **I2:** mindestens 2 Datenklassen außer der Geometrie, jede mit Quelle.
+- **I3:** mindestens 60 Wörter und ≥ 30 % des Ortstexts aus diesen Daten.
+- **I4:** Jaccard gegen indexierbare Geschwisterseiten ≤ 0,30 für die ganze Seite und ≤ 0,20 für die Ortsblöcke; im gebauten HTML ≤ 0,40 (`scripts/qa/check-local-similarity.mjs`).
+- **I5:** Daten aktuell (Fahrplanperiode; Einsätze ≤ 15 Monate).
+- **I6:** kein `pending`-Fakt auf der Seite.
+
+**Datenklassen** (in `lib/places/data/*.json`, Schema in `lib/places/schema.ts`, erzeugt offline über `scripts/places/*.mjs`):
+
+| Klasse | Quelle | Ebene |
+|---|---|---|
+| `oepnv`: Haltestelle, Linien, Umstiege, Ankunft bis 7:30, Takt | gtfs.de „Deutschland Nahverkehr“ (CC BY 4.0, Datenbasis DELFI e.V.), Pflege in `docs/operations/orte-oepnv.md` | Ort |
+| `berufsschule`: Bus- und Bahnweg zur zuständigen Berufsschule | GVBl. Hessen 2026 Nr. 21, Anlage 2, und Schulbezirkssatzung; Bestätigung durch den Inhaber offen (MENSCHEN M-024) | Ort |
+| `einsaetze`: Einsätze je Jahr | Auftragsbuch; nur Bänder 5–9, 10–19, 20+, nichts unter 5 (M-023) | Ort |
+| `touren`: typische Arbeiten in dieser Richtung | Betrieb (M-023) | Richtung/Kreis |
+| Kollegen in der Nähe | nur mit Einwilligung (M-035) | nur Kreis |
+| Arbeitsmarkt: Median-Entgelt KldB 34212, Engpass | BA-Entgeltatlas, Engpassanalyse, mit Stichtag; nur als Marktinfo, ohne Vergleich mit eigenen Beträgen | Kreis-Hub |
+
+Berufsverkehr entfällt: Werte aus Google Routes dürfen laut Nutzungsbedingungen nicht dauerhaft gespeichert werden.
+
+**Lock-Datei:** `bun run orte:gate` schreibt `lib/places/data/indexierung.json`. Ein Test erzwingt, dass die Datei dem berechneten Ergebnis entspricht (wie `slugs.lock.json`); jede Änderung steht damit im PR.
+
+**Folgen des Gates:**
+- Nicht indexierbar heißt `noindex,follow`; die Seite bleibt erreichbar.
+- Sie fällt aus Sitemap, IndexNow, `llms.txt` und den ItemLists der Hubs (`lib/seo/indexable-pages.ts`, `lib/places/jsonld.ts`).
+- `check-graph.mjs` prüft zusätzlich „noindex steht nicht in der Sitemap“.
+- **Orts-Sitemap:** `app/sitemap.ts` wird nach Gruppen geteilt (Kern, Stellen, Orte, Themen), damit die Ortsseiten in der Search Console getrennt messbar sind. Welche Sitemap-Adressen es gibt, steht in `robots.txt` (Zeilen `Sitemap:`); jede wird einzeln in der Search Console eingereicht (`docs/inhaber/checkliste-offsite.md`).
+
+**Titelstufen:**
+- Mit Einsatzdaten: „SHK-Jobs {Ort}“, belegt durch echte Baustellen.
+- Nur mit offenen Daten: „Arbeitsweg {Ort} – Wetzlar: Auto und Bus“.
+
+**Stufen:**
+- **Jetzt, im selben Release wie das Gate:** ÖPNV und Berufsschule für alle 54 Orte; damit sind I2 und I3 erfüllt. Gibt es für einen Ort keine brauchbare Verbindung, ist genau das die Information („kein Bus vor 7:30, Auto nötig“); die Klasse zählt trotzdem, weil sie mit Quelle belegt ist. Fällt ein Ort am Gate durch, setzt das Gate ihn automatisch auf `noindex,follow`, und der Bericht nennt den Grund. Ziel sind 0 Ausfälle.
+- **P2:** Einsatzdaten (M-023) → Titel „SHK-Jobs {Ort}“; Kreis-Hubs mit BA-Arbeitsmarktdaten.
+- **B33:** Die 26 weiteren gemessenen Orte (falls „35 km“ die Luftlinie meint) gehen nur über das Gate (`gebietsregel` in `lib/places/schema.ts`).
+- Breiter wird es erst, wenn **≥ 70 % der eingereichten Ortsseiten indexiert** sind.
+- **Fahrplanwechsel:** Jedes Jahr im Dezember werden die ÖPNV-Daten neu berechnet (I5); Ablauf in `docs/operations/orte-oepnv.md`.
+
+**Überwachung:** wöchentlich nach `docs/operations/orte-monitoring.md` (Orts-Sitemap, Stopp-Regel > 30 %, 120-Tage-Regel).
 
 ### 10.2 Themenseiten (E-028, PR3)
+
+> **Änderungen 2026-10-14:** Mit E-030 wird `/arbeiten-bei-uns/gehalt` zu „Bezahlung und Extras“ ohne Beträge (Slug und Weiterleitung bleiben stabil); Gehaltsleiter, Heizkreis mit Spanne und Kennwert im OG-Bild entfallen. Mit E-029 ersetzt die Technische Zeichnung 2.0 das Wärmebild auf `/arbeiten-bei-uns/waermepumpen` (Außengerät Front und Seite, Anlagenschema und Kältekreis bewegt, mit Erklärtext); Verteiler und Absperrung werden zu Liste bzw. Typografie, Leitungstrenner zu Flächenwechseln (KERN 1.2).
 
 Zweiter Teil der Verzehnfachung: der Themen-Hub `/arbeiten-bei-uns` und fünf Themenseiten, gebaut wie die Ortsseiten (statisch, `dynamicParams = false`, stündlich neu).
 
@@ -517,7 +568,7 @@ Zweiter Teil der Verzehnfachung: der Themen-Hub `/arbeiten-bei-uns` und fünf Th
 - **SEO-Technik:** Title, Description, h1 und Keyword aus dem Textmodell (eindeutig über alle indexierbaren Seiten, Test), Canonical auf sich selbst, eigenes OG-Bild je Thema (Kennwert im Heizkreis), Hub mit dem Standardbild. JSON-LD: Hub = CollectionPage mit ItemList und BreadcrumbList, Thema = WebPage mit BreadcrumbList; kein JobPosting, keine FAQPage. `check-graph.mjs` prüft das im Build. Gruppe `themen` in `lib/seo/indexable-pages.ts` (Sitemap, IndexNow, `llms.txt` eine Zeile, `llms-full.txt` Abschnitt 6).
 - **Verlinkung:** Fuß (Zeile „Arbeiten bei uns“ mit allen Themen), Startseite (unter Werkzeug & Fuhrpark „Mehr zum Arbeiten bei uns“), `/jobs` (unter dem Stellenvergleich), jede Stellenseite genau ein Link „Gehälter aller Stellen im Vergleich“ unter „Auf einen Blick“; jede Themenseite verlinkt die übrigen vier und den Hub.
 - **Prüfung:** `lib/themen/__tests__/themen.test.ts`, `app/arbeiten-bei-uns/__tests__/seiten.test.ts`, E2E `e2e/themen-pages.spec.ts` (alle sechs Seiten, 320 px) und Stichproben `/arbeiten-bei-uns`, `/arbeiten-bei-uns/gehalt` mit axe in allen vier Projekten.
-- **Navigation (2026-10-12, Auftrag des Inhabers „die Seiten müssen in Kopf, Menü und Fuß stehen“):** Hauptnavigation Stellen · Arbeiten bei uns · Einsatzgebiet · FAQ (die Anker „Vorteile“ und „Ablauf“ entfallen); Untermenüs am Desktop (ab 64em mit Maus; Escape schließt sie überall, WCAG 1.4.13) mit den fünf Themen bzw. den Kreis-Hubs und „Alle 54 Orte von A bis Z“, im Menü am Handy und auf Tablets jeder Breite als Nebenleitung; der Fuß listet alle 54 Orte nach Kreis und alle Themen. aria-current markiert den Bereich auf jeder Unterseite; Prüfung in `components/site/__tests__` und `e2e/navigation.spec.ts`.
+- **Navigation (2026-10-12, Auftrag des Inhabers „die Seiten müssen in Kopf, Menü und Fuß stehen“):** Hauptnavigation Stellen · Arbeiten bei uns · Einsatzgebiet · FAQ (die Anker „Vorteile“ und „Ablauf“ entfallen); Untermenüs am Desktop (ab 64em mit Maus; Escape schließt sie überall, WCAG 1.4.13) mit den fünf Themen bzw. den Kreis-Hubs und „Alle 54 Orte von A bis Z“, im Menü am Handy und auf Tablets jeder Breite als Nebenleitung; der Fuß listet alle 54 Orte nach Kreis und alle Themen (seit E-029: Kreis-Hubs und „Alle Orte“ statt der 54 Einzellinks). aria-current markiert den Bereich auf jeder Unterseite; Prüfung in `components/site/__tests__` und `e2e/navigation.spec.ts`.
 
 ---
 
@@ -527,7 +578,7 @@ Zweiter Teil der Verzehnfachung: der Themen-Hub `/arbeiten-bei-uns` und fünf Th
 |---|---|---|---|
 | **1 – Fundament & Flow** (jetzt) | Hotfixes, Job-Registry, Design-System, neue Seiten, ein Flow, Mappe, Karte, Karussell, Intake v2 (E-Mail-Sink), Attribution, Feeds, SEO, Tests und CI | Resend-Key rotieren; Env-Vars in Vercel prüfen | Jede Stelle hat eine statische Seite mit validem JobPosting, die Feeds validieren, alle Einstiege nutzen den einen Flow, es gibt keinen Fake-Erfolg, die CI ist grün |
 | **2 – ATS** | Supabase-Schema + RLS, SupabaseSink, Uploads, Cockpit, Cron (Purge/Outbox), Datenschutz-Update | Supabase-Projekt (Frankfurt, Pro), Vercel Pro, Cockpit-E-Mails, AVVs | Jede Bewerbung samt Dateien liegt in der DB, das Team arbeitet im Cockpit, die Löschfristen laufen automatisch |
-| **3 – Social & Beschleunigung** | `/lp/[slug]`, Consent-Vereinheitlichung + Banner, Pixel nach Einwilligung, CSP scharf, Indexing API, Funnel-Events, Kanban, MFA | Pixel-IDs, Ad-Budget, Search-Console-Service-Account | Kampagnen-Bewerbungen sind pro Anzeige messbar |
+| **3 – Social & Beschleunigung** | `/lp/[slug]`, Consent-Vereinheitlichung + Banner, Pixel nach Einwilligung, CSP scharf, ~~Indexing API, Funnel-Events~~ (vorgezogen in den Ausbau 2026-10-14, §7 und §15), Kanban, MFA | Pixel-IDs, Ad-Budget (Stand 2026-10-14: kein Werbebudget), Search-Console-Service-Account | Kampagnen-Bewerbungen sind pro Anzeige messbar |
 | **4 – Talent-Pool & Empfehlungen** | Job-Alarm mit DOI, Alert- und Reaktivierungs-Cron, `/empfehlen`, `/r/[code]`, Cockpit-Screens | Prämienregel (falls gewünscht), WhatsApp-Kanal | Neue Stellen erreichen automatisch Abonnenten, Empfehlungen sind zuordenbar |
 | **5 – Optional nach Bedarf** | Jobs-Tabelle + Editor, HR-BA-XML, serverseitige Conversions, WhatsApp Cloud API, Reporting (Time-to-Hire, Kanal-ROI) | BA-Kooperation, Meta-Verifizierung | – |
 
@@ -607,9 +658,10 @@ Zweiter Teil der Verzehnfachung: der Themen-Hub `/arbeiten-bei-uns` und fünf Th
 ## 13. Offene Owner-Punkte (blockieren Phase 1 nicht; bis zur Klärung gilt jeweils der sichere Standard)
 
 - ~~**Sofort:** Resend-Key rotieren.~~ **Erledigt am 2026-10-08.**
-- Versprechen „Rückmeldung in 24 h“? Standard: „Wir melden uns schnellstmöglich“.
+- Neue Owner-Punkte seit 2026-10-14 (Bosch-Urkunde und -Erlaubnis, Inneneinheit, Einsatzdaten, Berufsschule, Praktikum, Handy-Adresse, Profile, Search Console, DSB-Freigabe, Einwilligungen, Ticket Hauptdomain, Abnahme der Zeichnungen, Bürofachkraft, Migration, BA-Konto): `_relaunch/MENSCHEN.md` M-020…M-040, Kurzliste mit „schaltet frei“ in `docs/inhaber/offene-angaben.md`.
+- Versprechen „Rückmeldung in 24 h“? Standard: „Wir melden uns schnellstmöglich“. Vorschlag 2026-10-14: „binnen 24 Stunden an Werktagen“, zusammen mit der Sofortmeldung aufs Handy (MENSCHEN M-007, M-029).
 - Stand der Google-Bewertungen. `reviews.data.ts` nennt 24 Bewertungen und zitiert 10.
-- Quereinsteiger/Montagehelfer als echte Stelle (mit Gehalt)? Standard: `funnel_only`.
+- ~~Quereinsteiger/Montagehelfer als echte Stelle (mit Gehalt)? Standard: `funnel_only`.~~ **Geklärt 2026-10-14:** wird veröffentlicht, Lohn auf Anfrage (E-030).
 - Einheitlicher Titel für Sabri Demir. Standard: „Geschäftsführer und Meister“ (laut `team.ts`).
 - Einzelaussagen bestätigen: „Übernahmegarantie“, „1 %-Privatnutzung“, „Gehalt am 1. Werktag“. Bis dahin nur dort verwenden, wo sie bereits sichtbar stehen.
 - ~~Ist WhatsApp Business auf 06441 42956 aktiv?~~ Geklärt 2026-10-10: WhatsApp läuft nur über die Mobilnummer 0160 8834290 (`lib/data/contact.ts` `WHATSAPP`); 06441 42956 bleibt die Nummer für Anrufe, Impressum und JSON-LD. Offen: Business- oder privates Konto (`datenschutz-aenderungen.md` O9). Wer bekommt Cockpit-Zugänge (Phase 2)? Gibt es eine Empfehlungsprämie (Phase 4)? Soll eine BA-Kooperation beantragt werden (Phase 5)?
@@ -634,3 +686,31 @@ Zweiter Teil der Verzehnfachung: der Themen-Hub `/arbeiten-bei-uns` und fünf Th
    - Lighthouse mobil.
    - iPhone Safari, Android Chrome und die In-App-Browser von Instagram, Facebook und TikTok.
    - VoiceOver- und TalkBack-Durchlauf durch den Flow.
+
+---
+
+## 15. Ausbau 2026-10-14: „Bewerber-Maschine“
+
+**Anlass:** Der Betrieb braucht dringend Mitarbeiter. Die Karriereseite soll im Umkreis von 35 km um Wetzlar bei Bewerber-Suchen gut sichtbar sein (Google, Google for Jobs, Bing, KI-Antworten) und messbar Bewerbungen bringen. Der Inhaber hält die bisherigen SVGs für ungenau und verspielt.
+
+**Befund der Bestandsaufnahme (2026-10-14):** Die SEO-Technik ist stark (JobPosting vollständig, Sitemap, `llms.txt`, Feeds). Die Hebel liegen woanders: nur 4 Stellen, BA-Jobbörse ohne Treffer, keine Indexing API, `sameAs` nur auf bad-energie.de, Ortsseiten mit Doorway-Muster, keine Messung im Bewerbungsflow, nur eine E-Mail an info@ statt einer Sofortmeldung. Die Hauptdomain verlinkt die Karriereseite nicht, und ihre robots.txt sperrt CSS und Bilder für Google.
+
+**Entscheidungen** (`_relaunch/ENTSCHEIDUNGEN.md`, KERN 1.2):
+- **E-029:** Technische Zeichnung 2.0 (Linienarten, Maßstab als Daten, Normsymbole, Gerät Bosch Compress 5800i/6800i AW nur nach Maßen der Anleitung), Dauerbewegung nur in Produkt- und Prozesszeichnungen mit Anhalten-Knopf, Bosch-Markenfassung erst mit schriftlicher Erlaubnis, Ortsseiten indexiert nur nach Gate (§10.1).
+- **E-030:** „Lohn auf Anfrage“ bei allen Stellen; keine Euro-Beträge mehr.
+- Keine Fotos auf der Website, kein Werbebudget.
+
+**Ablauf:**
+
+| Stufe | Inhalt |
+|---|---|
+| P0 (bis 2026-10-18) | Ausbildung 2027 neu, Ausbildung 2026 zum Jahresende archivieren; Quereinsteiger veröffentlichen, Bürofachkraft neu; Ortsseiten bestehen das Gate (ÖPNV und Berufsschule für alle 54); Lohn auf Anfrage überall; Sofortmeldung; Sofortkorrektur der Hero-Zeichnung (Fließrichtung, Maßstab); Aufräumen; Dokumente; Off-site-Schritte des Inhabers |
+| P1 (Woche 2–4) | Zeichnung 2.0 einbauen; Gate-Modul und Sitemap nach Gruppen; Indexing API und IndexNow automatisch; JobPosting angereichert, `sameAs`, FAQ je Stelle, Schülerpraktikum; Funnel: Zusatzleistungen im Flow, Upload-Sackgasse weg, Herkunft über die URL, WhatsApp-Code, QR-UTM, cookielose Ereignisse; LCP-Diagnose mit Messung vorher und nachher |
+| P2 (Monat 2) | Dekorative Rohr-Metaphern seitenweit ersetzen, Icons auf 2 px; Kreis-Hubs mit BA-Arbeitsmarktdaten; Einsatzdaten und Titel „SHK-Jobs {Ort}“; 26 weitere Orte (B33) nur über das Gate; Bosch-Markenfassung, sobald die Erlaubnis vorliegt |
+| P3 (laufend) | Search Console überwachen und Stopp-Regel anwenden (`docs/operations/orte-monitoring.md`), Stellen alle 90 Tage verlängern, ÖPNV-Daten zum Fahrplanwechsel neu berechnen (`docs/operations/orte-oepnv.md`), Bosch-Kampagne aus der „Klimahelden Schmiede“, Empfehlungscodes, Talent-Pool |
+
+**Zeitkritisch:** Die Ausbildungsstelle 2026 läuft am 31.12.2026 aus. `lib/jobs/__tests__/registry.test.ts` wird ab etwa 17.12.2026 rot (14-Tage-Regel für `validThrough`) und blockiert dann jeden Deploy, wenn die Stelle nicht vorher archiviert ist.
+
+**Für den Inhaber:** Schritt-für-Schritt-Anleitungen, Anfragen und offene Angaben in `docs/inhaber/` (Search Console, Bing, BA, HWK, Unternehmensprofil, Kununu, lokale Links, Bosch-Anfrage, Ticket für die Hauptdomain). Der größte Hebel außerhalb des Codes sind BA-Jobbörse, Unternehmensprofil, eine Rückmeldung binnen 24 Stunden und echte Einsatzdaten.
+
+**Ehrlich:** Platzierungen, „Dominanz“ und Zitate in KI-Antworten kann niemand garantieren. Der Ausbau zieht jeden Hebel, den der Betrieb kontrolliert, und misst das Ergebnis.
