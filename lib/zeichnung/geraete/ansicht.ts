@@ -54,7 +54,13 @@ export interface Ansicht {
   rahmen: { x0: number; y0: number; x1: number; y1: number };
 }
 
-const SCHRIFT = { haupt: 48 } as const;
+const SCHRIFT = { haupt: 48, hinweis: 32 } as const;
+/** Abstand der Maßlinien vom Körper und voneinander (mm). */
+const VERSATZ = 110;
+
+/** Maßlinie mit den Werten dieser Zeichnungen (45°-Striche 14, Überstand 16, Maßzahl über der Linie). */
+const ketteMit = (schrift: number) => (von: Punkt, bis: Punkt, abstand: number, wert: number) =>
+  masslinie({ von, bis, abstand, wert, strich: 14, ueberstand: 16, schriftAbstand: schrift * 0.62 });
 
 /** Punkt in Polarkoordinaten um den Ursprung (Grad, 0 = rechts, im Uhrzeigersinn). */
 function polar(r: number, grad: number): Punkt {
@@ -70,34 +76,38 @@ const pt = (q: Punkt) => `${r1(q.x)} ${r1(q.y)}`;
  */
 export function rotorBlaetter(r: number, nabe: number, anzahl = 4): string {
   const teile: string[] = [];
+  const mitte = (anteil: number) => nabe + (r - nabe) * anteil;
   for (let k = 0; k < anzahl; k += 1) {
     const t = (360 / anzahl) * k;
-    const wurzelVor = polar(nabe, t - 24);
-    const wurzelNach = polar(nabe, t + 20);
-    const spitzeVor = polar(r, t + 6);
-    const spitzeNach = polar(r, t + 30);
-    const vorder = polar(r * 0.62, t - 16);
-    const hinter = polar(r * 0.6, t + 32);
+    // Sichel: schmale Wurzel an der Nabe, Vorderkante gewölbt, Spitze kurz auf dem Außenradius, Hinterkante hohl
+    const wurzelVor = polar(nabe, t - 16);
+    const wurzelNach = polar(nabe, t + 16);
+    const spitzeVor = polar(r, t + 24);
+    const spitzeNach = polar(r, t + 40);
+    const vor1 = polar(mitte(0.45), t - 24);
+    const vor2 = polar(r * 0.94, t + 2);
+    const nach1 = polar(r * 0.8, t + 46);
+    const nach2 = polar(mitte(0.3), t + 30);
     teile.push(
-      `M${pt(wurzelVor)}Q${pt(vorder)} ${pt(spitzeVor)}A${r1(r)} ${r1(r)} 0 0 1 ${pt(spitzeNach)}Q${pt(hinter)} ${pt(wurzelNach)}A${r1(nabe)} ${r1(nabe)} 0 0 0 ${pt(wurzelVor)}Z`,
+      `M${pt(wurzelVor)}C${pt(vor1)} ${pt(vor2)} ${pt(spitzeVor)}A${r1(r)} ${r1(r)} 0 0 1 ${pt(spitzeNach)}C${pt(nach1)} ${pt(nach2)} ${pt(wurzelNach)}A${r1(nabe)} ${r1(nabe)} 0 0 0 ${pt(wurzelVor)}Z`,
     );
   }
   return teile.join('');
 }
 
-function huelle(ansicht: Omit<Ansicht, 'rahmen'>, rand: number): Ansicht['rahmen'] {
+function huelle(ansicht: Omit<Ansicht, 'rahmen'>, rand: number, schrift: number = SCHRIFT.haupt): Ansicht['rahmen'] {
   const xs: number[] = [0, ansicht.breite];
   const ys: number[] = [0, ansicht.boden];
   for (const m of ansicht.masse) {
     // Maßzahl: grob als Kasten um die Mitte (Breite je Ziffer 0,6 em, gedreht bei senkrechten Maßen)
-    const breite = m.text.wert.length * SCHRIFT.haupt * 0.62;
+    const breite = m.text.wert.length * schrift * 0.62;
     const senkrecht = Math.abs(m.text.winkel) === 90;
-    const [bx, by] = senkrecht ? [SCHRIFT.haupt * 0.6, breite / 2] : [breite / 2, SCHRIFT.haupt * 0.6];
+    const [bx, by] = senkrecht ? [schrift * 0.6, breite / 2] : [breite / 2, schrift * 0.6];
     xs.push(m.a.x, m.b.x, m.text.x - bx, m.text.x + bx);
     ys.push(m.a.y, m.b.y, m.text.y - by, m.text.y + by);
   }
   for (const h of ansicht.hinweise) {
-    const breite = h.text.length * 30 * 0.62;
+    const breite = h.text.length * SCHRIFT.hinweis * 0.68;
     xs.push(h.ziel.x, h.anker === 'start' ? h.schrift.x + breite : h.schrift.x - breite);
     ys.push(h.ziel.y, h.schrift.y - 24, h.schrift.y + 24);
   }
@@ -107,7 +117,15 @@ function huelle(ansicht: Omit<Ansicht, 'rahmen'>, rand: number): Ansicht['rahmen
 const rechteck = (x0: number, y0: number, x1: number, y1: number) => `M${r1(x0)} ${r1(y0)}H${r1(x1)}V${r1(y1)}H${r1(x0)}Z`;
 
 /** Vorderansicht eines Außengeräts. */
-export function vorderansicht(g: Aussengeraet, { detail = 'voll', massketten = 'haupt' }: { detail?: Detail; massketten?: Massketten } = {}): Ansicht {
+export interface AnsichtOptionen {
+  detail?: Detail;
+  massketten?: Massketten;
+  /** Größe der Maßzahlen (mm); bestimmt Abstand der Zahl von der Linie und den Rahmen. */
+  schrift?: number;
+}
+
+export function vorderansicht(g: Aussengeraet, { detail = 'voll', massketten = 'haupt', schrift = SCHRIFT.haupt }: AnsichtOptionen = {}): Ansicht {
+  const kette = ketteMit(schrift);
   const B = g.breite.mm;
   const H = g.hoehe.mm;
   const kh = g.konsolen.hoehe.mm;
@@ -163,28 +181,27 @@ export function vorderansicht(g: Aussengeraet, { detail = 'voll', massketten = '
       ? [`M${r1(cx - R - ueber)} ${r1(cy)}H${r1(cx + R + ueber)}`, `M${r1(cx)} ${r1(cy - R - ueber)}V${r1(cy + R + ueber)}`]
       : [];
   const rotor: Rotor | null = { cx, cy, r: rr, nabe, blaetter: rotorBlaetter(rr, nabe, g.rotor.blaetter) };
-  if (detail === 'voll') kreise.push({ cx, cy, r: nabe, art: 'kontur' });
 
   const masse: Masslinie[] = [];
   const hinweise: Ansicht['hinweise'] = [];
   if (massketten) {
-    const versatz = 110;
-    masse.push(masslinie({ von: { x: 0, y: boden }, bis: { x: B, y: boden }, abstand: versatz, wert: B, strich: 14, ueberstand: 16, schriftAbstand: 30 }));
-    masse.push(masslinie({ von: { x: B, y: H }, bis: { x: B, y: 0 }, abstand: versatz, wert: H, strich: 14, ueberstand: 16, schriftAbstand: 30 }));
+    // DIN 406: kleine Maße innen, das Gesamtmaß außen
+    const zeilen = massketten === 'voll' ? 3 : 1;
     if (massketten === 'voll') {
-      // Zweite Kette unter der Breite: Bodenhalterungen (Achsen) und Kondensatablauf von rechts
-      const y = boden + versatz * 2;
-      masse.push(masslinie({ von: { x: 0, y: boden }, bis: { x: kx[0], y: boden }, abstand: versatz * 2, wert: g.konsolen.randabstand.mm, strich: 14, ueberstand: 16, schriftAbstand: 30 }));
-      masse.push(masslinie({ von: { x: kx[0], y: boden }, bis: { x: kx[1], y: boden }, abstand: versatz * 2, wert: g.konsolen.abstand.mm, strich: 14, ueberstand: 16, schriftAbstand: 30 }));
-      masse.push(masslinie({ von: { x: kond.x, y: H + kond.l }, bis: { x: B, y: H + kond.l }, abstand: y - (H + kond.l) + versatz, wert: g.kondensat.vonRechts.mm, strich: 14, ueberstand: 16, schriftAbstand: 30 }));
+      masse.push(kette({ x: kond.x, y: boden }, { x: B, y: boden }, VERSATZ, g.kondensat.vonRechts.mm));
+      masse.push(kette({ x: 0, y: boden }, { x: kx[0], y: boden }, VERSATZ * 2, g.konsolen.randabstand.mm));
+      masse.push(kette({ x: kx[0], y: boden }, { x: kx[1], y: boden }, VERSATZ * 2, g.konsolen.abstand.mm));
     }
+    masse.push(kette({ x: 0, y: boden }, { x: B, y: boden }, VERSATZ * zeilen, B));
+    masse.push(kette({ x: B, y: H }, { x: B, y: 0 }, VERSATZ, H));
   }
   const ohne = { ansicht: 'vorne' as const, breite: B, hoehe: H, boden, kontur, fein, verdeckt, mittellinie, kreise, rotor, masse, hinweise };
-  return { ...ohne, rahmen: huelle(ohne, 24) };
+  return { ...ohne, rahmen: huelle(ohne, 24, schrift) };
 }
 
 /** Seitenansicht von rechts: Front links (x = 0), Rückseite rechts (x = Tiefe). */
-export function seitenansicht(g: Aussengeraet, { detail = 'voll', massketten = 'haupt' }: { detail?: Detail; massketten?: Massketten } = {}): Ansicht {
+export function seitenansicht(g: Aussengeraet, { detail = 'voll', massketten = 'haupt', schrift = SCHRIFT.haupt }: AnsichtOptionen = {}): Ansicht {
+  const kette = ketteMit(schrift);
   const T = g.tiefe.mm;
   const H = g.hoehe.mm;
   const kh = g.konsolen.hoehe.mm;
@@ -211,7 +228,8 @@ export function seitenansicht(g: Aussengeraet, { detail = 'voll', massketten = '
   const verdeckt: string[] = [];
   const mittellinie: string[] = [];
   if (detail === 'voll') {
-    kontur.push(rechteck(kond.x - kond.d / 2, H, kond.x + kond.d / 2, H + kond.l));
+    // Kondensatablauf: von der Seite liegt er hinter der Bodenhalterung (verdeckt)
+    verdeckt.push(rechteck(kond.x - kond.d / 2, H, kond.x + kond.d / 2, H + kond.l));
     // Verdampfer hinten, Rotor hinter der Front: verdeckt; Lüfterachse als Mittellinie
     verdeckt.push(rechteck(T - g.verdampfer.tiefe.mm, rk, T, H - g.verdampfer.rand.mm));
     verdeckt.push(rechteck(60, cy - rr, 120, cy + rr));
@@ -221,21 +239,21 @@ export function seitenansicht(g: Aussengeraet, { detail = 'voll', massketten = '
   const masse: Masslinie[] = [];
   const hinweise: Ansicht['hinweise'] = [];
   if (massketten) {
-    const versatz = 110;
-    masse.push(masslinie({ von: { x: 0, y: 0 }, bis: { x: T, y: 0 }, abstand: -versatz, wert: T, strich: 14, ueberstand: 16, schriftAbstand: 30 }));
-    masse.push(masslinie({ von: { x: -ue, y: boden }, bis: { x: T + ue, y: boden }, abstand: versatz, wert: g.tiefeMitKonsolen.mm, strich: 14, ueberstand: 16, schriftAbstand: 30 }));
-    masse.push(masslinie({ von: { x: T, y: H }, bis: { x: T, y: hy }, abstand: hl + versatz, wert: g.hydraulik.hoehe.mm, strich: 14, ueberstand: 16, schriftAbstand: 30 }));
+    const zeilen = massketten === 'voll' ? 2 : 1;
+    masse.push(kette({ x: 0, y: 0 }, { x: T, y: 0 }, -VERSATZ, T));
+    if (massketten === 'voll') masse.push(kette({ x: 0, y: boden }, { x: kond.x, y: boden }, VERSATZ, kond.x));
+    masse.push(kette({ x: -ue, y: boden }, { x: T + ue, y: boden }, VERSATZ * zeilen, g.tiefeMitKonsolen.mm));
+    masse.push(kette({ x: T, y: H }, { x: T, y: hy }, hl + VERSATZ, g.hydraulik.hoehe.mm));
     if (massketten === 'voll') {
-      masse.push(masslinie({ von: { x: 0, y: H + kond.l }, bis: { x: kond.x, y: H + kond.l }, abstand: boden - (H + kond.l) + versatz * 2, wert: kond.x, strich: 14, ueberstand: 16, schriftAbstand: 30 }));
-      masse.push(masslinie({ von: { x: 0, y: H }, bis: { x: 0, y: 0 }, abstand: -versatz, wert: H, strich: 14, ueberstand: 16, schriftAbstand: 30 }));
+      masse.push(kette({ x: 0, y: H }, { x: 0, y: 0 }, -VERSATZ, H));
       hinweise.push({ text: 'Anschlüsse Heizwasser', ziel: { x: T + hl * 0.5, y: hy - hr }, schrift: { x: T + hl * 0.5 + 60, y: hy - 260 }, anker: 'start' });
     }
   }
   const ohne = { ansicht: 'seite' as const, breite: T, hoehe: H, boden, kontur, fein, verdeckt, mittellinie, kreise, rotor: null, masse, hinweise };
-  return { ...ohne, rahmen: huelle(ohne, 24) };
+  return { ...ohne, rahmen: huelle(ohne, 24, schrift) };
 }
 
-export function ansichtVon(g: Aussengeraet, ansicht: AnsichtId, optionen?: { detail?: Detail; massketten?: Massketten }): Ansicht {
+export function ansichtVon(g: Aussengeraet, ansicht: AnsichtId, optionen?: AnsichtOptionen): Ansicht {
   return ansicht === 'vorne' ? vorderansicht(g, optionen) : seitenansicht(g, optionen);
 }
 

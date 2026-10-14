@@ -1,5 +1,5 @@
 /**
- * Bewegungsregister (KERN K-009, verbindlich nach _relaunch/ausbau/richtungen/1/BEGRUENDUNG.md §9).
+ * Bewegungsregister (KERN K-009, verbindlich nach _relaunch/ausbau/richtungen/1/BEGRUENDUNG.md §9, Stand 1.2 nach E-029).
  *
  * Jedes animierte Element trägt seine Kennung als `data-motion`. scripts/qa/check-design-tokens.mjs
  * liest MOTION_IDS aus dieser Datei und lehnt jede Kennung ab, die hier fehlt. Neue Bewegungen kommen
@@ -7,15 +7,15 @@
  *
  * Regeln: Eigenschaften nur transform, opacity und stroke-dashoffset (dazu der View-Übergang zwischen
  * Erzählseiten); Dauern d-1…d-4, Verzögerungen als Vielfache des Takts (80 ms); Eingänge d-2 mit k-aus,
- * Ausgänge d-1 mit k-ein; keine Schleife, kein Scroll-Auftritt, Auftakt endet nach ≤ 1.120 ms.
+ * Ausgänge d-1 mit k-ein; kein Scroll-Auftritt, Auftakt endet nach ≤ 1.120 ms.
+ * Schleifen gibt es nur mit dem Auslöser `dauer` (E-029): Produkt- und Prozesszeichnungen auf Erzählseiten,
+ * pausierbar, nur im Sichtfeld, Periode ≥ 400 ms; Startbedingung in lib/motion/dauer.ts, Steuerung
+ * components/zeichnung/bewegung/DauerSteuerung.tsx, `infinite` nur in components/zeichnung/bewegung/dauer.module.css.
  */
 
 /** Alle Kennungen. Reihenfolge wie im Register; der Guard liest diese Liste wörtlich. */
 export const MOTION_IDS = [
-  'luft',
-  'luefter',
   'vorlauf-haus',
-  'waerme',
   'ruecklauf-haus',
   'erdleitung',
   'erdleitung-d',
@@ -29,10 +29,12 @@ export const MOTION_IDS = [
   'unterstrich',
   'flaeche',
   'druck',
-  'kreislauf-zeigen',
   'fortschritt',
   'kreis-schliessen',
   'seitenwechsel',
+  'rotor-dreht',
+  'wasser-fliesst',
+  'kaeltemittel-fliesst',
 ] as const;
 
 export type MotionId = (typeof MOTION_IDS)[number];
@@ -46,11 +48,20 @@ export type Eigenschaft = 'transform' | 'opacity' | 'stroke-dashoffset' | 'view-
 /**
  * Auslöser: `auftakt` = Klasse aus dem Kopfskript (einmal, nur ohne reduzierte Bewegung);
  * `hover` nur bei (hover: hover) and (pointer: fine); `druck` = :active; `tippen` = Bedienung;
- * `zustand` = Zustandswechsel der Seite; `knopf` = ausdrücklicher Knopfdruck; `navigation` = Seitenwechsel.
+ * `zustand` = Zustandswechsel der Seite; `knopf` = ausdrücklicher Knopfdruck; `navigation` = Seitenwechsel;
+ * `dauer` = Schleife einer Produkt- oder Prozesszeichnung unter der Startbedingung (lib/motion/dauer.ts).
  */
-export type Ausloeser = 'auftakt' | 'hover' | 'druck' | 'tippen' | 'zustand' | 'knopf' | 'navigation';
+export type Ausloeser = 'auftakt' | 'hover' | 'druck' | 'tippen' | 'zustand' | 'knopf' | 'navigation' | 'dauer';
 /** Wo die Bewegung vorkommen darf (K-011): Signatur nur auf Erzählseiten. */
 export type Seitenart = 'erzaehlseiten' | 'alle';
+
+/** Schleife einer Dauerbewegung (E-029): Periode, immer pausierbar und nur im Sichtfeld. */
+export interface Schleife {
+  /** Dauer eines Durchgangs in ms (≥ 400, Vielfache des halben Takts). */
+  periodeMs: number;
+  pausierbar: true;
+  nurSichtbar: true;
+}
 
 export interface MotionEntry {
   /** Wozu die Bewegung da ist (Bedeutung, nicht Effekt). */
@@ -69,38 +80,23 @@ export interface MotionEntry {
   endeMs?: number;
   /** Abweichende Dauer in ms, wo keine Stufe passt (nur der View-Übergang: 250–450 ms). */
   dauerMsBereich?: readonly [number, number];
+  /** Nur mit Auslöser `dauer`: die Schleife. */
+  schleife?: Schleife;
 }
 
 export const TAKT_MS = 80;
 export const DAUER_MS: Readonly<Record<DauerToken, number>> = { 'd-1': 120, 'd-2': 240, 'd-3': 400, 'd-4': 600 };
-/** Ende des gesamten Auftakts (Zirkel rastet auf 35 km ein); nichts läuft länger, darum kein Pause-Knopf. */
+/**
+ * Ende des gesamten Auftakts (das Maß „35 km“ im Giebel blendet ein); kein Auftakt läuft länger. Die Schleifen
+ * (Auslöser `dauer`) haben stattdessen den Knopf „Anhalten“ (WCAG 2.2.2).
+ */
 export const AUFTAKT_ENDE_MS = 1120;
 
 export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
-  luft: {
-    zweck: 'Die Pumpe zieht Luft (Logo-Motiv Luft).',
-    ausloeser: ['auftakt'],
-    eigenschaften: ['stroke-dashoffset'],
-    dauer: ['d-2'],
-    verzoegerungTakte: [0, 0.5, 1],
-    kurve: ['k-aus'],
-    reduziert: 'Endzustand: alle drei Luftpfade stehen.',
-    seitenart: 'erzaehlseiten',
-    endeMs: 320,
-  },
-  luefter: {
-    zweck: 'Die Anlage läuft an (Lüfter dreht eine halbe Umdrehung).',
-    ausloeser: ['auftakt'],
-    eigenschaften: ['transform'],
-    dauer: ['d-3'],
-    verzoegerungTakte: [0],
-    kurve: ['k-wechsel'],
-    reduziert: 'Lüfter steht.',
-    seitenart: 'erzaehlseiten',
-    endeMs: 400,
-  },
   'vorlauf-haus': {
-    zweck: 'Wärme geht ins Haus (Vorlauf zeichnet sich zum Heizkörper).',
+    zweck:
+      'Wärme geht ins Haus: Der Vorlauf zeichnet sich von der Außeneinheit (Wärmeerzeuger) durch die Erdleitung zur ' +
+      'Inneneinheit und weiter zum Heizkörper, in Fließrichtung (E-029).',
     ausloeser: ['auftakt'],
     eigenschaften: ['stroke-dashoffset'],
     dauer: ['d-3'],
@@ -110,19 +106,8 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
     seitenart: 'erzaehlseiten',
     endeMs: 560,
   },
-  waerme: {
-    zweck: 'Das Haus wird warm (Pegel steigt; im Einstieg nach Variante 3 breitet sich das Wärmebild vom Heizkörper aus, heiß zuerst).',
-    ausloeser: ['auftakt'],
-    eigenschaften: ['transform', 'opacity'],
-    dauer: ['d-4'],
-    verzoegerungTakte: [4],
-    kurve: ['k-aus'],
-    reduziert: 'Haus warm.',
-    seitenart: 'erzaehlseiten',
-    endeMs: 920,
-  },
   'ruecklauf-haus': {
-    zweck: 'Der Rücklauf kehrt zur Pumpe zurück.',
+    zweck: 'Der Rücklauf kehrt vom Heizkörper über die Erdleitung zur Außeneinheit zurück.',
     ausloeser: ['auftakt'],
     eigenschaften: ['stroke-dashoffset'],
     dauer: ['d-3'],
@@ -134,50 +119,52 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
   },
   erdleitung: {
     zweck:
-      'Die Leitungen laufen in den Knopf: mobil fallen sie senkrecht in die Daumenzone (Startseite, Stellenseiten), am Desktop der Stellenseiten laufen sie waagerecht aus der Navy-Fläche in den Flansch.',
+      'Die Leitungen laufen in den Knopf: mobil fällt der Vorlauf aus der Anlage senkrecht in die Daumenzone und zweigt ' +
+      'in den Knopf ab, der Rücklauf steigt im Bogen zurück (Startseite, je Stück d-1); am Desktop der Stellenseiten läuft ' +
+      'das Paar waagerecht aus der Navy-Fläche in den Flansch (d-2).',
     ausloeser: ['auftakt'],
     eigenschaften: ['transform'],
-    dauer: ['d-2'],
-    verzoegerungTakte: [5, 8],
-    kurve: ['k-wechsel'],
+    dauer: ['d-2', 'd-1'],
+    verzoegerungTakte: [5, 7, 8, 8.5, 10, 11.5],
+    kurve: ['k-wechsel', 'linear', 'k-aus'],
     reduziert: 'Leitungen stehen.',
     seitenart: 'erzaehlseiten',
-    endeMs: 880,
+    endeMs: 1040,
   },
   'erdleitung-d': {
-    zweck: 'Desktop der Startseite: Der Vorlauf läuft aus der Hauptaktion in die Wärmepumpe, der Rücklauf kommt zurück.',
+    zweck:
+      'Desktop der Startseite: Der Vorlauf läuft aus der Anlage zur Hauptaktion (E-029, K-001: er endet in deiner ' +
+      'Bewerbung): vom Rand der Navy-Fläche über Bogen, Steigleitung und Bogen in den Knopf, je Stück d-1.',
     ausloeser: ['auftakt'],
     eigenschaften: ['stroke-dashoffset'],
-    // Vorlauf: Fall d-1, Bogen d-1, Lauf d-2 ab 4 Takten; Rücklauf: Lauf d-2, Bogen d-1, Fall d-1 ab 8 Takten
-    dauer: ['d-1', 'd-2'],
-    verzoegerungTakte: [4, 8],
-    kurve: ['linear', 'k-aus', 'k-ein'],
-    reduziert: 'Leitungen stehen.',
+    dauer: ['d-1'],
+    verzoegerungTakte: [7, 8.5, 10, 11.5],
+    kurve: ['linear'],
+    reduziert: 'Die Leitung steht vollständig von der Anlage bis zum Knopf.',
     seitenart: 'erzaehlseiten',
-    endeMs: 1120,
+    endeMs: 1040,
   },
   pfeile: {
-    zweck: 'Die Fließrichtung bestätigen.',
+    zweck: 'Die Fließrichtung bestätigen: Die festen Fließpfeile blenden ein, wenn die Leitungen stehen.',
     ausloeser: ['auftakt'],
     eigenschaften: ['opacity'],
     dauer: ['d-2'],
     verzoegerungTakte: [9],
     kurve: ['k-aus'],
-    reduziert: 'Pfeile sichtbar.',
+    reduziert: 'Pfeile sichtbar (sie gehören zum Standbild).',
     seitenart: 'erzaehlseiten',
     endeMs: 960,
   },
   'radius-einrasten': {
     zweck:
-      'Schlusstakt (Leitmotiv „35 km“, E-027): Der Zirkel im Giebel rastet auf 35 km ein. Der Radius klappt auf, ' +
-      'das Fadenkreuz misst, am Desktop öffnet sich der Bogen einmal vom Ende der Hinweislinie aus (Bindung an das ' +
-      'Einsatzgebiet).',
+      'Schlusstakt (Leitmotiv „35 km“, E-027, E-029): Das Maß „35 km“ im Giebel blendet ein. Zirkel und Einrasten ' +
+      '(Skalierung) sind mit E-029 entfallen; es bleibt eine Überblendung.',
     ausloeser: ['auftakt'],
-    eigenschaften: ['transform', 'opacity', 'stroke-dashoffset'],
+    eigenschaften: ['opacity'],
     dauer: ['d-2'],
     verzoegerungTakte: [11],
     kurve: ['k-aus'],
-    reduziert: 'Zirkel und Bogen stehen auf 35 km.',
+    reduziert: 'Das Maß „35 km“ steht im Giebel.',
     seitenart: 'erzaehlseiten',
     endeMs: 1120,
   },
@@ -274,17 +261,6 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
     reduziert: 'Zustand wechselt sofort; ohne 1-px-Versatz (keine Positionsänderung).',
     seitenart: 'alle',
   },
-  'kreislauf-zeigen': {
-    zweck: 'Wiederholung des Auftakts auf Knopfdruck „Kreislauf zeigen“ (B Runde 1).',
-    ausloeser: ['knopf'],
-    eigenschaften: ['transform', 'opacity', 'stroke-dashoffset'],
-    dauer: ['d-1', 'd-2', 'd-3', 'd-4'],
-    verzoegerungTakte: [0],
-    kurve: ['k-aus', 'k-wechsel', 'k-ein', 'linear'],
-    reduziert: 'Knopf bleibt verborgen; die Zeichnung steht im Endzustand.',
-    seitenart: 'erzaehlseiten',
-    endeMs: 1120,
-  },
   fortschritt: {
     zweck: 'Der Leitungsstrang im Bewerbungsflow wächst mit jedem Schritt.',
     ausloeser: ['zustand'],
@@ -316,7 +292,49 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
     seitenart: 'erzaehlseiten',
     dauerMsBereich: [250, 450],
   },
+  'rotor-dreht': {
+    zweck:
+      'Die Maschine läuft (Produktzeichnung, E-029): Der Axialrotor des Außengeräts dreht hinter dem Schutzgitter, ' +
+      'linear, ein Blattabstand (90° bei vier Blättern) je 600 ms; der Rotor liegt auf eigener HTML-Ebene.',
+    ausloeser: ['dauer'],
+    eigenschaften: ['transform'],
+    dauer: ['d-4'],
+    verzoegerungTakte: [0],
+    kurve: ['linear'],
+    reduziert: 'Standbild: Der Rotor steht hinter dem Gitter.',
+    seitenart: 'erzaehlseiten',
+    schleife: { periodeMs: 600, pausierbar: true, nurSichtbar: true },
+  },
+  'wasser-fliesst': {
+    zweck:
+      'Wasser fließt (Prozesszeichnung, E-029): Auf Vorlauf und Rücklauf wandert ein Strichmuster in Fließrichtung ' +
+      '(Überlagerungspfad, stroke-dashoffset); der Pfad ist in Fließrichtung gezeichnet, so stimmt die Richtung von selbst.',
+    ausloeser: ['dauer'],
+    eigenschaften: ['stroke-dashoffset'],
+    dauer: [],
+    verzoegerungTakte: [0],
+    kurve: ['linear'],
+    reduziert: 'Standbild: volle Leitungen mit festen Fließpfeilen, kein Strichmuster.',
+    seitenart: 'erzaehlseiten',
+    schleife: { periodeMs: 1200, pausierbar: true, nurSichtbar: true },
+  },
+  'kaeltemittel-fliesst': {
+    zweck:
+      'Das Kältemittel kreist im Außengerät (Kältekreis, Monoblock, E-029): Strichmuster in Fließrichtung auf dem ' +
+      'Kreis Verdampfer → Verdichter → Plattenwärmeübertrager → Expansionsventil.',
+    ausloeser: ['dauer'],
+    eigenschaften: ['stroke-dashoffset'],
+    dauer: [],
+    verzoegerungTakte: [0],
+    kurve: ['linear'],
+    reduziert: 'Standbild: der Kreis mit festen Fließpfeilen und den Etiketten Heißgas, flüssig, Sauggas.',
+    seitenart: 'erzaehlseiten',
+    schleife: { periodeMs: 960, pausierbar: true, nurSichtbar: true },
+  },
 };
+
+/** Die Kennungen der Dauerbewegung (Auslöser `dauer`). */
+export const DAUER_IDS = MOTION_IDS.filter((id) => MOTION_REGISTER[id].ausloeser.includes('dauer'));
 
 export function isMotionId(value: unknown): value is MotionId {
   return typeof value === 'string' && (MOTION_IDS as readonly string[]).includes(value);

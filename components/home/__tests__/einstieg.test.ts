@@ -4,12 +4,12 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { APPLY_PATH, PRIMARY_CTA_ATTR } from '@/components/site/nav';
-import { MOTION_IDS } from '@/lib/motion/register';
-import { HAUS_ZIRKEL } from '@/lib/seo/og-haus';
+import { DAUER_IDS, MOTION_IDS } from '@/lib/motion/register';
+import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
+import { HAUSSCHNITT_RAHMEN, HEIZKOERPER_LAGE, KNOPF_LEITUNG, LEITUNGEN } from '@/lib/zeichnung/szenen/hausschnitt';
 import { HERO, HERO_STATS } from '../content';
 import { Hero } from '../Hero';
-import { KREISLAUF_SATZ, RADIUS_ETIKETT, vertrauenspunkte } from '../einstieg/einstieg-text';
-import { WAERMEBAENDER } from '../einstieg/waermefeld';
+import { EINZELHEIT_TITEL, KREISLAUF_SATZ, RADIUS_ETIKETT, vertrauenspunkte } from '../einstieg/einstieg-text';
 
 const DIR = path.resolve(__dirname, '..');
 const EINSTIEG = path.join(DIR, 'einstieg');
@@ -20,21 +20,19 @@ const plain = (html: string) =>
     .replace(/&amp;/g, '&')
     .replace(/&#x27;/g, "'")
     .replace(/­/g, '')
-    .replace(/ /g, ' ')
+    .replace(/\u00a0/g, ' ')
     .replace(/\s+/g, ' ');
 
 const render = (now: Date) => renderToStaticMarkup(createElement(Hero, { now }));
 const html2026 = render(new Date('2026-10-09T09:00:00Z'));
 const html2027 = render(new Date('2027-01-01T08:00:00Z'));
 const text2026 = plain(html2026);
+const szene = html2026.match(/<svg[^>]*data-szene="einstieg">([\s\S]*?)<\/svg>(?=<span)/)![1];
 
-/**
- * Auftakt-Kennungen des Einstiegs nach Variante 3 (R3-EINSTIEG-V3): Vorlauf vom Knopf ins Haus, Wärme, Rücklauf,
- * zuletzt rastet der Zirkel auf 35 km ein (E-027, ersetzt die Uhr auf 13:30).
- */
-const AUFTAKT = ['luefter', 'erdleitung', 'erdleitung-d', 'vorlauf-haus', 'waerme', 'ruecklauf-haus', 'radius-einrasten'];
+/** Auftakt-Kennungen des Einstiegs (E-029): Vorlauf aus der Anlage, Rücklauf, Leitung in den Knopf, Pfeile, 35 km. */
+const AUFTAKT = ['vorlauf-haus', 'ruecklauf-haus', 'erdleitung', 'erdleitung-d', 'pfeile', 'radius-einrasten'];
 
-describe('Hero / Einstieg (R3-HOME-01)', () => {
+describe('Hero / Einstieg (R3-HOME-01, Technische Zeichnung 2.0)', () => {
   it('genau eine h1 mit HERO.title und HERO.titleSecondLine im Wortlaut, Abschnitt zeigt darauf', () => {
     expect(html2026.match(/<h1\b/g)).toHaveLength(1);
     const h1 = html2026.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)!;
@@ -42,7 +40,7 @@ describe('Hero / Einstieg (R3-HOME-01)', () => {
     expect(plain(h1[1]).trim()).toBe(`${HERO.title} ${HERO.titleSecondLine}`);
     expect(html2026).toMatch(/^<section aria-labelledby="hero-title"/);
     expect(text2026).toContain(HERO.lead);
-    expect(text2026).toContain(HERO.microcopy.replace(/ /g, ' '));
+    expect(text2026).toContain(HERO.microcopy.replace(/\u00a0/g, ' '));
   });
 
   it('E-START-002: im Jubiläumsjahr „100 Jahre Meisterbetrieb (1926–2026)“ im Einstieg, ab 2027 „Seit 1926 · Wetzlar“', () => {
@@ -71,72 +69,80 @@ describe('Hero / Einstieg (R3-HOME-01)', () => {
     expect(text2026).toContain('Offene Stellen ansehen');
   });
 
-  it('zeigt die drei Maße aus HERO_STATS als echten Text (Liste), Wert und Name getrennt; die Zeichnung ist dekorativ', () => {
+  it('zeigt die drei Maße aus HERO_STATS als echten Text (Liste), Wert und Name getrennt; der Hausschnitt ist dekorativ', () => {
     const masse = html2026.match(/<ul class="[^"]*">([\s\S]*?)<\/ul>/)![1];
     const eintraege = [...masse.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/g)].map((m) => plain(m[1]).trim());
-    // Leerzeichen im DOM zwischen Wert und Name (Kopieren, Lesemodus): „35 km Einsatzgebiet rund um Wetzlar“
     expect(eintraege).toEqual([
-      `${HERO_STATS[0].value.replace(/\u00a0/g, ' ')} ${RADIUS_ETIKETT}`,
+      `${HERO_STATS[0].value.replace(/ /g, ' ')} ${RADIUS_ETIKETT}`,
       `${HERO_STATS[1].value} ${HERO_STATS[1].label}`,
       expect.stringMatching(new RegExp(`^${HERO_STATS[2].value} ${HERO_STATS[2].label}`)),
     ]);
     expect(eintraege[0]).toBe('35 km Einsatzgebiet rund um Wetzlar');
-    expect(html2026).toMatch(/<svg class="[^"]*" viewBox="0 0 800 800" aria-hidden="true" focusable="false" data-szene="einstieg">/);
-    // Wärmebild (Variante 3): vier Isothermen, das Zirkelzeichen im Giebel, Vorlauf und Rücklauf als Leitungen
-    const szene = html2026.match(/<svg[^>]*data-szene="einstieg">([\s\S]*?)<\/svg>/)![1];
-    expect(szene.match(/data-motion="waerme"/g)).toHaveLength(4);
-    expect(szene).toContain('data-motion="vorlauf-haus"');
-    expect(szene).toContain('data-motion="ruecklauf-haus"');
-    // Etiketten-Kästchen der drei Gewerke und die Ablesung „35 km“ sind Beiwerk der Zeichnung
-    const marken = html2026.match(/<div class="[^"]*" aria-hidden="true">((?:(?!<\/div>)[\s\S])*Wärmepumpen[\s\S]*?)<\/div>/)!;
-    for (const gewerk of ['Wärmepumpen', 'Heizungen', 'Bäder']) expect(plain(marken[1])).toContain(gewerk);
+    const { breite, hoehe } = HAUSSCHNITT_RAHMEN;
+    expect(html2026).toMatch(new RegExp(`<svg class="[^"]*" viewBox="0 0 ${breite} ${hoehe}" aria-hidden="true" focusable="false" data-szene="einstieg">`));
   });
 
-  it('Leitmotiv „35 km“ (E-027): Zirkel im Giebel, Radius als Hinweislinie bis an den Bogen, keine Uhr', () => {
-    const szene = html2026.match(/<svg[^>]*data-szene="einstieg">([\s\S]*?)<\/svg>/)![1];
-    // Radius mit Pfeil (klappt auf), Fadenkreuz und die beiden Bogenhälften rasten ein
-    expect(szene.match(/data-motion="radius-einrasten"/g)).toHaveLength(4);
-    expect(szene).toContain(`d="${HAUS_ZIRKEL.radius}${HAUS_ZIRKEL.radiusPfeil}"`);
-    expect(szene).toContain(`d="${HAUS_ZIRKEL.bogenRechts}"`);
-    expect(szene).toContain(`d="${HAUS_ZIRKEL.bogenLinks}"`);
-    expect(szene).toContain(`d="${HAUS_ZIRKEL.leitlinie}${HAUS_ZIRKEL.pfeil}"`);
-    expect(szene).not.toContain('data-motion="uhr"');
-    // Die Ablesung am Zirkel (mobil) ist der Wert des Fakts radius35
-    expect(html2026).toMatch(/aria-hidden="true">35\u00a0km<\/span>/);
+  it('Hausschnitt (E-029): Gerät maßstäblich 110 × 80, Flachheizkörper 100 × 60, Erdreich geschnitten, keine Wanne, kein Wärmebild', () => {
+    // Die Außeneinheit ist eine verschachtelte Zeichnung mit der viewBox der Gerätemaße (mm) in 110 × 80 Einheiten
+    expect(szene).toMatch(
+      new RegExp(`<svg x="[\\d.]+" y="[\\d.]+" width="110" height="80" viewBox="0 0 ${COMPRESS_AW_S.breite.mm} ${COMPRESS_AW_S.hoehe.mm}"[^>]*data-geraet-im-schnitt=""`),
+    );
+    expect(szene).toMatch(new RegExp(`width="${HEIZKOERPER_LAGE.breite}" height="${HEIZKOERPER_LAGE.hoehe}"[^>]*data-heizkoerper=""`));
+    expect([HEIZKOERPER_LAGE.breite, HEIZKOERPER_LAGE.hoehe]).toEqual([100, 60]);
+    expect(szene).toContain('data-wanddurchfuehrung=""');
+    expect(szene).toContain('data-inneneinheit=""');
+    expect(szene).toContain('data-symbol="pumpe"');
+    // Keine Isothermen, keine Wanne, kein Zirkel, keine Verläufe
+    expect(szene).not.toMatch(/data-motion="waerme"|Gradient|<image|data-motion="luefter"/i);
+    expect(html2026).not.toMatch(/Wärmepumpen<\/span>|Heizungen<\/span>|Bäder<\/span>/);
+  });
+
+  it('Fließrichtung (K-001, K-003.2): der Vorlauf beginnt an der Außeneinheit und endet links bzw. unten in der Leitung zur Bewerbung', () => {
+    const wege = [...szene.matchAll(/<path d="([^"]+)" class="[^"]*" data-medium="(vorlauf|ruecklauf)" data-weg="([^"]+)"/g)].map((m) => ({
+      d: m[1],
+      medium: m[2],
+      id: m[3],
+    }));
+    expect(wege.map((w) => w.id).sort()).toEqual(LEITUNGEN.map((l) => l.id).sort());
+    for (const w of wege) {
+      const leitung = LEITUNGEN.find((l) => l.id === w.id)!;
+      expect(w.d, w.id).toBe(leitung.d);
+      expect(w.medium, w.id).toBe(leitung.medium);
+    }
+    // Der Vorlauf zur Bewerbung verlässt das Bild am Desktop nach links (x 0), mobil nach unten bei x 28
+    expect(LEITUNGEN.find((l) => l.id === 'vorlauf-knopf-desktop')!.d).toMatch(/L0 640$/);
+    expect(LEITUNGEN.find((l) => l.id === 'vorlauf-knopf')!.d).toMatch(new RegExp(`L${KNOPF_LEITUNG.vorlaufX} ${HAUSSCHNITT_RAHMEN.hoehe}$`));
+  });
+
+  it('Leitmotiv „35 km“ (E-027, E-029): das Maß in Schrift im Giebel, kein Zirkel, keine Uhr', () => {
+    expect(html2026).toMatch(/<span class="[^"]*" aria-hidden="true" data-motion="radius-einrasten">35 km<\/span>/);
+    expect(szene).not.toMatch(/data-motion="radius-einrasten"/);
     expect(text2026).not.toMatch(/13:30|16:45|Feierabend|pünktlich/i);
   });
 
-  it('der Bogen geht durch das Ende der Hinweislinie und endet an beiden Traufen (Giebel 45°)', () => {
-    const { cx, cy, bogenR, ende } = HAUS_ZIRKEL;
-    expect(Math.hypot(ende.x - cx, ende.y - cy)).toBeCloseTo(bogenR, 1);
-    for (const d of [HAUS_ZIRKEL.bogenRechts, HAUS_ZIRKEL.bogenLinks]) {
-      const [x, y] = d.split(' ').slice(-2).map(Number);
-      expect(Math.hypot(x - cx, y - cy), d).toBeCloseTo(bogenR, 1);
-      // Traufen: linke Dachlinie x + y = 744, rechte y = x − 56 (M168 576L400 344L632 576)
-      expect(x < cx ? x + y : x - y, d).toBeCloseTo(x < cx ? 744 : 56, 1);
-    }
-  });
-
-  it('Bewegung: alle acht Auftakt-Kennungen an der Szene, nur Kennungen aus dem Register', () => {
+  it('Bewegung: alle Auftakt-Kennungen an der Szene, nur Kennungen aus dem Register, kein „Kreislauf zeigen“', () => {
     const ids = [...html2026.matchAll(/data-motion="([^"]+)"/g)].map((m) => m[1]);
     for (const id of AUFTAKT) expect(ids, id).toContain(id);
     for (const id of ids) expect(MOTION_IDS as readonly string[]).toContain(id);
-    expect(ids).toContain('kreislauf-zeigen');
-    expect(html2026).toContain('data-kreislauf="ruhe"');
+    expect(ids).not.toContain('kreislauf-zeigen');
+    expect(html2026).not.toContain('data-kreislauf');
+    expect(text2026).not.toContain('Kreislauf zeigen');
   });
 
-  it('„Kreislauf zeigen“ ist ein echter Knopf, bis zur Hydration unsichtbar (Platz bleibt), mit T-001 daneben', () => {
-    const knopf = html2026.match(/<button[^>]*data-motion="kreislauf-zeigen"[^>]*>[\s\S]*?<\/button>/)![0];
-    expect(knopf).toContain('type="button"');
-    expect(plain(knopf)).toContain('Kreislauf zeigen');
-    expect(knopf).not.toContain('aria-disabled');
-    expect(knopf).toMatch(/class="[^"]*knopfWartet[^"]*"/);
+  it('Einzelheit X (E-029): Außeneinheit von vorn mit Maßketten, der Rotor dreht nur im Bereich mit DauerSteuerung', () => {
+    const einzelheit = html2026.match(/<div class="[^"]*" data-einzelheit="X">([\s\S]*?)<\/button><\/div><\/div><\/div>/)![0];
+    expect(einzelheit).toMatch(/<div class="[^"]*" data-dauer="aus">/);
+    expect(einzelheit).toContain(`role="img" aria-label="${EINZELHEIT_TITEL}"`);
+    expect(einzelheit).toContain(`viewBox="0 0 ${COMPRESS_AW_S.breite.mm} ${COMPRESS_AW_S.hoehe.mm}"`);
+    expect(einzelheit).toContain('data-motion="rotor-dreht"');
+    expect(einzelheit).toContain('data-massketten=""');
+    // Knopf „Anhalten“ bis zur Hydration unsichtbar (Platz bleibt), der Server liefert das Standbild
+    expect(einzelheit).toMatch(/<button type="button" class="[^"]*wartet[^"]*" data-dauer-knopf="">[\s\S]*Anhalten<\/button>/);
+    // Jede Dauer-Kennung des Einstiegs steht in diesem Bereich
+    const dauer = [...html2026.matchAll(/data-motion="([^"]+)"/g)].map((m) => m[1]).filter((id) => (DAUER_IDS as readonly string[]).includes(id));
+    expect(dauer).toEqual(['rotor-dreht']);
+    expect(plain(einzelheit)).toContain('Einzelheit X · Maße in mm');
     expect(text2026).toContain(KREISLAUF_SATZ);
-  });
-
-  it('ohne Skript bleibt keine leere Knopffläche: das CSS-Modul blendet den Knopf bei scripting: none aus', () => {
-    const css = quelle(path.join(EINSTIEG, 'einstieg.module.css'));
-    expect(css).toMatch(/@media \(scripting: none\) \{\s*\.knopf \{\s*display: none;/);
   });
 
   it('Vertrauenszeile: statische Liste mit allen Punkten, ohne Laufband und ohne Fernmontage (E-023)', () => {
@@ -144,15 +150,16 @@ describe('Hero / Einstieg (R3-HOME-01)', () => {
     const liste = html2026.match(/<ul[^>]*data-vertrauenszeile=""[^>]*>([\s\S]*?)<\/ul>/)!;
     expect(liste[0]).toContain('aria-label="Betrieb und Partner"');
     const eintraege = [...liste[1].matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/g)].map((m) => plain(m[1]));
-    expect(eintraege).toEqual(vertrauenspunkte().map((p) => p.text.replace(/ /g, ' ')));
+    expect(eintraege).toEqual(vertrauenspunkte().map((p) => p.text.replace(/\u00a0/g, ' ')));
     expect(liste[0]).not.toMatch(/marquee|animate-/);
   });
 
-  it('Rohrklammer an der Zweitzeile und alle Zeichnungen sind aria-hidden', () => {
-    expect(html2026).toContain('data-zeichnung="rohrklammer"');
-    // Innere SVGs (x/y = 100 %) liegen in einem aria-hidden-SVG; jedes äußere ist selbst dekorativ.
-    const aeussere = html2026.match(/<svg\b(?![^>]* [xy]="100%")[^>]*>/g)!;
-    expect(aeussere.length).toBeGreaterThanOrEqual(7);
+  it('keine Rohr-Metapher als Schmuck (E-029): keine Rohrklammer, kein Leitungstrenner; alle Zeichnungen aria-hidden', () => {
+    expect(html2026).not.toContain('data-zeichnung="rohrklammer"');
+    expect(html2026).not.toContain('data-zeichnung="leitungstrenner"');
+    // Innere SVGs (x/y = 100 %) und verschachtelte Zeichnungen liegen in einem aria-hidden-SVG; jedes äußere ist dekorativ
+    const aeussere = html2026.match(/<svg\b(?![^>]* [xy]="(?:100%|[\d.]+)")[^>]*>/g)!;
+    expect(aeussere.length).toBeGreaterThanOrEqual(6);
     for (const svg of aeussere) expect(svg, svg).toMatch(/aria-hidden="true"/);
   });
 });
@@ -160,52 +167,39 @@ describe('Hero / Einstieg (R3-HOME-01)', () => {
 describe('Einstieg: Quellregeln', () => {
   const dateien = [path.join(DIR, 'Hero.tsx'), ...readdirSync(EINSTIEG).filter((f) => /\.tsx?$/.test(f)).map((f) => path.join(EINSTIEG, f))];
 
-  it('keine lucide-Importe, Icons aus components/icons; nur die Knopf-Insel ist Client-Komponente', () => {
+  it('keine lucide-Importe, Icons aus components/icons; der Einstieg hat keine eigene Client-Komponente', () => {
     for (const datei of dateien) {
       const src = quelle(datei);
       expect(src, datei).not.toMatch(/lucide-react/);
-      const client = /^['"]use client['"]/m.test(src);
-      expect(client, datei).toBe(path.basename(datei) === 'KreislaufKnopf.tsx');
+      expect(/^['"]use client['"]/m.test(src), datei).toBe(false);
     }
+    expect(readdirSync(EINSTIEG)).not.toContain('KreislaufKnopf.tsx');
+    expect(readdirSync(EINSTIEG)).not.toContain('waermefeld.ts');
   });
 
-  it('die Client-Insel bleibt klein (≤ 3 KB Quelltext, nur React und das Kopfskript-Modul)', () => {
-    const src = quelle(path.join(EINSTIEG, 'KreislaufKnopf.tsx'));
-    expect(Buffer.byteLength(src)).toBeLessThanOrEqual(3 * 1024);
-    const importe = [...src.matchAll(/from '([^']+)'/g)].map((m) => m[1]);
-    expect(importe).toEqual(['react', '@/lib/motion/head-script']);
-  });
-
-  it('Desktop: der Vorlauf läuft per Ankerpositionierung vom Knopf zur Pumpe, ohne Anker entfällt er', () => {
+  it('Desktop: der Vorlauf läuft per Ankerpositionierung von der Fläche zum Knopf, ohne Anker entfällt er', () => {
     const css = quelle(path.join(EINSTIEG, 'einstieg.module.css')).replace(/\/\*[\s\S]*?\*\//g, '');
     expect(css).toMatch(/\.bewerben \{[^}]*anchor-name: --einstieg-knopf;/);
     expect(css).toMatch(/\.bild \{[^}]*anchor-name: --einstieg-flaeche;/);
     const rohr = css.match(/\.rohrD \{[^}]*display: block;[^}]*\}/)![0];
     expect(rohr).toContain('left: calc(anchor(--einstieg-knopf right)');
     expect(rohr).toContain('top: calc(anchor(--einstieg-knopf center)');
-    // Pumpenanschluss der Szene: y 676 von 800 = 124 Einheiten über der Falz der Fläche
-    expect(rohr).toContain('bottom: calc(anchor(--einstieg-flaeche bottom) + 124 * var(--e)');
+    // Erdleitung des Hausschnitts: y 640 von 680 = 40 Einheiten über der Falz der Fläche
+    expect(HAUSSCHNITT_RAHMEN.hoehe - KNOPF_LEITUNG.desktopY).toBe(40);
+    expect(rohr).toContain('bottom: calc(anchor(--einstieg-flaeche bottom) + 40 * var(--e)');
     expect(css).toMatch(/@supports not \(anchor-name: --a\) \{\s*\.rohrD \{\s*display: none !important;/);
+    // Die Pfade laufen in Fließrichtung: der erste beginnt am Rand der Fläche (x = 100 %), der letzte endet im Knopf (x 0)
+    const src = quelle(path.join(EINSTIEG, 'Einstieg.tsx'));
+    expect(src).toMatch(/rohrD1[^>]*d="M0 -3H-20/);
+    expect(src).toMatch(/rohrD4[^>]*x2="44" y2="3" transform="translate\(-44 0\)"/);
   });
 
-  it('Wärmebild: vier Bänder aus dem Wärmefeld, hell aus den Papier-Rollen, dunkel mit eigenen hellen Stufen', () => {
-    expect(WAERMEBAENDER).toHaveLength(4);
-    for (const band of WAERMEBAENDER) expect(band).toMatch(/^M[\d.\s-]+/);
-    const css = quelle(path.join(EINSTIEG, 'einstieg.module.css')).replace(/\/\*[\s\S]*?\*\//g, '');
-    const hell = css.match(/\.held \{([^}]*)\}/)![1];
-    for (const rolle of ['--wb-1: var(--ruecklauf)', '--wb-2: var(--surface-2)', '--wb-3: var(--waerme)', '--wb-4: var(--surface)']) {
-      expect(hell).toContain(rolle);
-    }
-    const dunkel = css.match(/@media screen and \(prefers-color-scheme: dark\) \{\s*\.held \{([^}]*)\}/)![1];
-    for (const n of [1, 2, 3, 4]) expect(dunkel).toContain(`--wb-${n}:`);
-    expect(dunkel).not.toMatch(/var\(--(?:surface-2|waerme)\)/);
-  });
-
-  it('CSS-Modul: keine Rohfarben, keine Primitiven, Bewegung nur über Tokens', () => {
+  it('CSS-Modul: keine Rohfarben, keine Primitiven, keine Verläufe, Bewegung nur über Tokens, keine Schleife', () => {
     const css = quelle(path.join(EINSTIEG, 'einstieg.module.css')).replace(/\/\*[\s\S]*?\*\//g, '');
     expect(css).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);
     expect(css).not.toMatch(/--p-[a-z]/);
-    expect(css).not.toMatch(/\b(?:rgb|hsl|oklch)a?\(/);
+    expect(css).not.toMatch(/\b(?:rgb|hsl|oklch)a?\(|color-mix|gradient/);
+    expect(css).not.toMatch(/--wb-/);
     expect(css).not.toMatch(/\d+ms\b/);
     expect(css).not.toMatch(/infinite/);
   });

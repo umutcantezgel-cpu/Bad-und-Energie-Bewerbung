@@ -113,21 +113,21 @@ export const SYMBOLE = {
     beschreibung: 'Ventilkörper mit Stellpfeil (elektronisch geregelt)',
     halb: { x: 12, y: 12 },
     anschluesse: { ein: { x: -12, y: 0 }, aus: { x: 12, y: 0 } },
-    formen: [{ d: VENTIL_LINKS }, { d: VENTIL_RECHTS }, { d: 'M-8 10L7 -5' }, { d: 'M10 -8L3.5 -6.5L8.5 -1.5Z', voll: true }],
+    formen: [{ d: VENTIL_LINKS }, { d: VENTIL_RECHTS }, { d: 'M-8 10L7 -5' }, { d: 'M10 -8L5 -6.8L8.8 -3Z', voll: true }],
   },
   heizkoerper: {
     name: 'Heizkörper',
-    beschreibung: 'Rechteck mit senkrechten Lamellen; Vorlauf oben, Rücklauf unten',
+    beschreibung: 'Rechteck mit senkrechten Lamellen; Vorlauf oben links, Rücklauf unten rechts (wechselseitig)',
     halb: { x: 18, y: 11 },
-    anschluesse: { ein: { x: -18, y: -6 }, aus: { x: -18, y: 6 } },
+    anschluesse: { ein: { x: -18, y: -6 }, aus: { x: 18, y: 6 } },
     formen: [{ x: -18, y: -11, width: 36, height: 22 }, { d: 'M-9 -11V11M0 -11V11M9 -11V11', fein: true }],
   },
   fussbodenheizung: {
     name: 'Fußbodenheizung',
-    beschreibung: 'Rohrschlange im Rechteck des Heizkreises',
+    beschreibung: 'Rohrschlange im Rechteck des Heizkreises, Vorlauf links oben, Rücklauf rechts unten',
     halb: { x: 22, y: 9 },
-    anschluesse: { ein: { x: -22, y: -5 }, aus: { x: -22, y: 5 } },
-    formen: [{ x: -22, y: -9, width: 44, height: 18, fein: true }, { d: 'M-22 -5H17V-1.7H-17V1.7H17V5H-22' }],
+    anschluesse: { ein: { x: -22, y: -5 }, aus: { x: 22, y: 5 } },
+    formen: [{ x: -22, y: -9, width: 44, height: 18, fein: true }, { d: 'M-22 -5H17V-1.7H-17V1.7H17V5H22' }],
   },
   fuehler: {
     name: 'Temperaturfühler',
@@ -180,13 +180,16 @@ export interface Lage {
   y: number;
   /** Drehung in Grad (im Uhrzeigersinn, Vielfache von 90). */
   drehung?: number;
+  /** Vergrößerung des Symbols (Standard 1); die Strichstärke bleibt die Linienart. */
+  massstab?: number;
 }
 
-/** Anschlusspunkt eines Symbols im Schema, nach Verschiebung und Drehung. */
+/** Anschlusspunkt eines Symbols im Schema, nach Vergrößerung, Drehung und Verschiebung. */
 export function anschlussPunkt(id: SymbolId, anschluss: string, lage: Lage): Punkt {
   const def: SymbolDef = SYMBOLE[id];
   const lokal = def.anschluesse[anschluss];
   if (!lokal) throw new Error(`symbole: ${id} hat keinen Anschluss ${anschluss}`);
-  const gedreht = drehen(lokal, lage.drehung ?? 0);
+  const m = lage.massstab ?? 1;
+  const gedreht = drehen({ x: lokal.x * m, y: lokal.y * m }, lage.drehung ?? 0);
   return { x: r1(lage.x + gedreht.x), y: r1(lage.y + gedreht.y) };
 }

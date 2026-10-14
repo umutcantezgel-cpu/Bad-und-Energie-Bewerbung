@@ -162,10 +162,10 @@ describe('Gerätedaten (Bosch-Anleitungen, nur Zahlen)', () => {
     const vorne = vorderansicht(COMPRESS_AW_S, { massketten: 'voll' });
     expect([vorne.breite, vorne.hoehe]).toEqual([1100, 800]);
     expect(vorne.kontur[0]).toBe('M0 0H1100V800H0Z');
-    expect(vorne.masse.map((m) => m.text.wert)).toEqual(['1100', '800', '107', '881', '330']);
+    expect(vorne.masse.map((m) => m.text.wert)).toEqual(['330', '107', '881', '1100', '800']);
     const seite = seitenansicht(COMPRESS_AW_S, { massketten: 'voll' });
     expect(seite.breite).toBe(540);
-    expect(seite.masse.map((m) => m.text.wert)).toEqual(['540', '580', '202', '97', '800']);
+    expect(seite.masse.map((m) => m.text.wert)).toEqual(['540', '97', '580', '202', '800']);
     // Kein Maß ohne Beleg: jede Maßzahl ist ein belegter Wert der Anleitung, geschätzte (Ausblasöffnung, Rotor) nie
     const belegt = new Set(alleMasse(COMPRESS_AW_S).filter(([, m]) => !m.geschaetzt).map(([, m]) => String(m.mm)));
     for (const m of [...vorne.masse, ...seite.masse]) expect(belegt, m.text.wert).toContain(m.text.wert);

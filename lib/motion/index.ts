@@ -7,6 +7,7 @@ export { MEDIA, canHover, hasCoarsePointer, matches, motionAllowed, prefersReduc
 export type { MediaName, MediaWindow } from './prefers';
 export {
   AUFTAKT_ENDE_MS,
+  DAUER_IDS,
   DAUER_MS,
   MOTION_IDS,
   MOTION_REGISTER,
@@ -16,6 +17,8 @@ export {
   maxVerzoegerungMs,
   motionEntry,
 } from './register';
-export type { Ausloeser, DauerToken, Eigenschaft, KurveToken, MotionEntry, MotionId, Seitenart } from './register';
-export { onceVisible } from './sicht';
-export type { SichtOptionen } from './sicht';
+export type { Ausloeser, DauerToken, Eigenschaft, KurveToken, MotionEntry, MotionId, Schleife, Seitenart } from './register';
+export { beobachteSicht, beobachteTab, onceVisible } from './sicht';
+export type { SichtOptionen, TabDokument } from './sicht';
+export { DAUER_KNOPF, DAUER_RUHE, dauerLaeuft, dauerWert, knopfSichtbar, knopfText } from './dauer';
+export type { DauerWert, DauerZustand } from './dauer';

@@ -1,7 +1,7 @@
 /**
  * Hausschnitt (KERN K-001, K-010, E-029): die Anlage im Schnitt durch das Haus, 1 Einheit = 10 mm. Dieselbe Geometrie
  * zeichnen der Einstieg der Startseite (components/home/einstieg/Szene.tsx), der kleine Hausschnitt
- * (components/zeichnung/technik/HausschnittKlein.tsx) und die Teilen-Bilder (lib/seo/og-render.tsx).
+ * (HausschnittKlein in components/zeichnung/technik/Hausschnitt.tsx) und die Teilen-Bilder (lib/seo/og-haus.ts).
  *
  * Inhalt: Geländeschnitt mit Erdreich (45°-Schraffur), links vor dem Haus die Außeneinheit maßstäblich (110 × 80
  * Einheiten = 1.100 × 800 mm, compress-aw-s.ts) auf zwei Sockeln, die Erdleitung im Rohrgraben, durch die
@@ -12,15 +12,17 @@
  * (Wärmeerzeuger) und läuft zur Inneneinheit, von dort zum Heizkörper; ein Abzweig läuft zur Bewerbung (Startseite:
  * links aus dem Bild in den roten Knopf). Der Rücklauf kommt vom Verbraucher zurück zur Außeneinheit.
  * Maße ohne Beleg tragen `geschaetzt` (Sockel, Raumhöhe, Lage der Inneneinheit); Prüfung:
- * lib/zeichnung/__tests__/hausschnitt.test.ts.
+ * lib/zeichnung/__tests__/zeichnung-daten.test.ts und schemata.test.ts.
  */
 import { COMPRESS_AW_S } from '../geraete/compress-aw-s';
-import { fliesspfeil, leitungsweg, MASSSTAB, r1, type Medium, type Punkt } from '../norm';
+import { fliesspfeil, leitungsweg, MASSSTAB, r1, SCHRAFFUR, schraffurLinien, type Medium, type Punkt } from '../norm';
 
 /** mm → Einheiten des Hausschnitts. */
 const e = (mm: number) => r1(mm / MASSSTAB.haus);
 
 export const HAUSSCHNITT_RAHMEN = Object.freeze({ breite: 800, hoehe: 680 });
+/** Gelände und Erdreich laufen rechts über den Rahmen hinaus (breite Flächen am Desktop schneiden sie ab). */
+const RAND_RECHTS = 1100;
 
 /** Geländeoberkante (GOK). */
 const GOK = 570;
@@ -93,8 +95,11 @@ export interface Leitung {
   punkte: readonly Punkt[];
   /** Nur in einer Fassung: `knopf` (Startseite, Leitung zur Bewerbung), `mobil`/`desktop` (Lage des Knopfs). */
   nur?: 'knopf-mobil' | 'knopf-desktop' | 'knopf';
-  /** Liegt vor anderen Leitungen (Mantel in der Fläche an Kreuzungen). */
-  vorn?: boolean;
+  /**
+   * Stück, an dem diese Leitung vor einer anderen liegt (Kreuzung ohne Verbindung): dort ein Mantel in der Fläche,
+   * damit die hintere Leitung aussetzt.
+   */
+  mantel?: string;
 }
 
 const weg = (id: string, medium: Medium, punkte: Punkt[], extra: Partial<Leitung> = {}): Leitung => ({
@@ -119,7 +124,7 @@ export const LEITUNGEN: readonly Leitung[] = [
       { x: VL_IE_X, y: ERD.vorlauf },
       { x: VL_IE_X, y: HAUS.fussboden },
     ],
-    { vorn: true },
+    { mantel: `M${ANSCHLUSS.vorlauf} ${ERD.ruecklauf - 9}V${ERD.ruecklauf + 9}` },
   ),
   // Vorlauf von der Inneneinheit zum Heizkörper (oben angeschlossen)
   weg('vorlauf-haus', 'vorlauf', [
@@ -204,12 +209,12 @@ export const BAUTEILE = {
   decke: `M${HAUS.links + HAUS.wand} ${HAUS.traufe}H${HAUS.rechts - HAUS.wand}V${HAUS.deckeUnten}H${HAUS.links + HAUS.wand}Z`,
   bodenplatte: `M${HAUS.links + HAUS.wand} ${HAUS.fussboden}H${HAUS.rechts - HAUS.wand}V${HAUS.platteUnten}H${HAUS.links + HAUS.wand}Z`,
   /** Erdreich unter dem Gelände, ohne Haus (Wände, Bodenplatte) und Rohrgraben. */
-  erdreich: `M0 ${GOK}H${HAUS.links}V${HAUS.fundamentUnten}H${HAUS.rechts}V${GOK}H${HAUSSCHNITT_RAHMEN.breite}V${HAUSSCHNITT_RAHMEN.hoehe}H0Z`,
-  erdreichUnterPlatte: `M${HAUS.links + HAUS.wand} ${HAUS.platteUnten}H${HAUS.rechts - HAUS.wand}V${HAUS.fundamentUnten}H${HAUS.links + HAUS.wand}Z`,
   /** Rohrgraben mit Sandbett (ohne Schraffur), vom Gerät bis an das Fundament. */
   graben: `M0 ${GOK + 44}H${HAUS.links}V${GOK + 86}H0Z`,
   /** Geländeoberkante: links bis an die Wand, rechts ab der Wand. */
-  gelaende: `M0 ${GOK}H${HAUS.links}M${HAUS.rechts} ${GOK}H${HAUSSCHNITT_RAHMEN.breite}`,
+  gelaende: `M0 ${GOK}H${HAUS.links}M${HAUS.rechts} ${GOK}H${RAND_RECHTS}`,
+  /** 45°-Schraffur des Erdreichs (fein, 1 px); Haus, Fundament und Graben decken sie ab. */
+  schraffur: schraffurLinien(0, GOK, RAND_RECHTS, HAUSSCHNITT_RAHMEN.hoehe, SCHRAFFUR.abstandHaus),
   /** Wanddurchführung (Futterrohr) im Fundament für beide Leitungen. */
   durchfuehrung: `M${HAUS.links - 4} ${ERD.ruecklauf - 10}H${HAUS.links + HAUS.wand + 4}V${ERD.vorlauf + 10}H${HAUS.links - 4}Z`,
   /** Betonsockel unter den Bodenhalterungen (geschaetzt). */

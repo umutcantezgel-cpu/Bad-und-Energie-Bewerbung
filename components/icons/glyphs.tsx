@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import { BEDIEN_GLYPHEN } from './bedien';
 
 /**
  * Glyphen im Formsystem (KERN K-010): Raster 24 × 24 mit Rand 2, Giebel 45° und Kreis, runde Enden,
@@ -98,6 +99,9 @@ export const GLYPH_SHAPES = {
   /** Gegen den Uhrzeigersinn: Bogen um den Mittelpunkt, Spitze im 45°-Winkel */
   'rotate-ccw': [{ d: 'M4.5 12a7.5 7.5 0 1 0 2.2-5.3' }, { d: 'M10.7 6.7h-4v-4' }],
   'rotate-cw': [{ d: 'M19.5 12a7.5 7.5 0 1 1-2.2-5.3' }, { d: 'M13.3 6.7h4v-4' }],
+  // Dauerbewegung (E-029): Anhalten und Abspielen
+  pause: BEDIEN_GLYPHEN.pause,
+  play: BEDIEN_GLYPHEN.play,
   'shield-check': [
     { d: 'M12 3 4.5 6v5.5c0 4.6 3.2 8.2 7.5 9.5 4.3-1.3 7.5-4.9 7.5-9.5V6Z' },
     { d: 'M8.5 12l2.5 2.5 4.5-4.5' },

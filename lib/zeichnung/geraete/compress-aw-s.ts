@@ -11,7 +11,7 @@ import { mass, schaetzung, type Aussengeraet } from './typen';
  */
 export const COMPRESS_AW_S: Aussengeraet = {
   id: 'compress-aw-s',
-  name: 'Außeneinheit 4–7 kW',
+  name: 'Außeneinheit 4–7\u00A0kW',
   modelle: ['Compress 5800i AW 4 | 5 | 7 OR-S', 'Compress 6800i AW 4 | 5 | 7 OR-S'],
   quelle: {
     titel: 'Bosch Installationsanleitung AW 4|5|7 OR-S',

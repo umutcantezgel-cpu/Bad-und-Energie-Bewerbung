@@ -204,11 +204,28 @@ export function masslinie({ von, bis, abstand, wert, strich = 6, ueberstand = 6,
   };
 }
 
+/** Schraffur (K-008): Erdreich und Schnittflächen unter 45° in der feinen Linie, Abstand in Einheiten der Zeichnung. */
+export const SCHRAFFUR = Object.freeze({ winkel: 45, abstandHaus: 9, abstandSchema: 14 });
+
 /**
- * Schraffur (K-008): Schnittflächen und Erdreich unter 45° in der feinen Linie. Abstand in Einheiten der Zeichnung;
- * die Komponente legt daraus ein `<pattern>` an.
+ * 45°-Schraffur als einzelne Linien in einem Rechteck (von links unten nach rechts oben, am Rand abgeschnitten): ein
+ * Pfad in der Linienart `fein` mit non-scaling-stroke, also 1 px bei jeder Größe (ein `<pattern>` skalierte mit).
  */
-export const SCHRAFFUR = Object.freeze({ winkel: 45, abstandHaus: 8, abstandGeraet: 24 });
+export function schraffurLinien(x0: number, y0: number, x1: number, y1: number, abstand: number): string {
+  const h = y1 - y0;
+  let d = '';
+  for (let x = x0 - h + abstand / 2; x < x1; x += abstand) {
+    const a = { x: Math.max(x, x0), y: y1 - Math.max(0, x0 - x) };
+    const b = { x: Math.min(x + h, x1), y: y0 + Math.max(0, x + h - x1) };
+    if (b.x - a.x > 0.5) d += `M${r1(a.x)} ${r1(a.y)}L${r1(b.x)} ${r1(b.y)}`;
+  }
+  return d;
+}
+
+/** Versalien für Etiketten an der Zeichnung (in SVG-Schrift statt text-transform, wie die Teilen-Bilder). */
+export function versal(text: string): string {
+  return text.toLocaleUpperCase('de-DE');
+}
 
 /** Ein geschätzter Wert trägt diese Marke (Geräte- und Szenenmodule): sichtbar in Prüfung und Abnahme (M-037). */
 export const GESCHAETZT = 'geschaetzt' as const;
