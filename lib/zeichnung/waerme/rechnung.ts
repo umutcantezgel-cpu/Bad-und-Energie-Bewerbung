@@ -27,7 +27,7 @@
  *    wächst jede Schicht fast gleich schnell aus der Bodenfläche. Der Ring misst, wann die Wärme in der Zone ankommt.)
  */
 import { createHash } from 'node:crypto';
-import { DURCHMISCHUNG, FELDEINGABEN, GRENZSCHICHT, KALIBRIERUNG, PECLET, type Feldeingabe, type FeldId } from './eingabe';
+import { ANPASSUNG, DURCHMISCHUNG, FELDEINGABEN, GRENZSCHICHT, KALIBRIERUNG, PECLET, type Feldeingabe, type FeldId } from './eingabe';
 import { K, OMEGA, TOLERANZ, laufeZeit, loeseStationaer, type Feldaufgabe, type Gitter, type Loesung, type Rechteck } from './feld';
 import { SPIEGELRAND, anteilUeber, bezierPfad, flaeche, glaetten, konturen, quantil, rdp, type P } from './kontur';
 
@@ -48,10 +48,12 @@ export const MODELL =
   'Stationäre Wärmeausbreitung mit Konvektion, K∇²θ − u·∇θ = 0, θ = 0 außen, 1 am Vorlauf; Konvektion aus Walzen ' +
   '(Stromfunktion 16ξ(1−ξ)η(1−η), divergenzfrei, Pe 16 am Heizkörper, 2 an der Fußbodenheizung; im Vergleichsraum ' +
   'mit Heizkörper steigt die Luft in einer dünnen Schicht am Heizkörper, F(ξ) = (1−ξ)ξ/(ξ+0,05)); Heizkörper mit ' +
-  'fester Temperatur (1,0 oben, 0,8 unten), Unterseite ohne Wärmeabgabe nach unten; Wände, Decke und Boden als ' +
+  'fester Temperatur (1,0 oben, 0,8 unten), Unterseite ohne Wärmeabgabe nach unten; mit Heizkörper konvektive ' +
+  'Anpassung als Ersatz für den Auftrieb (wo die Luft oben kühler ist als darunter, 41-fache senkrechte ' +
+  'Leitfähigkeit, außer 0,1 m an Decke und Boden); Wände, Decke und Boden als ' +
   'Robin-Rand mit U nach dem GEG-Referenzgebäude (0,28 / 0,20 / 0,35 × 0,6), Fußbodenheizung als Robin-Rand mit θ 0,6 ' +
   'und 10,8 W/(m²·K) (DIN EN 1264-5), vierfache Leitfähigkeit über dem Boden als Ersatz für den Strahlungsaustausch ' +
-  '(Kalibrierung ohne Quelle); Kalibrierkonstante der Ränder 0,01. SOR (ω 1,5) auf 2 Einheiten. Bänder: Hausschnitt bei 64, 36, 16 ' +
+  '(Kalibrierung ohne Quelle); Kalibrierkonstante der Ränder 0,01. Linien-SOR (ω 1,7) auf 2 Einheiten. Bänder: Hausschnitt bei 64, 36, 16 ' +
   'und 6 % der Raumfläche; Vergleichsräume bei gleicher mittlerer Raumtemperatur auf derselben Skala (Abstände vom ' +
   'Raummittel wie im Raum mit Heizkörper bei 64/36/16/6 %), ein Band nur ab 2 % der Fläche. Reihenfolge aus einem ' +
   'expliziten Zeitlauf auf rund 4 Einheiten (Ring eines Bands zu 60 % erwärmt). Hausschnitt: Schnittebene vor der ' +
@@ -94,7 +96,7 @@ const auf3 = (x: number) => Math.round(x * 1000) / 1000;
 export function eingabeHash(): string {
   const eingaben = {
     felder: FELDEINGABEN,
-    konstanten: { K, OMEGA, TOLERANZ, KALIBRIERUNG, PECLET, DURCHMISCHUNG, GRENZSCHICHT, RASTER, RASTER_ZEIT, ANTEILE, MIN_FLAECHE, EPSILON, ANKUNFT, SPIEGELRAND },
+    konstanten: { K, OMEGA, TOLERANZ, KALIBRIERUNG, ANPASSUNG, PECLET, DURCHMISCHUNG, GRENZSCHICHT, RASTER, RASTER_ZEIT, ANTEILE, MIN_FLAECHE, EPSILON, ANKUNFT, SPIEGELRAND },
   };
   return createHash('sha256').update(JSON.stringify(eingaben)).digest('hex').slice(0, 16);
 }

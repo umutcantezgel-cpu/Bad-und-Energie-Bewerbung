@@ -2,7 +2,8 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { WAERMEFELDER, type WaermefeldId } from '../szenen/waermefeld';
-import { FELDEINGABEN } from '../waerme/eingabe';
+import { ANPASSUNG, FELDEINGABEN } from '../waerme/eingabe';
+import { stroemung } from '../waerme/feld';
 import { anteilUeber, imPolygon, pfadPunkte, schwerpunkt, type P } from '../waerme/kontur';
 import { ANTEILE, DATEI, MIN_FLAECHE, SKRIPT, berechneWaermefelder, dateiText, eingabeHash, type Rechnung } from '../waerme/rechnung';
 
@@ -121,6 +122,72 @@ describe('Wärmefeld: Bänder (E-031)', () => {
       };
       expect(breite(innen.y + 6), id).toBeGreaterThan(breite(innen.y + innen.hoehe - 6));
     }
+  });
+
+  it('Heizkörper (Prüfrunde 2 B2-1): keine kühlere Schicht unter der Decke – in jeder Spalte außerhalb der Fahne ist die Luft 0,1 m unter der Decke höchstens 0,01 kühler als die wärmste der Spalte', () => {
+    for (const id of HEIZKOERPER) {
+      const z = rechnung.zwischen.get(id)!;
+      const { innen, heizflaeche: hf } = z.eingabe;
+      const { gitter: g } = z.loesung;
+      // Gezeichnet wird das geglättete Feld; ungeglättet gilt es ebenso
+      for (const [art, feld] of [['geglättet', z.glatt], ['roh', z.loesung.theta]] as const) {
+        const j = Math.round((innen.y + ANPASSUNG.randschicht - g.y0) / g.dy);
+        let spalten = 0;
+        for (let i = 0; i < g.nx; i += 5) {
+          const x = g.x0 + i * g.dx;
+          if (x > hf.x - 30 && x < hf.x + hf.breite + 30) continue;
+          let max = -Infinity;
+          for (let q = 0; q < g.ny; q += 1) max = Math.max(max, feld[q * g.nx + i]);
+          expect(feld[j * g.nx + i], `${id} ${art} x = ${x}`).toBeGreaterThanOrEqual(max - 0.01);
+          spalten += 1;
+        }
+        expect(spalten, id).toBeGreaterThan(25);
+      }
+    }
+  });
+
+  it('Heizkörper (Prüfrunde 2 B2-1): jedes Band ist 0,1 m unter der Decke mindestens so breit wie in halber Höhe (außerhalb der Fahne)', () => {
+    for (const id of HEIZKOERPER) {
+      const { innen, baender } = WAERMEFELDER[id];
+      const hf = eingabe(id).heizflaeche;
+      for (const b of baender) {
+        const flaeche = polygon(b.d);
+        const breite = (y: number) => {
+          let n = 0;
+          for (let x = innen.x + 1; x < innen.x + innen.breite; x += 1) {
+            if (x > hf.x - 30 && x < hf.x + hf.breite + 30) continue;
+            if (imPolygon({ x, y }, flaeche)) n += 1;
+          }
+          return n;
+        };
+        expect(breite(innen.y + ANPASSUNG.randschicht), `${id} Band ${b.stufe}`).toBeGreaterThanOrEqual(breite(innen.y + innen.hoehe / 2));
+      }
+    }
+  });
+
+  it('Vergleichsraum mit Heizkörper (Prüfrunde 2 B2-2): die Luft sinkt über die ganze Breite, strömt am Boden zum Heizkörper zurück; die Innenwand ist oben wärmer als unten', () => {
+    const z = rechnung.zwischen.get('raum-heizkoerper')!;
+    const { aufgabe, innen, heizflaeche: hf } = z.eingabe;
+    // Halbe Höhe: Aufstrom nur am Heizkörper (höchstens das erste Viertel der Breite), danach bis an die Innenwand überall
+    // abwärts (v > 0, y nach unten) und nirgends mehr als das Doppelte des Mittels (kein Abstrom an einer Wand)
+    const xs: number[] = [];
+    for (let x = innen.x + 5; x < innen.x + innen.breite; x += 5) xs.push(x);
+    const v = xs.map((x) => stroemung(aufgabe, x, innen.y + innen.hoehe / 2)[1]);
+    const ab = v.findIndex((w) => w > 0);
+    expect(xs[ab] - innen.x, 'Ende des Aufstroms').toBeLessThan(innen.breite / 4);
+    expect(xs[ab], 'Aufstrom am Heizkörper').toBeGreaterThan(hf.x + hf.breite);
+    const abwaerts = v.slice(ab);
+    expect(abwaerts.every((w) => w > 0)).toBe(true);
+    const mittel = abwaerts.reduce((a, b) => a + b, 0) / abwaerts.length;
+    expect(Math.max(...abwaerts)).toBeLessThan(2 * mittel);
+    // Am Boden (5 Einheiten darüber) strömt die Luft überall zum Heizkörper (links, u < 0)
+    for (let x = innen.x + 5; x < innen.x + innen.breite - 5; x += 5) expect(stroemung(aufgabe, x, innen.y + innen.hoehe - 5)[0], `x = ${x}`).toBeLessThan(0);
+    // Die Innenwand (adiabat) ist nicht die kälteste Zone: oben deutlich wärmer als unten und als der Boden im Raum
+    const { gitter: g, theta } = z.loesung;
+    const i = g.nx - 1;
+    const wert = (ab: number) => theta[Math.round((innen.y + innen.hoehe - ab - g.y0) / g.dy) * g.nx + i];
+    expect(wert(innen.hoehe - 10) - wert(10)).toBeGreaterThan(0.02);
+    expect(wert(innen.hoehe - 10)).toBeGreaterThan(schicht('raum-heizkoerper', 2, 12) + 0.02);
   });
 
   it('Fußbodenheizung: am Boden am wärmsten, das heißeste Band liegt am Boden (an der Außenwand fällt kalte Luft)', () => {

@@ -18,10 +18,15 @@
  *   `unterseiteAdiabat` gibt die Unterseite keine Wärme nach unten ab (die erwärmte Luft steigt, Prüfrunde 1 B1-2).
  * - Wände, Decke, Boden: Robin-Bedingung −K' ∂θ/∂n = h (θ − bezug); h = 0 heißt adiabat (Innenwand).
  *
+ * - Konvektive Anpassung (Prüfrunde 2 B2-1, `anpassung`): Die Walzen sind fest vorgegeben und kennen keinen Auftrieb.
+ *   Wo die Luft oben kühler ist als darunter, mischt sie sich senkrecht stark (siehe Anpassung) – sonst stünde unter der
+ *   Decke eine kühlere Schicht über wärmerer Luft, was es in einem beheizten Raum nicht gibt.
+ *
  * Diskretisierung: Knotengitter mit den Rändern auf Knoten, Differenzen zweiter Ordnung (zentral, auch für die
- * Konvektion: die Zell-Péclet-Zahl bleibt unter 2), Robin über Geisterknoten. Stationär mit SOR (ω = 1,85), Startwert
- * auf Wunsch die Lösung eines gröberen Gitters, bis die größte Änderung eines Durchlaufs unter `TOLERANZ` liegt;
- * zeitabhängig explizit (Euler vorwärts) mit stabilem Schritt.
+ * Konvektion: die Zell-Péclet-Zahl bleibt unter 2), Robin über Geisterknoten. Stationär mit Linien-SOR (senkrechte
+ * Linien, ω = OMEGA = 1,7; Prüfrunde 1 B1-2 und Prüfrunde 2 B2-1, B2-6), Startwert auf Wunsch die Lösung eines
+ * gröberen Gitters, bis die größte Änderung eines Durchlaufs unter `TOLERANZ` liegt; zeitabhängig explizit (Euler
+ * vorwärts) mit stabilem Schritt.
  *
  * Bitgleich in bun (JavaScriptCore) und vitest (V8): nur +, −, ×, ÷ und Vergleiche in fester Reihenfolge, keine
  * Funktionen wie exp, sin, pow, die je Maschine anders runden dürfen (Math.sqrt ist exakt gerundet und erlaubt).
@@ -73,6 +78,21 @@ export interface Walze {
   grenzschicht?: number;
 }
 
+/**
+ * Konvektive Anpassung (Prüfrunde 2 B2-1): Ersatz für den Auftrieb, den die fest vorgegebenen Walzen nicht kennen. Wo
+ * die Luft oben kühler ist als darunter (instabile Schichtung), mischt sie sich in Wirklichkeit sofort; das Modell gibt
+ * jeder solchen senkrechten Verbindung zweier Knoten die (1 + faktor)-fache Leitfähigkeit. Ausgenommen sind die
+ * Randschichten an Decke und Boden (`randschicht` Einheiten, die Luft haftet dort an der kühleren bzw. wärmeren Fläche)
+ * und Verbindungen zu einer Heizfläche (deren Wärmeabgabe bleibt, wie sie ist).
+ * - Stationär: Eine Verbindung, die einmal instabil war, bleibt durchmischt; gerechnet wird, bis keine neue mehr
+ *   hinzukommt (die Menge wächst nur, darum endet die Schleife).
+ * - Zeitabhängig: je Schritt nach dem Feld des vorigen Schritts.
+ */
+export interface Anpassung {
+  faktor: number;
+  randschicht: number;
+}
+
 export interface Feldaufgabe {
   innen: Rechteck;
   /**
@@ -86,6 +106,8 @@ export interface Feldaufgabe {
   walzen: readonly Walze[];
   /** Péclet-Zahl Pe = U₀ · H / K (mit K ohne den Faktor `durchmischung`; wirksam ist Pe / durchmischung). */
   peclet: number;
+  /** Konvektive Anpassung (Ersatz für den Auftrieb) oder ohne. */
+  anpassung?: Anpassung;
 }
 
 /** Knotengitter über dem Rechteck, Ränder auf Knoten; Abstand dx waagerecht, dy senkrecht. */
@@ -110,13 +132,17 @@ export interface Loesung {
 /** Wirksame Leitfähigkeit der Raumluft (Einheiten² je Zeiteinheit). */
 export const K = 1;
 /**
- * Überrelaxation des stationären Lösers (E-031). 1,5 statt der geplanten 1,85: Mit der dünnen Aufstromschicht im
- * Vergleichsraum (Prüfrunde 1 B1-2) ist die Konvektion an der Heizfläche stark, und SOR divergiert mit 1,85.
+ * Überrelaxation des stationären Lösers (E-031). Geplant war 1,85; mit der dünnen Aufstromschicht im Vergleichsraum
+ * divergierte Punkt-SOR damit, darum 1,5 (Prüfrunde 1 B1-2). Seit der konvektiven Anpassung rechnet der Löser mit
+ * Linien-SOR (Prüfrunde 2 B2-1): 1,7 konvergiert in allen drei Feldern, 1,85 divergiert auch hier.
  */
-export const OMEGA = 1.5;
+export const OMEGA = 1.7;
 /** Abbruch: größte Änderung eines Durchlaufs (der gespeicherte Rest liegt darunter, Vertrag: < 1e-7). */
 export const TOLERANZ = 1e-10;
-const MAX_DURCHLAEUFE = 200_000;
+const MAX_DURCHLAEUFE = 400_000;
+/** Konvektive Anpassung: Toleranz der Zwischenrunden und größte Zahl der Runden. */
+const TOLERANZ_RUNDE = 1e-7;
+const MAX_RUNDEN = 400;
 
 /**
  * Gitter mit rund `schritt` Einheiten Abstand: so viele Felder, dass sie die Breite und die Höhe genau teilen (2 → 2 × 2,
@@ -187,7 +213,11 @@ interface Stern {
   fest: Float64Array;
 }
 
-function stern(aufgabe: Feldaufgabe, g: Gitter): Stern {
+/**
+ * Senkrechte Verbindungen mit konvektiver Anpassung: `gemischt[k]` = 1, wenn die Verbindung von Knoten k zum Knoten
+ * darunter (k + nx) durchmischt ist.
+ */
+function stern(aufgabe: Feldaufgabe, g: Gitter, gemischt?: Uint8Array): Stern {
   const n = g.nx * g.ny;
   const s: Stern = {
     cO: new Float64Array(n),
@@ -218,11 +248,15 @@ function stern(aufgabe: Feldaufgabe, g: Gitter): Stern {
       const b = (v * dy) / (2 * kr);
       // Gewichte der Nachbarn in K'∇²θ − u·∇θ (mal dx²/K', K' = K · durchmischung): Osten 1 − a, Westen 1 + a, unten
       // r (1 − b), oben r (1 + b)
+      // Konvektive Anpassung: senkrechte Verbindung nach oben (mN) und nach unten (mU) mit (1 + faktor)-facher Leitfähigkeit
+      const faktor = aufgabe.anpassung?.faktor ?? 0;
+      const mN = gemischt && j > 0 ? 1 + faktor * gemischt[k - g.nx] : 1;
+      const mU = gemischt && j < g.ny - 1 ? 1 + faktor * gemischt[k] : 1;
       let cO = 1 - a;
       let cW = 1 + a;
-      let cU = r * (1 - b);
-      let cN = r * (1 + b);
-      let diag = 2 + 2 * r;
+      let cU = r * (mU - b);
+      let cN = r * (mN + b);
+      let diag = 2 + r * (mN + mU);
       let c0 = 0;
       // Geisterknoten außerhalb: θ_G = θ_innen − β (θ_P − bezug), β = 2 d h / K' (d = dx bzw. dy); das Gewicht des Geists
       // geht auf den gespiegelten Nachbarn, β auf die Diagonale und die Konstante
@@ -267,6 +301,34 @@ function stern(aufgabe: Feldaufgabe, g: Gitter): Stern {
     }
   }
   return s;
+}
+
+/**
+ * Darf die senkrechte Verbindung von Knoten k (Zeile j) zum Knoten darunter durchmischt werden? Nicht in den
+ * Randschichten an Decke und Boden und nicht an einer Heizfläche.
+ */
+function mischbar(s: Stern, g: Gitter, randschicht: number, k: number, j: number): boolean {
+  if (!Number.isNaN(s.fest[k]) || !Number.isNaN(s.fest[k + g.nx])) return false;
+  return j * g.dy >= randschicht && (g.ny - 2 - j) * g.dy >= randschicht;
+}
+
+/**
+ * Markiert instabile senkrechte Verbindungen (oben kühler als unten) in `gemischt` und gibt die Zahl der neu markierten
+ * zurück (markierte bleiben markiert).
+ */
+function markiereInstabil(s: Stern, g: Gitter, randschicht: number, t: Float64Array, gemischt: Uint8Array): number {
+  let neu = 0;
+  for (let j = 0; j < g.ny - 1; j += 1) {
+    for (let i = 0; i < g.nx; i += 1) {
+      const k = j * g.nx + i;
+      if (gemischt[k] === 1 || !mischbar(s, g, randschicht, k, j)) continue;
+      if (t[k] < t[k + g.nx]) {
+        gemischt[k] = 1;
+        neu += 1;
+      }
+    }
+  }
+  return neu;
 }
 
 /** Gauß-Seidel-Wert eines freien Knotens (Nachbarn außerhalb haben Gewicht 0). */
@@ -331,32 +393,94 @@ function interpoliert(von: Loesung, g: Gitter): Float64Array {
  */
 export function loeseStationaer(aufgabe: Feldaufgabe, schritt: number, start?: Loesung): Loesung {
   const g = gitterFuer(aufgabe.innen, schritt);
-  const s = stern(aufgabe, g);
+  const anpassung = aufgabe.anpassung;
+  const gemischt = anpassung ? new Uint8Array(g.nx * g.ny) : undefined;
+  let s = stern(aufgabe, g, gemischt);
   const t = startfeld(s);
   if (start) {
     const grob = interpoliert(start, g);
     for (let k = 0; k < t.length; k += 1) if (Number.isNaN(s.fest[k])) t[k] = grob[k];
   }
+  // Konvektive Anpassung: rechnen, instabile Verbindungen mischen, neu rechnen, bis keine neue hinzukommt; erst grob
+  // (TOLERANZ_RUNDE), dann bis TOLERANZ und noch einmal prüfen
+  let iterationen = 0;
+  let toleranz = anpassung ? TOLERANZ_RUNDE : TOLERANZ;
+  for (let runde = 1; ; runde += 1) {
+    iterationen += sor(s, t, g, toleranz, iterationen);
+    if (!anpassung || !gemischt) break;
+    const neu = markiereInstabil(s, g, anpassung.randschicht, t, gemischt);
+    if (neu === 0) {
+      if (toleranz === TOLERANZ) break;
+      toleranz = TOLERANZ;
+      continue;
+    }
+    if (runde >= MAX_RUNDEN) throw new Error(`waerme/feld: konvektive Anpassung nach ${runde} Runden nicht abgeschlossen (${neu} neu)`);
+    s = stern(aufgabe, g, gemischt);
+  }
+  return { gitter: g, theta: t, iterationen, residuum: rest(s, t, g) };
+}
+
+/**
+ * Linien-SOR auf `t` (Prüfrunde 2 B2-1): je Spalte von links nach rechts die freien Knoten einer senkrechten Linie
+ * gemeinsam (tridiagonal, Thomas-Verfahren; die Nachbarspalten gelten als bekannt), dann überrelaxiert mit ω. Die
+ * konvektive Anpassung koppelt die Knoten senkrecht stark, Punkt-SOR bräuchte dafür ein Vielfaches an Durchläufen.
+ * Bis die größte Änderung eines Durchlaufs unter `toleranz` liegt; gibt die Zahl der Durchläufe zurück.
+ */
+function sor(s: Stern, t: Float64Array, g: Gitter, toleranz: number, bisher: number): number {
+  const rechts = new Float64Array(g.ny);
+  const cp = new Float64Array(g.ny);
+  const dp = new Float64Array(g.ny);
   let iterationen = 0;
   for (;;) {
     let max = 0;
-    for (let j = 0; j < g.ny; j += 1) {
-      for (let i = 0; i < g.nx; i += 1) {
-        const k = j * g.nx + i;
-        if (!Number.isNaN(s.fest[k])) continue;
-        const r = gs(s, t, g, k, i, j) - t[k];
-        t[k] += OMEGA * r;
-        const betrag = r < 0 ? -r : r;
-        // !(≤) statt >: ein NaN landet in max und bricht unten ab
-        if (!(betrag <= max)) max = betrag;
+    for (let i = 0; i < g.nx; i += 1) {
+      let j = 0;
+      while (j < g.ny) {
+        if (!Number.isNaN(s.fest[j * g.nx + i])) {
+          j += 1;
+          continue;
+        }
+        // Abschnitt freier Knoten j0 … j1 − 1 (über und unter ihm eine Heizfläche oder der Rand)
+        const j0 = j;
+        while (j < g.ny && Number.isNaN(s.fest[j * g.nx + i])) j += 1;
+        const j1 = j;
+        // θ_P − cN θ_N − cU θ_U = c0 + cO θ_O + cW θ_W (+ feste Nachbarn über und unter dem Abschnitt)
+        for (let q = j0; q < j1; q += 1) {
+          const k = q * g.nx + i;
+          let w = s.c0[k];
+          if (i < g.nx - 1) w += s.cO[k] * t[k + 1];
+          if (i > 0) w += s.cW[k] * t[k - 1];
+          if (q === j0 && q > 0) w += s.cN[k] * t[k - g.nx];
+          if (q === j1 - 1 && q < g.ny - 1) w += s.cU[k] * t[k + g.nx];
+          rechts[q] = w;
+        }
+        const k0 = j0 * g.nx + i;
+        cp[j0] = -s.cU[k0];
+        dp[j0] = rechts[j0];
+        for (let q = j0 + 1; q < j1; q += 1) {
+          const k = q * g.nx + i;
+          const m = 1 + s.cN[k] * cp[q - 1];
+          cp[q] = -s.cU[k] / m;
+          dp[q] = (rechts[q] + s.cN[k] * dp[q - 1]) / m;
+        }
+        let unten = 0;
+        for (let q = j1 - 1; q >= j0; q -= 1) {
+          const k = q * g.nx + i;
+          const x = q === j1 - 1 ? dp[q] : dp[q] - cp[q] * unten;
+          unten = x;
+          const r = x - t[k];
+          t[k] += OMEGA * r;
+          const betrag = r < 0 ? -r : r;
+          // !(≤) statt >: ein NaN landet in max und bricht unten ab
+          if (!(betrag <= max)) max = betrag;
+        }
       }
     }
     iterationen += 1;
-    if (!(max < 1e6)) throw new Error(`waerme/feld: SOR divergiert nach ${iterationen} Durchläufen`);
-    if (max < TOLERANZ) break;
-    if (iterationen >= MAX_DURCHLAEUFE) throw new Error(`waerme/feld: SOR nach ${iterationen} Durchläufen nicht konvergiert (Rest ${max})`);
+    if (!(max < 1e6)) throw new Error(`waerme/feld: SOR divergiert nach ${bisher + iterationen} Durchläufen`);
+    if (max < toleranz) return iterationen;
+    if (bisher + iterationen >= MAX_DURCHLAEUFE) throw new Error(`waerme/feld: SOR nach ${bisher + iterationen} Durchläufen nicht konvergiert (Rest ${max})`);
   }
-  return { gitter: g, theta: t, iterationen, residuum: rest(s, t, g) };
 }
 
 /**
@@ -375,8 +499,12 @@ export function laufeZeit(
   let t: Float64Array = startfeld(s);
   let maxDiag = 0;
   for (let k = 0; k < t.length; k += 1) if (s.diagonale[k] > maxDiag) maxDiag = s.diagonale[k];
+  // Konvektive Anpassung: je durchmischter Verbindung zusätzlich r · faktor auf der Diagonale (höchstens zwei je Knoten)
+  const anpassung = aufgabe.anpassung;
+  const r = (g.dx * g.dx) / (g.dy * g.dy);
+  const mischung = anpassung ? r * anpassung.faktor : 0;
   const kr = K * aufgabe.durchmischung;
-  const dt = (0.9 * g.dx * g.dx) / (kr * maxDiag);
+  const dt = (0.9 * g.dx * g.dx) / (kr * (maxDiag + 2 * mischung));
   const faktor = (kr * dt) / (g.dx * g.dx);
   let neu: Float64Array = new Float64Array(t.length);
   let zeit = 0;
@@ -385,6 +513,18 @@ export function laufeZeit(
       for (let i = 0; i < g.nx; i += 1) {
         const k = j * g.nx + i;
         neu[k] = Number.isNaN(s.fest[k]) ? t[k] + faktor * s.diagonale[k] * (gs(s, t, g, k, i, j) - t[k]) : t[k];
+      }
+    }
+    if (anpassung) {
+      // Instabile Verbindungen (oben kühler als unten, im Feld vor dem Schritt) tauschen zusätzlich Wärme aus
+      for (let j = 0; j < g.ny - 1; j += 1) {
+        for (let i = 0; i < g.nx; i += 1) {
+          const k = j * g.nx + i;
+          if (!(t[k] < t[k + g.nx]) || !mischbar(s, g, anpassung.randschicht, k, j)) continue;
+          const fluss = faktor * mischung * (t[k + g.nx] - t[k]);
+          neu[k] += fluss;
+          neu[k + g.nx] -= fluss;
+        }
       }
     }
     [t, neu] = [neu, t];

@@ -421,14 +421,14 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
     ausloeser: ['nachlauf', 'sicht'],
     eigenschaften: ['transform', 'opacity'],
     dauer: ['d-4'],
-    verzoegerungTakte: [0, 4, 7, 8.5, 11.5, 12, 16.5, 22],
+    verzoegerungTakte: [0, 1, 7, 8.5, 9.5, 16.5, 22],
     kurve: ['linear'],
     reduziert: 'Endzustand: das Wärmefeld steht.',
     seitenart: 'erzaehlseiten',
     endeMs: 2360,
     fenster: {
-      nachlauf: { verzoegerungTakte: [7, 8.5, 12, 16.5], endeMs: 1920 },
-      sicht: { verzoegerungTakte: [0, 4, 11.5, 22], endeMs: 2360 },
+      nachlauf: { verzoegerungTakte: [7, 8.5, 9.5, 16.5], endeMs: 1920 },
+      sicht: { verzoegerungTakte: [0, 1, 7, 22], endeMs: 2360 },
     },
   },
   'buero-ablauf': {

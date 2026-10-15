@@ -110,7 +110,11 @@ describe('Erklärtext zur Wärmepumpe (E-029, AEO)', () => {
     expect(WAERMEVERTEILUNG.hinweis.text).toContain(`4,2${NBSP}×${NBSP}2,5${NBSP}m`);
     // Was der Text sagt, prüft lib/zeichnung/__tests__/waermefeld.test.ts am Feld: Fahne, Schicht unter der Decke, kühler
     // Boden; Fußbodenheizung gleichmäßiger, am Boden wärmer, an der Außenwand kühler
-    expect(WAERMEVERTEILUNG.heizkoerper.text).toMatch(/steigt[\s\S]*Fahne[\s\S]*unter die Decke[\s\S]*Boden zurück[\s\S]*Am Boden bleibt es kühler als unter der Decke/);
+    expect(WAERMEVERTEILUNG.heizkoerper.text).toMatch(
+      /steigt[\s\S]*Fahne[\s\S]*unter die Decke[\s\S]*warme Schicht[\s\S]*sinkt im ganzen Raum[\s\S]*über den Boden[\s\S]*zum Heizkörper[\s\S]*zurück[\s\S]*Am Boden bleibt es kühler als unter der Decke/,
+    );
+    // Prüfrunde 2 B2-2: Das Feld zeigt kein Absinken an der Gegenwand (die Walze lässt die Luft über die Breite sinken)
+    expect(WAERMEVERTEILUNG.heizkoerper.text).not.toMatch(/gegenüberliegenden Wand|an der Innenwand/);
     expect(WAERMEVERTEILUNG.fussboden.text).toMatch(/ganze Bodenfläche[\s\S]*gleichmäßiger warm[\s\S]*am Boden ein wenig wärmer als unter der Decke[\s\S]*Außenwand/);
     expect(WAERMEVERTEILUNG.hinweis.text).toMatch(/links die Außenwand/);
     // Vergleich auf einer Skala (Prüfrunde 1 B1-1): gleiche Farbe heißt in beiden Räumen gleich warm

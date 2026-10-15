@@ -12,6 +12,9 @@
  *   Innenwand zum beheizten Nachbarraum (adiabat), eine Walze mit Aufstrom am Heizkörper. Die Luft steigt in einer
  *   dünnen Schicht zwischen Wand und Heizkörper und an seiner Vorderseite auf (GRENZSCHICHT), die kühle Raumluft strömt
  *   am Boden bis unter den Heizkörper zurück (Prüfrunde 1 B1-2).
+ * - Beide Räume mit Heizkörper mit konvektiver Anpassung (ANPASSUNG, Prüfrunde 2 B2-1): Die Walzen sind fest vorgegeben;
+ *   wo die Luft oben kühler wäre als darunter, mischt sie sich, wie es der Auftrieb täte. So liegt die wärmste Luft
+ *   unter der Decke und nicht 1 m tiefer.
  * - Beide Heizkörper geben nach unten keine Wärme an die Luft ab (Unterseite adiabat): Die erwärmte Luft steigt; ohne
  *   diese Angabe diffundierte die feste Temperatur der Heizfläche bis auf den Boden darunter.
  * - Vergleichsraum mit Fußbodenheizung: der ganze Boden gibt Wärme ab (Robin-Rand mit θ_F = 0,6, Wärmeübergang am
@@ -26,7 +29,7 @@
  */
 import { HAUS_LAGE, HEIZKOERPER_LAGE } from '../szenen/hausschnitt';
 import { RAUM_HEIZKOERPER, RAUM_INNEN } from '../szenen/raumschnitt';
-import type { Feldaufgabe, Rand, Rechteck } from './feld';
+import type { Anpassung, Feldaufgabe, Rand, Rechteck } from './feld';
 import type { P } from './kontur';
 
 export type FeldId = 'hausschnitt' | 'raum-heizkoerper' | 'raum-fussboden';
@@ -62,6 +65,18 @@ export const DURCHMISCHUNG = Object.freeze({ heizkoerper: 1, fussboden: 4 });
  * aufsteigenden Schicht davor. Gewählt, nicht gemessen (Prüfrunde 1 B1-2).
  */
 export const GRENZSCHICHT = 0.05;
+
+/**
+ * Konvektive Anpassung der Räume mit Heizkörper (Prüfrunde 2 B2-1, lib/zeichnung/waerme/feld.ts Anpassung): Wo die Luft
+ * oben kühler ist als darunter, mischt sie sich mit der 41-fachen Leitfähigkeit (faktor 40) – eine instabile Schichtung
+ * baut sich so bis auf rund ein Vierzigstel ab. Ausgenommen sind 0,1 m an Decke und Boden (randschicht 10 Einheiten):
+ * Dort haftet die Luft an der Fläche und gibt Wärme an sie ab. Gewählt, nicht gemessen: so groß, dass in jeder Spalte
+ * außerhalb der Fahne die Luft 0,1 m unter der Decke höchstens 0,01 kühler ist als die wärmste der Spalte
+ * (lib/zeichnung/__tests__/waermefeld.test.ts). Nicht bei der Fußbodenheizung: Über dem warmen Boden ist die
+ * Schichtung überall instabil, das Modell bildet diese Durchmischung dort schon mit DURCHMISCHUNG ab (Prüfrunde 1
+ * B1-4); beides zusammen zählte den Auftrieb doppelt.
+ */
+export const ANPASSUNG: Anpassung = Object.freeze({ faktor: 40, randschicht: 10 });
 
 const robin = (u: number, bezug = 0): Rand => ({ h: KALIBRIERUNG * u, bezug });
 const ADIABAT: Rand = { h: 0, bezug: 0 };
@@ -126,6 +141,7 @@ export const FELDEINGABEN: readonly Feldeingabe[] = [
       ],
       peclet: PECLET.heizkoerper,
       durchmischung: DURCHMISCHUNG.heizkoerper,
+      anpassung: ANPASSUNG,
     },
     ursprung: { x: HK_MITTE, y: HK.y },
     fenster: [7, 16.5],
@@ -148,6 +164,7 @@ export const FELDEINGABEN: readonly Feldeingabe[] = [
       walzen: [{ x0: RAUM_INNEN.x, x1: RAUM_INNEN.x + RAUM_INNEN.breite, aufstrom: 'links', grenzschicht: GRENZSCHICHT }],
       peclet: PECLET.heizkoerper,
       durchmischung: DURCHMISCHUNG.heizkoerper,
+      anpassung: ANPASSUNG,
     },
     ursprung: { x: RHK.x + RHK.breite / 2, y: RHK.y },
     fenster: [0, 22],

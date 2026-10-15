@@ -107,8 +107,9 @@ const raumMeter = (einheiten: number) => (einheiten / 100).toLocaleString('de-DE
 /**
  * „So verteilt sich die Wärme im Raum“ (E-031): was der Raumschnitt mit dem berechneten Wärmefeld zeigt
  * (lib/zeichnung/szenen/waermefeld.ts, Felder `raum-heizkoerper` und `raum-fussboden`). Nur Physik, keine Temperaturen;
- * jede Aussage prüft lib/zeichnung/__tests__/waermefeld.test.ts am gerechneten Feld (Fahne, Schicht unter der Decke,
- * kühler Boden; Fußbodenheizung gleichmäßiger, am Boden am wärmsten, an der Außenwand kühler; beide Räume auf einer
+ * jede Aussage prüft lib/zeichnung/__tests__/waermefeld.test.ts am gerechneten Feld (Fahne, warme Schicht unter der Decke
+ * ohne kühlere darüber, Absinken über die ganze Breite statt an der Gegenwand, Rückströmung am Boden zum Heizkörper,
+ * kühler Boden, Prüfrunde 2 B2-1, B2-2; Fußbodenheizung gleichmäßiger, am Boden am wärmsten, an der Außenwand kühler; beide Räume auf einer
  * Skala bei gleicher mittlerer Raumtemperatur, die beiden kräftigsten Stufen nur beim Heizkörper, Prüfrunde 1 B1-1).
  */
 export const WAERMEVERTEILUNG = Object.freeze({
@@ -116,8 +117,9 @@ export const WAERMEVERTEILUNG = Object.freeze({
   heizkoerper: {
     name: 'Heizkörper',
     text:
-      'Am Heizkörper steigt die erwärmte Luft auf und zieht als Fahne bis unter die Decke. Dort verteilt sie sich, sinkt an ' +
-      'der gegenüberliegenden Wand ab und strömt über den Boden zurück. Am Boden bleibt es kühler als unter der Decke.',
+      'Am Heizkörper steigt die erwärmte Luft auf und zieht als Fahne bis unter die Decke. Dort breitet sie sich als warme ' +
+      'Schicht aus, kühlt ab und sinkt im ganzen Raum langsam herab; über den Boden strömt die kühlere Luft zum Heizkörper ' +
+      'zurück. Am Boden bleibt es kühler als unter der Decke.',
     quelle: 'zeichnung:waermefeld',
   } satisfies ErklaerSatz & { name: string },
   fussboden: {
