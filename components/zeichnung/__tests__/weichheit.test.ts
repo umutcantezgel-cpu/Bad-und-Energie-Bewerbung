@@ -173,7 +173,7 @@ describe('Tonwechsel der Abschnitte mit runden oberen Ecken (E-031)', () => {
     // Zwischen zwei Abschnitten dürfen höchstens zwei leere Sprungmarken stehen (Startseite: alte Anker als <span id>)
     const ZWISCHEN = ['', 'span:empty + ', 'span:empty + span:empty + '];
     const wechsel = TOENE.flatMap((t) => ZWISCHEN.map((z) => `.ton[data-ton="${t}"] + ${z}.ton:not([data-ton="${t}"])`)).join(',\n');
-    expect(css).toContain(`${wechsel} {\n  position: relative;\n  border-start-start-radius: var(--radius-3);\n  border-start-end-radius: var(--radius-3);\n}`);
+    expect(css).toContain(`${wechsel} {\n  --trenner: hidden;\n  position: relative;\n  border-start-start-radius: var(--radius-3);\n  border-start-end-radius: var(--radius-3);\n}`);
     const folgt = (t: string) => ZWISCHEN.map((z) => `+ ${z}.ton:not([data-ton="${t}"])`).join(', ');
     const vorher = TOENE.map((t) => `.ton[data-ton="${t}"]:has(${folgt(t)})::after`).join(',\n');
     expect(deklarationen(regel(css, vorher))).toEqual({
@@ -190,6 +190,17 @@ describe('Tonwechsel der Abschnitte mit runden oberen Ecken (E-031)', () => {
     // Nur Form: kein Verlauf, kein Schatten, kein Glas, kein Filter; Radien nur aus den Tokens
     expect(css).not.toMatch(/gradient|shadow|blur|filter|opacity/);
     for (const [, wert] of css.matchAll(/radius:\s*([^;]+);/g)) expect(wert).toBe('var(--radius-3)');
+  });
+
+  it('Ecke oder Trenner, nie beides (Prüfrunde 1 A1-8): beim Tonwechsel ist der Leitungstrenner verborgen, sonst sichtbar', () => {
+    // Jeder Abschnitt setzt den Wert neu (er erbt nicht in verschachtelte), der Trenner liest ihn als visibility
+    expect(deklarationen(regel(css, '.ton'))).toEqual({ '--trenner': 'visible' });
+    expect(deklarationen(regel(css, '.ton > [data-zeichnung="leitungstrenner"]'))).toEqual({ visibility: 'var(--trenner)' });
+    // Nur die Regel des Tonwechsels setzt hidden (siehe oben, mit den runden Ecken)
+    expect(css.match(/--trenner: hidden;/g)).toHaveLength(1);
+    // Der Trenner trägt die Kennung, an der die Regel ihn findet, und steht als Kind des Abschnitts
+    const mit = html(createElement(Section, { tone: 'wand', trenner: true }, 'x'));
+    expect(mit).toMatch(/^<section [^>]*data-ton="wand"><span class="[^"]*" aria-hidden="true" data-zeichnung="leitungstrenner">/);
   });
 
   it('Themenabschnitte: zwei gleiche Töne trennt der Leitungstrenner, nicht mehr die feine Linie aus E-029', () => {

@@ -3,9 +3,19 @@
  * ein Abschnitt einem Abschnitt in einem anderen Ton (Papier, Wand, Band), hat er oben runde Ecken (--radius-3). Damit
  * die Ecken die Fläche des vorigen Abschnitts zeigen und nicht die der Seite, malt der vorige einen Streifen seiner
  * Fläche (--radius-3 hoch) unter den Anfang des nächsten. Gleicher Ton nacheinander: keine Ecken (dort trennt der
- * Leitungstrenner). Der Ton steht als data-ton am Abschnitt (components/layout/Section.tsx). Dazwischen dürfen bis zu
- * zwei leere Sprungmarken stehen (<span id> der alten Anker auf der Startseite, ohne Höhe).
+ * Leitungstrenner). Ecke oder Trenner, nie beides (Prüfrunde 1 A1-8): beim Tonwechsel bleibt ein Leitungstrenner des
+ * Abschnitts verborgen (--trenner; jeder Abschnitt setzt es neu, damit es nicht in verschachtelte erbt). Der Ton
+ * steht als data-ton am Abschnitt (components/layout/Section.tsx). Dazwischen dürfen bis zu zwei leere Sprungmarken
+ * stehen (<span id> der alten Anker auf der Startseite, ohne Höhe).
  */
+
+.ton {
+  --trenner: visible;
+}
+
+.ton > [data-zeichnung="leitungstrenner"] {
+  visibility: var(--trenner);
+}
 
 /* Papier deckt (wie Wand und Band): sonst schiene der Streifen des vorigen Abschnitts durch die ganze Oberkante */
 .ton[data-ton="papier"] {
@@ -21,6 +31,7 @@
 .ton[data-ton="band"] + .ton:not([data-ton="band"]),
 .ton[data-ton="band"] + span:empty + .ton:not([data-ton="band"]),
 .ton[data-ton="band"] + span:empty + span:empty + .ton:not([data-ton="band"]) {
+  --trenner: hidden;
   position: relative;
   border-start-start-radius: var(--radius-3);
   border-start-end-radius: var(--radius-3);
