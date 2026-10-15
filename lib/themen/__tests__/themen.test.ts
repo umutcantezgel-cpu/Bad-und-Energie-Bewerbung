@@ -209,6 +209,12 @@ describe('Texte der Themenseiten: nur Belegtes', () => {
       if (FACTS[id].offenFuer) {
         expect(kasten.giltFuer, id).toEqual(stellenMitZusatz(id, JOBS).map((j) => j.shortTitle));
         for (const j of JOBS.filter((j) => j.category === 'buero')) expect(kasten.giltFuer, id).not.toContain(j.shortTitle);
+        // Schülerpraktikum: zur Arbeitszeit nichts gesagt (S4, M-027; Prüfung E-029, Runde 3)
+        if (id === 'flexibleHours') {
+          const praktikum = JOBS.filter((j) => j.category === 'praktikum');
+          expect(praktikum.length).toBeGreaterThan(0);
+          for (const j of praktikum) expect(kasten.giltFuer, id).not.toContain(j.shortTitle);
+        }
       } else {
         expect(kasten.giltFuer, id).toBeUndefined();
       }

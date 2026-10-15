@@ -1,4 +1,4 @@
-import { COMPANY, FACTS, isFactActive, stellenMitFakt, type FactId } from '@/lib/content';
+import { COMPANY, FACTS, isFactActive, fuehrendeStellen, type FactId } from '@/lib/content';
 import { applyUrl, jobMetaTags, jobUrl, payLabel } from '@/lib/jobs/format';
 import { getActiveJobs, getFunnelOptions, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
 import { istOrtIndexierbar } from '@/lib/places/indexierung';
@@ -80,7 +80,7 @@ export function chamberLine(): string {
 export function employerFacts(now: Date, stellen: readonly Job[] = [...liveJobs(now), ...funnelOnlyJobs()]): string[] {
   return EMPLOYER_FACT_IDS.filter((id) => isFactActive(id, now) && !FACTS[id].pending).flatMap((id) => {
     if (COMPANY_FACT_IDS.includes(id) || stellen.length === 0) return [FACTS[id].long];
-    const mit = stellenMitFakt(id, stellen);
+    const mit = fuehrendeStellen(id, stellen);
     if (mit.length === 0) return [];
     if (mit.length === stellen.length) return [FACTS[id].long];
     return [`${FACTS[id].long} Je nach Stelle; genannt bei: ${mit.map((job) => job.shortTitle).join(', ')}.`];

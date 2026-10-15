@@ -1,4 +1,4 @@
-import { COMPANY, FACTS, stellenMitFakt } from '@/lib/content';
+import { COMPANY, FACTS, fuehrendeStellen } from '@/lib/content';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 import {
   TEXT_HEADERS,
@@ -30,7 +30,7 @@ export function GET(): Response {
   const extra = funnelOnlyJobs();
   // „Lohn auf Anfrage“ im Kopf nur, wenn ihn jede Stelle nennt; das Schülerpraktikum sagt nichts zu Geld (S4), dann
   // steht er unter „Arbeitgeber“ mit den Stellen, für die er gilt (Prüfung E-029, Runde 3)
-  const lohn = stellenMitFakt('payOnRequest', [...jobs, ...extra]).length === jobs.length + extra.length ? ` ${FACTS.payOnRequest.long}` : '';
+  const lohn = fuehrendeStellen('payOnRequest', [...jobs, ...extra]).length === jobs.length + extra.length ? ` ${FACTS.payOnRequest.long}` : '';
 
   const lines = [
     `# ${COMPANY.legalName}: Karriere`,

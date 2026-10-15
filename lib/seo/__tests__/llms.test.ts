@@ -82,6 +82,13 @@ describe('llms.txt (E-SEO-014)', () => {
     expect(kopf).not.toContain(FACTS.payOnRequest.long);
   });
 
+  it('llms-full.txt: the school internship block says nothing about working hours (S4, M-027, Runde 3)', async () => {
+    const text = await textAt(llmsFull, '2026-10-20T12:00:00Z');
+    const block = text.split('### Schülerpraktikum Anlagenmechaniker SHK (m/w/d)')[1]?.split('\n### ')[0] ?? '';
+    expect(block).toContain('Das bekommst du');
+    expect(block).not.toMatch(/Flexible Arbeitszeiten|Arbeitszeit/);
+  });
+
   it('names the anniversary in the lead sentence until 31.12.2026, not after', async () => {
     const before = await textAt(llms, '2026-12-31T12:00:00Z');
     expect(before).toContain('100 Jahre Meisterbetrieb (1926–2026)');

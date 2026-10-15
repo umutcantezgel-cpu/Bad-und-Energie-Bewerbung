@@ -93,6 +93,15 @@ describe('Indeed-XML', () => {
     expect(jobtype('SHK-BU-2026-08')).toBe('fulltime, parttime');
   });
 
+  it('Schülerpraktikum ohne „Flexible Arbeitszeiten“ (S4, M-027; Prüfung E-029, Runde 3)', () => {
+    const jobs = doc.source.job as Record<string, string>[];
+    const praktikum = jobs.find((j) => j.referencenumber === 'SHK-PR-2026-07')!;
+    expect(praktikum).toBeDefined();
+    expect(JSON.stringify(praktikum)).not.toMatch(/Flexible Arbeitszeiten|Arbeitszeit/);
+    // Gegenprobe: die Monteursstelle nennt sie
+    expect(JSON.stringify(jobs.find((j) => j.referencenumber === am.referenceCode))).toContain('Flexible Arbeitszeiten');
+  });
+
   it('respektiert Kanal-Flag und Ablaufdatum', () => {
     const off: Job = { ...am, channels: { ...am.channels, indeedFeed: false } };
     const expired: Job = { ...am, referenceCode: 'SHK-WP-2026-99', validThrough: '2026-10-01' };

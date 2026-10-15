@@ -87,12 +87,16 @@ describe('Ortsseite: Kopf und Metadaten', () => {
     expect(plain(asslar.meta.description)).toBe(
       'Arbeitsweg Aßlar – Wetzlar: 8 km, rund 12 Minuten mit dem Auto, mit Bus und Bahn los um 6:25 Uhr, an 7:16 Uhr. Keine Fernmontage.',
     );
-    // Ohne Bürostelle wie bisher
-    const ohneBuero = page('asslar', { jobs: jobs.filter((job) => job.category !== 'buero') });
-    expect(plain(ohneBuero.meta.description)).toBe(
+    // Ohne Bürostelle, aber mit dem Schülerpraktikum (Arbeitszeit offen, S4, Runde 3): ebenso nur die Zusage für jede Stelle
+    const mitPraktikum = page('asslar', { jobs: jobs.filter((job) => job.category !== 'buero') });
+    expect(mitPraktikum.meta.description).toBe(asslar.meta.description);
+    expect(mitPraktikum.unterzeile.map(plain)).not.toContain(FACTS.flexibleHours.long);
+    // Ohne Stellen der offenen Kategorien (Büro, Praktikum) wie bisher
+    const ohneOffene = page('asslar', { jobs: jobs.filter((job) => !['buero', 'praktikum'].includes(job.category)) });
+    expect(plain(ohneOffene.meta.description)).toBe(
       'Arbeitsweg Aßlar – Wetzlar: 8 km, rund 12 Minuten mit dem Auto, mit Bus und Bahn los um 6:25 Uhr, an 7:16 Uhr. Flexible Arbeitszeiten, 30 Tage Urlaub.',
     );
-    expect(ohneBuero.unterzeile.map(plain)).toEqual(['Rund 12 Minuten Fahrt.', FACTS.flexibleHours.long]);
+    expect(ohneOffene.unterzeile.map(plain)).toEqual(['Rund 12 Minuten Fahrt.', FACTS.flexibleHours.long]);
     for (const p of allPages) {
       expect(p.titelStufe, p.placeId).toBe('arbeitsweg');
       for (const text of [p.meta.title, p.meta.h1, p.meta.primaryKeyword]) expect(text, p.placeId).not.toMatch(/SHK[\s-]Jobs/i);
@@ -188,10 +192,16 @@ describe('Ortsseite: Abschnitte', () => {
 
   it('Band: noFarAssembly, vacation30, im Lahn-Dill-Kreis countyPartner, zuletzt flexibleHours (ohne weiteren Satz)', () => {
     expect(BAND_FACT_IDS).toEqual(['noFarAssembly', 'vacation30', 'flexibleHours']);
-    // Ohne Bürostelle gelten alle drei für jede gezeigte Stelle
-    const ohneBuero = { jobs: jobs.filter((job) => job.category !== 'buero') };
-    expect(page('asslar', ohneBuero).bandFactIds).toEqual(['noFarAssembly', 'vacation30', 'countyPartner', 'flexibleHours']);
-    expect(page('giessen', ohneBuero).bandFactIds).toEqual(['noFarAssembly', 'vacation30', 'flexibleHours']);
+    // Ohne Stellen der offenen Kategorien (Büro S5, Schülerpraktikum S4) gelten alle drei für jede gezeigte Stelle
+    const ohneOffene = { jobs: jobs.filter((job) => !['buero', 'praktikum'].includes(job.category)) };
+    expect(page('asslar', ohneOffene).bandFactIds).toEqual(['noFarAssembly', 'vacation30', 'countyPartner', 'flexibleHours']);
+    expect(page('giessen', ohneOffene).bandFactIds).toEqual(['noFarAssembly', 'vacation30', 'flexibleHours']);
+    // Mit dem Praktikum ist die Arbeitszeit nicht für jede Stelle belegt: dafür noWeekendOnCall
+    expect(page('giessen', { jobs: jobs.filter((job) => job.category !== 'buero') }).bandFactIds).toEqual([
+      'noFarAssembly',
+      'vacation30',
+      'noWeekendOnCall',
+    ]);
     expect(section(page('asslar'), 'band')!.blocks.map((b) => b.text)).toContain(FACTS.countyPartner.short);
   });
 
@@ -225,9 +235,11 @@ describe('Ortsseite: Abschnitte', () => {
       expect(text.length, s.id).toBeGreaterThanOrEqual(110);
       for (const zeile of s.unterzeile) expect(plain(zeile), s.id).not.toBe(FACTS.flexibleHours.long);
     }
-    // Ohne Bürostelle steht die Zusage ohne Zusatz
-    const ohneBuero = jobs.filter((job) => job.category !== 'buero');
-    expect(plain(getKreisPageText(getHubKreise()[0], { jobs: ohneBuero }).meta.description)).toMatch(/\. Flexible Arbeitszeiten, 30 Tage Urlaub\.$/);
+    // Ohne Stellen der offenen Kategorien (Büro S5, Schülerpraktikum S4) steht die Zusage ohne Zusatz, mit dem Praktikum nicht
+    const ohneOffene = jobs.filter((job) => !['buero', 'praktikum'].includes(job.category));
+    expect(plain(getKreisPageText(getHubKreise()[0], { jobs: ohneOffene }).meta.description)).toMatch(/\. Flexible Arbeitszeiten, 30 Tage Urlaub\.$/);
+    const mitPraktikum = jobs.filter((job) => job.category !== 'buero');
+    expect(plain(getKreisPageText(getHubKreise()[0], { jobs: mitPraktikum }).meta.description)).toMatch(/\. Je nach Stelle flexible Arbeitszeiten, 30 Tage Urlaub\.$/);
   });
 
   it('Kontakt: WhatsApp-Gruß mit Ort, im Wortlaut der Standardnachricht', () => {

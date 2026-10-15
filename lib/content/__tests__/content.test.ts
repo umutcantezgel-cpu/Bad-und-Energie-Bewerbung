@@ -27,7 +27,7 @@ import {
   processAudienceFor,
   isFactId,
   fuehrtFakt,
-  stellenMitFakt,
+  fuehrendeStellen,
   type FaktTraeger,
 } from '..';
 
@@ -113,7 +113,7 @@ describe('FACTS', () => {
     const quer = getJobById('quereinsteiger-montagehelfer')!;
     expect([fuehrtFakt('aboveTariff', azubi), fuehrtFakt('permanentContract', azubi)]).toEqual([false, false]);
     expect([fuehrtFakt('aboveTariff', quer), fuehrtFakt('permanentContract', quer)]).toEqual([false, true]);
-    expect(stellenMitFakt('aboveTariff', ALL_JOBS).map((job) => job.id)).toEqual(
+    expect(fuehrendeStellen('aboveTariff', ALL_JOBS).map((job) => job.id)).toEqual(
       ALL_JOBS.filter((job) => job.benefitFactIds.includes('aboveTariff')).map((job) => job.id),
     );
   });

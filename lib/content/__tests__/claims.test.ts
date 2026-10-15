@@ -59,9 +59,10 @@ describe('Keine festen Arbeitszeiten in Fakten, Stellen und Texten (B28)', () =>
     expect(claims('Gehalt 3.600–4.600 € im Monat').map((c) => c.claim)).toEqual(['3.600–4.600 €']);
   });
 
-  it('jede Stelle führt flexibleHours (außer wo es offen ist: Büro, S5), keine nennt eine feste Arbeitszeit (Daten, Beschreibung, Meta)', () => {
+  it('jede Stelle führt flexibleHours (außer wo es offen ist: Büro S5, Schülerpraktikum S4), keine nennt eine feste Arbeitszeit (Daten, Beschreibung, Meta)', () => {
     const offen = FACTS.flexibleHours.offenFuer?.kategorien ?? [];
-    expect(offen).toEqual(['buero']);
+    // Büro: feste Erreichbarkeit (S5, M-038); Schülerpraktikum: zur Arbeitszeit nichts gesagt (S4, M-027; Prüfung E-029, Runde 3)
+    expect(offen).toEqual(['buero', 'praktikum']);
     for (const job of ALL_JOBS) {
       expect(job.benefitFactIds.includes('flexibleHours'), job.id).toBe(!offen.includes(job.category));
       expect(claims(JSON.stringify(job)), job.id).toEqual([]);

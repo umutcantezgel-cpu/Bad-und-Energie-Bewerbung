@@ -81,6 +81,13 @@ describe('Regionalband (E-BEW-008): Fakten aus facts.ts, Link auf das Einsatzgeb
     expect(normal(plain(ohne.slice(ohne.indexOf('data-regionalband'))))).toContain('Je nach Stelle flexible Arbeitszeiten.');
   });
 
+  it('Schülerpraktikum vorgewählt: ohne flexible Arbeitszeiten, auch gerendert (S4, M-027; Prüfung E-029, Runde 3)', async () => {
+    const band = regionalband([stelle('schuelerpraktikum-shk')]);
+    expect(band.arbeitszeit).not.toMatch(/flexible Arbeitszeit/i);
+    const html = await seite({ stelle: 'schuelerpraktikum-shk-wetzlar' });
+    expect(normal(plain(html.slice(html.indexOf('data-regionalband'))))).not.toMatch(/flexible Arbeitszeit/i);
+  });
+
   it('verlinkt /#einsatzgebiet und bindet „35 km“', () => {
     expect(html).toContain('href="/#einsatzgebiet"');
     expect(html).toContain('35\u00a0km');

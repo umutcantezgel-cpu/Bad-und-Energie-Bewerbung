@@ -99,6 +99,10 @@ describe('buildJobPostingJsonLd', () => {
     expect(ld.employmentType).toBe('INTERN');
     expect(ld.experienceRequirements).toBe('no requirements');
     expect(ld.description).not.toMatch(/Lohn|Gehalt|Vergütung|Tarif/);
+    // Zur Arbeitszeit im Praktikum hat der Inhaber nichts gesagt (S4, M-027; Prüfung E-029, Runde 3)
+    expect(ld.jobBenefits).not.toContain(FACTS.flexibleHours.short);
+    expect(ld.description).not.toContain(FACTS.flexibleHours.long);
+    expect(ld.description).not.toMatch(/Arbeitszeit/);
   });
 
   it('Kundendienst: ohne eindeutigen ISCO-Code steht die KldB-Berufsgattung', () => {

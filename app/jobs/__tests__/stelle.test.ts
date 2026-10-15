@@ -307,6 +307,18 @@ describe('JobSections: sichtbare Abschnitte = Abschnitte der JobPosting-Beschrei
   });
 });
 
+describe('Schülerpraktikum: keine Aussage zur Arbeitszeit (S4, M-027; Prüfung E-029, Runde 3)', () => {
+  it('Seite und JobPosting ohne „Flexible Arbeitszeiten“', () => {
+    expect(praktikum.benefitFactIds).not.toContain('flexibleHours');
+    const seite = text(renderToStaticMarkup(createElement(JobSections, { job: praktikum })));
+    const kopf = text(renderToStaticMarkup(createElement(JobHeader, { job: praktikum })));
+    for (const t of [seite, kopf, JSON.stringify(buildJobPostingJsonLd(praktikum))]) {
+      expect(t).not.toContain(FACTS.flexibleHours.short);
+      expect(t).not.toMatch(/flexible Arbeitszeit/i);
+    }
+  });
+});
+
 describe('MoreJobs: Leitungsabgänge wie #stellen der Startseite', () => {
   it('listet die anderen Stellen mit „Lohn auf Anfrage“ und Link, ohne die aktuelle', () => {
     const now = new Date('2026-10-14T12:00:00Z');

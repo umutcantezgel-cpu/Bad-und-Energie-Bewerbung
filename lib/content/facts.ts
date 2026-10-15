@@ -53,8 +53,13 @@ const RAW_FACTS = {
   flexibleHours: {
     short: 'Flexible Arbeitszeiten',
     long: 'Flexible Arbeitszeiten.',
-    // B28 gilt für den Betrieb; fürs Büro mit festen Erreichbarkeitszeiten ist es nicht geklärt (S5, M-038)
-    offenFuer: { kategorien: ['buero'], frage: 'fakten-abgleich S5, M-038: Gelten flexible Arbeitszeiten auch im Büro?' },
+    // B28 gilt für den Betrieb; fürs Büro mit festen Erreichbarkeitszeiten ist es nicht geklärt (S5, M-038). Zum
+    // Schülerpraktikum hat der Inhaber nur Dauer und Geld genannt (S4); die Zeiten legen Schule und JArbSchG fest.
+    offenFuer: {
+      kategorien: ['buero', 'praktikum'],
+      frage:
+        'fakten-abgleich S5, M-038: Gelten flexible Arbeitszeiten auch im Büro? S4, M-027: Arbeitszeit im Schülerpraktikum nicht genannt',
+    },
     source: 'docs/operations/fakten-abgleich.md@699dcfb',
   },
   noUnpaidOvertime: {
@@ -349,7 +354,7 @@ export function fuehrtFakt(id: FactId, stelle: FaktTraeger): boolean {
 }
 
 /** Die gezeigten Stellen, deren eigene Daten den Fakt führen (fuehrtFakt), in ihrer Reihenfolge. */
-export function stellenMitFakt<T extends FaktTraeger>(id: FactId, stellen: readonly T[]): T[] {
+export function fuehrendeStellen<T extends FaktTraeger>(id: FactId, stellen: readonly T[]): T[] {
   return stellen.filter((stelle) => fuehrtFakt(id, stelle));
 }
 

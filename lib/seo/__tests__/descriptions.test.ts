@@ -37,8 +37,9 @@ describe('jobsHubDescription (/jobs)', () => {
       `Offene SHK-Jobs in Wetzlar & Gießen. ${FACTS.noFarAssembly.short}, je nach Stelle ${FACTS.vacation30.short} und flexible Arbeitszeiten. In ${FACTS.apply60s.value} Sek. bewerben.`,
     );
     expect(text).not.toContain(`${FACTS.vacation30.short}, flexible Arbeitszeiten`);
-    // Ohne Bürostelle ohne Zusatz
-    expect(jobsHubDescription(alle.filter((job) => job.category !== 'buero'))).not.toContain('je nach Stelle');
+    // Mit dem Schülerpraktikum (Arbeitszeit offen, S4, Runde 3) weiter mit Zusatz, ohne Büro und Praktikum ohne
+    expect(jobsHubDescription(alle.filter((job) => job.category !== 'buero'))).toBe(text);
+    expect(jobsHubDescription(alle.filter((job) => !['buero', 'praktikum'].includes(job.category)))).not.toContain('je nach Stelle');
   });
 
   it('drops an expired job type', () => {

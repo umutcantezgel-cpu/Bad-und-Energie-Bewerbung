@@ -28,7 +28,8 @@ export const schuelerpraktikumShk = defineJob({
   tasks: ['Einblick in die Arbeit an Wärmepumpen, Heizungen und Bädern', 'Kennenlernen der Ausbildung zum Anlagenmechaniker SHK'],
   requirements: [],
   requirementsOpen: 'M-027',
-  benefitFactIds: ['founded1926', 'noFarAssembly', 'flexibleHours'],
+  // Ohne flexibleHours: Zur Arbeitszeit im Praktikum hat der Inhaber nichts gesagt (S4, M-027; Prüfung E-029, Runde 3)
+  benefitFactIds: ['founded1926', 'noFarAssembly'],
   employment: { kind: 'praktikum', permanent: false, start: 'nach-absprache', durationNote: 'nach Absprache mit deiner Schule' },
   pay: 'keine-angabe',
   location: HQ_LOCATION,
