@@ -125,9 +125,14 @@ export interface OgJobText extends Omit<OgFrameText, 'action'> {
    * says nothing about pay (school internship), or the closed state.
    */
   salary: { value: string; name: string | null };
+  /**
+   * Drawing in the navy panel (E-031): the house section by default, the Leitstelle (desk from above, lib/zeichnung/buero)
+   * for the office job and the theme page „Büro und Verwaltung“. No supply line to the button there: no water in the office.
+   */
+  zeichnung?: 'haus' | 'buero';
 }
 
-type OgJob = Pick<Job, 'shortTitle' | 'titleShy' | 'pay' | 'employment' | 'location'>;
+type OgJob = Pick<Job, 'shortTitle' | 'titleShy' | 'pay' | 'employment' | 'location'> & Partial<Pick<Job, 'category'>>;
 
 const SOFT_HYPHEN = '\u00AD';
 
@@ -243,6 +248,7 @@ export function ogJobText(job: OgJob, open: boolean): OgJobText {
     action,
     microcopy,
     salary,
+    zeichnung: job.category === 'buero' ? 'buero' : 'haus',
     texts: [etikett, ...fitted.lines, ...subline, ...(action ? [action] : []), microcopy, salary.value, ...(salary.name ? [salary.name] : [])],
   };
 }
