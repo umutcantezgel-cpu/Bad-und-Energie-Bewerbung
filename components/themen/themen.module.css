@@ -428,7 +428,8 @@
   max-width: 32rem;
 }
 
-/* Am Handy nur die Liste (der Knopf bleibt nah am Kopf); die Zeichnung ab 37,5em */
+/* Am Handy nur die Liste (der Knopf bleibt nah am Kopf); die Zeichnung ab 37,5em, mittig über der Liste wie die
+   Zeichnungen der übrigen Themenköpfe (Prüfrunde 1 A1-14: vorher links, rechts daneben leer) */
 .verteilerBild {
   display: none;
 }
@@ -436,6 +437,7 @@
 @media (min-width: 37.5em) {
   .verteilerBild {
     display: block;
+    justify-self: center;
     width: 100%;
     max-width: 17rem;
   }

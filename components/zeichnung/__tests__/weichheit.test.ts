@@ -381,7 +381,7 @@ describe('Verteiler und Absperrung (Themenseiten, E-031): normgerecht und still'
   it('Verteiler: Zeichnung erst ab 37,5em, am Handy die Liste allein; Kästchen mit --radius-1', () => {
     const themen = quelle('components/themen/themen.module.css');
     expect(regel(themen, '.verteilerBild')).toMatch(/display: none;/);
-    expect(ohneKommentare(themen)).toMatch(/@media \(min-width: 37\.5em\) \{\s*\.verteilerBild \{\s*display: block;/);
+    expect(ohneKommentare(themen)).toMatch(/@media \(min-width: 37\.5em\) \{\s*\.verteilerBild \{\s*display: block;\s*justify-self: center;/);
     expect(regel(themen, '.verteilerKasten')).toMatch(/border-radius: var\(--radius-1\);/);
   });
 
