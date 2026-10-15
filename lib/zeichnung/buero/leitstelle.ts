@@ -41,7 +41,7 @@ const BLATT = [
 /** Liegender Ordner von oben (Deckel 285 × 318). */
 const ORDNER = { x: 354, y: 166, b: e(M.ordner.tiefe.mm), h: e(M.ordner.hoehe.mm) };
 /** Europalette von oben, im Maßstab des Tischs; die Deckbretter laufen in der Länge. */
-export const PALETTE = Object.freeze({ x: 490, y: 262, laenge: e(M.europalette.laenge.mm), breite: e(M.europalette.breite.mm) });
+export const PALETTE = Object.freeze({ x: 490, y: 250, laenge: e(M.europalette.laenge.mm), breite: e(M.europalette.breite.mm) });
 
 function deckbretter(): string {
   const p = M.europalette;
@@ -61,10 +61,10 @@ const haus = giebelhaus(64, 334, 52, 36);
 
 /** Startpunkt jeder Bezugslinie auf dem Tisch (Punkt) und Ende am Ziel. */
 export const BEZUG = Object.freeze({
-  monteure: { von: { x: 247, y: 157 }, bis: { x: 124, y: 92 } },
-  kundendienst: { von: { x: 393, y: 157 }, bis: { x: 516, y: 92 } },
-  kunden: { von: { x: 247, y: 223 }, bis: { x: 128, y: 296 } },
-  lager: { von: { x: 393, y: 223 }, bis: { x: 486, y: 258 } },
+  monteure: { von: { x: 247, y: 157 }, bis: { x: 116, y: 86 } },
+  kundendienst: { von: { x: 393, y: 157 }, bis: { x: 524, y: 86 } },
+  kunden: { von: { x: 247, y: 223 }, bis: { x: 126, y: 290 } },
+  lager: { von: { x: 393, y: 223 }, bis: { x: 486, y: 246 } },
 });
 
 export const LEITSTELLE: BueroSzene = Object.freeze<BueroSzene>({
@@ -94,8 +94,8 @@ export const LEITSTELLE: BueroSzene = Object.freeze<BueroSzene>({
         { d: Object.values(BEZUG).map((b) => kreis(b.von.x, b.von.y, 3)).join(''), art: 'voll' },
       ],
     },
-    { id: 'monteure', lage: { x: 54, y: 32, s: 2.6 }, teile: glyphPfade('servicefahrzeug') },
-    { id: 'kundendienst', lage: { x: 524, y: 30, s: 2.6 }, teile: glyphPfade('waermepumpe') },
+    { id: 'monteure', lage: { x: 54, y: 42, s: 2.6 }, teile: glyphPfade('servicefahrzeug') },
+    { id: 'kundendienst', lage: { x: 524, y: 38, s: 2.6 }, teile: glyphPfade('waermepumpe') },
     {
       id: 'kunden',
       teile: [
@@ -107,15 +107,16 @@ export const LEITSTELLE: BueroSzene = Object.freeze<BueroSzene>({
       id: 'lager',
       teile: [
         { d: deckbretter(), art: 'kontur' },
-        { d: rechteck(504, 268, 44, 34), art: 'kontur' },
-        { d: 'M526 268V302', art: 'fein' },
+        { d: rechteck(504, 256, 44, 34), art: 'kontur' },
+        { d: 'M526 256V290', art: 'fein' },
       ],
     },
   ],
   beschriftungen: [
-    { id: 'monteure', x: 54, y: 116, anker: 'start' },
-    { id: 'kundendienst', x: 586, y: 116, anker: 'end' },
-    { id: 'kunden', x: 54, y: 356, anker: 'start' },
-    { id: 'lager', x: 610, y: 356, anker: 'end' },
+    // Über den Glyphen bzw. unter Haus und Palette, frei von den Bezugslinien
+    { id: 'monteure', x: 54, y: 24, anker: 'start' },
+    { id: 'kundendienst', x: 586, y: 24, anker: 'end' },
+    { id: 'kunden', x: 54, y: 360, anker: 'start' },
+    { id: 'lager', x: 610, y: 354, anker: 'end' },
   ],
 });

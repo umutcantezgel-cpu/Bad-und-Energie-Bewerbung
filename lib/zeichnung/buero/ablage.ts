@@ -51,8 +51,11 @@ function ordnerGruppe(id: string, o: ReturnType<typeof ordner>, takte: number): 
   };
 }
 
-/** Ablage (Briefkorb) von vorn: Vorderkante und Boden; `oben` ist die Oberkante der Vorderkante. */
-const KORB = { x: 262, breite: 104, hoehe: 20 };
+/**
+ * Ablage (Briefkorb) von vorn: Vorderkante und Boden; `oben` ist die Oberkante der Vorderkante. Die Mitte liegt so,
+ * dass „Geschäftsführung“ (bei 280 px Bildbreite und 12 px Schrift gut 175 Einheiten) vor dem rechten Rand endet.
+ */
+const KORB = { x: 248, breite: 104, hoehe: 20 };
 const KORB_OBEN = 104;
 const KORB_UNTEN = 258;
 function korb(oben: number): string {
@@ -60,7 +63,7 @@ function korb(oben: number): string {
 }
 
 /** Brief DIN lang von vorn mit Anschriftfenster (90 × 45 mm, 20 mm von links, 15 mm von unten). */
-export const BRIEF = Object.freeze({ x: 277, y: 78, breite: e(L.breite.mm), hoehe: e(L.hoehe.mm) });
+export const BRIEF = Object.freeze({ x: 263, y: 78, breite: e(L.breite.mm), hoehe: e(L.hoehe.mm) });
 const FENSTER = {
   x: BRIEF.x + e(L.fensterLinks.mm),
   y: BRIEF.y + BRIEF.hoehe - e(L.fensterUnten.mm) - e(L.fensterHoehe.mm),
@@ -70,7 +73,7 @@ const FENSTER = {
 
 /** Blatt A4 hochkant für die Geschäftsführung, unten in der zweiten Ablage. */
 export const BLATT = Object.freeze({
-  x: 279,
+  x: 265,
   y: 158,
   breite: e(BUERO_MASSE.a4.breite.mm),
   hoehe: e(BUERO_MASSE.a4.hoehe.mm),

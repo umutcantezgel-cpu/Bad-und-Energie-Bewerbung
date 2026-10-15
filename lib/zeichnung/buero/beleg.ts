@@ -1,6 +1,6 @@
 /**
  * Szene „Angebote und Rechnungen“ (E-031, Paket W3): ein Blatt A4 (ISO 216) als Geschäftsbrief nach DIN 5008 Form B,
- * maßstäblich (1 Einheit = 1,5 mm): Anschriftfeld, Falz- und Lochmarken am linken Rand, Betreff, Positionen mit
+ * maßstäblich (1 Einheit = 1,6 mm): Anschriftfeld, Falz- und Lochmarken am linken Rand, Betreff, Positionen mit
  * rechter Spalte, Summe. Keine Ziffern, kein Betrag, kein Logo: Die Zeilen sind Striche. Rechts die drei Schritte
  * eines Auftrags im Büro (Angebot, Auftragsbestätigung, Rechnung) als Kästchen; die Wörter stehen als HTML daneben.
  *
@@ -10,14 +10,14 @@
 import { BUERO_MASSE } from './masse';
 import { haken, rechteck, rundRechteck, senkrecht, waagerecht, type BueroSzene, type Gruppe } from './szene';
 
-const MM = 1.5;
+const MM = 1.6;
 const e = (mm: number) => mm / MM;
 const B = BUERO_MASSE.brief5008;
 
 export const BELEG_RAHMEN = Object.freeze({ breite: 400, hoehe: 300 });
 
 /** Das Blatt A4 hochkant. */
-export const BLATT = Object.freeze({ x: 20, y: 51, breite: e(BUERO_MASSE.a4.breite.mm), hoehe: e(BUERO_MASSE.a4.hoehe.mm) });
+export const BLATT = Object.freeze({ x: 8, y: 57, breite: e(BUERO_MASSE.a4.breite.mm), hoehe: e(BUERO_MASSE.a4.hoehe.mm) });
 /** Rand rechts (DIN 5008: mindestens 20 mm). */
 const RECHTS = BLATT.x + BLATT.breite - e(20);
 /** Anschriftfeld nach DIN 5008, Form B. */
@@ -29,8 +29,11 @@ export const ANSCHRIFT = Object.freeze({
 });
 const MARKE = 5;
 
-/** Die drei Schritte rechts neben dem Blatt (Mitte je Zeile) und das Kästchen davor. */
-export const SCHRITTE = Object.freeze({ x: 184, y: [100, 150, 200] as const, kaestchen: 16 });
+/**
+ * Die drei Schritte rechts neben dem Blatt (Mitte je Zeile) und das Kästchen davor. Das längste Wort
+ * („Auftragsbestätigung“) misst bei 280 px Bildbreite und 12 px Schrift gut 210 Einheiten; es endet vor dem Rand.
+ */
+export const SCHRITTE = Object.freeze({ x: 160, y: [100, 150, 200] as const, kaestchen: 16 });
 
 let takt = 0;
 /** Eine geschriebene Zeile: ein Strich, der sich von links aufzieht; jede Zeile einen halben Takt später. */
@@ -103,8 +106,8 @@ export const BELEG: BueroSzene = Object.freeze<BueroSzene>({
     ),
   ],
   beschriftungen: [
-    { id: 'angebot', x: SCHRITTE.x + 26, y: SCHRITTE.y[0], anker: 'start' },
-    { id: 'auftrag', x: SCHRITTE.x + 26, y: SCHRITTE.y[1], anker: 'start' },
-    { id: 'rechnung', x: SCHRITTE.x + 26, y: SCHRITTE.y[2], anker: 'start' },
+    { id: 'angebot', x: SCHRITTE.x + 24, y: SCHRITTE.y[0], anker: 'start' },
+    { id: 'auftrag', x: SCHRITTE.x + 24, y: SCHRITTE.y[1], anker: 'start' },
+    { id: 'rechnung', x: SCHRITTE.x + 24, y: SCHRITTE.y[2], anker: 'start' },
   ],
 });
