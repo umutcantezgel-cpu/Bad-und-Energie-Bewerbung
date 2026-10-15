@@ -6,6 +6,7 @@ import { fontVariables } from './fonts';
 import { AttributionCapture } from '@/components/analytics/AttributionCapture';
 import { EreignisSchalter } from '@/components/analytics/EreignisSchalter';
 import { SiteFooter, SiteHeader, StickyApplyBar } from '@/components/site';
+import { Waermefront } from '@/components/site/waermefront/Waermefront';
 import { SkipLink } from '@/components/ui/SkipLink';
 import { ToastProvider } from '@/components/ui/Toast';
 import { HOME_DESCRIPTION, HOME_TITLE } from '@/components/home/content';
@@ -89,6 +90,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <SiteFooter />
           <StickyApplyBar />
         </ToastProvider>
+        {/* Klick-Wärme und Wärmefront (E-031): zwei Überlagerungen in der obersten Ebene, still bis zum Klick; ihr CSS
+            steht im globalen Chunk (check-css-chunks). Der eigene Zeiger ist reines CSS in globals.css. */}
+        <Waermefront />
         {/* Reads UTM/ref from the URL; the boundary keeps static pages static. */}
         <Suspense fallback={null}>
           <AttributionCapture />

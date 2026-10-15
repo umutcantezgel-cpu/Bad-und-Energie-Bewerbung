@@ -1,0 +1,94 @@
+/*
+ * Klick-Wärme und Wärmefront (E-031, KERN K-009, Kennungen `klick-waerme` und `seitenwechsel`; Insel Waermefront.tsx,
+ * Logik und Maße lib/motion/seitenwechsel.ts). Zwei Überlagerungen (popover="manual", oberste Ebene, auch über dem
+ * offenen Menü): aria-hidden, inert, ohne Zeigerereignisse, contain: strict; geschlossen blendet der Browser sie aus.
+ *
+ * Beide sprechen dieselbe Sprache: Schichten wachsen um den Klickpunkt nach √t (DIFFUSION_STUETZ: Maßstab 0 → 1 als
+ * Zahl auf 0 · 6,25 · 25 · 56,25 · 100 %, linear dazwischen), je ½ Takt versetzt, die kühlste zuerst und zuunterst –
+ * so liegt die heißeste innen und die kühlste außen (Verzögerung --n × ½ Takt). Den Mittelpunkt (--x, --y) setzt die
+ * Insel, ebenso den Durchmesser der Front (--s); die Scheiben haben --a-8. Grundwerte sind der Endzustand (Maßstab 1);
+ * die Abläufe füllen mit backwards.
+ * Kurze Klassennamen, weil jeder Name im Build den Präfix „waermefront-module__<hash>__“ trägt: Budget ≤ 1.200 B im
+ * globalen Chunk (scripts/qa/check-css-chunks.mjs, FRONT_BUDGET).
+ */
+
+/* .e = Ebene. Wärmefront: vier Bänder bis zur fernsten Ecke, --waerme-1, -2, -4, zuletzt die Seitenfarbe; je d-2,
+   abdecken 360 ms. Aufdecken ([data-auf]): Die Front verblasst und steigt um --a-4 (warme Luft steigt). */
+.e {
+  --c: var(--waerme-1);
+  --d: var(--d-2);
+  width: auto;
+  height: auto;
+  border: 0;
+  background: none;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+
+/* .k = Klick-Wärme: drei Scheiben auf 64 px, --waerme-0 außen, -2, -4 innen; je d-3, Ende 480 ms; durchscheinend,
+   damit die Beschriftung darunter lesbar bleibt; in der zweiten Hälfte (240 → 480 ms) verblassen sie an Ort und Stelle. */
+.k {
+  --c: var(--waerme-0);
+  --d: var(--d-3);
+  --s: var(--a-8);
+  opacity: 0.6;
+  animation: steigt var(--d-2) linear var(--d-2) forwards;
+}
+
+.e > * {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--s);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: var(--c);
+  animation: waechst var(--d) linear calc(var(--takt) * var(--n, 0) / 2) backwards;
+}
+
+.e > * + * {
+  --n: 1;
+  background: var(--waerme-2);
+}
+
+.e > * + * + * {
+  --n: 2;
+  background: var(--waerme-4);
+}
+
+.e > * + * + * + * {
+  --n: 3;
+  background: var(--surface);
+}
+
+.e[data-auf] {
+  --h: calc(-1 * var(--a-4));
+  animation: steigt var(--d-2) var(--k-aus) forwards;
+}
+
+@keyframes waechst {
+  from {
+    scale: 0;
+  }
+  6.25% {
+    scale: 0.25;
+  }
+  25% {
+    scale: 0.5;
+  }
+  56.25% {
+    scale: 0.75;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+@keyframes steigt {
+  to {
+    opacity: 0;
+    translate: 0 var(--h, 0);
+  }
+}
