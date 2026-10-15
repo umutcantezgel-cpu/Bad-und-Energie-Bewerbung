@@ -436,7 +436,8 @@ describe('Linien und Farben (K-010)', () => {
     html(createElement(Kaeltekreis, { bewegt: true })),
     html(createElement(Anlagenschema, { bewegt: true })),
     html(createElement(HausschnittKlein, {})),
-    // E-031: Raumschnitt mit Wärmefeld (Ebenen unter der Zeichnung)
+    // E-031: Raumschnitt mit Wärmefeld (Ebenen unter der Zeichnung; die Zeichnung selbst als Datei, Prüfrunde 1 C1-6,
+    // Linienarten und Farben der Datei prüft components/zeichnung/waerme/__tests__/waerme.test.ts)
     html(createElement(Raumschnitt, { art: 'heizkoerper' })),
     html(createElement(Raumschnitt, { art: 'fussboden' })),
   ];

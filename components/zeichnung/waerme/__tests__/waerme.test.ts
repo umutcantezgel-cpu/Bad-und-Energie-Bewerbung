@@ -6,7 +6,9 @@ import { describe, expect, it, vi } from 'vitest';
 import ThemaPage from '@/app/arbeiten-bei-uns/[thema]/page';
 import { Hero } from '@/components/home/Hero';
 import { HAUSSCHNITT_RAHMEN, LEITUNGEN, PFEILE } from '@/lib/zeichnung/szenen/hausschnitt';
-import { RAUMSCHNITT_RAHMEN } from '@/lib/zeichnung/szenen/raumschnitt';
+import { checkTheme } from '../../../../scripts/qa/check-contrast.mjs';
+import { FUSSBODEN_ROHRE, RAUM_BAUTEILE, RAUM_HEIZKOERPER, RAUMSCHNITT_RAHMEN } from '@/lib/zeichnung/szenen/raumschnitt';
+import { RAUMSCHNITT_RAND, RAUMSCHNITT_SVG_FARBEN, raumschnittBildLage, raumschnittPfad, raumschnittSvg } from '@/lib/zeichnung/raumschnitt-svg';
 import { WAERMEFELDER, type WaermefeldId } from '@/lib/zeichnung/szenen/waermefeld';
 import { HausschnittKlein } from '../../technik/Hausschnitt';
 import { Raumschnitt } from '../../technik/Raumschnitt';
@@ -149,22 +151,69 @@ describe('Wärmefeld an den Orten (E-031)', () => {
     expect(aus).toMatch(/<rect [^>]*class="_kontur_[^" ]+ _flaeche_[^" ]+" data-heizkoerper=""/);
   });
 
-  it('Raumschnitt: Wärmefeld als Ebenen unter der Zeichnung, Heizkörper im Wärmebereich bzw. Rohre im Estrich', () => {
+  it('Raumschnitt: Wärmefeld als Ebenen unter der Zeichnung; die Zeichnung als Datei darüber (Prüfrunde 1 C1-6)', () => {
     const hk = html(createElement(Raumschnitt, { art: 'heizkoerper', titel: 'Raum mit Heizkörper im Schnitt' }));
     expect(hk).toMatch(/^<div class="relative" style="aspect-ratio:480 \/ 293.5" data-zeichnung="raumschnitt" data-raum="heizkoerper"><div [^>]*data-waermefeld="raum-heizkoerper"/);
-    expect(hk).toMatch(/<g data-tone="warm"><rect [^>]*data-heizkoerper=""><\/rect><\/g>/);
-    expect(hk).toContain('role="img"');
-    expect(hk).toContain('<title>Raum mit Heizkörper im Schnitt</title>');
+    // Über den Bändern das Bild der Zeichnung, mit dem Namen als Alternativtext, lazy; nichts davon inline
+    const R = RAUMSCHNITT_RAHMEN;
+    const m = RAUMSCHNITT_RAND;
+    const bild = hk.match(/<img class="absolute block max-w-none" style="([^"]+)" src="([^"]+)" alt="([^"]*)" loading="lazy" decoding="async" width="(\d+)" height="([\d.]+)"\/><\/div>$/)!;
+    expect(bild).not.toBeNull();
+    const lage = raumschnittBildLage();
+    expect(bild[1]).toBe(`left:${lage.left};top:${lage.top};width:${lage.width};height:${lage.height}`);
+    expect([bild[2], bild[3], Number(bild[4]), Number(bild[5])]).toEqual([raumschnittPfad('heizkoerper'), 'Raum mit Heizkörper im Schnitt', R.breite + 2 * m, R.hoehe + 2 * m]);
     const fb = html(createElement(Raumschnitt, { art: 'fussboden' }));
     expect(fb).toContain('data-waermefeld="raum-fussboden"');
-    expect(fb).not.toContain('data-heizkoerper');
-    expect(fb.match(/<circle [^>]*data-medium="vorlauf"/g)!.length).toBeGreaterThan(10);
-    expect(fb.match(/<circle [^>]*data-medium="ruecklauf"/g)!.length).toBeGreaterThan(10);
-    expect(fb).toMatch(/aria-hidden="true"/);
+    expect(fb).toContain(`src="${raumschnittPfad('fussboden')}" alt=""`);
+    for (const x of [hk, fb]) expect(x).not.toMatch(/<svg|<path|<circle|<rect/);
     // Lage der Ebenen = Rauminneres im Rahmen der Zeichnung
-    const R = RAUMSCHNITT_RAHMEN;
     const p = (x: number) => `${Math.round(x * 10000) / 100}%`;
     expect(fb).toContain(`style="left:${p(-R.x / R.breite)};top:${p(-R.y / R.hoehe)};width:${p(420 / R.breite)};height:${p(250 / R.hoehe)}"`);
+  });
+
+  it('Raumschnitt-Datei: Wände, Fußbodenaufbau, Heizkörper bzw. Rohre aus den Daten, Linienarten und Rollen des Papiers', () => {
+    const R = RAUMSCHNITT_RAHMEN;
+    const m = RAUMSCHNITT_RAND;
+    const hk = raumschnittSvg('heizkoerper');
+    const fb = raumschnittSvg('fussboden');
+    for (const svg of [hk, fb]) {
+      expect(svg).toContain(`viewBox="${R.x - m} ${R.y - m} ${R.breite + 2 * m} ${R.hoehe + 2 * m}"`);
+      const pfade = [...svg.matchAll(/<path d="([^"]+)" class="([^"]+)"\/>/g)].map((x) => [x[1], x[2]]);
+      expect(pfade).toEqual([
+        ...RAUM_BAUTEILE.waende.map((d) => [d, 'k sn']),
+        [RAUM_BAUTEILE.decke, 'k sn'],
+        [RAUM_BAUTEILE.rohdecke, 'k sn'],
+        [RAUM_BAUTEILE.daemmung, 'f fl'],
+        [RAUM_BAUTEILE.estrich, 'k fl'],
+      ]);
+      expect(svg).not.toMatch(/Gradient|<filter|<image|<foreignObject|<text|href=|url\(/);
+      // Linienarten wie technik.module.css: Stärken aus den Tokens, Leitung rund, sonst stumpf
+      expect(svg).toContain(`.k{stroke:var(--b);stroke-width:${TOKENS.linien.kontur}px;stroke-linejoin:round}`);
+      expect(svg).toContain(`.f{stroke:var(--b);stroke-width:${TOKENS.linien.fein}px;stroke-linejoin:miter}`);
+      expect(svg).toContain(`.l{stroke-width:${TOKENS.linien.leitung}px;stroke-linecap:round;stroke-linejoin:round}`);
+    }
+    const hkRaum = RAUM_HEIZKOERPER;
+    expect(hk).toContain(`<rect x="${hkRaum.x}" y="${hkRaum.y}" width="${hkRaum.breite}" height="${hkRaum.hoehe}" class="k"/>`);
+    expect(hk).not.toContain('<circle');
+    expect([...fb.matchAll(/<circle cx="([\d.]+)" cy="([\d.]+)" r="([\d.]+)" class="l (vl|rl)"\/>/g)].map((x) => [Number(x[1]), Number(x[2]), Number(x[3]), x[4]])).toEqual(
+      FUSSBODEN_ROHRE.map((r) => [r.x, r.y, r.r, r.medium === 'vorlauf' ? 'vl' : 'rl']),
+    );
+    expect(fb).not.toContain('<rect');
+    // Farben = Rollen der Seite (Papier) und des Wärmebereichs um den Heizkörper, hell, dunkel und im Druck
+    const theme = checkTheme(quelle('app/styles/theme.css'));
+    const F = RAUMSCHNITT_SVG_FARBEN;
+    for (const [modus, warm, farben] of [['light', 'warm light', F.hell], ['dark', 'warm dark', F.dunkel], ['print', 'warm print', F.druck]] as const) {
+      expect(farben, modus).toEqual({
+        marke: theme.role(modus, 'brand'),
+        flaeche: theme.role(modus, 'surface'),
+        schnitt: theme.role(modus, 'surface-2'),
+        vorlauf: theme.role(modus, 'vorlauf'),
+        ruecklauf: theme.role(modus, 'ruecklauf'),
+      });
+      expect(theme.role(warm, 'brand'), warm).toBe(farben.marke);
+    }
+    expect(hk).toContain(`@media screen and (prefers-color-scheme:dark){svg{--b:${F.dunkel.marke};`);
+    expect(hk).toContain(`@media print{svg{--b:${F.druck.marke};`);
   });
 
   it('Wärmepumpen-Seite: der Vergleich steht in SichtStart, jedes Band liegt in data-ablauf; Sicht-Auftritte höchstens auf der Hälfte der Abschnitte (K-011)', async () => {
@@ -208,6 +257,7 @@ describe('Notschalter WAERMEFELD_AN = false (E-031, Entscheidung 8)', () => {
       const { Hero: Held } = await import('@/components/home/Hero');
       const { hausschnittSvg } = await import('@/lib/zeichnung/kopf-svg');
       const { OG_WAERMEFELD } = await import('@/lib/seo/og-haus');
+      const { raumschnittSvg: raumDatei } = await import('@/lib/zeichnung/raumschnitt-svg');
       const markups = [
         html(createElement(Klein, {})),
         html(createElement(Raum, { art: 'heizkoerper' })),
@@ -218,7 +268,8 @@ describe('Notschalter WAERMEFELD_AN = false (E-031, Entscheidung 8)', () => {
         expect(m).not.toMatch(/data-waermefeld|data-tone="warm"|waerme-breitet-sich-aus/);
       }
       expect(markups[0]).toMatch(/<rect [^>]*class="_kontur_[^" ]+ _flaeche_[^" ]+" data-heizkoerper=""/);
-      expect(markups[1]).toMatch(/<rect [^>]*class="_kontur_[^" ]+ _flaeche_[^" ]+" data-heizkoerper=""/);
+      // Der Heizkörper in der Datei wieder mit Fläche
+      expect(raumDatei('heizkoerper')).toMatch(/<rect [^>]*class="k fl"\/>/);
       expect(hausschnittSvg()).not.toMatch(/class="w\d"|class="wb"|--w0/);
       expect(OG_WAERMEFELD).toBeNull();
     } finally {

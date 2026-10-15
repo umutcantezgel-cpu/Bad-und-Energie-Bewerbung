@@ -12,6 +12,7 @@ import { BUERO_SVG_FARBEN, bueroSzenenDateien, leitstelleSvg } from '../buero/sv
 import { ANLAGENSCHEMA_PFEIL_MAX, ANLAGENSCHEMA_RAHMEN } from '../szenen/anlagenschema';
 import { WAERMEFELDER } from '../szenen/waermefeld';
 import { WAERME_DATEI_FELDER, waermeBandDateien } from '../waerme/dateien';
+import { raumschnittDateien } from '../raumschnitt-svg';
 
 const ROOT = path.resolve(__dirname, '../../..');
 const quelle = (datei: string) => readFileSync(path.join(ROOT, datei), 'utf8');
@@ -243,7 +244,10 @@ describe('Zeichnungen des Stellenkopfs als Datei (Prüfung E-029, Runde 3, Leist
     expect(baender.map((x) => x.datei.replace(/-[0-9a-f]{10}\.svg$/, ''))).toEqual(
       WAERME_DATEI_FELDER.flatMap((id) => WAERMEFELDER[id].baender.map((b) => `waerme-${id}-${b.stufe}`)),
     );
-    const dateien = [...kopf, ...szenen, ...baender];
+    // Und die Zeichnung der beiden Vergleichsräume (lib/zeichnung/raumschnitt-svg.ts, Prüfrunde 1 C1-6)
+    const raeume = raumschnittDateien();
+    expect(raeume.map((x) => x.datei.replace(/-[0-9a-f]{10}\.svg$/, ''))).toEqual(['raumschnitt-heizkoerper', 'raumschnitt-fussboden']);
+    const dateien = [...kopf, ...szenen, ...baender, ...raeume];
     for (const { datei, art } of kopf) {
       expect(datei).toMatch(new RegExp(`^${art}-[0-9a-f]{10}\\.svg$`));
       expect(kopfSvgPfad(art)).toBe(`/zeichnung/${datei}`);

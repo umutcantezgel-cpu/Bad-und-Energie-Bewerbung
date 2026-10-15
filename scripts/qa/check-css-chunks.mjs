@@ -28,9 +28,11 @@ import { BUERO_DATEI, BUERO_MARKE, bueroBlockAb } from './check-design-tokens.mj
  *    als Markup noch in der RSC-Nutzlast (Prüfung E-029, Runde 3: zweimal im Dokument, über der Slow-Start-Grenze, LCP
  *    +225 ms). Erkannt an den langen Pfaden der gebauten Dateien; die Stellenseite verweist auf ihre Datei, und jede
  *    gebaute Kopfdatei ist das Kopfbild mindestens einer Stelle.
- * 6. Die Bänder der Vergleichsräume auf der Wärmepumpen-Seite (lib/zeichnung/waerme/dateien.ts, Prüfrunde 1 C1-6)
- *    stehen ebenso nur als Datei im Dokument: Die Seite verweist auf jede gebaute Banddatei, und kein Bandpfad steht auf
- *    irgendeiner Seite inline (die Abbildung liegt weit unter dem ersten Bildschirm, inline zählten ihre Bytes vor LCP).
+ * 6. Die Vergleichsräume auf der Wärmepumpen-Seite (Prüfrunde 1 C1-6) stehen ebenso nur als Datei im Dokument, die
+ *    Bänder (lib/zeichnung/waerme/dateien.ts) wie die Zeichnung (lib/zeichnung/raumschnitt-svg.ts): Die Seite verweist
+ *    auf jede gebaute Datei, kein Bandpfad steht auf irgendeiner Seite inline, und kein Dokument trägt den Raumschnitt
+ *    inline (Kennung data-estrich; die Abbildung liegt weit unter dem ersten Bildschirm, inline zählten ihre Bytes vor
+ *    LCP).
  * 7. Teilbudgets aus E-031, je ab dem Tag, an dem die Quelle existiert (bis dahin darf nichts davon im Build stehen):
  *    Regeln aus waerme.module.css ≤ WAERME_BUDGET auf jeder Seite und auf der Startseite wirklich vorhanden; Regeln aus
  *    waermefront.module.css ≤ FRONT_BUDGET auf jeder Seite, und zwar in einem Stylesheet, das alle Seiten laden (der
@@ -73,6 +75,10 @@ export const MERKMAL_LAENGE = 120;
 export const WAERME_DATEI_SEITE = '/arbeiten-bei-uns/waermepumpen';
 /** Gebaute Banddatei: `waerme-<feld>-<stufe>-<hash>.svg` (lib/zeichnung/waerme/dateien.ts). */
 const WAERME_BANDDATEI = /^waerme-[a-z-]+-[1-4]-[0-9a-f]{10}\.svg$/;
+/** Gebaute Zeichnung eines Vergleichsraums: `raumschnitt-<art>-<hash>.svg` (lib/zeichnung/raumschnitt-svg.ts). */
+const RAUMSCHNITT_DATEI = /^raumschnitt-(?:heizkoerper|fussboden)-[0-9a-f]{10}\.svg$/;
+/** Kennung des inline gezeichneten Raumschnitts (Fußbodenaufbau); in keinem Dokument mehr. */
+const RAUMSCHNITT_INLINE = /data-estrich=|data-daemmung=/;
 
 /** Klassen eines CSS-Moduls im gebauten CSS: `.<name>-module__<hash>__<klasse>`. */
 const modulKlasse = (name) => new RegExp(`\\b${name}-module__[A-Za-z0-9_-]{6}__`);
@@ -264,14 +270,21 @@ export function pruefeWaermeDateien(seiten, dateien) {
     .filter(({ datei }) => WAERME_BANDDATEI.test(datei))
     .map(({ datei, svg }) => ({ datei, merkmale: [...svg.matchAll(/\sd="([^"]+)"/g)].map((m) => m[1]).filter((d) => d.length >= MERKMAL_LAENGE) }));
   if (baender.length === 0) return ['keine gebaute Banddatei des Wärmefelds (/zeichnung/waerme-*.svg)'];
+  const raeume = dateien.filter(({ datei }) => RAUMSCHNITT_DATEI.test(datei)).map(({ datei }) => datei);
   const fehler = [];
+  if (raeume.length !== 2) fehler.push(`${raeume.length} gebaute Zeichnungen der Vergleichsräume (/zeichnung/raumschnitt-*.svg), erwartet 2`);
   for (const { datei, merkmale } of baender) {
     if (merkmale.length === 0) fehler.push(`${datei}: kein Pfad ab ${MERKMAL_LAENGE} Zeichen, die Prüfung fände das Band nicht`);
   }
   const seite = seiten.find(({ route }) => route === WAERME_DATEI_SEITE);
   if (!seite) fehler.push(`${WAERME_DATEI_SEITE}: nicht gebaut`);
-  else for (const { datei } of baender) if (!seite.html.includes(`src="/zeichnung/${datei}"`)) fehler.push(`${WAERME_DATEI_SEITE}: verweist nicht auf /zeichnung/${datei}`);
+  else {
+    for (const datei of [...baender.map((b) => b.datei), ...raeume]) {
+      if (!seite.html.includes(`src="/zeichnung/${datei}"`)) fehler.push(`${WAERME_DATEI_SEITE}: verweist nicht auf /zeichnung/${datei}`);
+    }
+  }
   for (const { route, html } of seiten) {
+    if (RAUMSCHNITT_INLINE.test(html)) fehler.push(`${route}: der Raumschnitt steht inline im Dokument (HTML oder RSC)`);
     for (const { datei, merkmale } of baender) {
       if (merkmale.some((d) => html.includes(d))) fehler.push(`${route}: das Band aus ${datei} steht inline im Dokument (HTML oder RSC)`);
     }
@@ -352,7 +365,11 @@ export function runCssChunkCheck() {
   const fehler = [
     ...stand.fehler,
     ...pruefeSeiten(seiten, lies, stand.vorhanden),
-    ...pruefeKopfzeichnungen(dokumente, zeichnungen),
+    // Der Raumschnitt hat keine langen Pfade (Rechtecke und Kreise): Ihn erkennt pruefeWaermeDateien an seiner Kennung
+    ...pruefeKopfzeichnungen(
+      dokumente,
+      zeichnungen.filter(({ datei }) => !RAUMSCHNITT_DATEI.test(datei)),
+    ),
     ...pruefeWaermeDateien(dokumente, zeichnungen),
   ];
   if (fehler.length > 0) {

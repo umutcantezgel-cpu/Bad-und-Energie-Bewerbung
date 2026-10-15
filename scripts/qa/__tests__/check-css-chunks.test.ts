@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { anlagenschemaSvg, hausschnittSvg } from '@/lib/zeichnung/kopf-svg';
+import { raumschnittDateien } from '@/lib/zeichnung/raumschnitt-svg';
 import { waermeBandDateien } from '@/lib/zeichnung/waerme/dateien';
 import { BUERO_MARKE } from '../check-design-tokens.mjs';
 import {
@@ -272,20 +273,20 @@ describe('check-css-chunks: Teilbudgets E-031 (Wärme, Wärmefront, Büro-Block)
     expect(Object.keys(stand.vorhanden).sort()).toEqual(['buero', 'front', 'waerme']);
     expect(stand.fehler).toEqual([]);
   });
-  describe('Bänder der Vergleichsräume nur als Datei (Prüfrunde 1 C1-6)', () => {
-    const baender = waermeBandDateien();
-    const lang = (svg: string) => svg.match(/\sd="([^"]+)"/)![1];
+  describe('Vergleichsräume (Bänder und Zeichnung) nur als Datei (Prüfrunde 1 C1-6)', () => {
+    const baender = [...waermeBandDateien(), ...raumschnittDateien()];
+    const lang = (svg: string) => [...svg.matchAll(/\sd="([^"]+)"/g)].map((m) => m[1]).find((d) => d.length >= MERKMAL_LAENGE)!;
     const bilder = baender.map(({ datei }) => `<img src="/zeichnung/${datei}" alt=""/>`).join('');
     const andere = { datei: 'anlagenschema-0123456789.svg', svg: anlagenschemaSvg() };
 
     it('besteht, wenn die Wärmepumpen-Seite auf jede Banddatei verweist und kein Bandpfad inline steht', () => {
       expect(WAERME_DATEI_SEITE).toBe('/arbeiten-bei-uns/waermepumpen');
-      for (const { svg } of baender) expect(lang(svg).length).toBeGreaterThanOrEqual(MERKMAL_LAENGE);
+      for (const { svg } of waermeBandDateien()) expect(lang(svg).length).toBeGreaterThanOrEqual(MERKMAL_LAENGE);
       expect(pruefeWaermeDateien([{ route: WAERME_DATEI_SEITE, html: bilder }, { route: '/', html: '<main></main>' }], [andere, ...baender])).toEqual([]);
     });
 
     it('fällt durch: Band inline (Markup oder RSC), Verweis fehlt, Seite fehlt, keine Banddatei gebaut', () => {
-      const [erstes, zweites] = baender;
+      const [erstes, zweites] = waermeBandDateien();
       const rsc = `<script>self.__next_f.push([1,"\\"d\\":\\"${lang(erstes.svg)}\\""])</script>`;
       expect(pruefeWaermeDateien([{ route: WAERME_DATEI_SEITE, html: bilder + rsc }], baender)).toEqual([
         `${WAERME_DATEI_SEITE}: das Band aus ${erstes.datei} steht inline im Dokument (HTML oder RSC)`,
@@ -297,8 +298,17 @@ describe('check-css-chunks: Teilbudgets E-031 (Wärme, Wärmefront, Büro-Block)
         `/jobs: das Band aus ${zweites.datei} steht inline im Dokument (HTML oder RSC)`,
       ]);
       expect(pruefeWaermeDateien([{ route: WAERME_DATEI_SEITE, html: bilder }], [andere])).toEqual(['keine gebaute Banddatei des Wärmefelds (/zeichnung/waerme-*.svg)']);
+      // Raumschnitt: inline (Kennung des Fußbodenaufbaus) fällt durch, ebenso ein fehlender Verweis oder eine fehlende Datei
+      const raum = raumschnittDateien()[0];
+      expect(pruefeWaermeDateien([{ route: WAERME_DATEI_SEITE, html: `${bilder}<path data-estrich=""/>` }], baender)).toEqual([
+        `${WAERME_DATEI_SEITE}: der Raumschnitt steht inline im Dokument (HTML oder RSC)`,
+      ]);
+      expect(pruefeWaermeDateien([{ route: WAERME_DATEI_SEITE, html: bilder.replace(`<img src="/zeichnung/${raum.datei}" alt=""/>`, '') }], baender)).toEqual([
+        `${WAERME_DATEI_SEITE}: verweist nicht auf /zeichnung/${raum.datei}`,
+      ]);
+      expect(pruefeWaermeDateien([{ route: WAERME_DATEI_SEITE, html: bilder }], waermeBandDateien())[0]).toMatch(/^0 gebaute Zeichnungen der Vergleichsräume/);
       const kurz = { datei: 'waerme-raum-fussboden-1-0000000000.svg', svg: '<svg><path d="M0 0H1"/></svg>' };
-      expect(pruefeWaermeDateien([{ route: WAERME_DATEI_SEITE, html: `<img src="/zeichnung/${kurz.datei}"/>` }], [kurz])[0]).toMatch(/kein Pfad ab/);
+      expect(pruefeWaermeDateien([{ route: WAERME_DATEI_SEITE, html: `<img src="/zeichnung/${kurz.datei}"/>` }], [kurz])).toContainEqual(expect.stringMatching(/kein Pfad ab/));
     });
   });
 });
