@@ -1,6 +1,6 @@
 /**
  * Szene „Verwaltung und Ablage“ (E-031, Paket W3), von vorn und maßstäblich (1 Einheit = 3 mm): links das Regal mit
- * Ordnern für A4 (Rücken 80 mm, geschätzt), rechts zwei Ablagen. In die obere kommt die Post: ein Brief DIN lang
+ * Ordnern für A4 (Rücken 80 mm, geschätzt), rechts zwei Ablagen (Sinnbilder ohne Maßstab). In die obere kommt die Post: ein Brief DIN lang
  * (220 × 110 nach DIN 678) mit Anschriftfenster; in die untere ein Blatt A4 für die Geschäftsführung. Ordner ohne
  * Beschriftung, Brief ohne Briefmarke: Formate, keine Marken.
  *
@@ -54,6 +54,9 @@ function ordnerGruppe(id: string, o: ReturnType<typeof ordner>, takte: number): 
 /**
  * Ablage (Briefkorb) von vorn: Vorderkante und Boden; `oben` ist die Oberkante der Vorderkante. Die Mitte liegt so,
  * dass „Geschäftsführung“ (bei 280 px Bildbreite und 12 px Schrift gut 175 Einheiten) vor dem rechten Rand endet.
+ * Die Ablagen sind Sinnbilder ohne Maßstab (Prüfrunde 3 B3-5): In einem echten Briefkorb läge das Papier flach, und
+ * von vorn sähe man nur die Vorderkante. Maßstäblich bleiben Brief (DIN lang) und Blatt (A4), wie sie in die Ablage
+ * gehören; das Schriftfeld sagt es.
  */
 const KORB = { x: 248, breite: 104, hoehe: 20 };
 const KORB_OBEN = 104;
@@ -61,6 +64,9 @@ const KORB_UNTEN = 258;
 function korb(oben: number): string {
   return `${rechteck(KORB.x, oben, KORB.breite, KORB.hoehe)}${waagerecht(KORB.x + 6, KORB.x + KORB.breite - 6, oben + 6)}`;
 }
+
+/** Mitte der Beschriftungen: „Post“ über der oberen Ablage, „Geschäftsführung“ unter der unteren. */
+export const BESCHRIFTUNG_Y = Object.freeze({ post: 44, gf: KORB_UNTEN + 16 });
 
 /** Brief DIN lang von vorn mit Anschriftfenster (90 × 45 mm, 20 mm von links, 15 mm von unten). */
 export const BRIEF = Object.freeze({ x: 263, y: 78, breite: e(L.breite.mm), hoehe: e(L.hoehe.mm) });
@@ -117,7 +123,7 @@ export const ABLAGE: BueroSzene = Object.freeze<BueroSzene>({
       ],
       ablauf: { art: 'ein', takte: 5, dauer: 'd-4', y: -56 },
     },
-    { id: 'ablage-post', teile: [{ d: korb(KORB_OBEN), art: 'kontur' }] },
+    { id: 'ablage-post', sinnbild: true, teile: [{ d: korb(KORB_OBEN), art: 'kontur' }] },
     // Das Blatt wandert vom Regal in die Ablage der Geschäftsführung
     {
       id: 'blatt',
@@ -127,10 +133,12 @@ export const ABLAGE: BueroSzene = Object.freeze<BueroSzene>({
       ],
       ablauf: { art: 'ein', takte: 9, dauer: 'd-4', x: -82 },
     },
-    { id: 'ablage-gf', teile: [{ d: korb(KORB_UNTEN - KORB.hoehe), art: 'kontur' }] },
+    { id: 'ablage-gf', sinnbild: true, teile: [{ d: korb(KORB_UNTEN - KORB.hoehe), art: 'kontur' }] },
   ],
+  // „Post“ über ihrer Ablage, „Geschäftsführung“ unter ihrer: Jede steht nah an ihrem eigenen Fach, nicht zwischen den
+  // beiden (Prüfrunde 3 A3-7; vorher las man „Geschäftsführung“ als Unterschrift der Post)
   beschriftungen: [
-    { id: 'post', x: KORB.x + KORB.breite / 2, y: 44, anker: 'middle' },
-    { id: 'gf', x: KORB.x + KORB.breite / 2, y: 140, anker: 'middle' },
+    { id: 'post', x: KORB.x + KORB.breite / 2, y: BESCHRIFTUNG_Y.post, anker: 'middle' },
+    { id: 'gf', x: KORB.x + KORB.breite / 2, y: BESCHRIFTUNG_Y.gf, anker: 'middle' },
   ],
 });

@@ -1,4 +1,5 @@
 import { expect, test, type Locator } from '@playwright/test';
+import { malzeitJeBild, messeMitDrossel } from './support/malzeit';
 import { expectNoAxeViolations, findSmallText, waitForSettled } from './support/site';
 
 /**
@@ -52,6 +53,42 @@ test.describe('Szenen mit Bewegung', () => {
     await erste.scrollIntoViewIfNeeded();
     await expect(erste).toHaveAttribute('data-ablauf', 'fertig');
     expect((await animationen(erste)).zahl).toBe(0);
+  });
+
+  test('Malzeit (K-013, Prüfrunde 3 C3-2): jede Szene von laeuft bis fertig, nach den ersten zwei Bildern kein Bild 2 ms oder länger (Handy, CPU 4×)', async ({
+    page,
+    browser,
+  }) => {
+    test.skip(test.info().project.name !== 'mobile-light', 'Gemessen am Handy.');
+    test.setTimeout(90_000);
+    await page.goto(SEITE);
+    await waitForSettled(page);
+    const szenen = page.locator('[data-ablauf]');
+    await expect(szenen).toHaveCount(4);
+    for (let i = 0; i < 4; i += 1) {
+      const szene = szenen.nth(i);
+      await expect(szene).toHaveAttribute('data-ablauf', 'bereit');
+      // Erst knapp vor die Szene: Das Scrollen malt neue Inhalte, das gehört nicht zum Ablauf
+      await szene.evaluate((el) => window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - window.innerHeight - 40, behavior: 'instant' }));
+      await page.waitForTimeout(800);
+      await expect(szene).toHaveAttribute('data-ablauf', 'bereit');
+      await szene.evaluate((el, n) => {
+        new MutationObserver(() => {
+          const zustand = el.getAttribute('data-ablauf');
+          if (zustand === 'laeuft') performance.mark(`szene-${n}-start`);
+          if (zustand === 'fertig') performance.mark(`szene-${n}-ende`);
+        }).observe(el, { attributes: true, attributeFilter: ['data-ablauf'] });
+      }, i);
+      const lauf = malzeitJeBild(
+        await messeMitDrossel(page, browser, async () => {
+          await szene.evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
+          await expect(szene).toHaveAttribute('data-ablauf', 'fertig', { timeout: SICHT_ENDE_MS + 4000 });
+        }),
+        { von: `szene-${i}-start`, bis: `szene-${i}-ende` },
+      );
+      expect(lauf.bilder.length, `Szene ${i + 1}: Bilder im Fenster`).toBeGreaterThan(10);
+      expect(lauf.bilder.slice(2).filter((b) => b.ms >= 2), `Szene ${i + 1}: Bilder mit Malzeit ≥ 2 ms`).toEqual([]);
+    }
   });
 
   test('Deep-Link zu den Aufgaben: was beim Laden im Bild ist, steht im Endzustand (kein Aufblitzen)', async ({ page }) => {

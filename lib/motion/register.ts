@@ -15,12 +15,13 @@
  * Sichtbarwerden über components/zeichnung/bewegung/SichtStart.tsx, Ende ≤ SICHT_ENDE_MS, höchstens auf der Hälfte
  * der Abschnitte einer Seite); Klick-Wärme (`tippen`, KLICK_ENDE_MS) und Wärmefront (`navigation`, WECHSEL).
  * Skalieren nur nach √t: jeder Keyframe-Ablauf mit `scale` genau auf den Stützstellen DIFFUSION_STUETZ.
- * Malzeit (KERN K-013, e2e/support/malzeit.ts): Während Wärme, Klick-Wärme und Wärmefront laufen, malt nach den ersten
- * zwei Bildern kein Bild 2 ms oder länger (mobil, CPU 4×). Ausnahmen, je einmal und außerhalb der Bewegung: das Ende
- * eines Sicht-Ablaufs (`fertig`, will-change fällt) und bei der Wärmefront das Malen der neuen Seite unter voller
- * Deckung (vom Wechsel, router.push, bis sie ruht; Prüfrunde 3 C3-1). Abdecken und Aufdecken selbst sind ausnahmslos,
- * mit jedem Bandende (Schichten mit Füllung both, Prüfrunde 2 C2-4); e2e/interaktion.spec.ts misst vom Klick bis zum
- * Wechsel und vom Aufdecken bis die Front zu ist.
+ * Malzeit (KERN K-013, e2e/support/malzeit.ts): Während Wärme, Büro-Szenen, Klick-Wärme und Wärmefront laufen, malt
+ * nach den ersten zwei Bildern kein Bild 2 ms oder länger (mobil, CPU 4×). Ausnahmen, je einmal und außerhalb der
+ * Bewegung: das Ende eines Sicht-Ablaufs (`fertig`, will-change bzw. die Füllung fällt) und bei der Wärmefront das
+ * Malen der neuen Seite unter voller Deckung (vom Wechsel, router.push, bis sie ruht; Prüfrunde 3 C3-1). Abdecken und
+ * Aufdecken selbst sind ausnahmslos, mit jedem Bandende (Schichten mit Füllung both, Prüfrunde 2 C2-4);
+ * e2e/interaktion.spec.ts misst vom Klick bis zum Wechsel und vom Aufdecken bis die Front zu ist, e2e/buero.spec.ts
+ * jede Büro-Szene von laeuft bis fertig (Prüfrunde 3 C3-2: bewegte Gruppen auf eigenen HTML-Ebenen).
  */
 
 /** Alle Kennungen. Reihenfolge wie im Register; der Guard liest diese Liste wörtlich. */

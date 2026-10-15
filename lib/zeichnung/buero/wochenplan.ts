@@ -1,6 +1,7 @@
 /**
  * Szene „Telefon und Termine“ (E-031, Paket W3): die Plantafel der Woche, Montag bis Freitag in Spalten, zwei Bahnen
- * für die Monteure (Glyphe Servicefahrzeug) und den Kundendienst (Glyphe Wärmepumpe). Die Termine sind Blöcke auf der
+ * für die Monteure (Glyphe Servicefahrzeug) und den Kundendienst (Glyphe Wärmepumpe), getrennt durch eine Kontur; in
+ * jeder Bahn ein Termin oben und einer unten. Die Termine sind Blöcke auf der
  * Markierfläche (eine Stufe, Prüfrunde 2 A2-9), ohne Uhrzeit, ohne Namen; beim Sichtbarwerden gleiten sie einmal von links in ihre Felder
  * (Register `buero-ablauf`). Ohne Maßstab (Schriftfeld sagt es).
  */
@@ -48,14 +49,17 @@ function termin(t: Termin, i: number): Gruppe {
   };
 }
 
-/** Kopfzeile, Grenze der Bahnen, Mitte jeder Bahn (zwischen oberem und unterem Termin) und die Tage. */
+/** Kopfzeile und die Tage (fein). */
 const raster = [
   waagerecht(TAFEL.x, TAFEL.x + TAFEL.breite, TAFEL.y + TAFEL.kopf),
-  waagerecht(TAFEL.x, TAFEL.x + TAFEL.breite, TAFEL.y + TAFEL.kopf + BAHN),
-  waagerecht(TAFEL.x, TAFEL.x + TAFEL.breite, TAFEL.y + TAFEL.kopf + BAHN / 2),
-  waagerecht(TAFEL.x, TAFEL.x + TAFEL.breite, TAFEL.y + TAFEL.kopf + BAHN * 1.5),
   ...Array.from({ length: TAGE - 1 }, (_, i) => senkrecht(TAFEL.x + (i + 1) * SPALTE, TAFEL.y, TAFEL.y + TAFEL.hoehe)),
 ].join('');
+
+/**
+ * Grenze der beiden Bahnen als Kontur, kräftiger als das Raster (Prüfrunde 3 D3-3): Man liest zwei Bahnen, nicht vier
+ * gleiche Zeilen; die Glyphen der Bahnen stehen in deren Mitte, auf keiner Linie.
+ */
+export const BAHNGRENZE = waagerecht(TAFEL.x, TAFEL.x + TAFEL.breite, TAFEL.y + TAFEL.kopf + BAHN);
 
 export const WOCHENPLAN: BueroSzene = Object.freeze<BueroSzene>({
   id: 'wochenplan',
@@ -71,6 +75,7 @@ export const WOCHENPLAN: BueroSzene = Object.freeze<BueroSzene>({
           art: 'kontur',
         },
         { d: raster, art: 'fein' },
+        { d: BAHNGRENZE, art: 'konturOffen' },
       ],
     },
     { id: 'monteure', lage: { x: 4, y: TAFEL.y + TAFEL.kopf + BAHN / 2 - 26, s: 2 }, teile: glyphPfade('servicefahrzeug') },

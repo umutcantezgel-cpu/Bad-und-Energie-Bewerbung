@@ -1146,7 +1146,7 @@
    Abgegrenzt bis zum Dateiende; jede Klasse und jeder Keyframe beginnt mit `buero` (scripts/qa/check-css-chunks.mjs
    misst den Block im Build, höchstens 2500 B). Linien kommen aus technik.module.css, hier nur Lage, Wärmeflächen und
    der einmalige Ablauf (Register `buero-ablauf`, SichtStart): Grundwerte = Endzustand, `bereit` setzt den Start,
-   `laeuft` trägt die Abläufe mit Füllart backwards, Verzögerung in Takten aus den Daten (--v). */
+   `laeuft` trägt die Abläufe mit Füllart both, Verzögerung in Takten aus den Daten (--v). */
 .bueroLeitstelle {
   position: relative;
   width: 100%;
@@ -1191,17 +1191,22 @@
   fill: var(--waerme-2);
 }
 
-.bueroBild [data-a='schreiben'] {
-  transform-box: fill-box;
-  transform-origin: 0 50%;
+/* Ebenen über der Zeichnung (Prüfrunde 3 C3-2): jede bewegte Gruppe ein eigenes <svg> in der Größe ihres Rahmens, die
+   stillen Gruppen danach in voller Größe; Lage, Versatz (cqi) und Ursprung der Zeilen inline aus den Daten. So bewegt
+   der Compositor die Ebenen, und die Zeichnung malt nicht je Bild neu (Malzeit unter 2 ms, K-013). */
+.bueroLage {
+  position: absolute;
 }
 
 .bueroBild[data-ablauf='bereit'] [data-a] {
   opacity: 0;
 }
 
+/* Füllung both: Jede Ebene hält nach ihrem Ende den Endwert, bis der ganze Ablauf `fertig` ist; sonst fiele ihre
+   Animation einzeln weg, die Ebene ginge in die Seite zurück, und Chromium malte je Gruppe die ganze Seite neu (wie
+   bei der Wärmefront, Prüfrunde 2 C2-4; hier Prüfrunde 3 C3-2). Mit `fertig` endet alles auf einmal. */
 .bueroBild[data-ablauf='laeuft'] [data-a] {
-  animation: bueroEin var(--d-3) var(--k-aus) calc(var(--takt) * var(--v)) backwards;
+  animation: bueroEin var(--d-3) var(--k-aus) calc(var(--takt) * var(--v)) both;
 }
 
 .bueroBild[data-ablauf='laeuft'] [data-a='lang'] {

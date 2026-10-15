@@ -111,5 +111,6 @@ export const BUERO_SCHRIFTFELD = Object.freeze({
     `Ordnerrücken ${BUERO_MASSE.ordner.ruecken.mm}`,
     `Brief DIN lang ${masse(BUERO_MASSE.dinLang.breite, BUERO_MASSE.dinLang.hoehe)} nach ${norm('DIN', '678')}, Fenster nach ${norm('DIN', '680')}`,
     IN_MM,
+    'Ablagen als Sinnbild ohne Maßstab',
   ),
 });

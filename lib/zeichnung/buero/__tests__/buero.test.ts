@@ -20,15 +20,15 @@ import { TOKENS } from '@/lib/tokens';
 import { keyframesIn, skaliert } from '@/lib/motion/__tests__/keyframes';
 import { BUERO_DATEI, BUERO_MARKE } from '../../../../scripts/qa/check-design-tokens.mjs';
 import { MERKMAL_LAENGE, pruefeBueroBlock } from '../../../../scripts/qa/check-css-chunks.mjs';
-import { ABLAGE, BRIEF, ORDNER } from '../ablage';
+import { ABLAGE, BESCHRIFTUNG_Y, BRIEF, ORDNER } from '../ablage';
 import { ANSCHRIFT, BELEG, BLATT } from '../beleg';
 import { BEZUG, LEITSTELLE, TISCH, ZIELE } from '../leitstelle';
 import { BUERO_MASSE, BUERO_SCHRIFTFELD } from '../masse';
 import { BODEN, EINZELHEIT, GELAENDE, KARTON_HAUS, MATERIAL, PALETTE as PALETTE_SEITE } from '../material';
-import { ARTEN, pfadeVon, takteVon, type BueroSzene } from '../szene';
+import { ARTEN, EBENE_RAND, ebenenVon, pfadeVon, rahmenVon, takteVon, type BueroSzene, type Rahmen } from '../szene';
 import { BUERO_SZENEN, BUERO_SZENEN_ARTEN } from '../szenen';
 import { BUERO_SVG_FARBEN, DATEI_KLASSE, bueroSzenePfad, bueroSzenenDateien, leitstelleSvg, szeneSvg } from '../svg';
-import { WOCHENPLAN } from '../wochenplan';
+import { BAHNGRENZE, TAFEL, WOCHENPLAN } from '../wochenplan';
 
 /**
  * Büro-Zeichnungsfamilie (E-031, Paket W3): echte und genormte Maße im richtigen Verhältnis, Inline und Datei mit
@@ -142,7 +142,7 @@ describe('Maße: genormt und im richtigen Verhältnis', () => {
       leitstelle: ['tisch', 'bezug'],
       beleg: BELEG.gruppen.map((g) => g.id),
       material: ['lager', 'wege', 'paket-1', 'paket-2'],
-      ablage: ['regal', 'ordner', 'ordner-oben', 'ordner-unten', 'brief', 'ablage-post', 'blatt', 'ablage-gf'],
+      ablage: ['regal', 'ordner', 'ordner-oben', 'ordner-unten', 'brief', 'blatt'],
     };
     for (const szene of ALLE.filter((s) => s.mmJeEinheit !== null)) {
       const frei = szene.gruppen.filter((g) => !g.sinnbild && !g.lage).map((g) => g.id);
@@ -170,6 +170,64 @@ describe('Maße: genormt und im richtigen Verhältnis', () => {
     const d = MATERIAL.gruppen.find((g) => g.id === 'lager')!.teile[1].d;
     const links = [...d.matchAll(/M(-?[\d.]+) (-?[\d.]+)H/g)].map((m) => Number(m[1]));
     expect(links.slice(1, 4)).toEqual(links.slice(4, 7));
+  });
+
+  it('Ablage (Prüfrunde 3 B3-5): Die Ablagen sind Sinnbilder, das Schriftfeld sagt es; Brief und Blatt bleiben maßstäblich', () => {
+    // Ein Blatt A4 (99 Einheiten) stünde in einem 60 mm hohen Korb 80 Einheiten frei: kein echter Briefkorb
+    expect(ABLAGE.gruppen.filter((g) => g.sinnbild).map((g) => g.id)).toEqual(['ablage-post', 'ablage-gf']);
+    expect(BUERO_SCHRIFTFELD.ablage).toContain('Ablagen als Sinnbild ohne Maßstab');
+    expect(BUERO_SCHRIFTFELD.ablage).toContain('DIN lang');
+  });
+
+  it('Ablage (Prüfrunde 3 A3-7): Jede Beschriftung steht nah an ihrem Fach – Abstand zum eigenen höchstens halb so groß wie zum fremden', () => {
+    // Zeilenhöhe der Beschriftung in Einheiten: bei 280 px Bildbreite 12 px Schrift (17,1 Einheiten), Zeile 1,1
+    const halbeZeile = ((12 * 400) / 280) * 1.1 * 0.5;
+    const rahmen = (ids: string[]) => {
+      const r = ids.map((id) => rahmenVon(ABLAGE.gruppen.find((g) => g.id === id)!.teile));
+      return { oben: Math.min(...r.map((x) => x.y)), unten: Math.max(...r.map((x) => x.y + x.h)) };
+    };
+    const abstand = (y: number, o: { oben: number; unten: number }) => Math.max(0, o.oben - (y + halbeZeile), y - halbeZeile - o.unten);
+    const post = { eigen: rahmen(['brief', 'ablage-post']), fremd: rahmen(['blatt', 'ablage-gf']) };
+    const gf = { eigen: rahmen(['blatt', 'ablage-gf']), fremd: rahmen(['brief', 'ablage-post']) };
+    expect(ABLAGE.beschriftungen.map((b) => [b.id, b.y])).toEqual([
+      ['post', BESCHRIFTUNG_Y.post],
+      ['gf', BESCHRIFTUNG_Y.gf],
+    ]);
+    for (const [y, f] of [
+      [BESCHRIFTUNG_Y.post, post],
+      [BESCHRIFTUNG_Y.gf, gf],
+    ] as const) {
+      expect(abstand(y, f.eigen) * 2, `${y}`).toBeLessThanOrEqual(abstand(y, f.fremd));
+      // ganz im Bild
+      expect(y - halbeZeile).toBeGreaterThanOrEqual(0);
+      expect(y + halbeZeile).toBeLessThanOrEqual(ABLAGE.rahmen.hoehe);
+    }
+    // So stand es (y 140 zwischen den Fächern): näher an der Post als am eigenen Blatt
+    expect(abstand(140, gf.eigen) * 2).toBeGreaterThan(abstand(140, gf.fremd));
+  });
+
+  it('Wochenplan (Prüfrunde 3 D3-3): zwei Bahnen, ihre Grenze als Kontur kräftiger als das Raster; die Glyphen mittig in ihrer Bahn, auf keiner Linie', () => {
+    const tafel = WOCHENPLAN.gruppen.find((g) => g.id === 'tafel')!;
+    const grenze = tafel.teile.filter((t) => t.d === BAHNGRENZE);
+    expect(grenze.map((t) => t.art)).toEqual(['konturOffen']);
+    // Waagerechte feine Linien: nur die Kopfzeile, keine Mitte der Bahnen mehr (sonst las man vier gleiche Zeilen)
+    const fein = tafel.teile.filter((t) => t.art === 'fein').map((t) => t.d).join('');
+    const waagerechte = [...fein.matchAll(/M(-?[\d.]+) (-?[\d.]+)H/g)].map((m) => Number(m[2]));
+    expect(waagerechte).toEqual([TAFEL.y + TAFEL.kopf]);
+    const bahn = (TAFEL.hoehe - TAFEL.kopf) / 2;
+    const linien = [TAFEL.y + TAFEL.kopf, TAFEL.y + TAFEL.kopf + bahn, TAFEL.y + TAFEL.hoehe];
+    for (const [id, i] of [
+      ['monteure', 0],
+      ['kundendienst', 1],
+    ] as const) {
+      const g = WOCHENPLAN.gruppen.find((x) => x.id === id)!;
+      const mitte = g.lage!.y + 12 * g.lage!.s;
+      const bahnMitte = TAFEL.y + TAFEL.kopf + (i + 0.5) * bahn;
+      expect(Math.abs(mitte - bahnMitte), id).toBeLessThanOrEqual(3);
+      for (const y of linien) expect(Math.abs(mitte - y), `${id} ${y}`).toBeGreaterThan(12 * g.lage!.s);
+    }
+    // Die Beschreibung nennt, was das Bild zeigt
+    expect(SEITE.aufgaben.szenen.find((x) => x.id === 'wochenplan')!.bild).toMatch(/zwei Bahnen, oben die Monteure, unten der Kundendienst/);
   });
 
   it('jede maßstäbliche Szene mit Sinnbildern sagt „ohne Maßstab“; Szenen ohne Sinnbild behaupten keins', () => {
@@ -232,6 +290,60 @@ describe('Maße: genormt und im richtigen Verhältnis', () => {
     for (const svg of [leitstelleSvg(), ...bueroSzenenDateien().map((x) => x.svg)]) {
       expect([...svg.matchAll(/\sd="([^"]+)"/g)].some((m) => m[1].length >= MERKMAL_LAENGE)).toBe(true);
     }
+  });
+});
+
+describe('Bewegte Gruppen auf eigenen Ebenen (Prüfrunde 3 C3-2)', () => {
+  const szenen = BUERO_SZENEN_ARTEN.map((art) => BUERO_SZENEN[art]);
+
+  it('rahmenVon: Rechtecke, Linien und Bögen (mit Radius), nur absolute Befehle', () => {
+    expect(rahmenVon([{ d: 'M10 20H30V50H10Z', art: 'kontur' }])).toEqual({ x: 10, y: 20, b: 20, h: 30 });
+    expect(rahmenVon([{ d: 'M0 5L4 9', art: 'fein' }, { d: 'M2 1A3 3 0 0 1 8 1', art: 'fein' }])).toEqual({ x: 0, y: -2, b: 11, h: 11 });
+    expect(() => rahmenVon([{ d: 'm0 0l4 4', art: 'fein' }])).toThrow(/nicht unterstützt/);
+    expect(() => rahmenVon([{ d: 'M0 0C1 1 2 2 3 3', art: 'fein' }])).toThrow(/nicht unterstützt/);
+  });
+
+  it.each(szenen.map((s) => [s.id, s] as const))('%s: jede bewegte Gruppe eine Ebene in ihrem Rahmen, die stillen dazwischen zusammen, Reihenfolge wie die Daten', (_id, szene) => {
+    const ebenen = ebenenVon(szene);
+    expect('still' in ebenen[0]).toBe(true);
+    const reihe = ebenen.flatMap((e) => ('still' in e ? e.still.map((g) => g.id) : [e.gruppe.id]));
+    expect(reihe).toEqual(szene.gruppen.map((g) => g.id));
+    const bewegt = ebenen.filter((e): e is Extract<typeof e, { rahmen: Rahmen }> => !('still' in e));
+    expect(bewegt.map((e) => e.gruppe.id)).toEqual(szene.gruppen.filter((g) => g.ablauf).map((g) => g.id));
+    for (const e of bewegt) {
+      const r = rahmenVon(e.gruppe.teile);
+      expect(e.rahmen).toEqual({ x: r.x - EBENE_RAND, y: r.y - EBENE_RAND, b: r.b + 2 * EBENE_RAND, h: r.h + 2 * EBENE_RAND });
+      // jede Ecke jedes Pfads liegt in der Ebene
+      for (const t of e.gruppe.teile) {
+        for (const m of t.d.matchAll(/[ML](-?[\d.]+) (-?[\d.]+)/g)) {
+          expect(Number(m[1])).toBeGreaterThanOrEqual(e.rahmen.x);
+          expect(Number(m[1])).toBeLessThanOrEqual(e.rahmen.x + e.rahmen.b);
+          expect(Number(m[2])).toBeGreaterThanOrEqual(e.rahmen.y);
+          expect(Number(m[2])).toBeLessThanOrEqual(e.rahmen.y + e.rahmen.h);
+        }
+      }
+    }
+    // zwischen zwei stillen Ebenen liegt immer eine bewegte
+    for (let i = 1; i < ebenen.length; i += 1) expect('still' in ebenen[i] && 'still' in ebenen[i - 1]).toBe(false);
+  });
+
+  it.each(szenen.map((s) => [s.id, s] as const))('%s inline mit Ablauf: jede bewegte Gruppe ein <svg data-a data-motion>, dieselben Pfade in derselben Reihenfolge wie still', (_id, szene) => {
+    const bewegt = renderToStaticMarkup(createElement(BueroZeichnung, { szene, motion: 'buero-ablauf' }));
+    const still = renderToStaticMarkup(createElement(BueroZeichnung, { szene }));
+    expect(pfadeUndArten(bewegt, true)).toEqual(pfadeUndArten(still, true));
+    const ebenen = [...bewegt.matchAll(/<svg ([^>]*)>/g)].map((m) => m[1]);
+    const mitAblauf = ebenen.filter((a) => a.includes('data-a='));
+    expect(mitAblauf).toHaveLength(szene.gruppen.filter((g) => g.ablauf).length);
+    for (const a of mitAblauf) {
+      expect(a).toContain('data-motion="buero-ablauf"');
+      expect(a).toMatch(/style="left:[\d.]+%;top:[\d.]+%;width:[\d.]+%;height:[\d.]+%;--v:[\d.]+;--x:-?[\d.]+cqi;--y:-?[\d.]+cqi/);
+    }
+    // nur die bewegten Ebenen tragen eine Kennung; still eine einzige Zeichnung ohne Ablauf
+    expect(ebenen.filter((a) => a.includes('data-motion=')).length).toBe(mitAblauf.length);
+    expect([...still.matchAll(/<svg /g)]).toHaveLength(1);
+    expect(still).not.toMatch(/data-a=|data-motion=/);
+    // Zeilen schreiben sich vom Anfang der Linie: Ursprung am Rand der Ebene
+    for (const a of mitAblauf.filter((x) => x.includes('data-a="schreiben"'))) expect(a).toMatch(/transform-origin:[\d.]+% 50%/);
   });
 });
 
@@ -372,13 +484,13 @@ describe('Bewegung: einmal beim Sichtbarwerden, genau wie im Register', () => {
     expect(je('ablage').length).toBe(4);
   });
 
-  it('CSS im Büro-Block: Startzustand unter bereit, Abläufe unter laeuft mit backwards, nur transform und opacity, kein Skalieren', () => {
+  it('CSS im Büro-Block: Startzustand unter bereit, Abläufe unter laeuft mit both (Prüfrunde 3 C3-2), nur transform und opacity, kein Skalieren', () => {
     const css = quelle(BUERO_DATEI);
     const block = css.slice(css.indexOf(BUERO_MARKE));
     expect(pruefeBueroBlock(css)).toEqual([]);
     expect(block).toMatch(/\.bueroBild\[data-ablauf='bereit'\] \[data-a\] \{\s*opacity: 0;/);
     expect(block).toMatch(
-      /\.bueroBild\[data-ablauf='laeuft'\] \[data-a\] \{\s*animation: bueroEin var\(--d-3\) var\(--k-aus\) calc\(var\(--takt\) \* var\(--v\)\) backwards;/,
+      /\.bueroBild\[data-ablauf='laeuft'\] \[data-a\] \{\s*animation: bueroEin var\(--d-3\) var\(--k-aus\) calc\(var\(--takt\) \* var\(--v\)\) both;/,
     );
     expect(block).toMatch(/\[data-a='lang'\] \{\s*animation-duration: var\(--d-4\);/);
     expect(block).toMatch(/\[data-a='schreiben'\] \{\s*animation-name: bueroSchreiben;/);
@@ -401,7 +513,9 @@ describe('Bewegung: einmal beim Sichtbarwerden, genau wie im Register', () => {
 
   it('Themenseite: vier Szenen, jede in SichtStart; Sicht-Auftritte in höchstens der Hälfte der Abschnitte (K-011)', () => {
     const html = renderToStaticMarkup(createElement(BueroSeite, { text: SEITE, jobs: JOBS }));
-    expect(html.match(/data-motion="buero-ablauf"/g)).toHaveLength(4);
+    // Jede bewegte Gruppe trägt die Kennung auf ihrer eigenen Ebene (Prüfrunde 3 C3-2)
+    const bewegteGruppen = BUERO_SZENEN_ARTEN.flatMap((art) => BUERO_SZENEN[art].gruppen.filter((g) => g.ablauf));
+    expect(html.match(/data-motion="buero-ablauf"/g)).toHaveLength(bewegteGruppen.length);
     expect(kennungenAusserhalb(html, ['buero-ablauf'], ABLAUF_BEREICH)).toEqual([]);
     // Der Server liefert den Endzustand
     expect(html.match(/data-ablauf="fertig"/g)).toHaveLength(4);

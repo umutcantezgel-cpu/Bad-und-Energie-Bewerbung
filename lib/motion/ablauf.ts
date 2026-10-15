@@ -9,8 +9,9 @@ import { motionAllowed, type MediaWindow } from './prefers';
  * - `bereit`: Startzustand, solange der Bereich unterhalb wartet. Nur, wenn Bewegung erlaubt ist und die erste Meldung
  *   des Observers „nicht im Bild“ lautet. Der Bereich lädt dann seine Lazy-Bilder, und der Ablauf startet erst, wenn
  *   sie dekodiert sind (Prüfrunde 2 C2-5).
- * - `laeuft`: Der Ablauf läuft (CSS unter [data-ablauf="laeuft"], Füllart backwards, Ende ≤ SICHT_ENDE_MS); nach dem
- *   letzten Ablauf (spätestens nach ABLAUF_NETZ_MS) wieder `fertig`.
+ * - `laeuft`: Der Ablauf läuft (CSS unter [data-ablauf="laeuft"], Füllart backwards, bei den Büro-Szenen both, damit
+ *   jede Ebene bis zum Schluss besteht; Ende ≤ SICHT_ENDE_MS); nach dem letzten Ablauf (spätestens nach ABLAUF_NETZ_MS)
+ *   wieder `fertig`.
  * Das Modul hängt nur an ./prefers, damit die Insel klein bleibt (≤ 1 KB gzip).
  */
 export type AblaufWert = 'fertig' | 'bereit' | 'laeuft';

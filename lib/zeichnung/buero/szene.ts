@@ -160,6 +160,72 @@ export function pfadeVon(szene: BueroSzene): string[] {
   return szene.gruppen.flatMap((g) => g.teile.map((t) => t.d));
 }
 
+/** Rahmen in Einheiten der Zeichnung (links, oben, Breite, Höhe). */
+export interface Rahmen {
+  x: number;
+  y: number;
+  b: number;
+  h: number;
+}
+
+/**
+ * Umgebendes Rechteck der Pfade einer Gruppe (Einheiten der Szene), großzügig: Bögen zählen mit ihren Radien um den
+ * Endpunkt. Nur absolute Befehle M, L, H, V, A und Z, wie die Formen oben sie schreiben; alles andere bricht ab
+ * (eine Ebene schnitte sonst einen Teil der Gruppe ab). Gruppen mit fester Lage (Glyphen) haben keinen Rahmen hier.
+ */
+export function rahmenVon(teile: readonly Strich[]): Rahmen {
+  const xs: number[] = [];
+  const ys: number[] = [];
+  for (const { d } of teile) {
+    for (const [, befehl, werte] of d.matchAll(/([A-Za-z])([^A-Za-z]*)/g)) {
+      const n = (werte.match(/-?\d*\.?\d+(?:e-?\d+)?/g) ?? []).map(Number);
+      if (befehl === 'M' || befehl === 'L') {
+        for (let i = 0; i + 1 < n.length; i += 2) {
+          xs.push(n[i]);
+          ys.push(n[i + 1]);
+        }
+      } else if (befehl === 'H') xs.push(...n);
+      else if (befehl === 'V') ys.push(...n);
+      else if (befehl === 'A') {
+        for (let i = 0; i + 6 < n.length; i += 7) {
+          const [rx, ry, , , , x, y] = n.slice(i, i + 7);
+          xs.push(x - rx, x + rx);
+          ys.push(y - ry, y + ry);
+        }
+      } else if (befehl !== 'Z') throw new Error(`rahmenVon: Befehl ${befehl} wird nicht unterstützt (${d.slice(0, 40)})`);
+    }
+  }
+  const x = Math.min(...xs);
+  const y = Math.min(...ys);
+  return { x, y, b: Math.max(...xs) - x, h: Math.max(...ys) - y };
+}
+
+/** Rand um den Rahmen einer bewegten Ebene (Einheiten): Platz für Striche und Gelenke. */
+export const EBENE_RAND = 3;
+
+/** Eine Ebene der bewegten Zeichnung: stille Gruppen in Zeichenreihenfolge oder eine bewegte Gruppe mit Rahmen. */
+export type Ebene = { still: readonly Gruppe[] } | { gruppe: Gruppe & { ablauf: Ablauf }; rahmen: Rahmen };
+
+/**
+ * Ebenen einer Szene für den einmaligen Ablauf (Prüfrunde 3 C3-2): Jede bewegte Gruppe liegt auf einer eigenen
+ * HTML-Ebene in der Größe ihres Rahmens (mit EBENE_RAND), damit der Compositor sie bewegt und die Zeichnung nicht je
+ * Bild neu gemalt wird. Die stillen Gruppen dazwischen bleiben zusammen, die Reihenfolge der Daten bleibt (was später
+ * kommt, liegt oben). Die erste Ebene ist immer still (sie trägt die Größe der Zeichnung), auch wenn leer.
+ */
+export function ebenenVon(szene: BueroSzene): Ebene[] {
+  const ebenen: Ebene[] = [{ still: [] }];
+  for (const g of szene.gruppen) {
+    const letzte = ebenen[ebenen.length - 1];
+    if (g.ablauf) {
+      if (g.lage) throw new Error(`ebenenVon: bewegte Gruppe ${g.id} mit fester Lage wird nicht unterstützt`);
+      const r = rahmenVon(g.teile);
+      ebenen.push({ gruppe: g as Gruppe & { ablauf: Ablauf }, rahmen: { x: r.x - EBENE_RAND, y: r.y - EBENE_RAND, b: r.b + 2 * EBENE_RAND, h: r.h + 2 * EBENE_RAND } });
+    } else if ('still' in letzte) ebenen[ebenen.length - 1] = { still: [...letzte.still, g] };
+    else ebenen.push({ still: [g] });
+  }
+  return ebenen;
+}
+
 /** Die Verzögerungen (Takte) aller Abläufe einer Szene, aufsteigend, je einmal. */
 export function takteVon(szene: BueroSzene): number[] {
   return [...new Set(szene.gruppen.flatMap((g) => (g.ablauf ? [g.ablauf.takte] : [])))].sort((a, b) => a - b);
