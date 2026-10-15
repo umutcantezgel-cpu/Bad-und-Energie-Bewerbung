@@ -5,8 +5,9 @@ import { JobList } from '@/components/home/JobList';
 import { bueroTeaser } from '@/components/home/stellen-text';
 import { Einsatzgebiet } from '@/components/jobs/liste/Einsatzgebiet';
 import { StellenKopf } from '@/components/jobs/liste/StellenKopf';
-import { gebietBuero } from '@/components/jobs/liste/inhalt-text';
+import { gebietEinleitung } from '@/components/jobs/liste/inhalt-text';
 import { BUERO_AM_FIRMENSITZ, LISTEN_EINLEITUNG, listenEinleitung } from '@/components/jobs/liste/liste-text';
+import { REGION } from '@/lib/content/region';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 
 /**
@@ -31,13 +32,21 @@ describe('/jobs: das Büro ist am Firmensitz', () => {
     expect(normal(html)).toContain(BUERO_AM_FIRMENSITZ);
   });
 
-  it('Einsatzgebiet: Baustellen und Kundendienst im Umkreis (REGION), das Büro im Wortlaut der Stelle', () => {
-    const satz = gebietBuero(JOBS)!;
-    expect(BUERO.intro.startsWith(satz)).toBe(true);
-    expect(satz).toMatch(/^Als Bürofachkraft arbeitest du in unserem Büro am Firmensitz in Wetzlar/);
-    expect(gebietBuero(OHNE_BUERO)).toBeNull();
-    expect(normal(renderToStaticMarkup(createElement(Einsatzgebiet, { jobs: JOBS })))).toContain(satz);
-    expect(normal(renderToStaticMarkup(createElement(Einsatzgebiet, { jobs: OHNE_BUERO })))).not.toContain('Bürofachkraft arbeitest');
+  it('Einsatzgebiet (Prüfrunde 3 D3-1): mit Bürostelle gilt der Satz zum Gebiet nur für Baustellen und Kundendienst, dann „Das Büro ist am Firmensitz.“; kein uneingeschränktes „Du arbeitest in …“ neben der Bürostelle', () => {
+    const mit = gebietEinleitung(JOBS);
+    expect(mit.satz).toBe(`Auf den Baustellen und im Kundendienst arbeitest du ${REGION.summary.replace(/^Du arbeitest /, '')}`);
+    expect(mit.satz).toMatch(/^Auf den Baustellen und im Kundendienst arbeitest du in Wetzlar, Gießen, /);
+    expect(mit.buero).toBe(BUERO_AM_FIRMENSITZ);
+    expect(gebietEinleitung(OHNE_BUERO)).toEqual({ satz: REGION.summary, buero: null });
+    const html = normal(renderToStaticMarkup(createElement(Einsatzgebiet, { jobs: JOBS })));
+    expect(html).toContain(`${mit.satz} ${BUERO_AM_FIRMENSITZ}`);
+    expect(html).not.toMatch(/(?:^|[.!?] )Du arbeitest in /);
+    // Kein sachfremder Satz aus der Stelle (Voll- oder Teilzeit) im Gebiet
+    expect(html).not.toContain('Bürofachkraft arbeitest');
+    expect(html).not.toContain('Teilzeit');
+    const ohne = normal(renderToStaticMarkup(createElement(Einsatzgebiet, { jobs: OHNE_BUERO })));
+    expect(ohne).toContain(REGION.summary);
+    expect(ohne).not.toContain(BUERO_AM_FIRMENSITZ);
   });
 });
 

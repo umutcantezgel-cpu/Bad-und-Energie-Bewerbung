@@ -17,6 +17,7 @@ import {
   listenZeichnung,
   listenZweitweg,
 } from '@/components/jobs/liste/liste-text';
+import { gebietEinleitung } from '@/components/jobs/liste/inhalt-text';
 import { INITIATIVE_APPLY_PATH } from '@/lib/apply/params';
 import { FACTS } from '@/lib/content/facts';
 import { REGION } from '@/lib/content/region';
@@ -211,10 +212,12 @@ describe('/jobs (R5-JOBS-01)', () => {
     expect(plain(html)).toContain('Sprich direkt mit Sabri Demir');
   });
 
-  it('Einsatzgebiet im Bestandswortlaut, mit dem Weg zur Gebietsseite (E-028)', () => {
+  it('Einsatzgebiet im Bestandswortlaut (mit Bürostelle auf Baustellen und Kundendienst bezogen, Prüfrunde 3 D3-1), mit dem Weg zur Gebietsseite (E-028)', () => {
     const html = renderSeite();
     expect(plain(/<h2 id="einsatzgebiet"[^>]*>(.*?)<\/h2>/.exec(html)![1])).toBe(REGION.headline);
-    expect(html).toContain(REGION.summary);
+    const { satz, buero } = gebietEinleitung(live(new Date()));
+    expect(plain(html)).toContain(buero ? `${satz} ${buero}` : satz);
+    expect(satz.endsWith(REGION.summary.replace(/^Du arbeitest /, ''))).toBe(true);
     expect(html).toContain('href="/einsatzgebiet"');
     expect(html).not.toContain('href="/#einsatzgebiet"');
   });

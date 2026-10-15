@@ -3,6 +3,7 @@ import { FACTS, JE_NACH_STELLE, offenBei } from '@/lib/content/facts';
 import { REGION } from '@/lib/content/region';
 import { jobCategoryLabels, jobPath, payLabel } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/registry';
+import { BUERO_AM_FIRMENSITZ } from './liste-text';
 
 /**
  * Ausbau der Stellenliste `/jobs` (V6-G1): Stellenvergleich, Arbeitsalltag im Einsatzgebiet und die Ausnahmen im
@@ -114,16 +115,16 @@ export function alltagWoche(jobs: readonly Pick<Job, 'category'>[]): { titel: st
 }
 
 /**
- * Zusatz zum Einsatzgebiet (E-031), solange eine Stelle der Liste am Firmensitz arbeitet (Bürofachkraft: Arbeitsort ohne
- * Radius): REGION.headline und REGION.summary sprechen von Baustellen und Kundendienst im Umkreis, das Büro liegt am
- * Firmensitz. Im Wortlaut der Stelle (erster Satz ihrer Einleitung); ohne solche Stelle null.
+ * Einleitung des Einsatzgebiets (E-031, Prüfrunde 3 D3-1): REGION.summary („Du arbeitest in Wetzlar, Gießen, …“) gilt
+ * für die Stellen auf Baustellen und im Kundendienst im Umkreis (Stellendaten: Arbeitsort mit Radius, „Baustellen im
+ * Umkreis von 35 km“; Kundendienst mit Fakt radius35). Steht eine Stelle am Firmensitz in der Liste (Bürofachkraft:
+ * Arbeitsort ohne Radius), nennt der Satz, für wen er gilt, und danach steht BUERO_AM_FIRMENSITZ wie in der Einleitung
+ * der Liste; sonst der Satz im Bestandswortlaut und kein Zusatz.
  */
-export function gebietBuero(jobs: readonly Pick<Job, 'location' | 'intro'>[]): string | null {
-  const buero = jobs.find((job) => !job.location.radiusKm);
-  if (!buero) return null;
-  const satz = buero.intro.split(/(?<=[.!?])\s+/)[0];
-  if (!/Firmensitz/.test(satz)) throw new Error('inhalt-text: Die Stelle am Firmensitz nennt den Firmensitz nicht mehr');
-  return satz;
+export function gebietEinleitung(jobs: readonly Pick<Job, 'location'>[]): { satz: string; buero: string | null } {
+  if (!jobs.some((job) => !job.location.radiusKm)) return { satz: REGION.summary, buero: null };
+  if (!REGION.summary.startsWith('Du arbeitest ')) throw new Error('inhalt-text: REGION.summary beginnt nicht mehr mit „Du arbeitest“');
+  return { satz: `Auf den Baustellen und im Kundendienst arbeitest du ${REGION.summary.slice('Du arbeitest '.length)}`, buero: BUERO_AM_FIRMENSITZ };
 }
 
 /**

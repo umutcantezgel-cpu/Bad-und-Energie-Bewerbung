@@ -13,11 +13,12 @@ import {
   ALLTAG,
   VERGLEICH,
   alltagWoche,
+  gebietEinleitung,
   stellenanzeigeLabel,
   stellenprofil,
   vergleichEinleitung,
 } from '@/components/jobs/liste/inhalt-text';
-import { GEBIET_LINK, LISTEN_EINLEITUNG, LISTEN_ORTE } from '@/components/jobs/liste/liste-text';
+import { BUERO_AM_FIRMENSITZ, GEBIET_LINK, LISTEN_EINLEITUNG, LISTEN_ORTE } from '@/components/jobs/liste/liste-text';
 import { FACTS, JE_NACH_STELLE } from '@/lib/content/facts';
 import { getFaqItems } from '@/lib/content/faq';
 import {
@@ -114,6 +115,11 @@ const EIGENE = [
   ALLTAG.betrieb.titel,
   ALLTAG.orte.titel,
   ALLTAG.orte.einleitung,
+  // Einsatzgebiet mit Bürostelle (Prüfrunde 3 D3-1): REGION.summary auf Baustellen und Kundendienst bezogen (Wortlaut
+  // und Herkunft prüft buero-hinweise.test.ts); ohne Bürostelle ist es REGION.summary selbst
+  gebietEinleitung(JOBS).satz,
+  // … und danach derselbe Satz wie in der Einleitung der Liste (Stellendaten: Arbeitsort ohne Radius)
+  BUERO_AM_FIRMENSITZ,
   GEBIET_LINK.label,
   // Weg zum Themen-Hub (E-028) unter dem Vergleich
   ARBEITEN_LINK.label,
@@ -223,10 +229,12 @@ describe('Arbeitsalltag und Einsatzgebiet', () => {
     );
   });
 
-  it('Bestand bleibt: REGION.headline als h2, REGION.summary und der Weg zur Karte; Unterabschnitte als h3', () => {
+  it('Bestand bleibt: REGION.headline als h2, REGION.summary (mit Bürostelle auf Baustellen und Kundendienst bezogen, Prüfrunde 3 D3-1) und der Weg zur Karte; Unterabschnitte als h3', () => {
     const html = NEU.einsatzgebiet;
     expect(sichtbar(/<h2 id="einsatzgebiet"[^>]*>(.*?)<\/h2>/.exec(html)![1])).toBe(REGION.headline);
-    expect(html).toContain(REGION.summary);
+    const { satz, buero } = gebietEinleitung(JOBS);
+    expect(satz.endsWith(REGION.summary.replace(/^Du arbeitest /, ''))).toBe(true);
+    expect(sichtbar(html)).toContain(buero ? `${satz} ${buero}` : satz);
     expect(html).toContain(`href="${GEBIET_LINK.href}"`);
     expect(html.match(/<h3\b/g)).toHaveLength(3);
   });

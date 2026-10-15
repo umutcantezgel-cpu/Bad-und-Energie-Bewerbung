@@ -5,7 +5,7 @@ import { TextLink } from '@/components/ui/TextLink';
 import { REGION } from '@/lib/content/region';
 import { cn } from '@/lib/utils/cn';
 import type { Job } from '@/lib/jobs/registry';
-import { ALLTAG, alltagWoche, gebietBuero } from './inhalt-text';
+import { ALLTAG, alltagWoche, gebietEinleitung } from './inhalt-text';
 import { GEBIET_LINK } from './liste-text';
 import styles from './liste.module.css';
 
@@ -16,14 +16,15 @@ function saetze(text: string): string[] {
 
 /**
  * Arbeitsalltag und Einsatzgebiet auf der Stellenliste (Ton Papier, nach dem Stellenvergleich auf Wand):
- * REGION.headline und REGION.summary im Bestandswortlaut mit dem Weg zur Karte mit Pendelrechner auf der
+ * REGION.headline und REGION.summary (mit einer Stelle am Firmensitz auf Baustellen und Kundendienst bezogen, dazu
+ * „Das Büro ist am Firmensitz.“, gebietEinleitung) mit dem Weg zur Karte mit Pendelrechner auf der
  * Startseite, darunter Arbeitszeit, Betrieb und Team und die Orte mit Entfernung und Fahrzeit (inhalt-text.ts).
  * Überschrift im Muster des SectionHeader (Etikett, h2 in Bricolage und Navy), Einleitung und Weg rechts daneben.
  */
 export function Einsatzgebiet({ jobs }: { jobs: readonly Job[] }) {
   const { betrieb, orte } = ALLTAG;
   const woche = alltagWoche(jobs);
-  const buero = gebietBuero(jobs);
+  const gebiet = gebietEinleitung(jobs);
   return (
     <Section tone="papier" trenner="62%" aria-labelledby="einsatzgebiet">
       <Container className={styles.gebiet}>
@@ -37,8 +38,10 @@ export function Einsatzgebiet({ jobs }: { jobs: readonly Job[] }) {
           ))}
         </h2>
         <div className="flex flex-col items-start gap-3">
-          <p className="max-w-prose text-lead text-ink-muted">{REGION.summary}</p>
-          {buero ? <p className="max-w-prose text-body text-ink-muted">{buero}</p> : null}
+          <p className="max-w-prose text-lead text-ink-muted">
+            {gebiet.satz}
+            {gebiet.buero ? ` ${gebiet.buero}` : null}
+          </p>
           <TextLink href={GEBIET_LINK.href} standalone>
             {GEBIET_LINK.label}
             <Icon name="arrow-right" size="sm" className="shrink-0" />
