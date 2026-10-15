@@ -5,16 +5,27 @@ import {
   KAELTEKREIS_SCHRITTE,
   TECHNIK_ANTWORT,
   TECHNIK_KOPF,
+  WAERMEVERTEILUNG,
   geraetSteckbrief,
 } from '../erklaerung';
 import { COMPRESS_AW_L } from '../geraete/compress-aw-l';
 import { COMPRESS_AW_S } from '../geraete/compress-aw-s';
 import { FROSTTIEFE, HAUSSCHNITT_ERDLEITUNG, HAUSSCHNITT_GOK } from '../szenen/hausschnitt';
 import { KAELTEKREIS_SYMBOLE, KAELTEKREIS_WEGE } from '../szenen/kaeltekreis';
+import { RAUM_INNEN } from '../szenen/raumschnitt';
 import { SYMBOLE } from '../symbole';
 
 const NBSP = ' ';
-const alleTexte = [TECHNIK_KOPF.heading, TECHNIK_ANTWORT.text, ...KAELTEKREIS_SCHRITTE.map((s) => s.text), HEIZWASSER.text, geraetSteckbrief().text];
+const WAERME_TEXTE = [WAERMEVERTEILUNG.heizkoerper.text, WAERMEVERTEILUNG.fussboden.text, WAERMEVERTEILUNG.hinweis.text];
+const alleTexte = [
+  TECHNIK_KOPF.heading,
+  TECHNIK_ANTWORT.text,
+  ...KAELTEKREIS_SCHRITTE.map((s) => s.text),
+  HEIZWASSER.text,
+  geraetSteckbrief().text,
+  WAERMEVERTEILUNG.titel,
+  ...WAERME_TEXTE,
+];
 
 describe('Erklärtext zur Wärmepumpe (E-029, AEO)', () => {
   it('Frage als Überschrift, die Antwort im ersten Absatz: Monoblock, Kältekreis in der Außeneinheit, ins Haus nur Heizwasser', () => {
@@ -83,6 +94,25 @@ describe('Erklärtext zur Wärmepumpe (E-029, AEO)', () => {
       }
     }
     expect(geraetSteckbrief().text).toBe(geraetSteckbrief(COMPRESS_AW_S).text);
+  });
+
+  it('Wärme im Raum (E-031): nur Physik aus dem gerechneten Wärmefeld, keine Temperaturen, Maße aus dem Raumschnitt', () => {
+    for (const satz of [WAERMEVERTEILUNG.heizkoerper, WAERMEVERTEILUNG.fussboden, WAERMEVERTEILUNG.hinweis]) expect(satz.quelle).toBe('zeichnung:waermefeld');
+    for (const text of WAERME_TEXTE) {
+      expect(text).not.toMatch(/°|Grad|Kelvin|Celsius|warm genug|spar|effizien|Kosten|Prozent|%/i);
+      expect(text).not.toMatch(/\d\s*K\b/);
+    }
+    // Die einzigen Zahlen sind die Maße des Raums (lichte Breite und Höhe aus lib/zeichnung/szenen/raumschnitt.ts)
+    expect(WAERME_TEXTE.join(' ').match(/\d+(?:,\d+)?/g)).toEqual([
+      (RAUM_INNEN.breite / 100).toLocaleString('de-DE'),
+      (RAUM_INNEN.hoehe / 100).toLocaleString('de-DE'),
+    ]);
+    expect(WAERMEVERTEILUNG.hinweis.text).toContain(`4,2${NBSP}×${NBSP}2,5${NBSP}m`);
+    // Was der Text sagt, prüft lib/zeichnung/__tests__/waermefeld.test.ts am Feld: Fahne, Schicht unter der Decke, kühler
+    // Boden; Fußbodenheizung gleichmäßiger, am Boden wärmer, an der Außenwand kühler
+    expect(WAERMEVERTEILUNG.heizkoerper.text).toMatch(/steigt[\s\S]*Fahne[\s\S]*unter die Decke[\s\S]*Boden zurück[\s\S]*Am Boden bleibt es kühler als unter der Decke/);
+    expect(WAERMEVERTEILUNG.fussboden.text).toMatch(/ganze Bodenfläche[\s\S]*gleichmäßiger warm[\s\S]*am Boden ein wenig wärmer als unter der Decke[\s\S]*Außenwand/);
+    expect(WAERMEVERTEILUNG.hinweis.text).toMatch(/links die Außenwand/);
   });
 
   it('reine Technik (K-012): keine Aussage über den Betrieb, keine Beträge, keine Floskeln (S-13), Einheiten geschützt', () => {

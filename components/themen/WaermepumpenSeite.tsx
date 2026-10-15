@@ -2,11 +2,13 @@ import Link from 'next/link';
 import { bindSeparators, withSoftHyphens } from '@/components/jobs/text';
 import { Icon } from '@/components/icons';
 import { DauerSteuerung } from '@/components/zeichnung/bewegung/DauerSteuerung';
+import { SichtStart } from '@/components/zeichnung/bewegung/SichtStart';
 import { Anlagenschema } from '@/components/zeichnung/technik/Anlagenschema';
 import { Aussengeraet, geraetTitel } from '@/components/zeichnung/technik/Aussengeraet';
 import { Kaeltekreis } from '@/components/zeichnung/technik/Kaeltekreis';
+import { Raumschnitt } from '@/components/zeichnung/technik/Raumschnitt';
 import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
-import { HEIZWASSER, KAELTEKREIS_SCHRITTE, TECHNIK_ANTWORT, TECHNIK_KOPF, geraetSteckbrief } from '@/lib/zeichnung/erklaerung';
+import { HEIZWASSER, KAELTEKREIS_SCHRITTE, TECHNIK_ANTWORT, TECHNIK_KOPF, WAERMEVERTEILUNG, geraetSteckbrief } from '@/lib/zeichnung/erklaerung';
 import { themaPfad } from '@/lib/themen/jsonld';
 import { getThema } from '@/lib/themen/registry';
 import type { WaermepumpenPageText } from '@/lib/themen/text';
@@ -18,13 +20,16 @@ import styles from './stil';
 /** Ids der Zwischenüberschriften im Abschnitt Technik. */
 const KAELTE_ID = titelId('kaeltekreis');
 const WASSER_ID = titelId('heizwasser');
+const RAUM_ID = titelId('waermeverteilung');
 const GERAET_ID = titelId('aussengeraet');
 
 /**
  * Abschnitt „Wie arbeitet eine Luft/Wasser-Wärmepumpe?“ (E-029, AEO): die Antwort zuerst, dann der Kältekreis und das
  * Anlagenschema als bewegte Fließschemata (DauerSteuerung: nur im Sichtfeld, Knopf „Anhalten“), daneben der Text in
- * derselben Reihenfolge wie die Zeichnung (lib/zeichnung/erklaerung.ts), zuletzt das Beispielgerät von vorn und von
- * der Seite mit Maßketten. Reine Technik; Aussagen über den Betrieb stehen in den anderen Abschnitten (K-012).
+ * derselben Reihenfolge wie die Zeichnung (lib/zeichnung/erklaerung.ts), dann der Raum im Schnitt mit Heizkörper und
+ * mit Fußbodenheizung (E-031: das berechnete Wärmefeld breitet sich beim Sichtbarwerden einmal aus, SichtStart),
+ * zuletzt das Beispielgerät von vorn und von der Seite mit Maßketten. Reine Technik; Aussagen über den Betrieb stehen
+ * in den anderen Abschnitten (K-012).
  */
 function Technik() {
   return (
@@ -59,6 +64,25 @@ function Technik() {
             Der Weg des Heizwassers
           </h3>
           <p className={styles.absatz}>{HEIZWASSER.text}</p>
+        </div>
+      </div>
+
+      <div className={styles.technikPaar} role="group" aria-labelledby={RAUM_ID}>
+        <SichtStart className={cn(styles.technikBild, 'grid gap-5 sm:grid-cols-2')}>
+          {(['heizkoerper', 'fussboden'] as const).map((art) => (
+            <figure key={art} className="m-0 min-w-0">
+              <Raumschnitt art={art} titel={`Raum mit ${WAERMEVERTEILUNG[art].name} im Schnitt`} />
+              <figcaption className="text-etikett text-ink-2 mt-3">{WAERMEVERTEILUNG[art].name}</figcaption>
+            </figure>
+          ))}
+        </SichtStart>
+        <div className={styles.text}>
+          <h3 id={RAUM_ID} className="text-title-3 text-brand">
+            {WAERMEVERTEILUNG.titel}
+          </h3>
+          <p className={styles.absatz}>{WAERMEVERTEILUNG.heizkoerper.text}</p>
+          <p className={styles.absatz}>{WAERMEVERTEILUNG.fussboden.text}</p>
+          <p className={styles.absatz}>{WAERMEVERTEILUNG.hinweis.text}</p>
         </div>
       </div>
 
