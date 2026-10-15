@@ -60,9 +60,14 @@ seine Tests `no-preference` ein.
   versteckter Tab den Rotor an. Auf der Wärmepumpen-Seite fließen Wasser und Kältemittel, ein Druck hält alle
   Schleifen der Seite an, axe ohne Verstöße.
   Mit reduzierter Bewegung läuft nichts und der Knopf fehlt; ohne JavaScript steht das Standbild vom Server.
-- `themen-pages.spec.ts` (nur `mobile-light`): Themen-Hub `/arbeiten-bei-uns` und die fünf Themenseiten, dieselben
+- `themen-pages.spec.ts` (nur `mobile-light`): Themen-Hub `/arbeiten-bei-uns` und die sechs Themenseiten, dieselben
   Prüfungen und ein JSON-LD-Graph ohne JobPosting und FAQPage. axe über die Stichproben `/arbeiten-bei-uns` und
   `/arbeiten-bei-uns/gehalt` in `ROUTES`.
+- `buero.spec.ts` (E-031, nur `mobile-light` und `desktop-light`): „Büro und Verwaltung“. Beim Laden im Bild steht
+  der Endzustand; die vier Szenen unten starten einmal beim Hineinscrollen (`data-ablauf` bereit → laeuft → fertig),
+  jede Animation endet ≤ 2.400 ms mit genau einer Wiederholung; reduziert und ohne JavaScript keine Animation und der
+  Endzustand; Beschriftungen ≥ 12 px, kein horizontaler Scroll, axe ohne Verstöße. Die Stellenseite der Bürofachkraft
+  zeigt die Szenen nur als Dateien (`/zeichnung/buero-*.svg`), ohne Ablauf.
 
 Jeder Flow-Test sendet mit eigener `x-real-ip`, damit das Rate-Limit von `/api/bewerbung`
 (5 pro 10 Minuten je IP) parallele Tests nicht blockiert.
