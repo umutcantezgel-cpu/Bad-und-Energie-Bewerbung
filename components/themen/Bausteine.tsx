@@ -54,9 +54,9 @@ export function Saetze({ saetze, lead = false }: { saetze: readonly Satz[]; lead
 }
 
 /**
- * Abschnitt mit Kopf und Inhalt. Abschnitte trennt der Flächenwechsel (Papier, Wand, Navy); folgen zwei Abschnitte im
- * selben Ton, setzt `trenner` eine feine Linie an die Oberkante (seit E-029 statt des Leitungstrenners; die Lage des
- * Knicks, z. B. "62%", gibt es nicht mehr und wird übergangen).
+ * Abschnitt mit Kopf und Inhalt. Abschnitte trennt der Flächenwechsel (Papier, Wand, Navy; seit E-031 mit runden oberen
+ * Ecken); folgen zwei Abschnitte im selben Ton, setzt `trenner` den Leitungstrenner an die Oberkante (E-031: S-Bogen
+ * statt der feinen Linie aus E-029; `trenner` als Zeichenkette ist die Lage des Bogens, z. B. "62%").
  */
 export function Abschnitt({
   kopf,
@@ -75,7 +75,7 @@ export function Abschnitt({
   className?: string;
 }) {
   return (
-    <Section id={kopf.id} tone={tone} className={trenner ? styles.linie : undefined} aria-labelledby={titelId(kopf.id)}>
+    <Section id={kopf.id} tone={tone} trenner={trenner} aria-labelledby={titelId(kopf.id)}>
       <Container className={cn('flex flex-col gap-section-sm', className)}>
         <Kopf kopf={kopf} klammer={klammer} />
         {children}
@@ -139,7 +139,7 @@ export function ThemenAbgaenge({ karten, label }: { karten: readonly ThemaKarte[
             </span>
             <div className={styles.abgangText}>
               <h3 className="text-title-3 text-brand">
-                <CardLink href={karte.href} className="after:rounded-none focus-visible:after:outline-3 focus-visible:after:-outline-offset-3">
+                <CardLink href={karte.href} className="after:rounded-2 focus-visible:after:outline-3 focus-visible:after:-outline-offset-3">
                   {karte.name}
                 </CardLink>
               </h3>

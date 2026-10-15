@@ -207,7 +207,8 @@ describe('JobList (#stellen, E-START-023)', () => {
   });
 
   it('Papier ohne Leitungstrenner; je live Stelle eine Zeile mit „Lohn auf Anfrage“ (E-030) und benannter Liste', () => {
-    expect(html).toMatch(/<section class="py-section"[^>]*id="stellen"/);
+    // Nur der Rhythmus und die Klasse des Tonwechsels (E-031, section.module.css): Papier, keine Fläche, kein Trenner
+    expect(html).toMatch(/<section class="py-section [^" ]*ton[^" ]*" data-ton="papier"[^>]*id="stellen"/);
     expect(html).not.toMatch(/<section class="[^"]*bg-surface-2/);
     expect(html).not.toContain('data-zeichnung="leitungstrenner"');
     expect(html).toContain(`aria-label="${live.length} offene Stellen"`);

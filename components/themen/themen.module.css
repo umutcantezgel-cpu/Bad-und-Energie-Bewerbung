@@ -1,7 +1,7 @@
 /*
  * Themenseiten (E-028): Hub /arbeiten-bei-uns und fünf Themen als Erzählseiten im Design der Stellen- und Ortsseiten:
- * Navy-Seitenkopf mit der Zeichnung der Seite, Papier-, Wand- und Navy-Abschnitte (Flächenwechsel; zwei gleiche Töne
- * trennt eine feine Linie, E-029), Maße und Beträge in Martian Mono, Etiketten-Kästchen. Nur Rollen und Skalen aus
+ * Navy-Seitenkopf mit der Zeichnung der Seite, Papier-, Wand- und Navy-Abschnitte (Flächenwechsel mit runden oberen
+ * Ecken; zwei gleiche Töne trennt der Leitungstrenner, E-031), Maße und Beträge in Martian Mono, Etiketten-Kästchen. Nur Rollen und Skalen aus
  * app/styles/theme.css.
  */
 
@@ -55,11 +55,6 @@
 
 .passend {
   font-size: min(var(--text-title-1), calc(96cqi / var(--stueck)));
-}
-
-/* Zwei Abschnitte im selben Ton: feine Linie an der Oberkante statt Leitungstrenner (E-029) */
-.linie {
-  border-top: var(--m-fein) solid var(--line-strong);
 }
 
 /* ═══ Text ═══ */
