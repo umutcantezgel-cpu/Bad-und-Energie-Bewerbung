@@ -1234,3 +1234,119 @@
   line-height: 1.5;
   color: var(--ink-muted);
 }
+
+/* ═══ Büro-Block (E-031): Leitstelle im Kopf und die vier Szenen der Seite „Büro und Verwaltung“ ═══
+   Abgegrenzt bis zum Dateiende; jede Klasse und jeder Keyframe beginnt mit `buero` (scripts/qa/check-css-chunks.mjs
+   misst den Block im Build, höchstens 2500 B). Linien kommen aus technik.module.css, hier nur Lage, Wärmeflächen und
+   der einmalige Ablauf (Register `buero-ablauf`, SichtStart): Grundwerte = Endzustand, `bereit` setzt den Start,
+   `laeuft` trägt die Abläufe mit Füllart backwards, Verzögerung in Takten aus den Daten (--v). */
+.bueroLeitstelle {
+  position: relative;
+  width: 100%;
+  max-width: 34rem;
+  container-type: inline-size;
+}
+
+.bueroZiele {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-2);
+  padding-top: var(--a-3);
+}
+
+@container (min-width: 30rem) {
+  .bueroZiele {
+    position: absolute;
+    inset: 0;
+    display: block;
+    padding: 0;
+  }
+
+  .bueroZiel {
+    position: absolute;
+    left: var(--lx);
+    top: var(--ly);
+    translate: var(--tx) -50%;
+  }
+}
+
+.bueroSzenen {
+  display: grid;
+  gap: var(--a-8) var(--a-7);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 48em) {
+  .bueroSzenen {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.bueroBild {
+  position: relative;
+  container-type: inline-size;
+}
+
+/* Beschriftung über der Zeichnung: wächst mit ihr (bei 288 px Breite 12 px, Prüfung E-029, Befund 7) */
+.bueroText {
+  position: absolute;
+  font-size: clamp(12px, 4cqi, 15px);
+  white-space: nowrap;
+  color: var(--ink-2);
+}
+
+.bueroBild .bueroW1 {
+  fill: var(--waerme-1);
+}
+
+.bueroBild .bueroW2 {
+  fill: var(--waerme-2);
+}
+
+.bueroBild .bueroW3 {
+  fill: var(--waerme-3);
+}
+
+.bueroBild [data-a='schreiben'] {
+  transform-box: fill-box;
+  transform-origin: 0 50%;
+}
+
+.bueroBild[data-ablauf='bereit'] [data-a] {
+  opacity: 0;
+}
+
+.bueroBild[data-ablauf='laeuft'] [data-a] {
+  animation: bueroEin var(--d-3) var(--k-aus) calc(var(--takt) * var(--v)) backwards;
+}
+
+.bueroBild[data-ablauf='laeuft'] [data-a='lang'] {
+  animation-duration: var(--d-4);
+}
+
+.bueroBild[data-ablauf='laeuft'] [data-a='schreiben'] {
+  animation-name: bueroSchreiben;
+}
+
+@keyframes bueroEin {
+  from {
+    opacity: 0;
+    transform: translate(var(--x), var(--y));
+  }
+}
+
+@keyframes bueroSchreiben {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* Gedruckt steht der Endzustand */
+@media print {
+  .bueroBild[data-ablauf] [data-a] {
+    opacity: 1;
+    animation: none;
+  }
+}

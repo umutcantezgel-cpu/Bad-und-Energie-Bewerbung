@@ -433,12 +433,14 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
     ausloeser: ['sicht'],
     eigenschaften: ['transform', 'opacity'],
     dauer: ['d-3', 'd-4'],
-    verzoegerungTakte: [0, 2, 4, 6, 8],
+    // Aus den Szenen (lib/zeichnung/buero, je Gruppe `ablauf`): Zeilen je ½ Takt, Termine je 1½ Takte, Pakete,
+    // Ordner, Brief und Blatt; zuletzt das Häkchen an der Rechnung (14 Takte + d-3 = 1.520 ms). buero.test hält es gleich.
+    verzoegerungTakte: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 7.5, 9, 11.5, 13, 14],
     kurve: ['k-aus'],
     reduziert: 'Endzustand: Plan, Blatt, Lieferung, Ablage stehen.',
     seitenart: 'erzaehlseiten',
-    endeMs: 1240,
-    fenster: { sicht: { verzoegerungTakte: [0, 2, 4, 6, 8], endeMs: 1240 } },
+    endeMs: 1520,
+    fenster: { sicht: { verzoegerungTakte: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 7.5, 9, 11.5, 13, 14], endeMs: 1520 } },
   },
   'klick-waerme': {
     zweck:
