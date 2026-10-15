@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import { jobIdFromParam, paramForJob } from '@/lib/apply/params';
+import { FACTS, type FactId } from '@/lib/content/facts';
 import { getFunnelOptions, getJobById } from '@/lib/jobs/registry';
 import { getMappeJobOptions, getMappeRecipient } from '../context';
 import {
+  BUERO_SKILL_BRIEF,
   BUERO_SKILL_OPTIONS,
   BUERO_WORK_STYLES,
   SKILL_OPTIONS,
@@ -66,8 +68,15 @@ describe('buildCoverLetter', () => {
   it('uses the selected role without the gender suffix in running text', () => {
     const job = jobs.find((j) => j.id === 'kundendiensttechniker-shk')!;
     const letter = buildCoverLetter({ job, skills: [], recipient });
-    expect(letter).toContain(`bewerbe ich mich als ${roleForText(job.title)} bei der ${recipient.companyName} in Wetzlar.`);
-    expect(letter).not.toContain('(m/w/d)');
+    expect(letter).toContain(`bewerbe ich mich als Kundendiensttechniker SHK / Servicemonteur bei der ${recipient.companyName} in Wetzlar.`);
+    // „(m/w/d)“ fällt an jeder Stelle des Titels weg, auch mitten darin (Büro, Prüfung E-031 D1-2)
+    for (const option of jobs) {
+      const brief = buildCoverLetter({ job: option, skills: [], recipient });
+      expect(brief, option.id).not.toContain('(m/w/d)');
+      expect(brief, option.id).not.toMatch(/ {2}| \./);
+    }
+    expect(roleForText('Bürofachkraft (m/w/d) in Voll- oder Teilzeit')).toBe('Bürofachkraft in Voll- oder Teilzeit');
+    expect(roleForText('Anlagenmechaniker SHK (m/w/d)')).toBe('Anlagenmechaniker SHK');
   });
 
   it('phrases the apprenticeship and the initiative application correctly', () => {
@@ -79,6 +88,12 @@ describe('buildCoverLetter', () => {
     expect(buildCoverLetter({ job: null, initiative: true, skills: [], recipient })).toContain(
       'bewerbe ich mich initiativ bei der',
     );
+    // Schülerpraktikum (Prüfung E-031, D1-3): „um ein Schülerpraktikum“, keine Rolle
+    const praktikum = jobs.find((j) => j.category === 'praktikum')!;
+    expect(buildCoverLetter({ job: praktikum, skills: [], recipient })).toContain(
+      'bewerbe ich mich um ein Schülerpraktikum Anlagenmechaniker SHK bei der',
+    );
+    expect(buildSubject(praktikum)).toBe(`Bewerbung um ein ${praktikum.title}`);
   });
 
   it('includes the chosen skills and work style, and omits empty lines', () => {
@@ -142,7 +157,7 @@ describe('Büro (E-031, Wahrheitsfehler S5): Stärken aus den Aufgaben, Anschrei
       for (const skills of [[], [BUERO_SKILL_OPTIONS[0]], [...BUERO_SKILL_OPTIONS]]) {
         const letter = buildCoverLetter({ job: buero, skills, workStyle, fullName: 'Max Muster', recipient });
         expect(letter).not.toMatch(OFFEN_ODER_FREMD);
-        expect(letter).toContain(`bewerbe ich mich als ${roleForText(buero.title)} bei der`);
+        expect(letter).toContain('bewerbe ich mich als Bürofachkraft in Voll- oder Teilzeit bei der');
         expect(letter).toContain('Meisterbetrieb mit direkter Kommunikation');
         if (skills.length > 0) expect(letter).toContain('Meine Schwerpunkte im Büro:');
         if (workStyle) expect(letter).toContain(`Mein Arbeitsstil: ${workStyle}`);
@@ -151,5 +166,68 @@ describe('Büro (E-031, Wahrheitsfehler S5): Stärken aus den Aufgaben, Anschrei
     // Die Baustelle behält ihren Wortlaut
     const am = jobs.find((job) => job.id === 'anlagenmechaniker-shk')!;
     expect(buildCoverLetter({ job: am, skills: [SKILL_OPTIONS[0]], workStyle: WORK_STYLES[0].value, recipient })).toContain('Als Handwerker aus der Region');
+  });
+});
+
+/**
+ * Offene Fakten (K-012, offenFuer in lib/content/facts.ts): Das Anschreiben behauptet keinen Fakt für eine Stellenart,
+ * für die er offen ist – für jede Kategorie jedes Fakts mit offenFuer, mit allen Arbeitsstilen dieser Stellenart
+ * (Prüfung E-031, D1-3: das Schülerpraktikum stand im Handwerker-Wortlaut mit flexiblen Arbeitszeiten).
+ */
+describe('Anschreiben und offene Fakten', () => {
+  const WORTLAUT: Partial<Record<FactId, RegExp>> = {
+    flexibleHours: /flexib|Arbeitszeit/i,
+    vacation30: /Urlaub|30 Tage/i,
+    aboveTariff: /Tarif/i,
+    permanentContract: /unbefristet|Befristung/i,
+  };
+  const offen = (Object.keys(FACTS) as FactId[]).filter((id) => FACTS[id].offenFuer);
+
+  it('jeder Fakt mit offenFuer hat ein Suchmuster', () => {
+    expect(offen.length).toBeGreaterThan(0);
+    for (const id of offen) expect(WORTLAUT[id], id).toBeInstanceOf(RegExp);
+  });
+
+  it('kein offener Fakt im Anschreiben einer Stelle seiner offenen Kategorien', () => {
+    let geprueft = 0;
+    for (const id of offen) {
+      for (const kategorie of FACTS[id].offenFuer!.kategorien) {
+        for (const job of jobs.filter((j) => j.category === kategorie)) {
+          for (const workStyle of [undefined, ...workStylesFuer(job.category).map((s) => s.value)]) {
+            const letter = buildCoverLetter({ job, skills: [], workStyle, recipient });
+            expect(letter, `${id} · ${job.id}`).not.toMatch(WORTLAUT[id]!);
+            geprueft += 1;
+          }
+        }
+      }
+    }
+    expect(geprueft).toBeGreaterThan(0);
+  });
+
+  it('das Schülerpraktikum ohne Handwerker, Equipment und Hilti', () => {
+    const praktikum = jobs.find((j) => j.category === 'praktikum')!;
+    const letter = buildCoverLetter({ job: praktikum, skills: [], workStyle: WORK_STYLES[0].value, recipient });
+    expect(letter).not.toMatch(/Handwerker aus|Equipment|Hilti/);
+    expect(letter).toContain('Für mein Praktikum wünsche ich mir einen verlässlichen Meisterbetrieb');
+  });
+});
+
+describe('Büro-Schwerpunkte im Brief (Prüfung E-031, D1-4)', () => {
+  const buero = jobs.find((job) => job.category === 'buero')!;
+
+  it('je Aufgabe eine Kurzform, mit Semikolon getrennt, ein Doppelpunkt, „allgemeine“ mitten im Satz klein', () => {
+    expect(Object.keys(BUERO_SKILL_BRIEF)).toEqual([...BUERO_SKILL_OPTIONS]);
+    const letter = buildCoverLetter({ job: buero, skills: [...BUERO_SKILL_OPTIONS], recipient });
+    const zeile = letter.split('\n').find((z) => z.startsWith('Meine Schwerpunkte im Büro: '))!;
+    expect(zeile).toBe(
+      'Meine Schwerpunkte im Büro: Telefon und Terminplanung für Monteure und Kundendienst; Angebote, ' +
+        'Auftragsbestätigungen und Rechnungen; Materialbestellung beim Großhandel und Prüfung der Lieferungen; ' +
+        'allgemeine Verwaltung (Ablage, Post, Zuarbeit für die Geschäftsführung).',
+    );
+    expect(zeile.split(':')).toHaveLength(2);
+    // „allgemeine“ als Beiwort klein (Substantive wie „Angebote“ bleiben groß)
+    expect(zeile).not.toContain('Allgemeine');
+    // Eigene Einträge bleiben, wie sie getippt wurden
+    expect(buildCoverLetter({ job: buero, skills: ['DATEV'], recipient })).toContain('Meine Schwerpunkte im Büro: DATEV.');
   });
 });

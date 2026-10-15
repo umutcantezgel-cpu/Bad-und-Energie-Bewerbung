@@ -1,7 +1,8 @@
 import { INITIATIVE_JOB_ID, isApplicationJobId, type ApplicationJobId } from '@/lib/applications/constants';
 import { parseMappeData } from '@/lib/applications/mappe-data';
 import type { Mappe } from '@/lib/applications/schema';
-import { MAPPE_LIMITS, WORK_STYLE_IDS, getWorkStyle, workStyleIdFromValue, type WorkStyleId } from './options';
+import type { JobCategory } from '@/lib/jobs/schema';
+import { MAPPE_LIMITS, WORK_STYLE_IDS, getWorkStyle, skillsFuerStelle, workStyleIdFromValue, type WorkStyleId } from './options';
 import {
   createStationId,
   isCareerStationEmpty,
@@ -36,7 +37,8 @@ export interface MappeEditorState {
 
 export type MappeEditorAction =
   | { type: 'person'; patch: Partial<MappePerson> }
-  | { type: 'job'; jobId: ApplicationJobId | '' }
+  /** `category`: Stellenart der neuen Wahl (ohne Stelle bzw. initiativ: null); räumt fremde Vorgaben aus `skills`. */
+  | { type: 'job'; jobId: ApplicationJobId | ''; category?: JobCategory | null }
   | { type: 'toggleSkill'; skill: string }
   | { type: 'addSkill'; skill: string }
   | { type: 'workStyle'; id: WorkStyleId }
@@ -78,8 +80,10 @@ export function mappeEditorReducer(state: MappeEditorState, action: MappeEditorA
   switch (action.type) {
     case 'person':
       return { ...state, person: { ...state.person, ...action.patch } };
-    case 'job':
-      return { ...state, jobId: action.jobId };
+    case 'job': {
+      const skills = skillsFuerStelle(state.skills, action.category);
+      return { ...state, jobId: action.jobId, skills: skills.length === state.skills.length ? state.skills : skills };
+    }
     case 'toggleSkill': {
       const selected = state.skills.some((skill) => sameSkill(skill, action.skill));
       if (selected) return { ...state, skills: state.skills.filter((skill) => !sameSkill(skill, action.skill)) };

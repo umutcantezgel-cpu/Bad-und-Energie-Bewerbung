@@ -1,11 +1,12 @@
 import type { JobCategory } from '@/lib/jobs/schema';
+import { BUERO_SKILL_BRIEF } from './options';
 import type { MappeRecipient } from './types';
 
 /**
  * Anschreiben-Vorlage. Wortlaut aus der bisherigen Arbeitsstil-Logik
  * (components/views/QuizView.tsx@393df01, handleStyleChange); geändert wurde nur, was dort
  * falsch oder erfunden war: kein Platzhaltername, keine leeren Aufzählungen,
- * passende Formulierung für Ausbildung und Initiativbewerbung.
+ * passende Formulierung für Ausbildung, Praktikum, Büro und Initiativbewerbung.
  */
 
 export interface LetterJob {
@@ -24,25 +25,32 @@ export interface CoverLetterInput {
   recipient: Pick<MappeRecipient, 'salutation' | 'companyName' | 'city'>;
 }
 
-const GENDER_SUFFIX = /\s*\(m\/w\/d\)\s*$/;
+/** „(m/w/d)“ an jeder Stelle des Titels (Büro: „Bürofachkraft (m/w/d) in Voll- oder Teilzeit“, Prüfung E-031 D1-2). */
+const GENDER_ZUSATZ = /\s*\(m\/w\/d\)/g;
 
-/** Titel für den Fließtext: ohne „(m/w/d)“. */
+/** Titel für den Fließtext: ohne „(m/w/d)“, wo es auch steht. */
 export function roleForText(title: string): string {
-  return title.replace(GENDER_SUFFIX, '').trim();
+  return title.replace(GENDER_ZUSATZ, '').replace(/\s+/g, ' ').trim();
 }
 
 /** Betreffzeile des Anschreibens und Zeile unter dem Namen im Lebenslauf. */
 export function buildSubject(job: LetterJob | null, initiative = false): string {
   if (initiative) return 'Initiativbewerbung';
   if (!job) return 'Bewerbung';
-  return job.category === 'ausbildung' ? `Bewerbung um die ${job.title}` : `Bewerbung als ${job.title}`;
+  return `Bewerbung ${anliegen(job.category)} ${job.title}`;
+}
+
+/** Ausbildung und Praktikum sind keine Rolle: „um die Ausbildung …“, „um ein Schülerpraktikum …“, sonst „als …“. */
+function anliegen(category: JobCategory): string {
+  if (category === 'ausbildung') return 'um die';
+  if (category === 'praktikum') return 'um ein';
+  return 'als';
 }
 
 function intent(job: LetterJob | null, initiative: boolean): string {
   if (initiative) return 'bewerbe ich mich initiativ';
   if (!job) return 'bewerbe ich mich';
-  const role = roleForText(job.title);
-  return job.category === 'ausbildung' ? `bewerbe ich mich um die ${role}` : `bewerbe ich mich als ${role}`;
+  return `bewerbe ich mich ${anliegen(job.category)} ${roleForText(job.title)}`;
 }
 
 function clean(values: readonly string[]): string[] {
@@ -62,6 +70,18 @@ function sentence(text: string): string {
  */
 const BUERO_WERTE = 'Ich schätze einen verlässlichen Meisterbetrieb mit direkter Kommunikation und kurzen Wegen.';
 
+/**
+ * Schülerpraktikum (Prüfung E-031, D1-3): kein „Handwerker aus der Region“, kein Werkzeug und keine flexiblen
+ * Arbeitszeiten – die sind fürs Praktikum offen (Fakt flexibleHours, offenFuer; die Zeiten legen Schule und JArbSchG
+ * fest). Der Wunsch nennt nur den Meisterbetrieb (founded1926) und den direkten Draht (directLine).
+ */
+const PRAKTIKUM_WERTE = 'Für mein Praktikum wünsche ich mir einen verlässlichen Meisterbetrieb mit direkter Kommunikation.';
+
+/** Büro-Schwerpunkte im Brief: die Kurzform je Aufgabe (eigene Einträge bleiben, wie sie getippt wurden). */
+function bueroSchwerpunkte(skills: readonly string[]): string {
+  return skills.map((skill) => BUERO_SKILL_BRIEF[skill] ?? skill).join('; ');
+}
+
 export function buildCoverLetter(input: CoverLetterInput): string {
   const { job, initiative = false, recipient } = input;
   const skills = clean(input.skills);
@@ -69,17 +89,24 @@ export function buildCoverLetter(input: CoverLetterInput): string {
   const name = input.fullName?.trim();
   const isApprenticeship = !initiative && job?.category === 'ausbildung';
   const isOffice = !initiative && job?.category === 'buero';
+  const isInternship = !initiative && job?.category === 'praktikum';
 
   const profile = [
     workStyle ? `${isOffice ? 'Mein Arbeitsstil' : 'Mein handwerklicher Arbeitsstil'}: ${sentence(workStyle)}` : null,
-    skills.length > 0 ? `${isOffice ? 'Meine Schwerpunkte im Büro' : 'Meine praktischen Fachschwerpunkte'}: ${sentence(skills.join(', '))}` : null,
+    skills.length > 0
+      ? isOffice
+        ? `Meine Schwerpunkte im Büro: ${sentence(bueroSchwerpunkte(skills))}`
+        : `Meine praktischen Fachschwerpunkte: ${sentence(skills.join(', '))}`
+      : null,
   ].filter((line): line is string => line !== null);
 
   const values = isOffice
     ? BUERO_WERTE
-    : isApprenticeship
-      ? 'Für meine Ausbildung wünsche ich mir einen verlässlichen Meisterbetrieb mit direkter Kommunikation, modernem Equipment und flexiblen Arbeitszeiten.'
-      : 'Als Handwerker aus der Region schätze ich einen verlässlichen Meisterbetrieb mit direkter Kommunikation, modernem Equipment und flexiblen Arbeitszeiten.';
+    : isInternship
+      ? PRAKTIKUM_WERTE
+      : isApprenticeship
+        ? 'Für meine Ausbildung wünsche ich mir einen verlässlichen Meisterbetrieb mit direkter Kommunikation, modernem Equipment und flexiblen Arbeitszeiten.'
+        : 'Als Handwerker aus der Region schätze ich einen verlässlichen Meisterbetrieb mit direkter Kommunikation, modernem Equipment und flexiblen Arbeitszeiten.';
 
   const paragraphs = [
     recipient.salutation,

@@ -256,7 +256,7 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
           done={stand.abschnitte[1].erledigt}
           jobs={jobs}
           value={state.jobId}
-          onChange={(jobId) => dispatch({ type: 'job', jobId })}
+          onChange={(jobId) => dispatch({ type: 'job', jobId, category: jobs.find((job) => job.id === jobId)?.category ?? null })}
         />
         <SkillsSection
           step={3}

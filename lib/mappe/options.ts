@@ -28,9 +28,32 @@ export const BUERO_SKILL_OPTIONS = [
   'Allgemeine Verwaltung: Ablage, Post, Zuarbeit für die Geschäftsführung',
 ] as const;
 
+/**
+ * Dieselben vier Aufgaben als Kurzform für den Fließtext des Anschreibens (Prüfung E-031, D1-4): Der Wortlaut der
+ * Anzeige enthält selbst Kommas und einen Doppelpunkt; im Brief stehen die Kurzformen mit Semikolon getrennt. Die
+ * Chips behalten den Wortlaut der Anzeige.
+ */
+export const BUERO_SKILL_BRIEF: Readonly<Record<string, string>> = Object.freeze({
+  [BUERO_SKILL_OPTIONS[0]]: 'Telefon und Terminplanung für Monteure und Kundendienst',
+  [BUERO_SKILL_OPTIONS[1]]: 'Angebote, Auftragsbestätigungen und Rechnungen',
+  [BUERO_SKILL_OPTIONS[2]]: 'Materialbestellung beim Großhandel und Prüfung der Lieferungen',
+  [BUERO_SKILL_OPTIONS[3]]: 'allgemeine Verwaltung (Ablage, Post, Zuarbeit für die Geschäftsführung)',
+});
+
 /** Schwerpunkte zum Antippen je Stellenart: das Büro mit seinen Aufgaben, sonst die Praxis der Baustelle. */
 export function skillOptionen(category: JobCategory | null | undefined): readonly string[] {
   return category === 'buero' ? BUERO_SKILL_OPTIONS : SKILL_OPTIONS;
+}
+
+/**
+ * Beim Wechsel der Stelle (Prüfung E-031, D1-7): vorgegebene Schwerpunkte der anderen Stellenart fallen weg, damit
+ * keine Baustellen-Kenntnis im Büro-Anschreiben steht und keine Büro-Aufgabe unter den Fachschwerpunkten. Selbst
+ * eingetragene Schwerpunkte bleiben.
+ */
+export function skillsFuerStelle(skills: readonly string[], category: JobCategory | null | undefined): string[] {
+  const passend = skillOptionen(category);
+  const vorgaben = [...SKILL_OPTIONS, ...BUERO_SKILL_OPTIONS] as readonly string[];
+  return skills.filter((skill) => passend.includes(skill) || !vorgaben.includes(skill));
 }
 
 export const WORK_STYLE_IDS = ['qualitaet', 'technik', 'team'] as const;
