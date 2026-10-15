@@ -5,30 +5,36 @@
  * nie von der Seite (node:crypto).
  *
  * Ablauf je Feld:
- * 1. Stationäres Feld auf dem Gitter von 2 Einheiten (SOR), θ absolut (0 außen, 1 Vorlauf); geglättet mit dem
- *    Binomialkern.
+ * 1. Stationäres Feld auf dem Gitter von 2 Einheiten (direkt gelöst), θ absolut (0 außen, 1 Vorlauf); geglättet mit
+ *    dem Binomialkern.
  * 2. Schwellen der Bänder (Feldeingabe.skala):
  *    - Hausschnitt (`eigen`): oberhalb liegen 64, 36, 16 und 6 % der Raumfläche.
- *    - Vergleichsräume (`vergleich`, Prüfrunde 1 B1-1): eine gemeinsame Skala. Beide Räume haben dieselbe mittlere
- *      Raumtemperatur (wie mit dem Thermostat geregelt); die Schwellen sind dieselben Abstände vom Raummittel, nämlich
- *      die des Raums mit Heizkörper bei 64/36/16/6 % seiner Fläche. Gleiche Farbe heißt so in beiden Räumen gleich
- *      warm. Die Fußbodenheizung erreicht die oberen Abstände nicht: Sie bekommt nur die Bänder, die ihr Feld auf
- *      mindestens MIN_FLAECHE des Raums erreicht – das zeigt, dass sie gleichmäßiger heizt. (Vorher hatte jeder Raum
- *      seine eigenen Anteile; beide sahen gleich geschichtet aus.)
- * 3. Je Band die größte geschlossene Kontur (Marching Squares), Ramer-Douglas-Peucker mit ε = EPSILON, Catmull-Rom als
- *    Bézier, 0,5-Raster.
+ *    - Vergleichsräume (`vergleich`, Prüfrunde 1 B1-1, Prüfrunde 3 B3-1): eine gemeinsame Skala. Beide Räume haben
+ *      dieselbe mittlere Raumtemperatur (wie mit dem Thermostat geregelt). Das Feld ist linear in der Quelle (siehe
+ *      eingabe.ts Skala): Ein Thermostat, der den Raum auf dasselbe Mittel bringt, multipliziert sein Feld mit
+ *      m_Bezug / m_Raum. Die Schwellen sind darum die des Raums mit Heizkörper bei 64/36/16/6 % seiner Fläche mal
+ *      m_Raum / m_Bezug (vorher: dieselben Abstände vom Mittel; das zeichnete die Schichtung der Fußbodenheizung um rund
+ *      30 % zu flach). Gleiche Farbe heißt so in beiden Räumen gleich warm. Die Fußbodenheizung erreicht die oberen
+ *      Stufen nicht: Sie bekommt nur die Bänder, die ihr Feld auf mindestens MIN_FLAECHE des Raums erreicht – das
+ *      zeigt, dass sie gleichmäßiger heizt.
+ * 3. Je Band die größte geschlossene Kontur (Marching Squares), Ramer-Douglas-Peucker mit ε = EPSILON und Strecken
+ *    höchstens MAX_STRECKE lang, Catmull-Rom als Bézier, 0,5-Raster.
  * 4. Reihenfolge aus einem echten zeitabhängigen Lauf (Gitter rund 4 Einheiten, ab θ = 0 mit eingeschalteter
- *    Heizfläche): t_k = Zeit, zu der der Ring des Bands k (zwischen seiner Kontur und der des nächst heißeren Bands,
- *    aus dem Endzustand auf demselben Gitter) im Mittel ANKUNFT = 60 % seiner Endtemperatur erreicht. So setzt ein Band
- *    ein, wenn seine Zone zu 60 % erwärmt ist, und wächst dann vom Startmaßstab 0,6 auf 1 (√t). Die Zeiten gehen linear
- *    ins Fenster des Felds (heißestes Band am Anfang, kühlstes am Ende), auf halbe Takte. Kommt das heißeste Band nicht
- *    zuerst oder fallen zwei auf denselben halben Takt, bricht die Rechnung ab.
+ *    Heizfläche): t_k = Zeit, zu der der Ring des Bands k im Mittel ANKUNFT = 60 % seiner Endtemperatur erreicht. Der
+ *    Ring sind die Luftknoten des Zeitgitters zwischen Band k und Band k + 1, gebildet wie die Bänder selbst: aus dem
+ *    geglätteten stationären Feld auf dem Zeitgitter, mit Schwellen bei denselben Flächenanteilen wie die gezeichneten
+ *    Bänder (Prüfrunde 3 B3-3; vorher die feinen Schwellen auf dem groben, ungeglätteten Feld, und Knoten der Heizfläche
+ *    zählten mit: Im Hausschnitt bestand der Ring des heißesten Bands nur aus ihnen und „kam“ im ersten Schritt an).
+ *    Ein Ring ohne Luftknoten bricht die Rechnung ab. So setzt ein Band ein, wenn seine Zone zu 60 % erwärmt ist, und
+ *    wächst dann vom Startmaßstab 0,6 auf 1 (√t). Die Zeiten gehen linear ins Fenster des Felds (heißestes Band am
+ *    Anfang, kühlstes am Ende), auf halbe Takte. Kommt das heißeste Band nicht zuerst oder fallen zwei auf denselben
+ *    halben Takt, bricht die Rechnung ab.
  *    (Ein Maß über die Fläche der Bänder, „36 % der Endfläche“, ordnet die Bänder über der Fußbodenheizung nicht: Dort
  *    wächst jede Schicht fast gleich schnell aus der Bodenfläche. Der Ring misst, wann die Wärme in der Zone ankommt.)
  */
 import { createHash } from 'node:crypto';
-import { ANPASSUNG, DURCHMISCHUNG, FELDEINGABEN, GRENZSCHICHT, KALIBRIERUNG, PECLET, type Feldeingabe, type FeldId } from './eingabe';
-import { K, OMEGA, TOLERANZ, laufeZeit, loeseStationaer, type Feldaufgabe, type Gitter, type Loesung, type Rechteck } from './feld';
+import { ANPASSUNG, DURCHMISCHUNG, FELDEINGABEN, KALIBRIERUNG, PECLET, SCHICHTEN, type Feldeingabe, type FeldId } from './eingabe';
+import { K, laufeZeit, loeseStationaer, type Feldaufgabe, type Gitter, type Loesung, type Rechteck } from './feld';
 import { SPIEGELRAND, anteilUeber, bezierPfad, flaeche, glaetten, konturen, quantil, rdp, type P } from './kontur';
 
 export const SKRIPT = 'scripts/zeichnung/waermefeld.ts';
@@ -41,23 +47,30 @@ export const ANTEILE = Object.freeze([0.64, 0.36, 0.16, 0.06]);
 export const MIN_FLAECHE = 0.02;
 /** Genauigkeit der Vereinfachung (Einheiten). */
 export const EPSILON = 0.35;
+/**
+ * Längste Strecke der Vereinfachung (Einheiten, Prüfrunde 3 A3-5): Eine längere Strecke teilt RDP am Punkt der größten
+ * Abweichung, auch wenn alle Punkte innerhalb von ε liegen; so folgt auch eine fast gerade Isotherme den Stützpunkten
+ * des Rasters statt einer Sehne über die halbe Raumbreite.
+ */
+export const MAX_STRECKE = 40;
 /** Anteil der Endtemperatur im Ring eines Bands, bei dem es „ankommt“ (wie der Startmaßstab 0,6 der Bewegung). */
 export const ANKUNFT = 0.6;
 
 export const MODELL =
   'Stationäre Wärmeausbreitung mit Konvektion, K∇²θ − u·∇θ = 0, θ = 0 außen, 1 am Vorlauf; Konvektion aus Walzen ' +
-  '(Stromfunktion 16ξ(1−ξ)η(1−η), divergenzfrei, Pe 16 am Heizkörper, 2 an der Fußbodenheizung; im Vergleichsraum ' +
-  'mit Heizkörper steigt die Luft in einer dünnen Schicht am Heizkörper, F(ξ) = (1−ξ)ξ/(ξ+0,05)); Heizkörper mit ' +
-  'fester Temperatur (1,0 oben, 0,8 unten), Unterseite ohne Wärmeabgabe nach unten; mit Heizkörper konvektive ' +
-  'Anpassung als Ersatz für den Auftrieb (wo die Luft oben kühler ist als darunter, 41-fache senkrechte ' +
-  'Leitfähigkeit, außer 0,1 m an Decke und Boden); Wände, Decke und Boden als ' +
-  'Robin-Rand mit U nach dem GEG-Referenzgebäude (0,28 / 0,20 / 0,35 × 0,6), Fußbodenheizung als Robin-Rand mit θ 0,6 ' +
-  'und 10,8 W/(m²·K) (DIN EN 1264-5), vierfache Leitfähigkeit über dem Boden als Ersatz für den Strahlungsaustausch ' +
-  '(Kalibrierung ohne Quelle); Kalibrierkonstante der Ränder 0,01. Linien-SOR (ω 1,7) auf 2 Einheiten. Bänder: Hausschnitt bei 64, 36, 16 ' +
-  'und 6 % der Raumfläche; Vergleichsräume bei gleicher mittlerer Raumtemperatur auf derselben Skala (Abstände vom ' +
-  'Raummittel wie im Raum mit Heizkörper bei 64/36/16/6 %), ein Band nur ab 2 % der Fläche. Reihenfolge aus einem ' +
-  'expliziten Zeitlauf auf rund 4 Einheiten (Ring eines Bands zu 60 % erwärmt). Hausschnitt: Schnittebene vor der ' +
-  'Rückwand, der Heizkörper an der Rückwand liegt in der Ebene.';
+  '(Stromfunktion, divergenzfrei, Pe 16 am Heizkörper, 2 an der Fußbodenheizung); mit Heizkörper in dünnen Schichten ' +
+  'je F(ξ)·G(η), Profil x(1−x)/((x+p)(1−x+q)): Fahne über dem Heizkörper, Deckenstrahl unter der Decke, Abstrom an den ' +
+  'Außenwänden (Hausschnitt) bzw. im ganzen Raum (Vergleichsraum); Heizkörper mit fester Temperatur (1,0 oben, 0,8 ' +
+  'unten), Unterseite ohne Wärmeabgabe nach unten; mit Heizkörper konvektive Anpassung als Ersatz für den Auftrieb (wo ' +
+  'die Luft oben kühler ist als darunter, 41-fache senkrechte Leitfähigkeit, außer 20 mm an Decke und Boden); Wände, ' +
+  'Decke und Boden als Robin-Rand mit U nach dem GEG-Referenzgebäude (0,28 / 0,20 / 0,35 × 0,6), Fußbodenheizung als ' +
+  'Robin-Rand mit θ 0,6 und 10,8 W/(m²·K) (DIN EN 1264-5), vierfache Leitfähigkeit über dem Boden als Ersatz für den ' +
+  'Strahlungsaustausch (Kalibrierung ohne Quelle); Kalibrierkonstante der Ränder 0,01. Hybridverfahren, direkt gelöst ' +
+  'auf 2 Einheiten. Bänder: Hausschnitt bei 64, 36, 16 und 6 % der Raumfläche; Vergleichsräume bei gleicher mittlerer ' +
+  'Raumtemperatur auf derselben Skala (Schwellen des Raums mit Heizkörper bei 64/36/16/6 % im Verhältnis der ' +
+  'Raummittel), ein Band nur ab 2 % der Fläche. Reihenfolge aus einem expliziten Zeitlauf auf rund 4 Einheiten (Ring ' +
+  'eines Bands aus Luftknoten zu 60 % erwärmt). Hausschnitt: Schnittebene vor der Rückwand, der Heizkörper an der ' +
+  'Rückwand liegt in der Ebene.';
 
 export interface Band {
   stufe: 1 | 2 | 3 | 4;
@@ -88,6 +101,9 @@ export interface Feldrechnung {
   schwellen: number[];
   /** Ankunftszeiten der gezeichneten Bänder. */
   ankunft: number[];
+  /** Ringe des Zeitlaufs je Band: Indizes der Knoten auf `zeitgitter` (nur Luft, siehe ankunftszeiten). */
+  ringe: number[][];
+  zeitgitter: Gitter;
 }
 
 const auf3 = (x: number) => Math.round(x * 1000) / 1000;
@@ -96,27 +112,43 @@ const auf3 = (x: number) => Math.round(x * 1000) / 1000;
 export function eingabeHash(): string {
   const eingaben = {
     felder: FELDEINGABEN,
-    konstanten: { K, OMEGA, TOLERANZ, KALIBRIERUNG, ANPASSUNG, PECLET, DURCHMISCHUNG, GRENZSCHICHT, RASTER, RASTER_ZEIT, ANTEILE, MIN_FLAECHE, EPSILON, ANKUNFT, SPIEGELRAND },
+    konstanten: { K, KALIBRIERUNG, ANPASSUNG, PECLET, DURCHMISCHUNG, SCHICHTEN, RASTER, RASTER_ZEIT, ANTEILE, MIN_FLAECHE, EPSILON, MAX_STRECKE, ANKUNFT, SPIEGELRAND },
   };
   return createHash('sha256').update(JSON.stringify(eingaben)).digest('hex').slice(0, 16);
 }
 
 /**
- * Zeiten, zu denen der Ring jedes Bands im Mittel ANKUNFT seiner Endtemperatur erreicht (zeitabhängiger Lauf auf
- * RASTER_ZEIT; Ringe und Endtemperaturen aus dem stationären Feld auf demselben Gitter, Schwellen θ absolut).
+ * Ringe des Zeitlaufs (Prüfrunde 3 B3-3): je Band die Luftknoten des Zeitgitters zwischen ihm und dem nächst heißeren.
+ * Gebildet wie die Bänder: aus dem geglätteten stationären Feld auf dem Zeitgitter, mit Schwellen bei denselben
+ * Flächenanteilen wie die gezeichneten Bänder (`anteile`, Anteil des feinen geglätteten Felds über der Schwelle).
+ * Knoten einer Heizfläche (feste Temperatur, ab t = 0 am Endwert) gehören zu keinem Ring.
  */
-function ankunftszeiten(e: Feldeingabe, schwellen: readonly number[], grob: Loesung): number[] {
-  const ende = grob.theta;
-  const ringe = schwellen.map((s, k) => {
-    const unten = s;
+export function ringeAufZeitgitter(e: Feldeingabe, anteile: readonly number[], grob: Loesung): number[][] {
+  const g = grob.gitter;
+  const glatt = glaetten(grob.theta, g);
+  const schwellen = anteile.map((a) => quantil(glatt, a));
+  return schwellen.map((s, k) => {
     const oben = k < schwellen.length - 1 ? schwellen[k + 1] : Infinity;
     const knoten: number[] = [];
-    for (let q = 0; q < ende.length; q += 1) if (ende[q] >= unten && ende[q] < oben) knoten.push(q);
-    if (knoten.length === 0) throw new Error(`waermefeld: ${e.id}: Band ${k + 1} ohne Knoten auf dem Zeitgitter`);
+    for (let q = 0; q < glatt.length; q += 1) {
+      const x = g.x0 + (q % g.nx) * g.dx;
+      const y = g.y0 + Math.floor(q / g.nx) * g.dy;
+      if (aufHeizflaeche(e.aufgabe, x, y)) continue;
+      if (glatt[q] >= s && glatt[q] < oben) knoten.push(q);
+    }
+    if (knoten.length === 0) throw new Error(`waermefeld: ${e.id}: Band ${k + 1} ohne Luftknoten auf dem Zeitgitter`);
     return knoten;
   });
+}
+
+/**
+ * Zeiten, zu denen der Ring jedes Bands im Mittel ANKUNFT seiner Endtemperatur erreicht (zeitabhängiger Lauf auf
+ * RASTER_ZEIT; Endtemperaturen aus dem stationären Feld auf demselben Gitter).
+ */
+function ankunftszeiten(e: Feldeingabe, ringe: readonly number[][], grob: Loesung): number[] {
+  const ende = grob.theta;
   const endmittel = ringe.map((r) => r.reduce((summe, q) => summe + ende[q], 0) / r.length);
-  const zeiten = schwellen.map(() => NaN);
+  const zeiten = ringe.map(() => NaN);
   laufeZeit(
     e.aufgabe,
     RASTER_ZEIT,
@@ -173,10 +205,10 @@ export function berechneWaermefelder(): Rechnung {
   for (const e of FELDEINGABEN) {
     // 1. Feld rechnen (Startwert: dasselbe Feld auf dem Zeitgitter) und glätten; das Mittel der Raumluft
     const grob = loeseStationaer(e.aufgabe, RASTER_ZEIT);
-    const loesung = loeseStationaer(e.aufgabe, RASTER, grob);
+    const loesung = loeseStationaer(e.aufgabe, RASTER);
     const glatt = glaetten(loesung.theta, loesung.gitter);
     const mittel = raummittel(glatt, loesung.gitter, e.aufgabe);
-    zwischen.set(e.id, { eingabe: e, loesung, mittel, glatt, schwellen: [], ankunft: [] });
+    zwischen.set(e.id, { eingabe: e, loesung, mittel, glatt, schwellen: [], ankunft: [], ringe: [], zeitgitter: grob.gitter });
     grobe.set(e.id, grob);
   }
   for (const e of FELDEINGABEN) {
@@ -193,16 +225,22 @@ export function berechneWaermefelder(): Rechnung {
       if (!bezug || bezug.eingabe.skala.art !== 'vergleich' || bezug.eingabe.skala.bezug !== e.skala.bezug) {
         throw new Error(`waermefeld: ${e.id}: Bezugsraum ${e.skala.bezug} fehlt oder steht nicht auf seiner eigenen Skala`);
       }
-      const abstaende = ANTEILE.map((a) => quantil(bezug.glatt, a) - bezug.mittel);
-      schwellen = abstaende.map((d) => auf3(z.mittel + d)).filter((s) => anteilUeber(glatt, s) >= MIN_FLAECHE);
+      // Gleiches Mittel per Thermostat: das Feld mal m_Bezug / m_Raum, also die Schwellen des Bezugs mal m_Raum / m_Bezug
+      const faktor = z.mittel / bezug.mittel;
+      schwellen = ANTEILE.map((a) => auf3(quantil(bezug.glatt, a) * faktor)).filter((s) => anteilUeber(glatt, s) >= MIN_FLAECHE);
       if (schwellen.length === 0) throw new Error(`waermefeld: ${e.id}: kein Band auf der gemeinsamen Skala`);
     }
     for (let k = 1; k < schwellen.length; k += 1) {
       if (!(schwellen[k] > schwellen[k - 1])) throw new Error(`waermefeld: ${e.id}: Schwellen nicht steigend (${schwellen.join(', ')})`);
     }
     z.schwellen = schwellen;
-    // 4. Ankunftszeiten
-    z.ankunft = ankunftszeiten(e, schwellen, grob);
+    // 4. Ankunftszeiten (Ringe bei denselben Flächenanteilen wie die gezeichneten Bänder)
+    z.ringe = ringeAufZeitgitter(
+      e,
+      schwellen.map((s) => anteilUeber(glatt, s)),
+      grob,
+    );
+    z.ankunft = ankunftszeiten(e, z.ringe, grob);
     for (let k = 1; k < z.ankunft.length; k += 1) {
       if (!(z.ankunft[k] < z.ankunft[k - 1])) {
         throw new Error(`waermefeld: ${e.id}: Band ${k + 1} kommt nicht vor Band ${k} an (${z.ankunft.join(', ')}); das heißeste muss zuerst kommen`);
@@ -214,7 +252,7 @@ export function berechneWaermefelder(): Rechnung {
       const schleifen = konturen(z.glatt, g, s);
       if (schleifen.length === 0) throw new Error(`waermefeld: ${e.id}: keine Kontur auf ${s}`);
       const groesste = schleifen.reduce((a, b) => (Math.abs(flaeche(b)) > Math.abs(flaeche(a)) ? b : a));
-      const d = bezierPfad(rdp(groesste, EPSILON), {
+      const d = bezierPfad(rdp(groesste, EPSILON, MAX_STRECKE), {
         x0: e.innen.x - SPIEGELRAND,
         y0: e.innen.y - SPIEGELRAND,
         x1: e.innen.x + e.innen.breite + SPIEGELRAND,

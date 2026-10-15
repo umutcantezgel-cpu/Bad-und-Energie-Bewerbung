@@ -245,7 +245,13 @@ function abstandZurStrecke(p: P, a: P, b: P): number {
   return Math.sqrt(ex * ex + ey * ey);
 }
 
-function rdpOffen(punkte: readonly P[], epsilon: number): P[] {
+const abstand = (a: P, b: P) => {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  return Math.sqrt(dx * dx + dy * dy);
+};
+
+function rdpOffen(punkte: readonly P[], epsilon: number, maxLaenge: number): P[] {
   if (punkte.length < 3) return [...punkte];
   let max = 0;
   let index = 0;
@@ -258,14 +264,22 @@ function rdpOffen(punkte: readonly P[], epsilon: number): P[] {
       index = k;
     }
   }
-  if (max <= epsilon) return [a, b];
-  const links = rdpOffen(punkte.slice(0, index + 1), epsilon);
-  const rechts = rdpOffen(punkte.slice(index), epsilon);
+  if (max <= epsilon) {
+    // Innerhalb von ε, aber zu lang (Prüfrunde 3 A3-5): am Punkt der größten Abweichung teilen, liegen alle auf der
+    // Sehne, in der Mitte
+    if (abstand(a, b) <= maxLaenge) return [a, b];
+    if (max === 0) index = Math.floor((punkte.length - 1) / 2);
+  }
+  const links = rdpOffen(punkte.slice(0, index + 1), epsilon, maxLaenge);
+  const rechts = rdpOffen(punkte.slice(index), epsilon, maxLaenge);
   return [...links.slice(0, -1), ...rechts];
 }
 
-/** Ramer-Douglas-Peucker für eine geschlossene Schleife: geteilt am ersten Punkt und am Punkt am weitesten davon. */
-export function rdp(schleife: readonly P[], epsilon: number): P[] {
+/**
+ * Ramer-Douglas-Peucker für eine geschlossene Schleife: geteilt am ersten Punkt und am Punkt am weitesten davon. Keine
+ * Strecke des Ergebnisses ist länger als `maxLaenge`, solange zwischen ihren Enden Punkte der Schleife liegen.
+ */
+export function rdp(schleife: readonly P[], epsilon: number, maxLaenge = Infinity): P[] {
   const a = schleife[0];
   let fern = 0;
   let max = -1;
@@ -278,16 +292,10 @@ export function rdp(schleife: readonly P[], epsilon: number): P[] {
       fern = k;
     }
   }
-  const erste = rdpOffen(schleife.slice(0, fern + 1), epsilon);
-  const zweite = rdpOffen([...schleife.slice(fern), a], epsilon);
+  const erste = rdpOffen(schleife.slice(0, fern + 1), epsilon, maxLaenge);
+  const zweite = rdpOffen([...schleife.slice(fern), a], epsilon, maxLaenge);
   return [...erste.slice(0, -1), ...zweite.slice(0, -1)];
 }
-
-const abstand = (a: P, b: P) => {
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
-  return Math.sqrt(dx * dx + dy * dy);
-};
 
 /** Auf das 0,5-Raster (ohne −0). */
 export const halb = (wert: number): number => {

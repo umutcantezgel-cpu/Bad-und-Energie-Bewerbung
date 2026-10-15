@@ -9,9 +9,11 @@
  *   damit in der Ebene (HEIZKOERPER_LAGE). Beide Seitenwände sind Außenwände, darüber die oberste Geschossdecke, unten
  *   die Bodenplatte. Zwei gegenläufige Walzen mit gemeinsamem Aufstrom über der Mitte des Heizkörpers.
  * - Vergleichsraum mit Heizkörper: Flachheizkörper an der Außenwand links (von der Seite geschnitten), rechts eine
- *   Innenwand zum beheizten Nachbarraum (adiabat), eine Walze mit Aufstrom am Heizkörper. Die Luft steigt in einer
- *   dünnen Schicht zwischen Wand und Heizkörper und an seiner Vorderseite auf (GRENZSCHICHT), die kühle Raumluft strömt
- *   am Boden bis unter den Heizkörper zurück (Prüfrunde 1 B1-2).
+ *   Innenwand zum beheizten Nachbarraum (adiabat), eine Walze mit Aufstrom am Heizkörper.
+ * - Beide Räume mit Heizkörper strömen in dünnen Schichten (SCHICHTEN, Prüfrunde 3 B3-2): Die Luft steigt in einer
+ *   dünnen Fahne über dem Heizkörper auf, breitet sich als Deckenstrahl unter der Decke aus und sinkt im Hausschnitt an
+ *   den kalten Außenwänden, im Vergleichsraum langsam im ganzen Raum (an der Innenwand fällt keine kalte Luft,
+ *   Prüfrunde 2 B2-2); die Fahne saugt Raumluft aus der unteren Raumhälfte an.
  * - Beide Räume mit Heizkörper mit konvektiver Anpassung (ANPASSUNG, Prüfrunde 2 B2-1): Die Walzen sind fest vorgegeben;
  *   wo die Luft oben kühler wäre als darunter, mischt sie sich, wie es der Auftrieb täte. So liegt die wärmste Luft
  *   unter der Decke und nicht 1 m tiefer.
@@ -60,32 +62,44 @@ export const PECLET = Object.freeze({ heizkoerper: 16, fussboden: 2 });
  */
 export const DURCHMISCHUNG = Object.freeze({ heizkoerper: 1, fussboden: 4 });
 /**
- * Dicke der Aufstromschicht im Vergleichsraum mit Heizkörper (Anteil der Raumbreite, lib/zeichnung/waerme/feld.ts
- * Walze.grenzschicht): 0,05 × 4,2 m ≈ 0,2 m – Wandabstand (50 mm) und Bautiefe (100 mm) des Heizkörpers samt der
- * aufsteigenden Schicht davor. Gewählt, nicht gemessen (Prüfrunde 1 B1-2).
+ * Walzen der Räume mit Heizkörper aus dünnen Schichten (Prüfrunde 3 B3-2, lib/zeichnung/waerme/feld.ts
+ * Walze.schichten), je als Anteil der Walzenbreite bzw. der Raumhöhe. Gewählt, nicht gemessen:
+ * - aufstrom 0,05: die Fahne über dem Heizkörper (im Vergleichsraum 0,05 × 4,2 m ≈ 0,2 m, Wandabstand und Bautiefe des
+ *   Heizkörpers samt der aufsteigenden Schicht davor, wie die Aufstromschicht aus Prüfrunde 1 B1-2).
+ * - decke 0,05 (0,05 × 2,5 m ≈ 0,12 m): der Deckenstrahl, in dem die Fahne die warme Luft unter der Decke verteilt.
+ *   Vorher stieg die Luft in einer Walze über die ganze Höhe und kehrte in der oberen Raumhälfte um; die Isothermen
+ *   standen dort senkrecht, und unter der Decke war der waagerechte Unterschied größer als der senkrechte.
+ * - boden 1: die Rückströmung zur Fahne verteilt sich über die untere Raumhälfte (die Fahne saugt Raumluft an).
+ * - abstrom: im Hausschnitt 0,05, die Luft sinkt an den kalten Außenwänden; im Vergleichsraum 4, sie sinkt langsam im
+ *   ganzen Raum, zur Innenwand hin etwas stärker (Prüfrunde 2 B2-2: keine kalte Wand, an der sie fiele).
  */
-export const GRENZSCHICHT = 0.05;
+export const SCHICHTEN = Object.freeze({
+  hausschnitt: Object.freeze({ aufstrom: 0.05, abstrom: 0.05, decke: 0.05, boden: 1 }),
+  raum: Object.freeze({ aufstrom: 0.05, abstrom: 4, decke: 0.05, boden: 0.5 }),
+});
 
 /**
  * Konvektive Anpassung der Räume mit Heizkörper (Prüfrunde 2 B2-1, lib/zeichnung/waerme/feld.ts Anpassung): Wo die Luft
  * oben kühler ist als darunter, mischt sie sich mit der 41-fachen Leitfähigkeit (faktor 40) – eine instabile Schichtung
- * baut sich so bis auf rund ein Vierzigstel ab. Ausgenommen sind 0,1 m an Decke und Boden (randschicht 10 Einheiten):
- * Dort haftet die Luft an der Fläche und gibt Wärme an sie ab. Gewählt, nicht gemessen: so groß, dass in jeder Spalte
- * außerhalb der Fahne die Luft 0,1 m unter der Decke höchstens 0,01 kühler ist als die wärmste der Spalte
- * (lib/zeichnung/__tests__/waermefeld.test.ts). Nicht bei der Fußbodenheizung: Über dem warmen Boden ist die
- * Schichtung überall instabil, das Modell bildet diese Durchmischung dort schon mit DURCHMISCHUNG ab (Prüfrunde 1
+ * baut sich so bis auf rund ein Vierzigstel ab. Ausgenommen ist eine Gitterzeile an Decke und Boden (randschicht 2
+ * Einheiten = 20 mm, Prüfrunde 3 B3-2; vorher 0,1 m): Dort gibt die Luft Wärme an die Fläche ab, die Grenzschicht ist
+ * Millimeter bis Zentimeter dick. Gewählt, nicht gemessen. Nicht bei der Fußbodenheizung: Über dem warmen Boden ist
+ * die Schichtung überall instabil, das Modell bildet diese Durchmischung dort schon mit DURCHMISCHUNG ab (Prüfrunde 1
  * B1-4); beides zusammen zählte den Auftrieb doppelt.
  */
-export const ANPASSUNG: Anpassung = Object.freeze({ faktor: 40, randschicht: 10 });
+export const ANPASSUNG: Anpassung = Object.freeze({ faktor: 40, randschicht: 2 });
 
 const robin = (u: number, bezug = 0): Rand => ({ h: KALIBRIERUNG * u, bezug });
 const ADIABAT: Rand = { h: 0, bezug: 0 };
 
 /**
- * Skala der Bänder (Prüfrunde 1 B1-1): `eigen` – Schwellen aus den Flächenanteilen des Felds selbst (Hausschnitt);
- * `vergleich` – die beiden Vergleichsräume stehen auf einer gemeinsamen Skala: gleiche mittlere Raumtemperatur (wie mit
- * einem Thermostat geregelt) und dieselben Abstände vom Raummittel, nämlich die des Bezugsraums (Heizkörper) bei
- * 64/36/16/6 % seiner Fläche. Ein Raum bekommt nur die Bänder, die sein Feld erreicht.
+ * Skala der Bänder (Prüfrunde 1 B1-1, Prüfrunde 3 B3-1): `eigen` – Schwellen aus den Flächenanteilen des Felds selbst
+ * (Hausschnitt); `vergleich` – die beiden Vergleichsräume stehen auf einer gemeinsamen Skala: gleiche mittlere
+ * Raumtemperatur (wie mit einem Thermostat geregelt). Das Feld ist linear in der Quelle (Robin-Bezug 0 an Wänden und
+ * Decke, Heizfläche bzw. Fußboden als einzige Quelle; die konvektive Anpassung hängt nur vom Vorzeichen der
+ * Unterschiede ab): Hebt der Thermostat die Vorlauftemperatur, wachsen alle Temperaturen über außen mit demselben
+ * Faktor. Die Schwellen eines Raums sind darum die des Bezugsraums (Heizkörper, bei 64/36/16/6 % seiner Fläche) mal
+ * dem Verhältnis der Raummittel. Ein Raum bekommt nur die Bänder, die sein Feld erreicht.
  */
 export type Skala = { art: 'eigen' } | { art: 'vergleich'; bezug: FeldId };
 
@@ -136,8 +150,8 @@ export const FELDEINGABEN: readonly Feldeingabe[] = [
         unten: robin(U_WERTE.bodenplatte * F_ERDREICH),
       },
       walzen: [
-        { x0: HAUS_INNEN.x, x1: HK_MITTE, aufstrom: 'rechts' },
-        { x0: HK_MITTE, x1: HAUS_INNEN.x + HAUS_INNEN.breite, aufstrom: 'links' },
+        { x0: HAUS_INNEN.x, x1: HK_MITTE, aufstrom: 'rechts', schichten: SCHICHTEN.hausschnitt },
+        { x0: HK_MITTE, x1: HAUS_INNEN.x + HAUS_INNEN.breite, aufstrom: 'links', schichten: SCHICHTEN.hausschnitt },
       ],
       peclet: PECLET.heizkoerper,
       durchmischung: DURCHMISCHUNG.heizkoerper,
@@ -161,7 +175,7 @@ export const FELDEINGABEN: readonly Feldeingabe[] = [
         oben: robin(U_WERTE.decke),
         unten: robin(U_WERTE.bodenplatte * F_ERDREICH),
       },
-      walzen: [{ x0: RAUM_INNEN.x, x1: RAUM_INNEN.x + RAUM_INNEN.breite, aufstrom: 'links', grenzschicht: GRENZSCHICHT }],
+      walzen: [{ x0: RAUM_INNEN.x, x1: RAUM_INNEN.x + RAUM_INNEN.breite, aufstrom: 'links', schichten: SCHICHTEN.raum }],
       peclet: PECLET.heizkoerper,
       durchmischung: DURCHMISCHUNG.heizkoerper,
       anpassung: ANPASSUNG,

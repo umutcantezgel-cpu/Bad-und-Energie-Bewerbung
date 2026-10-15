@@ -110,7 +110,8 @@ const raumMeter = (einheiten: number) => (einheiten / 100).toLocaleString('de-DE
  * jede Aussage prüft lib/zeichnung/__tests__/waermefeld.test.ts am gerechneten Feld (Fahne, warme Schicht unter der Decke
  * ohne kühlere darüber, Absinken über die ganze Breite statt an der Gegenwand, Rückströmung am Boden zum Heizkörper,
  * kühler Boden, Prüfrunde 2 B2-1, B2-2; Fußbodenheizung gleichmäßiger, am Boden am wärmsten, an der Außenwand kühler; beide Räume auf einer
- * Skala bei gleicher mittlerer Raumtemperatur, die beiden kräftigsten Stufen nur beim Heizkörper, Prüfrunde 1 B1-1).
+ * Skala bei gleicher mittlerer Raumtemperatur, die beiden kräftigsten Stufen nur beim Heizkörper, mit Fußbodenheizung
+ * auf weniger als 1 % des Raums, Prüfrunde 1 B1-1 und Prüfrunde 3 B3-1).
  */
 export const WAERMEVERTEILUNG = Object.freeze({
   titel: 'So verteilt sich die Wärme im Raum',
@@ -133,7 +134,8 @@ export const WAERMEVERTEILUNG = Object.freeze({
     text:
       `Berechnet für einen Raum von ${raumMeter(RAUM_INNEN.breite)}${NBSP}×${NBSP}${raumMeter(RAUM_INNEN.hoehe)}${NBSP}m im ` +
       'Schnitt, links die Außenwand. Beide Räume sind im Mittel gleich warm und auf derselben Skala gezeichnet: Je ' +
-      'kräftiger die Fläche, desto wärmer die Luft. Die kräftigsten Stufen erreicht nur der Heizkörper.',
+      'kräftiger die Fläche, desto wärmer die Luft. Die beiden kräftigsten Stufen zeigt nur der Raum mit Heizkörper; mit ' +
+      'Fußbodenheizung ist die Luft fast nirgends so warm.',
     quelle: 'zeichnung:waermefeld',
   } satisfies ErklaerSatz,
 });

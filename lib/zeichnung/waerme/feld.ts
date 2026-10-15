@@ -10,10 +10,11 @@
  * - K' = K · durchmischung: wirksame Leitfähigkeit der Raumluft, K = 1 (Länge in Einheiten der Szene, Zeit in
  *   K-Einheiten). Über einem Heizkörper ist die Luft stabil geschichtet (durchmischung 1), über einer warmen Bodenfläche
  *   steigen überall kleine Warmluftsäulen auf und mischen sie (größer).
- * - u: Konvektion als Stromfunktion von Walzen, je Walze ψ = A · 16 ξ(1−ξ) η(1−η) (ξ, η: Lage in der Walze, 0…1),
- *   u = ∂ψ/∂y, v = −∂ψ/∂x. Das Feld ist divergenzfrei und senkrecht zu den Wänden null. Die größte senkrechte
- *   Geschwindigkeit liegt am Aufstrom und beträgt U₀ = Pe · K / H (H = Raumhöhe), gleich für alle Walzen eines Raums.
- *   Mit `grenzschicht` steigt die Luft in einer dünnen Schicht an der Heizfläche (siehe Walze).
+ * - u: Konvektion als Stromfunktion von Walzen, je Walze ψ = A · F(ξ) · G(η) (ξ, η: Lage in der Walze, 0…1),
+ *   u = ∂ψ/∂y, v = −∂ψ/∂x. Das Feld ist divergenzfrei und senkrecht zu den Wänden null. Ohne `schichten` ist es die
+ *   symmetrische Walze F = 4ξ(1−ξ), G = 4η(1−η); ihre größte senkrechte Geschwindigkeit liegt am Aufstrom und beträgt
+ *   U₀ = Pe · K / H (H = Raumhöhe), gleich für alle Walzen eines Raums. Mit `schichten` fließt derselbe Volumenstrom in
+ *   dünnen Schichten: Fahne, Deckenstrahl, Abstrom und Rückströmung (siehe Walze).
  * - Heizflächen (Heizkörper): feste Temperatur (Dirichlet), oben `oben`, unten `unten`, linear dazwischen; mit
  *   `unterseiteAdiabat` gibt die Unterseite keine Wärme nach unten ab (die erwärmte Luft steigt, Prüfrunde 1 B1-2).
  * - Wände, Decke, Boden: Robin-Bedingung −K' ∂θ/∂n = h (θ − bezug); h = 0 heißt adiabat (Innenwand).
@@ -22,11 +23,11 @@
  *   Wo die Luft oben kühler ist als darunter, mischt sie sich senkrecht stark (siehe Anpassung) – sonst stünde unter der
  *   Decke eine kühlere Schicht über wärmerer Luft, was es in einem beheizten Raum nicht gibt.
  *
- * Diskretisierung: Knotengitter mit den Rändern auf Knoten, Differenzen zweiter Ordnung (zentral, auch für die
- * Konvektion: die Zell-Péclet-Zahl bleibt unter 2), Robin über Geisterknoten. Stationär mit Linien-SOR (senkrechte
- * Linien, ω = OMEGA = 1,7; Prüfrunde 1 B1-2 und Prüfrunde 2 B2-1, B2-6), Startwert auf Wunsch die Lösung eines
- * gröberen Gitters, bis die größte Änderung eines Durchlaufs unter `TOLERANZ` liegt; zeitabhängig explizit (Euler
- * vorwärts) mit stabilem Schritt.
+ * Diskretisierung: Knotengitter mit den Rändern auf Knoten, Differenzen zweiter Ordnung, für die Konvektion das
+ * Hybridverfahren (Spalding 1972; Patankar, Numerical Heat Transfer and Fluid Flow, 1980, Kap. 5): zentral, solange die
+ * Zell-Péclet-Zahl unter 2 bleibt, darüber stromaufwärts. Robin über Geisterknoten. Stationär direkt gelöst
+ * (Gauß-Elimination im Band, Prüfrunde 3 B3-2; vorher Linien-SOR, der in den dünnen, schnellen Schichten divergierte);
+ * zeitabhängig explizit (Euler vorwärts) mit stabilem Schritt.
  *
  * Bitgleich in bun (JavaScriptCore) und vitest (V8): nur +, −, ×, ÷ und Vergleiche in fester Reihenfolge, keine
  * Funktionen wie exp, sin, pow, die je Maschine anders runden dürfen (Math.sqrt ist exakt gerundet und erlaubt).
@@ -69,13 +70,16 @@ export interface Walze {
   x1: number;
   aufstrom: 'links' | 'rechts';
   /**
-   * Dicke der Aufstromschicht als Anteil der Walzenbreite (δ, Prüfrunde 1 B1-2). Ohne: die symmetrische Walze
-   * F(ξ) = 4ξ(1−ξ), Aufstrom und Abstrom gleich breit. Mit: F(ξ) = (1−ξ) ξ / (ξ + δ), ξ von der Aufstromseite – die
-   * warme Luft steigt in einer dünnen Schicht an der Heizfläche auf (freie Konvektion an einer senkrechten Fläche), die
-   * Rückströmung am Boden reicht bis an die Wand und unter den Heizkörper. Gleicher Volumenstrom wie die symmetrische
-   * Walze (größtes ψ = U₀ · lx / 4).
+   * Walze aus dünnen Schichten (Prüfrunde 3 B3-2): Dicke der Schichten als Anteil der Walzenbreite (aufstrom, abstrom)
+   * bzw. der Raumhöhe (decke, boden). ψ = A · F(ξa) · G(η) mit F = profil(ξa; aufstrom, abstrom) (ξa von der
+   * Aufstromseite) und G = profil(η; decke, boden), siehe profil(). Eine dünne Schicht ist schnell, eine dicke (≥ 1)
+   * verteilt die Strömung über die Walze: Die Luft steigt in einer dünnen Fahne am Heizkörper, breitet sich als
+   * Deckenstrahl unter der Decke aus und sinkt an der kalten Wand (dünner Abstrom) oder im ganzen Raum (dicker Abstrom);
+   * dazwischen bewegt sie sich kaum. Gleicher Volumenstrom wie die symmetrische Walze (größtes F = größtes G = 1).
+   * (Ersetzt die Aufstromschicht `grenzschicht` aus Prüfrunde 1 B1-2: F = (1−ξ)ξ/(ξ+δ) ist der Grenzfall eines sehr
+   * dicken Abstroms.)
    */
-  grenzschicht?: number;
+  schichten?: Readonly<{ aufstrom: number; abstrom: number; decke: number; boden: number }>;
 }
 
 /**
@@ -124,24 +128,15 @@ export interface Gitter {
 export interface Loesung {
   gitter: Gitter;
   theta: Float64Array;
+  /** Zahl der Lösungen (mit konvektiver Anpassung eine je Runde, sonst 1). */
   iterationen: number;
-  /** Größte Abweichung eines Knotens von seiner Gleichung (Maximumnorm, in θ) nach dem letzten Durchlauf. */
+  /** Größte Abweichung eines Knotens von seiner Gleichung (Maximumnorm, in θ) in der letzten Lösung. */
   residuum: number;
 }
 
 /** Wirksame Leitfähigkeit der Raumluft (Einheiten² je Zeiteinheit). */
 export const K = 1;
-/**
- * Überrelaxation des stationären Lösers (E-031). Geplant war 1,85; mit der dünnen Aufstromschicht im Vergleichsraum
- * divergierte Punkt-SOR damit, darum 1,5 (Prüfrunde 1 B1-2). Seit der konvektiven Anpassung rechnet der Löser mit
- * Linien-SOR (Prüfrunde 2 B2-1): 1,7 konvergiert in allen drei Feldern, 1,85 divergiert auch hier.
- */
-export const OMEGA = 1.7;
-/** Abbruch: größte Änderung eines Durchlaufs (der gespeicherte Rest liegt darunter, Vertrag: < 1e-7). */
-export const TOLERANZ = 1e-10;
-const MAX_DURCHLAEUFE = 400_000;
-/** Konvektive Anpassung: Toleranz der Zwischenrunden und größte Zahl der Runden. */
-const TOLERANZ_RUNDE = 1e-7;
+/** Konvektive Anpassung: größte Zahl der Runden (Lösen, Mischen). */
 const MAX_RUNDEN = 400;
 
 /**
@@ -154,6 +149,36 @@ export function gitterFuer(innen: Rechteck, schritt: number): Gitter {
   return { nx: felderX + 1, ny: felderY + 1, dx: innen.breite / felderX, dy: innen.hoehe / felderY, x0: innen.x, y0: innen.y };
 }
 
+const profilMax = new Map<string, number>();
+
+/**
+ * Profil einer Walze über eine Richtung, x von 0 bis 1: h(x) = x(1−x) / ((x + p)(1 − x + q)), auf das größte h = 1
+ * normiert; p und q sind die Dicken der Schichten an den Enden (kleiner = dünner und schneller). Gibt [h(x), h'(x)].
+ * Das Maximum sucht eine Dreiteilung mit fester Schrittzahl (h ist eingipflig; nur Grundrechenarten, bitgleich).
+ */
+export function profil(x: number, p: number, q: number): [number, number] {
+  const roh = (t: number) => (t * (1 - t)) / ((t + p) * (1 - t + q));
+  const schluessel = `${p}|${q}`;
+  let max = profilMax.get(schluessel);
+  if (max === undefined) {
+    let lo = 0;
+    let hi = 1;
+    for (let n = 0; n < 100; n += 1) {
+      const m1 = lo + (hi - lo) / 3;
+      const m2 = hi - (hi - lo) / 3;
+      if (roh(m1) < roh(m2)) lo = m1;
+      else hi = m2;
+    }
+    max = roh((lo + hi) / 2);
+    profilMax.set(schluessel, max);
+  }
+  const z = x * (1 - x);
+  const n = (x + p) * (1 - x + q);
+  // n' = (1 − x + q) − (x + p)
+  const ableitung = ((1 - 2 * x) * n - z * (1 - x + q - (x + p))) / (n * n);
+  return [z / n / max, ableitung / max];
+}
+
 /** Geschwindigkeit (u, v) am Punkt (x, y); y zeigt nach unten, v < 0 heißt aufwärts. */
 export function stroemung(aufgabe: Feldaufgabe, x: number, y: number): [number, number] {
   const { innen, walzen, peclet } = aufgabe;
@@ -164,18 +189,15 @@ export function stroemung(aufgabe: Feldaufgabe, x: number, y: number): [number, 
     const lx = w.x1 - w.x0;
     const xi = (x - w.x0) / lx;
     const eta = (y - innen.y) / hoehe;
-    if (w.grenzschicht !== undefined) {
-      // ψ = s · a · F(ξa) · G(η) mit G = 4η(1−η); u = ∂ψ/∂y, v = −∂ψ/∂x; F' = (δ − ξa² − 2ξa δ) / (ξa + δ)²
-      const d = w.grenzschicht;
+    if (w.schichten !== undefined) {
+      // ψ = s · a · F(ξa) · G(η), a = U₀ · lx / 4 (Volumenstrom wie die symmetrische Walze); u = ∂ψ/∂y, v = −∂ψ/∂x
       const links = w.aufstrom === 'links';
       const xa = links ? xi : 1 - xi;
-      const xm = Math.sqrt(d * d + d) - d;
-      const fmax = ((1 - xm) * xm) / (xm + d);
-      const a = (u0 * lx) / 4 / fmax;
-      const f = ((1 - xa) * xa) / (xa + d);
-      const fs = (d - xa * xa - 2 * xa * d) / ((xa + d) * (xa + d));
+      const [f, fs] = profil(xa, w.schichten.aufstrom, w.schichten.abstrom);
+      const [gw, gs] = profil(eta, w.schichten.decke, w.schichten.boden);
+      const a = (u0 * lx) / 4;
       const s = links ? 1 : -1;
-      return [(s * a * f * 4 * (1 - 2 * eta)) / hoehe, -(a * fs * 4 * eta * (1 - eta)) / lx];
+      return [(s * a * f * gs) / hoehe, -(a * fs * gw) / lx];
     }
     // Aufstrom links: A > 0, rechts: A < 0; |v| am Aufstrom in halber Höhe = U₀
     const a = ((w.aufstrom === 'links' ? 1 : -1) * u0 * lx) / 4;
@@ -250,13 +272,15 @@ function stern(aufgabe: Feldaufgabe, g: Gitter, gemischt?: Uint8Array): Stern {
       // r (1 − b), oben r (1 + b)
       // Konvektive Anpassung: senkrechte Verbindung nach oben (mN) und nach unten (mU) mit (1 + faktor)-facher Leitfähigkeit
       const faktor = aufgabe.anpassung?.faktor ?? 0;
-      const mN = gemischt && j > 0 ? 1 + faktor * gemischt[k - g.nx] : 1;
-      const mU = gemischt && j < g.ny - 1 ? 1 + faktor * gemischt[k] : 1;
-      let cO = 1 - a;
-      let cW = 1 + a;
-      let cU = r * (mU - b);
-      let cN = r * (mN + b);
-      let diag = 2 + r * (mN + mU);
+      const mN = gemischt && j > 0 && gemischt[k - g.nx] ? 1 + faktor : 1;
+      const mU = gemischt && j < g.ny - 1 && gemischt[k] ? 1 + faktor : 1;
+      // Hybridverfahren: zentral, solange die Zell-Péclet-Zahl unter 2 bleibt; darüber stromaufwärts ohne Leitung (die
+      // Gewichte bleiben nie negativ, der Stern diagonal dominant)
+      let cO = Math.max(0, 1 - a, -2 * a);
+      let cW = Math.max(0, 1 + a, 2 * a);
+      let cU = Math.max(0, r * (mU - b), -2 * r * b);
+      let cN = Math.max(0, r * (mN + b), 2 * r * b);
+      let diag = cO + cW + cU + cN;
       let c0 = 0;
       // Geisterknoten außerhalb: θ_G = θ_innen − β (θ_P − bezug), β = 2 d h / K' (d = dx bzw. dy); das Gewicht des Geists
       // geht auf den gespiegelten Nachbarn, β auf die Diagonale und die Konstante
@@ -362,125 +386,84 @@ function rest(s: Stern, t: Float64Array, g: Gitter): number {
   return max;
 }
 
-/** Stationäres Feld auf einem Gitter mit Schritt `schritt` (SOR, ω = OMEGA). */
 /**
- * Bilinear aus einer Lösung auf einem anderen Gitter über demselben Rechteck (Startwert: Das grobe Feld enthält schon die
- * langwelligen Anteile, an denen SOR am längsten rechnet).
+ * Stationäres Feld auf einem Gitter mit Schritt `schritt` (direkt gelöst). Mit konvektiver Anpassung: lösen, instabile
+ * Verbindungen mischen, neu lösen, bis keine neue hinzukommt; `iterationen` zählt die Lösungen.
  */
-function interpoliert(von: Loesung, g: Gitter): Float64Array {
-  const a = von.gitter;
-  const t = new Float64Array(g.nx * g.ny);
-  for (let j = 0; j < g.ny; j += 1) {
-    const fy = (j * g.dy) / a.dy;
-    const j0 = fy >= a.ny - 1 ? a.ny - 2 : Math.floor(fy);
-    const wy = fy - j0;
-    for (let i = 0; i < g.nx; i += 1) {
-      const fx = (i * g.dx) / a.dx;
-      const i0 = fx >= a.nx - 1 ? a.nx - 2 : Math.floor(fx);
-      const wx = fx - i0;
-      const k = j0 * a.nx + i0;
-      const oben = von.theta[k] + wx * (von.theta[k + 1] - von.theta[k]);
-      const unten = von.theta[k + a.nx] + wx * (von.theta[k + a.nx + 1] - von.theta[k + a.nx]);
-      t[j * g.nx + i] = oben + wy * (unten - oben);
-    }
-  }
-  return t;
-}
-
-/**
- * Stationäres Feld auf einem Gitter mit Schritt `schritt` (SOR, ω = OMEGA), mit `start` als Startwert (eine Lösung auf
- * einem gröberen Gitter derselben Aufgabe) oder ab θ = 0.
- */
-export function loeseStationaer(aufgabe: Feldaufgabe, schritt: number, start?: Loesung): Loesung {
+export function loeseStationaer(aufgabe: Feldaufgabe, schritt: number): Loesung {
   const g = gitterFuer(aufgabe.innen, schritt);
   const anpassung = aufgabe.anpassung;
   const gemischt = anpassung ? new Uint8Array(g.nx * g.ny) : undefined;
   let s = stern(aufgabe, g, gemischt);
-  const t = startfeld(s);
-  if (start) {
-    const grob = interpoliert(start, g);
-    for (let k = 0; k < t.length; k += 1) if (Number.isNaN(s.fest[k])) t[k] = grob[k];
-  }
-  // Konvektive Anpassung: rechnen, instabile Verbindungen mischen, neu rechnen, bis keine neue hinzukommt; erst grob
-  // (TOLERANZ_RUNDE), dann bis TOLERANZ und noch einmal prüfen
-  let iterationen = 0;
-  let toleranz = anpassung ? TOLERANZ_RUNDE : TOLERANZ;
-  for (let runde = 1; ; runde += 1) {
-    iterationen += sor(s, t, g, toleranz, iterationen);
-    if (!anpassung || !gemischt) break;
+  let t = loeseDirekt(s, g);
+  let runden = 1;
+  while (anpassung && gemischt) {
     const neu = markiereInstabil(s, g, anpassung.randschicht, t, gemischt);
-    if (neu === 0) {
-      if (toleranz === TOLERANZ) break;
-      toleranz = TOLERANZ;
-      continue;
-    }
-    if (runde >= MAX_RUNDEN) throw new Error(`waerme/feld: konvektive Anpassung nach ${runde} Runden nicht abgeschlossen (${neu} neu)`);
+    if (neu === 0) break;
+    if (runden >= MAX_RUNDEN) throw new Error(`waerme/feld: konvektive Anpassung nach ${runden} Runden nicht abgeschlossen (${neu} neu)`);
     s = stern(aufgabe, g, gemischt);
+    t = loeseDirekt(s, g);
+    runden += 1;
   }
-  return { gitter: g, theta: t, iterationen, residuum: rest(s, t, g) };
+  return { gitter: g, theta: t, iterationen: runden, residuum: rest(s, t, g) };
 }
 
 /**
- * Linien-SOR auf `t` (Prüfrunde 2 B2-1): je Spalte von links nach rechts die freien Knoten einer senkrechten Linie
- * gemeinsam (tridiagonal, Thomas-Verfahren; die Nachbarspalten gelten als bekannt), dann überrelaxiert mit ω. Die
- * konvektive Anpassung koppelt die Knoten senkrecht stark, Punkt-SOR bräuchte dafür ein Vielfaches an Durchläufen.
- * Bis die größte Änderung eines Durchlaufs unter `toleranz` liegt; gibt die Zahl der Durchläufe zurück.
+ * Löst das Gleichungssystem des Sterns direkt (Gauß-Elimination im Band ohne Pivotsuche, Prüfrunde 3 B3-2): Die
+ * Unbekannten laufen spaltenweise (p = i · ny + j), senkrechte Nachbarn liegen bei p ± 1, waagerechte bei p ± ny; das
+ * Band ist ny breit, und die Auffüllung bleibt darin. Feste Knoten stehen als Zeile θ_p = fest im System. Die Matrix
+ * ist diagonal dominant (Hybridverfahren, Robin-Ränder, Heizflächen fest), darum braucht die Elimination keine
+ * Pivotsuche. Anders als ein iteratives Verfahren hängt das Ergebnis nicht von Überrelaxation und Toleranz ab; es
+ * rechnet auch dort, wo SOR bei schneller Strömung in dünnen Schichten divergierte.
  */
-function sor(s: Stern, t: Float64Array, g: Gitter, toleranz: number, bisher: number): number {
-  const rechts = new Float64Array(g.ny);
-  const cp = new Float64Array(g.ny);
-  const dp = new Float64Array(g.ny);
-  let iterationen = 0;
-  for (;;) {
-    let max = 0;
-    for (let i = 0; i < g.nx; i += 1) {
-      let j = 0;
-      while (j < g.ny) {
-        if (!Number.isNaN(s.fest[j * g.nx + i])) {
-          j += 1;
-          continue;
-        }
-        // Abschnitt freier Knoten j0 … j1 − 1 (über und unter ihm eine Heizfläche oder der Rand)
-        const j0 = j;
-        while (j < g.ny && Number.isNaN(s.fest[j * g.nx + i])) j += 1;
-        const j1 = j;
-        // θ_P − cN θ_N − cU θ_U = c0 + cO θ_O + cW θ_W (+ feste Nachbarn über und unter dem Abschnitt)
-        for (let q = j0; q < j1; q += 1) {
-          const k = q * g.nx + i;
-          let w = s.c0[k];
-          if (i < g.nx - 1) w += s.cO[k] * t[k + 1];
-          if (i > 0) w += s.cW[k] * t[k - 1];
-          if (q === j0 && q > 0) w += s.cN[k] * t[k - g.nx];
-          if (q === j1 - 1 && q < g.ny - 1) w += s.cU[k] * t[k + g.nx];
-          rechts[q] = w;
-        }
-        const k0 = j0 * g.nx + i;
-        cp[j0] = -s.cU[k0];
-        dp[j0] = rechts[j0];
-        for (let q = j0 + 1; q < j1; q += 1) {
-          const k = q * g.nx + i;
-          const m = 1 + s.cN[k] * cp[q - 1];
-          cp[q] = -s.cU[k] / m;
-          dp[q] = (rechts[q] + s.cN[k] * dp[q - 1]) / m;
-        }
-        let unten = 0;
-        for (let q = j1 - 1; q >= j0; q -= 1) {
-          const k = q * g.nx + i;
-          const x = q === j1 - 1 ? dp[q] : dp[q] - cp[q] * unten;
-          unten = x;
-          const r = x - t[k];
-          t[k] += OMEGA * r;
-          const betrag = r < 0 ? -r : r;
-          // !(≤) statt >: ein NaN landet in max und bricht unten ab
-          if (!(betrag <= max)) max = betrag;
-        }
+function loeseDirekt(s: Stern, g: Gitter): Float64Array {
+  const { nx, ny } = g;
+  const n = nx * ny;
+  const b = ny;
+  const w = 2 * b + 1;
+  const a = new Float64Array(n * w);
+  const rhs = new Float64Array(n);
+  // Eintrag (Zeile p, Spalte c) bei p · w + c − p + b
+  for (let i = 0; i < nx; i += 1) {
+    for (let j = 0; j < ny; j += 1) {
+      const p = i * ny + j;
+      const k = j * nx + i;
+      const d = p * w + b;
+      a[d] = 1;
+      if (!Number.isNaN(s.fest[k])) {
+        rhs[p] = s.fest[k];
+        continue;
       }
+      rhs[p] = s.c0[k];
+      if (j > 0) a[d - 1] = -s.cN[k];
+      if (j < ny - 1) a[d + 1] = -s.cU[k];
+      if (i > 0) a[d - b] = -s.cW[k];
+      if (i < nx - 1) a[d + b] = -s.cO[k];
     }
-    iterationen += 1;
-    if (!(max < 1e6)) throw new Error(`waerme/feld: SOR divergiert nach ${bisher + iterationen} Durchläufen`);
-    if (max < toleranz) return iterationen;
-    if (bisher + iterationen >= MAX_DURCHLAEUFE) throw new Error(`waerme/feld: SOR nach ${bisher + iterationen} Durchläufen nicht konvergiert (Rest ${max})`);
   }
+  for (let p = 0; p < n; p += 1) {
+    const zeileP = p * w - p + b;
+    const pivot = a[zeileP + p];
+    const ende = p + b < n - 1 ? p + b : n - 1;
+    for (let r = p + 1; r <= ende; r += 1) {
+      const zeileR = r * w - r + b;
+      const f = a[zeileR + p] / pivot;
+      if (f === 0) continue;
+      for (let c = p + 1; c <= ende; c += 1) a[zeileR + c] -= f * a[zeileP + c];
+      rhs[r] -= f * rhs[p];
+    }
+  }
+  const x = new Float64Array(n);
+  for (let p = n - 1; p >= 0; p -= 1) {
+    const zeileP = p * w - p + b;
+    const ende = p + b < n - 1 ? p + b : n - 1;
+    let summe = rhs[p];
+    for (let c = p + 1; c <= ende; c += 1) summe -= a[zeileP + c] * x[c];
+    x[p] = summe / a[zeileP + p];
+  }
+  const t = new Float64Array(n);
+  for (let i = 0; i < nx; i += 1) for (let j = 0; j < ny; j += 1) t[j * nx + i] = x[i * ny + j];
+  return t;
 }
 
 /**

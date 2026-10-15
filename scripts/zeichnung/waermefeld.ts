@@ -32,7 +32,7 @@ for (const f of rechnung.felder) {
   const gz = gzipSync(Buffer.from(f.baender.map((b) => b.d).join('')), { level: 9 }).length;
   console.log(
     `  ${f.id}: Schwellen ${f.baender.map((b) => b.schwelle).join(' / ')}, Start ${f.baender.map((b) => b.startTakte).join(' / ')} Takte, ` +
-      `${f.herkunft.iterationen} Durchläufe, Rest ${f.herkunft.residuum.toExponential(1)}, Pfade ${gz} B gzip`,
+      `${f.herkunft.iterationen} ${f.herkunft.iterationen === 1 ? 'Lösung' : 'Lösungen'}, Rest ${f.herkunft.residuum.toExponential(1)}, Pfade ${gz} B gzip`,
   );
 }
 

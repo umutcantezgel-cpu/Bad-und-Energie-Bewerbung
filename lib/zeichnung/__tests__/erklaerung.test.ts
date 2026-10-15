@@ -118,7 +118,9 @@ describe('Erklärtext zur Wärmepumpe (E-029, AEO)', () => {
     expect(WAERMEVERTEILUNG.fussboden.text).toMatch(/ganze Bodenfläche[\s\S]*gleichmäßiger warm[\s\S]*am Boden ein wenig wärmer als unter der Decke[\s\S]*Außenwand/);
     expect(WAERMEVERTEILUNG.hinweis.text).toMatch(/links die Außenwand/);
     // Vergleich auf einer Skala (Prüfrunde 1 B1-1): gleiche Farbe heißt in beiden Räumen gleich warm
-    expect(WAERMEVERTEILUNG.hinweis.text).toMatch(/im Mittel gleich warm und auf derselben Skala[\s\S]*kräftigsten Stufen erreicht nur der Heizkörper/);
+    expect(WAERMEVERTEILUNG.hinweis.text).toMatch(
+      /im Mittel gleich warm und auf derselben Skala[\s\S]*beiden kräftigsten Stufen zeigt nur der Raum mit Heizkörper[\s\S]*Fußbodenheizung ist die Luft fast nirgends so warm/,
+    );
   });
 
   it('reine Technik (K-012): keine Aussage über den Betrieb, keine Beträge, keine Floskeln (S-13), Einheiten geschützt', () => {
