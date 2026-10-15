@@ -20,7 +20,7 @@ import { getThemaPageText } from '@/lib/themen/text';
  * (Datum der Änderung) und OG_ZEICHNUNG_STAND (lib/seo/og-image.ts) darauf setzen; ein alter Stand mit neuem
  * Fingerabdruck geht nicht durch.
  */
-const HISTORIE: readonly { stand: string; fingerabdruck: string }[] = [{ stand: '2026-10-15', fingerabdruck: '08bbd4ca349d7913' }];
+const HISTORIE: readonly { stand: string; fingerabdruck: string }[] = [{ stand: '2026-10-15', fingerabdruck: '0ccbf9ab56f7b4e6' }];
 
 const ROOT = path.resolve(__dirname, '../../..');
 const quelle = (rel: string) => readFileSync(path.join(ROOT, rel), 'utf8');
