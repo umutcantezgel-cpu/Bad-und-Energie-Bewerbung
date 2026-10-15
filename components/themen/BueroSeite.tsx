@@ -4,6 +4,7 @@ import { listenName } from '@/components/jobs/liste/liste-text';
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
 import { Disclosure } from '@/components/ui/Disclosure';
+import { RohrAkzent } from '@/components/zeichnung/RohrAkzent';
 import type { Job } from '@/lib/jobs/registry';
 import { themaPfad } from '@/lib/themen/jsonld';
 import { getThema } from '@/lib/themen/registry';
@@ -59,7 +60,8 @@ export function BueroSeite({ text, jobs }: { text: BueroPageText; jobs: readonly
       ) : null}
 
       <Abschnitt kopf={text.fragen.kopf} tone="wand">
-        <div className="border-t-(length:--m-strich) border-brand">
+        <div className="relative">
+          <RohrAkzent />
           {text.fragen.fragen.map((frage) => (
             <Disclosure key={frage.id} name="faq-buero" summary={frage.frage}>
               <p className="max-w-prose">{geschuetzt(frage.antwort.text)}</p>
