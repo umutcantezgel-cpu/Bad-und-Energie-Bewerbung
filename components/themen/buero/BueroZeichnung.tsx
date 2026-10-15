@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 import t from '@/components/zeichnung/technik/technik.module.css';
 import type { MotionId } from '@/lib/motion/register';
 import { cn } from '@/lib/utils/cn';
-import type { Art, BueroSzene, Gruppe } from '@/lib/zeichnung/buero/szene';
+import { beschriftungsLage, type Art, type BueroSzene, type Gruppe } from '@/lib/zeichnung/buero/szene';
 import styles from '../stil';
 
 /** Klassen der Komponente je Linienart (Gegenstück zu DATEI_KLASSE in lib/zeichnung/buero/svg.ts). */
@@ -48,16 +48,6 @@ export interface BueroZeichnungProps {
    */
   motion?: MotionId;
   className?: string;
-}
-
-/** Lage einer Beschriftung in Prozent des Rahmens, Anker wie text-anchor (Mitte der Zeile auf y). */
-export function beschriftungsLage(szene: BueroSzene, b: BueroSzene['beschriftungen'][number]): CSSProperties {
-  const pct = (wert: number, von: number) => `${Math.round((wert / von) * 100_000) / 1000}%`;
-  return {
-    left: pct(b.x, szene.rahmen.breite),
-    top: pct(b.y, szene.rahmen.hoehe),
-    translate: `${b.anker === 'start' ? '0' : b.anker === 'middle' ? '-50%' : '-100%'} -50%`,
-  };
 }
 
 /**

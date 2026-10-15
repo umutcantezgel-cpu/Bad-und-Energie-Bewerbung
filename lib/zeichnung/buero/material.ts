@@ -4,12 +4,17 @@
  * (Giebelhaus). Über dem Lager der Lieferschein als Einzelheit (Blatt im Format A4, eigener Maßstab) mit Kästchen.
  * Keine Marke, kein Fahrzeug, keine Leitung; die Wege sind Hinweispfeile in der feinen Linie unter dem Gelände.
  *
+ * Maßstäblich ist nur das Lager: Palette und Kartons stehen in einem eigenen Rahmen (Einzelheit) auf eigener Linie.
+ * Halle und Haus sind Sinnbilder ohne Maßstab auf ihren eigenen Geländestücken, der Karton vor dem Haus im Maß des
+ * Hauses (kleiner als die Tür); das Schriftfeld sagt es (Prüfrunde 1 A1-4, B1-3: vorher stand die maßstäbliche
+ * Palette auf derselben Geländelinie wie eine 1,1 m hohe Halle).
+ *
  * Ablauf beim Sichtbarwerden (Register `buero-ablauf`): zwei Pakete wandern vom Großhandel auf die Palette, eins vom
  * Lager zur Baustelle; zuletzt bekommt der Lieferschein sein Häkchen.
  */
 import { fliesspfeil } from '../norm';
 import { BUERO_MASSE } from './masse';
-import { giebelhaus, haken, rechteck, strecke, waagerecht, type BueroSzene } from './szene';
+import { giebelhaus, haken, rechteck, rundRechteck, strecke, waagerecht, type BueroSzene } from './szene';
 
 const MM = 10;
 const e = (mm: number) => mm / MM;
@@ -50,6 +55,20 @@ function karton(x: number, unten: number, teil = 1): string {
 }
 const AUF_PALETTE = BODEN - PALETTE.hoehe;
 
+/** Rahmen der Einzelheit „Lager“: Palette mit zwei Kartons, 8 Einheiten Abstand, unten bis knapp unter ihre Linie. */
+export const EINZELHEIT = Object.freeze({
+  x: PALETTE.x - 8,
+  y: AUF_PALETTE - KARTON.hoehe - 10,
+  breite: PALETTE.laenge + 16,
+  hoehe: KARTON.hoehe + PALETTE.hoehe + 16,
+});
+/** Geländestücke: unter der Halle, im Rahmen des Lagers (seine eigene Linie) und unter dem Haus. */
+export const GELAENDE = Object.freeze([
+  { von: 8, bis: 130 },
+  { von: EINZELHEIT.x + 4, bis: EINZELHEIT.x + EINZELHEIT.breite - 4 },
+  { von: 284, bis: 392 },
+]);
+
 /**
  * Lieferschein als Einzelheit über dem Lager: Blatt im Seitenverhältnis A4, drei Zeilen, ein Kästchen. Groß genug, dass
  * er den Raum über den Stationen füllt; die Mitte steht über dem zweiten Paket.
@@ -58,6 +77,8 @@ const SCHEIN = { x: 216, y: 40, breite: 46, hoehe: (46 * BUERO_MASSE.a4.hoehe.mm
 const SCHEIN_KAESTCHEN = { x: SCHEIN.x + 7, y: SCHEIN.y + 38, k: 13 };
 
 const haus = giebelhaus(296, BODEN, 92, 76);
+/** Karton vor dem Haus im Maß des Sinnbilds: kleiner als die Tür (0,22 × 92 breit, 0,5 × 76 hoch). */
+export const KARTON_HAUS = Object.freeze({ x: 342, teil: 0.3 });
 /** Hinweispfeile der Wege unter dem Gelände; darunter die Namen der drei Stationen. */
 const WEG_Y = 264;
 const NAMEN_Y = 284;
@@ -69,15 +90,23 @@ export const MATERIAL: BueroSzene = Object.freeze<BueroSzene>({
   gruppen: [
     {
       id: 'grosshandel',
+      sinnbild: true,
       teile: [
         { d: `${rechteck(HALLE.x, BODEN - HALLE.hoehe, HALLE.breite, HALLE.hoehe)}${rechteck(HALLE.x - 6, BODEN - HALLE.hoehe - 6, HALLE.breite + 12, 6)}`, art: 'kontur' },
         { d: rechteck(TOR.x, BODEN - TOR.hoehe, TOR.breite, TOR.hoehe), art: 'kontur' },
         { d: lamellen, art: 'fein' },
       ],
     },
-    { id: 'lager', teile: [{ d: paletteSeite(), art: 'kontur' }] },
+    {
+      id: 'lager',
+      teile: [
+        { d: rundRechteck(EINZELHEIT.x, EINZELHEIT.y, EINZELHEIT.breite, EINZELHEIT.hoehe, 4), art: 'fein' },
+        { d: paletteSeite(), art: 'kontur' },
+      ],
+    },
     {
       id: 'baustelle',
+      sinnbild: true,
       teile: [
         { d: `${haus.waende}${haus.tuer}${rechteck(350, 194, 20, 20)}`, art: 'kontur' },
         { d: haus.dach, art: 'konturOffen' },
@@ -87,7 +116,7 @@ export const MATERIAL: BueroSzene = Object.freeze<BueroSzene>({
     {
       id: 'wege',
       teile: [
-        { d: `${waagerecht(8, 392, BODEN)}`, art: 'konturOffen' },
+        { d: GELAENDE.map((g) => waagerecht(g.von, g.bis, BODEN)).join(''), art: 'konturOffen' },
         { d: `${waagerecht(126, 140, WEG_Y)}${waagerecht(272, 280, WEG_Y)}`, art: 'fein' },
         { d: `${fliesspfeil({ x: 146, y: WEG_Y }, { x: 1, y: 0 }, 7, 5)}${fliesspfeil({ x: 286, y: WEG_Y }, { x: 1, y: 0 }, 7, 5)}`, art: 'voll' },
       ],
@@ -96,7 +125,7 @@ export const MATERIAL: BueroSzene = Object.freeze<BueroSzene>({
     {
       id: 'lieferschein',
       teile: [
-        { d: strecke(SCHEIN.x + SCHEIN.breite / 2, SCHEIN.y + SCHEIN.hoehe, SCHEIN.x + SCHEIN.breite / 2, AUF_PALETTE - KARTON.hoehe - 4), art: 'mass' },
+        { d: strecke(SCHEIN.x + SCHEIN.breite / 2, SCHEIN.y + SCHEIN.hoehe, SCHEIN.x + SCHEIN.breite / 2, EINZELHEIT.y), art: 'mass' },
         { d: rechteck(SCHEIN.x, SCHEIN.y, SCHEIN.breite, SCHEIN.hoehe), art: 'kontur' },
         {
           d: [9, 16, 23].map((dy, i) => waagerecht(SCHEIN.x + 7, SCHEIN.x + (i === 2 ? 26 : 38), SCHEIN.y + dy)).join(''),
@@ -109,7 +138,7 @@ export const MATERIAL: BueroSzene = Object.freeze<BueroSzene>({
     { id: 'paket-1', teile: [{ d: karton(PALETTE.x, AUF_PALETTE), art: 'warm1' }], ablauf: { art: 'ein', takte: 0, dauer: 'd-4', x: -110 } },
     { id: 'paket-2', teile: [{ d: karton(PALETTE.x + KARTON.breite, AUF_PALETTE), art: 'warm2' }], ablauf: { art: 'ein', takte: 3, dauer: 'd-4', x: -170 } },
     // Kleiner Karton vor der Hauswand, rechts der Tür und unter dem Fenster
-    { id: 'paket-3', teile: [{ d: karton(339, BODEN, 0.75), art: 'warm3' }], ablauf: { art: 'ein', takte: 7, dauer: 'd-4', x: -110 } },
+    { id: 'paket-3', teile: [{ d: karton(KARTON_HAUS.x, BODEN, KARTON_HAUS.teil), art: 'warm3' }], ablauf: { art: 'ein', takte: 7, dauer: 'd-4', x: -110 } },
     {
       id: 'haken',
       teile: [{ d: haken(SCHEIN_KAESTCHEN.x, SCHEIN_KAESTCHEN.y, SCHEIN_KAESTCHEN.k), art: 'konturOffen' }],

@@ -6,11 +6,13 @@ import { Aussengeraet } from '@/components/zeichnung/technik/Aussengeraet';
 import t from '@/components/zeichnung/technik/technik.module.css';
 import type { Job } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
-import { LEITSTELLE_RAHMEN } from '@/lib/zeichnung/buero/leitstelle';
+import { BUERO_LEITSTELLE_ZIELE } from '@/lib/themen/text';
+import { LEITSTELLE, LEITSTELLE_RAHMEN } from '@/lib/zeichnung/buero/leitstelle';
 import { KOPF_HAUS_VIEWBOX, kopfSvgPfad } from '@/lib/zeichnung/kopf-svg';
 import { SCHRIFTFELD_SCHEMA, versal } from '@/lib/zeichnung/norm';
 import { ANLAGENSCHEMA_RAHMEN, ANLAGENSCHEMA_SYMBOLE, ANLAGENSCHEMA_TEXTE } from '@/lib/zeichnung/szenen/anlagenschema';
 import { SalaryCard } from '../SalaryCard';
+import { BueroBild } from './BueroBild';
 import { kopfZeichnung } from './stelle-text';
 import styles from './stelle.module.css';
 
@@ -29,7 +31,8 @@ export const KOPFBILD_GERAET_TEXT = 'Außeneinheit · Maße in mm';
  * - Anlagenmechaniker und Ausbildung: das Anlagenschema, statisch, beschriftet (Außeneinheit, Inneneinheit, Heizkreise,
  *   Erdreich) mit kurzem Schriftfeld; die Legende steht auf /arbeiten-bei-uns/waermepumpen. Erst ab 64em.
  * - Bürofachkraft (E-031): die Leitstelle, der Schreibtisch von oben mit Bezugslinien zu Monteuren, Kundendienst,
- *   Kunden, Großhandel und Lager (dekorativ, wie der Hausschnitt erst ab 64em; Wörter dazu auf der Themenseite).
+ *   Kunden, Großhandel und Lager (dekorativ, wie der Hausschnitt erst ab 64em), die Ziele als Wörter über dem Bild wie
+ *   auf der Themenseite (Prüfrunde 1 A1-6).
  * - alle anderen: der kleine Hausschnitt (dekorativ), ebenfalls erst ab 64em. Am Handy bleibt der Knopf im ersten Bild.
  *
  * Anlagenschema, Leitstelle und Hausschnitt kommen als SVG-Datei (lib/zeichnung/kopf-svg.ts) per `<img loading="lazy">`: Am Handy
@@ -49,15 +52,17 @@ export function Kopfbild({ job }: KopfbildProps) {
       {art === 'anlagenschema' ? <KopfSchema /> : null}
       {art === 'buero' ? (
         <div className={styles.haus} data-zeichnung="leitstelle">
-          <Image
-            src={kopfSvgPfad('buero')}
-            alt=""
-            width={LEITSTELLE_RAHMEN.breite}
-            height={LEITSTELLE_RAHMEN.hoehe}
-            loading="lazy"
-            unoptimized
-            className={styles.kopfDatei}
-          />
+          <BueroBild szene={LEITSTELLE} woerter={BUERO_LEITSTELLE_ZIELE}>
+            <Image
+              src={kopfSvgPfad('buero')}
+              alt=""
+              width={LEITSTELLE_RAHMEN.breite}
+              height={LEITSTELLE_RAHMEN.hoehe}
+              loading="lazy"
+              unoptimized
+              className={styles.kopfDatei}
+            />
+          </BueroBild>
         </div>
       ) : null}
       {art === 'hausschnitt' ? (

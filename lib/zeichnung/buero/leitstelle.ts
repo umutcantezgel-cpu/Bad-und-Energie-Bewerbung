@@ -2,16 +2,17 @@
  * Leitstelle (E-031, Paket W3): der Schreibtisch im Büro von oben, maßstäblich (1 Einheit = 10 mm wie der
  * Hausschnitt), mit Bildschirm, zwei Blättern A4, einem liegenden Ordner und dem Stuhl. Vier Bezugslinien in der
  * Linienart `mass` führen vom Tisch zu den Stellen, die das Büro verbindet (Aufgaben der Bürofachkraft): zu den
- * Monteuren (Glyphe Servicefahrzeug), zum Kundendienst (Glyphe Wärmepumpe), zu den Kunden (Giebelhaus) und zu
- * Großhandel und Lager (Europalette von oben, im selben Maßstab wie der Tisch). Keine Leitung, keine Rohrfarbe:
- * Hier fließt nichts. Die Wörter stehen als HTML an den Beschriftungen.
+ * Monteuren (Glyphe Servicefahrzeug), zum Kundendienst (Glyphe Wärmepumpe), zu den Kunden (Glyphe Haus) und zu
+ * Großhandel und Lager (Glyphe Paket). Die vier Ziele sind gleich große Sinnbilder ohne Maßstab, maßstäblich ist nur
+ * der Tisch (Prüfrunde 1 A1-4, B1-3: vorher ein Haus kleiner als die maßstäbliche Palette). Keine Leitung, keine
+ * Rohrfarbe: Hier fließt nichts. Die Wörter stehen als HTML an den Beschriftungen.
  *
  * Kopf der Themenseite (components/themen/buero/Leitstelle.tsx, auf Navy) und Kopfbild der Bürofachkraft
  * (lib/zeichnung/kopf-svg.ts, Datei); still, ohne Ablauf.
  */
 import { GLYPH_SHAPES, type IconName } from '@/components/icons/glyphs';
 import { BUERO_MASSE } from './masse';
-import { giebelhaus, kreis, rechteck, rundRechteck, strecke, type BueroSzene, type Strich } from './szene';
+import { HAUS_GLYPHE, kreis, rechteck, rundRechteck, strecke, type BueroSzene, type Strich } from './szene';
 
 const MM = 10;
 const e = (mm: number) => mm / MM;
@@ -40,31 +41,21 @@ const BLATT = [
 ] as const;
 /** Liegender Ordner von oben (Deckel 285 × 318). */
 const ORDNER = { x: 354, y: 166, b: e(M.ordner.tiefe.mm), h: e(M.ordner.hoehe.mm) };
-/** Europalette von oben, im Maßstab des Tischs; die Deckbretter laufen in der Länge. */
-export const PALETTE = Object.freeze({ x: 490, y: 250, laenge: e(M.europalette.laenge.mm), breite: e(M.europalette.breite.mm) });
+/** Lage der vier Ziele: Glyphen im Raster 24 × 24, alle im selben Maßstab (gleich große Sinnbilder). */
+export const ZIEL_MASSSTAB = 2.6;
+export const ZIELE = Object.freeze({
+  monteure: { x: 54, y: 42, s: ZIEL_MASSSTAB },
+  kundendienst: { x: 524, y: 38, s: ZIEL_MASSSTAB },
+  kunden: { x: 54, y: 262, s: ZIEL_MASSSTAB },
+  lager: { x: 524, y: 262, s: ZIEL_MASSSTAB },
+});
 
-function deckbretter(): string {
-  const p = M.europalette;
-  const breiten = [p.deckbretter.mm, p.zwischenbretter.mm, p.deckbretter.mm, p.zwischenbretter.mm, p.deckbretter.mm].map(e);
-  const luecke = (PALETTE.breite - breiten.reduce((s, b) => s + b, 0)) / (breiten.length - 1);
-  let y = PALETTE.y;
-  return breiten
-    .map((b) => {
-      const d = rechteck(PALETTE.x, y, PALETTE.laenge, b);
-      y += b + luecke;
-      return d;
-    })
-    .join('');
-}
-
-const haus = giebelhaus(64, 334, 52, 36);
-
-/** Startpunkt jeder Bezugslinie auf dem Tisch (Punkt) und Ende am Ziel. */
+/** Startpunkt jeder Bezugslinie auf dem Tisch (Punkt) und Ende kurz vor dem Ziel. */
 export const BEZUG = Object.freeze({
   monteure: { von: { x: 247, y: 157 }, bis: { x: 116, y: 86 } },
   kundendienst: { von: { x: 393, y: 157 }, bis: { x: 524, y: 86 } },
-  kunden: { von: { x: 247, y: 223 }, bis: { x: 126, y: 290 } },
-  lager: { von: { x: 393, y: 223 }, bis: { x: 486, y: 246 } },
+  kunden: { von: { x: 247, y: 223 }, bis: { x: 116, y: 302 } },
+  lager: { von: { x: 393, y: 223 }, bis: { x: 525, y: 297 } },
 });
 
 export const LEITSTELLE: BueroSzene = Object.freeze<BueroSzene>({
@@ -94,29 +85,23 @@ export const LEITSTELLE: BueroSzene = Object.freeze<BueroSzene>({
         { d: Object.values(BEZUG).map((b) => kreis(b.von.x, b.von.y, 3)).join(''), art: 'voll' },
       ],
     },
-    { id: 'monteure', lage: { x: 54, y: 42, s: 2.6 }, teile: glyphPfade('servicefahrzeug') },
-    { id: 'kundendienst', lage: { x: 524, y: 38, s: 2.6 }, teile: glyphPfade('waermepumpe') },
+    { id: 'monteure', lage: ZIELE.monteure, teile: glyphPfade('servicefahrzeug') },
+    { id: 'kundendienst', lage: ZIELE.kundendienst, teile: glyphPfade('waermepumpe') },
     {
       id: 'kunden',
+      lage: ZIELE.kunden,
       teile: [
-        { d: `${haus.waende}${haus.tuer}`, art: 'kontur' },
-        { d: haus.dach, art: 'konturOffen' },
+        { d: `${HAUS_GLYPHE.waende}${HAUS_GLYPHE.tuer}`, art: 'konturOffen' },
+        { d: HAUS_GLYPHE.dach, art: 'konturOffen' },
       ],
     },
-    {
-      id: 'lager',
-      teile: [
-        { d: deckbretter(), art: 'kontur' },
-        { d: rechteck(504, 256, 44, 34), art: 'kontur' },
-        { d: 'M526 256V290', art: 'fein' },
-      ],
-    },
+    { id: 'lager', lage: ZIELE.lager, teile: glyphPfade('paket') },
   ],
   beschriftungen: [
-    // Über den Glyphen bzw. unter Haus und Palette, frei von den Bezugslinien
+    // Über den oberen und unter den unteren Glyphen, bündig mit ihnen, frei von den Bezugslinien
     { id: 'monteure', x: 54, y: 24, anker: 'start' },
     { id: 'kundendienst', x: 586, y: 24, anker: 'end' },
-    { id: 'kunden', x: 54, y: 360, anker: 'start' },
-    { id: 'lager', x: 610, y: 354, anker: 'end' },
+    { id: 'kunden', x: 54, y: 344, anker: 'start' },
+    { id: 'lager', x: 586, y: 344, anker: 'end' },
   ],
 });

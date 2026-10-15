@@ -79,6 +79,21 @@
   pointer-events: none;
 }
 
+/* Wörter über einer Zeichnung, die als Datei kommt (Büro auf der Stellenseite: Kopfbild Leitstelle, Szenen im
+   Einblick; Prüfrunde 1 A1-6): wie auf der Themenseite (themen.module.css .bueroText), bei 288 px Bildbreite 12 px.
+   Hier statt in stelle.module.css: Ein neuer Import dort aus dem Einblick brach die CSS-Ketten (check-css-chunks). */
+.bildRahmen {
+  position: relative;
+  container-type: inline-size;
+}
+
+.bildText {
+  position: absolute;
+  font-size: clamp(12px, 4cqi, 15px);
+  white-space: nowrap;
+  color: var(--ink-2);
+}
+
 /* ═══ Gemeinsam für die Zeichnungen in SVG (SEITENKOPF-01) ═══ */
 .svg {
   display: block;

@@ -1238,6 +1238,19 @@ const SZENEN: readonly { id: BueroSzenenArt; titel: string; icon: KastenIcon; au
   },
 ];
 
+/** Wörter an den vier Szenen, auch über den stillen Dateien im Einblick der Stellenseite (Prüfrunde 1 A1-6). */
+export const BUERO_SZENEN_BESCHRIFTUNGEN: Readonly<Record<BueroSzenenArt, Readonly<Record<string, string>>>> = Object.freeze(
+  Object.fromEntries(SZENEN.map((szene) => [szene.id, szene.beschriftungen])) as Record<BueroSzenenArt, Readonly<Record<string, string>>>,
+);
+
+/** Wörter an den vier Zielen der Leitstelle: Kopf der Themenseite und Kopfbild der Bürofachkraft (Prüfrunde 1 A1-6). */
+export const BUERO_LEITSTELLE_ZIELE: Readonly<Record<BueroZielId, string>> = Object.freeze({
+  monteure: 'Monteure',
+  kundendienst: 'Kundendienst',
+  kunden: 'Kunden',
+  lager: 'Großhandel und Lager',
+});
+
 /** Titel der vier Szenen (Beschriftungen), auch für die stillen Dateien im Einblick der Stellenseite. */
 export const BUERO_SZENEN_TITEL: Readonly<Record<BueroSzenenArt, string>> = Object.freeze(
   Object.fromEntries(SZENEN.map((szene) => [szene.id, szene.titel])) as Record<BueroSzenenArt, string>,
@@ -1299,8 +1312,8 @@ export function getBueroPageText(options: TextOptions): BueroPageText {
       : { wert: String(COMPANY.foundingYear), name: 'Gegründet in Wetzlar', zeilen: [`${buero},`, `${lager}.`], zeichnung: 'buero' },
     leitstelle: {
       titel:
-        'Schreibtisch im Büro von oben, maßstäblich, mit Bildschirm, zwei Blättern und einem Ordner; Bezugslinien führen zu den Monteuren, zum Kundendienst, zu den Kunden und zu Großhandel und Lager mit einer Europalette.',
-      ziele: { monteure: 'Monteure', kundendienst: 'Kundendienst', kunden: 'Kunden', lager: 'Großhandel und Lager' },
+        'Schreibtisch im Büro von oben, maßstäblich, mit Bildschirm, zwei Blättern und einem Ordner; Bezugslinien führen zu Sinnbildern für die Monteure, den Kundendienst, die Kunden sowie Großhandel und Lager.',
+      ziele: BUERO_LEITSTELLE_ZIELE,
     },
     aufgaben: {
       kopf: {

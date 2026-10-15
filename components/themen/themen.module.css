@@ -1152,29 +1152,6 @@
   container-type: inline-size;
 }
 
-.bueroZiele {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--a-2);
-  padding-top: var(--a-3);
-}
-
-@container (min-width: 30rem) {
-  .bueroZiele {
-    position: absolute;
-    inset: 0;
-    display: block;
-    padding: 0;
-  }
-
-  .bueroZiel {
-    position: absolute;
-    left: var(--lx);
-    top: var(--ly);
-    translate: var(--tx) -50%;
-  }
-}
-
 .bueroSzenen {
   display: grid;
   gap: var(--a-8) var(--a-7);
@@ -1192,6 +1169,11 @@
 .bueroBild {
   position: relative;
   container-type: inline-size;
+}
+
+/* Schriftfeld unter einer Szene: mehrzeilig lesbar (text-etikett hat 1,1; Prüfrunde 1 A1-9) */
+.bueroSchriftfeld {
+  line-height: 1.4;
 }
 
 /* Beschriftung über der Zeichnung: wächst mit ihr (bei 288 px Breite 12 px, Prüfung E-029, Befund 7) */

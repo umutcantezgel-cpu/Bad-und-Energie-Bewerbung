@@ -22,9 +22,9 @@ import { BUERO_DATEI, BUERO_MARKE } from '../../../../scripts/qa/check-design-to
 import { MERKMAL_LAENGE, pruefeBueroBlock } from '../../../../scripts/qa/check-css-chunks.mjs';
 import { ABLAGE, BRIEF, ORDNER } from '../ablage';
 import { ANSCHRIFT, BELEG, BLATT } from '../beleg';
-import { LEITSTELLE, PALETTE as PALETTE_OBEN, TISCH } from '../leitstelle';
+import { BEZUG, LEITSTELLE, TISCH, ZIELE } from '../leitstelle';
 import { BUERO_MASSE, BUERO_SCHRIFTFELD } from '../masse';
-import { MATERIAL, PALETTE as PALETTE_SEITE } from '../material';
+import { BODEN, EINZELHEIT, GELAENDE, KARTON_HAUS, MATERIAL, PALETTE as PALETTE_SEITE } from '../material';
 import { ARTEN, pfadeVon, takteVon, type BueroSzene } from '../szene';
 import { BUERO_SZENEN, BUERO_SZENEN_ARTEN } from '../szenen';
 import { BUERO_SVG_FARBEN, DATEI_KLASSE, bueroSzenePfad, bueroSzenenDateien, leitstelleSvg, szeneSvg } from '../svg';
@@ -71,6 +71,8 @@ describe('Maße: genormt und im richtigen Verhältnis', () => {
     expect(BUERO_MASSE.ordner.ruecken).toMatchObject({ mm: 80, geschaetzt: 'geschaetzt' });
     expect(BUERO_MASSE.a4.breite.stelle).toContain('ISO 216');
     expect(BUERO_MASSE.dinLang.breite.stelle).toContain('DIN 678');
+    // Lage des Fensters nach DIN 680 (Fensterbriefhüllen), nicht DIN 678 (Prüfrunde 1 B1-7)
+    for (const k of ['fensterBreite', 'fensterHoehe', 'fensterLinks', 'fensterUnten'] as const) expect(BUERO_MASSE.dinLang[k].stelle, k).toContain('DIN 680');
     expect(BUERO_MASSE.europalette.laenge.stelle).toContain('EN 13698-1');
     // Aufbau der Palette in der Seitenansicht ergibt ihre Höhe
     const p = BUERO_MASSE.europalette;
@@ -80,16 +82,77 @@ describe('Maße: genormt und im richtigen Verhältnis', () => {
     }
   });
 
-  it('Leitstelle 1 : 10 mm: Tisch 1600 × 800, Europalette 1200 × 800 von oben, Blätter A4, Ordner 285 × 318', () => {
+  it('Leitstelle 1 : 10 mm: Tisch 1600 × 800, Blätter A4, Ordner 285 × 318; die vier Ziele gleich große Sinnbilder', () => {
     expect(LEITSTELLE.mmJeEinheit).toBe(10);
     expect([TISCH.breite, TISCH.tiefe]).toEqual([160, 80]);
-    expect([PALETTE_OBEN.laenge, PALETTE_OBEN.breite]).toEqual([120, 80]);
     const r = alleRechtecke(LEITSTELLE);
     expect(r).toContainEqual([160, 80]);
     expect(r.filter(([b, h]) => nah(b, 21) && nah(h, 29.7))).toHaveLength(2);
     expect(r.some(([b, h]) => nah(b, 28.5) && nah(h, 31.8))).toBe(true);
-    // Deckbretter in voller Länge: 2 × 145 außen, 145 Mitte, 2 × 100 dazwischen
-    expect(r.filter(([b]) => b === 120).map(([, h]) => h)).toEqual([14.5, 10, 14.5, 10, 14.5]);
+    // Prüfrunde 1 A1-4, B1-3: Monteure, Kundendienst, Kunden, Lager sind Glyphen im selben Maßstab (kein Spielzeughaus
+    // neben einer maßstäblichen Palette); maßstäblich ist nur der Tisch, das Schriftfeld sagt es
+    const ziele = LEITSTELLE.gruppen.filter((g) => g.id in ZIELE);
+    expect(ziele.map((g) => g.id)).toEqual(['monteure', 'kundendienst', 'kunden', 'lager']);
+    expect(new Set(ziele.map((g) => g.lage?.s))).toEqual(new Set([ZIELE.monteure.s]));
+    for (const g of LEITSTELLE.gruppen) if (g.id !== 'tisch' && g.id !== 'bezug') expect(g.lage, g.id).toBeDefined();
+    expect(BUERO_SCHRIFTFELD.leitstelle).toContain('Sinnbild ohne Maßstab');
+    expect(BUERO_SCHRIFTFELD.leitstelle).not.toMatch(/Europalette|EN.13698/);
+    // Jede Bezugslinie endet kurz vor ihrem Ziel (höchstens 12 Einheiten neben dem Glyphenfeld 24 × 24)
+    for (const [id, b] of Object.entries(BEZUG)) {
+      const z = ZIELE[id as keyof typeof ZIELE];
+      const dx = Math.max(z.x - b.bis.x, 0, b.bis.x - (z.x + 24 * z.s));
+      const dy = Math.max(z.y - b.bis.y, 0, b.bis.y - (z.y + 24 * z.s));
+      expect(Math.hypot(dx, dy), id).toBeLessThanOrEqual(12);
+    }
+  });
+
+  it('Material (Prüfrunde 1 A1-4, B1-3): nur das Lager maßstäblich, im eigenen Rahmen; Halle und Haus Sinnbilder auf eigenen Geländestücken', () => {
+    const gruppe = (id: string) => MATERIAL.gruppen.find((g) => g.id === id)!;
+    expect(MATERIAL.gruppen.filter((g) => g.sinnbild).map((g) => g.id)).toEqual(['grosshandel', 'baustelle']);
+    expect(BUERO_SCHRIFTFELD.material).toContain('Halle und Haus als Sinnbild ohne Maßstab');
+    // Das Lager steht in seinem Rahmen: Palette und Kartons ganz darin
+    const imRahmen = (x: number, y: number) => x >= EINZELHEIT.x && x <= EINZELHEIT.x + EINZELHEIT.breite && y >= EINZELHEIT.y && y <= EINZELHEIT.y + EINZELHEIT.hoehe;
+    for (const id of ['lager', 'paket-1', 'paket-2']) {
+      for (const d of gruppe(id).teile.map((t) => t.d)) {
+        for (const m of d.matchAll(/M(-?[\d.]+) (-?[\d.]+)H(-?[\d.]+)V(-?[\d.]+)/g)) {
+          expect(imRahmen(Number(m[1]), Number(m[2])) && imRahmen(Number(m[3]), Number(m[4])), `${id} ${m[0]}`).toBe(true);
+        }
+      }
+    }
+    // Kein Geländestück trägt maßstäbliche und Sinnbild-Teile zugleich: die Palette hat ihre Linie im Rahmen
+    expect(GELAENDE).toHaveLength(3);
+    const [halle, lager, haus] = GELAENDE;
+    expect(lager.von).toBeGreaterThan(EINZELHEIT.x);
+    expect(lager.bis).toBeLessThan(EINZELHEIT.x + EINZELHEIT.breite);
+    expect(halle.bis).toBeLessThan(EINZELHEIT.x);
+    expect(haus.von).toBeGreaterThan(EINZELHEIT.x + EINZELHEIT.breite);
+    expect(gruppe('wege').teile[0].d).toBe(GELAENDE.map((g) => `M${g.von} ${BODEN}H${g.bis}`).join(''));
+    // Der Karton am Haus im Maß des Sinnbilds: kleiner als die Tür (0,22 × 92 breit, 0,5 × 76 hoch)
+    const [kb, kh] = rechtecke(gruppe('paket-3').teile[0].d)[0];
+    expect(kb).toBeCloseTo(60 * KARTON_HAUS.teil, 6);
+    expect(kb).toBeLessThan(0.22 * 92);
+    expect(kh).toBeLessThan(0.5 * 76);
+  });
+
+  it('jede maßstäbliche Szene mit Sinnbildern sagt „ohne Maßstab“; Szenen ohne Sinnbild behaupten keins', () => {
+    for (const szene of ALLE) {
+      const sinnbilder = szene.gruppen.filter((g) => g.sinnbild || g.lage);
+      const feld = BUERO_SCHRIFTFELD[szene.id];
+      if (szene.mmJeEinheit === null) expect(feld, szene.id).toContain('ohne Maßstab');
+      else expect(feld.includes('ohne Maßstab'), szene.id).toBe(sinnbilder.length > 0);
+    }
+  });
+
+  it('Schriftfelder brechen sauber um (Prüfrunde 1 A1-9): Zahl und Einheit, Norm und Nummer, Maß und Malzeichen ungetrennt; nie „·“ am Zeilenanfang', () => {
+    for (const [id, feld] of Object.entries(BUERO_SCHRIFTFELD)) {
+      expect(feld, id).not.toMatch(/ ·/);
+      expect(feld, id).not.toMatch(/\b(?:DIN|EN|ISO) \d/);
+      expect(feld, id).not.toMatch(/\d ×|× \d/);
+      expect(feld, id).not.toMatch(/ mm\b|Maße in/);
+    }
+    const css = quelle(BUERO_DATEI);
+    expect(css).toMatch(/\.bueroSchriftfeld \{\s*line-height: 1\.4;/);
+    expect(quelle('components/themen/buero/BueroSzene.tsx')).toContain("cn('text-etikett', styles.bueroSchriftfeld)");
   });
 
   it('Blatt A4 (1,5 mm je Einheit) mit Anschriftfeld nach DIN 5008; Palette von der Seite 1200 × 144; Ordner 80, Brief DIN lang', () => {

@@ -6,6 +6,7 @@
  * lib/zeichnung/norm.ts): Kontur stumpf mit runden Ecken, feine und Maßlinien stumpf und spitz; keine Leitung, keine
  * Rohrfarbe, nichts fließt. Wärme nur als Fläche (`warm1` … `warm3`, Rollen --waerme-1…3 im Wärmebereich).
  */
+import type { CSSProperties } from 'react';
 import { r1 } from '../norm';
 
 /** Linienart und Fläche eines Pfads. */
@@ -49,8 +50,13 @@ export interface Ablauf {
 export interface Gruppe {
   id: string;
   teile: readonly Strich[];
-  /** Feste Lage einer Gruppe (Glyphen im Raster 24 × 24): `translate(x y) scale(s)`. */
+  /** Feste Lage einer Gruppe (Glyphen im Raster 24 × 24): `translate(x y) scale(s)`. Glyphen sind Sinnbilder. */
   lage?: { x: number; y: number; s: number };
+  /**
+   * Sinnbild ohne Maßstab in einer maßstäblichen Szene (Gebäude): steht nicht auf derselben Linie wie die
+   * maßstäblichen Teile, und das Schriftfeld der Szene sagt „ohne Maßstab“ (Prüfrunde 1 A1-4, B1-3).
+   */
+  sinnbild?: true;
   ablauf?: Ablauf;
 }
 
@@ -126,6 +132,26 @@ export function giebelhaus(x: number, unten: number, breite: number, wandHoehe: 
     waende: rechteck(x, traufe, breite, wandHoehe),
     dach: `M${z(x - ueber)} ${z(traufe + ueber)}L${z(x + halb)} ${z(traufe - halb)}L${z(x + breite + ueber)} ${z(traufe + ueber)}`,
     tuer: rechteck(x + breite * 0.2, unten - wandHoehe * 0.5, breite * 0.22, wandHoehe * 0.5),
+  };
+}
+
+/**
+ * Haus als Glyphe im Raster 24 × 24 (Rand 2, Giebel 45°) wie die Familien-Icons: Wände 16 × 9, Dach mit Überstand,
+ * Tür. Für Sinnbilder neben anderen Glyphen (Leitstelle: die Kunden).
+ */
+export const HAUS_GLYPHE = Object.freeze(giebelhaus(4, 21, 16, 9));
+
+/**
+ * Lage einer Beschriftung über dem Bild in Prozent des Rahmens, Anker wie text-anchor (Mitte der Zeile auf y). Für die
+ * Inline-Zeichnung (components/themen/buero/BueroZeichnung.tsx) und die Dateien auf der Stellenseite
+ * (components/jobs/stelle/BueroBeschriftungen.tsx) gleich.
+ */
+export function beschriftungsLage(szene: BueroSzene, b: Beschriftung): CSSProperties {
+  const pct = (wert: number, von: number) => `${Math.round((wert / von) * 100_000) / 1000}%`;
+  return {
+    left: pct(b.x, szene.rahmen.breite),
+    top: pct(b.y, szene.rahmen.hoehe),
+    translate: `${b.anker === 'start' ? '0' : b.anker === 'middle' ? '-50%' : '-100%'} -50%`,
   };
 }
 

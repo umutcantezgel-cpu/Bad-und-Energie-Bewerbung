@@ -2,6 +2,7 @@ import { Icon } from '@/components/icons';
 import t from '@/components/zeichnung/technik/technik.module.css';
 import { SichtStart } from '@/components/zeichnung/bewegung/SichtStart';
 import type { MotionId } from '@/lib/motion/register';
+import { cn } from '@/lib/utils/cn';
 import { geschuetzt, type BueroSzeneText } from '@/lib/themen/text';
 import { BUERO_SZENEN } from '@/lib/zeichnung/buero/szenen';
 import styles from '../stil';
@@ -32,7 +33,7 @@ export function BueroSzene({ szene }: { szene: BueroSzeneText }) {
         </h3>
         {szene.aufgabe ? <p className="max-w-prose text-body text-ink">{geschuetzt(szene.aufgabe.text)}</p> : null}
         <div className={t.schriftfeld}>
-          <span className="text-etikett">{szene.schriftfeld}</span>
+          <span className={cn('text-etikett', styles.bueroSchriftfeld)}>{szene.schriftfeld}</span>
         </div>
       </figcaption>
     </figure>

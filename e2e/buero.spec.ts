@@ -88,6 +88,21 @@ test('reduzierte Bewegung (Standard der Projekte): keine Animation, alle Szenen 
   await expectNoAxeViolations(page, testInfo);
 });
 
+/** Beschriftungen, die über den Rand ihres Bilds ragen (Text der Spans), je Bild-Behälter. */
+function ausDemBild(bilder: Locator): Promise<(string | null)[]> {
+  return bilder.evaluateAll((alle) =>
+    alle.flatMap((bild) => {
+      const r = bild.getBoundingClientRect();
+      return [...bild.querySelectorAll('span')]
+        .filter((s) => {
+          const t = s.getBoundingClientRect();
+          return t.left < r.left - 0.5 || t.right > r.right + 0.5 || t.top < r.top - 0.5 || t.bottom > r.bottom + 0.5;
+        })
+        .map((s) => s.textContent);
+    }),
+  );
+}
+
 test('Beschriftungen ≥ 12 px, ganz im Bild, kein horizontaler Scroll bei 320 und 390 px', async ({ page }) => {
   for (const width of [320, 390]) {
     await page.setViewportSize({ width, height: 800 });
@@ -96,6 +111,11 @@ test('Beschriftungen ≥ 12 px, ganz im Bild, kein horizontaler Scroll bei 320 u
     expect(await findSmallText(page), `Text kleiner als 12 px bei ${width} px`).toEqual([]);
     const breit = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(breit, `horizontaler Scroll bei ${width} px`).toBeLessThanOrEqual(0);
+    // Die Ziele der Leitstelle stehen auch am Handy an ihren Glyphen, ohne Kasten, ganz im Bild (Prüfrunde 1 A1-7)
+    const leitstelle = page.locator('[data-zeichnung="leitstelle"]');
+    await expect(leitstelle.locator('span')).toHaveCount(4);
+    await expect(leitstelle.locator('[data-zeichnung="etikettkasten"]')).toHaveCount(0);
+    expect(await ausDemBild(leitstelle), `Ziel der Leitstelle ragt bei ${width} px aus dem Bild`).toEqual([]);
     // Jede Beschriftung einer Szene liegt ganz in ihrem Bild (nichts wird am Rand abgeschnitten)
     const draussen = await page.locator('[data-ablauf]').evaluateAll((bilder) =>
       bilder.flatMap((bild) => {
@@ -133,4 +153,16 @@ test('Stellenseite der Bürofachkraft: Kopfbild Leitstelle und die Szenen nur al
   const antwort = await page.request.get((await bilder.last().getAttribute('src'))!);
   expect(antwort.status()).toBe(200);
   expect(antwort.headers()['content-type']).toContain('image/svg+xml');
+  // Prüfrunde 1 A1-6: die Wörter wie auf der Themenseite über den Bildern, ganz im Bild, mindestens 12 px
+  const szenen = page.locator('[data-zeichnung^="buero-"] > div');
+  await expect(szenen).toHaveCount(4);
+  await expect(szenen.locator('span')).toHaveCount(5 + 3 + 4 + 2);
+  await szenen.first().scrollIntoViewIfNeeded();
+  expect(await ausDemBild(szenen)).toEqual([]);
+  expect(await findSmallText(page)).toEqual([]);
+  if ((page.viewportSize()?.width ?? 0) >= 1024) {
+    const kopf = page.locator('[data-stelle-kopfbild="buero"] [data-zeichnung="leitstelle"] > div');
+    await expect(kopf.locator('span')).toHaveCount(4);
+    expect(await ausDemBild(kopf)).toEqual([]);
+  }
 });
