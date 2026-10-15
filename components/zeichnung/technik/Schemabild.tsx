@@ -1,5 +1,13 @@
 import type { CSSProperties } from 'react';
-import { flussMuster, flussStrecken, flussStriche, type SchemaLeitung, type SchemaPfeil, type SchemaSymbol } from '@/lib/zeichnung/szenen/schema';
+import {
+  flussMuster,
+  flussStrecken,
+  flussStriche,
+  type FlussSperre,
+  type SchemaLeitung,
+  type SchemaPfeil,
+  type SchemaSymbol,
+} from '@/lib/zeichnung/szenen/schema';
 import { SYMBOLE, type SymbolDef } from '@/lib/zeichnung/symbole';
 import { r1, versal, type Medium } from '@/lib/zeichnung/norm';
 import { cn } from '@/lib/utils/cn';
@@ -35,16 +43,28 @@ const anteil = (wert: number, bezug: number) => `${Math.round((wert / bezug) * 1
  * ein SVG mit den Strichen, das dauer.module.css per `transform` um eine Periode weiterschiebt. So spielt der
  * Compositor die Schleife ab, ohne dass der Browser je Bild neu zeichnet (Malzeit unter 2 ms); `stroke-dashoffset` auf
  * einem Pfad in der Zeichnung malte je Bild das ganze Dokument neu. `breite` und `hoehe`: Rahmen der Zeichnung in
- * Einheiten. Liegt in einem Element mit `position: relative` genau über dem SVG der Zeichnung.
+ * Einheiten. Liegt in einem Element mit `position: relative` genau über dem SVG der Zeichnung. Unter Symbolen,
+ * festen Fließpfeilen und der Wanddurchführung (`sperren`) setzt das Muster aus (Prüfung E-029, Runde 3); Reste kürzer
+ * als ein Strich entfallen.
  */
-export function Fluss({ wege, breite, hoehe }: { wege: readonly SchemaLeitung[]; breite: number; hoehe: number }) {
+export function Fluss({
+  wege,
+  breite,
+  hoehe,
+  sperren,
+}: {
+  wege: readonly SchemaLeitung[];
+  breite: number;
+  hoehe: number;
+  sperren: readonly FlussSperre[];
+}) {
   const muster = flussMuster(breite);
   const { periode, rand } = muster;
   return (
     <div className={t.flussEbene} aria-hidden="true" data-fluss="">
       {wege.map((w) => (
         <div key={w.key} className={cn(t.fluss, bewegung.fluss)} data-motion={FLUSS[w.medium]} data-weg={w.key}>
-          {flussStrecken(w).map((s) => {
+          {flussStrecken(w, sperren, muster.strich).map((s) => {
             const laenge = r1(s.laenge);
             const lage: CSSProperties = {
               left: anteil(s.von.x, breite),

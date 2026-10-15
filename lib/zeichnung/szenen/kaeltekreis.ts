@@ -10,7 +10,7 @@
  * Vereinfacht: ohne 4-Wege-Ventil zum Abtauen und Kühlen, ohne Sammler und Filter (Anleitung Bild 2 und 3).
  * Gezeichnet in components/zeichnung/technik/Kaeltekreis.tsx, geprüft in lib/zeichnung/__tests__/schemata.test.ts.
  */
-import { an, leitung, pfeil, symbol, type SchemaLeitung, type SchemaPfeil, type SchemaSymbol } from './schema';
+import { an, flussSperren, leitung, pfeil, symbol, type FlussSperre, type SchemaLeitung, type SchemaPfeil, type SchemaSymbol } from './schema';
 
 /** Rechts läuft das Heizwasser aus dem Gehäuse; die Etiketten Vorlauf und Rücklauf stehen innerhalb des Rahmens. */
 export const KAELTEKREIS_RAHMEN = Object.freeze({ breite: 860, hoehe: 520 });
@@ -93,6 +93,20 @@ export const KAELTEKREIS_PFEILE: readonly SchemaPfeil[] = [
   pfeil('vorlauf', { x: 790, y: p('verfluessiger', 'rechtsAus').y }, { x: 1, y: 0 }),
   pfeil('ruecklauf', { x: 712, y: p('verfluessiger', 'rechtsEin').y }, { x: -1, y: 0 }),
 ];
+
+/** Größte Stufe der Fließpfeile: --pfeil der schmalsten Fläche (technik.module.css, `.kaeltekreisBild` unter 26rem). */
+export const KAELTEKREIS_PFEIL_MAX = 2.4;
+
+/**
+ * Wo das Strichmuster der Dauerbewegung aussetzt (Prüfung E-029, Runde 3): unter jedem Symbol und jedem festen
+ * Fließpfeil in der größten Stufe.
+ */
+export const KAELTEKREIS_FLUSS_SPERREN: readonly FlussSperre[] = flussSperren({
+  breite: KAELTEKREIS_RAHMEN.breite,
+  symbole: KAELTEKREIS_SYMBOLE,
+  pfeile: KAELTEKREIS_PFEILE,
+  pfeilFaktor: KAELTEKREIS_PFEIL_MAX,
+});
 
 /**
  * Außenluft tritt links in den Verdampfer (Etikett mit Pfeil außerhalb des Gehäuses). Das Etikett steht senkrecht

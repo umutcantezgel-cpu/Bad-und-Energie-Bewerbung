@@ -1,6 +1,7 @@
 import { SCHRIFTFELD_SCHEMA, schraffurLinien, versal } from '@/lib/zeichnung/norm';
 import {
   ANLAGENSCHEMA_BEREICHE,
+  ANLAGENSCHEMA_FLUSS_SPERREN,
   ANLAGENSCHEMA_KAELTE,
   ANLAGENSCHEMA_LEITUNGEN,
   ANLAGENSCHEMA_PFEILE,
@@ -75,7 +76,9 @@ export function Anlagenschema({ bewegt = false, titel = ANLAGENSCHEMA_TITEL, leg
           <Pfeile pfeile={ANLAGENSCHEMA_PFEILE} />
           <Symbole symbole={ANLAGENSCHEMA_SYMBOLE} />
         </svg>
-        {bewegt ? <Fluss wege={[...ANLAGENSCHEMA_KAELTE, ...ANLAGENSCHEMA_LEITUNGEN]} breite={breite} hoehe={hoehe} /> : null}
+        {bewegt ? (
+          <Fluss wege={[...ANLAGENSCHEMA_KAELTE, ...ANLAGENSCHEMA_LEITUNGEN]} breite={breite} hoehe={hoehe} sperren={ANLAGENSCHEMA_FLUSS_SPERREN} />
+        ) : null}
       </div>
       {legende || schriftfeld ? (
         <figcaption>

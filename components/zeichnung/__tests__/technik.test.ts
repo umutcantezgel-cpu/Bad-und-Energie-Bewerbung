@@ -11,10 +11,28 @@ import { COMPRESS_AW_L } from '@/lib/zeichnung/geraete/compress-aw-l';
 import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
 import type { Aussengeraet as Geraetedaten } from '@/lib/zeichnung/geraete/typen';
 import { BOSCH_FREIGABE } from '@/lib/zeichnung/marke';
-import { ANLAGENSCHEMA_KAELTE, ANLAGENSCHEMA_LEITUNGEN, ANLAGENSCHEMA_PFEILE, ANLAGENSCHEMA_RAHMEN, ANLAGENSCHEMA_SYMBOLE } from '@/lib/zeichnung/szenen/anlagenschema';
+import {
+  ANLAGENSCHEMA_BEREICHE,
+  ANLAGENSCHEMA_FLUSS_SPERREN,
+  ANLAGENSCHEMA_KAELTE,
+  ANLAGENSCHEMA_LEITUNGEN,
+  ANLAGENSCHEMA_PFEIL_MAX,
+  ANLAGENSCHEMA_PFEILE,
+  ANLAGENSCHEMA_RAHMEN,
+  ANLAGENSCHEMA_SYMBOLE,
+} from '@/lib/zeichnung/szenen/anlagenschema';
 import { HEIZKOERPER_LAGE, LEITUNGEN as HAUS_LEITUNGEN } from '@/lib/zeichnung/szenen/hausschnitt';
-import { KAELTEKREIS_GERAET, KAELTEKREIS_PFEILE, KAELTEKREIS_RAHMEN, KAELTEKREIS_SYMBOLE, KAELTEKREIS_WASSER, KAELTEKREIS_WEGE } from '@/lib/zeichnung/szenen/kaeltekreis';
-import { PFEIL_GRUNDMASS, flussMuster, flussStrecken } from '@/lib/zeichnung/szenen/schema';
+import {
+  KAELTEKREIS_FLUSS_SPERREN,
+  KAELTEKREIS_GERAET,
+  KAELTEKREIS_PFEIL_MAX,
+  KAELTEKREIS_PFEILE,
+  KAELTEKREIS_RAHMEN,
+  KAELTEKREIS_SYMBOLE,
+  KAELTEKREIS_WASSER,
+  KAELTEKREIS_WEGE,
+} from '@/lib/zeichnung/szenen/kaeltekreis';
+import { PFEIL_GRUNDMASS, flussMuster, flussStrecken, type SchemaLeitung } from '@/lib/zeichnung/szenen/schema';
 import { TOKENS } from '@/lib/tokens';
 import { ANSICHT_SCHRIFT, ansichtVon } from '@/lib/zeichnung/geraete/ansicht';
 import { SYMBOLE, kennbuchstabe, type SymbolId } from '@/lib/zeichnung/symbole';
@@ -277,11 +295,12 @@ describe('Schrift in den Zeichnungen: gezeichnet mindestens 12 px an der kleinst
       return { x0: s.lage.x - hx, y0: s.lage.y - hy, x1: s.lage.x + hx, y1: s.lage.y + hy };
     };
     for (const { name, k, pfeile, symbole, wege } of [
-      { name: 'Kältekreis', k: 2.4, pfeile: KAELTEKREIS_PFEILE, symbole: KAELTEKREIS_SYMBOLE, wege: [...KAELTEKREIS_WEGE, ...KAELTEKREIS_WASSER] },
-      { name: 'Anlagenschema', k: 3.6, pfeile: ANLAGENSCHEMA_PFEILE, symbole: ANLAGENSCHEMA_SYMBOLE, wege: [...ANLAGENSCHEMA_LEITUNGEN, ...ANLAGENSCHEMA_KAELTE] },
+      { name: 'Kältekreis', k: KAELTEKREIS_PFEIL_MAX, pfeile: KAELTEKREIS_PFEILE, symbole: KAELTEKREIS_SYMBOLE, wege: [...KAELTEKREIS_WEGE, ...KAELTEKREIS_WASSER] },
+      { name: 'Anlagenschema', k: ANLAGENSCHEMA_PFEIL_MAX, pfeile: ANLAGENSCHEMA_PFEILE, symbole: ANLAGENSCHEMA_SYMBOLE, wege: [...ANLAGENSCHEMA_LEITUNGEN, ...ANLAGENSCHEMA_KAELTE] },
     ]) {
-      // Der Faktor der kleinsten Stufe steht so auch in technik.module.css
+      // Der Faktor der kleinsten Stufe steht so auch in technik.module.css (die Sperren der Fluss-Ebene rechnen mit ihm)
       expect(container('max-width: 26rem'), name).toContain(`--pfeil: ${k};`);
+      expect([2.4, 3.6], name).toContain(k);
       for (const p of pfeile) {
         const e = ecken(p.d, k);
         const box = { x0: Math.min(...e.map((q) => q.x)), y0: Math.min(...e.map((q) => q.y)), x1: Math.max(...e.map((q) => q.x)), y1: Math.max(...e.map((q) => q.y)) };
@@ -482,10 +501,20 @@ describe('Fließrichtung in den gezeichneten Schemata (K-003.2)', () => {
 
   it('Kältekreis und Anlagenschema zeichnen die Wege des Moduls unverändert (Pfad = Fließrichtung)', () => {
     const faelle = [
-      { m: html(createElement(Kaeltekreis, { bewegt: true })), daten: [...KAELTEKREIS_WASSER, ...KAELTEKREIS_WEGE], rahmen: KAELTEKREIS_RAHMEN },
-      { m: html(createElement(Anlagenschema, { bewegt: true })), daten: [...ANLAGENSCHEMA_KAELTE, ...ANLAGENSCHEMA_LEITUNGEN], rahmen: ANLAGENSCHEMA_RAHMEN },
+      {
+        m: html(createElement(Kaeltekreis, { bewegt: true })),
+        daten: [...KAELTEKREIS_WASSER, ...KAELTEKREIS_WEGE],
+        rahmen: KAELTEKREIS_RAHMEN,
+        sperren: KAELTEKREIS_FLUSS_SPERREN,
+      },
+      {
+        m: html(createElement(Anlagenschema, { bewegt: true })),
+        daten: [...ANLAGENSCHEMA_KAELTE, ...ANLAGENSCHEMA_LEITUNGEN],
+        rahmen: ANLAGENSCHEMA_RAHMEN,
+        sperren: ANLAGENSCHEMA_FLUSS_SPERREN,
+      },
     ];
-    for (const { m, daten, rahmen } of faelle) {
+    for (const { m, daten, rahmen, sperren } of faelle) {
       const gezeichnet = wege(m);
       expect(gezeichnet.map((w) => w.key)).toEqual(daten.map((w) => w.key));
       for (const w of gezeichnet) {
@@ -493,27 +522,139 @@ describe('Fließrichtung in den gezeichneten Schemata (K-003.2)', () => {
         expect(w.d, w.key).toBe(l.d);
         expect(w.medium, w.key).toBe(l.medium);
       }
-      // Das Strichmuster liegt je Leitung auf jedem geraden Stück ihres Pfads, in seiner Reihenfolge und gedreht in
-      // seine Richtung (es wandert in +x des Stücks, also in Fließrichtung); Wasser und Kältemittel getrennt
-      const { rand } = flussMuster(rahmen.breite);
+      // Das Strichmuster liegt je Leitung auf den geraden Stücken ihres Pfads, gedreht in ihre Richtung (es wandert in +x
+      // des Stücks, also in Fließrichtung); Wasser und Kältemittel getrennt. Es läuft über jedes sichtbare Rohrstück und
+      // setzt nur unter den Sperren aus (Symbole, feste Fließpfeile, Wanddurchführung; Prüfung E-029, Runde 3)
+      const { rand, strich } = flussMuster(rahmen.breite);
       const f = fluesse(m);
       expect(f.map((x) => x.key)).toEqual(gezeichnet.map((w) => w.key));
+      // Rand der Sperren mit 0,3 Einheiten Spiel (Lage der Stücke in Prozent mit drei Stellen gerundet)
+      const gesperrt = (q: { x: number; y: number }) =>
+        sperren.some((k) => q.x > k.x0 + 0.3 && q.x < k.x1 - 0.3 && q.y > k.y0 + 0.3 && q.y < k.y1 - 0.3);
       gezeichnet.forEach((w, i) => {
         expect(f[i].id, w.key).toBe(w.medium === 'kaeltemittel' ? 'kaeltemittel-fliesst' : 'wasser-fliesst');
-        const soll = geradeImPfad(w.d);
-        expect(soll.length, w.key).toBeGreaterThan(0);
-        expect(f[i].strecken.length, w.key).toBe(soll.length);
-        soll.forEach((g, j) => {
-          const s = f[i].strecken[j];
-          expect((s.left * rahmen.breite) / 100, `${w.key} ${j} x`).toBeCloseTo(g.x, 1);
-          expect((s.top * rahmen.hoehe) / 100 + rand, `${w.key} ${j} y`).toBeCloseTo(g.y, 1);
-          expect((s.width * rahmen.breite) / 100, `${w.key} ${j} Länge`).toBeCloseTo(g.laenge, 0);
-          expect((s.height * rahmen.hoehe) / 100, `${w.key} ${j} Höhe`).toBeCloseTo(2 * rand, 1);
-          expect(Math.abs(((s.grad - g.grad + 540) % 360) - 180), `${w.key} ${j} Richtung`).toBeLessThan(0.1);
+        const gerade = geradeImPfad(w.d);
+        expect(gerade.length, w.key).toBeGreaterThan(0);
+        const stuecke = f[i].strecken.map((s) => {
+          const a = { x: (s.left * rahmen.breite) / 100, y: (s.top * rahmen.hoehe) / 100 + rand };
+          const laenge = (s.width * rahmen.breite) / 100;
+          expect((s.height * rahmen.hoehe) / 100, `${w.key} Höhe`).toBeCloseTo(2 * rand, 1);
+          return { a, laenge, grad: s.grad };
         });
+        // Jedes Stück des Musters liegt auf einem geraden Stück des Pfads, in seiner Richtung, nicht darüber hinaus
+        for (const st of stuecke) {
+          const g = gerade.find((x) => {
+            const u = { x: Math.cos((x.grad * Math.PI) / 180), y: Math.sin((x.grad * Math.PI) / 180) };
+            const t = (st.a.x - x.x) * u.x + (st.a.y - x.y) * u.y;
+            const quer = Math.abs((st.a.x - x.x) * u.y - (st.a.y - x.y) * u.x);
+            return Math.abs(((st.grad - x.grad + 540) % 360) - 180) < 0.1 && quer < 0.2 && t > -0.2 && t + st.laenge < x.laenge + 0.3;
+          });
+          expect(g, `${w.key}: Stück bei ${st.a.x.toFixed(1)}/${st.a.y.toFixed(1)} auf dem Pfad`).toBeDefined();
+        }
+        // Abgetastet je Einheit: Kein Punkt unter einer Sperre trägt Striche; jeder freie Punkt trägt welche, außer in
+        // Resten kürzer als ein Strich
+        for (const g of gerade) {
+          const u = { x: Math.cos((g.grad * Math.PI) / 180), y: Math.sin((g.grad * Math.PI) / 180) };
+          const proben = Array.from({ length: Math.floor(g.laenge) - 1 }, (_, j) => {
+            const q = { x: g.x + u.x * (j + 1), y: g.y + u.y * (j + 1) };
+            const gedeckt = stuecke.some((st) => {
+              const t = (q.x - st.a.x) * u.x + (q.y - st.a.y) * u.y;
+              const quer = Math.abs((q.x - st.a.x) * u.y - (q.y - st.a.y) * u.x);
+              return Math.abs(((st.grad - g.grad + 540) % 360) - 180) < 0.1 && quer < 0.2 && t >= -0.2 && t <= st.laenge + 0.2;
+            });
+            return { q, gedeckt, frei: !gesperrt(q) };
+          });
+          for (const p of proben) if (p.gedeckt) expect(p.frei, `${w.key}: Striche unter einer Sperre bei ${p.q.x.toFixed(1)}/${p.q.y.toFixed(1)}`).toBe(true);
+          // Freie Läufe: zusammenhängende freie Proben; ab einem Strich Länge (plus Rundung) ganz gedeckt
+          let lauf: typeof proben = [];
+          for (const p of [...proben, { q: { x: 0, y: 0 }, gedeckt: false, frei: false }]) {
+            if (p.frei) {
+              lauf.push(p);
+              continue;
+            }
+            if (lauf.length > strich + 2) {
+              for (const r of lauf.slice(1, -1)) expect(r.gedeckt, `${w.key}: frei, aber ohne Striche bei ${r.q.x.toFixed(1)}/${r.q.y.toFixed(1)}`).toBe(true);
+            }
+            lauf = [];
+          }
+        }
       });
       // Die Ebene liegt über dem SVG der Zeichnung, dekorativ
       expect(m).toMatch(/<\/svg><div class="[^"]*" aria-hidden="true" data-fluss="">/);
+    }
+  });
+
+  it('kein Stück der Fluss-Ebene liegt über einem Symbol, einem festen Fließpfeil (größte Stufe) oder der Wanddurchführung (Runde 3)', () => {
+    type Rechteck = { x0: number; y0: number; x1: number; y1: number; was: string };
+    /** Flächen aus den Daten selbst (ohne die Sperren des Moduls): Symbol (halb × Vergrößerung), Pfeil, Durchführung. */
+    const flaechen = (symbole: typeof ANLAGENSCHEMA_SYMBOLE, pfeile: typeof ANLAGENSCHEMA_PFEILE, k: number, extra: Rechteck[]): Rechteck[] => [
+      ...symbole.map((x) => {
+        const { halb } = SYMBOLE[x.id];
+        const m = x.lage.massstab ?? 1;
+        const quer = Math.abs((x.lage.drehung ?? 0) % 180) === 90;
+        const [hx, hy] = [(quer ? halb.y : halb.x) * m, (quer ? halb.x : halb.y) * m];
+        return { x0: x.lage.x - hx, y0: x.lage.y - hy, x1: x.lage.x + hx, y1: x.lage.y + hy, was: x.key };
+      }),
+      ...pfeile.map((p) => {
+        // Ecken des Pfeils um die Spitze um k vergrößert (wie im Markup per scale)
+        const n = (p.d.match(/-?\d*\.?\d+/g) ?? []).map(Number);
+        const e = [0, 2, 4].map((i) => ({ x: p.spitze.x + (n[i] - p.spitze.x) * k, y: p.spitze.y + (n[i + 1] - p.spitze.y) * k }));
+        return { x0: Math.min(...e.map((q) => q.x)), y0: Math.min(...e.map((q) => q.y)), x1: Math.max(...e.map((q) => q.x)), y1: Math.max(...e.map((q) => q.y)), was: `Pfeil ${p.d}` };
+      }),
+      ...extra,
+    ];
+    const d = ANLAGENSCHEMA_BEREICHE.durchfuehrung;
+    const faelle = [
+      {
+        name: 'Kältekreis',
+        wege: [...KAELTEKREIS_WASSER, ...KAELTEKREIS_WEGE] as SchemaLeitung[],
+        breite: KAELTEKREIS_RAHMEN.breite,
+        sperren: KAELTEKREIS_FLUSS_SPERREN,
+        flaechen: flaechen(KAELTEKREIS_SYMBOLE, KAELTEKREIS_PFEILE, KAELTEKREIS_PFEIL_MAX, []),
+      },
+      {
+        name: 'Anlagenschema',
+        wege: [...ANLAGENSCHEMA_KAELTE, ...ANLAGENSCHEMA_LEITUNGEN] as SchemaLeitung[],
+        breite: ANLAGENSCHEMA_RAHMEN.breite,
+        sperren: ANLAGENSCHEMA_FLUSS_SPERREN,
+        flaechen: flaechen(ANLAGENSCHEMA_SYMBOLE, ANLAGENSCHEMA_PFEILE, ANLAGENSCHEMA_PFEIL_MAX, [
+          { x0: d.x, y0: d.y, x1: d.x + d.breite, y1: d.y + d.hoehe, was: 'Wanddurchführung' },
+        ]),
+      },
+    ];
+    for (const { name, wege, breite, sperren, flaechen: fl } of faelle) {
+      const { rand, strich } = flussMuster(breite);
+      /** Treffer: Band des Stücks (Achse ± rand) überschneidet eine Fläche um mehr als 0,1 Einheiten. */
+      const treffer = (stuecke: ReturnType<typeof flussStrecken>) =>
+        stuecke.flatMap((st) => {
+          const box = {
+            x0: Math.min(st.von.x, st.bis.x) - (st.von.y === st.bis.y ? 0 : rand),
+            x1: Math.max(st.von.x, st.bis.x) + (st.von.y === st.bis.y ? 0 : rand),
+            y0: Math.min(st.von.y, st.bis.y) - (st.von.x === st.bis.x ? 0 : rand),
+            y1: Math.max(st.von.y, st.bis.y) + (st.von.x === st.bis.x ? 0 : rand),
+          };
+          return fl.filter((f) => Math.min(box.x1, f.x1) - Math.max(box.x0, f.x0) > 0.1 && Math.min(box.y1, f.y1) - Math.max(box.y0, f.y0) > 0.1).map((f) => f.was);
+        });
+      for (const w of wege) {
+        const stuecke = flussStrecken(w, sperren, strich);
+        // Alle Stücke achsparallel (die Prüfung oben setzt das voraus)
+        for (const st of stuecke) expect(st.von.x === st.bis.x || st.von.y === st.bis.y, `${name} ${w.key}`).toBe(true);
+        expect(treffer(stuecke), `${name} ${w.key}`).toEqual([]);
+        // Die Teilstücke behalten ihre Weglänge ab dem Anfang der Leitung (Takt über die Lücken)
+        const ganz = flussStrecken(w);
+        for (const st of stuecke) {
+          const g = ganz.find((x) => x.winkel === st.winkel && st.anfang >= x.anfang - 1e-6 && st.anfang + st.laenge <= x.anfang + x.laenge + 1e-6)!;
+          expect(g, `${name} ${w.key}`).toBeDefined();
+          expect(st.anfang - g.anfang).toBeCloseTo(Math.hypot(st.von.x - g.von.x, st.von.y - g.von.y), 0);
+        }
+      }
+      // Gegenprobe: ohne Sperren (Stand Runde 3) lägen die Striche über den festen Pfeilen und, im Anlagenschema, über
+      // Armaturen, Pumpen und der Wanddurchführung
+      const ohne = wege.flatMap((w) => treffer(flussStrecken(w)));
+      expect(ohne.filter((x) => x.startsWith('Pfeil')).length, name).toBe(name === 'Kältekreis' ? KAELTEKREIS_PFEILE.length : ANLAGENSCHEMA_PFEILE.length);
+      if (name === 'Anlagenschema') {
+        for (const was of ['pumpe', 'absperrung-vl', 'rueckschlag', 'mischer', 'filter', 'Wanddurchführung']) expect(ohne, was).toContain(was);
+      }
     }
   });
 
@@ -521,7 +662,7 @@ describe('Fließrichtung in den gezeichneten Schemata (K-003.2)', () => {
     const m = html(createElement(Anlagenschema, { bewegt: true }));
     const { periode, strich, rand } = flussMuster(ANLAGENSCHEMA_RAHMEN.breite);
     const baender = [...m.matchAll(/<svg class="[^"]*" style="left:([-\d.]+)%;width:([\d.]+)%;--fluss-schritt:([\d.]+)%" viewBox="([^"]+)" preserveAspectRatio="none" focusable="false"><path d="([^"]+)"><\/path><\/svg>/g)];
-    expect(baender.length).toBe(ANLAGENSCHEMA_LEITUNGEN.concat(ANLAGENSCHEMA_KAELTE).reduce((n, l) => n + flussStrecken(l).length, 0));
+    expect(baender.length).toBe(ANLAGENSCHEMA_LEITUNGEN.concat(ANLAGENSCHEMA_KAELTE).reduce((n, l) => n + flussStrecken(l, ANLAGENSCHEMA_FLUSS_SPERREN, strich).length, 0));
     for (const [, left, width, schritt, viewBox, d] of baender) {
       const [vx, vy, vw, vh] = viewBox.split(' ').map(Number);
       const laenge = vw - periode;

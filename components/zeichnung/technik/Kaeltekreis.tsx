@@ -2,6 +2,7 @@ import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
 import { SCHRIFTFELD_SCHEMA, fliesspfeil, versal } from '@/lib/zeichnung/norm';
 import {
   KAELTEKREIS_DRUCKGRENZE,
+  KAELTEKREIS_FLUSS_SPERREN,
   KAELTEKREIS_GERAET,
   KAELTEKREIS_LUFT,
   KAELTEKREIS_PFEILE,
@@ -85,7 +86,9 @@ export function Kaeltekreis({ bewegt = false, titel = KAELTEKREIS_TITEL, legende
             ) : null,
           )}
         </svg>
-        {bewegt ? <Fluss wege={[...KAELTEKREIS_WASSER, ...KAELTEKREIS_WEGE]} breite={breite} hoehe={hoehe} /> : null}
+        {bewegt ? (
+          <Fluss wege={[...KAELTEKREIS_WASSER, ...KAELTEKREIS_WEGE]} breite={breite} hoehe={hoehe} sperren={KAELTEKREIS_FLUSS_SPERREN} />
+        ) : null}
       </div>
       {legende ? (
         <figcaption>

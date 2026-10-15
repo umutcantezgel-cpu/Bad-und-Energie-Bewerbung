@@ -20,7 +20,7 @@
  * Systemgrenze steht als Strich-Punkt-Linie. Gezeichnet in components/zeichnung/technik/Anlagenschema.tsx, geprüft in
  * lib/zeichnung/__tests__/schemata.test.ts.
  */
-import { an, leitung, pfeil, symbol, type SchemaLeitung, type SchemaPfeil, type SchemaSymbol } from './schema';
+import { an, flussSperren, leitung, pfeil, symbol, type FlussSperre, type SchemaLeitung, type SchemaPfeil, type SchemaSymbol } from './schema';
 
 export const ANLAGENSCHEMA_RAHMEN = Object.freeze({ breite: 1300, hoehe: 620 });
 
@@ -151,6 +151,21 @@ export const ANLAGENSCHEMA_PFEILE: readonly SchemaPfeil[] = [
   pfeil('ruecklauf', { x: RL_PUFFER_X, y: 324 }, { x: 0, y: 1 }),
   pfeil('ruecklauf', { x: 720, y: 450 }, { x: -1, y: 0 }),
 ];
+
+/** Größte Stufe der Fließpfeile: --pfeil der schmalsten Fläche (technik.module.css, `.anlagenBild` unter 26rem). */
+export const ANLAGENSCHEMA_PFEIL_MAX = 3.6;
+
+/**
+ * Wo das Strichmuster der Dauerbewegung aussetzt (Prüfung E-029, Runde 3): unter jedem Symbol, jedem festen
+ * Fließpfeil in der größten Stufe und der Wanddurchführung. So laufen die Striche nur über sichtbare Rohrstücke.
+ */
+export const ANLAGENSCHEMA_FLUSS_SPERREN: readonly FlussSperre[] = flussSperren({
+  breite: ANLAGENSCHEMA_RAHMEN.breite,
+  symbole: ANLAGENSCHEMA_SYMBOLE,
+  pfeile: ANLAGENSCHEMA_PFEILE,
+  pfeilFaktor: ANLAGENSCHEMA_PFEIL_MAX,
+  flaechen: [{ ...ANLAGENSCHEMA_BEREICHE.durchfuehrung, grund: 'wanddurchfuehrung' }],
+});
 
 /** Beschriftung der Bereiche (Versalien, immer sichtbar). */
 export const ANLAGENSCHEMA_TEXTE = Object.freeze([
