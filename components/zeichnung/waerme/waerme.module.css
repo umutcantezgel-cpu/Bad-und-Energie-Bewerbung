@@ -1,0 +1,94 @@
+/*
+ * Wärmefeld 2.0 (E-031, KERN K-010, K-015): die berechneten Bänder (lib/zeichnung/szenen/waermefeld.ts) im
+ * Rauminneren einer Zeichnung, gezeichnet von Waermefeld.tsx. Band 0 (der ganze Raum) steht still; die Bänder 1–4
+ * wachsen einmal nach √t aus ihrem Ursprung (transform-origin im Markup, Einheiten der Daten), das heißeste zuerst:
+ * Startverzögerung `--start` (Takte) aus den Daten, Dauer d-4, Kurve linear auf den Stützstellen DIFFUSION_STUETZ.
+ *
+ * Nur die Wärmerampe --waerme-0…4 (Guard waerme-rollen), keine Verläufe, keine Filter, keine Rohfarben. Grundwerte sind
+ * der Endzustand (Füllart backwards): ohne Skript, mit reduzierter Bewegung, nach einer Soft-Navigation und im Druck
+ * steht das Feld. Hero: unter `.auftakt` (Kopfskript, Auslöser `nachlauf`, Ende ≤ 1.920 ms); Seiten: im Bereich von
+ * SichtStart unter [data-ablauf="laeuft"] (Auslöser `sicht`, Ende ≤ 2.400 ms), vorher unter [data-ablauf="bereit"]
+ * unsichtbar. will-change nur, solange es läuft. Wächter: components/zeichnung/waerme/__tests__/.
+ */
+
+.feld {
+  position: absolute;
+  pointer-events: none;
+}
+
+.grund,
+.band {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.grund {
+  background-color: var(--waerme-0);
+}
+
+.w0 {
+  fill: var(--waerme-0);
+}
+
+.w1 {
+  fill: var(--waerme-1);
+}
+
+.w2 {
+  fill: var(--waerme-2);
+}
+
+.w3 {
+  fill: var(--waerme-3);
+}
+
+.w4 {
+  fill: var(--waerme-4);
+}
+
+/* Wachsen nach √t: Maßstab 0,6 → 1 auf den Stützstellen (0 | 0), (6,25 % | ¼), (25 % | ½), (56,25 % | ¾), (100 % | 1);
+   dabei blendet das Band im ersten Viertel ein */
+@keyframes wachsen {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+
+  6.25% {
+    transform: scale(0.7);
+    opacity: 0.5;
+  }
+
+  25% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+
+  56.25% {
+    transform: scale(0.9);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+:global(.auftakt) [data-waermefeld="hausschnitt"] .band,
+[data-ablauf="laeuft"] .band {
+  will-change: transform, opacity;
+  animation: wachsen var(--d-4) linear calc(var(--takt) * var(--start)) backwards;
+}
+
+/* Bevor der Bereich sichtbar wird (SichtStart): Bänder noch nicht da, Band 0 steht */
+[data-ablauf="bereit"] .band {
+  opacity: 0;
+}
+
+@media print {
+  [data-ablauf="bereit"] .band {
+    opacity: 1;
+  }
+}

@@ -15,6 +15,8 @@ import {
   type Pfeil,
 } from '@/lib/zeichnung/szenen/hausschnitt';
 import { cn } from '@/lib/utils/cn';
+import { WAERMEFELD_AN } from '@/lib/zeichnung/waerme/schalter';
+import { WaermefeldStill } from '../waerme/Waermefeld';
 import { Symbol } from './Symbol';
 import t from './technik.module.css';
 
@@ -44,6 +46,13 @@ export interface HausschnittInhaltProps {
   fassungKlasse?: (leitung: Leitung) => string | undefined;
   /** Schraffur des Erdreichs mit doppeltem Abstand (kleine Einsätze). */
   grob?: boolean;
+  /**
+   * Wärmefeld im Rauminneren (E-031): `aus` ohne Bänder; `still` mit den Bändern in der Zeichnung (ohne Bewegung);
+   * `ebenen`, wenn der Aufrufer die Bänder als eigene Ebenen darunterlegt (Hero, components/zeichnung/waerme). Mit
+   * Bändern stehen Heizkörper, Inneneinheit, Pumpe, Leitungen und Pfeile im Raum im Wärmebereich (data-tone="warm"),
+   * Heizkörper und Inneneinheit ohne Fläche: Die Bänder zeigen auch die Temperatur des Heizkörpers (oben der Vorlauf).
+   */
+  waerme?: 'aus' | 'still' | 'ebenen';
 }
 
 /**
@@ -63,15 +72,55 @@ export function HausschnittInhalt({
   pfeilMotion,
   fassungKlasse,
   grob = false,
+  waerme = 'aus',
 }: HausschnittInhaltProps) {
   const leitungen = LEITUNGEN.filter((l) => knopf || !l.nur);
   const pfeile = PFEILE.filter((p) => knopf || !p.nur);
+  const warm = waerme !== 'aus' && WAERMEFELD_AN;
   const ie = INNENEINHEIT_LAGE;
   const hk = HEIZKOERPER_LAGE;
   const g = GERAET_LAGE;
   const lamellen = Array.from({ length: hk.lamellen }, (_, i) => r1(hk.x + ((i + 1) * hk.breite) / (hk.lamellen + 1)));
+  const leitung = (l: Leitung) => {
+    const motion = leitungMotion?.(l);
+    return (
+      <path
+        key={l.id}
+        d={l.d}
+        className={cn(leitungKlasse?.(l) ?? t.leitung, LEITUNG[l.medium])}
+        data-medium={l.medium}
+        data-weg={l.id}
+        {...(motion ? { 'data-motion': motion, pathLength: 1 } : {})}
+      />
+    );
+  };
+  const pfeilGruppe = (auswahl: readonly Pfeil[]) => (
+    <g {...(pfeilMotion ? { 'data-motion': pfeilMotion } : {})}>
+      {auswahl.map((p) => (
+        <path key={p.d} d={p.d} className={cn(PFEIL[p.medium], pfeilKlasse?.(p))} />
+      ))}
+    </g>
+  );
+  // Rauminneres: mit Wärmefeld im Wärmebereich über den Bändern
+  const raum = (
+    <>
+      {/* Inneneinheit als Symbol (Systemgrenze, Modell offen) mit Umwälzpumpe */}
+      <rect x={ie.x} y={ie.y} width={ie.breite} height={ie.hoehe} className={cn(t.mittellinie, !warm && t.flaeche)} data-inneneinheit="" />
+      <Symbol id="pumpe" x={ie.pumpe.x} y={ie.pumpe.y} massstab={1.4} />
+
+      {/* Flachheizkörper 600 × 1.000 mm, 150 mm über dem Boden */}
+      <rect x={hk.x} y={hk.y} width={hk.breite} height={hk.hoehe} className={cn(t.kontur, !warm && t.flaeche)} data-heizkoerper="" />
+      <path d={lamellen.map((x) => `M${x} ${hk.y}V${hk.y + hk.hoehe}`).join('')} className={t.fein} />
+
+      {/* Vorlauf und Rücklauf zwischen Inneneinheit und Heizkörper, mit festen Pfeilen */}
+      {leitungen.filter((l) => l.raum).map(leitung)}
+      {pfeilGruppe(pfeile.filter((p) => p.raum))}
+    </>
+  );
   return (
     <g data-hausschnitt="">
+      {/* Wärmefeld still unter der ganzen Zeichnung (Wände und Decke decken seinen Rand) */}
+      {waerme === 'still' ? <WaermefeldStill id="hausschnitt" /> : null}
       {/* Erdreich (Schnitt), Rohrgraben mit Sandbett, Schotter unter den Sockeln, Kiesbett am Kondensatrohr */}
       <path d={grob ? BAUTEILE.schraffurGrob : BAUTEILE.schraffur} className={t.schraffur} />
       <path d={BAUTEILE.graben} className={cn(t.fein, t.flaeche)} />
@@ -108,13 +157,7 @@ export function HausschnittInhalt({
       <path d={BAUTEILE.kondensat} className={cn(t.fein, t.flaeche)} data-kondensat="" />
       <path d={BAUTEILE.durchfuehrung} className={cn(t.kontur, t.flaeche)} data-wanddurchfuehrung="" />
 
-      {/* Inneneinheit als Symbol (Systemgrenze, Modell offen) mit Umwälzpumpe */}
-      <rect x={ie.x} y={ie.y} width={ie.breite} height={ie.hoehe} className={cn(t.mittellinie, t.flaeche)} data-inneneinheit="" />
-      <Symbol id="pumpe" x={ie.pumpe.x} y={ie.pumpe.y} massstab={1.4} />
-
-      {/* Flachheizkörper 600 × 1.000 mm, 150 mm über dem Boden */}
-      <rect x={hk.x} y={hk.y} width={hk.breite} height={hk.hoehe} className={cn(t.kontur, t.flaeche)} data-heizkoerper="" />
-      <path d={lamellen.map((x) => `M${x} ${hk.y}V${hk.y + hk.hoehe}`).join('')} className={t.fein} />
+      {warm ? <g data-tone="warm">{raum}</g> : raum}
 
       {/* Hinter Gehäuse und Sockel (vom Anschluss bis unter das Gelände): verdeckte Linie, ohne Bewegung */}
       {leitungen
@@ -130,26 +173,8 @@ export function HausschnittInhalt({
           />
         ))}
       {/* Leitungen in Fließrichtung (keine Kreuzung, auch nicht mit den Leitungen zur Bewerbung) */}
-      {leitungen
-        .filter((l) => !l.verdeckt)
-        .map((l) => {
-          const motion = leitungMotion?.(l);
-          return (
-            <path
-              key={l.id}
-              d={l.d}
-              className={cn(leitungKlasse?.(l) ?? t.leitung, LEITUNG[l.medium])}
-              data-medium={l.medium}
-              data-weg={l.id}
-              {...(motion ? { 'data-motion': motion, pathLength: 1 } : {})}
-            />
-          );
-        })}
-      <g {...(pfeilMotion ? { 'data-motion': pfeilMotion } : {})}>
-        {pfeile.map((p) => (
-          <path key={p.d} d={p.d} className={cn(PFEIL[p.medium], pfeilKlasse?.(p))} />
-        ))}
-      </g>
+      {leitungen.filter((l) => !l.verdeckt && !l.raum).map(leitung)}
+      {pfeilGruppe(pfeile.filter((p) => !p.raum))}
 
       {einzelheit ? (
         <g data-einzelheit={EINZELHEIT.buchstabe}>
@@ -168,6 +193,8 @@ export interface HausschnittKleinProps {
   titel?: string;
   /** Schraffur mit doppeltem Abstand für schmale Einsätze (HausKlein, rund 11–15rem). */
   grob?: boolean;
+  /** Wärmefeld still im Raum (E-031, Grundeinstellung) oder ohne. */
+  waerme?: 'aus' | 'still';
   className?: string;
 }
 
@@ -176,9 +203,10 @@ const KLEIN_VIEWBOX = `60 0 ${HAUSSCHNITT_RAHMEN.breite - 40} ${HAUSSCHNITT_RAHM
 
 /**
  * Kleiner Hausschnitt (Stellenkopf Obermonteur und weitere Stellen, über HausKlein auch Bewerbung, Danke und „Der
- * Betrieb“): derselbe Schnitt wie im Einstieg, ohne Leitungen zur Bewerbung und ohne Bewegung. Breite setzt der Aufrufer.
+ * Betrieb“): derselbe Schnitt wie im Einstieg, ohne Leitungen zur Bewerbung und ohne Bewegung, im Raum das Wärmefeld
+ * still (E-031). Breite setzt der Aufrufer.
  */
-export function HausschnittKlein({ titel, grob = false, className }: HausschnittKleinProps) {
+export function HausschnittKlein({ titel, grob = false, waerme = 'still', className }: HausschnittKleinProps) {
   return (
     <svg
       className={cn(t.zeichnung, t.beschnitten, className)}
@@ -188,7 +216,7 @@ export function HausschnittKlein({ titel, grob = false, className }: Hausschnitt
       {...(titel ? { role: 'img' } : { 'aria-hidden': true })}
     >
       {titel ? <title>{titel}</title> : null}
-      <HausschnittInhalt grob={grob} />
+      <HausschnittInhalt grob={grob} waerme={waerme} />
     </svg>
   );
 }

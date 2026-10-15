@@ -174,6 +174,8 @@ export interface Leitung {
    * gezeichnet in der Linienart `verdeckt`, ohne Bewegung.
    */
   verdeckt?: true;
+  /** Im Rauminneren (E-031): steht im Wärmebereich über den Bändern des Wärmefelds. */
+  raum?: true;
 }
 
 const weg = (id: string, medium: Medium, punkte: Punkt[], extra: Partial<Leitung> = {}): Leitung => ({
@@ -211,15 +213,25 @@ export const LEITUNGEN: readonly Leitung[] = [
     ],
   ),
   // Vorlauf von der Inneneinheit zum Heizkörper (oben angeschlossen)
-  weg('vorlauf-haus', 'vorlauf', [
-    { x: IE.x + IE.breite, y: HK.y + 6 },
-    { x: HK.x, y: HK.y + 6 },
-  ]),
+  weg(
+    'vorlauf-haus',
+    'vorlauf',
+    [
+      { x: IE.x + IE.breite, y: HK.y + 6 },
+      { x: HK.x, y: HK.y + 6 },
+    ],
+    { raum: true },
+  ),
   // Rücklauf vom Heizkörper (unten) zur Inneneinheit
-  weg('ruecklauf-haus', 'ruecklauf', [
-    { x: HK.x, y: HK.y + HK.hoehe - 6 },
-    { x: IE.x + IE.breite, y: HK.y + HK.hoehe - 6 },
-  ]),
+  weg(
+    'ruecklauf-haus',
+    'ruecklauf',
+    [
+      { x: HK.x, y: HK.y + HK.hoehe - 6 },
+      { x: IE.x + IE.breite, y: HK.y + HK.hoehe - 6 },
+    ],
+    { raum: true },
+  ),
   // Rücklauf: aus der Inneneinheit durch die Wanddurchführung zurück zur Außeneinheit, unter dem Gelände sichtbar …
   weg(
     'ruecklauf-erde',
@@ -308,15 +320,18 @@ export interface Pfeil {
   medium: Medium;
   d: string;
   nur?: Leitung['nur'];
+  /** Im Rauminneren (E-031), wie Leitung.raum. */
+  raum?: true;
 }
 
 const pfeil = (medium: Medium, spitze: Punkt, nach: Punkt, nur?: Leitung['nur']): Pfeil => ({ medium, d: fliesspfeil(spitze, nach, 14, 10), nur });
+const raumPfeil = (medium: Medium, spitze: Punkt, nach: Punkt): Pfeil => ({ ...pfeil(medium, spitze, nach), raum: true });
 
 export const PFEILE: readonly Pfeil[] = [
   pfeil('vorlauf', { x: 268, y: ERD.vorlauf }, { x: 1, y: 0 }),
   pfeil('ruecklauf', { x: 238, y: ERD.ruecklauf }, { x: -1, y: 0 }),
-  pfeil('vorlauf', { x: 500, y: HK.y + 6 }, { x: 1, y: 0 }),
-  pfeil('ruecklauf', { x: 456, y: HK.y + HK.hoehe - 6 }, { x: -1, y: 0 }),
+  raumPfeil('vorlauf', { x: 500, y: HK.y + 6 }, { x: 1, y: 0 }),
+  raumPfeil('ruecklauf', { x: 456, y: HK.y + HK.hoehe - 6 }, { x: -1, y: 0 }),
   pfeil('vorlauf', { x: 80, y: KNOPF_TIEFE.band }, { x: -1, y: 0 }, 'knopf-desktop'),
   pfeil('vorlauf', { x: 80, y: KNOPF_TIEFE.unterKiesbett }, { x: -1, y: 0 }, 'knopf-mobil'),
 ];
