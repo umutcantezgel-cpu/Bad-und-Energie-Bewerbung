@@ -1,6 +1,7 @@
 import type { Job } from '@/lib/jobs/registry';
 import type { ThemaPageText } from '@/lib/themen/text';
 import { BetriebSeite } from './BetriebSeite';
+import { BueroSeite } from './BueroSeite';
 import { DiskretSeite } from './DiskretSeite';
 import { FahrzeugSeite } from './FahrzeugSeite';
 import { GehaltSeite } from './GehaltSeite';
@@ -19,5 +20,7 @@ export function ThemaSeite({ text, jobs }: { text: ThemaPageText; jobs: readonly
       return <BetriebSeite text={text} />;
     case 'diskret-wechseln':
       return <DiskretSeite text={text} jobs={jobs} />;
+    case 'buero-und-verwaltung':
+      return <BueroSeite text={text} jobs={jobs} />;
   }
 }

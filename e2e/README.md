@@ -64,9 +64,14 @@ Alle mit `reducedMotion: 'reduce'`, Locale `de-DE`, Zeitzone `Europe/Berlin`. Nu
   einmal, das heißeste zuerst, ab dem Ende des Vorlaufs (560 ms) bis höchstens 1.920 ms; auf der Wärmepumpen-Seite
   wartet der Vergleich unsichtbar und läuft beim Hinscrollen einmal (≤ 2.400 ms). Per Sprung an die Stelle, mit
   reduzierter Bewegung und ohne JavaScript steht der Endzustand. Malzeit je Bild unter 2 ms (Handy, CPU 4×).
-- `themen-pages.spec.ts` (nur `mobile-light`): Themen-Hub `/arbeiten-bei-uns` und die fünf Themenseiten, dieselben
+- `themen-pages.spec.ts` (nur `mobile-light`): Themen-Hub `/arbeiten-bei-uns` und die sechs Themenseiten, dieselben
   Prüfungen und ein JSON-LD-Graph ohne JobPosting und FAQPage. axe über die Stichproben `/arbeiten-bei-uns` und
   `/arbeiten-bei-uns/gehalt` in `ROUTES`.
+- `buero.spec.ts` (E-031, nur `mobile-light` und `desktop-light`): „Büro und Verwaltung“. Beim Laden im Bild steht
+  der Endzustand; die vier Szenen unten starten einmal beim Hineinscrollen (`data-ablauf` bereit → laeuft → fertig),
+  jede Animation endet ≤ 2.400 ms mit genau einer Wiederholung; reduziert und ohne JavaScript keine Animation und der
+  Endzustand; Beschriftungen ≥ 12 px, kein horizontaler Scroll, axe ohne Verstöße. Die Stellenseite der Bürofachkraft
+  zeigt die Szenen nur als Dateien (`/zeichnung/buero-*.svg`), ohne Ablauf.
 
 Jeder Flow-Test sendet mit eigener `x-real-ip`, damit das Rate-Limit von `/api/bewerbung`
 (5 pro 10 Minuten je IP) parallele Tests nicht blockiert.

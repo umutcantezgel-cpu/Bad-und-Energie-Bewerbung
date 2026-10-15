@@ -6,6 +6,8 @@ import { ImageResponse } from 'next/og';
 import { COMPANY } from '@/lib/content/company';
 import { TOKENS } from '@/lib/tokens';
 import { r1, type Medium } from '@/lib/zeichnung/norm';
+import { LEITSTELLE } from '@/lib/zeichnung/buero/leitstelle';
+import type { Art } from '@/lib/zeichnung/buero/szene';
 import {
   OG_BAUTEILE,
   OG_ERDLEITUNG_Y,
@@ -229,6 +231,48 @@ function Haus({ knopf }: { knopf: boolean }) {
   );
 }
 
+// ── Büro (E-031) ───────────────────────────────────────────────────────────────────────────────────
+
+/** Leitstelle über die Breite des Panels, unten mit Luft; Kennwert darüber wie beim Haus. */
+const BUERO_S = (PANEL_W - 40) / LEITSTELLE.rahmen.breite;
+const BUERO_TOP = H - LEITSTELLE.rahmen.hoehe * BUERO_S - 28;
+
+/**
+ * Büro-Zweig des Navy-Panels (Stelle Bürofachkraft, Seite „Büro und Verwaltung“): die Leitstelle aus
+ * lib/zeichnung/buero/leitstelle.ts, der Schreibtisch von oben mit den Bezugslinien, in den Linienarten der Zeichnung
+ * (Kontur 2 px mit runden Ecken, feine und Maßlinien 1 px, alle stumpf). Ohne Wörter (die stehen auf der Seite), ohne
+ * Leitung zum Knopf: Im Büro fließt nichts.
+ */
+function Leitstelle() {
+  /** Strich in Einheiten der Gruppe, damit er im Bild `px` misst (Glyphen sind zusätzlich skaliert). */
+  const strich = (px: number, massstab = 1) => px / BUERO_S / massstab;
+  const stilVon = (art: Art, massstab: number) => {
+    if (art === 'voll') return { fill: NAVY.kontur, stroke: 'none' };
+    if (art === 'fein' || art === 'mass') return { ...stumpf, stroke: NAVY.kontur, strokeWidth: strich(1, massstab) };
+    return { ...kontur, strokeWidth: strich(2, massstab), fill: art === 'konturOffen' ? 'none' : NAVY.flaeche };
+  };
+  return (
+    <svg
+      width={PANEL_W - 40}
+      height={LEITSTELLE.rahmen.hoehe * BUERO_S}
+      viewBox={`0 0 ${LEITSTELLE.rahmen.breite} ${LEITSTELLE.rahmen.hoehe}`}
+      style={{ position: 'absolute', left: PANEL_X + 20, top: BUERO_TOP }}
+    >
+      {LEITSTELLE.gruppen.map((g) => {
+        const massstab = g.lage?.s ?? 1;
+        const pfade = g.teile.map((t) => <path key={t.d} d={t.d} {...stilVon(t.art, massstab)} />);
+        return g.lage ? (
+          <g key={g.id} transform={`translate(${g.lage.x} ${g.lage.y}) scale(${g.lage.s})`}>
+            {pfade}
+          </g>
+        ) : (
+          <g key={g.id}>{pfade}</g>
+        );
+      })}
+    </svg>
+  );
+}
+
 /** Maßlinie nach DIN 406 (Linienart mass, 1 px): Linie mit 45°-Begrenzungsstrichen an beiden Enden. */
 function Masslinie({ width, color }: { width: number; color: string }) {
   const h = 12;
@@ -267,9 +311,11 @@ interface FrameProps {
   microcopy: string;
   /** Inhalt des Navy-Panels über dem Haus (absolut positioniert). */
   panel: ReactNode;
+  /** Zeichnung im Panel: Hausschnitt (Standard) oder Leitstelle (Büro, E-031, ohne Vorlauf zum Knopf). */
+  zeichnung?: 'haus' | 'buero';
 }
 
-function Frame({ logo, etikett, title, titleSize, subline, action, microcopy, panel }: FrameProps) {
+function Frame({ logo, etikett, title, titleSize, subline, action, microcopy, panel, zeichnung = 'haus' }: FrameProps) {
   const sublineSize = 30;
   const sublineHeight = Math.round(subline.length * sublineSize * 1.12);
   return (
@@ -286,7 +332,7 @@ function Frame({ logo, etikett, title, titleSize, subline, action, microcopy, pa
     >
       {/* Navy-Panel mit dem Hausschnitt */}
       <div style={{ position: 'absolute', left: PANEL_X, top: 0, width: PANEL_W, height: H, backgroundColor: C.navy, display: 'flex' }} />
-      <Haus knopf={action !== null} />
+      {zeichnung === 'buero' ? <Leitstelle /> : <Haus knopf={action !== null} />}
       {panel}
 
       {/* Linke Spalte auf Papier */}
@@ -342,8 +388,8 @@ function Frame({ logo, etikett, title, titleSize, subline, action, microcopy, pa
 
       {action ? (
         <>
-          {/* Vorlauf: aus der Außeneinheit über die Erdleitung und die Steigleitung in den Knopf (K-001) */}
-          <VorlaufZumKnopf />
+          {/* Vorlauf: aus der Außeneinheit über die Erdleitung und die Steigleitung in den Knopf (K-001); nicht im Büro */}
+          {zeichnung === 'haus' ? <VorlaufZumKnopf /> : null}
           <div
             style={{
               position: 'absolute',
@@ -507,6 +553,7 @@ export async function renderJobImage(text: OgJobText): Promise<ImageResponse> {
       action={text.action}
       microcopy={text.microcopy}
       panel={<Kennwert {...text.salary} />}
+      zeichnung={text.zeichnung ?? 'haus'}
     />
   ));
 }

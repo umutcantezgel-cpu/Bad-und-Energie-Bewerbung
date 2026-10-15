@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { HOME_TITLE, homeDescription } from '@/components/home/content';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS, FACT_IDS, isFactActive, type FactId } from '@/lib/content/facts';
-import { FAQ_ITEMS } from '@/lib/content/faq';
-import { DISCRETION_PROMISE, getProcessSteps } from '@/lib/content/process';
+import { FAQ_ITEMS, JOB_FAQ_IDS } from '@/lib/content/faq';
+import { DISCRETION_PROMISE, FUER_FACHKRAEFTE, getProcessSteps } from '@/lib/content/process';
 import { REGION } from '@/lib/content/region';
 import { TEAM_PROFILES, TEAM_QUOTES } from '@/lib/content/team';
 import { WHATSAPP_GREETING } from '@/lib/apply/whatsapp-message';
@@ -13,6 +13,7 @@ import { getHubKreise, getPublishedPlaces } from '@/lib/places/registry';
 import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
 import { jobsHubDescription } from '@/lib/seo/descriptions';
 import { themenPages } from '@/lib/seo/indexable-pages';
+import { BUERO_MASSE, BUERO_SCHRIFTFELD } from '@/lib/zeichnung/buero/masse';
 import { findClaims } from '../../../scripts/qa/check-claims.mjs';
 import { arbeitenPfad, buildThemenItemListJsonLd, pfadJsonLd, pfadItems, themaPfad } from '../jsonld';
 import { ogThemaText } from '../og';
@@ -24,9 +25,11 @@ import {
   getArbeitenPageText,
   mitLohn,
   getThemaPageText,
+  ohneAusstattung,
   saetze,
   stellenMitFakt,
   stellenMitZusatz,
+  themaKarte,
   type Satz,
   type SeitenBasis,
 } from '../text';
@@ -59,8 +62,9 @@ function alleSaetze(value: unknown): Satz[] {
 }
 
 describe('Registry der Themen', () => {
-  it('fünf Themen mit festen Slugs (ein veröffentlichter Slug bleibt)', () => {
-    expect(THEMA_IDS).toEqual(['gehalt', 'fahrzeug-und-werkzeug', 'waermepumpen', 'betrieb', 'diskret-wechseln']);
+  it('sechs Themen mit festen Slugs (ein veröffentlichter Slug bleibt; Büro und Verwaltung seit E-031 als sechstes)', () => {
+    expect(THEMA_IDS).toEqual(['gehalt', 'fahrzeug-und-werkzeug', 'waermepumpen', 'betrieb', 'diskret-wechseln', 'buero-und-verwaltung']);
+    expect(getThema('buero-und-verwaltung')).toMatchObject({ name: 'Büro und Verwaltung', icon: 'ordner' });
     expect(getThemen().map(themaPath)).toEqual(THEMA_IDS.map((id) => `${ARBEITEN_PATH}/${id}`));
     for (const thema of getThemen()) expect(getThemaBySlug(thema.slug)).toBe(thema);
     expect(getThemaBySlug('arbeitszeit')).toBeUndefined();
@@ -130,6 +134,8 @@ describe('Texte der Themenseiten: nur Belegtes', () => {
       JSON.stringify(FAQ_ITEMS),
       JSON.stringify(TEAM_PROFILES),
       JSON.stringify(TEAM_QUOTES),
+      // Formate und Normen der Büro-Zeichnungen (A4, DIN lang, Europalette; Schriftfelder der Szenen)
+      JSON.stringify(BUERO_MASSE),
     ].join(' ');
     const erlaubt = new Set(plain(quellen).match(/\d[\d.,]*\d|\d/g) ?? []);
     // Gezählt statt abgeschrieben: Stellen, Orte, Themen, Schritte, Jahre seit der Gründung (bis zum Meilenstein)
@@ -336,13 +342,120 @@ describe('Pfad und strukturierte Daten', () => {
     }
   });
 
-  it('ItemList des Hubs: die fünf Themen in Reihenfolge, je mit Canonical-URL', () => {
+  it('ItemList des Hubs: die sechs Themen in Reihenfolge, je mit Canonical-URL', () => {
     const list = buildThemenItemListJsonLd();
     expect(list['@id']).toBe(`${getCleanCanonicalUrl(ARBEITEN_PATH)}#itemlist`);
     expect(list.itemListElement.map((e) => e.url)).toEqual(getThemen().map((t) => getCleanCanonicalUrl(themaPath(t))));
-    expect(list.itemListElement.map((e) => e.position)).toEqual([1, 2, 3, 4, 5]);
+    expect(list.itemListElement.map((e) => e.position)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(list.numberOfItems).toBe(6);
     // E-030: Name ohne „Gehalt“, der veröffentlichte Slug bleibt
     expect(getThema('gehalt').name).toBe('Bezahlung und Extras');
     expect(themaPath(getThema('gehalt'))).toBe(`${ARBEITEN_PATH}/gehalt`);
+  });
+});
+
+describe('Büro und Verwaltung (E-031): nur Belegtes, nichts Offenes, nichts von der Baustelle', () => {
+  const seite = getThemaPageText('buero-und-verwaltung', { jobs: JOBS, now: NOW });
+  if (seite.id !== 'buero-und-verwaltung') throw new Error('falsche Seite');
+  // Die Karten der übrigen Themen („Weitere Themen“) sprechen für ihre eigenen Seiten und werden dort geprüft
+  const eigene = { ...seite, weitere: null };
+  const text = plain(alleTexte(eigene).join(' '));
+  const quellen = alleQuellen(eigene);
+  const stelle = JOBS.find((job) => job.category === 'buero')!;
+
+  it('die offenen Büro-Fakten (S5) stehen nie auf der Seite: Arbeitszeit, Urlaub, Tarif, Befristung', () => {
+    expect(stelle).toBeDefined();
+    for (const id of ['flexibleHours', 'vacation30', 'aboveTariff', 'permanentContract'] as const) {
+      expect(FACTS[id].offenFuer?.kategorien, id).toContain('buero');
+      expect(text, id).not.toContain(FACTS[id].short);
+      expect(text, id).not.toContain(FACTS[id].long);
+      expect(quellen, id).not.toContain(`fakt:${id}`);
+    }
+    expect(text).not.toMatch(/flexib|Urlaub|Tarif|unbefristet|Weihnachtsgeld|Überstunden/i);
+  });
+
+  it('keine Fakten der Baustelle: Hilti, Fahrzeug, 35 km, Fernmontage, iPad, Tankkarte, Messtechnik', () => {
+    const baustelle = ['hilti', 'vehicle', 'radius35', 'noFarAssembly', 'ipadSmartphone', 'fuelCard', 'workwear', 'measurementTools', 'paidCertifications', 'azubiToolkit'] as const;
+    for (const id of baustelle) {
+      expect(text, id).not.toContain(FACTS[id].short);
+      expect(text, id).not.toContain(FACTS[id].long);
+      expect(quellen, id).not.toContain(`fakt:${id}`);
+    }
+    expect(text).not.toMatch(/Hilti|Servicefahrzeug|Firmenwagen|35\s?km|Fernmontage|iPad|Tankkarte|Werkzeug/i);
+    // Keine Uhrzeit: Die Bürozeiten stehen nur im Kontakt (OpeningHoursText, „Büro erreichbar“), nie im Textmodell
+    expect(text).not.toMatch(/\d:\d\d|\bUhr\b/);
+    expect(findClaims(text)).toEqual([]);
+  });
+
+  it('Aufgaben im Wortlaut der Bürostelle, Umfang und Lohn aus der Anzeige, Fragen der Stellenart', () => {
+    expect(seite.aufgaben.szenen.map((s) => s.id)).toEqual(['wochenplan', 'beleg', 'material', 'ablage']);
+    expect(seite.aufgaben.szenen.map((s) => s.aufgabe?.text)).toEqual([...stelle.tasks]);
+    for (const szene of seite.aufgaben.szenen) {
+      expect(szene.aufgabe?.quellen).toEqual([`stelle:${stelle.id}`]);
+      expect(szene.schriftfeld).toBe(BUERO_SCHRIFTFELD[szene.id]);
+    }
+    expect(seite.aufgaben.kopf.heading).toBe('Die vier Aufgaben im Büro');
+    expect(seite.aufgaben.kopf.lead?.text).toBe(stelle.summary);
+    expect(seite.unterzeile).toEqual(['Voll- oder Teilzeit.', `${FACTS.payOnRequest.short}.`]);
+    expect(seite.einleitung[0].text).toBe(saetze(stelle.intro)[0]);
+    expect(seite.einleitung.map((s) => s.quellen)).toEqual([[`stelle:${stelle.id}`], ['betrieb:meilenstein']]);
+    // Der direkte Draht steht einmal (Kasten unter „Betrieb“), nicht zusätzlich im Kopf
+    expect(seite.einleitung.some((s) => s.text.includes(FACTS.directLine.long))).toBe(false);
+    expect(seite.meta.primaryKeyword).toBe('Büro und Verwaltung SHK-Betrieb Wetzlar');
+    expect(seite.og.zeichnung).toBe('buero');
+    expect(seite.fragen.fragen.map((f) => f.id)).toEqual([...JOB_FAQ_IDS.buero]);
+    expect(seite.betrieb.kaesten.map((k) => k.titel)).toEqual(
+      (['payOnRequest', 'directLine', 'employees15', 'founded1926'] as const).map((id) => FACTS[id].short),
+    );
+    expect(seite.stellen?.kopf.lead?.quellen).toEqual([`stelle:${stelle.id}`]);
+    expect(seite.ablauf).toEqual({ audience: 'buero' });
+  });
+
+  it('ohne live Bürostelle: keine Aufgabe, keine Stelle, kein Ablauf; Büro und Lager aus dem Meilenstein', () => {
+    const jobs = JOBS.filter((job) => job.category !== 'buero');
+    const ohne = getThemaPageText('buero-und-verwaltung', { jobs, now: NOW });
+    if (ohne.id !== 'buero-und-verwaltung') throw new Error('falsche Seite');
+    expect(ohne.aufgaben.szenen.every((s) => s.aufgabe === null)).toBe(true);
+    expect(ohne.stellen).toBeNull();
+    expect(ohne.ablauf).toBeNull();
+    expect(ohne.unterzeile).toEqual(['Moderneres Büro,', 'größeres Lager.']);
+    expect(ohne.einleitung[0].quellen).toEqual(['betrieb:meilenstein']);
+    expect(alleQuellen({ ...ohne, weitere: null }).some((q) => q.startsWith('stelle:'))).toBe(false);
+    const karte = themaKarte('buero-und-verwaltung', { jobs, now: NOW });
+    expect(karte.wert).toBeUndefined();
+    expect(karte.satz.quellen).toEqual(['betrieb:meilenstein']);
+    expect(ohne.meta.description.length).toBeGreaterThanOrEqual(110);
+    expect(ohne.meta.description.length).toBeLessThanOrEqual(155);
+  });
+
+  it('Hub und Karte: die Arbeit im Büro nur mit live Bürostelle, Umfang als Kennwert', () => {
+    const karte = themaKarte('buero-und-verwaltung', { jobs: JOBS, now: NOW });
+    expect(karte.satz).toEqual({ text: stelle.summary, quellen: [`stelle:${stelle.id}`] });
+    expect(karte.wert).toBe('Voll- oder Teilzeit');
+    expect(getArbeitenPageText({ jobs: JOBS, now: NOW }).themen.kopf.lead?.text).toContain('der Arbeit im Büro');
+    expect(getArbeitenPageText({ jobs: JOBS.filter((job) => job.category !== 'buero'), now: NOW }).themen.kopf.lead?.text).not.toContain('Büro');
+  });
+});
+
+describe('Fahrzeug und Werkzeug (E-031): Einschränkung am Anfang, solange eine Stelle ohne Ausstattung live ist', () => {
+  it('Büro und Schülerpraktikum nennen keine Ausstattung; dann „Je nach Stelle“ und „Für Fachkräfte“ vorn', () => {
+    expect(ohneAusstattung(JOBS, NOW).map((job) => job.category).sort()).toEqual(['buero', 'praktikum']);
+    const seite = getThemaPageText('fahrzeug-und-werkzeug', { jobs: JOBS, now: NOW });
+    if (seite.id !== 'fahrzeug-und-werkzeug') throw new Error('falsche Seite');
+    expect(seite.unterzeile[0]).toBe(`Je nach Stelle: ${FACTS.hilti.short}.`);
+    expect(seite.einleitung[0].text.startsWith(`${FUER_FACHKRAEFTE}: Am ersten Tag`)).toBe(true);
+    expect(seite.og.zeilen).toEqual([FACTS.hilti.short, 'je nach Stelle.']);
+    expect(themaKarte('fahrzeug-und-werkzeug', { jobs: JOBS, now: NOW }).satz.text).toBe(
+      `Je nach Stelle: ${FACTS.hilti.short} und ${FACTS.vehicle.short}.`,
+    );
+  });
+
+  it('nur Fachkräfte mit Fahrzeug und Werkzeug: ohne Einschränkung wie bisher', () => {
+    const fach = JOBS.filter((job) => ['anlagenmechaniker', 'kundendienst', 'projektleitung'].includes(job.category));
+    expect(ohneAusstattung(fach, NOW)).toEqual([]);
+    const seite = getThemaPageText('fahrzeug-und-werkzeug', { jobs: fach, now: NOW });
+    if (seite.id !== 'fahrzeug-und-werkzeug') throw new Error('falsche Seite');
+    expect(seite.unterzeile[0]).toBe(`${FACTS.hilti.short}.`);
+    expect(seite.einleitung[0].text.startsWith('Am ersten Tag')).toBe(true);
   });
 });

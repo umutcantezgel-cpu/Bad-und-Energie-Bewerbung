@@ -83,9 +83,10 @@ export function kopfMasse(job: Pick<Job, 'location'>): SeitenkopfMass[] {
 /**
  * Zeichnung im Navy-Panel des Stellenkopfs (E-029), nach dem Beruf: Der Kundendienst arbeitet an der Außeneinheit
  * (Gerät von vorn mit Maßketten, der Rotor dreht unter der Startbedingung), Anlagenmechaniker und Ausbildung an der
- * ganzen Anlage (Anlagenschema, statisch, beschriftet); alle anderen Stellen zeigen den kleinen Hausschnitt.
+ * ganzen Anlage (Anlagenschema, statisch, beschriftet), das Büro am Schreibtisch (Leitstelle, E-031: Bezugslinien zu
+ * Monteuren, Kundendienst, Kunden, Großhandel und Lager); alle anderen Stellen zeigen den kleinen Hausschnitt.
  */
-export type KopfZeichnung = 'aussengeraet' | 'anlagenschema' | 'hausschnitt';
+export type KopfZeichnung = 'aussengeraet' | 'anlagenschema' | 'hausschnitt' | 'buero';
 
 export function kopfZeichnung(job: Pick<Job, 'category'>): KopfZeichnung {
   switch (job.category) {
@@ -94,6 +95,8 @@ export function kopfZeichnung(job: Pick<Job, 'category'>): KopfZeichnung {
     case 'anlagenmechaniker':
     case 'ausbildung':
       return 'anlagenschema';
+    case 'buero':
+      return 'buero';
     default:
       return 'hausschnitt';
   }
@@ -128,6 +131,8 @@ const VORTEIL_ICON: Partial<Record<FactId, IconName>> = {
   directLine: 'phone',
   mentoring: 'users',
   familyTeam: 'users',
+  // Vorteile der Bürofachkraft (E-031): das Team; der Meisterbetrieb behält den Haken
+  employees15: 'users',
 };
 
 export function vorteilIcon(id: FactId): IconName {

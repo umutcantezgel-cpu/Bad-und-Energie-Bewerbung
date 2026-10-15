@@ -21,6 +21,7 @@ import {
 } from '@/lib/mappe/editor';
 import { sendMappeFollowUp } from '@/lib/mappe/follow-up';
 import { formatLetterDate } from '@/lib/mappe/format';
+import { skillOptionen, workStylesFuer } from '@/lib/mappe/options';
 import {
   getSessionStorage,
   hasHandoverMappe,
@@ -114,6 +115,8 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
 
   const context: MappeContext = useMemo(() => ({ jobs, recipient }), [jobs, recipient]);
   const letter = resolveCoverLetter(state, context);
+  // Stellenart der gewählten Stelle: Büro mit eigenen Schwerpunkten und Arbeitsstilen (E-031)
+  const kategorie = jobs.find((option) => option.id === state.jobId)?.category ?? null;
   const subject = letterSubject(state, jobs);
   // Stand only from real entries (E-BEW-006/007); before hydration the empty editor shows „0 von 5“.
   const stand = useMemo(() => mappeStand(state), [state]);
@@ -259,6 +262,7 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
           step={3}
           done={stand.abschnitte[2].erledigt}
           skills={state.skills}
+          optionen={skillOptionen(kategorie)}
           onToggle={(skill) => dispatch({ type: 'toggleSkill', skill })}
           onAdd={(skill) => dispatch({ type: 'addSkill', skill })}
         />
@@ -266,6 +270,7 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
           step={4}
           done={stand.abschnitte[3].erledigt}
           workStyleId={state.workStyleId}
+          workStyles={workStylesFuer(kategorie)}
           onWorkStyleChange={(id) => dispatch({ type: 'workStyle', id })}
           letter={letter}
           edited={state.customLetter !== null}

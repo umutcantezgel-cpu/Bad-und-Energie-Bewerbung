@@ -8,6 +8,7 @@ import { HausschnittKlein } from '@/components/zeichnung/technik/Hausschnitt';
 import { GET, generateStaticParams } from '@/app/zeichnung/[datei]/route';
 import { TOKENS } from '@/lib/tokens';
 import { KOPF_HAUS_VIEWBOX, KOPF_SVG_FARBEN, KOPF_SVG_WAERME, anlagenschemaSvg, hausschnittSvg, kopfSvgDateien, kopfSvgPfad } from '../kopf-svg';
+import { BUERO_SVG_FARBEN, bueroSzenenDateien, leitstelleSvg } from '../buero/svg';
 import { ANLAGENSCHEMA_PFEIL_MAX, ANLAGENSCHEMA_RAHMEN } from '../szenen/anlagenschema';
 import { WAERMEFELDER } from '../szenen/waermefeld';
 
@@ -211,12 +212,37 @@ describe('Zeichnungen des Stellenkopfs als Datei (Prüfung E-029, Runde 3, Leist
     expect(Number(stufe(unten))).toBe(ANLAGENSCHEMA_PFEIL_MAX);
   });
 
+  it('Leitstelle der Bürofachkraft (Typ buero, E-031): Datei aus lib/zeichnung/buero in den Farben des Inverse-Bands, ohne runde Enden', () => {
+    const svg = leitstelleSvg();
+    expect(kopfSvgDateien().find((x) => x.art === 'buero')?.svg).toBe(svg);
+    // Navy-Fläche wie die übrigen Kopfbilder: hell, dunkel und Druck aus KOPF_SVG_FARBEN
+    for (const modus of ['hell', 'dunkel', 'druck'] as const) {
+      expect(BUERO_SVG_FARBEN.navy[modus].marke, modus).toBe(KOPF_SVG_FARBEN[modus].marke);
+      expect(BUERO_SVG_FARBEN.navy[modus].flaeche, modus).toBe(KOPF_SVG_FARBEN[modus].flaeche);
+    }
+    expect(svg).toContain('@media screen and (prefers-color-scheme:dark)');
+    expect(svg).toContain('@media print');
+    expect(svg).not.toMatch(/href=|url\(|<image|<script|<foreignObject|@font-face|<text/);
+    expect(svg).toContain('vector-effect:non-scaling-stroke');
+    // Keine Leitung in der Büro-Zeichnung: keine runden Enden; runde Ecken nur an der Kontur
+    expect(svg).not.toContain('stroke-linecap:round');
+    expect([...svg.matchAll(/([^{}>]+)\{[^}]*stroke-linecap:butt/g)].map((m) => m[1])).toEqual(['.k,.f,.m']);
+    expect([...svg.matchAll(/([^{}>]+)\{[^}]*stroke-linejoin:round/g)].map((m) => m[1])).toEqual(['.k']);
+  });
+
   it('Dateiname mit Hash des Inhalts (ein Jahr gecacht); der Route-Handler liefert genau diese Dateien statisch', async () => {
-    const dateien = kopfSvgDateien();
-    expect(dateien.map((x) => x.art)).toEqual(['anlagenschema', 'hausschnitt']);
-    for (const { datei, art, svg } of dateien) {
+    const kopf = kopfSvgDateien();
+    expect(kopf.map((x) => x.art)).toEqual(['anlagenschema', 'hausschnitt', 'buero']);
+    // Dazu die vier stillen Büro-Szenen des Einblicks (lib/zeichnung/buero/svg.ts), gleiche Regel für den Namen
+    const szenen = bueroSzenenDateien();
+    expect(szenen.map((x) => x.art)).toEqual(['wochenplan', 'beleg', 'material', 'ablage']);
+    for (const { datei, art } of szenen) expect(datei).toMatch(new RegExp(`^buero-${art}-[0-9a-f]{10}\\.svg$`));
+    const dateien = [...kopf, ...szenen];
+    for (const { datei, art } of kopf) {
       expect(datei).toMatch(new RegExp(`^${art}-[0-9a-f]{10}\\.svg$`));
       expect(kopfSvgPfad(art)).toBe(`/zeichnung/${datei}`);
+    }
+    for (const { datei, svg } of dateien) {
       const antwort = await GET(new Request(`http://localhost/zeichnung/${datei}`), { params: Promise.resolve({ datei }) });
       expect(antwort.status).toBe(200);
       expect(antwort.headers.get('Content-Type')).toBe('image/svg+xml; charset=utf-8');

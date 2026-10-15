@@ -1,6 +1,6 @@
 /**
- * Texte der Themenseiten (E-028): Hub /arbeiten-bei-uns und fünf Themen. Reines Modul ohne JSX, geprüft in
- * lib/themen/__tests__/text.test.ts.
+ * Texte der Themenseiten (E-028): Hub /arbeiten-bei-uns und sechs Themen (seit E-031 mit „Büro und Verwaltung“). Reines
+ * Modul ohne JSX, geprüft in lib/themen/__tests__/themen.test.ts.
  *
  * Regeln (ROADMAP §1, fakten-abgleich):
  * - Jeder Satz mit Aussage ist ein `Satz` mit Quelle: ein Fakt aus lib/content/facts.ts (per ID, nur bestätigt und
@@ -17,14 +17,16 @@
 import { WHATSAPP_GREETING } from '@/lib/apply/whatsapp-message';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS, JE_NACH_STELLE, fuehrendeStellen, isFactActive, offenBei, type FactId } from '@/lib/content/facts';
-import { getFaqItem, type FaqId } from '@/lib/content/faq';
-import { DISCRETION_PROMISE, getProcessSteps, type ProcessStep } from '@/lib/content/process';
+import { JOB_FAQ_IDS, getFaqItem, type FaqId } from '@/lib/content/faq';
+import { DISCRETION_PROMISE, FUER_FACHKRAEFTE, getProcessSteps, sammelAblauf, type ProcessStep } from '@/lib/content/process';
 import { REGION } from '@/lib/content/region';
 import { TEAM_PROFILES, getReleasedQuote, type TeamMemberId, type TeamQuote } from '@/lib/content/team';
 import { employmentLabel, jobPath, payLabel } from '@/lib/jobs/format';
 import type { Job, JobId } from '@/lib/jobs/registry';
 import { EINSATZGEBIET_PATH, getPublishedPlaces } from '@/lib/places/registry';
 import { fitDescription } from '@/lib/seo/descriptions';
+import { BUERO_MASSE, BUERO_SCHRIFTFELD } from '@/lib/zeichnung/buero/masse';
+import type { BueroSzenenArt } from '@/lib/zeichnung/buero/szenen';
 
 import { ARBEITEN_PATH, THEMEN_UEBERSICHT_LINK, getThema, getThemen, themaPath, type ThemaIcon, type ThemaId } from './registry';
 
@@ -83,7 +85,11 @@ export type KastenIcon =
   | 'message-circle'
   | 'check'
   | 'radius'
-  | 'phone';
+  | 'phone'
+  | 'kalender'
+  | 'beleg'
+  | 'paket'
+  | 'brief';
 
 /** Etiketten-Kästchen mit Satz (Bänder auf Navy): Titel im Kästchen, Satz darunter. */
 export interface Kasten {
@@ -137,8 +143,11 @@ export interface SeitenBasis {
   kontakt: { kopf: Kopfzeile; text: string };
   /** Karten der übrigen Themen (Hub: alle). */
   weitere: { kopf: Kopfzeile; karten: readonly ThemaKarte[]; hub?: Weg };
-  /** Teilen-Bild: Wert und Name im Heizkreis, zwei kurze Zeilen an der Rohrklammer (≤ 30 Zeichen). */
-  og: { wert: string; name: string; zeilen: readonly string[] };
+  /**
+   * Teilen-Bild: Wert und Name als Maß, zwei kurze Zeilen (≤ 30 Zeichen); `zeichnung` im Navy-Panel (Standard der
+   * Hausschnitt, die Seite „Büro und Verwaltung“ die Leitstelle).
+   */
+  og: { wert: string; name: string; zeilen: readonly string[]; zeichnung?: 'haus' | 'buero' };
 }
 
 const satz = (text: string, ...quellen: Quelle[]): Satz => ({ text, quellen });
@@ -221,6 +230,9 @@ const FAKT_ICON: Readonly<Partial<Record<FactId, KastenIcon>>> = Object.freeze({
   apply60s: 'check',
   quickResponse: 'phone',
   discretion: 'shield-check',
+  payOnRequest: 'banknote',
+  directLine: 'phone',
+  employees15: 'users',
 });
 
 /** Kästchen eines Fakts: Kurzform als Titel, der lange Satz (oder der des Begleitfakts) darunter. */
@@ -284,6 +296,7 @@ const WHATSAPP_ANLIEGEN: Readonly<Record<ThemaId | 'hub', string>> = Object.free
   waermepumpen: 'ich interessiere mich für die Arbeit an Wärmepumpen bei Bad und Energie',
   betrieb: 'ich möchte Bad und Energie als Arbeitgeber kennenlernen',
   'diskret-wechseln': 'ich bin noch angestellt und möchte mich diskret bei Bad und Energie bewerben',
+  'buero-und-verwaltung': 'ich interessiere mich für die Arbeit im Büro bei Bad und Energie',
 });
 
 /** Vorbereitete WhatsApp-Nachricht der Seite. */
@@ -298,6 +311,7 @@ const KONTAKT_TITEL: Readonly<Record<ThemaId | 'hub', string>> = Object.freeze({
   waermepumpen: 'Fragen zu Wärmepumpen',
   betrieb: 'Den Betrieb kennenlernen',
   'diskret-wechseln': 'Erst einmal fragen',
+  'buero-und-verwaltung': 'Fragen zum Büro',
 });
 
 function kontakt(id: ThemaId | 'hub'): SeitenBasis['kontakt'] {
@@ -342,13 +356,19 @@ export function themaKarte(id: ThemaId, { jobs, now = new Date() }: TextOptions)
       };
     }
     case 'fahrzeug-und-werkzeug': {
-      // Das Fahrzeug nur mit den Stellen, zu denen es gehört (B7); die Hilti-Ausstattung gilt für alle
+      // Das Fahrzeug nur mit den Stellen, zu denen es gehört (B7). Werkzeug und Fahrzeug gehören nicht zu jeder Stelle
+      // (Büro, Schülerpraktikum: keine Ausstattung in der Anzeige; E-031): dann beginnt der Satz mit „Je nach Stelle“
       const fahrzeug = fahrzeugZeile(jobs, now);
+      const hilti = FACTS[erlaubt('hilti', now)];
+      const einschraenkung = ohneAusstattung(jobs, now).length > 0;
       return {
         ...basis,
-        satz: fahrzeug
-          ? satz(`${FACTS[erlaubt('hilti', now)].short}. ${fahrzeug.text}`, fq('hilti'), fq('vehicle'), ...fahrzeug.stellen.map(sq))
-          : satz(FACTS[erlaubt('hilti', now)].long, fq('hilti')),
+        satz:
+          fahrzeug && einschraenkung
+            ? satz(jeNachStelleSatz(`${hilti.short} und ${FACTS.vehicle.short}.`), fq('hilti'), fq('vehicle'), ...fahrzeug.stellen.map(sq))
+            : fahrzeug
+              ? satz(`${hilti.short}. ${fahrzeug.text}`, fq('hilti'), fq('vehicle'), ...fahrzeug.stellen.map(sq))
+              : satz(einschraenkung ? jeNachStelleSatz(hilti.long) : hilti.long, fq('hilti')),
         wert: hiltiVolt(),
         wertName: 'Hilti-Akku-Flotte',
         kurz: hiltiVolt(),
@@ -384,6 +404,14 @@ export function themaKarte(id: ThemaId, { jobs, now = new Date() }: TextOptions)
         kurz: `${FACTS.apply60s.value}${NBSP}${FACTS.apply60s.label}`,
         klammer: `Bewerbung in ${FACTS.apply60s.value}${NBSP}${FACTS.apply60s.label}`,
       };
+    case 'buero-und-verwaltung': {
+      // Die Bürostelle nennt Umfang und Aufgaben (fakten-abgleich S5); ohne live Bürostelle der Satz zum Büro aus
+      // REGION.milestone, ohne Kennwert
+      const stelle = bueroStelle(jobs);
+      if (!stelle) return { ...basis, satz: satz(meilensteinSaetze()[0], 'betrieb:meilenstein') };
+      const umfang = employmentLabel(stelle);
+      return { ...basis, satz: satz(stelle.summary, sq(stelle)), wert: umfang, wertName: 'Anstellung', kurz: umfang, klammer: umfang };
+    }
   }
 }
 
@@ -485,7 +513,7 @@ export function getArbeitenPageText(options: TextOptions): ArbeitenPageText {
         etikett: 'Themen',
         heading: 'Die Themen im Überblick',
         lead: satz(
-          'Je Thema eine eigene Seite: mit Bezahlung und Paketen aus den Stellenanzeigen, den Partnern des Betriebs und dem Ablauf deines Wechsels.',
+          `Je Thema eine eigene Seite: mit Bezahlung und Paketen aus den Stellenanzeigen, den Partnern des Betriebs${bueroStelle(jobs) ? ', der Arbeit im Büro' : ''} und dem Ablauf deines Wechsels.`,
           ...jobs.map(sq),
           fq('partners5'),
           'ablauf:bewerben',
@@ -740,6 +768,15 @@ function stellenPaket(job: Job, now: Date): StellenPaket {
   return { ...verweis(job), zeilen };
 }
 
+/**
+ * Live Stellen ohne jede Ausstattung in ihrer Anzeige (keine Paketzeile zu Fahrzeug, Werkzeug, Mobilität oder
+ * Ausstattung, kein Vorteil dazu): die Bürofachkraft und das Schülerpraktikum. Gibt es eine, ist „Fahrzeug und
+ * Werkzeug“ eine Sammelfläche mit Einschränkung (E-031, Plan §4 W3): Kopf und Karte beginnen mit „Je nach Stelle“.
+ */
+export function ohneAusstattung(jobs: readonly Job[], now: Date = new Date()): Job[] {
+  return jobs.filter((job) => stellenPaket(job, now).zeilen.length === 0);
+}
+
 export function getFahrzeugPageText(options: TextOptions): FahrzeugPageText {
   const { jobs, now = new Date() } = options;
   const start = getProcessSteps('fachkraft')[2];
@@ -775,6 +812,8 @@ export function getFahrzeugPageText(options: TextOptions): FahrzeugPageText {
   // Description: „Servicefahrzeug je nach Stelle“, wenn nicht jede Stelle eines hat (B7); sonst die Kurzform des Fakts
   const fahrzeugKurz =
     fahrzeugZeileText && fahrzeugZeileText.stellen.length === jobs.length ? fahrzeug.short : 'Servicefahrzeug je nach Stelle';
+  const einschraenkung = ohneAusstattung(jobs, now).length > 0;
+  const fuerFachkraefte = sammelAblauf(jobs).varianten.length > 0;
 
   return {
     path: themaPath(getThema('fahrzeug-und-werkzeug')),
@@ -788,14 +827,22 @@ export function getFahrzeugPageText(options: TextOptions): FahrzeugPageText {
       ),
     }),
     etikett: 'Fahrzeug · Werkzeug · Digital',
-    unterzeile: [`${hilti.short}.`, ...(fahrzeugText ? [fahrzeugText] : [])],
-    // Der Hilti-Satz steht in der Stückliste (Position 02), nicht noch einmal wortgleich im Kopf (Kritik 2, P3)
-    einleitung: [satz(ersterTag, `ablauf:${start.id}`), satz(satzMit(hilti.long, /^Kein Leihen/, 'Fakt hilti'), fq('hilti'))],
+    unterzeile: [`${einschraenkung ? jeNachStelleSatz(hilti.short) : hilti.short}.`, ...(fahrzeugText ? [fahrzeugText] : [])],
+    // Der Hilti-Satz steht in der Stückliste (Position 02), nicht noch einmal wortgleich im Kopf (Kritik 2, P3). Der
+    // erste Tag ist Schritt 3 der Fachkräfte: auf der Sammelfläche mit „Für Fachkräfte“ wie im Ablauf (sammelAblauf)
+    einleitung: [
+      satz(fuerFachkraefte ? `${FUER_FACHKRAEFTE}: ${ersterTag}` : ersterTag, `ablauf:${start.id}`),
+      satz(satzMit(hilti.long, /^Kein Leihen/, 'Fakt hilti'), fq('hilti')),
+    ],
     masse: [{ wert: volt, name: 'Hilti-Akku-Flotte' }],
     zweitweg: { href: '#stueckliste', label: 'Zur Stückliste' },
     whatsapp: whatsappNachricht('fahrzeug-und-werkzeug'),
     kontakt: kontakt('fahrzeug-und-werkzeug'),
-    og: { wert: volt, name: 'Hilti-Akku-Flotte', zeilen: [`${hilti.short}.`, satzMit(hilti.long, /^Kein Leihen/, 'Fakt hilti')] },
+    og: {
+      wert: volt,
+      name: 'Hilti-Akku-Flotte',
+      zeilen: einschraenkung ? [hilti.short, `${JE_NACH_STELLE}.`] : [`${hilti.short}.`, satzMit(hilti.long, /^Kein Leihen/, 'Fakt hilti')],
+    },
     stueckliste: { kopf: { id: 'stueckliste', etikett: 'Stückliste', heading: 'Deine Ausstattung' }, positionen },
     jeStelle: {
       kopf: {
@@ -1102,6 +1149,177 @@ export function getDiskretPageText(options: TextOptions): DiskretPageText {
   };
 }
 
+// ─── Büro und Verwaltung ────────────────────────────────────────────────────
+
+/** Die live Bürostelle (Kategorie `buero`), deren Aufgaben die Seite zeigt; ohne sie bleibt die Seite beim Büro selbst. */
+export function bueroStelle(jobs: readonly Job[]): Job | undefined {
+  return jobs.find((job) => job.category === 'buero');
+}
+
+export type BueroZielId = 'monteure' | 'kundendienst' | 'kunden' | 'lager';
+
+/** Eine Szene der Seite (Zeichnung in lib/zeichnung/buero) mit ihrer Aufgabe. */
+export interface BueroSzeneText {
+  id: BueroSzenenArt;
+  /** Beschriftung (Überschrift der Abbildung), keine Aussage. */
+  titel: string;
+  icon: KastenIcon;
+  /** Die Aufgabe im Wortlaut der Stellenanzeige; null, solange keine Bürostelle live ist. */
+  aufgabe: Satz | null;
+  /** Zugänglicher Name der Zeichnung: beschreibt genau, was sie zeigt. */
+  bild: string;
+  /** Wörter an der Zeichnung (je Lage in lib/zeichnung/buero). */
+  beschriftungen: Readonly<Record<string, string>>;
+  /** Schriftfeld: Format, Norm, Maße (lib/zeichnung/buero/masse.ts). */
+  schriftfeld: string;
+}
+
+export interface FrageText {
+  id: FaqId;
+  frage: string;
+  antwort: Satz;
+}
+
+export interface BueroPageText extends SeitenBasis {
+  /** Leitstelle im Kopf (components/themen/buero/Leitstelle.tsx): zugänglicher Name und die vier Ziele. */
+  leitstelle: { titel: string; ziele: Readonly<Record<BueroZielId, string>> };
+  aufgaben: { kopf: Kopfzeile; szenen: readonly BueroSzeneText[] };
+  betrieb: { kopf: Kopfzeile; kaesten: readonly Kasten[] };
+  stellen: { kopf: Kopfzeile } | null;
+  /** Ablauf der Bürostelle (lib/content/process.ts, Fragenset `buero`); null ohne live Bürostelle. */
+  ablauf: { audience: 'buero' } | null;
+  fragen: { kopf: Kopfzeile; fragen: readonly FrageText[] };
+}
+
+/** Szenen in der Reihenfolge der Aufgaben; die Aufgabe der Stelle wird am Wortlaut erkannt (wirft, fehlt sie). */
+const SZENEN: readonly { id: BueroSzenenArt; titel: string; icon: KastenIcon; aufgabe: RegExp; bild: string; beschriftungen: Readonly<Record<string, string>> }[] = [
+  {
+    id: 'wochenplan',
+    titel: 'Telefon und Termine',
+    icon: 'kalender',
+    aufgabe: /^Telefon und Terminplanung/,
+    bild: 'Plantafel der Woche von Montag bis Freitag mit zwei Bahnen, oben die Monteure, unten der Kundendienst; die Termine stehen als Blöcke in den Tagen, ohne Uhrzeit.',
+    beschriftungen: { mo: 'Mo', di: 'Di', mi: 'Mi', do: 'Do', fr: 'Fr' },
+  },
+  {
+    id: 'beleg',
+    titel: 'Angebote und Rechnungen',
+    icon: 'beleg',
+    aufgabe: /^Angebote, Auftragsbestätigungen und Rechnungen/,
+    bild: 'Ein Blatt A4 als Geschäftsbrief mit Anschriftfeld, Falz- und Lochmarken und Positionszeilen ohne Beträge; daneben die Schritte Angebot, Auftragsbestätigung und Rechnung, abgehakt bis zur Rechnung.',
+    beschriftungen: { angebot: 'Angebot', auftrag: 'Auftragsbestätigung', rechnung: 'Rechnung' },
+  },
+  {
+    id: 'material',
+    titel: 'Material und Lieferungen',
+    icon: 'paket',
+    aufgabe: /^Material beim Großhandel/,
+    bild: 'Pakete auf dem Weg vom Großhandel auf die Europalette im Lager und weiter zur Baustelle; über dem Lager der Lieferschein mit Häkchen.',
+    beschriftungen: { grosshandel: 'Großhandel', lager: 'Lager', baustelle: 'Baustelle', lieferschein: 'Lieferschein' },
+  },
+  {
+    id: 'ablage',
+    titel: 'Verwaltung und Post',
+    icon: 'brief',
+    aufgabe: /^Allgemeine Verwaltung/,
+    bild: `Regal mit Ordnern, Rücken ${BUERO_MASSE.ordner.ruecken.mm} Millimeter; ein Brief im Format DIN lang kommt in die Ablage für die Post, ein Blatt A4 in die Ablage für die Geschäftsführung.`,
+    beschriftungen: { post: 'Post', gf: 'Geschäftsführung' },
+  },
+];
+
+/** Titel der vier Szenen (Beschriftungen), auch für die stillen Dateien im Einblick der Stellenseite. */
+export const BUERO_SZENEN_TITEL: Readonly<Record<BueroSzenenArt, string>> = Object.freeze(
+  Object.fromEntries(SZENEN.map((szene) => [szene.id, szene.titel])) as Record<BueroSzenenArt, string>,
+);
+
+/** Die Wörter „moderneres Büro, größeres Lager“ aus REGION.milestone (Unterzeile ohne live Bürostelle). */
+function bueroLager(): [string, string] {
+  const m = /(moderneres Büro), (größeres Lager)/.exec(REGION.milestone.text);
+  if (!m) throw new Error('lib/themen: REGION.milestone nennt Büro und Lager nicht mehr');
+  return [upperFirst(m[1]), m[2]];
+}
+
+/**
+ * Seite „Büro und Verwaltung“ (E-031, Paket W3): die Arbeit im Büro aus der Bürostelle (vier Aufgaben, Voll- oder
+ * Teilzeit, Lohn auf Anfrage; fakten-abgleich S5), das Büro aus REGION.milestone, der Betrieb aus den Fakten
+ * (founded1926, employees15, directLine), Ablauf und Fragen der Stellenart `buero`. Nie für das Büro behauptet, solange
+ * offen (offenFuer): flexible Arbeitszeiten, 30 Tage Urlaub, über Tarif, unbefristet; keine Fakten der Baustelle
+ * (Fahrzeug, Werkzeug, Radius). Bürozeiten nur im Kontakt (OpeningHoursText, „Büro erreichbar“).
+ */
+export function getBueroPageText(options: TextOptions): BueroPageText {
+  const { jobs, now = new Date() } = options;
+  const stelle = bueroStelle(jobs);
+  const bueroStellen = jobs.filter((job) => job.category === 'buero');
+  const lohn = FACTS[erlaubt('payOnRequest', now)];
+  const draht = FACTS[erlaubt('directLine', now)];
+  const [umzug] = meilensteinSaetze();
+  const [buero, lager] = bueroLager();
+  const umfang = stelle ? employmentLabel(stelle) : null;
+  const imBuero = stelle ? satzMit(stelle.intro, /^Als Bürofachkraft arbeitest du in unserem Büro/, 'Bürostelle, Einleitung') : null;
+  const fragen: readonly FaqId[] = stelle ? JOB_FAQ_IDS.buero : ['diskreter-wechsel', 'lebenslauf', 'antwortzeit'];
+
+  return {
+    path: themaPath(getThema('buero-und-verwaltung')),
+    meta: plainMeta({
+      title: 'Büro und Verwaltung im SHK-Betrieb in Wetzlar',
+      h1: 'Büro und Verwaltung',
+      primaryKeyword: 'Büro und Verwaltung SHK-Betrieb Wetzlar',
+      description: stelle
+        ? fitDescription(
+            `Telefon und Termine, Angebote und Rechnungen, Material und Post: das Büro im SHK-Meisterbetrieb in ${COMPANY.address.city}, ${umfang}, ${lohn.short}.`,
+            `Telefon und Termine, Angebote und Rechnungen, Material und Post: das Büro in ${COMPANY.address.city}, ${umfang}, ${lohn.short}.`,
+          )
+        : fitDescription(`${umzug} ${draht.long}`, `${umzug} ${draht.short}.`),
+    }),
+    etikett: `Büro · ${COMPANY.address.city}`,
+    unterzeile: umfang ? [`${umfang}.`, `${lohn.short}.`] : [`${buero},`, `${lager}.`],
+    // Der direkte Draht steht als Kasten unter „Betrieb“, nicht doppelt im Kopf
+    einleitung: imBuero && stelle ? [satz(imBuero, sq(stelle)), satz(umzug, 'betrieb:meilenstein')] : [satz(umzug, 'betrieb:meilenstein')],
+    masse: masseAus(erlaubt('employees15', now), erlaubt('founded1926', now)),
+    zweitweg: { href: '#aufgaben', label: 'Zu den Aufgaben im Büro' },
+    whatsapp: whatsappNachricht('buero-und-verwaltung'),
+    kontakt: kontakt('buero-und-verwaltung'),
+    og: umfang
+      ? { wert: umfang, name: 'Büro in Wetzlar', zeilen: ['Büro am Firmensitz.', `${lohn.short}.`], zeichnung: 'buero' }
+      : { wert: String(COMPANY.foundingYear), name: 'Gegründet in Wetzlar', zeilen: [`${buero},`, `${lager}.`], zeichnung: 'buero' },
+    leitstelle: {
+      titel:
+        'Schreibtisch im Büro von oben, maßstäblich, mit Bildschirm, zwei Blättern und einem Ordner; Bezugslinien führen zu den Monteuren, zum Kundendienst, zu den Kunden und zu Großhandel und Lager mit einer Europalette.',
+      ziele: { monteure: 'Monteure', kundendienst: 'Kundendienst', kunden: 'Kunden', lager: 'Großhandel und Lager' },
+    },
+    aufgaben: {
+      kopf: {
+        id: 'aufgaben',
+        etikett: 'Aufgaben',
+        heading: stelle ? `Die ${zahlwort(stelle.tasks.length)} Aufgaben im Büro` : 'Die Arbeit im Büro',
+        ...(stelle ? { lead: satz(stelle.summary, sq(stelle)) } : {}),
+      },
+      szenen: SZENEN.map(({ aufgabe, ...szene }) => {
+        const wortlaut = stelle?.tasks.find((task) => aufgabe.test(task));
+        if (stelle && !wortlaut) throw new Error(`lib/themen: Aufgabe ${aufgabe} fehlt in der Bürostelle`);
+        return { ...szene, aufgabe: stelle && wortlaut ? satz(wortlaut, sq(stelle)) : null, schriftfeld: BUERO_SCHRIFTFELD[szene.id] };
+      }),
+    },
+    betrieb: {
+      kopf: { id: 'betrieb', etikett: 'Betrieb', heading: 'Kurze Wege im Meisterbetrieb' },
+      kaesten: (['payOnRequest', 'directLine', 'employees15', 'founded1926'] as const).map((id) => faktKasten(id, now)),
+    },
+    stellen:
+      bueroStellen.length > 0
+        ? { kopf: { id: 'stellen', etikett: 'Stellen', heading: 'Offene Stellen im Büro', lead: offeneStellen(bueroStellen) } }
+        : null,
+    ablauf: stelle ? { audience: 'buero' } : null,
+    fragen: {
+      kopf: { id: 'fragen', etikett: 'Fragen', heading: 'Häufige Fragen zum Büro' },
+      fragen: fragen.map((id) => {
+        const item = getFaqItem(id);
+        return { id, frage: item.question, antwort: satz(item.answer, `faq:${id}`) };
+      }),
+    },
+    weitere: weitere('buero-und-verwaltung', options),
+  };
+}
+
 // ─── Alle Seiten ────────────────────────────────────────────────────────────
 
 export type ThemaPageText =
@@ -1109,7 +1327,8 @@ export type ThemaPageText =
   | ({ id: 'fahrzeug-und-werkzeug' } & FahrzeugPageText)
   | ({ id: 'waermepumpen' } & WaermepumpenPageText)
   | ({ id: 'betrieb' } & BetriebPageText)
-  | ({ id: 'diskret-wechseln' } & DiskretPageText);
+  | ({ id: 'diskret-wechseln' } & DiskretPageText)
+  | ({ id: 'buero-und-verwaltung' } & BueroPageText);
 
 export function getThemaPageText(id: ThemaId, options: TextOptions): ThemaPageText {
   switch (id) {
@@ -1123,6 +1342,8 @@ export function getThemaPageText(id: ThemaId, options: TextOptions): ThemaPageTe
       return { id, ...getBetriebPageText(options) };
     case 'diskret-wechseln':
       return { id, ...getDiskretPageText(options) };
+    case 'buero-und-verwaltung':
+      return { id, ...getBueroPageText(options) };
   }
 }
 

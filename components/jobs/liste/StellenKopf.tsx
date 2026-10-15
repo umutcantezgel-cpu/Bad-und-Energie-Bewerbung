@@ -7,8 +7,8 @@ import { BREADCRUMB_HOME, BREADCRUMB_JOBS } from '@/lib/content/breadcrumbs';
 import type { Job } from '@/lib/jobs/registry';
 import {
   GEWERKE,
-  LISTEN_EINLEITUNG,
   LISTEN_MIKROTEXT,
+  listenEinleitung,
   listenEtikett,
   listenUnterzeile,
   listenZeichnung,
@@ -77,7 +77,7 @@ export function StellenKopf({ jobs, titel }: StellenKopfProps) {
             <span className="block">{satz1}</span> <span className="block">{satz2}</span>
           </>
         }
-        einleitung={<p>{LISTEN_EINLEITUNG}</p>}
+        einleitung={<p>{listenEinleitung(jobs)}</p>}
         aktion={{ href: APPLY_PATH, label: SHORT_APPLY_LABEL }}
         mikrotext={LISTEN_MIKROTEXT}
         zweitweg={listenZweitweg(jobs.length)}

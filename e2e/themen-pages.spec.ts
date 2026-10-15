@@ -2,8 +2,8 @@ import { expect, test } from '@playwright/test';
 import { THEMEN_PAGES, findSmallText, waitForSettled } from './support/site';
 
 /**
- * Alle Themenseiten (E-028): Hub /arbeiten-bei-uns und die fünf Themen. Nur im Projekt mobile-light (die vier Projekte
- * laufen über die Stichproben in ROUTES, mit axe): Status 200, genau eine h1, Canonical auf sich selbst, bei 320 px der
+ * Alle Themenseiten (E-028): Hub /arbeiten-bei-uns und die sechs Themen (seit E-031 mit „Büro und Verwaltung“). Nur
+ * im Projekt mobile-light (die vier Projekte laufen über die Stichproben in ROUTES, mit axe): Status 200, genau eine h1, Canonical auf sich selbst, bei 320 px der
  * kurze Pfad eine Stufe zurück, ab 40em der ganze Pfad mit der Seite als letzter Stufe, ein JSON-LD-Graph ohne
  * JobPosting und FAQPage, kein horizontaler Scroll bei 320 px, Schrift bei 320 und 390 px gezeichnet ≥ 12 px (auch in
  * den Zeichnungen, Prüfung E-029, Befund 7).

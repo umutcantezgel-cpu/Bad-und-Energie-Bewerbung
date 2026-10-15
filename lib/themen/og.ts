@@ -26,6 +26,7 @@ export function ogThemaText(text: Pick<SeitenBasis, 'etikett' | 'meta' | 'og'>):
     action: ACTION,
     microcopy,
     salary,
+    zeichnung: text.og.zeichnung ?? 'haus',
     texts: [etikett, ...fitted.lines, ...subline, ACTION, microcopy, salary.value, salary.name],
   };
 }

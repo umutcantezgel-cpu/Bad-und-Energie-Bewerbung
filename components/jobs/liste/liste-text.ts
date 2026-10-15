@@ -66,6 +66,18 @@ export const LISTEN_EINLEITUNG = schuetzeZahlen(
   `Stellenangebote im SHK-Handwerk vom ${FACTS.founded1926.short}, mit Baustellen in ${LISTEN_ORTE}. Fachkräfte, Azubis und Quereinsteiger bezahlen wir über Tarif, mit Hilti-Ausstattung ab dem ersten Tag.`,
 );
 
+/**
+ * Büro am Firmensitz (E-031): Die Bürofachkraft arbeitet nicht auf Baustellen, sondern im Büro am Firmensitz
+ * (Stellendaten: Arbeitsort ohne Radius, Einleitung „in unserem Büro am Firmensitz“). Solange eine solche Stelle in der
+ * Liste steht, sagt die Einleitung das nach den Baustellen; ohne sie nichts.
+ */
+export const BUERO_AM_FIRMENSITZ = 'Das Büro ist am Firmensitz.';
+
+/** Einleitung der Liste: LISTEN_EINLEITUNG, dazu BUERO_AM_FIRMENSITZ, wenn eine Stelle der Liste ohne Baustellen ist. */
+export function listenEinleitung(jobs: readonly Pick<Job, 'location'>[]): string {
+  return jobs.some((job) => !job.location.radiusKm) ? `${LISTEN_EINLEITUNG} ${BUERO_AM_FIRMENSITZ}` : LISTEN_EINLEITUNG;
+}
+
 /** Mikrotext unter dem Knopf (Fakten apply60s, noCvNeeded), wortgleich mit dem Einstieg der Startseite. */
 export const LISTEN_MIKROTEXT = `Dauert ca. ${FACTS.apply60s.value}${NBSP}${FACTS.apply60s.label}. ${FACTS.noCvNeeded.short}.`;
 

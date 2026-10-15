@@ -1,6 +1,7 @@
 import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
 import type { Job, JobCategory } from '@/lib/jobs/schema';
+import { getThema, themaPath } from '@/lib/themen/registry';
 
 /**
  * Einleitung von #stellen (V6-G2), gebaut aus den Stellen, die gerade live sind: Sie nennt nur Bereiche mit
@@ -42,4 +43,14 @@ export function stellenEinleitung(jobs: readonly Pick<Job, 'category' | 'pay'>[]
     ? `Jobs ${STELLEN_BEREICH.anlagenmechaniker} in ${city}${weitere.length > 0 ? `, dazu ${aufzaehlung(weitere)}` : ''}.`
     : `SHK-Jobs in ${city} ${aufzaehlung(weitere)}.`;
   return `${satz} ${eckdaten}`;
+}
+
+/**
+ * Weg zur Seite „Büro und Verwaltung“ unter den Stellen (E-031), nur solange eine Bürostelle live ist: eine Frage als
+ * Beschriftung und der Name des Themas als Linktext (ein Ankertext, ein Ziel). Ohne Bürostelle null.
+ */
+export function bueroTeaser(jobs: readonly Pick<Job, 'category'>[]): { frage: string; href: string; label: string } | null {
+  if (!jobs.some((job) => job.category === 'buero')) return null;
+  const thema = getThema('buero-und-verwaltung');
+  return { frage: 'Lieber im Büro?', href: themaPath(thema), label: thema.name };
 }

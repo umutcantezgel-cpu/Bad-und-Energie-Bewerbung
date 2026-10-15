@@ -12,16 +12,16 @@ export interface SkillsSectionProps {
   /** Mappe-Stand: mindestens ein Schwerpunkt. */
   done?: boolean;
   skills: readonly string[];
+  /** Schwerpunkte zum Antippen (skillOptionen je Stellenart: Büro mit seinen Aufgaben); Standard die der Baustelle. */
+  optionen?: readonly string[];
   onToggle: (skill: string) => void;
   onAdd: (skill: string) => void;
 }
 
-const PRESET = new Set<string>(SKILL_OPTIONS);
-
-export function SkillsSection({ step, done, skills, onToggle, onAdd }: SkillsSectionProps) {
+export function SkillsSection({ step, done, skills, optionen = SKILL_OPTIONS, onToggle, onAdd }: SkillsSectionProps) {
   const [custom, setCustom] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const customSkills = skills.filter((skill) => !PRESET.has(skill));
+  const customSkills = skills.filter((skill) => !optionen.includes(skill));
   const full = skills.length >= MAPPE_LIMITS.skills;
 
   function handleAdd(event: FormEvent<HTMLFormElement>) {
@@ -49,7 +49,7 @@ export function SkillsSection({ step, done, skills, onToggle, onAdd }: SkillsSec
       description="Tipp alles an, worin du schon selbstständig gearbeitet hast."
     >
       <div role="group" aria-labelledby="mappe-schwerpunkte-title" className="flex flex-wrap gap-2">
-        {[...SKILL_OPTIONS, ...customSkills].map((skill) => {
+        {[...optionen, ...customSkills].map((skill) => {
           const pressed = skills.includes(skill);
           return (
             <Chip

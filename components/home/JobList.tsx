@@ -6,7 +6,7 @@ import { INITIATIVE_APPLY_PATH } from '@/lib/apply/params';
 import { COMPANY } from '@/lib/content/company';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import { SectionHeader } from './SectionHeader';
-import { stellenEinleitung } from './stellen-text';
+import { bueroTeaser, stellenEinleitung } from './stellen-text';
 
 /** Etikett über „Offene Stellen“, gezählt aus den Stellen, die gerade live sind: „4 Stellen · Wetzlar“. */
 export function stellenEtikett(anzahl: number): string {
@@ -26,6 +26,7 @@ export interface JobListProps {
 
 export function JobList({ now = new Date() }: JobListProps) {
   const jobs = getActiveJobs().filter((job) => isJobLive(job, now));
+  const buero = bueroTeaser(jobs);
 
   return (
     <Section id="stellen" tone="papier" aria-labelledby="stellen-title">
@@ -49,7 +50,12 @@ export function JobList({ now = new Date() }: JobListProps) {
           className="mt-8 md:mt-12"
         />
 
-        <p className="mt-8 text-body text-ink-muted">
+        {buero ? (
+          <p className="mt-8 text-body text-ink-muted">
+            {buero.frage} <TextLink href={buero.href}>{buero.label}</TextLink>
+          </p>
+        ) : null}
+        <p className={buero ? 'mt-2 text-body text-ink-muted' : 'mt-8 text-body text-ink-muted'}>
           Nichts dabei? <TextLink href={INITIATIVE_APPLY_PATH}>Initiativ bewerben</TextLink>
         </p>
       </Container>

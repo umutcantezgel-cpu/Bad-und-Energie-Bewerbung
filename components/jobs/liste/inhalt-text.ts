@@ -114,6 +114,19 @@ export function alltagWoche(jobs: readonly Pick<Job, 'category'>[]): { titel: st
 }
 
 /**
+ * Zusatz zum Einsatzgebiet (E-031), solange eine Stelle der Liste am Firmensitz arbeitet (Bürofachkraft: Arbeitsort ohne
+ * Radius): REGION.headline und REGION.summary sprechen von Baustellen und Kundendienst im Umkreis, das Büro liegt am
+ * Firmensitz. Im Wortlaut der Stelle (erster Satz ihrer Einleitung); ohne solche Stelle null.
+ */
+export function gebietBuero(jobs: readonly Pick<Job, 'location' | 'intro'>[]): string | null {
+  const buero = jobs.find((job) => !job.location.radiusKm);
+  if (!buero) return null;
+  const satz = buero.intro.split(/(?<=[.!?])\s+/)[0];
+  if (!/Firmensitz/.test(satz)) throw new Error('inhalt-text: Die Stelle am Firmensitz nennt den Firmensitz nicht mehr');
+  return satz;
+}
+
+/**
  * Abschnitt Einsatzgebiet (Bestand: REGION.headline als h2, REGION.summary als Einleitung, Weg zur Karte), dazu
  * die Arbeitszeit (alltagWoche), Betrieb und Team (REGION.milestone mit employees15)
  * und die Orte mit Entfernung und Fahrzeit bis Wetzlar (REGION.locations aus lib/data/locations.ts).
