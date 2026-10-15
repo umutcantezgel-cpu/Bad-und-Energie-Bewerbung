@@ -9,7 +9,9 @@
  *   - raised cards are lighter than the surface-2 sections they sit on,
  *   - in the warm area: lines (brand, Vorlauf, Rücklauf, line-strong) ≥ 3 and text ≥ 4.5 on every band of
  *     the warmth ramp (--waerme-0…4), neighbouring bands within a luminance ratio of 1.04–1.35
- *     („soft but distinguishable“).
+ *     („soft but distinguishable“),
+ *   - the click rings (--klick-1…3) on every screen tone between 1.5 and 3 against surface and surface-2, hotter rings
+ *     stronger („visible, never louder than a line“).
  * Prints a table and exits 1 if any pair is below its minimum.
  *
  * Usage: node scripts/qa/check-contrast.mjs
@@ -48,6 +50,16 @@ export const WARM_LINES = ['brand', 'vorlauf', 'ruecklauf', 'line-strong'];
 export const WARM_TEXT = ['ink', 'ink-2', 'brand'];
 /** Neighbouring bands: luminance ratio (WCAG formula) within this range. */
 export const NACHBAR = Object.freeze({ min: 1.04, max: 1.35 });
+
+/**
+ * Click warmth (E-031, Prüfrunde 3 A3-1): three rings, cool → hot from outside in, one sequence per tone of the surface
+ * clicked on (the island gives the overlay that tone). Each ring against the surfaces of its tone (surface, surface-2)
+ * within KLICK: visible (≥ 1.5) but never stronger than a line (≤ 3), so the label under it stays in front; hotter
+ * rings stand out more (contrast against surface rises from ring 1 to ring 3). Screen only (no overlay in print).
+ */
+export const KLICK_RINGE = ['klick-1', 'klick-2', 'klick-3'];
+export const KLICK = Object.freeze({ min: 1.5, max: 3 });
+const KLICK_GROUNDS = ['surface', 'surface-2'];
 
 /**
  * [foreground, background, minimum, modes?]: every role × every surface, plus fills, the pipe pair
@@ -232,7 +244,8 @@ export function contrast(a, b) {
 export function checkTheme(cssText) {
   const css = cssText.replace(/\/\*[\s\S]*?\*\//g, '');
   const { rules, theme } = walk(css, [], { rules: [], theme: new Map() });
-  // Role names come from the utilities (--color-x: var(--x)) and the warmth ramp (no utilities on purpose);
+  // Role names come from the utilities (--color-x: var(--x)), the warmth ramp and the click rings (no utilities on
+  // purpose);
   // they must never hide in width queries.
   const colorKeys = new Set([
     ...[...theme.entries()]
@@ -240,6 +253,7 @@ export function checkTheme(cssText) {
       .map(([, v]) => v.match(/^var\(\s*(--[\w-]+)/)?.[1])
       .filter(Boolean),
     ...RAMP.map((name) => `--${name}`),
+    ...KLICK_RINGE.map((name) => `--${name}`),
   ]);
 
   const scope = (mode) => {
@@ -294,6 +308,21 @@ export function checkTheme(cssText) {
         `${NACHBAR.min}–${NACHBAR.max}`,
         pass ? 'ok' : 'FAIL',
       ]);
+    }
+  }
+
+  // Click warmth (Prüfrunde 3 A3-1): every ring visible but never louder than a line, on every tone it can land on.
+  for (const mode of MODES.filter((m) => !m.print)) {
+    const vars = scope(mode);
+    const ringe = KLICK_RINGE.map((name) => resolveValue(`var(--${name})`, vars, theme));
+    for (const ground of KLICK_GROUNDS) {
+      const bgValue = resolveValue(`var(--${ground})`, vars, theme);
+      const ratios = ringe.map((ring) => contrast(parseColor(ring), parseColor(bgValue)));
+      ratios.forEach((ratio, i) => {
+        const pass = ratio >= KLICK.min && ratio <= KLICK.max && (i === 0 || ground !== 'surface' || ratio > ratios[i - 1]);
+        if (!pass) failures++;
+        rows.push([mode.name, `${KLICK_RINGE[i]} / ${ground}`, `${ringe[i]} on ${bgValue}`, ratio.toFixed(2), `${KLICK.min}–${KLICK.max}`, pass ? 'ok' : 'FAIL']);
+      });
     }
   }
 
@@ -356,7 +385,7 @@ function main() {
   }
   console.log(
     `All ${rows.length} pairs pass (text ≥ ${TEXT}, UI and lines ≥ ${UI}, band separation ≥ ${SEPARATION}, raised cards lighter than surface-2, ` +
-      `warmth ramp neighbours ${NACHBAR.min}–${NACHBAR.max}).`,
+      `warmth ramp neighbours ${NACHBAR.min}–${NACHBAR.max}, click rings ${KLICK.min}–${KLICK.max}).`,
   );
 }
 

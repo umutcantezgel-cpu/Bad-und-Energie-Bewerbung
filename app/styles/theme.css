@@ -272,6 +272,16 @@
     --p-glimm-2: #54252B;
     --p-glimm-3: #642F2D;
     --p-glimm-4: #6E3226;
+    /* Klick-Wärme (E-031, Prüfrunde 3 A3-1): drei Ringe, kühl → heiß von außen nach innen, je Ton der Fläche eine
+       eigene Folge. Jeder Ring hebt sich von seiner Fläche ab (≥ 1,5:1) und ist nie kräftiger als eine Linie (≤ 3:1),
+       damit die Beschriftung darunter vorne bleibt (check-contrast). Auf Papier Pfirsich → Terrakotta (OKLCH 55–44°),
+       auf Nacht und im Navy-Band Kupfer (36–40°); kühl → heiß steigen Kontrast und Buntheit. */
+    --p-klick-1: #E4B18F;
+    --p-klick-2: #DE9A76;
+    --p-klick-3: #D88460;
+    --p-klick-d-1: #7C4232;
+    --p-klick-d-2: #884733;
+    --p-klick-d-3: #944C33;
 
     /* ── Maße, Abstände, Bewegung (K-007…K-009); Spiegel in lib/tokens ── */
     --a-1: 0.25rem;
@@ -359,6 +369,10 @@
     --waerme-2: var(--p-waerme-2);
     --waerme-3: var(--p-waerme-3);
     --waerme-4: var(--p-waerme-4);
+    /* Klick-Wärme: die Ringe je Ton der Fläche (die Insel gibt der Überlagerung den Ton der getroffenen Fläche) */
+    --klick-1: var(--p-klick-1);
+    --klick-2: var(--p-klick-2);
+    --klick-3: var(--p-klick-3);
   }
 
   /* ── dunkel (nur Bildschirm; Druck bleibt hell) ── */
@@ -393,6 +407,9 @@
       --waerme-2: var(--p-glimm-2);
       --waerme-3: var(--p-glimm-3);
       --waerme-4: var(--p-glimm-4);
+      --klick-1: var(--p-klick-d-1);
+      --klick-2: var(--p-klick-d-2);
+      --klick-3: var(--p-klick-d-3);
     }
   }
 
@@ -431,6 +448,10 @@
       --waerme-2: var(--p-waerme-2);
       --waerme-3: var(--p-waerme-3);
       --waerme-4: var(--p-waerme-4);
+      /* Die Klick-Wärme dagegen gedämpft: Kupfer, nie greller als eine Linie über der Beschriftung (Prüfrunde 3 A3-1) */
+      --klick-1: var(--p-klick-d-1);
+      --klick-2: var(--p-klick-d-2);
+      --klick-3: var(--p-klick-d-3);
     }
   }
 
@@ -487,6 +508,9 @@
     --waerme-2: var(--p-waerme-2);
     --waerme-3: var(--p-waerme-3);
     --waerme-4: var(--p-waerme-4);
+    --klick-1: var(--p-klick-1);
+    --klick-2: var(--p-klick-2);
+    --klick-3: var(--p-klick-3);
   }
 
   @media screen and (prefers-color-scheme: dark) {
@@ -518,7 +542,19 @@
       --waerme-2: var(--p-glimm-2);
       --waerme-3: var(--p-glimm-3);
       --waerme-4: var(--p-glimm-4);
+      --klick-1: var(--p-klick-d-1);
+      --klick-2: var(--p-klick-d-2);
+      --klick-3: var(--p-klick-d-3);
     }
+  }
+
+  /* ── Klick-Wärme (E-031, Prüfrunde 3 A3-1): In ihrer Überlagerung stehen die Stufen 1–3 der Rampe für die Ringe des
+     Tons, den die Insel von der getroffenen Fläche übernimmt (data-tone auf der Überlagerung, --klick-1…3 oben je Ton);
+     so zeichnet waermefront.module.css Front und Ringe mit denselben Rollen. ── */
+  [data-motion="klick-waerme"] {
+    --waerme-1: var(--klick-1);
+    --waerme-2: var(--klick-2);
+    --waerme-3: var(--klick-3);
   }
 
   /* ── Druck: immer die hellen Primitiven, Papier weiß (dunkel und Inverse-Band gelten nur am Bildschirm; der

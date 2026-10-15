@@ -10,7 +10,8 @@
  *   components/zeichnung/bewegung/dauer.module.css only under [data-dauer="an"] and
  *   prefers-reduced-motion: no-preference.
  * - Rule `waerme-rollen` (E-031): the warmth ramp --waerme-0…4 only in WAERME_ROLLEN_ERLAUBT and in the Büro block
- *   appended to components/themen/themen.module.css (from BUERO_MARKE to the end of the file).
+ *   appended to components/themen/themen.module.css (from BUERO_MARKE to the end of the file); the click rings
+ *   --klick-1…3 only in KLICK_ROLLEN_ERLAUBT.
  * - Rule `cursor` (E-031): image cursors (url(), image-set(), files under /cursor/) only in app/globals.css.
  * - Rule `radius` (E-031, Prüfrunde 1 A1-15): border-*-radius in stylesheets only on the four steps of the scale.
  * - Reports off-scale spacing and numeric durations as notes (not blocking yet; R3–R5 move the
@@ -281,12 +282,22 @@ export const BUERO_MARKE = '/* ═══ Büro-Block (E-031)';
 /** The one step of the ramp the Büro block may name: its marker surface (Prüfrunde 2 A2-9). */
 export const BUERO_STUFE = '--waerme-2';
 
+/**
+ * Files that may name the rings of the click warmth (--klick-1…3, E-031 Prüfrunde 3 A3-1): one sequence per tone of the
+ * surface (paper, band, night), ≥ 1.5 and ≤ 3 against it (check-contrast). Part of rule `waerme-rollen`.
+ */
+export const KLICK_ROLLEN_ERLAUBT = Object.freeze({
+  [THEME_FILE]: 'Primitive und Rollen der Klick-Wärme je Ton (hell, dunkel, Inverse-Band, Wärmebereich)',
+  'components/site/waermefront/waermefront.module.css': 'Ringe der Klick-Wärme (E-031, Prüfrunde 3 A3-1)',
+});
+
 const WAERME_RULE = {
   id: 'waerme-rollen',
-  hint: `The warmth ramp --waerme-0…4 only in ${Object.keys(WAERME_ROLLEN_ERLAUBT).join(', ')}; in the Büro block of ${BUERO_DATEI} only ${BUERO_STUFE} (E-031).`,
+  hint: `The warmth ramp --waerme-0…4 only in ${Object.keys(WAERME_ROLLEN_ERLAUBT).join(', ')}; in the Büro block of ${BUERO_DATEI} only ${BUERO_STUFE}; the click rings --klick-1…3 only in ${Object.keys(KLICK_ROLLEN_ERLAUBT).join(', ')} (E-031).`,
 };
 
 const WAERME_ROLLE = /--waerme-[0-4](?![\w-])/g;
+const KLICK_ROLLE = /--klick-[1-3](?![\w-])/g;
 
 /** Source without comments, positions kept (CSS: block comments; TS: block and line comments). */
 function ohneKommentare(source, file) {
@@ -303,17 +314,22 @@ export function bueroBlockAb(source) {
 
 /** Findings of rule `waerme-rollen` for one file. */
 export function checkWaermeRollen(source, file) {
-  if (Object.prototype.hasOwnProperty.call(WAERME_ROLLEN_ERLAUBT, file)) return [];
+  const waerme = !Object.prototype.hasOwnProperty.call(WAERME_ROLLEN_ERLAUBT, file);
+  const klick = !Object.prototype.hasOwnProperty.call(KLICK_ROLLEN_ERLAUBT, file);
+  if (!waerme && !klick) return [];
   const ab = file === BUERO_DATEI ? bueroBlockAb(source) : Infinity;
   const findings = [];
   ohneKommentare(source, file)
     .split('\n')
     .forEach((line, i) => {
       const imBuero = i + 1 >= ab;
-      for (const m of line.matchAll(WAERME_ROLLE)) {
-        if (imBuero && m[0] === BUERO_STUFE) continue;
-        findings.push({ line: i + 1, col: m.index + 1, rule: WAERME_RULE, token: m[0] });
+      if (waerme) {
+        for (const m of line.matchAll(WAERME_ROLLE)) {
+          if (imBuero && m[0] === BUERO_STUFE) continue;
+          findings.push({ line: i + 1, col: m.index + 1, rule: WAERME_RULE, token: m[0] });
+        }
       }
+      if (klick) for (const m of line.matchAll(KLICK_ROLLE)) findings.push({ line: i + 1, col: m.index + 1, rule: WAERME_RULE, token: m[0] });
     });
   return findings;
 }

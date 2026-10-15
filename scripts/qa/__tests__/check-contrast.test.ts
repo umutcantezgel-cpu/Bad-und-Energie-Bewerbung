@@ -4,6 +4,8 @@ import { describe, expect, it } from 'vitest';
 import {
   checkTheme,
   contrast,
+  KLICK,
+  KLICK_RINGE,
   luminance,
   mediaMatches,
   MODES,
@@ -270,6 +272,47 @@ describe('check-contrast: Wärmebereich und Wärmerampe (E-031)', () => {
     expect(fails(theme.replace('--p-waerme-1: #F3DFCC;', '--p-waerme-1: #E0B090;'), /^waerme-0 \/ waerme-1$/)).toBe(true);
     expect(fails(theme.replace('--line-strong: var(--p-tinte-2);', '--line-strong: var(--p-rand);'), /^line-strong \/ waerme-4$/)).toBe(true);
     expect(fails(theme.replace('--p-glimm-4: #6E3226;', '--p-glimm-4: #7A4470;'), /^vorlauf \/ waerme-4$/, 'warm dark')).toBe(true);
+  });
+
+  it('Klick-Wärme (Prüfrunde 3 A3-1): auf jedem Ton am Bildschirm jeder Ring 1,5–3:1 gegen surface und surface-2, heißer = kräftiger', () => {
+    expect(KLICK).toEqual({ min: 1.5, max: 3 });
+    expect(KLICK_RINGE).toEqual(['klick-1', 'klick-2', 'klick-3']);
+    const bildschirm = MODES.filter((m: { print: boolean }) => !m.print).map((m: { name: string }) => m.name);
+    expect(bildschirm).toEqual(expect.arrayContaining(['light', 'dark', 'inverse light', 'inverse dark', 'warm light', 'warm dark']));
+    for (const mode of bildschirm) {
+      for (const ground of ['surface', 'surface-2']) {
+        const werte = KLICK_RINGE.map((ring: string) => {
+          const r = result.rows.find((row: string[]) => row[0] === mode && row[1] === `${ring} / ${ground}`);
+          expect(r?.[5], `${mode} ${ring} / ${ground}`).toBe('ok');
+          return Number(r![3]);
+        });
+        for (const w of werte) {
+          expect(w).toBeGreaterThanOrEqual(1.5);
+          expect(w).toBeLessThanOrEqual(3);
+        }
+        if (ground === 'surface') expect(werte[2]).toBeGreaterThan(werte[1]);
+        if (ground === 'surface') expect(werte[1]).toBeGreaterThan(werte[0]);
+      }
+    }
+    // Auf Papier Pfirsich → Terrakotta, auf Nacht und im Navy-Band (hell wie dunkel) Kupfer
+    expect(result.role('light', 'klick-3')).toBe('#D88460');
+    for (const mode of ['dark', 'inverse light', 'inverse dark']) expect(result.role(mode, 'klick-3'), mode).toBe('#944C33');
+  });
+
+  it('Klick-Wärme fällt durch: die Ringe der Wärmerampe (Prüfrunde 3: unsichtbar auf Papier und im dunklen Band, grell auf Navy)', () => {
+    const fails = (css: string, mode: string) => checkTheme(css).rows.some((row: string[]) => row[0] === mode && /^klick-\d/.test(row[1]) && row[5] === 'FAIL');
+    // so stand es: Ringe --waerme-1…3 der Fläche im Wurzelton
+    const rampe = (css: string, von: string, zu: string) =>
+      [1, 2, 3].reduce((c, n) => c.replaceAll(`--klick-${n}: var(--p-${von}-${n});`, `--klick-${n}: var(--p-${zu}-${n});`), css);
+    expect(rampe(theme, 'klick', 'waerme')).not.toBe(theme);
+    expect(fails(rampe(theme, 'klick', 'waerme'), 'light')).toBe(true);
+    expect(fails(rampe(theme, 'klick-d', 'glimm'), 'inverse dark')).toBe(true);
+    // hell auf Navy: über 3:1, lauter als eine Linie
+    const imBand = '(Prüfrunde 3 A3-1) */\n      --klick-1: var(--p-klick-d-1);';
+    expect(theme).toContain(imBand);
+    expect(fails(theme.replace(imBand, imBand.replace('klick-d-1', 'waerme-1')), 'inverse light')).toBe(true);
+    // kühl → heiß muss kräftiger werden
+    expect(fails(theme.replace('--p-klick-3: #D88460;', '--p-klick-3: #E4B18F;'), 'light')).toBe(true);
   });
 
   it('lässt die Rampe nicht in Breitenabfragen verstecken', () => {

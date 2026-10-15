@@ -12,6 +12,7 @@ import {
   ENDLOS_ERLAUBT,
   RADIUS_AUSNAHMEN,
   WAERME_ROLLEN_ERLAUBT,
+  KLICK_ROLLEN_ERLAUBT,
   bueroBlockAb,
   checkCursor,
   checkEndlos,
@@ -227,6 +228,16 @@ describe('check-design-tokens: waerme-rollen (E-031, K-006)', () => {
     // So stand es vor Prüfrunde 2: drei Stufen ohne Bedeutung
     expect(regel(block([1, 2, 3]), BUERO_DATEI)).toEqual(['2:--waerme-1:waerme-rollen', '4:--waerme-3:waerme-rollen']);
     expect(regel(block([0, 4]), BUERO_DATEI)).toEqual(['2:--waerme-0:waerme-rollen', '3:--waerme-4:waerme-rollen']);
+  });
+
+  it('die Ringe der Klick-Wärme (--klick-1…3) nur in theme.css und waermefront.module.css, auch nicht im Wärmefeld oder Büro-Block (Prüfrunde 3 A3-1)', () => {
+    expect(Object.keys(KLICK_ROLLEN_ERLAUBT).sort()).toEqual(['app/styles/theme.css', 'components/site/waermefront/waermefront.module.css'].sort());
+    for (const grund of Object.values(KLICK_ROLLEN_ERLAUBT)) expect(String(grund).length).toBeGreaterThan(20);
+    for (const datei of Object.keys(KLICK_ROLLEN_ERLAUBT)) expect(regel('.a { border-color: var(--klick-3); }', datei)).toEqual([]);
+    expect(regel('.a { fill: var(--klick-1); }', 'components/zeichnung/waerme/waerme.module.css')).toEqual(['1:--klick-1:waerme-rollen']);
+    expect(regel(`${BUERO_MARKE}: Szenen ═══ */\n.bueroA { fill: var(--klick-2); }\n`, BUERO_DATEI)).toEqual(['2:--klick-2:waerme-rollen']);
+    expect(regel("<i style={{ color: 'var(--klick-3)' }} /> // design-allow: Test", 'components/x.tsx')).toEqual(['1:--klick-3:waerme-rollen']);
+    expect(regel('/* --klick-1 */ .a { --klick-10: 1; --p-klick-1: 2; }', 'components/x.module.css')).toEqual([]);
   });
 
   it('die echten Dateien bestehen; theme.css führt die Rampe', () => {
