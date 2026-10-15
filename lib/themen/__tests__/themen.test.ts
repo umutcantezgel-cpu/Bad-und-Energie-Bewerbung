@@ -14,6 +14,7 @@ import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
 import { jobsHubDescription } from '@/lib/seo/descriptions';
 import { themenPages } from '@/lib/seo/indexable-pages';
 import { BUERO_MASSE, BUERO_SCHRIFTFELD } from '@/lib/zeichnung/buero/masse';
+import { ogHomeText } from '@/lib/seo/og-image';
 import { findClaims } from '../../../scripts/qa/check-claims.mjs';
 import { arbeitenPfad, buildThemenItemListJsonLd, pfadJsonLd, pfadItems, themaPfad } from '../jsonld';
 import { ogThemaText } from '../og';
@@ -222,16 +223,21 @@ describe('Texte der Themenseiten: nur Belegtes', () => {
 
     const hub = getArbeitenPageText({ jobs: JOBS, now: NOW });
     expect(hub.masse.map((m) => plain(m.name))).toContain(`${FACTS.vacation30.label} je nach Stelle`);
-    expect(hub.og.zeilen).toContain(`${FACTS.vacation30.short} je nach Stelle.`);
+    // Der Hub teilt das Standardbild der Website (Prüfrunde 2 D2-4): kein eigenes Teilen-Modell, das niemand sähe; was
+    // das Standardbild sagt, gilt hier wie dort (Urlaub nur je nach Stelle, keine Ausstattung)
+    expect('og' in hub).toBe(false);
+    const standard = ogHomeText(JOBS).texts.join(' ');
+    expect(standard).toContain('Urlaub je nach Stelle');
     // Fahrzeug und Werkzeug (Prüfung E-031, D1-5): Büro und Praktikum haben keine Ausstattung; Description und
     // Teilen-Zeilen nennen sie dann nur mit „je nach Stelle“, und die Description nennt alle sechs Themen samt Büro
     expect(ohneAusstattung(JOBS, NOW).length).toBeGreaterThan(0);
     expect(hub.meta.description).toContain('Servicefahrzeug und Hilti je nach Stelle');
     expect(hub.meta.description).toContain('Büro');
-    expect(hub.og.zeilen.join(' ')).not.toMatch(/Fahrzeug|Werkzeug|Hilti/);
+    expect(standard).not.toMatch(/Fahrzeug|Werkzeug|Hilti/);
+    expect(findClaims(standard)).toEqual([]);
     const fachHub = getArbeitenPageText({ jobs: JOBS.filter((j) => ohneAusstattung([j], NOW).length === 0), now: NOW });
     expect(fachHub.meta.description).toContain('Servicefahrzeug, Hilti-Ausstattung');
-    expect(fachHub.og.zeilen[0]).toBe('Lohn, Fahrzeug, Werkzeug.');
+    expect('og' in fachHub).toBe(false);
     for (const kasten of hub.zusagen.kaesten) {
       const id = (['flexibleHours', 'vacation30', 'noWeekendOnCall', 'noFarAssembly'] as const).find((f) => FACTS[f].short === kasten.titel)!;
       if (FACTS[id].offenFuer) {
@@ -331,8 +337,8 @@ describe('Metadaten: Längen und Eindeutigkeit (wie Gate U8)', () => {
     }
   });
 
-  it('Teilen-Bild: kurze Zeilen an der Rohrklammer (≤ 30 Zeichen), Wert aus der Seite', () => {
-    for (const seite of SEITEN) {
+  it('Teilen-Bild: kurze Zeilen an der Rohrklammer (≤ 30 Zeichen), Wert aus der Seite (jede Themenseite; der Hub teilt das Standardbild)', () => {
+    for (const seite of THEMA_IDS.map((id) => getThemaPageText(id, { jobs: JOBS, now: NOW }))) {
       const og = ogThemaText(seite);
       for (const zeile of og.subline) expect(zeile.length, zeile).toBeLessThanOrEqual(30);
       expect(og.salary.value).toBe(plain(seite.og.wert));
@@ -480,6 +486,30 @@ describe('Fahrzeug und Werkzeug (E-031): Einschränkung am Anfang, solange eine 
     );
   });
 
+  it('Prüfrunde 2 D2-1: Stückliste und Description schränken ebenso ein – jede Position mit „Gehört zu“, nie Büro oder Praktikum', () => {
+    const ohne = ohneAusstattung(JOBS, NOW);
+    expect(ohne.length).toBeGreaterThan(0);
+    const seite = getThemaPageText('fahrzeug-und-werkzeug', { jobs: JOBS, now: NOW });
+    if (seite.id !== 'fahrzeug-und-werkzeug') throw new Error('falsche Seite');
+    expect(seite.stueckliste.positionen.length).toBeGreaterThan(4);
+    for (const position of seite.stueckliste.positionen) {
+      expect(position.giltFuer, position.factId).not.toBeNull();
+      expect(position.giltFuer!.length, position.factId).toBeGreaterThan(0);
+      for (const job of ohne) expect(position.giltFuer, position.factId).not.toContain(job.shortTitle);
+      // Jede genannte Stelle nennt die Position selbst (Vorteil oder Paketzeile) und ist eine Quelle des Satzes
+      for (const titel of position.giltFuer!) {
+        const job = JOBS.find((j) => j.shortTitle === titel)!;
+        expect(stellenMitFakt(position.factId, JOBS).map((j) => j.id), `${position.factId}: ${titel}`).toContain(job.id);
+        expect(position.quellen, `${position.factId}: ${titel}`).toContain(`stelle:${job.id}`);
+      }
+    }
+    // Die persönliche 22-V-Flotte nur, wo die Anzeige sie so nennt (nicht Hilti-Koffer, Basisausstattung, Azubi-Set)
+    const hilti = seite.stueckliste.positionen.find((p) => p.factId === 'hilti')!;
+    expect(hilti.giltFuer).toEqual(['Anlagenmechaniker SHK', 'Obermonteur / Projektleiter']);
+    expect(seite.meta.description.startsWith('Je nach Stelle: ')).toBe(true);
+    expect(seite.meta.description).not.toMatch(/^(?!Je nach Stelle)[^.]*Hilti/);
+  });
+
   it('nur Fachkräfte mit Fahrzeug und Werkzeug: ohne Einschränkung wie bisher', () => {
     const fach = JOBS.filter((job) => ['anlagenmechaniker', 'kundendienst', 'projektleitung'].includes(job.category));
     expect(ohneAusstattung(fach, NOW)).toEqual([]);
@@ -487,5 +517,8 @@ describe('Fahrzeug und Werkzeug (E-031): Einschränkung am Anfang, solange eine 
     if (seite.id !== 'fahrzeug-und-werkzeug') throw new Error('falsche Seite');
     expect(seite.unterzeile[0]).toBe(`${FACTS.hilti.short}.`);
     expect(seite.einleitung[0].text.startsWith('Am ersten Tag')).toBe(true);
+    // Die Ausstattung aller gilt ohne „Gehört zu“, die Description ohne „Je nach Stelle“ vorn
+    for (const id of ['hilti', 'measurementTools', 'workwear']) expect(seite.stueckliste.positionen.find((p) => p.factId === id)?.giltFuer, id).toBeNull();
+    expect(seite.meta.description.startsWith('Je nach Stelle')).toBe(false);
   });
 });

@@ -272,6 +272,20 @@ describe('Ernsthaft: keine Spielereien, keine Marken, Ziffern nur aus Maßen', (
     }
     for (const wort of Object.values(SEITE.leitstelle.ziele)) expect(wort).not.toMatch(/\d/);
     expect(SEITE.leitstelle.titel).not.toMatch(/\d/);
+    // Der zugängliche Name beschreibt, was die Zeichnung zeigt (Prüfrunde 2 D2-3): jedes Teil, das die Quelle der
+    // Leitstelle als Kommentar nennt, steht im Titel
+    const teile = quelle('lib/zeichnung/buero/leitstelle.ts');
+    for (const [teil, wort] of [
+      ['Tischplatte', 'Schreibtisch'],
+      ['Stuhl', 'Stuhl'],
+      ['Bildschirm', 'Bildschirm'],
+      ['BLATT', 'Blättern'],
+      ['ORDNER', 'Ordner'],
+      ['Bezugslinien', 'Bezugslinien'],
+    ] as const) {
+      expect(teile, teil).toContain(teil);
+      expect(SEITE.leitstelle.titel, wort).toContain(wort);
+    }
     // In den Zeichnungen steht keine Schrift: Wörter nur als HTML
     expect(markup).not.toMatch(/<text\b/);
   });

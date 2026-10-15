@@ -76,14 +76,22 @@ export function canAddSkill(skills: readonly string[], skill: string): boolean {
   );
 }
 
+/**
+ * Stelle setzen und dabei fremde Vorgabe-Schwerpunkte räumen (Prüfrunde 1 D1-7): beim Wechsel im Editor (Aktion `job`)
+ * und beim Wiederherstellen mit ?stelle= oder der gesendeten Bewerbung (Prüfrunde 2 D2-2; sonst stünden
+ * Baustellen-Kenntnisse aus einem Entwurf ohne Stelle im Büro-Brief). Eigene Einträge bleiben.
+ */
+export function mitStelle(state: MappeEditorState, jobId: MappeEditorState['jobId'], category: JobCategory | null | undefined): MappeEditorState {
+  const skills = skillsFuerStelle(state.skills, category);
+  return { ...state, jobId, skills: skills.length === state.skills.length ? state.skills : skills };
+}
+
 export function mappeEditorReducer(state: MappeEditorState, action: MappeEditorAction): MappeEditorState {
   switch (action.type) {
     case 'person':
       return { ...state, person: { ...state.person, ...action.patch } };
-    case 'job': {
-      const skills = skillsFuerStelle(state.skills, action.category);
-      return { ...state, jobId: action.jobId, skills: skills.length === state.skills.length ? state.skills : skills };
-    }
+    case 'job':
+      return mitStelle(state, action.jobId, action.category);
     case 'toggleSkill': {
       const selected = state.skills.some((skill) => sameSkill(skill, action.skill));
       if (selected) return { ...state, skills: state.skills.filter((skill) => !sameSkill(skill, action.skill)) };

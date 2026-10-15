@@ -42,7 +42,7 @@ export function themaMetadata(text: SeitenBasis): Metadata {
   return metadataFor(text, themaOgImage(text));
 }
 
-/** Graph des Hubs: CollectionPage mit der ItemList der fünf Themen, BreadcrumbList. */
+/** Graph des Hubs: CollectionPage mit der ItemList aller Themen (THEMA_IDS, heute sechs), BreadcrumbList. */
 export function arbeitenGraphInput(text: ArbeitenPageText): PageGraphInput {
   return { metadata: arbeitenMetadata(text), breadcrumb: pfadJsonLd(arbeitenPfad()), itemList: buildThemenItemListJsonLd() };
 }

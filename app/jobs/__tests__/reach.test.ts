@@ -38,7 +38,7 @@ const liveJobs = getActiveJobs().filter((job) => isJobLive(job, new Date()));
  */
 const indexierbareOrte = getPublishedPlaces().filter((place) => istOrtIndexierbar(place, new Date()));
 const localPaths = [EINSATZGEBIET_PATH, ...getHubKreise().map(kreisPath), ...indexierbareOrte.map(placePath)];
-/** Themenseiten (E-028): Hub und die fünf Themen aus lib/themen/registry.ts. */
+/** Themenseiten (E-028): Hub und alle Themen aus lib/themen/registry.ts (THEMA_IDS, heute sechs). */
 const themenPaths = [ARBEITEN_PATH, ...getThemen().map(themaPath)];
 const newest = (dates: readonly string[]) => [...dates].sort().at(-1);
 

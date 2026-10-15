@@ -10,7 +10,7 @@ import { liveJobs, themaGraphInput, themaMetadata } from '../seo';
 
 type Params = Promise<{ thema: string }>;
 
-/** Nur die fünf Themen; alles andere ist ein 404 ohne Serverlauf. */
+/** Nur die Themen aus THEMA_IDS (heute sechs); alles andere ist ein 404 ohne Serverlauf. */
 export const dynamicParams = false;
 
 /** Stündlich neu: Bezahlung, Fahrzeug und Wärmepumpen nennen die live Stellen (wie /jobs und die Stellenseiten). */

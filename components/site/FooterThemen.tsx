@@ -11,7 +11,7 @@ import styles from './fuss/fuss.module.css';
 export const FOOTER_THEMEN_LINK = THEMEN_UEBERSICHT_LINK;
 
 /**
- * Themenzeile im Fuß (E-028): Etikett wie die Spaltenköpfe, die fünf Themenseiten als ruhige Zeile mit Trennpunkten
+ * Themenzeile im Fuß (E-028): Etikett wie die Spaltenköpfe, alle Themenseiten (THEMA_IDS, heute sechs) als ruhige Zeile mit Trennpunkten
  * und der Weg zum Hub /arbeiten-bei-uns. Jede Themenseite ist so höchstens zwei Klicks entfernt. Darunter stehen die
  * Kreis-Hubs (FooterPlaces).
  */

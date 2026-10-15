@@ -62,7 +62,7 @@ export function einsatzgebietPages(now: Date = new Date()): IndexablePage[] {
 const THEMEN_MIT_STELLEN: ReadonlySet<ThemaId> = new Set(['gehalt', 'fahrzeug-und-werkzeug', 'waermepumpen']);
 
 /**
- * Themenseiten (E-028): der Hub /arbeiten-bei-uns und die fünf Themen. Datum ist der Stand der Texte (THEMEN_STAND);
+ * Themenseiten (E-028): der Hub /arbeiten-bei-uns und alle Themen aus THEMA_IDS (heute sechs). Datum ist der Stand der Texte (THEMEN_STAND);
  * Hub, Bezahlung, Fahrzeug und Wärmepumpen nennen die live Stellen und nehmen das jüngere Datum der live Stellen dazu.
  */
 export function themenPages(now: Date = new Date()): IndexablePage[] {

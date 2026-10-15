@@ -14,6 +14,7 @@ import {
   isMappeEmpty,
   letterSubject,
   mappeEditorReducer,
+  mitStelle,
   resolveCoverLetter,
   serializeMappe,
   type MappeContext,
@@ -66,7 +67,9 @@ function restoreState(jobs: readonly MappeJobOption[], submitted: SubmittedAppli
   const state = draft ?? (handover ? fromMappe(handover) : createEmptyEditorState());
   if (state.jobId) return state;
   const fromParam = jobIdFromParam(new URLSearchParams(window.location.search).get('stelle') ?? undefined, jobs);
-  return { ...state, jobId: fromParam ?? submitted?.jobId ?? '' };
+  const jobId = fromParam ?? submitted?.jobId ?? '';
+  // Wie beim Wechsel im Editor: fremde Vorgabe-Schwerpunkte räumen (Prüfrunde 2 D2-2)
+  return mitStelle(state, jobId, jobs.find((job) => job.id === jobId)?.category ?? null);
 }
 
 /** Flow with the job chosen here preselected (slug for published and funnel_only jobs, „initiativ“). */

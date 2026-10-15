@@ -2,7 +2,7 @@ import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
 import { OG_IMAGE_SIZE, OG_IMAGE_TYPE, OG_ZEICHNUNG_ABFRAGE, fitTitle, versal, type OgImage, type OgJobText } from '@/lib/seo/og-image';
 import { THEMEN_STAND } from './registry';
-import type { SeitenBasis } from './text';
+import type { SeitenBasis, ThemaBasis } from './text';
 
 const plain = (text: string) => text.replace(/ /g, ' ');
 const ACTION = 'Jetzt bewerben';
@@ -12,7 +12,7 @@ const ACTION = 'Jetzt bewerben';
  * Etikett und h1 der Seite, zwei kurze Zeilen an der Rohrklammer, im Heizkreis der Kennwert der Seite („auf Anfrage“
  * seit E-030, „22 V“, „5 Marken“, „1926“, „100 %“). Alles aus dem Textmodell.
  */
-export function ogThemaText(text: Pick<SeitenBasis, 'etikett' | 'meta' | 'og'>): OgJobText {
+export function ogThemaText(text: Pick<ThemaBasis, 'etikett' | 'meta' | 'og'>): OgJobText {
   const etikett = versal(plain(text.etikett));
   const fitted = fitTitle(plain(text.meta.h1));
   const subline = text.og.zeilen.map(plain);

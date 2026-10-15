@@ -38,7 +38,7 @@ export function pfadItems(pfad: SeitenPfad): { label: string; href?: string }[] 
   return [...pfad.trail.map((step) => ({ label: step.label, href: step.href })), { label: pfad.current.label }];
 }
 
-/** Hub: die fünf Themen in Seitenreihenfolge, jede mit ihrer Canonical-URL (steht in der Sitemap). */
+/** Hub: alle Themen aus THEMA_IDS (heute sechs) in Seitenreihenfolge, jede mit ihrer Canonical-URL (steht in der Sitemap). */
 export function buildThemenItemListJsonLd(): ItemListJsonLd {
   const themen = getThemen();
   return {

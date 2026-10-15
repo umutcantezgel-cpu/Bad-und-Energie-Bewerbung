@@ -143,10 +143,15 @@ export interface SeitenBasis {
   kontakt: { kopf: Kopfzeile; text: string };
   /** Karten der übrigen Themen (Hub: alle). */
   weitere: { kopf: Kopfzeile; karten: readonly ThemaKarte[]; hub?: Weg };
-  /**
-   * Teilen-Bild: Wert und Name als Maß, zwei kurze Zeilen (≤ 30 Zeichen); `zeichnung` im Navy-Panel (Standard der
-   * Hausschnitt, die Seite „Büro und Verwaltung“ die Leitstelle).
-   */
+}
+
+/**
+ * Was jede Themenseite dazu hat: ihr Teilen-Bild (lib/themen/og.ts, Route <pfad>/opengraph-image). Wert und Name als
+ * Maß, zwei kurze Zeilen (≤ 30 Zeichen); `zeichnung` im Navy-Panel (Standard der Hausschnitt, die Seite „Büro und
+ * Verwaltung“ die Leitstelle). Der Hub hat keins: Er teilt das Standardbild der Website (app/arbeiten-bei-uns/seo.ts),
+ * darum stehen dort keine Teilen-Zeilen im Textmodell, die niemand sähe (Prüfrunde 2 D2-4).
+ */
+export interface ThemaBasis extends SeitenBasis {
   og: { wert: string; name: string; zeilen: readonly string[]; zeichnung?: 'haus' | 'buero' };
 }
 
@@ -503,15 +508,6 @@ export function getArbeitenPageText(options: TextOptions): ArbeitenPageText {
     zweitweg: { href: '#themen', label: `Alle ${zahlwort(themen.length)} Themen ansehen` },
     whatsapp: whatsappNachricht('hub'),
     kontakt: kontakt('hub'),
-    og: {
-      wert: String(COMPANY.foundingYear),
-      name: 'Gegründet in Wetzlar',
-      zeilen: [
-        // Mit einer Stelle ohne Ausstattung nur der Lohn (gilt für jede Stelle); die Zeile fasst keine Einschränkung
-        einschraenkung ? `${FACTS.payOnRequest.short}.` : 'Lohn, Fahrzeug, Werkzeug.',
-        `${offenBei('vacation30', jobs).length > 0 ? jeNachStelleKurz(FACTS.vacation30.short) : FACTS.vacation30.short}.`,
-      ],
-    },
     themen: {
       kopf: {
         id: 'themen',
@@ -552,7 +548,7 @@ export interface LohnKarte extends StellenVerweis {
   verguetung: string | null;
 }
 
-export interface GehaltPageText extends SeitenBasis {
+export interface GehaltPageText extends ThemaBasis {
   /** Zeichnung im Kopf (Plan §A): „Lohn auf Anfrage“ und darunter die belegten Fakten ohne Zahl. */
   lohn: { etikett: string; titel: string; zeilen: readonly string[] };
   jeStelle: { kopf: Kopfzeile; karten: readonly LohnKarte[] };
@@ -690,7 +686,7 @@ export interface StellenPaket extends StellenVerweis {
   zeilen: readonly PaketZeile[];
 }
 
-export interface FahrzeugPageText extends SeitenBasis {
+export interface FahrzeugPageText extends ThemaBasis {
   stueckliste: { kopf: Kopfzeile; positionen: readonly StueckPosition[] };
   jeStelle: { kopf: Kopfzeile; pakete: readonly StellenPaket[] };
   zitat: TeamQuote | null;
@@ -723,9 +719,22 @@ const NUR_BEI_STELLEN: Readonly<Partial<Record<FactId, RegExp | null>>> = Object
   azubiToolkit: /Azubi-Werkzeugset/,
 });
 
+/**
+ * Ausstattung, die die Seite „Fahrzeug und Werkzeug“ ohne Einschränkung allen zuschreibt, solange jede live Stelle
+ * Ausstattung nennt – und woran eine Stelle sie nennt (Prüfrunde 2 D2-1). Ist eine Stelle ohne Ausstattung live (Büro,
+ * Schülerpraktikum, ohneAusstattung), bekommt auch jede dieser Positionen „Gehört zu“: die Stellen, deren Anzeige sie
+ * nennt (Vorteil oder Paketzeile). Die persönliche Hilti-22-V-Akku-Flotte nur, wo die Anzeige sie so nennt (nicht der
+ * Hilti-Koffer, die Basisausstattung oder das Azubi-Set).
+ */
+const AUSSTATTUNG_JE_STELLE: Readonly<Partial<Record<FactId, RegExp>>> = Object.freeze({
+  hilti: /^Werkzeug: Persönliche Hilti-/,
+  measurementTools: /Messtechnik/,
+  workwear: /Arbeitskleidung/,
+});
+
 /** Live Stellen, die einen Fakt selbst nennen (Vorteil oder Paketzeile). */
 export function stellenMitFakt(id: FactId, jobs: readonly Job[]): Job[] {
-  const merkmal = NUR_BEI_STELLEN[id];
+  const merkmal = NUR_BEI_STELLEN[id] ?? AUSSTATTUNG_JE_STELLE[id];
   return jobs.filter(
     (job) =>
       job.benefitFactIds.includes(id) ||
@@ -788,10 +797,12 @@ export function getFahrzeugPageText(options: TextOptions): FahrzeugPageText {
   const ersterTag = satzMit(start.text, /^Am ersten Tag/, 'Ablauf Schritt 3');
   const volt = hiltiVolt();
 
+  // Solange eine Stelle ohne Ausstattung live ist, gehört keine Position allen (Prüfrunde 2 D2-1)
+  const einschraenkung = ohneAusstattung(jobs, now).length > 0;
   const positionen: StueckPosition[] = [];
   for (const { id, etikett, icon } of STUECKLISTE) {
     if (!faktErlaubt(id, now)) continue;
-    const nurBei = id in NUR_BEI_STELLEN;
+    const nurBei = id in NUR_BEI_STELLEN || (einschraenkung && id in AUSSTATTUNG_JE_STELLE);
     const stellen = nurBei ? stellenMitFakt(id, jobs) : [];
     if (nurBei && stellen.length === 0) continue;
     positionen.push({
@@ -817,7 +828,6 @@ export function getFahrzeugPageText(options: TextOptions): FahrzeugPageText {
   // Description: „Servicefahrzeug je nach Stelle“, wenn nicht jede Stelle eines hat (B7); sonst die Kurzform des Fakts
   const fahrzeugKurz =
     fahrzeugZeileText && fahrzeugZeileText.stellen.length === jobs.length ? fahrzeug.short : 'Servicefahrzeug je nach Stelle';
-  const einschraenkung = ohneAusstattung(jobs, now).length > 0;
   const fuerFachkraefte = sammelAblauf(jobs).varianten.length > 0;
 
   return {
@@ -826,10 +836,16 @@ export function getFahrzeugPageText(options: TextOptions): FahrzeugPageText {
       title: 'Servicefahrzeug und Hilti-Werkzeug: deine Ausstattung',
       h1: 'Womit du bei uns arbeitest',
       primaryKeyword: 'SHK Job mit Firmenwagen Wetzlar',
-      description: fitDescription(
-        `${fahrzeugKurz}, persönliche Hilti-${volt.replace(NBSP, '-')}-Akku-Flotte, Messtechnik für Wärmepumpen, ${FACTS.workwear.short}. Was zu welcher Stelle gehört.`,
-        `${fahrzeugKurz}, ${lowerFirst(hilti.short)}, Messtechnik für Wärmepumpen, ${FACTS.workwear.short}. Was zu welcher Stelle gehört.`,
-      ),
+      // Mit einer Stelle ohne Ausstattung gilt auch die Hilti-Ausstattung je nach Stelle (Prüfrunde 2 D2-1, wie der Hub)
+      description: einschraenkung
+        ? fitDescription(
+            `Je nach Stelle: Servicefahrzeug, persönliche Hilti-${volt.replace(NBSP, '-')}-Akku-Flotte, Messtechnik für Wärmepumpen, ${FACTS.workwear.short}. Was zu welcher Stelle gehört.`,
+            `Je nach Stelle: Servicefahrzeug, ${lowerFirst(hilti.short)}, Messtechnik, ${FACTS.workwear.short}. Was zu welcher Stelle gehört.`,
+          )
+        : fitDescription(
+            `${fahrzeugKurz}, persönliche Hilti-${volt.replace(NBSP, '-')}-Akku-Flotte, Messtechnik für Wärmepumpen, ${FACTS.workwear.short}. Was zu welcher Stelle gehört.`,
+            `${fahrzeugKurz}, ${lowerFirst(hilti.short)}, Messtechnik für Wärmepumpen, ${FACTS.workwear.short}. Was zu welcher Stelle gehört.`,
+          ),
     }),
     etikett: 'Fahrzeug · Werkzeug · Digital',
     unterzeile: [`${einschraenkung ? jeNachStelleSatz(hilti.short) : hilti.short}.`, ...(fahrzeugText ? [fahrzeugText] : [])],
@@ -889,7 +905,7 @@ export interface WpStelle extends StellenVerweis {
   aufgaben: readonly string[];
 }
 
-export interface WaermepumpenPageText extends SeitenBasis {
+export interface WaermepumpenPageText extends ThemaBasis {
   marken: { kopf: Kopfzeile; namen: readonly string[]; partner: readonly Partnersaeule[] };
   arbeit: { kopf: Kopfzeile; stellen: readonly WpStelle[]; schluss: Satz };
   lernen: { kopf: Kopfzeile; kaesten: readonly Kasten[] };
@@ -981,7 +997,7 @@ export interface Person {
   initialen: string;
 }
 
-export interface BetriebPageText extends SeitenBasis {
+export interface BetriebPageText extends ThemaBasis {
   zeitkette: { von: string; bis: string; spanne: string; vonName: string; bisName: string };
   team: { kopf: Kopfzeile; saetze: readonly Satz[]; personenTitel: string; personen: readonly Person[]; steckbrief: readonly { label: string; wert: string }[] };
   partner: { kopf: Kopfzeile; saeulen: readonly Partnersaeule[] };
@@ -1078,7 +1094,7 @@ export function getBetriebPageText(options: TextOptions): BetriebPageText {
 
 // ─── Diskret wechseln ───────────────────────────────────────────────────────
 
-export interface DiskretPageText extends SeitenBasis {
+export interface DiskretPageText extends ThemaBasis {
   /** Laufzettel im Kopf (echter Text, kein Bild; components/themen/Absperrung.tsx): die drei Zeilen. */
   zeichnung: { etiketten: { du: string; arbeitgeber: string; ziel: string } };
   ablauf: { kopf: Kopfzeile };
@@ -1185,7 +1201,7 @@ export interface FrageText {
   antwort: Satz;
 }
 
-export interface BueroPageText extends SeitenBasis {
+export interface BueroPageText extends ThemaBasis {
   /** Leitstelle im Kopf (components/themen/buero/Leitstelle.tsx): zugänglicher Name und die vier Ziele. */
   leitstelle: { titel: string; ziele: Readonly<Record<BueroZielId, string>> };
   aufgaben: { kopf: Kopfzeile; szenen: readonly BueroSzeneText[] };
@@ -1312,7 +1328,7 @@ export function getBueroPageText(options: TextOptions): BueroPageText {
       : { wert: String(COMPANY.foundingYear), name: 'Gegründet in Wetzlar', zeilen: [`${buero},`, `${lager}.`], zeichnung: 'buero' },
     leitstelle: {
       titel:
-        'Schreibtisch im Büro von oben, maßstäblich, mit Bildschirm, zwei Blättern und einem Ordner; Bezugslinien führen zu Sinnbildern für die Monteure, den Kundendienst, die Kunden sowie Großhandel und Lager.',
+        'Schreibtisch im Büro von oben, maßstäblich, mit Bildschirm, zwei Blättern, einem Ordner und dem Stuhl davor; Bezugslinien führen zu Sinnbildern für die Monteure, den Kundendienst, die Kunden sowie Großhandel und Lager.',
       ziele: BUERO_LEITSTELLE_ZIELE,
     },
     aufgaben: {

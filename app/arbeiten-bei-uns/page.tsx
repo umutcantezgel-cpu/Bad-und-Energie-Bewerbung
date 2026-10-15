@@ -14,8 +14,8 @@ export function generateMetadata(): Metadata {
 }
 
 /**
- * Themen-Hub /arbeiten-bei-uns (E-028): die fünf Themen (Bezahlung und Extras, Fahrzeug und Werkzeug, Wärmepumpen,
- * Betrieb, diskreter Wechsel), die Zusagen und die offenen Stellen (Lohn auf Anfrage, E-030). Ein Graph (V6-B): CollectionPage mit der ItemList
+ * Themen-Hub /arbeiten-bei-uns (E-028): die sechs Themen (Bezahlung und Extras, Fahrzeug und Werkzeug, Wärmepumpen,
+ * Betrieb, diskreter Wechsel, Büro und Verwaltung), die Zusagen und die offenen Stellen (Lohn auf Anfrage, E-030). Ein Graph (V6-B): CollectionPage mit der ItemList
  * der Themen und die BreadcrumbList des sichtbaren Pfads.
  */
 export default function ArbeitenBeiUnsPage() {
