@@ -1,4 +1,4 @@
-import { COMPANY, FACTS, isFactActive, offenBei, type FactId } from '@/lib/content';
+import { COMPANY, FACTS, isFactActive, stellenMitFakt, type FactId } from '@/lib/content';
 import { applyUrl, jobMetaTags, jobUrl, payLabel } from '@/lib/jobs/format';
 import { getActiveJobs, getFunnelOptions, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
 import { istOrtIndexierbar } from '@/lib/places/indexierung';
@@ -33,10 +33,10 @@ export function funnelOnlyJobs(): Job[] {
 }
 
 /**
- * Company-wide statements; pending (unconfirmed) and expired facts are skipped. Pay, contract,
+ * Employer statements; pending (unconfirmed) and expired facts are skipped. Pay, contract,
  * Hilti kit and workwear came back with E-SEO-014 (all backed, not pending); pay on request with E-030.
  */
-const EMPLOYER_FACT_IDS: readonly FactId[] = [
+export const EMPLOYER_FACT_IDS: readonly FactId[] = [
   'founded1926',
   'employees15',
   'payOnRequest',
@@ -50,6 +50,12 @@ const EMPLOYER_FACT_IDS: readonly FactId[] = [
   'noFarAssembly',
   'partners5',
 ];
+
+/**
+ * Statements about the company itself (founding, team, area, partners): true whichever job you take. Every other
+ * employer fact is a condition of the job and only stands for the jobs whose own data carry it (fuehrtFakt).
+ */
+export const COMPANY_FACT_IDS: readonly FactId[] = ['founded1926', 'employees15', 'radius35', 'noFarAssembly', 'partners5'];
 
 /**
  * Who the company is, for the lead sentence: until the end of the anniversary year
@@ -66,14 +72,18 @@ export function chamberLine(): string {
 }
 
 /**
- * Statements across all jobs that are open now (live and funnel_only). A fact that is not confirmed for some of them
- * (`offenFuer`, e.g. holidays and hours for the office, fakten-abgleich S5) carries the jobs it is open for, so an AI
- * answer cannot pin it on the office job (Prüfung E-029, Runde 2).
+ * Statements across all jobs that are open now (live and funnel_only). A job condition (pay, contract, hours, holidays,
+ * kit) that not every one of them carries names the jobs that state it in their own data („genannt bei“: benefitFactIds,
+ * „Unbefristet“, „Lohn auf Anfrage“), never the exceptions: an AI answer must not pin it on a job whose page does not
+ * say it, e.g. a permanent contract on an apprenticeship (Prüfung E-029, Runde 3). Stated by none: left out.
  */
 export function employerFacts(now: Date, stellen: readonly Job[] = [...liveJobs(now), ...funnelOnlyJobs()]): string[] {
-  return EMPLOYER_FACT_IDS.filter((id) => isFactActive(id, now) && !FACTS[id].pending).map((id) => {
-    const offen = offenBei(id, stellen);
-    return offen.length === 0 ? FACTS[id].long : `${FACTS[id].long} Je nach Stelle; offen bei: ${offen.map((job) => job.shortTitle).join(', ')}.`;
+  return EMPLOYER_FACT_IDS.filter((id) => isFactActive(id, now) && !FACTS[id].pending).flatMap((id) => {
+    if (COMPANY_FACT_IDS.includes(id) || stellen.length === 0) return [FACTS[id].long];
+    const mit = stellenMitFakt(id, stellen);
+    if (mit.length === 0) return [];
+    if (mit.length === stellen.length) return [FACTS[id].long];
+    return [`${FACTS[id].long} Je nach Stelle; genannt bei: ${mit.map((job) => job.shortTitle).join(', ')}.`];
   });
 }
 

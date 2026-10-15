@@ -26,6 +26,9 @@ import {
   isFactActive,
   processAudienceFor,
   isFactId,
+  fuehrtFakt,
+  stellenMitFakt,
+  type FaktTraeger,
 } from '..';
 
 const REQUIRED_FACTS = [
@@ -84,6 +87,35 @@ describe('FACTS', () => {
     expect(isFactActive('anniversary100', new Date('2026-12-31T12:00:00Z'))).toBe(true);
     expect(isFactActive('anniversary100', new Date('2027-01-01T00:00:00Z'))).toBe(false);
     expect(isFactActive('founded1926', new Date('2030-01-01T00:00:00Z'))).toBe(true);
+  });
+
+  it('fuehrtFakt: nur was die Stelle selbst nennt, nie für eine offene Kategorie (Prüfung E-029, Runde 3)', () => {
+    const stelle = (teil: Partial<FaktTraeger>): FaktTraeger => ({
+      category: 'anlagenmechaniker',
+      benefitFactIds: [],
+      employment: { permanent: false },
+      pay: 'auf-anfrage',
+      ...teil,
+    });
+    expect(fuehrtFakt('aboveTariff', stelle({ benefitFactIds: ['aboveTariff'] }))).toBe(true);
+    expect(fuehrtFakt('aboveTariff', stelle({}))).toBe(false);
+    // „Unbefristet“ in der Meta-Zeile trägt den Vertrag, „Lohn auf Anfrage“ den Lohn; sonst nichts aus Meta-Angaben
+    expect(fuehrtFakt('permanentContract', stelle({ employment: { permanent: true } }))).toBe(true);
+    expect(fuehrtFakt('permanentContract', stelle({}))).toBe(false);
+    expect(fuehrtFakt('vacation30', stelle({ employment: { permanent: true } }))).toBe(false);
+    expect(fuehrtFakt('payOnRequest', stelle({}))).toBe(true);
+    expect(fuehrtFakt('payOnRequest', stelle({ category: 'praktikum', pay: 'keine-angabe' }))).toBe(false);
+    // Offen fürs Büro (S5): auch mit gesetztem Flag nicht
+    expect(fuehrtFakt('permanentContract', stelle({ category: 'buero', employment: { permanent: true } }))).toBe(false);
+    expect(fuehrtFakt('vacation30', stelle({ category: 'buero', benefitFactIds: ['vacation30'] }))).toBe(false);
+    // Echte Stellen: Ausbildung ohne Tarif und ohne unbefristeten Vertrag, Quereinstieg unbefristet ohne Tarif
+    const azubi = getJobById('ausbildung-anlagenmechaniker-shk')!;
+    const quer = getJobById('quereinsteiger-montagehelfer')!;
+    expect([fuehrtFakt('aboveTariff', azubi), fuehrtFakt('permanentContract', azubi)]).toEqual([false, false]);
+    expect([fuehrtFakt('aboveTariff', quer), fuehrtFakt('permanentContract', quer)]).toEqual([false, true]);
+    expect(stellenMitFakt('aboveTariff', ALL_JOBS).map((job) => job.id)).toEqual(
+      ALL_JOBS.filter((job) => job.benefitFactIds.includes('aboveTariff')).map((job) => job.id),
+    );
   });
 
   it('keine alte Anrede und kein Versprechen „24 Stunden“', () => {

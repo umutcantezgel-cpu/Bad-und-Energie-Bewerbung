@@ -1,8 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GET as llmsFull } from '@/app/llms-full.txt/route';
 import { GET as llms } from '@/app/llms.txt/route';
-import { COMPANY, FACTS, FACT_IDS, offenBei } from '@/lib/content';
-import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
+import { COMPANY_FACT_IDS, EMPLOYER_FACT_IDS, funnelOnlyJobs, liveJobs } from '@/app/llms.txt/content';
+import { COMPANY, FACTS, type FactId } from '@/lib/content';
+import type { Job } from '@/lib/jobs/registry';
 
 /** E-SEO-014: the short file carries the backed employer lines the old file had, all from fact ids. */
 
@@ -26,24 +27,59 @@ describe('llms.txt (E-SEO-014)', () => {
     expect(text).toContain(`${COMPANY.hwk}, ${COMPANY.innung}`);
   });
 
-  it('facts open for a live job (offenFuer, office S5) only with the jobs they are open for, in both files (Runde 2)', async () => {
-    const offene = FACT_IDS.filter((id) => FACTS[id].offenFuer);
-    expect(offene.length).toBeGreaterThan(0);
+  it('job conditions only with the jobs whose own data carry them, never by naming the exceptions (Runde 3)', async () => {
+    const jetzt = new Date('2026-10-20T12:00:00Z');
+    const stellen = [...liveJobs(jetzt), ...funnelOnlyJobs()];
+    expect(stellen.length).toBeGreaterThan(0);
+    // Was die Stelle selbst sagt: ihre Vorteile, „Unbefristet“ und „Lohn auf Anfrage“ in der Meta-Zeile
+    const fuehrt = (id: FactId, job: Job) =>
+      job.benefitFactIds.includes(id) ||
+      (id === 'permanentContract' && job.employment.permanent) ||
+      (id === 'payOnRequest' && job.pay === 'auf-anfrage');
+    const stellenbezogen = EMPLOYER_FACT_IDS.filter((id) => !COMPANY_FACT_IDS.includes(id));
+    expect(stellenbezogen).toEqual(expect.arrayContaining(['payOnRequest', 'aboveTariff', 'permanentContract', 'flexibleHours', 'vacation30']));
+    // Über den Betrieb selbst nur, was für jede Stelle gilt: kein Fakt mit offenFuer
+    for (const id of COMPANY_FACT_IDS) expect(FACTS[id].offenFuer, id).toBeUndefined();
     for (const route of [llms, llmsFull]) {
-      const text = await textAt(route, '2026-10-20T12:00:00Z');
+      const text = await textAt(route, jetzt.toISOString());
       // llms.txt: „## Arbeitgeber“, llms-full.txt: „## 1. Arbeitgeber“
       const arbeitgeber = text.split(/^## (?:1\. )?Arbeitgeber$/m)[1]?.split('\n## ')[0] ?? '';
-      const stellen = getActiveJobs().filter((job) => isJobLive(job, new Date('2026-10-20T12:00:00Z')));
-      for (const id of offene) {
-        const offen = offenBei(id, stellen);
-        const zeile = arbeitgeber.split('\n').find((line) => line.startsWith(`- ${FACTS[id].long}`));
-        expect(zeile, id).toBeDefined();
-        if (offen.length === 0) expect(zeile, id).toBe(`- ${FACTS[id].long}`);
-        else expect(zeile, id).toBe(`- ${FACTS[id].long} Je nach Stelle; offen bei: ${offen.map((job) => job.shortTitle).join(', ')}.`);
+      const zeilen = arbeitgeber.split('\n');
+      for (const id of COMPANY_FACT_IDS) expect(zeilen, id).toContain(`- ${FACTS[id].long}`);
+      for (const id of stellenbezogen) {
+        const zeile = zeilen.find((line) => line.startsWith(`- ${FACTS[id].long}`));
+        const mit = stellen.filter((job) => fuehrt(id, job));
+        if (mit.length === 0) expect(zeile, id).toBeUndefined();
+        else if (mit.length === stellen.length) expect(zeile, id).toBe(`- ${FACTS[id].long}`);
+        else expect(zeile, id).toBe(`- ${FACTS[id].long} Je nach Stelle; genannt bei: ${mit.map((job) => job.shortTitle).join(', ')}.`);
+        // Genannt (ohne Zusatz: alle) ist eine Stelle genau dann, wenn ihre eigenen Daten den Fakt führen
+        const genannt = zeile === undefined ? [] : (zeile.match(/; genannt bei: (.+)\.$/)?.[1].split(', ') ?? stellen.map((job) => job.shortTitle));
+        for (const job of stellen) {
+          expect(genannt.includes(job.shortTitle), `${id}: ${job.shortTitle}`).toBe(fuehrt(id, job));
+          if (FACTS[id].offenFuer?.kategorien.includes(job.category)) expect(genannt, `${id}: ${job.shortTitle}`).not.toContain(job.shortTitle);
+        }
       }
-      // Die Bürostelle ist live: mindestens ein Fakt trägt die Einschränkung
-      expect(arbeitgeber).toContain('offen bei: Bürofachkraft');
+      // Ausnahmen werden nicht aufgezählt: Aus „offen bei: Bürofachkraft“ las sich der Rest als gültig
+      expect(arbeitgeber).not.toContain('offen bei');
+      // Beleg seo-gate-r3/llms-offen-bei.txt: Ausbildung und Schülerpraktikum ohne unbefristeten Vertrag und ohne Tarif,
+      // das Praktikum ohne Urlaub und ohne Lohn, der Quereinstieg ohne Tarif
+      const zeileVon = (id: FactId) => zeilen.find((line) => line.startsWith(`- ${FACTS[id].long}`)) ?? '';
+      for (const titel of ['Ausbildung Anlagenmechaniker 2026', 'Ausbildung Anlagenmechaniker 2027', 'Schülerpraktikum SHK']) {
+        expect(zeileVon('permanentContract'), titel).toContain('genannt bei: ');
+        expect(zeileVon('permanentContract'), titel).not.toContain(titel);
+        expect(zeileVon('aboveTariff'), titel).not.toContain(titel);
+      }
+      expect(zeileVon('aboveTariff')).toBe(
+        `- ${FACTS.aboveTariff.long} Je nach Stelle; genannt bei: Anlagenmechaniker SHK, Kundendiensttechniker, Obermonteur / Projektleiter.`,
+      );
+      expect(zeileVon('vacation30')).not.toContain('Schülerpraktikum SHK');
+      expect(zeileVon('payOnRequest')).toContain('genannt bei: ');
+      expect(zeileVon('payOnRequest')).not.toContain('Schülerpraktikum SHK');
     }
+    // Kopf von llms.txt: „Lohn auf Anfrage“ nicht pauschal, solange das Praktikum (ohne Wort zu Geld) offen ist
+    const kopf = (await textAt(llms, jetzt.toISOString())).split('\n').find((line) => line.startsWith('> ')) ?? '';
+    expect(stellen.some((job) => job.pay === 'keine-angabe')).toBe(true);
+    expect(kopf).not.toContain(FACTS.payOnRequest.long);
   });
 
   it('names the anniversary in the lead sentence until 31.12.2026, not after', async () => {

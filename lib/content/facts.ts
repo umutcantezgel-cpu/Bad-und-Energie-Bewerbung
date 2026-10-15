@@ -326,5 +326,32 @@ export function offenBei<T extends { category: JobCategory }>(id: FactId, stelle
   return offen ? stellen.filter((stelle) => offen.kategorien.includes(stelle.category)) : [];
 }
 
+/** Was eine Stelle selbst zu einem Fakt sagt (Ausschnitt aus Job, lib/jobs/schema.ts). */
+export interface FaktTraeger {
+  category: JobCategory;
+  benefitFactIds: readonly FactId[];
+  employment: { permanent: boolean };
+  pay: string;
+}
+
+/**
+ * Führt die Stelle den Fakt in ihren eigenen Daten? Ihre Vorteile (benefitFactIds), dazu die Angaben der Meta-Zeile
+ * mit derselben Aussage: „Unbefristet“ (employment.permanent) und „Lohn auf Anfrage“ (pay). Für eine Kategorie aus
+ * `offenFuer` nie. Ordnet eine Sammelfläche einen Fakt Stellen zu („genannt bei“, „Gehört zu“), dann nur diesen; aus
+ * einer Paketzeile mit ähnlichem Wortlaut folgt der Fakt nicht (Prüfung E-029, Runde 3).
+ */
+export function fuehrtFakt(id: FactId, stelle: FaktTraeger): boolean {
+  if (FACTS[id].offenFuer?.kategorien.includes(stelle.category)) return false;
+  if (stelle.benefitFactIds.includes(id)) return true;
+  if (id === 'permanentContract') return stelle.employment.permanent;
+  if (id === 'payOnRequest') return stelle.pay === 'auf-anfrage';
+  return false;
+}
+
+/** Die gezeigten Stellen, deren eigene Daten den Fakt führen (fuehrtFakt), in ihrer Reihenfolge. */
+export function stellenMitFakt<T extends FaktTraeger>(id: FactId, stellen: readonly T[]): T[] {
+  return stellen.filter((stelle) => fuehrtFakt(id, stelle));
+}
+
 /** Stellenbezug auf Sammelflächen, wie auf der Seite „Bezahlung und Extras“. */
 export const JE_NACH_STELLE = 'je nach Stelle';
