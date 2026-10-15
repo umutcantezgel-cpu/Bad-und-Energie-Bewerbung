@@ -145,8 +145,18 @@ export const GLYPH_SHAPES = {
   // ── Büro und Verwaltung (E-031): dieselben Formen wie die Szenen in lib/zeichnung/buero ──
   /** Wochenplan: Blatt mit Ringen und Kopfzeile, darin drei Termine als kurze Striche (keine Uhrzeit, kein Datum). */
   kalender: [{ x: 3, y: 5, width: 18, height: 16, rx: 2 }, { d: 'M8 3v4M16 3v4M3 10h18' }, { d: 'M7 14h4M13 14h4M7 17.5h4' }],
-  /** Ordner von vorn: Rücken mit Rückenschild und Griffloch (Rückenbreite wie lib/zeichnung/buero/masse.ts). */
-  ordner: [{ x: 7, y: 3, width: 10, height: 18, rx: 1.5 }, { d: 'M9.5 6h5v5.5h-5Z' }, { cx: 12, cy: 16.5, r: 1.5 }],
+  /**
+   * Zwei Ordner von vorn, nebeneinander wie im Regal der Ablage-Szene (lib/zeichnung/buero/ablage.ts): je Rücken mit
+   * Rückenschild oben und Griffloch unten. Breit wie die Familie (18 von 24); ein einzelner schmaler Rücken las sich
+   * klein wie ein Handy (Prüfrunde 2 A2-6).
+   */
+  ordner: [
+    { x: 3, y: 3, width: 7.5, height: 18, rx: 1.5 },
+    { x: 13.5, y: 3, width: 7.5, height: 18, rx: 1.5 },
+    { d: 'M5.25 6h3v5h-3ZM15.75 6h3v5h-3Z' },
+    { cx: 6.75, cy: 16.5, r: 1.25 },
+    { cx: 17.25, cy: 16.5, r: 1.25 },
+  ],
   /** Paket von vorn: Karton mit Deckelfuge und Klebeband. */
   paket: [{ x: 3, y: 7, width: 18, height: 13, rx: 1.5 }, { d: 'M3 11.5h18' }, { d: 'M10 7v4.5h4V7' }],
   /** Beleg: Blatt mit abgerissener Unterkante und drei Zeilen (Angebot, Auftragsbestätigung, Rechnung). */

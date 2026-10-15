@@ -45,3 +45,13 @@ describe('Themenseiten: CSS nur über stil.ts mit der Grenze davor', () => {
     expect(grenze.replace(/\/\*[\s\S]*?\*\//g, '').trim()).toBe('');
   });
 });
+
+describe('Themen als Leitungsabgänge: Kennwerte in einer Spalte (Prüfrunde 2 A2-7)', () => {
+  it('ab 48em hat die Wertspalte eine feste Breite (jede Zeile ist ihr eigenes Raster, „auto“ schöbe sie je Wert)', () => {
+    const css = readFileSync(path.join(ORDNER, 'themen.module.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    const breit = css.match(/@media \(min-width: 48em\) \{\s*\.abgangZeile \{([^}]*)\}/)?.[1] ?? '';
+    const spalten = breit.match(/grid-template-columns:\s*([^;]+);/)?.[1].trim().split(/\s+(?![^(]*\))/) ?? [];
+    expect(spalten).toHaveLength(4);
+    expect(spalten[2]).toMatch(/^\d+(?:\.\d+)?rem$/);
+  });
+});

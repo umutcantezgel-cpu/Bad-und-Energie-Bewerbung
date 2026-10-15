@@ -258,9 +258,11 @@
   margin: 0;
 }
 
+/* Ab 48em steht der Kennwert in einer Spalte fester Breite: Jede Zeile ist ihr eigenes Raster, mit „auto“ schob ein
+   langer Wert („Voll- oder Teilzeit“) nur seine Spalte nach links (Prüfrunde 2 A2-7). Längere Werte brechen um. */
 @media (min-width: 48em) {
   .abgangZeile {
-    grid-template-columns: auto minmax(0, 1fr) minmax(11rem, auto) auto;
+    grid-template-columns: auto minmax(0, 1fr) 11rem auto;
     column-gap: var(--a-6);
   }
 

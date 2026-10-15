@@ -164,5 +164,10 @@ test('Stellenseite der Bürofachkraft: Kopfbild Leitstelle und die Szenen nur al
     const kopf = page.locator('[data-stelle-kopfbild="buero"] [data-zeichnung="leitstelle"] > div');
     await expect(kopf.locator('span')).toHaveCount(4);
     expect(await ausDemBild(kopf)).toEqual([]);
+    // Prüfrunde 2 A2-8: die Leitstelle so breit wie die Fläche (wie Gerät und Schema), der Lohn-Block darunter
+    const flaeche = (await page.locator('[data-stelle-kopfbild="buero"]').boundingBox())!;
+    const bild = (await page.locator('[data-stelle-kopfbild="buero"] [data-zeichnung="leitstelle"]').boundingBox())!;
+    expect(bild.width).toBeGreaterThanOrEqual(flaeche.width - 1);
+    expect(bild.width).toBeGreaterThan(24 * 16);
   }
 });

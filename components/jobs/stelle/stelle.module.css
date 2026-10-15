@@ -62,6 +62,12 @@
     width: 100%;
     max-width: 24rem;
   }
+
+  /* Die Leitstelle so breit wie die Fläche, wie Gerät und Schema (Prüfrunde 2 A2-8: mit 24rem war sie der schwächste
+     Stellenkopf); am Handy bleibt sie verborgen wie Schema und Hausschnitt (Knopf im ersten Bild, LCP auf der h1) */
+  .leitstelle {
+    max-width: none;
+  }
 }
 
 /* Anlagenschema und Hausschnitt als Datei (lib/zeichnung/kopf-svg.ts, Prüfung E-029, Runde 3): verborgen lädt der

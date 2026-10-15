@@ -31,8 +31,8 @@ export const KOPFBILD_GERAET_TEXT = 'Außeneinheit · Maße in mm';
  * - Anlagenmechaniker und Ausbildung: das Anlagenschema, statisch, beschriftet (Außeneinheit, Inneneinheit, Heizkreise,
  *   Erdreich) mit kurzem Schriftfeld; die Legende steht auf /arbeiten-bei-uns/waermepumpen. Erst ab 64em.
  * - Bürofachkraft (E-031): die Leitstelle, der Schreibtisch von oben mit Bezugslinien zu Monteuren, Kundendienst,
- *   Kunden, Großhandel und Lager (dekorativ, wie der Hausschnitt erst ab 64em), die Ziele als Wörter über dem Bild wie
- *   auf der Themenseite (Prüfrunde 1 A1-6).
+ *   Kunden, Großhandel und Lager (dekorativ, wie das Anlagenschema erst ab 64em und dann so breit wie die Fläche,
+ *   Prüfrunde 2 A2-8), die Ziele als Wörter über dem Bild wie auf der Themenseite (Prüfrunde 1 A1-6).
  * - alle anderen: der kleine Hausschnitt (dekorativ), ebenfalls erst ab 64em. Am Handy bleibt der Knopf im ersten Bild.
  *
  * Anlagenschema, Leitstelle und Hausschnitt kommen als SVG-Datei (lib/zeichnung/kopf-svg.ts) per `<img loading="lazy">`: Am Handy
@@ -43,7 +43,7 @@ export const KOPFBILD_GERAET_TEXT = 'Außeneinheit · Maße in mm';
 export function Kopfbild({ job }: KopfbildProps) {
   const art = kopfZeichnung(job);
   return (
-    <div className={cn(styles.kopfbild, art !== 'hausschnitt' && art !== 'buero' && styles.kopfbildBreit)} data-stelle-kopfbild={art}>
+    <div className={cn(styles.kopfbild, art !== 'hausschnitt' && styles.kopfbildBreit)} data-stelle-kopfbild={art}>
       {art === 'aussengeraet' ? (
         <DauerSteuerung className={styles.kopfGeraet} beschriftung={<span className="text-etikett text-ink-2">{KOPFBILD_GERAET_TEXT}</span>}>
           <Aussengeraet ansicht="vorne" massketten="haupt" bewegt schriftfeld={false} massSchrift={64} />
@@ -51,7 +51,7 @@ export function Kopfbild({ job }: KopfbildProps) {
       ) : null}
       {art === 'anlagenschema' ? <KopfSchema /> : null}
       {art === 'buero' ? (
-        <div className={styles.haus} data-zeichnung="leitstelle">
+        <div className={cn(styles.haus, styles.leitstelle)} data-zeichnung="leitstelle">
           <BueroBild szene={LEITSTELLE} woerter={BUERO_LEITSTELLE_ZIELE}>
             <Image
               src={kopfSvgPfad('buero')}
