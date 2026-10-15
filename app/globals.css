@@ -117,6 +117,39 @@
     cursor: pointer;
   }
 
+  /* Eigener Zeiger (E-031): Navy-Pfeil mit 2 px Creme-Rand und runden Ecken, 32 × 32, Spitze (Hotspot)
+     bei 4 3; über Links und Knöpfen derselbe Pfeil mit einem Punkt in Vorlaufrot im Creme-Ring. Nur bei feinem Zeiger
+     mit Hover und ohne erzwungene Farben (dort bleibt der Systemzeiger, ebenso bei Touch). Erst die einfache Adresse,
+     dann image-set mit 1x und 2x; dahinter immer ein Schlüsselwort, falls das Bild nicht lädt. Eingabefelder behalten
+     den Textzeiger, Deaktiviertes zeigt not-allowed. Bilder nur hier (Guard `cursor`, check-design-tokens). */
+  @media (hover: hover) and (pointer: fine) and (forced-colors: none) {
+    :root {
+      cursor: url("/cursor/zeiger.svg") 4 3, auto;
+      cursor: image-set(url("/cursor/zeiger.svg") 1x, url("/cursor/zeiger-2x.svg") 2x) 4 3, auto;
+    }
+
+    a[href],
+    button:not(:disabled),
+    [role="button"]:not([aria-disabled="true"]),
+    summary {
+      cursor: url("/cursor/hand.svg") 4 3, pointer;
+      cursor: image-set(url("/cursor/hand.svg") 1x, url("/cursor/hand-2x.svg") 2x) 4 3, pointer;
+    }
+
+    :where(
+        input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="submit"], [type="reset"], [type="button"], [type="image"]),
+        textarea,
+        [contenteditable="true"]
+      ) {
+      cursor: text;
+    }
+
+    :disabled,
+    [aria-disabled="true"] {
+      cursor: not-allowed;
+    }
+  }
+
   [hidden]:where(:not([hidden="until-found"])) {
     display: none !important;
   }
@@ -132,11 +165,17 @@
       transition-delay: 0s !important;
       scroll-behavior: auto !important;
     }
+  }
+}
 
-    ::view-transition-group(*),
-    ::view-transition-old(*),
-    ::view-transition-new(*) {
-      animation: none !important;
+/* Zeiger über Elementen mit der Utility cursor-pointer (Auswahlkarten, Kästchen, Aufklapper): dieselbe Hand wie über
+   Links und Knöpfen, in der Ebene der Utilities nach Tailwinds eigener Regel. Zustände mit höherer Spezifität
+   (disabled:cursor-not-allowed, has-disabled:cursor-default) gehen weiter vor. */
+@layer utilities {
+  @media (hover: hover) and (pointer: fine) and (forced-colors: none) {
+    .cursor-pointer {
+      cursor: url("/cursor/hand.svg") 4 3, pointer;
+      cursor: image-set(url("/cursor/hand.svg") 1x, url("/cursor/hand-2x.svg") 2x) 4 3, pointer;
     }
   }
 }
