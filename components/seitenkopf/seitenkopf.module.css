@@ -21,10 +21,11 @@
   color: var(--ink);
 }
 
-/* Navy-Fläche: am Handy hinter Titelblock und Zeichnung */
+/* Navy-Fläche: am Handy hinter Titelblock und Zeichnung; die Ecke unten rechts rund (E-031, wie der Einstieg) */
 .flaeche {
   grid-column: voll;
   grid-row: 1 / 3;
+  border-end-end-radius: var(--radius-3);
   background-color: var(--surface);
 }
 
@@ -356,9 +357,13 @@
     padding-bottom: var(--a-6);
   }
 
+  /* Innenecken links rund (E-031): die Fläche setzt oben und unten weich am Papier an */
   .flaeche {
     grid-column: panel-start / voll-end;
     grid-row: 1 / -1;
+    border-start-start-radius: var(--radius-3);
+    border-end-start-radius: var(--radius-3);
+    border-end-end-radius: 0;
   }
 
   /* Titelblock auf Papier: die Rollen des Inverse-Bands zurück auf die des Papiers */
@@ -410,7 +415,7 @@
     min-width: 18rem;
   }
 
-  /* Flansch in Navy am Knopf: hier münden Vorlauf und Rücklauf (wie im Einstieg) */
+  /* Flansch in Navy am Knopf: hier münden Vorlauf und Rücklauf (wie im Einstieg); außen rund (E-031) */
   .mitAktion .aktion::after {
     content: "";
     position: absolute;
@@ -419,7 +424,7 @@
     bottom: var(--a-2);
     width: calc(var(--m-strich) * 2);
     background-color: var(--brand);
-    border-radius: 0 var(--radius-1) var(--radius-1) 0;
+    border-radius: 0 var(--radius-voll) var(--radius-voll) 0;
   }
 
   .leitung {
@@ -449,8 +454,32 @@
     margin-left: var(--a-8);
   }
 
+  /* Das Paar endet im Seitenrand mit runden Enden (E-031), statt an der Kante des Bildschirms abgeschnitten zu werden:
+     je Leitung ein Kreis im Strich, mittig auf dem Ende */
   .leitungNavy {
+    position: relative;
     grid-column: 3;
+    margin-right: var(--rand);
+  }
+
+  .leitungNavy::before,
+  .leitungNavy::after {
+    content: "";
+    position: absolute;
+    right: calc(var(--m-strich) / -2);
+    width: var(--m-strich);
+    height: var(--m-strich);
+    border-radius: var(--radius-voll);
+  }
+
+  .leitungNavy::before {
+    top: calc(var(--m-strich) * -1);
+    background-color: var(--vorlauf);
+  }
+
+  .leitungNavy::after {
+    bottom: calc(var(--m-strich) * -1);
+    background-color: var(--ruecklauf);
   }
 
   .panel {

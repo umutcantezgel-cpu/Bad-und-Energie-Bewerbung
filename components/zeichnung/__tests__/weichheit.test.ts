@@ -8,6 +8,7 @@ import { PartnerSaeulen } from '@/components/home/betrieb/PartnerSaeulen';
 import { Ausstattung } from '@/components/home/vorteile/Ausstattung';
 import { Zusagen } from '@/components/home/vorteile/Zusagen';
 import { PackageList } from '@/components/jobs/PackageList';
+import { Section } from '@/components/layout/Section';
 import { RohrAkzent } from '..';
 
 /**
@@ -21,12 +22,28 @@ const quelle = (rel: string) => readFileSync(path.join(ROOT, rel), 'utf8');
 const ohneKommentare = (css: string) => css.replace(/\/\*[\s\S]*?\*\//g, '');
 const html = (element: Parameters<typeof renderToStaticMarkup>[0]) => renderToStaticMarkup(element);
 
-/** Rumpf der ersten Regel mit genau diesem Selektor (ohne @media). */
+/** Rumpf der ersten Regel, deren Selektor genau so lautet (Grundregeln stehen vor den @media-Blöcken). */
 function regel(css: string, selektor: string): string {
-  const esc = selektor.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const m = ohneKommentare(css).match(new RegExp(`(?:^|\\n)${esc} \\{([^}]*)\\}`));
-  expect(m, selektor).not.toBeNull();
-  return m![1];
+  const treffer = [...ohneKommentare(css).matchAll(/([^{}]+)\{([^{}]*)\}/g)].find((m) => m[1].trim() === selektor);
+  expect(treffer, selektor).toBeDefined();
+  return treffer![2];
+}
+
+/** Werte einer Kurzschreibweise, an Leerzeichen außerhalb von Klammern getrennt. */
+function teile(wert: string): string[] {
+  const out: string[] = [];
+  let tiefe = 0;
+  let akt = '';
+  for (const z of wert.trim()) {
+    if (z === '(') tiefe += 1;
+    if (z === ')') tiefe -= 1;
+    if (/\s/.test(z) && tiefe === 0) {
+      if (akt) out.push(akt);
+      akt = '';
+    } else akt += z;
+  }
+  if (akt) out.push(akt);
+  return out;
 }
 
 /** Deklarationen eines Regelrumpfs als Tabelle. */
@@ -127,6 +144,53 @@ describe('Rohrakzent statt harter 3-px-Oberkanten (E-031)', () => {
   });
 });
 
+describe('Tonwechsel der Abschnitte mit runden oberen Ecken (E-031)', () => {
+  const css = ohneKommentare(quelle('components/layout/section.module.css'));
+  const TOENE = ['papier', 'wand', 'band'] as const;
+
+  it('jeder Abschnitt trägt seinen Ton als data-ton (Papier, Wand, Band; alte Namen eingeschlossen)', () => {
+    const ton = (tone?: Parameters<typeof Section>[0]['tone']) => html(createElement(Section, { tone }, 'x')).match(/data-ton="(\w+)"/)?.[1];
+    expect([ton(), ton('default'), ton('papier'), ton('subtle'), ton('wand'), ton('inverse'), ton('band')]).toEqual([
+      'papier',
+      'papier',
+      'papier',
+      'wand',
+      'wand',
+      'band',
+      'band',
+    ]);
+    expect(html(createElement(Section, { tone: 'wand' }, 'x'))).toMatch(/^<section class="[^"]*\bton\b|^<section class="[^"]*_ton_/);
+  });
+
+  it('nur beim Wechsel des Tons: oben runde Ecken mit --radius-3, darunter ein Streifen in der Fläche des vorigen', () => {
+    // Zwischen zwei Abschnitten dürfen höchstens zwei leere Sprungmarken stehen (Startseite: alte Anker als <span id>)
+    const ZWISCHEN = ['', 'span:empty + ', 'span:empty + span:empty + '];
+    const wechsel = TOENE.flatMap((t) => ZWISCHEN.map((z) => `.ton[data-ton="${t}"] + ${z}.ton:not([data-ton="${t}"])`)).join(',\n');
+    expect(css).toContain(`${wechsel} {\n  position: relative;\n  border-start-start-radius: var(--radius-3);\n  border-start-end-radius: var(--radius-3);\n}`);
+    const folgt = (t: string) => ZWISCHEN.map((z) => `+ ${z}.ton:not([data-ton="${t}"])`).join(', ');
+    const vorher = TOENE.map((t) => `.ton[data-ton="${t}"]:has(${folgt(t)})::after`).join(',\n');
+    expect(deklarationen(regel(css, vorher))).toEqual({
+      content: '""',
+      position: 'absolute',
+      'inset-inline': '0',
+      top: '100%',
+      height: 'var(--radius-3)',
+      'background-color': 'inherit',
+      'pointer-events': 'none',
+    });
+    // Papier deckt wie Wand und Band, sonst schiene der Streifen durch die ganze Oberkante
+    expect(deklarationen(regel(css, '.ton[data-ton="papier"]'))).toEqual({ 'background-color': 'var(--surface)' });
+    // Nur Form: kein Verlauf, kein Schatten, kein Glas, kein Filter; Radien nur aus den Tokens
+    expect(css).not.toMatch(/gradient|shadow|blur|filter|opacity/);
+    for (const [, wert] of css.matchAll(/radius:\s*([^;]+);/g)) expect(wert).toBe('var(--radius-3)');
+  });
+
+  it('Themenabschnitte: zwei gleiche Töne trennt der Leitungstrenner, nicht mehr die feine Linie aus E-029', () => {
+    expect(ohneKommentare(quelle('components/themen/themen.module.css'))).not.toMatch(/\.linie\b/);
+    expect(quelle('components/themen/Bausteine.tsx')).toContain('<Section id={kopf.id} tone={tone} trenner={trenner} aria-labelledby={titelId(kopf.id)}>');
+  });
+});
+
 describe('Rohrklammer zurück an den Abschnittsköpfen (E-031, K-003.2)', () => {
   it('der Rahmen an der h2: mittig, mindestens zwei Bögen und ein gerades Stück hoch, Breite der Klammer (--a-5)', () => {
     expect(deklarationen(regel(quelle(ZEICHNUNG_CSS), '.klammerRahmen'))).toEqual({
@@ -134,7 +198,7 @@ describe('Rohrklammer zurück an den Abschnittsköpfen (E-031, K-003.2)', () => 
       top: '50%',
       left: '0',
       width: 'var(--a-5)',
-      height: 'max(calc(100% - 0.4em), calc(var(--radius-2) * 2 + var(--a-3)))',
+      height: 'max(calc(100% - 0.2em), calc(var(--radius-2) * 2 + var(--a-5)))',
       transform: 'translateY(-50%)',
       'pointer-events': 'none',
     });
@@ -145,5 +209,110 @@ describe('Rohrklammer zurück an den Abschnittsköpfen (E-031, K-003.2)', () => 
     expect(bausteine).toMatch(/<SectionHeader\s+id=\{titelId\(kopf\.id\)\}\s+eyebrow=\{kopf\.etikett\}\s+klammer=\{klammer\}/);
     expect(bausteine).toContain('<Kopf kopf={kopf} klammer={klammer} />');
     for (const datei of dateien('components/home', /\.tsx$/)) expect(quelle(datei), datei).not.toMatch(/<SectionHeader\b[^>]*?\bklammer\b/);
+  });
+});
+
+describe('Bänder mit Hauptaktion: Leitungen beginnen rund im Band statt abgeschnitten (Schlussband, Initiativband)', () => {
+  const faelle = [
+    { css: 'components/home/betrieb/schlussband.module.css', tsx: 'components/home/CtaBand.tsx', text: '.text' },
+    { css: 'components/jobs/liste/liste.module.css', tsx: 'components/jobs/liste/Initiativband.tsx', text: '.bandText' },
+  ];
+
+  it.each(faelle)('$tsx: Leitungen im Text, oben rund, Knopf --a-6 darunter, kein Abschneiden an der Bandkante', ({ css: datei, tsx, text }) => {
+    const css = ohneKommentare(quelle(datei));
+    const quelltext = quelle(tsx);
+    expect(css).not.toMatch(/-200vh|overflow: clip/);
+    expect(quelltext).not.toContain('styles.band}');
+    // Die beiden Leitungen stehen im Textblock (vor der Überschrift im DOM, dekorativ), nicht mehr am Knopf
+    const block = quelltext.slice(quelltext.indexOf(`styles.${text.slice(1)}}`));
+    expect(block.indexOf('styles.vorlauf')).toBeLessThan(block.indexOf('<h2'));
+    expect(block.indexOf('styles.ruecklauf')).toBeLessThan(block.indexOf('<h2'));
+    expect(regel(css, text)).toMatch(/position: relative;/);
+    expect(regel(css, '.anschluss')).toMatch(/margin-top: var\(--a-6\);/);
+    const mobil = regel(css, '.leitung');
+    expect(mobil).toMatch(/top: 0;\s*bottom: calc\(var\(--a-6\) \* -1\);/);
+    expect(mobil).toMatch(/border-radius: var\(--radius-voll\) var\(--radius-voll\) 0 0;/);
+    // Desktop: konzentrische Bögen 12/24 in den Flansch, oben ein Kreis im Strich; der Flansch außen rund
+    const desktop = css.slice(css.indexOf('@media (min-width: 64em)'));
+    expect(desktop).toMatch(/\.leitung::before \{[^}]*border-radius: var\(--radius-voll\);[^}]*background-color: currentColor;/);
+    expect(desktop).toMatch(/border-bottom-right-radius: calc\(var\(--radius-2\) \+ var\(--m-strich\) \/ 2\);/);
+    expect(desktop).toMatch(/border-bottom-right-radius: calc\(var\(--radius-3\) \+ var\(--m-strich\) \/ 2\);/);
+    expect(desktop).toMatch(/\.aktion::after \{[^}]*border-radius: 0 var\(--radius-voll\) var\(--radius-voll\) 0;/);
+    // Mittellinien waagerecht --paar/2 über und unter der Knopfmitte, gerechnet ab der Unterkante des Textes
+    expect(desktop).toContain('bottom: calc((var(--a-6) + var(--m-knopf) / 2 - var(--paar) / 2 + var(--m-strich) / 2) * -1);');
+    expect(desktop).toContain('bottom: calc((var(--a-6) + var(--m-knopf) / 2 + var(--paar) / 2 + var(--m-strich) / 2) * -1);');
+  });
+});
+
+describe('Seitenkopf, Stellenliste und Heizkreis: weiche Ecken und Enden (E-031)', () => {
+  const kopf = quelle('components/seitenkopf/seitenkopf.module.css');
+  const desktop = ohneKommentare(kopf.slice(kopf.indexOf('@media (min-width: 64em)')));
+
+  it('Navy-Fläche: Innenecken zum Papier mit --radius-3 (Desktop links oben und unten), am Handy die Ecke unten rechts', () => {
+    expect(regel(kopf, '.flaeche')).toMatch(/border-end-end-radius: var\(--radius-3\);/);
+    expect(desktop).toMatch(
+      /\.flaeche \{[^}]*border-start-start-radius: var\(--radius-3\);[^}]*border-end-start-radius: var\(--radius-3\);[^}]*border-end-end-radius: 0;/,
+    );
+    // Die Pfadleiste der Stellenliste setzt die Fläche fort: dieselbe Ecke
+    expect(ohneKommentare(quelle('components/jobs/liste/liste.module.css'))).toMatch(/\.pfadNavy \{[^}]*border-start-start-radius: var\(--radius-3\);/);
+  });
+
+  it('Leitungspaar endet rund im Seitenrand; der Flansch am Knopf ist außen rund', () => {
+    expect(desktop).toMatch(/\.leitungNavy \{[^}]*margin-right: var\(--rand\);/);
+    expect(desktop).toMatch(/\.leitungNavy::before,\s*\.leitungNavy::after \{[^}]*right: calc\(var\(--m-strich\) \/ -2\);[^}]*width: var\(--m-strich\);[^}]*height: var\(--m-strich\);[^}]*border-radius: var\(--radius-voll\);/);
+    expect(desktop).toMatch(/\.leitungNavy::before \{[^}]*background-color: var\(--vorlauf\);/);
+    expect(desktop).toMatch(/\.leitungNavy::after \{[^}]*background-color: var\(--ruecklauf\);/);
+    expect(desktop).toMatch(/\.mitAktion \.aktion::after \{[^}]*border-radius: 0 var\(--radius-voll\) var\(--radius-voll\) 0;/);
+  });
+
+  it('Heizkreis: Zu- und Abgang enden rund (ein Kreis im Strich je Ende, in der Farbe der Leitung)', () => {
+    const z = quelle(ZEICHNUNG_CSS);
+    expect(deklarationen(regel(z, '.hkVorlauf::after,\n.hkRuecklauf::after'))).toEqual({
+      content: '""',
+      position: 'absolute',
+      left: 'calc(var(--m-strich) * -1)',
+      width: 'var(--m-strich)',
+      height: 'var(--m-strich)',
+      'border-radius': 'var(--radius-voll)',
+    });
+    expect(regel(z, '.hkVorlauf::after')).toMatch(/top: calc\(100% - var\(--m-strich\) \/ 2\);\s*background-color: var\(--vorlauf\);/);
+    expect(regel(z, '.hkRuecklauf::after')).toMatch(/top: calc\(var\(--m-strich\) \/ -2\);\s*background-color: var\(--ruecklauf\);/);
+  });
+
+  it('Fokusringe der Zeilenlinks sind rund (--radius-2) statt eckig', () => {
+    for (const datei of ['components/jobs/JobCard.tsx', 'components/themen/Bausteine.tsx']) {
+      expect(quelle(datei), datei).not.toContain('after:rounded-none');
+      expect(quelle(datei), datei).toContain('after:rounded-2 focus-visible:after:outline-3');
+    }
+    expect(regel(quelle('components/jobs/liste/liste.module.css'), '.ziel::after')).toMatch(/border-radius: var\(--radius-2\);/);
+  });
+});
+
+describe('Nur vorhandene Tokens: Radien 4 · 12 · 24 · 999, ein Schatten, kein Glas, kein Glow, kein Verlauf', () => {
+  const DATEIEN = [
+    ZEICHNUNG_CSS,
+    'components/layout/section.module.css',
+    'components/seitenkopf/seitenkopf.module.css',
+    'components/home/betrieb/schlussband.module.css',
+    'components/jobs/liste/liste.module.css',
+    'components/site/fuss/leiste.module.css',
+    'components/site/kopf/kopf.module.css',
+    'components/einsatzgebiet/einsatzgebiet.module.css',
+  ];
+  /** themen.module.css ohne den Büro-Block (angehängt von Paket W3, eigene Prüfung) */
+  const themen = () => {
+    const css = quelle('components/themen/themen.module.css');
+    const i = css.indexOf('/* ═══ Büro-Block (E-031)');
+    return i < 0 ? css : css.slice(0, i);
+  };
+  const RADIUS = /^(?:0|inherit|var\(--radius-(?:1|2|3|voll)(?:, (?:4|12|24|999)px)?\)|calc\(var\(--radius-[23]\) \+ var\(--m-strich\) \/ 2\))$/;
+
+  it.each([...DATEIEN, 'components/themen/themen.module.css'])('%s', (datei) => {
+    const css = ohneKommentare(datei.endsWith('themen.module.css') ? themen() : quelle(datei));
+    for (const [, name, wert] of css.matchAll(/(border(?:-[a-z]+)*-radius):\s*([^;]+);/g)) {
+      for (const teil of teile(wert)) expect(teil, `${datei} ${name}: ${wert}`).toMatch(RADIUS);
+    }
+    expect(css).not.toMatch(/gradient\(|backdrop-filter|filter:\s*(?:blur|drop-shadow)|text-shadow/);
+    for (const [, wert] of css.matchAll(/box-shadow:\s*([^;]+);/g)) expect(wert.trim(), datei).toBe('var(--shadow-lg)');
   });
 });

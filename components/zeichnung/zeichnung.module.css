@@ -67,14 +67,14 @@
   overflow: visible;
 }
 
-/* Rahmen der Rohrklammer an einer Überschrift (SectionHeader, E-031): mittig, um 0,2 em je Seite eingerückt, aber
-   mindestens zwei Bögen (--radius-2) und ein gerades Stück (--a-3) hoch, damit eine Zeile nicht als „C“ steht */
+/* Rahmen der Rohrklammer an einer Überschrift (SectionHeader, E-031): mittig, um 0,1 em je Seite eingerückt, aber
+   mindestens zwei Bögen (--radius-2) und ein gerades Stück (--a-5) hoch, damit eine Zeile nicht als „C“ steht */
 .klammerRahmen {
   position: absolute;
   top: 50%;
   left: 0;
   width: var(--a-5);
-  height: max(calc(100% - 0.4em), calc(var(--radius-2) * 2 + var(--a-3)));
+  height: max(calc(100% - 0.2em), calc(var(--radius-2) * 2 + var(--a-5)));
   transform: translateY(-50%);
   pointer-events: none;
 }
@@ -207,6 +207,27 @@
   border-color: var(--ruecklauf);
   border-top: 0;
   border-radius: 0 0 var(--radius-3) var(--radius-3);
+}
+
+/* Zu- und Abgang links enden rund (E-031, Linienart leitung): ein Kreis im Strich, mittig auf dem Ende */
+.hkVorlauf::after,
+.hkRuecklauf::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--m-strich) * -1);
+  width: var(--m-strich);
+  height: var(--m-strich);
+  border-radius: var(--radius-voll);
+}
+
+.hkVorlauf::after {
+  top: calc(100% - var(--m-strich) / 2);
+  background-color: var(--vorlauf);
+}
+
+.hkRuecklauf::after {
+  top: calc(var(--m-strich) / -2);
+  background-color: var(--ruecklauf);
 }
 
 .hkWert {
