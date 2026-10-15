@@ -174,14 +174,30 @@ describe('Zeiger im CSS (E-031, nur app/globals.css)', () => {
   it('Pfeil auf der Seite, Hand über Links, Knöpfen und cursor-pointer; Text in Feldern, not-allowed bei Deaktiviertem', () => {
     const block = globals.slice(globals.indexOf(MEDIA));
     expect(block).toMatch(/:root \{\s*cursor: url\("\/cursor\/zeiger\.svg"\)/);
-    expect(block).toMatch(/a\[href\],\s*button:not\(:disabled\),\s*\[role="button"\]:not\(\[aria-disabled="true"\]\),\s*summary \{\s*cursor: url\("\/cursor\/hand\.svg"\)/);
+    expect(block).toMatch(
+      /a\[href\]:not\(\[aria-disabled="true"\]\),\s*button:not\(:disabled, \[aria-disabled="true"\]\),\s*\[role="button"\]:not\(\[aria-disabled="true"\]\),\s*summary \{\s*cursor: url\("\/cursor\/hand\.svg"\)/,
+    );
     expect(block).toMatch(/textarea,[\s\S]*?\{\s*cursor: text;\s*\}/);
     expect(block).toMatch(/:disabled,\s*\[aria-disabled="true"\] \{\s*cursor: not-allowed;\s*\}/);
     const utility = globals.slice(globals.lastIndexOf(MEDIA));
     expect(bloecke(globals.indexOf('cursor:', globals.lastIndexOf('.cursor-pointer')))).toEqual(['@layer utilities', MEDIA, '.cursor-pointer']);
     expect(utility).toMatch(/\.cursor-pointer \{\s*cursor: url\("\/cursor\/hand\.svg"\) 4 3, pointer;/);
     // Ohne feinen Zeiger (Touch) und in forced-colors bleiben die Systemzeiger: Knöpfe weiter mit pointer
-    expect(globals).toMatch(/button:not\(:disabled\),\s*\[role="button"\]:not\(\[aria-disabled="true"\]\) \{\s*cursor: pointer;\s*\}/);
+    expect(globals).toMatch(/button:not\(:disabled, \[aria-disabled="true"\]\),\s*\[role="button"\]:not\(\[aria-disabled="true"\]\) \{\s*cursor: pointer;\s*\}/);
+  });
+
+  it('Wirkung: Kein Selektor mit Hand oder pointer trifft ein deaktiviertes Element (aria-disabled oder :disabled) – sonst schlüge seine höhere Spezifität not-allowed (Prüfrunde 1 C1-7)', () => {
+    // Alle Regeln mit cursor: url(hand)… oder cursor: pointer; jeder Teilselektor, der ein Bedienelement nennt, schließt
+    // aria-disabled="true" aus (Knöpfe auch :disabled). Die Utility .cursor-pointer verlässt sich auf disabled:cursor-not-allowed.
+    const regeln = [...globals.matchAll(/([^{}]+)\{([^{}]*)\}/g)].filter((m) => /cursor:\s*(?:url\("\/cursor\/hand|pointer)/.test(m[2]));
+    expect(regeln.length).toBeGreaterThanOrEqual(3);
+    for (const [, kopf] of regeln) {
+      for (const teil of kopf.split(/,(?![^(]*\))/).map((t) => t.trim())) {
+        if (teil === '.cursor-pointer') continue;
+        expect(teil, teil).toMatch(/:not\([^)]*\[aria-disabled="true"\][^)]*\)|^summary$/);
+        if (teil.startsWith('button')) expect(teil, teil).toMatch(/:not\([^)]*:disabled/);
+      }
+    }
   });
 
   it('kein View-Übergang mehr im globalen Blatt (E-031: die Wärmefront ist eine Überlagerung)', () => {

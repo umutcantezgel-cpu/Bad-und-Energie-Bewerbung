@@ -112,7 +112,7 @@
     display: block;
   }
 
-  button:not(:disabled),
+  button:not(:disabled, [aria-disabled="true"]),
   [role="button"]:not([aria-disabled="true"]) {
     cursor: pointer;
   }
@@ -121,15 +121,17 @@
      bei 4 3; über Links und Knöpfen derselbe Pfeil mit einem Punkt in Vorlaufrot im Creme-Ring. Nur bei feinem Zeiger
      mit Hover und ohne erzwungene Farben (dort bleibt der Systemzeiger, ebenso bei Touch). Erst die einfache Adresse,
      dann image-set mit 1x und 2x; dahinter immer ein Schlüsselwort, falls das Bild nicht lädt. Eingabefelder behalten
-     den Textzeiger, Deaktiviertes zeigt not-allowed. Bilder nur hier (Guard `cursor`, check-design-tokens). */
+     den Textzeiger, Deaktiviertes zeigt not-allowed: Die Hand gilt nie für aria-disabled="true" (sonst schlüge
+     button:not(:disabled) mit höherer Spezifität die Regel unten, Prüfrunde 1 C1-7). Bilder nur hier (Guard `cursor`,
+     check-design-tokens). */
   @media (hover: hover) and (pointer: fine) and (forced-colors: none) {
     :root {
       cursor: url("/cursor/zeiger.svg") 4 3, auto;
       cursor: image-set(url("/cursor/zeiger.svg") 1x, url("/cursor/zeiger-2x.svg") 2x) 4 3, auto;
     }
 
-    a[href],
-    button:not(:disabled),
+    a[href]:not([aria-disabled="true"]),
+    button:not(:disabled, [aria-disabled="true"]),
     [role="button"]:not([aria-disabled="true"]),
     summary {
       cursor: url("/cursor/hand.svg") 4 3, pointer;
