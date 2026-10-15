@@ -4,15 +4,21 @@ import path from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 import { AUFTAKT_KLASSE, HEAD_SCRIPT, HEAD_SCRIPT_SHA256, REDUZIERT_ABFRAGE, SICHERHEITSNETZ_MS } from '../head-script';
 import { MEDIA } from '../prefers';
+import { AUFTAKT_ENDE_MS, NACHLAUF_ENDE_MS } from '../register';
 
 const ROOT = path.resolve(__dirname, '../../..');
 
-/** Führt das Kopfskript mit einem nachgebauten <html> und matchMedia aus. */
+/** Führt das Kopfskript mit einem nachgebauten <html> (Klassen, Ereignis-Hörer) und matchMedia aus. */
 function run(reduced: boolean | 'throws') {
   const classes = new Set<string>();
+  const hoerer = new Map<string, Set<() => void>>();
   const documentElement = {
     classList: { add: (c: string) => classes.add(c), remove: (c: string) => classes.delete(c) },
+    addEventListener: (typ: string, fn: () => void) => hoerer.set(typ, (hoerer.get(typ) ?? new Set()).add(fn)),
+    removeEventListener: (typ: string, fn: () => void) => hoerer.get(typ)?.delete(fn),
   };
+  /** Ein Ereignis steigt bis <html> auf. */
+  const melde = (typ: string) => [...(hoerer.get(typ) ?? [])].forEach((fn) => fn());
   const timers: Array<{ fn: () => void; ms: number }> = [];
   const matchMedia = vi.fn((query: string) => {
     if (reduced === 'throws') throw new Error('kein matchMedia');
@@ -20,7 +26,7 @@ function run(reduced: boolean | 'throws') {
   });
   const setTimeout = (fn: () => void, ms: number) => timers.push({ fn, ms });
   new Function('document', 'matchMedia', 'setTimeout', HEAD_SCRIPT)({ documentElement }, matchMedia, setTimeout);
-  return { classes, timers, matchMedia };
+  return { classes, timers, matchMedia, hoerer, melde };
 }
 
 describe('Kopfskript', () => {
@@ -30,21 +36,36 @@ describe('Kopfskript', () => {
     expect(REDUZIERT_ABFRAGE).toBe(MEDIA.reduzierteBewegung);
   });
 
-  it('setzt „auftakt“ ohne reduzierte Bewegung und entfernt die Klasse nach 2 s', () => {
-    const { classes, timers, matchMedia } = run(false);
+  it('setzt „auftakt“ ohne reduzierte Bewegung und entfernt die Klasse 2 s nach dem ersten Ablaufstart', () => {
+    const { classes, timers, matchMedia, hoerer, melde } = run(false);
     expect(matchMedia).toHaveBeenCalledWith('(prefers-reduced-motion: reduce)');
     expect(classes.has(AUFTAKT_KLASSE)).toBe(true);
+    // Das Netz wartet auf den ersten Ablauf (Prüfrunde 1 C1-1: Skriptstart im <head> ≠ Start der Abläufe)
+    expect(timers).toHaveLength(0);
+    expect(hoerer.get('animationstart')?.size).toBe(1);
+    melde('animationstart');
     expect(timers).toHaveLength(1);
     expect(timers[0].ms).toBe(SICHERHEITSNETZ_MS);
     expect(SICHERHEITSNETZ_MS).toBe(2000);
+    // Nur einmal: weitere Abläufe verschieben das Netz nicht
+    expect(hoerer.get('animationstart')?.size).toBe(0);
+    melde('animationstart');
+    expect(timers).toHaveLength(1);
+    expect(classes.has(AUFTAKT_KLASSE)).toBe(true);
     timers[0].fn();
     expect(classes.has(AUFTAKT_KLASSE)).toBe(false);
   });
 
+  it('das Netz liegt nach dem Ende jedes Auftakts und des Nachlaufs (beide ab demselben Stilaufbau)', () => {
+    expect(SICHERHEITSNETZ_MS).toBeGreaterThan(AUFTAKT_ENDE_MS);
+    expect(SICHERHEITSNETZ_MS).toBeGreaterThan(NACHLAUF_ENDE_MS);
+  });
+
   it('lässt die Klasse bei reduzierter Bewegung weg (Endzustand sofort)', () => {
-    const { classes, timers } = run(true);
+    const { classes, timers, hoerer } = run(true);
     expect(classes.size).toBe(0);
     expect(timers).toHaveLength(0);
+    expect(hoerer.size).toBe(0);
   });
 
   it('wirft nicht, wenn matchMedia fehlt oder wirft', () => {
