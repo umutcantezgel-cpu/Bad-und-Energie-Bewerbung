@@ -188,6 +188,8 @@
 
 .quelleLink {
   color: inherit;
+  /* Namen wie „OpenStreetMap“ nur am Bindestrich umbrechen, nie „OpenStre-etMap“ */
+  hyphens: manual;
   text-decoration-line: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;

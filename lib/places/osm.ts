@@ -7,8 +7,8 @@
  * Fuß jeder Seite es laden kann.
  */
 
-/** Wortlaut wie in lib/places/data/oepnv.json („fusswege“.„daten“). */
-export const OSM_NAMENSNENNUNG = '© OpenStreetMap-Mitwirkende, ODbL';
+/** Wortlaut wie in lib/places/data/oepnv.json („fusswege“.„daten“), „©“ geschützt vor dem Namen (kein „©“ allein am Zeilenende). */
+export const OSM_NAMENSNENNUNG = '©\u00A0OpenStreetMap-Mitwirkende, ODbL';
 
 /** Urheberrecht und Lizenz der OpenStreetMap-Daten; der Linktext ist die Namensnennung selbst. */
 export const OSM_LINK = Object.freeze({ label: OSM_NAMENSNENNUNG, href: 'https://www.openstreetmap.org/copyright' });

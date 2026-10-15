@@ -446,7 +446,8 @@ describe('Bus und Bahn und Berufsschule (Plan §B): Antworten aus den Daten', ()
   it('Quellenzeilen: Namensnennung und Bearbeitung wörtlich aus oepnv.json, Fundstellen der Zuständigkeit, nichts im Ortstext', () => {
     expect(OEPNV_QUELLENZEILE).toContain(OEPNV_QUELLE.namensnennung);
     // Fußwege aus OpenStreetMap: eigene Nennung mit ODbL, Wortlaut aus oepnv.json, Links in der Reihenfolge des Texts
-    expect(OSM_NAMENSNENNUNG).toBe(OEPNV_DATEI.fusswege.daten);
+    expect(OSM_NAMENSNENNUNG.replace(/\u00A0/g, ' ')).toBe(OEPNV_DATEI.fusswege.daten);
+    expect(OSM_NAMENSNENNUNG.startsWith('©\u00A0')).toBe(true);
     expect(OEPNV_QUELLENZEILE.endsWith(`Fußwege: ${OSM_NAMENSNENNUNG}.`)).toBe(true);
     expect(OEPNV_QUELLENLINKS).toEqual([{ label: OEPNV_QUELLE.lizenz, href: OEPNV_QUELLE.lizenzUrl }, OSM_LINK]);
     expect(OSM_LINK.href).toBe('https://www.openstreetmap.org/copyright');

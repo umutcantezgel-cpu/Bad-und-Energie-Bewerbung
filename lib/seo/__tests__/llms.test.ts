@@ -107,10 +107,12 @@ describe('llms.txt (E-SEO-014)', () => {
     const text = await textAt(llmsFull, '2026-10-20T12:00:00Z');
     const gebiet = text.split('## 5. Einsatzgebiet')[1]?.split('\n## ')[0] ?? '';
     const [strecke, bus] = gebiet.split('\n').filter((line) => line.startsWith('Gemessene Strecke') || line.startsWith('Bus und Bahn:'));
-    expect(strecke).toContain(`Daten: ${OSM_NAMENSNENNUNG} (${OSM_LINK.href}).`);
+    // Textdateien ohne geschützte Leerzeichen
+    const osm = OSM_NAMENSNENNUNG.replace(/\u00A0/g, ' ');
+    expect(strecke).toContain(`Daten: ${osm} (${OSM_LINK.href}).`);
     // Der CC-BY-Link gehört zum Fahrplan, die Fußwege aus OpenStreetMap stehen danach mit eigener Lizenz
     expect(bus).toContain(`${OEPNV_QUELLE.namensnennung} (${OEPNV_QUELLE.lizenzUrl})`);
-    expect(bus).toMatch(new RegExp(`Fußwege: ${OSM_NAMENSNENNUNG} \\(${OSM_LINK.href.replace(/[./]/g, '\\$&')}\\)\\.$`));
+    expect(bus).toMatch(new RegExp(`Fußwege: ${osm} \\(${OSM_LINK.href.replace(/[./]/g, '\\$&')}\\)\\.$`));
     expect(bus.indexOf('ODbL')).toBeGreaterThan(bus.indexOf(OEPNV_QUELLE.lizenzUrl));
   });
 

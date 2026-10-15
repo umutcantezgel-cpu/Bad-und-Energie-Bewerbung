@@ -332,7 +332,7 @@ describe('OpenStreetMap-Daten: ODbL-Namensnennung auf jeder Seite mit OSM-Werten
       const osm = zeile.indexOf(`href="${OSM_LINK.href}"`);
       expect(cc, place.id).toBeGreaterThan(0);
       expect(osm, place.id).toBeGreaterThan(cc);
-      expect(plain(zeile.slice(osm)), place.id).toContain(`${OSM_NAMENSNENNUNG}`);
+      expect(plain(zeile.slice(osm)), place.id).toContain(norm(OSM_NAMENSNENNUNG));
       expect(plain(zeile), place.id).toMatch(/Fußwege: © OpenStreetMap-Mitwirkende, ODbL/);
     }
   });

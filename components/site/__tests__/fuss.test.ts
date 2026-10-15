@@ -189,9 +189,9 @@ describe('Stellen, Ortsliste und Fußzeile', () => {
       expect(link, name).not.toBeNull();
       expect(link![0], name).toContain('target="_blank"');
       expect(link![0], name).toContain('rel="noopener noreferrer"');
-      expect(plain(link![1]), name).toBe(`${OSM_NAMENSNENNUNG}${NEUER_TAB}`);
+      expect(plain(link![1]), name).toBe(plain(`${OSM_NAMENSNENNUNG}${NEUER_TAB}`));
       // Sichtbar ohne den nur vorgelesenen Hinweis auf den neuen Tab
-      expect(plain(html).replaceAll(NEUER_TAB, ''), name).toContain(OSM_FUSSZEILE);
+      expect(plain(html).replaceAll(NEUER_TAB, ''), name).toContain(plain(OSM_FUSSZEILE));
     }
   });
 
