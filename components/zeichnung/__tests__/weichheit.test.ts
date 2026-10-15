@@ -369,3 +369,23 @@ describe('Verteiler und Absperrung (Themenseiten, E-031): normgerecht und still'
     expect(absperrungHtml).not.toMatch(/Blindflansch|Abzweig|<text/);
   });
 });
+
+describe('Nichts Verspieltes (E-031: nie zurück)', () => {
+  const QUELLEN = [
+    'components/zeichnung/RohrAkzent.tsx',
+    'components/zeichnung/Rohrklammer.tsx',
+    'components/zeichnung/Leitungstrenner.tsx',
+    'components/zeichnung/Heizkreis.tsx',
+    'components/themen/Verteiler.tsx',
+    'components/themen/Absperrung.tsx',
+    'lib/zeichnung/szenen/verteiler.ts',
+    'components/layout/section.module.css',
+  ];
+
+  it.each(QUELLEN)('%s: keine Uhr, kein Zirkel bzw. Kompass, kein Windrad, kein Lüfter, keine Bewegung, kein Euro, kein °C', (datei) => {
+    const text = quelle(datei);
+    expect(text).not.toMatch(/\b(?:uhr|uhren|zirkel|kompass|windrad|propeller|l(?:ü|ue)fter)\b/i);
+    expect(text).not.toMatch(/data-motion|@keyframes|animation|transition/);
+    expect(text).not.toMatch(/€|\bEuro\b|°C/);
+  });
+});
