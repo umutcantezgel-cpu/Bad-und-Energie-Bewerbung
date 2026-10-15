@@ -81,6 +81,9 @@
   display: block;
   width: 100%;
   height: auto;
+  /* Die Datei wählt ihre Farben per prefers-color-scheme; im Navy-Band (color-scheme: dark) richtet sie sich so nach
+     dem Farbschema der Seite statt nach dem des Bands (hell: Wärmerampe hell wie im Einstieg, E-031) */
+  color-scheme: light dark;
 }
 
 .schemaText {

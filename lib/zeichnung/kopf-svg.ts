@@ -35,7 +35,9 @@ import {
   LEITUNGEN,
   PFEILE,
 } from './szenen/hausschnitt';
+import { WAERMEFELDER } from './szenen/waermefeld';
 import { SYMBOLE, type Lage, type SymbolForm, type SymbolId } from './symbole';
+import { WAERMEFELD_AN } from './waerme/schalter';
 
 /**
  * Rollen des Inverse-Bands, in dem der Stellenkopf steht (app/styles/theme.css, Primitive): Marke und Kontur Creme,
@@ -50,9 +52,25 @@ export const KOPF_SVG_FARBEN = Object.freeze({
 
 type Farben = (typeof KOPF_SVG_FARBEN)['hell'];
 
+/**
+ * Wärmefeld (E-031) in der Datei: die Wärmerampe gespiegelt aus lib/tokens (hell auch im Inverse-Band und im Druck,
+ * dunkel = Pflaume), und die Rollen des Wärmebereichs (data-tone="warm", app/styles/theme.css) für alles, was im Raum
+ * über den Bändern steht: hell und im Druck die des Papiers (Navy, Vorlauf Rot, Rücklauf Blau), dunkel die der Nacht.
+ */
+export const KOPF_SVG_WAERME = Object.freeze({
+  rampe: { hell: TOKENS.waerme.hell, dunkel: TOKENS.waerme.dunkel },
+  bereich: {
+    hell: { marke: '#111D6D', flaeche: '#FBF7F0', vorlauf: '#D60000', ruecklauf: '#1F57C4' },
+    dunkel: { marke: '#F6F0E4', flaeche: '#0A1033', vorlauf: '#FF6B5F', ruecklauf: '#86AEFF' },
+    druck: { marke: '#111D6D', flaeche: '#FFFFFF', vorlauf: '#D60000', ruecklauf: '#1F57C4' },
+  },
+});
+
 const L = TOKENS.linien;
 const vars = (f: Farben) =>
   `--b:${f.marke};--fl:${f.flaeche};--sn:${f.schnitt};--sr:${f.schraffur};--vl:${f.vorlauf};--rl:${f.ruecklauf}`;
+const rampe = (stufen: readonly string[]) => stufen.map((farbe, k) => `--w${k}:${farbe}`).join(';');
+const bereich = (f: (typeof KOPF_SVG_WAERME)['bereich']['hell']) => `--b:${f.marke};--fl:${f.flaeche};--vl:${f.vorlauf};--rl:${f.ruecklauf}`;
 
 /**
  * Linienarten wie technik.module.css (gleiche Reihenfolge, damit die Kaskade gleich wirkt): non-scaling-stroke; Enden
@@ -60,11 +78,20 @@ const vars = (f: Farben) =>
  * aus lib/tokens. `pfeil`: Faktoren der Fließpfeile je Breite
  * des Bilds wie `.anlagenBild` (im `<img>` gelten Medienabfragen für die Breite des Bilds).
  */
-function stil(pfeil: boolean): string {
-  const regeln = [
-    `svg{${vars(KOPF_SVG_FARBEN.hell)}}`,
-    `@media screen and (prefers-color-scheme:dark){svg{${vars(KOPF_SVG_FARBEN.dunkel)}}}`,
-    `@media print{svg{${vars(KOPF_SVG_FARBEN.druck)}}}`,
+function stil(pfeil: boolean, waerme = false): string {
+  const w = KOPF_SVG_WAERME;
+  const regeln = waerme
+    ? [
+        `svg{${vars(KOPF_SVG_FARBEN.hell)};${rampe(w.rampe.hell)}}.wb{${bereich(w.bereich.hell)}}`,
+        `@media screen and (prefers-color-scheme:dark){svg{${vars(KOPF_SVG_FARBEN.dunkel)};${rampe(w.rampe.dunkel)}}.wb{${bereich(w.bereich.dunkel)}}}`,
+        `@media print{svg{${vars(KOPF_SVG_FARBEN.druck)};${rampe(w.rampe.hell)}}.wb{${bereich(w.bereich.druck)}}}`,
+      ]
+    : [
+        `svg{${vars(KOPF_SVG_FARBEN.hell)}}`,
+        `@media screen and (prefers-color-scheme:dark){svg{${vars(KOPF_SVG_FARBEN.dunkel)}}}`,
+        `@media print{svg{${vars(KOPF_SVG_FARBEN.druck)}}}`,
+      ];
+  regeln.push(
     '.l,.k,.f,.v,.m,.s{fill:none;stroke-linecap:butt;vector-effect:non-scaling-stroke}',
     `.k{stroke:var(--b);stroke-width:${L.kontur}px;stroke-linejoin:round}`,
     `.f{stroke:var(--b);stroke-width:${L.fein}px;stroke-linejoin:miter}`,
@@ -81,7 +108,8 @@ function stil(pfeil: boolean): string {
     '.pv{fill:var(--vl)}',
     '.pr{fill:var(--rl)}',
     '.pk{fill:var(--b)}',
-  ];
+  );
+  if (waerme) regeln.push(...[0, 1, 2, 3, 4].map((k) => `.w${k}{fill:var(--w${k})}`));
   if (pfeil) {
     regeln.push(
       '.p{scale:var(--pfeil,1)}',
@@ -114,8 +142,19 @@ function symbol(id: SymbolId, { x, y, drehung = 0, massstab = 1 }: Lage): string
   return `<g transform="${transform}">${SYMBOLE[id].formen.map(form).join('')}</g>`;
 }
 
-const dokument = (viewBox: string, breite: number, hoehe: number, pfeil: boolean, inhalt: string[]) =>
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" width="${breite}" height="${hoehe}"><style>${stil(pfeil)}</style>${inhalt.join('')}</svg>`;
+const dokument = (viewBox: string, breite: number, hoehe: number, pfeil: boolean, inhalt: string[], waerme = false) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" width="${breite}" height="${hoehe}"><style>${stil(pfeil, waerme)}</style>${inhalt.join('')}</svg>`;
+
+/** Wärmefeld still wie WaermefeldStill (components/zeichnung/waerme/Waermefeld.tsx): Band 0 und die Bänder 1–4. */
+function waermefeldStill(): string {
+  const { innen, baender } = WAERMEFELDER.hausschnitt;
+  return (
+    `<svg x="${innen.x}" y="${innen.y}" width="${innen.breite}" height="${innen.hoehe}" viewBox="${innen.x} ${innen.y} ${innen.breite} ${innen.hoehe}">` +
+    rechteck(innen.x, innen.y, innen.breite, innen.hoehe, 'w0') +
+    baender.map((b) => pfad(b.d, `w${b.stufe}`)).join('') +
+    '</svg>'
+  );
+}
 
 /**
  * Anlagenschema statisch, ohne Beschriftung (die steht als HTML darüber) und ohne Legende: Erdreich, Gelände, Wand mit
@@ -141,9 +180,11 @@ export function anlagenschemaSvg(): string {
 export const KOPF_HAUS_VIEWBOX = Object.freeze({ x: 60, y: 0, breite: HAUSSCHNITT_RAHMEN.breite - 40, hoehe: HAUSSCHNITT_RAHMEN.hoehe });
 
 /**
- * Kleiner Hausschnitt wie HausschnittKlein (ohne Leitungen zur Bewerbung, ohne Bewegung): Erdreich, Rohrgraben,
- * Schotter, Kiesbett, Haus im Schnitt, Außeneinheit (einfache Detailstufe, 1 : 10 eingesetzt), Sockel, Kondensatrohr,
- * Wanddurchführung, Inneneinheit mit Pumpe, Flachheizkörper, Leitungen (verdeckt und sichtbar) und feste Pfeile.
+ * Kleiner Hausschnitt wie HausschnittKlein (ohne Leitungen zur Bewerbung, ohne Bewegung): im Raum das Wärmefeld still
+ * (E-031), Erdreich, Rohrgraben, Schotter, Kiesbett, Haus im Schnitt, Außeneinheit (einfache Detailstufe, 1 : 10
+ * eingesetzt), Sockel, Kondensatrohr, Wanddurchführung, im Wärmebereich Inneneinheit mit Pumpe, Flachheizkörper (ohne
+ * Fläche, die Bänder zeigen seine Temperatur), die Leitungen und Pfeile im Raum, dann die übrigen Leitungen (verdeckt
+ * und sichtbar) und Pfeile.
  */
 export function hausschnittSvg(): string {
   const v = KOPF_HAUS_VIEWBOX;
@@ -153,35 +194,50 @@ export function hausschnittSvg(): string {
   const a = vorderansicht(COMPRESS_AW_S, { detail: 'einfach', massketten: false });
   const lamellen = Array.from({ length: hk.lamellen }, (_, i) => r1(hk.x + ((i + 1) * hk.breite) / (hk.lamellen + 1)));
   const leitungen = LEITUNGEN.filter((l) => !l.nur);
-  return dokument(`${v.x} ${v.y} ${v.breite} ${v.hoehe}`, v.breite, v.hoehe, false, [
-    pfad(BAUTEILE.schraffur, 's'),
-    pfad(BAUTEILE.graben, 'f fl'),
-    pfad(BAUTEILE.schotter, 'f fl'),
-    pfad(BAUTEILE.schotterSchraffur, 's'),
-    pfad(BAUTEILE.kiesbett, 'f fl'),
-    pfad(BAUTEILE.kiesbettSchraffur, 's'),
-    pfad(BAUTEILE.dach, 'k sn'),
-    pfad(BAUTEILE.decke, 'k sn'),
-    pfad(BAUTEILE.bodenplatte, 'k sn'),
-    ...BAUTEILE.waende.map((d) => pfad(d, 'k sn')),
-    pfad(BAUTEILE.gelaende, 'k'),
-    `<svg x="${g.x}" y="${g.y}" width="${g.breite}" height="${g.hoehe}" viewBox="0 0 ${a.breite} ${a.hoehe}" overflow="visible">`,
-    ...a.kontur.map((d) => pfad(d, 'k fl')),
-    ...a.fein.map((d) => pfad(d, 'f')),
-    ...a.kreise.map((k) => `<circle cx="${k.cx}" cy="${k.cy}" r="${k.r}" class="${k.art === 'fein' ? 'f' : 'k'}"/>`),
-    a.rotor ? pfad(a.rotor.blaetter, 'f', ` transform="translate(${a.rotor.cx} ${a.rotor.cy})"`) : '',
-    '</svg>',
-    ...BAUTEILE.sockel.map((d) => pfad(d, 'k sn')),
-    pfad(BAUTEILE.kondensat, 'f fl'),
-    pfad(BAUTEILE.durchfuehrung, 'k fl'),
-    rechteck(ie.x, ie.y, ie.breite, ie.hoehe, 'm fl'),
+  const pfeile = PFEILE.filter((p) => !p.nur);
+  const warm = WAERMEFELD_AN;
+  const raum = [
+    rechteck(ie.x, ie.y, ie.breite, ie.hoehe, warm ? 'm' : 'm fl'),
     symbol('pumpe', { x: ie.pumpe.x, y: ie.pumpe.y, massstab: 1.4 }),
-    rechteck(hk.x, hk.y, hk.breite, hk.hoehe, 'k fl'),
+    rechteck(hk.x, hk.y, hk.breite, hk.hoehe, warm ? 'k' : 'k fl'),
     pfad(lamellen.map((x) => `M${x} ${hk.y}V${hk.y + hk.hoehe}`).join(''), 'f'),
-    ...leitungen.filter((l) => l.verdeckt).map((l) => pfad(l.d, `v ${LEITUNG[l.medium]}`)),
-    ...leitungen.filter((l) => !l.verdeckt).map((l) => pfad(l.d, `l ${LEITUNG[l.medium]}`)),
-    ...PFEILE.filter((p) => !p.nur).map((p) => pfad(p.d, PFEIL[p.medium])),
-  ]);
+    ...leitungen.filter((l) => l.raum).map((l) => pfad(l.d, `l ${LEITUNG[l.medium]}`)),
+    ...pfeile.filter((p) => p.raum).map((p) => pfad(p.d, PFEIL[p.medium])),
+  ];
+  return dokument(
+    `${v.x} ${v.y} ${v.breite} ${v.hoehe}`,
+    v.breite,
+    v.hoehe,
+    false,
+    [
+      warm ? waermefeldStill() : '',
+      pfad(BAUTEILE.schraffur, 's'),
+      pfad(BAUTEILE.graben, 'f fl'),
+      pfad(BAUTEILE.schotter, 'f fl'),
+      pfad(BAUTEILE.schotterSchraffur, 's'),
+      pfad(BAUTEILE.kiesbett, 'f fl'),
+      pfad(BAUTEILE.kiesbettSchraffur, 's'),
+      pfad(BAUTEILE.dach, 'k sn'),
+      pfad(BAUTEILE.decke, 'k sn'),
+      pfad(BAUTEILE.bodenplatte, 'k sn'),
+      ...BAUTEILE.waende.map((d) => pfad(d, 'k sn')),
+      pfad(BAUTEILE.gelaende, 'k'),
+      `<svg x="${g.x}" y="${g.y}" width="${g.breite}" height="${g.hoehe}" viewBox="0 0 ${a.breite} ${a.hoehe}" overflow="visible">`,
+      ...a.kontur.map((d) => pfad(d, 'k fl')),
+      ...a.fein.map((d) => pfad(d, 'f')),
+      ...a.kreise.map((k) => `<circle cx="${k.cx}" cy="${k.cy}" r="${k.r}" class="${k.art === 'fein' ? 'f' : 'k'}"/>`),
+      a.rotor ? pfad(a.rotor.blaetter, 'f', ` transform="translate(${a.rotor.cx} ${a.rotor.cy})"`) : '',
+      '</svg>',
+      ...BAUTEILE.sockel.map((d) => pfad(d, 'k sn')),
+      pfad(BAUTEILE.kondensat, 'f fl'),
+      pfad(BAUTEILE.durchfuehrung, 'k fl'),
+      warm ? `<g class="wb">${raum.join('')}</g>` : raum.join(''),
+      ...leitungen.filter((l) => l.verdeckt).map((l) => pfad(l.d, `v ${LEITUNG[l.medium]}`)),
+      ...leitungen.filter((l) => !l.verdeckt && !l.raum).map((l) => pfad(l.d, `l ${LEITUNG[l.medium]}`)),
+      ...pfeile.filter((p) => !p.raum).map((p) => pfad(p.d, PFEIL[p.medium])),
+    ],
+    warm,
+  );
 }
 
 export type KopfSvgArt = 'anlagenschema' | 'hausschnitt';

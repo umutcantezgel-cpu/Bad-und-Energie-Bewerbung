@@ -1,7 +1,20 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { OG_BAUTEILE, OG_ERDLEITUNG_Y, OG_GERAET, OG_GIEBEL_MASS, OG_HAUS_RAHMEN, ogLeitungen, ogPfeile } from '@/lib/seo/og-haus';
+import {
+  OG_BAUTEILE,
+  OG_ERDLEITUNG_Y,
+  OG_GERAET,
+  OG_GIEBEL_MASS,
+  OG_HAUS_RAHMEN,
+  OG_WAERMEFELD,
+  OG_WAERME_RAMPE,
+  ogLeitungen,
+  ogPfeile,
+} from '@/lib/seo/og-haus';
+import { TOKENS } from '@/lib/tokens';
+import { WAERMEFELDER } from '@/lib/zeichnung/szenen/waermefeld';
+import { WAERMEFELD_AN } from '@/lib/zeichnung/waerme/schalter';
 import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
 import {
   BAUTEILE,
@@ -58,8 +71,24 @@ describe('Teilen-Bilder zeichnen den Hausschnitt der Website (E-029)', () => {
     expect(quelle).toMatch(/H\$\{ende\}`;/);
   });
 
-  it('kein Wärmebild, kein Zirkel, keine Rohrklammer, kein Heizkreis; Leitungen rund, sonst stumpf wie in den Zeichnungen', () => {
-    expect(quelle).not.toMatch(/HAUS_BAENDER|HAUS_ZIRKEL|HAUS_MARKEN|Rohrklammer|Heizkreis|luefter|waerme/i);
+  it('Wärmefeld still im Raum (E-031): genau die Bänder von WAERMEFELDER.hausschnitt in der hellen Rampe, unter allem anderen', () => {
+    expect(WAERMEFELD_AN).toBe(true);
+    expect(OG_WAERMEFELD).toBe(WAERMEFELDER.hausschnitt);
+    expect(OG_WAERME_RAMPE).toEqual(TOKENS.waerme.hell);
+    // Band 0 als Rechteck des Rauminneren, die Bänder mit ihren Pfaden aus den Daten (keine eigenen Formen)
+    expect(quelle).toMatch(/<rect x=\{feld\.innen\.x\} y=\{feld\.innen\.y\} width=\{feld\.innen\.breite\} height=\{feld\.innen\.hoehe\} fill=\{OG_WAERME_RAMPE\[0\]\} \/>/);
+    expect(quelle).toMatch(/feld\.baender\.map\(\(b\) => \(\s*<path key=\{b\.stufe\} d=\{b\.d\} fill=\{OG_WAERME_RAMPE\[b\.stufe\]\} \/>/);
+    expect(quelle).not.toMatch(/\bd="M/);
+    // Ganz unten: vor dem Erdreich und dem Haus, die Wände und die Decke decken den Spiegelrand
+    expect(quelle.indexOf('OG_WAERME_RAMPE[0]')).toBeLessThan(quelle.indexOf('OG_BAUTEILE.schraffur'));
+    // Im Raum stehen Leitungen und Pfeile in den Farben des Wärmebereichs (wie auf Papier), draußen in denen des Bands
+    expect(quelle).toMatch(/const WARM_MEDIUM: Record<Medium, string> = \{ vorlauf: C\.rot, ruecklauf: C\.blau, kaeltemittel: C\.navy \};/);
+    expect(LEITUNGEN.filter((l) => l.raum).map((l) => l.id)).toEqual(['vorlauf-haus', 'ruecklauf-haus']);
+    expect(ogPfeile(false).filter((p) => p.raum)).toHaveLength(2);
+  });
+
+  it('kein gezeichnetes Wärmebild, kein Zirkel, keine Rohrklammer, kein Heizkreis; Leitungen rund, sonst stumpf wie in den Zeichnungen', () => {
+    expect(quelle).not.toMatch(/HAUS_BAENDER|HAUS_ZIRKEL|HAUS_MARKEN|Rohrklammer|Heizkreis|luefter|Waermebild|isotherm/i);
     // Runde Enden nur auf Leitungspfaden (E-031): die Leitungen des Schnitts und der Vorlauf zum Knopf, beide in der
     // Stärke der Leitung; die gemeinsamen Linienarten (stumpf) bleiben stumpf
     const rund = [...quelle.matchAll(/<path\b[^>]*strokeLinecap[=:]\s*['"{]*round[^>]*>/g)].map((m) => m[0]);

@@ -9,13 +9,14 @@ import { COMPRESS_AW_S } from './geraete/compress-aw-s';
 import type { Aussengeraet } from './geraete/typen';
 import { FROSTTIEFE, HAUSSCHNITT_ERDLEITUNG, HAUSSCHNITT_GOK } from './szenen/hausschnitt';
 import { KAELTEKREIS_SYMBOLE } from './szenen/kaeltekreis';
+import { RAUM_INNEN } from './szenen/raumschnitt';
 
 const NBSP = ' ';
 const zahl = (wert: number) => wert.toLocaleString('de-DE');
 const mm = (wert: number) => `${zahl(wert)}${NBSP}mm`;
 
 /** Herkunft eines Satzes: Zeichnung bzw. Geräte-Modul, aus dem er abgeleitet ist. */
-export type ErklaerQuelle = 'zeichnung:kaeltekreis' | 'zeichnung:anlagenschema' | `geraet:${string}`;
+export type ErklaerQuelle = 'zeichnung:kaeltekreis' | 'zeichnung:anlagenschema' | 'zeichnung:waermefeld' | `geraet:${string}`;
 
 export interface ErklaerSatz {
   text: string;
@@ -99,3 +100,36 @@ export function geraetSteckbrief(g: Aussengeraet = COMPRESS_AW_S): ErklaerSatz {
 
 /** Reihenfolge der Schritte = Reihenfolge der Symbole im Kältekreis (für den Test und die Legende). */
 export const KAELTEKREIS_REIHENFOLGE = KAELTEKREIS_SYMBOLE.map((s) => s.key);
+
+/** Meter mit einer Nachkommastelle („4,2 m“), aus Einheiten zu 10 mm. */
+const raumMeter = (einheiten: number) => (einheiten / 100).toLocaleString('de-DE', { maximumFractionDigits: 1 });
+
+/**
+ * „So verteilt sich die Wärme im Raum“ (E-031): was der Raumschnitt mit dem berechneten Wärmefeld zeigt
+ * (lib/zeichnung/szenen/waermefeld.ts, Felder `raum-heizkoerper` und `raum-fussboden`). Nur Physik, keine Temperaturen;
+ * jede Aussage prüft lib/zeichnung/__tests__/waermefeld.test.ts am gerechneten Feld (Fahne, Schicht unter der Decke,
+ * kühler Boden; Fußbodenheizung gleichmäßiger, am Boden am wärmsten, an der Außenwand kühler).
+ */
+export const WAERMEVERTEILUNG = Object.freeze({
+  titel: 'So verteilt sich die Wärme im Raum',
+  heizkoerper: {
+    name: 'Heizkörper',
+    text:
+      'Am Heizkörper steigt die erwärmte Luft auf und zieht als Fahne bis unter die Decke. Dort verteilt sie sich, sinkt an ' +
+      'der gegenüberliegenden Wand ab und strömt über den Boden zurück. Am Boden bleibt es kühler als unter der Decke.',
+    quelle: 'zeichnung:waermefeld',
+  } satisfies ErklaerSatz & { name: string },
+  fussboden: {
+    name: 'Fußbodenheizung',
+    text:
+      'Die Fußbodenheizung gibt ihre Wärme über die ganze Bodenfläche ab. Der Raum ist gleichmäßiger warm, am Boden ein ' +
+      'wenig wärmer als unter der Decke; nur an der Außenwand sinkt kühlere Luft herab.',
+    quelle: 'zeichnung:waermefeld',
+  } satisfies ErklaerSatz & { name: string },
+  hinweis: {
+    text:
+      `Berechnet für einen Raum von ${raumMeter(RAUM_INNEN.breite)}${NBSP}×${NBSP}${raumMeter(RAUM_INNEN.hoehe)}${NBSP}m im ` +
+      'Schnitt, links die Außenwand: Je kräftiger die Fläche, desto wärmer die Luft.',
+    quelle: 'zeichnung:waermefeld',
+  } satisfies ErklaerSatz,
+});

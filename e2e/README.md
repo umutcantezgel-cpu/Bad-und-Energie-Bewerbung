@@ -24,8 +24,8 @@ bun run e2e        # = playwright test; startet `next start -p 3400` und beendet
 | `mobile-light` / `mobile-dark` | 390 × 844, Touch, DPR 2 | hell / dunkel |
 | `desktop-light` / `desktop-dark` | 1440 × 900 | hell / dunkel |
 
-Alle mit `reducedMotion: 'reduce'`, Locale `de-DE`, Zeitzone `Europe/Berlin`. Nur `bewegung.spec.ts` schaltet für
-seine Tests `no-preference` ein.
+Alle mit `reducedMotion: 'reduce'`, Locale `de-DE`, Zeitzone `Europe/Berlin`. Nur `bewegung.spec.ts` und
+`waerme.spec.ts` schalten für ihre Tests `no-preference` ein.
 
 ## Specs
 
@@ -60,6 +60,10 @@ seine Tests `no-preference` ein.
   versteckter Tab den Rotor an. Auf der Wärmepumpen-Seite fließen Wasser und Kältemittel, ein Druck hält alle
   Schleifen der Seite an, axe ohne Verstöße.
   Mit reduzierter Bewegung läuft nichts und der Knopf fehlt; ohne JavaScript steht das Standbild vom Server.
+- `waerme.spec.ts` (nur `mobile-light` und `desktop-light`, E-031): das Wärmefeld. Im Hero wachsen die vier Bänder
+  einmal, das heißeste zuerst, ab dem Ende des Vorlaufs (560 ms) bis höchstens 1.920 ms; auf der Wärmepumpen-Seite
+  wartet der Vergleich unsichtbar und läuft beim Hinscrollen einmal (≤ 2.400 ms). Per Sprung an die Stelle, mit
+  reduzierter Bewegung und ohne JavaScript steht der Endzustand. Malzeit je Bild unter 2 ms (Handy, CPU 4×).
 - `themen-pages.spec.ts` (nur `mobile-light`): Themen-Hub `/arbeiten-bei-uns` und die fünf Themenseiten, dieselben
   Prüfungen und ein JSON-LD-Graph ohne JobPosting und FAQPage. axe über die Stichproben `/arbeiten-bei-uns` und
   `/arbeiten-bei-uns/gehalt` in `ROUTES`.

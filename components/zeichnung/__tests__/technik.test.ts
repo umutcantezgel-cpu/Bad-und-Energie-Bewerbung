@@ -41,6 +41,7 @@ import { Anlagenschema } from '../technik/Anlagenschema';
 import { Aussengeraet, type AussengeraetProps } from '../technik/Aussengeraet';
 import { HausschnittKlein } from '../technik/Hausschnitt';
 import { Kaeltekreis } from '../technik/Kaeltekreis';
+import { Raumschnitt } from '../technik/Raumschnitt';
 import { Symbol } from '../technik/Symbol';
 
 const ROOT = path.resolve(__dirname, '../../..');
@@ -435,6 +436,9 @@ describe('Linien und Farben (K-010)', () => {
     html(createElement(Kaeltekreis, { bewegt: true })),
     html(createElement(Anlagenschema, { bewegt: true })),
     html(createElement(HausschnittKlein, {})),
+    // E-031: Raumschnitt mit Wärmefeld (Ebenen unter der Zeichnung)
+    html(createElement(Raumschnitt, { art: 'heizkoerper' })),
+    html(createElement(Raumschnitt, { art: 'fussboden' })),
   ];
 
   it('Enden je Linienart (E-031): nur die Leitung rund, sonst stumpf; rund im Knopf nur das Bedienzeichen', () => {
@@ -745,6 +749,13 @@ describe('Budgets (K-013, gzip per zlib)', () => {
   it('Einstieg ≤ 15 KB: das ganze Markup des Abschnitts mit Hausschnitt und Einzelheit', () => {
     const m = html(createElement(Hero, { now: new Date('2026-10-14T09:00:00Z') }));
     expect(gzip(m)).toBeLessThanOrEqual(15 * 1024);
+  });
+
+  it('Wärmefeld im Einstieg ≤ 3 KB (E-031): Band 0 und die vier Band-Ebenen', () => {
+    const m = html(createElement(Hero, { now: new Date('2026-10-14T09:00:00Z') }));
+    const feld = m.match(/<div class="[^"]*" style="[^"]*" data-waermefeld="hausschnitt"[\s\S]*?<\/div>(?=<svg[^>]*data-szene="einstieg")/)![0];
+    expect(feld.match(/<svg\b/g)).toHaveLength(4);
+    expect(gzip(feld)).toBeLessThanOrEqual(3 * 1024);
   });
 
   it('Gerät ≤ 12 KB: jede Ansicht beider Größen mit vollen Maßketten, Rotor und Schriftfeld', () => {

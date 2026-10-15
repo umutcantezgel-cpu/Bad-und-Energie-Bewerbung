@@ -1,10 +1,13 @@
 import Link from 'next/link';
 import { Icon } from '@/components/icons';
 import { APPLY_PATH, SHORT_APPLY_LABEL } from '@/components/site/nav';
+import { Heizkreis, Rohrklammer } from '@/components/zeichnung';
 import { DauerSteuerung } from '@/components/zeichnung/bewegung/DauerSteuerung';
 import { Aussengeraet } from '@/components/zeichnung/technik/Aussengeraet';
+import { WaermefeldEbenen } from '@/components/zeichnung/waerme/Waermefeld';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
+import { HAUSSCHNITT_RAHMEN } from '@/lib/zeichnung/szenen/hausschnitt';
 import { HERO, heroLead, heroZweitzeile } from '../content';
 import { EINZELHEIT_TEXT, EINZELHEIT_TITEL, KREISLAUF_SATZ, RADIUS_ETIKETT, ZWEITWEG, einstiegMasse, jahreskette, ortsmarke } from './einstieg-text';
 import { Szene } from './Szene';
@@ -47,7 +50,10 @@ export interface EinstiegProps {
  *   gilt (Knopf „Anhalten“). Der Vorlauf läuft aus der Anlage links aus der Fläche in den Knopf.
  * - Handy: ein Navy-Block (Etikett, h1 und Unterzeile, Hausschnitt, Maße als Leiste), dann fällt der Vorlauf links
  *   senkrecht auf Papier und zweigt in den Knopf ab; die Einzelheit „X“ steht nach dem Erklärsatz als eigener Block.
- * Leitmotiv „35 km“ (E-027, seit E-029 ohne Zirkel): das Maß in Schrift im Giebel.
+ * Leitmotiv „35 km“ (E-027, seit E-029 ohne Zirkel): das Maß in Schrift im Giebel; am Desktop fasst ein Heizkreis das
+ * Maß oben in der Fläche, eine Rohrklammer die Unterzeile (E-031, Rohrakzente an freigegebenen Stellen). Im Raum des
+ * Hausschnitts liegt das Wärmefeld (E-031): Band 0 als Fläche, die Bänder 1–4 als eigene Ebenen unter der Szene; sie
+ * breiten sich nach dem Vorlauf aus (Register `waerme-breitet-sich-aus`, Auslöser `nachlauf`, Ende ≤ 1.920 ms).
  * Reihenfolge im DOM (Lesen, Tab) wie am Handy: Etikett, h1, Zeichnung (dekorativ), Maße, Einleitung, Knopf,
  * Mikrotext, Zweitweg, Erklärsatz T-001, Einzelheit mit „Anhalten“. Am Desktop setzt das Raster die Einzelheit in die
  * Navy-Fläche (gleiche Zelle wie das Bild). So springt der Fokus nicht vom Kopf zum Pausenknopf weit unten und zurück
@@ -75,6 +81,10 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
             <span>{zeile1}</span> <span>{zeile2}</span>
           </span>{' '}
           <span className={cn(styles.titelZweit, 'text-title-3')}>
+            {/* Rohrklammer (E-031): fasst die Unterzeile am Desktop wie eine Rohrschelle, Vorlauf oben, Rücklauf unten */}
+            <span className={styles.klammer}>
+              <Rohrklammer />
+            </span>
             {saetze(heroZweitzeile(stellen)).map((satz, i) => (
               <span key={satz}>
                 {i > 0 ? ' ' : null}
@@ -89,6 +99,7 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
       <div className={styles.bild} data-tone="inverse">
         <div className={styles.rahmen}>
           <div className={styles.lage}>
+            <WaermefeldEbenen id="hausschnitt" rahmen={{ x: 0, y: 0, ...HAUSSCHNITT_RAHMEN }} />
             <Szene />
             <span className={cn(styles.ablesung, 'font-mass')} aria-hidden="true" data-motion="radius-einrasten">
               {masse.radius.value}
@@ -101,11 +112,17 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
           <span className={cn(styles.leitung, styles.leisteVl)} data-motion="erdleitung" aria-hidden="true" />
           <ul className={styles.masse}>
             <li className={cn(styles.mass, styles.massRadius)}>
-              <span className={cn(styles.wert, 'font-display')}>{masse.radius.value}</span>{' '}
-              <span className={cn(styles.name, styles.trennbar)}>
-                <span className={styles.zeile}>{radiusWort.replace('Einsatz', 'Einsatz­')}</span>{' '}
-                <span className={styles.zeile}>{radiusRest.join(' ')}</span>
-              </span>
+              {/* Heizkreis (E-031): nur am Desktop gezeichnet, mobil steht das Maß wie die beiden anderen */}
+              <Heizkreis
+                className={styles.kreis}
+                wert={<span className={cn(styles.wert, 'font-display')}>{masse.radius.value}</span>}
+                name={
+                  <span className={cn(styles.name, styles.trennbar, 'font-sans')}>
+                    <span className={styles.zeile}>{radiusWort.replace('Einsatz', 'Einsatz­')}</span>{' '}
+                    <span className={styles.zeile}>{radiusRest.join(' ')}</span>
+                  </span>
+                }
+              />
             </li>
             <li className={styles.mass}>
               <span className={cn(styles.wert, 'font-display')}>

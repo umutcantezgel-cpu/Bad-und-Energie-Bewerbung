@@ -1,38 +1,49 @@
 #!/usr/bin/env bun
 /**
- * Wärmefeld-Löser (E-031, KERN K-010) – PLATZHALTER aus Paket W0. Paket W1 ersetzt dieses Skript durch den Löser, der
- * lib/zeichnung/szenen/waermefeld.ts mit Herkunftskopf schreibt.
+ * Wärmefeld-Löser (E-031, KERN K-010): rechnet die Wärmefelder des Hausschnitts und der beiden Vergleichsräume
+ * (lib/zeichnung/waerme/rechnung.ts) und schreibt lib/zeichnung/szenen/waermefeld.ts mit Herkunft.
  *
- *   bun run zeichnung:waermefeld            # später: rechnet und schreibt die Datei
+ *   bun run zeichnung:waermefeld            # rechnet und schreibt die Datei
  *   bun run zeichnung:waermefeld --pruefen  # schreibt nichts, Exit 1, wenn die Datei nicht der Rechnung entspricht
  *
- * Bis dahin prüft `--pruefen` nur die Form der Platzhalter-Datei (drei Felder, Herkunft aus diesem Skript, vier Bänder
- * je Feld) und schreibt nichts. Ohne `--pruefen` bricht das Skript mit Exit 1 ab: Es kann noch nichts rechnen.
+ * Bitgleich in bun und Node/V8 (nur +, −, ×, ÷ und sqrt), darum prüft auch der Lock-Test in vitest gegen dieselbe
+ * Rechnung. Bricht ab, wenn das heißeste Band nicht zuerst ankommt oder zwei Bänder auf denselben halben Takt fallen.
  */
-import { WAERMEFELDER, type WaermefeldId } from '../../lib/zeichnung/szenen/waermefeld';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { gzipSync } from 'node:zlib';
+import { DATEI, berechneWaermefelder, dateiText } from '../../lib/zeichnung/waerme/rechnung';
 
-const SKRIPT = 'scripts/zeichnung/waermefeld.ts';
-const IDS: readonly WaermefeldId[] = ['hausschnitt', 'raum-heizkoerper', 'raum-fussboden'];
+const pruefen = process.argv.includes('--pruefen');
+const ziel = fileURLToPath(new URL(`../../${DATEI}`, import.meta.url));
 
-if (!process.argv.includes('--pruefen')) {
-  console.error('zeichnung:waermefeld: Der Löser fehlt noch (Paket W1); nichts geschrieben.');
+const beginn = performance.now();
+let rechnung: ReturnType<typeof berechneWaermefelder>;
+try {
+  rechnung = berechneWaermefelder();
+} catch (fehler) {
+  console.error(`❌ zeichnung:waermefeld: ${fehler instanceof Error ? fehler.message : String(fehler)}`);
   process.exit(1);
 }
+const dauer = Math.round(performance.now() - beginn);
+const text = dateiText(rechnung.felder);
 
-const fehler: string[] = [];
-const ids = Object.keys(WAERMEFELDER).sort();
-if (ids.join() !== [...IDS].sort().join()) fehler.push(`Felder ${ids.join(', ')} statt ${IDS.join(', ')}`);
-for (const id of IDS) {
-  const feld = WAERMEFELDER[id];
-  if (!feld) continue;
-  if (feld.id !== id) fehler.push(`${id}: id ${feld.id}`);
-  if (feld.herkunft.skript !== SKRIPT) fehler.push(`${id}: Herkunft ${feld.herkunft.skript}`);
-  if (feld.herkunft.raster !== 2) fehler.push(`${id}: Raster ${feld.herkunft.raster}`);
-  if (feld.baender.map((b) => b.stufe).join() !== '1,2,3,4') fehler.push(`${id}: Stufen ${feld.baender.map((b) => b.stufe).join()}`);
+for (const f of rechnung.felder) {
+  const gz = gzipSync(Buffer.from(f.baender.map((b) => b.d).join('')), { level: 9 }).length;
+  console.log(
+    `  ${f.id}: Schwellen ${f.baender.map((b) => b.schwelle).join(' / ')}, Start ${f.baender.map((b) => b.startTakte).join(' / ')} Takte, ` +
+      `${f.herkunft.iterationen} Durchläufe, Rest ${f.herkunft.residuum.toExponential(1)}, Pfade ${gz} B gzip`,
+  );
 }
 
-if (fehler.length > 0) {
-  for (const f of fehler) console.error(`❌ ${f}`);
-  process.exit(1);
+if (pruefen) {
+  const vorhanden = readFileSync(ziel, 'utf8');
+  if (vorhanden !== text) {
+    console.error(`❌ zeichnung:waermefeld --pruefen: ${DATEI} entspricht nicht der Rechnung (bun run zeichnung:waermefeld).`);
+    process.exit(1);
+  }
+  console.log(`✅ zeichnung:waermefeld --pruefen: ${DATEI} entspricht der Rechnung (eingabeHash ${rechnung.felder[0].herkunft.eingabeHash}, ${dauer} ms).`);
+} else {
+  writeFileSync(ziel, text);
+  console.log(`✅ zeichnung:waermefeld: ${DATEI} geschrieben (eingabeHash ${rechnung.felder[0].herkunft.eingabeHash}, ${dauer} ms).`);
 }
-console.log(`✅ zeichnung:waermefeld --pruefen: ${IDS.length} Felder in der Form des Vertrags (Platzhalter, eingabeHash ${WAERMEFELDER.hausschnitt.herkunft.eingabeHash}).`);

@@ -7,6 +7,7 @@ import { APPLY_PATH, PRIMARY_CTA_ATTR } from '@/components/site/nav';
 import { DAUER_IDS, MOTION_IDS } from '@/lib/motion/register';
 import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
 import { HAUSSCHNITT_RAHMEN, HEIZKOERPER_LAGE, KNOPF_LEITUNG, LEITUNGEN } from '@/lib/zeichnung/szenen/hausschnitt';
+import { WAERMEFELDER } from '@/lib/zeichnung/szenen/waermefeld';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import { HERO, HERO_STATS, heroLead, heroStats, heroZweitzeile } from '../content';
 import { Hero } from '../Hero';
@@ -184,13 +185,56 @@ describe('Hero / Einstieg (R3-HOME-01, Technische Zeichnung 2.0)', () => {
     expect(liste[0]).not.toMatch(/marquee|animate-/);
   });
 
-  it('keine Rohr-Metapher als Schmuck (E-029): keine Rohrklammer, kein Leitungstrenner; alle Zeichnungen aria-hidden', () => {
-    expect(html2026).not.toContain('data-zeichnung="rohrklammer"');
+  it('Rohrakzente nur an den freigegebenen Stellen (E-031): eine Rohrklammer an der Unterzeile, ein Heizkreis um „35 km“, kein Leitungstrenner; alle Zeichnungen aria-hidden', () => {
+    // Genau eine Rohrklammer, in der Unterzeile der h1, dekorativ
+    expect(html2026.match(/data-zeichnung="rohrklammer"/g)).toHaveLength(1);
+    const h1 = html2026.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)![1];
+    expect(h1).toMatch(/<svg class="[^"]*" aria-hidden="true" focusable="false" data-zeichnung="rohrklammer">/);
+    // Genau ein Heizkreis, um das Maß „35 km“ in der Leiste (Text unverändert, siehe oben)
+    expect(html2026.match(/data-zeichnung="heizkreis"/g)).toHaveLength(1);
+    const radius = html2026.match(/<li\b[^>]*>([\s\S]*?)<\/li>/)![1];
+    expect(radius).toContain('data-zeichnung="heizkreis"');
+    expect(plain(radius).trim()).toBe(`35 km ${RADIUS_ETIKETT}`);
     expect(html2026).not.toContain('data-zeichnung="leitungstrenner"');
+    // Beide nur am Desktop gezeichnet
+    const css = quelle(path.join(EINSTIEG, 'einstieg.module.css')).replace(/\/\*[\s\S]*?\*\//g, '');
+    expect(css).toMatch(/\.klammer \{\s*display: none;/);
+    expect(css).toMatch(/@media \(min-width: 64em\) \{[\s\S]*?\.klammer \{\s*display: block;/);
+    expect(css).toMatch(/@media \(max-width: 63\.99em\) \{\s*\.kreis \{\s*display: contents;\s*\}\s*\.kreis > \[aria-hidden\] \{\s*display: none;/);
     // Innere SVGs (x/y = 100 %) und verschachtelte Zeichnungen liegen in einem aria-hidden-SVG; jedes äußere ist dekorativ
     const aeussere = html2026.match(/<svg\b(?![^>]* [xy]="(?:100%|[\d.]+)")[^>]*>/g)!;
-    expect(aeussere.length).toBeGreaterThanOrEqual(6);
+    expect(aeussere.length).toBeGreaterThanOrEqual(10);
     for (const svg of aeussere) expect(svg, svg).toMatch(/aria-hidden="true"/);
+  });
+
+  it('Wärmefeld (E-031): ein Grund-div und vier Band-SVGs aus den Daten unter der Szene, alles aria-hidden; der Raum steht im Wärmebereich', () => {
+    const { innen, baender } = WAERMEFELDER.hausschnitt;
+    const feld = html2026.match(/<div class="[^"]*" style="([^"]*)" data-waermefeld="hausschnitt" aria-hidden="true">([\s\S]*?)<\/div><svg[^>]*data-szene="einstieg"/)!;
+    expect(feld, 'Wärmefeld direkt vor der Szene').not.toBeNull();
+    // Lage: das Rauminnere in Prozent der Szene (800 × 692)
+    const { breite, hoehe } = HAUSSCHNITT_RAHMEN;
+    const p = (x: number) => `${Math.round(x * 10000) / 100}%`;
+    expect(feld[1]).toBe(`left:${p(innen.x / breite)};top:${p(innen.y / hoehe)};width:${p(innen.breite / breite)};height:${p(innen.hoehe / hoehe)}`);
+    expect(feld[2].match(/<div\b/g)).toHaveLength(1);
+    expect(feld[2]).toMatch(/^<div class="[^"]*" aria-hidden="true" data-band="0"><\/div>/);
+    const svgs = [...feld[2].matchAll(/<svg class="[^"]*" viewBox="([^"]+)" aria-hidden="true" focusable="false" data-band="(\d)" data-motion="waerme-breitet-sich-aus" style="([^"]*)"><path d="([^"]+)"><\/path><\/svg>/g)];
+    expect(svgs).toHaveLength(4);
+    svgs.forEach((m, k) => {
+      const b = baender[k];
+      expect(m[1]).toBe(`${innen.x} ${innen.y} ${innen.breite} ${innen.hoehe}`);
+      expect(Number(m[2])).toBe(b.stufe);
+      expect(m[3]).toBe(`transform-origin:${p((b.ursprung.x - innen.x) / innen.breite)} ${p((b.ursprung.y - innen.y) / innen.hoehe)};--start:${b.startTakte}`);
+      expect(m[4]).toBe(b.d);
+    });
+    // Keine eigenen Pfade: jede Kontur im Einstieg stammt aus den Daten
+    expect(html2026.match(/data-motion="waerme-breitet-sich-aus"/g)).toHaveLength(4);
+    // Heizkörper, Inneneinheit, Pumpe, Leitungen und Pfeile im Raum im Wärmebereich, der Rest der Szene nicht
+    const warm = szene.match(/<g data-tone="warm">([\s\S]*?)<\/g><\/g>/)![1];
+    for (const teil of ['data-heizkoerper=""', 'data-inneneinheit=""', 'data-symbol="pumpe"', 'data-weg="vorlauf-haus"', 'data-weg="ruecklauf-haus"']) {
+      expect(warm, teil).toContain(teil);
+    }
+    expect(szene.match(/data-tone=/g)).toHaveLength(1);
+    expect(warm).not.toMatch(/data-weg="(?:vorlauf|ruecklauf)-erde"|data-geraet-im-schnitt/);
   });
 });
 

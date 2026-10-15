@@ -6,8 +6,10 @@ import { describe, expect, it } from 'vitest';
 import { Anlagenschema } from '@/components/zeichnung/technik/Anlagenschema';
 import { HausschnittKlein } from '@/components/zeichnung/technik/Hausschnitt';
 import { GET, generateStaticParams } from '@/app/zeichnung/[datei]/route';
-import { KOPF_HAUS_VIEWBOX, KOPF_SVG_FARBEN, anlagenschemaSvg, hausschnittSvg, kopfSvgDateien, kopfSvgPfad } from '../kopf-svg';
+import { TOKENS } from '@/lib/tokens';
+import { KOPF_HAUS_VIEWBOX, KOPF_SVG_FARBEN, KOPF_SVG_WAERME, anlagenschemaSvg, hausschnittSvg, kopfSvgDateien, kopfSvgPfad } from '../kopf-svg';
 import { ANLAGENSCHEMA_PFEIL_MAX, ANLAGENSCHEMA_RAHMEN } from '../szenen/anlagenschema';
+import { WAERMEFELDER } from '../szenen/waermefeld';
 
 const ROOT = path.resolve(__dirname, '../../..');
 const quelle = (datei: string) => readFileSync(path.join(ROOT, datei), 'utf8');
@@ -30,6 +32,12 @@ const ROLLEN: Record<string, string> = {
   pfeilRuecklauf: 'pr',
   pfeilKaeltemittel: 'pk',
   pfeil: 'p',
+  // Wärmefeld (E-031): Band 0 bis 4 (components/zeichnung/waerme/waerme.module.css)
+  w0: 'w0',
+  w1: 'w1',
+  w2: 'w2',
+  w3: 'w3',
+  w4: 'w4',
 };
 
 /**
@@ -43,7 +51,7 @@ function elemente(svg: string, modul: boolean) {
     const wert = (name: string) => attr.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1];
     const klasse = wert('class') ?? '';
     const rollen = modul
-      ? [...klasse.matchAll(/_([a-zA-Z]+)_[A-Za-z0-9-]+/g)].map((x) => ROLLEN[x[1]]).filter(Boolean)
+      ? [...klasse.matchAll(/_([a-zA-Z0-9]+)_[A-Za-z0-9-]+/g)].map((x) => ROLLEN[x[1]]).filter(Boolean)
       : klasse.split(/\s+/).filter((x) => Object.values(ROLLEN).includes(x));
     const geo = ['d', 'x', 'y', 'width', 'height', 'rx', 'cx', 'cy', 'r', 'transform', 'viewBox']
       .map((name) => [name, wert(name)])
@@ -80,6 +88,8 @@ describe('Zeichnungen des Stellenkopfs als Datei (Prüfung E-029, Runde 3, Leist
     expect(ist[0]).toContain(`viewBox=${KOPF_HAUS_VIEWBOX.x} ${KOPF_HAUS_VIEWBOX.y} ${KOPF_HAUS_VIEWBOX.breite} ${KOPF_HAUS_VIEWBOX.hoehe}`);
     expect(soll.length).toBeGreaterThan(30);
     expect(ist.slice(1)).toEqual(soll.slice(1));
+    // Das Wärmefeld (E-031) zählt mit: Band 0 bis 4 mit ihren Rollen
+    for (const k of [0, 1, 2, 3, 4]) expect(soll.filter((e) => e.endsWith(`[w${k}]`)), `w${k}`).toHaveLength(1);
   });
 
   it('eigenständig: feste Farben der Rollen des Inverse-Bands (hell, dunkel, Druck), keine Verweise nach außen', () => {
@@ -124,6 +134,67 @@ describe('Zeichnungen des Stellenkopfs als Datei (Prüfung E-029, Runde 3, Leist
       expect([...svg.matchAll(/([^{}>]+)\{[^}]*stroke-linecap:round/g)].map((m) => m[1])).toEqual(['.l']);
       expect([...svg.matchAll(/([^{}>]+)\{[^}]*stroke-linecap:butt/g)].map((m) => m[1])).toEqual(['.l,.k,.f,.v,.m,.s']);
       expect([...svg.matchAll(/([^{}>]+)\{[^}]*stroke-linejoin:round/g)].map((m) => m[1])).toEqual(['.k', '.l']);
+    }
+  });
+
+  it('Hausschnitt mit Wärmefeld (E-031): Bänder aus WAERMEFELDER, Rampe aus lib/tokens, Raum im Wärmebereich', () => {
+    const svg = hausschnittSvg();
+    const { innen, baender } = WAERMEFELDER.hausschnitt;
+    // Band 0 als Rechteck, die Bänder 1–4 mit genau den Pfaden der Daten, im Rauminneren geschnitten (viewBox)
+    expect(svg).toContain(
+      `<svg x="${innen.x}" y="${innen.y}" width="${innen.breite}" height="${innen.hoehe}" viewBox="${innen.x} ${innen.y} ${innen.breite} ${innen.hoehe}">` +
+        `<rect x="${innen.x}" y="${innen.y}" width="${innen.breite}" height="${innen.hoehe}" class="w0"/>`,
+    );
+    expect([...svg.matchAll(/<path d="([^"]+)" class="w([1-4])"\/>/g)].map((m) => [Number(m[2]), m[1]])).toEqual(baender.map((b) => [b.stufe, b.d]));
+    // Die Bänder liegen ganz unten, alles andere darüber
+    expect(svg.indexOf('class="w0"')).toBeLessThan(svg.indexOf('class="s"'));
+    // Rampe hell (auch im Druck) und dunkel aus lib/tokens, je Band eine Füllung
+    expect(KOPF_SVG_WAERME.rampe).toEqual({ hell: TOKENS.waerme.hell, dunkel: TOKENS.waerme.dunkel });
+    const rampe = (stufen: readonly string[]) => stufen.map((f, k) => `--w${k}:${f}`).join(';');
+    expect(svg.split(rampe(TOKENS.waerme.hell))).toHaveLength(3);
+    expect(svg.split(rampe(TOKENS.waerme.dunkel))).toHaveLength(2);
+    for (const k of [0, 1, 2, 3, 4]) expect(svg).toContain(`.w${k}{fill:var(--w${k})}`);
+    // Heizkörper, Inneneinheit, Pumpe, Leitungen und Pfeile im Raum stehen im Wärmebereich, Heizkörper ohne Fläche
+    const bereich = svg.slice(svg.indexOf('<g class="wb">'), svg.indexOf('class="v '));
+    expect(bereich).toContain('class="m"');
+    expect(bereich).toContain('width="100" height="60" class="k"/>');
+    expect(bereich).toContain('class="l vl"');
+    expect(bereich).toContain('class="l rl"');
+    expect(bereich).toContain('class="pv"');
+    expect(bereich).toContain('class="pr"');
+  });
+
+  it('Wärmebereich der Datei: Rollen aus [data-tone="warm"] (app/styles/theme.css), hell wie Papier, dunkel wie Nacht', () => {
+    const theme = quelle('app/styles/theme.css');
+    const p = (name: string) => theme.match(new RegExp(`--p-${name}: (#[0-9A-Fa-f]{6});`))![1].toUpperCase();
+    expect(KOPF_SVG_WAERME.bereich).toEqual({
+      hell: { marke: p('navy'), flaeche: p('papier'), vorlauf: p('rot'), ruecklauf: p('blau') },
+      dunkel: { marke: p('creme'), flaeche: p('nacht'), vorlauf: p('rot-hell'), ruecklauf: p('blau-hell') },
+      druck: { marke: p('navy'), flaeche: p('weiss'), vorlauf: p('rot'), ruecklauf: p('blau') },
+    });
+    const ab = theme.indexOf('[data-tone="warm"] {');
+    const hell = theme.slice(ab, theme.indexOf('}', ab));
+    const abDunkel = theme.indexOf('[data-tone="warm"] {', ab + 10);
+    const dunkel = theme.slice(abDunkel, theme.indexOf('}', abDunkel));
+    for (const [rolle, primitiv] of [
+      ['brand', 'navy'],
+      ['surface', 'papier'],
+      ['vorlauf', 'rot'],
+      ['ruecklauf', 'blau'],
+    ]) {
+      expect(hell, rolle).toContain(`--${rolle}: var(--p-${primitiv});`);
+    }
+    for (const [rolle, primitiv] of [
+      ['brand', 'creme'],
+      ['surface', 'nacht'],
+      ['vorlauf', 'rot-hell'],
+      ['ruecklauf', 'blau-hell'],
+    ]) {
+      expect(dunkel, rolle).toContain(`--${rolle}: var(--p-${primitiv});`);
+    }
+    const svg = hausschnittSvg();
+    for (const [modus, f] of Object.entries(KOPF_SVG_WAERME.bereich)) {
+      expect(svg, modus).toContain(`.wb{--b:${f.marke};--fl:${f.flaeche};--vl:${f.vorlauf};--rl:${f.ruecklauf}}`);
     }
   });
 
