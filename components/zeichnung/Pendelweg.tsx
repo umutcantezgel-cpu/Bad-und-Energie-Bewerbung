@@ -48,9 +48,18 @@ const HAUS_MASS = 1.25;
 const SCHRIFT = 13;
 /** Mittlere Zeichenbreite in em (Atkinson 700 bzw. Martian Mono 75 %), großzügig für die Lage der Schrift. */
 const ZEICHEN_EM = 0.6;
-/** Abstand der Maßkette vom geraden Weg und ihres Werts von der Kette. */
-const KETTE_ABSTAND = 16;
+/**
+ * Abstand der Maßkette vom geraden Weg und ihres Werts von der Kette. Die Kette läuft über die volle Strecke Haus–Ort
+ * (DIN 406-11); den Symbolen weicht ihr Abstand aus, nicht ihre Länge: Bei 20 Einheiten bleiben auch die
+ * 45°-Begrenzungsstriche frei vom Giebel (bis rund 14 Einheiten um die Hausmitte) und vom Ring des Orts (9).
+ */
+const KETTE_ABSTAND = 20;
 const WERT_ABSTAND = 11;
+/**
+ * Maßhilfslinien quer zur Kette durch Hausmitte und Ortspunkt: Sie beginnen außerhalb des Symbols (Giebel bzw. Ring)
+ * und reichen 4 Einheiten über die Maßlinie hinaus.
+ */
+const HILFS = Object.freeze({ abHaus: 14, abOrt: 11, ueber: 4 });
 /** Linienarten in Einheiten des Plans (bei 450 px Breite 1 Einheit = 1,5 px): Kontur 2 px, fein und Maß 1 px. */
 const KONTUR = 4 / 3;
 const FEIN = 2 / 3;
@@ -94,7 +103,10 @@ export interface PendelLage {
   ort: Punkt;
   ortSchrift: Schrift;
   hausSchrift: Schrift;
+  /** Maßlinie von Hausmitte bis Ortspunkt (parallel versetzt), mit den Begrenzungsstrichen an den Hilfslinien. */
   kette: { a: Punkt; b: Punkt; strich: Punkt };
+  /** Maßhilfslinien quer zur Kette, durch die Hausmitte und durch den Ortspunkt. */
+  hilfslinien: [{ a: Punkt; b: Punkt }, { a: Punkt; b: Punkt }];
   wert: Schrift & { winkel: number };
   /** Verbindung Firmensitz → Ort (gerade, in echter Richtung), vom Rand des Hauses bis an den Ring des Punkts. */
   linie: { a: Punkt; b: Punkt };
@@ -223,11 +235,17 @@ export function pendelLage(kursGrad: number, ort: string, sitz = 'Firmensitz', s
   const seite = n.y > 0 || (n.y === 0 && n.x > 0) ? 1 : -1;
   const versatz = { x: n.x * KETTE_ABSTAND * seite, y: n.y * KETTE_ABSTAND * seite };
 
-  // Maßkette parallel zur Verbindung, Wert mittig daneben (gedreht wie die Verbindung)
-  const kuerzung = Math.min(16, r / 5);
-  const a = { x: v.x * kuerzung + versatz.x, y: v.y * kuerzung + versatz.y };
-  const b = { x: punkt.x - v.x * kuerzung + versatz.x, y: punkt.y - v.y * kuerzung + versatz.y };
+  // Maßkette parallel zur Verbindung über die volle Strecke von der Hausmitte bis zum Ortspunkt (Prüfung E-029,
+  // Runde 3: vorher an jedem Ende gekürzt, 62 % des Werts), Wert mittig daneben (gedreht wie die Verbindung)
+  const a = { x: haus.x + versatz.x, y: haus.y + versatz.y };
+  const b = { x: punkt.x + versatz.x, y: punkt.y + versatz.y };
   const strich = { x: n.x * 6, y: n.y * 6 };
+  // Maßhilfslinien quer zur Kette durch die gemessenen Punkte, vom Rand des Symbols bis über die Maßlinie
+  const quer = (p: Punkt, ab: number) => ({
+    a: { x: p.x + n.x * seite * ab, y: p.y + n.y * seite * ab },
+    b: { x: p.x + n.x * seite * (KETTE_ABSTAND + HILFS.ueber), y: p.y + n.y * seite * (KETTE_ABSTAND + HILFS.ueber) },
+  });
+  const hilfslinien: PendelLage['hilfslinien'] = [quer(haus, HILFS.abHaus), quer(punkt, HILFS.abOrt)];
   // Straße in ganzen km; Luftlinie mit einer Stelle nach dem Komma wie das Maß „Luftlinie“ im Kopf (formatAirKm)
   const wertKm = luftlinieKm === undefined ? String(strasseKm) : luftlinieKm.toFixed(1);
   const wertText = `${wertKm.replace('.', ',')}${NBSP}km`;
@@ -253,8 +271,9 @@ export function pendelLage(kursGrad: number, ort: string, sitz = 'Firmensitz', s
     winkel,
     kasten: { x0: mitte.x - kw / 2, y0: mitte.y - kh / 2, x1: mitte.x + kw / 2, y1: mitte.y + kh / 2 },
   };
-  // Die Kette als Reihe kleiner Kästen (ein Kasten um die schräge Kette sperrte eine viel zu große Fläche)
-  const ketteKaesten = laengs(a, b, 6, 4);
+  // Die Kette als Reihe kleiner Kästen (ein Kasten um die schräge Kette sperrte eine viel zu große Fläche), ebenso die
+  // Maßhilfslinien
+  const ketteKaesten = [...laengs(a, b, 6, 4), ...hilfslinien.flatMap((h) => laengs(h.a, h.b, 2, 4))];
 
   // Verbindung vom Rand des Hauses bis an den Ring des Punkts: nie Schrift darauf
   const linieA = { x: v.x * 12, y: v.y * 12 };
@@ -358,6 +377,10 @@ export function pendelLage(kursGrad: number, ort: string, sitz = 'Firmensitz', s
     ortSchrift: s(ortSchrift),
     hausSchrift: s(hausSchrift),
     kette: { a: p(a), b: p(b), strich },
+    hilfslinien: [
+      { a: p(hilfslinien[0].a), b: p(hilfslinien[0].b) },
+      { a: p(hilfslinien[1].a), b: p(hilfslinien[1].b) },
+    ],
     wert: s(wert),
     linie: { a: p(linieA), b: p(linieB) },
     leiste: {
@@ -381,14 +404,15 @@ export function pendelLage(kursGrad: number, ort: string, sitz = 'Firmensitz', s
  * Lageplan der Ortsseite (E-028, seit E-029 statt des Pendelwegs mit Leitungspaar und Zirkel): Firmensitz (Giebel
  * 45°) und Ort (Punkt mit Ring) in echter Himmelsrichtung (Nordpfeil) und maßstäblich (Maßstabsleiste; Regelfall
  * 35 km auf derselben Länge wie auf jeder Ortsseite, nahe Orte in der nächsten Stufe), verbunden durch eine feine
- * Linie, daneben die Maßkette nach DIN 406 (45°-Begrenzungsstriche) mit der Messung. Rohr nur, wo Wasser fließt:
+ * Linie, daneben die Maßkette nach DIN 406-11 über die volle Strecke von der Hausmitte zum Ortspunkt, mit
+ * Maßhilfslinien durch beide Punkte und 45°-Begrenzungsstrichen, daran die Messung. Rohr nur, wo Wasser fließt:
  * Vorlauf und Rücklauf gibt es hier nicht mehr. Beim Laden zeichnen sich Verbindung und Maßkette einmal (Register
  * `pendel-zeichnen`); reduziert und ohne Skript stehen sie. Server-Komponente, Farben nur über Rollen (auf Navy
  * Creme); Schrift mit Halo in der Fläche. Die Props bleiben stabil; `luftlinieKm` ist neu und optional.
  */
 export function Pendelweg({ ort, kursGrad, strasseKm, luftlinieKm, sitz = 'Firmensitz', titel, className }: PendelwegProps) {
   const lage = pendelLage(kursGrad, ort, sitz, strasseKm, luftlinieKm);
-  const { haus, ort: punkt, kette, wert, nord, linie, leiste } = lage;
+  const { haus, ort: punkt, kette, hilfslinien, wert, nord, linie, leiste } = lage;
   // Eine Zeichnung je Seite; die Id hängt am Ort, damit sie ohne Zustand eindeutig bleibt
   const maskeId = `pendelweg-frei-${[...ort].map((c) => (/[a-z0-9]/i.test(c) ? c : '-')).join('')}`;
   const strecke = (a: Punkt, b: Punkt) => `M${round1(a.x)} ${round1(a.y)}L${round1(b.x)} ${round1(b.y)}`;
@@ -446,6 +470,13 @@ export function Pendelweg({ ort, kursGrad, strasseKm, luftlinieKm, sitz = 'Firme
           data-motion="pendel-zeichnen"
         />
         <path d={`${begrenzung(kette.a)}${begrenzung(kette.b)}`} strokeWidth={FEIN} className={styles.pendelLinie} data-begrenzung="" />
+        {/* Maßhilfslinien quer zur Kette durch Hausmitte und Ortspunkt, über die Maßlinie hinaus */}
+        <path
+          d={hilfslinien.map((h) => strecke(h.a, h.b)).join('')}
+          strokeWidth={FEIN}
+          className={styles.pendelLinie}
+          data-masshilfslinien=""
+        />
       </g>
       <text
         x={wert.x}

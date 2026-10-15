@@ -71,7 +71,10 @@ describe('Lageplan der Ortsseite (E-028, Pendelweg seit E-029)', () => {
   });
 
   it('kurze Wege: der Wert steht waagerecht neben der Kette statt gedreht über sie hinaus', () => {
-    const kurz = pendelLage(225, 'Steindorf', 'Firmensitz', 1);
+    // Steindorf, 1,6 km Luftlinie: die kürzeste Kette (Mindestabstand) ist kürzer als ihr Wert
+    const kurz = pendelLage(225, 'Steindorf', 'Firmensitz', 2, 1.6);
+    const kette = Math.hypot(kurz.kette.b.x - kurz.kette.a.x, kurz.kette.b.y - kurz.kette.a.y);
+    expect(kette).toBeLessThan(kurz.wert.text.length * 13 * 0.6 + 6);
     expect(kurz.wert.winkel).toBe(0);
     const lang = pendelLage(225, 'Villmar', 'Firmensitz', 34);
     expect(Math.abs(lang.wert.winkel)).toBeGreaterThan(30);
@@ -110,13 +113,64 @@ describe('Lageplan der Ortsseite (E-028, Pendelweg seit E-029)', () => {
     expect(pendelMassstab(2)).toBe(5);
   });
 
+  it('Maßkette über die volle Strecke (DIN 406-11, Prüfung E-029, Runde 3): Länge nach Maßstabsleiste = Wert (±1 %), zwei Maßhilfslinien durch Haus und Ort', () => {
+    const quer = (p: { x: number; y: number }, h: { a: { x: number; y: number }; b: { x: number; y: number } }, n: { x: number; y: number }) => {
+      // Abstand des Punkts von der Geraden der Hilfslinie (sie läuft durch ihn) und ihre Richtung (quer zur Kette)
+      const d = { x: h.b.x - h.a.x, y: h.b.y - h.a.y };
+      const l = Math.hypot(d.x, d.y);
+      return { abstand: Math.abs((p.x - h.a.x) * d.y - (p.y - h.a.y) * d.x) / l, kosinus: Math.abs((d.x * n.x + d.y * n.y) / l) };
+    };
+    let geprueft = 0;
+    for (const place of getPublishedPlaces()) {
+      for (const [km, luft] of [[place.commute.distanceKm, undefined], [place.commute.distanceKm, place.commute.airKm]] as const) {
+        const gemessen = luft ?? km;
+        // Nur, wo der Plan maßstäblich zeichnet (über dem Mindestabstand und im Rahmen der Skala); die Ortsseite gibt
+        // immer die Luftlinie, die liegt bei allen Orten darin
+        if (gemessen < PENDELWEG_MIN_ANTEIL * 5 || gemessen > PENDELWEG_SKALA.maxKm) continue;
+        const lage = pendelLage(bearingDeg(HEADQUARTERS, place), place.name, 'Firmensitz', km, luft);
+        const kmJeEinheit = lage.leiste.teilung / lage.leiste.einheiten;
+        const { a, b } = lage.kette;
+        const laenge = Math.hypot(b.x - a.x, b.y - a.y) * kmJeEinheit;
+        expect(Math.abs(laenge - gemessen) / gemessen, `${place.name}: Kette ${laenge.toFixed(2)} km, Wert ${gemessen} km`).toBeLessThanOrEqual(0.01);
+        // Die Kette ist so lang wie der Abstand Haus–Ort und parallel zu ihm
+        const abstand = Math.hypot(lage.ort.x - lage.haus.x, lage.ort.y - lage.haus.y);
+        expect(Math.hypot(b.x - a.x, b.y - a.y)).toBeCloseTo(abstand, 0);
+        // Zwei Maßhilfslinien: je eine durch Hausmitte und Ortspunkt, quer zur Kette, über die Maßlinie hinaus
+        const u = { x: (b.x - a.x) / abstand, y: (b.y - a.y) / abstand };
+        const [hHaus, hOrt] = lage.hilfslinien;
+        for (const [p, h, ende] of [[lage.haus, hHaus, a], [lage.ort, hOrt, b]] as const) {
+          const q = quer(p, h, u);
+          // Koordinaten auf eine Stelle gerundet: bis 0,25 Einheiten (unter 0,4 px) Rundung
+          expect(q.abstand, place.name).toBeLessThan(0.25);
+          expect(q.kosinus, place.name).toBeLessThan(0.01);
+          // Das Ende der Maßlinie liegt auf der Hilfslinie, die Hilfslinie reicht darüber hinaus
+          const zuEnde = Math.hypot(ende.x - p.x, ende.y - p.y);
+          expect(Math.hypot(h.b.x - p.x, h.b.y - p.y), place.name).toBeGreaterThan(zuEnde + 2);
+          expect(Math.hypot(h.a.x - p.x, h.a.y - p.y), place.name).toBeLessThan(zuEnde);
+          expect(quer(ende, h, u).abstand, place.name).toBeLessThan(0.25);
+        }
+        geprueft += 1;
+      }
+    }
+    expect(geprueft).toBeGreaterThan(getPublishedPlaces().length);
+    // Gegenprobe: die gekürzte Kette aus Runde 2 (um min(16, r/5) je Ende) läge um mehr als 1 % daneben
+    expect(1 - 2 * Math.min(16, PENDELWEG_SKALA.radius / 5) / PENDELWEG_SKALA.radius).toBeLessThan(0.99);
+    const html = renderToStaticMarkup(createElement(Pendelweg, { ort: 'Herborn', kursGrad: 315, strasseKm: 27, luftlinieKm: 18.9 }));
+    expect(html.match(/data-masshilfslinien=""/g)).toHaveLength(1);
+    const d = html.match(/<path d="([^"]+)"[^>]*data-masshilfslinien=""/)![1];
+    expect(d.match(/M/g)).toHaveLength(2);
+    // Die Hilfslinien liegen unter der Freistellung der Schrift wie Verbindung und Kette
+    expect(html).toMatch(/<g mask="url\(#pendelweg-frei-[^"]+\)">[\s\S]*data-masshilfslinien=""[\s\S]*<\/g>/);
+  });
+
   it('Lageplan: Nordpfeil, Maßstabsleiste 0 · 5 · 10 km (Straße bzw. Luftlinie), Maßkette mit 45°-Strichen', () => {
     const html = renderToStaticMarkup(createElement(Pendelweg, { ort: 'Villmar', kursGrad: 225, strasseKm: 34 }));
     expect(html).toContain('data-nordpfeil=""');
     expect(html).toMatch(/data-massstabsleiste="" data-teilung-km="5"/);
     expect(html).toMatch(/>0<\/text><text[^>]*>5<\/text><text[^>]*>10<\/text>[\s\S]*>km<\/text>/);
-    // Begrenzungsstriche unter 45° (je Ende einer), keine Maßhilfslinien quer zur Kette
+    // Begrenzungsstriche unter 45° (je Ende einer) und zwei Maßhilfslinien quer zur Kette (DIN 406-11)
     expect(html).toMatch(/<path d="M[^"]+L[^"]+M[^"]+L[^"]+" stroke-width="[^"]+" class="[^"]+" data-begrenzung=""/);
+    expect(html).toMatch(/<path d="M[-\d.]+ [-\d.]+L[-\d.]+ [-\d.]+M[-\d.]+ [-\d.]+L[-\d.]+ [-\d.]+" stroke-width="[^"]+" class="[^"]+" data-masshilfslinien=""/);
     expect(html).toContain('>STRASSE<');
     expect(html).toContain('>34 km<');
     const luft = renderToStaticMarkup(createElement(Pendelweg, { ort: 'Villmar', kursGrad: 225, strasseKm: 34, luftlinieKm: 27.4 }));
