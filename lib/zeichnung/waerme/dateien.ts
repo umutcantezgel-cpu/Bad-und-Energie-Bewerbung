@@ -6,7 +6,7 @@
  * die Bilder wie die Inline-Ebenen (components/zeichnung/waerme/Waermefeld.tsx, WaermefeldDateien).
  *
  * Je Band eine Datei: der Pfad aus WAERMEFELDER (keine eigene Form) in der Farbe seiner Stufe, gespiegelt aus der
- * Wärmerampe (lib/tokens: hell auf Papier und im Druck, dunkel Nacht-Blau → Rotbraun per prefers-color-scheme),
+ * Wärmerampe (lib/tokens: hell auf Papier und im Druck, dunkel Weinrot → Rotbraun per prefers-color-scheme),
  * viewBox = Rauminneres. Der Dateiname trägt einen Hash des Inhalts (SVG-Dateien werden ein Jahr gecacht, next.config.ts). Ausgeliefert über
  * app/zeichnung/[datei]/route.ts. Prüfung: components/zeichnung/waerme/__tests__/waerme.test.ts,
  * scripts/qa/check-css-chunks.mjs (nie inline im Dokument).

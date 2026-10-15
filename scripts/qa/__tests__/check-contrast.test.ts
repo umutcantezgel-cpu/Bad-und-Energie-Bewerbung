@@ -163,7 +163,7 @@ describe('check-contrast: Wärmebereich und Wärmerampe (E-031)', () => {
     expect(result.rows.some((row: string[]) => !warm.includes(row[0]) && /waerme-\d/.test(row[1]))).toBe(false);
   });
 
-  it('Wärmebereich hell = Rollen des Papiers (auch im Navy-Band), dunkel = Creme auf der Rampe Nacht-Blau → Rotbraun, Druck = Papier weiß', () => {
+  it('Wärmebereich hell = Rollen des Papiers (auch im Navy-Band), dunkel = Creme auf der Rampe Weinrot → Rotbraun, Druck = Papier weiß', () => {
     for (const mode of ['warm light', 'inverse warm light']) {
       expect(result.role(mode, 'brand'), mode).toBe('#111D6D');
       expect(result.role(mode, 'vorlauf'), mode).toBe('#D60000');
@@ -179,7 +179,7 @@ describe('check-contrast: Wärmebereich und Wärmerampe (E-031)', () => {
       expect(result.role(mode, 'vorlauf'), mode).toBe('#FF6B5F');
       expect(result.role(mode, 'ruecklauf'), mode).toBe('#86AEFF');
       expect(result.role(mode, 'line-strong'), mode).toBe('#B9C0E8');
-      expect(result.role(mode, 'waerme-0'), mode).toBe('#1B2150');
+      expect(result.role(mode, 'waerme-0'), mode).toBe('#3F1927');
     }
     for (const mode of ['warm print', 'warm print dark', 'print inverse warm']) {
       expect(result.role(mode, 'surface'), mode).toBe('#FFFFFF');
@@ -201,7 +201,27 @@ describe('check-contrast: Wärmebereich und Wärmerampe (E-031)', () => {
     }
   });
 
-  it('dunkel wird die Wärme warm (Prüfrunde 1 A1-13): Stufe 0 Nacht-Blau, die heißen Stufen 3 und 4 rotbraun (Farbton 0–30°)', () => {
+  // OKLab nach Björn Ottosson (sRGB → linear → LMS → Lab): Chroma = Abstand von der Grauachse, Farbton in Grad
+  const oklch = (hex: string) => {
+    const [r, g, b] = [1, 3, 5].map((i) => {
+      const c = parseInt(hex.slice(i, i + 2), 16) / 255;
+      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    });
+    const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+    const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+    const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+    const a = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
+    const bb = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+    return { chroma: Math.hypot(a, bb), ton: ((Math.atan2(bb, a) * 180) / Math.PI + 360) % 360 };
+  };
+  /** Kleinste Spanne (Grad) auf dem Farbkreis, die alle Farbtöne enthält. */
+  const spanne = (toene: number[]) => {
+    const s = [...toene].sort((a, b) => a - b);
+    const luecke = Math.max(...s.map((t, i) => (i === 0 ? s[0] + 360 - s[s.length - 1] : t - s[i - 1])));
+    return 360 - luecke;
+  };
+
+  it('dunkel wird die Wärme warm (Prüfrunde 1 A1-13), die heißen Stufen 3 und 4 rotbraun (Farbton 0–30°); keine Stufe blau oder violett (Prüfrunde 3 A3-6)', () => {
     const farbton = (hex: string) => {
       const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
       const max = Math.max(r, g, b);
@@ -211,37 +231,35 @@ describe('check-contrast: Wärmebereich und Wärmerampe (E-031)', () => {
     };
     for (const mode of ['warm dark', 'inverse warm dark', 'dark']) {
       const ton = RAMP.map((band) => farbton(result.role(mode, band)));
-      expect(ton[0], mode).toBeGreaterThan(200);
-      expect(ton[0], mode).toBeLessThan(250);
       for (const i of [3, 4]) expect(ton[i], `${mode} waerme-${i}`).toBeLessThanOrEqual(30);
+      // Weinrot bis Rotbraun: OKLCH-Farbton jeder Stufe zwischen 340° und 40° (kein Blau, kein Violett, kein Orange)
+      for (const [i, band] of RAMP.entries()) {
+        const t = oklch(result.role(mode, band)).ton;
+        expect(t >= 340 || t <= 40, `${mode} waerme-${i} ${t.toFixed(0)}°`).toBe(true);
+      }
     }
   });
 
-  it('dunkel ist jede Stufe bunt, kein grauer Rauch (Prüfrunde 2 A2-5): OKLCH-Chroma ≥ 0,06, Stufe 1 violett, ab Stufe 2 rötlich', () => {
-    // OKLab nach Björn Ottosson (sRGB → linear → LMS → Lab), Chroma = Abstand von der Grauachse
-    const oklch = (hex: string) => {
-      const [r, g, b] = [1, 3, 5].map((i) => {
-        const c = parseInt(hex.slice(i, i + 2), 16) / 255;
-        return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-      });
-      const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
-      const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
-      const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
-      const a = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
-      const bb = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
-      return { chroma: Math.hypot(a, bb), ton: ((Math.atan2(bb, a) * 180) / Math.PI + 360) % 360 };
-    };
+  it('jede Stufe bunt, kein grauer Rauch (Prüfrunde 2 A2-5: dunkel OKLCH-Chroma ≥ 0,06); die Stufen ändern nur Helligkeit und Buntheit, der Farbton bleibt in einer Familie (Prüfrunde 3 A3-6: Spanne ≤ 40°, keine Flamme)', () => {
     for (const mode of ['warm dark', 'inverse warm dark', 'dark']) {
       const stufen = RAMP.map((band) => oklch(result.role(mode, band)));
       for (const [i, { chroma }] of stufen.entries()) expect(chroma, `${mode} waerme-${i}`).toBeGreaterThanOrEqual(0.06);
-      // Stufe 1 zwischen Nacht-Blau und Rot (violett), Stufe 2 schon rötlich (Magenta bis Rot)
-      expect(stufen[1].ton, mode).toBeGreaterThan(285);
-      expect(stufen[1].ton, mode).toBeLessThan(330);
-      expect(stufen[2].ton >= 330 || stufen[2].ton <= 30, `${mode} waerme-2 ${stufen[2].ton}`).toBe(true);
+      // kühl → heiß wird es bunter, wie hell (Papier → Pfirsich)
+      for (let i = 1; i < stufen.length; i += 1) expect(stufen[i].chroma, `${mode} waerme-${i}`).toBeGreaterThan(stufen[i - 1].chroma);
+      expect(spanne(stufen.map((s) => s.ton)), mode).toBeLessThanOrEqual(40);
     }
-    // Die Rampe vor Prüfrunde 2 fiele durch (Stufe 2 #3F3035: Chroma 0,02)
+    for (const mode of ['warm light', 'light', 'inverse light']) {
+      const stufen = RAMP.map((band) => oklch(result.role(mode, band)));
+      for (let i = 1; i < stufen.length; i += 1) expect(stufen[i].chroma, `${mode} waerme-${i}`).toBeGreaterThan(stufen[i - 1].chroma);
+      expect(spanne(stufen.map((s) => s.ton)), mode).toBeLessThanOrEqual(40);
+    }
+    // Die Rampe vor Prüfrunde 2 fiele durch (Stufe 2 #3F3035: Chroma 0,02), die aus Prüfrunde 2 (Bogen Nacht-Blau →
+    // Violett → Weinrot → Rotbraun, rund 120°) ebenso
     expect(oklch('#3F3035').chroma).toBeLessThan(0.06);
     expect(oklch('#2C2843').chroma).toBeLessThan(0.06);
+    expect(spanne(['#1B2150', '#362349', '#50263B', '#632F2F', '#6E3226'].map((hex) => oklch(hex).ton))).toBeGreaterThan(100);
+    expect(spanne([350, 10, 30])).toBe(40);
+    expect(spanne([10, 20])).toBe(10);
   });
 
   it('fällt durch: zu dunkle heiße Stufe, zu ähnliche oder zu verschiedene Nachbarn, schwache Linie im Wärmebereich', () => {

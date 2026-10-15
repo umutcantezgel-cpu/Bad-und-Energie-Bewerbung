@@ -257,20 +257,20 @@
     --p-band-d-2: #1E2C86;
     --p-band-d-3: #27368F;
     --p-band-d-linie: #34439A;
-    /* Wärmerampe (E-031): Bänder des Wärmefelds, kühl → heiß. Hell Papier → Pfirsich (Nachbarn 1,09–1,12:1), dunkel
-       Nacht-Blau über Violett und Weinrot zu Rot und Rotbraun (Glimmen; Nachbarn 1,08–1,18:1). Prüfrunde 1 A1-13:
-       vorher Pflaume bis zur heißesten Stufe, die Wärme wirkte violett; Prüfrunde 2 A2-5: danach fast unbunte Stufen
-       1–2, sie lasen sich als grauer Rauch. Jetzt jede Stufe bunt (OKLCH-Chroma ≥ 0,06), nur Stufe 1 noch violett,
-       ab Stufe 2 rötlich; Leuchtdichte je Stufe wie vorher. Linien auf jeder Stufe ≥ 3:1 (check-contrast). */
+    /* Wärmerampe (E-031): Bänder des Wärmefelds, kühl → heiß. Hell Papier → Pfirsich (Nachbarn 1,09–1,12:1, Farbton
+       OKLCH 51–82°), dunkel Weinrot → Rotbraun (Glimmen; Nachbarn 1,08–1,19:1, Farbton 359–33°). Wie hell steigen
+       dunkel nur Helligkeit und Buntheit, der Farbton bleibt in einer Familie (Spanne ≤ 40°, Prüfrunde 3 A3-6: der
+       Bogen Nacht-Blau → Violett → Rotorange las sich als Flamme). Jede Stufe bunt (OKLCH-Chroma ≥ 0,06, Prüfrunde 2
+       A2-5: kein grauer Rauch); Leuchtdichte je Stufe wie vorher. Linien auf jeder Stufe ≥ 3:1 (check-contrast). */
     --p-waerme-0: #F3EBDD;
     --p-waerme-1: #F3DFCC;
     --p-waerme-2: #F3D2BC;
     --p-waerme-3: #F3C7AB;
     --p-waerme-4: #F2BB9C;
-    --p-glimm-0: #1B2150;
-    --p-glimm-1: #362349;
-    --p-glimm-2: #50263B;
-    --p-glimm-3: #632F2F;
+    --p-glimm-0: #3F1927;
+    --p-glimm-1: #481E29;
+    --p-glimm-2: #54252B;
+    --p-glimm-3: #642F2D;
     --p-glimm-4: #6E3226;
 
     /* ── Maße, Abstände, Bewegung (K-007…K-009); Spiegel in lib/tokens ── */
@@ -454,7 +454,7 @@
 
   /* ── Wärmebereich (data-tone="warm", E-031): das Rauminnere einer Zeichnung, auch mitten im Navy-Band. Hell gelten
      die Rollen des Papiers (Navy-Linien, Vorlauf Rot, Rücklauf Blau), dunkel die der Nacht (Creme-Linien auf der
-     dunklen Rampe Nacht-Blau → Rotbraun); line-strong ist eine Stufe kräftiger, damit jede Linie auf jedem Band ≥ 3:1 steht. Druck: hell. ── */
+     dunklen Rampe Weinrot → Rotbraun); line-strong ist eine Stufe kräftiger, damit jede Linie auf jedem Band ≥ 3:1 steht. Druck: hell. ── */
   [data-tone="warm"] {
     color-scheme: light;
 

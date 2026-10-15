@@ -66,7 +66,7 @@ Austauschprobe (E-027, ersetzt die Uhr auf 13:30; E-029, ersetzt Zirkel und Einr
 | Rot (Hauptaktion, Vorlauf) | #D60000 · Hover #B00000 · Druck #A80000 | Linie #FF6B5F, Knopf #D60000 | nur Knopffläche und Vorlauf-Linie |
 | Blau (Rücklauf, Fokus) | #1F57C4 | #86AEFF | Rücklauf, Fokusring, Zweitweg-Hover |
 | Erfolg | Grün nur für Erfolg | | |
-| Wärmerampe `--waerme-0…4` (1.3, E-031) | 5 Stufen Papier → Pfirsich (`--p-waerme-0…4`) | 5 Stufen Nacht-Blau → Rotbraun (`--p-glimm-0…4`, Prüfrunde 1 A1-13) | nur die Bänder des Wärmefelds, Klick-Wärme und Wärmefront (Guard `waerme-rollen`) |
+| Wärmerampe `--waerme-0…4` (1.3, E-031) | 5 Stufen Papier → Pfirsich (`--p-waerme-0…4`) | 5 Stufen Weinrot → Rotbraun in einer Farbtonfamilie (`--p-glimm-0…4`, Prüfrunde 3 A3-6) | nur die Bänder des Wärmefelds, Klick-Wärme und Wärmefront (Guard `waerme-rollen`) |
 Kontraste: alle Textpaare ≥ 4,5:1, Grafik/Bedienelemente ≥ 3:1 (Prüfung `scripts/qa/check-contrast.mjs`; Werte in `ausbau/richtungen/1/BEGRUENDUNG.md` §10). Inverse-Band: Navy-Fläche mit Creme-Schrift. Druck: immer helle Primitiven.
 **Wärmebereich (1.3, E-031):** `[data-tone="warm"]` umschließt das Rauminnere einer Zeichnung (auch im Navy-Band). Hell gelten die Rollen des Papiers (Navy-Linien, Vorlauf #D60000, Rücklauf #1F57C4), dunkel Creme-Linien auf der Pflaumen-Rampe; `line-strong` ist dort eine Stufe kräftiger. Die Rampe ist in jedem Modus gesetzt (hell, dunkel, Inverse-Band, Druck = hell) und in `lib/tokens/index.ts` gespiegelt. `check-contrast` prüft im Wärmebereich hell, dunkel und Druck: Linien (Marke, Vorlauf, Rücklauf, line-strong) auf jedem Band ≥ 3:1, Text (Tinte, Marke) ≥ 4,5:1, Nachbarbänder im Helligkeitsverhältnis 1,04–1,35. Linien über den Bändern stehen immer im Wärmebereich.
 

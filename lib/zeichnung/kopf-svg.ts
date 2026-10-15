@@ -55,7 +55,7 @@ type Farben = (typeof KOPF_SVG_FARBEN)['hell'];
 
 /**
  * Wärmefeld (E-031) in der Datei: die Wärmerampe gespiegelt aus lib/tokens (hell auch im Inverse-Band und im Druck,
- * dunkel = Nacht-Blau → Rotbraun), und die Rollen des Wärmebereichs (data-tone="warm", app/styles/theme.css) für alles, was im Raum
+ * dunkel = Weinrot → Rotbraun), und die Rollen des Wärmebereichs (data-tone="warm", app/styles/theme.css) für alles, was im Raum
  * über den Bändern steht: hell und im Druck die des Papiers (Navy, Vorlauf Rot, Rücklauf Blau), dunkel die der Nacht.
  */
 export const KOPF_SVG_WAERME = Object.freeze({
