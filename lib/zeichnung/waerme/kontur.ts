@@ -283,6 +283,12 @@ export function rdp(schleife: readonly P[], epsilon: number): P[] {
   return [...erste.slice(0, -1), ...zweite.slice(0, -1)];
 }
 
+const abstand = (a: P, b: P) => {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  return Math.sqrt(dx * dx + dy * dy);
+};
+
 /** Auf das 0,5-Raster (ohne −0). */
 export const halb = (wert: number): number => {
   const r = Math.round(wert * 2) / 2;
@@ -300,10 +306,12 @@ export interface Rahmen {
 }
 
 /**
- * Geschlossener Pfad durch die Punkte: Catmull-Rom (gleichmäßig) als kubische Bézier, Kontrollpunkte
- * P_i + (P_{i+1} − P_{i−1}) / 6 und P_{i+1} − (P_{i+2} − P_i) / 6, auf den `rahmen` begrenzt (eine Bézierkurve bleibt in
- * der Hülle ihrer Punkte, also im Rahmen: Wo die Kontur am Spiegelrand entlang läuft und abknickt, schießt sie sonst weit
- * hinaus), alle Zahlen auf dem 0,5-Raster. Fallen zwei Punkte nach dem Runden zusammen, bleibt einer.
+ * Geschlossener Pfad durch die Punkte: Catmull-Rom als kubische Bézier, die Tangente nach den Längen der beiden
+ * Nachbarstrecken gewichtet (Kontrollpunkt P_i + (P_{i+1} − P_{i−1}) · |P_i P_{i+1}| / (|P_{i−1} P_i| + |P_i P_{i+1}|) / 3,
+ * bei gleichen Abständen genau der gleichmäßige Catmull-Rom mit 1/6): Wo eine lange Strecke am Spiegelrand auf eine kurze
+ * trifft, schießt die Kurve nicht über. Die Kontrollpunkte bleiben im `rahmen` (eine Bézierkurve bleibt in der Hülle
+ * ihrer Punkte, also im Rahmen); alle Zahlen auf dem 0,5-Raster. Fallen zwei Punkte nach dem Runden zusammen, bleibt
+ * einer.
  */
 export function bezierPfad(punkte: readonly P[], rahmen: Rahmen): string {
   const fx = (x: number) => (x < rahmen.x0 ? rahmen.x0 : x > rahmen.x1 ? rahmen.x1 : x);
@@ -324,8 +332,13 @@ export function bezierPfad(punkte: readonly P[], rahmen: Rahmen): string {
     const p1 = p(k);
     const p2 = p(k + 1);
     const p3 = p(k + 2);
-    const c1 = { x: fx(p1.x + (p2.x - p0.x) / 6), y: fy(p1.y + (p2.y - p0.y) / 6) };
-    const c2 = { x: fx(p2.x - (p3.x - p1.x) / 6), y: fy(p2.y - (p3.y - p1.y) / 6) };
+    const d01 = abstand(p0, p1);
+    const d12 = abstand(p1, p2);
+    const d23 = abstand(p2, p3);
+    const g1 = d12 / (d01 + d12) / 3;
+    const g2 = d12 / (d12 + d23) / 3;
+    const c1 = { x: fx(p1.x + (p2.x - p0.x) * g1), y: fy(p1.y + (p2.y - p0.y) * g1) };
+    const c2 = { x: fx(p2.x - (p3.x - p1.x) * g2), y: fy(p2.y - (p3.y - p1.y) * g2) };
     teile.push(`C${zahl(c1.x)} ${zahl(c1.y)} ${zahl(c2.x)} ${zahl(c2.y)} ${zahl(p2.x)} ${zahl(p2.y)}`);
   }
   return `${teile.join('')}Z`;
