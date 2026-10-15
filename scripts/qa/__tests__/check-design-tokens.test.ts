@@ -9,10 +9,13 @@ import {
   CURSOR_DATEI,
   DAUER_CSS,
   ENDLOS_ERLAUBT,
+  RADIUS_AUSNAHMEN,
   WAERME_ROLLEN_ERLAUBT,
   bueroBlockAb,
   checkCursor,
   checkEndlos,
+  checkRadius,
+  radiusWerte,
   checkWaermeRollen,
   checkLine,
   checkMotionLine,
@@ -248,6 +251,55 @@ describe('check-design-tokens: cursor (E-031)', () => {
 
   it('die echten Dateien bestehen', () => {
     for (const datei of quellen()) expect(checkCursor(readFileSync(path.join(ROOT, datei), 'utf8'), datei), datei).toEqual([]);
+  });
+});
+
+describe('check-design-tokens: radius in Stylesheets (E-031, Prüfrunde 1 A1-15, K-008)', () => {
+  const regel = (source: string, file = 'components/x.module.css') =>
+    checkRadius(source, file).map((f: { line: number; rule: { id: string }; token: string }) => `${f.line}:${f.token}`);
+
+  it('nur die vier Stufen, 0 und inherit; Prozent, Pixel, rem und fremde Variablen schlagen an', () => {
+    for (const ok of [
+      '.a { border-radius: var(--radius-1); }',
+      '.a { border-radius: var(--radius-voll); }',
+      '.a { border-radius: var(--radius-voll, 999px); }',
+      '.a { border-start-start-radius: var(--radius-3); border-end-end-radius: 0; }',
+      '.a { border-radius: 0 var(--radius-2) var(--radius-3) inherit; }',
+      '.a { border-bottom-right-radius: calc(var(--radius-2) + var(--m-strich) / 2); }',
+      '/* border-radius: 50% */ .a { color: red; }',
+    ]) {
+      expect(regel(ok), ok).toEqual([]);
+    }
+    expect(regel('.e > * { border-radius: 50%; }')).toEqual(['1:border-radius: 50%']);
+    expect(regel('.a {\n  border-radius: 8px;\n}')).toEqual(['2:border-radius: 8px']);
+    expect(regel('.a { border-top-left-radius: 1rem; }')).toEqual(['1:border-top-left-radius: 1rem']);
+    expect(regel('.a { border-radius: var(--m-strich); }')).toEqual(['1:border-radius: var(--m-strich)']);
+    expect(regel('.a { border-radius: 0 0 0 var(--bogen); }')).toEqual(['1:border-radius: var(--bogen)']);
+    expect(regel('.a { border-radius: calc(var(--radius-2) * 2); }')).toEqual(['1:border-radius: calc(var(--radius-2) * 2)']);
+    expect(radiusWerte('0 0 var(--radius-voll, 999px) calc(var(--radius-2) + var(--m-strich) / 2) !important')).toEqual([
+      '0',
+      '0',
+      'var(--radius-voll, 999px)',
+      'calc(var(--radius-2) + var(--m-strich) / 2)',
+    ]);
+    // Nur Stylesheets; theme.css definiert die Stufen
+    expect(regel('.a { border-radius: 50%; }', 'app/styles/theme.css')).toEqual([]);
+    expect(regel("const x = 'border-radius: 50%';", 'components/x.tsx')).toEqual([]);
+  });
+
+  it('Ausnahmen sind Geometrie mit Grund und gelten nur in ihrer Datei', () => {
+    expect(Object.keys(RADIUS_AUSNAHMEN).sort()).toEqual(['components/home/einstieg/einstieg.module.css', 'components/mappe/mappe.module.css']);
+    for (const [datei, { variable, grund }] of Object.entries(RADIUS_AUSNAHMEN) as [string, { variable: string; grund: string }][]) {
+      expect(grund.length, datei).toBeGreaterThan(20);
+      expect(regel(`.a { border-radius: 0 0 0 var(${variable}); }`, datei)).toEqual([]);
+      expect(regel(`.a { border-radius: 50%; }`, datei)).toEqual(['1:border-radius: 50%']);
+    }
+  });
+
+  it('die echten Stylesheets bestehen, auch die Wärmefront (vorher 50 %)', () => {
+    const css = quellen().filter((datei) => datei.endsWith('.css'));
+    expect(css).toContain('components/site/waermefront/waermefront.module.css');
+    for (const datei of css) expect(checkRadius(readFileSync(path.join(ROOT, datei), 'utf8'), datei), datei).toEqual([]);
   });
 });
 

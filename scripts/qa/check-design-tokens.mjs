@@ -12,6 +12,7 @@
  * - Rule `waerme-rollen` (E-031): the warmth ramp --waerme-0…4 only in WAERME_ROLLEN_ERLAUBT and in the Büro block
  *   appended to components/themen/themen.module.css (from BUERO_MARKE to the end of the file).
  * - Rule `cursor` (E-031): image cursors (url(), image-set(), files under /cursor/) only in app/globals.css.
+ * - Rule `radius` (E-031, Prüfrunde 1 A1-15): border-*-radius in stylesheets only on the four steps of the scale.
  * - Reports off-scale spacing and numeric durations as notes (not blocking yet; R3–R5 move the
  *   components onto the 11-step scale and the four durations).
  *
@@ -340,6 +341,67 @@ export function checkCursor(source, file) {
   return findings;
 }
 
+// --- radii in stylesheets (E-031, Prüfrunde 1 A1-15, KERN K-008) --------------------------
+
+/**
+ * Corner radii in CSS files (rule `radius`): only the four steps of the scale (var(--radius-1|2|3|voll), optionally
+ * with a fallback), `0`, `inherit` and concentric pipe bends around a step (± half a stroke). `extra-radius` covers the Tailwind classes; this covers border-*-radius in the
+ * stylesheets (CSS modules, globals), where `border-radius: 50%` slipped through. Exceptions are variables that are
+ * geometry, not a corner, each with its reason. theme.css defines the steps and is skipped.
+ */
+export const RADIUS_AUSNAHMEN = Object.freeze({
+  'components/home/einstieg/einstieg.module.css': { variable: '--bogen', grund: 'Rohrbogen der Leitung im Hero (Geometrie aus dem Paarabstand, kein Eckenradius)' },
+  'components/mappe/mappe.module.css': { variable: '--blatt-foto-radius', grund: 'Foto auf dem Druckblatt der Mappe, Papiermaß in mm' },
+});
+
+const RADIUS_RULE = {
+  id: 'radius',
+  hint: 'Four radii only in stylesheets: var(--radius-1|2|3|voll), 0 or inherit (K-008, E-031); geometry variables need an entry in RADIUS_AUSNAHMEN.',
+};
+
+const RADIUS_DEKLARATION = /(?<![\w-])border(?:-[a-z]+)*-radius\s*:\s*([^;{}]*)/g;
+/**
+ * A step, 0, inherit – or a concentric bend: the outer edge of a pipe stroke drawn around a step's centre line,
+ * calc(var(--radius-1|2|3) ± var(--m-strich|--m-leitung) / 2) (Leitungstrenner, Schlussband, Stellenliste).
+ */
+const RADIUS_STUFE =
+  /^(?:0|inherit|var\(--radius-(?:1|2|3|voll)(?:\s*,\s*[^()]*)?\)|calc\(var\(--radius-[123]\)\s*[+-]\s*var\(--m-(?:strich|leitung)\)\s*\/\s*2\))$/;
+
+/** Value tokens of a radius declaration, split at whitespace outside parentheses (`!important` dropped). */
+export function radiusWerte(wert) {
+  const out = [];
+  let tiefe = 0;
+  let teil = '';
+  for (const ch of wert.replace(/!important\s*$/, '').trim()) {
+    if (ch === '(') tiefe += 1;
+    if (ch === ')') tiefe -= 1;
+    if (/\s/.test(ch) && tiefe === 0) {
+      if (teil) out.push(teil);
+      teil = '';
+    } else teil += ch;
+  }
+  if (teil) out.push(teil);
+  return out;
+}
+
+/** Findings of rule `radius` for one stylesheet (one per offending value). */
+export function checkRadius(source, file) {
+  if (!file.endsWith('.css') || file === THEME_FILE) return [];
+  const ausnahme = RADIUS_AUSNAHMEN[file];
+  const findings = [];
+  ohneKommentare(source, file)
+    .split('\n')
+    .forEach((line, i) => {
+      for (const m of line.matchAll(RADIUS_DEKLARATION)) {
+        for (const wert of radiusWerte(m[1])) {
+          if (RADIUS_STUFE.test(wert) || (ausnahme && wert === `var(${ausnahme.variable})`)) continue;
+          findings.push({ line: i + 1, col: m.index + 1, rule: RADIUS_RULE, token: `${m[0].split(':')[0].trim()}: ${wert}` });
+        }
+      }
+    });
+  return findings;
+}
+
 // --- notes (not blocking) ------------------------------------------------------------
 
 /** Tailwind spacing steps on the K-007 scale (×0.25rem): 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 · 80 · 96 · 128 px. */
@@ -443,6 +505,11 @@ function main() {
     for (const f of checkEndlos(source, file)) problems.push({ file, ...f });
     for (const f of checkWaermeRollen(source, file)) problems.push({ file, ...f });
     for (const f of checkCursor(source, file)) problems.push({ file, ...f });
+    for (const f of checkRadius(source, file)) problems.push({ file, ...f });
+  }
+  // An exception without its file is stale: remove it from RADIUS_AUSNAHMEN
+  for (const file of Object.keys(RADIUS_AUSNAHMEN)) {
+    if (!existsSync(path.join(ROOT, file))) problems.push({ file, line: 0, col: 0, rule: RADIUS_RULE, token: 'RADIUS_AUSNAHMEN (Datei fehlt)' });
   }
   // An exception without its file is stale: remove it from ENDLOS_ERLAUBT
   for (const file of Object.keys(ENDLOS_ERLAUBT)) {

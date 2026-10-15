@@ -132,7 +132,7 @@ describe('Waermefront: CSS (E-031, K-009)', () => {
       'pointer-events': 'none',
       contain: 'strict',
     });
-    expect(regel('.e > *')).toMatchObject({ position: 'absolute', 'aspect-ratio': '1', translate: '-50% -50%', 'border-radius': '50%' });
+    expect(regel('.e > *')).toMatchObject({ position: 'absolute', 'aspect-ratio': '1', translate: '-50% -50%', 'border-radius': 'var(--radius-voll)' });
     // Selektoren: nur die beiden Klassen, ihre Schichten und [data-auf]
     const selektoren = [...css.matchAll(/(?:^|\})\s*([^{}@]+?)\s*\{/g)].map((m) => m[1].trim()).filter((s) => s.startsWith('.'));
     expect(selektoren).toEqual(['.e', '.k', '.e > *', '.e > * + *', '.e > * + * + *', '.e > * + * + * + *', '.e[data-auf]']);

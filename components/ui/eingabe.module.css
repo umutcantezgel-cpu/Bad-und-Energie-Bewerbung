@@ -16,7 +16,7 @@
   height: var(--m-strich);
   margin-top: calc(var(--m-strich) / -2);
   overflow: hidden;
-  border-radius: var(--m-strich);
+  border-radius: var(--radius-voll);
   opacity: 0;
   animation: erscheinen var(--d-1) var(--k-aus) calc(var(--takt) * 4) forwards;
 }
