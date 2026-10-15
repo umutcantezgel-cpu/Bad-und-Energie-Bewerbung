@@ -6,6 +6,7 @@ import { Section } from '@/components/layout/Section';
 import { Seitenkopf } from '@/components/seitenkopf';
 import { ContactOptions } from '@/components/site/ContactOptions';
 import { OffeneLeitung } from '@/components/zeichnung/OffeneLeitung';
+import { RohrAkzent } from '@/components/zeichnung/RohrAkzent';
 import { cn } from '@/lib/utils/cn';
 import {
   DIREKT_EINLEITUNG,
@@ -103,7 +104,9 @@ export function FehlerSeite() {
             className="lg:col-start-1 lg:row-start-1"
           />
 
-          <div className="grid min-w-0 content-start gap-y-3 border-t-(length:--m-strich) border-brand pt-6 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:border-t-0 lg:border-l-(length:--m-strich) lg:pt-0 lg:pl-12">
+          <div className="relative grid min-w-0 content-start gap-y-3 pt-6 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:border-l-(length:--m-strich) lg:border-brand lg:pt-0 lg:pl-12">
+            {/* Handy: Rohrakzent auf der Oberkante (E-031); ab lg trennt die senkrechte Kante links */}
+            <RohrAkzent className="lg:hidden" />
             <p className="text-etikett text-ink-2">Dein Ansprechpartner</p>
             <p className="mb-2 flex flex-col gap-1">
               <span className="text-title-3 text-brand">{FEHLER_ANSPRECHPARTNER.name}</span>

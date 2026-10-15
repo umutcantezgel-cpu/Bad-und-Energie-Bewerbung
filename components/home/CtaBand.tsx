@@ -16,24 +16,26 @@ const NBSP = '\u00A0';
  * Schlussband (E-START-051, E-START-048), das zweite und letzte Navy-Band der Startseite.
  * - Links der Rückruf auf die Leitidee: „Bewirb dich bei uns.“, die Antwortzusage (Fakt quickResponse) und
  *   „Jetzt bewerben“ als die eine rote Fläche; Vorlauf und Rücklauf kommen von oben und enden im Knopf.
- *   Darunter „Unverbindlich …“ (Wesenskern des Altstands, ohne Druck).
+ *   Darunter „Unverbindlich …“ (Wesenskern des Altstands, ohne Druck). Die Leitungen beginnen seit E-031 rund neben
+ *   der Überschrift, statt an der Oberkante des Bands abgeschnitten zu werden.
  * - Rechts bzw. darunter der persönliche Draht: „Sprich direkt mit Sabri Demir“, Rolle, dann Telefon,
  *   WhatsApp, E-Mail in fester Reihenfolge (WCAG 3.2.6) mit den Öffnungszeiten.
  */
 export function CtaBand() {
   return (
-    <Section tone="inverse" aria-labelledby="cta-title" className={styles.band}>
+    <Section tone="inverse" aria-labelledby="cta-title">
       <Container className="grid gap-12 lg:grid-cols-12 lg:gap-x-8">
         <div className="lg:col-span-7">
           <div className={styles.text}>
+            {/* Vorlauf und Rücklauf beginnen neben der Überschrift rund und münden im Knopf (E-031) */}
+            <span className={cn(styles.leitung, styles.vorlauf)} aria-hidden="true" />
+            <span className={cn(styles.leitung, styles.ruecklauf)} aria-hidden="true" />
             <h2 id="cta-title" className="text-title-1 text-brand">
               {CTA.title}
             </h2>
             <p className="mt-4 max-w-prose text-lead text-ink-muted">{schuetzeNamen(CTA.lead)}</p>
           </div>
-          <div data-primary-cta className={cn(styles.anschluss, 'mt-8')}>
-            <span className={cn(styles.leitung, styles.vorlauf)} aria-hidden="true" />
-            <span className={cn(styles.leitung, styles.ruecklauf)} aria-hidden="true" />
+          <div data-primary-cta className={styles.anschluss}>
             <Link href={APPLY_PATH} className={cn(styles.aktion, 'rounded-1')} data-motion="druck">
               {SHORT_APPLY_LABEL}
               <Icon name="arrow-right" size="md" />

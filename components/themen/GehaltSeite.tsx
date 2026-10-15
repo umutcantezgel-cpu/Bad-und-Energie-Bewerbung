@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { bindSeparators, withSoftHyphens } from '@/components/jobs/text';
 import { Etikettkasten } from '@/components/zeichnung/Etikettkasten';
+import { RohrAkzent } from '@/components/zeichnung/RohrAkzent';
 import { getThema } from '@/lib/themen/registry';
 import { themaPfad } from '@/lib/themen/jsonld';
 import { geschuetzt, type GehaltPageText } from '@/lib/themen/text';
@@ -14,7 +15,8 @@ import styles from './stil';
  */
 function LohnBlock({ lohn }: { lohn: GehaltPageText['lohn'] }) {
   return (
-    <div className="flex max-w-sm flex-col gap-3 border-t-(length:--m-strich) border-brand pt-4" data-zeichnung="lohn">
+    <div className="relative flex max-w-sm flex-col gap-3 pt-4" data-zeichnung="lohn">
+      <RohrAkzent />
       <p className="text-etikett text-ink-2">{lohn.etikett}</p>
       <p className="text-title-1 text-brand">{lohn.titel}</p>
       <ul className="flex flex-col gap-1 text-body text-ink">
@@ -83,6 +85,7 @@ export function GehaltSeite({ text }: { text: GehaltPageText }) {
             <ul className={styles.kaestchenListe}>
               {text.ausbildung.kaesten.map((kasten) => (
                 <li key={kasten.titel} className={styles.kaestchen}>
+                  <RohrAkzent />
                   <Etikettkasten icon={kasten.icon} className="whitespace-normal">
                     {kasten.titel}
                   </Etikettkasten>

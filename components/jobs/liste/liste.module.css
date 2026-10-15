@@ -37,10 +37,12 @@
     padding-bottom: 0;
   }
 
+  /* Innenecke oben links rund (E-031), wie die Navy-Fläche des Seitenkopfs, die unter der Pfadleiste weiterläuft */
   .pfadNavy {
     display: block;
     grid-column: panel-start / voll-end;
     grid-row: 1;
+    border-start-start-radius: var(--radius-3);
     background-color: var(--surface);
   }
 
@@ -250,6 +252,7 @@
   position: absolute;
   inset: 0;
   z-index: 1;
+  border-radius: var(--radius-2);
 }
 
 .ziel:focus-visible {
@@ -453,36 +456,37 @@
   }
 }
 
-/* ═══ Initiativband (Navy): Vorlauf und Rücklauf kommen von oben und münden in „Initiativ bewerben“ ═══ */
-.band {
-  overflow: clip;
-}
-
+/* ═══ Initiativband (Navy): Vorlauf und Rücklauf beginnen rund neben der Überschrift (E-031, wie das Schlussband der
+   Startseite) und münden in „Initiativ bewerben“ ═══ */
 .bandText {
+  position: relative;
   padding-right: var(--a-8);
 }
 
 .anschluss {
   position: relative;
   display: flex;
+  margin-top: var(--a-6);
 }
 
 .leitung {
   position: absolute;
-  top: -200vh;
-  bottom: 100%;
+  top: 0;
+  bottom: calc(var(--a-6) * -1);
   width: var(--m-strich);
+  border-radius: var(--radius-voll) var(--radius-voll) 0 0;
+  background-color: currentColor;
   pointer-events: none;
 }
 
 .vorlauf {
   right: calc(var(--a-6) + var(--paar) - var(--m-strich) / 2);
-  background-color: var(--vorlauf);
+  color: var(--vorlauf);
 }
 
 .ruecklauf {
   right: calc(var(--a-6) - var(--m-strich) / 2);
-  background-color: var(--ruecklauf);
+  color: var(--ruecklauf);
 }
 
 /* Die eine rote Fläche dieser Ansicht (E-016), wie im Schlussband der Startseite */
@@ -534,6 +538,7 @@
     flex: 0 0 18rem;
   }
 
+  /* Flansch: außen rund (E-031) */
   .aktion::after {
     content: "";
     position: absolute;
@@ -542,28 +547,41 @@
     bottom: var(--a-2);
     width: calc(var(--m-strich) * 2);
     background-color: var(--brand);
-    border-radius: 0 var(--radius-1) var(--radius-1) 0;
+    border-radius: 0 var(--radius-voll) var(--radius-voll) 0;
   }
 
+  /* Wie im Schlussband: Fall am Spaltenrand, konzentrischer Bogen (12/24), Lauf in den Flansch; oben rund */
   .leitung {
+    top: calc(var(--m-strich) / 2);
     left: calc(18rem + var(--m-strich) * 2);
     width: auto;
     background: none;
     border-style: solid;
+    border-color: currentColor;
     border-width: 0 var(--m-strich) var(--m-strich) 0;
+    border-radius: 0;
+  }
+
+  .leitung::before {
+    content: "";
+    position: absolute;
+    top: calc(var(--m-strich) / -2);
+    right: calc(var(--m-strich) * -1);
+    width: var(--m-strich);
+    height: var(--m-strich);
+    border-radius: var(--radius-voll);
+    background-color: currentColor;
   }
 
   .vorlauf {
     right: calc(var(--paar) * 2 - var(--m-strich) / 2);
-    bottom: calc(50% + var(--paar) / 2 - var(--m-strich) / 2);
-    border-color: var(--vorlauf);
+    bottom: calc((var(--a-6) + var(--m-knopf) / 2 - var(--paar) / 2 + var(--m-strich) / 2) * -1);
     border-bottom-right-radius: calc(var(--radius-2) + var(--m-strich) / 2);
   }
 
   .ruecklauf {
     right: calc(var(--paar) - var(--m-strich) / 2);
-    bottom: calc(50% - var(--paar) / 2 - var(--m-strich) / 2);
-    border-color: var(--ruecklauf);
+    bottom: calc((var(--a-6) + var(--m-knopf) / 2 + var(--paar) / 2 + var(--m-strich) / 2) * -1);
     border-bottom-right-radius: calc(var(--radius-3) + var(--m-strich) / 2);
   }
 }

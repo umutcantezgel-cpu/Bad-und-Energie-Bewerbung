@@ -6,66 +6,109 @@ import { describe, expect, it } from 'vitest';
 import { TOKENS } from '@/lib/tokens';
 import { LINIENARTEN } from '@/lib/zeichnung/norm';
 import { Leitungstrenner, Rohrklammer } from '..';
+import { TRENNER_BOGEN } from '../Leitungstrenner';
 
 const DIR = path.resolve(__dirname, '..');
 const quelle = (datei: string) => readFileSync(path.join(DIR, datei), 'utf8');
 const trenner = (props: Parameters<typeof Leitungstrenner>[0] = {}) => renderToStaticMarkup(createElement(Leitungstrenner, props));
 const klammer = (props: Parameters<typeof Rohrklammer>[0] = {}) => renderToStaticMarkup(createElement(Rohrklammer, props));
 
-/** Absolute Eckpunkte eines Pfads aus M/L/H/V (absolute Befehle, wie in den Zeichnungen). */
-function punkte(d: string): number[][] {
-  let x = 0;
-  let y = 0;
-  return [...d.matchAll(/([MLHV])\s*(-?[\d.]+)(?:\s+(-?[\d.]+))?/g)].map((m) => {
-    const a = Number(m[2]);
-    if (m[1] === 'H') x = a;
-    else if (m[1] === 'V') y = a;
-    else [x, y] = [a, Number(m[3])];
-    return [x, y];
-  });
-}
-
-describe('Leitungstrenner (R3-HOME-01, B Runde 1 / Variante 1)', () => {
+describe('Leitungstrenner (R3-HOME-01, Variante 1; seit E-031 mit S-Bogen)', () => {
   const html = trenner();
+  const { breite, hoehe } = TRENNER_BOGEN;
+
+  /** Bögen eines Pfads: Anfang, Halbmesser, Drehsinn und Ende (absolute M/A). */
+  function boegen(d: string) {
+    const start = d.match(/^M(-?[\d.]+) (-?[\d.]+)/)!;
+    let von = [Number(start[1]), Number(start[2])];
+    return [...d.matchAll(/A([\d.]+) ([\d.]+) 0 0 ([01]) (-?[\d.]+) (-?[\d.]+)/g)].map((m) => {
+      const bis = [Number(m[4]), Number(m[5])];
+      const bogen = { von, r: Number(m[1]), ry: Number(m[2]), sweep: Number(m[3]), bis };
+      von = bis;
+      return bogen;
+    });
+  }
+  /** Abstand zweier Punkte. */
+  const abstand = (a: number[], b: number[]) => Math.hypot(a[0] - b[0], a[1] - b[1]);
 
   it('ist dekorativ: aria-hidden, nicht fokussierbar, ohne Bewegung', () => {
-    expect(html).toMatch(/^<svg [^>]*aria-hidden="true"[^>]*focusable="false"/);
+    expect(html).toMatch(/^<span [^>]*aria-hidden="true"[^>]*data-zeichnung="leitungstrenner"/);
+    expect(html.match(/<svg /g)).toHaveLength(3);
+    expect(html.match(/focusable="false"/g)).toHaveLength(3);
     expect(html).not.toContain('data-motion');
     expect(html).not.toMatch(/<title|role=/);
   });
 
-  it('zeichnet das Paar: Vorlauf oben, Rücklauf unten, je eine Linie mit 45°-Versatz', () => {
-    const pfade = [...html.matchAll(/<path class="([^"]+)" d="([^"]+)"/g)];
-    expect(pfade).toHaveLength(2);
-    expect(pfade[0][1]).toMatch(/vorlauf/);
-    expect(pfade[1][1]).toMatch(/ruecklauf/);
-    for (const [, , d] of pfade) {
-      const [, knickVon, knickBis] = punkte(d);
-      // 45°: Weg in x = Weg in y
-      expect(Math.abs(knickBis[0] - knickVon[0])).toBe(Math.abs(knickBis[1] - knickVon[1]));
-      expect(knickBis[1] - knickVon[1]).toBe(TOKENS.paar);
-    }
+  it('zeichnet das Paar: Vorlauf oben, Rücklauf darunter, beide als Linienart leitung (runde Enden über .strich)', () => {
+    const teile = [...html.matchAll(/<(line|path) class="([^"]+)"/g)].map((m) => m[2]);
+    expect(teile).toHaveLength(6);
+    expect(teile.filter((k) => /vorlauf/.test(k))).toHaveLength(3);
+    expect(teile.filter((k) => /ruecklauf/.test(k))).toHaveLength(3);
+    expect(teile.every((k) => /strich/.test(k))).toBe(true);
+    // keine Linienenden als Attribut: Enden und Ecken kommen allein aus der Klasse .strich
+    expect(html).not.toMatch(/stroke-linecap|stroke-linejoin/);
   });
 
-  it('die Zeichnungswerte folgen --paar und --m-strich (lib/tokens): 1,5 / 13,5 / 25,5 und Schrägen im Abstand --paar', () => {
+  it('S-Bogen: konzentrische Bögen mit --radius-2 und --radius-3, Versatz genau ein Paarabstand (lib/tokens)', () => {
     const halb = TOKENS.strich / 2;
-    const ys = [halb, halb + TOKENS.paar, halb + 2 * TOKENS.paar];
-    const [vl, rl] = [...html.matchAll(/ d="([^"]+)"/g)].map((m) => punkte(m[1]));
-    expect([vl[0][1], vl[3][1]]).toEqual([ys[0], ys[1]]);
-    expect([rl[0][1], rl[3][1]]).toEqual([ys[1], ys[2]]);
-    // Abstand der parallelen Schrägen y = x + c: |c1 − c2| / √2 ≈ --paar (auf 0,1 px)
-    const c = (p: number[][]) => p[2][1] - p[2][0];
-    expect(Math.abs(Math.abs(c(vl) - c(rl)) / Math.SQRT2 - TOKENS.paar)).toBeLessThan(0.1);
-    // Höhe im CSS: zwei Paarabstände + ein Strich = unterster Linienrand
-    expect(quelle('zeichnung.module.css')).toMatch(/height: calc\(var\(--paar\) \* 2 \+ var\(--m-strich\)\)/);
-    expect(ys[2] + halb).toBe(2 * TOKENS.paar + TOKENS.strich);
+    const vl = boegen(TRENNER_BOGEN.vorlauf);
+    // Rücklauf ist in Fließrichtung gezeichnet (von rechts zurück): umgedreht, damit beide von links lesen
+    const rl = boegen(TRENNER_BOGEN.ruecklauf)
+      .reverse()
+      .map((b) => ({ ...b, von: b.bis, bis: b.von, sweep: 1 - b.sweep }));
+    expect(vl.map((b) => b.r)).toEqual([TOKENS.radius.r3, TOKENS.radius.r2]);
+    expect(rl.map((b) => b.r)).toEqual([TOKENS.radius.r2, TOKENS.radius.r3]);
+    for (const b of [...vl, ...rl]) expect(b.ry).toBe(b.r);
+    // erst nach unten (im Uhrzeigersinn), dann zurück in die Waagerechte
+    expect(vl.map((b) => b.sweep)).toEqual([1, 0]);
+    expect(rl.map((b) => b.sweep)).toEqual([1, 0]);
+    // Anfang und Ende: Vorlauf 1,5 → 13,5, Rücklauf 13,5 → 25,5 (Versatz --paar), Bogen von x = 0 bis zur Breite
+    expect([vl[0].von, vl[1].bis]).toEqual([[0, halb], [breite, halb + TOKENS.paar]]);
+    expect([rl[0].von, rl[1].bis]).toEqual([[0, halb + TOKENS.paar], [breite, halb + 2 * TOKENS.paar]]);
+    // Mittelpunkte: Tangente am Anfang und Ende waagerecht, also Mittelpunkt senkrecht darunter bzw. darüber
+    const m1 = [0, halb + TOKENS.radius.r3];
+    const m2 = [breite, halb];
+    expect([vl[0].von[0], vl[0].von[1] + vl[0].r]).toEqual(m1);
+    expect([rl[0].von[0], rl[0].von[1] + rl[0].r]).toEqual(m1);
+    expect([vl[1].bis[0], vl[1].bis[1] - vl[1].r]).toEqual(m2);
+    expect([rl[1].bis[0], rl[1].bis[1] - rl[1].r]).toEqual(m2);
+    // Wendepunkte liegen auf beiden Kreisen (auf 0,02 px): konzentrisch, überall im Abstand --paar
+    for (const [bogen, mitte] of [
+      [vl[0], m1],
+      [rl[0], m1],
+      [vl[1], m2],
+      [rl[1], m2],
+    ] as const) {
+      expect(Math.abs(abstand(bogen.von, mitte) - bogen.r)).toBeLessThan(0.02);
+      expect(Math.abs(abstand(bogen.bis, mitte) - bogen.r)).toBeLessThan(0.02);
+    }
+    expect(TOKENS.radius.r3 - TOKENS.radius.r2).toBe(TOKENS.paar);
+    // Höhe: zwei Paarabstände + ein Strich, im CSS wie im SVG
+    expect(hoehe).toBe(2 * TOKENS.paar + TOKENS.strich);
+    expect(html).toContain(`width="${breite}" height="${hoehe}" viewBox="0 0 ${breite} ${hoehe}"`);
+    expect(quelle('zeichnung.module.css')).toMatch(/\.trenner \{[^}]*height: calc\(var\(--paar\) \* 2 \+ var\(--m-strich\)\)/);
   });
 
-  it('der Knick ist einstellbar (Standard 18 %), Klassen des Aufrufers kommen dazu', () => {
-    expect(html).toContain('<svg x="18%" overflow="visible">');
+  it('gerade Stücke vor und nach dem Bogen auf der Höhe der Bogenenden; runde Enden im Seitenrand statt abgeschnitten', () => {
+    const halb = TOKENS.strich / 2;
+    const linien = [...html.matchAll(/<line class="[^"]*" x1="([^"]+)" y1="([^"]+)" x2="([^"]+)" y2="([^"]+)"/g)].map((m) => m.slice(1));
+    expect(linien.map(([, y1, , y2]) => [Number(y1), Number(y2)])).toEqual([
+      [halb, halb],
+      [halb + TOKENS.paar, halb + TOKENS.paar],
+      [halb + TOKENS.paar, halb + TOKENS.paar],
+      [halb + 2 * TOKENS.paar, halb + 2 * TOKENS.paar],
+    ]);
+    const css = quelle('zeichnung.module.css').replace(/\/\*[\s\S]*?\*\//g, '');
+    expect(css).toMatch(/\.trenner \{[^}]*padding-inline: var\(--spacing-gutter\);/);
+    expect(css).not.toMatch(/\.trenner \{[^}]*overflow: hidden/);
+    expect(css).toMatch(/\.trennerGerade \{[^}]*overflow: visible;/);
+  });
+
+  it('der Bogen ist einstellbar (Standard 18 %), Klassen des Aufrufers kommen dazu', () => {
+    expect(html).toContain('style="flex-basis:18%"');
     const eigen = trenner({ knick: '40%', className: 'my-8' });
-    expect(eigen).toContain('<svg x="40%" overflow="visible">');
-    expect(eigen).toMatch(/^<svg class="[^"]*\bmy-8\b/);
+    expect(eigen).toContain('style="flex-basis:40%"');
+    expect(eigen).toMatch(/^<span class="[^"]*\bmy-8\b/);
   });
 });
 

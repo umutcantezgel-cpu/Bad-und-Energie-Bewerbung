@@ -41,6 +41,12 @@ export function kennbuchstabe(buchstabe: 'M' | 'T', x: number, y: number): strin
 const VENTIL_LINKS = 'M-12 -7L0 0L-12 7Z';
 const VENTIL_RECHTS = 'M12 -7L0 0L12 7Z';
 
+/** Halbmesser der Kugel im Kugelhahn (Symbol), in Einheiten des Schemas. */
+export const KUGEL_R = 4.5;
+
+/** Die Kugel des Kugelhahns als gefüllter Kreis (zwei Halbbögen), damit die Form wie die übrigen gefüllten Teile ein Pfad ist. */
+const KUGEL = `M${-KUGEL_R} 0A${KUGEL_R} ${KUGEL_R} 0 1 0 ${KUGEL_R} 0A${KUGEL_R} ${KUGEL_R} 0 1 0 ${-KUGEL_R} 0Z`;
+
 export const SYMBOLE = {
   pumpe: {
     name: 'Umwälzpumpe',
@@ -185,7 +191,36 @@ export const SYMBOLE = {
     anschluesse: {},
     formen: [{ cx: 0, cy: 0, r: 12 }, { d: 'M0 0C-2 -5 -2 -8 0 -10C2 -8 2 -5 0 0ZM0 0C2 5 2 8 0 10C-2 8 -2 5 0 0Z' }],
   },
+  kugelhahn: {
+    name: 'Kugelhahn',
+    beschreibung: 'Durchgangsarmatur mit Kugel: zwei Dreiecke Spitze an Spitze, die Kugel als gefüllter Kreis in der Mitte; offen',
+    halb: { x: 12, y: 7 },
+    anschluesse: { ein: { x: -12, y: 0 }, aus: { x: 12, y: 0 } },
+    formen: [{ d: VENTIL_LINKS }, { d: VENTIL_RECHTS }, { d: KUGEL, voll: true }],
+  },
+  kugelhahnGeschlossen: {
+    name: 'Kugelhahn, geschlossen',
+    beschreibung:
+      'Derselbe Kugelhahn im Zustand geschlossen: beide Dreiecke gefüllt (Darstellung einer geschlossenen Armatur im ' +
+      'Fließschema), die Kugel als Ring darüber, damit sie im gefüllten Körper sichtbar bleibt; es fließt nichts hindurch',
+    halb: { x: 12, y: 7 },
+    anschluesse: { ein: { x: -12, y: 0 }, aus: { x: 12, y: 0 } },
+    formen: [{ d: VENTIL_LINKS, voll: true }, { d: VENTIL_RECHTS, voll: true }, { cx: 0, cy: 0, r: KUGEL_R }],
+  },
+  durchflussmesser: {
+    name: 'Durchflussmesser (Schwebekörper)',
+    beschreibung:
+      'Konisches Messrohr, eng am Eintritt und weit am Austritt, darin der Schwebekörper als Scheibe quer zur Strömung; ' +
+      'steht senkrecht und wird von ' +
+      'unten durchströmt (am Heizkreisverteiler als Durchflussanzeiger je Kreis auf dem Vorlaufbalken)',
+    halb: { x: 14, y: 6 },
+    anschluesse: { ein: { x: -14, y: 0 }, aus: { x: 14, y: 0 } },
+    formen: [{ d: 'M-14 -3.5L14 -6V6L-14 3.5Z' }, { d: 'M-2 -4H2V4H-2Z', voll: true }],
+  },
 } as const satisfies Record<string, SymbolDef>;
+
+/** Armaturen, die E-031 (KERN 1.3, K-003.2) für Verteiler und Absperrung ergänzt; nicht Teil des Pflichtumfangs K-010. */
+export const ARMATUR_SYMBOLE: readonly SymbolId[] = ['kugelhahn', 'kugelhahnGeschlossen', 'durchflussmesser'];
 
 export type SymbolId = keyof typeof SYMBOLE;
 

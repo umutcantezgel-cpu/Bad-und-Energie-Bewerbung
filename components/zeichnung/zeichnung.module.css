@@ -21,12 +21,42 @@
   stroke: var(--ruecklauf);
 }
 
-/* Leitungstrenner: das Paar quer durch den Behälter, Höhe = zwei Paarabstände + ein Strich */
+/* Leitungstrenner: das Paar quer durch den Behälter, Höhe = zwei Paarabstände + ein Strich. Die runden Enden liegen im
+   Seitenrand (E-031), der S-Bogen hat eine feste Breite, die geraden Stücke teilen sich den Rest. */
 .trenner {
-  display: block;
+  display: flex;
   width: 100%;
   height: calc(var(--paar) * 2 + var(--m-strich));
-  overflow: hidden;
+  padding-inline: var(--spacing-gutter);
+  box-sizing: border-box;
+}
+
+.trennerGerade {
+  flex: 0 0 auto;
+  min-width: 0;
+  height: 100%;
+  overflow: visible;
+}
+
+.trennerRest {
+  flex: 1 1 0;
+}
+
+.trennerBogen {
+  flex: none;
+  overflow: visible;
+}
+
+/* Rohrakzent (E-031): kurzes Rohrstück mit runden Enden auf der Oberkante des Behälters (statt einer harten 3-px-Kante) */
+.rohrakzent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: min(var(--a-8), 100%);
+  height: var(--m-leitung);
+  border-radius: var(--radius-voll);
+  background-color: var(--brand);
+  pointer-events: none;
 }
 
 /* Rohrklammer: feste Breite --a-5, Höhe vom Elternelement (z. B. zwei Textzeilen) */
@@ -35,6 +65,18 @@
   width: var(--a-5);
   height: 100%;
   overflow: visible;
+}
+
+/* Rahmen der Rohrklammer an einer Überschrift (SectionHeader, E-031): mittig, um 0,1 em je Seite eingerückt, aber
+   mindestens zwei Bögen (--radius-2) und ein gerades Stück (--a-5) hoch, damit eine Zeile nicht als „C“ steht */
+.klammerRahmen {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: var(--a-5);
+  height: max(calc(100% - 0.2em), calc(var(--radius-2) * 2 + var(--a-5)));
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 /* ═══ Gemeinsam für die Zeichnungen in SVG (SEITENKOPF-01) ═══ */
@@ -165,6 +207,27 @@
   border-color: var(--ruecklauf);
   border-top: 0;
   border-radius: 0 0 var(--radius-3) var(--radius-3);
+}
+
+/* Zu- und Abgang links enden rund (E-031, Linienart leitung): ein Kreis im Strich, mittig auf dem Ende */
+.hkVorlauf::after,
+.hkRuecklauf::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--m-strich) * -1);
+  width: var(--m-strich);
+  height: var(--m-strich);
+  border-radius: var(--radius-voll);
+}
+
+.hkVorlauf::after {
+  top: calc(100% - var(--m-strich) / 2);
+  background-color: var(--vorlauf);
+}
+
+.hkRuecklauf::after {
+  top: calc(var(--m-strich) / -2);
+  background-color: var(--ruecklauf);
 }
 
 .hkWert {

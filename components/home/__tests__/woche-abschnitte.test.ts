@@ -53,10 +53,17 @@ describe('SectionHeader (Props nur ergänzt)', () => {
     expect(html.indexOf('<p class="text-etikett text-ink-muted">Etikett</p>')).toBeLessThan(html.indexOf('<h2'));
   });
 
-  it('E-029: keine Rohrklammer mehr an der h2, auch nicht mit `klammer` (Etikett und h2 tragen den Kopf)', () => {
-    const html = renderToStaticMarkup(createElement(SectionHeader, { id: 'x', title: 'Zwei Zeilen', klammer: true }));
-    expect(html).toContain('<h2 id="x" class="text-title-1 text-brand">Zwei Zeilen</h2>');
-    expect(html).not.toMatch(/rohrklammer|<svg|pl-8/);
+  it('E-031: Rohrklammer nur mit `klammer` an der h2, dekorativ; ohne bleibt die h2 ohne Zeichnung (Startseite)', () => {
+    const ohne = renderToStaticMarkup(createElement(SectionHeader, { id: 'x', title: 'Zwei Zeilen' }));
+    expect(ohne).toContain('<h2 id="x" class="text-title-1 text-brand">Zwei Zeilen</h2>');
+    expect(ohne).not.toMatch(/rohrklammer|<svg|pl-8/);
+    const mit = renderToStaticMarkup(createElement(SectionHeader, { id: 'x', title: 'Zwei Zeilen', klammer: true }));
+    // genau eine Klammer, vor dem Titel in der h2, in einem dekorativen Rahmen; der zugängliche Name bleibt der Titel
+    expect(mit.match(/data-zeichnung="rohrklammer"/g)).toHaveLength(1);
+    expect(mit).toMatch(
+      /<h2 id="x" class="text-title-1 text-brand relative pl-8"><span aria-hidden="true" class="[^"]*klammerRahmen[^"]*"><svg class="[^"]*" aria-hidden="true" focusable="false" data-zeichnung="rohrklammer">[\s\S]*?<\/svg><\/span>Zwei Zeilen<\/h2>/,
+    );
+    expect(mit).not.toMatch(/<title|role=/);
   });
 });
 
@@ -200,7 +207,8 @@ describe('JobList (#stellen, E-START-023)', () => {
   });
 
   it('Papier ohne Leitungstrenner; je live Stelle eine Zeile mit „Lohn auf Anfrage“ (E-030) und benannter Liste', () => {
-    expect(html).toMatch(/<section class="py-section"[^>]*id="stellen"/);
+    // Nur der Rhythmus und die Klasse des Tonwechsels (E-031, section.module.css): Papier, keine Fläche, kein Trenner
+    expect(html).toMatch(/<section class="py-section [^" ]*ton[^" ]*" data-ton="papier"[^>]*id="stellen"/);
     expect(html).not.toMatch(/<section class="[^"]*bg-surface-2/);
     expect(html).not.toContain('data-zeichnung="leitungstrenner"');
     expect(html).toContain(`aria-label="${live.length} offene Stellen"`);

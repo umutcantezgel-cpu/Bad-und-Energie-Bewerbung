@@ -8,6 +8,7 @@ import { ContactOptions } from '@/components/site/ContactOptions';
 import { CardLink } from '@/components/ui/Card';
 import { TextLink } from '@/components/ui/TextLink';
 import { Etikettkasten } from '@/components/zeichnung/Etikettkasten';
+import { RohrAkzent } from '@/components/zeichnung/RohrAkzent';
 import { breitestesStueckEm } from '@/components/einsatzgebiet/titel';
 import { ANSPRECHPARTNER } from '@/components/jobs/stelle/stelle-text';
 import { geschuetzt, type Kasten, type Kopfzeile, type Satz, type SeitenBasis, type ThemaKarte } from '@/lib/themen/text';
@@ -20,13 +21,14 @@ export const titelId = (id: string) => `${id}-titel`;
 /**
  * Abschnittskopf der Themenseiten: SectionHeader der Startseite (Etikett, h2 in Bricolage, Lead), die h2 nach ihrem
  * breitesten Wort auf die Spalte gesetzt („Kündigungsfrist,“ bricht bei 320 px nicht im Wort), wie auf den Ortsseiten.
- * Seit E-029 ohne Rohrklammer: Etikett und h2 tragen den Kopf; `klammer` bleibt für die Aufrufer, wirkt aber nicht.
+ * Mit `klammer` fasst die Rohrklammer die h2 (E-031, K-003.2: zurück an den Abschnittsköpfen).
  */
-export function Kopf({ kopf, className }: { kopf: Kopfzeile; klammer?: boolean; className?: string }) {
+export function Kopf({ kopf, klammer = false, className }: { kopf: Kopfzeile; klammer?: boolean; className?: string }) {
   return (
     <SectionHeader
       id={titelId(kopf.id)}
       eyebrow={kopf.etikett}
+      klammer={klammer}
       className={cn(styles.abschnittskopf, className)}
       title={
         <span className={styles.passend} style={{ '--stueck': breitestesStueckEm(kopf.heading).toFixed(3) } as CSSProperties}>
@@ -52,29 +54,30 @@ export function Saetze({ saetze, lead = false }: { saetze: readonly Satz[]; lead
 }
 
 /**
- * Abschnitt mit Kopf und Inhalt. Abschnitte trennt der Flächenwechsel (Papier, Wand, Navy); folgen zwei Abschnitte im
- * selben Ton, setzt `trenner` eine feine Linie an die Oberkante (seit E-029 statt des Leitungstrenners; die Lage des
- * Knicks, z. B. "62%", gibt es nicht mehr und wird übergangen).
+ * Abschnitt mit Kopf und Inhalt. Abschnitte trennt der Flächenwechsel (Papier, Wand, Navy; seit E-031 mit runden oberen
+ * Ecken); folgen zwei Abschnitte im selben Ton, setzt `trenner` den Leitungstrenner an die Oberkante (E-031: S-Bogen
+ * statt der feinen Linie aus E-029; `trenner` als Zeichenkette ist die Lage des Bogens, z. B. "62%").
  */
 export function Abschnitt({
   kopf,
   tone = 'papier',
   trenner,
+  klammer = false,
   children,
   className,
 }: {
   kopf: Kopfzeile;
   tone?: SectionTone;
   trenner?: boolean | string;
-  /** Entfällt mit E-029 (keine Rohrklammer mehr); bleibt für die Aufrufer. */
+  /** Rohrklammer an der h2 (E-031). */
   klammer?: boolean;
   children?: ReactNode;
   className?: string;
 }) {
   return (
-    <Section id={kopf.id} tone={tone} className={trenner ? styles.linie : undefined} aria-labelledby={titelId(kopf.id)}>
+    <Section id={kopf.id} tone={tone} trenner={trenner} aria-labelledby={titelId(kopf.id)}>
       <Container className={cn('flex flex-col gap-section-sm', className)}>
-        <Kopf kopf={kopf} />
+        <Kopf kopf={kopf} klammer={klammer} />
         {children}
       </Container>
     </Section>
@@ -96,6 +99,7 @@ export function Kaestenband({ kopf, kaesten }: { kopf: Kopfzeile; kaesten: reado
         <ul className={cn(styles.kaesten, kaesten.length === 3 ? styles.kaestenDrei : styles.kaestenVier, !mitSatz && styles.kaestenKurz)}>
           {kaesten.map((kasten) => (
             <li key={kasten.titel} className={styles.kasten}>
+              <RohrAkzent />
               <Etikettkasten icon={kasten.icon} className="whitespace-normal">
                 {kasten.titel}
               </Etikettkasten>
@@ -135,7 +139,7 @@ export function ThemenAbgaenge({ karten, label }: { karten: readonly ThemaKarte[
             </span>
             <div className={styles.abgangText}>
               <h3 className="text-title-3 text-brand">
-                <CardLink href={karte.href} className="after:rounded-none focus-visible:after:outline-3 focus-visible:after:-outline-offset-3">
+                <CardLink href={karte.href} className="after:rounded-2 focus-visible:after:outline-3 focus-visible:after:-outline-offset-3">
                   {karte.name}
                 </CardLink>
               </h3>

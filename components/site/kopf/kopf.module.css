@@ -34,13 +34,15 @@
   position: relative;
 }
 
-/* Beim Scrollen trennt eine Linie im Strich der Zeichnung (3 px, Haar) den Kopf vom Inhalt */
+/* Beim Scrollen trennt eine Linie im Strich der Zeichnung (3 px, Haar) den Kopf vom Inhalt; seit E-031 wie der
+   Rohrakzent mit runden Enden im Seitenrand statt hart von Kante zu Kante */
 .kopf[data-scrolled]::after {
   content: "";
   position: absolute;
-  inset-inline: 0;
+  inset-inline: var(--rand);
   top: 100%;
   height: var(--m-strich);
+  border-radius: var(--radius-voll);
   background-color: var(--line);
   pointer-events: none;
 }

@@ -19,16 +19,20 @@ export interface InitiativbandProps {
 
 /**
  * Initiativband der Stellenliste (Navy, wie das Schlussband der Startseite): links „Initiativ bewerben“ mit
- * der roten Hauptaktion dieser Ansicht, in die Vorlauf und Rücklauf von oben münden; rechts der persönliche
+ * der roten Hauptaktion dieser Ansicht, in die Vorlauf und Rücklauf münden (seit E-031 beginnen sie rund neben der
+ * Überschrift); rechts der persönliche
  * Draht zu Sabri Demir mit Telefon, WhatsApp und E-Mail (feste Reihenfolge, WCAG 3.2.6).
  * Die Initiativbewerbung (INITIATIVE_APPLY_PATH) bleibt der Weg, wenn keine Stelle passt.
  */
 export function Initiativband({ auchMoeglich }: InitiativbandProps) {
   return (
-    <Section tone="inverse" aria-labelledby="initiativ" className={styles.band}>
+    <Section tone="inverse" aria-labelledby="initiativ">
       <Container className="grid gap-12 lg:grid-cols-12 lg:gap-x-8">
         <div className="lg:col-span-7">
           <div className={styles.bandText}>
+            {/* Vorlauf und Rücklauf beginnen neben der Überschrift rund und münden im Knopf (E-031) */}
+            <span className={cn(styles.leitung, styles.vorlauf)} aria-hidden="true" />
+            <span className={cn(styles.leitung, styles.ruecklauf)} aria-hidden="true" />
             <h2 id="initiativ" className="text-title-1 text-brand">
               {INITIATIV.titel}
             </h2>
@@ -48,9 +52,7 @@ export function Initiativband({ auchMoeglich }: InitiativbandProps) {
               </p>
             ) : null}
           </div>
-          <div data-primary-cta="" className={cn(styles.anschluss, 'mt-8')}>
-            <span className={cn(styles.leitung, styles.vorlauf)} aria-hidden="true" />
-            <span className={cn(styles.leitung, styles.ruecklauf)} aria-hidden="true" />
+          <div data-primary-cta="" className={styles.anschluss}>
             <Link href={INITIATIVE_APPLY_PATH} className={cn(styles.aktion, 'rounded-1')} data-motion="druck">
               {INITIATIV.knopf}
               <Icon name="arrow-right" size="md" />

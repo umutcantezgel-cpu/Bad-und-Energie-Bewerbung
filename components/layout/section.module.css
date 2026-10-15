@@ -1,0 +1,45 @@
+/*
+ * Tonwechsel der Abschnitte (E-031, KERN 1.3 K-008: Tiefe durch Flächen, nie durch Verläufe oder Schatten): Folgt
+ * ein Abschnitt einem Abschnitt in einem anderen Ton (Papier, Wand, Band), hat er oben runde Ecken (--radius-3). Damit
+ * die Ecken die Fläche des vorigen Abschnitts zeigen und nicht die der Seite, malt der vorige einen Streifen seiner
+ * Fläche (--radius-3 hoch) unter den Anfang des nächsten. Gleicher Ton nacheinander: keine Ecken (dort trennt der
+ * Leitungstrenner). Der Ton steht als data-ton am Abschnitt (components/layout/Section.tsx). Dazwischen dürfen bis zu
+ * zwei leere Sprungmarken stehen (<span id> der alten Anker auf der Startseite, ohne Höhe).
+ */
+
+/* Papier deckt (wie Wand und Band): sonst schiene der Streifen des vorigen Abschnitts durch die ganze Oberkante */
+.ton[data-ton="papier"] {
+  background-color: var(--surface);
+}
+
+.ton[data-ton="papier"] + .ton:not([data-ton="papier"]),
+.ton[data-ton="papier"] + span:empty + .ton:not([data-ton="papier"]),
+.ton[data-ton="papier"] + span:empty + span:empty + .ton:not([data-ton="papier"]),
+.ton[data-ton="wand"] + .ton:not([data-ton="wand"]),
+.ton[data-ton="wand"] + span:empty + .ton:not([data-ton="wand"]),
+.ton[data-ton="wand"] + span:empty + span:empty + .ton:not([data-ton="wand"]),
+.ton[data-ton="band"] + .ton:not([data-ton="band"]),
+.ton[data-ton="band"] + span:empty + .ton:not([data-ton="band"]),
+.ton[data-ton="band"] + span:empty + span:empty + .ton:not([data-ton="band"]) {
+  position: relative;
+  border-start-start-radius: var(--radius-3);
+  border-start-end-radius: var(--radius-3);
+}
+
+.ton[data-ton="papier"]:has(+ .ton:not([data-ton="papier"]), + span:empty + .ton:not([data-ton="papier"]), + span:empty + span:empty + .ton:not([data-ton="papier"])),
+.ton[data-ton="wand"]:has(+ .ton:not([data-ton="wand"]), + span:empty + .ton:not([data-ton="wand"]), + span:empty + span:empty + .ton:not([data-ton="wand"])),
+.ton[data-ton="band"]:has(+ .ton:not([data-ton="band"]), + span:empty + .ton:not([data-ton="band"]), + span:empty + span:empty + .ton:not([data-ton="band"])) {
+  position: relative;
+}
+
+.ton[data-ton="papier"]:has(+ .ton:not([data-ton="papier"]), + span:empty + .ton:not([data-ton="papier"]), + span:empty + span:empty + .ton:not([data-ton="papier"]))::after,
+.ton[data-ton="wand"]:has(+ .ton:not([data-ton="wand"]), + span:empty + .ton:not([data-ton="wand"]), + span:empty + span:empty + .ton:not([data-ton="wand"]))::after,
+.ton[data-ton="band"]:has(+ .ton:not([data-ton="band"]), + span:empty + .ton:not([data-ton="band"]), + span:empty + span:empty + .ton:not([data-ton="band"]))::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  height: var(--radius-3);
+  background-color: inherit;
+  pointer-events: none;
+}

@@ -7,6 +7,7 @@ import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
 import { ContactOptions } from '@/components/site/ContactOptions';
 import { Etikettkasten } from '@/components/zeichnung/Etikettkasten';
+import { RohrAkzent } from '@/components/zeichnung/RohrAkzent';
 import { FACTS, type FactId } from '@/lib/content/facts';
 import { FAKT_BEGLEITER, formatAirKm, formatKm, formatMin, type TextBlock, type TextSection } from '@/lib/places/text';
 import { cn } from '@/lib/utils/cn';
@@ -140,6 +141,7 @@ export function Faktenband({ section, factIds }: { section: TextSection; factIds
         <ul className={cn(styles.fakten, factIds.length >= 4 ? styles.faktenVier : styles.faktenDrei, !mitSatz && styles.faktenKurz)}>
           {factIds.map((factId, i) => (
             <li key={factId} className={styles.fakt}>
+              <RohrAkzent />
               <Etikettkasten icon={vorteilIcon(factId)} className="whitespace-normal">
                 {FACTS[factId].short}
               </Etikettkasten>

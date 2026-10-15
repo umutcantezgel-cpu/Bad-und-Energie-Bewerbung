@@ -79,10 +79,11 @@ function JobAbgang({ job, headingLevel: Heading = 'h3', className }: Omit<JobCar
         />
         <div className="grid min-w-0 flex-1 gap-y-1 md:grid-cols-[minmax(0,7fr)_minmax(0,4fr)] md:gap-x-8">
           <Heading className="text-title-3 text-brand md:col-start-1 md:row-start-1">
-            {/* Focus ring inside the row (B R1 `.zeile:focus-visible{outline-offset:-3px}`), never flush with the edge */}
+            {/* Focus ring inside the row (B R1 `.zeile:focus-visible{outline-offset:-3px}`), never flush with the edge;
+                rounded with --radius-2 (E-031) like every other ring */}
             <CardLink
               href={jobPath(job)}
-              className="after:rounded-none focus-visible:after:outline-3 focus-visible:after:-outline-offset-3"
+              className="after:rounded-2 focus-visible:after:outline-3 focus-visible:after:-outline-offset-3"
             >
               {bindSeparators(withSoftHyphens(job.shortTitle, job.titleShy))}
             </CardLink>{' '}

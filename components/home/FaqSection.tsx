@@ -1,6 +1,7 @@
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
 import { Disclosure } from '@/components/ui/Disclosure';
+import { RohrAkzent } from '@/components/zeichnung/RohrAkzent';
 import { getFaqItems } from '@/lib/content/faq';
 import { SectionHeader } from './SectionHeader';
 import { FAQ_KOPF } from './woche/abschnitte-text';
@@ -25,7 +26,8 @@ export function FaqSection() {
           lead={FAQ_KOPF.einleitung}
           className="lg:col-span-5"
         />
-        <div className="border-t-(length:--m-strich) border-brand lg:col-span-7">
+        <div className="relative lg:col-span-7">
+          <RohrAkzent />
           {items.map((item) => (
             <Disclosure key={item.id} name="faq" summary={<span className="text-pretty">{item.question}</span>}>
               <p className="max-w-prose">{item.answer}</p>

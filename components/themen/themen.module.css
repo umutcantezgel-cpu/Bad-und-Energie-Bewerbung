@@ -1,7 +1,7 @@
 /*
  * Themenseiten (E-028): Hub /arbeiten-bei-uns und fünf Themen als Erzählseiten im Design der Stellen- und Ortsseiten:
- * Navy-Seitenkopf mit der Zeichnung der Seite, Papier-, Wand- und Navy-Abschnitte (Flächenwechsel; zwei gleiche Töne
- * trennt eine feine Linie, E-029), Maße und Beträge in Martian Mono, Etiketten-Kästchen. Nur Rollen und Skalen aus
+ * Navy-Seitenkopf mit der Zeichnung der Seite, Papier-, Wand- und Navy-Abschnitte (Flächenwechsel mit runden oberen
+ * Ecken; zwei gleiche Töne trennt der Leitungstrenner, E-031), Maße und Beträge in Martian Mono, Etiketten-Kästchen. Nur Rollen und Skalen aus
  * app/styles/theme.css.
  */
 
@@ -55,11 +55,6 @@
 
 .passend {
   font-size: min(var(--text-title-1), calc(96cqi / var(--stueck)));
-}
-
-/* Zwei Abschnitte im selben Ton: feine Linie an der Oberkante statt Leitungstrenner (E-029) */
-.linie {
-  border-top: var(--m-fein) solid var(--line-strong);
 }
 
 /* ═══ Text ═══ */
@@ -382,8 +377,8 @@
   row-gap: var(--a-4);
   align-items: start;
   justify-items: start;
+  position: relative;
   padding-top: var(--a-5);
-  border-top: var(--m-strich) solid var(--brand);
 }
 
 .kaestenKurz .kasten {
@@ -425,10 +420,48 @@
   }
 }
 
-/* ═══ Themenliste (Kopf des Hubs, seit E-029 ohne Vorlauf und Rücklauf): je Thema Kästchen, Leitlinie, Kennwert ═══ */
+/* ═══ Verteiler (Kopf des Hubs, E-031): Heizkreisverteiler in der Vorderansicht, darunter die Themen als Liste ═══ */
 .verteiler {
+  display: grid;
+  row-gap: var(--a-5);
   width: 100%;
   max-width: 32rem;
+}
+
+/* Am Handy nur die Liste (der Knopf bleibt nah am Kopf); die Zeichnung ab 37,5em */
+.verteilerBild {
+  display: none;
+}
+
+@media (min-width: 37.5em) {
+  .verteilerBild {
+    display: block;
+    width: 100%;
+    max-width: 17rem;
+  }
+}
+
+/* Kreisschilder: je Kreis ein Kästchen mit dem Zeichen des Themas, mittig unter seinem Abgang */
+.verteilerSchilder {
+  position: relative;
+  display: block;
+  height: var(--a-5);
+}
+
+.verteilerSchild {
+  position: absolute;
+  top: 0;
+  left: calc(var(--lage) * 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--a-5);
+  height: var(--a-5);
+  border: var(--m-kontur) solid var(--brand);
+  border-radius: var(--radius-1);
+  background-color: var(--surface);
+  color: var(--brand);
+  transform: translateX(-50%);
 }
 
 .verteilerListe {
@@ -443,19 +476,8 @@
   display: grid;
   grid-template-columns: fit-content(64%) minmax(var(--a-3), 1fr) auto;
   align-items: center;
-  padding-block: var(--a-2);
+  padding-block: var(--a-1);
   border-bottom: var(--m-fein) solid var(--line-strong);
-}
-
-@media (min-width: 37.5em) {
-  .verteilerKreis {
-    padding-block: var(--a-3);
-  }
-
-  .verteilerKasten {
-    min-height: var(--a-7);
-    padding: var(--a-2) var(--a-3);
-  }
 }
 
 .verteilerKasten {
@@ -468,6 +490,7 @@
   min-height: var(--a-6);
   padding: var(--a-1) var(--a-2);
   border: var(--m-kontur) solid var(--brand);
+  border-radius: var(--radius-1);
   background-color: var(--surface);
 }
 
@@ -484,151 +507,6 @@
   font-size: var(--text-callout);
   font-weight: 500;
   white-space: nowrap;
-}
-
-/* ═══ Gehaltsleiter (Kopf der Gehaltsseite): Spannen auf einer Euro-Skala ═══ */
-.leiter {
-  display: grid;
-  gap: var(--a-3);
-  width: 100%;
-  max-width: 34rem;
-}
-
-.leiterListe {
-  display: grid;
-  gap: var(--a-5);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.leiterZeile {
-  display: grid;
-  gap: var(--a-2);
-}
-
-.leiterSpur {
-  position: relative;
-  display: block;
-  height: var(--a-6);
-  /* Planpapier: senkrechte Haarlinien an jedem vollen Tausender (--teile = Abschnitte der Skala) */
-  background-image: repeating-linear-gradient(
-    90deg,
-    var(--line) 0 1px,
-    transparent 1px calc(100% / var(--teile))
-  );
-  border-right: 1px solid var(--line);
-}
-
-.leiterPaar {
-  position: absolute;
-  top: 50%;
-  left: calc(var(--von) * 100%);
-  width: calc((var(--bis) - var(--von)) * 100%);
-  height: calc(var(--paar) + var(--m-strich) * 2);
-  transform: translateY(-50%);
-  border-top: var(--m-strich) solid var(--vorlauf);
-  border-bottom: var(--m-strich) solid var(--ruecklauf);
-}
-
-/* Flansche an Anfang und Ende der Spanne */
-.leiterPaar::before,
-.leiterPaar::after {
-  content: "";
-  position: absolute;
-  top: calc(var(--a-1) * -1 - var(--m-strich));
-  bottom: calc(var(--a-1) * -1 - var(--m-strich));
-  width: var(--m-strich);
-  border-radius: var(--radius-voll);
-  background-color: var(--brand);
-}
-
-.leiterPaar::before {
-  left: calc(var(--m-strich) * -1);
-}
-
-.leiterPaar::after {
-  right: calc(var(--m-strich) * -1);
-}
-
-.leiterBetrag {
-  position: absolute;
-  top: 50%;
-  left: calc(var(--bis) * 100% + var(--a-3));
-  transform: translateY(-50%);
-  padding-inline: var(--a-1);
-  background-color: var(--surface);
-  font-size: var(--text-callout);
-  font-weight: 500;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-.leiterBetragLinks {
-  left: auto;
-  right: calc((1 - var(--von)) * 100% + var(--a-3));
-}
-
-@media (min-width: 64em) {
-  .leiterBetrag {
-    font-size: var(--text-lead);
-  }
-}
-
-.leiterKopf {
-  margin-bottom: var(--a-2);
-}
-
-.leiterSkala {
-  position: relative;
-  height: calc(var(--a-3) + var(--a-2) + 1.2em);
-  font-size: var(--text-footnote);
-}
-
-/* Maßlinie mit Endstrichen wie die Maßkette */
-.leiterMass {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: var(--a-3);
-  border-inline: var(--m-strich) solid var(--brand);
-}
-
-.leiterMass::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: var(--m-strich);
-  transform: translateY(-50%);
-  background-color: var(--brand);
-}
-
-.leiterMarke {
-  position: absolute;
-  top: calc(var(--a-3) + var(--a-2));
-  left: calc(var(--lage) * 100%);
-  transform: translateX(-50%);
-  font-stretch: 75%;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-.leiterMarke:nth-child(2) {
-  transform: none;
-}
-
-.leiterMarke:last-child {
-  transform: translateX(-100%);
-}
-
-/* Unter 30em (480 px) nur jede zweite Marke: Die Haarlinien des Planpapiers zeigen die übrigen Tausender */
-@media (max-width: 29.99em) {
-  .leiterMarkeBreit {
-    display: none;
-  }
 }
 
 /* ═══ Zeitkette (Kopf der Seite „Der Betrieb“): Haus und Maßkette 1926 → 2026 ═══ */
@@ -781,7 +659,7 @@
   }
 }
 
-/* ═══ Laufzettel (Kopf „Diskret wechseln“, seit E-029 statt Absperrung): drei Zeilen Typografie ═══ */
+/* ═══ Laufzettel (Kopf „Diskret wechseln“): drei Zeilen Typografie, seit E-031 mit Absperrung vor dem Arbeitgeber ═══ */
 .laufzettel {
   display: grid;
   margin: 0;
@@ -818,6 +696,22 @@
   color: var(--ink-2);
 }
 
+/* Absperrung vor „Dein Arbeitgeber“ (E-031): kurze Leitung mit geschlossenem Kugelhahn vor dem Wert; reicht die
+   Breite nicht, rückt der Wert als Ganzes in die nächste Zeile (statt mitten im Namen umzubrechen) */
+.laufwertAbgesperrt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--a-2);
+}
+
+.absperrLeitung {
+  flex: none;
+  width: var(--a-7);
+  height: var(--a-5);
+  overflow: visible;
+}
+
 /* ═══ Gehalt: Spannen je Stelle ═══ */
 .spannen {
   display: grid;
@@ -840,11 +734,6 @@
   gap: var(--a-5);
 }
 
-.spanneBetrag {
-  font-size: var(--text-title-2);
-  white-space: nowrap;
-}
-
 .spanneText {
   display: flex;
   flex-direction: column;
@@ -865,8 +754,8 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--a-3);
+  position: relative;
   padding-top: var(--a-5);
-  border-top: var(--m-strich) solid var(--brand);
 }
 
 .kaestchen [data-zeichnung="etikettkasten"],
@@ -902,8 +791,8 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--a-3);
+  position: relative;
   padding-top: var(--a-5);
-  border-top: var(--m-strich) solid var(--brand);
 }
 
 .positionText {
@@ -1108,11 +997,25 @@
 }
 
 .partner {
+  position: relative;
   display: grid;
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: var(--m-strich) solid var(--brand);
+}
+
+/* Rohrakzent (E-031) als Pseudoelement: in einer Liste steht kein <span>; Form wie .rohrakzent in
+   components/zeichnung/zeichnung.module.css (Gleichheit prüft components/zeichnung/__tests__/weichheit.test.ts) */
+.partner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: min(var(--a-8), 100%);
+  height: var(--m-leitung);
+  border-radius: var(--radius-voll);
+  background-color: var(--brand);
+  pointer-events: none;
 }
 
 @media (min-width: 48em) {
@@ -1211,8 +1114,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--a-2);
+  position: relative;
   padding-top: var(--a-4);
-  border-top: var(--m-strich) solid var(--brand);
 }
 
 .saeuleNummer {

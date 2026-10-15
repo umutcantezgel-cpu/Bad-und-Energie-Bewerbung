@@ -1,3 +1,4 @@
+import { RohrAkzent } from '@/components/zeichnung/RohrAkzent';
 import { FACTS } from '@/lib/content/facts';
 import { payLabel } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/registry';
@@ -32,9 +33,10 @@ export function SalaryCard({ job, size = 'gross', className }: SalaryCardProps) 
   const zusatz = lohnZusatz(job);
   return (
     <div
-      className={cn('flex max-w-sm flex-col gap-2 border-t-(length:--m-strich) border-brand pt-4', className)}
+      className={cn('relative flex max-w-sm flex-col gap-2 pt-4', className)}
       data-stelle-lohn=""
     >
+      <RohrAkzent />
       <p className="text-etikett text-ink-2">Bezahlung</p>
       <p className={cn('text-brand', size === 'gross' ? 'text-title-1' : 'text-title-2')}>{label}</p>
       {zusatz ? <p className="text-body text-ink">{zusatz}</p> : null}
