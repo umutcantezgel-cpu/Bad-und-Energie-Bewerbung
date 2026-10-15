@@ -4,10 +4,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GET as llmsFull } from '@/app/llms-full.txt/route';
 import { GET as llms } from '@/app/llms.txt/route';
 import { regionalband } from '@/components/apply/seite/seite-text';
-import { HERO, HERO_RADIUS_LABEL, HERO_STATS, homeDescription } from '@/components/home/content';
+import { HERO, HERO_RADIUS_LABEL, HERO_STATS, heroLead, heroZweitzeile, homeDescription } from '@/components/home/content';
 import { Hero } from '@/components/home/Hero';
 import { WUNSCH_OPTIONEN, ZUSAGEN } from '@/components/home/vorteile/vorteile-text';
-import { ALLTAG } from '@/components/jobs/liste/inhalt-text';
+import { alltagWoche } from '@/components/jobs/liste/inhalt-text';
 import { listenUnterzeile, listenZeichnung } from '@/components/jobs/liste/liste-text';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS, FACT_IDS } from '@/lib/content/facts';
@@ -83,7 +83,9 @@ describe('Keine festen Arbeitszeiten in Fakten, Stellen und Texten (B28)', () =>
   it('Startseite, /jobs, /bewerbung und OG-Bild: keine Uhrzeit als Arbeitszeit', () => {
     const texte = [
       HERO.title,
-      HERO.titleSecondLine,
+      heroZweitzeile(getActiveJobs()),
+      heroZweitzeile([]),
+      heroLead(getActiveJobs()),
       HERO_RADIUS_LABEL,
       ...HERO_STATS.flatMap((s) => [s.value, s.label]),
       homeDescription(getActiveJobs()),
@@ -91,9 +93,10 @@ describe('Keine festen Arbeitszeiten in Fakten, Stellen und Texten (B28)', () =>
       ...WUNSCH_OPTIONEN.map((w) => w.label),
       ...ZUSAGEN.flatMap((z) => [z.titel, z.text, z.mass ?? '']),
       ...listenUnterzeile(getActiveJobs()),
-      JSON.stringify(listenZeichnung()),
-      ALLTAG.woche.titel,
-      ALLTAG.woche.text,
+      JSON.stringify(listenZeichnung(getActiveJobs())),
+      alltagWoche(getActiveJobs()).titel,
+      alltagWoche(getActiveJobs()).text,
+      alltagWoche([]).text,
       JSON.stringify(regionalband(getActiveJobs())),
       ...getActiveJobs().map((job) => JSON.stringify(regionalband([job]))),
       ...ogHomeText().texts,

@@ -13,12 +13,13 @@ import {
   ABLAUF_VARIANTEN,
   ALLTAG,
   VERGLEICH,
+  alltagWoche,
   stellenanzeigeLabel,
   stellenprofil,
   vergleichEinleitung,
 } from '@/components/jobs/liste/inhalt-text';
 import { GEBIET_LINK, LISTEN_EINLEITUNG, LISTEN_ORTE } from '@/components/jobs/liste/liste-text';
-import { FACTS } from '@/lib/content/facts';
+import { FACTS, JE_NACH_STELLE } from '@/lib/content/facts';
 import { getFaqItems } from '@/lib/content/faq';
 import { DISCRETION_PROMISE, getProcessIntro, getProcessSteps, type ProcessAudience } from '@/lib/content/process';
 import { REGION } from '@/lib/content/region';
@@ -63,6 +64,10 @@ const render = (element: ReactElement) => renderToStaticMarkup(element);
 const KORPUS = normal(
   [
     ...Object.values(FACTS).flatMap((fact) => [fact.short, fact.long, fact.value ?? '', fact.label ?? '']),
+    // Sammelflächen (lib/content/facts.ts offenBei): ein für eine Stellenart offener Fakt mit Stellenbezug davor
+    ...Object.values(FACTS)
+      .filter((fact) => fact.offenFuer)
+      .map((fact) => `${JE_NACH_STELLE.charAt(0).toUpperCase()}${JE_NACH_STELLE.slice(1)} ${fact.long.charAt(0).toLowerCase()}${fact.long.slice(1)}`),
     REGION.headline,
     REGION.summary,
     REGION.milestone.text,
@@ -96,7 +101,7 @@ const EIGENE = [
   ...saetze(vergleichEinleitung(JOBS)),
   ...JOBS.map((job) => normal(stellenanzeigeLabel(job))),
   ALLTAG.etikett,
-  ALLTAG.woche.titel,
+  alltagWoche(JOBS).titel,
   ALLTAG.betrieb.titel,
   ALLTAG.orte.titel,
   ALLTAG.orte.einleitung,
@@ -112,7 +117,7 @@ const EIGENE = [
 /** Die neuen Abschnitte, so wie die Seite sie rendert. */
 const NEU = {
   vergleich: render(createElement(Stellenvergleich, { jobs: JOBS })),
-  einsatzgebiet: render(createElement(Einsatzgebiet)),
+  einsatzgebiet: render(createElement(Einsatzgebiet, { jobs: JOBS })),
   ablauf: render(createElement(Ablauf)),
 };
 
@@ -191,9 +196,18 @@ describe('Stellenvergleich: Aufgaben, Voraussetzungen und „Lohn auf Anfrage“
 
 describe('Arbeitsalltag und Einsatzgebiet', () => {
   it('Arbeitszeit, Betrieb und Orte im Wortlaut von FACTS und REGION (flexibel, keine Uhrzeit; B28)', () => {
-    expect(ALLTAG.woche.titel).toBe('Arbeitszeit');
-    expect(normal(ALLTAG.woche.text)).toBe(`${FACTS.flexibleHours.long} ${FACTS.noUnpaidOvertime.long} ${FACTS.noWeekendOnCall.long}`);
-    expect(ALLTAG.woche.text).not.toMatch(/\d:\d|Feierabend|pünktlich/i);
+    const woche = alltagWoche(JOBS);
+    expect(woche.titel).toBe('Arbeitszeit');
+    // Sammelfläche (Runde 3): Büro (S5) und Schülerpraktikum (S4) stehen in der Liste, die Arbeitszeit mit Stellenbezug
+    expect(JOBS.some((job) => job.category === 'buero')).toBe(true);
+    expect(normal(woche.text)).toBe(`Je nach Stelle flexible Arbeitszeiten. ${FACTS.noUnpaidOvertime.long} ${FACTS.noWeekendOnCall.long}`);
+    expect(sichtbar(NEU.einsatzgebiet)).toContain('Je nach Stelle flexible Arbeitszeiten.');
+    expect(sichtbar(NEU.einsatzgebiet)).not.toContain(`${FACTS.flexibleHours.long} ${FACTS.noUnpaidOvertime.long}`);
+    // Ohne Stelle einer offenen Kategorie ohne Zusatz, nur mit solchen ohne den Satz
+    const ohneOffene = JOBS.filter((job) => !['buero', 'praktikum'].includes(job.category));
+    expect(normal(alltagWoche(ohneOffene).text)).toBe(`${FACTS.flexibleHours.long} ${FACTS.noUnpaidOvertime.long} ${FACTS.noWeekendOnCall.long}`);
+    expect(normal(alltagWoche(JOBS.filter((job) => job.category === 'buero')).text)).toBe(`${FACTS.noUnpaidOvertime.long} ${FACTS.noWeekendOnCall.long}`);
+    for (const stellen of [JOBS, ohneOffene, []]) expect(alltagWoche(stellen).text).not.toMatch(/\d:\d|Feierabend|pünktlich/i);
     expect(normal(ALLTAG.betrieb.text)).toBe(REGION.milestone.text);
     expect(ALLTAG.orte.liste.map((ort) => [ort.name, normal(ort.entfernung), normal(ort.fahrzeit)])).toEqual(
       REGION.locations.map((ort) => [ort.name, `${ort.distanceKm} km`, `ca. ${ort.commuteMinutes} Min.`]),
@@ -258,7 +272,7 @@ describe('/jobs: Seitentitel und Faktenregel (V6-G1)', () => {
     };
     const MARKEN: Record<string, RegExp> = {
       radius35: /35[\s -]km/,
-      flexibleHours: /Flexible Arbeitszeiten/,
+      flexibleHours: /[Ff]lexible Arbeitszeiten/,
       noFarAssembly: /Fernmontage/,
       noCvNeeded: /Lebenslauf/,
       apply60s: /60[\s ]Sekunden/,

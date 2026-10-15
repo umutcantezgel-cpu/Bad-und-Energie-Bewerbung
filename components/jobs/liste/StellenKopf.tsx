@@ -48,7 +48,8 @@ export function StellenZeichnung({ heizkreis }: { heizkreis: ListenMass }) {
 /**
  * Kopf der Stellenliste (R5-JOBS-01): Pfad, dann der gemeinsame Seitenkopf in der Variante `erzaehl` wie der
  * Einstieg der Startseite – Papier links mit Etikett, h1, Rohrklammer-Unterzeile und „Jetzt bewerben“, Navy
- * rechts (mobil oben) mit dem Einsatzradius im Heizkreis und dem Maß 30 Tage. Server-Komponente ohne Bewegung.
+ * rechts (mobil oben) mit dem Einsatzradius im Heizkreis und dem Maß 30 Tage (je nach Stelle, solange der Urlaub für eine
+ * Stelle der Liste offen ist). Server-Komponente ohne Bewegung.
  *
  * Der Pfad steht über dem Kopf (Breadcrumbs: „Pfad über dem Seitenkopf“); das BreadcrumbList-Markup der Seite
  * entspricht ihm (app/jobs/__tests__/seo.test.ts). Ab 64em reicht die Navy-Fläche durch die Pfadleiste bis
@@ -56,7 +57,7 @@ export function StellenZeichnung({ heizkreis }: { heizkreis: ListenMass }) {
  */
 export function StellenKopf({ jobs, titel }: StellenKopfProps) {
   const [satz1, satz2] = listenUnterzeile(jobs);
-  const { heizkreis, masse } = listenZeichnung();
+  const { heizkreis, masse } = listenZeichnung(jobs);
 
   return (
     <>

@@ -3,7 +3,8 @@ import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
 import { geraetTitel } from '@/lib/zeichnung/geraete/titel';
 import { FACTS, isFactActive } from '@/lib/content/facts';
 import { PROCESS_STEPS } from '@/lib/content/process';
-import { HERO, HERO_RADIUS_LABEL, HERO_STATS, type HeroStat } from '../content';
+import type { Job } from '@/lib/jobs/registry';
+import { HERO, HERO_RADIUS_LABEL, heroStats, type HeroStat } from '../content';
 
 /**
  * Texte des Einstiegs (R3-HOME-01), nur aus belegten Quellen gebaut: content.ts (HERO, HERO_STATS),
@@ -76,10 +77,14 @@ export function jahreskette(now: Date): Jahreskette | null {
  */
 export const RADIUS_ETIKETT = HERO_RADIUS_LABEL;
 
-/** Die drei Maße am Haus in fester Reihenfolge (HERO_STATS: 35 km, 30, 1926). */
-export function einstiegMasse(): Record<'radius' | 'urlaub' | 'gruendung', HeroStat> {
+/**
+ * Die drei Maße am Haus in fester Reihenfolge (HERO_STATS: 35 km, 30, 1926), mit Stellenbezug am Namen, solange ein Fakt
+ * für eine der gezeigten Stellen offen ist (heroStats: „Tage Urlaub je nach Stelle“).
+ */
+export function einstiegMasse(stellen: readonly Pick<Job, 'category'>[]): Record<'radius' | 'urlaub' | 'gruendung', HeroStat> {
+  const stats = heroStats(stellen);
   const byId = (id: HeroStat['factId']) => {
-    const stat = HERO_STATS.find((s) => s.factId === id);
+    const stat = stats.find((s) => s.factId === id);
     if (!stat) throw new Error(`HERO_STATS ohne ${id}`);
     return stat;
   };

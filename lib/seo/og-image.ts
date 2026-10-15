@@ -1,7 +1,8 @@
-import { HERO, HERO_RADIUS_LABEL, HERO_STATS } from '@/components/home/content';
+import { HERO, HERO_RADIUS_LABEL, heroStats, heroZweitzeile } from '@/components/home/content';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
 import { jobMetaTags, jobPath, payLabel } from '@/lib/jobs/format';
+import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import type { Job } from '@/lib/jobs/schema';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 
@@ -87,14 +88,19 @@ export interface OgHomeText extends OgFrameText {
   radius: OgMeasure;
 }
 
-/** Content of the root share image: the hero of the home page (HERO, HERO_STATS, facts). */
-export function ogHomeText(): OgHomeText {
-  const stats = HERO_STATS.map((stat) => ({ value: plain(stat.value), name: stat.label }));
-  const index = Math.max(0, HERO_STATS.findIndex((stat) => stat.factId === 'radius35'));
+/**
+ * Content of the root share image: the hero of the home page (HERO, heroZweitzeile, heroStats, facts) for the jobs that
+ * are live when it is rendered. It is the default image of every page without its own (/jobs, /bewerbung, the hubs):
+ * a fact one of those jobs leaves open (office S5, internship S4) carries „je nach Stelle“ (Prüfung E-029, Runde 3).
+ */
+export function ogHomeText(stellen: readonly Pick<Job, 'category'>[] = getActiveJobs().filter((job) => isJobLive(job, new Date()))): OgHomeText {
+  const heroStatsFuer = heroStats(stellen);
+  const stats = heroStatsFuer.map((stat) => ({ value: plain(stat.value), name: stat.label }));
+  const index = Math.max(0, heroStatsFuer.findIndex((stat) => stat.factId === 'radius35'));
   const radius = { value: stats[index].value, name: HERO_RADIUS_LABEL };
   const measures = stats.filter((_, i) => i !== index);
   const title = splitTitle(HERO.title);
-  const subline = splitSentences(HERO.titleSecondLine);
+  const subline = splitSentences(heroZweitzeile(stellen));
   const microcopy = plain(HERO.microcopy);
   const etikett = versal(OG_EYEBROW);
   return {

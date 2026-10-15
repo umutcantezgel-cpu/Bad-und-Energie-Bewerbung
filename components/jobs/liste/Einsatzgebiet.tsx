@@ -4,7 +4,8 @@ import { Section } from '@/components/layout/Section';
 import { TextLink } from '@/components/ui/TextLink';
 import { REGION } from '@/lib/content/region';
 import { cn } from '@/lib/utils/cn';
-import { ALLTAG } from './inhalt-text';
+import type { Job } from '@/lib/jobs/registry';
+import { ALLTAG, alltagWoche } from './inhalt-text';
 import { GEBIET_LINK } from './liste-text';
 import styles from './liste.module.css';
 
@@ -19,8 +20,9 @@ function saetze(text: string): string[] {
  * Startseite, darunter Arbeitszeit, Betrieb und Team und die Orte mit Entfernung und Fahrzeit (inhalt-text.ts).
  * Überschrift im Muster des SectionHeader (Etikett, h2 in Bricolage und Navy), Einleitung und Weg rechts daneben.
  */
-export function Einsatzgebiet() {
-  const { woche, betrieb, orte } = ALLTAG;
+export function Einsatzgebiet({ jobs }: { jobs: readonly Job[] }) {
+  const { betrieb, orte } = ALLTAG;
+  const woche = alltagWoche(jobs);
   return (
     <Section tone="papier" trenner="62%" aria-labelledby="einsatzgebiet">
       <Container className={styles.gebiet}>

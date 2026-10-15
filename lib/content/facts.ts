@@ -319,10 +319,11 @@ export function isFactActive(id: FactId, date: Date): boolean {
 }
 
 /**
- * Sammelflächen (Prüfung E-029, Runde 2): Seiten und Dateien, die über mehrere Stellen zugleich sprechen (Ortsseiten
- * und ihre Descriptions, /jobs, /bewerbung ohne Stelle, Themenseiten, llms.txt). Ein Fakt mit `offenFuer` steht dort
- * nur mit Stellenbezug („je nach Stelle“) oder gar nicht, solange eine gezeigte Stelle in einer offenen Kategorie
- * liegt. Die Stellenseite selbst sperrt ihn schon über das Schema (lib/jobs/schema.ts).
+ * Sammelflächen (Prüfung E-029, Runde 2 und 3): Seiten und Dateien, die über mehrere Stellen zugleich sprechen (die
+ * Startseite / mit Description, h1, Einleitung und Maßen, das Standard-Teilen-Bild /opengraph-image, Ortsseiten und
+ * ihre Descriptions, /jobs, /bewerbung ohne Stelle, Themenseiten, llms.txt). Ein Fakt mit `offenFuer` steht dort nur
+ * mit Stellenbezug („je nach Stelle“) oder gar nicht, solange eine gezeigte Stelle in einer offenen Kategorie liegt.
+ * Die Stellenseite selbst sperrt ihn schon über das Schema (lib/jobs/schema.ts).
  *
  * Ergebnis: die gezeigten Stellen, für die der Fakt offen ist; leer heißt, er gilt für alle.
  */

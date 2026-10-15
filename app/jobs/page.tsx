@@ -76,7 +76,7 @@ export default function JobsPage() {
 
       <Stellenvergleich jobs={jobs} />
 
-      <Einsatzgebiet />
+      <Einsatzgebiet jobs={jobs} />
 
       <Ablauf />
 

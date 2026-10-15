@@ -1,6 +1,6 @@
 import { INITIATIVE_APPLY_PATH } from '@/lib/apply/params';
 import { COMPANY } from '@/lib/content/company';
-import { FACTS } from '@/lib/content/facts';
+import { FACTS, JE_NACH_STELLE, offenBei } from '@/lib/content/facts';
 import type { Job } from '@/lib/jobs/registry';
 
 /**
@@ -13,6 +13,8 @@ import type { Job } from '@/lib/jobs/registry';
  *   Gehaltsspanne der Fachkräfte; seit E-030 nennt keine Seite mehr einen Betrag);
  * - „Lohn auf Anfrage.“ (Fakt payOnRequest) und „Flexible Arbeitszeiten.“ (Fakt flexibleHours) stehen in der Unterzeile;
  * - 30 Tage stehen als Maß an der Zeichnung; „35 km“ kehrt nur in REGION.headline (Einsatzgebiet) wieder;
+ * - Die Liste zeigt alle offenen Stellen (Sammelfläche, lib/content/facts.ts): Arbeitszeit und Urlaub tragen „je nach
+ *   Stelle“, solange sie für eine davon offen sind (Büro S5, Schülerpraktikum S4; Prüfung E-029, Runde 3);
  * - 1926 steht in der Einleitung (Fakt founded1926), darum nicht als Maß.
  */
 
@@ -32,11 +34,19 @@ export function listenEtikett(anzahl: number): string {
 /**
  * Unterzeile mit Rohrklammer (zwei Sätze, je eine Zeile). „Lohn auf Anfrage.“ (Fakt payOnRequest, E-030), wenn eine
  * Stelle der Liste etwas zur Bezahlung sagt; sonst die Marke „Ehrliches Handwerk.“ (Zweitzeile der Startseite). Der
- * zweite Satz ist der Fakt flexibleHours, wie in der h1 der Startseite.
+ * zweite Satz ist der Fakt flexibleHours wie in der h1 der Startseite: „Je nach Stelle flexible Arbeitszeiten.“, solange
+ * er für eine Stelle der Liste offen ist; für keine belegt, „Keine Fernmontage.“ (gilt für den Betrieb).
  */
-export function listenUnterzeile(jobs: readonly Pick<Job, 'pay'>[]): [string, string] {
+export function listenUnterzeile(jobs: readonly Pick<Job, 'pay' | 'category'>[]): [string, string] {
   const mitLohn = jobs.some((job) => job.pay === 'auf-anfrage');
-  return [mitLohn ? `${FACTS.payOnRequest.short}.` : 'Ehrliches Handwerk.', FACTS.flexibleHours.long];
+  const offen = offenBei('flexibleHours', jobs).length;
+  const arbeitszeit =
+    offen === 0
+      ? FACTS.flexibleHours.long
+      : offen < jobs.length
+        ? `${JE_NACH_STELLE.charAt(0).toUpperCase()}${JE_NACH_STELLE.slice(1)} ${FACTS.flexibleHours.long.charAt(0).toLowerCase()}${FACTS.flexibleHours.long.slice(1)}`
+        : `${FACTS.noFarAssembly.short}.`;
+  return [mitLohn ? `${FACTS.payOnRequest.short}.` : 'Ehrliches Handwerk.', arbeitszeit];
 }
 
 /**
@@ -77,9 +87,14 @@ const RADIUS_MASS: ListenMass = { wert: schuetzeZahlen(FACTS.radius35.value ?? '
 /**
  * Zeichnung des Kopfs: im Heizkreis der Einsatzradius 35 km (Fakt radius35), daneben das Maß 30 Tage Urlaub (Fakt
  * vacation30). Bis 2026-10-14 stand im Heizkreis die Gehaltsspanne der Fachkräfte; seit E-030 gibt es keinen Betrag.
+ * Ist der Urlaub für eine Stelle der Liste offen (Büro S5), heißt das Maß „Tage Urlaub je nach Stelle“ wie im Hub;
+ * für keine belegt, entfällt es.
  */
-export function listenZeichnung(): { heizkreis: ListenMass; masse: readonly ListenMass[] } {
-  return { heizkreis: RADIUS_MASS, masse: [URLAUB_MASS] };
+export function listenZeichnung(jobs: readonly Pick<Job, 'category'>[]): { heizkreis: ListenMass; masse: readonly ListenMass[] } {
+  const offen = offenBei('vacation30', jobs).length;
+  if (offen === 0) return { heizkreis: RADIUS_MASS, masse: [URLAUB_MASS] };
+  if (offen === jobs.length) return { heizkreis: RADIUS_MASS, masse: [] };
+  return { heizkreis: RADIUS_MASS, masse: [{ ...URLAUB_MASS, name: `${URLAUB_MASS.name} ${JE_NACH_STELLE}` }] };
 }
 
 /**

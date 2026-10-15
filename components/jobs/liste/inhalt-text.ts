@@ -1,5 +1,5 @@
 import { bindSeparators } from '@/components/jobs/text';
-import { FACTS } from '@/lib/content/facts';
+import { FACTS, JE_NACH_STELLE, offenBei } from '@/lib/content/facts';
 import { getProcessSteps } from '@/lib/content/process';
 import { REGION } from '@/lib/content/region';
 import { jobCategoryLabels, jobPath, payLabel } from '@/lib/jobs/format';
@@ -98,16 +98,28 @@ export interface Ort {
 }
 
 /**
+ * Arbeitszeit für die Stellen der Liste (Fakten flexibleHours, noUnpaidOvertime, noWeekendOnCall): „Je nach Stelle
+ * flexible Arbeitszeiten.“, solange die Arbeitszeit für eine davon offen ist (Büro S5, Schülerpraktikum S4;
+ * Sammelfläche, Prüfung E-029, Runde 3); für keine belegt, ohne den Satz.
+ */
+export function alltagWoche(jobs: readonly Pick<Job, 'category'>[]): { titel: string; text: string } {
+  const offen = offenBei('flexibleHours', jobs).length;
+  const flexibel =
+    offen === 0
+      ? `${FACTS.flexibleHours.long} `
+      : offen < jobs.length
+        ? `${JE_NACH_STELLE.charAt(0).toUpperCase()}${JE_NACH_STELLE.slice(1)} ${FACTS.flexibleHours.long.charAt(0).toLowerCase()}${FACTS.flexibleHours.long.slice(1)} `
+        : '';
+  return { titel: 'Arbeitszeit', text: zusammen(`${flexibel}${FACTS.noUnpaidOvertime.long} ${FACTS.noWeekendOnCall.long}`) };
+}
+
+/**
  * Abschnitt Einsatzgebiet (Bestand: REGION.headline als h2, REGION.summary als Einleitung, Weg zur Karte), dazu
- * die Arbeitszeit (Fakten flexibleHours, noUnpaidOvertime, noWeekendOnCall), Betrieb und Team (REGION.milestone mit employees15)
+ * die Arbeitszeit (alltagWoche), Betrieb und Team (REGION.milestone mit employees15)
  * und die Orte mit Entfernung und Fahrzeit bis Wetzlar (REGION.locations aus lib/data/locations.ts).
  */
 export const ALLTAG = Object.freeze({
   etikett: 'Arbeitsalltag und Einsatzgebiet',
-  woche: Object.freeze({
-    titel: 'Arbeitszeit',
-    text: zusammen(`${FACTS.flexibleHours.long} ${FACTS.noUnpaidOvertime.long} ${FACTS.noWeekendOnCall.long}`),
-  }),
   betrieb: Object.freeze({
     titel: 'Betrieb und Team',
     text: zusammen(REGION.milestone.text),

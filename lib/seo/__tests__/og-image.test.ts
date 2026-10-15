@@ -14,19 +14,27 @@ const ROOT = path.resolve(__dirname, '../../..');
 
 describe('root share image text (hero of the home page)', () => {
   const text = ogHomeText();
+  const ohneOffene = ogHomeText(getActiveJobs().filter((job) => !['buero', 'praktikum'].includes(job.category)));
 
   it('breaks the h1 after its first word and the subline after each sentence', () => {
     expect(splitTitle('SHK-Jobs in Wetzlar.')).toEqual(['SHK-Jobs', 'in Wetzlar.']);
     expect(splitSentences('Ehrliches Handwerk. Flexible Arbeitszeiten.')).toEqual(['Ehrliches Handwerk.', 'Flexible Arbeitszeiten.']);
     expect(text.title).toEqual(['SHK-Jobs', 'in Wetzlar.']);
-    expect(text.subline).toEqual(['Ehrliches Handwerk.', 'Flexible Arbeitszeiten.']);
+    // Standardbild von /, /jobs, /bewerbung und den Hubs (Sammelflächen, Runde 3): Büro und Praktikum sind live
+    expect(text.subline).toEqual(['Ehrliches Handwerk.', 'Je nach Stelle flexible Arbeitszeiten.']);
+    expect(ohneOffene.subline).toEqual(['Ehrliches Handwerk.', 'Flexible Arbeitszeiten.']);
   });
 
   it('takes every figure from the fact registry', () => {
     // Leitmotiv „35 km“ (E-027): der Radius mit Hinweislinie zum Zirkel im Giebel, wie im Einstieg; keine Uhrzeit
     expect(text.radius).toEqual({ value: FACTS.radius35.value, name: 'Einsatzgebiet rund um Wetzlar' });
     expect(text.measures.map((m) => m.value)).toEqual([FACTS.vacation30.value, FACTS.founded1926.value]);
-    expect(text.measures.map((m) => m.name)).toEqual(['Tage Urlaub', 'Gegründet']);
+    // 30 Tage Urlaub sind fürs Büro offen (S5): mit Stellenbezug am Namen, ohne offene Stelle ohne
+    expect(text.measures.map((m) => m.name)).toEqual(['Tage Urlaub je nach Stelle', 'Gegründet']);
+    expect(ohneOffene.measures.map((m) => m.name)).toEqual(['Tage Urlaub', 'Gegründet']);
+    // Kein für eine live Stelle offener Fakt ohne Bezug im Bild
+    expect(text.texts).not.toContain(FACTS.flexibleHours.long);
+    expect(text.texts).not.toContain(FACTS.vacation30.label);
     expect(text.texts.join(' ')).not.toMatch(/13:30|Feierabend|pünktlich/i);
     expect(text.etikett).toBe('SEIT 1926 · WETZLAR');
     expect(text.microcopy).toContain(`${FACTS.apply60s.value} Sekunden`);

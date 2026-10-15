@@ -62,22 +62,32 @@ describe('Texte der Stellenliste (nur aus Fakten und Stellendaten)', () => {
   it('„Lohn auf Anfrage.“, sobald eine Stelle der Liste etwas zur Bezahlung sagt (E-030); sonst die Marke', () => {
     const am = getJobById('anlagenmechaniker-shk')!;
     const praktikum = getJobById('schuelerpraktikum-shk')!;
+    const buero = getJobById('buerofachkraft')!;
     expect(listenUnterzeile([am])).toEqual(['Lohn auf Anfrage.', 'Flexible Arbeitszeiten.']);
     expect(listenUnterzeile([praktikum, am])[0]).toBe(`${FACTS.payOnRequest.short}.`);
     // Nur das Schülerpraktikum (kein Wort zu Geld) oder keine Stelle: „Ehrliches Handwerk.“
-    expect(listenUnterzeile([praktikum])).toEqual(['Ehrliches Handwerk.', 'Flexible Arbeitszeiten.']);
     expect(listenUnterzeile([])[0]).toBe('Ehrliches Handwerk.');
     expect(listenUnterzeile([am])[1]).toBe(FACTS.flexibleHours.long);
+    // Sammelfläche (Runde 3): Arbeitszeit fürs Büro (S5) und das Schülerpraktikum (S4) offen, also mit Stellenbezug;
+    // für keine Stelle der Liste belegt, die Zusage, die für den Betrieb gilt
+    expect(listenUnterzeile([praktikum, am])[1]).toBe('Je nach Stelle flexible Arbeitszeiten.');
+    expect(listenUnterzeile([buero, am])).toEqual(['Lohn auf Anfrage.', 'Je nach Stelle flexible Arbeitszeiten.']);
+    expect(listenUnterzeile([praktikum])).toEqual(['Ehrliches Handwerk.', `${FACTS.noFarAssembly.short}.`]);
+    expect(listenUnterzeile(getActiveJobs())).toEqual(['Lohn auf Anfrage.', 'Je nach Stelle flexible Arbeitszeiten.']);
   });
 
   it('Heizkreis: der Einsatzradius statt eines Betrags (E-030, bis 2026-10-12 13:30), Maße aus dem Faktenregister', () => {
-    const { heizkreis, masse } = listenZeichnung();
+    const am = getJobById('anlagenmechaniker-shk')!;
+    const { heizkreis, masse } = listenZeichnung([am]);
     expect(heizkreis.wert.replaceAll(NBSP, ' ')).toBe(FACTS.radius35.value);
     expect(heizkreis.name).toBe('Einsatzradius');
     // Der Radius steht nicht doppelt als Maß
     expect(masse.map((mass) => mass.wert.replaceAll(NBSP, ' '))).toEqual([FACTS.vacation30.value]);
     expect(masse.map((mass) => mass.name)).toEqual([FACTS.vacation30.label]);
-    expect(JSON.stringify(listenZeichnung())).not.toMatch(/\d:\d|Feierabend|€|Gehalt/);
+    // Sammelfläche (Runde 3): 30 Tage Urlaub fürs Büro offen (S5), das Maß mit Stellenbezug wie im Hub; nur Büro: kein Maß
+    expect(listenZeichnung(getActiveJobs()).masse.map((mass) => mass.name)).toEqual([`${FACTS.vacation30.label} je nach Stelle`]);
+    expect(listenZeichnung([getJobById('buerofachkraft')!]).masse).toEqual([]);
+    for (const jobs of [[am], getActiveJobs()]) expect(JSON.stringify(listenZeichnung(jobs))).not.toMatch(/\d:\d|Feierabend|€|Gehalt/);
     // Tarif nur für die Stellen, die ihn belegen: nicht fürs Büro (S5), nichts zu Geld beim Praktikum (S4)
     expect(LISTEN_EINLEITUNG).toContain('Fachkräfte, Azubis und Quereinsteiger bezahlen wir über Tarif');
     expect(LISTEN_EINLEITUNG).not.toMatch(/€|\d\.\d{3}/);
@@ -148,7 +158,7 @@ describe('/jobs (R5-JOBS-01)', () => {
     expect(plain(/<h1[^>]*>(.*?)<\/h1>/.exec(html)![1])).toBe('Offene Stellen in Wetzlar und Umgebung');
     expect(html).toContain('data-seitenkopf="erzaehl"');
     expect(html).toContain('data-zeichnung="heizkreis"');
-    const { heizkreis } = listenZeichnung();
+    const { heizkreis } = listenZeichnung(getActiveJobs());
     expect(plain(html)).toContain(`${heizkreis.wert.replaceAll(NBSP, ' ')} ${heizkreis.name}`);
     // Keine Arbeitszeit-Aussage im sichtbaren Text (Bürozeiten im Fuß sind markiert, check-claims)
     expect(claimsInHtml(html)).toEqual([]);

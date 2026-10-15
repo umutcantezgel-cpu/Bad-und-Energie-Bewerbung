@@ -3,8 +3,9 @@ import { Icon } from '@/components/icons';
 import { APPLY_PATH, SHORT_APPLY_LABEL } from '@/components/site/nav';
 import { DauerSteuerung } from '@/components/zeichnung/bewegung/DauerSteuerung';
 import { Aussengeraet } from '@/components/zeichnung/technik/Aussengeraet';
+import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
-import { HERO } from '../content';
+import { HERO, heroLead, heroZweitzeile } from '../content';
 import { EINZELHEIT_TEXT, EINZELHEIT_TITEL, KREISLAUF_SATZ, RADIUS_ETIKETT, ZWEITWEG, einstiegMasse, jahreskette, ortsmarke } from './einstieg-text';
 import { Szene } from './Szene';
 import { mitZiffern } from './ziffern';
@@ -16,7 +17,7 @@ function plakatzeilen(titel: string): [string, string] {
   return i < 0 ? [titel, ''] : [titel.slice(0, i), titel.slice(i + 1)];
 }
 
-/** „Ehrliches Handwerk. Flexible Arbeitszeiten.“ → je Satz eine Zeile. */
+/** „Ehrliches Handwerk. Je nach Stelle flexible Arbeitszeiten.“ → je Satz eine Zeile. */
 function saetze(text: string): string[] {
   return text.split(/(?<=\.)\s+/);
 }
@@ -32,7 +33,7 @@ function Sonne() {
 }
 
 export interface EinstiegProps {
-  /** Stichtag für das Jubiläum (E-START-002); die Seite rendert stündlich neu (revalidate). */
+  /** Stichtag für das Jubiläum (E-START-002) und die offenen Stellen; die Seite rendert stündlich neu (revalidate). */
   now: Date;
   /** Id der h1; der Abschnitt zeigt mit aria-labelledby darauf. */
   titleId: string;
@@ -53,8 +54,10 @@ export interface EinstiegProps {
  * (WCAG 2.4.3, 1.3.2), und beim schrittweisen Aufbau des HTML rutscht die Einzelheit nicht nach (CLS, K-013).
  */
 export function Einstieg({ now, titleId }: EinstiegProps) {
+  // Die Startseite spricht über alle offenen Stellen (Sammelfläche): Fakten, die für eine davon offen sind, mit Bezug
+  const stellen = getActiveJobs().filter((job) => isJobLive(job, now));
   const [zeile1, zeile2] = plakatzeilen(HERO.title);
-  const masse = einstiegMasse();
+  const masse = einstiegMasse(stellen);
   const jahre = jahreskette(now);
   // „Einsatzgebiet“ / „rund um Wetzlar“: zwei Zeilen am Maß (nie „rund“ allein am Zeilenende)
   const [radiusWort, ...radiusRest] = RADIUS_ETIKETT.split(' ');
@@ -72,7 +75,7 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
             <span>{zeile1}</span> <span>{zeile2}</span>
           </span>{' '}
           <span className={cn(styles.titelZweit, 'text-title-3')}>
-            {saetze(HERO.titleSecondLine).map((satz, i) => (
+            {saetze(heroZweitzeile(stellen)).map((satz, i) => (
               <span key={satz}>
                 {i > 0 ? ' ' : null}
                 {satz}
@@ -132,7 +135,7 @@ export function Einstieg({ now, titleId }: EinstiegProps) {
         <span className={cn(styles.leitung, styles.schachtVlUnten)} data-motion="erdleitung" aria-hidden="true" />
 
         <div className={styles.handlung}>
-          <p className={styles.lead}>{HERO.lead}</p>
+          <p className={styles.lead}>{heroLead(stellen)}</p>
           <div className={styles.aktion} data-primary-cta="">
             <span className={styles.abzweig} data-motion="erdleitung" aria-hidden="true" />
             <Link href={APPLY_PATH} className={cn(styles.bewerben, 'font-display rounded-1')} data-motion="druck">

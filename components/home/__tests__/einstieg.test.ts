@@ -7,7 +7,8 @@ import { APPLY_PATH, PRIMARY_CTA_ATTR } from '@/components/site/nav';
 import { DAUER_IDS, MOTION_IDS } from '@/lib/motion/register';
 import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
 import { HAUSSCHNITT_RAHMEN, HEIZKOERPER_LAGE, KNOPF_LEITUNG, LEITUNGEN } from '@/lib/zeichnung/szenen/hausschnitt';
-import { HERO, HERO_STATS } from '../content';
+import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
+import { HERO, HERO_STATS, heroLead, heroStats, heroZweitzeile } from '../content';
 import { Hero } from '../Hero';
 import { EINZELHEIT_TITEL, KREISLAUF_SATZ, RADIUS_ETIKETT, vertrauenspunkte } from '../einstieg/einstieg-text';
 
@@ -25,6 +26,7 @@ const plain = (html: string) =>
 
 const render = (now: Date) => renderToStaticMarkup(createElement(Hero, { now }));
 const html2026 = render(new Date('2026-10-09T09:00:00Z'));
+const live2026 = getActiveJobs().filter((job) => isJobLive(job, new Date('2026-10-09T09:00:00Z')));
 const html2027 = render(new Date('2027-01-01T08:00:00Z'));
 const text2026 = plain(html2026);
 const szene = html2026.match(/<svg[^>]*data-szene="einstieg">([\s\S]*?)<\/svg>(?=<span)/)![1];
@@ -33,13 +35,17 @@ const szene = html2026.match(/<svg[^>]*data-szene="einstieg">([\s\S]*?)<\/svg>(?
 const AUFTAKT = ['vorlauf-haus', 'ruecklauf-haus', 'erdleitung', 'erdleitung-d', 'pfeile', 'radius-einrasten'];
 
 describe('Hero / Einstieg (R3-HOME-01, Technische Zeichnung 2.0)', () => {
-  it('genau eine h1 mit HERO.title und HERO.titleSecondLine im Wortlaut, Abschnitt zeigt darauf', () => {
+  it('genau eine h1 mit HERO.title und der Zweitzeile für die live Stellen im Wortlaut, Abschnitt zeigt darauf', () => {
     expect(html2026.match(/<h1\b/g)).toHaveLength(1);
     const h1 = html2026.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)!;
     expect(h1[0]).toContain('id="hero-title"');
-    expect(plain(h1[1]).trim()).toBe(`${HERO.title} ${HERO.titleSecondLine}`);
+    // Sammelfläche (Runde 3): Büro und Schülerpraktikum sind live, die Arbeitszeit steht mit Stellenbezug
+    expect(live2026.some((job) => job.category === 'buero')).toBe(true);
+    expect(plain(h1[1]).trim()).toBe(`${HERO.title} ${heroZweitzeile(live2026)}`);
+    expect(plain(h1[1]).trim()).toBe('SHK-Jobs in Wetzlar. Ehrliches Handwerk. Je nach Stelle flexible Arbeitszeiten.');
     expect(html2026).toMatch(/^<section aria-labelledby="hero-title"/);
-    expect(text2026).toContain(HERO.lead);
+    expect(text2026).toContain(heroLead(live2026));
+    expect(text2026).toContain('Je nach Stelle bezahlt über Tarif');
     expect(text2026).toContain(HERO.microcopy.replace(/\u00a0/g, ' '));
   });
 
@@ -72,11 +78,15 @@ describe('Hero / Einstieg (R3-HOME-01, Technische Zeichnung 2.0)', () => {
   it('zeigt die drei Maße aus HERO_STATS als echten Text (Liste), Wert und Name getrennt; der Hausschnitt ist dekorativ', () => {
     const masse = html2026.match(/<ul class="[^"]*">([\s\S]*?)<\/ul>/)![1];
     const eintraege = [...masse.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/g)].map((m) => plain(m[1]).trim());
+    const stats = heroStats(live2026);
     expect(eintraege).toEqual([
-      `${HERO_STATS[0].value.replace(/ /g, ' ')} ${RADIUS_ETIKETT}`,
-      `${HERO_STATS[1].value} ${HERO_STATS[1].label}`,
-      expect.stringMatching(new RegExp(`^${HERO_STATS[2].value} ${HERO_STATS[2].label}`)),
+      `${stats[0].value.replace(/\u00a0/g, ' ')} ${RADIUS_ETIKETT}`,
+      `${stats[1].value} ${stats[1].label}`,
+      expect.stringMatching(new RegExp(`^${stats[2].value} ${stats[2].label}`)),
     ]);
+    // 30 Tage Urlaub sind fürs Büro offen (S5): mit Stellenbezug am Namen
+    expect(eintraege[1]).toBe('30 Tage Urlaub je nach Stelle');
+    expect(stats.map((s) => s.factId)).toEqual(HERO_STATS.map((s) => s.factId));
     expect(eintraege[0]).toBe('35 km Einsatzgebiet rund um Wetzlar');
     const { breite, hoehe } = HAUSSCHNITT_RAHMEN;
     expect(html2026).toMatch(new RegExp(`<svg class="[^"]*" viewBox="0 0 ${breite} ${hoehe}" aria-hidden="true" focusable="false" data-szene="einstieg">`));

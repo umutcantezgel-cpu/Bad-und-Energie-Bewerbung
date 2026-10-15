@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { FACTS } from '@/lib/content/facts';
 import { PROCESS_STEPS } from '@/lib/content/process';
-import { HERO, HERO_STATS } from '../content';
+import { getActiveJobs } from '@/lib/jobs/registry';
+import { HERO, HERO_STATS, heroStats } from '../content';
 import {
   EINZELHEIT_TEXT,
   EINZELHEIT_TITEL,
@@ -53,9 +54,13 @@ describe('Einstieg-Texte (R3-HOME-01)', () => {
     expect(EINZELHEIT_TITEL).not.toMatch(/Bosch|Compress|540|430/);
   });
 
-  it('die drei Maße kommen unverändert aus HERO_STATS (35 km, 30, 1926), keine Uhrzeit (E-027)', () => {
-    const m = einstiegMasse();
-    expect([m.radius, m.urlaub, m.gruendung]).toEqual([...HERO_STATS]);
+  it('die drei Maße kommen aus HERO_STATS (35 km, 30, 1926), mit Stellenbezug am Namen für die gezeigten Stellen, keine Uhrzeit (E-027)', () => {
+    const live = getActiveJobs();
+    const m = einstiegMasse(live);
+    expect([m.radius, m.urlaub, m.gruendung]).toEqual([...heroStats(live)]);
+    expect(m.urlaub.label).toBe(`${HERO_STATS[1].label} je nach Stelle`);
+    const ohneOffene = einstiegMasse(live.filter((job) => !['buero', 'praktikum'].includes(job.category)));
+    expect([ohneOffene.radius, ohneOffene.urlaub, ohneOffene.gruendung]).toEqual([...HERO_STATS]);
     expect(plain(m.radius.value)).toBe('35 km');
     expect(Object.values(m).map((s) => s.value).join(' ')).not.toMatch(/\d:\d/);
     expect(RADIUS_ETIKETT).toBe('Einsatzgebiet rund um Wetzlar');

@@ -29,9 +29,10 @@ const APPLY = `In ${FACTS.apply60s.value} Sek. bewerben.`;
 
 /**
  * Urlaub und Arbeitszeit für die gezeigten Stellen: ohne Zusatz, wenn beide für jede gelten; sonst „Je nach Stelle …“
- * (Sammelfläche, lib/content/facts.ts offenBei: fürs Büro offen, fakten-abgleich S5).
+ * (Sammelfläche, lib/content/facts.ts offenBei: fürs Büro offen, fakten-abgleich S5). Auch für die Startseite
+ * (components/home/content.ts homeDescription).
  */
-function perks(liveJobs: readonly Pick<Job, 'category'>[]): { satz: string; mitFernmontage: string } {
+export function perks(liveJobs: readonly Pick<Job, 'category'>[]): { satz: string; mitFernmontage: string } {
   const offen = (['vacation30', 'flexibleHours'] as const).some((id) => offenBei(id, liveJobs).length > 0);
   if (!offen) return { satz: PERKS, mitFernmontage: `${PERKS}, ${lowerFirst(FACTS.noFarAssembly.short)}` };
   const liste = `${lowerFirst(FACTS.vacation30.short)} und ${lowerFirst(FACTS.flexibleHours.short)}`;
