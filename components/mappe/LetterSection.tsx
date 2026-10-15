@@ -2,7 +2,7 @@
 
 import { Icon } from '@/components/icons';
 import { Button, ChoiceCard, ChoiceGroup, Field, Textarea } from '@/components/ui';
-import { MAPPE_LIMITS, WORK_STYLES, type WorkStyleId } from '@/lib/mappe/options';
+import { MAPPE_LIMITS, WORK_STYLES, type WorkStyle, type WorkStyleId } from '@/lib/mappe/options';
 import { EditorSection } from './EditorSection';
 
 export interface LetterSectionProps {
@@ -10,6 +10,8 @@ export interface LetterSectionProps {
   /** Mappe-Stand: Arbeitsstil gewählt oder eigener Text. */
   done?: boolean;
   workStyleId: WorkStyleId | null;
+  /** Arbeitsstile zur Auswahl (workStylesFuer je Stellenart: Büro mit eigenem Wortlaut); Standard die der Baustelle. */
+  workStyles?: readonly WorkStyle[];
   onWorkStyleChange: (id: WorkStyleId) => void;
   /** The letter as shown in the preview (template or edited text). */
   letter: string;
@@ -23,6 +25,7 @@ export function LetterSection({
   step,
   done,
   workStyleId,
+  workStyles = WORK_STYLES,
   onWorkStyleChange,
   letter,
   edited,
@@ -42,7 +45,7 @@ export function LetterSection({
           Was zeichnet deinen Arbeitsstil aus?
         </h3>
         <ChoiceGroup labelledBy="mappe-arbeitsstil-title">
-          {WORK_STYLES.map((style) => (
+          {workStyles.map((style) => (
             <ChoiceCard
               key={style.id}
               title={style.title}

@@ -1,9 +1,18 @@
 import { describe, expect, it } from 'vitest';
 
 import { jobIdFromParam, paramForJob } from '@/lib/apply/params';
-import { getFunnelOptions } from '@/lib/jobs/registry';
+import { getFunnelOptions, getJobById } from '@/lib/jobs/registry';
 import { getMappeJobOptions, getMappeRecipient } from '../context';
-import { SKILL_OPTIONS, WORK_STYLES } from '../options';
+import {
+  BUERO_SKILL_OPTIONS,
+  BUERO_WORK_STYLES,
+  SKILL_OPTIONS,
+  WORK_STYLES,
+  getWorkStyle,
+  skillOptionen,
+  workStyleIdFromValue,
+  workStylesFuer,
+} from '../options';
 import { buildCoverLetter, buildSubject, roleForText, type LetterJob } from '../template';
 
 const recipient = getMappeRecipient();
@@ -103,5 +112,44 @@ describe('buildSubject', () => {
     expect(buildSubject(jobs.find((j) => j.category === 'ausbildung')!)).toMatch(/^Bewerbung um die Ausbildung/);
     expect(buildSubject(null, true)).toBe('Initiativbewerbung');
     expect(buildSubject(null)).toBe('Bewerbung');
+  });
+});
+
+describe('Büro (E-031, Wahrheitsfehler S5): Stärken aus den Aufgaben, Anschreiben ohne Baustelle', () => {
+  const buero = jobs.find((job) => job.category === 'buero')!;
+  const OFFEN_ODER_FREMD = /Handwerk|Baustelle|Montage|Hilti|Werkzeug|Equipment|flexib|Arbeitszeit|Urlaub|Tarif|unbefristet|Rohr|Trasse|Inbetriebnahme|Wärmepumpe/i;
+
+  it('Schwerpunkte im Büro sind die vier Aufgaben der Bürofachkraft im Wortlaut der Anzeige', () => {
+    expect([...BUERO_SKILL_OPTIONS]).toEqual([...getJobById('buerofachkraft')!.tasks]);
+    expect(skillOptionen('buero')).toBe(BUERO_SKILL_OPTIONS);
+    for (const category of ['anlagenmechaniker', 'ausbildung', 'helfer', undefined, null] as const) expect(skillOptionen(category)).toBe(SKILL_OPTIONS);
+  });
+
+  it('Arbeitsstile im Büro: dieselben Plätze, Wortlaut ohne Baustelle; gespeicherte Sätze finden zurück', () => {
+    expect(BUERO_WORK_STYLES.map((s) => s.id)).toEqual(WORK_STYLES.map((s) => s.id));
+    expect(workStylesFuer('buero')).toBe(BUERO_WORK_STYLES);
+    expect(workStylesFuer('kundendienst')).toBe(WORK_STYLES);
+    for (const style of BUERO_WORK_STYLES) {
+      expect(`${style.title} ${style.description} ${style.value}`, style.id).not.toMatch(OFFEN_ODER_FREMD);
+      expect(getWorkStyle(style.id, 'buero')).toBe(style);
+      expect(workStyleIdFromValue(style.value)).toBe(style.id);
+    }
+    expect(getWorkStyle('team')).toBe(WORK_STYLES[2]);
+  });
+
+  it('das Anschreiben fürs Büro nennt weder Handwerk noch Baustelle noch flexible Arbeitszeiten', () => {
+    for (const workStyle of [undefined, ...BUERO_WORK_STYLES.map((s) => s.value)]) {
+      for (const skills of [[], [BUERO_SKILL_OPTIONS[0]], [...BUERO_SKILL_OPTIONS]]) {
+        const letter = buildCoverLetter({ job: buero, skills, workStyle, fullName: 'Max Muster', recipient });
+        expect(letter).not.toMatch(OFFEN_ODER_FREMD);
+        expect(letter).toContain(`bewerbe ich mich als ${roleForText(buero.title)} bei der`);
+        expect(letter).toContain('Meisterbetrieb mit direkter Kommunikation');
+        if (skills.length > 0) expect(letter).toContain('Meine Schwerpunkte im Büro:');
+        if (workStyle) expect(letter).toContain(`Mein Arbeitsstil: ${workStyle}`);
+      }
+    }
+    // Die Baustelle behält ihren Wortlaut
+    const am = jobs.find((job) => job.id === 'anlagenmechaniker-shk')!;
+    expect(buildCoverLetter({ job: am, skills: [SKILL_OPTIONS[0]], workStyle: WORK_STYLES[0].value, recipient })).toContain('Als Handwerker aus der Region');
   });
 });

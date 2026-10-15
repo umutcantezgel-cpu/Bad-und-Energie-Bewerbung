@@ -126,7 +126,7 @@ export function templateLetter(state: MappeEditorState, context: MappeContext): 
     job: letterJob(state, context.jobs),
     initiative: isInitiative(state),
     skills: state.skills,
-    workStyle: getWorkStyle(state.workStyleId)?.value,
+    workStyle: getWorkStyle(state.workStyleId, selectedJob(state, context.jobs)?.category)?.value,
     fullName: state.person.name,
     recipient: context.recipient,
   });
@@ -159,7 +159,7 @@ export function toMappe(state: MappeEditorState, context: MappeContext): Mappe {
   return {
     coverLetter: resolveCoverLetter(state, context).trim(),
     skills: state.skills.map((skill) => skill.trim()).filter(Boolean),
-    workStyle: getWorkStyle(state.workStyleId)?.value,
+    workStyle: getWorkStyle(state.workStyleId, selectedJob(state, context.jobs)?.category)?.value,
     careerStations: state.careerStations
       .filter((station) => !isCareerStationEmpty(station))
       .map((station) => ({

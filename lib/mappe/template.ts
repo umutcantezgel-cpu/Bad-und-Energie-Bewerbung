@@ -55,21 +55,31 @@ function sentence(text: string): string {
   return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
 }
 
+/**
+ * Büro (E-031, Wahrheitsfehler S5): kein Handwerker, keine Baustelle, kein Werkzeug und keine flexiblen Arbeitszeiten –
+ * die sind fürs Büro offen (Fakt flexibleHours, offenFuer). Der Wunsch nennt nur, was der Betrieb belegt: direkter
+ * Draht zur Geschäftsführung (Fakt directLine), Meisterbetrieb (Fakt founded1926).
+ */
+const BUERO_WERTE = 'Ich schätze einen verlässlichen Meisterbetrieb mit direkter Kommunikation und kurzen Wegen.';
+
 export function buildCoverLetter(input: CoverLetterInput): string {
   const { job, initiative = false, recipient } = input;
   const skills = clean(input.skills);
   const workStyle = input.workStyle?.trim();
   const name = input.fullName?.trim();
   const isApprenticeship = !initiative && job?.category === 'ausbildung';
+  const isOffice = !initiative && job?.category === 'buero';
 
   const profile = [
-    workStyle ? `Mein handwerklicher Arbeitsstil: ${sentence(workStyle)}` : null,
-    skills.length > 0 ? `Meine praktischen Fachschwerpunkte: ${sentence(skills.join(', '))}` : null,
+    workStyle ? `${isOffice ? 'Mein Arbeitsstil' : 'Mein handwerklicher Arbeitsstil'}: ${sentence(workStyle)}` : null,
+    skills.length > 0 ? `${isOffice ? 'Meine Schwerpunkte im Büro' : 'Meine praktischen Fachschwerpunkte'}: ${sentence(skills.join(', '))}` : null,
   ].filter((line): line is string => line !== null);
 
-  const values = isApprenticeship
-    ? 'Für meine Ausbildung wünsche ich mir einen verlässlichen Meisterbetrieb mit direkter Kommunikation, modernem Equipment und flexiblen Arbeitszeiten.'
-    : 'Als Handwerker aus der Region schätze ich einen verlässlichen Meisterbetrieb mit direkter Kommunikation, modernem Equipment und flexiblen Arbeitszeiten.';
+  const values = isOffice
+    ? BUERO_WERTE
+    : isApprenticeship
+      ? 'Für meine Ausbildung wünsche ich mir einen verlässlichen Meisterbetrieb mit direkter Kommunikation, modernem Equipment und flexiblen Arbeitszeiten.'
+      : 'Als Handwerker aus der Region schätze ich einen verlässlichen Meisterbetrieb mit direkter Kommunikation, modernem Equipment und flexiblen Arbeitszeiten.';
 
   const paragraphs = [
     recipient.salutation,
