@@ -4,10 +4,13 @@ import { FACTS, offenBei } from '@/lib/content/facts';
 import { getActiveJobs } from '@/lib/jobs/registry';
 import { findClaims } from '../../../scripts/qa/check-claims.mjs';
 import { DEFAULT_WHATSAPP_MESSAGE } from '@/lib/utils/whatsapp-utils';
+import OEPNV_DATEI from '../data/oepnv.json';
 import { OEPNV_QUELLE } from '../oepnv';
+import { OSM_LINK, OSM_NAMENSNENNUNG, OSM_QUELLENZEILE } from '../osm';
 import { getHubKreise, getKreisById, getKreise, getPlaceById, getPublishedPlaces } from '../registry';
 import {
   BERUFSSCHULE_QUELLENZEILE,
+  OEPNV_QUELLENLINKS,
   OEPNV_QUELLENZEILE,
   fahrzeugName,
   formatMeter,
@@ -442,6 +445,12 @@ describe('Bus und Bahn und Berufsschule (Plan §B): Antworten aus den Daten', ()
 
   it('Quellenzeilen: Namensnennung und Bearbeitung wörtlich aus oepnv.json, Fundstellen der Zuständigkeit, nichts im Ortstext', () => {
     expect(OEPNV_QUELLENZEILE).toContain(OEPNV_QUELLE.namensnennung);
+    // Fußwege aus OpenStreetMap: eigene Nennung mit ODbL, Wortlaut aus oepnv.json, Links in der Reihenfolge des Texts
+    expect(OSM_NAMENSNENNUNG).toBe(OEPNV_DATEI.fusswege.daten);
+    expect(OEPNV_QUELLENZEILE.endsWith(`Fußwege: ${OSM_NAMENSNENNUNG}.`)).toBe(true);
+    expect(OEPNV_QUELLENLINKS).toEqual([{ label: OEPNV_QUELLE.lizenz, href: OEPNV_QUELLE.lizenzUrl }, OSM_LINK]);
+    expect(OSM_LINK.href).toBe('https://www.openstreetmap.org/copyright');
+    expect(OSM_QUELLENZEILE).toContain(OSM_NAMENSNENNUNG);
     expect(OEPNV_QUELLENZEILE).toContain(OEPNV_QUELLE.lizenz);
     expect(OEPNV_QUELLENZEILE).toContain('Auf das Gebiet um Wetzlar und einen Werktag gefiltert und mit eigenem Routing ausgewertet.');
     expect(OEPNV_QUELLENZEILE).not.toContain('scripts/');

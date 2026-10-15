@@ -37,6 +37,8 @@ import {
   getPlacePageText,
   type PlacePageText,
 } from '@/lib/places/text';
+import { OSM_LINK, OSM_NAMENSNENNUNG } from '@/lib/places/osm';
+import { OEPNV_QUELLE } from '@/lib/places/oepnv';
 import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
 import type { PageGraph } from '@/lib/seo/graph';
 import { DEFAULT_OG_IMAGE } from '@/lib/seo/og-image';
@@ -295,5 +297,43 @@ describe('Ortsseite: Metadaten, Canonical und Graph (Stichproben und alle Orte)'
     const html = renderToStaticMarkup(OrtSeite({ place, text: getPlacePageText(place, { jobs }), jobs }));
     expect(visibleCrumbs(html)).toEqual(['Startseite', 'Einsatzgebiet', 'Weilrod']);
     expect(html).toContain(`href="${EINSATZGEBIET_PATH}#hochtaunuskreis"`);
+  });
+});
+
+/**
+ * Namensnennung der OpenStreetMap-Daten (ODbL 1.0 § 4.3, OSMF Attribution Guidelines; Prüfung E-029, Runde 3): Jede
+ * Seite unter /einsatzgebiet zeigt aus OpenStreetMap abgeleitete Werte (Strecke und Fahrzeit über OSRM, Lage über
+ * Nominatim, Fußwege). Jede nennt darum „© OpenStreetMap-Mitwirkende, ODbL“ als Link auf openstreetmap.org/copyright,
+ * bei Bus und Bahn getrennt von der CC-BY-Nennung des Fahrplans.
+ */
+describe('OpenStreetMap-Daten: ODbL-Namensnennung auf jeder Seite mit OSM-Werten', () => {
+  const osmLink = new RegExp(`<a href="${OSM_LINK.href.replace(/[./]/g, '\\$&')}"[^>]*>${OSM_NAMENSNENNUNG}<`);
+
+  it('Gebietsseite, jeder Kreis-Hub und jede Ortsseite', async () => {
+    const stream = await renderToReadableStream(GebietSeite({ text: getEinsatzgebietPageText({ jobs }) }));
+    await stream.allReady;
+    const seiten: [string, string][] = [['einsatzgebiet', await new Response(stream).text()]];
+    for (const kreis of getHubKreise()) seiten.push([kreis.id, renderToStaticMarkup(KreisSeite({ kreis, text: getKreisPageText(kreis, { jobs }), jobs }))]);
+    for (const place of getPublishedPlaces()) seiten.push([place.id, renderToStaticMarkup(OrtSeite({ place, text: getPlacePageText(place, { jobs }), jobs }))]);
+    expect(seiten.length).toBe(1 + getHubKreise().length + getPublishedPlaces().length);
+    for (const [id, html] of seiten) {
+      expect(html, id).toMatch(osmLink);
+      expect(plain(html), id).toContain('ODbL');
+    }
+  });
+
+  it('Bus und Bahn: CC BY 4.0 verlinkt auf die Lizenz, die Fußwege aus OpenStreetMap getrennt davon auf die ODbL-Seite', () => {
+    const mitOepnv = getPublishedPlaces().filter((place) => place.oepnv);
+    expect(mitOepnv.length).toBeGreaterThan(0);
+    for (const place of mitOepnv) {
+      const html = renderToStaticMarkup(OrtSeite({ place, text: getPlacePageText(place, { jobs }), jobs }));
+      const zeile = /<p class="[^"]*">Fahrplan für[\s\S]*?<\/p>/.exec(html)?.[0] ?? '';
+      const cc = zeile.indexOf(`href="${OEPNV_QUELLE.lizenzUrl}"`);
+      const osm = zeile.indexOf(`href="${OSM_LINK.href}"`);
+      expect(cc, place.id).toBeGreaterThan(0);
+      expect(osm, place.id).toBeGreaterThan(cc);
+      expect(plain(zeile.slice(osm)), place.id).toContain(`${OSM_NAMENSNENNUNG}`);
+      expect(plain(zeile), place.id).toMatch(/Fußwege: © OpenStreetMap-Mitwirkende, ODbL/);
+    }
   });
 });

@@ -9,8 +9,8 @@ import { Entfernungsleiste } from '@/components/zeichnung/Entfernungsleiste';
 import type { Job } from '@/lib/jobs/registry';
 import { kreisPfad, pfadItems } from '@/lib/places/jsonld';
 import { getKreisPlaces, getPublishedPlaces, type Kreis } from '@/lib/places/registry';
-import { OEPNV_QUELLE } from '@/lib/places/oepnv';
-import { OEPNV_QUELLENZEILE, ORTE_ANKER, type KreisPageText, type KreisSectionId, type TextSection } from '@/lib/places/text';
+import { OSM_LINK, OSM_QUELLENZEILE } from '@/lib/places/osm';
+import { OEPNV_QUELLENLINKS, OEPNV_QUELLENZEILE, ORTE_ANKER, type KreisPageText, type KreisSectionId, type TextSection } from '@/lib/places/text';
 import { cn } from '@/lib/utils/cn';
 import { Abschnittskopf, Absaetze, Faktenband, Kontakt, Messhinweis, Ortstabelle, Quellenzeile, bloecke, titelId } from './Bausteine';
 import { ETIKETT, leisteLegende, planBeschreibungKreis } from './einsatzgebiet-text';
@@ -100,7 +100,7 @@ export function KreisSeite({ kreis, text, jobs }: KreisSeiteProps) {
                     {oepnv.heading}
                   </h3>
                   <Absaetze blocks={oepnv.blocks} />
-                  <Quellenzeile text={OEPNV_QUELLENZEILE} lizenz={{ label: OEPNV_QUELLE.lizenz, href: OEPNV_QUELLE.lizenzUrl }} />
+                  <Quellenzeile text={OEPNV_QUELLENZEILE} links={OEPNV_QUELLENLINKS} />
                 </section>
               ) : null}
             </div>
@@ -120,6 +120,8 @@ export function KreisSeite({ kreis, text, jobs }: KreisSeiteProps) {
           <Container className="flex flex-col gap-section-sm">
             <Abschnittskopf id={titelId('orte')} eyebrow={ETIKETT.orte} title={orte.heading} />
             <Ortstabelle zeilen={text.rows} caption={`${orte.heading}, nach Strecke zum Firmensitz`} />
+            {/* Strecke, Fahrzeit und Lage aus OpenStreetMap (ODbL, lib/places/osm.ts) */}
+            <Quellenzeile text={OSM_QUELLENZEILE} links={[OSM_LINK]} />
           </Container>
         </Section>
       ) : null}

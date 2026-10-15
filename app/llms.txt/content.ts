@@ -3,6 +3,7 @@ import { applyUrl, jobMetaTags, jobUrl, payLabel } from '@/lib/jobs/format';
 import { getActiveJobs, getFunnelOptions, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
 import { istOrtIndexierbar } from '@/lib/places/indexierung';
 import { OEPNV_QUELLE } from '@/lib/places/oepnv';
+import { OSM_LINK, OSM_NAMENSNENNUNG } from '@/lib/places/osm';
 import { getHubKreise, getKreise, getKreisPlaces, getPublishedPlaces, kreisUrl, placeUrl, type Place } from '@/lib/places/registry';
 import { ANKUNFT_BETRIEB, MEASUREMENT_NOTE, formatUhr, formatUhrzeit } from '@/lib/places/text';
 import { einsatzgebietPages, themenPages } from '@/lib/seo/indexable-pages';
@@ -143,14 +144,15 @@ function busZeile(place: Place): string {
 /**
  * Abschnitt Einsatzgebiet in /llms-full.txt: je Kreis die Orte nach Strecke mit km, Minuten, Ortsseite und Bus und
  * Bahn. Nur Ortsseiten, die das Gate bestehen (E-029, Plan §B: raus aus llms.txt); mit Fahrplandaten die Namensnennung
- * nach CC BY 4.0.
+ * nach CC BY 4.0, getrennt davon die der OpenStreetMap-Daten (Strecke, Fahrzeit, Fußwege) mit ODbL und Link auf
+ * openstreetmap.org/copyright (Prüfung E-029, Runde 3).
  */
 export function einsatzgebietBlocks(now: Date = new Date()): string[] {
   const [hub] = einsatzgebietPages(now);
   const plain = (text: string) => text.replace(/\u00A0/g, ' ');
   return [
-    plain(`Gemessene Strecke und Fahrzeit zum Firmensitz, je Kreis nach Strecke. ${MEASUREMENT_NOTE} Übersicht: ${hub.url}`),
-    plain(`Bus und Bahn: späteste Verbindung mit Ankunft bis ${formatUhr(ANKUNFT_BETRIEB)} am Firmensitz an einem Werktag. Daten: ${OEPNV_QUELLE.namensnennung} (${OEPNV_QUELLE.lizenzUrl}), Stand ${OEPNV_QUELLE.stand}.`),
+    plain(`Gemessene Strecke und Fahrzeit zum Firmensitz, je Kreis nach Strecke. ${MEASUREMENT_NOTE} Daten: ${OSM_NAMENSNENNUNG} (${OSM_LINK.href}). Übersicht: ${hub.url}`),
+    plain(`Bus und Bahn: späteste Verbindung mit Ankunft bis ${formatUhr(ANKUNFT_BETRIEB)} am Firmensitz an einem Werktag. Daten: ${OEPNV_QUELLE.namensnennung} (${OEPNV_QUELLE.lizenzUrl}), Stand ${OEPNV_QUELLE.stand}. Fußwege: ${OSM_NAMENSNENNUNG} (${OSM_LINK.href}).`),
     '',
     ...getKreise().flatMap((kreis) => [
       `### ${kreis.name}${kreis.hasHub ? ` (${kreisUrl(kreis)})` : ''}`,

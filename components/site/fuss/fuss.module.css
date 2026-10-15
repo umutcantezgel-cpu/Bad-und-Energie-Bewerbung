@@ -414,6 +414,25 @@
   color: var(--ink-2);
 }
 
+/* Namensnennung der OpenStreetMap-Daten (OsmNennung) unter der Pflichtzeile */
+.osm {
+  display: block;
+  margin-top: var(--a-1);
+}
+
+.osmLink {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+}
+
+.osmLink:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-1);
+}
+
 /* ═══ Schmaler Fuß im Fokusmodus (/bewerbung…) ═══ */
 .schmal {
   display: flex;

@@ -10,6 +10,7 @@ import { APPLY_PATH, SHORT_APPLY_LABEL } from '@/components/site/nav';
 import { Masskette } from '@/components/zeichnung/Masskette';
 import { groupStats } from '@/lib/places/derive';
 import { einsatzgebietPfad, pfadItems } from '@/lib/places/jsonld';
+import { OSM_LINK, OSM_QUELLENZEILE } from '@/lib/places/osm';
 import { getHubKreise, getKreisPlaces, getKreise, kreisPath, placePath } from '@/lib/places/registry';
 import {
   ORTE_ANKER,
@@ -20,7 +21,7 @@ import {
   type PlaceRow,
   type TextSection,
 } from '@/lib/places/text';
-import { Abschnittskopf, Absaetze, Faktenband, Messhinweis, OrtsKarten, bloecke, kartenWerte, titelId } from './Bausteine';
+import { Abschnittskopf, Absaetze, Faktenband, Messhinweis, OrtsKarten, Quellenzeile, bloecke, kartenWerte, titelId } from './Bausteine';
 import { ETIKETT, VERZEICHNIS_TITEL } from './einsatzgebiet-text';
 import styles from './einsatzgebiet.module.css';
 import { GEBIET_LABEL_PRIORITY, GEBIET_MAP_DATA } from './karte';
@@ -192,6 +193,8 @@ export function GebietSeite({ text }: GebietSeiteProps) {
               </li>
             ))}
           </ul>
+          {/* Strecke, Fahrzeit und Lage aus OpenStreetMap (ODbL, lib/places/osm.ts) */}
+          <Quellenzeile text={OSM_QUELLENZEILE} links={[OSM_LINK]} />
         </Container>
       </Section>
 

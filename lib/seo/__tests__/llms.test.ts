@@ -4,6 +4,8 @@ import { GET as llms } from '@/app/llms.txt/route';
 import { COMPANY_FACT_IDS, EMPLOYER_FACT_IDS, funnelOnlyJobs, liveJobs } from '@/app/llms.txt/content';
 import { ANDERE_ABLAEUFE_TITEL, COMPANY, FACTS, FUER_FACHKRAEFTE, getProcessSteps, sammelAblauf, type FactId } from '@/lib/content';
 import type { Job } from '@/lib/jobs/registry';
+import { OEPNV_QUELLE } from '@/lib/places/oepnv';
+import { OSM_LINK, OSM_NAMENSNENNUNG } from '@/lib/places/osm';
 
 /** E-SEO-014: the short file carries the backed employer lines the old file had, all from fact ids. */
 
@@ -99,6 +101,17 @@ describe('llms.txt (E-SEO-014)', () => {
     const { varianten } = sammelAblauf([...liveJobs(new Date('2026-10-20T12:00:00Z')), ...funnelOnlyJobs()]);
     expect(varianten.map((variante) => variante.name)).toEqual(['Ausbildung', 'Quereinstieg', 'Büro', 'Schülerpraktikum']);
     expect(ablauf).toContain(`${ANDERE_ABLAEUFE_TITEL}:\n${varianten.map((variante) => `- ${variante.name}: ${variante.text}`).join('\n')}\n`);
+  });
+
+  it('llms-full.txt: OpenStreetMap data named with ODbL and the copyright link, apart from the CC BY link (Runde 3)', async () => {
+    const text = await textAt(llmsFull, '2026-10-20T12:00:00Z');
+    const gebiet = text.split('## 5. Einsatzgebiet')[1]?.split('\n## ')[0] ?? '';
+    const [strecke, bus] = gebiet.split('\n').filter((line) => line.startsWith('Gemessene Strecke') || line.startsWith('Bus und Bahn:'));
+    expect(strecke).toContain(`Daten: ${OSM_NAMENSNENNUNG} (${OSM_LINK.href}).`);
+    // Der CC-BY-Link gehört zum Fahrplan, die Fußwege aus OpenStreetMap stehen danach mit eigener Lizenz
+    expect(bus).toContain(`${OEPNV_QUELLE.namensnennung} (${OEPNV_QUELLE.lizenzUrl})`);
+    expect(bus).toMatch(new RegExp(`Fußwege: ${OSM_NAMENSNENNUNG} \\(${OSM_LINK.href.replace(/[./]/g, '\\$&')}\\)\\.$`));
+    expect(bus.indexOf('ODbL')).toBeGreaterThan(bus.indexOf(OEPNV_QUELLE.lizenzUrl));
   });
 
   it('names the anniversary in the lead sentence until 31.12.2026, not after', async () => {

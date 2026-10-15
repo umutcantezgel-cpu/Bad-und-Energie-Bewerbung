@@ -12,6 +12,7 @@ import { FooterThemen } from '../FooterThemen';
 import { OpeningHoursText } from '../OpeningHoursText';
 import { ALLE_STELLEN, FUSS_SPALTEN, KUNDEN_WEBSITE, RECHTS_LINKS, fussKontakte, pflichtzeile } from './fuss-text';
 import { FussLink } from './FussLink';
+import { OsmNennung } from './OsmNennung';
 import { Ziffern } from './Ziffern';
 import styles from './fuss.module.css';
 
@@ -122,6 +123,7 @@ export function FussVoll({ year, now = new Date() }: FussVollProps) {
 
         <p className={styles.zeile}>
           <Ziffern text={pflichtzeile(year)} />
+          <OsmNennung />
         </p>
       </Container>
     </footer>

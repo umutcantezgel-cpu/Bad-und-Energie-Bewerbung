@@ -22,6 +22,7 @@
  *   „bis 15 km Strecke“, „16 bis 25 km“, „26 bis 35 km“ (roadBandLabel); so widerspricht kein Satz der Zeichnung.
  */
 import { FACTS, JE_NACH_STELLE, offenBei, type FactId } from '@/lib/content/facts';
+import { OSM_LINK, OSM_NAMENSNENNUNG } from './osm';
 import { formatNumber } from '@/lib/jobs/format';
 import { getActiveJobs, type Job } from '@/lib/jobs/registry';
 import { fitDescription } from '@/lib/seo/descriptions';
@@ -691,10 +692,15 @@ const BEARBEITUNG = OEPNV_QUELLE.bearbeitung.replace(/\s*\([^)]*\)\s*$/, '');
 
 /**
  * Namensnennung unter Bus und Bahn: Werktag und Stand, dazu der Wortlaut aus oepnv.json (CC BY 4.0 verlangt Urheber,
- * Lizenz und Hinweis auf die Bearbeitung; den Link auf die Lizenz setzt die Seite). Die Fristen 7:30 und 7:45 Uhr nennen
- * die Antworten selbst. Steht als Quellenzeile unter den Angaben, nicht im Ortstext.
+ * Lizenz und Hinweis auf die Bearbeitung; den Link auf die Lizenz setzt die Seite). Die Fußwege stammen aus
+ * OpenStreetMap: eigene Nennung mit ODbL und Link auf openstreetmap.org/copyright (OEPNV_QUELLENLINKS; Prüfung E-029,
+ * Runde 3). Die Fristen 7:30 und 7:45 Uhr nennen die Antworten selbst. Steht als Quellenzeile unter den Angaben, nicht
+ * im Ortstext.
  */
-export const OEPNV_QUELLENZEILE = `Fahrplan für ${OEPNV_META.wochentag}, ${formatMeasuredOn(OEPNV_META.werktag)}, Datenstand ${formatMeasuredOn(FAHRPLAN_STAND.stand)}: ${OEPNV_QUELLE.namensnennung}. ${BEARBEITUNG}.`;
+export const OEPNV_QUELLENZEILE = `Fahrplan für ${OEPNV_META.wochentag}, ${formatMeasuredOn(OEPNV_META.werktag)}, Datenstand ${formatMeasuredOn(FAHRPLAN_STAND.stand)}: ${OEPNV_QUELLE.namensnennung}. ${BEARBEITUNG}. Fußwege: ${OSM_NAMENSNENNUNG}.`;
+
+/** Links der Quellenzeile von Bus und Bahn: CC BY 4.0 des Fahrplans, Urheberrecht und ODbL der Fußwege (lib/places/osm.ts). */
+export const OEPNV_QUELLENLINKS = Object.freeze([{ label: OEPNV_QUELLE.lizenz, href: OEPNV_QUELLE.lizenzUrl }, OSM_LINK]);
 
 /** Kurzform des Gesetzblatts aus dem Titel der Verordnung: „GVBl. Hessen 2026 Nr. 21“. */
 const GESETZBLATT = (() => {

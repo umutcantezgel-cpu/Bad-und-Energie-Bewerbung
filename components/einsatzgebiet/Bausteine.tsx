@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import Link from 'next/link';
 import { SectionHeader, type SectionHeaderProps } from '@/components/home/SectionHeader';
 import { Icon } from '@/components/icons';
@@ -73,27 +73,28 @@ export function Antworten({ blocks }: { blocks: readonly TextBlock[] }) {
 }
 
 /**
- * Quellenzeile unter Daten: Namensnennung und Stand, bei CC BY 4.0 mit Link auf die Lizenz (an der Stelle, an der die
- * Lizenz im Wortlaut steht). Wortlaut aus lib/places/text.ts, der ihn aus den Daten liest.
+ * Quellenzeile unter Daten: Namensnennung und Stand, mit Links an den Stellen, an denen sie im Wortlaut stehen (CC BY 4.0
+ * auf die Lizenz, die OpenStreetMap-Nennung auf openstreetmap.org/copyright). Wortlaut aus lib/places/text.ts bzw.
+ * lib/places/osm.ts, die ihn aus den Daten lesen.
  */
-export function Quellenzeile({ text, lizenz }: { text: string; lizenz?: { label: string; href: string } }) {
-  const at = lizenz ? text.indexOf(lizenz.label) : -1;
-  return (
-    <p className={styles.quelle}>
-      {lizenz && at >= 0 ? (
-        <>
-          {text.slice(0, at)}
-          <a href={lizenz.href} target="_blank" rel="noopener noreferrer" className={styles.quelleLink}>
-            {lizenz.label}
-            <span className="sr-only">{NEUER_TAB}</span>
-          </a>
-          {text.slice(at + lizenz.label.length)}
-        </>
-      ) : (
-        text
-      )}
-    </p>
-  );
+export function Quellenzeile({ text, links = [] }: { text: string; links?: readonly { label: string; href: string }[] }) {
+  // Jeder Linktext wird ab dem Ende des vorigen gesucht: Die Reihenfolge der Links ist die des Texts
+  const teile: ReactNode[] = [];
+  let ab = 0;
+  for (const link of links) {
+    const at = text.indexOf(link.label, ab);
+    if (at < 0) continue;
+    teile.push(
+      text.slice(ab, at),
+      <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className={styles.quelleLink}>
+        {link.label}
+        <span className="sr-only">{NEUER_TAB}</span>
+      </a>,
+    );
+    ab = at + link.label.length;
+  }
+  teile.push(text.slice(ab));
+  return <p className={styles.quelle}>{teile}</p>;
 }
 
 /** Hinweis zur Messung (gemeinsamer Block): klein, mit Strich links. */

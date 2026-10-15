@@ -18,9 +18,11 @@ import {
   FussVoll,
   KUNDEN_WEBSITE,
   RECHTS_LINKS,
+  NEUER_TAB,
   fussKontakte,
   pflichtzeile,
 } from '../fuss';
+import { OSM_FUSSZEILE, OSM_NAMENSNENNUNG } from '@/lib/places/osm';
 import { OpeningHoursText } from '../OpeningHoursText';
 import { StickyApplyBarClient } from '../StickyApplyBarClient';
 
@@ -175,6 +177,22 @@ describe('Stellen, Ortsliste und Fußzeile', () => {
     expect(pflichtzeile(2026)).toBe(`© 2026 ${COMPANY.legalName} · ${COMPANY.register.full} · ${COMPANY.innung}`);
     expect(vollText).toContain(COMPANY.register.full);
     expect(schmalText).toContain(COMPANY.innung);
+  });
+
+  it('nennt in beiden Füßen die OpenStreetMap-Daten mit ODbL und Link auf openstreetmap.org/copyright (Runde 3)', () => {
+    // Strecken und Fahrzeiten stehen auch auf der Startseite, /jobs und /bewerbung (Fokusmodus mit dem schmalen Fuß)
+    for (const [name, html] of [
+      ['voll', voll],
+      ['schmal', schmal],
+    ] as const) {
+      const link = /<a href="https:\/\/www\.openstreetmap\.org\/copyright"[^>]*>([\s\S]*?)<\/a>/.exec(html);
+      expect(link, name).not.toBeNull();
+      expect(link![0], name).toContain('target="_blank"');
+      expect(link![0], name).toContain('rel="noopener noreferrer"');
+      expect(plain(link![1]), name).toBe(`${OSM_NAMENSNENNUNG}${NEUER_TAB}`);
+      // Sichtbar ohne den nur vorgelesenen Hinweis auf den neuen Tab
+      expect(plain(html).replaceAll(NEUER_TAB, ''), name).toContain(OSM_FUSSZEILE);
+    }
   });
 
   it('Bewegung nur über Registerkennungen, keine lucide-Icons in den Dateien des Pakets', () => {

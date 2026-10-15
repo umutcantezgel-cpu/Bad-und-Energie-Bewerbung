@@ -24,10 +24,11 @@ import {
   placePath,
   type Place,
 } from '@/lib/places/registry';
-import { OEPNV_QUELLE } from '@/lib/places/oepnv';
+import { OSM_LINK, OSM_QUELLENZEILE } from '@/lib/places/osm';
 import {
   BERUFSSCHULE_QUELLENZEILE,
   EINSATZGEBIET_LINK_LABEL,
+  OEPNV_QUELLENLINKS,
   OEPNV_QUELLENZEILE,
   type LinkGruppe,
   type PlacePageText,
@@ -197,6 +198,8 @@ export function OrtSeite({ place, text, jobs }: OrtSeiteProps) {
               titel={`${place.name}: ${place.commute.distanceKm} km bis zum Firmensitz, auf der Skala bis 35 km mit den Orten ${kreis.dative}`}
             />
           </div>
+          {/* Strecke, Fahrzeit und Lage aus OpenStreetMap (ODbL, lib/places/osm.ts) */}
+          <Quellenzeile text={OSM_QUELLENZEILE} links={[OSM_LINK]} />
         </Container>
       </Section>
 
@@ -211,7 +214,7 @@ export function OrtSeite({ place, text, jobs }: OrtSeiteProps) {
               </div>
               {zumBetrieb ? <Fahrplan verbindung={zumBetrieb} titel={FAHRPLAN.betrieb} /> : null}
             </div>
-            <Quellenzeile text={OEPNV_QUELLENZEILE} lizenz={{ label: OEPNV_QUELLE.lizenz, href: OEPNV_QUELLE.lizenzUrl }} />
+            <Quellenzeile text={OEPNV_QUELLENZEILE} links={OEPNV_QUELLENLINKS} />
           </Container>
         </Section>
       ) : null}
