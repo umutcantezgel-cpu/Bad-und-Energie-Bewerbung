@@ -33,7 +33,7 @@ export function BueroSeite({ text, jobs }: { text: BueroPageText; jobs: readonly
         panel={<Leitstelle titel={text.leitstelle.titel} ziele={text.leitstelle.ziele} />}
       />
 
-      <Abschnitt kopf={text.aufgaben.kopf} trenner>
+      <Abschnitt kopf={text.aufgaben.kopf} trenner klammer>
         <ul className={styles.bueroSzenen} aria-label={text.aufgaben.kopf.heading}>
           {text.aufgaben.szenen.map((szene) => (
             <li key={szene.id}>
