@@ -4,7 +4,8 @@
  * Dieselben Daten zeichnen die Themenseite (components/themen/buero, inline, mit einmaligem Ablauf) und die Dateien
  * der Stellenseite (lib/zeichnung/buero/svg.ts, still). Linienarten wie die technischen Zeichnungen (KERN K-010,
  * lib/zeichnung/norm.ts): Kontur stumpf mit runden Ecken, feine und Maßlinien stumpf und spitz; keine Leitung, keine
- * Rohrfarbe, nichts fließt. Wärme nur als Fläche (`warm1` … `warm3`, Rollen --waerme-1…3 im Wärmebereich).
+ * Rohrfarbe, nichts fließt. Eine einzige Markierfläche (`markiert`, Rolle --waerme-2): Stufen der Wärmerampe trügen
+ * hier keine Bedeutung und verwässerten die Temperatur der Wärmefelder (Prüfrunde 2 A2-9).
  */
 import type { CSSProperties } from 'react';
 import { r1 } from '../norm';
@@ -21,12 +22,10 @@ export type Art =
   | 'mass'
   /** Gefüllt in der Markenrolle, ohne Strich (Punkte der Bezugslinien, Pfeilspitzen). */
   | 'voll'
-  /** Kontur 2 px auf einer Stufe der Wärmerampe. */
-  | 'warm1'
-  | 'warm2'
-  | 'warm3';
+  /** Kontur 2 px auf der Markierfläche (eine Stufe, --waerme-2): was die Szene hervorhebt. */
+  | 'markiert';
 
-export const ARTEN: readonly Art[] = ['kontur', 'konturOffen', 'fein', 'mass', 'voll', 'warm1', 'warm2', 'warm3'];
+export const ARTEN: readonly Art[] = ['kontur', 'konturOffen', 'fein', 'mass', 'voll', 'markiert'];
 
 export interface Strich {
   d: string;
@@ -53,8 +52,9 @@ export interface Gruppe {
   /** Feste Lage einer Gruppe (Glyphen im Raster 24 × 24): `translate(x y) scale(s)`. Glyphen sind Sinnbilder. */
   lage?: { x: number; y: number; s: number };
   /**
-   * Sinnbild ohne Maßstab in einer maßstäblichen Szene (Gebäude): steht nicht auf derselben Linie wie die
-   * maßstäblichen Teile, und das Schriftfeld der Szene sagt „ohne Maßstab“ (Prüfrunde 1 A1-4, B1-3).
+   * Sinnbild ohne Maßstab in einer maßstäblichen Szene (Gebäude, ein Blatt über dem Lager): steht nicht auf derselben
+   * Linie wie die maßstäblichen Teile, und das Schriftfeld der Szene sagt „ohne Maßstab“ (Prüfrunde 1 A1-4, B1-3;
+   * Prüfrunde 2 B2-4).
    */
   sinnbild?: true;
   ablauf?: Ablauf;

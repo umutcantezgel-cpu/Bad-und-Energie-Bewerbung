@@ -1,13 +1,15 @@
 /**
  * Szene „Material und Lieferungen“ (E-031, Paket W3): der Weg des Materials vom Großhandel (Halle mit Rolltor) über das
  * Lager (Europalette nach EN 13698-1 in der Seitenansicht, maßstäblich, 1 Einheit = 10 mm) zur Baustelle
- * (Giebelhaus). Über dem Lager der Lieferschein als Einzelheit (Blatt im Format A4, eigener Maßstab) mit Kästchen.
+ * (Giebelhaus). Über dem Lager der Lieferschein als Sinnbild ohne Maßstab (Blatt im Seitenverhältnis A4) mit Kästchen.
  * Keine Marke, kein Fahrzeug, keine Leitung; die Wege sind Hinweispfeile in der feinen Linie unter dem Gelände.
  *
  * Maßstäblich ist nur das Lager: Palette und Kartons stehen in einem eigenen Rahmen (Einzelheit) auf eigener Linie.
  * Halle und Haus sind Sinnbilder ohne Maßstab auf ihren eigenen Geländestücken, der Karton vor dem Haus im Maß des
  * Hauses (kleiner als die Tür); das Schriftfeld sagt es (Prüfrunde 1 A1-4, B1-3: vorher stand die maßstäbliche
- * Palette auf derselben Geländelinie wie eine 1,1 m hohe Halle).
+ * Palette auf derselben Geländelinie wie eine 1,1 m hohe Halle). Ebenso der Lieferschein: Maßstäblich wäre er 21 × 29,7
+ * Einheiten, zu klein für Zeilen, Kästchen und Häkchen; er ist darum als Sinnbild gekennzeichnet, und das Schriftfeld
+ * nennt ihn (Prüfrunde 2 B2-4: vorher 46 × 65, das 2,2-Fache, ohne Kennzeichnung neben der maßstäblichen Palette).
  *
  * Ablauf beim Sichtbarwerden (Register `buero-ablauf`): zwei Pakete wandern vom Großhandel auf die Palette, eins vom
  * Lager zur Baustelle; zuletzt bekommt der Lieferschein sein Häkchen.
@@ -31,17 +33,21 @@ const HALLE = { x: 12, breite: 110, hoehe: 110 };
 const TOR = { x: 38, breite: 58, hoehe: 64 };
 const lamellen = Array.from({ length: 9 }, (_, i) => waagerecht(TOR.x, TOR.x + TOR.breite, BODEN - TOR.hoehe + 6.4 * (i + 1))).join('');
 
-/** Europalette in der Seitenansicht (Länge 1200): Deckbrett und Querbrett, drei Klötze, Bodenbrett; Höhe 144. */
+/**
+ * Europalette in der Seitenansicht (Länge 1200), von oben: das Deckbrett durchgehend; die drei Querbretter laufen quer
+ * dazu und erscheinen nur als Abschnitte über den Klötzen (je so breit wie die Klötze, dazwischen Luft); drei Klötze;
+ * das Bodenbrett durchgehend. Höhe 144 (Prüfrunde 2 B2-5: vorher Deck- und Querbrett als ein Streifen von 44 mm).
+ */
 export const PALETTE = Object.freeze({ x: 148, laenge: e(P.laenge.mm), hoehe: e(P.hoehe.mm) });
 function paletteSeite(): string {
   const brett = e(P.brett.mm);
   const oben = BODEN - PALETTE.hoehe;
   const klotz = e(P.klotzBreite.mm);
-  const klotzOben = oben + 2 * brett;
   const lagen = [0, (PALETTE.laenge - klotz) / 2, PALETTE.laenge - klotz];
   return [
-    rechteck(PALETTE.x, oben, PALETTE.laenge, 2 * brett),
-    ...lagen.map((x) => rechteck(PALETTE.x + x, klotzOben, klotz, e(P.klotz.mm))),
+    rechteck(PALETTE.x, oben, PALETTE.laenge, brett),
+    ...lagen.map((x) => rechteck(PALETTE.x + x, oben + brett, klotz, brett)),
+    ...lagen.map((x) => rechteck(PALETTE.x + x, oben + 2 * brett, klotz, e(P.klotz.mm))),
     rechteck(PALETTE.x, BODEN - brett, PALETTE.laenge, brett),
   ].join('');
 }
@@ -70,8 +76,8 @@ export const GELAENDE = Object.freeze([
 ]);
 
 /**
- * Lieferschein als Einzelheit über dem Lager: Blatt im Seitenverhältnis A4, drei Zeilen, ein Kästchen. Groß genug, dass
- * er den Raum über den Stationen füllt; die Mitte steht über dem zweiten Paket.
+ * Lieferschein über dem Lager, Sinnbild ohne Maßstab: Blatt im Seitenverhältnis A4, drei Zeilen, ein Kästchen. Groß
+ * genug, dass er den Raum über den Stationen füllt; die Mitte steht über dem zweiten Paket.
  */
 const SCHEIN = { x: 216, y: 40, breite: 46, hoehe: (46 * BUERO_MASSE.a4.hoehe.mm) / BUERO_MASSE.a4.breite.mm };
 const SCHEIN_KAESTCHEN = { x: SCHEIN.x + 7, y: SCHEIN.y + 38, k: 13 };
@@ -121,9 +127,10 @@ export const MATERIAL: BueroSzene = Object.freeze<BueroSzene>({
         { d: `${fliesspfeil({ x: 146, y: WEG_Y }, { x: 1, y: 0 }, 7, 5)}${fliesspfeil({ x: 286, y: WEG_Y }, { x: 1, y: 0 }, 7, 5)}`, art: 'voll' },
       ],
     },
-    // Der Lieferschein über dem Lager, mit Bezugslinie auf die Palette
+    // Der Lieferschein über dem Lager, mit Bezugslinie auf die Palette (Sinnbild ohne Maßstab, Prüfrunde 2 B2-4)
     {
       id: 'lieferschein',
+      sinnbild: true,
       teile: [
         { d: strecke(SCHEIN.x + SCHEIN.breite / 2, SCHEIN.y + SCHEIN.hoehe, SCHEIN.x + SCHEIN.breite / 2, EINZELHEIT.y), art: 'mass' },
         { d: rechteck(SCHEIN.x, SCHEIN.y, SCHEIN.breite, SCHEIN.hoehe), art: 'kontur' },
@@ -135,12 +142,13 @@ export const MATERIAL: BueroSzene = Object.freeze<BueroSzene>({
       ],
     },
     // Pakete: zwei kommen vom Großhandel auf die Palette, eins geht vom Lager zur Baustelle
-    { id: 'paket-1', teile: [{ d: karton(PALETTE.x, AUF_PALETTE), art: 'warm1' }], ablauf: { art: 'ein', takte: 0, dauer: 'd-4', x: -110 } },
-    { id: 'paket-2', teile: [{ d: karton(PALETTE.x + KARTON.breite, AUF_PALETTE), art: 'warm2' }], ablauf: { art: 'ein', takte: 3, dauer: 'd-4', x: -170 } },
+    { id: 'paket-1', teile: [{ d: karton(PALETTE.x, AUF_PALETTE), art: 'markiert' }], ablauf: { art: 'ein', takte: 0, dauer: 'd-4', x: -110 } },
+    { id: 'paket-2', teile: [{ d: karton(PALETTE.x + KARTON.breite, AUF_PALETTE), art: 'markiert' }], ablauf: { art: 'ein', takte: 3, dauer: 'd-4', x: -170 } },
     // Kleiner Karton vor der Hauswand, rechts der Tür und unter dem Fenster
-    { id: 'paket-3', teile: [{ d: karton(KARTON_HAUS.x, BODEN, KARTON_HAUS.teil), art: 'warm3' }], ablauf: { art: 'ein', takte: 7, dauer: 'd-4', x: -110 } },
+    { id: 'paket-3', sinnbild: true, teile: [{ d: karton(KARTON_HAUS.x, BODEN, KARTON_HAUS.teil), art: 'markiert' }], ablauf: { art: 'ein', takte: 7, dauer: 'd-4', x: -110 } },
     {
       id: 'haken',
+      sinnbild: true,
       teile: [{ d: haken(SCHEIN_KAESTCHEN.x, SCHEIN_KAESTCHEN.y, SCHEIN_KAESTCHEN.k), art: 'konturOffen' }],
       ablauf: { art: 'ein', takte: 13, dauer: 'd-3' },
     },

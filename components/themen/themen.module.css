@@ -1186,16 +1186,9 @@
   color: var(--ink-2);
 }
 
-.bueroBild .bueroW1 {
-  fill: var(--waerme-1);
-}
-
-.bueroBild .bueroW2 {
+/* Die eine Markierfläche der Szenen (Prüfrunde 2 A2-9): Stufe 2 der Wärmerampe, keine Stufenfolge */
+.bueroBild .bueroMarkiert {
   fill: var(--waerme-2);
-}
-
-.bueroBild .bueroW3 {
-  fill: var(--waerme-3);
 }
 
 .bueroBild [data-a='schreiben'] {

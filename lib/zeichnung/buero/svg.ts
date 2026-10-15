@@ -14,35 +14,36 @@ import { LEITSTELLE } from './leitstelle';
 import type { Art, BueroSzene } from './szene';
 import { BUERO_SZENEN, BUERO_SZENEN_ARTEN, type BueroSzenenArt } from './szenen';
 
-const [, W1, W2, W3] = [0, 1, 2, 3].map((i): string => TOKENS.waerme.hell[i]);
-const [, D1, D2, D3] = [0, 1, 2, 3].map((i): string => TOKENS.waerme.dunkel[i]);
+/** Die eine Markierfläche (Prüfrunde 2 A2-9): Stufe 2 der Wärmerampe, hell und dunkel. */
+const MARKIERT = TOKENS.waerme.hell[2];
+const MARKIERT_DUNKEL = TOKENS.waerme.dunkel[2];
 
 /**
- * Feste Farben je Umgebung (app/styles/theme.css, Primitive): Papier (Marke Navy, Fläche Papier, Wärmerampe hell) und
- * Nacht (Marke Creme, Fläche Nacht, Rampe Nacht-Blau → Rotbraun); die Leitstelle wie die Kopfzeichnungen auf Navy.
+ * Feste Farben je Umgebung (app/styles/theme.css, Primitive): Papier (Marke Navy, Fläche Papier, Markierfläche hell) und
+ * Nacht (Marke Creme, Fläche Nacht, Markierfläche dunkel); die Leitstelle wie die Kopfzeichnungen auf Navy.
  */
 export const BUERO_SVG_FARBEN = Object.freeze({
   papier: {
-    hell: { marke: '#111D6D', flaeche: '#FBF7F0', w1: W1, w2: W2, w3: W3 },
-    dunkel: { marke: '#F6F0E4', flaeche: '#0A1033', w1: D1, w2: D2, w3: D3 },
-    druck: { marke: '#111D6D', flaeche: '#FFFFFF', w1: W1, w2: W2, w3: W3 },
+    hell: { marke: '#111D6D', flaeche: '#FBF7F0', markiert: MARKIERT },
+    dunkel: { marke: '#F6F0E4', flaeche: '#0A1033', markiert: MARKIERT_DUNKEL },
+    druck: { marke: '#111D6D', flaeche: '#FFFFFF', markiert: MARKIERT },
   },
   navy: {
-    hell: { marke: '#F6F0E4', flaeche: '#111D6D', w1: W1, w2: W2, w3: W3 },
-    dunkel: { marke: '#F6F0E4', flaeche: '#16237A', w1: D1, w2: D2, w3: D3 },
-    druck: { marke: '#111D6D', flaeche: '#FFFFFF', w1: W1, w2: W2, w3: W3 },
+    hell: { marke: '#F6F0E4', flaeche: '#111D6D', markiert: MARKIERT },
+    dunkel: { marke: '#F6F0E4', flaeche: '#16237A', markiert: MARKIERT_DUNKEL },
+    druck: { marke: '#111D6D', flaeche: '#FFFFFF', markiert: MARKIERT },
   },
 });
 
-type Farben = { marke: string; flaeche: string; w1: string; w2: string; w3: string };
+type Farben = { marke: string; flaeche: string; markiert: string };
 type Umgebung = keyof typeof BUERO_SVG_FARBEN;
 
 const L = TOKENS.linien;
-const vars = (f: Farben) => `--b:${f.marke};--fl:${f.flaeche};--w1:${f.w1};--w2:${f.w2};--w3:${f.w3}`;
+const vars = (f: Farben) => `--b:${f.marke};--fl:${f.flaeche};--w:${f.markiert}`;
 
 /**
  * Linienarten wie technik.module.css: non-scaling-stroke, stumpfe Enden (keine Leitung in diesen Zeichnungen), Kontur
- * mit runden Ecken, feine und Maßlinien spitz; Flächen Papier, Wärmerampe oder Marke.
+ * mit runden Ecken, feine und Maßlinien spitz; Flächen Papier, Markierfläche oder Marke.
  */
 function stil(umgebung: Umgebung): string {
   const f = BUERO_SVG_FARBEN[umgebung];
@@ -56,9 +57,7 @@ function stil(umgebung: Umgebung): string {
     `.m{stroke:var(--b);stroke-width:${L.mass}px;stroke-linejoin:miter}`,
     '.fl{fill:var(--fl)}',
     '.vo{fill:var(--b);stroke:none}',
-    '.w1{fill:var(--w1)}',
-    '.w2{fill:var(--w2)}',
-    '.w3{fill:var(--w3)}',
+    '.w{fill:var(--w)}',
   ].join('');
 }
 
@@ -69,9 +68,7 @@ export const DATEI_KLASSE: Readonly<Record<Art, string>> = Object.freeze({
   fein: 'f',
   mass: 'm',
   voll: 'vo',
-  warm1: 'k w1',
-  warm2: 'k w2',
-  warm3: 'k w3',
+  markiert: 'k w',
 });
 
 /** Eine Szene als eigenständige SVG-Datei, im Endzustand (ohne Ablauf), ohne Schrift. */

@@ -97,7 +97,7 @@ export const BELEG: BueroSzene = Object.freeze<BueroSzene>({
     // Markierung: wandert vom Angebot zur Rechnung (Endlage bei der Rechnung)
     {
       id: 'markierung',
-      teile: [{ d: rundRechteck(SCHRITTE.x - 6, SCHRITTE.y[2] - 15, 216, 30, 4), art: 'warm2' }],
+      teile: [{ d: rundRechteck(SCHRITTE.x - 6, SCHRITTE.y[2] - 15, 216, 30, 4), art: 'markiert' }],
       ablauf: { art: 'ein', takte: 9, dauer: 'd-4', y: SCHRITTE.y[0] - SCHRITTE.y[2] },
     },
     { id: 'kaestchen', teile: [{ d: schritte.map((s) => s.kaestchen).join(''), art: 'kontur' }] },

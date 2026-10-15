@@ -12,9 +12,7 @@ export const KLASSE: Readonly<Record<Art, string>> = Object.freeze({
   fein: t.fein,
   mass: t.mass,
   voll: t.voll,
-  warm1: cn(t.kontur, styles.bueroW1),
-  warm2: cn(t.kontur, styles.bueroW2),
-  warm3: cn(t.kontur, styles.bueroW3),
+  markiert: cn(t.kontur, styles.bueroMarkiert),
 });
 
 /** Wert von `data-a`: Art und Dauer des Ablaufs (CSS im Büro-Block von themen.module.css). */

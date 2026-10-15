@@ -352,7 +352,8 @@
     --success-subtle: var(--p-gruen-flaeche);
     --danger: var(--p-fehler);
     --danger-subtle: var(--p-fehler-flaeche);
-    /* Wärmerampe (E-031): nur die Bänder des Wärmefelds, Klick-Wärme und Wärmefront (Guard waerme-rollen) */
+    /* Wärmerampe (E-031): die Bänder des Wärmefelds, Klick-Wärme und Wärmefront; dazu nur Stufe 2 als die eine
+       Markierfläche der Büro-Szenen, ohne Stufenfolge (Prüfrunde 2 A2-9; Guard waerme-rollen) */
     --waerme-0: var(--p-waerme-0);
     --waerme-1: var(--p-waerme-1);
     --waerme-2: var(--p-waerme-2);

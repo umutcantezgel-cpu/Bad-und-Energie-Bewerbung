@@ -1,7 +1,7 @@
 /**
  * Szene „Telefon und Termine“ (E-031, Paket W3): die Plantafel der Woche, Montag bis Freitag in Spalten, zwei Bahnen
  * für die Monteure (Glyphe Servicefahrzeug) und den Kundendienst (Glyphe Wärmepumpe). Die Termine sind Blöcke auf der
- * Wärmerampe, ohne Uhrzeit, ohne Namen; beim Sichtbarwerden gleiten sie einmal von links in ihre Felder
+ * Markierfläche (eine Stufe, Prüfrunde 2 A2-9), ohne Uhrzeit, ohne Namen; beim Sichtbarwerden gleiten sie einmal von links in ihre Felder
  * (Register `buero-ablauf`). Ohne Maßstab (Schriftfeld sagt es).
  */
 import { glyphPfade } from './leitstelle';
@@ -17,25 +17,24 @@ const BAHN = (TAFEL.hoehe - TAFEL.kopf) / 2;
 const RAND = 6;
 const BLOCK_HOEHE = 38;
 
-/** Ein Termin: Tag (0 = Montag), Länge in Tagen, Bahn (0 Monteure, 1 Kundendienst), Lage in der Bahn, Fläche, Start. */
+/** Ein Termin: Tag (0 = Montag), Länge in Tagen, Bahn (0 Monteure, 1 Kundendienst), Lage in der Bahn, Start. */
 interface Termin {
   tag: number;
   tage: number;
   bahn: 0 | 1;
   oben: boolean;
-  art: Extract<Art, 'warm1' | 'warm2' | 'warm3'>;
   takte: number;
 }
 
 /** Sieben Termine, je ein Takt und ein halber versetzt; der letzte steht nach 9 Takten + d-3. */
 export const TERMINE: readonly Termin[] = [
-  { tag: 0, tage: 1, bahn: 0, oben: true, art: 'warm1', takte: 0 },
-  { tag: 1, tage: 2, bahn: 0, oben: false, art: 'warm2', takte: 1.5 },
-  { tag: 3, tage: 1, bahn: 0, oben: true, art: 'warm3', takte: 3 },
-  { tag: 0, tage: 1, bahn: 1, oben: false, art: 'warm2', takte: 4.5 },
-  { tag: 2, tage: 1, bahn: 1, oben: true, art: 'warm1', takte: 6 },
-  { tag: 3, tage: 2, bahn: 1, oben: false, art: 'warm3', takte: 7.5 },
-  { tag: 4, tage: 1, bahn: 0, oben: false, art: 'warm1', takte: 9 },
+  { tag: 0, tage: 1, bahn: 0, oben: true, takte: 0 },
+  { tag: 1, tage: 2, bahn: 0, oben: false, takte: 1.5 },
+  { tag: 3, tage: 1, bahn: 0, oben: true, takte: 3 },
+  { tag: 0, tage: 1, bahn: 1, oben: false, takte: 4.5 },
+  { tag: 2, tage: 1, bahn: 1, oben: true, takte: 6 },
+  { tag: 3, tage: 2, bahn: 1, oben: false, takte: 7.5 },
+  { tag: 4, tage: 1, bahn: 0, oben: false, takte: 9 },
 ];
 
 function termin(t: Termin, i: number): Gruppe {
@@ -44,7 +43,7 @@ function termin(t: Termin, i: number): Gruppe {
   const y = t.oben ? bahnOben + 8 : bahnOben + BAHN - 8 - BLOCK_HOEHE;
   return {
     id: `termin-${i + 1}`,
-    teile: [{ d: rundRechteck(x, y, t.tage * SPALTE - 2 * RAND, BLOCK_HOEHE, 4), art: t.art }],
+    teile: [{ d: rundRechteck(x, y, t.tage * SPALTE - 2 * RAND, BLOCK_HOEHE, 4), art: 'markiert' }],
     ablauf: { art: 'ein', takte: t.takte, dauer: 'd-3', x: -28 },
   };
 }

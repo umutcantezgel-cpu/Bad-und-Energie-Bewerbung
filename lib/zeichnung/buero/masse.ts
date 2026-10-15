@@ -105,7 +105,7 @@ export const BUERO_SCHRIFTFELD = Object.freeze({
   material: feld(
     `Europalette ${masse(BUERO_MASSE.europalette.laenge, BUERO_MASSE.europalette.breite, BUERO_MASSE.europalette.hoehe)} nach ${norm('EN', '13698-1')}`,
     IN_MM,
-    'Halle und Haus als Sinnbild ohne Maßstab',
+    'Halle, Haus und Lieferschein als Sinnbild ohne Maßstab',
   ),
   ablage: feld(
     `Ordnerrücken ${BUERO_MASSE.ordner.ruecken.mm}`,

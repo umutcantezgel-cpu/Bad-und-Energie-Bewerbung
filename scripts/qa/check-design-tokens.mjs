@@ -261,7 +261,8 @@ export function checkEndlos(source, file) {
 
 /**
  * Files that may name the warmth ramp (--waerme-0…4), each with its reason (rule `waerme-rollen`). Everything else
- * fails, comments excepted; a design-allow comment does not lift this rule. The Büro block counts as allowed too.
+ * fails, comments excepted; a design-allow comment does not lift this rule. The Büro block may name only BUERO_STUFE,
+ * its one marker surface (Prüfrunde 2 A2-9: three steps there meant nothing and diluted the temperature code).
  */
 export const WAERME_ROLLEN_ERLAUBT = Object.freeze({
   [THEME_FILE]: 'Primitive und Rollen der Wärmerampe (hell, dunkel, Inverse-Band, Wärmebereich, Druck)',
@@ -277,9 +278,12 @@ export const BUERO_DATEI = 'components/themen/themen.module.css';
  */
 export const BUERO_MARKE = '/* ═══ Büro-Block (E-031)';
 
+/** The one step of the ramp the Büro block may name: its marker surface (Prüfrunde 2 A2-9). */
+export const BUERO_STUFE = '--waerme-2';
+
 const WAERME_RULE = {
   id: 'waerme-rollen',
-  hint: `The warmth ramp --waerme-0…4 only in ${Object.keys(WAERME_ROLLEN_ERLAUBT).join(', ')} and the Büro block of ${BUERO_DATEI} (E-031).`,
+  hint: `The warmth ramp --waerme-0…4 only in ${Object.keys(WAERME_ROLLEN_ERLAUBT).join(', ')}; in the Büro block of ${BUERO_DATEI} only ${BUERO_STUFE} (E-031).`,
 };
 
 const WAERME_ROLLE = /--waerme-[0-4](?![\w-])/g;
@@ -305,8 +309,11 @@ export function checkWaermeRollen(source, file) {
   ohneKommentare(source, file)
     .split('\n')
     .forEach((line, i) => {
-      if (i + 1 >= ab) return;
-      for (const m of line.matchAll(WAERME_ROLLE)) findings.push({ line: i + 1, col: m.index + 1, rule: WAERME_RULE, token: m[0] });
+      const imBuero = i + 1 >= ab;
+      for (const m of line.matchAll(WAERME_ROLLE)) {
+        if (imBuero && m[0] === BUERO_STUFE) continue;
+        findings.push({ line: i + 1, col: m.index + 1, rule: WAERME_RULE, token: m[0] });
+      }
     });
   return findings;
 }

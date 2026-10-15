@@ -44,7 +44,7 @@ function ordnerGruppe(id: string, o: ReturnType<typeof ordner>, takte: number): 
   return {
     id,
     teile: [
-      { d: `${o.umriss}${o.loch}`, art: 'warm1' },
+      { d: `${o.umriss}${o.loch}`, art: 'markiert' },
       { d: o.schild, art: 'fein' },
     ],
     ablauf: { art: 'ein', takte, dauer: 'd-3', y: -22 },
@@ -112,7 +112,7 @@ export const ABLAGE: BueroSzene = Object.freeze<BueroSzene>({
     {
       id: 'brief',
       teile: [
-        { d: rechteck(BRIEF.x, BRIEF.y, BRIEF.breite, BRIEF.hoehe), art: 'warm2' },
+        { d: rechteck(BRIEF.x, BRIEF.y, BRIEF.breite, BRIEF.hoehe), art: 'markiert' },
         { d: rechteck(FENSTER.x, FENSTER.y, FENSTER.breite, FENSTER.hoehe), art: 'fein' },
       ],
       ablauf: { art: 'ein', takte: 5, dauer: 'd-4', y: -56 },

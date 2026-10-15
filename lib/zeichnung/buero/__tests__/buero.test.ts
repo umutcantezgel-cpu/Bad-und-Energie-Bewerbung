@@ -108,8 +108,9 @@ describe('Maße: genormt und im richtigen Verhältnis', () => {
 
   it('Material (Prüfrunde 1 A1-4, B1-3): nur das Lager maßstäblich, im eigenen Rahmen; Halle und Haus Sinnbilder auf eigenen Geländestücken', () => {
     const gruppe = (id: string) => MATERIAL.gruppen.find((g) => g.id === id)!;
-    expect(MATERIAL.gruppen.filter((g) => g.sinnbild).map((g) => g.id)).toEqual(['grosshandel', 'baustelle']);
-    expect(BUERO_SCHRIFTFELD.material).toContain('Halle und Haus als Sinnbild ohne Maßstab');
+    // Prüfrunde 2 B2-4: auch der Lieferschein (samt Häkchen) und der Karton am Haus sind gekennzeichnet
+    expect(MATERIAL.gruppen.filter((g) => g.sinnbild).map((g) => g.id)).toEqual(['grosshandel', 'baustelle', 'lieferschein', 'paket-3', 'haken']);
+    expect(BUERO_SCHRIFTFELD.material).toContain('Halle, Haus und Lieferschein als Sinnbild ohne Maßstab');
     // Das Lager steht in seinem Rahmen: Palette und Kartons ganz darin
     const imRahmen = (x: number, y: number) => x >= EINZELHEIT.x && x <= EINZELHEIT.x + EINZELHEIT.breite && y >= EINZELHEIT.y && y <= EINZELHEIT.y + EINZELHEIT.hoehe;
     for (const id of ['lager', 'paket-1', 'paket-2']) {
@@ -132,6 +133,43 @@ describe('Maße: genormt und im richtigen Verhältnis', () => {
     expect(kb).toBeCloseTo(60 * KARTON_HAUS.teil, 6);
     expect(kb).toBeLessThan(0.22 * 92);
     expect(kh).toBeLessThan(0.5 * 76);
+  });
+
+  it('jedes Teil einer maßstäblichen Szene ist maßstäblich (geprüft) oder gekennzeichnet (Prüfrunde 2 B2-4)', () => {
+    // Die ungekennzeichneten Gruppen je Szene; ihre Maße prüfen die Tests oben und „Blatt A4 …“. Eine neue Gruppe ohne
+    // Kennzeichnung (sinnbild oder Glyphe mit Lage) fällt hier auf und braucht eine Maßprüfung.
+    const MASSSTAEBLICH: Record<string, string[]> = {
+      leitstelle: ['tisch', 'bezug'],
+      beleg: BELEG.gruppen.map((g) => g.id),
+      material: ['lager', 'wege', 'paket-1', 'paket-2'],
+      ablage: ['regal', 'ordner', 'ordner-oben', 'ordner-unten', 'brief', 'ablage-post', 'blatt', 'ablage-gf'],
+    };
+    for (const szene of ALLE.filter((s) => s.mmJeEinheit !== null)) {
+      const frei = szene.gruppen.filter((g) => !g.sinnbild && !g.lage).map((g) => g.id);
+      expect(frei, szene.id).toEqual(MASSSTAEBLICH[szene.id]);
+    }
+    // Der Lieferschein bliebe maßstäblich zu klein für Zeilen und Kästchen (A4 = 21 × 29,7 Einheiten): Sinnbild
+    const schein = rechtecke(MATERIAL.gruppen.find((g) => g.id === 'lieferschein')!.teile[1].d)[0];
+    expect(schein[0] / schein[1]).toBeCloseTo(210 / 297, 2);
+    expect(schein[0] * MATERIAL.mmJeEinheit!).toBeGreaterThan(210);
+  });
+
+  it('Europalette von der Seite (Prüfrunde 2 B2-5): Deckbrett durchgehend, darunter drei Querbrett-Abschnitte über den Klötzen', () => {
+    const p = BUERO_MASSE.europalette;
+    const mm = (x: number) => Math.round(x * MATERIAL.mmJeEinheit! * 10) / 10;
+    const palette = rechtecke(MATERIAL.gruppen.find((g) => g.id === 'lager')!.teile[1].d).map(([b, h]) => [mm(b), mm(h)]);
+    expect(palette).toEqual([
+      [p.laenge.mm, p.brett.mm],
+      ...Array.from({ length: 3 }, () => [p.klotzBreite.mm, p.brett.mm]),
+      ...Array.from({ length: 3 }, () => [p.klotzBreite.mm, p.klotz.mm]),
+      [p.laenge.mm, p.brett.mm],
+    ]);
+    // Kein durchgehender Streifen aus Deck- und Querbrett mehr (2 × 22 mm)
+    expect(palette.some(([, h]) => h === 2 * p.brett.mm)).toBe(false);
+    // Die Querbrett-Abschnitte stehen genau über den Klötzen
+    const d = MATERIAL.gruppen.find((g) => g.id === 'lager')!.teile[1].d;
+    const links = [...d.matchAll(/M(-?[\d.]+) (-?[\d.]+)H/g)].map((m) => Number(m[1]));
+    expect(links.slice(1, 4)).toEqual(links.slice(4, 7));
   });
 
   it('jede maßstäbliche Szene mit Sinnbildern sagt „ohne Maßstab“; Szenen ohne Sinnbild behaupten keins', () => {
@@ -214,10 +252,11 @@ describe('Inline und Datei: dieselbe Zeichnung', () => {
   it('die Szenen-Dateien in den Papier-Rollen, die Leitstelle auf Navy; je hell, dunkel und Druck aus den Primitiven', () => {
     const theme = quelle('app/styles/theme.css');
     const p = (name: string) => theme.match(new RegExp(`--p-${name}: (#[0-9A-Fa-f]{6});`))![1].toUpperCase();
-    expect(BUERO_SVG_FARBEN.papier.hell).toEqual({ marke: p('navy'), flaeche: p('papier'), w1: p('waerme-1'), w2: p('waerme-2'), w3: p('waerme-3') });
-    expect(BUERO_SVG_FARBEN.papier.dunkel).toEqual({ marke: p('creme'), flaeche: p('nacht'), w1: p('glimm-1'), w2: p('glimm-2'), w3: p('glimm-3') });
+    // Eine Markierfläche (Prüfrunde 2 A2-9): Stufe 2 der Wärmerampe, keine Stufenfolge
+    expect(BUERO_SVG_FARBEN.papier.hell).toEqual({ marke: p('navy'), flaeche: p('papier'), markiert: p('waerme-2') });
+    expect(BUERO_SVG_FARBEN.papier.dunkel).toEqual({ marke: p('creme'), flaeche: p('nacht'), markiert: p('glimm-2') });
     expect(BUERO_SVG_FARBEN.papier.druck).toEqual({ ...BUERO_SVG_FARBEN.papier.hell, flaeche: p('weiss') });
-    expect(BUERO_SVG_FARBEN.papier.hell.w1).toBe(TOKENS.waerme.hell[1]);
+    expect(BUERO_SVG_FARBEN.papier.hell.markiert).toBe(TOKENS.waerme.hell[2]);
     for (const { svg } of bueroSzenenDateien()) {
       expect(svg).toContain('@media screen and (prefers-color-scheme:dark)');
       expect(svg).toContain('@media print');
@@ -294,7 +333,7 @@ describe('Ernsthaft: keine Spielereien, keine Marken, Ziffern nur aus Maßen', (
     const t = quelle('components/themen/buero/BueroZeichnung.tsx');
     expect(t).not.toMatch(/t\.leitung|t\.vorlauf|t\.ruecklauf|t\.kaeltemittel|t\.pfeilVorlauf|t\.pfeilRuecklauf/);
     expect(markup).not.toMatch(/<linearGradient|<radialGradient|<filter|<image\b|<pattern/);
-    for (const art of ARTEN) expect(['kontur', 'konturOffen', 'fein', 'mass', 'voll', 'warm1', 'warm2', 'warm3']).toContain(art);
+    for (const art of ARTEN) expect(['kontur', 'konturOffen', 'fein', 'mass', 'voll', 'markiert']).toContain(art);
   });
 
   it('fünf Glyphen der Familie Büro: kalender, ordner, paket, beleg, brief', () => {
@@ -353,9 +392,9 @@ describe('Bewegung: einmal beim Sichtbarwerden, genau wie im Register', () => {
       expect(skaliert(k), k.name).toBe(false);
       for (const stopp of k.stopps) for (const eigenschaft of stopp.deklarationen.keys()) expect(['opacity', 'transform']).toContain(eigenschaft);
     }
-    // Farben nur aus Rollen: Wärmeflächen 1–3, sonst keine Farbwerte
+    // Farben nur aus Rollen: die eine Markierfläche (Stufe 2, Prüfrunde 2 A2-9), sonst keine Farbwerte
     expect(block).not.toMatch(/#[0-9a-f]{3,8}\b|rgb\(|hsl\(|gradient|filter:|mix-blend/i);
-    expect([...block.matchAll(/var\(--waerme-(\d)\)/g)].map((m) => m[1])).toEqual(['1', '2', '3']);
+    expect([...block.matchAll(/var\(--waerme-(\d)\)/g)].map((m) => m[1])).toEqual(['2']);
     // Gedruckt steht der Endzustand
     expect(block).toMatch(/@media print \{\s*\.bueroBild\[data-ablauf\] \[data-a\] \{\s*opacity: 1;\s*animation: none;/);
   });

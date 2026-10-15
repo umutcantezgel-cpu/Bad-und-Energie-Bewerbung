@@ -6,6 +6,7 @@ import { MOTION_IDS } from '../../../lib/motion/register';
 import {
   BUERO_DATEI,
   BUERO_MARKE,
+  BUERO_STUFE,
   CURSOR_DATEI,
   DAUER_CSS,
   ENDLOS_ERLAUBT,
@@ -217,6 +218,15 @@ describe('check-design-tokens: waerme-rollen (E-031, K-006)', () => {
     expect(regel(quelle.replace(BUERO_MARKE, '/* ═══ Büro'), BUERO_DATEI)).toHaveLength(2);
     expect(regel(quelle, 'components/jobs/x.module.css')).toHaveLength(2);
     expect(bueroBlockAb('.a {}')).toBe(Infinity);
+  });
+
+  it('im Büro-Block nur die eine Markierfläche --waerme-2, keine Stufenfolge (Prüfrunde 2 A2-9)', () => {
+    expect(BUERO_STUFE).toBe('--waerme-2');
+    const block = (stufen: number[]) => `${BUERO_MARKE}: Szenen ═══ */\n${stufen.map((n) => `.bueroW${n} { fill: var(--waerme-${n}); }`).join('\n')}\n`;
+    expect(regel(block([2]), BUERO_DATEI)).toEqual([]);
+    // So stand es vor Prüfrunde 2: drei Stufen ohne Bedeutung
+    expect(regel(block([1, 2, 3]), BUERO_DATEI)).toEqual(['2:--waerme-1:waerme-rollen', '4:--waerme-3:waerme-rollen']);
+    expect(regel(block([0, 4]), BUERO_DATEI)).toEqual(['2:--waerme-0:waerme-rollen', '3:--waerme-4:waerme-rollen']);
   });
 
   it('die echten Dateien bestehen; theme.css führt die Rampe', () => {
