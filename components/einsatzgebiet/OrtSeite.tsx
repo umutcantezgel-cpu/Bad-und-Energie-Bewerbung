@@ -3,7 +3,7 @@ import { Icon } from '@/components/icons';
 import { JobAbgaenge } from '@/components/jobs/JobCard';
 import { LISTEN_MIKROTEXT, listenName, listenZweitweg } from '@/components/jobs/liste/liste-text';
 import { Container } from '@/components/layout/Container';
-import { Section } from '@/components/layout/Section';
+import { Section, tonFlaeche } from '@/components/layout/Section';
 import { Seitenkopf } from '@/components/seitenkopf';
 import { Pfad } from '@/components/seitenkopf/Pfad';
 import { APPLY_PATH, SHORT_APPLY_LABEL } from '@/components/site/nav';
@@ -122,7 +122,7 @@ export function OrtSeite({ place, text, jobs }: OrtSeiteProps) {
   return (
     <>
       <Pfad items={pfadItems(placePfad(place))} />
-      <div className={styles.kopf} data-motion="erdleitung">
+      <div {...tonFlaeche('papier', styles.kopf)} data-motion="erdleitung">
         <Seitenkopf
           variante="erzaehl"
           bildBreit

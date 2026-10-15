@@ -140,6 +140,24 @@ describe('Hero / Einstieg (R3-HOME-01, Technische Zeichnung 2.0)', () => {
     expect(text2026).not.toContain('Kreislauf zeigen');
   });
 
+  it('Weich am Handy (E-031, Prüfrunde 2 A2-4): Leiste unten rechts, Einzelheit oben links und unten rechts mit --radius-3; am Desktop ohne Fläche und eckig', () => {
+    const css = quelle(path.join(EINSTIEG, 'einstieg.module.css')).replace(/\/\*[\s\S]*?\*\//g, '');
+    // Erste Regel je Klasse: mobil (vor den @media-Blöcken); die mit `grid-column: 4` bzw. `position: absolute`: Desktop
+    const rumpfe = (klasse: string) => [...css.matchAll(new RegExp(`\\.${klasse} \\{([^}]*)\\}`, 'g'))].map((m) => m[1]);
+    const [leiste, einzelheit] = [rumpfe('leiste'), rumpfe('einzelheit')];
+    expect(leiste[0]).toMatch(/border-bottom-right-radius: var\(--radius-3\);/);
+    expect(leiste[0]).toMatch(/background-color: var\(--surface\);/);
+    expect(einzelheit[0]).toMatch(/border-radius: var\(--radius-3\) 0 var\(--radius-3\) 0;/);
+    expect(einzelheit[0]).toMatch(/background-color: var\(--surface\);/);
+    // Am Desktop liegen beide durchsichtig auf der Navy-Fläche: ohne eigene Ecken
+    const leisteD = leiste.find((r) => r.includes('position: absolute'))!;
+    const einzelheitD = einzelheit.find((r) => r.includes('grid-column: 4'))!;
+    expect(leisteD).toMatch(/border-radius: 0;[\s\S]*background-color: transparent;/);
+    expect(einzelheitD).toMatch(/border-radius: 0;\s*background-color: transparent;/);
+    // Beide Navy-Blöcke stehen im Band (Creme auf Navy)
+    expect(html2026).toMatch(/<div class="[^"]*" data-einzelheit="X" data-tone="inverse">/);
+  });
+
   it('DOM-Reihenfolge wie am Handy: Knopf, Mikrotext, Zweitweg und Erklärsatz vor der Einzelheit mit „Anhalten“ (WCAG 2.4.3, CLS)', () => {
     const knopf = html2026.indexOf(`${PRIMARY_CTA_ATTR}=""`);
     const zweitweg = html2026.indexOf('href="#stellen"');

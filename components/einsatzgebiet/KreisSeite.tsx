@@ -1,7 +1,7 @@
 import { JobAbgaenge } from '@/components/jobs/JobCard';
 import { LISTEN_MIKROTEXT, listenName } from '@/components/jobs/liste/liste-text';
 import { Container } from '@/components/layout/Container';
-import { Section } from '@/components/layout/Section';
+import { Section, tonFlaeche } from '@/components/layout/Section';
 import { Seitenkopf } from '@/components/seitenkopf';
 import { Pfad } from '@/components/seitenkopf/Pfad';
 import { APPLY_PATH, SHORT_APPLY_LABEL } from '@/components/site/nav';
@@ -53,7 +53,7 @@ export function KreisSeite({ kreis, text, jobs }: KreisSeiteProps) {
   return (
     <>
       <Pfad items={pfadItems(kreisPfad(kreis))} />
-      <div className={styles.kopf} data-motion="erdleitung">
+      <div {...tonFlaeche('papier', styles.kopf)} data-motion="erdleitung">
         <Seitenkopf
           variante="erzaehl"
           bildBreit

@@ -54,3 +54,23 @@
   background-color: inherit;
   pointer-events: none;
 }
+
+/*
+ * Letzter Abschnitt vor dem Fuß (Prüfrunde 2 A2-2): Der Fuß ist Navy; endet die Seite nicht im Navy-Band, ist das ein
+ * Tonwechsel wie jeder andere. Der Fuß schließt dann oben rund an (components/site/fuss/fuss.module.css), und der letzte
+ * Abschnitt malt den Streifen seiner Fläche unter dessen Anfang. Letzter heißt: das letzte Kind von <main> außer Skripten
+ * (JSON-LD) und Vorlagen.
+ */
+main:has(+ footer) > .ton:nth-last-child(1 of :not(script, template)):not([data-ton="band"]) {
+  position: relative;
+}
+
+main:has(+ footer) > .ton:nth-last-child(1 of :not(script, template)):not([data-ton="band"])::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  height: var(--radius-3);
+  background-color: inherit;
+  pointer-events: none;
+}

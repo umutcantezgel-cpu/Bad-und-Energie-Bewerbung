@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Icon } from '@/components/icons';
 import { LISTEN_MIKROTEXT } from '@/components/jobs/liste/liste-text';
 import { Container } from '@/components/layout/Container';
-import { Section } from '@/components/layout/Section';
+import { Section, tonFlaeche } from '@/components/layout/Section';
 import { RegionExplorerLazy } from '@/components/maps/RegionExplorerLazy';
 import { Seitenkopf } from '@/components/seitenkopf';
 import { Pfad } from '@/components/seitenkopf/Pfad';
@@ -73,7 +73,7 @@ export function GebietSeite({ text }: GebietSeiteProps) {
   return (
     <>
       <Pfad items={pfadItems(einsatzgebietPfad())} />
-      <div className={styles.kopf} data-motion="erdleitung">
+      <div {...tonFlaeche('papier', styles.kopf)} data-motion="erdleitung">
         <Seitenkopf
           variante="erzaehl"
           bildBreit

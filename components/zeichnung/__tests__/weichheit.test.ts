@@ -9,7 +9,8 @@ import { Ausstattung } from '@/components/home/vorteile/Ausstattung';
 import { Zusagen } from '@/components/home/vorteile/Zusagen';
 import { JobProcess } from '@/components/jobs/JobProcess';
 import { PackageList } from '@/components/jobs/PackageList';
-import { Section } from '@/components/layout/Section';
+import { JobSections } from '@/components/jobs/JobSections';
+import { Section, tonFlaeche } from '@/components/layout/Section';
 import { ABSPERR_LEITUNG, Absperrung } from '@/components/themen/Absperrung';
 import { Verteiler } from '@/components/themen/Verteiler';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
@@ -201,6 +202,51 @@ describe('Tonwechsel der Abschnitte mit runden oberen Ecken (E-031)', () => {
     // Der Trenner trägt die Kennung, an der die Regel ihn findet, und steht als Kind des Abschnitts
     const mit = html(createElement(Section, { tone: 'wand', trenner: true }, 'x'));
     expect(mit).toMatch(/^<section [^>]*data-ton="wand"><span class="[^"]*" aria-hidden="true" data-zeichnung="leitungstrenner">/);
+  });
+
+  it('Fuß als Tonwechsel (Prüfrunde 2 A2-2): nach Papier oder Wand rund und ohne Trenner, der letzte Abschnitt malt den Streifen', () => {
+    const letzter = 'main:has(+ footer) > .ton:nth-last-child(1 of :not(script, template)):not([data-ton="band"])';
+    expect(deklarationen(regel(css, letzter))).toEqual({ position: 'relative' });
+    expect(deklarationen(regel(css, `${letzter}::after`))).toEqual({
+      content: '""',
+      position: 'absolute',
+      'inset-inline': '0',
+      top: '100%',
+      height: 'var(--radius-3)',
+      'background-color': 'inherit',
+      'pointer-events': 'none',
+    });
+    const fuss = quelle('components/site/fuss/fuss.module.css');
+    const vorFuss = 'main:has(> [data-ton]:nth-last-child(1 of :not(script, template)):not([data-ton="band"])) + .fuss';
+    expect(deklarationen(regel(fuss, vorFuss))).toEqual({
+      'border-start-start-radius': 'var(--radius-3)',
+      'border-start-end-radius': 'var(--radius-3)',
+    });
+    expect(deklarationen(regel(fuss, `${vorFuss} > [data-zeichnung="leitungstrenner"]`))).toEqual({ visibility: 'hidden' });
+    // Beide Füße tragen die Klasse, und der Trenner ist ein Kind des Fußes
+    for (const datei of ['components/site/fuss/FussVoll.tsx', 'components/site/fuss/FussSchmal.tsx']) {
+      const tsx = quelle(datei);
+      expect(tsx, datei).toMatch(/<footer data-tone="inverse" className=\{cn\(styles\.fuss\b/);
+      expect(tsx, datei).toMatch(/<footer[^>]*>\s*<Leitungstrenner className=\{styles\.trenner\} \/>/);
+    }
+  });
+
+  it('Seitenköpfe gehören zur Tonfolge (Prüfrunde 2 A2-3): Papier mit der Klasse der Abschnitte; die Stellenseite ohne umschließendes Element', () => {
+    for (const datei of [
+      'components/jobs/JobHeader.tsx',
+      'components/themen/ThemaKopf.tsx',
+      'components/einsatzgebiet/OrtSeite.tsx',
+      'components/einsatzgebiet/GebietSeite.tsx',
+      'components/einsatzgebiet/KreisSeite.tsx',
+    ]) {
+      expect(quelle(datei), datei).toContain(`<div {...tonFlaeche('papier', styles.kopf)} data-motion="erdleitung">`);
+    }
+    const kopf = html(createElement('div', tonFlaeche('papier', 'k')));
+    expect(kopf).toMatch(/^<div class="[^"]*_ton_[^"]* k" data-ton="papier"><\/div>$|^<div class="ton k" data-ton="papier"><\/div>$/);
+    // JobSections rendert seine Abschnitte als Geschwister (Fragment), kein <div> drumherum
+    const job = getActiveJobs().find((j) => isJobLive(j, new Date()))!;
+    expect(html(createElement(JobSections, { job }))).toMatch(/^<section\b/);
+    expect(quelle('components/jobs/JobSections.tsx')).not.toMatch(/<div className=\{className\}>/);
   });
 
   it('Themenabschnitte: zwei gleiche Töne trennt der Leitungstrenner, nicht mehr die feine Linie aus E-029', () => {

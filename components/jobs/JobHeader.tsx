@@ -13,6 +13,7 @@ import {
 } from './stelle/stelle-text';
 import styles from './stelle/stelle.module.css';
 import { bindSeparators, withSoftHyphens } from './text';
+import { tonFlaeche } from '@/components/layout/Section';
 
 export interface JobHeaderProps {
   job: Job;
@@ -38,7 +39,7 @@ export function JobHeader({ job, className }: JobHeaderProps) {
   return (
     <>
       <Pfad job={job} />
-      <div className={styles.kopf} data-motion="erdleitung">
+      <div {...tonFlaeche('papier', styles.kopf)} data-motion="erdleitung">
         <Seitenkopf
           variante="erzaehl"
           className={className}

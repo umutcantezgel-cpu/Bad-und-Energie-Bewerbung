@@ -9,6 +9,7 @@ import { pfadItems } from '@/lib/themen/jsonld';
 import type { SeitenBasis } from '@/lib/themen/text';
 import { Saetze } from './Bausteine';
 import styles from './stil';
+import { tonFlaeche } from '@/components/layout/Section';
 
 export interface ThemaKopfProps {
   text: SeitenBasis;
@@ -30,7 +31,7 @@ export function ThemaKopf({ text, pfad, panel, bildBreit = false }: ThemaKopfPro
   return (
     <>
       <Pfad items={pfadItems(pfad)} />
-      <div className={styles.kopf} data-motion="erdleitung">
+      <div {...tonFlaeche('papier', styles.kopf)} data-motion="erdleitung">
         <Seitenkopf
           variante="erzaehl"
           bildBreit={bildBreit}

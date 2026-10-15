@@ -12,6 +12,19 @@
   overflow-x: clip;
 }
 
+/* Tonwechsel zum Fuß (Prüfrunde 2 A2-2): Endet die Seite nicht im Navy-Band, schließt der Fuß wie jeder Tonwechsel oben
+   mit runden Ecken an (--radius-3); darunter zeigt der Streifen des letzten Abschnitts dessen Fläche
+   (components/layout/section.module.css). Ecke oder Trenner, nie beides: Der Leitungstrenner bleibt dann verborgen
+   (sein Platz bleibt). Nach einem Navy-Band (Startseite, Stellenliste) gleicher Ton: keine Ecken, der Trenner trennt. */
+main:has(> [data-ton]:nth-last-child(1 of :not(script, template)):not([data-ton="band"])) + .fuss {
+  border-start-start-radius: var(--radius-3);
+  border-start-end-radius: var(--radius-3);
+}
+
+main:has(> [data-ton]:nth-last-child(1 of :not(script, template)):not([data-ton="band"])) + .fuss > [data-zeichnung="leitungstrenner"] {
+  visibility: hidden;
+}
+
 /* Leitungspaar als oberer Abschluss: randlos, mit Luft zum Navy-Rand und zum Inhalt */
 .trenner {
   margin-top: var(--a-6);

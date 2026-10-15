@@ -36,6 +36,15 @@ export interface SectionProps extends ComponentPropsWithRef<'section'> {
  * Tonwechsel (E-031): Der Ton steht als `data-ton` am Abschnitt; folgt ein Abschnitt einem anderen Ton, hat er oben
  * runde Ecken (--radius-3), und die Ecken zeigen die Fläche des vorigen (section.module.css). Nur Form, kein Verlauf.
  */
+/**
+ * Ton einer Fläche, die neben den Abschnitten steht, aber kein <Section> ist (Prüfrunde 2 A2-3): Die Seitenköpfe der
+ * Erzählseiten enden auf Papier und gehören zur Tonfolge, damit der erste Abschnitt danach beim Tonwechsel oben rund
+ * anschließt und keinen Leitungstrenner zeigt (section.module.css). Klasse und data-ton zum Verteilen auf das Element.
+ */
+export function tonFlaeche(ton: 'papier' | 'wand' | 'band', className?: string): { className: string; 'data-ton': typeof ton } {
+  return { className: cn(styles.ton, className), 'data-ton': ton };
+}
+
 export function Section({ tone = 'default', spacing = 'default', trenner = false, className, children, ...props }: SectionProps) {
   const ton = TON[tone] ?? 'papier';
   const knick = typeof trenner === 'string' ? trenner : undefined;

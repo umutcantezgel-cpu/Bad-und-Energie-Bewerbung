@@ -197,6 +197,8 @@
 .einzelheit {
   grid-row: 5;
   padding: var(--a-6) var(--rand) var(--a-6) var(--schacht);
+  /* Weich wie die Leiste (Prüfrunde 2 A2-4): oben links und unten rechts --radius-3, kein harter Riegel über die Breite */
+  border-radius: var(--radius-3) 0 var(--radius-3) 0;
   background-color: var(--surface);
   color: var(--ink);
 }
@@ -785,6 +787,7 @@
     width: max(calc(250 * var(--e)), 12.5rem);
     margin: 0 0 calc(424 * var(--e)) calc(16 * var(--e));
     padding: 0;
+    border-radius: 0;
     background-color: transparent;
   }
 

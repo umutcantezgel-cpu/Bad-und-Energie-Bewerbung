@@ -15,7 +15,6 @@ import { splitLabel } from './text';
 
 export interface JobSectionsProps {
   job: Job;
-  className?: string;
 }
 
 type SectionId = JobSection['id'];
@@ -134,7 +133,7 @@ function Paket({ job }: { job: Job }) {
  * Danach das Band „Einblick“ (Wand, V6-G2): Arbeit, Unterschied zu den Nachbarstellen und Einsatzgebiet, je
  * Stelle eigen. Es steht nur auf der Seite, nicht in der JobPosting-Beschreibung.
  */
-export function JobSections({ job, className }: JobSectionsProps) {
+export function JobSections({ job }: JobSectionsProps) {
   const sections = new Map(
     getJobSections(job)
       .filter((s) => !RENDERED_ELSEWHERE.has(s.id) && s.heading)
@@ -148,8 +147,10 @@ export function JobSections({ job, className }: JobSectionsProps) {
   const paket = sections.get('paket');
   const eckdaten = sections.get('eckdaten');
 
+  // Ohne umschließendes Element (Prüfrunde 2 A2-3): Die Abschnitte stehen als Geschwister neben Kopf, Stimme und Ablauf,
+  // sonst griffe die Tonwechsel-Regel (section.module.css) an diesen Übergängen nicht
   return (
-    <div className={className}>
+    <>
       <Section id={STELLE_ANKER.aufgaben} tone="wand" trenner>
         <Container className="grid gap-16 lg:grid-cols-12 lg:gap-x-12">
           {aufgaben?.heading ? (
@@ -222,6 +223,6 @@ export function JobSections({ job, className }: JobSectionsProps) {
       </Section>
 
       <Einblick job={job} />
-    </div>
+    </>
   );
 }
