@@ -47,7 +47,6 @@ export interface Aussengeraet {
   breite: Mass;
   hoehe: Mass;
   tiefe: Mass;
-  tiefeMitKonsolen: Mass;
   /** Obere Längskanten links und rechts gerundet: von vorn und hinten runde Ecken, von der Seite eine Deckellinie. */
   oberkante: { radius: Mass };
   konsolen: {
@@ -56,7 +55,17 @@ export interface Aussengeraet {
     abstand: Mass;
     /** Abstand der linken Bodenhalterung vom linken Rand (Ansicht von vorn). */
     randabstand: Mass;
-    /** Überstand der Bodenhalterungen vorn und hinten über das Gehäuse. */
+    /**
+     * Abstand der Bohrungen in der Tiefe (Bild 5: die Maßhilfslinien der 580 setzen an den Bohrungen an, Bild 24 bohrt
+     * im Raster Breite × Tiefe). Je Seite stehen vorn und hinten zwei getrennte Halterungen; 580 ist kein Außenmaß
+     * einer durchgehenden Schiene (Prüfung E-029, Runde 3).
+     */
+    lochabstandTiefe: Mass;
+    /** Von der Gehäusekante (vorn bzw. hinten) bis zur Bohrung der Halterung. */
+    lochRand: Mass;
+    /** Länge einer Halterung in der Tiefe. */
+    laenge: Mass;
+    /** Überstand einer Halterung über die Gehäusekante (vorn und hinten gleich gezeichnet). */
     ueberstand: Mass;
     breite: Mass;
     /** Höhe von der Aufstellfläche bis zur Unterkante des Gehäuses. */

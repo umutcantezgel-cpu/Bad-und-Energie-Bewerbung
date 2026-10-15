@@ -29,13 +29,20 @@ export const COMPRESS_AW_L: Aussengeraet = {
     'Gesamthöhe ab Aufstellfläche wie bei AW 4|5|7; Bild 4 nennt 1050 mm (DK: Fig. 4), Bezug nicht eindeutig',
   ),
   tiefe: mass(540, 'Bild 5, Tabelle 5 (DK: S. 5 Fig. 5, S. 23 Tab. 5)'),
-  tiefeMitKonsolen: mass(580, 'Bild 5 (DK: S. 5 Fig. 5)'),
   oberkante: { radius: schaetzung(60, 'Obere Längskanten links und rechts gerundet (Bild 4, 26, 27; DK: S. 5, 16), Radius nicht bemaßt') },
   konsolen: {
     anzahl: 4,
     abstand: mass(1266, 'Bild 6 (DK: S. 5 Fig. 6)'),
     randabstand: mass(42, 'Bild 5 (DK: S. 5 Fig. 5)', '42 + 1266 + 42 = 1350'),
-    ueberstand: mass(20, 'Bild 5 (DK: S. 5 Fig. 5)', '580 − 540 = 2 × 20'),
+    // Wie bei AW 4|5|7: vier getrennte Halterungen, die 580 von Bohrung zu Bohrung, die 20 von der Gehäusekante bis zur
+    // Bohrung (Bild 5, DK: S. 5 Fig. 5); unter dem Gehäuse zeigt Bild 5 die Halterungen hier nicht
+    lochabstandTiefe: mass(580, 'Bild 5 (DK: S. 5 Fig. 5)', 'Abstand der Bohrungen vorn und hinten'),
+    lochRand: mass(20, 'Bild 5 (DK: S. 5 Fig. 5)', 'Gehäusekante bis Bohrung; 580 − 540 = 2 × 20'),
+    laenge: schaetzung(157, 'Länge der Halterung nicht bemaßt und in Bild 5 unter dem Gehäuse verdeckt; gleiche Halterung wie bei AW 4|5|7 angenommen'),
+    ueberstand: schaetzung(
+      50,
+      'Überstand nicht bemaßt; in Bild 5 (DK: S. 5 Fig. 5) endet die Halterung rund 30 mm hinter der Bohrung, also 20 + 30 mm (gemessen 42 mm vorn, 47 mm hinten)',
+    ),
     breite: schaetzung(50, 'Breite der Bodenhalterung nicht bemaßt'),
     hoehe: schaetzung(25, 'Höhe der Bodenhalterung nicht bemaßt; gleiche Halterung wie bei AW 4|5|7 angenommen'),
   },

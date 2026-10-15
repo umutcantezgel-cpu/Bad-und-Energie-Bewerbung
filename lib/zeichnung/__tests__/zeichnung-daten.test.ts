@@ -157,9 +157,24 @@ describe('Normsymbole (DIN EN ISO 10628-2)', () => {
 describe('Gerätedaten (Bosch-Anleitungen, nur Zahlen)', () => {
   it('AW 4|5|7 OR-S: 1.100 × 800 × 540 mm, Halterungen, Anschlüsse und Kondensat wie in der Anleitung', () => {
     const g = COMPRESS_AW_S;
-    expect([g.breite.mm, g.hoehe.mm, g.tiefe.mm, g.tiefeMitKonsolen.mm]).toEqual([1100, 800, 540, 580]);
+    expect([g.breite.mm, g.hoehe.mm, g.tiefe.mm]).toEqual([1100, 800, 540]);
     expect([g.konsolen.anzahl, g.konsolen.abstand.mm, g.konsolen.randabstand.mm]).toEqual([4, 881, 107]);
-    expect(g.tiefeMitKonsolen.mm - g.tiefe.mm).toBe(2 * g.konsolen.ueberstand.mm);
+    // Bild 5: 580 ist der Abstand der Bohrungen (Maßhilfslinien an den Bohrungen, Bild 24 bohrt im Raster 881 × 580),
+    // 20 die Gehäusekante bis zur Bohrung; beide belegt. Länge und Überstand der getrennten Halterungen sind geschätzt
+    expect([g.konsolen.lochabstandTiefe.mm, g.konsolen.lochRand.mm]).toEqual([580, 20]);
+    expect(g.konsolen.lochabstandTiefe.geschaetzt).toBeUndefined();
+    expect(g.konsolen.lochRand.geschaetzt).toBeUndefined();
+    expect(g.konsolen.lochabstandTiefe.hinweis).toMatch(/Bohrungen/);
+    expect(g.konsolen.lochabstandTiefe.hinweis).toMatch(/Bild 24/);
+    expect(g.konsolen.lochabstandTiefe.mm - g.tiefe.mm).toBe(2 * g.konsolen.lochRand.mm);
+    for (const teil of [g.konsolen.laenge, g.konsolen.ueberstand]) {
+      expect(teil.geschaetzt).toBe(GESCHAETZT);
+      expect(teil.stelle).toMatch(/Bild 5/);
+    }
+    // Die Bohrung liegt in der Halterung, und vorn und hinten bleibt eine Lücke zwischen den beiden Halterungen
+    expect(g.konsolen.ueberstand.mm).toBeGreaterThan(g.konsolen.lochRand.mm);
+    expect(g.konsolen.laenge.mm - g.konsolen.ueberstand.mm).toBeGreaterThan(0);
+    expect(2 * (g.konsolen.laenge.mm - g.konsolen.ueberstand.mm)).toBeLessThan(g.tiefe.mm);
     expect([g.hydraulik.hoehe.mm, g.hydraulik.abstandRand.mm, g.hydraulik.abstandZwischen.mm]).toEqual([202, 87, 90]);
     // 202 und 802 zählen ab der Aufstellfläche (Bild 4: Maßhilfslinien an der Unterkante der Bodenhalterungen)
     expect(g.hydraulik.hoehe.hinweis).toMatch(/Aufstellfläche/);
@@ -185,6 +200,10 @@ describe('Gerätedaten (Bosch-Anleitungen, nur Zahlen)', () => {
     const g = COMPRESS_AW_L;
     expect([g.breite.mm, g.hoehe.mm, g.tiefe.mm]).toEqual([1350, 1100, 540]);
     expect(g.quelle.dokument).toBe('6721842854');
+    // Bild 5 wie bei AW 4|5|7: 580 von Bohrung zu Bohrung, 20 von der Gehäusekante; die Halterung ist geschätzt
+    expect([g.konsolen.lochabstandTiefe.mm, g.konsolen.lochRand.mm]).toEqual([580, 20]);
+    expect(g.konsolen.lochabstandTiefe.mm - g.tiefe.mm).toBe(2 * g.konsolen.lochRand.mm);
+    expect([g.konsolen.laenge.geschaetzt, g.konsolen.ueberstand.geschaetzt]).toEqual([GESCHAETZT, GESCHAETZT]);
     expect(g.konsolen.randabstand.mm * 2 + g.konsolen.abstand.mm).toBe(g.breite.mm);
     expect([g.kondensat.vonLinks.mm, g.kondensat.vonHinten.mm]).toEqual([270, 97]);
     expect(g.kondensat.laenge.mm).toBeLessThanOrEqual(g.konsolen.hoehe.mm);
@@ -240,12 +259,42 @@ describe('Gerätedaten (Bosch-Anleitungen, nur Zahlen)', () => {
     for (const k of vorne.kreise.filter((x) => x.art === 'verdeckt')) expect(vorne.boden - k.cy).toBe(202);
     const seite = seitenansicht(COMPRESS_AW_S, { massketten: 'voll' });
     expect(seite.breite).toBe(540);
-    expect(seite.masse.map((m) => m.text.wert)).toEqual(['540', '97', '580', '202', '800']);
+    expect(seite.masse.map((m) => m.text.wert)).toEqual(['540', '97', '20', '580', '202', '800']);
     // Von der Seite ein Rechteck mit Deckellinie (Bild 14, 17, 20), keine Rundung vorn
     expect(seite.kontur[0]).toBe('M0 0H540V775H0Z');
     expect(seite.fein).toContain('M0 60H540');
+    // Bodenhalterungen (Bild 5, Draufsicht): zwei getrennte Konturen unter dem Gehäuse, vorn und hinten, mit Lücke
+    // dazwischen; keine durchgehende Schiene über die 580 (Prüfung E-029, Runde 3)
+    const halterungen = seite.kontur
+      .map((d) => d.match(/^M(-?[\d.]+) ([\d.]+)H(-?[\d.]+)V([\d.]+)H(-?[\d.]+)Z$/))
+      .filter((t): t is RegExpMatchArray => t !== null && Number(t[2]) === seite.unterkante && Number(t[4]) === seite.boden)
+      .map((t) => [Number(t[1]), Number(t[3])]);
+    expect(halterungen).toEqual([
+      [-50, 107],
+      [433, 590],
+    ]);
+    expect(seite.kontur).not.toContain('M-20 775H560V800H-20Z');
+    expect(halterungen[1][0] - halterungen[0][1]).toBeGreaterThan(300);
+    // 580 von Bohrung zu Bohrung: die Achsen der Bohrungen liegen je 20 vor der Gehäusekante in den Halterungen, die
+    // Maßhilfslinien der 580 setzen sie fort; die 20 reicht von der Gehäusekante (an ihrer Ecke) bis zur Bohrung
+    const achsen = seite.mittellinie.filter((d) => /^M-?[\d.]+ [\d.]+V[\d.]+$/.test(d)).map((d) => Number(d.match(/^M(-?[\d.]+)/)![1]));
+    expect(achsen).toEqual([-20, 560]);
+    for (const [x, [a, b]] of achsen.map((x, i) => [x, halterungen[i]] as const)) {
+      expect(x).toBeGreaterThan(a);
+      expect(x).toBeLessThan(b);
+    }
+    const k580 = seite.masse[3];
+    expect([k580.a.x, k580.b.x, k580.b.x - k580.a.x]).toEqual([-20, 560, 580]);
+    expect(k580.hilfslinien).toBe(`M-20 ${seite.boden}L-20 1036M560 ${seite.boden}L560 1036`);
+    const k20 = seite.masse[2];
+    expect([Math.min(k20.a.x, k20.b.x), Math.max(k20.a.x, k20.b.x)]).toEqual([-20, 0]);
+    expect(k20.hilfslinien.startsWith(`M-20 ${seite.unterkante}L`)).toBe(true);
+    expect(k20.hilfslinien).toContain(`M0 ${seite.unterkante}L`);
+    // Halterungen und Anschlüsse liegen im Rahmen der Zeichnung
+    expect(seite.rahmen.x0).toBeLessThan(halterungen[0][0]);
+    expect(seite.rahmen.x1).toBeGreaterThan(halterungen[1][1]);
     // 202 von der Aufstellfläche bis zur Mitte der Anschlüsse; Kondensat 97 mm von der Rückseite, hinter der Halterung
-    const k202 = seite.masse[3];
+    const k202 = seite.masse[4];
     expect([Math.max(k202.a.y, k202.b.y), Math.abs(k202.a.y - k202.b.y)]).toEqual([seite.boden, 202]);
     const k97 = seite.masse[1];
     expect([Math.min(k97.a.x, k97.b.x), Math.max(k97.a.x, k97.b.x)]).toEqual([443, 540]);

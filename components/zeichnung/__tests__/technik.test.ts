@@ -86,7 +86,7 @@ describe('Außengerät: maßstäblich aus dem Geräte-Modul (K-010)', () => {
     }
     const seite = geraet({ groesse: 'L', ansicht: 'seite', massketten: 'voll' });
     const werteSeite = [...seite.matchAll(/<text[^>]*>(\d+)<\/text>/g)].map((x) => Number(x[1]));
-    for (const w of [COMPRESS_AW_L.tiefe.mm, COMPRESS_AW_L.tiefeMitKonsolen.mm, COMPRESS_AW_L.hoehe.mm, COMPRESS_AW_L.hydraulik.hoehe.mm]) {
+    for (const w of [COMPRESS_AW_L.tiefe.mm, COMPRESS_AW_L.konsolen.lochabstandTiefe.mm, COMPRESS_AW_L.konsolen.lochRand.mm, COMPRESS_AW_L.hoehe.mm, COMPRESS_AW_L.hydraulik.hoehe.mm]) {
       expect(werteSeite, String(w)).toContain(w);
     }
     expect(vorne).toContain(`Dok.-Nr. ${COMPRESS_AW_S.quelle.dokument} (${COMPRESS_AW_S.quelle.ausgabe})`);
@@ -353,6 +353,8 @@ describe('Schrift in den Zeichnungen: gezeichnet mindestens 12 px an der kleinst
     const seite = geraet({ ansicht: 'seite', massketten: 'voll' });
     expect(seite).not.toMatch(/ANSCHLÜSSE|_etikett_/);
     expect(seite).toContain(`die Anschlüsse für das Heizwasser, ${COMPRESS_AW_S.hydraulik.hoehe.mm}\u00a0mm über der Aufstellfläche`);
+    expect(seite).toContain(`je eine Bodenhalterung, ihre Bohrungen ${COMPRESS_AW_S.konsolen.lochabstandTiefe.mm}\u00a0mm auseinander`);
+    expect(seite).toMatch(/aria-label="[^"]*je Seite zwei Bodenhalterungen mit 580\u00a0mm zwischen den Bohrungen/);
   });
 
   it('jede Schrift im Markup hat mindestens 12 Einheiten (Hausschnitt, Geräte, Schemata ohne CSS)', () => {

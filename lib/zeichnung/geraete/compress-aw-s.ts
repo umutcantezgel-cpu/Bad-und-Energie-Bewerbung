@@ -36,13 +36,24 @@ export const COMPRESS_AW_S: Aussengeraet = {
     'Gesamthöhe ab Aufstellfläche; Bild 4 bemaßt 802 mm von der Unterkante der Bodenhalterungen (DK: S. 5 Fig. 4)',
   ),
   tiefe: mass(540, 'Bild 5, Tabelle 26 (DK: S. 5 Fig. 5, S. 22 Tab. 5)'),
-  tiefeMitKonsolen: mass(580, 'Bild 5 (DK: S. 5 Fig. 5)'),
   oberkante: { radius: schaetzung(60, 'Obere Längskanten links und rechts gerundet (Bild 4, 18, 28; DK: S. 5, 11, 16), Radius nicht bemaßt') },
   konsolen: {
     anzahl: 4,
     abstand: mass(881, 'Bild 6 (DK: S. 5 Fig. 6)'),
     randabstand: mass(107, 'Bild 5 (DK: S. 5 Fig. 5)', '107 + 881 + 112 = 1100; die Gegenseite ist nicht bemaßt'),
-    ueberstand: mass(20, 'Bild 5 (DK: S. 5 Fig. 5)', '580 − 540 = 2 × 20'),
+    // Bild 5 (DK: S. 5 Fig. 5, Draufsicht) zeigt vier getrennte Halterungen, je eine vorn und eine hinten; die
+    // Maßhilfslinien der 580 setzen an ihren Bohrungen an, die 20 reicht von der Gehäusekante bis zur Bohrung.
+    // Bild 24 (DK: S. 14 Fig. 24, Fundamentplan) bohrt im Raster 881 × 580
+    lochabstandTiefe: mass(580, 'Bild 5 (DK: S. 5 Fig. 5)', 'Abstand der Bohrungen vorn und hinten; ebenso Bild 24 (DK: S. 14 Fig. 24), Raster 881 × 580'),
+    lochRand: mass(20, 'Bild 5 (DK: S. 5 Fig. 5)', 'Gehäusekante bis Bohrung; 580 − 540 = 2 × 20'),
+    laenge: schaetzung(
+      157,
+      'Länge der Halterung nicht bemaßt; in Bild 5 (DK: S. 5 Fig. 5) am Gehäuse von 540 mm gemessen rund 157 mm, vorn wie hinten',
+    ),
+    ueberstand: schaetzung(
+      50,
+      'Überstand nicht bemaßt; in Bild 5 (DK: S. 5 Fig. 5) endet die Halterung rund 30 mm hinter der Bohrung, also 20 + 30 mm (gemessen 44 mm vorn, 53 mm hinten)',
+    ),
     breite: schaetzung(50, 'Breite der Bodenhalterung nicht bemaßt'),
     hoehe: schaetzung(25, 'Höhe der Bodenhalterung nicht bemaßt; in Bild 4 und Bild 17 rund ein Dreißigstel der Gesamthöhe'),
   },

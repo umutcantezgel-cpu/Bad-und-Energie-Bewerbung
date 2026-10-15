@@ -123,8 +123,14 @@ export function rotorBlaetter(r: number, nabe: number, anzahl = 4): string {
   return teile.join('');
 }
 
-function huelle(ansicht: Omit<Ansicht, 'rahmen'>, rand: number, schrift: number = SCHRIFT.haupt): Ansicht['rahmen'] {
-  const xs: number[] = [0, ansicht.breite];
+function huelle(
+  ansicht: Omit<Ansicht, 'rahmen'>,
+  rand: number,
+  schrift: number = SCHRIFT.haupt,
+  koerper: { x0: number; x1: number } = { x0: 0, x1: ansicht.breite },
+): Ansicht['rahmen'] {
+  // Körper samt allem, was über das Gehäuse hinausragt (Halterungen und Anschlüsse der Seitenansicht)
+  const xs: number[] = [koerper.x0, koerper.x1];
   const ys: number[] = [0, ansicht.boden];
   for (const m of ansicht.masse) {
     // Maßzahl: grob als Kasten um die Mitte (Breite je Ziffer 0,6 em, gedreht bei senkrechten Maßen)
@@ -241,6 +247,10 @@ export function seitenansicht(g: Aussengeraet, { detail = 'voll', massketten = '
   const boden = H;
   const unterkante = H - kh;
   const ue = g.konsolen.ueberstand.mm;
+  const kl = g.konsolen.laenge.mm;
+  const lr = g.konsolen.lochRand.mm;
+  // Bohrungen der Halterungen vorn und hinten, je `lochRand` vor der Gehäusekante: 580 mm auseinander (Bild 5)
+  const loecher = [-lr, T + lr];
   const rk = g.oberkante.radius.mm;
   const cy = g.ausblas.mitteY.mm;
   const rr = g.rotor.durchmesser.mm / 2;
@@ -253,8 +263,10 @@ export function seitenansicht(g: Aussengeraet, { detail = 'voll', massketten = '
   const kontur = [
     // Gehäuse: von der Seite ein Rechteck (Bild 14, 17, 20); die Rundung der oberen Längskante steht als Deckellinie
     rechteck(0, 0, T, unterkante),
-    // Bodenhalterungen: 580 mm, je 20 mm Überstand vorn und hinten (beide Halterungen liegen hintereinander)
-    rechteck(-ue, unterkante, T + ue, boden),
+    // Bodenhalterungen: je Seite zwei getrennte, vorn und hinten, mit der Lücke dazwischen (Bild 5, Draufsicht); die
+    // Halterungen der linken Seite liegen genau dahinter. 580 ist der Abstand ihrer Bohrungen, keine Schienenlänge
+    rechteck(-ue, unterkante, -ue + kl, boden),
+    rechteck(T + ue - kl, unterkante, T + ue, boden),
     // Hydraulische Anschlüsse hinten (beide auf 202 mm über der Aufstellfläche, hintereinander)
     rechteck(T, hy - hr, T + hl, hy + hr),
   ];
@@ -263,20 +275,28 @@ export function seitenansicht(g: Aussengeraet, { detail = 'voll', massketten = '
   const verdeckt: string[] = [];
   const mittellinie: string[] = [];
   if (detail === 'voll') {
-    // Kondensatablauf: von der Seite liegt er hinter der Bodenhalterung (verdeckt, nicht länger als sie hoch ist)
+    // Kondensatablauf: von der Seite liegt er hinter der hinteren Bodenhalterung (verdeckt, nicht länger als sie hoch ist)
     verdeckt.push(rechteck(kond.x - kond.d / 2, unterkante, kond.x + kond.d / 2, unterkante + kond.l));
     // Verdampfer hinten, Rotor hinter der Front: verdeckt; Lüfterachse als Mittellinie
     verdeckt.push(rechteck(T - g.verdampfer.tiefe.mm, rk, T, unterkante - g.verdampfer.rand.mm));
     verdeckt.push(rechteck(60, cy - rr, 120, cy + rr));
     mittellinie.push(`M-40 ${r1(cy)}H${r1(T * 0.62)}`);
+    // Achsen der Bohrungen durch die Halterungen; die Maßhilfslinien der 580 setzen sie unter der Aufstellfläche fort
+    for (const x of loecher) mittellinie.push(`M${r1(x)} ${r1(unterkante - 12)}V${r1(boden)}`);
   }
 
   const masse: Masslinie[] = [];
   if (massketten) {
     const zeilen = massketten === 'voll' ? 2 : 1;
     masse.push(kette({ x: 0, y: 0 }, { x: T, y: 0 }, -VERSATZ, T));
-    if (massketten === 'voll') masse.push(kette({ x: kond.x, y: boden }, { x: T, y: boden }, VERSATZ, g.kondensat.vonHinten.mm));
-    masse.push(kette({ x: -ue, y: boden }, { x: T + ue, y: boden }, VERSATZ * zeilen, g.tiefeMitKonsolen.mm));
+    if (massketten === 'voll') {
+      masse.push(kette({ x: kond.x, y: boden }, { x: T, y: boden }, VERSATZ, g.kondensat.vonHinten.mm));
+      // 20 von der Gehäusekante (vorn) bis zur Bohrung: die Hilfslinien setzen an der Unterkante des Gehäuses an, an
+      // seiner Ecke und an der Achse der Bohrung; die Maßlinie liegt in der Zeile des Kondensatmaßes
+      masse.push(kette({ x: -lr, y: unterkante }, { x: 0, y: unterkante }, boden - unterkante + VERSATZ, g.konsolen.lochRand.mm));
+    }
+    // 580 von Bohrung zu Bohrung (Bild 5: Maßhilfslinien an den Bohrungen)
+    masse.push(kette({ x: loecher[0], y: boden }, { x: loecher[1], y: boden }, VERSATZ * zeilen, g.konsolen.lochabstandTiefe.mm));
     // 202 und die Höhe zählen ab der Aufstellfläche (Bild 4: Maßhilfslinie an der Unterkante der Halterungen)
     masse.push(kette({ x: T, y: boden }, { x: T, y: hy }, hl + VERSATZ, g.hydraulik.hoehe.mm));
     // Die Anschlüsse benennt das Schriftfeld (HTML): Ein Hinweis mit Hinweislinie im Bild hätte am Handy nie die
@@ -284,7 +304,7 @@ export function seitenansicht(g: Aussengeraet, { detail = 'voll', massketten = '
     if (massketten === 'voll') masse.push(kette({ x: 0, y: boden }, { x: 0, y: 0 }, -VERSATZ, H));
   }
   const ohne = { ansicht: 'seite' as const, breite: T, hoehe: H, boden, unterkante, kontur, fein, verdeckt, mittellinie, kreise, rotor: null, masse };
-  return { ...ohne, rahmen: huelle(ohne, 24, schrift) };
+  return { ...ohne, rahmen: huelle(ohne, 24, schrift, { x0: -ue, x1: Math.max(T + ue, T + hl) }) };
 }
 
 export function ansichtVon(g: Aussengeraet, ansicht: AnsichtId, optionen?: AnsichtOptionen): Ansicht {

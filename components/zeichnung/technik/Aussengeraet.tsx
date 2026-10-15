@@ -181,6 +181,7 @@ export function Aussengeraet({
           {ansicht === 'seite' && massketten === 'voll' ? (
             <span className={t.quelle}>
               Hinten, rechts im Bild: die Anschlüsse für das Heizwasser, {g.hydraulik.hoehe.mm}&nbsp;mm über der Aufstellfläche.
+              Unten vorn und hinten je eine Bodenhalterung, ihre Bohrungen {g.konsolen.lochabstandTiefe.mm}&nbsp;mm auseinander.
             </span>
           ) : null}
           <span className={t.quelle}>
