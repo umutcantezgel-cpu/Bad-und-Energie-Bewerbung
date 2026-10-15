@@ -1,6 +1,7 @@
 import { INITIATIVE_JOB_ID } from '@/lib/applications/constants';
 import { INITIATIVE_QUESTION_SET } from '@/lib/apply/questions';
 import { FACTS } from '@/lib/content/facts';
+import { employmentLabel } from '@/lib/jobs/format';
 import { getFunnelOptions, getJobById, type Job } from '@/lib/jobs/registry';
 import { STELLEN_ICON, mitTrennstellen } from './strang/strang-text';
 import type { FlowJobOption } from './types';
@@ -20,10 +21,11 @@ const UEBER_TARIF = /über Tarif|übertariflich/i;
 
 /**
  * Zusatzleistungen statt Gehalt (E-030, Plan §D) unter dem Namen der Stelle: „Über Tarif · 30 Tage Urlaub“, nur aus den
- * Daten der Stelle (Fakten aboveTariff und vacation30, Paketzeile „Vergütung“). Ohne belegte Angabe keine Zeile; beim
- * Schülerpraktikum nie (kein Wort zu Geld).
+ * Daten der Stelle (Fakten aboveTariff und vacation30, Paketzeile „Vergütung“). Belegt eine Stelle weder Tarif noch
+ * Urlaub (Büro: offen, fakten-abgleich S5), nennt die Zeile ihre Anstellung und „Lohn auf Anfrage“ (E-031: „Voll- oder
+ * Teilzeit · Lohn auf Anfrage“). Beim Schülerpraktikum nie (kein Wort zu Geld).
  */
-export function zusatzZeile(job: Pick<Job, 'pay' | 'benefitFactIds' | 'packageExtras'>): string | undefined {
+export function zusatzZeile(job: Pick<Job, 'pay' | 'benefitFactIds' | 'packageExtras' | 'employment'>): string | undefined {
   if (job.pay !== 'auf-anfrage') return undefined;
   const teile: string[] = [];
   const tarif =
@@ -31,7 +33,8 @@ export function zusatzZeile(job: Pick<Job, 'pay' | 'benefitFactIds' | 'packageEx
     job.packageExtras.some((extra) => extra.label === 'Vergütung' && UEBER_TARIF.test(extra.text));
   if (tarif) teile.push('Über Tarif');
   if (job.benefitFactIds.includes('vacation30')) teile.push(FACTS.vacation30.short);
-  return teile.length > 0 ? teile.join(' · ') : undefined;
+  if (teile.length > 0) return teile.join(' · ');
+  return `${employmentLabel(job).split(' · ')[0]} · ${FACTS.payOnRequest.short}`;
 }
 
 /**

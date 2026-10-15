@@ -27,12 +27,14 @@ describe('zusatzZeile', () => {
     }
   });
 
-  it('Büro: weder Tarif noch Urlaub belegt (S5, M-038), also keine Zeile; Praktikum: nichts', () => {
-    expect(zusatzZeile(job('buerofachkraft'))).toBeUndefined();
+  it('Büro: weder Tarif noch Urlaub belegt (S5, M-038), also Anstellung und „Lohn auf Anfrage“ (E-031); Praktikum: nichts', () => {
+    expect(zusatzZeile(job('buerofachkraft'))).toBe(`Voll- oder Teilzeit · ${FACTS.payOnRequest.short}`);
+    expect(zusatzZeile(job('buerofachkraft'))).not.toMatch(/Tarif|Urlaub|flexib|unbefristet/i);
     expect(zusatzZeile(job('schuelerpraktikum-shk'))).toBeUndefined();
-    // Ohne belegte Angabe keine Zeile
-    expect(zusatzZeile({ pay: 'auf-anfrage', benefitFactIds: [], packageExtras: [] })).toBeUndefined();
-    expect(zusatzZeile({ pay: 'keine-angabe', benefitFactIds: ['aboveTariff', 'vacation30'], packageExtras: [] })).toBeUndefined();
+    // Ohne Tarif und Urlaub nur, was die Stelle selbst sagt: Anstellung (ohne Befristung) und Lohn auf Anfrage
+    const employment = { kind: 'vollzeit', permanent: true, start: 'sofort' } as const;
+    expect(zusatzZeile({ pay: 'auf-anfrage', benefitFactIds: [], packageExtras: [], employment })).toBe(`Vollzeit · ${FACTS.payOnRequest.short}`);
+    expect(zusatzZeile({ pay: 'keine-angabe', benefitFactIds: ['aboveTariff', 'vacation30'], packageExtras: [], employment })).toBeUndefined();
   });
 });
 
