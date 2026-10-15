@@ -6,9 +6,10 @@ import {
   PROCESS_INTRO,
   STELLEN_FAQ_ITEMS,
   REGION,
-  getProcessSteps,
-  processAudienceFor,
-  type ProcessAudience,
+  ANDERE_ABLAEUFE_TITEL,
+  FUER_FACHKRAEFTE,
+  sammelAblauf,
+  type ProcessStep,
 } from '@/lib/content';
 import { berufKategorie } from '@/lib/jobs/berufe';
 import { jobUrl, toPlainDescription } from '@/lib/jobs/format';
@@ -33,23 +34,23 @@ import {
 export const dynamic = 'force-static';
 export const revalidate = 3600;
 
-const START_LABEL: Record<Exclude<ProcessAudience, 'fachkraft'>, string> = {
-  ausbildung: 'Start in der Ausbildung',
-  quereinstieg: 'Start im Quereinstieg',
-  buero: 'Start im Büro',
-  praktikum: 'Start im Schülerpraktikum',
-};
-
 /**
- * Step 3 differs for apprentices, career changers, the office and the school internship (by category, not by question
- * set: the internship asks like the apprenticeship, but has its own process); listed only if such a job is open.
+ * Process on a page about all open jobs (lib/content/process.ts sammelAblauf): the steps for skilled trades, step 3
+ * marked „Für Fachkräfte“, then per other kind of job among them what differs (Prüfung E-029, Runde 3).
  */
-function startVariants(jobs: readonly Job[]): string[] {
-  const audiences = new Set(jobs.map((job) => processAudienceFor({ category: job.category, questionSet: job.apply.questionSet })));
-  const lines = (['ausbildung', 'quereinstieg', 'buero', 'praktikum'] as const)
-    .filter((audience) => audiences.has(audience))
-    .map((audience) => `${START_LABEL[audience]}: ${getProcessSteps(audience)[2].text}`);
-  return lines.length > 0 ? [...lines, ''] : [];
+function processLines(jobs: readonly Job[]): string[] {
+  const { schritte, varianten } = sammelAblauf(jobs);
+  // „3. Start mit Werkzeug und Fahrzeug (für Fachkräfte): Du bekommst …“ statt zweier Doppelpunkte hintereinander
+  const bezug = `${FUER_FACHKRAEFTE}: `;
+  const zeile = (step: ProcessStep) =>
+    step.text.startsWith(bezug)
+      ? `${step.number}. ${step.title} (${FUER_FACHKRAEFTE.charAt(0).toLowerCase()}${FUER_FACHKRAEFTE.slice(1)}): ${step.text.slice(bezug.length)}`
+      : `${step.number}. ${step.title}: ${step.text}`;
+  return [
+    ...schritte.map(zeile),
+    '',
+    ...(varianten.length > 0 ? [`${ANDERE_ABLAEUFE_TITEL}:`, ...varianten.map((variante) => `- ${variante.name}: ${variante.text}`), ''] : []),
+  ];
 }
 
 /** Full version of /llms.txt: every job text as on its page, plus process, FAQ, region and contact. */
@@ -97,9 +98,7 @@ export function GET(): Response {
     '## 3. Bewerbung und Ablauf',
     `${PROCESS_INTRO.title}. ${PROCESS_INTRO.text}`,
     '',
-    ...getProcessSteps('fachkraft').map((step) => `${step.number}. ${step.title}: ${step.text}`),
-    '',
-    ...startVariants([...jobs, ...extra]),
+    ...processLines([...jobs, ...extra]),
     DISCRETION_PROMISE,
     `Bewerben: ${base}/bewerbung`,
     '',

@@ -1,6 +1,7 @@
 import { SectionHeader } from '@/components/home/SectionHeader';
 import { Icon } from '@/components/icons';
 import { TextLink } from '@/components/ui/TextLink';
+import { ANDERE_ABLAEUFE_TITEL } from '@/lib/content/process';
 import { ERKLAERUNG_TITEL_ID, erklaerung, type ErklaerungEingaben } from './erklaerung-text';
 import styles from './seite.module.css';
 
@@ -34,6 +35,19 @@ export function Erklaerung(eingaben: ErklaerungEingaben) {
             </li>
           ))}
         </ol>
+        {ablauf.varianten.length > 0 ? (
+          <div className="flex flex-col gap-3" data-ablauf-varianten="">
+            <h4 className="text-body font-bold text-ink">{ANDERE_ABLAEUFE_TITEL}</h4>
+            <dl className={styles.liste}>
+              {ablauf.varianten.map((variante) => (
+                <div key={variante.audience} className="flex flex-col gap-1">
+                  <dt className="text-etikett text-ink-muted">{variante.name}</dt>
+                  <dd className="max-w-prose text-callout text-ink-muted">{variante.text}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        ) : null}
         {ablauf.hinweis ? <p className="max-w-prose text-callout text-ink">{ablauf.hinweis}</p> : null}
       </div>
 

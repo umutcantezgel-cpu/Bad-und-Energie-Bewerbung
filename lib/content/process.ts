@@ -142,6 +142,58 @@ export function getProcessSteps(audience: ProcessAudience = 'fachkraft'): readon
   return [APPLY_STEP, MEET_STEPS[audience], START_STEPS[audience]];
 }
 
+/** Stellenbezug von Schritt 3 der Fachkräfte auf Sammelflächen (sammelAblauf). */
+export const FUER_FACHKRAEFTE = 'Für Fachkräfte';
+
+/** Stellenarten mit eigenem Ablauf, in der Reihenfolge der Sammelflächen; Name wie im Etikett der Variante. */
+const ANDERE_ABLAEUFE = Object.freeze([
+  { audience: 'ausbildung', name: 'Ausbildung' },
+  { audience: 'quereinstieg', name: 'Quereinstieg' },
+  { audience: 'buero', name: 'Büro' },
+  { audience: 'praktikum', name: 'Schülerpraktikum' },
+] as const satisfies readonly { audience: Exclude<ProcessAudience, 'fachkraft'>; name: string }[]);
+
+/** Überschrift über den Varianten auf einer Sammelfläche. */
+export const ANDERE_ABLAEUFE_TITEL = 'Ablauf bei den anderen Stellen';
+
+export interface AblaufVariante {
+  audience: Exclude<ProcessAudience, 'fachkraft'>;
+  name: string;
+  /** Die Schritte, die vom Ablauf der Fachkräfte abweichen, im Wortlaut (Kennenlernen und Start bzw. nur Start). */
+  text: string;
+}
+
+export interface SammelAblauf {
+  /** Die Schritte der Fachkräfte; Schritt 3 mit „Für Fachkräfte: “, sobald es Varianten gibt. */
+  schritte: readonly ProcessStep[];
+  varianten: readonly AblaufVariante[];
+}
+
+/**
+ * Ablauf auf einer Sammelfläche, einer Seite über mehrere Stellen (/, /jobs, /bewerbung ohne Stelle, „Diskret
+ * wechseln“, llms-full.txt; Prüfung E-029, Runde 3): die Schritte der Fachkräfte und je Stellenart unter den gezeigten
+ * Stellen mit eigenem Ablauf, was anders ist. Gibt es eine solche, trägt Schritt 3 „Für Fachkräfte: …“: Unbefristeter
+ * Vertrag, Hilti-Set und Servicefahrzeug stehen so nie ohne Bezug neben dem Büro (Befristung offen, S5), der Ausbildung
+ * oder dem Schülerpraktikum.
+ */
+export function sammelAblauf(stellen: readonly { category?: string; apply: { questionSet: QuestionSet } }[]): SammelAblauf {
+  const arten = new Set(stellen.map((stelle) => processAudienceFor({ category: stelle.category, questionSet: stelle.apply.questionSet })));
+  const fachkraft = getProcessSteps('fachkraft');
+  const varianten = ANDERE_ABLAEUFE.filter(({ audience }) => arten.has(audience)).map(({ audience, name }) => ({
+    audience,
+    name,
+    text: getProcessSteps(audience)
+      .filter((step, i) => step !== fachkraft[i])
+      .map((step) => step.text)
+      .join(' '),
+  }));
+  if (varianten.length === 0) return { schritte: fachkraft, varianten };
+  return {
+    schritte: fachkraft.map((step) => (step.id === 'start' ? { ...step, text: `${FUER_FACHKRAEFTE}: ${step.text}` } : step)),
+    varianten,
+  };
+}
+
 export function getProcessIntro(audience: ProcessAudience = 'fachkraft'): ProcessIntro {
   return PROCESS_INTROS[audience];
 }

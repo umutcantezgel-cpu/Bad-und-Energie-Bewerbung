@@ -6,7 +6,14 @@ import { COMPANY } from '@/lib/content/company';
 import { getFaqItems } from '@/lib/content/faq';
 import { PAY_ON_REQUEST, jobPath } from '@/lib/jobs/format';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
-import { DISCRETION_PROMISE, PROCESS_INTRO, getProcessSteps } from '@/lib/content/process';
+import {
+  ANDERE_ABLAEUFE_TITEL,
+  DISCRETION_PROMISE,
+  FUER_FACHKRAEFTE,
+  PROCESS_INTRO,
+  getProcessSteps,
+  sammelAblauf,
+} from '@/lib/content/process';
 import { buildFaqPageJsonLd } from '../content';
 import { AboutSection } from '../AboutSection';
 import { BenefitGrid } from '../BenefitGrid';
@@ -80,6 +87,24 @@ describe('ProcessTimeline (#ablauf, E-START-027)', () => {
     expect(strang).toContain('border-ruecklauf');
     expect(html).toMatch(/aria-hidden="true" class="pointer-events-none absolute top-0 right-0 hidden w-screen rounded-r-voll lg:block/);
     expect(html).toMatch(/<section[^>]*class="[^"]*overflow-x-clip/);
+  });
+
+  it('Sammelfläche (Runde 3): Schritt 3 „Für Fachkräfte“, darunter die Abläufe der anderen live Stellen im Wortlaut', () => {
+    const live = getActiveJobs().filter((job) => isJobLive(job, new Date()));
+    expect(live.some((job) => job.category === 'buero')).toBe(true);
+    const text = decode(html.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ');
+    expect(text).toContain(`${FUER_FACHKRAEFTE}: ${steps[2].text}`);
+    // Unbefristeter Vertrag, Hilti-Set und Servicefahrzeug nie ohne Bezug neben dem Büro (Befristung offen, S5)
+    expect(count(text, /unbefristeten/g)).toBe(1);
+    expect(text).toContain(ANDERE_ABLAEUFE_TITEL);
+    const { varianten } = sammelAblauf(live);
+    expect(varianten.map((variante) => variante.name)).toEqual(['Ausbildung', 'Quereinstieg', 'Büro', 'Schülerpraktikum']);
+    for (const variante of varianten) expect(text).toContain(`${variante.name} ${variante.text}`);
+    // Ohne Stellen mit anderem Ablauf (Stichtag nach dem Ende aller Stellen): Schritt 3 ohne Bezug, keine Varianten
+    const ohne = decode(renderToStaticMarkup(createElement(ProcessTimeline, { now: new Date('2099-01-01T00:00:00Z') })));
+    expect(ohne).toContain(steps[2].text);
+    expect(ohne).not.toContain(FUER_FACHKRAEFTE);
+    expect(ohne).not.toContain(ANDERE_ABLAEUFE_TITEL);
   });
 
   it('Diskretionszusage sichtbar und genau ein Knopf zu /bewerbung als Hauptaktion', () => {

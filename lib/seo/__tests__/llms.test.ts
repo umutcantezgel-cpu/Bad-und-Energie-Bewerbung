@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GET as llmsFull } from '@/app/llms-full.txt/route';
 import { GET as llms } from '@/app/llms.txt/route';
 import { COMPANY_FACT_IDS, EMPLOYER_FACT_IDS, funnelOnlyJobs, liveJobs } from '@/app/llms.txt/content';
-import { COMPANY, FACTS, type FactId } from '@/lib/content';
+import { ANDERE_ABLAEUFE_TITEL, COMPANY, FACTS, FUER_FACHKRAEFTE, getProcessSteps, sammelAblauf, type FactId } from '@/lib/content';
 import type { Job } from '@/lib/jobs/registry';
 
 /** E-SEO-014: the short file carries the backed employer lines the old file had, all from fact ids. */
@@ -87,6 +87,18 @@ describe('llms.txt (E-SEO-014)', () => {
     const block = text.split('### Schülerpraktikum Anlagenmechaniker SHK (m/w/d)')[1]?.split('\n### ')[0] ?? '';
     expect(block).toContain('Das bekommst du');
     expect(block).not.toMatch(/Flexible Arbeitszeiten|Arbeitszeit/);
+  });
+
+  it('llms-full.txt: step 3 of the process marked „Für Fachkräfte“, the other jobs\' process below (Sammelfläche, Runde 3)', async () => {
+    const text = await textAt(llmsFull, '2026-10-20T12:00:00Z');
+    const ablauf = text.split('## 3. Bewerbung und Ablauf')[1]?.split('\n## ')[0] ?? '';
+    const start = getProcessSteps('fachkraft')[2];
+    expect(ablauf).toContain(`3. ${start.title} (für Fachkräfte): ${start.text}`);
+    expect(FUER_FACHKRAEFTE).toBe('Für Fachkräfte');
+    expect(ablauf.match(/unbefristeten/g)).toHaveLength(1);
+    const { varianten } = sammelAblauf([...liveJobs(new Date('2026-10-20T12:00:00Z')), ...funnelOnlyJobs()]);
+    expect(varianten.map((variante) => variante.name)).toEqual(['Ausbildung', 'Quereinstieg', 'Büro', 'Schülerpraktikum']);
+    expect(ablauf).toContain(`${ANDERE_ABLAEUFE_TITEL}:\n${varianten.map((variante) => `- ${variante.name}: ${variante.text}`).join('\n')}\n`);
   });
 
   it('names the anniversary in the lead sentence until 31.12.2026, not after', async () => {

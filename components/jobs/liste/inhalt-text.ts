@@ -1,6 +1,5 @@
 import { bindSeparators } from '@/components/jobs/text';
 import { FACTS, JE_NACH_STELLE, offenBei } from '@/lib/content/facts';
-import { getProcessSteps } from '@/lib/content/process';
 import { REGION } from '@/lib/content/region';
 import { jobCategoryLabels, jobPath, payLabel } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/registry';
@@ -15,7 +14,8 @@ import type { Job } from '@/lib/jobs/registry';
  * - 35 km steht als Maß im Kopf und in REGION.headline: Der Vergleich lässt Aufgaben mit dem Radius weg.
  * - „Flexible Arbeitszeiten“ steht in der Unterzeile des Kopfs und hier in der Arbeitszeit, sonst nirgends; feste
  *   Uhrzeiten nennt die Seite nicht (fakten-abgleich B28).
- * - Hilti, Servicefahrzeug und „unbefristet“ stehen im Ablauf (Schritt 3) und je einmal in Kopf oder Liste.
+ * - Hilti, Servicefahrzeug und „unbefristet“ stehen im Ablauf (Schritt 3, „Für Fachkräfte“) und je einmal in Kopf oder
+ *   Liste; was bei den anderen Stellen anders läuft, steht darunter (lib/content/process.ts sammelAblauf).
  * - „Kein Lebenslauf“ steht im Mikrotext des Kopfs und im Initiativband, darum in keinem neuen Abschnitt.
  */
 
@@ -137,21 +137,4 @@ export const ALLTAG = Object.freeze({
       ),
     ),
   }),
-});
-
-// ─── Ablauf: was bei Ausbildung und Quereinstieg anders ist ─────────────────────────────────────────────────
-
-const AUSBILDUNG = getProcessSteps('ausbildung');
-const QUEREINSTIEG = getProcessSteps('quereinstieg');
-
-/**
- * Unter dem Ablauf für Fachkräfte (JobProcess, Fragenset fachkraft): Schritt 2 und 3 der Ausbildung und
- * Schritt 3 des Quereinstiegs im Wortlaut von lib/content/process.
- */
-export const ABLAUF_VARIANTEN = Object.freeze({
-  titel: 'Ablauf bei Ausbildung und Quereinstieg',
-  eintraege: Object.freeze([
-    { name: 'Ausbildung', text: `${AUSBILDUNG[1].text} ${AUSBILDUNG[2].text}` },
-    { name: 'Quereinstieg', text: QUEREINSTIEG[2].text },
-  ]),
 });

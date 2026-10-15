@@ -11,7 +11,15 @@ import { MAPPE_PATH } from '@/lib/apply/params';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
 import { getFaqItems } from '@/lib/content/faq';
-import { DISCRETION_PROMISE, getProcessIntro, getProcessSteps, type ProcessAudience } from '@/lib/content/process';
+import {
+  ANDERE_ABLAEUFE_TITEL,
+  DISCRETION_PROMISE,
+  FUER_FACHKRAEFTE,
+  getProcessIntro,
+  getProcessSteps,
+  sammelAblauf,
+  type ProcessAudience,
+} from '@/lib/content/process';
 import { REGION } from '@/lib/content/region';
 import { jobPath, payLabel } from '@/lib/jobs/format';
 import { ALL_JOBS, getActiveJobs, getFunnelOptions, getJobById, getJobPageSlugs, isJobLive } from '@/lib/jobs/registry';
@@ -70,6 +78,8 @@ const KORPUS = normal(
       getProcessIntro(audience).text,
       ...getProcessSteps(audience).flatMap((step) => [String(step.number), step.title, step.text]),
     ]),
+    // Sammelfläche (sammelAblauf): Schritt 3 der Fachkräfte mit Stellenbezug
+    `${FUER_FACHKRAEFTE}: ${getProcessSteps('fachkraft')[2].text}`,
     ...getFaqItems().map((faq) => faq.answer),
     ...ALL_JOBS.flatMap((job) => [job.title, job.shortTitle, job.seo.h1, job.summary, ...job.requirements, payLabel(job) ?? '']),
     MAPPE_KOPF.titel,
@@ -95,6 +105,8 @@ describe.each(AUDIENCES)('Erklärteil (%s): jeder Satz hat eine Quelle', (audien
     text.unterlagen.mappe,
     ...text.unterlagen.links.map((link) => link.label),
     'Noch angestellt?',
+    ANDERE_ABLAEUFE_TITEL,
+    ...text.ablauf.varianten.map((variante) => variante.name),
   ].map(normal);
 
   it('Sätze aus FACTS, Ablauf, FAQ, Stellendaten und Mappe; sonst nur die geprüften eigenen Wörter', () => {
@@ -138,10 +150,41 @@ describe.each(AUDIENCES)('Erklärteil (%s): jeder Satz hat eine Quelle', (audien
 
   it('Ablauf und Antwort aus lib/content: Fakt quickResponse, Schritte nach Fragenset', () => {
     expect(text.einleitung).toBe(`${FACTS.quickResponse.long} ${getProcessIntro(audience).text}`);
-    expect(text.ablauf.schritte).toEqual(getProcessSteps(audience));
+    // Ohne Vorauswahl (fachkraft) eine Sammelfläche über alle Stellen der Auswahl (Runde 3), sonst der Ablauf der Stelle
+    const { jobs, ohneAnzeige } = eingaben(audience);
+    const sammel = audience === 'fachkraft' ? sammelAblauf([...jobs, ...ohneAnzeige]) : { schritte: getProcessSteps(audience), varianten: [] };
+    expect(text.ablauf.schritte).toEqual(sammel.schritte);
+    expect(text.ablauf.varianten).toEqual(sammel.varianten);
+    expect(erklaerung({ ...eingaben(audience), vorausgewaehlt: true }).ablauf).toMatchObject({
+      schritte: getProcessSteps(audience),
+      varianten: [],
+    });
     expect(html.match(/<h2\b/g)).toHaveLength(1);
     expect(html.match(/<h3\b/g)).toHaveLength(3);
-    expect(html.match(/<h4\b/g)).toHaveLength(3);
+    expect(html.match(/<h4\b/g)).toHaveLength(audience === 'fachkraft' ? 4 : 3);
+  });
+});
+
+describe('Erklärteil ohne Stelle: Sammelfläche (Prüfung E-029, Runde 3)', () => {
+  it('Schritt 3 „Für Fachkräfte“, darunter Ausbildung, Quereinstieg, Büro und Schülerpraktikum im Wortlaut', () => {
+    const html = sichtbar(render(createElement(Erklaerung, eingaben('fachkraft'))));
+    const start = getProcessSteps('fachkraft')[2];
+    expect(html).toContain(`${FUER_FACHKRAEFTE}: ${start.text}`);
+    // Unbefristeter Vertrag und Servicefahrzeug nie ohne Bezug, solange die Bürostelle zur Auswahl steht (S5)
+    expect(eingaben('fachkraft').jobs.some((job) => job.category === 'buero')).toBe(true);
+    expect(html.match(/unbefristeten/g)).toHaveLength(1);
+    expect(html).toContain(ANDERE_ABLAEUFE_TITEL);
+    const { varianten } = erklaerung(eingaben('fachkraft')).ablauf;
+    expect(varianten.map((variante) => variante.name)).toEqual(['Ausbildung', 'Quereinstieg', 'Büro', 'Schülerpraktikum']);
+    expect(varianten.find((variante) => variante.audience === 'buero')?.text).toBe(
+      `${getProcessSteps('buero')[1].text} ${getProcessSteps('buero')[2].text}`,
+    );
+    for (const variante of varianten) expect(html).toContain(`${variante.name} ${normal(variante.text)}`);
+    // Mit vorgewählter Fachkraft-Stelle der Ablauf der Stelle ohne Bezug
+    const vor = sichtbar(render(createElement(Erklaerung, { ...eingaben('fachkraft'), vorausgewaehlt: true })));
+    expect(vor).toContain(start.text);
+    expect(vor).not.toContain(FUER_FACHKRAEFTE);
+    expect(vor).not.toContain(ANDERE_ABLAEUFE_TITEL);
   });
 });
 

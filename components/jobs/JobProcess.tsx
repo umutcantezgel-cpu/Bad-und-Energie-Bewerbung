@@ -1,7 +1,9 @@
 import { Icon } from '@/components/icons';
 import { Rohrklammer } from '@/components/zeichnung/Rohrklammer';
-import { getDiscretionPromise, getProcessIntro, getProcessSteps, type ProcessAudience } from '@/lib/content';
+import { getDiscretionPromise, getProcessIntro, getProcessSteps, sammelAblauf, type ProcessAudience } from '@/lib/content';
+import type { Job } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
+import { AblaufVarianten } from './AblaufVarianten';
 
 export interface JobProcessProps {
   audience: ProcessAudience;
@@ -10,6 +12,11 @@ export interface JobProcessProps {
    * nennt sie schon im Kopf und schaltet sie hier ab, damit der Satz nicht zweimal auf der Seite steht.
    */
   zusage?: boolean;
+  /**
+   * Sammelfläche (/jobs, „Diskret wechseln“): die gezeigten Stellen. Dann Schritt 3 mit „Für Fachkräfte: …“ und
+   * darunter je anderer Stellenart, was anders läuft (sammelAblauf; Prüfung E-029, Runde 3). Nur mit `fachkraft`.
+   */
+  stellen?: readonly Job[];
   className?: string;
 }
 
@@ -37,11 +44,12 @@ function Leitungsstrang() {
 
 /**
  * Ablauf in drei Schritten (Schritt 3 hängt vom Fragenset ab), im Design von #ablauf der Startseite:
- * Etikett, h2 mit Rohrklammer, Schritte mit Nummer in Martian Mono am Leitungsstrang, darunter die
- * Diskretionszusage (nicht bei der Ausbildung).
+ * Etikett, h2 mit Rohrklammer, Schritte mit Nummer in Martian Mono am Leitungsstrang, auf Sammelflächen die anderen
+ * Abläufe (AblaufVarianten), darunter die Diskretionszusage (nicht bei der Ausbildung).
  */
-export function JobProcess({ audience, zusage = true, className }: JobProcessProps) {
-  const steps = getProcessSteps(audience);
+export function JobProcess({ audience, zusage = true, stellen, className }: JobProcessProps) {
+  const { schritte: steps, varianten } =
+    stellen && audience === 'fachkraft' ? sammelAblauf(stellen) : { schritte: getProcessSteps(audience), varianten: [] };
   const intro = getProcessIntro(audience);
   const discretion = zusage ? getDiscretionPromise(audience) : null;
   return (
@@ -77,6 +85,8 @@ export function JobProcess({ audience, zusage = true, className }: JobProcessPro
         </ol>
         <Leitungsstrang />
       </div>
+
+      <AblaufVarianten varianten={varianten} />
 
       {discretion && (
         <p className="flex max-w-prose items-start gap-3 text-lead text-ink">

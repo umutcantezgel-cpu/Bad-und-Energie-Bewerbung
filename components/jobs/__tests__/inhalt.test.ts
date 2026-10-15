@@ -10,7 +10,6 @@ import { Stellenvergleich } from '@/components/jobs/liste/Stellenvergleich';
 import { ARBEITEN_LINK } from '@/lib/themen/registry';
 import { Stellenverteiler } from '@/components/jobs/liste/Stellenverteiler';
 import {
-  ABLAUF_VARIANTEN,
   ALLTAG,
   VERGLEICH,
   alltagWoche,
@@ -21,7 +20,15 @@ import {
 import { GEBIET_LINK, LISTEN_EINLEITUNG, LISTEN_ORTE } from '@/components/jobs/liste/liste-text';
 import { FACTS, JE_NACH_STELLE } from '@/lib/content/facts';
 import { getFaqItems } from '@/lib/content/faq';
-import { DISCRETION_PROMISE, getProcessIntro, getProcessSteps, type ProcessAudience } from '@/lib/content/process';
+import {
+  ANDERE_ABLAEUFE_TITEL,
+  DISCRETION_PROMISE,
+  FUER_FACHKRAEFTE,
+  getProcessIntro,
+  getProcessSteps,
+  sammelAblauf,
+  type ProcessAudience,
+} from '@/lib/content/process';
 import { REGION } from '@/lib/content/region';
 import { PAY_ON_REQUEST, jobPath, payLabel } from '@/lib/jobs/format';
 import { ALL_JOBS, getActiveJobs, isJobLive } from '@/lib/jobs/registry';
@@ -34,7 +41,7 @@ import { ALL_JOBS, getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 
 const STICHTAG = new Date('2026-10-10T12:00:00+02:00');
 const JOBS = getActiveJobs().filter((job) => isJobLive(job, STICHTAG));
-const AUDIENCES: ProcessAudience[] = ['fachkraft', 'ausbildung', 'quereinstieg', 'buero'];
+const AUDIENCES: ProcessAudience[] = ['fachkraft', 'ausbildung', 'quereinstieg', 'buero', 'praktikum'];
 
 /** Wie der Leser es sieht: geschützte Leerzeichen als Leerzeichen, ohne weiche Trennstellen und Wortverbinder. */
 const normal = (text: string) =>
@@ -77,6 +84,8 @@ const KORPUS = normal(
       getProcessIntro(audience).text,
       ...getProcessSteps(audience).flatMap((step) => [String(step.number), step.title, step.text]),
     ]),
+    // Sammelfläche (sammelAblauf): Schritt 3 der Fachkräfte mit Stellenbezug
+    `${FUER_FACHKRAEFTE}: ${getProcessSteps('fachkraft')[2].text}`,
     DISCRETION_PROMISE,
     ...getFaqItems().map((faq) => faq.answer),
     ...ALL_JOBS.flatMap((job) => [
@@ -108,8 +117,8 @@ const EIGENE = [
   GEBIET_LINK.label,
   // Weg zum Themen-Hub (E-028) unter dem Vergleich
   ARBEITEN_LINK.label,
-  ABLAUF_VARIANTEN.titel,
-  ...ABLAUF_VARIANTEN.eintraege.map((eintrag) => eintrag.name),
+  ANDERE_ABLAEUFE_TITEL,
+  ...sammelAblauf(JOBS).varianten.map((variante) => variante.name),
   // Bestand von JobProcess (Stellenseiten): Etikett über dem Ablauf
   'Ablauf',
 ].map(normal);
@@ -118,7 +127,7 @@ const EIGENE = [
 const NEU = {
   vergleich: render(createElement(Stellenvergleich, { jobs: JOBS })),
   einsatzgebiet: render(createElement(Einsatzgebiet, { jobs: JOBS })),
-  ablauf: render(createElement(Ablauf)),
+  ablauf: render(createElement(Ablauf, { jobs: JOBS })),
 };
 
 const zahlen = (text: string) => (text.match(/\d+/g) ?? []).map((zahl) => zahl.replace(/^0+(?=\d)/, ''));
@@ -223,14 +232,37 @@ describe('Arbeitsalltag und Einsatzgebiet', () => {
   });
 });
 
-describe('Ablauf: Fachkräfte wie auf den Stellenseiten, dazu Ausbildung und Quereinstieg', () => {
-  it('Schritte und Diskretionszusage aus lib/content/process, die Ausnahmen im Wortlaut', () => {
+describe('Ablauf: Fachkräfte wie auf den Stellenseiten, dazu die anderen Stellen der Liste (Sammelfläche, Runde 3)', () => {
+  it('Schritte und Diskretionszusage aus lib/content/process, Schritt 3 „Für Fachkräfte“, die Abweichungen im Wortlaut', () => {
     const text = sichtbar(NEU.ablauf);
-    for (const step of getProcessSteps('fachkraft')) expect(text).toContain(step.text);
+    const [bewerben, kennenlernen, start] = getProcessSteps('fachkraft');
+    for (const step of [bewerben, kennenlernen]) expect(text).toContain(step.text);
+    expect(text).toContain(`${FUER_FACHKRAEFTE}: ${start.text}`);
+    // Unbefristeter Vertrag, Hilti-Set und Servicefahrzeug nur im Schritt der Fachkräfte, nie ohne Bezug (Büro: S5)
+    expect(text.match(/unbefristeten/g)).toHaveLength(1);
+    expect(text.match(/Servicefahrzeug/g)).toHaveLength(1);
     expect(text).toContain(DISCRETION_PROMISE);
-    const [ausbildung, quereinstieg] = ABLAUF_VARIANTEN.eintraege;
-    expect(ausbildung.text).toBe(`${getProcessSteps('ausbildung')[1].text} ${getProcessSteps('ausbildung')[2].text}`);
-    expect(quereinstieg.text).toBe(getProcessSteps('quereinstieg')[2].text);
+    // Jede Stellenart der Liste mit eigenem Ablauf steht darunter
+    expect(new Set(JOBS.map((job) => job.category))).toEqual(
+      new Set(['anlagenmechaniker', 'kundendienst', 'projektleitung', 'ausbildung', 'helfer', 'buero', 'praktikum']),
+    );
+    const { varianten } = sammelAblauf(JOBS);
+    expect(varianten.map((variante) => variante.name)).toEqual(['Ausbildung', 'Quereinstieg', 'Büro', 'Schülerpraktikum']);
+    const schritt = (audience: ProcessAudience, i: number) => getProcessSteps(audience)[i].text;
+    expect(varianten.map((variante) => variante.text)).toEqual([
+      `${schritt('ausbildung', 1)} ${schritt('ausbildung', 2)}`,
+      schritt('quereinstieg', 2),
+      `${schritt('buero', 1)} ${schritt('buero', 2)}`,
+      `${schritt('praktikum', 1)} ${schritt('praktikum', 2)}`,
+    ]);
+    expect(text).toContain(ANDERE_ABLAEUFE_TITEL);
+    for (const variante of varianten) expect(text).toContain(`${variante.name} ${normal(variante.text)}`);
+    // Nur Fachkräfte in der Liste: Schritt 3 ohne Bezug, keine Varianten
+    const fachkraefte = JOBS.filter((job) => ['anlagenmechaniker', 'kundendienst', 'projektleitung'].includes(job.category));
+    const nurFachkraefte = sichtbar(render(createElement(Ablauf, { jobs: fachkraefte })));
+    expect(nurFachkraefte).toContain(start.text);
+    expect(nurFachkraefte).not.toContain(FUER_FACHKRAEFTE);
+    expect(nurFachkraefte).not.toContain(ANDERE_ABLAEUFE_TITEL);
   });
 });
 

@@ -3,7 +3,9 @@ import { Icon } from '@/components/icons';
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
 import { Button } from '@/components/ui/Button';
-import { DISCRETION_PROMISE, PROCESS_INTRO, getProcessSteps } from '@/lib/content/process';
+import { AblaufVarianten } from '@/components/jobs/AblaufVarianten';
+import { DISCRETION_PROMISE, PROCESS_INTRO, sammelAblauf } from '@/lib/content/process';
+import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import { SectionHeader } from './SectionHeader';
 import { ABLAUF_KOPF } from './woche/abschnitte-text';
 
@@ -41,9 +43,13 @@ function Leitungsstrang() {
   );
 }
 
-/** #ablauf auf der Wand (Tonfolge E-023): drei Schritte am Leitungsstrang, die Diskretionszusage und die Hauptaktion. */
-export function ProcessTimeline() {
-  const steps = getProcessSteps('fachkraft');
+/**
+ * #ablauf auf der Wand (Tonfolge E-023): drei Schritte am Leitungsstrang, die Diskretionszusage und die Hauptaktion.
+ * Die Startseite zeigt alle offenen Stellen (Sammelfläche): Schritt 3 trägt „Für Fachkräfte“, darunter steht, was bei
+ * den anderen Stellen anders läuft (sammelAblauf; Prüfung E-029, Runde 3).
+ */
+export function ProcessTimeline({ now = new Date() }: { now?: Date }) {
+  const { schritte: steps, varianten } = sammelAblauf(getActiveJobs().filter((job) => isJobLive(job, now)));
 
   return (
     <Section id="ablauf" tone="wand" aria-labelledby="ablauf-title" className="overflow-x-clip">
@@ -76,6 +82,8 @@ export function ProcessTimeline() {
           </ol>
           <Leitungsstrang />
         </div>
+
+        <AblaufVarianten varianten={varianten} className="mt-12" />
 
         <div className="mt-12 flex flex-col gap-6 border-t border-line pt-8 md:flex-row md:items-center md:justify-between">
           <p className="flex max-w-prose items-start gap-3 text-lead text-ink">

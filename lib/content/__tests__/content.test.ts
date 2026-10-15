@@ -26,6 +26,8 @@ import {
   isFactActive,
   processAudienceFor,
   isFactId,
+  FUER_FACHKRAEFTE,
+  sammelAblauf,
   fuehrtFakt,
   fuehrendeStellen,
   type FaktTraeger,
@@ -267,6 +269,29 @@ describe('Ablauf', () => {
     }
     // Ohne Stelle (Initiativbewerbung) zählt das Fragenset
     expect(processAudienceFor({ questionSet: 'fachkraft' })).toBe('fachkraft');
+  });
+
+  it('Sammelfläche (Prüfung E-029, Runde 3): Schritt 3 „Für Fachkräfte“, sobald eine gezeigte Stelle anders läuft', () => {
+    const job = (id: string) => getJobById(id)!;
+    const fachkraft = getProcessSteps('fachkraft');
+    // Nur Fachkräfte oder keine Stelle: der Ablauf der Fachkräfte ohne Bezug, keine Varianten
+    for (const stellen of [[], [job('anlagenmechaniker-shk'), job('kundendiensttechniker-shk')]]) {
+      expect(sammelAblauf(stellen)).toEqual({ schritte: fachkraft, varianten: [] });
+    }
+    // Mit dem Büro: Schritt 3 mit Bezug, sonst unverändert; die Büro-Variante mit Kennenlernen und Start im Wortlaut
+    const mitBuero = sammelAblauf([job('anlagenmechaniker-shk'), job('buerofachkraft')]);
+    expect(mitBuero.schritte.slice(0, 2)).toEqual(fachkraft.slice(0, 2));
+    expect(mitBuero.schritte[2]).toEqual({ ...fachkraft[2], text: `${FUER_FACHKRAEFTE}: ${fachkraft[2].text}` });
+    expect(mitBuero.varianten).toEqual([
+      { audience: 'buero', name: 'Büro', text: `${getProcessSteps('buero')[1].text} ${getProcessSteps('buero')[2].text}` },
+    ]);
+    // Alle Stellen: jede Art mit eigenem Ablauf einmal, in fester Reihenfolge; das Praktikum nach der Kategorie
+    const alle = sammelAblauf(ALL_JOBS);
+    expect(alle.varianten.map((variante) => variante.audience)).toEqual(['ausbildung', 'quereinstieg', 'buero', 'praktikum']);
+    expect(alle.varianten.find((variante) => variante.audience === 'quereinstieg')?.text).toBe(getProcessSteps('quereinstieg')[2].text);
+    expect(alle.varianten.find((variante) => variante.audience === 'praktikum')?.text).not.toMatch(/Hilti|Werkzeug|Lohn/);
+    // Der unbefristete Vertrag steht nur im Schritt der Fachkräfte, nie in einer Variante
+    for (const variante of alle.varianten) expect(variante.text, variante.name).not.toMatch(/unbefristet|Servicefahrzeug/);
   });
 
   it('drei Schritte, Start je Zielgruppe', () => {

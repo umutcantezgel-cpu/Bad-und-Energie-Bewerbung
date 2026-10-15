@@ -15,6 +15,7 @@ import {
 } from '@/app/arbeiten-bei-uns/[thema]/opengraph-image';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { WHATSAPP_GREETING } from '@/lib/apply/whatsapp-message';
+import { ANDERE_ABLAEUFE_TITEL, FUER_FACHKRAEFTE, getProcessSteps, sammelAblauf } from '@/lib/content/process';
 import { jobPath } from '@/lib/jobs/format';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
@@ -122,6 +123,15 @@ describe('Routen unter /arbeiten-bei-uns', () => {
       expect(zettel).toMatch(/<dt[^>]*>Von<\/dt><dd[^>]*>Du<\/dd>[\s\S]*<dt[^>]*>An<\/dt><dd[^>]*>Wetzlar<\/dd>[\s\S]*<dt[^>]*>Nicht an<\/dt><dd[^>]*>Dein Arbeitgeber<\/dd>/);
       expect(zettel).not.toContain('role="img"');
       expect(html).not.toMatch(/Blindflansch|Abzweig/);
+      // Sammelfläche (Runde 3): „Wohin du wechseln kannst“ zeigt auch Büro, Ausbildung und Praktikum; der unbefristete
+      // Vertrag mit Werkzeug und Fahrzeug steht nur als Schritt der Fachkräfte, darunter die anderen Abläufe
+      const text = html.replace(/<[^>]+>/g, ' ').replace(/&#x27;/g, "'").replace(/&amp;/g, '&').replace(/[\s\u00a0]+/g, ' ');
+      expect(jobs.some((job) => job.category === 'buero')).toBe(true);
+      expect(text).toContain(`${FUER_FACHKRAEFTE}: ${getProcessSteps('fachkraft')[2].text}`);
+      expect(text.match(/unbefristeten/g)).toHaveLength(1);
+      expect(text).toContain(ANDERE_ABLAEUFE_TITEL);
+      for (const variante of sammelAblauf(jobs).varianten) expect(text, variante.name).toContain(`${variante.name} ${variante.text}`);
+      expect(sammelAblauf(jobs).varianten.map((variante) => variante.audience)).toEqual(expect.arrayContaining(['quereinstieg', 'buero']));
     }
     if (id === 'gehalt') {
       // „Bezahlung und Extras“ (E-030): jede live Stelle mit Lohn auf Anfrage; das Schülerpraktikum sagt nichts zu Geld

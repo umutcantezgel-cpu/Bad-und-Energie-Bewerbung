@@ -20,7 +20,15 @@ import { MAPPE_PATH } from '@/lib/apply/params';
 import { COMPANY } from '@/lib/content/company';
 import { getFaqItem } from '@/lib/content/faq';
 import { FACTS } from '@/lib/content/facts';
-import { getProcessIntro, getProcessSteps, ohneArbeitgeber, type ProcessAudience, type ProcessStep } from '@/lib/content/process';
+import {
+  getProcessIntro,
+  getProcessSteps,
+  ohneArbeitgeber,
+  sammelAblauf,
+  type AblaufVariante,
+  type ProcessAudience,
+  type ProcessStep,
+} from '@/lib/content/process';
 import { jobPath } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/registry';
 
@@ -56,7 +64,11 @@ export interface Erklaerung {
   etikett: string;
   titel: string;
   einleitung: string;
-  ablauf: { titel: string; schritte: readonly ProcessStep[]; hinweis: string | null };
+  /**
+   * Ohne vorgewählte Stelle spricht die Seite über alle Stellen der Auswahl (Sammelfläche): Schritt 3 „Für Fachkräfte:
+   * …“ und die Abläufe der anderen Stellen darunter (sammelAblauf; Prüfung E-029, Runde 3).
+   */
+  ablauf: { titel: string; schritte: readonly ProcessStep[]; varianten: readonly AblaufVariante[]; hinweis: string | null };
   stellen: {
     titel: string;
     voraussetzung: string;
@@ -90,6 +102,9 @@ export function erklaerung({ audience, jobs, ohneAnzeige, vorausgewaehlt = false
   const wahlOrt = vorausgewaehlt ? 'oben über „ändern“' : 'oben im ersten Schritt';
   const wahlKurz = vorausgewaehlt ? 'oben über „ändern“' : 'oben';
   const intro = getProcessIntro(audience);
+  // Ohne Vorauswahl (Ablauf der Fachkräfte) spricht der Teil über alle Stellen der Auswahl: Sammelfläche
+  const { schritte, varianten } =
+    !vorausgewaehlt && audience === 'fachkraft' ? sammelAblauf([...jobs, ...ohneAnzeige]) : { schritte: getProcessSteps(audience), varianten: [] };
   return {
     etikett: 'Ablauf und Wegweiser',
     titel: `So läuft deine Bewerbung in ${COMPANY.address.city}`,
@@ -97,7 +112,8 @@ export function erklaerung({ audience, jobs, ohneAnzeige, vorausgewaehlt = false
     einleitung: `${FACTS.quickResponse.long} ${intro.text}`,
     ablauf: {
       titel: intro.title,
-      schritte: getProcessSteps(audience),
+      schritte,
+      varianten,
       // Ausbildung und Praktikum: meist noch Schule, also kein Arbeitgeber und keine Kündigungsfrist (wie getDiscretionPromise)
       hinweis: ohneArbeitgeber(audience) ? null : `Noch angestellt? ${KUENDIGUNG}`,
     },

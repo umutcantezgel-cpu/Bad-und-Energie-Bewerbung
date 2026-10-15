@@ -16,7 +16,8 @@ import styles from './stil';
 /**
  * Themenseite Diskret wechseln (E-028). Tonfolge: Kopf Papier/Navy (Laufzettel seit E-029: „Von: Du“, „An: Wetzlar“,
  * „Nicht an: Dein Arbeitgeber“) · Ablauf Papier (die drei Schritte wie auf den Stellenseiten, ohne die Zusage, die
- * schon im Kopf steht) · Was du brauchst Navy · Stellen Wand (mit Gehalt) · Kündigungsfrist und Daten Papier · Weitere Themen Wand · Kontakt
+ * schon im Kopf steht; Schritt 3 „Für Fachkräfte“, darunter die Abläufe der anderen Stellen, die die Seite unter
+ * „Wohin du wechseln kannst“ zeigt) · Was du brauchst Navy · Stellen Wand (mit Gehalt) · Kündigungsfrist und Daten Papier · Weitere Themen Wand · Kontakt
  * Papier.
  */
 export function DiskretSeite({ text, jobs }: { text: DiskretPageText; jobs: readonly Job[] }) {
@@ -32,7 +33,7 @@ export function DiskretSeite({ text, jobs }: { text: DiskretPageText; jobs: read
       {/* Ohne eigenen Namen: JobProcess ist selbst die benannte Region („stelle-ablauf“), sonst zwei gleiche Landmarken */}
       <Section id={text.ablauf.kopf.id} tone="papier" trenner>
         <Container>
-          <JobProcess audience="fachkraft" zusage={false} />
+          <JobProcess audience="fachkraft" zusage={false} stellen={jobs} />
         </Container>
       </Section>
 

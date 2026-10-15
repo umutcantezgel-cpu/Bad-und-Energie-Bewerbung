@@ -78,7 +78,7 @@ export default function JobsPage() {
 
       <Einsatzgebiet jobs={jobs} />
 
-      <Ablauf />
+      <Ablauf jobs={[...jobs, ...funnelOnly]} />
 
       <Initiativband auchMoeglich={funnelOnly} />
     </>
