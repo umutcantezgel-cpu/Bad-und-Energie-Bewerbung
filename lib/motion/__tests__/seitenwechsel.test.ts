@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { ARBEITEN_PATH, getThemen, themaPath } from '@/lib/themen/registry';
 import { DAUER_MS, KLICK_ENDE_MS, MOTION_REGISTER, TAKT_MS, WECHSEL } from '../register';
 import * as seitenwechsel from '../seitenwechsel';
 import {
@@ -190,6 +191,19 @@ describe('Wärmefront: Ziele nur Erzählseiten (KERN K-011)', () => {
     }
     expect(imBewerbungsweg('/bewerbung/mappe')).toBe(true);
     expect(imBewerbungsweg('/jobs')).toBe(false);
+  });
+
+  it('jede Themenseite aus der Registry ist Ziel, auch „Büro und Verwaltung“ (E-031): vom Hub und von Thema zu Thema', () => {
+    const themen = getThemen();
+    expect(themen.map((thema) => thema.id)).toContain('buero-und-verwaltung');
+    for (const thema of themen) {
+      const pfad = themaPath(thema);
+      expect(frontSeite(pfad), pfad).toBe(true);
+      expect(frontZiel(KLICK, link({ href: pfad }), ort(ARBEITEN_PATH)), pfad).toBe(pfad);
+      for (const anderes of themen.filter((x) => x.id !== thema.id)) {
+        expect(frontZiel(KLICK, link({ href: pfad }), ort(themaPath(anderes))), `${themaPath(anderes)} → ${pfad}`).toBe(pfad);
+      }
+    }
   });
 });
 
