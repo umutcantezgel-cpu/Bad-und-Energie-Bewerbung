@@ -38,6 +38,8 @@ export type {
   Wechsel,
 } from './register';
 export { beobachteSicht, beobachteTab, onceVisible } from './sicht';
+export { ABLAUF_NETZ_MS, ABLAUF_RAND, ABLAUF_RUHE, ablaufSchritt, beobachteAblauf, warteAufEnde } from './ablauf';
+export type { AblaufEreignis, AblaufFenster, AblaufWert } from './ablauf';
 export type { SichtOptionen, TabDokument } from './sicht';
 export { DAUER_KNOPF, DAUER_RUHE, dauerLaeuft, dauerWert, knopfSichtbar, knopfText } from './dauer';
 export type { DauerWert, DauerZustand } from './dauer';
