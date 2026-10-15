@@ -829,6 +829,14 @@ export function getFahrzeugPageText(options: TextOptions): FahrzeugPageText {
   const fahrzeugKurz =
     fahrzeugZeileText && fahrzeugZeileText.stellen.length === jobs.length ? fahrzeug.short : 'Servicefahrzeug je nach Stelle';
   const fuerFachkraefte = sammelAblauf(jobs).varianten.length > 0;
+  // Prüfrunde 3 D3-2: Der erste Tag der Fachkräfte verspricht das persönliche Hilti-Werkzeugset und das Servicefahrzeug.
+  // Im Kopf steht er nur, wenn die Stückliste darunter beides jeder live Fachkraft-Stelle zuordnet (Position ohne
+  // „Gehört zu“ oder mit der Stelle); sonst läse etwa der Kundendiensttechniker oben eine Zusage, die die Stückliste
+  // für ihn ausschließt. Der Satz zur Hilti-Flotte (Kein Leihen, kein Warten) bleibt.
+  const inStueckliste = (factId: FactId, job: Job) =>
+    positionen.some((p) => p.factId === factId && (p.giltFuer === null || p.giltFuer.includes(job.shortTitle)));
+  const fachkraefte = jobs.filter((job) => job.apply.questionSet === 'fachkraft');
+  const ersterTagGilt = fachkraefte.length > 0 && fachkraefte.every((job) => inStueckliste('hilti', job) && inStueckliste('vehicle', job));
 
   return {
     path: themaPath(getThema('fahrzeug-und-werkzeug')),
@@ -850,9 +858,10 @@ export function getFahrzeugPageText(options: TextOptions): FahrzeugPageText {
     etikett: 'Fahrzeug · Werkzeug · Digital',
     unterzeile: [`${einschraenkung ? jeNachStelleSatz(hilti.short) : hilti.short}.`, ...(fahrzeugText ? [fahrzeugText] : [])],
     // Der Hilti-Satz steht in der Stückliste (Position 02), nicht noch einmal wortgleich im Kopf (Kritik 2, P3). Der
-    // erste Tag ist Schritt 3 der Fachkräfte: auf der Sammelfläche mit „Für Fachkräfte“ wie im Ablauf (sammelAblauf)
+    // erste Tag ist Schritt 3 der Fachkräfte: auf der Sammelfläche mit „Für Fachkräfte“ wie im Ablauf (sammelAblauf),
+    // nur, wenn die Stückliste ihn für jede Fachkraft-Stelle trägt (Prüfrunde 3 D3-2)
     einleitung: [
-      satz(fuerFachkraefte ? `${FUER_FACHKRAEFTE}: ${ersterTag}` : ersterTag, `ablauf:${start.id}`),
+      ...(ersterTagGilt ? [satz(fuerFachkraefte ? `${FUER_FACHKRAEFTE}: ${ersterTag}` : ersterTag, `ablauf:${start.id}`)] : []),
       satz(satzMit(hilti.long, /^Kein Leihen/, 'Fakt hilti'), fq('hilti')),
     ],
     masse: [{ wert: volt, name: 'Hilti-Akku-Flotte' }],

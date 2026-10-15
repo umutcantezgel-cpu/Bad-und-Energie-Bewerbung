@@ -474,12 +474,15 @@ describe('Büro und Verwaltung (E-031): nur Belegtes, nichts Offenes, nichts von
 });
 
 describe('Fahrzeug und Werkzeug (E-031): Einschränkung am Anfang, solange eine Stelle ohne Ausstattung live ist', () => {
-  it('Büro und Schülerpraktikum nennen keine Ausstattung; dann „Je nach Stelle“ und „Für Fachkräfte“ vorn', () => {
+  it('Büro und Schülerpraktikum nennen keine Ausstattung; dann „Je nach Stelle“ vorn, der erste Tag der Fachkräfte nur mit Deckung in der Stückliste (Prüfrunde 3 D3-2)', () => {
     expect(ohneAusstattung(JOBS, NOW).map((job) => job.category).sort()).toEqual(['buero', 'praktikum']);
     const seite = getThemaPageText('fahrzeug-und-werkzeug', { jobs: JOBS, now: NOW });
     if (seite.id !== 'fahrzeug-und-werkzeug') throw new Error('falsche Seite');
     expect(seite.unterzeile[0]).toBe(`Je nach Stelle: ${FACTS.hilti.short}.`);
-    expect(seite.einleitung[0].text.startsWith(`${FUER_FACHKRAEFTE}: Am ersten Tag`)).toBe(true);
+    // Die persönliche Hilti-Ausstattung gehört laut Stückliste nicht zum Kundendiensttechniker (Hilti-Koffer): kein
+    // „Für Fachkräfte: Am ersten Tag stehen dein persönliches Hilti-Werkzeugset und dein Servicefahrzeug bereit.“
+    expect(seite.einleitung.map((s) => s.text).join(' ')).not.toContain('Am ersten Tag');
+    expect(seite.einleitung.map((s) => s.quellen)).toEqual([['fakt:hilti']]);
     expect(seite.og.zeilen).toEqual([FACTS.hilti.short, 'je nach Stelle.']);
     expect(themaKarte('fahrzeug-und-werkzeug', { jobs: JOBS, now: NOW }).satz.text).toBe(
       `Je nach Stelle: ${FACTS.hilti.short} und ${FACTS.vehicle.short}.`,
@@ -510,13 +513,41 @@ describe('Fahrzeug und Werkzeug (E-031): Einschränkung am Anfang, solange eine 
     expect(seite.meta.description).not.toMatch(/^(?!Je nach Stelle)[^.]*Hilti/);
   });
 
+  it('Prüfrunde 3 D3-2: keine Zusage im Kopf gilt einer Stelle, die die Stückliste für dieselbe Ausstattung ausschließt', () => {
+    const fach = JOBS.filter((job) => job.apply.questionSet === 'fachkraft');
+    const auswahlen = [JOBS, fach, ...fach.map((job) => [job]), fach.filter((job) => job.category !== 'projektleitung')];
+    let mitZusage = 0;
+    for (const jobs of auswahlen) {
+      const seite = getThemaPageText('fahrzeug-und-werkzeug', { jobs, now: NOW });
+      if (seite.id !== 'fahrzeug-und-werkzeug') throw new Error('falsche Seite');
+      const kopf = seite.einleitung.map((s) => s.text).join(' ');
+      const gilt = (factId: string, job: (typeof JOBS)[number]) =>
+        seite.stueckliste.positionen.some((p) => p.factId === factId && (p.giltFuer === null || p.giltFuer.includes(job.shortTitle)));
+      const zusagen = [
+        { muster: /Hilti-Werkzeugset/, factId: 'hilti' },
+        { muster: /Servicefahrzeug/, factId: 'vehicle' },
+      ].filter((z) => z.muster.test(kopf));
+      for (const { factId } of zusagen) {
+        mitZusage += 1;
+        for (const job of jobs.filter((j) => j.apply.questionSet === 'fachkraft')) expect(gilt(factId, job), `${factId}: ${job.shortTitle}`).toBe(true);
+      }
+    }
+    // Die Prüfung greift: In mindestens einer Auswahl steht die Zusage (nur Stellen, die beides nennen)
+    expect(mitZusage).toBeGreaterThan(0);
+  });
+
   it('nur Fachkräfte mit Fahrzeug und Werkzeug: ohne Einschränkung wie bisher', () => {
     const fach = JOBS.filter((job) => ['anlagenmechaniker', 'kundendienst', 'projektleitung'].includes(job.category));
     expect(ohneAusstattung(fach, NOW)).toEqual([]);
     const seite = getThemaPageText('fahrzeug-und-werkzeug', { jobs: fach, now: NOW });
     if (seite.id !== 'fahrzeug-und-werkzeug') throw new Error('falsche Seite');
     expect(seite.unterzeile[0]).toBe(`${FACTS.hilti.short}.`);
-    expect(seite.einleitung[0].text.startsWith('Am ersten Tag')).toBe(true);
+    // Das Servicefahrzeug nennt der Obermonteur nicht (Firmenwagen und Tankkarte): kein erster Tag im Kopf (Prüfrunde 3
+    // D3-2); mit Stellen, die beides nennen, steht er da (ohne „Für Fachkräfte“, es gibt keine anderen Abläufe)
+    expect(seite.einleitung.map((s) => s.text).join(' ')).not.toContain('Am ersten Tag');
+    const beides = getThemaPageText('fahrzeug-und-werkzeug', { jobs: fach.filter((job) => job.category === 'anlagenmechaniker'), now: NOW });
+    if (beides.id !== 'fahrzeug-und-werkzeug') throw new Error('falsche Seite');
+    expect(beides.einleitung[0].text).toBe(getProcessSteps('fachkraft')[2].text.split(/(?<=\.)\s+/).find((s) => s.startsWith('Am ersten Tag')));
     // Die Ausstattung aller gilt ohne „Gehört zu“, die Description ohne „Je nach Stelle“ vorn
     for (const id of ['hilti', 'measurementTools', 'workwear']) expect(seite.stueckliste.positionen.find((p) => p.factId === id)?.giltFuer, id).toBeNull();
     expect(seite.meta.description.startsWith('Je nach Stelle')).toBe(false);
