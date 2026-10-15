@@ -7,7 +7,8 @@ import { motionAllowed, type MediaWindow } from './prefers';
  * - `fertig`: Endzustand. So liefert ihn der Server, so steht er ohne Skript, bei reduzierter Bewegung, ohne
  *   IntersectionObserver und wenn der Bereich beim Laden schon (teilweise) im Bild ist – nichts blitzt auf.
  * - `bereit`: Startzustand, solange der Bereich unterhalb wartet. Nur, wenn Bewegung erlaubt ist und die erste Meldung
- *   des Observers „nicht im Bild“ lautet.
+ *   des Observers „nicht im Bild“ lautet. Der Bereich lädt dann seine Lazy-Bilder, und der Ablauf startet erst, wenn
+ *   sie dekodiert sind (Prüfrunde 2 C2-5).
  * - `laeuft`: Der Ablauf läuft (CSS unter [data-ablauf="laeuft"], Füllart backwards, Ende ≤ SICHT_ENDE_MS); nach dem
  *   letzten Ablauf (spätestens nach ABLAUF_NETZ_MS) wieder `fertig`.
  * Das Modul hängt nur an ./prefers, damit die Insel klein bleibt (≤ 1 KB gzip).
@@ -26,6 +27,15 @@ export const ABLAUF_RAND = '0px 0px -15% 0px';
 /** Sicherheitsnetz: so lange nach dem Start steht spätestens der Endzustand (SICHT_ENDE_MS 2.400 + d-3 400). */
 export const ABLAUF_NETZ_MS = 2800;
 
+/**
+ * Bilder des Bereichs (Prüfrunde 2 C2-5): Die Bänder und Zeichnungen der Vergleichsräume sind Lazy-Dateien. Springt man
+ * zur Stelle (Ende, Bildlaufleiste, Suche im Text, Überschriften-Navigation), war der Ablauf sonst gestartet, bevor sie
+ * geladen waren: Das heißeste Band sprang mitten im Wachsen ein. Darum lädt der Bereich seine Bilder, sobald er
+ * `bereit` ist (eager, niedrige Priorität, nach dem Hydrieren und damit nach LCP), und `laeuft` erst, wenn alle Bilder
+ * dekodiert sind – höchstens ABLAUF_BILD_NETZ_MS nach dem Sichtbarwerden, dann läuft er trotzdem.
+ */
+export const ABLAUF_BILD_NETZ_MS = 1500;
+
 export type AblaufEreignis =
   /** Erste Meldung des Observers: ist der Bereich irgendwo im Bild? */
   | { art: 'erster-blick'; sichtbar: boolean }
@@ -33,6 +43,9 @@ export type AblaufEreignis =
   | { art: 'sichtbar' }
   /** Der letzte Ablauf ist zu Ende (oder das Netz greift). */
   | { art: 'ende' };
+
+/** Bilder des Bereichs (ohne querySelectorAll: keine). */
+const bilderIn = (element: Element) => [...((element as Partial<ParentNode>).querySelectorAll?.('img') ?? [])] as HTMLImageElement[];
 
 /** Übergänge: fertig → bereit (erster Blick, nicht im Bild) → laeuft (sichtbar) → fertig (Ende); sonst bleibt alles. */
 export function ablaufSchritt(jetzt: AblaufWert, ereignis: AblaufEreignis): AblaufWert {
@@ -63,7 +76,15 @@ export function beobachteAblauf(element: Element, melden: (wert: AblaufWert) => 
   let erster = true;
   const schritt = (ereignis: AblaufEreignis) => {
     const neu = ablaufSchritt(wert, ereignis);
-    if (neu !== wert) melden((wert = neu));
+    if (neu === wert) return;
+    melden((wert = neu));
+    // bereit: die Lazy-Bilder jetzt laden, mit niedriger Priorität (nach dem Hydrieren, also nach LCP)
+    if (wert === 'bereit') {
+      for (const bild of bilderIn(element)) {
+        bild.fetchPriority = 'low';
+        bild.loading = 'eager';
+      }
+    }
   };
   const observer = new Observer(
     (eintraege) => {
@@ -78,7 +99,11 @@ export function beobachteAblauf(element: Element, melden: (wert: AblaufWert) => 
       }
       if (e.isIntersecting) {
         observer.disconnect();
-        schritt({ art: 'sichtbar' });
+        // laeuft erst, wenn alle Bilder dekodiert sind (ein fehlerhaftes zählt als fertig), spätestens nach dem Netz;
+        // ein zweiter Aufruf ändert nichts mehr (laeuft bleibt laeuft)
+        const los = () => schritt({ art: 'sichtbar' });
+        setTimeout(los, ABLAUF_BILD_NETZ_MS);
+        void Promise.allSettled(bilderIn(element).map((bild) => bild.decode())).then(los);
       }
     },
     { threshold: 0, rootMargin: ABLAUF_RAND },

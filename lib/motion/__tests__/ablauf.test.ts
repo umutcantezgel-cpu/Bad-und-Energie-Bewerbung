@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  ABLAUF_BILD_NETZ_MS,
   ABLAUF_NETZ_MS,
   ABLAUF_RAND,
   ABLAUF_RUHE,
@@ -65,7 +66,7 @@ describe('Ablauf beim Sichtbarwerden (E-031, Auslöser sicht)', () => {
     ]);
   });
 
-  it('beim Laden unterhalb: bereit, beim Sichtbarwerden laeuft, dann trennt der Observer', () => {
+  it('beim Laden unterhalb: bereit, beim Sichtbarwerden laeuft, dann trennt der Observer', async () => {
     const { win, observers } = fakeFenster();
     const melden = vi.fn();
     beobachteAblauf(element, melden, win);
@@ -77,8 +78,58 @@ describe('Ablauf beim Sichtbarwerden (E-031, Auslöser sicht)', () => {
     observers[0].cb([lage(700, 300, false)]);
     expect(melden).toHaveBeenCalledTimes(1);
     observers[0].cb([lage(600, 300, true)]);
-    expect(melden.mock.calls).toEqual([['bereit'], ['laeuft']]);
     expect(observers[0].disconnected).toBe(true);
+    // Ohne Bilder im Bereich gleich nach dem Sichtbarwerden (eine Mikroaufgabe später)
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(melden.mock.calls).toEqual([['bereit'], ['laeuft']]);
+  });
+
+  it('Prüfrunde 2 C2-5: bereit lädt die Lazy-Bilder (eager, niedrige Priorität); laeuft erst, wenn alle dekodiert sind', async () => {
+    let fertig: () => void = () => {};
+    const bilder = [
+      { loading: 'lazy', fetchPriority: 'auto', decode: () => new Promise<void>((r) => (fertig = r)) },
+      { loading: 'lazy', fetchPriority: 'auto', decode: () => Promise.reject(new Error('defekt')) },
+    ];
+    const mitBildern = { querySelectorAll: (s: string) => (s === 'img' ? bilder : []) } as unknown as Element;
+    const { win, observers } = fakeFenster();
+    const melden = vi.fn();
+    beobachteAblauf(mitBildern, melden, win);
+    expect(bilder.map((b) => [b.loading, b.fetchPriority])).toEqual([
+      ['lazy', 'auto'],
+      ['lazy', 'auto'],
+    ]);
+    observers[0].cb([lage(1200)]);
+    expect(bilder.map((b) => [b.loading, b.fetchPriority])).toEqual([
+      ['eager', 'low'],
+      ['eager', 'low'],
+    ]);
+    observers[0].cb([lage(600, 300, true)]);
+    for (let i = 0; i < 5; i += 1) await Promise.resolve();
+    // Ein Bild dekodiert noch: weiter bereit (das fehlerhafte zählt als fertig)
+    expect(melden.mock.calls).toEqual([['bereit']]);
+    fertig();
+    for (let i = 0; i < 5; i += 1) await Promise.resolve();
+    expect(melden.mock.calls).toEqual([['bereit'], ['laeuft']]);
+  });
+
+  it('Prüfrunde 2 C2-5: dekodiert ein Bild nicht, läuft der Ablauf nach ABLAUF_BILD_NETZ_MS trotzdem, genau einmal', async () => {
+    vi.useFakeTimers();
+    const bilder = [{ loading: 'lazy', decode: () => new Promise<void>(() => {}) }];
+    const mitBildern = { querySelectorAll: () => bilder } as unknown as Element;
+    const { win, observers } = fakeFenster();
+    const melden = vi.fn();
+    beobachteAblauf(mitBildern, melden, win);
+    observers[0].cb([lage(1200)]);
+    observers[0].cb([lage(600, 300, true)]);
+    await vi.advanceTimersByTimeAsync(ABLAUF_BILD_NETZ_MS - 1);
+    expect(melden.mock.calls).toEqual([['bereit']]);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(melden.mock.calls).toEqual([['bereit'], ['laeuft']]);
+    await vi.advanceTimersByTimeAsync(ABLAUF_BILD_NETZ_MS);
+    expect(melden).toHaveBeenCalledTimes(2);
+    // Das Netz ist kurz genug, dass der Ablauf im Fenster bleibt: Start spätestens nach dem Netz
+    expect(ABLAUF_BILD_NETZ_MS).toBeLessThanOrEqual(1500);
   });
 
   it('beim Laden im Bild (auch nur im unteren Rand): Endzustand bleibt, nichts blitzt auf', () => {

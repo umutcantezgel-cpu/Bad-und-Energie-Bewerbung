@@ -148,6 +148,50 @@ test.describe('mit Bewegung (no-preference)', () => {
     await endzustand(raum);
   });
 
+  test('Sprung bei langsamem Netz (Prüfrunde 2 C2-5): der Ablauf startet erst, wenn alle Bilder des Vergleichs geladen und dekodiert sind', async ({
+    page,
+  }) => {
+    test.skip(test.info().project.name !== 'mobile-light', 'Gemessen am Handy mit Drossel.');
+    test.setTimeout(90_000);
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('Network.enable');
+    // Lighthouse „Slow 4G“: 150 ms RTT, 1,6 Mbit/s herunter, 750 kbit/s hinauf
+    await cdp.send('Network.emulateNetworkConditions', {
+      offline: false,
+      latency: 150,
+      downloadThroughput: (1.6 * 1024 * 1024) / 8,
+      uploadThroughput: (750 * 1024) / 8,
+    });
+    await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+    try {
+      await page.goto(WAERMEPUMPEN, { waitUntil: 'domcontentloaded', timeout: 60_000 });
+      const raum = page.locator(RAUM);
+      await expect(raum).toHaveAttribute('data-ablauf', 'bereit', { timeout: 30_000 });
+      // Beim Wechsel auf „laeuft“ den Stand der Bilder festhalten
+      await raum.evaluate((el) => {
+        const w = window as unknown as { __bilderBeimStart?: { geladen: boolean; breite: number }[] };
+        new MutationObserver(() => {
+          if (el.getAttribute('data-ablauf') === 'laeuft' && !w.__bilderBeimStart) {
+            w.__bilderBeimStart = [...el.querySelectorAll('img')].map((b) => ({ geladen: b.complete, breite: b.naturalWidth }));
+          }
+        }).observe(el, { attributes: true, attributeFilter: ['data-ablauf'] });
+      });
+      // Sprung (wie Ende, Bildlaufleiste oder Suche im Text): ohne weiches Scrollen direkt an die Stelle
+      await raum.evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
+      await expect(raum).toHaveAttribute('data-ablauf', 'laeuft', { timeout: 30_000 });
+      const bilder = await page.evaluate(() => (window as unknown as { __bilderBeimStart?: { geladen: boolean; breite: number }[] }).__bilderBeimStart);
+      expect(bilder!.length, 'Bilder im Vergleich').toBeGreaterThan(3);
+      for (const b of bilder!) {
+        expect(b.geladen).toBe(true);
+        expect(b.breite).toBeGreaterThan(0);
+      }
+    } finally {
+      await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+      await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 });
+      await cdp.detach();
+    }
+  });
+
   test('Sprung an die Stelle (Deep-Link): der Vergleich ist beim Laden sichtbar und steht sofort im Endzustand', async ({ page }) => {
     await page.goto(`${WAERMEPUMPEN}#waermeverteilung`);
     const raum = page.locator(RAUM);
