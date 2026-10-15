@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import postcss from 'postcss';
 import tailwind from '@tailwindcss/postcss';
@@ -27,6 +27,18 @@ describe('Prose-Stile im eigenen Blatt (V6-A1-CSS)', () => {
 
   it('nur Prose.tsx importiert prose.css', () => {
     expect(lies('components/ui/Prose.tsx')).toMatch(/^import '\.\/prose\.css';$/m);
+  });
+
+  it('nur die Rechtsseiten laden das Blatt: kein Sammelexport, nur RechtDokument importiert Prose (Prüfrunde 2 C2-1)', () => {
+    // Über `export * from './Prose'` in components/ui/index.ts zog jeder Import aus '@/components/ui' das Blatt mit
+    // (die Mappe lud es render-blockierend, ohne es zu nutzen); check-css-chunks prüft die Wirkung im Build.
+    expect(ohneKommentare(lies('components/ui/index.ts'))).not.toMatch(/['"]\.\/Prose['"]/);
+    const importeure = (verzeichnis: string): string[] =>
+      readdirSync(path.join(ROOT, verzeichnis), { withFileTypes: true, recursive: true })
+        .filter((e) => e.isFile() && /\.(tsx?|mjs)$/.test(e.name) && !e.parentPath.includes('__tests__'))
+        .map((e) => path.relative(ROOT, path.join(e.parentPath, e.name)))
+        .filter((datei) => /from ['"](?:@\/components\/ui\/Prose|\.\/Prose|\.\.\/ui\/Prose)['"]/.test(lies(datei)));
+    expect(['app', 'components', 'lib'].flatMap(importeure)).toEqual(['components/recht/RechtDokument.tsx']);
   });
 
   it('erzeugt prose und alle prose-*-Varianten aus Prose.tsx in der Ebene components, mit den Farben der Rollen', async () => {

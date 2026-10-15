@@ -114,3 +114,35 @@ describe('Bausteine', () => {
     expect(html).toContain('aria-current="page"');
   });
 });
+
+describe('Satzblatt als Grenze vor recht.module.css (E-031, Prüfrunde 2 C2-1)', () => {
+  // Turbopack legt CSS in der Reihenfolge ab, in der die Module ausgewertet werden. Steht recht.module.css unmittelbar
+  // nach dem Satzblatt (components/ui/prose.css, global), landet es mit ihm in einem Chunk nur für die Rechtsseiten;
+  // zuerst ausgewertet (über DruckKnopf oder RechtAbschnitt) stand es im gemeinsamen Chunk jeder Seite. Die Wirkung
+  // prüft der Build (scripts/qa/check-css-chunks.mjs: recht.module.css nur auf /datenschutz und /impressum).
+  const importe = (datei: string) =>
+    [...readFileSync(path.join(DIR, datei), 'utf8').matchAll(/^(?:import|export)\s+(?:type\s+)?(?:[\w{}\s,*]+\s+from\s+)?['"]([^'"]+)['"]/gm)]
+      .filter((m) => !/^(?:import|export)\s+type\b/.test(m[0]))
+      .map((m) => m[1]);
+
+  it('der Sammelexport wertet RechtDokument zuerst aus', () => {
+    expect(importe('index.ts')[0]).toBe('./RechtDokument');
+  });
+
+  it('RechtDokument importiert Prose vor allem, was recht.module.css lädt', () => {
+    const liste = importe('RechtDokument.tsx');
+    const prose = liste.indexOf('@/components/ui/Prose');
+    expect(prose).toBeGreaterThanOrEqual(0);
+    for (const spaeter of ['./DruckKnopf', './RechtInhalt', './recht.module.css']) expect(liste.indexOf(spaeter), spaeter).toBeGreaterThan(prose);
+  });
+
+  it('außerhalb von components/recht importiert niemand recht.module.css', () => {
+    const fremd = ['app', 'components', 'lib'].flatMap((verzeichnis) =>
+      readdirSync(path.join(ROOT, verzeichnis), { withFileTypes: true, recursive: true })
+        .filter((e) => e.isFile() && /\.(tsx?|mjs|css)$/.test(e.name) && !e.parentPath.startsWith(DIR))
+        .map((e) => path.join(e.parentPath, e.name))
+        .filter((datei) => /['"][^'"]*recht\.module\.css['"]/.test(readFileSync(datei, 'utf8'))),
+    );
+    expect(fremd.map((d) => path.relative(ROOT, d))).toEqual([]);
+  });
+});

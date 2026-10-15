@@ -5,7 +5,7 @@ import { Icon } from '@/components/icons';
 import { Button, ProgressRing } from '@/components/ui';
 import { WHATSAPP } from '@/lib/data/contact';
 import { cn } from '@/lib/utils/cn';
-import styles from './mappe.module.css';
+import styles from './stil';
 import { sprungKlick } from './MappeStand';
 import { STAND_TEXT, type MappeStandWerte } from './stand';
 

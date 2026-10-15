@@ -1,0 +1,16 @@
+/*
+ * Grenze vor dem CSS der Danke-Seite /bewerbung/danke (E-031, Prüfrunde 2 C2-1). Absichtlich ohne Regeln.
+ *
+ * Wie components/themen/themen-grenze.css: Next fasst das CSS der Seiten in gemeinsame Chunks zusammen (Turbopack,
+ * cssChunking `true`) und nahm danke.module.css render-blockierend in den gemeinsamen Chunk aller Seiten (Startseite,
+ * Stellen, Orte, Themen). Globales CSS legt Next nie in einen Chunk von Seiten, die es nicht importieren; diese leere
+ * globale Datei steht darum unmittelbar vor danke.module.css (stil.ts), und das Modul landet mit ihr in einem eigenen
+ * Chunk nur für diese Seite (−0,8 KB gzip render-blockierendes CSS auf allen anderen Seiten, K-013). Geprüft im Build
+ * (scripts/qa/check-css-chunks.mjs: danke.module.css nur auf /bewerbung/danke) und im Quelltext
+ * (components/apply/__tests__/danke-grenze.test.ts).
+ *
+ * Ebenso die Mappe (components/mappe/mappe-grenze.css); vor den Rechtsseiten (recht.module.css) wirkt das Satzblatt
+ * prose.css als Grenze (components/recht/index.ts). Versucht und verworfen: dieselbe leere Grenze für die
+ * Bewerbungsseite (seite.module.css). Dort verschob Turbopack das Wärmefeld-CSS in einen eigenen Chunk auf jeder Seite,
+ * und die Grenzen je Seite (check-css-chunks) rissen.
+ */

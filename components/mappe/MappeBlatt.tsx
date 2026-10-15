@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils/cn';
-import styles from './mappe.module.css';
+import styles from './stil';
 
 export interface MappeBlattProps {
   className?: string;

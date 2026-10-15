@@ -10,7 +10,6 @@ export * from './IconButton';
 export * from './Input';
 export * from './PageHeader';
 export * from './ProgressRing';
-export * from './Prose';
 export * from './Rating';
 export * from './SegmentedControl';
 export * from './Sheet';

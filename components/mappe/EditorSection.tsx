@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Icon } from '@/components/icons';
 import { cn } from '@/lib/utils/cn';
-import styles from './mappe.module.css';
+import styles from './stil';
 import { MAPPE_ABSCHNITTE, STAND_TEXT } from './stand';
 
 export interface EditorSectionProps {

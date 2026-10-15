@@ -14,7 +14,7 @@ import { SKILL_OPTIONS } from '@/lib/mappe/options';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
 import { SubmitErrorPanel } from '../SubmitErrorPanel';
 import { ERGAENZEN_TEXT, ergaenzungPruefen, rueckfallNachricht, type ErgaenzungWerte } from './danke-text';
-import styles from './danke.module.css';
+import styles from './stil';
 
 export interface FollowUpFormProps {
   reference: string;

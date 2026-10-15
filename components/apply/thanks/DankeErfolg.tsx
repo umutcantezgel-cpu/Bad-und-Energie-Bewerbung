@@ -18,7 +18,7 @@ import { DankeAblauf, type DankeSchritt } from './DankeAblauf';
 import { ABLAUF_TEXT, DANKE_ANKER, ERFOLG_KOPF, ERGAENZEN_TEXT, SEITEN_TEXT, rueckmeldewegText } from './danke-text';
 import { FollowUpForm } from './FollowUpForm';
 import type { ThankYouCompany, ThankYouViewProps } from './types';
-import styles from './danke.module.css';
+import styles from './stil';
 
 const KANAL_ICON = { whatsapp: 'message-circle', phone: 'phone', email: 'mail' } as const;
 

@@ -1,0 +1,11 @@
+/*
+ * Grenze vor dem CSS der Bewerbungsmappe /bewerbung/mappe (E-031, Prüfrunde 2 C2-1). Absichtlich ohne Regeln.
+ *
+ * Wie components/themen/themen-grenze.css: Next fasst das CSS der Seiten in gemeinsame Chunks zusammen (Turbopack,
+ * cssChunking `true`). Bis Prüfrunde 2 hielt zufällig das Satzblatt (components/ui/prose.css, global) die Mappe aus
+ * dem gemeinsamen Chunk: Der Sammelexport components/ui/index.ts zog es auf die Mappe, obwohl sie es nicht nutzt.
+ * Seit es nur noch die Rechtsseiten laden (Prose direkt aus components/ui/Prose), übernimmt diese leere globale Datei
+ * unmittelbar vor mappe.module.css (stil.ts) die Grenze: Das Modul landet mit ihr in einem eigenen Chunk nur für die
+ * Mappe statt render-blockierend im gemeinsamen Chunk aller Seiten. Geprüft im Build (scripts/qa/check-css-chunks.mjs:
+ * mappe.module.css nur auf /bewerbung/mappe) und im Quelltext (components/mappe/__tests__/mappe-grenze.test.ts).
+ */

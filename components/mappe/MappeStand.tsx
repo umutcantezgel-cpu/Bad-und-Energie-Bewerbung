@@ -4,7 +4,7 @@ import type { MouseEvent } from 'react';
 import { Icon } from '@/components/icons';
 import { motionAllowed } from '@/lib/motion/prefers';
 import { cn } from '@/lib/utils/cn';
-import styles from './mappe.module.css';
+import styles from './stil';
 import { STAND_TEXT, springeZuAbschnitt, type MappeAbschnittId, type MappeStandWerte } from './stand';
 
 /** Sprung mit Fokus aufs erste Feld (E-BEW-006); ohne JS trägt der Anker allein. */

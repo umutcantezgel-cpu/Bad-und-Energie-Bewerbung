@@ -13,7 +13,7 @@ import {
 import { MAPPE_LIMITS } from '@/lib/mappe/options';
 import type { MappeRecipient } from '@/lib/mappe/types';
 import { cn } from '@/lib/utils/cn';
-import styles from './mappe.module.css';
+import styles from './stil';
 
 /** 210 mm at 96 dpi. */
 const A4_WIDTH_PX = (210 / 25.4) * 96;

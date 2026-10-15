@@ -4,11 +4,14 @@ import { raumschnittDateien } from '@/lib/zeichnung/raumschnitt-svg';
 import { waermeBandDateien } from '@/lib/zeichnung/waerme/dateien';
 import { BUERO_MARKE } from '../check-design-tokens.mjs';
 import {
+  AUSNAHMEN,
   BUERO_BUDGET,
   FRONT_BUDGET,
   FRONT_CSS,
   KOPF_ARTEN,
   MERKMAL_LAENGE,
+  PROSE_SEITEN,
+  SEITEN_MODULE,
   TECHNIK_BUDGET,
   WAERME_BUDGET,
   WAERME_CSS,
@@ -73,9 +76,11 @@ describe('check-css-chunks: CSS-Ketten im Build (Prüfung E-029, Runde 2, Befund
     expect(fehler[0]).toMatch(/^\/jobs: CSS-Preload \/fehler\.css/);
     expect(fehler[1]).toMatch(/^\/jobs\/kundendienst: 3 render-blockierende Stylesheets, höchstens 2/);
     expect(pruefeSeiten([seite('/', ['/g.css', '/s.css', '/x.css', '/t.css'])], lies)[0]).toMatch(/4 render-blockierende Stylesheets, höchstens 3/);
-    // Die Bewerbungsmappe darf ihr Druckblatt dazu laden, mehr nicht
-    expect(pruefeSeiten([seite('/bewerbung/mappe', ['/g.css', '/s.css', '/x.css', '/x.css'])], lies)).toEqual([]);
-    expect(pruefeSeiten([seite('/bewerbung/mappe', ['/g.css', '/s.css', '/x.css', '/x.css', '/x.css'])], lies)[0]).toMatch(/höchstens 4/);
+    // Keine Ausnahme mehr (Prüfrunde 2 C2-1): Auch die Bewerbungsmappe lädt höchstens drei (vorher vier mit dem Satzblatt)
+    expect(AUSNAHMEN).toEqual({});
+    const mitMappe = (href: string) => (href === '/m.css' ? '.mappe-module__I2zLJq__werkbank{gap:1rem}' : lies(href));
+    expect(pruefeSeiten([seite('/bewerbung/mappe', ['/g.css', '/s.css', '/m.css'])], mitMappe)).toEqual([]);
+    expect(pruefeSeiten([seite('/bewerbung/mappe', ['/g.css', '/s.css', '/x.css', '/m.css'])], mitMappe)[0]).toMatch(/höchstens 3/);
   });
 
   it('Befund 9: themen.module.css außerhalb der Themenseiten fällt durch, eine Themenseite ohne sie auch', () => {
@@ -84,6 +89,56 @@ describe('check-css-chunks: CSS-Ketten im Build (Prüfung E-029, Runde 2, Befund
       `/jobs: ${THEMEN.length} B aus themen.module.css render-blockierend, gehören nur auf die Themenseiten`,
       '/arbeiten-bei-uns: ohne die Regeln aus themen.module.css',
       'keine Themenseite geprüft',
+    ]);
+  });
+
+  it('Prüfrunde 2 C2-1: die CSS-Module der Danke-Seite, der Mappe und der Rechtsseiten nur auf ihren Seiten, dort aber wirklich', () => {
+    expect(SEITEN_MODULE).toEqual({ danke: ['/bewerbung/danke'], mappe: ['/bewerbung/mappe'], recht: ['/datenschutz', '/impressum'] });
+    const PROSE = '@layer components{.prose{--tw-prose-body:var(--ink)}}';
+    const MODUL: Record<string, string> = {
+      danke: '.danke-module__Qw12Er__kopf{gap:1rem}',
+      mappe: '.mappe-module__I2zLJq__werkbank{gap:1rem}',
+      recht: '.recht-module___s8qoq__dokument{gap:1rem}@media print{.recht-module___s8qoq__text{color:black}}',
+    };
+    for (const [modul, erlaubt] of Object.entries(SEITEN_MODULE)) {
+      const eigen = MODUL[modul];
+      // Die Rechtsseiten laden das Modul mit dem Satzblatt in einem Chunk (das Satzblatt ist dort Pflicht)
+      const zusatz = modul === 'recht' ? PROSE : '';
+      const dateien: Record<string, string> = { ...DATEIEN, '/m.css': zusatz + eigen, '/o.css': zusatz, '/sm.css': GEMEINSAM + eigen };
+      const mit = (href: string) => dateien[href];
+      const eigene = erlaubt.map((route) => seite(route, ['/g.css', '/s.css', '/m.css']));
+      expect(pruefeSeiten([seite('/jobs', ['/g.css', '/s.css']), ...eigene], mit), modul).toEqual([]);
+      // Im gemeinsamen Chunk (so stand es vor der Grenze) fällt es auf jeder anderen Seite durch
+      expect(pruefeSeiten([seite('/jobs', ['/g.css', '/sm.css']), ...eigene], mit), modul).toEqual([
+        `/jobs: ${eigen.length} B aus ${modul}.module.css render-blockierend, gehören nur auf ${erlaubt.join(' und ')}`,
+      ]);
+      // Fehlt es auf der eigenen Seite, fällt das durch, auch als „nicht geprüft“
+      expect(pruefeSeiten([seite(erlaubt[0], ['/g.css', '/s.css', '/o.css'])], mit), modul).toEqual([
+        `${erlaubt[0]}: ohne die Regeln aus ${modul}.module.css`,
+        `${erlaubt.join(', ')} nicht geprüft`,
+      ]);
+    }
+  });
+
+  it('Prüfrunde 2 C2-1: das Satzblatt (prose.css) nur auf den Rechtsseiten, dort aber wirklich', () => {
+    expect(PROSE_SEITEN).toEqual(['/datenschutz', '/impressum']);
+    const PROSE = '@layer components{.prose{--tw-prose-body:var(--ink)}.prose :where(p){margin:1em 0}}';
+    const RECHT = '.recht-module___s8qoq__dokument{gap:1rem}';
+    const dateien: Record<string, string> = { ...DATEIEN, '/pr.css': PROSE + RECHT, '/p.css': PROSE };
+    const mit = (href: string) => dateien[href];
+    const recht = PROSE_SEITEN.map((route) => seite(route, ['/g.css', '/s.css', '/pr.css']));
+    expect(pruefeSeiten(recht, mit)).toEqual([]);
+    // So stand es vor Prüfrunde 2: die Mappe lud das Satzblatt über den Sammelexport mit
+    expect(pruefeSeiten([...recht, seite('/bewerbung/mappe', ['/g.css', '/s.css', '/p.css'])], mit)).toEqual([
+      '/bewerbung/mappe: ohne die Regeln aus mappe.module.css',
+      `/bewerbung/mappe: ${PROSE.length} B aus dem Satzblatt (prose.css) render-blockierend, gehören nur auf /datenschutz und /impressum`,
+      '/bewerbung/mappe nicht geprüft',
+    ]);
+    expect(pruefeSeiten([seite('/impressum', ['/g.css', '/s.css'])], mit)).toEqual([
+      '/impressum: ohne die Regeln aus recht.module.css',
+      '/impressum: ohne das Satzblatt (prose.css)',
+      '/datenschutz, /impressum nicht geprüft',
+      '/datenschutz, /impressum nicht geprüft',
     ]);
   });
 
@@ -243,7 +298,7 @@ describe('check-css-chunks: Teilbudgets E-031 (Wärme, Wärmefront, Büro-Block)
     ]);
     // je Seite ein anderes Stylesheet: nicht der globale Chunk
     const getrennt: Record<string, string> = { '/a.css': FRONT, '/b.css': FRONT };
-    expect(pruefeSeiten([seite('/jobs', ['/a.css']), seite('/impressum', ['/b.css'])], (h: string) => getrennt[h], { front: true })).toEqual([
+    expect(pruefeSeiten([seite('/jobs', ['/a.css']), seite('/einsatzgebiet/herborn', ['/b.css'])], (h: string) => getrennt[h], { front: true })).toEqual([
       'die Regeln aus waermefront.module.css stehen in keinem Stylesheet, das alle Seiten laden (globaler Chunk)',
     ]);
   });

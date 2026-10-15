@@ -40,7 +40,7 @@ import { LetterSection } from './LetterSection';
 import { MappeActions, type MappeFeedback, type SaveStatus } from './MappeActions';
 import { MappePreview } from './MappePreview';
 import { MappeStand } from './MappeStand';
-import styles from './mappe.module.css';
+import styles from './stil';
 import { PersonalSection } from './PersonalSection';
 import { SkillsSection } from './SkillsSection';
 import { StationsSection } from './StationsSection';

@@ -18,7 +18,10 @@ import { BUERO_DATEI, BUERO_MARKE, bueroBlockAb } from './check-design-tokens.mj
  * 2. Höchstens zwei render-blockierende Stylesheets auf /jobs, den Stellenseiten und den Orts- und Kreisseiten (wie in
  *    der Basis 2f34ae9: das globale und das gemeinsame), höchstens drei auf jeder anderen Seite (AUSNAHMEN begründet).
  * 3. Die Regeln der Themenseiten (themen.module.css, 20 kB) nur auf /arbeiten-bei-uns und den Themen darunter
- *    (Befund 9; die Grenze davor: components/themen/themen-grenze.css), dort aber wirklich.
+ *    (Befund 9; die Grenze davor: components/themen/themen-grenze.css), dort aber wirklich. Ebenso die Regeln der
+ *    Danke-Seite, der Mappe und der Rechtsseiten nur auf ihren Seiten (SEITEN_MODULE) und das Satzblatt (prose.css)
+ *    nur auf den Rechtsseiten (E-031, Prüfrunde 2 C2-1: vorher standen sie render-blockierend im gemeinsamen Chunk
+ *    jeder Seite bzw. auf der Mappe).
  * 4. Die Regeln der technischen Zeichnungen und ihrer Dauerbewegung (technik.module.css, dauer.module.css) dürfen im
  *    gemeinsamen Chunk stehen, höchstens TECHNIK_BUDGET Bytes: Startseite, alle Stellenseiten (eine Chunk-Gruppe) und
  *    die Wärmepumpen-Seite brauchen sie, ein eigener Chunk kostete dort eine Anfrage mehr (eine Runde, ~150 ms) für
@@ -47,8 +50,28 @@ const ABLAGEN = ['app', 'route-cache'];
 /** Seiten, die nur das globale und das gemeinsame Stylesheet laden dürfen. */
 export const ZWEI_STYLESHEETS = /^\/jobs(?:\/[^/]+)?$|^\/einsatzgebiet(?:\/[^/]+)?$/;
 export const HOECHSTENS_STYLESHEETS = 3;
-/** Ausnahmen mit Begründung: die Bewerbungsmappe (noindex) lädt dazu das Satzblatt (prose.css) und ihr Druckblatt. */
-export const AUSNAHMEN = Object.freeze({ '/bewerbung/mappe': 4 });
+/**
+ * Ausnahmen mit Begründung (Route → höchstens). Keine mehr: Die Bewerbungsmappe lud bis Prüfrunde 2 (E-031, C2-1) das
+ * Satzblatt mit, das sie nicht nutzt (prose.css über den Sammelexport components/ui/index.ts), und durfte darum vier.
+ */
+export const AUSNAHMEN = Object.freeze({});
+/**
+ * CSS-Module einzelner Seiten (E-031, Prüfrunde 2 C2-1): Modulname → die Seiten, auf denen seine Regeln stehen dürfen
+ * und, sobald eine davon vorab gerendert ist, auch stehen müssen. Ohne Grenze nahm Turbopack sie render-blockierend in
+ * den gemeinsamen Chunk jeder Seite (zusammen rund 1,8 KB gzip). Die Grenzen im Quelltext: leere globale Dateien vor
+ * danke.module.css (components/apply/thanks/danke-grenze.css) und mappe.module.css (components/mappe/mappe-grenze.css);
+ * vor recht.module.css das Satzblatt prose.css selbst (components/recht/index.ts: RechtDokument zuerst).
+ */
+export const SEITEN_MODULE = Object.freeze({
+  danke: Object.freeze(['/bewerbung/danke']),
+  mappe: Object.freeze(['/bewerbung/mappe']),
+  recht: Object.freeze(['/datenschutz', '/impressum']),
+});
+/** Das Satzblatt (components/ui/prose.css, Typography-Plugin) nur auf den Rechtsseiten, dort aber wirklich. */
+export const PROSE_SEITEN = Object.freeze(['/datenschutz', '/impressum']);
+/** Kennung des Satzblatts im gebauten CSS (Farbe des Lesetexts, nur in prose.css gesetzt). */
+const PROSE_MERKMAL = /--tw-prose-body:/;
+
 /** Themen-Hub und Themen flach darunter: die einzigen Seiten mit den Regeln aus themen.module.css. */
 export const THEMEN_SEITE = /^\/arbeiten-bei-uns(?:\/[^/]+)?$/;
 /** Höchstens so viele Bytes (roh) aus technik.module.css und dauer.module.css auf einer Seite (heute rund 7,2 kB). */
@@ -170,6 +193,8 @@ export function pruefeSeiten(seiten, lies, vorhanden = {}) {
   if (seiten.length === 0) return ['keine vorab gerenderte Seite mit Stylesheet gefunden, die Prüfung liefe ins Leere'];
   const fehler = [];
   let themenGesehen = 0;
+  /** Je Seitenmodul (und Satzblatt): auf wie vielen seiner Seiten es wirklich stand. */
+  const gesehen = Object.fromEntries([...Object.keys(SEITEN_MODULE), 'prose'].map((name) => [name, 0]));
   let bueroGesehen = 0;
   /** Stylesheets mit Regeln der Wärmefront, je Seite (für „globaler Chunk“). */
   const frontBlaetter = [];
@@ -186,6 +211,22 @@ export function pruefeSeiten(seiten, lies, vorhanden = {}) {
       else themenGesehen++;
     } else if (themen > 0) {
       fehler.push(`${route}: ${themen} B aus themen.module.css render-blockierend, gehören nur auf die Themenseiten`);
+    }
+    for (const [modul, erlaubt] of Object.entries(SEITEN_MODULE)) {
+      const bytes = modulBytes(css, [modul]);
+      if (erlaubt.includes(route)) {
+        if (bytes === 0) fehler.push(`${route}: ohne die Regeln aus ${modul}.module.css`);
+        else gesehen[modul]++;
+      } else if (bytes > 0) {
+        fehler.push(`${route}: ${bytes} B aus ${modul}.module.css render-blockierend, gehören nur auf ${erlaubt.join(' und ')}`);
+      }
+    }
+    const prose = musterBytes(css, [PROSE_MERKMAL]);
+    if (PROSE_SEITEN.includes(route)) {
+      if (prose === 0) fehler.push(`${route}: ohne das Satzblatt (prose.css)`);
+      else gesehen.prose++;
+    } else if (prose > 0) {
+      fehler.push(`${route}: ${prose} B aus dem Satzblatt (prose.css) render-blockierend, gehören nur auf ${PROSE_SEITEN.join(' und ')}`);
     }
     const technik = modulBytes(css, ['technik', 'dauer']);
     if (technik > TECHNIK_BUDGET) fehler.push(`${route}: ${technik} B aus technik/dauer, höchstens ${TECHNIK_BUDGET} B`);
@@ -211,6 +252,9 @@ export function pruefeSeiten(seiten, lies, vorhanden = {}) {
     if (buero > 0 && THEMEN_SEITE.test(route)) bueroGesehen++;
   }
   if (seiten.some(({ route }) => THEMEN_SEITE.test(route)) && themenGesehen === 0) fehler.push('keine Themenseite geprüft');
+  for (const [name, erlaubt] of [...Object.entries(SEITEN_MODULE), ['prose', PROSE_SEITEN]]) {
+    if (seiten.some(({ route }) => erlaubt.includes(route)) && gesehen[name] === 0) fehler.push(`${erlaubt.join(', ')} nicht geprüft`);
+  }
   if (vorhanden.buero && bueroGesehen === 0) fehler.push('der Büro-Block steht auf keiner Themenseite');
   if (vorhanden.front && frontBlaetter.length > 0) {
     const gemeinsam = [...frontBlaetter[0]].filter((href) => frontBlaetter.every((blaetter) => blaetter.has(href)));

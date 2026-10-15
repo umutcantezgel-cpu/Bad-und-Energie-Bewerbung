@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Icon, type IconName } from '@/components/icons';
 import { cn } from '@/lib/utils/cn';
-import styles from './danke.module.css';
+import styles from './stil';
 
 export interface DankeAngabe {
   name: string;
