@@ -127,7 +127,7 @@ describe('Spiegel theme.css ↔ lib/tokens', () => {
     expect(hell).toHaveLength(5);
     expect(dunkel).toHaveLength(5);
     hell.forEach((hex, i) => expect(cssVar(`--p-waerme-${i}`), `hell ${i}`).toBe(hex));
-    dunkel.forEach((hex, i) => expect(cssVar(`--p-pflaume-${i}`), `dunkel ${i}`).toBe(hex));
+    dunkel.forEach((hex, i) => expect(cssVar(`--p-glimm-${i}`), `dunkel ${i}`).toBe(hex));
     // Jede Rolle in jedem Modus aufgelöst wie in check-contrast (Seite, Band, Wärmebereich, Druck)
     const { role } = checkTheme(readFileSync(path.resolve(__dirname, '../../../app/styles/theme.css'), 'utf8'));
     const modi = MODES as ReadonlyArray<{ name: string; dark: boolean; print: boolean }>;

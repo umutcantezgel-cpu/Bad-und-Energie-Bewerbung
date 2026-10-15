@@ -163,7 +163,7 @@ describe('check-contrast: Wärmebereich und Wärmerampe (E-031)', () => {
     expect(result.rows.some((row: string[]) => !warm.includes(row[0]) && /waerme-\d/.test(row[1]))).toBe(false);
   });
 
-  it('Wärmebereich hell = Rollen des Papiers (auch im Navy-Band), dunkel = Creme auf Pflaume, Druck = Papier weiß', () => {
+  it('Wärmebereich hell = Rollen des Papiers (auch im Navy-Band), dunkel = Creme auf der Rampe Nacht-Blau → Rotbraun, Druck = Papier weiß', () => {
     for (const mode of ['warm light', 'inverse warm light']) {
       expect(result.role(mode, 'brand'), mode).toBe('#111D6D');
       expect(result.role(mode, 'vorlauf'), mode).toBe('#D60000');
@@ -201,6 +201,22 @@ describe('check-contrast: Wärmebereich und Wärmerampe (E-031)', () => {
     }
   });
 
+  it('dunkel wird die Wärme warm (Prüfrunde 1 A1-13): Stufe 0 Nacht-Blau, die heißen Stufen 3 und 4 rotbraun (Farbton 0–30°)', () => {
+    const farbton = (hex: string) => {
+      const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+      const max = Math.max(r, g, b);
+      const d = max - Math.min(r, g, b);
+      const h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+      return (h * 60 + 360) % 360;
+    };
+    for (const mode of ['warm dark', 'inverse warm dark', 'dark']) {
+      const ton = RAMP.map((band) => farbton(result.role(mode, band)));
+      expect(ton[0], mode).toBeGreaterThan(200);
+      expect(ton[0], mode).toBeLessThan(250);
+      for (const i of [3, 4]) expect(ton[i], `${mode} waerme-${i}`).toBeLessThanOrEqual(30);
+    }
+  });
+
   it('fällt durch: zu dunkle heiße Stufe, zu ähnliche oder zu verschiedene Nachbarn, schwache Linie im Wärmebereich', () => {
     const fails = (css: string, pair: RegExp, mode = 'warm light') =>
       checkTheme(css).rows.some((row: string[]) => row[0] === mode && pair.test(row[1]) && row[5] === 'FAIL');
@@ -208,7 +224,7 @@ describe('check-contrast: Wärmebereich und Wärmerampe (E-031)', () => {
     expect(fails(theme.replace('--p-waerme-1: #F3DFCC;', '--p-waerme-1: #F3EADC;'), /^waerme-0 \/ waerme-1$/)).toBe(true);
     expect(fails(theme.replace('--p-waerme-1: #F3DFCC;', '--p-waerme-1: #E0B090;'), /^waerme-0 \/ waerme-1$/)).toBe(true);
     expect(fails(theme.replace('--line-strong: var(--p-tinte-2);', '--line-strong: var(--p-rand);'), /^line-strong \/ waerme-4$/)).toBe(true);
-    expect(fails(theme.replace('--p-pflaume-4: #61365A;', '--p-pflaume-4: #7A4470;'), /^vorlauf \/ waerme-4$/, 'warm dark')).toBe(true);
+    expect(fails(theme.replace('--p-glimm-4: #6E3226;', '--p-glimm-4: #7A4470;'), /^vorlauf \/ waerme-4$/, 'warm dark')).toBe(true);
   });
 
   it('lässt die Rampe nicht in Breitenabfragen verstecken', () => {

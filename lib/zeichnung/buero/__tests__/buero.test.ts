@@ -152,7 +152,7 @@ describe('Inline und Datei: dieselbe Zeichnung', () => {
     const theme = quelle('app/styles/theme.css');
     const p = (name: string) => theme.match(new RegExp(`--p-${name}: (#[0-9A-Fa-f]{6});`))![1].toUpperCase();
     expect(BUERO_SVG_FARBEN.papier.hell).toEqual({ marke: p('navy'), flaeche: p('papier'), w1: p('waerme-1'), w2: p('waerme-2'), w3: p('waerme-3') });
-    expect(BUERO_SVG_FARBEN.papier.dunkel).toEqual({ marke: p('creme'), flaeche: p('nacht'), w1: p('pflaume-1'), w2: p('pflaume-2'), w3: p('pflaume-3') });
+    expect(BUERO_SVG_FARBEN.papier.dunkel).toEqual({ marke: p('creme'), flaeche: p('nacht'), w1: p('glimm-1'), w2: p('glimm-2'), w3: p('glimm-3') });
     expect(BUERO_SVG_FARBEN.papier.druck).toEqual({ ...BUERO_SVG_FARBEN.papier.hell, flaeche: p('weiss') });
     expect(BUERO_SVG_FARBEN.papier.hell.w1).toBe(TOKENS.waerme.hell[1]);
     for (const { svg } of bueroSzenenDateien()) {

@@ -19,7 +19,7 @@ const [, D1, D2, D3] = [0, 1, 2, 3].map((i): string => TOKENS.waerme.dunkel[i]);
 
 /**
  * Feste Farben je Umgebung (app/styles/theme.css, Primitive): Papier (Marke Navy, Fläche Papier, Wärmerampe hell) und
- * Nacht (Marke Creme, Fläche Nacht, Rampe Pflaume); die Leitstelle wie die Kopfzeichnungen auf Navy.
+ * Nacht (Marke Creme, Fläche Nacht, Rampe Nacht-Blau → Rotbraun); die Leitstelle wie die Kopfzeichnungen auf Navy.
  */
 export const BUERO_SVG_FARBEN = Object.freeze({
   papier: {

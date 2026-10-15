@@ -257,18 +257,19 @@
     --p-band-d-2: #1E2C86;
     --p-band-d-3: #27368F;
     --p-band-d-linie: #34439A;
-    /* Wärmerampe (E-031): Bänder des Wärmefelds, kühl → heiß. Hell Papier → Pfirsich, dunkel Nacht-Blau → Pflaume;
-       je Stufe gleich weit in der Helligkeit (Nachbarn 1,09–1,12:1), Linien auf jeder Stufe ≥ 3:1 (check-contrast). */
+    /* Wärmerampe (E-031): Bänder des Wärmefelds, kühl → heiß. Hell Papier → Pfirsich (Nachbarn 1,09–1,12:1), dunkel
+       Nacht-Blau über ein neutrales Dunkelbraun zu Rotbraun (Glimmen; Nachbarn 1,08–1,18:1, Prüfrunde 1 A1-13: vorher
+       Pflaume, die Wärme wirkte violett); Linien auf jeder Stufe ≥ 3:1 (check-contrast). */
     --p-waerme-0: #F3EBDD;
     --p-waerme-1: #F3DFCC;
     --p-waerme-2: #F3D2BC;
     --p-waerme-3: #F3C7AB;
     --p-waerme-4: #F2BB9C;
-    --p-pflaume-0: #1B2150;
-    --p-pflaume-1: #2F2853;
-    --p-pflaume-2: #412D56;
-    --p-pflaume-3: #513258;
-    --p-pflaume-4: #61365A;
+    --p-glimm-0: #1B2150;
+    --p-glimm-1: #2C2843;
+    --p-glimm-2: #3F3035;
+    --p-glimm-3: #55382A;
+    --p-glimm-4: #6E3226;
 
     /* ── Maße, Abstände, Bewegung (K-007…K-009); Spiegel in lib/tokens ── */
     --a-1: 0.25rem;
@@ -384,11 +385,11 @@
       --success-subtle: var(--p-gruen-nacht);
       --danger: var(--p-fehler-hell);
       --danger-subtle: var(--p-fehler-nacht);
-      --waerme-0: var(--p-pflaume-0);
-      --waerme-1: var(--p-pflaume-1);
-      --waerme-2: var(--p-pflaume-2);
-      --waerme-3: var(--p-pflaume-3);
-      --waerme-4: var(--p-pflaume-4);
+      --waerme-0: var(--p-glimm-0);
+      --waerme-1: var(--p-glimm-1);
+      --waerme-2: var(--p-glimm-2);
+      --waerme-3: var(--p-glimm-3);
+      --waerme-4: var(--p-glimm-4);
     }
   }
 
@@ -440,17 +441,17 @@
       --surface-raised: var(--p-band-d-3);
       --line: var(--p-band-d-linie);
       --wand: var(--p-band-d-2);
-      --waerme-0: var(--p-pflaume-0);
-      --waerme-1: var(--p-pflaume-1);
-      --waerme-2: var(--p-pflaume-2);
-      --waerme-3: var(--p-pflaume-3);
-      --waerme-4: var(--p-pflaume-4);
+      --waerme-0: var(--p-glimm-0);
+      --waerme-1: var(--p-glimm-1);
+      --waerme-2: var(--p-glimm-2);
+      --waerme-3: var(--p-glimm-3);
+      --waerme-4: var(--p-glimm-4);
     }
   }
 
   /* ── Wärmebereich (data-tone="warm", E-031): das Rauminnere einer Zeichnung, auch mitten im Navy-Band. Hell gelten
      die Rollen des Papiers (Navy-Linien, Vorlauf Rot, Rücklauf Blau), dunkel die der Nacht (Creme-Linien auf der
-     Pflaumen-Rampe); line-strong ist eine Stufe kräftiger, damit jede Linie auf jedem Band ≥ 3:1 steht. Druck: hell. ── */
+     dunklen Rampe Nacht-Blau → Rotbraun); line-strong ist eine Stufe kräftiger, damit jede Linie auf jedem Band ≥ 3:1 steht. Druck: hell. ── */
   [data-tone="warm"] {
     color-scheme: light;
 
@@ -509,11 +510,11 @@
       --success-subtle: var(--p-gruen-nacht);
       --danger: var(--p-fehler-hell);
       --danger-subtle: var(--p-fehler-nacht);
-      --waerme-0: var(--p-pflaume-0);
-      --waerme-1: var(--p-pflaume-1);
-      --waerme-2: var(--p-pflaume-2);
-      --waerme-3: var(--p-pflaume-3);
-      --waerme-4: var(--p-pflaume-4);
+      --waerme-0: var(--p-glimm-0);
+      --waerme-1: var(--p-glimm-1);
+      --waerme-2: var(--p-glimm-2);
+      --waerme-3: var(--p-glimm-3);
+      --waerme-4: var(--p-glimm-4);
     }
   }
 

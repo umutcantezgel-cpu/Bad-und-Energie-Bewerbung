@@ -71,14 +71,14 @@ export const TOKENS = {
   },
   /**
    * Wärmerampe (E-031), kühl → heiß: die Primitiven der Rollen für die Bänder des Wärmefelds, die Klick-Wärme und die
-   * Wärmefront (CSS --p-waerme-0…4 hell, --p-pflaume-0…4 dunkel). Hell gilt auch im Inverse-Band und im Druck, dunkel
+   * Wärmefront (CSS --p-waerme-0…4 hell, --p-glimm-0…4 dunkel). Hell gilt auch im Inverse-Band und im Druck, dunkel
    * nur am Bildschirm. Für Dateien und Bilder, die keine Rollen erben (Kopfbilder, Teilen-Bilder); im Code der Seite nur
    * über die Rollen in den freigegebenen Stylesheets (Guard waerme-rollen). lib/motion/__tests__/spiegel.test.ts hält
    * beide Seiten gleich.
    */
   waerme: {
     hell: ['#F3EBDD', '#F3DFCC', '#F3D2BC', '#F3C7AB', '#F2BB9C'],
-    dunkel: ['#1B2150', '#2F2853', '#412D56', '#513258', '#61365A'],
+    dunkel: ['#1B2150', '#2C2843', '#3F3035', '#55382A', '#6E3226'],
   },
   zIndex: {
     header: 30,
