@@ -14,9 +14,10 @@ export interface ArbeitenSeiteProps {
 }
 
 /**
- * Themen-Hub /arbeiten-bei-uns (E-028), Erzählseite. Tonfolge: Pfad und Kopf Papier/Navy (Verteiler mit einem Abgang je
- * Thema) · Themen Papier (Leitungsabgänge, je Thema ein belegter Satz und ein Kennwert) · Zusagen Navy · Stellen Wand
- * (mit Gehalt) · Kontakt Papier · Fuß Navy. Jeder Satz kommt aus lib/themen/text.ts.
+ * Themen-Hub /arbeiten-bei-uns (E-028), Erzählseite. Tonfolge: Pfad und Kopf Papier/Navy (seit E-031 ein
+ * maßstäblicher Heizkreisverteiler mit einem Kreis je Thema aus getThemen(), darunter die Themenliste) · Themen Papier
+ * (Leitungsabgänge, je Thema ein belegter Satz und ein Kennwert) · Zusagen Navy · Stellen Wand · Kontakt Papier · Fuß
+ * Navy. Jeder Satz kommt aus lib/themen/text.ts.
  */
 export function ArbeitenSeite({ text, jobs }: ArbeitenSeiteProps) {
   return (

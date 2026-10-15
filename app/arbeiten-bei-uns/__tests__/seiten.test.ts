@@ -118,9 +118,15 @@ describe('Routen unter /arbeiten-bei-uns', () => {
       expect(html).not.toMatch(/Rohrpaar|Dachträger/);
     }
     if (id === 'diskret-wechseln') {
-      // Laufzettel (E-029): echter Text in drei Zeilen statt Abzweig mit Blindflansch, ohne Bildnamen
+      // Laufzettel (E-029): echter Text in drei Zeilen statt Abzweig mit Blindflansch, ohne Bildnamen. Seit E-031 steht
+      // vor „Dein Arbeitgeber“ genau eine dekorative Absperrung: Leitung mit geschlossenem Kugelhahn, ohne Text im Bild
       const zettel = /<div[^>]*data-zeichnung="laufzettel"[^>]*>([\s\S]*?)<\/dl>/.exec(html)?.[1] ?? '';
-      expect(zettel).toMatch(/<dt[^>]*>Von<\/dt><dd[^>]*>Du<\/dd>[\s\S]*<dt[^>]*>An<\/dt><dd[^>]*>Wetzlar<\/dd>[\s\S]*<dt[^>]*>Nicht an<\/dt><dd[^>]*>Dein Arbeitgeber<\/dd>/);
+      expect(zettel).toMatch(
+        /<dt[^>]*>Von<\/dt><dd[^>]*>Du<\/dd>[\s\S]*<dt[^>]*>An<\/dt><dd[^>]*>Wetzlar<\/dd>[\s\S]*<dt[^>]*>Nicht an<\/dt><dd[^>]*><svg [^>]*aria-hidden="true"[^>]*data-zeichnung="absperrung">(?:(?!<\/svg>|<text)[\s\S])*<\/svg>Dein Arbeitgeber<\/dd>/,
+      );
+      expect(zettel.match(/data-zeichnung="absperrung"/g)).toHaveLength(1);
+      expect(zettel.match(/data-symbol="kugelhahnGeschlossen"/g)).toHaveLength(1);
+      expect(zettel).not.toMatch(/data-symbol="kugelhahn"/);
       expect(zettel).not.toContain('role="img"');
       expect(html).not.toMatch(/Blindflansch|Abzweig/);
       // Sammelfläche (Runde 3): „Wohin du wechseln kannst“ zeigt auch Büro, Ausbildung und Praktikum; der unbefristete

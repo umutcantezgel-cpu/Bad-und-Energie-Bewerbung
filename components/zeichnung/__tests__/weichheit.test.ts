@@ -9,6 +9,12 @@ import { Ausstattung } from '@/components/home/vorteile/Ausstattung';
 import { Zusagen } from '@/components/home/vorteile/Zusagen';
 import { PackageList } from '@/components/jobs/PackageList';
 import { Section } from '@/components/layout/Section';
+import { ABSPERR_LEITUNG, Absperrung } from '@/components/themen/Absperrung';
+import { Verteiler } from '@/components/themen/Verteiler';
+import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
+import { getThemen } from '@/lib/themen/registry';
+import { getArbeitenPageText } from '@/lib/themen/text';
+import { anschlussPunkt } from '@/lib/zeichnung/symbole';
 import { RohrAkzent } from '..';
 
 /**
@@ -314,5 +320,52 @@ describe('Nur vorhandene Tokens: Radien 4 · 12 · 24 · 999, ein Schatten, kein
     }
     expect(css).not.toMatch(/gradient\(|backdrop-filter|filter:\s*(?:blur|drop-shadow)|text-shadow/);
     for (const [, wert] of css.matchAll(/box-shadow:\s*([^;]+);/g)) expect(wert.trim(), datei).toBe('var(--shadow-lg)');
+  });
+});
+
+describe('Verteiler und Absperrung (Themenseiten, E-031): normgerecht und still', () => {
+  const jobs = getActiveJobs().filter((job) => isJobLive(job, new Date()));
+  const karten = getArbeitenPageText({ jobs }).themen.karten;
+  const verteilerHtml = html(createElement(Verteiler, { karten }));
+  const absperrungHtml = html(createElement(Absperrung, { etiketten: { du: 'Du', ziel: 'Wetzlar', arbeitgeber: 'Dein Arbeitgeber' } }));
+  /** Nie zurück (E-031): Uhr, Zirkel bzw. Kompass, Windrad, halber Lüfterdreh, Propeller. */
+  const BANN = /uhr|zirkel|kompass|windrad|luefter|lüfter|propeller|ventilator/i;
+
+  it('Verteiler: ein Kreis je Thema aus getThemen(), in derselben Reihenfolge, mit Kreisschild, die Zeichnung dekorativ', () => {
+    const ids = getThemen().map((thema) => thema.id);
+    expect(karten.map((karte) => karte.id)).toEqual(ids);
+    expect([...verteilerHtml.matchAll(/data-kreis="([^"]+)"/g)].map((m) => m[1])).toEqual(ids);
+    expect(verteilerHtml.match(/data-symbol="durchflussmesser"/g)).toHaveLength(ids.length);
+    // Je Kreis zwei Leitungsstücke (Vorlauf, Rücklauf) plus die beiden Zuleitungen
+    expect(verteilerHtml.match(/<path d="[^"]*" class="[^"]*leitung[^"]*"/g)).toHaveLength(2 * ids.length + 2);
+    // Zeichnung und Schilder hinter aria-hidden; im Bild kein Text, keine Bewegung
+    const bild = verteilerHtml.match(/<div class="[^"]*" aria-hidden="true">([\s\S]*?)<\/div><ul/)![1];
+    expect(bild).toContain('<svg');
+    expect(bild).not.toMatch(/<text|data-motion|role=/);
+    // Die Liste bleibt echter Text mit allen Themen
+    expect(verteilerHtml).toMatch(/<ul class="[^"]*" aria-label="Themen">/);
+    for (const karte of karten) expect(verteilerHtml).toContain(`<span>${karte.name.replace(/&/g, '&amp;')}</span>`);
+    expect(verteilerHtml).not.toMatch(BANN);
+  });
+
+  it('Verteiler: Zeichnung erst ab 37,5em, am Handy die Liste allein; Kästchen mit --radius-1', () => {
+    const themen = quelle('components/themen/themen.module.css');
+    expect(regel(themen, '.verteilerBild')).toMatch(/display: none;/);
+    expect(ohneKommentare(themen)).toMatch(/@media \(min-width: 37\.5em\) \{\s*\.verteilerBild \{\s*display: block;/);
+    expect(regel(themen, '.verteilerKasten')).toMatch(/border-radius: var\(--radius-1\);/);
+  });
+
+  it('Absperrung: vor „Dein Arbeitgeber“ eine Leitung auf einen geschlossenen Kugelhahn; „Von“ und „An“ ohne', () => {
+    expect(absperrungHtml.match(/data-symbol="kugelhahnGeschlossen"/g)).toHaveLength(1);
+    expect(absperrungHtml).not.toMatch(/data-symbol="kugelhahn"/);
+    expect(absperrungHtml).toMatch(/<dd[^>]*>Du<\/dd>/);
+    expect(absperrungHtml).toMatch(/<dd[^>]*>Wetzlar<\/dd>/);
+    // Die Leitung endet am Eintritt des Hahns und beginnt am Austritt wieder (Fließrichtung von links)
+    const ein = anschlussPunkt('kugelhahnGeschlossen', 'ein', { x: 24, y: 0, massstab: 0.875 });
+    const aus = anschlussPunkt('kugelhahnGeschlossen', 'aus', { x: 24, y: 0, massstab: 0.875 });
+    expect(ABSPERR_LEITUNG.vor).toBe(`M3 0H${ein.x}`);
+    expect(ABSPERR_LEITUNG.nach.startsWith(`M${aus.x} 0H`)).toBe(true);
+    expect(absperrungHtml).not.toMatch(BANN);
+    expect(absperrungHtml).not.toMatch(/Blindflansch|Abzweig|<text/);
   });
 });

@@ -420,10 +420,48 @@
   }
 }
 
-/* ═══ Themenliste (Kopf des Hubs, seit E-029 ohne Vorlauf und Rücklauf): je Thema Kästchen, Leitlinie, Kennwert ═══ */
+/* ═══ Verteiler (Kopf des Hubs, E-031): Heizkreisverteiler in der Vorderansicht, darunter die Themen als Liste ═══ */
 .verteiler {
+  display: grid;
+  row-gap: var(--a-5);
   width: 100%;
   max-width: 32rem;
+}
+
+/* Am Handy nur die Liste (der Knopf bleibt nah am Kopf); die Zeichnung ab 37,5em */
+.verteilerBild {
+  display: none;
+}
+
+@media (min-width: 37.5em) {
+  .verteilerBild {
+    display: block;
+    width: 100%;
+    max-width: 17rem;
+  }
+}
+
+/* Kreisschilder: je Kreis ein Kästchen mit dem Zeichen des Themas, mittig unter seinem Abgang */
+.verteilerSchilder {
+  position: relative;
+  display: block;
+  height: var(--a-5);
+}
+
+.verteilerSchild {
+  position: absolute;
+  top: 0;
+  left: calc(var(--lage) * 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--a-5);
+  height: var(--a-5);
+  border: var(--m-kontur) solid var(--brand);
+  border-radius: var(--radius-1);
+  background-color: var(--surface);
+  color: var(--brand);
+  transform: translateX(-50%);
 }
 
 .verteilerListe {
@@ -438,19 +476,8 @@
   display: grid;
   grid-template-columns: fit-content(64%) minmax(var(--a-3), 1fr) auto;
   align-items: center;
-  padding-block: var(--a-2);
+  padding-block: var(--a-1);
   border-bottom: var(--m-fein) solid var(--line-strong);
-}
-
-@media (min-width: 37.5em) {
-  .verteilerKreis {
-    padding-block: var(--a-3);
-  }
-
-  .verteilerKasten {
-    min-height: var(--a-7);
-    padding: var(--a-2) var(--a-3);
-  }
 }
 
 .verteilerKasten {
@@ -463,6 +490,7 @@
   min-height: var(--a-6);
   padding: var(--a-1) var(--a-2);
   border: var(--m-kontur) solid var(--brand);
+  border-radius: var(--radius-1);
   background-color: var(--surface);
 }
 
@@ -631,7 +659,7 @@
   }
 }
 
-/* ═══ Laufzettel (Kopf „Diskret wechseln“, seit E-029 statt Absperrung): drei Zeilen Typografie ═══ */
+/* ═══ Laufzettel (Kopf „Diskret wechseln“): drei Zeilen Typografie, seit E-031 mit Absperrung vor dem Arbeitgeber ═══ */
 .laufzettel {
   display: grid;
   margin: 0;
@@ -666,6 +694,22 @@
 
 .laufzeileLeise .laufwert {
   color: var(--ink-2);
+}
+
+/* Absperrung vor „Dein Arbeitgeber“ (E-031): kurze Leitung mit geschlossenem Kugelhahn vor dem Wert; reicht die
+   Breite nicht, rückt der Wert als Ganzes in die nächste Zeile (statt mitten im Namen umzubrechen) */
+.laufwertAbgesperrt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--a-2);
+}
+
+.absperrLeitung {
+  flex: none;
+  width: var(--a-7);
+  height: var(--a-5);
+  overflow: visible;
 }
 
 /* ═══ Gehalt: Spannen je Stelle ═══ */
