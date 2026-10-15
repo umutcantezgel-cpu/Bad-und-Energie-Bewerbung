@@ -148,3 +148,26 @@ export function klickPunkt(
 export function frontDurchmesser(x: number, y: number, breite: number, hoehe: number): number {
   return 2 * Math.ceil(Math.hypot(Math.max(x, breite - x), Math.max(y, hoehe - y))) + 2;
 }
+
+/**
+ * Größte Grundgröße einer Scheibe der Front in px (Prüfrunde 2 A2-1, C2-2, C2-3, B2-3). Die Scheibe ist so groß
+ * gezeichnet und wächst darüber hinaus per transform: scale(faktor).
+ * - Kreis: --radius-voll (999 px) rundet eine Scheibe nur bis 1.998 px Durchmesser zum Kreis; darüber blieben gerade
+ *   Flanken stehen (am Desktop bis rund 3.400 px). Bei höchstens 1.024 px ist die Scheibe immer ein Kreis, das
+ *   Skalieren erhält die Form.
+ * - Ebenen: Vier Ebenen von bis zu 3.400 px Kantenlänge, die ab Maßstab 0 wachsen, musste Chromium ganz rastern
+ *   (Kacheln fehlten, große Lücken in der Bildfolge). Eine Grundgröße von 1.024 px rastert ein Viertel bis ein Elftel
+ *   der Fläche; gemessen (Headless-Chromium, 1.440 × 900): keine geraden Farbkanten mehr, Rasterzeit halbiert, mehr
+ *   Bilder je Abdecken.
+ */
+export const FRONT_GRUND = 1024;
+
+/**
+ * Maß der Front: Grundgröße der Scheiben (px, höchstens FRONT_GRUND) und der Faktor, mit dem sie auf den Durchmesser
+ * bis zur fernsten Ecke wachsen (frontDurchmesser = grund × faktor).
+ */
+export function frontMass(x: number, y: number, breite: number, hoehe: number): { grund: number; faktor: number } {
+  const durchmesser = frontDurchmesser(x, y, breite, hoehe);
+  const grund = Math.min(durchmesser, FRONT_GRUND);
+  return { grund, faktor: durchmesser / grund };
+}

@@ -17,7 +17,9 @@
  * Skalieren nur nach √t: jeder Keyframe-Ablauf mit `scale` genau auf den Stützstellen DIFFUSION_STUETZ.
  * Malzeit (KERN K-013, e2e/support/malzeit.ts): Während Wärme, Klick-Wärme und Wärmefront laufen, malt nach den ersten
  * zwei Bildern kein Bild 2 ms oder länger (mobil, CPU 4×). Ausnahmen, je einmal und außerhalb der Bewegung: das Ende
- * eines Sicht-Ablaufs (`fertig`, will-change fällt) und das Ende des Abdeckens der Wärmefront (unter voller Deckung).
+ * eines Sicht-Ablaufs (`fertig`, will-change fällt) und bei der Wärmefront das erste Malen der neuen Seite nach dem
+ * Wechsel (router.push, unter voller Deckung). Das Abdecken selbst ist ausnahmslos, mit jedem Bandende (Schichten mit
+ * Füllung both, Prüfrunde 2 C2-4; e2e/interaktion.spec.ts misst vom Klick bis zum Wechsel).
  */
 
 /** Alle Kennungen. Reihenfolge wie im Register; der Guard liest diese Liste wörtlich. */

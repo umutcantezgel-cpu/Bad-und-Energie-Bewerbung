@@ -134,7 +134,8 @@ describe('Waermefront: CSS (E-031, K-009)', () => {
 
   it('Zeitplan wie im Register: je Schicht ½ Takt versetzt; Front d-2, Klick d-3 bis 480 ms; Aufdecken d-2 mit k-aus', () => {
     const schicht = regel('.e > *');
-    expect(schicht.animation).toBe('w var(--d) linear calc(var(--takt) * var(--n, 0)) backwards');
+    // Füllung both (Prüfrunde 2 C2-4): Die Schicht hält nach dem Ende den Endwert, das Bandende malt die Seite nicht neu
+    expect(schicht.animation).toBe('w var(--d) linear calc(var(--takt) * var(--n, 0)) both');
     const n = [0, Number(regel('.e > * + *')['--n']), Number(regel('.e > * + * + *')['--n']), Number(regel('.e > * + * + * + *')['--n'])];
     const front = MOTION_REGISTER.seitenwechsel;
     const klick = MOTION_REGISTER['klick-waerme'];

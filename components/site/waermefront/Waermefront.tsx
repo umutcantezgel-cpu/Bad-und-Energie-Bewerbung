@@ -3,7 +3,7 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { motionAllowed } from '@/lib/motion/prefers';
-import { AUFTAKT, ZEITPLAN, frontDurchmesser, frontZiel, imBewerbungsweg, klickPunkt, klickZiel, linkPfad } from '@/lib/motion/seitenwechsel';
+import { AUFTAKT, ZEITPLAN, frontMass, frontZiel, imBewerbungsweg, klickPunkt, klickZiel, linkPfad } from '@/lib/motion/seitenwechsel';
 import styles from './waermefront.module.css';
 
 /** Ablauf der Front: abdecken → warten (Wechsel beauftragt) → aufdecken; null = Ruhe. */
@@ -81,11 +81,18 @@ export function Waermefront() {
       if (imBewerbungsweg(location.pathname)) zu(klick);
       if (phase === 'warten') bild = requestAnimationFrame(() => (bild = requestAnimationFrame(aufdecken)));
     };
-    /** Zeigt eine Überlagerung am Punkt neu; ihre Abläufe beginnen von vorn. */
-    const zeige = (el: HTMLElement, x: number, y: number, durchmesser?: number) => {
+    /**
+     * Zeigt eine Überlagerung am Punkt neu; ihre Abläufe beginnen von vorn. Die Front: Scheiben in der Grundgröße
+     * (--s), die per transform auf den Durchmesser bis zur fernsten Ecke wachsen (frontMass: immer ein Kreis, kleine
+     * Ebenen).
+     */
+    const zeige = (el: HTMLElement, x: number, y: number, mass?: { grund: number; faktor: number }) => {
       el.style.setProperty('--x', `${x}px`);
       el.style.setProperty('--y', `${y}px`);
-      if (durchmesser) el.style.setProperty('--s', `${durchmesser}px`);
+      if (mass) {
+        el.style.setProperty('--s', `${mass.grund}px`);
+        for (const schicht of el.children) (schicht as HTMLElement).style.transform = `scale(${mass.faktor})`;
+      }
       zu(el);
       void el.offsetWidth;
       el.showPopover();
@@ -115,7 +122,7 @@ export function Waermefront() {
         aus();
         ziel = neu;
         phase = 'ab';
-        zeige(front, x, y, frontDurchmesser(x, y, innerWidth, innerHeight));
+        zeige(front, x, y, frontMass(x, y, innerWidth, innerHeight));
         uhr = window.setTimeout(wechseln, ZEITPLAN.abdeckenNetz);
       } else if (bedien) {
         zeige(klick, x, y);

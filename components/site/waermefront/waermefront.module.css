@@ -7,7 +7,8 @@
  * Maßstab 0 → 1 als Zahl auf 0 · 6,25 · 25 · 56,25 · 100 %, linear dazwischen), je ½ Takt versetzt, die kühlste zuerst
  * und zuunterst. Die heißeste liegt immer innen (sie startet zuletzt und liegt oben), nach außen wird es stetig kühler –
  * wie bei Wärmeleitung von einer Quelle, keine Welle mit kaltem Kern (Prüfrunde 1 A1-12, B1-5). Den Mittelpunkt (--x,
- * --y) setzt die Insel, ebenso den Durchmesser der Front (--s); die Ringe der Klick-Wärme haben --a-8. Farbe (--c) und
+ * --y) setzt die Insel, ebenso die Grundgröße der Front (--s) und je Schicht den Faktor bis zur fernsten Ecke; die Ringe
+ * der Klick-Wärme haben --a-8. Farbe (--c) und
  * Verzögerung (--n, Takte) je Schicht: --waerme-1, -2, -3, -4 von der ersten zur letzten. Grundwerte sind der Endzustand
  * (Maßstab 1); die Abläufe füllen mit backwards.
  * Kurze Klassennamen, weil jeder Name im Build den Präfix „waermefront-module__<hash>__“ trägt: Budget ≤ 1.200 B im
@@ -42,7 +43,11 @@
 }
 
 /* Schicht: Front Scheibe (Fläche und Rand --c), Klick Ring (nur der Rand --m-leitung in --c, ohne Fläche); --n ist die
-   Verzögerung in Takten (½ je Schicht), der Ring hat den Durchmesser --s − n × --q (64, 48, 32 px) */
+   Verzögerung in Takten (½ je Schicht), der Ring hat den Durchmesser --s − n × --q (64, 48, 32 px). Die Scheiben der
+   Front haben die Grundgröße --s (≤ 1.024 px, ein Kreis mit --radius-voll) und wachsen per transform: scale(faktor),
+   den die Insel setzt, bis zur fernsten Ecke (lib/motion/seitenwechsel.ts frontMass; Prüfrunde 2 A2-1, C2-3).
+   Füllung both: Nach ihrem Ende hält jede Schicht den Endwert; sonst fiele die Animation am Bandende weg, und Chromium
+   malte die ganze Seite neu (Prüfrunde 2 C2-4). */
 .e > * {
   position: absolute;
   left: var(--x);
@@ -53,7 +58,7 @@
   border: var(--m-leitung) solid var(--c);
   border-radius: var(--radius-voll);
   background: var(--f, var(--c));
-  animation: w var(--d) linear calc(var(--takt) * var(--n, 0)) backwards;
+  animation: w var(--d) linear calc(var(--takt) * var(--n, 0)) both;
 }
 
 .e > * + * {

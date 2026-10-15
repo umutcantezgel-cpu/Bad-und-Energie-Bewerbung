@@ -10,7 +10,9 @@ import {
   BEDIENELEMENT,
   WAERMEFRONT_AN,
   ZEITPLAN,
+  FRONT_GRUND,
   frontDurchmesser,
+  frontMass,
   frontSeite,
   frontZiel,
   imBewerbungsweg,
@@ -348,6 +350,53 @@ describe('Klick-Wärme: Ziel und Punkt (E-031)', () => {
     expect(klickPunkt({ detail: 1, clientX: 130, clientY: 60 }, box)).toEqual([130, 60]);
     expect(klickPunkt({ detail: 2, clientX: 5, clientY: 6 }, box)).toEqual([5, 6]);
     expect(klickPunkt({ detail: 0, clientX: 0, clientY: 0 }, box)).toEqual([160, 62]);
+  });
+});
+
+describe('Wärmefront: immer ein Kreis, kleine Ebenen (Prüfrunde 2 A2-1, C2-2, C2-3)', () => {
+  const css = readFileSync(path.join(ROOT, 'components/site/waermefront/waermefront.module.css'), 'utf8');
+  const theme = readFileSync(path.join(ROOT, 'app/styles/theme.css'), 'utf8');
+  const radiusVoll = Number(theme.match(/--radius-voll: (\d+)px;/)![1]);
+
+  it('Klick in jede Ecke bei 1440 × 900 (und anderen Fenstern): Grundgröße höchstens 2 × --radius-voll, der Radius ist mindestens die halbe Breite; Grundgröße × Faktor erreicht die fernste Ecke', () => {
+    expect(css).toMatch(/border-radius: var\(--radius-voll\);/);
+    expect(FRONT_GRUND).toBeLessThanOrEqual(2 * radiusVoll);
+    for (const [b, h] of [
+      [1440, 900],
+      [1920, 1080],
+      [2560, 1440],
+      [390, 844],
+    ] as const) {
+      for (const [x, y] of [
+        [0, 0],
+        [b, 0],
+        [0, h],
+        [b, h],
+        [b / 2, h / 2],
+        [410, 490],
+      ] as const) {
+        const { grund, faktor } = frontMass(x, y, b, h);
+        const wo = `${b}×${h} @ ${x},${y}`;
+        // Gezeichneter Radius (--radius-voll, auf die halbe Breite begrenzt) ist die halbe Breite: ein Kreis
+        expect(Math.min(radiusVoll, grund / 2), wo).toBeGreaterThanOrEqual(grund / 2);
+        expect(grund, wo).toBeLessThanOrEqual(FRONT_GRUND);
+        expect(faktor, wo).toBeGreaterThanOrEqual(1);
+        expect(grund * faktor, wo).toBeCloseTo(frontDurchmesser(x, y, b, h), 6);
+        const ecke = Math.max(Math.hypot(x, y), Math.hypot(b - x, y), Math.hypot(x, h - y), Math.hypot(b - x, h - y));
+        expect((grund * faktor) / 2, wo).toBeGreaterThanOrEqual(ecke);
+      }
+    }
+    // Die Ebene einer Scheibe misst höchstens FRONT_GRUND² statt bis zu 3.400² px (1440 × 900, Klick in die Ecke)
+    expect(frontDurchmesser(0, 0, 1440, 900)).toBeGreaterThan(2 * radiusVoll);
+    expect(frontMass(0, 0, 1440, 900).grund).toBe(FRONT_GRUND);
+  });
+
+  it('die Insel setzt die Grundgröße als --s und den Faktor als transform je Schicht der Front, nicht bei der Klick-Wärme', () => {
+    const insel = readFileSync(path.join(ROOT, 'components/site/waermefront/Waermefront.tsx'), 'utf8');
+    expect(insel).toMatch(/el\.style\.setProperty\('--s', `\$\{mass\.grund\}px`\);/);
+    expect(insel).toMatch(/\(schicht as HTMLElement\)\.style\.transform = `scale\(\$\{mass\.faktor\}\)`;/);
+    expect(insel).toContain('zeige(front, x, y, frontMass(x, y, innerWidth, innerHeight));');
+    expect(insel).toContain('zeige(klick, x, y);');
   });
 });
 

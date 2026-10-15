@@ -161,6 +161,46 @@ test.describe('mit Bewegung (no-preference)', () => {
     expect(await page.evaluate(() => window.scrollY)).toBe(0);
   });
 
+  test('Wärmefront ist immer ein Kreis (Prüfrunde 2 A2-1, C2-2): Klick nahe der Ecke, jede Scheibe gezeichnet höchstens 2 × --radius-voll breit, voll gerundet, per transform bis über die fernste Ecke', async ({
+    page,
+  }) => {
+    await page.goto('/jobs');
+    await page.waitForLoadState('networkidle');
+    const link = page.locator('a[href="/"]').first();
+    const box = (await link.boundingBox())!;
+    // Den Link möglichst nah an der Ecke links oben treffen (Logo im Kopf)
+    const x = Math.max(1, Math.round(box.x + 2));
+    const y = Math.max(1, Math.round(box.y + 2));
+    await page.mouse.click(x, y);
+    const schichten = await page.locator(FRONT).evaluate((el) =>
+      [...el.children].map((i) => {
+        const cs = getComputedStyle(i);
+        const r = (i as HTMLElement).getBoundingClientRect();
+        return {
+          breite: parseFloat(cs.width),
+          radius: parseFloat(cs.borderTopLeftRadius),
+          transform: cs.transform,
+          voll: { links: r.left, oben: r.top, rechts: r.right, unten: r.bottom },
+        };
+      }),
+    );
+    const radiusVoll = await page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--radius-voll')));
+    const fenster = page.viewportSize()!;
+    const ecke = Math.max(Math.hypot(x, y), Math.hypot(fenster.width - x, y), Math.hypot(x, fenster.height - y), Math.hypot(fenster.width - x, fenster.height - y));
+    expect(schichten).toHaveLength(4);
+    for (const s of schichten) {
+      // Gezeichnet ein Kreis: der Radius ist mindestens die halbe Breite (sonst blieben gerade Flanken)
+      expect(s.breite).toBeLessThanOrEqual(2 * radiusVoll);
+      expect(s.radius).toBeGreaterThanOrEqual(s.breite / 2);
+      const faktor = Number(s.transform.match(/^matrix\(([\d.]+), 0, 0, ([\d.]+), 0, 0\)$/)?.[1]);
+      expect(faktor).toBeGreaterThanOrEqual(1);
+      // Endgröße (ohne den laufenden Ablauf) reicht über die fernste Ecke
+      expect((s.breite * faktor) / 2).toBeGreaterThanOrEqual(ecke);
+    }
+    await expect(page).toHaveURL('/');
+    await frontZu(page);
+  });
+
   test('die Front ist still für Hilfsmittel und Zeiger: aria-hidden, inert, nicht trefferbar, ohne Fokus; kein Layout-Versatz', async ({ page }) => {
     await protokollieren(page);
     await page.goto('/jobs');
@@ -302,18 +342,30 @@ test.describe('mit Bewegung (no-preference)', () => {
     await page.waitForLoadState('networkidle');
     const link = page.locator(STELLE_LINK).first();
     await link.scrollIntoViewIfNeeded();
-    // Fenster: nur das Abdecken, vom Klick bis einen Takt vor dem Wechsel (danach deckt die heißeste Schicht das Fenster;
-    // wenn die Abläufe enden, malt der Browser die Front einmal flach, und die neue Seite malt unter ihr)
+    // Fenster (Prüfrunde 2 C2-4): das ganze Abdecken, vom Klick bis zum Wechsel (router.push, hier am pushState
+    // erkannt), spätestens bis zum Netz. Jedes Bandende liegt darin; seit der Füllung both malt dort nichts mehr neu.
+    // Danach malt die neue Seite unter der deckenden Front (die eine Ausnahme im Register).
     await page.evaluate((ms) => {
       document.addEventListener(
         'click',
         () => {
           performance.mark('lauf-start');
-          setTimeout(() => performance.mark('lauf-ende'), ms);
+          let ende = false;
+          const markiere = () => {
+            if (ende) return;
+            ende = true;
+            performance.mark('lauf-ende');
+          };
+          const push = history.pushState.bind(history);
+          history.pushState = (...args: Parameters<History['pushState']>) => {
+            markiere();
+            push(...args);
+          };
+          setTimeout(markiere, ms);
         },
         { capture: true, once: true },
       );
-    }, ZEITPLAN.abdecken - TAKT_MS);
+    }, ZEITPLAN.abdeckenNetz);
     const front = malzeitJeBild(
       await messeMitDrossel(page, browser, async () => {
         await link.click();
@@ -322,8 +374,8 @@ test.describe('mit Bewegung (no-preference)', () => {
       { von: 'lauf-start', bis: 'lauf-ende' },
     );
     expect(front.hauptthread).toBeGreaterThan(0);
-    expect(front.bilder.length, 'Bilder im Fenster').toBeGreaterThan(4);
-    // Die ersten zwei Bilder zeichnen die Ebenen einmal; danach bewegt nur noch der Compositor
+    expect(front.bilder.length, 'Bilder im Fenster').toBeGreaterThan(6);
+    // Die ersten zwei Bilder zeichnen die Ebenen einmal; danach bewegt nur noch der Compositor, auch an jedem Bandende
     expect(front.bilder.slice(2).filter((b) => b.ms >= 2)).toEqual([]);
   });
 
