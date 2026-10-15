@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { DIFFUSION_STUETZ, TAKT_MS, WECHSEL, KLICK_ENDE_MS } from '../lib/motion/register';
 import { ZEITPLAN } from '../lib/motion/seitenwechsel';
+import { malzeitJeBild, messeMitDrossel } from './support/malzeit';
 import { isDesktop } from './support/site';
 
 /**
@@ -116,9 +117,18 @@ test.describe('mit Bewegung (no-preference)', () => {
     await protokollieren(page);
     await page.goto('/jobs');
     await page.waitForLoadState('networkidle');
-    const link = page.locator(STELLE_LINK).first();
+    // Die letzte Stelle: Die Seite steht beim Klick ein Stück tiefer, die neue Seite muss trotzdem oben stehen
+    const link = page.locator(STELLE_LINK).last();
     const ziel = await link.getAttribute('href');
     await link.scrollIntoViewIfNeeded();
+    expect(await page.evaluate(() => window.scrollY), 'Ausgangsseite gescrollt').toBeGreaterThan(0);
+    // Lage der Seite in dem Moment, in dem die Front aufdeckt (Prüfrunde 1 A1-2, C1-5)
+    await page.locator(FRONT).evaluate((el) => {
+      const w = window as unknown as { __beimAufdecken?: number };
+      new MutationObserver(() => {
+        if (el.hasAttribute('data-auf') && w.__beimAufdecken === undefined) w.__beimAufdecken = window.scrollY;
+      }).observe(el, { attributes: true, attributeFilter: ['data-auf'] });
+    });
     await ablaeufeMerken(page, FRONT);
     await link.click();
 
@@ -146,6 +156,9 @@ test.describe('mit Bewegung (no-preference)', () => {
     expect(zu.t).toBeGreaterThan(push.t);
     expect(zu.t - klick.t).toBeLessThanOrEqual(ZEITPLAN.abdeckenNetz + WECHSEL.haltenMs + ZEITPLAN.aufdeckenNetz + 500);
     expect(await page.locator(FRONT).getAttribute('data-auf')).toBeNull();
+    // Die neue Seite steht oben, schon wenn die Front aufdeckt (kein weiches Scrollen beim Wechsel)
+    expect(await page.evaluate(() => (window as unknown as { __beimAufdecken?: number }).__beimAufdecken)).toBe(0);
+    expect(await page.evaluate(() => window.scrollY)).toBe(0);
   });
 
   test('die Front ist still für Hilfsmittel und Zeiger: aria-hidden, inert, nicht trefferbar, ohne Fokus; kein Layout-Versatz', async ({ page }) => {
@@ -257,7 +270,7 @@ test.describe('mit Bewegung (no-preference)', () => {
     expect(log.filter((e) => e.art === 'toggle')).toEqual([]);
   });
 
-  test('Klick-Wärme: drei Scheiben (½ Takt versetzt, d-3, linear auf den Stützstellen) am Knopf; nach 480 ms zu', async ({ page }) => {
+  test('Klick-Wärme: drei Ringe (½ Takt versetzt, d-3, linear auf den Stützstellen) am Knopf; nach 480 ms zu', async ({ page }) => {
     await protokollieren(page);
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -280,27 +293,90 @@ test.describe('mit Bewegung (no-preference)', () => {
     expect(log[1].t - log[0].t).toBeLessThan(KLICK_ENDE_MS + 400);
   });
 
-  test('Malzeit (KERN K-009): während die Front deckt, malt kein Bild 2 ms oder länger (Handy, CPU 4×)', async ({ page, browser }) => {
+  test('Malzeit (KERN K-009): während die Front deckt, malt nach den ersten zwei Bildern kein Bild 2 ms oder länger (Handy, CPU 4×)', async ({
+    page,
+    browser,
+  }) => {
     test.skip(test.info().project.name !== 'mobile-light', 'Gemessen am Handy.');
     await page.goto('/jobs');
     await page.waitForLoadState('networkidle');
     const link = page.locator(STELLE_LINK).first();
     await link.scrollIntoViewIfNeeded();
-    const cdp = await page.context().newCDPSession(page);
-    await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
-    await browser.startTracing(page, { categories: ['devtools.timeline', 'disabled-by-default-devtools.timeline'] });
-    await link.click();
-    // Nur das Abdecken (bis einen Takt vor dem Wechsel): die neue Seite malt danach unter der Front
-    await page.waitForTimeout(ZEITPLAN.abdecken - TAKT_MS);
-    const puffer = await browser.stopTracing();
-    await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
-    await cdp.detach();
-    const { traceEvents } = JSON.parse(puffer.toString('utf8')) as { traceEvents: TraceEreignis[] };
-    const { hauptthread, malzeitenMs } = malzeitJeBild(traceEvents);
-    expect(hauptthread).toBeGreaterThan(0);
-    expect(malzeitenMs.length).toBeGreaterThan(0);
+    // Fenster: nur das Abdecken, vom Klick bis einen Takt vor dem Wechsel (danach deckt die heißeste Schicht das Fenster;
+    // wenn die Abläufe enden, malt der Browser die Front einmal flach, und die neue Seite malt unter ihr)
+    await page.evaluate((ms) => {
+      document.addEventListener(
+        'click',
+        () => {
+          performance.mark('lauf-start');
+          setTimeout(() => performance.mark('lauf-ende'), ms);
+        },
+        { capture: true, once: true },
+      );
+    }, ZEITPLAN.abdecken - TAKT_MS);
+    const front = malzeitJeBild(
+      await messeMitDrossel(page, browser, async () => {
+        await link.click();
+        await expect(page).not.toHaveURL('/jobs', { timeout: 5000 });
+      }),
+      { von: 'lauf-start', bis: 'lauf-ende' },
+    );
+    expect(front.hauptthread).toBeGreaterThan(0);
+    expect(front.bilder.length, 'Bilder im Fenster').toBeGreaterThan(4);
     // Die ersten zwei Bilder zeichnen die Ebenen einmal; danach bewegt nur noch der Compositor
-    expect(malzeitenMs.slice(2).filter((ms) => ms >= 2)).toEqual([]);
+    expect(front.bilder.slice(2).filter((b) => b.ms >= 2)).toEqual([]);
+  });
+
+  test('Klick auf „Jetzt bewerben“: keine Klick-Wärme auf dem Weg in den Bewerbungsweg, auch nicht nach dem Wechsel (Prüfrunde 1 C1-3)', async ({
+    page,
+  }) => {
+    await protokollieren(page);
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    const bewerben = page.locator('main a[href^="/bewerbung"]').first();
+    await bewerben.scrollIntoViewIfNeeded();
+    await bewerben.click();
+    await expect(page).toHaveURL(/\/bewerbung/);
+    await page.waitForTimeout(KLICK_ENDE_MS);
+    const log = await protokoll(page);
+    expect(log.filter((e) => e.art === 'toggle')).toEqual([]);
+    expect(await offen(page, KLICK)).toBe(false);
+  });
+
+  test('Seitenwechsel in den ersten Sekunden: die Startseite steht im Endzustand, kein Auftakt läuft an (Prüfrunde 1 C1-2)', async ({ page }) => {
+    for (const [von, link] of [
+      ['/jobs', 'Wärmefront'],
+      ['/bewerbung', 'ohne Front'],
+    ] as const) {
+      await page.goto(von);
+      await page.waitForLoadState('networkidle');
+      // Wie in den ersten 2 s nach dem Laden: Die Klasse des Kopfskripts steht noch
+      await page.evaluate(() => document.documentElement.classList.add('auftakt'));
+      await page.getByRole('banner').getByRole('link').first().click();
+      await expect(page, link).toHaveURL('/');
+      await expect(page.locator('html'), link).not.toHaveClass(/auftakt/);
+      const feld = page.locator('[data-waermefeld="hausschnitt"]');
+      await expect(feld).toBeVisible();
+      const ablaeufe = await feld.evaluate((el) => el.getAnimations({ subtree: true }).length);
+      expect(ablaeufe, link).toBe(0);
+      for (const band of await feld.locator('[data-band]').all()) await expect(band).toHaveCSS('opacity', '1');
+    }
+  });
+});
+
+test.describe('Zeiger (E-031)', () => {
+  test('über deaktivierten Knöpfen (aria-disabled) not-allowed statt der Hand (Prüfrunde 1 C1-7)', async ({ page }, testInfo) => {
+    test.skip(!isDesktop(testInfo), 'Der eigene Zeiger gilt bei feinem Zeiger mit Hover.');
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    const zeiger = await page.evaluate(() => {
+      const aus = [...document.querySelectorAll('button[aria-disabled="true"], [role="button"][aria-disabled="true"]')];
+      const an = document.querySelector('main button:not(:disabled):not([aria-disabled="true"])');
+      return { aus: aus.map((el) => getComputedStyle(el).cursor), an: an ? getComputedStyle(an).cursor : null };
+    });
+    expect(zeiger.aus.length, 'deaktivierte Knöpfe auf der Startseite').toBeGreaterThan(0);
+    for (const cursor of zeiger.aus) expect(cursor).toBe('not-allowed');
+    expect(zeiger.an).toMatch(/hand\.svg/);
   });
 });
 
@@ -323,40 +399,3 @@ test.describe('reduzierte Bewegung', () => {
     expect(await offen(page, FRONT)).toBe(false);
   });
 });
-
-interface TraceEreignis {
-  name: string;
-  ph: string;
-  pid: number;
-  tid: number;
-  ts: number;
-  dur?: number;
-  args?: { name?: string };
-}
-
-/** Malzeit je Bild auf dem Hauptthread der Seite (wie e2e/bewegung.spec.ts, Prüfung E-029 Befund 10). */
-function malzeitJeBild(ereignisse: readonly TraceEreignis[]): { hauptthread: number; malzeitenMs: number[] } {
-  const namen = new Map<string, string>();
-  for (const e of ereignisse) if (e.ph === 'M' && e.name === 'thread_name' && e.args?.name) namen.set(`${e.pid}:${e.tid}`, e.args.name);
-  const zahl = new Map<string, number>();
-  for (const e of ereignisse) {
-    const k = `${e.pid}:${e.tid}`;
-    if (namen.get(k) === 'CrRendererMain') zahl.set(k, (zahl.get(k) ?? 0) + 1);
-  }
-  const haupt = [...zahl.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
-  const aufHaupt = ereignisse.filter((e) => `${e.pid}:${e.tid}` === haupt);
-  const anfaenge = aufHaupt
-    .filter((e) => e.name === 'BeginMainThreadFrame')
-    .map((e) => e.ts)
-    .sort((a, b) => a - b);
-  const summen = new Map<number, number>();
-  for (const e of aufHaupt) {
-    if (e.name !== 'Paint' || e.ph !== 'X') continue;
-    const bild = anfaenge.filter((t) => t <= e.ts).at(-1) ?? 0;
-    summen.set(bild, (summen.get(bild) ?? 0) + (e.dur ?? 0) / 1000);
-  }
-  return {
-    hauptthread: aufHaupt.length,
-    malzeitenMs: [...summen.entries()].sort((a, b) => a[0] - b[0]).map(([, ms]) => Math.round(ms * 100) / 100),
-  };
-}

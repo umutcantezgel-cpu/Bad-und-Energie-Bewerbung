@@ -1,10 +1,12 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
+import { malzeitJeBild, messeMitDrossel } from './support/malzeit';
 
 /**
  * Wärmefeld 2.0 (E-031, KERN K-009/K-015, Register `waerme-breitet-sich-aus`): Die Bänder 1–4 wachsen einmal nach √t,
  * das heißeste zuerst. Im Hero als Nachlauf unter `.auftakt` (ab 560 ms, Ende ≤ 1.920 ms vor dem Sicherheitsnetz), auf
  * der Wärmepumpen-Seite beim Sichtbarwerden (SichtStart, Ende ≤ 2.400 ms). Reduziert, ohne Skript und per Sprung an die
- * Stelle steht der Endzustand. Malzeit je Bild unter 2 ms (Handy, CPU 4×).
+ * Stelle steht der Endzustand. Malzeit je Bild unter 2 ms (Handy, CPU 4×). Beim echten Laden (Handy, CPU 4×, langsames
+ * 4G) bricht kein Band am Sicherheitsnetz ab (Prüfrunde 1 C1-1: Das Netz zählt ab dem ersten Ablaufstart).
  *
  * Die Projekte laufen sonst mit `reducedMotion: 'reduce'` (playwright.config.ts); die Abläufe prüft ein Block mit
  * `no-preference`. Den Auftakt des Heros startet der Test selbst (Klasse `auftakt` neu setzen), damit die Zeiten nicht
@@ -63,38 +65,6 @@ async function endzustand(bereich: Locator): Promise<void> {
     await expect(band).toHaveCSS('opacity', '1');
     await expect(band).toHaveCSS('transform', 'none');
   }
-}
-
-interface TraceEreignis {
-  name: string;
-  ph: string;
-  pid: number;
-  tid: number;
-  ts: number;
-  dur?: number;
-  args?: { name?: string };
-}
-
-/** Malzeit je Bild auf dem Hauptthread der Seite (wie e2e/bewegung.spec.ts), in der Reihenfolge der Bilder. */
-function malzeitJeBild(ereignisse: readonly TraceEreignis[]): { hauptthread: number; malzeitenMs: number[] } {
-  const namen = new Map<string, string>();
-  for (const e of ereignisse) if (e.ph === 'M' && e.name === 'thread_name' && e.args?.name) namen.set(`${e.pid}:${e.tid}`, e.args.name);
-  const zahl = new Map<string, number>();
-  for (const e of ereignisse) {
-    const k = `${e.pid}:${e.tid}`;
-    if (namen.get(k) === 'CrRendererMain') zahl.set(k, (zahl.get(k) ?? 0) + 1);
-  }
-  const haupt = [...zahl.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
-  const aufHaupt = ereignisse.filter((e) => `${e.pid}:${e.tid}` === haupt);
-  const anfaenge = aufHaupt.filter((e) => e.name === 'BeginMainThreadFrame').map((e) => e.ts).sort((a, b) => a - b);
-  const summen = new Map<number, number>();
-  for (const e of aufHaupt) {
-    if (e.name !== 'Paint' || e.ph !== 'X') continue;
-    const bild = anfaenge.filter((t) => t <= e.ts).at(-1) ?? 0;
-    summen.set(bild, (summen.get(bild) ?? 0) + (e.dur ?? 0) / 1000);
-  }
-  const reihe = [...summen.entries()].sort((a, b) => a[0] - b[0]).map(([, ms]) => Math.round(ms * 100) / 100);
-  return { hauptthread: aufHaupt.length, malzeitenMs: reihe };
 }
 
 /** Startet den Nachlauf des Heros neu: Klasse `auftakt` ab- und wieder ansetzen (wie das Kopfskript beim Laden). */
@@ -174,33 +144,124 @@ test.describe('mit Bewegung (no-preference)', () => {
     await endzustand(raum);
   });
 
-  test('Malzeit (K-013): während sich die Wärme ausbreitet, malt kein Bild 2 ms oder länger (Handy, CPU 4×)', async ({ page, browser }) => {
+  test('Malzeit (K-013): während sich die Wärme ausbreitet, malt nach den ersten zwei Bildern kein Bild 2 ms oder länger (Handy, CPU 4×)', async ({
+    page,
+    browser,
+  }) => {
     test.skip(test.info().project.name !== 'mobile-light', 'Das Budget gilt für das Moto-G-Profil (Handy, CPU 4×).');
-    const messen = async (starten: () => Promise<void>, ms: number) => {
-      const cdp = await page.context().newCDPSession(page);
-      await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
-      await browser.startTracing(page, { categories: ['devtools.timeline', 'disabled-by-default-devtools.timeline'] });
-      await starten();
-      await page.waitForTimeout(ms);
-      const trace = JSON.parse((await browser.stopTracing()).toString('utf8')) as { traceEvents: TraceEreignis[] };
-      await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
-      await cdp.detach();
-      return malzeitJeBild(trace.traceEvents);
-    };
-    // Hero: Nachlauf neu gestartet
+    // Hero: Nachlauf neu gestartet. Das Linienzeichnen des Auftakts (vorlauf-haus, ruecklauf-haus, erdleitung-d:
+    // stroke-dashoffset, E-013) malt bis 1.120 ms auf dem Hauptthread; es gehört nicht zur Wärme. Zwei Messungen:
+    // (1) nur die Wärme (die übrigen Abläufe stehen sofort im Endzustand), Fenster vom Start bis zum letzten Band;
+    // (2) der ganze Auftakt, Fenster vom Ende des Linienzeichnens bis zum letzten Band – dort läuft nur noch die Wärme.
     await page.goto(START);
     await expect(page.locator(HERO_FELD)).toBeVisible();
-    await expect(page.locator('html')).not.toHaveClass(/auftakt/);
-    const hero = await messen(() => auftaktNeu(page), 2400);
-    expect(hero.hauptthread).toBeGreaterThan(0);
-    // Die ersten beiden Bilder legen die Ebenen an; danach bewegt der Compositor sie
-    expect(hero.malzeitenMs.slice(2).filter((ms) => ms >= 2), 'Hero: Bilder mit Malzeit ≥ 2 ms').toEqual([]);
-    // Wärmepumpen-Seite: Ablauf beim Hinscrollen
+    for (const nurWaerme of [true, false]) {
+      await expect(page.locator('html')).not.toHaveClass(/auftakt/);
+      const ereignisse = await messeMitDrossel(page, browser, () =>
+        page.locator(HERO_FELD).evaluate(
+          async (feld, { band, nur }) => {
+            performance.mark('lauf-start');
+            const html = document.documentElement;
+            html.classList.remove('auftakt');
+            void html.offsetWidth;
+            html.classList.add('auftakt');
+            const baender = [...feld.querySelectorAll(band)].flatMap((svg) => svg.getAnimations());
+            const andere = document.getAnimations().filter((a) => !baender.includes(a));
+            if (nur) for (const a of andere) a.finish();
+            await Promise.all(andere.map((a) => a.finished));
+            performance.mark('auftakt-ende');
+            await Promise.all(baender.map((a) => a.finished));
+            performance.mark('lauf-ende');
+            html.classList.remove('auftakt');
+          },
+          { band: BAND, nur: nurWaerme },
+        ),
+      );
+      const hero = malzeitJeBild(ereignisse, { von: nurWaerme ? 'lauf-start' : 'auftakt-ende', bis: 'lauf-ende' });
+      const art = nurWaerme ? 'Hero, nur die Wärme' : 'Hero nach dem Linienzeichnen';
+      expect(hero.hauptthread).toBeGreaterThan(0);
+      // Plausibel: Im Fenster liegen viele Bilder (sonst misst die Prüfung nichts)
+      expect(hero.bilder.length, `${art}: Bilder im Fenster`).toBeGreaterThan(4);
+      // Die ersten beiden Bilder legen die Ebenen an bzw. malen den Endzustand der Linien; danach bewegt der Compositor
+      expect(hero.bilder.slice(2).filter((b) => b.ms >= 2), `${art}: Bilder mit Malzeit ≥ 2 ms`).toEqual([]);
+    }
+
+    // Wärmepumpen-Seite: Fenster von „laeuft“ bis „fertig“ (SichtStart); das Scrollen davor malt neue Inhalte, das
+    // Aufräumen danach (will-change fällt, die Zeichnung wird einmal flach gemalt) liegt außerhalb der Bewegung
     await page.goto(WAERMEPUMPEN);
     const raum = page.locator(RAUM);
     await expect(raum).toHaveAttribute('data-ablauf', 'bereit');
-    const seite = await messen(() => raum.scrollIntoViewIfNeeded(), 2800);
-    expect(seite.malzeitenMs.slice(2).filter((ms) => ms >= 2), 'Wärmepumpen: Bilder mit Malzeit ≥ 2 ms').toEqual([]);
+    // Erst bis knapp vor die Abbildung scrollen: Die Bewerben-Leiste fährt beim ersten Scrollen ein (Übergang mit
+    // transitionend, malt die Seite neu); das gehört nicht zur Wärme. Danach liegt die Abbildung noch unter dem Rand.
+    await raum.evaluate((el) => window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - window.innerHeight - 40, behavior: 'instant' }));
+    await page.waitForTimeout(800);
+    await expect(raum).toHaveAttribute('data-ablauf', 'bereit');
+    await raum.evaluate((el) => {
+      new MutationObserver(() => {
+        const zustand = el.getAttribute('data-ablauf');
+        if (zustand === 'laeuft') performance.mark('lauf-start');
+        if (zustand === 'fertig') performance.mark('lauf-ende');
+      }).observe(el, { attributes: true, attributeFilter: ['data-ablauf'] });
+    });
+    const seite = malzeitJeBild(
+      await messeMitDrossel(page, browser, async () => {
+        await raum.scrollIntoViewIfNeeded();
+        await expect(raum).toHaveAttribute('data-ablauf', 'fertig', { timeout: SICHT_ENDE_MS + 3000 });
+      }),
+      { von: 'lauf-start', bis: 'lauf-ende' },
+    );
+    expect(seite.bilder.length, 'Wärmepumpen: Bilder im Fenster').toBeGreaterThan(4);
+    expect(seite.bilder.slice(2).filter((b) => b.ms >= 2), 'Wärmepumpen: Bilder mit Malzeit ≥ 2 ms').toEqual([]);
+  });
+
+  test('beim echten Laden bricht kein Band am Sicherheitsnetz ab; alle vier enden (mobil: CPU 4×, langsames 4G)', async ({ page }) => {
+    // Prüfrunde 1 C1-1: Vorher zählte das Netz ab dem Skriptstart im <head>; die Bänder begannen erst mit dem ersten
+    // Stilaufbau und brachen bei 1,85 s (Desktop) bzw. 1,0–1,4 s (gedrosselt) ab und sprangen in den Endzustand.
+    test.setTimeout(90_000);
+    const mobil = test.info().project.name === 'mobile-light';
+    await page.addInitScript(() => {
+      const w = window as unknown as { __baender: { typ: string; band: string | null; t: number }[] };
+      w.__baender = [];
+      for (const typ of ['animationstart', 'animationend', 'animationcancel']) {
+        document.addEventListener(
+          typ,
+          (event) => {
+            const el = event.target;
+            if (el instanceof Element && el.hasAttribute('data-band') && el.closest('[data-waermefeld="hausschnitt"]')) {
+              w.__baender.push({ typ, band: el.getAttribute('data-band'), t: performance.now() });
+            }
+          },
+          true,
+        );
+      }
+    });
+    const cdp = await page.context().newCDPSession(page);
+    if (mobil) {
+      await cdp.send('Network.enable');
+      // Lighthouse „Slow 4G“: 150 ms RTT, 1,6 Mbit/s herunter, 750 kbit/s hinauf
+      await cdp.send('Network.emulateNetworkConditions', {
+        offline: false,
+        latency: 150,
+        downloadThroughput: (1.6 * 1024 * 1024) / 8,
+        uploadThroughput: (750 * 1024) / 8,
+      });
+      await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+    }
+    try {
+      // domcontentloaded kommt nach dem Kopfskript: Die Klasse steht, bis das Netz sie nach dem Lauf nimmt
+      await page.goto(START, { waitUntil: 'domcontentloaded', timeout: 60_000 });
+      await expect(page.locator('html')).not.toHaveClass(/auftakt/, { timeout: 30_000 });
+    } finally {
+      if (mobil) {
+        await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+        await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 });
+      }
+      await cdp.detach();
+    }
+    const log = await page.evaluate(() => (window as unknown as { __baender: { typ: string; band: string | null; t: number }[] }).__baender);
+    expect(log.filter((e) => e.typ === 'animationcancel'), 'abgebrochene Bänder').toEqual([]);
+    expect([...new Set(log.filter((e) => e.typ === 'animationend').map((e) => e.band))].sort()).toEqual(['1', '2', '3', '4']);
+    await endzustand(page.locator(HERO_FELD));
   });
 });
 

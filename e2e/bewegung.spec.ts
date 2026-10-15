@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
+import { malzeitJeBild, messeMitDrossel } from './support/malzeit';
 import { MIN_TOUCH_TARGET_PX, expectNoAxeViolations } from './support/site';
 
 /**
@@ -36,40 +37,6 @@ async function tabSichtbar(page: Page, sichtbar: boolean): Promise<void> {
     Object.defineProperty(document, 'visibilityState', { value: wert ? 'visible' : 'hidden', configurable: true });
     document.dispatchEvent(new Event('visibilitychange'));
   }, sichtbar);
-}
-
-interface TraceEreignis {
-  name: string;
-  ph: string;
-  pid: number;
-  tid: number;
-  ts: number;
-  dur?: number;
-  args?: { name?: string };
-}
-
-/**
- * Malzeit je Bild aus einem Performance-Trace (Prüfung E-029, Befund 10): auf dem Hauptthread der Seite (der
- * CrRendererMain mit den meisten Ereignissen) die Dauer aller Paint-Ereignisse zwischen zwei Bildanfängen.
- */
-function malzeitJeBild(ereignisse: readonly TraceEreignis[]): { hauptthread: number; malzeitenMs: number[] } {
-  const namen = new Map<string, string>();
-  for (const e of ereignisse) if (e.ph === 'M' && e.name === 'thread_name' && e.args?.name) namen.set(`${e.pid}:${e.tid}`, e.args.name);
-  const zahl = new Map<string, number>();
-  for (const e of ereignisse) {
-    const k = `${e.pid}:${e.tid}`;
-    if (namen.get(k) === 'CrRendererMain') zahl.set(k, (zahl.get(k) ?? 0) + 1);
-  }
-  const haupt = [...zahl.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
-  const aufHaupt = ereignisse.filter((e) => `${e.pid}:${e.tid}` === haupt);
-  const anfaenge = aufHaupt.filter((e) => e.name === 'BeginMainThreadFrame').map((e) => e.ts).sort((a, b) => a - b);
-  const summen = new Map<number, number>();
-  for (const e of aufHaupt) {
-    if (e.name !== 'Paint' || e.ph !== 'X') continue;
-    const bild = anfaenge.filter((t) => t <= e.ts).at(-1) ?? 0;
-    summen.set(bild, (summen.get(bild) ?? 0) + (e.dur ?? 0) / 1000);
-  }
-  return { hauptthread: aufHaupt.length, malzeitenMs: [...summen.values()].map((ms) => Math.round(ms * 100) / 100) };
 }
 
 /** Reihenfolge, in der die Ziele mit der Tab-Taste den Fokus bekommen (Indizes in `ziele`), von oben auf der Seite. */
@@ -229,17 +196,13 @@ test.describe('mit Bewegung (no-preference)', () => {
       await expect(bereich).toHaveAttribute('data-dauer', 'an');
       await expect.poll(() => schleifenLaufen(bereich)).toBe(true);
       await page.waitForTimeout(500);
-      const cdp = await page.context().newCDPSession(page);
-      await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
-      await browser.startTracing(page, { categories: ['devtools.timeline', 'disabled-by-default-devtools.timeline'] });
-      await page.waitForTimeout(3000);
-      const trace = JSON.parse((await browser.stopTracing()).toString('utf8')) as { traceEvents: TraceEreignis[] };
-      await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
-      await cdp.detach();
-      const bilder = malzeitJeBild(trace.traceEvents);
+      const bilder = malzeitJeBild(await messeMitDrossel(page, browser, () => page.waitForTimeout(3000)));
       // Der Trace hat den Hauptthread erfasst; Bilder, die der Compositor allein abspielt, malen dort nichts
       expect(bilder.hauptthread, `${zeichnung}: Ereignisse des Hauptthreads`).toBeGreaterThan(0);
-      expect(bilder.malzeitenMs.filter((ms) => ms >= 2), `${zeichnung}: Bilder mit Malzeit ≥ 2 ms`).toEqual([]);
+      expect(bilder.bilder.filter((b) => b.ms >= 2), `${zeichnung}: Bilder mit Malzeit ≥ 2 ms`).toEqual([]);
+      // Die Schleifen laufen allein im Compositor: Über drei Sekunden zusammen weniger als 2 ms Malzeit (so streng wie
+      // bisher, als die Hilfe alle Paints in ein „Bild“ legte; Prüfrunde 1 C1-4)
+      expect(bilder.gesamtMs, `${zeichnung}: Malzeit in 3 s`).toBeLessThan(2);
     }
   });
 });
