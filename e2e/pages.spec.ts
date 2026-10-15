@@ -95,3 +95,35 @@ test.describe('Pläne: Schrift auf jeder Breite gezeichnet ≥ 12 px', () => {
     });
   }
 });
+
+/**
+ * Einstieg der Startseite (Prüfrunde 1 A1-1): Der Heizkreis um „35 km“ liegt außerhalb des Textflusses. Wert, Maßlinie
+ * (Oberkante des Namens) und Name stehen bei 1440 px auf derselben Linie wie bei „30“ und „1926“ (± 1 px).
+ */
+test.describe('Einstieg: drei Maße auf einer Linie', () => {
+  test.beforeEach(() => {
+    test.skip(test.info().project.name !== 'desktop-light', 'Der Heizkreis steht nur am Desktop.');
+  });
+
+  test('Wert, Maßlinie und Name von „35 km“, „30“ und „1926“ auf einer Höhe', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+    await waitForSettled(page);
+    const masse = page.locator('ul:has(> li [data-zeichnung="heizkreis"]) > li');
+    await expect(masse).toHaveCount(3);
+    // Der Heizkreis ist gezeichnet (am Desktop sichtbar)
+    await expect(masse.first().locator('[data-zeichnung="heizkreis"] > [aria-hidden]').first()).toBeVisible();
+    const lagen = await masse.evaluateAll((items) =>
+      items.map((li) => {
+        const kinder = [...li.querySelectorAll('span')];
+        const wert = kinder.find((el) => /\bwert\b|__wert/.test(String(el.className)))!;
+        const name = kinder.find((el) => /\bname\b|__name/.test(String(el.className)) && !/hkName/.test(String(el.className)))!;
+        return { wert: wert.getBoundingClientRect().top, linie: name.getBoundingClientRect().top, text: li.textContent?.trim().slice(0, 12) };
+      }),
+    );
+    for (const lage of lagen.slice(1)) {
+      expect(Math.abs(lage.wert - lagen[0].wert), `Wert ${lage.text}`).toBeLessThanOrEqual(1);
+      expect(Math.abs(lage.linie - lagen[0].linie), `Maßlinie ${lage.text}`).toBeLessThanOrEqual(1);
+    }
+  });
+});

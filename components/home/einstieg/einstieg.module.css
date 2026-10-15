@@ -815,8 +815,11 @@
     padding-right: 0;
   }
 
-  /* Heizkreis um „35 km“: eng um das Maß, mit Abstand zum nächsten, damit alle drei Maße in einer Reihe bleiben */
+  /* Heizkreis um „35 km“: eng um das Maß, mit Abstand zum nächsten, damit alle drei Maße in einer Reihe bleiben. Der
+     Rahmen liegt außerhalb des Textflusses: Er rückt um seinen Innenabstand oben nach oben, so stehen Wert, Maßlinie und
+     Name auf derselben Linie wie bei „30“ und „1926“ (Prüfrunde 1 A1-1; e2e/pages.spec.ts misst es bei 1440 px). */
   .massRadius .kreis {
+    margin-top: calc(-1 * var(--a-3));
     margin-right: var(--a-4);
     padding: var(--a-3) var(--a-4) var(--a-3) calc(var(--paar) + var(--a-3));
   }
