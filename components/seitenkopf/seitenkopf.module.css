@@ -203,10 +203,12 @@
   line-height: 1.45;
 }
 
+/* Zweitweg: eine Textzeile im Fluss (inline-block), damit die Unterstreichung über Text und .zusammen durchläuft
+   (Prüfrunde 3 A3-8: als Flex-Elemente bekam jedes Stück eine eigene, versetzte Linie mit Lücke). Die Zielhöhe
+   --m-ziel kommt aus dem Innenabstand um die Zeile (Zeilenhöhe 1,2em), das Icon steht per vertical-align. */
 .zweitweg {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--m-ziel);
+  display: inline-block;
+  padding-block: calc((var(--m-ziel) - 1.2em) / 2);
   font-size: var(--text-callout);
   font-weight: 700;
   line-height: 1.2;
@@ -214,10 +216,6 @@
   text-decoration-line: underline;
   text-decoration-thickness: var(--m-strich);
   text-underline-offset: 0.25em;
-}
-
-.zweitweg > * {
-  margin-left: 0.25em;
 }
 
 .zusammen {

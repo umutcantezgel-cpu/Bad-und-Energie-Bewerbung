@@ -165,6 +165,20 @@ describe('Seitenkopf (SEITENKOPF-01): Probeseite rendert jede Variante', () => {
     expect(ohne).toMatch(/<h1 [^>]*>(?:<span[^>]*>)<svg[^>]*data-zeichnung="rohrklammer"/);
   });
 
+  it('Zweitweg (Prüfrunde 3 A3-8): eine Textzeile im Fluss mit durchgehender Unterstreichung, das letzte Wort mit dem Pfeil zusammen', () => {
+    const regel = (name: string) => css.match(new RegExp(`\\n\\.${name} \\{([^}]*)\\}`))?.[1] ?? '';
+    // Kein Flex: als Flex-Elemente bekamen Text und .zusammen je eine eigene, versetzte Unterstreichung mit Lücke
+    expect(regel('zweitweg')).toMatch(/display: inline-block;/);
+    expect(regel('zweitweg')).not.toMatch(/flex|align-items/);
+    expect(css).not.toMatch(/\.zweitweg > \*/);
+    // Zielhöhe --m-ziel aus dem Innenabstand um die eine Zeile (Zeilenhöhe 1,2em)
+    expect(regel('zweitweg')).toMatch(/padding-block: calc\(\(var\(--m-ziel\) - 1\.2em\) \/ 2\);[\s\S]*line-height: 1\.2;/);
+    expect(regel('zusammen')).toMatch(/white-space: nowrap;/);
+    expect(regel('zweitwegIkon')).toMatch(/display: inline;[\s\S]*vertical-align: -0\.2em;/);
+    const link = render(PROBE.stelle).match(/<a [^>]*class="[^"]*zweitweg[^"]*"[^>]*>([\s\S]*?)<\/a>/)?.[1] ?? '';
+    expect(link).toMatch(/^Aufgaben <span class="[^"]*zusammen[^"]*">ansehen<svg/);
+  });
+
   it('fremde Ziele als <a>, interne über next/link; Bewegung nur mit Registerkennungen', () => {
     const tel = render({ ...PROBE.fehler, zweitweg: { href: 'tel:+49644142956', label: '06441 42956 anrufen' } });
     expect(tel).toContain('href="tel:+49644142956"');
