@@ -26,6 +26,21 @@ export const ZEITPLAN = Object.freeze({
 });
 
 /**
+ * Ruhe der neuen Seite vor dem Aufdecken (Prüfrunde 3 C3-1, KERN K-013): so viele Bilder in Folge ohne Änderung im
+ * Dokument, ohne nachladenden Bereich (LAEDT) und ohne ladendes Bild. Die neue Seite malt beim Hydrieren und beim Nachladen ihrer
+ * Teile (Bewerbung auf der Stellenseite, Sicht-Bereiche) mehrmals; das soll unter der deckenden Front geschehen, nicht
+ * während sie steigt. Spätestens nach `halten` deckt die Front trotzdem auf.
+ */
+export const RUHE_BILDER = 4;
+
+/**
+ * Platzhalter eines Bereichs, der nach dem Wechsel nachlädt (Suspense-Fallback eines React.lazy, etwa die Bewerbung auf
+ * der Stellenseite): Solange einer im Dokument steht, ruht die Seite nicht. React zeigt den Inhalt frühestens 300 ms
+ * nach dem Platzhalter; ohne diese Marke stiege die Front, während die Seite ihn einsetzt und neu malt.
+ */
+export const LAEDT = '[data-laedt]';
+
+/**
  * Klasse des Kopfskripts (lib/motion/head-script.ts, AUFTAKT_KLASSE; hier als Text, die Logik hängt an nichts): Bei
  * einem Seitenwechsel innerhalb der Seite nimmt die Insel sie weg, damit die neue Seite im Endzustand steht (Plan §5,
  * Prüfrunde 1 C1-2) und kein Auftakt mitten im Lauf vom Sicherheitsnetz abgebrochen wird.
@@ -161,6 +176,15 @@ export function frontDurchmesser(x: number, y: number, breite: number, hoehe: nu
  *   Bilder je Abdecken.
  */
 export const FRONT_GRUND = 1024;
+
+/**
+ * Weg der Front beim Aufdecken in px (Prüfrunde 3 A3-2): Die Scheiben (Mittelpunkt in Höhe y, Durchmesser
+ * grund × faktor) steigen, bis ihr unterer Rand 2 px über dem Fenster liegt. So bleibt kein ungetönter Streifen und
+ * keine gerade Kante; unten öffnet ein Kreisbogen die neue Seite.
+ */
+export function frontSteigen(y: number, mass: { grund: number; faktor: number }): number {
+  return Math.ceil(y + (mass.grund * mass.faktor) / 2) + 2;
+}
 
 /**
  * Maß der Front: Grundgröße der Scheiben (px, höchstens FRONT_GRUND) und der Faktor, mit dem sie auf den Durchmesser

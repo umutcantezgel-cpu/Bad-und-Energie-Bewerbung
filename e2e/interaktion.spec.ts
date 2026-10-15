@@ -333,50 +333,210 @@ test.describe('mit Bewegung (no-preference)', () => {
     expect(log[1].t - log[0].t).toBeLessThan(KLICK_ENDE_MS + 400);
   });
 
-  test('Malzeit (KERN K-009): während die Front deckt, malt nach den ersten zwei Bildern kein Bild 2 ms oder länger (Handy, CPU 4×)', async ({
+  test('Klick-Wärme achtet auf den Ton der Fläche (Prüfrunde 3 A3-1): auf Papier und im Navy-Band jeder Ring 1,5–3:1 gegen die Fläche', async ({ page }) => {
+    await protokollieren(page);
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    const lum = (hex: string) => {
+      const [r, g, b] = [1, 3, 5].map((i) => {
+        const c = parseInt(hex.slice(i, i + 2), 16) / 255;
+        return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+      });
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const kontrast = (a: string, b: string) => {
+      const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
+      return (x + 0.05) / (y + 0.05);
+    };
+    const hex = (rgb: string) => `#${rgb.match(/\d+/g)!.slice(0, 3).map((v) => Number(v).toString(16).padStart(2, '0')).join('').toUpperCase()}`;
+    // „Anhalten“ steht im Navy-Band der Einzelheit, die Telefonnummer im Kopf auf Papier (keine Front: fremdes Ziel)
+    const ziele = [
+      { ort: 'Band', el: page.getByRole('button', { name: 'Anhalten' }).first(), ton: 'inverse' },
+      { ort: 'Papier', el: page.getByRole('banner').locator('a[href^="tel:"]').first(), ton: '' },
+    ];
+    for (const z of ziele) {
+      await z.el.scrollIntoViewIfNeeded();
+      // Fläche des Tons, auf dem das Element steht (die Rolle --surface dort; gezeichnet ist sie oft von einem Geschwister)
+      const flaeche = await z.el.evaluate((el) => getComputedStyle(el.closest('[data-tone]') ?? document.documentElement).getPropertyValue('--surface').trim().toUpperCase());
+      await z.el.evaluate((el) => el.addEventListener('click', (e) => e.preventDefault(), { once: true }));
+      const vorher = (await protokoll(page)).length;
+      await z.el.click();
+      await expect.poll(async () => (await protokoll(page)).slice(vorher).some((e) => e.motion === 'klick-waerme' && e.zustand === 'open')).toBe(true);
+      const lage = await page.locator(KLICK).evaluate((el) => ({ ton: (el as HTMLElement).dataset.tone ?? null, ringe: [...el.children].map((r) => getComputedStyle(r).borderTopColor) }));
+      expect(lage.ton, z.ort).toBe(z.ton);
+      expect(new Set(lage.ringe).size, `${z.ort}: drei verschiedene Ringe`).toBe(3);
+      for (const ring of lage.ringe.map(hex)) {
+        const k = kontrast(ring, flaeche);
+        expect(k, `${z.ort} ${ring} auf ${flaeche}`).toBeGreaterThanOrEqual(1.5);
+        expect(k, `${z.ort} ${ring} auf ${flaeche}`).toBeLessThanOrEqual(3);
+      }
+      await expect.poll(() => offen(page, KLICK), { timeout: 2000 }).toBe(false);
+    }
+  });
+
+  test('Malzeit (KERN K-009): während die Front deckt, malt nach den ersten zwei Bildern kein Bild 2 ms oder länger; während sie aufdeckt, keines (Handy, CPU 4×)', async ({
     page,
     browser,
   }) => {
     test.skip(test.info().project.name !== 'mobile-light', 'Gemessen am Handy.');
     await page.goto('/jobs');
     await page.waitForLoadState('networkidle');
+    // Die Stelle führt zu einer Seite, die nach dem Wechsel nachlädt (Bewerbung als React.lazy) und dabei einblendet
     const link = page.locator(STELLE_LINK).first();
     await link.scrollIntoViewIfNeeded();
-    // Fenster (Prüfrunde 2 C2-4): das ganze Abdecken, vom Klick bis zum Wechsel (router.push, hier am pushState
+    // Fenster 1 (Prüfrunde 2 C2-4): das ganze Abdecken, vom Klick bis zum Wechsel (router.push, hier am pushState
     // erkannt), spätestens bis zum Netz. Jedes Bandende liegt darin; seit der Füllung both malt dort nichts mehr neu.
-    // Danach malt die neue Seite unter der deckenden Front (die eine Ausnahme im Register).
-    await page.evaluate((ms) => {
-      document.addEventListener(
-        'click',
-        () => {
-          performance.mark('lauf-start');
-          let ende = false;
-          const markiere = () => {
-            if (ende) return;
-            ende = true;
-            performance.mark('lauf-ende');
-          };
-          const push = history.pushState.bind(history);
-          history.pushState = (...args: Parameters<History['pushState']>) => {
-            markiere();
-            push(...args);
-          };
-          setTimeout(markiere, ms);
-        },
-        { capture: true, once: true },
-      );
-    }, ZEITPLAN.abdeckenNetz);
-    const front = malzeitJeBild(
-      await messeMitDrossel(page, browser, async () => {
-        await link.click();
-        await expect(page).not.toHaveURL('/jobs', { timeout: 5000 });
-      }),
-      { von: 'lauf-start', bis: 'lauf-ende' },
+    // Danach malt die neue Seite unter der deckenden Front (die eine Ausnahme im Register), bis sie ruht.
+    // Fenster 2 (Prüfrunde 3 C3-1): das ganze Aufdecken, vom Start (data-auf) bis die Front zu ist (beforetoggle).
+    await page.evaluate(
+      ({ ms, sel }) => {
+        const fr = document.querySelector<HTMLElement>(sel)!;
+        new MutationObserver(() => {
+          if (fr.hasAttribute('data-auf')) performance.mark('auf-start');
+        }).observe(fr, { attributes: true, attributeFilter: ['data-auf'] });
+        fr.addEventListener('beforetoggle', (e) => {
+          if ((e as ToggleEvent).newState === 'closed') performance.mark('auf-ende');
+        });
+        document.addEventListener(
+          'click',
+          () => {
+            performance.mark('lauf-start');
+            let ende = false;
+            const markiere = () => {
+              if (ende) return;
+              ende = true;
+              performance.mark('lauf-ende');
+            };
+            const push = history.pushState.bind(history);
+            history.pushState = (...args: Parameters<History['pushState']>) => {
+              markiere();
+              push(...args);
+            };
+            setTimeout(markiere, ms);
+          },
+          { capture: true, once: true },
+        );
+      },
+      { ms: ZEITPLAN.abdeckenNetz, sel: FRONT },
     );
+    const ereignisse = await messeMitDrossel(page, browser, async () => {
+      await link.click();
+      await expect(page).not.toHaveURL('/jobs', { timeout: 5000 });
+      await frontZu(page);
+    });
+    const front = malzeitJeBild(ereignisse, { von: 'lauf-start', bis: 'lauf-ende' });
     expect(front.hauptthread).toBeGreaterThan(0);
     expect(front.bilder.length, 'Bilder im Fenster').toBeGreaterThan(6);
     // Die ersten zwei Bilder zeichnen die Ebenen einmal; danach bewegt nur noch der Compositor, auch an jedem Bandende
     expect(front.bilder.slice(2).filter((b) => b.ms >= 2)).toEqual([]);
+    // Aufdecken: Die neue Seite hat unter der Front fertig gemalt (auch die nachgeladene Bewerbung und ihr Einblenden);
+    // die Ebenen stehen schon, also gilt das Budget ab dem ersten Bild
+    const auf = malzeitJeBild(ereignisse, { von: 'auf-start', bis: 'auf-ende' });
+    expect(auf.bilder.length, 'Bilder beim Aufdecken').toBeGreaterThanOrEqual(5);
+    expect(auf.bilder.filter((b) => b.ms >= 2)).toEqual([]);
+  });
+
+  test('Aufdecken (Prüfrunde 3 A3-2): Die Front steigt nur per transform aus dem Bild, ohne Verblassen; unten ein Kreisbogen, keine gerade Kante, kein Streifen', async ({
+    page,
+  }) => {
+    await page.goto('/jobs');
+    await page.waitForLoadState('networkidle');
+    const link = page.locator(STELLE_LINK).first();
+    await link.scrollIntoViewIfNeeded();
+    // Beim Start des Aufdeckens anhalten: die Übergänge der Schichten pausieren; die Front bleibt offen, bis gemessen ist
+    await page.locator(FRONT).evaluate((el) => {
+      const fr = el as HTMLElement;
+      const w = window as unknown as { __auf: Promise<{ uebergaenge: string[]; ablaeufe: string[] }>; __halt: boolean };
+      w.__halt = true;
+      w.__auf = new Promise((fertig) => {
+        new MutationObserver((_, beob) => {
+          if (!fr.hasAttribute('data-auf')) return;
+          beob.disconnect();
+          fr.hidePopover = () => {};
+          new MutationObserver(() => {
+            if (w.__halt && !fr.hasAttribute('data-auf')) fr.setAttribute('data-auf', '');
+          }).observe(fr, { attributes: true, attributeFilter: ['data-auf'] });
+          for (const s of fr.children) void getComputedStyle(s).translate;
+          const alle = fr.getAnimations({ subtree: true });
+          const uebergaenge = alle.filter((a) => a instanceof CSSTransition) as CSSTransition[];
+          for (const a of uebergaenge) a.pause();
+          fertig({
+            uebergaenge: uebergaenge.map((a) => `${a.transitionProperty}@${[...fr.children].indexOf((a.effect as KeyframeEffect).target as Element)}`),
+            ablaeufe: alle
+              .filter((a) => !(a instanceof CSSTransition))
+              .flatMap((a) => (a.effect as KeyframeEffect).getKeyframes().flatMap((k) => Object.keys(k)))
+              .filter((k) => !['offset', 'computedOffset', 'easing', 'composite'].includes(k)),
+          });
+        }).observe(fr, { attributes: true, attributeFilter: ['data-auf'] });
+      });
+    });
+    await link.click();
+    const lauf = await page.evaluate(() => (window as unknown as { __auf: Promise<{ uebergaenge: string[]; ablaeufe: string[] }> }).__auf);
+    // Nur translate, je Schicht einmal; die Front verblasst nicht (keine Mischfarbe), das Wachsen steht nur still
+    expect(lauf.uebergaenge.sort()).toEqual(['translate@0', 'translate@1', 'translate@2', 'translate@3']);
+    expect([...new Set(lauf.ablaeufe)]).toEqual(['scale']);
+
+    const farbe = await page.locator(FRONT).evaluate((el) => getComputedStyle(el.lastElementChild!).backgroundColor);
+    const [R, G, B] = farbe.match(/\d+/g)!.map(Number);
+    const auswertung = await page.context().newPage();
+    const proben: { zeit: number; front: number; gerade: number[] }[] = [];
+    for (const zeit of [30, 60, 90, 130]) {
+      await page.locator(FRONT).evaluate((el, t) => {
+        for (const a of el.getAnimations({ subtree: true })) if (a instanceof CSSTransition) a.currentTime = t;
+      }, zeit);
+      await page.evaluate(() => new Promise((fertig) => requestAnimationFrame(() => requestAnimationFrame(fertig))));
+      const bild = (await page.screenshot({ scale: 'css' })).toString('base64');
+      proben.push({
+        zeit,
+        ...(await auswertung.evaluate(
+          async ({ bild, R, G, B }) => {
+            const bytes = Uint8Array.from(atob(bild), (c) => c.charCodeAt(0));
+            const b = await createImageBitmap(new Blob([bytes], { type: 'image/png' }));
+            const c = new OffscreenCanvas(b.width, b.height);
+            const ctx = c.getContext('2d')!;
+            ctx.drawImage(b, 0, 0);
+            const { data, width, height } = ctx.getImageData(0, 0, b.width, b.height);
+            const istFront = (x: number, y: number) => {
+              const i = (y * width + x) * 4;
+              return Math.abs(data[i] - R) + Math.abs(data[i + 1] - G) + Math.abs(data[i + 2] - B) <= 12;
+            };
+            let front = 0;
+            const gerade: number[] = [];
+            for (let y = 0; y < height; y += 1) {
+              let wechsel = 0;
+              for (let x = 0; x < width; x += 1) {
+                const f = istFront(x, y);
+                if (f) front += 1;
+                if (y + 1 < height && f !== istFront(x, y + 1)) wechsel += 1;
+              }
+              // Gerade Kante: in einer Zeile wechselt fast die ganze Breite zwischen Front und Seite
+              if (wechsel >= 0.9 * width) gerade.push(y);
+            }
+            return { front: front / (width * height), gerade };
+          },
+          { bild, R, G, B },
+        )),
+      });
+    }
+    for (const p of proben) expect(p.gerade, `gerade Kante bei ${p.zeit} ms`).toEqual([]);
+    // Die Proben zeigen den Bogen: Front und Seite zugleich im Bild, die Front nimmt ab
+    expect(proben.some((p) => p.front > 0.05 && p.front < 0.95)).toBe(true);
+    for (let i = 1; i < proben.length; i += 1) expect(proben[i].front).toBeLessThanOrEqual(proben[i - 1].front);
+    // Am Ende liegt jede Schicht ganz über dem Fenster: kein ungetönter oder getönter Streifen
+    const unten = await page.locator(FRONT).evaluate((el) => {
+      for (const a of el.getAnimations({ subtree: true })) if (a instanceof CSSTransition) a.finish();
+      return [...el.children].map((s) => s.getBoundingClientRect().bottom);
+    });
+    for (const u of unten) expect(u).toBeLessThanOrEqual(0);
+    await auswertung.close();
+    await page.locator(FRONT).evaluate((el) => {
+      (window as unknown as { __halt: boolean }).__halt = false;
+      const fr = el as HTMLElement;
+      delete (fr as Partial<HTMLElement>).hidePopover;
+      fr.removeAttribute('data-auf');
+      fr.hidePopover();
+    });
+    await frontZu(page);
   });
 
   test('Klick auf „Jetzt bewerben“: keine Klick-Wärme auf dem Weg in den Bewerbungsweg, auch nicht nach dem Wechsel (Prüfrunde 1 C1-3)', async ({
@@ -413,6 +573,29 @@ test.describe('mit Bewegung (no-preference)', () => {
       expect(ablaeufe, link).toBe(0);
       for (const band of await feld.locator('[data-band]').all()) await expect(band).toHaveCSS('opacity', '1');
     }
+  });
+});
+
+test.describe('erzwungene Farben (Prüfrunde 3 C3-4)', () => {
+  test.use({ contextOptions: { reducedMotion: 'no-preference', forcedColors: 'active' } });
+
+  test('keine Front und keine Klick-Wärme: Die Systempalette bleibt ungestört, der Link wechselt sofort', async ({ page }) => {
+    await protokollieren(page);
+    await page.goto('/jobs');
+    await page.waitForLoadState('networkidle');
+    expect(await page.evaluate(() => matchMedia('(forced-colors: active)').matches)).toBe(true);
+    const link = page.locator(STELLE_LINK).first();
+    const ziel = await link.getAttribute('href');
+    await link.scrollIntoViewIfNeeded();
+    await link.click();
+    await expect(page).toHaveURL(ziel!);
+    // Auch ein Knopf: keine Ringe
+    const knopf = page.locator('main button:not([aria-disabled="true"])').first();
+    if (await knopf.count()) await knopf.click({ trial: false }).catch(() => {});
+    await page.waitForTimeout(KLICK_ENDE_MS);
+    expect((await protokoll(page)).filter((e) => e.art === 'toggle')).toEqual([]);
+    expect(await offen(page, FRONT)).toBe(false);
+    expect(await offen(page, KLICK)).toBe(false);
   });
 });
 

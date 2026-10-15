@@ -86,14 +86,17 @@ describe('Waermefront: die neue Seite steht oben (Prüfrunde 1 A1-2, C1-5)', () 
 });
 
 describe('Waermefront: CSS (E-031, K-009)', () => {
-  it('Wachstum nur nach √t: w skaliert 0 → 1 genau auf DIFFUSION_STUETZ, linear; s nur opacity und translate', () => {
+  it('Wachstum nur nach √t: w skaliert 0 → 1 genau auf DIFFUSION_STUETZ, linear; s nur opacity (Verblassen der Klick-Wärme)', () => {
     expect(diffusionsFehler(css)).toEqual([]);
     const k = Object.fromEntries(keyframesIn(css).map((x) => [x.name, x]));
     expect(Object.keys(k).sort()).toEqual(['s', 'w']);
     expect(k.w.stopps.map((s) => [s.anteil / 100, Number(s.deklarationen.get('scale'))])).toEqual(DIFFUSION_STUETZ.map(([t, f]) => [t, f]));
     expect(k.w.stopps.every((s) => [...s.deklarationen.keys()].join() === 'scale')).toBe(true);
     expect(k.s.stopps).toHaveLength(1);
-    expect(Object.fromEntries(k.s.stopps[0].deklarationen)).toEqual({ opacity: '0', translate: '0 var(--h, 0)' });
+    expect(Object.fromEntries(k.s.stopps[0].deklarationen)).toEqual({ opacity: '0' });
+    // s gehört nur der Klick-Wärme: Die Front verblasst nie (Prüfrunde 3 A3-2: keine Mischfarbe aus Front und Seite)
+    expect([...css.matchAll(/animation\s*:\s*s\b/g)]).toHaveLength(1);
+    expect(regel('.k').animation).toMatch(/^s /);
   });
 
   it('Farben nur aus der Wärmerampe, kühl → heiß von der ersten zur letzten Schicht; keine Seitenfarbe (Prüfrunde 1 A1-12, B1-5)', () => {
@@ -109,6 +112,26 @@ describe('Waermefront: CSS (E-031, K-009)', () => {
     expect(regel('.e > *').border).toBe('var(--m-leitung) solid var(--c)');
     const farben = [...css.matchAll(/(?:background|--c|--f)\s*:\s*([^;]+);/g)].map((m) => m[1].trim());
     for (const f of farben) expect(f).toMatch(/^(?:none|var\(--f, var\(--c\)\)|var\(--waerme-[1-4]\))$/);
+  });
+
+  it('Klick-Wärme je Ton der Fläche (Prüfrunde 3 A3-1): In ihrer Überlagerung stehen die Stufen 1–3 für --klick-1…3, die Insel setzt den Ton der getroffenen Fläche', () => {
+    const theme = lies('app/styles/theme.css').replace(/\/\*[\s\S]*?\*\//g, '');
+    const block = theme.match(/\[data-motion="klick-waerme"\]\s*\{([^}]*)\}/);
+    expect(block, 'Umleitung in theme.css').not.toBeNull();
+    expect(block![1].split(';').map((d) => d.trim()).filter(Boolean)).toEqual([
+      '--waerme-1: var(--klick-1)',
+      '--waerme-2: var(--klick-2)',
+      '--waerme-3: var(--klick-3)',
+    ]);
+    // nach allen Tönen (sonst gewönne ein [data-tone]-Block derselben Spezifität auf der Überlagerung)
+    const umleitung = theme.indexOf('[data-motion="klick-waerme"]');
+    const toene = [...theme.matchAll(/\[data-tone="\w+"\][^{]*\{([^}]*)\}/g)].filter((m) => /--(?:waerme|klick)-\d/.test(m[1]));
+    expect(toene.length).toBeGreaterThanOrEqual(4);
+    for (const m of toene) expect(m.index).toBeLessThan(umleitung);
+    // die Front nutzt Stufe 4, die es in der Klick-Wärme nicht gibt; die Klick-Wärme hat drei Schichten
+    expect(MOTION_REGISTER['klick-waerme'].verzoegerungTakte).toHaveLength(3);
+    const quelle = lies(EINGANG);
+    expect(quelle).toMatch(/klick\.dataset\.tone = bedien\.closest<HTMLElement>\('\[data-tone\]'\)\?\.dataset\.tone \?\? '';/);
   });
 
   it('Klick-Wärme: nur Ringe ohne Fläche und ohne Durchsicht (die Beschriftung bleibt rein, auch im Navy-Band; Prüfrunde 1 A1-3)', () => {
@@ -148,8 +171,12 @@ describe('Waermefront: CSS (E-031, K-009)', () => {
     expect(regel('.k').animation).toBe('s var(--d-2) linear var(--d-2) both');
     expect(2 * DAUER_MS['d-2']).toBe(KLICK_ENDE_MS);
     expect(Math.max(...klick.verzoegerungTakte) * TAKT_MS + DAUER_MS['d-3']).toBe(KLICK_ENDE_MS);
-    // Aufdecken: Die Front kühlt als Ganzes ab, verblasst und steigt um --a-4, d-2 mit k-aus
-    expect(regel('.e[data-auf]')).toEqual({ '--h': 'calc(-1*var(--a-4))', animation: 's var(--d-2) var(--k-aus) both' });
+    // Aufdecken (Prüfrunde 3 A3-2): Die Front steigt als Ganzes aus dem Bild, d-2 mit k-aus, nur per transform; keine
+    // Deckkraft (keine Mischfarbe), die Überlagerung selbst bewegt sich nicht (sonst eine gerade Kante an ihrem Rand)
+    expect(regel('.e[data-auf] > *')).toEqual({ translate: '-50% calc(-50% - var(--h))' });
+    expect(schicht.transition).toBe('translate var(--d-2) var(--k-aus)');
+    expect(() => regel('.e[data-auf]')).toThrow();
+    expect(css).not.toMatch(/\[data-auf\][^{]*\{[^}]*opacity/);
     expect(DAUER_MS['d-2']).toBe(WECHSEL.aufdeckenMs);
     expect(front.kurve).toEqual(['linear', 'k-aus']);
   });
@@ -164,10 +191,16 @@ describe('Waermefront: CSS (E-031, K-009)', () => {
       'pointer-events': 'none',
       contain: 'strict',
     });
-    expect(regel('.e > *')).toMatchObject({ position: 'absolute', 'aspect-ratio': '1', translate: '-50% -50%', 'border-radius': 'var(--radius-voll)' });
+    expect(regel('.e > *')).toMatchObject({
+      position: 'absolute',
+      'aspect-ratio': '1',
+      translate: '-50% -50%',
+      transform: 'scale(var(--m, 1))',
+      'border-radius': 'var(--radius-voll)',
+    });
     // Selektoren: nur die beiden Klassen, ihre Schichten und [data-auf]
     const selektoren = [...css.matchAll(/(?:^|\})\s*([^{}@]+?)\s*\{/g)].map((m) => m[1].trim()).filter((s) => s.startsWith('.'));
-    expect(selektoren).toEqual(['.e', '.k', '.e > *', '.e > * + *', '.e > * + * + *', '.e > * + * + * + *', '.e[data-auf]']);
+    expect(selektoren).toEqual(['.e', '.k', '.e > *', '.e > * + *', '.e > * + * + *', '.e > * + * + * + *', '.e[data-auf] > *']);
   });
 
   it(`Budget: ≤ ${FRONT_BUDGET} B im globalen Chunk, gemessen wie check-css-chunks (verkleinert, Klassen mit Präfix)`, async () => {
@@ -190,6 +223,8 @@ describe('Waermefront: Insel ≤ 2 KB gzip (K-013)', () => {
     expect(lies(EINGANG).startsWith("'use client';")).toBe(true);
     // Die Insel importiert nur React, Next-Navigation, die reine Logik und ihr CSS-Modul; die Logik zieht nichts nach
     const importe = [...lies(EINGANG).matchAll(/from '([^']+)'/g)].map((m) => m[1]);
+    // reduzierte Bewegung und erzwungene Farben: eine Abfrage aus lib/motion/prefers.ts (Prüfrunde 3 C3-4)
+    expect(lies(EINGANG)).toMatch(/if \(matchMedia\(OHNE_UEBERLAGERUNG\)\.matches\) return;/);
     expect(importe.sort()).toEqual(['./waermefront.module.css', '@/lib/motion/prefers', '@/lib/motion/seitenwechsel', 'next/navigation', 'react']);
     expect([...lies('lib/motion/seitenwechsel.ts').matchAll(/from '([^']+)'/g)]).toEqual([]);
     expect([...lies('lib/motion/prefers.ts').matchAll(/from '([^']+)'/g)]).toEqual([]);
@@ -212,7 +247,18 @@ describe('Waermefront: Insel ≤ 2 KB gzip (K-013)', () => {
       write: false,
     });
     const code = ergebnis.output[0].code;
-    for (const teil of ['showPopover', ':popover-open', 'animationend', 'pageshow', 'popstate', 'prefetch', 'preventDefault', 'requestAnimationFrame']) {
+    for (const teil of [
+      'showPopover',
+      ':popover-open',
+      'animationend',
+      'pageshow',
+      'popstate',
+      'prefetch',
+      'preventDefault',
+      'requestAnimationFrame',
+      'MutationObserver',
+      '(prefers-reduced-motion: reduce), (forced-colors: active)',
+    ]) {
       expect(code, teil).toContain(teil);
     }
     // Klick in der Erfassungsphase am Dokument: vor next/link, nach den onClickCapture-Handlern von React

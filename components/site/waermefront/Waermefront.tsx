@@ -2,8 +2,20 @@
 
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { motionAllowed } from '@/lib/motion/prefers';
-import { AUFTAKT, ZEITPLAN, frontMass, frontZiel, imBewerbungsweg, klickPunkt, klickZiel, linkPfad } from '@/lib/motion/seitenwechsel';
+import { OHNE_UEBERLAGERUNG } from '@/lib/motion/prefers';
+import {
+  AUFTAKT,
+  LAEDT,
+  RUHE_BILDER,
+  ZEITPLAN,
+  frontMass,
+  frontSteigen,
+  frontZiel,
+  imBewerbungsweg,
+  klickPunkt,
+  klickZiel,
+  linkPfad,
+} from '@/lib/motion/seitenwechsel';
 import styles from './waermefront.module.css';
 
 /** Ablauf der Front: abdecken → warten (Wechsel beauftragt) → aufdecken; null = Ruhe. */
@@ -17,18 +29,22 @@ const zu = (el: HTMLElement) => {
 /**
  * Klick-Wärme und Wärmefront (E-031, KERN K-009, Logik lib/motion/seitenwechsel.ts, CSS waermefront.module.css), einmal
  * im Layout. Zwei Überlagerungen als popover="manual" (oberste Ebene, auch über dem offenen Menü), aria-hidden und
- * inert; ohne Popover-Unterstützung oder bei reduzierter Bewegung zeigt die Insel nichts und jeder Klick wirkt sofort.
+ * inert; ohne Popover-Unterstützung, bei reduzierter Bewegung und in erzwungenen Farben (forced-colors, Prüfrunde 3
+ * C3-4: dort würden aus den Schichten schwarze Zielscheiben auf weißer Fläche) zeigt die Insel nichts und jeder Klick
+ * wirkt sofort.
  *
  * - Klick-Wärme: ein Klick-Listener in der Erfassungsphase am Dokument; an Bedienelementen (nicht in Formularen, nicht
  *   im Bewerbungsweg und nicht auf dem Weg dorthin) wachsen drei Ringe am Zeiger, mit der Tastatur in der Mitte des
- *   Elements; nach 480 ms zu, spätestens beim Wechsel in den Bewerbungsweg.
+ *   Elements; nach 480 ms zu, spätestens beim Wechsel in den Bewerbungsweg. Die Überlagerung trägt den Ton der
+ *   getroffenen Fläche (data-tone, Prüfrunde 3 A3-1): Die Ringe heben sich auf Papier, Nacht und Navy gleich ab.
  *   Führt der Klick zur Wärmefront, ist sie die Rückmeldung (dieselben Schichten vom selben Punkt, nur bis zur Ecke).
  * - Wärmefront: Führt ein einfacher Klick zu einer Erzählseite (frontZiel), hält die Insel den Wechsel an
  *   (preventDefault – next/link bricht dann ab), lädt das Ziel vor und deckt vom Klickpunkt aus ab. Nach dem letzten
- *   Band (spätestens nach dem Netz) wechselt router.push die Seite; sobald der neue Pfad steht, nach zwei Bildern, deckt
- *   die Front auf, spätestens nach `halten`. Zurück/vor, die Rückkehr aus dem bfcache und ein Klick auf einen anderen
- *   Link beenden sie sofort. Die neue Seite steht oben: <html data-scroll-behavior="smooth"> (app/layout.tsx) lässt
- *   Next beim Wechsel ohne weiches Scrollen springen.
+ *   Band (spätestens nach dem Netz) wechselt router.push die Seite. Aufgedeckt wird erst, wenn die neue Seite unter der
+ *   Front fertig gemalt hat (Prüfrunde 3 C3-1): RUHE_BILDER Bilder ohne Änderung im Dokument, ohne nachladenden Bereich
+ *   (LAEDT) und ohne ladendes Bild, spätestens nach `halten`; dann steigt die Front aus dem Bild. Zurück/vor, die Rückkehr aus dem
+ *   bfcache und ein Klick auf einen anderen Link beenden sie sofort. Die neue Seite steht oben:
+ *   <html data-scroll-behavior="smooth"> (app/layout.tsx) lässt Next beim Wechsel ohne weiches Scrollen springen.
  * - Auftakt: Jeder Wechsel innerhalb der Seite nimmt die Klasse `auftakt` weg, bevor die neue Seite gemalt wird
  *   (useLayoutEffect); sie steht dann im Endzustand, und kein Auftakt bricht am Sicherheitsnetz mitten im Lauf ab.
  *
@@ -49,13 +65,17 @@ export function Waermefront() {
     if (!front || !klick || typeof front.showPopover !== 'function') return;
     let phase: Phase = null;
     let ziel = '';
-    let uhr = 0;
-    let klickUhr = 0;
+    let uhr: ReturnType<typeof setTimeout> | undefined;
+    let klickUhr: ReturnType<typeof setTimeout> | undefined;
     let bild = 0;
+    // Ruhe der neuen Seite: Bilder in Folge ohne Änderung im Dokument (jede Änderung malt die Seite neu)
+    let still = 0;
+    const beob = new MutationObserver(() => (still = 0));
 
     const aus = () => {
       clearTimeout(uhr);
       cancelAnimationFrame(bild);
+      beob.disconnect();
       phase = null;
       delete front.dataset.auf;
       zu(front);
@@ -64,22 +84,40 @@ export function Waermefront() {
       if (phase !== 'warten') return;
       phase = 'auf';
       clearTimeout(uhr);
-      uhr = window.setTimeout(aus, ZEITPLAN.aufdeckenNetz);
+      uhr = setTimeout(aus, ZEITPLAN.aufdeckenNetz);
       front.dataset.auf = '';
     };
     const wechseln = () => {
       if (phase !== 'ab') return;
       phase = 'warten';
       clearTimeout(uhr);
-      uhr = window.setTimeout(aufdecken, ZEITPLAN.halten);
+      uhr = setTimeout(aufdecken, ZEITPLAN.halten);
+      // Ab hier zählt jede Änderung der neuen Seite gegen die Ruhe (auch das Nachladen vor dem neuen Pfad)
+      still = 0;
+      beob.observe(document, { subtree: true, childList: true, attributes: true });
       // Unter der deckenden Front: Die neue Seite steht im Endzustand (kein Auftakt nach einem Wechsel)
       document.documentElement.classList.remove(AUFTAKT);
       router.push(ziel);
     };
-    // Neuer Pfad: zwei Bilder warten, damit die neue Seite unter der Front gemalt ist; im Bewerbungsweg keine Wärme
+    // Je Bild: ruht die neue Seite RUHE_BILDER Bilder lang (nichts geändert, kein Bereich lädt nach – Platzhalter tragen
+    // data-laedt –, kein Bild lädt; Bilder mit loading="lazy" laden erst bei Annäherung; kein endlicher Ablauf läuft, an
+    // dessen Ende die Seite neu malte – die Schichten der Front sind dann am Ende, Schleifen zählen nicht), deckt die
+    // Front auf; sonst weiter warten, höchstens bis `halten`
+    const ruhe = () => {
+      if (phase !== 'warten') return;
+      still =
+        document.querySelector(LAEDT) ||
+        [...document.images].some((i) => !i.complete && i.loading !== 'lazy') ||
+        document.getAnimations().some((a) => a.playState === 'running' && a.effect!.getTiming().iterations! < Infinity)
+          ? 0
+          : still + 1;
+      if (still >= RUHE_BILDER) aufdecken();
+      else bild = requestAnimationFrame(ruhe);
+    };
+    // Neuer Pfad: Die neue Seite malt unter der Front; im Bewerbungsweg keine Wärme
     neuerPfad.current = () => {
       if (imBewerbungsweg(location.pathname)) zu(klick);
-      if (phase === 'warten') bild = requestAnimationFrame(() => (bild = requestAnimationFrame(aufdecken)));
+      if (phase === 'warten') bild = requestAnimationFrame(ruhe);
     };
     /**
      * Zeigt eine Überlagerung am Punkt neu; ihre Abläufe beginnen von vorn. Die Front: Scheiben in der Grundgröße
@@ -87,12 +125,8 @@ export function Waermefront() {
      * Ebenen).
      */
     const zeige = (el: HTMLElement, x: number, y: number, mass?: { grund: number; faktor: number }) => {
-      el.style.setProperty('--x', `${x}px`);
-      el.style.setProperty('--y', `${y}px`);
-      if (mass) {
-        el.style.setProperty('--s', `${mass.grund}px`);
-        for (const schicht of el.children) (schicht as HTMLElement).style.transform = `scale(${mass.faktor})`;
-      }
+      // Nur diese Variablen stehen inline: Mittelpunkt, bei der Front Grundgröße, Weg nach oben und Faktor
+      el.style.cssText = `--x:${x}px;--y:${y}px` + (mass ? `;--s:${mass.grund}px;--h:${frontSteigen(y, mass)}px;--m:${mass.faktor}` : '');
       zu(el);
       void el.offsetWidth;
       el.showPopover();
@@ -111,7 +145,7 @@ export function Waermefront() {
         }
         aus();
       }
-      if (!motionAllowed()) return;
+      if (matchMedia(OHNE_UEBERLAGERUNG).matches) return;
       const bedien = klickZiel(start, location.pathname, link ? linkPfad(link, location) : null) as Element | null;
       const element = bedien ?? link;
       if (!element) return;
@@ -123,16 +157,19 @@ export function Waermefront() {
         ziel = neu;
         phase = 'ab';
         zeige(front, x, y, frontMass(x, y, innerWidth, innerHeight));
-        uhr = window.setTimeout(wechseln, ZEITPLAN.abdeckenNetz);
+        uhr = setTimeout(wechseln, ZEITPLAN.abdeckenNetz);
       } else if (bedien) {
+        // Ton der getroffenen Fläche (Papier, Navy-Band, Wärmebereich): Die Rollen der Ringe folgen ihm (theme.css)
+        klick.dataset.tone = bedien.closest<HTMLElement>('[data-tone]')?.dataset.tone ?? '';
         zeige(klick, x, y);
         clearTimeout(klickUhr);
-        klickUhr = window.setTimeout(() => zu(klick), ZEITPLAN.klick);
+        klickUhr = setTimeout(() => zu(klick), ZEITPLAN.klick);
       }
     };
+    // Ende der heißesten Schicht beim Abdecken: wechseln. Beim Aufdecken schließt die Uhr die Front, wenn sie aus dem
+    // Bild gestiegen ist (aufdeckenNetz).
     const beiEnde = (event: AnimationEvent) => {
       if (event.target === front.lastElementChild) wechseln();
-      else if (event.target === front && phase === 'auf') aus();
     };
 
     document.addEventListener('click', beiKlick, true);

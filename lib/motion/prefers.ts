@@ -48,6 +48,14 @@ export function motionAllowed(win: MediaWindow | undefined = currentWindow()): b
   return !prefersReducedMotion(win);
 }
 
+/**
+ * Abfrage für Überlagerungen aus Farbschichten (Klick-Wärme, Wärmefront, E-031): Sie entfallen bei reduzierter Bewegung
+ * und in erzwungenen Farben (Kontrastmodus, Prüfrunde 3 C3-4: dort zeichnete der Browser die Schichten als weiße Fläche
+ * mit schwarzen Ringen). Eine Abfrageliste (oder) als Text ohne MEDIA, damit die Inseln klein bleiben; die Insel fragt
+ * nur im Browser mit Popover-Unterstützung, also mit matchMedia.
+ */
+export const OHNE_UEBERLAGERUNG = '(prefers-reduced-motion: reduce), (forced-colors: active)';
+
 /** Echter Hover möglich (Maus/Trackpad)? Ohne Fenster: nein. */
 export function canHover(win: MediaWindow | undefined = currentWindow()): boolean {
   return matches('feinerZeiger', win, false);

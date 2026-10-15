@@ -11,8 +11,11 @@ import {
   WAERMEFRONT_AN,
   ZEITPLAN,
   FRONT_GRUND,
+  LAEDT,
+  RUHE_BILDER,
   frontDurchmesser,
   frontMass,
+  frontSteigen,
   frontSeite,
   frontZiel,
   imBewerbungsweg,
@@ -391,12 +394,55 @@ describe('Wärmefront: immer ein Kreis, kleine Ebenen (Prüfrunde 2 A2-1, C2-2, 
     expect(frontMass(0, 0, 1440, 900).grund).toBe(FRONT_GRUND);
   });
 
-  it('die Insel setzt die Grundgröße als --s und den Faktor als transform je Schicht der Front, nicht bei der Klick-Wärme', () => {
+  it('die Insel setzt die Grundgröße als --s, den Faktor als --m (transform: scale je Schicht) und den Weg nach oben als --h, nur bei der Front', () => {
     const insel = readFileSync(path.join(ROOT, 'components/site/waermefront/Waermefront.tsx'), 'utf8');
-    expect(insel).toMatch(/el\.style\.setProperty\('--s', `\$\{mass\.grund\}px`\);/);
-    expect(insel).toMatch(/\(schicht as HTMLElement\)\.style\.transform = `scale\(\$\{mass\.faktor\}\)`;/);
+    expect(insel).toContain(
+      "el.style.cssText = `--x:${x}px;--y:${y}px` + (mass ? `;--s:${mass.grund}px;--h:${frontSteigen(y, mass)}px;--m:${mass.faktor}` : '');",
+    );
     expect(insel).toContain('zeige(front, x, y, frontMass(x, y, innerWidth, innerHeight));');
     expect(insel).toContain('zeige(klick, x, y);');
+  });
+});
+
+describe('Wärmefront: Aufdecken (Prüfrunde 3 A3-2, C3-1)', () => {
+  it('die Scheiben steigen, bis ihr unterer Rand über dem Fenster liegt: kein Streifen, keine gerade Kante', () => {
+    for (const [b, h] of [
+      [390, 844],
+      [1440, 900],
+    ] as const) {
+      for (const [x, y] of [
+        [0, 0],
+        [b / 2, h],
+        [b, h / 3],
+        [b / 4, h - 1],
+      ]) {
+        const mass = frontMass(x, y, b, h);
+        const weg = frontSteigen(y, mass);
+        // unterer Rand nach dem Steigen: y + Radius − Weg ≤ −2
+        expect(y + (mass.grund * mass.faktor) / 2 - weg, `${b}×${h} @ ${x},${y}`).toBeLessThanOrEqual(-2);
+        // und nicht unnötig weit (höchstens 1 px Rundung mehr)
+        expect(y + (mass.grund * mass.faktor) / 2 - weg).toBeGreaterThan(-3.01);
+        expect(Number.isInteger(weg)).toBe(true);
+      }
+    }
+  });
+
+  it('aufgedeckt wird erst in Ruhe: RUHE_BILDER Bilder ohne Änderung, ohne nachladenden Bereich, ladendes Bild und endlichen Ablauf, spätestens nach halten', () => {
+    expect(RUHE_BILDER).toBeGreaterThanOrEqual(3);
+    // Die Ruhe darf das Halten nicht ausreizen: bei 60 Bildern je Sekunde bleibt Zeit für die neue Seite
+    expect((RUHE_BILDER * 1000) / 60).toBeLessThan(ZEITPLAN.halten / 4);
+    expect(LAEDT).toBe('[data-laedt]');
+    const insel = readFileSync(path.join(ROOT, 'components/site/waermefront/Waermefront.tsx'), 'utf8');
+    expect(insel).toContain('beob.observe(document, { subtree: true, childList: true, attributes: true });');
+    expect(insel).toContain('document.querySelector(LAEDT) ||');
+    expect(insel).toContain("[...document.images].some((i) => !i.complete && i.loading !== 'lazy') ||");
+    expect(insel).toContain("document.getAnimations().some((a) => a.playState === 'running' && a.effect!.getTiming().iterations! < Infinity)");
+    expect(insel).toContain('if (still >= RUHE_BILDER) aufdecken();');
+    // Der Platzhalter der nachgeladenen Bewerbung auf der Stellenseite trägt die Marke
+    expect(readFileSync(path.join(ROOT, 'app/jobs/[slug]/page.tsx'), 'utf8')).toMatch(/<p className="text-body text-ink-muted" data-laedt="">/);
+    expect(insel).toContain('uhr = setTimeout(aufdecken, ZEITPLAN.halten);');
+    // nicht mehr: aufdecken zwei Bilder nach dem neuen Pfad, mitten im Malen der neuen Seite (Prüfrunde 3 C3-1)
+    expect(insel).not.toMatch(/requestAnimationFrame\(\(\) => \(bild = requestAnimationFrame\(aufdecken\)\)\)/);
   });
 });
 

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { MEDIA, canHover, hasCoarsePointer, matches, motionAllowed, prefersReducedMotion, subscribe, type MediaWindow } from '../prefers';
+import { MEDIA, OHNE_UEBERLAGERUNG, canHover, hasCoarsePointer, matches, motionAllowed, prefersReducedMotion, subscribe, type MediaWindow } from '../prefers';
 
 type Listener = (event: MediaQueryListEvent) => void;
 
@@ -37,6 +37,10 @@ describe('prefers', () => {
     expect(MEDIA.reduzierteBewegung).toBe('(prefers-reduced-motion: reduce)');
     expect(MEDIA.feinerZeiger).toBe('(hover: hover) and (pointer: fine)');
     expect(MEDIA.groberZeiger).toBe('(pointer: coarse)');
+  });
+
+  it('Überlagerungen aus Farbschichten entfallen bei reduzierter Bewegung oder erzwungenen Farben (eine Abfrageliste, oder; Prüfrunde 3 C3-4)', () => {
+    expect(OHNE_UEBERLAGERUNG.split(', ')).toEqual([MEDIA.reduzierteBewegung, '(forced-colors: active)']);
   });
 
   it('nimmt ohne Fenster die sichere Seite an: reduziert, kein Hover', () => {

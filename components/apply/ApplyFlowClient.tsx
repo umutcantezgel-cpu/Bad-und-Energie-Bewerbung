@@ -76,6 +76,8 @@ interface Session {
   ready: boolean;
   mappe: Mappe | null;
   includeMappe: boolean;
+  /** Der Schritt nach dem Wiederherstellen: Er steht sofort, erst ein Wechsel blendet ein. */
+  start?: StepId;
 }
 
 const mergeSession = (state: Session, patch: Partial<Session>): Session => ({ ...state, ...patch });
@@ -267,7 +269,7 @@ export function ApplyFlowClient({
         contactChannel: draft.contactChannel,
       });
     }
-    patchSession({ ready: true, mappe: readMappe() });
+    patchSession({ ready: true, mappe: readMappe(), start: restored.step });
 
     if (isPage) {
       historyDepth.current = historyDepthOf(window.history.state);
@@ -604,15 +606,17 @@ export function ApplyFlowClient({
 
       {/*
         Schrittwechsel (E-BEW-003, Register `fortschritt`): Die neue Frage kommt mit dem Strang, 8 px von unten
-        und eingeblendet in d-2 (240 ms), per @starting-style ohne JS-Paket; nicht beim ersten Laden. Bei
-        reduzierter Bewegung kein Versatz, und die globale Regel setzt den Wechsel sofort.
+        und eingeblendet in d-2 (240 ms), per @starting-style ohne JS-Paket; nicht beim ersten Laden: Der
+        wiederhergestellte Schritt (session.start) steht sofort, auch nach einem Seitenwechsel (sonst malte die Seite
+        noch, während die Wärmefront aufdeckt; Prüfrunde 3 C3-1). Bei reduzierter Bewegung kein Versatz, und die
+        globale Regel setzt den Wechsel sofort.
       */}
       <div
         key={done ? 'done' : state.step}
         data-motion="fortschritt"
         className={cn(
           'transition-[opacity,translate] duration-d2 ease-aus',
-          session.ready && 'starting:opacity-0 motion-safe:starting:translate-y-2',
+          session.ready && (done || state.step !== session.start) && 'starting:opacity-0 motion-safe:starting:translate-y-2',
         )}
       >
         {body}

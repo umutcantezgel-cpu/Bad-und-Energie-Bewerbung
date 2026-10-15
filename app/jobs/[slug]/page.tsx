@@ -216,10 +216,13 @@ function OpenJob({ job }: { job: Job }) {
   );
 }
 
-/** Server-rendered stand-in while the flow loads (and the no-JS path): the flow as its own page. */
+/**
+ * Server-rendered stand-in while the flow loads (and the no-JS path): the flow as its own page. `data-laedt` marks it as
+ * loading: after a page change the warm front waits until the flow stands (LAEDT, lib/motion/seitenwechsel.ts).
+ */
 function ApplyFallback({ job }: { job: Job }) {
   return (
-    <p className="text-body text-ink-muted">
+    <p className="text-body text-ink-muted" data-laedt="">
       <TextLink href={applyPath(job)}>
         {isAusbildung(job)
           ? 'Bewerbung für die Ausbildung öffnen'

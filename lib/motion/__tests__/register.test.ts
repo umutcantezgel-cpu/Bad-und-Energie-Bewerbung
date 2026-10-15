@@ -368,11 +368,12 @@ describe('Bewegungsregister', () => {
     expect(k.schleife).toBeUndefined();
   });
 
-  it('seitenwechsel (E-031): Wärmefront mit transform und opacity; abdecken 360, aufdecken 240, halten 1.200 ms', () => {
+  it('seitenwechsel (E-031): Wärmefront nur mit transform (Prüfrunde 3 A3-2: Aufdecken ohne Verblassen); abdecken 360, aufdecken 240, halten 1.200 ms', () => {
     const w = MOTION_REGISTER.seitenwechsel;
     expect(mitAusloeser('navigation')).toEqual(['seitenwechsel']);
     expect(w.ausloeser).toEqual(['navigation']);
-    expect([...w.eigenschaften].sort()).toEqual(['opacity', 'transform']);
+    expect([...w.eigenschaften]).toEqual(['transform']);
+    expect(w.zweck).toMatch(/ohne Verblassen/);
     expect(w.dauer).toEqual(['d-2']);
     expect(w.verzoegerungTakte).toEqual([0, 0.5, 1, 1.5]);
     // abdecken √t (linear auf den Stützstellen), aufdecken mit k-aus

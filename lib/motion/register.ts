@@ -17,9 +17,10 @@
  * Skalieren nur nach √t: jeder Keyframe-Ablauf mit `scale` genau auf den Stützstellen DIFFUSION_STUETZ.
  * Malzeit (KERN K-013, e2e/support/malzeit.ts): Während Wärme, Klick-Wärme und Wärmefront laufen, malt nach den ersten
  * zwei Bildern kein Bild 2 ms oder länger (mobil, CPU 4×). Ausnahmen, je einmal und außerhalb der Bewegung: das Ende
- * eines Sicht-Ablaufs (`fertig`, will-change fällt) und bei der Wärmefront das erste Malen der neuen Seite nach dem
- * Wechsel (router.push, unter voller Deckung). Das Abdecken selbst ist ausnahmslos, mit jedem Bandende (Schichten mit
- * Füllung both, Prüfrunde 2 C2-4; e2e/interaktion.spec.ts misst vom Klick bis zum Wechsel).
+ * eines Sicht-Ablaufs (`fertig`, will-change fällt) und bei der Wärmefront das Malen der neuen Seite unter voller
+ * Deckung (vom Wechsel, router.push, bis sie ruht; Prüfrunde 3 C3-1). Abdecken und Aufdecken selbst sind ausnahmslos,
+ * mit jedem Bandende (Schichten mit Füllung both, Prüfrunde 2 C2-4); e2e/interaktion.spec.ts misst vom Klick bis zum
+ * Wechsel und vom Aufdecken bis die Front zu ist.
  */
 
 /** Alle Kennungen. Reihenfolge wie im Register; der Guard liest diese Liste wörtlich. */
@@ -104,9 +105,12 @@ export interface Fenster {
 export interface Wechsel {
   /** Bänder decken vom Klickpunkt aus ab (√t), danach wechselt die Seite. */
   abdeckenMs: number;
-  /** Nach dem Wechsel blendet die Front aus und steigt dabei leicht („warme Luft steigt“). */
+  /** Nach dem Wechsel steigt die Front aus dem Bild („warme Luft steigt“), ohne zu verblassen. */
   aufdeckenMs: number;
-  /** Spätestens so lange nach dem Wechsel-Auftrag wird aufgedeckt, auch wenn die Seite noch nicht da ist. */
+  /**
+   * Spätestens so lange nach dem Wechsel-Auftrag wird aufgedeckt, auch wenn die neue Seite noch nicht ruht (sonst
+   * deckt die Front auf, sobald die neue Seite unter ihr fertig gemalt hat, Prüfrunde 3 C3-1).
+   */
   haltenMs: number;
 }
 
@@ -362,11 +366,12 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
     zweck:
       'Wärmefront (E-031): Beim Klick auf einen Link zu einer Erzählseite decken vier Wärmeschichten die Seite vom ' +
       'Klickpunkt aus ab, wachsend nach √t (½ Takt versetzt, je d-2), die kühlste zuerst und außen, die heißeste zuletzt ' +
-      'und innen – wie Wärmeleitung von einer Quelle, ohne kalten Kern; am Ende ist der ganze Raum warm. Nach dem ' +
-      'Wechsel kühlt die Front als Ganzes ab, blendet aus und steigt dabei leicht (warme Luft steigt). Eine dauerhafte ' +
-      'Überlagerung (Popover), kein View-Übergang.',
+      'und innen – wie Wärmeleitung von einer Quelle, ohne kalten Kern; am Ende ist der ganze Raum warm. Hat die neue ' +
+      'Seite unter der Front fertig gemalt, steigt die Front als Ganzes aus dem Bild (warme Luft steigt): nur per ' +
+      'transform, ohne Verblassen, unten öffnet ein Kreisbogen die Seite. Eine dauerhafte Überlagerung (Popover), kein ' +
+      'View-Übergang.',
     ausloeser: ['navigation'],
-    eigenschaften: ['transform', 'opacity'],
+    eigenschaften: ['transform'],
     dauer: ['d-2'],
     verzoegerungTakte: [0, 0.5, 1, 1.5],
     kurve: ['linear', 'k-aus'],
