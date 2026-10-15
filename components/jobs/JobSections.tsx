@@ -5,6 +5,7 @@ import { FACTS } from '@/lib/content/facts';
 import { getJobSections, type JobSection } from '@/lib/jobs/format';
 import { BEZAHLUNG_LINK } from '@/lib/themen/registry';
 import { TextLink } from '@/components/ui/TextLink';
+import { RohrAkzent } from '@/components/zeichnung/RohrAkzent';
 import type { Job } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
 import { PackageList, type PackageListItem } from './PackageList';
@@ -88,8 +89,9 @@ function Vorteile({ job }: { job: Job }) {
       {job.benefitFactIds.map((id) => (
         <li
           key={id}
-          className="grid grid-cols-[auto_minmax(0,1fr)] content-start gap-x-4 gap-y-2 border-t-(length:--m-strich) border-brand pt-6 sm:grid-cols-1 sm:gap-y-3"
+          className="relative grid grid-cols-[auto_minmax(0,1fr)] content-start gap-x-4 gap-y-2 pt-6 sm:grid-cols-1 sm:gap-y-3"
         >
+          <RohrAkzent />
           {/* Handy: Icon links neben Titel und Text (kürzer); ab sm darüber */}
           <span className="row-span-2 flex size-11 items-center justify-center rounded-1 border-(length:--m-strich) border-brand text-brand sm:row-span-1">
             <Icon name={vorteilIcon(id)} size="lg" />

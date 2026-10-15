@@ -382,8 +382,8 @@
   row-gap: var(--a-4);
   align-items: start;
   justify-items: start;
+  position: relative;
   padding-top: var(--a-5);
-  border-top: var(--m-strich) solid var(--brand);
 }
 
 .kaestenKurz .kasten {
@@ -484,151 +484,6 @@
   font-size: var(--text-callout);
   font-weight: 500;
   white-space: nowrap;
-}
-
-/* ═══ Gehaltsleiter (Kopf der Gehaltsseite): Spannen auf einer Euro-Skala ═══ */
-.leiter {
-  display: grid;
-  gap: var(--a-3);
-  width: 100%;
-  max-width: 34rem;
-}
-
-.leiterListe {
-  display: grid;
-  gap: var(--a-5);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.leiterZeile {
-  display: grid;
-  gap: var(--a-2);
-}
-
-.leiterSpur {
-  position: relative;
-  display: block;
-  height: var(--a-6);
-  /* Planpapier: senkrechte Haarlinien an jedem vollen Tausender (--teile = Abschnitte der Skala) */
-  background-image: repeating-linear-gradient(
-    90deg,
-    var(--line) 0 1px,
-    transparent 1px calc(100% / var(--teile))
-  );
-  border-right: 1px solid var(--line);
-}
-
-.leiterPaar {
-  position: absolute;
-  top: 50%;
-  left: calc(var(--von) * 100%);
-  width: calc((var(--bis) - var(--von)) * 100%);
-  height: calc(var(--paar) + var(--m-strich) * 2);
-  transform: translateY(-50%);
-  border-top: var(--m-strich) solid var(--vorlauf);
-  border-bottom: var(--m-strich) solid var(--ruecklauf);
-}
-
-/* Flansche an Anfang und Ende der Spanne */
-.leiterPaar::before,
-.leiterPaar::after {
-  content: "";
-  position: absolute;
-  top: calc(var(--a-1) * -1 - var(--m-strich));
-  bottom: calc(var(--a-1) * -1 - var(--m-strich));
-  width: var(--m-strich);
-  border-radius: var(--radius-voll);
-  background-color: var(--brand);
-}
-
-.leiterPaar::before {
-  left: calc(var(--m-strich) * -1);
-}
-
-.leiterPaar::after {
-  right: calc(var(--m-strich) * -1);
-}
-
-.leiterBetrag {
-  position: absolute;
-  top: 50%;
-  left: calc(var(--bis) * 100% + var(--a-3));
-  transform: translateY(-50%);
-  padding-inline: var(--a-1);
-  background-color: var(--surface);
-  font-size: var(--text-callout);
-  font-weight: 500;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-.leiterBetragLinks {
-  left: auto;
-  right: calc((1 - var(--von)) * 100% + var(--a-3));
-}
-
-@media (min-width: 64em) {
-  .leiterBetrag {
-    font-size: var(--text-lead);
-  }
-}
-
-.leiterKopf {
-  margin-bottom: var(--a-2);
-}
-
-.leiterSkala {
-  position: relative;
-  height: calc(var(--a-3) + var(--a-2) + 1.2em);
-  font-size: var(--text-footnote);
-}
-
-/* Maßlinie mit Endstrichen wie die Maßkette */
-.leiterMass {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: var(--a-3);
-  border-inline: var(--m-strich) solid var(--brand);
-}
-
-.leiterMass::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: var(--m-strich);
-  transform: translateY(-50%);
-  background-color: var(--brand);
-}
-
-.leiterMarke {
-  position: absolute;
-  top: calc(var(--a-3) + var(--a-2));
-  left: calc(var(--lage) * 100%);
-  transform: translateX(-50%);
-  font-stretch: 75%;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-.leiterMarke:nth-child(2) {
-  transform: none;
-}
-
-.leiterMarke:last-child {
-  transform: translateX(-100%);
-}
-
-/* Unter 30em (480 px) nur jede zweite Marke: Die Haarlinien des Planpapiers zeigen die übrigen Tausender */
-@media (max-width: 29.99em) {
-  .leiterMarkeBreit {
-    display: none;
-  }
 }
 
 /* ═══ Zeitkette (Kopf der Seite „Der Betrieb“): Haus und Maßkette 1926 → 2026 ═══ */
@@ -840,11 +695,6 @@
   gap: var(--a-5);
 }
 
-.spanneBetrag {
-  font-size: var(--text-title-2);
-  white-space: nowrap;
-}
-
 .spanneText {
   display: flex;
   flex-direction: column;
@@ -865,8 +715,8 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--a-3);
+  position: relative;
   padding-top: var(--a-5);
-  border-top: var(--m-strich) solid var(--brand);
 }
 
 .kaestchen [data-zeichnung="etikettkasten"],
@@ -902,8 +752,8 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--a-3);
+  position: relative;
   padding-top: var(--a-5);
-  border-top: var(--m-strich) solid var(--brand);
 }
 
 .positionText {
@@ -1108,11 +958,25 @@
 }
 
 .partner {
+  position: relative;
   display: grid;
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: var(--m-strich) solid var(--brand);
+}
+
+/* Rohrakzent (E-031) als Pseudoelement: in einer Liste steht kein <span>; Form wie .rohrakzent in
+   components/zeichnung/zeichnung.module.css (Gleichheit prüft components/zeichnung/__tests__/weichheit.test.ts) */
+.partner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: min(var(--a-8), 100%);
+  height: var(--m-leitung);
+  border-radius: var(--radius-voll);
+  background-color: var(--brand);
+  pointer-events: none;
 }
 
 @media (min-width: 48em) {
@@ -1211,8 +1075,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--a-2);
+  position: relative;
   padding-top: var(--a-4);
-  border-top: var(--m-strich) solid var(--brand);
 }
 
 .saeuleNummer {

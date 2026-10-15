@@ -457,8 +457,8 @@
   row-gap: var(--a-4);
   align-items: start;
   justify-items: start;
+  position: relative;
   padding-top: var(--a-5);
-  border-top: var(--m-strich) solid var(--brand);
 }
 
 /* Lange Kurzformen („Einsatzgebiet maximal 35 km um Wetzlar“) brechen im Kästchen um, statt die Spalte zu sprengen */

@@ -50,7 +50,8 @@ export default function ErrorPage({ error, retry }: { error: Error & { digest?: 
           Zur Startseite
         </Link>
       </div>
-      <ul className="flex flex-wrap gap-x-8 gap-y-1 border-t-3 border-brand pt-4">
+      {/* Rohrakzent (E-031) als Pseudoelement: diese Datei bleibt ohne CSS-Modul und ohne cn (siehe oben) */}
+      <ul className="relative flex flex-wrap gap-x-8 gap-y-1 pt-4 before:pointer-events-none before:absolute before:top-0 before:left-0 before:h-(--m-leitung) before:w-16 before:rounded-voll before:bg-brand">
         <li>
           <a href={PHONE.href} className={contactLinkClass} data-motion="druck">
             <Icon name="phone" size="md" className="text-brand" />

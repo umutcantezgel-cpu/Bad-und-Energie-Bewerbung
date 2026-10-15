@@ -1,6 +1,7 @@
 import { Icon } from '@/components/icons';
 import { JobQuote } from '@/components/jobs/JobQuote';
 import { TextLink } from '@/components/ui/TextLink';
+import { RohrAkzent } from '@/components/zeichnung/RohrAkzent';
 import { themaPfad } from '@/lib/themen/jsonld';
 import { getThema } from '@/lib/themen/registry';
 import { geschuetzt, type BetriebPageText } from '@/lib/themen/text';
@@ -67,6 +68,7 @@ export function BetriebSeite({ text }: { text: BetriebPageText }) {
           <ol className={styles.saeulen}>
             {text.partner.saeulen.map((saeule, i) => (
               <li key={saeule.name} className={styles.saeule}>
+                <RohrAkzent />
                 <span className={cn(styles.saeuleNummer, 'text-etikett text-ink-2')}>{`Säule ${String(i + 1).padStart(2, '0')}`}</span>
                 <p className={styles.saeuleName}>{saeule.name}</p>
                 {saeule.zusatz ? <p className={styles.saeuleZusatz}>{saeule.zusatz}</p> : null}

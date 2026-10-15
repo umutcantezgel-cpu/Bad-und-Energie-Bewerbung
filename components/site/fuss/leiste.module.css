@@ -1,7 +1,8 @@
 /*
  * StickyApplyBar (R4-SHELL-02, E-023), unter lg: im System neu gefasst wie das Erdreich des Einstiegs auf dem
- * Handy. Oben die Bodenlinie (3 px --brand), aus ihr fallen Vorlauf und Rücklauf senkrecht in die Hauptaktion,
- * über dem Pfeil (Abstand --paar, wie im Schlussband). Daneben WhatsApp als Zweitweg mit Navy-Kontur.
+ * Handy. Oben eine Haarlinie und links der Rohrakzent (E-031: statt der harten 3-px-Kante über die ganze Breite);
+ * Vorlauf und Rücklauf beginnen mit runden Enden unter der Oberkante und fallen senkrecht in die Hauptaktion, über dem
+ * Pfeil (Abstand --paar, wie im Schlussband). Daneben WhatsApp als Zweitweg mit Navy-Kontur.
  *
  * Erscheinen und Verschwinden über die Registerkennung am Element (data-motion): Eingang d-2 mit k-aus,
  * Ausgang d-1 mit k-ein; nur transform und opacity. Reduzierte Bewegung: globals.css setzt die Dauer auf
@@ -14,7 +15,7 @@
   bottom: 0;
   z-index: 30;
   background-color: var(--surface);
-  border-top: var(--m-strich) solid var(--brand);
+  border-top: 1px solid var(--line);
   padding-bottom: max(var(--a-3), env(safe-area-inset-bottom));
   transition:
     transform var(--d-2) var(--k-aus),
@@ -37,6 +38,7 @@
 }
 
 .innen {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--a-3);
@@ -45,7 +47,12 @@
   padding: var(--a-3) max(var(--spacing-gutter, var(--a-5)), env(safe-area-inset-left), env(safe-area-inset-right)) 0;
 }
 
-/* Anschluss: Bezug der beiden Leitungen, die aus der Bodenlinie in den Knopf fallen */
+/* Rohrakzent (components/zeichnung/RohrAkzent) an der Satzkante des Inhalts, auf der Oberkante */
+.innen > .akzent {
+  left: max(var(--spacing-gutter, var(--a-5)), env(safe-area-inset-left), env(safe-area-inset-right));
+}
+
+/* Anschluss: Bezug der beiden Leitungen, die von der Oberkante in den Knopf fallen */
 .anschluss {
   position: relative;
   display: flex;
@@ -56,8 +63,9 @@
 .leitung {
   position: absolute;
   bottom: 100%;
-  height: calc(var(--a-3) + var(--m-strich));
+  height: calc(var(--a-3) - var(--a-1));
   width: var(--m-strich);
+  border-radius: var(--radius-voll) var(--radius-voll) 0 0;
   pointer-events: none;
 }
 

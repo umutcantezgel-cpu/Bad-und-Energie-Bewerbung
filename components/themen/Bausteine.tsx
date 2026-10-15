@@ -8,6 +8,7 @@ import { ContactOptions } from '@/components/site/ContactOptions';
 import { CardLink } from '@/components/ui/Card';
 import { TextLink } from '@/components/ui/TextLink';
 import { Etikettkasten } from '@/components/zeichnung/Etikettkasten';
+import { RohrAkzent } from '@/components/zeichnung/RohrAkzent';
 import { breitestesStueckEm } from '@/components/einsatzgebiet/titel';
 import { ANSPRECHPARTNER } from '@/components/jobs/stelle/stelle-text';
 import { geschuetzt, type Kasten, type Kopfzeile, type Satz, type SeitenBasis, type ThemaKarte } from '@/lib/themen/text';
@@ -96,6 +97,7 @@ export function Kaestenband({ kopf, kaesten }: { kopf: Kopfzeile; kaesten: reado
         <ul className={cn(styles.kaesten, kaesten.length === 3 ? styles.kaestenDrei : styles.kaestenVier, !mitSatz && styles.kaestenKurz)}>
           {kaesten.map((kasten) => (
             <li key={kasten.titel} className={styles.kasten}>
+              <RohrAkzent />
               <Etikettkasten icon={kasten.icon} className="whitespace-normal">
                 {kasten.titel}
               </Etikettkasten>

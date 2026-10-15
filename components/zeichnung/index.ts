@@ -16,6 +16,8 @@ export { Masskette } from './Masskette';
 export type { MasskettenProps } from './Masskette';
 export { OFFENE_LEITUNG_TITEL, OffeneLeitung } from './OffeneLeitung';
 export type { OffeneLeitungProps } from './OffeneLeitung';
+export { RohrAkzent } from './RohrAkzent';
+export type { RohrAkzentProps } from './RohrAkzent';
 export { Rohrklammer } from './Rohrklammer';
 export type { RohrklammerProps } from './Rohrklammer';
 export { Entfernungsleiste, senkrechteLage } from './Entfernungsleiste';

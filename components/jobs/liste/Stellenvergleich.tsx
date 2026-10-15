@@ -3,6 +3,7 @@ import { Icon } from '@/components/icons';
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
 import { TextLink } from '@/components/ui/TextLink';
+import { RohrAkzent } from '@/components/zeichnung/RohrAkzent';
 import type { Job } from '@/lib/jobs/registry';
 import { ARBEITEN_LINK } from '@/lib/themen/registry';
 import { VERGLEICH, stellenprofil, vergleichEinleitung } from './inhalt-text';
@@ -17,7 +18,7 @@ export interface StellenvergleichProps {
  * „Alle offenen Jobs im Vergleich“ (V6-G1, Ton Wand): je Stelle der volle Titel, die Aufgaben, die harten
  * Voraussetzungen (nur belegte; offene wie bei der Bürofachkraft fehlen) und „Lohn auf Anfrage“ (E-030, ohne Betrag),
  * dazu der Weg zur Stellenanzeige. Karten mit
- * Markenkante wie „Das bekommst du“ der Stellenseite, Beschriftungen als Etikett (dl > div > dt + dd).
+ * Rohrakzent (E-031) wie „Das bekommst du“ der Stellenseite, Beschriftungen als Etikett (dl > div > dt + dd).
  */
 export function Stellenvergleich({ jobs }: StellenvergleichProps) {
   if (jobs.length < 2) return null;
@@ -30,7 +31,8 @@ export function Stellenvergleich({ jobs }: StellenvergleichProps) {
         <ul className="grid gap-x-12 gap-y-12 md:grid-cols-2">
           {jobs.map(stellenprofil).map((profil) => (
             <li key={profil.id}>
-              <article className="flex h-full flex-col gap-6 border-t-(length:--m-strich) border-brand pt-6">
+              <article className="relative flex h-full flex-col gap-6 pt-6">
+                <RohrAkzent />
                 <h3 className="text-title-3 text-brand">{profil.titel}</h3>
                 <dl className="flex flex-col gap-4">
                   <div className="flex flex-col gap-2">

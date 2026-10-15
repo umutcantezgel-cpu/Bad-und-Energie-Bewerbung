@@ -1,4 +1,5 @@
 import { Disclosure } from '@/components/ui/Disclosure';
+import { RohrAkzent } from '@/components/zeichnung/RohrAkzent';
 import { JOB_FAQ_IDS, getFaqItems } from '@/lib/content';
 import type { Job } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
@@ -23,7 +24,8 @@ export function JobFaq({ job, className }: JobFaqProps) {
           Häufige Fragen
         </h2>
       </div>
-      <div className="border-t-(length:--m-strich) border-brand lg:col-span-8">
+      <div className="relative lg:col-span-8">
+        <RohrAkzent />
         {items.map((item) => (
           <Disclosure key={item.id} name={`faq-${job.id}`} summary={item.question}>
             <p className="max-w-prose">{item.answer}</p>

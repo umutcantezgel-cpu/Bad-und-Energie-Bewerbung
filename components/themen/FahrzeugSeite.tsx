@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { JobQuote } from '@/components/jobs/JobQuote';
 import { bindSeparators, withSoftHyphens } from '@/components/jobs/text';
 import { Etikettkasten } from '@/components/zeichnung/Etikettkasten';
+import { RohrAkzent } from '@/components/zeichnung/RohrAkzent';
 import { themaPfad } from '@/lib/themen/jsonld';
 import { getThema } from '@/lib/themen/registry';
 import { geschuetzt, type FahrzeugPageText } from '@/lib/themen/text';
@@ -31,6 +32,7 @@ export function FahrzeugSeite({ text }: { text: FahrzeugPageText }) {
         <ol className={styles.stueckliste} aria-label={text.stueckliste.kopf.heading}>
           {text.stueckliste.positionen.map((position) => (
             <li key={position.factId} className={styles.position}>
+              <RohrAkzent />
               <Etikettkasten icon={position.icon}>
                 {position.pos} · {position.etikett}
               </Etikettkasten>

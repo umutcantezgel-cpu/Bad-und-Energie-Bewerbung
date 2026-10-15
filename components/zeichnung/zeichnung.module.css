@@ -47,6 +47,18 @@
   overflow: visible;
 }
 
+/* Rohrakzent (E-031): kurzes Rohrstück mit runden Enden auf der Oberkante des Behälters (statt einer harten 3-px-Kante) */
+.rohrakzent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: min(var(--a-8), 100%);
+  height: var(--m-leitung);
+  border-radius: var(--radius-voll);
+  background-color: var(--brand);
+  pointer-events: none;
+}
+
 /* Rohrklammer: feste Breite --a-5, Höhe vom Elternelement (z. B. zwei Textzeilen) */
 .klammer {
   display: block;
