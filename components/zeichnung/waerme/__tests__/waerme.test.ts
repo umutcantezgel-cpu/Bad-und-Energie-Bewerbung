@@ -7,7 +7,7 @@ import ThemaPage from '@/app/arbeiten-bei-uns/[thema]/page';
 import { Hero } from '@/components/home/Hero';
 import { HAUSSCHNITT_RAHMEN, LEITUNGEN, PFEILE } from '@/lib/zeichnung/szenen/hausschnitt';
 import { checkTheme } from '../../../../scripts/qa/check-contrast.mjs';
-import { FUSSBODEN_ROHRE, RAUM_BAUTEILE, RAUM_HEIZKOERPER, RAUMSCHNITT_RAHMEN } from '@/lib/zeichnung/szenen/raumschnitt';
+import { FUSSBODEN_ROHRE, RAUM_BAUTEILE, RAUM_HEIZKOERPER, RAUM_MASSE, RAUMSCHNITT_RAHMEN } from '@/lib/zeichnung/szenen/raumschnitt';
 import { RAUMSCHNITT_RAND, RAUMSCHNITT_SVG_FARBEN, raumschnittBildLage, raumschnittPfad, raumschnittSvg } from '@/lib/zeichnung/raumschnitt-svg';
 import { WAERMEFELDER, type WaermefeldId } from '@/lib/zeichnung/szenen/waermefeld';
 import { HausschnittKlein } from '../../technik/Hausschnitt';
@@ -171,6 +171,25 @@ describe('Wärmefeld an den Orten (E-031)', () => {
     expect(fb).toContain(`style="left:${p(-R.x / R.breite)};top:${p(-R.y / R.hoehe)};width:${p(420 / R.breite)};height:${p(250 / R.hoehe)}"`);
   });
 
+  it('Fußbodenaufbau (Prüfrunde 3 B3-4): schwimmender Estrich, an beiden Wänden ein Randdämmstreifen von 10 mm über Estrich und Dämmung', () => {
+    const rand = RAUM_MASSE.randstreifen;
+    expect(rand.mm).toBe(10);
+    expect(rand.geschaetzt).toBe('geschaetzt');
+    expect(rand.stelle).toMatch(/DIN 18560-2/);
+    expect(rand.stelle).toMatch(/DIN EN 1264-4/);
+    const r = rand.mm / 10;
+    const box = (d: string) => d.match(/^M(-?[\d.]+) (-?[\d.]+)H(-?[\d.]+)V(-?[\d.]+)H-?[\d.]+Z$/)!.slice(1).map(Number);
+    const [ex0, ey0, ex1, ey1] = box(RAUM_BAUTEILE.estrich);
+    const [dx0, dy0, dx1, dy1] = box(RAUM_BAUTEILE.daemmung);
+    // Estrich und Dämmung berühren keine Wand: sie enden am Streifen
+    expect([ex0, ex1, dx0, dx1]).toEqual([r, 420 - r, r, 420 - r]);
+    expect(RAUM_BAUTEILE.randstreifen.map(box)).toEqual([
+      [0, ey0, r, dy1],
+      [420 - r, ey0, 420, dy1],
+    ]);
+    expect(ey1).toBe(dy0);
+  });
+
   it('Raumschnitt-Datei: Wände, Fußbodenaufbau, Heizkörper bzw. Rohre aus den Daten, Linienarten und Rollen des Papiers', () => {
     const R = RAUMSCHNITT_RAHMEN;
     const m = RAUMSCHNITT_RAND;
@@ -184,6 +203,7 @@ describe('Wärmefeld an den Orten (E-031)', () => {
         [RAUM_BAUTEILE.decke, 'k sn'],
         [RAUM_BAUTEILE.rohdecke, 'k sn'],
         [RAUM_BAUTEILE.daemmung, 'f fl'],
+        ...RAUM_BAUTEILE.randstreifen.map((d) => [d, 'f fl']),
         [RAUM_BAUTEILE.estrich, 'k fl'],
       ]);
       expect(svg).not.toMatch(/Gradient|<filter|<image|<foreignObject|<text|href=|url\(/);

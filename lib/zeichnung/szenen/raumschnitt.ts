@@ -16,11 +16,15 @@ const e = (mm: number) => mm / 10;
 /** Rauminneres: lichte Breite 4,2 m und lichte Höhe 2,5 m wie im Hausschnitt. */
 export const RAUM_INNEN = Object.freeze({ x: 0, y: 0, breite: 420, hoehe: 250 });
 
-export const RAUM_MASSE: Readonly<Record<'wand' | 'decke' | 'estrich' | 'daemmung' | 'rohdecke' | 'wandabstand' | 'bautiefe', Mass>> = Object.freeze({
+export const RAUM_MASSE: Readonly<Record<'wand' | 'decke' | 'estrich' | 'daemmung' | 'randstreifen' | 'rohdecke' | 'wandabstand' | 'bautiefe', Mass>> = Object.freeze({
   wand: schaetzung(300, 'Wanddicke gewählt (Außen- und Innenwand gleich gezeichnet)'),
   decke: schaetzung(200, 'Geschossdecke wie im Hausschnitt (200 mm)'),
   estrich: schaetzung(65, 'Heizestrich nach DIN 18560-2: mindestens 45 mm über dem Rohr, mit Rohr Ø 16 mm rund 65 mm'),
   daemmung: schaetzung(50, 'Dämmschicht unter dem Estrich (Wärme- und Trittschall), gewählt'),
+  randstreifen: schaetzung(
+    10,
+    'Randdämmstreifen nach DIN 18560-2 und DIN EN 1264-4: trennt den schwimmenden Heizestrich von Wänden und allen aufgehenden Bauteilen (Bewegung mindestens 5 mm), üblich 8–10 mm, gewählt 10 mm',
+  ),
   rohdecke: schaetzung(200, 'Rohdecke bzw. Bodenplatte, angeschnitten'),
   wandabstand: schaetzung(50, 'Abstand des Heizkörpers zur Wand (Halterung), gewählt'),
   bautiefe: schaetzung(100, 'Bautiefe eines zweireihigen Flachheizkörpers (Typ 22), rund 100 mm'),
@@ -45,6 +49,7 @@ const WAND = e(RAUM_MASSE.wand.mm);
 const DECKE = e(RAUM_MASSE.decke.mm);
 const ESTRICH = e(RAUM_MASSE.estrich.mm);
 const DAEMMUNG = e(RAUM_MASSE.daemmung.mm);
+const RAND = e(RAUM_MASSE.randstreifen.mm);
 /** Von der Rohdecke zeigt der Schnitt nur einen Streifen (angeschnitten). */
 const ROHDECKE_SICHTBAR = 12;
 
@@ -60,12 +65,16 @@ const rechteck = (x0: number, y0: number, x1: number, y1: number) => `M${x0} ${y
 const unten = RAUMSCHNITT_RAHMEN.y + RAUMSCHNITT_RAHMEN.hoehe;
 const boden = RAUM_INNEN.hoehe;
 
-/** Schnittflächen und Fußbodenaufbau (Einheiten). */
+/**
+ * Schnittflächen und Fußbodenaufbau (Einheiten). Der Heizestrich schwimmt auf der Dämmung: An beiden Wänden steht ein
+ * Randdämmstreifen über die Höhe von Estrich und Dämmung (Prüfrunde 3 B3-4), Estrich und Dämmung enden an ihm.
+ */
 export const RAUM_BAUTEILE = Object.freeze({
   waende: [rechteck(-WAND, -DECKE, 0, unten), rechteck(RAUM_INNEN.breite, -DECKE, RAUM_INNEN.breite + WAND, unten)],
   decke: rechteck(0, -DECKE, RAUM_INNEN.breite, 0),
-  estrich: rechteck(0, boden, RAUM_INNEN.breite, boden + ESTRICH),
-  daemmung: rechteck(0, boden + ESTRICH, RAUM_INNEN.breite, boden + ESTRICH + DAEMMUNG),
+  estrich: rechteck(RAND, boden, RAUM_INNEN.breite - RAND, boden + ESTRICH),
+  daemmung: rechteck(RAND, boden + ESTRICH, RAUM_INNEN.breite - RAND, boden + ESTRICH + DAEMMUNG),
+  randstreifen: [rechteck(0, boden, RAND, boden + ESTRICH + DAEMMUNG), rechteck(RAUM_INNEN.breite - RAND, boden, RAUM_INNEN.breite, boden + ESTRICH + DAEMMUNG)],
   rohdecke: rechteck(0, boden + ESTRICH + DAEMMUNG, RAUM_INNEN.breite, unten),
 });
 

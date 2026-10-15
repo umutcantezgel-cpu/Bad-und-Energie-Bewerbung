@@ -60,7 +60,8 @@ const STIL = [
 ].join('');
 
 /**
- * SVG des Raums: Wände und Decke geschnitten, Fußbodenaufbau (Estrich, Dämmung, Rohdecke angeschnitten); mit
+ * SVG des Raums: Wände und Decke geschnitten, Fußbodenaufbau (Estrich, Dämmung, Randdämmstreifen, Rohdecke
+ * angeschnitten); mit
  * Heizkörper von der Seite (ohne Fläche, die Bänder darunter zeigen seine Temperatur; ohne Wärmefeld mit Fläche) oder
  * mit den Rohren der Fußbodenheizung im Estrich, Vorlauf und Rücklauf im Wechsel.
  */
@@ -73,6 +74,7 @@ export function raumschnittSvg(art: RaumschnittArt): string {
     `<path d="${RAUM_BAUTEILE.decke}" class="k sn"/>`,
     `<path d="${RAUM_BAUTEILE.rohdecke}" class="k sn"/>`,
     `<path d="${RAUM_BAUTEILE.daemmung}" class="f fl"/>`,
+    ...RAUM_BAUTEILE.randstreifen.map((d) => `<path d="${d}" class="f fl"/>`),
     `<path d="${RAUM_BAUTEILE.estrich}" class="k fl"/>`,
     ...(art === 'heizkoerper'
       ? [`<rect x="${hk.x}" y="${hk.y}" width="${hk.breite}" height="${hk.hoehe}" class="${WAERMEFELD_AN ? 'k' : 'k fl'}"/>`]
