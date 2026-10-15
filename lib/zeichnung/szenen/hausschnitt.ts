@@ -14,7 +14,8 @@
  *
  * Fließrichtung (K-003.2): Jeder Leitungsweg ist in Fließrichtung angelegt. Der Vorlauf beginnt an der Außeneinheit
  * (Wärmeerzeuger) und läuft zur Inneneinheit, von dort zum Heizkörper; ein Abzweig läuft zur Bewerbung (Startseite:
- * links aus dem Bild in den roten Knopf). Der Rücklauf kommt vom Verbraucher zurück zur Außeneinheit.
+ * links aus dem Bild in den roten Knopf). Der Rücklauf kommt vom Verbraucher zurück zur Außeneinheit. Auch die
+ * Leitungen zur Bewerbung liegen waagerecht nur unter der Frosttiefe (Prüfung E-029, Runde 3, KNOPF_LEITUNG).
  *
  * Die Anschlüsse sitzen hinten am Gerät (202 mm über der Aufstellfläche). Von vorn liegen die Leitungen dort hinter
  * Gehäuse und Sockel: bis unter die Geländeoberkante als verdeckte Linie (`verdeckt`), erst im Erdreich voll.
@@ -28,7 +29,11 @@ import { fliesspfeil, leitungsweg, MASSSTAB, r1, SCHRAFFUR, schraffurLinien, typ
 /** mm → Einheiten des Hausschnitts. */
 const e = (mm: number) => r1(mm / MASSSTAB.haus);
 
-export const HAUSSCHNITT_RAHMEN = Object.freeze({ breite: 800, hoehe: 680 });
+/**
+ * Rahmen bis 1,22 m unter Gelände (GOK + 122, die Unterkante der Frostschürze): Unter dem Kiesbett des Kondensats
+ * braucht der Vorlauf zur Bewerbung am Handy Platz (KNOPF_LEITUNG; Prüfung E-029, Runde 3).
+ */
+export const HAUSSCHNITT_RAHMEN = Object.freeze({ breite: 800, hoehe: 692 });
 /** Gelände und Erdreich laufen rechts über den Rahmen hinaus (breite Flächen am Desktop schneiden sie ab). */
 const RAND_RECHTS = 1100;
 
@@ -117,13 +122,44 @@ const ANSCHLUSS = {
 /**
  * Tiefe der Erdleitung unter der Frosttiefe (Achse 0,88 und 0,98 m; geschaetzt). Der Vorlauf kommt vom äußeren Stutzen
  * und biegt höher zum Haus ab, der Rücklauf vom inneren Stutzen läuft darunter: Die Bögen liegen ineinander, nichts
- * kreuzt sich. Nur die Leitungen zur Bewerbung (Startseite) kreuzen die Steigleitung des Rücklaufs; dort liegt der
- * Vorlauf zur Bewerbung vorn (Mantel), so läuft er sichtbar aus der eigenen Steigleitung über den Rücklauf. Sie liegen
- * höher (`vorlaufKnopf`, `ruecklaufKnopf`) und gehören nicht zur Anlage.
+ * kreuzt sich.
  */
-const ERD = { vorlauf: GOK + 88, ruecklauf: GOK + 98, vorlaufKnopf: GOK + 60, ruecklaufKnopf: GOK + 46 };
-/** Lage der Leitungen zur Bewerbung (Startseite): senkrecht links (mobil) bzw. waagerecht aus dem Bild (Desktop). */
-export const KNOPF_LEITUNG = Object.freeze({ vorlaufX: 28, ruecklaufX: 14, desktopY: ERD.vorlaufKnopf });
+const ERD = { vorlauf: GOK + 88, ruecklauf: GOK + 98 };
+
+/** Kiesbett am Ende des Kondensatrohrs (Höhe nicht bemaßt: geschaetzt 150 mm), unter der Frosttiefe. */
+export const KIESBETT_HOEHE = schaetzung(150, 'Höhe des Kiesbetts [4] in Bild 27 nicht bemaßt');
+/** Oberkante (900 mm unter Gelände, Bild 27) und Unterkante des Kiesbetts. */
+const KIESBETT = { oben: GOK + e(ABLEITUNG.tiefe.mm), unten: GOK + e(ABLEITUNG.tiefe.mm) + e(KIESBETT_HOEHE.mm) };
+
+/**
+ * Leitungen zur Bewerbung (Startseite) unter der Frosttiefe wie die Erdleitung (Prüfung E-029, Runde 3: vorher lagen
+ * sie 0,46 und 0,60 m tief). Sie zweigen mit T-Stücken direkt an den Anschlüssen hinten am Gerät ab (hinter dem Gehäuse,
+ * verdeckt), laufen links neben den Steigleitungen der Anlage senkrecht hinab und erst unter der Frosttiefe waagerecht
+ * nach links. Unter dem Gerät liegt ab 0,90 m das Kiesbett des Kondensats: Zwischen Frosttiefe und Kiesbett
+ * (0,80–0,90 m) ist Platz für genau eine Leitung (`band`), die zweite läuft unter dem Kiesbett (`unterKiesbett`).
+ * - Desktop und Teilen-Bild: nur der Vorlauf, im Band links aus dem Bild (`desktopY`).
+ * - Handy: der Rücklauf von der Bewerbung im Band (außen, x 14), der Vorlauf unter dem Kiesbett (innen, x 28). So kreuzt
+ *   sich keine Leitung, auch nicht mit der Anlage.
+ */
+const KNOPF_TIEFE = { band: r1((FROST + KIESBETT.oben) / 2), unterKiesbett: r1(KIESBETT.unten + 7) };
+/**
+ * Senkrechte Stücke neben den Steigleitungen: links vom Rücklauf-Stutzen und vom Rohrgraben der Erdleitung, rechts vom
+ * Kiesbett, 100 mm auseinander.
+ */
+const KNOPF_SENKRECHT = { vorlauf: r1(ANSCHLUSS.ruecklauf - 20), ruecklauf: r1(ANSCHLUSS.ruecklauf - 30) };
+/** Höhe der T-Stücke an den Anschlüssen, hinter dem Gehäuse; der Rücklauf darüber, damit sich nichts kreuzt. */
+const KNOPF_T = { vorlauf: r1(ANSCHLUSS.y + 11), ruecklauf: r1(ANSCHLUSS.y + 5) };
+
+/** Lage der Leitungen zur Bewerbung: senkrecht links (mobil) bzw. waagerecht aus dem Bild (Desktop), Tiefen wie oben. */
+export const KNOPF_LEITUNG = Object.freeze({
+  vorlaufX: 28,
+  ruecklaufX: 14,
+  desktopY: KNOPF_TIEFE.band,
+  mobilVorlaufY: KNOPF_TIEFE.unterKiesbett,
+  mobilRuecklaufY: KNOPF_TIEFE.band,
+  senkrecht: KNOPF_SENKRECHT,
+  t: KNOPF_T,
+});
 
 export interface Leitung {
   id: string;
@@ -134,15 +170,10 @@ export interface Leitung {
   /** Nur in einer Fassung: `knopf` (Startseite, Leitung zur Bewerbung), `mobil`/`desktop` (Lage des Knopfs). */
   nur?: 'knopf-mobil' | 'knopf-desktop' | 'knopf';
   /**
-   * Stück hinter Gehäuse und Sockel (vom Anschluss bis unter die Geländeoberkante): gezeichnet in der Linienart
-   * `verdeckt`, ohne Bewegung.
+   * Stück hinter Gehäuse und Sockel (vom Anschluss bis unter die Geländeoberkante bzw. bis unter das Gehäuse):
+   * gezeichnet in der Linienart `verdeckt`, ohne Bewegung.
    */
   verdeckt?: true;
-  /**
-   * Stück, an dem diese Leitung vor einer anderen liegt (Kreuzung ohne Verbindung): dort ein Mantel in der Fläche,
-   * damit die hintere Leitung aussetzt.
-   */
-  mantel?: string;
 }
 
 const weg = (id: string, medium: Medium, punkte: Punkt[], extra: Partial<Leitung> = {}): Leitung => ({
@@ -152,31 +183,6 @@ const weg = (id: string, medium: Medium, punkte: Punkt[], extra: Partial<Leitung
   d: leitungsweg(punkte, BOGEN),
   ...extra,
 });
-
-/**
- * Abzweig des Vorlaufs zur Bewerbung: ein T-Stück auf dem geraden Stück der Steigleitung, über ihrem Bogen zum Haus
- * (Prüfung E-029, Runde 2: nicht mehr im Bogen, den der Mantel der Kreuzung verdeckte).
- */
-const KNOPF_ABZWEIG = { x: ANSCHLUSS.vorlauf, y: ERD.vorlaufKnopf };
-
-/** Abstand der beiden Steigleitungen (Achsen, 90 mm): Grenze für die Länge des Mantels an der Kreuzung. */
-export const STEIG_ABSTAND = r1(ANSCHLUSS.vorlauf - ANSCHLUSS.ruecklauf);
-
-/**
- * Mantel an der Kreuzung (Prüfung E-029, Runde 2), in Einheiten statt non-scaling px (die am Handy 22 Einheiten breit
- * wurden und Abzweig und Vorlauf verdeckten): ein Stück entlang der vorderen Leitung (Vorlauf zur Bewerbung), `halb`
- * zu jeder Seite der Rücklauf-Steigleitung. Es deckt sie in ihrer ganzen Stärke ab und endet vor der Vorlauf-
- * Steigleitung (halb + halbe Rohrstärke ≤ Steigabstand). Quer zur vorderen Leitung reicht es `luft` über ihren Rand:
- * So weit setzt der Rücklauf aus.
- */
-export const MANTEL = Object.freeze({ halb: 4, luft: 4 });
-
-/** Breite (Strichstärke) des Mantels zur Rohrstärke einer Darstellung, in Einheiten. */
-export function mantelBreite(rohr: number): number {
-  return r1(rohr + 2 * MANTEL.luft);
-}
-
-const knopfMantel = `M${r1(ANSCHLUSS.ruecklauf - MANTEL.halb)} ${ERD.vorlaufKnopf}H${r1(ANSCHLUSS.ruecklauf + MANTEL.halb)}`;
 
 /** Steigleitungen in der Inneneinheit: der höher liegende Vorlauf innen, der Rücklauf außen herum. */
 const VL_IE_X = IE.x + 16;
@@ -235,25 +241,65 @@ export const LEITUNGEN: readonly Leitung[] = [
     ],
     { verdeckt: true },
   ),
-  // Abzweig zur Bewerbung: Vorlauf nach links aus dem Bild (Desktop) bzw. senkrecht nach unten (Handy). Er verlässt
-  // die Steigleitung mit einem T-Stück auf ihrem geraden Stück und läuft vor der Steigleitung des Rücklaufs (Mantel)
+  // Abzweig zur Bewerbung: T-Stück am Vorlauf-Anschluss hinter dem Gehäuse (verdeckt), über die Rücklauf-Steigleitung
+  // hinweg links neben die Steigleitungen …
+  weg(
+    'vorlauf-knopf-anschluss',
+    'vorlauf',
+    [
+      { x: ANSCHLUSS.vorlauf, y: KNOPF_T.vorlauf },
+      { x: KNOPF_SENKRECHT.vorlauf, y: KNOPF_T.vorlauf },
+      { x: KNOPF_SENKRECHT.vorlauf, y: AUFSTELLFLAECHE },
+    ],
+    { nur: 'knopf', verdeckt: true },
+  ),
+  // … unter dem Gehäuse senkrecht hinab und erst unter der Frosttiefe nach links: am Handy unter dem Kiesbett und links
+  // senkrecht nach unten aus dem Bild …
   weg(
     'vorlauf-knopf',
     'vorlauf',
-    [KNOPF_ABZWEIG, { x: KNOPF_LEITUNG.vorlaufX, y: ERD.vorlaufKnopf }, { x: KNOPF_LEITUNG.vorlaufX, y: HAUSSCHNITT_RAHMEN.hoehe }],
-    { nur: 'knopf-mobil', mantel: knopfMantel },
+    [
+      { x: KNOPF_SENKRECHT.vorlauf, y: AUFSTELLFLAECHE },
+      { x: KNOPF_SENKRECHT.vorlauf, y: KNOPF_TIEFE.unterKiesbett },
+      { x: KNOPF_LEITUNG.vorlaufX, y: KNOPF_TIEFE.unterKiesbett },
+      { x: KNOPF_LEITUNG.vorlaufX, y: HAUSSCHNITT_RAHMEN.hoehe },
+    ],
+    { nur: 'knopf-mobil' },
   ),
-  weg('vorlauf-knopf-desktop', 'vorlauf', [KNOPF_ABZWEIG, { x: 0, y: ERD.vorlaufKnopf }], { nur: 'knopf-desktop', mantel: knopfMantel }),
-  // Rücklauf von der Bewerbung (Handy): links herauf, im Rohrgraben in die Rücklauf-Steigleitung
+  // … am Desktop zwischen Frosttiefe und Kiesbett links aus dem Bild
+  weg(
+    'vorlauf-knopf-desktop',
+    'vorlauf',
+    [
+      { x: KNOPF_SENKRECHT.vorlauf, y: AUFSTELLFLAECHE },
+      { x: KNOPF_SENKRECHT.vorlauf, y: KNOPF_TIEFE.band },
+      { x: 0, y: KNOPF_TIEFE.band },
+    ],
+    { nur: 'knopf-desktop' },
+  ),
+  // Rücklauf von der Bewerbung (Handy): links herauf, zwischen Frosttiefe und Kiesbett nach rechts und neben den
+  // Steigleitungen hinauf unter das Gehäuse …
   weg(
     'ruecklauf-knopf',
     'ruecklauf',
     [
       { x: KNOPF_LEITUNG.ruecklaufX, y: HAUSSCHNITT_RAHMEN.hoehe },
-      { x: KNOPF_LEITUNG.ruecklaufX, y: ERD.ruecklaufKnopf },
-      { x: ANSCHLUSS.ruecklauf, y: ERD.ruecklaufKnopf },
+      { x: KNOPF_LEITUNG.ruecklaufX, y: KNOPF_TIEFE.band },
+      { x: KNOPF_SENKRECHT.ruecklauf, y: KNOPF_TIEFE.band },
+      { x: KNOPF_SENKRECHT.ruecklauf, y: AUFSTELLFLAECHE },
     ],
     { nur: 'knopf-mobil' },
+  ),
+  // … und hinter dem Gehäuse (verdeckt) mit einem T-Stück in den Rücklauf-Anschluss
+  weg(
+    'ruecklauf-knopf-anschluss',
+    'ruecklauf',
+    [
+      { x: KNOPF_SENKRECHT.ruecklauf, y: AUFSTELLFLAECHE },
+      { x: KNOPF_SENKRECHT.ruecklauf, y: KNOPF_T.ruecklauf },
+      { x: ANSCHLUSS.ruecklauf, y: KNOPF_T.ruecklauf },
+    ],
+    { nur: 'knopf-mobil', verdeckt: true },
   ),
 ];
 
@@ -271,7 +317,8 @@ export const PFEILE: readonly Pfeil[] = [
   pfeil('ruecklauf', { x: 238, y: ERD.ruecklauf }, { x: -1, y: 0 }),
   pfeil('vorlauf', { x: 500, y: HK.y + 6 }, { x: 1, y: 0 }),
   pfeil('ruecklauf', { x: 456, y: HK.y + HK.hoehe - 6 }, { x: -1, y: 0 }),
-  pfeil('vorlauf', { x: 80, y: ERD.vorlaufKnopf }, { x: -1, y: 0 }, 'knopf'),
+  pfeil('vorlauf', { x: 80, y: KNOPF_TIEFE.band }, { x: -1, y: 0 }, 'knopf-desktop'),
+  pfeil('vorlauf', { x: 80, y: KNOPF_TIEFE.unterKiesbett }, { x: -1, y: 0 }, 'knopf-mobil'),
 ];
 
 /**
@@ -295,9 +342,6 @@ export const SCHOTTER_LAGE = Object.freeze({
   hoehe: e(ABLEITUNG.schotter.mm),
 });
 
-/** Kiesbett am Ende des Kondensatrohrs (Höhe nicht bemaßt: geschaetzt 150 mm), unter der Frosttiefe. */
-export const KIESBETT_HOEHE = schaetzung(150, 'Höhe des Kiesbetts [4] in Bild 27 nicht bemaßt');
-
 /**
  * Kondensatweg: Ablaufstutzen unter dem Gerät (330 mm vom linken Rand, Geräte-Modul), darunter das Kondensatrohr
  * Ø 100 mm senkrecht durch die Schotterschicht bis 900 mm unter Gelände ins Kiesbett (Bild 27), also unter der
@@ -309,7 +353,7 @@ export const KONDENSAT_LAGE = Object.freeze({
   /** Oberkante des Rohrs: 15 mm unter dem Ende des Stutzens. */
   oben: r1(AUFSTELLFLAECHE - e(G.konsolen.hoehe.mm) + e(G.kondensat.laenge.mm) + 1.5),
   /** Oberkante des Kiesbetts: 900 mm unter Gelände. */
-  kiesbett: GOK + e(ABLEITUNG.tiefe.mm),
+  kiesbett: KIESBETT.oben,
   kiesbettHoehe: e(KIESBETT_HOEHE.mm),
   kiesbettBreite: 40,
 });

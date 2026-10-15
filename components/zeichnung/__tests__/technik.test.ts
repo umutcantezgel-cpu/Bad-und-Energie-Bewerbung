@@ -145,20 +145,23 @@ describe('Außengerät: maßstäblich aus dem Geräte-Modul (K-010)', () => {
     // Ohne Leitungen zur Bewerbung und ohne Bewegung
     expect(m).not.toMatch(/data-weg="[^"]*knopf/);
     expect(m).not.toContain('data-motion');
-    // Gründung und Kondensatweg (Prüfung E-029, Runde 2): Schotter, Kondensatrohr ins Kiesbett, kein Mantel ohne Knopf
+    // Gründung und Kondensatweg (Prüfung E-029, Runde 2): Schotter, Kondensatrohr ins Kiesbett
     for (const teil of ['data-schotter=""', 'data-kondensat=""', 'data-kiesbett=""']) expect(m).toContain(teil);
-    expect(m).not.toContain('data-mantel');
   });
 
-  it('Startseite: Mantel nur an der Kreuzung der Leitung zur Bewerbung, in Einheiten und in der Fassung seiner Leitung', () => {
+  it('Startseite: die verdeckten T-Stücke der Leitungen zur Bewerbung nur in der Fassung ihrer Leitung, kein Mantel mehr', () => {
     const m = html(createElement(Hero, {}));
-    const maentel = [...m.matchAll(/<path d="([^"]+)" class="([^"]*)" data-mantel=""/g)];
-    expect(maentel).toHaveLength(2);
-    for (const [, d, klasse] of maentel) {
-      expect(d).toMatch(/^M[\d.]+ [\d.]+H[\d.]+$/);
-      // Klasse der Linienart mantel plus die Fassung (mobil bzw. Desktop) wie die Leitung, nie non-scaling
-      expect(klasse).toMatch(/_mantel_/);
-      expect(klasse).toMatch(/_nur(?:Mobil|Desktop)_/);
+    // Keine Kreuzung mehr (Prüfung E-029, Runde 3): also auch keine Fläche, die eine hintere Leitung aussetzen lässt
+    expect(m).not.toContain('data-mantel');
+    const verdeckt = HAUS_LEITUNGEN.filter((l) => l.verdeckt && l.nur);
+    expect(verdeckt.map((l) => l.id).sort()).toEqual(['ruecklauf-knopf-anschluss', 'vorlauf-knopf-anschluss']);
+    for (const l of verdeckt) {
+      const tag = m.match(new RegExp(`<path [^>]*data-weg="${l.id}"[^>]*>`))![0];
+      expect(tag, l.id).toContain('data-verdeckt=""');
+      expect(tag, l.id).toMatch(/class="[^"]*_verdeckt_/);
+      // Der Rücklauf von der Bewerbung gibt es nur am Handy; das T-Stück des Vorlaufs gehört zu beiden Fassungen
+      if (l.nur === 'knopf-mobil') expect(tag, l.id).toMatch(/class="[^"]*_nurMobil_/);
+      else expect(tag, l.id).not.toMatch(/_nur(?:Mobil|Desktop)_/);
     }
   });
 });
@@ -416,8 +419,9 @@ describe('Linien und Farben (K-010)', () => {
   ];
 
   it('stumpfe Enden: in den Zeichnungen nie stroke-linecap round; rund nur das Bedienzeichen des Knopfs', () => {
-    // Linienarten, Strichmuster der Bewegung und der Mantel an Kreuzungen (in Einheiten, eigene Regel): alle stumpf
-    expect([...technik.matchAll(/stroke-linecap:\s*([a-z]+)/g)].map((m) => m[1])).toEqual(['butt', 'butt', 'butt']);
+    // Linienarten und Strichmuster der Bewegung: alle stumpf (den Mantel an Kreuzungen gibt es seit Runde 3 nicht mehr)
+    expect([...technik.matchAll(/stroke-linecap:\s*([a-z]+)/g)].map((m) => m[1])).toEqual(['butt', 'butt']);
+    expect(technik).not.toMatch(/\.mantel\b|--mantel-e/);
     const rund = [...dauer.matchAll(/([^{}]+)\{[^}]*stroke-linecap:\s*round/g)].map((m) => m[1].trim());
     expect(rund).toEqual(['.zeichen']);
     for (const m of alle) {
@@ -566,7 +570,7 @@ describe('Fließrichtung in den gezeichneten Schemata (K-003.2)', () => {
       expect(/class="[^"]*_leitung_/.test(tag), l.id).toBe(!l.verdeckt);
     }
     // Ohne die Leitungen zur Bewerbung kreuzt sich nichts, also auch kein Mantel
-    for (const l of ohneKnopf.filter((x) => x.mantel)) expect(m).not.toContain(`<path d="${l.mantel}"`);
+    expect(m).not.toContain('data-mantel');
   });
 });
 

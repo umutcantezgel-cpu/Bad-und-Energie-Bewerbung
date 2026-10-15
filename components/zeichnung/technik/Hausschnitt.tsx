@@ -38,21 +38,21 @@ export interface HausschnittInhaltProps {
   /** Bewegungskennung der Fließpfeile (Auftakt). */
   pfeilMotion?: MotionId;
   /**
-   * Zusätzliche Klasse je Mantel an der Kreuzung (nur mit `knopf`), wie die Leitung, zu der er gehört (Startseite: nur
-   * in der Fassung ihrer Leitung sichtbar). Die Breite in Einheiten setzt --mantel-e (einstieg.module.css).
+   * Zusätzliche Klasse je verdecktem Stück (nur mit `knopf`): Die T-Stücke der Leitungen zur Bewerbung hinter dem
+   * Gehäuse gibt es wie ihre Leitungen nur in einer Fassung (Startseite: mobil bzw. Desktop).
    */
-  mantelKlasse?: (leitung: Leitung) => string | undefined;
+  fassungKlasse?: (leitung: Leitung) => string | undefined;
   /** Schraffur des Erdreichs mit doppeltem Abstand (kleine Einsätze). */
   grob?: boolean;
 }
 
 /**
  * Inhalt des Hausschnitts (lib/zeichnung/szenen/hausschnitt.ts) in Einheiten von 10 mm, als Gruppe für eine Zeichnung
- * mit viewBox 0 0 800 680: Erdreich geschnitten (45°-Schraffur), Rohrgraben, Schotter und Kiesbett (Kreuzschraffur),
+ * mit viewBox 0 0 800 692: Erdreich geschnitten (45°-Schraffur), Rohrgraben, Schotter und Kiesbett (Kreuzschraffur),
  * Haus im Schnitt (Wände, Decke, Bodenplatte, Dach als Schnittflächen), Sockel, Außeneinheit (verschachtelte Zeichnung
  * mit viewBox in mm, 110 × 80 Einheiten), Kondensatrohr, Inneneinheit als Symbol, Flachheizkörper, Leitungen in
  * Fließrichtung mit festen Pfeilen. Die Stücke hinter Gehäuse und Sockel (vom Anschluss hinten am Gerät bis unter den
- * Sockel) stehen als verdeckte Linie.
+ * Sockel, mit `knopf` auch die T-Stücke der Leitungen zur Bewerbung) stehen als verdeckte Linie.
  */
 export function HausschnittInhalt({
   knopf = false,
@@ -61,7 +61,7 @@ export function HausschnittInhalt({
   leitungMotion,
   pfeilKlasse,
   pfeilMotion,
-  mantelKlasse,
+  fassungKlasse,
   grob = false,
 }: HausschnittInhaltProps) {
   const leitungen = LEITUNGEN.filter((l) => knopf || !l.nur);
@@ -120,27 +120,31 @@ export function HausschnittInhalt({
       {leitungen
         .filter((l) => l.verdeckt)
         .map((l) => (
-          <path key={l.id} d={l.d} className={cn(t.verdeckt, LEITUNG[l.medium])} data-medium={l.medium} data-weg={l.id} data-verdeckt="" />
+          <path
+            key={l.id}
+            d={l.d}
+            className={cn(t.verdeckt, LEITUNG[l.medium], knopf ? fassungKlasse?.(l) : undefined)}
+            data-medium={l.medium}
+            data-weg={l.id}
+            data-verdeckt=""
+          />
         ))}
-      {/* Leitungen in Fließrichtung; an einer Kreuzung liegt die vordere mit einem Mantel in der Fläche darüber */}
+      {/* Leitungen in Fließrichtung (keine Kreuzung, auch nicht mit den Leitungen zur Bewerbung) */}
       {leitungen
         .filter((l) => !l.verdeckt)
-        .sort((a, b) => Number(Boolean(a.mantel)) - Number(Boolean(b.mantel)))
         .map((l) => {
-        const motion = leitungMotion?.(l);
-        return (
-          <g key={l.id}>
-            {knopf && l.mantel ? <path d={l.mantel} className={cn(t.mantel, mantelKlasse?.(l))} data-mantel="" /> : null}
+          const motion = leitungMotion?.(l);
+          return (
             <path
+              key={l.id}
               d={l.d}
               className={cn(leitungKlasse?.(l) ?? t.leitung, LEITUNG[l.medium])}
               data-medium={l.medium}
               data-weg={l.id}
               {...(motion ? { 'data-motion': motion, pathLength: 1 } : {})}
             />
-          </g>
-        );
-      })}
+          );
+        })}
       <g {...(pfeilMotion ? { 'data-motion': pfeilMotion } : {})}>
         {pfeile.map((p) => (
           <path key={p.d} d={p.d} className={cn(PFEIL[p.medium], pfeilKlasse?.(p))} />

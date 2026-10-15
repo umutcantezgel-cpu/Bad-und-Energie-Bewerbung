@@ -7,7 +7,7 @@
  * Markup (font-display, font-mass, text-etikett, text-title-3), damit der Guard sie sieht. Keine Schleife in dieser
  * Datei: Der Rotor der Einzelheit dreht über components/zeichnung/bewegung/dauer.module.css.
  *
- * Szene: 800 × 680 Einheiten; --lage ist ihre Breite in px, --e = px je Einheit. Mobil füllt sie die Breite (der
+ * Szene: 800 × 692 Einheiten; --lage ist ihre Breite in px, --e = px je Einheit. Mobil füllt sie die Breite (der
  * Himmel wird auf flachen Handys oben angeschnitten, damit der Knopf im ersten Bild bleibt); am Desktop steht sie unten
  * in der Navy-Fläche, über ihr die Maße. Die Rohre der Szene zeichnen sich beim Laden (pathLength 1); darum ohne
  * non-scaling-stroke und mit einer Stärke in Einheiten (--rohr-e), die je Breite rund 3 px ergibt (--m-leitung).
@@ -31,9 +31,6 @@
   --e: calc(var(--lage) / 800);
   --rohr-e: 6.5;
   --leitung: calc(var(--rohr-e) * var(--e));
-  /* Mantel an der Kreuzung (technik.module.css .mantel): Rohr plus 4 Einheiten Luft je Seite, dort setzt der Rücklauf
-     hinter dem Vorlauf zur Bewerbung aus (mantelBreite und MANTEL.luft, lib/zeichnung/szenen/hausschnitt.ts) */
-  --mantel-e: calc(var(--rohr-e) + 2 * 4);
   /* Leitungspaar links: Rücklauf außen (x 14), Vorlauf innen (x 28); der Text hält Abstand */
   --rl-x: calc(14 * var(--e));
   --vl-x: calc(28 * var(--e));
@@ -108,8 +105,10 @@
 .rahmen {
   grid-row: 2;
   position: relative;
-  /* Ganze Szene, auf flachen Handys oben angeschnitten (mindestens 400 Einheiten: Haus, Gerät, Erdreich) */
-  height: min(calc(680 * var(--e)), max(calc(400 * var(--e)), calc(100svh - var(--m-kopf) - 15.65rem - 31.5vw)));
+  /* Ganze Szene, auf flachen Handys oben angeschnitten (mindestens 400 Einheiten: Haus, Gerät, Erdreich). Die 12
+     Einheiten unter dem Kiesbett (Leitung zur Bewerbung, Prüfung E-029, Runde 3) kommen unten dazu, oben bleibt der
+     Anschnitt wie bisher: „35 km“ im Giebel bleibt so sichtbar wie vorher */
+  height: min(calc(692 * var(--e)), max(calc(400 * var(--e)), calc(100svh - var(--m-kopf) - 15.65rem - 31.5vw + 12 * var(--e))));
   overflow: clip;
   background-color: var(--surface);
 }
@@ -119,7 +118,7 @@
   left: 0;
   bottom: 0;
   width: var(--lage);
-  height: calc(680 * var(--e));
+  height: calc(692 * var(--e));
 }
 
 .szene {
@@ -575,12 +574,12 @@
 /* ═══ Tablett (600–1023): dieselbe Komposition, Titel eine Stufe größer, die Szene höchstens so hoch wie Platz ist ═══ */
 @media (min-width: 37.5em) {
   .einstieg {
-    --lage: min(100cqw, calc((100svh - var(--m-kopf) - 17rem - 22vw) * 1.1765));
+    --lage: min(100cqw, calc((100svh - var(--m-kopf) - 17rem - 22vw) * 1.1561));
     --rohr-e: 4;
   }
 
   .rahmen {
-    height: calc(680 * var(--e));
+    height: calc(692 * var(--e));
   }
 
   .titelHaupt {
@@ -613,7 +612,7 @@
   .einstieg {
     --held-h: max(calc(100svh - var(--m-kopf)), 34rem);
     /* Die Szene füllt die Breite der Fläche, höchstens so hoch, dass oben die Maße Platz haben */
-    --lage: min(50cqw, calc((var(--held-h) - 9rem) * 1.1765));
+    --lage: min(50cqw, calc((var(--held-h) - 9rem) * 1.1561));
     --rohr-e: 4;
     /* Zeilen: Titelblock · Handlung (beide neben der Fläche, zusammen mindestens --held-h) · Bildunterschrift */
     grid-template-columns: var(--rand) minmax(0, 1fr) var(--a-6) 50%;
@@ -740,7 +739,7 @@
     /* Nie unter 12.5rem: Die Maßzahlen (78 Einheiten in 1258) messen gezeichnet sonst unter 12 px (bei 64em waren es
        160 px Breite und 9,9 px Schrift; Prüfung E-029, Befund 7) */
     width: max(calc(250 * var(--e)), 12.5rem);
-    margin: 0 0 calc(412 * var(--e)) calc(16 * var(--e));
+    margin: 0 0 calc(424 * var(--e)) calc(16 * var(--e));
     padding: 0;
     background-color: transparent;
   }
@@ -800,7 +799,7 @@
     line-height: 1.6;
   }
 
-  /* Vorlauf aus der Anlage zum Knopf (Szene y 640 = 40 Einheiten über der Falz der Fläche) */
+  /* Vorlauf aus der Anlage zum Knopf (Szene y 655 zwischen Frosttiefe und Kiesbett = 37 Einheiten über der Falz) */
   .rohrD {
     display: block;
     position: absolute;
@@ -808,7 +807,7 @@
     left: calc(anchor(--einstieg-knopf right) - var(--a-2));
     right: anchor(--einstieg-flaeche left);
     top: calc(anchor(--einstieg-knopf center) - 3px);
-    bottom: calc(anchor(--einstieg-flaeche bottom) + 50 * var(--e) - 3px);
+    bottom: calc(anchor(--einstieg-flaeche bottom) + 37 * var(--e) - 3px);
     pointer-events: none;
   }
 

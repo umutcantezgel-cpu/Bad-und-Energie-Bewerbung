@@ -21,7 +21,6 @@ import {
   KNOPF_LEITUNG,
   LEITUNGEN,
   PFEILE,
-  mantelBreite,
   type Leitung,
   type Pfeil,
 } from '@/lib/zeichnung/szenen/hausschnitt';
@@ -29,27 +28,27 @@ import { SYMBOLE } from '@/lib/zeichnung/symbole';
 
 /**
  * Rahmen des Hausschnitts (Einheiten) und die Höhe, auf der der Vorlauf zum Knopf links aus dem Schnitt läuft (wie am
- * Desktop: `KNOPF_LEITUNG.desktopY`, das T-Stück über dem Bogen der Steigleitung).
+ * Desktop: `KNOPF_LEITUNG.desktopY`, zwischen Frosttiefe und Kiesbett).
  */
 export const OG_HAUS_RAHMEN = HAUSSCHNITT_RAHMEN;
 export const OG_ERDLEITUNG_Y = KNOPF_LEITUNG.desktopY;
 
-/** Mantel an der Kreuzung zur Rohrstärke des Bilds (Einheiten), höchstens bis an die Nachbarleitung. */
-export { mantelBreite as ogMantelBreite };
-
 /** Schnittflächen, Erdreich und Gelände wie im Einstieg. */
 export const OG_BAUTEILE = BAUTEILE;
 
+/** Fassung des Teilen-Bilds: die des Desktops (`knopf-desktop`) und die gemeinsamen Stücke (`knopf`). */
+const imBild = (nur: Leitung['nur']) => nur === 'knopf' || nur === 'knopf-desktop';
+
 /**
  * Leitungen und feste Fließpfeile des Teilen-Bilds: der Hausschnitt ohne die Leitungen zur Bewerbung; mit Knopf dazu
- * der Abzweig, der links aus dem Bild zum Knopf läuft (die Fassung des Desktops, `knopf-desktop`).
+ * der Abzweig (T-Stück hinter dem Gehäuse, verdeckt), der links aus dem Bild zum Knopf läuft (die Fassung des Desktops).
  */
 export function ogLeitungen(knopf: boolean): readonly Leitung[] {
-  return LEITUNGEN.filter((l) => !l.nur || (knopf && l.nur === 'knopf-desktop'));
+  return LEITUNGEN.filter((l) => !l.nur || (knopf && imBild(l.nur)));
 }
 
 export function ogPfeile(knopf: boolean): readonly Pfeil[] {
-  return PFEILE.filter((p) => !p.nur || (knopf && p.nur === 'knopf'));
+  return PFEILE.filter((p) => !p.nur || (knopf && imBild(p.nur)));
 }
 
 /** Außeneinheit von vorn in der einfachen Detailstufe (mm), eingesetzt mit 1 : 10 an ihrer Lage im Schnitt. */

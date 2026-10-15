@@ -204,9 +204,9 @@ describe('Einstieg: Quellregeln', () => {
     const rohr = css.match(/\.rohrD \{[^}]*display: block;[^}]*\}/)![0];
     expect(rohr).toContain('left: calc(anchor(--einstieg-knopf right)');
     expect(rohr).toContain('top: calc(anchor(--einstieg-knopf center)');
-    // Leitung zur Bewerbung im Hausschnitt: y 630 von 680 = 50 Einheiten über der Falz der Fläche (T-Stück über dem
-    // Bogen der Steigleitung, Prüfung E-029, Runde 2)
-    expect(HAUSSCHNITT_RAHMEN.hoehe - KNOPF_LEITUNG.desktopY).toBe(50);
+    // Leitung zur Bewerbung im Hausschnitt: y 655 von 692 = 37 Einheiten über der Falz der Fläche (zwischen Frosttiefe
+    // und Kiesbett, Prüfung E-029, Runde 3)
+    expect(HAUSSCHNITT_RAHMEN.hoehe - KNOPF_LEITUNG.desktopY).toBe(37);
     expect(rohr).toContain(`bottom: calc(anchor(--einstieg-flaeche bottom) + ${HAUSSCHNITT_RAHMEN.hoehe - KNOPF_LEITUNG.desktopY} * var(--e)`);
     expect(css).toMatch(/@supports not \(anchor-name: --a\) \{\s*\.rohrD \{\s*display: none !important;/);
     // Die Pfade laufen in Fließrichtung: der erste beginnt am Rand der Fläche (x = 100 %), der letzte endet im Knopf (x 0)

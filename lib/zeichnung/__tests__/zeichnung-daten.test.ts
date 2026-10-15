@@ -26,13 +26,10 @@ import {
   KNOPF_LEITUNG,
   KONDENSAT_LAGE,
   LEITUNGEN,
-  MANTEL,
   PFEILE,
   SCHOTTER_LAGE,
   SOCKEL_EINBINDUNG,
   SOCKEL_LAGE,
-  STEIG_ABSTAND,
-  mantelBreite,
 } from '../szenen/hausschnitt';
 import { PFLICHT_SYMBOLE, SYMBOLE, anschlussPunkt } from '../symbole';
 
@@ -346,7 +343,9 @@ describe('Hausschnitt (1 Einheit = 10 mm)', () => {
   it('das eingesetzte Gerät misst 110 × 80 Einheiten, der Flachheizkörper 100 × 60 (600 × 1.000 mm)', () => {
     expect([GERAET_LAGE.breite, GERAET_LAGE.hoehe]).toEqual([110, 80]);
     expect([HEIZKOERPER_LAGE.breite, HEIZKOERPER_LAGE.hoehe]).toEqual([HEIZKOERPER_MM.baulaenge / 10, HEIZKOERPER_MM.bauhoehe / 10]);
-    expect(HAUSSCHNITT_RAHMEN).toEqual({ breite: 800, hoehe: 680 });
+    // Bis 1,22 m unter Gelände (Unterkante der Frostschürze): Platz für den Vorlauf zur Bewerbung unter dem Kiesbett
+    expect(HAUSSCHNITT_RAHMEN).toEqual({ breite: 800, hoehe: 692 });
+    expect(HAUSSCHNITT_RAHMEN.hoehe).toBe(HAUS_LAGE.fundamentUnten);
     expect(BAUTEILE.dach).toMatch(/^M/);
   });
 
@@ -361,7 +360,7 @@ describe('Hausschnitt (1 Einheit = 10 mm)', () => {
     expect(HAUSSCHNITT_ERDLEITUNG.ruecklauf).toBeGreaterThan(HAUSSCHNITT_ERDLEITUNG.vorlauf);
   });
 
-  it('Kreuzungen: ohne die Leitungen zur Bewerbung keine; mit ihnen liegt an jeder Kreuzung eine Leitung mit Mantel vorn', () => {
+  it('Kreuzungen: in keiner Fassung kreuzen sich sichtbare Leitungen, auch nicht die Leitungen zur Bewerbung (Runde 3)', () => {
     type Stueck = { id: string; a: { x: number; y: number }; b: { x: number; y: number } };
     const stuecke = (ls: readonly (typeof LEITUNGEN)[number][]): Stueck[] =>
       ls.flatMap((l) => l.punkte.slice(1).map((b, i) => ({ id: l.id, a: l.punkte[i], b })));
@@ -385,23 +384,23 @@ describe('Hausschnitt (1 Einheit = 10 mm)', () => {
       return out;
     };
     const sichtbar = LEITUNGEN.filter((l) => !l.verdeckt);
-    // Kleiner Hausschnitt und Teilen-Bild ohne Knopf: nichts kreuzt sich
+    // Gegenprobe der Prüfung: die Lage der Leitungen zur Bewerbung aus Runde 2 (0,60 m, T-Stück auf der
+    // Vorlauf-Steigleitung, über die Rücklauf-Steigleitung nach links) fiele als Kreuzung auf
+    const runde2 = { id: 'runde-2', medium: 'vorlauf' as const, d: '', punkte: [{ x: HAUSSCHNITT_ANSCHLUSS.vorlauf, y: HAUSSCHNITT_GOK + 60 }, { x: 0, y: HAUSSCHNITT_GOK + 60 }] };
+    expect(kreuzungen([...sichtbar.filter((l) => !l.nur), runde2]).map((k) => k.ids)).toEqual([['ruecklauf-erde', 'runde-2']]);
+    // Kleiner Hausschnitt und Teilen-Bild ohne Knopf, Startseite je Fassung (mobil, Desktop), Teilen-Bild mit Knopf:
+    // nichts kreuzt sich, darum braucht keine Leitung einen Mantel, der eine hintere aussetzen ließe
     expect(kreuzungen(sichtbar.filter((l) => !l.nur))).toEqual([]);
-    // Startseite: je Fassung (mobil, Desktop) kreuzt der Vorlauf zur Bewerbung die Steigleitung des Rücklaufs
     for (const fassung of ['knopf-mobil', 'knopf-desktop'] as const) {
-      const k = kreuzungen(sichtbar.filter((l) => !l.nur || l.nur === fassung || l.nur === 'knopf'));
-      expect(k.length, fassung).toBeGreaterThan(0);
-      for (const { ids, q } of k) {
-        const mitMantel = ids.map((id) => LEITUNGEN.find((l) => l.id === id)!).filter((l) => l.mantel);
-        expect(mitMantel.length, `${fassung} ${ids.join('/')}`).toBe(1);
-        // Vorn liegt der Vorlauf zur Bewerbung (er läuft sichtbar aus seiner Steigleitung); der Mantel liegt auf ihm,
-        // waagerecht durch den Kreuzungspunkt
-        expect(mitMantel[0].nur, ids.join('/')).toBe(fassung);
-        const m = mitMantel[0].mantel!.match(/^M(-?[\d.]+) (-?[\d.]+)H(-?[\d.]+)$/)!;
-        expect(Number(m[2]), ids.join('/')).toBe(q.y);
-        expect(q.x, ids.join('/')).toBeGreaterThan(Number(m[1]));
-        expect(q.x, ids.join('/')).toBeLessThan(Number(m[3]));
-      }
+      const ls = sichtbar.filter((l) => !l.nur || l.nur === fassung || l.nur === 'knopf');
+      expect(ls.some((l) => l.nur === fassung), fassung).toBe(true);
+      expect(kreuzungen(ls), fassung).toEqual([]);
+    }
+    // Auch die verdeckten Stücke einer Fassung kreuzen keine sichtbare Leitung
+    for (const fassung of ['knopf-mobil', 'knopf-desktop'] as const) {
+      const ls = LEITUNGEN.filter((l) => !l.nur || l.nur === fassung || l.nur === 'knopf');
+      const k = kreuzungen(ls).filter(({ ids }) => ids.some((id) => !LEITUNGEN.find((l) => l.id === id)!.verdeckt));
+      expect(k, fassung).toEqual([]);
     }
   });
 
@@ -432,14 +431,29 @@ describe('Hausschnitt (1 Einheit = 10 mm)', () => {
         for (const r of [...SOCKEL_LAGE, geraet]) expect(schneidet(l.punkte[i - 1], l.punkte[i], r), `${l.id} Stück ${i}`).toBe(false);
       }
     }
-    // Die verdeckten Stücke führen vom Anschluss senkrecht bis unter den Sockel, je eins für Vor- und Rücklauf
-    const verdeckt = LEITUNGEN.filter((x) => x.verdeckt);
+    // Die verdeckten Stücke der Anlage führen vom Anschluss senkrecht bis unter den Sockel, je eins für Vor- und Rücklauf
+    const verdeckt = LEITUNGEN.filter((x) => x.verdeckt && !x.nur);
     expect(verdeckt.map((l) => l.id).sort()).toEqual(['ruecklauf-anschluss', 'vorlauf-anschluss']);
     for (const l of verdeckt) {
       const ys = l.punkte.map((q) => q.y).sort((a, b) => a - b);
       expect(ys, l.id).toEqual([HAUSSCHNITT_ANSCHLUSS.y, sockelUnten]);
       expect(new Set(l.punkte.map((q) => q.x)).size, l.id).toBe(1);
-      expect(l.nur, l.id).toBeUndefined();
+    }
+    // Die T-Stücke der Leitungen zur Bewerbung liegen ganz hinter dem Gehäuse (über der Aufstellfläche, zwischen seinen
+    // Seiten) und sitzen auf dem geraden, verdeckten Stück der Steigleitung ihres Mediums, nie an seinem Ende
+    const knopfVerdeckt = LEITUNGEN.filter((x) => x.verdeckt && x.nur);
+    expect(knopfVerdeckt.map((l) => l.id).sort()).toEqual(['ruecklauf-knopf-anschluss', 'vorlauf-knopf-anschluss']);
+    for (const l of knopfVerdeckt) {
+      for (const q of l.punkte) {
+        expect(q.x, l.id).toBeGreaterThan(geraet.x);
+        expect(q.x, l.id).toBeLessThan(geraet.x + geraet.breite);
+        expect(q.y, l.id).toBeGreaterThan(HAUSSCHNITT_ANSCHLUSS.y);
+        expect(q.y, l.id).toBeLessThanOrEqual(GERAET_LAGE.boden);
+      }
+      const t = l.medium === 'vorlauf' ? l.punkte[0] : l.punkte.at(-1)!;
+      expect(t.x, l.id).toBe(l.medium === 'vorlauf' ? HAUSSCHNITT_ANSCHLUSS.vorlauf : HAUSSCHNITT_ANSCHLUSS.ruecklauf);
+      expect(t.y, l.id).toBeGreaterThan(HAUSSCHNITT_ANSCHLUSS.y);
+      expect(t.y, l.id).toBeLessThan(sockelUnten);
     }
   });
 
@@ -474,8 +488,10 @@ describe('Hausschnitt (1 Einheit = 10 mm)', () => {
       expect(anGeraet(ende) || aufWeg(ende, 'ruecklauf', l.id) || ende.x === 345 + 56, l.id).toBe(true);
       expect(endpunkte(l.d).at(-1), l.id).toEqual(ende);
     }
-    // Der Vorlauf zur Bewerbung verlässt das Bild (links bzw. unten), er beginnt nie dort
-    const knopf = LEITUNGEN.filter((l) => l.nur?.startsWith('knopf') && l.medium === 'vorlauf');
+    // Der Vorlauf zur Bewerbung verlässt das Bild (links bzw. unten), er beginnt nie dort; das verdeckte T-Stück am
+    // Anschluss ist sein Anfang
+    const knopf = LEITUNGEN.filter((l) => l.nur?.startsWith('knopf') && l.medium === 'vorlauf' && !l.verdeckt);
+    expect(knopf.map((l) => l.id).sort()).toEqual(['vorlauf-knopf', 'vorlauf-knopf-desktop']);
     for (const l of knopf) {
       const ende = l.punkte.at(-1)!;
       expect(ende.x === 0 || ende.y === HAUSSCHNITT_RAHMEN.hoehe, l.id).toBe(true);
@@ -495,48 +511,53 @@ describe('Hausschnitt: Kreuzung, Frosttiefe, Gründung und Kondensat (Prüfung E
   const panelX = Number(ogQuelle.match(/const PANEL_X = (\d+);/)![1]);
   const ogRohr = TOKENS.linien.leitung / ((1200 - panelX) / HAUSSCHNITT_RAHMEN.breite);
 
-  it('Mantel in Einheiten: deckt den Rücklauf ganz, endet vor der Vorlauf-Steigleitung und trifft keine andere Leitung', () => {
+  it('Leitungen zur Bewerbung (Runde 3): neben den Steigleitungen hinab, waagerecht nur über bzw. unter dem Kiesbett', () => {
     expect(rohre.length).toBeGreaterThanOrEqual(4);
-    // Die Startseite rechnet die Breite wie mantelBreite (Rohr + 2 × Luft); das Teilen-Bild ruft mantelBreite selbst auf
-    expect(einstiegCss).toContain(`--mantel-e: calc(var(--rohr-e) + 2 * ${MANTEL.luft});`);
-    expect(readFileSync(path.join(ROOT, 'components/zeichnung/technik/technik.module.css'), 'utf8')).toMatch(/\.mantel \{[^}]*stroke-width: calc\(var\(--mantel-e, [\d.]+\) \* 1px\);/);
-    expect(ogQuelle).toContain('strokeWidth={ogMantelBreite(vb(LEITUNG))}');
     expect(ogQuelle).toContain('const S = PANEL_W / OG_HAUS_RAHMEN.breite;');
-    const vorn = LEITUNGEN.filter((l) => l.mantel);
-    expect(vorn.map((l) => l.id).sort()).toEqual(['vorlauf-knopf', 'vorlauf-knopf-desktop']);
-    const andere = LEITUNGEN.filter((l) => !l.verdeckt && !l.mantel && l.id !== 'ruecklauf-erde');
+    const id = (x: string) => LEITUNGEN.find((l) => l.id === x)!;
+    const kies = {
+      x0: KONDENSAT_LAGE.x - KONDENSAT_LAGE.kiesbettBreite / 2,
+      x1: KONDENSAT_LAGE.x + KONDENSAT_LAGE.kiesbettBreite / 2,
+      y0: KONDENSAT_LAGE.kiesbett,
+      y1: KONDENSAT_LAGE.kiesbett + KONDENSAT_LAGE.kiesbettHoehe,
+    };
+    const rechterSockel = SOCKEL_LAGE[1];
+    const knopf = LEITUNGEN.filter((l) => l.nur && !l.verdeckt);
+    expect(knopf.map((l) => l.id).sort()).toEqual(['ruecklauf-knopf', 'vorlauf-knopf', 'vorlauf-knopf-desktop']);
     for (const rohr of [...rohre, ogRohr]) {
-      const breite = mantelBreite(rohr);
-      for (const l of vorn) {
-        const m = l.mantel!.match(/^M(-?[\d.]+) (-?[\d.]+)H(-?[\d.]+)$/)!.slice(1).map(Number);
-        const box = { x0: m[0], x1: m[2], y0: m[1] - breite / 2, y1: m[1] + breite / 2 };
-        // Deckt die Rücklauf-Steigleitung in ihrer ganzen Stärke, endet vor der Vorlauf-Steigleitung (T-Stück frei)
-        expect(box.x0, `${rohr}`).toBeLessThanOrEqual(HAUSSCHNITT_ANSCHLUSS.ruecklauf - rohr / 2);
-        expect(box.x1, `${rohr}`).toBeGreaterThanOrEqual(HAUSSCHNITT_ANSCHLUSS.ruecklauf + rohr / 2);
-        expect(box.x1, `${rohr}`).toBeLessThanOrEqual(HAUSSCHNITT_ANSCHLUSS.vorlauf - rohr / 2);
-        expect(MANTEL.halb + rohr / 2, `${rohr}`).toBeLessThanOrEqual(STEIG_ABSTAND);
-        // Keine andere Leitung (mit ihrer Rohrstärke) im Mantel: weder die Vorlauf-Steigleitung noch der Rücklauf von
-        // der Bewerbung (T-Stück darüber) noch die Erdleitung
-        for (const o of andere) {
-          for (let i = 1; i < o.punkte.length; i += 1) {
-            const [a, b] = [o.punkte[i - 1], o.punkte[i]];
-            const ox0 = Math.min(a.x, b.x) - rohr / 2;
-            const ox1 = Math.max(a.x, b.x) + rohr / 2;
-            const oy0 = Math.min(a.y, b.y) - rohr / 2;
-            const oy1 = Math.max(a.y, b.y) + rohr / 2;
-            const ueber = Math.min(box.x1, ox1) - Math.max(box.x0, ox0) > 0.01 && Math.min(box.y1, oy1) - Math.max(box.y0, oy0) > 0.01;
-            // Die eigene Leitung des Mantels darf er treffen, er liegt unter ihr
-            if (o.id === l.id) continue;
-            expect(ueber, `Rohr ${rohr}: Mantel von ${l.id} über ${o.id}`).toBe(false);
+      for (const l of knopf) {
+        for (let i = 1; i < l.punkte.length; i += 1) {
+          const [a, b] = [l.punkte[i - 1], l.punkte[i]];
+          // Kein Stück (mit seiner Rohrstärke) im Kiesbett des Kondensats
+          const box = { x0: Math.min(a.x, b.x) - rohr / 2, x1: Math.max(a.x, b.x) + rohr / 2, y0: Math.min(a.y, b.y) - rohr / 2, y1: Math.max(a.y, b.y) + rohr / 2 };
+          const imKies = Math.min(box.x1, kies.x1) - Math.max(box.x0, kies.x0) > 0 && Math.min(box.y1, kies.y1) - Math.max(box.y0, kies.y0) > 0;
+          expect(imKies, `Rohr ${rohr}: ${l.id} Stück ${i} im Kiesbett`).toBe(false);
+          // Senkrecht unter dem Gerät nur zwischen Kiesbett und rechtem Sockel, links der Rücklauf-Steigleitung
+          if (a.x === b.x && Math.min(a.y, b.y) < KONDENSAT_LAGE.kiesbett && a.x > kies.x1) {
+            expect(a.x - rohr / 2, `${l.id} ${rohr}`).toBeGreaterThan(kies.x1);
+            expect(a.x + rohr / 2, `${l.id} ${rohr}`).toBeLessThan(rechterSockel.x);
+            expect(a.x + rohr / 2, `${l.id} ${rohr}`).toBeLessThan(HAUSSCHNITT_ANSCHLUSS.ruecklauf - rohr / 2);
+            // … und neben dem Rohrgraben der Erdleitung, nicht auf seinem Rand
+            expect(a.x + rohr / 2, `${l.id} ${rohr}`).toBeLessThan(Math.min(...endpunkte(BAUTEILE.graben).map((q) => q.x)));
           }
         }
+        // Die beiden senkrechten Leitungen am Handy halten Abstand zueinander
+        expect(Math.abs(KNOPF_LEITUNG.senkrecht.vorlauf - KNOPF_LEITUNG.senkrecht.ruecklauf) - rohr, `${rohr}`).toBeGreaterThan(2);
       }
     }
-    // Das T-Stück liegt auf dem geraden Stück der Steigleitung, über ihrem Bogen zum Haus
-    const vorlaufErde = LEITUNGEN.find((l) => l.id === 'vorlauf-erde')!;
-    expect(KNOPF_LEITUNG.desktopY).toBeLessThan(HAUSSCHNITT_ERDLEITUNG.vorlauf - 10);
-    expect(KNOPF_LEITUNG.desktopY).toBeGreaterThan(vorlaufErde.punkte[0].y);
-    for (const l of vorn) expect(l.punkte[0]).toEqual({ x: HAUSSCHNITT_ANSCHLUSS.vorlauf, y: KNOPF_LEITUNG.desktopY });
+    // Zwischen Frosttiefe und Kiesbett eine Leitung (Desktop: Vorlauf; Handy: Rücklauf), unter dem Kiesbett der Vorlauf
+    // am Handy, innerhalb des Rahmens
+    expect(KNOPF_LEITUNG.desktopY).toBe(KNOPF_LEITUNG.mobilRuecklaufY);
+    expect(KNOPF_LEITUNG.desktopY).toBeGreaterThan(HAUSSCHNITT_FROST);
+    expect(KNOPF_LEITUNG.desktopY).toBeLessThan(kies.y0);
+    expect(KNOPF_LEITUNG.mobilVorlaufY).toBeGreaterThan(kies.y1);
+    expect(KNOPF_LEITUNG.mobilVorlaufY + Math.max(...rohre) / 2).toBeLessThan(HAUSSCHNITT_RAHMEN.hoehe);
+    expect(id('vorlauf-knopf-desktop').punkte.map((q) => q.y)).toContain(KNOPF_LEITUNG.desktopY);
+    expect(id('vorlauf-knopf').punkte.map((q) => q.y)).toContain(KNOPF_LEITUNG.mobilVorlaufY);
+    expect(id('ruecklauf-knopf').punkte.map((q) => q.y)).toContain(KNOPF_LEITUNG.mobilRuecklaufY);
+    // Die T-Stücke sitzen hinter dem Gehäuse, der Rücklauf über dem Vorlauf (so kreuzen sich auch die verdeckten nicht)
+    expect(KNOPF_LEITUNG.t.ruecklauf).toBeLessThan(KNOPF_LEITUNG.t.vorlauf);
+    expect(KNOPF_LEITUNG.senkrecht.ruecklauf).toBeLessThan(KNOPF_LEITUNG.senkrecht.vorlauf);
   });
 
   it('eine Frosttiefe für alles: Erdleitung, Kondensatweg und Frostschürze liegen darunter (DIN 1054, geschätzt)', () => {
@@ -548,12 +569,22 @@ describe('Hausschnitt: Kreuzung, Frosttiefe, Gründung und Kondensat (Prüfung E
     const dickstes = Math.max(...rohre);
     expect(HAUSSCHNITT_ERDLEITUNG.vorlauf - dickstes / 2).toBeGreaterThan(HAUSSCHNITT_FROST);
     expect(HAUSSCHNITT_ERDLEITUNG.ruecklauf).toBeGreaterThan(HAUSSCHNITT_ERDLEITUNG.vorlauf);
-    for (const id of ['vorlauf-erde', 'ruecklauf-erde']) {
-      const l = LEITUNGEN.find((x) => x.id === id)!;
-      const waagerecht = l.punkte.slice(1).filter((q, i) => q.y === l.punkte[i].y);
-      expect(waagerecht.length, id).toBeGreaterThan(0);
-      for (const q of waagerecht) expect(q.y, id).toBeGreaterThan(HAUSSCHNITT_FROST);
+    // Jedes waagerechte Stück mit Vorlauf oder Rücklauf unter dem Gelände, auch die Leitungen zur Bewerbung (`nur`)
+    // und verdeckte Stücke, liegt mit der Oberkante des dicksten Rohrs unter der Frosttiefe (Prüfung E-029, Runde 3)
+    const unterGelaende = (q: { y: number }) => q.y > HAUSSCHNITT_GOK;
+    const geprueft = new Set<string>();
+    for (const l of LEITUNGEN.filter((x) => x.medium === 'vorlauf' || x.medium === 'ruecklauf')) {
+      const waagerecht = l.punkte.slice(1).filter((q, i) => q.y === l.punkte[i].y && unterGelaende(q));
+      for (const q of waagerecht) {
+        expect(q.y - dickstes / 2, l.id).toBeGreaterThan(HAUSSCHNITT_FROST);
+        geprueft.add(l.id);
+      }
     }
+    expect([...geprueft].sort()).toEqual(['ruecklauf-erde', 'ruecklauf-knopf', 'vorlauf-erde', 'vorlauf-knopf', 'vorlauf-knopf-desktop']);
+    // Waagerecht über dem Gelände und vor dem Haus nur die verdeckten T-Stücke hinter dem Gehäuse
+    const draussen = LEITUNGEN.filter((l) => l.punkte.slice(1).some((q, i) => q.y === l.punkte[i].y && !unterGelaende(q) && Math.max(q.x, l.punkte[i].x) < HAUS_LAGE.links));
+    expect(draussen.map((l) => l.id).sort()).toEqual(['ruecklauf-knopf-anschluss', 'vorlauf-knopf-anschluss']);
+    for (const l of draussen) expect(l.verdeckt, l.id).toBe(true);
     // Frostschürze bis unter die Frosttiefe
     expect(HAUS_LAGE.fundamentUnten).toBeGreaterThan(HAUSSCHNITT_FROST);
   });

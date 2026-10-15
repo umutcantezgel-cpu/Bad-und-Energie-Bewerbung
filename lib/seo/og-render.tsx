@@ -16,7 +16,6 @@ import {
   OG_INNENEINHEIT,
   OG_PUMPE,
   ogLeitungen,
-  ogMantelBreite,
   ogPfeile,
 } from './og-haus';
 import { OG_COLOR as C, OG_IMAGE_SIZE, versal, type OgHomeText, type OgJobText, type OgPlaceText } from './og-image';
@@ -129,7 +128,7 @@ function Haus({ knopf }: { knopf: boolean }) {
   const ie = OG_INNENEINHEIT;
   const hk = OG_HEIZKOERPER;
   const lamellen = Array.from({ length: hk.lamellen }, (_, i) => r1(hk.x + ((i + 1) * hk.breite) / (hk.lamellen + 1)));
-  const leitungen = [...ogLeitungen(knopf)].sort((x, y) => Number(Boolean(x.mantel)) - Number(Boolean(y.mantel)));
+  const leitungen = ogLeitungen(knopf);
   // Gerät in mm: Strich in mm, damit er im Bild 2 bzw. 1 px misst
   const mm = (pixels: number) => vb(pixels) / g.massstab;
   return (
@@ -182,17 +181,13 @@ function Haus({ knopf }: { knopf: boolean }) {
       </g>
       <rect x={hk.x} y={hk.y} width={hk.breite} height={hk.hoehe} {...kontur} fill={NAVY.flaeche} />
       <path d={lamellen.map((x) => `M${x} ${hk.y}V${hk.y + hk.hoehe}`).join('')} {...fein} />
-      {/* Leitungen in Fließrichtung; an der Kreuzung liegt die vordere mit einem Mantel in der Fläche darüber */}
+      {/* Leitungen in Fließrichtung (ohne Kreuzung) */}
       {leitungen.map((l) =>
         l.verdeckt ? (
           // Hinter Gehäuse und Sockel: verdeckte Linie (1 px, gestrichelt wie --m-verdeckt-muster)
           <path key={l.id} d={l.d} {...stumpf} stroke={MEDIUM[l.medium]} strokeWidth={vb(1)} strokeDasharray={VERDECKT_MUSTER} />
         ) : (
-          <g key={l.id}>
-            {/* Mantel in Einheiten, höchstens bis an die Nachbarleitung (Prüfung E-029, Runde 2) */}
-            {knopf && l.mantel ? <path d={l.mantel} {...stumpf} stroke={NAVY.flaeche} strokeWidth={ogMantelBreite(vb(LEITUNG))} /> : null}
-            <path d={l.d} fill="none" stroke={MEDIUM[l.medium]} strokeWidth={vb(LEITUNG)} strokeLinecap="butt" strokeLinejoin="round" />
-          </g>
+          <path key={l.id} d={l.d} fill="none" stroke={MEDIUM[l.medium]} strokeWidth={vb(LEITUNG)} strokeLinecap="butt" strokeLinejoin="round" />
         ),
       )}
       {ogPfeile(knopf).map((p) => (
