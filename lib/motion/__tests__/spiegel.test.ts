@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { TOKENS } from '@/lib/tokens';
+import { MODES, checkTheme } from '../../../scripts/qa/check-contrast.mjs';
 import { AUFTAKT_ENDE_MS, DAUER_MS, TAKT_MS } from '../register';
 import { SICHERHEITSNETZ_MS } from '../head-script';
 
@@ -119,6 +120,24 @@ describe('Spiegel theme.css ↔ lib/tokens', () => {
     expect(layout).toContain("{ media: '(prefers-color-scheme: light)', color: TOKENS.themeColor.light }");
     expect(layout).toContain("{ media: '(prefers-color-scheme: dark)', color: TOKENS.themeColor.dark }");
     expect(layout).not.toMatch(/#[0-9a-fA-F]{6}\b/);
+  });
+
+  it('Wärmerampe (E-031): fünf Stufen je Modus, Primitive und Rollen gespiegelt; hell auch im Band und im Druck', () => {
+    const { hell, dunkel } = TOKENS.waerme;
+    expect(hell).toHaveLength(5);
+    expect(dunkel).toHaveLength(5);
+    hell.forEach((hex, i) => expect(cssVar(`--p-waerme-${i}`), `hell ${i}`).toBe(hex));
+    dunkel.forEach((hex, i) => expect(cssVar(`--p-pflaume-${i}`), `dunkel ${i}`).toBe(hex));
+    // Jede Rolle in jedem Modus aufgelöst wie in check-contrast (Seite, Band, Wärmebereich, Druck)
+    const { role } = checkTheme(readFileSync(path.resolve(__dirname, '../../../app/styles/theme.css'), 'utf8'));
+    const modi = MODES as ReadonlyArray<{ name: string; dark: boolean; print: boolean }>;
+    expect(modi.length).toBeGreaterThanOrEqual(13);
+    for (const modus of modi) {
+      const soll = modus.dark && !modus.print ? dunkel : hell;
+      for (let i = 0; i < 5; i += 1) expect(role(modus.name, `waerme-${i}`), `${modus.name} waerme-${i}`).toBe(soll[i]);
+    }
+    // Keine Utilities: die Rampe gehört nur in die freigegebenen Stylesheets (Guard waerme-rollen)
+    expect(theme).not.toMatch(/--color-waerme-\d/);
   });
 
   it('Druck-Rückmeldung: 1 px, nur mit Kennung „druck“ und nur ohne reduzierte Bewegung (K-009, Z-09)', () => {

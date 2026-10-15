@@ -2,10 +2,14 @@
 /**
  * WCAG 2.2 contrast check for the semantic color roles in app/styles/theme.css (KERN K-006).
  * Resolves the cascade (roles → var() → primitives) for light, dark, the inverse band in both
- * modes and print (also with a dark preference: print must stay light), then checks
+ * modes, print (also with a dark preference: print must stay light) and the warm area
+ * ([data-tone="warm"], E-031: on the page and inside the inverse band, light, dark and print), then checks
  *   - text pairs ≥ 4.5 (1.4.3) and graphics/controls ≥ 3 (1.4.11),
  *   - the inverse band stands apart from the page surfaces (screen only),
- *   - raised cards are lighter than the surface-2 sections they sit on.
+ *   - raised cards are lighter than the surface-2 sections they sit on,
+ *   - in the warm area: lines (brand, Vorlauf, Rücklauf, line-strong) ≥ 3 and text ≥ 4.5 on every band of
+ *     the warmth ramp (--waerme-0…4), neighbouring bands within a luminance ratio of 1.04–1.35
+ *     („soft but distinguishable“).
  * Prints a table and exits 1 if any pair is below its minimum.
  *
  * Usage: node scripts/qa/check-contrast.mjs
@@ -36,7 +40,14 @@ const UI_ROLES = ['focus', 'line-strong'];
 const PIPE_GROUNDS = ['surface', 'surface-2', 'waerme'];
 const PIPE_ROLES = ['vorlauf', 'ruecklauf'];
 
-const ALL_MODES = ['light', 'dark', 'inverse light', 'inverse dark', 'print', 'print dark', 'print inverse'];
+/** The warmth ramp (E-031), cool → hot: only the bands of the heat field, click warmth and the warm front. */
+export const RAMP = ['waerme-0', 'waerme-1', 'waerme-2', 'waerme-3', 'waerme-4'];
+/** Lines drawn over the bands (always inside [data-tone="warm"]): ≥ UI on every band. */
+export const WARM_LINES = ['brand', 'vorlauf', 'ruecklauf', 'line-strong'];
+/** Text inside the warm area (labels in the room): ≥ TEXT on every band. */
+export const WARM_TEXT = ['ink', 'ink-2', 'brand'];
+/** Neighbouring bands: luminance ratio (WCAG formula) within this range. */
+export const NACHBAR = Object.freeze({ min: 1.04, max: 1.35 });
 
 /**
  * [foreground, background, minimum, modes?]: every role × every surface, plus fills, the pipe pair
@@ -67,17 +78,29 @@ export const PAIRS = [
 
 const ROOT_SELECTOR = ':root';
 const INVERSE_SELECTOR = '[data-tone=inverse]';
+const WARM_SELECTOR = '[data-tone=warm]';
 
+/** `kette`: the scopes from the root to the element (custom properties inherit along it). */
 export const MODES = [
-  { name: 'light', selector: ROOT_SELECTOR, dark: false, print: false },
-  { name: 'dark', selector: ROOT_SELECTOR, dark: true, print: false },
-  { name: 'inverse light', selector: INVERSE_SELECTOR, dark: false, print: false },
-  { name: 'inverse dark', selector: INVERSE_SELECTOR, dark: true, print: false },
+  { name: 'light', kette: [ROOT_SELECTOR], dark: false, print: false },
+  { name: 'dark', kette: [ROOT_SELECTOR], dark: true, print: false },
+  { name: 'inverse light', kette: [ROOT_SELECTOR, INVERSE_SELECTOR], dark: false, print: false },
+  { name: 'inverse dark', kette: [ROOT_SELECTOR, INVERSE_SELECTOR], dark: true, print: false },
   // Print is always light: dark mode and the band are screen-only.
-  { name: 'print', selector: ROOT_SELECTOR, dark: false, print: true },
-  { name: 'print dark', selector: ROOT_SELECTOR, dark: true, print: true },
-  { name: 'print inverse', selector: INVERSE_SELECTOR, dark: true, print: true },
+  { name: 'print', kette: [ROOT_SELECTOR], dark: false, print: true },
+  { name: 'print dark', kette: [ROOT_SELECTOR], dark: true, print: true },
+  { name: 'print inverse', kette: [ROOT_SELECTOR, INVERSE_SELECTOR], dark: true, print: true },
+  // Warm area (E-031): the room inside a drawing, on the page and inside the navy band (hero, job header).
+  { name: 'warm light', kette: [ROOT_SELECTOR, WARM_SELECTOR], dark: false, print: false, warm: true },
+  { name: 'warm dark', kette: [ROOT_SELECTOR, WARM_SELECTOR], dark: true, print: false, warm: true },
+  { name: 'inverse warm light', kette: [ROOT_SELECTOR, INVERSE_SELECTOR, WARM_SELECTOR], dark: false, print: false, warm: true },
+  { name: 'inverse warm dark', kette: [ROOT_SELECTOR, INVERSE_SELECTOR, WARM_SELECTOR], dark: true, print: false, warm: true },
+  { name: 'warm print', kette: [ROOT_SELECTOR, WARM_SELECTOR], dark: false, print: true, warm: true },
+  { name: 'warm print dark', kette: [ROOT_SELECTOR, WARM_SELECTOR], dark: true, print: true, warm: true },
+  { name: 'print inverse warm', kette: [ROOT_SELECTOR, INVERSE_SELECTOR, WARM_SELECTOR], dark: true, print: true, warm: true },
 ];
+
+const ALL_MODES = MODES.map((m) => m.name);
 
 // --- minimal CSS walker -----------------------------------------------------
 
@@ -209,18 +232,19 @@ export function contrast(a, b) {
 export function checkTheme(cssText) {
   const css = cssText.replace(/\/\*[\s\S]*?\*\//g, '');
   const { rules, theme } = walk(css, [], { rules: [], theme: new Map() });
-  // Role names come from the utilities (--color-x: var(--x)); they must never hide in width queries.
-  const colorKeys = new Set(
-    [...theme.entries()]
+  // Role names come from the utilities (--color-x: var(--x)) and the warmth ramp (no utilities on purpose);
+  // they must never hide in width queries.
+  const colorKeys = new Set([
+    ...[...theme.entries()]
       .filter(([k]) => k.startsWith('--color-'))
       .map(([, v]) => v.match(/^var\(\s*(--[\w-]+)/)?.[1])
       .filter(Boolean),
-  );
+    ...RAMP.map((name) => `--${name}`),
+  ]);
 
   const scope = (mode) => {
     const env = { dark: mode.dark, print: mode.print };
-    const rootVars = resolveScope(rules, ROOT_SELECTOR, env, colorKeys);
-    return mode.selector === ROOT_SELECTOR ? rootVars : resolveScope(rules, mode.selector, env, colorKeys, rootVars);
+    return mode.kette.reduce((vars, selector) => resolveScope(rules, selector, env, colorKeys, vars), new Map());
   };
   const role = (modeName, name) => {
     const mode = MODES.find((m) => m.name === modeName);
@@ -244,9 +268,38 @@ export function checkTheme(cssText) {
     }
   }
 
+  // Warm area (E-031): lines and text on every band of the ramp, neighbouring bands soft but distinguishable.
+  for (const mode of MODES.filter((m) => m.warm)) {
+    const vars = scope(mode);
+    const band = RAMP.map((name) => resolveValue(`var(--${name})`, vars, theme));
+    const pairs = [...WARM_LINES.map((fg) => [fg, UI]), ...WARM_TEXT.map((fg) => [fg, TEXT])];
+    for (const [fg, min] of pairs) {
+      const fgValue = resolveValue(`var(--${fg})`, vars, theme);
+      RAMP.forEach((name, i) => {
+        const ratio = contrast(parseColor(fgValue), parseColor(band[i]));
+        const pass = ratio >= min;
+        if (!pass) failures++;
+        rows.push([mode.name, `${fg} / ${name}`, `${fgValue} on ${band[i]}`, ratio.toFixed(2), `${min}`, pass ? 'ok' : 'FAIL']);
+      });
+    }
+    for (let i = 0; i < RAMP.length - 1; i++) {
+      const ratio = contrast(parseColor(band[i]), parseColor(band[i + 1]));
+      const pass = ratio >= NACHBAR.min && ratio <= NACHBAR.max;
+      if (!pass) failures++;
+      rows.push([
+        mode.name,
+        `${RAMP[i]} / ${RAMP[i + 1]}`,
+        `${band[i]} vs ${band[i + 1]}`,
+        ratio.toFixed(2),
+        `${NACHBAR.min}–${NACHBAR.max}`,
+        pass ? 'ok' : 'FAIL',
+      ]);
+    }
+  }
+
   for (const dark of [false, true]) {
-    const page = scope(MODES.find((m) => m.selector === ROOT_SELECTOR && m.dark === dark && !m.print));
-    const inverse = scope(MODES.find((m) => m.selector === INVERSE_SELECTOR && m.dark === dark && !m.print));
+    const page = scope(MODES.find((m) => m.kette.join() === ROOT_SELECTOR && m.dark === dark && !m.print));
+    const inverse = scope(MODES.find((m) => m.kette.join() === [ROOT_SELECTOR, INVERSE_SELECTOR].join() && m.dark === dark && !m.print));
     const band = resolveValue('var(--surface)', inverse, theme);
     for (const name of SEPARATED_FROM) {
       const pageValue = resolveValue(`var(--${name})`, page, theme);
@@ -302,7 +355,8 @@ function main() {
     process.exit(1);
   }
   console.log(
-    `All ${rows.length} pairs pass (text ≥ ${TEXT}, UI and lines ≥ ${UI}, band separation ≥ ${SEPARATION}, raised cards lighter than surface-2).`,
+    `All ${rows.length} pairs pass (text ≥ ${TEXT}, UI and lines ≥ ${UI}, band separation ≥ ${SEPARATION}, raised cards lighter than surface-2, ` +
+      `warmth ramp neighbours ${NACHBAR.min}–${NACHBAR.max}).`,
   );
 }
 

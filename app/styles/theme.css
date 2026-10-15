@@ -3,7 +3,7 @@
  * Variante 1 (_relaunch/ausbau/richtungen/1, BEGRUENDUNG §8–§10) und den Farben aus E-016.
  * Drei Ebenen:
  *   1. Primitive      --p-* in :root (keine Utilities; nur diese Datei darf sie nennen)
- *   2. Rollen         :root (hell), dunkel, [data-tone="inverse"] (Navy-Band), Druck
+ *   2. Rollen         :root (hell), dunkel, [data-tone="inverse"] (Navy-Band), [data-tone="warm"] (Wärmebereich), Druck
  *   3. Utilities      @theme inline: Rollen → bg-surface, text-ink, border-line, text-brand …
  * Komponenten nutzen nur die Rollen-Utilities; scripts/qa/check-design-tokens.mjs verbietet
  * Rohpaletten, Hexwerte in Klassen und --p-* außerhalb dieser Datei. scripts/qa/check-contrast.mjs
@@ -257,6 +257,18 @@
     --p-band-d-2: #1E2C86;
     --p-band-d-3: #27368F;
     --p-band-d-linie: #34439A;
+    /* Wärmerampe (E-031): Bänder des Wärmefelds, kühl → heiß. Hell Papier → Pfirsich, dunkel Nacht-Blau → Pflaume;
+       je Stufe gleich weit in der Helligkeit (Nachbarn 1,09–1,12:1), Linien auf jeder Stufe ≥ 3:1 (check-contrast). */
+    --p-waerme-0: #F3EBDD;
+    --p-waerme-1: #F3DFCC;
+    --p-waerme-2: #F3D2BC;
+    --p-waerme-3: #F3C7AB;
+    --p-waerme-4: #F2BB9C;
+    --p-pflaume-0: #1B2150;
+    --p-pflaume-1: #2F2853;
+    --p-pflaume-2: #412D56;
+    --p-pflaume-3: #513258;
+    --p-pflaume-4: #61365A;
 
     /* ── Maße, Abstände, Bewegung (K-007…K-009); Spiegel in lib/tokens ── */
     --a-1: 0.25rem;
@@ -337,6 +349,12 @@
     --success-subtle: var(--p-gruen-flaeche);
     --danger: var(--p-fehler);
     --danger-subtle: var(--p-fehler-flaeche);
+    /* Wärmerampe (E-031): nur die Bänder des Wärmefelds, Klick-Wärme und Wärmefront (Guard waerme-rollen) */
+    --waerme-0: var(--p-waerme-0);
+    --waerme-1: var(--p-waerme-1);
+    --waerme-2: var(--p-waerme-2);
+    --waerme-3: var(--p-waerme-3);
+    --waerme-4: var(--p-waerme-4);
   }
 
   /* ── dunkel (nur Bildschirm; Druck bleibt hell) ── */
@@ -366,6 +384,11 @@
       --success-subtle: var(--p-gruen-nacht);
       --danger: var(--p-fehler-hell);
       --danger-subtle: var(--p-fehler-nacht);
+      --waerme-0: var(--p-pflaume-0);
+      --waerme-1: var(--p-pflaume-1);
+      --waerme-2: var(--p-pflaume-2);
+      --waerme-3: var(--p-pflaume-3);
+      --waerme-4: var(--p-pflaume-4);
     }
   }
 
@@ -398,6 +421,12 @@
       --success-subtle: var(--p-gruen-nacht);
       --danger: var(--p-fehler-hell);
       --danger-subtle: var(--p-fehler-nacht);
+      /* Die Wärme leuchtet im Navy-Feld in den hellen Stufen (E-031) */
+      --waerme-0: var(--p-waerme-0);
+      --waerme-1: var(--p-waerme-1);
+      --waerme-2: var(--p-waerme-2);
+      --waerme-3: var(--p-waerme-3);
+      --waerme-4: var(--p-waerme-4);
     }
   }
 
@@ -411,12 +440,88 @@
       --surface-raised: var(--p-band-d-3);
       --line: var(--p-band-d-linie);
       --wand: var(--p-band-d-2);
+      --waerme-0: var(--p-pflaume-0);
+      --waerme-1: var(--p-pflaume-1);
+      --waerme-2: var(--p-pflaume-2);
+      --waerme-3: var(--p-pflaume-3);
+      --waerme-4: var(--p-pflaume-4);
     }
   }
 
-  /* ── Druck: immer die hellen Primitiven, Papier weiß (dunkel und Inverse-Band gelten nur am Bildschirm) ── */
+  /* ── Wärmebereich (data-tone="warm", E-031): das Rauminnere einer Zeichnung, auch mitten im Navy-Band. Hell gelten
+     die Rollen des Papiers (Navy-Linien, Vorlauf Rot, Rücklauf Blau), dunkel die der Nacht (Creme-Linien auf der
+     Pflaumen-Rampe); line-strong ist eine Stufe kräftiger, damit jede Linie auf jedem Band ≥ 3:1 steht. Druck: hell. ── */
+  [data-tone="warm"] {
+    color-scheme: light;
+
+    --surface: var(--p-papier);
+    --surface-2: var(--p-wand);
+    --surface-3: var(--p-sand);
+    --surface-raised: var(--p-papier);
+    --ink: var(--p-tinte);
+    --ink-muted: var(--p-tinte-2);
+    --ink-2: var(--p-tinte-2);
+    --brand: var(--p-navy);
+    --line: var(--p-haar);
+    --line-strong: var(--p-tinte-2);
+    --accent: var(--p-rot);
+    --accent-hover: var(--p-rot-hover);
+    --accent-press: var(--p-rot-druck);
+    --on-accent: var(--p-weiss);
+    --focus: var(--p-blau);
+    --vorlauf: var(--p-rot);
+    --ruecklauf: var(--p-blau);
+    --waerme: var(--p-waerme);
+    --wand: var(--p-wand);
+    --plakette: transparent;
+    --success: var(--p-gruen);
+    --success-subtle: var(--p-gruen-flaeche);
+    --danger: var(--p-fehler);
+    --danger-subtle: var(--p-fehler-flaeche);
+    --waerme-0: var(--p-waerme-0);
+    --waerme-1: var(--p-waerme-1);
+    --waerme-2: var(--p-waerme-2);
+    --waerme-3: var(--p-waerme-3);
+    --waerme-4: var(--p-waerme-4);
+  }
+
+  @media screen and (prefers-color-scheme: dark) {
+    [data-tone="warm"] {
+      color-scheme: dark;
+
+      --surface: var(--p-nacht);
+      --surface-2: var(--p-nacht-2);
+      --surface-3: var(--p-nacht-3);
+      --surface-raised: var(--p-nacht-3);
+      --ink: var(--p-creme);
+      --ink-muted: var(--p-creme-2);
+      --ink-2: var(--p-creme-2);
+      --brand: var(--p-creme);
+      --line: var(--p-haar-d);
+      --line-strong: var(--p-creme-2);
+      --focus: var(--p-blau-hell);
+      --vorlauf: var(--p-rot-hell);
+      --ruecklauf: var(--p-blau-hell);
+      --waerme: var(--p-glut);
+      --wand: var(--p-nacht-2);
+      --plakette: var(--p-papier);
+      --success: var(--p-gruen-hell);
+      --success-subtle: var(--p-gruen-nacht);
+      --danger: var(--p-fehler-hell);
+      --danger-subtle: var(--p-fehler-nacht);
+      --waerme-0: var(--p-pflaume-0);
+      --waerme-1: var(--p-pflaume-1);
+      --waerme-2: var(--p-pflaume-2);
+      --waerme-3: var(--p-pflaume-3);
+      --waerme-4: var(--p-pflaume-4);
+    }
+  }
+
+  /* ── Druck: immer die hellen Primitiven, Papier weiß (dunkel und Inverse-Band gelten nur am Bildschirm; der
+     Wärmebereich druckt wie das Papier) ── */
   @media print {
-    :root {
+    :root,
+    [data-tone="warm"] {
       color-scheme: light;
       --surface: var(--p-weiss);
       --surface-raised: var(--p-weiss);

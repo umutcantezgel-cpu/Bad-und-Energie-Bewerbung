@@ -1,7 +1,21 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-import { checkTheme, contrast, mediaMatches, parseColor, TEXT, THEME_FILE, UI } from '../check-contrast.mjs';
+import {
+  checkTheme,
+  contrast,
+  luminance,
+  mediaMatches,
+  MODES,
+  NACHBAR,
+  parseColor,
+  RAMP,
+  TEXT,
+  THEME_FILE,
+  UI,
+  WARM_LINES,
+  WARM_TEXT,
+} from '../check-contrast.mjs';
 
 const theme = readFileSync(THEME_FILE, 'utf8');
 
@@ -12,7 +26,22 @@ describe('check-contrast on app/styles/theme.css (KERN K-006)', () => {
     const failed = result.rows.filter((row: string[]) => row[5] !== 'ok');
     expect(failed).toEqual([]);
     const modes = new Set(result.rows.map((row: string[]) => row[0]));
-    for (const mode of ['light', 'dark', 'inverse light', 'inverse dark', 'print', 'print dark', 'print inverse']) {
+    for (const mode of [
+      'light',
+      'dark',
+      'inverse light',
+      'inverse dark',
+      'print',
+      'print dark',
+      'print inverse',
+      'warm light',
+      'warm dark',
+      'inverse warm light',
+      'inverse warm dark',
+      'warm print',
+      'warm print dark',
+      'print inverse warm',
+    ]) {
       expect(modes.has(mode), mode).toBe(true);
     }
   });
@@ -101,6 +130,89 @@ describe('check-contrast mechanics', () => {
 
   it('refuses color roles hidden in width queries', () => {
     const css = `${theme}\n@layer base { @media (min-width: 40em) { :root { --surface: #000000; } } }`;
+    expect(() => checkTheme(css)).toThrow(/unsupported media condition/);
+  });
+});
+
+describe('check-contrast: Wärmebereich und Wärmerampe (E-031)', () => {
+  const result = checkTheme(theme);
+  const warm = (MODES as ReadonlyArray<{ name: string; warm?: boolean }>).filter((m) => m.warm).map((m) => m.name);
+
+  it('prüft in jedem Wärmemodus Linien ≥ 3 und Text ≥ 4,5 auf jedem Band sowie die Nachbarbänder', () => {
+    expect(warm.sort()).toEqual(
+      ['inverse warm dark', 'inverse warm light', 'print inverse warm', 'warm dark', 'warm light', 'warm print', 'warm print dark'].sort(),
+    );
+    expect(RAMP).toEqual(['waerme-0', 'waerme-1', 'waerme-2', 'waerme-3', 'waerme-4']);
+    expect(WARM_LINES).toEqual(['brand', 'vorlauf', 'ruecklauf', 'line-strong']);
+    expect(WARM_TEXT).toEqual(['ink', 'ink-2', 'brand']);
+    expect(NACHBAR).toEqual({ min: 1.04, max: 1.35 });
+    const zeile = (mode: string, pair: string) => result.rows.find((row: string[]) => row[0] === mode && row[1] === pair);
+    for (const mode of warm) {
+      for (const band of RAMP) {
+        for (const fg of WARM_LINES) expect(zeile(mode, `${fg} / ${band}`)?.[4], `${mode} ${fg} / ${band}`).toBe(String(UI));
+        for (const fg of WARM_TEXT) expect(result.rows.some((row: string[]) => row[0] === mode && row[1] === `${fg} / ${band}` && row[4] === String(TEXT)), `${mode} ${fg} / ${band}`).toBe(true);
+      }
+      for (let i = 0; i < RAMP.length - 1; i += 1) {
+        const r = zeile(mode, `${RAMP[i]} / ${RAMP[i + 1]}`);
+        expect(r?.[5], `${mode} ${RAMP[i]}`).toBe('ok');
+        expect(Number(r![3])).toBeGreaterThanOrEqual(NACHBAR.min);
+        expect(Number(r![3])).toBeLessThanOrEqual(NACHBAR.max);
+      }
+    }
+    // Die Rampe ist nur im Wärmebereich gegen Linien geprüft: Linien über den Bändern stehen immer dort
+    expect(result.rows.some((row: string[]) => !warm.includes(row[0]) && /waerme-\d/.test(row[1]))).toBe(false);
+  });
+
+  it('Wärmebereich hell = Rollen des Papiers (auch im Navy-Band), dunkel = Creme auf Pflaume, Druck = Papier weiß', () => {
+    for (const mode of ['warm light', 'inverse warm light']) {
+      expect(result.role(mode, 'brand'), mode).toBe('#111D6D');
+      expect(result.role(mode, 'vorlauf'), mode).toBe('#D60000');
+      expect(result.role(mode, 'ruecklauf'), mode).toBe('#1F57C4');
+      expect(result.role(mode, 'ink'), mode).toBe('#111A3B');
+      expect(result.role(mode, 'surface'), mode).toBe('#FBF7F0');
+      // line-strong eine Stufe kräftiger als auf dem Papier (#6B74A6 hielte 3:1 auf den heißen Bändern nicht)
+      expect(result.role(mode, 'line-strong'), mode).toBe('#454C78');
+    }
+    expect(result.role('light', 'line-strong')).toBe('#6B74A6');
+    for (const mode of ['warm dark', 'inverse warm dark']) {
+      expect(result.role(mode, 'brand'), mode).toBe('#F6F0E4');
+      expect(result.role(mode, 'vorlauf'), mode).toBe('#FF6B5F');
+      expect(result.role(mode, 'ruecklauf'), mode).toBe('#86AEFF');
+      expect(result.role(mode, 'line-strong'), mode).toBe('#B9C0E8');
+      expect(result.role(mode, 'waerme-0'), mode).toBe('#1B2150');
+    }
+    for (const mode of ['warm print', 'warm print dark', 'print inverse warm']) {
+      expect(result.role(mode, 'surface'), mode).toBe('#FFFFFF');
+      expect(result.role(mode, 'brand'), mode).toBe('#111D6D');
+      expect(result.role(mode, 'waerme-4'), mode).toBe('#F2BB9C');
+    }
+  });
+
+  it('heißeste Stufe: hell Luminanz ≥ 0,535 (Vorlauf #D60000 ≥ 3:1), dunkel ≤ 0,075 (Vorlauf #FF6B5F ≥ 3:1)', () => {
+    expect(luminance(parseColor(result.role('warm light', 'waerme-4')))).toBeGreaterThanOrEqual(0.535);
+    expect(luminance(parseColor(result.role('warm dark', 'waerme-4')))).toBeLessThanOrEqual(0.075);
+    // kühl → heiß: hell wird es dunkler, dunkel heller
+    const l = (mode: string) => RAMP.map((band) => luminance(parseColor(result.role(mode, band))));
+    const hell = l('warm light');
+    const dunkel = l('warm dark');
+    for (let i = 1; i < RAMP.length; i += 1) {
+      expect(hell[i]).toBeLessThan(hell[i - 1]);
+      expect(dunkel[i]).toBeGreaterThan(dunkel[i - 1]);
+    }
+  });
+
+  it('fällt durch: zu dunkle heiße Stufe, zu ähnliche oder zu verschiedene Nachbarn, schwache Linie im Wärmebereich', () => {
+    const fails = (css: string, pair: RegExp, mode = 'warm light') =>
+      checkTheme(css).rows.some((row: string[]) => row[0] === mode && pair.test(row[1]) && row[5] === 'FAIL');
+    expect(fails(theme.replace('--p-waerme-4: #F2BB9C;', '--p-waerme-4: #E8A27C;'), /^vorlauf \/ waerme-4$/)).toBe(true);
+    expect(fails(theme.replace('--p-waerme-1: #F3DFCC;', '--p-waerme-1: #F3EADC;'), /^waerme-0 \/ waerme-1$/)).toBe(true);
+    expect(fails(theme.replace('--p-waerme-1: #F3DFCC;', '--p-waerme-1: #E0B090;'), /^waerme-0 \/ waerme-1$/)).toBe(true);
+    expect(fails(theme.replace('--line-strong: var(--p-tinte-2);', '--line-strong: var(--p-rand);'), /^line-strong \/ waerme-4$/)).toBe(true);
+    expect(fails(theme.replace('--p-pflaume-4: #61365A;', '--p-pflaume-4: #7A4470;'), /^vorlauf \/ waerme-4$/, 'warm dark')).toBe(true);
+  });
+
+  it('lässt die Rampe nicht in Breitenabfragen verstecken', () => {
+    const css = `${theme}\n@layer base { @media (min-width: 40em) { :root { --waerme-2: #000000; } } }`;
     expect(() => checkTheme(css)).toThrow(/unsupported media condition/);
   });
 });
