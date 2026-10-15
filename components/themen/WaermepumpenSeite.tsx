@@ -67,7 +67,7 @@ function Technik() {
         </div>
       </div>
 
-      <div className={styles.technikPaar} role="group" aria-labelledby={RAUM_ID}>
+      <div id="waermeverteilung" className={styles.technikPaar} role="group" aria-labelledby={RAUM_ID}>
         <SichtStart className={cn(styles.technikBild, 'grid gap-5 sm:grid-cols-2')}>
           {(['heizkoerper', 'fussboden'] as const).map((art) => (
             <figure key={art} className="m-0 min-w-0">
