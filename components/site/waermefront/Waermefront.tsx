@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { motionAllowed } from '@/lib/motion/prefers';
-import { ZEITPLAN, frontDurchmesser, frontZiel, klickPunkt, klickZiel } from '@/lib/motion/seitenwechsel';
+import { AUFTAKT, ZEITPLAN, frontDurchmesser, frontZiel, imBewerbungsweg, klickPunkt, klickZiel, linkPfad } from '@/lib/motion/seitenwechsel';
 import styles from './waermefront.module.css';
 
 /** Ablauf der Front: abdecken → warten (Wechsel beauftragt) → aufdecken; null = Ruhe. */
@@ -20,13 +20,17 @@ const zu = (el: HTMLElement) => {
  * inert; ohne Popover-Unterstützung oder bei reduzierter Bewegung zeigt die Insel nichts und jeder Klick wirkt sofort.
  *
  * - Klick-Wärme: ein Klick-Listener in der Erfassungsphase am Dokument; an Bedienelementen (nicht in Formularen, nicht
- *   im Bewerbungsweg) wachsen drei Scheiben am Zeiger, mit der Tastatur in der Mitte des Elements; nach 480 ms zu.
+ *   im Bewerbungsweg und nicht auf dem Weg dorthin) wachsen drei Ringe am Zeiger, mit der Tastatur in der Mitte des
+ *   Elements; nach 480 ms zu, spätestens beim Wechsel in den Bewerbungsweg.
  *   Führt der Klick zur Wärmefront, ist sie die Rückmeldung (dieselben Schichten vom selben Punkt, nur bis zur Ecke).
  * - Wärmefront: Führt ein einfacher Klick zu einer Erzählseite (frontZiel), hält die Insel den Wechsel an
  *   (preventDefault – next/link bricht dann ab), lädt das Ziel vor und deckt vom Klickpunkt aus ab. Nach dem letzten
  *   Band (spätestens nach dem Netz) wechselt router.push die Seite; sobald der neue Pfad steht, nach zwei Bildern, deckt
  *   die Front auf, spätestens nach `halten`. Zurück/vor, die Rückkehr aus dem bfcache und ein Klick auf einen anderen
- *   Link beenden sie sofort.
+ *   Link beenden sie sofort. Die neue Seite steht oben: <html data-scroll-behavior="smooth"> (app/layout.tsx) lässt
+ *   Next beim Wechsel ohne weiches Scrollen springen.
+ * - Auftakt: Jeder Wechsel innerhalb der Seite nimmt die Klasse `auftakt` weg, bevor die neue Seite gemalt wird
+ *   (useLayoutEffect); sie steht dann im Endzustand, und kein Auftakt bricht am Sicherheitsnetz mitten im Lauf ab.
  *
  * Reihenfolge: Der Listener sitzt in der Erfassungsphase am Dokument, wo React schon beim Hydrieren seine Listener
  * anmeldet. So hat ein onClickCapture der Seite (etwa nach einem Zug im Bewertungsband) den Klick schon abgefangen
@@ -68,10 +72,13 @@ export function Waermefront() {
       phase = 'warten';
       clearTimeout(uhr);
       uhr = window.setTimeout(aufdecken, ZEITPLAN.halten);
+      // Unter der deckenden Front: Die neue Seite steht im Endzustand (kein Auftakt nach einem Wechsel)
+      document.documentElement.classList.remove(AUFTAKT);
       router.push(ziel);
     };
-    // Neuer Pfad: zwei Bilder warten, damit die neue Seite unter der Front gemalt ist
+    // Neuer Pfad: zwei Bilder warten, damit die neue Seite unter der Front gemalt ist; im Bewerbungsweg keine Wärme
     neuerPfad.current = () => {
+      if (imBewerbungsweg(location.pathname)) zu(klick);
       if (phase === 'warten') bild = requestAnimationFrame(() => (bild = requestAnimationFrame(aufdecken)));
     };
     /** Zeigt eine Überlagerung am Punkt neu; ihre Abläufe beginnen von vorn. */
@@ -98,7 +105,7 @@ export function Waermefront() {
         aus();
       }
       if (!motionAllowed()) return;
-      const bedien = klickZiel(start, location.pathname) as Element | null;
+      const bedien = klickZiel(start, location.pathname, link ? linkPfad(link, location) : null) as Element | null;
       const element = bedien ?? link;
       if (!element) return;
       const [x, y] = klickPunkt(event, element.getBoundingClientRect());
@@ -137,7 +144,14 @@ export function Waermefront() {
     };
   }, [router]);
 
-  useEffect(() => neuerPfad.current(), [pfad]);
+  // Wechsel innerhalb der Seite (nicht beim Hydrieren): Auftakt weg, bevor die neue Seite gemalt wird; dann die Front
+  const vorher = useRef(pfad);
+  useLayoutEffect(() => {
+    if (vorher.current === pfad) return;
+    vorher.current = pfad;
+    document.documentElement.classList.remove(AUFTAKT);
+    neuerPfad.current();
+  }, [pfad]);
 
   return (
     <>

@@ -74,7 +74,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     // suppressHydrationWarning: das Kopfskript setzt vor dem ersten Bild die Klasse „auftakt“ auf <html>.
-    <html lang="de" className={fontVariables} suppressHydrationWarning>
+    // data-scroll-behavior="smooth" (Next 16, Upgrade-Leitfaden „Scroll Behavior Override“): globals.css scrollt weich
+    // (Anker); beim Seitenwechsel schaltet Next das ab, und die neue Seite steht sofort oben – auch unter der
+    // Wärmefront, die erst danach aufdeckt (Prüfrunde 1 A1-2, C1-5).
+    <html lang="de" className={fontVariables} data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         {/* Kopfskript (E-013): vor dem ersten Rendern; CSP-Hash in lib/motion/head-script.ts (HEAD_SCRIPT_SHA256). */}
         <script dangerouslySetInnerHTML={{ __html: HEAD_SCRIPT }} />

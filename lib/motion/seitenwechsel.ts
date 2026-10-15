@@ -25,6 +25,13 @@ export const ZEITPLAN = Object.freeze({
   klick: 480,
 });
 
+/**
+ * Klasse des Kopfskripts (lib/motion/head-script.ts, AUFTAKT_KLASSE; hier als Text, die Logik hängt an nichts): Bei
+ * einem Seitenwechsel innerhalb der Seite nimmt die Insel sie weg, damit die neue Seite im Endzustand steht (Plan §5,
+ * Prüfrunde 1 C1-2) und kein Auftakt mitten im Lauf vom Sicherheitsnetz abgebrochen wird.
+ */
+export const AUFTAKT = 'auftakt';
+
 /** Ziele der Wärmefront: nur Erzählseiten (KERN K-011): `/`, `/jobs/[slug]`, `/einsatzgebiet/**`, `/arbeiten-bei-uns/**`. */
 const ERZAEHLSEITE = /^\/(?:jobs\/[^/]+|(?:einsatzgebiet|arbeiten-bei-uns)(?:\/[^/]+)*)?$/;
 /** Nie mit Front: Schnittstellen, Feeds, Zeichnungsdateien, Dateien von Next und alles mit Dateiendung. */
@@ -86,6 +93,22 @@ export function frontZiel(klick: FrontKlick, link: FrontLink, ort: FrontOrt): st
   return ziel.pathname + ziel.search + ziel.hash;
 }
 
+/**
+ * Pfad, zu dem ein Link auf derselben Herkunft führt, sonst null (fremde Herkunft, ungültige Adresse, ohne href).
+ * Die Klick-Wärme fragt damit, ob ein Link in den Bewerbungsweg führt (Prüfrunde 1 C1-3): Sie stünde sonst nach dem
+ * Wechsel über dem ersten Schritt des Formulars.
+ */
+export function linkPfad(link: Pick<FrontLink, 'getAttribute'>, ort: FrontOrt): string | null {
+  const href = link.getAttribute('href');
+  if (href === null) return null;
+  try {
+    const ziel = new URL(href, ort.href);
+    return ziel.origin === ort.origin ? ziel.pathname : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Bedienelemente, an denen die Klick-Wärme erscheint. */
 export const BEDIENELEMENT = 'a[href],button,summary,[role="button"]';
 
@@ -97,11 +120,13 @@ export interface KlickElement {
 
 /**
  * Das Bedienelement der Klick-Wärme oder null: nur Links und Knöpfe (auch `summary`, `role="button"`), nicht in
- * Formularen, nicht deaktiviert (`aria-disabled`; deaktivierte Knöpfe melden keinen Klick) und nicht im Bewerbungsweg.
+ * Formularen, nicht deaktiviert (`aria-disabled`; deaktivierte Knöpfe melden keinen Klick), nicht im Bewerbungsweg und
+ * nicht auf dem Weg dorthin (`ziel`: Pfad des Links, linkPfad; „Jetzt bewerben“ wechselt vor dem Ende der Wärme).
  */
-export function klickZiel(start: KlickElement | null, pfad: string): KlickElement | null {
+export function klickZiel(start: KlickElement | null, pfad: string, ziel: string | null = null): KlickElement | null {
   const element = start?.closest(BEDIENELEMENT) ?? null;
-  if (!element || imBewerbungsweg(pfad) || element.closest('form') || element.getAttribute('aria-disabled') === 'true') return null;
+  if (!element || imBewerbungsweg(pfad) || (ziel !== null && imBewerbungsweg(ziel))) return null;
+  if (element.closest('form') || element.getAttribute('aria-disabled') === 'true') return null;
   return element;
 }
 

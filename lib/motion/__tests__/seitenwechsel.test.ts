@@ -4,7 +4,9 @@ import { describe, expect, it } from 'vitest';
 import { ARBEITEN_PATH, getThemen, themaPath } from '@/lib/themen/registry';
 import { DAUER_MS, KLICK_ENDE_MS, MOTION_REGISTER, TAKT_MS, WECHSEL } from '../register';
 import * as seitenwechsel from '../seitenwechsel';
+import { AUFTAKT_KLASSE } from '../head-script';
 import {
+  AUFTAKT,
   BEDIENELEMENT,
   WAERMEFRONT_AN,
   ZEITPLAN,
@@ -14,6 +16,7 @@ import {
   imBewerbungsweg,
   klickPunkt,
   klickZiel,
+  linkPfad,
   type FrontKlick,
   type FrontLink,
   type FrontOrt,
@@ -316,6 +319,28 @@ describe('Klick-Wärme: Ziel und Punkt (E-031)', () => {
     expect(klickZiel(element('bedien', { aria: 'true' }), '/')).toBeNull();
     expect(klickZiel(element('bedien', { aria: 'false' }), '/')).not.toBeNull();
     for (const pfad of ['/bewerbung', '/bewerbung/danke', '/bewerbung/mappe']) expect(klickZiel(knopf, pfad), pfad).toBeNull();
+  });
+
+  it('nicht auf dem Weg in den Bewerbungsweg: Links nach /bewerbung* zeigen keine Klick-Wärme (Prüfrunde 1 C1-3)', () => {
+    const knopf = element('bedien');
+    for (const ziel of ['/bewerbung', '/bewerbung/mappe', '/bewerbungsweg']) expect(klickZiel(knopf, '/', ziel), ziel).toBeNull();
+    for (const ziel of ['/', '/jobs', '/arbeiten-bei-uns/buero-und-verwaltung', null]) expect(klickZiel(knopf, '/jobs', ziel), String(ziel)).toBe(knopf);
+    // Der Pfad des Links: nur auf derselben Herkunft, relativ aufgelöst, ohne Suche und Anker
+    const hier = ort('/jobs/anlagenmechaniker-shk-wetzlar');
+    expect(linkPfad(link({ href: '/bewerbung?stelle=anlagenmechaniker-shk#start' }), hier)).toBe('/bewerbung');
+    expect(linkPfad(link({ href: '../bewerbung' }), hier)).toBe('/bewerbung');
+    expect(linkPfad(link({ href: '#faq' }), hier)).toBe('/jobs/anlagenmechaniker-shk-wetzlar');
+    expect(linkPfad(link({ href: 'https://wa.me/49123' }), hier)).toBeNull();
+    expect(linkPfad(link({ href: 'http://[' }), hier)).toBeNull();
+    expect(linkPfad(link({}), hier)).toBeNull();
+  });
+
+  it('die Klasse des Auftakts ist die des Kopfskripts (die Insel nimmt sie beim Seitenwechsel weg, Prüfrunde 1 C1-2)', () => {
+    expect(AUFTAKT).toBe(AUFTAKT_KLASSE);
+    const insel = readFileSync(path.join(ROOT, 'components/site/waermefront/Waermefront.tsx'), 'utf8');
+    // vor dem Malen der neuen Seite (useLayoutEffect, nicht beim Hydrieren) und unter der deckenden Front vor router.push
+    expect(insel).toMatch(/useLayoutEffect\(\(\) => \{\s*if \(vorher\.current === pfad\) return;\s*vorher\.current = pfad;\s*document\.documentElement\.classList\.remove\(AUFTAKT\);/);
+    expect(insel).toMatch(/document\.documentElement\.classList\.remove\(AUFTAKT\);\s*router\.push\(ziel\);/);
   });
 
   it('am Zeiger; mit der Tastatur (detail 0) in der Mitte des Elements', () => {
