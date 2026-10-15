@@ -25,7 +25,8 @@ function klasse(l: Leitung | Pfeil): string | undefined {
  *
  * Dekorativ (`aria-hidden`): Maße, Einleitung und der Erklärsatz tragen dieselbe Information als Text. Beim Laden
  * zeichnen sich die Leitungen einmal (Register `vorlauf-haus`, `ruecklauf-haus`), die festen Fließpfeile blenden ein
- * (`pfeile`); ohne Auftakt steht der Endzustand.
+ * (`pfeile`); ohne Auftakt steht der Endzustand. Das Wärmefeld liegt als eigene Ebenen darunter (Einstieg.tsx,
+ * WaermefeldEbenen); Heizkörper, Inneneinheit, Leitungen und Pfeile im Raum stehen im Wärmebereich (E-031).
  */
 export function Szene() {
   const { breite, hoehe } = HAUSSCHNITT_RAHMEN;
@@ -34,6 +35,7 @@ export function Szene() {
       <HausschnittInhalt
         knopf
         einzelheit
+        waerme="ebenen"
         leitungKlasse={(l) => cn(styles.rohr, klasse(l))}
         leitungMotion={motion}
         pfeilKlasse={klasse}

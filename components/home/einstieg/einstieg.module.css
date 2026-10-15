@@ -82,8 +82,9 @@
   white-space: nowrap;
 }
 
-/* Unterzeile: nur Typografie (die Rohrklammer ist mit E-029 entfallen) */
+/* Unterzeile; am Desktop fasst sie die Rohrklammer (E-031, components/zeichnung/Rohrklammer.tsx) */
 .titelZweit {
+  position: relative;
   display: block;
   margin-top: var(--a-2);
   font-size: clamp(1.0625rem, 4.63vw, 1.5rem);
@@ -93,8 +94,18 @@
   color: var(--ink-2);
 }
 
-.titelZweit > span {
+.titelZweit > span:not(.klammer) {
   display: block;
+}
+
+/* Rohrklammer: nur am Desktop, so hoch wie die beiden Zeilen, links vor dem Text */
+.klammer {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0.2em;
+  bottom: 0.2em;
+  width: var(--a-5);
 }
 
 /* ─── Bild: mobil löst sich die Fläche ins Raster auf, ihre Teile tragen das Navy selbst ─── */
@@ -198,12 +209,13 @@
   color: var(--ink-2);
 }
 
-/* ─── Maße: mobil als Leiste unter dem Bild, gesetzt als Maßkette ─── */
+/* ─── Maße: mobil als Leiste unter dem Bild, gesetzt als Maßkette; unten rechts weich (E-031) ─── */
 .leiste {
   grid-row: 3;
   position: relative;
   padding: var(--a-3) var(--rand) var(--a-3) var(--schacht);
   border-top: 1px solid var(--line-strong);
+  border-bottom-right-radius: var(--radius-3);
   background-color: var(--surface);
   color: var(--ink);
 }
@@ -282,6 +294,30 @@
 /* Etikett am Radius in zwei festen Zeilen: „Einsatzgebiet“ / „rund um Wetzlar“ */
 .zeile {
   display: block;
+}
+
+/* Heizkreis um „35 km“ (E-031): Wert und Name behalten die Form der anderen Maße (die Teile des Heizkreises lösen sich
+   auf); gezeichnet wird er nur am Desktop, mobil fallen seine Leitungen weg */
+.kreis > span:not([aria-hidden]) {
+  display: contents;
+}
+
+.kreis .name {
+  color: var(--ink);
+  font-stretch: normal;
+  font-variant-numeric: normal;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+@media (max-width: 63.99em) {
+  .kreis {
+    display: contents;
+  }
+
+  .kreis > [aria-hidden] {
+    display: none;
+  }
 }
 
 .jahre {
@@ -651,7 +687,12 @@
 
   .titelZweit {
     margin-top: var(--a-3);
+    padding-left: var(--a-6);
     font-size: min(var(--text-title-3), calc(3svh + 0.75rem));
+  }
+
+  .klammer {
+    display: block;
   }
 
   /* Rest löst sich ins Raster auf: Handlung links neben der Fläche, Erklärsatz als Bildunterschrift unter ihr */
@@ -700,7 +741,8 @@
     display: none;
   }
 
-  /* Navy-Fläche über beide Zeilen; die Szene steht auf der Falz, die Maße oben */
+  /* Navy-Fläche über beide Zeilen; die Szene steht auf der Falz, die Maße oben. Weich (E-031): oben links --radius-3,
+     unten links --radius-2 – kleiner als die 37 Einheiten, auf denen der Vorlauf zum Knopf links austritt */
   .bild {
     grid-column: 4;
     grid-row: 1 / 3;
@@ -708,6 +750,7 @@
     display: block;
     min-height: var(--held-h);
     overflow: clip;
+    border-radius: var(--radius-3) 0 0 var(--radius-2);
     background-color: var(--surface);
     anchor-name: --einstieg-flaeche;
   }
@@ -756,6 +799,7 @@
     width: 100%;
     padding: var(--a-6) var(--a-6) 0;
     border: 0;
+    border-radius: 0;
     background-color: transparent;
     pointer-events: none;
   }
@@ -769,6 +813,11 @@
 
   .mass {
     padding-right: 0;
+  }
+
+  /* Heizkreis um „35 km“: Abstand zum nächsten Maß, damit die Schleife frei steht */
+  .kreis {
+    margin-right: var(--a-6);
   }
 
   .wert {
@@ -843,7 +892,7 @@
     padding-top: var(--a-5);
   }
 
-  .titelZweit > span {
+  .titelZweit > span:not(.klammer) {
     display: inline;
   }
 
