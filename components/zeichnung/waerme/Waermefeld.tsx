@@ -56,7 +56,8 @@ export function WaermefeldEbenen({ id, rahmen, className }: WaermefeldEbenenProp
 /**
  * Wie WaermefeldEbenen, die Bänder aber als Bilder aus eigenen Dateien (lib/zeichnung/waerme/dateien.ts, Prüfrunde 1
  * C1-6): für die Vergleichsräume weit unter dem ersten Bildschirm, damit ihre Pfade nicht im Dokument stehen. Die
- * Bilder laden erst, wenn die Abbildung näherkommt (loading="lazy"), und bewegen sich wie die Ebenen.
+ * Bilder laden erst, wenn die Abbildung näherkommt (loading="lazy"; SichtStart lässt sie so, Prüfrunde 3 C3-5), und
+ * bewegen sich wie die Ebenen.
  */
 export function WaermefeldDateien({ id, rahmen, className }: { id: WaermeDateiFeld; rahmen: Rechteck; className?: string }) {
   if (!WAERMEFELD_AN) return null;

@@ -5,7 +5,8 @@ import { malzeitJeBild, messeMitDrossel } from './support/malzeit';
 /**
  * Wärmefeld 2.0 (E-031, KERN K-009/K-015, Register `waerme-breitet-sich-aus`): Die Bänder wachsen einmal nach √t,
  * das heißeste zuerst. Im Hero als Nachlauf unter `.auftakt` (ab 560 ms, Ende ≤ 1.920 ms vor dem Sicherheitsnetz), auf
- * der Wärmepumpen-Seite beim Sichtbarwerden (SichtStart, Ende ≤ 2.400 ms). Reduziert, ohne Skript und per Sprung an die
+ * der Wärmepumpen-Seite beim Sichtbarwerden (SichtStart: Start, sobald die Bilder dekodiert sind, höchstens 1.500 ms
+ * danach; Ende ≤ 2.400 ms nach dem Start, Prüfrunde 3 C3-3). Reduziert, ohne Skript und per Sprung an die
  * Stelle steht der Endzustand. Malzeit je Bild unter 2 ms (Handy, CPU 4×). Beim echten Laden (Handy, CPU 4×, langsames
  * 4G) bricht kein Band am Sicherheitsnetz ab (Prüfrunde 1 C1-1: Das Netz zählt ab dem ersten Ablaufstart).
  *
@@ -25,6 +26,8 @@ const D4_MS = 600;
 const NACHLAUF_START_MS = 560;
 const NACHLAUF_ENDE_MS = 1920;
 const SICHT_ENDE_MS = 2400;
+/** Prüfrunde 3 C3-3: Start spätestens 1.500 ms nach dem Sichtbarwerden (Bilder dekodiert oder Netz). */
+const SICHT_WARTEN_MS = 1500;
 
 test.beforeEach(() => {
   test.skip(!['mobile-light', 'desktop-light'].includes(test.info().project.name), 'Die Wärme läuft je einmal mobil und am Desktop.');
@@ -148,7 +151,7 @@ test.describe('mit Bewegung (no-preference)', () => {
     await endzustand(raum);
   });
 
-  test('Sprung bei langsamem Netz (Prüfrunde 2 C2-5): der Ablauf startet erst, wenn alle Bilder des Vergleichs geladen und dekodiert sind', async ({
+  test('Sprung bei langsamem Netz (Prüfrunde 2 C2-5, Prüfrunde 3 C3-3): der Ablauf startet erst, wenn alle Bilder des Vergleichs geladen und dekodiert sind, höchstens 1,5 s nach dem Sichtbarwerden, und endet ≤ 2,4 s nach dem Start', async ({
     page,
   }) => {
     test.skip(test.info().project.name !== 'mobile-light', 'Gemessen am Handy mit Drossel.');
@@ -167,17 +170,28 @@ test.describe('mit Bewegung (no-preference)', () => {
       await page.goto(WAERMEPUMPEN, { waitUntil: 'domcontentloaded', timeout: 60_000 });
       const raum = page.locator(RAUM);
       await expect(raum).toHaveAttribute('data-ablauf', 'bereit', { timeout: 30_000 });
-      // Beim Wechsel auf „laeuft“ den Stand der Bilder festhalten
+      // Prüfrunde 3 C3-5: Bis zum Sprung lädt der Vergleich seine Bilder nicht (lazy, weit unter dem Bildschirm)
+      const vorher = await raum.evaluate((el) => [...el.querySelectorAll('img')].map((b) => ({ lazy: b.loading === 'lazy', geladen: b.complete && b.naturalWidth > 0 })));
+      expect(vorher.length, 'Bilder im Vergleich').toBeGreaterThan(3);
+      expect(vorher.every((b) => b.lazy && !b.geladen)).toBe(true);
+      // Beim Wechsel auf „laeuft“ und „fertig“ den Stand der Bilder und die Zeit festhalten
       await raum.evaluate((el) => {
-        const w = window as unknown as { __bilderBeimStart?: { geladen: boolean; breite: number }[] };
+        const w = window as unknown as { __bilderBeimStart?: { geladen: boolean; breite: number }[]; __zeiten?: Record<string, number> };
+        w.__zeiten = {};
         new MutationObserver(() => {
-          if (el.getAttribute('data-ablauf') === 'laeuft' && !w.__bilderBeimStart) {
+          const zustand = el.getAttribute('data-ablauf')!;
+          w.__zeiten![zustand] ??= performance.now();
+          if (zustand === 'laeuft' && !w.__bilderBeimStart) {
             w.__bilderBeimStart = [...el.querySelectorAll('img')].map((b) => ({ geladen: b.complete, breite: b.naturalWidth }));
           }
         }).observe(el, { attributes: true, attributeFilter: ['data-ablauf'] });
       });
-      // Sprung (wie Ende, Bildlaufleiste oder Suche im Text): ohne weiches Scrollen direkt an die Stelle
-      await raum.evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
+      // Sprung (wie Ende, Bildlaufleiste oder Suche im Text): ohne weiches Scrollen direkt an die Stelle; ab hier ist der
+      // Bereich sichtbar
+      await raum.evaluate((el) => {
+        (window as unknown as { __sprung?: number }).__sprung = performance.now();
+        el.scrollIntoView({ block: 'center', behavior: 'instant' });
+      });
       await expect(raum).toHaveAttribute('data-ablauf', 'laeuft', { timeout: 30_000 });
       const bilder = await page.evaluate(() => (window as unknown as { __bilderBeimStart?: { geladen: boolean; breite: number }[] }).__bilderBeimStart);
       expect(bilder!.length, 'Bilder im Vergleich').toBeGreaterThan(3);
@@ -185,6 +199,15 @@ test.describe('mit Bewegung (no-preference)', () => {
         expect(b.geladen).toBe(true);
         expect(b.breite).toBeGreaterThan(0);
       }
+      await expect(raum).toHaveAttribute('data-ablauf', 'fertig', { timeout: 30_000 });
+      const { sprung, zeiten } = await page.evaluate(() => {
+        const w = window as unknown as { __sprung: number; __zeiten: Record<string, number> };
+        return { sprung: w.__sprung, zeiten: w.__zeiten };
+      });
+      // Start höchstens SICHT_WARTEN_MS nach dem Sichtbarwerden, Ende höchstens SICHT_ENDE_MS nach dem Start (+ 400 ms für
+      // Zeitgeber und Mikroaufgaben unter CPU 4×; das Netz des Endes liegt bei SICHT_ENDE_MS + d-3)
+      expect(zeiten.laeuft - sprung, 'sichtbar → Start').toBeLessThanOrEqual(SICHT_WARTEN_MS + 400);
+      expect(zeiten.fertig - zeiten.laeuft, 'Start → Ende').toBeLessThanOrEqual(SICHT_ENDE_MS + 400);
     } finally {
       await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
       await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 });

@@ -10,7 +10,7 @@ import {
   type AblaufWert,
 } from '../ablauf';
 import { MEDIA } from '../prefers';
-import { DAUER_MS, SICHT_ENDE_MS } from '../register';
+import { DAUER_MS, SICHT_ENDE_MS, SICHT_WARTEN_MS } from '../register';
 
 type Eintrag = { isIntersecting: boolean; boundingClientRect: { top: number; bottom: number; height: number } };
 type Callback = (entries: Eintrag[]) => void;
@@ -85,7 +85,7 @@ describe('Ablauf beim Sichtbarwerden (E-031, Auslöser sicht)', () => {
     expect(melden.mock.calls).toEqual([['bereit'], ['laeuft']]);
   });
 
-  it('Prüfrunde 2 C2-5: bereit lädt die Lazy-Bilder (eager, niedrige Priorität); laeuft erst, wenn alle dekodiert sind', async () => {
+  it('Prüfrunde 2 C2-5, Prüfrunde 3 C3-5: bereit lässt die Bilder lazy (der Browser lädt sie, wenn der Bereich näherkommt); laeuft erst, wenn alle dekodiert sind', async () => {
     let fertig: () => void = () => {};
     const bilder = [
       { loading: 'lazy', fetchPriority: 'auto', decode: () => new Promise<void>((r) => (fertig = r)) },
@@ -100,9 +100,11 @@ describe('Ablauf beim Sichtbarwerden (E-031, Auslöser sicht)', () => {
       ['lazy', 'auto'],
     ]);
     observers[0].cb([lage(1200)]);
+    expect(melden.mock.calls).toEqual([['bereit']]);
+    // Wer nicht bis zum Bereich scrollt, lädt seine Bilder nicht (vorher: eager mit niedriger Priorität bei bereit)
     expect(bilder.map((b) => [b.loading, b.fetchPriority])).toEqual([
-      ['eager', 'low'],
-      ['eager', 'low'],
+      ['lazy', 'auto'],
+      ['lazy', 'auto'],
     ]);
     observers[0].cb([lage(600, 300, true)]);
     for (let i = 0; i < 5; i += 1) await Promise.resolve();
@@ -128,8 +130,9 @@ describe('Ablauf beim Sichtbarwerden (E-031, Auslöser sicht)', () => {
     expect(melden.mock.calls).toEqual([['bereit'], ['laeuft']]);
     await vi.advanceTimersByTimeAsync(ABLAUF_BILD_NETZ_MS);
     expect(melden).toHaveBeenCalledTimes(2);
-    // Das Netz ist kurz genug, dass der Ablauf im Fenster bleibt: Start spätestens nach dem Netz
+    // Das Netz ist der Start des Auslösers sicht (Register SICHT_WARTEN_MS): Start spätestens nach dem Netz
     expect(ABLAUF_BILD_NETZ_MS).toBeLessThanOrEqual(1500);
+    expect(ABLAUF_BILD_NETZ_MS).toBe(SICHT_WARTEN_MS);
   });
 
   it('beim Laden im Bild (auch nur im unteren Rand): Endzustand bleibt, nichts blitzt auf', () => {

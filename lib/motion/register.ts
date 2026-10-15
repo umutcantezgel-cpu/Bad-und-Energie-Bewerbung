@@ -155,7 +155,13 @@ export const AUFTAKT_ENDE_MS = 1120;
  */
 export const NACHLAUF_START_TAKTE = 7;
 export const NACHLAUF_ENDE_MS = 1920;
-/** Sicht-Auftritt (E-031): Ende spätestens 2.400 ms nach dem Sichtbarwerden. */
+/**
+ * Sicht-Auftritt (E-031, Prüfrunde 3 C3-3): Der Ablauf startet, wenn der Bereich sichtbar ist und seine Bilder dekodiert
+ * sind, spätestens SICHT_WARTEN_MS nach dem Sichtbarwerden (lib/motion/ablauf.ts ABLAUF_BILD_NETZ_MS, Prüfrunde 2
+ * C2-5), und endet spätestens SICHT_ENDE_MS nach dem Start, also höchstens 3.900 ms nach dem Sichtbarwerden. Ohne
+ * Bilder oder mit geladenen Bildern beginnt er mit dem Sichtbarwerden.
+ */
+export const SICHT_WARTEN_MS = 1500;
 export const SICHT_ENDE_MS = 2400;
 /** Klick-Wärme (E-031): Ende 480 ms nach dem Klick. */
 export const KLICK_ENDE_MS = 480;

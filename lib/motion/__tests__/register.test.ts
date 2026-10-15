@@ -2,6 +2,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { parseMotionIds } from '../../../scripts/qa/check-design-tokens.mjs';
+import { ABLAUF_BILD_NETZ_MS } from '../ablauf';
 import { SICHERHEITSNETZ_MS } from '../head-script';
 import {
   AUFTAKT_ENDE_MS,
@@ -15,6 +16,7 @@ import {
   NACHLAUF_ENDE_MS,
   NACHLAUF_START_TAKTE,
   SICHT_ENDE_MS,
+  SICHT_WARTEN_MS,
   TAKT_MS,
   WECHSEL,
   isMotionId,
@@ -256,6 +258,10 @@ describe('Bewegungsregister', () => {
     expect(NACHLAUF_START_TAKTE).toBe(7);
     expect(NACHLAUF_ENDE_MS).toBe(1920);
     expect(SICHT_ENDE_MS).toBe(2400);
+    // Prüfrunde 3 C3-3: Start spätestens SICHT_WARTEN_MS nach dem Sichtbarwerden (= Netz der Bilder in lib/motion/ablauf.ts),
+    // Ende höchstens 3.900 ms nach dem Sichtbarwerden
+    expect(SICHT_WARTEN_MS).toBe(ABLAUF_BILD_NETZ_MS);
+    expect(SICHT_WARTEN_MS + SICHT_ENDE_MS).toBeLessThanOrEqual(3900);
     expect(KLICK_ENDE_MS).toBe(480);
     expect(WECHSEL).toEqual({ abdeckenMs: 360, aufdeckenMs: 240, haltenMs: 1200 });
     expect(Object.isFrozen(WECHSEL)).toBe(true);
@@ -334,7 +340,7 @@ describe('Bewegungsregister', () => {
     expect([...f.sicht!.verzoegerungTakte]).toEqual([...raum].sort((a, b) => a - b));
   });
 
-  it('sicht (E-031): nur Wärmefeld und Büro-Szenen, Ende ≤ 2.400 ms ab dem Sichtbarwerden', () => {
+  it('sicht (E-031, Prüfrunde 3 C3-3): nur Wärmefeld und Büro-Szenen, Ende ≤ 2.400 ms ab dem Start (sichtbar und Bilder dekodiert)', () => {
     expect(mitAusloeser('sicht')).toEqual(['waerme-breitet-sich-aus', 'buero-ablauf']);
     for (const id of mitAusloeser('sicht') as MotionId[]) {
       const f = MOTION_REGISTER[id].fenster!.sicht!;

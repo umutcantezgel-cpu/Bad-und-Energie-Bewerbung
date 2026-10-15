@@ -7,7 +7,7 @@
  * Nur die Wärmerampe --waerme-0…4 (Guard waerme-rollen), keine Verläufe, keine Filter, keine Rohfarben. Grundwerte sind
  * der Endzustand (Füllart backwards): ohne Skript, mit reduzierter Bewegung, nach einer Soft-Navigation und im Druck
  * steht das Feld. Hero: unter `.auftakt` (Kopfskript, Auslöser `nachlauf`, Ende ≤ 1.920 ms); Seiten: im Bereich von
- * SichtStart unter [data-ablauf="laeuft"] (Auslöser `sicht`, Ende ≤ 2.400 ms), vorher unter [data-ablauf="bereit"]
+ * SichtStart unter [data-ablauf="laeuft"] (Auslöser `sicht`, Ende ≤ 2.400 ms nach dem Start), vorher unter [data-ablauf="bereit"]
  * am Bildschirm unsichtbar. will-change nur, solange es läuft. Wächter: components/zeichnung/waerme/__tests__/.
  */
 

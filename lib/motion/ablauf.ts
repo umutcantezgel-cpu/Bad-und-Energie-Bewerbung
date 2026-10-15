@@ -7,8 +7,8 @@ import { motionAllowed, type MediaWindow } from './prefers';
  * - `fertig`: Endzustand. So liefert ihn der Server, so steht er ohne Skript, bei reduzierter Bewegung, ohne
  *   IntersectionObserver und wenn der Bereich beim Laden schon (teilweise) im Bild ist – nichts blitzt auf.
  * - `bereit`: Startzustand, solange der Bereich unterhalb wartet. Nur, wenn Bewegung erlaubt ist und die erste Meldung
- *   des Observers „nicht im Bild“ lautet. Der Bereich lädt dann seine Lazy-Bilder, und der Ablauf startet erst, wenn
- *   sie dekodiert sind (Prüfrunde 2 C2-5).
+ *   des Observers „nicht im Bild“ lautet. Seine Lazy-Bilder lädt der Browser, wenn der Bereich näherkommt; der Ablauf
+ *   startet erst, wenn sie dekodiert sind (Prüfrunde 2 C2-5), höchstens ABLAUF_BILD_NETZ_MS nach dem Sichtbarwerden.
  * - `laeuft`: Der Ablauf läuft (CSS unter [data-ablauf="laeuft"], Füllart backwards, bei den Büro-Szenen both, damit
  *   jede Ebene bis zum Schluss besteht; Ende ≤ SICHT_ENDE_MS); nach dem letzten Ablauf (spätestens nach ABLAUF_NETZ_MS)
  *   wieder `fertig`.
@@ -29,11 +29,13 @@ export const ABLAUF_RAND = '0px 0px -15% 0px';
 export const ABLAUF_NETZ_MS = 2800;
 
 /**
- * Bilder des Bereichs (Prüfrunde 2 C2-5): Die Bänder und Zeichnungen der Vergleichsräume sind Lazy-Dateien. Springt man
- * zur Stelle (Ende, Bildlaufleiste, Suche im Text, Überschriften-Navigation), war der Ablauf sonst gestartet, bevor sie
- * geladen waren: Das heißeste Band sprang mitten im Wachsen ein. Darum lädt der Bereich seine Bilder, sobald er
- * `bereit` ist (eager, niedrige Priorität, nach dem Hydrieren und damit nach LCP), und `laeuft` erst, wenn alle Bilder
- * dekodiert sind – höchstens ABLAUF_BILD_NETZ_MS nach dem Sichtbarwerden, dann läuft er trotzdem.
+ * Bilder des Bereichs (Prüfrunde 2 C2-5, Prüfrunde 3 C3-3, C3-5): Die Bänder und Zeichnungen der Vergleichsräume sind
+ * Lazy-Dateien; der Browser lädt sie, wenn der Bereich näherkommt (wer nicht bis dorthin scrollt, lädt sie nicht).
+ * Springt man zur Stelle (Ende, Bildlaufleiste, Suche im Text, Überschriften-Navigation), war der Ablauf sonst
+ * gestartet, bevor sie geladen waren: Das heißeste Band sprang mitten im Wachsen ein. Darum `laeuft` der Bereich erst,
+ * wenn alle Bilder dekodiert sind – höchstens ABLAUF_BILD_NETZ_MS nach dem Sichtbarwerden, dann läuft er trotzdem. Das
+ * ist der Start des Auslösers `sicht` (lib/motion/register.ts SICHT_WARTEN_MS): Ende ≤ SICHT_ENDE_MS nach dem Start,
+ * also ≤ 3.900 ms nach dem Sichtbarwerden.
  */
 export const ABLAUF_BILD_NETZ_MS = 1500;
 
@@ -77,15 +79,7 @@ export function beobachteAblauf(element: Element, melden: (wert: AblaufWert) => 
   let erster = true;
   const schritt = (ereignis: AblaufEreignis) => {
     const neu = ablaufSchritt(wert, ereignis);
-    if (neu === wert) return;
-    melden((wert = neu));
-    // bereit: die Lazy-Bilder jetzt laden, mit niedriger Priorität (nach dem Hydrieren, also nach LCP)
-    if (wert === 'bereit') {
-      for (const bild of bilderIn(element)) {
-        bild.fetchPriority = 'low';
-        bild.loading = 'eager';
-      }
-    }
+    if (neu !== wert) melden((wert = neu));
   };
   const observer = new Observer(
     (eintraege) => {
