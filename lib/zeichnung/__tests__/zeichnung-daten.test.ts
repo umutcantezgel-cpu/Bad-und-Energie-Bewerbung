@@ -54,15 +54,21 @@ function endpunkte(d: string): Array<{ x: number; y: number }> {
 }
 
 describe('Linienarten (K-010, DIN EN ISO 128-2)', () => {
-  it('nimmt die Stärken aus den Tokens; in Zeichnungen sind alle Enden stumpf, rund nur das Bedienzeichen', () => {
-    for (const id of ZEICHNUNG_LINIEN) {
-      expect(LINIENARTEN[id].enden, id).toBe('butt');
-      expect(TOKENS.linien[id], id).toBe(LINIENARTEN[id].px);
-    }
-    expect(LINIENARTEN.icon.enden).toBe('round');
+  it('nimmt die Stärken aus den Tokens; Enden und Ecken je Linienart exakt (E-031: nur die Leitung rund)', () => {
+    for (const id of ZEICHNUNG_LINIEN) expect(TOKENS.linien[id], id).toBe(LINIENARTEN[id].px);
+    // Leitung rund (Enden und Ecken), Kontur stumpf mit runden Ecken, feine, Maß-, verdeckte und Mittellinie nach DIN
+    // stumpf und spitz; das Bedienzeichen bleibt rund und gehört nicht in Zeichnungen
+    expect(Object.fromEntries(Object.entries(LINIENARTEN).map(([id, l]) => [id, [l.enden, l.ecken]]))).toEqual({
+      leitung: ['round', 'round'],
+      kontur: ['butt', 'round'],
+      fein: ['butt', 'miter'],
+      mass: ['butt', 'miter'],
+      verdeckt: ['butt', 'miter'],
+      mittellinie: ['butt', 'miter'],
+      icon: ['round', 'round'],
+    });
     expect(ZEICHNUNG_LINIEN).not.toContain('icon');
-    expect(LINIENARTEN.kontur.ecken).toBe('miter');
-    expect(LINIENARTEN.leitung.ecken).toBe('round');
+    expect(ZEICHNUNG_LINIEN.filter((id) => LINIENARTEN[id].enden === 'round')).toEqual(['leitung']);
     expect(LINIENARTEN.verdeckt.muster).toEqual(TOKENS.linien.verdecktMuster);
     expect(LINIENARTEN.mittellinie.muster).toEqual(TOKENS.linien.mittellinieMuster);
     expect(MASSSTAB).toEqual({ geraet: 1, haus: 10 });

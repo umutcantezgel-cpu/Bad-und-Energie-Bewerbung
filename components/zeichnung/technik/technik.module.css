@@ -1,7 +1,7 @@
 /*
  * Technische Zeichnung 2.0 (KERN K-010, E-029): Linienarten aus app/styles/theme.css (Helfer in lib/zeichnung/norm.ts),
- * alle mit non-scaling-stroke und stumpfen Enden; Konturen spitz, Leitungen mit runden Gelenken (Bögen kommen aus der
- * Geometrie). Farben nur über Rollen: Kontur in der Markenrolle (auf Navy Creme), Vorlauf rot, Rücklauf blau,
+ * alle mit non-scaling-stroke. Enden je Linienart (E-031, KERN 1.3): Leitungen rund mit runden Gelenken (Bögen kommen
+ * aus der Geometrie), Konturen stumpf mit runden Ecken, feine, Maß-, verdeckte und Mittellinien stumpf und spitz. Farben nur über Rollen: Kontur in der Markenrolle (auf Navy Creme), Vorlauf rot, Rücklauf blau,
  * Kältemittel in der Markenrolle. Nur flache Flächen, keine Verläufe.
  */
 
@@ -34,7 +34,7 @@
 .kontur {
   stroke: var(--brand);
   stroke-width: var(--m-kontur);
-  stroke-linejoin: miter;
+  stroke-linejoin: round;
 }
 
 .fein {
@@ -71,6 +71,7 @@
 
 .leitung {
   stroke-width: var(--m-leitung);
+  stroke-linecap: round;
   stroke-linejoin: round;
 }
 

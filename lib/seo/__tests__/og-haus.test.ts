@@ -58,9 +58,15 @@ describe('Teilen-Bilder zeichnen den Hausschnitt der Website (E-029)', () => {
     expect(quelle).toMatch(/H\$\{ende\}`;/);
   });
 
-  it('kein Wärmebild, kein Zirkel, keine Rohrklammer, kein Heizkreis; Linien stumpf wie in den Zeichnungen', () => {
+  it('kein Wärmebild, kein Zirkel, keine Rohrklammer, kein Heizkreis; Leitungen rund, sonst stumpf wie in den Zeichnungen', () => {
     expect(quelle).not.toMatch(/HAUS_BAENDER|HAUS_ZIRKEL|HAUS_MARKEN|Rohrklammer|Heizkreis|luefter|waerme/i);
-    expect(quelle).not.toMatch(/strokeLinecap[=:]\s*['"{]*round/);
+    // Runde Enden nur auf Leitungspfaden (E-031): die Leitungen des Schnitts und der Vorlauf zum Knopf, beide in der
+    // Stärke der Leitung; die gemeinsamen Linienarten (stumpf) bleiben stumpf
+    const rund = [...quelle.matchAll(/<path\b[^>]*strokeLinecap[=:]\s*['"{]*round[^>]*>/g)].map((m) => m[0]);
+    expect(rund).toHaveLength(2);
+    for (const p of rund) expect(p).toMatch(/strokeWidth=\{(?:vb\()?LEITUNG\)?\}[^>]*strokeLinejoin="round"/);
+    expect(quelle).not.toMatch(/strokeLinecap:\s*['"]round/);
+    expect(quelle).toMatch(/const stumpf = \{ strokeLinecap: 'butt', strokeLinejoin: 'miter', fill: 'none' \} as const;/);
     expect(quelle).not.toMatch(/borderRadius: '24px/);
   });
 });

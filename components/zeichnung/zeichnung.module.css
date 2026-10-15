@@ -1,14 +1,15 @@
 /*
  * Formsystem der wiederkehrenden Zeichnungen (KERN K-008, K-010; Linienarten nach E-029, lib/zeichnung/norm.ts):
- * Leitungen in der Linienart `leitung` (--m-leitung, 3 px) mit stumpfen Enden, Bögen rund; Vorlauf rot oben,
- * Rücklauf blau unten, Paarabstand --paar. Runde Enden gibt es nur an Bedienzeichen (--m-icon).
+ * Leitungen in der Linienart `leitung` (--m-leitung, 3 px) mit runden Enden und Bögen (E-031); Vorlauf rot oben,
+ * Rücklauf blau unten, Paarabstand --paar. Alle übrigen Striche bleiben stumpf (der Kreis der Danke-Seite zeichnet
+ * sich über stroke-dashoffset, runde Enden ließen dort Punkte stehen).
  * Farben nur über die Rollen (--vorlauf, --ruecklauf); hell, dunkel, Inverse-Band und Druck kommen aus theme.css.
  */
 
 .strich {
   fill: none;
   stroke-width: var(--m-leitung);
-  stroke-linecap: butt;
+  stroke-linecap: round;
   stroke-linejoin: round;
 }
 

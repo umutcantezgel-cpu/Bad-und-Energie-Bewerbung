@@ -95,17 +95,18 @@ describe('Rohrklammer (R3-HOME-01, B Runde 1 / Variante 1)', () => {
 });
 
 describe('Formsystem der Zeichnungen', () => {
-  it('Linienarten aus lib/zeichnung/norm.ts (E-029): Leitung 3 px, Kontur 2 px, stumpfe Enden, nur Rollenfarben', () => {
+  it('Linienarten aus lib/zeichnung/norm.ts (E-029, E-031): Leitung 3 px rund, Kontur 2 px, sonst stumpf, nur Rollenfarben', () => {
     const css = quelle('zeichnung.module.css').replace(/\/\*[\s\S]*?\*\//g, '');
-    // Leitungen in der Linienart `leitung`, Abgänge in `kontur`; beide aus den Tokens (theme.css)
-    expect(css).toMatch(/\.strich \{[^}]*stroke-width: var\(--m-leitung\);[^}]*stroke-linecap: butt;/);
+    // Leitungen in der Linienart `leitung` mit runden Enden und Bögen, Abgänge in `kontur`; beide aus den Tokens (theme.css)
+    expect(css).toMatch(/\.strich \{[^}]*stroke-width: var\(--m-leitung\);[^}]*stroke-linecap: round;[^}]*stroke-linejoin: round;/);
     expect([LINIENARTEN.leitung.px, LINIENARTEN.kontur.px]).toEqual([TOKENS.linien.leitung, TOKENS.linien.kontur]);
-    expect(LINIENARTEN.leitung.enden).toBe('butt');
+    expect([LINIENARTEN.leitung.enden, LINIENARTEN.leitung.ecken]).toEqual(['round', 'round']);
     const breiten = [...css.matchAll(/stroke-width:\s*([^;]+);/g)].map((m) => m[1].trim());
     expect(breiten.length).toBeGreaterThan(3);
     for (const b of breiten) expect(b).toMatch(/^(?:var\(--m-(?:leitung|kontur|fein|mass|strich)\)|calc\(var\(--m-(?:leitung|strich)\) [/+] var\(--[a-z0-9-]+\)\))$/);
-    // Runde Enden gibt es in Zeichnungen nicht mehr (nur Bedienzeichen, components/zeichnung/bewegung)
-    expect(css).not.toMatch(/stroke-linecap: round/);
+    // Runde Enden nur an der Leitung (.strich); jede andere Regel bleibt stumpf (Kreis, Lageplan, Abgänge)
+    expect([...css.matchAll(/([^{}]+)\{[^}]*stroke-linecap: round/g)].map((m) => m[1].trim())).toEqual(['.strich']);
+    expect([...css.matchAll(/([^{}]+)\{[^}]*stroke-linecap: butt/g)].map((m) => m[1].trim())).toEqual(['.kreisStrich', '.pendelLinie', '.lsAbgang']);
     expect(css).toMatch(/stroke: var\(--vorlauf\)/);
     expect(css).toMatch(/stroke: var\(--ruecklauf\)/);
     expect(css).not.toMatch(/#[0-9a-fA-F]{3,8}\b|--p-[a-z]|rgb\(|--wb-|iso(?:Kalt|Warm)/);

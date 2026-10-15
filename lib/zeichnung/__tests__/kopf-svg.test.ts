@@ -118,9 +118,12 @@ describe('Zeichnungen des Stellenkopfs als Datei (Prüfung E-029, Runde 3, Leist
       expect(svg).toContain('@media screen and (prefers-color-scheme:dark)');
       expect(svg).toContain('@media print');
       expect(svg).not.toMatch(/href=|url\(|<image|<script|<foreignObject|@font-face|<text/);
-      // Linienarten: non-scaling-stroke, stumpfe Enden, nie rund
+      // Linienarten: non-scaling-stroke; runde Enden nur in .l{} (Leitung, E-031), sonst stumpf; runde Ecken nur bei
+      // Leitung und Kontur
       expect(svg).toContain('vector-effect:non-scaling-stroke');
-      expect(svg).not.toMatch(/stroke-linecap:round/);
+      expect([...svg.matchAll(/([^{}>]+)\{[^}]*stroke-linecap:round/g)].map((m) => m[1])).toEqual(['.l']);
+      expect([...svg.matchAll(/([^{}>]+)\{[^}]*stroke-linecap:butt/g)].map((m) => m[1])).toEqual(['.l,.k,.f,.v,.m,.s']);
+      expect([...svg.matchAll(/([^{}>]+)\{[^}]*stroke-linejoin:round/g)].map((m) => m[1])).toEqual(['.k', '.l']);
     }
   });
 

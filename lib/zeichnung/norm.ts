@@ -2,8 +2,9 @@
  * Technische Zeichnung 2.0 (KERN K-010, E-029): Linienarten, Maßstab und Maßlinien als Daten.
  *
  * Grundlage DIN EN ISO 128-2 (Linienarten), an den Bildschirm angepasst: feste Strichstärken in px (CSS-Tokens in
- * app/styles/theme.css, Spiegel in lib/tokens), alle mit `vector-effect: non-scaling-stroke`. In Zeichnungen sind alle
- * Enden stumpf, Konturen haben spitze Ecken, Leitungen biegen mit Radius; runde Enden nur bei Bedienzeichen.
+ * app/styles/theme.css, Spiegel in lib/tokens), alle mit `vector-effect: non-scaling-stroke`. Seit E-031 (KERN 1.3):
+ * Leitungen haben runde Enden und runde Ecken und biegen mit Radius, Konturen haben stumpfe Enden und runde Ecken;
+ * feine, Maß-, verdeckte und Mittellinien bleiben stumpf mit spitzen Ecken nach DIN. Bedienzeichen: rund.
  * Maßlinien nach DIN 406-11 mit 45°-Begrenzungsstrichen, Maßzahl über der Linie, lesbar von unten oder von rechts.
  *
  * Reines Modul ohne React: Website (components/zeichnung/technik), Hausschnitt (lib/zeichnung/szenen) und
@@ -16,9 +17,9 @@ export type LinienartId = 'leitung' | 'kontur' | 'fein' | 'mass' | 'verdeckt' | 
 export interface Linienart {
   /** Strichstärke in px bei jeder Größe (non-scaling-stroke). */
   px: number;
-  /** stroke-linecap: stumpf in Zeichnungen, rund nur für Bedienzeichen. */
+  /** stroke-linecap: rund bei Leitungen und Bedienzeichen (E-031), sonst stumpf nach DIN. */
   enden: 'butt' | 'round';
-  /** stroke-linejoin: Konturen spitz, Leitungen und Bedienzeichen rund (Bögen mit Radius). */
+  /** stroke-linejoin: rund bei Leitungen, Konturen und Bedienzeichen (E-031), sonst spitz. */
   ecken: 'miter' | 'round';
   /** Strichmuster in px (stroke-dasharray) oder null für Volllinien. */
   muster: readonly number[] | null;
@@ -33,13 +34,13 @@ const L = TOKENS.linien;
 export const LINIENARTEN: Readonly<Record<LinienartId, Linienart>> = {
   leitung: {
     px: L.leitung,
-    enden: 'butt',
+    enden: 'round',
     ecken: 'round',
     muster: null,
     token: '--m-leitung',
     verwendung: 'Vorlauf, Rücklauf, Kältemittel; Bögen mit Radius',
   },
-  kontur: { px: L.kontur, enden: 'butt', ecken: 'miter', muster: null, token: '--m-kontur', verwendung: 'Gehäuse, Wände, Geräte' },
+  kontur: { px: L.kontur, enden: 'butt', ecken: 'round', muster: null, token: '--m-kontur', verwendung: 'Gehäuse, Wände, Geräte' },
   fein: { px: L.fein, enden: 'butt', ecken: 'miter', muster: null, token: '--m-fein', verwendung: 'Gitter, Lamellen, Fugen, Schraffur' },
   mass: { px: L.mass, enden: 'butt', ecken: 'miter', muster: null, token: '--m-mass', verwendung: 'Maß- und Hinweislinien' },
   verdeckt: {
@@ -61,7 +62,7 @@ export const LINIENARTEN: Readonly<Record<LinienartId, Linienart>> = {
   icon: { px: L.icon, enden: 'round', ecken: 'round', muster: null, token: '--m-icon', verwendung: 'Nur Bedienzeichen (Icons, Knöpfe)' },
 };
 
-/** Linienarten, die in Zeichnungen vorkommen dürfen (alle stumpf); `icon` gehört nur zu Bedienzeichen. */
+/** Linienarten, die in Zeichnungen vorkommen dürfen (rund nur die Leitung); `icon` gehört nur zu Bedienzeichen. */
 export const ZEICHNUNG_LINIEN: readonly LinienartId[] = ['leitung', 'kontur', 'fein', 'mass', 'verdeckt', 'mittellinie'];
 
 /** Maßstab als Daten (K-010): Millimeter je Einheit. Gerätezeichnung 1 Einheit = 1 mm, Hausschnitt 1 Einheit = 10 mm. */

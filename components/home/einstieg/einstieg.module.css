@@ -129,11 +129,12 @@
   overflow: visible;
 }
 
-/* Rohre der Szene (Vorlauf und Rücklauf, Farbe aus der Zeichnung): stumpf, Bögen mit Radius, zeichnen sich einmal */
+/* Rohre der Szene (Vorlauf und Rücklauf, Farbe aus der Zeichnung): runde Enden, Bögen mit Radius (E-031), zeichnen sich
+   einmal; während des Auftakts stumpf (siehe unten) */
 .rohr {
   fill: none;
   stroke-width: calc(var(--rohr-e) * 1px);
-  stroke-linecap: butt;
+  stroke-linecap: round;
   stroke-linejoin: round;
   stroke-dasharray: 1 1;
   stroke-dashoffset: 0;
@@ -823,7 +824,7 @@
     fill: none;
     stroke: var(--vorlauf);
     stroke-width: calc(var(--rohr-e) * var(--e));
-    stroke-linecap: butt;
+    stroke-linecap: round;
     stroke-dasharray: 1 1;
     stroke-dashoffset: 0;
   }
@@ -914,6 +915,14 @@
   to {
     transform: none;
   }
+}
+
+/* Während des Auftakts sind die Rohre stumpf: Ein Strich mit pathLength, der sich über stroke-dashoffset zeichnet, ließe
+   mit runden Enden vorab Punkte stehen. In Ruhe (ohne Auftakt, nach dem Sicherheitsnetz) sind sie rund (E-031). */
+:global(.auftakt) .held .rohr,
+:global(.auftakt) .held .rohrD line,
+:global(.auftakt) .held .rohrD path {
+  stroke-linecap: butt;
 }
 
 /* Der Vorlauf fällt von oben (Anlage) in den Schacht; der Rücklauf steigt von unten zurück */

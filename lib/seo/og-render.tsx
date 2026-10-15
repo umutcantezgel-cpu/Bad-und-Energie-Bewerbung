@@ -114,8 +114,8 @@ function loadAssets() {
 
 const stumpf = { strokeLinecap: 'butt', strokeLinejoin: 'miter', fill: 'none' } as const;
 
-/** Linienarten im Bild (px wie auf der Website, umgerechnet in Einheiten des Schnitts). */
-const kontur = { ...stumpf, stroke: NAVY.kontur, strokeWidth: vb(2) } as const;
+/** Linienarten im Bild (px wie auf der Website, umgerechnet in Einheiten des Schnitts; Konturen mit runden Ecken, E-031). */
+const kontur = { ...stumpf, strokeLinejoin: 'round', stroke: NAVY.kontur, strokeWidth: vb(2) } as const;
 const fein = { ...stumpf, stroke: NAVY.kontur, strokeWidth: vb(1) } as const;
 
 /**
@@ -187,7 +187,7 @@ function Haus({ knopf }: { knopf: boolean }) {
           // Hinter Gehäuse und Sockel: verdeckte Linie (1 px, gestrichelt wie --m-verdeckt-muster)
           <path key={l.id} d={l.d} {...stumpf} stroke={MEDIUM[l.medium]} strokeWidth={vb(1)} strokeDasharray={VERDECKT_MUSTER} />
         ) : (
-          <path key={l.id} d={l.d} fill="none" stroke={MEDIUM[l.medium]} strokeWidth={vb(LEITUNG)} strokeLinecap="butt" strokeLinejoin="round" />
+          <path key={l.id} d={l.d} fill="none" stroke={MEDIUM[l.medium]} strokeWidth={vb(LEITUNG)} strokeLinecap="round" strokeLinejoin="round" />
         ),
       )}
       {ogPfeile(knopf).map((p) => (
@@ -218,7 +218,7 @@ function VorlaufZumKnopf() {
     `V${KNOPF_Y + BOGEN}A${BOGEN} ${BOGEN} 0 0 0 ${STEIG_X - BOGEN} ${KNOPF_Y}H${ende}`;
   return (
     <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ position: 'absolute', left: 0, top: 0 }}>
-      <path d={d} stroke={C.rot} strokeWidth={LEITUNG} strokeLinecap="butt" strokeLinejoin="round" fill="none" />
+      <path d={d} stroke={C.rot} strokeWidth={LEITUNG} strokeLinecap="round" strokeLinejoin="round" fill="none" />
     </svg>
   );
 }

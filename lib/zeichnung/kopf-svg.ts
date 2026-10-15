@@ -55,8 +55,9 @@ const vars = (f: Farben) =>
   `--b:${f.marke};--fl:${f.flaeche};--sn:${f.schnitt};--sr:${f.schraffur};--vl:${f.vorlauf};--rl:${f.ruecklauf}`;
 
 /**
- * Linienarten wie technik.module.css (gleiche Reihenfolge, damit die Kaskade gleich wirkt): non-scaling-stroke, stumpfe
- * Enden, Konturen spitz, Leitungen rund; Stärken und Muster aus lib/tokens. `pfeil`: Faktoren der Fließpfeile je Breite
+ * Linienarten wie technik.module.css (gleiche Reihenfolge, damit die Kaskade gleich wirkt): non-scaling-stroke; Enden
+ * stumpf außer bei Leitungen (rund, E-031), Konturen und Leitungen mit runden Ecken, sonst spitz; Stärken und Muster
+ * aus lib/tokens. `pfeil`: Faktoren der Fließpfeile je Breite
  * des Bilds wie `.anlagenBild` (im `<img>` gelten Medienabfragen für die Breite des Bilds).
  */
 function stil(pfeil: boolean): string {
@@ -65,12 +66,12 @@ function stil(pfeil: boolean): string {
     `@media screen and (prefers-color-scheme:dark){svg{${vars(KOPF_SVG_FARBEN.dunkel)}}}`,
     `@media print{svg{${vars(KOPF_SVG_FARBEN.druck)}}}`,
     '.l,.k,.f,.v,.m,.s{fill:none;stroke-linecap:butt;vector-effect:non-scaling-stroke}',
-    `.k{stroke:var(--b);stroke-width:${L.kontur}px;stroke-linejoin:miter}`,
+    `.k{stroke:var(--b);stroke-width:${L.kontur}px;stroke-linejoin:round}`,
     `.f{stroke:var(--b);stroke-width:${L.fein}px;stroke-linejoin:miter}`,
     `.v{stroke:var(--b);stroke-width:${L.verdeckt}px;stroke-dasharray:${L.verdecktMuster.join(' ')};stroke-linejoin:miter}`,
     `.m{stroke:var(--b);stroke-width:${L.mittellinie}px;stroke-dasharray:${L.mittellinieMuster.join(' ')};stroke-linejoin:miter}`,
     `.s{stroke:var(--sr);stroke-width:${L.fein}px}`,
-    `.l{stroke-width:${L.leitung}px;stroke-linejoin:round}`,
+    `.l{stroke-width:${L.leitung}px;stroke-linecap:round;stroke-linejoin:round}`,
     '.vl{stroke:var(--vl)}',
     '.rl{stroke:var(--rl)}',
     '.km{stroke:var(--b)}',

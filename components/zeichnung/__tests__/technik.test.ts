@@ -437,9 +437,15 @@ describe('Linien und Farben (K-010)', () => {
     html(createElement(HausschnittKlein, {})),
   ];
 
-  it('stumpfe Enden: in den Zeichnungen nie stroke-linecap round; rund nur das Bedienzeichen des Knopfs', () => {
-    // Linienarten und Strichmuster der Bewegung: alle stumpf (den Mantel an Kreuzungen gibt es seit Runde 3 nicht mehr)
-    expect([...technik.matchAll(/stroke-linecap:\s*([a-z]+)/g)].map((m) => m[1])).toEqual(['butt', 'butt']);
+  it('Enden je Linienart (E-031): nur die Leitung rund, sonst stumpf; rund im Knopf nur das Bedienzeichen', () => {
+    // Je Regel mit stroke-linecap Selektor und Ende, exakt: Linienarten stumpf, die Leitung rund, das Strichmuster der
+    // Bewegung stumpf (den Mantel an Kreuzungen gibt es seit Runde 3 nicht mehr)
+    const enden = [...technik.matchAll(/([^{}]+)\{[^}]*stroke-linecap:\s*([a-z]+)/g)].map((m) => [m[1].trim().replace(/\s+/g, ' '), m[2]]);
+    expect(enden).toEqual([
+      ['.leitung, .kontur, .fein, .mass, .verdeckt, .mittellinie, .schraffur', 'butt'],
+      ['.leitung', 'round'],
+      ['.band path', 'butt'],
+    ]);
     expect(technik).not.toMatch(/\.mantel\b|--mantel-e/);
     const rund = [...dauer.matchAll(/([^{}]+)\{[^}]*stroke-linecap:\s*round/g)].map((m) => m[1].trim());
     expect(rund).toEqual(['.zeichen']);
