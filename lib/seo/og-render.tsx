@@ -15,6 +15,8 @@ import {
   OG_HEIZKOERPER,
   OG_INNENEINHEIT,
   OG_PUMPE,
+  OG_WAERMEFELD,
+  OG_WAERME_RAMPE,
   ogLeitungen,
   ogPfeile,
 } from './og-haus';
@@ -24,10 +26,10 @@ import { OG_COLOR as C, OG_IMAGE_SIZE, versal, type OgHomeText, type OgJobText, 
  * Teilen-Bilder im Design des Einstiegs: links Papier mit Logo, Etikett, h1 in Bricolage 800 (Navy), Unterzeile und
  * dem roten Knopf; rechts das Navy-Panel mit dem Hausschnitt aus lib/zeichnung (Technische Zeichnung 2.0, E-029):
  * Erdreich als 45°-Schraffur, Außeneinheit maßstäblich, Erdleitung durch die Wanddurchführung, Inneneinheit als
- * Symbol, Flachheizkörper. Der Vorlauf läuft von der Außeneinheit links aus dem Panel, über Bogen und Steigleitung in
- * den Knopf (K-001). Die Startseite trägt darüber die Maße (35 km, 30 Tage, 1926) und „35 km“ als Maß im Giebel; die
- * Stellen-, Orts- und Themenbilder ihren Kennwert als Maßkette (Linienart mass, 45°-Begrenzungsstriche) statt des
- * Heizkreises. Keine Rohrklammer, kein Wärmebild, kein Zirkel.
+ * Symbol, Flachheizkörper, im Raum das berechnete Wärmefeld still (E-031). Der Vorlauf läuft von der Außeneinheit links
+ * aus dem Panel, über Bogen und Steigleitung in den Knopf (K-001). Die Startseite trägt darüber die Maße (35 km,
+ * 30 Tage, 1926) und „35 km“ als Maß im Giebel; die Stellen-, Orts- und Themenbilder ihren Kennwert als Maßkette
+ * (Linienart mass, 45°-Begrenzungsstriche). Keine Rohrklammer, kein gezeichnetes Wärmebild, kein Zirkel.
  *
  * Schriften: die drei Familien der Website als feste TTF-Schnitte aus lib/seo/og-fonts (next/og liest
  * kein WOFF2 und keine variablen Achsen; Herkunft in og-fonts/LIZENZEN.md). Sie liegen im Repository und
@@ -67,6 +69,12 @@ const LEITUNG = 3;
  */
 const NAVY = { kontur: C.creme, vorlauf: '#FF6B5F', ruecklauf: '#86AEFF', schraffur: '#8E97D6', schnitt: '#1A2878', flaeche: C.navy } as const;
 const MEDIUM: Record<Medium, string> = { vorlauf: NAVY.vorlauf, ruecklauf: NAVY.ruecklauf, kaeltemittel: NAVY.kontur };
+/**
+ * Rollen des Wärmebereichs (app/styles/theme.css, [data-tone="warm"], hell): im Raum über den Bändern stehen die Linien
+ * wie auf Papier, Navy, Vorlauf Rot, Rücklauf Blau (E-031).
+ */
+const WARM = { kontur: C.navy, flaeche: C.papier } as const;
+const WARM_MEDIUM: Record<Medium, string> = { vorlauf: C.rot, ruecklauf: C.blau, kaeltemittel: C.navy };
 
 type FontWeight = 400 | 600 | 700 | 800;
 type LoadedFont = { name: string; data: Buffer; weight: FontWeight; style: 'normal' };
@@ -117,6 +125,8 @@ const stumpf = { strokeLinecap: 'butt', strokeLinejoin: 'miter', fill: 'none' } 
 /** Linienarten im Bild (px wie auf der Website, umgerechnet in Einheiten des Schnitts; Konturen mit runden Ecken, E-031). */
 const kontur = { ...stumpf, strokeLinejoin: 'round', stroke: NAVY.kontur, strokeWidth: vb(2) } as const;
 const fein = { ...stumpf, stroke: NAVY.kontur, strokeWidth: vb(1) } as const;
+const konturWarm = { ...kontur, stroke: WARM.kontur } as const;
+const feinWarm = { ...fein, stroke: WARM.kontur } as const;
 
 /**
  * Hausschnitt aus lib/zeichnung/szenen/hausschnitt.ts (über og-haus.ts), unten am Panel; mit Knopf läuft der Vorlauf
@@ -129,6 +139,12 @@ function Haus({ knopf }: { knopf: boolean }) {
   const hk = OG_HEIZKOERPER;
   const lamellen = Array.from({ length: hk.lamellen }, (_, i) => r1(hk.x + ((i + 1) * hk.breite) / (hk.lamellen + 1)));
   const leitungen = ogLeitungen(knopf);
+  const feld = OG_WAERMEFELD;
+  // Mit Wärmefeld stehen Inneneinheit, Pumpe, Heizkörper, Leitungen und Pfeile im Raum in den Rollen des Wärmebereichs
+  const imRaum = (x: { raum?: true }) => feld !== null && x.raum === true;
+  const k = feld ? konturWarm : kontur;
+  const f = feld ? feinWarm : fein;
+  const farbe = (x: { medium: Medium; raum?: true }) => (imRaum(x) ? WARM_MEDIUM : MEDIUM)[x.medium];
   // Gerät in mm: Strich in mm, damit er im Bild 2 bzw. 1 px misst
   const mm = (pixels: number) => vb(pixels) / g.massstab;
   return (
@@ -138,6 +154,13 @@ function Haus({ knopf }: { knopf: boolean }) {
       viewBox={`0 0 ${OG_HAUS_RAHMEN.breite} ${OG_HAUS_RAHMEN.hoehe}`}
       style={{ position: 'absolute', left: PANEL_X, top: HOUSE_TOP }}
     >
+      {/* Wärmefeld still im Raum: Band 0 als Rechteck, die Bänder 1–4 aus den Daten (Wände und Decke decken den Rand) */}
+      {feld ? <rect x={feld.innen.x} y={feld.innen.y} width={feld.innen.breite} height={feld.innen.hoehe} fill={OG_WAERME_RAMPE[0]} /> : null}
+      {feld
+        ? feld.baender.map((b) => (
+            <path key={b.stufe} d={b.d} fill={OG_WAERME_RAMPE[b.stufe]} />
+          ))
+        : null}
       <path d={OG_BAUTEILE.schraffur} {...stumpf} stroke={NAVY.schraffur} strokeWidth={vb(1)} />
       <path d={OG_BAUTEILE.graben} {...fein} fill={NAVY.flaeche} />
       {/* Schotter unter den Sockeln und Kiesbett am Kondensatrohr (Kreuzschraffur wie das Erdreich) */}
@@ -168,30 +191,39 @@ function Haus({ knopf }: { knopf: boolean }) {
       {/* Kondensatrohr Ø 100 mm ins Kiesbett unter der Frosttiefe */}
       <path d={OG_BAUTEILE.kondensat} {...fein} fill={NAVY.flaeche} />
       <path d={OG_BAUTEILE.durchfuehrung} {...kontur} fill={NAVY.flaeche} />
-      {/* Inneneinheit als Symbol (Systemgrenze Strich-Punkt) mit Umwälzpumpe; Flachheizkörper */}
-      <rect x={ie.x} y={ie.y} width={ie.breite} height={ie.hoehe} {...fein} fill={NAVY.flaeche} strokeDasharray={[16, 4, 2, 4].map(vb).join(' ')} />
+      {/* Inneneinheit als Symbol (Systemgrenze Strich-Punkt) mit Umwälzpumpe; Flachheizkörper (mit Wärmefeld ohne Fläche:
+          die Bänder zeigen seine Temperatur, oben der Vorlauf) */}
+      <rect
+        x={ie.x}
+        y={ie.y}
+        width={ie.breite}
+        height={ie.hoehe}
+        {...f}
+        fill={feld ? 'none' : NAVY.flaeche}
+        strokeDasharray={[16, 4, 2, 4].map(vb).join(' ')}
+      />
       <g transform={`translate(${ie.pumpe.x} ${ie.pumpe.y}) scale(${OG_PUMPE.massstab})`}>
-        {OG_PUMPE.formen.map((f, i) =>
-          'cx' in f ? (
-            <circle key={i} cx={f.cx} cy={f.cy} r={f.r} {...kontur} strokeWidth={vb(2) / OG_PUMPE.massstab} fill={NAVY.flaeche} />
+        {OG_PUMPE.formen.map((form, i) =>
+          'cx' in form ? (
+            <circle key={i} cx={form.cx} cy={form.cy} r={form.r} {...k} strokeWidth={vb(2) / OG_PUMPE.massstab} fill={feld ? WARM.flaeche : NAVY.flaeche} />
           ) : (
-            <path key={i} d={f.d} {...kontur} strokeWidth={vb(2) / OG_PUMPE.massstab} />
+            <path key={i} d={form.d} {...k} strokeWidth={vb(2) / OG_PUMPE.massstab} />
           ),
         )}
       </g>
-      <rect x={hk.x} y={hk.y} width={hk.breite} height={hk.hoehe} {...kontur} fill={NAVY.flaeche} />
-      <path d={lamellen.map((x) => `M${x} ${hk.y}V${hk.y + hk.hoehe}`).join('')} {...fein} />
+      <rect x={hk.x} y={hk.y} width={hk.breite} height={hk.hoehe} {...k} fill={feld ? 'none' : NAVY.flaeche} />
+      <path d={lamellen.map((x) => `M${x} ${hk.y}V${hk.y + hk.hoehe}`).join('')} {...f} />
       {/* Leitungen in Fließrichtung (ohne Kreuzung) */}
       {leitungen.map((l) =>
         l.verdeckt ? (
           // Hinter Gehäuse und Sockel: verdeckte Linie (1 px, gestrichelt wie --m-verdeckt-muster)
           <path key={l.id} d={l.d} {...stumpf} stroke={MEDIUM[l.medium]} strokeWidth={vb(1)} strokeDasharray={VERDECKT_MUSTER} />
         ) : (
-          <path key={l.id} d={l.d} fill="none" stroke={MEDIUM[l.medium]} strokeWidth={vb(LEITUNG)} strokeLinecap="round" strokeLinejoin="round" />
+          <path key={l.id} d={l.d} fill="none" stroke={farbe(l)} strokeWidth={vb(LEITUNG)} strokeLinecap="round" strokeLinejoin="round" />
         ),
       )}
       {ogPfeile(knopf).map((p) => (
-        <path key={p.d} d={p.d} fill={MEDIUM[p.medium]} />
+        <path key={p.d} d={p.d} fill={farbe(p)} />
       ))}
     </svg>
   );
