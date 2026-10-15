@@ -1,12 +1,19 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { MOTION_IDS } from '../../../lib/motion/register';
 import {
+  BUERO_DATEI,
+  BUERO_MARKE,
+  CURSOR_DATEI,
   DAUER_CSS,
   ENDLOS_ERLAUBT,
+  WAERME_ROLLEN_ERLAUBT,
+  bueroBlockAb,
+  checkCursor,
   checkEndlos,
+  checkWaermeRollen,
   checkLine,
   checkMotionLine,
   endlosIn,
@@ -159,6 +166,88 @@ describe('check-design-tokens: endlos (E-029, K-009)', () => {
     expect(checkEndlos(dauer, DAUER_CSS)).toEqual([]);
     const einstieg = readFileSync(path.join(ROOT, 'components/home/einstieg/einstieg.module.css'), 'utf8');
     expect(endlosIn(einstieg.replace(/\/\*[\s\S]*?\*\//g, ''))).toEqual([]);
+  });
+});
+
+/** Alle Quelltexte, die der Guard prüft (app, components, lib; ohne Tests). */
+function quellen(): string[] {
+  const out: string[] = [];
+  const lauf = (dir: string) => {
+    for (const name of readdirSync(path.join(ROOT, dir))) {
+      if (name === 'node_modules' || name === '.next' || name === '__tests__' || name.startsWith('.')) continue;
+      const rel = `${dir}/${name}`;
+      if (statSync(path.join(ROOT, rel)).isDirectory()) lauf(rel);
+      else if (/\.(?:tsx?|css)$/.test(name) && !/\.(?:test|spec)\.tsx?$/.test(name)) out.push(rel);
+    }
+  };
+  for (const dir of ['app', 'components', 'lib']) lauf(dir);
+  return out;
+}
+
+describe('check-design-tokens: waerme-rollen (E-031, K-006)', () => {
+  const regel = (source: string, file: string) => checkWaermeRollen(source, file).map((f: { line: number; token: string; rule: { id: string } }) => `${f.line}:${f.token}:${f.rule.id}`);
+
+  it('erlaubt die Wärmerampe nur in theme.css, waerme.module.css, waermefront.module.css und im Büro-Block, jede mit Grund', () => {
+    expect(Object.keys(WAERME_ROLLEN_ERLAUBT).sort()).toEqual(
+      ['app/styles/theme.css', 'components/zeichnung/waerme/waerme.module.css', 'components/site/waermefront/waermefront.module.css'].sort(),
+    );
+    for (const grund of Object.values(WAERME_ROLLEN_ERLAUBT)) expect(String(grund).length).toBeGreaterThan(20);
+    for (const datei of Object.keys(WAERME_ROLLEN_ERLAUBT)) expect(regel('.a { fill: var(--waerme-2); }', datei)).toEqual([]);
+    expect(BUERO_DATEI).toBe('components/themen/themen.module.css');
+    expect(BUERO_MARKE).toBe('/* ═══ Büro-Block (E-031)');
+  });
+
+  it('findet --waerme-0…4 überall sonst, in CSS und Code, auch mit design-allow; Kommentare und andere Namen zählen nicht', () => {
+    expect(regel('.a { fill: var(--waerme-4); }', 'components/home/x.module.css')).toEqual(['1:--waerme-4:waerme-rollen']);
+    expect(regel("<g style={{ fill: 'var(--waerme-0)' }} /> // design-allow: Test", 'components/x.tsx')).toEqual(['1:--waerme-0:waerme-rollen']);
+    expect(regel(".a {\n  --b: var(--waerme-1);\n}", 'app/globals.css')).toEqual(['2:--waerme-1:waerme-rollen']);
+    expect(regel('/* --waerme-2 */ .a { fill: var(--waerme); }', 'components/x.module.css')).toEqual([]);
+    expect(regel('// --waerme-3 nur im Kommentar\nconst a = 1;', 'lib/x.ts')).toEqual([]);
+    expect(regel('.a { --waerme-10: 1; --p-waerme-0: 2; }', 'components/x.module.css')).toEqual([]);
+  });
+
+  it('im Büro-Block von themen.module.css erlaubt, davor nicht', () => {
+    const quelle = `.kasten { fill: var(--waerme-1); }\n${BUERO_MARKE}: Leitstelle ═══ */\n.bueroPlan { fill: var(--waerme-2); }\n`;
+    expect(bueroBlockAb(quelle)).toBe(2);
+    expect(regel(quelle, BUERO_DATEI)).toEqual(['1:--waerme-1:waerme-rollen']);
+    // Ohne Marke kein Block; dieselbe Marke in einer anderen Datei hilft nicht
+    expect(regel(quelle.replace(BUERO_MARKE, '/* ═══ Büro'), BUERO_DATEI)).toHaveLength(2);
+    expect(regel(quelle, 'components/jobs/x.module.css')).toHaveLength(2);
+    expect(bueroBlockAb('.a {}')).toBe(Infinity);
+  });
+
+  it('die echten Dateien bestehen; theme.css führt die Rampe', () => {
+    const dateien = quellen();
+    expect(dateien.length).toBeGreaterThan(300);
+    for (const datei of dateien) expect(checkWaermeRollen(readFileSync(path.join(ROOT, datei), 'utf8'), datei), datei).toEqual([]);
+    expect(readFileSync(path.join(ROOT, 'app/styles/theme.css'), 'utf8')).toMatch(/--waerme-4: var\(--p-waerme-4\);/);
+  });
+});
+
+describe('check-design-tokens: cursor (E-031)', () => {
+  const regel = (source: string, file: string) => checkCursor(source, file).map((f: { line: number; rule: { id: string } }) => `${f.line}:${f.rule.id}`);
+
+  it('Bild-Cursor nur in app/globals.css', () => {
+    expect(CURSOR_DATEI).toBe('app/globals.css');
+    const gut = '@media (hover: hover) and (pointer: fine) {\n  :root { cursor: url(/cursor/zeiger.svg) 4 3, auto; }\n}';
+    expect(regel(gut, CURSOR_DATEI)).toEqual([]);
+    expect(regel(gut, 'components/site/kopf/kopf.module.css')).toEqual(['2:cursor']);
+    expect(regel('.a { cursor: image-set("/x.svg" 1x, "/x2.svg" 2x) 4 3, auto; }', 'app/styles/theme.css')).toEqual(['1:cursor']);
+    expect(regel("<a style={{ cursor: 'url(/hand.svg) 4 3, pointer' }} />", 'components/x.tsx')).toEqual(['1:cursor']);
+    expect(regel('<a className="cursor-[url(/hand.svg),pointer]" />', 'components/x.tsx')).toEqual(['1:cursor']);
+    // Auch der Umweg über eine Variable mit einer Datei aus /cursor/
+    expect(regel('.a { --zeiger: url(/cursor/hand.svg); }', 'components/x.module.css')).toEqual(['1:cursor']);
+    expect(regel("const bild = '/cursor/hand-2x.svg';", 'lib/x.ts')).toEqual(['1:cursor']);
+  });
+
+  it('Schlüsselwort-Cursor bleiben überall erlaubt; Kommentare zählen nicht', () => {
+    for (const ok of ['.a { cursor: pointer; }', '.b { cursor: not-allowed; }', '<button className="cursor-pointer" />', '/* cursor: url(/x.svg) */ .c { color: red; }']) {
+      expect(regel(ok, 'components/x.module.css'), ok).toEqual([]);
+    }
+  });
+
+  it('die echten Dateien bestehen', () => {
+    for (const datei of quellen()) expect(checkCursor(readFileSync(path.join(ROOT, datei), 'utf8'), datei), datei).toEqual([]);
   });
 });
 

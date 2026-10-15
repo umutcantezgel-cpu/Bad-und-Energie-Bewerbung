@@ -9,6 +9,9 @@
  * - Rule `endlos` (E-029): endless loops only in ENDLOS_ERLAUBT, each with its reason; in
  *   components/zeichnung/bewegung/dauer.module.css only under [data-dauer="an"] and
  *   prefers-reduced-motion: no-preference.
+ * - Rule `waerme-rollen` (E-031): the warmth ramp --waerme-0…4 only in WAERME_ROLLEN_ERLAUBT and in the Büro block
+ *   appended to components/themen/themen.module.css (from BUERO_MARKE to the end of the file).
+ * - Rule `cursor` (E-031): image cursors (url(), image-set(), files under /cursor/) only in app/globals.css.
  * - Reports off-scale spacing and numeric durations as notes (not blocking yet; R3–R5 move the
  *   components onto the 11-step scale and the four durations).
  *
@@ -253,6 +256,90 @@ export function checkEndlos(source, file) {
   return findings;
 }
 
+// --- warmth ramp (E-031, KERN K-006) ----------------------------------------------------
+
+/**
+ * Files that may name the warmth ramp (--waerme-0…4), each with its reason (rule `waerme-rollen`). Everything else
+ * fails, comments excepted; a design-allow comment does not lift this rule. The Büro block counts as allowed too.
+ */
+export const WAERME_ROLLEN_ERLAUBT = Object.freeze({
+  [THEME_FILE]: 'Primitive und Rollen der Wärmerampe (hell, dunkel, Inverse-Band, Wärmebereich, Druck)',
+  'components/zeichnung/waerme/waerme.module.css': 'Bänder des Wärmefelds (E-031, Paket W1)',
+  'components/site/waermefront/waermefront.module.css': 'Klick-Wärme und Wärmefront (E-031, Paket W4)',
+});
+
+/** The stylesheet that carries the Büro block (E-031, Paket W3): appended at its end. */
+export const BUERO_DATEI = 'components/themen/themen.module.css';
+/**
+ * Start of the Büro block: a comment line beginning with this text; the block runs to the end of the file and all its
+ * classes begin with `buero` (scripts/qa/check-css-chunks.mjs measures it in the build by that prefix).
+ */
+export const BUERO_MARKE = '/* ═══ Büro-Block (E-031)';
+
+const WAERME_RULE = {
+  id: 'waerme-rollen',
+  hint: `The warmth ramp --waerme-0…4 only in ${Object.keys(WAERME_ROLLEN_ERLAUBT).join(', ')} and the Büro block of ${BUERO_DATEI} (E-031).`,
+};
+
+const WAERME_ROLLE = /--waerme-[0-4](?![\w-])/g;
+
+/** Source without comments, positions kept (CSS: block comments; TS: block and line comments). */
+function ohneKommentare(source, file) {
+  const blank = (c) => c.replace(/[^\n]/g, ' ');
+  const ohneBlock = source.replace(/\/\*[\s\S]*?\*\//g, blank);
+  return file.endsWith('.css') ? ohneBlock : ohneBlock.replace(/(^|[^:'"`])(\/\/.*)$/gm, (_, vor, k) => vor + blank(k));
+}
+
+/** Line (1-based) where the Büro block of BUERO_DATEI begins, or Infinity without a block. */
+export function bueroBlockAb(source) {
+  const i = source.indexOf(BUERO_MARKE);
+  return i < 0 ? Infinity : source.slice(0, i).split('\n').length;
+}
+
+/** Findings of rule `waerme-rollen` for one file. */
+export function checkWaermeRollen(source, file) {
+  if (Object.prototype.hasOwnProperty.call(WAERME_ROLLEN_ERLAUBT, file)) return [];
+  const ab = file === BUERO_DATEI ? bueroBlockAb(source) : Infinity;
+  const findings = [];
+  ohneKommentare(source, file)
+    .split('\n')
+    .forEach((line, i) => {
+      if (i + 1 >= ab) return;
+      for (const m of line.matchAll(WAERME_ROLLE)) findings.push({ line: i + 1, col: m.index + 1, rule: WAERME_RULE, token: m[0] });
+    });
+  return findings;
+}
+
+// --- cursor (E-031) ------------------------------------------------------------------
+
+/** The only stylesheet with image cursors (E-031, Paket W4): `url() 4 3, auto` behind (hover: hover) and (pointer: fine). */
+export const CURSOR_DATEI = 'app/globals.css';
+
+const CURSOR_RULE = {
+  id: 'cursor',
+  hint: `Image cursors (url(), image-set(), /cursor/ files) only in ${CURSOR_DATEI}, always with a keyword fallback (E-031).`,
+};
+
+/** Image-cursor tokens in a source without comments: cursor declarations with url()/image-set(), Tailwind cursor-[url(…)], files under /cursor/. */
+const CURSOR_MUSTER = [
+  /(?<![\w-])cursor\s*:\s*[^;{}]*?(?:url|image-set)\(/g,
+  /(?<![\w-])cursor-\[[^\]]*?(?:url|image-set)\(/g,
+  /["'`(\s]\/cursor\//g,
+];
+
+/** Findings of rule `cursor` for one file (one per line: the first image-cursor token). */
+export function checkCursor(source, file) {
+  if (file === CURSOR_DATEI) return [];
+  const findings = [];
+  ohneKommentare(source, file)
+    .split('\n')
+    .forEach((line, i) => {
+      const treffer = CURSOR_MUSTER.flatMap((re) => [...line.matchAll(re)]).sort((a, b) => a.index - b.index)[0];
+      if (treffer) findings.push({ line: i + 1, col: treffer.index + 1, rule: CURSOR_RULE, token: treffer[0].trim() });
+    });
+  return findings;
+}
+
 // --- notes (not blocking) ------------------------------------------------------------
 
 /** Tailwind spacing steps on the K-007 scale (×0.25rem): 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 · 80 · 96 · 128 px. */
@@ -352,7 +439,10 @@ function main() {
   const usedIds = new Set();
 
   for (const file of [...files, ...cssFiles]) {
-    for (const f of checkEndlos(readFileSync(path.join(ROOT, file), 'utf8'), file)) problems.push({ file, ...f });
+    const source = readFileSync(path.join(ROOT, file), 'utf8');
+    for (const f of checkEndlos(source, file)) problems.push({ file, ...f });
+    for (const f of checkWaermeRollen(source, file)) problems.push({ file, ...f });
+    for (const f of checkCursor(source, file)) problems.push({ file, ...f });
   }
   // An exception without its file is stale: remove it from ENDLOS_ERLAUBT
   for (const file of Object.keys(ENDLOS_ERLAUBT)) {
