@@ -1,21 +1,25 @@
 /**
  * Wärmefeld 2.0 (E-031, KERN K-010): berechnete Isothermen im Rauminneren als Bänder, kühl → heiß.
  *
- * PLATZHALTER aus Paket W0. Diese Datei legt nur Form und Vertrag fest: Typen, die drei Felder und kleine, gültige
- * Rechteck-Bänder ohne Berechnung. Paket W1 ersetzt sie durch die Ausgabe des Lösers (`bun run zeichnung:waermefeld`,
- * scripts/zeichnung/waermefeld.ts); danach wird sie nur noch vom Skript geschrieben und von
- * `bun run zeichnung:waermefeld --pruefen` gegen die Rechnung geprüft.
+ * ERZEUGT von scripts/zeichnung/waermefeld.ts (`bun run zeichnung:waermefeld`), nicht von Hand ändern. Geprüft von
+ * `bun run zeichnung:waermefeld --pruefen` und lib/zeichnung/__tests__/waermefeld.test.ts (Lock: die Rechnung ergibt
+ * genau diese Datei). Rechnung: lib/zeichnung/waerme/ (eingabe.ts Aufgaben, feld.ts Löser, kontur.ts Isothermen,
+ * rechnung.ts Ablauf).
  *
- * Vertrag (Prüfungen: lib/zeichnung/__tests__/waermefeld-vertrag.test.ts, lib/motion/__tests__/register.test.ts):
+ * Vertrag (lib/zeichnung/__tests__/waermefeld-vertrag.test.ts, lib/motion/__tests__/register.test.ts):
  * - Band 0 ist das Innenrechteck `innen` (eine Fläche ohne Pfad, steht still); `baender` sind die Bänder 1–4,
- *   aufsteigend nach Stufe (kühl → heiß), also in der Reihenfolge, in der sie übereinander liegen.
- * - Jedes Band liegt in `innen` (± 4 Einheiten Spiegelrand), Band k + 1 liegt in Band k, alle Zahlen im Pfad liegen
- *   auf dem 0,5-Raster; Schwelle steigt, Flächenanteil sinkt mit der Stufe.
- * - `startTakte` (Verzögerung in Takten zu 80 ms, halbe Takte) steigt streng von heiß nach kühl: Das heißeste Band
- *   beginnt zuerst. Hausschnitt (Hero, Auslöser `nachlauf`) im Fenster 7…16,5 Takte, die Vergleichsräume der
- *   Wärmepumpen-Seite (Auslöser `sicht`) im Fenster 0…22 Takte; das Bewegungsregister (lib/motion/register.ts,
- *   `waerme-breitet-sich-aus`) führt genau diese Werte.
- * - Einheiten wie in der Szene: Hausschnitt 1 Einheit = 10 mm (lib/zeichnung/szenen/hausschnitt.ts, HAUS_LAGE).
+ *   aufsteigend nach Stufe (kühl → heiß), in der Reihenfolge, in der sie übereinander liegen.
+ * - `schwelle`: θ̂ (0 an der kühlsten, 1 an der wärmsten Stelle des Raums), oberhalb der 64, 36, 16 bzw. 6 % des Raums
+ *   liegen (`flaecheAnteil`).
+ * - Jedes Band liegt in `innen` (± 4 Einheiten Spiegelrand, den die Wände der Zeichnung decken), Band k + 1 liegt in
+ *   Band k, alle Zahlen im Pfad liegen auf dem 0,5-Raster.
+ * - `startTakte` (Verzögerung in Takten zu 80 ms, halbe Takte) steigt streng von heiß nach kühl. Hausschnitt (Hero,
+ *   Auslöser `nachlauf`) im Fenster 7…16,5 Takte, die Vergleichsräume der Wärmepumpen-Seite (Auslöser `sicht`) im
+ *   Fenster 0…22 Takte; das Bewegungsregister (lib/motion/register.ts, `waerme-breitet-sich-aus`) führt genau diese
+ *   Werte. `ursprung`: Mitte, aus der ein Band wächst (Oberkante des Heizkörpers bzw. Mitte des Bodens).
+ * - Einheiten wie in der Szene, 1 Einheit = 10 mm: Hausschnitt in den Koordinaten von HAUS_LAGE
+ *   (lib/zeichnung/szenen/hausschnitt.ts), die Vergleichsräume ab der linken oberen Ecke des Rauminneren
+ *   (lib/zeichnung/szenen/raumschnitt.ts).
  */
 import type { Punkt } from '../norm';
 
@@ -32,7 +36,7 @@ export type WaermefeldId = 'hausschnitt' | 'raum-heizkoerper' | 'raum-fussboden'
 export interface Waermeband {
   /** 1 = kühlstes bewegtes Band … 4 = heißestes (Band 0 ist das Innenrechteck). */
   stufe: 1 | 2 | 3 | 4;
-  /** Normierte Temperatur θ̂ (0 außen … 1 Vorlaufoberfläche), oberhalb der das Band liegt. */
+  /** Normierte Temperatur θ̂ (0 kühlste, 1 wärmste Stelle des Raums), oberhalb der das Band liegt. */
   schwelle: number;
   /** Geschlossene Kontur (beginnt mit M, endet mit Z), alle Zahlen auf dem 0,5-Raster. */
   d: string;
@@ -60,72 +64,155 @@ export interface Waermefeld {
   };
 }
 
-const HERKUNFT = Object.freeze({
-  skript: 'scripts/zeichnung/waermefeld.ts',
-  eingabeHash: 'platzhalter',
-  modell: 'Platzhalter (Paket W0): Rechtecke ohne Berechnung; Paket W1 ersetzt die Datei durch die Ausgabe des Lösers.',
-  raster: 2 as const,
-  iterationen: 0,
-  residuum: 0,
-});
+const MODELL =
+  'Stationäre Wärmeausbreitung mit Konvektion, K∇²θ − u·∇θ = 0, θ = 0 außen, 1 am Vorlauf; Konvektion aus Walzen (Stromfunktion 16ξ(1−ξ)η(1−η), divergenzfrei, Pe 16 am Heizkörper, 2 an der Fußbodenheizung mit vierfacher Durchmischung); Heizkörper mit fester Temperatur (1,0 oben, 0,8 unten); Wände, Decke und Boden als Robin-Rand mit U nach dem GEG-Referenzgebäude (0,28 / 0,20 / 0,35 × 0,6), Fußbodenheizung als Robin-Rand mit θ 0,6 und 10,8 W/(m²·K) (DIN EN 1264-5); eine Kalibrierkonstante (0,01). SOR (ω 1,85) auf 2 Einheiten, Bänder bei 64, 36, 16 und 6 % der Raumfläche, Reihenfolge aus einem expliziten Zeitlauf auf rund 4 Einheiten (Ring eines Bands zu 60 % erwärmt). Hausschnitt: Schnittebene vor der Rückwand, der Heizkörper an der Rückwand liegt in der Ebene.';
 
-/** Rauminneres des Hausschnitts: HAUS_LAGE x 330…750, y 305…555 (4,2 × 2,5 m). */
-const HAUS_INNEN: Rechteck = Object.freeze({ x: 330, y: 305, breite: 420, hoehe: 250 });
-/** Vergleichsraum der Wärmepumpen-Seite: gleicher Raum, eigene Koordinaten ab 0. */
-const RAUM_INNEN: Rechteck = Object.freeze({ x: 0, y: 0, breite: 420, hoehe: 250 });
-
-const rechteck = (x0: number, y0: number, x1: number, y1: number) => `M${x0} ${y0}H${x1}V${y1}H${x0}Z`;
-const anteil = (innen: Rechteck, x0: number, y0: number, x1: number, y1: number) =>
-  Math.round((((x1 - x0) * (y1 - y0)) / (innen.breite * innen.hoehe)) * 1000) / 1000;
-
-function band(innen: Rechteck, stufe: Waermeband['stufe'], box: [number, number, number, number], ursprung: Punkt, startTakte: number): Waermeband {
-  const [x0, y0, x1, y1] = box;
-  return Object.freeze({
-    stufe,
-    schwelle: [0, 0.2, 0.4, 0.6, 0.8][stufe],
-    d: rechteck(x0, y0, x1, y1),
-    ursprung,
-    startTakte,
-    flaecheAnteil: anteil(innen, x0, y0, x1, y1),
-  });
+/** Tief eingefroren: Die Daten ändert nur das Skript. */
+function fest<T>(wert: T): T {
+  if (wert && typeof wert === 'object') {
+    for (const teil of Object.values(wert)) fest(teil);
+    Object.freeze(wert);
+  }
+  return wert;
 }
 
-const HK_OBEN: Punkt = Object.freeze({ x: 610, y: 480 });
-const WAND_HK: Punkt = Object.freeze({ x: 5, y: 205 });
-const BODEN: Punkt = Object.freeze({ x: 210, y: 250 });
-
-export const WAERMEFELDER: Readonly<Record<WaermefeldId, Waermefeld>> = Object.freeze({
-  hausschnitt: Object.freeze({
+export const WAERMEFELDER: Readonly<Record<WaermefeldId, Waermefeld>> = fest<Record<WaermefeldId, Waermefeld>>({
+  'hausschnitt': {
     id: 'hausschnitt',
-    innen: HAUS_INNEN,
-    baender: Object.freeze([
-      band(HAUS_INNEN, 1, [430, 320, 750, 555], HK_OBEN, 16.5),
-      band(HAUS_INNEN, 2, [500, 380, 720, 552], HK_OBEN, 13),
-      band(HAUS_INNEN, 3, [530, 430, 690, 550], HK_OBEN, 10),
-      band(HAUS_INNEN, 4, [550, 466, 670, 546], HK_OBEN, 7),
-    ]),
-    herkunft: HERKUNFT,
-  }),
-  'raum-heizkoerper': Object.freeze({
+    innen: { x: 330, y: 305, breite: 420, hoehe: 250 },
+    baender: [
+      {
+        stufe: 1,
+        schwelle: 0.467,
+        d: 'M402 301C350.5 301 400.5 301 400.5 301C400.5 301.5 402 302.5 402.5 303C403 303.5 403.5 304.5 403.5 305C403.5 305.5 403.5 305.5 402.5 307C401.5 308.5 398.5 311 396.5 313C394.5 315 393 316.5 391.5 319C390 321.5 388.5 324.5 387 327C386 329.5 385 331 384 334.5C383 338 381.5 345.5 380.5 349C380 353 380 354 379.5 357C379.5 360 379 363.5 379 367C379 370.5 379.5 373.5 379.5 377C380 380.5 380 383.5 380.5 387C381 390.5 382 394 382.5 397C383.5 400 384 402.5 385 405C386 407.5 387 410 388 412.5C389 415 390.5 417.5 392 419.5C393.5 421.5 394.5 423.5 396 425.5C397.5 427.5 399.5 429.5 401 431C402.5 432.5 404.5 434 406 435.5C407.5 437 409 438 411 439C413 440 416 441.5 418 442.5C420 443.5 420.5 444 424 445C427.5 446 432.5 448 440 449.5C447.5 451 462.5 453 470 454.5C477.5 456 479.5 456.5 484 457.5C488.5 459 493 461 496 462C499 463.5 500 464 502 465C504 466.5 506 468 508 469.5C510 471 512 472.5 514 474.5C516 476.5 517.5 478 520 481.5C522.5 485 526.5 491 530 496.5C533.5 502 536.5 507.5 540 514.5C544 521.5 550 534 552.5 539C555 544 554 541.5 556 544C558 546.5 562.5 551 564 553C565.5 555 564.5 554.5 564.5 555C564.5 555.5 564.5 556.5 564 557C563.5 557.5 545.5 558.5 562.5 559C580 559 650.5 559 667.5 559C685 558.5 666.5 557.5 666 557C665.5 556.5 665.5 555.5 665.5 555C665.5 554.5 659.5 559 666 553C672.5 545.5 697 518 704.5 509C712 500 710 502 712 499C714 496 716 493.5 717.5 491C719 488.5 720.5 486 722 483C723.5 480 725 476.5 726 473C727 469.5 728 466.5 729 463C730 459.5 731 456 731.5 451C732.5 446 733 439.5 733.5 433C734 426.5 734 420 734 413C734 406 733.5 398 733 391C732.5 384 732 377.5 731 371C730 364.5 728.5 357.5 727 351C725.5 344.5 724 338.5 722 333C720 327.5 718.5 323.5 716 319C714 314.5 710 309.5 708.5 307C707 304.5 708 306 708 305C708 304 754 301.5 709.5 301C658.5 301 453.5 301 402 301Z',
+        ursprung: { x: 610, y: 480 },
+        startTakte: 16.5,
+        flaecheAnteil: 0.639,
+      },
+      {
+        stufe: 2,
+        schwelle: 0.64,
+        d: 'M538 301C523.5 301.5 545 302.5 547 303C549.5 303.5 551.5 304.5 551.5 305C551.5 305.5 552.5 305.5 547 307C542 308.5 527.5 311.5 520 313.5C512.5 315.5 507.5 317.5 503 319C498.5 320.5 497 321.5 494 323C491.5 324.5 489 325.5 486.5 327C484.5 328.5 482.5 329.5 480.5 331C479 332.5 477.5 333.5 476 335C474.5 336.5 473.5 337.5 472.5 339C471.5 340.5 470.5 341 469.5 343C468.5 345 467 348.5 466.5 351C466 353.5 466 357 466 359C466 361 466.5 361.5 467 363C467.5 364.5 468.5 367 469.5 369C470.5 371 471.5 372.5 473.5 375C475.5 377.5 475.5 378.5 480.5 383C485.5 388 498.5 398.5 504 403.5C509.5 408.5 511 410.5 514 413.5C517 417 519.5 420 521.5 423C523.5 426 525 428 526.5 431C528.5 434 530.5 438 532 441.5C533.5 445 534.5 446 536 453C538 460 540.5 475.5 542.5 483C544.5 490.5 544.5 490 547 497C549.5 504.5 556 521 558 526.5C560 532 559.5 529.5 560 530.5C560.5 531.5 546 531.5 562 532C578 532.5 639.5 532.5 656 532.5C672.5 532.5 658.5 532.5 660 531.5C661.5 530.5 662 529.5 664 526.5C666 523.5 670.5 517 673 513C675.5 509 677 506 678.5 503C680 500 681.5 497.5 682.5 495C684 492.5 685 489.5 686 487C687 484.5 687 483.5 688 479C689 474.5 691 465.5 692 459C693 452.5 693 447.5 693.5 441C694 434.5 694.5 427 694.5 421C694.5 415 694.5 410.5 694.5 405C694.5 399.5 694 393.5 693.5 389C693 384.5 692.5 381 692 377C691.5 373 691 369 690 365C689 361 687.5 356.5 686 353C684.5 349.5 683.5 346.5 682 344C680.5 341.5 679 339 677.5 337C676 335 674.5 333 672.5 331C670.5 329 668.5 326.5 666.5 325C664.5 323.5 664 323 661 321C658 319 651.5 315.5 648 314C644.5 312.5 643.5 312 640 311C636.5 310 630 308 627.5 307C625 306 624 305.5 624 305C624 304.5 626 303.5 627.5 303C629 302.5 649 301.5 634 301C619 301 552.5 301 538 301Z',
+        ursprung: { x: 610, y: 480 },
+        startTakte: 12.5,
+        flaecheAnteil: 0.359,
+      },
+      {
+        stufe: 3,
+        schwelle: 0.777,
+        d: 'M590 346.5C587 347 584.5 348 582 348.5C579.5 349 578 350 576 350.5C574 351.5 572 352 570.5 353C569 354 567.5 355 566 356C564.5 357 563.5 358.5 562 360C561 361.5 559.5 363.5 558.5 365C557.5 366.5 557 367.5 556.5 369C556 370.5 555.5 372 555 375C554.5 378 554 379.5 554 387C554.5 394.5 556 410.5 556.5 419C557 427.5 557 431.5 557 437C557 442.5 556.5 445 555.5 451C554.5 457 552.5 468.5 552 473.5C551.5 478.5 551.5 478 551.5 481C551.5 484 552 487 553 491C554 495.5 557 503.5 558 506.5C559 510 559.5 509.5 560 510.5C560.5 511.5 561.5 512 562 512.5C562.5 513 548 513 564 513C580 513 642 513 658 512.5C674 512.5 659.5 512 660 511.5C660.5 511 660.5 512 662 509C663.5 506.5 667.5 499 669 495C670.5 491 671.5 488 672 485C672.5 482 672.5 480.5 672.5 477C672.5 473.5 673 476.5 671 465C669 453.5 662.5 420.5 660 409C657.5 397.5 658 399.5 656.5 395C655.5 390.5 654 386.5 652.5 383C651 379.5 650 376.5 648 373.5C646.5 370.5 644 367.5 642 365C640 362.5 638.5 361 636 359C633.5 357 630.5 355 628 353.5C625.5 352 623 350.5 620 349.5C617 348.5 613.5 347.5 610 347C606.5 346.5 603.5 346 600 346C596.5 346 593 346 590 346.5Z',
+        ursprung: { x: 610, y: 480 },
+        startTakte: 9,
+        flaecheAnteil: 0.16,
+      },
+      {
+        stufe: 4,
+        schwelle: 0.888,
+        d: 'M606 410.5C604.5 411 603.5 411.5 602 412C600.5 412.5 599.5 413.5 598 414.5C596.5 415.5 595.5 416.5 594 418C592.5 419.5 591.5 420.5 590 423C588.5 425.5 587.5 427 584 433C581 439 575 451.5 570.5 459C566 466.5 560.5 474 558 477.5C556 481 557 480 557 481C557 482.5 557 483.5 557 485C557 486.5 557.5 488 558 489.5C558.5 491 559.5 493.5 560 494.5C560.5 495.5 561.5 496 562 496.5C562.5 497 548 497 564 497C580 497 642 497 658 496.5C674 496.5 659.5 496.5 660 495.5C660.5 495 661.5 494 662 492C662.5 490.5 663.5 487 664 485C664.5 483 664.5 481 664 479C663.5 477.5 664.5 478 662 474.5C659.5 471 654.5 464.5 650 457C645.5 450 638 437 634 431C630 425 628 423 626 420.5C624 418 623.5 418 622 416.5C620.5 415 618 413.5 616 412.5C614 411.5 611.5 411 610 410.5C608.5 410 607.5 410.5 606 410.5Z',
+        ursprung: { x: 610, y: 480 },
+        startTakte: 7,
+        flaecheAnteil: 0.06,
+      },
+    ],
+    herkunft: {
+      skript: 'scripts/zeichnung/waermefeld.ts',
+      eingabeHash: '0c6917688f72a50a',
+      modell: MODELL,
+      raster: 2,
+      iterationen: 4673,
+      residuum: 7.192935136401957e-11,
+    },
+  },
+  'raum-heizkoerper': {
     id: 'raum-heizkoerper',
-    innen: RAUM_INNEN,
-    baender: Object.freeze([
-      band(RAUM_INNEN, 1, [0, 20, 230, 250], WAND_HK, 22),
-      band(RAUM_INNEN, 2, [0, 70, 140, 248], WAND_HK, 14.5),
-      band(RAUM_INNEN, 3, [0, 120, 80, 245], WAND_HK, 7.5),
-      band(RAUM_INNEN, 4, [0, 160, 40, 240], WAND_HK, 0),
-    ]),
-    herkunft: HERKUNFT,
-  }),
-  'raum-fussboden': Object.freeze({
+    innen: { x: 0, y: 0, breite: 420, hoehe: 250 },
+    baender: [
+      {
+        stufe: 1,
+        schwelle: 0.12,
+        d: 'M-4 -4C-4 39 -4 211 -4 254C5 254 41.5 254 50.5 254C59.5 253.5 50 251 50 250C50 249 48.5 252 50 248C51.5 244.5 55 234.5 58 227.5C61 220.5 64.5 213.5 68 207C71.5 200.5 76.5 193 80 188C83.5 183 85 181 88 178C91 175 94.5 171.5 98 169C101.5 166.5 105.5 164 108 162.5C110.5 161 112 160.5 114 159.5C116 158.5 118 158 120 157.5C122 157 123.5 157 126 156.5C128.5 156 130.5 155.5 134 155.5C137.5 155.5 143 155.5 148 156.5C153 157.5 154 157.5 164 160.5C174 163.5 197 171.5 208 174.5C219 178 224 178.5 230 180C236 181.5 239 182 244 182.5C249 183 254.5 183.5 260 184C265.5 184.5 271 185 276 185C281 185 285 185 290 185C295 185 301 184.5 306 184C311 183.5 315.5 183 320 182.5C324.5 182 328 181 332 180C336 179 340.5 177.5 344 176C347.5 174.5 349.5 173.5 352 172C355 170.5 358.5 168 360.5 166C363 164 364 162.5 365.5 160C367 157.5 369 154.5 370 152C371 149.5 372 147 372.5 144C373 141 374 137.5 374 134C374.5 130.5 374 126 374 122C374 118 374 114.5 373.5 110C373 105.5 373 100.5 372 96C371.5 91.5 370 86.5 369 82C368 77.5 367 72.5 365.5 68C364.5 63.5 363 59.5 361.5 56C360 52.5 358.5 49 357 46C355.5 43 354.5 40.5 352.5 38C351 35.5 348.5 32.5 346.5 30C344.5 27.5 342 25 340 23C338 21 336.5 20 334 18C331.5 16 328 13.5 325 12C322 10.5 320.5 9.5 317 8C313.5 6.5 305.5 3.5 303 2C300.5 0.5 301 0.5 301 0C301 -0.5 302 -1.5 303 -2C304 -2.5 359 -3.5 308 -4C257 -4 48 -4 -4 -4Z',
+        ursprung: { x: 10, y: 175 },
+        startTakte: 22,
+        flaecheAnteil: 0.64,
+      },
+      {
+        stufe: 2,
+        schwelle: 0.178,
+        d: 'M20 -4C-4 -4 18.5 -4 18.5 -4C18.5 -3.5 20.5 -2.5 21 -2C21.5 -1.5 22 -0.5 22 0C22 0.5 21.5 1.5 21 2C20.5 2.5 21.5 1.5 18.5 4C15.5 6.5 5 15 2 17C-1 19.5 0.5 17.5 0 17.5C-0.5 17.5 -1.5 17.5 -2 17C-2.5 16.5 -3.5 -4 -4 15.5C-4 55 -4 214.5 -4 254C4 254 35 254 42.5 254C50 253.5 42 251 42 250C42 249 40.5 252.5 42 248C43.5 244 46.5 234 50 224.5C53.5 215 59.5 200 64 190C68.5 180 72.5 171.5 76 165C79.5 158.5 81 156.5 84 152C87 147.5 90.5 143 94 139C97.5 135.5 100.5 132.5 104 129.5C107.5 126.5 110.5 124 114 122C117.5 120 120.5 118 124 116.5C127.5 115 130.5 113.5 134 112C137.5 110.5 141.5 109 146 108C150.5 107 153.5 106 160 105C166.5 104 171.5 103 184 102C196.5 101 225.5 100 236 99.5C246.5 99 243 98.5 246 98C249.5 97.5 252 97 255.5 96C259 95 263 93 266 91.5C269 90 272 88 274 86C276 84 277.5 82.5 279 80C280.5 77.5 282 74.5 282.5 72C283.5 69.5 283.5 66.5 283.5 64C283.5 61.5 283 59.5 282.5 58C282 56.5 282 55.5 281.5 54C281 52.5 280 49.5 279 48C278 46.5 277.5 46 276 44C274.5 42 271.5 38.5 269 36C266.5 33.5 264 31.5 261.5 30C259.5 28.5 259 28 255.5 26C252 24 246.5 20.5 240.5 18C234.5 15.5 227.5 12.5 219.5 10C211.5 7.5 198.5 3.5 193.5 2C188.5 0.5 190.5 0.5 190.5 0C190.5 -0.5 192 -1.5 193.5 -2C195 -2.5 229 -3.5 200 -4C171 -4 50.5 -4 20 -4Z',
+        ursprung: { x: 10, y: 175 },
+        startTakte: 16.5,
+        flaecheAnteil: 0.36,
+      },
+      {
+        stufe: 3,
+        schwelle: 0.26,
+        d: 'M60 22C55.5 22.5 50.5 22.5 46 23.5C41.5 24.5 35.5 26 32 27C28.5 28 26.5 29 24 30C21.5 31 18.5 32.5 16 33.5C13.5 34.5 12.5 35.5 10 37C7.5 38.5 3.5 42 2 43C0.5 44 0.5 44 0 44C-0.5 44 -1.5 43.5 -2 43C-2.5 42.5 -3.5 6.5 -4 41.5C-4 76.5 -4 218.5 -4 254C2.5 254 28 254 34 254C40.5 253 33 250.5 33.5 248C34 245.5 31 254 36 240C41 224 58 171 64 153C70 135 69.5 137.5 72 131.5C74.5 126 75.5 123 78 118.5C80.5 114 83 109.5 86 105C89 100.5 91 97 96 90.5C101 84 111.5 71.5 115.5 66C119.5 60.5 119.5 60.5 120.5 58C121.5 55.5 122 54 122.5 52C123 50 123.5 48 123 46C123 44 122 42 121 40C120 38 118 35.5 116 34C114 32.5 112.5 31.5 109.5 30C107 28.5 103 27 99.5 26C96 25 92.5 24 88 23.5C84 23 78.5 22.5 74 22C69.5 22 64.5 22 60 22Z',
+        ursprung: { x: 10, y: 175 },
+        startTakte: 9.5,
+        flaecheAnteil: 0.16,
+      },
+      {
+        stufe: 4,
+        schwelle: 0.408,
+        d: 'M22 84C20.5 84 19.5 84 18 84.5C16.5 85 13.5 85.5 12 86C10.5 86.5 9.5 87.5 8 88.5C6.5 89.5 3.5 92 2 93C0.5 94 0.5 93.5 0 93.5C-0.5 93.5 -1.5 93.5 -2 93C-2.5 92.5 -3.5 64.5 -4 91.5C-4 118.5 -4 227 -4 254C0 254 16.5 254 20.5 254C24.5 253.5 19.5 251 19.5 250C19.5 249 19 250.5 20 248C21 245.5 24 238.5 26 234C28 229.5 29 227 31 220C33 213 36.5 199.5 38.5 192C40.5 184.5 41 180 42 174C43 168 43.5 162.5 44 156C44.5 149.5 44.5 142.5 44.5 136C44.5 130 44.5 123.5 44 118.5C43.5 113.5 43 110 42 106C41 102.5 40 98.5 39 96C38 93.5 36.5 91.5 35 90C33.5 88.5 31.5 87 30 86C28.5 85 27.5 85 26 84.5C24.5 84 23.5 84 22 84Z',
+        ursprung: { x: 10, y: 175 },
+        startTakte: 0,
+        flaecheAnteil: 0.06,
+      },
+    ],
+    herkunft: {
+      skript: 'scripts/zeichnung/waermefeld.ts',
+      eingabeHash: '0c6917688f72a50a',
+      modell: MODELL,
+      raster: 2,
+      iterationen: 11350,
+      residuum: 6.850658929025144e-11,
+    },
+  },
+  'raum-fussboden': {
     id: 'raum-fussboden',
-    innen: RAUM_INNEN,
-    baender: Object.freeze([
-      band(RAUM_INNEN, 1, [0, 140, 420, 250], BODEN, 22),
-      band(RAUM_INNEN, 2, [0, 190, 420, 250], BODEN, 14.5),
-      band(RAUM_INNEN, 3, [0, 220, 420, 250], BODEN, 7.5),
-      band(RAUM_INNEN, 4, [0, 238, 420, 250], BODEN, 0),
-    ]),
-    herkunft: HERKUNFT,
-  }),
+    innen: { x: 0, y: 0, breite: 420, hoehe: 250 },
+    baender: [
+      {
+        stufe: 1,
+        schwelle: 0.518,
+        d: 'M406 30C399.5 30.5 393 30.5 386 31C379 31.5 371.5 32 364 33C356.5 34 349 35.5 342 36.5C335 37.5 329 38.5 322 40C315 41.5 307 43 300 45C293 47 286.5 49 280 51C273.5 53 266.5 55 260 57.5C253.5 60 246.5 62.5 240 65C233.5 67.5 226.5 70 220 73C213.5 76 210.5 77 200 82C189.5 87.5 180 91.5 156 104.5C132 117.5 81.5 146.5 56 161C30.5 176 11.5 187.5 2 193C-4 198.5 1 193.5 0 193.5C-1 193.5 -3.5 182 -4 192C-4 202 -4 243.5 -4 254C67.5 254 352.5 254 424 254C424 216.5 424 67 424 29.5C421 -4 412.5 30 406 30Z',
+        ursprung: { x: 210, y: 250 },
+        startTakte: 22,
+        flaecheAnteil: 0.64,
+      },
+      {
+        stufe: 2,
+        schwelle: 0.702,
+        d: 'M402 116C394.5 116.5 386 117 378 117.5C370 118 362.5 119 354 120C345.5 121 336.5 122.5 328 124C319.5 125.5 311 127.5 302 129.5C293 131.5 283.5 133.5 274 136C264.5 138.5 255.5 140.5 246 143.5C236.5 146.5 227 149.5 216 153C205 156.5 206.5 155.5 180 164.5C153.5 174 82 199 56 208.5C30 218 33 217.5 24 221C15 225 6 229.5 2 231C-2 232.5 1 231 0 231C-1 231 -3.5 226 -4 230C-4 234 -4 250 -4 254C67.5 254 352.5 254 424 254C424 231 424 138.5 424 115.5C420.5 92.5 409.5 115.5 402 116Z',
+        ursprung: { x: 210, y: 250 },
+        startTakte: 12,
+        flaecheAnteil: 0.359,
+      },
+      {
+        stufe: 3,
+        schwelle: 0.848,
+        d: 'M408 182C400 182.5 387 183 376 183.5C365 184.5 353.5 185.5 342 186.5C330.5 188 319 189 306 191C293 193 282.5 194.5 264 198C245.5 201.5 226.5 205 196 211C165.5 217 107.5 229 80 235C52.5 241 40.5 244 31 246C21.5 248 25.5 247.5 24 248C22.5 248.5 21 249.5 21 250C21 250.5 22.5 251.5 24 252C25.5 252.5 -4 253.5 31 254C97.5 254 358.5 254 424 254C424 242 424 194 424 182C421.5 170 416 182 408 182Z',
+        ursprung: { x: 210, y: 250 },
+        startTakte: 3.5,
+        flaecheAnteil: 0.159,
+      },
+      {
+        stufe: 4,
+        schwelle: 0.929,
+        d: 'M366 220C352.5 221 333 222.5 314 224C295 226 282.5 227 252 230.5C221.5 234 154 243 132 246C110 249 122 247.5 119 248C116 248.5 113 249.5 113 250C113 250.5 116 251.5 119 252C122 252.5 81 253.5 132 254C183 254 375.5 254 424 254C424 248 424 224.5 424 218.5C419.5 212.5 405.5 218.5 396 218.5C386.5 219 379.5 219 366 220Z',
+        ursprung: { x: 210, y: 250 },
+        startTakte: 0,
+        flaecheAnteil: 0.06,
+      },
+    ],
+    herkunft: {
+      skript: 'scripts/zeichnung/waermefeld.ts',
+      eingabeHash: '0c6917688f72a50a',
+      modell: MODELL,
+      raster: 2,
+      iterationen: 2213,
+      residuum: 9.91965953822671e-11,
+    },
+  },
 });

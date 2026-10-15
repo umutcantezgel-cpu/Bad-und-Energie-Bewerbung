@@ -70,6 +70,10 @@ jobs:
       - name: Unit-Tests (Vitest)
         run: bun run test
 
+      # Wärmefeld (E-031): die gespeicherten Bänder entsprechen der Rechnung (lib/zeichnung/waerme/)
+      - name: Wärmefeld-Lock
+        run: bun run zeichnung:waermefeld --pruefen
+
       - name: Design-Guard
         run: bun run check:design
 
