@@ -19,6 +19,7 @@ import { arbeitenPfad, buildThemenItemListJsonLd, pfadJsonLd, pfadItems, themaPf
 import { ogThemaText } from '../og';
 import { ARBEITEN_PATH, THEMA_IDS, getThema, getThemaBySlug, getThemen, themaPath } from '../registry';
 import {
+  BUERO_THEMA_FRAGEN,
   alleQuellen,
   alleTexte,
   faktErlaubt,
@@ -222,6 +223,15 @@ describe('Texte der Themenseiten: nur Belegtes', () => {
     const hub = getArbeitenPageText({ jobs: JOBS, now: NOW });
     expect(hub.masse.map((m) => plain(m.name))).toContain(`${FACTS.vacation30.label} je nach Stelle`);
     expect(hub.og.zeilen).toContain(`${FACTS.vacation30.short} je nach Stelle.`);
+    // Fahrzeug und Werkzeug (Prüfung E-031, D1-5): Büro und Praktikum haben keine Ausstattung; Description und
+    // Teilen-Zeilen nennen sie dann nur mit „je nach Stelle“, und die Description nennt alle sechs Themen samt Büro
+    expect(ohneAusstattung(JOBS, NOW).length).toBeGreaterThan(0);
+    expect(hub.meta.description).toContain('Servicefahrzeug und Hilti je nach Stelle');
+    expect(hub.meta.description).toContain('Büro');
+    expect(hub.og.zeilen.join(' ')).not.toMatch(/Fahrzeug|Werkzeug|Hilti/);
+    const fachHub = getArbeitenPageText({ jobs: JOBS.filter((j) => ohneAusstattung([j], NOW).length === 0), now: NOW });
+    expect(fachHub.meta.description).toContain('Servicefahrzeug, Hilti-Ausstattung');
+    expect(fachHub.og.zeilen[0]).toBe('Lohn, Fahrzeug, Werkzeug.');
     for (const kasten of hub.zusagen.kaesten) {
       const id = (['flexibleHours', 'vacation30', 'noWeekendOnCall', 'noFarAssembly'] as const).find((f) => FACTS[f].short === kasten.titel)!;
       if (FACTS[id].offenFuer) {
@@ -403,7 +413,9 @@ describe('Büro und Verwaltung (E-031): nur Belegtes, nichts Offenes, nichts von
     expect(seite.einleitung.some((s) => s.text.includes(FACTS.directLine.long))).toBe(false);
     expect(seite.meta.primaryKeyword).toBe('Büro und Verwaltung SHK-Betrieb Wetzlar');
     expect(seite.og.zeichnung).toBe('buero');
-    expect(seite.fragen.fragen.map((f) => f.id)).toEqual([...JOB_FAQ_IDS.buero]);
+    // Höchstens drei der fünf Fragen der Stellenseite (Prüfung E-031, D1-6)
+    expect(seite.fragen.fragen.map((f) => f.id)).toEqual([...BUERO_THEMA_FRAGEN]);
+    expect(seite.fragen.fragen.filter((f) => JOB_FAQ_IDS.buero.includes(f.id)).length).toBeLessThanOrEqual(3);
     expect(seite.betrieb.kaesten.map((k) => k.titel)).toEqual(
       (['payOnRequest', 'directLine', 'employees15', 'founded1926'] as const).map((id) => FACTS[id].short),
     );
@@ -426,6 +438,24 @@ describe('Büro und Verwaltung (E-031): nur Belegtes, nichts Offenes, nichts von
     expect(karte.satz.quellen).toEqual(['betrieb:meilenstein']);
     expect(ohne.meta.description.length).toBeGreaterThanOrEqual(110);
     expect(ohne.meta.description.length).toBeLessThanOrEqual(155);
+  });
+
+  it('Description der Themenseite ist eine andere als die der Stellenseite: das Büro selbst, nicht die Anzeige (Prüfung E-031, D1-6)', () => {
+    const thema = seite.meta.description;
+    const anzeige = stelle.seo.metaDescription;
+    const woerter = (t: string) => new Set(t.toLocaleLowerCase('de').match(/[a-zäöüß0-9-]{4,}/g) ?? []);
+    const a = woerter(thema);
+    const b = woerter(anzeige);
+    const gemeinsam = [...a].filter((w) => b.has(w)).length;
+    // Jaccard der Wörter ab vier Zeichen unter 0,25; keine gemeinsame Aufzählung von Umfang und Betrieb
+    expect(gemeinsam / new Set([...a, ...b]).size).toBeLessThan(0.25);
+    expect(thema).not.toContain('Voll- oder Teilzeit');
+    expect(thema).not.toContain('SHK-Meisterbetrieb in Wetzlar');
+    // Aus Quellen: Meilenstein (Umzug, moderneres Büro), direkter Draht, Meisterbetrieb seit 1926
+    expect(thema).toContain(`seit dem Umzug ${REGION.milestone.year}`);
+    expect(thema).toContain(FACTS.directLine.short.replace(/^D/, 'd'));
+    expect(thema).toContain(FACTS.founded1926.short);
+    expect(findClaims(thema)).toEqual([]);
   });
 
   it('Hub und Karte: die Arbeit im Büro nur mit live Bürostelle, Umfang als Kennwert', () => {

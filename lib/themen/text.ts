@@ -473,6 +473,8 @@ export function getArbeitenPageText(options: TextOptions): ArbeitenPageText {
   const themen = getThemen();
   const marken = FACTS.heatPumpBrands.list?.length ?? 0;
   const gesamt = getThemen().map((thema) => themaKarte(thema.id, options));
+  const einschraenkung = ohneAusstattung(jobs, now).length > 0;
+  const ausstattung = einschraenkung ? `Servicefahrzeug und Hilti ${JE_NACH_STELLE}` : 'Servicefahrzeug, Hilti-Ausstattung';
 
   return {
     path: ARBEITEN_PATH,
@@ -480,9 +482,11 @@ export function getArbeitenPageText(options: TextOptions): ArbeitenPageText {
       title: 'Arbeiten bei Bad und Energie: SHK-Arbeitgeber in Wetzlar',
       h1: 'Arbeiten bei Bad und Energie',
       primaryKeyword: 'Arbeiten bei Bad und Energie',
+      // Alle sechs Themen; Fahrzeug und Werkzeug mit Einschränkung, solange eine Stelle ohne Ausstattung live ist (Büro,
+      // Schülerpraktikum; wie die Karte „Fahrzeug und Werkzeug“, Prüfung E-031 D1-5)
       description: fitDescription(
-        `${FACTS.payOnRequest.short}, Servicefahrzeug, Hilti-Ausstattung, Wärmepumpen von ${marken} Marken und ein diskreter Wechsel: Arbeiten bei Bad und Energie in Wetzlar.`,
-        `${FACTS.payOnRequest.short}, Servicefahrzeug, Hilti-Ausstattung, Wärmepumpen von ${marken} Marken und ein diskreter Wechsel: Arbeiten bei uns in Wetzlar.`,
+        `${FACTS.payOnRequest.short}, ${ausstattung}, Wärmepumpen von ${marken} Marken, Arbeit im Büro, diskreter Wechsel: Arbeiten bei Bad und Energie in Wetzlar.`,
+        `${FACTS.payOnRequest.short}, ${ausstattung}, Wärmepumpen von ${marken} Marken, Arbeit im Büro, diskreter Wechsel: Arbeiten bei uns in Wetzlar.`,
       ),
     }),
     etikett: `Seit ${COMPANY.foundingYear} · ${COMPANY.address.city}`,
@@ -503,7 +507,8 @@ export function getArbeitenPageText(options: TextOptions): ArbeitenPageText {
       wert: String(COMPANY.foundingYear),
       name: 'Gegründet in Wetzlar',
       zeilen: [
-        'Lohn, Fahrzeug, Werkzeug.',
+        // Mit einer Stelle ohne Ausstattung nur der Lohn (gilt für jede Stelle); die Zeile fasst keine Einschränkung
+        einschraenkung ? `${FACTS.payOnRequest.short}.` : 'Lohn, Fahrzeug, Werkzeug.',
         `${offenBei('vacation30', jobs).length > 0 ? jeNachStelleKurz(FACTS.vacation30.short) : FACTS.vacation30.short}.`,
       ],
     },
@@ -1191,6 +1196,12 @@ export interface BueroPageText extends SeitenBasis {
   fragen: { kopf: Kopfzeile; fragen: readonly FrageText[] };
 }
 
+/**
+ * Fragen der Themenseite mit live Bürostelle: drei der fünf Fragen der Stellenseite (JOB_FAQ_IDS.buero), damit Themen-
+ * und Stellenseite nicht denselben Block tragen (Prüfung E-031, D1-6).
+ */
+export const BUERO_THEMA_FRAGEN: readonly FaqId[] = Object.freeze(['buero-umfang', 'lohn-buero', 'diskreter-wechsel']);
+
 /** Szenen in der Reihenfolge der Aufgaben; die Aufgabe der Stelle wird am Wortlaut erkannt (wirft, fehlt sie). */
 const SZENEN: readonly { id: BueroSzenenArt; titel: string; icon: KastenIcon; aufgabe: RegExp; bild: string; beschriftungen: Readonly<Record<string, string>> }[] = [
   {
@@ -1256,7 +1267,8 @@ export function getBueroPageText(options: TextOptions): BueroPageText {
   const [buero, lager] = bueroLager();
   const umfang = stelle ? employmentLabel(stelle) : null;
   const imBuero = stelle ? satzMit(stelle.intro, /^Als Bürofachkraft arbeitest du in unserem Büro/, 'Bürostelle, Einleitung') : null;
-  const fragen: readonly FaqId[] = stelle ? JOB_FAQ_IDS.buero : ['diskreter-wechsel', 'lebenslauf', 'antwortzeit'];
+  // Höchstens drei der fünf Fragen der Stellenseite (Prüfung E-031, D1-6): Umfang, Lohn und der diskrete Wechsel
+  const fragen: readonly FaqId[] = stelle ? BUERO_THEMA_FRAGEN : ['diskreter-wechsel', 'lebenslauf', 'antwortzeit'];
 
   return {
     path: themaPath(getThema('buero-und-verwaltung')),
@@ -1264,10 +1276,13 @@ export function getBueroPageText(options: TextOptions): BueroPageText {
       title: 'Büro und Verwaltung im SHK-Betrieb in Wetzlar',
       h1: 'Büro und Verwaltung',
       primaryKeyword: 'Büro und Verwaltung SHK-Betrieb Wetzlar',
+      // Was nur die Themenseite hat (Prüfung E-031, D1-6): das Büro selbst – der Umzug mit moderneren Räumen
+      // (REGION.milestone), der direkte Draht (directLine), der Meisterbetrieb (founded1926) – statt der Aufzählung der
+      // Stellenanzeige (Umfang und Lohn stehen auf /jobs/buerofachkraft-wetzlar)
       description: stelle
         ? fitDescription(
-            `Telefon und Termine, Angebote und Rechnungen, Material und Post: das Büro im SHK-Meisterbetrieb in ${COMPANY.address.city}, ${umfang}, ${lohn.short}.`,
-            `Telefon und Termine, Angebote und Rechnungen, Material und Post: das Büro in ${COMPANY.address.city}, ${umfang}, ${lohn.short}.`,
+            `${buero} seit dem Umzug ${REGION.milestone.year}, ${lowerFirst(draht.short)}: wie Termine, Angebote, Material und Post im ${FACTS[erlaubt('founded1926', now)].short} laufen.`,
+            `${buero} seit ${REGION.milestone.year}, ${lowerFirst(draht.short)}: Termine, Angebote, Material und Post im ${FACTS[erlaubt('founded1926', now)].short}.`,
           )
         : fitDescription(`${umzug} ${draht.long}`, `${umzug} ${draht.short}.`),
     }),
