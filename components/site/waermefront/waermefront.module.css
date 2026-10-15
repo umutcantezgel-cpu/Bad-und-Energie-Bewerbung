@@ -3,17 +3,20 @@
  * Logik und Maße lib/motion/seitenwechsel.ts). Zwei Überlagerungen (popover="manual", oberste Ebene, auch über dem
  * offenen Menü): aria-hidden, inert, ohne Zeigerereignisse, contain: strict; geschlossen blendet der Browser sie aus.
  *
- * Beide sprechen dieselbe Sprache: Schichten wachsen um den Klickpunkt nach √t (DIFFUSION_STUETZ: Maßstab 0 → 1 als
- * Zahl auf 0 · 6,25 · 25 · 56,25 · 100 %, linear dazwischen), je ½ Takt versetzt, die kühlste zuerst und zuunterst –
- * so liegt die heißeste innen und die kühlste außen (Verzögerung --n × ½ Takt). Den Mittelpunkt (--x, --y) setzt die
- * Insel, ebenso den Durchmesser der Front (--s); die Scheiben haben --a-8. Grundwerte sind der Endzustand (Maßstab 1);
- * die Abläufe füllen mit backwards.
+ * Beide sprechen dieselbe Sprache wie das Wärmefeld: Isothermen um den Klickpunkt wachsen nach √t (DIFFUSION_STUETZ:
+ * Maßstab 0 → 1 als Zahl auf 0 · 6,25 · 25 · 56,25 · 100 %, linear dazwischen), je ½ Takt versetzt, die kühlste zuerst
+ * und zuunterst. Die heißeste liegt immer innen (sie startet zuletzt und liegt oben), nach außen wird es stetig kühler –
+ * wie bei Wärmeleitung von einer Quelle, keine Welle mit kaltem Kern (Prüfrunde 1 A1-12, B1-5). Den Mittelpunkt (--x,
+ * --y) setzt die Insel, ebenso den Durchmesser der Front (--s); die Ringe der Klick-Wärme haben --a-8. Farbe (--c) und
+ * Verzögerung (--n, Takte) je Schicht: --waerme-1, -2, -3, -4 von der ersten zur letzten. Grundwerte sind der Endzustand
+ * (Maßstab 1); die Abläufe füllen mit backwards.
  * Kurze Klassennamen, weil jeder Name im Build den Präfix „waermefront-module__<hash>__“ trägt: Budget ≤ 1.200 B im
  * globalen Chunk (scripts/qa/check-css-chunks.mjs, FRONT_BUDGET).
  */
 
-/* .e = Ebene. Wärmefront: vier Bänder bis zur fernsten Ecke, --waerme-1, -2, -4, zuletzt die Seitenfarbe; je d-2,
-   abdecken 360 ms. Aufdecken ([data-auf]): Die Front verblasst und steigt um --a-4 (warme Luft steigt). */
+/* .e = Ebene. Wärmefront: vier Scheiben bis zur fernsten Ecke, --waerme-1 außen bis --waerme-4 innen; je d-2,
+   abdecken 360 ms. Am Ende deckt die heißeste das ganze Fenster: Der Raum ist warm, darunter wechselt die Seite.
+   Aufdecken ([data-auf]): Die Front kühlt als Ganzes ab, verblasst und steigt um --a-4 (warme Luft steigt). */
 .e {
   --c: var(--waerme-1);
   --d: var(--d-2);
@@ -26,49 +29,55 @@
   contain: strict;
 }
 
-/* .k = Klick-Wärme: drei Scheiben auf 64 px, --waerme-0 außen, -2, -4 innen; je d-3, Ende 480 ms; durchscheinend,
-   damit die Beschriftung darunter lesbar bleibt; in der zweiten Hälfte (240 → 480 ms) verblassen sie an Ort und Stelle. */
+/* .k = Klick-Wärme: drei Ringe (Rand statt Fläche, voll deckend), --waerme-1 außen auf --s (64 px), -2 auf 48 px, -3
+   innen auf 32 px; so bleiben die Isothermen nebeneinander stehen (Prüfrunde 1 A1-11), und die Beschriftung
+   darunter bleibt rein, auch im Navy-Band (keine durchscheinende Fläche, keine Mischfarbe, Prüfrunde 1 A1-3). Je d-3,
+   Ende 480 ms; in der zweiten Hälfte (240 → 480 ms) verblassen sie an Ort und Stelle. */
 .k {
-  --c: var(--waerme-0);
   --d: var(--d-3);
   --s: var(--a-8);
-  opacity: 0.6;
-  animation: steigt var(--d-2) linear var(--d-2) forwards;
+  --q: var(--a-6);
+  --f: none;
+  animation: s var(--d-2) linear var(--d-2) both;
 }
 
+/* Schicht: Front Scheibe (Fläche und Rand --c), Klick Ring (nur der Rand --m-leitung in --c, ohne Fläche); --n ist die
+   Verzögerung in Takten (½ je Schicht), der Ring hat den Durchmesser --s − n × --q (64, 48, 32 px) */
 .e > * {
   position: absolute;
   left: var(--x);
   top: var(--y);
-  width: var(--s);
+  width: calc(var(--s) - var(--n, 0) * var(--q, 0px));
   aspect-ratio: 1;
   translate: -50% -50%;
+  border: var(--m-leitung) solid var(--c);
   border-radius: var(--radius-voll);
-  background: var(--c);
-  animation: waechst var(--d) linear calc(var(--takt) * var(--n, 0) / 2) backwards;
+  background: var(--f, var(--c));
+  animation: w var(--d) linear calc(var(--takt) * var(--n, 0)) backwards;
 }
 
 .e > * + * {
-  --n: 1;
-  background: var(--waerme-2);
+  --n: .5;
+  --c: var(--waerme-2);
 }
 
 .e > * + * + * {
-  --n: 2;
-  background: var(--waerme-4);
+  --n: 1;
+  --c: var(--waerme-3);
 }
 
 .e > * + * + * + * {
-  --n: 3;
-  background: var(--surface);
+  --n: 1.5;
+  --c: var(--waerme-4);
 }
 
 .e[data-auf] {
-  --h: calc(-1 * var(--a-4));
-  animation: steigt var(--d-2) var(--k-aus) forwards;
+  --h: calc(-1*var(--a-4));
+  animation: s var(--d-2) var(--k-aus) both;
 }
 
-@keyframes waechst {
+/* w = wachsen nach √t, s = steigen und verblassen (kurz wegen des Präfixes im Build) */
+@keyframes w {
   from {
     scale: 0;
   }
@@ -86,7 +95,7 @@
   }
 }
 
-@keyframes steigt {
+@keyframes s {
   to {
     opacity: 0;
     translate: 0 var(--h, 0);

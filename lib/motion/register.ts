@@ -15,6 +15,9 @@
  * Sichtbarwerden über components/zeichnung/bewegung/SichtStart.tsx, Ende ≤ SICHT_ENDE_MS, höchstens auf der Hälfte
  * der Abschnitte einer Seite); Klick-Wärme (`tippen`, KLICK_ENDE_MS) und Wärmefront (`navigation`, WECHSEL).
  * Skalieren nur nach √t: jeder Keyframe-Ablauf mit `scale` genau auf den Stützstellen DIFFUSION_STUETZ.
+ * Malzeit (KERN K-013, e2e/support/malzeit.ts): Während Wärme, Klick-Wärme und Wärmefront laufen, malt nach den ersten
+ * zwei Bildern kein Bild 2 ms oder länger (mobil, CPU 4×). Ausnahmen, je einmal und außerhalb der Bewegung: das Ende
+ * eines Sicht-Ablaufs (`fertig`, will-change fällt) und das Ende des Abdeckens der Wärmefront (unter voller Deckung).
  */
 
 /** Alle Kennungen. Reihenfolge wie im Register; der Guard liest diese Liste wörtlich. */
@@ -356,8 +359,10 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
   seitenwechsel: {
     zweck:
       'Wärmefront (E-031): Beim Klick auf einen Link zu einer Erzählseite decken vier Wärmeschichten die Seite vom ' +
-      'Klickpunkt aus ab, wachsend nach √t (½ Takt versetzt, je d-2); nach dem Wechsel blendet die Front aus und steigt ' +
-      'dabei leicht (warme Luft steigt). Eine dauerhafte Überlagerung (Popover), kein View-Übergang.',
+      'Klickpunkt aus ab, wachsend nach √t (½ Takt versetzt, je d-2), die kühlste zuerst und außen, die heißeste zuletzt ' +
+      'und innen – wie Wärmeleitung von einer Quelle, ohne kalten Kern; am Ende ist der ganze Raum warm. Nach dem ' +
+      'Wechsel kühlt die Front als Ganzes ab, blendet aus und steigt dabei leicht (warme Luft steigt). Eine dauerhafte ' +
+      'Überlagerung (Popover), kein View-Übergang.',
     ausloeser: ['navigation'],
     eigenschaften: ['transform', 'opacity'],
     dauer: ['d-2'],
@@ -445,8 +450,9 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
   'klick-waerme': {
     zweck:
       'Rückmeldung beim Klick (E-031): Vom Klickpunkt (mit der Tastatur von der Mitte des Elements) wachsen drei ' +
-      'Wärmescheiben nach √t, die heißeste innen, und blenden in der zweiten Hälfte aus; nur an Bedienelementen, nicht ' +
-      'in Formularen und nicht auf /bewerbung.',
+      'Wärmeringe nach √t auf drei Durchmesser, der heißeste innen, und blenden in der zweiten Hälfte aus; Ringe ohne ' +
+      'Fläche, damit die Beschriftung darunter rein bleibt. Nur an Bedienelementen, nicht in Formularen, nicht auf ' +
+      '/bewerbung und nicht auf dem Weg dorthin.',
     ausloeser: ['tippen'],
     eigenschaften: ['transform', 'opacity'],
     dauer: ['d-3'],

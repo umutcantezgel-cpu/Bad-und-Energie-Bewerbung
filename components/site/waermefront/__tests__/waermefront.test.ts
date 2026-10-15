@@ -73,51 +73,82 @@ describe('Waermefront: Markup (E-031)', () => {
   });
 });
 
+describe('Waermefront: die neue Seite steht oben (Prüfrunde 1 A1-2, C1-5)', () => {
+  it('<html data-scroll-behavior="smooth">, solange globals.css weich scrollt: Next springt beim Wechsel ohne Weichheit', () => {
+    const layout = lies('app/layout.tsx');
+    expect(layout).toMatch(/<html [^>]*data-scroll-behavior="smooth"[^>]*>/);
+    expect(lies('app/globals.css')).toMatch(/html \{\s*scroll-behavior: smooth;\s*\}/);
+    // Vertrag der installierten Next-Version: Nur mit dem Attribut schaltet der Router das weiche Scrollen beim Wechsel ab
+    const next = lies('node_modules/next/dist/shared/lib/router/utils/disable-smooth-scroll.js');
+    expect(next).toContain("htmlElement.dataset.scrollBehavior === 'smooth'");
+    expect(next).toContain("htmlElement.style.scrollBehavior = 'auto'");
+  });
+});
+
 describe('Waermefront: CSS (E-031, K-009)', () => {
-  it('Wachstum nur nach √t: waechst skaliert 0 → 1 genau auf DIFFUSION_STUETZ, linear; steigt nur opacity und translate', () => {
+  it('Wachstum nur nach √t: w skaliert 0 → 1 genau auf DIFFUSION_STUETZ, linear; s nur opacity und translate', () => {
     expect(diffusionsFehler(css)).toEqual([]);
     const k = Object.fromEntries(keyframesIn(css).map((x) => [x.name, x]));
-    expect(Object.keys(k).sort()).toEqual(['steigt', 'waechst']);
-    expect(k.waechst.stopps.map((s) => [s.anteil / 100, Number(s.deklarationen.get('scale'))])).toEqual(DIFFUSION_STUETZ.map(([t, f]) => [t, f]));
-    expect(k.waechst.stopps.every((s) => [...s.deklarationen.keys()].join() === 'scale')).toBe(true);
-    expect(k.steigt.stopps).toHaveLength(1);
-    expect(Object.fromEntries(k.steigt.stopps[0].deklarationen)).toEqual({ opacity: '0', translate: '0 var(--h, 0)' });
+    expect(Object.keys(k).sort()).toEqual(['s', 'w']);
+    expect(k.w.stopps.map((s) => [s.anteil / 100, Number(s.deklarationen.get('scale'))])).toEqual(DIFFUSION_STUETZ.map(([t, f]) => [t, f]));
+    expect(k.w.stopps.every((s) => [...s.deklarationen.keys()].join() === 'scale')).toBe(true);
+    expect(k.s.stopps).toHaveLength(1);
+    expect(Object.fromEntries(k.s.stopps[0].deklarationen)).toEqual({ opacity: '0', translate: '0 var(--h, 0)' });
   });
 
-  it('Farben nur aus der Wärmerampe und die Seitenfarbe: Front --waerme-1, -2, -4, Seite; Klick --waerme-0 außen, -2, -4 innen', () => {
+  it('Farben nur aus der Wärmerampe, kühl → heiß von der ersten zur letzten Schicht; keine Seitenfarbe (Prüfrunde 1 A1-12, B1-5)', () => {
     expect(Object.keys(WAERME_ROLLEN_ERLAUBT)).toContain(FRONT_CSS);
-    expect(css).not.toMatch(/#[0-9a-f]{3,8}\b|gradient|color-mix|filter|shadow|blend|backdrop|rgba?\(|hsla?\(|oklch|will-change|infinite/i);
+    expect(css).not.toMatch(/#[0-9a-f]{3,8}\b|gradient|color-mix|filter|shadow|blend|backdrop|rgba?\(|hsla?\(|oklch|will-change|infinite|--surface/i);
     expect(regel('.e')['--c']).toBe('var(--waerme-1)');
-    expect(regel('.k')['--c']).toBe('var(--waerme-0)');
-    expect(regel('.e > *').background).toBe('var(--c)');
-    expect(regel('.e > * + *').background).toBe('var(--waerme-2)');
-    expect(regel('.e > * + * + *').background).toBe('var(--waerme-4)');
-    expect(regel('.e > * + * + * + *').background).toBe('var(--surface)');
-    const farben = [...css.matchAll(/(?:background|--c)\s*:\s*([^;]+);/g)].map((m) => m[1].trim());
-    for (const f of farben) expect(f).toMatch(/^(?:none|var\(--c\)|var\(--surface\)|var\(--waerme-[0124]\))$/);
+    expect(regel('.e > * + *')['--c']).toBe('var(--waerme-2)');
+    expect(regel('.e > * + * + *')['--c']).toBe('var(--waerme-3)');
+    // Die heißeste ist die letzte Schicht der Front: Sie startet zuletzt, liegt oben und damit immer innen; alle wachsen
+    // auf denselben Durchmesser (--s, bis zur fernsten Ecke), am Ende deckt die heißeste das Fenster (kein kalter Kern)
+    expect(regel('.e > * + * + * + *')['--c']).toBe('var(--waerme-4)');
+    expect(regel('.e > *').background).toBe('var(--f, var(--c))');
+    expect(regel('.e > *').border).toBe('var(--m-leitung) solid var(--c)');
+    const farben = [...css.matchAll(/(?:background|--c|--f)\s*:\s*([^;]+);/g)].map((m) => m[1].trim());
+    for (const f of farben) expect(f).toMatch(/^(?:none|var\(--f, var\(--c\)\)|var\(--waerme-[1-4]\))$/);
+  });
+
+  it('Klick-Wärme: nur Ringe ohne Fläche und ohne Durchsicht (die Beschriftung bleibt rein, auch im Navy-Band; Prüfrunde 1 A1-3)', () => {
+    const k = regel('.k');
+    expect(k['--f']).toBe('none');
+    // Keine durchscheinende Fläche: weder Deckkraft unter 1 noch eine Füllung, die Text verdecken oder färben könnte
+    expect(k.opacity).toBeUndefined();
+    expect(css).not.toMatch(/opacity\s*:\s*0?\.\d/);
+    expect(regel('.e > *').border).toMatch(/^var\(--m-leitung\) solid /);
+  });
+
+  it('Klick-Wärme: die drei Ringe enden auf verschiedenen Durchmessern, innen der heißeste (Prüfrunde 1 A1-11)', () => {
+    expect(regel('.e > *').width).toBe('calc(var(--s) - var(--n, 0) * var(--q, 0px))');
+    expect(regel('.k')['--s']).toBe('var(--a-8)');
+    expect(regel('.k')['--q']).toBe('var(--a-6)');
+    expect(regel('.e')['--q']).toBeUndefined();
+    const theme = lies('app/styles/theme.css');
+    const rem = (name: string) => Number(theme.match(new RegExp(`${name}: ([\\d.]+)rem;`))![1]) * 16;
+    const n = [0, Number(regel('.e > * + *')['--n']), Number(regel('.e > * + * + *')['--n'])];
+    const durchmesser = n.map((x) => rem('--a-8') - x * rem('--a-6'));
+    expect(durchmesser).toEqual([64, 48, 32]);
   });
 
   it('Zeitplan wie im Register: je Schicht ½ Takt versetzt; Front d-2, Klick d-3 bis 480 ms; Aufdecken d-2 mit k-aus', () => {
     const schicht = regel('.e > *');
-    expect(schicht.animation).toBe('waechst var(--d) linear calc(var(--takt) * var(--n, 0) / 2) backwards');
+    expect(schicht.animation).toBe('w var(--d) linear calc(var(--takt) * var(--n, 0)) backwards');
     const n = [0, Number(regel('.e > * + *')['--n']), Number(regel('.e > * + * + *')['--n']), Number(regel('.e > * + * + * + *')['--n'])];
     const front = MOTION_REGISTER.seitenwechsel;
     const klick = MOTION_REGISTER['klick-waerme'];
-    expect(n.map((x) => x / 2)).toEqual(front.verzoegerungTakte);
-    expect(n.slice(0, 3).map((x) => x / 2)).toEqual(klick.verzoegerungTakte);
+    expect(n).toEqual(front.verzoegerungTakte);
+    expect(n.slice(0, 3)).toEqual(klick.verzoegerungTakte);
     expect(regel('.e')['--d']).toBe(`var(--${front.dauer[0]})`);
     expect(regel('.k')['--d']).toBe(`var(--${klick.dauer[0]})`);
-    // Klick-Wärme: Scheiben --a-8 (64 px); verblassen in der zweiten Hälfte, Ende = KLICK_ENDE_MS
-    expect(regel('.k')['--s']).toBe('var(--a-8)');
-    // durchscheinend über der Beschriftung, ab dort verblassend auf 0
-    expect(Number(regel('.k').opacity)).toBeGreaterThan(0.5);
-    expect(Number(regel('.k').opacity)).toBeLessThan(1);
+    // Klick-Wärme: Ringe bis --a-8 (64 px); verblassen in der zweiten Hälfte, Ende = KLICK_ENDE_MS
     expect(lies('app/styles/theme.css')).toMatch(/--a-8: 4rem;/);
-    expect(regel('.k').animation).toBe('steigt var(--d-2) linear var(--d-2) forwards');
+    expect(regel('.k').animation).toBe('s var(--d-2) linear var(--d-2) both');
     expect(2 * DAUER_MS['d-2']).toBe(KLICK_ENDE_MS);
     expect(Math.max(...klick.verzoegerungTakte) * TAKT_MS + DAUER_MS['d-3']).toBe(KLICK_ENDE_MS);
-    // Aufdecken: Die Front verblasst und steigt um --a-4, d-2 mit k-aus
-    expect(regel('.e[data-auf]')).toEqual({ '--h': 'calc(-1 * var(--a-4))', animation: 'steigt var(--d-2) var(--k-aus) forwards' });
+    // Aufdecken: Die Front kühlt als Ganzes ab, verblasst und steigt um --a-4, d-2 mit k-aus
+    expect(regel('.e[data-auf]')).toEqual({ '--h': 'calc(-1*var(--a-4))', animation: 's var(--d-2) var(--k-aus) both' });
     expect(DAUER_MS['d-2']).toBe(WECHSEL.aufdeckenMs);
     expect(front.kurve).toEqual(['linear', 'k-aus']);
   });

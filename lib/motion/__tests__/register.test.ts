@@ -349,7 +349,7 @@ describe('Bewegungsregister', () => {
     expect(buero.reduziert).toBe('Endzustand: Plan, Blatt, Lieferung, Ablage stehen.');
   });
 
-  it('klick-waerme (E-031): drei Scheiben ½ Takt versetzt, d-3, Ende 480 ms, linear; reduziert keine Welle', () => {
+  it('klick-waerme (E-031): drei Ringe ½ Takt versetzt, d-3, Ende 480 ms, linear; reduziert keine Welle', () => {
     const k = MOTION_REGISTER['klick-waerme'];
     expect(mitAusloeser('tippen')).toContain('klick-waerme');
     expect(k.ausloeser).toEqual(['tippen']);
@@ -362,6 +362,9 @@ describe('Bewegungsregister', () => {
     expect(k.reduziert).toBe('Keine Welle; der Klick wirkt sofort.');
     expect(k.zweck).toMatch(/nicht\s+in Formularen/);
     expect(k.zweck).toMatch(/\/bewerbung/);
+    // Prüfrunde 1 A1-3, C1-3: Ringe ohne Fläche, auch nicht auf dem Weg in den Bewerbungsweg
+    expect(k.zweck).toMatch(/Ringe ohne\s+Fläche/);
+    expect(k.zweck).toMatch(/nicht auf dem Weg dorthin/);
     expect(k.schleife).toBeUndefined();
   });
 
@@ -380,6 +383,9 @@ describe('Bewegungsregister', () => {
     expect(WECHSEL.haltenMs).toBeGreaterThanOrEqual(WECHSEL.abdeckenMs + WECHSEL.aufdeckenMs);
     expect(w.reduziert).toBe('Kein Übergang: die Seite wechselt sofort.');
     expect(w.zweck).not.toMatch(/View-Transition|View Transition/);
+    // Prüfrunde 1 A1-12, B1-5: die heißeste innen und zuletzt, kein kalter Kern
+    expect(w.zweck).toMatch(/heißeste zuletzt\s+und innen/);
+    expect(w.zweck).toMatch(/ohne kalten Kern/);
     expect(w.seitenart).toBe('erzaehlseiten');
     for (const id of MOTION_IDS) if (id !== 'seitenwechsel') expect(MOTION_REGISTER[id].wechsel, id).toBeUndefined();
   });
