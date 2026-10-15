@@ -3,48 +3,16 @@ import { Icon } from '@/components/icons';
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
 import { Button } from '@/components/ui/Button';
+import { ABLAUF_LISTE, AblaufNummer, AblaufStrang } from '@/components/jobs/AblaufStrang';
 import { AblaufVarianten } from '@/components/jobs/AblaufVarianten';
 import { DISCRETION_PROMISE, PROCESS_INTRO, sammelAblauf } from '@/lib/content/process';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import { SectionHeader } from './SectionHeader';
 import { ABLAUF_KOPF } from './woche/abschnitte-text';
 
-/** Paarbreite: Vorlauf und Rücklauf im Abstand --paar, je ein Strich --m-strich. */
-const PAAR_BREITE = 'w-[calc(var(--paar)+var(--m-strich))]';
-const PAAR_HOEHE = 'h-[calc(var(--paar)+var(--m-strich))]';
-const STRICH = 'border-(length:--m-strich)';
-
 /**
- * Leitungsstrang des Ablaufs (E-START-027, Variante 1 Formsystem): das Paar Vorlauf/Rücklauf als
- * Fortschrittslinie, ein Heizkreis. Mobil kommt es vom linken Seitenrand (Rücklauf außen, Bogen --r-3;
- * Vorlauf innen, Bogen --r-2), läuft senkrecht an den drei Schritten entlang und kehrt unten im Bogen um.
- * Ab lg läuft es waagerecht über den drei Spalten und kehrt rechts um. Rein grafisch (aria-hidden); liegt
- * über den Abgängen der Schritte, damit sie sauber am Rücklauf ansetzen.
- */
-function Leitungsstrang() {
-  return (
-    <>
-      <span aria-hidden="true" className={`pointer-events-none absolute inset-y-0 left-0 lg:hidden ${PAAR_BREITE}`}>
-        <span
-          className={`absolute top-0 right-0 h-6 w-screen rounded-tr-3 border-t-(length:--m-strich) border-r-(length:--m-strich) border-ruecklauf`}
-        />
-        <span
-          className={`absolute top-paar right-paar h-paar w-screen rounded-tr-2 border-t-(length:--m-strich) border-r-(length:--m-strich) border-vorlauf`}
-        />
-        <span
-          className={`absolute inset-x-0 top-6 bottom-0 rounded-b-voll ${STRICH} border-t-0 border-r-ruecklauf border-b-vorlauf border-l-vorlauf`}
-        />
-      </span>
-      <span
-        aria-hidden="true"
-        className={`pointer-events-none absolute top-0 right-0 hidden w-screen rounded-r-voll lg:block ${PAAR_HOEHE} ${STRICH} border-l-0 border-t-vorlauf border-r-vorlauf border-b-ruecklauf`}
-      />
-    </>
-  );
-}
-
-/**
- * #ablauf auf der Wand (Tonfolge E-023): drei Schritte am Leitungsstrang, die Diskretionszusage und die Hauptaktion.
+ * #ablauf auf der Wand (Tonfolge E-023): drei Schritte am Leitungsstrang (AblaufStrang, derselbe wie auf den
+ * Stellenseiten), die Diskretionszusage und die Hauptaktion.
  * Die Startseite zeigt alle offenen Stellen (Sammelfläche): Schritt 3 trägt „Für Fachkräfte“, darunter steht, was bei
  * den anderen Stellen anders läuft (sammelAblauf; Prüfung E-029, Runde 3).
  */
@@ -52,25 +20,21 @@ export function ProcessTimeline({ now = new Date() }: { now?: Date }) {
   const { schritte: steps, varianten } = sammelAblauf(getActiveJobs().filter((job) => isJobLive(job, now)));
 
   return (
-    <Section id="ablauf" tone="wand" aria-labelledby="ablauf-title" className="overflow-x-clip">
+    <Section id="ablauf" tone="wand" aria-labelledby="ablauf-title">
       <Container>
         <SectionHeader
           id="ablauf-title"
           eyebrow={ABLAUF_KOPF.etikett}
           title={PROCESS_INTRO.title}
           lead={PROCESS_INTRO.text}
+          klammer
         />
 
         <div className="relative mt-12">
-          <ol className="grid gap-12 pt-12 pb-6 pl-12 lg:grid-cols-3 lg:gap-8 lg:pt-12 lg:pb-0 lg:pl-0">
+          <ol className={ABLAUF_LISTE}>
             {steps.map((step) => (
               <li key={step.id} className="relative flex flex-col gap-3">
-                {/* Abgang in Navy vom Rücklauf zur Schrittnummer: mobil waagerecht, ab lg senkrecht (24 px, Skala --a-5) */}
-                <span aria-hidden="true" className="relative self-start">
-                  <span className="absolute top-1/2 right-full mr-3 h-(--m-strich) w-6 -translate-y-1/2 bg-brand lg:hidden" />
-                  <span className="absolute bottom-full left-0 mb-3 hidden h-6 w-(--m-strich) bg-brand lg:block" />
-                  <span className="font-mass text-lead font-semibold text-brand">{String(step.number).padStart(2, '0')}</span>
-                </span>
+                <AblaufNummer nummer={step.number} />
                 <h3 className="text-title-3 text-brand">
                   <span className="sr-only">Schritt {step.number}: </span>
                   {step.title}
@@ -80,7 +44,7 @@ export function ProcessTimeline({ now = new Date() }: { now?: Date }) {
               </li>
             ))}
           </ol>
-          <Leitungsstrang />
+          <AblaufStrang />
         </div>
 
         <AblaufVarianten varianten={varianten} className="mt-12" />

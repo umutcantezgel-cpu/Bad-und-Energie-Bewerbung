@@ -3,6 +3,7 @@ import { Rohrklammer } from '@/components/zeichnung/Rohrklammer';
 import { getDiscretionPromise, getProcessIntro, getProcessSteps, sammelAblauf, type ProcessAudience } from '@/lib/content';
 import type { Job } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
+import { ABLAUF_LISTE, AblaufNummer, AblaufStrang } from './AblaufStrang';
 import { AblaufVarianten } from './AblaufVarianten';
 
 export interface JobProcessProps {
@@ -18,38 +19,6 @@ export interface JobProcessProps {
    */
   stellen?: readonly Job[];
   className?: string;
-}
-
-const STRICH = 'border-(length:--m-strich)';
-
-/** Rundes Ende einer Leitung: ein Kreis im Strich, mittig auf dem offenen Ende (wie .leitungNavy im Seitenkopf). */
-const ENDE = 'absolute size-(--m-strich) rounded-voll';
-
-/**
- * Leitungsstrang des Ablaufs (wie #ablauf der Startseite, Variante 1 Formsystem): Vorlauf und Rücklauf als
- * Paar an den drei Schritten entlang, mobil senkrecht mit Bogen unten, ab lg waagerecht mit Bogen rechts.
- * Die offenen Enden sind rund (Prüfrunde 1 A1-5: vorher stumpf an der Inhaltskante); ab lg beginnt das Paar links vor
- * dem ersten Abgang, sodass jeder Abgang ein T-Stück ist und keine Ecke. Rein grafisch (aria-hidden), ohne Bewegung.
- */
-function Leitungsstrang() {
-  return (
-    <>
-      <span
-        aria-hidden="true"
-        className={`pointer-events-none absolute inset-y-0 left-0 w-[calc(var(--paar)+var(--m-strich))] rounded-b-voll lg:hidden ${STRICH} border-t-0 border-r-ruecklauf border-b-vorlauf border-l-vorlauf`}
-      >
-        <span className={`${ENDE} -top-[calc(var(--m-strich)/2)] -left-(--m-strich) bg-vorlauf`} />
-        <span className={`${ENDE} -top-[calc(var(--m-strich)/2)] -right-(--m-strich) bg-ruecklauf`} />
-      </span>
-      <span
-        aria-hidden="true"
-        className={`pointer-events-none absolute top-0 right-0 -left-6 hidden h-[calc(var(--paar)+var(--m-strich))] rounded-r-voll lg:block ${STRICH} border-l-0 border-t-vorlauf border-r-vorlauf border-b-ruecklauf`}
-      >
-        <span className={`${ENDE} -top-(--m-strich) -left-[calc(var(--m-strich)/2)] bg-vorlauf`} />
-        <span className={`${ENDE} -bottom-(--m-strich) -left-[calc(var(--m-strich)/2)] bg-ruecklauf`} />
-      </span>
-    </>
-  );
 }
 
 /**
@@ -76,15 +45,10 @@ export function JobProcess({ audience, zusage = true, stellen, className }: JobP
       </div>
 
       <div className="relative">
-        <ol className="grid gap-12 py-2 pl-12 lg:grid-cols-3 lg:gap-8 lg:pt-12 lg:pb-0 lg:pl-0">
+        <ol className={ABLAUF_LISTE}>
           {steps.map((step) => (
             <li key={step.id} className="relative flex flex-col gap-3">
-              {/* Abgang in Navy vom Strang zur Schrittnummer: mobil waagerecht, ab lg senkrecht */}
-              <span aria-hidden="true" className="relative self-start">
-                <span className="absolute top-1/2 right-full mr-3 h-(--m-strich) w-6 -translate-y-1/2 rounded-voll bg-brand lg:hidden" />
-                <span className="absolute bottom-full left-0 mb-3 hidden h-6 w-(--m-strich) rounded-voll bg-brand lg:block" />
-                <span className="font-mass text-lead font-semibold text-brand">{String(step.number).padStart(2, '0')}</span>
-              </span>
+              <AblaufNummer nummer={step.number} />
               <h3 className="text-title-3 text-brand">
                 <span className="sr-only">Schritt {step.number}: </span>
                 {step.title}
@@ -93,7 +57,7 @@ export function JobProcess({ audience, zusage = true, stellen, className }: JobP
             </li>
           ))}
         </ol>
-        <Leitungsstrang />
+        <AblaufStrang />
       </div>
 
       <AblaufVarianten varianten={varianten} />

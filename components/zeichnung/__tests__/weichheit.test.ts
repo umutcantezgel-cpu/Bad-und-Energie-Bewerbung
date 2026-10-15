@@ -4,6 +4,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { FaqSection } from '@/components/home/FaqSection';
+import { ProcessTimeline } from '@/components/home/ProcessTimeline';
 import { PartnerSaeulen } from '@/components/home/betrieb/PartnerSaeulen';
 import { Ausstattung } from '@/components/home/vorteile/Ausstattung';
 import { Zusagen } from '@/components/home/vorteile/Zusagen';
@@ -268,11 +269,15 @@ describe('Rohrklammer zurück an den Abschnittsköpfen (E-031, K-003.2)', () => 
     });
   });
 
-  it('nur wo der Aufrufer sie setzt: Themenabschnitte reichen `klammer` bis an die h2 durch, die Startseite setzt keine', () => {
+  it('nur wo der Aufrufer sie setzt: Themenabschnitte reichen `klammer` bis an die h2 durch; die Startseite setzt sie genau am Ablauf und am Einsatzgebiet (Prüfrunde 3 A3-4, wie vor E-029)', () => {
     const bausteine = quelle('components/themen/Bausteine.tsx');
     expect(bausteine).toMatch(/<SectionHeader\s+id=\{titelId\(kopf\.id\)\}\s+eyebrow=\{kopf\.etikett\}\s+klammer=\{klammer\}/);
     expect(bausteine).toContain('<Kopf kopf={kopf} klammer={klammer} />');
-    for (const datei of dateien('components/home', /\.tsx$/)) expect(quelle(datei), datei).not.toMatch(/<SectionHeader\b[^>]*?\bklammer\b/);
+    // Vom Öffnen des SectionHeader bis zu `klammer`, ohne sein Ende (/>) zu überspringen
+    const mitKlammer = dateien('components/home', /\.tsx$/).filter((datei) => /<SectionHeader\b(?:(?!\/>)[\s\S])*?\bklammer\b/.test(quelle(datei)));
+    expect(mitKlammer.map((datei) => path.basename(datei)).sort()).toEqual(['ProcessTimeline.tsx', 'RegionSection.tsx']);
+    // Dieselbe Überschrift „In 3 Schritten …“ sieht auf Startseite und Stellenseiten gleich aus
+    expect(quelle('components/jobs/JobProcess.tsx')).toContain('<Rohrklammer />');
   });
 });
 
@@ -343,8 +348,13 @@ describe('Seitenkopf, Stellenliste und Heizkreis: weiche Ecken und Enden (E-031)
     expect(regel(z, '.hkRuecklauf::after')).toMatch(/top: calc\(var\(--m-strich\) \/ -2\);\s*background-color: var\(--ruecklauf\);/);
   });
 
-  it('Ablauf der Stellenseiten (Prüfrunde 1 A1-5): das Leitungspaar endet rund, ab lg links vor dem ersten Abgang; Abgänge rund', () => {
-    const m = html(createElement(JobProcess, { audience: 'fachkraft' }));
+  it.each([
+    ['Stellenseiten (Prüfrunde 1 A1-5)', () => html(createElement(JobProcess, { audience: 'fachkraft' }))],
+    ['Startseite #ablauf (Prüfrunde 3 A3-3)', () => html(createElement(ProcessTimeline, { now: new Date('2026-10-15T12:00:00+02:00') }))],
+  ] as const)('Ablauf der %s: das Leitungspaar endet rund, ab lg links vor dem ersten Abgang; Abgänge rund', (_, render) => {
+    const m = render();
+    // Kein Paar, das mit w-screen hart in den Bildschirmrand läuft
+    expect(m).not.toContain('w-screen');
     const enden = [...m.matchAll(/<span class="(absolute size-\(--m-strich\) rounded-voll [^"]+)"><\/span>/g)].map((x) => x[1]);
     // Je Leitung ein Kreis am offenen Ende, mobil oben, ab lg links; in der Farbe der Leitung
     expect(enden).toEqual([

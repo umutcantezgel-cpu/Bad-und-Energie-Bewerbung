@@ -30,6 +30,7 @@ export function RegionSection() {
                 </Fragment>
               ))}
               lead={REGION.summary}
+              klammer
             />
           }
         />

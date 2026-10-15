@@ -13,8 +13,9 @@ export interface SectionHeaderProps {
   eyebrow?: ReactNode;
   /**
    * Rohrklammer links an der Überschrift (B Runde 1, Variante 1; seit E-031 zurück, KERN 1.3 K-003.2): Vorlauf oben,
-   * Rücklauf unten, Bögen --radius-2, runde Enden. Rein grafisch (aria-hidden); nur, wo der Aufrufer sie setzt
-   * (Themen- und Ortsseiten), die Startseite bleibt ohne. Standard aus.
+   * Rücklauf unten, Bögen --radius-2, runde Enden. Rein grafisch (aria-hidden); nur, wo der Aufrufer sie setzt:
+   * Themen- und Ortsseiten, auf der Startseite der Ablauf und das Einsatzgebiet wie vor E-029 (Prüfrunde 3 A3-4; dieselbe
+   * Überschrift „In 3 Schritten …“ trägt sie auch auf den Stellenseiten). Standard aus.
    */
   klammer?: boolean;
 }

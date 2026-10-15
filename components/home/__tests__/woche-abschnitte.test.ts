@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { prerender } from 'react-dom/static';
 import { describe, expect, it } from 'vitest';
 import { COMPANY } from '@/lib/content/company';
+import { JobProcess } from '@/components/jobs/JobProcess';
 import { getFaqItems } from '@/lib/content/faq';
 import { PAY_ON_REQUEST, jobPath } from '@/lib/jobs/format';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
@@ -88,12 +89,18 @@ describe('ProcessTimeline (#ablauf, E-START-027)', () => {
     });
   });
 
-  it('der Leitungsstrang ist rein grafisch: Vorlauf und Rücklauf, mobil und ab lg', () => {
+  it('der Leitungsstrang ist rein grafisch: Vorlauf und Rücklauf, mobil und ab lg; derselbe wie auf den Stellenseiten (Prüfrunde 3 A3-3)', () => {
     const strang = html.match(/<span aria-hidden="true" class="pointer-events-none absolute inset-y-0[\s\S]*$/)?.[0] ?? '';
-    expect(strang).toContain('border-vorlauf');
-    expect(strang).toContain('border-ruecklauf');
-    expect(html).toMatch(/aria-hidden="true" class="pointer-events-none absolute top-0 right-0 hidden w-screen rounded-r-voll lg:block/);
-    expect(html).toMatch(/<section[^>]*class="[^"]*overflow-x-clip/);
+    // Mobil: Vorlauf außen links und unten, Rücklauf rechts; ab lg Vorlauf oben, Rücklauf unten
+    for (const farbe of ['border-l-vorlauf', 'border-b-vorlauf', 'border-r-ruecklauf', 'border-t-vorlauf', 'border-b-ruecklauf']) expect(strang).toContain(farbe);
+    // Ab lg beginnt das Paar rund vor dem ersten Abgang statt mit w-screen am Bildschirmrand
+    expect(html).toMatch(/aria-hidden="true" class="pointer-events-none absolute top-0 right-0 -left-6 hidden h-\[calc\(var\(--paar\)\+var\(--m-strich\)\)\] rounded-r-voll lg:block/);
+    expect(html).not.toContain('w-screen');
+    const stelle = renderToStaticMarkup(createElement(JobProcess, { audience: 'fachkraft' }));
+    const strangVon = (m: string) =>
+      [...m.matchAll(/<span aria-hidden="true" class="(pointer-events-none absolute [^"]+)">/g)].map((x) => x[1]).filter((k) => k.includes('border-(length:--m-strich)'));
+    expect(strangVon(html)).toHaveLength(2);
+    expect(strangVon(html)).toEqual(strangVon(stelle));
   });
 
   it('Sammelfläche (Runde 3): Schritt 3 „Für Fachkräfte“, darunter die Abläufe der anderen live Stellen im Wortlaut', () => {
@@ -120,10 +127,11 @@ describe('ProcessTimeline (#ablauf, E-START-027)', () => {
     expect(html).toMatch(/<div data-primary-cta="true" class="shrink-0"><a [^>]*href="\/bewerbung"[^>]*>Jetzt bewerben<\/a>/);
   });
 
-  it('Wand ohne Leitungstrenner und ohne Rohrklammer (E-029); Abgänge auf der Abstandsskala (24 px)', () => {
+  it('Wand ohne Leitungstrenner (E-029), die Rohrklammer genau einmal an der h2 wie auf den Stellenseiten (E-031 K-003.2, Prüfrunde 3 A3-4); Abgänge auf der Abstandsskala (24 px)', () => {
     expect(html).toMatch(/<section class="[^"]*bg-surface-2[^"]*"[^>]*id="ablauf"/);
     expect(html).not.toContain('data-zeichnung="leitungstrenner"');
-    expect(html).not.toContain('data-zeichnung="rohrklammer"');
+    expect(count(html, /data-zeichnung="rohrklammer"/g)).toBe(1);
+    expect(html).toMatch(/<h2 id="ablauf-title" class="text-title-1 text-brand relative pl-8"><span aria-hidden="true" class="[^"]*klammerRahmen[^"]*"><svg [^>]*data-zeichnung="rohrklammer">/);
     expect(html).not.toMatch(/\b[wh]-7\b/);
     expect(html).toContain('w-6');
   });
@@ -187,9 +195,10 @@ describe('Abschnitte der Startseite: Flächenwechsel statt Leitungstrenner (E-02
     );
     const toene = folge.map((html) => (/^<section class="[^"]*bg-surface-2/.test(html) ? 'wand' : 'papier'));
     expect(toene).toEqual(['papier', 'wand', 'papier', 'wand', 'papier', 'wand']);
+    // Rohrklammer (E-031 K-003.2, Prüfrunde 3 A3-4): genau an den Köpfen von Einsatzgebiet und Ablauf, wie vor E-029
+    expect(folge.map((html) => count(html, /data-zeichnung="rohrklammer"/g))).toEqual([0, 0, 1, 1, 0, 0]);
     for (const html of folge) {
       expect(html).not.toContain('data-zeichnung="leitungstrenner"');
-      expect(html).not.toContain('data-zeichnung="rohrklammer"');
       expect(html).not.toMatch(/^<section class="[^"]*relative pt-24/);
     }
   });
