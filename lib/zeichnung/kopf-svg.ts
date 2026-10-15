@@ -36,6 +36,7 @@ import {
   PFEILE,
 } from './szenen/hausschnitt';
 import { SYMBOLE, type Lage, type SymbolForm, type SymbolId } from './symbole';
+import { leitstelleSvg } from './buero/svg';
 
 /**
  * Rollen des Inverse-Bands, in dem der Stellenkopf steht (app/styles/theme.css, Primitive): Marke und Kontur Creme,
@@ -184,9 +185,13 @@ export function hausschnittSvg(): string {
   ]);
 }
 
-export type KopfSvgArt = 'anlagenschema' | 'hausschnitt';
+/**
+ * Kopfbilder: Anlagenschema, kleiner Hausschnitt und seit E-031 die Leitstelle der Bürofachkraft (Typ `buero`, Geometrie
+ * und Farben in lib/zeichnung/buero, Datei-Renderer lib/zeichnung/buero/svg.ts).
+ */
+export type KopfSvgArt = 'anlagenschema' | 'hausschnitt' | 'buero';
 
-const ERZEUGT: Record<KopfSvgArt, () => string> = { anlagenschema: anlagenschemaSvg, hausschnitt: hausschnittSvg };
+const ERZEUGT: Record<KopfSvgArt, () => string> = { anlagenschema: anlagenschemaSvg, hausschnitt: hausschnittSvg, buero: leitstelleSvg };
 const inhalte = new Map<KopfSvgArt, string>();
 const inhalt = (art: KopfSvgArt) => {
   if (!inhalte.has(art)) inhalte.set(art, ERZEUGT[art]());
