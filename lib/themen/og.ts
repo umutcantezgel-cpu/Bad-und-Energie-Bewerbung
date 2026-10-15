@@ -1,6 +1,6 @@
 import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
-import { OG_IMAGE_SIZE, OG_IMAGE_TYPE, fitTitle, versal, type OgImage, type OgJobText } from '@/lib/seo/og-image';
+import { OG_IMAGE_SIZE, OG_IMAGE_TYPE, OG_ZEICHNUNG_ABFRAGE, fitTitle, versal, type OgImage, type OgJobText } from '@/lib/seo/og-image';
 import { THEMEN_STAND } from './registry';
 import type { SeitenBasis } from './text';
 
@@ -31,10 +31,13 @@ export function ogThemaText(text: Pick<SeitenBasis, 'etikett' | 'meta' | 'og'>):
   };
 }
 
-/** Teilen-Bild der Themenseite: eigene Route `<pfad>/opengraph-image` mit eigenem alt; die Abfrage wechselt mit dem Stand. */
+/**
+ * Teilen-Bild der Themenseite: eigene Route `<pfad>/opengraph-image` mit eigenem alt; die Abfrage wechselt mit dem Stand
+ * der Texte und dem der Zeichnung.
+ */
 export function themaOgImage(text: Pick<SeitenBasis, 'path' | 'meta'>): OgImage {
   return {
-    url: `${text.path}/opengraph-image?v=${THEMEN_STAND}`,
+    url: `${text.path}/opengraph-image?v=${THEMEN_STAND}&${OG_ZEICHNUNG_ABFRAGE}`,
     ...OG_IMAGE_SIZE,
     type: OG_IMAGE_TYPE,
     alt: `${text.meta.h1}: ${COMPANY.name} in ${COMPANY.address.city}`,

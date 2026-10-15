@@ -20,7 +20,7 @@ import { jobPath } from '@/lib/jobs/format';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
 import type { PageGraph } from '@/lib/seo/graph';
-import { DEFAULT_OG_IMAGE } from '@/lib/seo/og-image';
+import { DEFAULT_OG_IMAGE, OG_ZEICHNUNG_STAND } from '@/lib/seo/og-image';
 import { ARBEITEN_PATH, THEMA_IDS, getThemen, themaPath } from '@/lib/themen/registry';
 import { claimsInHtml } from '../../../scripts/qa/check-claims.mjs';
 
@@ -95,7 +95,7 @@ describe('Routen unter /arbeiten-bei-uns', () => {
     const meta = await themaMetadata(params(id));
     expect(canonicalOf(meta)).toBe(getCleanCanonicalUrl(themaPath(thema)));
     const images = meta.openGraph?.images as { url: string }[];
-    expect(images[0].url).toMatch(new RegExp(`^${themaPath(thema)}/opengraph-image\\?v=\\d{4}-\\d{2}-\\d{2}$`));
+    expect(images[0].url).toMatch(new RegExp(`^${themaPath(thema)}/opengraph-image\\?v=\\d{4}-\\d{2}-\\d{2}&z=${OG_ZEICHNUNG_STAND}$`));
 
     const element = await ThemaPage(params(id));
     const graph = graphOf(element);

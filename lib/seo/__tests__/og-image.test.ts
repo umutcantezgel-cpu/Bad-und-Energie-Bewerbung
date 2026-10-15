@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { FACTS } from '@/lib/content';
 import { PAY_ON_REQUEST } from '@/lib/jobs/format';
 import { getActiveJobs, getJobBySlug } from '@/lib/jobs/registry';
-import { OG_TITLE_BOX, fitTitle, ogHomeText, ogJobText, ogPlaceText, placeOgImage, splitSentences, splitTitle } from '@/lib/seo/og-image';
+import { OG_TITLE_BOX, OG_ZEICHNUNG_STAND, fitTitle, ogHomeText, ogJobText, ogPlaceText, placeOgImage, splitSentences, splitTitle } from '@/lib/seo/og-image';
 import { renderHomeImage, renderJobImage, renderPlaceImage } from '@/lib/seo/og-render';
 import { getPlaceBySlug, getPublishedPlaces, placePath } from '@/lib/places/registry';
 import { getPlacePageText } from '@/lib/places/text';
@@ -149,7 +149,7 @@ describe('place share image text (E-028)', () => {
   it('links the image per place with a versioned url and an alt that names the distance', () => {
     const herborn = getPlaceBySlug('herborn')!;
     const image = placeOgImage({ path: placePath(herborn), name: herborn.name, updatedAt: herborn.updatedAt, distanceKm: herborn.commute.distanceKm });
-    expect(image.url).toBe(`/einsatzgebiet/herborn/opengraph-image?v=${herborn.updatedAt}`);
+    expect(image.url).toBe(`/einsatzgebiet/herborn/opengraph-image?v=${herborn.updatedAt}&z=${OG_ZEICHNUNG_STAND}`);
     expect(image.alt).toContain('27 km bis zum Firmensitz');
   });
 

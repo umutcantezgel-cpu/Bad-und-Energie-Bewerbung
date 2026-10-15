@@ -41,7 +41,7 @@ import { OSM_LINK, OSM_NAMENSNENNUNG } from '@/lib/places/osm';
 import { OEPNV_QUELLE } from '@/lib/places/oepnv';
 import { getCleanCanonicalUrl } from '@/lib/seo/canonical-links';
 import type { PageGraph } from '@/lib/seo/graph';
-import { DEFAULT_OG_IMAGE } from '@/lib/seo/og-image';
+import { DEFAULT_OG_IMAGE, OG_ZEICHNUNG_STAND } from '@/lib/seo/og-image';
 
 /**
  * Routen unter /einsatzgebiet (E-028): Metadaten aus dem Textmodell, Canonical auf sich selbst, sichtbarer Pfad =
@@ -267,7 +267,7 @@ describe('Ortsseite: Metadaten, Canonical und Graph (Stichproben und alle Orte)'
     expect(canonical(meta)).toBe(getCleanCanonicalUrl(placePath(place)));
     expect(meta.description).toBe(text.meta.description);
     const og = meta.openGraph?.images as { url: string }[];
-    expect(og[0].url).toBe(`${placePath(place)}/opengraph-image?v=${place.updatedAt}`);
+    expect(og[0].url).toBe(`${placePath(place)}/opengraph-image?v=${place.updatedAt}&z=${OG_ZEICHNUNG_STAND}`);
 
     const graph = graphOf(await EinsatzgebietSlugPage(params(place.slug)));
     const [page] = ofType(graph, 'WebPage');

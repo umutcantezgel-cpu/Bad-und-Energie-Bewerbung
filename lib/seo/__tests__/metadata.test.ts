@@ -2,7 +2,7 @@ import { existsSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { generatePageMetadata } from '../metadata';
-import { DEFAULT_OG_IMAGE, type OgImage } from '../og-image';
+import { DEFAULT_OG_IMAGE, OG_ZEICHNUNG_STAND, type OgImage } from '../og-image';
 
 const ROOT = path.resolve(__dirname, '../../..');
 const base = { title: 'Titel', description: 'Beschreibung' };
@@ -64,7 +64,7 @@ describe('generatePageMetadata: share image', () => {
   });
 
   it('the default points at app/opengraph-image', () => {
-    expect(DEFAULT_OG_IMAGE).toMatchObject({ url: '/opengraph-image', width: 1200, height: 630 });
+    expect(DEFAULT_OG_IMAGE).toMatchObject({ url: `/opengraph-image?z=${OG_ZEICHNUNG_STAND}`, width: 1200, height: 630 });
     expect(DEFAULT_OG_IMAGE.alt.length).toBeGreaterThan(10);
     expect(existsSync(path.join(ROOT, 'app/opengraph-image.tsx'))).toBe(true);
   });

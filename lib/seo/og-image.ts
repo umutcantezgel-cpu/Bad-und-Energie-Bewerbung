@@ -39,6 +39,17 @@ export const OG_COLOR = Object.freeze({
   weiss: '#FFFFFF',
 });
 
+/**
+ * Stand der Zeichnung in den Teilen-Bildern (Hausschnitt mit Wärmefeld, Leitstelle der Bürostelle; Prüfung E-031,
+ * D1-1). Jede Adresse eines Teilen-Bilds trägt ihn als `z=`, damit WhatsApp, LinkedIn und Facebook nach einer neuen
+ * Zeichnung die neue Karte holen, auch wenn Stelle, Ort und Themenstand gleich geblieben sind.
+ * lib/seo/__tests__/og-zeichnung.test.ts hält ihn am Fingerabdruck der Zeichnung: Ändert sie sich, braucht es einen
+ * neuen, späteren Stand.
+ */
+export const OG_ZEICHNUNG_STAND = '2026-10-15';
+/** Abfrageteil mit dem Stand der Zeichnung (an jeder Adresse eines Teilen-Bilds). */
+export const OG_ZEICHNUNG_ABFRAGE = `z=${OG_ZEICHNUNG_STAND}`;
+
 /** Top left of every share image, like the place mark of the home hero (timeless, no anniversary). */
 export const OG_EYEBROW = `Seit ${COMPANY.foundingYear} · ${COMPANY.address.city}`;
 
@@ -303,7 +314,7 @@ export function ogPlaceText(place: OgPlace): OgPlaceText {
  */
 export function placeOgImage(place: { path: string; name: string; updatedAt: string; distanceKm: number }): OgImage {
   return {
-    url: `${place.path}/opengraph-image?v=${place.updatedAt}`,
+    url: `${place.path}/opengraph-image?v=${place.updatedAt}&${OG_ZEICHNUNG_ABFRAGE}`,
     ...OG_IMAGE_SIZE,
     type: OG_IMAGE_TYPE,
     alt: `SHK-Jobs für ${place.name}: ${place.distanceKm} km bis zum Firmensitz von ${COMPANY.shortName} in ${COMPANY.address.city}`,
@@ -315,7 +326,7 @@ export function placeOgImage(place: { path: string; name: string; updatedAt: str
  * (see generatePageMetadata), so its alt is defined here and imported by the image file.
  */
 export const DEFAULT_OG_IMAGE: Readonly<OgImage> = Object.freeze({
-  url: '/opengraph-image',
+  url: `/opengraph-image?${OG_ZEICHNUNG_ABFRAGE}`,
   ...OG_IMAGE_SIZE,
   type: OG_IMAGE_TYPE,
   alt: `${COMPANY.name}: SHK-Jobs in ${COMPANY.address.city}`,
@@ -324,8 +335,8 @@ export const DEFAULT_OG_IMAGE: Readonly<OgImage> = Object.freeze({
 /**
  * Share image of a job page: its own app/jobs/[slug]/opengraph-image route with a per-job alt.
  * The page links it explicitly because a file-based image can only have one static alt. The
- * query changes with every edit and when the job closes, so WhatsApp, LinkedIn and Facebook
- * fetch the new card instead of their cached one.
+ * query changes with every edit, when the job closes and with a new drawing (OG_ZEICHNUNG_STAND), so WhatsApp,
+ * LinkedIn and Facebook fetch the new card instead of their cached one.
  */
 export function jobOgImage(
   job: Pick<Job, 'slug' | 'shortTitle' | 'updatedAt' | 'location' | 'pay'>,
@@ -334,7 +345,7 @@ export function jobOgImage(
   const salary = open ? payLabel(job) : null;
   const subject = `${job.shortTitle} (m/w/d) bei ${COMPANY.shortName} in ${job.location.city}`;
   return {
-    url: `${jobPath(job)}/opengraph-image?v=${job.updatedAt}${open ? '' : '-besetzt'}`,
+    url: `${jobPath(job)}/opengraph-image?v=${job.updatedAt}${open ? '' : '-besetzt'}&${OG_ZEICHNUNG_ABFRAGE}`,
     ...OG_IMAGE_SIZE,
     type: OG_IMAGE_TYPE,
     alt: open ? (salary ? `${subject}, ${salary}` : subject) : `${subject}: Stelle besetzt`,
