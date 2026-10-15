@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { anlagenschemaSvg, hausschnittSvg } from '@/lib/zeichnung/kopf-svg';
-import { MERKMAL_LAENGE, TECHNIK_BUDGET, modulBytes, pruefeKopfzeichnungen, pruefeSeiten, stylesheetsOf } from '../check-css-chunks.mjs';
+import { MERKMAL_LAENGE, TECHNIK_BUDGET, modulBytes, pruefeKopfzeichnungen, pruefeSeiten, routeVon, stylesheetsOf } from '../check-css-chunks.mjs';
 
 /** Gebautes CSS in der Form, die Turbopack schreibt: `.<modul>-module__<hash>__<klasse>`. */
 const GLOBAL = '.flex{display:flex}';
@@ -62,6 +62,24 @@ describe('check-css-chunks: CSS-Ketten im Build (Prüfung E-029, Runde 2, Befund
       '/arbeiten-bei-uns: ohne die Regeln aus themen.module.css',
       'keine Themenseite geprüft',
     ]);
+  });
+
+  it('findet die Seiten in beiden Ablagen von next build, mit und ohne Deployment-Adapter (Vercel)', () => {
+    const hash = 'f484ef78197dc75478738aa9f80c0f9c5bb20fd79fee4c396b364eb3e8000e27';
+    expect(routeVon('app/index.html', '.html')).toBe('/');
+    expect(routeVon('app/jobs/anlagenmechaniker-shk-wetzlar.html', '.html')).toBe('/jobs/anlagenmechaniker-shk-wetzlar');
+    expect(routeVon(`route-cache/APP_PAGE/${hash}/$/index.html`, '.html')).toBe('/');
+    expect(routeVon(`route-cache/APP_PAGE/${hash}/$/jobs/anlagenmechaniker-shk-wetzlar.html`, '.html')).toBe('/jobs/anlagenmechaniker-shk-wetzlar');
+    expect(routeVon('app/zeichnung/anlagenschema-a998c27bff.svg.body', '.body')).toBe('/zeichnung/anlagenschema-a998c27bff.svg');
+    expect(routeVon(`route-cache/APP_ROUTE/${hash}/$/zeichnung/anlagenschema-a998c27bff.svg.body`, '.body')).toBe('/zeichnung/anlagenschema-a998c27bff.svg');
+    // Andere Endung, fremde Ablage oder unvollständiger Schlüssel: keine Seite
+    expect(routeVon('app/jobs.rsc', '.html')).toBeNull();
+    expect(routeVon('pages/404.html', '.html')).toBeNull();
+    expect(routeVon('route-cache/APP_PAGE/jobs.html', '.html')).toBeNull();
+  });
+
+  it('fällt durch, wenn sie keine Seite findet, statt leer zu bestehen', () => {
+    expect(pruefeSeiten([], lies)).toEqual(['keine vorab gerenderte Seite mit Stylesheet gefunden, die Prüfung liefe ins Leere']);
   });
 
   it('technik/dauer: über dem Budget fällt durch', () => {

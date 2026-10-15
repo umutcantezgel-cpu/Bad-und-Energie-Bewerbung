@@ -7,8 +7,10 @@ import { fileURLToPath } from 'node:url';
  * CSS-Ketten im Build (Prüfung E-029, Runde 2, Befunde 8 und 9; läuft nach `next build` als postbuild, einzeln mit
  * `bun run check:css-chunks`). Ergänzt die Quelltext-Wächter (components/zeichnung/__tests__/zeichnungen-seitenkopf,
  * components/themen/__tests__/stil, components/site/fehler/__tests__/fehler): Die prüfen, was importiert wird; hier
- * steht, was Next daraus macht. Gelesen werden die vorab gerenderten Seiten in .next/server/app/**\/*.html und die
- * Stylesheets, die sie verlinken.
+ * steht, was Next daraus macht. Gelesen werden die vorab gerenderten Seiten und die Stylesheets, die sie verlinken, aus
+ * beiden Ablagen von `next build`: ohne Deployment-Adapter .next/server/app/<route>.html, mit Adapter (Vercel setzt
+ * NEXT_ADAPTER_PATH) .next/server/route-cache/<Art>/<sha256>/$/<route>.html (next/dist/server/lib/route-cache-key.js).
+ * Findet die Prüfung keine Seite, fällt sie durch, statt leer zu bestehen.
  *
  * 1. Kein CSS-Preload (`<link rel="preload" as="style">`) auf irgendeiner Seite: Jeder kostet vor dem ersten Bild eine
  *    Runde (Befund 8: das CSS-Modul der 404-Seite stand als Preload auf jeder Seite, FCP +150 ms bei Slow 4G).
@@ -26,8 +28,10 @@ import { fileURLToPath } from 'node:url';
  *    den langen Pfaden der gebauten Dateien; die Stellenseite verweist auf ihre Datei.
  */
 
-const APP_OUTPUT_DIR = path.resolve(process.cwd(), '.next/server/app');
 const NEXT_DIR = path.resolve(process.cwd(), '.next');
+const SERVER_DIR = path.join(NEXT_DIR, 'server');
+/** Ablagen der vorab gerenderten Ausgaben unter .next/server: klassisch und mit Deployment-Adapter. */
+const ABLAGEN = ['app', 'route-cache'];
 /** Seiten, die nur das globale und das gemeinsame Stylesheet laden dürfen. */
 export const ZWEI_STYLESHEETS = /^\/jobs(?:\/[^/]+)?$|^\/einsatzgebiet(?:\/[^/]+)?$/;
 export const HOECHSTENS_STYLESHEETS = 3;
@@ -38,8 +42,8 @@ export const THEMEN_SEITE = /^\/arbeiten-bei-uns(?:\/[^/]+)?$/;
 /** Höchstens so viele Bytes (roh) aus technik.module.css und dauer.module.css auf einer Seite (heute rund 7,2 kB). */
 export const TECHNIK_BUDGET = 8000;
 const UEBERSPRUNGEN = new Set(['/_global-error']);
-/** Gebaute Kopfzeichnungen (Route-Handler app/zeichnung/[datei]): Inhalt in `<datei>.body`. */
-const ZEICHNUNG_DIR = path.join(APP_OUTPUT_DIR, 'zeichnung');
+/** Gebaute Kopfzeichnungen (Route-Handler app/zeichnung/[datei]): Inhalt in `<route>.body`. */
+const ZEICHNUNG_ROUTE = /^\/zeichnung\/([^/]+\.svg)$/;
 /** Pfade ab dieser Länge erkennen eine Zeichnung sicher (Schraffur, Leitungen); kürzere kommen auch anderswo vor. */
 export const MERKMAL_LAENGE = 120;
 
@@ -90,6 +94,7 @@ export function stylesheetsOf(html) {
  * Gibt die Fehler als Liste zurück (leer = bestanden).
  */
 export function pruefeSeiten(seiten, lies) {
+  if (seiten.length === 0) return ['keine vorab gerenderte Seite mit Stylesheet gefunden, die Prüfung liefe ins Leere'];
   const fehler = [];
   let themenGesehen = 0;
   for (const { route, stylesheets, preloads } of seiten) {
@@ -145,27 +150,46 @@ export function pruefeKopfzeichnungen(seiten, dateien) {
   return fehler;
 }
 
-function htmlDateien(dir, out = []) {
+/**
+ * Route einer vorab gerenderten Datei aus ihrem Pfad relativ zu .next/server, ohne `endung`; null, wenn die Datei in
+ * keiner der beiden Ablagen liegt. `app/jobs.html` und `route-cache/APP_PAGE/<sha256>/$/jobs.html` → `/jobs`,
+ * `app/index.html` und `route-cache/APP_PAGE/<sha256>/$/index.html` → `/`.
+ */
+export function routeVon(relativ, endung) {
+  const pfad = relativ.replace(/\\/g, '/');
+  if (!pfad.endsWith(endung)) return null;
+  const ohne = pfad.slice(0, -endung.length);
+  const rest = ohne.match(/^app\/(.+)$/)?.[1] ?? ohne.match(/^route-cache\/[A-Z_]+\/[0-9a-f]{64}\/\$\/(.+)$/)?.[1];
+  if (!rest) return null;
+  return rest === 'index' ? '/' : `/${rest}`;
+}
+
+function dateienMit(dir, endung, out = []) {
   for (const eintrag of fs.readdirSync(dir, { withFileTypes: true })) {
     const voll = path.join(dir, eintrag.name);
-    if (eintrag.isDirectory()) htmlDateien(voll, out);
-    else if (eintrag.name.endsWith('.html')) out.push(voll);
+    if (eintrag.isDirectory()) dateienMit(voll, endung, out);
+    else if (eintrag.name.endsWith(endung)) out.push(voll);
   }
   return out;
 }
 
-function routeVon(datei) {
-  const relativ = path.relative(APP_OUTPUT_DIR, datei).replace(/\\/g, '/').replace(/\.html$/, '');
-  return relativ === 'index' ? '/' : `/${relativ}`;
+/** Vorab gerenderte Dateien mit `endung` aus beiden Ablagen: [{ route, inhalt }]. */
+function vorabGerendert(endung) {
+  return ABLAGEN.map((ablage) => path.join(SERVER_DIR, ablage))
+    .filter((wurzel) => fs.existsSync(wurzel))
+    .flatMap((wurzel) => dateienMit(wurzel, endung))
+    .map((voll) => ({ route: routeVon(path.relative(SERVER_DIR, voll), endung), voll }))
+    .filter(({ route }) => route !== null)
+    .map(({ route, voll }) => ({ route, inhalt: fs.readFileSync(voll, 'utf8') }));
 }
 
 export function runCssChunkCheck() {
-  if (!fs.existsSync(APP_OUTPUT_DIR)) {
-    console.error('🚨 Kein Build gefunden (.next/server/app). Erst `next build`.');
+  if (!fs.existsSync(SERVER_DIR)) {
+    console.error('🚨 Kein Build gefunden (.next/server). Erst `next build`.');
     process.exit(1);
   }
-  const dokumente = htmlDateien(APP_OUTPUT_DIR)
-    .map((datei) => ({ route: routeVon(datei), html: fs.readFileSync(datei, 'utf8') }))
+  const dokumente = vorabGerendert('.html')
+    .map(({ route, inhalt }) => ({ route, html: inhalt }))
     // Vorab gerenderte Weiterleitungen (alte Slugs) tragen kein Stylesheet
     .filter(({ route, html }) => !UEBERSPRUNGEN.has(route) && /<link\b[^>]*rel="stylesheet"/.test(html));
   const seiten = dokumente.map(({ route, html }) => ({ route, ...stylesheetsOf(html) }));
@@ -174,12 +198,10 @@ export function runCssChunkCheck() {
     if (!cache.has(href)) cache.set(href, fs.readFileSync(path.join(NEXT_DIR, href.replace(/^\/_next\//, '').replace(/\?.*$/, '')), 'utf8'));
     return cache.get(href);
   };
-  const zeichnungen = fs.existsSync(ZEICHNUNG_DIR)
-    ? fs
-        .readdirSync(ZEICHNUNG_DIR)
-        .filter((name) => name.endsWith('.svg.body'))
-        .map((name) => ({ datei: name.replace(/\.body$/, ''), svg: fs.readFileSync(path.join(ZEICHNUNG_DIR, name), 'utf8') }))
-    : [];
+  const zeichnungen = vorabGerendert('.body').flatMap(({ route, inhalt }) => {
+    const datei = route.match(ZEICHNUNG_ROUTE)?.[1];
+    return datei ? [{ datei, svg: inhalt }] : [];
+  });
   const fehler = [...pruefeSeiten(seiten, lies), ...pruefeKopfzeichnungen(dokumente, zeichnungen)];
   if (fehler.length > 0) {
     for (const f of fehler.slice(0, 40)) console.error(`❌ ${f}`);
