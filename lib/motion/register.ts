@@ -1,16 +1,20 @@
 /**
- * Bewegungsregister (KERN K-009, verbindlich nach _relaunch/ausbau/richtungen/1/BEGRUENDUNG.md §9, Stand 1.2 nach E-029).
+ * Bewegungsregister (KERN K-009, verbindlich nach _relaunch/ausbau/richtungen/1/BEGRUENDUNG.md §9, Stand 1.3 nach E-031).
  *
  * Jedes animierte Element trägt seine Kennung als `data-motion`. scripts/qa/check-design-tokens.mjs
  * liest MOTION_IDS aus dieser Datei und lehnt jede Kennung ab, die hier fehlt. Neue Bewegungen kommen
  * zuerst hierher (mit Zweck und reduzierter Fassung), dann in die Komponente.
  *
- * Regeln: Eigenschaften nur transform, opacity und stroke-dashoffset (dazu der View-Übergang zwischen
- * Erzählseiten); Dauern d-1…d-4, Verzögerungen als Vielfache des Takts (80 ms); Eingänge d-2 mit k-aus,
- * Ausgänge d-1 mit k-ein; kein Scroll-Auftritt, Auftakt endet nach ≤ 1.120 ms.
+ * Regeln: Eigenschaften nur transform, opacity und stroke-dashoffset (seit E-031 kein View-Übergang mehr);
+ * Dauern d-1…d-4, Verzögerungen als Vielfache des Takts (80 ms); Eingänge d-2 mit k-aus, Ausgänge d-1 mit k-ein;
+ * Auftakt endet nach ≤ 1.120 ms.
  * Schleifen gibt es nur mit dem Auslöser `dauer` (E-029): Produkt- und Prozesszeichnungen auf Erzählseiten,
  * pausierbar, nur im Sichtfeld, Periode ≥ 400 ms; Startbedingung in lib/motion/dauer.ts, Steuerung
  * components/zeichnung/bewegung/DauerSteuerung.tsx, `infinite` nur in components/zeichnung/bewegung/dauer.module.css.
+ * Wärme (E-031): `nachlauf` (Hero, nach dem Vorlauf, Ende ≤ NACHLAUF_ENDE_MS) und `sicht` (einmal beim
+ * Sichtbarwerden über components/zeichnung/bewegung/SichtStart.tsx, Ende ≤ SICHT_ENDE_MS, höchstens auf der Hälfte
+ * der Abschnitte einer Seite); Klick-Wärme (`tippen`, KLICK_ENDE_MS) und Wärmefront (`navigation`, WECHSEL).
+ * Skalieren nur nach √t: jeder Keyframe-Ablauf mit `scale` genau auf den Stützstellen DIFFUSION_STUETZ.
  */
 
 /** Alle Kennungen. Reihenfolge wie im Register; der Guard liest diese Liste wörtlich. */
@@ -35,6 +39,9 @@ export const MOTION_IDS = [
   'rotor-dreht',
   'wasser-fliesst',
   'kaeltemittel-fliesst',
+  'waerme-breitet-sich-aus',
+  'buero-ablauf',
+  'klick-waerme',
 ] as const;
 
 export type MotionId = (typeof MOTION_IDS)[number];
@@ -43,15 +50,32 @@ export type MotionId = (typeof MOTION_IDS)[number];
 export type DauerToken = 'd-1' | 'd-2' | 'd-3' | 'd-4';
 /** Kurven (theme.css --k-aus, --k-wechsel, --k-ein) und linear. */
 export type KurveToken = 'k-aus' | 'k-wechsel' | 'k-ein' | 'linear';
-/** Erlaubte animierte Eigenschaften. */
-export type Eigenschaft = 'transform' | 'opacity' | 'stroke-dashoffset' | 'view-transition';
+/** Erlaubte animierte Eigenschaften (E-031: der View-Übergang ist entfallen). */
+export type Eigenschaft = 'transform' | 'opacity' | 'stroke-dashoffset';
+/** Die erlaubten Eigenschaften als Liste (Prüfungen lesen sie hier). */
+export const EIGENSCHAFTEN: readonly Eigenschaft[] = ['transform', 'opacity', 'stroke-dashoffset'];
 /**
  * Auslöser: `auftakt` = Klasse aus dem Kopfskript (einmal, nur ohne reduzierte Bewegung);
- * `hover` nur bei (hover: hover) and (pointer: fine); `druck` = :active; `tippen` = Bedienung;
- * `zustand` = Zustandswechsel der Seite; `knopf` = ausdrücklicher Knopfdruck; `navigation` = Seitenwechsel;
- * `dauer` = Schleife einer Produkt- oder Prozesszeichnung unter der Startbedingung (lib/motion/dauer.ts).
+ * `nachlauf` = einmal im Hero unter derselben Klasse, nach dem Vorlauf (E-031, Start NACHLAUF_START_TAKTE, Ende
+ * ≤ NACHLAUF_ENDE_MS vor dem Sicherheitsnetz); `sicht` = einmal beim Sichtbarwerden (E-031, SichtStart,
+ * `data-ablauf`, Ende ≤ SICHT_ENDE_MS); `hover` nur bei (hover: hover) and (pointer: fine); `druck` = :active;
+ * `tippen` = Bedienung (auch Klick); `zustand` = Zustandswechsel der Seite; `knopf` = ausdrücklicher Knopfdruck;
+ * `navigation` = Seitenwechsel; `dauer` = Schleife einer Produkt- oder Prozesszeichnung unter der Startbedingung
+ * (lib/motion/dauer.ts).
  */
-export type Ausloeser = 'auftakt' | 'hover' | 'druck' | 'tippen' | 'zustand' | 'knopf' | 'navigation' | 'dauer';
+export type Ausloeser =
+  | 'auftakt'
+  | 'nachlauf'
+  | 'sicht'
+  | 'hover'
+  | 'druck'
+  | 'tippen'
+  | 'zustand'
+  | 'knopf'
+  | 'navigation'
+  | 'dauer';
+/** Einmalige Abläufe mit eigenem Zeitfenster (E-031). */
+export type FensterAusloeser = 'nachlauf' | 'sicht';
 /** Wo die Bewegung vorkommen darf (K-011): Signatur nur auf Erzählseiten. */
 export type Seitenart = 'erzaehlseiten' | 'alle';
 
@@ -61,6 +85,24 @@ export interface Schleife {
   periodeMs: number;
   pausierbar: true;
   nurSichtbar: true;
+}
+
+/** Zeitplan eines einmaligen Ablaufs ab seinem Auslöser (E-031). */
+export interface Fenster {
+  /** Verzögerungen in Takten, streng steigend (je Band bzw. Teil). */
+  verzoegerungTakte: readonly number[];
+  /** Ende des letzten Teils in ms ab dem Auslöser. */
+  endeMs: number;
+}
+
+/** Zeitplan der Wärmefront (Kennung `seitenwechsel`, E-031). */
+export interface Wechsel {
+  /** Bänder decken vom Klickpunkt aus ab (√t), danach wechselt die Seite. */
+  abdeckenMs: number;
+  /** Nach dem Wechsel blendet die Front aus und steigt dabei leicht („warme Luft steigt“). */
+  aufdeckenMs: number;
+  /** Spätestens so lange nach dem Wechsel-Auftrag wird aufgedeckt, auch wenn die Seite noch nicht da ist. */
+  haltenMs: number;
 }
 
 export interface MotionEntry {
@@ -76,10 +118,15 @@ export interface MotionEntry {
   /** Was bei reduzierter Bewegung (und ohne Skript) zu sehen ist. */
   reduziert: string;
   seitenart: Seitenart;
-  /** Für Auftakt-Abläufe: Ende des Teils in ms ab Aufruf (≤ AUFTAKT_ENDE_MS). */
+  /**
+   * Ende in ms ab dem Auslöser: beim Auftakt ab Aufruf (≤ AUFTAKT_ENDE_MS), bei `nachlauf` und `sicht` das späteste
+   * Ende der Fenster, bei `tippen` ab dem Klick.
+   */
   endeMs?: number;
-  /** Abweichende Dauer in ms, wo keine Stufe passt (nur der View-Übergang: 250–450 ms). */
-  dauerMsBereich?: readonly [number, number];
+  /** Nur mit Auslöser `nachlauf` oder `sicht` (E-031): Zeitplan je Auslöser; `verzoegerungTakte` ist ihre Vereinigung. */
+  fenster?: Readonly<Partial<Record<FensterAusloeser, Fenster>>>;
+  /** Nur `seitenwechsel` (E-031): Zeitplan der Wärmefront. */
+  wechsel?: Readonly<Wechsel>;
   /** Nur mit Auslöser `dauer`: die Schleife. */
   schleife?: Schleife;
 }
@@ -91,6 +138,31 @@ export const DAUER_MS: Readonly<Record<DauerToken, number>> = { 'd-1': 120, 'd-2
  * (Auslöser `dauer`) haben stattdessen den Knopf „Anhalten“ (WCAG 2.2.2).
  */
 export const AUFTAKT_ENDE_MS = 1120;
+
+/**
+ * Nachlauf (E-031): Die Wärme im Hero beginnt nach 7 Takten, wenn der Vorlauf den Heizkörper erreicht hat (Ende von
+ * `vorlauf-haus`, 560 ms), und endet spätestens nach 1.920 ms, also vor dem 2-s-Sicherheitsnetz des Kopfskripts.
+ */
+export const NACHLAUF_START_TAKTE = 7;
+export const NACHLAUF_ENDE_MS = 1920;
+/** Sicht-Auftritt (E-031): Ende spätestens 2.400 ms nach dem Sichtbarwerden. */
+export const SICHT_ENDE_MS = 2400;
+/** Klick-Wärme (E-031): Ende 480 ms nach dem Klick. */
+export const KLICK_ENDE_MS = 480;
+/** Wärmefront (E-031): abdecken 360 ms (Bänder ½ Takt versetzt, je d-2), aufdecken 240 ms (d-2), halten ≤ 1.200 ms. */
+export const WECHSEL: Readonly<Wechsel> = Object.freeze({ abdeckenMs: 360, aufdeckenMs: 240, haltenMs: 1200 });
+/**
+ * Diffusionsgesetz r ∝ √t (E-031): Stützstellen [Zeitanteil, Fortschritt] mit Fortschritt = √Zeitanteil. Jeder
+ * Keyframe-Ablauf mit `scale` steht genau auf diesen Stellen (linear dazwischen), monoton, ohne Überschwingen; der
+ * Wert an Stelle i ist Start + Fortschritt_i × (Ende − Start). Gleich für Wärmefeld, Klick-Wärme und Wärmefront.
+ */
+export const DIFFUSION_STUETZ: readonly (readonly [number, number])[] = Object.freeze([
+  Object.freeze([0, 0] as const),
+  Object.freeze([0.0625, 0.25] as const),
+  Object.freeze([0.25, 0.5] as const),
+  Object.freeze([0.5625, 0.75] as const),
+  Object.freeze([1, 1] as const),
+]);
 
 export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
   'vorlauf-haus': {
@@ -282,15 +354,18 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
     seitenart: 'alle',
   },
   seitenwechsel: {
-    zweck: 'View-Übergang zwischen Erzählseiten (Zusammenhang Startseite ↔ Stellenseite).',
+    zweck:
+      'Wärmefront (E-031): Beim Klick auf einen Link zu einer Erzählseite decken vier Wärmeschichten die Seite vom ' +
+      'Klickpunkt aus ab, wachsend nach √t (½ Takt versetzt, je d-2); nach dem Wechsel blendet die Front aus und steigt ' +
+      'dabei leicht (warme Luft steigt). Eine dauerhafte Überlagerung (Popover), kein View-Übergang.',
     ausloeser: ['navigation'],
-    eigenschaften: ['view-transition'],
-    dauer: [],
-    verzoegerungTakte: [0],
-    kurve: ['k-wechsel'],
-    reduziert: 'Kein Übergang.',
+    eigenschaften: ['transform', 'opacity'],
+    dauer: ['d-2'],
+    verzoegerungTakte: [0, 0.5, 1, 1.5],
+    kurve: ['linear', 'k-aus'],
+    reduziert: 'Kein Übergang: die Seite wechselt sofort.',
     seitenart: 'erzaehlseiten',
-    dauerMsBereich: [250, 450],
+    wechsel: WECHSEL,
   },
   'rotor-dreht': {
     zweck:
@@ -333,6 +408,52 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
     seitenart: 'erzaehlseiten',
     schleife: { periodeMs: 960, pausierbar: true, nurSichtbar: true },
   },
+  'waerme-breitet-sich-aus': {
+    zweck:
+      'Die Wärme verteilt sich im Raum (E-031): Die Bänder 1–4 des berechneten Wärmefelds (lib/zeichnung/szenen/' +
+      'waermefeld.ts) wachsen nach √t aus ihrem Ursprung, das heißeste zuerst; Band 0 (der ganze Raum) steht still. ' +
+      'Im Hero als Nachlauf, wenn der Vorlauf den Heizkörper erreicht hat, auf der Wärmepumpen-Seite beim Sichtbarwerden.',
+    ausloeser: ['nachlauf', 'sicht'],
+    eigenschaften: ['transform', 'opacity'],
+    dauer: ['d-4'],
+    verzoegerungTakte: [0, 7, 7.5, 10, 13, 14.5, 16.5, 22],
+    kurve: ['linear'],
+    reduziert: 'Endzustand: das Wärmefeld steht.',
+    seitenart: 'erzaehlseiten',
+    endeMs: 2360,
+    fenster: {
+      nachlauf: { verzoegerungTakte: [7, 10, 13, 16.5], endeMs: 1920 },
+      sicht: { verzoegerungTakte: [0, 7.5, 14.5, 22], endeMs: 2360 },
+    },
+  },
+  'buero-ablauf': {
+    zweck:
+      'Büro und Verwaltung (E-031): Die Szenen der Themenseite laufen einmal beim Sichtbarwerden ab – Blöcke gleiten in ' +
+      'den Wochenplan, Zeilen schreiben sich auf das Blatt, Pakete wandern, Ordner gleiten in die Ablage.',
+    ausloeser: ['sicht'],
+    eigenschaften: ['transform', 'opacity'],
+    dauer: ['d-3', 'd-4'],
+    verzoegerungTakte: [0, 2, 4, 6, 8],
+    kurve: ['k-aus'],
+    reduziert: 'Endzustand: Plan, Blatt, Lieferung, Ablage stehen.',
+    seitenart: 'erzaehlseiten',
+    endeMs: 1240,
+    fenster: { sicht: { verzoegerungTakte: [0, 2, 4, 6, 8], endeMs: 1240 } },
+  },
+  'klick-waerme': {
+    zweck:
+      'Rückmeldung beim Klick (E-031): Vom Klickpunkt (mit der Tastatur von der Mitte des Elements) wachsen drei ' +
+      'Wärmescheiben nach √t, die heißeste innen, und blenden in der zweiten Hälfte aus; nur an Bedienelementen, nicht ' +
+      'in Formularen und nicht auf /bewerbung.',
+    ausloeser: ['tippen'],
+    eigenschaften: ['transform', 'opacity'],
+    dauer: ['d-3'],
+    verzoegerungTakte: [0, 0.5, 1],
+    kurve: ['linear'],
+    reduziert: 'Keine Welle; der Klick wirkt sofort.',
+    seitenart: 'alle',
+    endeMs: 480,
+  },
 };
 
 /** Die Kennungen der Dauerbewegung (Auslöser `dauer`). */
@@ -349,8 +470,7 @@ export function motionEntry(id: MotionId): MotionEntry {
 
 /** Längste Dauer eines Eintrags in ms (für Sicherheitsnetze und Prüfungen). */
 export function maxDauerMs(entry: MotionEntry): number {
-  const stufen = entry.dauer.map((token) => DAUER_MS[token]);
-  return Math.max(0, ...stufen, ...(entry.dauerMsBereich ?? []));
+  return Math.max(0, ...entry.dauer.map((token) => DAUER_MS[token]));
 }
 
 /** Spätester Start eines Eintrags in ms (größte Verzögerung × Takt). */

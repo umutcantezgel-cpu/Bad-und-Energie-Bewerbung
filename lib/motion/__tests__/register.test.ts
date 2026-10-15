@@ -1,22 +1,32 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { parseMotionIds } from '../../../scripts/qa/check-design-tokens.mjs';
+import { SICHERHEITSNETZ_MS } from '../head-script';
 import {
   AUFTAKT_ENDE_MS,
   DAUER_IDS,
   DAUER_MS,
+  DIFFUSION_STUETZ,
+  EIGENSCHAFTEN,
+  KLICK_ENDE_MS,
   MOTION_IDS,
   MOTION_REGISTER,
+  NACHLAUF_ENDE_MS,
+  NACHLAUF_START_TAKTE,
+  SICHT_ENDE_MS,
   TAKT_MS,
+  WECHSEL,
   isMotionId,
   maxDauerMs,
   maxVerzoegerungMs,
   motionEntry,
+  type FensterAusloeser,
   type MotionId,
 } from '../register';
+import { diffusionsFehler, keyframesIn } from './keyframes';
 
-/** KERN K-009 (Stand 1.2, E-029): Tabelle aus BEGRUENDUNG §9 mit den Ergänzungen. */
+/** KERN K-009 (Stand 1.3, E-031): Tabelle aus BEGRUENDUNG §9 mit den Ergänzungen. */
 const KERN_K009 = [
   'vorlauf-haus',
   'ruecklauf-haus',
@@ -41,10 +51,21 @@ const KERN_K009 = [
   'rotor-dreht',
   'wasser-fliesst',
   'kaeltemittel-fliesst',
+  // E-031: Wärme und Weichheit (seitenwechsel ist seitdem die Wärmefront)
+  'waerme-breitet-sich-aus',
+  'buero-ablauf',
+  'klick-waerme',
 ];
 
 /** Mit E-029 entfallen (Effekte ohne Aussage bzw. ersetzt durch „Anhalten“/„Abspielen“). */
 const ENTFALLEN = ['luft', 'luefter', 'waerme', 'kreislauf-zeigen', 'uhr'];
+/** Kommt nie zurück (E-031): keine Kennung erinnert an Uhr, Zirkel, Kompass, Windrad oder Lüfter. */
+const NIE = /uhr|zirkel|kompass|windrad|luefter/;
+
+const ROOT = path.resolve(__dirname, '../../..');
+const mitAusloeser = (a: string) => MOTION_IDS.filter((id) => (MOTION_REGISTER[id].ausloeser as readonly string[]).includes(a));
+const ende = (takte: readonly number[], dauer: number) => Math.max(...takte) * TAKT_MS + dauer;
+const steigt = (liste: readonly number[]) => liste.every((v, i) => i === 0 || v > liste[i - 1]);
 
 describe('Bewegungsregister', () => {
   it('enthält genau die Kennungen aus KERN K-009, jede einmal und mit Eintrag', () => {
@@ -52,6 +73,7 @@ describe('Bewegungsregister', () => {
     expect(new Set(MOTION_IDS).size).toBe(MOTION_IDS.length);
     expect(Object.keys(MOTION_REGISTER).sort()).toEqual([...MOTION_IDS].sort());
     for (const id of ENTFALLEN) expect(MOTION_IDS as readonly string[], id).not.toContain(id);
+    for (const id of MOTION_IDS) expect(id).not.toMatch(NIE);
   });
 
   it('nutzt nur Kebab-Kennungen ohne Umlaute (data-motion, CSS-Selektoren)', () => {
@@ -67,14 +89,16 @@ describe('Bewegungsregister', () => {
     }
   });
 
-  it('animiert nur transform, opacity und stroke-dashoffset (dazu den View-Übergang)', () => {
+  it('animiert nur transform, opacity und stroke-dashoffset; der View-Übergang ist entfallen (E-031)', () => {
+    expect([...EIGENSCHAFTEN]).toEqual(['transform', 'opacity', 'stroke-dashoffset']);
     for (const id of MOTION_IDS) {
-      for (const property of MOTION_REGISTER[id].eigenschaften) {
-        expect(['transform', 'opacity', 'stroke-dashoffset', 'view-transition'], id).toContain(property);
-      }
+      const eigen = MOTION_REGISTER[id].eigenschaften;
+      expect(eigen.length, id).toBeGreaterThan(0);
+      for (const property of eigen) expect(EIGENSCHAFTEN, id).toContain(property);
+      expect(eigen as readonly string[], id).not.toContain('view-transition');
+      // Feste Dauern nur aus den Stufen: kein freier Bereich mehr (der gehörte zum View-Übergang)
+      expect(Object.keys(MOTION_REGISTER[id]), id).not.toContain('dauerMsBereich');
     }
-    const viewTransition = MOTION_IDS.filter((id) => MOTION_REGISTER[id].eigenschaften.includes('view-transition'));
-    expect(viewTransition).toEqual(['seitenwechsel']);
   });
 
   it('verzögert nur in halben oder ganzen Takten und hält Dauern auf den vier Stufen', () => {
@@ -105,7 +129,16 @@ describe('Bewegungsregister', () => {
   });
 
   it('hält Signaturmomente und alle Schleifen auf Erzählseiten (K-011)', () => {
-    for (const id of ['vorlauf-haus', 'radius-einrasten', 'pendel-zeichnen', 'ringe-zeichnen', 'seitenwechsel', ...DAUER_IDS] as MotionId[]) {
+    for (const id of [
+      'vorlauf-haus',
+      'radius-einrasten',
+      'pendel-zeichnen',
+      'ringe-zeichnen',
+      'seitenwechsel',
+      'waerme-breitet-sich-aus',
+      'buero-ablauf',
+      ...DAUER_IDS,
+    ] as MotionId[]) {
       expect(MOTION_REGISTER[id].seitenart, id).toBe('erzaehlseiten');
     }
     expect(MOTION_REGISTER.fortschritt.seitenart).toBe('alle');
@@ -203,6 +236,10 @@ describe('Bewegungsregister', () => {
   it('erkennt Kennungen', () => {
     expect(isMotionId('radius-einrasten')).toBe(true);
     expect(isMotionId('rotor-dreht')).toBe(true);
+    expect(isMotionId('waerme-breitet-sich-aus')).toBe(true);
+    expect(isMotionId('klick-waerme')).toBe(true);
+    expect(isMotionId('waerme')).toBe(false);
+    expect(isMotionId('view-transition')).toBe(false);
     expect(isMotionId('uhr')).toBe(false);
     expect(isMotionId('luefter')).toBe(false);
     expect(isMotionId('konfetti')).toBe(false);
@@ -212,5 +249,167 @@ describe('Bewegungsregister', () => {
   it('ist für den Design-Guard lesbar (gleiche Liste wie MOTION_IDS)', () => {
     const source = readFileSync(path.resolve(__dirname, '../register.ts'), 'utf8');
     expect(parseMotionIds(source)).toEqual([...MOTION_IDS]);
+  });
+
+  it('Wärme (E-031): Konstanten der neuen Auslöser, der Klick-Wärme und der Wärmefront', () => {
+    expect(NACHLAUF_START_TAKTE).toBe(7);
+    expect(NACHLAUF_ENDE_MS).toBe(1920);
+    expect(SICHT_ENDE_MS).toBe(2400);
+    expect(KLICK_ENDE_MS).toBe(480);
+    expect(WECHSEL).toEqual({ abdeckenMs: 360, aufdeckenMs: 240, haltenMs: 1200 });
+    expect(Object.isFrozen(WECHSEL)).toBe(true);
+    // Der Nachlauf beginnt, wenn der Vorlauf den Heizkörper erreicht, und endet vor dem Sicherheitsnetz des Kopfskripts
+    expect(NACHLAUF_START_TAKTE * TAKT_MS).toBe(MOTION_REGISTER['vorlauf-haus'].endeMs);
+    expect(NACHLAUF_ENDE_MS).toBeLessThan(SICHERHEITSNETZ_MS);
+    expect(NACHLAUF_ENDE_MS).toBeGreaterThan(AUFTAKT_ENDE_MS);
+  });
+
+  it('√t (E-031): DIFFUSION_STUETZ – Fortschritt = Wurzel des Zeitanteils, fünf Stellen von 0 bis 1, streng steigend', () => {
+    expect(DIFFUSION_STUETZ.map((p) => [...p])).toEqual([
+      [0, 0],
+      [0.0625, 0.25],
+      [0.25, 0.5],
+      [0.5625, 0.75],
+      [1, 1],
+    ]);
+    for (const [t, p] of DIFFUSION_STUETZ) expect(Math.sqrt(t)).toBe(p);
+    expect(steigt(DIFFUSION_STUETZ.map(([t]) => t))).toBe(true);
+    expect(steigt(DIFFUSION_STUETZ.map(([, p]) => p))).toBe(true);
+    expect(Object.isFrozen(DIFFUSION_STUETZ)).toBe(true);
+  });
+
+  it('Fenster (E-031): genau die Auslöser nachlauf und sicht haben Fenster; Verzögerungen und Ende stimmen überein', () => {
+    for (const id of MOTION_IDS) {
+      const e = MOTION_REGISTER[id];
+      const fensterAusloeser = e.ausloeser.filter((a): a is FensterAusloeser => a === 'nachlauf' || a === 'sicht');
+      expect(Object.keys(e.fenster ?? {}).sort(), id).toEqual([...fensterAusloeser].sort());
+      if (fensterAusloeser.length === 0) continue;
+      const alle = new Set<number>();
+      let spaetestes = 0;
+      for (const a of fensterAusloeser) {
+        const f = e.fenster![a]!;
+        expect(f.verzoegerungTakte.length, `${id} ${a}`).toBeGreaterThan(0);
+        expect(steigt(f.verzoegerungTakte), `${id} ${a}: streng steigend`).toBe(true);
+        for (const t of f.verzoegerungTakte) {
+          expect(Number.isInteger(t * 2), `${id} ${a}: ${t}`).toBe(true);
+          alle.add(t);
+        }
+        // Das Fenster endet zwischen Start des letzten Teils + kürzester und + längster Dauer
+        expect(f.endeMs, `${id} ${a}`).toBeLessThanOrEqual(ende(f.verzoegerungTakte, maxDauerMs(e)));
+        expect(f.endeMs, `${id} ${a}`).toBeGreaterThanOrEqual(ende(f.verzoegerungTakte, Math.min(...e.dauer.map((d) => DAUER_MS[d]))));
+        if (e.dauer.length === 1) expect(f.endeMs, `${id} ${a}`).toBe(ende(f.verzoegerungTakte, maxDauerMs(e)));
+        spaetestes = Math.max(spaetestes, f.endeMs);
+      }
+      expect([...e.verzoegerungTakte], `${id}: Vereinigung der Fenster`).toEqual([...alle].sort((x, y) => x - y));
+      expect(e.endeMs, id).toBe(spaetestes);
+      // Einmalig: keine Schleife, nur transform und opacity, Endzustand bei reduzierter Bewegung, nur Erzählseiten
+      expect(e.schleife, id).toBeUndefined();
+      expect([...e.eigenschaften].sort(), id).toEqual(['opacity', 'transform']);
+      expect(e.reduziert, id).toMatch(/^Endzustand/);
+      expect(e.seitenart, id).toBe('erzaehlseiten');
+    }
+  });
+
+  it('nachlauf (E-031): nur das Wärmefeld im Hero, Start nach dem Vorlauf, Ende ≤ 1.920 ms vor dem Sicherheitsnetz', () => {
+    expect(mitAusloeser('nachlauf')).toEqual(['waerme-breitet-sich-aus']);
+    const f = MOTION_REGISTER['waerme-breitet-sich-aus'].fenster!.nachlauf!;
+    expect(Math.min(...f.verzoegerungTakte)).toBe(NACHLAUF_START_TAKTE);
+    expect(Math.min(...f.verzoegerungTakte) * TAKT_MS).toBeGreaterThanOrEqual(MOTION_REGISTER['vorlauf-haus'].endeMs!);
+    expect(f.endeMs).toBeLessThanOrEqual(NACHLAUF_ENDE_MS);
+    expect(f.endeMs).toBeLessThan(SICHERHEITSNETZ_MS);
+    // vier Bänder, je d-4, linear auf den √t-Stützstellen
+    expect(f.verzoegerungTakte).toHaveLength(4);
+    expect(MOTION_REGISTER['waerme-breitet-sich-aus'].dauer).toEqual(['d-4']);
+    expect(MOTION_REGISTER['waerme-breitet-sich-aus'].kurve).toEqual(['linear']);
+  });
+
+  it('sicht (E-031): nur Wärmefeld und Büro-Szenen, Ende ≤ 2.400 ms ab dem Sichtbarwerden', () => {
+    expect(mitAusloeser('sicht')).toEqual(['waerme-breitet-sich-aus', 'buero-ablauf']);
+    for (const id of mitAusloeser('sicht') as MotionId[]) {
+      const f = MOTION_REGISTER[id].fenster!.sicht!;
+      expect(Math.min(...f.verzoegerungTakte), id).toBeGreaterThanOrEqual(0);
+      expect(f.endeMs, id).toBeLessThanOrEqual(SICHT_ENDE_MS);
+    }
+    const buero = MOTION_REGISTER['buero-ablauf'];
+    expect(buero.ausloeser).toEqual(['sicht']);
+    expect(buero.kurve).toEqual(['k-aus']);
+    expect(buero.dauer.every((d) => d === 'd-3' || d === 'd-4')).toBe(true);
+    expect(Math.max(...buero.verzoegerungTakte)).toBeLessThanOrEqual(22);
+    expect(buero.reduziert).toBe('Endzustand: Plan, Blatt, Lieferung, Ablage stehen.');
+  });
+
+  it('klick-waerme (E-031): drei Scheiben ½ Takt versetzt, d-3, Ende 480 ms, linear; reduziert keine Welle', () => {
+    const k = MOTION_REGISTER['klick-waerme'];
+    expect(mitAusloeser('tippen')).toContain('klick-waerme');
+    expect(k.ausloeser).toEqual(['tippen']);
+    expect([...k.eigenschaften].sort()).toEqual(['opacity', 'transform']);
+    expect(k.dauer).toEqual(['d-3']);
+    expect(k.verzoegerungTakte).toEqual([0, 0.5, 1]);
+    expect(k.kurve).toEqual(['linear']);
+    expect(k.endeMs).toBe(KLICK_ENDE_MS);
+    expect(ende(k.verzoegerungTakte, DAUER_MS['d-3'])).toBe(KLICK_ENDE_MS);
+    expect(k.reduziert).toBe('Keine Welle; der Klick wirkt sofort.');
+    expect(k.zweck).toMatch(/nicht\s+in Formularen/);
+    expect(k.zweck).toMatch(/\/bewerbung/);
+    expect(k.schleife).toBeUndefined();
+  });
+
+  it('seitenwechsel (E-031): Wärmefront mit transform und opacity; abdecken 360, aufdecken 240, halten 1.200 ms', () => {
+    const w = MOTION_REGISTER.seitenwechsel;
+    expect(mitAusloeser('navigation')).toEqual(['seitenwechsel']);
+    expect(w.ausloeser).toEqual(['navigation']);
+    expect([...w.eigenschaften].sort()).toEqual(['opacity', 'transform']);
+    expect(w.dauer).toEqual(['d-2']);
+    expect(w.verzoegerungTakte).toEqual([0, 0.5, 1, 1.5]);
+    // abdecken √t (linear auf den Stützstellen), aufdecken mit k-aus
+    expect(w.kurve).toEqual(['linear', 'k-aus']);
+    expect(w.wechsel).toBe(WECHSEL);
+    expect(ende(w.verzoegerungTakte, DAUER_MS['d-2'])).toBe(WECHSEL.abdeckenMs);
+    expect(WECHSEL.aufdeckenMs).toBe(DAUER_MS['d-2']);
+    expect(WECHSEL.haltenMs).toBeGreaterThanOrEqual(WECHSEL.abdeckenMs + WECHSEL.aufdeckenMs);
+    expect(w.reduziert).toBe('Kein Übergang: die Seite wechselt sofort.');
+    expect(w.zweck).not.toMatch(/View-Transition|View Transition/);
+    expect(w.seitenart).toBe('erzaehlseiten');
+    for (const id of MOTION_IDS) if (id !== 'seitenwechsel') expect(MOTION_REGISTER[id].wechsel, id).toBeUndefined();
+  });
+
+  describe('Skalieren nur nach √t (E-031)', () => {
+    const gut =
+      '@keyframes wachsen {\n  from { transform: scale(0.6); opacity: 0; }\n  6.25% { transform: scale(0.7); }\n' +
+      '  25% { transform: scale(0.8); }\n  56.25% { transform: scale(0.9); }\n  to { transform: scale(1); opacity: 1; }\n}\n' +
+      '.a { animation: wachsen var(--d-4) linear calc(var(--takt) * 7) backwards; }';
+
+    it('der Prüfer nimmt genau die Stützstellen und erkennt Abweichungen', () => {
+      expect(diffusionsFehler(gut)).toEqual([]);
+      expect(diffusionsFehler(gut.replace(/transform: scale\(([\d.]+)\)/g, 'scale: $1'))).toEqual([]);
+      // falsche Stellen, Überschwingen, Schrumpfen, Kurve, Variablen, ungleichmäßig, animation-name
+      expect(diffusionsFehler(gut.replace('6.25%', '10%'))[0]).toMatch(/Stellen/);
+      expect(diffusionsFehler(gut.replace('scale(0.9)', 'scale(1.05)'))).toContainEqual(expect.stringMatching(/nicht monoton/));
+      expect(diffusionsFehler(gut.replace('scale(0.6)', 'scale(1.2)'))).toContainEqual(expect.stringMatching(/wächst nicht/));
+      expect(diffusionsFehler(gut.replace('scale(0.7)', 'scale(0.75)'))).toContainEqual(expect.stringMatching(/Fortschritt/));
+      expect(diffusionsFehler(gut.replace('linear calc', 'var(--k-aus) calc'))).toContainEqual(expect.stringMatching(/linear fehlt/));
+      expect(diffusionsFehler(gut.replace('scale(0.8)', 'scale(var(--s))'))[0]).toMatch(/Zahl/);
+      expect(diffusionsFehler(gut.replace('scale(0.8)', 'scale(0.8, 0.9)'))[0]).toMatch(/gleichmäßig/);
+      expect(diffusionsFehler(`${gut}\n.b { animation-name: wachsen; }`)).toContainEqual(expect.stringMatching(/Kurzform/));
+      // zweistellige Pops sind verboten, einachsiges Zeichnen von Leitungen (scaleX/scaleY) bleibt erlaubt
+      expect(diffusionsFehler('@keyframes pop { from { transform: scale(0); } to { transform: none; } }')[0]).toMatch(/Stellen/);
+      expect(diffusionsFehler('@keyframes fallen { from { transform: scaleY(0); } to { transform: none; } }')).toEqual([]);
+      expect(keyframesIn(gut)[0].stopps.map((s) => s.anteil)).toEqual([0, 6.25, 25, 56.25, 100]);
+    });
+
+    it('jedes Stylesheet in app/ und components/ hält die Regel', () => {
+      const dateien: string[] = [];
+      const lauf = (dir: string) => {
+        for (const name of readdirSync(dir)) {
+          if (name === 'node_modules' || name.startsWith('.')) continue;
+          const p = path.join(dir, name);
+          if (statSync(p).isDirectory()) lauf(p);
+          else if (name.endsWith('.css')) dateien.push(p);
+        }
+      };
+      for (const dir of ['app', 'components']) lauf(path.join(ROOT, dir));
+      expect(dateien.length).toBeGreaterThan(20);
+      for (const datei of dateien) expect(diffusionsFehler(readFileSync(datei, 'utf8')), path.relative(ROOT, datei)).toEqual([]);
+    });
   });
 });

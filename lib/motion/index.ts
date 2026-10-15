@@ -9,15 +9,34 @@ export {
   AUFTAKT_ENDE_MS,
   DAUER_IDS,
   DAUER_MS,
+  DIFFUSION_STUETZ,
+  EIGENSCHAFTEN,
+  KLICK_ENDE_MS,
   MOTION_IDS,
   MOTION_REGISTER,
+  NACHLAUF_ENDE_MS,
+  NACHLAUF_START_TAKTE,
+  SICHT_ENDE_MS,
   TAKT_MS,
+  WECHSEL,
   isMotionId,
   maxDauerMs,
   maxVerzoegerungMs,
   motionEntry,
 } from './register';
-export type { Ausloeser, DauerToken, Eigenschaft, KurveToken, MotionEntry, MotionId, Schleife, Seitenart } from './register';
+export type {
+  Ausloeser,
+  DauerToken,
+  Eigenschaft,
+  Fenster,
+  FensterAusloeser,
+  KurveToken,
+  MotionEntry,
+  MotionId,
+  Schleife,
+  Seitenart,
+  Wechsel,
+} from './register';
 export { beobachteSicht, beobachteTab, onceVisible } from './sicht';
 export type { SichtOptionen, TabDokument } from './sicht';
 export { DAUER_KNOPF, DAUER_RUHE, dauerLaeuft, dauerWert, knopfSichtbar, knopfText } from './dauer';
