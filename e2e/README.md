@@ -24,8 +24,8 @@ bun run e2e        # = playwright test; startet `next start -p 3400` und beendet
 | `mobile-light` / `mobile-dark` | 390 × 844, Touch, DPR 2 | hell / dunkel |
 | `desktop-light` / `desktop-dark` | 1440 × 900 | hell / dunkel |
 
-Alle mit `reducedMotion: 'reduce'`, Locale `de-DE`, Zeitzone `Europe/Berlin`. Nur `bewegung.spec.ts` und
-`waerme.spec.ts` schalten für ihre Tests `no-preference` ein.
+Alle mit `reducedMotion: 'reduce'`, Locale `de-DE`, Zeitzone `Europe/Berlin`. Nur `bewegung.spec.ts`,
+`waerme.spec.ts`, `interaktion.spec.ts` und `buero.spec.ts` schalten für ihre Tests `no-preference` ein.
 
 ## Specs
 
@@ -64,6 +64,12 @@ Alle mit `reducedMotion: 'reduce'`, Locale `de-DE`, Zeitzone `Europe/Berlin`. Nu
   einmal, das heißeste zuerst, ab dem Ende des Vorlaufs (560 ms) bis höchstens 1.920 ms; auf der Wärmepumpen-Seite
   wartet der Vergleich unsichtbar und läuft beim Hinscrollen einmal (≤ 2.400 ms). Per Sprung an die Stelle, mit
   reduzierter Bewegung und ohne JavaScript steht der Endzustand. Malzeit je Bild unter 2 ms (Handy, CPU 4×).
+- `interaktion.spec.ts` (nur `mobile-light` und `desktop-light`, E-031): Klick-Wärme und Wärmefront. Ein Klick auf eine
+  Stelle deckt vom Klickpunkt ab (vier Bänder, ½ Takt versetzt, d-2, √t), wechselt danach die Seite und deckt auf; die
+  Front ist still für Hilfsmittel und Zeiger (aria-hidden, inert, nicht trefferbar, ohne Fokus, kein Layout-Versatz).
+  Mit der Tastatur startet sie in der Mitte des Links, der Fokus bleibt in der Seite. Keine Front zu Arbeitsseiten, bei
+  Zurück und Vor und aus dem Bewerbungsweg. Die Klick-Wärme: drei Scheiben am Knopf, nach 480 ms zu. Malzeit unter
+  2 ms, während die Front deckt (Handy, CPU 4×). Mit reduzierter Bewegung keine Front und keine Klick-Wärme.
 - `themen-pages.spec.ts` (nur `mobile-light`): Themen-Hub `/arbeiten-bei-uns` und die sechs Themenseiten, dieselben
   Prüfungen und ein JSON-LD-Graph ohne JobPosting und FAQPage. axe über die Stichproben `/arbeiten-bei-uns` und
   `/arbeiten-bei-uns/gehalt` in `ROUTES`.
