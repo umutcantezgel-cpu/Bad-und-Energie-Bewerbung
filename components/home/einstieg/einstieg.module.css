@@ -815,9 +815,14 @@
     padding-right: 0;
   }
 
-  /* Heizkreis um „35 km“: Abstand zum nächsten Maß, damit die Schleife frei steht */
-  .kreis {
-    margin-right: var(--a-6);
+  /* Heizkreis um „35 km“: eng um das Maß, mit Abstand zum nächsten, damit alle drei Maße in einer Reihe bleiben */
+  .massRadius .kreis {
+    margin-right: var(--a-4);
+    padding: var(--a-3) var(--a-4) var(--a-3) calc(var(--paar) + var(--a-3));
+  }
+
+  .massRadius .kreis .name {
+    padding-right: 0;
   }
 
   .wert {
