@@ -52,12 +52,17 @@ describe('Armaturen (E-031): Kugelhahn und Durchflussmesser nach DIN EN ISO 1062
     expect(KUGEL_R).toBeGreaterThan(2);
   });
 
-  it('Kugelhahn geschlossen: dieselbe Form, die Dreiecke gefüllt (geschlossene Armatur); offen bleibt der Körper leer', () => {
+  it('Kugelhahn geschlossen: derselbe Körper gefüllt (geschlossene Armatur), die Kugel als Ring darüber; offen bleibt der Körper leer', () => {
     const offen = SYMBOLE.kugelhahn.formen as readonly SymbolForm[];
     const zu = SYMBOLE.kugelhahnGeschlossen.formen as readonly SymbolForm[];
-    expect(zu.map((f) => ('d' in f ? f.d : null))).toEqual(offen.map((f) => ('d' in f ? f.d : null)));
-    expect(zu.every((f) => 'd' in f && f.voll === true)).toBe(true);
-    expect(offen.filter((f) => 'd' in f && f.voll === true)).toHaveLength(1);
+    // Gleiche Dreiecke, geschlossen gefüllt, offen leer
+    expect(zu.slice(0, 2).map((f) => ('d' in f ? f.d : null))).toEqual(offen.slice(0, 2).map((f) => ('d' in f ? f.d : null)));
+    expect(zu.slice(0, 2).every((f) => 'd' in f && f.voll === true)).toBe(true);
+    expect(offen.slice(0, 2).some((f) => 'd' in f && f.voll === true)).toBe(false);
+    // Die Kugel an derselben Stelle mit demselben Halbmesser: offen gefüllt, geschlossen als Ring (Kontur mit Fläche),
+    // sonst verschwände sie im gefüllten Körper; die Kugel liegt zuletzt, also über den Dreiecken
+    expect(zu[2]).toEqual({ cx: 0, cy: 0, r: KUGEL_R });
+    expect(zu).toHaveLength(3);
     expect(SYMBOLE.kugelhahnGeschlossen.beschreibung).toMatch(/geschlossen/);
     expect(SYMBOLE.kugelhahn.beschreibung).toMatch(/offen/);
   });

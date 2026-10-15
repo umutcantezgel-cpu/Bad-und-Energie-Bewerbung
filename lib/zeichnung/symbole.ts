@@ -202,19 +202,20 @@ export const SYMBOLE = {
     name: 'Kugelhahn, geschlossen',
     beschreibung:
       'Derselbe Kugelhahn im Zustand geschlossen: beide Dreiecke gefüllt (Darstellung einer geschlossenen Armatur im ' +
-      'Fließschema); es fließt nichts hindurch',
+      'Fließschema), die Kugel als Ring darüber, damit sie im gefüllten Körper sichtbar bleibt; es fließt nichts hindurch',
     halb: { x: 12, y: 7 },
     anschluesse: { ein: { x: -12, y: 0 }, aus: { x: 12, y: 0 } },
-    formen: [{ d: VENTIL_LINKS, voll: true }, { d: VENTIL_RECHTS, voll: true }, { d: KUGEL, voll: true }],
+    formen: [{ d: VENTIL_LINKS, voll: true }, { d: VENTIL_RECHTS, voll: true }, { cx: 0, cy: 0, r: KUGEL_R }],
   },
   durchflussmesser: {
     name: 'Durchflussmesser (Schwebekörper)',
     beschreibung:
-      'Konisches Messrohr, eng am Eintritt und weit am Austritt, darin der Schwebekörper; steht senkrecht und wird von ' +
+      'Konisches Messrohr, eng am Eintritt und weit am Austritt, darin der Schwebekörper als Scheibe quer zur Strömung; ' +
+      'steht senkrecht und wird von ' +
       'unten durchströmt (am Heizkreisverteiler als Durchflussanzeiger je Kreis auf dem Vorlaufbalken)',
     halb: { x: 14, y: 6 },
     anschluesse: { ein: { x: -14, y: 0 }, aus: { x: 14, y: 0 } },
-    formen: [{ d: 'M-14 -3.5L14 -6V6L-14 3.5Z' }, { d: 'M-3 0L1 -3.5H3V3.5H1Z', voll: true }],
+    formen: [{ d: 'M-14 -3.5L14 -6V6L-14 3.5Z' }, { d: 'M-2 -4H2V4H-2Z', voll: true }],
   },
 } as const satisfies Record<string, SymbolDef>;
 
