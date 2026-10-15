@@ -1,4 +1,3 @@
-import { cn } from '@/lib/utils/cn';
 import styles from './zeichnung.module.css';
 
 export interface RohrAkzentProps {
@@ -14,5 +13,7 @@ export interface RohrAkzentProps {
  * Platz im Raster. Dekorativ (`aria-hidden`), ohne Bewegung; hell, dunkel, Inverse-Band und Druck über die Rolle --brand.
  */
 export function RohrAkzent({ className }: RohrAkzentProps) {
-  return <span aria-hidden="true" data-zeichnung="rohrakzent" className={cn(styles.rohrakzent, className)} />;
+  // Ohne cn(): Die Bewerbungsleiste im Layout (StickyApplyBarClient) zeichnet den Akzent; tailwind-merge bliebe sonst
+  // im gemeinsamen Client-Bündel jeder Seite (components/site/index.ts). Die Modulklasse widerspricht keiner Utility.
+  return <span aria-hidden="true" data-zeichnung="rohrakzent" className={className ? `${styles.rohrakzent} ${className}` : styles.rohrakzent} />;
 }
