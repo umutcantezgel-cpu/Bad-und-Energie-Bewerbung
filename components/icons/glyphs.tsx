@@ -141,6 +141,18 @@ export const GLYPH_SHAPES = {
     { d: 'M16 4.7a3.5 3.5 0 0 1 0 6.6' },
     { d: 'M18 14.2a6.5 6.5 0 0 1 3.5 5.8' },
   ],
+
+  // ── Büro und Verwaltung (E-031): dieselben Formen wie die Szenen in lib/zeichnung/buero ──
+  /** Wochenplan: Blatt mit Ringen und Kopfzeile, darin drei Termine als kurze Striche (keine Uhrzeit, kein Datum). */
+  kalender: [{ x: 3, y: 5, width: 18, height: 16, rx: 2 }, { d: 'M8 3v4M16 3v4M3 10h18' }, { d: 'M7 14h4M13 14h4M7 17.5h4' }],
+  /** Ordner von vorn: Rücken mit Rückenschild und Griffloch (Rückenbreite wie lib/zeichnung/buero/masse.ts). */
+  ordner: [{ x: 7, y: 3, width: 10, height: 18, rx: 1.5 }, { d: 'M9.5 6h5v5.5h-5Z' }, { cx: 12, cy: 16.5, r: 1.5 }],
+  /** Paket von vorn: Karton mit Deckelfuge und Klebeband. */
+  paket: [{ x: 3, y: 7, width: 18, height: 13, rx: 1.5 }, { d: 'M3 11.5h18' }, { d: 'M10 7v4.5h4V7' }],
+  /** Beleg: Blatt mit abgerissener Unterkante und drei Zeilen (Angebot, Auftragsbestätigung, Rechnung). */
+  beleg: [{ d: 'M5 3h14v17l-2.33-1.4-2.33 1.4-2.34-1.4-2.33 1.4-2.33-1.4L5 20Z' }, { d: 'M8.5 8h7M8.5 11.5h7M8.5 15h4' }],
+  /** Brief: Umschlag DIN lang (2 : 1) mit Anschriftfenster unten links, wie lib/zeichnung/buero/ablage.ts. */
+  brief: [{ x: 2, y: 7, width: 20, height: 10, rx: 1.5 }, { d: 'M4 11.5h8v4H4Z' }],
 } as const satisfies Record<string, readonly Shape[]>;
 
 export type IconName = keyof typeof GLYPH_SHAPES;
