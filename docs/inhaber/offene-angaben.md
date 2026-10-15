@@ -1,6 +1,6 @@
 # Offene Angaben des Inhabers
 
-Stand: 2026-10-14 · Kurzliste zu `_relaunch/MENSCHEN.md` (dort mit Beleg und Standardannahme)
+Stand: 2026-10-15 (live seit 15.10.2026) · Kurzliste zu `_relaunch/MENSCHEN.md` (dort mit Beleg und Standardannahme)
 
 Was nur du beantworten oder erledigen kannst, und was deine Antwort auf der Website freischaltet. Bis zur Antwort zeigt die Website nur Belegtes; nichts wird erfunden.
 
@@ -22,7 +22,7 @@ Was nur du beantworten oder erledigen kannst, und was deine Antwort auf der Webs
 | M-036 | Ticket an den Dienstleister von bad-energie.de schicken (`ticket-hauptdomain.md`) | Links und Weiterleitungen zur Karriereseite; Google sieht CSS und Bilder |
 | M-037 | Ein Meister prüft die Zeichnungen und unterschreibt die Abnahme | fachliche Abnahme der Zeichnungen |
 | M-038 | Bürofachkraft: Anforderungen (kaufmännische Ausbildung nötig? Quereinstieg?) und Stundenrahmen bei Teilzeit | Abschnitt „Das bringst du mit“ |
-| M-039 | Absprache mit der Datenbank-Session zur Migration der neuen Stellen | Bewerbungen auf die neuen Stellen landen regulär in der Datenbank (bis dahin vollständig per E-Mail) |
+| M-039 | Migration `supabase/migrations/20261014095643_neue_stellen.sql` einspielen, **bevor** die Datenbank an die Website angeschlossen wird. Heute nicht nötig: Die Produktion speichert Bewerbungen per E-Mail (`/api/status`: `applications.target = email`, `not_configured`, Stand 15.10.2026) | Bewerbungen auf die neuen Stellen landen nach dem Anschluss der Datenbank regulär dort |
 | M-040 | Arbeitgeberkonto bei der Arbeitsagentur anlegen und alle Stellen einstellen; Ausbildung 2027 und Praktikum in der HWK-Lehrstellenbörse (`checkliste-offsite.md`, Schritt 3 und 4) | Anzeigen im größten kostenlosen Kanal |
 | M-007 | Darf die Website „Wir melden uns binnen 24 Stunden an Werktagen“ versprechen? | Rückmeldezusage im Formular und auf der Danke-Seite |
 | M-009 | Zahl und Durchschnitt eurer Google-Bewertungen mit Monat der Abfrage, Link zum Profil | Bewertungszeile mit Stand |
