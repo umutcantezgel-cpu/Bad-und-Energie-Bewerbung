@@ -7,6 +7,7 @@ import { FaqSection } from '@/components/home/FaqSection';
 import { PartnerSaeulen } from '@/components/home/betrieb/PartnerSaeulen';
 import { Ausstattung } from '@/components/home/vorteile/Ausstattung';
 import { Zusagen } from '@/components/home/vorteile/Zusagen';
+import { JobProcess } from '@/components/jobs/JobProcess';
 import { PackageList } from '@/components/jobs/PackageList';
 import { Section } from '@/components/layout/Section';
 import { ABSPERR_LEITUNG, Absperrung } from '@/components/themen/Absperrung';
@@ -283,6 +284,24 @@ describe('Seitenkopf, Stellenliste und Heizkreis: weiche Ecken und Enden (E-031)
     });
     expect(regel(z, '.hkVorlauf::after')).toMatch(/top: calc\(100% - var\(--m-strich\) \/ 2\);\s*background-color: var\(--vorlauf\);/);
     expect(regel(z, '.hkRuecklauf::after')).toMatch(/top: calc\(var\(--m-strich\) \/ -2\);\s*background-color: var\(--ruecklauf\);/);
+  });
+
+  it('Ablauf der Stellenseiten (Prüfrunde 1 A1-5): das Leitungspaar endet rund, ab lg links vor dem ersten Abgang; Abgänge rund', () => {
+    const m = html(createElement(JobProcess, { audience: 'fachkraft' }));
+    const enden = [...m.matchAll(/<span class="(absolute size-\(--m-strich\) rounded-voll [^"]+)"><\/span>/g)].map((x) => x[1]);
+    // Je Leitung ein Kreis am offenen Ende, mobil oben, ab lg links; in der Farbe der Leitung
+    expect(enden).toEqual([
+      'absolute size-(--m-strich) rounded-voll -top-[calc(var(--m-strich)/2)] -left-(--m-strich) bg-vorlauf',
+      'absolute size-(--m-strich) rounded-voll -top-[calc(var(--m-strich)/2)] -right-(--m-strich) bg-ruecklauf',
+      'absolute size-(--m-strich) rounded-voll -top-(--m-strich) -left-[calc(var(--m-strich)/2)] bg-vorlauf',
+      'absolute size-(--m-strich) rounded-voll -bottom-(--m-strich) -left-[calc(var(--m-strich)/2)] bg-ruecklauf',
+    ]);
+    // Ab lg beginnt das Paar vor dem ersten Abgang (der sitzt bei left-0): T-Stück statt Ecke
+    expect(m).toMatch(/class="pointer-events-none absolute top-0 right-0 -left-6 hidden [^"]*lg:block/);
+    // Die Abgänge in Navy mit runden Enden
+    const abgaenge = [...m.matchAll(/<span class="([^"]*bg-brand[^"]*)"><\/span>/g)].map((x) => x[1]);
+    expect(abgaenge.length).toBe(6);
+    for (const a of abgaenge) expect(a).toContain('rounded-voll');
   });
 
   it('Fokusringe der Zeilenlinks sind rund (--radius-2) statt eckig', () => {
