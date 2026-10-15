@@ -217,6 +217,33 @@ describe('check-contrast: Wärmebereich und Wärmerampe (E-031)', () => {
     }
   });
 
+  it('dunkel ist jede Stufe bunt, kein grauer Rauch (Prüfrunde 2 A2-5): OKLCH-Chroma ≥ 0,06, Stufe 1 violett, ab Stufe 2 rötlich', () => {
+    // OKLab nach Björn Ottosson (sRGB → linear → LMS → Lab), Chroma = Abstand von der Grauachse
+    const oklch = (hex: string) => {
+      const [r, g, b] = [1, 3, 5].map((i) => {
+        const c = parseInt(hex.slice(i, i + 2), 16) / 255;
+        return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+      });
+      const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+      const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+      const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+      const a = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
+      const bb = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+      return { chroma: Math.hypot(a, bb), ton: ((Math.atan2(bb, a) * 180) / Math.PI + 360) % 360 };
+    };
+    for (const mode of ['warm dark', 'inverse warm dark', 'dark']) {
+      const stufen = RAMP.map((band) => oklch(result.role(mode, band)));
+      for (const [i, { chroma }] of stufen.entries()) expect(chroma, `${mode} waerme-${i}`).toBeGreaterThanOrEqual(0.06);
+      // Stufe 1 zwischen Nacht-Blau und Rot (violett), Stufe 2 schon rötlich (Magenta bis Rot)
+      expect(stufen[1].ton, mode).toBeGreaterThan(285);
+      expect(stufen[1].ton, mode).toBeLessThan(330);
+      expect(stufen[2].ton >= 330 || stufen[2].ton <= 30, `${mode} waerme-2 ${stufen[2].ton}`).toBe(true);
+    }
+    // Die Rampe vor Prüfrunde 2 fiele durch (Stufe 2 #3F3035: Chroma 0,02)
+    expect(oklch('#3F3035').chroma).toBeLessThan(0.06);
+    expect(oklch('#2C2843').chroma).toBeLessThan(0.06);
+  });
+
   it('fällt durch: zu dunkle heiße Stufe, zu ähnliche oder zu verschiedene Nachbarn, schwache Linie im Wärmebereich', () => {
     const fails = (css: string, pair: RegExp, mode = 'warm light') =>
       checkTheme(css).rows.some((row: string[]) => row[0] === mode && pair.test(row[1]) && row[5] === 'FAIL');

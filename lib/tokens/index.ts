@@ -78,7 +78,7 @@ export const TOKENS = {
    */
   waerme: {
     hell: ['#F3EBDD', '#F3DFCC', '#F3D2BC', '#F3C7AB', '#F2BB9C'],
-    dunkel: ['#1B2150', '#2C2843', '#3F3035', '#55382A', '#6E3226'],
+    dunkel: ['#1B2150', '#362349', '#50263B', '#632F2F', '#6E3226'],
   },
   zIndex: {
     header: 30,

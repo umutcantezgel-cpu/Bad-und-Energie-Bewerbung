@@ -258,17 +258,19 @@
     --p-band-d-3: #27368F;
     --p-band-d-linie: #34439A;
     /* Wärmerampe (E-031): Bänder des Wärmefelds, kühl → heiß. Hell Papier → Pfirsich (Nachbarn 1,09–1,12:1), dunkel
-       Nacht-Blau über ein neutrales Dunkelbraun zu Rotbraun (Glimmen; Nachbarn 1,08–1,18:1, Prüfrunde 1 A1-13: vorher
-       Pflaume, die Wärme wirkte violett); Linien auf jeder Stufe ≥ 3:1 (check-contrast). */
+       Nacht-Blau über Violett und Weinrot zu Rot und Rotbraun (Glimmen; Nachbarn 1,08–1,18:1). Prüfrunde 1 A1-13:
+       vorher Pflaume bis zur heißesten Stufe, die Wärme wirkte violett; Prüfrunde 2 A2-5: danach fast unbunte Stufen
+       1–2, sie lasen sich als grauer Rauch. Jetzt jede Stufe bunt (OKLCH-Chroma ≥ 0,06), nur Stufe 1 noch violett,
+       ab Stufe 2 rötlich; Leuchtdichte je Stufe wie vorher. Linien auf jeder Stufe ≥ 3:1 (check-contrast). */
     --p-waerme-0: #F3EBDD;
     --p-waerme-1: #F3DFCC;
     --p-waerme-2: #F3D2BC;
     --p-waerme-3: #F3C7AB;
     --p-waerme-4: #F2BB9C;
     --p-glimm-0: #1B2150;
-    --p-glimm-1: #2C2843;
-    --p-glimm-2: #3F3035;
-    --p-glimm-3: #55382A;
+    --p-glimm-1: #362349;
+    --p-glimm-2: #50263B;
+    --p-glimm-3: #632F2F;
     --p-glimm-4: #6E3226;
 
     /* ── Maße, Abstände, Bewegung (K-007…K-009); Spiegel in lib/tokens ── */
