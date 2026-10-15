@@ -177,6 +177,18 @@ describe('Texte der Themenseiten: nur Belegtes', () => {
       for (const j of buero) expect(kasten.giltFuer, id).not.toContain(j.shortTitle);
     }
     expect(gehalt.dazu.kaesten[3].giltFuer).not.toContain(JOBS.find((j) => j.category === 'ausbildung')!.shortTitle);
+    // „Über Tarif plus Urlaubs- und Weihnachtsgeld“ gehört genau zu den Stellen mit aboveTariff unter ihren Vorteilen:
+    // Die Paketzeilen der Ausbildung („über Tarif, plus Prämien“) und des Quereinstiegs („übertarifliche Bezahlung“)
+    // sagen weniger und stehen nur im Wortlaut unter „Extras je Stelle“ (Prüfung E-029, Runde 3)
+    const tarif = gehalt.dazu.kaesten[0];
+    expect(tarif.titel).toBe(FACTS.aboveTariff.short);
+    expect(tarif.giltFuer).toEqual(mitLohn(JOBS).filter((j) => j.benefitFactIds.includes('aboveTariff')).map((j) => j.shortTitle));
+    expect(tarif.giltFuer).toEqual(['Anlagenmechaniker SHK', 'Kundendiensttechniker', 'Obermonteur / Projektleiter']);
+    for (const j of JOBS.filter((j) => ['ausbildung', 'helfer'].includes(j.category))) {
+      expect(tarif.giltFuer, j.id).not.toContain(j.shortTitle);
+      const verguetung = j.packageExtras.find((extra) => extra.label === 'Vergütung')?.text;
+      if (verguetung) expect(gehalt.jeStelle.karten.find((k) => k.jobId === j.id)?.verguetung, j.id).toBe(verguetung);
+    }
     // Meta und Teilen-Bild: Lohn auf Anfrage bei jeder Stelle, die Extras je nach Stelle
     expect(gehalt.meta.description).toMatch(/je nach Stelle/);
     expect(gehalt.meta.description).not.toMatch(/bei jeder Stelle:/);

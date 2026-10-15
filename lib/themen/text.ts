@@ -16,7 +16,7 @@
  */
 import { WHATSAPP_GREETING } from '@/lib/apply/whatsapp-message';
 import { COMPANY } from '@/lib/content/company';
-import { FACTS, JE_NACH_STELLE, isFactActive, offenBei, type FactId } from '@/lib/content/facts';
+import { FACTS, JE_NACH_STELLE, fuehrendeStellen, isFactActive, offenBei, type FactId } from '@/lib/content/facts';
 import { getFaqItem, type FaqId } from '@/lib/content/faq';
 import { DISCRETION_PROMISE, getProcessSteps, type ProcessStep } from '@/lib/content/process';
 import { REGION } from '@/lib/content/region';
@@ -537,19 +537,14 @@ function lohnKarte(job: Job): LohnKarte {
   };
 }
 
-/** Woran eine Stelle einen Zusatz zum Lohn nennt, außer als eigenen Vorteil: „über Tarif“ in der Paketzeile „Vergütung“. */
-const ZUSATZ_PAKETZEILE: Readonly<Partial<Record<FactId, RegExp>>> = Object.freeze({
-  aboveTariff: /^Vergütung: .*(?:über Tarif|übertariflich)/i,
-});
-
-/** Stellen, die den Zusatz selbst nennen (Vorteil oder Paketzeile). */
+/**
+ * Stellen, die den Zusatz selbst nennen (lib/content/facts.ts fuehrtFakt): als Vorteil, den unbefristeten Vertrag auch
+ * über „Unbefristet“. Eine Paketzeile mit ähnlichem Wortlaut zählt nicht: „Ausbildungsvergütung über Tarif, plus
+ * Prämien“ oder „Faire, übertarifliche Bezahlung“ sagen weniger als aboveTariff (kein „deutlich“, kein Urlaubs- und
+ * Weihnachtsgeld; Prüfung E-029, Runde 3). Sie steht im Wortlaut unter „Extras je Stelle“ (lohnKarte).
+ */
 export function stellenMitZusatz(id: FactId, jobs: readonly Job[]): Job[] {
-  const merkmal = ZUSATZ_PAKETZEILE[id];
-  return jobs.filter(
-    (job) =>
-      job.benefitFactIds.includes(id) ||
-      (merkmal ? job.packageExtras.some((extra) => merkmal.test(`${extra.label}: ${extra.text}`)) : false),
-  );
+  return fuehrendeStellen(id, jobs);
 }
 
 /**
