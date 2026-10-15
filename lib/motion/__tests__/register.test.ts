@@ -24,6 +24,7 @@ import {
   type FensterAusloeser,
   type MotionId,
 } from '../register';
+import { WAERMEFELDER } from '../../zeichnung/szenen/waermefeld';
 import { diffusionsFehler, keyframesIn } from './keyframes';
 
 /** KERN K-009 (Stand 1.3, E-031): Tabelle aus BEGRUENDUNG §9 mit den Ergänzungen. */
@@ -321,6 +322,16 @@ describe('Bewegungsregister', () => {
     expect(f.verzoegerungTakte).toHaveLength(4);
     expect(MOTION_REGISTER['waerme-breitet-sich-aus'].dauer).toEqual(['d-4']);
     expect(MOTION_REGISTER['waerme-breitet-sich-aus'].kurve).toEqual(['linear']);
+  });
+
+  it('Wärmefeld (E-031): die Verzögerungen stammen aus den Daten (lib/zeichnung/szenen/waermefeld.ts), heiß zuerst', () => {
+    const f = MOTION_REGISTER['waerme-breitet-sich-aus'].fenster!;
+    // Hero: Bänder des Hausschnitts von heiß (Stufe 4) nach kühl (Stufe 1)
+    const hero = [...WAERMEFELDER.hausschnitt.baender].sort((a, b) => b.stufe - a.stufe).map((b) => b.startTakte);
+    expect([...f.nachlauf!.verzoegerungTakte]).toEqual(hero);
+    // Wärmepumpen-Seite: beide Vergleichsräume (Heizkörper, Fußbodenheizung), jede Verzögerung einmal
+    const raum = new Set([...WAERMEFELDER['raum-heizkoerper'].baender, ...WAERMEFELDER['raum-fussboden'].baender].map((b) => b.startTakte));
+    expect([...f.sicht!.verzoegerungTakte]).toEqual([...raum].sort((a, b) => a - b));
   });
 
   it('sicht (E-031): nur Wärmefeld und Büro-Szenen, Ende ≤ 2.400 ms ab dem Sichtbarwerden', () => {
