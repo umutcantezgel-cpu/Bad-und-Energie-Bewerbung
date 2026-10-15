@@ -21,12 +21,30 @@
   stroke: var(--ruecklauf);
 }
 
-/* Leitungstrenner: das Paar quer durch den Behälter, Höhe = zwei Paarabstände + ein Strich */
+/* Leitungstrenner: das Paar quer durch den Behälter, Höhe = zwei Paarabstände + ein Strich. Die runden Enden liegen im
+   Seitenrand (E-031), der S-Bogen hat eine feste Breite, die geraden Stücke teilen sich den Rest. */
 .trenner {
-  display: block;
+  display: flex;
   width: 100%;
   height: calc(var(--paar) * 2 + var(--m-strich));
-  overflow: hidden;
+  padding-inline: var(--spacing-gutter);
+  box-sizing: border-box;
+}
+
+.trennerGerade {
+  flex: 0 0 auto;
+  min-width: 0;
+  height: 100%;
+  overflow: visible;
+}
+
+.trennerRest {
+  flex: 1 1 0;
+}
+
+.trennerBogen {
+  flex: none;
+  overflow: visible;
 }
 
 /* Rohrklammer: feste Breite --a-5, Höhe vom Elternelement (z. B. zwei Textzeilen) */
