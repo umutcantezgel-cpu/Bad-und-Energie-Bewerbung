@@ -1,8 +1,9 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
+import { WAERMEFELDER, type WaermefeldId } from '../lib/zeichnung/szenen/waermefeld';
 import { malzeitJeBild, messeMitDrossel } from './support/malzeit';
 
 /**
- * Wärmefeld 2.0 (E-031, KERN K-009/K-015, Register `waerme-breitet-sich-aus`): Die Bänder 1–4 wachsen einmal nach √t,
+ * Wärmefeld 2.0 (E-031, KERN K-009/K-015, Register `waerme-breitet-sich-aus`): Die Bänder wachsen einmal nach √t,
  * das heißeste zuerst. Im Hero als Nachlauf unter `.auftakt` (ab 560 ms, Ende ≤ 1.920 ms vor dem Sicherheitsnetz), auf
  * der Wärmepumpen-Seite beim Sichtbarwerden (SichtStart, Ende ≤ 2.400 ms). Reduziert, ohne Skript und per Sprung an die
  * Stelle steht der Endzustand. Malzeit je Bild unter 2 ms (Handy, CPU 4×). Beim echten Laden (Handy, CPU 4×, langsames
@@ -55,12 +56,19 @@ function ablaeufe(bereich: Locator): Promise<Ablauf[]> {
   BAND);
 }
 
-/** Endzustand: jedes Band ganz sichtbar, ohne Maßstab (je Feld vier Bänder: Hero 4, Wärmepumpen-Seite 8). */
+/** Bänder der Felder im Bereich laut Daten (Hero 4; Wärmepumpen-Seite 4 + die der Fußbodenheizung, Prüfrunde 1 B1-1). */
+async function bandAnzahl(bereich: Locator): Promise<number> {
+  const ids = await bereich.evaluate((el) =>
+    (el.matches('[data-waermefeld]') ? [el] : [...el.querySelectorAll('[data-waermefeld]')]).map((feld) => feld.getAttribute('data-waermefeld')),
+  );
+  expect(ids.length).toBeGreaterThan(0);
+  return ids.reduce((n, id) => n + WAERMEFELDER[id as WaermefeldId].baender.length, 0);
+}
+
+/** Endzustand: jedes Band der Daten ganz sichtbar, ohne Maßstab. */
 async function endzustand(bereich: Locator): Promise<void> {
   const baender = bereich.locator(BAND);
-  const anzahl = await baender.count();
-  expect(anzahl).toBeGreaterThanOrEqual(4);
-  expect(anzahl % 4).toBe(0);
+  expect(await baender.count()).toBe(await bandAnzahl(bereich));
   for (const band of await baender.all()) {
     await expect(band).toHaveCSS('opacity', '1');
     await expect(band).toHaveCSS('transform', 'none');
@@ -124,7 +132,13 @@ test.describe('mit Bewegung (no-preference)', () => {
     await raum.scrollIntoViewIfNeeded();
     await expect(raum).toHaveAttribute('data-ablauf', 'laeuft');
     const liste = await ablaeufe(raum);
-    expect(liste).toHaveLength(8);
+    expect(liste).toHaveLength(await bandAnzahl(raum));
+    // Heizkörper wächst aus dem Ursprung, die Fußbodenheizung nur nach oben (Prüfrunde 1 B1-6)
+    // Namen im Build mit dem Präfix des CSS-Moduls (`waerme-module__<hash>__wachsen`)
+    expect(liste.map((a) => a.name.replace(/^.*__/, ''))).toEqual([
+      ...WAERMEFELDER['raum-heizkoerper'].baender.map(() => 'wachsen'),
+      ...WAERMEFELDER['raum-fussboden'].baender.map(() => 'steigen'),
+    ]);
     for (const a of liste) {
       expect(a.iterationen).toBe(1);
       expect(a.dauer).toBe(D4_MS);

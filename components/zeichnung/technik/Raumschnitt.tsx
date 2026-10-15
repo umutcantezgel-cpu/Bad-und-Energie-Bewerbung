@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils/cn';
 import { WAERMEFELD_AN } from '@/lib/zeichnung/waerme/schalter';
 import { FUSSBODEN_ROHRE, RAUM_BAUTEILE, RAUM_HEIZKOERPER, RAUMSCHNITT_RAHMEN } from '@/lib/zeichnung/szenen/raumschnitt';
-import { WaermefeldEbenen } from '../waerme/Waermefeld';
+import { WaermefeldDateien } from '../waerme/Waermefeld';
 import t from './technik.module.css';
 
 export type RaumschnittArt = 'heizkoerper' | 'fussboden';
@@ -20,9 +20,9 @@ const VIEWBOX = `${R.x} ${R.y} ${R.breite} ${R.hoehe}`;
 /**
  * Raumschnitt (E-031, KERN K-010): derselbe Raum (4,2 × 2,5 m, lib/zeichnung/szenen/raumschnitt.ts) einmal mit
  * Flachheizkörper an der Außenwand (links, von der Seite geschnitten), einmal mit Fußbodenheizung (Rohre im Estrich,
- * Vorlauf und Rücklauf im Wechsel). Unter der Zeichnung liegt das berechnete Wärmefeld als Ebenen
- * (components/zeichnung/waerme), das sich beim Sichtbarwerden einmal ausbreitet, wenn der Aufrufer die Zeichnung in
- * SichtStart setzt. Heizkörper und Rohre stehen im Wärmebereich; der Heizkörper ohne Fläche, die Bänder zeigen seine
+ * Vorlauf und Rücklauf im Wechsel). Unter der Zeichnung liegt das berechnete Wärmefeld als Ebenen aus eigenen Dateien
+ * (components/zeichnung/waerme, WaermefeldDateien), das sich beim Sichtbarwerden einmal ausbreitet, wenn der Aufrufer
+ * die Zeichnung in SichtStart setzt. Heizkörper und Rohre stehen im Wärmebereich; der Heizkörper ohne Fläche, die Bänder zeigen seine
  * Temperatur (oben der Vorlauf). Nur Rollenfarben, keine Verläufe.
  */
 export function Raumschnitt({ art, titel, className }: RaumschnittProps) {
@@ -30,7 +30,8 @@ export function Raumschnitt({ art, titel, className }: RaumschnittProps) {
   const warm = WAERMEFELD_AN;
   return (
     <div className={cn('relative', className)} style={{ aspectRatio: `${R.breite} / ${R.hoehe}` }} data-zeichnung="raumschnitt" data-raum={art}>
-      <WaermefeldEbenen id={art === 'heizkoerper' ? 'raum-heizkoerper' : 'raum-fussboden'} rahmen={R} />
+      {/* Bänder als Dateien (lazy): Die Abbildung steht weit unten, ihre Pfade gehören nicht ins Dokument (C1-6) */}
+      <WaermefeldDateien id={art === 'heizkoerper' ? 'raum-heizkoerper' : 'raum-fussboden'} rahmen={R} />
       <svg
         className="absolute inset-0 block size-full overflow-visible"
         viewBox={VIEWBOX}

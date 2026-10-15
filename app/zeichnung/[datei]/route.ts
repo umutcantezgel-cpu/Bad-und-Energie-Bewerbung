@@ -1,19 +1,21 @@
 import { bueroSzenenDateien } from '@/lib/zeichnung/buero/svg';
 import { kopfSvgDateien } from '@/lib/zeichnung/kopf-svg';
+import { waermeBandDateien } from '@/lib/zeichnung/waerme/dateien';
 
 /**
  * Zeichnungen als SVG-Dateien (Prüfung E-029, Runde 3; E-031): die Kopfbilder der Stellen (Anlagenschema, kleiner
- * Hausschnitt, Leitstelle der Bürofachkraft) und die vier stillen Büro-Szenen des Einblicks, beim Build aus denselben
- * Modulen erzeugt wie die Komponenten (lib/zeichnung/kopf-svg.ts, lib/zeichnung/buero/svg.ts), statisch ausgeliefert.
+ * Hausschnitt, Leitstelle der Bürofachkraft), die vier stillen Büro-Szenen des Einblicks und die Bänder der
+ * Vergleichsräume der Wärmepumpen-Seite (Prüfrunde 1 C1-6), beim Build aus denselben Modulen erzeugt wie die
+ * Komponenten (lib/zeichnung/kopf-svg.ts, lib/zeichnung/buero/svg.ts, lib/zeichnung/waerme/dateien.ts), statisch.
  * Der Dateiname trägt einen Hash des Inhalts; SVG-Dateien werden ein Jahr gecacht (next.config.ts). Der Proxy lässt
  * `*.svg` durch (proxy.ts).
  */
 export const dynamic = 'force-static';
 export const dynamicParams = false;
 
-/** Alle ausgelieferten Zeichnungen: erst die Kopfbilder, dann die Büro-Szenen. */
+/** Alle ausgelieferten Zeichnungen: erst die Kopfbilder, dann die Büro-Szenen, dann die Bänder der Vergleichsräume. */
 function zeichnungDateien(): Array<{ datei: string; svg: string }> {
-  return [...kopfSvgDateien(), ...bueroSzenenDateien()];
+  return [...kopfSvgDateien(), ...bueroSzenenDateien(), ...waermeBandDateien()];
 }
 
 export function generateStaticParams(): { datei: string }[] {

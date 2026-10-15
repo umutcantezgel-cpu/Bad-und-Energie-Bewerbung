@@ -13,7 +13,9 @@
  * - u: Konvektion als Stromfunktion von Walzen, je Walze ψ = A · 16 ξ(1−ξ) η(1−η) (ξ, η: Lage in der Walze, 0…1),
  *   u = ∂ψ/∂y, v = −∂ψ/∂x. Das Feld ist divergenzfrei und senkrecht zu den Wänden null. Die größte senkrechte
  *   Geschwindigkeit liegt am Aufstrom und beträgt U₀ = Pe · K / H (H = Raumhöhe), gleich für alle Walzen eines Raums.
- * - Heizflächen (Heizkörper): feste Temperatur (Dirichlet), oben `oben`, unten `unten`, linear dazwischen.
+ *   Mit `grenzschicht` steigt die Luft in einer dünnen Schicht an der Heizfläche (siehe Walze).
+ * - Heizflächen (Heizkörper): feste Temperatur (Dirichlet), oben `oben`, unten `unten`, linear dazwischen; mit
+ *   `unterseiteAdiabat` gibt die Unterseite keine Wärme nach unten ab (die erwärmte Luft steigt, Prüfrunde 1 B1-2).
  * - Wände, Decke, Boden: Robin-Bedingung −K' ∂θ/∂n = h (θ − bezug); h = 0 heißt adiabat (Innenwand).
  *
  * Diskretisierung: Knotengitter mit den Rändern auf Knoten, Differenzen zweiter Ordnung (zentral, auch für die
@@ -48,6 +50,12 @@ export interface Heizflaeche {
   oben: number;
   /** … und an der Unterkante (abgekühlt). */
   unten: number;
+  /**
+   * Unterseite ohne Wärmeabgabe an die Luft darunter (Neumann, kein Fluss): Die Luft, die ein Heizkörper erwärmt,
+   * steigt an seiner Vorder- und Oberseite auf; unter ihm strömt die kühle Raumluft vom Boden zu. Ohne diese Angabe
+   * diffundierte die feste Temperatur der Heizfläche auch nach unten bis auf den Boden (Prüfrunde 1 B1-2).
+   */
+  unterseiteAdiabat?: boolean;
 }
 
 /** Konvektionswalze über die ganze Raumhöhe zwischen x0 und x1; `aufstrom`: Seite, an der die Luft steigt. */
@@ -55,19 +63,28 @@ export interface Walze {
   x0: number;
   x1: number;
   aufstrom: 'links' | 'rechts';
+  /**
+   * Dicke der Aufstromschicht als Anteil der Walzenbreite (δ, Prüfrunde 1 B1-2). Ohne: die symmetrische Walze
+   * F(ξ) = 4ξ(1−ξ), Aufstrom und Abstrom gleich breit. Mit: F(ξ) = (1−ξ) ξ / (ξ + δ), ξ von der Aufstromseite – die
+   * warme Luft steigt in einer dünnen Schicht an der Heizfläche auf (freie Konvektion an einer senkrechten Fläche), die
+   * Rückströmung am Boden reicht bis an die Wand und unter den Heizkörper. Gleicher Volumenstrom wie die symmetrische
+   * Walze (größtes ψ = U₀ · lx / 4).
+   */
+  grenzschicht?: number;
 }
 
 export interface Feldaufgabe {
   innen: Rechteck;
   /**
-   * Wirksame Leitfähigkeit der Raumluft in Vielfachen von K (Durchmischung): 1 bei stabiler Schichtung über einem
-   * Heizkörper, größer über einer warmen Bodenfläche, wo überall kleine Warmluftsäulen aufsteigen.
+   * Wirksame Leitfähigkeit der Raumluft in Vielfachen von K: 1 mit Heizkörper; größer mit Fußbodenheizung als Ersatz
+   * für den Strahlungsaustausch der warmen Bodenfläche, den das Modell nicht eigens abbildet (Kalibrierung ohne Quelle,
+   * lib/zeichnung/waerme/eingabe.ts DURCHMISCHUNG, Prüfrunde 1 B1-4).
    */
   durchmischung: number;
   heizflaechen: readonly Heizflaeche[];
   raender: Readonly<{ links: Rand; rechts: Rand; oben: Rand; unten: Rand }>;
   walzen: readonly Walze[];
-  /** Péclet-Zahl Pe = U₀ · H / K (mit K ohne Durchmischung; wirksam ist Pe / durchmischung). */
+  /** Péclet-Zahl Pe = U₀ · H / K (mit K ohne den Faktor `durchmischung`; wirksam ist Pe / durchmischung). */
   peclet: number;
 }
 
@@ -92,8 +109,11 @@ export interface Loesung {
 
 /** Wirksame Leitfähigkeit der Raumluft (Einheiten² je Zeiteinheit). */
 export const K = 1;
-/** Überrelaxation des stationären Lösers (E-031). */
-export const OMEGA = 1.85;
+/**
+ * Überrelaxation des stationären Lösers (E-031). 1,5 statt der geplanten 1,85: Mit der dünnen Aufstromschicht im
+ * Vergleichsraum (Prüfrunde 1 B1-2) ist die Konvektion an der Heizfläche stark, und SOR divergiert mit 1,85.
+ */
+export const OMEGA = 1.5;
 /** Abbruch: größte Änderung eines Durchlaufs (der gespeicherte Rest liegt darunter, Vertrag: < 1e-7). */
 export const TOLERANZ = 1e-10;
 const MAX_DURCHLAEUFE = 200_000;
@@ -118,6 +138,19 @@ export function stroemung(aufgabe: Feldaufgabe, x: number, y: number): [number, 
     const lx = w.x1 - w.x0;
     const xi = (x - w.x0) / lx;
     const eta = (y - innen.y) / hoehe;
+    if (w.grenzschicht !== undefined) {
+      // ψ = s · a · F(ξa) · G(η) mit G = 4η(1−η); u = ∂ψ/∂y, v = −∂ψ/∂x; F' = (δ − ξa² − 2ξa δ) / (ξa + δ)²
+      const d = w.grenzschicht;
+      const links = w.aufstrom === 'links';
+      const xa = links ? xi : 1 - xi;
+      const xm = Math.sqrt(d * d + d) - d;
+      const fmax = ((1 - xm) * xm) / (xm + d);
+      const a = (u0 * lx) / 4 / fmax;
+      const f = ((1 - xa) * xa) / (xa + d);
+      const fs = (d - xa * xa - 2 * xa * d) / ((xa + d) * (xa + d));
+      const s = links ? 1 : -1;
+      return [(s * a * f * 4 * (1 - 2 * eta)) / hoehe, -(a * fs * 4 * eta * (1 - eta)) / lx];
+    }
     // Aufstrom links: A > 0, rechts: A < 0; |v| am Aufstrom in halber Höhe = U₀
     const a = ((w.aufstrom === 'links' ? 1 : -1) * u0 * lx) / 4;
     const u = (a * 16 * xi * (1 - xi) * (1 - 2 * eta)) / hoehe;
@@ -133,6 +166,11 @@ function heizwert(aufgabe: Feldaufgabe, x: number, y: number): number {
     if (x >= f.x0 && x <= f.x1 && y >= f.y0 && y <= f.y1) return f.oben + ((f.unten - f.oben) * (y - f.y0)) / (f.y1 - f.y0);
   }
   return NaN;
+}
+
+/** Liegt über dem Knoten (x, y) die Unterseite einer Heizfläche, die nach unten keine Wärme abgibt? */
+function unterAdiabat(aufgabe: Feldaufgabe, x: number, yOben: number): boolean {
+  return aufgabe.heizflaechen.some((f) => f.unterseiteAdiabat === true && x >= f.x0 && x <= f.x1 && yOben >= f.y0 && yOben <= f.y1);
 }
 
 /**
@@ -207,6 +245,10 @@ function stern(aufgabe: Feldaufgabe, g: Gitter): Stern {
         cU += cN;
         diag += cN * beta;
         c0 += cN * beta * oben.bezug;
+        cN = 0;
+      } else if (unterAdiabat(aufgabe, x, y - dy)) {
+        // Unterseite eines Heizkörpers darüber: kein Fluss (gespiegelter Nachbar wie an einer adiabaten Wand)
+        cU += cN;
         cN = 0;
       }
       if (j === g.ny - 1) {

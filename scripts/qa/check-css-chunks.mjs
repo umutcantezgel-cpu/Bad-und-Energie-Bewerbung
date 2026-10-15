@@ -28,7 +28,10 @@ import { BUERO_DATEI, BUERO_MARKE, bueroBlockAb } from './check-design-tokens.mj
  *    als Markup noch in der RSC-Nutzlast (Prüfung E-029, Runde 3: zweimal im Dokument, über der Slow-Start-Grenze, LCP
  *    +225 ms). Erkannt an den langen Pfaden der gebauten Dateien; die Stellenseite verweist auf ihre Datei, und jede
  *    gebaute Kopfdatei ist das Kopfbild mindestens einer Stelle.
- * 6. Teilbudgets aus E-031, je ab dem Tag, an dem die Quelle existiert (bis dahin darf nichts davon im Build stehen):
+ * 6. Die Bänder der Vergleichsräume auf der Wärmepumpen-Seite (lib/zeichnung/waerme/dateien.ts, Prüfrunde 1 C1-6)
+ *    stehen ebenso nur als Datei im Dokument: Die Seite verweist auf jede gebaute Banddatei, und kein Bandpfad steht auf
+ *    irgendeiner Seite inline (die Abbildung liegt weit unter dem ersten Bildschirm, inline zählten ihre Bytes vor LCP).
+ * 7. Teilbudgets aus E-031, je ab dem Tag, an dem die Quelle existiert (bis dahin darf nichts davon im Build stehen):
  *    Regeln aus waerme.module.css ≤ WAERME_BUDGET auf jeder Seite und auf der Startseite wirklich vorhanden; Regeln aus
  *    waermefront.module.css ≤ FRONT_BUDGET auf jeder Seite, und zwar in einem Stylesheet, das alle Seiten laden (der
  *    globale Chunk); der Büro-Block am Ende von themen.module.css (Klassen und Keyframes mit `buero` am Anfang) nur auf
@@ -66,6 +69,10 @@ const UEBERSPRUNGEN = new Set(['/_global-error']);
 const ZEICHNUNG_ROUTE = /^\/zeichnung\/([^/]+\.svg)$/;
 /** Pfade ab dieser Länge erkennen eine Zeichnung sicher (Schraffur, Leitungen); kürzere kommen auch anderswo vor. */
 export const MERKMAL_LAENGE = 120;
+/** Seite mit den Vergleichsräumen, deren Bänder als Datei kommen (Prüfrunde 1 C1-6). */
+export const WAERME_DATEI_SEITE = '/arbeiten-bei-uns/waermepumpen';
+/** Gebaute Banddatei: `waerme-<feld>-<stufe>-<hash>.svg` (lib/zeichnung/waerme/dateien.ts). */
+const WAERME_BANDDATEI = /^waerme-[a-z-]+-[1-4]-[0-9a-f]{10}\.svg$/;
 
 /** Klassen eines CSS-Moduls im gebauten CSS: `.<name>-module__<hash>__<klasse>`. */
 const modulKlasse = (name) => new RegExp(`\\b${name}-module__[A-Za-z0-9_-]{6}__`);
@@ -249,6 +256,30 @@ export function pruefeKopfzeichnungen(seiten, dateien) {
 }
 
 /**
+ * Prüft die Bänder der Vergleichsräume (Punkt 6): `seiten` [{ route, html }], `dateien` alle gebauten Zeichnungen
+ * [{ datei, svg }]; berücksichtigt werden die Banddateien `waerme-*.svg`. Gibt die Fehler als Liste zurück.
+ */
+export function pruefeWaermeDateien(seiten, dateien) {
+  const baender = dateien
+    .filter(({ datei }) => WAERME_BANDDATEI.test(datei))
+    .map(({ datei, svg }) => ({ datei, merkmale: [...svg.matchAll(/\sd="([^"]+)"/g)].map((m) => m[1]).filter((d) => d.length >= MERKMAL_LAENGE) }));
+  if (baender.length === 0) return ['keine gebaute Banddatei des Wärmefelds (/zeichnung/waerme-*.svg)'];
+  const fehler = [];
+  for (const { datei, merkmale } of baender) {
+    if (merkmale.length === 0) fehler.push(`${datei}: kein Pfad ab ${MERKMAL_LAENGE} Zeichen, die Prüfung fände das Band nicht`);
+  }
+  const seite = seiten.find(({ route }) => route === WAERME_DATEI_SEITE);
+  if (!seite) fehler.push(`${WAERME_DATEI_SEITE}: nicht gebaut`);
+  else for (const { datei } of baender) if (!seite.html.includes(`src="/zeichnung/${datei}"`)) fehler.push(`${WAERME_DATEI_SEITE}: verweist nicht auf /zeichnung/${datei}`);
+  for (const { route, html } of seiten) {
+    for (const { datei, merkmale } of baender) {
+      if (merkmale.some((d) => html.includes(d))) fehler.push(`${route}: das Band aus ${datei} steht inline im Dokument (HTML oder RSC)`);
+    }
+  }
+  return fehler;
+}
+
+/**
  * Route einer vorab gerenderten Datei aus ihrem Pfad relativ zu .next/server, ohne `endung`; null, wenn die Datei in
  * keiner der beiden Ablagen liegt. `app/jobs.html` und `route-cache/APP_PAGE/<sha256>/$/jobs.html` → `/jobs`,
  * `app/index.html` und `route-cache/APP_PAGE/<sha256>/$/index.html` → `/`.
@@ -318,7 +349,12 @@ export function runCssChunkCheck() {
     const datei = route.match(ZEICHNUNG_ROUTE)?.[1];
     return datei ? [{ datei, svg: inhalt }] : [];
   });
-  const fehler = [...stand.fehler, ...pruefeSeiten(seiten, lies, stand.vorhanden), ...pruefeKopfzeichnungen(dokumente, zeichnungen)];
+  const fehler = [
+    ...stand.fehler,
+    ...pruefeSeiten(seiten, lies, stand.vorhanden),
+    ...pruefeKopfzeichnungen(dokumente, zeichnungen),
+    ...pruefeWaermeDateien(dokumente, zeichnungen),
+  ];
   if (fehler.length > 0) {
     for (const f of fehler.slice(0, 40)) console.error(`❌ ${f}`);
     if (fehler.length > 40) console.error(`… und ${fehler.length - 40} weitere`);
@@ -351,8 +387,8 @@ export function runCssChunkCheck() {
       ['/', '/jobs', '/arbeiten-bei-uns/waermepumpen', '/arbeiten-bei-uns/buero-und-verwaltung'].map(teil).join(' · '),
   );
   console.log(
-    `✅ Kopfzeichnungen der Stellen nur als Datei (${zeichnungen.map((z) => z.datei).join(', ')}). Dokumente: ` +
-      ['/jobs/anlagenmechaniker-shk-wetzlar', '/jobs/ausbildung-anlagenmechaniker-shk-wetzlar', '/jobs/obermonteur-projektleiter-shk-wetzlar'].map(dokument).join(' · '),
+    `✅ Kopfzeichnungen der Stellen und Bänder der Vergleichsräume nur als Datei (${zeichnungen.map((z) => z.datei).join(', ')}). Dokumente: ` +
+      ['/jobs/anlagenmechaniker-shk-wetzlar', '/jobs/ausbildung-anlagenmechaniker-shk-wetzlar', '/jobs/obermonteur-projektleiter-shk-wetzlar', WAERME_DATEI_SEITE].map(dokument).join(' · '),
   );
 }
 

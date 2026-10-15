@@ -71,9 +71,11 @@ describe('Wärmefeld: Vertrag der Daten (E-031)', () => {
     for (const id of IDS) expect([WAERMEFELDER[id].innen.breite, WAERMEFELDER[id].innen.hoehe], id).toEqual([420, 250]);
   });
 
-  it.each(IDS)('%s: Bänder 1–4 aufsteigend, Schwelle steigt, Fläche sinkt', (id) => {
+  it.each(IDS)('%s: Bänder 1 bis höchstens 4 aufsteigend, Schwelle steigt, Fläche sinkt', (id) => {
     const { baender } = WAERMEFELDER[id];
-    expect(baender.map((b) => b.stufe)).toEqual([1, 2, 3, 4]);
+    // Hausschnitt und Bezugsraum alle vier; die Fußbodenheizung auf der gemeinsamen Skala nur, was ihr Feld erreicht
+    expect(baender.map((b) => b.stufe)).toEqual([1, 2, 3, 4].slice(0, baender.length));
+    expect(baender.length, id).toBeGreaterThanOrEqual(id === 'raum-fussboden' ? 1 : 4);
     for (let i = 0; i < baender.length; i += 1) {
       const b = baender[i];
       expect(b.schwelle, `${id} ${b.stufe}`).toBeGreaterThan(0);

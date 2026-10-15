@@ -3,8 +3,8 @@ import path from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { WAERMEFELDER, type WaermefeldId } from '../szenen/waermefeld';
 import { FELDEINGABEN } from '../waerme/eingabe';
-import { imPolygon, pfadPunkte, schwerpunkt, type P } from '../waerme/kontur';
-import { DATEI, SKRIPT, berechneWaermefelder, dateiText, eingabeHash, type Rechnung } from '../waerme/rechnung';
+import { anteilUeber, imPolygon, pfadPunkte, schwerpunkt, type P } from '../waerme/kontur';
+import { ANTEILE, DATEI, MIN_FLAECHE, SKRIPT, berechneWaermefelder, dateiText, eingabeHash, type Rechnung } from '../waerme/rechnung';
 
 /**
  * Wärmefeld 2.0 (E-031, Paket W1): Lock und Physik. Der Vertrag der Daten (Form, Raster, Fenster) steht in
@@ -123,20 +123,77 @@ describe('Wärmefeld: Bänder (E-031)', () => {
     }
   });
 
-  it('Fußbodenheizung: am Boden am wärmsten, die beiden heißesten Bänder liegen am Boden (an der Außenwand fällt kalte Luft)', () => {
+  it('Fußbodenheizung: am Boden am wärmsten, das heißeste Band liegt am Boden (an der Außenwand fällt kalte Luft)', () => {
     const { innen, baender } = WAERMEFELDER['raum-fussboden'];
     expect(schicht('raum-fussboden', 2, 82)).toBeGreaterThan(schicht('raum-fussboden', innen.hoehe - 82, innen.hoehe - 2));
     const proben = Array.from({ length: 41 }, (_, i) => ({ x: innen.x + 5 + (i * (innen.breite - 10)) / 40, y: innen.y + innen.hoehe - 1 }));
     const amBoden = (b: number) => proben.filter((q) => imPolygon(q, polygon(baender[b].d))).length / proben.length;
-    expect(amBoden(2)).toBeGreaterThanOrEqual(0.9);
-    expect(amBoden(3)).toBeGreaterThanOrEqual(2 / 3);
+    // Auf der gemeinsamen Skala (Prüfrunde 1 B1-1) hat sie weniger Bänder; jedes deckt den Boden fast ganz
+    for (let k = 0; k < baender.length; k += 1) expect(amBoden(k), `Band ${k + 1}`).toBeGreaterThanOrEqual(0.9);
     // Die kühle Stelle am Boden liegt an der Außenwand (links), nicht an der Innenwand
-    expect(imPolygon(proben[0], polygon(baender[3].d))).toBe(false);
-    expect(imPolygon(proben[proben.length - 1], polygon(baender[3].d))).toBe(true);
+    const heissestes = polygon(baender[baender.length - 1].d);
+    expect(imPolygon(proben[0], heissestes)).toBe(false);
+    expect(imPolygon(proben[proben.length - 1], heissestes)).toBe(true);
     // Je heißer, desto tiefer der Schwerpunkt
     const tiefe = baender.map((b) => schwerpunkt(polygon(b.d)).y);
     for (let k = 1; k < tiefe.length; k += 1) expect(tiefe[k]).toBeGreaterThan(tiefe[k - 1]);
     for (const b of baender) expect(b.ursprung).toEqual({ x: innen.x + innen.breite / 2, y: innen.y + innen.hoehe });
+  });
+
+  it('Vergleichsräume auf einer Skala (Prüfrunde 1 B1-1): gleiche Abstände vom Raummittel, die Fußbodenheizung erreicht die heißen Stufen nicht', () => {
+    const hk = rechnung.zwischen.get('raum-heizkoerper')!;
+    const fb = rechnung.zwischen.get('raum-fussboden')!;
+    const [hkBaender, fbBaender] = [WAERMEFELDER['raum-heizkoerper'].baender, WAERMEFELDER['raum-fussboden'].baender];
+    // Gezeichnete Schwellen = Schwellen der Rechnung; jede Stufe liegt in beiden Räumen gleich weit über dem Raummittel
+    expect(hkBaender.map((b) => b.schwelle)).toEqual(hk.schwellen);
+    expect(fbBaender.map((b) => b.schwelle)).toEqual(fb.schwellen);
+    fbBaender.forEach((b, k) => expect(b.schwelle - fb.mittel, `Stufe ${b.stufe}`).toBeCloseTo(hkBaender[k].schwelle - hk.mittel, 2));
+    // Der Raum mit Heizkörper hat alle vier Stufen, die Fußbodenheizung weniger und nie die heißeste
+    expect(hkBaender.map((b) => b.stufe)).toEqual([1, 2, 3, 4]);
+    expect(fbBaender.length).toBeLessThan(hkBaender.length);
+    // „Die kräftigsten Stufen erreicht nur der Heizkörper“ (lib/zeichnung/erklaerung.ts): 3 und 4 fehlen
+    expect(fbBaender.map((b) => b.stufe)).not.toContain(3);
+    expect(fbBaender.map((b) => b.stufe)).not.toContain(4);
+    // Gleichmäßiger, im Bild: die kühlste Stufe deckt mehr vom Raum, die heißeste gezeichnete weniger als beim Heizkörper
+    expect(fbBaender[0].flaecheAnteil).toBeGreaterThan(hkBaender[0].flaecheAnteil);
+    const oben = fbBaender[fbBaender.length - 1];
+    expect(oben.flaecheAnteil).toBeLessThan(hkBaender[oben.stufe - 1].flaecheAnteil);
+    // Jedes gezeichnete Band hat mindestens MIN_FLAECHE; die nächste Stufe hätte sie nicht
+    for (const b of fbBaender) expect(b.flaecheAnteil, `Stufe ${b.stufe}`).toBeGreaterThanOrEqual(MIN_FLAECHE);
+    const naechste = hkBaender[fbBaender.length].schwelle - hk.mittel + fb.mittel;
+    expect(anteilUeber(fb.glatt, naechste)).toBeLessThan(MIN_FLAECHE);
+    // Der Hausschnitt bleibt auf seiner eigenen Skala (64/36/16/6 % der Fläche)
+    WAERMEFELDER.hausschnitt.baender.forEach((b, k) => expect(b.flaecheAnteil).toBeCloseTo(ANTEILE[k], 1));
+  });
+
+  it('Heizkörper (Prüfrunde 1 B1-2): unter dem Heizkörper kein heißes Band, die Luft dort nicht wärmer als unten in Raummitte', () => {
+    for (const id of HEIZKOERPER) {
+      const z = rechnung.zwischen.get(id)!;
+      const { innen, heizflaeche: hf } = z.eingabe;
+      const unten = innen.y + innen.hoehe;
+      // Zwischen Unterkante und Boden: höchstens Band 1 (die kühle Raumluft strömt am Boden zum Heizkörper)
+      const proben: { x: number; y: number }[] = [];
+      for (let x = Math.max(hf.x, innen.x) + 1; x < hf.x + hf.breite; x += 2) for (let y = hf.y + hf.hoehe + 1; y < unten; y += 2) proben.push({ x, y });
+      expect(proben.length, id).toBeGreaterThan(20);
+      for (const b of WAERMEFELDER[id].baender.slice(1)) {
+        const flaeche = polygon(b.d);
+        expect(proben.filter((q) => imPolygon(q, flaeche)), `${id} Band ${b.stufe}`).toEqual([]);
+      }
+      // Mittel unter dem Heizkörper ≤ Schicht 0–0,8 m in Raummitte + 0,025 (ein Drittel des Abstands zweier Stufen)
+      const { gitter: g, theta } = z.loesung;
+      let summe = 0;
+      let n = 0;
+      for (let j = 0; j < g.ny; j += 1) {
+        for (let i = 0; i < g.nx; i += 1) {
+          const x = g.x0 + i * g.dx;
+          const y = g.y0 + j * g.dy;
+          if (x < Math.max(hf.x, innen.x) || x > hf.x + hf.breite || y <= hf.y + hf.hoehe || y > unten) continue;
+          summe += theta[j * g.nx + i];
+          n += 1;
+        }
+      }
+      expect(summe / n, id).toBeLessThanOrEqual(schicht(id, 0, 80) + 0.025);
+    }
   });
 
   it('Fußbodenheizung gleichmäßiger: zwischen Knöchel (0,1 m) und Kopf (1,1 m) ein kleinerer Unterschied als mit Heizkörper', () => {

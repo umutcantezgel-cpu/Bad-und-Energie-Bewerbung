@@ -68,7 +68,9 @@ function Technik() {
       </div>
 
       <div id="waermeverteilung" className={styles.technikPaar} role="group" aria-labelledby={RAUM_ID}>
-        <SichtStart className={cn(styles.technikBild, 'grid gap-5 sm:grid-cols-2')}>
+        {/* Neben dem Text (ab 64em) untereinander in voller Spaltenbreite, damit Heizkörper, Fahne und Bodenschicht
+            tragen (Prüfrunde 1 A1-10); dazwischen nebeneinander über die ganze Breite */}
+        <SichtStart className={cn(styles.technikBild, 'grid gap-5 sm:grid-cols-2 lg:grid-cols-1')}>
           {(['heizkoerper', 'fussboden'] as const).map((art) => (
             <figure key={art} className="m-0 min-w-0">
               <Raumschnitt art={art} titel={`Raum mit ${WAERMEVERTEILUNG[art].name} im Schnitt`} />

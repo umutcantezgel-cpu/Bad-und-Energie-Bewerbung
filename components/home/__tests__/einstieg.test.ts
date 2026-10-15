@@ -209,7 +209,9 @@ describe('Hero / Einstieg (R3-HOME-01, Technische Zeichnung 2.0)', () => {
 
   it('Wärmefeld (E-031): ein Grund-div und vier Band-SVGs aus den Daten unter der Szene, alles aria-hidden; der Raum steht im Wärmebereich', () => {
     const { innen, baender } = WAERMEFELDER.hausschnitt;
-    const feld = html2026.match(/<div class="[^"]*" style="([^"]*)" data-waermefeld="hausschnitt" aria-hidden="true">([\s\S]*?)<\/div><svg[^>]*data-szene="einstieg"/)!;
+    // data-wachstum aus den Daten (Prüfrunde 1 B1-6): der Hausschnitt wächst aus dem Heizkörper
+    expect(WAERMEFELDER.hausschnitt.wachstum).toBe('radial');
+    const feld = html2026.match(/<div class="[^"]*" style="([^"]*)" data-waermefeld="hausschnitt" data-wachstum="radial" aria-hidden="true">([\s\S]*?)<\/div><svg[^>]*data-szene="einstieg"/)!;
     expect(feld, 'Wärmefeld direkt vor der Szene').not.toBeNull();
     // Lage: das Rauminnere in Prozent der Szene (800 × 692)
     const { breite, hoehe } = HAUSSCHNITT_RAHMEN;

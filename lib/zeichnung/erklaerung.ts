@@ -108,7 +108,8 @@ const raumMeter = (einheiten: number) => (einheiten / 100).toLocaleString('de-DE
  * „So verteilt sich die Wärme im Raum“ (E-031): was der Raumschnitt mit dem berechneten Wärmefeld zeigt
  * (lib/zeichnung/szenen/waermefeld.ts, Felder `raum-heizkoerper` und `raum-fussboden`). Nur Physik, keine Temperaturen;
  * jede Aussage prüft lib/zeichnung/__tests__/waermefeld.test.ts am gerechneten Feld (Fahne, Schicht unter der Decke,
- * kühler Boden; Fußbodenheizung gleichmäßiger, am Boden am wärmsten, an der Außenwand kühler).
+ * kühler Boden; Fußbodenheizung gleichmäßiger, am Boden am wärmsten, an der Außenwand kühler; beide Räume auf einer
+ * Skala bei gleicher mittlerer Raumtemperatur, die beiden kräftigsten Stufen nur beim Heizkörper, Prüfrunde 1 B1-1).
  */
 export const WAERMEVERTEILUNG = Object.freeze({
   titel: 'So verteilt sich die Wärme im Raum',
@@ -129,7 +130,8 @@ export const WAERMEVERTEILUNG = Object.freeze({
   hinweis: {
     text:
       `Berechnet für einen Raum von ${raumMeter(RAUM_INNEN.breite)}${NBSP}×${NBSP}${raumMeter(RAUM_INNEN.hoehe)}${NBSP}m im ` +
-      'Schnitt, links die Außenwand: Je kräftiger die Fläche, desto wärmer die Luft.',
+      'Schnitt, links die Außenwand. Beide Räume sind im Mittel gleich warm und auf derselben Skala gezeichnet: Je ' +
+      'kräftiger die Fläche, desto wärmer die Luft. Die kräftigsten Stufen erreicht nur der Heizkörper.',
     quelle: 'zeichnung:waermefeld',
   } satisfies ErklaerSatz,
 });

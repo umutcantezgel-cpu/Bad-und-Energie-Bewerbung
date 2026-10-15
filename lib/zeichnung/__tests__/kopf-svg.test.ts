@@ -11,6 +11,7 @@ import { KOPF_HAUS_VIEWBOX, KOPF_SVG_FARBEN, KOPF_SVG_WAERME, anlagenschemaSvg, 
 import { BUERO_SVG_FARBEN, bueroSzenenDateien, leitstelleSvg } from '../buero/svg';
 import { ANLAGENSCHEMA_PFEIL_MAX, ANLAGENSCHEMA_RAHMEN } from '../szenen/anlagenschema';
 import { WAERMEFELDER } from '../szenen/waermefeld';
+import { WAERME_DATEI_FELDER, waermeBandDateien } from '../waerme/dateien';
 
 const ROOT = path.resolve(__dirname, '../../..');
 const quelle = (datei: string) => readFileSync(path.join(ROOT, datei), 'utf8');
@@ -237,7 +238,12 @@ describe('Zeichnungen des Stellenkopfs als Datei (Prüfung E-029, Runde 3, Leist
     const szenen = bueroSzenenDateien();
     expect(szenen.map((x) => x.art)).toEqual(['wochenplan', 'beleg', 'material', 'ablage']);
     for (const { datei, art } of szenen) expect(datei).toMatch(new RegExp(`^buero-${art}-[0-9a-f]{10}\\.svg$`));
-    const dateien = [...kopf, ...szenen];
+    // Und die Bänder der Vergleichsräume der Wärmepumpen-Seite (lib/zeichnung/waerme/dateien.ts, Prüfrunde 1 C1-6)
+    const baender = waermeBandDateien();
+    expect(baender.map((x) => x.datei.replace(/-[0-9a-f]{10}\.svg$/, ''))).toEqual(
+      WAERME_DATEI_FELDER.flatMap((id) => WAERMEFELDER[id].baender.map((b) => `waerme-${id}-${b.stufe}`)),
+    );
+    const dateien = [...kopf, ...szenen, ...baender];
     for (const { datei, art } of kopf) {
       expect(datei).toMatch(new RegExp(`^${art}-[0-9a-f]{10}\\.svg$`));
       expect(kopfSvgPfad(art)).toBe(`/zeichnung/${datei}`);

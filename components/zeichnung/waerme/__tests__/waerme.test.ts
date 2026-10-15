@@ -11,7 +11,9 @@ import { WAERMEFELDER, type WaermefeldId } from '@/lib/zeichnung/szenen/waermefe
 import { HausschnittKlein } from '../../technik/Hausschnitt';
 import { Raumschnitt } from '../../technik/Raumschnitt';
 import { ABLAUF_BEREICH, kennungenAusserhalb } from '../../__tests__/bereich';
-import { WaermefeldEbenen, WaermefeldStill } from '../Waermefeld';
+import { TOKENS } from '@/lib/tokens';
+import { WAERME_DATEI_FELDER, waermeBandPfad, waermeBandSvg } from '@/lib/zeichnung/waerme/dateien';
+import { WaermefeldDateien, WaermefeldEbenen, WaermefeldStill } from '../Waermefeld';
 
 /**
  * Wärmefeld 2.0 (E-031, Paket W1): Darstellung. Waermefeld.tsx ist der einzige Renderer der Wärme und zeichnet nur die
@@ -40,15 +42,48 @@ function quellen(): string[] {
 }
 
 describe('Wärmefeld: nur aus den Daten (E-031)', () => {
-  it.each(IDS)('%s: Ebenen = Grund-div und vier Band-SVGs mit genau den Pfaden der Daten', (id) => {
+  it.each(IDS)('%s: Ebenen = Grund-div und je Band ein SVG mit genau den Pfaden der Daten', (id) => {
     const m = html(createElement(WaermefeldEbenen, { id, rahmen: { x: 0, y: 0, ...HAUSSCHNITT_RAHMEN } }));
-    const { innen, baender } = WAERMEFELDER[id];
-    expect(m).toMatch(new RegExp(`^<div class="[^"]*" style="[^"]*" data-waermefeld="${id}" aria-hidden="true"><div class="[^"]*" aria-hidden="true" data-band="0"></div>`));
+    const { innen, baender, wachstum } = WAERMEFELDER[id];
+    expect(m).toMatch(
+      new RegExp(`^<div class="[^"]*" style="[^"]*" data-waermefeld="${id}" data-wachstum="${wachstum}" aria-hidden="true"><div class="[^"]*" aria-hidden="true" data-band="0"></div>`),
+    );
     expect([...m.matchAll(/<path d="([^"]+)">/g)].map((x) => x[1])).toEqual(baender.map((b) => b.d));
     expect([...m.matchAll(/viewBox="([^"]+)"/g)].map((x) => x[1])).toEqual(baender.map(() => `${innen.x} ${innen.y} ${innen.breite} ${innen.hoehe}`));
     expect([...m.matchAll(/--start:([\d.]+)/g)].map((x) => Number(x[1]))).toEqual(baender.map((b) => b.startTakte));
-    expect(m.match(/data-motion="waerme-breitet-sich-aus"/g)).toHaveLength(4);
+    expect(m.match(/data-motion="waerme-breitet-sich-aus"/g)).toHaveLength(baender.length);
     expect(m).not.toMatch(/Gradient|<filter|<image|<foreignObject|fill="|stroke="|style="[^"]*(?:color|fill|stroke)/);
+  });
+
+  it.each(WAERME_DATEI_FELDER)('%s als Dateien (Prüfrunde 1 C1-6): je Band ein Bild aus seiner Datei, kein Pfad im Dokument', (id) => {
+    const rahmen = { x: 0, y: 0, ...HAUSSCHNITT_RAHMEN };
+    const m = html(createElement(WaermefeldDateien, { id, rahmen }));
+    const { innen, baender } = WAERMEFELDER[id];
+    // Gleicher Rahmen und gleiche Bewegung wie die Ebenen, nur die Bänder als Bild
+    const ebenen = html(createElement(WaermefeldEbenen, { id, rahmen }));
+    expect(m.slice(0, m.indexOf('<img'))).toBe(ebenen.slice(0, ebenen.indexOf('<svg')));
+    const bilder = [...m.matchAll(/<img ([^>]*)\/>/g)].map((x) => x[1]);
+    expect(bilder).toHaveLength(baender.length);
+    bilder.forEach((attr, i) => {
+      const b = baender[i];
+      expect(attr).toContain(`src="${waermeBandPfad(id, b.stufe)}"`);
+      expect(attr).toContain('alt=""');
+      expect(attr).toContain('loading="lazy"');
+      expect(attr).toContain(`width="${innen.breite}" height="${innen.hoehe}"`);
+      expect(attr).toContain(`data-band="${b.stufe}"`);
+      expect(attr).toContain('data-motion="waerme-breitet-sich-aus"');
+      expect(attr).toContain(`--start:${b.startTakte}`);
+    });
+    expect(m).not.toMatch(/<path|<svg/);
+    for (const b of baender) expect(m).not.toContain(b.d.slice(0, 40));
+    // Die Datei: genau der Pfad der Daten in der Rampenfarbe der Stufe, hell und dunkel, viewBox = Rauminneres
+    for (const b of baender) {
+      const svg = waermeBandSvg(id, b.stufe);
+      expect(svg).toContain(`viewBox="${innen.x} ${innen.y} ${innen.breite} ${innen.hoehe}"`);
+      expect([...svg.matchAll(/<path d="([^"]+)"\/>/g)].map((x) => x[1])).toEqual([b.d]);
+      expect(svg).toContain(`path{fill:${TOKENS.waerme.hell[b.stufe]}}@media screen and (prefers-color-scheme:dark){path{fill:${TOKENS.waerme.dunkel[b.stufe]}}}`);
+      expect(svg).not.toMatch(/Gradient|<filter|<image|<foreignObject|stroke/);
+    }
   });
 
   it('still: Band 0 als Rechteck und die vier Pfade der Daten in einer Zeichnung mit der viewBox des Rauminneren, ohne Bewegung', () => {
@@ -75,11 +110,12 @@ describe('Wärmefeld: nur aus den Daten (E-031)', () => {
       'components/zeichnung/technik/Hausschnitt.tsx',
       'components/zeichnung/technik/Raumschnitt.tsx',
     ]);
-    // Wer die Daten liest (Renderer, Kopfbild-Datei, Teilen-Bild)
+    // Wer die Daten liest (Renderer, Kopfbild-Datei, Teilen-Bild, Banddateien der Vergleichsräume)
     expect(nutzt(/from '(?:\.\/|\.\.\/|@\/lib\/zeichnung\/)szenen\/waermefeld'/)).toEqual([
       'components/zeichnung/waerme/Waermefeld.tsx',
       'lib/seo/og-haus.ts',
       'lib/zeichnung/kopf-svg.ts',
+      'lib/zeichnung/waerme/dateien.ts',
     ]);
     // Wo Raumschnitt und HausschnittKlein stehen: Wärmepumpen-Seite bzw. HausKlein; nie Gerät, Schema oder Lageplan
     expect(nutzt(/<Raumschnitt\b/)).toEqual(['components/themen/WaermepumpenSeite.tsx']);
@@ -133,10 +169,21 @@ describe('Wärmefeld an den Orten (E-031)', () => {
 
   it('Wärmepumpen-Seite: der Vergleich steht in SichtStart, jedes Band liegt in data-ablauf; Sicht-Auftritte höchstens auf der Hälfte der Abschnitte (K-011)', async () => {
     const m = html(await ThemaPage({ params: Promise.resolve({ thema: 'waermepumpen' }) }));
-    expect(m.match(/data-motion="waerme-breitet-sich-aus"/g)).toHaveLength(8);
+    const anzahl = WAERME_DATEI_FELDER.reduce((n, id) => n + WAERMEFELDER[id].baender.length, 0);
+    expect(m.match(/data-motion="waerme-breitet-sich-aus"/g)).toHaveLength(anzahl);
+    // Die Bänder kommen als Dateien, ihre Pfade stehen nicht im Dokument (Prüfrunde 1 C1-6)
+    for (const id of WAERME_DATEI_FELDER) {
+      for (const b of WAERMEFELDER[id].baender) {
+        expect(m).toContain(`src="${waermeBandPfad(id, b.stufe)}"`);
+        expect(m).not.toContain(b.d.slice(0, 40));
+      }
+    }
     expect(kennungenAusserhalb(m, ['waerme-breitet-sich-aus'], ABLAUF_BEREICH)).toEqual([]);
     expect(m).toContain('data-waermefeld="raum-heizkoerper"');
     expect(m).toContain('data-waermefeld="raum-fussboden"');
+    // Neben dem Text untereinander in voller Spaltenbreite, nicht als Daumennagel (Prüfrunde 1 A1-10)
+    const sicht = m.match(/<div class="([^"]*)" data-ablauf="[^"]*"[^>]*>(?:(?!<\/figure>)[\s\S])*data-waermefeld="raum-heizkoerper"/);
+    expect(sicht?.[1].split(' ')).toEqual(expect.arrayContaining(['sm:grid-cols-2', 'lg:grid-cols-1']));
     const abschnitte = m.split(/<section\b/).slice(1);
     const mitSicht = abschnitte.filter((a) => /data-ablauf=/.test(a.split(/<\/section>/)[0]));
     expect(mitSicht.length).toBeGreaterThan(0);

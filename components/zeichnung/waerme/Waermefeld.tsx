@@ -1,6 +1,7 @@
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { cn } from '@/lib/utils/cn';
 import { WAERMEFELDER, type Rechteck, type Waermeband, type WaermefeldId } from '@/lib/zeichnung/szenen/waermefeld';
+import { waermeBandPfad, type WaermeDateiFeld } from '@/lib/zeichnung/waerme/dateien';
 import { WAERMEFELD_AN } from '@/lib/zeichnung/waerme/schalter';
 import w from './waerme.module.css';
 
@@ -32,15 +33,8 @@ export interface WaermefeldEbenenProps {
 export function WaermefeldEbenen({ id, rahmen, className }: WaermefeldEbenenProps) {
   if (!WAERMEFELD_AN) return null;
   const { innen, baender } = WAERMEFELDER[id];
-  const lage: CSSProperties = {
-    left: prozent((innen.x - rahmen.x) / rahmen.breite),
-    top: prozent((innen.y - rahmen.y) / rahmen.hoehe),
-    width: prozent(innen.breite / rahmen.breite),
-    height: prozent(innen.hoehe / rahmen.hoehe),
-  };
   return (
-    <div className={cn(w.feld, className)} style={lage} data-waermefeld={id} aria-hidden="true">
-      <div className={w.grund} aria-hidden="true" data-band="0" />
+    <FeldRahmen id={id} rahmen={rahmen} className={className}>
       {baender.map((b) => (
         <svg
           key={b.stufe}
@@ -50,18 +44,69 @@ export function WaermefeldEbenen({ id, rahmen, className }: WaermefeldEbenenProp
           focusable="false"
           data-band={b.stufe}
           data-motion="waerme-breitet-sich-aus"
-          style={
-            {
-              transformOrigin: `${prozent((b.ursprung.x - innen.x) / innen.breite)} ${prozent((b.ursprung.y - innen.y) / innen.hoehe)}`,
-              '--start': b.startTakte,
-            } as CSSProperties
-          }
+          style={bandStil(innen, b)}
         >
           <path d={b.d} />
         </svg>
       ))}
+    </FeldRahmen>
+  );
+}
+
+/**
+ * Wie WaermefeldEbenen, die Bänder aber als Bilder aus eigenen Dateien (lib/zeichnung/waerme/dateien.ts, Prüfrunde 1
+ * C1-6): für die Vergleichsräume weit unter dem ersten Bildschirm, damit ihre Pfade nicht im Dokument stehen. Die
+ * Bilder laden erst, wenn die Abbildung näherkommt (loading="lazy"), und bewegen sich wie die Ebenen.
+ */
+export function WaermefeldDateien({ id, rahmen, className }: { id: WaermeDateiFeld; rahmen: Rechteck; className?: string }) {
+  if (!WAERMEFELD_AN) return null;
+  const { innen, baender } = WAERMEFELDER[id];
+  return (
+    <FeldRahmen id={id} rahmen={rahmen} className={className}>
+      {baender.map((b) => (
+        // Dekorative Ebenen eines Bilds (Zeichnung darüber trägt den Namen); next/image ist für SVG-Dateien hier nicht nötig
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={b.stufe}
+          className={w.band}
+          src={waermeBandPfad(id, b.stufe)}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          width={innen.breite}
+          height={innen.hoehe}
+          data-band={b.stufe}
+          data-motion="waerme-breitet-sich-aus"
+          style={bandStil(innen, b)}
+        />
+      ))}
+    </FeldRahmen>
+  );
+}
+
+/** Lage des Felds im Rahmen der Zeichnung (Prozent), Band 0 als Fläche; `data-wachstum` aus den Daten. */
+function FeldRahmen({ id, rahmen, className, children }: { id: WaermefeldId; rahmen: Rechteck; className?: string; children: ReactNode }) {
+  const { innen, wachstum } = WAERMEFELDER[id];
+  const lage: CSSProperties = {
+    left: prozent((innen.x - rahmen.x) / rahmen.breite),
+    top: prozent((innen.y - rahmen.y) / rahmen.hoehe),
+    width: prozent(innen.breite / rahmen.breite),
+    height: prozent(innen.hoehe / rahmen.hoehe),
+  };
+  return (
+    <div className={cn(w.feld, className)} style={lage} data-waermefeld={id} data-wachstum={wachstum} aria-hidden="true">
+      <div className={w.grund} aria-hidden="true" data-band="0" />
+      {children}
     </div>
   );
+}
+
+/** Ursprung des Wachstums (transform-origin) und Startverzögerung eines Bands. */
+function bandStil(innen: Rechteck, b: Waermeband): CSSProperties {
+  return {
+    transformOrigin: `${prozent((b.ursprung.x - innen.x) / innen.breite)} ${prozent((b.ursprung.y - innen.y) / innen.hoehe)}`,
+    '--start': b.startTakte,
+  } as CSSProperties;
 }
 
 /**

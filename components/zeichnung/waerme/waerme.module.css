@@ -1,14 +1,14 @@
 /*
  * Wärmefeld 2.0 (E-031, KERN K-010, K-015): die berechneten Bänder (lib/zeichnung/szenen/waermefeld.ts) im
- * Rauminneren einer Zeichnung, gezeichnet von Waermefeld.tsx. Band 0 (der ganze Raum) steht still; die Bänder 1–4
- * wachsen einmal nach √t aus ihrem Ursprung (transform-origin im Markup, Einheiten der Daten), das heißeste zuerst:
+ * Rauminneren einer Zeichnung, gezeichnet von Waermefeld.tsx. Band 0 (der ganze Raum) steht still; die Bänder
+ * (bis zu vier) wachsen einmal nach √t aus ihrem Ursprung (transform-origin im Markup, Einheiten der Daten), das heißeste zuerst:
  * Startverzögerung `--start` (Takte) aus den Daten, Dauer d-4, Kurve linear auf den Stützstellen DIFFUSION_STUETZ.
  *
  * Nur die Wärmerampe --waerme-0…4 (Guard waerme-rollen), keine Verläufe, keine Filter, keine Rohfarben. Grundwerte sind
  * der Endzustand (Füllart backwards): ohne Skript, mit reduzierter Bewegung, nach einer Soft-Navigation und im Druck
  * steht das Feld. Hero: unter `.auftakt` (Kopfskript, Auslöser `nachlauf`, Ende ≤ 1.920 ms); Seiten: im Bereich von
  * SichtStart unter [data-ablauf="laeuft"] (Auslöser `sicht`, Ende ≤ 2.400 ms), vorher unter [data-ablauf="bereit"]
- * unsichtbar. will-change nur, solange es läuft. Wächter: components/zeichnung/waerme/__tests__/.
+ * am Bildschirm unsichtbar. will-change nur, solange es läuft. Wächter: components/zeichnung/waerme/__tests__/.
  */
 
 .feld {
@@ -50,7 +50,9 @@
 }
 
 /* Wachsen nach √t: Maßstab 0,6 → 1 auf den Stützstellen (0 | 0), (6,25 % | ¼), (25 % | ½), (56,25 % | ¾), (100 % | 1);
-   dabei blendet das Band im ersten Viertel ein */
+   dabei blendet das Band im ersten Viertel ein. `wachsen` aus dem Ursprung (Heizkörper), `steigen` nur nach
+   oben aus der Bodenlinie (Fußbodenheizung, data-wachstum="senkrecht": die ganze Fläche heizt zugleich, Prüfrunde 1
+   B1-6); beide auf denselben Stützstellen. */
 @keyframes wachsen {
   from {
     transform: scale(0.6);
@@ -76,19 +78,45 @@
   }
 }
 
-:global(.auftakt) [data-waermefeld="hausschnitt"] .band,
-[data-ablauf="laeuft"] .band {
+@keyframes steigen {
+  from {
+    transform: scaleY(0.6);
+    opacity: 0;
+  }
+
+  6.25% {
+    transform: scaleY(0.7);
+    opacity: 0.5;
+  }
+
+  25% {
+    transform: scaleY(0.8);
+    opacity: 1;
+  }
+
+  56.25% {
+    transform: scaleY(0.9);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* Eine Regel für Hero und Sicht-Bereich (eine Liste ohne :is() schreibt der Build zweimal aus, Budget K-013). Die
+   Fußbodenheizung danach: gleiche Spezifität, spätere Regel gewinnt. */
+:is(:global(.auftakt) [data-waermefeld="hausschnitt"], [data-ablauf="laeuft"]) .band {
   will-change: transform, opacity;
   animation: wachsen var(--d-4) linear calc(var(--takt) * var(--start)) backwards;
 }
 
-/* Bevor der Bereich sichtbar wird (SichtStart): Bänder noch nicht da, Band 0 steht */
-[data-ablauf="bereit"] .band {
-  opacity: 0;
+[data-ablauf="laeuft"] [data-wachstum="senkrecht"] .band {
+  animation: steigen var(--d-4) linear calc(var(--takt) * var(--start)) backwards;
 }
 
-@media print {
+/* Bevor der Bereich sichtbar wird (SichtStart): Bänder noch nicht da, Band 0 steht; im Druck steht das ganze Feld */
+@media screen {
   [data-ablauf="bereit"] .band {
-    opacity: 1;
+    opacity: 0;
   }
 }

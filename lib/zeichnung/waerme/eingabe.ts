@@ -9,10 +9,15 @@
  *   damit in der Ebene (HEIZKOERPER_LAGE). Beide Seitenwände sind Außenwände, darüber die oberste Geschossdecke, unten
  *   die Bodenplatte. Zwei gegenläufige Walzen mit gemeinsamem Aufstrom über der Mitte des Heizkörpers.
  * - Vergleichsraum mit Heizkörper: Flachheizkörper an der Außenwand links (von der Seite geschnitten), rechts eine
- *   Innenwand zum beheizten Nachbarraum (adiabat), eine Walze mit Aufstrom am Heizkörper.
+ *   Innenwand zum beheizten Nachbarraum (adiabat), eine Walze mit Aufstrom am Heizkörper. Die Luft steigt in einer
+ *   dünnen Schicht zwischen Wand und Heizkörper und an seiner Vorderseite auf (GRENZSCHICHT), die kühle Raumluft strömt
+ *   am Boden bis unter den Heizkörper zurück (Prüfrunde 1 B1-2).
+ * - Beide Heizkörper geben nach unten keine Wärme an die Luft ab (Unterseite adiabat): Die erwärmte Luft steigt; ohne
+ *   diese Angabe diffundierte die feste Temperatur der Heizfläche bis auf den Boden darunter.
  * - Vergleichsraum mit Fußbodenheizung: der ganze Boden gibt Wärme ab (Robin-Rand mit θ_F = 0,6, Wärmeübergang am
- *   Fußboden), schwache Konvektion: eine Walze, die Luft sinkt an der kalten Außenwand und steigt an der Innenwand;
- *   über der warmen Fläche mischen kleine Warmluftsäulen die Luft (vierfache Durchmischung).
+ *   Fußboden), schwache Konvektion: eine Walze, die Luft sinkt an der kalten Außenwand und steigt an der Innenwand.
+ *   Die erhöhte Leitfähigkeit über dem Boden (DURCHMISCHUNG) ersetzt den Strahlungsaustausch der warmen Bodenfläche
+ *   mit Wänden und Decke, den das Modell nicht eigens abbildet – eine Kalibrierung ohne Quelle wie KALIBRIERUNG.
  *
  * Ränder: Robin mit h = C · U. U nach dem Referenzgebäude des GEG (Anlage 1): Außenwand 0,28, oberste Geschossdecke
  * 0,20, Bodenplatte 0,35 W/(m²·K), diese mal Temperatur-Korrekturfaktor 0,6 gegen Erdreich (DIN V 4108-6, vereinfacht).
@@ -44,17 +49,43 @@ export const KALIBRIERUNG = 0.01;
  */
 export const PECLET = Object.freeze({ heizkoerper: 16, fussboden: 2 });
 /**
- * Durchmischung der Raumluft (Vielfaches von K): über dem Heizkörper stabil geschichtet (1), über der warmen Bodenfläche
- * vierfach (instabile Schichtung, die Luft wird ständig umgewälzt).
+ * Wirksame Leitfähigkeit der Raumluft (Vielfaches von K). Mit Heizkörper 1. Mit Fußbodenheizung 4: Kalibrierung ohne
+ * Quelle (Prüfrunde 1 B1-4), als Ersatz für den Strahlungsaustausch der großen, wenig warmen Bodenfläche mit Wänden und
+ * Decke – der Robin-Rand mit α = 10,8 W/(m²·K) gibt die ganze Leistung (Konvektion und Strahlung) an die Luft am Boden
+ * ab, ohne diesen Ausgleich stünde eine zu starke Schichtung über dem Boden. Gewählt so, dass der Raum gleichmäßiger
+ * ist als mit Heizkörper, wie es der Strahlungsanteil der Fußbodenheizung bewirkt (ENTSCHEIDUNGEN E-031).
  */
 export const DURCHMISCHUNG = Object.freeze({ heizkoerper: 1, fussboden: 4 });
+/**
+ * Dicke der Aufstromschicht im Vergleichsraum mit Heizkörper (Anteil der Raumbreite, lib/zeichnung/waerme/feld.ts
+ * Walze.grenzschicht): 0,05 × 4,2 m ≈ 0,2 m – Wandabstand (50 mm) und Bautiefe (100 mm) des Heizkörpers samt der
+ * aufsteigenden Schicht davor. Gewählt, nicht gemessen (Prüfrunde 1 B1-2).
+ */
+export const GRENZSCHICHT = 0.05;
 
 const robin = (u: number, bezug = 0): Rand => ({ h: KALIBRIERUNG * u, bezug });
 const ADIABAT: Rand = { h: 0, bezug: 0 };
 
+/**
+ * Skala der Bänder (Prüfrunde 1 B1-1): `eigen` – Schwellen aus den Flächenanteilen des Felds selbst (Hausschnitt);
+ * `vergleich` – die beiden Vergleichsräume stehen auf einer gemeinsamen Skala: gleiche mittlere Raumtemperatur (wie mit
+ * einem Thermostat geregelt) und dieselben Abstände vom Raummittel, nämlich die des Bezugsraums (Heizkörper) bei
+ * 64/36/16/6 % seiner Fläche. Ein Raum bekommt nur die Bänder, die sein Feld erreicht.
+ */
+export type Skala = { art: 'eigen' } | { art: 'vergleich'; bezug: FeldId };
+
+/**
+ * Wie die Bänder wachsen (Darstellung, components/zeichnung/waerme/waerme.module.css): `radial` aus dem Ursprung an der
+ * Oberkante des Heizkörpers; `senkrecht` nur nach oben aus der Bodenlinie – die Fußbodenheizung erwärmt die ganze
+ * Fläche zugleich, die Schichten wachsen nur in die Höhe (Prüfrunde 1 B1-6).
+ */
+export type Wachstum = 'radial' | 'senkrecht';
+
 export interface Feldeingabe {
   id: FeldId;
   innen: Rechteck;
+  skala: Skala;
+  wachstum: Wachstum;
   aufgabe: Feldaufgabe;
   /** Ursprung des Wachstums der Bänder (Mitte der Oberkante des Heizkörpers bzw. Mitte des Bodens). */
   ursprung: P;
@@ -78,9 +109,11 @@ export const FELDEINGABEN: readonly Feldeingabe[] = [
   {
     id: 'hausschnitt',
     innen: HAUS_INNEN,
+    skala: { art: 'eigen' },
+    wachstum: 'radial',
     aufgabe: {
       innen: HAUS_INNEN,
-      heizflaechen: [{ x0: HK.x, y0: HK.y, x1: HK.x + HK.breite, y1: HK.y + HK.hoehe, ...HEIZKOERPER_THETA }],
+      heizflaechen: [{ x0: HK.x, y0: HK.y, x1: HK.x + HK.breite, y1: HK.y + HK.hoehe, ...HEIZKOERPER_THETA, unterseiteAdiabat: true }],
       raender: {
         links: robin(U_WERTE.aussenwand),
         rechts: robin(U_WERTE.aussenwand),
@@ -101,16 +134,18 @@ export const FELDEINGABEN: readonly Feldeingabe[] = [
   {
     id: 'raum-heizkoerper',
     innen: RAUM_INNEN,
+    skala: { art: 'vergleich', bezug: 'raum-heizkoerper' },
+    wachstum: 'radial',
     aufgabe: {
       innen: RAUM_INNEN,
-      heizflaechen: [{ x0: RHK.x, y0: RHK.y, x1: RHK.x + RHK.breite, y1: RHK.y + RHK.hoehe, ...HEIZKOERPER_THETA }],
+      heizflaechen: [{ x0: RHK.x, y0: RHK.y, x1: RHK.x + RHK.breite, y1: RHK.y + RHK.hoehe, ...HEIZKOERPER_THETA, unterseiteAdiabat: true }],
       raender: {
         links: robin(U_WERTE.aussenwand),
         rechts: ADIABAT,
         oben: robin(U_WERTE.decke),
         unten: robin(U_WERTE.bodenplatte * F_ERDREICH),
       },
-      walzen: [{ x0: RAUM_INNEN.x, x1: RAUM_INNEN.x + RAUM_INNEN.breite, aufstrom: 'links' }],
+      walzen: [{ x0: RAUM_INNEN.x, x1: RAUM_INNEN.x + RAUM_INNEN.breite, aufstrom: 'links', grenzschicht: GRENZSCHICHT }],
       peclet: PECLET.heizkoerper,
       durchmischung: DURCHMISCHUNG.heizkoerper,
     },
@@ -121,6 +156,8 @@ export const FELDEINGABEN: readonly Feldeingabe[] = [
   {
     id: 'raum-fussboden',
     innen: RAUM_INNEN,
+    skala: { art: 'vergleich', bezug: 'raum-heizkoerper' },
+    wachstum: 'senkrecht',
     aufgabe: {
       innen: RAUM_INNEN,
       heizflaechen: [],
