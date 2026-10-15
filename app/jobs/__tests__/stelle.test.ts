@@ -114,17 +114,22 @@ describe('Kopf der Stellenseite: Texte und Maße (stelle-text)', () => {
     for (const job of pageJobs) expect(job.summary).toContain(kopfUnterzeile(job));
   });
 
-  it('Zeichnung je Beruf (E-029): Außeneinheit im Kundendienst, Anlagenschema für Anlagenmechaniker und Ausbildung', () => {
+  it('Zeichnung je Beruf (E-029, E-031): Außeneinheit im Kundendienst, Anlagenschema für Anlagenmechaniker und Ausbildung, Leitstelle im Büro', () => {
     const nach = (art: string) => pageJobs.filter((job) => kopfZeichnung(job) === art).map((job) => job.category);
     expect(nach('aussengeraet')).toEqual(['kundendienst']);
     expect(new Set(nach('anlagenschema'))).toEqual(new Set(['anlagenmechaniker', 'ausbildung']));
+    expect(nach('buero')).toEqual(['buero']);
+    expect(kopfZeichnung(buero)).toBe('buero');
     expect(nach('hausschnitt')).not.toContain('kundendienst');
-    for (const job of pageJobs) expect(['aussengeraet', 'anlagenschema', 'hausschnitt']).toContain(kopfZeichnung(job));
+    expect(nach('hausschnitt')).not.toContain('buero');
+    for (const job of pageJobs) expect(['aussengeraet', 'anlagenschema', 'hausschnitt', 'buero']).toContain(kopfZeichnung(job));
   });
 
   it('Icons: Zeichen der eigenen Familie, sonst der Haken', () => {
     expect(vorteilIcon('aboveTariff')).toBe('banknote');
     expect(vorteilIcon('founded1926')).toBe('check');
+    // Vorteile der Bürofachkraft (E-031): das Team mit eigenem Zeichen
+    expect(buero.benefitFactIds.map(vorteilIcon)).toEqual(['check', 'users']);
     expect(paketIcon('Fahrzeug')).toBe('servicefahrzeug');
     expect(paketIcon('Unbekannt')).toBe('check');
   });
@@ -215,9 +220,25 @@ describe('JobHeader (Seitenkopf erzaehl)', () => {
       expect(html, job.id).not.toContain('aria-label="Legende"');
       for (const id of DAUER_IDS) expect(html, job.id).not.toContain(`data-motion="${id}"`);
     }
+    // Bürofachkraft (E-031): die Leitstelle als Datei, dekorativ, verborgen am Handy nicht geladen; kein Hausschnitt
+    {
+      const html = renderToStaticMarkup(createElement(JobHeader, { job: buero }));
+      expect(html).toContain('data-stelle-kopfbild="buero"');
+      expect(html).toContain('data-zeichnung="leitstelle"');
+      const bild = html.match(/<img [^>]*>/g)!.find((tag) => tag.includes(kopfSvgPfad('buero')))!;
+      expect(bild).toMatch(/^<img [^>]*src="\/zeichnung\/buero-[0-9a-f]{10}\.svg"/);
+      expect(bild).toContain('alt=""');
+      expect(bild).toContain('loading="lazy"');
+      expect(bild).toMatch(/width="640" height="400"/);
+      expect(kopfbild(html)).not.toContain('<svg');
+      expect(html).not.toContain(kopfSvgPfad('hausschnitt'));
+      expect(html).not.toContain('data-zeichnung="hausschnitt-klein"');
+      for (const id of DAUER_IDS) expect(html).not.toContain(`data-motion="${id}"`);
+      expect(html).not.toContain('data-motion="buero-ablauf"');
+    }
     // Alle anderen, ausdrücklich der Obermonteur: der kleine Hausschnitt, dekorativ, ohne das alte Haus
     expect(kopfZeichnung(obermonteur)).toBe('hausschnitt');
-    for (const job of [obermonteur, buero, praktikum]) {
+    for (const job of [obermonteur, praktikum]) {
       const html = renderToStaticMarkup(createElement(JobHeader, { job }));
       expect(html, job.id).toContain('data-zeichnung="hausschnitt-klein"');
       // Als Datei, dekorativ (alt leer), verborgen am Handy nicht geladen

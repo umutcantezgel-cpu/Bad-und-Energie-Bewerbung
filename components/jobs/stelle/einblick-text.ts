@@ -21,6 +21,9 @@ import { formatNumber, jobPath } from '@/lib/jobs/format';
 import { getJobById, isJobLive, type Job, type JobId } from '@/lib/jobs/registry';
 import { DISTANCE_BAND_KM } from '@/lib/places/derive';
 import { getHubKreise, getKreisById, getKreisPlaces, getStadtteile } from '@/lib/places/registry';
+import { getThema, themaPath } from '@/lib/themen/registry';
+import { BUERO_SZENEN_TITEL } from '@/lib/themen/text';
+import { BUERO_SZENEN_ARTEN, type BueroSzenenArt } from '@/lib/zeichnung/buero/szenen';
 import { lowerFirst } from '../text';
 
 const NBSP = ' ';
@@ -55,8 +58,17 @@ export interface EinblickOrt {
   mass: boolean;
 }
 
+/**
+ * Büro (E-031): die vier Szenen der Themenseite „Büro und Verwaltung“ als stille Dateien (2 × 2, still im Endzustand,
+ * lazy), je mit ihrem Titel, und der Weg zur Themenseite.
+ */
+export interface EinblickSzenen {
+  bilder: readonly { art: BueroSzenenArt; titel: string }[];
+  link: Verweis;
+}
+
 export interface Einblick {
-  arbeit: { etikett: string; titel: string; einleitung: string; punkte: readonly EinblickPunkt[] };
+  arbeit: { etikett: string; titel: string; einleitung: string; punkte: readonly EinblickPunkt[]; szenen?: EinblickSzenen };
   /** Unterschied zu den Nachbarstellen; null, wenn keine davon gerade live ist. */
   vergleich: { titel: string; teile: readonly Textteil[] } | null;
   gebiet: { etikett: string; titel: string; einleitung: string; orte: readonly EinblickOrt[]; nachsatz: string | null };
@@ -489,6 +501,10 @@ function buero(_job: Job, now: Date): Einblick {
         { titel: 'Material', text: 'Was die Baustellen brauchen, bestellst du beim Großhandel. Kommt die Lieferung, prüfst du sie.' },
         { titel: 'Verwaltung', text: 'Ablage und Post erledigst du, und der Geschäftsführung arbeitest du zu.' },
       ],
+      szenen: {
+        bilder: BUERO_SZENEN_ARTEN.map((art) => ({ art, titel: BUERO_SZENEN_TITEL[art] })),
+        link: { href: themaPath(getThema('buero-und-verwaltung')), label: 'Mehr zu Büro und Verwaltung' },
+      },
     },
     vergleich: teile.length > 0 ? { titel: 'Büro und Baustelle', teile } : null,
     gebiet: {

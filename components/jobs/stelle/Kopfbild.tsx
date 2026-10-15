@@ -6,6 +6,7 @@ import { Aussengeraet } from '@/components/zeichnung/technik/Aussengeraet';
 import t from '@/components/zeichnung/technik/technik.module.css';
 import type { Job } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
+import { LEITSTELLE_RAHMEN } from '@/lib/zeichnung/buero/leitstelle';
 import { KOPF_HAUS_VIEWBOX, kopfSvgPfad } from '@/lib/zeichnung/kopf-svg';
 import { SCHRIFTFELD_SCHEMA, versal } from '@/lib/zeichnung/norm';
 import { ANLAGENSCHEMA_RAHMEN, ANLAGENSCHEMA_SYMBOLE, ANLAGENSCHEMA_TEXTE } from '@/lib/zeichnung/szenen/anlagenschema';
@@ -27,9 +28,11 @@ export const KOPFBILD_GERAET_TEXT = 'Außeneinheit · Maße in mm';
  *   „Anhalten“); auf jeder Breite, am Handy schmaler. Der Block steht dann eine Stufe kleiner darunter.
  * - Anlagenmechaniker und Ausbildung: das Anlagenschema, statisch, beschriftet (Außeneinheit, Inneneinheit, Heizkreise,
  *   Erdreich) mit kurzem Schriftfeld; die Legende steht auf /arbeiten-bei-uns/waermepumpen. Erst ab 64em.
+ * - Bürofachkraft (E-031): die Leitstelle, der Schreibtisch von oben mit Bezugslinien zu Monteuren, Kundendienst,
+ *   Kunden, Großhandel und Lager (dekorativ, wie der Hausschnitt erst ab 64em; Wörter dazu auf der Themenseite).
  * - alle anderen: der kleine Hausschnitt (dekorativ), ebenfalls erst ab 64em. Am Handy bleibt der Knopf im ersten Bild.
  *
- * Anlagenschema und Hausschnitt kommen als SVG-Datei (lib/zeichnung/kopf-svg.ts) per `<img loading="lazy">`: Am Handy
+ * Anlagenschema, Leitstelle und Hausschnitt kommen als SVG-Datei (lib/zeichnung/kopf-svg.ts) per `<img loading="lazy">`: Am Handy
  * ist ihr Behälter verborgen, der Browser lädt sie dann nicht, und das Dokument trägt sie nicht mehr zweimal (HTML und
  * RSC-Nutzlast; Prüfung E-029, Runde 3: Dokument über der Slow-Start-Grenze, LCP +225 ms). Die Beschriftung des Schemas
  * steht als HTML über dem Bild, in der Schrift der Seite und in denselben Größen wie in der Zeichnung.
@@ -37,13 +40,26 @@ export const KOPFBILD_GERAET_TEXT = 'Außeneinheit · Maße in mm';
 export function Kopfbild({ job }: KopfbildProps) {
   const art = kopfZeichnung(job);
   return (
-    <div className={cn(styles.kopfbild, art !== 'hausschnitt' && styles.kopfbildBreit)} data-stelle-kopfbild={art}>
+    <div className={cn(styles.kopfbild, art !== 'hausschnitt' && art !== 'buero' && styles.kopfbildBreit)} data-stelle-kopfbild={art}>
       {art === 'aussengeraet' ? (
         <DauerSteuerung className={styles.kopfGeraet} beschriftung={<span className="text-etikett text-ink-2">{KOPFBILD_GERAET_TEXT}</span>}>
           <Aussengeraet ansicht="vorne" massketten="haupt" bewegt schriftfeld={false} massSchrift={64} />
         </DauerSteuerung>
       ) : null}
       {art === 'anlagenschema' ? <KopfSchema /> : null}
+      {art === 'buero' ? (
+        <div className={styles.haus} data-zeichnung="leitstelle">
+          <Image
+            src={kopfSvgPfad('buero')}
+            alt=""
+            width={LEITSTELLE_RAHMEN.breite}
+            height={LEITSTELLE_RAHMEN.hoehe}
+            loading="lazy"
+            unoptimized
+            className={styles.kopfDatei}
+          />
+        </div>
+      ) : null}
       {art === 'hausschnitt' ? (
         <div className={styles.haus} data-zeichnung="hausschnitt-klein">
           <Image

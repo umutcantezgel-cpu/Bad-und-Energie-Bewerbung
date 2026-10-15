@@ -1,10 +1,13 @@
+import Image from 'next/image';
 import { Icon } from '@/components/icons';
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
 import { TextLink } from '@/components/ui/TextLink';
 import type { Job } from '@/lib/jobs/registry';
 import { PackageList } from '../PackageList';
-import { ARBEITSWEG_LINK, EINBLICK_ANKER, einblick, type Textteil } from './einblick-text';
+import { BUERO_SZENEN } from '@/lib/zeichnung/buero/szenen';
+import { bueroSzenePfad } from '@/lib/zeichnung/buero/svg';
+import { ARBEITSWEG_LINK, EINBLICK_ANKER, einblick, type EinblickSzenen, type Textteil } from './einblick-text';
 
 export interface EinblickProps {
   job: Job;
@@ -26,6 +29,40 @@ function Fliesstext({ teile }: { teile: readonly Textteil[] }) {
         ),
       )}
     </>
+  );
+}
+
+/**
+ * Büro (E-031): die vier Szenen der Themenseite als stille Dateien im Raster 2 × 2 (still im Endzustand, lazy geladen,
+ * nie inline: scripts/qa/check-css-chunks.mjs), je mit Titel, dazu der Weg zur Themenseite. Dekorativ (alt leer): Den
+ * Inhalt sagen die Punkte darüber und die Titel.
+ */
+function Szenen({ szenen }: { szenen: EinblickSzenen }) {
+  return (
+    <div className="flex flex-col gap-4">
+      <ul className="grid grid-cols-2 gap-4 sm:gap-6">
+        {szenen.bilder.map((bild) => (
+          <li key={bild.art}>
+            <figure className="m-0 flex flex-col gap-2" data-zeichnung={`buero-${bild.art}`}>
+              <Image
+                src={bueroSzenePfad(bild.art)}
+                alt=""
+                width={BUERO_SZENEN[bild.art].rahmen.breite}
+                height={BUERO_SZENEN[bild.art].rahmen.hoehe}
+                loading="lazy"
+                unoptimized
+                className="block h-auto w-full"
+              />
+              <figcaption className="text-etikett text-ink-muted">{bild.titel}</figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+      <TextLink href={szenen.link.href} standalone className="self-start">
+        {szenen.link.label}
+        <Icon name="arrow-right" size="sm" className="shrink-0" />
+      </TextLink>
+    </div>
   );
 }
 
@@ -59,6 +96,7 @@ export function Einblick({ job, now }: EinblickProps) {
               </li>
             ))}
           </ul>
+          {arbeit.szenen ? <Szenen szenen={arbeit.szenen} /> : null}
           {vergleich ? (
             <div className="flex flex-col gap-3 rounded-2 border-(length:--m-strich) border-brand bg-surface p-6 sm:p-8">
               <h3 className="text-title-3 text-brand">{vergleich.titel}</h3>
