@@ -126,3 +126,24 @@ describe('Rohrakzent statt harter 3-px-Oberkanten (E-031)', () => {
     expect(kopf).toMatch(/border-radius: var\(--radius-voll\);/);
   });
 });
+
+describe('Rohrklammer zurück an den Abschnittsköpfen (E-031, K-003.2)', () => {
+  it('der Rahmen an der h2: mittig, mindestens zwei Bögen und ein gerades Stück hoch, Breite der Klammer (--a-5)', () => {
+    expect(deklarationen(regel(quelle(ZEICHNUNG_CSS), '.klammerRahmen'))).toEqual({
+      position: 'absolute',
+      top: '50%',
+      left: '0',
+      width: 'var(--a-5)',
+      height: 'max(calc(100% - 0.4em), calc(var(--radius-2) * 2 + var(--a-3)))',
+      transform: 'translateY(-50%)',
+      'pointer-events': 'none',
+    });
+  });
+
+  it('nur wo der Aufrufer sie setzt: Themenabschnitte reichen `klammer` bis an die h2 durch, die Startseite setzt keine', () => {
+    const bausteine = quelle('components/themen/Bausteine.tsx');
+    expect(bausteine).toMatch(/<SectionHeader\s+id=\{titelId\(kopf\.id\)\}\s+eyebrow=\{kopf\.etikett\}\s+klammer=\{klammer\}/);
+    expect(bausteine).toContain('<Kopf kopf={kopf} klammer={klammer} />');
+    for (const datei of dateien('components/home', /\.tsx$/)) expect(quelle(datei), datei).not.toMatch(/<SectionHeader\b[^>]*?\bklammer\b/);
+  });
+});

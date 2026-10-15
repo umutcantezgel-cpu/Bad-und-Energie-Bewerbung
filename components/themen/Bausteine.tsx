@@ -21,13 +21,14 @@ export const titelId = (id: string) => `${id}-titel`;
 /**
  * Abschnittskopf der Themenseiten: SectionHeader der Startseite (Etikett, h2 in Bricolage, Lead), die h2 nach ihrem
  * breitesten Wort auf die Spalte gesetzt („Kündigungsfrist,“ bricht bei 320 px nicht im Wort), wie auf den Ortsseiten.
- * Seit E-029 ohne Rohrklammer: Etikett und h2 tragen den Kopf; `klammer` bleibt für die Aufrufer, wirkt aber nicht.
+ * Mit `klammer` fasst die Rohrklammer die h2 (E-031, K-003.2: zurück an den Abschnittsköpfen).
  */
-export function Kopf({ kopf, className }: { kopf: Kopfzeile; klammer?: boolean; className?: string }) {
+export function Kopf({ kopf, klammer = false, className }: { kopf: Kopfzeile; klammer?: boolean; className?: string }) {
   return (
     <SectionHeader
       id={titelId(kopf.id)}
       eyebrow={kopf.etikett}
+      klammer={klammer}
       className={cn(styles.abschnittskopf, className)}
       title={
         <span className={styles.passend} style={{ '--stueck': breitestesStueckEm(kopf.heading).toFixed(3) } as CSSProperties}>
@@ -61,13 +62,14 @@ export function Abschnitt({
   kopf,
   tone = 'papier',
   trenner,
+  klammer = false,
   children,
   className,
 }: {
   kopf: Kopfzeile;
   tone?: SectionTone;
   trenner?: boolean | string;
-  /** Entfällt mit E-029 (keine Rohrklammer mehr); bleibt für die Aufrufer. */
+  /** Rohrklammer an der h2 (E-031). */
   klammer?: boolean;
   children?: ReactNode;
   className?: string;
@@ -75,7 +77,7 @@ export function Abschnitt({
   return (
     <Section id={kopf.id} tone={tone} className={trenner ? styles.linie : undefined} aria-labelledby={titelId(kopf.id)}>
       <Container className={cn('flex flex-col gap-section-sm', className)}>
-        <Kopf kopf={kopf} />
+        <Kopf kopf={kopf} klammer={klammer} />
         {children}
       </Container>
     </Section>
