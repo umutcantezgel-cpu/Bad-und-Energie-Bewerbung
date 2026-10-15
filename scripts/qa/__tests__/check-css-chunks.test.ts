@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { TECHNIK_BUDGET, modulBytes, pruefeSeiten, stylesheetsOf } from '../check-css-chunks.mjs';
+import { anlagenschemaSvg, hausschnittSvg } from '@/lib/zeichnung/kopf-svg';
+import { MERKMAL_LAENGE, TECHNIK_BUDGET, modulBytes, pruefeKopfzeichnungen, pruefeSeiten, stylesheetsOf } from '../check-css-chunks.mjs';
 
 /** Gebautes CSS in der Form, die Turbopack schreibt: `.<modul>-module__<hash>__<klasse>`. */
 const GLOBAL = '.flex{display:flex}';
@@ -67,5 +68,47 @@ describe('check-css-chunks: CSS-Ketten im Build (Prüfung E-029, Runde 2, Befund
     const gross = `.technik-module__uBmuTa__a{${'x:y;'.repeat(TECHNIK_BUDGET / 4)}}`;
     const fehler = pruefeSeiten([seite('/jobs', ['/gross.css'])], (href: string) => (href === '/gross.css' ? gross : lies(href)));
     expect(fehler).toEqual([`/jobs: ${gross.length} B aus technik/dauer, höchstens ${TECHNIK_BUDGET} B`]);
+  });
+
+  describe('Kopfzeichnungen der Stellen nur als Datei (Prüfung E-029, Runde 3, Leistung)', () => {
+    const dateien = [
+      { datei: 'anlagenschema-0123456789.svg', svg: anlagenschemaSvg() },
+      { datei: 'hausschnitt-abcdef0123.svg', svg: hausschnittSvg() },
+    ];
+    const lang = (svg: string) => [...svg.matchAll(/\sd="([^"]+)"/g)].map((m) => m[1]).find((d) => d.length >= MERKMAL_LAENGE)!;
+    const kopf = (art: string, datei: string, extra = '') =>
+      `<div data-stelle-kopfbild="${art}"><img src="/zeichnung/${datei}" alt=""/></div>${extra}`;
+
+    it('besteht, wenn die Stellen nur auf ihre Datei verweisen', () => {
+      expect(
+        pruefeKopfzeichnungen(
+          [
+            { route: '/jobs/anlagenmechaniker-shk-wetzlar', html: kopf('anlagenschema', dateien[0].datei) },
+            { route: '/jobs/obermonteur-projektleiter-shk-wetzlar', html: kopf('hausschnitt', dateien[1].datei) },
+            // Kundendienst: das Außengerät bleibt inline (am Handy sichtbar)
+            { route: '/jobs/kundendiensttechniker-waermepumpe-wetzlar', html: '<div data-stelle-kopfbild="aussengeraet"><svg></svg></div>' },
+          ],
+          dateien,
+        ),
+      ).toEqual([]);
+    });
+
+    it('fällt durch, wenn die Zeichnung inline steht (Markup oder RSC-Nutzlast) oder die Datei fehlt', () => {
+      // Stand Runde 3: Schema inline und in der RSC-Nutzlast (dort als JSON-Zeichenkette)
+      const inline = `<svg><path d="${lang(dateien[0].svg)}"/></svg><script>self.__next_f.push([1,"\\"d\\":\\"${lang(dateien[0].svg)}\\""])</script>`;
+      expect(pruefeKopfzeichnungen([{ route: '/jobs/ausbildung-anlagenmechaniker-shk-wetzlar', html: kopf('anlagenschema', dateien[0].datei, inline) }], dateien)).toEqual([
+        '/jobs/ausbildung-anlagenmechaniker-shk-wetzlar: die Zeichnung aus anlagenschema-0123456789.svg steht inline im Dokument (HTML oder RSC)',
+      ]);
+      expect(pruefeKopfzeichnungen([{ route: '/jobs/obermonteur-projektleiter-shk-wetzlar', html: '<div data-stelle-kopfbild="hausschnitt"></div>' }], dateien)).toEqual([
+        '/jobs/obermonteur-projektleiter-shk-wetzlar: verweist nicht auf /zeichnung/hausschnitt-abcdef0123.svg',
+      ]);
+      expect(pruefeKopfzeichnungen([{ route: '/jobs/x', html: kopf('hausschnitt', 'x.svg') }], [dateien[0]])).toEqual([
+        '/jobs/x: keine gebaute Datei für hausschnitt',
+        'keine Stellenseite mit Anlagenschema oder Hausschnitt im Kopf geprüft',
+      ]);
+      // Ohne lange Pfade fände die Prüfung nichts: Das fällt selbst durch
+      expect(pruefeKopfzeichnungen([], [{ datei: 'leer-0000000000.svg', svg: '<svg><path d="M0 0H1"/></svg>' }])[0]).toMatch(/kein Pfad ab/);
+      expect(pruefeKopfzeichnungen([], dateien)).toEqual(['keine Stellenseite mit Anlagenschema oder Hausschnitt im Kopf geprüft']);
+    });
   });
 });

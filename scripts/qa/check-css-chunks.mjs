@@ -20,6 +20,10 @@ import { fileURLToPath } from 'node:url';
  *    gemeinsamen Chunk stehen, höchstens TECHNIK_BUDGET Bytes: Startseite, alle Stellenseiten (eine Chunk-Gruppe) und
  *    die Wärmepumpen-Seite brauchen sie, ein eigener Chunk kostete dort eine Anfrage mehr (eine Runde, ~150 ms) für
  *    rund 1,2 kB gzip, die die übrigen Seiten mitladen.
+ * 5. Die Kopfzeichnungen der Stellen, die am Handy verborgen sind (Anlagenschema, kleiner Hausschnitt), stehen nur als
+ *    Datei (/zeichnung/*.svg, lib/zeichnung/kopf-svg.ts) im Dokument, nie inline: weder als Markup noch in der
+ *    RSC-Nutzlast (Prüfung E-029, Runde 3: zweimal im Dokument, über der Slow-Start-Grenze, LCP +225 ms). Erkannt an
+ *    den langen Pfaden der gebauten Dateien; die Stellenseite verweist auf ihre Datei.
  */
 
 const APP_OUTPUT_DIR = path.resolve(process.cwd(), '.next/server/app');
@@ -34,6 +38,10 @@ export const THEMEN_SEITE = /^\/arbeiten-bei-uns(?:\/[^/]+)?$/;
 /** Höchstens so viele Bytes (roh) aus technik.module.css und dauer.module.css auf einer Seite (heute rund 7,2 kB). */
 export const TECHNIK_BUDGET = 8000;
 const UEBERSPRUNGEN = new Set(['/_global-error']);
+/** Gebaute Kopfzeichnungen (Route-Handler app/zeichnung/[datei]): Inhalt in `<datei>.body`. */
+const ZEICHNUNG_DIR = path.join(APP_OUTPUT_DIR, 'zeichnung');
+/** Pfade ab dieser Länge erkennen eine Zeichnung sicher (Schraffur, Leitungen); kürzere kommen auch anderswo vor. */
+export const MERKMAL_LAENGE = 120;
 
 /** Klassen eines CSS-Moduls im gebauten CSS: `.<name>-module__<hash>__<klasse>`. */
 const modulKlasse = (name) => new RegExp(`\\b${name}-module__[A-Za-z0-9_-]{6}__`);
@@ -105,6 +113,38 @@ export function pruefeSeiten(seiten, lies) {
   return fehler;
 }
 
+/**
+ * Prüft die Stellenseiten gegen die gebauten Kopfzeichnungen. `seiten`: [{ route, html }], `dateien`:
+ * [{ datei: 'anlagenschema-<hash>.svg', svg }]. Gibt die Fehler als Liste zurück (leer = bestanden).
+ */
+export function pruefeKopfzeichnungen(seiten, dateien) {
+  const fehler = [];
+  const arten = new Map();
+  for (const { datei, svg } of dateien) {
+    const merkmale = [...svg.matchAll(/\sd="([^"]+)"/g)].map((m) => m[1]).filter((d) => d.length >= MERKMAL_LAENGE);
+    if (merkmale.length === 0) fehler.push(`${datei}: kein Pfad ab ${MERKMAL_LAENGE} Zeichen, die Prüfung fände die Zeichnung nicht`);
+    arten.set(datei.replace(/-[0-9a-f]{10}\.svg$/, ''), { datei, merkmale });
+  }
+  let geprueft = 0;
+  for (const { route, html } of seiten) {
+    if (!/^\/jobs\/[^/]+$/.test(route)) continue;
+    const art = html.match(/data-stelle-kopfbild="(anlagenschema|hausschnitt)"/)?.[1];
+    if (!art) continue;
+    const eigene = arten.get(art);
+    if (!eigene) {
+      fehler.push(`${route}: keine gebaute Datei für ${art}`);
+      continue;
+    }
+    geprueft++;
+    if (!html.includes(`src="/zeichnung/${eigene.datei}"`)) fehler.push(`${route}: verweist nicht auf /zeichnung/${eigene.datei}`);
+    for (const { datei, merkmale } of arten.values()) {
+      if (merkmale.some((d) => html.includes(d))) fehler.push(`${route}: die Zeichnung aus ${datei} steht inline im Dokument (HTML oder RSC)`);
+    }
+  }
+  if (geprueft === 0) fehler.push('keine Stellenseite mit Anlagenschema oder Hausschnitt im Kopf geprüft');
+  return fehler;
+}
+
 function htmlDateien(dir, out = []) {
   for (const eintrag of fs.readdirSync(dir, { withFileTypes: true })) {
     const voll = path.join(dir, eintrag.name);
@@ -124,17 +164,23 @@ export function runCssChunkCheck() {
     console.error('🚨 Kein Build gefunden (.next/server/app). Erst `next build`.');
     process.exit(1);
   }
-  const seiten = htmlDateien(APP_OUTPUT_DIR)
+  const dokumente = htmlDateien(APP_OUTPUT_DIR)
     .map((datei) => ({ route: routeVon(datei), html: fs.readFileSync(datei, 'utf8') }))
     // Vorab gerenderte Weiterleitungen (alte Slugs) tragen kein Stylesheet
-    .filter(({ route, html }) => !UEBERSPRUNGEN.has(route) && /<link\b[^>]*rel="stylesheet"/.test(html))
-    .map(({ route, html }) => ({ route, ...stylesheetsOf(html) }));
+    .filter(({ route, html }) => !UEBERSPRUNGEN.has(route) && /<link\b[^>]*rel="stylesheet"/.test(html));
+  const seiten = dokumente.map(({ route, html }) => ({ route, ...stylesheetsOf(html) }));
   const cache = new Map();
   const lies = (href) => {
     if (!cache.has(href)) cache.set(href, fs.readFileSync(path.join(NEXT_DIR, href.replace(/^\/_next\//, '').replace(/\?.*$/, '')), 'utf8'));
     return cache.get(href);
   };
-  const fehler = pruefeSeiten(seiten, lies);
+  const zeichnungen = fs.existsSync(ZEICHNUNG_DIR)
+    ? fs
+        .readdirSync(ZEICHNUNG_DIR)
+        .filter((name) => name.endsWith('.svg.body'))
+        .map((name) => ({ datei: name.replace(/\.body$/, ''), svg: fs.readFileSync(path.join(ZEICHNUNG_DIR, name), 'utf8') }))
+    : [];
+  const fehler = [...pruefeSeiten(seiten, lies), ...pruefeKopfzeichnungen(dokumente, zeichnungen)];
   if (fehler.length > 0) {
     for (const f of fehler.slice(0, 40)) console.error(`❌ ${f}`);
     if (fehler.length > 40) console.error(`… und ${fehler.length - 40} weitere`);
@@ -147,9 +193,17 @@ export function runCssChunkCheck() {
     const gz = seite.stylesheets.reduce((summe, href) => summe + zlib.gzipSync(lies(href), { level: 9 }).length, 0);
     return `${route} ${seite.stylesheets.length} Stylesheet(s), ${gz} B gzip`;
   };
+  const dokument = (route) => {
+    const seite = dokumente.find((s) => s.route === route);
+    return seite ? `${route} ${zlib.gzipSync(seite.html).length} B gzip` : `${route}: nicht gebaut`;
+  };
   console.log(
     `✅ CSS-Ketten: ${seiten.length} Seiten ohne CSS-Preload, themen.module.css nur auf den Themenseiten, technik/dauer im Budget. ` +
       ['/', '/jobs', '/jobs/anlagenmechaniker-shk-wetzlar', '/einsatzgebiet/herborn', '/arbeiten-bei-uns/waermepumpen'].map(groesse).join(' · '),
+  );
+  console.log(
+    `✅ Kopfzeichnungen der Stellen nur als Datei (${zeichnungen.map((z) => z.datei).join(', ')}). Dokumente: ` +
+      ['/jobs/anlagenmechaniker-shk-wetzlar', '/jobs/ausbildung-anlagenmechaniker-shk-wetzlar', '/jobs/obermonteur-projektleiter-shk-wetzlar'].map(dokument).join(' · '),
   );
 }
 

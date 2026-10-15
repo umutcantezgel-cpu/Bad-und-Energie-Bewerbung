@@ -64,6 +64,74 @@
   }
 }
 
+/* Anlagenschema und Hausschnitt als Datei (lib/zeichnung/kopf-svg.ts, Prüfung E-029, Runde 3): verborgen lädt der
+   Browser das Bild nicht (loading="lazy"). Die Beschriftung des Schemas liegt als HTML darüber, an derselben Stelle
+   und in denselben Größen wie in der Zeichnung (Einheiten des Rahmens 1300 breit, je Breite der Fläche wie
+   technik.module.css `.anlagenBild`: über 40rem 25, darunter 38, unter 26rem 56 Einheiten). */
+.kopfSchema {
+  margin: 0;
+  container-type: inline-size;
+}
+
+.schemaBild {
+  position: relative;
+}
+
+.kopfDatei {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.schemaText {
+  position: absolute;
+  translate: 0 -50%;
+  color: var(--ink-2);
+  font-family: var(--font-mass);
+  font-size: calc(38cqw / 13);
+  font-stretch: 75%;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  /* Halo in der Fläche wie `.halo` der Zeichnung: Linien darunter setzen aus */
+  text-shadow:
+    0 0 2px var(--surface),
+    1px 1px 1px var(--surface),
+    -1px -1px 1px var(--surface),
+    1px -1px 1px var(--surface),
+    -1px 1px 1px var(--surface);
+}
+
+.schemaText[data-anker="middle"] {
+  translate: -50% -50%;
+}
+
+.schemaText[data-anker="end"] {
+  translate: -100% -50%;
+}
+
+.schemaSymbolText {
+  display: none;
+}
+
+@container (min-width: 40rem) {
+  .schemaText {
+    font-size: calc(25cqw / 13);
+  }
+
+  .schemaSymbolText {
+    display: inline;
+  }
+}
+
+@container (max-width: 26rem) {
+  .schemaText {
+    font-size: calc(56cqw / 13);
+    letter-spacing: 0;
+  }
+}
+
 /* ═══ Signaturmoment „Gehalt im Heizkreis“ (KERN K-009): Das Leitungspaar des Kopfs zeichnet sich beim
    Laden einmal zur Bewerbung. Register `erdleitung` (transform, d-2, Verzögerung 5 und 8 Takte, k-wechsel).
    Läuft nur unter der Klasse `auftakt` aus dem Kopfskript; Grundwert ist der Endzustand (Füllart backwards),

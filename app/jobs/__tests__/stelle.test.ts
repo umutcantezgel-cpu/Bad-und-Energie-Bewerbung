@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import { gzipSync } from 'node:zlib';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
@@ -26,6 +27,7 @@ import { ANLAGENSCHEMA_TITEL } from '@/components/zeichnung/technik/Anlagenschem
 import { geraetTitel } from '@/components/zeichnung/technik/Aussengeraet';
 import { DAUER_IDS } from '@/lib/motion/register';
 import { COMPRESS_AW_S } from '@/lib/zeichnung/geraete/compress-aw-s';
+import { kopfSvgPfad } from '@/lib/zeichnung/kopf-svg';
 import { SCHRIFTFELD_SCHEMA } from '@/lib/zeichnung/norm';
 import { FACTS } from '@/lib/content/facts';
 import { PAY_ON_REQUEST, escapeHtml, getJobSections } from '@/lib/jobs/format';
@@ -185,13 +187,30 @@ describe('JobHeader (Seitenkopf erzaehl)', () => {
     expect(kdHtml).toMatch(/data-dauer="aus">[\s\S]*data-motion="rotor-dreht"[\s\S]*Anhalten<\/button>/);
     expect(kdHtml.match(/data-motion="rotor-dreht"/g)).toHaveLength(1);
     expect(kdHtml).not.toMatch(/<canvas|data-zeichnung="waermebild"/);
-    // Anlagenmechaniker und Ausbildung: Anlagenschema statisch und beschriftet, mit kurzem Schriftfeld; ohne Dauerbewegung
+    // Anlagenmechaniker und Ausbildung: Anlagenschema statisch und beschriftet, mit kurzem Schriftfeld; ohne Dauerbewegung.
+    // Als Datei per <img loading="lazy">, nicht inline: Am Handy verborgen lädt der Browser sie nicht, und das Dokument
+    // trägt sie nicht zweimal (HTML und RSC-Nutzlast; Prüfung E-029, Runde 3: Slow-Start-Grenze, LCP)
+    /** Markup der Zeichnung im Kopf: vom Behälter bis zum Ende der Figur (Schema) bzw. ihres Rahmens (Hausschnitt). */
+    const kopfbild = (html: string) => {
+      const start = html.indexOf('data-stelle-kopfbild=');
+      const ende = html.includes('data-stelle-kopfbild="anlagenschema"') ? html.indexOf('</figure>', start) : html.indexOf('</div>', start);
+      expect(start).toBeGreaterThan(-1);
+      expect(ende).toBeGreaterThan(start);
+      return html.slice(start, ende);
+    };
     for (const job of [am, azubi]) {
       const html = renderToStaticMarkup(createElement(JobHeader, { job }));
       expect(html, job.id).toContain('data-stelle-kopfbild="anlagenschema"');
-      expect(html, job.id).toContain(`aria-label="${escapeHtml(ANLAGENSCHEMA_TITEL)}"`);
-      for (const bereich of ['AUSSENEINHEIT', 'INNENEINHEIT', 'HEIZKREISE', 'ERDREICH']) expect(html, job.id).toContain(`>${bereich}</text>`);
+      const bild = html.match(/<img [^>]*>/g)!.find((tag) => tag.includes(kopfSvgPfad('anlagenschema')))!;
+      expect(bild, job.id).toContain(`alt="${escapeHtml(ANLAGENSCHEMA_TITEL)}"`);
+      expect(bild, job.id).toContain('loading="lazy"');
+      expect(bild, job.id).toMatch(/width="1300" height="620"/);
+      expect(kopfbild(html), job.id).not.toContain('<svg');
+      for (const bereich of ['AUSSENEINHEIT', 'INNENEINHEIT', 'HEIZKREISE', 'ERDREICH']) expect(html, job.id).toMatch(new RegExp(`aria-hidden="true">${bereich}</span>`));
       expect(html, job.id).toContain(`>${SCHRIFTFELD_SCHEMA}</span>`);
+      // Der Kopf mit Bild und Beschriftung bleibt klein (gzip; inline waren es rund 2,9 kB nur für das Schema)
+      expect(kopfbild(html).length, job.id).toBeGreaterThan(500);
+      expect(gzipSync(kopfbild(html)).length, job.id).toBeLessThan(1500);
       // Die Legende steht auf der Wärmepumpen-Seite; im Kopf hielte sie den Lohn-Block unter dem ersten Bild
       expect(html, job.id).not.toContain('aria-label="Legende"');
       for (const id of DAUER_IDS) expect(html, job.id).not.toContain(`data-motion="${id}"`);
@@ -201,6 +220,11 @@ describe('JobHeader (Seitenkopf erzaehl)', () => {
     for (const job of [obermonteur, buero, praktikum]) {
       const html = renderToStaticMarkup(createElement(JobHeader, { job }));
       expect(html, job.id).toContain('data-zeichnung="hausschnitt-klein"');
+      // Als Datei, dekorativ (alt leer), verborgen am Handy nicht geladen
+      const bild = html.match(/<img [^>]*>/g)!.find((tag) => tag.includes(kopfSvgPfad('hausschnitt')))!;
+      expect(bild, job.id).toContain('alt=""');
+      expect(bild, job.id).toContain('loading="lazy"');
+      expect(kopfbild(html), job.id).not.toContain('<svg');
       expect(html, job.id).not.toContain('data-zeichnung="haus-klein"');
       expect(html, job.id).not.toContain('data-motion="rotor-dreht"');
     }
