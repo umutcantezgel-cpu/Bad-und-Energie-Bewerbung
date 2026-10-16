@@ -128,6 +128,16 @@ export function gebietEinleitung(jobs: readonly Pick<Job, 'location'>[]): { satz
 }
 
 /**
+ * Die Einleitung des Einsatzgebiets als ein Text (Prüfrunde 4 D4-1): gebietEinleitung, Satz und Hinweis aufs Büro
+ * hintereinander. Dieselbe Einschränkung gilt überall, wo der Gebietssatz neben den live Stellen steht: /jobs, die
+ * Startseite (#einsatzgebiet, components/home/RegionSection.tsx) und llms-full.txt.
+ */
+export function gebietText(jobs: readonly Pick<Job, 'location'>[]): string {
+  const { satz, buero } = gebietEinleitung(jobs);
+  return buero ? `${satz} ${buero}` : satz;
+}
+
+/**
  * Abschnitt Einsatzgebiet (Bestand: REGION.headline als h2, REGION.summary als Einleitung, Weg zur Karte), dazu
  * die Arbeitszeit (alltagWoche), Betrieb und Team (REGION.milestone mit employees15)
  * und die Orte mit Entfernung und Fahrzeit bis Wetzlar (REGION.locations aus lib/data/locations.ts).
