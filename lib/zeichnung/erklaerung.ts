@@ -111,7 +111,9 @@ const raumMeter = (einheiten: number) => (einheiten / 100).toLocaleString('de-DE
  * ohne kühlere darüber, Absinken über die ganze Breite statt an der Gegenwand, Rückströmung am Boden zum Heizkörper,
  * kühler Boden, Prüfrunde 2 B2-1, B2-2; Fußbodenheizung gleichmäßiger, am Boden am wärmsten, an der Außenwand kühler; beide Räume auf einer
  * Skala bei gleicher mittlerer Raumtemperatur, die beiden kräftigsten Stufen nur beim Heizkörper, mit Fußbodenheizung
- * auf weniger als 1 % des Raums, Prüfrunde 1 B1-1 und Prüfrunde 3 B3-1).
+ * auf weniger als 1 % des Raums, Prüfrunde 1 B1-1 und Prüfrunde 3 B3-1). Seit Prüfrunde 4 (B4-1, B4-3) rechnet ein
+ * halbempirisches Raumluftmodell das Feld (Füllkasten nach Baines & Turner, Fahne nach Morton, Taylor & Turner); die
+ * Aussagen gelten unverändert und werden am neuen Feld geprüft.
  */
 export const WAERMEVERTEILUNG = Object.freeze({
   titel: 'So verteilt sich die Wärme im Raum',

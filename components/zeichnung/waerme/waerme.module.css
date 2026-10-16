@@ -1,7 +1,11 @@
 /*
  * Wärmefeld 2.0 (E-031, KERN K-010, K-015): die berechneten Bänder (lib/zeichnung/szenen/waermefeld.ts) im
  * Rauminneren einer Zeichnung, gezeichnet von Waermefeld.tsx. Band 0 (der ganze Raum) steht still; die Bänder
- * (bis zu vier) wachsen einmal nach √t aus ihrem Ursprung (transform-origin im Markup, Einheiten der Daten), das heißeste zuerst:
+ * (bis zu vier) erscheinen einmal nach √t, das heißeste zuerst (Prüfrunde 4 B4-2): Erst wächst die Fahne senkrecht aus
+ * der Oberkante des Heizkörpers nach oben (`wachsen`, transform-origin im Markup, Einheiten der Daten), dann blendet die
+ * Deckenschicht an der Decke ein, die wärmste Schicht zuerst (`einblenden`, data-bewegung aus den Daten); mit
+ * Fußbodenheizung wächst die warme Schicht aus der Bodenlinie, die übrige Luft blendet ein. So liegt in keinem
+ * Zwischenstand kühlere Luft unter der Decke über wärmerer, und keine flache Kante wandert durch den Raum.
  * Startverzögerung `--start` (Takte) aus den Daten, Dauer d-4, Kurve linear auf den Stützstellen DIFFUSION_STUETZ.
  *
  * Nur die Wärmerampe --waerme-0…4 (Guard waerme-rollen), keine Verläufe, keine Filter, keine Rohfarben. Grundwerte sind
@@ -49,36 +53,10 @@
   fill: var(--waerme-4);
 }
 
-/* Wachsen nach √t: Maßstab 0,6 → 1 auf den Stützstellen (0 | 0), (6,25 % | ¼), (25 % | ½), (56,25 % | ¾), (100 % | 1);
-   dabei blendet das Band im ersten Viertel ein. `wachsen` aus dem Ursprung (Heizkörper), `steigen` nur nach
-   oben aus der Bodenlinie (Fußbodenheizung, data-wachstum="senkrecht": die ganze Fläche heizt zugleich, Prüfrunde 1
-   B1-6); beide auf denselben Stützstellen. */
+/* Wachsen nach √t, senkrecht: Maßstab 0,6 → 1 auf den Stützstellen (0 | 0), (6,25 % | ¼), (25 % | ½), (56,25 % | ¾),
+   (100 % | 1); dabei blendet das Band im ersten Viertel ein. Nur scaleY: Ein Band der Deckenschicht bleibt an der Decke
+   (Ursprung dort), die Fahne steht auf der Oberkante des Heizkörpers, die Schichten der Fußbodenheizung auf dem Boden. */
 @keyframes wachsen {
-  from {
-    transform: scale(0.6);
-    opacity: 0;
-  }
-
-  6.25% {
-    transform: scale(0.7);
-    opacity: 0.5;
-  }
-
-  25% {
-    transform: scale(0.8);
-    opacity: 1;
-  }
-
-  56.25% {
-    transform: scale(0.9);
-  }
-
-  to {
-    transform: scale(1);
-  }
-}
-
-@keyframes steigen {
   from {
     transform: scaleY(0.6);
     opacity: 0;
@@ -103,15 +81,38 @@
   }
 }
 
-/* Eine Regel für Hero und Sicht-Bereich (eine Liste ohne :is() schreibt der Build zweimal aus, Budget K-013). Die
-   Fußbodenheizung danach: gleiche Spezifität, spätere Regel gewinnt. */
+/* Einblenden nach √t (Deckenschicht): nur die Deckkraft, auf denselben Stützstellen; das Band bleibt, wo es ist. */
+@keyframes einblenden {
+  from {
+    opacity: 0;
+  }
+
+  6.25% {
+    opacity: 0.25;
+  }
+
+  25% {
+    opacity: 0.5;
+  }
+
+  56.25% {
+    opacity: 0.75;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Eine Regel für Hero und Sicht-Bereich (eine Liste ohne :is() schreibt der Build zweimal aus, Budget K-013); die
+   Deckenschicht danach, mit dem Attribut genauer. */
 :is(:global(.auftakt) [data-waermefeld="hausschnitt"], [data-ablauf="laeuft"]) .band {
   will-change: transform, opacity;
   animation: wachsen var(--d-4) linear calc(var(--takt) * var(--start)) backwards;
 }
 
-[data-ablauf="laeuft"] [data-wachstum="senkrecht"] .band {
-  animation: steigen var(--d-4) linear calc(var(--takt) * var(--start)) backwards;
+:is(:global(.auftakt) [data-waermefeld="hausschnitt"], [data-ablauf="laeuft"]) .band[data-bewegung="einblenden"] {
+  animation: einblenden var(--d-4) linear calc(var(--takt) * var(--start)) backwards;
 }
 
 /* Bevor der Bereich sichtbar wird (SichtStart): Bänder noch nicht da, Band 0 steht; im Druck steht das ganze Feld */

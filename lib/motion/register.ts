@@ -444,19 +444,22 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
   'waerme-breitet-sich-aus': {
     zweck:
       'Die Wärme verteilt sich im Raum (E-031): Die Bänder 1–4 des berechneten Wärmefelds (lib/zeichnung/szenen/' +
-      'waermefeld.ts) wachsen nach √t aus ihrem Ursprung, das heißeste zuerst; Band 0 (der ganze Raum) steht still. ' +
-      'Im Hero als Nachlauf, wenn der Vorlauf den Heizkörper erreicht hat, auf der Wärmepumpen-Seite beim Sichtbarwerden.',
+      'waermefeld.ts) erscheinen nach √t, das heißeste zuerst; Band 0 (der ganze Raum) steht still. Erst steigt die ' +
+      'Fahne senkrecht (scaleY) aus der Oberkante des Heizkörpers, dann blendet die Deckenschicht an Ort und Stelle ein ' +
+      '(nur Deckkraft), in keinem Zwischenstand kühlere über wärmerer Luft (Prüfrunde 4 B4-2); mit Fußbodenheizung ' +
+      'wächst die warme Schicht aus dem Boden. Im Hero als Nachlauf, wenn der Vorlauf den Heizkörper erreicht hat, auf ' +
+      'der Wärmepumpen-Seite beim Sichtbarwerden.',
     ausloeser: ['nachlauf', 'sicht'],
     eigenschaften: ['transform', 'opacity'],
     dauer: ['d-4'],
-    verzoegerungTakte: [0, 6, 7, 7.5, 10, 14, 16.5, 22],
+    verzoegerungTakte: [0, 0.5, 7, 8, 11, 13, 16.5, 22],
     kurve: ['linear'],
     reduziert: 'Endzustand: das Wärmefeld steht.',
     seitenart: 'erzaehlseiten',
     endeMs: 2360,
     fenster: {
-      nachlauf: { verzoegerungTakte: [7, 7.5, 10, 16.5], endeMs: 1920 },
-      sicht: { verzoegerungTakte: [0, 6, 14, 22], endeMs: 2360 },
+      nachlauf: { verzoegerungTakte: [7, 8, 13, 16.5], endeMs: 1920 },
+      sicht: { verzoegerungTakte: [0, 0.5, 11, 22], endeMs: 2360 },
     },
   },
   'buero-ablauf': {

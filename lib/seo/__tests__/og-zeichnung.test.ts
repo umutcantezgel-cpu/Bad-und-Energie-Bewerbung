@@ -22,8 +22,9 @@ import { getThemaPageText } from '@/lib/themen/text';
  */
 const HISTORIE: readonly { stand: string; fingerabdruck: string }[] = [
   { stand: '2026-10-15', fingerabdruck: '0ccbf9ab56f7b4e6' },
-  // Prüfrunde 4 D4-2: die Leitstelle der Büro-Bilder mit den Wörtern an den Zielen
-  { stand: '2026-10-16', fingerabdruck: 'fd1e6346f0c42baa' },
+  // Prüfrunde 4: die Leitstelle der Büro-Bilder mit den Wörtern an den Zielen (D4-2) und das Wärmefeld aus dem
+  // Raumluftmodell (B4-1, B4-3); beide noch nicht veröffentlicht, darum ein gemeinsamer Stand
+  { stand: '2026-10-16', fingerabdruck: '90808bfc0393f702' },
 ];
 
 const ROOT = path.resolve(__dirname, '../../..');

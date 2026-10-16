@@ -1,36 +1,41 @@
 /**
- * Wärmefeld-Löser (E-031, KERN K-010): stationäre und zeitabhängige Wärmeausbreitung im Rauminneren einer Zeichnung.
- * Reiner Rechenkern ohne Bezug zur Szene; die Aufgaben baut lib/zeichnung/waerme/eingabe.ts, das Skript
+ * Raumluftmodell des Wärmefelds (E-031, KERN K-010, Prüfrunde 4): halbempirisch statt gelöst. Das Temperaturfeld im
+ * Rauminneren setzt sich aus belegten Bausteinen der Raumluftströmung zusammen; jeder Baustein ist eine geschlossene
+ * Formel, deren Form aus der Literatur stammt und deren Größen in lib/zeichnung/waerme/eingabe.ts stehen (Quellen dort,
+ * Schätzwerte als Schätzwerte gekennzeichnet). Reiner Rechenkern ohne Bezug zur Szene; das Skript
  * scripts/zeichnung/waermefeld.ts schreibt das Ergebnis nach lib/zeichnung/szenen/waermefeld.ts.
  *
- * Gleichung (θ normiert: 0 außen, 1 Vorlauf an der Oberfläche des Heizkörpers):
+ * Temperaturen in K über der Außentemperatur (T); gezeichnet wird θ = T / spanne (0 außen, 1 Vorlauf). y zeigt nach
+ * unten, z = Höhe über dem Boden, beides in Einheiten der Szene (1 Einheit = 10 mm).
  *
- *     ∂θ/∂t = K' ∇²θ − u·∇θ          stationär: K' ∇²θ − u·∇θ = 0
+ * Bausteine (T = c + Schichtung + Außenwände + Heizfläche; c stellt das Raummittel ein):
+ * 1. Schichtung (Filling Box, Baines & Turner 1969): Eine Auftriebsfahne in einem geschlossenen Raum legt ihre warme
+ *    Luft unter der Decke ab; die Raumluft außerhalb der Fahne ist stabil geschichtet, ihre Isothermen liegen waagerecht
+ *    (waagerechte Dichteunterschiede gleichen Schwereströmungen sofort aus). Hier, nur von der Höhe abhängig: ein
+ *    senkrechter Gradient im Kern, eine glatte Stufe zur warmen Schicht unter der Decke und eine zum kühlen Boden
+ *    (Kaltluftsee).
+ * 2. Auftriebsfahne über dem Heizkörper (Morton, Taylor & Turner 1956; Turner 1973, Kap. 6): Die Halbbreite wächst
+ *    linear mit der Höhe über einem virtuellen Ursprung, b = β·ζ; die Übertemperatur auf der Achse fällt bei der
+ *    ebenen Fahne (Heizkörper als Linienquelle) wie 1/ζ. Seitlich eine Glocke (1 + u²/2)⁻² (wie die Gaußglocke um
+ *    die Achse, mit langsamer auslaufendem Rand, ohne exp); von vorn gesehen reicht sie über die Baulänge. Auf und neben
+ *    dem Heizkörper die Luft seiner Grenzschicht (unten Raumluft, oben Vorlauf); unter ihm keine (die erwärmte Luft
+ *    steigt, Prüfrunde 1 B1-2).
+ * 3. Kalte Außenwand: dünne Fallströmung (Kaltluftabfall, Heiselberg 1994) mit der Oberflächentemperatur der Wand an der
+ *    Wand (Wärmeübergangswiderstand innen R_si, DIN EN ISO 6946), nach unten dicker; am Fuß der Wand breitet sich die
+ *    kalte Luft als Kaltluftsee über den Boden aus.
+ * 4. Fußbodenheizung: schwache Schichtung, am Boden etwas wärmer, nur an der Außenwand kühler.
  *
- * - K' = K · durchmischung: wirksame Leitfähigkeit der Raumluft, K = 1 (Länge in Einheiten der Szene, Zeit in
- *   K-Einheiten). Über einem Heizkörper ist die Luft stabil geschichtet (durchmischung 1), über einer warmen Bodenfläche
- *   steigen überall kleine Warmluftsäulen auf und mischen sie (größer).
- * - u: Konvektion als Stromfunktion von Walzen, je Walze ψ = A · F(ξ) · G(η) (ξ, η: Lage in der Walze, 0…1),
- *   u = ∂ψ/∂y, v = −∂ψ/∂x. Das Feld ist divergenzfrei und senkrecht zu den Wänden null. Ohne `schichten` ist es die
- *   symmetrische Walze F = 4ξ(1−ξ), G = 4η(1−η); ihre größte senkrechte Geschwindigkeit liegt am Aufstrom und beträgt
- *   U₀ = Pe · K / H (H = Raumhöhe), gleich für alle Walzen eines Raums. Mit `schichten` fließt derselbe Volumenstrom in
- *   dünnen Schichten: Fahne, Deckenstrahl, Abstrom und Rückströmung (siehe Walze).
- * - Heizflächen (Heizkörper): feste Temperatur (Dirichlet), oben `oben`, unten `unten`, linear dazwischen; mit
- *   `unterseiteAdiabat` gibt die Unterseite keine Wärme nach unten ab (die erwärmte Luft steigt, Prüfrunde 1 B1-2).
- * - Wände, Decke, Boden: Robin-Bedingung −K' ∂θ/∂n = h (θ − bezug); h = 0 heißt adiabat (Innenwand).
+ * Strömung (nur für die Prüfung der Aussagen im Text): die Kinematik der Filling Box als Stromfunktion – die Fahne
+ * saugt über ihre Höhe Raumluft an (Volumenstrom ∝ Höhe, ebene Fahne), die Luft außerhalb sinkt über die ganze Breite
+ * gleichmäßig, unter der Decke strömt sie von der Fahne weg, am Boden zu ihr hin.
  *
- * - Konvektive Anpassung (Prüfrunde 2 B2-1, `anpassung`): Die Walzen sind fest vorgegeben und kennen keinen Auftrieb.
- *   Wo die Luft oben kühler ist als darunter, mischt sie sich senkrecht stark (siehe Anpassung) – sonst stünde unter der
- *   Decke eine kühlere Schicht über wärmerer Luft, was es in einem beheizten Raum nicht gibt.
+ * Ankunft (Reihenfolge der Bänder): erst steigt die Fahne (Geschwindigkeit der ebenen Fahne unabhängig von der Höhe,
+ * Turner 1973), dann sinkt die erste Front der Deckenschicht, dz/dt = −Q(z)/W (Baines & Turner 1969); mit Q ∝ ζ ist
+ * die Zeit bis zur Höhe z proportional zu ln(ζ_Decke/ζ). Mit Fußbodenheizung steigt die Wärme vom Boden auf.
  *
- * Diskretisierung: Knotengitter mit den Rändern auf Knoten, Differenzen zweiter Ordnung, für die Konvektion das
- * Hybridverfahren (Spalding 1972; Patankar, Numerical Heat Transfer and Fluid Flow, 1980, Kap. 5): zentral, solange die
- * Zell-Péclet-Zahl unter 2 bleibt, darüber stromaufwärts. Robin über Geisterknoten. Stationär direkt gelöst
- * (Gauß-Elimination im Band, Prüfrunde 3 B3-2; vorher Linien-SOR, der in den dünnen, schnellen Schichten divergierte);
- * zeitabhängig explizit (Euler vorwärts) mit stabilem Schritt.
- *
- * Bitgleich in bun (JavaScriptCore) und vitest (V8): nur +, −, ×, ÷ und Vergleiche in fester Reihenfolge, keine
- * Funktionen wie exp, sin, pow, die je Maschine anders runden dürfen (Math.sqrt ist exakt gerundet und erlaubt).
+ * Bitgleich in bun (JavaScriptCore) und vitest (V8): nur +, −, ×, ÷, Math.sqrt und Vergleiche in fester Reihenfolge;
+ * keine Funktionen wie exp, log, sin, pow, die je Maschine anders runden dürfen (der Logarithmus der Ankunftszeit über
+ * wiederholte Quadratwurzeln, siehe ln).
  */
 
 export interface Rechteck {
@@ -38,80 +43,6 @@ export interface Rechteck {
   y: number;
   breite: number;
   hoehe: number;
-}
-
-/** Robin-Rand: −K ∂θ/∂n = h (θ − bezug). */
-export interface Rand {
-  h: number;
-  bezug: number;
-}
-
-/** Heizfläche mit fester Temperatur (Dirichlet), in Einheiten der Szene. */
-export interface Heizflaeche {
-  x0: number;
-  y0: number;
-  x1: number;
-  y1: number;
-  /** θ an der Oberkante (Vorlauf) … */
-  oben: number;
-  /** … und an der Unterkante (abgekühlt). */
-  unten: number;
-  /**
-   * Unterseite ohne Wärmeabgabe an die Luft darunter (Neumann, kein Fluss): Die Luft, die ein Heizkörper erwärmt,
-   * steigt an seiner Vorder- und Oberseite auf; unter ihm strömt die kühle Raumluft vom Boden zu. Ohne diese Angabe
-   * diffundierte die feste Temperatur der Heizfläche auch nach unten bis auf den Boden (Prüfrunde 1 B1-2).
-   */
-  unterseiteAdiabat?: boolean;
-}
-
-/** Konvektionswalze über die ganze Raumhöhe zwischen x0 und x1; `aufstrom`: Seite, an der die Luft steigt. */
-export interface Walze {
-  x0: number;
-  x1: number;
-  aufstrom: 'links' | 'rechts';
-  /**
-   * Walze aus dünnen Schichten (Prüfrunde 3 B3-2): Dicke der Schichten als Anteil der Walzenbreite (aufstrom, abstrom)
-   * bzw. der Raumhöhe (decke, boden). ψ = A · F(ξa) · G(η) mit F = profil(ξa; aufstrom, abstrom) (ξa von der
-   * Aufstromseite) und G = profil(η; decke, boden), siehe profil(). Eine dünne Schicht ist schnell, eine dicke (≥ 1)
-   * verteilt die Strömung über die Walze: Die Luft steigt in einer dünnen Fahne am Heizkörper, breitet sich als
-   * Deckenstrahl unter der Decke aus und sinkt an der kalten Wand (dünner Abstrom) oder im ganzen Raum (dicker Abstrom);
-   * dazwischen bewegt sie sich kaum. Gleicher Volumenstrom wie die symmetrische Walze (größtes F = größtes G = 1).
-   * (Ersetzt die Aufstromschicht `grenzschicht` aus Prüfrunde 1 B1-2: F = (1−ξ)ξ/(ξ+δ) ist der Grenzfall eines sehr
-   * dicken Abstroms.)
-   */
-  schichten?: Readonly<{ aufstrom: number; abstrom: number; decke: number; boden: number }>;
-}
-
-/**
- * Konvektive Anpassung (Prüfrunde 2 B2-1): Ersatz für den Auftrieb, den die fest vorgegebenen Walzen nicht kennen. Wo
- * die Luft oben kühler ist als darunter (instabile Schichtung), mischt sie sich in Wirklichkeit sofort; das Modell gibt
- * jeder solchen senkrechten Verbindung zweier Knoten die (1 + faktor)-fache Leitfähigkeit. Ausgenommen sind die
- * Randschichten an Decke und Boden (`randschicht` Einheiten, die Luft haftet dort an der kühleren bzw. wärmeren Fläche)
- * und Verbindungen zu einer Heizfläche (deren Wärmeabgabe bleibt, wie sie ist).
- * - Stationär: Eine Verbindung, die einmal instabil war, bleibt durchmischt; gerechnet wird, bis keine neue mehr
- *   hinzukommt (die Menge wächst nur, darum endet die Schleife).
- * - Zeitabhängig: je Schritt nach dem Feld des vorigen Schritts.
- */
-export interface Anpassung {
-  faktor: number;
-  randschicht: number;
-}
-
-export interface Feldaufgabe {
-  innen: Rechteck;
-  /**
-   * Wirksame Leitfähigkeit der Raumluft in Vielfachen von K: 1 mit Heizkörper; größer mit Fußbodenheizung als Ersatz
-   * für den Strahlungsaustausch der warmen Bodenfläche, den das Modell nicht eigens abbildet (Kalibrierung ohne Quelle,
-   * lib/zeichnung/waerme/eingabe.ts DURCHMISCHUNG, Prüfrunde 1 B1-4).
-   */
-  durchmischung: number;
-  heizflaechen: readonly Heizflaeche[];
-  raender: Readonly<{ links: Rand; rechts: Rand; oben: Rand; unten: Rand }>;
-  walzen: readonly Walze[];
-  /** Péclet-Zahl Pe = U₀ · H / K (mit K ohne den Faktor `durchmischung`; wirksam ist Pe / durchmischung). */
-  peclet: number;
-  /** Konvektive Anpassung (Ersatz für den Auftrieb) oder ohne. */
-  anpassung?: Anpassung;
 }
 
 /** Knotengitter über dem Rechteck, Ränder auf Knoten; Abstand dx waagerecht, dy senkrecht. */
@@ -124,24 +55,101 @@ export interface Gitter {
   y0: number;
 }
 
-/** Ergebnis eines stationären Laufs. */
+/**
+ * Schichtung der Raumluft außerhalb von Fahne und Wandgrenzschichten (Baustein 1), Temperaturen in K, Längen in
+ * Einheiten, nur von der Höhe z abhängig (waagerechte Isothermen): T = gradient·z
+ * + decke.stufe·S((z − (Höhe − decke.tiefe))/decke.breite) + boden.stufe·(1 − S((z − boden.hoehe)/boden.breite)) mit der
+ * glatten Stufe S (stufe()).
+ */
+export interface Schichtung {
+  /** K je Einheit Höhe; positiv: oben wärmer. */
+  gradient: number;
+  /** Warme Schicht unter der Decke (nur mit Heizkörper). */
+  decke: Readonly<{ stufe: number; tiefe: number; breite: number }> | null;
+  /** Schicht über dem Boden: negativ kühler (Kaltluftsee), positiv wärmer (Fußbodenheizung). */
+  boden: Readonly<{ stufe: number; hoehe: number; breite: number }>;
+}
+
+/** Kalte Außenwand (Baustein 3). */
+export interface Aussenwand {
+  /** x der Wandoberfläche. */
+  x: number;
+  /** In den Raum: +1 (Wand links) bzw. −1 (Wand rechts). */
+  richtung: 1 | -1;
+  /**
+   * Anteil der Temperatur über außen, um den die Wandoberfläche kühler ist als die Raumluft: U · R_si (stationärer
+   * Wärmedurchgang, die Oberfläche liegt um U·R_si·(T_i − T_a) unter der Raumluft).
+   */
+  oberflaeche: number;
+  /** Dicke der Fallströmung am Boden (Einheiten), an der Decke null; 0 = kein Kaltluftabfall. */
+  grenzschicht: number;
+  /** Kaltluftsee am Fuß der Wand: Stufe (K, negativ), Reichweite über den Boden und Höhe (Einheiten). */
+  fuss: Readonly<{ stufe: number; reichweite: number; hoehe: number }>;
+  /** Raumluft nahe der Wand kühler: Stufe (K, negativ) und Reichweite (Einheiten), oder ohne. */
+  naehe: Readonly<{ stufe: number; reichweite: number }> | null;
+}
+
+/** Auftriebsfahne über einem Heizkörper (Baustein 2). */
+export interface Fahne {
+  /** db/dζ (Morton, Taylor & Turner 1956). */
+  ausbreitung: number;
+  /** Halbbreite an der Oberkante (Einheiten); der virtuelle Ursprung liegt halbbreite/ausbreitung darunter. */
+  halbbreite: number;
+  /** Übertemperatur auf der Achse an der Oberkante (K). */
+  uebertemperatur: number;
+  /** x der Achse: an der Wand (Heizkörper von der Seite) oder in der Mitte (Heizkörper von vorn). */
+  achse: number;
+  /** Halbe Länge des Fahnenblatts (Heizkörper von vorn: halbe Baulänge; von der Seite 0). */
+  halbeLaenge: number;
+  /** Von vorn: Anteil der halben Baulänge in der Halbbreite der Glocke (0 … 1). */
+  kern: number;
+  /** Einmischkoeffizient α (Volumenstrom der Fahne je Höhe 2α·w, Ankunft der Front). */
+  einmischung: number;
+}
+
+/** Heizkörper mit fester Oberflächentemperatur (θ oben, unten, linear dazwischen). */
+export interface Heizkoerper {
+  x0: number;
+  y0: number;
+  x1: number;
+  y1: number;
+  oben: number;
+  unten: number;
+  /** Dicke der warmen Grenzschicht an der Oberfläche (Einheiten); unter dem Heizkörper keine. */
+  grenzschicht: number;
+  fahne: Readonly<Fahne>;
+}
+
+export interface Feldaufgabe {
+  innen: Rechteck;
+  /** Vorlauf − außen in K: θ = T / spanne. */
+  spanne: number;
+  /** Mittlere Raumlufttemperatur in K über außen (Thermostat; ohne Heizfläche gemittelt). */
+  mittel: number;
+  schichtung: Readonly<Schichtung>;
+  waende: readonly Readonly<Aussenwand>[];
+  heizkoerper: Readonly<Heizkoerper> | null;
+}
+
+/** Ergebnis auf einem Gitter. */
 export interface Loesung {
   gitter: Gitter;
+  /** θ (0 außen, 1 Vorlauf) je Knoten. */
   theta: Float64Array;
-  /** Zahl der Lösungen (mit konvektiver Anpassung eine je Runde, sonst 1). */
+  /** Konstante c (K) der Schichtung nach der Einstellung des Raummittels. */
+  versatz: number;
+  /** Runden der Einstellung des Raummittels. */
   iterationen: number;
-  /** Größte Abweichung eines Knotens von seiner Gleichung (Maximumnorm, in θ) in der letzten Lösung. */
+  /** Abweichung des Raummittels vom Sollwert nach der letzten Runde (in θ). */
   residuum: number;
 }
 
-/** Wirksame Leitfähigkeit der Raumluft (Einheiten² je Zeiteinheit). */
-export const K = 1;
-/** Konvektive Anpassung: größte Zahl der Runden (Lösen, Mischen). */
-const MAX_RUNDEN = 400;
+/** Runden der Einstellung des Raummittels höchstens. */
+const MAX_RUNDEN = 50;
 
 /**
  * Gitter mit rund `schritt` Einheiten Abstand: so viele Felder, dass sie die Breite und die Höhe genau teilen (2 → 2 × 2,
- * 4 → 4 × 250/63 im Raum von 4,2 × 2,5 m).
+ * 1 → 1 × 1 im Raum von 4,2 × 2,5 m).
  */
 export function gitterFuer(innen: Rechteck, schritt: number): Gitter {
   const felderX = Math.round(innen.breite / schritt);
@@ -149,370 +157,277 @@ export function gitterFuer(innen: Rechteck, schritt: number): Gitter {
   return { nx: felderX + 1, ny: felderY + 1, dx: innen.breite / felderX, dy: innen.hoehe / felderY, x0: innen.x, y0: innen.y };
 }
 
-const profilMax = new Map<string, number>();
-
-/**
- * Profil einer Walze über eine Richtung, x von 0 bis 1: h(x) = x(1−x) / ((x + p)(1 − x + q)), auf das größte h = 1
- * normiert; p und q sind die Dicken der Schichten an den Enden (kleiner = dünner und schneller). Gibt [h(x), h'(x)].
- * Das Maximum sucht eine Dreiteilung mit fester Schrittzahl (h ist eingipflig; nur Grundrechenarten, bitgleich).
- */
-export function profil(x: number, p: number, q: number): [number, number] {
-  const roh = (t: number) => (t * (1 - t)) / ((t + p) * (1 - t + q));
-  const schluessel = `${p}|${q}`;
-  let max = profilMax.get(schluessel);
-  if (max === undefined) {
-    let lo = 0;
-    let hi = 1;
-    for (let n = 0; n < 100; n += 1) {
-      const m1 = lo + (hi - lo) / 3;
-      const m2 = hi - (hi - lo) / 3;
-      if (roh(m1) < roh(m2)) lo = m1;
-      else hi = m2;
-    }
-    max = roh((lo + hi) / 2);
-    profilMax.set(schluessel, max);
-  }
-  const z = x * (1 - x);
-  const n = (x + p) * (1 - x + q);
-  // n' = (1 − x + q) − (x + p)
-  const ableitung = ((1 - 2 * x) * n - z * (1 - x + q - (x + p))) / (n * n);
-  return [z / n / max, ableitung / max];
+/** Glatte Stufe von 0 (u ≤ −1) bis 1 (u ≥ 1): 1/2 + 3u/4 − u³/4, stetig differenzierbar. */
+export function stufe(u: number): number {
+  if (u <= -1) return 0;
+  if (u >= 1) return 1;
+  return 0.5 + 0.75 * u - 0.25 * u * u * u;
 }
 
-/** Geschwindigkeit (u, v) am Punkt (x, y); y zeigt nach unten, v < 0 heißt aufwärts. */
-export function stroemung(aufgabe: Feldaufgabe, x: number, y: number): [number, number] {
-  const { innen, walzen, peclet } = aufgabe;
-  const hoehe = innen.hoehe;
-  const u0 = (peclet * K) / hoehe;
-  for (const w of walzen) {
-    if (x < w.x0 || x > w.x1) continue;
-    const lx = w.x1 - w.x0;
-    const xi = (x - w.x0) / lx;
-    const eta = (y - innen.y) / hoehe;
-    if (w.schichten !== undefined) {
-      // ψ = s · a · F(ξa) · G(η), a = U₀ · lx / 4 (Volumenstrom wie die symmetrische Walze); u = ∂ψ/∂y, v = −∂ψ/∂x
-      const links = w.aufstrom === 'links';
-      const xa = links ? xi : 1 - xi;
-      const [f, fs] = profil(xa, w.schichten.aufstrom, w.schichten.abstrom);
-      const [gw, gs] = profil(eta, w.schichten.decke, w.schichten.boden);
-      const a = (u0 * lx) / 4;
-      const s = links ? 1 : -1;
-      return [(s * a * f * gs) / hoehe, -(a * fs * gw) / lx];
-    }
-    // Aufstrom links: A > 0, rechts: A < 0; |v| am Aufstrom in halber Höhe = U₀
-    const a = ((w.aufstrom === 'links' ? 1 : -1) * u0 * lx) / 4;
-    const u = (a * 16 * xi * (1 - xi) * (1 - 2 * eta)) / hoehe;
-    const v = -(a * 16 * (1 - 2 * xi) * eta * (1 - eta)) / lx;
-    return [u, v];
-  }
-  return [0, 0];
-}
-
-/** Feste Temperatur eines Knotens auf einer Heizfläche oder NaN. */
-function heizwert(aufgabe: Feldaufgabe, x: number, y: number): number {
-  for (const f of aufgabe.heizflaechen) {
-    if (x >= f.x0 && x <= f.x1 && y >= f.y0 && y <= f.y1) return f.oben + ((f.unten - f.oben) * (y - f.y0)) / (f.y1 - f.y0);
-  }
-  return NaN;
-}
-
-/** Liegt über dem Knoten (x, y) die Unterseite einer Heizfläche, die nach unten keine Wärme abgibt? */
-function unterAdiabat(aufgabe: Feldaufgabe, x: number, yOben: number): boolean {
-  return aufgabe.heizflaechen.some((f) => f.unterseiteAdiabat === true && x >= f.x0 && x <= f.x1 && yOben >= f.y0 && yOben <= f.y1);
+/** Kompakte Glocke (1 − u²)² für |u| < 1, sonst 0 (Näherung der Gaußglocke ohne exp). */
+export function glocke(u: number): number {
+  const q = 1 - u * u;
+  return q > 0 ? q * q : 0;
 }
 
 /**
- * Fünf-Punkte-Stern je Knoten: θ_P = cO·θ_O + cW·θ_W + cU·θ_U + cN·θ_N + c0 (O = Osten, U = unten); `diagonale` ist der
- * Faktor vor θ_P in der ungeteilten Gleichung (für den Zeitschritt). Feste Knoten tragen ihren Wert in `fest`.
+ * Glocke mit algebraischem Rand (1 + u²/2)⁻² für das Profil der Fahne: um die Achse wie die Gaußglocke, nach außen
+ * langsamer abfallend, ohne exp. Der Rand lässt die Isothermen der Fahne glatt in die Schichtung auslaufen, statt an
+ * einer festen Breite zu knicken.
  */
-interface Stern {
-  cO: Float64Array;
-  cW: Float64Array;
-  cU: Float64Array;
-  cN: Float64Array;
-  c0: Float64Array;
-  diagonale: Float64Array;
-  fest: Float64Array;
+export function fahnenprofil(u: number): number {
+  const q = 1 + (u * u) / 2;
+  return 1 / (q * q);
+}
+
+/** (1 − u)² für 0 ≤ u < 1, sonst 0: fällt von der Wand bzw. Achse in den Raum ab. */
+function nah(u: number): number {
+  if (u < 0) return 1;
+  return u < 1 ? (1 - u) * (1 - u) : 0;
 }
 
 /**
- * Senkrechte Verbindungen mit konvektiver Anpassung: `gemischt[k]` = 1, wenn die Verbindung von Knoten k zum Knoten
- * darunter (k + nx) durchmischt ist.
+ * Natürlicher Logarithmus für x ≥ 1 nur mit Quadratwurzeln und Grundrechenarten: ln x = 2^n · ln(x^(1/2^n)) mit der
+ * Reihe ln(1 + e) ≈ e − e²/2 + e³/3 für die kleine Restgröße e (n = 16, Fehler unter 1e-12).
  */
-function stern(aufgabe: Feldaufgabe, g: Gitter, gemischt?: Uint8Array): Stern {
-  const n = g.nx * g.ny;
-  const s: Stern = {
-    cO: new Float64Array(n),
-    cW: new Float64Array(n),
-    cU: new Float64Array(n),
-    cN: new Float64Array(n),
-    c0: new Float64Array(n),
-    diagonale: new Float64Array(n),
-    fest: new Float64Array(n).fill(NaN),
-  };
-  const { links, rechts, oben, unten } = aufgabe.raender;
-  const { dx, dy } = g;
-  const kr = K * aufgabe.durchmischung;
-  // Gleichung mal dx²/K: waagerecht Gewicht 1, senkrecht r = dx²/dy²
-  const r = (dx * dx) / (dy * dy);
-  for (let j = 0; j < g.ny; j += 1) {
-    for (let i = 0; i < g.nx; i += 1) {
-      const k = j * g.nx + i;
-      const x = g.x0 + i * dx;
-      const y = g.y0 + j * dy;
-      const fest = heizwert(aufgabe, x, y);
-      if (!Number.isNaN(fest)) {
-        s.fest[k] = fest;
-        continue;
-      }
-      const [u, v] = stroemung(aufgabe, x, y);
-      const a = (u * dx) / (2 * kr);
-      const b = (v * dy) / (2 * kr);
-      // Gewichte der Nachbarn in K'∇²θ − u·∇θ (mal dx²/K', K' = K · durchmischung): Osten 1 − a, Westen 1 + a, unten
-      // r (1 − b), oben r (1 + b)
-      // Konvektive Anpassung: senkrechte Verbindung nach oben (mN) und nach unten (mU) mit (1 + faktor)-facher Leitfähigkeit
-      const faktor = aufgabe.anpassung?.faktor ?? 0;
-      const mN = gemischt && j > 0 && gemischt[k - g.nx] ? 1 + faktor : 1;
-      const mU = gemischt && j < g.ny - 1 && gemischt[k] ? 1 + faktor : 1;
-      // Hybridverfahren: zentral, solange die Zell-Péclet-Zahl unter 2 bleibt; darüber stromaufwärts ohne Leitung (die
-      // Gewichte bleiben nie negativ, der Stern diagonal dominant)
-      let cO = Math.max(0, 1 - a, -2 * a);
-      let cW = Math.max(0, 1 + a, 2 * a);
-      let cU = Math.max(0, r * (mU - b), -2 * r * b);
-      let cN = Math.max(0, r * (mN + b), 2 * r * b);
-      let diag = cO + cW + cU + cN;
-      let c0 = 0;
-      // Geisterknoten außerhalb: θ_G = θ_innen − β (θ_P − bezug), β = 2 d h / K' (d = dx bzw. dy); das Gewicht des Geists
-      // geht auf den gespiegelten Nachbarn, β auf die Diagonale und die Konstante
-      if (i === 0) {
-        const beta = (2 * dx * links.h) / kr;
-        cO += cW;
-        diag += cW * beta;
-        c0 += cW * beta * links.bezug;
-        cW = 0;
-      }
-      if (i === g.nx - 1) {
-        const beta = (2 * dx * rechts.h) / kr;
-        cW += cO;
-        diag += cO * beta;
-        c0 += cO * beta * rechts.bezug;
-        cO = 0;
-      }
-      if (j === 0) {
-        const beta = (2 * dy * oben.h) / kr;
-        cU += cN;
-        diag += cN * beta;
-        c0 += cN * beta * oben.bezug;
-        cN = 0;
-      } else if (unterAdiabat(aufgabe, x, y - dy)) {
-        // Unterseite eines Heizkörpers darüber: kein Fluss (gespiegelter Nachbar wie an einer adiabaten Wand)
-        cU += cN;
-        cN = 0;
-      }
-      if (j === g.ny - 1) {
-        const beta = (2 * dy * unten.h) / kr;
-        cN += cU;
-        diag += cU * beta;
-        c0 += cU * beta * unten.bezug;
-        cU = 0;
-      }
-      s.cO[k] = cO / diag;
-      s.cW[k] = cW / diag;
-      s.cU[k] = cU / diag;
-      s.cN[k] = cN / diag;
-      s.c0[k] = c0 / diag;
-      s.diagonale[k] = diag;
-    }
-  }
-  return s;
+export function ln(x: number): number {
+  if (!(x >= 1)) throw new Error(`waerme/feld: ln nur für x ≥ 1 (${x})`);
+  let y = x;
+  for (let k = 0; k < 16; k += 1) y = Math.sqrt(y);
+  const e = y - 1;
+  return 65536 * (e - (e * e) / 2 + (e * e * e) / 3);
 }
 
-/**
- * Darf die senkrechte Verbindung von Knoten k (Zeile j) zum Knoten darunter durchmischt werden? Nicht in den
- * Randschichten an Decke und Boden und nicht an einer Heizfläche.
- */
-function mischbar(s: Stern, g: Gitter, randschicht: number, k: number, j: number): boolean {
-  if (!Number.isNaN(s.fest[k]) || !Number.isNaN(s.fest[k + g.nx])) return false;
-  return j * g.dy >= randschicht && (g.ny - 2 - j) * g.dy >= randschicht;
+/** Höhe über dem Boden. */
+const hoehe = (a: Feldaufgabe, y: number) => a.innen.y + a.innen.hoehe - y;
+
+/** Liegt (x, y) auf dem Heizkörper (feste Oberflächentemperatur, keine Raumluft)? */
+export function aufHeizkoerper(a: Feldaufgabe, x: number, y: number): boolean {
+  const h = a.heizkoerper;
+  return h !== null && x >= h.x0 && x <= h.x1 && y >= h.y0 && y <= h.y1;
 }
 
-/**
- * Markiert instabile senkrechte Verbindungen (oben kühler als unten) in `gemischt` und gibt die Zahl der neu markierten
- * zurück (markierte bleiben markiert).
- */
-function markiereInstabil(s: Stern, g: Gitter, randschicht: number, t: Float64Array, gemischt: Uint8Array): number {
-  let neu = 0;
-  for (let j = 0; j < g.ny - 1; j += 1) {
-    for (let i = 0; i < g.nx; i += 1) {
-      const k = j * g.nx + i;
-      if (gemischt[k] === 1 || !mischbar(s, g, randschicht, k, j)) continue;
-      if (t[k] < t[k + g.nx]) {
-        gemischt[k] = 1;
-        neu += 1;
-      }
-    }
-  }
-  return neu;
+/** Oberflächentemperatur des Heizkörpers in der Höhe y (θ). */
+function oberflaeche(h: Heizkoerper, y: number): number {
+  const yy = y < h.y0 ? h.y0 : y > h.y1 ? h.y1 : y;
+  return h.oben + ((h.unten - h.oben) * (yy - h.y0)) / (h.y1 - h.y0);
 }
 
-/** Gauß-Seidel-Wert eines freien Knotens (Nachbarn außerhalb haben Gewicht 0). */
-function gs(s: Stern, t: Float64Array, g: Gitter, k: number, i: number, j: number): number {
-  let w = s.c0[k];
-  if (i < g.nx - 1) w += s.cO[k] * t[k + 1];
-  if (i > 0) w += s.cW[k] * t[k - 1];
-  if (j < g.ny - 1) w += s.cU[k] * t[k + g.nx];
-  if (j > 0) w += s.cN[k] * t[k - g.nx];
-  return w;
+/** Waagerechter Abstand von der Achse der Fahne (ohne Heizkörper 0). */
+function achsabstand(a: Feldaufgabe, x: number): number {
+  const f = a.heizkoerper?.fahne;
+  if (!f) return 0;
+  return x < f.achse ? f.achse - x : x - f.achse;
 }
 
-function startfeld(s: Stern): Float64Array {
-  const t = new Float64Array(s.fest.length);
-  for (let k = 0; k < t.length; k += 1) t[k] = Number.isNaN(s.fest[k]) ? 0 : s.fest[k];
+
+/** Laufkoordinate ζ der Fahne über ihrem virtuellen Ursprung (Einheiten) in der Höhe y über der Oberkante. */
+function zeta(h: Heizkoerper, y: number): number {
+  const zeta0 = h.fahne.halbbreite / h.fahne.ausbreitung;
+  return (y < h.y0 ? h.y0 - y : 0) + zeta0;
+}
+
+/** Schichtung (Baustein 1) in K ohne den Versatz c. */
+function schichtung(a: Feldaufgabe, z: number): number {
+  const s = a.schichtung;
+  const b = s.boden;
+  let t = s.gradient * z + b.stufe * (1 - stufe((z - b.hoehe) / b.breite));
+  if (s.decke) t += s.decke.stufe * stufe((z - (a.innen.hoehe - s.decke.tiefe)) / s.decke.breite);
   return t;
 }
 
-/** Größte Abweichung eines freien Knotens von seiner Gleichung. */
-function rest(s: Stern, t: Float64Array, g: Gitter): number {
-  let max = 0;
-  for (let j = 0; j < g.ny; j += 1) {
-    for (let i = 0; i < g.nx; i += 1) {
-      const k = j * g.nx + i;
-      if (!Number.isNaN(s.fest[k])) continue;
-      const r = gs(s, t, g, k, i, j) - t[k];
-      const betrag = r < 0 ? -r : r;
-      if (betrag > max) max = betrag;
-    }
-  }
-  return max;
+/** Abstand des Punkts vom Heizkörper (0 auf ihm). */
+function abstandHeizkoerper(h: Heizkoerper, x: number, y: number): number {
+  const ex = x < h.x0 ? h.x0 - x : x > h.x1 ? x - h.x1 : 0;
+  const ey = y < h.y0 ? h.y0 - y : y > h.y1 ? y - h.y1 : 0;
+  return Math.sqrt(ex * ex + ey * ey);
 }
 
 /**
- * Stationäres Feld auf einem Gitter mit Schritt `schritt` (direkt gelöst). Mit konvektiver Anpassung: lösen, instabile
- * Verbindungen mischen, neu lösen, bis keine neue hinzukommt; `iterationen` zählt die Lösungen.
+ * Luft in der Grenzschicht des Heizkörpers in der Höhe y (K über außen), bei der Raumluft t daneben: An der Unterkante
+ * tritt Raumluft ein, an der Oberkante ist sie so warm wie die Oberfläche (Vorlauf); dazwischen linear. Auf der Fläche
+ * des Heizkörpers zeigt das Feld diese Luft (die Bänder zeigen Luft, der Heizkörper ist darüber gezeichnet).
  */
-export function loeseStationaer(aufgabe: Feldaufgabe, schritt: number): Loesung {
-  const g = gitterFuer(aufgabe.innen, schritt);
-  const anpassung = aufgabe.anpassung;
-  const gemischt = anpassung ? new Uint8Array(g.nx * g.ny) : undefined;
-  let s = stern(aufgabe, g, gemischt);
-  let t = loeseDirekt(s, g);
+function grenzschichtluft(a: Feldaufgabe, h: Heizkoerper, y: number, t: number): number {
+  const yy = y < h.y0 ? h.y0 : y > h.y1 ? h.y1 : y;
+  return t + (oberflaeche(h, yy) * a.spanne - t) * ((h.y1 - yy) / (h.y1 - h.y0));
+}
+
+/** Temperatur in K über außen am Punkt (x, y) mit dem Versatz c (auf dem Heizkörper: die Luft seiner Grenzschicht). */
+export function temperatur(a: Feldaufgabe, x: number, y: number, c: number): number {
+  const h = a.heizkoerper;
+  const z = hoehe(a, y);
+  const H = a.innen.hoehe;
+  // 1. Schichtung
+  let t = c + schichtung(a, z);
+  // 3. Außenwände: kühlere Luft nahe der Wand, Kaltluftsee am Fuß, Fallströmung an der Wand
+  for (const w of a.waende) {
+    const d = (x - w.x) * w.richtung;
+    if (w.naehe) t += w.naehe.stufe * nah(d / w.naehe.reichweite);
+    t += w.fuss.stufe * nah(d / w.fuss.reichweite) * (1 - stufe((z - w.fuss.hoehe) / w.fuss.hoehe));
+    if (w.grenzschicht > 0) {
+      // An der Wand selbst immer die Oberflächentemperatur, auch in der Ecke unter der Decke (dort ist die Schicht null dick)
+      const dicke = w.grenzschicht * Math.sqrt(Math.sqrt(z < H ? (H - z) / H : 0));
+      const anteil = d <= 0 ? 1 : dicke > 0 ? glocke(d / dicke) : 0;
+      t -= w.oberflaeche * t * anteil;
+    }
+  }
+  // 2. Heizkörper: Luft seiner Grenzschicht auf ihm und daneben (nicht darunter: die Unterseite gibt keine Wärme nach
+  // unten ab), Fahne über der Oberkante
+  if (h) {
+    if (aufHeizkoerper(a, x, y)) return grenzschichtluft(a, h, y, t);
+    let zuschlag = 0;
+    if (y <= h.y1) zuschlag = (grenzschichtluft(a, h, y, t) - t) * fahnenprofil(abstandHeizkoerper(h, x, y) / h.grenzschicht);
+    const fahne = fahnenzuschlag(a, x, y);
+    if (fahne > zuschlag) zuschlag = fahne;
+    if (zuschlag > 0) t += zuschlag;
+  }
+  return t;
+}
+
+/** Übertemperatur der Fahne (Baustein 2, ohne die Grenzschicht am Heizkörper) am Punkt (x, y) in K; 0 unter der Oberkante. */
+export function fahnenzuschlag(a: Feldaufgabe, x: number, y: number): number {
+  const h = a.heizkoerper;
+  if (!h || y >= h.y0) return 0;
+  const f = h.fahne;
+  return ((f.uebertemperatur * (f.halbbreite / f.ausbreitung)) / zeta(h, y)) * fahnenprofil(achsabstand(a, x) / halbbreite(h, y));
+}
+
+/** Feld θ auf dem Gitter für den Versatz c. */
+function abtasten(a: Feldaufgabe, g: Gitter, c: number): Float64Array {
+  const theta = new Float64Array(g.nx * g.ny);
+  for (let j = 0; j < g.ny; j += 1) {
+    for (let i = 0; i < g.nx; i += 1) theta[j * g.nx + i] = temperatur(a, g.x0 + i * g.dx, g.y0 + j * g.dy, c) / a.spanne;
+  }
+  return theta;
+}
+
+/**
+ * Gehört (x, y) zur Raumluft, über die das Raummittel gebildet wird? Alle Luft außer dem Heizkörper, seiner Grenzschicht
+ * und der Fahne (im Raum ein dünnes Blatt über dem Heizkörper, im Schnitt aber der Länge nach angeschnitten; ein
+ * Thermostat regelt die Raumluft, nicht die Fahne).
+ */
+export function inRaumluft(a: Feldaufgabe, x: number, y: number): boolean {
+  return !aufHeizkoerper(a, x, y) && !inFahne(a, x, y);
+}
+
+/**
+ * Liegt (x, y) in der Fahne (bis zu ihrem Rand) oder in der Grenzschicht des Heizkörpers (bis zum Dreifachen ihrer
+ * Dicke), nicht unter ihm?
+ */
+export function inFahne(a: Feldaufgabe, x: number, y: number): boolean {
+  const h = a.heizkoerper;
+  if (!h || aufHeizkoerper(a, x, y) || y > h.y1) return false;
+  return achsabstand(a, x) <= fahnenrand(h, y) || abstandHeizkoerper(h, x, y) <= 3 * h.grenzschicht;
+}
+
+/** Mittel von θ über die Knoten der Raumluft (inRaumluft). */
+export function luftmittel(a: Feldaufgabe, g: Gitter, theta: Float64Array): number {
+  let summe = 0;
+  let n = 0;
+  for (let j = 0; j < g.ny; j += 1) {
+    for (let i = 0; i < g.nx; i += 1) {
+      if (!inRaumluft(a, g.x0 + i * g.dx, g.y0 + j * g.dy)) continue;
+      summe += theta[j * g.nx + i];
+      n += 1;
+    }
+  }
+  return summe / n;
+}
+
+/**
+ * Feld auf dem Gitter mit Schritt `schritt`; der Versatz c stellt das Mittel der Raumluft auf `mittel` ein (wie ein
+ * Thermostat). Das Mittel hängt fast linear von c ab (die Wandgrenzschicht ist ein Anteil der Temperatur), darum
+ * c ← c + Abweichung, bis sie unter 1e-12 liegt.
+ */
+export function rechneFeld(a: Feldaufgabe, schritt: number): Loesung {
+  const g = gitterFuer(a.innen, schritt);
+  const soll = a.mittel / a.spanne;
+  let c = a.mittel;
+  let theta = abtasten(a, g, c);
+  let abweichung = soll - luftmittel(a, g, theta);
   let runden = 1;
-  while (anpassung && gemischt) {
-    const neu = markiereInstabil(s, g, anpassung.randschicht, t, gemischt);
-    if (neu === 0) break;
-    if (runden >= MAX_RUNDEN) throw new Error(`waerme/feld: konvektive Anpassung nach ${runden} Runden nicht abgeschlossen (${neu} neu)`);
-    s = stern(aufgabe, g, gemischt);
-    t = loeseDirekt(s, g);
+  while (Math.abs(abweichung) > 1e-12) {
+    if (runden >= MAX_RUNDEN) throw new Error(`waerme/feld: Raummittel nach ${runden} Runden nicht eingestellt (${abweichung})`);
+    c += abweichung * a.spanne;
+    theta = abtasten(a, g, c);
+    abweichung = soll - luftmittel(a, g, theta);
     runden += 1;
   }
-  return { gitter: g, theta: t, iterationen: runden, residuum: rest(s, t, g) };
+  return { gitter: g, theta, versatz: c, iterationen: runden, residuum: Math.abs(abweichung) };
 }
 
 /**
- * Löst das Gleichungssystem des Sterns direkt (Gauß-Elimination im Band ohne Pivotsuche, Prüfrunde 3 B3-2): Die
- * Unbekannten laufen spaltenweise (p = i · ny + j), senkrechte Nachbarn liegen bei p ± 1, waagerechte bei p ± ny; das
- * Band ist ny breit, und die Auffüllung bleibt darin. Feste Knoten stehen als Zeile θ_p = fest im System. Die Matrix
- * ist diagonal dominant (Hybridverfahren, Robin-Ränder, Heizflächen fest), darum braucht die Elimination keine
- * Pivotsuche. Anders als ein iteratives Verfahren hängt das Ergebnis nicht von Überrelaxation und Toleranz ab; es
- * rechnet auch dort, wo SOR bei schneller Strömung in dünnen Schichten divergierte.
+ * Halbbreite der Fahne in der Höhe y (Einheiten von der Achse): b = β·ζ (Morton, Taylor & Turner 1956); von vorn
+ * gesehen dazu `kern` × die halbe Baulänge (eine Glocke über die ganze Länge, in der Mitte am wärmsten, an den Enden
+ * mischt sich Raumluft ein). Unter der Oberkante wie an der Oberkante. Die Breite wächst linear mit der Höhe.
  */
-function loeseDirekt(s: Stern, g: Gitter): Float64Array {
-  const { nx, ny } = g;
-  const n = nx * ny;
-  const b = ny;
-  const w = 2 * b + 1;
-  const a = new Float64Array(n * w);
-  const rhs = new Float64Array(n);
-  // Eintrag (Zeile p, Spalte c) bei p · w + c − p + b
-  for (let i = 0; i < nx; i += 1) {
-    for (let j = 0; j < ny; j += 1) {
-      const p = i * ny + j;
-      const k = j * nx + i;
-      const d = p * w + b;
-      a[d] = 1;
-      if (!Number.isNaN(s.fest[k])) {
-        rhs[p] = s.fest[k];
-        continue;
-      }
-      rhs[p] = s.c0[k];
-      if (j > 0) a[d - 1] = -s.cN[k];
-      if (j < ny - 1) a[d + 1] = -s.cU[k];
-      if (i > 0) a[d - b] = -s.cW[k];
-      if (i < nx - 1) a[d + b] = -s.cO[k];
-    }
-  }
-  for (let p = 0; p < n; p += 1) {
-    const zeileP = p * w - p + b;
-    const pivot = a[zeileP + p];
-    const ende = p + b < n - 1 ? p + b : n - 1;
-    for (let r = p + 1; r <= ende; r += 1) {
-      const zeileR = r * w - r + b;
-      const f = a[zeileR + p] / pivot;
-      if (f === 0) continue;
-      for (let c = p + 1; c <= ende; c += 1) a[zeileR + c] -= f * a[zeileP + c];
-      rhs[r] -= f * rhs[p];
-    }
-  }
-  const x = new Float64Array(n);
-  for (let p = n - 1; p >= 0; p -= 1) {
-    const zeileP = p * w - p + b;
-    const ende = p + b < n - 1 ? p + b : n - 1;
-    let summe = rhs[p];
-    for (let c = p + 1; c <= ende; c += 1) summe -= a[zeileP + c] * x[c];
-    x[p] = summe / a[zeileP + p];
-  }
-  const t = new Float64Array(n);
-  for (let i = 0; i < nx; i += 1) for (let j = 0; j < ny; j += 1) t[j * nx + i] = x[i * ny + j];
-  return t;
+export function halbbreite(h: Heizkoerper, y: number): number {
+  return h.fahne.kern * h.fahne.halbeLaenge + h.fahne.ausbreitung * zeta(h, y);
+}
+
+/** Rand der Fahne (Einheiten von der Achse) in der Höhe y: die doppelte Halbbreite; dort ist die Übertemperatur auf ein Neuntel gefallen. */
+export function fahnenrand(h: Heizkoerper, y: number): number {
+  return 2 * halbbreite(h, y);
 }
 
 /**
- * Zeitabhängiger Lauf ab θ = 0 im ganzen Raum, die Heizflächen und Ränder ab t = 0 eingeschaltet. Ruft `beobachten`
- * nach jedem Schritt mit Zeit und Feld; liefert `true` zurück, endet der Lauf. Schritt: 90 % der Stabilitätsgrenze
- * des expliziten Verfahrens.
+ * Stromfunktion der Filling Box (Volumenstrom je Tiefe, Vorzeichen: u = ∂ψ/∂y, v = −∂ψ/∂x, y nach unten). Die Fahne
+ * führt Q(z) = 2α·w·z nach oben (ebene Fahne: linear in der Höhe; w = 1, nur Verhältnisse zählen); unter der Decke
+ * biegt sie in der Dicke der Deckenschicht ab (Q fällt glatt auf null). Außerhalb der Fahne fällt ψ linear zur Wand
+ * ab: Die Luft sinkt über die ganze Breite gleichmäßig. Ohne Heizkörper ruht die Luft (ψ = 0).
  */
-export function laufeZeit(
-  aufgabe: Feldaufgabe,
-  schritt: number,
-  beobachten: (zeit: number, theta: Float64Array) => boolean,
-  maxZeit: number,
-): void {
-  const g = gitterFuer(aufgabe.innen, schritt);
-  const s = stern(aufgabe, g);
-  let t: Float64Array = startfeld(s);
-  let maxDiag = 0;
-  for (let k = 0; k < t.length; k += 1) if (s.diagonale[k] > maxDiag) maxDiag = s.diagonale[k];
-  // Konvektive Anpassung: je durchmischter Verbindung zusätzlich r · faktor auf der Diagonale (höchstens zwei je Knoten)
-  const anpassung = aufgabe.anpassung;
-  const r = (g.dx * g.dx) / (g.dy * g.dy);
-  const mischung = anpassung ? r * anpassung.faktor : 0;
-  const kr = K * aufgabe.durchmischung;
-  const dt = (0.9 * g.dx * g.dx) / (kr * (maxDiag + 2 * mischung));
-  const faktor = (kr * dt) / (g.dx * g.dx);
-  let neu: Float64Array = new Float64Array(t.length);
-  let zeit = 0;
-  for (;;) {
-    for (let j = 0; j < g.ny; j += 1) {
-      for (let i = 0; i < g.nx; i += 1) {
-        const k = j * g.nx + i;
-        neu[k] = Number.isNaN(s.fest[k]) ? t[k] + faktor * s.diagonale[k] * (gs(s, t, g, k, i, j) - t[k]) : t[k];
-      }
-    }
-    if (anpassung) {
-      // Instabile Verbindungen (oben kühler als unten, im Feld vor dem Schritt) tauschen zusätzlich Wärme aus
-      for (let j = 0; j < g.ny - 1; j += 1) {
-        for (let i = 0; i < g.nx; i += 1) {
-          const k = j * g.nx + i;
-          if (!(t[k] < t[k + g.nx]) || !mischbar(s, g, anpassung.randschicht, k, j)) continue;
-          const fluss = faktor * mischung * (t[k + g.nx] - t[k]);
-          neu[k] += fluss;
-          neu[k + g.nx] -= fluss;
-        }
-      }
-    }
-    [t, neu] = [neu, t];
-    zeit += dt;
-    if (beobachten(zeit, t)) return;
-    if (zeit > maxZeit) throw new Error(`waerme/feld: zeitabhängiger Lauf nach t = ${zeit} ohne Ende`);
+export function stromfunktion(a: Feldaufgabe, x: number, y: number): number {
+  const h = a.heizkoerper;
+  if (!h) return 0;
+  const { innen } = a;
+  const H = innen.hoehe;
+  const z = hoehe(a, y);
+  if (z <= 0 || z >= H || x <= innen.x || x >= innen.x + innen.breite) return 0;
+  const f = h.fahne;
+  const dicke = a.schichtung.decke ? a.schichtung.decke.tiefe : H / 5;
+  const q = 2 * f.einmischung * z * (1 - stufe((z - (H - dicke / 2)) / (dicke / 2)));
+  const rand = fahnenrand(h, y);
+  const links = f.achse - rand;
+  const rechts = f.achse + rand;
+  const ende = innen.x + innen.breite;
+  if (links <= innen.x) {
+    // Fahne an der linken Wand: eine Zelle, ψ von 0 an der Wand auf Q am Rand der Fahne, dann linear auf 0 an der Gegenwand
+    return x <= rechts ? (q * (x - innen.x)) / (rechts - innen.x) : (q * (ende - x)) / (ende - rechts);
   }
+  // Fahne im Raum: zwei gegenläufige Zellen mit je der Hälfte des Volumenstroms
+  if (x <= links) return (-q / 2) * ((x - innen.x) / (links - innen.x));
+  if (x >= rechts) return (q / 2) * ((ende - x) / (ende - rechts));
+  return -q / 2 + (q * (x - links)) / (rechts - links);
+}
+
+/** Geschwindigkeit (u, v) am Punkt (x, y) aus der Stromfunktion (zentrale Differenzen über 0,5 Einheiten); v > 0 abwärts. */
+export function stroemung(a: Feldaufgabe, x: number, y: number): [number, number] {
+  const e = 0.25;
+  const u = (stromfunktion(a, x, y + e) - stromfunktion(a, x, y - e)) / (2 * e);
+  const v = -(stromfunktion(a, x + e, y) - stromfunktion(a, x - e, y)) / (2 * e);
+  return [u, v];
+}
+
+/**
+ * Ankunft der Wärme am Punkt (x, y) in Zeiteinheiten (nur Verhältnisse innerhalb eines Felds zählen).
+ * - Mit Heizkörper: an der Oberfläche sofort; in der Fahne nach der Steigzeit (y₀ − y)/w mit w = 1 (die Geschwindigkeit
+ *   der ebenen Fahne hängt nicht von der Höhe ab); außerhalb der Fahne, wenn die erste Front der Deckenschicht die Höhe
+ *   erreicht: Steigzeit bis zur Decke + W/(2α)·ln(ζ_Decke/ζ) (W = Breite der Zelle von der Fahne bis zur Wand).
+ * - Ohne Heizkörper (Fußbodenheizung): die Wärme steigt vom Boden auf, Ankunft ∝ Höhe.
+ */
+export function ankunft(a: Feldaufgabe, x: number, y: number): number {
+  const h = a.heizkoerper;
+  const z = hoehe(a, y);
+  if (!h) return z;
+  const f = h.fahne;
+  const steigen = (yy: number) => (yy < h.y0 ? h.y0 - yy : 0);
+  // Am Heizkörper und in der Fahne: sofort bzw. nach der Steigzeit
+  if (aufHeizkoerper(a, x, y) || inFahne(a, x, y)) return steigen(y);
+  const { innen } = a;
+  const zellenbreite = x < f.achse ? f.achse - f.halbeLaenge - innen.x : innen.x + innen.breite - f.achse - f.halbeLaenge;
+  // ζ = Höhe über dem virtuellen Ursprung der Fahne, mindestens eine Einheit (die Front erreicht ihn nie)
+  const ursprung = hoehe(a, h.y0) - f.halbbreite / f.ausbreitung;
+  const hier = z - ursprung > 1 ? z - ursprung : 1;
+  return steigen(innen.y) + (zellenbreite / (2 * f.einmischung)) * ln((innen.hoehe - ursprung) / hier);
 }

@@ -1,49 +1,41 @@
 /**
- * Rechnung des Wärmefelds (E-031, KERN K-010): von den Aufgaben (eingabe.ts) über den Löser (feld.ts) und die
- * Konturen (kontur.ts) zu den Daten in lib/zeichnung/szenen/waermefeld.ts. Benutzt vom Skript
+ * Rechnung des Wärmefelds (E-031, KERN K-010, Prüfrunde 4): von den Aufgaben (eingabe.ts) über das Raumluftmodell
+ * (feld.ts) und die Konturen (kontur.ts) zu den Daten in lib/zeichnung/szenen/waermefeld.ts. Benutzt vom Skript
  * scripts/zeichnung/waermefeld.ts (schreiben, `--pruefen`) und vom Lock-Test lib/zeichnung/__tests__/waermefeld.test.ts;
  * nie von der Seite (node:crypto).
  *
  * Ablauf je Feld:
- * 1. Stationäres Feld auf dem Gitter von 2 Einheiten (direkt gelöst), θ absolut (0 außen, 1 Vorlauf); geglättet mit
- *    dem Binomialkern.
- * 2. Schwellen der Bänder (Feldeingabe.skala):
- *    - Hausschnitt (`eigen`): oberhalb liegen 64, 36, 16 und 6 % der Raumfläche.
- *    - Vergleichsräume (`vergleich`, Prüfrunde 1 B1-1, Prüfrunde 3 B3-1): eine gemeinsame Skala. Beide Räume haben
- *      dieselbe mittlere Raumtemperatur (wie mit dem Thermostat geregelt). Das Feld ist linear in der Quelle (siehe
- *      eingabe.ts Skala): Ein Thermostat, der den Raum auf dasselbe Mittel bringt, multipliziert sein Feld mit
- *      m_Bezug / m_Raum. Die Schwellen sind darum die des Raums mit Heizkörper bei 64/36/16/6 % seiner Fläche mal
- *      m_Raum / m_Bezug (vorher: dieselben Abstände vom Mittel; das zeichnete die Schichtung der Fußbodenheizung um rund
- *      30 % zu flach). Gleiche Farbe heißt so in beiden Räumen gleich warm. Die Fußbodenheizung erreicht die oberen
- *      Stufen nicht: Sie bekommt nur die Bänder, die ihr Feld auf mindestens MIN_FLAECHE des Raums erreicht – das
- *      zeigt, dass sie gleichmäßiger heizt.
+ * 1. Feld des Raumluftmodells auf dem Gitter von 2 Einheiten, θ absolut (0 außen, 1 Vorlauf), Raummittel auf den
+ *    Sollwert eingestellt (Thermostat); geglättet mit dem Binomialkern.
+ * 2. Schwellen der Bänder nach der Skala des Felds (eingabe.ts Skala): die beiden Vergleichsräume auf derselben
+ *    absoluten Skala, Stufe k bei stufenK[k] K über der mittleren Raumluft; beide haben dasselbe Raummittel, gleiche Farbe
+ *    heißt also in beiden Räumen gleich warm. Der Hausschnitt (Hero, ohne Vergleich) bei Flächenanteilen der Raumluft.
+ *    Ein Feld bekommt nur die Stufen, die es auf mindestens MIN_FLAECHE des Raums erreicht (die Fußbodenheizung erreicht
+ *    die beiden heißesten nicht, sie stehen nur in der Fahne über dem Heizkörper).
  * 3. Je Band die größte geschlossene Kontur (Marching Squares), Ramer-Douglas-Peucker mit ε = EPSILON und Strecken
  *    höchstens MAX_STRECKE lang, Catmull-Rom als Bézier, 0,5-Raster.
- * 4. Reihenfolge aus einem echten zeitabhängigen Lauf (Gitter rund 4 Einheiten, ab θ = 0 mit eingeschalteter
- *    Heizfläche): t_k = Zeit, zu der der Ring des Bands k im Mittel ANKUNFT = 60 % seiner Endtemperatur erreicht. Der
- *    Ring sind die Luftknoten des Zeitgitters zwischen Band k und Band k + 1, gebildet wie die Bänder selbst: aus dem
- *    geglätteten stationären Feld auf dem Zeitgitter, mit Schwellen bei denselben Flächenanteilen wie die gezeichneten
- *    Bänder (Prüfrunde 3 B3-3; vorher die feinen Schwellen auf dem groben, ungeglätteten Feld, und Knoten der Heizfläche
- *    zählten mit: Im Hausschnitt bestand der Ring des heißesten Bands nur aus ihnen und „kam“ im ersten Schritt an).
- *    Ein Ring ohne Luftknoten bricht die Rechnung ab. So setzt ein Band ein, wenn seine Zone zu 60 % erwärmt ist, und
- *    wächst dann vom Startmaßstab 0,6 auf 1 (√t). Die Zeiten gehen linear ins Fenster des Felds (heißestes Band am
- *    Anfang, kühlstes am Ende), auf halbe Takte. Kommt das heißeste Band nicht zuerst oder fallen zwei auf denselben
- *    halben Takt, bricht die Rechnung ab.
- *    (Ein Maß über die Fläche der Bänder, „36 % der Endfläche“, ordnet die Bänder über der Fußbodenheizung nicht: Dort
- *    wächst jede Schicht fast gleich schnell aus der Bodenfläche. Der Ring misst, wann die Wärme in der Zone ankommt.)
+ * 4. Reihenfolge aus der Ankunft der Wärme im Modell (feld.ts ankunft): Der Ring eines Bands sind die Luftknoten
+ *    zwischen ihm und dem nächst heißeren; t_k = Median der Ankunft im Ring (bei einem Band der Deckenschicht außerhalb
+ *    der Fahne, bei einem der Fahne in ihr). Erst steigt die Fahne, dann sinkt die Deckenschicht von der Decke (Baines &
+ *    Turner 1969), mit Fußbodenheizung steigt die Wärme vom Boden. Die Zeiten gehen nach √t ins Fenster des Felds
+ *    (heißestes Band am Anfang, kühlstes am Ende), auf halbe Takte. Kommt das heißeste Band nicht zuerst, ein Band der
+ *    Deckenschicht vor der Fahne oder fallen zwei auf denselben halben Takt, bricht die Rechnung ab.
+ * 5. Bewegung je Band (Prüfrunde 4 B4-2): Ein Band, das die Decke außerhalb der Fahne berührt (Deckenschicht), blendet
+ *    an Ort und Stelle ein (`einblenden`, Ursprung an der Decke über der Fahne): Mit scaleY von der Decke würden sein Stiel
+ *    und die Grenzschicht um den Heizkörper mit nach oben gezogen (ein Umriss des Heizkörpers schwebte über ihm), mit
+ *    scaleY vom Boden zöge seine flache Kante an der Decke durch den Raum (Prüfrunde 4 A4-1). Die übrigen wachsen
+ *    senkrecht (`wachsen`): die Fahne aus der Oberkante des Heizkörpers nach oben, mit Fußbodenheizung aus der Mitte des
+ *    Bodens nach oben.
  */
 import { createHash } from 'node:crypto';
-import { ANPASSUNG, DURCHMISCHUNG, FELDEINGABEN, KALIBRIERUNG, PECLET, SCHICHTEN, type Feldeingabe, type FeldId } from './eingabe';
-import { K, laufeZeit, loeseStationaer, type Feldaufgabe, type Gitter, type Loesung, type Rechteck } from './feld';
+import { FELDEINGABEN, type Feldeingabe, type FeldId } from './eingabe';
+import { ankunft, aufHeizkoerper, inFahne, luftmittel, rechneFeld, type Gitter, type Loesung, type Rechteck } from './feld';
 import { SPIEGELRAND, anteilUeber, bezierPfad, flaeche, glaetten, konturen, quantil, rdp, type P } from './kontur';
 
 export const SKRIPT = 'scripts/zeichnung/waermefeld.ts';
-/** Gitter des stationären Felds und des zeitabhängigen Laufs (Einheiten). */
+/** Gitter des Felds (Einheiten). */
 export const RASTER = 2 as const;
-export const RASTER_ZEIT = 4;
-/** Flächenanteile der Bänder 1–4 (bestimmen die Schwellen des Hausschnitts und des Bezugsraums). */
-export const ANTEILE = Object.freeze([0.64, 0.36, 0.16, 0.06]);
-/** Kleinster Flächenanteil, mit dem ein Band auf der gemeinsamen Skala der Vergleichsräume gezeichnet wird. */
+/** Kleinster Flächenanteil, mit dem ein Band gezeichnet wird. */
 export const MIN_FLAECHE = 0.02;
 /** Genauigkeit der Vereinfachung (Einheiten). */
 export const EPSILON = 0.35;
@@ -53,30 +45,32 @@ export const EPSILON = 0.35;
  * des Rasters statt einer Sehne über die halbe Raumbreite.
  */
 export const MAX_STRECKE = 40;
-/** Anteil der Endtemperatur im Ring eines Bands, bei dem es „ankommt“ (wie der Startmaßstab 0,6 der Bewegung). */
-export const ANKUNFT = 0.6;
+/** Ein Band berührt die Decke, wenn seine Kontur bis auf so viele Einheiten an sie heranreicht. */
+export const DECKENKONTAKT = 0.5;
 
 export const MODELL =
-  'Stationäre Wärmeausbreitung mit Konvektion, K∇²θ − u·∇θ = 0, θ = 0 außen, 1 am Vorlauf; Konvektion aus Walzen ' +
-  '(Stromfunktion, divergenzfrei, Pe 16 am Heizkörper, 2 an der Fußbodenheizung); mit Heizkörper in dünnen Schichten ' +
-  'je F(ξ)·G(η), Profil x(1−x)/((x+p)(1−x+q)): Fahne über dem Heizkörper, Deckenstrahl unter der Decke, Abstrom an den ' +
-  'Außenwänden (Hausschnitt) bzw. im ganzen Raum (Vergleichsraum); Heizkörper mit fester Temperatur (1,0 oben, 0,8 ' +
-  'unten), Unterseite ohne Wärmeabgabe nach unten; mit Heizkörper konvektive Anpassung als Ersatz für den Auftrieb (wo ' +
-  'die Luft oben kühler ist als darunter, 41-fache senkrechte Leitfähigkeit, außer 20 mm an Decke und Boden); Wände, ' +
-  'Decke und Boden als Robin-Rand mit U nach dem GEG-Referenzgebäude (0,28 / 0,20 / 0,35 × 0,6), Fußbodenheizung als ' +
-  'Robin-Rand mit θ 0,6 und 10,8 W/(m²·K) (DIN EN 1264-5), vierfache Leitfähigkeit über dem Boden als Ersatz für den ' +
-  'Strahlungsaustausch (Kalibrierung ohne Quelle); Kalibrierkonstante der Ränder 0,01. Hybridverfahren, direkt gelöst ' +
-  'auf 2 Einheiten. Bänder: Hausschnitt bei 64, 36, 16 und 6 % der Raumfläche; Vergleichsräume bei gleicher mittlerer ' +
-  'Raumtemperatur auf derselben Skala (Schwellen des Raums mit Heizkörper bei 64/36/16/6 % im Verhältnis der ' +
-  'Raummittel), ein Band nur ab 2 % der Fläche. Reihenfolge aus einem expliziten Zeitlauf auf rund 4 Einheiten (Ring ' +
-  'eines Bands aus Luftknoten zu 60 % erwärmt). Hausschnitt: Schnittebene vor der Rückwand, der Heizkörper an der ' +
-  'Rückwand liegt in der Ebene.';
+  'Halbempirisches Raumluftmodell (Prüfrunde 4), θ = 0 außen, 1 am Vorlauf (Schätzwerte −12 und 55 °C), Raumluft im ' +
+  'Mittel 20 °C (DIN/TS 12831-1, außerhalb der Fahne gemittelt, wie ein Thermostat). Mit Heizkörper stabile Schichtung ' +
+  'nach dem Filling-Box-Modell (Baines & Turner 1969): Isothermen außerhalb von Fahne und Wandgrenzschicht waagerecht, ' +
+  '1 K/m im Kern, warme Schicht unter der Decke (+1,5 K, Grenze 0,7 m unter der Decke), Kaltluftsee am Boden (−1,2 K); ' +
+  'Auftriebsfahne über dem Heizkörper nach Morton, Taylor & Turner 1956 (Halbbreite 0,12·ζ ab dem virtuellen Ursprung, ' +
+  'Übertemperatur auf der Achse ∝ 1/ζ, 8 K an der Oberkante, von vorn eine Glocke über die Baulänge); auf und am ' +
+  'Heizkörper die Luft seiner Grenzschicht, darunter keine; kalte Außenwand mit der Oberfläche U·R_si unter der Raumluft ' +
+  '(0,28 W/(m²·K), 0,13 m²·K/W), Fallströmung 80 mm am Boden und Kaltluftsee am Fuß, außer wo der Heizkörper davor steht ' +
+  '(VDI 6030). Fußbodenheizung: −0,2 K/m, +1 K über dem warmen Boden, nur an der Außenwand kühler. Größen ohne Quelle sind ' +
+  'Schätzwerte (lib/zeichnung/waerme/eingabe.ts). Bänder: Vergleichsräume auf derselben absoluten Skala bei −0,4, +0,3, ' +
+  '+3 und +3,7 K über der mittleren Raumluft (die beiden heißesten nur in der Fahne), Hausschnitt bei 64, 45, 2 und 1 % ' +
+  'der Raumluft; ein Band nur ab 2 % der Fläche. Reihenfolge aus der Ankunft der Wärme, nach √t ins Fenster: erst die ' +
+  'Fahne, dann die Deckenschicht von oben (erste Front nach Baines & Turner), mit Fußbodenheizung vom Boden. Gitter 2 ' +
+  'Einheiten, auf 1 Einheit gleiches Mittel und gleiche Flächen. Hausschnitt: Schnittebene vor der Rückwand, der ' +
+  'Heizkörper an der Rückwand liegt in der Ebene.';
 
 export interface Band {
   stufe: 1 | 2 | 3 | 4;
   schwelle: number;
   d: string;
   ursprung: P;
+  bewegung: 'wachsen' | 'einblenden';
   startTakte: number;
   flaecheAnteil: number;
 }
@@ -84,12 +78,12 @@ export interface Band {
 export interface Feldergebnis {
   id: FeldId;
   innen: Rechteck;
-  wachstum: 'radial' | 'senkrecht';
+  wachstum: 'senkrecht';
   baender: Band[];
   herkunft: { skript: string; eingabeHash: string; modell: string; raster: 2; iterationen: number; residuum: number };
 }
 
-/** Zwischenstand je Feld für Prüfungen (Feld, Skala, Konturen vor dem Runden). */
+/** Zwischenstand je Feld für Prüfungen (Feld, Skala, Ankunft, Deckenschicht). */
 export interface Feldrechnung {
   eingabe: Feldeingabe;
   loesung: Loesung;
@@ -99,97 +93,97 @@ export interface Feldrechnung {
   glatt: Float64Array;
   /** Schwellen der gezeichneten Bänder (θ absolut), aufsteigend. */
   schwellen: number[];
-  /** Ankunftszeiten der gezeichneten Bänder. */
+  /** Ankunftszeiten der gezeichneten Bänder (mittlere Ankunft im Ring). */
   ankunft: number[];
-  /** Ringe des Zeitlaufs je Band: Indizes der Knoten auf `zeitgitter` (nur Luft, siehe ankunftszeiten). */
+  /** Ringe je Band: Indizes der Luftknoten auf dem Gitter der Lösung zwischen dem Band und dem nächst heißeren. */
   ringe: number[][];
-  zeitgitter: Gitter;
+  /** Je Band: berührt es die Decke außerhalb der Fahne (Band der Deckenschicht, blendet an Ort und Stelle ein)? */
+  deckenband: boolean[];
 }
 
 const auf3 = (x: number) => Math.round(x * 1000) / 1000;
+
+/**
+ * Schwellen der Stufen 1–4 nach der Skala des Felds (θ absolut, auf 0,001), vor der Auswahl nach MIN_FLAECHE; die
+ * Flächenanteile der Skala `flaeche` gelten für die Raumluft (ohne den Heizkörper, der sonst allein die heißeste Stufe
+ * füllte).
+ */
+export function stufenSchwellen(e: Feldeingabe, g: Gitter, glatt: Float64Array): number[] {
+  const s = e.skala;
+  if (s.art === 'absolut') return s.stufenK.map((k) => auf3((e.aufgabe.mittel + k) / e.aufgabe.spanne));
+  const luft = luftknoten(e, g, glatt);
+  return s.anteile.map((a) => auf3(quantil(luft, a)));
+}
+
+/** θ der Luftknoten (ohne Heizkörper). */
+export function luftknoten(e: Feldeingabe, g: Gitter, glatt: Float64Array): Float64Array {
+  const werte: number[] = [];
+  for (let q = 0; q < glatt.length; q += 1) {
+    if (!aufHeizkoerper(e.aufgabe, g.x0 + (q % g.nx) * g.dx, g.y0 + Math.floor(q / g.nx) * g.dy)) werte.push(glatt[q]);
+  }
+  return Float64Array.from(werte);
+}
 
 /** Hash der Eingaben: Aufgaben, Konstanten und Verfahren (ändert sich eine, muss die Datei neu geschrieben werden). */
 export function eingabeHash(): string {
   const eingaben = {
     felder: FELDEINGABEN,
-    konstanten: { K, KALIBRIERUNG, ANPASSUNG, PECLET, DURCHMISCHUNG, SCHICHTEN, RASTER, RASTER_ZEIT, ANTEILE, MIN_FLAECHE, EPSILON, MAX_STRECKE, ANKUNFT, SPIEGELRAND },
+    konstanten: { RASTER, MIN_FLAECHE, EPSILON, MAX_STRECKE, SPIEGELRAND, DECKENKONTAKT },
   };
   return createHash('sha256').update(JSON.stringify(eingaben)).digest('hex').slice(0, 16);
 }
 
-/**
- * Ringe des Zeitlaufs (Prüfrunde 3 B3-3): je Band die Luftknoten des Zeitgitters zwischen ihm und dem nächst heißeren.
- * Gebildet wie die Bänder: aus dem geglätteten stationären Feld auf dem Zeitgitter, mit Schwellen bei denselben
- * Flächenanteilen wie die gezeichneten Bänder (`anteile`, Anteil des feinen geglätteten Felds über der Schwelle).
- * Knoten einer Heizfläche (feste Temperatur, ab t = 0 am Endwert) gehören zu keinem Ring.
- */
-export function ringeAufZeitgitter(e: Feldeingabe, anteile: readonly number[], grob: Loesung): number[][] {
-  const g = grob.gitter;
-  const glatt = glaetten(grob.theta, g);
-  const schwellen = anteile.map((a) => quantil(glatt, a));
+/** Ringe: je Band die Luftknoten zwischen ihm und dem nächst heißeren (geglättetes Feld); ein leerer Ring bricht ab. */
+export function ringeImFeld(e: Feldeingabe, g: Gitter, glatt: Float64Array, schwellen: readonly number[]): number[][] {
   return schwellen.map((s, k) => {
     const oben = k < schwellen.length - 1 ? schwellen[k + 1] : Infinity;
     const knoten: number[] = [];
     for (let q = 0; q < glatt.length; q += 1) {
       const x = g.x0 + (q % g.nx) * g.dx;
       const y = g.y0 + Math.floor(q / g.nx) * g.dy;
-      if (aufHeizflaeche(e.aufgabe, x, y)) continue;
+      if (aufHeizkoerper(e.aufgabe, x, y)) continue;
       if (glatt[q] >= s && glatt[q] < oben) knoten.push(q);
     }
-    if (knoten.length === 0) throw new Error(`waermefeld: ${e.id}: Band ${k + 1} ohne Luftknoten auf dem Zeitgitter`);
+    if (knoten.length === 0) throw new Error(`waermefeld: ${e.id}: Band ${k + 1} ohne Luftknoten`);
     return knoten;
   });
 }
 
 /**
- * Zeiten, zu denen der Ring jedes Bands im Mittel ANKUNFT seiner Endtemperatur erreicht (zeitabhängiger Lauf auf
- * RASTER_ZEIT; Endtemperaturen aus dem stationären Feld auf demselben Gitter).
+ * Ankunft der Wärme in jedem Ring: Median über seine Knoten (robust gegen die wenigen Knoten, die die Glättung neben dem
+ * Heizkörper oder am Boden in einen Ring schiebt). Bei einem Band der Deckenschicht zählen nur die Knoten außerhalb der
+ * Fahne (dort kommt die Front an), bei einem Band der Fahne nur die in ihr (dort steigt sie).
  */
-function ankunftszeiten(e: Feldeingabe, ringe: readonly number[][], grob: Loesung): number[] {
-  const ende = grob.theta;
-  const endmittel = ringe.map((r) => r.reduce((summe, q) => summe + ende[q], 0) / r.length);
-  const zeiten = ringe.map(() => NaN);
-  laufeZeit(
-    e.aufgabe,
-    RASTER_ZEIT,
-    (zeit, theta) => {
-      for (let k = 0; k < ringe.length; k += 1) {
-        if (!Number.isNaN(zeiten[k])) continue;
-        const mittel = ringe[k].reduce((summe, q) => summe + theta[q], 0) / ringe[k].length;
-        if (mittel >= ANKUNFT * endmittel[k]) zeiten[k] = zeit;
-      }
-      return zeiten.every((z) => !Number.isNaN(z));
-    },
-    1e7,
-  );
-  return zeiten;
+function ankunftszeiten(e: Feldeingabe, g: Gitter, ringe: readonly number[][], deckenband: readonly boolean[]): number[] {
+  return ringe.map((ring, k) => {
+    const lage = (q: number): [number, number] => [g.x0 + (q % g.nx) * g.dx, g.y0 + Math.floor(q / g.nx) * g.dy];
+    const auswahl = e.aufgabe.heizkoerper ? ring.filter((q) => inFahne(e.aufgabe, ...lage(q)) !== deckenband[k]) : ring;
+    const knoten = auswahl.length > 0 ? auswahl : ring;
+    const zeiten = Float64Array.from(knoten, (q) => ankunft(e.aufgabe, ...lage(q))).sort();
+    const m = zeiten.length >> 1;
+    return zeiten.length % 2 === 1 ? zeiten[m] : (zeiten[m - 1] + zeiten[m]) / 2;
+  });
 }
 
-/** Linear ins Fenster: frühestes → Anfang, spätestes → Ende, auf halbe Takte (ein einzelnes Band am Anfang). */
-function insFenster(zeiten: readonly number[], [anfang, ende]: readonly [number, number]): number[] {
-  const t0 = Math.min(...zeiten);
-  const t1 = Math.max(...zeiten);
-  if (t1 === t0) return zeiten.map(() => anfang);
-  return zeiten.map((t) => Math.round((anfang + ((t - t0) / (t1 - t0)) * (ende - anfang)) * 2) / 2);
+/**
+ * Berührt die Kontur die Decke außerhalb der Fahne (ein Band der Deckenschicht)? Ein Band, das die Decke nur in der
+ * Fahne erreicht, gehört zur Fahne (sie steigt bis unter die Decke). Ohne Heizkörper zählt jeder Kontakt mit der Decke.
+ */
+function beruehrtDeckeAusserhalbDerFahne(e: Feldeingabe, kontur: readonly P[]): boolean {
+  return kontur.some((q) => q.y <= e.innen.y + DECKENKONTAKT && q.x >= e.innen.x && q.x <= e.innen.x + e.innen.breite && !inFahne(e.aufgabe, q.x, e.innen.y));
 }
 
-/** Liegt der Knoten (x, y) auf einer Heizfläche (feste Temperatur, keine Raumluft)? */
-function aufHeizflaeche(a: Feldaufgabe, x: number, y: number): boolean {
-  return a.heizflaechen.some((f) => x >= f.x0 && x <= f.x1 && y >= f.y0 && y <= f.y1);
-}
-
-/** Mittlere Temperatur der Raumluft: Mittel über alle Knoten außer denen der Heizflächen. */
-function raummittel(theta: Float64Array, g: Gitter, a: Feldaufgabe): number {
-  let summe = 0;
-  let n = 0;
-  for (let j = 0; j < g.ny; j += 1) {
-    for (let i = 0; i < g.nx; i += 1) {
-      if (aufHeizflaeche(a, g.x0 + i * g.dx, g.y0 + j * g.dy)) continue;
-      summe += theta[j * g.nx + i];
-      n += 1;
-    }
-  }
-  return summe / n;
+/**
+ * Ins Fenster nach √t (wie die Bewegung selbst, E-031 Entscheidung 3): frühestes → Anfang, spätestes → Ende, linear in
+ * √t dazwischen, auf halbe Takte (ein einzelnes Band am Anfang). Die Fahne steigt in Sekunden, die Front der
+ * Deckenschicht sinkt in Minuten; linear in t fielen die Bänder der Fahne auf denselben Takt.
+ */
+export function insFenster(zeiten: readonly number[], [anfang, ende]: readonly [number, number]): number[] {
+  const w = zeiten.map((t) => Math.sqrt(t));
+  const w0 = Math.min(...w);
+  const w1 = Math.max(...w);
+  if (w1 === w0) return zeiten.map(() => anfang);
+  return w.map((v) => Math.round((anfang + ((v - w0) / (w1 - w0)) * (ende - anfang)) * 2) / 2);
 }
 
 export interface Rechnung {
@@ -201,72 +195,55 @@ export function berechneWaermefelder(): Rechnung {
   const hash = eingabeHash();
   const zwischen = new Map<FeldId, Feldrechnung>();
   const felder: Feldergebnis[] = [];
-  const grobe = new Map<FeldId, Loesung>();
   for (const e of FELDEINGABEN) {
-    // 1. Feld rechnen (Startwert: dasselbe Feld auf dem Zeitgitter) und glätten; das Mittel der Raumluft
-    const grob = loeseStationaer(e.aufgabe, RASTER_ZEIT);
-    const loesung = loeseStationaer(e.aufgabe, RASTER);
-    const glatt = glaetten(loesung.theta, loesung.gitter);
-    const mittel = raummittel(glatt, loesung.gitter, e.aufgabe);
-    zwischen.set(e.id, { eingabe: e, loesung, mittel, glatt, schwellen: [], ankunft: [], ringe: [], zeitgitter: grob.gitter });
-    grobe.set(e.id, grob);
-  }
-  for (const e of FELDEINGABEN) {
-    const z = zwischen.get(e.id)!;
-    const grob = grobe.get(e.id)!;
-    const glatt = z.glatt;
-    const g = z.loesung.gitter;
-    // 2. Schwellen: eigene Flächenanteile oder die Abstände vom Raummittel des Bezugsraums
-    let schwellen: number[];
-    if (e.skala.art === 'eigen') {
-      schwellen = ANTEILE.map((a) => auf3(quantil(glatt, a)));
-    } else {
-      const bezug = zwischen.get(e.skala.bezug);
-      if (!bezug || bezug.eingabe.skala.art !== 'vergleich' || bezug.eingabe.skala.bezug !== e.skala.bezug) {
-        throw new Error(`waermefeld: ${e.id}: Bezugsraum ${e.skala.bezug} fehlt oder steht nicht auf seiner eigenen Skala`);
-      }
-      // Gleiches Mittel per Thermostat: das Feld mal m_Bezug / m_Raum, also die Schwellen des Bezugs mal m_Raum / m_Bezug
-      const faktor = z.mittel / bezug.mittel;
-      schwellen = ANTEILE.map((a) => auf3(quantil(bezug.glatt, a) * faktor)).filter((s) => anteilUeber(glatt, s) >= MIN_FLAECHE);
-      if (schwellen.length === 0) throw new Error(`waermefeld: ${e.id}: kein Band auf der gemeinsamen Skala`);
+    // 1. Feld rechnen (Raummittel eingestellt) und glätten
+    const loesung = rechneFeld(e.aufgabe, RASTER);
+    const g = loesung.gitter;
+    const glatt = glaetten(loesung.theta, g);
+    const mittel = luftmittel(e.aufgabe, g, glatt);
+    // 2. Schwellen nach der Skala; nur Stufen ab MIN_FLAECHE (die Fläche fällt mit der Stufe, es fehlen nur die obersten)
+    const alle = stufenSchwellen(e, g, glatt);
+    for (let k = 1; k < alle.length; k += 1) {
+      if (!(alle[k] > alle[k - 1])) throw new Error(`waermefeld: ${e.id}: Schwellen nicht steigend (${alle.join(', ')})`);
     }
-    for (let k = 1; k < schwellen.length; k += 1) {
-      if (!(schwellen[k] > schwellen[k - 1])) throw new Error(`waermefeld: ${e.id}: Schwellen nicht steigend (${schwellen.join(', ')})`);
-    }
-    z.schwellen = schwellen;
-    // 4. Ankunftszeiten (Ringe bei denselben Flächenanteilen wie die gezeichneten Bänder)
-    z.ringe = ringeAufZeitgitter(
-      e,
-      schwellen.map((s) => anteilUeber(glatt, s)),
-      grob,
-    );
-    z.ankunft = ankunftszeiten(e, z.ringe, grob);
-    for (let k = 1; k < z.ankunft.length; k += 1) {
-      if (!(z.ankunft[k] < z.ankunft[k - 1])) {
-        throw new Error(`waermefeld: ${e.id}: Band ${k + 1} kommt nicht vor Band ${k} an (${z.ankunft.join(', ')}); das heißeste muss zuerst kommen`);
+    const schwellen = alle.filter((s) => anteilUeber(glatt, s) >= MIN_FLAECHE);
+    if (schwellen.length === 0) throw new Error(`waermefeld: ${e.id}: kein Band auf der Skala`);
+    // 3. Konturen; 5. Band der Deckenschicht oder der Fahne
+    const schleifen = schwellen.map((s) => {
+      const alle = konturen(glatt, g, s);
+      if (alle.length === 0) throw new Error(`waermefeld: ${e.id}: keine Kontur auf ${s}`);
+      return alle.reduce((a, b) => (Math.abs(flaeche(b)) > Math.abs(flaeche(a)) ? b : a));
+    });
+    const deckenband = schleifen.map((kontur) => beruehrtDeckeAusserhalbDerFahne(e, kontur));
+    // 4. Ankunft je Ring: das heißeste zuerst, jedes Band der Fahne vor jedem der Deckenschicht
+    const ringe = ringeImFeld(e, g, glatt, schwellen);
+    const zeiten = ankunftszeiten(e, g, ringe, deckenband);
+    for (let k = 1; k < zeiten.length; k += 1) {
+      if (!(zeiten[k] < zeiten[k - 1])) {
+        throw new Error(`waermefeld: ${e.id}: Band ${k + 1} kommt nicht vor Band ${k} an (${zeiten.join(', ')}); das heißeste muss zuerst kommen`);
       }
     }
-    const takte = insFenster(z.ankunft, e.fenster);
-    // 3. Konturen
-    const baender: Band[] = schwellen.map((s, k) => {
-      const schleifen = konturen(z.glatt, g, s);
-      if (schleifen.length === 0) throw new Error(`waermefeld: ${e.id}: keine Kontur auf ${s}`);
-      const groesste = schleifen.reduce((a, b) => (Math.abs(flaeche(b)) > Math.abs(flaeche(a)) ? b : a));
-      const d = bezierPfad(rdp(groesste, EPSILON, MAX_STRECKE), {
+    const fahne = zeiten.filter((_, k) => !deckenband[k]);
+    const decke = zeiten.filter((_, k) => deckenband[k]);
+    if (fahne.length > 0 && decke.length > 0 && !(Math.min(...decke) > Math.max(...fahne))) {
+      throw new Error(`waermefeld: ${e.id}: ein Band der Deckenschicht kommt vor der Fahne an (${zeiten.join(', ')})`);
+    }
+    zwischen.set(e.id, { eingabe: e, loesung, mittel, glatt, schwellen, ankunft: zeiten, ringe, deckenband });
+    const takte = insFenster(zeiten, e.fenster);
+    const baender: Band[] = schwellen.map((s, k) => ({
+      stufe: (k + 1) as Band['stufe'],
+      schwelle: s,
+      d: bezierPfad(rdp(schleifen[k], EPSILON, MAX_STRECKE), {
         x0: e.innen.x - SPIEGELRAND,
         y0: e.innen.y - SPIEGELRAND,
         x1: e.innen.x + e.innen.breite + SPIEGELRAND,
         y1: e.innen.y + e.innen.hoehe + SPIEGELRAND,
-      });
-      return {
-        stufe: (k + 1) as Band['stufe'],
-        schwelle: s,
-        d,
-        ursprung: { ...e.ursprung },
-        startTakte: takte[k],
-        flaecheAnteil: auf3(anteilUeber(z.glatt, s)),
-      };
-    });
+      }),
+      ursprung: { ...(deckenband[k] && e.ursprung.decke ? e.ursprung.decke : e.ursprung.fahne) },
+      bewegung: deckenband[k] ? 'einblenden' : 'wachsen',
+      startTakte: takte[k],
+      flaecheAnteil: auf3(anteilUeber(glatt, s)),
+    }));
     for (let k = 1; k < baender.length; k += 1) {
       if (!(baender[k].startTakte < baender[k - 1].startTakte)) throw new Error(`waermefeld: ${e.id}: Verzögerungen fallen auf halbe Takte zusammen (${takte.join(', ')})`);
     }
@@ -275,7 +252,7 @@ export function berechneWaermefelder(): Rechnung {
       innen: { ...e.innen },
       wachstum: e.wachstum,
       baender,
-      herkunft: { skript: SKRIPT, eingabeHash: hash, modell: MODELL, raster: RASTER, iterationen: z.loesung.iterationen, residuum: z.loesung.residuum },
+      herkunft: { skript: SKRIPT, eingabeHash: hash, modell: MODELL, raster: RASTER, iterationen: loesung.iterationen, residuum: loesung.residuum },
     });
   }
   return { felder, zwischen };
@@ -298,6 +275,7 @@ export function dateiText(felder: readonly Feldergebnis[]): string {
           `        schwelle: ${zahl(b.schwelle)},\n` +
           `        d: ${zitat(b.d)},\n` +
           `        ursprung: { x: ${zahl(b.ursprung.x)}, y: ${zahl(b.ursprung.y)} },\n` +
+          `        bewegung: ${zitat(b.bewegung)},\n` +
           `        startTakte: ${zahl(b.startTakte)},\n` +
           `        flaecheAnteil: ${zahl(b.flaecheAnteil)},\n` +
           `      },\n`,
@@ -326,23 +304,29 @@ export function dateiText(felder: readonly Feldergebnis[]): string {
  *
  * ERZEUGT von ${SKRIPT} (\`bun run zeichnung:waermefeld\`), nicht von Hand ändern. Geprüft von
  * \`bun run zeichnung:waermefeld --pruefen\` und lib/zeichnung/__tests__/waermefeld.test.ts (Lock: die Rechnung ergibt
- * genau diese Datei). Rechnung: lib/zeichnung/waerme/ (eingabe.ts Aufgaben, feld.ts Löser, kontur.ts Isothermen,
- * rechnung.ts Ablauf).
+ * genau diese Datei). Rechnung: lib/zeichnung/waerme/ (eingabe.ts Aufgaben und Quellen, feld.ts Raumluftmodell,
+ * kontur.ts Isothermen, rechnung.ts Ablauf).
  *
  * Vertrag (lib/zeichnung/__tests__/waermefeld-vertrag.test.ts, lib/motion/__tests__/register.test.ts):
  * - Band 0 ist das Innenrechteck \`innen\` (eine Fläche ohne Pfad, steht still); \`baender\` sind die Bänder 1 bis
  *   höchstens 4, aufsteigend nach Stufe (kühl → heiß), in der Reihenfolge, in der sie übereinander liegen.
- * - \`schwelle\`: θ (0 außen, 1 Vorlauf), oberhalb der das Band liegt. Hausschnitt: 64, 36, 16 bzw. 6 % des Raums
- *   (\`flaecheAnteil\`). Vergleichsräume auf gemeinsamer Skala: gleiche mittlere Raumtemperatur, dieselben Abstände vom
- *   Raummittel wie im Raum mit Heizkörper; ein Band erst ab 2 % der Fläche, die Fußbodenheizung hat darum weniger
- *   Bänder (gleichmäßiger).
+ * - \`schwelle\`: θ (0 außen, 1 Vorlauf), oberhalb der das Band liegt; jedes Feld auf das Raummittel 20 °C eingestellt
+ *   (Thermostat). Vergleichsräume auf derselben absoluten Skala: Stufe k bei einer festen Temperatur über der mittleren
+ *   Raumluft (lib/zeichnung/waerme/eingabe.ts SKALA_VERGLEICH), gleiche Stufe heißt in beiden Räumen gleich warm; die
+ *   Fußbodenheizung erreicht die beiden heißesten Stufen nicht (sie stehen nur in der Fahne über dem Heizkörper).
+ *   Hausschnitt bei 64, 45, 2 und 1 % der Raumluft (SKALA_HERO). Ein Band erst ab 2 % der Fläche (\`flaecheAnteil\`).
  * - Jedes Band liegt in \`innen\` (± 4 Einheiten Spiegelrand, den die Wände der Zeichnung decken), Band k + 1 liegt in
  *   Band k, alle Zahlen im Pfad liegen auf dem 0,5-Raster.
  * - \`startTakte\` (Verzögerung in Takten zu 80 ms, halbe Takte) steigt streng von heiß nach kühl. Hausschnitt (Hero,
  *   Auslöser \`nachlauf\`) im Fenster 7…16,5 Takte, die Vergleichsräume der Wärmepumpen-Seite (Auslöser \`sicht\`) im
  *   Fenster 0…22 Takte; das Bewegungsregister (lib/motion/register.ts, \`waerme-breitet-sich-aus\`) führt genau diese
- *   Werte. \`ursprung\`: Mitte, aus der ein Band wächst (Oberkante des Heizkörpers bzw. Mitte des Bodens);
- *   \`wachstum\`: radial aus dem Ursprung, mit Fußbodenheizung senkrecht aus der Bodenlinie (die ganze Fläche heizt).
+ *   Werte. Erst steigt die Fahne, dann erscheint die Deckenschicht (Prüfrunde 4 B4-2): \`bewegung\` \`wachsen\` heißt
+ *   senkrecht (\`wachstum\`, scaleY) aus \`ursprung\` – die Fahne aus der Mitte der Oberkante des Heizkörpers nach oben,
+ *   die warme Schicht der Fußbodenheizung aus der Mitte des Bodens; \`einblenden\` heißt an Ort und Stelle nur über die
+ *   Deckkraft – jedes Band, das die Decke außerhalb der Fahne berührt (die Deckenschicht hängt von Anfang an an der
+ *   Decke, \`ursprung\` dort über der Fahne; ohne Heizkörper am Boden).
+ * - \`herkunft\`: \`iterationen\` = Runden, in denen das Raummittel eingestellt wurde, \`residuum\` = verbleibende
+ *   Abweichung des Raummittels (θ).
  * - Einheiten wie in der Szene, 1 Einheit = 10 mm: Hausschnitt in den Koordinaten von HAUS_LAGE
  *   (lib/zeichnung/szenen/hausschnitt.ts), die Vergleichsräume ab der linken oberen Ecke des Rauminneren
  *   (lib/zeichnung/szenen/raumschnitt.ts).
@@ -368,6 +352,11 @@ export interface Waermeband {
   d: string;
   /** Ursprung des Wachstums (transform-origin) in Einheiten der Szene. */
   ursprung: Punkt;
+  /**
+   * \`wachsen\`: senkrecht (scaleY) aus dem Ursprung, die Fahne und die warme Schicht über dem Fußboden;
+   * \`einblenden\`: an Ort und Stelle (nur Deckkraft), jedes Band, das die Decke außerhalb der Fahne berührt.
+   */
+  bewegung: 'wachsen' | 'einblenden';
   /** Startverzögerung in Takten (80 ms), halbe Takte. */
   startTakte: number;
   /** Anteil der Bandfläche am Innenrechteck (0 < a ≤ 1). */
@@ -378,8 +367,8 @@ export interface Waermefeld {
   id: WaermefeldId;
   /** Rauminneres = Band 0. */
   innen: Rechteck;
-  /** Wie die Bänder wachsen: aus dem Ursprung (radial) oder nur nach oben aus der Bodenlinie (senkrecht). */
-  wachstum: 'radial' | 'senkrecht';
+  /** Wie die Bänder wachsen: senkrecht (scaleY) aus dem Ursprung jedes Bands. */
+  wachstum: 'senkrecht';
   /** Bänder 1 bis höchstens 4, aufsteigend nach Stufe. */
   baender: readonly Waermeband[];
   herkunft: {

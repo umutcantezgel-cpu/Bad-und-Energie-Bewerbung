@@ -28,7 +28,9 @@ export interface WaermefeldEbenenProps {
  * Bewegte Fassung als Ebenen unter einer Zeichnung (Hero, Raumschnitt): Band 0 als Fläche (div), jedes Band 1–4 als
  * eigenes SVG nur in Größe des Rauminneren, damit der Browser jedes für sich verschieben kann (transform, opacity).
  * Lage in Prozent des `rahmen`; der Aufrufer stellt die Ebenen in einen Behälter mit dem Seitenverhältnis des Rahmens.
- * Jedes Band wächst aus seinem Ursprung (transform-origin) und startet nach `--start` Takten (aus den Daten).
+ * Jedes Band startet nach `--start` Takten (aus den Daten) und wächst senkrecht aus seinem Ursprung (transform-origin:
+ * Oberkante des Heizkörpers oder Boden) oder blendet als Deckenschicht an Ort und Stelle ein (`data-bewegung`,
+ * Prüfrunde 4 B4-2).
  */
 export function WaermefeldEbenen({ id, rahmen, className }: WaermefeldEbenenProps) {
   if (!WAERMEFELD_AN) return null;
@@ -43,6 +45,7 @@ export function WaermefeldEbenen({ id, rahmen, className }: WaermefeldEbenenProp
           aria-hidden="true"
           focusable="false"
           data-band={b.stufe}
+          data-bewegung={b.bewegung}
           data-motion="waerme-breitet-sich-aus"
           style={bandStil(innen, b)}
         >
@@ -77,6 +80,7 @@ export function WaermefeldDateien({ id, rahmen, className }: { id: WaermeDateiFe
           width={innen.breite}
           height={innen.hoehe}
           data-band={b.stufe}
+          data-bewegung={b.bewegung}
           data-motion="waerme-breitet-sich-aus"
           style={bandStil(innen, b)}
         />
@@ -85,7 +89,7 @@ export function WaermefeldDateien({ id, rahmen, className }: { id: WaermeDateiFe
   );
 }
 
-/** Lage des Felds im Rahmen der Zeichnung (Prozent), Band 0 als Fläche; `data-wachstum` aus den Daten. */
+/** Lage des Felds im Rahmen der Zeichnung (Prozent), Band 0 als Fläche; `data-wachstum` aus den Daten (senkrecht). */
 function FeldRahmen({ id, rahmen, className, children }: { id: WaermefeldId; rahmen: Rechteck; className?: string; children: ReactNode }) {
   const { innen, wachstum } = WAERMEFELDER[id];
   const lage: CSSProperties = {
