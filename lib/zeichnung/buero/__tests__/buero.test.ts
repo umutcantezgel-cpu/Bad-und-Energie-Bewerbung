@@ -15,7 +15,7 @@ import { DAUER_MS, MOTION_REGISTER, SICHT_ENDE_MS, TAKT_MS } from '@/lib/motion/
 import { getThemaPageText } from '@/lib/themen/text';
 import { ogThemaText } from '@/lib/themen/og';
 import { ogJobText } from '@/lib/seo/og-image';
-import { renderJobImage } from '@/lib/seo/og-render';
+import { BUERO_WORT_FELD, ogBueroWoerter, renderJobImage } from '@/lib/seo/og-render';
 import { TOKENS } from '@/lib/tokens';
 import { keyframesIn, skaliert } from '@/lib/motion/__tests__/keyframes';
 import { BUERO_DATEI, BUERO_MARKE } from '../../../../scripts/qa/check-design-tokens.mjs';
@@ -575,4 +575,42 @@ describe('Teilen-Bilder (E-031): Büro-Zweig mit der Leitstelle, ohne Leitung zu
     expect(png.subarray(1, 4).toString('ascii')).toBe('PNG');
     expect(png.readUInt32BE(16)).toBe(1200);
   }, 30_000);
+
+  it('Prüfrunde 4 D4-2: die Leitstelle trägt die vier Wörter der Seite an denselben Lagen, im Navy-Panel, ohne Überlappung', () => {
+    const woerter = ogBueroWoerter();
+    expect(woerter.map((w) => w.id)).toEqual(LEITSTELLE.beschriftungen.map((b) => b.id));
+    expect(woerter.map((w) => w.text)).toEqual(LEITSTELLE.beschriftungen.map((b) => SEITE.leitstelle.ziele[b.id as keyof typeof SEITE.leitstelle.ziele].toUpperCase()));
+    expect(woerter.map((w) => w.text)).toEqual(['MONTEURE', 'KUNDENDIENST', 'KUNDEN', 'GROSSHANDEL UND LAGER']);
+    // Lage wie auf der Seite: Anker start → linke Kante, end → rechte Kante; dieselben Verhältnisse im Rahmen
+    const panelX = 660;
+    const breite = 1200 - panelX - 40;
+    const s = breite / LEITSTELLE.rahmen.breite;
+    // Breite eines Worts im Bild: Martian 15 px, rund 0,66 em je Zeichen und 1 px Sperrung
+    const breiteVon = (text: string) => text.length * (15 * 0.66 + 1);
+    for (const [i, b] of LEITSTELLE.beschriftungen.entries()) {
+      const w = woerter[i];
+      const ende = b.anker === 'end';
+      const kante = ende ? w.left + BUERO_WORT_FELD : w.left;
+      expect(w.justify, b.id).toBe(ende ? 'flex-end' : 'flex-start');
+      expect(Math.abs(kante - (panelX + 20 + b.x * s)), b.id).toBeLessThanOrEqual(1);
+      expect(breiteVon(w.text), b.id).toBeLessThan(BUERO_WORT_FELD);
+      // Das Wort selbst steht im Navy-Panel
+      expect(ende ? kante - breiteVon(w.text) : kante, b.id).toBeGreaterThan(panelX);
+      expect(ende ? kante : kante + breiteVon(w.text), b.id).toBeLessThan(1200);
+      expect(w.top, b.id).toBeGreaterThan(0);
+      expect(w.top + 15, b.id).toBeLessThan(630);
+    }
+    // Zwei Wörter einer Zeile überlappen nicht
+    const zeilen = Object.values(Object.groupBy(woerter, (w) => w.top));
+    expect(zeilen).toHaveLength(2);
+    for (const zeile of zeilen) {
+      const links = zeile!.find((w) => w.justify === 'flex-start')!;
+      const rechts = zeile!.find((w) => w.justify === 'flex-end')!;
+      expect(links.left + breiteVon(links.text), `${links.id} / ${rechts.id}`).toBeLessThan(rechts.left + BUERO_WORT_FELD - breiteVon(rechts.text));
+    }
+    // Der Quelltext setzt die Wörter in den Büro-Zweig (nicht mehr „Ohne Wörter“)
+    const quelleOg = quelle('lib/seo/og-render.tsx');
+    expect(quelleOg).toContain('{ogBueroWoerter().map(');
+    expect(quelleOg).not.toMatch(/Ohne Wörter/);
+  });
 });
