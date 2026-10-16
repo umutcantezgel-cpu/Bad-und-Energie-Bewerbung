@@ -783,7 +783,7 @@ test.describe('reduzierte Bewegung', () => {
     expect(log.filter((e) => e.art === 'toggle')).toEqual([]);
     const klick = log.find((e) => e.art === 'klick')!;
     const push = log.find((e) => e.art === 'push')!;
-    // Kein Abdecken vor dem Wechsel (der Wechsel wartet nur auf die Seite, nicht auf 360 ms Bewegung)
+    // Kein Abdecken vor dem Wechsel (der Wechsel wartet nur auf die Seite, nicht auf die 280 ms bis zur ersten Deckung)
     expect(push.t).toBeGreaterThan(klick.t);
     expect(await offen(page, FRONT)).toBe(false);
   });
