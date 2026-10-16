@@ -1,6 +1,6 @@
 # Prüfpunkt
 
-- **Nächster exakter Schritt:** Änderungs-Commit der Nennung in der Arbeitskopie, main per Fast-Forward darauf, `bun run build`, Server auf Port 3511, Prüfstufe A (E2-PRUEFER-01).
-- **Laufende Pakete:** keine.
-- **Letzter grüner Commit:** `a4491d5` (volle lokale CI grün, live seit 16.10.2026).
-- **Ausgangswerte:** berichte/E0-PRUEFER-02.md, Rohdaten in protokolle/roh/e0 (nicht committet), Vorher-Bilder in bilder/e0 (nicht committet; Auswahl folgt in bilder/auswahl).
+- **Nächster exakter Schritt:** E4-ENDPRUEFER-01 (frischer Unteragent des Orchestrator-Modells) prüft ABNAHME.md gegen die Belege. Danach CLAUDE.md-Block entfernen, committen, `git push origin main`, Live-Prüfung, Statuszeile ABSCHLUSS.
+- **Laufende Pakete:** E3-PRUEFER-05 (Z-08 am Endstand).
+- **Letzter grüner Commit:** `66d8d99` (volle CI ALLES GRUEN, Protokoll protokolle/stufe-b-ci.md); danach nur Commits in `_werkstatt`.
+- **Server für Prüfungen:** Produktions-Build 66d8d99 auf http://127.0.0.1:3511.

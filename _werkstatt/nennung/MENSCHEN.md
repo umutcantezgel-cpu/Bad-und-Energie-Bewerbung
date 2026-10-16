@@ -18,7 +18,11 @@
 - USt-IdNr. im Impressum gegen lib/seo/site-config.ts: bekannt als B1 in docs/inhaber/offene-angaben.md.
 
 ## 4. Linkziel
-- `https://www.codayweb.de/de`: Erreichbarkeit, Weiterleitung und Canonical prüft E0-PRUEFER-02; Ergebnis folgt hier.
+- `https://www.codayweb.de/de` antwortet ohne Weiterleitung mit 200, sein Canonical zeigt auf sich selbst (berichte/E0-PRUEFER-02.md, protokolle/indexierbar.md). Bleibt das Linkziel.
+- Gibt es auf codayweb.de eine eigene Referenzseite für die Bad und Energie GmbH (etwa `/de/work/...`), kann LINKZIEL per ÄNDERN darauf umgestellt werden; der Entwurf dafür steht in REFERENZ.md.
 
 ## 5. Liste für den nächsten Schritt (N-08)
-- (noch leer)
+- Lighthouse-Performance auf `/` lag am Endstand im Median bei 0,90 (E0: 0,93), dazu eine neue Warnung auf `/einsatzgebiet` (0,90). Beides liegt unter dem Warnwert 0,95 und blockiert die CI nicht. Netz und Layoutverschiebung sind unverändert (Z-08). An der Live-Seite einmal nachmessen (protokolle/stufe-b-ci.md).
+- S4 bei Navigation im Browser: Der beibehaltene Fuß zeigt den rel-Wert der neuen URL (N-05, N-13). Wer das anders will, bräuchte einen Fuß je Seite statt im Layout; das wäre ein größerer Umbau außerhalb dieses Laufs.
+- Search Console: Zugang für den Kunden und für codayweb.de klären (BERICHT.md, Abschnitt 5).
+- Der Linkprüfer folgt keinen Weiterleitungen; die zwei 308-Adressen (/einsatzgebiet/hochtaunuskreis, /einsatzgebiet/landkreis-marburg-biedenkopf) führen auf /einsatzgebiet, das geprüft ist.

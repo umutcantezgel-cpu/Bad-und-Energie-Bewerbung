@@ -21,7 +21,7 @@ Stand 16.10.2026. Die Prüfprotokolle liegen in `_werkstatt/nennung/protokolle/`
 
 ## 4. Übernahme und Rückweg
 - Die Änderung liegt schon lokal auf `main`, in 9 Schritten (Commits, davon 2 mit Code-Änderungen), noch nicht gepusht. Mit dem Push geht sie sofort live, denn `main` wird über Vercel veröffentlicht.
-- Gepusht wird erst, wenn die Prüfung grün ist. Stand heute: 0 von 10 Abnahme-Kriterien erfüllt.
+- Gepusht wird erst, wenn die Prüfung grün ist. Stand vor dem Push: 10 von 10 Abnahme-Kriterien mit Beleg erfüllt, volle Prüfung grün (ABNAHME.md).
 - Der Ordner `_werkstatt` ist über `.vercelignore` von der Veröffentlichung ausgenommen (Commit b0ae185). Er bleibt im Repository. Löschen ist möglich, ist aber nicht geschehen. Das entscheidest du.
 - Der Arbeitsblock in `CLAUDE.md` (zwischen NENNUNG-ANFANG und NENNUNG-ENDE) wird beim Abschluss entfernt.
 - Rückweg: `git revert 66d8d99 b0ae185`, dann pushen. Danach ist die Nennung wieder weg. Alternativ setzt du in Vercel den Stand von vor der Nennung (Commit a4491d5) wieder als live.
@@ -32,7 +32,7 @@ Stand 16.10.2026. Die Prüfprotokolle liegen in `_werkstatt/nennung/protokolle/`
 
 ## 6. Stand und was offen ist
 - Grün geprüft: Die Startseite ist für Google offen, der Link stimmt, die Browser-Konsole zeigt keine Fehler, die Seite lädt mit gleich vielen Anfragen (38) wie vorher, und im Fuß gibt es keine Befunde bei der automatischen Barrierefreiheits-Prüfung.
-- Offen: die Nachprüfung nach der Änderung am Linktext und die volle Prüfung des Standes vor dem Push.
+- Auch grün: die Nachprüfung nach der Änderung am Linktext und die volle Prüfung des Standes vor dem Push (protokolle/nachpruefung.md, protokolle/stufe-b-ci.md).
 - Deine Entscheidungen:
   - Soll `_werkstatt` im Repository bleiben oder vor dem Push gelöscht werden?
   - Soll der Link auch auf der Startseite keine Empfehlung mehr weitergeben („nofollow“)?
