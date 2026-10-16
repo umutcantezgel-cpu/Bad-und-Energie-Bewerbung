@@ -14,3 +14,9 @@ Anlass: Zwei Tage Arbeit mit vielen Prüfrunden, aber auf der Seite hat sich sic
 5. **Zweimal gescheitert heißt anhalten.** Fällt dasselbe Thema zweimal durch die Prüfung, wird nicht weiter nachjustiert. Der Stand geht mit Bildern an den Inhaber, und er entscheidet.
 6. **Inhaber-Feedback schlägt interne Kritiker.** Was der Inhaber live sieht und sagt, wird zuerst umgesetzt.
 7. **Bericht in Inhabersprache.** Jeder Bericht sagt zuerst, was sich auf der Seite sichtbar geändert hat und wo man es sieht, mit Link oder Bild. Danach erst, was im Hintergrund passiert ist.
+
+<!-- NENNUNG-ANFANG · Lauf „Agenturnennung Coday Web“ · wird beim ABSCHLUSS entfernt -->
+## Lauf „Agenturnennung Coday Web“ (nur für den Orchestrator)
+- Bei jedem Sitzungsstart und nach jeder Kontextverdichtung zuerst `_werkstatt/nennung/AUFTRAG.md`, `_werkstatt/nennung/STATUS.md` und `_werkstatt/nennung/PRUEFPUNKT.md` lesen und dort fortsetzen.
+- Push nur auf ARBEITSBRANCH `main` und nur grüne Stände; `main` geht über Vercel live (Änderung des Auftraggebers, `_werkstatt/nennung/ENTSCHEIDUNGEN.md` N-02). Sonst kein Deploy.
+<!-- NENNUNG-ENDE -->

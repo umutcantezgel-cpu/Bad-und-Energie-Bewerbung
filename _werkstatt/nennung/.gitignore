@@ -1,0 +1,6 @@
+# Auftrag G8 und Abschnitt 7: installierte Abhängigkeiten der Prüfwerkzeuge, Rohbilder und Rohprotokolle bleiben aus
+# jedem Commit; committet werden nur die ausgewählten Vorher-nachher-Bilder in bilder/auswahl/.
+werkzeuge/node_modules/
+bilder/*
+!bilder/auswahl/
+protokolle/roh/
