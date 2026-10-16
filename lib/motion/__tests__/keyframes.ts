@@ -140,3 +140,31 @@ export function diffusionsFehler(css: string, toleranz = 0.002): string[] {
   }
   return fehler;
 }
+
+/**
+ * Wert einer Kurve cubic-bezier(x1, y1, x2, y2) zum Zeitanteil t (0…1), wie der Browser sie rechnet (Bisektion auf x).
+ * Für Prüfungen der Wärmefront (Owner-Feedback 16.10.2026): ruhig an, ruhig aus, kein Antritt.
+ */
+export function bezier(x1: number, y1: number, x2: number, y2: number): (t: number) => number {
+  const b = (a: number, c: number, s: number) => 3 * (1 - s) * (1 - s) * s * a + 3 * (1 - s) * s * s * c + s * s * s;
+  return (t) => {
+    if (t <= 0) return 0;
+    if (t >= 1) return 1;
+    let lo = 0;
+    let hi = 1;
+    for (let i = 0; i < 60; i += 1) {
+      const mitte = (lo + hi) / 2;
+      if (b(x1, x2, mitte) < t) lo = mitte;
+      else hi = mitte;
+    }
+    return b(y1, y2, (lo + hi) / 2);
+  };
+}
+
+/** Die Kurve eines Tokens aus app/styles/theme.css (--k-aus, --k-wechsel, --k-ein). */
+export function kurveAus(theme: string, token: 'k-aus' | 'k-wechsel' | 'k-ein'): (t: number) => number {
+  const m = theme.match(new RegExp(`--${token}: cubic-bezier\\(([^)]+)\\);`));
+  if (!m) throw new Error(`Kurve --${token} fehlt`);
+  const [x1, y1, x2, y2] = m[1].split(',').map(Number);
+  return bezier(x1, y1, x2, y2);
+}

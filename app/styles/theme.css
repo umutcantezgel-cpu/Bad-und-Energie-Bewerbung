@@ -552,13 +552,14 @@
     }
   }
 
-  /* ── Klick-Wärme (E-031, Prüfrunde 3 A3-1): In ihrer Überlagerung stehen die Stufen 1–3 der Rampe für die Ringe des
-     Tons, den die Insel von der getroffenen Fläche übernimmt (data-tone auf der Überlagerung, --klick-1…3 oben je Ton);
-     so zeichnet waermefront.module.css Front und Ringe mit denselben Rollen. ── */
+  /* ── Klick-Wärme (E-031, Prüfrunde 3 A3-1; Owner-Feedback 16.10.2026): In ihrer Überlagerung stehen die Stufen 0–2
+     der Rampe für die Ringe des Tons, den die Insel von der getroffenen Fläche übernimmt (data-tone auf der
+     Überlagerung, --klick-1…3 oben je Ton): außen der kühlste, innen der heißeste, wie die Schichten der Front. So
+     zeichnet waermefront.module.css Front und Ringe mit denselben Rollen. ── */
   [data-motion="klick-waerme"] {
-    --waerme-1: var(--klick-1);
-    --waerme-2: var(--klick-2);
-    --waerme-3: var(--klick-3);
+    --waerme-0: var(--klick-1);
+    --waerme-1: var(--klick-2);
+    --waerme-2: var(--klick-3);
   }
 
   /* ── Druck: immer die hellen Primitiven, Papier weiß (dunkel und Inverse-Band gelten nur am Bildschirm; der

@@ -78,8 +78,13 @@ export const THEMEN_SEITE = /^\/arbeiten-bei-uns(?:\/[^/]+)?$/;
 export const TECHNIK_BUDGET = 8000;
 /** Höchstens so viele Bytes (roh) aus waerme.module.css auf einer Seite (Bänder des Wärmefelds, E-031). */
 export const WAERME_BUDGET = 1400;
-/** Höchstens so viele Bytes (roh) aus waermefront.module.css auf jeder Seite (Klick-Wärme und Wärmefront, E-031). */
-export const FRONT_BUDGET = 1200;
+/**
+ * Höchstens so viele Bytes (roh) aus waermefront.module.css auf jeder Seite (Klick-Wärme und Wärmefront, E-031). 1.200 →
+ * 1.600 B mit dem Owner-Feedback vom 16.10.2026 (sanfter Wärmeschleier, E-031): Einblenden je Schicht, gestaffelte
+ * Deckkraft und Größe, das Verblassen samt dem steigenden Hauptinhalt und die Ringe um die Box des Elements; gzip rund
+ * 0,5 KB. Nicht weiter anheben.
+ */
+export const FRONT_BUDGET = 1600;
 /** Höchstens so viele Bytes (roh) aus dem Büro-Block von themen.module.css auf einer Themenseite (E-031). */
 export const BUERO_BUDGET = 2500;
 /** Quellen der Teilbudgets (E-031): Die Prüfungen auf Vorhandensein greifen, sobald es sie gibt. */

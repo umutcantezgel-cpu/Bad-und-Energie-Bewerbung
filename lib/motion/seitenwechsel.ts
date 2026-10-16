@@ -11,67 +11,88 @@
 export const WAERMEFRONT_AN: boolean = true;
 
 /**
- * Zeitplan in ms (Prüfrunde 4 A4-2, A4-3), ab dem Klick: `vorlauf` (WECHSEL.vorlaufMs, ½ Takt: die Schichten stehen
- * schon als eigene Ebenen in der Startgröße FRONT_START, bevor sie wachsen), `wechsel` (WECHSEL.wechselMs: router.push,
- * sobald die erste Scheibe das ganze Fenster deckt, Vorlauf + d-2; rund zwei Drittel des Abdeckens), `abdecken`
- * (WECHSEL.abdeckenMs: die letzte Schicht in der Seitenfarbe deckt das Fenster, Vorlauf + 1½ Takte + d-2). Ab dem
+ * Zeitplan in ms (Owner-Feedback 16.10.2026, sanfter Wärmeschleier; E-031), ab dem Klick: `vorlauf` (WECHSEL.vorlaufMs,
+ * ein Takt: Die Schichten stehen in der Startgröße als eigene Ebenen und blenden ein, bevor sie wachsen), `abdecken`
+ * (WECHSEL.abdeckenMs: Vorlauf + d-4 Wachsen; zugleich endet das Einblenden der Seitenfarbe, 5½ Takte + d-2: Sie deckt
+ * das Fenster), `wechsel` (WECHSEL.wechselMs: router.push, sobald die Seitenfarbe deckt, also gleich `abdecken`). Ab dem
  * Wechsel-Auftrag `halten` (WECHSEL.haltenMs: spätestens dann wird aufgedeckt, auch wenn die neue Seite noch nicht
- * ruht); `aufdecken` (WECHSEL.aufdeckenMs, d-2) ab seinem Start, `klick` (KLICK_ENDE_MS) ab dem Klick. Die Netze greifen,
- * falls das Ende eines Ablaufs (animationend, transitionend) nicht gemeldet wird: Dann wechselt die Seite bzw. die Front
- * ist weg. Das Netz des Aufdeckens greift einen Takt nach dessen Ende; das des Wechsels zwei Takte nach dem Ende der
- * ersten Schicht, denn die Abläufe beginnen erst, wenn Chromium die Ebenen gerastert hat (gemessen 40–100 ms nach dem
- * Klick, Prüfrunde 4): Mit einem Takt griffe das Netz bisweilen, bevor die erste Schicht das Fenster deckt.
+ * steht), ab dem neuen Pfad `ruhe` (WECHSEL.ruheMs: so lange höchstens auf die Ruhe der neuen Seite warten, Prüfrunde 5
+ * C5-2); `aufdecken` (WECHSEL.aufdeckenMs, ein Takt + d-3) ab seinem Start. `klick` (KLICK_ENDE_MS) ab dem Klick:
+ * Die Ringe blenden je ½ Takt versetzt ein (d-2), der äußere zuerst; steht er, verklingen alle gemeinsam (ein Takt +
+ * d-3), also nach d-2 + ein Takt + d-3. Die Netze greifen, falls das Ende eines Ablaufs (animationend, transitionend)
+ * nicht gemeldet wird: Dann wechselt die Seite bzw. die Überlagerung ist zu. Das Netz des Aufdeckens und der
+ * Klick-Wärme greift einen Takt nach dem Ende; das des Wechsels zwei Takte nach der Deckung, denn die Abläufe beginnen
+ * erst, wenn Chromium die Ebenen gerastert hat (gemessen 40–100 ms nach dem Klick, Prüfrunde 4).
  */
 export const ZEITPLAN = /* @__PURE__ */ Object.freeze({
-  vorlauf: 40,
-  wechsel: 280,
-  wechselNetz: 440,
-  abdecken: 400,
+  vorlauf: 80,
+  wechsel: 680,
+  wechselNetz: 840,
+  abdecken: 680,
   halten: 1200,
-  aufdecken: 240,
-  aufdeckenNetz: 320,
-  klick: 480,
+  ruhe: 320,
+  aufdecken: 480,
+  aufdeckenNetz: 560,
+  klick: 720,
+  klickNetz: 800,
 });
 
 /**
  * Die Zeiten, die die Insel braucht, einzeln (das Objekt ZEITPLAN mit seinen Schlüsseln bliebe sonst ganz im Bündel der
  * Insel, ≤ 2 KB gzip); seitenwechsel.test.ts hält sie gleich ZEITPLAN.
  */
-export const WECHSEL_NETZ_MS = 440;
+export const WECHSEL_NETZ_MS = 840;
 export const HALTEN_MS = 1200;
-export const AUFDECKEN_NETZ_MS = 320;
-export const KLICK_ZU_MS = 480;
+export const RUHE_MS = 320;
+export const AUFDECKEN_NETZ_MS = 560;
+export const KLICK_ZU_MS = 800;
 
 /**
- * Vorlauf der Front in Takten (waermefront.module.css: --v, zu jeder Verzögerung --n addiert; ZEITPLAN.vorlauf in ms):
- * Die Schichten stehen so lange in der Startgröße als eigene Ebenen, bevor sie wachsen (Prüfrunde 4 A4-3, C4-1).
+ * Startgröße der Front (Owner-Feedback 16.10.2026: „nicht als winziger explodierender Punkt“): Die Schicht in der
+ * Seitenfarbe beginnt mit diesem Anteil der Fensterdiagonale als Durchmesser, die warmen Schichten mit 1,04–1,12 davon
+ * (also 15,6–16,8 %). Sichtbar beginnt der Schleier mit den warmen Schichten; die Seitenfarbe ist bis zu ihrem
+ * Einblenden unsichtbar. Nicht 0: Eine Scheibe ohne Fläche hat nichts vorzurastern (Prüfrunde 4 A4-3, C4-1).
  */
-export const FRONT_VORLAUF_TAKTE = 0.5;
+export const FRONT_START = 0.15;
 
 /**
- * Startgröße der Schichten (Anteil der Endgröße; @keyframes w in waermefront.module.css beginnt hier, Prüfrunde 4
- * A4-3, C4-1): nicht 0, sonst hat eine Scheibe im Vorlauf keine Fläche, Chromium rastert nichts vor, und wächst sie
- * im nächsten Bild auf Hunderte Pixel, fehlen Kacheln an geraden Kanten. 4 %: am Desktop rund 140 px, am Handy rund 75 px
- * in der Mitte des Klicks, unter der letzten Schicht in der Seitenfarbe; die Ringe der Klick-Wärme beginnen bei 1–3 px.
+ * Durchmesser der Schichten der Front relativ zur Schicht in der Seitenfarbe (waermefront.module.css: Innenabstand
+ * (29 − n) × --s / 50, Schicht n = 1…4): außen die kühlste, je 4 % enger gestaffelt.
  */
-export const FRONT_START = 0.04;
+export const FRONT_SCHICHTEN: readonly number[] = /* @__PURE__ */ Object.freeze([1.12, 1.08, 1.04, 1]);
 
 /**
  * Ruhe der neuen Seite vor dem Aufdecken (Prüfrunde 3 C3-1, KERN K-013): so viele Bilder in Folge ohne Änderung im
- * Dokument, ohne nachladenden Bereich (LAEDT), ohne ladendes Bild und ohne endlichen Ablauf der Seite. Die neue Seite malt
- * beim Hydrieren und beim Nachladen ihrer Teile (Bewerbung auf der Stellenseite, Sicht-Bereiche) mehrmals; das soll
- * unter der deckenden Front geschehen, nicht während sie steigt. Gezählt wird schon, während die Front noch deckt (ihre
- * eigenen Abläufe zählen nicht, Prüfrunde 4 A4-2); aufgedeckt wird, sobald die Seite ruht und die Seitenfarbe das Fenster
- * deckt, spätestens nach `halten`.
+ * Dokument, ohne ladendes Bild und ohne endlichen Ablauf der Seite. Die neue Seite malt beim Einsetzen und beim Start
+ * ihrer Teile mehrmals; das soll unter der deckenden Front geschehen, nicht während sie verblasst. Gezählt wird ab dem
+ * neuen Pfad, höchstens `ruhe` lang (Prüfrunde 5 C5-2): Bereiche, die nachladen – etwa die Bewerbung auf der
+ * Stellenseite als React.lazy –, wartet die Front nicht mehr ab. React zeigte deren Platzhalter frühestens 300 ms nach
+ * dem Einsetzen, und so lange stand eine leere Fläche über dem Fenster.
  */
 export const RUHE_BILDER = 4;
 
+/** Die Überlagerung der Wärmefront (Waermefront.tsx, data-motion = Kennung im Register). */
+export const FRONT_SELEKTOR = '[data-motion="seitenwechsel"]';
+
 /**
- * Platzhalter eines Bereichs, der nach dem Wechsel nachlädt (Suspense-Fallback eines React.lazy, etwa die Bewerbung auf
- * der Stellenseite): Solange einer im Dokument steht, ruht die Seite nicht. React zeigt den Inhalt frühestens 300 ms
- * nach dem Platzhalter; ohne diese Marke stiege die Front, während die Seite ihn einsetzt und neu malt.
+ * Nachladende Bereiche warten auf die Front, nicht die Front auf sie (Prüfrunde 5 C5-2; KERN K-013 Malzeit): Ein
+ * Bereich, der nach einem Seitenwechsel nachlädt (React.lazy, etwa die Bewerbung auf der Stellenseite), setzt seinen
+ * Inhalt erst ein, wenn die Wärmefront zu ist. So malt er weder unter der Deckung noch beim Aufdecken, und die neue
+ * Seite steht ohne Wartezeit. Das Versprechen geht sofort auf, wenn keine Front offen ist (erstes Laden, reduzierte
+ * Bewegung, ohne Popover-Unterstützung, auf dem Server).
  */
-export const LAEDT = '[data-laedt]';
+export function nachDerFront(dokument: Pick<Document, 'querySelector'> | undefined = typeof document === 'undefined' ? undefined : document): Promise<void> {
+  return new Promise((fertig) => {
+    const front = dokument?.querySelector<HTMLElement>(FRONT_SELEKTOR);
+    if (!front || typeof front.showPopover !== 'function' || !front.matches(':popover-open')) return fertig();
+    const warte = (event: Event) => {
+      if ((event as ToggleEvent).newState !== 'closed') return;
+      front.removeEventListener('toggle', warte);
+      fertig();
+    };
+    front.addEventListener('toggle', warte);
+  });
+}
 
 /**
  * Klasse des Kopfskripts (lib/motion/head-script.ts, AUFTAKT_KLASSE; hier als Text, die Logik hängt an nichts): Bei
@@ -212,20 +233,13 @@ export function frontDurchmesser(x: number, y: number, breite: number, hoehe: nu
 export const FRONT_GRUND = 1024;
 
 /**
- * Weg der Front beim Aufdecken in px (Prüfrunde 3 A3-2): Die Scheiben (Mittelpunkt in Höhe y, Durchmesser
- * grund × faktor) steigen, bis ihr unterer Rand 2 px über dem Fenster liegt. So bleibt kein ungetönter Streifen und
- * keine gerade Kante; unten öffnet ein Kreisbogen die neue Seite. Die Insel setzt ihn erst beim Aufdecken als --h.
+ * Maß der Front als [grund, faktor, start]: Grundgröße der Schichten (px, höchstens FRONT_GRUND), der Faktor, mit dem
+ * die Schicht in der Seitenfarbe auf den Durchmesser bis zur fernsten Ecke wächst (frontDurchmesser = grund × faktor),
+ * und ihr Startmaßstab, FRONT_START der Fensterdiagonale (waermefront.module.css: @keyframes w von --z auf --m). Ein
+ * Tupel statt eines Objekts: Die Schlüssel stünden sonst im Bündel der Insel (≤ 2 KB gzip).
  */
-export function frontSteigen(y: number, mass: { grund: number; faktor: number }): number {
-  return Math.ceil(y + (mass.grund * mass.faktor) / 2) + 2;
-}
-
-/**
- * Maß der Front: Grundgröße der Scheiben (px, höchstens FRONT_GRUND) und der Faktor, mit dem sie auf den Durchmesser
- * bis zur fernsten Ecke wachsen (frontDurchmesser = grund × faktor).
- */
-export function frontMass(x: number, y: number, breite: number, hoehe: number): { grund: number; faktor: number } {
+export function frontMass(x: number, y: number, breite: number, hoehe: number): [grund: number, faktor: number, start: number] {
   const durchmesser = frontDurchmesser(x, y, breite, hoehe);
   const grund = Math.min(durchmesser, FRONT_GRUND);
-  return { grund, faktor: durchmesser / grund };
+  return [grund, durchmesser / grund, (FRONT_START * Math.hypot(breite, hoehe)) / grund];
 }

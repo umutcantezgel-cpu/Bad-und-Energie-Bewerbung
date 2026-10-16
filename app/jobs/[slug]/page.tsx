@@ -217,12 +217,13 @@ function OpenJob({ job }: { job: Job }) {
 }
 
 /**
- * Server-rendered stand-in while the flow loads (and the no-JS path): the flow as its own page. `data-laedt` marks it as
- * loading: after a page change the warm front waits until the flow stands (LAEDT, lib/motion/seitenwechsel.ts).
+ * Server-rendered stand-in while the flow loads (and the no-JS path): the flow as its own page. After a page change
+ * with the warm front the flow waits for the front, not the other way round (E-031, Prüfrunde 5 C5-2): it replaces
+ * this stand-in below the fold once the front has lifted (ApplyFlowLazy, nachDerFront).
  */
 function ApplyFallback({ job }: { job: Job }) {
   return (
-    <p className="text-body text-ink-muted" data-laedt="">
+    <p className="text-body text-ink-muted">
       <TextLink href={applyPath(job)}>
         {isAusbildung(job)
           ? 'Bewerbung für die Ausbildung öffnen'

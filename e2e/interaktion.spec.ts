@@ -1,6 +1,9 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
-import { DIFFUSION_STUETZ, MOTION_REGISTER, TAKT_MS, WECHSEL, KLICK_ENDE_MS } from '../lib/motion/register';
-import { FRONT_START, ZEITPLAN } from '../lib/motion/seitenwechsel';
+import { DAUER_MS, MOTION_REGISTER, TAKT_MS, WECHSEL, KLICK_ENDE_MS } from '../lib/motion/register';
+import { FRONT_SCHICHTEN, FRONT_START, ZEITPLAN } from '../lib/motion/seitenwechsel';
+import { kurveAus } from '../lib/motion/__tests__/keyframes';
 import { malzeitJeBild, messeMitDrossel } from './support/malzeit';
 import { isDesktop } from './support/site';
 
@@ -16,6 +19,8 @@ import { isDesktop } from './support/site';
 const FRONT = '[data-motion="seitenwechsel"]';
 const KLICK = '[data-motion="klick-waerme"]';
 const STELLE_LINK = 'main a[href^="/jobs/"]';
+/** k-wechsel aus theme.css: Wachsen der Front, Verblassen der Front und der Klick-Wärme, Steigen des Hauptinhalts. */
+const WECHSEL_KURVE = kurveAus(readFileSync(path.join(__dirname, '../app/styles/theme.css'), 'utf8'), 'k-wechsel');
 
 interface Eintrag {
   art: 'toggle' | 'klick' | 'push';
@@ -62,16 +67,21 @@ async function frontZu(page: Page): Promise<void> {
 }
 
 interface Ablauf {
+  /** Name des Keyframe-Ablaufs ohne den Präfix des CSS-Moduls (w, f). */
+  name: string;
+  /** Index der Schicht in der Überlagerung. */
+  schicht: number;
   dauer: number;
   verzoegerung: number;
+  /** Kurve der Keyframes (CSS-Abläufe tragen sie dort, die Wirkung selbst ist linear). */
   kurve: string;
   stellen: number[];
-  werte: string[];
+  werte: Record<string, string>[];
 }
 
 /**
- * Merkt sich beim Öffnen einer Überlagerung (beforetoggle) ein Bild später ihre Abläufe: Dauer, Verzögerung, Kurve,
- * Stellen und Maßstäbe, ohne den Ablauf der Überlagerung selbst (nur die Schichten). Erst setzen, dann klicken.
+ * Merkt sich beim Öffnen einer Überlagerung (beforetoggle) ein Bild später ihre Abläufe: Name, Schicht, Dauer,
+ * Verzögerung, Kurve, Stellen und Werte (scale, opacity), ohne Abläufe der Überlagerung selbst. Erst setzen, dann klicken.
  */
 async function ablaeufeMerken(page: Page, sel: string): Promise<void> {
   await page.locator(sel).evaluate((el) => {
@@ -89,11 +99,13 @@ async function ablaeufeMerken(page: Page, sel: string): Promise<void> {
                   const t = a.effect!.getTiming();
                   const k = (a.effect as KeyframeEffect).getKeyframes();
                   return {
+                    name: String((a as CSSAnimation).animationName).replace(/^.*__/, ''),
+                    schicht: [...el.children].indexOf((a.effect as KeyframeEffect).target as Element),
                     dauer: Number(t.duration),
                     verzoegerung: Number(t.delay),
-                    kurve: String(t.easing),
+                    kurve: String(k[0].easing),
                     stellen: k.map((s) => s.computedOffset as number),
-                    werte: k.map((s) => String(s.scale ?? '')),
+                    werte: k.map((s) => Object.fromEntries(['scale', 'opacity'].filter((p) => p in s).map((p) => [p, String(s[p])]))),
                   };
                 }),
             ),
@@ -113,7 +125,7 @@ test.beforeEach(() => {
 test.describe('mit Bewegung (no-preference)', () => {
   test.use({ contextOptions: { reducedMotion: 'no-preference' } });
 
-  test('Wärmefront: Klick auf eine Stelle deckt vom Klickpunkt ab (Vorlauf, √t ab FRONT_START, ½ Takt versetzt, d-2), wechselt danach und deckt auf', async ({ page }) => {
+  test('Wärmefront (Owner-Feedback 16.10.2026): vom Klickpunkt ein sanfter Wärmeschleier – Start bei 15 % der Diagonale, je ½ Takt eingeblendet, nach einem Takt mit k-wechsel gewachsen; Wechsel erst gedeckt, dann verblasst sie', async ({ page }) => {
     await protokollieren(page);
     await page.goto('/jobs');
     await page.waitForLoadState('networkidle');
@@ -132,17 +144,39 @@ test.describe('mit Bewegung (no-preference)', () => {
     await ablaeufeMerken(page, FRONT);
     await link.click();
 
-    // vier Schichten, je d-2, nach dem Vorlauf ½ Takt versetzt, linear auf den Stützstellen von FRONT_START (nicht 0,
-    // Prüfrunde 4 A4-3) auf 1
-    const baender = await gemerkteAblaeufe(page);
-    expect(baender).toHaveLength(4);
-    expect(baender.map((b) => b.dauer)).toEqual([240, 240, 240, 240]);
-    expect(baender.map((b) => b.verzoegerung)).toEqual(MOTION_REGISTER.seitenwechsel.verzoegerungTakte.map((n) => n * TAKT_MS));
-    expect(baender[0].verzoegerung).toBe(WECHSEL.vorlaufMs);
-    for (const b of baender) {
-      expect(b.kurve).toBe('linear');
-      expect(b.stellen).toEqual(DIFFUSION_STUETZ.map(([t]) => t));
-      expect(b.werte.map((w) => Math.round(Number(w) * 1e4) / 1e4)).toEqual(DIFFUSION_STUETZ.map(([, f]) => Math.round((FRONT_START + f * (1 - FRONT_START)) * 1e4) / 1e4));
+    // Vier Schichten mit je zwei Abläufen: w (Wachsen, d-4 mit k-wechsel nach einem Takt Vorlauf, von --z auf --m) und f
+    // (Einblenden je d-2, die warmen ½ Takt versetzt ab dem Klick, die Seitenfarbe nach 5½ Takten)
+    const ab = await gemerkteAblaeufe(page);
+    expect(ab).toHaveLength(8);
+    const w = ab.filter((a) => a.name === 'w').sort((x, y) => x.schicht - y.schicht);
+    const f = ab.filter((a) => a.name === 'f').sort((x, y) => x.schicht - y.schicht);
+    expect(w.map((a) => a.schicht)).toEqual([0, 1, 2, 3]);
+    expect(f.map((a) => a.schicht)).toEqual([0, 1, 2, 3]);
+    const lage = await page.locator(FRONT).evaluate((el) => ({
+      z: Number(el.style.getPropertyValue('--z')),
+      m: Number(el.style.getPropertyValue('--m')),
+      s: parseFloat(el.style.getPropertyValue('--s')),
+      fenster: [innerWidth, innerHeight],
+    }));
+    for (const a of w) {
+      expect(a.dauer).toBe(DAUER_MS['d-4']);
+      expect(a.verzoegerung).toBe(WECHSEL.vorlaufMs);
+      expect(a.kurve).toBe('cubic-bezier(0.65, 0, 0.35, 1)');
+      expect(a.stellen).toEqual([0, 1]);
+      expect(Number(a.werte[0].scale)).toBeCloseTo(lage.z, 4);
+      expect(Number(a.werte[1].scale)).toBeCloseTo(lage.m, 4);
+    }
+    expect(f.map((a) => a.dauer)).toEqual([240, 240, 240, 240]);
+    expect(f.map((a) => a.verzoegerung)).toEqual(MOTION_REGISTER.seitenwechsel.verzoegerungTakte.map((n) => n * TAKT_MS));
+    expect(f.map((a) => a.kurve)).toEqual(['linear', 'linear', 'linear', 'linear']);
+    expect(f.map((a) => Number(a.werte[0].opacity))).toEqual([0, 0, 0, 0]);
+    expect(f.map((a) => Math.round(Number(a.werte[1].opacity) * 1000) / 1000)).toEqual([0.25, 0.333, 0.5, 1]);
+    // Kein winziger Punkt: Jede Schicht beginnt bei 12–18 % der Fensterdiagonale (die Seitenfarbe bei FRONT_START)
+    const diagonale = Math.hypot(lage.fenster[0], lage.fenster[1]);
+    expect((lage.s * lage.z) / diagonale).toBeCloseTo(FRONT_START, 3);
+    for (const schicht of FRONT_SCHICHTEN) {
+      expect((lage.s * lage.z * schicht) / diagonale).toBeGreaterThanOrEqual(0.12);
+      expect((lage.s * lage.z * schicht) / diagonale).toBeLessThanOrEqual(0.18);
     }
 
     await expect(page).toHaveURL(ziel!);
@@ -152,18 +186,20 @@ test.describe('mit Bewegung (no-preference)', () => {
     const auf = log.find((e) => e.art === 'toggle' && e.motion === 'seitenwechsel' && e.zustand === 'open')!;
     const zu = log.find((e) => e.art === 'toggle' && e.motion === 'seitenwechsel' && e.zustand === 'closed')!;
     const push = log.find((e) => e.art === 'push')!;
-    // Start beim Klick, Wechsel erst, wenn die erste Schicht deckt, Aufdecken nach dem Wechsel, spätestens nach halten
+    // Start beim Klick, Wechsel erst, wenn die Seitenfarbe deckt, Aufdecken nach dem Wechsel, spätestens nach halten
     expect(auf.t - klick.t).toBeLessThan(50);
     expect(push.t - klick.t).toBeGreaterThanOrEqual(ZEITPLAN.wechsel);
     expect(zu.t).toBeGreaterThan(push.t);
     expect(zu.t - klick.t).toBeLessThanOrEqual(ZEITPLAN.wechselNetz + WECHSEL.haltenMs + ZEITPLAN.aufdeckenNetz + 500);
     expect(await page.locator(FRONT).getAttribute('data-auf')).toBeNull();
+    // Der Hauptinhalt hat seine Ebene und seinen Versatz wieder abgegeben
+    expect(await page.locator('main').evaluate((el) => [getComputedStyle(el).translate, getComputedStyle(el).willChange])).toEqual(['none', 'auto']);
     // Die neue Seite steht oben, schon wenn die Front aufdeckt (kein weiches Scrollen beim Wechsel)
     expect(await page.evaluate(() => (window as unknown as { __beimAufdecken?: number }).__beimAufdecken)).toBe(0);
     expect(await page.evaluate(() => window.scrollY)).toBe(0);
   });
 
-  test('Wärmefront ist immer ein Kreis (Prüfrunde 2 A2-1, C2-2): Klick nahe der Ecke, jede Scheibe gezeichnet höchstens 2 × --radius-voll breit, voll gerundet, per transform bis über die fernste Ecke', async ({
+  test('Wärmefront ist immer ein Kreis (Prüfrunde 2 A2-1, C2-2): Klick nahe der Ecke, jede Schicht gezeichnet höchstens 2 × --radius-voll breit, voll gerundet, am Ende bis über die fernste Ecke', async ({
     page,
   }) => {
     await page.goto('/jobs');
@@ -174,30 +210,26 @@ test.describe('mit Bewegung (no-preference)', () => {
     const x = Math.max(1, Math.round(box.x + 2));
     const y = Math.max(1, Math.round(box.y + 2));
     await page.mouse.click(x, y);
-    const schichten = await page.locator(FRONT).evaluate((el) =>
-      [...el.children].map((i) => {
+    const { schichten, faktor } = await page.locator(FRONT).evaluate((el) => ({
+      faktor: Number((el as HTMLElement).style.getPropertyValue('--m')),
+      schichten: [...el.children].map((i) => {
         const cs = getComputedStyle(i);
-        const r = (i as HTMLElement).getBoundingClientRect();
-        return {
-          breite: parseFloat(cs.width),
-          radius: parseFloat(cs.borderTopLeftRadius),
-          transform: cs.transform,
-          voll: { links: r.left, oben: r.top, rechts: r.right, unten: r.bottom },
-        };
+        return { breite: parseFloat(cs.width), hoehe: parseFloat(cs.height), radius: parseFloat(cs.borderTopLeftRadius) };
       }),
-    );
+    }));
     const radiusVoll = await page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--radius-voll')));
     const fenster = page.viewportSize()!;
     const ecke = Math.max(Math.hypot(x, y), Math.hypot(fenster.width - x, y), Math.hypot(x, fenster.height - y), Math.hypot(fenster.width - x, fenster.height - y));
     expect(schichten).toHaveLength(4);
-    for (const s of schichten) {
+    expect(faktor).toBeGreaterThanOrEqual(1);
+    for (const [i, s] of schichten.entries()) {
       // Gezeichnet ein Kreis: der Radius ist mindestens die halbe Breite (sonst blieben gerade Flanken)
+      expect(s.hoehe).toBeCloseTo(s.breite, 1);
       expect(s.breite).toBeLessThanOrEqual(2 * radiusVoll);
       expect(s.radius).toBeGreaterThanOrEqual(s.breite / 2);
-      const faktor = Number(s.transform.match(/^matrix\(([\d.]+), 0, 0, ([\d.]+), 0, 0\)$/)?.[1]);
-      expect(faktor).toBeGreaterThanOrEqual(1);
-      // Endgröße (ohne den laufenden Ablauf) reicht über die fernste Ecke
+      // Endgröße (Grundwert scale --m) reicht über die fernste Ecke, die warmen Schichten noch weiter (Saum außen)
       expect((s.breite * faktor) / 2).toBeGreaterThanOrEqual(ecke);
+      if (i > 0) expect(s.breite).toBeLessThan(schichten[i - 1].breite);
     }
     await expect(page).toHaveURL('/');
     await frontZu(page);
@@ -314,28 +346,72 @@ test.describe('mit Bewegung (no-preference)', () => {
     expect(log.filter((e) => e.art === 'toggle')).toEqual([]);
   });
 
-  test('Klick-Wärme: drei Ringe (½ Takt versetzt, d-3, linear auf den Stützstellen ab FRONT_START) am Knopf; nach 480 ms zu', async ({ page }) => {
+  test('Klick-Wärme (Owner-Feedback 16.10.2026, Prüfrunde 5 A5-4, C5-3): drei Ringe um die Box des Knopfs (24 · 16 · 8 px), ½ Takt versetzt eingeblendet, gemeinsam verklungen; zu am Ende dieses Übergangs, fast unsichtbar', async ({
+    page,
+  }) => {
     await protokollieren(page);
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     const knopf = page.getByRole('button', { name: 'Anhalten' }).first();
     await knopf.scrollIntoViewIfNeeded();
+    const box = (await knopf.boundingBox())!;
+    // Deckkraft der Überlagerung je Bild bis zum Schließen; Zeit des Übergangsendes (Erfassung vor der Insel)
+    await page.locator(KLICK).evaluate((el) => {
+      const w = window as unknown as { __klick: { deckkraft: number[]; ende?: number; zu?: number } };
+      w.__klick = { deckkraft: [] };
+      const probe = () => {
+        if (!el.matches(':popover-open')) return;
+        w.__klick.deckkraft.push(Number(getComputedStyle(el).opacity));
+        requestAnimationFrame(probe);
+      };
+      el.addEventListener('toggle', (e) => (e as ToggleEvent).newState === 'open' && requestAnimationFrame(probe));
+      document.addEventListener('transitionend', (e) => e.target === el && (w.__klick.ende ??= performance.now()), true);
+      el.addEventListener('beforetoggle', (e) => (e as ToggleEvent).newState === 'closed' && (w.__klick.zu ??= performance.now()));
+    });
     await ablaeufeMerken(page, KLICK);
     await knopf.click();
-    const ab = await gemerkteAblaeufe(page);
-    expect(ab.map((s) => s.dauer)).toEqual([400, 400, 400]);
-    expect(ab.map((s) => s.verzoegerung)).toEqual([0, 0.5, 1].map((n) => n * TAKT_MS));
-    // Dieselben Keyframes wie die Front: von FRONT_START (nicht 0, Prüfrunde 4 A4-3) auf 1, ohne Vorlauf (--v: 0)
-    for (const s of ab) {
-      expect(s.kurve).toBe('linear');
-      expect(s.stellen).toEqual(DIFFUSION_STUETZ.map(([t]) => t));
-      expect(s.werte.map((w) => Math.round(Number(w) * 1e4) / 1e4)).toEqual(DIFFUSION_STUETZ.map(([, f]) => Math.round((FRONT_START + f * (1 - FRONT_START)) * 1e4) / 1e4));
+    const ab = (await gemerkteAblaeufe(page)).sort((x, y) => x.schicht - y.schicht);
+    // Nur Einblenden (f), kein Wachsen: je d-2, linear, ½ Takt versetzt, der äußere zuerst; nach außen zarter
+    expect(ab.map((a) => a.name)).toEqual(['f', 'f', 'f']);
+    expect(ab.map((a) => a.dauer)).toEqual([240, 240, 240]);
+    expect(ab.map((a) => a.verzoegerung)).toEqual(MOTION_REGISTER['klick-waerme'].verzoegerungTakte.map((n) => n * TAKT_MS));
+    expect(ab.map((a) => a.kurve)).toEqual(['linear', 'linear', 'linear']);
+    expect(ab.map((a) => Number(a.werte[0].opacity))).toEqual([0, 0, 0]);
+    expect(ab.map((a) => Math.round(Number(a.werte[1].opacity) * 1000) / 1000)).toEqual([0.25, 0.333, 0.5]);
+    // Die Ringe umgeben die Box des Knopfs: gleich groß und gleich gelegen, der Umriss liegt außerhalb (außen 24, dann
+    // 16, innen 8 px)
+    const ringe = await page.locator(KLICK).evaluate((el) =>
+      [...el.children].map((r) => {
+        const b = r.getBoundingClientRect();
+        const cs = getComputedStyle(r);
+        return { x: b.x, y: b.y, w: b.width, h: b.height, abstand: parseFloat(cs.outlineOffset), dicke: parseFloat(cs.outlineWidth), flaeche: cs.backgroundColor, scale: cs.scale };
+      }),
+    );
+    for (const [i, r] of ringe.entries()) {
+      expect(Math.abs(r.x - box.x), `Ring ${i + 1}`).toBeLessThanOrEqual(1);
+      expect(Math.abs(r.y - box.y), `Ring ${i + 1}`).toBeLessThanOrEqual(1);
+      expect(Math.abs(r.w - box.width), `Ring ${i + 1}`).toBeLessThanOrEqual(1);
+      expect(Math.abs(r.h - box.height), `Ring ${i + 1}`).toBeLessThanOrEqual(1);
+      expect(r.abstand).toBe(8 * (3 - i));
+      expect(r.dicke).toBe(2);
+      expect(r.flaeche).toBe('rgba(0, 0, 0, 0)');
+      expect(r.scale).toBe('none');
     }
     await expect.poll(() => offen(page, KLICK), { timeout: 2000 }).toBe(false);
     const log = (await protokoll(page)).filter((e) => e.motion === 'klick-waerme');
     expect(log.map((e) => e.zustand)).toEqual(['open', 'closed']);
+    // Ende nach den eigenen Abläufen (C5-3): Einblenden des äußeren (d-2), ein Takt, Verklingen (d-3); geschlossen in
+    // demselben Moment wie das Ende des Übergangs, nicht von der Uhr
     expect(log[1].t - log[0].t).toBeGreaterThanOrEqual(KLICK_ENDE_MS - 20);
-    expect(log[1].t - log[0].t).toBeLessThan(KLICK_ENDE_MS + 400);
+    expect(log[1].t - log[0].t).toBeLessThan(ZEITPLAN.klickNetz);
+    const k = await page.evaluate(() => (window as unknown as { __klick: { deckkraft: number[]; ende?: number; zu?: number } }).__klick);
+    expect(k.ende, 'Ende des Verklingens').toBeDefined();
+    expect(k.zu! - k.ende!).toBeLessThan(20);
+    // Beim Schließen ist sie verklungen: Das letzte gemalte Bild zeigt höchstens 2 % (C5-3: kein Sprung am Ende)
+    expect(k.deckkraft.length).toBeGreaterThan(10);
+    expect(k.deckkraft.at(-1)).toBeLessThanOrEqual(0.02);
+    // Nichts Plötzliches: von Bild zu Bild nie mehr als ein Viertel Deckkraft weniger
+    for (let i = 1; i < k.deckkraft.length; i += 1) expect(k.deckkraft[i - 1] - k.deckkraft[i]).toBeLessThanOrEqual(0.25);
   });
 
   test('Klick-Wärme achtet auf den Ton der Fläche (Prüfrunde 3 A3-1): auf Papier und im Navy-Band jeder Ring 1,5–3:1 gegen die Fläche', async ({ page }) => {
@@ -367,14 +443,17 @@ test.describe('mit Bewegung (no-preference)', () => {
       const vorher = (await protokoll(page)).length;
       await z.el.click();
       await expect.poll(async () => (await protokoll(page)).slice(vorher).some((e) => e.motion === 'klick-waerme' && e.zustand === 'open')).toBe(true);
-      const lage = await page.locator(KLICK).evaluate((el) => ({ ton: (el as HTMLElement).dataset.tone ?? null, ringe: [...el.children].map((r) => getComputedStyle(r).borderTopColor) }));
+      const lage = await page.locator(KLICK).evaluate((el) => ({ ton: (el as HTMLElement).dataset.tone ?? null, ringe: [...el.children].map((r) => getComputedStyle(r).outlineColor) }));
       expect(lage.ton, z.ort).toBe(z.ton);
       expect(new Set(lage.ringe).size, `${z.ort}: drei verschiedene Ringe`).toBe(3);
-      for (const ring of lage.ringe.map(hex)) {
-        const k = kontrast(ring, flaeche);
-        expect(k, `${z.ort} ${ring} auf ${flaeche}`).toBeGreaterThanOrEqual(1.5);
-        expect(k, `${z.ort} ${ring} auf ${flaeche}`).toBeLessThanOrEqual(3);
+      const kontraste = lage.ringe.map(hex).map((ring) => kontrast(ring, flaeche));
+      for (const [i, k] of kontraste.entries()) {
+        expect(k, `${z.ort} ${lage.ringe[i]} auf ${flaeche}`).toBeGreaterThanOrEqual(1.5);
+        expect(k, `${z.ort} ${lage.ringe[i]} auf ${flaeche}`).toBeLessThanOrEqual(3);
       }
+      // Innen der heißeste: Der innere Ring (der letzte) hebt sich am stärksten ab, nach außen schwächer
+      expect(kontraste[2], z.ort).toBeGreaterThan(kontraste[1]);
+      expect(kontraste[1], z.ort).toBeGreaterThan(kontraste[0]);
       await expect.poll(() => offen(page, KLICK), { timeout: 2000 }).toBe(false);
     }
   });
@@ -441,25 +520,25 @@ test.describe('mit Bewegung (no-preference)', () => {
     expect(auf.bilder.filter((b) => b.ms >= 2)).toEqual([]);
   });
 
-  test('Aufdecken (Prüfrunde 3 A3-2): Die Front steigt nur per transform aus dem Bild, ohne Verblassen; unten ein Kreisbogen, keine gerade Kante, kein Streifen', async ({
+  test('Aufdecken (Owner-Feedback 16.10.2026): Die Front ist eine Fläche in der Seitenfarbe und verblasst als Ganzes, gleichmäßig, ohne Loch; der Hauptinhalt taucht auf und steigt um 24 px an seinen Platz; kein Sprung', async ({
     page,
   }) => {
     await page.goto('/jobs');
     await page.waitForLoadState('networkidle');
     const link = page.locator(STELLE_LINK).first();
     await link.scrollIntoViewIfNeeded();
-    // Beim Start des Aufdeckens anhalten: die Übergänge der Schichten pausieren; die Front bleibt offen, bis gemessen ist
+    // Beim Start des Aufdeckens anhalten: Übergang der Front und Ablauf des Hauptinhalts pausieren; die Front bleibt
+    // offen, bis gemessen ist
     await page.locator(FRONT).evaluate((el) => {
       const fr = el as HTMLElement;
-      const w = window as unknown as { __auf: Promise<{ uebergaenge: string[]; ablaeufe: string[] }>; __halt: boolean; __deckkraft: string[]; __seitenfarbe: boolean };
+      const w = window as unknown as { __auf: Promise<{ front: string[]; haupt: string[]; schichten: string[] }>; __halt: boolean; __seitenfarbe: boolean };
       w.__halt = true;
       w.__auf = new Promise((fertig) => {
         new MutationObserver((_, beob) => {
           if (!fr.hasAttribute('data-auf')) return;
           beob.disconnect();
-          // Die letzte Schicht trägt die Seitenfarbe (Prüfrunde 4 A4-2): für die Auswertung eine Markierfarbe, sonst wäre
-          // sie von der Seite nicht zu unterscheiden. Die warmen Schichten sind schon ausgeblendet.
-          w.__deckkraft = [...fr.children].map((s) => getComputedStyle(s).opacity);
+          // Die oberste Schicht trägt die Seitenfarbe: für die Auswertung eine Markierfarbe (sonst von der Seite nicht zu
+          // unterscheiden)
           const probe = document.body.appendChild(document.createElement('i'));
           probe.style.background = 'var(--surface)';
           w.__seitenfarbe = getComputedStyle(fr.lastElementChild!).backgroundColor === getComputedStyle(probe).backgroundColor;
@@ -469,86 +548,134 @@ test.describe('mit Bewegung (no-preference)', () => {
           new MutationObserver(() => {
             if (w.__halt && !fr.hasAttribute('data-auf')) fr.setAttribute('data-auf', '');
           }).observe(fr, { attributes: true, attributeFilter: ['data-auf'] });
-          for (const s of fr.children) void getComputedStyle(s).translate;
-          const alle = fr.getAnimations({ subtree: true });
-          const uebergaenge = alle.filter((a) => a instanceof CSSTransition) as CSSTransition[];
-          for (const a of uebergaenge) a.pause();
+          // Das Netz der Insel schlösse die Front während der Messung und nähme <main> seine Klassen: zurück damit
+          const haupt = document.querySelector('main')!;
+          const klassen = haupt.className;
+          new MutationObserver(() => {
+            if (w.__halt && haupt.className !== klassen) haupt.className = klassen;
+          }).observe(haupt, { attributes: true, attributeFilter: ['class'] });
+          void getComputedStyle(fr).opacity;
+          void getComputedStyle(haupt).opacity;
+          const vorne = fr.getAnimations();
+          const hinten = haupt.getAnimations();
+          for (const a of [...vorne, ...hinten]) a.pause();
           fertig({
-            uebergaenge: uebergaenge.map((a) => `${a.transitionProperty}@${[...fr.children].indexOf((a.effect as KeyframeEffect).target as Element)}`),
-            ablaeufe: alle
-              .filter((a) => !(a instanceof CSSTransition))
-              .flatMap((a) => (a.effect as KeyframeEffect).getKeyframes().flatMap((k) => Object.keys(k)))
-              .filter((k) => !['offset', 'computedOffset', 'easing', 'composite'].includes(k)),
+            front: vorne.map((a) => (a instanceof CSSTransition ? `Übergang ${a.transitionProperty}` : `Ablauf ${(a as CSSAnimation).animationName}`)),
+            haupt: hinten.map((a) => (a instanceof CSSTransition ? `Übergang ${a.transitionProperty}` : `Ablauf ${(a as CSSAnimation).animationName.replace(/^.*__/, '')}`)),
+            schichten: fr.getAnimations({ subtree: true }).filter((a) => (a.effect as KeyframeEffect).target !== fr && a.playState === 'running').map((a) => String((a as CSSAnimation).animationName)),
           });
         }).observe(fr, { attributes: true, attributeFilter: ['data-auf'] });
       });
     });
     await link.click();
-    const lauf = await page.evaluate(() => (window as unknown as { __auf: Promise<{ uebergaenge: string[]; ablaeufe: string[] }> }).__auf);
-    // Nur translate, je Schicht einmal; die Front verblasst nicht (keine Mischfarbe), das Wachsen steht nur still
-    expect(lauf.uebergaenge.sort()).toEqual(['translate@0', 'translate@1', 'translate@2', 'translate@3']);
-    expect([...new Set(lauf.ablaeufe)]).toEqual(['scale']);
-    // Prüfrunde 4 A4-2: Beim Aufdecken deckt die letzte Schicht in der Seitenfarbe; die warmen darunter sind ausgeblendet
-    // (kein warmer Saum am Bogen), sie selbst nie
-    const stand = await page.evaluate(() => {
-      const w = window as unknown as { __deckkraft: string[]; __seitenfarbe: boolean };
-      return { deckkraft: w.__deckkraft, seitenfarbe: w.__seitenfarbe };
-    });
-    expect(stand.deckkraft).toEqual(['0', '0', '0', '1']);
-    expect(stand.seitenfarbe).toBe(true);
+    const lauf = await page.evaluate(() => (window as unknown as { __auf: Promise<{ front: string[]; haupt: string[]; schichten: string[] }> }).__auf);
+    // Genau ein Übergang an der Überlagerung (Deckkraft, nicht an den Schichten) und ein Ablauf am Hauptinhalt; die
+    // Schichten stehen still (ihre Abläufe sind zu Ende)
+    expect(lauf.front).toEqual(['Übergang opacity']);
+    expect(lauf.haupt).toEqual(['Ablauf f']);
+    expect(lauf.schichten).toEqual([]);
+    expect(await page.evaluate(() => (window as unknown as { __seitenfarbe: boolean }).__seitenfarbe)).toBe(true);
 
-    const farbe = await page.locator(FRONT).evaluate((el) => getComputedStyle(el.lastElementChild!).backgroundColor);
-    const [R, G, B] = farbe.match(/\d+/g)!.map(Number);
     const auswertung = await page.context().newPage();
-    const proben: { zeit: number; front: number; gerade: number[] }[] = [];
-    for (const zeit of [30, 60, 90, 130]) {
-      await page.locator(FRONT).evaluate((el, t) => {
-        for (const a of el.getAnimations({ subtree: true })) if (a instanceof CSSTransition) a.currentTime = t;
-      }, zeit);
-      await page.evaluate(() => new Promise((fertig) => requestAnimationFrame(() => requestAnimationFrame(fertig))));
-      const bild = (await page.screenshot({ scale: 'css' })).toString('base64');
-      proben.push({
-        zeit,
-        ...(await auswertung.evaluate(
-          async ({ bild, R, G, B }) => {
-            const bytes = Uint8Array.from(atob(bild), (c) => c.charCodeAt(0));
+    const kopf = await page.locator('header').first().evaluate((el) => Math.floor(el.getBoundingClientRect().bottom));
+    /** Anteil der Markierfarbe (Magenta hat kein Grün) im Bild; im Kopf (er bewegt sich nicht) je Pixel die Deckung. */
+    const messen = async (bild: string, unten: string) =>
+      auswertung.evaluate(
+        async ({ bild, unten, kopf }) => {
+          const lese = async (b64: string) => {
+            const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
             const b = await createImageBitmap(new Blob([bytes], { type: 'image/png' }));
             const c = new OffscreenCanvas(b.width, b.height);
             const ctx = c.getContext('2d')!;
             ctx.drawImage(b, 0, 0);
-            const { data, width, height } = ctx.getImageData(0, 0, b.width, b.height);
-            const istFront = (x: number, y: number) => {
+            return ctx.getImageData(0, 0, b.width, b.height);
+          };
+          const a = await lese(bild);
+          const u = await lese(unten);
+          const { width, height } = a;
+          // Deckung: Anteil der Pixel, die (fast) die Markierfarbe tragen – ein Loch im Bild der Front zeigte die Seite
+          let magenta = 0;
+          for (let i = 0; i < width * height; i += 1) {
+            const [r, g, b] = [a.data[i * 4], a.data[i * 4 + 1], a.data[i * 4 + 2]];
+            if (r > 200 && g < 40 && b > 200) magenta += 1;
+          }
+          // Gleichmäßiges Verblassen: im Kopf je Pixel mit hellem Grund α = 1 − G / G_unten, und zwar Zeile für Zeile
+          const alpha: number[] = [];
+          const zeilen: number[] = [];
+          for (let y = 0; y < Math.min(kopf, height); y += 1) {
+            const zeile: number[] = [];
+            for (let x = 0; x < width; x += 2) {
               const i = (y * width + x) * 4;
-              return Math.abs(data[i] - R) + Math.abs(data[i + 1] - G) + Math.abs(data[i + 2] - B) <= 12;
-            };
-            let front = 0;
-            const gerade: number[] = [];
-            for (let y = 0; y < height; y += 1) {
-              let wechsel = 0;
-              for (let x = 0; x < width; x += 1) {
-                const f = istFront(x, y);
-                if (f) front += 1;
-                if (y + 1 < height && f !== istFront(x, y + 1)) wechsel += 1;
-              }
-              // Gerade Kante: in einer Zeile wechselt fast die ganze Breite zwischen Front und Seite
-              if (wechsel >= 0.9 * width) gerade.push(y);
+              if (u.data[i + 1] > 150) zeile.push(1 - a.data[i + 1] / u.data[i + 1]);
             }
-            return { front: front / (width * height), gerade };
-          },
-          { bild, R, G, B },
-        )),
-      });
+            if (zeile.length < 20) continue;
+            zeile.sort((p, q) => p - q);
+            zeilen.push(zeile[Math.floor(zeile.length / 2)]);
+            alpha.push(...zeile);
+          }
+          alpha.sort((p, q) => p - q);
+          zeilen.sort((p, q) => p - q);
+          return {
+            magenta: magenta / (width * height),
+            alpha: { p10: alpha[Math.floor(alpha.length * 0.1)], p50: alpha[Math.floor(alpha.length / 2)], p90: alpha[Math.floor(alpha.length * 0.9)] },
+            zeilenSpanne: zeilen.at(-1)! - zeilen[0],
+          };
+        },
+        { bild, unten, kopf },
+      );
+    const stellen = async (t: number) => {
+      await page.evaluate((t) => {
+        const fr = document.querySelector('[data-motion="seitenwechsel"]')!;
+        for (const a of [...fr.getAnimations(), ...document.querySelector('main')!.getAnimations()]) {
+          a.pause();
+          a.currentTime = t;
+        }
+      }, t);
+      await page.evaluate(() => new Promise((fertig) => requestAnimationFrame(() => requestAnimationFrame(fertig))));
+      return {
+        bild: (await page.screenshot({ scale: 'css' })).toString('base64'),
+        stand: await page.evaluate(() => {
+          const haupt = getComputedStyle(document.querySelector('main')!);
+          return {
+            deckkraft: Number(getComputedStyle(document.querySelector('[data-motion="seitenwechsel"]')!).opacity),
+            sichtbar: Number(haupt.opacity),
+            versatz: haupt.translate === 'none' ? 0 : parseFloat(haupt.translate.split(' ')[1] ?? '0'),
+          };
+        }),
+      };
+    };
+    // Ende (eine halbe Millisekunde davor, sonst endet der Übergang und die Insel schlösse): die Seite ohne Front,
+    // <main> an seinem Platz – der Bezug für den Grünkanal im Kopf
+    const ende = await stellen(WECHSEL.aufdeckenMs - 0.5);
+    expect(ende.stand.deckkraft).toBeLessThan(0.001);
+    expect(ende.stand.sichtbar).toBeGreaterThan(0.999);
+    expect(ende.stand.versatz).toBeLessThan(0.01);
+    // Beginn und der erste Takt: Das Fenster ist ganz in der Seitenfarbe gedeckt – kein Loch, kein warmer Saum
+    for (const t of [0, TAKT_MS]) {
+      const p = await stellen(t);
+      expect(p.stand, `${t} ms`).toEqual({ deckkraft: 1, sichtbar: 0, versatz: 24 });
+      expect((await messen(p.bild, ende.bild)).magenta, `${t} ms`).toBeGreaterThan(0.999);
     }
-    for (const p of proben) expect(p.gerade, `gerade Kante bei ${p.zeit} ms`).toEqual([]);
-    // Die Proben zeigen den Bogen: Front und Seite zugleich im Bild, die Front nimmt ab
-    expect(proben.some((p) => p.front > 0.05 && p.front < 0.95)).toBe(true);
-    for (let i = 1; i < proben.length; i += 1) expect(proben[i].front).toBeLessThanOrEqual(proben[i - 1].front);
-    // Am Ende liegt jede Schicht ganz über dem Fenster: kein ungetönter oder getönter Streifen
-    const unten = await page.locator(FRONT).evaluate((el) => {
-      for (const a of el.getAnimations({ subtree: true })) if (a instanceof CSSTransition) a.finish();
-      return [...el.children].map((s) => s.getBoundingClientRect().bottom);
-    });
-    for (const u of unten) expect(u).toBeLessThanOrEqual(0);
+    let vorher = { deckkraft: 1, sichtbar: 0, versatz: 24 };
+    for (const t of [120, 160, 200, 280, 360, 420]) {
+      const p = await stellen(t);
+      const soll = WECHSEL_KURVE(Math.max(0, t - TAKT_MS) / DAUER_MS['d-3']);
+      expect(p.stand.deckkraft, `${t} ms`).toBeCloseTo(1 - soll, 2);
+      expect(p.stand.sichtbar, `${t} ms`).toBeCloseTo(soll, 2);
+      expect(p.stand.versatz, `${t} ms`).toBeCloseTo(24 * (1 - soll), 1);
+      expect(p.stand.deckkraft).toBeLessThanOrEqual(vorher.deckkraft);
+      expect(p.stand.sichtbar).toBeGreaterThanOrEqual(vorher.sichtbar);
+      expect(p.stand.versatz).toBeLessThanOrEqual(vorher.versatz);
+      vorher = p.stand;
+      const m = await messen(p.bild, ende.bild);
+      // Solange die Front noch fast deckt, kein Loch in ihr
+      if (p.stand.deckkraft > 0.9) expect(m.magenta, `${t} ms`).toBeGreaterThan(0.999);
+      // Als Ganzes: Überall im Kopf dieselbe Deckung der Seitenfarbe – je Pixel (Spanne der mittleren 80 % höchstens
+      // 0,06) und von Zeile zu Zeile (keine Kante, kein Streifen: höchstens 0,04)
+      expect(m.alpha.p50, `${t} ms`).toBeCloseTo(p.stand.deckkraft, 1);
+      expect(m.alpha.p90 - m.alpha.p10, `${t} ms`).toBeLessThanOrEqual(0.06);
+      expect(m.zeilenSpanne, `${t} ms`).toBeLessThanOrEqual(0.04);
+    }
     await auswertung.close();
     await page.locator(FRONT).evaluate((el) => {
       (window as unknown as { __halt: boolean }).__halt = false;
@@ -560,12 +687,12 @@ test.describe('mit Bewegung (no-preference)', () => {
     await frontZu(page);
   });
 
-  test('Abdecken (Prüfrunde 4 A4-2, A4-3, C4-1): in fünf Läufen keine gerade Kante in den Bildern bis zum Aufdecken, nie eine einfarbige Pfirsichfläche; von voller Deckung bis zum Aufdecken unter 160 ms', async ({
+  test('Abdecken (Owner-Feedback 16.10.2026; Prüfrunde 5 A5-1, B5-1, C5-1, C5-2): in fünf Läufen keine gerade Kante bis zum Aufdecken, kein Loch und kein kalter Kern, nie satter als --waerme-1; aufgedeckt höchstens `ruhe` nach dem neuen Pfad', async ({
     page,
     context,
   }) => {
-    test.skip(test.info().project.name !== 'desktop-light', 'Gemessen am Desktop: Dort sind die Scheiben am größten (bis rund 3.400 px).');
-    test.setTimeout(120_000);
+    test.skip(test.info().project.name !== 'desktop-light', 'Gemessen am Desktop: Dort sind die Schichten am größten (bis rund 3.800 px).');
+    test.setTimeout(150_000);
     const ZIEL = '/arbeiten-bei-uns/buero-und-verwaltung';
     const auswertung = await context.newPage();
     const luecken: number[] = [];
@@ -574,14 +701,25 @@ test.describe('mit Bewegung (no-preference)', () => {
       await page.waitForLoadState('networkidle');
       const link = page.locator(`main a[href="${ZIEL}"]`).first();
       await link.scrollIntoViewIfNeeded();
-      // Phasen in Zeit der Seite: Klick, Ende der letzten Schicht (die Seitenfarbe deckt), Aufdecken (data-auf), zu
+      // Abläufe der Seite in Sichtweite zu Ende kommen lassen (verglichen wird mit dem Bild vor dem Klick)
+      await page.waitForTimeout(1500);
+      // Phasen in Zeit der Seite: Klick, Start der Abläufe, Deckung (Ende der letzten Schicht), Wechsel (pushState),
+      // Aufdecken (data-auf), zu
       await page.locator(FRONT).evaluate((el) => {
         const p: Record<string, number> = {};
         (window as unknown as { __p: Record<string, number> }).__p = p;
         document.addEventListener('click', () => (p.klick = performance.now()), { capture: true, once: true });
+        el.addEventListener('animationstart', (e) => {
+          if (e.target === el.firstElementChild) p.start ??= performance.now();
+        });
         el.addEventListener('animationend', (e) => {
           if (e.target === el.lastElementChild) p.voll ??= performance.now();
         });
+        const push = history.pushState.bind(history);
+        history.pushState = (...a: Parameters<History['pushState']>) => {
+          p.push ??= performance.now();
+          push(...a);
+        };
         new MutationObserver(() => {
           if (el.hasAttribute('data-auf')) p.auf ??= performance.now();
         }).observe(el, { attributes: true, attributeFilter: ['data-auf'] });
@@ -589,16 +727,22 @@ test.describe('mit Bewegung (no-preference)', () => {
           if ((e as ToggleEvent).newState === 'closed') p.zu ??= performance.now();
         });
       });
+      const farben = await page.evaluate(() => {
+        const cs = getComputedStyle(document.documentElement);
+        return { papier: cs.getPropertyValue('--surface').trim(), waerme1: cs.getPropertyValue('--waerme-1').trim() };
+      });
       const cdp = await context.newCDPSession(page);
       const bilder: { t: number; data: string }[] = [];
       cdp.on('Page.screencastFrame', (f) => {
         bilder.push({ t: (f.metadata.timestamp ?? 0) * 1000, data: f.data });
         void cdp.send('Page.screencastFrameAck', { sessionId: f.sessionId }).catch(() => {});
       });
-      await cdp.send('Page.startScreencast', { format: 'png', everyNthFrame: 1 });
-      await page.waitForTimeout(200);
       const box = (await link.boundingBox())!;
-      const klick = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+      const klick = { x: Math.round(box.x + Math.min(box.width / 2, 60)), y: Math.round(box.y + box.height / 2) };
+      // Erst über den Link (sein Hover-Zustand steht dann schon im Bild vor dem Klick), dann aufnehmen und klicken
+      await page.mouse.move(klick.x, klick.y);
+      await cdp.send('Page.startScreencast', { format: 'png', everyNthFrame: 1 });
+      await page.waitForTimeout(300);
       await page.mouse.click(klick.x, klick.y);
       await expect(page).toHaveURL(ZIEL);
       await frontZu(page);
@@ -606,59 +750,63 @@ test.describe('mit Bewegung (no-preference)', () => {
       await cdp.detach();
       const p = await page.evaluate(() => {
         const q = (window as unknown as { __p: Record<string, number> }).__p;
-        return { klick: q.klick, voll: q.voll, auf: q.auf, zu: q.zu, ursprung: performance.timeOrigin };
+        return { klick: q.klick, start: q.start, voll: q.voll, push: q.push, auf: q.auf, zu: q.zu, ursprung: performance.timeOrigin };
       });
-      const farben = await page.locator(FRONT).evaluate((el) => [...el.children].map((s) => getComputedStyle(s).backgroundColor));
       const wo = `Lauf ${lauf}`;
-      // Zeitplan (Prüfrunde 4 A4-2): Chromium beginnt die Abläufe, sobald die Ebenen gerastert sind (lokal 40–100 ms);
-      // ruht die Seite, deckt die Front kurz nach voller Deckung auf; sie ist zu, sobald sie aus dem Bild gestiegen ist
+      // Zeitplan: Deckung nach Vorlauf und Wachsen (Chromium beginnt die Abläufe, sobald die Ebenen gerastert sind, lokal
+      // 40–100 ms nach dem Klick); gewechselt erst danach; aufgedeckt höchstens `ruhe` nach dem neuen Pfad (Prüfrunde 5
+      // C5-2: kein Warten auf nachladende Bereiche); zu, sobald die Front verblasst ist
       expect(p.voll - p.klick, wo).toBeLessThanOrEqual(ZEITPLAN.abdecken + 160);
+      expect(p.push, wo).toBeGreaterThanOrEqual(p.voll);
       expect(p.auf - p.voll, wo).toBeGreaterThanOrEqual(0);
-      expect(p.auf - p.voll, wo).toBeLessThan(3 * TAKT_MS);
+      expect(p.auf - p.push, wo).toBeLessThanOrEqual(ZEITPLAN.ruhe + 34);
       luecken.push(p.auf - p.voll);
       expect(p.zu - p.auf, wo).toBeLessThanOrEqual(ZEITPLAN.aufdecken + TAKT_MS);
-      // Alle Bilder vom Klick bis zum Aufdecken: gerade Kanten zwischen zwei Schichtfarben oder zwischen einer warmen
-      // Schicht und der Seite (fehlende Kacheln), länger als 120 px und nicht die Tangente eines Kreises
-      const vorher = bilder.filter((b) => b.t >= p.ursprung + p.klick && b.t <= p.ursprung + p.auf);
-      expect(vorher.length, wo).toBeGreaterThan(8);
-      for (const bild of vorher) {
+      const vorKlick = bilder.filter((b) => b.t <= p.ursprung + p.klick).at(-1);
+      expect(vorKlick, `${wo}: Bild vor dem Klick`).toBeDefined();
+      const bisAuf = bilder.filter((b) => b.t > p.ursprung + p.klick && b.t <= p.ursprung + p.auf);
+      expect(bisAuf.length, wo).toBeGreaterThan(12);
+      // Die Seitenfarbe blendet nach 5½ Takten ab dem Start der Abläufe ein; bis dahin muss es am Klickpunkt warm sein
+      const seitenfarbeAb = p.ursprung + p.start + MOTION_REGISTER.seitenwechsel.verzoegerungTakte[3] * TAKT_MS - 17;
+      let gepruefteKerne = 0;
+      for (const bild of bisAuf) {
+        const kernPruefen = bild.t < seitenfarbeAb;
         const befund = await auswertung.evaluate(
-          async ({ bild, farben, klick }) => {
-            const bytes = Uint8Array.from(atob(bild), (c) => c.charCodeAt(0));
-            const b = await createImageBitmap(new Blob([bytes], { type: 'image/png' }));
-            const c = new OffscreenCanvas(b.width, b.height);
-            const ctx = c.getContext('2d')!;
-            ctx.drawImage(b, 0, 0);
-            const { data, width, height } = ctx.getImageData(0, 0, b.width, b.height);
-            const rgb = farben.map((f) => f.match(/\d+/g)!.slice(0, 3).map(Number));
-            const letzte = rgb.length;
-            // Klasse je Pixel: 1…n = Schicht (Toleranz 6), 0 = Seite
-            const klasse = new Uint8Array(width * height);
-            const anteil = new Array(letzte + 1).fill(0);
-            for (let i = 0; i < width * height; i += 1) {
-              for (let k = 0; k < letzte; k += 1) {
-                if (Math.abs(data[i * 4] - rgb[k][0]) + Math.abs(data[i * 4 + 1] - rgb[k][1]) + Math.abs(data[i * 4 + 2] - rgb[k][2]) <= 6) {
-                  klasse[i] = k + 1;
-                  anteil[k + 1] += 1;
-                  break;
-                }
-              }
-            }
-            const kante = (a: number, b: number) => {
-              const ka = klasse[a];
-              const kb = klasse[b];
-              if (ka === kb) return false;
-              if (ka && kb) return true;
-              const warm = (k: number) => k > 0 && k < letzte;
-              return warm(ka) || warm(kb);
+          async ({ bild, grund, farben, klick, linkBox }) => {
+            const lese = async (b64: string) => {
+              const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+              const b = await createImageBitmap(new Blob([bytes], { type: 'image/png' }));
+              const c = new OffscreenCanvas(b.width, b.height);
+              const ctx = c.getContext('2d')!;
+              ctx.drawImage(b, 0, 0);
+              return ctx.getImageData(0, 0, b.width, b.height);
             };
+            const f = await lese(bild);
+            const g = await lese(grund);
+            const { width, height } = f;
+            const hex = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+            const papier = hex(farben.papier);
+            const w1 = hex(farben.waerme1);
+            const satt = (r: number, gg: number, b: number) => (Math.max(r, gg, b) - Math.min(r, gg, b)) / Math.max(r, gg, b, 1);
+            const grenzeSatt = satt(w1[0], w1[1], w1[2]) + 0.01;
+            const d = (b: ImageData, i: number, j: number) => Math.abs(b.data[i] - b.data[j]) + Math.abs(b.data[i + 1] - b.data[j + 1]) + Math.abs(b.data[i + 2] - b.data[j + 2]);
+            const istPapier = (i: number) => Math.abs(g.data[i] - papier[0]) + Math.abs(g.data[i + 1] - papier[1]) + Math.abs(g.data[i + 2] - papier[2]) <= 6;
+            // Kante der Front: Zwei Nachbarpixel waren vor dem Klick gleich und sind es jetzt nicht mehr (die Seite steht
+            // still, bis gewechselt wird); gerade, wenn eine solche Kante über 120 px in einer Zeile oder Spalte läuft und
+            // nicht die Tangente eines Kreises ist (fehlende Kacheln)
             const MIN = 120;
+            // Der geklickte Link selbst darf sich ändern (aktiver Zustand); das ist die Seite, nicht die Front
+            const imLink = (i: number) => {
+              const x = (i / 4) % width;
+              const y = Math.floor(i / 4 / width);
+              return x >= linkBox.x - 4 && x <= linkBox.x + linkBox.width + 4 && y >= linkBox.y - 4 && y <= linkBox.y + linkBox.height + 4;
+            };
+            const kante = (a: number, b: number) => d(g, a, b) === 0 && d(f, a, b) > 6 && !imLink(a);
             const gerade: string[] = [];
-            // waagerecht: Zeile y gegen y + 1; Tangente: Mitte auf der Senkrechten durch den Klick, nicht länger als 2√(5R)
             for (let y = 0; y + 1 < height; y += 1) {
               let lauf = 0;
               for (let x = 0; x <= width; x += 1) {
-                if (x < width && kante(y * width + x, (y + 1) * width + x)) lauf += 1;
+                if (x < width && kante((y * width + x) * 4, ((y + 1) * width + x) * 4)) lauf += 1;
                 else {
                   const mitte = x - lauf / 2;
                   const tangente = Math.abs(mitte - klick.x) <= 6 && lauf <= 2 * Math.sqrt(5 * Math.abs(y - klick.y)) + 12;
@@ -670,7 +818,7 @@ test.describe('mit Bewegung (no-preference)', () => {
             for (let x = 0; x + 1 < width; x += 1) {
               let lauf = 0;
               for (let y = 0; y <= height; y += 1) {
-                if (y < height && kante(y * width + x, y * width + x + 1)) lauf += 1;
+                if (y < height && kante((y * width + x) * 4, (y * width + x + 1) * 4)) lauf += 1;
                 else {
                   const mitte = y - lauf / 2;
                   const tangente = Math.abs(mitte - klick.y) <= 6 && lauf <= 2 * Math.sqrt(5 * Math.abs(x - klick.x)) + 12;
@@ -679,21 +827,79 @@ test.describe('mit Bewegung (no-preference)', () => {
                 }
               }
             }
-            const warmGroesst = Math.max(...anteil.slice(1, letzte)) / (width * height);
-            return { gerade: gerade.slice(0, 3), warmGroesst };
+            // Wärme je Pixel auf Papiergrund: Zunahme von Rot gegen Blau gegenüber dem Bild vor dem Klick; Sättigung
+            const waerme: number[] = [];
+            const kern: number[] = [];
+            let kraeftig = 0;
+            for (let y = 0; y < height; y += 2) {
+              for (let x = 0; x < width; x += 2) {
+                const i = (y * width + x) * 4;
+                if (!istPapier(i)) continue;
+                const w = f.data[i] - f.data[i + 2] - (g.data[i] - g.data[i + 2]);
+                waerme.push(w);
+                if (Math.hypot(x - klick.x, y - klick.y) <= 24) kern.push(w);
+                if (satt(f.data[i], f.data[i + 1], f.data[i + 2]) > grenzeSatt) kraeftig += 1;
+              }
+            }
+            waerme.sort((a, b) => a - b);
+            kern.sort((a, b) => a - b);
+            return {
+              gerade: gerade.slice(0, 3),
+              kraeftig,
+              hoechste: waerme[Math.floor(waerme.length * 0.99)] ?? 0,
+              amKlick: kern[Math.floor(kern.length / 2)] ?? 0,
+              kernPixel: kern.length,
+            };
           },
-          { bild: bild.data, farben, klick },
+          { bild: bild.data, grund: vorKlick!.data, farben, klick, linkBox: box },
         );
         const ms = Math.round(bild.t - p.ursprung - p.klick);
         expect(befund.gerade, `${wo}, Bild ab ${ms} ms`).toEqual([]);
-        // Nie eine einfarbige Pfirsichfläche: keine warme Schicht deckt das Fenster (die letzte trägt die Seitenfarbe)
-        expect(befund.warmGroesst, `${wo}, Bild ab ${ms} ms`).toBeLessThan(0.95);
+        // Nie eine kräftige, gesättigte Fläche: kein Pixel auf Papiergrund satter als --waerme-1 (zarte Bänder)
+        expect(befund.kraeftig, `${wo}, Bild ab ${ms} ms`).toBe(0);
+        if (kernPruefen) {
+          // Kein Loch, kein kalter Kern (A5-1, B5-1, C5-1): Bis die Seitenfarbe einblendet, ist es am Klickpunkt mindestens
+          // so warm wie überall sonst, und ist irgendwo Wärme, dann auch dort
+          gepruefteKerne += 1;
+          expect(befund.kernPixel, `${wo}, Bild ab ${ms} ms`).toBeGreaterThan(20);
+          expect(befund.amKlick, `${wo}, Bild ab ${ms} ms: am Klickpunkt ${befund.amKlick}, höchste ${befund.hoechste}`).toBeGreaterThanOrEqual(befund.hoechste - 2);
+          if (befund.hoechste > 3) expect(befund.amKlick, `${wo}, Bild ab ${ms} ms`).toBeGreaterThan(3);
+        }
       }
+      expect(gepruefteKerne, `${wo}: Bilder vor dem Einblenden der Seitenfarbe`).toBeGreaterThan(8);
     }
     await auswertung.close();
-    // Von voller Deckung bis zum Aufdecken im Mittel (Median der fünf Läufe) unter 160 ms; die neue Seite setzt nach dem
-    // Wechsel noch Kopf, Leiste und Sicht-Bereiche, das zählt gegen die Ruhe
-    expect(luecken.sort((a, b) => a - b)[2]).toBeLessThan(160);
+    // Von voller Deckung bis zum Aufdecken im Mittel (Median der fünf Läufe) unter drei Takten: Einsetzen der neuen Seite
+    // (gewechselt wird erst bei Deckung, Owner-Feedback 16.10.2026) und ihre Ruhe; Kopf, Leiste und Sicht-Bereiche
+    // zählen dagegen
+    expect(luecken.sort((a, b) => a - b)[2]).toBeLessThan(3 * TAKT_MS);
+  });
+
+  test('Stellenliste → Stellenseite (Prüfrunde 5 C5-2): Die Front wartet nicht auf die nachladende Bewerbung; die neue Seite ist nach Deckung, Ruhe und Aufdecken voll sichtbar', async ({
+    page,
+  }, testInfo) => {
+    test.skip(!isDesktop(testInfo), 'Gemessen am Desktop (am Handy misst der Malzeit-Fall denselben Weg).');
+    await protokollieren(page);
+    await page.goto('/jobs');
+    await page.waitForLoadState('networkidle');
+    const link = page.locator(STELLE_LINK).first();
+    await link.scrollIntoViewIfNeeded();
+    await page.locator(FRONT).evaluate((el) => {
+      const w = window as unknown as { __auf?: number };
+      new MutationObserver(() => el.hasAttribute('data-auf') && (w.__auf ??= performance.now())).observe(el, { attributes: true, attributeFilter: ['data-auf'] });
+    });
+    await link.click();
+    await expect(page).not.toHaveURL('/jobs');
+    await frontZu(page);
+    const log = await protokoll(page);
+    const klick = log.find((e) => e.art === 'klick')!;
+    const push = log.find((e) => e.art === 'push')!;
+    const zu = log.find((e) => e.art === 'toggle' && e.motion === 'seitenwechsel' && e.zustand === 'closed')!;
+    const auf = await page.evaluate(() => (window as unknown as { __auf?: number }).__auf!);
+    // Aufgedeckt höchstens `ruhe` nach dem neuen Pfad (vorher wartete die Front bis zu 0,3 s auf den Platzhalter)
+    expect(auf - push.t).toBeLessThanOrEqual(ZEITPLAN.ruhe + 34);
+    // Klick bis neue Seite voll sichtbar: Deckung (mit Rasterzeit), Einsetzen und Ruhe, Aufdecken mit Netz
+    expect(zu.t - klick.t).toBeLessThanOrEqual(ZEITPLAN.abdecken + 160 + ZEITPLAN.ruhe + ZEITPLAN.aufdeckenNetz);
   });
 
   test('Klick auf „Jetzt bewerben“: keine Klick-Wärme auf dem Weg in den Bewerbungsweg, auch nicht nach dem Wechsel (Prüfrunde 1 C1-3)', async ({

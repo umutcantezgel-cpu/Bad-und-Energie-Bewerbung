@@ -7,20 +7,24 @@
  *
  * Regeln: Eigenschaften nur transform, opacity und stroke-dashoffset (seit E-031 kein View-Übergang mehr);
  * Dauern d-1…d-4, Verzögerungen als Vielfache des Takts (80 ms); Eingänge d-2 mit k-aus, Ausgänge d-1 mit k-ein;
- * Auftakt endet nach ≤ 1.120 ms. Ausnahmen vom Ausgang, je im Eintrag vermerkt (Prüfrunde 4 C4-3): Die Klick-Wärme
- * verblasst d-2 linear in der zweiten Hälfte ihres Ablaufs, die Wärmefront steigt d-2 mit k-aus aus dem Bild.
+ * Auftakt endet nach ≤ 1.120 ms. Ausnahmen vom Ausgang, je im Eintrag vermerkt (Prüfrunde 4 C4-3; Owner-Feedback
+ * 16.10.2026): Die Klick-Wärme verklingt d-3 mit k-wechsel, die Wärmefront verblasst d-3 mit k-wechsel, und der
+ * Hauptinhalt steigt dabei an seinen Platz.
  * Schleifen gibt es nur mit dem Auslöser `dauer` (E-029): Produkt- und Prozesszeichnungen auf Erzählseiten,
  * pausierbar, nur im Sichtfeld, Periode ≥ 400 ms; Startbedingung in lib/motion/dauer.ts, Steuerung
  * components/zeichnung/bewegung/DauerSteuerung.tsx, `infinite` nur in components/zeichnung/bewegung/dauer.module.css.
  * Wärme (E-031): `nachlauf` (Hero, nach dem Vorlauf, Ende ≤ NACHLAUF_ENDE_MS) und `sicht` (einmal beim
  * Sichtbarwerden über components/zeichnung/bewegung/SichtStart.tsx, Ende ≤ SICHT_ENDE_MS, höchstens auf der Hälfte
  * der Abschnitte einer Seite); Klick-Wärme (`tippen`, KLICK_ENDE_MS) und Wärmefront (`navigation`, WECHSEL).
- * Skalieren nur nach √t: jeder Keyframe-Ablauf mit `scale` genau auf den Stützstellen DIFFUSION_STUETZ.
+ * Skalieren nur nach √t: jeder Keyframe-Ablauf mit `scale` genau auf den Stützstellen DIFFUSION_STUETZ; einzige
+ * Ausnahme die Wärmefront (Owner-Feedback 16.10.2026: Sie wächst ruhig mit k-wechsel ab FRONT_START, ohne Antritt;
+ * lib/motion/__tests__/register.test.ts prüft sie eigens).
  * Malzeit (KERN K-013, e2e/support/malzeit.ts): Während Wärme, Büro-Szenen, Klick-Wärme und Wärmefront laufen, malt
  * nach den ersten zwei Bildern kein Bild 2 ms oder länger (mobil, CPU 4×). Ausnahmen, je einmal und außerhalb der
  * Bewegung: das Ende eines Sicht-Ablaufs (`fertig`, will-change bzw. die Füllung fällt) und bei der Wärmefront das
- * Malen der neuen Seite unter voller Deckung (vom Wechsel, router.push, bis sie ruht; Prüfrunde 3 C3-1). Abdecken und
- * Aufdecken selbst sind ausnahmslos, mit jedem Bandende (Schichten mit Füllung both, Prüfrunde 2 C2-4);
+ * Malen der neuen Seite unter voller Deckung (vom Wechsel, router.push, bis sie ruht; Prüfrunde 3 C3-1; dabei hebt die
+ * Insel auch den Hauptinhalt auf eine eigene Ebene), und wenn die Front zu ist, gibt der Hauptinhalt diese Ebene
+ * einmal wieder ab. Abdecken und Aufdecken selbst sind ausnahmslos, mit jedem Bandende (Füllung both, Prüfrunde 2 C2-4);
  * e2e/interaktion.spec.ts misst vom Klick bis zum Wechsel und vom Aufdecken bis die Front zu ist, e2e/buero.spec.ts
  * jede Büro-Szene von laeuft bis fertig (Prüfrunde 3 C3-2: bewegte Gruppen auf eigenen HTML-Ebenen).
  */
@@ -103,24 +107,29 @@ export interface Fenster {
   endeMs: number;
 }
 
-/** Zeitplan der Wärmefront (Kennung `seitenwechsel`, E-031), in ms ab dem Klick bzw. wie angegeben. */
+/**
+ * Zeitplan der Wärmefront (Kennung `seitenwechsel`, E-031; Owner-Feedback 16.10.2026: sanfter Wärmeschleier statt
+ * Blitz), in ms ab dem Klick bzw. wie angegeben.
+ */
 export interface Wechsel {
   /**
-   * Vorlauf: Die Schichten stehen als eigene Ebenen in der Startgröße, bevor sie wachsen (Prüfrunde 4 A4-3, C4-1:
-   * gerastert, bevor sie groß werden).
+   * Vorlauf: Die Schichten stehen in der Startgröße als eigene Ebenen und blenden ein, bevor sie wachsen (Prüfrunde 4
+   * A4-3, C4-1: gerastert, bevor sie groß werden; kein Antritt am Anfang).
    */
   vorlaufMs: number;
-  /** Die erste Schicht deckt das Fenster: Die Seite wechselt (router.push; Prüfrunde 4 A4-2, rund zwei Drittel des Abdeckens). */
+  /** Die Seitenfarbe deckt das Fenster: Erst dann wechselt die Seite (router.push). */
   wechselMs: number;
-  /** Die Schichten decken vom Klickpunkt aus ab (√t), zuletzt die in der Seitenfarbe; danach ist das Fenster gedeckt. */
+  /** Der Wärmeschleier wächst vom Klickpunkt bis über die fernste Ecke (k-wechsel), zuletzt deckt die Seitenfarbe. */
   abdeckenMs: number;
-  /** Nach dem Wechsel steigt die Front aus dem Bild („warme Luft steigt“), ohne zu verblassen. */
+  /** Ruht die neue Seite, verblasst die Front, und der Hauptinhalt steigt ein Stück an seinen Platz („warme Luft steigt“). */
   aufdeckenMs: number;
-  /**
-   * Spätestens so lange nach dem Wechsel-Auftrag wird aufgedeckt, auch wenn die neue Seite noch nicht ruht (sonst
-   * deckt die Front auf, sobald die neue Seite unter ihr fertig gemalt hat, Prüfrunde 3 C3-1).
-   */
+  /** Spätestens so lange nach dem Wechsel-Auftrag wird aufgedeckt, auch ohne neuen Pfad (langsames Netz). */
   haltenMs: number;
+  /**
+   * Höchstens so lange nach dem neuen Pfad wartet die Front auf die Ruhe der neuen Seite (Prüfrunde 3 C3-1; Prüfrunde 5
+   * C5-2: nachladende Bereiche wartet sie nicht ab).
+   */
+  ruheMs: number;
 }
 
 export interface MotionEntry {
@@ -171,18 +180,26 @@ export const NACHLAUF_ENDE_MS = 1920;
  */
 export const SICHT_WARTEN_MS = 1500;
 export const SICHT_ENDE_MS = 2400;
-/** Klick-Wärme (E-031): Ende 480 ms nach dem Klick. */
-export const KLICK_ENDE_MS = 480;
 /**
- * Wärmefront (E-031, Prüfrunde 4 A4-2): Vorlauf ½ Takt (40 ms), dann vier Schichten ½ Takt versetzt, je d-2; die erste
- * deckt nach 280 ms (Wechsel), die letzte nach 400 ms; aufdecken 240 ms (d-2), sobald die neue Seite ruht und die
- * letzte Schicht deckt, spätestens 1.200 ms nach dem Wechsel. Ohne Warten: Klick bis Front zu 640 ms (Plan §5: ≈ 600–650).
+ * Klick-Wärme (E-031; Owner-Feedback 16.10.2026): Der innere Ring steht nach d-2, dann verklingen alle (ein Takt + d-3),
+ * Ende 720 ms nach dem Klick.
  */
-export const WECHSEL: Readonly<Wechsel> = Object.freeze({ vorlaufMs: 40, wechselMs: 280, abdeckenMs: 400, aufdeckenMs: 240, haltenMs: 1200 });
+export const KLICK_ENDE_MS = 720;
+/**
+ * Wärmefront (E-031; Owner-Feedback 16.10.2026, „viel zu schnell … erschreckend“; ersetzt Prüfrunde 4 A4-2): Die drei
+ * warmen Schichten blenden ab dem Klick je ½ Takt versetzt ein (d-2), nach einem Takt Vorlauf wachsen alle gemeinsam
+ * (d-4, k-wechsel), nach 5½ Takten blendet die Seitenfarbe ein (d-2) und deckt nach 680 ms, wenn das Wachsen endet:
+ * Wechsel. Aufgedeckt wird, sobald die neue Seite ruht, höchstens 320 ms nach dem neuen Pfad und spätestens 1.200 ms
+ * nach dem Wechsel: ein Takt + d-3 = 480 ms. Ohne Warten: Klick bis Front zu 1.160 ms; mit dem Einsetzen der neuen
+ * Seite (Desktop rund 60–90 ms) und der Ruhe (vier Bilder) rund 1,2–1,3 s.
+ */
+export const WECHSEL: Readonly<Wechsel> = Object.freeze({ vorlaufMs: 80, wechselMs: 680, abdeckenMs: 680, aufdeckenMs: 480, haltenMs: 1200, ruheMs: 320 });
 /**
  * Diffusionsgesetz r ∝ √t (E-031): Stützstellen [Zeitanteil, Fortschritt] mit Fortschritt = √Zeitanteil. Jeder
  * Keyframe-Ablauf mit `scale` steht genau auf diesen Stellen (linear dazwischen), monoton, ohne Überschwingen; der
- * Wert an Stelle i ist Start + Fortschritt_i × (Ende − Start). Gleich für Wärmefeld, Klick-Wärme und Wärmefront.
+ * Wert an Stelle i ist Start + Fortschritt_i × (Ende − Start). Für das Wärmefeld; die Wärmefront wächst seit dem
+ * Owner-Feedback vom 16.10.2026 ruhig mit k-wechsel (√t hätte am Anfang den schnellsten Antritt), die Klick-Wärme
+ * skaliert nicht mehr.
  */
 export const DIFFUSION_STUETZ: readonly (readonly [number, number])[] = Object.freeze([
   Object.freeze([0, 0] as const),
@@ -383,19 +400,23 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
   },
   seitenwechsel: {
     zweck:
-      'Wärmefront (E-031): Beim Klick auf einen Link zu einer Erzählseite läuft vom Klickpunkt aus eine Wärmefront über ' +
-      'die Seite: Nach einem Vorlauf von ½ Takt (die Schichten stehen klein als eigene Ebenen) wachsen drei warme Bänder ' +
-      'nach √t (½ Takt versetzt, je d-2), das kühlste zuerst und außen, das heißeste zuletzt und innen – wie Wärmeleitung ' +
-      'von einer Quelle; deckt das erste das Fenster, wechselt die Seite. Hinter den Bändern deckt zuletzt die ' +
-      'Seitenfarbe: Die Wärme ist durchgezogen, nie steht eine einfarbige Pfirsichfläche (Prüfrunde 4 A4-2); die warmen ' +
-      'Bänder darunter blenden aus. Ruht die neue Seite, steigt die Front als Ganzes aus dem Bild: nur per transform, ' +
-      'ohne Verblassen, unten öffnet ein Kreisbogen die Seite. Eine dauerhafte Überlagerung (Popover), kein ' +
+      'Wärmefront (E-031; Owner-Feedback 16.10.2026: sanfter Wärmeschleier statt Blitz): Beim Klick auf einen Link zu ' +
+      'einer Erzählseite legt sich vom Klickpunkt aus ein zarter, durchscheinender Wärmeschleier über die Seite: drei ' +
+      'warme Bänder, eng gestaffelt, außen das kühlste und durchsichtigste, das heißeste zuletzt und innen – wie ' +
+      'Wärmeleitung von einer Quelle, ohne kalten Kern. Sie beginnen nicht als Punkt, sondern bei 15 % der ' +
+      'Fensterdiagonale, blenden je ½ Takt versetzt ein und wachsen nach einem Takt gemeinsam ruhig (k-wechsel) bis über ' +
+      'die fernste Ecke. Zuletzt blendet die Seitenfarbe ein und deckt; erst dann wechselt die Seite. Die Wärme ist ' +
+      'durchgezogen, nie steht eine einfarbige Pfirsichfläche. Ruht die neue Seite, verblasst die Front als Ganzes, ' +
+      'und der Hauptinhalt (<main>) taucht auf und steigt ein Stück an seinen Platz. Nachladende Bereiche wartet sie ' +
+      'nicht ab, sie setzen ihren Inhalt nach der Front ein. Eine dauerhafte Überlagerung (Popover), kein ' +
       'View-Übergang.',
     ausloeser: ['navigation'],
-    eigenschaften: ['transform'],
-    dauer: ['d-2'],
-    verzoegerungTakte: [0.5, 1, 1.5, 2],
-    kurve: ['linear', 'k-aus'],
+    eigenschaften: ['transform', 'opacity'],
+    // Wachsen d-4, Aufdecken d-3 (Front und Hauptinhalt), Einblenden je Schicht d-2 (waermefront.module.css)
+    dauer: ['d-4', 'd-3', 'd-2'],
+    // Einblenden je Schicht: die drei warmen ab dem Klick, die Seitenfarbe nach 5½ Takten
+    verzoegerungTakte: [0, 0.5, 1, 5.5],
+    kurve: ['k-wechsel', 'linear'],
     reduziert: 'Kein Übergang: die Seite wechselt sofort.',
     seitenart: 'erzaehlseiten',
     wechsel: WECHSEL,
@@ -480,20 +501,22 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
   },
   'klick-waerme': {
     zweck:
-      'Rückmeldung beim Klick (E-031): Vom Klickpunkt (mit der Tastatur von der Mitte des Elements) wachsen drei ' +
-      'Wärmeringe nach √t auf drei Durchmesser (d-3), der heißeste innen, und blenden in der zweiten Hälfte aus (d-2 ' +
-      'linear nach d-2; Ausnahme vom Ausgang d-1 mit k-ein: die Ringe verklingen, während sie noch wachsen); Ringe ohne ' +
-      'Fläche, damit die Beschriftung darunter rein bleibt. Nur an Bedienelementen, nicht in Formularen, nicht auf ' +
-      '/bewerbung und nicht auf dem Weg dorthin.',
+      'Rückmeldung beim Klick (E-031; Owner-Feedback 16.10.2026: zart, nichts Plötzliches): Um die Box des ' +
+      'Bedienelements stehen drei Wärmeringe im Abstand von 8, 16 und 24 px, der heißeste innen, nach außen kühler und ' +
+      'durchsichtiger wie die Schichten der Front. Sie blenden je ½ Takt versetzt ein (d-2 linear, der äußere zuerst), ' +
+      'und steht er, verklingen alle gemeinsam (d-3 mit k-wechsel nach einem Takt; Ausnahme vom Ausgang d-1 mit k-ein: ' +
+      'ein Verklingen, kein Abgang); kein Wachsen. Ringe ohne Fläche und außerhalb der Box, damit die Beschriftung frei ' +
+      'bleibt (Prüfrunde 5 A5-4). Nur an Bedienelementen, nicht in Formularen, nicht auf /bewerbung und nicht auf dem ' +
+      'Weg dorthin.',
     ausloeser: ['tippen'],
-    eigenschaften: ['transform', 'opacity'],
-    // Eingang (Wachsen) d-3, Ausgang (Verblassen) d-2 – beide aus waermefront.module.css (Prüfrunde 4 C4-3)
-    dauer: ['d-3', 'd-2'],
+    eigenschaften: ['opacity'],
+    // Eingang (Einblenden je Ring) d-2, Ausgang (Verklingen der Überlagerung) d-3 – beide aus waermefront.module.css
+    dauer: ['d-2', 'd-3'],
     verzoegerungTakte: [0, 0.5, 1],
-    kurve: ['linear'],
+    kurve: ['linear', 'k-wechsel'],
     reduziert: 'Keine Welle; der Klick wirkt sofort.',
     seitenart: 'alle',
-    endeMs: 480,
+    endeMs: 720,
   },
 };
 
