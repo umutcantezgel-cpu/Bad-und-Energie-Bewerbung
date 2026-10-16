@@ -369,7 +369,7 @@ describe('Bewegungsregister', () => {
     // Die Ringe blenden mit dem gemeinsamen Ablauf der Schichten ein und verklingen mit der Überlagerung (data-auf)
     const eRegel = frontCss.match(/\.e > \* \{([^}]*)\}/)![1];
     expect(eRegel).toContain(`animation: f var(--${k.dauer[0]}) linear var(--q) both;`);
-    expect(eRegel).toContain('--q: calc(var(--takt) * var(--v, 0));');
+    expect(eRegel).toContain('--q: calc(var(--takt)*var(--v, 0));');
     expect(frontCss.match(/\.k > \* \{([^}]*)\}/)![1]).not.toMatch(/animation/);
     expect(frontCss.match(/\.e\[data-auf\] \{([^}]*)\}/)![1]).toContain(`transition: var(--${k.dauer[1]}) var(--k-wechsel) var(--takt);`);
     // Ende: der innere Ring steht (d-2), dann ein Takt und d-3
@@ -396,24 +396,25 @@ describe('Bewegungsregister', () => {
     expect(w.ausloeser).toEqual(['navigation']);
     expect([...w.eigenschaften].sort()).toEqual(['opacity', 'transform']);
     expect(w.dauer).toEqual(['d-4', 'd-3', 'd-2', 'd-1']);
-    // Einblenden je Schicht: der Schleier ½ Takt versetzt ab dem Klick, die drei Ringe nach 1, 2½, 4 Takten, die
-    // Seitenfarbe nach 5½ Takten
-    expect(w.verzoegerungTakte).toEqual([0, 0.5, 1, 2.5, 4, 5.5]);
+    // Einblenden je Schicht: der Schleier ½ Takt versetzt ab dem Klick, die drei Ringe nach 1, 1½, 2 Takten (so früh wie
+    // Runde 1, Art Director nach dem Owner-Feedback 16.10.2026 (2)), die Seitenfarbe nach 5½ Takten
+    expect(w.verzoegerungTakte).toEqual([0, 0.5, 1, 1.5, 2, 5.5]);
     expect(steigt(w.verzoegerungTakte)).toBe(true);
     // Ringe (Owner-Feedback 16.10.2026 (2)): je eigene Verzögerung (Schichten 3–5), Dauer in ganzen Takten (die einzige
     // Ausnahme von d-1…d-4), nach innen kürzer, Deckkraft nach innen dichter, keiner deckend
     expect(w.ringe).toBe(FRONT_RINGE);
     expect(Object.isFrozen(FRONT_RINGE)).toBe(true);
-    expect(FRONT_RINGE).toEqual({ verzoegerungTakte: [1, 2.5, 4], dauerTakte: [7, 6, 5], deckkraft: [0.55, 0.7, 0.85] });
+    expect(FRONT_RINGE).toEqual({ verzoegerungTakte: [1, 1.5, 2], dauerTakte: [6, 5, 4], deckkraft: [0.5, 0.75, 0.95] });
     expect([...w.verzoegerungTakte.slice(2, 5)]).toEqual([...FRONT_RINGE.verzoegerungTakte]);
     for (const d of FRONT_RINGE.dauerTakte) expect(Number.isInteger(d)).toBe(true);
     expect(steigt([...FRONT_RINGE.dauerTakte].reverse())).toBe(true);
     expect(steigt(FRONT_RINGE.deckkraft)).toBe(true);
     for (const o of FRONT_RINGE.deckkraft) expect(o).toBeLessThan(1);
-    // Sie stehen ganz, bevor die Seitenfarbe einblendet (d-1), und wachsen höchstens einen Takt über die Deckung hinaus
+    // Sie stehen ganz (d-1) mindestens zwei Takte, bevor die Seitenfarbe einblendet (Art Director: jeder Ring steht rund
+    // 150 ms voll), und wachsen höchstens einen Takt über die Deckung hinaus
     const seitenfarbe = w.verzoegerungTakte.at(-1)! * TAKT_MS;
     FRONT_RINGE.verzoegerungTakte.forEach((v, j) => {
-      expect(v * TAKT_MS + DAUER_MS['d-1']).toBeLessThanOrEqual(seitenfarbe);
+      expect(v * TAKT_MS + DAUER_MS['d-1'] + 2 * TAKT_MS).toBeLessThanOrEqual(seitenfarbe);
       expect((v + FRONT_RINGE.dauerTakte[j]) * TAKT_MS).toBeLessThanOrEqual(WECHSEL.abdeckenMs + TAKT_MS);
     });
     expect(new Set(FRONT_RINGE.verzoegerungTakte.map((v, j) => v + FRONT_RINGE.dauerTakte[j])).size).toBe(3);
@@ -514,12 +515,12 @@ describe('Bewegungsregister', () => {
       // r hält die Regel ganz (nur w ist ausgenommen) und läuft linear, genau einmal benutzt (die Ringe)
       expect(diffusionsFehler(css).filter((f) => /^r: /.test(f))).toEqual([]);
       expect(diffusionsFehler(css).every((f) => /^w: /.test(f))).toBe(true);
-      expect(teile.filter((t) => /^r\b/.test(t))).toEqual(['r calc(var(--takt) * var(--u)) linear var(--q) both']);
+      expect(teile.filter((t) => /^r\b/.test(t))).toEqual(['r calc(var(--takt)*var(--u)) linear var(--q) both']);
       // Keine weitere Skalierung in der Datei: scale nur als Ziel --m, Start --z und die Stützstellen von r; transform
       // nur als fester Faktor --m der Ringe (nie in Keyframes)
       expect([...css.matchAll(/(?<![\w-])transform\s*:\s*([^;]+);/g)].map((m) => m[1].trim())).toEqual(['scale(var(--m))']);
       expect(keyframesIn(css).every((k) => k.stopps.every((s) => !s.deklarationen.has('transform')))).toBe(true);
-      expect([...css.matchAll(/(?<![\w-])scale\s*:\s*([^;]+);/g)].map((m) => m[1].trim()).sort()).toEqual(['0.16', '0.37', '0.58', '0.79', '1', 'var(--m)', 'var(--z)']);
+      expect([...css.matchAll(/(?<![\w-])scale\s*:\s*([^;]+);/g)].map((m) => m[1].trim()).sort()).toEqual(['0.175', '0.38125', '0.5875', '0.79375', '1', 'var(--m)', 'var(--z)']);
     });
   });
 });

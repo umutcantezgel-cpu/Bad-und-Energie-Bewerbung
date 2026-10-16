@@ -203,24 +203,25 @@ export const SICHT_ENDE_MS = 2400;
 export const KLICK_ENDE_MS = 720;
 /**
  * Wärmefront (E-031; Owner-Feedback 16.10.2026, „viel zu schnell … erschreckend“; ersetzt Prüfrunde 4 A4-2; Ringe nach
- * dem zweiten Feedback, FRONT_RINGE): Die zwei Schichten des Schleiers blenden ab dem Klick ½ Takt versetzt ein (d-2) und
- * wachsen nach einem Takt Vorlauf (d-4, k-wechsel), die Ringe darauf nach √t, nach 5½ Takten blendet die Seitenfarbe ein
- * (d-2) und deckt nach 680 ms, wenn das Wachsen des Schleiers endet: Wechsel. Aufgedeckt wird, sobald die neue Seite ruht, höchstens 320 ms nach dem neuen Pfad und spätestens 1.200 ms
+ * dem zweiten Feedback, FRONT_RINGE): Die zwei Schichten des Schleiers blenden ab dem Klick ½ Takt versetzt ein (d-1:
+ * Der Klick antwortet sofort sichtbar) und wachsen nach einem Takt Vorlauf (d-4, k-wechsel), die Ringe darauf nach √t,
+ * nach 5½ Takten blendet die Seitenfarbe ein (d-2) und deckt nach 680 ms, wenn das Wachsen des Schleiers endet: Wechsel. Aufgedeckt wird, sobald die neue Seite ruht, höchstens 320 ms nach dem neuen Pfad und spätestens 1.200 ms
  * nach dem Wechsel: ein Takt + d-3 = 480 ms. Ohne Warten: Klick bis Front zu 1.160 ms; mit dem Einsetzen der neuen
  * Seite (Desktop rund 60–90 ms) und der Ruhe (vier Bilder) rund 1,2–1,3 s.
  */
 export const WECHSEL: Readonly<Wechsel> = Object.freeze({ vorlaufMs: 80, wechselMs: 680, abdeckenMs: 680, aufdeckenMs: 480, haltenMs: 1200, ruheMs: 320 });
 /**
- * Ringe der Wärmefront (Owner-Feedback 16.10.2026 (2), E-031): Auf dem Schleier liegen drei Ringe in --waerme-1, -2, -3.
- * Jeder blendet nach 1, 2½ bzw. 4 Takten ein (d-1; am Filmstreifen abgestimmt: mit d-2 stünden sie erst voll da, wenn die
- * Seitenfarbe schon einblendet) und wächst ab demselben Moment nach √t (7, 6 bzw. 5 Takte, also 560, 480 und 400 ms); so
- * starten sie versetzt, enden verschieden (640, 680, 720 ms), und ihre Breiten ziehen ungleichmäßig nach. Der innerste
- * endet unter der deckenden Seitenfarbe. Deckkraft 0,55 · 0,7 · 0,85.
+ * Ringe der Wärmefront (Owner-Feedback 16.10.2026 (2), E-031; nachgeschärft nach dem Art Director: so kräftig und so
+ * früh wie Runde 1): Auf dem Schleier liegen drei Ringe, --waerme-2 mit ½ und ¾, innen --waerme-4 mit 0,95 (der Lachston
+ * von Runde 1). Jeder blendet nach 1, 1½ bzw. 2 Takten ein (d-1) und steht nach 200, 240 und 280 ms voll, mindestens
+ * 160 ms bevor die Seitenfarbe einblendet; ab demselben Moment wächst er nach √t (6, 5 bzw. 4 Takte, also 480, 400 und
+ * 320 ms). So starten sie versetzt, enden verschieden (560, 520, 480 ms), und die inneren ziehen ungleichmäßig nach; dann
+ * stehen sie, bis die Seitenfarbe deckt.
  */
 export const FRONT_RINGE: Readonly<Ringe> = Object.freeze({
-  verzoegerungTakte: Object.freeze([1, 2.5, 4]),
-  dauerTakte: Object.freeze([7, 6, 5]),
-  deckkraft: Object.freeze([0.55, 0.7, 0.85]),
+  verzoegerungTakte: Object.freeze([1, 1.5, 2]),
+  dauerTakte: Object.freeze([6, 5, 4]),
+  deckkraft: Object.freeze([0.5, 0.75, 0.95]),
 });
 /**
  * Diffusionsgesetz r ∝ √t (E-031): Stützstellen [Zeitanteil, Fortschritt] mit Fortschritt = √Zeitanteil. Jeder
@@ -430,10 +431,11 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
     zweck:
       'Wärmefront (E-031; Owner-Feedback 16.10.2026: sanfter Wärmeschleier statt Blitz, danach die Ringe von Runde 1 ' +
       'darauf): Beim Klick auf einen Link zu einer Erzählseite legt sich vom Klickpunkt aus ein zarter, durchscheinender ' +
-      'Wärmeschleier über die Seite. Er beginnt nicht als Punkt, sondern bei 15 % der Fensterdiagonale, blendet ein und ' +
-      'wächst nach einem Takt ruhig (k-wechsel) bis über die fernste Ecke. Darauf ziehen drei warme Ringe ungleichmäßig ' +
-      'nach: je versetzt eingeblendet, wachsen sie nach √t, verschieden lang, nach innen wärmer und dichter, das ' +
-      'heißeste zuletzt und innen – wie Wärmeleitung von einer Quelle, ohne kalten Kern. Sie kommen im Fenster zur Ruhe, ' +
+      'Wärmeschleier über die Seite. Er beginnt nicht als Punkt, sondern bei 15 % der Fensterdiagonale, blendet sofort ein ' +
+      'und wächst nach einem Takt ruhig (k-wechsel) bis über die fernste Ecke. Gleich darauf ziehen drei warme Ringe ' +
+      'ungleichmäßig nach, kräftig wie in Runde 1: je versetzt eingeblendet, wachsen sie nach √t, verschieden lang, nach ' +
+      'innen wärmer und dichter, das heißeste zuletzt und innen – wie Wärmeleitung von einer Quelle, ohne kalten Kern. ' +
+      'Sie kommen im Fenster zur Ruhe, ' +
       'außen bleibt der Schleier. Zuletzt blendet die Seitenfarbe ein und deckt; erst dann wechselt die Seite. Die Wärme ' +
       'ist durchgezogen, nie steht eine einfarbige Pfirsichfläche. Ruht die neue Seite, verblasst die Front als Ganzes, ' +
       'und der Hauptinhalt (<main>) taucht auf und steigt ein Stück an seinen Platz. Nachladende Bereiche wartet sie ' +
@@ -441,11 +443,11 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
       'View-Übergang.',
     ausloeser: ['navigation'],
     eigenschaften: ['transform', 'opacity'],
-    // Wachsen des Schleiers d-4, Aufdecken d-3 (Front und Hauptinhalt), Einblenden von Schleier und Seitenfarbe d-2, der
-    // Ringe d-1 (waermefront.module.css); die Ringe wachsen ganze Takte (FRONT_RINGE)
+    // Wachsen des Schleiers d-4, Aufdecken d-3 (Front und Hauptinhalt), Einblenden der Seitenfarbe d-2, von Schleier und
+    // Ringen d-1 (waermefront.module.css); die Ringe wachsen ganze Takte (FRONT_RINGE)
     dauer: ['d-4', 'd-3', 'd-2', 'd-1'],
-    // Einblenden je Schicht: Schleier ab dem Klick, die Ringe nach 1, 2½, 4 Takten, die Seitenfarbe nach 5½ Takten
-    verzoegerungTakte: [0, 0.5, 1, 2.5, 4, 5.5],
+    // Einblenden je Schicht: Schleier ab dem Klick, die Ringe nach 1, 1½, 2 Takten, die Seitenfarbe nach 5½ Takten
+    verzoegerungTakte: [0, 0.5, 1, 1.5, 2, 5.5],
     // Schleier und Seitenfarbe wachsen mit k-wechsel; Einblenden und das Wachsen der Ringe nach √t linear
     kurve: ['k-wechsel', 'linear'],
     reduziert: 'Kein Übergang: die Seite wechselt sofort.',

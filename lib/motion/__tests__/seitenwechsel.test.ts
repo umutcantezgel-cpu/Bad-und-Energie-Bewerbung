@@ -172,9 +172,10 @@ describe('Wärmefront: Zeitplan und Notschalter (E-031)', () => {
   it('Startgröße (Owner-Feedback 16.10.2026): kein winziger Punkt; Schleier und Seitenfarbe beginnen bei 12–18 % der Fensterdiagonale (@keyframes w ab --z), die Ringe bei mindestens der Hälfte (@keyframes r ab RING_START)', () => {
     expect(FRONT_START).toBeGreaterThanOrEqual(0.12);
     expect(FRONT_START).toBeLessThanOrEqual(0.18);
-    // Von unten nach oben: der Schleier (1,12 · 1,08) bis über die Ecke, die Ringe (0,92 · 0,8 · 0,6) im Fenster, nach
-    // innen enger, zuletzt die Seitenfarbe genau bis zur Ecke (Owner-Feedback 16.10.2026 (2))
-    expect([...FRONT_SCHICHTEN]).toEqual([1.12, 1.08, 0.92, 0.8, 0.6, 1]);
+    // Von unten nach oben: der Schleier (1,12 · 1,08) bis über die Ecke, die Ringe (0,855 · 0,66 · 0,43) im Fenster, nach
+    // innen enger, zuletzt die Seitenfarbe genau bis zur Ecke (Owner-Feedback 16.10.2026 (2), Art Director: der satte
+    // innerste kleiner)
+    expect([...FRONT_SCHICHTEN]).toEqual([1.12, 1.08, 0.855, 0.66, 0.43, 1]);
     expect(Object.isFrozen(FRONT_SCHICHTEN)).toBe(true);
     const ZUM_START = [0, 1, 5];
     const RINGE = [2, 3, 4];

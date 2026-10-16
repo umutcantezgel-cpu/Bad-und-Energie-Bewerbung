@@ -149,7 +149,8 @@ test.describe('mit Bewegung (no-preference)', () => {
 
     // Sechs Schichten mit je zwei Abläufen: Schleier und Seitenfarbe w (Wachsen, d-4 mit k-wechsel nach einem Takt Vorlauf,
     // von --z auf --m), die Ringe r (√t auf den Stützstellen, ganze Takte, ab ihrer Verzögerung); alle f (Einblenden,
-    // Schleier ½ Takt versetzt ab dem Klick, die Ringe nach 1, 2½, 4 Takten mit d-1, die Seitenfarbe nach 5½ Takten)
+    // Schleier ½ Takt versetzt ab dem Klick mit d-1, die Ringe nach 1, 1½, 2 Takten mit d-1, die Seitenfarbe nach
+    // 5½ Takten mit d-2)
     const ab = await gemerkteAblaeufe(page);
     expect(ab).toHaveLength(12);
     const w = ab.filter((a) => a.name === 'w').sort((x, y) => x.schicht - y.schicht);
@@ -179,7 +180,7 @@ test.describe('mit Bewegung (no-preference)', () => {
       expect(Number(a.werte[0].scale)).toBeCloseTo(lage.z, 4);
       expect(Number(a.werte[1].scale)).toBeCloseTo(lage.m, 4);
     }
-    expect(f.map((a) => a.dauer)).toEqual([240, 240, 120, 120, 120, 240]);
+    expect(f.map((a) => a.dauer)).toEqual([120, 120, 120, 120, 120, 240]);
     expect(f.map((a) => a.verzoegerung)).toEqual(MOTION_REGISTER.seitenwechsel.verzoegerungTakte.map((n) => n * TAKT_MS));
     expect(f.map((a) => a.kurve)).toEqual(Array(6).fill('linear'));
     expect(f.map((a) => Number(a.werte[0].opacity))).toEqual(Array(6).fill(0));
@@ -252,11 +253,15 @@ test.describe('mit Bewegung (no-preference)', () => {
     }
     expect(schichten[0].breite).toBeGreaterThan(schichten[1].breite);
     expect(schichten[1].breite).toBeGreaterThan(schichten[5].breite);
-    // Ringe: der Faktor --m als festes transform, Endgröße (scale 1) im Fenster, nach innen enger; außen bleibt der Schleier
+    // Ringe: der Faktor --m als festes transform, Endgröße (scale 1) im Fenster und genau wie im Register
+    // (FRONT_SCHICHTEN, gemessen an der fernsten Ecke), nach innen enger; außen bleibt der Schleier. Der innerste, als
+    // einziger satt, ist seit dem Art Director kleiner als die Hälfte (43 %: die 60-%-Regel des Abdeckens), aber nie
+    // unter 40 %
     for (const [j, i] of RINGE.entries()) {
       expect(schichten[i].transform).toBeCloseTo(faktor, 4);
       expect((schichten[i].breite * faktor) / 2).toBeLessThan(ecke);
-      expect((schichten[i].breite * faktor) / 2).toBeGreaterThan(0.5 * ecke);
+      expect((schichten[i].breite * faktor) / 2 / ecke).toBeCloseTo(FRONT_SCHICHTEN[i], 2);
+      expect((schichten[i].breite * faktor) / 2).toBeGreaterThan(0.4 * ecke);
       if (j > 0) expect(schichten[i].breite).toBeLessThan(schichten[RINGE[j - 1]].breite);
     }
     await expect(page).toHaveURL('/');

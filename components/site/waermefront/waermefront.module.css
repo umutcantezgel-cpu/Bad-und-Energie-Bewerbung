@@ -8,28 +8,33 @@
  * Schichten wächst; Chromium malte dann in jedem Bild die ganze Seite neu (am Handy bei CPU 4× 0,6–3,6 ms je Bild).
  *
  * Schichten n beider Überlagerungen in derselben Sprache: Farbe --c, Deckkraft 1 / (5 − n), Einblenden nach --v Takten
- * (f, d-2 linear, Verzögerung --q), ohne Verlauf und ohne filter. Die ersten zwei teilen sich beide: --waerme-0 (¼) und
- * --waerme-1 (⅓, zusammen ½).
+ * (f, linear, Verzögerung --q; d-2, an der Front d-1 über --g), ohne Verlauf und ohne filter. Die ersten drei teilen
+ * sich beide: --waerme-0 (¼), --waerme-1 (⅓, zusammen ½) und --waerme-2 (die dritte Schicht der Klick-Wärme, der erste
+ * Ring der Front). Formeln ohne Leerzeichen um * und /, wo es geht: Jedes Zeichen zählt im Budget.
  *
  * Wärmefront: Ringe auf dem Wärmeschleier (Inhaber 16.10.2026, zweites Feedback: der Schleier allein sei „wenn dann
  * für den Hintergrund einer guten Transition geeignet“; die ungleichmäßig nachziehenden Ringe von Runde 1 zurück, im
- * Tempo von heute; E-031 Abschnitt „Owner-Feedback 16.10. (2): Ringe von Runde 1 auf dem Schleier“). Sechs Schichten um
- * den Klickpunkt, von unten nach oben:
+ * Tempo von heute; E-031 Abschnitt „Owner-Feedback 16.10. (2): Ringe von Runde 1 auf dem Schleier“, nachgeschärft nach
+ * dem Art Director: so kräftig und so früh wie Runde 1). Sechs Schichten um den Klickpunkt, von unten nach oben:
  * - Schleier (<i>, n = 1, 2): Durchmesser (29 − n) / 25 × Grundgröße --s (1,12 · 1,08). Er steht ab dem Klick in der
- *   Startgröße (--z: FRONT_START = 15 % der Fensterdiagonale, kein Punkt), blendet ein und wächst nach einem Takt bis über
- *   die fernste Ecke (w, d-4 mit k-wechsel: ohne Antritt, ruhig aus).
- * - Ringe (<b>): --waerme-1, -2, -3 (nach innen wärmer), Deckkraft 0,55 · 0,7 · 0,85 (der Schleier scheint durch). Jeder
- *   blendet nach 1, 2½ bzw. 4 Takten ein (d-1: mit d-2 stünden sie erst voll da, wenn die Seitenfarbe schon einblendet;
- *   am Filmstreifen abgestimmt) und wächst ab demselben Moment nach √t (r: auf den Stützstellen DIFFUSION_STUETZ,
- *   linear dazwischen, 7, 6 bzw. 5 Takte) von 16 % auf seine Endgröße (29 − n) / 25 × --s × --m mit
- *   n = 6, 9, 14, also 92, 80 und 60 % des Durchmessers bis zur fernsten Ecke. Den Faktor --m bis zur Ecke trägt ein
- *   festes transform; das Wachsen ist allein der √t-Ablauf auf scale. Versetzt gestartet und verschieden lang ziehen die
- *   Ringbreiten ungleichmäßig nach; der heißeste liegt zuletzt und innen (kein kalter Kern). Sie kommen im Fenster zur
- *   Ruhe: Außen bleibt der Schleier sichtbar, bis die Seitenfarbe deckt, und der heißeste überzieht nie das ganze
- *   Fenster (keine satte Fläche, die steht).
+ *   Startgröße (--z: FRONT_START = 15 % der Fensterdiagonale, kein Punkt), blendet über d-1 ein (der Klick antwortet
+ *   sofort sichtbar) und wächst nach einem Takt bis über die fernste Ecke (w, d-4 mit k-wechsel: ohne Antritt, ruhig aus).
+ * - Ringe (<b>): --waerme-2 mit ½ und ¾ Deckkraft, innen --waerme-4 mit 0,95 (der Lachston von Runde 1); zusammen von
+ *   außen L* rund 90,4, 87,6 und 80,4 auf Papier 97,4 wie die Bänder von Runde 1 (90,0 · 86,6 · 80,3). Satt (Ton ab
+ *   --waerme-2) ist nur der innerste; der mittlere bleibt mit Abstand darunter (mit --waerme-3 wäre seine ganze Scheibe
+ *   satt, an der Startseite rund 73 % des Fensters, über der Grenze von 60 %). Jeder blendet nach 1, 1½ bzw. 2 Takten über d-1 ein, steht also nach
+ *   200, 240 und 280 ms voll, mindestens 160 ms vor der Seitenfarbe, und wächst ab demselben Moment nach √t (r: auf den
+ *   Stützstellen DIFFUSION_STUETZ, linear dazwischen, 6, 5 bzw. 4 Takte) von 17,5 % auf seine Endgröße
+ *   (29 − n) / 25 × --s × --m mit n = 7,625, 12,5, 18,25, also 85,5, 66 und 43 % des Durchmessers bis zur fernsten
+ *   Ecke (der satte innerste so klein, wie es der Start ohne Punkt erlaubt: an der Startseite rund 54 % des Fensters). Den
+ *   Faktor --m bis zur Ecke trägt ein festes transform; das Wachsen ist allein der √t-Ablauf auf scale. Versetzt
+ *   gestartet und verschieden lang ziehen die Ringbreiten ungleichmäßig nach; der heißeste liegt zuletzt und innen (kein
+ *   kalter Kern). Sie kommen im Fenster zur Ruhe: Außen bleibt der Schleier sichtbar, bis die Seitenfarbe deckt, und der
+ *   heißeste überzieht nie das ganze Fenster (keine satte Fläche, die steht).
  * - Seitenfarbe (<i> nach den Ringen, n = 4): innen und zuoberst, wächst mit dem Schleier und blendet erst nach 5½ Takten
- *   ein, wenn die Ringe das Fenster fast überzogen haben; bis dahin unsichtbar, also nie ein Loch und nie ein kalter
- *   Kern (Prüfrunde 5 A5-1, B5-1, C5-1). Sie deckt, wenn das Wachsen des Schleiers endet; dann wechselt die Seite.
+ *   über d-2 ein (--g), wenn die Ringe das Fenster fast überzogen haben; bis dahin unsichtbar, also nie ein Loch und nie
+ *   ein kalter Kern (Prüfrunde 5 A5-1, B5-1, C5-1). Sie deckt, wenn das Wachsen des Schleiers endet; dann wechselt die
+ *   Seite.
  * Mittelpunkt (--x, --y), Grundgröße (--s), Faktor bis zur Ecke (--m) und Startmaßstab (--z) setzt die Insel.
  * Aufdecken: Die Insel setzt data-auf, die Front verblasst als Ganzes (ein Takt + d-3, k-wechsel; sie ist dann eine
  * einzige Fläche in der Seitenfarbe), und der Hauptinhalt taucht auf und steigt um --a-5 an seinen Platz („warme Luft
@@ -75,13 +80,13 @@
   --c: var(--waerme-0);
   --n: 1;
   --t: -50% -50%;
-  --q: calc(var(--takt) * var(--v, 0));
+  --q: calc(var(--takt)*var(--v, 0));
   position: absolute;
   left: var(--x);
   top: var(--y);
   translate: var(--t);
-  opacity: calc(1 / (5 - var(--n)));
-  will-change: scale, opacity;
+  opacity: calc(1/(5 - var(--n)));
+  will-change: scale,opacity;
   animation: f var(--d-2) linear var(--q) both;
 }
 
@@ -91,57 +96,56 @@
   --v: 0.5;
 }
 
-.k > * + * + * {
+/* Dritte Schicht: der innere Ring der Klick-Wärme, an der Front der erste Ring (Farbe und Verzögerung) */
+.e > * + * + * {
   --c: var(--waerme-2);
   --n: 3;
   --v: 1;
 }
 
-/* Front: Kreise mit dem Durchmesser (29 − n) / 25 × --s; Schleier und Seitenfarbe wachsen von --z auf --m */
+/* Front: Kreise mit dem Durchmesser (29 − n) / 25 × --s; Schleier und Seitenfarbe wachsen von --z auf --m und blenden
+   über --g ein (Schleier d-1, Seitenfarbe d-2) */
 .f > * {
-  padding: calc((29 - var(--n)) * var(--s) / 50);
+  padding: calc((29 - var(--n))*var(--s)/50);
   border-radius: var(--radius-voll);
   background: var(--c);
   scale: var(--m);
   animation:
-    w var(--d-4) var(--k-wechsel) var(--takt) both,
-    f var(--d-2) linear var(--q) both;
+    w var(--d-4) var(--k-wechsel) var(--takt) both,f var(--g, var(--d-1)) linear var(--q) both;
 }
 
 /* Ringe: Endgröße (29 − n) / 25 × --s × --m (festes transform), Wachsen nach √t (r) über --u Takte ab --v Takten,
-   Einblenden d-1 */
+   Einblenden d-1; der erste in --waerme-2 nach einem Takt (dritte Schicht) */
 .f > b {
-  --n: 6;
-  --v: 1;
-  --u: 7;
-  opacity: 0.55;
+  --n: 7.625;
+  --u: 6;
+  opacity: 0.5;
   transform: scale(var(--m));
   animation:
-    r calc(var(--takt) * var(--u)) linear var(--q) both,
-    f var(--d-1) linear var(--q) both;
+    r calc(var(--takt)*var(--u)) linear var(--q) both,f var(--d-1) linear var(--q) both;
 }
 
 .f > b + b {
-  --c: var(--waerme-2);
-  --n: 9;
-  --v: 2.5;
-  --u: 6;
-  opacity: 0.7;
+  --n: 12.5;
+  --v: 1.5;
+  --u: 5;
+  opacity: 0.75;
 }
 
 .f > b + b + b {
-  --c: var(--waerme-3);
-  --n: 14;
-  --v: 4;
-  --u: 5;
-  opacity: 0.85;
+  --c: var(--waerme-4);
+  --n: 18.25;
+  --v: 2;
+  --u: 4;
+  opacity: 0.95;
 }
 
-/* Seitenfarbe: nach den Ringen, also zuoberst */
+/* Seitenfarbe: nach den Ringen, also zuoberst; Einblenden d-2 */
 .f > b + i {
   --c: var(--surface);
   --n: 4;
   --v: 5.5;
+  --g: var(--d-2);
 }
 
 /* Klick-Wärme: Umrisse um die Box des Elements, außen 24, dann 16, innen 8 px */
@@ -150,14 +154,14 @@
   height: var(--h);
   border-radius: var(--radius-2);
   outline: var(--m-kontur) solid var(--c);
-  outline-offset: calc((4 - var(--n)) * var(--a-2));
+  outline-offset: calc((4 - var(--n))*var(--a-2));
 }
 
 /* Hauptinhalt beim Aufdecken: unter der Deckung eine Ebene, der Ablauf f steht angehalten am Anfang (unsichtbar und
    --a-5 tiefer, .h); beim Aufdecken läuft er (.a): Der Inhalt taucht auf und steigt an seinen Platz */
 .h {
   --t: 0 var(--a-5);
-  will-change: transform, opacity;
+  will-change: transform,opacity;
   animation: f var(--d-3) var(--k-wechsel) var(--takt) both paused;
 }
 
@@ -165,7 +169,7 @@
   animation-play-state: running;
 }
 
-/* w = wachsen von der Startgröße auf --m, f = einblenden aus --t, r = Ring wächst nach √t von 16 % (kurz wegen des
+/* w = wachsen von der Startgröße auf --m, f = einblenden aus --t, r = Ring wächst nach √t von 17,5 % (kurz wegen des
    Präfixes) */
 @keyframes w {
   from {
@@ -182,16 +186,16 @@
 
 @keyframes r {
   from {
-    scale: 0.16;
+    scale: 0.175;
   }
   6.25% {
-    scale: 0.37;
+    scale: 0.38125;
   }
   25% {
-    scale: 0.58;
+    scale: 0.5875;
   }
   56.25% {
-    scale: 0.79;
+    scale: 0.79375;
   }
   to {
     scale: 1;

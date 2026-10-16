@@ -60,17 +60,21 @@ export const FRONT_START = 0.15;
 /**
  * Durchmesser der Schichten der Front am Ende, relativ zum Kreis bis zur fernsten Ecke (frontDurchmesser), von unten
  * nach oben (waermefront.module.css: Innenabstand (29 − n) × --s / 50): der Schleier 1,12 und 1,08 (n = 1, 2), die drei
- * Ringe 0,92, 0,8 und 0,6 (n = 6, 9, 14: Sie kommen im Fenster zur Ruhe, außen bleibt der Schleier, und der heißeste
- * überzieht das Fenster nie ganz), zuletzt die Seitenfarbe 1 (n = 4).
+ * Ringe 0,855, 0,66 und 0,43 (n = 7,625, 12,5, 18,25: Sie kommen im Fenster zur Ruhe, außen bleibt der Schleier, und
+ * der heißeste, als einziger satt, überzieht das Fenster nie ganz: an der Startseite höchstens rund 54 % in seinem Ton),
+ * zuletzt die Seitenfarbe 1 (n = 4).
  */
-export const FRONT_SCHICHTEN: readonly number[] = /* @__PURE__ */ Object.freeze([1.12, 1.08, 0.92, 0.8, 0.6, 1]);
+export const FRONT_SCHICHTEN: readonly number[] = /* @__PURE__ */ Object.freeze([1.12, 1.08, 0.855, 0.66, 0.43, 1]);
 
 /**
- * Startmaßstab der Ringe relativ zu ihrer Endgröße (@keyframes r: 0,16 → 1 nach √t). Kein Punkt (Owner-Feedback
- * 16.10.2026): Auch der innerste Ring (0,6) beginnt bei mindestens FRONT_START / 2 der Fensterdiagonale, denn der Kreis
- * bis zur fernsten Ecke ist nie kleiner als die Diagonale.
+ * Startmaßstab der Ringe relativ zu ihrer Endgröße (@keyframes r: 0,175 → 1 nach √t). Kein Punkt (Owner-Feedback
+ * 16.10.2026): Auch der innerste Ring (0,43) beginnt bei mindestens FRONT_START / 2 der Fensterdiagonale, denn der Kreis
+ * bis zur fernsten Ecke ist nie kleiner als die Diagonale; und der äußere (0,855) bei höchstens 2 × FRONT_START, denn
+ * der Kreis ist nie größer als die doppelte Diagonale. Darum liegen die Ringe innerhalb eines Faktors 2, und der satte
+ * innerste kann nicht kleiner werden, ohne dass der äußere zu Beginn der Seitenfarbe weniger als drei Viertel des Wegs
+ * hätte.
  */
-export const RING_START = 0.16;
+export const RING_START = 0.175;
 
 /**
  * Ruhe der neuen Seite vor dem Aufdecken (Prüfrunde 3 C3-1, KERN K-013): so viele Bilder in Folge ohne Änderung im

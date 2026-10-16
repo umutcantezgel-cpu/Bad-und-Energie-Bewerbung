@@ -128,7 +128,15 @@ describe('Waermefront: CSS (E-031, K-009; Owner-Feedback 16.10.2026: sanfter Wä
   const klick = MOTION_REGISTER['klick-waerme'];
   const wechsel = kurveAus(theme, 'k-wechsel');
   const EINBLENDEN = 'f var(--d-2) linear var(--q) both';
-  const VERZOEGERUNG = 'calc(var(--takt) * var(--v, 0))';
+  // Front: Schleier über d-1 (der Klick antwortet sofort sichtbar), die Seitenfarbe setzt --g auf d-2
+  const EINBLENDEN_FRONT = 'f var(--g, var(--d-1)) linear var(--q) both';
+  const VERZOEGERUNG = 'calc(var(--takt)*var(--v, 0))';
+  /** Dauer (1…4 für d-1…d-4) des Einblendens f einer Schicht: der letzte Teil ihres Ablaufs, --g aufgelöst. */
+  const einblendDauer = (r: Record<string, string>) => {
+    const teil = listenteile(r.animation).at(-1)!.trim();
+    expect(teil).toMatch(/^f /);
+    return Number(teil.replace(/var\(--g, (var\(--d-\d\))\)/, (_, rest: string) => r['--g'] ?? rest).match(/var\(--d-(\d)\)/)![1]);
+  };
   /** √t wie @keyframes r: linear zwischen den Stützstellen, Anteil 0…1 → Fortschritt 0…1. */
   const wurzel = (anteil: number) => {
     const a = Math.min(1, Math.max(0, anteil));
@@ -170,8 +178,13 @@ describe('Waermefront: CSS (E-031, K-009; Owner-Feedback 16.10.2026: sanfter Wä
 
   it('Schleier und Seitenfarbe wachsen ruhig (Owner-Feedback 16.10.2026): d-4 mit k-wechsel nach einem Takt Vorlauf; in den ersten 100 ms praktisch kein Wachsen, nie ein Schuss', () => {
     const teile = listenteile(regel('.f > *').animation).map((t) => t.trim());
-    expect(teile).toEqual(['w var(--d-4) var(--k-wechsel) var(--takt) both', EINBLENDEN]);
+    expect(teile).toEqual(['w var(--d-4) var(--k-wechsel) var(--takt) both', EINBLENDEN_FRONT]);
     expect(regel('.e > *').animation).toBe(EINBLENDEN);
+    // --g setzt allein die Seitenfarbe (d-2); der Schleier blendet über d-1 ein, voll nach 120 und 160 ms
+    expect([...css.matchAll(/--g\s*:/g)]).toHaveLength(1);
+    expect(je[SEITENFARBE]['--g']).toBe('var(--d-2)');
+    expect(SCHLEIER.map((i) => einblendDauer(je[i]))).toEqual([1, 1]);
+    expect(SCHLEIER.map((i) => Number(je[i]['--v'] ?? 0) * TAKT_MS + DAUER_MS['d-1'])).toEqual([120, 160]);
     expect(regel('.e > *')['--q']).toBe(VERZOEGERUNG);
     // Genau Schleier und Seitenfarbe tragen w (die Ringe haben ihren eigenen Ablauf)
     expect(je.map((r, i) => [i, /(?:^|,)\s*w /.test(r.animation)]).filter(([, w]) => w).map(([i]) => i)).toEqual([...SCHLEIER, SEITENFARBE]);
@@ -191,9 +204,9 @@ describe('Waermefront: CSS (E-031, K-009; Owner-Feedback 16.10.2026: sanfter Wä
     expect(WECHSEL.vorlaufMs + DAUER_MS['d-4']).toBe(WECHSEL.abdeckenMs);
   });
 
-  it('Ringe (Owner-Feedback 16.10.2026 (2)): je eigene Verzögerung, Dauer und Deckkraft wie im Register, Wachsen nach √t ab dem Einblenden (d-1); die Ringbreiten ziehen ungleichmäßig nach', () => {
+  it('Ringe (Owner-Feedback 16.10.2026 (2), nachgeschärft): je eigene Verzögerung, Dauer und Deckkraft wie im Register, Wachsen nach √t ab dem Einblenden (d-1); die Ringbreiten ziehen ungleichmäßig nach', () => {
     expect(listenteile(regel('.f > b').animation).map((t) => t.trim())).toEqual([
-      'r calc(var(--takt) * var(--u)) linear var(--q) both',
+      'r calc(var(--takt)*var(--u)) linear var(--q) both',
       'f var(--d-1) linear var(--q) both',
     ]);
     const ringe = RINGE.map((i) => je[i]);
@@ -202,19 +215,23 @@ describe('Waermefront: CSS (E-031, K-009; Owner-Feedback 16.10.2026: sanfter Wä
     expect(ringe.map((r) => Number(r.opacity))).toEqual([...FRONT_RINGE.deckkraft]);
     expect(front.ringe).toBe(FRONT_RINGE);
     expect(front.verzoegerungTakte.slice(RINGE[0], RINGE.at(-1)! + 1)).toEqual([...FRONT_RINGE.verzoegerungTakte]);
-    // Versetzt gestartet, nach innen kürzer, darum verschieden geendet (640, 680, 720 ms); der letzte höchstens einen
+    // Versetzt gestartet, nach innen kürzer, darum verschieden geendet (560, 520, 480 ms); der letzte höchstens einen
     // Takt nach der Deckung, unter der deckenden Seitenfarbe
     const enden = FRONT_RINGE.verzoegerungTakte.map((v, j) => (v + FRONT_RINGE.dauerTakte[j]) * TAKT_MS);
-    expect(enden).toEqual([640, 680, 720]);
+    expect(enden).toEqual([560, 520, 480]);
     expect(Math.max(...enden)).toBeLessThanOrEqual(WECHSEL.abdeckenMs + TAKT_MS);
     // Ungleichmäßig nachziehend: Ein gleichmäßig wachsendes Muster hielte das Verhältnis jedes Rings zum äußeren fest; hier
-    // ziehen die inneren nach (ihr Verhältnis wächst stetig, der innerste um mehr als 0,15), und keine Ringbreite wird
-    // je null
-    const zeiten = [360, 440, 520, 600];
+    // ziehen die inneren nach (ihr Verhältnis wächst stetig, der innerste um mehr als 0,15), solange alle drei zu sehen
+    // sind und die Seitenfarbe noch nicht einblendet: ab ½ Takt nach dem Einsatz des innersten (vorher ab 360 ms, als er
+    // erst nach 4 Takten kam) in Takten bis zum Einsatz der Seitenfarbe. Keine Ringbreite wird je null, auch danach nicht
+    const seitenfarbeAb = front.verzoegerungTakte.at(-1)! * TAKT_MS;
+    const zeiten = [0, 1, 2, 3].map((k) => (FRONT_RINGE.verzoegerungTakte.at(-1)! + 0.5 + k) * TAKT_MS);
+    expect(zeiten).toEqual([200, 280, 360, 440]);
+    expect(zeiten.at(-1)).toBe(seitenfarbeAb);
     const zumAeusseren = [1, 2].map((j) => zeiten.map((ms) => ring(j, ms) / ring(0, ms)));
     for (const folge of zumAeusseren) for (let i = 1; i < folge.length; i += 1) expect(folge[i]).toBeGreaterThan(folge[i - 1]);
     expect(zumAeusseren[1].at(-1)! - zumAeusseren[1][0]).toBeGreaterThan(0.15);
-    for (const ms of zeiten) {
+    for (const ms of [...zeiten, 520, 600, WECHSEL.abdeckenMs]) {
       const [a, b, c] = [0, 1, 2].map((j) => ring(j, ms));
       expect(a - b, `${ms} ms`).toBeGreaterThan(0.1);
       expect(b - c, `${ms} ms`).toBeGreaterThan(0.1);
@@ -237,24 +254,55 @@ describe('Waermefront: CSS (E-031, K-009; Owner-Feedback 16.10.2026: sanfter Wä
     }
   });
 
-  it('Farben nur aus der Rampe: Schleier --waerme-0, -1, Ringe --waerme-1, -2, -3 (nach innen wärmer, kein -4), zuletzt und innen die Seitenfarbe; kein Verlauf, kein Filter', () => {
+  it('Farben nur aus der Rampe: Schleier --waerme-0, -1, Ringe --waerme-2, -2, -4 (zusammen nach innen wärmer, innen der Lachston von Runde 1), zuletzt und innen die Seitenfarbe; nur der innerste Ring satt; kein Verlauf, kein Filter', () => {
     expect(Object.keys(WAERME_ROLLEN_ERLAUBT)).toContain(FRONT_CSS);
     expect(css).not.toMatch(/#[0-9a-f]{3,8}\b|gradient|color-mix|filter|shadow|blend|backdrop|rgba?\(|hsla?\(|oklch|infinite/i);
-    expect(je.map((r) => r['--c'])).toEqual(['var(--waerme-0)', 'var(--waerme-1)', 'var(--waerme-1)', 'var(--waerme-2)', 'var(--waerme-3)', 'var(--surface)']);
-    expect(css).not.toMatch(/--waerme-4/);
+    expect(je.map((r) => r['--c'])).toEqual(['var(--waerme-0)', 'var(--waerme-1)', 'var(--waerme-2)', 'var(--waerme-2)', 'var(--waerme-4)', 'var(--surface)']);
+    // --waerme-4 nur im innersten Ring, --waerme-3 nirgends; die Klick-Wärme nennt höchstens --waerme-2 (umgeleitet)
+    expect([...css.matchAll(/--waerme-4/g)]).toHaveLength(1);
+    expect(css).not.toMatch(/--waerme-3/);
     expect([...css.matchAll(/--surface/g)]).toHaveLength(1);
     expect(regel('.f > *').background).toBe('var(--c)');
     expect(regel('.k > *').outline).toBe('var(--m-kontur) solid var(--c)');
     const farben = [...css.matchAll(/(?:background|--c)\s*:\s*([^;]+);/g)].map((m) => m[1].trim());
-    for (const f of farben) expect(f).toMatch(/^(?:none|var\(--c\)|var\(--waerme-[0-3]\)|var\(--surface\))$/);
+    for (const f of farben) expect(f).toMatch(/^(?:none|var\(--c\)|var\(--waerme-[0-24]\)|var\(--surface\))$/);
+    // Die Bänder, wie sie auf hellem Papier stehen (Schleier, dann je Ring darüber, sRGB in 8 Bit gerundet): von außen
+    // nach innen dunkler und wärmer, im stärksten Bild L* rund 80–91 wie die Bänder von Runde 1 (90,0 · 86,6 · 80,3);
+    // satt (mindestens so satt wie --waerme-2, die Grenze des e2e „Abdecken“) ist allein der innerste, der mittlere bleibt
+    // mit Abstand darunter: Sonst wäre die ganze Scheibe des mittleren satt, an der Startseite über 60 % des Fensters
+    const hex = (name: string) => {
+      const h = theme.match(new RegExp(`${name}: (#[0-9A-Fa-f]{6});`))![1];
+      return [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+    };
+    const rampe = [0, 1, 2, 3, 4].map((i) => hex(`--p-waerme-${i}`));
+    const papier = hex('--p-papier');
+    const ueber = (unten: number[], oben: number[], a: number) => unten.map((v, i) => Math.round(v * (1 - a) + oben[i] * a));
+    const satt = ([r, g, b]: number[]) => (Math.max(r, g, b) - Math.min(r, g, b)) / Math.max(r, g, b);
+    const lstern = (c: number[]) => {
+      const lin = (v: number) => (v / 255 <= 0.04045 ? v / 255 / 12.92 : ((v / 255 + 0.055) / 1.055) ** 2.4);
+      const y = 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]);
+      return 116 * Math.cbrt(y) - 16;
+    };
+    const stufe = (r: Record<string, string>) => Number(r['--c'].match(/--waerme-(\d)/)![1]);
+    let grund = [0, 1].reduce((c, i) => ueber(c, rampe[stufe(je[i])], deckkraft(je[i])), papier);
+    const baender = RINGE.map((i) => (grund = ueber(grund, rampe[stufe(je[i])], deckkraft(je[i]))));
+    const l = baender.map(lstern);
+    expect(l[0]).toBeLessThan(lstern(ueber(ueber(papier, rampe[0], 0.25), rampe[1], 1 / 3)) - 3);
+    for (let i = 1; i < l.length; i += 1) expect(l[i]).toBeLessThan(l[i - 1] - 2);
+    expect(Math.max(...l)).toBeLessThanOrEqual(91);
+    expect(Math.min(...l)).toBeGreaterThanOrEqual(80);
+    expect(Math.min(...l)).toBeLessThan(81);
+    const grenze = satt(rampe[2]);
+    expect(baender.map((b) => satt(b) >= grenze)).toEqual([false, false, true]);
+    expect(satt(baender[1])).toBeLessThan(grenze - 0.01);
   });
 
-  it('Deckkraft und Größe: der Schleier ¼ und ⅓ (zusammen ½) bis über die Ecke, die Ringe 0,55 · 0,7 · 0,85 (der Schleier scheint durch) mit 92 · 80 · 60 % im Fenster, die Seitenfarbe ganz und innen', () => {
+  it('Deckkraft und Größe: der Schleier ¼ und ⅓ (zusammen ½) bis über die Ecke, die Ringe ½ · ¾ · 0,95 (nach innen dichter, keiner ganz) mit 85,5 · 66 · 43 % im Fenster, die Seitenfarbe ganz und innen', () => {
     const n = je.map((r) => Number(r['--n']));
-    expect(n).toEqual([1, 2, 6, 9, 14, 4]);
+    expect(n).toEqual([1, 2, 7.625, 12.5, 18.25, 4]);
     // Durchmesser: Innenabstand rundum, also 2 × padding je Grundgröße --s (die Ringe mal --m im transform)
     const padding = regel('.f > *').padding;
-    expect(padding).toBe('calc((29 - var(--n)) * var(--s) / 50)');
+    expect(padding).toBe('calc((29 - var(--n))*var(--s)/50)');
     const durchmesser = n.map((x) => Math.round(2 * mitN(padding, x) * 1e6) / 1e6);
     expect(durchmesser).toEqual([...FRONT_SCHICHTEN]);
     // Schleier über die Ecke hinaus (äußerer zuerst), Ringe enden im Fenster und nach innen enger, die Seitenfarbe genau
@@ -265,8 +313,9 @@ describe('Waermefront: CSS (E-031, K-009; Owner-Feedback 16.10.2026: sanfter Wä
     expect(RINGE.map((i) => durchmesser[i])).toEqual([...RINGE.map((i) => durchmesser[i])].sort((a, b) => b - a));
     expect(durchmesser[SEITENFARBE]).toBe(1);
     // Deckkraft: der Schleier 1 / (5 − n), zusammen ½; die Ringe nach innen dichter, keiner deckt; die Seitenfarbe ganz
-    expect(regel('.e > *').opacity).toBe('calc(1 / (5 - var(--n)))');
-    expect(je.map((r) => Math.round(deckkraft(r) * 1000) / 1000)).toEqual([0.25, 0.333, 0.55, 0.7, 0.85, 1]);
+    expect(regel('.e > *').opacity).toBe('calc(1/(5 - var(--n)))');
+    expect(je.map((r) => Math.round(deckkraft(r) * 1000) / 1000)).toEqual([0.25, 0.333, 0.5, 0.75, 0.95, 1]);
+    for (let i = 1; i < RINGE.length; i += 1) expect(deckkraft(je[RINGE[i]])).toBeGreaterThan(deckkraft(je[RINGE[i - 1]]));
     expect(1 - (1 - deckkraft(je[0])) * (1 - deckkraft(je[1]))).toBeCloseTo(0.5, 9);
     for (const i of RINGE) expect(deckkraft(je[i])).toBeLessThan(1);
     // Kreise: --radius-voll; die Seitenfarbe liegt zuoberst (letzte Schicht) und ist bis zu ihrem Einblenden unsichtbar
@@ -274,18 +323,18 @@ describe('Waermefront: CSS (E-031, K-009; Owner-Feedback 16.10.2026: sanfter Wä
   });
 
   it('kein Loch, kein kalter Kern, keine satte Fläche (A5-1, B5-1, C5-1; Owner-Feedback 16.10.2026 (2)): Die Seitenfarbe blendet erst ein, wenn alle warmen Schichten stehen und die Ringe das Fenster fast überzogen haben, und deckt mit dem Ende des Wachsens', () => {
-    // Einblenden je Schicht (Takte) wie im Register; der Schleier und die Seitenfarbe d-2, die Ringe d-1
+    // Einblenden je Schicht (Takte) wie im Register; Schleier und Ringe d-1, die Seitenfarbe d-2
     const v = je.map((r) => Number(r['--v'] ?? 0));
     expect(v).toEqual([...front.verzoegerungTakte]);
-    const einblenden = je.map((r) => Number(listenteile(r.animation).at(-1)!.match(/var\(--d-(\d)\)/)![1]));
-    expect(einblenden).toEqual([2, 2, 1, 1, 1, 2]);
+    const einblenden = je.map(einblendDauer);
+    expect(einblenden).toEqual([1, 1, 1, 1, 1, 2]);
     const anfang = v[SEITENFARBE] * TAKT_MS;
     const ende = anfang + DAUER_MS['d-2'];
     for (let i = 0; i < SEITENFARBE; i += 1) expect(v[i] * TAKT_MS + DAUER_MS[`d-${einblenden[i]}` as 'd-1']).toBeLessThanOrEqual(anfang);
     expect(ende).toBe(WECHSEL.abdeckenMs);
     expect(ende).toBe(WECHSEL.wechselMs);
-    // Die heißeste liegt zuletzt und innen: die Ringe nach innen wärmer, später gestartet, enger
-    expect(RINGE.map((i) => je[i]['--c'])).toEqual(['var(--waerme-1)', 'var(--waerme-2)', 'var(--waerme-3)']);
+    // Die heißeste liegt zuletzt und innen: die Ringe nach innen wärmer (Stufe und Deckkraft), später gestartet, enger
+    expect(RINGE.map((i) => je[i]['--c'])).toEqual(['var(--waerme-2)', 'var(--waerme-2)', 'var(--waerme-4)']);
     // Reichweite, gemessen an der fernsten Ecke, bei jedem Klickpunkt und Fenster: Beginnt die Seitenfarbe, hat der
     // äußere Schleier und der äußere Ring mehr als drei Viertel des Wegs; deckt sie, liegt der Schleier jenseits der Ecke,
     // der heißeste Ring aber bleibt im Fenster (er überzieht es nie ganz)
@@ -323,7 +372,7 @@ describe('Waermefront: CSS (E-031, K-009; Owner-Feedback 16.10.2026: sanfter Wä
     expect(regel('.e')['will-change']).toBe('opacity');
     // <main>: unter voller Deckung eine Ebene, der Ablauf f steht angehalten am Anfang (unsichtbar, --a-5 tiefer, .h);
     // beim Aufdecken läuft er (.a). Ein Übergang an <main> malte bei seinem Start die Seite neu, ein Ablauf nicht.
-    expect(regel('.h')).toEqual({ '--t': '0 var(--a-5)', 'will-change': 'transform, opacity', animation: 'f var(--d-3) var(--k-wechsel) var(--takt) both paused' });
+    expect(regel('.h')).toEqual({ '--t': '0 var(--a-5)', 'will-change': 'transform,opacity', animation: 'f var(--d-3) var(--k-wechsel) var(--takt) both paused' });
     expect(regel('.a')).toEqual({ 'animation-play-state': 'running' });
     expect(theme).toMatch(/--a-5: 1\.5rem;/);
     // Nur dieser eine Übergang in der Datei (die Überlagerung); Front und Hauptinhalt gleich getaktet: Sie enden zusammen
@@ -342,7 +391,7 @@ describe('Waermefront: CSS (E-031, K-009; Owner-Feedback 16.10.2026: sanfter Wä
   });
 
   it('Ebenen vor dem Wachsen (Prüfrunde 4 A4-3, C4-1): will-change: scale, opacity je Schicht, ab dem Öffnen; die Überlagerung und der Hauptinhalt je eine Ebene', () => {
-    expect(regel('.e > *')['will-change']).toBe('scale, opacity');
+    expect(regel('.e > *')['will-change']).toBe('scale,opacity');
     expect([...css.matchAll(/will-change/g)]).toHaveLength(3);
     // Füllung both (Prüfrunde 2 C2-4): Jede Schicht hält vor dem Start den Anfang (unsichtbar, klein) und danach das Ende
     for (const r of [...je, ...jeKlick]) for (const teil of listenteile(r.animation)) expect(teil.trim()).toMatch(/ both$/);
@@ -350,12 +399,13 @@ describe('Waermefront: CSS (E-031, K-009; Owner-Feedback 16.10.2026: sanfter Wä
 
   it('Klick-Wärme bleibt (Owner-Feedback 16.10.2026 (2)): ihre drei Schichten tragen genau die Werte wie vorher, kein Ring der Front gilt für sie', () => {
     expect(jeKlick.map((r) => [r['--c'], r['--n'], r['--v'] ?? '0', r.opacity, r.animation])).toEqual([
-      ['var(--waerme-0)', '1', '0', 'calc(1 / (5 - var(--n)))', EINBLENDEN],
-      ['var(--waerme-1)', '2', '0.5', 'calc(1 / (5 - var(--n)))', EINBLENDEN],
-      ['var(--waerme-2)', '3', '1', 'calc(1 / (5 - var(--n)))', EINBLENDEN],
+      ['var(--waerme-0)', '1', '0', 'calc(1/(5 - var(--n)))', EINBLENDEN],
+      ['var(--waerme-1)', '2', '0.5', 'calc(1/(5 - var(--n)))', EINBLENDEN],
+      ['var(--waerme-2)', '3', '1', 'calc(1/(5 - var(--n)))', EINBLENDEN],
     ]);
     for (const r of jeKlick) {
       expect(r['--u']).toBeUndefined();
+      expect(r['--g']).toBeUndefined();
       expect(r.transform).toBeUndefined();
       expect(r.padding).toBeUndefined();
     }
@@ -389,7 +439,7 @@ describe('Waermefront: CSS (E-031, K-009; Owner-Feedback 16.10.2026: sanfter Wä
       height: 'var(--h)',
       'border-radius': 'var(--radius-2)',
       outline: 'var(--m-kontur) solid var(--c)',
-      'outline-offset': 'calc((4 - var(--n)) * var(--a-2))',
+      'outline-offset': 'calc((4 - var(--n))*var(--a-2))',
     });
     // Keine Fläche, kein Skalieren: Die Ringe liegen um die Box, nicht über ihr; sie blenden nur ein (der gemeinsame
     // Ablauf f der Schichten)
@@ -457,7 +507,7 @@ describe('Waermefront: CSS (E-031, K-009; Owner-Feedback 16.10.2026: sanfter Wä
       '.e[data-auf]',
       '.e > *',
       '.e > * + *',
-      '.k > * + * + *',
+      '.e > * + * + *',
       '.f > *',
       '.f > b',
       '.f > b + b',
