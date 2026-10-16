@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { MEDIA } from '../prefers';
-import { beobachteSicht, beobachteTab, onceVisible } from '../sicht';
+import { beobachteSicht, beobachteTab, nachAuftakt, onceVisible } from '../sicht';
 
 type Callback = (entries: Array<{ isIntersecting: boolean }>) => void;
 
@@ -125,5 +125,56 @@ describe('beobachteTab (Dauerbewegung: Stopp bei verstecktem Tab)', () => {
     const server = vi.fn();
     beobachteTab(server, undefined);
     expect(server).toHaveBeenCalledWith(true);
+  });
+});
+
+describe('nachAuftakt (Prüfrunde 4 C4-2: die Steuerung der Dauerbewegung wartet, bis der Auftakt vorbei ist)', () => {
+  /** Ein Ablauf, dessen Ende der Test auslöst (endlich oder endlos). */
+  function ablauf(iterations = 1) {
+    let ende!: (a: unknown) => void;
+    let abbruch!: (e: unknown) => void;
+    const finished = new Promise((ja, nein) => {
+      ende = ja;
+      abbruch = nein;
+    });
+    return { anim: { effect: { getTiming: () => ({ iterations }) }, finished } as unknown as Animation, ende: () => ende(null), abbruch: () => abbruch(new Error('AbortError')) };
+  }
+  const dok = (auftakt: boolean, anims: Animation[]) => ({ documentElement: { classList: { contains: (k: string) => auftakt && k === 'auftakt' } }, getAnimations: () => anims });
+  const ruhe = () => new Promise((r) => setTimeout(r, 0));
+
+  it('ohne Auftakt (reduzierte Bewegung, nach einem Seitenwechsel) und ohne Dokument gleich', async () => {
+    const fertig = vi.fn();
+    const lang = ablauf();
+    nachAuftakt(fertig, dok(false, [lang.anim]));
+    nachAuftakt(fertig, undefined);
+    await ruhe();
+    expect(fertig).toHaveBeenCalledTimes(2);
+  });
+
+  it('unter `auftakt` erst nach dem letzten endlichen Ablauf; abgebrochene zählen als beendet, Schleifen nicht', async () => {
+    const fertig = vi.fn();
+    const held = ablauf();
+    const nachlauf = ablauf();
+    const schleife = ablauf(Infinity);
+    nachAuftakt(fertig, dok(true, [held.anim, nachlauf.anim, schleife.anim]));
+    await ruhe();
+    expect(fertig).not.toHaveBeenCalled();
+    held.ende();
+    await ruhe();
+    expect(fertig).not.toHaveBeenCalled();
+    // Das Sicherheitsnetz nimmt die Klasse weg: Der Nachlauf bricht ab
+    nachlauf.abbruch();
+    await ruhe();
+    expect(fertig).toHaveBeenCalledTimes(1);
+  });
+
+  it('lässt sich vorher abmelden', async () => {
+    const fertig = vi.fn();
+    const held = ablauf();
+    const stop = nachAuftakt(fertig, dok(true, [held.anim]));
+    stop();
+    held.ende();
+    await ruhe();
+    expect(fertig).not.toHaveBeenCalled();
   });
 });

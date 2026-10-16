@@ -795,6 +795,9 @@ describe('Budgets (K-013, gzip per zlib)', () => {
     const code = ergebnis.output[0].code;
     expect(code).toContain('IntersectionObserver');
     expect(code).toContain('visibilitychange');
+    // Prüfrunde 4 C4-2: Knopf und Schleife warten auf das Ende des Auftakts (nachAuftakt, lib/motion/sicht.ts)
+    expect(code).toContain('getAnimations');
+    expect(code).toContain('auftakt');
     expect(gzip(code)).toBeLessThanOrEqual(2 * 1024);
   }, 30_000);
 });
