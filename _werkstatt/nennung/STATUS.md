@@ -1,4 +1,4 @@
-STATUS · Branch main · Phase E2 · Kriterien 0/10 · Ausnahmen 0 · Bestand grün · Nächster Schritt: Änderungs-Commit der Nennung, Build und Prüfstufe A (E2-PRUEFER-01)
+STATUS · Branch main · Phase E3 · Kriterien 0/10 · Ausnahmen 0 · Bestand grün · Nächster Schritt: volle CI am Stand b0ae185, danach Prüfstufe B (E3-PRUEFER-01 bis -03)
 
 # Status · Agenturnennung Coday Web
 
@@ -15,7 +15,7 @@ STATUS · Branch main · Phase E2 · Kriterien 0/10 · Ausnahmen 0 · Bestand gr
 | E0-PRUEFER-01 | Prüfer | Arbeitsmodell | `_werkstatt/nennung/werkzeuge/*` (Bericht abgelegt durch den Orchestrator) | Werkzeuge für Z-01 bis Z-09 | fertig |
 | E0-PRUEFER-02 | Prüfer | Arbeitsmodell | `berichte/E0-PRUEFER-02.md`, `protokolle/roh/e0/*`, `bilder/e0/*`, `werkzeuge/konsole.mjs` | Ausgangswerte Z-01, Z-07, Z-08, Z-09 | fertig; Bilder nach zwei Abbrüchen vom Orchestrator übernommen |
 | E1-PRUEFER-01 | Prüfer | Arbeitsmodell | keine (Bericht als Rückgabe) | Planabgleich: Einstellungen, Kriterien mit Prüfschritt, Grenzen | fertig, nachgebessert |
-| E2-PRUEFER-01 | Prüfer | Arbeitsmodell | `protokolle/stufe-a.md`, `protokolle/roh/e2/*` | Prüfstufe A | offen |
+| E2-PRUEFER-01 | Prüfer | Arbeitsmodell | `protokolle/stufe-a.md`, `protokolle/roh/e2/*`, `bilder/e2/*` | Prüfstufe A | fertig, grün |
 | E3-PRUEFER-01 | Prüfer | Arbeitsmodell | `protokolle/*.md` außer stufe-a.md, `protokolle/roh/e3/*`, `bilder/` | Prüfstufe B: Z-01 bis Z-09 | offen |
 | E3-DOKUMENTAR-01 | Dokumentar | Arbeitsmodell | `BERICHT.md`, `LINKREGISTER.md`, `REFERENZ.md` | Z-10 | offen |
 | E4-ENDPRUEFER-01 | Endprüfer | frischer Unteragent des Orchestrator-Modells | keine (Urteil als Rückgabe) | Z-01 bis Z-10 gegen Belege | offen |
@@ -27,3 +27,5 @@ STATUS · Branch main · Phase E2 · Kriterien 0/10 · Ausnahmen 0 · Bestand gr
 - 16.10.2026 · E1 · Planabgleich E1-PRUEFER-01 (9 Befunde) nachgebessert: N-05 als Denkprotokoll, N-09 Basis a4491d5, N-10 Druck, schale-bundle.test.ts unverändert. Die Entscheidung gilt.
 - 16.10.2026 · E0 · Ausgangswerte (E0-PRUEFER-02, Build a4491d5): 84 Seiten, 0 Links auf codayweb.de; Footer axe 0 Befunde in 12 Kombinationen; Startseite 38 Anfragen, 541,1 KB komprimiert (Median aus 3), Layoutverschiebung 0,0000 in 3 Läufen; 0 Konsolenfehler; Linkziel 200 ohne Weiterleitung, Canonical auf sich selbst; Startseite indexierbar.
 - 16.10.2026 · E0 · bilder.mjs scheiterte zweimal an der WebP-Höchsthöhe von 16.383 px (Vollbild Startseite 390 px: 17.774 px); vom Orchestrator behoben (zusätzliche Verkleinerung), 24 Bilder aufgenommen (L1, L6).
+- 16.10.2026 · E2 · Änderungs-Commit b0ae185 (9 Dateien, ohne _werkstatt). Prüfstufe A grün: Typprüfung, Linter der geänderten Dateien, 19 Testdateien mit 347 Tests, Build mit allen Nachprüfungen, Linkprüfer: „/“ rel noopener, „/jobs“ rel nofollow noopener, Googlebot gleich; Footer-Bilder ohne Überdeckung.
+- 16.10.2026 · E3 · Sichtabnahme an den Vorher-nachher-Bildern bestanden (bilder/auswahl): wirkt wie ein Teil des Fußes, nicht auffälliger als die Rechtslinks, hell und dunkel lesbar, mobil einzeilig. Bilder an den Inhaber geschickt (Arbeitsregel, Bilder vor dem Deploy).
