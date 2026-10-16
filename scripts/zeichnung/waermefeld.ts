@@ -1,13 +1,15 @@
 #!/usr/bin/env bun
 /**
- * Wärmefeld-Löser (E-031, KERN K-010): rechnet die Wärmefelder des Hausschnitts und der beiden Vergleichsräume
- * (lib/zeichnung/waerme/rechnung.ts) und schreibt lib/zeichnung/szenen/waermefeld.ts mit Herkunft.
+ * Wärmefeld (E-031, KERN K-010): rechnet die Wärmefelder des Hausschnitts und der beiden Vergleichsräume mit dem
+ * halbempirischen Raumluftmodell (lib/zeichnung/waerme/rechnung.ts, Prüfrunde 4) und schreibt
+ * lib/zeichnung/szenen/waermefeld.ts mit Herkunft.
  *
  *   bun run zeichnung:waermefeld            # rechnet und schreibt die Datei
  *   bun run zeichnung:waermefeld --pruefen  # schreibt nichts, Exit 1, wenn die Datei nicht der Rechnung entspricht
  *
  * Bitgleich in bun und Node/V8 (nur +, −, ×, ÷ und sqrt), darum prüft auch der Lock-Test in vitest gegen dieselbe
- * Rechnung. Bricht ab, wenn das heißeste Band nicht zuerst ankommt oder zwei Bänder auf denselben halben Takt fallen.
+ * Rechnung. Bricht ab, wenn das heißeste Band nicht zuerst ankommt, ein Band der Deckenschicht vor der Fahne oder zwei
+ * Bänder auf denselben halben Takt fallen.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -32,7 +34,7 @@ for (const f of rechnung.felder) {
   const gz = gzipSync(Buffer.from(f.baender.map((b) => b.d).join('')), { level: 9 }).length;
   console.log(
     `  ${f.id}: Schwellen ${f.baender.map((b) => b.schwelle).join(' / ')}, Start ${f.baender.map((b) => b.startTakte).join(' / ')} Takte, ` +
-      `${f.herkunft.iterationen} ${f.herkunft.iterationen === 1 ? 'Lösung' : 'Lösungen'}, Rest ${f.herkunft.residuum.toExponential(1)}, Pfade ${gz} B gzip`,
+      `Raummittel in ${f.herkunft.iterationen} ${f.herkunft.iterationen === 1 ? 'Runde' : 'Runden'} eingestellt, Rest ${f.herkunft.residuum.toExponential(1)}, Pfade ${gz} B gzip`,
   );
 }
 

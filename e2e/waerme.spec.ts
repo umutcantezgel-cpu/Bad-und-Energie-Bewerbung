@@ -100,8 +100,8 @@ test.describe('mit Bewegung (no-preference)', () => {
     await auftaktNeu(page);
     const liste = await ablaeufe(feld);
     expect(liste).toHaveLength(4);
+    expect(liste.map((a) => a.name.replace(/^.*__/, ''))).toEqual(WAERMEFELDER.hausschnitt.baender.map((b) => b.bewegung));
     for (const a of liste) {
-      expect(a.name).toMatch(/wachsen/);
       expect(a.iterationen).toBe(1);
       expect(a.dauer).toBe(D4_MS);
       expect(a.verzoegerung % (TAKT_MS / 2)).toBe(0);
@@ -136,12 +136,10 @@ test.describe('mit Bewegung (no-preference)', () => {
     await expect(raum).toHaveAttribute('data-ablauf', 'laeuft');
     const liste = await ablaeufe(raum);
     expect(liste).toHaveLength(await bandAnzahl(raum));
-    // Heizkörper wächst aus dem Ursprung, die Fußbodenheizung nur nach oben (Prüfrunde 1 B1-6)
-    // Namen im Build mit dem Präfix des CSS-Moduls (`waerme-module__<hash>__wachsen`)
-    expect(liste.map((a) => a.name.replace(/^.*__/, ''))).toEqual([
-      ...WAERMEFELDER['raum-heizkoerper'].baender.map(() => 'wachsen'),
-      ...WAERMEFELDER['raum-fussboden'].baender.map(() => 'steigen'),
-    ]);
+    // Prüfrunde 4 B4-2: Die Fahne und die warme Schicht über dem Fußboden wachsen senkrecht aus ihrem Ursprung, die
+    // Deckenschicht blendet an der Decke ein (Bewegung aus den Daten). Namen im Build mit dem Präfix des CSS-Moduls
+    // (`waerme-module__<hash>__wachsen`)
+    expect(liste.map((a) => a.name.replace(/^.*__/, ''))).toEqual([...WAERMEFELDER['raum-heizkoerper'].baender, ...WAERMEFELDER['raum-fussboden'].baender].map((b) => b.bewegung));
     for (const a of liste) {
       expect(a.iterationen).toBe(1);
       expect(a.dauer).toBe(D4_MS);

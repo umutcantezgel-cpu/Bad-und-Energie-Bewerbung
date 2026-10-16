@@ -227,9 +227,10 @@ describe('Hero / Einstieg (R3-HOME-01, Technische Zeichnung 2.0)', () => {
 
   it('Wärmefeld (E-031): ein Grund-div und vier Band-SVGs aus den Daten unter der Szene, alles aria-hidden; der Raum steht im Wärmebereich', () => {
     const { innen, baender } = WAERMEFELDER.hausschnitt;
-    // data-wachstum aus den Daten (Prüfrunde 1 B1-6): der Hausschnitt wächst aus dem Heizkörper
-    expect(WAERMEFELDER.hausschnitt.wachstum).toBe('radial');
-    const feld = html2026.match(/<div class="[^"]*" style="([^"]*)" data-waermefeld="hausschnitt" data-wachstum="radial" aria-hidden="true">([\s\S]*?)<\/div><svg[^>]*data-szene="einstieg"/)!;
+    // data-wachstum aus den Daten (Prüfrunde 4 B4-2): jedes Band wächst senkrecht aus seinem Ursprung (Fahne aus dem
+    // Heizkörper, Deckenschicht von der Decke)
+    expect(WAERMEFELDER.hausschnitt.wachstum).toBe('senkrecht');
+    const feld = html2026.match(/<div class="[^"]*" style="([^"]*)" data-waermefeld="hausschnitt" data-wachstum="senkrecht" aria-hidden="true">([\s\S]*?)<\/div><svg[^>]*data-szene="einstieg"/)!;
     expect(feld, 'Wärmefeld direkt vor der Szene').not.toBeNull();
     // Lage: das Rauminnere in Prozent der Szene (800 × 692)
     const { breite, hoehe } = HAUSSCHNITT_RAHMEN;
@@ -237,14 +238,15 @@ describe('Hero / Einstieg (R3-HOME-01, Technische Zeichnung 2.0)', () => {
     expect(feld[1]).toBe(`left:${p(innen.x / breite)};top:${p(innen.y / hoehe)};width:${p(innen.breite / breite)};height:${p(innen.hoehe / hoehe)}`);
     expect(feld[2].match(/<div\b/g)).toHaveLength(1);
     expect(feld[2]).toMatch(/^<div class="[^"]*" aria-hidden="true" data-band="0"><\/div>/);
-    const svgs = [...feld[2].matchAll(/<svg class="[^"]*" viewBox="([^"]+)" aria-hidden="true" focusable="false" data-band="(\d)" data-motion="waerme-breitet-sich-aus" style="([^"]*)"><path d="([^"]+)"><\/path><\/svg>/g)];
+    const svgs = [...feld[2].matchAll(/<svg class="[^"]*" viewBox="([^"]+)" aria-hidden="true" focusable="false" data-band="(\d)" data-bewegung="(wachsen|einblenden)" data-motion="waerme-breitet-sich-aus" style="([^"]*)"><path d="([^"]+)"><\/path><\/svg>/g)];
     expect(svgs).toHaveLength(4);
     svgs.forEach((m, k) => {
       const b = baender[k];
       expect(m[1]).toBe(`${innen.x} ${innen.y} ${innen.breite} ${innen.hoehe}`);
       expect(Number(m[2])).toBe(b.stufe);
-      expect(m[3]).toBe(`transform-origin:${p((b.ursprung.x - innen.x) / innen.breite)} ${p((b.ursprung.y - innen.y) / innen.hoehe)};--start:${b.startTakte}`);
-      expect(m[4]).toBe(b.d);
+      expect(m[3]).toBe(b.bewegung);
+      expect(m[4]).toBe(`transform-origin:${p((b.ursprung.x - innen.x) / innen.breite)} ${p((b.ursprung.y - innen.y) / innen.hoehe)};--start:${b.startTakte}`);
+      expect(m[5]).toBe(b.d);
     });
     // Keine eigenen Pfade: jede Kontur im Einstieg stammt aus den Daten
     expect(html2026.match(/data-motion="waerme-breitet-sich-aus"/g)).toHaveLength(4);
