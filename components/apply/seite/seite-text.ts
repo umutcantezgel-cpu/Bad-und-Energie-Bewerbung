@@ -2,6 +2,7 @@
  * Texte der Bewerbungsseite /bewerbung (R5-BEW-01, E-023): Seitenkopf, „Lieber direkt sprechen?“ und das
  * Regionalband (E-BEW-008). Nur aus FACTS, COMPANY und REGION; Mikrotexte direkt (K-012), keine neuen Zusagen.
  */
+import { gebietText } from '@/components/jobs/liste/inhalt-text';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS, JE_NACH_STELLE, offenBei } from '@/lib/content/facts';
 import { REGION } from '@/lib/content/region';
@@ -73,7 +74,10 @@ export type RegionalStelle = Pick<Job, 'category' | 'location'>;
 export interface RegionalbandText {
   etikett: string;
   titel: string;
-  /** REGION.summary; null, wenn keine der Stellen auf Baustellen im Umkreis arbeitet (Büro am Firmensitz). */
+  /**
+   * Gebietssatz (gebietText): REGION.summary, neben einer Stelle am Firmensitz eingeschränkt auf Baustellen und
+   * Kundendienst mit „Das Büro ist am Firmensitz.“ (Prüfrunde 5 D5-1); null, wenn alle Stellen am Firmensitz arbeiten.
+   */
   einleitung: string | null;
   masse: readonly RegionalMass[];
   standort: { name: string; zeilen: readonly string[] };
@@ -114,8 +118,12 @@ export function regionalband(stellen: readonly RegionalStelle[]): RegionalbandTe
     etikett: 'Arbeitsort und Arbeitszeit',
     /** Fakt noFarAssembly; am Firmensitz der Arbeitsort aus COMPANY. */
     titel: amFirmensitz ? `Arbeitsort: ${STANDORT.name} in ${COMPANY.address.city}.` : `${FACTS.noFarAssembly.short}.`,
-    /** REGION.summary: Wetzlar, Gießen, Lahn-Dill-Kreis und Nachbarkreise, jeden Abend zu Hause (Bestand der Startseite). */
-    einleitung: amFirmensitz ? null : REGION.summary,
+    /**
+     * REGION.summary: Wetzlar, Gießen, Lahn-Dill-Kreis und Nachbarkreise, jeden Abend zu Hause (Bestand der Startseite).
+     * Ohne Vorauswahl stehen Büro- und Außenstellen zusammen: dann gilt der Satz nur für Baustellen und Kundendienst
+     * (gebietText, dieselbe Regel wie auf /jobs, der Startseite und in llms-full.txt; Prüfrunde 5 D5-1).
+     */
+    einleitung: amFirmensitz ? null : gebietText(stellen),
     // Fakt radius35
     masse: amFirmensitz ? [] : [{ wert: geschuetzt(wertVon('radius35')), name: 'Einsatzradius' }],
     standort: STANDORT,

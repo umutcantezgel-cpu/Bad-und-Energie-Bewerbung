@@ -3,6 +3,7 @@ import {
   DISCRETION_PROMISE,
   FACTS,
   FAQ_ITEMS,
+  JOB_FAQ_IDS,
   PROCESS_INTRO,
   STELLEN_FAQ_ITEMS,
   REGION,
@@ -52,6 +53,18 @@ function processLines(jobs: readonly Job[]): string[] {
     '',
     ...(varianten.length > 0 ? [`${ANDERE_ABLAEUFE_TITEL}:`, ...varianten.map((variante) => `- ${variante.name}: ${variante.text}`), ''] : []),
   ];
+}
+
+/**
+ * Questions of the job pages (Plan §C5) with the jobs they belong to (Prüfrunde 5 D5-2): each one only when a job
+ * here shows it on its page (JOB_FAQ_IDS), then „Gilt für:“ with those jobs. Without that line an answer such as
+ * aboveTariff (open for the office) or part-time (office only) would read as true for every job.
+ */
+function stellenFragen(jobs: readonly Job[]): string[] {
+  return STELLEN_FAQ_ITEMS.flatMap((item) => {
+    const mit = jobs.filter((job) => JOB_FAQ_IDS[job.category].includes(item.id));
+    return mit.length === 0 ? [] : [`### ${item.question}`, `Gilt für: ${mit.map((job) => job.shortTitle).join(', ')}.`, item.answer, ''];
+  });
 }
 
 /** Full version of /llms.txt: every job text as on its page, plus process, FAQ, region and contact. */
@@ -106,8 +119,8 @@ export function GET(): Response {
     '## 4. Häufige Fragen',
     '',
     ...FAQ_ITEMS.flatMap((item) => [`### ${item.question}`, item.answer, '']),
-    // Fragen der Stellenseiten (Plan §C5): Bezahlung auf Anfrage, Berufsschule, Quereinstieg, Büro, Praktikum
-    ...STELLEN_FAQ_ITEMS.flatMap((item) => [`### ${item.question}`, item.answer, '']),
+    // Fragen der Stellenseiten (Plan §C5) je mit den Stellen, für die sie gelten (Prüfrunde 5 D5-2)
+    ...stellenFragen([...jobs, ...extra]),
     '## 5. Einsatzgebiet',
     // Wie auf /jobs und der Startseite (Prüfrunde 4 D4-1): mit Stelle am Firmensitz gilt der Satz nur für Baustellen
     // und Kundendienst, dann „Das Büro ist am Firmensitz.“

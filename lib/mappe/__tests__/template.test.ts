@@ -210,6 +210,22 @@ describe('Anschreiben und offene Fakten', () => {
     expect(letter).not.toMatch(/Handwerker aus|Equipment|Hilti/);
     expect(letter).toContain('Für mein Praktikum wünsche ich mir einen verlässlichen Meisterbetrieb');
   });
+
+  it('Ausbildung und Schülerpraktikum ohne „vertraulich“ und „diskret“, die anderen Stellen mit vertraulichem Kennenlernen (Prüfrunde 5 D5-4)', () => {
+    const ohneDiskretion = jobs.filter((j) => j.category === 'ausbildung' || j.category === 'praktikum');
+    expect(ohneDiskretion.map((j) => j.category)).toEqual(expect.arrayContaining(['ausbildung', 'praktikum']));
+    for (const job of ohneDiskretion) {
+      const letter = buildCoverLetter({ job, skills: [], workStyle: WORK_STYLES[0].value, recipient });
+      expect(letter, job.title).not.toMatch(/vertraulich|diskret/i);
+      expect(letter, job.title).toContain(`Über ein Kennenlernen in ${recipient.city} freue ich mich.`);
+    }
+    for (const job of jobs.filter((j) => j.category !== 'ausbildung' && j.category !== 'praktikum')) {
+      const letter = buildCoverLetter({ job, skills: [], workStyle: WORK_STYLES[0].value, recipient });
+      expect(letter, job.title).toContain(`Über ein vertrauliches Kennenlernen in ${recipient.city} freue ich mich.`);
+    }
+    // Initiativbewerbung wie bisher vertraulich
+    expect(buildCoverLetter({ job: null, initiative: true, skills: [], recipient })).toContain('Über ein vertrauliches Kennenlernen');
+  });
 });
 
 describe('Büro-Schwerpunkte im Brief (Prüfung E-031, D1-4)', () => {

@@ -6,6 +6,7 @@ import { FACTS } from '@/lib/content/facts';
 import { getDiscretionPromise } from '@/lib/content/process';
 import { REGION } from '@/lib/content/region';
 import { UNTERLAGEN_ZEILE_TEXT } from '@/components/apply/unterlagen';
+import { BUERO_AM_FIRMENSITZ } from '@/components/jobs/liste/liste-text';
 import { getFunnelOptions, getJobById, type Job } from '@/lib/jobs/registry';
 import { bewerbungKopf, DirektSprechen, Regionalband, regionalband, UNTERLAGEN_ZWEITWEG } from '..';
 
@@ -52,10 +53,23 @@ describe('Regionalband (E-BEW-008): Fakten aus facts.ts, Link auf das Einsatzgeb
     const band = regionalband(alleStellen);
     expect(band.arbeitszeit).toBe(`Je nach Stelle flexible Arbeitszeiten. ${FACTS.noWeekendOnCall.long}`);
     expect(band.titel).toBe(`${FACTS.noFarAssembly.short}.`);
-    expect(band.einleitung).toBe(REGION.summary);
     const text = normal(plain(renderToStaticMarkup(createElement(Regionalband, { stellen: alleStellen }))));
     expect(text).not.toContain(`${FACTS.flexibleHours.long} ${FACTS.noWeekendOnCall.long}`);
     expect(text).toContain('Je nach Stelle flexible Arbeitszeiten.');
+  });
+
+  it('ohne Vorauswahl (Büro live): der Gebietssatz gilt nur für Baustellen und Kundendienst, danach „Das Büro ist am Firmensitz.“ (Prüfrunde 5 D5-1)', () => {
+    expect(REGION.summary.startsWith('Du arbeitest ')).toBe(true);
+    const eingeschraenkt = `Auf den Baustellen und im Kundendienst arbeitest du ${REGION.summary.slice('Du arbeitest '.length)} ${BUERO_AM_FIRMENSITZ}`;
+    expect(regionalband(alleStellen).einleitung).toBe(eingeschraenkt);
+    const text = normal(plain(renderToStaticMarkup(createElement(Regionalband, { stellen: alleStellen }))));
+    expect(text).toContain(normal(eingeschraenkt));
+    // Der Satz im Bestandswortlaut („Du arbeitest in Wetzlar, Gießen, …“) steht nicht neben der Bürostelle
+    expect(text).not.toContain(normal(REGION.summary));
+    // Ohne Bürostelle bleibt der Bestandswortlaut ohne Zusatz
+    const draussen = alleStellen.filter((job) => job.location.radiusKm !== undefined);
+    expect(draussen.length).toBeGreaterThan(0);
+    expect(regionalband(draussen).einleitung).toBe(REGION.summary);
   });
 
   it('Bürofachkraft vorgewählt: Arbeitsort Firmensitz, ohne Einsatzgebiet, ohne 35 km und ohne flexible Arbeitszeiten', () => {

@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GET as llmsFull } from '@/app/llms-full.txt/route';
 import { GET as llms } from '@/app/llms.txt/route';
 import { COMPANY_FACT_IDS, EMPLOYER_FACT_IDS, funnelOnlyJobs, liveJobs } from '@/app/llms.txt/content';
-import { ANDERE_ABLAEUFE_TITEL, COMPANY, FACTS, FUER_FACHKRAEFTE, getProcessSteps, sammelAblauf, type FactId } from '@/lib/content';
+import { ANDERE_ABLAEUFE_TITEL, COMPANY, FACTS, FUER_FACHKRAEFTE, getProcessSteps, JOB_FAQ_IDS, sammelAblauf, STELLEN_FAQ_ITEMS, type FactId } from '@/lib/content';
 import type { Job } from '@/lib/jobs/registry';
 import { OEPNV_QUELLE } from '@/lib/places/oepnv';
 import { OSM_LINK, OSM_NAMENSNENNUNG } from '@/lib/places/osm';
@@ -82,6 +82,41 @@ describe('llms.txt (E-SEO-014)', () => {
     const kopf = (await textAt(llms, jetzt.toISOString())).split('\n').find((line) => line.startsWith('> ')) ?? '';
     expect(stellen.some((job) => job.pay === 'keine-angabe')).toBe(true);
     expect(kopf).not.toContain(FACTS.payOnRequest.long);
+  });
+
+  it('llms-full.txt: questions of the job pages name the jobs they belong to; open facts never stand for those jobs (Prüfrunde 5 D5-2)', async () => {
+    const iso = '2026-10-20T12:00:00Z';
+    const text = await textAt(llmsFull, iso);
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date(iso));
+    const stellen = [...liveJobs(new Date()), ...funnelOnlyJobs()];
+    vi.useRealTimers();
+    expect(stellen.some((job) => job.category === 'buero')).toBe(true);
+    const fragen = text.split('## 4. Häufige Fragen')[1]?.split('\n## ')[0] ?? '';
+    const bloecke = fragen.split('\n### ').slice(1);
+    let geprueft = 0;
+    for (const item of STELLEN_FAQ_ITEMS) {
+      const mit = stellen.filter((job) => JOB_FAQ_IDS[job.category].includes(item.id));
+      const block = bloecke.find((b) => b.startsWith(`${item.question}\n`));
+      if (mit.length === 0) {
+        expect(block, item.id).toBeUndefined();
+        continue;
+      }
+      geprueft += 1;
+      // Frage, dann „Gilt für:“ mit genau den Stellen, die sie auf ihrer Seite zeigen, dann die Antwort
+      expect(block, item.id).toBe(`${item.question}\nGilt für: ${mit.map((job) => job.shortTitle).join(', ')}.\n${item.answer}\n`);
+      // Ein Fakt, der für eine Stellenart offen ist (S5), steht nie bei einer Frage, die für diese Stellenart gilt
+      for (const id of item.factIds) {
+        const offen = FACTS[id].offenFuer?.kategorien ?? [];
+        expect(mit.filter((job) => offen.includes(job.category)), `${item.id}/${id}`).toEqual([]);
+      }
+    }
+    expect(geprueft).toBeGreaterThan(0);
+    // Kein langer Satz eines offenen Fakts im Frageteil ohne Stellenbezug
+    for (const [id, fakt] of Object.entries(FACTS)) {
+      if (!fakt.offenFuer) continue;
+      for (const b of bloecke.filter((b) => b.includes(fakt.long))) expect(b, id).toMatch(/\nGilt für: [^\n]+\.\n/);
+    }
   });
 
   it('llms-full.txt: the school internship block says nothing about working hours (S4, M-027, Runde 3)', async () => {

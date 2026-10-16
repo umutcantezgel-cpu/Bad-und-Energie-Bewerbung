@@ -112,7 +112,9 @@ export function buildCoverLetter(input: CoverLetterInput): string {
     recipient.salutation,
     `mit großem Interesse ${intent(job, initiative)} bei der ${recipient.companyName} in ${recipient.city}.`,
     profile.length > 0 ? profile.join('\n') : null,
-    `${values} Über ein vertrauliches Kennenlernen in ${recipient.city} freue ich mich.`,
+    // Ausbildung und Schülerpraktikum ohne „vertraulich“: Für sie nimmt die Seite jede Diskretion heraus
+    // (lib/content/process.ts ohneArbeitgeber, Prüfrunde 5 D5-4)
+    `${values} Über ein ${isApprenticeship || isInternship ? '' : 'vertrauliches '}Kennenlernen in ${recipient.city} freue ich mich.`,
     name ? `Mit freundlichen Grüßen\n${name}` : 'Mit freundlichen Grüßen',
   ].filter((paragraph): paragraph is string => paragraph !== null);
 
