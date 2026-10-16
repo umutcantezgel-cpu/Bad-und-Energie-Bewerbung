@@ -312,7 +312,7 @@ test.describe('mit Bewegung (no-preference)', () => {
     expect(log.filter((e) => e.art === 'toggle')).toEqual([]);
   });
 
-  test('Klick-Wärme: drei Ringe (½ Takt versetzt, d-3, linear auf den Stützstellen) am Knopf; nach 480 ms zu', async ({ page }) => {
+  test('Klick-Wärme: drei Ringe (½ Takt versetzt, d-3, linear auf den Stützstellen ab FRONT_START) am Knopf; nach 480 ms zu', async ({ page }) => {
     await protokollieren(page);
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -323,10 +323,11 @@ test.describe('mit Bewegung (no-preference)', () => {
     const ab = await gemerkteAblaeufe(page);
     expect(ab.map((s) => s.dauer)).toEqual([400, 400, 400]);
     expect(ab.map((s) => s.verzoegerung)).toEqual([0, 0.5, 1].map((n) => n * TAKT_MS));
+    // Dieselben Keyframes wie die Front: von FRONT_START (nicht 0, Prüfrunde 4 A4-3) auf 1, ohne Vorlauf (--v: 0)
     for (const s of ab) {
       expect(s.kurve).toBe('linear');
       expect(s.stellen).toEqual(DIFFUSION_STUETZ.map(([t]) => t));
-      expect(s.werte.map(Number)).toEqual(DIFFUSION_STUETZ.map(([, f]) => f));
+      expect(s.werte.map((w) => Math.round(Number(w) * 1e4) / 1e4)).toEqual(DIFFUSION_STUETZ.map(([, f]) => Math.round((FRONT_START + f * (1 - FRONT_START)) * 1e4) / 1e4));
     }
     await expect.poll(() => offen(page, KLICK), { timeout: 2000 }).toBe(false);
     const log = (await protokoll(page)).filter((e) => e.motion === 'klick-waerme');
