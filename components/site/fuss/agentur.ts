@@ -11,6 +11,12 @@ export const AGENTUR = Object.freeze({
   url: 'https://www.codayweb.de/de',
 });
 
+/**
+ * Kennung des verborgenen Hinweises „(öffnet in neuem Tab)“. Er steht neben dem Link und ist ihm per aria-describedby
+ * zugeordnet, damit der Linktext genau die Marke bleibt (Leitplanke S1, _werkstatt/nennung N-12).
+ */
+export const AGENTUR_HINWEIS_ID = 'agentur-neuer-tab';
+
 /** Quellseite ist nur die Startseite; ein Schrägstrich am Ende zählt nicht. Ohne Pfad gilt die Seite nicht als Quellseite. */
 export function istQuellseite(pfad: string | null): boolean {
   return pfad !== null && pfad.startsWith('/') && pfad.replace(/\/+$/, '') === '';

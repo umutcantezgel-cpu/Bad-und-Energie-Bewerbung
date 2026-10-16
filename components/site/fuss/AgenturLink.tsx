@@ -9,9 +9,9 @@ import { AGENTUR, agenturRel } from './agentur';
  * liest ihn wie FooterSwitch. Next.js rendert sie beim Vorrendern bzw. beim Rendern der Anfrage auf dem Server mit
  * dem Pfad der Seite, darum steht rel schon im ausgelieferten HTML jeder Seite richtig.
  */
-export function AgenturLink({ className, children }: { className?: string; children: ReactNode }) {
+export function AgenturLink({ className, hinweis, children }: { className?: string; hinweis: string; children: ReactNode }) {
   return (
-    <a href={AGENTUR.url} target="_blank" rel={agenturRel(usePathname())} className={className}>
+    <a href={AGENTUR.url} target="_blank" rel={agenturRel(usePathname())} aria-describedby={hinweis} className={className}>
       {children}
     </a>
   );

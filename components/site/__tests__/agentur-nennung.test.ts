@@ -5,7 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { isClientModule, valueImports } from '../../../scripts/qa/check-client-imports.mjs';
 import { FussSchmal, FussVoll, NEUER_TAB } from '../fuss';
-import { AGENTUR, agenturRel, istQuellseite } from '../fuss/agentur';
+import { AGENTUR, AGENTUR_HINWEIS_ID, agenturRel, istQuellseite } from '../fuss/agentur';
 import { buildSiteNodes } from '../site-jsonld';
 
 /**
@@ -66,9 +66,13 @@ describe('Nennung in beiden Füßen (N-06)', () => {
       expect(attr(tag, 'href'), name).toBe('https://www.codayweb.de/de');
       expect(attr(tag, 'target'), name).toBe('_blank');
       expect(attr(tag, 'rel'), name).toBe('noopener');
-      // Sichtbarer Linktext genau die Marke; dahinter nur der verborgene Hinweis auf den neuen Tab
-      expect(inhalt, name).toBe(`${AGENTUR.marke}<span class="sr-only">${NEUER_TAB}</span>`);
+      // Linktext genau die Marke (S1), ohne weiteren Text im a-Element, auch keinen verborgenen
+      expect(inhalt, name).toBe('Coday Web');
       expect(AGENTUR.marke).toBe('Coday Web');
+      // Der Hinweis auf den neuen Tab steht direkt hinter dem Link und ist ihm per aria-describedby zugeordnet
+      expect(attr(tag, 'aria-describedby'), name).toBe(AGENTUR_HINWEIS_ID);
+      expect(html, name).toContain(`</a><span id="${AGENTUR_HINWEIS_ID}" class="sr-only">${NEUER_TAB}</span>`);
+      expect(html.split(`id="${AGENTUR_HINWEIS_ID}"`), name).toHaveLength(2);
     }
   });
 
@@ -85,9 +89,9 @@ describe('Nennung in beiden Füßen (N-06)', () => {
 
   it('Wortlaut „Webdesign & Entwicklung: Coday Web“ als letzte Zeile unter der OSM-Nennung', () => {
     for (const [name, html] of fuesse('/')) {
-      const zeile = /<span class="[^"]*" data-agentur-nennung="">([\s\S]*?<\/a>)<\/span>/.exec(html);
+      const zeile = /<span class="[^"]*" data-agentur-nennung="">([\s\S]*?<\/a>)<span id="[^"]*" class="sr-only">[^<]*<\/span><\/span>/.exec(html);
       expect(zeile, name).not.toBeNull();
-      expect(plain(zeile![1]).replace(NEUER_TAB.trim(), '').trim(), name).toBe('Webdesign & Entwicklung: Coday Web');
+      expect(plain(zeile![1]), name).toBe('Webdesign & Entwicklung: Coday Web');
       expect(html.indexOf('data-osm-nennung'), name).toBeLessThan(html.indexOf('data-agentur-nennung'));
       // Keine Zahl, kein Superlativ, kein weiterer Link auf codayweb.de
       expect(plain(zeile![1]), name).not.toMatch(/\d|beste|führend|Award|Preis/i);
