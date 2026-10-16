@@ -258,17 +258,31 @@
   margin: 0;
 }
 
-/* Ab 48em steht der Kennwert in einer Spalte fester Breite: Jede Zeile ist ihr eigenes Raster, mit „auto“ schob ein
-   langer Wert („Voll- oder Teilzeit“) nur seine Spalte nach links (Prüfrunde 2 A2-7). Längere Werte brechen um. */
+/* Ab 48em steht der Kennwert in einer gemeinsamen Spalte aller Zeilen (Prüfrunde 2 A2-7: mit „auto“ je Zeile schob ein
+   langer Wert nur seine Spalte nach links). Die Spalte ist so breit wie der längste Wert, kein Wert bricht um
+   (Prüfrunde 4 A4-5: „Voll- oder Teilzeit“ brach in 11rem um, die Zeile wurde dreizeilig): Die Liste ist das Raster,
+   Eintrag und Zeile übernehmen seine Spalten (subgrid). */
 @media (min-width: 48em) {
+  .abgaenge {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) max-content auto;
+  }
+
+  .abgang,
   .abgangZeile {
-    grid-template-columns: auto minmax(0, 1fr) 11rem auto;
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+  }
+
+  .abgangZeile {
     column-gap: var(--a-6);
   }
 
   .abgangWert {
     grid-column: 3;
     grid-row: 1;
+    white-space: nowrap;
   }
 }
 
@@ -388,7 +402,10 @@
   grid-template-rows: auto;
 }
 
+/* Die Kästchen einer Reihe sind gleich hoch (Prüfrunde 4 A4-5): Sie füllen die gemeinsame erste Zeile des Subgrids,
+   ein einzeiliges Kästchen steht mittig so hoch wie ein zweizeiliges daneben; die Unterkanten springen nicht. */
 .kasten [data-zeichnung="etikettkasten"] {
+  align-self: stretch;
   max-width: 100%;
   white-space: normal;
   line-height: 1.3;
