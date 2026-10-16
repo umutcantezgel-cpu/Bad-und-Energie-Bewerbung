@@ -1,6 +1,6 @@
 # Lage · Agenturnennung Coday Web
 
-Stand E0, 16.10.2026, Ausgangs-Commit `0c9f103` (main). Quellen: `berichte/E0-KUNDSCHAFTER-01.md` (Technik), `berichte/E0-KUNDSCHAFTER-02.md` (SEO-Bestand), Ausgangswerte in `berichte/E0-PRUEFER-02.md`.
+Stand E0, 16.10.2026, Basis-Commit `a4491d5` (main, live; N-09). Quellen: `berichte/E0-KUNDSCHAFTER-01.md` (Technik), `berichte/E0-KUNDSCHAFTER-02.md` (SEO-Bestand), Ausgangswerte in `berichte/E0-PRUEFER-02.md`.
 
 ## Das Projekt in drei Sätzen
 Karriereseite karriere.bad-energie.de der Bad und Energie GmbH, eines SHK-Meisterbetriebs in Wetzlar, gebaut von Coday Web. Next.js 16 (App Router, TypeScript, Tailwind und CSS-Module) mit Bun und Vitest, ausgeliefert über Vercel, eine Sprachfassung (Deutsch), Seiten werden vorab gerendert. Der Footer sitzt im Layout (app/layout.tsx → components/site/SiteFooter.tsx → FooterSwitch → components/site/fuss/FussVoll.tsx bzw. FussSchmal.tsx).
