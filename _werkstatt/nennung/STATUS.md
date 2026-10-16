@@ -20,7 +20,7 @@ STATUS · Branch main · Phase E4 · Kriterien 10/10 · Ausnahmen 0 · Bestand g
 | E3-PRUEFER-02 | Prüfer | Arbeitsmodell | `werkzeuge/navigation.mjs`, `protokolle/{zugang,konsole,navigation,leitplanken}.md`, `protokolle/roh/e3b/*`, `bilder/e3/*` | Prüfstufe B: Z-04, Z-07, Konsole | fertig, grün; S1 nachgebessert (N-12) |
 | E3-PRUEFER-03 | Prüfer | Arbeitsmodell | `protokolle/leistung.md`, `protokolle/roh/e3c/*` | Prüfstufe B: Z-08 | fertig, grün |
 | E3-PRUEFER-04 | Prüfer | Arbeitsmodell | `protokolle/nachpruefung.md`, `protokolle/stufe-b-ci.md`, `protokolle/roh/e3d/*` | Nachprüfung S1, Zugang, Links nach N-12; volle CI für Z-01 | fertig, grün |
-| E3-PRUEFER-05 | Prüfer | Arbeitsmodell | `protokolle/leistung-endstand.md`, `protokolle/roh/e3e/*` | Z-08 am Endstand 66d8d99 | läuft |
+| E3-PRUEFER-05 | Prüfer | Arbeitsmodell | `protokolle/leistung-endstand.md`, `protokolle/roh/e3e/*` | Z-08 am Endstand 66d8d99 | fertig, grün |
 | E3-DOKUMENTAR-01 | Dokumentar | Arbeitsmodell | `BERICHT.md`, `LINKREGISTER.md`, `REFERENZ.md` | Z-10 | fertig |
 | E4-ENDPRUEFER-01 | Endprüfer | frischer Unteragent des Orchestrator-Modells | keine (Urteil als Rückgabe) | Z-01 bis Z-10 gegen Belege | offen |
 
@@ -43,3 +43,4 @@ STATUS · Branch main · Phase E4 · Kriterien 10/10 · Ausnahmen 0 · Bestand g
   - Leistung: 38 Anfragen, Transfer −684 B, Layoutverschiebung 0.
   - Befund S1: der verborgene Hinweis stand im Link → N-12.
 - 16.10.2026 · E3 · Volle CI am Endstand 66d8d99 ALLES GRUEN (190 Testdateien, 3.883 Tests, e2e 590/506/0). Nachprüfung nach N-12 (E3-PRUEFER-04) grün: Linktext und zugänglicher Name exakt „Coday Web“, 82 von 82 Füßen mit genau einem Link, gefolgt nur „/“, axe 0, Konsole 0, Navigation 11/11, HTML nur die Nennung. ABNAHME.md: 10 von 10 mit Beleg.
+- 16.10.2026 · E3 · E3-PRUEFER-05: Z-08 am Endstand grün (38 Anfragen, Median −2.288 B, Layoutverschiebung 0).
