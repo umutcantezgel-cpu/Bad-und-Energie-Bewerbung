@@ -256,8 +256,9 @@ describe('check-css-chunks: Teilbudgets E-031 (Wärme, Wärmefront, Büro-Block)
   ];
 
   it('Budgets und Quellen', () => {
-    // Front 1.200 → 1.600 B mit dem Owner-Feedback vom 16.10.2026 (E-031, sanfter Wärmeschleier); die Obergrenze
-    expect([WAERME_BUDGET, FRONT_BUDGET, BUERO_BUDGET]).toEqual([1400, 1600, 2500]);
+    // Front 1.200 → 1.600 B mit dem Owner-Feedback vom 16.10.2026 (E-031, sanfter Wärmeschleier), → 2.120 B mit dem
+    // zweiten (Ringe auf dem Schleier); die Obergrenze
+    expect([WAERME_BUDGET, FRONT_BUDGET, BUERO_BUDGET]).toEqual([1400, 2120, 2500]);
     expect(WAERME_CSS).toBe('components/zeichnung/waerme/waerme.module.css');
     expect(FRONT_CSS).toBe('components/site/waermefront/waermefront.module.css');
     expect([...WAERME_SEITEN]).toEqual(['/']);

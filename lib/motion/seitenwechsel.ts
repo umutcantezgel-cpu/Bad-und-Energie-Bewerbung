@@ -11,8 +11,9 @@
 export const WAERMEFRONT_AN: boolean = true;
 
 /**
- * Zeitplan in ms (Owner-Feedback 16.10.2026, sanfter Wärmeschleier; E-031), ab dem Klick: `vorlauf` (WECHSEL.vorlaufMs,
- * ein Takt: Die Schichten stehen in der Startgröße als eigene Ebenen und blenden ein, bevor sie wachsen), `abdecken`
+ * Zeitplan in ms (Owner-Feedback 16.10.2026, sanfter Wärmeschleier, darauf die Ringe; E-031), ab dem Klick: `vorlauf`
+ * (WECHSEL.vorlaufMs, ein Takt: Der Schleier steht in der Startgröße als eigene Ebenen und blendet ein, bevor er wächst;
+ * die Ringe wachsen nach FRONT_RINGE im Register), `abdecken`
  * (WECHSEL.abdeckenMs: Vorlauf + d-4 Wachsen; zugleich endet das Einblenden der Seitenfarbe, 5½ Takte + d-2: Sie deckt
  * das Fenster), `wechsel` (WECHSEL.wechselMs: router.push, sobald die Seitenfarbe deckt, also gleich `abdecken`). Ab dem
  * Wechsel-Auftrag `halten` (WECHSEL.haltenMs: spätestens dann wird aufgedeckt, auch wenn die neue Seite noch nicht
@@ -49,17 +50,27 @@ export const KLICK_ZU_MS = 800;
 
 /**
  * Startgröße der Front (Owner-Feedback 16.10.2026: „nicht als winziger explodierender Punkt“): Die Schicht in der
- * Seitenfarbe beginnt mit diesem Anteil der Fensterdiagonale als Durchmesser, die warmen Schichten mit 1,04–1,12 davon
- * (also 15,6–16,8 %). Sichtbar beginnt der Schleier mit den warmen Schichten; die Seitenfarbe ist bis zu ihrem
- * Einblenden unsichtbar. Nicht 0: Eine Scheibe ohne Fläche hat nichts vorzurastern (Prüfrunde 4 A4-3, C4-1).
+ * Seitenfarbe beginnt mit diesem Anteil der Fensterdiagonale als Durchmesser, die zwei Schichten des Schleiers mit 1,12
+ * und 1,08 davon (also 16,2–16,8 %). Sichtbar beginnt der Schleier; die Seitenfarbe ist bis zu ihrem Einblenden
+ * unsichtbar. Nicht 0: Eine Scheibe ohne Fläche hat nichts vorzurastern (Prüfrunde 4 A4-3, C4-1). Die Ringe beginnen
+ * bei RING_START ihrer Endgröße, also bei mindestens der Hälfte davon.
  */
 export const FRONT_START = 0.15;
 
 /**
- * Durchmesser der Schichten der Front relativ zur Schicht in der Seitenfarbe (waermefront.module.css: Innenabstand
- * (29 − n) × --s / 50, Schicht n = 1…4): außen die kühlste, je 4 % enger gestaffelt.
+ * Durchmesser der Schichten der Front am Ende, relativ zum Kreis bis zur fernsten Ecke (frontDurchmesser), von unten
+ * nach oben (waermefront.module.css: Innenabstand (29 − n) × --s / 50): der Schleier 1,12 und 1,08 (n = 1, 2), die drei
+ * Ringe 0,92, 0,8 und 0,6 (n = 6, 9, 14: Sie kommen im Fenster zur Ruhe, außen bleibt der Schleier, und der heißeste
+ * überzieht das Fenster nie ganz), zuletzt die Seitenfarbe 1 (n = 4).
  */
-export const FRONT_SCHICHTEN: readonly number[] = /* @__PURE__ */ Object.freeze([1.12, 1.08, 1.04, 1]);
+export const FRONT_SCHICHTEN: readonly number[] = /* @__PURE__ */ Object.freeze([1.12, 1.08, 0.92, 0.8, 0.6, 1]);
+
+/**
+ * Startmaßstab der Ringe relativ zu ihrer Endgröße (@keyframes r: 0,16 → 1 nach √t). Kein Punkt (Owner-Feedback
+ * 16.10.2026): Auch der innerste Ring (0,6) beginnt bei mindestens FRONT_START / 2 der Fensterdiagonale, denn der Kreis
+ * bis zur fernsten Ecke ist nie kleiner als die Diagonale.
+ */
+export const RING_START = 0.16;
 
 /**
  * Ruhe der neuen Seite vor dem Aufdecken (Prüfrunde 3 C3-1, KERN K-013): so viele Bilder in Folge ohne Änderung im

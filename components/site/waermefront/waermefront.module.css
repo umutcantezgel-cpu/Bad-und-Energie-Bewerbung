@@ -1,44 +1,55 @@
 /*
  * Klick-Wärme und Wärmefront (E-031, KERN K-009, Kennungen `klick-waerme` und `seitenwechsel`; Insel Waermefront.tsx,
- * Logik und Maße lib/motion/seitenwechsel.ts). Zwei Überlagerungen (popover="manual", oberste Ebene, auch über dem
- * offenen Menü): aria-hidden, inert (Treffer gehen durch sie hindurch an die Seite: Ein inertes Element wird beim
- * Treffertest übergangen wie mit pointer-events: none), contain: strict und overflow: hidden; geschlossen blendet der
- * Browser sie aus. overflow: hidden ist nötig, obwohl contain: strict schon beschneidet: Das Popover bringt
- * overflow: auto mit und wäre sonst ein Scroll-Container, dessen Überlauf mit jedem Bild der wachsenden Schichten
- * wächst; Chromium malte dann in jedem Bild die ganze Seite neu (am Handy bei CPU 4× 0,6–3,6 ms je Bild, einmal 7 ms).
+ * Logik und Maße lib/motion/seitenwechsel.ts, Zeiten lib/motion/register.ts). Zwei Überlagerungen (popover="manual",
+ * oberste Ebene, auch über dem offenen Menü): aria-hidden, inert (Treffer gehen durch sie hindurch an die Seite: Ein
+ * inertes Element wird beim Treffertest übergangen wie mit pointer-events: none), contain: strict und overflow: hidden;
+ * geschlossen blendet der Browser sie aus. overflow: hidden ist nötig, obwohl contain: strict schon beschneidet: Das
+ * Popover bringt overflow: auto mit und wäre sonst ein Scroll-Container, dessen Überlauf mit jedem Bild der wachsenden
+ * Schichten wächst; Chromium malte dann in jedem Bild die ganze Seite neu (am Handy bei CPU 4× 0,6–3,6 ms je Bild).
  *
- * Wärmeschleier statt Blitz (Inhaber 16.10.2026: „viel zu schnell … erschreckend … bitte weicheres Design“, E-031
- * Abschnitt „Owner-Feedback 16.10.: sanfter Wärmeschleier“). Beide Überlagerungen haben Schichten n = 1, 2, 3 (die Front
- * dazu 4) in derselben Sprache: Farbe --waerme-0, -1, -2 (die Front zuletzt die Seitenfarbe --surface), Deckkraft
- * 1 / (5 − n), also zusammen von außen ¼, ½, ¾ und ganz: eine weiche Kante aus Stufen, außen kühl und durchscheinend,
- * innen am wärmsten, ohne Verlauf und ohne filter; jede blendet nach --v Takten ein (f, d-2 linear), die äußere zuerst.
+ * Schichten n beider Überlagerungen in derselben Sprache: Farbe --c, Deckkraft 1 / (5 − n), Einblenden nach --v Takten
+ * (f, d-2 linear, Verzögerung --q), ohne Verlauf und ohne filter. Die ersten zwei teilen sich beide: --waerme-0 (¼) und
+ * --waerme-1 (⅓, zusammen ½).
  *
- * Front: vier Kreise um den Klickpunkt, Durchmesser (29 − n) / 25 × Grundgröße --s (1,12 · 1,08 · 1,04 · 1), die
- * Seitenfarbe innen und zuoberst. Sie stehen ab dem Klick in der Startgröße (--z: die Seitenfarbe bei FRONT_START =
- * 15 % der Fensterdiagonale, die warmen bis 16,8 %, kein Punkt), die warmen blenden ab dem Klick ein, und nach einem
- * Takt wachsen alle gemeinsam bis über die fernste Ecke (w, d-4 mit k-wechsel: ohne Antritt, ruhig aus). Die
- * Seitenfarbe blendet erst nach 5½ Takten ein, wenn der Schleier das Fenster fast überzogen hat; bis dahin ist sie
- * unsichtbar, also nie ein Loch und nie ein kalter Kern (Prüfrunde 5 A5-1, B5-1, C5-1). Sie deckt, wenn das Wachsen
- * endet; dann wechselt die Seite. Mittelpunkt (--x, --y), Grundgröße (--s), Faktor bis zur Ecke (--m) und Startmaßstab
- * (--z) setzt die Insel. Aufdecken: Die Insel setzt data-auf, die Front verblasst als Ganzes (ein Takt + d-3,
- * k-wechsel; sie ist dann eine einzige Fläche in der Seitenfarbe), und der Hauptinhalt taucht auf und steigt um --a-5
- * an seinen Platz („warme Luft steigt“): Die Insel setzt .h schon unter voller Deckung (eigene Ebene, der Ablauf steht
- * angehalten am Anfang) und beim Aufdecken .a (er läuft). Ein Übergang an <main> malte bei seinem Start die ganze
- * Seite neu (am Handy bei CPU 4× 8–10 ms), ein angehaltener Ablauf nicht; ebenso die Überlagerung ohne eigene Ebene
- * (will-change: opacity).
+ * Wärmefront: Ringe auf dem Wärmeschleier (Inhaber 16.10.2026, zweites Feedback: der Schleier allein sei „wenn dann
+ * für den Hintergrund einer guten Transition geeignet“; die ungleichmäßig nachziehenden Ringe von Runde 1 zurück, im
+ * Tempo von heute; E-031 Abschnitt „Owner-Feedback 16.10. (2): Ringe von Runde 1 auf dem Schleier“). Sechs Schichten um
+ * den Klickpunkt, von unten nach oben:
+ * - Schleier (<i>, n = 1, 2): Durchmesser (29 − n) / 25 × Grundgröße --s (1,12 · 1,08). Er steht ab dem Klick in der
+ *   Startgröße (--z: FRONT_START = 15 % der Fensterdiagonale, kein Punkt), blendet ein und wächst nach einem Takt bis über
+ *   die fernste Ecke (w, d-4 mit k-wechsel: ohne Antritt, ruhig aus).
+ * - Ringe (<b>): --waerme-1, -2, -3 (nach innen wärmer), Deckkraft 0,55 · 0,7 · 0,85 (der Schleier scheint durch). Jeder
+ *   blendet nach 1, 2½ bzw. 4 Takten ein (d-1: mit d-2 stünden sie erst voll da, wenn die Seitenfarbe schon einblendet;
+ *   am Filmstreifen abgestimmt) und wächst ab demselben Moment nach √t (r: auf den Stützstellen DIFFUSION_STUETZ,
+ *   linear dazwischen, 7, 6 bzw. 5 Takte) von 16 % auf seine Endgröße (29 − n) / 25 × --s × --m mit
+ *   n = 6, 9, 14, also 92, 80 und 60 % des Durchmessers bis zur fernsten Ecke. Den Faktor --m bis zur Ecke trägt ein
+ *   festes transform; das Wachsen ist allein der √t-Ablauf auf scale. Versetzt gestartet und verschieden lang ziehen die
+ *   Ringbreiten ungleichmäßig nach; der heißeste liegt zuletzt und innen (kein kalter Kern). Sie kommen im Fenster zur
+ *   Ruhe: Außen bleibt der Schleier sichtbar, bis die Seitenfarbe deckt, und der heißeste überzieht nie das ganze
+ *   Fenster (keine satte Fläche, die steht).
+ * - Seitenfarbe (<i> nach den Ringen, n = 4): innen und zuoberst, wächst mit dem Schleier und blendet erst nach 5½ Takten
+ *   ein, wenn die Ringe das Fenster fast überzogen haben; bis dahin unsichtbar, also nie ein Loch und nie ein kalter
+ *   Kern (Prüfrunde 5 A5-1, B5-1, C5-1). Sie deckt, wenn das Wachsen des Schleiers endet; dann wechselt die Seite.
+ * Mittelpunkt (--x, --y), Grundgröße (--s), Faktor bis zur Ecke (--m) und Startmaßstab (--z) setzt die Insel.
+ * Aufdecken: Die Insel setzt data-auf, die Front verblasst als Ganzes (ein Takt + d-3, k-wechsel; sie ist dann eine
+ * einzige Fläche in der Seitenfarbe), und der Hauptinhalt taucht auf und steigt um --a-5 an seinen Platz („warme Luft
+ * steigt“): Die Insel setzt .h schon unter voller Deckung (eigene Ebene, der Ablauf steht angehalten am Anfang) und beim
+ * Aufdecken .a (er läuft). Ein Übergang an <main> malte bei seinem Start die ganze Seite neu (am Handy bei CPU 4×
+ * 8–10 ms), ein angehaltener Ablauf nicht; ebenso die Überlagerung ohne eigene Ebene (will-change: opacity).
  *
  * Klick-Wärme (Inhaber 16.10.2026: zarter, langsamer, nichts Plötzliches; Prüfrunde 5 A5-4): drei Isothermen um die
  * getroffene Fläche, Umrisse (--m-kontur) außerhalb ihrer Box (--w × --h um die Mitte --x, --y von der Insel), außen im
- * Abstand 24, dann 16, innen 8 px, mit --radius-2, der nach außen mitwächst. Die Beschriftung bleibt frei; kreuzt der
- * äußere eine nahe Beschriftung, ist er der zarteste (¼). Steht der äußere (animationend), setzt die Insel data-auf, und
- * alle verklingen gemeinsam wie die Front (ein Takt + d-3, k-wechsel), Ende 720 ms; am Ende dieses Übergangs schließt
- * sie die Insel (Prüfrunde 5 C5-3). Kein Wachsen, kein Sprung. Farben: In ihrer Überlagerung stehen --waerme-0…2 für
- * --klick-1…3 (app/styles/theme.css; den Ton der getroffenen Fläche setzt die Insel als data-tone, Prüfrunde 3 A3-1).
+ * Abstand 24, dann 16, innen 8 px, mit --radius-2, der nach außen mitwächst; Farben --waerme-0…2 (in ihrer Überlagerung
+ * --klick-1…3, app/styles/theme.css; den Ton der getroffenen Fläche setzt die Insel als data-tone, Prüfrunde 3 A3-1).
+ * Die Beschriftung bleibt frei; kreuzt der äußere eine nahe Beschriftung, ist er der zarteste (¼). Steht der äußere
+ * (animationend), setzt die Insel data-auf, und alle verklingen gemeinsam wie die Front (ein Takt + d-3, k-wechsel), Ende
+ * 720 ms; am Ende dieses Übergangs schließt sie die Insel (Prüfrunde 5 C5-3). Kein Wachsen, kein Sprung.
  *
  * Grundwerte sind der Endzustand; die Abläufe füllen mit both (Prüfrunde 2 C2-4: kein Neumalen am Ende eines Bands).
  * will-change: Die Schichten sind eigene Ebenen, sobald die Überlagerung offen ist (Prüfrunde 4 A4-3), auch für
- * opacity (Einblenden nur auf den Ebenen). Kurze Klassennamen, weil jeder Name im Build den Präfix
- * „waermefront-module__<hash>__“ trägt: Budget ≤ FRONT_BUDGET im globalen Chunk (scripts/qa/check-css-chunks.mjs).
+ * opacity (Einblenden nur auf den Ebenen). Keine Schicht beginnt bei Maßstab 0 (Prüfrunde 4 A4-3, C4-1). Kurze
+ * Klassennamen, weil jeder Name im Build den Präfix „waermefront-module__<hash>__“ trägt: Budget ≤ FRONT_BUDGET im
+ * globalen Chunk (scripts/qa/check-css-chunks.mjs).
  */
 
 /* .e = Ebene (beide Überlagerungen), .f = Wärmefront, .k = Klick-Wärme */
@@ -59,18 +70,19 @@
 }
 
 /* Schicht n (beide Überlagerungen): Mittelpunkt von der Insel, Farbe, Deckkraft 1 / (5 − n), Einblenden nach --v
-   Takten (d-2, linear) */
+   Takten (d-2, linear; --q ist diese Verzögerung) */
 .e > * {
   --c: var(--waerme-0);
   --n: 1;
   --t: -50% -50%;
+  --q: calc(var(--takt) * var(--v, 0));
   position: absolute;
   left: var(--x);
   top: var(--y);
   translate: var(--t);
   opacity: calc(1 / (5 - var(--n)));
   will-change: scale, opacity;
-  animation: f var(--d-2) linear calc(var(--takt) * var(--v, 0)) both;
+  animation: f var(--d-2) linear var(--q) both;
 }
 
 .e > * + * {
@@ -79,19 +91,13 @@
   --v: 0.5;
 }
 
-.e > * + * + * {
+.k > * + * + * {
   --c: var(--waerme-2);
   --n: 3;
   --v: 1;
 }
 
-.e > * + * + * + * {
-  --c: var(--surface);
-  --n: 4;
-  --v: 5.5;
-}
-
-/* Front: Kreise mit dem Durchmesser (29 − n) / 25 × --s (1,12 · 1,08 · 1,04 · 1), wachsen von --z auf --m */
+/* Front: Kreise mit dem Durchmesser (29 − n) / 25 × --s; Schleier und Seitenfarbe wachsen von --z auf --m */
 .f > * {
   padding: calc((29 - var(--n)) * var(--s) / 50);
   border-radius: var(--radius-voll);
@@ -99,7 +105,43 @@
   scale: var(--m);
   animation:
     w var(--d-4) var(--k-wechsel) var(--takt) both,
-    f var(--d-2) linear calc(var(--takt) * var(--v, 0)) both;
+    f var(--d-2) linear var(--q) both;
+}
+
+/* Ringe: Endgröße (29 − n) / 25 × --s × --m (festes transform), Wachsen nach √t (r) über --u Takte ab --v Takten,
+   Einblenden d-1 */
+.f > b {
+  --n: 6;
+  --v: 1;
+  --u: 7;
+  opacity: 0.55;
+  transform: scale(var(--m));
+  animation:
+    r calc(var(--takt) * var(--u)) linear var(--q) both,
+    f var(--d-1) linear var(--q) both;
+}
+
+.f > b + b {
+  --c: var(--waerme-2);
+  --n: 9;
+  --v: 2.5;
+  --u: 6;
+  opacity: 0.7;
+}
+
+.f > b + b + b {
+  --c: var(--waerme-3);
+  --n: 14;
+  --v: 4;
+  --u: 5;
+  opacity: 0.85;
+}
+
+/* Seitenfarbe: nach den Ringen, also zuoberst */
+.f > b + i {
+  --c: var(--surface);
+  --n: 4;
+  --v: 5.5;
 }
 
 /* Klick-Wärme: Umrisse um die Box des Elements, außen 24, dann 16, innen 8 px */
@@ -123,7 +165,8 @@
   animation-play-state: running;
 }
 
-/* w = wachsen von der Startgröße auf --m, f = einblenden aus --t (kurz wegen des Präfixes) */
+/* w = wachsen von der Startgröße auf --m, f = einblenden aus --t, r = Ring wächst nach √t von 16 % (kurz wegen des
+   Präfixes) */
 @keyframes w {
   from {
     scale: var(--z);
@@ -134,5 +177,23 @@
   from {
     opacity: 0;
     translate: var(--t);
+  }
+}
+
+@keyframes r {
+  from {
+    scale: 0.16;
+  }
+  6.25% {
+    scale: 0.37;
+  }
+  25% {
+    scale: 0.58;
+  }
+  56.25% {
+    scale: 0.79;
+  }
+  to {
+    scale: 1;
   }
 }

@@ -11,6 +11,7 @@ import {
   BEDIENELEMENT,
   FRONT_SCHICHTEN,
   FRONT_START,
+  RING_START,
   HALTEN_MS,
   KLICK_ZU_MS,
   RUHE_MS,
@@ -168,11 +169,17 @@ describe('Wärmefront: Zeitplan und Notschalter (E-031)', () => {
     expect(insel).not.toMatch(/ZEITPLAN/);
   });
 
-  it('Startgröße (Owner-Feedback 16.10.2026): kein winziger Punkt, jede Schicht beginnt bei 12–18 % der Fensterdiagonale; @keyframes w beginnt bei --z', () => {
+  it('Startgröße (Owner-Feedback 16.10.2026): kein winziger Punkt; Schleier und Seitenfarbe beginnen bei 12–18 % der Fensterdiagonale (@keyframes w ab --z), die Ringe bei mindestens der Hälfte (@keyframes r ab RING_START)', () => {
     expect(FRONT_START).toBeGreaterThanOrEqual(0.12);
     expect(FRONT_START).toBeLessThanOrEqual(0.18);
-    // Die Schichten liegen eng gestaffelt, je 4 %, außen die größte, innen die Seitenfarbe
-    expect([...FRONT_SCHICHTEN]).toEqual([1.12, 1.08, 1.04, 1]);
+    // Von unten nach oben: der Schleier (1,12 · 1,08) bis über die Ecke, die Ringe (0,92 · 0,8 · 0,6) im Fenster, nach
+    // innen enger, zuletzt die Seitenfarbe genau bis zur Ecke (Owner-Feedback 16.10.2026 (2))
+    expect([...FRONT_SCHICHTEN]).toEqual([1.12, 1.08, 0.92, 0.8, 0.6, 1]);
+    expect(Object.isFrozen(FRONT_SCHICHTEN)).toBe(true);
+    const ZUM_START = [0, 1, 5];
+    const RINGE = [2, 3, 4];
+    expect(RING_START).toBeGreaterThan(0);
+    expect(RING_START).toBeLessThan(0.25);
     for (const [b, h] of [
       [390, 844],
       [1440, 900],
@@ -189,10 +196,17 @@ describe('Wärmefront: Zeitplan und Notschalter (E-031)', () => {
       ]) {
         const [grund, faktor, start] = frontMass(x, y, b, h);
         const wo = `${b}×${h} @ ${x},${y}`;
-        for (const schicht of FRONT_SCHICHTEN) {
-          const anteil = (grund * start * schicht) / diagonale;
+        for (const i of ZUM_START) {
+          const anteil = (grund * start * FRONT_SCHICHTEN[i]) / diagonale;
           expect(anteil, wo).toBeGreaterThanOrEqual(0.12);
           expect(anteil, wo).toBeLessThanOrEqual(0.18);
+        }
+        // Ringe: Start RING_START ihrer Endgröße (Faktor bis zur Ecke); nie ein Punkt, nie größer als FRONT_START × 2
+        for (const i of RINGE) {
+          const anteil = (grund * faktor * RING_START * FRONT_SCHICHTEN[i]) / diagonale;
+          expect(anteil, wo).toBeGreaterThanOrEqual(FRONT_START / 2);
+          expect(anteil, wo).toBeLessThanOrEqual(2 * FRONT_START);
+          expect(grund * faktor * RING_START * FRONT_SCHICHTEN[i], wo).toBeGreaterThan(50);
         }
         // Sie wächst (Start kleiner als der Faktor bis zur Ecke) und hat von Anfang an Fläche (Prüfrunde 4 A4-3)
         expect(start, wo).toBeGreaterThan(0);
@@ -202,6 +216,7 @@ describe('Wärmefront: Zeitplan und Notschalter (E-031)', () => {
     }
     const css = readFileSync(path.join(ROOT, 'components/site/waermefront/waermefront.module.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
     expect(css).toMatch(/@keyframes w \{\s*from \{\s*scale: var\(--z\);\s*\}\s*\}/);
+    expect(css).toMatch(new RegExp(`@keyframes r \\{\\s*from \\{\\s*scale: ${RING_START};`));
   });
 
   it('die Logik hängt an nichts (das Register bliebe sonst im Browser-Bündel der Insel)', () => {
@@ -473,6 +488,7 @@ describe('Wärmefront: immer ein Kreis, kleine Ebenen (Prüfrunde 2 A2-1, C2-2, 
     expect(frontDurchmesser(0, 0, 1440, 900)).toBeGreaterThan(2 * radiusVoll);
     expect(frontMass(0, 0, 1440, 900)[0]).toBe(FRONT_GRUND);
     // Auch die größte, äußere Schicht (1,12 × Grundgröße) ist gezeichnet noch ein Kreis
+    expect(Math.max(...FRONT_SCHICHTEN)).toBe(FRONT_SCHICHTEN[0]);
     expect(FRONT_SCHICHTEN[0] * FRONT_GRUND).toBeLessThanOrEqual(2 * radiusVoll);
   });
 

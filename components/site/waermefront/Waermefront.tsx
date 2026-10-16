@@ -46,17 +46,18 @@ const zu = (el: HTMLElement) => {
  *   spätestens beim Wechsel in den Bewerbungsweg. Die Überlagerung trägt den Ton der getroffenen Fläche (data-tone,
  *   Prüfrunde 3 A3-1). Führt der Klick zur Wärmefront, ist sie die Rückmeldung.
  * - Wärmefront: Führt ein einfacher Klick zu einer Erzählseite (frontZiel), hält die Insel den Wechsel an
- *   (preventDefault – next/link bricht dann ab), lädt das Ziel vor und legt vom Klickpunkt aus einen Wärmeschleier über
- *   die Seite (frontMass: Grundgröße --s, Faktor --m bis zur fernsten Ecke, Startmaßstab --z). Deckt die Seitenfarbe
- *   das Fenster (animationend der letzten Schicht, spätestens nach dem Netz), wechselt router.push die Seite. Mit dem
- *   neuen Pfad hebt die Insel <main> auf eine eigene Ebene, unsichtbar und ein Stück tiefer (.h: ein angehaltener
- *   Ablauf), und zählt Bilder ohne Änderung im Dokument (die Front selbst zählt nicht), ohne ladendes Bild und ohne
- *   laufenden endlichen Ablauf der Seite; sind es RUHE_BILDER, spätestens nach `ruhe` (ohne neuen Pfad nach `halten`),
- *   deckt sie auf: Die Front verblasst (data-auf), und <main> taucht auf und steigt an seinen Platz (.a: der Ablauf
- *   läuft). Nachladende Bereiche wartet sie nicht ab, sie warten auf die Front (nachDerFront, Prüfrunde 5 C5-2). Ist
- *   die Front verblasst (transitionend), ist sie zu. Zurück/vor, die Rückkehr aus dem bfcache und ein Klick auf einen
- *   anderen Link beenden sie sofort. Die neue Seite steht oben: <html data-scroll-behavior="smooth"> (app/layout.tsx)
- *   lässt Next beim Wechsel ohne weiches Scrollen springen.
+ *   (preventDefault – next/link bricht dann ab), lädt das Ziel vor und legt vom Klickpunkt aus einen Wärmeschleier mit
+ *   drei ungleichmäßig nachziehenden Ringen über die Seite (Owner-Feedback 16.10.2026 (2); zwei <i> Schleier, drei <b>
+ *   Ringe, zuletzt ein <i> in der Seitenfarbe; frontMass: Grundgröße --s, Faktor --m bis zur fernsten Ecke,
+ *   Startmaßstab --z). Deckt die Seitenfarbe das Fenster (animationend der letzten Schicht, spätestens nach dem Netz),
+ *   wechselt router.push die Seite. Mit dem neuen Pfad hebt die Insel <main> auf eine eigene Ebene, unsichtbar und ein
+ *   Stück tiefer (.h: ein angehaltener Ablauf), und zählt Bilder ohne Änderung im Dokument (die Front selbst zählt
+ *   nicht), ohne ladendes Bild und ohne laufenden endlichen Ablauf der Seite; sind es RUHE_BILDER, spätestens nach
+ *   `ruhe` (ohne neuen Pfad nach `halten`), deckt sie auf: Die Front verblasst (data-auf), und <main> taucht auf und
+ *   steigt an seinen Platz (.a: der Ablauf läuft). Nachladende Bereiche wartet sie nicht ab, sie warten auf die Front
+ *   (nachDerFront, Prüfrunde 5 C5-2). Ist die Front verblasst (transitionend), ist sie zu. Zurück/vor, die Rückkehr aus
+ *   dem bfcache und ein Klick auf einen anderen Link beenden sie sofort. Die neue Seite steht oben: <html
+ *   data-scroll-behavior="smooth"> (app/layout.tsx) lässt Next beim Wechsel ohne weiches Scrollen springen.
  * - Auftakt: Jeder Wechsel innerhalb der Seite nimmt die Klasse `auftakt` weg, bevor die neue Seite gemalt wird
  *   (useLayoutEffect); sie steht dann im Endzustand, und kein Auftakt bricht am Sicherheitsnetz mitten im Lauf ab.
  *
@@ -229,7 +230,9 @@ export function Waermefront() {
       <div ref={frontRef} popover="manual" className={`${styles.e} ${styles.f}`} aria-hidden="true" inert data-motion="seitenwechsel">
         <i />
         <i />
-        <i />
+        <b />
+        <b />
+        <b />
         <i />
       </div>
     </>

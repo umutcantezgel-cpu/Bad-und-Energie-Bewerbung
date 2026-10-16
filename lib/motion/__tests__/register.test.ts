@@ -9,6 +9,7 @@ import {
   DAUER_IDS,
   DAUER_MS,
   DIFFUSION_STUETZ,
+  FRONT_RINGE,
   EIGENSCHAFTEN,
   KLICK_ENDE_MS,
   MOTION_IDS,
@@ -367,7 +368,8 @@ describe('Bewegungsregister', () => {
     const frontCss = readFileSync(path.resolve(__dirname, '../../../components/site/waermefront/waermefront.module.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
     // Die Ringe blenden mit dem gemeinsamen Ablauf der Schichten ein und verklingen mit der Überlagerung (data-auf)
     const eRegel = frontCss.match(/\.e > \* \{([^}]*)\}/)![1];
-    expect(eRegel).toContain(`animation: f var(--${k.dauer[0]}) linear calc(var(--takt) * var(--v, 0)) both;`);
+    expect(eRegel).toContain(`animation: f var(--${k.dauer[0]}) linear var(--q) both;`);
+    expect(eRegel).toContain('--q: calc(var(--takt) * var(--v, 0));');
     expect(frontCss.match(/\.k > \* \{([^}]*)\}/)![1]).not.toMatch(/animation/);
     expect(frontCss.match(/\.e\[data-auf\] \{([^}]*)\}/)![1]).toContain(`transition: var(--${k.dauer[1]}) var(--k-wechsel) var(--takt);`);
     // Ende: der innere Ring steht (d-2), dann ein Takt und d-3
@@ -388,15 +390,33 @@ describe('Bewegungsregister', () => {
     expect(k.schleife).toBeUndefined();
   });
 
-  it('seitenwechsel (E-031; Owner-Feedback 16.10.2026): sanfter Wärmeschleier; Vorlauf 80, Deckung und Wechsel 680, aufdecken 480, halten 1.200, Ruhe höchstens 320 ms', () => {
+  it('seitenwechsel (E-031; Owner-Feedback 16.10.2026): sanfter Wärmeschleier mit den Ringen von Runde 1; Vorlauf 80, Deckung und Wechsel 680, aufdecken 480, halten 1.200, Ruhe höchstens 320 ms', () => {
     const w = MOTION_REGISTER.seitenwechsel;
     expect(mitAusloeser('navigation')).toEqual(['seitenwechsel']);
     expect(w.ausloeser).toEqual(['navigation']);
     expect([...w.eigenschaften].sort()).toEqual(['opacity', 'transform']);
-    expect(w.dauer).toEqual(['d-4', 'd-3', 'd-2']);
-    // Einblenden je Schicht: drei warme ½ Takt versetzt ab dem Klick, die Seitenfarbe nach 5½ Takten
-    expect(w.verzoegerungTakte).toEqual([0, 0.5, 1, 5.5]);
+    expect(w.dauer).toEqual(['d-4', 'd-3', 'd-2', 'd-1']);
+    // Einblenden je Schicht: der Schleier ½ Takt versetzt ab dem Klick, die drei Ringe nach 1, 2½, 4 Takten, die
+    // Seitenfarbe nach 5½ Takten
+    expect(w.verzoegerungTakte).toEqual([0, 0.5, 1, 2.5, 4, 5.5]);
     expect(steigt(w.verzoegerungTakte)).toBe(true);
+    // Ringe (Owner-Feedback 16.10.2026 (2)): je eigene Verzögerung (Schichten 3–5), Dauer in ganzen Takten (die einzige
+    // Ausnahme von d-1…d-4), nach innen kürzer, Deckkraft nach innen dichter, keiner deckend
+    expect(w.ringe).toBe(FRONT_RINGE);
+    expect(Object.isFrozen(FRONT_RINGE)).toBe(true);
+    expect(FRONT_RINGE).toEqual({ verzoegerungTakte: [1, 2.5, 4], dauerTakte: [7, 6, 5], deckkraft: [0.55, 0.7, 0.85] });
+    expect([...w.verzoegerungTakte.slice(2, 5)]).toEqual([...FRONT_RINGE.verzoegerungTakte]);
+    for (const d of FRONT_RINGE.dauerTakte) expect(Number.isInteger(d)).toBe(true);
+    expect(steigt([...FRONT_RINGE.dauerTakte].reverse())).toBe(true);
+    expect(steigt(FRONT_RINGE.deckkraft)).toBe(true);
+    for (const o of FRONT_RINGE.deckkraft) expect(o).toBeLessThan(1);
+    // Sie stehen ganz, bevor die Seitenfarbe einblendet (d-1), und wachsen höchstens einen Takt über die Deckung hinaus
+    const seitenfarbe = w.verzoegerungTakte.at(-1)! * TAKT_MS;
+    FRONT_RINGE.verzoegerungTakte.forEach((v, j) => {
+      expect(v * TAKT_MS + DAUER_MS['d-1']).toBeLessThanOrEqual(seitenfarbe);
+      expect((v + FRONT_RINGE.dauerTakte[j]) * TAKT_MS).toBeLessThanOrEqual(WECHSEL.abdeckenMs + TAKT_MS);
+    });
+    expect(new Set(FRONT_RINGE.verzoegerungTakte.map((v, j) => v + FRONT_RINGE.dauerTakte[j])).size).toBe(3);
     // Wachsen nach einem Takt Vorlauf, d-4 mit k-wechsel; Einblenden linear
     expect(w.kurve).toEqual(['k-wechsel', 'linear']);
     expect(w.wechsel).toBe(WECHSEL);
@@ -425,8 +445,11 @@ describe('Bewegungsregister', () => {
     expect(w.zweck).toMatch(/nie steht eine einfarbige Pfirsichfläche/);
     expect(w.zweck).toMatch(/nicht als Punkt/);
     expect(w.zweck).toMatch(/verblasst die Front/);
+    expect(w.zweck).toMatch(/drei warme Ringe ungleichmäßig/);
+    expect(w.zweck).toMatch(/nach √t/);
     expect(w.seitenart).toBe('erzaehlseiten');
     for (const id of MOTION_IDS) if (id !== 'seitenwechsel') expect(MOTION_REGISTER[id].wechsel, id).toBeUndefined();
+    for (const id of MOTION_IDS) if (id !== 'seitenwechsel') expect(MOTION_REGISTER[id].ringe, id).toBeUndefined();
   });
 
   describe('Skalieren nur nach √t (E-031)', () => {
@@ -481,16 +504,22 @@ describe('Bewegungsregister', () => {
       }
     });
 
-    it('die Wärmefront (einzige Ausnahme): ein Ablauf w von var(--z) auf den Grundwert, nur mit d-4, k-wechsel und einem Takt Vorlauf; kein Antritt', () => {
+    it('die Wärmefront (einzige Ausnahme): Schleier und Seitenfarbe ein Ablauf w von var(--z) auf den Grundwert, nur mit d-4, k-wechsel und einem Takt Vorlauf; ihre Ringe wachsen nach √t (r)', () => {
       const css = readFileSync(path.join(ROOT, 'components/site/waermefront/waermefront.module.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
       const skalierend = keyframesIn(css).filter((k) => k.stopps.some((s) => s.deklarationen.has('scale') || /scale\(/.test(s.deklarationen.get('transform') ?? '')));
-      expect(skalierend.map((k) => k.name)).toEqual(['w']);
+      expect(skalierend.map((k) => k.name)).toEqual(['w', 'r']);
       expect(skalierend[0].stopps.map((s) => [s.anteil, Object.fromEntries(s.deklarationen)])).toEqual([[0, { scale: 'var(--z)' }]]);
-      const nutzung = [...css.matchAll(/(?<![\w-])animation\s*:\s*([^;]+);/g)].flatMap((m) => listenteile(m[1])).map((t) => t.trim()).filter((t) => /^w\b/.test(t));
-      expect(nutzung).toEqual(['w var(--d-4) var(--k-wechsel) var(--takt) both']);
-      // Keine weitere Skalierung in der Datei (kein transform: scale, kein scale außer dem Ziel --m)
-      expect(css).not.toMatch(/transform\s*:/);
-      expect([...css.matchAll(/(?<![\w-])scale\s*:\s*([^;]+);/g)].map((m) => m[1].trim()).sort()).toEqual(['var(--m)', 'var(--z)']);
+      const teile = [...css.matchAll(/(?<![\w-])animation\s*:\s*([^;]+);/g)].flatMap((m) => listenteile(m[1])).map((t) => t.trim());
+      expect(teile.filter((t) => /^w\b/.test(t))).toEqual(['w var(--d-4) var(--k-wechsel) var(--takt) both']);
+      // r hält die Regel ganz (nur w ist ausgenommen) und läuft linear, genau einmal benutzt (die Ringe)
+      expect(diffusionsFehler(css).filter((f) => /^r: /.test(f))).toEqual([]);
+      expect(diffusionsFehler(css).every((f) => /^w: /.test(f))).toBe(true);
+      expect(teile.filter((t) => /^r\b/.test(t))).toEqual(['r calc(var(--takt) * var(--u)) linear var(--q) both']);
+      // Keine weitere Skalierung in der Datei: scale nur als Ziel --m, Start --z und die Stützstellen von r; transform
+      // nur als fester Faktor --m der Ringe (nie in Keyframes)
+      expect([...css.matchAll(/(?<![\w-])transform\s*:\s*([^;]+);/g)].map((m) => m[1].trim())).toEqual(['scale(var(--m))']);
+      expect(keyframesIn(css).every((k) => k.stopps.every((s) => !s.deklarationen.has('transform')))).toBe(true);
+      expect([...css.matchAll(/(?<![\w-])scale\s*:\s*([^;]+);/g)].map((m) => m[1].trim()).sort()).toEqual(['0.16', '0.37', '0.58', '0.79', '1', 'var(--m)', 'var(--z)']);
     });
   });
 });

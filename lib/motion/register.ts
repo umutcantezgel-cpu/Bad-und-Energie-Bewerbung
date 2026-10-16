@@ -6,7 +6,8 @@
  * zuerst hierher (mit Zweck und reduzierter Fassung), dann in die Komponente.
  *
  * Regeln: Eigenschaften nur transform, opacity und stroke-dashoffset (seit E-031 kein View-Übergang mehr);
- * Dauern d-1…d-4, Verzögerungen als Vielfache des Takts (80 ms); Eingänge d-2 mit k-aus, Ausgänge d-1 mit k-ein;
+ * Dauern d-1…d-4 (einzige Ausnahme die Ringe der Wärmefront: ganze Takte, FRONT_RINGE), Verzögerungen als Vielfache des
+ * Takts (80 ms); Eingänge d-2 mit k-aus, Ausgänge d-1 mit k-ein;
  * Auftakt endet nach ≤ 1.120 ms. Ausnahmen vom Ausgang, je im Eintrag vermerkt (Prüfrunde 4 C4-3; Owner-Feedback
  * 16.10.2026): Die Klick-Wärme verklingt d-3 mit k-wechsel, die Wärmefront verblasst d-3 mit k-wechsel, und der
  * Hauptinhalt steigt dabei an seinen Platz.
@@ -16,9 +17,9 @@
  * Wärme (E-031): `nachlauf` (Hero, nach dem Vorlauf, Ende ≤ NACHLAUF_ENDE_MS) und `sicht` (einmal beim
  * Sichtbarwerden über components/zeichnung/bewegung/SichtStart.tsx, Ende ≤ SICHT_ENDE_MS, höchstens auf der Hälfte
  * der Abschnitte einer Seite); Klick-Wärme (`tippen`, KLICK_ENDE_MS) und Wärmefront (`navigation`, WECHSEL).
- * Skalieren nur nach √t: jeder Keyframe-Ablauf mit `scale` genau auf den Stützstellen DIFFUSION_STUETZ; einzige
- * Ausnahme die Wärmefront (Owner-Feedback 16.10.2026: Sie wächst ruhig mit k-wechsel ab FRONT_START, ohne Antritt;
- * lib/motion/__tests__/register.test.ts prüft sie eigens).
+ * Skalieren nur nach √t: jeder Keyframe-Ablauf mit `scale` genau auf den Stützstellen DIFFUSION_STUETZ, auch die Ringe
+ * der Wärmefront; einzige Ausnahme ihr Schleier und ihre Seitenfarbe (Owner-Feedback 16.10.2026: Sie wachsen ruhig mit
+ * k-wechsel ab FRONT_START, ohne Antritt; lib/motion/__tests__/register.test.ts prüft sie eigens).
  * Malzeit (KERN K-013, e2e/support/malzeit.ts): Während Wärme, Büro-Szenen, Klick-Wärme und Wärmefront laufen, malt
  * nach den ersten zwei Bildern kein Bild 2 ms oder länger (mobil, CPU 4×). Ausnahmen, je einmal und außerhalb der
  * Bewegung: das Ende eines Sicht-Ablaufs (`fertig`, will-change bzw. die Füllung fällt) und bei der Wärmefront das
@@ -132,6 +133,19 @@ export interface Wechsel {
   ruheMs: number;
 }
 
+/**
+ * Die drei Ringe der Wärmefront (Kennung `seitenwechsel`; Owner-Feedback 16.10.2026 (2): die ungleichmäßig
+ * nachziehenden Ringe von Runde 1 auf dem Schleier), von außen nach innen, je Ring gleich lang wie die anderen Listen.
+ */
+export interface Ringe {
+  /** Ab dem Klick: Einblenden (d-1) und Wachsen nach √t beginnen gemeinsam, in Takten, streng steigend. */
+  verzoegerungTakte: readonly number[];
+  /** Dauer des Wachsens nach √t in ganzen Takten (die Ausnahme von d-1…d-4), nach innen kürzer. */
+  dauerTakte: readonly number[];
+  /** Deckkraft (der Schleier scheint durch), nach innen dichter. */
+  deckkraft: readonly number[];
+}
+
 export interface MotionEntry {
   /** Wozu die Bewegung da ist (Bedeutung, nicht Effekt). */
   zweck: string;
@@ -154,6 +168,8 @@ export interface MotionEntry {
   fenster?: Readonly<Partial<Record<FensterAusloeser, Fenster>>>;
   /** Nur `seitenwechsel` (E-031): Zeitplan der Wärmefront. */
   wechsel?: Readonly<Wechsel>;
+  /** Nur `seitenwechsel` (Owner-Feedback 16.10.2026 (2)): die Ringe der Wärmefront. */
+  ringe?: Readonly<Ringe>;
   /** Nur mit Auslöser `dauer`: die Schleife. */
   schleife?: Schleife;
 }
@@ -186,20 +202,32 @@ export const SICHT_ENDE_MS = 2400;
  */
 export const KLICK_ENDE_MS = 720;
 /**
- * Wärmefront (E-031; Owner-Feedback 16.10.2026, „viel zu schnell … erschreckend“; ersetzt Prüfrunde 4 A4-2): Die drei
- * warmen Schichten blenden ab dem Klick je ½ Takt versetzt ein (d-2), nach einem Takt Vorlauf wachsen alle gemeinsam
- * (d-4, k-wechsel), nach 5½ Takten blendet die Seitenfarbe ein (d-2) und deckt nach 680 ms, wenn das Wachsen endet:
- * Wechsel. Aufgedeckt wird, sobald die neue Seite ruht, höchstens 320 ms nach dem neuen Pfad und spätestens 1.200 ms
+ * Wärmefront (E-031; Owner-Feedback 16.10.2026, „viel zu schnell … erschreckend“; ersetzt Prüfrunde 4 A4-2; Ringe nach
+ * dem zweiten Feedback, FRONT_RINGE): Die zwei Schichten des Schleiers blenden ab dem Klick ½ Takt versetzt ein (d-2) und
+ * wachsen nach einem Takt Vorlauf (d-4, k-wechsel), die Ringe darauf nach √t, nach 5½ Takten blendet die Seitenfarbe ein
+ * (d-2) und deckt nach 680 ms, wenn das Wachsen des Schleiers endet: Wechsel. Aufgedeckt wird, sobald die neue Seite ruht, höchstens 320 ms nach dem neuen Pfad und spätestens 1.200 ms
  * nach dem Wechsel: ein Takt + d-3 = 480 ms. Ohne Warten: Klick bis Front zu 1.160 ms; mit dem Einsetzen der neuen
  * Seite (Desktop rund 60–90 ms) und der Ruhe (vier Bilder) rund 1,2–1,3 s.
  */
 export const WECHSEL: Readonly<Wechsel> = Object.freeze({ vorlaufMs: 80, wechselMs: 680, abdeckenMs: 680, aufdeckenMs: 480, haltenMs: 1200, ruheMs: 320 });
 /**
+ * Ringe der Wärmefront (Owner-Feedback 16.10.2026 (2), E-031): Auf dem Schleier liegen drei Ringe in --waerme-1, -2, -3.
+ * Jeder blendet nach 1, 2½ bzw. 4 Takten ein (d-1; am Filmstreifen abgestimmt: mit d-2 stünden sie erst voll da, wenn die
+ * Seitenfarbe schon einblendet) und wächst ab demselben Moment nach √t (7, 6 bzw. 5 Takte, also 560, 480 und 400 ms); so
+ * starten sie versetzt, enden verschieden (640, 680, 720 ms), und ihre Breiten ziehen ungleichmäßig nach. Der innerste
+ * endet unter der deckenden Seitenfarbe. Deckkraft 0,55 · 0,7 · 0,85.
+ */
+export const FRONT_RINGE: Readonly<Ringe> = Object.freeze({
+  verzoegerungTakte: Object.freeze([1, 2.5, 4]),
+  dauerTakte: Object.freeze([7, 6, 5]),
+  deckkraft: Object.freeze([0.55, 0.7, 0.85]),
+});
+/**
  * Diffusionsgesetz r ∝ √t (E-031): Stützstellen [Zeitanteil, Fortschritt] mit Fortschritt = √Zeitanteil. Jeder
  * Keyframe-Ablauf mit `scale` steht genau auf diesen Stellen (linear dazwischen), monoton, ohne Überschwingen; der
- * Wert an Stelle i ist Start + Fortschritt_i × (Ende − Start). Für das Wärmefeld; die Wärmefront wächst seit dem
- * Owner-Feedback vom 16.10.2026 ruhig mit k-wechsel (√t hätte am Anfang den schnellsten Antritt), die Klick-Wärme
- * skaliert nicht mehr.
+ * Wert an Stelle i ist Start + Fortschritt_i × (Ende − Start). Für das Wärmefeld und die Ringe der Wärmefront (sie
+ * blenden dabei ein, so bleibt der Antritt zart); Schleier und Seitenfarbe der Front wachsen seit dem Owner-Feedback vom
+ * 16.10.2026 ruhig mit k-wechsel, die Klick-Wärme skaliert nicht mehr.
  */
 export const DIFFUSION_STUETZ: readonly (readonly [number, number])[] = Object.freeze([
   Object.freeze([0, 0] as const),
@@ -400,26 +428,30 @@ export const MOTION_REGISTER: Readonly<Record<MotionId, MotionEntry>> = {
   },
   seitenwechsel: {
     zweck:
-      'Wärmefront (E-031; Owner-Feedback 16.10.2026: sanfter Wärmeschleier statt Blitz): Beim Klick auf einen Link zu ' +
-      'einer Erzählseite legt sich vom Klickpunkt aus ein zarter, durchscheinender Wärmeschleier über die Seite: drei ' +
-      'warme Bänder, eng gestaffelt, außen das kühlste und durchsichtigste, das heißeste zuletzt und innen – wie ' +
-      'Wärmeleitung von einer Quelle, ohne kalten Kern. Sie beginnen nicht als Punkt, sondern bei 15 % der ' +
-      'Fensterdiagonale, blenden je ½ Takt versetzt ein und wachsen nach einem Takt gemeinsam ruhig (k-wechsel) bis über ' +
-      'die fernste Ecke. Zuletzt blendet die Seitenfarbe ein und deckt; erst dann wechselt die Seite. Die Wärme ist ' +
-      'durchgezogen, nie steht eine einfarbige Pfirsichfläche. Ruht die neue Seite, verblasst die Front als Ganzes, ' +
+      'Wärmefront (E-031; Owner-Feedback 16.10.2026: sanfter Wärmeschleier statt Blitz, danach die Ringe von Runde 1 ' +
+      'darauf): Beim Klick auf einen Link zu einer Erzählseite legt sich vom Klickpunkt aus ein zarter, durchscheinender ' +
+      'Wärmeschleier über die Seite. Er beginnt nicht als Punkt, sondern bei 15 % der Fensterdiagonale, blendet ein und ' +
+      'wächst nach einem Takt ruhig (k-wechsel) bis über die fernste Ecke. Darauf ziehen drei warme Ringe ungleichmäßig ' +
+      'nach: je versetzt eingeblendet, wachsen sie nach √t, verschieden lang, nach innen wärmer und dichter, das ' +
+      'heißeste zuletzt und innen – wie Wärmeleitung von einer Quelle, ohne kalten Kern. Sie kommen im Fenster zur Ruhe, ' +
+      'außen bleibt der Schleier. Zuletzt blendet die Seitenfarbe ein und deckt; erst dann wechselt die Seite. Die Wärme ' +
+      'ist durchgezogen, nie steht eine einfarbige Pfirsichfläche. Ruht die neue Seite, verblasst die Front als Ganzes, ' +
       'und der Hauptinhalt (<main>) taucht auf und steigt ein Stück an seinen Platz. Nachladende Bereiche wartet sie ' +
       'nicht ab, sie setzen ihren Inhalt nach der Front ein. Eine dauerhafte Überlagerung (Popover), kein ' +
       'View-Übergang.',
     ausloeser: ['navigation'],
     eigenschaften: ['transform', 'opacity'],
-    // Wachsen d-4, Aufdecken d-3 (Front und Hauptinhalt), Einblenden je Schicht d-2 (waermefront.module.css)
-    dauer: ['d-4', 'd-3', 'd-2'],
-    // Einblenden je Schicht: die drei warmen ab dem Klick, die Seitenfarbe nach 5½ Takten
-    verzoegerungTakte: [0, 0.5, 1, 5.5],
+    // Wachsen des Schleiers d-4, Aufdecken d-3 (Front und Hauptinhalt), Einblenden von Schleier und Seitenfarbe d-2, der
+    // Ringe d-1 (waermefront.module.css); die Ringe wachsen ganze Takte (FRONT_RINGE)
+    dauer: ['d-4', 'd-3', 'd-2', 'd-1'],
+    // Einblenden je Schicht: Schleier ab dem Klick, die Ringe nach 1, 2½, 4 Takten, die Seitenfarbe nach 5½ Takten
+    verzoegerungTakte: [0, 0.5, 1, 2.5, 4, 5.5],
+    // Schleier und Seitenfarbe wachsen mit k-wechsel; Einblenden und das Wachsen der Ringe nach √t linear
     kurve: ['k-wechsel', 'linear'],
     reduziert: 'Kein Übergang: die Seite wechselt sofort.',
     seitenart: 'erzaehlseiten',
     wechsel: WECHSEL,
+    ringe: FRONT_RINGE,
   },
   'rotor-dreht': {
     zweck:

@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
-import { DAUER_MS, MOTION_REGISTER, TAKT_MS, WECHSEL, KLICK_ENDE_MS } from '../lib/motion/register';
-import { FRONT_SCHICHTEN, FRONT_START, ZEITPLAN } from '../lib/motion/seitenwechsel';
+import { DAUER_MS, DIFFUSION_STUETZ, FRONT_RINGE, MOTION_REGISTER, TAKT_MS, WECHSEL, KLICK_ENDE_MS } from '../lib/motion/register';
+import { FRONT_SCHICHTEN, FRONT_START, RING_START, ZEITPLAN } from '../lib/motion/seitenwechsel';
 import { kurveAus } from '../lib/motion/__tests__/keyframes';
 import { malzeitJeBild, messeMitDrossel } from './support/malzeit';
 import { isDesktop } from './support/site';
@@ -19,6 +19,9 @@ import { isDesktop } from './support/site';
 const FRONT = '[data-motion="seitenwechsel"]';
 const KLICK = '[data-motion="klick-waerme"]';
 const STELLE_LINK = 'main a[href^="/jobs/"]';
+/** Schichten der Front (Owner-Feedback 16.10.2026 (2)): Schleier und Seitenfarbe wachsen mit w, die Ringe nach √t (r). */
+const MIT_W = [0, 1, 5];
+const RINGE = [2, 3, 4];
 /** k-wechsel aus theme.css: Wachsen der Front, Verblassen der Front und der Klick-Wärme, Steigen des Hauptinhalts. */
 const WECHSEL_KURVE = kurveAus(readFileSync(path.join(__dirname, '../app/styles/theme.css'), 'utf8'), 'k-wechsel');
 
@@ -125,7 +128,7 @@ test.beforeEach(() => {
 test.describe('mit Bewegung (no-preference)', () => {
   test.use({ contextOptions: { reducedMotion: 'no-preference' } });
 
-  test('Wärmefront (Owner-Feedback 16.10.2026): vom Klickpunkt ein sanfter Wärmeschleier – Start bei 15 % der Diagonale, je ½ Takt eingeblendet, nach einem Takt mit k-wechsel gewachsen; Wechsel erst gedeckt, dann verblasst sie', async ({ page }) => {
+  test('Wärmefront (Owner-Feedback 16.10.2026 (2)): vom Klickpunkt ein sanfter Wärmeschleier – Start bei 15 % der Diagonale, nach einem Takt mit k-wechsel gewachsen –, darauf drei Ringe nach √t, versetzt und verschieden lang; Wechsel erst gedeckt, dann verblasst sie', async ({ page }) => {
     await protokollieren(page);
     await page.goto('/jobs');
     await page.waitForLoadState('networkidle');
@@ -144,14 +147,24 @@ test.describe('mit Bewegung (no-preference)', () => {
     await ablaeufeMerken(page, FRONT);
     await link.click();
 
-    // Vier Schichten mit je zwei Abläufen: w (Wachsen, d-4 mit k-wechsel nach einem Takt Vorlauf, von --z auf --m) und f
-    // (Einblenden je d-2, die warmen ½ Takt versetzt ab dem Klick, die Seitenfarbe nach 5½ Takten)
+    // Sechs Schichten mit je zwei Abläufen: Schleier und Seitenfarbe w (Wachsen, d-4 mit k-wechsel nach einem Takt Vorlauf,
+    // von --z auf --m), die Ringe r (√t auf den Stützstellen, ganze Takte, ab ihrer Verzögerung); alle f (Einblenden,
+    // Schleier ½ Takt versetzt ab dem Klick, die Ringe nach 1, 2½, 4 Takten mit d-1, die Seitenfarbe nach 5½ Takten)
     const ab = await gemerkteAblaeufe(page);
-    expect(ab).toHaveLength(8);
+    expect(ab).toHaveLength(12);
     const w = ab.filter((a) => a.name === 'w').sort((x, y) => x.schicht - y.schicht);
+    const r = ab.filter((a) => a.name === 'r').sort((x, y) => x.schicht - y.schicht);
     const f = ab.filter((a) => a.name === 'f').sort((x, y) => x.schicht - y.schicht);
-    expect(w.map((a) => a.schicht)).toEqual([0, 1, 2, 3]);
-    expect(f.map((a) => a.schicht)).toEqual([0, 1, 2, 3]);
+    expect(w.map((a) => a.schicht)).toEqual(MIT_W);
+    expect(r.map((a) => a.schicht)).toEqual(RINGE);
+    expect(f.map((a) => a.schicht)).toEqual([0, 1, 2, 3, 4, 5]);
+    r.forEach((a, j) => {
+      expect(a.dauer).toBe(FRONT_RINGE.dauerTakte[j] * TAKT_MS);
+      expect(a.verzoegerung).toBe(FRONT_RINGE.verzoegerungTakte[j] * TAKT_MS);
+      expect(a.kurve).toBe('linear');
+      expect(a.stellen).toEqual(DIFFUSION_STUETZ.map(([t]) => t));
+      a.werte.forEach((v, i) => expect(Number(v.scale)).toBeCloseTo(RING_START + DIFFUSION_STUETZ[i][1] * (1 - RING_START), 4));
+    });
     const lage = await page.locator(FRONT).evaluate((el) => ({
       z: Number(el.style.getPropertyValue('--z')),
       m: Number(el.style.getPropertyValue('--m')),
@@ -166,18 +179,20 @@ test.describe('mit Bewegung (no-preference)', () => {
       expect(Number(a.werte[0].scale)).toBeCloseTo(lage.z, 4);
       expect(Number(a.werte[1].scale)).toBeCloseTo(lage.m, 4);
     }
-    expect(f.map((a) => a.dauer)).toEqual([240, 240, 240, 240]);
+    expect(f.map((a) => a.dauer)).toEqual([240, 240, 120, 120, 120, 240]);
     expect(f.map((a) => a.verzoegerung)).toEqual(MOTION_REGISTER.seitenwechsel.verzoegerungTakte.map((n) => n * TAKT_MS));
-    expect(f.map((a) => a.kurve)).toEqual(['linear', 'linear', 'linear', 'linear']);
-    expect(f.map((a) => Number(a.werte[0].opacity))).toEqual([0, 0, 0, 0]);
-    expect(f.map((a) => Math.round(Number(a.werte[1].opacity) * 1000) / 1000)).toEqual([0.25, 0.333, 0.5, 1]);
-    // Kein winziger Punkt: Jede Schicht beginnt bei 12–18 % der Fensterdiagonale (die Seitenfarbe bei FRONT_START)
+    expect(f.map((a) => a.kurve)).toEqual(Array(6).fill('linear'));
+    expect(f.map((a) => Number(a.werte[0].opacity))).toEqual(Array(6).fill(0));
+    expect(f.map((a) => Math.round(Number(a.werte[1].opacity) * 1000) / 1000)).toEqual([0.25, 0.333, ...FRONT_RINGE.deckkraft, 1]);
+    // Kein winziger Punkt: Schleier und Seitenfarbe beginnen bei 12–18 % der Fensterdiagonale (die Seitenfarbe bei
+    // FRONT_START), die Ringe bei mindestens der Hälfte davon
     const diagonale = Math.hypot(lage.fenster[0], lage.fenster[1]);
     expect((lage.s * lage.z) / diagonale).toBeCloseTo(FRONT_START, 3);
-    for (const schicht of FRONT_SCHICHTEN) {
-      expect((lage.s * lage.z * schicht) / diagonale).toBeGreaterThanOrEqual(0.12);
-      expect((lage.s * lage.z * schicht) / diagonale).toBeLessThanOrEqual(0.18);
+    for (const i of MIT_W) {
+      expect((lage.s * lage.z * FRONT_SCHICHTEN[i]) / diagonale).toBeGreaterThanOrEqual(0.12);
+      expect((lage.s * lage.z * FRONT_SCHICHTEN[i]) / diagonale).toBeLessThanOrEqual(0.18);
     }
+    for (const i of RINGE) expect((lage.s * lage.m * RING_START * FRONT_SCHICHTEN[i]) / diagonale).toBeGreaterThanOrEqual(FRONT_START / 2);
 
     await expect(page).toHaveURL(ziel!);
     await frontZu(page);
@@ -214,22 +229,35 @@ test.describe('mit Bewegung (no-preference)', () => {
       faktor: Number((el as HTMLElement).style.getPropertyValue('--m')),
       schichten: [...el.children].map((i) => {
         const cs = getComputedStyle(i);
-        return { breite: parseFloat(cs.width), hoehe: parseFloat(cs.height), radius: parseFloat(cs.borderTopLeftRadius) };
+        const transform = cs.transform === 'none' ? 1 : new DOMMatrix(cs.transform).a;
+        return { breite: parseFloat(cs.width), hoehe: parseFloat(cs.height), radius: parseFloat(cs.borderTopLeftRadius), transform };
       }),
     }));
     const radiusVoll = await page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--radius-voll')));
     const fenster = page.viewportSize()!;
     const ecke = Math.max(Math.hypot(x, y), Math.hypot(fenster.width - x, y), Math.hypot(x, fenster.height - y), Math.hypot(fenster.width - x, fenster.height - y));
-    expect(schichten).toHaveLength(4);
+    expect(schichten).toHaveLength(6);
     expect(faktor).toBeGreaterThanOrEqual(1);
-    for (const [i, s] of schichten.entries()) {
+    for (const s of schichten) {
       // Gezeichnet ein Kreis: der Radius ist mindestens die halbe Breite (sonst blieben gerade Flanken)
       expect(s.hoehe).toBeCloseTo(s.breite, 1);
       expect(s.breite).toBeLessThanOrEqual(2 * radiusVoll);
       expect(s.radius).toBeGreaterThanOrEqual(s.breite / 2);
-      // Endgröße (Grundwert scale --m) reicht über die fernste Ecke, die warmen Schichten noch weiter (Saum außen)
-      expect((s.breite * faktor) / 2).toBeGreaterThanOrEqual(ecke);
-      if (i > 0) expect(s.breite).toBeLessThan(schichten[i - 1].breite);
+    }
+    // Schleier und Seitenfarbe: Endgröße (Grundwert scale --m) über die fernste Ecke, der Schleier noch weiter (Saum
+    // außen), die Seitenfarbe innen; ohne festes transform
+    for (const i of MIT_W) {
+      expect(schichten[i].transform).toBe(1);
+      expect((schichten[i].breite * faktor) / 2).toBeGreaterThanOrEqual(ecke);
+    }
+    expect(schichten[0].breite).toBeGreaterThan(schichten[1].breite);
+    expect(schichten[1].breite).toBeGreaterThan(schichten[5].breite);
+    // Ringe: der Faktor --m als festes transform, Endgröße (scale 1) im Fenster, nach innen enger; außen bleibt der Schleier
+    for (const [j, i] of RINGE.entries()) {
+      expect(schichten[i].transform).toBeCloseTo(faktor, 4);
+      expect((schichten[i].breite * faktor) / 2).toBeLessThan(ecke);
+      expect((schichten[i].breite * faktor) / 2).toBeGreaterThan(0.5 * ecke);
+      if (j > 0) expect(schichten[i].breite).toBeLessThan(schichten[RINGE[j - 1]].breite);
     }
     await expect(page).toHaveURL('/');
     await frontZu(page);
@@ -687,7 +715,7 @@ test.describe('mit Bewegung (no-preference)', () => {
     await frontZu(page);
   });
 
-  test('Abdecken (Owner-Feedback 16.10.2026; Prüfrunde 5 A5-1, B5-1, C5-1, C5-2): in fünf Läufen keine gerade Kante bis zum Aufdecken, kein Loch und kein kalter Kern, nie satter als --waerme-1; aufgedeckt höchstens `ruhe` nach dem neuen Pfad', async ({
+  test('Abdecken (Owner-Feedback 16.10.2026 (2); Prüfrunde 5 A5-1, B5-1, C5-1, C5-2): in fünf Läufen keine gerade Kante bis zum Aufdecken, kein Loch und kein kalter Kern; bis zur Deckung in jedem Bild mindestens zwei Töne, nie eine satte Fläche (Ton ≥ --waerme-2) über 60 % des Fensters, sichtbare Ringe; aufgedeckt höchstens `ruhe` nach dem neuen Pfad', async ({
     page,
     context,
   }) => {
@@ -729,7 +757,7 @@ test.describe('mit Bewegung (no-preference)', () => {
       });
       const farben = await page.evaluate(() => {
         const cs = getComputedStyle(document.documentElement);
-        return { papier: cs.getPropertyValue('--surface').trim(), waerme1: cs.getPropertyValue('--waerme-1').trim() };
+        return { papier: cs.getPropertyValue('--surface').trim(), waerme2: cs.getPropertyValue('--waerme-2').trim() };
       });
       const cdp = await context.newCDPSession(page);
       const bilder: { t: number; data: string }[] = [];
@@ -767,8 +795,10 @@ test.describe('mit Bewegung (no-preference)', () => {
       const bisAuf = bilder.filter((b) => b.t > p.ursprung + p.klick && b.t <= p.ursprung + p.auf);
       expect(bisAuf.length, wo).toBeGreaterThan(12);
       // Die Seitenfarbe blendet nach 5½ Takten ab dem Start der Abläufe ein; bis dahin muss es am Klickpunkt warm sein
-      const seitenfarbeAb = p.ursprung + p.start + MOTION_REGISTER.seitenwechsel.verzoegerungTakte[3] * TAKT_MS - 17;
+      const seitenfarbeAb = p.ursprung + p.start + MOTION_REGISTER.seitenwechsel.verzoegerungTakte.at(-1)! * TAKT_MS - 17;
       let gepruefteKerne = 0;
+      // Bilder bis zur Deckung, in denen mindestens drei Töne stehen: Schleier und Ringe (Owner-Feedback 16.10.2026 (2))
+      let ringBilder = 0;
       for (const bild of bisAuf) {
         const kernPruefen = bild.t < seitenfarbeAb;
         const befund = await auswertung.evaluate(
@@ -786,11 +816,14 @@ test.describe('mit Bewegung (no-preference)', () => {
             const { width, height } = f;
             const hex = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
             const papier = hex(farben.papier);
-            const w1 = hex(farben.waerme1);
+            const w2 = hex(farben.waerme2);
             const satt = (r: number, gg: number, b: number) => (Math.max(r, gg, b) - Math.min(r, gg, b)) / Math.max(r, gg, b, 1);
-            const grenzeSatt = satt(w1[0], w1[1], w1[2]) + 0.01;
+            // Ein Ton mindestens so satt wie --waerme-2 gilt als satt (Owner-Feedback 16.10.2026 (2))
+            const grenzeSatt = satt(w2[0], w2[1], w2[2]);
             const d = (b: ImageData, i: number, j: number) => Math.abs(b.data[i] - b.data[j]) + Math.abs(b.data[i + 1] - b.data[j + 1]) + Math.abs(b.data[i + 2] - b.data[j + 2]);
+            const d2 = (a: ImageData, b: ImageData, i: number) => Math.abs(a.data[i] - b.data[i]) + Math.abs(a.data[i + 1] - b.data[i + 1]) + Math.abs(a.data[i + 2] - b.data[i + 2]);
             const istPapier = (i: number) => Math.abs(g.data[i] - papier[0]) + Math.abs(g.data[i + 1] - papier[1]) + Math.abs(g.data[i + 2] - papier[2]) <= 6;
+            const rein = (i: number) => Math.abs(g.data[i] - papier[0]) + Math.abs(g.data[i + 1] - papier[1]) + Math.abs(g.data[i + 2] - papier[2]) <= 1;
             // Kante der Front: Zwei Nachbarpixel waren vor dem Klick gleich und sind es jetzt nicht mehr (die Seite steht
             // still, bis gewechselt wird); gerade, wenn eine solche Kante über 120 px in einer Zeile oder Spalte läuft und
             // nicht die Tangente eines Kreises ist (fehlende Kacheln)
@@ -827,25 +860,62 @@ test.describe('mit Bewegung (no-preference)', () => {
                 }
               }
             }
-            // Wärme je Pixel auf Papiergrund: Zunahme von Rot gegen Blau gegenüber dem Bild vor dem Klick; Sättigung
+            // Je Pixel auf Papiergrund: Wärme, Sättigung, Abstand zur Seitenfarbe und die Farbe für die Töne. Wärme ist der
+            // Abstand zum Bild vor dem Klick (Summe über R, G, B): Jede Stufe der Rampe ist in jedem Kanal dunkler als das
+            // Papier, also wächst er mit jeder Schicht und jeder wärmeren Stufe (--waerme-0 39 … -4 153) und kehrt sich nicht
+            // durch Rundung um (Rot gegen Blau tat das bei zartester Deckung: In der Mitte sank auch Rot eine Stufe mehr)
             const waerme: number[] = [];
             const kern: number[] = [];
-            let kraeftig = 0;
+            const farbe = new Map<number, number>();
+            let papierPixel = 0;
+            let sattPixel = 0;
+            let abstandSeitenfarbe = 0;
             for (let y = 0; y < height; y += 2) {
               for (let x = 0; x < width; x += 2) {
                 const i = (y * width + x) * 4;
                 if (!istPapier(i)) continue;
-                const w = f.data[i] - f.data[i + 2] - (g.data[i] - g.data[i + 2]);
-                waerme.push(w);
-                if (Math.hypot(x - klick.x, y - klick.y) <= 24) kern.push(w);
-                if (satt(f.data[i], f.data[i + 1], f.data[i + 2]) > grenzeSatt) kraeftig += 1;
+                papierPixel += 1;
+                const w = d2(f, g, i);
+                // Wärme der Front: auf reinem Papiergrund (vor dem Klick genau die Seitenfarbe ±1; fast papierfarbene
+                // Kantenpixel von Schrift und Linien runden beim Mischen eine Stufe anders) und ohne den geklickten Link (sein
+                // Druckzustand versetzt die Schrift um 1 px; das ist die Seite, nicht die Front, wie bei den Kanten)
+                if (!imLink(i) && rein(i)) {
+                  waerme.push(w);
+                  if (Math.hypot(x - klick.x, y - klick.y) <= 24) kern.push(w);
+                }
+                if (satt(f.data[i], f.data[i + 1], f.data[i + 2]) >= grenzeSatt) sattPixel += 1;
+                abstandSeitenfarbe = Math.max(abstandSeitenfarbe, d2(f, g, i));
+                const k = (f.data[i] << 16) | (f.data[i + 1] << 8) | f.data[i + 2];
+                farbe.set(k, (farbe.get(k) ?? 0) + 1);
               }
+            }
+            // Töne: von der häufigsten Farbe an je alle Farben bis 4 Stufen Abstand (Summe über R, G, B) zusammenfassen;
+            // ein Ton zählt mit mindestens 2 % des Papiergrunds
+            const reihe = [...farbe.entries()].sort((a, b) => b[1] - a[1]);
+            const frei = new Set(reihe.map(([k]) => k));
+            const kanal = (k: number) => [k >> 16, (k >> 8) & 255, k & 255];
+            let toene = 0;
+            for (const [k] of reihe) {
+              if (!frei.has(k)) continue;
+              const [r0, g0, b0] = kanal(k);
+              let anteil = 0;
+              for (const [k2, n] of reihe) {
+                if (!frei.has(k2)) continue;
+                const [r1, g1, b1] = kanal(k2);
+                if (Math.abs(r1 - r0) + Math.abs(g1 - g0) + Math.abs(b1 - b0) > 4) continue;
+                anteil += n;
+                frei.delete(k2);
+              }
+              if (anteil >= 0.02 * papierPixel) toene += 1;
             }
             waerme.sort((a, b) => a - b);
             kern.sort((a, b) => a - b);
             return {
               gerade: gerade.slice(0, 3),
-              kraeftig,
+              satt: sattPixel / Math.max(papierPixel, 1),
+              toene,
+              seitenfarbig: abstandSeitenfarbe <= 12,
+              abstand: abstandSeitenfarbe,
               hoechste: waerme[Math.floor(waerme.length * 0.99)] ?? 0,
               amKlick: kern[Math.floor(kern.length / 2)] ?? 0,
               kernPixel: kern.length,
@@ -855,8 +925,19 @@ test.describe('mit Bewegung (no-preference)', () => {
         );
         const ms = Math.round(bild.t - p.ursprung - p.klick);
         expect(befund.gerade, `${wo}, Bild ab ${ms} ms`).toEqual([]);
-        // Nie eine kräftige, gesättigte Fläche: kein Pixel auf Papiergrund satter als --waerme-1 (zarte Bänder)
-        expect(befund.kraeftig, `${wo}, Bild ab ${ms} ms`).toBe(0);
+        // Nie eine satte Einzelfläche (Owner-Feedback 16.10.2026 (2), statt „nie satter als --waerme-1“): höchstens 60 %
+        // des Papiergrunds in einem Ton, der mindestens so satt ist wie --waerme-2
+        expect(befund.satt, `${wo}, Bild ab ${ms} ms: satt ${befund.satt.toFixed(3)}`).toBeLessThanOrEqual(0.6);
+        // Bis zur Deckung (mit zwei Bildern Spielraum: Der Zeitstempel eines Bildes und die Uhr der Seite laufen bis zu
+        // einem Bild auseinander) in jedem Bild mindestens zwei Töne: nie eine einfarbige Fläche, die steht. Ausgenommen nur
+        // ein Bild, das überall die Seitenfarbe zeigt (vor dem ersten Einblenden und in den letzten Bildern der Deckung)
+        if (bild.t <= p.ursprung + p.voll + 34) {
+          if (!befund.seitenfarbig) expect(befund.toene, `${wo}, Bild ab ${ms} ms: Abstand zur Seitenfarbe ${befund.abstand}`).toBeGreaterThanOrEqual(2);
+          if (befund.toene >= 3) ringBilder += 1;
+        } else {
+          // Gedeckt: nur noch die Seitenfarbe, keine warme Fläche, die stehen bleibt
+          expect(befund.seitenfarbig, `${wo}, Bild ab ${ms} ms: Abstand zur Seitenfarbe ${befund.abstand}`).toBe(true);
+        }
         if (kernPruefen) {
           // Kein Loch, kein kalter Kern (A5-1, B5-1, C5-1): Bis die Seitenfarbe einblendet, ist es am Klickpunkt mindestens
           // so warm wie überall sonst, und ist irgendwo Wärme, dann auch dort
@@ -867,6 +948,8 @@ test.describe('mit Bewegung (no-preference)', () => {
         }
       }
       expect(gepruefteKerne, `${wo}: Bilder vor dem Einblenden der Seitenfarbe`).toBeGreaterThan(8);
+      // Die Ringe sind zu sehen: mehrere Bilder mit Schleier und mindestens zwei Ringen (drei Töne und mehr)
+      expect(ringBilder, `${wo}: Bilder mit Ringen`).toBeGreaterThanOrEqual(6);
     }
     await auswertung.close();
     // Von voller Deckung bis zum Aufdecken im Mittel (Median der fünf Läufe) unter drei Takten: Einsetzen der neuen Seite

@@ -81,10 +81,13 @@ export const WAERME_BUDGET = 1400;
 /**
  * Höchstens so viele Bytes (roh) aus waermefront.module.css auf jeder Seite (Klick-Wärme und Wärmefront, E-031). 1.200 →
  * 1.600 B mit dem Owner-Feedback vom 16.10.2026 (sanfter Wärmeschleier, E-031): Einblenden je Schicht, gestaffelte
- * Deckkraft und Größe, das Verblassen samt dem steigenden Hauptinhalt und die Ringe um die Box des Elements; gzip rund
- * 0,5 KB. Nicht weiter anheben.
+ * Deckkraft und Größe, das Verblassen samt dem steigenden Hauptinhalt und die Ringe um die Box des Elements. 1.600 →
+ * 2.120 B mit dem zweiten Feedback desselben Tages (E-031 „Owner-Feedback 16.10. (2)“): drei Ringe auf dem Schleier mit
+ * je eigener Farbe, Deckkraft, Verzögerung und Dauer und ihr √t-Ablauf; schon kompakter geschrieben (gemeinsame
+ * Verzögerung --q, Ringe am Element statt an langen Geschwisterketten), gemessen 2.111 B, gzip 654 B. Nicht weiter
+ * anheben.
  */
-export const FRONT_BUDGET = 1600;
+export const FRONT_BUDGET = 2120;
 /** Höchstens so viele Bytes (roh) aus dem Büro-Block von themen.module.css auf einer Themenseite (E-031). */
 export const BUERO_BUDGET = 2500;
 /** Quellen der Teilbudgets (E-031): Die Prüfungen auf Vorhandensein greifen, sobald es sie gibt. */
