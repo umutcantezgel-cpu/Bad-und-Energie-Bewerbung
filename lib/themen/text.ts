@@ -1286,6 +1286,11 @@ export const BUERO_SZENEN_TITEL: Readonly<Record<BueroSzenenArt, string>> = Obje
   Object.fromEntries(SZENEN.map((szene) => [szene.id, szene.titel])) as Record<BueroSzenenArt, string>,
 );
 
+/** Glyphe je Szene wie an ihrer Überschrift auf der Themenseite, auch an der Bildunterschrift im Einblick (Prüfrunde 4 A4-4). */
+export const BUERO_SZENEN_ICON: Readonly<Record<BueroSzenenArt, KastenIcon>> = Object.freeze(
+  Object.fromEntries(SZENEN.map((szene) => [szene.id, szene.icon])) as Record<BueroSzenenArt, KastenIcon>,
+);
+
 /** Die Wörter „moderneres Büro, größeres Lager“ aus REGION.milestone (Unterzeile ohne live Bürostelle). */
 function bueroLager(): [string, string] {
   const m = /(moderneres Büro), (größeres Lager)/.exec(REGION.milestone.text);

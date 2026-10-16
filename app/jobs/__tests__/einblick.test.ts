@@ -311,6 +311,25 @@ describe('<Einblick>: Band auf der Wand mit h2/h3 und Ortsliste als Maße', () =
   });
 });
 
+describe('<Einblick> Bürofachkraft: Bildunterschrift der Szenen abgesetzt von den Wörtern an der Zeichnung (Prüfrunde 4 A4-4)', () => {
+  it('Unterschrift in der Schrift des Fließtexts mit der Glyphe der Szene, nicht in Mono-Versalien; Abstand zur Zeichnung', () => {
+    const html = renderToStaticMarkup(createElement(Einblick, { job: buero, now: NOW }));
+    const bilder = inhalt(buero).arbeit.szenen!.bilder;
+    const unterschriften = [...html.matchAll(/<figcaption class="([^"]*)">([\s\S]*?)<\/figcaption>/g)];
+    expect(unterschriften).toHaveLength(bilder.length);
+    unterschriften.forEach(([, klasse, inneres], i) => {
+      expect(klasse.split(' ')).toEqual(expect.arrayContaining(['text-body', 'font-bold', 'text-brand']));
+      expect(klasse).not.toMatch(/text-etikett|font-mass|uppercase/);
+      expect(inneres).toMatch(/^<svg\b/);
+      expect(sichtbar(inneres).trim()).toBe(bilder[i].titel);
+    });
+    // Die Wörter an der Zeichnung bleiben Mono-Etiketten
+    expect(html).toMatch(/class="[^"]*text-etikett[^"]*" style="[^"]*" aria-hidden="true">Großhandel</);
+    // Zwischen Zeichnung und Unterschrift mindestens --a-4 (gap-4)
+    for (const figur of html.match(/<figure class="[^"]*"/g)!) expect(figur).toMatch(/\bgap-(?:[4-9]|1\d)\b/);
+  });
+});
+
 describe('<Einblick>: genau ein Weg zur Gebietsseite je Stellenseite (E-028)', () => {
   it.each(pageJobs.map((job) => [job.id, job] as const))('%s', (_id, job) => {
     const html = renderToStaticMarkup(createElement(Einblick, { job, now: NOW }));
