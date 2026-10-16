@@ -364,11 +364,20 @@ describe('Inline und Datei: dieselbe Zeichnung', () => {
   it('die Szenen-Dateien in den Papier-Rollen, die Leitstelle auf Navy; je hell, dunkel und Druck aus den Primitiven', () => {
     const theme = quelle('app/styles/theme.css');
     const p = (name: string) => theme.match(new RegExp(`--p-${name}: (#[0-9A-Fa-f]{6});`))![1].toUpperCase();
-    // Eine Markierfläche (Prüfrunde 2 A2-9): Stufe 2 der Wärmerampe, keine Stufenfolge
+    // Eine Markierfläche (Prüfrunde 2 A2-9), als eigene Rolle --markierung auf den Primitiven der Stufe 2 (Prüfrunde 4
+    // A4-6): die Datei wie die Seite, die Rampe bleibt Temperatur
+    const rolle = (block: RegExp) => theme.replace(/\/\*[\s\S]*?\*\//g, '').match(block)![1];
+    expect(rolle(/:root \{[^}]*--markierung: var\(--p-([\w-]+)\);/)).toBe('waerme-2');
+    expect(rolle(/prefers-color-scheme: dark\) \{\s*:root \{[^}]*--markierung: var\(--p-([\w-]+)\);/)).toBe('glimm-2');
     expect(BUERO_SVG_FARBEN.papier.hell).toEqual({ marke: p('navy'), flaeche: p('papier'), markiert: p('waerme-2') });
     expect(BUERO_SVG_FARBEN.papier.dunkel).toEqual({ marke: p('creme'), flaeche: p('nacht'), markiert: p('glimm-2') });
     expect(BUERO_SVG_FARBEN.papier.druck).toEqual({ ...BUERO_SVG_FARBEN.papier.hell, flaeche: p('weiss') });
-    expect(BUERO_SVG_FARBEN.papier.hell.markiert).toBe(TOKENS.waerme.hell[2]);
+    expect(BUERO_SVG_FARBEN.papier.hell.markiert).toBe(TOKENS.markierung.hell);
+    expect(BUERO_SVG_FARBEN.papier.dunkel.markiert).toBe(TOKENS.markierung.dunkel);
+    // Keine Stufe der Wärmerampe im Code der Büro-Familie
+    for (const name of readdirSync(path.join(ROOT, 'lib/zeichnung/buero')).filter((n) => n.endsWith('.ts'))) {
+      expect(quelle(`lib/zeichnung/buero/${name}`).replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, ''), name).not.toMatch(/TOKENS\.waerme|--waerme-|glimm/);
+    }
     for (const { svg } of bueroSzenenDateien()) {
       expect(svg).toContain('@media screen and (prefers-color-scheme:dark)');
       expect(svg).toContain('@media print');
@@ -504,9 +513,10 @@ describe('Bewegung: einmal beim Sichtbarwerden, genau wie im Register', () => {
       expect(skaliert(k), k.name).toBe(false);
       for (const stopp of k.stopps) for (const eigenschaft of stopp.deklarationen.keys()) expect(['opacity', 'transform']).toContain(eigenschaft);
     }
-    // Farben nur aus Rollen: die eine Markierfläche (Stufe 2, Prüfrunde 2 A2-9), sonst keine Farbwerte
-    expect(block).not.toMatch(/#[0-9a-f]{3,8}\b|rgb\(|hsl\(|gradient|filter:|mix-blend/i);
-    expect([...block.matchAll(/var\(--waerme-(\d)\)/g)].map((m) => m[1])).toEqual(['2']);
+    // Farben nur aus Rollen: die eine Markierfläche (Prüfrunde 2 A2-9) als eigene Rolle, keine Stufe der Wärmerampe
+    // (Prüfrunde 4 A4-6), sonst keine Farbwerte
+    expect(block).not.toMatch(/#[0-9a-f]{3,8}\b|rgb\(|hsl\(|gradient|filter:|mix-blend|--waerme|--klick|--p-/i);
+    expect([...block.matchAll(/var\(--markierung\)/g)]).toHaveLength(1);
     // Gedruckt steht der Endzustand
     expect(block).toMatch(/@media print \{\s*\.bueroBild\[data-ablauf\] \[data-a\] \{\s*opacity: 1;\s*animation: none;/);
   });

@@ -362,13 +362,16 @@
     --success-subtle: var(--p-gruen-flaeche);
     --danger: var(--p-fehler);
     --danger-subtle: var(--p-fehler-flaeche);
-    /* Wärmerampe (E-031): die Bänder des Wärmefelds, Klick-Wärme und Wärmefront; dazu nur Stufe 2 als die eine
-       Markierfläche der Büro-Szenen, ohne Stufenfolge (Prüfrunde 2 A2-9; Guard waerme-rollen) */
+    /* Wärmerampe (E-031): nur Temperatur – die Bänder des Wärmefelds, Klick-Wärme und Wärmefront (Guard waerme-rollen) */
     --waerme-0: var(--p-waerme-0);
     --waerme-1: var(--p-waerme-1);
     --waerme-2: var(--p-waerme-2);
     --waerme-3: var(--p-waerme-3);
     --waerme-4: var(--p-waerme-4);
+    /* Markierfläche der Büro-Szenen (Prüfrunde 4 A4-6): eine eigene Rolle auf dem Primitivwert der Stufe 2, damit die
+       Rampe nur Temperatur bedeutet; im Büro heißt die Fläche „markiert“, nicht „warm“. Nur im Büro-Block
+       (Guard waerme-rollen); dunkel die Stufe 2 der dunklen Rampe. Band und Wärmebereich erben sie. */
+    --markierung: var(--p-waerme-2);
     /* Klick-Wärme: die Ringe je Ton der Fläche (die Insel gibt der Überlagerung den Ton der getroffenen Fläche) */
     --klick-1: var(--p-klick-1);
     --klick-2: var(--p-klick-2);
@@ -407,6 +410,7 @@
       --waerme-2: var(--p-glimm-2);
       --waerme-3: var(--p-glimm-3);
       --waerme-4: var(--p-glimm-4);
+      --markierung: var(--p-glimm-2);
       --klick-1: var(--p-klick-d-1);
       --klick-2: var(--p-klick-d-2);
       --klick-3: var(--p-klick-d-3);

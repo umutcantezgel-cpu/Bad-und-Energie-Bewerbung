@@ -58,6 +58,11 @@ export const NACHBAR = Object.freeze({ min: 1.04, max: 1.35 });
  * rings stand out more (contrast against surface rises from ring 1 to ring 3). Screen only (no overlay in print).
  */
 export const KLICK_RINGE = ['klick-1', 'klick-2', 'klick-3'];
+/**
+ * Marker surface of the Büro scenes (Prüfrunde 4 A4-6): its own role, not a step of the ramp. The scenes stand in the
+ * warm area ([data-tone="warm"], components/themen/buero/BueroSzene.tsx); their contour (brand) on it ≥ UI.
+ */
+export const MARKIERUNG = 'markierung';
 export const KLICK = Object.freeze({ min: 1.5, max: 3 });
 const KLICK_GROUNDS = ['surface', 'surface-2'];
 
@@ -86,6 +91,8 @@ export const PAIRS = [
   ['ink', 'danger-subtle', TEXT],
   ['success', 'success-subtle', TEXT],
   ['ink', 'success-subtle', TEXT],
+  // The contour of a Büro scene on its marker surface, wherever a scene can stand (warm area on page and band, print).
+  ['brand', MARKIERUNG, UI, ['warm light', 'warm dark', 'inverse warm light', 'inverse warm dark', 'warm print', 'warm print dark', 'print inverse warm']],
 ];
 
 const ROOT_SELECTOR = ':root';
@@ -254,6 +261,7 @@ export function checkTheme(cssText) {
       .filter(Boolean),
     ...RAMP.map((name) => `--${name}`),
     ...KLICK_RINGE.map((name) => `--${name}`),
+    `--${MARKIERUNG}`,
   ]);
 
   const scope = (mode) => {

@@ -1186,9 +1186,10 @@
   color: var(--ink-2);
 }
 
-/* Die eine Markierfläche der Szenen (Prüfrunde 2 A2-9): Stufe 2 der Wärmerampe, keine Stufenfolge */
+/* Die eine Markierfläche der Szenen (Prüfrunde 2 A2-9): eigene Rolle --markierung, keine Stufe der Wärmerampe – im Büro
+   heißt die Fläche „markiert“, nicht „warm“ (Prüfrunde 4 A4-6) */
 .bueroBild .bueroMarkiert {
-  fill: var(--waerme-2);
+  fill: var(--markierung);
 }
 
 /* Ebenen über der Zeichnung (Prüfrunde 3 C3-2): jede bewegte Gruppe ein eigenes <svg> in der Größe ihres Rahmens, die

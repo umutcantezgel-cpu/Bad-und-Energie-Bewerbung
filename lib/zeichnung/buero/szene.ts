@@ -4,8 +4,9 @@
  * Dieselben Daten zeichnen die Themenseite (components/themen/buero, inline, mit einmaligem Ablauf) und die Dateien
  * der Stellenseite (lib/zeichnung/buero/svg.ts, still). Linienarten wie die technischen Zeichnungen (KERN K-010,
  * lib/zeichnung/norm.ts): Kontur stumpf mit runden Ecken, feine und Maßlinien stumpf und spitz; keine Leitung, keine
- * Rohrfarbe, nichts fließt. Eine einzige Markierfläche (`markiert`, Rolle --waerme-2): Stufen der Wärmerampe trügen
- * hier keine Bedeutung und verwässerten die Temperatur der Wärmefelder (Prüfrunde 2 A2-9).
+ * Rohrfarbe, nichts fließt. Eine einzige Markierfläche (`markiert`, Rolle --markierung): Stufen der Wärmerampe trügen
+ * hier keine Bedeutung und verwässerten die Temperatur der Wärmefelder (Prüfrunde 2 A2-9); die Rampe bleibt Temperatur
+ * (Prüfrunde 4 A4-6).
  */
 import type { CSSProperties } from 'react';
 import { r1 } from '../norm';
@@ -22,7 +23,7 @@ export type Art =
   | 'mass'
   /** Gefüllt in der Markenrolle, ohne Strich (Punkte der Bezugslinien, Pfeilspitzen). */
   | 'voll'
-  /** Kontur 2 px auf der Markierfläche (eine Stufe, --waerme-2): was die Szene hervorhebt. */
+  /** Kontur 2 px auf der Markierfläche (Rolle --markierung): was die Szene hervorhebt. */
   | 'markiert';
 
 export const ARTEN: readonly Art[] = ['kontur', 'konturOffen', 'fein', 'mass', 'voll', 'markiert'];

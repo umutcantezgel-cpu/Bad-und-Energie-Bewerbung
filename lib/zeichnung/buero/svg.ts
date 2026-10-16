@@ -14,9 +14,9 @@ import { LEITSTELLE } from './leitstelle';
 import type { Art, BueroSzene } from './szene';
 import { BUERO_SZENEN, BUERO_SZENEN_ARTEN, type BueroSzenenArt } from './szenen';
 
-/** Die eine Markierfläche (Prüfrunde 2 A2-9): Stufe 2 der Wärmerampe, hell und dunkel. */
-const MARKIERT = TOKENS.waerme.hell[2];
-const MARKIERT_DUNKEL = TOKENS.waerme.dunkel[2];
+/** Die eine Markierfläche (Prüfrunde 2 A2-9): die Rolle --markierung, hell und dunkel (Prüfrunde 4 A4-6: keine Stufe der Wärmerampe). */
+const MARKIERT = TOKENS.markierung.hell;
+const MARKIERT_DUNKEL = TOKENS.markierung.dunkel;
 
 /**
  * Feste Farben je Umgebung (app/styles/theme.css, Primitive): Papier (Marke Navy, Fläche Papier, Markierfläche hell) und

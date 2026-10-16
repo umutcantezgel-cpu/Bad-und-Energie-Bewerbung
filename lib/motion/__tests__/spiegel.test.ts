@@ -140,6 +140,17 @@ describe('Spiegel theme.css ↔ lib/tokens', () => {
     expect(theme).not.toMatch(/--color-waerme-\d/);
   });
 
+  it('Markierfläche der Büro-Szenen (Prüfrunde 4 A4-6): eigene Rolle auf dem Primitivwert der Stufe 2, in jedem Modus gespiegelt, ohne Utility', () => {
+    const { role } = checkTheme(readFileSync(path.resolve(__dirname, '../../../app/styles/theme.css'), 'utf8'));
+    expect(TOKENS.markierung).toEqual({ hell: TOKENS.waerme.hell[2], dunkel: TOKENS.waerme.dunkel[2] });
+    for (const modus of MODES as ReadonlyArray<{ name: string; dark: boolean; print: boolean }>) {
+      const soll = modus.dark && !modus.print ? TOKENS.markierung.dunkel : TOKENS.markierung.hell;
+      expect(role(modus.name, 'markierung'), modus.name).toBe(soll);
+    }
+    expect(cssVar('--markierung')).toBe('var(--p-waerme-2)');
+    expect(theme).not.toMatch(/--color-markierung/);
+  });
+
   it('Druck-Rückmeldung: 1 px, nur mit Kennung „druck“ und nur ohne reduzierte Bewegung (K-009, Z-09)', () => {
     const globals = readFileSync(path.resolve(__dirname, '../../../app/globals.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
     expect(TOKENS.druckVersatz).toBe(1);
