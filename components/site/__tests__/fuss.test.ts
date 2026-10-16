@@ -260,4 +260,15 @@ describe('StickyApplyBar (Fuß- und Mobil-Anteil)', () => {
     for (const id of motionIds(html)) expect(MOTION_IDS).toContain(id);
     expect(html).toMatch(/<aside[^>]*data-motion="menue-oeffnen"/);
   });
+
+  it('eigene Ebene (KERN K-009/K-013): will-change genau für die Eigenschaften des Übergangs, nur an der Leiste selbst', () => {
+    // Ohne feste Ebene malte Chromium am Ende jedes Ein- und Ausgangs die ganze Seite neu (Büro-Szene, e2e Malzeit)
+    const css = quelle('components/site/fuss/leiste.module.css').replace(/\/\*[\s\S]*?\*\//g, '');
+    const regeln = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => ({ wahl: m[1].trim(), rumpf: m[2] }));
+    const mitWillChange = regeln.filter((r) => /will-change/.test(r.rumpf));
+    expect(mitWillChange.map((r) => r.wahl)).toEqual(['.leiste']);
+    expect(mitWillChange[0].rumpf).toMatch(/will-change:\s*transform,\s*opacity;/);
+    const uebergang = mitWillChange[0].rumpf.match(/transition:([^;]+);/)![1];
+    expect([...uebergang.matchAll(/(transform|opacity) var/g)].map((m) => m[1]).sort()).toEqual(['opacity', 'transform']);
+  });
 });
