@@ -1,4 +1,4 @@
-STATUS · Branch main · Phase E0 · Kriterien 0/10 · Ausnahmen 0 · Bestand grün · Nächster Schritt: E0-PRUEFER-01 Einrichtung und E0-PRUEFER-02 Ausgangswerte am Produktions-Build von a4491d5
+STATUS · Branch main · Phase E1 · Kriterien 0/10 · Ausnahmen 0 · Bestand grün · Nächster Schritt: E1-PRUEFER-01 Planabgleich, danach E0-PRUEFER-02 Ausgangswerte am Produktions-Build von a4491d5
 
 # Status · Agenturnennung Coday Web
 
@@ -14,7 +14,13 @@ STATUS · Branch main · Phase E0 · Kriterien 0/10 · Ausnahmen 0 · Bestand gr
 | E0-KUNDSCHAFTER-02 | Kundschafter | Arbeitsmodell | keine (Bericht als Rückgabe, abgelegt in berichte/) | Grundlage E1, Z-05 | fertig |
 | E0-PRUEFER-01 | Prüfer | Arbeitsmodell | `_werkstatt/nennung/werkzeuge/*` (Bericht abgelegt durch den Orchestrator) | Werkzeuge für Z-01 bis Z-09 | fertig |
 | E0-PRUEFER-02 | Prüfer | Arbeitsmodell | `berichte/E0-PRUEFER-02.md`, `protokolle/e0-*`, `bilder/` | Ausgangswerte Z-01, Z-07, Z-08, Z-09 | offen |
+| E1-PRUEFER-01 | Prüfer | Arbeitsmodell | keine (Bericht als Rückgabe) | Planabgleich: Einstellungen, Kriterien mit Prüfschritt, Grenzen | offen |
+| E2-PRUEFER-01 | Prüfer | Arbeitsmodell | `protokolle/stufe-a.md`, `protokolle/roh/e2/*` | Prüfstufe A | offen |
+| E3-PRUEFER-01 | Prüfer | Arbeitsmodell | `protokolle/*.md` außer stufe-a.md, `protokolle/roh/e3/*`, `bilder/` | Prüfstufe B: Z-01 bis Z-09 | offen |
+| E3-DOKUMENTAR-01 | Dokumentar | Arbeitsmodell | `BERICHT.md`, `LINKREGISTER.md`, `REFERENZ.md` | Z-10 | offen |
+| E4-ENDPRUEFER-01 | Endprüfer | frischer Unteragent des Orchestrator-Modells | keine (Urteil als Rückgabe) | Z-01 bis Z-10 gegen Belege | offen |
 
 ## Verlauf
 - 16.10.2026 · E0 · Auftrag gespeichert (N-01), Kundschafter-Berichte abgelegt, LAGE.md geschrieben. Bau der Nennung parallel vorbereitet, Änderungs-Commit erst nach den Ausgangswerten.
 - 16.10.2026 · E0 · E0-PRUEFER-01: sechs Werkzeuge, node --check und ESLint sauber; Lauf gegen den Server folgt mit E0-PRUEFER-02.
+- 16.10.2026 · E1 · Entscheidungen N-01 bis N-08, ABNAHME.md mit Z-01 bis Z-10, MENSCHEN.md mit Zustimmungstext und G6-Liste.

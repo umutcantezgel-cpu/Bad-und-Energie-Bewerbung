@@ -1,0 +1,16 @@
+# Abnahme · Agenturnennung Coday Web
+
+Kriterium · Methode · Schwelle · Ausgangswert (E0) · Ergebnis · Beleg. Abgehakt wird nur mit Beleg. Es gibt keine AUSNAHME und keine UMGEBUNGSAUSNAHME, solange hier keine steht.
+
+| Nr. | Kriterium | Methode | Schwelle | Ausgangswert E0 | Ergebnis | Beleg |
+|---|---|---|---|---|---|---|
+| Z-01 | Bestand | Prüfstufe B | Build, Typprüfung, Linter, Tests mindestens so grün wie in E0; null neue Konsolenfehler; HTML-Vergleich nur an der Nennung und am Feld creator geändert | siehe berichte/E0-PRUEFER-02.md | offen | protokolle/stufe-b.md |
+| Z-02 | Link der Quellseite | Linkprüfer am ausgelieferten HTML von `/` | genau ein Link auf codayweb.de im Footer: Linktext exakt „Coday Web“, href exakt `https://www.codayweb.de/de`, rel ohne nofollow/sponsored/ugc und ohne noreferrer, mit noopener, target _blank; identisch mit Googlebot-Kennung | 0 Links | offen | protokolle/links-alle.tsv, protokolle/googlebot.md |
+| Z-03 | Übrige Seiten | Linkprüfer über alle Seiten der Sitemap und die noindex-Seiten mit Fuß | auf jeder geprüften Seite mit Fuß genau ein Link auf codayweb.de im Footer, rel enthält nofollow; gefolgt nur auf `/` | 0 Links | offen | protokolle/links-alle.tsv |
+| Z-04 | Leitplanken S1–S7 | Prüfliste | alle sieben erfüllt, jede mit Beleg | – | offen | protokolle/leitplanken.md |
+| Z-05 | Quellseite indexierbar | Prüfstufe B am Produktions-Build | Status 200, kein noindex (Meta und Header), robots.txt erlaubt `/`, Canonical auf sich selbst, in der Sitemap | nach Code erfüllt | offen | protokolle/indexierbar.md |
+| Z-06 | Kundenschutz | Dateiliste `git diff --name-only 0c9f103..HEAD` | geändert nur, was G1 erlaubt; G5, G6, G7 unverletzt | – | offen | protokolle/dateiliste.md |
+| Z-07 | Zugänglichkeit und Darstellung | Prüfstufe B und Sichtabnahme | null neue ernste oder kritische Befunde (axe, Footer); Kontrast ≥ 4,5:1 in hell, dunkel und Druck; Fokus sichtbar; Klickfläche ≥ 24 × 24 px oder ausreichender Abstand; kein Überlauf bei 390 × 844 und 1440 × 900; Sichtabnahme bestanden | siehe E0-PRUEFER-02 | offen | bilder/, protokolle/zugang.md |
+| Z-08 | Leistung | Messung am Produktions-Build, je drei Läufe | null neue Netzwerkanfragen; komprimierte Transfergröße der Startseite höchstens 1 KB über E0; Layoutverschiebung nicht schlechter als die Spanne der drei E0-Läufe | siehe E0-PRUEFER-02 | offen | protokolle/leistung.md |
+| Z-09 | Strukturdaten | JSON-LD-Vergleich vorher/nachher für `/` und zwei Unterseiten | gültiges JSON-LD; im WebSite-Knoten nur creator `{Organization, „Coday Web“, https://www.codayweb.de/de}` ergänzt; alle übrigen Felder und Knoten gleich | kein creator | offen | protokolle/jsonld.md |
+| Z-10 | Übergabe | Dateien | BERICHT.md, MENSCHEN.md, LINKREGISTER.md und REFERENZ.md vollständig (REFERENZ-STECKBRIEF ja, weil LINKZIEL nicht gesetzt wurde und den Standard nimmt; BAUSTEIN.md entfällt: kein CMS); Änderungs-Commits ohne Dateien aus `_werkstatt` | – | offen | BERICHT.md, `git show --stat` der Änderungs-Commits |
