@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
-import { DIFFUSION_STUETZ, TAKT_MS, WECHSEL, KLICK_ENDE_MS } from '../lib/motion/register';
-import { ZEITPLAN } from '../lib/motion/seitenwechsel';
+import { DIFFUSION_STUETZ, MOTION_REGISTER, TAKT_MS, WECHSEL, KLICK_ENDE_MS } from '../lib/motion/register';
+import { FRONT_START, ZEITPLAN } from '../lib/motion/seitenwechsel';
 import { malzeitJeBild, messeMitDrossel } from './support/malzeit';
 import { isDesktop } from './support/site';
 
@@ -113,7 +113,7 @@ test.beforeEach(() => {
 test.describe('mit Bewegung (no-preference)', () => {
   test.use({ contextOptions: { reducedMotion: 'no-preference' } });
 
-  test('Wärmefront: Klick auf eine Stelle deckt vom Klickpunkt ab (√t, ½ Takt versetzt, d-2), wechselt danach und deckt auf', async ({ page }) => {
+  test('Wärmefront: Klick auf eine Stelle deckt vom Klickpunkt ab (Vorlauf, √t ab FRONT_START, ½ Takt versetzt, d-2), wechselt danach und deckt auf', async ({ page }) => {
     await protokollieren(page);
     await page.goto('/jobs');
     await page.waitForLoadState('networkidle');
@@ -132,15 +132,17 @@ test.describe('mit Bewegung (no-preference)', () => {
     await ablaeufeMerken(page, FRONT);
     await link.click();
 
-    // vier Bänder, je d-2, ½ Takt versetzt, linear auf den Stützstellen von 0 auf 1
+    // vier Schichten, je d-2, nach dem Vorlauf ½ Takt versetzt, linear auf den Stützstellen von FRONT_START (nicht 0,
+    // Prüfrunde 4 A4-3) auf 1
     const baender = await gemerkteAblaeufe(page);
     expect(baender).toHaveLength(4);
     expect(baender.map((b) => b.dauer)).toEqual([240, 240, 240, 240]);
-    expect(baender.map((b) => b.verzoegerung)).toEqual([0, 0.5, 1, 1.5].map((n) => n * TAKT_MS));
+    expect(baender.map((b) => b.verzoegerung)).toEqual(MOTION_REGISTER.seitenwechsel.verzoegerungTakte.map((n) => n * TAKT_MS));
+    expect(baender[0].verzoegerung).toBe(WECHSEL.vorlaufMs);
     for (const b of baender) {
       expect(b.kurve).toBe('linear');
       expect(b.stellen).toEqual(DIFFUSION_STUETZ.map(([t]) => t));
-      expect(b.werte.map(Number)).toEqual(DIFFUSION_STUETZ.map(([, f]) => f));
+      expect(b.werte.map((w) => Math.round(Number(w) * 1e4) / 1e4)).toEqual(DIFFUSION_STUETZ.map(([, f]) => Math.round((FRONT_START + f * (1 - FRONT_START)) * 1e4) / 1e4));
     }
 
     await expect(page).toHaveURL(ziel!);
@@ -150,11 +152,11 @@ test.describe('mit Bewegung (no-preference)', () => {
     const auf = log.find((e) => e.art === 'toggle' && e.motion === 'seitenwechsel' && e.zustand === 'open')!;
     const zu = log.find((e) => e.art === 'toggle' && e.motion === 'seitenwechsel' && e.zustand === 'closed')!;
     const push = log.find((e) => e.art === 'push')!;
-    // Start beim Klick, Wechsel erst nach dem Abdecken, Aufdecken nach dem Wechsel, spätestens nach halten
+    // Start beim Klick, Wechsel erst, wenn die erste Schicht deckt, Aufdecken nach dem Wechsel, spätestens nach halten
     expect(auf.t - klick.t).toBeLessThan(50);
-    expect(push.t - klick.t).toBeGreaterThanOrEqual(ZEITPLAN.abdecken - TAKT_MS);
+    expect(push.t - klick.t).toBeGreaterThanOrEqual(ZEITPLAN.wechsel);
     expect(zu.t).toBeGreaterThan(push.t);
-    expect(zu.t - klick.t).toBeLessThanOrEqual(ZEITPLAN.abdeckenNetz + WECHSEL.haltenMs + ZEITPLAN.aufdeckenNetz + 500);
+    expect(zu.t - klick.t).toBeLessThanOrEqual(ZEITPLAN.wechselNetz + WECHSEL.haltenMs + ZEITPLAN.aufdeckenNetz + 500);
     expect(await page.locator(FRONT).getAttribute('data-auf')).toBeNull();
     // Die neue Seite steht oben, schon wenn die Front aufdeckt (kein weiches Scrollen beim Wechsel)
     expect(await page.evaluate(() => (window as unknown as { __beimAufdecken?: number }).__beimAufdecken)).toBe(0);
@@ -417,7 +419,7 @@ test.describe('mit Bewegung (no-preference)', () => {
           { capture: true, once: true },
         );
       },
-      { ms: ZEITPLAN.abdeckenNetz, sel: FRONT },
+      { ms: ZEITPLAN.wechselNetz, sel: FRONT },
     );
     const ereignisse = await messeMitDrossel(page, browser, async () => {
       await link.click();
@@ -446,12 +448,20 @@ test.describe('mit Bewegung (no-preference)', () => {
     // Beim Start des Aufdeckens anhalten: die Übergänge der Schichten pausieren; die Front bleibt offen, bis gemessen ist
     await page.locator(FRONT).evaluate((el) => {
       const fr = el as HTMLElement;
-      const w = window as unknown as { __auf: Promise<{ uebergaenge: string[]; ablaeufe: string[] }>; __halt: boolean };
+      const w = window as unknown as { __auf: Promise<{ uebergaenge: string[]; ablaeufe: string[] }>; __halt: boolean; __deckkraft: string[]; __seitenfarbe: boolean };
       w.__halt = true;
       w.__auf = new Promise((fertig) => {
         new MutationObserver((_, beob) => {
           if (!fr.hasAttribute('data-auf')) return;
           beob.disconnect();
+          // Die letzte Schicht trägt die Seitenfarbe (Prüfrunde 4 A4-2): für die Auswertung eine Markierfarbe, sonst wäre
+          // sie von der Seite nicht zu unterscheiden. Die warmen Schichten sind schon ausgeblendet.
+          w.__deckkraft = [...fr.children].map((s) => getComputedStyle(s).opacity);
+          const probe = document.body.appendChild(document.createElement('i'));
+          probe.style.background = 'var(--surface)';
+          w.__seitenfarbe = getComputedStyle(fr.lastElementChild!).backgroundColor === getComputedStyle(probe).backgroundColor;
+          probe.remove();
+          fr.style.setProperty('--surface', 'rgb(255, 0, 255)');
           fr.hidePopover = () => {};
           new MutationObserver(() => {
             if (w.__halt && !fr.hasAttribute('data-auf')) fr.setAttribute('data-auf', '');
@@ -475,6 +485,14 @@ test.describe('mit Bewegung (no-preference)', () => {
     // Nur translate, je Schicht einmal; die Front verblasst nicht (keine Mischfarbe), das Wachsen steht nur still
     expect(lauf.uebergaenge.sort()).toEqual(['translate@0', 'translate@1', 'translate@2', 'translate@3']);
     expect([...new Set(lauf.ablaeufe)]).toEqual(['scale']);
+    // Prüfrunde 4 A4-2: Beim Aufdecken deckt die letzte Schicht in der Seitenfarbe; die warmen darunter sind ausgeblendet
+    // (kein warmer Saum am Bogen), sie selbst nie
+    const stand = await page.evaluate(() => {
+      const w = window as unknown as { __deckkraft: string[]; __seitenfarbe: boolean };
+      return { deckkraft: w.__deckkraft, seitenfarbe: w.__seitenfarbe };
+    });
+    expect(stand.deckkraft).toEqual(['0', '0', '0', '1']);
+    expect(stand.seitenfarbe).toBe(true);
 
     const farbe = await page.locator(FRONT).evaluate((el) => getComputedStyle(el.lastElementChild!).backgroundColor);
     const [R, G, B] = farbe.match(/\d+/g)!.map(Number);
@@ -537,6 +555,142 @@ test.describe('mit Bewegung (no-preference)', () => {
       fr.hidePopover();
     });
     await frontZu(page);
+  });
+
+  test('Abdecken (Prüfrunde 4 A4-2, A4-3, C4-1): in fünf Läufen keine gerade Kante in den Bildern bis zum Aufdecken, nie eine einfarbige Pfirsichfläche; von voller Deckung bis zum Aufdecken unter 160 ms', async ({
+    page,
+    context,
+  }) => {
+    test.skip(test.info().project.name !== 'desktop-light', 'Gemessen am Desktop: Dort sind die Scheiben am größten (bis rund 3.400 px).');
+    test.setTimeout(120_000);
+    const ZIEL = '/arbeiten-bei-uns/buero-und-verwaltung';
+    const auswertung = await context.newPage();
+    const luecken: number[] = [];
+    for (let lauf = 1; lauf <= 5; lauf += 1) {
+      await page.goto('/');
+      await page.waitForLoadState('networkidle');
+      const link = page.locator(`main a[href="${ZIEL}"]`).first();
+      await link.scrollIntoViewIfNeeded();
+      // Phasen in Zeit der Seite: Klick, Ende der letzten Schicht (die Seitenfarbe deckt), Aufdecken (data-auf), zu
+      await page.locator(FRONT).evaluate((el) => {
+        const p: Record<string, number> = {};
+        (window as unknown as { __p: Record<string, number> }).__p = p;
+        document.addEventListener('click', () => (p.klick = performance.now()), { capture: true, once: true });
+        el.addEventListener('animationend', (e) => {
+          if (e.target === el.lastElementChild) p.voll ??= performance.now();
+        });
+        new MutationObserver(() => {
+          if (el.hasAttribute('data-auf')) p.auf ??= performance.now();
+        }).observe(el, { attributes: true, attributeFilter: ['data-auf'] });
+        el.addEventListener('beforetoggle', (e) => {
+          if ((e as ToggleEvent).newState === 'closed') p.zu ??= performance.now();
+        });
+      });
+      const cdp = await context.newCDPSession(page);
+      const bilder: { t: number; data: string }[] = [];
+      cdp.on('Page.screencastFrame', (f) => {
+        bilder.push({ t: (f.metadata.timestamp ?? 0) * 1000, data: f.data });
+        void cdp.send('Page.screencastFrameAck', { sessionId: f.sessionId }).catch(() => {});
+      });
+      await cdp.send('Page.startScreencast', { format: 'png', everyNthFrame: 1 });
+      await page.waitForTimeout(200);
+      const box = (await link.boundingBox())!;
+      const klick = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+      await page.mouse.click(klick.x, klick.y);
+      await expect(page).toHaveURL(ZIEL);
+      await frontZu(page);
+      await cdp.send('Page.stopScreencast');
+      await cdp.detach();
+      const p = await page.evaluate(() => {
+        const q = (window as unknown as { __p: Record<string, number> }).__p;
+        return { klick: q.klick, voll: q.voll, auf: q.auf, zu: q.zu, ursprung: performance.timeOrigin };
+      });
+      const farben = await page.locator(FRONT).evaluate((el) => [...el.children].map((s) => getComputedStyle(s).backgroundColor));
+      const wo = `Lauf ${lauf}`;
+      // Zeitplan (Prüfrunde 4 A4-2): Chromium beginnt die Abläufe, sobald die Ebenen gerastert sind (lokal 40–100 ms);
+      // ruht die Seite, deckt die Front kurz nach voller Deckung auf; sie ist zu, sobald sie aus dem Bild gestiegen ist
+      expect(p.voll - p.klick, wo).toBeLessThanOrEqual(ZEITPLAN.abdecken + 160);
+      expect(p.auf - p.voll, wo).toBeGreaterThanOrEqual(0);
+      expect(p.auf - p.voll, wo).toBeLessThan(3 * TAKT_MS);
+      luecken.push(p.auf - p.voll);
+      expect(p.zu - p.auf, wo).toBeLessThanOrEqual(ZEITPLAN.aufdecken + TAKT_MS);
+      // Alle Bilder vom Klick bis zum Aufdecken: gerade Kanten zwischen zwei Schichtfarben oder zwischen einer warmen
+      // Schicht und der Seite (fehlende Kacheln), länger als 120 px und nicht die Tangente eines Kreises
+      const vorher = bilder.filter((b) => b.t >= p.ursprung + p.klick && b.t <= p.ursprung + p.auf);
+      expect(vorher.length, wo).toBeGreaterThan(8);
+      for (const bild of vorher) {
+        const befund = await auswertung.evaluate(
+          async ({ bild, farben, klick }) => {
+            const bytes = Uint8Array.from(atob(bild), (c) => c.charCodeAt(0));
+            const b = await createImageBitmap(new Blob([bytes], { type: 'image/png' }));
+            const c = new OffscreenCanvas(b.width, b.height);
+            const ctx = c.getContext('2d')!;
+            ctx.drawImage(b, 0, 0);
+            const { data, width, height } = ctx.getImageData(0, 0, b.width, b.height);
+            const rgb = farben.map((f) => f.match(/\d+/g)!.slice(0, 3).map(Number));
+            const letzte = rgb.length;
+            // Klasse je Pixel: 1…n = Schicht (Toleranz 6), 0 = Seite
+            const klasse = new Uint8Array(width * height);
+            const anteil = new Array(letzte + 1).fill(0);
+            for (let i = 0; i < width * height; i += 1) {
+              for (let k = 0; k < letzte; k += 1) {
+                if (Math.abs(data[i * 4] - rgb[k][0]) + Math.abs(data[i * 4 + 1] - rgb[k][1]) + Math.abs(data[i * 4 + 2] - rgb[k][2]) <= 6) {
+                  klasse[i] = k + 1;
+                  anteil[k + 1] += 1;
+                  break;
+                }
+              }
+            }
+            const kante = (a: number, b: number) => {
+              const ka = klasse[a];
+              const kb = klasse[b];
+              if (ka === kb) return false;
+              if (ka && kb) return true;
+              const warm = (k: number) => k > 0 && k < letzte;
+              return warm(ka) || warm(kb);
+            };
+            const MIN = 120;
+            const gerade: string[] = [];
+            // waagerecht: Zeile y gegen y + 1; Tangente: Mitte auf der Senkrechten durch den Klick, nicht länger als 2√(5R)
+            for (let y = 0; y + 1 < height; y += 1) {
+              let lauf = 0;
+              for (let x = 0; x <= width; x += 1) {
+                if (x < width && kante(y * width + x, (y + 1) * width + x)) lauf += 1;
+                else {
+                  const mitte = x - lauf / 2;
+                  const tangente = Math.abs(mitte - klick.x) <= 6 && lauf <= 2 * Math.sqrt(5 * Math.abs(y - klick.y)) + 12;
+                  if (lauf >= MIN && !tangente) gerade.push(`Zeile ${y} ab ${x - lauf}, ${lauf} px`);
+                  lauf = 0;
+                }
+              }
+            }
+            for (let x = 0; x + 1 < width; x += 1) {
+              let lauf = 0;
+              for (let y = 0; y <= height; y += 1) {
+                if (y < height && kante(y * width + x, y * width + x + 1)) lauf += 1;
+                else {
+                  const mitte = y - lauf / 2;
+                  const tangente = Math.abs(mitte - klick.y) <= 6 && lauf <= 2 * Math.sqrt(5 * Math.abs(x - klick.x)) + 12;
+                  if (lauf >= MIN && !tangente) gerade.push(`Spalte ${x} ab ${y - lauf}, ${lauf} px`);
+                  lauf = 0;
+                }
+              }
+            }
+            const warmGroesst = Math.max(...anteil.slice(1, letzte)) / (width * height);
+            return { gerade: gerade.slice(0, 3), warmGroesst };
+          },
+          { bild: bild.data, farben, klick },
+        );
+        const ms = Math.round(bild.t - p.ursprung - p.klick);
+        expect(befund.gerade, `${wo}, Bild ab ${ms} ms`).toEqual([]);
+        // Nie eine einfarbige Pfirsichfläche: keine warme Schicht deckt das Fenster (die letzte trägt die Seitenfarbe)
+        expect(befund.warmGroesst, `${wo}, Bild ab ${ms} ms`).toBeLessThan(0.95);
+      }
+    }
+    await auswertung.close();
+    // Von voller Deckung bis zum Aufdecken im Mittel (Median der fünf Läufe) unter 160 ms; die neue Seite setzt nach dem
+    // Wechsel noch Kopf, Leiste und Sicht-Bereiche, das zählt gegen die Ruhe
+    expect(luecken.sort((a, b) => a - b)[2]).toBeLessThan(160);
   });
 
   test('Klick auf „Jetzt bewerben“: keine Klick-Wärme auf dem Weg in den Bewerbungsweg, auch nicht nach dem Wechsel (Prüfrunde 1 C1-3)', async ({

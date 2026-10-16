@@ -1,31 +1,35 @@
 /*
  * Klick-Wärme und Wärmefront (E-031, KERN K-009, Kennungen `klick-waerme` und `seitenwechsel`; Insel Waermefront.tsx,
  * Logik und Maße lib/motion/seitenwechsel.ts). Zwei Überlagerungen (popover="manual", oberste Ebene, auch über dem
- * offenen Menü): aria-hidden, inert, ohne Zeigerereignisse, contain: strict; geschlossen blendet der Browser sie aus.
+ * offenen Menü): aria-hidden, inert, ohne Zeigerereignisse, contain: strict (die Malbegrenzung schneidet wie
+ * overflow: hidden ab); geschlossen blendet der Browser sie aus.
  *
  * Beide sprechen dieselbe Sprache wie das Wärmefeld: Isothermen um den Klickpunkt wachsen nach √t (DIFFUSION_STUETZ:
- * Maßstab 0 → 1 als Zahl auf 0 · 6,25 · 25 · 56,25 · 100 %, linear dazwischen), je ½ Takt versetzt, die kühlste zuerst
- * und zuunterst. Die heißeste liegt immer innen (sie startet zuletzt und liegt oben), nach außen wird es stetig kühler –
- * wie bei Wärmeleitung von einer Quelle, keine Welle mit kaltem Kern (Prüfrunde 1 A1-12, B1-5). Den Mittelpunkt (--x,
- * --y) setzt die Insel, ebenso die Grundgröße der Front (--s), den Faktor bis zur fernsten Ecke (--m) und den Weg
- * nach oben (--h); die Ringe der Klick-Wärme haben --a-8. Farbe (--c) und Verzögerung (--n, Takte) je Schicht:
- * --waerme-1, -2, -3, -4 von der ersten zur letzten. In der Klick-Wärme stehen die Stufen 1–3 für die Ringe ihres Tons
- * (app/styles/theme.css, [data-motion="klick-waerme"] → --klick-1…3; den Ton der getroffenen Fläche setzt die Insel
- * als data-tone, Prüfrunde 3 A3-1). Grundwerte sind der Endzustand (Maßstab 1); die Abläufe füllen mit both.
+ * Maßstab FRONT_START → 1 als Zahl auf 0 · 6,25 · 25 · 56,25 · 100 %, linear dazwischen), je ½ Takt versetzt, die
+ * kühlste zuerst und zuunterst. Sie wachsen nicht von Maßstab 0 auf (Prüfrunde 4 A4-3, C4-1): Eine Scheibe ohne Fläche
+ * hat nichts zu rastern, und wuchs sie dann in einem Bild auf Hunderte Pixel, fehlten Kacheln an geraden Kanten. Den
+ * Mittelpunkt (--x, --y) setzt die Insel, ebenso die Grundgröße der Front (--s), den Faktor bis zur fernsten Ecke (--m)
+ * und den Weg nach oben (--h, beim Aufdecken mit --u: 1), dazu das Ausblenden der warmen Schichten (--o). Der Vorlauf
+ * der Front (--v, ½ Takt = FRONT_VORLAUF_TAKTE) kommt zu jeder Verzögerung hinzu; die Klick-Wärme hat keinen (--v: 0);
+ * die Ringe der Klick-Wärme haben --a-8. Farbe (--c) und Verzögerung (--n, Takte) je Schicht. In der Klick-Wärme
+ * stehen die Stufen 1–3 für die Ringe ihres Tons (app/styles/theme.css, [data-motion="klick-waerme"] → --klick-1…3;
+ * den Ton der getroffenen Fläche setzt die Insel als data-tone, Prüfrunde 3 A3-1). Grundwerte sind der Endzustand
+ * (Maßstab 1); die Abläufe füllen mit both. will-change: Die Schichten sind eigene Ebenen, sobald die Überlagerung
+ * offen ist, also schon im Vorlauf vor dem Wachsen (Prüfrunde 4 A4-3).
  * Kurze Klassennamen, weil jeder Name im Build den Präfix „waermefront-module__<hash>__“ trägt: Budget ≤ 1.200 B im
  * globalen Chunk (scripts/qa/check-css-chunks.mjs, FRONT_BUDGET).
  */
 
-/* .e = Ebene. Wärmefront: vier Scheiben bis zur fernsten Ecke, --waerme-1 außen bis --waerme-4 innen; je d-2,
-   abdecken 360 ms. Am Ende deckt die heißeste das ganze Fenster: Der Raum ist warm, darunter wechselt die Seite. */
+/* .e = Ebene. Wärmefront: vier Scheiben bis zur fernsten Ecke, außen --waerme-1, dann -2 und -3, zuletzt und innen die
+   Seitenfarbe (--surface, Prüfrunde 4 A4-2): Die warmen Bänder laufen als Front über die Seite, dahinter steht die Seite
+   in ihrer eigenen Farbe, nie eine einfarbige Pfirsichfläche. Je d-2 nach dem Vorlauf; die Seite wechselt, sobald die
+   erste Scheibe das Fenster deckt (ZEITPLAN.wechsel). */
 .e {
   --c: var(--waerme-1);
-  --d: var(--d-2);
   width: auto;
   height: auto;
   border: 0;
   background: none;
-  overflow: hidden;
   pointer-events: none;
   contain: strict;
 }
@@ -34,33 +38,41 @@
    innen auf 32 px; so bleiben die Isothermen nebeneinander stehen (Prüfrunde 1 A1-11), und die Beschriftung
    darunter bleibt rein (keine durchscheinende Fläche, keine Mischfarbe, Prüfrunde 1 A1-3). Je Ton 1,5–3:1 gegen die
    Fläche: sichtbar auf Papier, Nacht und Navy, nie lauter als eine Linie (check-contrast). Je d-3, Ende 480 ms; in der
-   zweiten Hälfte (240 → 480 ms) verblassen sie an Ort und Stelle. */
+   zweiten Hälfte (240 → 480 ms) verblassen sie an Ort und Stelle, d-2 linear (Ausnahme vom Ausgang d-1 mit k-ein, im
+   Register vermerkt, Prüfrunde 4 C4-3). */
 .k {
   --d: var(--d-3);
   --s: var(--a-8);
   --q: var(--a-6);
   --f: none;
+  --v: 0;
   animation: s var(--d-2) linear var(--d-2) both;
 }
 
 /* Schicht: Front Scheibe (Fläche und Rand --c), Klick Ring (nur der Rand --m-leitung in --c, ohne Fläche); --n ist die
-   Verzögerung in Takten (½ je Schicht), der Ring hat den Durchmesser --s − n × --q (64, 48, 32 px). Die Scheiben der
-   Front haben die Grundgröße --s (≤ 1.024 px, ein Kreis mit --radius-voll) und wachsen per transform: scale(--m), den
-   Faktor setzt die Insel, bis zur fernsten Ecke (lib/motion/seitenwechsel.ts frontMass; Prüfrunde 2 A2-1, C2-3).
-   Füllung both: Nach ihrem Ende hält jede Schicht den Endwert; sonst fiele die Animation am Bandende weg, und Chromium
-   malte die ganze Seite neu (Prüfrunde 2 C2-4). */
+   Verzögerung in Takten (½ je Schicht), dazu der Vorlauf --v (Front ½ Takt, Klick 0); der Ring hat den Durchmesser
+   --s − n × --q (64, 48, 32 px). Die Scheiben der Front haben die Grundgröße --s (≤ 1.024 px, ein Kreis mit
+   --radius-voll) und wachsen per transform: scale(--m), den Faktor setzt die Insel, bis zur fernsten Ecke
+   (lib/motion/seitenwechsel.ts frontMass; Prüfrunde 2 A2-1, C2-3). Füllung both: Nach ihrem Ende hält jede Schicht den
+   Endwert; sonst fiele die Animation am Bandende weg, und Chromium malte die ganze Seite neu (Prüfrunde 2 C2-4).
+   Aufdecken (Prüfrunde 3 A3-2): Setzt die Insel --u: 1, steigt jede Scheibe als Ganzes um --h aus dem Bild (warme Luft
+   steigt), d-2 mit k-aus, nur per transform; unten öffnet ein Kreisbogen die neue Seite, keine gerade Kante, nichts
+   verblasst. Die warmen Schichten blendet die Insel davor aus (--o: 0), sobald die Seitenfarbe das Fenster deckt
+   (Prüfrunde 4 A4-2): unsichtbar unter ihr, und beim Steigen bleibt kein warmer Saum am Bogen. */
 .e > * {
   position: absolute;
   left: var(--x);
   top: var(--y);
   width: calc(var(--s) - var(--n, 0) * var(--q, 0px));
   aspect-ratio: 1;
-  translate: -50% -50%;
+  translate: -50% calc(-50% - var(--h, 0px) * var(--u, 0));
   border: var(--m-leitung) solid var(--c);
   border-radius: var(--radius-voll);
   background: var(--f, var(--c));
+  opacity: var(--o, 1);
   transform: scale(var(--m, 1));
-  animation: w var(--d) linear calc(var(--takt) * var(--n, 0)) both;
+  will-change: transform;
+  animation: w var(--d, var(--d-2)) linear calc(var(--takt) * (var(--n, 0) + var(--v, .5))) both;
   transition: translate var(--d-2) var(--k-aus);
 }
 
@@ -74,32 +86,26 @@
   --c: var(--waerme-3);
 }
 
+/* Die letzte Schicht der Front: die Seitenfarbe, immer deckend */
 .e > * + * + * + * {
   --n: 1.5;
-  --c: var(--waerme-4);
+  --c: var(--surface);
+  opacity: 1;
 }
 
-/* Aufdecken ([data-auf], Prüfrunde 3 A3-2): Die warme Front steigt als Ganzes aus dem Bild (warme Luft steigt), d-2
-   mit k-aus (Übergang oben), nur per transform: jede Scheibe um --h, bis ihr unterer Rand über dem Fenster liegt.
-   Unten öffnet ein Kreisbogen die neue Seite, keine gerade Kante; nichts verblasst, also keine Mischfarbe aus Front
-   und Seite. Das Wachsen (w) bleibt mit seinem Endwert stehen. */
-.e[data-auf] > * {
-  translate: -50% calc(-50% - var(--h));
-}
-
-/* w = wachsen nach √t, s = verblassen (kurz wegen des Präfixes im Build) */
+/* w = wachsen nach √t von FRONT_START (4 %) auf 1, s = verblassen (kurz wegen des Präfixes im Build) */
 @keyframes w {
   from {
-    scale: 0;
+    scale: 0.04;
   }
   6.25% {
-    scale: 0.25;
+    scale: 0.28;
   }
   25% {
-    scale: 0.5;
+    scale: 0.52;
   }
   56.25% {
-    scale: 0.75;
+    scale: 0.76;
   }
   to {
     scale: 1;

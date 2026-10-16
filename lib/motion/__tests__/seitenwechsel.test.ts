@@ -6,9 +6,15 @@ import { DAUER_MS, KLICK_ENDE_MS, MOTION_REGISTER, TAKT_MS, WECHSEL } from '../r
 import * as seitenwechsel from '../seitenwechsel';
 import { AUFTAKT_KLASSE } from '../head-script';
 import {
+  AUFDECKEN_NETZ_MS,
   AUFTAKT,
   BEDIENELEMENT,
+  FRONT_START,
+  FRONT_VORLAUF_TAKTE,
+  HALTEN_MS,
+  KLICK_ZU_MS,
   WAERMEFRONT_AN,
+  WECHSEL_NETZ_MS,
   ZEITPLAN,
   FRONT_GRUND,
   LAEDT,
@@ -110,18 +116,48 @@ const EINORDNUNG: Readonly<Record<string, boolean>> = {
 
 describe('Wärmefront: Zeitplan und Notschalter (E-031)', () => {
   it('der Zeitplan spiegelt das Register (WECHSEL, KLICK_ENDE_MS); die Netze greifen einen Takt nach dem Ende', () => {
+    expect(ZEITPLAN.vorlauf).toBe(WECHSEL.vorlaufMs);
+    expect(ZEITPLAN.wechsel).toBe(WECHSEL.wechselMs);
     expect(ZEITPLAN.abdecken).toBe(WECHSEL.abdeckenMs);
     expect(ZEITPLAN.halten).toBe(WECHSEL.haltenMs);
     expect(ZEITPLAN.aufdecken).toBe(WECHSEL.aufdeckenMs);
     expect(ZEITPLAN.klick).toBe(KLICK_ENDE_MS);
-    expect(ZEITPLAN.abdeckenNetz).toBe(ZEITPLAN.abdecken + TAKT_MS);
+    // Das Netz des Wechsels zwei Takte nach dem Ende der ersten Schicht: Die Abläufe beginnen erst nach dem Rastern der
+    // Ebenen (gemessen bis 100 ms nach dem Klick); früher griffe es, bevor die erste Schicht das Fenster deckt
+    expect(ZEITPLAN.wechselNetz).toBe(ZEITPLAN.wechsel + 2 * TAKT_MS);
+    expect(ZEITPLAN.wechselNetz - ZEITPLAN.wechsel).toBeGreaterThanOrEqual(100);
     expect(ZEITPLAN.aufdeckenNetz).toBe(ZEITPLAN.aufdecken + TAKT_MS);
-    // Abdecken = letztes Band (Verzögerung) + d-2; Halten deckt Abdecken, Netz und Aufdecken
+    // Vorlauf = kleinste Verzögerung (FRONT_VORLAUF_TAKTE); Wechsel = Ende der ersten Schicht; Abdecken = Ende der letzten
     const w = MOTION_REGISTER.seitenwechsel;
+    expect(FRONT_VORLAUF_TAKTE * TAKT_MS).toBe(ZEITPLAN.vorlauf);
+    expect(Math.min(...w.verzoegerungTakte) * TAKT_MS).toBe(ZEITPLAN.vorlauf);
+    expect(ZEITPLAN.vorlauf).toBeGreaterThan(1000 / 60);
+    expect(Math.min(...w.verzoegerungTakte) * TAKT_MS + DAUER_MS['d-2']).toBe(ZEITPLAN.wechsel);
     expect(Math.max(...w.verzoegerungTakte) * TAKT_MS + DAUER_MS['d-2']).toBe(ZEITPLAN.abdecken);
-    expect(ZEITPLAN.halten).toBeGreaterThan(ZEITPLAN.abdeckenNetz - ZEITPLAN.abdecken + ZEITPLAN.aufdeckenNetz);
+    // Prüfrunde 4 A4-2: Der Wechsel beginnt nach rund zwei Dritteln des Abdeckens, nicht erst an seinem Ende (Halten
+    // kürzer); ohne Warten ist die Front nach höchstens 650 ms zu (Plan §5: ≈ 600–650 ms)
+    expect(ZEITPLAN.wechsel / ZEITPLAN.abdecken).toBeGreaterThanOrEqual(0.6);
+    expect(ZEITPLAN.wechsel / ZEITPLAN.abdecken).toBeLessThanOrEqual(0.75);
+    expect(ZEITPLAN.abdecken + ZEITPLAN.aufdecken).toBeLessThanOrEqual(650);
+    // Halten (ab dem Wechsel) deckt den Rest des Abdeckens und das Aufdecken mit Netz
+    expect(ZEITPLAN.halten).toBeGreaterThan(ZEITPLAN.abdecken - ZEITPLAN.wechsel + ZEITPLAN.aufdeckenNetz);
     expect(Object.isFrozen(ZEITPLAN)).toBe(true);
-    expect(Object.keys(ZEITPLAN).sort()).toEqual(['abdecken', 'abdeckenNetz', 'aufdecken', 'aufdeckenNetz', 'halten', 'klick']);
+    expect(Object.keys(ZEITPLAN).sort()).toEqual(['abdecken', 'aufdecken', 'aufdeckenNetz', 'halten', 'klick', 'vorlauf', 'wechsel', 'wechselNetz']);
+    // Die Insel nimmt die Einzelwerte (das Objekt bliebe sonst ganz im Bündel)
+    expect([WECHSEL_NETZ_MS, HALTEN_MS, AUFDECKEN_NETZ_MS, KLICK_ZU_MS]).toEqual([ZEITPLAN.wechselNetz, ZEITPLAN.halten, ZEITPLAN.aufdeckenNetz, ZEITPLAN.klick]);
+    const insel = readFileSync(path.join(ROOT, 'components/site/waermefront/Waermefront.tsx'), 'utf8');
+    expect(insel).not.toMatch(/ZEITPLAN/);
+  });
+
+  it('Startgröße (Prüfrunde 4 A4-3, C4-1): nicht 0, ein paar Prozent; @keyframes w der Front beginnt dort', () => {
+    expect(FRONT_START).toBeGreaterThanOrEqual(0.02);
+    expect(FRONT_START).toBeLessThanOrEqual(0.05);
+    const css = readFileSync(path.join(ROOT, 'components/site/waermefront/waermefront.module.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    expect(css).toMatch(new RegExp(`@keyframes w \\{\\s*from \\{\\s*scale: ${FRONT_START};`));
+    // Der Vorlauf steht in der Verzögerung der Front, die Klick-Wärme hat keinen
+    expect(css).toMatch(/calc\(var\(--takt\) \* \(var\(--n, 0\) \+ var\(--v, \.5\)\)\)/);
+    expect(Number('.5')).toBe(FRONT_VORLAUF_TAKTE);
+    expect(css).toMatch(/\.k \{[^}]*--v: 0;/);
   });
 
   it('die Logik hängt an nichts (das Register bliebe sonst im Browser-Bündel der Insel)', () => {
@@ -399,6 +435,9 @@ describe('Wärmefront: immer ein Kreis, kleine Ebenen (Prüfrunde 2 A2-1, C2-2, 
     expect(insel).toContain(
       "el.style.cssText = `--x:${x}px;--y:${y}px` + (mass ? `;--s:${mass.grund}px;--h:${frontSteigen(y, mass)}px;--m:${mass.faktor}` : '');",
     );
+    // Gestiegen wird erst beim Aufdecken (--u: 1), die warmen Schichten blenden aus, sobald die Seitenfarbe deckt (--o: 0)
+    expect(insel).toContain("front.style.cssText += ';--u:1';");
+    expect(insel).toContain("front.style.cssText += ';--o:0';");
     expect(insel).toContain('zeige(front, x, y, frontMass(x, y, innerWidth, innerHeight));');
     expect(insel).toContain('zeige(klick, x, y);');
   });
@@ -433,14 +472,29 @@ describe('Wärmefront: Aufdecken (Prüfrunde 3 A3-2, C3-1)', () => {
     expect((RUHE_BILDER * 1000) / 60).toBeLessThan(ZEITPLAN.halten / 4);
     expect(LAEDT).toBe('[data-laedt]');
     const insel = readFileSync(path.join(ROOT, 'components/site/waermefront/Waermefront.tsx'), 'utf8');
-    expect(insel).toContain('beob.observe(document, { subtree: true, childList: true, attributes: true });');
+    // Beobachtet wird die Seite (body): Titel und Meta-Angaben im head malen nichts (Prüfrunde 4 A4-2)
+    expect(insel).toContain('beob.observe(document.body, { subtree: true, childList: true, attributes: true });');
     expect(insel).toContain('document.querySelector(LAEDT) ||');
     expect(insel).toContain("[...document.images].some((i) => !i.complete && i.loading !== 'lazy') ||");
-    expect(insel).toContain("document.getAnimations().some((a) => a.playState === 'running' && a.effect!.getTiming().iterations! < Infinity)");
-    expect(insel).toContain('if (still >= RUHE_BILDER) aufdecken();');
+    // Es zählen die endlichen Abläufe im Hauptinhalt (Prüfrunde 4 A4-2): nicht die der Front selbst (so wird die Ruhe
+    // schon gezählt, während sie noch deckt; aufgedeckt wird erst, wenn auch die Seitenfarbe das Fenster deckt, voll),
+    // nicht der Ortsstrich im Kopf. Die Insel steht außerhalb von <main>.
+    expect(insel).toContain(
+      "document.getAnimations().some((a) => a.playState === 'running' && a.effect!.getTiming().iterations! < Infinity && (a.effect as KeyframeEffect).target!.closest('main'))",
+    );
+    const layout = readFileSync(path.join(ROOT, 'app/layout.tsx'), 'utf8');
+    expect(layout.indexOf('<Waermefront />')).toBeGreaterThan(layout.indexOf('</main>'));
+    expect(layout.match(/<main\b/g)).toHaveLength(1);
+    expect(insel).toContain('if (still >= RUHE_BILDER && voll) aufdecken();');
+    // voll erst am Ende der letzten Schicht; die eigene Änderung (--o) zählt nicht gegen die Ruhe
+    expect(insel).toMatch(/else if \(event\.target === front\.lastElementChild\) \{\s*voll = true;\s*front\.style\.cssText \+= ';--o:0';\s*beob\.takeRecords\(\);\s*\}/);
+    expect(insel).toContain('if (event.target === front.firstElementChild) wechseln();');
+    // Zu, sobald die Front aus dem Bild gestiegen ist (der einzige Übergang der Schichten), sonst nach dem Netz
+    expect(insel).toContain("front.addEventListener('transitionend', aus);");
+    expect(insel).toContain('uhr = setTimeout(aus, AUFDECKEN_NETZ_MS);');
     // Der Platzhalter der nachgeladenen Bewerbung auf der Stellenseite trägt die Marke
     expect(readFileSync(path.join(ROOT, 'app/jobs/[slug]/page.tsx'), 'utf8')).toMatch(/<p className="text-body text-ink-muted" data-laedt="">/);
-    expect(insel).toContain('uhr = setTimeout(aufdecken, ZEITPLAN.halten);');
+    expect(insel).toContain('uhr = setTimeout(aufdecken, HALTEN_MS);');
     // nicht mehr: aufdecken zwei Bilder nach dem neuen Pfad, mitten im Malen der neuen Seite (Prüfrunde 3 C3-1)
     expect(insel).not.toMatch(/requestAnimationFrame\(\(\) => \(bild = requestAnimationFrame\(aufdecken\)\)\)/);
   });
