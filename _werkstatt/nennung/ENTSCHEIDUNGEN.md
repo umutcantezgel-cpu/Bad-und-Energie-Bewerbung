@@ -76,3 +76,16 @@ Der Auftraggeber ist Coday Web selbst; Coday arbeitet im Auftrag der Bad und Ene
 
 ## N-11 Lernen (L6, E0)
 - Das Bildwerkzeug scheiterte zweimal am selben Fehler: Canvas liefert über 16.383 px kein WebP. Behoben im Werkzeug; künftige Prüfer-Briefings nennen die Grenze. Ausgangswerte mit `next start` und `APP_URL=http://127.0.0.1:3511`: Seiten, die pro Anfrage rendern (`/bewerbung`), tragen dort den lokalen Host im Canonical; das ist eine Folge der Messumgebung, nicht der Website, und gilt vorher wie nachher gleich.
+
+## N-12 Linktext genau „Coday Web“, Hinweis auf den neuen Tab daneben (E3, nach Prüfstufe B)
+- **Befund:** E3-PRUEFER-01 und -02 fanden den verborgenen Hinweis „(öffnet in neuem Tab)“ im a-Element. Sichtbar war der Linktext genau „Coday Web“. Der Textinhalt des Links, den Suchmaschinen als Ankertext lesen können, war aber „Coday Web (öffnet in neuem Tab)“.
+- **Konflikt:** Abschnitt 6 verlangt den Hinweis „nach dem vorhandenen Muster des Projekts“, also im Link wie bei OsmNennung und FussLink. S1 verlangt einen Linktext von genau ANKERMARKE. Nach dem Vorrang des Auftrags gehen Leitplanken (1) den Mustern und der Gestaltung (7) vor.
+- **Entscheidung:** Der Hinweis steht als `span.sr-only` mit eigener Kennung direkt hinter dem Link und ist ihm per `aria-describedby` zugeordnet.
+  - Hilfstechnik liest weiterhin „Coday Web, Link, (öffnet in neuem Tab)“.
+  - Der Textinhalt des a-Elements ist genau „Coday Web“.
+- Ein Blocker nach N-08: Behoben wird nur dieser Punkt. Erneut geprüft werden S1, die Zugänglichkeit der Nennung und der Linkprüfer über alle Seiten.
+
+## N-13 Ergebnis zu S4 (E3)
+- navigation.mjs: 11 von 11 Fällen gleich. Das gilt für das HTML, den Browser ohne JavaScript, den Browser mit JavaScript bei DOMContentLoaded und nach networkidle plus 2 s, und für eine Navigation im Browser in beide Richtungen.
+- Beim Laden ändert kein Skript `rel` (MutationObserver: 0 Änderungen).
+- Bei einer Navigation im Browser zeigt der beibehaltene Fuß den Wert der neuen URL, wie N-05 es beschreibt. Das ist die Lesart von N-05, keine AUSNAHME.

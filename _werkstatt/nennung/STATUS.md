@@ -1,4 +1,4 @@
-STATUS · Branch main · Phase E3 · Kriterien 0/10 · Ausnahmen 0 · Bestand grün · Nächster Schritt: volle CI am Stand b0ae185, danach Prüfstufe B (E3-PRUEFER-01 bis -03)
+STATUS · Branch main · Phase E3 · Kriterien 0/10 · Ausnahmen 0 · Bestand grün · Nächster Schritt: S1-Korrektur (N-12), volle CI, Nachprüfung S1/Zugang/Links (E3-PRUEFER-04)
 
 # Status · Agenturnennung Coday Web
 
@@ -16,7 +16,10 @@ STATUS · Branch main · Phase E3 · Kriterien 0/10 · Ausnahmen 0 · Bestand gr
 | E0-PRUEFER-02 | Prüfer | Arbeitsmodell | `berichte/E0-PRUEFER-02.md`, `protokolle/roh/e0/*`, `bilder/e0/*`, `werkzeuge/konsole.mjs` | Ausgangswerte Z-01, Z-07, Z-08, Z-09 | fertig; Bilder nach zwei Abbrüchen vom Orchestrator übernommen |
 | E1-PRUEFER-01 | Prüfer | Arbeitsmodell | keine (Bericht als Rückgabe) | Planabgleich: Einstellungen, Kriterien mit Prüfschritt, Grenzen | fertig, nachgebessert |
 | E2-PRUEFER-01 | Prüfer | Arbeitsmodell | `protokolle/stufe-a.md`, `protokolle/roh/e2/*`, `bilder/e2/*` | Prüfstufe A | fertig, grün |
-| E3-PRUEFER-01 | Prüfer | Arbeitsmodell | `protokolle/*.md` außer stufe-a.md, `protokolle/roh/e3/*`, `bilder/` | Prüfstufe B: Z-01 bis Z-09 | offen |
+| E3-PRUEFER-01 | Prüfer | Arbeitsmodell | `protokolle/{links,googlebot,indexierbar,html-vergleich,dateiliste,jsonld}.md`, `protokolle/roh/e3/*` | Prüfstufe B: Z-02, Z-03, Z-05, Z-06, Z-09 | fertig, grün |
+| E3-PRUEFER-02 | Prüfer | Arbeitsmodell | `werkzeuge/navigation.mjs`, `protokolle/{zugang,konsole,navigation,leitplanken}.md`, `protokolle/roh/e3b/*`, `bilder/e3/*` | Prüfstufe B: Z-04, Z-07, Konsole | fertig, grün; S1 nachgebessert (N-12) |
+| E3-PRUEFER-03 | Prüfer | Arbeitsmodell | `protokolle/leistung.md`, `protokolle/roh/e3c/*` | Prüfstufe B: Z-08 | fertig, grün |
+| E3-PRUEFER-04 | Prüfer | Arbeitsmodell | `protokolle/nachpruefung.md`, `protokolle/stufe-b-ci.md`, `protokolle/roh/e3d/*` | Nachprüfung S1, Zugang, Links nach N-12; volle CI für Z-01 | offen |
 | E3-DOKUMENTAR-01 | Dokumentar | Arbeitsmodell | `BERICHT.md`, `LINKREGISTER.md`, `REFERENZ.md` | Z-10 | offen |
 | E4-ENDPRUEFER-01 | Endprüfer | frischer Unteragent des Orchestrator-Modells | keine (Urteil als Rückgabe) | Z-01 bis Z-10 gegen Belege | offen |
 
@@ -29,3 +32,12 @@ STATUS · Branch main · Phase E3 · Kriterien 0/10 · Ausnahmen 0 · Bestand gr
 - 16.10.2026 · E0 · bilder.mjs scheiterte zweimal an der WebP-Höchsthöhe von 16.383 px (Vollbild Startseite 390 px: 17.774 px); vom Orchestrator behoben (zusätzliche Verkleinerung), 24 Bilder aufgenommen (L1, L6).
 - 16.10.2026 · E2 · Änderungs-Commit b0ae185 (9 Dateien, ohne _werkstatt). Prüfstufe A grün: Typprüfung, Linter der geänderten Dateien, 19 Testdateien mit 347 Tests, Build mit allen Nachprüfungen, Linkprüfer: „/“ rel noopener, „/jobs“ rel nofollow noopener, Googlebot gleich; Footer-Bilder ohne Überdeckung.
 - 16.10.2026 · E3 · Sichtabnahme an den Vorher-nachher-Bildern bestanden (bilder/auswahl): wirkt wie ein Teil des Fußes, nicht auffälliger als die Rechtslinks, hell und dunkel lesbar, mobil einzeilig. Bilder an den Inhaber geschickt (Arbeitsregel, Bilder vor dem Deploy).
+- 16.10.2026 · E3 · Prüfstufe B (E3-PRUEFER-01 bis -03) am Build b0ae185:
+  - Links: 82 Seiten mit Fuß, je genau ein Link, gefolgt nur auf „/“; 84 von 84 Seiten gleich mit Googlebot-Kennung.
+  - Startseite indexierbar.
+  - HTML-Vergleich: nur das span der Nennung. JSON-LD: nur creator.
+  - Dateiliste innerhalb von G1; G5, G6, G7 unberührt.
+  - Darstellung: 12 von 12 Footer-Bildern sauber. Kontrast 8,28:1 hell, 7,57:1 dunkel. Trefferfläche 71 × 26 px, axe 0 Befunde, Fokus sichtbar, 0 Konsolenfehler.
+  - S4: 11 von 11 Fällen gleich.
+  - Leistung: 38 Anfragen, Transfer −684 B, Layoutverschiebung 0.
+  - Befund S1: der verborgene Hinweis stand im Link → N-12.
