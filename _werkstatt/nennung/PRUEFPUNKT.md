@@ -1,6 +1,6 @@
 # Prüfpunkt
 
-- **Nächster exakter Schritt:** E0-PRUEFER-01 (Werkzeuge) und danach E0-PRUEFER-02 (Ausgangswerte) am Produktions-Build ohne Nennung, Stand `a4491d5`.
+- **Nächster exakter Schritt:** Änderungs-Commit der Nennung in der Arbeitskopie, main per Fast-Forward darauf, `bun run build`, Server auf Port 3511, Prüfstufe A (E2-PRUEFER-01).
 - **Laufende Pakete:** keine.
-- **Letzter grüner Commit:** `0c9f103` (volle lokale CI grün, 16.10.2026).
-- **Vorbereitet, nicht committet:** Änderung der Nennung (agentur.ts, AgenturLink.tsx, AgenturNennung.tsx, FussVoll, FussSchmal, fuss.module.css, site-jsonld.ts, .vercelignore, Tests) in der Arbeitskopie.
+- **Letzter grüner Commit:** `a4491d5` (volle lokale CI grün, live seit 16.10.2026).
+- **Ausgangswerte:** berichte/E0-PRUEFER-02.md, Rohdaten in protokolle/roh/e0 (nicht committet), Vorher-Bilder in bilder/e0 (nicht committet; Auswahl folgt in bilder/auswahl).

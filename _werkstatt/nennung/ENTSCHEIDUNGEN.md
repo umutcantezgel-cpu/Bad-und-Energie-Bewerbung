@@ -73,3 +73,6 @@ Der Auftraggeber ist Coday Web selbst; Coday arbeitet im Auftrag der Bad und Ene
 
 ## N-10 Druck (E1)
 - Beide Füße tragen `print-hidden` (FussVoll.tsx:50, FussSchmal.tsx:18) und erscheinen im Druck nicht. Für Z-07 entfällt deshalb das Thema Druck; geprüft werden hell und dunkel.
+
+## N-11 Lernen (L6, E0)
+- Das Bildwerkzeug scheiterte zweimal am selben Fehler: Canvas liefert über 16.383 px kein WebP. Behoben im Werkzeug; künftige Prüfer-Briefings nennen die Grenze. Ausgangswerte mit `next start` und `APP_URL=http://127.0.0.1:3511`: Seiten, die pro Anfrage rendern (`/bewerbung`), tragen dort den lokalen Host im Canonical; das ist eine Folge der Messumgebung, nicht der Website, und gilt vorher wie nachher gleich.

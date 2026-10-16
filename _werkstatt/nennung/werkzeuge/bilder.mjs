@@ -43,7 +43,8 @@ async function alsWebp(context, png) {
         const bild = new Image();
         bild.src = quelle;
         await bild.decode();
-        const faktor = Math.min(1, maxBreite / bild.naturalWidth);
+        // WebP erlaubt höchstens 16.383 px je Seite; lange Vollbilder werden darauf verkleinert (sonst liefert toDataURL PNG)
+        const faktor = Math.min(1, maxBreite / bild.naturalWidth, 16383 / bild.naturalHeight);
         const leinwand = document.createElement('canvas');
         leinwand.width = Math.round(bild.naturalWidth * faktor);
         leinwand.height = Math.round(bild.naturalHeight * faktor);
