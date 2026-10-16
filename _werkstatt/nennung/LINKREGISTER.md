@@ -1,0 +1,3 @@
+| Datum | Kundendomain | Quellseiten | Linkziele | Anker | Linkmodell | rel auf Quellseite und übrigen Seiten | Änderungs-Commits | Status |
+|---|---|---|---|---|---|---|---|---|
+| 16.10.2026 | karriere.bad-energie.de (Bad und Energie GmbH) | / (Startseite, einzige Sprachfassung Deutsch) | https://www.codayweb.de/de (Standard, LINKZIEL nicht gesetzt) | Coday Web | Startseite; GEGENLEISTUNG nein (Auftrag Abschnitt 0, ENTSCHEIDUNGEN N-04) | Quellseite /: noopener, ohne nofollow; übrige Seiten: nofollow noopener; target _blank, nie noreferrer (N-04, protokolle/links.md) | b0ae185, 66d8d99 | auf main, live mit dem Push vom 16.10.2026 (Stand beim Schreiben: noch nicht gepusht, 9 Commits voraus; Abnahme 0 von 10 Kriterien offen; ENTSCHEIDUNGEN N-02, git status) |
