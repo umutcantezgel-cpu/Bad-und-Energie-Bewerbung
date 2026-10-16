@@ -3,6 +3,7 @@ import { Leitungstrenner } from '@/components/zeichnung';
 import { cn } from '@/lib/utils/cn';
 import { RECHTS_LINKS, fussKontakte, pflichtzeile } from './fuss-text';
 import { FussLink } from './FussLink';
+import { AgenturNennung } from './AgenturNennung';
 import { OsmNennung } from './OsmNennung';
 import { Ziffern } from './Ziffern';
 import styles from './fuss.module.css';
@@ -38,6 +39,7 @@ export function FussSchmal({ year }: { year: number }) {
         <p className={cn(styles.zeile, 'w-full')}>
           <Ziffern text={pflichtzeile(year)} />
           <OsmNennung />
+          <AgenturNennung />
         </p>
       </Container>
     </footer>

@@ -427,13 +427,16 @@ main:has(> [data-ton]:nth-last-child(1 of :not(script, template)):not([data-ton=
   color: var(--ink-2);
 }
 
-/* Namensnennung der OpenStreetMap-Daten (OsmNennung) unter der Pflichtzeile */
-.osm {
+/* Namensnennung der OpenStreetMap-Daten (OsmNennung) unter der Pflichtzeile, darunter die Agenturnennung
+   (AgenturNennung, _werkstatt/nennung N-06) in derselben Gestalt */
+.osm,
+.nennung {
   display: block;
   margin-top: var(--a-1);
 }
 
-.osmLink {
+.osmLink,
+.nennungLink {
   color: inherit;
   /* Nur am Bindestrich umbrechen, nie „OpenStre-etMap“ */
   hyphens: manual;
@@ -442,10 +445,16 @@ main:has(> [data-ton]:nth-last-child(1 of :not(script, template)):not([data-ton=
   text-underline-offset: 0.25em;
 }
 
-.osmLink:focus-visible {
+.osmLink:focus-visible,
+.nennungLink:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
   border-radius: var(--radius-1);
+}
+
+/* Trefferfläche mindestens 24 px hoch (WCAG 2.2, 2.5.8): Innenabstand am Inline-Link ändert die Zeilenhöhe nicht */
+.nennungLink {
+  padding-block: var(--a-1);
 }
 
 /* ═══ Schmaler Fuß im Fokusmodus (/bewerbung…) ═══ */

@@ -1,3 +1,4 @@
+import { AGENTUR } from '@/components/site/fuss/agentur';
 import { COMPANY } from '@/lib/content/company';
 import { REGION } from '@/lib/content/region';
 import { EMPLOYER, SAME_AS } from '@/lib/jobs/employer';
@@ -102,6 +103,8 @@ export function buildSiteNodes() {
       description: `Offizielles Karriereportal der ${COMPANY.name} in ${COMPANY.address.city}.`,
       inLanguage: 'de-DE',
       publisher: { '@id': ORGANIZATION_ID },
+      // Agenturnennung (_werkstatt/nennung N-07): die Agentur, die die Seite gebaut hat, wie im Fuß sichtbar genannt
+      creator: { '@type': 'Organization', name: AGENTUR.marke, url: AGENTUR.url },
       // E-SEO-006: Die Karriereseite gehört zur Website für Kunden (eingebettet, ohne eigene @id).
       isPartOf: {
         '@type': 'WebSite',
