@@ -231,16 +231,18 @@ test.describe('mit Bewegung (no-preference)', () => {
     const mitte = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
     await link.click();
     await expect.poll(() => offen(page, FRONT)).toBe(true);
-    // Während die Front deckt: Treffer gehen an die Seite, der Fokus bleibt außerhalb, die Überlagerung ist nicht im Baum
+    // Während die Front deckt: Treffer gehen an die Seite (inert wirkt beim Treffertest wie pointer-events: none; unter
+    // dem Punkt ist weder die Überlagerung noch eine ihrer Schichten, das oberste Element gehört zur Seite), der Fokus
+    // bleibt außerhalb, die Überlagerung ist nicht im Baum
     const lage = await page.evaluate(({ x, y }) => {
-      const treffer = document.elementFromPoint(x, y);
+      const alle = document.elementsFromPoint(x, y);
       return {
-        treffer: Boolean(treffer?.closest('[popover]')),
+        oben: Boolean(alle[0]) && !alle[0].closest('[popover]'),
+        treffer: alle.some((el) => el.closest('[popover]')),
         fokus: Boolean(document.activeElement?.closest('[popover]')),
-        zeiger: getComputedStyle(document.querySelector('[data-motion="seitenwechsel"]')!).pointerEvents,
       };
     }, mitte);
-    expect(lage).toEqual({ treffer: false, fokus: false, zeiger: 'none' });
+    expect(lage).toEqual({ oben: true, treffer: false, fokus: false });
     // Im Baum der Barrierefreiheit (Chromium) ist die offene Front samt Schichten ausgeblendet
     const cdp = await page.context().newCDPSession(page);
     const { root } = await cdp.send('DOM.getDocument');

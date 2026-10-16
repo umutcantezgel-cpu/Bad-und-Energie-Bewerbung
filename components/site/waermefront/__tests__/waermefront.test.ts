@@ -113,8 +113,9 @@ describe('Waermefront: CSS (E-031, K-009)', () => {
     expect(regel('.e > * + * + *')['--c']).toBe('var(--waerme-3)');
     // Die letzte Schicht der Front startet zuletzt, liegt oben und damit immer innen; alle wachsen auf denselben
     // Durchmesser (--s, bis zur fernsten Ecke). Am Ende deckt sie das Fenster in der Farbe der Seite, nicht in Pfirsich;
-    // sie blendet nie aus (opacity fest 1), die warmen Bänder darunter schon (--o)
-    expect(regel('.e > * + * + * + *')).toEqual({ '--n': '1.5', '--c': 'var(--surface)', opacity: '1' });
+    // sie blendet nie aus (eigenes --o: 1, das --o: 0 der Insel am Element der Front erbt sie nicht), die warmen Bänder
+    // darunter schon (--o)
+    expect(regel('.e > * + * + * + *')).toEqual({ '--n': '1.5', '--c': 'var(--surface)', '--o': '1' });
     expect([...css.matchAll(/--surface/g)]).toHaveLength(1);
     expect(css).not.toMatch(/--waerme-4/);
     expect(regel('.e > *').opacity).toBe('var(--o, 1)');
@@ -128,8 +129,10 @@ describe('Waermefront: CSS (E-031, K-009)', () => {
     expect(quelle.match(/cssText \+= ';--o:/g)).toHaveLength(1);
   });
 
-  it('Ebenen vor dem Wachsen (Prüfrunde 4 A4-3, C4-1): will-change: transform je Schicht, Vorlauf ½ Takt in jeder Verzögerung der Front', () => {
-    expect(regel('.e > *')['will-change']).toBe('transform');
+  it('Ebenen vor dem Wachsen (Prüfrunde 4 A4-3, C4-1): will-change: transform, opacity je Schicht, Vorlauf ½ Takt in jeder Verzögerung der Front', () => {
+    // opacity: Das Ausblenden der warmen Schichten (--o: 0) ändert nur die Ebenen; ohne will-change malte Chromium die
+    // unsichtbaren Schichten nicht mehr und dafür die ganze Seite neu (e2e Malzeit der Front)
+    expect(regel('.e > *')['will-change']).toBe('transform, opacity');
     expect([...css.matchAll(/will-change/g)]).toHaveLength(1);
     expect(regel('.e > *').animation).toBe('w var(--d, var(--d-2)) linear calc(var(--takt) * (var(--n, 0) + var(--v, .5))) both');
     expect(Number('.5')).toBe(FRONT_VORLAUF_TAKTE);
@@ -216,17 +219,21 @@ describe('Waermefront: CSS (E-031, K-009)', () => {
     expect(front.kurve).toEqual(['linear', 'k-aus']);
   });
 
-  it('die Überlagerung ist still: keine Zeigerereignisse, contain: strict (beschnitten durch die Malbegrenzung), ohne Rahmen und Fläche des Popovers', () => {
-    // contain: strict schließt paint ein: Der Inhalt ist auf die Überlagerung beschnitten wie mit overflow: hidden
+  it('die Überlagerung ist still: inert (keine Treffer), contain: strict, beschnitten und kein Scroll-Container, ohne Rahmen und Fläche des Popovers', () => {
+    // overflow: hidden statt des overflow: auto des Popovers: sonst ein Scroll-Container, dessen Überlauf mit den
+    // wachsenden Schichten in jedem Bild wächst (Chromium malte jedes Bild die ganze Seite neu). Treffer gehen durch:
+    // Beide Überlagerungen sind inert (oben, Markup), das wirkt beim Treffertest wie pointer-events: none (e2e prüft es
+    // mit elementsFromPoint an allen Elementen unter dem Punkt)
     expect(regel('.e')).toEqual({
       '--c': 'var(--waerme-1)',
       width: 'auto',
       height: 'auto',
       border: '0',
       background: 'none',
-      'pointer-events': 'none',
+      overflow: 'hidden',
       contain: 'strict',
     });
+    expect(lies(EINGANG).match(/popover="manual" className=\{[^\n]*?\} aria-hidden="true" inert data-motion="(?:klick-waerme|seitenwechsel)"/g)).toHaveLength(2);
     expect(regel('.e > *')).toMatchObject({
       position: 'absolute',
       'aspect-ratio': '1',

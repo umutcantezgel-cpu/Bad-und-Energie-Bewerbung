@@ -1,8 +1,11 @@
 /*
  * Klick-Wärme und Wärmefront (E-031, KERN K-009, Kennungen `klick-waerme` und `seitenwechsel`; Insel Waermefront.tsx,
  * Logik und Maße lib/motion/seitenwechsel.ts). Zwei Überlagerungen (popover="manual", oberste Ebene, auch über dem
- * offenen Menü): aria-hidden, inert, ohne Zeigerereignisse, contain: strict (die Malbegrenzung schneidet wie
- * overflow: hidden ab); geschlossen blendet der Browser sie aus.
+ * offenen Menü): aria-hidden, inert (Treffer gehen durch sie hindurch an die Seite: Ein inertes Element wird beim
+ * Treffertest übergangen wie mit pointer-events: none), contain: strict und overflow: hidden; geschlossen blendet der
+ * Browser sie aus. overflow: hidden ist nötig, obwohl contain: strict schon beschneidet: Das Popover bringt
+ * overflow: auto mit und wäre sonst ein Scroll-Container, dessen Überlauf mit jedem Bild der wachsenden Schichten
+ * wächst; Chromium malte dann in jedem Bild die ganze Seite neu (am Handy bei CPU 4× 0,6–3,6 ms je Bild, einmal 7 ms).
  *
  * Beide sprechen dieselbe Sprache wie das Wärmefeld: Isothermen um den Klickpunkt wachsen nach √t (DIFFUSION_STUETZ:
  * Maßstab FRONT_START → 1 als Zahl auf 0 · 6,25 · 25 · 56,25 · 100 %, linear dazwischen), je ½ Takt versetzt, die
@@ -15,7 +18,9 @@
  * stehen die Stufen 1–3 für die Ringe ihres Tons (app/styles/theme.css, [data-motion="klick-waerme"] → --klick-1…3;
  * den Ton der getroffenen Fläche setzt die Insel als data-tone, Prüfrunde 3 A3-1). Grundwerte sind der Endzustand
  * (Maßstab 1); die Abläufe füllen mit both. will-change: Die Schichten sind eigene Ebenen, sobald die Überlagerung
- * offen ist, also schon im Vorlauf vor dem Wachsen (Prüfrunde 4 A4-3).
+ * offen ist, also schon im Vorlauf vor dem Wachsen (Prüfrunde 4 A4-3); auch für opacity, damit das Ausblenden der
+ * warmen Schichten (--o: 0) nur die Ebenen ändert: Ohne will-change für opacity malt Chromium eine unsichtbare Schicht
+ * nicht mehr und dafür die ganze Seite neu.
  * Kurze Klassennamen, weil jeder Name im Build den Präfix „waermefront-module__<hash>__“ trägt: Budget ≤ 1.200 B im
  * globalen Chunk (scripts/qa/check-css-chunks.mjs, FRONT_BUDGET).
  */
@@ -30,7 +35,7 @@
   height: auto;
   border: 0;
   background: none;
-  pointer-events: none;
+  overflow: hidden;
   contain: strict;
 }
 
@@ -71,7 +76,7 @@
   background: var(--f, var(--c));
   opacity: var(--o, 1);
   transform: scale(var(--m, 1));
-  will-change: transform;
+  will-change: transform, opacity;
   animation: w var(--d, var(--d-2)) linear calc(var(--takt) * (var(--n, 0) + var(--v, .5))) both;
   transition: translate var(--d-2) var(--k-aus);
 }
@@ -86,11 +91,12 @@
   --c: var(--waerme-3);
 }
 
-/* Die letzte Schicht der Front: die Seitenfarbe, immer deckend */
+/* Die letzte Schicht der Front: die Seitenfarbe, immer deckend (eigenes --o: Das Ausblenden am Element der Front erbt
+   sie nicht) */
 .e > * + * + * + * {
   --n: 1.5;
   --c: var(--surface);
-  opacity: 1;
+  --o: 1;
 }
 
 /* w = wachsen nach √t von FRONT_START (4 %) auf 1, s = verblassen (kurz wegen des Präfixes im Build) */
