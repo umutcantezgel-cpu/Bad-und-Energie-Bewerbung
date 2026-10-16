@@ -38,6 +38,10 @@ function Fliesstext({ teile }: { teile: readonly Textteil[] }) {
  * (still im Endzustand, lazy geladen, nie inline: scripts/qa/check-css-chunks.mjs), je mit den Wörtern an der Zeichnung
  * wie auf der Themenseite (Prüfrunde 1 A1-6) und dem Titel, dazu der Weg zur Themenseite. Dekorativ (alt leer, Wörter
  * verborgen): Den Inhalt sagen die Punkte darüber und die Titel.
+ *
+ * Die Bildunterschrift ist eine kleine Überschrift mit der Glyphe der Szene wie auf der Themenseite, in der Schrift des
+ * Fließtexts und mit Abstand zur Zeichnung (Prüfrunde 4 A4-4): Die Wörter an der Zeichnung stehen in Mono-Versalien, die
+ * Unterschrift darf sich nicht wie eine weitere Beschriftung lesen.
  */
 function Szenen({ szenen }: { szenen: EinblickSzenen }) {
   return (
@@ -45,7 +49,7 @@ function Szenen({ szenen }: { szenen: EinblickSzenen }) {
       <ul className="grid gap-6 sm:grid-cols-2">
         {szenen.bilder.map((bild) => (
           <li key={bild.art}>
-            <figure className="m-0 flex flex-col gap-2" data-zeichnung={`buero-${bild.art}`}>
+            <figure className="m-0 flex flex-col gap-4" data-zeichnung={`buero-${bild.art}`}>
               <BueroBild szene={BUERO_SZENEN[bild.art]} woerter={bild.beschriftungen}>
                 <Image
                   src={bueroSzenePfad(bild.art)}
@@ -57,7 +61,10 @@ function Szenen({ szenen }: { szenen: EinblickSzenen }) {
                   className="block h-auto w-full"
                 />
               </BueroBild>
-              <figcaption className="text-etikett text-ink-muted">{bild.titel}</figcaption>
+              <figcaption className="flex items-center gap-2 text-body font-bold text-brand">
+                <Icon name={bild.icon} size="md" className="shrink-0" />
+                {bild.titel}
+              </figcaption>
             </figure>
           </li>
         ))}

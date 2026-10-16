@@ -7,6 +7,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { FRONT_BUDGET, FRONT_CSS, modulBytes } from '@/scripts/qa/check-css-chunks.mjs';
 import { CURSOR_DATEI, WAERME_ROLLEN_ERLAUBT } from '@/scripts/qa/check-design-tokens.mjs';
 import { DAUER_MS, DIFFUSION_STUETZ, KLICK_ENDE_MS, MOTION_REGISTER, TAKT_MS, WECHSEL } from '@/lib/motion/register';
+import { FRONT_START, FRONT_VORLAUF_TAKTE } from '@/lib/motion/seitenwechsel';
 import { diffusionsFehler, keyframesIn } from '@/lib/motion/__tests__/keyframes';
 import { Waermefront } from '../Waermefront';
 
@@ -86,11 +87,16 @@ describe('Waermefront: die neue Seite steht oben (Prüfrunde 1 A1-2, C1-5)', () 
 });
 
 describe('Waermefront: CSS (E-031, K-009)', () => {
-  it('Wachstum nur nach √t: w skaliert 0 → 1 genau auf DIFFUSION_STUETZ, linear; s nur opacity (Verblassen der Klick-Wärme)', () => {
+  it('Wachstum nur nach √t: w skaliert FRONT_START → 1 genau auf DIFFUSION_STUETZ, linear; s nur opacity (Verblassen der Klick-Wärme)', () => {
     expect(diffusionsFehler(css)).toEqual([]);
     const k = Object.fromEntries(keyframesIn(css).map((x) => [x.name, x]));
     expect(Object.keys(k).sort()).toEqual(['s', 'w']);
-    expect(k.w.stopps.map((s) => [s.anteil / 100, Number(s.deklarationen.get('scale'))])).toEqual(DIFFUSION_STUETZ.map(([t, f]) => [t, f]));
+    // Prüfrunde 4 A4-3, C4-1: nicht von Maßstab 0 (eine Scheibe ohne Fläche hat nichts vorzurastern), ein paar Prozent
+    expect(FRONT_START).toBeGreaterThan(0);
+    const rund = (x: number) => Math.round(x * 1e6) / 1e6;
+    expect(k.w.stopps.map((s) => [s.anteil / 100, Number(s.deklarationen.get('scale'))])).toEqual(
+      DIFFUSION_STUETZ.map(([t, f]) => [t, rund(FRONT_START + f * (1 - FRONT_START))]),
+    );
     expect(k.w.stopps.every((s) => [...s.deklarationen.keys()].join() === 'scale')).toBe(true);
     expect(k.s.stopps).toHaveLength(1);
     expect(Object.fromEntries(k.s.stopps[0].deklarationen)).toEqual({ opacity: '0' });
@@ -99,19 +105,39 @@ describe('Waermefront: CSS (E-031, K-009)', () => {
     expect(regel('.k').animation).toMatch(/^s /);
   });
 
-  it('Farben nur aus der Wärmerampe, kühl → heiß von der ersten zur letzten Schicht; keine Seitenfarbe (Prüfrunde 1 A1-12, B1-5)', () => {
+  it('Farben: drei warme Bänder kühl → heiß, zuletzt und innen die Seitenfarbe, nie eine einfarbige Pfirsichfläche (Prüfrunde 4 A4-2)', () => {
     expect(Object.keys(WAERME_ROLLEN_ERLAUBT)).toContain(FRONT_CSS);
-    expect(css).not.toMatch(/#[0-9a-f]{3,8}\b|gradient|color-mix|filter|shadow|blend|backdrop|rgba?\(|hsla?\(|oklch|will-change|infinite|--surface/i);
+    expect(css).not.toMatch(/#[0-9a-f]{3,8}\b|gradient|color-mix|filter|shadow|blend|backdrop|rgba?\(|hsla?\(|oklch|infinite/i);
     expect(regel('.e')['--c']).toBe('var(--waerme-1)');
     expect(regel('.e > * + *')['--c']).toBe('var(--waerme-2)');
     expect(regel('.e > * + * + *')['--c']).toBe('var(--waerme-3)');
-    // Die heißeste ist die letzte Schicht der Front: Sie startet zuletzt, liegt oben und damit immer innen; alle wachsen
-    // auf denselben Durchmesser (--s, bis zur fernsten Ecke), am Ende deckt die heißeste das Fenster (kein kalter Kern)
-    expect(regel('.e > * + * + * + *')['--c']).toBe('var(--waerme-4)');
+    // Die letzte Schicht der Front startet zuletzt, liegt oben und damit immer innen; alle wachsen auf denselben
+    // Durchmesser (--s, bis zur fernsten Ecke). Am Ende deckt sie das Fenster in der Farbe der Seite, nicht in Pfirsich;
+    // sie blendet nie aus (opacity fest 1), die warmen Bänder darunter schon (--o)
+    expect(regel('.e > * + * + * + *')).toEqual({ '--n': '1.5', '--c': 'var(--surface)', opacity: '1' });
+    expect([...css.matchAll(/--surface/g)]).toHaveLength(1);
+    expect(css).not.toMatch(/--waerme-4/);
+    expect(regel('.e > *').opacity).toBe('var(--o, 1)');
     expect(regel('.e > *').background).toBe('var(--f, var(--c))');
     expect(regel('.e > *').border).toBe('var(--m-leitung) solid var(--c)');
     const farben = [...css.matchAll(/(?:background|--c|--f)\s*:\s*([^;]+);/g)].map((m) => m[1].trim());
-    for (const f of farben) expect(f).toMatch(/^(?:none|var\(--f, var\(--c\)\)|var\(--waerme-[1-4]\))$/);
+    for (const f of farben) expect(f).toMatch(/^(?:none|var\(--f, var\(--c\)\)|var\(--waerme-[1-3]\)|var\(--surface\))$/);
+    // Die Insel blendet die warmen Bänder erst aus, wenn die Seitenfarbe das Fenster deckt
+    const quelle = lies(EINGANG);
+    expect(quelle).toMatch(/else if \(event\.target === front\.lastElementChild\) \{\s*voll = true;\s*front\.style\.cssText \+= ';--o:0';/);
+    expect(quelle.match(/cssText \+= ';--o:/g)).toHaveLength(1);
+  });
+
+  it('Ebenen vor dem Wachsen (Prüfrunde 4 A4-3, C4-1): will-change: transform je Schicht, Vorlauf ½ Takt in jeder Verzögerung der Front', () => {
+    expect(regel('.e > *')['will-change']).toBe('transform');
+    expect([...css.matchAll(/will-change/g)]).toHaveLength(1);
+    expect(regel('.e > *').animation).toBe('w var(--d, var(--d-2)) linear calc(var(--takt) * (var(--n, 0) + var(--v, .5))) both');
+    expect(Number('.5')).toBe(FRONT_VORLAUF_TAKTE);
+    expect(FRONT_VORLAUF_TAKTE * TAKT_MS).toBe(WECHSEL.vorlaufMs);
+    // ≥ 2 Bilder bei 60 Hz stehen die Schichten klein als Ebenen, bevor sie wachsen; die Klick-Wärme hat keinen Vorlauf
+    expect(WECHSEL.vorlaufMs).toBeGreaterThanOrEqual(2 * (1000 / 60));
+    expect(regel('.k')['--v']).toBe('0');
+    expect(regel('.e')['--v']).toBeUndefined();
   });
 
   it('Klick-Wärme je Ton der Fläche (Prüfrunde 3 A3-1): In ihrer Überlagerung stehen die Stufen 1–3 für --klick-1…3, die Insel setzt den Ton der getroffenen Fläche', () => {
@@ -155,52 +181,62 @@ describe('Waermefront: CSS (E-031, K-009)', () => {
     expect(durchmesser).toEqual([64, 48, 32]);
   });
 
-  it('Zeitplan wie im Register: je Schicht ½ Takt versetzt; Front d-2, Klick d-3 bis 480 ms; Aufdecken d-2 mit k-aus', () => {
+  it('Zeitplan wie im Register: je Schicht ½ Takt versetzt, die Front nach dem Vorlauf; Front d-2, Klick d-3 und d-2 bis 480 ms; Aufdecken d-2 mit k-aus', () => {
     const schicht = regel('.e > *');
     // Füllung both (Prüfrunde 2 C2-4): Die Schicht hält nach dem Ende den Endwert, das Bandende malt die Seite nicht neu
-    expect(schicht.animation).toBe('w var(--d) linear calc(var(--takt) * var(--n, 0)) both');
+    expect(schicht.animation).toMatch(/ both$/);
     const n = [0, Number(regel('.e > * + *')['--n']), Number(regel('.e > * + * + *')['--n']), Number(regel('.e > * + * + * + *')['--n'])];
     const front = MOTION_REGISTER.seitenwechsel;
     const klick = MOTION_REGISTER['klick-waerme'];
-    expect(n).toEqual(front.verzoegerungTakte);
-    expect(n.slice(0, 3)).toEqual(klick.verzoegerungTakte);
-    expect(regel('.e')['--d']).toBe(`var(--${front.dauer[0]})`);
+    expect(n.map((x) => x + FRONT_VORLAUF_TAKTE)).toEqual(front.verzoegerungTakte);
+    expect(n.slice(0, 3).map((x) => x + Number(regel('.k')['--v']))).toEqual(klick.verzoegerungTakte);
+    // Dauerstufen genau wie im Register (Prüfrunde 4 C4-3): Front d-2 (Grundwert in der Kurzform), Klick d-3 wachsen und
+    // d-2 verblassen; keine weitere Dauer in der Datei
+    expect(front.dauer).toEqual(['d-2']);
+    expect(schicht.animation).toMatch(new RegExp(`^w var\\(--d, var\\(--${front.dauer[0]}\\)\\) `));
+    expect(regel('.e')['--d']).toBeUndefined();
+    expect(klick.dauer).toEqual(['d-3', 'd-2']);
     expect(regel('.k')['--d']).toBe(`var(--${klick.dauer[0]})`);
+    expect(regel('.k').animation).toBe(`s var(--${klick.dauer[1]}) linear var(--${klick.dauer[1]}) both`);
+    expect([...new Set([...css.matchAll(/--d-(\d)/g)].map((m) => `d-${m[1]}`))].sort()).toEqual(['d-2', 'd-3']);
     // Klick-Wärme: Ringe bis --a-8 (64 px); verblassen in der zweiten Hälfte, Ende = KLICK_ENDE_MS
     expect(lies('app/styles/theme.css')).toMatch(/--a-8: 4rem;/);
-    expect(regel('.k').animation).toBe('s var(--d-2) linear var(--d-2) both');
     expect(2 * DAUER_MS['d-2']).toBe(KLICK_ENDE_MS);
     expect(Math.max(...klick.verzoegerungTakte) * TAKT_MS + DAUER_MS['d-3']).toBe(KLICK_ENDE_MS);
-    // Aufdecken (Prüfrunde 3 A3-2): Die Front steigt als Ganzes aus dem Bild, d-2 mit k-aus, nur per transform; keine
-    // Deckkraft (keine Mischfarbe), die Überlagerung selbst bewegt sich nicht (sonst eine gerade Kante an ihrem Rand)
-    expect(regel('.e[data-auf] > *')).toEqual({ translate: '-50% calc(-50% - var(--h))' });
+    // Aufdecken (Prüfrunde 3 A3-2): Die Front steigt als Ganzes um --h aus dem Bild, sobald die Insel --u: 1 setzt; d-2
+    // mit k-aus, nur per transform; keine Deckkraft auf der letzten Schicht (keine Mischfarbe), die Überlagerung selbst
+    // bewegt sich nicht (sonst eine gerade Kante an ihrem Rand)
+    expect(schicht.translate).toBe('-50% calc(-50% - var(--h, 0px) * var(--u, 0))');
     expect(schicht.transition).toBe('translate var(--d-2) var(--k-aus)');
     expect(() => regel('.e[data-auf]')).toThrow();
-    expect(css).not.toMatch(/\[data-auf\][^{]*\{[^}]*opacity/);
+    expect(() => regel('.e[data-auf] > *')).toThrow();
+    expect(regel('.e').translate).toBeUndefined();
+    expect(lies(EINGANG)).toContain("front.style.cssText += ';--u:1';");
     expect(DAUER_MS['d-2']).toBe(WECHSEL.aufdeckenMs);
     expect(front.kurve).toEqual(['linear', 'k-aus']);
   });
 
-  it('die Überlagerung ist still: keine Zeigerereignisse, contain: strict, beschnitten, ohne Rahmen und Fläche des Popovers', () => {
-    expect(regel('.e')).toMatchObject({
+  it('die Überlagerung ist still: keine Zeigerereignisse, contain: strict (beschnitten durch die Malbegrenzung), ohne Rahmen und Fläche des Popovers', () => {
+    // contain: strict schließt paint ein: Der Inhalt ist auf die Überlagerung beschnitten wie mit overflow: hidden
+    expect(regel('.e')).toEqual({
+      '--c': 'var(--waerme-1)',
       width: 'auto',
       height: 'auto',
       border: '0',
       background: 'none',
-      overflow: 'hidden',
       'pointer-events': 'none',
       contain: 'strict',
     });
     expect(regel('.e > *')).toMatchObject({
       position: 'absolute',
       'aspect-ratio': '1',
-      translate: '-50% -50%',
+      translate: '-50% calc(-50% - var(--h, 0px) * var(--u, 0))',
       transform: 'scale(var(--m, 1))',
       'border-radius': 'var(--radius-voll)',
     });
     // Selektoren: nur die beiden Klassen, ihre Schichten und [data-auf]
     const selektoren = [...css.matchAll(/(?:^|\})\s*([^{}@]+?)\s*\{/g)].map((m) => m[1].trim()).filter((s) => s.startsWith('.'));
-    expect(selektoren).toEqual(['.e', '.k', '.e > *', '.e > * + *', '.e > * + * + *', '.e > * + * + * + *', '.e[data-auf] > *']);
+    expect(selektoren).toEqual(['.e', '.k', '.e > *', '.e > * + *', '.e > * + * + *', '.e > * + * + * + *']);
   });
 
   it(`Budget: ≤ ${FRONT_BUDGET} B im globalen Chunk, gemessen wie check-css-chunks (verkleinert, Klassen mit Präfix)`, async () => {
@@ -251,6 +287,8 @@ describe('Waermefront: Insel ≤ 2 KB gzip (K-013)', () => {
       'showPopover',
       ':popover-open',
       'animationend',
+      'transitionend',
+      'takeRecords',
       'pageshow',
       'popstate',
       'prefetch',

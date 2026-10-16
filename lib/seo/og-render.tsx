@@ -6,6 +6,7 @@ import { ImageResponse } from 'next/og';
 import { COMPANY } from '@/lib/content/company';
 import { TOKENS } from '@/lib/tokens';
 import { r1, type Medium } from '@/lib/zeichnung/norm';
+import { BUERO_LEITSTELLE_ZIELE, type BueroZielId } from '@/lib/themen/text';
 import { LEITSTELLE } from '@/lib/zeichnung/buero/leitstelle';
 import type { Art } from '@/lib/zeichnung/buero/szene';
 import {
@@ -237,11 +238,52 @@ function Haus({ knopf }: { knopf: boolean }) {
 const BUERO_S = (PANEL_W - 40) / LEITSTELLE.rahmen.breite;
 const BUERO_TOP = H - LEITSTELLE.rahmen.hoehe * BUERO_S - 28;
 
+/** Schriftgrad der Wörter an der Leitstelle: auf der Seite 4cqi des Rahmens, höchstens 15 px (zeichnung.module.css .bildText). */
+const BUERO_WORT = 15;
+
+/**
+ * Ein Wort an der Leitstelle im Bild: Text in Versalien in einem Feld der Breite BUERO_WORT_FELD, links- (Anker start)
+ * oder rechtsbündig (Anker end) an der Lage der Beschriftung, senkrecht mittig auf y. Satori setzt `right` nicht, darum
+ * steht ein rechtsbündiges Wort am rechten Rand seines Felds.
+ */
+export interface OgBueroWort {
+  id: BueroZielId;
+  text: string;
+  /** Linke Kante des Felds, px. */
+  left: number;
+  /** Ausrichtung im Feld: Anker start → flex-start, end → flex-end. */
+  justify: 'flex-start' | 'flex-end';
+  /** Oberkante der Zeile, px. */
+  top: number;
+}
+
+/** Breite des Felds je Wort (px): das längste Wort, „GROSSHANDEL UND LAGER“, braucht rund 230 px. */
+export const BUERO_WORT_FELD = 260;
+
+/**
+ * Die Wörter an den vier Zielen der Leitstelle (Prüfrunde 4 D4-2) an denselben Lagen wie auf der Seite
+ * (LEITSTELLE.beschriftungen, components/jobs/stelle/BueroBild.tsx): Ein Teilen-Bild wird ohne die Seite gesehen, ohne
+ * Wörter läse sich die Glyphe „servicefahrzeug“ der Monteure als Fahrzeug-Zusage für das Büro.
+ */
+export function ogBueroWoerter(): OgBueroWort[] {
+  const links = PANEL_X + 20;
+  return LEITSTELLE.beschriftungen.map((b) => {
+    if (!(b.id in BUERO_LEITSTELLE_ZIELE)) throw new Error(`og-render: kein Wort für das Ziel ${b.id}`);
+    const id = b.id as BueroZielId;
+    const x = Math.round(links + b.x * BUERO_S);
+    const top = Math.round(BUERO_TOP + b.y * BUERO_S - BUERO_WORT / 2);
+    if (b.anker === 'middle') throw new Error('og-render: Wörter der Leitstelle stehen links- oder rechtsbündig');
+    const ende = b.anker === 'end';
+    return { id, text: versal(BUERO_LEITSTELLE_ZIELE[id]), left: ende ? x - BUERO_WORT_FELD : x, justify: ende ? 'flex-end' : 'flex-start', top };
+  });
+}
+
 /**
  * Büro-Zweig des Navy-Panels (Stelle Bürofachkraft, Seite „Büro und Verwaltung“): die Leitstelle aus
  * lib/zeichnung/buero/leitstelle.ts, der Schreibtisch von oben mit den Bezugslinien, in den Linienarten der Zeichnung
- * (Kontur 2 px mit runden Ecken, feine und Maßlinien 1 px, alle stumpf). Ohne Wörter (die stehen auf der Seite), ohne
- * Leitung zum Knopf: Im Büro fließt nichts.
+ * (Kontur 2 px mit runden Ecken, feine und Maßlinien 1 px, alle stumpf), mit den Wörtern an den Zielen wie auf der
+ * Seite (ogBueroWoerter, Schrift wie der Name des Kennwerts: Martian in Versalien, Creme auf Navy). Ohne Leitung zum
+ * Knopf: Im Büro fließt nichts.
  */
 function Leitstelle() {
   /** Strich in Einheiten der Gruppe, damit er im Bild `px` misst (Glyphen sind zusätzlich skaliert). */
@@ -252,24 +294,48 @@ function Leitstelle() {
     return { ...kontur, strokeWidth: strich(2, massstab), fill: art === 'konturOffen' ? 'none' : NAVY.flaeche };
   };
   return (
-    <svg
-      width={PANEL_W - 40}
-      height={LEITSTELLE.rahmen.hoehe * BUERO_S}
-      viewBox={`0 0 ${LEITSTELLE.rahmen.breite} ${LEITSTELLE.rahmen.hoehe}`}
-      style={{ position: 'absolute', left: PANEL_X + 20, top: BUERO_TOP }}
-    >
-      {LEITSTELLE.gruppen.map((g) => {
-        const massstab = g.lage?.s ?? 1;
-        const pfade = g.teile.map((t) => <path key={t.d} d={t.d} {...stilVon(t.art, massstab)} />);
-        return g.lage ? (
-          <g key={g.id} transform={`translate(${g.lage.x} ${g.lage.y}) scale(${g.lage.s})`}>
-            {pfade}
-          </g>
-        ) : (
-          <g key={g.id}>{pfade}</g>
-        );
-      })}
-    </svg>
+    <>
+      <svg
+        width={PANEL_W - 40}
+        height={LEITSTELLE.rahmen.hoehe * BUERO_S}
+        viewBox={`0 0 ${LEITSTELLE.rahmen.breite} ${LEITSTELLE.rahmen.hoehe}`}
+        style={{ position: 'absolute', left: PANEL_X + 20, top: BUERO_TOP }}
+      >
+        {LEITSTELLE.gruppen.map((g) => {
+          const massstab = g.lage?.s ?? 1;
+          const pfade = g.teile.map((t) => <path key={t.d} d={t.d} {...stilVon(t.art, massstab)} />);
+          return g.lage ? (
+            <g key={g.id} transform={`translate(${g.lage.x} ${g.lage.y}) scale(${g.lage.s})`}>
+              {pfade}
+            </g>
+          ) : (
+            <g key={g.id}>{pfade}</g>
+          );
+        })}
+      </svg>
+      {ogBueroWoerter().map(({ id, text, left, top, justify }) => (
+        <div
+          key={id}
+          style={{
+            position: 'absolute',
+            left,
+            top,
+            width: BUERO_WORT_FELD,
+            display: 'flex',
+            justifyContent: justify,
+            fontFamily: 'Martian',
+            fontWeight: 600,
+            fontSize: BUERO_WORT,
+            lineHeight: 1,
+            letterSpacing: 1,
+            whiteSpace: 'nowrap',
+            color: C.creme2,
+          }}
+        >
+          {text}
+        </div>
+      ))}
+    </>
   );
 }
 

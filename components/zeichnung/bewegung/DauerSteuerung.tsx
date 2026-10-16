@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } fro
 import { BEDIEN_GLYPHEN } from '@/components/icons/bedien';
 import { dauerWert, knopfText } from '@/lib/motion/dauer';
 import { prefersReducedMotion, subscribe } from '@/lib/motion/prefers';
-import { beobachteSicht, beobachteTab } from '@/lib/motion/sicht';
+import { beobachteSicht, beobachteTab, nachAuftakt } from '@/lib/motion/sicht';
 import styles from './dauer.module.css';
 
 // Ein Druck hält alle Schleifen der Seite an: ein Zustand für alle Bereiche, nur im Speicher der Seite
@@ -20,7 +20,6 @@ const umschalten = () => {
   angehalten = !angehalten;
   hoerer.forEach((f) => f());
 };
-const leer = () => () => {};
 
 export interface DauerSteuerungProps {
   /** Die bewegte Zeichnung (Server-Komponente, kommt fertig gerendert). */
@@ -36,10 +35,14 @@ export interface DauerSteuerungProps {
  * „aus“, also das Standbild. Der Knopf (44 × 44 px) heißt „Anhalten“ bzw. „Abspielen“ und gilt für alle Schleifen der
  * Seite (WCAG 2.2.2), ohne Speicher im Browser. Bis zur Hydration hält er unsichtbar seinen Platz; ohne Skript und bei
  * reduzierter Bewegung blendet dauer.module.css ihn aus.
+ *
+ * Beim ersten Laden wartet die Steuerung nach der Hydration, bis der Auftakt der Seite vorbei ist (`nachAuftakt`,
+ * lib/motion/sicht.ts; E-031 Prüfrunde 4 C4-2): Erst dann wird der Knopf sichtbar und die Schleife darf starten. Sonst
+ * malte Chromium mitten in der Wärme des Heros die ganze Seite neu.
  */
 export function DauerSteuerung({ children, beschriftung, className }: DauerSteuerungProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const skript = useSyncExternalStore(leer, () => true, () => false);
+  const [skript, setSkript] = useState(false);
   const halt = useSyncExternalStore(abo, () => angehalten, () => false);
   const [sichtbar, setSichtbar] = useState(false);
   const [tab, setTab] = useState(false);
@@ -49,7 +52,7 @@ export function DauerSteuerung({ children, beschriftung, className }: DauerSteue
     const el = ref.current;
     if (!el) return;
     setReduziert(prefersReducedMotion());
-    const ab = [beobachteSicht(el, setSichtbar), beobachteTab(setTab), subscribe('reduzierteBewegung', setReduziert)];
+    const ab = [nachAuftakt(() => setSkript(true)), beobachteSicht(el, setSichtbar), beobachteTab(setTab), subscribe('reduzierteBewegung', setReduziert)];
     return () => ab.forEach((f) => f());
   }, []);
 

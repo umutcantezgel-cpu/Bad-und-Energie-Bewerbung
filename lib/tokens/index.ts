@@ -80,6 +80,15 @@ export const TOKENS = {
     hell: ['#F3EBDD', '#F3DFCC', '#F3D2BC', '#F3C7AB', '#F2BB9C'],
     dunkel: ['#3F1927', '#481E29', '#54252B', '#642F2D', '#6E3226'],
   },
+  /**
+   * Markierfläche der Büro-Szenen (Prüfrunde 4 A4-6): eigene Rolle (CSS --markierung) auf dem Primitivwert der Stufe 2,
+   * hell (auch im Band und im Druck) und dunkel; für die Szenen-Dateien, die keine Rollen erben (lib/zeichnung/buero/
+   * svg.ts). Keine Stufe der Wärmerampe: Die Rampe bedeutet nur Temperatur (KERN K-006).
+   */
+  markierung: {
+    hell: '#F3D2BC',
+    dunkel: '#54252B',
+  },
   zIndex: {
     header: 30,
     sticky: 30,

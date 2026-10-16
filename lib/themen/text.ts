@@ -856,7 +856,12 @@ export function getFahrzeugPageText(options: TextOptions): FahrzeugPageText {
           ),
     }),
     etikett: 'Fahrzeug · Werkzeug · Digital',
-    unterzeile: [`${einschraenkung ? jeNachStelleSatz(hilti.short) : hilti.short}.`, ...(fahrzeugText ? [fahrzeugText] : [])],
+    // Eine Einschränkung für beide Positionen, im Wortlaut der Karte im Hub (Prüfrunde 4 D4-3): nicht „Je nach Stelle:
+    // Hilti …“ und danach noch einmal „Servicefahrzeug … je nach Stelle.“
+    unterzeile:
+      einschraenkung && fahrzeugText
+        ? [jeNachStelleSatz(`${hilti.short} und ${FACTS.vehicle.short}.`)]
+        : [`${einschraenkung ? jeNachStelleSatz(hilti.short) : hilti.short}.`, ...(fahrzeugText ? [fahrzeugText] : [])],
     // Der Hilti-Satz steht in der Stückliste (Position 02), nicht noch einmal wortgleich im Kopf (Kritik 2, P3). Der
     // erste Tag ist Schritt 3 der Fachkräfte: auf der Sammelfläche mit „Für Fachkräfte“ wie im Ablauf (sammelAblauf),
     // nur, wenn die Stückliste ihn für jede Fachkraft-Stelle trägt (Prüfrunde 3 D3-2)
@@ -1279,6 +1284,11 @@ export const BUERO_LEITSTELLE_ZIELE: Readonly<Record<BueroZielId, string>> = Obj
 /** Titel der vier Szenen (Beschriftungen), auch für die stillen Dateien im Einblick der Stellenseite. */
 export const BUERO_SZENEN_TITEL: Readonly<Record<BueroSzenenArt, string>> = Object.freeze(
   Object.fromEntries(SZENEN.map((szene) => [szene.id, szene.titel])) as Record<BueroSzenenArt, string>,
+);
+
+/** Glyphe je Szene wie an ihrer Überschrift auf der Themenseite, auch an der Bildunterschrift im Einblick (Prüfrunde 4 A4-4). */
+export const BUERO_SZENEN_ICON: Readonly<Record<BueroSzenenArt, KastenIcon>> = Object.freeze(
+  Object.fromEntries(SZENEN.map((szene) => [szene.id, szene.icon])) as Record<BueroSzenenArt, KastenIcon>,
 );
 
 /** Die Wörter „moderneres Büro, größeres Lager“ aus REGION.milestone (Unterzeile ohne live Bürostelle). */

@@ -6,13 +6,13 @@ import { MOTION_IDS } from '../../../lib/motion/register';
 import {
   BUERO_DATEI,
   BUERO_MARKE,
-  BUERO_STUFE,
   CURSOR_DATEI,
   DAUER_CSS,
   ENDLOS_ERLAUBT,
   RADIUS_AUSNAHMEN,
   WAERME_ROLLEN_ERLAUBT,
   KLICK_ROLLEN_ERLAUBT,
+  MARKIERUNG,
   bueroBlockAb,
   checkCursor,
   checkEndlos,
@@ -192,7 +192,7 @@ function quellen(): string[] {
 describe('check-design-tokens: waerme-rollen (E-031, K-006)', () => {
   const regel = (source: string, file: string) => checkWaermeRollen(source, file).map((f: { line: number; token: string; rule: { id: string } }) => `${f.line}:${f.token}:${f.rule.id}`);
 
-  it('erlaubt die Wärmerampe nur in theme.css, waerme.module.css, waermefront.module.css und im Büro-Block, jede mit Grund', () => {
+  it('erlaubt die Wärmerampe nur in theme.css, waerme.module.css und waermefront.module.css, jede mit Grund', () => {
     expect(Object.keys(WAERME_ROLLEN_ERLAUBT).sort()).toEqual(
       ['app/styles/theme.css', 'components/zeichnung/waerme/waerme.module.css', 'components/site/waermefront/waermefront.module.css'].sort(),
     );
@@ -211,23 +211,30 @@ describe('check-design-tokens: waerme-rollen (E-031, K-006)', () => {
     expect(regel('.a { --waerme-10: 1; --p-waerme-0: 2; }', 'components/x.module.css')).toEqual([]);
   });
 
-  it('im Büro-Block von themen.module.css erlaubt, davor nicht', () => {
-    const quelle = `.kasten { fill: var(--waerme-1); }\n${BUERO_MARKE}: Leitstelle ═══ */\n.bueroPlan { fill: var(--waerme-2); }\n`;
+  it('die Markierfläche --markierung nur im Büro-Block von themen.module.css und in theme.css, davor und anderswo nicht (Prüfrunde 4 A4-6)', () => {
+    expect(MARKIERUNG).toBe('--markierung');
+    const quelle = `.kasten { fill: var(--markierung); }\n${BUERO_MARKE}: Leitstelle ═══ */\n.bueroPlan { fill: var(--markierung); }\n`;
     expect(bueroBlockAb(quelle)).toBe(2);
-    expect(regel(quelle, BUERO_DATEI)).toEqual(['1:--waerme-1:waerme-rollen']);
-    // Ohne Marke kein Block; dieselbe Marke in einer anderen Datei hilft nicht
+    expect(regel(quelle, BUERO_DATEI)).toEqual(['1:--markierung:waerme-rollen']);
+    // Ohne Marke kein Block; dieselbe Marke in einer anderen Datei hilft nicht, auch nicht in den Stylesheets der Wärme
     expect(regel(quelle.replace(BUERO_MARKE, '/* ═══ Büro'), BUERO_DATEI)).toHaveLength(2);
     expect(regel(quelle, 'components/jobs/x.module.css')).toHaveLength(2);
+    expect(regel(quelle, 'components/site/waermefront/waermefront.module.css')).toHaveLength(2);
+    expect(regel(quelle, 'components/zeichnung/waerme/waerme.module.css')).toHaveLength(2);
+    expect(regel("<g style={{ fill: 'var(--markierung)' }} /> // design-allow: Test", 'components/x.tsx')).toEqual(['1:--markierung:waerme-rollen']);
+    expect(regel('.a { fill: var(--markierung); }', 'app/styles/theme.css')).toEqual([]);
+    // Andere Namen zählen nicht
+    expect(regel('.a { --markierungen: 1; --p-markierung: 2; }', 'components/x.module.css')).toEqual([]);
     expect(bueroBlockAb('.a {}')).toBe(Infinity);
   });
 
-  it('im Büro-Block nur die eine Markierfläche --waerme-2, keine Stufenfolge (Prüfrunde 2 A2-9)', () => {
-    expect(BUERO_STUFE).toBe('--waerme-2');
+  it('im Büro-Block keine Stufe der Wärmerampe, auch nicht Stufe 2: Pfirsich heißt dort nicht „warm“ (Prüfrunde 4 A4-6, vorher Prüfrunde 2 A2-9)', () => {
     const block = (stufen: number[]) => `${BUERO_MARKE}: Szenen ═══ */\n${stufen.map((n) => `.bueroW${n} { fill: var(--waerme-${n}); }`).join('\n')}\n`;
-    expect(regel(block([2]), BUERO_DATEI)).toEqual([]);
+    expect(regel(block([2]), BUERO_DATEI)).toEqual(['2:--waerme-2:waerme-rollen']);
     // So stand es vor Prüfrunde 2: drei Stufen ohne Bedeutung
-    expect(regel(block([1, 2, 3]), BUERO_DATEI)).toEqual(['2:--waerme-1:waerme-rollen', '4:--waerme-3:waerme-rollen']);
+    expect(regel(block([1, 2, 3]), BUERO_DATEI)).toEqual(['2:--waerme-1:waerme-rollen', '3:--waerme-2:waerme-rollen', '4:--waerme-3:waerme-rollen']);
     expect(regel(block([0, 4]), BUERO_DATEI)).toEqual(['2:--waerme-0:waerme-rollen', '3:--waerme-4:waerme-rollen']);
+    expect(regel(`${BUERO_MARKE}: Szenen ═══ */\n.bueroMarkiert { fill: var(--markierung); }\n`, BUERO_DATEI)).toEqual([]);
   });
 
   it('die Ringe der Klick-Wärme (--klick-1…3) nur in theme.css und waermefront.module.css, auch nicht im Wärmefeld oder Büro-Block (Prüfrunde 3 A3-1)', () => {
@@ -245,6 +252,11 @@ describe('check-design-tokens: waerme-rollen (E-031, K-006)', () => {
     expect(dateien.length).toBeGreaterThan(300);
     for (const datei of dateien) expect(checkWaermeRollen(readFileSync(path.join(ROOT, datei), 'utf8'), datei), datei).toEqual([]);
     expect(readFileSync(path.join(ROOT, 'app/styles/theme.css'), 'utf8')).toMatch(/--waerme-4: var\(--p-waerme-4\);/);
+    // Der Büro-Block nutzt die eigene Rolle und keine Stufe der Rampe (Prüfrunde 4 A4-6)
+    const themen = readFileSync(path.join(ROOT, BUERO_DATEI), 'utf8');
+    const buero = themen.slice(themen.indexOf(BUERO_MARKE)).replace(/\/\*[\s\S]*?\*\//g, '');
+    expect(buero).toMatch(/fill: var\(--markierung\);/);
+    expect(buero).not.toMatch(/--waerme-/);
   });
 });
 

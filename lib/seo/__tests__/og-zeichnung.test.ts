@@ -20,7 +20,11 @@ import { getThemaPageText } from '@/lib/themen/text';
  * (Datum der Änderung) und OG_ZEICHNUNG_STAND (lib/seo/og-image.ts) darauf setzen; ein alter Stand mit neuem
  * Fingerabdruck geht nicht durch.
  */
-const HISTORIE: readonly { stand: string; fingerabdruck: string }[] = [{ stand: '2026-10-15', fingerabdruck: '0ccbf9ab56f7b4e6' }];
+const HISTORIE: readonly { stand: string; fingerabdruck: string }[] = [
+  { stand: '2026-10-15', fingerabdruck: '0ccbf9ab56f7b4e6' },
+  // Prüfrunde 4 D4-2: die Leitstelle der Büro-Bilder mit den Wörtern an den Zielen
+  { stand: '2026-10-16', fingerabdruck: 'fd1e6346f0c42baa' },
+];
 
 const ROOT = path.resolve(__dirname, '../../..');
 const quelle = (rel: string) => readFileSync(path.join(ROOT, rel), 'utf8');

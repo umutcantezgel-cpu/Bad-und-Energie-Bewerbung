@@ -9,9 +9,10 @@
  * - Rule `endlos` (E-029): endless loops only in ENDLOS_ERLAUBT, each with its reason; in
  *   components/zeichnung/bewegung/dauer.module.css only under [data-dauer="an"] and
  *   prefers-reduced-motion: no-preference.
- * - Rule `waerme-rollen` (E-031): the warmth ramp --waerme-0…4 only in WAERME_ROLLEN_ERLAUBT and in the Büro block
- *   appended to components/themen/themen.module.css (from BUERO_MARKE to the end of the file); the click rings
- *   --klick-1…3 only in KLICK_ROLLEN_ERLAUBT.
+ * - Rule `waerme-rollen` (E-031): the warmth ramp --waerme-0…4 only in WAERME_ROLLEN_ERLAUBT (temperature only:
+ *   bands of the warmth field, click warmth, warmth front); the click rings --klick-1…3 only in KLICK_ROLLEN_ERLAUBT;
+ *   the marker surface --markierung only in app/styles/theme.css and the Büro block appended to
+ *   components/themen/themen.module.css (from BUERO_MARKE to the end of the file), which names no step of the ramp.
  * - Rule `cursor` (E-031): image cursors (url(), image-set(), files under /cursor/) only in app/globals.css.
  * - Rule `radius` (E-031, Prüfrunde 1 A1-15): border-*-radius in stylesheets only on the four steps of the scale.
  * - Reports off-scale spacing and numeric durations as notes (not blocking yet; R3–R5 move the
@@ -262,8 +263,9 @@ export function checkEndlos(source, file) {
 
 /**
  * Files that may name the warmth ramp (--waerme-0…4), each with its reason (rule `waerme-rollen`). Everything else
- * fails, comments excepted; a design-allow comment does not lift this rule. The Büro block may name only BUERO_STUFE,
- * its one marker surface (Prüfrunde 2 A2-9: three steps there meant nothing and diluted the temperature code).
+ * fails, comments excepted; a design-allow comment does not lift this rule. The ramp means temperature only (KERN
+ * K-006): the Büro block names none of its steps, its one marker surface is the role MARKIERUNG (Prüfrunde 4 A4-6;
+ * before that it named --waerme-2, Prüfrunde 2 A2-9).
  */
 export const WAERME_ROLLEN_ERLAUBT = Object.freeze({
   [THEME_FILE]: 'Primitive und Rollen der Wärmerampe (hell, dunkel, Inverse-Band, Wärmebereich, Druck)',
@@ -279,8 +281,11 @@ export const BUERO_DATEI = 'components/themen/themen.module.css';
  */
 export const BUERO_MARKE = '/* ═══ Büro-Block (E-031)';
 
-/** The one step of the ramp the Büro block may name: its marker surface (Prüfrunde 2 A2-9). */
-export const BUERO_STUFE = '--waerme-2';
+/**
+ * The marker surface of the Büro scenes (Prüfrunde 4 A4-6): its own role on the primitive of ramp step 2 (theme.css),
+ * so the ramp stays temperature only. Allowed only in theme.css (definition) and in the Büro block.
+ */
+export const MARKIERUNG = '--markierung';
 
 /**
  * Files that may name the rings of the click warmth (--klick-1…3, E-031 Prüfrunde 3 A3-1): one sequence per tone of the
@@ -293,11 +298,12 @@ export const KLICK_ROLLEN_ERLAUBT = Object.freeze({
 
 const WAERME_RULE = {
   id: 'waerme-rollen',
-  hint: `The warmth ramp --waerme-0…4 only in ${Object.keys(WAERME_ROLLEN_ERLAUBT).join(', ')}; in the Büro block of ${BUERO_DATEI} only ${BUERO_STUFE}; the click rings --klick-1…3 only in ${Object.keys(KLICK_ROLLEN_ERLAUBT).join(', ')} (E-031).`,
+  hint: `The warmth ramp --waerme-0…4 only in ${Object.keys(WAERME_ROLLEN_ERLAUBT).join(', ')}; the click rings --klick-1…3 only in ${Object.keys(KLICK_ROLLEN_ERLAUBT).join(', ')}; the marker ${MARKIERUNG} only in ${THEME_FILE} and the Büro block of ${BUERO_DATEI} (E-031, Prüfrunde 4 A4-6).`,
 };
 
 const WAERME_ROLLE = /--waerme-[0-4](?![\w-])/g;
 const KLICK_ROLLE = /--klick-[1-3](?![\w-])/g;
+const MARKIERUNG_ROLLE = /--markierung(?![\w-])/g;
 
 /** Source without comments, positions kept (CSS: block comments; TS: block and line comments). */
 function ohneKommentare(source, file) {
@@ -316,20 +322,19 @@ export function bueroBlockAb(source) {
 export function checkWaermeRollen(source, file) {
   const waerme = !Object.prototype.hasOwnProperty.call(WAERME_ROLLEN_ERLAUBT, file);
   const klick = !Object.prototype.hasOwnProperty.call(KLICK_ROLLEN_ERLAUBT, file);
-  if (!waerme && !klick) return [];
+  const markierung = file !== THEME_FILE;
+  if (!waerme && !klick && !markierung) return [];
   const ab = file === BUERO_DATEI ? bueroBlockAb(source) : Infinity;
   const findings = [];
   ohneKommentare(source, file)
     .split('\n')
     .forEach((line, i) => {
       const imBuero = i + 1 >= ab;
-      if (waerme) {
-        for (const m of line.matchAll(WAERME_ROLLE)) {
-          if (imBuero && m[0] === BUERO_STUFE) continue;
-          findings.push({ line: i + 1, col: m.index + 1, rule: WAERME_RULE, token: m[0] });
-        }
-      }
+      if (waerme) for (const m of line.matchAll(WAERME_ROLLE)) findings.push({ line: i + 1, col: m.index + 1, rule: WAERME_RULE, token: m[0] });
       if (klick) for (const m of line.matchAll(KLICK_ROLLE)) findings.push({ line: i + 1, col: m.index + 1, rule: WAERME_RULE, token: m[0] });
+      if (markierung && !imBuero) {
+        for (const m of line.matchAll(MARKIERUNG_ROLLE)) findings.push({ line: i + 1, col: m.index + 1, rule: WAERME_RULE, token: m[0] });
+      }
     });
   return findings;
 }

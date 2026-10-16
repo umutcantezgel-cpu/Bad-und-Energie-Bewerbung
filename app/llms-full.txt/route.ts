@@ -11,6 +11,7 @@ import {
   sammelAblauf,
   type ProcessStep,
 } from '@/lib/content';
+import { gebietText } from '@/components/jobs/liste/inhalt-text';
 import { berufKategorie } from '@/lib/jobs/berufe';
 import { jobUrl, toPlainDescription } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/registry';
@@ -108,7 +109,9 @@ export function GET(): Response {
     // Fragen der Stellenseiten (Plan §C5): Bezahlung auf Anfrage, Berufsschule, Quereinstieg, Büro, Praktikum
     ...STELLEN_FAQ_ITEMS.flatMap((item) => [`### ${item.question}`, item.answer, '']),
     '## 5. Einsatzgebiet',
-    `${REGION.headline} ${REGION.summary}`,
+    // Wie auf /jobs und der Startseite (Prüfrunde 4 D4-1): mit Stelle am Firmensitz gilt der Satz nur für Baustellen
+    // und Kundendienst, dann „Das Büro ist am Firmensitz.“
+    `${REGION.headline} ${gebietText([...jobs, ...extra])}`,
     '',
     ...einsatzgebietBlocks(),
     '## 6. Arbeiten bei uns',

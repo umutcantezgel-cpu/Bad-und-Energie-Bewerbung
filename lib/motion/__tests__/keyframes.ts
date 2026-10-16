@@ -79,6 +79,25 @@ export function skaliert(k: Keyframes): boolean {
 }
 
 /**
+ * Die Abläufe einer Kurzform `animation`: an den Kommas der obersten Ebene getrennt, nicht an Kommas in Klammern
+ * (`var(--d, var(--d-2))`, `calc(…)`), sonst zerfiele ein Ablauf mit Grundwert in zwei Teile.
+ */
+export function listenteile(wert: string): string[] {
+  const teile: string[] = [];
+  let tiefe = 0;
+  let teil = '';
+  for (const c of wert) {
+    if (c === '(') tiefe += 1;
+    else if (c === ')') tiefe -= 1;
+    if (c === ',' && tiefe === 0) {
+      teile.push(teil);
+      teil = '';
+    } else teil += c;
+  }
+  return [...teile, teil];
+}
+
+/**
  * Verstöße gegen „Skalieren nur nach √t“ in einem Stylesheet: Jeder skalierende Keyframe-Ablauf steht genau auf den
  * Stellen von DIFFUSION_STUETZ, nennt an jeder einen Zahlenwert, wächst streng, folgt dem Fortschritt (Wert_i = Start +
  * Fortschritt_i × (Ende − Start)) und wird nur über die Kurzform `animation` mit `linear` benutzt. Leere Liste = in Ordnung.
@@ -114,7 +133,7 @@ export function diffusionsFehler(css: string, toleranz = 0.002): string[] {
     const name = k.name.replace(/[-]/g, '\\-');
     for (const m of quelle.matchAll(new RegExp(`animation(-name)?\\s*:\\s*([^;}]*\\b${name}\\b[^;}]*)`, 'g'))) {
       if (m[1]) fehler.push(`${k.name}: nur über die Kurzform animation mit linear benutzen`);
-      else if (!m[2].split(',').filter((teil) => new RegExp(`\\b${name}\\b`).test(teil)).every((teil) => /(?:^|\s)linear(?:\s|$)/.test(teil.trim()))) {
+      else if (!listenteile(m[2]).filter((teil) => new RegExp(`\\b${name}\\b`).test(teil)).every((teil) => /(?:^|\s)linear(?:\s|$)/.test(teil.trim()))) {
         fehler.push(`${k.name}: Kurve linear fehlt (${m[2].trim()})`);
       }
     }

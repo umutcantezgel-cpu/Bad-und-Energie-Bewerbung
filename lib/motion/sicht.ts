@@ -86,3 +86,27 @@ export function beobachteTab(melden: (sichtbar: boolean) => void, doc: TabDokume
   doc.addEventListener('visibilitychange', lesen);
   return () => doc.removeEventListener?.('visibilitychange', lesen);
 }
+
+/** Der Teil von document, den `nachAuftakt` braucht (für Tests austauschbar). */
+export interface AuftaktDokument {
+  documentElement: { classList: { contains: (klasse: string) => boolean } };
+  getAnimations?: () => Animation[];
+}
+
+/**
+ * Meldet einmal, sobald der Auftakt der Seite vorbei ist (E-031 Prüfrunde 4 C4-2). Steht die Klasse `auftakt` des
+ * Kopfskripts auf <html> (lib/motion/head-script.ts, AUFTAKT_KLASSE; hier als Text, das Modul zieht nichts nach),
+ * wartet sie auf das Ende aller endlichen Abläufe, die dann laufen, also des Heros mit seinem Nachlauf bis 1.920 ms.
+ * Nimmt das Sicherheitsnetz die Klasse vorher weg, brechen die Abläufe ab und gelten ebenso als beendet. Sonst meldet
+ * sie gleich (im nächsten Mikrotask), ohne Dokument ebenso. Grund: Beim echten Laden hydrierte die Steuerung der
+ * Dauerbewegung mitten in der Wärme des Heros, und der sichtbar werdende Knopf ließ Chromium die ganze Seite neu malen
+ * (bis 5 ms je Bild, Pixel 7, CPU 4×). Gibt die Abmeldung zurück.
+ */
+export function nachAuftakt(fertig: () => void, doc: AuftaktDokument | undefined = typeof document === 'undefined' ? undefined : document): () => void {
+  let aus = false;
+  const laeufe = doc?.documentElement.classList.contains('auftakt') ? (doc.getAnimations?.() ?? []).filter((a) => a.effect?.getTiming().iterations !== Infinity) : [];
+  void Promise.allSettled(laeufe.map((a) => a.finished)).then(() => aus || fertig());
+  return () => {
+    aus = true;
+  };
+}

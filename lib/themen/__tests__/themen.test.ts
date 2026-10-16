@@ -478,7 +478,9 @@ describe('Fahrzeug und Werkzeug (E-031): Einschränkung am Anfang, solange eine 
     expect(ohneAusstattung(JOBS, NOW).map((job) => job.category).sort()).toEqual(['buero', 'praktikum']);
     const seite = getThemaPageText('fahrzeug-und-werkzeug', { jobs: JOBS, now: NOW });
     if (seite.id !== 'fahrzeug-und-werkzeug') throw new Error('falsche Seite');
-    expect(seite.unterzeile[0]).toBe(`Je nach Stelle: ${FACTS.hilti.short}.`);
+    // Eine Einschränkung für Hilti und Fahrzeug, im Wortlaut der Karte im Hub (Prüfrunde 4 D4-3)
+    expect(seite.unterzeile).toEqual([`Je nach Stelle: ${FACTS.hilti.short} und ${FACTS.vehicle.short}.`]);
+    expect(seite.unterzeile).toEqual([themaKarte('fahrzeug-und-werkzeug', { jobs: JOBS, now: NOW }).satz.text]);
     // Die persönliche Hilti-Ausstattung gehört laut Stückliste nicht zum Kundendiensttechniker (Hilti-Koffer): kein
     // „Für Fachkräfte: Am ersten Tag stehen dein persönliches Hilti-Werkzeugset und dein Servicefahrzeug bereit.“
     expect(seite.einleitung.map((s) => s.text).join(' ')).not.toContain('Am ersten Tag');
@@ -534,6 +536,22 @@ describe('Fahrzeug und Werkzeug (E-031): Einschränkung am Anfang, solange eine 
     }
     // Die Prüfung greift: In mindestens einer Auswahl steht die Zusage (nur Stellen, die beides nennen)
     expect(mitZusage).toBeGreaterThan(0);
+  });
+
+  it('Prüfrunde 4 D4-3: „je nach Stelle“ steht in der Unterzeile höchstens einmal, in jeder Auswahl von Stellen', () => {
+    const fach = JOBS.filter((job) => job.apply.questionSet === 'fachkraft');
+    const ohne = ohneAusstattung(JOBS, NOW);
+    const auswahlen = [JOBS, fach, ...JOBS.map((job) => [job]), ...ohne.map((job) => [...fach, job]), fach.filter((job) => job.category !== 'kundendienst')];
+    let mitEinschraenkung = 0;
+    for (const jobs of auswahlen) {
+      const seite = getThemaPageText('fahrzeug-und-werkzeug', { jobs, now: NOW });
+      if (seite.id !== 'fahrzeug-und-werkzeug') throw new Error('falsche Seite');
+      const treffer = seite.unterzeile.join(' ').match(/je nach stelle/gi) ?? [];
+      expect(treffer.length, jobs.map((job) => job.shortTitle).join(', ')).toBeLessThanOrEqual(1);
+      if (treffer.length === 1) mitEinschraenkung += 1;
+    }
+    // Die Prüfung greift: In mindestens einer Auswahl steht die Einschränkung
+    expect(mitEinschraenkung).toBeGreaterThan(0);
   });
 
   it('nur Fachkräfte mit Fahrzeug und Werkzeug: ohne Einschränkung wie bisher', () => {

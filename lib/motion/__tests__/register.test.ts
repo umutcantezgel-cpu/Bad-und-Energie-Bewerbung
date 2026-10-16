@@ -263,7 +263,7 @@ describe('Bewegungsregister', () => {
     expect(SICHT_WARTEN_MS).toBe(ABLAUF_BILD_NETZ_MS);
     expect(SICHT_WARTEN_MS + SICHT_ENDE_MS).toBeLessThanOrEqual(3900);
     expect(KLICK_ENDE_MS).toBe(480);
-    expect(WECHSEL).toEqual({ abdeckenMs: 360, aufdeckenMs: 240, haltenMs: 1200 });
+    expect(WECHSEL).toEqual({ vorlaufMs: 40, wechselMs: 280, abdeckenMs: 400, aufdeckenMs: 240, haltenMs: 1200 });
     expect(Object.isFrozen(WECHSEL)).toBe(true);
     // Der Nachlauf beginnt, wenn der Vorlauf den Heizkörper erreicht, und endet vor dem Sicherheitsnetz des Kopfskripts
     expect(NACHLAUF_START_TAKTE * TAKT_MS).toBe(MOTION_REGISTER['vorlauf-haus'].endeMs);
@@ -360,7 +360,15 @@ describe('Bewegungsregister', () => {
     expect(mitAusloeser('tippen')).toContain('klick-waerme');
     expect(k.ausloeser).toEqual(['tippen']);
     expect([...k.eigenschaften].sort()).toEqual(['opacity', 'transform']);
-    expect(k.dauer).toEqual(['d-3']);
+    // Prüfrunde 4 C4-3: alle Dauerstufen der Datei – wachsen d-3, verblassen d-2 (Ausgang linear, im Zweck vermerkt)
+    expect(k.dauer).toEqual(['d-3', 'd-2']);
+    expect(k.zweck).toMatch(/Ausnahme vom Ausgang d-1 mit k-ein/);
+    const frontCss = readFileSync(path.resolve(__dirname, '../../../components/site/waermefront/waermefront.module.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    const kRegel = frontCss.match(/\.k \{([^}]*)\}/)![1];
+    expect(kRegel).toContain(`--d: var(--${k.dauer[0]});`);
+    expect(kRegel).toContain(`animation: s var(--${k.dauer[1]}) linear var(--${k.dauer[1]}) both;`);
+    // Ende des Verblassens = Ende des Wachsens = KLICK_ENDE_MS
+    expect(2 * DAUER_MS[k.dauer[1]]).toBe(KLICK_ENDE_MS);
     expect(k.verzoegerungTakte).toEqual([0, 0.5, 1]);
     expect(k.kurve).toEqual(['linear']);
     expect(k.endeMs).toBe(KLICK_ENDE_MS);
@@ -374,25 +382,33 @@ describe('Bewegungsregister', () => {
     expect(k.schleife).toBeUndefined();
   });
 
-  it('seitenwechsel (E-031): Wärmefront nur mit transform (Prüfrunde 3 A3-2: Aufdecken ohne Verblassen); abdecken 360, aufdecken 240, halten 1.200 ms', () => {
+  it('seitenwechsel (E-031): Wärmefront nur mit transform (Prüfrunde 3 A3-2: Aufdecken ohne Verblassen); Vorlauf 40, Wechsel 280, abdecken 400, aufdecken 240, halten 1.200 ms', () => {
     const w = MOTION_REGISTER.seitenwechsel;
     expect(mitAusloeser('navigation')).toEqual(['seitenwechsel']);
     expect(w.ausloeser).toEqual(['navigation']);
     expect([...w.eigenschaften]).toEqual(['transform']);
     expect(w.zweck).toMatch(/ohne Verblassen/);
     expect(w.dauer).toEqual(['d-2']);
-    expect(w.verzoegerungTakte).toEqual([0, 0.5, 1, 1.5]);
+    // Prüfrunde 4 A4-3: ½ Takt Vorlauf vor jeder Schicht
+    expect(w.verzoegerungTakte).toEqual([0.5, 1, 1.5, 2]);
+    expect(Math.min(...w.verzoegerungTakte) * TAKT_MS).toBe(WECHSEL.vorlaufMs);
     // abdecken √t (linear auf den Stützstellen), aufdecken mit k-aus
     expect(w.kurve).toEqual(['linear', 'k-aus']);
     expect(w.wechsel).toBe(WECHSEL);
     expect(ende(w.verzoegerungTakte, DAUER_MS['d-2'])).toBe(WECHSEL.abdeckenMs);
+    // Prüfrunde 4 A4-2: Wechsel, sobald die erste Schicht deckt (rund zwei Drittel des Abdeckens); ohne Warten ≤ 650 ms
+    expect(WECHSEL.wechselMs).toBe(WECHSEL.vorlaufMs + DAUER_MS['d-2']);
+    expect(WECHSEL.wechselMs).toBeLessThan(WECHSEL.abdeckenMs);
+    expect(WECHSEL.abdeckenMs + WECHSEL.aufdeckenMs).toBeLessThanOrEqual(650);
     expect(WECHSEL.aufdeckenMs).toBe(DAUER_MS['d-2']);
     expect(WECHSEL.haltenMs).toBeGreaterThanOrEqual(WECHSEL.abdeckenMs + WECHSEL.aufdeckenMs);
     expect(w.reduziert).toBe('Kein Übergang: die Seite wechselt sofort.');
     expect(w.zweck).not.toMatch(/View-Transition|View Transition/);
-    // Prüfrunde 1 A1-12, B1-5: die heißeste innen und zuletzt, kein kalter Kern
+    // Prüfrunde 1 A1-12, B1-5: die warmen Bänder kühl außen, heiß innen; Prüfrunde 4 A4-2: zuletzt die Seitenfarbe,
+    // nie eine einfarbige Pfirsichfläche
     expect(w.zweck).toMatch(/heißeste zuletzt\s+und innen/);
-    expect(w.zweck).toMatch(/ohne kalten Kern/);
+    expect(w.zweck).toMatch(/Seitenfarbe/);
+    expect(w.zweck).toMatch(/nie steht eine einfarbige Pfirsichfläche/);
     expect(w.seitenart).toBe('erzaehlseiten');
     for (const id of MOTION_IDS) if (id !== 'seitenwechsel') expect(MOTION_REGISTER[id].wechsel, id).toBeUndefined();
   });
@@ -412,6 +428,11 @@ describe('Bewegungsregister', () => {
       expect(diffusionsFehler(gut.replace('scale(0.6)', 'scale(1.2)'))).toContainEqual(expect.stringMatching(/wächst nicht/));
       expect(diffusionsFehler(gut.replace('scale(0.7)', 'scale(0.75)'))).toContainEqual(expect.stringMatching(/Fortschritt/));
       expect(diffusionsFehler(gut.replace('linear calc', 'var(--k-aus) calc'))).toContainEqual(expect.stringMatching(/linear fehlt/));
+      // Kommas in Klammern trennen keine Abläufe (Prüfrunde 4: Dauer mit Grundwert); ein zweiter Ablauf ohne linear auch nicht
+      expect(diffusionsFehler(gut.replace('var(--d-4) linear', 'var(--d, var(--d-4)) linear'))).toEqual([]);
+      expect(diffusionsFehler(gut.replace('var(--d-4) linear', 'var(--d, var(--d-4)) var(--k-aus)'))).toContainEqual(expect.stringMatching(/linear fehlt/));
+      expect(diffusionsFehler(gut.replace('backwards;', 'backwards, andere 1s ease;'))).toEqual([]);
+      expect(diffusionsFehler(gut.replace('linear calc(var(--takt) * 7) backwards;', 'ease, wachsen 1s linear;'))).toContainEqual(expect.stringMatching(/linear fehlt/));
       expect(diffusionsFehler(gut.replace('scale(0.8)', 'scale(var(--s))'))[0]).toMatch(/Zahl/);
       expect(diffusionsFehler(gut.replace('scale(0.8)', 'scale(0.8, 0.9)'))[0]).toMatch(/gleichmäßig/);
       expect(diffusionsFehler(`${gut}\n.b { animation-name: wachsen; }`)).toContainEqual(expect.stringMatching(/Kurzform/));

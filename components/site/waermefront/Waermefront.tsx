@@ -4,10 +4,13 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { OHNE_UEBERLAGERUNG } from '@/lib/motion/prefers';
 import {
+  AUFDECKEN_NETZ_MS,
   AUFTAKT,
+  HALTEN_MS,
+  KLICK_ZU_MS,
   LAEDT,
   RUHE_BILDER,
-  ZEITPLAN,
+  WECHSEL_NETZ_MS,
   frontMass,
   frontSteigen,
   frontZiel,
@@ -38,13 +41,18 @@ const zu = (el: HTMLElement) => {
  *   Elements; nach 480 ms zu, spätestens beim Wechsel in den Bewerbungsweg. Die Überlagerung trägt den Ton der
  *   getroffenen Fläche (data-tone, Prüfrunde 3 A3-1): Die Ringe heben sich auf Papier, Nacht und Navy gleich ab.
  *   Führt der Klick zur Wärmefront, ist sie die Rückmeldung (dieselben Schichten vom selben Punkt, nur bis zur Ecke).
- * - Wärmefront: Führt ein einfacher Klick zu einer Erzählseite (frontZiel), hält die Insel den Wechsel an
- *   (preventDefault – next/link bricht dann ab), lädt das Ziel vor und deckt vom Klickpunkt aus ab. Nach dem letzten
- *   Band (spätestens nach dem Netz) wechselt router.push die Seite. Aufgedeckt wird erst, wenn die neue Seite unter der
- *   Front fertig gemalt hat (Prüfrunde 3 C3-1): RUHE_BILDER Bilder ohne Änderung im Dokument, ohne nachladenden Bereich
- *   (LAEDT) und ohne ladendes Bild, spätestens nach `halten`; dann steigt die Front aus dem Bild. Zurück/vor, die Rückkehr aus dem
- *   bfcache und ein Klick auf einen anderen Link beenden sie sofort. Die neue Seite steht oben:
- *   <html data-scroll-behavior="smooth"> (app/layout.tsx) lässt Next beim Wechsel ohne weiches Scrollen springen.
+ * - Wärmefront (Prüfrunde 4 A4-2, A4-3): Führt ein einfacher Klick zu einer Erzählseite (frontZiel), hält die Insel den
+ *   Wechsel an (preventDefault – next/link bricht dann ab), lädt das Ziel vor und deckt vom Klickpunkt aus ab: Die
+ *   Schichten stehen ab dem ersten Bild als eigene Ebenen in der Startgröße (will-change) und wachsen erst nach dem
+ *   Vorlauf (--v, ½ Takt), so sind sie gerastert, bevor sie groß werden. Deckt die erste Scheibe das Fenster
+ *   (animationend, spätestens nach dem Netz), wechselt router.push die Seite; die übrigen Schichten wachsen weiter, zuletzt
+ *   die in der Seitenfarbe. Deckt sie das Fenster, blendet die Insel die warmen Schichten darunter aus (--o: 0). Ab dem
+ *   neuen Pfad zählt die Insel Bilder ohne Änderung im Dokument (die Front selbst zählt nicht), ohne nachladenden
+ *   Bereich (LAEDT), ohne ladendes Bild und ohne endlichen Ablauf der Seite; sind es RUHE_BILDER und deckt die
+ *   Seitenfarbe, steigt die Front aus dem Bild (--h), spätestens nach `halten`; ist sie oben angekommen
+ *   (transitionend), ist sie zu. Zurück/vor, die Rückkehr aus dem bfcache und ein Klick auf einen anderen Link beenden
+ *   sie sofort. Die neue Seite steht oben: <html data-scroll-behavior="smooth"> (app/layout.tsx) lässt Next beim
+ *   Wechsel ohne weiches Scrollen springen.
  * - Auftakt: Jeder Wechsel innerhalb der Seite nimmt die Klasse `auftakt` weg, bevor die neue Seite gemalt wird
  *   (useLayoutEffect); sie steht dann im Endzustand, und kein Auftakt bricht am Sicherheitsnetz mitten im Lauf ab.
  *
@@ -61,10 +69,13 @@ export function Waermefront() {
 
   useEffect(() => {
     const front = frontRef.current;
-    const klick = klickRef.current;
-    if (!front || !klick || typeof front.showPopover !== 'function') return;
+    // Beide Überlagerungen stehen im selben Markup; ohne Popover-Unterstützung keine von beiden
+    const klick = klickRef.current!;
+    if (!front?.showPopover) return;
     let phase: Phase = null;
     let ziel = '';
+    // Deckt die letzte Schicht (Seitenfarbe) das Fenster?
+    let voll = false;
     let uhr: ReturnType<typeof setTimeout> | undefined;
     let klickUhr: ReturnType<typeof setTimeout> | undefined;
     let bild = 0;
@@ -84,34 +95,36 @@ export function Waermefront() {
       if (phase !== 'warten') return;
       phase = 'auf';
       clearTimeout(uhr);
-      uhr = setTimeout(aus, ZEITPLAN.aufdeckenNetz);
+      uhr = setTimeout(aus, AUFDECKEN_NETZ_MS);
       front.dataset.auf = '';
+      // Die Scheiben steigen um --h aus dem Bild (translate, d-2 mit k-aus)
+      front.style.cssText += ';--u:1';
     };
     const wechseln = () => {
       if (phase !== 'ab') return;
       phase = 'warten';
       clearTimeout(uhr);
-      uhr = setTimeout(aufdecken, ZEITPLAN.halten);
+      uhr = setTimeout(aufdecken, HALTEN_MS);
       // Ab hier zählt jede Änderung der neuen Seite gegen die Ruhe (auch das Nachladen vor dem neuen Pfad)
       still = 0;
-      beob.observe(document, { subtree: true, childList: true, attributes: true });
+      beob.observe(document.body, { subtree: true, childList: true, attributes: true });
       // Unter der deckenden Front: Die neue Seite steht im Endzustand (kein Auftakt nach einem Wechsel)
       document.documentElement.classList.remove(AUFTAKT);
       router.push(ziel);
     };
     // Je Bild: ruht die neue Seite RUHE_BILDER Bilder lang (nichts geändert, kein Bereich lädt nach – Platzhalter tragen
-    // data-laedt –, kein Bild lädt; Bilder mit loading="lazy" laden erst bei Annäherung; kein endlicher Ablauf läuft, an
-    // dessen Ende die Seite neu malte – die Schichten der Front sind dann am Ende, Schleifen zählen nicht), deckt die
-    // Front auf; sonst weiter warten, höchstens bis `halten`
+    // data-laedt –, kein Bild lädt; Bilder mit loading="lazy" laden erst bei Annäherung; kein endlicher Ablauf der Seite
+    // läuft, an dessen Ende sie neu malte – die Schichten der Front zählen nicht, Schleifen auch nicht) und deckt die
+    // Seitenfarbe das Fenster, deckt die Front auf; sonst weiter warten, höchstens bis `halten`
     const ruhe = () => {
       if (phase !== 'warten') return;
       still =
         document.querySelector(LAEDT) ||
         [...document.images].some((i) => !i.complete && i.loading !== 'lazy') ||
-        document.getAnimations().some((a) => a.playState === 'running' && a.effect!.getTiming().iterations! < Infinity)
+        document.getAnimations().some((a) => a.playState === 'running' && a.effect!.getTiming().iterations! < Infinity && (a.effect as KeyframeEffect).target!.closest('main'))
           ? 0
           : still + 1;
-      if (still >= RUHE_BILDER) aufdecken();
+      if (still >= RUHE_BILDER && voll) aufdecken();
       else bild = requestAnimationFrame(ruhe);
     };
     // Neuer Pfad: Die neue Seite malt unter der Front; im Bewerbungsweg keine Wärme
@@ -122,7 +135,7 @@ export function Waermefront() {
     /**
      * Zeigt eine Überlagerung am Punkt neu; ihre Abläufe beginnen von vorn. Die Front: Scheiben in der Grundgröße
      * (--s), die per transform auf den Durchmesser bis zur fernsten Ecke wachsen (frontMass: immer ein Kreis, kleine
-     * Ebenen).
+     * Ebenen), nach dem Vorlauf (CSS --v).
      */
     const zeige = (el: HTMLElement, x: number, y: number, mass?: { grund: number; faktor: number }) => {
       // Nur diese Variablen stehen inline: Mittelpunkt, bei der Front Grundgröße, Weg nach oben und Faktor
@@ -151,34 +164,43 @@ export function Waermefront() {
       if (!element) return;
       const [x, y] = klickPunkt(event, element.getBoundingClientRect());
       if (neu) {
+        // Die Front ist zu (Ruhe oder eben beendet, siehe oben)
         event.preventDefault();
         router.prefetch(neu);
-        aus();
         ziel = neu;
         phase = 'ab';
+        voll = false;
         zeige(front, x, y, frontMass(x, y, innerWidth, innerHeight));
-        uhr = setTimeout(wechseln, ZEITPLAN.abdeckenNetz);
+        uhr = setTimeout(wechseln, WECHSEL_NETZ_MS);
       } else if (bedien) {
         // Ton der getroffenen Fläche (Papier, Navy-Band, Wärmebereich): Die Rollen der Ringe folgen ihm (theme.css)
         klick.dataset.tone = bedien.closest<HTMLElement>('[data-tone]')?.dataset.tone ?? '';
         zeige(klick, x, y);
         clearTimeout(klickUhr);
-        klickUhr = setTimeout(() => zu(klick), ZEITPLAN.klick);
+        klickUhr = setTimeout(() => zu(klick), KLICK_ZU_MS);
       }
     };
-    // Ende der heißesten Schicht beim Abdecken: wechseln. Beim Aufdecken schließt die Uhr die Front, wenn sie aus dem
-    // Bild gestiegen ist (aufdeckenNetz).
+    // Ende der ersten Schicht beim Abdecken (sie deckt das Fenster): wechseln. Ende der letzten (die Seitenfarbe deckt
+    // das Fenster): die warmen Schichten darunter ausblenden; diese eigene Änderung zählt nicht gegen die Ruhe. Das
+    // Steigen (der einzige Übergang der Schichten) ist zu Ende (transitionend): Die Front ist aus dem Bild, sie schließt.
     const beiEnde = (event: AnimationEvent) => {
-      if (event.target === front.lastElementChild) wechseln();
+      if (event.target === front.firstElementChild) wechseln();
+      else if (event.target === front.lastElementChild) {
+        voll = true;
+        front.style.cssText += ';--o:0';
+        beob.takeRecords();
+      }
     };
 
     document.addEventListener('click', beiKlick, true);
     front.addEventListener('animationend', beiEnde);
+    front.addEventListener('transitionend', aus);
     addEventListener('popstate', aus);
     addEventListener('pageshow', aus);
     return () => {
       document.removeEventListener('click', beiKlick, true);
       front.removeEventListener('animationend', beiEnde);
+      front.removeEventListener('transitionend', aus);
       removeEventListener('popstate', aus);
       removeEventListener('pageshow', aus);
       clearTimeout(klickUhr);

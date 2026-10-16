@@ -22,7 +22,7 @@ import { getJobById, isJobLive, type Job, type JobId } from '@/lib/jobs/registry
 import { DISTANCE_BAND_KM } from '@/lib/places/derive';
 import { getHubKreise, getKreisById, getKreisPlaces, getStadtteile } from '@/lib/places/registry';
 import { getThema, themaPath } from '@/lib/themen/registry';
-import { BUERO_SZENEN_BESCHRIFTUNGEN, BUERO_SZENEN_TITEL } from '@/lib/themen/text';
+import { BUERO_SZENEN_BESCHRIFTUNGEN, BUERO_SZENEN_ICON, BUERO_SZENEN_TITEL, type KastenIcon } from '@/lib/themen/text';
 import { BUERO_SZENEN_ARTEN, type BueroSzenenArt } from '@/lib/zeichnung/buero/szenen';
 import { lowerFirst } from '../text';
 
@@ -64,7 +64,7 @@ export interface EinblickOrt {
  * und der Weg zur Themenseite.
  */
 export interface EinblickSzenen {
-  bilder: readonly { art: BueroSzenenArt; titel: string; beschriftungen: Readonly<Record<string, string>> }[];
+  bilder: readonly { art: BueroSzenenArt; titel: string; icon: KastenIcon; beschriftungen: Readonly<Record<string, string>> }[];
   link: Verweis;
 }
 
@@ -503,7 +503,12 @@ function buero(_job: Job, now: Date): Einblick {
         { titel: 'Verwaltung', text: 'Ablage und Post erledigst du, und der Geschäftsführung arbeitest du zu.' },
       ],
       szenen: {
-        bilder: BUERO_SZENEN_ARTEN.map((art) => ({ art, titel: BUERO_SZENEN_TITEL[art], beschriftungen: BUERO_SZENEN_BESCHRIFTUNGEN[art] })),
+        bilder: BUERO_SZENEN_ARTEN.map((art) => ({
+          art,
+          titel: BUERO_SZENEN_TITEL[art],
+          icon: BUERO_SZENEN_ICON[art],
+          beschriftungen: BUERO_SZENEN_BESCHRIFTUNGEN[art],
+        })),
         link: { href: themaPath(getThema('buero-und-verwaltung')), label: 'Mehr zu Büro und Verwaltung' },
       },
     },

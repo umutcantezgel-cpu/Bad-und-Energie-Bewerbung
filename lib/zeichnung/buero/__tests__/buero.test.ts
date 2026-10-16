@@ -15,7 +15,7 @@ import { DAUER_MS, MOTION_REGISTER, SICHT_ENDE_MS, TAKT_MS } from '@/lib/motion/
 import { getThemaPageText } from '@/lib/themen/text';
 import { ogThemaText } from '@/lib/themen/og';
 import { ogJobText } from '@/lib/seo/og-image';
-import { renderJobImage } from '@/lib/seo/og-render';
+import { BUERO_WORT_FELD, ogBueroWoerter, renderJobImage } from '@/lib/seo/og-render';
 import { TOKENS } from '@/lib/tokens';
 import { keyframesIn, skaliert } from '@/lib/motion/__tests__/keyframes';
 import { BUERO_DATEI, BUERO_MARKE } from '../../../../scripts/qa/check-design-tokens.mjs';
@@ -364,11 +364,20 @@ describe('Inline und Datei: dieselbe Zeichnung', () => {
   it('die Szenen-Dateien in den Papier-Rollen, die Leitstelle auf Navy; je hell, dunkel und Druck aus den Primitiven', () => {
     const theme = quelle('app/styles/theme.css');
     const p = (name: string) => theme.match(new RegExp(`--p-${name}: (#[0-9A-Fa-f]{6});`))![1].toUpperCase();
-    // Eine Markierfläche (Prüfrunde 2 A2-9): Stufe 2 der Wärmerampe, keine Stufenfolge
+    // Eine Markierfläche (Prüfrunde 2 A2-9), als eigene Rolle --markierung auf den Primitiven der Stufe 2 (Prüfrunde 4
+    // A4-6): die Datei wie die Seite, die Rampe bleibt Temperatur
+    const rolle = (block: RegExp) => theme.replace(/\/\*[\s\S]*?\*\//g, '').match(block)![1];
+    expect(rolle(/:root \{[^}]*--markierung: var\(--p-([\w-]+)\);/)).toBe('waerme-2');
+    expect(rolle(/prefers-color-scheme: dark\) \{\s*:root \{[^}]*--markierung: var\(--p-([\w-]+)\);/)).toBe('glimm-2');
     expect(BUERO_SVG_FARBEN.papier.hell).toEqual({ marke: p('navy'), flaeche: p('papier'), markiert: p('waerme-2') });
     expect(BUERO_SVG_FARBEN.papier.dunkel).toEqual({ marke: p('creme'), flaeche: p('nacht'), markiert: p('glimm-2') });
     expect(BUERO_SVG_FARBEN.papier.druck).toEqual({ ...BUERO_SVG_FARBEN.papier.hell, flaeche: p('weiss') });
-    expect(BUERO_SVG_FARBEN.papier.hell.markiert).toBe(TOKENS.waerme.hell[2]);
+    expect(BUERO_SVG_FARBEN.papier.hell.markiert).toBe(TOKENS.markierung.hell);
+    expect(BUERO_SVG_FARBEN.papier.dunkel.markiert).toBe(TOKENS.markierung.dunkel);
+    // Keine Stufe der Wärmerampe im Code der Büro-Familie
+    for (const name of readdirSync(path.join(ROOT, 'lib/zeichnung/buero')).filter((n) => n.endsWith('.ts'))) {
+      expect(quelle(`lib/zeichnung/buero/${name}`).replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, ''), name).not.toMatch(/TOKENS\.waerme|--waerme-|glimm/);
+    }
     for (const { svg } of bueroSzenenDateien()) {
       expect(svg).toContain('@media screen and (prefers-color-scheme:dark)');
       expect(svg).toContain('@media print');
@@ -504,9 +513,10 @@ describe('Bewegung: einmal beim Sichtbarwerden, genau wie im Register', () => {
       expect(skaliert(k), k.name).toBe(false);
       for (const stopp of k.stopps) for (const eigenschaft of stopp.deklarationen.keys()) expect(['opacity', 'transform']).toContain(eigenschaft);
     }
-    // Farben nur aus Rollen: die eine Markierfläche (Stufe 2, Prüfrunde 2 A2-9), sonst keine Farbwerte
-    expect(block).not.toMatch(/#[0-9a-f]{3,8}\b|rgb\(|hsl\(|gradient|filter:|mix-blend/i);
-    expect([...block.matchAll(/var\(--waerme-(\d)\)/g)].map((m) => m[1])).toEqual(['2']);
+    // Farben nur aus Rollen: die eine Markierfläche (Prüfrunde 2 A2-9) als eigene Rolle, keine Stufe der Wärmerampe
+    // (Prüfrunde 4 A4-6), sonst keine Farbwerte
+    expect(block).not.toMatch(/#[0-9a-f]{3,8}\b|rgb\(|hsl\(|gradient|filter:|mix-blend|--waerme|--klick|--p-/i);
+    expect([...block.matchAll(/var\(--markierung\)/g)]).toHaveLength(1);
     // Gedruckt steht der Endzustand
     expect(block).toMatch(/@media print \{\s*\.bueroBild\[data-ablauf\] \[data-a\] \{\s*opacity: 1;\s*animation: none;/);
   });
@@ -565,4 +575,42 @@ describe('Teilen-Bilder (E-031): Büro-Zweig mit der Leitstelle, ohne Leitung zu
     expect(png.subarray(1, 4).toString('ascii')).toBe('PNG');
     expect(png.readUInt32BE(16)).toBe(1200);
   }, 30_000);
+
+  it('Prüfrunde 4 D4-2: die Leitstelle trägt die vier Wörter der Seite an denselben Lagen, im Navy-Panel, ohne Überlappung', () => {
+    const woerter = ogBueroWoerter();
+    expect(woerter.map((w) => w.id)).toEqual(LEITSTELLE.beschriftungen.map((b) => b.id));
+    expect(woerter.map((w) => w.text)).toEqual(LEITSTELLE.beschriftungen.map((b) => SEITE.leitstelle.ziele[b.id as keyof typeof SEITE.leitstelle.ziele].toUpperCase()));
+    expect(woerter.map((w) => w.text)).toEqual(['MONTEURE', 'KUNDENDIENST', 'KUNDEN', 'GROSSHANDEL UND LAGER']);
+    // Lage wie auf der Seite: Anker start → linke Kante, end → rechte Kante; dieselben Verhältnisse im Rahmen
+    const panelX = 660;
+    const breite = 1200 - panelX - 40;
+    const s = breite / LEITSTELLE.rahmen.breite;
+    // Breite eines Worts im Bild: Martian 15 px, rund 0,66 em je Zeichen und 1 px Sperrung
+    const breiteVon = (text: string) => text.length * (15 * 0.66 + 1);
+    for (const [i, b] of LEITSTELLE.beschriftungen.entries()) {
+      const w = woerter[i];
+      const ende = b.anker === 'end';
+      const kante = ende ? w.left + BUERO_WORT_FELD : w.left;
+      expect(w.justify, b.id).toBe(ende ? 'flex-end' : 'flex-start');
+      expect(Math.abs(kante - (panelX + 20 + b.x * s)), b.id).toBeLessThanOrEqual(1);
+      expect(breiteVon(w.text), b.id).toBeLessThan(BUERO_WORT_FELD);
+      // Das Wort selbst steht im Navy-Panel
+      expect(ende ? kante - breiteVon(w.text) : kante, b.id).toBeGreaterThan(panelX);
+      expect(ende ? kante : kante + breiteVon(w.text), b.id).toBeLessThan(1200);
+      expect(w.top, b.id).toBeGreaterThan(0);
+      expect(w.top + 15, b.id).toBeLessThan(630);
+    }
+    // Zwei Wörter einer Zeile überlappen nicht
+    const zeilen = Object.values(Object.groupBy(woerter, (w) => w.top));
+    expect(zeilen).toHaveLength(2);
+    for (const zeile of zeilen) {
+      const links = zeile!.find((w) => w.justify === 'flex-start')!;
+      const rechts = zeile!.find((w) => w.justify === 'flex-end')!;
+      expect(links.left + breiteVon(links.text), `${links.id} / ${rechts.id}`).toBeLessThan(rechts.left + BUERO_WORT_FELD - breiteVon(rechts.text));
+    }
+    // Der Quelltext setzt die Wörter in den Büro-Zweig (nicht mehr „Ohne Wörter“)
+    const quelleOg = quelle('lib/seo/og-render.tsx');
+    expect(quelleOg).toContain('{ogBueroWoerter().map(');
+    expect(quelleOg).not.toMatch(/Ohne Wörter/);
+  });
 });

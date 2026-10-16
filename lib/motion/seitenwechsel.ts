@@ -11,14 +11,22 @@
 export const WAERMEFRONT_AN: boolean = true;
 
 /**
- * Zeitplan in ms: `abdecken` ab dem Klick (WECHSEL.abdeckenMs: vier Bänder, ½ Takt versetzt, je d-2), `halten` ab dem
- * Wechsel-Auftrag (WECHSEL.haltenMs: spätestens dann wird aufgedeckt, auch wenn die neue Seite noch nicht steht),
- * `aufdecken` (WECHSEL.aufdeckenMs, d-2), `klick` (KLICK_ENDE_MS). Die Netze greifen einen Takt nach dem Ende eines
- * Ablaufs, falls sein Ende (animationend) nicht gemeldet wird: Dann wechselt die Seite bzw. die Front ist weg.
+ * Zeitplan in ms (Prüfrunde 4 A4-2, A4-3), ab dem Klick: `vorlauf` (WECHSEL.vorlaufMs, ½ Takt: die Schichten stehen
+ * schon als eigene Ebenen in der Startgröße FRONT_START, bevor sie wachsen), `wechsel` (WECHSEL.wechselMs: router.push,
+ * sobald die erste Scheibe das ganze Fenster deckt, Vorlauf + d-2; rund zwei Drittel des Abdeckens), `abdecken`
+ * (WECHSEL.abdeckenMs: die letzte Schicht in der Seitenfarbe deckt das Fenster, Vorlauf + 1½ Takte + d-2). Ab dem
+ * Wechsel-Auftrag `halten` (WECHSEL.haltenMs: spätestens dann wird aufgedeckt, auch wenn die neue Seite noch nicht
+ * ruht); `aufdecken` (WECHSEL.aufdeckenMs, d-2) ab seinem Start, `klick` (KLICK_ENDE_MS) ab dem Klick. Die Netze greifen,
+ * falls das Ende eines Ablaufs (animationend, transitionend) nicht gemeldet wird: Dann wechselt die Seite bzw. die Front
+ * ist weg. Das Netz des Aufdeckens greift einen Takt nach dessen Ende; das des Wechsels zwei Takte nach dem Ende der
+ * ersten Schicht, denn die Abläufe beginnen erst, wenn Chromium die Ebenen gerastert hat (gemessen 40–100 ms nach dem
+ * Klick, Prüfrunde 4): Mit einem Takt griffe das Netz bisweilen, bevor die erste Schicht das Fenster deckt.
  */
-export const ZEITPLAN = Object.freeze({
-  abdecken: 360,
-  abdeckenNetz: 440,
+export const ZEITPLAN = /* @__PURE__ */ Object.freeze({
+  vorlauf: 40,
+  wechsel: 280,
+  wechselNetz: 440,
+  abdecken: 400,
   halten: 1200,
   aufdecken: 240,
   aufdeckenNetz: 320,
@@ -26,10 +34,35 @@ export const ZEITPLAN = Object.freeze({
 });
 
 /**
+ * Die Zeiten, die die Insel braucht, einzeln (das Objekt ZEITPLAN mit seinen Schlüsseln bliebe sonst ganz im Bündel der
+ * Insel, ≤ 2 KB gzip); seitenwechsel.test.ts hält sie gleich ZEITPLAN.
+ */
+export const WECHSEL_NETZ_MS = 440;
+export const HALTEN_MS = 1200;
+export const AUFDECKEN_NETZ_MS = 320;
+export const KLICK_ZU_MS = 480;
+
+/**
+ * Vorlauf der Front in Takten (waermefront.module.css: --v, zu jeder Verzögerung --n addiert; ZEITPLAN.vorlauf in ms):
+ * Die Schichten stehen so lange in der Startgröße als eigene Ebenen, bevor sie wachsen (Prüfrunde 4 A4-3, C4-1).
+ */
+export const FRONT_VORLAUF_TAKTE = 0.5;
+
+/**
+ * Startgröße der Schichten (Anteil der Endgröße; @keyframes w in waermefront.module.css beginnt hier, Prüfrunde 4
+ * A4-3, C4-1): nicht 0, sonst hat eine Scheibe im Vorlauf keine Fläche, Chromium rastert nichts vor, und wächst sie
+ * im nächsten Bild auf Hunderte Pixel, fehlen Kacheln an geraden Kanten. 4 %: am Desktop rund 140 px, am Handy rund 75 px
+ * in der Mitte des Klicks, unter der letzten Schicht in der Seitenfarbe; die Ringe der Klick-Wärme beginnen bei 1–3 px.
+ */
+export const FRONT_START = 0.04;
+
+/**
  * Ruhe der neuen Seite vor dem Aufdecken (Prüfrunde 3 C3-1, KERN K-013): so viele Bilder in Folge ohne Änderung im
- * Dokument, ohne nachladenden Bereich (LAEDT) und ohne ladendes Bild. Die neue Seite malt beim Hydrieren und beim Nachladen ihrer
- * Teile (Bewerbung auf der Stellenseite, Sicht-Bereiche) mehrmals; das soll unter der deckenden Front geschehen, nicht
- * während sie steigt. Spätestens nach `halten` deckt die Front trotzdem auf.
+ * Dokument, ohne nachladenden Bereich (LAEDT), ohne ladendes Bild und ohne endlichen Ablauf der Seite. Die neue Seite malt
+ * beim Hydrieren und beim Nachladen ihrer Teile (Bewerbung auf der Stellenseite, Sicht-Bereiche) mehrmals; das soll
+ * unter der deckenden Front geschehen, nicht während sie steigt. Gezählt wird schon, während die Front noch deckt (ihre
+ * eigenen Abläufe zählen nicht, Prüfrunde 4 A4-2); aufgedeckt wird, sobald die Seite ruht und die Seitenfarbe das Fenster
+ * deckt, spätestens nach `halten`.
  */
 export const RUHE_BILDER = 4;
 
@@ -172,15 +205,16 @@ export function frontDurchmesser(x: number, y: number, breite: number, hoehe: nu
  *   Skalieren erhält die Form.
  * - Ebenen: Vier Ebenen von bis zu 3.400 px Kantenlänge, die ab Maßstab 0 wachsen, musste Chromium ganz rastern
  *   (Kacheln fehlten, große Lücken in der Bildfolge). Eine Grundgröße von 1.024 px rastert ein Viertel bis ein Elftel
- *   der Fläche; gemessen (Headless-Chromium, 1.440 × 900): keine geraden Farbkanten mehr, Rasterzeit halbiert, mehr
- *   Bilder je Abdecken.
+ *   der Fläche, und die Rasterzeit halbierte sich. Gerade Farbkanten blieben trotzdem im ersten Bild nach dem Klick
+ *   (Prüfrunde 4 A4-3, C4-1: 3 von 4 Läufen, Kante an der Kachelgrenze): Eine Scheibe, die im Vorlauf bei Maßstab 0
+ *   stand, hatte nichts vorzurastern. Dagegen helfen erst FRONT_START, will-change und der Vorlauf (ZEITPLAN.vorlauf).
  */
 export const FRONT_GRUND = 1024;
 
 /**
  * Weg der Front beim Aufdecken in px (Prüfrunde 3 A3-2): Die Scheiben (Mittelpunkt in Höhe y, Durchmesser
  * grund × faktor) steigen, bis ihr unterer Rand 2 px über dem Fenster liegt. So bleibt kein ungetönter Streifen und
- * keine gerade Kante; unten öffnet ein Kreisbogen die neue Seite.
+ * keine gerade Kante; unten öffnet ein Kreisbogen die neue Seite. Die Insel setzt ihn erst beim Aufdecken als --h.
  */
 export function frontSteigen(y: number, mass: { grund: number; faktor: number }): number {
   return Math.ceil(y + (mass.grund * mass.faktor) / 2) + 2;

@@ -46,12 +46,41 @@ describe('Themenseiten: CSS nur über stil.ts mit der Grenze davor', () => {
   });
 });
 
-describe('Themen als Leitungsabgänge: Kennwerte in einer Spalte (Prüfrunde 2 A2-7)', () => {
-  it('ab 48em hat die Wertspalte eine feste Breite (jede Zeile ist ihr eigenes Raster, „auto“ schöbe sie je Wert)', () => {
-    const css = readFileSync(path.join(ORDNER, 'themen.module.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
-    const breit = css.match(/@media \(min-width: 48em\) \{\s*\.abgangZeile \{([^}]*)\}/)?.[1] ?? '';
-    const spalten = breit.match(/grid-template-columns:\s*([^;]+);/)?.[1].trim().split(/\s+(?![^(]*\))/) ?? [];
+describe('Themen als Leitungsabgänge: Kennwerte in einer Spalte (Prüfrunde 2 A2-7, Prüfrunde 4 A4-5)', () => {
+  const css = readFileSync(path.join(ORDNER, 'themen.module.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+  const breit = css.match(/@media \(min-width: 48em\) \{([\s\S]*?)\n\}/)?.[1] ?? '';
+  const regel = (selektor: string) => {
+    const flucht = selektor.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const m = breit.match(new RegExp(`(?:^|\\})\\s*${flucht}\\s*\\{([^}]*)\\}`));
+    if (!m) throw new Error(`Regel ${selektor} fehlt ab 48em`);
+    return Object.fromEntries(m[1].split(';').map((d) => d.trim()).filter(Boolean).map((d) => [d.slice(0, d.indexOf(':')).trim(), d.slice(d.indexOf(':') + 1).trim()]));
+  };
+
+  it('ab 48em ist die Liste das Raster; Eintrag und Zeile übernehmen seine Spalten (subgrid), so steht jeder Kennwert in derselben Spalte', () => {
+    const liste = regel('.abgaenge');
+    expect(liste.display).toBe('grid');
+    const spalten = liste['grid-template-columns'].split(/\s+(?![^(]*\))/);
     expect(spalten).toHaveLength(4);
-    expect(spalten[2]).toMatch(/^\d+(?:\.\d+)?rem$/);
+    // Die Wertspalte ist so breit wie der längste Wert aller Zeilen
+    expect(spalten[2]).toBe('max-content');
+    const zeile = regel('.abgang,\n  .abgangZeile');
+    expect(zeile).toMatchObject({ display: 'grid', 'grid-column': '1 / -1', 'grid-template-columns': 'subgrid' });
+    expect(regel('.abgangWert')).toMatchObject({ 'grid-column': '3', 'grid-row': '1' });
+  });
+
+  it('kein Kennwert bricht um („Voll- oder Teilzeit“ war in 11rem zweizeilig, die Zeile dreizeilig)', () => {
+    expect(regel('.abgangWert')['white-space']).toBe('nowrap');
+    // Keine feste Breite mehr, an der ein langer Wert umbräche
+    expect(breit).not.toMatch(/grid-template-columns:[^;]*\d+(?:\.\d+)?rem/);
+  });
+});
+
+describe('Kästchenband: die Kästchen einer Reihe sind gleich hoch (Prüfrunde 4 A4-5)', () => {
+  it('das Etikettkästchen füllt die gemeinsame erste Zeile des Subgrids', () => {
+    const css = readFileSync(path.join(ORDNER, 'themen.module.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    const kaestchen = css.match(/\.kasten \[data-zeichnung="etikettkasten"\] \{([^}]*)\}/)?.[1] ?? '';
+    expect(kaestchen).toMatch(/align-self: stretch;/);
+    const kasten = css.match(/(?:^|\})\s*\.kasten \{([^}]*)\}/)?.[1] ?? '';
+    expect(kasten).toMatch(/grid-template-rows: subgrid;/);
   });
 });

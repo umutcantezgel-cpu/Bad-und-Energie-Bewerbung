@@ -106,7 +106,9 @@ test.describe('mit Bewegung (no-preference)', () => {
         page.locator(anhalten).getByRole('button', { name: 'Anhalten' }),
         page.locator('main [data-primary-cta] a').first(),
       ];
-      await expect(ziele[0]).toBeAttached();
+      // Der Knopf erscheint, sobald der Auftakt der Seite vorbei ist (Prüfrunde 4 C4-2); vorher hält er unsichtbar
+      // seinen Platz und ist nicht fokussierbar
+      await expect(ziele[0]).toBeVisible();
       const lage = await lageFolge(ziele);
       expect(await tabFolge(page, ziele), pfad).toEqual(lage);
     }
@@ -204,6 +206,51 @@ test.describe('mit Bewegung (no-preference)', () => {
       // bisher, als die Hilfe alle Paints in ein „Bild“ legte; Prüfrunde 1 C1-4)
       expect(bilder.gesamtMs, `${zeichnung}: Malzeit in 3 s`).toBeLessThan(2);
     }
+  });
+
+  test('Echter Ladeweg (E-031 Prüfrunde 4 C4-2): Knopf und Schleife der Startseite warten, bis die Wärme im Hero vorbei ist (Handy, CPU 4×)', async ({
+    page,
+  }) => {
+    test.skip(test.info().project.name !== 'mobile-light', 'Gemessen im Moto-G-Profil (Handy, CPU 4×).');
+    // Beim echten Laden hydrierte die Steuerung mitten im Nachlauf der Wärme; der sichtbar werdende Knopf ließ die
+    // ganze Seite neu malen (bis 5 ms je Bild). Gemessen in Zeit der Seite: Start und Ende der Bänder im Hero (Ende
+    // auch als Abbruch, falls das Sicherheitsnetz die Klasse `auftakt` nimmt), jede Änderung an Knopf und Bereich
+    await page.addInitScript(() => {
+      const p = { start: [] as number[], ende: [] as number[], steuerung: [] as { t: number; was: string }[] };
+      (window as unknown as { __c42: typeof p }).__c42 = p;
+      const imHero = (e: Event) => (e.target as Element).closest?.('[data-waermefeld="hausschnitt"]');
+      document.addEventListener('animationstart', (e) => imHero(e) && p.start.push(performance.now()), true);
+      for (const typ of ['animationend', 'animationcancel']) document.addEventListener(typ, (e) => imHero(e) && p.ende.push(performance.now()), true);
+      new MutationObserver((liste) => {
+        for (const m of liste) {
+          const el = m.target as Element;
+          if (el.matches('[data-dauer], [data-dauer-knopf]')) p.steuerung.push({ t: performance.now(), was: `${m.attributeName}=${el.getAttribute(m.attributeName!)}` });
+        }
+      }).observe(document, { subtree: true, attributes: true, attributeFilter: ['class', 'data-dauer'] });
+    });
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
+    try {
+      await page.goto(START);
+      // Der Auftakt ist vorbei: Das Kopfskript nimmt die Klasse spätestens 2 s nach dem ersten Ablauf
+      await expect(page.locator('html')).not.toHaveClass(/auftakt/, { timeout: 15_000 });
+      const knopf = page.locator('[data-einzelheit="X"] [data-dauer-knopf]');
+      await expect(knopf).toBeVisible();
+      await expect(knopf).not.toHaveClass(/wartet/);
+    } finally {
+      await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+      await cdp.detach();
+    }
+    const p = await page.evaluate(() => (window as unknown as { __c42: { start: number[]; ende: number[]; steuerung: { t: number; was: string }[] } }).__c42);
+    // Die Wärme lief beim Laden (sonst misst der Fall nichts), und die Steuerung hat danach umgeschaltet
+    expect(p.start.length, 'Abläufe im Hero').toBeGreaterThan(0);
+    expect(p.ende.length, 'Ende der Abläufe im Hero').toBeGreaterThan(0);
+    expect(p.steuerung.length, 'Änderungen an Knopf und Bereich').toBeGreaterThan(0);
+    // Fenster wie in Prüfrunde 4: vom Ende des Linienzeichnens (erster Bandstart + 560 ms) bis zum Ende der Bänder.
+    // Keine Änderung der Steuerung vor dem Ende des letzten Bands (enthält das Fenster)
+    const ende = Math.max(...p.ende);
+    const frueh = p.steuerung.filter((s) => s.t < ende).map((s) => `${Math.round(s.t - Math.min(...p.start))} ms nach Bandstart: ${s.was}`);
+    expect(frueh, 'Änderungen der Steuerung, solange die Wärme läuft').toEqual([]);
   });
 });
 

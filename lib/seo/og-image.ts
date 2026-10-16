@@ -46,7 +46,7 @@ export const OG_COLOR = Object.freeze({
  * lib/seo/__tests__/og-zeichnung.test.ts hält ihn am Fingerabdruck der Zeichnung: Ändert sie sich, braucht es einen
  * neuen, späteren Stand.
  */
-export const OG_ZEICHNUNG_STAND = '2026-10-15';
+export const OG_ZEICHNUNG_STAND = '2026-10-16';
 /** Abfrageteil mit dem Stand der Zeichnung (an jeder Adresse eines Teilen-Bilds). */
 export const OG_ZEICHNUNG_ABFRAGE = `z=${OG_ZEICHNUNG_STAND}`;
 

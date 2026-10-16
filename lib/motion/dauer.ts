@@ -7,7 +7,7 @@
  */
 
 export interface DauerZustand {
-  /** Das Skript ist geladen und die Steuerung hydriert. */
+  /** Das Skript ist geladen, die Steuerung hydriert und der Auftakt der Seite vorbei (Prüfrunde 4 C4-2, nachAuftakt). */
   skript: boolean;
   /** Die Zeichnung liegt (teilweise) im Sichtfeld. */
   sichtbar: boolean;
