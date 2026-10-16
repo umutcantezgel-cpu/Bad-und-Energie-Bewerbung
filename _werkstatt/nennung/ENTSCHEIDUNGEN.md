@@ -89,3 +89,11 @@ Der Auftraggeber ist Coday Web selbst; Coday arbeitet im Auftrag der Bad und Ene
 - navigation.mjs: 11 von 11 Fällen gleich. Das gilt für das HTML, den Browser ohne JavaScript, den Browser mit JavaScript bei DOMContentLoaded und nach networkidle plus 2 s, und für eine Navigation im Browser in beide Richtungen.
 - Beim Laden ändert kein Skript `rel` (MutationObserver: 0 Änderungen).
 - Bei einer Navigation im Browser zeigt der beibehaltene Fuß den Wert der neuen URL, wie N-05 es beschreibt. Das ist die Lesart von N-05, keine AUSNAHME.
+
+## N-14 Auslegung von G1 (E4, nach dem Hinweis des Endprüfers)
+- **Komponente:** „Eine neue kleine Komponente nur für die Nennung“ besteht hier aus drei kleinen Dateien.
+  - `AgenturNennung.tsx` ist die Zeile auf dem Server.
+  - `AgenturLink.tsx` ist die Client-Insel für `rel`.
+  - `agentur.ts` ist die importfreie Regel samt Text.
+  - Zusammen sind sie eine Komponente, aufgeteilt wegen der Grenze zwischen Server und Client (N-05). Keine der drei Dateien enthält etwas anderes als die Nennung.
+- **Import:** Die Importzeile in `site-jsonld.ts` gehört zum Feld `creator`. Sie holt Marke und Ziel aus derselben Quelle wie der Fuß. Ausgegeben wird nur `creator` (Z-09).

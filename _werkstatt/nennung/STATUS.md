@@ -1,4 +1,4 @@
-STATUS · Branch main · Phase E4 · Kriterien 10/10 · Ausnahmen 0 · Bestand grün · Nächster Schritt: Endprüfung E4-ENDPRUEFER-01
+ABSCHLUSS · Branch main · Kriterien 10/10 · Ausnahmen 0
 
 # Status · Agenturnennung Coday Web
 
@@ -22,7 +22,7 @@ STATUS · Branch main · Phase E4 · Kriterien 10/10 · Ausnahmen 0 · Bestand g
 | E3-PRUEFER-04 | Prüfer | Arbeitsmodell | `protokolle/nachpruefung.md`, `protokolle/stufe-b-ci.md`, `protokolle/roh/e3d/*` | Nachprüfung S1, Zugang, Links nach N-12; volle CI für Z-01 | fertig, grün |
 | E3-PRUEFER-05 | Prüfer | Arbeitsmodell | `protokolle/leistung-endstand.md`, `protokolle/roh/e3e/*` | Z-08 am Endstand 66d8d99 | fertig, grün |
 | E3-DOKUMENTAR-01 | Dokumentar | Arbeitsmodell | `BERICHT.md`, `LINKREGISTER.md`, `REFERENZ.md` | Z-10 | fertig |
-| E4-ENDPRUEFER-01 | Endprüfer | frischer Unteragent des Orchestrator-Modells | keine (Urteil als Rückgabe) | Z-01 bis Z-10 gegen Belege | offen |
+| E4-ENDPRUEFER-01 | Endprüfer | frischer Unteragent des Orchestrator-Modells | keine (Urteil als Rückgabe, abgelegt in berichte/) | Z-01 bis Z-10 gegen Belege | fertig: alle bestätigt |
 
 ## Verlauf
 - 16.10.2026 · E0 · Auftrag gespeichert (N-01), Kundschafter-Berichte abgelegt, LAGE.md geschrieben. Bau der Nennung parallel vorbereitet, Änderungs-Commit erst nach den Ausgangswerten.
@@ -44,3 +44,4 @@ STATUS · Branch main · Phase E4 · Kriterien 10/10 · Ausnahmen 0 · Bestand g
   - Befund S1: der verborgene Hinweis stand im Link → N-12.
 - 16.10.2026 · E3 · Volle CI am Endstand 66d8d99 ALLES GRUEN (190 Testdateien, 3.883 Tests, e2e 590/506/0). Nachprüfung nach N-12 (E3-PRUEFER-04) grün: Linktext und zugänglicher Name exakt „Coday Web“, 82 von 82 Füßen mit genau einem Link, gefolgt nur „/“, axe 0, Konsole 0, Navigation 11/11, HTML nur die Nennung. ABNAHME.md: 10 von 10 mit Beleg.
 - 16.10.2026 · E3 · E3-PRUEFER-05: Z-08 am Endstand grün (38 Anfragen, Median −2.288 B, Layoutverschiebung 0).
+- 16.10.2026 · E4 · Endprüfung E4-ENDPRUEFER-01: Z-01 bis Z-10 bestätigt, keine AUSNAHME, keine UMGEBUNGSAUSNAHME, S4-Lesart tragfähig (berichte/E4-ENDPRUEFER-01.md). Hinweise 1, 3 und 4 in ABNAHME.md, BERICHT.md, MENSCHEN.md und ENTSCHEIDUNGEN.md N-14 eingearbeitet. CLAUDE.md-Block entfernt, Push auf main (live).

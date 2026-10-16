@@ -12,7 +12,7 @@ Stand 16.10.2026. Die Prüfprotokolle liegen in `_werkstatt/nennung/protokolle/`
 - Nur die Startseite. Sie gibt Suchmaschinen eine Empfehlung weiter.
 - Auf allen anderen Seiten steht „nofollow“. Dort zählt die Empfehlung nicht. Grund: Ein Link auf jeder Seite sieht für Google aus wie gekaufte Werbung und kann als Linkspam gelten.
 - Ziel ist https://www.codayweb.de/de. Das ist die Standardeinstellung, weil keine eigene Referenzseite festgelegt wurde.
-- Der Link öffnet in einem neuen Tab. Beim Klick erfährt die Agentur, von welcher Seite der Besucher kommt.
+- Der Link öffnet in einem neuen Tab. Beim Klick erfährt die Agentur, von welcher Website der Besucher kommt (nur die Domain, nicht die Unterseite).
 
 ## 3. Wie du dem Kunden die Nennung zeigst
 - Mit den Bildern aus Abschnitt 1 und der Live-Seite.
@@ -20,7 +20,7 @@ Stand 16.10.2026. Die Prüfprotokolle liegen in `_werkstatt/nennung/protokolle/`
 - Es lädt nichts von unserem Server: kein Bild, kein Skript, keine Schrift.
 
 ## 4. Übernahme und Rückweg
-- Die Änderung liegt schon lokal auf `main`, in 9 Schritten (Commits, davon 2 mit Code-Änderungen), noch nicht gepusht. Mit dem Push geht sie sofort live, denn `main` wird über Vercel veröffentlicht.
+- Die Änderung steht auf `main`: 2 Commits mit Code (b0ae185, 66d8d99), die übrigen nur in `_werkstatt`. Mit dem Push vom 16.10.2026 ist sie live, denn `main` wird über Vercel veröffentlicht.
 - Gepusht wird erst, wenn die Prüfung grün ist. Stand vor dem Push: 10 von 10 Abnahme-Kriterien mit Beleg erfüllt, volle Prüfung grün (ABNAHME.md).
 - Der Ordner `_werkstatt` ist über `.vercelignore` von der Veröffentlichung ausgenommen (Commit b0ae185). Er bleibt im Repository. Löschen ist möglich, ist aber nicht geschehen. Das entscheidest du.
 - Der Arbeitsblock in `CLAUDE.md` (zwischen NENNUNG-ANFANG und NENNUNG-ENDE) wird beim Abschluss entfernt.
@@ -36,4 +36,4 @@ Stand 16.10.2026. Die Prüfprotokolle liegen in `_werkstatt/nennung/protokolle/`
 - Deine Entscheidungen:
   - Soll `_werkstatt` im Repository bleiben oder vor dem Push gelöscht werden?
   - Soll der Link auch auf der Startseite keine Empfehlung mehr weitergeben („nofollow“)?
-  - Bei jedem Seitenwechsel im Browser springt die Schutzangabe des Links einmal um und stimmt danach mit der neuen Seite überein. Ist das für dich in Ordnung?
+  - Beim Wechsel von oder zur Startseite im Browser springt die Schutzangabe des Links einmal um und stimmt danach mit der neuen Seite überein. Ist das für dich in Ordnung?

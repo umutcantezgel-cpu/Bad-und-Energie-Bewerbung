@@ -1,6 +1,6 @@
 # Prüfpunkt
 
-- **Nächster exakter Schritt:** E4-ENDPRUEFER-01 (frischer Unteragent des Orchestrator-Modells) prüft ABNAHME.md gegen die Belege. Danach CLAUDE.md-Block entfernen, committen, `git push origin main`, Live-Prüfung, Statuszeile ABSCHLUSS.
-- **Laufende Pakete:** E4-ENDPRUEFER-01.
-- **Letzter grüner Commit:** `66d8d99` (volle CI ALLES GRUEN, Protokoll protokolle/stufe-b-ci.md); danach nur Commits in `_werkstatt`.
-- **Server für Prüfungen:** Produktions-Build 66d8d99 auf http://127.0.0.1:3511.
+- **Stand:** ABSCHLUSS · Branch main · Kriterien 10/10 · Ausnahmen 0. Die Nennung ist mit dem Push vom 16.10.2026 live.
+- **Laufende Pakete:** keine.
+- **Letzter grüner Commit mit Code:** `66d8d99` (volle CI ALLES GRUEN).
+- **Nach dem Livegang:** Live-Prüfung von `/` (gefolgt) und einer Unterseite (`nofollow`), Lighthouse an der Live-Seite nachmessen, Search Console nach einigen Wochen (BERICHT.md, Abschnitt 5).
