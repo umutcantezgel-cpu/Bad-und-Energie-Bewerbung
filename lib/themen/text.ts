@@ -856,7 +856,12 @@ export function getFahrzeugPageText(options: TextOptions): FahrzeugPageText {
           ),
     }),
     etikett: 'Fahrzeug · Werkzeug · Digital',
-    unterzeile: [`${einschraenkung ? jeNachStelleSatz(hilti.short) : hilti.short}.`, ...(fahrzeugText ? [fahrzeugText] : [])],
+    // Eine Einschränkung für beide Positionen, im Wortlaut der Karte im Hub (Prüfrunde 4 D4-3): nicht „Je nach Stelle:
+    // Hilti …“ und danach noch einmal „Servicefahrzeug … je nach Stelle.“
+    unterzeile:
+      einschraenkung && fahrzeugText
+        ? [jeNachStelleSatz(`${hilti.short} und ${FACTS.vehicle.short}.`)]
+        : [`${einschraenkung ? jeNachStelleSatz(hilti.short) : hilti.short}.`, ...(fahrzeugText ? [fahrzeugText] : [])],
     // Der Hilti-Satz steht in der Stückliste (Position 02), nicht noch einmal wortgleich im Kopf (Kritik 2, P3). Der
     // erste Tag ist Schritt 3 der Fachkräfte: auf der Sammelfläche mit „Für Fachkräfte“ wie im Ablauf (sammelAblauf),
     // nur, wenn die Stückliste ihn für jede Fachkraft-Stelle trägt (Prüfrunde 3 D3-2)
