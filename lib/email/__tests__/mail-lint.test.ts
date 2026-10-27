@@ -76,6 +76,21 @@ describe.each(MAIL_VARIANTEN.map((variante) => [variante.name, variante] as cons
     expect(eckig).toEqual([]);
   });
 
+  it('legt Listenzeilen in ein präsentationales tbody (sonst verwirft Chromium die Listeneinträge)', () => {
+    expect(html).not.toMatch(/<table role="list"[^>]*>(?!<tbody role="presentation">)/);
+  });
+
+  it('baut den Knopf wie goodemailcode: Abstandhalter direkt im <a>, ohne mso-line-height-rule in Knopf- und Kartenzelle', () => {
+    for (const [knopf] of html.matchAll(/<td bgcolor="#111D6D"[^>]*><a [^>]*>[\s\S]*?<\/a><\/td>/g)) {
+      expect(knopf).toMatch(/<a [^>]*mso-padding-alt: 0;[^>]*><!--\[if mso\]><i [^>]*hidden>&emsp;<\/i>/);
+      expect(knopf).toMatch(/<i style="mso-font-width: 150%;" hidden>&emsp;&#8203;<\/i><!\[endif\]--><\/a><\/td>$/);
+      expect(knopf).not.toContain('mso-line-height-rule');
+    }
+    const karte = /<td class="karte"[^>]*>/.exec(html)?.[0] ?? '';
+    expect(karte).not.toBe('');
+    expect(karte).not.toContain('mso-line-height-rule');
+  });
+
   it('verlinkt nur http(s), mailto und tel, lesbar ohne Entitäten wie &#x2F;', () => {
     for (const [, href] of html.matchAll(/href="([^"]*)"/g)) {
       expect(href).toMatch(/^(?:https?:\/\/|mailto:|tel:)/);

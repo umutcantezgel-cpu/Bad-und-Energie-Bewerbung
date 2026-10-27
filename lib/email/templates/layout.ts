@@ -185,12 +185,15 @@ function linkHtml(href: string | undefined | null, label: string): string {
 
 /** Eine Leitung als Tabellenzeile (Outlook-fest): Höhe = Strich, Farbe als Fläche, auch als Attribut. */
 function lineRow(color: string): string {
-  return `<tr><td height="${STRICH}" bgcolor="${color}" style="height: ${STRICH}px; font-size: ${STRICH}px; ${lh(STRICH)} background-color: ${color};">&nbsp;</td></tr>`;
+  return `<tr><td height="${STRICH}" bgcolor="${color}" aria-hidden="true" style="height: ${STRICH}px; font-size: ${STRICH}px; ${lh(STRICH)} background-color: ${color};">&nbsp;</td></tr>`;
 }
 
-/** Abstand als Tabellenzeile: Outlook kopiert margin an Tabellen auf jede innere Zelle. */
+/**
+ * Abstand als Tabellenzeile: Outlook kopiert margin an Tabellen auf jede innere Zelle. aria-hidden, damit Screenreader
+ * auf dem &nbsp; nicht „leer“ ansagen.
+ */
 function spacerRow(px: number, colspan = 1): string {
-  return `<tr><td${colspan > 1 ? ` colspan="${colspan}"` : ''} height="${px}" style="height: ${px}px; font-size: ${px}px; ${lh(px)}">&nbsp;</td></tr>`;
+  return `<tr><td${colspan > 1 ? ` colspan="${colspan}"` : ''} height="${px}" aria-hidden="true" style="height: ${px}px; font-size: ${px}px; ${lh(px)}">&nbsp;</td></tr>`;
 }
 
 /**
@@ -227,7 +230,7 @@ function rowsHtml(rows: EmailRow[]): string {
       // Letzte Zeile: 10 px Innenabstand + 20 px Abstand zum nächsten Block (statt margin an der Tabelle).
       const unten = letzte ? 30 : 10;
       return `<tr>
-        <td width="38%" valign="top" style="width: 38%; padding: 10px 16px ${unten}px 0; font-size: 14px; ${lh(20)} color: ${C.muted}; hyphens: auto; -webkit-hyphens: auto;${border}">${esc(row.label)}</td>
+        <td width="38%" valign="top" style="width: 38%; padding: 10px 16px ${unten}px 0; font-size: 14px; ${lh(20)} color: ${C.muted}; word-break: normal; overflow-wrap: normal; hyphens: auto; -webkit-hyphens: auto;${border}">${esc(row.label)}</td>
         <td width="62%" valign="top" style="padding: 10px 0 ${unten}px 0; font-size: 15px; ${lh(22)} color: ${C.ink}; font-variant-numeric: tabular-nums; ${UMBRUCH}${border}">${main}${extra ? `<br><span style="font-size: 14px;">${extra}</span>` : ''}</td>
       </tr>`;
     })
@@ -258,12 +261,14 @@ function blockHtml(block: EmailBlock, vorher?: EmailBlock): string {
       const items = block.items.filter(present);
       if (items.length === 0) return '';
       // Aufzählung als Tabellenzeilen: Outlook rückt <ul>/<li> unvorhersehbar ein; role erhält die Liste für Screenreader.
-      return `<table role="list" border="0" cellpadding="0" cellspacing="0" width="100%">${items
+      // Das <tbody> muss ausdrücklich präsentational sein: Ein vom Parser eingefügtes tbody (rowgroup) stünde zwischen
+      // list und listitem, Chromium verwirft dann die Einträge (axe aria-required-children/-parent).
+      return `<table role="list" border="0" cellpadding="0" cellspacing="0" width="100%"><tbody role="presentation">${items
         .map((item, index) => {
           const unten = index === items.length - 1 ? 20 : 8;
           return `<tr role="listitem"><td width="20" valign="top" aria-hidden="true" style="width: 20px; padding: 0 0 ${unten}px 0; font-size: 15px; ${lh(22)} color: ${C.ink};">&bull;</td><td valign="top" style="padding: 0 0 ${unten}px 0; font-size: 15px; ${lh(22)} color: ${C.ink}; ${UMBRUCH}">${escMultiline(item)}</td></tr>`;
         })
-        .join('')}</table>`;
+        .join('')}</tbody></table>`;
     }
     case 'steps': {
       const rows = block.steps
@@ -272,14 +277,14 @@ function blockHtml(block: EmailBlock, vorher?: EmailBlock): string {
             ? markeHtml('&#10003;', C.successSubtle, C.success)
             : markeHtml(String(index + 1), C.card, C.brand, C.brand);
           const status = step.done ? ` <span style="color: ${C.success}; font-weight: 700;">· Erledigt</span>` : '';
-          // Gleicher Innenabstand in beiden Zellen (Outlook gibt jeder Zelle einer Zeile den größten); den Titel richtet
-          // die Zeilenhöhe 28 px an der Marke aus.
+          // Gleicher Innenabstand in beiden Zellen (Outlook gibt jeder Zelle einer Zeile den größten). Der Titel sitzt mit
+          // 3 px Rand am <p> mittig zur 28-px-Marke; mit 28 px Zeilenhöhe stünde ein umbrechender Titel zu locker.
           const unten = index === block.steps.length - 1 ? 24 : 16;
           return `<tr>
             <td width="42" valign="top" style="width: 42px; padding: 0 0 ${unten}px 0;">${marke}</td>
             <td valign="top" style="padding: 0 0 ${unten}px 0;">
-              <p style="margin: 0; font-size: 16px; ${lh(28)} font-weight: 700; color: ${C.brand};">${esc(step.title)}${status}</p>
-              ${present(step.text) ? `<p style="margin: 0; font-size: 15px; ${lh(22)} color: ${C.muted};">${esc(step.text)}</p>` : ''}
+              <p style="margin: 3px 0 0 0; font-size: 16px; ${lh(22)} font-weight: 700; color: ${C.brand};">${esc(step.title)}${status}</p>
+              ${present(step.text) ? `<p style="margin: 3px 0 0 0; font-size: 15px; ${lh(22)} color: ${C.muted};">${esc(step.text)}</p>` : ''}
             </td>
           </tr>`;
         })
@@ -294,10 +299,11 @@ function blockHtml(block: EmailBlock, vorher?: EmailBlock): string {
       // <i>-Abstandhalter (150 % eines Geviertstrichs = 24 px seitlich, 175 % / 87,5 % Anhebung = 28 / 14 px) geben
       // der Navy-Fläche dort Innenabstand. `hidden` hält T-Online davon ab, die Abstandhalter zu zeigen. Im <a> kein
       // Leerraum, in keiner Elternzelle mso-line-height-rule.
-      return `<table role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate;">${spacerRow(4, 2)}<tr>
-        <td width="28" valign="middle" style="width: 28px;"><table role="presentation" border="0" cellpadding="0" cellspacing="0" width="28">${lineRow(C.accent)}</table></td>
+      // Abstand oben gibt der Absatz davor (16 px), unten 20 px + 8 px Rand einer folgenden Überschrift = 28 px wie bisher.
+      return `<table role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate;"><tr>
+        <td width="28" valign="middle" style="width: 28px;"><table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">${lineRow(C.accent)}</table></td>
         <td bgcolor="${C.brand}" style="border-radius: 4px; background-color: ${C.brand}; color: ${C.onBrand};"><a href="${escAttr(href)}" style="display: inline-block; padding: 14px 24px; font-size: 16px; line-height: 20px; font-weight: 700; color: ${C.onBrand}; text-decoration: none; border-radius: 4px; mso-padding-alt: 0; text-underline-color: ${C.brand};"><!--[if mso]><i style="mso-font-width: 150%; mso-text-raise: 175%;" hidden>&emsp;</i><span style="mso-text-raise: 87.5%;"><![endif]-->${esc(block.label)}<!--[if mso]></span><i style="mso-font-width: 150%;" hidden>&emsp;&#8203;</i><![endif]--></a></td>
-      </tr>${spacerRow(24, 2)}</table>`;
+      </tr>${spacerRow(20, 2)}</table>`;
     }
     case 'note': {
       const danger = block.tone === 'danger';
@@ -308,13 +314,13 @@ function blockHtml(block: EmailBlock, vorher?: EmailBlock): string {
     case 'panel': {
       const inner = alsHtml(block.blocks.filter(isBlock));
       if (!inner) return '';
-      return `<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">${spacerRow(8)}<tr><td>
+      return `<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td>
         <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: separate; border: 1px solid ${C.line}; border-radius: 4px;">
           ${lineRow(C.ruecklauf)}
           <tr><td style="padding: 16px 18px 0 18px; ${ETIKETT}">${esc(block.title)}</td></tr>
           <tr><td style="padding: 8px 18px 0 18px;">${inner}</td></tr>
         </table>
-      </td></tr>${spacerRow(24)}</table>`;
+      </td></tr>${spacerRow(20)}</table>`;
     }
   }
 }

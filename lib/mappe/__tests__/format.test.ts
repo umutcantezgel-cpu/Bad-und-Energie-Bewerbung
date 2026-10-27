@@ -19,9 +19,17 @@ describe('letter date line', () => {
 
 describe('date from a date field', () => {
   it('writes ISO dates out in German, independent of the time zone', () => {
-    expect(formatIsoDate('2026-12-01')).toBe('1. Dezember 2026');
-    expect(formatIsoDate(' 2027-01-31 ')).toBe('31. Januar 2027');
-    expect(formatIsoDate('2028-02-29')).toBe('29. Februar 2028');
+    const tz = process.env.TZ;
+    try {
+      for (const zone of ['Europe/Berlin', 'America/Los_Angeles', 'Pacific/Kiritimati']) {
+        process.env.TZ = zone;
+        expect(formatIsoDate('2026-12-01')).toBe('1. Dezember 2026');
+        expect(formatIsoDate(' 2027-01-31 ')).toBe('31. Januar 2027');
+        expect(formatIsoDate('2028-02-29')).toBe('29. Februar 2028');
+      }
+    } finally {
+      process.env.TZ = tz;
+    }
   });
 
   it('leaves everything else as typed', () => {
