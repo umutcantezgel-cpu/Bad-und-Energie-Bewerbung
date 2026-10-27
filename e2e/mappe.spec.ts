@@ -177,9 +177,7 @@ test.describe('Im Instagram-Browser bei 320 px', () => {
     await page.goto(`/bewerbung/mappe?stelle=${MAIN_JOB_SLUG}`);
     const knopf = page.getByRole('button', { name: 'PDF herunterladen' });
     await waitForHydration(knopf);
-    await expect(
-      page.getByText('Du bist im Instagram-Browser. Dort klappt Herunterladen oft nicht. Öffne die Seite in Safari oder Chrome.'),
-    ).toBeVisible();
+    await expect(page.getByText(/^Du bist im Instagram-Browser\. Dort klappt Herunterladen oft nicht\. Bewerben geht trotzdem/)).toBeVisible();
     const kopieren = page.getByRole('button', { name: 'Link kopieren' });
     await expect(kopieren).toBeVisible();
     await kopieren.click();

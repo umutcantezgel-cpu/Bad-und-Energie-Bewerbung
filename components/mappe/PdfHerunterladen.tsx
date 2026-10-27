@@ -42,6 +42,9 @@ export const PDF_TEXT = Object.freeze({
 
 const seitenText = (seiten: number) => `${seiten} ${seiten === 1 ? 'Seite' : 'Seiten'}`;
 
+/** Grobe Zeigereingabe (Finger): Handy und Tablet. */
+const beruehrung = () => typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
+
 /** Fehlende Zeichen lesbar aufzählen (höchstens zehn). */
 export function zeichenText(zeichen: readonly string[]): string {
   const liste = zeichen.slice(0, 10).join(' ') + (zeichen.length > 10 ? ' …' : '');
@@ -49,13 +52,17 @@ export function zeichenText(zeichen: readonly string[]): string {
 }
 
 export function inAppText(app: InAppBrowser): string {
-  return `Du bist im ${IN_APP_BROWSER[app]}-Browser. Dort klappt Herunterladen oft nicht. Öffne die Seite in Safari oder Chrome.`;
+  return (
+    `Du bist im ${IN_APP_BROWSER[app]}-Browser. Dort klappt Herunterladen oft nicht. Bewerben geht trotzdem: ` +
+    '„Mit dieser Mappe bewerben“ nimmt deine Mappe mit. Für eine eigene PDF öffne die Seite in Safari oder Chrome; ' +
+    'deine Angaben trägst du dort neu ein.'
+  );
 }
 
 /**
  * „PDF herunterladen“ im Pult (L4): Die PDF entsteht im Browser (lib/mappe/pdf/browser.tsx, react-pdf), geladen erst
- * bei Absicht (Zeiger, Fokus, Berührung). Ohne Teilen-Menü (Desktop) startet der Download sofort; am Handy mit
- * Teilen-Menü folgen „Teilen“ und „Herunterladen“, je mit eigenem Tippen (navigator.share braucht ein frisches).
+ * bei Absicht (Zeiger, Fokus, Berührung). Am Computer startet der Download sofort; am Touch-Gerät mit Teilen-Menü
+ * folgen „Teilen“ und „Herunterladen“, je mit eigenem Tippen (navigator.share braucht ein frisches).
  * In den In-App-Browsern von Instagram, Facebook und TikTok ein Hinweis mit „Link kopieren“; der Download bleibt.
  */
 export function PdfHerunterladen({ vorbereiten, entwurf, foto, className }: PdfHerunterladenProps) {
@@ -106,7 +113,8 @@ export function PdfHerunterladen({ vorbereiten, entwurf, foto, className }: PdfH
         return;
       }
       ergebnisRef.current = { blob: ergebnis.blob, dateiname: ergebnis.dateiname };
-      const teilen = kannTeilen(pdfDatei(ergebnis.blob, ergebnis.dateiname));
+      // Teilen-Menü nur am Touch-Gerät; am Computer (auch mit Teilen-Menü, etwa Windows oder macOS) gleich speichern
+      const teilen = beruehrung() && kannTeilen(pdfDatei(ergebnis.blob, ergebnis.dateiname));
       if (!teilen) herunterladen(ergebnis.blob, ergebnis.dateiname);
       setStand({ art: 'fertig', dateiname: ergebnis.dateiname, seiten: ergebnis.seiten, teilen });
     } catch {
