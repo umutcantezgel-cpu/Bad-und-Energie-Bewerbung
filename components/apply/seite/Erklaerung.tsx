@@ -57,7 +57,8 @@ export function Erklaerung(eingaben: ErklaerungEingaben) {
         <ul className={styles.liste}>
           {stellen.liste.map((stelle) => (
             <li key={stelle.id} className={styles.eintrag}>
-              <TextLink href={stelle.href} className="self-start text-body font-bold">
+              {/* 44 px Trefferfläche auch bei einzeiligen Titeln („Bürofachkraft …“ passt am Handy in eine Zeile, 27 px) */}
+              <TextLink href={stelle.href} className="inline-flex min-h-11 items-center self-start text-body font-bold">
                 {stelle.titel}
               </TextLink>
               <p className="max-w-prose text-callout text-ink">{stelle.text}</p>
