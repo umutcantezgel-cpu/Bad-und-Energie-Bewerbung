@@ -61,6 +61,15 @@ export function schriftenRegistrieren(quellen: SchriftQuellen) {
   registriert = true;
 }
 
+/**
+ * Nach einem Fehler beim Laden der Schriften (Netz): react-pdf merkt sich den Fehlschlag je Schrift; erst nach clear()
+ * und neuem Registrieren lädt der nächste Versuch die Dateien neu.
+ */
+export function schriftenZuruecksetzen() {
+  Font.clear();
+  registriert = false;
+}
+
 /** Kosten einer Trennstelle (Knuth-Plass, unendlich = 10000): nur, wenn ein Wort sonst nicht in die Zeile passt. */
 const STRAFE_TRENNUNG = 5000;
 
@@ -231,7 +240,12 @@ function Kopf({ name, ueberschrift, t, kontakt, foto }: { name: string; uebersch
       ) : null}
       <Satz style={[stil.name, { color: band ? WEISS : t.akzent, fontFamily: t.titel }]}>{name}</Satz>
       {/* Kontaktzeile wie im Letterhead: klein, Tinte leise, auf dem Band weiß */}
-      {kontakt ? <Satz style={[stil.kontakt, { color: band ? WEISS : farbe.tinteLeise }]}>{kontakt}</Satz> : null}
+      {/* Nie trennen: Eine lange E-Mail-Adresse bekäme sonst einen Bindestrich, der nicht zur Adresse gehört */}
+      {kontakt ? (
+        <Satz style={[stil.kontakt, { color: band ? WEISS : farbe.tinteLeise }]} hyphenationCallback={(wort) => [wort]}>
+          {kontakt}
+        </Satz>
+      ) : null}
     </>
   );
   if (!foto) return <View style={band ? rahmen : stil.kopf}>{zeilen}</View>;

@@ -12,7 +12,8 @@ const CSP_REPORT_GROUP = 'csp-endpoint';
 const GOOGLE_MAPS = {
   script: 'https://*.googleapis.com https://*.gstatic.com https://*.google.com https://*.ggpht.com https://*.googleusercontent.com blob:',
   img: 'https://*.googleapis.com https://*.gstatic.com https://*.google.com https://*.googleusercontent.com https://*.ggpht.com',
-  connect: 'https://*.googleapis.com https://*.google.com https://*.gstatic.com data: blob:',
+  // data: steht in connect-src selbst (Karten und Yoga, siehe dort)
+  connect: 'https://*.googleapis.com https://*.google.com https://*.gstatic.com blob:',
   frame: 'https://*.google.com',
 };
 
@@ -26,7 +27,8 @@ const contentSecurityPolicy = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   `img-src 'self' data: blob: ${GOOGLE_MAPS.img}`,
   "font-src 'self' data: https://fonts.gstatic.com",
-  `connect-src 'self' ${GOOGLE_MAPS.connect} https://*.supabase.co`,
+  // data: für die Karten und für „PDF herunterladen“ (L4): Yoga lädt sein WebAssembly per fetch(data:…)
+  `connect-src 'self' data: ${GOOGLE_MAPS.connect} https://*.supabase.co`,
   `frame-src ${GOOGLE_MAPS.frame}`,
   "worker-src 'self' blob:",
   "object-src 'none'",

@@ -41,7 +41,7 @@ describe('MappeTool (server render)', () => {
     expect(html).toContain('Mit dieser Mappe bewerben');
     // Zweitwege (L4): PDF herunterladen (im Browser gesetzt), Drucken, WhatsApp
     expect(html).toContain('PDF herunterladen');
-    expect(html).toContain('Fertige A4-PDF. Sie entsteht auf deinem Gerät.');
+    expect(html).toContain('Fertiges A4-PDF. Es entsteht auf deinem Gerät.');
     expect(html).toContain('Drucken');
     expect(html).toContain('Öffnet den Druckdialog deines Browsers.');
     expect(html).not.toContain('Als PDF speichern');

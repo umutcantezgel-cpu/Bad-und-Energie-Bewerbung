@@ -4,7 +4,7 @@ import { mappeDokument, type MappeDokumentEingaben } from '@/lib/mappe/blatt/dok
 import { fehlendeZeichen, fuerPdf, fuerSchrift, texte } from '@/lib/mappe/blatt/zeichen';
 import { downloadDateiname } from './dateiname';
 import { fotoFuerPdf } from './foto';
-import { MappePdf, schriftenRegistrieren, seitenZaehlen, type MappePdfPersoenlich } from './satz';
+import { MappePdf, schriftenRegistrieren, schriftenZuruecksetzen, seitenZaehlen, type MappePdfPersoenlich } from './satz';
 
 /**
  * „PDF herunterladen“ (L4): die Mappe als A4-PDF im Browser, mit demselben Satz wie die Team-PDF (./satz.tsx), dazu
@@ -34,7 +34,9 @@ export type BewerberPdf =
   /** Weder Anschreiben noch Lebenslauf haben Inhalt. */
   | { ok: false; grund: 'leer' }
   /** Zeichen, die die Schrift nicht hat (je einmal); dann keine PDF statt Kästchen. */
-  | { ok: false; grund: 'zeichen'; zeichen: string[] };
+  | { ok: false; grund: 'zeichen'; zeichen: string[] }
+  /** Das Foto lässt sich nicht lesen (defekte Datei). */
+  | { ok: false; grund: 'foto' };
 
 /** Fehlende Zeichen aller Texte (wie fuerPdf sie sieht) und der Kontaktzeile, je einmal in Reihenfolge. */
 function fehlendIn(alleTexte: readonly string[]): string[] {
@@ -52,17 +54,28 @@ export async function bewerberPdf(eingaben: BewerberPdfEingaben, erstellt: Date)
   }
   if (!fuerSatz.anschreiben && !fuerSatz.lebenslauf) return { ok: false, grund: 'leer' };
 
-  const persoenlich: MappePdfPersoenlich = {
-    kontakt: kontakt || null,
-    foto: eingaben.foto ? { src: await fotoFuerPdf(eingaben.foto.datei, eingaben.foto.form), form: eingaben.foto.form } : null,
-  };
+  let foto: MappePdfPersoenlich['foto'] = null;
+  if (eingaben.foto) {
+    try {
+      foto = { src: await fotoFuerPdf(eingaben.foto.datei, eingaben.foto.form), form: eingaben.foto.form };
+    } catch {
+      return { ok: false, grund: 'foto' };
+    }
+  }
+  const persoenlich: MappePdfPersoenlich = { kontakt: kontakt || null, foto };
   schriftenRegistrieren(SCHRIFTEN);
   let blob: Blob;
   try {
-    blob = await pdf(<MappePdf dokument={fuerSatz} erstellt={erstellt} seitenzahlen {...persoenlich} />).toBlob();
-  } catch {
-    // Wie auf dem Server: Ein Fehler beim Setzen der Seitenzahlen soll die Mappe nicht kosten
-    blob = await pdf(<MappePdf dokument={fuerSatz} erstellt={erstellt} seitenzahlen={false} {...persoenlich} />).toBlob();
+    try {
+      blob = await pdf(<MappePdf dokument={fuerSatz} erstellt={erstellt} seitenzahlen {...persoenlich} />).toBlob();
+    } catch {
+      // Wie auf dem Server: Ein Fehler beim Setzen der Seitenzahlen soll die Mappe nicht kosten
+      blob = await pdf(<MappePdf dokument={fuerSatz} erstellt={erstellt} seitenzahlen={false} {...persoenlich} />).toBlob();
+    }
+  } catch (fehler) {
+    // Etwa eine Schrift kam nicht an: Der nächste Klick registriert und lädt sie neu
+    schriftenZuruecksetzen();
+    throw fehler;
   }
   const seiten = seitenZaehlen(new TextDecoder('latin1').decode(await blob.arrayBuffer()));
   return { ok: true, blob, seiten, dateiname: downloadDateiname(fuerSatz.name ?? undefined) };

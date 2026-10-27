@@ -194,3 +194,55 @@ test.describe('Im Instagram-Browser bei 320 px', () => {
     await expectNoAxeViolations(page, testInfo);
   });
 });
+
+test.describe('Teilen-Menü am Handy (nachgebildet)', () => {
+  test.beforeEach(() => {
+    test.skip(test.info().project.name !== 'mobile-light', 'Ein Projekt mit Touch genügt; Chromium hat kein echtes Teilen-Menü.');
+  });
+
+  test('„PDF teilen“ und „PDF speichern“; ein Teilen-Fehler lässt beide Knöpfe stehen', async ({ page }, testInfo) => {
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, 'canShare', { value: () => true, configurable: true });
+      Object.defineProperty(navigator, 'share', {
+        value: async () => {
+          throw new DOMException('verweigert', 'NotAllowedError');
+        },
+        configurable: true,
+      });
+    });
+    await page.goto(`/bewerbung/mappe?stelle=${MAIN_JOB_SLUG}`);
+    const knopf = page.getByRole('button', { name: 'PDF herunterladen' });
+    await waitForHydration(knopf);
+    await page.getByLabel('Vor- und Nachname').fill('Max Müller');
+    await page.getByRole('group', { name: 'Schwerpunkte' }).getByRole('button').first().click();
+    await page.getByRole('button', { name: WORK_STYLE }).click();
+    await knopf.click();
+    await expect(page.getByText(/^Dein PDF ist fertig \(\d Seiten?\)\. Teilen oder speichern\?$/)).toBeVisible();
+
+    const teilen = page.getByRole('button', { name: 'PDF teilen' });
+    const speichern = page.getByRole('button', { name: 'PDF speichern' });
+    await teilen.click();
+    await expect(page.getByRole('alert').filter({ hasText: 'Teilen hat nicht geklappt' })).toBeVisible();
+    await expect(teilen).toBeVisible();
+    await expect(speichern).toBeVisible();
+    const [download] = await Promise.all([page.waitForEvent('download'), speichern.click()]);
+    expect(download.suggestedFilename()).toBe('Bewerbungsmappe_Mueller.pdf');
+    await expectNoAxeViolations(page, testInfo);
+  });
+});
+
+test.describe('Im Instagram-Browser nach dem Absenden', () => {
+  test.use({ userAgent: INSTAGRAM_UA });
+  test.beforeEach(() => {
+    test.skip(test.info().project.name !== 'mobile-light', 'Ein Projekt genügt.');
+  });
+
+  test('der Hinweis nennt den Knopf, den es dann gibt: „Mappe nachreichen“', async ({ page }) => {
+    const gesendet = { reference: 'BE-26-K7M4QX', followUpToken: 'token.zum.test', firstName: 'Max', jobId: 'anlagenmechaniker-shk', submittedAt: new Date().toISOString() };
+    await page.addInitScript((wert) => sessionStorage.setItem('be:application:v1', wert), JSON.stringify(gesendet));
+    await page.goto('/bewerbung/mappe');
+    await expect(page.getByRole('button', { name: 'Mappe nachreichen' })).toBeVisible();
+    await expect(page.getByText(/Nachreichen geht trotzdem: „Mappe nachreichen“ hängt deine Mappe an deine Bewerbung\./)).toBeVisible();
+    await expect(page.getByText(/Mit dieser Mappe bewerben/)).toHaveCount(0);
+  });
+});

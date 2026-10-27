@@ -336,7 +336,9 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
           busy={busy}
           onPrimary={handlePrimary}
           onPrint={() => window.print()}
-          pdfWeg={<PdfHerunterladen vorbereiten={pdfVorbereiten} entwurf={state} foto={photoUrl} />}
+          pdfWeg={
+            <PdfHerunterladen vorbereiten={pdfVorbereiten} entwurf={state} foto={photoUrl} modus={submitted ? 'followUp' : 'apply'} />
+          }
           stand={stand}
           whatsappHref={shareHref(state, jobs, submitted)}
           feedback={feedback}

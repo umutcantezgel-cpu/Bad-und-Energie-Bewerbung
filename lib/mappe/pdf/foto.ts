@@ -23,6 +23,9 @@ export async function fotoFuerPdf(datei: Blob, form: Fotoform): Promise<string> 
     const skala = Math.max(breite / bild.width, hoehe / bild.height);
     const w = breite / skala;
     const h = hoehe / skala;
+    // Handyfotos (3000–4000 px) in einem Schritt auf 413 px: ohne gute Glättung Treppchen und Moiré
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, breite, hoehe);
     ctx.drawImage(bild, (bild.width - w) / 2, (bild.height - h) / 2, w, h, 0, 0, breite, hoehe);

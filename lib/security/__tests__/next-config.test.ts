@@ -48,6 +48,8 @@ describe('next.config.ts headers', () => {
     for (const pfad of ['/', '/bewerbung', '/bewerbung/danke', '/bewerbung/mappe']) {
       const directives = parseCsp((await headersFor(pfad)).get('content-security-policy-report-only') ?? '');
       expect(directives.get('script-src'), pfad).toContain("'wasm-unsafe-eval'");
+      // Yoga lädt sein WebAssembly per fetch(data:…)
+      expect(directives.get('connect-src'), pfad).toContain('data:');
       expect(directives.get('script-src'), pfad).not.toContain("'unsafe-eval'");
     }
   });
