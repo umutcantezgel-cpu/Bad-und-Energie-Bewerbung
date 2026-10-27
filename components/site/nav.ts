@@ -26,6 +26,8 @@ export const NAV_ITEMS: readonly NavItem[] = Object.freeze([
 ]);
 
 export const APPLY_PATH = '/bewerbung';
+/** Vorgerenderte Varianten von /bewerbung, auf die proxy.ts umschreibt (gleich VARIANTE_PFAD, Test nav.test.ts). */
+export const APPLY_VARIANT_PATH = `${APPLY_PATH}/variante`;
 
 /** Id of the embedded application flow on job pages (C9). */
 export const FLOW_ANCHOR_ID = 'bewerben';
@@ -66,7 +68,10 @@ export function hasStickyApplyBar(pathname: string | null | undefined): boolean 
 
 /** Exit link in focus mode: „Abbrechen“ inside the flow, „Zur Startseite“ on the thank-you page and the Mappe tool. */
 export function focusModeExitLabel(pathname: string | null | undefined): string {
-  return normalize(pathname) === APPLY_PATH ? 'Abbrechen' : 'Zur Startseite';
+  const path = normalize(pathname);
+  // Der Server rendert eine Variante unter /bewerbung/variante/…, der Browser hydriert mit /bewerbung (Next-Doku
+  // use-pathname.md, „Avoid hydration mismatch with rewrites“): beide brauchen denselben Text, sonst React #418.
+  return path === APPLY_PATH || path.startsWith(`${APPLY_VARIANT_PATH}/`) ? 'Abbrechen' : 'Zur Startseite';
 }
 
 /** Page links (not #anchors) are current for their own path and everything below it. */

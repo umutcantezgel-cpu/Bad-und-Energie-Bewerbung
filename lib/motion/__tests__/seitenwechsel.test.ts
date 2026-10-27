@@ -110,6 +110,7 @@ const EINORDNUNG: Readonly<Record<string, boolean>> = {
   '/jobs/[slug]': true,
   '/jobs': false,
   '/bewerbung': false,
+  '/bewerbung/variante/[stelle]/[hinweis]': false,
   '/bewerbung/danke': false,
   '/bewerbung/mappe': false,
   '/datenschutz': false,

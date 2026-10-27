@@ -9,12 +9,32 @@ export type SearchParamValue = string | string[] | undefined;
 export type SearchParamsRecord = Record<string, SearchParamValue>;
 
 export const INITIATIVE_PARAM = 'initiativ';
+export const BEWERBUNG_PFAD = '/bewerbung';
 export const MAPPE_PATH = '/bewerbung/mappe';
+/**
+ * Vorgerenderte Varianten von /bewerbung (Vorauswahl, Unterlagen-Hinweis): Nur proxy.ts schreibt intern hierher um,
+ * im Browser steht weiter /bewerbung?stelle=… (lib/apply/vorauswahl.ts). Direkte Aufrufe leitet der Proxy zurück.
+ */
+export const VARIANTE_PFAD = `${BEWERBUNG_PFAD}/variante`;
+/** Variante ohne Vorauswahl (nur Unterlagen-Hinweis). */
+export const KEINE_STELLE = 'keine';
+/** Zweite Pfadebene der Varianten: mit oder ohne Hinweis auf Unterlagen (Altlinks ?tab=vault|direct, ?direct=true). */
+export const HINWEISE = ['ohne', 'unterlagen'] as const;
 /** Flow mit vorgewählter Initiativbewerbung (Links „Initiativ bewerben“). */
 export const INITIATIVE_APPLY_PATH = `/bewerbung?stelle=${INITIATIVE_PARAM}`;
 
 /** Parameter, die nur der Vorgänger kannte; sie werden nicht weitergereicht. */
 const LEGACY_PARAMS = ['tab', 'direct'] as const;
+
+/** URLSearchParams als Record wie Nexts searchParams: Mehrfachwerte als Array, Schlüssel in URL-Reihenfolge. */
+export function searchParamsRecord(search: URLSearchParams): SearchParamsRecord {
+  const record = Object.create(null) as SearchParamsRecord;
+  for (const key of new Set(search.keys())) {
+    const values = search.getAll(key);
+    record[key] = values.length > 1 ? values : values[0];
+  }
+  return record;
+}
 
 export function firstParam(value: SearchParamValue): string | undefined {
   const first = Array.isArray(value) ? value[0] : value;

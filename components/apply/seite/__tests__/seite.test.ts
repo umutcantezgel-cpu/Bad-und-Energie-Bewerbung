@@ -8,6 +8,7 @@ import { REGION } from '@/lib/content/region';
 import { UNTERLAGEN_ZEILE_TEXT } from '@/components/apply/unterlagen';
 import { BUERO_AM_FIRMENSITZ } from '@/components/jobs/liste/liste-text';
 import { getFunnelOptions, getJobById, type Job } from '@/lib/jobs/registry';
+import { bewerbungZiel } from '@/lib/apply/vorauswahl';
 import { bewerbungKopf, DirektSprechen, Regionalband, regionalband, UNTERLAGEN_ZWEITWEG } from '..';
 
 // Der Flow ist Sache von R5-APPLY-01 und braucht den App-Router; hier genügt sein Platzhalter.
@@ -21,10 +22,22 @@ const plain = (html: string) => html.replace(/<[^>]+>/g, ' ').replace(/&amp;/g, 
 /** Für den Vergleich mit FACTS: geschützte Leerzeichen und Wortverbinder wie normale Zeichen. */
 const normal = (text: string) => text.replace(/ /g, ' ').replace(/⁠/g, '');
 
+/**
+ * /bewerbung mit Query wie im Betrieb: proxy.ts entscheidet (bewerbungZiel), dann rendert die statische Seite oder die
+ * vorgerenderte Variante. Eine Weiterleitung kommt als Fehler mit ihrem Ziel zurück.
+ */
 async function seite(searchParams: Record<string, string | string[]> = {}) {
+  const query = new URLSearchParams();
+  for (const [key, value] of Object.entries(searchParams)) for (const wert of [value].flat()) query.append(key, wert);
+  const ziel = bewerbungZiel('/bewerbung', query, new Date());
+  if (ziel?.art === 'weiterleiten') throw Object.assign(new Error('Weiterleitung'), { ziel: ziel.url });
+  if (ziel?.art === 'umschreiben') {
+    const [stelle, hinweis] = ziel.pfad.split('/').slice(-2);
+    const { default: Variante } = await import('@/app/bewerbung/variante/[stelle]/[hinweis]/page');
+    return renderToStaticMarkup((await Variante({ params: Promise.resolve({ stelle, hinweis }) })) as ReactElement);
+  }
   const { default: BewerbungPage } = await import('@/app/bewerbung/page');
-  const element = (await BewerbungPage({ searchParams: Promise.resolve(searchParams) })) as ReactElement;
-  return renderToStaticMarkup(element);
+  return renderToStaticMarkup(BewerbungPage() as ReactElement);
 }
 
 /** Alle im Flow wählbaren Stellen (ohne Vorauswahl), dazu einzelne Stellen (Vorauswahl per ?stelle=). */
@@ -222,10 +235,18 @@ describe('Seite /bewerbung (R5-BEW-01)', () => {
     expect(String(metadata.alternates?.canonical)).toMatch(/\/bewerbung$/);
   });
 
-  it('?tab=dossier leitet mit 308 und Query auf die Mappe (E-BEW-027)', async () => {
+  it('?tab=dossier leitet mit Query auf die Mappe (E-BEW-027; den 308 setzt proxy.ts, lib/security/__tests__/proxy.test.ts)', async () => {
     await expect(seite({ tab: 'dossier', utm_source: 'indeed', stelle: 'initiativ' })).rejects.toMatchObject({
-      digest: expect.stringMatching(/^NEXT_REDIRECT;[a-z]+;\/bewerbung\/mappe\?utm_source=indeed&stelle=initiativ;308;/),
+      ziel: '/bewerbung/mappe?utm_source=indeed&stelle=initiativ',
     });
+  });
+
+  it('Die Seite liest keine searchParams mehr (statisch, aus dem Cache)', async () => {
+    const { readFileSync } = await import('node:fs');
+    const quelle = readFileSync(new URL('../../../../app/bewerbung/page.tsx', import.meta.url), 'utf8');
+    const code = quelle.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+    expect(code).not.toMatch(/searchParams|permanentRedirect|headers\(|cookies\(/);
+    expect(code).toMatch(/export const dynamic = 'error'/);
   });
 
   it('?tab=vault, ?direct= und unbekannte Werte rendern den Flow ohne Fehler (E-BEW-027)', async () => {

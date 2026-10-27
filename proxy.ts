@@ -1,4 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { BEWERBUNG_PFAD, VARIANTE_PFAD } from '@/lib/apply/params';
+import { bewerbungZiel } from '@/lib/apply/vorauswahl';
 import { isTrustedSiteRequest } from '@/lib/security/origin';
 
 // Nur benannte SEO-Scraper aus der Sperrliste in app/robots.ts. Bewusst offen: Bytespider (dort nur
@@ -44,6 +46,22 @@ export function proxy(request: NextRequest) {
     );
   }
 
+  const { pathname } = request.nextUrl;
+  if (pathname === BEWERBUNG_PFAD || pathname.startsWith(`${VARIANTE_PFAD}/`)) return bewerbung(request);
+
+  return NextResponse.next();
+}
+
+/**
+ * /bewerbung kommt aus dem Cache (statisch, stündlich neu): Altlinks, Vorauswahl und Unterlagen-Hinweis entscheidet
+ * der Proxy davor (lib/apply/vorauswahl.ts). Weiterleitung ausdrücklich mit 308 (ohne Angabe wäre es 307); das
+ * Umschreibeziel ohne Query, damit jede Variante genau eine Cache-Zeile hat. Die Adresse im Browser (mit utm_*) bleibt.
+ * Absprache: proxy.ts ist laut docs/ROADMAP.md §8.1 gemeinsamer Vertrag; dieser Zweig betrifft nur /bewerbung.
+ */
+function bewerbung(request: NextRequest): NextResponse {
+  const ziel = bewerbungZiel(request.nextUrl.pathname, request.nextUrl.searchParams, new Date());
+  if (ziel?.art === 'weiterleiten') return NextResponse.redirect(new URL(ziel.url, request.url), 308);
+  if (ziel?.art === 'umschreiben') return NextResponse.rewrite(new URL(ziel.pfad, request.url));
   return NextResponse.next();
 }
 

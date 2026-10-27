@@ -268,9 +268,9 @@ describe('Regionalband: Arbeitszeit, Wochenende und Fahrzeiten (V6-G1)', () => {
 });
 
 describe('Seite /bewerbung mit Erklärteil (V6-G1)', () => {
-  async function seite(searchParams: Record<string, string> = {}) {
+  async function seite() {
     const { default: BewerbungPage } = await import('@/app/bewerbung/page');
-    return render((await BewerbungPage({ searchParams: Promise.resolve(searchParams) })) as ReactElement);
+    return render(BewerbungPage() as ReactElement);
   }
 
   it('Erklärteil nach den anderen Wegen und vor dem Regionalband; Überschriften ohne Sprung', async () => {

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { VARIANTE_PFAD } from '@/lib/apply/params';
 import {
+  APPLY_VARIANT_PATH,
   ARBEITEN_HUB_PATH,
   EINSATZGEBIET_HUB_PATH,
   NAV_ITEMS,
@@ -47,6 +49,13 @@ describe('focusModeExitLabel', () => {
     expect(focusModeExitLabel('/bewerbung/')).toBe('Abbrechen');
     expect(focusModeExitLabel('/bewerbung/danke')).toBe('Zur Startseite');
     expect(focusModeExitLabel('/bewerbung/mappe')).toBe('Zur Startseite');
+  });
+
+  it('says „Abbrechen“ on the prerendered variants too (server path after the proxy rewrite, browser /bewerbung)', () => {
+    expect(APPLY_VARIANT_PATH).toBe(VARIANTE_PFAD);
+    expect(focusModeExitLabel('/bewerbung/variante/initiativ/ohne')).toBe('Abbrechen');
+    expect(focusModeExitLabel('/bewerbung/variante/keine/unterlagen')).toBe('Abbrechen');
+    expect(isFocusMode('/bewerbung/variante/initiativ/ohne')).toBe(true);
   });
 });
 

@@ -356,7 +356,8 @@ describe('Quellen: je Seite ein Aufruf, das Layout ohne JSON-LD', () => {
     'app/page.tsx',
     'app/jobs/page.tsx',
     'app/jobs/[slug]/page.tsx',
-    'app/bewerbung/page.tsx',
+    // /bewerbung und ihre Varianten rendern dieselbe Server-Komponente (Schritt 2b).
+    'components/apply/seite/BewerbungSeite.tsx',
     'app/bewerbung/mappe/page.tsx',
     'app/bewerbung/danke/page.tsx',
     'app/datenschutz/page.tsx',
@@ -369,6 +370,12 @@ describe('Quellen: je Seite ein Aufruf, das Layout ohne JSON-LD', () => {
     expect(text.match(/buildPageGraph\(/g)).toHaveLength(1);
     expect(text.match(/<JsonLd\b/g)).toHaveLength(1);
     expect(text).not.toMatch(/application\/ld\+json/);
+  });
+
+  it('/bewerbung und ihre Varianten tragen kein eigenes JSON-LD (nur über BewerbungSeite)', () => {
+    for (const datei of ['app/bewerbung/page.tsx', 'app/bewerbung/variante/[stelle]/[hinweis]/page.tsx']) {
+      expect(quelle(datei)).not.toMatch(/<JsonLd\b|buildPageGraph\(|application\/ld\+json/);
+    }
   });
 
   it('Root-Layout und FAQ-Abschnitt rendern kein JSON-LD mehr', () => {

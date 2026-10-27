@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { NextRequest } from 'next/server';
-import { unstable_doesMiddlewareMatch } from 'next/experimental/testing/server';
+import { getRedirectUrl, getRewrittenUrl, isRewrite, unstable_doesMiddlewareMatch } from 'next/experimental/testing/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { config, proxy } from '@/proxy';
 
@@ -149,10 +149,54 @@ describe('proxy: matcher', () => {
     }
   );
 
-  it.each(['/', '/bewerbung', '/jobs/anlagenmechaniker-shk', '/api/maps/config', '/api/bewerbung', '/api/e'])(
-    'läuft für %s',
-    (url) => {
-      expect(matches(url)).toBe(true);
-    }
+  it.each([
+    '/',
+    '/bewerbung',
+    '/bewerbung?stelle=anlagenmechaniker-shk-wetzlar',
+    '/bewerbung/variante/initiativ/ohne',
+    '/jobs/anlagenmechaniker-shk',
+    '/api/maps/config',
+    '/api/bewerbung',
+    '/api/e',
+  ])('läuft für %s', (url) => {
+    expect(matches(url)).toBe(true);
+  });
+});
+
+// Schritt 2b: /bewerbung ist statisch; Vorauswahl, Unterlagen-Hinweis und Altlinks entscheidet der Proxy (lib/apply/vorauswahl.ts).
+describe('proxy: /bewerbung aus dem Cache', () => {
+  it('schreibt ?stelle= intern auf die vorgerenderte Variante um; die Adresse im Browser (mit utm) bleibt', () => {
+    const response = proxy(request('/bewerbung?stelle=anlagenmechaniker-shk-wetzlar&utm_source=indeed'));
+    expect(isRewrite(response)).toBe(true);
+    expect(getRewrittenUrl(response)).toBe(`${BASE}/bewerbung/variante/anlagenmechaniker-shk/ohne`);
+  });
+
+  it('schreibt den Unterlagen-Hinweis der Altlinks auf die Variante ohne Stelle um', () => {
+    expect(getRewrittenUrl(proxy(request('/bewerbung?tab=vault')))).toBe(`${BASE}/bewerbung/variante/keine/unterlagen`);
+    expect(getRewrittenUrl(proxy(request('/bewerbung?direct=true&stelle=initiativ')))).toBe(`${BASE}/bewerbung/variante/initiativ/unterlagen`);
+  });
+
+  it.each([
+    ['?tab=dossier&utm_source=indeed', `${BASE}/bewerbung/mappe?utm_source=indeed`],
+    ['?tab=%20DOSSIER%20', `${BASE}/bewerbung/mappe`],
+  ])('leitet %s mit 308 auf die Mappe', (query, ziel) => {
+    const response = proxy(request(`/bewerbung${query}`));
+    expect(response.status).toBe(308);
+    expect(getRedirectUrl(response)).toBe(ziel);
+  });
+
+  it('leitet einen direkten Aufruf der internen Adresse mit 308 auf /bewerbung zurück', () => {
+    const response = proxy(request('/bewerbung/variante/anlagenmechaniker-shk/ohne?utm_source=x'));
+    expect(response.status).toBe(308);
+    expect(getRedirectUrl(response)).toBe(`${BASE}/bewerbung?utm_source=x&stelle=anlagenmechaniker-shk`);
+  });
+
+  it.each(['', '?utm_source=indeed&ref=koch', '?stelle=gibt-es-nicht', '?tab=quiz', '?direct=false'])(
+    'lässt /bewerbung%s zur statischen Seite durch',
+    (query) => {
+      const response = proxy(request(`/bewerbung${query}`));
+      expect(passes(response)).toBe(true);
+      expect(isRewrite(response)).toBe(false);
+    },
   );
 });
