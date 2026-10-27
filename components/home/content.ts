@@ -93,12 +93,12 @@ export function heroZweitzeile(stellen: GezeigteStellen): string {
 }
 
 /**
- * Einleitung (≤ 30 Wörter). Fakten: aboveTariff in der Kurzform der Paketzeilen („über Tarif“), hilti. Die Region
- * bleibt dem Maß „35 km“ und #einsatzgebiet, so steht der Regionssatz höchstens zweimal. Tarif und Werkzeug gehören zu
- * den Stellen im Handwerk: Ist der Tarif für eine gezeigte Stelle offen (Büro S5), „Je nach Stelle …“ (Runde 3).
+ * Einleitung (≤ 30 Wörter). Fakt aboveTariff in der Kurzform der Paketzeilen („über Tarif“); das Werkzeug nennen die
+ * Anzeigen selbst (Inhaber 2026-10-27: Hilti nicht allgemein). Die Region bleibt dem Maß „35 km“ und #einsatzgebiet,
+ * so steht der Regionssatz höchstens zweimal. Ist der Tarif für eine gezeigte Stelle offen (Büro S5), „Je nach Stelle …“.
  */
 export function heroLead(stellen: GezeigteStellen): string {
-  const paket = 'bezahlt über Tarif und mit persönlicher Hilti-Ausstattung.';
+  const paket = 'bezahlt über Tarif.';
   const jeStelle = offenBei('aboveTariff', stellen).length > 0;
   return `Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. ${jeStelle ? `${upperFirst(JE_NACH_STELLE)} ${paket}` : upperFirst(paket)}`;
 }

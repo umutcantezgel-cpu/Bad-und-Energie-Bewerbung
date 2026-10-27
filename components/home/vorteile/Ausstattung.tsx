@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils/cn';
 import { AUSSTATTUNG_ID, AUSSTATTUNG_SCHLUSS, AUSSTATTUNG_TITEL, GERAETE } from './vorteile-text';
 
 /**
- * Werkzeug & Fuhrpark (E-START-026) als Stückliste, der eine Ort für Hilti und Fahrzeug in #vorteile (E-023):
+ * Werkzeug & Fuhrpark (E-START-026) als Stückliste, der eine Ort für Werkzeug und Fahrzeug in #vorteile (E-023):
  * Position und Gerät im Etiketten-Kästchen mit Familien-Icon (wie WÄRMEPUMPEN · HEIZUNGEN · BÄDER an der
  * Zeichnung des Einstiegs), Gerät in der Display-Schrift, Beschreibung aus den Fakten. Arbeitskleidung als
  * Schlusszeile. Sprungziel /#ausstattung.

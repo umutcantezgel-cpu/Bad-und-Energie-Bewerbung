@@ -115,7 +115,7 @@ const KENNENLERNEN = PROCESS_STEPS.find((step) => step.id === 'kennenlernen');
  * Vertrauenszeile unter dem Einstieg (E-START-021, mit E-START-010 und E-START-011): ruhig, statisch,
  * alle Punkte sichtbar. Auswahl nach der Faktenverteilung E-023 (je Abschnitt eine Nennung, höchstens
  * zwei Abschnitte je Seite):
- * - nicht hier: 35 km, 30 Tage, 1926/100 Jahre (Einstieg), flexible Arbeitszeiten (h1), Hilti (Einleitung), 15 Leute und
+ * - nicht hier: 35 km, 30 Tage, 1926/100 Jahre (Einstieg), flexible Arbeitszeiten (h1), Werkzeug (Vorteile), 15 Leute und
  *   Lahn-Dill-Kreis (Abschnitt Betrieb), Fahrzeug und Urlaub (Vorteile);
  * - nicht hier: „Keine Fernmontage“ (steht in REGION.headline und in der FAQ, beides Bestand);
  * - „Innungsbetrieb“ ohne Prozentzahl (E-START-011, COMPANY.innung);

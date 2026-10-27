@@ -15,7 +15,7 @@ import { BUERO_AM_FIRMENSITZ } from './liste-text';
  * - 35 km steht als Maß im Kopf und in REGION.headline: Der Vergleich lässt Aufgaben mit dem Radius weg.
  * - „Flexible Arbeitszeiten“ steht in der Unterzeile des Kopfs und hier in der Arbeitszeit, sonst nirgends; feste
  *   Uhrzeiten nennt die Seite nicht (fakten-abgleich B28).
- * - Hilti, Servicefahrzeug und „unbefristet“ stehen im Ablauf (Schritt 3, „Für Fachkräfte“) und je einmal in Kopf oder
+ * - Werkzeugset, Servicefahrzeug und „unbefristet“ stehen im Ablauf (Schritt 3, „Für Fachkräfte“) und je einmal in Kopf oder
  *   Liste; was bei den anderen Stellen anders läuft, steht darunter (lib/content/process.ts sammelAblauf).
  * - „Kein Lebenslauf“ steht im Mikrotext des Kopfs und im Initiativband, darum in keinem neuen Abschnitt.
  */

@@ -106,14 +106,14 @@ describe('home copy', () => {
     expect(heroZweitzeile(live)).not.toMatch(/\. Flexible Arbeitszeiten\./);
     // Tarif fürs Büro offen (S5)
     expect(heroLead(live)).toBe(
-      'Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Je nach Stelle bezahlt über Tarif und mit persönlicher Hilti-Ausstattung.',
+      'Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Je nach Stelle bezahlt über Tarif.',
     );
     // 30 Tage Urlaub fürs Büro offen (S5): „Tage Urlaub je nach Stelle“ wie im Hub
     expect(heroStats(live).map((s) => s.label)).toEqual(['Einsatzradius', 'Tage Urlaub je nach Stelle', 'Gegründet']);
     for (const stat of heroStats(live)) if (offenBei(stat.factId, live).length > 0) expect(stat.label, stat.factId).toMatch(/ je nach Stelle$/);
     // Ohne Stelle einer offenen Kategorie ohne Zusatz
     const ohneOffene = live.filter((job) => !['buero', 'praktikum'].includes(job.category));
-    expect(heroLead(ohneOffene)).toBe('Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt über Tarif und mit persönlicher Hilti-Ausstattung.');
+    expect(heroLead(ohneOffene)).toBe('Wir suchen Verstärkung für Wärmepumpen, Heizungen und moderne Bäder. Bezahlt über Tarif.');
     expect(heroStats(ohneOffene)).toEqual(HERO_STATS);
     // Nur Stellen, für die die Arbeitszeit offen ist: die Zusage, die für den Betrieb gilt
     expect(heroZweitzeile(live.filter((job) => job.category === 'buero'))).toBe(`Ehrliches Handwerk. ${FACTS.noFarAssembly.short}.`);

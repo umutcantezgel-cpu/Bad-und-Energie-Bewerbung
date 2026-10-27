@@ -57,13 +57,13 @@ export const LISTEN_ORTE = 'Wetzlar und Gießen';
 
 /**
  * Einleitung: „Stellenangebote im SHK-Handwerk“ (alle Stellen sind SHK, Stellendaten) mit den Orten der Baustellen
- * und Fakt founded1926, dann Tarif und Werkzeug für die Stellen auf der Baustelle (Fakten aboveTariff/azubiPay,
- * Paketzeile „Vergütung“ des Quereinstiegs; hilti/azubiToolkit und Hilti-Basisausstattung, je ab dem ersten Tag laut
- * Ablauf). Seit 2026-10-14 gibt es auch das Büro (keine Tarifaussage belegt, S5) und das Schülerpraktikum (kein Wort zu
- * Geld, S4): Darum nennt der Satz, für wen er gilt.
+ * und Fakt founded1926, dann der Tarif für die Stellen auf der Baustelle (Fakten aboveTariff/azubiPay, Paketzeile
+ * „Vergütung“ des Quereinstiegs). Das Werkzeug nennen die Anzeigen selbst (Inhaber 2026-10-27: Hilti nicht allgemein).
+ * Seit 2026-10-14 gibt es auch das Büro (keine Tarifaussage belegt, S5) und das Schülerpraktikum (kein Wort zu Geld,
+ * S4): Darum nennt der Satz, für wen er gilt.
  */
 export const LISTEN_EINLEITUNG = schuetzeZahlen(
-  `Stellenangebote im SHK-Handwerk vom ${FACTS.founded1926.short}, mit Baustellen in ${LISTEN_ORTE}. Fachkräfte, Azubis und Quereinsteiger bezahlen wir über Tarif, mit Hilti-Ausstattung ab dem ersten Tag.`,
+  `Stellenangebote im SHK-Handwerk vom ${FACTS.founded1926.short}, mit Baustellen in ${LISTEN_ORTE}. Fachkräfte, Azubis und Quereinsteiger bezahlen wir über Tarif.`,
 );
 
 /**

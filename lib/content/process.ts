@@ -71,21 +71,21 @@ const START_STEPS: Record<ProcessAudience, ProcessStep> = {
     id: 'start',
     number: 3,
     title: 'Start mit Werkzeug und Fahrzeug',
-    text: 'Du bekommst deinen unbefristeten Arbeitsvertrag. Am ersten Tag stehen dein persönliches Hilti-Werkzeugset und dein Servicefahrzeug bereit.',
+    text: 'Du bekommst deinen unbefristeten Arbeitsvertrag. Am ersten Tag stehen dein persönliches Werkzeugset und dein Servicefahrzeug bereit.',
     highlight: 'Sicherer Start',
   },
   ausbildung: {
     id: 'start',
     number: 3,
     title: 'Start mit eigenem Werkzeug',
-    text: 'Am ersten Tag bekommst du dein eigenes Hilti-Azubi-Werkzeugset geschenkt und arbeitest von Anfang an mit.',
+    text: 'Am ersten Tag bekommst du dein eigenes Azubi-Werkzeugset geschenkt und arbeitest von Anfang an mit.',
     highlight: 'Sicherer Start',
   },
   quereinstieg: {
     id: 'start',
     number: 3,
     title: 'Start mit Ausstattung',
-    text: 'Am ersten Tag stehen deine Arbeitskleidung und die Hilti-Basisausstattung bereit, dazu eine intensive Einarbeitung.',
+    text: 'Am ersten Tag stehen deine Arbeitskleidung und die Werkzeug-Basisausstattung bereit, dazu eine intensive Einarbeitung.',
     highlight: 'Sicherer Start',
   },
   // Büro: Werkzeug und Fahrzeug gehören nicht dazu; Beginn und Umfang (Voll- oder Teilzeit) sind nach Absprache.
@@ -143,10 +143,10 @@ export function getProcessSteps(audience: ProcessAudience = 'fachkraft'): readon
 }
 
 /**
- * Schritt 3 der Fachkräfte für eine Stelle ohne Hilti-Werkzeug (Obermonteur, Inhaber 2026-10-27: „Hilti-Werkzeug
- * rausnehmen“): Vertrag und Fahrzeug wie bei den Fachkräften, ohne das Werkzeugset.
+ * Schritt 3 der Fachkräfte für eine Stelle, deren Anzeige kein Werkzeug nennt (Obermonteur, Inhaber 2026-10-27:
+ * „Hilti-Werkzeug rausnehmen“): Vertrag und Fahrzeug wie bei den Fachkräften, ohne das Werkzeugset.
  */
-const START_STEP_OHNE_HILTI: ProcessStep = {
+const START_STEP_OHNE_WERKZEUG: ProcessStep = {
   ...START_STEPS.fachkraft,
   title: 'Start mit Fahrzeug',
   text: 'Du bekommst deinen unbefristeten Arbeitsvertrag. Am ersten Tag steht dein Servicefahrzeug bereit.',
@@ -157,18 +157,18 @@ export interface AblaufStelle {
   category?: string;
   apply: { questionSet: QuestionSet };
   benefitFactIds: readonly string[];
-  packageExtras: readonly { text: string }[];
+  packageExtras: readonly { label: string; text: string }[];
 }
 
 /**
- * Ablauf einer Stelle, wo er von dem ihrer Stellenart abweicht, sonst null: Eine Fachkraft-Stelle, die kein
- * Hilti-Werkzeug nennt (Vorteil hilti oder Paketzeile), startet ohne das Werkzeugset (Obermonteur, Inhaber 2026-10-27).
+ * Ablauf einer Stelle, wo er von dem ihrer Stellenart abweicht, sonst null: Eine Fachkraft-Stelle, deren Anzeige kein
+ * Werkzeug nennt (Vorteil hilti oder Paketzeile „Werkzeug“), startet ohne das Werkzeugset (Obermonteur, Inhaber 2026-10-27).
  */
 export function eigenerAblauf(stelle: AblaufStelle): readonly ProcessStep[] | null {
   const audience = processAudienceFor({ category: stelle.category, questionSet: stelle.apply.questionSet });
-  const nenntHilti = stelle.benefitFactIds.includes('hilti') || stelle.packageExtras.some((extra) => /\bHilti\b/.test(extra.text));
-  if (audience !== 'fachkraft' || nenntHilti) return null;
-  return getProcessSteps(audience).map((step) => (step.id === 'start' ? START_STEP_OHNE_HILTI : step));
+  const nenntWerkzeug = stelle.benefitFactIds.includes('hilti') || stelle.packageExtras.some((extra) => extra.label === 'Werkzeug');
+  if (audience !== 'fachkraft' || nenntWerkzeug) return null;
+  return getProcessSteps(audience).map((step) => (step.id === 'start' ? START_STEP_OHNE_WERKZEUG : step));
 }
 
 /** Ablauf einer einzelnen Stelle (Stellenseite, /bewerbung mit Vorauswahl): ihr eigener oder der ihrer Stellenart. */
@@ -207,7 +207,7 @@ export interface SammelAblauf {
  * Ablauf auf einer Sammelfläche, einer Seite über mehrere Stellen (/, /jobs, /bewerbung ohne Stelle, „Diskret
  * wechseln“, llms-full.txt; Prüfung E-029, Runde 3): die Schritte der Fachkräfte und je Stellenart unter den gezeigten
  * Stellen mit eigenem Ablauf, was anders ist. Gibt es eine solche, trägt Schritt 3 „Für Fachkräfte: …“: Unbefristeter
- * Vertrag, Hilti-Set und Servicefahrzeug stehen so nie ohne Bezug neben dem Büro (Befristung offen, S5), der Ausbildung
+ * Vertrag, Werkzeugset und Servicefahrzeug stehen so nie ohne Bezug neben dem Büro (Befristung offen, S5), der Ausbildung
  * oder dem Schülerpraktikum.
  */
 export function sammelAblauf(stellen: readonly { category?: string; apply: { questionSet: QuestionSet } }[]): SammelAblauf {

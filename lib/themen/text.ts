@@ -327,9 +327,9 @@ function kontakt(id: ThemaId | 'hub'): SeitenBasis['kontakt'] {
   };
 }
 
-/** Kennwert der Hilti-Ausstattung aus dem Fakt hilti („Hilti-22-V-Akku-Flotte“ → „22 V“). */
+/** Kennwert der Werkzeug-Ausstattung aus dem Fakt hilti („22-V-Akku-Flotte“ → „22 V“; markenneutral, Inhaber 27.10.). */
 function hiltiVolt(): string {
-  const m = /Hilti-(\d+)-V-Akku/.exec(FACTS.hilti.long);
+  const m = /(\d+)-V-Akku/.exec(FACTS.hilti.long);
   if (!m) throw new Error('lib/themen: Fakt hilti nennt keine Volt-Zahl mehr');
   return `${m[1]}${NBSP}V`;
 }
@@ -375,9 +375,9 @@ export function themaKarte(id: ThemaId, { jobs, now = new Date() }: TextOptions)
               ? satz(`${hilti.short}. ${fahrzeug.text}`, fq('hilti'), fq('vehicle'), ...fahrzeug.stellen.map(sq))
               : satz(einschraenkung ? jeNachStelleSatz(hilti.long) : hilti.long, fq('hilti')),
         wert: hiltiVolt(),
-        wertName: 'Hilti-Akku-Flotte',
+        wertName: 'Akku-Flotte',
         kurz: hiltiVolt(),
-        klammer: `Hilti-Akku-Flotte mit ${hiltiVolt()}`,
+        klammer: `Akku-Flotte mit ${hiltiVolt()}`,
       };
     }
     case 'waermepumpen': {
@@ -479,7 +479,7 @@ export function getArbeitenPageText(options: TextOptions): ArbeitenPageText {
   const marken = FACTS.heatPumpBrands.list?.length ?? 0;
   const gesamt = getThemen().map((thema) => themaKarte(thema.id, options));
   const einschraenkung = ohneAusstattung(jobs, now).length > 0;
-  const ausstattung = einschraenkung ? `Servicefahrzeug und Hilti ${JE_NACH_STELLE}` : 'Servicefahrzeug, Hilti-Ausstattung';
+  const ausstattung = einschraenkung ? `Servicefahrzeug und Werkzeug ${JE_NACH_STELLE}` : 'Servicefahrzeug, Werkzeug-Ausstattung';
 
   return {
     path: ARBEITEN_PATH,
@@ -829,10 +829,10 @@ export function getFahrzeugPageText(options: TextOptions): FahrzeugPageText {
   const fahrzeugKurz =
     fahrzeugZeileText && fahrzeugZeileText.stellen.length === jobs.length ? fahrzeug.short : 'Servicefahrzeug je nach Stelle';
   const fuerFachkraefte = sammelAblauf(jobs).varianten.length > 0;
-  // Prüfrunde 3 D3-2: Der erste Tag der Fachkräfte verspricht das persönliche Hilti-Werkzeugset und das Servicefahrzeug.
+  // Prüfrunde 3 D3-2: Der erste Tag der Fachkräfte verspricht das persönliche Werkzeugset und das Servicefahrzeug.
   // Im Kopf steht er nur, wenn die Stückliste darunter beides jeder live Fachkraft-Stelle zuordnet (Position ohne
   // „Gehört zu“ oder mit der Stelle); sonst läse etwa der Kundendiensttechniker oben eine Zusage, die die Stückliste
-  // für ihn ausschließt. Der Satz zur Hilti-Flotte (Kein Leihen, kein Warten) bleibt.
+  // für ihn ausschließt. Der Satz zur Akku-Flotte (Kein Leihen, kein Warten) bleibt.
   const inStueckliste = (factId: FactId, job: Job) =>
     positionen.some((p) => p.factId === factId && (p.giltFuer === null || p.giltFuer.includes(job.shortTitle)));
   const fachkraefte = jobs.filter((job) => job.apply.questionSet === 'fachkraft');
@@ -841,41 +841,41 @@ export function getFahrzeugPageText(options: TextOptions): FahrzeugPageText {
   return {
     path: themaPath(getThema('fahrzeug-und-werkzeug')),
     meta: plainMeta({
-      title: 'Servicefahrzeug und Hilti-Werkzeug: deine Ausstattung',
+      title: 'Servicefahrzeug und Werkzeug: deine Ausstattung',
       h1: 'Womit du bei uns arbeitest',
       primaryKeyword: 'SHK Job mit Firmenwagen Wetzlar',
-      // Mit einer Stelle ohne Ausstattung gilt auch die Hilti-Ausstattung je nach Stelle (Prüfrunde 2 D2-1, wie der Hub)
+      // Mit einer Stelle ohne Ausstattung gilt auch die Werkzeug-Ausstattung je nach Stelle (Prüfrunde 2 D2-1, wie der Hub)
       description: einschraenkung
         ? fitDescription(
-            `Je nach Stelle: Servicefahrzeug, persönliche Hilti-${volt.replace(NBSP, '-')}-Akku-Flotte, Messtechnik für Wärmepumpen, ${FACTS.workwear.short}. Was zu welcher Stelle gehört.`,
+            `Je nach Stelle: Servicefahrzeug, persönliche ${volt.replace(NBSP, '-')}-Akku-Flotte, Messtechnik für Wärmepumpen, ${FACTS.workwear.short}. Was zu welcher Stelle gehört.`,
             `Je nach Stelle: Servicefahrzeug, ${lowerFirst(hilti.short)}, Messtechnik, ${FACTS.workwear.short}. Was zu welcher Stelle gehört.`,
           )
         : fitDescription(
-            `${fahrzeugKurz}, persönliche Hilti-${volt.replace(NBSP, '-')}-Akku-Flotte, Messtechnik für Wärmepumpen, ${FACTS.workwear.short}. Was zu welcher Stelle gehört.`,
+            `${fahrzeugKurz}, persönliche ${volt.replace(NBSP, '-')}-Akku-Flotte, Messtechnik für Wärmepumpen, ${FACTS.workwear.short}. Was zu welcher Stelle gehört.`,
             `${fahrzeugKurz}, ${lowerFirst(hilti.short)}, Messtechnik für Wärmepumpen, ${FACTS.workwear.short}. Was zu welcher Stelle gehört.`,
           ),
     }),
     etikett: 'Fahrzeug · Werkzeug · Digital',
     // Eine Einschränkung für beide Positionen, im Wortlaut der Karte im Hub (Prüfrunde 4 D4-3): nicht „Je nach Stelle:
-    // Hilti …“ und danach noch einmal „Servicefahrzeug … je nach Stelle.“
+    // Werkzeug …“ und danach noch einmal „Servicefahrzeug … je nach Stelle.“
     unterzeile:
       einschraenkung && fahrzeugText
         ? [jeNachStelleSatz(`${hilti.short} und ${FACTS.vehicle.short}.`)]
         : [`${einschraenkung ? jeNachStelleSatz(hilti.short) : hilti.short}.`, ...(fahrzeugText ? [fahrzeugText] : [])],
-    // Der Hilti-Satz steht in der Stückliste (Position 02), nicht noch einmal wortgleich im Kopf (Kritik 2, P3). Der
+    // Der Werkzeug-Satz steht in der Stückliste (Position 02), nicht noch einmal wortgleich im Kopf (Kritik 2, P3). Der
     // erste Tag ist Schritt 3 der Fachkräfte: auf der Sammelfläche mit „Für Fachkräfte“ wie im Ablauf (sammelAblauf),
     // nur, wenn die Stückliste ihn für jede Fachkraft-Stelle trägt (Prüfrunde 3 D3-2)
     einleitung: [
       ...(ersterTagGilt ? [satz(fuerFachkraefte ? `${FUER_FACHKRAEFTE}: ${ersterTag}` : ersterTag, `ablauf:${start.id}`)] : []),
       satz(satzMit(hilti.long, /^Kein Leihen/, 'Fakt hilti'), fq('hilti')),
     ],
-    masse: [{ wert: volt, name: 'Hilti-Akku-Flotte' }],
+    masse: [{ wert: volt, name: 'Akku-Flotte' }],
     zweitweg: { href: '#stueckliste', label: 'Zur Stückliste' },
     whatsapp: whatsappNachricht('fahrzeug-und-werkzeug'),
     kontakt: kontakt('fahrzeug-und-werkzeug'),
     og: {
       wert: volt,
-      name: 'Hilti-Akku-Flotte',
+      name: 'Akku-Flotte',
       zeilen: einschraenkung ? [hilti.short, `${JE_NACH_STELLE}.`] : [`${hilti.short}.`, satzMit(hilti.long, /^Kein Leihen/, 'Fakt hilti')],
     },
     stueckliste: { kopf: { id: 'stueckliste', etikett: 'Stückliste', heading: 'Deine Ausstattung' }, positionen },
@@ -892,7 +892,7 @@ export function getFahrzeugPageText(options: TextOptions): FahrzeugPageText {
     zeichnung: {
       // Beschreibt die Zeichnung 2.0 (components/themen/Servicefahrzeug.tsx): Ausbau hinter der Schiebetür, kein Dachträger
       titel: `Transporter von der Seite, die Schiebetür offen und nach hinten geschoben: dahinter der ${sortimo} mit Regalböden, Koffern und Kleinteilekästen, unten auf dem Ladeboden der Werkzeugkoffer.`,
-      etiketten: { sortimo, hilti: `Hilti ${volt}`, mess: FACTS[erlaubt('measurementTools', now)].short.replace(/^Moderne /, '') },
+      etiketten: { sortimo, hilti: `Akku ${volt}`, mess: FACTS[erlaubt('measurementTools', now)].short.replace(/^Moderne /, '') },
     },
     weitere: weitere('fahrzeug-und-werkzeug', options),
   };

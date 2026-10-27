@@ -238,7 +238,7 @@ describe('Zusagen und Werkzeug & Fuhrpark (E-START-025, -026)', () => {
     GERAETE.forEach((geraet, i) => expect(block).toContain(`0${i + 1} · ${geraet.etikett}`));
   });
 
-  it('equipment: Hilti, vehicle, measurement tools, iPad from the facts, workwear below', () => {
+  it('equipment: tools, vehicle, measurement tools, iPad from the facts, workwear below', () => {
     expect(GERAETE.map((g) => g.id)).toEqual(['hilti', 'vehicle', 'measurementTools', 'ipadSmartphone']);
     for (const geraet of GERAETE) {
       expect(geraet.titel).toBe(FACTS[geraet.id].short);
@@ -263,9 +263,11 @@ describe('BenefitGrid (#vorteile) server render', () => {
     expect(html.match(/id="ausstattung"/g)).toHaveLength(1);
   });
 
-  it('Hilti and the vehicle stand in exactly one block of the section: „Werkzeug & Fuhrpark“ (E-023)', () => {
+  it('tools and the vehicle stand in exactly one block of the section: „Werkzeug & Fuhrpark“ (E-023)', () => {
     const [vorher, ab] = html.split('id="ausstattung"');
-    for (const wort of ['Hilti', 'Sortimo', 'Servicefahrzeug']) {
+    // Inhaber 2026-10-27: Hilti nennen nur die Anzeigen in ihrem Paket, die Startseite markenneutral
+    expect(html).not.toContain('Hilti');
+    for (const wort of ['Akku-Flotte', 'Sortimo', 'Servicefahrzeug']) {
       expect(vorher, wort).not.toContain(wort);
       expect(ab, wort).toContain(wort);
     }

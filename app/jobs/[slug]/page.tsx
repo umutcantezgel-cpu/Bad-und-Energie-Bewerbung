@@ -170,7 +170,7 @@ function OpenJob({ job }: { job: Job }) {
           {/*
             Ablauf nach der Kategorie (processAudienceFor): Das Schülerpraktikum nutzt das Fragenset der Ausbildung, aber
             nicht deren Ablauf (Azubi-Werkzeugset ab Tag 1), sondern den eigenen: Zeitraum nach Absprache mit der Schule (S4).
-            Schritt 3 nach der Stelle (getJobProcessSteps): ohne Hilti-Werkzeug, wo die Stelle keins nennt (Obermonteur).
+            Schritt 3 nach der Stelle (getJobProcessSteps): ohne Werkzeugset, wo die Anzeige kein Werkzeug nennt (Obermonteur).
           */}
           <JobProcess
             audience={processAudienceFor({ category: job.category, questionSet: job.apply.questionSet })}

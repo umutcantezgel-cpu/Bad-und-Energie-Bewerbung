@@ -41,7 +41,7 @@ export const WUNSCH_OPTIONEN: readonly WunschOption[] = [
 /**
  * Fakten, die einen Wunsch im Paket beantworten. Eine Stelle zeigt nur die Fakten aus ihren eigenen
  * `benefitFactIds` (Registry-Test: pending nur bei `onlyForJobIds`), und nur auf Wunsch. Faktenverteilung E-023:
- * Was schon an anderer Stelle der Seite steht (Tarif, Überstunden und Wochenende in den Zusagen, Hilti und
+ * Was schon an anderer Stelle der Seite steht (Tarif, Überstunden und Wochenende in den Zusagen, Werkzeug und
  * Fahrzeug in Werkzeug & Fuhrpark, 35 km und Fernmontage im Einsatzgebiet), kommt nicht ein drittes Mal ins
  * Paket; dafür zeigt eine Verweiszeile dorthin (WUNSCH_VERWEISE). „Flexible Arbeitszeiten“ steht in der h1 und
  * in den Zusagen, darum ebenfalls nur als Verweis.
@@ -107,7 +107,7 @@ const EXTRA_WUENSCHE: Readonly<Record<string, readonly WunschId[]>> = {
 };
 
 /**
- * Paketzeilen, deren Inhalt „Werkzeug & Fuhrpark“ trägt (E-023: Hilti und Fahrzeug an genau einem Ort in
+ * Paketzeilen, deren Inhalt „Werkzeug & Fuhrpark“ trägt (E-023: Werkzeug und Fahrzeug an genau einem Ort in
  * #vorteile). Sie stehen im Paket als eine Verweiszeile; der Wortlaut der Stelle steht auf ihrer Seite.
  */
 const AUSSTATTUNG_EXTRAS: ReadonlySet<string> = new Set(['Werkzeug', 'Fahrzeug']);

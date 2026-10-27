@@ -303,12 +303,12 @@ describe('Ablauf', () => {
     expect(start.title).not.toMatch(/Werkzeug/);
     expect(start.text).toContain('unbefristeten');
     expect(getJobProcessSteps(om).slice(0, 2)).toEqual(getProcessSteps('fachkraft').slice(0, 2));
-    // Wer Hilti nennt (Vorteil oder Paketzeile), behält den Start der Fachkräfte; andere Stellenarten ihren eigenen
+    // Wer Werkzeug nennt (Vorteil oder Paketzeile), behält den Start der Fachkräfte; andere Stellenarten ihren eigenen
     for (const job of ALL_JOBS.filter((j) => j.id !== om.id)) {
       expect(eigenerAblauf(job), job.id).toBeNull();
       expect(getJobProcessSteps(job), job.id).toEqual(getProcessSteps(processAudienceFor({ category: job.category, questionSet: job.apply.questionSet })));
     }
-    expect(getJobProcessSteps(getJobById('anlagenmechaniker-shk')!)[2].text).toContain('Hilti');
+    expect(getJobProcessSteps(getJobById('anlagenmechaniker-shk')!)[2].text).toContain('persönliches Werkzeugset');
   });
 
   it('drei Schritte, Start je Zielgruppe', () => {

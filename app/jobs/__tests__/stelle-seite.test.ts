@@ -79,8 +79,11 @@ describe('/jobs/[slug]: Obermonteur (Inhaber 2026-10-27)', () => {
     expect(html).not.toContain('selbst montieren');
   });
 
-  it('der Anlagenmechaniker behält Hilti im Ablauf', async () => {
-    expect(await render(am.slug)).toContain('persönliches Hilti-Werkzeugset');
+  it('der Anlagenmechaniker behält das Werkzeugset im Ablauf und Hilti in seiner Paketzeile', async () => {
+    const html = await render(am.slug);
+    expect(html).toContain('persönliches Werkzeugset');
+    // Inhaber 2026-10-27: Hilti nur noch dort, wo die Anzeige es selbst in ihrem Paket nennt
+    expect(html).toContain('Persönliche Hilti-22-V-Akku-Flotte');
   });
 });
 

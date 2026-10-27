@@ -128,9 +128,11 @@ const RAW_FACTS = {
     offenFuer: { kategorien: ['buero'], frage: 'fakten-abgleich S5, M-038: Befristung der Bürostelle nicht genannt' },
     source: 'components/trust/ProcessSteps.tsx@393df01',
   },
+  // Inhaber 2026-10-27 (fakten-abgleich S8): „Hilti braucht allgemein nicht erwähnt zu werden“. Der Fakt steht nur
+  // noch auf Sammelflächen und ist darum markenneutral; die Marke nennen allein die Anzeigen in ihrem Paket.
   hilti: {
-    short: 'Persönliche Hilti-Ausstattung',
-    long: 'Deine persönliche Hilti-22-V-Akku-Flotte mit Bohrhammer, Säbelsäge und Presszangen für Viega und Geberit. Kein Leihen, kein Warten.',
+    short: 'Persönliche Akku-Werkzeuge',
+    long: 'Deine persönliche 22-V-Akku-Flotte mit Bohrhammer, Säbelsäge und Presszangen für Viega und Geberit. Kein Leihen, kein Warten.',
     source: 'app/page.tsx@393df01',
   },
   vehicle: {
@@ -226,8 +228,9 @@ const RAW_FACTS = {
     source: 'lib/data/services.ts@393df01',
   },
   azubiToolkit: {
-    short: 'Eigenes Hilti-Werkzeugset ab Tag 1',
-    long: 'Ab dem ersten Tag bekommst du dein eigenes Hilti-Azubi-Werkzeugset geschenkt.',
+    // Nur auf der Themenseite „Fahrzeug und Werkzeug“ (Stückliste), darum markenneutral wie hilti (fakten-abgleich S8)
+    short: 'Eigenes Werkzeugset ab Tag 1',
+    long: 'Ab dem ersten Tag bekommst du dein eigenes Azubi-Werkzeugset geschenkt.',
     source: 'components/pricing/pricing.constants.ts@393df01',
   },
   azubiPay: {

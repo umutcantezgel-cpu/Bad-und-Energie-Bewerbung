@@ -231,12 +231,12 @@ describe('Texte der Themenseiten: nur Belegtes', () => {
     // Fahrzeug und Werkzeug (Prüfung E-031, D1-5): Büro und Praktikum haben keine Ausstattung; Description und
     // Teilen-Zeilen nennen sie dann nur mit „je nach Stelle“, und die Description nennt alle sechs Themen samt Büro
     expect(ohneAusstattung(JOBS, NOW).length).toBeGreaterThan(0);
-    expect(hub.meta.description).toContain('Servicefahrzeug und Hilti je nach Stelle');
+    expect(hub.meta.description).toContain('Servicefahrzeug und Werkzeug je nach Stelle');
     expect(hub.meta.description).toContain('Büro');
     expect(standard).not.toMatch(/Fahrzeug|Werkzeug|Hilti/);
     expect(findClaims(standard)).toEqual([]);
     const fachHub = getArbeitenPageText({ jobs: JOBS.filter((j) => ohneAusstattung([j], NOW).length === 0), now: NOW });
-    expect(fachHub.meta.description).toContain('Servicefahrzeug, Hilti-Ausstattung');
+    expect(fachHub.meta.description).toContain('Servicefahrzeug, Werkzeug-Ausstattung');
     expect('og' in fachHub).toBe(false);
     for (const kasten of hub.zusagen.kaesten) {
       const id = (['flexibleHours', 'vacation30', 'noWeekendOnCall', 'noFarAssembly'] as const).find((f) => FACTS[f].short === kasten.titel)!;
@@ -478,11 +478,11 @@ describe('Fahrzeug und Werkzeug (E-031): Einschränkung am Anfang, solange eine 
     expect(ohneAusstattung(JOBS, NOW).map((job) => job.category).sort()).toEqual(['buero', 'praktikum']);
     const seite = getThemaPageText('fahrzeug-und-werkzeug', { jobs: JOBS, now: NOW });
     if (seite.id !== 'fahrzeug-und-werkzeug') throw new Error('falsche Seite');
-    // Eine Einschränkung für Hilti und Fahrzeug, im Wortlaut der Karte im Hub (Prüfrunde 4 D4-3)
+    // Eine Einschränkung für Werkzeug und Fahrzeug, im Wortlaut der Karte im Hub (Prüfrunde 4 D4-3)
     expect(seite.unterzeile).toEqual([`Je nach Stelle: ${FACTS.hilti.short} und ${FACTS.vehicle.short}.`]);
     expect(seite.unterzeile).toEqual([themaKarte('fahrzeug-und-werkzeug', { jobs: JOBS, now: NOW }).satz.text]);
-    // Die persönliche Hilti-Ausstattung gehört laut Stückliste nicht zum Kundendiensttechniker (Hilti-Koffer): kein
-    // „Für Fachkräfte: Am ersten Tag stehen dein persönliches Hilti-Werkzeugset und dein Servicefahrzeug bereit.“
+    // Die persönliche Akku-Flotte gehört laut Stückliste nicht zum Kundendiensttechniker (Hilti-Koffer): kein
+    // „Für Fachkräfte: Am ersten Tag stehen dein persönliches Werkzeugset und dein Servicefahrzeug bereit.“
     expect(seite.einleitung.map((s) => s.text).join(' ')).not.toContain('Am ersten Tag');
     expect(seite.einleitung.map((s) => s.quellen)).toEqual([['fakt:hilti']]);
     expect(seite.og.zeilen).toEqual([FACTS.hilti.short, 'je nach Stelle.']);
@@ -513,7 +513,8 @@ describe('Fahrzeug und Werkzeug (E-031): Einschränkung am Anfang, solange eine 
     const hilti = seite.stueckliste.positionen.find((p) => p.factId === 'hilti')!;
     expect(hilti.giltFuer).toEqual(['Anlagenmechaniker SHK']);
     expect(seite.meta.description.startsWith('Je nach Stelle: ')).toBe(true);
-    expect(seite.meta.description).not.toMatch(/^(?!Je nach Stelle)[^.]*Hilti/);
+    // Inhaber 2026-10-27: Hilti nennen nur die Anzeigen in ihrem Paket, nicht die Sammelseite
+    expect(seite.meta.description).not.toContain('Hilti');
   });
 
   it('Prüfrunde 3 D3-2: keine Zusage im Kopf gilt einer Stelle, die die Stückliste für dieselbe Ausstattung ausschließt', () => {
@@ -527,7 +528,7 @@ describe('Fahrzeug und Werkzeug (E-031): Einschränkung am Anfang, solange eine 
       const gilt = (factId: string, job: (typeof JOBS)[number]) =>
         seite.stueckliste.positionen.some((p) => p.factId === factId && (p.giltFuer === null || p.giltFuer.includes(job.shortTitle)));
       const zusagen = [
-        { muster: /Hilti-Werkzeugset/, factId: 'hilti' },
+        { muster: /persönliches Werkzeugset/, factId: 'hilti' },
         { muster: /Servicefahrzeug/, factId: 'vehicle' },
       ].filter((z) => z.muster.test(kopf));
       for (const { factId } of zusagen) {

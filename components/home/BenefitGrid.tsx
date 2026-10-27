@@ -32,7 +32,7 @@ export const VORTEILE_ETIKETT = 'Vorteile';
  * #vorteile on the wall surface (R3-HOME-02, Tonfolge E-023): the package configurator per role
  * (E-START-024 with the wishes of E-START-016, a small client island fed with plain data), the
  * company's promises (E-START-025) and the equipment list „Werkzeug & Fuhrpark“ (E-START-026, the one
- * place for Hilti and vehicle in this section; the package points there).
+ * place for tools and vehicle in this section; the package points there).
  */
 export interface BenefitGridProps {
   /** Stichtag für Stellen und Fakten (Tests mit festem Datum); Standard: jetzt. */
