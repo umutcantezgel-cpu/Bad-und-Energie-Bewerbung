@@ -40,9 +40,30 @@ export const EMAIL_COLORS = Object.freeze({
 });
 
 const C = EMAIL_COLORS;
-const FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+/**
+ * Segoe UI zuerst: Outlook für Windows nimmt nur die erste Familie und fiele bei unbekanntem `-apple-system` auf Times
+ * New Roman zurück. Apple und Android haben kein Segoe UI und landen bei ihrer Systemschrift.
+ */
+const FONT = "'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif";
+/** Reserve nur für Outlook (Word-Engine), im bedingten Kommentar im Kopf. */
+const FONT_MSO = "'Segoe UI', Arial, sans-serif";
 /** Strichstärke der Leitungen wie auf der Website (--m-strich). */
 const STRICH = 3;
+/** Breite der Karte; Outlook bekommt sie als fester Rahmen, alle anderen als max-width. */
+const BREITE = 600;
+/** Füllzeichen hinter dem Vorschautext, damit die Postfachliste nicht den Anfang der Mail anhängt. */
+const VORSCHAU_FUELLER = '&zwnj;&nbsp;'.repeat(90);
+
+/**
+ * Zeilenhöhe in px; `exactly` hält Outlook bei genau diesem Wert. Nie an `<a>`-Knöpfen oder an Zellen, die einen Knopf
+ * enthalten (dort verschiebt `exactly` die Höhe).
+ */
+function lh(px: number): string {
+  return `line-height: ${px}px; mso-line-height-rule: exactly;`;
+}
+
+/** Lange Wörter ohne Bruchstelle (Adressen, Links, Kennungen) umbrechen statt die Mail zu verbreitern. */
+const UMBRUCH = 'word-break: break-word; overflow-wrap: break-word;';
 
 export interface EmailLink {
   href: string;
@@ -143,19 +164,20 @@ export function formatBerlinDateTime(date: Date): string {
 // HTML
 // ---------------------------------------------------------------------------
 
-const P = `margin: 0 0 16px 0; font-size: 16px; line-height: 1.55; color: ${C.ink};`;
+const P = `margin: 0 0 16px 0; font-size: 16px; ${lh(24)} color: ${C.ink};`;
+const P_LEISE = `margin: 0 0 16px 0; font-size: 15px; ${lh(22)} color: ${C.muted};`;
 const LINK = `color: ${C.brand}; text-decoration: underline;`;
 /** Etikett: kleine, gesperrte Zeile in Navy (wie text-etikett, ohne Versalien). */
-const ETIKETT = `font-size: 13px; line-height: 1.4; font-weight: 700; letter-spacing: 0.06em; color: ${C.brand};`;
+const ETIKETT = `font-size: 13px; ${lh(18)} font-weight: 700; letter-spacing: 0.06em; color: ${C.brand};`;
 
 function linkHtml(href: string | undefined | null, label: string): string {
   const safe = safeHref(href);
   return safe ? `<a href="${esc(safe)}" style="${LINK}">${esc(label)}</a>` : esc(label);
 }
 
-/** Eine Leitung als Tabellenzeile (Outlook-fest): Höhe = Strich, Farbe als Fläche. */
+/** Eine Leitung als Tabellenzeile (Outlook-fest): Höhe = Strich, Farbe als Fläche, auch als Attribut. */
 function lineRow(color: string): string {
-  return `<tr><td style="height: ${STRICH}px; line-height: ${STRICH}px; font-size: 0; background-color: ${color};">&nbsp;</td></tr>`;
+  return `<tr><td height="${STRICH}" bgcolor="${color}" style="height: ${STRICH}px; font-size: ${STRICH}px; ${lh(STRICH)} background-color: ${color};">&nbsp;</td></tr>`;
 }
 
 function rowsHtml(rows: EmailRow[]): string {
@@ -175,8 +197,8 @@ function rowsHtml(rows: EmailRow[]): string {
         .join(' · ');
       const border = index === visible.length - 1 ? '' : `border-bottom: 1px solid ${C.line};`;
       return `<tr>
-        <td valign="top" style="padding: 10px 16px 10px 0; width: 38%; font-size: 14px; line-height: 1.45; color: ${C.muted}; ${border}">${esc(row.label)}</td>
-        <td valign="top" style="padding: 10px 0; font-size: 15px; line-height: 1.45; color: ${C.ink}; font-variant-numeric: tabular-nums; ${border}">${main}${extra ? `<br><span style="font-size: 14px;">${extra}</span>` : ''}</td>
+        <td valign="top" style="padding: 10px 16px 10px 0; width: 38%; font-size: 14px; ${lh(20)} color: ${C.muted}; word-break: normal; hyphens: auto; -webkit-hyphens: auto; ${border}">${esc(row.label)}</td>
+        <td valign="top" style="padding: 10px 0; font-size: 15px; ${lh(22)} color: ${C.ink}; font-variant-numeric: tabular-nums; ${UMBRUCH} ${border}">${main}${extra ? `<br><span style="font-size: 14px;">${extra}</span>` : ''}</td>
       </tr>`;
     })
     .join('');
@@ -186,32 +208,32 @@ function rowsHtml(rows: EmailRow[]): string {
 function blockHtml(block: EmailBlock): string {
   switch (block.type) {
     case 'title':
-      return `<h1 style="margin: 0 0 12px 0; font-size: 26px; line-height: 1.2; font-weight: 800; letter-spacing: -0.01em; color: ${C.brand};">${esc(block.text)}</h1>`;
+      return `<h1 style="margin: 0 0 12px 0; font-size: 26px; ${lh(32)} font-weight: 800; letter-spacing: -0.01em; color: ${C.brand};">${esc(block.text)}</h1>`;
     case 'heading':
-      return `<h2 style="margin: 28px 0 8px 0; font-size: 17px; line-height: 1.3; font-weight: 700; color: ${C.brand};">${esc(block.text)}</h2>`;
+      return `<h2 style="margin: 28px 0 8px 0; font-size: 17px; ${lh(22)} font-weight: 700; color: ${C.brand};">${esc(block.text)}</h2>`;
     case 'paragraph':
-      return `<p style="${P}${block.muted ? ` color: ${C.muted}; font-size: 15px;` : ''}">${escMultiline(block.text)}</p>`;
+      return `<p style="${block.muted ? P_LEISE : P}">${escMultiline(block.text)}</p>`;
     case 'rows':
       return rowsHtml(block.rows);
     case 'list': {
       const items = block.items.filter(present);
       if (items.length === 0) return '';
       return `<ul style="margin: 0 0 20px 0; padding: 0 0 0 20px; color: ${C.ink};">${items
-        .map((item) => `<li style="margin: 0 0 8px 0; font-size: 15px; line-height: 1.5;">${escMultiline(item)}</li>`)
+        .map((item) => `<li style="margin: 0 0 8px 0; font-size: 15px; ${lh(22)}">${escMultiline(item)}</li>`)
         .join('')}</ul>`;
     }
     case 'steps': {
       const rows = block.steps
         .map((step, index) => {
           const marker = step.done
-            ? `<span style="display: inline-block; width: 28px; height: 28px; line-height: 28px; border-radius: 14px; background-color: ${C.successSubtle}; color: ${C.success}; font-size: 15px; font-weight: 700; text-align: center;">&#10003;</span>`
-            : `<span style="display: inline-block; width: 24px; height: 24px; line-height: 24px; border: 2px solid ${C.brand}; border-radius: 14px; background-color: ${C.card}; color: ${C.brand}; font-size: 14px; font-weight: 700; text-align: center;">${index + 1}</span>`;
+            ? `<span style="display: inline-block; width: 28px; height: 28px; ${lh(28)} border-radius: 14px; background-color: ${C.successSubtle}; color: ${C.success}; font-size: 15px; font-weight: 700; text-align: center;">&#10003;</span>`
+            : `<span style="display: inline-block; width: 24px; height: 24px; ${lh(24)} border: 2px solid ${C.brand}; border-radius: 14px; background-color: ${C.card}; color: ${C.brand}; font-size: 14px; font-weight: 700; text-align: center;">${index + 1}</span>`;
           const status = step.done ? ` <span style="color: ${C.success}; font-weight: 700;">· Erledigt</span>` : '';
           return `<tr>
             <td valign="top" style="padding: 0 14px 16px 0; width: 28px;">${marker}</td>
             <td valign="top" style="padding: 2px 0 16px 0;">
-              <div style="font-size: 16px; line-height: 1.4; font-weight: 700; color: ${C.brand};">${esc(step.title)}${status}</div>
-              ${present(step.text) ? `<div style="margin-top: 4px; font-size: 15px; line-height: 1.5; color: ${C.muted};">${esc(step.text)}</div>` : ''}
+              <div style="font-size: 16px; ${lh(22)} font-weight: 700; color: ${C.brand};">${esc(step.title)}${status}</div>
+              ${present(step.text) ? `<div style="margin-top: 4px; font-size: 15px; ${lh(22)} color: ${C.muted};">${esc(step.text)}</div>` : ''}
             </td>
           </tr>`;
         })
@@ -223,18 +245,18 @@ function blockHtml(block: EmailBlock): string {
       if (!href) return '';
       // Wie im Einstieg: Die rote Vorlauf-Linie läuft in den Knopf; der Knopf selbst ist Navy.
       return `<table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 4px 0 24px 0;"><tr>
-        <td valign="middle" style="width: 28px; padding: 0;"><div style="height: ${STRICH}px; line-height: ${STRICH}px; font-size: 0; background-color: ${C.accent};">&nbsp;</div></td>
-        <td style="border-radius: 4px; background-color: ${C.brand};">
+        <td valign="middle" style="width: 28px; padding: 0;"><div style="height: ${STRICH}px; ${lh(STRICH)} font-size: 0; background-color: ${C.accent};">&nbsp;</div></td>
+        <td style="border-radius: 4px; background-color: ${C.brand}; color: ${C.onBrand};">
           <a href="${esc(href)}" style="display: inline-block; padding: 14px 24px; font-size: 16px; line-height: 1.2; font-weight: 700; color: ${C.onBrand}; text-decoration: none; border-radius: 4px;">${esc(block.label)}</a>
         </td>
       </tr></table>`;
     }
     case 'note': {
       const danger = block.tone === 'danger';
-      return `<div style="margin: 0 0 20px 0; padding: 14px 16px; border-radius: 4px; border-left: ${STRICH}px solid ${danger ? C.danger : C.brand}; background-color: ${danger ? C.dangerSubtle : C.subtle}; color: ${danger ? C.danger : C.ink}; font-size: 15px; line-height: 1.5;">${escMultiline(block.text)}</div>`;
+      return `<div style="margin: 0 0 20px 0; padding: 14px 16px; border-radius: 4px; border-left: ${STRICH}px solid ${danger ? C.danger : C.brand}; background-color: ${danger ? C.dangerSubtle : C.subtle}; color: ${danger ? C.danger : C.ink}; font-size: 15px; ${lh(22)}">${escMultiline(block.text)}</div>`;
     }
     case 'quote':
-      return `<div style="margin: 0 0 20px 0; padding: 14px 16px; border-radius: 4px; border-left: ${STRICH}px solid ${C.brand}; background-color: ${C.subtle}; color: ${C.ink}; font-size: 15px; line-height: 1.6;">${escMultiline(block.text)}</div>`;
+      return `<div style="margin: 0 0 20px 0; padding: 14px 16px; border-radius: 4px; border-left: ${STRICH}px solid ${C.brand}; background-color: ${C.subtle}; color: ${C.ink}; font-size: 15px; ${lh(24)}">${escMultiline(block.text)}</div>`;
     case 'panel': {
       const inner = block.blocks.filter(isBlock).map(blockHtml).filter(Boolean).join('\n');
       if (!inner) return '';
@@ -337,63 +359,89 @@ export interface EmailLayoutOptions {
 /**
  * Rahmen: Navy-Kopf mit Wortmarke und Ortsmarke, rote Vorlauf-Linie, Karte auf Papier, blaue
  * Rücklauf-Linie, darunter die Pflichtangaben auf der Wand. Tabellenbasiert für Outlook und Gmail.
+ *
+ * Alles Wichtige steht inline, weil GMX, WEB.DE und die Gmail-App mit fremden Konten den `<style>`-Block entfernen;
+ * der Kopf-Style bringt nur das breitere Polster am Desktop. Outlook für Windows bekommt einen festen 600-px-Rahmen
+ * (ignoriert max-width), 96 dpi (sonst wächst die Karte bei 125/150 % Skalierung) und keine „erweiterte Typografie“
+ * (Blocksatz mit Silbentrennung im Lesebereich). Mails bleiben hell („light only“, Gmail-Apps und Apple Mail).
+ * Der Reset für die Datenerkennung von Apple steht in einem eigenen `<style>`: Gmail verwirft einen Block mit
+ * Attributselektor ganz und nähme sonst das Desktop-Polster mit.
  */
 export function emailLayout({ title, preheader, eyebrow, badge, contentHtml, footerNote }: EmailLayoutOptions): string {
   const kicker = eyebrow ?? badge;
   const footer = footerLines()
-    .map((line, index) => `<p style="margin: 0 0 4px 0;${index === 0 ? ` color: ${C.brand}; font-weight: 700;` : ''}">${esc(line)}</p>`)
+    .map(
+      (line, index) =>
+        `<p style="margin: 0 0 4px 0; font-size: 13px; ${lh(20)} color: ${index === 0 ? C.brand : C.muted};${index === 0 ? ' font-weight: 700;' : ''}">${esc(line)}</p>`,
+    )
     .join('');
 
   return `<!DOCTYPE html>
-<html lang="de">
+<html lang="de" dir="ltr" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light">
-  <meta name="supported-color-schemes" content="light">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="x-apple-disable-message-reformatting" content="true">
+  <meta name="format-detection" content="date=no, address=no">
+  <meta name="color-scheme" content="light only">
+  <meta name="supported-color-schemes" content="light only">
   <title>${title}</title>
+  <!--[if mso]>
+  <noscript><xml>
+    <o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings>
+    <w:WordDocument><w:DontUseAdvancedTypographyReadingMail/></w:WordDocument>
+  </xml></noscript>
+  <style>table, td, div, p, a, span, h1, h2, li { font-family: ${FONT_MSO} !important; }</style>
+  <![endif]-->
   <style>
-    body { margin: 0; padding: 0; background-color: ${C.page}; -webkit-text-size-adjust: 100%; }
-    table, td { border-collapse: collapse; }
+    body { margin: 0; padding: 0; width: 100%; background-color: ${C.page}; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
     a { color: ${C.brand}; }
-    @media only screen and (max-width: 600px) {
-      .card { padding: 24px 20px !important; }
-      .kopf { padding: 18px 20px !important; }
+    @media only screen and (min-width: 640px) {
+      .kopf { padding: 20px 36px !important; }
+      .karte { padding: 32px 36px 36px 36px !important; }
     }
   </style>
+  <style>
+    :root { color-scheme: light only; supported-color-schemes: light only; }
+    a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; font-size: inherit !important; font-family: inherit !important; font-weight: inherit !important; line-height: inherit !important; }
+  </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: ${C.page}; font-family: ${FONT}; color: ${C.ink};">
-  <div style="display: none; max-height: 0; overflow: hidden; opacity: 0; font-size: 1px; line-height: 1px; color: ${C.page};">${preheader}</div>
-  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: ${C.page};">
+<body style="margin: 0; padding: 0; width: 100%; background-color: ${C.page};">
+<div role="article" aria-roledescription="E-Mail" aria-label="${title}" lang="de" dir="ltr" style="font-family: ${FONT}; color: ${C.ink}; background-color: ${C.page};">
+  <div style="display: none; max-height: 0; max-width: 0; overflow: hidden; opacity: 0; font-size: 1px; ${lh(1)} color: ${C.page}; mso-hide: all;">${preheader}${VORSCHAU_FUELLER}</div>
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="${C.page}" style="background-color: ${C.page};">
     <tr>
-      <td align="center" style="padding: 32px 16px;">
-        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+      <td align="center" style="padding: 24px 8px 32px 8px;">
+        <!--[if mso]><table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="${BREITE}" style="width: ${BREITE}px;"><tr><td><![endif]-->
+        <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: ${BREITE}px; border-collapse: separate; font-family: ${FONT};">
           <tr>
-            <td class="kopf" style="padding: 20px 36px; background-color: ${C.brand}; border-radius: 4px 4px 0 0; font-family: ${FONT};">
-              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-                <td style="font-size: 19px; line-height: 1.2; font-weight: 800; letter-spacing: -0.01em; color: ${C.onBrand};">${esc(COMPANY.shortName)} <span style="font-weight: 400; color: ${C.onBrandMuted};">· Karriere</span></td>
-                <td align="right" style="font-size: 12px; line-height: 1.2; font-weight: 700; letter-spacing: 0.06em; color: ${C.onBrandMuted}; white-space: nowrap;">Seit ${COMPANY.foundingYear} · ${esc(COMPANY.address.city)}</td>
-              </tr></table>
+            <td class="kopf" bgcolor="${C.brand}" style="padding: 18px 24px; background-color: ${C.brand}; border-radius: 4px 4px 0 0;">
+              <p style="margin: 0; font-size: 19px; ${lh(24)} font-weight: 800; letter-spacing: -0.01em; color: ${C.onBrand};">${esc(COMPANY.shortName)} <span style="font-weight: 400; color: ${C.onBrandMuted};">· Karriere</span></p>
+              <p style="margin: 4px 0 0 0; font-size: 12px; ${lh(16)} font-weight: 700; letter-spacing: 0.06em; color: ${C.onBrandMuted};">Seit ${COMPANY.foundingYear} · ${esc(COMPANY.address.city)}</p>
             </td>
           </tr>
           ${lineRow(C.accent)}
           <tr>
-            <td class="card" style="padding: 32px 36px 36px 36px; background-color: ${C.card}; border-left: 1px solid ${C.line}; border-right: 1px solid ${C.line}; font-family: ${FONT};">
+            <td class="karte" bgcolor="${C.card}" style="padding: 28px 24px 32px 24px; background-color: ${C.card}; border-left: 1px solid ${C.line}; border-right: 1px solid ${C.line}; ${UMBRUCH}">
               ${kicker ? `<p style="margin: 0 0 10px 0; ${ETIKETT}">${esc(kicker)}</p>` : ''}
               ${contentHtml}
             </td>
           </tr>
           ${lineRow(C.ruecklauf)}
           <tr>
-            <td style="padding: 24px 4px 0 4px; font-family: ${FONT}; font-size: 13px; line-height: 1.5; color: ${C.muted};">
+            <td style="padding: 24px 4px 0 4px;">
               ${footer}
-              ${footerNote ? `<p style="margin: 12px 0 0 0;">${esc(footerNote)}</p>` : ''}
+              ${footerNote ? `<p style="margin: 12px 0 0 0; font-size: 13px; ${lh(20)} color: ${C.muted};">${esc(footerNote)}</p>` : ''}
             </td>
           </tr>
         </table>
+        <!--[if mso]></td></tr></table><![endif]-->
       </td>
     </tr>
   </table>
+</div>
 </body>
 </html>`;
 }
@@ -409,7 +457,10 @@ export function renderEmail({ subject, preheader, eyebrow, blocks, footerNote }:
   const contentHtml = visible.map(blockHtml).filter(Boolean).join('\n');
   const html = emailLayout({ title: esc(cleanTitle), preheader: esc(preheader), eyebrow, contentHtml, footerNote });
 
+  // Der Vorschautext steht auch vorn in der Textfassung: Die Android-Apps von GMX, WEB.DE, mail.com und 1&1 zeigen die
+  // Vorschau aus dem Text-Teil.
   const textParts = [
+    preheader,
     eyebrow,
     ...visible.map(blockText),
     `--\n${footerLines().join('\n')}`,

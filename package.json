@@ -25,7 +25,9 @@
     "e2e": "playwright test",
     "lighthouse": "npx --yes @lhci/cli@0.15.1 autorun",
     "orte:gate": "bun scripts/places/orte-gate.ts",
-    "zeichnung:waermefeld": "bun scripts/zeichnung/waermefeld.ts"
+    "zeichnung:waermefeld": "bun scripts/zeichnung/waermefeld.ts",
+    "mail:vorschau": "bun scripts/email/vorschau.ts",
+    "mail:bilder": "node scripts/email/bilder.mjs"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.3.3",

@@ -1,0 +1,4 @@
+# Erzeugt von bun run mail:vorschau und mail:bilder; eingecheckt werden nur die ausgewählten Vergleichsbilder.
+vorschau/
+bilder/*
+!bilder/auswahl/

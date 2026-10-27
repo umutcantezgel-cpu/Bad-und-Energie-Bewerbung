@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { NormalizedFollowUp, ReferencedApplication } from '@/lib/applications/types';
+import type { NormalizedFollowUp } from '@/lib/applications/types';
 import { LEGAL_ENTITY } from '@/components/legal/legal-data';
 import {
   EMAIL_COLORS,
@@ -13,76 +13,7 @@ import {
   renderEmail,
   type RenderedEmail,
 } from '@/lib/email/templates';
-
-const XSS = '<script>alert(1)</script>';
-
-const base: ReferencedApplication = {
-  reference: 'BE-26-K7M4QX',
-  idempotencyKey: '7f9c1b9e-3c0f-4d5e-9a51-1c2b3d4e5f60',
-  submittedAt: new Date('2026-10-08T12:05:00Z'),
-  job: {
-    id: 'anlagenmechaniker-shk',
-    title: 'Anlagenmechaniker SHK für Wärmepumpen & Heizungstechnik (m/w/d)',
-    shortTitle: 'Anlagenmechaniker SHK',
-    referenceCode: 'SHK-WP-2026-01',
-    questionSet: 'fachkraft',
-    status: 'published',
-  },
-  answers: {},
-  name: 'Max Muster',
-  firstName: 'Max',
-  phone: { raw: '0151 23456789', e164: '+4915123456789', display: '01512 3456789', valid: true, country: 'DE' },
-  contactChannel: 'whatsapp',
-  attribution: {},
-  channel: 'direct',
-  privacyNoticeVersion: '2026-10',
-  suspectedSpam: false,
-  spamSignals: [],
-};
-
-const full: ReferencedApplication = {
-  ...base,
-  answers: { qualification: 'geselle-ueber-5', start: '1-3-monate' },
-  email: 'max@example.org',
-  contactChannel: 'email',
-  fillDurationMs: 41_000,
-  mappe: {
-    coverLetter: 'Sehr geehrter Herr Demir,\nich bewerbe mich.',
-    skills: ['Wärmepumpen', 'Löten'],
-    workStyle: 'Ruhig und genau',
-    careerStations: [
-      { period: '2019–2024', role: 'Geselle', company: 'Muster GmbH', location: 'Gießen', tasks: ['Heizungsbau'] },
-    ],
-    educationStations: [{ period: '2016–2019', degree: 'Ausbildung SHK', institution: 'Berufsschule Wetzlar' }],
-  },
-  attribution: {
-    utmSource: 'indeed',
-    utmMedium: 'jobboard',
-    utmCampaign: 'anlagenmechaniker-shk',
-    ref: 'koch',
-    referrerHost: 'de.indeed.com',
-    landingPath: '/jobs/anlagenmechaniker-shk-wetzlar',
-    funnel: 'stellenseite',
-  },
-  channel: 'indeed',
-};
-
-const hostile: ReferencedApplication = {
-  ...full,
-  name: `Eve ${XSS}`,
-  firstName: `Eve${XSS}`,
-  email: 'eve@example.org',
-  phone: { raw: `${XSS}`, display: `${XSS}`, valid: false },
-  answers: { qualification: XSS },
-  mappe: {
-    coverLetter: XSS,
-    skills: [XSS],
-    workStyle: XSS,
-    careerStations: [{ period: XSS, role: XSS, company: XSS, location: XSS, tasks: [XSS] }],
-    educationStations: [{ period: XSS, degree: XSS, institution: XSS, location: XSS }],
-  },
-  attribution: { utmSource: XSS, landingPath: `/${XSS}`, funnel: XSS },
-};
+import { XSS, base, full, hostile } from './fixtures';
 
 function expectClean(text: string) {
   expect(text).not.toMatch(/\bundefined\b/);

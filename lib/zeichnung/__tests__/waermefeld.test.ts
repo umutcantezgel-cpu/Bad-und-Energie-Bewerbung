@@ -702,5 +702,6 @@ describe('Wärmefeld: Zwischenstände der Bewegung (Prüfrunde 4 B4-2)', () => {
       staende += 1;
     }
     expect(staende, id).toBeGreaterThan(10);
-  });
+    // Rund 7 s je Raum im vollen Lauf (Tausende Punkt-in-Polygon-Prüfungen je Zwischenstand); 5 s Standard reichen nicht.
+  }, 60_000);
 });
