@@ -109,6 +109,11 @@ describe('follow-up message', () => {
     ]);
     noGaps(buildFollowUpMessage({ reference: null, startDate: undefined }));
   });
+
+  it('writes the start date from the date field out', () => {
+    const text = buildFollowUpMessage({ reference: 'BE-26-0042', kind: 'extras', startDate: '2026-12-01' });
+    expect(text.split('\n')[1]).toBe('Frühester Start: 1. Dezember 2026');
+  });
 });
 
 describe('mappe share message (E-BEW-020)', () => {

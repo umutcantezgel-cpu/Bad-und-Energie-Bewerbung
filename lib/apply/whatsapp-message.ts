@@ -1,5 +1,6 @@
 import type { ApplicationAnswers, ContactChannel } from '@/lib/applications/schema';
 import { ACQUISITION_CHANNELS, HERKUNFT_CODES, type AcquisitionChannel } from '@/lib/attribution/channel';
+import { formatIsoDate } from '@/lib/mappe/format';
 import { BEWERBUNG_WHATSAPP_MESSAGE, WHATSAPP_CODE_PRAEFIX } from '@/lib/utils/whatsapp-utils';
 import { describeAnswers, type QuestionSetId } from './questions';
 
@@ -90,7 +91,7 @@ export function buildFollowUpMessage(input: FollowUpMessageInput): string {
   const about = reference ? `zur Bewerbung ${reference}` : 'zu meiner Bewerbung';
   return compact([
     `${WHATSAPP_GREETING} hier sind meine ${subject} ${about}.`,
-    line('Frühester Start', input.startDate),
+    line('Frühester Start', input.startDate ? formatIsoDate(input.startDate) : null),
     line('PLZ', input.postalCode),
     clean(input.message) || null,
   ]);

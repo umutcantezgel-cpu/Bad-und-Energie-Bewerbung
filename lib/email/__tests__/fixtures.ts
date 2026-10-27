@@ -183,4 +183,15 @@ export const MAIL_VARIANTEN: readonly MailVariante[] = [
   { name: 'bestaetigung', to: full.email ?? '', replyTo: TEAM, render: () => renderApplicationConfirmationEmail(full) },
   { name: 'ergaenzung', to: TEAM, render: () => renderApplicationFollowUpEmail(ergaenzung) },
   { name: 'ergaenzung-mappe', to: TEAM, render: () => renderApplicationFollowUpEmail({ ...ergaenzung, mappe: maximal.mappe }) },
+  {
+    // Nur angetippte Praxiserfahrung von der Danke-Seite (reist als mappe.skills).
+    name: 'ergaenzung-praxis',
+    to: TEAM,
+    render: () =>
+      renderApplicationFollowUpEmail({
+        ...ergaenzung,
+        message: undefined,
+        mappe: { coverLetter: '', skills: ['Wärmepumpen', 'Heizungstausch', 'Badsanierung'], careerStations: [], educationStations: [] },
+      }),
+  },
 ];

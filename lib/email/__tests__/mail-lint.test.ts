@@ -13,8 +13,7 @@ function unescape(html: string): string {
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
-    .replace(/&#x27;/g, "'")
-    .replace(/&#x2F;/g, '/')
+    .replace(/&#39;/g, "'")
     .replace(/&amp;/g, '&');
 }
 
@@ -49,8 +48,39 @@ describe.each(MAIL_VARIANTEN.map((variante) => [variante.name, variante] as cons
     for (const familien of stapel) expect(familien).toMatch(/^'Segoe UI'/);
   });
 
-  it('gibt Zeilenhöhen in px nur mit mso-line-height-rule an', () => {
-    expect([...html.matchAll(/line-height: \d+px;(?! mso-line-height-rule: exactly;)/g)].map((m) => m[0])).toEqual([]);
+  it('gibt Zeilenhöhen in px an, außerhalb des Knopfs mit mso-line-height-rule', () => {
+    // Am <a> des Knopfs verschöbe `exactly` in Outlook die Höhe (goodemailcode „link button“).
+    const ohneLinks = html.replace(/<a\b[^>]*>/g, '');
+    expect([...ohneLinks.matchAll(/line-height: \d+px;(?! mso-line-height-rule: exactly;)/g)].map((m) => m[0])).toEqual([]);
+    expect(html).not.toMatch(/line-height:\s*[\d.]+\s*[;"]/);
+  });
+
+  it('baut alles aus Tabellenzellen: keine Listen-Tags, kein Abstand an div oder table, keine inline-block-Spans', () => {
+    // Outlook rückt <ul>/<li> unvorhersehbar ein, kennt padding nur an Zellen und kopiert margin an Tabellen auf jede
+    // innere Zelle; display: inline-block kennt es nicht.
+    expect(html).not.toMatch(/<(?:ul|ol|li)\b/);
+    expect(html).not.toMatch(/<div\b[^>]*style="[^"]*(?:padding|margin)\s*:/);
+    expect(html).not.toMatch(/<table\b[^>]*style="[^"]*margin\s*:/);
+    expect(html).not.toMatch(/<span\b[^>]*display:\s*inline-block/);
+  });
+
+  it('rundet Zellen nur in Tabellen mit border-collapse: separate (sonst ignorieren Browser die Ecken)', () => {
+    const offen: string[] = [];
+    const eckig: string[] = [];
+    for (const [tag] of html.matchAll(/<\/?table\b[^>]*>|<td\b[^>]*>/g)) {
+      if (tag.startsWith('</table')) offen.pop();
+      else if (tag.startsWith('<table')) offen.push(tag);
+      else if (tag.includes('border-radius') && !(offen.at(-1) ?? '').includes('border-collapse: separate')) eckig.push(tag.slice(0, 90));
+    }
+    expect(offen).toEqual([]);
+    expect(eckig).toEqual([]);
+  });
+
+  it('verlinkt nur http(s), mailto und tel, lesbar ohne Entitäten wie &#x2F;', () => {
+    for (const [, href] of html.matchAll(/href="([^"]*)"/g)) {
+      expect(href).toMatch(/^(?:https?:\/\/|mailto:|tel:)/);
+      expect(href).not.toContain('&#');
+    }
   });
 
   it('versteckt den Vorschautext auch in Outlook und füllt danach auf', () => {

@@ -49,6 +49,21 @@ function joinParts(parts: Array<string | undefined>, separator: string): string 
   return parts.filter((part): part is string => Boolean(part?.trim())).join(separator);
 }
 
+/**
+ * Nur angetippte Praxiserfahrung (Chips der Danke-Seite, reisen als `mappe.skills`, components/apply/thanks/danke-text.ts):
+ * die Liste, sonst null. Solche Angaben gehören in den Kasten „Ergänzung“, nicht unter eine fast leere „Bewerbungsmappe“.
+ */
+export function nurPraxiserfahrung(mappe: Mappe | undefined): string[] | null {
+  if (!mappe) return null;
+  const skills = mappe.skills.filter((skill) => skill.trim());
+  const sonstEtwas =
+    Boolean(mappe.coverLetter.trim()) ||
+    Boolean(mappe.workStyle?.trim()) ||
+    mappe.careerStations.length > 0 ||
+    mappe.educationStations.length > 0;
+  return skills.length > 0 && !sonstEtwas ? skills : null;
+}
+
 /** Bewerbungsmappe als Blöcke: Anschreiben, Arbeitsstil, Fähigkeiten, Stationen. */
 export function mappeBlocks(mappe: Mappe | undefined): EmailBlockInput[] {
   if (!mappe) return [];

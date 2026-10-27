@@ -56,7 +56,7 @@ describe('team notification', () => {
     expect(mail.text).toContain('Qualifikation: Geselle, über 5 Jahre');
     expect(mail.text).toContain('Start: In 1–3 Monaten (Kündigungsfrist)');
     expect(mail.html).toContain('href="tel:+4915123456789"');
-    expect(mail.html).toContain('https:&#x2F;&#x2F;wa.me&#x2F;4915123456789');
+    expect(mail.html).toContain('href="https://wa.me/4915123456789"');
     expect(mail.text).toContain('https://wa.me/4915123456789');
     expect(mail.text).toContain('Am liebsten per: E-Mail');
     expect(mail.text).toContain('Referenz: SHK-WP-2026-01');
@@ -307,6 +307,25 @@ describe('follow-up block', () => {
     expect(block).toContain('Gern Vollzeit, Firmenwagen wäre schön.');
     expect(MESSAGE_LABEL).toContain('Wunschkonditionen');
     expect(mail.html).toContain('>Ergänzung<');
+  });
+
+  it('writes the start date from the date field out', () => {
+    const iso = renderApplicationFollowUpEmail({ reference: 'BE-26-K7M4QX', idempotencyKey: 'h', receivedAt: new Date(), startDate: '2026-12-01' });
+    expect(iso.text).toContain('Frühester Start: 1. Dezember 2026');
+    expect(iso.html).toContain('1. Dezember 2026');
+  });
+
+  it('shows tapped practice chips as „Praxiserfahrung“ in the block, not under an almost empty „Bewerbungsmappe“', () => {
+    const chips = renderApplicationFollowUpEmail({
+      reference: 'BE-26-K7M4QX',
+      idempotencyKey: 'h',
+      receivedAt: new Date(),
+      mappe: { coverLetter: '', skills: ['Wärmepumpen', 'Badsanierung'], careerStations: [], educationStations: [] },
+    });
+    const block = chips.text.slice(chips.text.indexOf('Ergänzung\n='));
+    expect(block).toContain('Praxiserfahrung: Wärmepumpen, Badsanierung');
+    expect(chips.text).not.toContain('Bewerbungsmappe');
+    expect(chips.text).not.toContain('Fähigkeiten');
   });
 
   it('leaves the block out when nothing but the Mappe was added', () => {

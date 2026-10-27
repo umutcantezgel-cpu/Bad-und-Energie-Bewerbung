@@ -1,5 +1,6 @@
 import type { NormalizedFollowUp } from '@/lib/applications/types';
-import { mappeBlocks } from './application-parts';
+import { formatIsoDate } from '@/lib/mappe/format';
+import { mappeBlocks, nurPraxiserfahrung } from './application-parts';
 import { renderEmail, type RenderedEmail } from './layout';
 
 /**
@@ -19,6 +20,8 @@ export function applicationFollowUpSubject(followUp: Pick<NormalizedFollowUp, 'r
 }
 
 export function renderApplicationFollowUpEmail(followUp: NormalizedFollowUp): RenderedEmail {
+  // Angetippte Praxiserfahrung steht im Kasten „Ergänzung“; eine echte Mappe darunter wie bisher.
+  const praxis = nurPraxiserfahrung(followUp.mappe);
   return renderEmail({
     subject: applicationFollowUpSubject(followUp),
     preheader: `Neue Angaben zur Bewerbung ${followUp.reference}.`,
@@ -29,22 +32,23 @@ export function renderApplicationFollowUpEmail(followUp: NormalizedFollowUp): Re
         type: 'paragraph',
         text: `Zur Bewerbung ${followUp.reference} sind neue Angaben eingegangen. Name und Kontakt stehen in der E-Mail „Neue Bewerbung ${followUp.reference}“.`,
       },
-      Boolean(followUp.startDate || followUp.postalCode || followUp.message) && {
+      Boolean(followUp.startDate || followUp.postalCode || followUp.message || praxis) && {
         type: 'panel',
         title: 'Ergänzung',
         blocks: [
           {
             type: 'rows',
             rows: [
-              { label: 'Frühester Start', value: followUp.startDate },
+              { label: 'Frühester Start', value: followUp.startDate ? formatIsoDate(followUp.startDate) : undefined },
               { label: 'PLZ', value: followUp.postalCode },
+              { label: 'Praxiserfahrung', value: praxis?.join(', ') },
             ],
           },
           followUp.message ? { type: 'paragraph', text: MESSAGE_LABEL, muted: true } : null,
           followUp.message ? { type: 'quote', text: followUp.message } : null,
         ],
       },
-      ...mappeBlocks(followUp.mappe),
+      ...(praxis ? [] : mappeBlocks(followUp.mappe)),
     ],
   });
 }

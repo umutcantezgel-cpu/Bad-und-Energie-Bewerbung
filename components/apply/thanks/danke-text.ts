@@ -143,7 +143,7 @@ export type ErgaenzungPruefung =
 /**
  * Freiwillige Ergänzung zur Bewerbung: Starttermin, Postleitzahl, Nachricht und die angetippten Kenntnisse.
  * Die Kenntnisse reisen als `mappe.skills` (der Vertrag C8 kennt die Mappe schon; die Team-Mail zeigt sie als
- * „Fähigkeiten“). Leere Angaben fallen weg; ohne jede Angabe gibt es nichts zu senden.
+ * „Praxiserfahrung“ im Kasten „Ergänzung“). Leere Angaben fallen weg; ohne jede Angabe gibt es nichts zu senden.
  */
 export function ergaenzungPruefen(
   werte: ErgaenzungWerte,
