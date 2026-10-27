@@ -27,7 +27,7 @@
         "@playwright/test": "1.63.0",
         "@tailwindcss/postcss": "4.3.3",
         "@tailwindcss/typography": "^0.5.19",
-        "@types/google.maps": "^3.66.5",
+        "@types/google.maps": "^3.66.7",
         "@types/node": "^20",
         "@types/react": "^19.3.0",
         "@types/react-dom": "^19.3.0",
@@ -343,7 +343,7 @@
 
     "@types/estree": ["@types/estree@1.0.9", "", {}, "sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg=="],
 
-    "@types/google.maps": ["@types/google.maps@3.66.5", "", {}, "sha512-z7wMLjozUDNC6SYoxvnsh4RvbFQoiqgjHmfcOWKCjKiLklAKV32jvywuBvJRfpThJZn4TonyoeJc/3t9RlVnWQ=="],
+    "@types/google.maps": ["@types/google.maps@3.66.7", "", {}, "sha512-4EhLRkBtF5TMBAifddMeK+tn5MS6Sa6cMwrg4TbQiPlV4nU9IbKwHJ5csBfnpykNmXwqy+a9y0/38ZezOwtxmg=="],
 
     "@types/json-schema": ["@types/json-schema@7.0.15", "", {}, "sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA=="],
 
