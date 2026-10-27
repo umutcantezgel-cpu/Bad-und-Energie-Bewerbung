@@ -177,16 +177,17 @@ export const MAIL_VARIANTEN: readonly MailVariante[] = [
     render: () =>
       renderApplicationTeamEmail({ ...full, mappe: undefined, suspectedSpam: true, spamSignals: ['honeypot', 'fast'], fillDurationMs: 1200 }),
   },
-  { name: 'team-ohne-email', to: TEAM, render: () => renderApplicationTeamEmail({ ...base, contactChannel: 'phone' }) },
+  { name: 'team-ohne-email', to: TEAM, replyTo: TEAM, render: () => renderApplicationTeamEmail({ ...base, contactChannel: 'phone' }) },
   { name: 'team-mappe', to: TEAM, replyTo: full.email, render: () => renderApplicationTeamEmail(full) },
   { name: 'team-maximal', to: TEAM, replyTo: maximal.email, render: () => renderApplicationTeamEmail(maximal) },
   { name: 'bestaetigung', to: full.email ?? '', replyTo: TEAM, render: () => renderApplicationConfirmationEmail(full) },
-  { name: 'ergaenzung', to: TEAM, render: () => renderApplicationFollowUpEmail(ergaenzung) },
-  { name: 'ergaenzung-mappe', to: TEAM, render: () => renderApplicationFollowUpEmail({ ...ergaenzung, mappe: maximal.mappe }) },
+  { name: 'ergaenzung', to: TEAM, replyTo: TEAM, render: () => renderApplicationFollowUpEmail(ergaenzung) },
+  { name: 'ergaenzung-mappe', to: TEAM, replyTo: TEAM, render: () => renderApplicationFollowUpEmail({ ...ergaenzung, mappe: maximal.mappe }) },
   {
     // Nur angetippte Praxiserfahrung von der Danke-Seite (reist als mappe.skills).
     name: 'ergaenzung-praxis',
     to: TEAM,
+    replyTo: TEAM,
     render: () =>
       renderApplicationFollowUpEmail({
         ...ergaenzung,

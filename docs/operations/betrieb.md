@@ -49,7 +49,7 @@ Commit `9717265` hat einen echten Resend-Key in `.env.example` veröffentlicht. 
 
 Ohne verifizierte Domain lehnt Resend den Versand ab; die Website nimmt dann keine Bewerbung an (503, siehe 3.2).
 
-Die Absenderadresse braucht kein Postfach: Keine Mail lässt „Antworten“ dorthin gehen. Antworten auf die Team-Mail gehen an die Bewerberin bzw. den Bewerber, ohne angegebene E-Mail-Adresse an die erste Adresse aus `CONTACT_NOTIFICATION_EMAIL` (Hauptpostfach). Antworten auf die Eingangsbestätigung und auf „Ergänzung zu BE-…“ gehen ebenfalls ans Hauptpostfach (siehe 4.2).
+Die Absenderadresse braucht kein Postfach: Keine Mail lässt „Antworten“ dorthin gehen. Antworten auf die Team-Mail gehen an die Bewerberin bzw. den Bewerber, ohne angegebene E-Mail-Adresse an die erste Adresse aus `CONTACT_NOTIFICATION_EMAIL` (Hauptpostfach; fehlt die Variable oder ist sie ungültig, der Ersatz `RESEND_TO_EMAIL` bzw. `info@bad-energie.de`, also immer eine Adresse, die auch die Team-Mail bekommt). Antworten auf die Eingangsbestätigung und auf „Ergänzung zu BE-…“ gehen ebenfalls ans Hauptpostfach (siehe 4.2).
 
 ### 2.2 Geheimnisse erzeugen und Umgebungsvariablen setzen
 

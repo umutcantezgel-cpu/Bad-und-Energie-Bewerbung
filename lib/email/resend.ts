@@ -49,11 +49,11 @@ export interface SendEmailOptions {
 
 export interface DispatchOptions {
   /**
-   * Basis-Schlüssel, z. B. `bewerbung:<uuid>`. Je Mail wird `:<art>:<Inhalts-Hash>` angehängt:
-   * Gleicher Inhalt wird von Resend 24 h lang nur einmal versendet, geänderter Inhalt
-   * (z. B. korrigierte Telefonnummer nach einem Fehler) bekommt einen eigenen Schlüssel.
-   * Bei Bewerbungen zählen nur die Angaben, nicht Eingangszeit oder Ausfülldauer
-   * (applicationFingerprint), damit Wiederholungen auf einer anderen Instanz denselben Key haben.
+   * Basis-Schlüssel, z. B. `bewerbung:<uuid>`. Je Mail wird `:<art>:<Hash>` angehängt, nie aus dem gerenderten
+   * HTML: Gleicher Inhalt wird von Resend 24 h lang nur einmal versendet, geänderter Inhalt (z. B. korrigierte
+   * Telefonnummer nach einem Fehler) bekommt einen eigenen Schlüssel, ein neues Mail-Layout nicht. Bei Bewerbungen
+   * zählen nur die Angaben, nicht Eingangszeit oder Ausfülldauer (applicationFingerprint), damit Wiederholungen auf
+   * einer anderen Instanz denselben Key haben; bei Ergänzungen Empfänger und Inhalts-Schlüssel der Ergänzung.
    */
   idempotencyKey?: string;
   /**
@@ -339,7 +339,9 @@ export async function dispatchApplicationFollowUpEmail(
       ...mail,
       replyTo: config.replyToEmail,
       tags: [{ name: 'category', value: 'application_follow_up' }],
-      idempotencyKey: stableIdempotencyKey(options, 'follow-up', [mail.to]),
+      // followUp.idempotencyKey auch im Hash: Ein Aufrufer mit grobem Basis-Schlüssel (etwa nur die Nummer) ließe
+      // sonst jede weitere, andere Ergänzung als „schon versendet“ still verschwinden.
+      idempotencyKey: stableIdempotencyKey(options, 'follow-up', [mail.to, followUp.idempotencyKey]),
     });
   } catch {
     return { success: false, error: 'send_failed' };

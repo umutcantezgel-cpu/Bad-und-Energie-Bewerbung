@@ -427,10 +427,21 @@ describe('dispatchApplicationFollowUpEmail', () => {
     await dispatchApplicationFollowUpEmail(followUp, { idempotencyKey: 'ergaenzung:hash' });
     await dispatchApplicationFollowUpEmail({ ...followUp, message: 'anderer Text, gleicher Schlüssel' }, { idempotencyKey: 'ergaenzung:hash' });
 
-    const digest = createHash('sha256').update(JSON.stringify([['info@bad-energie.de']])).digest('hex').slice(0, 16);
+    const digest = createHash('sha256').update(JSON.stringify([['info@bad-energie.de'], 'hash'])).digest('hex').slice(0, 16);
     expect(send.mock.calls[0][1].idempotencyKey).toBe(`ergaenzung:hash:follow-up:${digest}`);
     // Der Inhalt steckt schon im Schlüssel der Ergänzung (normalizeFollowUp); das HTML zählt nicht mit.
     expect(send.mock.calls[1][1].idempotencyKey).toBe(send.mock.calls[0][1].idempotencyKey);
+  });
+
+  it('keeps different follow-ups apart even when a caller passes a coarse base key', async () => {
+    stubEnv({ NODE_ENV: 'production', RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER });
+    send.mockResolvedValue({ data: { id: 'email_f' }, error: null, headers: null });
+    const base = { reference: 'BE-26-K7M4QX', receivedAt: new Date() };
+
+    await dispatchApplicationFollowUpEmail({ ...base, idempotencyKey: 'a', postalCode: '35578' }, { idempotencyKey: 'ergaenzung:BE-26-K7M4QX' });
+    await dispatchApplicationFollowUpEmail({ ...base, idempotencyKey: 'b', postalCode: '35579' }, { idempotencyKey: 'ergaenzung:BE-26-K7M4QX' });
+
+    expect(send.mock.calls[1][1].idempotencyKey).not.toBe(send.mock.calls[0][1].idempotencyKey);
   });
 });
 
