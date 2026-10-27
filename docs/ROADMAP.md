@@ -661,7 +661,7 @@ Zweiter Teil der Verzehnfachung: der Themen-Hub `/arbeiten-bei-uns` und fünf Th
 
 - ~~**Sofort:** Resend-Key rotieren.~~ **Erledigt am 2026-10-08.**
 - Neue Owner-Punkte seit 2026-10-14 (Bosch-Urkunde und -Erlaubnis, Inneneinheit, Einsatzdaten, Berufsschule, Praktikum, Handy-Adresse, Profile, Search Console, DSB-Freigabe, Einwilligungen, Ticket Hauptdomain, Abnahme der Zeichnungen, Bürofachkraft, Migration, BA-Konto): `_relaunch/MENSCHEN.md` M-020…M-040, Kurzliste mit „schaltet frei“ in `docs/inhaber/offene-angaben.md`.
-- Versprechen „Rückmeldung in 24 h“? Standard: „Wir melden uns schnellstmöglich“. Vorschlag 2026-10-14: „binnen 24 Stunden an Werktagen“, zusammen mit der Sofortmeldung aufs Handy (MENSCHEN M-007, M-029).
+- Versprechen „Rückmeldung in 24 h“? Standard: „Wir melden uns schnellstmöglich“. Vorschlag 2026-10-14: „binnen 24 Stunden an Werktagen“, zusammen mit der Sofortmeldung aufs Handy (MENSCHEN M-007; M-029 entschieden 27.10.2026: keine zusätzliche Adresse, alles über info@bad-energie.de).
 - Stand der Google-Bewertungen. `reviews.data.ts` nennt 24 Bewertungen und zitiert 10.
 - ~~Quereinsteiger/Montagehelfer als echte Stelle (mit Gehalt)? Standard: `funnel_only`.~~ **Geklärt 2026-10-14:** wird veröffentlicht, Lohn auf Anfrage (E-030).
 - Einheitlicher Titel für Sabri Demir. Standard: „Geschäftsführer und Meister“ (laut `team.ts`).

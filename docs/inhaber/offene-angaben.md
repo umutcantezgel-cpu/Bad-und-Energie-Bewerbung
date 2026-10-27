@@ -1,6 +1,6 @@
 # Offene Angaben des Inhabers
 
-Stand: 2026-10-15 (live seit 15.10.2026) · Kurzliste zu `_relaunch/MENSCHEN.md` (dort mit Beleg und Standardannahme)
+Stand: 2026-10-27 (live seit 15.10.2026) · Kurzliste zu `_relaunch/MENSCHEN.md` (dort mit Beleg und Standardannahme)
 
 Was nur du beantworten oder erledigen kannst, und was deine Antwort auf der Website freischaltet. Bis zur Antwort zeigt die Website nur Belegtes; nichts wird erfunden.
 
@@ -14,7 +14,6 @@ Was nur du beantworten oder erledigen kannst, und was deine Antwort auf der Webs
 | M-023 | Einsätze je Ort und Jahr aus dem Auftragsbuch (nur Bänder 5–9, 10–19, 20+) und typische Touren je Richtung | Einsatzdaten auf den Ortsseiten, Titel „SHK-Jobs {Ort}“ |
 | M-024 | Berufsschule eurer Azubis (Anlagenmechaniker SHK) | Schulweg auf den Ortsseiten als „bestätigt“ |
 | M-027 | Schülerpraktikum: ab welchem Alter bzw. welcher Klasse, wer betreut die Praktikanten | Feinschliff der Praktikumsstelle |
-| M-029 | E-Mail-Adresse, die neue Bewerbungen sofort aufs Handy bringt | Sofortmeldung jeder Bewerbung |
 | M-030 | Adressen eurer Profile (Unternehmensprofil, Kununu, weitere) | `sameAs`: Google und KI-Antworten ordnen die Profile dem Betrieb zu |
 | M-032 | Search Console bestätigen, Service-Account anlegen und Schlüssel in GitHub hinterlegen (`checkliste-offsite.md`, Schritt 1) | Meldung jeder Stelle an Google nach dem Deploy; Daten für die Ortsseiten |
 | M-034 | Freigabe der cookielosen Ereignisse durch die oder den Datenschutzbeauftragten | Messung, wo Bewerber im Formular abbrechen |
@@ -32,9 +31,10 @@ Was nur du beantworten oder erledigen kannst, und was deine Antwort auf der Webs
 
 ## Erledigt
 
-| Nr. | Antwort (14.10.2026) |
+| Nr. | Antwort |
 |---|---|
-| M-025 | Ausbildung 2027: Start nach Absprache, Vergütung über Tarif plus Prämien wie 2026 |
-| M-026 | Lohn für Quereinsteiger: Lohn auf Anfrage wie bei allen Stellen (E-030) |
+| M-025 | 14.10.2026: Ausbildung 2027: Start nach Absprache, Vergütung über Tarif plus Prämien wie 2026 |
+| M-026 | 14.10.2026: Lohn für Quereinsteiger: Lohn auf Anfrage wie bei allen Stellen (E-030) |
+| M-029 | 27.10.2026: Keine zusätzliche Adresse fürs Handy. Bewerbungen und alle Antworten laufen immer nur über info@bad-energie.de |
 
 Weitere offene Fragen zu einzelnen Formulierungen stehen in `docs/operations/fakten-abgleich.md`.

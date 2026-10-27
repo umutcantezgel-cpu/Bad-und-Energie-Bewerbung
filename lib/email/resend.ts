@@ -4,6 +4,7 @@ import { Resend } from 'resend';
 
 import { applicationContent } from '@/lib/applications/fingerprint';
 import type { NormalizedFollowUp, ReferencedApplication } from '@/lib/applications/types';
+import { COMPANY } from '@/lib/content/company';
 import { emailSimulationAllowed, getEmailConfig } from '@/lib/env';
 import {
   renderApplicationConfirmationEmail,
@@ -114,7 +115,11 @@ export function getResendClient(): {
   fromEmail: string;
   /** Empfänger der Team-Mails (CONTACT_NOTIFICATION_EMAIL als Liste), nie leer. */
   toEmails: string[];
-  /** Hauptpostfach (erste Adresse der Liste): Antwortadresse der Eingangsbestätigung. */
+  /**
+   * Antwortadresse aller Mails, deren „Antworten“ beim Betrieb ankommen soll (Eingangsbestätigung, Ergänzung,
+   * Team-Mail ohne Bewerber-E-Mail): immer info@bad-energie.de (COMPANY.email), unabhängig von Reihenfolge und
+   * Inhalt von CONTACT_NOTIFICATION_EMAIL. Inhaber 27.10.2026 (M-029): „immer nur über info@bad-energie.de“.
+   */
   replyToEmail: string;
   isConfigured: boolean;
   forceSimulation: boolean;
@@ -126,7 +131,7 @@ export function getResendClient(): {
     client: config.apiKey ? new Resend(config.apiKey) : null,
     fromEmail: config.from,
     toEmails: [...config.notificationTo],
-    replyToEmail: config.notificationTo[0],
+    replyToEmail: COMPANY.email,
     isConfigured,
     forceSimulation: config.forceSimulation,
   };
@@ -257,7 +262,7 @@ function tagValue(value: string): string {
 
 /**
  * Bewerbung: Benachrichtigung ans Team an alle Adressen aus CONTACT_NOTIFICATION_EMAIL (Reply-To = Bewerber-E-Mail,
- * sonst das Hauptpostfach: die Absenderadresse hat kein Postfach), danach die Eingangsbestätigung, aber nur wenn die Team-Mail angenommen wurde, eine E-Mail
+ * sonst info@bad-energie.de: die Absenderadresse hat kein Postfach), danach die Eingangsbestätigung, aber nur wenn die Team-Mail angenommen wurde, eine E-Mail
  * angegeben ist und kein Spamverdacht besteht (die Adresse ist ungeprüft). Erfolg = Team-Mail angenommen.
  */
 export async function dispatchApplicationEmails(
@@ -301,7 +306,7 @@ export async function dispatchApplicationEmails(
       settle(() =>
         sendEmail({
           ...confirmationMail,
-          // Nur das Hauptpostfach: Antworten der Bewerber gehören ins Team-Postfach, nicht auf jedes Handy der Liste.
+          // Antworten der Bewerber gehen immer an info@bad-energie.de, nie an eine weitere Adresse der Liste.
           replyTo: config.replyToEmail,
           tags: [{ name: 'category', value: 'application_confirmation' }, ...tags],
           idempotencyKey: stableIdempotencyKey(options, 'user', [confirmationMail.to, fingerprint]),
@@ -324,8 +329,8 @@ export async function dispatchApplicationEmails(
 }
 
 /**
- * Ergänzung zu einer Bewerbung: eine Mail ans Team mit der Bewerbungsnummer im Betreff. „Antworten“ geht ans
- * Hauptpostfach (die Absenderadresse hat keins). Der Idempotency-Key hängt am Inhalt der Ergänzung
+ * Ergänzung zu einer Bewerbung: eine Mail ans Team mit der Bewerbungsnummer im Betreff. „Antworten“ geht an
+ * info@bad-energie.de (die Absenderadresse hat kein Postfach). Der Idempotency-Key hängt am Inhalt der Ergänzung
  * (options.idempotencyKey = „ergaenzung:<Inhalts-Hash>“, normalizeFollowUp) und an den Empfängern, nicht am HTML.
  */
 export async function dispatchApplicationFollowUpEmail(

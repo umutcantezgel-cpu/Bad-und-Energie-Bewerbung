@@ -448,7 +448,7 @@ describe('dispatchApplicationFollowUpEmail', () => {
 describe('CONTACT_NOTIFICATION_EMAIL als Liste (Sofortmeldung, P0-4)', () => {
   const TEAM = 'info@bad-energie.de, chef@bad-energie.de';
 
-  it('schickt die Team-Mail in einem Versand an alle Adressen, die Eingangsbestätigung antwortet nur ans Hauptpostfach', async () => {
+  it('schickt die Team-Mail in einem Versand an alle Adressen, die Eingangsbestätigung antwortet nur an info@', async () => {
     stubEnv({ NODE_ENV: 'production', RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER, CONTACT_NOTIFICATION_EMAIL: TEAM });
     send.mockResolvedValue({ data: { id: 'email_x' }, error: null, headers: null });
 
@@ -481,10 +481,10 @@ describe('CONTACT_NOTIFICATION_EMAIL als Liste (Sofortmeldung, P0-4)', () => {
     expect(send.mock.calls[0][0]).toMatchObject({ to: ['info@bad-energie.de'] });
   });
 
-  it('getResendClient: Liste ohne Dubletten, Hauptpostfach vorn und nie eine leere Empfängerliste', async () => {
+  it('getResendClient: Liste ohne Dubletten, nie leer; Antworten immer an info@, egal was vorn steht (M-029)', async () => {
     const { getResendClient } = await import('@/lib/email/resend');
     stubEnv({ CONTACT_NOTIFICATION_EMAIL: 'Chef@Bad-Energie.de, info@bad-energie.de, chef@bad-energie.de' });
-    expect(getResendClient()).toMatchObject({ toEmails: ['Chef@Bad-Energie.de', 'info@bad-energie.de'], replyToEmail: 'Chef@Bad-Energie.de' });
+    expect(getResendClient()).toMatchObject({ toEmails: ['Chef@Bad-Energie.de', 'info@bad-energie.de'], replyToEmail: 'info@bad-energie.de' });
     stubEnv({ CONTACT_NOTIFICATION_EMAIL: ' , ' });
     expect(getResendClient()).toMatchObject({ toEmails: ['info@bad-energie.de'], replyToEmail: 'info@bad-energie.de' });
   });

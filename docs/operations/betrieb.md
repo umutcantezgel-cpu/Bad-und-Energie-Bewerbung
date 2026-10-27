@@ -49,7 +49,7 @@ Commit `9717265` hat einen echten Resend-Key in `.env.example` veröffentlicht. 
 
 Ohne verifizierte Domain lehnt Resend den Versand ab; die Website nimmt dann keine Bewerbung an (503, siehe 3.2).
 
-Die Absenderadresse braucht kein Postfach: Keine Mail lässt „Antworten“ dorthin gehen. Antworten auf die Team-Mail gehen an die Bewerberin bzw. den Bewerber, ohne angegebene E-Mail-Adresse an die erste Adresse aus `CONTACT_NOTIFICATION_EMAIL` (Hauptpostfach; fehlt die Variable oder ist sie ungültig, der Ersatz `RESEND_TO_EMAIL` bzw. `info@bad-energie.de`, also immer eine Adresse, die auch die Team-Mail bekommt). Antworten auf die Eingangsbestätigung und auf „Ergänzung zu BE-…“ gehen ebenfalls ans Hauptpostfach (siehe 4.2).
+Die Absenderadresse braucht kein Postfach: Keine Mail lässt „Antworten“ dorthin gehen. Antworten auf die Team-Mail gehen an die Bewerberin bzw. den Bewerber, ohne angegebene E-Mail-Adresse an `info@bad-energie.de`. Antworten auf die Eingangsbestätigung und auf „Ergänzung zu BE-…“ gehen ebenfalls immer an `info@bad-energie.de`, fest im Code (`COMPANY.email`), unabhängig von `CONTACT_NOTIFICATION_EMAIL` (Inhaber 27.10.2026, M-029: „immer nur über info@bad-energie.de“; siehe 4.2). `CONTACT_NOTIFICATION_EMAIL` bleibt deshalb `info@bad-energie.de` oder leer (Standard).
 
 ### 2.2 Geheimnisse erzeugen und Umgebungsvariablen setzen
 
@@ -305,7 +305,7 @@ Die **Bewerbungsnummer** `BE-26-XXXXXX` (Jahr und sechs Zeichen) ist der Schlüs
 - **Quelle:** Kanal (z. B. Google for Jobs, Indeed, Bundesagentur für Arbeit, Empfehlung, Direkt), UTM-Werte, Empfehlungscode, verweisende Seite und Einstiegsseite. Bis zum Cockpit (Phase 2d) ist das die Grundlage für „Bewerbungen pro Kanal“.
 - **Eingang:** Bewerbungsnummer, Zeitpunkt (deutsche Zeit), Ausfülldauer und die Version des Datenschutzhinweises, den die Person gesehen hat.
 
-**Antworten:** „Antworten“ im Mailprogramm geht an die E-Mail-Adresse der Bewerberin bzw. des Bewerbers. Hat die Person keine E-Mail angegeben, geht die Antwort an das eigene Hauptpostfach (erste Adresse aus `CONTACT_NOTIFICATION_EMAIL`), nicht an die Person; dann über den Button, per Telefon oder WhatsApp antworten. Der bevorzugte Kontaktweg steht unter „Am liebsten per“. Die Bestätigung verspricht keine Frist, sondern „Wir melden uns schnellstmöglich“.
+**Antworten:** „Antworten“ im Mailprogramm geht an die E-Mail-Adresse der Bewerberin bzw. des Bewerbers. Hat die Person keine E-Mail angegeben, geht die Antwort an `info@bad-energie.de`, nicht an die Person; dann über den Button, per Telefon oder WhatsApp antworten. Der bevorzugte Kontaktweg steht unter „Am liebsten per“. Die Bestätigung verspricht keine Frist, sondern „Wir melden uns schnellstmöglich“.
 
 ### 4.3 Spamverdacht
 
