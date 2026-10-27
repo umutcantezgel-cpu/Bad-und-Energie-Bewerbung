@@ -11,13 +11,12 @@ import type { ContactChannel } from '@/lib/applications/constants';
 import { formatBerlinDateTime } from '@/lib/apply/office-hours';
 import { MAPPE_PATH } from '@/lib/apply/params';
 import type { SubmittedApplication } from '@/lib/apply/storage';
-import { buildVCard, vcardDataUri } from '@/lib/apply/vcard';
 import { buildFollowUpMessage } from '@/lib/apply/whatsapp-message';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
 import { DankeAblauf, type DankeSchritt } from './DankeAblauf';
 import { ABLAUF_TEXT, DANKE_ANKER, ERFOLG_KOPF, ERGAENZEN_TEXT, SEITEN_TEXT, rueckmeldewegText } from './danke-text';
 import { FollowUpForm } from './FollowUpForm';
-import type { ThankYouCompany, ThankYouViewProps } from './types';
+import type { ThankYouViewProps } from './types';
 import styles from './stil';
 
 const KANAL_ICON = { whatsapp: 'message-circle', phone: 'phone', email: 'mail' } as const;
@@ -89,6 +88,7 @@ export function DankeErfolg({
     <>
       <Seitenkopf
         variante="arbeit"
+        className={styles.druckseite}
         titelId={DANKE_ANKER.titel}
         etikett={
           <>
@@ -119,7 +119,8 @@ export function DankeErfolg({
             </p>
             <div className={styles.knoepfe}>
               <Button asChild variant="outline">
-                <a href={vcardDataUri(buildVCard(vcardFor(company)))} download="bad-und-energie.vcf">
+                {/* Echte Datei (app/bad-und-energie.vcf): Name und Typ setzt der Server, kein data:-Link */}
+                <a href="/bad-und-energie.vcf">
                   <Icon name="user-plus" size="md" />
                   {SEITEN_TEXT.nummerKnopf}
                 </a>
@@ -157,7 +158,8 @@ export function DankeErfolg({
         </div>
       </div>
 
-      <Section id={DANKE_ANKER.ergaenzen} tone="wand" trenner aria-labelledby="danke-ergaenzen-titel">
+      {/* Ergänzen ist ein Formular für den Bildschirm: Auf Papier zählen Bestätigung, Nummer, Ablauf und Kontakt */}
+      <Section id={DANKE_ANKER.ergaenzen} tone="wand" trenner aria-labelledby="danke-ergaenzen-titel" className="print-hidden">
         <div className={styles.ergaenzen}>
           <div className={styles.ergaenzenHaupt}>
             <SectionHeader
@@ -214,22 +216,6 @@ function Weg({
       {children}
     </section>
   );
-}
-
-function vcardFor(company: ThankYouCompany) {
-  return {
-    formattedName: company.shortName,
-    organization: company.legalName,
-    phone: company.phoneE164,
-    whatsapp: company.whatsappE164,
-    email: company.email,
-    street: company.street,
-    postalCode: company.postalCode,
-    city: company.city,
-    region: company.region,
-    country: company.countryName,
-    url: company.website,
-  };
 }
 
 function mailtoFor(email: string, reference: string): string {

@@ -151,9 +151,9 @@ describe('Erfolgszustand (E-START-020, Register kreis-schliessen)', () => {
     expect(plain(html)).toContain(
       'Speichere unsere Nummern, damit du uns erkennst, wenn wir uns melden: 06441 42956 für Anrufe, 0160 8834290 für WhatsApp.',
     );
-    const vcf = decodeURIComponent(/href="data:text\/vcard;charset=utf-8,([^"]+)"/.exec(html)?.[1] ?? '');
-    expect(vcf).toContain('TEL;TYPE=WORK,VOICE:+49644142956\r\n');
-    expect(vcf).toContain('item1.TEL;TYPE=CELL:+491608834290\r\nitem1.X-ABLabel:WhatsApp\r\n');
+    // Echte Datei statt data:-Link (iPhone, Android); Inhalt prüft app/__tests__/vcf.test.ts
+    expect(html).toContain('href="/bad-und-energie.vcf"');
+    expect(html).not.toContain('data:text/vcard');
   });
 
   it('nennt den Weg allgemein, wenn der Datensatz ihn nicht trägt', () => {

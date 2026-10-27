@@ -1,6 +1,7 @@
 /**
  * Kontaktkarte (vCard 3.0) für „Nummern speichern“ auf der Danke-Seite: Viele Handwerker
- * nehmen unbekannte Nummern nicht an (ROADMAP §6). Rein, damit Server und Client gleich bauen.
+ * nehmen unbekannte Nummern nicht an (ROADMAP §6). Ausgeliefert als Datei unter /bad-und-energie.vcf
+ * (app/bad-und-energie.vcf/route.ts).
  */
 
 export interface VCardContact {
@@ -56,9 +57,4 @@ export function buildVCard(contact: VCardContact): string {
   // iOS zeigt die Karte als Firma statt als Person.
   lines.push('X-ABShowAs:COMPANY', 'END:VCARD');
   return `${lines.join('\r\n')}\r\n`;
-}
-
-/** Download-Link ohne Server-Anfrage. */
-export function vcardDataUri(vcard: string): string {
-  return `data:text/vcard;charset=utf-8,${encodeURIComponent(vcard)}`;
 }

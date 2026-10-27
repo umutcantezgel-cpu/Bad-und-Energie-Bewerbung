@@ -362,9 +362,33 @@
   }
 }
 
+/*
+ * ═══ Druck: benannte Seite mit Rand wie die Rechtsseiten (recht.module.css); app/globals.css setzt margin 0 für alle
+ * Seiten, die Mappe braucht das. Safari kennt benannte Seiten nicht und druckt weiter mit margin 0: Der Innenabstand der
+ * Fläche bleibt deshalb stehen, sonst liefe der Text dort bis an den Papierrand. ═══
+ */
+@page danke {
+  size: A4;
+  margin: 18mm 18mm 20mm;
+}
+
 @media print {
   .paar,
   .kreisHandy {
+    display: none;
+  }
+
+  .druckseite,
+  .flaeche {
+    page: danke;
+  }
+
+  /* Ein Weg (Nummern, Unterlagen, Fragen) bleibt auf einer Seite; der Sprung zum Formular entfällt mit dem Formular */
+  .weg {
+    break-inside: avoid;
+  }
+
+  .druckseite a[href^='#'] {
     display: none;
   }
 }
