@@ -32,12 +32,13 @@ export interface MappeDesign {
 }
 
 export const STANDARD_DESIGN: MappeDesign = Object.freeze({ vorlage: 'schlicht', akzent: 'navy', schrift: 'sachlich' });
-export const STANDARD_FOTOFORM: Fotoform = 'eckig';
+/** Wie das Blatt vor L3: Foto mit leicht abgerundeten Ecken. */
+export const STANDARD_FOTOFORM: Fotoform = 'abgerundet';
 
 export const VORLAGE_TEXTE: Readonly<Record<Vorlage, { name: string; beschreibung: string }>> = Object.freeze({
   schlicht: { name: 'Schlicht', beschreibung: 'Klar wie ein Brief: Name oben, feine Linien.' },
   farbband: { name: 'Farbband', beschreibung: 'Dein Name auf einem Band in deiner Farbe.' },
-  zweispaltig: { name: 'Zweispaltig', beschreibung: 'Lebenslauf mit Seitenspalte für Schwerpunkte.' },
+  zweispaltig: { name: 'Zweispaltig', beschreibung: 'Lebenslauf mit Seitenspalte, sobald du Schwerpunkte gewählt hast.' },
 });
 
 /** Akzent (Name, Linien, Überschriften, Band) und seine Tönung (Seitenspalte), je als Hex für Vorschau und PDF. */

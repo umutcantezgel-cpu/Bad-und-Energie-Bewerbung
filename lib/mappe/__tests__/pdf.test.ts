@@ -93,6 +93,18 @@ describe('PDF der Mappe im Anhang der Team-Mail', () => {
     expect(standard!.inhalt).toBe(ohne!.inhalt);
   });
 
+  it('Zweispaltig ohne Schwerpunkte oder ohne Stationen setzt genau wie Schlicht (wie die Vorschau, Prüfrunde L3)', async () => {
+    const mit = (vorlage: 'schlicht' | 'zweispaltig', mappe: Partial<NonNullable<typeof full.mappe>>) =>
+      mappeAnhangFuerBewerbung({ ...full, mappe: { ...full.mappe!, ...mappe, design: { vorlage, akzent: 'kupfer', schrift: 'markant' } } });
+    for (const fall of [{ skills: [] }, { careerStations: [], educationStations: [] }]) {
+      const schlicht = await mit('schlicht', fall);
+      const zweispaltig = await mit('zweispaltig', fall);
+      expect(zweispaltig!.inhalt, JSON.stringify(fall)).toBe(schlicht!.inhalt);
+    }
+    // mit Schwerpunkten und Stationen wirklich zwei Spalten (andere Datei)
+    expect((await mit('zweispaltig', {}))!.inhalt).not.toBe((await mit('schlicht', {}))!.inhalt);
+  }, 30_000);
+
   it('Spamverdacht: keine PDF (kein Satz für Bot-Anfragen), Grund im Log', async () => {
     expect(await mappeAnhangFuerBewerbung({ ...full, suspectedSpam: true, spamSignals: ['honeypot'] })).toBeNull();
     expect(logs()).toContain('[mappe-pdf] BE-26-K7M4QX: keine PDF (spam)');

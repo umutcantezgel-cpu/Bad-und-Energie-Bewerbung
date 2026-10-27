@@ -61,7 +61,7 @@ describe('Design der Mappe (L3)', () => {
     expect(designAus(undefined)).toEqual(STANDARD_DESIGN);
     expect(designAus('farbband')).toEqual(STANDARD_DESIGN);
     expect(fotoformAus('rund')).toBe('rund');
-    expect(fotoformAus('oval')).toBe('eckig');
+    expect(fotoformAus('oval')).toBe('abgerundet');
     expect(istStandard(STANDARD_DESIGN)).toBe(true);
     expect(istStandard({ ...STANDARD_DESIGN, akzent: 'kupfer' })).toBe(false);
   });

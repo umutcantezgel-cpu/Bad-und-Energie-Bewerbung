@@ -99,7 +99,6 @@ const stil = StyleSheet.create({
     fontSize: schrift.kopf,
     lineHeight: zeilenhoehe(schrift.kopf, zeile.kopf),
     fontWeight: 700,
-    color: farbe.tinteLeise,
     marginBottom: 4,
   },
   name: {
@@ -197,7 +196,10 @@ function Kopf({ name, ueberschrift, t }: { name: string; ueberschrift?: string; 
   const band = t.design.vorlage === 'farbband';
   return (
     <View style={band ? [stil.band, { backgroundColor: t.akzent }] : stil.kopf}>
-      {ueberschrift ? <Satz style={[stil.kopfUeberschrift, band ? { color: WEISS } : {}]}>{ueberschrift}</Satz> : null}
+      {/* „Lebenslauf“ wie in der Vorschau (.heading): Akzentfarbe, auf dem Band weiß, in der Titelschrift */}
+      {ueberschrift ? (
+        <Satz style={[stil.kopfUeberschrift, { color: band ? WEISS : t.akzent, fontFamily: t.titel }]}>{ueberschrift}</Satz>
+      ) : null}
       <Satz style={[stil.name, { color: band ? WEISS : t.akzent, fontFamily: t.titel }]}>{name}</Satz>
     </View>
   );
@@ -216,16 +218,22 @@ function Punkte({ eintraege }: { eintraege: readonly string[] }) {
   return eintraege.map((eintrag, i) => <Punkt key={i} eintrag={eintrag} />);
 }
 
-/** Zeichen je Zeile in der Spalte Angaben, eher zu wenige (121 mm bei 10,5 pt): für die Schätzung unten. */
+/**
+ * Zeichen je Zeile in der Spalte Angaben, eher zu wenige: 121 mm bei 10,5 pt; in der Hauptspalte von „Zweispaltig“
+ * (107 mm) entsprechend weniger. Für die Schätzung unten.
+ */
 const ZEICHEN_JE_ZEILE = 55;
+const ZEICHEN_JE_ZEILE_EINSPALTIG = 48;
 /** Stationen bis zu so vielen Zeilen (gut ein Drittel der Seite) bleiben ganz; längere dürfen zwischen Aufgaben umbrechen. */
 const ZEILEN_GANZ = 16;
 
-/** Grob geschätzte Zeilen einer Station in der Spalte Angaben. */
-export function geschaetzteZeilen(station: MappeStation | MappeBerufsstation): number {
-  const zeilen = (text: string) => (text ? Math.ceil(text.length / ZEICHEN_JE_ZEILE) : 0);
+/** Grob geschätzte Zeilen einer Station in der Spalte Angaben (einspaltig: Zeitraum als eigene Zeile über dem Titel). */
+export function geschaetzteZeilen(station: MappeStation | MappeBerufsstation, einspaltig = false): number {
+  const je = einspaltig ? ZEICHEN_JE_ZEILE_EINSPALTIG : ZEICHEN_JE_ZEILE;
+  const zeilen = (text: string) => (text ? Math.ceil(text.length / je) : 0);
   const aufgaben = 'aufgaben' in station ? station.aufgaben : [];
-  return zeilen(station.titel) + zeilen(station.ort) + aufgaben.reduce((summe, aufgabe) => summe + zeilen(aufgabe), 0);
+  const zeit = einspaltig ? zeilen(station.zeit) : 0;
+  return zeit + zeilen(station.titel) + zeilen(station.ort) + aufgaben.reduce((summe, aufgabe) => summe + zeilen(aufgabe), 0);
 }
 
 function Abschnitt({ titel, t, erster = false, children }: { titel: string; t: Thema; erster?: boolean; children: ReactNode }) {
@@ -261,7 +269,7 @@ function Station({ station, einspaltig = false }: { station: MappeStation | Mapp
     </>
   );
   return (
-    <View style={stil.station} wrap={geschaetzteZeilen(station) > ZEILEN_GANZ}>
+    <View style={stil.station} wrap={geschaetzteZeilen(station, einspaltig) > ZEILEN_GANZ}>
       {einspaltig ? (
         // Ohne flex: 1 (stil.angaben) – in einer Spalte fiele die Höhe sonst auf null, und die Zeilen lägen übereinander
         <View wrap={false}>{angaben}</View>
@@ -281,33 +289,38 @@ function Station({ station, einspaltig = false }: { station: MappeStation | Mapp
 }
 
 function Lebenslaufteile({ lebenslauf, t }: { lebenslauf: NonNullable<MappeDokument['lebenslauf']>; t: Thema }) {
+  // Zwei Spalten nur mit Schwerpunkten und mindestens einer Station (wie die Vorschau); sonst genau wie Schlicht
+  const spalten =
+    t.design.vorlage === 'zweispaltig' &&
+    lebenslauf.schwerpunkte.length > 0 &&
+    lebenslauf.beruf.length + lebenslauf.ausbildung.length > 0;
   const beruf =
     lebenslauf.beruf.length > 0 ? (
-      <Abschnitt titel="Berufserfahrung" t={t} erster={t.design.vorlage === 'zweispaltig'}>
+      <Abschnitt titel="Berufserfahrung" t={t} erster={spalten}>
         {lebenslauf.beruf.map((station, i) => (
-          <Station key={i} station={station} einspaltig={t.design.vorlage === 'zweispaltig'} />
+          <Station key={i} station={station} einspaltig={spalten} />
         ))}
       </Abschnitt>
     ) : null;
   const ausbildung =
     lebenslauf.ausbildung.length > 0 ? (
-      <Abschnitt titel="Schule und Ausbildung" t={t} erster={t.design.vorlage === 'zweispaltig' && lebenslauf.beruf.length === 0}>
+      <Abschnitt titel="Schule und Ausbildung" t={t} erster={spalten && lebenslauf.beruf.length === 0}>
         {lebenslauf.ausbildung.map((station, i) => (
-          <Station key={i} station={station} einspaltig={t.design.vorlage === 'zweispaltig'} />
+          <Station key={i} station={station} einspaltig={spalten} />
         ))}
       </Abschnitt>
     ) : null;
   const schwerpunkte =
     lebenslauf.schwerpunkte.length > 0 ? (
-      <Abschnitt titel="Schwerpunkte" t={t} erster={t.design.vorlage === 'zweispaltig'}>
+      <Abschnitt titel="Schwerpunkte" t={t} erster={spalten}>
         <View style={stil.aufgaben}>
           <Punkte eintraege={lebenslauf.schwerpunkte} />
         </View>
       </Abschnitt>
     ) : null;
 
-  // Zweispaltig mit Schwerpunkten: Seitenspalte (getönt) links, Stationen rechts; ohne Schwerpunkte wie Schlicht
-  if (t.design.vorlage === 'zweispaltig' && schwerpunkte && (beruf || ausbildung)) {
+  // Zweispaltig: Seitenspalte (getönt) mit den Schwerpunkten links, Stationen rechts
+  if (spalten) {
     return (
       <View style={stil.spalten}>
         <View style={[stil.seitenspalte, { backgroundColor: t.toenung }]}>{schwerpunkte}</View>

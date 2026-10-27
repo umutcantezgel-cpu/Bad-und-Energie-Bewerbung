@@ -640,8 +640,23 @@
   print-color-adjust: exact;
 }
 
-.seitenspalte > section:first-child,
-.hauptspalte > section:first-child {
+.seitenspalte > section:first-child {
+  margin-top: 0;
+}
+
+/* Ein Schwerpunkt bleibt im Druck auf einer Seite (die PDF hält Punkte ebenso zusammen) */
+.seitenspalte li {
+  break-inside: avoid;
+}
+
+/* Abstand der Abschnitte als gap: Ein leerer, im Druck ausgeblendeter Abschnitt lässt oben keine Lücke (wie die PDF) */
+.hauptspalte {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--blatt-abschnitt-oben);
+}
+
+.hauptspalte > section {
   margin-top: 0;
 }
 
@@ -649,7 +664,7 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
-/* Fotoform (nur mit Foto): eckig, abgerundet (Standard des Blatts) oder rund (quadratisch zugeschnitten) */
+/* Fotoform (nur mit Foto): eckig, abgerundet (Standard, wie vor L3) oder rund (quadratisch zugeschnitten) */
 .frame[data-fotoform='eckig'] .photo {
   border-radius: 0;
 }
@@ -668,6 +683,7 @@
   width: 2.625rem;
   height: 3.6875rem;
   flex-shrink: 0;
+  color: var(--miniatur-farbe, #111D6D);
 }
 
 .miniaturBlatt {
@@ -733,6 +749,12 @@
 
 .farbHaken {
   opacity: 0;
+}
+
+/* Form des Fotos: Bei 320 px passt „✓ Abgerundet“ nicht in ein Drittel; das Wort darf umbrechen statt abgeschnitten zu werden */
+.fotoform label {
+  hyphens: auto;
+  overflow-wrap: anywhere;
 }
 
 .farbe:has(:checked) .farbHaken {

@@ -17,6 +17,8 @@ import { MAIN_JOB_SLUG, PUBLISHED_JOBS, expectNoAxeViolations, findSmallTouchTar
 const MAIN_JOB = PUBLISHED_JOBS.find((job) => job.slug === MAIN_JOB_SLUG)!;
 const STATION = { role: 'Anlagenmechaniker SHK', company: 'Testbetrieb Haustechnik', period: '2019–2024' };
 const WORK_STYLE = 'Teamgeist und Zuverlässigkeit';
+/** Kleinstes gültiges PNG (1 × 1 px) als Bewerbungsfoto. */
+const FOTO_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
 
 test.beforeEach(async ({ page }) => {
   await useOwnClientIp(page);
@@ -97,6 +99,12 @@ test('Design wählen: Vorschau folgt, axe ohne Verstöße, das Design geht mit d
   await page.getByRole('button', { name: /^Zweispaltig/ }).click();
   await page.getByText('Kupfer', { exact: true }).click();
   await expect(blatt).toHaveAttribute('data-vorlage', 'zweispaltig');
+
+  // Foto (bleibt im Browser): Erst damit gibt es die Fotoform; Standard ist „Abgerundet“ wie vor den Designs.
+  await page.locator('input[type="file"]').setInputFiles({ name: 'foto.png', mimeType: 'image/png', buffer: Buffer.from(FOTO_PNG, 'base64') });
+  await expect(page.getByRole('radio', { name: 'Abgerundet' })).toBeChecked();
+  await page.getByText('Rund', { exact: true }).click();
+  await expect(blatt).toHaveAttribute('data-fotoform', 'rund');
   await expectNoAxeViolations(page, testInfo);
   if (isTouch(testInfo)) expect(await findSmallTouchTargets(page, 'main'), 'Trefferfläche < 44 px').toEqual([]);
 
@@ -108,8 +116,11 @@ test('Design wählen: Vorschau folgt, axe ohne Verstöße, das Design geht mit d
   await fillContact(flow);
   const requestPromise = page.waitForRequest((request) => new URL(request.url()).pathname === '/api/bewerbung');
   await taps.tap(submitButton(flow));
-  const payload = (await requestPromise).postDataJSON() as { mappe?: { design?: unknown } };
+  const request = await requestPromise;
+  const payload = request.postDataJSON() as { mappe?: { design?: unknown } };
   expect(payload.mappe?.design).toEqual({ vorlage: 'zweispaltig', akzent: 'kupfer', schrift: 'markant' });
+  // Foto und Fotoform verlassen das Gerät nicht.
+  expect(request.postData() ?? '').not.toMatch(/fotoform|data:image|blob:/);
   await expectThankYou(page);
 });
 

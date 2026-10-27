@@ -1,5 +1,6 @@
 'use client';
 
+import type { CSSProperties } from 'react';
 import { Icon } from '@/components/icons';
 import { ChoiceCard, ChoiceGroup, SegmentedControl } from '@/components/ui';
 import {
@@ -29,11 +30,14 @@ export interface DesignSectionProps {
 /** Textzeilen der Miniatur (y in Einheiten des 42 × 59 großen Blatts). */
 const ZEILEN = [30, 34, 38, 42, 46, 50];
 
-/** Kleines Blatt je Vorlage, ohne Text: Flächen und Linien in der gewählten Farbe; für Screenreader stumm. */
-function Miniatur({ vorlage, farbe }: { vorlage: Vorlage; farbe: string }) {
+/**
+ * Kleines Blatt je Vorlage, ohne Text: Flächen und Linien in der gewählten Farbe (--miniatur-farbe am Abschnitt);
+ * für Screenreader stumm.
+ */
+function Miniatur({ vorlage }: { vorlage: Vorlage }) {
   const zweispaltig = vorlage === 'zweispaltig';
   return (
-    <svg viewBox="0 0 42 59" aria-hidden="true" className={styles.miniatur} style={{ color: farbe }}>
+    <svg viewBox="0 0 42 59" aria-hidden="true" className={styles.miniatur}>
       <rect x="0.5" y="0.5" width="41" height="58" rx="1" className={styles.miniaturBlatt} />
       {vorlage === 'farbband' ? <rect x="3" y="3" width="36" height="11" rx="0.75" fill="currentColor" /> : null}
       <rect x="6" y="6.5" width="18" height="3.5" rx="0.5" className={vorlage === 'farbband' ? styles.miniaturWeiss : undefined} fill={vorlage === 'farbband' ? undefined : 'currentColor'} />
@@ -46,6 +50,18 @@ function Miniatur({ vorlage, farbe }: { vorlage: Vorlage; farbe: string }) {
     </svg>
   );
 }
+
+// Feste Bild-Komponenten je Vorlage: Eine neue Funktion je Rendern hängte die Miniaturen bei jedem Tastendruck neu ein
+function MiniaturSchlicht() {
+  return <Miniatur vorlage="schlicht" />;
+}
+function MiniaturFarbband() {
+  return <Miniatur vorlage="farbband" />;
+}
+function MiniaturZweispaltig() {
+  return <Miniatur vorlage="zweispaltig" />;
+}
+const MINIATUREN = { schlicht: MiniaturSchlicht, farbband: MiniaturFarbband, zweispaltig: MiniaturZweispaltig } as const;
 
 /**
  * Freiwillig · Design (L3): Vorlage, Farbe und Schrift für Vorschau, Druck und die PDF fürs Team; die Fotoform nur mit
@@ -64,7 +80,10 @@ export function DesignSection({ design, fotoform, hatFoto, onDesign, onFotoform 
         </p>
       </header>
 
-      <div className="flex flex-col gap-2">
+      <div
+        className="flex flex-col gap-2"
+        style={{ '--miniatur-farbe': AKZENT_FARBEN[design.akzent].farbe } as CSSProperties}
+      >
         <h3 id="mappe-vorlage-title" className="text-callout font-bold text-ink">
           Vorlage
         </h3>
@@ -74,7 +93,7 @@ export function DesignSection({ design, fotoform, hatFoto, onDesign, onFotoform 
               key={vorlage}
               title={VORLAGE_TEXTE[vorlage].name}
               description={VORLAGE_TEXTE[vorlage].beschreibung}
-              icon={() => <Miniatur vorlage={vorlage} farbe={AKZENT_FARBEN[design.akzent].farbe} />}
+              icon={MINIATUREN[vorlage]}
               selected={design.vorlage === vorlage}
               onClick={() => onDesign({ vorlage })}
             />
@@ -104,22 +123,31 @@ export function DesignSection({ design, fotoform, hatFoto, onDesign, onFotoform 
         </div>
       </fieldset>
 
-      <SegmentedControl
-        legend="Schrift"
-        name="mappe-schrift"
-        options={SCHRIFTSTILE.map((schrift) => ({ value: schrift, label: SCHRIFT_TEXTE[schrift].name }))}
-        value={design.schrift}
-        onValueChange={(schrift) => onDesign({ schrift })}
-      />
+      <div className="flex flex-col gap-2">
+        <SegmentedControl
+          legend="Schrift"
+          name="mappe-schrift"
+          options={SCHRIFTSTILE.map((schrift) => ({ value: schrift, label: SCHRIFT_TEXTE[schrift].name }))}
+          value={design.schrift}
+          onValueChange={(schrift) => onDesign({ schrift })}
+        />
+        <p className="text-callout text-ink-2">{SCHRIFT_TEXTE[design.schrift].beschreibung}</p>
+      </div>
 
       {hatFoto ? (
-        <SegmentedControl
-          legend="Form des Fotos"
-          name="mappe-fotoform"
-          options={FOTOFORMEN.map((form) => ({ value: form, label: FOTOFORM_TEXTE[form] }))}
-          value={fotoform}
-          onValueChange={onFotoform}
-        />
+        <div className="flex flex-col gap-2">
+          <SegmentedControl
+            legend="Form des Fotos"
+            name="mappe-fotoform"
+            options={FOTOFORMEN.map((form) => ({ value: form, label: FOTOFORM_TEXTE[form] }))}
+            value={fotoform}
+            onValueChange={onFotoform}
+            className={styles.fotoform}
+          />
+          <p className="text-callout text-ink-2">
+            Wirkt in Vorschau und Druck. Das Foto bleibt auf deinem Gerät und geht nicht ans Team.
+          </p>
+        </div>
       ) : null}
     </section>
   );
