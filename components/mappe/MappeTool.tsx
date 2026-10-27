@@ -20,7 +20,7 @@ import {
   type MappeEditorState,
 } from '@/lib/mappe/editor';
 import { sendMappeFollowUp } from '@/lib/mappe/follow-up';
-import { formatLetterDate } from '@/lib/mappe/format';
+import { dateLine, formatLetterDate } from '@/lib/mappe/format';
 import { skillOptionen, workStylesFuer } from '@/lib/mappe/options';
 import {
   getSessionStorage,
@@ -39,6 +39,7 @@ import { JobSection } from './JobSection';
 import { LetterSection } from './LetterSection';
 import { MappeActions, type MappeFeedback, type SaveStatus } from './MappeActions';
 import { MappePreview } from './MappePreview';
+import { PdfHerunterladen, type PdfVorbereitung } from './PdfHerunterladen';
 import { MappeStand } from './MappeStand';
 import styles from './stil';
 import { PersonalSection } from './PersonalSection';
@@ -95,7 +96,7 @@ function shareHref(state: MappeEditorState, jobs: readonly MappeJobOption[], sub
 
 /**
  * Bewerbungsmappe (roadmap §6): optional tool outside the application path.
- * Mobile: checklist, the five editor steps, the desk (ring, main action, PDF, WhatsApp), the A4 preview.
+ * Mobile: checklist, the five editor steps, the desk (ring, main action, PDF download, print, WhatsApp), the A4 preview.
  * Desktop: checklist and editor left; desk and live preview right in a sticky column. Personal data and
  * the draft stay in sessionStorage; the photo stays in memory only.
  */
@@ -112,6 +113,8 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
   const [announcement, setAnnouncement] = useState({ id: 0, text: '' });
   const feedbackRef = useRef<HTMLDivElement>(null);
   const photoUrlRef = useRef<string | null>(null);
+  /** Die Fotodatei selbst (nur im Speicher): Die PDF liest sie direkt, nicht über die blob:-URL. */
+  const photoFileRef = useRef<File | null>(null);
   /** The state as restored on mount; nothing is written until it changes. */
   const restoredRef = useRef<MappeEditorState | null>(null);
 
@@ -180,8 +183,33 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
     if (photoUrlRef.current) URL.revokeObjectURL(photoUrlRef.current);
     const url = file ? URL.createObjectURL(file) : null;
     photoUrlRef.current = url;
+    photoFileRef.current = file;
     setPhotoUrl(url);
     announce(file ? 'Foto hinzugefügt.' : 'Foto entfernt.');
+  }
+
+  /**
+   * Eingaben der PDF des Bewerbers (L4), beim Klick gebaut: die Mappe wie beim Senden (serializeMappe), dazu Name,
+   * Kontaktzeile, Datumszeile und Foto wie im Kopf der Vorschau. Nichts davon verlässt das Gerät.
+   */
+  function pdfVorbereiten(): PdfVorbereitung {
+    const result = serializeMappe(state, context);
+    if (!result.ok) return { ok: false, meldung: result.message };
+    const { person } = state;
+    const job = jobs.find((option) => option.id === state.jobId);
+    return {
+      ok: true,
+      eingaben: {
+        name: person.name,
+        betreff: subject,
+        stelle: job?.title ?? (state.jobId === INITIATIVE_JOB_ID ? 'Initiativbewerbung' : undefined),
+        datum: dateLine(person.location, today || formatLetterDate(new Date())),
+        empfaenger: recipient,
+        mappe: result.mappe,
+        kontakt: [person.location, person.phone, person.email].map((teil) => teil.trim()).filter(Boolean).join(' · '),
+        foto: photoFileRef.current ? { datei: photoFileRef.current, form: state.fotoform } : null,
+      },
+    };
   }
 
   function handleResetLetter() {
@@ -308,6 +336,7 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
           busy={busy}
           onPrimary={handlePrimary}
           onPrint={() => window.print()}
+          pdfWeg={<PdfHerunterladen vorbereiten={pdfVorbereiten} entwurf={state} foto={photoUrl} />}
           stand={stand}
           whatsappHref={shareHref(state, jobs, submitted)}
           feedback={feedback}

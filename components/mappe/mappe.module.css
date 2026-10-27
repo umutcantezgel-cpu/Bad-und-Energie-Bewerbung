@@ -344,6 +344,46 @@
   min-width: 0;
 }
 
+/* „PDF herunterladen“ (L4): der erste Zweitweg über die ganze Breite; Drucken und WhatsApp darunter. Abstand nur
+   für Kinder mit Inhalt: Die Statuszeilen bleiben leer im DOM (Live-Regionen sagen so zuverlässig an), ohne Platz */
+.pultWegVoll {
+  grid-column: 1 / -1;
+  gap: 0;
+}
+
+.pultWegVoll > :not(:first-child):not(:empty) {
+  margin-top: var(--a-2);
+}
+
+/* Status und Dateiname brechen auch mitten im Wort um (lange Nachnamen bei 320 px) */
+.pultWegVoll > p {
+  overflow-wrap: anywhere;
+}
+
+.pdfAktionen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-3);
+}
+
+.pdfInApp {
+  display: flex;
+  flex-direction: column;
+  padding: var(--a-4);
+}
+
+.pdfInApp > :not(:first-child):not(:empty) {
+  margin-top: var(--a-3);
+}
+
+.pdfAdresse {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--m-ziel);
+  padding: var(--a-2) var(--a-3);
+  border: 1px solid var(--line-strong);
+}
+
 @container pult (min-width: 30rem) {
   .pultOben {
     grid-template-areas:

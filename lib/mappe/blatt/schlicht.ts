@@ -4,6 +4,7 @@
  * Abstände der Vorschau sind Tailwind-Stufen auf dem 210-mm-Blatt bei 96 dpi: 1 Stufe = 4 px = 25,4 / 24 mm.
  * Client-sicher und ohne Abhängigkeiten; die PDF (lib/mappe/pdf) liest nur von hier.
  */
+import type { Fotoform } from './design';
 
 const STUFE_MM = 25.4 / 24;
 const stufe = (n: number) => Math.round(n * STUFE_MM * 100) / 100;
@@ -17,6 +18,8 @@ export const SCHLICHT = Object.freeze({
   /** Designs (L3): Farbband mit Abstand zum Papierrand (Drucker ohne Randlosdruck), Seitenspalte von „Zweispaltig“ (mm). */
   bandRand: 10,
   seitenspalte: 52,
+  /** Foto rechts im Kopf des Lebenslaufs (mm, wie .photo): Passbild 35 × 45, Ecken 1,5; Abstand zum Text gap-8. */
+  foto: Object.freeze({ breite: 35, hoehe: 45, radius: 1.5, abstand: stufe(8) }),
   /** Schriftstufen (pt) und Zeilenhöhen (Faktor): Name · Betreff groß · Überschrift · Text · klein. */
   schrift: Object.freeze({ name: 22, gross: 12, kopf: 11, text: 10.5, klein: 9 }),
   zeile: Object.freeze({ name: 1.15, kopf: 1.35, text: 1.5, klein: 1.45 }),
@@ -47,3 +50,21 @@ export const SCHLICHT = Object.freeze({
   /** Linien: Haarlinie unter Kopf und Überschriften, Unterschriftslinie (pt). */
   strich: Object.freeze({ fein: 0.75 }),
 });
+
+/**
+ * Maße des Fotos auf dem Blatt je Form (mm), wie .photo in components/mappe/mappe.module.css: Passbild 35 × 45 mm,
+ * „rund“ quadratisch 35 × 35 mit vollem Radius, „abgerundet“ 1,5 mm, „eckig“ ohne Radius. Nur die PDF des Bewerbers
+ * (lib/mappe/pdf/satz.tsx, Browser) setzt ein Foto; die Team-PDF hat keins.
+ */
+export function fotoMasse(form: Fotoform): { breite: number; hoehe: number; radius: number } {
+  const { breite, hoehe, radius } = SCHLICHT.foto;
+  if (form === 'rund') return { breite, hoehe: breite, radius: breite / 2 };
+  return { breite, hoehe, radius: form === 'eckig' ? 0 : radius };
+}
+
+/** Pixel des Fotos in der PDF: die Maße bei 300 dpi (35 × 45 mm → 413 × 531, rund 413 × 413). */
+export function fotoPixel(form: Fotoform): { breite: number; hoehe: number } {
+  const px = (mm: number) => Math.round((mm / 25.4) * 300);
+  const { breite, hoehe } = fotoMasse(form);
+  return { breite: px(breite), hoehe: px(hoehe) };
+}

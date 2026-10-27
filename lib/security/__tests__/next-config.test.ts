@@ -43,6 +43,15 @@ describe('next.config.ts headers', () => {
     expect(csp).toContain('https://*.supabase.co');
   });
 
+  it("erlaubt WebAssembly ('wasm-unsafe-eval') für die PDF der Mappe auf jeder Seite, aber kein eval", async () => {
+    // Global: Nach einer Client-Navigation gilt die CSP des ersten Dokuments (L4, next.config.ts)
+    for (const pfad of ['/', '/bewerbung', '/bewerbung/danke', '/bewerbung/mappe']) {
+      const directives = parseCsp((await headersFor(pfad)).get('content-security-policy-report-only') ?? '');
+      expect(directives.get('script-src'), pfad).toContain("'wasm-unsafe-eval'");
+      expect(directives.get('script-src'), pfad).not.toContain("'unsafe-eval'");
+    }
+  });
+
   it('sammelt Verstöße über /api/csp-report', async () => {
     const headers = await headersFor('/');
     const directives = parseCsp(headers.get('content-security-policy-report-only') ?? '');

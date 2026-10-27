@@ -53,3 +53,12 @@ export function mappeDateiname(reference: string, name?: string): string {
   const nachname = name ? nachnameFuerDatei(name) : '';
   return `Bewerbungsmappe_${nummer}${nachname ? `_${nachname}` : ''}.pdf`;
 }
+
+/**
+ * Dateiname der PDF, die der Bewerber selbst herunterlädt (L4): „Bewerbungsmappe_Mueller.pdf“, ohne Nachnamen
+ * „Bewerbungsmappe.pdf“ (keine Bewerbungsnummer: Die Mappe entsteht vor dem Senden).
+ */
+export function downloadDateiname(name?: string): string {
+  const nachname = name ? nachnameFuerDatei(name) : '';
+  return `Bewerbungsmappe${nachname ? `_${nachname}` : ''}.pdf`;
+}

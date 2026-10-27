@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { AKZENT_FARBEN } from '@/lib/mappe/blatt/design';
-import { SCHLICHT } from '@/lib/mappe/blatt/schlicht';
+import { SCHLICHT, fotoMasse, fotoPixel } from '@/lib/mappe/blatt/schlicht';
 
 /**
  * Die PDF (lib/mappe/pdf/blatt.tsx) und das Blatt der Vorschau (components/mappe/mappe.module.css) teilen ihre Maße:
@@ -34,6 +34,24 @@ describe('Design „Schlicht“: PDF und Vorschau mit denselben Maßen', () => {
     expect(variable('blatt-spalte-abstand')).toBe(`${SCHLICHT.spalteAbstand}mm`);
     expect(variable('blatt-band-rand')).toBe(`${SCHLICHT.bandRand}mm`);
     expect(variable('blatt-seitenspalte')).toBe(`${SCHLICHT.seitenspalte}mm`);
+  });
+
+  it('Foto (mm): Passbild wie .photo, je Form wie data-fotoform (PDF des Bewerbers, L4)', () => {
+    expect(variable('blatt-foto-breite')).toBe(`${SCHLICHT.foto.breite}mm`);
+    expect(variable('blatt-foto-hoehe')).toBe(`${SCHLICHT.foto.hoehe}mm`);
+    expect(variable('blatt-foto-radius')).toBe(`${SCHLICHT.foto.radius}mm`);
+    expect(fotoMasse('abgerundet')).toEqual({ breite: 35, hoehe: 45, radius: 1.5 });
+    expect(fotoMasse('eckig')).toEqual({ breite: 35, hoehe: 45, radius: 0 });
+    // rund: quadratisch 35 × 35 (height: var(--blatt-foto-breite)), voller Radius
+    expect(fotoMasse('rund')).toEqual({ breite: 35, hoehe: 35, radius: 17.5 });
+    expect(CSS).toMatch(/\[data-fotoform='rund'\] \.photo \{\s*height: var\(--blatt-foto-breite\);/);
+    expect(CSS).toMatch(/\[data-fotoform='eckig'\] \.photo \{\s*border-radius: 0;/);
+  });
+
+  it('Foto (px) für die PDF: 300 dpi, 413 × 531, rund 413 × 413', () => {
+    expect(fotoPixel('abgerundet')).toEqual({ breite: 413, hoehe: 531 });
+    expect(fotoPixel('eckig')).toEqual({ breite: 413, hoehe: 531 });
+    expect(fotoPixel('rund')).toEqual({ breite: 413, hoehe: 413 });
   });
 
   it('Schriftstufen (pt) und Zeilenhöhen', () => {

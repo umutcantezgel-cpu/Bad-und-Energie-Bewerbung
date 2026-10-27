@@ -16,9 +16,13 @@ const GOOGLE_MAPS = {
   frame: 'https://*.google.com',
 };
 
+// 'wasm-unsafe-eval': „PDF herunterladen“ der Mappe (L4) setzt die PDF im Browser; react-pdf rechnet das Layout mit Yoga
+// als WebAssembly. Das Schlüsselwort erlaubt nur das Kompilieren von WebAssembly, kein eval von JavaScript. Global statt
+// nur für /bewerbung/mappe: Die CSP gilt für das Dokument, und wer per Link (Client-Navigation, z. B. aus dem Flow
+// oder von der Danke-Seite) auf die Mappe kommt, behält das Dokument der Seite davor samt deren CSP.
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} ${GOOGLE_MAPS.script}`, // Bewusst ohne Hash/Nonce: ein Hash schaltet 'unsafe-inline' ab und sperrte die Inline-Skripte von Next (self.__next_f); bis zur Nonce-Strategie deckt 'unsafe-inline' alle ab, auch das Kopfskript (Hash: lib/motion/head-script.ts HEAD_SCRIPT_SHA256; Prüfung lib/motion/__tests__/csp.test.ts)
+  `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'${isDev ? " 'unsafe-eval'" : ''} ${GOOGLE_MAPS.script}`, // Bewusst ohne Hash/Nonce: ein Hash schaltet 'unsafe-inline' ab und sperrte die Inline-Skripte von Next (self.__next_f); bis zur Nonce-Strategie deckt 'unsafe-inline' alle ab, auch das Kopfskript (Hash: lib/motion/head-script.ts HEAD_SCRIPT_SHA256; Prüfung lib/motion/__tests__/csp.test.ts)
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   `img-src 'self' data: blob: ${GOOGLE_MAPS.img}`,
   "font-src 'self' data: https://fonts.gstatic.com",

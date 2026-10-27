@@ -96,6 +96,8 @@ export const GLYPH_SHAPES = {
   'message-circle': [{ d: 'M12 3a9 9 0 1 1-4.6 16.7L3 21l1.3-4.4A9 9 0 0 1 12 3Z' }],
   /** Hörer (aus Variante 1) */
   phone: [{ d: 'M7 3h3l1.5 4.5-2 1.5a10 10 0 0 0 5.5 5.5l1.5-2L21 14v3a3 3 0 0 1-3 3A15 15 0 0 1 4 6a3 3 0 0 1 3-3Z' }],
+  /** Herunterladen (L4, PDF der Mappe): Pfeil mit 45°-Spitze in eine Schale mit runden Ecken */
+  download: [{ d: 'M12 3.5v11' }, { d: 'M7.5 10 12 14.5l4.5-4.5' }, { d: 'M3.5 15.5v3A1.5 1.5 0 0 0 5 20h14a1.5 1.5 0 0 0 1.5-1.5v-3' }],
   printer: [
     { d: 'M7 9V3h10v6' },
     { d: 'M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2' },

@@ -46,6 +46,7 @@ describe('Bewerbungsmappe: CSS nur über stil.ts mit der Grenze davor', () => {
       'MappePreview.tsx',
       'MappeStand.tsx',
       'MappeTool.tsx',
+      'PdfHerunterladen.tsx',
     ]);
   });
 

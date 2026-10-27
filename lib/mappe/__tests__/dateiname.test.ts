@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { asciiUmschrift, mappeDateiname, nachnameFuerDatei } from '@/lib/mappe/pdf/dateiname';
+import { asciiUmschrift, downloadDateiname, mappeDateiname, nachnameFuerDatei } from '@/lib/mappe/pdf/dateiname';
 
 describe('Dateiname der Mappe-PDF (nur ASCII, überall gleich lesbar)', () => {
   it('Bewerbungsnummer und Nachname, Umlaute ausgeschrieben', () => {
@@ -29,5 +29,17 @@ describe('Dateiname der Mappe-PDF (nur ASCII, überall gleich lesbar)', () => {
     expect(nachnameFuerDatei(`Max ${'Sehr'.repeat(20)}langername`).length).toBeLessThanOrEqual(40);
     expect(mappeDateiname('BE-26-K7M4QX', 'Max <Muster>/../"x"')).toMatch(/^Bewerbungsmappe_BE-26-K7M4QX_[A-Za-z0-9-]+\.pdf$/);
     expect(asciiUmschrift('  ä  ö  ')).toBe('ae-oe');
+  });
+});
+
+describe('Dateiname der PDF, die der Bewerber herunterlädt (L4)', () => {
+  it('Bewerbungsmappe_<Nachname>.pdf, sonst Bewerbungsmappe.pdf', () => {
+    expect(downloadDateiname('Max Müller')).toBe('Bewerbungsmappe_Mueller.pdf');
+    expect(downloadDateiname('Zoë Müller-Lüdenscheidt')).toBe('Bewerbungsmappe_Mueller-Luedenscheidt.pdf');
+    expect(downloadDateiname('Ayşe Yılmaz')).toBe('Bewerbungsmappe_Yilmaz.pdf');
+    expect(downloadDateiname()).toBe('Bewerbungsmappe.pdf');
+    expect(downloadDateiname('   ')).toBe('Bewerbungsmappe.pdf');
+    expect(downloadDateiname('Иван Петров')).toBe('Bewerbungsmappe.pdf');
+    expect(downloadDateiname('Max <Muster>/../"x"')).toMatch(/^Bewerbungsmappe_[A-Za-z0-9-]+\.pdf$/);
   });
 });

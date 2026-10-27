@@ -23,6 +23,8 @@ export interface MappeActionsProps {
   busy: boolean;
   onPrimary: () => void;
   onPrint: () => void;
+  /** „PDF herunterladen“ (L4, PdfHerunterladen): der erste Zweitweg, über die ganze Breite. */
+  pdfWeg?: ReactNode;
   /** Stand der Mappe (E-BEW-006/007): Ring und „Als Nächstes“. */
   stand: MappeStandWerte;
   /** WhatsApp link with the prefilled share text (E-BEW-020, lib/apply/whatsapp-message.ts). */
@@ -45,7 +47,7 @@ const SAVE_TEXT: Record<SaveStatus, string> = {
 /**
  * Pult der Mappe: der Stand als Ring (E-BEW-007, ProgressRing aus R4) mit dem nächsten offenen Abschnitt und die
  * eine rote Hauptaktion; Vorlauf und Rücklauf laufen aus dem Ring in den Knopf (Button `leitung`, wie im Einstieg).
- * Dann die Zweitwege: als PDF speichern und per WhatsApp schicken (E-BEW-020).
+ * Dann die Zweitwege: PDF herunterladen (L4, über die ganze Breite), drucken und per WhatsApp schicken (E-BEW-020).
  */
 export function MappeActions({
   mode,
@@ -53,6 +55,7 @@ export function MappeActions({
   busy,
   onPrimary,
   onPrint,
+  pdfWeg,
   stand,
   whatsappHref,
   feedback,
@@ -112,12 +115,13 @@ export function MappeActions({
       </div>
 
       <div className={styles.pultWege}>
+        {pdfWeg}
         <div className={styles.pultWeg}>
           <Button variant="outline" wrap onClick={onPrint} fullWidth className={styles.pultWegKnopf}>
             <Icon name="printer" size="md" />
-            Als PDF speichern
+            Drucken
           </Button>
-          <p className="text-footnote text-ink-2">Öffnet den Druckdialog: „Als PDF speichern“ wählen oder direkt drucken.</p>
+          <p className="text-footnote text-ink-2">Öffnet den Druckdialog deines Browsers.</p>
         </div>
         <div className={styles.pultWeg}>
           <Button variant="outline" wrap fullWidth asChild className={styles.pultWegKnopf}>

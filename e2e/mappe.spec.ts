@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 import {
   APPLICANT,
@@ -19,6 +20,9 @@ const STATION = { role: 'Anlagenmechaniker SHK', company: 'Testbetrieb Haustechn
 const WORK_STYLE = 'Teamgeist und Zuverlässigkeit';
 /** Kleinstes gültiges PNG (1 × 1 px) als Bewerbungsfoto. */
 const FOTO_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+/** Kennung des In-App-Browsers von Instagram (iPhone). */
+const INSTAGRAM_UA =
+  'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 334.0.4.32.98 (iPhone15,2; iOS 17_5; de_DE; de; scale=3.00; 1179x2556; 609529009)';
 
 test.beforeEach(async ({ page }) => {
   await useOwnClientIp(page);
@@ -140,4 +144,55 @@ test('Mappe abwählen: Hinweis wechselt, Bewerbung geht ohne Mappe', async ({ pa
   await flow.getByRole('button', { name: 'Entfernen' }).click();
   await expect(flow.getByText('Deine Bewerbungsmappe wird nicht mitgeschickt.')).toBeVisible();
   await expect(flow.getByRole('heading', { name: QUESTIONS.contact.heading })).toBeVisible();
+});
+
+test('„PDF herunterladen“: A4-PDF aus dem Browser mit Foto, Status „Fertig“, axe danach', async ({ page }, testInfo) => {
+  await page.goto(`/bewerbung/mappe?stelle=${MAIN_JOB_SLUG}`);
+  const knopf = page.getByRole('button', { name: 'PDF herunterladen' });
+  await waitForHydration(knopf);
+  await page.getByLabel('Vor- und Nachname').fill('Max Müller');
+  await page.getByLabel('Telefon').fill('0171 2345678');
+  await page.getByRole('group', { name: 'Schwerpunkte' }).getByRole('button').first().click();
+  await page.getByRole('button', { name: WORK_STYLE }).click();
+  await page.locator('input[type="file"]').setInputFiles({ name: 'foto.png', mimeType: 'image/png', buffer: Buffer.from(FOTO_PNG, 'base64') });
+  await page.getByText('Rund', { exact: true }).click();
+
+  const [download] = await Promise.all([page.waitForEvent('download'), knopf.click()]);
+  expect(download.suggestedFilename()).toBe('Bewerbungsmappe_Mueller.pdf');
+  const pdf = readFileSync(await download.path()).toString('latin1');
+  expect(pdf.startsWith('%PDF-')).toBe(true);
+  // Seiten wie seitenZaehlen (lib/mappe/pdf/satz.tsx): Anschreiben und Lebenslauf; das Foto als ein Bild
+  expect(pdf.match(/^\/Type \/Page$/gm)).toHaveLength(2);
+  expect(pdf.match(/\/Subtype \/Image/g)).toHaveLength(1);
+  await expect(page.getByText('Fertig: Bewerbungsmappe_Mueller.pdf (2 Seiten)')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Nochmal herunterladen' })).toBeVisible();
+  await expectNoAxeViolations(page, testInfo);
+  if (isTouch(testInfo)) expect(await findSmallTouchTargets(page, 'main'), 'Trefferfläche < 44 px').toEqual([]);
+});
+
+test.describe('Im Instagram-Browser bei 320 px', () => {
+  test.use({ userAgent: INSTAGRAM_UA, viewport: { width: 320, height: 720 } });
+
+  test('Hinweis und „Link kopieren“; der Download bleibt, kein Querscroll, axe ohne Verstöße', async ({ page }, testInfo) => {
+    await page.goto(`/bewerbung/mappe?stelle=${MAIN_JOB_SLUG}`);
+    const knopf = page.getByRole('button', { name: 'PDF herunterladen' });
+    await waitForHydration(knopf);
+    await expect(
+      page.getByText('Du bist im Instagram-Browser. Dort klappt Herunterladen oft nicht. Öffne die Seite in Safari oder Chrome.'),
+    ).toBeVisible();
+    const kopieren = page.getByRole('button', { name: 'Link kopieren' });
+    await expect(kopieren).toBeVisible();
+    await kopieren.click();
+    // Zwischenablage erlaubt: „Link kopiert.“; verweigert: die Adresse steht markierbar da
+    await expect(page.getByText('Link kopiert.').or(page.getByRole('textbox', { name: 'Adresse dieser Seite' }))).toBeVisible();
+
+    // Langer Nachname: Der Dateiname im Status bricht um, statt die Seite zu verbreitern
+    await page.getByLabel('Vor- und Nachname').fill('Zoë Müller-Lüdenscheidt');
+    const [download] = await Promise.all([page.waitForEvent('download'), knopf.click()]);
+    expect(download.suggestedFilename()).toBe('Bewerbungsmappe_Mueller-Luedenscheidt.pdf');
+    await expect(page.getByText(/^Fertig: Bewerbungsmappe_Mueller-Luedenscheidt\.pdf/)).toBeVisible();
+    const querscroll = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    expect(querscroll, 'Querscroll bei 320 px').toBeLessThanOrEqual(0);
+    await expectNoAxeViolations(page, testInfo);
+  });
 });

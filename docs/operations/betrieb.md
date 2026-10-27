@@ -283,6 +283,8 @@ Bis zum Scharfschalten in Phase 3 etwa monatlich auswerten:
 - **Ignorieren:** Quellen wie `chrome-extension` oder `moz-extension` und fremde Skripte, die Browser-Erweiterungen oder In-App-Browser einschleusen.
 - **An die Entwicklung melden:** wiederkehrende Meldungen auf eigenen Seiten zu Diensten, die die Website wirklich nutzt, etwa Google Maps nach dem Klick auf „Interaktive Karte laden“. Die Policy muss dann vor Phase 3 angepasst werden (`next.config.ts`).
 
+**Browser-PDF der Mappe (seit L4, 27.10.2026):** „PDF herunterladen“ auf `/bewerbung/mappe` setzt die PDF im Browser des Bewerbers (react-pdf, dieselbe Gestaltung wie die Team-PDF, dazu Kontaktzeile und Foto; nichts davon geht an den Server). Das Layout rechnet als WebAssembly, darum steht `'wasm-unsafe-eval'` in `script-src`, auf allen Seiten: Die CSP gilt je Dokument, und wer per Link aus dem Flow oder von der Danke-Seite zur Mappe wechselt, behält das Dokument der Seite davor. Das Schlüsselwort erlaubt nur WebAssembly, kein `eval` von JavaScript; beim Scharfschalten in Phase 3 muss es bleiben, sonst bricht „PDF herunterladen“ ab (die Seite zeigt dann den Hinweis auf „Drucken“). Die Bibliothek (rund 450 KB gzip) und die Schriften lädt die Seite erst, wenn jemand den Knopf berührt oder fokussiert, nie beim ersten Laden. Meldungen `[csp] … blockiert wasm-eval` gibt es mit dieser Policy nicht mehr; tauchen sie auf, fehlt das Schlüsselwort.
+
 ## 4. Bewerbungs-E-Mails lesen
 
 Jede Bewerbung kommt als E-Mail an `CONTACT_NOTIFICATION_EMAIL`. Ist Supabase in Production konfiguriert (Phase 2b), speichert die Website sie samt Ergänzungen zusätzlich in der Bewerberdatenbank. Eine Oberfläche dafür gibt es erst mit dem Cockpit (Phase 2d); bis dahin bleibt das Postfach die Arbeitsablage.

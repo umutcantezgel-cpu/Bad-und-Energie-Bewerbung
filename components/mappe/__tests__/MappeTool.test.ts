@@ -39,7 +39,12 @@ describe('MappeTool (server render)', () => {
       'Vorschau',
     ]);
     expect(html).toContain('Mit dieser Mappe bewerben');
-    expect(html).toContain('Als PDF speichern');
+    // Zweitwege (L4): PDF herunterladen (im Browser gesetzt), Drucken, WhatsApp
+    expect(html).toContain('PDF herunterladen');
+    expect(html).toContain('Fertige A4-PDF. Sie entsteht auf deinem Gerät.');
+    expect(html).toContain('Drucken');
+    expect(html).toContain('Öffnet den Druckdialog deines Browsers.');
+    expect(html).not.toContain('Als PDF speichern');
     expect(html).toContain('Per WhatsApp schicken');
     expect(html.match(/<h1/g)).toBeNull();
   });
@@ -78,7 +83,7 @@ describe('MappeTool (server render)', () => {
 
   it('uses the own icon family only (no lucide)', () => {
     expect(html).not.toContain('lucide');
-    for (const icon of ['camera', 'chevron-down', 'plus', 'printer', 'message-circle', 'arrow-right']) {
+    for (const icon of ['camera', 'chevron-down', 'plus', 'download', 'printer', 'message-circle', 'arrow-right']) {
       expect(html).toContain(`data-icon="${icon}"`);
     }
   });
