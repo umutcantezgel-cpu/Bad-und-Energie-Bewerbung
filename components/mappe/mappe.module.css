@@ -466,6 +466,13 @@
   --blatt-foto-breite: 35mm;
   --blatt-foto-hoehe: 45mm;
   --blatt-foto-radius: 1.5mm;
+  /* Designs (L3): Farbband 10 mm vom Papierrand, Seitenspalte von „Zweispaltig“ */
+  --blatt-band-rand: 10mm;
+  --blatt-band-oben: 8mm;
+  --blatt-band-unten: 7mm;
+  --blatt-seitenspalte: 52mm;
+  --blatt-seitenspalte-polster: 4mm;
+  --blatt-abschnitt-oben: 8mm;
   /* Schriftstufen: Name · Betreff groß · Überschrift · Text · klein */
   --blatt-schrift-name: 22pt;
   --blatt-schrift-gross: 12pt;
@@ -508,7 +515,8 @@
   --ink: #111A3B;
   --ink-muted: #454C78;
   --ink-2: #454C78;
-  --brand: #111D6D;
+  /* Marke des Blatts = Akzentfarbe des gewählten Designs (MappePreview setzt --blatt-akzent am Rahmen) */
+  --brand: var(--blatt-akzent, #111D6D);
   --line: #DDD3C2;
   --line-strong: #6B74A6;
   background-color: var(--surface);
@@ -579,6 +587,156 @@
 .placeholder {
   color: var(--ink-muted);
   border-bottom: 1px dashed var(--line-strong);
+}
+
+/*
+ * ═══ Designs des Blatts (L3, lib/mappe/blatt/design.ts) ═══
+ * Der Rahmen trägt data-vorlage, data-schrift, data-fotoform und --blatt-akzent/--blatt-akzent-toenung (MappePreview).
+ * Die Akzentfarbe ersetzt die Marke nur auf dem Blatt (KERN K-006, Notiz „Blatt-Akzente“); Vorschau und Druck folgen
+ * denselben Regeln wie die PDF (lib/mappe/pdf/blatt.tsx).
+ */
+
+/* Markant: Name und Überschriften in der Display-Schrift der Seite (Bricolage Grotesque) */
+.frame[data-schrift='markant'] .name,
+.frame[data-schrift='markant'] .heading {
+  font-family: var(--font-display);
+}
+
+/* Farbband: Kopf als Band in der Akzentfarbe, 10 mm vom Papierrand (Drucker ohne Randlosdruck schneiden nichts ab) */
+.frame[data-vorlage='farbband'] .page > header {
+  margin: calc(var(--blatt-band-rand) - var(--blatt-rand-oben)) calc(var(--blatt-band-rand) - var(--blatt-rand-rechts)) 0
+    calc(var(--blatt-band-rand) - var(--blatt-rand-links));
+  padding: var(--blatt-band-oben) calc(var(--blatt-rand-rechts) - var(--blatt-band-rand)) var(--blatt-band-unten)
+    calc(var(--blatt-rand-links) - var(--blatt-band-rand));
+  border: 0;
+  border-radius: var(--radius-1);
+  background-color: var(--blatt-akzent, #111D6D);
+  /* Auf dem Band: alles in Papierweiß (Kontrast ≥ 6,2 : 1 bei jedem Akzent, check-contrast) */
+  --brand: #FFFFFF;
+  --ink: #FFFFFF;
+  --ink-muted: #FFFFFF;
+  --line-strong: #FFFFFF;
+  color: var(--ink);
+  /* Das Band druckt auch ohne „Hintergrundgrafiken“ im Druckdialog (Standard in Chrome/Safari): sonst stünde der Name
+     weiß auf Weiß */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* Zweispaltig: Schwerpunkte in der getönten Seitenspalte, Stationen daneben mit dem Zeitraum über dem Titel */
+.spalten {
+  display: grid;
+  grid-template-columns: var(--blatt-seitenspalte) minmax(0, 1fr);
+  column-gap: var(--blatt-spalte-abstand);
+  align-items: start;
+  margin-top: var(--blatt-abschnitt-oben);
+}
+
+.seitenspalte {
+  padding: var(--blatt-seitenspalte-polster);
+  border-radius: var(--radius-1);
+  background-color: var(--blatt-akzent-toenung, #ECEDF3);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.seitenspalte > section:first-child,
+.hauptspalte > section:first-child {
+  margin-top: 0;
+}
+
+.hauptspalte .row {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Fotoform (nur mit Foto): eckig, abgerundet (Standard des Blatts) oder rund (quadratisch zugeschnitten) */
+.frame[data-fotoform='eckig'] .photo {
+  border-radius: 0;
+}
+
+.frame[data-fotoform='rund'] .photo {
+  height: var(--blatt-foto-breite);
+  border-radius: var(--radius-voll);
+}
+
+/*
+ * ═══ Abschnitt „Design“ (L3) ═══
+ * Miniaturen der Vorlagen: kleines weißes Blatt wie das Druckblatt (helle Rollen aus .paper, auch im dunklen Thema),
+ * Linien in der gewählten Akzentfarbe (currentColor am SVG). Farbfelder als echte Radioknöpfe mit Namen.
+ */
+.miniatur {
+  width: 2.625rem;
+  height: 3.6875rem;
+  flex-shrink: 0;
+}
+
+.miniaturBlatt {
+  fill: #FFFFFF;
+  stroke: #DDD3C2;
+  stroke-width: 1;
+}
+
+.miniaturZeile {
+  fill: #6B74A6;
+  opacity: 0.55;
+}
+
+.miniaturWeiss {
+  fill: #FFFFFF;
+}
+
+.farbwahl {
+  display: grid;
+  /* So viele Spalten, wie Felder mit ganzem Namen nebeneinander passen: 320 px eine, 390 px zwei, breiter drei */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
+  gap: var(--a-3);
+}
+
+.farbe {
+  display: flex;
+  min-height: 3rem;
+  align-items: center;
+  gap: var(--a-2);
+  padding: var(--a-2) var(--a-3);
+  border: 2px solid var(--line-strong);
+  border-radius: var(--radius-2);
+  background-color: var(--surface-raised);
+  color: var(--ink);
+  font-size: var(--text-callout);
+  cursor: pointer;
+}
+
+/* Gewählt: Navy-Kontur, fett und Haken im Farbpunkt (der Zustand hängt nie an der Farbe allein) */
+.farbe:has(:checked) {
+  border-color: var(--brand);
+  font-weight: 700;
+}
+
+.farbe:has(:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.farbPunkt {
+  display: grid;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  place-items: center;
+  border: 2px solid #FFFFFF;
+  border-radius: var(--radius-voll);
+  /* Papierweißer Rand plus feine Kontur: jede Farbe bleibt auf jedem Grund (auch dunkel) sichtbar */
+  outline: 1px solid var(--line-strong);
+  /* Haken in Papierweiß: ≥ 6,2 : 1 auf jedem Akzent (check-contrast) */
+  color: #FFFFFF;
+}
+
+.farbHaken {
+  opacity: 0;
+}
+
+.farbe:has(:checked) .farbHaken {
+  opacity: 1;
 }
 
 @media print {

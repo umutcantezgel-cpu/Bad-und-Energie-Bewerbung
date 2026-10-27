@@ -35,6 +35,7 @@ describe('MappeTool (server render)', () => {
       'Schwerpunkte',
       'Arbeitsstil und Anschreiben',
       'Berufserfahrung und Ausbildung',
+      'Design',
       'Vorschau',
     ]);
     expect(html).toContain('Mit dieser Mappe bewerben');

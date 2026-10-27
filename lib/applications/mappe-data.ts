@@ -1,4 +1,4 @@
-import { MAPPE_SCHEMA_LIMITS as LIMITS } from './constants';
+import { MAPPE_DESIGN, MAPPE_SCHEMA_LIMITS as LIMITS } from './constants';
 import type { Mappe } from './schema';
 
 /**
@@ -63,11 +63,23 @@ function educationStation(value: unknown, path: MappeIssuePath): Mappe['educatio
   };
 }
 
+const einer = <T extends string>(liste: readonly T[], wert: unknown): wert is T => (liste as readonly unknown[]).includes(wert);
+
+/** Gestaltung wie `mappeDesignSchema`: nur vollständig bekannte Werte, sonst fällt sie weg (kein Fehler). */
+function design(value: unknown): Mappe['design'] {
+  if (!isRecord(value)) return undefined;
+  const { vorlage, akzent, schrift } = value;
+  return einer(MAPPE_DESIGN.vorlagen, vorlage) && einer(MAPPE_DESIGN.akzente, akzent) && einer(MAPPE_DESIGN.schriften, schrift)
+    ? { vorlage, akzent, schrift }
+    : undefined;
+}
+
 /** Mappe prüfen und normalisieren; bei Fehlern der Pfad des ersten Problems. */
 export function parseMappeData(value: unknown): MappeParseResult {
   try {
     const mappe = record(value, []);
     const workStyle = optionalText(mappe.workStyle, LIMITS.workStyle, ['workStyle']);
+    const gestaltung = design(mappe.design);
     return {
       ok: true,
       mappe: {
@@ -76,6 +88,7 @@ export function parseMappeData(value: unknown): MappeParseResult {
         ...(workStyle !== undefined ? { workStyle } : {}),
         careerStations: list(mappe.careerStations, LIMITS.careerStations, ['careerStations'], careerStation),
         educationStations: list(mappe.educationStations, LIMITS.educationStations, ['educationStations'], educationStation),
+        ...(gestaltung ? { design: gestaltung } : {}),
       },
     };
   } catch (error) {

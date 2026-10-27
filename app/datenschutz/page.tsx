@@ -315,7 +315,7 @@ function Datenschutzerklaerung() {
           <li>deinen bevorzugten Kontaktweg: WhatsApp, Anruf oder E-Mail</li>
           <li>
             auf Wunsch die Inhalte deiner Bewerbungsmappe: Anschreiben, Kenntnisse, Arbeitsstil sowie Berufs- und
-            Ausbildungsstationen
+            Ausbildungsstationen, dazu das gewählte Design (Vorlage, Farbe, Schrift)
           </li>
           <li>
             die Herkunft deiner Bewerbung, also Quelle und Kampagne (siehe <a href="#herkunft">Herkunftsmessung</a>)

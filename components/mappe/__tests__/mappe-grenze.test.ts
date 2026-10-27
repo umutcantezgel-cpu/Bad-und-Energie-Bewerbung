@@ -38,7 +38,15 @@ describe('Bewerbungsmappe: CSS nur über stil.ts mit der Grenze davor', () => {
     expect(fremd.map((d) => path.relative(WURZEL, d))).toEqual([]);
     const dateien = readdirSync(ORDNER, { withFileTypes: true }).filter((e) => e.isFile()).map((e) => e.name);
     const ueberStil = dateien.filter((name) => /from '\.\/stil'/.test(readFileSync(path.join(ORDNER, name), 'utf8')));
-    expect(ueberStil.sort()).toEqual(['EditorSection.tsx', 'MappeActions.tsx', 'MappeBlatt.tsx', 'MappePreview.tsx', 'MappeStand.tsx', 'MappeTool.tsx']);
+    expect(ueberStil.sort()).toEqual([
+      'DesignSection.tsx',
+      'EditorSection.tsx',
+      'MappeActions.tsx',
+      'MappeBlatt.tsx',
+      'MappePreview.tsx',
+      'MappeStand.tsx',
+      'MappeTool.tsx',
+    ]);
   });
 
   it('die Grenze ist global, aber ohne Regeln (nur Kommentar)', () => {

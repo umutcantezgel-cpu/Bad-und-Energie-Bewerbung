@@ -9,6 +9,7 @@ import {
   CONTACT_MESSAGES,
   EMAIL_PATTERN,
   HONEYPOT_FIELD,
+  MAPPE_DESIGN,
   MAPPE_SCHEMA_LIMITS as MAPPE,
   PRIVACY_NOTICE_VERSIONS,
   type ApiErrorCode,
@@ -93,12 +94,23 @@ export const educationStationSchema = z.object({
  * Structured Bewerbungsmappe (no photo: photos never leave the browser in Phase 1).
  * Browser code checks the same rules without zod: lib/applications/mappe-data.ts.
  */
+/**
+ * Gestaltung (L3): nur bekannte Werte. Ein unbekanntes Design (älterer oder neuerer Client) fällt weg, statt die
+ * Bewerbung abzulehnen; die PDF fürs Team nimmt dann den Standard.
+ */
+const mappeDesignSchema = z.object({
+  vorlage: z.enum(MAPPE_DESIGN.vorlagen),
+  akzent: z.enum(MAPPE_DESIGN.akzente),
+  schrift: z.enum(MAPPE_DESIGN.schriften),
+});
+
 export const mappeSchema = z.object({
   coverLetter: trimmed(MAPPE.coverLetter).default(''),
   skills: z.array(trimmed(MAPPE.skill)).max(MAPPE.skills).default([]),
   workStyle: trimmed(MAPPE.workStyle).optional(),
   careerStations: z.array(careerStationSchema).max(MAPPE.careerStations).default([]),
   educationStations: z.array(educationStationSchema).max(MAPPE.educationStations).default([]),
+  design: mappeDesignSchema.optional().catch(undefined),
 });
 export type Mappe = z.infer<typeof mappeSchema>;
 

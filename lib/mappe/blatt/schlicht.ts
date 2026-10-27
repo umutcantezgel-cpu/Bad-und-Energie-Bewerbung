@@ -14,6 +14,9 @@ export const SCHLICHT = Object.freeze({
   /** Lebenslauf: Spalte Zeitraum und Abstand zur Spalte Angaben (mm). */
   spalteZeit: 38,
   spalteAbstand: 6,
+  /** Designs (L3): Farbband mit Abstand zum Papierrand (Drucker ohne Randlosdruck), Seitenspalte von „Zweispaltig“ (mm). */
+  bandRand: 10,
+  seitenspalte: 52,
   /** Schriftstufen (pt) und Zeilenhöhen (Faktor): Name · Betreff groß · Überschrift · Text · klein. */
   schrift: Object.freeze({ name: 22, gross: 12, kopf: 11, text: 10.5, klein: 9 }),
   zeile: Object.freeze({ name: 1.15, kopf: 1.35, text: 1.5, klein: 1.45 }),

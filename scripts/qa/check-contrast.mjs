@@ -375,13 +375,55 @@ export function checkTheme(cssText) {
   return { rows, failures, role };
 }
 
+// --- Blatt-Akzente der Bewerbungsmappe (L3, lib/mappe/blatt/design.ts, KERN K-006 Notiz „Blatt-Akzente“) -------------
+
+export const DESIGN_FILE = path.join(ROOT, 'lib/mappe/blatt/design.ts');
+/** Feste helle Rollen des Blatts (.paper in components/mappe/mappe.module.css, lib/mappe/blatt/schlicht.ts). */
+const BLATT = Object.freeze({ papier: '#FFFFFF', tinte: '#111A3B', tinteLeise: '#454C78' });
+
+/** Akzente aus design.ts lesen: `schluessel: { name: '…', farbe: '#RRGGBB', toenung: '#RRGGBB' }`. */
+export function blattAkzente(source) {
+  const eintrag = /(\w+):\s*\{\s*name:\s*'([^']+)',\s*farbe:\s*'(#[0-9A-Fa-f]{6})',\s*toenung:\s*'(#[0-9A-Fa-f]{6})'\s*\}/g;
+  return [...source.matchAll(eintrag)].map(([, id, name, farbe, toenung]) => ({ id, name, farbe, toenung }));
+}
+
+/**
+ * Jeder Akzent auf dem Blatt: als Text (Name, Überschriften) auf Papier und auf seiner Tönung (Seitenspalte „Zweispaltig“),
+ * Papierweiß auf dem Akzent (Band „Farbband“), Tinte und Nebentext auf der Tönung – je ≥ 4,5 : 1.
+ */
+export function checkBlattAkzente(source) {
+  const akzente = blattAkzente(source);
+  const rows = [];
+  let failures = akzente.length === 6 ? 0 : 1;
+  if (failures) rows.push(['blatt', 'Akzente in design.ts', `${akzente.length} gefunden`, '–', '6', 'FAIL']);
+  for (const a of akzente) {
+    const paare = [
+      ['akzent / papier', a.farbe, BLATT.papier],
+      ['akzent / toenung', a.farbe, a.toenung],
+      ['papier / akzent (Band)', BLATT.papier, a.farbe],
+      ['tinte / toenung', BLATT.tinte, a.toenung],
+      ['tinte-leise / toenung', BLATT.tinteLeise, a.toenung],
+    ];
+    for (const [paar, vorne, hinten] of paare) {
+      const ratio = contrast(parseColor(vorne), parseColor(hinten));
+      const pass = ratio >= TEXT;
+      if (!pass) failures++;
+      rows.push([`blatt ${a.id}`, paar, `${vorne} on ${hinten}`, ratio.toFixed(2), `${TEXT}`, pass ? 'ok' : 'FAIL']);
+    }
+  }
+  return { rows, failures };
+}
+
 function main() {
-  const { rows, failures } = checkTheme(readFileSync(THEME_FILE, 'utf8'));
+  const theme = checkTheme(readFileSync(THEME_FILE, 'utf8'));
+  const blatt = checkBlattAkzente(readFileSync(DESIGN_FILE, 'utf8'));
+  const rows = [...theme.rows, ...blatt.rows];
+  const failures = theme.failures + blatt.failures;
   const header = ['mode', 'pair', 'values', 'ratio', 'min', 'result'];
   const widths = header.map((h, i) => Math.max(h.length, ...rows.map((r) => r[i].length)));
   const line = (cells) => cells.map((c, i) => (i === 3 || i === 4 ? c.padStart(widths[i]) : c.padEnd(widths[i]))).join('  ').trimEnd();
 
-  console.log(`Contrast check: ${path.relative(ROOT, THEME_FILE)} (${ALL_MODES.join(', ')})\n`);
+  console.log(`Contrast check: ${path.relative(ROOT, THEME_FILE)} (${ALL_MODES.join(', ')}) and ${path.relative(ROOT, DESIGN_FILE)} (Blatt-Akzente)\n`);
   console.log(line(header));
   console.log(widths.map((w) => '-'.repeat(w)).join('  '));
   for (const row of rows) console.log(line(row));

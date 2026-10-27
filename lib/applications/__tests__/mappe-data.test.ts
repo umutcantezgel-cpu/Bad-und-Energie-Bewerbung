@@ -37,6 +37,13 @@ const samples: unknown[] = [
   null,
   [],
   'mappe',
+  // Gestaltung (L3): nur vollständig bekannte Werte; sonst fällt sie weg, die Mappe bleibt gültig
+  { coverLetter: 'Hallo', design: { vorlage: 'farbband', akzent: 'petrol', schrift: 'markant' } },
+  { coverLetter: 'Hallo', design: { vorlage: 'bunt', akzent: 'petrol', schrift: 'markant' } },
+  { coverLetter: 'Hallo', design: { vorlage: 'schlicht', akzent: 'navy' } },
+  { coverLetter: 'Hallo', design: 'farbband' },
+  { coverLetter: 'Hallo', design: null },
+  { coverLetter: 'Hallo', design: { vorlage: 'zweispaltig', akzent: 'graphit', schrift: 'sachlich', mehr: 1 } },
 ];
 
 describe('parseMappeData mirrors mappeSchema', () => {

@@ -2,13 +2,18 @@ import 'server-only';
 import path from 'node:path';
 import type { ComponentProps, ReactNode } from 'react';
 import { Document, Font, Page, StyleSheet, Text, View, renderToBuffer } from '@react-pdf/renderer';
+import { AKZENT_FARBEN, type MappeDesign } from '@/lib/mappe/blatt/design';
 import type { MappeBerufsstation, MappeDokument, MappeStation } from '@/lib/mappe/blatt/dokument';
 import { SCHLICHT } from '@/lib/mappe/blatt/schlicht';
 
 /**
- * Bewerbungsmappe als A4-PDF im Design „Schlicht“ (Schritt 4a), gesetzt wie das Blatt der Vorschau
- * (components/mappe/MappePreview.tsx): Anschreiben und Lebenslauf, Schrift Atkinson Hyperlegible Next als statische
- * Schnitte (lib/mappe/schriften), Maße aus lib/mappe/blatt/schlicht.ts. @react-pdf/renderer steht in Nexts Liste der
+ * Bewerbungsmappe als A4-PDF (Schritt 4a, Designs L3), gesetzt wie das Blatt der Vorschau
+ * (components/mappe/MappePreview.tsx): Anschreiben und Lebenslauf in einem der drei Designs (lib/mappe/blatt/design.ts):
+ * Schlicht (Name, feine Linien), Farbband (Name auf einem Band in der Akzentfarbe, 10 mm vom Papierrand, damit
+ * Drucker ohne Randlosdruck nichts abschneiden) und Zweispaltig (Lebenslauf mit getönter Seitenspalte für die
+ * Schwerpunkte). Akzentfarbe für Name, Überschriften und Band; Schriftstil Sachlich (alles Atkinson Hyperlegible Next)
+ * oder Markant (Name und Überschriften in Bricolage Grotesque fett). Schriften als statische Schnitte
+ * (lib/mappe/schriften), Maße aus lib/mappe/blatt/schlicht.ts. @react-pdf/renderer steht in Nexts Liste der
  * Server-Pakete ohne Bündelung; die Schriften liest es über den Pfad (next.config.ts nimmt sie in die Funktionen auf).
  *
  * Seitenumbruch: kurze Stationen bleiben ganz, lange brechen zwischen den Aufgaben um (Kopf der Station mit der ersten
@@ -26,6 +31,7 @@ import { SCHLICHT } from '@/lib/mappe/blatt/schlicht';
  */
 
 const SCHRIFT = 'Atkinson Hyperlegible Next';
+const TITELSCHRIFT = 'Bricolage Grotesque';
 const SCHRIFTEN = path.join(process.cwd(), 'lib/mappe/schriften');
 
 let registriert = false;
@@ -38,6 +44,8 @@ function schriftenRegistrieren() {
       { src: path.join(SCHRIFTEN, 'atkinson-hyperlegible-next-700.ttf'), fontWeight: 700 },
     ],
   });
+  // Nur geladen, wenn ein Dokument im Schriftstil „Markant“ sie braucht
+  Font.register({ family: TITELSCHRIFT, fonts: [{ src: path.join(SCHRIFTEN, 'bricolage-grotesque-700.ttf'), fontWeight: 700 }] });
   // Keine Silbentrennung (Kritik am Blatt: getrennte Wörter lesen sich schlecht). Fachwörter wie
   // „Gebäudetechnikinstallationen“ bleiben ganz; nur Wörter über 40 Zeichen (Links, Adressen) dürfen in Stücken umbrechen
   Font.registerHyphenationCallback((wort) => (wort.length > 40 ? (wort.match(/.{1,12}/g) ?? [wort]) : [wort]));
@@ -51,6 +59,13 @@ const mm = (wert: number) => `${wert}mm`;
 /** Zeilenhöhe in pt aus Schriftgröße und Faktor des Blatts. */
 const zeilenhoehe = (groesse: number, faktor: number) => `${Math.round(groesse * faktor * 100) / 100}pt`;
 const { rand, schrift, zeile, farbe, abstand, strich } = SCHLICHT;
+
+/** Farbband: Abstand zum Papierrand (mm) – Drucker ohne Randlosdruck schneiden so nichts ab. */
+const BAND_RAND = SCHLICHT.bandRand;
+/** Zweispaltig: Breite der Seitenspalte (mm). */
+const SPALTE_SEITE = SCHLICHT.seitenspalte;
+/** Schrift auf dem Band: Papierweiß (≥ 6,2 : 1 auf jedem Akzent, scripts/qa/check-contrast.mjs). */
+const WEISS = farbe.papier;
 
 const stil = StyleSheet.create({
   seite: {
@@ -70,6 +85,16 @@ const stil = StyleSheet.create({
     borderBottomColor: farbe.linie,
     borderBottomStyle: 'solid',
   },
+  band: {
+    marginTop: mm(BAND_RAND - rand.oben),
+    marginLeft: mm(BAND_RAND - rand.links),
+    marginRight: mm(BAND_RAND - rand.rechts),
+    paddingTop: mm(8),
+    paddingBottom: mm(7),
+    paddingLeft: mm(rand.links - BAND_RAND),
+    paddingRight: mm(rand.rechts - BAND_RAND),
+    borderRadius: mm(1),
+  },
   kopfUeberschrift: {
     fontSize: schrift.kopf,
     lineHeight: zeilenhoehe(schrift.kopf, zeile.kopf),
@@ -81,7 +106,6 @@ const stil = StyleSheet.create({
     fontSize: schrift.name,
     lineHeight: zeilenhoehe(schrift.name, zeile.name),
     fontWeight: 700,
-    color: farbe.marke,
     letterSpacing: -0.22,
   },
   empfaenger: { marginTop: mm(abstand.empfaengerOben) },
@@ -93,7 +117,6 @@ const stil = StyleSheet.create({
     fontSize: schrift.kopf,
     lineHeight: zeilenhoehe(schrift.kopf, zeile.kopf),
     fontWeight: 700,
-    color: farbe.marke,
     paddingBottom: mm(abstand.ueberschriftUnten),
     borderBottomWidth: strich.fein,
     borderBottomColor: farbe.linie,
@@ -102,6 +125,7 @@ const stil = StyleSheet.create({
   station: { marginTop: mm(abstand.abschnittInnen) },
   zeile: { flexDirection: 'row' },
   zeit: { width: mm(SCHLICHT.spalteZeit), marginRight: mm(SCHLICHT.spalteAbstand), color: farbe.tinteLeise },
+  zeitOben: { color: farbe.tinteLeise },
   angaben: { flex: 1 },
   /** Weitere Aufgaben einer langen Station: eingerückt bis zur Spalte Angaben. */
   weitere: { marginLeft: mm(SCHLICHT.spalteZeit + SCHLICHT.spalteAbstand) },
@@ -111,6 +135,16 @@ const stil = StyleSheet.create({
   punkt: { flexDirection: 'row' },
   punktZeichen: { width: mm(abstand.einzug) },
   punktText: { flex: 1 },
+  spalten: { flexDirection: 'row', marginTop: mm(abstand.abschnittOben) },
+  // So hoch wie ihr Inhalt (wie .spalten in der Vorschau): keine leere getönte Spalte neben langen Stationen
+  seitenspalte: {
+    width: mm(SPALTE_SEITE),
+    marginRight: mm(SCHLICHT.spalteAbstand),
+    padding: mm(4),
+    borderRadius: mm(1),
+    alignSelf: 'flex-start',
+  },
+  hauptspalte: { flex: 1 },
   fuss: { marginTop: mm(abstand.fussOben), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
   fussDatum: { flexShrink: 0, marginRight: mm(SCHLICHT.spalteAbstand) },
   unterschrift: {
@@ -136,6 +170,19 @@ const stil = StyleSheet.create({
   },
 });
 
+/** Farben und Titelschrift eines Designs. */
+interface Thema {
+  design: MappeDesign;
+  akzent: string;
+  toenung: string;
+  titel: string;
+}
+
+function themaFuer(design: MappeDesign): Thema {
+  const { farbe: akzent, toenung } = AKZENT_FARBEN[design.akzent];
+  return { design, akzent, toenung, titel: design.schrift === 'markant' ? TITELSCHRIFT : SCHRIFT };
+}
+
 /** Text mit hoher Trennstrafe (siehe oben): umbrochen wird an Leerzeichen. */
 function Satz(props: ComponentProps<typeof Text>) {
   return <Text hyphenationPenalty={STRAFE_TRENNUNG} {...props} />;
@@ -146,11 +193,12 @@ function Seitenzahl() {
   return <Text style={stil.seitenzahl} fixed render={({ pageNumber, totalPages }) => (pageNumber > 1 ? `Seite ${pageNumber} von ${totalPages}` : '')} />;
 }
 
-function Kopf({ name, ueberschrift }: { name: string; ueberschrift?: string }) {
+function Kopf({ name, ueberschrift, t }: { name: string; ueberschrift?: string; t: Thema }) {
+  const band = t.design.vorlage === 'farbband';
   return (
-    <View style={stil.kopf}>
-      {ueberschrift ? <Satz style={stil.kopfUeberschrift}>{ueberschrift}</Satz> : null}
-      <Satz style={stil.name}>{name}</Satz>
+    <View style={band ? [stil.band, { backgroundColor: t.akzent }] : stil.kopf}>
+      {ueberschrift ? <Satz style={[stil.kopfUeberschrift, band ? { color: WEISS } : {}]}>{ueberschrift}</Satz> : null}
+      <Satz style={[stil.name, { color: band ? WEISS : t.akzent, fontFamily: t.titel }]}>{name}</Satz>
     </View>
   );
 }
@@ -180,11 +228,11 @@ export function geschaetzteZeilen(station: MappeStation | MappeBerufsstation): n
   return zeilen(station.titel) + zeilen(station.ort) + aufgaben.reduce((summe, aufgabe) => summe + zeilen(aufgabe), 0);
 }
 
-function Abschnitt({ titel, children }: { titel: string; children: ReactNode }) {
+function Abschnitt({ titel, t, erster = false, children }: { titel: string; t: Thema; erster?: boolean; children: ReactNode }) {
   return (
-    <View style={stil.abschnitt}>
+    <View style={erster ? {} : stil.abschnitt}>
       {/* Überschrift nicht allein am Seitenende: mindestens eine Zeile Inhalt muss mit auf die Seite */}
-      <Satz style={stil.ueberschrift} minPresenceAhead={40}>
+      <Satz style={[stil.ueberschrift, { color: t.akzent, fontFamily: t.titel }]} minPresenceAhead={40}>
         {titel}
       </Satz>
       {children}
@@ -193,28 +241,38 @@ function Abschnitt({ titel, children }: { titel: string; children: ReactNode }) 
 }
 
 /**
- * Eine Station: Zeitraum, Titel, Ort und die erste Aufgabe stehen als eine Zeile zusammen. Eine kurze Station bleibt
- * ganz auf einer Seite; bei einer langen (viele oder lange Aufgaben) folgen die weiteren Aufgaben eingerückt darunter
- * und dürfen auf die nächste Seite umbrechen – sonst passte die Station auf keine Seite.
+ * Eine Station: Zeitraum, Titel, Ort und die erste Aufgabe stehen zusammen. Eine kurze Station bleibt ganz auf einer
+ * Seite; bei einer langen (viele oder lange Aufgaben) folgen die weiteren Aufgaben darunter und dürfen auf die nächste
+ * Seite umbrechen – sonst passte die Station auf keine Seite. `einspaltig` (Hauptspalte von „Zweispaltig“): der
+ * Zeitraum steht über dem Titel statt in einer eigenen Spalte.
  */
-function Station({ station }: { station: MappeStation | MappeBerufsstation }) {
+function Station({ station, einspaltig = false }: { station: MappeStation | MappeBerufsstation; einspaltig?: boolean }) {
   const [erste, ...weitere] = 'aufgaben' in station ? station.aufgaben : [];
+  const angaben = (
+    <>
+      {einspaltig && station.zeit ? <Satz style={stil.zeitOben}>{station.zeit}</Satz> : null}
+      {station.titel ? <Satz style={stil.fett}>{station.titel}</Satz> : null}
+      {station.ort ? <Satz style={stil.leise}>{station.ort}</Satz> : null}
+      {erste ? (
+        <View style={stil.aufgaben}>
+          <Punkt eintrag={erste} />
+        </View>
+      ) : null}
+    </>
+  );
   return (
     <View style={stil.station} wrap={geschaetzteZeilen(station) > ZEILEN_GANZ}>
-      <View style={stil.zeile} wrap={false}>
-        <Satz style={stil.zeit}>{station.zeit}</Satz>
-        <View style={stil.angaben}>
-          {station.titel ? <Satz style={stil.fett}>{station.titel}</Satz> : null}
-          {station.ort ? <Satz style={stil.leise}>{station.ort}</Satz> : null}
-          {erste ? (
-            <View style={stil.aufgaben}>
-              <Punkt eintrag={erste} />
-            </View>
-          ) : null}
+      {einspaltig ? (
+        // Ohne flex: 1 (stil.angaben) – in einer Spalte fiele die Höhe sonst auf null, und die Zeilen lägen übereinander
+        <View wrap={false}>{angaben}</View>
+      ) : (
+        <View style={stil.zeile} wrap={false}>
+          <Satz style={stil.zeit}>{station.zeit}</Satz>
+          <View style={stil.angaben}>{angaben}</View>
         </View>
-      </View>
+      )}
       {weitere.length > 0 ? (
-        <View style={stil.weitere}>
+        <View style={einspaltig ? {} : stil.weitere}>
           <Punkte eintraege={weitere} />
         </View>
       ) : null}
@@ -222,9 +280,57 @@ function Station({ station }: { station: MappeStation | MappeBerufsstation }) {
   );
 }
 
+function Lebenslaufteile({ lebenslauf, t }: { lebenslauf: NonNullable<MappeDokument['lebenslauf']>; t: Thema }) {
+  const beruf =
+    lebenslauf.beruf.length > 0 ? (
+      <Abschnitt titel="Berufserfahrung" t={t} erster={t.design.vorlage === 'zweispaltig'}>
+        {lebenslauf.beruf.map((station, i) => (
+          <Station key={i} station={station} einspaltig={t.design.vorlage === 'zweispaltig'} />
+        ))}
+      </Abschnitt>
+    ) : null;
+  const ausbildung =
+    lebenslauf.ausbildung.length > 0 ? (
+      <Abschnitt titel="Schule und Ausbildung" t={t} erster={t.design.vorlage === 'zweispaltig' && lebenslauf.beruf.length === 0}>
+        {lebenslauf.ausbildung.map((station, i) => (
+          <Station key={i} station={station} einspaltig={t.design.vorlage === 'zweispaltig'} />
+        ))}
+      </Abschnitt>
+    ) : null;
+  const schwerpunkte =
+    lebenslauf.schwerpunkte.length > 0 ? (
+      <Abschnitt titel="Schwerpunkte" t={t} erster={t.design.vorlage === 'zweispaltig'}>
+        <View style={stil.aufgaben}>
+          <Punkte eintraege={lebenslauf.schwerpunkte} />
+        </View>
+      </Abschnitt>
+    ) : null;
+
+  // Zweispaltig mit Schwerpunkten: Seitenspalte (getönt) links, Stationen rechts; ohne Schwerpunkte wie Schlicht
+  if (t.design.vorlage === 'zweispaltig' && schwerpunkte && (beruf || ausbildung)) {
+    return (
+      <View style={stil.spalten}>
+        <View style={[stil.seitenspalte, { backgroundColor: t.toenung }]}>{schwerpunkte}</View>
+        <View style={stil.hauptspalte}>
+          {beruf}
+          {ausbildung}
+        </View>
+      </View>
+    );
+  }
+  return (
+    <>
+      {beruf}
+      {ausbildung}
+      {schwerpunkte}
+    </>
+  );
+}
+
 function MappePdf({ dokument, erstellt, seitenzahlen }: { dokument: MappeDokument; erstellt: Date; seitenzahlen: boolean }) {
   const { anschreiben, lebenslauf } = dokument;
   const kopf = dokument.name ?? 'Bewerbungsmappe';
+  const t = themaFuer(dokument.design);
   return (
     <Document
       title={dokument.titel}
@@ -239,7 +345,7 @@ function MappePdf({ dokument, erstellt, seitenzahlen }: { dokument: MappeDokumen
       {anschreiben ? (
         <Page size="A4" style={stil.seite}>
           <View style={stil.inhalt}>
-            <Kopf name={kopf} />
+            <Kopf name={kopf} t={t} />
             <View style={stil.empfaenger}>
               {anschreiben.empfaenger.map((eintrag, i) => (
                 <Satz key={i}>{eintrag}</Satz>
@@ -255,29 +361,9 @@ function MappePdf({ dokument, erstellt, seitenzahlen }: { dokument: MappeDokumen
       {lebenslauf ? (
         <Page size="A4" style={stil.seite}>
           <View style={stil.inhalt}>
-            <Kopf name={kopf} ueberschrift="Lebenslauf" />
+            <Kopf name={kopf} ueberschrift="Lebenslauf" t={t} />
             <Satz style={stil.betreff}>{dokument.betreff}</Satz>
-            {lebenslauf.beruf.length > 0 ? (
-              <Abschnitt titel="Berufserfahrung">
-                {lebenslauf.beruf.map((station, i) => (
-                  <Station key={i} station={station} />
-                ))}
-              </Abschnitt>
-            ) : null}
-            {lebenslauf.ausbildung.length > 0 ? (
-              <Abschnitt titel="Schule und Ausbildung">
-                {lebenslauf.ausbildung.map((station, i) => (
-                  <Station key={i} station={station} />
-                ))}
-              </Abschnitt>
-            ) : null}
-            {lebenslauf.schwerpunkte.length > 0 ? (
-              <Abschnitt titel="Schwerpunkte">
-                <View style={stil.aufgaben}>
-                  <Punkte eintraege={lebenslauf.schwerpunkte} />
-                </View>
-              </Abschnitt>
-            ) : null}
+            <Lebenslaufteile lebenslauf={lebenslauf} t={t} />
             <View style={stil.fuss} wrap={false}>
               <Satz style={stil.fussDatum}>{dokument.datum}</Satz>
               {dokument.name ? <Satz style={stil.unterschrift}>{dokument.name}</Satz> : null}

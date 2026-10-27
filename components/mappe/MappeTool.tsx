@@ -34,6 +34,7 @@ import {
 import type { MappeJobOption, MappeRecipient } from '@/lib/mappe/types';
 import { cn } from '@/lib/utils/cn';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
+import { DesignSection } from './DesignSection';
 import { JobSection } from './JobSection';
 import { LetterSection } from './LetterSection';
 import { MappeActions, type MappeFeedback, type SaveStatus } from './MappeActions';
@@ -288,6 +289,13 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
           onEducation={(action) => dispatch({ type: 'education', action })}
           announce={announce}
         />
+        <DesignSection
+          design={state.design}
+          fotoform={state.fotoform}
+          hatFoto={photoUrl !== null}
+          onDesign={(patch) => dispatch({ type: 'design', patch })}
+          onFotoform={(form) => dispatch({ type: 'fotoform', form })}
+        />
       </div>
 
       <Leitungstrenner className={styles.trenner} />
@@ -331,6 +339,8 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
               education={state.educationStations}
               photoUrl={photoUrl}
               today={today}
+              design={state.design}
+              fotoform={state.fotoform}
             />
           </section>
         </div>

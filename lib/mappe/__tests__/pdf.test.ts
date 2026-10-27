@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ergaenzung, full, maximal } from '@/lib/email/__tests__/fixtures';
+import { SCHRIFTSTILE, VORLAGEN } from '@/lib/mappe/blatt/design';
 import { mappeDokument } from '@/lib/mappe/blatt/dokument';
 import { fuerPdf } from '@/lib/mappe/blatt/zeichen';
 import { getMappeRecipient } from '@/lib/mappe/context';
@@ -73,6 +74,23 @@ describe('PDF der Mappe im Anhang der Team-Mail', () => {
     expect(await mappeAnhangFuerBewerbung({ ...full, name: 'Иван Петров' })).toBeNull();
     expect(logs()).toContain('[mappe-pdf] BE-26-K7M4QX: keine PDF (zeichen)');
     expect(logs()).not.toContain('Иван');
+  });
+
+  it('jedes Design setzt sich (Schlicht, Farbband, Zweispaltig, je Sachlich und Markant); Markant bettet Bricolage ein', async () => {
+    for (const vorlage of VORLAGEN) {
+      for (const schrift of SCHRIFTSTILE) {
+        const anhang = await mappeAnhangFuerBewerbung({ ...full, mappe: { ...full.mappe!, design: { vorlage, akzent: 'petrol', schrift } } });
+        const fall = `${vorlage}/${schrift}`;
+        expect(anhang!.seiten, fall).toBe(2);
+        expect(/BricolageGrotesque-Bold/.test(roh(anhang!.inhalt)), fall).toBe(schrift === 'markant');
+      }
+    }
+  }, 30_000);
+
+  it('ohne Design in der Mappe wie bisher „Schlicht“ (gleiche Bytes wie mit dem Standard-Design)', async () => {
+    const ohne = await mappeAnhangFuerBewerbung(full);
+    const standard = await mappeAnhangFuerBewerbung({ ...full, mappe: { ...full.mappe!, design: { vorlage: 'schlicht', akzent: 'navy', schrift: 'sachlich' } } });
+    expect(standard!.inhalt).toBe(ohne!.inhalt);
   });
 
   it('Spamverdacht: keine PDF (kein Satz für Bot-Anfragen), Grund im Log', async () => {

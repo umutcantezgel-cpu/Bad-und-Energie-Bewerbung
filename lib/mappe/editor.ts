@@ -2,6 +2,7 @@ import { INITIATIVE_JOB_ID, isApplicationJobId, type ApplicationJobId } from '@/
 import { parseMappeData } from '@/lib/applications/mappe-data';
 import type { Mappe } from '@/lib/applications/schema';
 import type { JobCategory } from '@/lib/jobs/schema';
+import { STANDARD_DESIGN, STANDARD_FOTOFORM, designAus, fotoformAus, istStandard, type Fotoform, type MappeDesign } from './blatt/design';
 import { MAPPE_LIMITS, WORK_STYLE_IDS, getWorkStyle, skillsFuerStelle, workStyleIdFromValue, type WorkStyleId } from './options';
 import {
   createStationId,
@@ -33,6 +34,10 @@ export interface MappeEditorState {
   customLetter: string | null;
   careerStations: CareerStationDraft[];
   educationStations: EducationStationDraft[];
+  /** Design, Farbe und Schrift (L3); reisen mit der Mappe, wenn sie vom Standard abweichen. */
+  design: MappeDesign;
+  /** Form des Fotos; bleibt im Browser wie das Foto. */
+  fotoform: Fotoform;
 }
 
 export type MappeEditorAction =
@@ -46,6 +51,8 @@ export type MappeEditorAction =
   | { type: 'resetLetter' }
   | { type: 'career'; action: ListAction<CareerStationDraft> }
   | { type: 'education'; action: ListAction<EducationStationDraft> }
+  | { type: 'design'; patch: Partial<MappeDesign> }
+  | { type: 'fotoform'; form: Fotoform }
   | { type: 'hydrate'; state: MappeEditorState };
 
 export const EMPTY_PERSON: MappePerson = Object.freeze({ name: '', phone: '', email: '', location: '' });
@@ -59,6 +66,8 @@ export function createEmptyEditorState(jobId: ApplicationJobId | '' = ''): Mappe
     customLetter: null,
     careerStations: [],
     educationStations: [],
+    design: { ...STANDARD_DESIGN },
+    fotoform: STANDARD_FOTOFORM,
   };
 }
 
@@ -109,6 +118,10 @@ export function mappeEditorReducer(state: MappeEditorState, action: MappeEditorA
       return { ...state, careerStations: listReducer(state.careerStations, action.action) };
     case 'education':
       return { ...state, educationStations: listReducer(state.educationStations, action.action) };
+    case 'design':
+      return { ...state, design: designAus({ ...state.design, ...action.patch }) };
+    case 'fotoform':
+      return { ...state, fotoform: fotoformAus(action.form) };
     case 'hydrate':
       return action.state;
   }
@@ -166,9 +179,10 @@ export function isMappeEmpty(state: MappeEditorState): boolean {
 
 const optionalText = (value: string): string | undefined => value.trim() || undefined;
 
-/** Editor-Stand → Mappe laut Vertrag (ohne persönliche Angaben und ohne Foto). */
+/** Editor-Stand → Mappe laut Vertrag (ohne persönliche Angaben, Foto und Fotoform; das Design nur, wenn gewählt). */
 export function toMappe(state: MappeEditorState, context: MappeContext): Mappe {
   return {
+    ...(istStandard(state.design) ? {} : { design: { ...state.design } }),
     coverLetter: resolveCoverLetter(state, context).trim(),
     skills: state.skills.map((skill) => skill.trim()).filter(Boolean),
     workStyle: getWorkStyle(state.workStyleId, selectedJob(state, context.jobs)?.category)?.value,
@@ -218,6 +232,7 @@ function describeIssue(path: readonly PropertyKey[]): string {
 export function fromMappe(mappe: Mappe, jobId: ApplicationJobId | '' = ''): MappeEditorState {
   return {
     ...createEmptyEditorState(jobId),
+    design: designAus(mappe.design),
     skills: mappe.skills.slice(0, MAPPE_LIMITS.skills),
     workStyleId: workStyleIdFromValue(mappe.workStyle),
     customLetter: mappe.coverLetter.trim() ? mappe.coverLetter : null,
@@ -317,5 +332,8 @@ export function parseEditorState(value: unknown): MappeEditorState | null {
     customLetter,
     careerStations: strictList(value.careerStations, MAPPE_LIMITS.careerStations, careerDraft),
     educationStations: strictList(value.educationStations, MAPPE_LIMITS.educationStations, educationDraft),
+    // Entwürfe von vor L3 haben kein Design: Standard
+    design: designAus(value.design),
+    fotoform: fotoformAus(value.fotoform),
   };
 }

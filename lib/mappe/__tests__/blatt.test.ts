@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { AKZENT_FARBEN } from '@/lib/mappe/blatt/design';
 import { SCHLICHT } from '@/lib/mappe/blatt/schlicht';
 
 /**
@@ -31,6 +32,8 @@ describe('Design „Schlicht“: PDF und Vorschau mit denselben Maßen', () => {
     expect(variable('blatt-rand-links')).toBe(`${SCHLICHT.rand.links}mm`);
     expect(variable('blatt-spalte-zeit')).toBe(`${SCHLICHT.spalteZeit}mm`);
     expect(variable('blatt-spalte-abstand')).toBe(`${SCHLICHT.spalteAbstand}mm`);
+    expect(variable('blatt-band-rand')).toBe(`${SCHLICHT.bandRand}mm`);
+    expect(variable('blatt-seitenspalte')).toBe(`${SCHLICHT.seitenspalte}mm`);
   });
 
   it('Schriftstufen (pt) und Zeilenhöhen', () => {
@@ -46,7 +49,9 @@ describe('Design „Schlicht“: PDF und Vorschau mit denselben Maßen', () => {
     expect(paperFarbe('surface')).toBe(SCHLICHT.farbe.papier);
     expect(paperFarbe('ink')).toBe(SCHLICHT.farbe.tinte);
     expect(paperFarbe('ink-muted')).toBe(SCHLICHT.farbe.tinteLeise);
-    expect(paperFarbe('brand')).toBe(SCHLICHT.farbe.marke);
+    // Die Marke des Blatts ist die Akzentfarbe des Designs, ohne Angabe Navy (= Marke von „Schlicht“)
+    expect(paperFarbe('brand')).toBe(`VAR(--BLATT-AKZENT, ${SCHLICHT.farbe.marke})`);
+    expect(AKZENT_FARBEN.navy.farbe).toBe(SCHLICHT.farbe.marke);
     expect(paperFarbe('line')).toBe(SCHLICHT.farbe.linie);
     expect(paperFarbe('line-strong')).toBe(SCHLICHT.farbe.linieStark);
   });

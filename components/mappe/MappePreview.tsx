@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
+import { AKZENT_FARBEN, type Fotoform, type MappeDesign } from '@/lib/mappe/blatt/design';
 import type { MappePerson } from '@/lib/mappe/editor';
 import { dateLine } from '@/lib/mappe/format';
 import {
@@ -29,11 +30,19 @@ export interface MappePreviewProps {
   photoUrl: string | null;
   /** Formatted date of today; empty until mounted (the page is static). */
   today: string;
+  /** Design, Farbe und Schrift (L3); dieselben Werte setzt die PDF (lib/mappe/pdf/blatt.tsx). */
+  design: MappeDesign;
+  /** Form des Fotos; nur mit Foto sichtbar. */
+  fotoform: Fotoform;
   className?: string;
 }
 
-/** Two A4 pages (Anschreiben, Lebenslauf). On screen zoomed to the column, in print at real size. */
-export function MappePreview({ className, ...props }: MappePreviewProps) {
+/**
+ * Two A4 pages (Anschreiben, Lebenslauf). On screen zoomed to the column, in print at real size. Das Design steht als
+ * Attribute und Variablen am Rahmen (data-vorlage, data-schrift, data-fotoform, --blatt-akzent): Die Blattregeln in
+ * mappe.module.css lesen nur diese, Vorschau und Druck folgen ihnen gleich.
+ */
+export function MappePreview({ className, design, fotoform, ...props }: MappePreviewProps) {
   const frameRef = useRef<HTMLDivElement>(null);
 
   // Zoom factor from the column width; written to the DOM directly, no re-render per resize.
@@ -50,17 +59,26 @@ export function MappePreview({ className, ...props }: MappePreviewProps) {
     return () => observer.disconnect();
   }, []);
 
+  const akzent = AKZENT_FARBEN[design.akzent];
+  const farben = { '--blatt-akzent': akzent.farbe, '--blatt-akzent-toenung': akzent.toenung } as CSSProperties;
   return (
-    <div ref={frameRef} className={cn(styles.frame, className)}>
+    <div
+      ref={frameRef}
+      className={cn(styles.frame, className)}
+      data-vorlage={design.vorlage}
+      data-schrift={design.schrift}
+      data-fotoform={fotoform}
+      style={farben}
+    >
       <div className={styles.stack}>
         <CoverLetterPage {...props} />
-        <CvPage {...props} />
+        <CvPage {...props} zweispaltig={design.vorlage === 'zweispaltig'} />
       </div>
     </div>
   );
 }
 
-type PageProps = Omit<MappePreviewProps, 'className'>;
+type PageProps = Omit<MappePreviewProps, 'className' | 'design' | 'fotoform'>;
 
 function Filled({ value, placeholder }: { value: string; placeholder: string }) {
   return value.trim() ? <>{value.trim()}</> : <span className={styles.placeholder}>{placeholder}</span>;
@@ -135,10 +153,64 @@ function CvSection({
   );
 }
 
-function CvPage({ person, subject, skills, career, education, photoUrl, today }: PageProps) {
+function CvPage({ person, subject, skills, career, education, photoUrl, today, zweispaltig }: PageProps & { zweispaltig: boolean }) {
   const careerItems = career.filter((station) => !isCareerStationEmpty(station));
   const educationItems = education.filter((station) => !isEducationStationEmpty(station));
   const date = dateLine(person.location, today);
+
+  const beruf = (
+    <CvSection title="Berufserfahrung" isEmpty={careerItems.length === 0} emptyText="Noch keine Berufserfahrung eingetragen.">
+      {careerItems.map((station) => {
+        const tasks = splitTasks(station.tasks, MAPPE_LIMITS.tasksPerStation);
+        const place = [station.company.trim(), station.location.trim()].filter(Boolean).join(', ');
+        return (
+          <div key={station.id} className={styles.row}>
+            <p className="tabular-nums text-ink-muted">{station.period.trim()}</p>
+            <div className="flex min-w-0 flex-col">
+              {station.role.trim() && <p className="font-bold">{station.role.trim()}</p>}
+              {place && <p className="text-ink-muted">{place}</p>}
+              {tasks.length > 0 && (
+                <ul className="mt-1.5 list-disc pl-5">
+                  {tasks.map((task, index) => (
+                    <li key={index}>{task}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </CvSection>
+  );
+  const ausbildung = (
+    <CvSection
+      title="Schule und Ausbildung"
+      isEmpty={educationItems.length === 0}
+      emptyText="Noch kein Abschluss eingetragen."
+    >
+      {educationItems.map((station) => {
+        const place = [station.institution.trim(), station.location.trim()].filter(Boolean).join(', ');
+        return (
+          <div key={station.id} className={styles.row}>
+            <p className="tabular-nums text-ink-muted">{station.period.trim()}</p>
+            <div className="flex min-w-0 flex-col">
+              {station.degree.trim() && <p className="font-bold">{station.degree.trim()}</p>}
+              {place && <p className="text-ink-muted">{place}</p>}
+            </div>
+          </div>
+        );
+      })}
+    </CvSection>
+  );
+  const schwerpunkte = (
+    <CvSection title="Schwerpunkte" isEmpty={skills.length === 0} emptyText="Noch keine Schwerpunkte gewählt.">
+      <ul className="list-disc pl-5">
+        {skills.map((skill) => (
+          <li key={skill}>{skill}</li>
+        ))}
+      </ul>
+    </CvSection>
+  );
 
   return (
     <article aria-labelledby="mappe-seite-lebenslauf" className={cn(styles.page, styles.paper)}>
@@ -156,55 +228,22 @@ function CvPage({ person, subject, skills, career, education, photoUrl, today }:
 
       <p className="mt-6 font-bold">{subject}</p>
 
-      <CvSection title="Berufserfahrung" isEmpty={careerItems.length === 0} emptyText="Noch keine Berufserfahrung eingetragen.">
-        {careerItems.map((station) => {
-          const tasks = splitTasks(station.tasks, MAPPE_LIMITS.tasksPerStation);
-          const place = [station.company.trim(), station.location.trim()].filter(Boolean).join(', ');
-          return (
-            <div key={station.id} className={styles.row}>
-              <p className="tabular-nums text-ink-muted">{station.period.trim()}</p>
-              <div className="flex min-w-0 flex-col">
-                {station.role.trim() && <p className="font-bold">{station.role.trim()}</p>}
-                {place && <p className="text-ink-muted">{place}</p>}
-                {tasks.length > 0 && (
-                  <ul className="mt-1.5 list-disc pl-5">
-                    {tasks.map((task, index) => (
-                      <li key={index}>{task}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </CvSection>
-
-      <CvSection
-        title="Schule und Ausbildung"
-        isEmpty={educationItems.length === 0}
-        emptyText="Noch kein Abschluss eingetragen."
-      >
-        {educationItems.map((station) => {
-          const place = [station.institution.trim(), station.location.trim()].filter(Boolean).join(', ');
-          return (
-            <div key={station.id} className={styles.row}>
-              <p className="tabular-nums text-ink-muted">{station.period.trim()}</p>
-              <div className="flex min-w-0 flex-col">
-                {station.degree.trim() && <p className="font-bold">{station.degree.trim()}</p>}
-                {place && <p className="text-ink-muted">{place}</p>}
-              </div>
-            </div>
-          );
-        })}
-      </CvSection>
-
-      <CvSection title="Schwerpunkte" isEmpty={skills.length === 0} emptyText="Noch keine Schwerpunkte gewählt.">
-        <ul className="list-disc pl-5">
-          {skills.map((skill) => (
-            <li key={skill}>{skill}</li>
-          ))}
-        </ul>
-      </CvSection>
+      {zweispaltig && skills.length > 0 && (careerItems.length > 0 || educationItems.length > 0) ? (
+        // Zweispaltig: Schwerpunkte in der getönten Seitenspalte, Stationen daneben (Zeitraum über dem Titel)
+        <div className={styles.spalten}>
+          <div className={styles.seitenspalte}>{schwerpunkte}</div>
+          <div className={styles.hauptspalte}>
+            {beruf}
+            {ausbildung}
+          </div>
+        </div>
+      ) : (
+        <>
+          {beruf}
+          {ausbildung}
+          {schwerpunkte}
+        </>
+      )}
 
       <footer className="mt-auto flex items-end justify-between gap-8 pt-16">
         <p className="tabular-nums">{date}</p>

@@ -1,5 +1,6 @@
 import type { Mappe } from '@/lib/applications/schema';
 import type { MappeRecipient } from '@/lib/mappe/types';
+import { designAus, type MappeDesign } from './design';
 
 /**
  * Bewerbungsmappe als Dokument (Schritt 4a): was auf den Blättern steht, getrennt von der Darstellung. Gebaut aus der
@@ -36,6 +37,8 @@ export interface MappeDokument {
     ausbildung: readonly MappeStation[];
     schwerpunkte: readonly string[];
   } | null;
+  /** Design, Farbe und Schrift aus der Mappe (L3); ohne Angabe der Standard „Schlicht“, Navy, Sachlich. */
+  design: MappeDesign;
 }
 
 export interface MappeDokumentEingaben {
@@ -94,5 +97,6 @@ export function mappeDokument({ name, betreff, stelle, datum, empfaenger, mappe 
     datum,
     anschreiben,
     lebenslauf,
+    design: designAus(mappe.design),
   };
 }

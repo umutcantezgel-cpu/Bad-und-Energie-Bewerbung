@@ -72,6 +72,47 @@ test('Station, Anschreiben und „Mit dieser Mappe bewerben“ führen in den Fl
   await expectThankYou(page);
 });
 
+test('Design wählen: Vorschau folgt, axe ohne Verstöße, das Design geht mit der Mappe mit', async ({ page }, testInfo) => {
+  await page.goto(`/bewerbung/mappe?stelle=${MAIN_JOB_SLUG}`);
+  const addStation = page.getByRole('button', { name: 'Berufserfahrung hinzufügen' });
+  await waitForHydration(addStation);
+  await addStation.click();
+  const station = page.getByRole('list', { name: 'Berufserfahrung' }).getByRole('listitem').first();
+  await station.getByRole('textbox', { name: 'Tätigkeit' }).fill(STATION.role);
+  await station.getByRole('textbox', { name: 'Betrieb' }).fill(STATION.company);
+  await station.getByRole('textbox', { name: 'Zeitraum' }).fill(STATION.period);
+  await page.getByRole('group', { name: 'Schwerpunkte' }).getByRole('button').first().click();
+  await page.getByRole('button', { name: WORK_STYLE }).click();
+
+  // Farbband in Petrol mit Markant: Name (noch Platzhalter) und Kontaktzeile stehen weiß auf dem Band.
+  const blatt = page.locator('[data-vorlage]');
+  await page.getByRole('button', { name: /^Farbband/ }).click();
+  await page.getByText('Petrol', { exact: true }).click();
+  await page.getByText('Markant', { exact: true }).click();
+  await expect(blatt).toHaveAttribute('data-vorlage', 'farbband');
+  await expect(blatt).toHaveAttribute('data-schrift', 'markant');
+  await expectNoAxeViolations(page, testInfo);
+
+  // Zweispaltig in Kupfer: Schwerpunkte in der getönten Seitenspalte.
+  await page.getByRole('button', { name: /^Zweispaltig/ }).click();
+  await page.getByText('Kupfer', { exact: true }).click();
+  await expect(blatt).toHaveAttribute('data-vorlage', 'zweispaltig');
+  await expectNoAxeViolations(page, testInfo);
+  if (isTouch(testInfo)) expect(await findSmallTouchTargets(page, 'main'), 'Trefferfläche < 44 px').toEqual([]);
+
+  await page.getByRole('button', { name: 'Mit dieser Mappe bewerben' }).click();
+  const flow = flowRoot(page, 'page');
+  await waitForHydration(flow);
+  const taps = new TapCounter(testInfo);
+  await answerQuestions(flow, taps);
+  await fillContact(flow);
+  const requestPromise = page.waitForRequest((request) => new URL(request.url()).pathname === '/api/bewerbung');
+  await taps.tap(submitButton(flow));
+  const payload = (await requestPromise).postDataJSON() as { mappe?: { design?: unknown } };
+  expect(payload.mappe?.design).toEqual({ vorlage: 'zweispaltig', akzent: 'kupfer', schrift: 'markant' });
+  await expectThankYou(page);
+});
+
 test('Mappe abwählen: Hinweis wechselt, Bewerbung geht ohne Mappe', async ({ page }) => {
   await page.goto(`/bewerbung/mappe?stelle=${MAIN_JOB_SLUG}`);
   const workStyle = page.getByRole('button', { name: WORK_STYLE });

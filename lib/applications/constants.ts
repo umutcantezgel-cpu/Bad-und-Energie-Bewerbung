@@ -88,6 +88,16 @@ export const EMAIL_PATTERN =
 export const HONEYPOT_FIELD = 'contactTimeHint' as const;
 
 /** Grenzen der strukturierten Bewerbungsmappe (mappeSchema und die Prüfung im Browser). */
+/**
+ * Gestaltung der Mappe (Vertrag `mappe.design`, L3 am 2026-10-27, additiv; Absprache mit Phase 2 laut E-012 in
+ * _relaunch/MENSCHEN.md M-042): Werte, die Vorschau und PDF kennen (lib/mappe/blatt/design.ts).
+ */
+export const MAPPE_DESIGN = Object.freeze({
+  vorlagen: ['schlicht', 'farbband', 'zweispaltig'],
+  akzente: ['navy', 'koenigsblau', 'petrol', 'tannengruen', 'kupfer', 'graphit'],
+  schriften: ['sachlich', 'markant'],
+} as const);
+
 export const MAPPE_SCHEMA_LIMITS = Object.freeze({
   coverLetter: 6000,
   skills: 12,

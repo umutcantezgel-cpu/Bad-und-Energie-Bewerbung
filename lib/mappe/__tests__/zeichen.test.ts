@@ -1,8 +1,9 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { STANDARD_DESIGN } from '@/lib/mappe/blatt/design';
 import type { MappeDokument } from '@/lib/mappe/blatt/dokument';
-import { SCHRIFT_BEREICHE, fehlendeZeichen, fuerPdf, fuerSchrift, texte } from '@/lib/mappe/blatt/zeichen';
+import { SCHRIFT_BEREICHE, TITEL_BEREICHE, fehlendeZeichen, fuerPdf, fuerSchrift, texte, titelschriftDeckt } from '@/lib/mappe/blatt/zeichen';
 
 /** fontkit kommt mit @react-pdf/renderer (über @react-pdf/font); hier nur, um die Bereiche gegen die Dateien zu prüfen. */
 const fontkit = createRequire(import.meta.url)('fontkit') as {
@@ -32,6 +33,7 @@ const DOKUMENT: MappeDokument = {
     ausbildung: [{ zeit: '2016–2019', titel: 'Ausbildung SHK', ort: 'Berufsschule Wetzlar' }],
     schwerpunkte: ['Löten', 'Ölheizung'],
   },
+  design: STANDARD_DESIGN,
 };
 
 describe('Zeichen der PDF-Schrift', () => {
@@ -42,6 +44,20 @@ describe('Zeichen der PDF-Schrift', () => {
       const zeichen = font.characterSet.filter((cp) => cp !== 0xffff);
       expect(bereicheAus(zeichen), schnitt).toEqual(SCHRIFT_BEREICHE.map(([von, bis]) => [von, bis]));
     }
+  });
+
+  it('die Titelschrift („Markant“) hat genau die Zeichen der Bricolage-Datei', () => {
+    const font = fontkit.openSync(path.join(SCHRIFTEN, 'bricolage-grotesque-700.ttf'));
+    expect(bereicheAus(font.characterSet.filter((cp) => cp !== 0xffff))).toEqual(TITEL_BEREICHE.map(([von, bis]) => [von, bis]));
+    expect(titelschriftDeckt('Ayşe Yılmaz-Öztürk')).toBe(true);
+    // Ţ (T mit Cedille, alte rumänische Form) fehlt der Titelschrift
+    expect(titelschriftDeckt('\u0162epe\u015f')).toBe(false);
+  });
+
+  it('Markant mit einem Namen, den die Titelschrift nicht zeichnen kann: sachlich statt Kästchen', () => {
+    const markant = { ...DOKUMENT, design: { ...DOKUMENT.design, schrift: 'markant' as const } };
+    expect(fuerPdf(markant)!.design.schrift).toBe('markant');
+    expect(fuerPdf({ ...markant, name: 'Ion \u0162epe\u015f' })!.design.schrift).toBe('sachlich');
   });
 
   it('Deutsch, Türkisch, Polnisch, Tschechisch, Rumänisch und die Satzzeichen eines Briefs sind gedeckt', () => {

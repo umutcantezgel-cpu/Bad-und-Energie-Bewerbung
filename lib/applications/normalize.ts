@@ -88,7 +88,8 @@ export function compactMappe(mappe: Mappe | null | undefined): Mappe | undefined
   if (!coverLetter && !workStyle && skills.length === 0 && careerStations.length === 0 && educationStations.length === 0) {
     return undefined;
   }
-  return { coverLetter, skills, ...(workStyle ? { workStyle } : {}), careerStations, educationStations };
+  // Das Design allein ist keine Mappe; mit Inhalt reist es mit (L3: die PDF fürs Team folgt ihm)
+  return { coverLetter, skills, ...(workStyle ? { workStyle } : {}), careerStations, educationStations, ...(mappe.design ? { design: mappe.design } : {}) };
 }
 
 export interface NormalizeOptions {
