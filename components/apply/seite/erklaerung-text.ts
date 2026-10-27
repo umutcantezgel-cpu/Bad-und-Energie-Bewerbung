@@ -95,16 +95,20 @@ export interface ErklaerungEingaben {
   ohneAnzeige: readonly Job[];
   /** Stelle per ?stelle= vorgewählt: Der Flow zeigt sie als Tag mit „ändern“ statt des Schritts „Stelle“. */
   vorausgewaehlt?: boolean;
+  /** Ablauf der vorgewählten Stelle (getJobProcessSteps), wo er von dem ihrer Stellenart abweicht (Obermonteur ohne Hilti). */
+  schritte?: readonly ProcessStep[];
 }
 
-export function erklaerung({ audience, jobs, ohneAnzeige, vorausgewaehlt = false }: ErklaerungEingaben): Erklaerung {
+export function erklaerung({ audience, jobs, ohneAnzeige, vorausgewaehlt = false, schritte: eigene }: ErklaerungEingaben): Erklaerung {
   // Wo die Stelle im Flow oben zu wählen ist (components/apply/types.ts: Vorauswahl ersetzt den Schritt „Stelle“)
   const wahlOrt = vorausgewaehlt ? 'oben über „ändern“' : 'oben im ersten Schritt';
   const wahlKurz = vorausgewaehlt ? 'oben über „ändern“' : 'oben';
   const intro = getProcessIntro(audience);
   // Ohne Vorauswahl (Ablauf der Fachkräfte) spricht der Teil über alle Stellen der Auswahl: Sammelfläche
   const { schritte, varianten } =
-    !vorausgewaehlt && audience === 'fachkraft' ? sammelAblauf([...jobs, ...ohneAnzeige]) : { schritte: getProcessSteps(audience), varianten: [] };
+    !vorausgewaehlt && audience === 'fachkraft'
+      ? sammelAblauf([...jobs, ...ohneAnzeige])
+      : { schritte: eigene ?? getProcessSteps(audience), varianten: [] };
   return {
     etikett: 'Ablauf und Wegweiser',
     titel: `So läuft deine Bewerbung in ${COMPANY.address.city}`,

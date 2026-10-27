@@ -5,9 +5,12 @@ import type { OpeningHoursSpec } from '@/lib/apply/office-hours';
 
 /**
  * Stellen-Anzeige je ID (inklusive Initiativbewerbung). `ablauf` folgt der Kategorie (processAudienceFor), nicht dem
- * Fragenset: Das Schülerpraktikum fragt wie die Ausbildung, hat aber einen eigenen Ablauf.
+ * Fragenset: Das Schülerpraktikum fragt wie die Ausbildung, hat aber einen eigenen Ablauf. `schritte` nur, wo die Stelle
+ * davon abweicht (eigenerAblauf: Obermonteur ohne Hilti-Werkzeug).
  */
-export type ThankYouJobs = Readonly<Record<string, { label: string; questionSet: QuestionSetId; ablauf: ProcessAudience }>>;
+export type ThankYouJobs = Readonly<
+  Record<string, { label: string; questionSet: QuestionSetId; ablauf: ProcessAudience; schritte?: readonly ProcessStep[] }>
+>;
 
 /** Stammdaten für Kontakt, vCard und Bürozeiten (aus COMPANY, auf dem Server zusammengestellt). */
 export interface ThankYouCompany {

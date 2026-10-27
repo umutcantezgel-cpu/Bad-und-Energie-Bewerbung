@@ -508,9 +508,10 @@ describe('Fahrzeug und Werkzeug (E-031): Einschränkung am Anfang, solange eine 
         expect(position.quellen, `${position.factId}: ${titel}`).toContain(`stelle:${job.id}`);
       }
     }
-    // Die persönliche 22-V-Flotte nur, wo die Anzeige sie so nennt (nicht Hilti-Koffer, Basisausstattung, Azubi-Set)
+    // Die persönliche 22-V-Flotte nur, wo die Anzeige sie so nennt (nicht Hilti-Koffer, Basisausstattung, Azubi-Set);
+    // der Obermonteur nennt seit 2026-10-27 kein Hilti-Werkzeug mehr (Inhaber)
     const hilti = seite.stueckliste.positionen.find((p) => p.factId === 'hilti')!;
-    expect(hilti.giltFuer).toEqual(['Anlagenmechaniker SHK', 'Obermonteur / Projektleiter']);
+    expect(hilti.giltFuer).toEqual(['Anlagenmechaniker SHK']);
     expect(seite.meta.description.startsWith('Je nach Stelle: ')).toBe(true);
     expect(seite.meta.description).not.toMatch(/^(?!Je nach Stelle)[^.]*Hilti/);
   });

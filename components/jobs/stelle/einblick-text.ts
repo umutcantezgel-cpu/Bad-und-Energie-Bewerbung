@@ -270,11 +270,12 @@ function obermonteur(job: Job, now: Date): Einblick {
     },
     vergleich: am
       ? {
-          titel: 'Lieber selbst montieren?',
+          // Ohne Bauleitung, nicht ohne Baustelle: Der Obermonteur ist selbst mit auf der Baustelle (Inhaber 2026-10-27)
+          titel: 'Lieber ohne Bauleitung?',
           teile: [
             'Als ',
             verweis(am, `${am.shortTitle} in ${am.location.city}`),
-            ` montierst du Wärmepumpen und Bäder selbst; die Stelle setzt mindestens ${erfahrung(am)} als Geselle voraus. Für die Bauleitung sind es ${erfahrung(job)} Berufserfahrung.`,
+            ` montierst du Wärmepumpen und Bäder; die Stelle setzt mindestens ${erfahrung(am)} als Geselle voraus. Für die Bauleitung sind es ${erfahrung(job)} Berufserfahrung.`,
           ],
         }
       : null,

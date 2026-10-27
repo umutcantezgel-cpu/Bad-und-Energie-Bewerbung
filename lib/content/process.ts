@@ -142,6 +142,40 @@ export function getProcessSteps(audience: ProcessAudience = 'fachkraft'): readon
   return [APPLY_STEP, MEET_STEPS[audience], START_STEPS[audience]];
 }
 
+/**
+ * Schritt 3 der Fachkräfte für eine Stelle ohne Hilti-Werkzeug (Obermonteur, Inhaber 2026-10-27: „Hilti-Werkzeug
+ * rausnehmen“): Vertrag und Fahrzeug wie bei den Fachkräften, ohne das Werkzeugset.
+ */
+const START_STEP_OHNE_HILTI: ProcessStep = {
+  ...START_STEPS.fachkraft,
+  title: 'Start mit Fahrzeug',
+  text: 'Du bekommst deinen unbefristeten Arbeitsvertrag. Am ersten Tag steht dein Servicefahrzeug bereit.',
+};
+
+/** Was der Ablauf einer einzelnen Stelle von ihr liest (Job aus lib/jobs/registry). */
+export interface AblaufStelle {
+  category?: string;
+  apply: { questionSet: QuestionSet };
+  benefitFactIds: readonly string[];
+  packageExtras: readonly { text: string }[];
+}
+
+/**
+ * Ablauf einer Stelle, wo er von dem ihrer Stellenart abweicht, sonst null: Eine Fachkraft-Stelle, die kein
+ * Hilti-Werkzeug nennt (Vorteil hilti oder Paketzeile), startet ohne das Werkzeugset (Obermonteur, Inhaber 2026-10-27).
+ */
+export function eigenerAblauf(stelle: AblaufStelle): readonly ProcessStep[] | null {
+  const audience = processAudienceFor({ category: stelle.category, questionSet: stelle.apply.questionSet });
+  const nenntHilti = stelle.benefitFactIds.includes('hilti') || stelle.packageExtras.some((extra) => /\bHilti\b/.test(extra.text));
+  if (audience !== 'fachkraft' || nenntHilti) return null;
+  return getProcessSteps(audience).map((step) => (step.id === 'start' ? START_STEP_OHNE_HILTI : step));
+}
+
+/** Ablauf einer einzelnen Stelle (Stellenseite, /bewerbung mit Vorauswahl): ihr eigener oder der ihrer Stellenart. */
+export function getJobProcessSteps(stelle: AblaufStelle): readonly ProcessStep[] {
+  return eigenerAblauf(stelle) ?? getProcessSteps(processAudienceFor({ category: stelle.category, questionSet: stelle.apply.questionSet }));
+}
+
 /** Stellenbezug von Schritt 3 der Fachkräfte auf Sammelflächen (sammelAblauf). */
 export const FUER_FACHKRAEFTE = 'Für Fachkräfte';
 

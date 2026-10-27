@@ -1,6 +1,6 @@
 import { Icon } from '@/components/icons';
 import { Rohrklammer } from '@/components/zeichnung/Rohrklammer';
-import { getDiscretionPromise, getProcessIntro, getProcessSteps, sammelAblauf, type ProcessAudience } from '@/lib/content';
+import { getDiscretionPromise, getProcessIntro, getProcessSteps, sammelAblauf, type ProcessAudience, type ProcessStep } from '@/lib/content';
 import type { Job } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
 import { ABLAUF_LISTE, AblaufNummer, AblaufStrang } from './AblaufStrang';
@@ -18,6 +18,8 @@ export interface JobProcessProps {
    * darunter je anderer Stellenart, was anders läuft (sammelAblauf; Prüfung E-029, Runde 3). Nur mit `fachkraft`.
    */
   stellen?: readonly Job[];
+  /** Ablauf einer einzelnen Stelle (getJobProcessSteps), wo er von dem der Stellenart abweicht (Obermonteur ohne Hilti). */
+  schritte?: readonly ProcessStep[];
   className?: string;
 }
 
@@ -26,9 +28,9 @@ export interface JobProcessProps {
  * Etikett, h2 mit Rohrklammer, Schritte mit Nummer in Martian Mono am Leitungsstrang, auf Sammelflächen die anderen
  * Abläufe (AblaufVarianten), darunter die Diskretionszusage (nicht bei der Ausbildung).
  */
-export function JobProcess({ audience, zusage = true, stellen, className }: JobProcessProps) {
+export function JobProcess({ audience, zusage = true, stellen, schritte, className }: JobProcessProps) {
   const { schritte: steps, varianten } =
-    stellen && audience === 'fachkraft' ? sammelAblauf(stellen) : { schritte: getProcessSteps(audience), varianten: [] };
+    stellen && audience === 'fachkraft' ? sammelAblauf(stellen) : { schritte: schritte ?? getProcessSteps(audience), varianten: [] };
   const intro = getProcessIntro(audience);
   const discretion = zusage ? getDiscretionPromise(audience) : null;
   return (

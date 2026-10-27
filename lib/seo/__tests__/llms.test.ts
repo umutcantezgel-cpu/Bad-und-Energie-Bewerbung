@@ -20,11 +20,16 @@ afterEach(() => {
 });
 
 describe('llms.txt (E-SEO-014)', () => {
-  it('lists pay, contract, Hilti kit, workwear and chamber and guild from the registry', async () => {
+  it('lists pay, contract, workwear and chamber and guild from the registry; the Hilti kit only with a job that carries it', async () => {
     const text = await textAt(llms, '2026-10-10T12:00:00Z');
     expect(text).toContain('Vergütung deutlich über dem regionalen Handwerkstarif, dazu Urlaubs- und Weihnachtsgeld.');
     expect(text).toContain('Du bekommst einen unbefristeten Arbeitsvertrag.');
-    expect(text).toContain(FACTS.hilti.long);
+    // Seit 2026-10-27 führt keine Stelle den Vorteil hilti (Obermonteur ohne Hilti, Inhaber); die Hilti-Flotte des
+    // Anlagenmechanikers steht in seiner Paketzeile und damit in llms-full.txt
+    const mitHilti = [...liveJobs(new Date('2026-10-10T12:00:00Z')), ...funnelOnlyJobs()].filter((job) => job.benefitFactIds.includes('hilti'));
+    if (mitHilti.length > 0) expect(text).toContain(FACTS.hilti.long);
+    else expect(text).not.toContain(FACTS.hilti.long);
+    expect(await textAt(llmsFull, '2026-10-10T12:00:00Z')).toContain('Persönliche Hilti-22-V-Akku-Flotte');
     expect(text).toContain(FACTS.workwear.long);
     expect(text).toContain(`${COMPANY.hwk}, ${COMPANY.innung}`);
   });

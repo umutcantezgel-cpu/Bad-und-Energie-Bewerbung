@@ -4,6 +4,8 @@ import { defineJob } from '../schema';
 // Quellen (Stand 393df01): JobPosting SHK-PL-2026-03 (app/layout.tsx), Stellenkarte 03 (app/page.tsx),
 // EXPERIENCE_MODIFIERS senior/meister (pricing.constants.ts). Im Gehaltsrechner gab es keine eigene Rolle.
 // Die direkte Abstimmung mit Sabri Demir steht im Vorteil `directLine`, nicht zusätzlich im Intro.
+// Inhaber 2026-10-27: „mit auf die Baustelle“ (Kurzbeschreibung und Einleitung) und Hilti-Werkzeug von dieser Stelle
+// nehmen (Vorteil hilti raus; Schritt 3 des Ablaufs ohne Werkzeugset über eigenerAblauf in lib/content/process.ts).
 export const obermonteurProjektleiterShk = defineJob({
   id: 'obermonteur-projektleiter-shk',
   referenceCode: 'SHK-PL-2026-03',
@@ -27,9 +29,10 @@ export const obermonteurProjektleiterShk = defineJob({
     ],
   },
   alsoKnownAs: ['Bauleitender Monteur', 'Bauleiter SHK'],
-  summary: 'Du leitest Badsanierungen und Heizungsprojekte eigenverantwortlich, in direkter Abstimmung mit Sabri Demir.',
+  summary:
+    'Du leitest Badsanierungen und Heizungsprojekte eigenverantwortlich, in direkter Abstimmung mit Sabri Demir. Dabei bist du selbst mit auf der Baustelle.',
   intro:
-    'Als Obermonteur oder Projektleiter führst du anspruchsvolle Badsanierungen und Heizungsmodernisierungen im Lahn-Dill-Kreis eigenverantwortlich. Du organisierst deine Baustellen frei und führst dein Team kollegial.',
+    'Als Obermonteur oder Projektleiter führst du anspruchsvolle Badsanierungen und Heizungsmodernisierungen im Lahn-Dill-Kreis eigenverantwortlich. Du bist selbst mit auf der Baustelle, organisierst deine Baustellen frei und führst dein Team kollegial.',
   tasks: [
     'Eigenverantwortliche Leitung von Badsanierungen und Heizungsmodernisierungen im 35-km-Radius',
     'Baustellenleitung für Komplettbäder und regenerative Großanlagen',
@@ -48,7 +51,6 @@ export const obermonteurProjektleiterShk = defineJob({
     'flexibleHours',
     'privateCarOnePercent',
     'fuelCard',
-    'hilti',
     'directLine',
     'noFarAssembly',
     'permanentContract',
@@ -65,7 +67,7 @@ export const obermonteurProjektleiterShk = defineJob({
   experienceMonths: 36,
   datePosted: '2026-03-01',
   validThrough: '2027-01-12T00:00:00',
-  updatedAt: '2026-10-14',
+  updatedAt: '2026-10-27',
   apply: { questionSet: 'fachkraft' },
   channels: { googleJobs: true, indeedFeed: true, genericFeed: true, ba: true },
   // „Bauleitende/r Monteur/in (Gas- u. Wasserinstallation)“: KldB 34293 (Aufsicht), ISCO-08 3123 (lib/jobs/berufe.ts).

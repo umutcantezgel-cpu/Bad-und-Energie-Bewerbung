@@ -6,7 +6,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { ContactOptions } from '@/components/site/ContactOptions';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS } from '@/lib/content/facts';
-import { getProcessSteps, processAudienceFor, type ProcessAudience, type ProcessStep } from '@/lib/content/process';
+import { eigenerAblauf, getProcessSteps, processAudienceFor, type ProcessAudience, type ProcessStep } from '@/lib/content/process';
 import { getJobById } from '@/lib/jobs/registry';
 import { buildPageGraph } from '@/lib/seo/graph';
 import { generatePageMetadata } from '@/lib/seo/metadata';
@@ -18,16 +18,22 @@ export const metadata = generatePageMetadata({
   noindex: true,
 });
 
-// Ablauf je Stelle nach der Kategorie (processAudienceFor): das Schülerpraktikum ohne den Ablauf der Ausbildung.
+// Ablauf je Stelle nach der Kategorie (processAudienceFor): das Schülerpraktikum ohne den Ablauf der Ausbildung. Eine
+// Stelle mit eigenem Ablauf (eigenerAblauf: Obermonteur ohne Hilti-Werkzeug) bringt ihre Schritte mit.
 const jobs: ThankYouJobs = Object.fromEntries(
-  getFlowJobOptions().map((option) => [
-    option.id,
-    {
-      label: option.summaryLabel,
-      questionSet: option.questionSet,
-      ablauf: processAudienceFor({ category: getJobById(option.id)?.category, questionSet: option.questionSet }),
-    },
-  ]),
+  getFlowJobOptions().map((option) => {
+    const job = getJobById(option.id);
+    const schritte = job ? eigenerAblauf(job) : null;
+    return [
+      option.id,
+      {
+        label: option.summaryLabel,
+        questionSet: option.questionSet,
+        ablauf: processAudienceFor({ category: job?.category, questionSet: option.questionSet }),
+        ...(schritte ? { schritte } : {}),
+      },
+    ];
+  }),
 );
 
 const processSteps: Record<ProcessAudience, readonly ProcessStep[]> = {

@@ -62,6 +62,28 @@ describe('/jobs/[slug]: SEO im sichtbaren Text (V6-G2)', () => {
   });
 });
 
+describe('/jobs/[slug]: Obermonteur (Inhaber 2026-10-27)', () => {
+  const om = getJobById('obermonteur-projektleiter-shk')!;
+
+  it('„selbst mit auf der Baustelle“ im Kopf und in der JobPosting-Beschreibung, nirgends Hilti', async () => {
+    const html = await render(om.slug);
+    const ld = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)![1]);
+    const posting = ld['@graph'].find((k: { '@type': string }) => k['@type'] === 'JobPosting');
+    expect(posting.description).toContain('Du bist selbst mit auf der Baustelle');
+    expect(posting.description).not.toMatch(/Hilti/);
+    expect(html.match(/selbst mit auf der Baustelle/g)?.length).toBeGreaterThanOrEqual(3);
+    expect(html).not.toMatch(/Hilti/);
+    // Ablauf ohne Werkzeugset, der Vergleich zum Anlagenmechaniker ohne „selbst montieren“
+    expect(html).toContain('Start mit Fahrzeug');
+    expect(html).toContain('Lieber ohne Bauleitung?');
+    expect(html).not.toContain('selbst montieren');
+  });
+
+  it('der Anlagenmechaniker behält Hilti im Ablauf', async () => {
+    expect(await render(am.slug)).toContain('persönliches Hilti-Werkzeugset');
+  });
+});
+
 describe('/jobs/[slug]: besetzte Stelle', () => {
   it('Kopf „Diese Stelle ist besetzt“ mit Initiativbewerbung, ohne JobPosting', async () => {
     vi.useFakeTimers({ toFake: ['Date'] });

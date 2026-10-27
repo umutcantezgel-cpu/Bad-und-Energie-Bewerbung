@@ -23,6 +23,8 @@ import {
   getFaqItems,
   getProcessIntro,
   getProcessSteps,
+  getJobProcessSteps,
+  eigenerAblauf,
   isFactActive,
   processAudienceFor,
   isFactId,
@@ -292,6 +294,21 @@ describe('Ablauf', () => {
     expect(alle.varianten.find((variante) => variante.audience === 'praktikum')?.text).not.toMatch(/Hilti|Werkzeug|Lohn/);
     // Der unbefristete Vertrag steht nur im Schritt der Fachkräfte, nie in einer Variante
     for (const variante of alle.varianten) expect(variante.text, variante.name).not.toMatch(/unbefristet|Servicefahrzeug/);
+  });
+
+  it('Ablauf je Stelle: Obermonteur startet ohne Hilti-Werkzeug (Inhaber 2026-10-27), die anderen wie ihre Stellenart', () => {
+    const om = getJobById('obermonteur-projektleiter-shk')!;
+    const start = getJobProcessSteps(om)[2];
+    expect(start.text).not.toMatch(/Hilti|Werkzeug/);
+    expect(start.title).not.toMatch(/Werkzeug/);
+    expect(start.text).toContain('unbefristeten');
+    expect(getJobProcessSteps(om).slice(0, 2)).toEqual(getProcessSteps('fachkraft').slice(0, 2));
+    // Wer Hilti nennt (Vorteil oder Paketzeile), behält den Start der Fachkräfte; andere Stellenarten ihren eigenen
+    for (const job of ALL_JOBS.filter((j) => j.id !== om.id)) {
+      expect(eigenerAblauf(job), job.id).toBeNull();
+      expect(getJobProcessSteps(job), job.id).toEqual(getProcessSteps(processAudienceFor({ category: job.category, questionSet: job.apply.questionSet })));
+    }
+    expect(getJobProcessSteps(getJobById('anlagenmechaniker-shk')!)[2].text).toContain('Hilti');
   });
 
   it('drei Schritte, Start je Zielgruppe', () => {

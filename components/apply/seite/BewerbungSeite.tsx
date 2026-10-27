@@ -4,7 +4,7 @@ import { Seitenkopf } from '@/components/seitenkopf';
 import { JsonLd } from '@/components/seo/JsonLd';
 import type { ApplicationJobId } from '@/lib/applications/constants';
 import { BEWERBUNG_PFAD } from '@/lib/apply/params';
-import { getDiscretionPromise, processAudienceFor } from '@/lib/content/process';
+import { getDiscretionPromise, getJobProcessSteps, processAudienceFor } from '@/lib/content/process';
 import { FACTS } from '@/lib/content/facts';
 import { getActiveJobs, getFunnelOptions, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
 import { buildPageGraph } from '@/lib/seo/graph';
@@ -104,7 +104,14 @@ export function BewerbungSeite({ initialJobId, unterlagenWunsch = false }: Bewer
         }
         /* V6-G1: ruhiger Erklärteil im selben Abschnitt (E-023: „Kein Lebenslauf“ und „diskret“ bleiben in zwei
            Abschnitten); der Ablauf folgt der vorgewählten Stelle wie die Diskretionszusage. */
-        erklaerung={<Erklaerung audience={audience} vorausgewaehlt={initialJobId !== undefined} {...wegweiserStellen(new Date())} />}
+        erklaerung={
+          <Erklaerung
+            audience={audience}
+            vorausgewaehlt={initialJobId !== undefined}
+            schritte={preselected ? getJobProcessSteps(preselected) : undefined}
+            {...wegweiserStellen(new Date())}
+          />
+        }
       />
 
       {/* Arbeitsort und Arbeitszeit der vorgewählten Stelle, ohne Vorauswahl aller offenen (Fakt offenFuer: Büro S5) */}

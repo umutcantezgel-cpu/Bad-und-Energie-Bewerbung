@@ -155,11 +155,11 @@ describe('Konfigurator: Wünsche (E-START-016)', () => {
     expect(arbeitszeit.at(-1)).toMatchObject({ etikett: 'Arbeitszeit', href: `#${ZUSAGEN_ID}`, richtung: 'runter', passt: true });
     const kd = rollen[1]!;
     expect(sichtbareZeilen(kd, ['naehe']).filter((z) => z.passt).map((z) => z.href)).toEqual(['#einsatzgebiet']);
+    // Obermonteur ohne Hilti (Inhaber 2026-10-27): Firmenwagen und Tankkarte, kein Verweis auf „Werkzeug & Fuhrpark“
     const om = rollen[2]!;
     expect(sichtbareZeilen(om, ['ausstattung']).filter((z) => z.passt).map((z) => z.key)).toEqual([
       'fakt-privateCarOnePercent',
       'fakt-fuelCard',
-      'verweis-ausstattung',
     ]);
   });
 
