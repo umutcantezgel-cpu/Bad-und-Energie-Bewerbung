@@ -27,7 +27,7 @@ import {
   type FlowState,
   type StepId,
 } from '@/lib/apply/flow';
-import { paramForJob } from '@/lib/apply/params';
+import { jobIdFromParam, paramForJob } from '@/lib/apply/params';
 import { getQuestion, questionSetFor, type AnswerKey } from '@/lib/apply/questions';
 import { clearMappe, readMappe, removeLegacyDossier, writeSubmitted } from '@/lib/apply/storage';
 import {
@@ -247,10 +247,14 @@ export function ApplyFlowClient({
       firstInteractionAt.current = draft.firstInteractionAt ?? draft.savedAt;
       idempotencyKey.current = draft.idempotencyKey ?? null;
     }
-    // Vorauswahl (Prop oder ?stelle=) schlägt den Entwurf; eine inzwischen nicht mehr wählbare Stelle fällt weg.
+    // Vorauswahl (Prop oder ?stelle=) schlägt den Entwurf; eine inzwischen nicht mehr wählbare Stelle fällt weg. ?stelle=
+    // liest der Flow nur ohne Prop selbst: proxy.ts schreibt es bei jedem Seitenaufruf auf die vorgewählte Variante um,
+    // ein Wechsel im Browser (next/link, router.push) zeigt aber die statische /bewerbung (lib/apply/vorauswahl.ts).
     const draftJobId = draft?.jobId && options.some((option) => option.id === draft.jobId) ? draft.jobId : null;
-    const jobId = initialJobId ?? draftJobId;
-    const requested = isPage ? stepFromSlug(new URLSearchParams(window.location.search).get('schritt')) : null;
+    const query = isPage ? new URLSearchParams(window.location.search) : null;
+    const urlJobId = query && !initialJobId ? jobIdFromParam(query.get('stelle') ?? undefined, options) : undefined;
+    const jobId = initialJobId ?? urlJobId ?? draftJobId;
+    const requested = query ? stepFromSlug(query.get('schritt')) : null;
     const action = {
       type: 'restore',
       jobId,

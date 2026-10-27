@@ -2,17 +2,13 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { ToastProvider } from '@/components/ui/Toast';
 import { getMappeJobOptions, getMappeRecipient } from '@/lib/mappe/context';
 import { MappeTool } from '../MappeTool';
 import styles from '../mappe.module.css';
 import { MAPPE_ABSCHNITTE } from '../stand';
-
-vi.mock('next/navigation', () => ({
-  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn(), prefetch: vi.fn(), refresh: vi.fn() }),
-}));
 
 function render(): string {
   return renderToStaticMarkup(

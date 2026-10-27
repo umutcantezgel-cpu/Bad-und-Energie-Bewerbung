@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui';
 import { Leitungstrenner } from '@/components/zeichnung/Leitungstrenner';
 import { INITIATIVE_JOB_ID } from '@/lib/applications/constants';
@@ -100,7 +99,6 @@ function shareHref(state: MappeEditorState, jobs: readonly MappeJobOption[], sub
  * the draft stay in sessionStorage; the photo stays in memory only.
  */
 export function MappeTool({ jobs, recipient, contact, className }: MappeToolProps) {
-  const router = useRouter();
   const { toast } = useToast();
   const [state, dispatch] = useReducer(mappeEditorReducer, undefined, () => createEmptyEditorState());
   const [hydrated, setHydrated] = useState(false);
@@ -223,7 +221,8 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
         return;
       }
       setFeedback({ kind: 'none' });
-      router.push(applyHref(state.jobId, jobs));
+      // Ganzer Seitenaufruf: Nur so schreibt proxy.ts ?stelle= auf die vorgewählte Seite um (die Mappe liegt im Tab)
+      window.location.assign(applyHref(state.jobId, jobs));
       return;
     }
 

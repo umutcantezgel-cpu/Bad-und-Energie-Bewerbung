@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { formatRating, isExternalHref, joinIds, starFills, stepMarks, stepProgress } from '../helpers';
+import { formatRating, isExternalHref, joinIds, needsDocumentLoad, starFills, stepMarks, stepProgress } from '../helpers';
+import { INITIATIVE_APPLY_PATH, MAPPE_PATH } from '@/lib/apply/params';
+import { applyPath } from '@/lib/jobs/format';
 import { buttonVariants } from '../Button';
 import { buttonVariants as rawButtonVariants } from '../variants';
 import { cn } from '@/lib/utils/cn';
@@ -16,6 +18,26 @@ describe('isExternalHref', () => {
     ['jobs', false],
   ])('%s → %s', (href, expected) => {
     expect(isExternalHref(href)).toBe(expected);
+  });
+});
+
+describe('needsDocumentLoad', () => {
+  it.each([
+    ['/bewerbung?stelle=anlagenmechaniker-shk-wetzlar', true],
+    ['/bewerbung/?stelle=initiativ', true],
+    ['/bewerbung?tab=vault', true],
+    ['/bewerbung', false],
+    ['/bewerbung#kontakt', false],
+    [`${MAPPE_PATH}?stelle=initiativ`, false],
+    ['/bewerbungsmappe?stelle=x', false],
+    ['/jobs?stelle=x', false],
+  ])('%s → %s', (href, expected) => {
+    expect(needsDocumentLoad(href)).toBe(expected);
+  });
+
+  it('gilt für die Links mit Vorauswahl (Stelle, Initiativbewerbung)', () => {
+    expect(needsDocumentLoad(applyPath({ slug: 'anlagenmechaniker-shk-wetzlar' }))).toBe(true);
+    expect(needsDocumentLoad(INITIATIVE_APPLY_PATH)).toBe(true);
   });
 });
 

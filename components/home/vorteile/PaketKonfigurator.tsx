@@ -120,13 +120,14 @@ export function PaketKonfigurator({ rollen, wuensche, texte, icons }: PaketKonfi
             {status}
           </p>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-            <Link
+            {/* Einfacher Link: /bewerbung?stelle= schreibt proxy.ts nur beim ganzen Seitenaufruf um (needsDocumentLoad) */}
+            <a
               href={rolle.bewerbenHref}
               className={`${buttonVariants({ variant: 'contrast', size: 'lg', wrap: true })} w-full sm:w-auto`}
             >
               {texte.bewerben[rolle.id] ?? rolle.titel}
               {icons.pfeil}
-            </Link>
+            </a>
             <Link
               href={rolle.stelleHref}
               className="inline-flex min-h-11 items-center rounded-1 text-callout font-bold text-ink underline decoration-1 underline-offset-4"

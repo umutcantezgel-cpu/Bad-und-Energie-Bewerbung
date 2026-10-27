@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { Section } from '@/components/layout/Section';
 import { Breadcrumbs } from '../Breadcrumbs';
-import { Card } from '../Card';
+import { Card, CardLink } from '../Card';
 import { Disclosure, type DisclosureProps } from '../Disclosure';
 import { PageHeader } from '../PageHeader';
 import { ProgressRing, ringAnteil } from '../ProgressRing';
@@ -132,6 +132,13 @@ describe('Anzeige-Bausteine im Formsystem', () => {
     const satz = html(createElement(TextLink, { href: '/jobs' }, 'Stellen'));
     expect(satz).not.toContain('data-motion');
     expect(satz).toContain('hover:decoration-ruecklauf');
+  });
+
+  it('TextLink und CardLink: /bewerbung?… lädt die Seite ganz (einfaches <a>), andere interne Ziele über next/link', () => {
+    for (const Verweis of [TextLink, CardLink]) {
+      expect(Verweis({ href: '/bewerbung?stelle=initiativ', children: 'x' }).type).toBe('a');
+      expect(Verweis({ href: '/jobs', children: 'x' }).type).not.toBe('a');
+    }
   });
 
   it('Card: Ton wand als Standard, interaktiv mit Druck', () => {

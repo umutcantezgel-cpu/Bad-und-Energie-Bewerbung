@@ -5,6 +5,15 @@ export function isExternalHref(href: string): boolean {
   return /^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(href);
 }
 
+/**
+ * Internal hrefs that need a full page load: /bewerbung with a query (?stelle=, old ?tab= links). proxy.ts rewrites
+ * them before the cache to a prerendered variant (lib/apply/vorauswahl.ts); a router change would reuse the static
+ * /bewerbung already known in the browser and lose the preselection.
+ */
+export function needsDocumentLoad(href: string): boolean {
+  return /^\/bewerbung\/?\?/.test(href);
+}
+
 /** German one-decimal rating, e.g. 5 → "5,0". */
 export function formatRating(value: number): string {
   return value.toLocaleString('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });

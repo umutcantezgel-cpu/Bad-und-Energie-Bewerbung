@@ -2,7 +2,7 @@ import type { ComponentPropsWithRef, HTMLAttributes } from 'react';
 import Link from 'next/link';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils/cn';
-import { isExternalHref } from './helpers';
+import { isExternalHref, needsDocumentLoad } from './helpers';
 
 /**
  * Flächen des Formsystems (K-008): Tiefe nur über Flächen, Radius 12 (--r-2), kein Schatten.
@@ -71,6 +71,6 @@ export function CardLink({ href, className, ...props }: CardLinkProps) {
     'focus-visible:after:outline-3 focus-visible:after:outline-offset-3 focus-visible:after:outline-focus',
     className,
   );
-  if (isExternalHref(href)) return <a href={href} className={classes} {...props} />;
+  if (isExternalHref(href) || needsDocumentLoad(href)) return <a href={href} className={classes} {...props} />;
   return <Link href={href} className={classes} {...props} />;
 }

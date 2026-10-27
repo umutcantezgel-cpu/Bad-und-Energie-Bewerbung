@@ -177,6 +177,31 @@ test.describe('Navigation und Entwurf', () => {
     await waitForHydration(flowRoot(page, 'page'));
     await expect.poll(() => page.evaluate((key) => localStorage.getItem(key), LEGACY_DOSSIER_KEY)).toBeNull();
   });
+
+  /**
+   * /bewerbung kommt aus dem Cache, die Vorauswahl schreibt proxy.ts nur bei ganzen Seitenaufrufen um (Schritt 2b). Links
+   * mit ?stelle= laden deshalb die ganze Seite; wechselt doch der Router (next/link, router.push), wählt der Flow selbst
+   * vor. Beide Wege beginnen mit der vorgewählten Stelle statt mit dem Schritt „Stelle“ (der Flow löscht dort ?stelle=).
+   */
+  test('„Initiativ bewerben“ aus der Stellenliste wählt die Initiativbewerbung vor', async ({ page }) => {
+    await page.goto('/jobs');
+    const link = page.getByRole('region', { name: 'Initiativ bewerben' }).getByRole('link', { name: 'Initiativ bewerben' });
+    await waitForHydration(link);
+    await link.click();
+    await waitForHydration(flowRoot(page, 'page'));
+    await expect(page).toHaveURL(/schritt=/);
+    expect(new URL(page.url()).searchParams.get('stelle')).toBe('initiativ');
+  });
+
+  test('Wechsel im Browser auf /bewerbung?stelle=: Der Flow wählt die Stelle trotzdem vor', async ({ page }) => {
+    await page.goto('/jobs');
+    await waitForHydration(page.locator('main'));
+    // Wie ein künftiger next/link: Nexts Router (window.next.router, sonst nur zur Fehlersuche) statt eines Seitenaufrufs
+    await page.evaluate((ziel) => (window as unknown as { next: { router: { push(href: string): void } } }).next.router.push(ziel), PAGE_FLOW_PATH);
+    await waitForHydration(flowRoot(page, 'page'));
+    await expect(page).toHaveURL(new RegExp(`schritt=${QUESTIONS.qualification.slug}`));
+    expect(new URL(page.url()).searchParams.get('stelle')).toBe(new URL(PAGE_FLOW_PATH, page.url()).searchParams.get('stelle'));
+  });
 });
 
 test.describe('Fehler und Prüfung', () => {

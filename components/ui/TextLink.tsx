@@ -2,7 +2,7 @@ import type { ComponentPropsWithRef } from 'react';
 import Link from 'next/link';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils/cn';
-import { isExternalHref } from './helpers';
+import { isExternalHref, needsDocumentLoad } from './helpers';
 
 /**
  * Tertiärweg (Formsystem): Text mit Unterstrich. Hover nur mit Maus (Tailwind hover: = @media (hover: hover)):
@@ -36,10 +36,13 @@ export interface TextLinkProps extends Omit<ComponentPropsWithRef<'a'>, 'href'>,
   href: string;
 }
 
-/** Underlined link. Internal paths use next/link; tel:, mailto:, https: and #anchors a plain <a>. */
+/**
+ * Underlined link. Internal paths use next/link; tel:, mailto:, https:, #anchors and /bewerbung?… (full page load, see
+ * needsDocumentLoad) a plain <a>.
+ */
 export function TextLink({ href, tone, standalone, className, ...props }: TextLinkProps) {
   const classes = cn(textLinkVariants({ tone, standalone }), className);
   const motion = standalone ? { 'data-motion': 'druck' } : undefined;
-  if (isExternalHref(href)) return <a href={href} className={classes} {...motion} {...props} />;
+  if (isExternalHref(href) || needsDocumentLoad(href)) return <a href={href} className={classes} {...motion} {...props} />;
   return <Link href={href} className={classes} {...motion} {...props} />;
 }

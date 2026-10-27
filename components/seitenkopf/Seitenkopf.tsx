@@ -70,6 +70,7 @@ import type { ReactNode } from 'react';
 import { Icon } from '@/components/icons';
 import { Masskette } from '@/components/zeichnung/Masskette';
 import { Rohrklammer } from '@/components/zeichnung/Rohrklammer';
+import { needsDocumentLoad } from '@/components/ui/helpers';
 import { cn } from '@/lib/utils/cn';
 import styles from './seitenkopf.module.css';
 
@@ -131,9 +132,12 @@ export interface SeitenkopfProps {
   className?: string;
 }
 
-/** Interne Ziele über next/link, Anker, Telefon, Mail und fremde Ziele als einfacher Link. */
+/**
+ * Interne Ziele über next/link; Anker, Telefon, Mail, fremde Ziele und /bewerbung?… (ganzer Seitenaufruf, damit
+ * proxy.ts die Vorauswahl umschreibt: needsDocumentLoad) als einfacher Link.
+ */
 function istIntern(href: string): boolean {
-  return href.startsWith('/') && !href.startsWith('//');
+  return href.startsWith('/') && !href.startsWith('//') && !needsDocumentLoad(href);
 }
 
 function Ziel({ href, className, children, ...rest }: { href: string; className: string; children: ReactNode; 'data-motion'?: string }) {

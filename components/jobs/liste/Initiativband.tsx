@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { Icon } from '@/components/icons';
 import { Container } from '@/components/layout/Container';
 import { Section } from '@/components/layout/Section';
@@ -53,10 +52,11 @@ export function Initiativband({ auchMoeglich }: InitiativbandProps) {
             ) : null}
           </div>
           <div data-primary-cta="" className={styles.anschluss}>
-            <Link href={INITIATIVE_APPLY_PATH} className={cn(styles.aktion, 'rounded-1')} data-motion="druck">
+            {/* Einfacher Link: Die Vorauswahl schreibt proxy.ts nur beim ganzen Seitenaufruf um (needsDocumentLoad) */}
+            <a href={INITIATIVE_APPLY_PATH} className={cn(styles.aktion, 'rounded-1')} data-motion="druck">
               {INITIATIV.knopf}
               <Icon name="arrow-right" size="md" />
-            </Link>
+            </a>
           </div>
         </div>
 

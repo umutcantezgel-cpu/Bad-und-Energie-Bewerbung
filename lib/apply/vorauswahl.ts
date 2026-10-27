@@ -17,6 +17,9 @@ import {
  * Altlinks leitet er um, eine Vorauswahl (?stelle=) und den Unterlagen-Hinweis schreibt er intern auf eine von wenigen
  * vorgerenderten Varianten um; alles andere (utm_*, ref, herkunft, schritt, unbekannte Stelle) bekommt die statische
  * Seite. Rein und ohne Next-APIs, damit Proxy, Seiten und Tests dieselbe Entscheidung treffen.
+ * Der Proxy sieht nur ganze Seitenaufrufe: Ein Wechsel im Browser (next/link, router.push) nähme die schon bekannte
+ * statische /bewerbung. Links auf /bewerbung?… sind deshalb einfache Links (needsDocumentLoad in
+ * components/ui/helpers.ts), und landet doch ein Wechsel dort, wählt der Flow ?stelle= selbst vor (ApplyFlowClient).
  */
 
 /** Was ?stelle= zum Stichtag vorwählt (veröffentlicht und live oder funnel_only, mit alten Slugs). */
