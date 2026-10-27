@@ -51,6 +51,9 @@ describe('rel-Regel (Linkmodell Startseite, N-04/N-05)', () => {
 
   it('gefolgt nur auf der Startseite, sonst nofollow; immer noopener, nie noreferrer, sponsored oder ugc', () => {
     expect(agenturRel('/')).toBe('noopener');
+    // ISR-Neuberechnung der Startseite auf Vercel: Server-Pfad „/index“, der Link bleibt gefolgt.
+    expect(agenturRel('/index')).toBe('noopener');
+    expect(agenturRel('/index/')).toBe('noopener');
     expect(agenturRel('/jobs')).toBe('nofollow noopener');
     expect(agenturRel(null)).toBe('nofollow noopener');
     for (const wert of ['/', '/jobs', null]) expect(agenturRel(wert)).not.toMatch(/noreferrer|sponsored|ugc/);

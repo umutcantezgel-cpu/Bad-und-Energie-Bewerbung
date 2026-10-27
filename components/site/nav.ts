@@ -39,9 +39,15 @@ export const PRIMARY_CTA_ATTR = 'data-primary-cta';
 /** Elements that hide the sticky apply bar while visible. */
 export const STICKY_BAR_HIDE_SELECTOR = `#${FLOW_ANCHOR_ID}, [${PRIMARY_CTA_ATTR}]`;
 
+/**
+ * Path without query, hash and trailing slash. „/index“ is the home page: Vercel re-renders the ISR page „/“ with
+ * req.url „/index“, so usePathname() returns „/index“ on the server and „/“ in the browser; treating them differently
+ * makes server and browser render different markup (React #418 on the home page, live on 2026-10-27).
+ */
 function normalize(pathname: string | null | undefined): string {
   const path = (pathname ?? '/').split(/[?#]/)[0] || '/';
-  return path.length > 1 ? path.replace(/\/+$/, '') : path;
+  const trimmed = path.length > 1 ? path.replace(/\/+$/, '') || '/' : path;
+  return trimmed === '/index' ? '/' : trimmed;
 }
 
 /** /bewerbung and everything below it: header shows only logo + „Abbrechen“, no sticky bar. */

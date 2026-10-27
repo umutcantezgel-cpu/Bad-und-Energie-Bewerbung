@@ -52,9 +52,15 @@ export interface KopfVertraulich {
   ohne: readonly string[];
 }
 
+/**
+ * Pfad ohne Query, Hash und Schrägstrich am Ende. „/index“ ist die Startseite: Vercel rechnet die ISR-Seite „/“ bei
+ * jeder Neuberechnung mit req.url „/index“ neu, usePathname() liefert dann auf dem Server „/index“, im Browser „/“.
+ * Anders behandelt, rendern Server und Browser Verschiedenes (React #418, Startseite live am 27.10.2026).
+ */
 function pfad(pathname: string | null | undefined): string {
   const path = (pathname ?? '/').split(/[?#]/)[0] || '/';
-  return path.length > 1 ? path.replace(/\/+$/, '') : path;
+  const ohneSchraegstrich = path.length > 1 ? path.replace(/\/+$/, '') || '/' : path;
+  return ohneSchraegstrich === '/index' ? '/' : ohneSchraegstrich;
 }
 
 /** Die Startseite trägt die Jubiläumsmarke im Einstieg (Ortsmarke); der Kopf wiederholt sie dort nicht. */

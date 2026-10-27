@@ -79,6 +79,12 @@ describe('navCurrent und subNavCurrent (aria-current)', () => {
     expect(navCurrent(gebiet, `${EINSATZGEBIET_PATH}/`)).toBe('page');
   });
 
+  it('treats the ISR path /index exactly like the home page (Vercel re-renders / as /index, React #418)', () => {
+    for (const item of [gebiet, arbeiten, faq]) expect(navCurrent(item, '/index')).toBe(navCurrent(item, '/'));
+    expect(isFocusMode('/index')).toBe(false);
+    expect(focusModeExitLabel('/index')).toBe(focusModeExitLabel('/'));
+  });
+
   it('marks nothing elsewhere and never an anchor', () => {
     expect(navCurrent(gebiet, '/einsatzgebietx')).toBeUndefined();
     expect(navCurrent(arbeiten, '/jobs')).toBeUndefined();
@@ -142,7 +148,7 @@ describe('getStickyApplyAction', () => {
   });
 
   it('links to /bewerbung everywhere else', () => {
-    for (const path of ['/', '/jobs', '/datenschutz', '/jobs/gibt-es-nicht']) {
+    for (const path of ['/', '/index', '/jobs', '/datenschutz', '/jobs/gibt-es-nicht']) {
       expect(getStickyApplyAction(path, labels)).toEqual({ href: '/bewerbung', label: 'Jetzt bewerben', inPageFlow: false });
     }
   });

@@ -17,9 +17,15 @@ export const AGENTUR = Object.freeze({
  */
 export const AGENTUR_HINWEIS_ID = 'agentur-neuer-tab';
 
-/** Quellseite ist nur die Startseite; ein Schrägstrich am Ende zählt nicht. Ohne Pfad gilt die Seite nicht als Quellseite. */
+/**
+ * Quellseite ist nur die Startseite; ein Schrägstrich am Ende zählt nicht. Ohne Pfad gilt die Seite nicht als Quellseite.
+ * „/index“ ist ebenfalls die Startseite: So rechnet Vercel „/“ bei jeder ISR-Neuberechnung (usePathname() auf dem
+ * Server); sonst stünde der Link im ausgelieferten HTML der Startseite auf nofollow.
+ */
 export function istQuellseite(pfad: string | null): boolean {
-  return pfad !== null && pfad.startsWith('/') && pfad.replace(/\/+$/, '') === '';
+  if (pfad === null || !pfad.startsWith('/')) return false;
+  const ohneSchraegstrich = pfad.replace(/\/+$/, '');
+  return ohneSchraegstrich === '' || ohneSchraegstrich === '/index';
 }
 
 /** rel des Links je Seite: auf der Startseite gefolgt, sonst nofollow; immer noopener, nie noreferrer. */

@@ -97,6 +97,10 @@ describe('E-SHELL-001 · Jubiläumsmarke im Rahmen', () => {
   it('steht auf der Startseite nicht im Kopf (der Einstieg trägt sie), wohl aber im Menü', () => {
     expect(zeigeMarkeImKopf('/')).toBe(false);
     expect(zeigeMarkeImKopf('/jobs')).toBe(true);
+    // Vercel rechnet / per ISR mit dem Pfad „/index“ neu; Server und Browser müssen dasselbe zeigen (React #418).
+    expect(zeigeMarkeImKopf('/index')).toBe(false);
+    expect(zeigeMarkeImKopf('/index/')).toBe(false);
+    expect(zeigeMarkeImKopf('/indexe')).toBe(true);
     pfad = '/';
     const html = render();
     pfad = '/jobs';
