@@ -219,21 +219,11 @@ async function settle(mail: () => Promise<EmailDispatchResult>): Promise<EmailDi
   }
 }
 
-/** Resend erlaubt Schlüssel bis 256 Zeichen; der Hash bindet den Schlüssel an Empfänger und Inhalt. */
-export function idempotencyFor(
-  options: DispatchOptions | undefined,
-  kind: string,
-  mail: { to: string | string[]; subject: string; html: string; text?: string }
-): string | undefined {
-  if (!options?.idempotencyKey) return undefined;
-  const digest = createHash('sha256')
-    .update(JSON.stringify([mail.to, mail.subject, mail.html, mail.text ?? '']))
-    .digest('hex')
-    .slice(0, 16);
-  return `${options.idempotencyKey.slice(0, 200)}:${kind}:${digest}`;
-}
-
-/** Schlüssel aus einem eigenen, stabilen Fingerabdruck statt aus dem gerenderten Mail-Inhalt. */
+/**
+ * Schlüssel aus einem eigenen, stabilen Fingerabdruck statt aus dem gerenderten Mail-Inhalt: Ein neues Mail-Layout
+ * (Deploy zwischen erstem Versuch und Wiederholung) erzeugt so keinen neuen Schlüssel und keine Doppel-Mail. Resend
+ * erlaubt Schlüssel bis 256 Zeichen.
+ */
 export function stableIdempotencyKey(
   options: DispatchOptions | undefined,
   kind: string,
@@ -267,7 +257,7 @@ function tagValue(value: string): string {
 
 /**
  * Bewerbung: Benachrichtigung ans Team an alle Adressen aus CONTACT_NOTIFICATION_EMAIL (Reply-To = Bewerber-E-Mail,
- * falls vorhanden), danach die Eingangsbestätigung, aber nur wenn die Team-Mail angenommen wurde, eine E-Mail
+ * sonst das Hauptpostfach: die Absenderadresse hat kein Postfach), danach die Eingangsbestätigung, aber nur wenn die Team-Mail angenommen wurde, eine E-Mail
  * angegeben ist und kein Spamverdacht besteht (die Adresse ist ungeprüft). Erfolg = Team-Mail angenommen.
  */
 export async function dispatchApplicationEmails(
@@ -290,7 +280,8 @@ export async function dispatchApplicationEmails(
   const teamNotification = await settle(() =>
     sendEmail({
       ...teamMail,
-      replyTo: app.email || undefined,
+      // Ohne Bewerber-E-Mail ginge „Antworten“ an die Absenderadresse ohne Postfach und versandete.
+      replyTo: app.email || config.replyToEmail,
       tags: [
         { name: 'category', value: 'application_team' },
         ...tags,
@@ -332,7 +323,11 @@ export async function dispatchApplicationEmails(
   };
 }
 
-/** Ergänzung zu einer Bewerbung: eine Mail ans Team mit der Bewerbungsnummer im Betreff. */
+/**
+ * Ergänzung zu einer Bewerbung: eine Mail ans Team mit der Bewerbungsnummer im Betreff. „Antworten“ geht ans
+ * Hauptpostfach (die Absenderadresse hat keins). Der Idempotency-Key hängt am Inhalt der Ergänzung
+ * (options.idempotencyKey = „ergaenzung:<Inhalts-Hash>“, normalizeFollowUp) und an den Empfängern, nicht am HTML.
+ */
 export async function dispatchApplicationFollowUpEmail(
   followUp: NormalizedFollowUp,
   options?: DispatchOptions
@@ -342,8 +337,9 @@ export async function dispatchApplicationFollowUpEmail(
   try {
     return await sendEmail({
       ...mail,
+      replyTo: config.replyToEmail,
       tags: [{ name: 'category', value: 'application_follow_up' }],
-      idempotencyKey: idempotencyFor(options, 'follow-up', mail),
+      idempotencyKey: stableIdempotencyKey(options, 'follow-up', [mail.to]),
     });
   } catch {
     return { success: false, error: 'send_failed' };

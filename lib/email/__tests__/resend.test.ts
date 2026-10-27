@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const send = vi.hoisted(() => vi.fn());
@@ -342,7 +343,8 @@ describe('dispatchApplicationEmails', () => {
     expect(result.success).toBe(true);
     expect(result.userConfirmation).toEqual({ success: false, error: 'no_recipient' });
     expect(send).toHaveBeenCalledTimes(1);
-    expect(send.mock.calls[0][0]).toMatchObject({ to: ['info@bad-energie.de'], replyTo: undefined });
+    // „Antworten“ ginge sonst an die Absenderadresse ohne Postfach.
+    expect(send.mock.calls[0][0]).toMatchObject({ to: ['info@bad-energie.de'], replyTo: 'info@bad-energie.de' });
   });
 
   it('sends no confirmation while the team mail failed (the applicant would read "angekommen")', async () => {
@@ -409,8 +411,26 @@ describe('dispatchApplicationFollowUpEmail', () => {
     );
 
     expect(result.success).toBe(true);
-    expect(send.mock.calls[0][0]).toMatchObject({ to: ['info@bad-energie.de'], subject: 'Ergänzung zu BE-26-K7M4QX' });
+    expect(send.mock.calls[0][0]).toMatchObject({
+      to: ['info@bad-energie.de'],
+      subject: 'Ergänzung zu BE-26-K7M4QX',
+      replyTo: 'info@bad-energie.de',
+    });
     expect(send.mock.calls[0][1].idempotencyKey).toMatch(/^ergaenzung:hash:follow-up:[0-9a-f]{16}$/);
+  });
+
+  it('binds the idempotency key to content key and recipients, not to the rendered HTML (no double mail after a deploy)', async () => {
+    stubEnv({ NODE_ENV: 'production', RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER });
+    send.mockResolvedValue({ data: { id: 'email_f' }, error: null, headers: null });
+    const followUp = { reference: 'BE-26-K7M4QX', idempotencyKey: 'hash', receivedAt: new Date(), postalCode: '35578' };
+
+    await dispatchApplicationFollowUpEmail(followUp, { idempotencyKey: 'ergaenzung:hash' });
+    await dispatchApplicationFollowUpEmail({ ...followUp, message: 'anderer Text, gleicher Schlüssel' }, { idempotencyKey: 'ergaenzung:hash' });
+
+    const digest = createHash('sha256').update(JSON.stringify([['info@bad-energie.de']])).digest('hex').slice(0, 16);
+    expect(send.mock.calls[0][1].idempotencyKey).toBe(`ergaenzung:hash:follow-up:${digest}`);
+    // Der Inhalt steckt schon im Schlüssel der Ergänzung (normalizeFollowUp); das HTML zählt nicht mit.
+    expect(send.mock.calls[1][1].idempotencyKey).toBe(send.mock.calls[0][1].idempotencyKey);
   });
 });
 
@@ -435,7 +455,7 @@ describe('CONTACT_NOTIFICATION_EMAIL als Liste (Sofortmeldung, P0-4)', () => {
     stubEnv({ NODE_ENV: 'production', RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER, CONTACT_NOTIFICATION_EMAIL: TEAM });
     send.mockResolvedValue({ data: { id: 'email_f' }, error: null, headers: null });
     await dispatchApplicationFollowUpEmail({ reference: 'BE-26-K7M4QX', idempotencyKey: 'hash', receivedAt: new Date(), postalCode: '35578' });
-    expect(send.mock.calls[0][0]).toMatchObject({ to: ['info@bad-energie.de', 'chef@bad-energie.de'] });
+    expect(send.mock.calls[0][0]).toMatchObject({ to: ['info@bad-energie.de', 'chef@bad-energie.de'], replyTo: 'info@bad-energie.de' });
   });
 
   it('eine ungültige Adresse in der Liste: Team-Mail an den Ersatz info@bad-energie.de statt an eine halbe Liste', async () => {

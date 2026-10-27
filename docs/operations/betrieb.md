@@ -49,7 +49,7 @@ Commit `9717265` hat einen echten Resend-Key in `.env.example` veröffentlicht. 
 
 Ohne verifizierte Domain lehnt Resend den Versand ab; die Website nimmt dann keine Bewerbung an (503, siehe 3.2).
 
-Die Absenderadresse braucht kein Postfach. Antworten auf die Team-Mail gehen an die Bewerberin bzw. den Bewerber, Antworten auf die Eingangsbestätigung an `CONTACT_NOTIFICATION_EMAIL`. Wer aber auf eine Team-Mail **ohne** angegebene E-Mail-Adresse antwortet, schreibt an die Absenderadresse; das kommt ohne Postfach nicht an (siehe 4.2).
+Die Absenderadresse braucht kein Postfach: Keine Mail lässt „Antworten“ dorthin gehen. Antworten auf die Team-Mail gehen an die Bewerberin bzw. den Bewerber, ohne angegebene E-Mail-Adresse an die erste Adresse aus `CONTACT_NOTIFICATION_EMAIL` (Hauptpostfach). Antworten auf die Eingangsbestätigung und auf „Ergänzung zu BE-…“ gehen ebenfalls ans Hauptpostfach (siehe 4.2).
 
 ### 2.2 Geheimnisse erzeugen und Umgebungsvariablen setzen
 
@@ -179,7 +179,7 @@ Stand 2026-10-10: Der Live-Test zeigte `BillingNotEnabledMapError`. Offener Owne
    - Die Eingangsbestätigung kommt an; „Antworten“ geht an das Team-Postfach.
    - In Resend steht der Versand als zugestellt, im Mail-Header SPF/DKIM/DMARC „pass“.
    - Mit Datenbank: Im Log steht `[bewerbung] eingegangen BE-26-…` ohne eine Zeile `[bewerbung] Datenbank: …` davor. Die Testbewerbung steht dann in der Datenbank; bis zum Cockpit löscht die Administration sie per SQL (siehe 6).
-5. Auf der Danke-Seite eine Ergänzung schicken: „Ergänzung zu BE-26-…“ kommt im Team-Postfach an.
+5. Auf der Danke-Seite eine Ergänzung schicken: „Ergänzung zu BE-26-…“ kommt im Team-Postfach an; „Antworten“ geht an das Team-Postfach.
 6. Feeds und Header prüfen:
 
    ```bash
@@ -305,7 +305,7 @@ Die **Bewerbungsnummer** `BE-26-XXXXXX` (Jahr und sechs Zeichen) ist der Schlüs
 - **Quelle:** Kanal (z. B. Google for Jobs, Indeed, Bundesagentur für Arbeit, Empfehlung, Direkt), UTM-Werte, Empfehlungscode, verweisende Seite und Einstiegsseite. Bis zum Cockpit (Phase 2d) ist das die Grundlage für „Bewerbungen pro Kanal“.
 - **Eingang:** Bewerbungsnummer, Zeitpunkt (deutsche Zeit), Ausfülldauer und die Version des Datenschutzhinweises, den die Person gesehen hat.
 
-**Antworten:** „Antworten“ im Mailprogramm geht an die E-Mail-Adresse der Bewerberin bzw. des Bewerbers. Hat die Person keine E-Mail angegeben, ginge die Antwort an die Absenderadresse der Website; dann über den Button, per Telefon oder WhatsApp antworten. Der bevorzugte Kontaktweg steht unter „Am liebsten per“. Die Bestätigung verspricht keine Frist, sondern „Wir melden uns schnellstmöglich“.
+**Antworten:** „Antworten“ im Mailprogramm geht an die E-Mail-Adresse der Bewerberin bzw. des Bewerbers. Hat die Person keine E-Mail angegeben, geht die Antwort an das eigene Hauptpostfach (erste Adresse aus `CONTACT_NOTIFICATION_EMAIL`), nicht an die Person; dann über den Button, per Telefon oder WhatsApp antworten. Der bevorzugte Kontaktweg steht unter „Am liebsten per“. Die Bestätigung verspricht keine Frist, sondern „Wir melden uns schnellstmöglich“.
 
 ### 4.3 Spamverdacht
 
