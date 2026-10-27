@@ -445,6 +445,63 @@ describe('dispatchApplicationFollowUpEmail', () => {
   });
 });
 
+describe('Mappe als PDF im Anhang (Schritt 4a/4b)', () => {
+  // NODE_ENV bleibt „development“: Ein Wechsel auf „production“ mitten im Lauf lädt React für den PDF-Satz in der
+  // anderen Fassung (auf dem Server ist es von Anfang an „production“)
+  const mappe = {
+    coverLetter: 'Sehr geehrter Herr Demir,\n\nich bewerbe mich.',
+    skills: ['Wärmepumpen'],
+    careerStations: [{ period: '2019–2024', role: 'Geselle', company: 'Muster GmbH', location: 'Gießen', tasks: ['Heizungsbau'] }],
+    educationStations: [],
+  };
+
+  it('die Team-Mail trägt die PDF und nennt sie; die Eingangsbestätigung nicht; der Schlüssel hängt nicht am Anhang', async () => {
+    stubEnv({ RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER });
+    send.mockResolvedValue({ data: { id: 'email_x' }, error: null, headers: null });
+
+    await dispatchApplicationEmails({ ...application, mappe }, { idempotencyKey: 'bewerbung:abc' });
+    const [teamPayload, teamOptions] = send.mock.calls[0];
+    expect(teamPayload.attachments).toHaveLength(1);
+    const [anhang] = teamPayload.attachments;
+    expect(anhang).toMatchObject({ filename: 'Bewerbungsmappe_BE-26-K7M4QX_Beispiel.pdf', contentType: 'application/pdf' });
+    expect(Buffer.from(anhang.content, 'base64').subarray(0, 5).toString('latin1')).toBe('%PDF-');
+    expect(teamPayload.html).toContain('Als PDF im Anhang: Bewerbungsmappe_BE-26-K7M4QX_Beispiel.pdf (2 Seiten)');
+    expect(teamPayload.text).toContain('Als PDF im Anhang: Bewerbungsmappe_BE-26-K7M4QX_Beispiel.pdf (2 Seiten)');
+    expect(send.mock.calls[1][0].attachments).toBeUndefined();
+
+    // Gleiche Bewerbung ohne PDF (Not-Schalter): derselbe Schlüssel, Resend erkennt die Wiederholung
+    send.mockClear();
+    vi.stubEnv('MAPPE_PDF', 'aus');
+    await dispatchApplicationEmails({ ...application, mappe }, { idempotencyKey: 'bewerbung:abc' });
+    expect(send.mock.calls[0][0].attachments).toBeUndefined();
+    expect(send.mock.calls[0][0].html).not.toContain('Als PDF im Anhang');
+    expect(send.mock.calls[0][0].html).toContain('Bewerbungsmappe');
+    expect(send.mock.calls[0][1].idempotencyKey).toBe(teamOptions.idempotencyKey);
+  });
+
+  it('ohne Mappe kein Anhang und kein PDF-Satz', async () => {
+    stubEnv({ RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER });
+    send.mockResolvedValue({ data: { id: 'email_x' }, error: null, headers: null });
+    await dispatchApplicationEmails(application);
+    expect(send.mock.calls[0][0].attachments).toBeUndefined();
+    expect(loggedText()).not.toContain('[mappe-pdf]');
+  });
+
+  it('die nachgereichte Mappe kommt mit PDF (nur mit Nummer), Praxis-Chips ohne', async () => {
+    stubEnv({ RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER });
+    send.mockResolvedValue({ data: { id: 'email_f' }, error: null, headers: null });
+    const followUp = { reference: 'BE-26-K7M4QX', idempotencyKey: 'hash', receivedAt: new Date('2026-10-09T08:30:00Z'), mappe };
+
+    await dispatchApplicationFollowUpEmail(followUp, { idempotencyKey: 'ergaenzung:hash' });
+    expect(send.mock.calls[0][0].attachments[0]).toMatchObject({ filename: 'Bewerbungsmappe_BE-26-K7M4QX.pdf', contentType: 'application/pdf' });
+    expect(send.mock.calls[0][0].html).toContain('Als PDF im Anhang: Bewerbungsmappe_BE-26-K7M4QX.pdf');
+
+    const praxis = { coverLetter: '', skills: ['Wärmepumpen'], careerStations: [], educationStations: [] };
+    await dispatchApplicationFollowUpEmail({ ...followUp, mappe: praxis }, { idempotencyKey: 'ergaenzung:hash2' });
+    expect(send.mock.calls[1][0].attachments).toBeUndefined();
+  });
+});
+
 describe('CONTACT_NOTIFICATION_EMAIL als Liste (Sofortmeldung, P0-4)', () => {
   const TEAM = 'info@bad-energie.de, chef@bad-energie.de';
 

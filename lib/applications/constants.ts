@@ -56,7 +56,8 @@ export const STORAGE_KEYS = {
  * Offene Tabs mit dem alten Client-Bundle senden noch deren Version.
  */
 // 2026-10-10: Bewerberdatenbank (Supabase, Frankfurt) als Empfänger und Auftragsverarbeiter ergänzt.
-export const PRIVACY_NOTICE_VERSIONS = ['2026-10', '2026-10-10'] as const;
+// 2026-10-27: Mappe als PDF im Anhang der Team-Mail (von der Serverfunktion gesetzt, lib/mappe/pdf).
+export const PRIVACY_NOTICE_VERSIONS = ['2026-10', '2026-10-10', '2026-10-27'] as const;
 export type PrivacyNoticeVersion = (typeof PRIVACY_NOTICE_VERSIONS)[number];
 export const PRIVACY_NOTICE_VERSION: PrivacyNoticeVersion = PRIVACY_NOTICE_VERSIONS[PRIVACY_NOTICE_VERSIONS.length - 1];
 

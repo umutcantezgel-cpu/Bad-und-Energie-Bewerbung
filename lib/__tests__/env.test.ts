@@ -13,6 +13,7 @@ import {
   devSecretsAllowed,
   emailSimulationAllowed,
   funnelEventsEnabled,
+  mappePdfEnabled,
   getAppUrl,
   MAX_NOTIFICATION_RECIPIENTS,
   getEmailConfig,
@@ -42,6 +43,7 @@ const MANAGED_VARS = [
   'SUPABASE_SERVICE_ROLE_KEY',
   'APPLICATION_SINK',
   'FUNNEL_EVENTS',
+  'MAPPE_PDF',
 ] as const;
 
 const REAL_KEY = 're_Ab3dEf9h_KlMnOpQrStUvWx';
@@ -341,6 +343,33 @@ describe('funnelEventsEnabled (FUNNEL_EVENTS, Standard aus bis M-034)', () => {
     setEnv({ FUNNEL_EVENTS: 'false' });
     reportServerEnv();
     expect(String(vi.mocked(console.info).mock.calls.at(-1)?.[0])).not.toContain('Ereignisse');
+  });
+});
+
+describe('mappePdfEnabled (MAPPE_PDF, Not-Schalter der Mappe-PDF)', () => {
+  it('ist ohne Wert und mit „an“ an, nur „aus“ schaltet ab', () => {
+    expect(mappePdfEnabled()).toBe(true);
+    setEnv({ MAPPE_PDF: 'an' });
+    expect(mappePdfEnabled()).toBe(true);
+    setEnv({ MAPPE_PDF: 'aus' });
+    expect(mappePdfEnabled()).toBe(false);
+  });
+
+  it('ein ungültiger Wert lässt sie an und steht im Start-Check als ungültig', () => {
+    for (const value of ['off', 'false', '0', 'AUS']) {
+      setEnv({ MAPPE_PDF: value });
+      expect(mappePdfEnabled()).toBe(true);
+      expect(checkServerEnv().invalid).toContain('MAPPE_PDF');
+    }
+  });
+
+  it('der Start-Log sagt, wenn die PDF aus ist', () => {
+    setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: REAL_KEY, MAPPE_PDF: 'aus' });
+    reportServerEnv();
+    expect(String(vi.mocked(console.info).mock.calls.at(-1)?.[0])).toContain('Mappe-PDF aus (MAPPE_PDF=aus)');
+    setEnv({ MAPPE_PDF: 'an' });
+    reportServerEnv();
+    expect(String(vi.mocked(console.info).mock.calls.at(-1)?.[0])).not.toContain('Mappe-PDF');
   });
 });
 

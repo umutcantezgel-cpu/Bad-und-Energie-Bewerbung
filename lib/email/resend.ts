@@ -5,7 +5,8 @@ import { Resend } from 'resend';
 import { applicationContent } from '@/lib/applications/fingerprint';
 import type { NormalizedFollowUp, ReferencedApplication } from '@/lib/applications/types';
 import { COMPANY } from '@/lib/content/company';
-import { emailSimulationAllowed, getEmailConfig } from '@/lib/env';
+import { emailSimulationAllowed, getEmailConfig, mappePdfEnabled } from '@/lib/env';
+import type { MappeAnhang } from '@/lib/mappe/pdf/anhang';
 import {
   renderApplicationConfirmationEmail,
   renderApplicationFollowUpEmail,
@@ -35,6 +36,13 @@ export interface EmailTag {
   value: string;
 }
 
+/** Anhang einer Mail: Inhalt als Base64, Typ ausdrücklich (nicht aus der Endung geraten). */
+export interface EmailAttachment {
+  filename: string;
+  content: string;
+  contentType: string;
+}
+
 export interface SendEmailOptions {
   to: string | string[];
   subject: string;
@@ -46,6 +54,7 @@ export interface SendEmailOptions {
   tags?: EmailTag[];
   /** Wird als `Idempotency-Key` an Resend durchgereicht (sichere Wiederholungen). */
   idempotencyKey?: string;
+  attachments?: EmailAttachment[];
 }
 
 export interface DispatchOptions {
@@ -151,6 +160,7 @@ export async function sendEmail({
   from,
   tags,
   idempotencyKey,
+  attachments,
 }: SendEmailOptions): Promise<EmailDispatchResult> {
   const config = getResendClient();
   const sender = from || config.fromEmail;
@@ -174,6 +184,7 @@ export async function sendEmail({
     ...(text ? { text } : {}),
     replyTo: replyTo || undefined,
     tags: tags?.length ? tags : undefined,
+    ...(attachments?.length ? { attachments } : {}),
   };
 
   try {
@@ -247,6 +258,30 @@ export function applicationFingerprint(app: ReferencedApplication): unknown {
   return [app.reference, ...applicationContent(app)];
 }
 
+/**
+ * Mappe als PDF (lib/mappe/pdf/anhang.ts), nur geladen, wenn eine Mappe mitkommt: Bewerbungen ohne Mappe laden den
+ * PDF-Satz nie. Jeder Fehler heißt Mail ohne Anhang; der Idempotency-Key hängt nie am Anhang (gleicher Schlüssel mit
+ * und ohne PDF, Resend meldet eine Wiederholung dann als schon versendet).
+ */
+async function mappeAnhang(
+  reference: string,
+  erstellen: (modul: typeof import('@/lib/mappe/pdf/anhang')) => Promise<MappeAnhang | null>,
+): Promise<MappeAnhang | null> {
+  // Not-Schalter vor dem Laden: Mit MAPPE_PDF=aus kommt react-pdf gar nicht erst in die Funktion
+  if (!mappePdfEnabled()) return null;
+  try {
+    return await erstellen(await import('@/lib/mappe/pdf/anhang'));
+  } catch (err: unknown) {
+    // Etwa eine Datei, die im Funktions-Trace fehlt: Mail ohne PDF, aber sichtbar im Log (nur Nummer und Fehlerart)
+    console.warn(`[mappe-pdf] ${reference}: keine PDF (laden: ${err instanceof Error ? err.name : 'unknown'})`);
+    return null;
+  }
+}
+
+function alsAnhang(anhang: MappeAnhang | null): EmailAttachment[] | undefined {
+  return anhang ? [{ filename: anhang.dateiname, content: anhang.inhalt, contentType: 'application/pdf' }] : undefined;
+}
+
 const NO_RECIPIENT: EmailDispatchResult = { success: false, error: 'no_recipient' };
 /** Keine Eingangsbestätigung bei Spamverdacht: Die Adresse ist ungeprüft und könnte fremd sein. */
 const SKIPPED_SPAM: EmailDispatchResult = { success: false, error: 'skipped_suspected_spam' };
@@ -270,7 +305,8 @@ export async function dispatchApplicationEmails(
   options?: DispatchOptions
 ): Promise<DualDispatchResult> {
   const config = getResendClient();
-  const team = renderApplicationTeamEmail(app);
+  const anhang = app.mappe ? await mappeAnhang(app.reference, (modul) => modul.mappeAnhangFuerBewerbung(app)) : null;
+  const team = renderApplicationTeamEmail(app, anhang);
   // Alle Adressen in einem Versand (eine Mail, ein Idempotency-Key): Fällt eine Adresse aus, merkt es Resend, nicht wir.
   const teamMail = { to: config.toEmails, ...team };
   const tags: EmailTag[] = [
@@ -293,6 +329,7 @@ export async function dispatchApplicationEmails(
         ...(app.suspectedSpam ? [{ name: 'spam', value: 'suspected' }] : []),
       ],
       idempotencyKey: stableIdempotencyKey(options, 'team', [teamMail.to, fingerprint]),
+      attachments: alsAnhang(anhang),
     })
   );
 
@@ -338,8 +375,9 @@ export async function dispatchApplicationFollowUpEmail(
   options?: DispatchOptions
 ): Promise<EmailDispatchResult> {
   const config = getResendClient();
-  const mail = { to: config.toEmails, ...renderApplicationFollowUpEmail(followUp) };
   try {
+    const anhang = followUp.mappe ? await mappeAnhang(followUp.reference, (modul) => modul.mappeAnhangFuerErgaenzung(followUp)) : null;
+    const mail = { to: config.toEmails, ...renderApplicationFollowUpEmail(followUp, anhang) };
     return await sendEmail({
       ...mail,
       replyTo: config.replyToEmail,
@@ -347,6 +385,7 @@ export async function dispatchApplicationFollowUpEmail(
       // followUp.idempotencyKey auch im Hash: Ein Aufrufer mit grobem Basis-Schlüssel (etwa nur die Nummer) ließe
       // sonst jede weitere, andere Ergänzung als „schon versendet“ still verschwinden.
       idempotencyKey: stableIdempotencyKey(options, 'follow-up', [mail.to, followUp.idempotencyKey]),
+      attachments: alsAnhang(anhang),
     });
   } catch {
     return { success: false, error: 'send_failed' };

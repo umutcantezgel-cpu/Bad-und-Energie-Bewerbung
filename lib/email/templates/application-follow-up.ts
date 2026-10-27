@@ -1,6 +1,6 @@
 import type { NormalizedFollowUp } from '@/lib/applications/types';
 import { formatIsoDate } from '@/lib/mappe/format';
-import { mappeBlocks, nurPraxiserfahrung } from './application-parts';
+import { mappeBlocks, nurPraxiserfahrung, type MappePdfHinweis } from './application-parts';
 import { renderEmail, type RenderedEmail } from './layout';
 
 /**
@@ -19,7 +19,8 @@ export function applicationFollowUpSubject(followUp: Pick<NormalizedFollowUp, 'r
   return `Ergänzung zu ${followUp.reference}`;
 }
 
-export function renderApplicationFollowUpEmail(followUp: NormalizedFollowUp): RenderedEmail {
+/** `pdf`: die nachgereichte Mappe liegt als PDF im Anhang (lib/mappe/pdf/anhang.ts). */
+export function renderApplicationFollowUpEmail(followUp: NormalizedFollowUp, pdf?: MappePdfHinweis | null): RenderedEmail {
   // Angetippte Praxiserfahrung steht im Kasten „Ergänzung“; eine echte Mappe darunter wie bisher.
   const praxis = nurPraxiserfahrung(followUp.mappe);
   return renderEmail({
@@ -48,7 +49,7 @@ export function renderApplicationFollowUpEmail(followUp: NormalizedFollowUp): Re
           followUp.message ? { type: 'quote', text: followUp.message } : null,
         ],
       },
-      ...(praxis ? [] : mappeBlocks(followUp.mappe)),
+      ...(praxis ? [] : mappeBlocks(followUp.mappe, pdf)),
     ],
   });
 }

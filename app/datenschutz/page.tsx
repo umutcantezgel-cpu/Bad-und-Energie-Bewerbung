@@ -360,7 +360,10 @@ function Datenschutzerklaerung() {
         <p>
           Deine Bewerbung geht per E-Mail an unser Team in Wetzlar. Außerdem speichern wir sie mit deinen Ergänzungen in
           unserer Bewerberdatenbank, damit keine Bewerbung in einem Postfach verloren geht und wir sie geordnet
-          bearbeiten können. Sie lesen nur die Personen, die an der Auswahl beteiligt sind. Hast du eine E-Mail-Adresse
+          bearbeiten können. Sie lesen nur die Personen, die an der Auswahl beteiligt sind. Schickst du eine
+          Bewerbungsmappe mit oder reichst sie nach, setzt unsere Serverfunktion daraus zusätzlich ein PDF mit Anschreiben
+          und Lebenslauf und hängt es an die E-Mail an unser Team. Es enthält nur die Angaben der Mappe, die Stelle, deinen
+          Namen oder die Bewerbungsnummer und das Datum, und es wird wie die E-Mail aufbewahrt und gelöscht. Hast du eine E-Mail-Adresse
           angegeben, bekommst du eine Eingangsbestätigung, außer die Bewerbung wurde als möglicher Spam markiert. Wir
           verkaufen deine Daten nicht und geben sie nicht an Dritte weiter. Technisch beteiligt sind nur unsere
           Auftragsverarbeiter:
@@ -417,7 +420,8 @@ function Datenschutzerklaerung() {
           <li>
             Die Bewerbungsmappe speichert deine Eingaben ebenfalls im sessionStorage, auch die Kontaktdaten für den
             Briefkopf. Ein Foto bleibt nur im Arbeitsspeicher der geöffneten Seite. Telefon, E-Mail, Wohnort und Foto
-            aus der Mappe werden nicht mitgesendet. Druck und PDF erstellt dein Browser selbst.
+            aus der Mappe werden nicht mitgesendet. Druck und dein eigenes PDF erstellt dein Browser selbst; das PDF für
+            unser Team setzt unsere Serverfunktion aus der gesendeten Mappe (siehe „Wer deine Bewerbung erhält“).
           </li>
           <li>
             Nach dem Absenden merkt sich der Browser im selben Tab Bewerbungsnummer, Vorname, Stelle und einen

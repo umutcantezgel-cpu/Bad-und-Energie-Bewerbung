@@ -64,8 +64,22 @@ export function nurPraxiserfahrung(mappe: Mappe | undefined): string[] | null {
   return skills.length > 0 && !sonstEtwas ? skills : null;
 }
 
-/** Bewerbungsmappe als Blöcke: Anschreiben, Arbeitsstil, Fähigkeiten, Stationen. */
-export function mappeBlocks(mappe: Mappe | undefined): EmailBlockInput[] {
+/** PDF der Mappe im Anhang der Mail (lib/mappe/pdf/anhang.ts): Dateiname und Seitenzahl für die Zeile über der Mappe. */
+export interface MappePdfHinweis {
+  dateiname: string;
+  seiten: number;
+}
+
+/** „Als PDF im Anhang: Bewerbungsmappe_BE-26-K7M4QX_Mueller.pdf (2 Seiten)“ */
+export function mappePdfZeile(pdf: MappePdfHinweis): string {
+  return `Als PDF im Anhang: ${pdf.dateiname} (${pdf.seiten} ${pdf.seiten === 1 ? 'Seite' : 'Seiten'})`;
+}
+
+/**
+ * Bewerbungsmappe als Blöcke: Anschreiben, Arbeitsstil, Fähigkeiten, Stationen. Liegt die Mappe auch als PDF bei, sagt
+ * das die erste Zeile; der Text darunter bleibt (Vorschau im Postfach, Rückfall ohne PDF).
+ */
+export function mappeBlocks(mappe: Mappe | undefined, pdf?: MappePdfHinweis | null): EmailBlockInput[] {
   if (!mappe) return [];
 
   const career = mappe.careerStations.map((station) => {
@@ -80,6 +94,7 @@ export function mappeBlocks(mappe: Mappe | undefined): EmailBlockInput[] {
 
   return [
     { type: 'heading', text: 'Bewerbungsmappe' },
+    pdf ? { type: 'paragraph', text: mappePdfZeile(pdf) } : null,
     mappe.coverLetter.trim() ? { type: 'paragraph', text: 'Anschreiben', muted: true } : null,
     mappe.coverLetter.trim() ? { type: 'quote', text: mappe.coverLetter.trim() } : null,
     {

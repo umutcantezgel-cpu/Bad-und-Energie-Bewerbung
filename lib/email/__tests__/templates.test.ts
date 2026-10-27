@@ -13,7 +13,7 @@ import {
   renderEmail,
   type RenderedEmail,
 } from '@/lib/email/templates';
-import { XSS, base, full, hostile } from './fixtures';
+import { PDF_ERGAENZUNG, PDF_FULL, XSS, base, full, hostile } from './fixtures';
 
 function expectClean(text: string) {
   expect(text).not.toMatch(/\bundefined\b/);
@@ -68,6 +68,22 @@ describe('team notification', () => {
     expect(mail.text).toContain('Eingegangen: 08.10.2026, 14:05 Uhr');
     expect(mail.text).toContain('Ausfülldauer: 41 Sekunden');
     expect(mail.html).toContain('Sehr geehrter Herr Demir,<br>ich bewerbe mich.');
+  });
+
+  it('names the PDF in the attachment above the Mappe text (file name and pages), without PDF nothing of it', () => {
+    const mitPdf = renderApplicationTeamEmail(full, PDF_FULL);
+    const zeile = 'Als PDF im Anhang: Bewerbungsmappe_BE-26-K7M4QX_Muster.pdf (2 Seiten)';
+    expect(mitPdf.text).toContain(zeile);
+    expect(mitPdf.html).toContain(zeile);
+    // Die Zeile steht direkt unter der Überschrift, der Text der Mappe bleibt darunter
+    expect(mitPdf.text.indexOf(zeile)).toBeGreaterThan(mitPdf.text.indexOf('Bewerbungsmappe'));
+    expect(mitPdf.text.indexOf(zeile)).toBeLessThan(mitPdf.text.indexOf('Anschreiben'));
+    expect(mitPdf.text).toContain('Ruhig und genau');
+    expect(renderApplicationTeamEmail(full, { dateiname: 'x.pdf', seiten: 1 }).text).toContain('Als PDF im Anhang: x.pdf (1 Seite)');
+    expect(renderApplicationTeamEmail(full).text).not.toContain('Als PDF im Anhang');
+    expect(renderApplicationFollowUpEmail({ reference: 'BE-26-K7M4QX', idempotencyKey: 'h', receivedAt: new Date(), mappe: full.mappe }, PDF_ERGAENZUNG).text).toContain(
+      `Als PDF im Anhang: ${PDF_ERGAENZUNG.dateiname}`,
+    );
   });
 
   it('describes an initiative application without a job reference', () => {

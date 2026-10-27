@@ -1,7 +1,7 @@
 import type { ReferencedApplication } from '@/lib/applications/types';
 import { CONTACT_CHANNEL_LABEL } from '@/lib/apply/whatsapp-message';
 import { channelLabel } from '@/lib/attribution/channel';
-import { answerRows, mappeBlocks, phoneRow, telHref, whatsAppHref } from './application-parts';
+import { answerRows, mappeBlocks, phoneRow, telHref, whatsAppHref, type MappePdfHinweis } from './application-parts';
 import { formatBerlinDateTime, renderEmail, type EmailBlockInput, type RenderedEmail } from './layout';
 
 /**
@@ -39,7 +39,8 @@ function primaryAction(app: ReferencedApplication): { href: string; label: strin
   return null;
 }
 
-export function renderApplicationTeamEmail(app: ReferencedApplication): RenderedEmail {
+/** `pdf`: die Mappe liegt als PDF im Anhang (lib/mappe/pdf/anhang.ts); die Mail nennt Dateiname und Seitenzahl. */
+export function renderApplicationTeamEmail(app: ReferencedApplication, pdf?: MappePdfHinweis | null): RenderedEmail {
   const { job, attribution } = app;
   const isInitiative = !job.referenceCode;
   const action = primaryAction(app);
@@ -99,7 +100,7 @@ export function renderApplicationTeamEmail(app: ReferencedApplication): Rendered
     answers.length > 0 && { type: 'heading', text: 'Angaben' },
     answers.length > 0 && { type: 'rows', rows: answers },
 
-    ...mappeBlocks(app.mappe),
+    ...mappeBlocks(app.mappe, pdf),
 
     { type: 'heading', text: 'Quelle' },
     {

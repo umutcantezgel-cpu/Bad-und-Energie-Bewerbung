@@ -160,6 +160,11 @@ export const ABSENDER = 'Bad und Energie Karriere <bewerbung@karriere.bad-energi
 /** Erste Adresse von CONTACT_NOTIFICATION_EMAIL (Standard). */
 export const TEAM = 'info@bad-energie.de';
 
+/** Hinweise auf die PDF im Anhang, wie lib/mappe/pdf/anhang.ts sie für diese Mappen liefert. */
+export const PDF_FULL = { dateiname: 'Bewerbungsmappe_BE-26-K7M4QX_Muster.pdf', seiten: 2 } as const;
+export const PDF_MAXIMAL = { dateiname: 'Bewerbungsmappe_BE-26-K7M4QX_M.pdf', seiten: 18 } as const;
+export const PDF_ERGAENZUNG = { dateiname: 'Bewerbungsmappe_BE-26-K7M4QX.pdf', seiten: 18 } as const;
+
 export interface MailVariante {
   name: string;
   to: string;
@@ -178,11 +183,17 @@ export const MAIL_VARIANTEN: readonly MailVariante[] = [
       renderApplicationTeamEmail({ ...full, mappe: undefined, suspectedSpam: true, spamSignals: ['honeypot', 'fast'], fillDurationMs: 1200 }),
   },
   { name: 'team-ohne-email', to: TEAM, replyTo: TEAM, render: () => renderApplicationTeamEmail({ ...base, contactChannel: 'phone' }) },
-  { name: 'team-mappe', to: TEAM, replyTo: full.email, render: () => renderApplicationTeamEmail(full) },
-  { name: 'team-maximal', to: TEAM, replyTo: maximal.email, render: () => renderApplicationTeamEmail(maximal) },
+  // Mit Mappe liegt sie als PDF im Anhang (lib/mappe/pdf/anhang.ts); die Mail nennt Dateiname und Seiten.
+  { name: 'team-mappe', to: TEAM, replyTo: full.email, render: () => renderApplicationTeamEmail(full, PDF_FULL) },
+  { name: 'team-maximal', to: TEAM, replyTo: maximal.email, render: () => renderApplicationTeamEmail(maximal, PDF_MAXIMAL) },
   { name: 'bestaetigung', to: full.email ?? '', replyTo: TEAM, render: () => renderApplicationConfirmationEmail(full) },
   { name: 'ergaenzung', to: TEAM, replyTo: TEAM, render: () => renderApplicationFollowUpEmail(ergaenzung) },
-  { name: 'ergaenzung-mappe', to: TEAM, replyTo: TEAM, render: () => renderApplicationFollowUpEmail({ ...ergaenzung, mappe: maximal.mappe }) },
+  {
+    name: 'ergaenzung-mappe',
+    to: TEAM,
+    replyTo: TEAM,
+    render: () => renderApplicationFollowUpEmail({ ...ergaenzung, mappe: maximal.mappe }, PDF_ERGAENZUNG),
+  },
   {
     // Nur angetippte Praxiserfahrung von der Danke-Seite (reist als mappe.skills).
     name: 'ergaenzung-praxis',

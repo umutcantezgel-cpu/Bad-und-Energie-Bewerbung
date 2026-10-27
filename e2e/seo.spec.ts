@@ -152,8 +152,9 @@ const canonicalOf = (page: Page) =>
 
 /**
  * V6-B: ein JSON-LD-Block je Seite, Wurzel mit @graph, jeder @id-Verweis im selben Graphen auflösbar; mit
- * Canonical genau ein WebPage-Knoten mit url = Canonical. Läuft auch für /bewerbung, das dynamisch rendert
- * und darum nicht im Build-Check (scripts/qa/check-graph.mjs) liegt.
+ * Canonical genau ein WebPage-Knoten mit url = Canonical. Prüft die ausgelieferten Seiten im Browser, auch /bewerbung
+ * mit Vorauswahl, die der Proxy auf eine vorgerenderte Variante umschreibt (der Build-Check scripts/qa/check-graph.mjs
+ * sieht nur die Dateien).
  */
 for (const route of ROUTES) {
   test(`ein @graph je Seite: ${route.path}`, async ({ page }) => {
@@ -234,9 +235,9 @@ async function crawl(page: Page): Promise<CrawlResult> {
 }
 
 /**
- * Pfad einer absoluten URL. Canonical und Sitemap werden über den Pfad verglichen: Die Sitemap ist beim Build statisch
- * entstanden (Basis-URL des Builds), dynamische Seiten wie /bewerbung lesen APP_URL erst zur Laufzeit (in CI
- * http://localhost:3400). In Produktion sind beide gleich; der Vergleich der Herkunft gehört nicht zu diesem Test.
+ * Pfad einer absoluten URL. Canonical und Sitemap werden über den Pfad verglichen: Die Basis-URL des Builds und die
+ * Adresse, unter der der Test läuft (in CI http://localhost:3400), können sich unterscheiden. In Produktion sind beide
+ * gleich; der Vergleich der Herkunft gehört nicht zu diesem Test.
  */
 const pathOf = (url: string | null) => (url && /^https?:\/\//.test(url) ? new URL(url).pathname : null);
 

@@ -92,6 +92,8 @@ const serverEnvSchema = z.object({
   APPLICATION_SINK: optional(z.enum(['auto', 'email', 'supabase'])),
   // Cookielose Ereignisse des Bewerbungsflows (POST /api/e). Standard aus, bis der Datenschutz freigibt (M-034).
   FUNNEL_EVENTS: optional(z.enum(['true', 'false'])),
+  // Mappe als PDF im Anhang der Team-Mail (lib/mappe/pdf). Standard an; „aus“ ist der Not-Schalter.
+  MAPPE_PDF: optional(z.enum(['an', 'aus'])),
 });
 
 export type ServerEnv = z.output<typeof serverEnvSchema>;
@@ -285,6 +287,15 @@ export function funnelEventsEnabled(): boolean {
   return readVar('FUNNEL_EVENTS').value === 'true';
 }
 
+/**
+ * Mappe als PDF im Anhang der Team-Mail (lib/mappe/pdf/anhang.ts). An, solange MAPPE_PDF nicht „aus“ ist: Ohne Wert
+ * und mit ungültigem Wert bleibt sie an (der Start-Check meldet den ungültigen Wert). Aus heißt: Team-Mail wie bisher,
+ * mit der Mappe nur als Text.
+ */
+export function mappePdfEnabled(): boolean {
+  return readVar('MAPPE_PDF').value !== 'aus';
+}
+
 // ---------------------------------------------------------------------------
 // Supabase (Phase 2b): Ziel der Bewerbungen
 // ---------------------------------------------------------------------------
@@ -403,6 +414,7 @@ export function reportServerEnv(): { ok: boolean } {
     // Nur die Zahl, nie die Adressen.
     ...(notificationRecipients().length > 1 ? [`Team-Mail an ${notificationRecipients().length} Adressen`] : []),
     ...(funnelEventsEnabled() ? ['Ereignisse an (nur Log)'] : []),
+    ...(mappePdfEnabled() ? [] : ['Mappe-PDF aus (MAPPE_PDF=aus)']),
   ];
   console.info(`[env] ${notes.join('; ')}`);
 

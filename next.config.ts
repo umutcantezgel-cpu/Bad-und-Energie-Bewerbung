@@ -57,6 +57,12 @@ const nextConfig: NextConfig = {
     formats: ['image/avif', 'image/webp'],
   },
   output: 'standalone',
+  // Schriften der Mappe-PDF (lib/mappe/pdf/blatt.tsx liest sie über den Pfad): sicher in den Funktionen der beiden
+  // Routen, die Team-Mails mit PDF senden, auch wenn die Spurensuche den Pfad aus process.cwd() nicht erkennt
+  outputFileTracingIncludes: {
+    '/api/bewerbung': ['./lib/mappe/schriften/*.ttf'],
+    '/api/bewerbung/ergaenzung': ['./lib/mappe/schriften/*.ttf'],
+  },
   poweredByHeader: false,
   async headers() {
     return [

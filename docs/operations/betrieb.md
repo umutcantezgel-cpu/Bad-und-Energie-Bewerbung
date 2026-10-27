@@ -79,6 +79,7 @@ In Vercel unter **Settings → Environment Variables** eintragen, Geheimnisse al
 | `SUPABASE_SECRET_KEY` | Secret Key `sb_secret_…` (oder `SUPABASE_SERVICE_ROLE_KEY`, nur `service_role`); nie den Publishable- oder anon-Key | nicht nötig |
 | `APPLICATION_SINK` | nicht setzen (`auto`); `email` schaltet die Datenbank ab | nicht setzen (`auto` bleibt dort bei E-Mail); `email` nur zusätzlich, wenn die Supabase-Variablen auch für Preview gelten |
 | `EMAIL_SIMULATION` | nicht setzen (dort ohnehin wirkungslos) | `true` |
+| `MAPPE_PDF` | nicht setzen (PDF an); `aus` ist der Not-Schalter für die Mappe-PDF im Anhang (Team-Mail dann ohne PDF, Mappe nur als Text) | nicht setzen |
 | `INDEXNOW_KEY` | siehe 2.3 | nicht setzen |
 | `INDEXNOW_SUBMIT_TOKEN` | eigener Wert | nicht setzen |
 | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | siehe 2.4 | optional |
@@ -90,6 +91,7 @@ Wichtig:
 - `APPLICATION_TOKEN_SECRET` nur bei Verdacht auf ein Leck wechseln. Der Wechsel macht alle Ergänzungs-Links der letzten 14 Tage ungültig. Das gilt auch, wenn ein abgeleiteter Wert erstmals durch einen eigenen ersetzt wird, und solange abgeleitet wird, für jeden neuen `RESEND_API_KEY`.
 - `IP_HASH_SALT` lässt sich jederzeit wechseln; nur die Zähler des Rate-Limits beginnen neu.
 - `APPLICATION_SINK=email` ist der Notschalter für die Datenbank: Bewerbungen gehen dann wieder nur per E-Mail.
+- `MAPPE_PDF=aus` ist der Not-Schalter für die Mappe als PDF (`lib/mappe/pdf`): Die Team-Mail kommt dann wie vor dem 27.10.2026 ohne Anhang, die Mappe steht weiter als Text darin. Ein ungültiger Wert lässt die PDF an (der Start-Check meldet ihn). Bei Problemen mit der PDF diesen Schalter setzen und neu deployen, **kein Instant Rollback** auf einen Stand vor dem 27.10.2026: Der ältere Server kennt die Datenschutzfassung `2026-10-27` nicht und lehnt Bewerbungen aus offenen Tabs ab, bis sie neu geladen werden (außer Skew Protection ist im Vercel-Projekt an).
 - Änderungen wirken erst nach einem neuen Deploy. Danach `/api/status` prüfen (2.6).
 
 ### 2.3 IndexNow
@@ -238,6 +240,9 @@ Vercel → Projekt → **Logs**. Die Zeilen enthalten keine personenbezogenen Da
 | `[email] Resend-Fehler: <code> (HTTP <status>), neuer Versuch` | Vorübergehender Fehler (`rate_limit_exceeded`, `internal_server_error`, `service_unavailable`, `concurrent_idempotent_requests`, `application_error` mit HTTP 5xx), der erste Versuch scheiterte in weniger als 5 Sekunden; nach 800 ms ein zweiter Versuch mit demselben Idempotency-Key | nichts, solange keine Fehlerzeile folgt |
 | `[email] Resend-Fehler: <code> (HTTP <status>): <meldung>` | anderer Fehlercode von Resend | Resend-Logs ansehen |
 | `[bewerbung/ergaenzung] …` | dasselbe für Ergänzungen | wie oben |
+| `[mappe-pdf] BE-26-…: <n> Seiten, <ms> ms, <kb> KB` | Mappe als PDF gesetzt und an die Team-Mail (bzw. Ergänzung) gehängt | nichts |
+| `[mappe-pdf] BE-26-…: keine PDF (<grund>)` | Mail ohne PDF, Mappe nur als Text. Gründe: `spam` (Spamverdacht, dafür setzt der Server keine PDF), `zeichen` (Schrift ohne diese Zeichen, etwa kyrillisch oder arabisch), `umfang` (ungewöhnlich lange Mappe, über rund 30 Seiten), `zeitlimit` (Laden von PDF-Bibliothek und Schriften dauerte über 3 Sekunden), `laden` (PDF-Modul nicht ladbar, etwa eine Datei fehlt in der Funktion), `fehler` (react-pdf) | nichts; bei `laden`, `fehler` oder `zeitlimit` gehäuft: melden; im Notfall `MAPPE_PDF=aus` |
+| `[env] …; Mappe-PDF aus (MAPPE_PDF=aus)` | Der Not-Schalter ist gesetzt | Variable löschen, wenn die PDF wieder mit soll |
 | `[csp] report <direktive> blockiert <quelle> auf <pfad>` | CSP-Meldung (Report-Only) | siehe 3.3 |
 
 Fehlt `IP_HASH_SALT` und lässt es sich nicht ableiten, antwortet die API mit 503, ohne eine eigene Zeile pro Anfrage zu schreiben; dann steht nur die `[env]`-Zeile beim Start im Log.
@@ -301,7 +306,7 @@ Die **Bewerbungsnummer** `BE-26-XXXXXX` (Jahr und sechs Zeichen) ist der Schlüs
 - **Kontakt:** Name, Telefon mit Link „WhatsApp-Chat öffnen“, E-Mail (falls angegeben), „Am liebsten per“. Steht hinter der Nummer „nicht automatisch erkannt, bitte prüfen“, konnte die Nummer nicht eindeutig gelesen werden; dann fehlt auch der WhatsApp-Link.
 - **Stelle:** Titel und Referenz der Stelle (z. B. `SHK-WP-2026-01`); Initiativbewerbungen haben keine Referenz. Ein Hinweis erscheint, wenn die Stelle inzwischen als besetzt markiert ist (z. B. Bewerbung über einen alten Link).
 - **Angaben:** die Antworten aus dem Flow, etwa Erfahrung und möglicher Start.
-- **Bewerbungsmappe:** nur wenn mitgeschickt: Anschreiben, Arbeitsstil, Fähigkeiten, berufliche Stationen, Schule und Ausbildung.
+- **Bewerbungsmappe:** nur wenn mitgeschickt: Anschreiben, Arbeitsstil, Fähigkeiten, berufliche Stationen, Schule und Ausbildung. Seit 27.10.2026 liegt sie zusätzlich als **PDF im Anhang** (`Bewerbungsmappe_BE-26-…_Nachname.pdf`, A4, Anschreiben und Lebenslauf im Design der Mappe; die erste Zeile unter „Bewerbungsmappe“ nennt Datei und Seitenzahl). Eine nachgereichte Mappe kommt mit der Ergänzungs-Mail, die PDF dort nur mit Nummer (`Bewerbungsmappe_BE-26-….pdf`, „Bewerbungsmappe“ statt Name im Kopf). Fehlt die Zeile, kam keine PDF mit (Grund im Log, 3.1); der Text ist vollständig. Der Betreff der PDF ist die Stelle der Bewerbung: Wechselt jemand nach der Mappe im Formular die Stelle, kann der Brieftext noch die zuerst gewählte nennen (Liste für später: Betreff mit der Mappe senden). Telefon, E-Mail, Wohnort und Foto aus der Mappe sind nie darin (sie bleiben beim Bewerber).
 - **Quelle:** Kanal (z. B. Google for Jobs, Indeed, Bundesagentur für Arbeit, Empfehlung, Direkt), UTM-Werte, Empfehlungscode, verweisende Seite und Einstiegsseite. Bis zum Cockpit (Phase 2d) ist das die Grundlage für „Bewerbungen pro Kanal“.
 - **Eingang:** Bewerbungsnummer, Zeitpunkt (deutsche Zeit), Ausfülldauer und die Version des Datenschutzhinweises, den die Person gesehen hat.
 
