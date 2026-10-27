@@ -1,5 +1,7 @@
+import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 
+import { applicationContentHash } from '@/lib/applications/fingerprint';
 import {
   compactMappe,
   firstNameOf,
@@ -8,7 +10,7 @@ import {
   normalizePhone,
   resolveJobInfo,
 } from '@/lib/applications/normalize';
-import { applicationInputSchema, type ApplicationInput } from '@/lib/applications/schema';
+import { applicationFollowUpSchema, applicationInputSchema, type ApplicationInput } from '@/lib/applications/schema';
 
 const NOW = new Date('2026-10-08T10:00:00Z');
 
@@ -169,6 +171,32 @@ describe('normalizeFollowUp', () => {
     expect(a?.idempotencyKey).toMatch(/^[0-9a-f]{32}$/);
     expect(a?.idempotencyKey).toBe(b?.idempotencyKey);
     expect(c?.idempotencyKey).not.toBe(a?.idempotencyKey);
+  });
+
+  it('mappe.design (L3): ohne oder kaputt bleibt der Schlüssel wie vor L3, nur eine gültige Wahl ändert ihn', () => {
+    const mappe = { coverLetter: 'Hallo', skills: ['Löten'], workStyle: 'ruhig', careerStations: [], educationStations: [] };
+    const schluessel = (m: object) =>
+      normalizeFollowUp(applicationFollowUpSchema.parse({ reference: 'x', token: 't', mappe: m }), 'BE-26-K7M4QX', NOW)?.idempotencyKey;
+    // Rechnung von vor L3 (sha256 über Nummer und Inhalt): offene Tabs und Wiederholungen behalten ihren Schlüssel
+    const vorL3 = createHash('sha256')
+      .update(JSON.stringify({ reference: 'BE-26-K7M4QX', startDate: undefined, postalCode: undefined, message: undefined, mappe }))
+      .digest('hex')
+      .slice(0, 32);
+    expect(schluessel(mappe)).toBe(vorL3);
+    expect(schluessel({ ...mappe, design: 'farbband' })).toBe(vorL3);
+    expect(schluessel({ ...mappe, design: { vorlage: 'farbband', akzent: 'rot', schrift: 'markant' } })).toBe(vorL3);
+    expect(schluessel({ ...mappe, design: { vorlage: 'farbband', akzent: 'petrol', schrift: 'markant' } })).not.toBe(vorL3);
+  });
+
+  it('mappe.design (L3): eine Bewerbung mit kaputtem Design hat denselben Inhalts-Hash wie ohne', () => {
+    const mappe = { coverLetter: 'Hallo', skills: ['Löten'], careerStations: [], educationStations: [] };
+    const ohne = normalizeApplication(input({ mappe }), { now: NOW });
+    const kaputt = normalizeApplication(
+      applicationInputSchema.parse({ ...input(), mappe: { ...mappe, design: { vorlage: 'neu' } } }),
+      { now: NOW },
+    );
+    expect(kaputt.mappe && 'design' in kaputt.mappe).toBe(false);
+    expect(applicationContentHash(kaputt)).toBe(applicationContentHash(ohne));
   });
 });
 

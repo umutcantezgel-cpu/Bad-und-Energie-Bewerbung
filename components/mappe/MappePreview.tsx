@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
 import { AKZENT_FARBEN, type Fotoform, type MappeDesign } from '@/lib/mappe/blatt/design';
+import { fuerSchrift, titelschriftDeckt } from '@/lib/mappe/blatt/zeichen';
 import type { MappePerson } from '@/lib/mappe/editor';
 import { dateLine } from '@/lib/mappe/format';
 import {
@@ -61,12 +62,14 @@ export function MappePreview({ className, design, fotoform, ...props }: MappePre
 
   const akzent = AKZENT_FARBEN[design.akzent];
   const farben = { '--blatt-akzent': akzent.farbe, '--blatt-akzent-toenung': akzent.toenung } as CSSProperties;
+  // Wie die PDF (fuerPdf): Markant nur, wenn die Titelschrift jedes Zeichen des Namens hat, sonst Sachlich statt Mischschrift
+  const schrift = design.schrift === 'markant' && !titelschriftDeckt(fuerSchrift(props.person.name)) ? 'sachlich' : design.schrift;
   return (
     <div
       ref={frameRef}
       className={cn(styles.frame, className)}
       data-vorlage={design.vorlage}
-      data-schrift={design.schrift}
+      data-schrift={schrift}
       data-fotoform={fotoform}
       style={farben}
     >

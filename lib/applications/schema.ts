@@ -91,10 +91,6 @@ export const educationStationSchema = z.object({
 });
 
 /**
- * Structured Bewerbungsmappe (no photo: photos never leave the browser in Phase 1).
- * Browser code checks the same rules without zod: lib/applications/mappe-data.ts.
- */
-/**
  * Gestaltung (L3): nur bekannte Werte. Ein unbekanntes Design (älterer oder neuerer Client) fällt weg, statt die
  * Bewerbung abzulehnen; die PDF fürs Team nimmt dann den Standard.
  */
@@ -104,6 +100,10 @@ const mappeDesignSchema = z.object({
   schrift: z.enum(MAPPE_DESIGN.schriften),
 });
 
+/**
+ * Structured Bewerbungsmappe (no photo: photos never leave the browser in Phase 1).
+ * Browser code checks the same rules without zod: lib/applications/mappe-data.ts.
+ */
 export const mappeSchema = z.object({
   coverLetter: trimmed(MAPPE.coverLetter).default(''),
   skills: z.array(trimmed(MAPPE.skill)).max(MAPPE.skills).default([]),

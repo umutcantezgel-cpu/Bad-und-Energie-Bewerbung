@@ -44,6 +44,17 @@ const samples: unknown[] = [
   { coverLetter: 'Hallo', design: 'farbband' },
   { coverLetter: 'Hallo', design: null },
   { coverLetter: 'Hallo', design: { vorlage: 'zweispaltig', akzent: 'graphit', schrift: 'sachlich', mehr: 1 } },
+  // Sonderfälle (Prüfrunde L3): Typen, Großschreibung, Namen aus Object.prototype, geerbte Werte, Fotoform bleibt im Browser
+  { coverLetter: 'Hallo', design: [] },
+  { coverLetter: 'Hallo', design: true },
+  { coverLetter: 'Hallo', design: 0 },
+  { coverLetter: 'Hallo', design: { vorlage: 'Schlicht', akzent: 'navy', schrift: 'sachlich' } },
+  { coverLetter: 'Hallo', design: { vorlage: 'toString', akzent: 'navy', schrift: 'sachlich' } },
+  { coverLetter: 'Hallo', design: { vorlage: 'schlicht', akzent: 'constructor', schrift: 'sachlich' } },
+  { coverLetter: 'Hallo', design: Object.create({ vorlage: 'farbband', akzent: 'petrol', schrift: 'markant' }) },
+  { coverLetter: 'Hallo', design: { vorlage: 'farbband', akzent: ['petrol'], schrift: 'markant' } },
+  { coverLetter: 'Hallo', design: { vorlage: 'farbband', akzent: 'petrol', schrift: 'markant', fotoform: 'rund' } },
+  { coverLetter: x(L.coverLetter + 1), design: { vorlage: 'farbband', akzent: 'petrol', schrift: 'markant' } },
 ];
 
 describe('parseMappeData mirrors mappeSchema', () => {
