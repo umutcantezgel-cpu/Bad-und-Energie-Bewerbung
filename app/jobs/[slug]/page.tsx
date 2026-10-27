@@ -224,7 +224,8 @@ function OpenJob({ job }: { job: Job }) {
 function ApplyFallback({ job }: { job: Job }) {
   return (
     <p className="text-body text-ink-muted">
-      <TextLink href={applyPath(job)}>
+      {/* 44 px Trefferfläche: Ohne Flow (kein JavaScript, oder bis er nachlädt) ist das der Weg zur Bewerbung */}
+      <TextLink href={applyPath(job)} className="inline-flex min-h-11 items-center">
         {isAusbildung(job)
           ? 'Bewerbung für die Ausbildung öffnen'
           : isPraktikum(job)
