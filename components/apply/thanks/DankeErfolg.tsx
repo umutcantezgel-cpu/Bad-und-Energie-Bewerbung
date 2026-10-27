@@ -16,6 +16,7 @@ import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
 import { DankeAblauf, type DankeSchritt } from './DankeAblauf';
 import { ABLAUF_TEXT, DANKE_ANKER, ERFOLG_KOPF, ERGAENZEN_TEXT, SEITEN_TEXT, rueckmeldewegText } from './danke-text';
 import { FollowUpForm } from './FollowUpForm';
+import { NummernInApp } from './NummernInApp';
 import type { ThankYouViewProps } from './types';
 import styles from './stil';
 
@@ -126,6 +127,7 @@ export function DankeErfolg({
                 </a>
               </Button>
             </div>
+            <NummernInApp />
           </Weg>
 
           <Weg titelId="danke-unterlagen" titel={SEITEN_TEXT.unterlagenTitel} icon="file-text">

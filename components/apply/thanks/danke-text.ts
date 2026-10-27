@@ -93,6 +93,8 @@ export const SEITEN_TEXT = Object.freeze({
   nummerAnruf: 'für Anrufe,',
   nummerWhatsApp: 'für WhatsApp.',
   nummerKnopf: 'Nummern speichern',
+  /** Nur im Browser von Instagram, Facebook oder TikTok (NummernInApp). */
+  nummerInApp: 'Klappt das Speichern hier nicht? Die Nummern stehen direkt darüber.',
   unterlagenTitel: 'Unterlagen schicken',
   unterlagenText:
     'Wenn du Zeugnisse oder einen Lebenslauf zur Hand hast, kannst du sie per WhatsApp oder E‑Mail nachreichen. Nenn dabei deine Bewerbungsnummer',

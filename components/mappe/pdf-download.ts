@@ -3,19 +3,8 @@
  * im Erst-Bundle der Mappe); den Satz lädt MappeTool erst bei Absicht (lib/mappe/pdf/browser.tsx).
  */
 
-export const IN_APP_BROWSER = Object.freeze({ instagram: 'Instagram', facebook: 'Facebook', tiktok: 'TikTok' });
-export type InAppBrowser = keyof typeof IN_APP_BROWSER;
-
-/**
- * In-App-Browser von Instagram, Facebook (auch Messenger) und TikTok an der Kennung (User-Agent); null im normalen
- * Browser. Dort klappt das Herunterladen oft nicht: Ob ein Download ankommt, entscheidet die App, nicht die Seite.
- */
-export function inAppBrowser(userAgent: string): InAppBrowser | null {
-  if (/Instagram/i.test(userAgent)) return 'instagram';
-  if (/FBAN|FBAV|FB_IAB|FBIOS|FB4A|MessengerForiOS/i.test(userAgent)) return 'facebook';
-  if (/BytedanceWebview|musical_ly|TikTok|trill_/i.test(userAgent)) return 'tiktok';
-  return null;
-}
+// Erkennung der App-Browser teilt die Mappe mit der Danke-Seite (lib/apply/in-app-browser.ts)
+export { IN_APP_BROWSER, inAppBrowser, type InAppBrowser } from '@/lib/apply/in-app-browser';
 
 /** Datei speichern: a[download] mit Blob-URL; die URL wird nach einer Minute freigegeben. */
 export function herunterladen(blob: Blob, dateiname: string): void {
