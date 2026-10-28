@@ -84,20 +84,20 @@ export function LetterSection({
 
       <div className="flex flex-col gap-3">
         <Field label="Betreff" hint={subjectHint}>
-          {/* Zwei Zeilen statt einer: Schon der Vorschlag (bis 77 Zeichen) passt am Handy nicht in eine Zeile.
-              Einzeilig bleibt er trotzdem: Enter und Zeilenumbrüche werden zu Leerzeichen */}
+          {/* Mehrzeilig statt einer Zeile: Schon der Vorschlag (bis 77 Zeichen) braucht am Handy drei Zeilen. Die Höhe
+              folgt dem Text (field-sizing, sonst drei Zeilen); inhaltlich einzeilig: Enter und Umbrüche werden zu Leerzeichen */}
           <Textarea
             ref={subjectRef}
             name="betreff"
             autoComplete="off"
-            rows={2}
+            rows={3}
             maxLength={MAPPE_LIMITS.subject}
             value={customSubject ?? subjectSuggestion}
             onChange={(event) => onSubjectChange(event.target.value.replace(/\s*[\r\n]+\s*/g, ' '))}
             onKeyDown={(event) => {
               if (event.key === 'Enter') event.preventDefault();
             }}
-            className="min-h-0 resize-none"
+            className="min-h-0 resize-none field-sizing-content"
           />
         </Field>
         {customSubject !== null && (
