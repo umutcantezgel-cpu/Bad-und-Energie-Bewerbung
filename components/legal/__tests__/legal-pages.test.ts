@@ -67,6 +67,17 @@ describe('Datenschutz content', () => {
     expect(html).toContain(`Stand: ${formatNoticeDate(PRIVACY_NOTICE_VERSION)}`);
   });
 
+  it('nennt die Inhalte der frei umgeschriebenen Mappe (Fassung 2026-10-28) und den neutralen Satz zu sensiblen Angaben', () => {
+    const text = html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ');
+    expect(PRIVACY_NOTICE_VERSION).toBe('2026-10-28');
+    expect(text).toContain('Stand: 28. Oktober 2026');
+    expect(text).toContain(
+      'auf Wunsch die Inhalte deiner Bewerbungsmappe: Betreff und Anschreiben, Kenntnisse, Arbeitsstil, Berufs- und Ausbildungsstationen und, wenn du sie ausfüllst, Kurzprofil, Sprachen, Führerscheinklassen, Interessen und einen eigenen Abschnitt; dazu Reihenfolge und Überschriften deines Lebenslaufs und das gewählte Design (Vorlage, Farbe, Schrift)',
+    );
+    expect(text).toContain('Angaben zu Religion, Gesundheit, Partei oder Gewerkschaft brauchen wir für deine Bewerbung nicht.');
+    expect(text).toContain('Abschnitte, die du im Lebenslauf ausblendest, bleiben ebenfalls nur in deinem Browser und werden nicht mitgesendet.');
+  });
+
   it('covers the processing of the new platform', () => {
     for (const phrase of ['Art. 6 Abs. 1 lit. b DSGVO', 'C-34/21', 'sessionStorage', '§ 25 Abs. 2 Nr. 2 TDDDG', 'Vercel', 'Resend', 'fra1', 'Interaktive Karte laden', 'Karte wieder ausblenden', 'Bricolage Grotesque', 'Atkinson Hyperlegible Next', 'Martian Mono']) {
       expect(html).toContain(phrase);

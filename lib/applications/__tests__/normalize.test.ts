@@ -169,6 +169,44 @@ describe('compactMappe', () => {
     expect(compactMappe({ ...mappe, subject: ' Bewerbung\nals\u2028 X\u0007 ' })!.subject).toBe('Bewerbung als X');
     expect(compactMappe({ coverLetter: ' ', skills: [], careerStations: [], educationStations: [], subject: 'Bewerbung als X' })).toBeUndefined();
   });
+
+  it('Mehr im Lebenslauf (L5): neue Felder getrimmt und hinten, Leeres und Doppeltes fällt weg, allein auch eine Mappe', () => {
+    const leer = { coverLetter: '', skills: [], careerStations: [], educationStations: [] };
+    const kompakt = compactMappe({
+      ...leer,
+      subject: 'Bewerbung',
+      profile: '  Kurz  ',
+      languages: [{ language: ' Deutsch ', level: ' Muttersprache ' }, { language: ' ', level: 'gut' }, { language: 'Englisch', level: ' ' }],
+      drivingLicenses: [' B ', 'B', ' ', 'BE'],
+      interests: ' ',
+      customText: ' Ehrenamt ',
+      sections: [{ id: 'custom', title: 'Weiterbildungen' }],
+    });
+    expect(kompakt).toEqual({
+      ...leer,
+      subject: 'Bewerbung',
+      profile: 'Kurz',
+      languages: [{ language: 'Deutsch', level: 'Muttersprache' }, { language: 'Englisch' }],
+      drivingLicenses: ['B', 'BE'],
+      customText: 'Ehrenamt',
+      sections: [{ id: 'custom', title: 'Weiterbildungen' }],
+    });
+    expect(Object.keys(kompakt!)).toEqual([
+      'coverLetter',
+      'skills',
+      'careerStations',
+      'educationStations',
+      'subject',
+      'profile',
+      'languages',
+      'drivingLicenses',
+      'customText',
+      'sections',
+    ]);
+    expect(compactMappe({ ...leer, languages: [{ language: 'Deutsch' }] })).toEqual({ ...leer, languages: [{ language: 'Deutsch' }] });
+    // Betreff, Aufbau und leere neue Felder allein sind keine Mappe
+    expect(compactMappe({ ...leer, subject: 'B', sections: [{ id: 'skills' }], profile: ' ', languages: [{ language: ' ' }] })).toBeUndefined();
+  });
 });
 
 describe('normalizeFollowUp', () => {
@@ -238,6 +276,21 @@ describe('normalizeFollowUp', () => {
     const mit = normalizeApplication(input({ mappe: { ...mappe, subject: 'Bewerbung als X' } }), { now: NOW });
     expect(mit.mappe?.subject).toBe('Bewerbung als X');
     expect(applicationContentHash(mit)).not.toBe(applicationContentHash(ohne));
+  });
+
+  it('Mehr im Lebenslauf (L5): kaputter Aufbau und leere neue Felder ändern weder Hash noch Ergänzungs-Schlüssel', () => {
+    const mappe = { coverLetter: 'Hallo', skills: ['Löten'], careerStations: [], educationStations: [] };
+    const ohne = normalizeApplication(input({ mappe }), { now: NOW });
+    const kaputt = normalizeApplication(
+      applicationInputSchema.parse({ ...input(), mappe: { ...mappe, sections: 'kaputt', profile: ' ', languages: [], drivingLicenses: [' '] } }),
+      { now: NOW },
+    );
+    expect(kaputt.mappe).toEqual(ohne.mappe);
+    expect(applicationContentHash(kaputt)).toBe(applicationContentHash(ohne));
+    const schluessel = (m: object) =>
+      normalizeFollowUp(applicationFollowUpSchema.parse({ reference: 'x', token: 't', mappe: m }), 'BE-26-K7M4QX', NOW)?.idempotencyKey;
+    expect(schluessel({ ...mappe, sections: [], interests: '' })).toBe(schluessel(mappe));
+    expect(schluessel({ ...mappe, interests: 'Angeln' })).not.toBe(schluessel(mappe));
   });
 });
 

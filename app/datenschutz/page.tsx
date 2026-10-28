@@ -314,8 +314,10 @@ function Datenschutzerklaerung() {
           <li>deine E-Mail-Adresse, wenn du sie angibst</li>
           <li>deinen bevorzugten Kontaktweg: WhatsApp, Anruf oder E-Mail</li>
           <li>
-            auf Wunsch die Inhalte deiner Bewerbungsmappe: Anschreiben, Kenntnisse, Arbeitsstil sowie Berufs- und
-            Ausbildungsstationen, dazu das gewählte Design (Vorlage, Farbe, Schrift)
+            auf Wunsch die Inhalte deiner Bewerbungsmappe: Betreff und Anschreiben, Kenntnisse, Arbeitsstil, Berufs- und
+            Ausbildungsstationen und, wenn du sie ausfüllst, Kurzprofil, Sprachen, Führerscheinklassen, Interessen und
+            einen eigenen Abschnitt; dazu Reihenfolge und Überschriften deines Lebenslaufs und das gewählte Design
+            (Vorlage, Farbe, Schrift)
           </li>
           <li>
             die Herkunft deiner Bewerbung, also Quelle und Kampagne (siehe <a href="#herkunft">Herkunftsmessung</a>)
@@ -330,7 +332,7 @@ function Datenschutzerklaerung() {
           Pflicht sind nur die Stelle, deine Antworten auf die kurzen Fragen, dein Name und deine Telefonnummer, damit
           wir die Bewerbung einordnen und dich erreichen können. Die E-Mail-Adresse brauchen wir nur, wenn du E-Mail als
           Kontaktweg wählst. Alles andere ist freiwillig. Ohne die Pflichtangaben können wir deine Bewerbung nicht
-          bearbeiten.
+          bearbeiten. Angaben zu Religion, Gesundheit, Partei oder Gewerkschaft brauchen wir für deine Bewerbung nicht.
         </p>
         <p>
           Nach dem Absenden kannst du auf der Danke-Seite freiwillig etwas ergänzen: Starttermin, Postleitzahl, eine
@@ -422,6 +424,8 @@ function Datenschutzerklaerung() {
             Briefkopf. Ein Foto bleibt nur im Arbeitsspeicher der geöffneten Seite. Telefon, E-Mail, Wohnort und Foto
             aus der Mappe werden nicht mitgesendet. Druck und dein eigenes PDF erstellt dein Browser selbst; das PDF für
             unser Team setzt unsere Serverfunktion aus der gesendeten Mappe (siehe „Wer deine Bewerbung erhält“).
+            Abschnitte, die du im Lebenslauf ausblendest, bleiben ebenfalls nur in deinem Browser und werden nicht
+            mitgesendet.
           </li>
           <li>
             Nach dem Absenden merkt sich der Browser im selben Tab Bewerbungsnummer, Vorname, Stelle und einen

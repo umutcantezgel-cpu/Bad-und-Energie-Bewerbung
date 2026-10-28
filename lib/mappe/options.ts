@@ -159,8 +159,23 @@ export const MAPPE_LIMITS = Object.freeze({
   institution: SCHEMA_LIMITS.institution,
   location: SCHEMA_LIMITS.location,
   subject: SCHEMA_LIMITS.subject,
+  profile: SCHEMA_LIMITS.profile,
+  languages: SCHEMA_LIMITS.languages,
+  language: SCHEMA_LIMITS.language,
+  languageLevel: SCHEMA_LIMITS.languageLevel,
+  drivingLicenses: SCHEMA_LIMITS.drivingLicenses,
+  interests: SCHEMA_LIMITS.interests,
+  customText: SCHEMA_LIMITS.customText,
+  sectionTitle: SCHEMA_LIMITS.sectionTitle,
   // nur lokal (Vorschau und Druck)
   name: CONTACT_LIMITS.name,
   phone: CONTACT_LIMITS.phone,
   email: CONTACT_LIMITS.email,
 });
+
+/**
+ * Führerscheinklassen zum Antippen (L5): die fürs Handwerk (Pkw, Anhänger, 7,5 t, Lkw) und für Azubis AM und A1. Höchstens
+ * so viele, wie der Vertrag erlaubt (`drivingLicenses`).
+ */
+export const FUEHRERSCHEIN_KLASSEN = ['AM', 'A1', 'B', 'BE', 'C1', 'C1E', 'C', 'CE'] as const;
+export type FuehrerscheinKlasse = (typeof FUEHRERSCHEIN_KLASSEN)[number];

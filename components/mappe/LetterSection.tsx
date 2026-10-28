@@ -118,6 +118,7 @@ export function LetterSection({
 
       <div className="flex flex-col gap-3">
         <Field
+          id="mappe-anschreiben-text"
           label="Anschreiben"
           hint={
             edited

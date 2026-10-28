@@ -1,10 +1,28 @@
-import { INITIATIVE_JOB_ID, isApplicationJobId, type ApplicationJobId } from '@/lib/applications/constants';
-import { parseMappeData } from '@/lib/applications/mappe-data';
+import {
+  INITIATIVE_JOB_ID,
+  MAPPE_SCHEMA_LIMITS,
+  MAPPE_SECTION_IDS,
+  isApplicationJobId,
+  type ApplicationJobId,
+  type MappeSectionId,
+} from '@/lib/applications/constants';
+import { parseMappeData, type MappeSection } from '@/lib/applications/mappe-data';
 import type { Mappe } from '@/lib/applications/schema';
 import type { JobCategory } from '@/lib/jobs/schema';
+import { ABSCHNITT_NAME, GRUNDABSCHNITTE, STANDARD_TITEL, aufbauFolge } from './blatt/aufbau';
 import { STANDARD_DESIGN, STANDARD_FOTOFORM, designAus, fotoformAus, istStandard, type Fotoform, type MappeDesign } from './blatt/design';
-import { mitInhaltFuerSchrift, type ZeichenOrt } from './blatt/zeichen';
-import { MAPPE_LIMITS, WORK_STYLE_IDS, getWorkStyle, skillsFuerStelle, workStyleIdFromValue, type WorkStyleId } from './options';
+import { lebenslaufAbschnitte, type MappeAbschnitt } from './blatt/dokument';
+import { abschnittTexte, mitInhaltFuerSchrift, type ZeichenOrt } from './blatt/zeichen';
+import {
+  FUEHRERSCHEIN_KLASSEN,
+  MAPPE_LIMITS,
+  WORK_STYLE_IDS,
+  getWorkStyle,
+  skillsFuerStelle,
+  workStyleIdFromValue,
+  type FuehrerscheinKlasse,
+  type WorkStyleId,
+} from './options';
 import {
   createStationId,
   isCareerStationEmpty,
@@ -26,6 +44,23 @@ export interface MappePerson {
   location: string;
 }
 
+/** Sprache im Editor (L5); `id` nur für React-Keys und Fokus, wird nicht gesendet. */
+export interface SpracheDraft {
+  id: string;
+  sprache: string;
+  niveau: string;
+}
+
+/**
+ * Platz eines Abschnitts im Lebenslauf (L5): Reihenfolge der Liste, gezeigt oder ausgeblendet, eigener Titel (`null`:
+ * Standardtitel). Ausgeblendetes bleibt nur hier im Editor und geht nicht mit (toMappe).
+ */
+export interface AufbauEintrag {
+  id: MappeSectionId;
+  sichtbar: boolean;
+  titel: string | null;
+}
+
 export interface MappeEditorState {
   person: MappePerson;
   jobId: ApplicationJobId | '';
@@ -41,6 +76,15 @@ export interface MappeEditorState {
   design: MappeDesign;
   /** Form des Fotos; bleibt im Browser wie das Foto. */
   fotoform: Fotoform;
+  /** Aufbau des Lebenslaufs (L5): immer alle Abschnitte, in der Reihenfolge der Person. */
+  aufbau: AufbauEintrag[];
+  /** Mehr im Lebenslauf (L5): Kurzprofil, Sprachen, Führerschein, Interessen, Text des eigenen Abschnitts. */
+  profil: string;
+  sprachen: SpracheDraft[];
+  fuehrerschein: FuehrerscheinKlasse[];
+  interessen: string;
+  /** Text des eigenen Abschnitts; seine Überschrift steht im Aufbau (id `custom`). */
+  eigenerText: string;
 }
 
 export type MappeEditorAction =
@@ -58,9 +102,22 @@ export type MappeEditorAction =
   | { type: 'education'; action: ListAction<EducationStationDraft> }
   | { type: 'design'; patch: Partial<MappeDesign> }
   | { type: 'fotoform'; form: Fotoform }
+  | { type: 'zusatz'; feld: 'profil' | 'interessen' | 'eigenerText'; text: string }
+  | { type: 'sprachen'; action: ListAction<SpracheDraft> }
+  | { type: 'fuehrerschein'; klasse: FuehrerscheinKlasse }
+  /** Eigener Titel eines Abschnitts; `null`: Standardtitel. */
+  | { type: 'abschnittTitel'; id: MappeSectionId; titel: string | null }
+  | { type: 'abschnittSichtbar'; id: MappeSectionId; sichtbar: boolean }
+  /** Einen Platz nach oben (-1) oder unten (1); am Rand ändert sich nichts. */
+  | { type: 'abschnittVerschieben'; id: MappeSectionId; richtung: -1 | 1 }
   | { type: 'hydrate'; state: MappeEditorState };
 
 export const EMPTY_PERSON: MappePerson = Object.freeze({ name: '', phone: '', email: '', location: '' });
+
+/** Standardaufbau: alle Abschnitte gezeigt, in Standardreihenfolge, ohne eigene Titel. */
+export function standardAufbau(): AufbauEintrag[] {
+  return MAPPE_SECTION_IDS.map((id) => ({ id, sichtbar: true, titel: null }));
+}
 
 export function createEmptyEditorState(jobId: ApplicationJobId | '' = ''): MappeEditorState {
   return {
@@ -74,6 +131,12 @@ export function createEmptyEditorState(jobId: ApplicationJobId | '' = ''): Mappe
     educationStations: [],
     design: { ...STANDARD_DESIGN },
     fotoform: STANDARD_FOTOFORM,
+    aufbau: standardAufbau(),
+    profil: '',
+    sprachen: [],
+    fuehrerschein: [],
+    interessen: '',
+    eigenerText: '',
   };
 }
 
@@ -132,6 +195,33 @@ export function mappeEditorReducer(state: MappeEditorState, action: MappeEditorA
       return { ...state, design: designAus({ ...state.design, ...action.patch }) };
     case 'fotoform':
       return { ...state, fotoform: fotoformAus(action.form) };
+    case 'zusatz':
+      if (action.feld === 'profil') return { ...state, profil: action.text };
+      if (action.feld === 'interessen') return { ...state, interessen: action.text };
+      return { ...state, eigenerText: action.text };
+    case 'sprachen':
+      return { ...state, sprachen: listReducer(state.sprachen, action.action) };
+    case 'fuehrerschein': {
+      const an = state.fuehrerschein.includes(action.klasse);
+      const gewaehlt = an ? state.fuehrerschein.filter((klasse) => klasse !== action.klasse) : [...state.fuehrerschein, action.klasse];
+      // In der Reihenfolge der Chips, wie sie auch gesendet wird
+      return { ...state, fuehrerschein: FUEHRERSCHEIN_KLASSEN.filter((klasse) => gewaehlt.includes(klasse)) };
+    }
+    case 'abschnittTitel':
+      return { ...state, aufbau: state.aufbau.map((eintrag) => (eintrag.id === action.id ? { ...eintrag, titel: action.titel } : eintrag)) };
+    case 'abschnittSichtbar':
+      return {
+        ...state,
+        aufbau: state.aufbau.map((eintrag) => (eintrag.id === action.id ? { ...eintrag, sichtbar: action.sichtbar } : eintrag)),
+      };
+    case 'abschnittVerschieben': {
+      const von = state.aufbau.findIndex((eintrag) => eintrag.id === action.id);
+      const nach = von + action.richtung;
+      if (von === -1 || nach < 0 || nach >= state.aufbau.length) return state;
+      const aufbau = [...state.aufbau];
+      [aufbau[von], aufbau[nach]] = [aufbau[nach], aufbau[von]];
+      return { ...state, aufbau };
+    }
     case 'hydrate':
       return action.state;
   }
@@ -155,12 +245,39 @@ function letterJob(state: MappeEditorState, jobs: readonly MappeJobOption[]): Le
   return job ? { title: job.title, category: job.category } : null;
 }
 
-/** Text aus der Vorlage für den aktuellen Stand. */
+/** Ist der Abschnitt im Lebenslauf gezeigt (L5)? Ohne Eintrag im Aufbau: ja. */
+export function zeigt(state: Pick<MappeEditorState, 'aufbau'>, id: MappeSectionId): boolean {
+  return state.aufbau.find((eintrag) => eintrag.id === id)?.sichtbar ?? true;
+}
+
+const einzeilig = (text: string) => text.replace(/\s+/g, ' ').trim();
+
+/** Überschrift eines Abschnitts: eigener Titel (einzeilig, getrimmt), sonst der Standardtitel. */
+export function abschnittTitel(state: Pick<MappeEditorState, 'aufbau'>, id: MappeSectionId): string {
+  return einzeilig(state.aufbau.find((eintrag) => eintrag.id === id)?.titel ?? '') || STANDARD_TITEL[id];
+}
+
+/**
+ * `sections` der Mappe: die gezeigten Abschnitte in Reihenfolge, `title` nur bei eigenem Titel. Ohne Abweichung vom
+ * Standardaufbau fehlt es ganz (dieselbe Mappe wie vor L5).
+ */
+function sectionsAus(state: MappeEditorState): MappeSection[] | undefined {
+  const sections = state.aufbau
+    .filter((eintrag) => eintrag.sichtbar)
+    .map(({ id, titel }): MappeSection => {
+      const eigen = einzeilig(titel ?? '');
+      return eigen && eigen !== STANDARD_TITEL[id] && eigen.length <= MAPPE_LIMITS.sectionTitle ? { id, title: eigen } : { id };
+    });
+  const standard = sections.length === MAPPE_SECTION_IDS.length && sections.every((eintrag, i) => eintrag.id === MAPPE_SECTION_IDS[i] && !eintrag.title);
+  return standard ? undefined : sections;
+}
+
+/** Text aus der Vorlage für den aktuellen Stand; ausgeblendete Schwerpunkte nennt er nicht (sie gehen nicht mit, L5). */
 export function templateLetter(state: MappeEditorState, context: MappeContext): string {
   return buildCoverLetter({
     job: letterJob(state, context.jobs),
     initiative: isInitiative(state),
-    skills: state.skills,
+    skills: zeigt(state, 'skills') ? state.skills : [],
     workStyle: getWorkStyle(state.workStyleId, selectedJob(state, context.jobs)?.category)?.value,
     fullName: state.person.name,
     recipient: context.recipient,
@@ -203,14 +320,34 @@ export function betreffAlsVorschlag(state: MappeEditorState, jobs: readonly Mapp
   return state.customSubject !== null && state.customSubject.trim() === letterSubject(state, jobs) ? { ...state, customSubject: null } : state;
 }
 
-/** Nichts eingetragen, was über die reine Vorlage hinausgeht. */
+/** Hat der Abschnitt Inhalt, unabhängig davon, ob er gezeigt wird (Aufbau: „Noch leer“)? */
+export function abschnittHatInhalt(state: MappeEditorState, id: MappeSectionId): boolean {
+  switch (id) {
+    case 'career':
+      return !state.careerStations.every(isCareerStationEmpty);
+    case 'education':
+      return !state.educationStations.every(isEducationStationEmpty);
+    case 'skills':
+      return state.skills.length > 0;
+    case 'profile':
+      return state.profil.trim().length > 0;
+    case 'languages':
+      return state.sprachen.some((eintrag) => eintrag.sprache.trim());
+    case 'drivingLicenses':
+      return state.fuehrerschein.length > 0;
+    case 'interests':
+      return state.interessen.trim().length > 0;
+    case 'custom':
+      return state.eigenerText.trim().length > 0;
+  }
+}
+
+/** Nichts eingetragen, was über die reine Vorlage hinausgeht; ausgeblendete Abschnitte zählen nicht (sie gehen nicht mit). */
 export function isMappeEmpty(state: MappeEditorState): boolean {
   return (
-    state.skills.length === 0 &&
     state.workStyleId === null &&
     !state.customLetter?.trim() &&
-    state.careerStations.every(isCareerStationEmpty) &&
-    state.educationStations.every(isEducationStationEmpty)
+    MAPPE_SECTION_IDS.every((id) => !zeigt(state, id) || !abschnittHatInhalt(state, id))
   );
 }
 
@@ -218,16 +355,24 @@ const optionalText = (value: string): string | undefined => value.trim() || unde
 
 /**
  * Editor-Stand → Mappe laut Vertrag (ohne persönliche Angaben, Foto und Fotoform; das Design nur, wenn gewählt; der
- * Betreff nur mit Stelle oder eigenem Text, sentSubject).
+ * Betreff nur mit Stelle oder eigenem Text, sentSubject). Ausgeblendete Abschnitte gehen nicht mit (L5): Ihr Inhalt
+ * fehlt, und sie fehlen in `sections`. Neue Felder nur mit Inhalt, `sections` nur bei eigenem Aufbau.
  */
 export function toMappe(state: MappeEditorState, context: MappeContext): Mappe {
   const subject = sentSubject(state, context.jobs);
+  const z = (id: MappeSectionId) => zeigt(state, id);
+  const sprachen = state.sprachen
+    .map((eintrag) => ({ language: eintrag.sprache.trim(), level: eintrag.niveau.trim() }))
+    .filter((eintrag) => eintrag.language)
+    .map(({ language, level }) => (level ? { language, level } : { language }));
+  const klassen = FUEHRERSCHEIN_KLASSEN.filter((klasse) => state.fuehrerschein.includes(klasse));
+  const sections = sectionsAus(state);
   return {
     ...(istStandard(state.design) ? {} : { design: { ...state.design } }),
     coverLetter: resolveCoverLetter(state, context).trim(),
-    skills: state.skills.map((skill) => skill.trim()).filter(Boolean),
+    skills: z('skills') ? state.skills.map((skill) => skill.trim()).filter(Boolean) : [],
     workStyle: getWorkStyle(state.workStyleId, selectedJob(state, context.jobs)?.category)?.value,
-    careerStations: state.careerStations
+    careerStations: (z('career') ? state.careerStations : [])
       .filter((station) => !isCareerStationEmpty(station))
       .map((station) => ({
         period: station.period.trim(),
@@ -236,7 +381,7 @@ export function toMappe(state: MappeEditorState, context: MappeContext): Mappe {
         location: optionalText(station.location),
         tasks: splitTasks(station.tasks, MAPPE_LIMITS.tasksPerStation),
       })),
-    educationStations: state.educationStations
+    educationStations: (z('education') ? state.educationStations : [])
       .filter((station) => !isEducationStationEmpty(station))
       .map((station) => ({
         period: station.period.trim(),
@@ -245,7 +390,33 @@ export function toMappe(state: MappeEditorState, context: MappeContext): Mappe {
         location: optionalText(station.location),
       })),
     ...(subject ? { subject } : {}),
+    ...(z('profile') && state.profil.trim() ? { profile: state.profil.trim() } : {}),
+    ...(z('languages') && sprachen.length > 0 ? { languages: sprachen } : {}),
+    ...(z('drivingLicenses') && klassen.length > 0 ? { drivingLicenses: [...klassen] } : {}),
+    ...(z('interests') && state.interessen.trim() ? { interests: state.interessen.trim() } : {}),
+    ...(z('custom') && state.eigenerText.trim() ? { customText: state.eigenerText.trim() } : {}),
+    ...(sections ? { sections } : {}),
   };
+}
+
+/** Ein Abschnitt in der Vorschau (L5): Titel wie im Lebenslauf; `abschnitt` null = leerer Grundabschnitt (Platzhalter). */
+export interface VorschauAbschnitt {
+  id: MappeSectionId;
+  titel: string;
+  abschnitt: MappeAbschnitt | null;
+}
+
+/**
+ * Lebenslauf der Vorschau: die gezeigten Abschnitte in der Reihenfolge des Aufbaus, mit Inhalt aus derselben Mappe wie
+ * PDF und Mail (lebenslaufAbschnitte). Leere Grundabschnitte (Berufserfahrung, Schule und Ausbildung, Schwerpunkte)
+ * stehen als Platzhalter da, leere neue Abschnitte gar nicht.
+ */
+export function vorschauAbschnitte(state: MappeEditorState, context: MappeContext): VorschauAbschnitt[] {
+  const inhalt = new Map(lebenslaufAbschnitte(toMappe(state, context)).map((abschnitt) => [abschnitt.id, abschnitt]));
+  return state.aufbau
+    .filter((eintrag) => eintrag.sichtbar)
+    .map(({ id }) => ({ id, titel: abschnittTitel(state, id), abschnitt: inhalt.get(id) ?? null }))
+    .filter((eintrag) => eintrag.abschnitt !== null || GRUNDABSCHNITTE.has(eintrag.id));
 }
 
 /** Ort für den Zeichen-Hinweis (L5); `nurDownload`: steht nur im PDF zum Herunterladen, nie im PDF fürs Team. */
@@ -263,22 +434,27 @@ export function zeichenOrte(state: MappeEditorState, context: MappeContext): Map
   const { person } = state;
   const nurDownload = (ort: string, text: string): MappeZeichenOrt => ({ ort, text, nurDownload: true });
   const inBeiden = (ort: string, text: string): MappeZeichenOrt => ({ ort, text, nurDownload: false });
+  // Lebenslauf je Abschnitt mit seiner Überschrift (auch eine eigene steht im PDF), benannt wie im Editor
+  const abschnitte = new Map(lebenslaufAbschnitte(mappe).map((abschnitt) => [abschnitt.id, abschnitt]));
+  const lebenslauf = (id: MappeSectionId) => {
+    const abschnitt = abschnitte.get(id);
+    return inBeiden(ABSCHNITT_NAME[id], abschnitt ? abschnittTexte(abschnitt).join('\n') : '');
+  };
   return [
     nurDownload('Name', person.name),
     nurDownload('Telefon', person.phone),
     nurDownload('E-Mail', person.email),
     nurDownload('Wohnort', person.location),
-    inBeiden('Schwerpunkte', mappe.skills.join('\n')),
+    lebenslauf('skills'),
     inBeiden('Betreff', resolveSubject(state, context.jobs)),
     inBeiden('Anschreiben', mappe.coverLetter),
-    inBeiden(
-      'Berufserfahrung',
-      mappe.careerStations.flatMap((station) => [station.period, station.role, station.company, station.location ?? '', ...station.tasks]).join('\n'),
-    ),
-    inBeiden(
-      'Schule und Ausbildung',
-      mappe.educationStations.flatMap((station) => [station.period, station.degree, station.institution, station.location ?? '']).join('\n'),
-    ),
+    lebenslauf('career'),
+    lebenslauf('education'),
+    lebenslauf('profile'),
+    lebenslauf('languages'),
+    lebenslauf('drivingLicenses'),
+    lebenslauf('interests'),
+    lebenslauf('custom'),
   ];
 }
 
@@ -298,6 +474,11 @@ const SECTION_LABELS: Record<string, string> = {
   careerStations: 'Eine Station in der Berufserfahrung',
   educationStations: 'Eine Station in Schule und Ausbildung',
   subject: 'Der Betreff',
+  profile: 'Das Kurzprofil',
+  languages: 'Die Liste der Sprachen',
+  drivingLicenses: 'Die Angabe zum Führerschein',
+  interests: 'Der Text zu deinen Interessen',
+  customText: 'Der eigene Abschnitt',
 };
 
 export function describeIssue(path: readonly PropertyKey[]): string {
@@ -330,7 +511,21 @@ export function fromMappe(mappe: Mappe, jobId: ApplicationJobId | '' = ''): Mapp
       institution: station.institution,
       location: station.location ?? '',
     })),
+    aufbau: aufbauAus(mappe.sections),
+    profil: mappe.profile ?? '',
+    sprachen: (mappe.languages ?? [])
+      .slice(0, MAPPE_LIMITS.languages)
+      .map((eintrag) => ({ id: createStationId(), sprache: eintrag.language, niveau: eintrag.level ?? '' })),
+    fuehrerschein: FUEHRERSCHEIN_KLASSEN.filter((klasse) => mappe.drivingLicenses?.includes(klasse)),
+    interessen: mappe.interests ?? '',
+    eigenerText: mappe.customText ?? '',
   };
+}
+
+/** Aufbau aus `mappe.sections`: gelistete zuerst mit eigenem Titel, die übrigen in Standardreihenfolge; alle gezeigt. */
+function aufbauAus(sections: readonly MappeSection[] | undefined): AufbauEintrag[] {
+  const titel = new Map((sections ?? []).map((eintrag) => [eintrag.id, eintrag.title?.trim() || null]));
+  return aufbauFolge(sections).map(({ id }) => ({ id, sichtbar: true, titel: titel.get(id) ?? null }));
 }
 
 /* Wiederherstellung aus sessionStorage: tolerant, ungültige Teile fallen auf leer zurück (ohne zod). */
@@ -373,6 +568,30 @@ function careerDraft(value: unknown): CareerStationDraft | null {
     location: text(value.location, MAPPE_LIMITS.location),
     tasks: text(value.tasks, TASKS_TEXT_MAX),
   };
+}
+
+function spracheDraft(value: unknown): SpracheDraft | null {
+  if (!isRecord(value) || !isStationId(value.id)) return null;
+  return { id: value.id, sprache: text(value.sprache, MAPPE_LIMITS.language), niveau: text(value.niveau, MAPPE_LIMITS.languageLevel) };
+}
+
+/**
+ * Aufbau aus dem Entwurf: bekannte IDs je einmal, `sichtbar` nur bei false aus; Titel bis zur Grenze, sonst Standard.
+ * Fehlende Abschnitte kommen in Standardreihenfolge hinten dazu (Entwürfe von vor L5: Standardaufbau).
+ */
+function aufbauEntwurf(value: unknown): AufbauEintrag[] {
+  const aufbau: AufbauEintrag[] = [];
+  if (Array.isArray(value)) {
+    for (const eintrag of value.slice(0, MAPPE_SCHEMA_LIMITS.sectionsRaw)) {
+      if (!isRecord(eintrag)) continue;
+      const id = eintrag.id;
+      if (!(MAPPE_SECTION_IDS as readonly unknown[]).includes(id) || aufbau.some((platz) => platz.id === id)) continue;
+      const titel = typeof eintrag.titel === 'string' && eintrag.titel.length <= MAPPE_LIMITS.sectionTitle ? eintrag.titel : null;
+      aufbau.push({ id: id as MappeSectionId, sichtbar: eintrag.sichtbar !== false, titel });
+    }
+  }
+  for (const id of MAPPE_SECTION_IDS) if (!aufbau.some((platz) => platz.id === id)) aufbau.push({ id, sichtbar: true, titel: null });
+  return aufbau;
 }
 
 function educationDraft(value: unknown): EducationStationDraft | null {
@@ -418,5 +637,14 @@ export function parseEditorState(value: unknown): MappeEditorState | null {
     // Entwürfe von vor L3 haben kein Design: Standard
     design: designAus(value.design),
     fotoform: fotoformAus(value.fotoform),
+    // Entwürfe von vor L5 Teil B: Standardaufbau, neue Abschnitte leer
+    aufbau: aufbauEntwurf(value.aufbau),
+    profil: text(value.profil, MAPPE_LIMITS.profile),
+    sprachen: strictList(value.sprachen, MAPPE_LIMITS.languages, spracheDraft),
+    fuehrerschein: Array.isArray(value.fuehrerschein)
+      ? FUEHRERSCHEIN_KLASSEN.filter((klasse) => (value.fuehrerschein as unknown[]).includes(klasse))
+      : [],
+    interessen: text(value.interessen, MAPPE_LIMITS.interests),
+    eigenerText: text(value.eigenerText, MAPPE_LIMITS.customText),
   };
 }

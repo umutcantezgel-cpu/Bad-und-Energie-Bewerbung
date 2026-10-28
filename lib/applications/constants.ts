@@ -57,7 +57,9 @@ export const STORAGE_KEYS = {
  */
 // 2026-10-10: Bewerberdatenbank (Supabase, Frankfurt) als Empfänger und Auftragsverarbeiter ergänzt.
 // 2026-10-27: Mappe als PDF im Anhang der Team-Mail (von der Serverfunktion gesetzt, lib/mappe/pdf).
-export const PRIVACY_NOTICE_VERSIONS = ['2026-10', '2026-10-10', '2026-10-27'] as const;
+// 2026-10-28: Mappe frei umschreiben (L5): Betreff, Kurzprofil, Sprachen, Führerschein, Interessen, eigener Abschnitt,
+// Reihenfolge und Überschriften des Lebenslaufs; ausgeblendete Abschnitte gehen nicht mit.
+export const PRIVACY_NOTICE_VERSIONS = ['2026-10', '2026-10-10', '2026-10-27', '2026-10-28'] as const;
 export type PrivacyNoticeVersion = (typeof PRIVACY_NOTICE_VERSIONS)[number];
 export const PRIVACY_NOTICE_VERSION: PrivacyNoticeVersion = PRIVACY_NOTICE_VERSIONS[PRIVACY_NOTICE_VERSIONS.length - 1];
 
@@ -119,4 +121,23 @@ export const MAPPE_SCHEMA_LIMITS = Object.freeze({
    * lib/mappe/__tests__/serialize.test.ts).
    */
   subject: 160,
+  /**
+   * Mehr im Lebenslauf (L5 Teil B, Vertrag additiv wie `subject`, M-043): Kurzprofil, Sprachen mit Niveau,
+   * Führerscheinklassen, Interessen, ein eigener Abschnitt; dazu Reihenfolge und eigene Überschriften (`sections`).
+   */
+  profile: 600,
+  languages: 6,
+  language: 40,
+  languageLevel: 40,
+  drivingLicenses: 8,
+  drivingLicense: 10,
+  interests: 300,
+  customText: 1200,
+  sectionTitle: 60,
+  /** Mehr Einträge in `sections`: Der ganze Aufbau fällt weg (Standardaufbau), die Bewerbung bleibt. */
+  sectionsRaw: 16,
 });
+
+/** Abschnitte des Lebenslaufs (L5, Vertrag `mappe.sections`) in Standardreihenfolge. */
+export const MAPPE_SECTION_IDS = ['profile', 'career', 'education', 'skills', 'languages', 'drivingLicenses', 'interests', 'custom'] as const;
+export type MappeSectionId = (typeof MAPPE_SECTION_IDS)[number];

@@ -17,7 +17,7 @@ import {
   type MappeEditorState,
 } from '../editor';
 import { sendMappeFollowUp } from '../follow-up';
-import { MAPPE_LIMITS, SKILL_OPTIONS, WORK_STYLES } from '../options';
+import { FUEHRERSCHEIN_KLASSEN, MAPPE_LIMITS, SKILL_OPTIONS, WORK_STYLES } from '../options';
 import { emptyCareerStation, emptyEducationStation } from '../stations';
 import { buildSubject } from '../template';
 import {
@@ -176,6 +176,124 @@ describe('Betreff (L5, mappe.subject)', () => {
   });
 });
 
+describe('Mehr im Lebenslauf und Aufbau (L5 Teil B)', () => {
+  function vollerZusatz(): MappeEditorState {
+    return {
+      ...filledState(),
+      profil: '  Ruhig und genau.  ',
+      sprachen: [
+        { id: 's1', sprache: ' Deutsch ', niveau: ' Muttersprache ' },
+        { id: 's2', sprache: ' ', niveau: 'gut' },
+        { id: 's3', sprache: 'Englisch', niveau: ' ' },
+      ],
+      fuehrerschein: ['BE', 'B'],
+      interessen: 'Angeln',
+      eigenerText: 'Ersthelfer seit 2024',
+    };
+  }
+
+  it('Standardaufbau: neue Felder nur mit Inhalt, kein sections (alte Mappen bleiben dieselben)', () => {
+    expect(toMappe(filledState(), context)).not.toHaveProperty('sections');
+    expect(toMappe(filledState(), context)).not.toHaveProperty('profile');
+    const mappe = toMappe(vollerZusatz(), context);
+    expect(mappe).toMatchObject({
+      profile: 'Ruhig und genau.',
+      languages: [{ language: 'Deutsch', level: 'Muttersprache' }, { language: 'Englisch' }],
+      drivingLicenses: ['B', 'BE'],
+      interests: 'Angeln',
+      customText: 'Ersthelfer seit 2024',
+    });
+    expect(mappe).not.toHaveProperty('sections');
+    expect(serializeMappe(vollerZusatz(), context).ok).toBe(true);
+  });
+
+  it('ausgeblendet: Inhalt und Platz fehlen; Reihenfolge und eigene Titel gehen als sections mit', () => {
+    const state = vollerZusatz();
+    const aufbau = state.aufbau.map((eintrag) =>
+      eintrag.id === 'languages' ? { ...eintrag, sichtbar: false } : eintrag.id === 'career' ? { ...eintrag, titel: ' Praxis ' } : eintrag,
+    );
+    // Schwerpunkte ganz nach oben
+    const skills = aufbau.findIndex((eintrag) => eintrag.id === 'skills');
+    const neu = [aufbau[skills], ...aufbau.filter((_, i) => i !== skills)];
+    const mappe = toMappe({ ...state, aufbau: neu }, context);
+    expect(mappe).not.toHaveProperty('languages');
+    expect(mappe.sections).toEqual([
+      { id: 'skills' },
+      { id: 'profile' },
+      { id: 'career', title: 'Praxis' },
+      { id: 'education' },
+      { id: 'drivingLicenses' },
+      { id: 'interests' },
+      { id: 'custom' },
+    ]);
+    // Ein Titel gleich dem Standard ist keiner; Schwerpunkte ausgeblendet: weder Liste noch Satz im Brief der Vorlage
+    const versteckt = { ...state, aufbau: state.aufbau.map((e) => (e.id === 'skills' ? { ...e, sichtbar: false } : e.id === 'education' ? { ...e, titel: 'Schule und Ausbildung' } : e)) };
+    const ohneSchwerpunkte = toMappe(versteckt, context);
+    expect(ohneSchwerpunkte.skills).toEqual([]);
+    expect(ohneSchwerpunkte.coverLetter).not.toContain(SKILL_OPTIONS[0]);
+    expect(toMappe(state, context).coverLetter).toContain(SKILL_OPTIONS[0]);
+    expect(ohneSchwerpunkte.sections?.find((e) => e.id === 'education')).toEqual({ id: 'education' });
+  });
+
+  it('Rundweg über die Übergabe und den Entwurf; Entwürfe von vor L5 laden mit Standardwerten', () => {
+    const state = vollerZusatz();
+    const mitTitel = { ...state, aufbau: state.aufbau.map((e) => (e.id === 'custom' ? { ...e, titel: 'Weiterbildungen' } : e)) };
+    const mappe = toMappe(mitTitel, context);
+    const zurueck = fromMappe(mappe, 'anlagenmechaniker-shk');
+    expect(zurueck.aufbau.find((e) => e.id === 'custom')?.titel).toBe('Weiterbildungen');
+    expect(zurueck.fuehrerschein).toEqual(['B', 'BE']);
+    expect(toMappe(zurueck, context)).toEqual(mappe);
+    const storage = memoryStorage();
+    expect(writeDraft(storage, mitTitel, 1_000)).toBe(true);
+    const entwurf = readDraft(storage, 2_000)!;
+    expect(entwurf.profil).toBe(mitTitel.profil);
+    expect(entwurf.sprachen).toEqual(mitTitel.sprachen);
+    expect(entwurf.aufbau).toEqual(mitTitel.aufbau);
+    // Entwurf von vor L5 Teil B (ohne die neuen Felder): Standardaufbau, alles leer
+    const alt = memoryStorage({ [MAPPE_DRAFT_KEY]: JSON.stringify({ v: 1, savedAt: 5, state: filledState() }) });
+    const geladen = readDraft(alt, 10)!;
+    expect(geladen.aufbau).toEqual(createEmptyEditorState().aufbau);
+    expect([geladen.profil, geladen.interessen, geladen.eigenerText, geladen.sprachen, geladen.fuehrerschein]).toEqual(['', '', '', [], []]);
+  });
+
+  it('repariert einen kaputten Aufbau im Entwurf: unbekannt und doppelt fallen weg, fehlende hinten, zu lange Titel werden Standard', () => {
+    const storage = memoryStorage({
+      [MAPPE_DRAFT_KEY]: JSON.stringify({
+        v: 1,
+        savedAt: 5,
+        state: {
+          ...filledState(),
+          aufbau: [{ id: 'skills', sichtbar: false }, { id: 'skills' }, { id: 'kaputt' }, { id: 'career', titel: 'x'.repeat(61) }, 'x'],
+          fuehrerschein: ['B', 'Z', 'B'],
+          sprachen: [{ id: 's1', sprache: 'Deutsch', niveau: 'gut' }, { sprache: 'ohne id' }],
+        },
+      }),
+    });
+    const entwurf = readDraft(storage, 10)!;
+    expect(entwurf.aufbau.map((e) => [e.id, e.sichtbar, e.titel])).toEqual([
+      ['skills', false, null],
+      ['career', true, null],
+      ['profile', true, null],
+      ['education', true, null],
+      ['languages', true, null],
+      ['drivingLicenses', true, null],
+      ['interests', true, null],
+      ['custom', true, null],
+    ]);
+    expect(entwurf.fuehrerschein).toEqual(['B']);
+    // Ein ungültiger Eintrag verwirft die Liste wie bei den Stationen
+    expect(entwurf.sprachen).toEqual([]);
+  });
+
+  it('isMappeEmpty: neue Abschnitte zählen, ausgeblendete nicht', () => {
+    const leer = createEmptyEditorState('anlagenmechaniker-shk');
+    expect(isMappeEmpty({ ...leer, profil: 'Kurz' })).toBe(false);
+    expect(isMappeEmpty({ ...leer, fuehrerschein: ['B'] })).toBe(false);
+    expect(isMappeEmpty({ ...leer, sprachen: [{ id: 's', sprache: ' ', niveau: 'gut' }] })).toBe(true);
+    expect(isMappeEmpty({ ...leer, profil: 'Kurz', aufbau: leer.aufbau.map((e) => ({ ...e, sichtbar: e.id !== 'profile' })) })).toBe(true);
+  });
+});
+
 describe('MAPPE_LIMITS mirror mappeSchema', () => {
   const ok = (value: object) => mappeSchema.safeParse(value).success;
   const career = (patch: object = {}) => ({ period: 'p', role: 'r', company: 'c', tasks: [], ...patch });
@@ -197,6 +315,13 @@ describe('MAPPE_LIMITS mirror mappeSchema', () => {
     ['degree', (n: number) => ({ educationStations: [education({ degree: 'x'.repeat(n) })] }), MAPPE_LIMITS.degree],
     ['institution', (n: number) => ({ educationStations: [education({ institution: 'x'.repeat(n) })] }), MAPPE_LIMITS.institution],
     ['subject', (n: number) => ({ subject: 'x'.repeat(n) }), MAPPE_LIMITS.subject],
+    ['profile', (n: number) => ({ profile: 'x'.repeat(n) }), MAPPE_LIMITS.profile],
+    ['languages', (n: number) => ({ languages: Array.from({ length: n }, () => ({ language: 'D' })) }), MAPPE_LIMITS.languages],
+    ['language', (n: number) => ({ languages: [{ language: 'x'.repeat(n) }] }), MAPPE_LIMITS.language],
+    ['languageLevel', (n: number) => ({ languages: [{ language: 'D', level: 'x'.repeat(n) }] }), MAPPE_LIMITS.languageLevel],
+    ['drivingLicenses', (n: number) => ({ drivingLicenses: Array.from({ length: n }, () => 'B') }), MAPPE_LIMITS.drivingLicenses],
+    ['interests', (n: number) => ({ interests: 'x'.repeat(n) }), MAPPE_LIMITS.interests],
+    ['customText', (n: number) => ({ customText: 'x'.repeat(n) }), MAPPE_LIMITS.customText],
   ])('%s', (_name, build, limit) => {
     expect(ok(build(limit))).toBe(true);
     expect(ok(build(limit + 1))).toBe(false);
@@ -205,6 +330,10 @@ describe('MAPPE_LIMITS mirror mappeSchema', () => {
   it('keeps every predefined option within the limits', () => {
     expect(SKILL_OPTIONS.every((skill) => skill.length <= MAPPE_LIMITS.skill)).toBe(true);
     expect(WORK_STYLES.every((style) => style.value.length <= MAPPE_LIMITS.workStyle)).toBe(true);
+    // Alle Führerschein-Chips zusammen passen in den Vertrag
+    expect(FUEHRERSCHEIN_KLASSEN.length).toBeLessThanOrEqual(MAPPE_SCHEMA_LIMITS.drivingLicenses);
+    expect(FUEHRERSCHEIN_KLASSEN.every((klasse) => klasse.length <= MAPPE_SCHEMA_LIMITS.drivingLicense)).toBe(true);
+    expect(MAPPE_LIMITS.sectionTitle).toBe(MAPPE_SCHEMA_LIMITS.sectionTitle);
   });
 });
 

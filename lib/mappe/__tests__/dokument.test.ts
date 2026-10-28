@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Mappe } from '@/lib/applications/schema';
-import { mappeDokument } from '@/lib/mappe/blatt/dokument';
+import { fuehrerscheinText, lebenslaufAbschnitte, mappeDokument, spracheText } from '@/lib/mappe/blatt/dokument';
 import { getMappeRecipient } from '@/lib/mappe/context';
 
 const MAPPE: Mappe = {
@@ -33,10 +33,72 @@ describe('mappeDokument: was auf den Blättern der PDF steht', () => {
       text: 'Sehr geehrter Herr Demir,\n\nich bewerbe mich.',
     });
     expect(dokument.lebenslauf).toEqual({
-      beruf: [{ zeit: '2019–2024', titel: 'Geselle', ort: 'Muster GmbH, Gießen', aufgaben: ['Heizungsbau'] }],
-      ausbildung: [{ zeit: '2016–2019', titel: 'Ausbildung SHK', ort: 'Berufsschule Wetzlar' }],
-      schwerpunkte: ['Wärmepumpen', 'Löten'],
+      abschnitte: [
+        {
+          id: 'career',
+          titel: 'Berufserfahrung',
+          art: 'beruf',
+          stationen: [{ zeit: '2019–2024', titel: 'Geselle', ort: 'Muster GmbH, Gießen', aufgaben: ['Heizungsbau'] }],
+        },
+        {
+          id: 'education',
+          titel: 'Schule und Ausbildung',
+          art: 'ausbildung',
+          stationen: [{ zeit: '2016–2019', titel: 'Ausbildung SHK', ort: 'Berufsschule Wetzlar' }],
+        },
+        { id: 'skills', titel: 'Schwerpunkte', art: 'punkte', punkte: ['Wärmepumpen', 'Löten'] },
+      ],
     });
+  });
+
+  it('Mehr im Lebenslauf (L5): Kurzprofil oben, die neuen Abschnitte hinter den Schwerpunkten, leere fehlen', () => {
+    const mappe: Mappe = {
+      ...MAPPE,
+      profile: '  Zwei Sätze über mich.  ',
+      languages: [{ language: 'Deutsch', level: 'Muttersprache' }, { language: 'Englisch' }],
+      drivingLicenses: ['B', 'BE'],
+      interests: ' ',
+      customText: 'Ersthelfer seit 2024',
+    };
+    expect(lebenslaufAbschnitte(mappe).map((a) => [a.id, a.titel])).toEqual([
+      ['profile', 'Kurzprofil'],
+      ['career', 'Berufserfahrung'],
+      ['education', 'Schule und Ausbildung'],
+      ['skills', 'Schwerpunkte'],
+      ['languages', 'Sprachen'],
+      ['drivingLicenses', 'Führerschein'],
+      ['custom', 'Weiteres'],
+    ]);
+    const nach = new Map(lebenslaufAbschnitte(mappe).map((a) => [a.id, a]));
+    expect(nach.get('profile')).toMatchObject({ art: 'text', text: 'Zwei Sätze über mich.' });
+    expect(nach.get('languages')).toMatchObject({ art: 'punkte', punkte: ['Deutsch (Muttersprache)', 'Englisch'] });
+    expect(nach.get('drivingLicenses')).toMatchObject({ art: 'text', text: 'Klassen B und BE' });
+    // Nur ein Kurzprofil ist auch ein Lebenslauf
+    const nurProfil = { coverLetter: '', skills: [], careerStations: [], educationStations: [], profile: 'Kurz.' };
+    expect(mappeDokument({ ...EINGABEN, mappe: nurProfil })!.lebenslauf!.abschnitte).toHaveLength(1);
+  });
+
+  it('Reihenfolge und Titel aus sections; nicht gelistete mit Inhalt hinten in Standardreihenfolge', () => {
+    const mappe: Mappe = {
+      ...MAPPE,
+      customText: 'Ersthelfer',
+      sections: [{ id: 'skills' }, { id: 'custom', title: 'Weiterbildungen' }, { id: 'career', title: 'Praxis' }],
+    };
+    expect(lebenslaufAbschnitte(mappe).map((a) => [a.id, a.titel])).toEqual([
+      ['skills', 'Schwerpunkte'],
+      ['custom', 'Weiterbildungen'],
+      ['career', 'Praxis'],
+      ['education', 'Schule und Ausbildung'],
+    ]);
+  });
+
+  it('spracheText und fuehrerscheinText', () => {
+    expect(spracheText({ language: ' Türkisch ', level: ' gut ' })).toBe('Türkisch (gut)');
+    expect(spracheText({ language: 'Polnisch', level: ' ' })).toBe('Polnisch');
+    expect(fuehrerscheinText([])).toBe('');
+    expect(fuehrerscheinText(['B'])).toBe('Klasse B');
+    expect(fuehrerscheinText(['B', 'BE'])).toBe('Klassen B und BE');
+    expect(fuehrerscheinText(['AM', 'B', 'C1E'])).toBe('Klassen AM, B und C1E');
   });
 
   it('ohne Brieftext kein Anschreiben, ohne Einträge kein Lebenslauf, ohne beides kein Dokument', () => {

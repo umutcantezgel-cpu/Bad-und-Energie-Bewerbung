@@ -45,3 +45,30 @@ export function EditorSection({ id, step, title, description, done = false, clas
     </section>
   );
 }
+
+export interface FreiwilligAbschnittProps {
+  id: string;
+  title: string;
+  description?: ReactNode;
+  children: ReactNode;
+}
+
+/**
+ * Freiwilliger Abschnitt nach den fünf nummerierten (L5: Mehr im Lebenslauf, Aufbau des Lebenslaufs): Etikett
+ * „Freiwillig“, h2, kurzer Text, wie beim Design. Zählt nicht zum Mappe-Stand, darum ohne Nummer.
+ */
+export function FreiwilligAbschnitt({ id, title, description, children }: FreiwilligAbschnittProps) {
+  const titleId = `${id}-title`;
+  return (
+    <section id={id} aria-labelledby={titleId} className={styles.abschnitt}>
+      <header className="flex flex-col gap-2">
+        <p className="text-etikett text-ink-2">Freiwillig</p>
+        <h2 id={titleId} className="text-title-2 text-brand">
+          {title}
+        </h2>
+        {description && <p className="max-w-prose text-callout text-ink-2">{description}</p>}
+      </header>
+      {children}
+    </section>
+  );
+}

@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { zeichenFunde } from '../blatt/zeichen';
 import { getMappeJobOptions, getMappeRecipient } from '../context';
 import {
+  abschnittHatInhalt,
+  abschnittTitel,
   betreffAlsVorschlag,
   createEmptyEditorState,
   describeIssue,
@@ -13,7 +15,9 @@ import {
   serializeMappe,
   templateLetter,
   toMappe,
+  vorschauAbschnitte,
   zeichenOrte,
+  type MappeEditorState,
 } from '../editor';
 import { BUERO_SKILL_OPTIONS, SKILL_OPTIONS, skillsFuerStelle } from '../options';
 import { buildSubject } from '../template';
@@ -151,7 +155,28 @@ describe('Zeichen-Hinweis (L5): Orte im Editor', () => {
       ['Anschreiben', false],
       ['Berufserfahrung', false],
       ['Schule und Ausbildung', false],
+      ['Kurzprofil', false],
+      ['Sprachen', false],
+      ['Führerschein', false],
+      ['Interessen', false],
+      ['Eigener Abschnitt', false],
     ]);
+  });
+
+  it('neue Abschnitte (L5): Funde je Abschnitt, auch in der eigenen Überschrift; ausgeblendete zählen nicht', () => {
+    const state = {
+      ...createEmptyEditorState('anlagenmechaniker-shk'),
+      profil: 'Ruhig 🙂',
+      sprachen: [{ id: 's1', sprache: 'Українська', niveau: 'Muttersprache' }],
+      eigenerText: 'Ehrenamt',
+      aufbau: createEmptyEditorState().aufbau.map((eintrag) => (eintrag.id === 'custom' ? { ...eintrag, titel: 'Ţitel' } : eintrag)),
+    };
+    expect(zeichenFunde(zeichenOrte(state, context))).toEqual([
+      { ort: 'Kurzprofil', nurDownload: false, fallenWeg: ['🙂'], fehlen: [] },
+      { ort: 'Sprachen', nurDownload: false, fallenWeg: [], fehlen: ['У', 'к', 'р', 'а', 'ї', 'н', 'с', 'ь'] },
+    ]);
+    const ausgeblendet = { ...state, aufbau: state.aufbau.map((eintrag) => ({ ...eintrag, sichtbar: eintrag.id !== 'languages' })) };
+    expect(zeichenFunde(zeichenOrte(ausgeblendet, context)).map((fund) => fund.ort)).toEqual(['Kurzprofil']);
   });
 
   it('findet je Ort, was im PDF fehlt; der Name steht auch im Anschreiben der Vorlage', () => {
@@ -170,5 +195,66 @@ describe('Zeichen-Hinweis (L5): Orte im Editor', () => {
       { ort: 'Berufserfahrung', nurDownload: false, fallenWeg: ['👷'], fehlen: [] },
     ]);
     expect(zeichenFunde(zeichenOrte(createEmptyEditorState('anlagenmechaniker-shk'), context))).toEqual([]);
+  });
+});
+
+describe('Mehr im Lebenslauf und Aufbau (L5 Teil B): Reducer, Titel, Vorschau', () => {
+  const context = { jobs: getMappeJobOptions(), recipient: getMappeRecipient() };
+  const leer = createEmptyEditorState('anlagenmechaniker-shk');
+
+  it('Führerschein umschalten: in der Reihenfolge der Chips, zweimal tippen nimmt die Klasse wieder weg', () => {
+    let state = mappeEditorReducer(leer, { type: 'fuehrerschein', klasse: 'CE' });
+    state = mappeEditorReducer(state, { type: 'fuehrerschein', klasse: 'AM' });
+    state = mappeEditorReducer(state, { type: 'fuehrerschein', klasse: 'B' });
+    expect(state.fuehrerschein).toEqual(['AM', 'B', 'CE']);
+    expect(mappeEditorReducer(state, { type: 'fuehrerschein', klasse: 'AM' }).fuehrerschein).toEqual(['B', 'CE']);
+  });
+
+  it('Texte, Sprachen und Titel über ihre Aktionen; verschieben tauscht Nachbarn, am Rand ändert sich nichts', () => {
+    let state = mappeEditorReducer(leer, { type: 'zusatz', feld: 'profil', text: 'Kurz' });
+    state = mappeEditorReducer(state, { type: 'zusatz', feld: 'interessen', text: 'Angeln' });
+    state = mappeEditorReducer(state, { type: 'zusatz', feld: 'eigenerText', text: 'Ehrenamt' });
+    state = mappeEditorReducer(state, { type: 'sprachen', action: { type: 'add', item: { id: 's1', sprache: 'Deutsch', niveau: '' }, max: 6 } });
+    expect([state.profil, state.interessen, state.eigenerText, state.sprachen.length]).toEqual(['Kurz', 'Angeln', 'Ehrenamt', 1]);
+
+    state = mappeEditorReducer(state, { type: 'abschnittVerschieben', id: 'skills', richtung: -1 });
+    expect(state.aufbau.map((e) => e.id).slice(0, 4)).toEqual(['profile', 'career', 'skills', 'education']);
+    expect(mappeEditorReducer(state, { type: 'abschnittVerschieben', id: 'profile', richtung: -1 })).toBe(state);
+    expect(mappeEditorReducer(state, { type: 'abschnittVerschieben', id: 'custom', richtung: 1 })).toBe(state);
+
+    state = mappeEditorReducer(state, { type: 'abschnittTitel', id: 'custom', titel: '  Weiter\nbildungen ' });
+    expect(abschnittTitel(state, 'custom')).toBe('Weiter bildungen');
+    expect(abschnittTitel(mappeEditorReducer(state, { type: 'abschnittTitel', id: 'custom', titel: '' }), 'custom')).toBe('Weiteres');
+    expect(abschnittTitel(mappeEditorReducer(state, { type: 'abschnittTitel', id: 'custom', titel: null }), 'custom')).toBe('Weiteres');
+    state = mappeEditorReducer(state, { type: 'abschnittSichtbar', id: 'interests', sichtbar: false });
+    expect(state.aufbau.find((e) => e.id === 'interests')?.sichtbar).toBe(false);
+  });
+
+  it('vorschauAbschnitte: Reihenfolge des Aufbaus, Platzhalter nur für die drei Grundabschnitte, Ausgeblendetes fehlt', () => {
+    expect(vorschauAbschnitte(leer, context).map((e) => [e.id, e.abschnitt === null])).toEqual([
+      ['career', true],
+      ['education', true],
+      ['skills', true],
+    ]);
+    let state: MappeEditorState = { ...leer, profil: 'Kurz', fuehrerschein: ['B'], skills: ['Löten'] };
+    state = mappeEditorReducer(state, { type: 'abschnittVerschieben', id: 'skills', richtung: -1 });
+    state = mappeEditorReducer(state, { type: 'abschnittSichtbar', id: 'education', sichtbar: false });
+    state = mappeEditorReducer(state, { type: 'abschnittTitel', id: 'career', titel: 'Praxis' });
+    expect(vorschauAbschnitte(state, context).map((e) => [e.id, e.titel, e.abschnitt?.art ?? null])).toEqual([
+      ['profile', 'Kurzprofil', 'text'],
+      ['career', 'Praxis', null],
+      ['skills', 'Schwerpunkte', 'punkte'],
+      ['drivingLicenses', 'Führerschein', 'text'],
+    ]);
+  });
+
+  it('abschnittHatInhalt prüft den Inhalt, nicht ob gezeigt; describeIssue nennt die neuen Felder', () => {
+    expect(abschnittHatInhalt(leer, 'languages')).toBe(false);
+    expect(abschnittHatInhalt({ ...leer, sprachen: [{ id: 's', sprache: ' ', niveau: 'gut' }] }, 'languages')).toBe(false);
+    expect(abschnittHatInhalt({ ...leer, sprachen: [{ id: 's', sprache: 'Deutsch', niveau: '' }] }, 'languages')).toBe(true);
+    expect(abschnittHatInhalt({ ...leer, eigenerText: 'x', aufbau: leer.aufbau.map((e) => ({ ...e, sichtbar: false })) }, 'custom')).toBe(true);
+    expect(describeIssue(['profile'])).toBe('Das Kurzprofil ist zu lang oder hat zu viele Einträge. Bitte kürze die Angabe.');
+    expect(describeIssue(['languages', 0, 'level'])).toBe('Die Liste der Sprachen ist zu lang oder hat zu viele Einträge. Bitte kürze die Angabe.');
+    expect(describeIssue(['customText'])).toBe('Der eigene Abschnitt ist zu lang oder hat zu viele Einträge. Bitte kürze die Angabe.');
   });
 });

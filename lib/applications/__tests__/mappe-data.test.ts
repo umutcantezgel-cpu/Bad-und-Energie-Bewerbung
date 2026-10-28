@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { MAPPE_SCHEMA_LIMITS as L } from '../constants';
-import { parseMappeData } from '../mappe-data';
+import { hatZusatzinhalt, mappeAufbauAus, parseMappeData } from '../mappe-data';
 import { mappeSchema } from '../schema';
 
 const career = (patch: object = {}) => ({ period: '2020', role: 'Geselle', company: 'Betrieb', tasks: ['Montage'], ...patch });
@@ -69,6 +69,51 @@ const samples: unknown[] = [
   { coverLetter: x(L.coverLetter + 1), subject: x(L.subject + 1) },
   { workStyle: x(L.workStyle + 1), subject: 3 },
   { careerStations: [career({ role: x(L.role + 1) })], subject: null },
+  // Mehr im Lebenslauf (L5 Teil B): optional ohne Default, Listen fehlen statt leer; Grenzen wie die übrigen Felder
+  { coverLetter: 'Hallo', profile: '  Kurz  ', interests: ' Angeln ', customText: ' Ehrenamt ' },
+  { coverLetter: 'Hallo', profile: x(L.profile) },
+  { coverLetter: 'Hallo', profile: x(L.profile + 1) },
+  { coverLetter: 'Hallo', profile: null },
+  { coverLetter: 'Hallo', interests: x(L.interests + 1) },
+  { coverLetter: 'Hallo', customText: x(L.customText) },
+  { coverLetter: 'Hallo', customText: x(L.customText + 1) },
+  { coverLetter: 'Hallo', customText: 5 },
+  { coverLetter: 'Hallo', languages: [{ language: ' Deutsch ', level: ' Muttersprache ' }, { language: 'Englisch' }] },
+  { coverLetter: 'Hallo', languages: Array.from({ length: L.languages }, () => ({ language: 'D' })) },
+  { coverLetter: 'Hallo', languages: Array.from({ length: L.languages + 1 }, () => ({ language: 'D' })) },
+  { coverLetter: 'Hallo', languages: [{ language: x(L.language + 1) }] },
+  { coverLetter: 'Hallo', languages: [{ language: 'D', level: x(L.languageLevel + 1) }] },
+  { coverLetter: 'Hallo', languages: [{ level: 'gut' }] },
+  { coverLetter: 'Hallo', languages: [{ language: 'D', level: null }] },
+  { coverLetter: 'Hallo', languages: [{ language: 'D', mehr: 1 }] },
+  { coverLetter: 'Hallo', languages: ['Deutsch'] },
+  { coverLetter: 'Hallo', languages: 'Deutsch' },
+  { coverLetter: 'Hallo', languages: null },
+  { coverLetter: 'Hallo', languages: [] },
+  { coverLetter: 'Hallo', drivingLicenses: [' B ', 'BE'] },
+  { coverLetter: 'Hallo', drivingLicenses: Array.from({ length: L.drivingLicenses }, () => 'B') },
+  { coverLetter: 'Hallo', drivingLicenses: Array.from({ length: L.drivingLicenses + 1 }, () => 'B') },
+  { coverLetter: 'Hallo', drivingLicenses: [x(L.drivingLicense + 1)] },
+  { coverLetter: 'Hallo', drivingLicenses: [3] },
+  // Aufbau: nie ein Ablehnungsgrund; Ungültiges fällt weg (wie das Design)
+  { coverLetter: 'Hallo', sections: [{ id: 'skills' }, { id: 'career', title: ' Praxis ' }] },
+  { coverLetter: 'Hallo', sections: [{ id: 'career', title: 'A\nB\tC' }] },
+  { coverLetter: 'Hallo', sections: [{ id: 'career', title: x(L.sectionTitle) }, { id: 'skills', title: x(L.sectionTitle + 1) }] },
+  { coverLetter: 'Hallo', sections: [{ id: 'career' }, { id: 'career' }, { id: 'unbekannt' }, 'skills'] },
+  { coverLetter: 'Hallo', sections: [{ id: 'toString' }, { id: 'constructor' }] },
+  { coverLetter: 'Hallo', sections: [Object.create({ id: 'career' })] },
+  { coverLetter: 'Hallo', sections: [{ id: 'career', title: 3, mehr: 1 }] },
+  { coverLetter: 'Hallo', sections: 'kaputt' },
+  { coverLetter: 'Hallo', sections: null },
+  { coverLetter: 'Hallo', sections: [] },
+  { coverLetter: 'Hallo', sections: Array.from({ length: L.sectionsRaw + 1 }, () => ({ id: 'career' })) },
+  { coverLetter: x(L.coverLetter + 1), sections: 'kaputt' },
+  // Erster Fehlerpfad in Schema-Reihenfolge
+  { subject: 3, profile: x(L.profile + 1) },
+  { profile: x(L.profile + 1), languages: 'x' },
+  { languages: [{ language: 3 }], drivingLicenses: [3] },
+  { drivingLicenses: [3], interests: 3 },
+  { interests: 3, customText: 3, sections: 'x' },
 ];
 
 describe('parseMappeData mirrors mappeSchema', () => {
@@ -88,5 +133,44 @@ describe('parseMappeData mirrors mappeSchema', () => {
     expect(mit.ok && mit.mappe.subject).toBe('Bewerbung als X');
     const schema = mappeSchema.parse({ subject: ' Bewerbung als X ', coverLetter: 'Hallo' });
     expect(Object.keys(schema)).toEqual(['coverLetter', 'skills', 'careerStations', 'educationStations', 'subject']);
+  });
+
+  it('Mehr im Lebenslauf (L5): ohne die neuen Felder dieselbe Mappe; mit ihnen hinten in Schema-Reihenfolge', () => {
+    const alle = {
+      sections: [{ id: 'custom', title: 'Weiterbildungen' }],
+      customText: 'Ehrenamt',
+      interests: 'Angeln',
+      drivingLicenses: ['B'],
+      languages: [{ language: 'Deutsch' }],
+      profile: 'Kurz',
+      subject: 'Bewerbung',
+      coverLetter: 'Hallo',
+    };
+    const plain = parseMappeData(alle);
+    const schluessel = ['coverLetter', 'skills', 'careerStations', 'educationStations', 'subject', 'profile', 'languages', 'drivingLicenses', 'interests', 'customText', 'sections'];
+    expect(plain.ok && Object.keys(plain.mappe)).toEqual(schluessel);
+    expect(Object.keys(mappeSchema.parse(alle))).toEqual(schluessel);
+    // Kaputter Aufbau: Der Schlüssel fällt in der JSON-Form weg, wie ohne ihn
+    expect(JSON.stringify(mappeSchema.parse({ coverLetter: 'Hallo', sections: 'kaputt' }))).toBe(JSON.stringify(mappeSchema.parse({ coverLetter: 'Hallo' })));
+  });
+
+  it('mappeAufbauAus: bekannte IDs je einmal, eigene Titel einzeilig und begrenzt, sonst Standardaufbau', () => {
+    expect(mappeAufbauAus([{ id: 'skills' }, { id: 'career', title: '  Praxis\n und  Projekte ' }, { id: 'skills' }])).toEqual([
+      { id: 'skills' },
+      { id: 'career', title: 'Praxis und Projekte' },
+    ]);
+    expect(mappeAufbauAus([{ id: 'career', title: x(L.sectionTitle + 1) }])).toEqual([{ id: 'career' }]);
+    expect(mappeAufbauAus([{ id: 'career', title: '\u0007' }])).toEqual([{ id: 'career' }]);
+    expect(mappeAufbauAus([])).toBeUndefined();
+    expect(mappeAufbauAus('kaputt')).toBeUndefined();
+    expect(mappeAufbauAus([Object.create({ id: 'career' })])).toBeUndefined();
+  });
+
+  it('hatZusatzinhalt: nur echte Angaben zählen', () => {
+    expect(hatZusatzinhalt({})).toBe(false);
+    expect(hatZusatzinhalt({ profile: ' ', languages: [{ language: ' ' }], drivingLicenses: [' '], interests: '', customText: ' ' })).toBe(false);
+    expect(hatZusatzinhalt({ languages: [{ language: 'Deutsch' }] })).toBe(true);
+    expect(hatZusatzinhalt({ drivingLicenses: ['B'] })).toBe(true);
+    expect(hatZusatzinhalt({ customText: 'Ehrenamt' })).toBe(true);
   });
 });

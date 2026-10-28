@@ -14,6 +14,7 @@ import {
   type ApplicationJobId,
   type Mappe,
 } from './schema';
+import { hatZusatzinhalt } from './mappe-data';
 import type { ApplicationJobInfo, NormalizedApplication, NormalizedFollowUp, NormalizedPhone, SpamSignal } from './types';
 
 /** Unterhalb dieser Ausfülldauer wird die Bewerbung als Spamverdacht markiert (nicht abgelehnt). */
@@ -86,12 +87,32 @@ export function compactMappe(mappe: Mappe | null | undefined): Mappe | undefined
   );
   // Einzeilig wie der Name (auch ohne Editor, etwa mit U+2028): Der Betreff steht als eine Zeile in Mail und PDF
   const subject = (mappe.subject && collapse(mappe.subject)) || undefined;
+  // Mehr im Lebenslauf (L5 Teil B): Sprachen ohne Namen und doppelte Führerscheinklassen fallen weg
+  const profile = mappe.profile?.trim() || undefined;
+  const languages = (mappe.languages ?? [])
+    .map((eintrag) => {
+      const level = eintrag.level?.trim();
+      return { language: eintrag.language.trim(), ...(level ? { level } : {}) };
+    })
+    .filter((eintrag) => eintrag.language);
+  const drivingLicenses = [...new Set((mappe.drivingLicenses ?? []).map((klasse) => klasse.trim()).filter(Boolean))];
+  const interests = mappe.interests?.trim() || undefined;
+  const customText = mappe.customText?.trim() || undefined;
+  const zusatz = { profile, languages, drivingLicenses, interests, customText };
 
-  if (!coverLetter && !workStyle && skills.length === 0 && careerStations.length === 0 && educationStations.length === 0) {
+  if (
+    !coverLetter &&
+    !workStyle &&
+    skills.length === 0 &&
+    careerStations.length === 0 &&
+    educationStations.length === 0 &&
+    !hatZusatzinhalt(zusatz)
+  ) {
     return undefined;
   }
-  // Design und Betreff allein sind keine Mappe; mit Inhalt reisen sie mit (L3: die PDF fürs Team folgt dem Design, L5:
-  // dem Betreff). Neue Schlüssel nur hinten und nur mit Inhalt: Ohne sie bleiben Inhalts-Hash und Schlüssel wie vorher.
+  // Design, Betreff und Aufbau allein sind keine Mappe; mit Inhalt reisen sie mit (L3: die PDF fürs Team folgt dem
+  // Design, L5: Betreff und Aufbau). Neue Schlüssel nur hinten und nur mit Inhalt: Ohne sie bleiben Inhalts-Hash und
+  // Schlüssel wie vorher.
   return {
     coverLetter,
     skills,
@@ -100,6 +121,12 @@ export function compactMappe(mappe: Mappe | null | undefined): Mappe | undefined
     educationStations,
     ...(mappe.design ? { design: mappe.design } : {}),
     ...(subject ? { subject } : {}),
+    ...(profile ? { profile } : {}),
+    ...(languages.length > 0 ? { languages } : {}),
+    ...(drivingLicenses.length > 0 ? { drivingLicenses } : {}),
+    ...(interests ? { interests } : {}),
+    ...(customText ? { customText } : {}),
+    ...(mappe.sections ? { sections: mappe.sections } : {}),
   };
 }
 

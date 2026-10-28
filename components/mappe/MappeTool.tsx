@@ -9,6 +9,7 @@ import { buildMappeShareMessage } from '@/lib/apply/whatsapp-message';
 import { readSubmitted, removeLegacyDossier, type SubmittedApplication } from '@/lib/apply/storage';
 import { zeichenFunde } from '@/lib/mappe/blatt/zeichen';
 import {
+  abschnittHatInhalt,
   betreffAlsVorschlag,
   createEmptyEditorState,
   fromMappe,
@@ -21,7 +22,9 @@ import {
   resolveSubject,
   selectedJob,
   serializeMappe,
+  vorschauAbschnitte,
   zeichenOrte,
+  zeigt,
   type MappeContext,
   type MappeEditorState,
 } from '@/lib/mappe/editor';
@@ -40,6 +43,7 @@ import {
 import type { MappeJobOption, MappeRecipient } from '@/lib/mappe/types';
 import { cn } from '@/lib/utils/cn';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
+import { AufbauSection } from './AufbauSection';
 import { DesignSection } from './DesignSection';
 import { JobSection } from './JobSection';
 import { LetterSection } from './LetterSection';
@@ -51,6 +55,7 @@ import styles from './stil';
 import { PersonalSection } from './PersonalSection';
 import { SkillsSection } from './SkillsSection';
 import { StationsSection } from './StationsSection';
+import { ZusatzSection } from './ZusatzSection';
 import { mappeStand, standText, type MappeStandWerte } from './stand';
 import { ZEICHEN_TEXT, ZeichenHinweis } from './ZeichenHinweis';
 
@@ -137,6 +142,8 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
   const kategorie = jobs.find((option) => option.id === state.jobId)?.category ?? null;
   // Betreff (L5): eigener Text oder Vorschlag der Stelle, derselbe in Vorschau, Druck und PDF
   const subject = resolveSubject(state, jobs);
+  // Lebenslauf der Vorschau in der Reihenfolge des Aufbaus, aus derselben Mappe wie PDF und Mail (L5)
+  const abschnitte = useMemo(() => vorschauAbschnitte(state, context), [state, context]);
   // Zeichen, die im PDF fehlen (L5): aus dem ruhigen Stand gerechnet, das Tippen bleibt flüssig
   const ruhig = useDeferredValue(state);
   const zeichen = useMemo(() => zeichenFunde(zeichenOrte(ruhig, context)), [ruhig, context]);
@@ -364,6 +371,29 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
           onEducation={(action) => dispatch({ type: 'education', action })}
           announce={announce}
         />
+        <ZusatzSection
+          profil={state.profil}
+          sprachen={state.sprachen}
+          fuehrerschein={state.fuehrerschein}
+          interessen={state.interessen}
+          eigenerTitel={state.aufbau.find((eintrag) => eintrag.id === 'custom')?.titel ?? null}
+          eigenerText={state.eigenerText}
+          onText={(feld, text) => dispatch({ type: 'zusatz', feld, text })}
+          onSprachen={(action) => dispatch({ type: 'sprachen', action })}
+          onFuehrerschein={(klasse) => dispatch({ type: 'fuehrerschein', klasse })}
+          onEigenerTitel={(titel) => dispatch({ type: 'abschnittTitel', id: 'custom', titel })}
+          announce={announce}
+        />
+        <AufbauSection
+          aufbau={state.aufbau}
+          hatInhalt={(id) => abschnittHatInhalt(state, id)}
+          zweispaltig={state.design.vorlage === 'zweispaltig'}
+          briefHinweis={state.customLetter !== null && state.skills.length > 0 && !zeigt(state, 'skills')}
+          onTitel={(id, titel) => dispatch({ type: 'abschnittTitel', id, titel })}
+          onSichtbar={(id, sichtbar) => dispatch({ type: 'abschnittSichtbar', id, sichtbar })}
+          onVerschieben={(id, richtung) => dispatch({ type: 'abschnittVerschieben', id, richtung })}
+          announce={announce}
+        />
         <DesignSection
           design={state.design}
           fotoform={state.fotoform}
@@ -419,9 +449,7 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
               subject={subject}
               letter={letter}
               recipient={recipient}
-              skills={state.skills}
-              career={state.careerStations}
-              education={state.educationStations}
+              abschnitte={abschnitte}
               photoUrl={photoUrl}
               today={today}
               design={state.design}

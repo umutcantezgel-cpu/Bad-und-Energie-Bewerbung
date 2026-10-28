@@ -1,5 +1,7 @@
+import type { MappeSectionId } from '@/lib/applications/constants';
 import type { Mappe } from '@/lib/applications/schema';
 import type { MappeRecipient } from '@/lib/mappe/types';
+import { aufbauFolge } from './aufbau';
 import { designAus, type MappeDesign } from './design';
 
 /**
@@ -23,6 +25,22 @@ export interface MappeBerufsstation extends MappeStation {
   aufgaben: readonly string[];
 }
 
+interface AbschnittBasis {
+  id: MappeSectionId;
+  /** Überschrift im Lebenslauf: eigener Titel aus `mappe.sections`, sonst der Standardtitel (./aufbau). */
+  titel: string;
+}
+
+/**
+ * Ein Abschnitt des Lebenslaufs (L5) in der Reihenfolge der Mappe: Stationen (Berufserfahrung, Schule und Ausbildung),
+ * Punkte (Schwerpunkte, Sprachen) oder Text (Kurzprofil, Führerschein, Interessen, eigener Abschnitt).
+ */
+export type MappeAbschnitt =
+  | (AbschnittBasis & { art: 'beruf'; stationen: readonly MappeBerufsstation[] })
+  | (AbschnittBasis & { art: 'ausbildung'; stationen: readonly MappeStation[] })
+  | (AbschnittBasis & { art: 'punkte'; punkte: readonly string[] })
+  | (AbschnittBasis & { art: 'text'; text: string });
+
 export interface MappeDokument {
   /** Titel der PDF, z. B. „Bewerbung Max Müller – Anlagenmechaniker SHK“. */
   titel: string;
@@ -32,11 +50,8 @@ export interface MappeDokument {
   /** Datumszeile, z. B. „27. Oktober 2026“. */
   datum: string;
   anschreiben: { empfaenger: readonly string[]; text: string } | null;
-  lebenslauf: {
-    beruf: readonly MappeBerufsstation[];
-    ausbildung: readonly MappeStation[];
-    schwerpunkte: readonly string[];
-  } | null;
+  /** Abschnitte mit Inhalt in der Reihenfolge der Mappe; null ohne jeden Eintrag (kein Blatt). */
+  lebenslauf: { abschnitte: readonly MappeAbschnitt[] } | null;
   /** Design, Farbe und Schrift aus der Mappe (L3); ohne Angabe der Standard „Schlicht“, Navy, Sachlich. */
   design: MappeDesign;
 }
@@ -55,9 +70,25 @@ export interface MappeDokumentEingaben {
 
 const sauber = (werte: readonly (string | undefined)[]) => werte.map((wert) => wert?.trim() ?? '').filter(Boolean);
 
-/** Dokument der Mappe; null, wenn weder Anschreiben noch Lebenslauf etwas zu zeigen haben. */
-export function mappeDokument({ name, betreff, stelle, datum, empfaenger, mappe }: MappeDokumentEingaben): MappeDokument | null {
-  const text = mappe.coverLetter.trim();
+/** „Deutsch (Muttersprache)“, ohne Niveau nur die Sprache. */
+export function spracheText(eintrag: { language: string; level?: string }): string {
+  const level = eintrag.level?.trim();
+  return level ? `${eintrag.language.trim()} (${level})` : eintrag.language.trim();
+}
+
+/** „Klasse B“, „Klassen B und BE“, „Klassen B, BE und C1E“; ohne Klassen leer. */
+export function fuehrerscheinText(klassen: readonly string[]): string {
+  const liste = sauber(klassen);
+  if (liste.length === 0) return '';
+  if (liste.length === 1) return `Klasse ${liste[0]}`;
+  return `Klassen ${liste.slice(0, -1).join(', ')} und ${liste[liste.length - 1]}`;
+}
+
+/**
+ * Abschnitte des Lebenslaufs mit Inhalt, in der Reihenfolge aus `mappe.sections` (fehlende in Standardreihenfolge
+ * dahinter, ./aufbau). Leere Stationen und leere Texte fallen weg wie bisher.
+ */
+export function lebenslaufAbschnitte(mappe: Mappe): MappeAbschnitt[] {
   const beruf = mappe.careerStations
     .map((station) => ({
       zeit: station.period.trim(),
@@ -74,6 +105,39 @@ export function mappeDokument({ name, betreff, stelle, datum, empfaenger, mappe 
     }))
     .filter((station) => station.zeit || station.titel || station.ort);
   const schwerpunkte = sauber(mappe.skills);
+  const sprachen = (mappe.languages ?? []).map(spracheText).filter(Boolean);
+  const fuehrerschein = fuehrerscheinText(mappe.drivingLicenses ?? []);
+  const text = (id: MappeSectionId, titel: string, wert: string | undefined): MappeAbschnitt | null =>
+    wert?.trim() ? { id, titel, art: 'text', text: wert.trim() } : null;
+
+  return aufbauFolge(mappe.sections)
+    .map(({ id, titel }): MappeAbschnitt | null => {
+      switch (id) {
+        case 'career':
+          return beruf.length > 0 ? { id, titel, art: 'beruf', stationen: beruf } : null;
+        case 'education':
+          return ausbildung.length > 0 ? { id, titel, art: 'ausbildung', stationen: ausbildung } : null;
+        case 'skills':
+          return schwerpunkte.length > 0 ? { id, titel, art: 'punkte', punkte: schwerpunkte } : null;
+        case 'languages':
+          return sprachen.length > 0 ? { id, titel, art: 'punkte', punkte: sprachen } : null;
+        case 'drivingLicenses':
+          return text(id, titel, fuehrerschein);
+        case 'profile':
+          return text(id, titel, mappe.profile);
+        case 'interests':
+          return text(id, titel, mappe.interests);
+        case 'custom':
+          return text(id, titel, mappe.customText);
+      }
+    })
+    .filter((abschnitt): abschnitt is MappeAbschnitt => abschnitt !== null);
+}
+
+/** Dokument der Mappe; null, wenn weder Anschreiben noch Lebenslauf etwas zu zeigen haben. */
+export function mappeDokument({ name, betreff, stelle, datum, empfaenger, mappe }: MappeDokumentEingaben): MappeDokument | null {
+  const text = mappe.coverLetter.trim();
+  const abschnitte = lebenslaufAbschnitte(mappe);
 
   const anschreiben = text
     ? {
@@ -86,7 +150,7 @@ export function mappeDokument({ name, betreff, stelle, datum, empfaenger, mappe 
         text,
       }
     : null;
-  const lebenslauf = beruf.length + ausbildung.length + schwerpunkte.length > 0 ? { beruf, ausbildung, schwerpunkte } : null;
+  const lebenslauf = abschnitte.length > 0 ? { abschnitte } : null;
   if (!anschreiben && !lebenslauf) return null;
 
   const vollerName = name?.trim() || null;

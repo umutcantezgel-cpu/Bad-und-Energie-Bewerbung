@@ -1,18 +1,13 @@
 'use client';
 
 import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
+import type { MappeSectionId } from '@/lib/applications/constants';
+import { SEITENSPALTE } from '@/lib/mappe/blatt/aufbau';
 import { AKZENT_FARBEN, type Fotoform, type MappeDesign } from '@/lib/mappe/blatt/design';
-import { fuerSchrift, titelschriftDeckt } from '@/lib/mappe/blatt/zeichen';
-import type { MappePerson } from '@/lib/mappe/editor';
+import type { MappeAbschnitt } from '@/lib/mappe/blatt/dokument';
+import { fuerSchrift, titelschriftDecktAlle } from '@/lib/mappe/blatt/zeichen';
+import type { MappePerson, VorschauAbschnitt } from '@/lib/mappe/editor';
 import { dateLine } from '@/lib/mappe/format';
-import {
-  isCareerStationEmpty,
-  isEducationStationEmpty,
-  splitTasks,
-  type CareerStationDraft,
-  type EducationStationDraft,
-} from '@/lib/mappe/stations';
-import { MAPPE_LIMITS } from '@/lib/mappe/options';
 import type { MappeRecipient } from '@/lib/mappe/types';
 import { cn } from '@/lib/utils/cn';
 import styles from './stil';
@@ -25,9 +20,8 @@ export interface MappePreviewProps {
   subject: string;
   letter: string;
   recipient: MappeRecipient;
-  skills: readonly string[];
-  career: readonly CareerStationDraft[];
-  education: readonly EducationStationDraft[];
+  /** Lebenslauf in der Reihenfolge des Aufbaus (vorschauAbschnitte): dieselben Abschnitte wie PDF und Mail (L5). */
+  abschnitte: readonly VorschauAbschnitt[];
   photoUrl: string | null;
   /** Formatted date of today; empty until mounted (the page is static). */
   today: string;
@@ -62,8 +56,10 @@ export function MappePreview({ className, design, fotoform, ...props }: MappePre
 
   const akzent = AKZENT_FARBEN[design.akzent];
   const farben = { '--blatt-akzent': akzent.farbe, '--blatt-akzent-toenung': akzent.toenung } as CSSProperties;
-  // Wie die PDF (fuerPdf): Markant nur, wenn die Titelschrift jedes Zeichen des Namens hat, sonst Sachlich statt Mischschrift
-  const schrift = design.schrift === 'markant' && !titelschriftDeckt(fuerSchrift(props.person.name)) ? 'sachlich' : design.schrift;
+  // Wie die PDF (fuerPdf): Markant nur, wenn die Titelschrift jedes Zeichen des Namens und der Überschriften hat, sonst
+  // Sachlich statt Mischschrift
+  const titel = [props.person.name, ...props.abschnitte.map((eintrag) => eintrag.titel)].map(fuerSchrift);
+  const schrift = design.schrift === 'markant' && !titelschriftDecktAlle(titel) ? 'sachlich' : design.schrift;
   return (
     <div
       ref={frameRef}
@@ -156,64 +152,60 @@ function CvSection({
   );
 }
 
-function CvPage({ person, subject, skills, career, education, photoUrl, today, zweispaltig }: PageProps & { zweispaltig: boolean }) {
-  const careerItems = career.filter((station) => !isCareerStationEmpty(station));
-  const educationItems = education.filter((station) => !isEducationStationEmpty(station));
-  const date = dateLine(person.location, today);
+/** Platzhalter leerer Grundabschnitte (nur am Bildschirm); neue Abschnitte erscheinen erst mit Inhalt. */
+const LEERTEXT: Partial<Record<MappeSectionId, string>> = {
+  career: 'Noch keine Berufserfahrung eingetragen.',
+  education: 'Noch kein Abschluss eingetragen.',
+  skills: 'Noch keine Schwerpunkte gewählt.',
+};
 
-  const beruf = (
-    <CvSection title="Berufserfahrung" isEmpty={careerItems.length === 0} emptyText="Noch keine Berufserfahrung eingetragen.">
-      {careerItems.map((station) => {
-        const tasks = splitTasks(station.tasks, MAPPE_LIMITS.tasksPerStation);
-        const place = [station.company.trim(), station.location.trim()].filter(Boolean).join(', ');
-        return (
-          <div key={station.id} className={styles.row}>
-            <p className="tabular-nums text-ink-muted">{station.period.trim()}</p>
-            <div className="flex min-w-0 flex-col">
-              {station.role.trim() && <p className="font-bold">{station.role.trim()}</p>}
-              {place && <p className="text-ink-muted">{place}</p>}
-              {tasks.length > 0 && (
-                <ul className="mt-1.5 list-disc pl-5">
-                  {tasks.map((task, index) => (
-                    <li key={index}>{task}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
+/** Inhalt eines Abschnitts wie in der PDF: Stationen in Zeilen, Punkte als Liste, Text als Absatz (L5). */
+function AbschnittInhalt({ abschnitt }: { abschnitt: MappeAbschnitt }) {
+  switch (abschnitt.art) {
+    case 'beruf':
+    case 'ausbildung':
+      return abschnitt.stationen.map((station, index) => (
+        <div key={index} className={styles.row}>
+          <p className="tabular-nums text-ink-muted">{station.zeit}</p>
+          <div className="flex min-w-0 flex-col">
+            {station.titel && <p className="font-bold">{station.titel}</p>}
+            {station.ort && <p className="text-ink-muted">{station.ort}</p>}
+            {'aufgaben' in station && station.aufgaben.length > 0 && (
+              <ul className="mt-1.5 list-disc pl-5">
+                {station.aufgaben.map((aufgabe, i) => (
+                  <li key={i}>{aufgabe}</li>
+                ))}
+              </ul>
+            )}
           </div>
-        );
-      })}
-    </CvSection>
-  );
-  const ausbildung = (
-    <CvSection
-      title="Schule und Ausbildung"
-      isEmpty={educationItems.length === 0}
-      emptyText="Noch kein Abschluss eingetragen."
-    >
-      {educationItems.map((station) => {
-        const place = [station.institution.trim(), station.location.trim()].filter(Boolean).join(', ');
-        return (
-          <div key={station.id} className={styles.row}>
-            <p className="tabular-nums text-ink-muted">{station.period.trim()}</p>
-            <div className="flex min-w-0 flex-col">
-              {station.degree.trim() && <p className="font-bold">{station.degree.trim()}</p>}
-              {place && <p className="text-ink-muted">{place}</p>}
-            </div>
-          </div>
-        );
-      })}
-    </CvSection>
-  );
-  const schwerpunkte = (
-    <CvSection title="Schwerpunkte" isEmpty={skills.length === 0} emptyText="Noch keine Schwerpunkte gewählt.">
-      <ul className="list-disc pl-5">
-        {skills.map((skill) => (
-          <li key={skill}>{skill}</li>
-        ))}
-      </ul>
-    </CvSection>
-  );
+        </div>
+      ));
+    case 'punkte':
+      return (
+        <ul className="list-disc pl-5">
+          {abschnitt.punkte.map((punkt, i) => (
+            <li key={i}>{punkt}</li>
+          ))}
+        </ul>
+      );
+    case 'text':
+      return <p className={styles.letter}>{abschnitt.text}</p>;
+  }
+}
+
+function CvPage({ person, subject, abschnitte, photoUrl, today, zweispaltig }: PageProps & { zweispaltig: boolean }) {
+  const date = dateLine(person.location, today);
+  const setze = (liste: readonly VorschauAbschnitt[]) =>
+    liste.map((eintrag) => (
+      <CvSection key={eintrag.id} title={eintrag.titel} isEmpty={eintrag.abschnitt === null} emptyText={LEERTEXT[eintrag.id] ?? ''}>
+        {eintrag.abschnitt && <AbschnittInhalt abschnitt={eintrag.abschnitt} />}
+      </CvSection>
+    ));
+  // Zweispaltig wie die PDF: kurze Abschnitte in der getönten Seitenspalte, nur wenn beide Spalten Inhalt haben
+  // (Platzhalter zählen nicht); sonst eine Spalte wie Schlicht
+  const seite = abschnitte.filter((eintrag) => SEITENSPALTE.has(eintrag.id));
+  const haupt = abschnitte.filter((eintrag) => !SEITENSPALTE.has(eintrag.id));
+  const spalten = zweispaltig && seite.some((eintrag) => eintrag.abschnitt) && haupt.some((eintrag) => eintrag.abschnitt);
 
   return (
     <article aria-labelledby="mappe-seite-lebenslauf" className={cn(styles.page, styles.paper)}>
@@ -231,21 +223,14 @@ function CvPage({ person, subject, skills, career, education, photoUrl, today, z
 
       <p className="mt-6 font-bold">{subject}</p>
 
-      {zweispaltig && skills.length > 0 && (careerItems.length > 0 || educationItems.length > 0) ? (
-        // Zweispaltig: Schwerpunkte in der getönten Seitenspalte, Stationen daneben (Zeitraum über dem Titel)
+      {spalten ? (
+        // Zweispaltig: Seitenspalte getönt, daneben die Hauptspalte (Zeitraum über dem Titel)
         <div className={styles.spalten}>
-          <div className={styles.seitenspalte}>{schwerpunkte}</div>
-          <div className={styles.hauptspalte}>
-            {beruf}
-            {ausbildung}
-          </div>
+          <div className={styles.seitenspalte}>{setze(seite)}</div>
+          <div className={styles.hauptspalte}>{setze(haupt)}</div>
         </div>
       ) : (
-        <>
-          {beruf}
-          {ausbildung}
-          {schwerpunkte}
-        </>
+        setze(abschnitte)
       )}
 
       <footer className="mt-auto flex items-end justify-between gap-8 pt-16">

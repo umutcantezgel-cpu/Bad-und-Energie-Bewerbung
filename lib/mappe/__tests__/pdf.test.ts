@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ergaenzung, full, maximal } from '@/lib/email/__tests__/fixtures';
+import { ergaenzung, full, maximal, maximalFrei } from '@/lib/email/__tests__/fixtures';
 import { getJobById } from '@/lib/jobs/registry';
 import { SCHRIFTSTILE, VORLAGEN } from '@/lib/mappe/blatt/design';
 import { mappeDokument } from '@/lib/mappe/blatt/dokument';
@@ -132,6 +132,59 @@ describe('PDF der Mappe im Anhang der Team-Mail', () => {
     // mit Schwerpunkten und Stationen wirklich zwei Spalten (andere Datei)
     expect((await mit('zweispaltig', {}))!.inhalt).not.toBe((await mit('schlicht', {}))!.inhalt);
   }, 30_000);
+
+  it('Mehr im Lebenslauf (L5): jedes Design setzt Kurzprofil, Sprachen, Führerschein, Interessen und eigenen Abschnitt', async () => {
+    const mappe = {
+      ...full.mappe!,
+      profile: 'Ruhig und genau, seit 2019 im Kundendienst.',
+      languages: [{ language: 'Deutsch', level: 'Muttersprache' }, { language: 'Türkisch', level: 'gut' }],
+      drivingLicenses: ['B', 'BE'],
+      interests: 'Angeln und Fußball im Verein',
+      customText: 'Ersthelfer seit 2024\nSchweißschein (WIG)',
+      sections: [{ id: 'custom' as const, title: 'Weiterbildungen' }],
+    };
+    const ohne = await mappeAnhangFuerBewerbung(full);
+    for (const vorlage of VORLAGEN) {
+      for (const schrift of SCHRIFTSTILE) {
+        const anhang = await mappeAnhangFuerBewerbung({ ...full, mappe: { ...mappe, design: { vorlage, akzent: 'tannengruen', schrift } } });
+        const fall = `${vorlage}/${schrift}`;
+        expect(anhang, fall).not.toBeNull();
+        expect(anhang!.seiten, fall).toBeGreaterThanOrEqual(2);
+        expect(anhang!.inhalt, fall).not.toBe(ohne!.inhalt);
+        expect(/BricolageGrotesque-Bold/.test(roh(anhang!.inhalt)), fall).toBe(schrift === 'markant');
+      }
+    }
+  }, 60_000);
+
+  it('Zweispaltig nur mit Inhalt für die Seitenspalte setzt genau wie Schlicht (L5: Schwerpunkte, Sprachen, Führerschein)', async () => {
+    const nurSeite = { coverLetter: 'Hallo', skills: ['Löten'], careerStations: [], educationStations: [], languages: [{ language: 'Deutsch' }], drivingLicenses: ['B'] };
+    const mit = (vorlage: 'schlicht' | 'zweispaltig') =>
+      mappeAnhangFuerBewerbung({ ...full, mappe: { ...nurSeite, design: { vorlage, akzent: 'kupfer', schrift: 'sachlich' } } });
+    expect((await mit('zweispaltig'))!.inhalt).toBe((await mit('schlicht'))!.inhalt);
+    // Mit Kurzprofil hat auch die Hauptspalte Inhalt: zwei Spalten
+    const mitProfil = (vorlage: 'schlicht' | 'zweispaltig') =>
+      mappeAnhangFuerBewerbung({ ...full, mappe: { ...nurSeite, profile: 'Kurz.', design: { vorlage, akzent: 'kupfer', schrift: 'sachlich' } } });
+    expect((await mitProfil('zweispaltig'))!.inhalt).not.toBe((await mitProfil('schlicht'))!.inhalt);
+  }, 30_000);
+
+  it('frei umgeschriebene Mappe an allen Grenzen (L5): jedes Design setzt sich ohne Abbruch, die Seitenspalte bricht um', async () => {
+    for (const vorlage of VORLAGEN) {
+      const dokument = fuerPdf(
+        mappeDokument({
+          name: 'Max Muster',
+          betreff: maximalFrei.mappe!.subject!,
+          stelle: 'Anlagenmechaniker SHK',
+          datum: '8. Oktober 2026',
+          empfaenger: getMappeRecipient(),
+          mappe: { ...maximalFrei.mappe!, design: { vorlage, akzent: 'graphit', schrift: 'markant' } },
+        })!,
+      )!;
+      expect(geschaetzterUmfang(dokument), vorlage).toBeLessThan(ZEILEN_HOECHSTENS / 2);
+      const { pdf, seiten } = await mappePdf(dokument, maximalFrei.submittedAt);
+      expect(pdf.subarray(0, 5).toString('latin1'), vorlage).toBe('%PDF-');
+      expect(seiten, vorlage).toBeGreaterThan(10);
+    }
+  }, 90_000);
 
   it('Spamverdacht: keine PDF (kein Satz für Bot-Anfragen), Grund im Log', async () => {
     expect(await mappeAnhangFuerBewerbung({ ...full, suspectedSpam: true, spamSignals: ['honeypot'] })).toBeNull();

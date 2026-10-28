@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import {
   APPLICANT,
   QUESTIONS,
@@ -214,6 +214,172 @@ test('Zeichen-Hinweis der Mappe (L5): kyrillisches Wort und Emoji im Anschreiben
   // Zeichen ersetzt: Der Hinweis verschwindet
   await letter.fill((await letter.inputValue()).replace('Дякую! 😊', 'Danke!'));
   await expect(hinweis).toHaveCount(0);
+});
+
+/** Bewerbung aus der Mappe absenden und die gesendete Mappe zurückgeben. */
+async function mitMappeBewerben(page: Page, testInfo: TestInfo) {
+  await page.getByRole('button', { name: 'Mit dieser Mappe bewerben' }).click();
+  await expect(page).toHaveURL(new RegExp(`/bewerbung\\?stelle=${MAIN_JOB_SLUG}`));
+  const flow = flowRoot(page, 'page');
+  await waitForHydration(flow);
+  const taps = new TapCounter(testInfo);
+  await answerQuestions(flow, taps);
+  await fillContact(flow);
+  const requestPromise = page.waitForRequest((request) => new URL(request.url()).pathname === '/api/bewerbung');
+  await taps.tap(submitButton(flow));
+  const payload = (await requestPromise).postDataJSON() as { mappe?: Record<string, unknown> };
+  await expectThankYou(page);
+  return payload.mappe;
+}
+
+/** Ohne Querscroll bei 320 px (der Maßstab der Vorschau folgt einen Frame später). */
+async function ohneQuerscroll(page: Page) {
+  await page.setViewportSize({ width: 320, height: 720 });
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth), { message: 'Querscroll bei 320 px' })
+    .toBeLessThanOrEqual(0);
+}
+
+test('Mehr im Lebenslauf (L5): Kurzprofil, Sprache, Führerschein, Interessen und eigener Abschnitt in Vorschau und Bewerbung', async ({ page }, testInfo) => {
+  await page.goto(`/bewerbung/mappe?stelle=${MAIN_JOB_SLUG}`);
+  const profil = page.getByRole('textbox', { name: 'Kurzprofil' });
+  await waitForHydration(profil);
+  await expect(page.getByText('Angaben zu Religion, Gesundheit, Partei oder Gewerkschaft brauchen wir für deine Bewerbung nicht.')).toBeVisible();
+
+  await profil.fill('Ruhig und genau, seit 2019 im Kundendienst.');
+  await page.getByRole('button', { name: 'Sprache hinzufügen' }).click();
+  const sprache = page.getByRole('list', { name: 'Sprachen' }).getByRole('listitem').first();
+  await expect(sprache.getByRole('textbox', { name: 'Sprache', exact: true })).toBeFocused();
+  await sprache.getByRole('textbox', { name: 'Sprache', exact: true }).fill('Deutsch');
+  await sprache.getByRole('textbox', { name: /^Niveau/ }).fill('Muttersprache');
+  await page.getByRole('button', { name: 'Klasse BE', exact: true }).click();
+  await page.getByRole('button', { name: 'Klasse B', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Klasse B', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('textbox', { name: 'Interessen' }).fill('Angeln');
+  await page.getByRole('textbox', { name: 'Überschrift des eigenen Abschnitts' }).fill('Weiterbildungen');
+  await page.getByRole('textbox', { name: 'Text des eigenen Abschnitts' }).fill('Ersthelfer seit 2024');
+
+  // Vorschau: Kurzprofil oben, die neuen Abschnitte hinter den Schwerpunkten, der eigene mit seiner Überschrift
+  const lebenslauf = page.locator('article[aria-labelledby="mappe-seite-lebenslauf"]');
+  await expect(lebenslauf.locator('h4')).toHaveText([
+    'Kurzprofil',
+    'Berufserfahrung',
+    'Schule und Ausbildung',
+    'Schwerpunkte',
+    'Sprachen',
+    'Führerschein',
+    'Interessen',
+    'Weiterbildungen',
+  ]);
+  for (const text of ['Ruhig und genau, seit 2019 im Kundendienst.', 'Deutsch (Muttersprache)', 'Klassen B und BE', 'Angeln', 'Ersthelfer seit 2024']) {
+    await expect(lebenslauf).toContainText(text);
+  }
+  await expectNoAxeViolations(page, testInfo);
+  if (isTouch(testInfo)) expect(await findSmallTouchTargets(page, 'main'), 'Trefferfläche < 44 px').toEqual([]);
+  const groesse = page.viewportSize()!;
+  await ohneQuerscroll(page);
+  await page.setViewportSize(groesse);
+
+  await page.getByRole('button', { name: WORK_STYLE }).click();
+  const mappe = await mitMappeBewerben(page, testInfo);
+  expect(mappe).toMatchObject({
+    profile: 'Ruhig und genau, seit 2019 im Kundendienst.',
+    languages: [{ language: 'Deutsch', level: 'Muttersprache' }],
+    drivingLicenses: ['B', 'BE'],
+    interests: 'Angeln',
+    customText: 'Ersthelfer seit 2024',
+  });
+  expect(mappe?.sections).toEqual([
+    { id: 'profile' },
+    { id: 'career' },
+    { id: 'education' },
+    { id: 'skills' },
+    { id: 'languages' },
+    { id: 'drivingLicenses' },
+    { id: 'interests' },
+    { id: 'custom', title: 'Weiterbildungen' },
+  ]);
+});
+
+test('Aufbau des Lebenslaufs (L5): verschieben, umbenennen und ausblenden; Vorschau und Bewerbung folgen, der Fokus bleibt', async ({ page }, testInfo) => {
+  await page.goto(`/bewerbung/mappe?stelle=${MAIN_JOB_SLUG}`);
+  const profil = page.getByRole('textbox', { name: 'Kurzprofil' });
+  await waitForHydration(profil);
+  await page.getByRole('group', { name: 'Schwerpunkte' }).getByRole('button').first().click();
+  await profil.fill('Kurzprofil zum Ausblenden');
+  await page.getByRole('button', { name: WORK_STYLE }).click();
+  const ansage = page.locator('[data-mappe-werkbank] > p[aria-live="polite"]');
+
+  // Schwerpunkte zweimal nach oben: Der Fokus bleibt auf dem Pfeil der verschobenen Zeile
+  const hoch = page.getByRole('button', { name: 'Schwerpunkte nach oben verschieben' });
+  await hoch.click();
+  await expect(hoch).toBeFocused();
+  await hoch.click();
+  await expect(hoch).toBeFocused();
+  await expect(ansage).toHaveText('Schwerpunkte steht jetzt an Stelle 2 von 8.');
+
+  // Umbenennen, „Standardtitel nehmen“ (Fokus zurück ins Feld), wieder umbenennen
+  const titel = page.getByRole('textbox', { name: 'Überschrift für „Berufserfahrung“' });
+  await titel.fill('Praxis');
+  await page.getByRole('button', { name: 'Standardtitel nehmen für „Berufserfahrung“' }).click();
+  await expect(titel).toHaveValue('Berufserfahrung');
+  await expect(titel).toBeFocused();
+  await expect(ansage).toHaveText('Standardtitel übernommen.');
+  await titel.fill('Praxis');
+
+  // Kurzprofil ausblenden: weg aus der Vorschau, im Aufbau als ausgeblendet benannt
+  const zeigen = page.getByRole('button', { name: 'Im Lebenslauf zeigen: Kurzprofil' });
+  await zeigen.click();
+  await expect(zeigen).toHaveAttribute('aria-pressed', 'false');
+  await expect(ansage).toHaveText('Kurzprofil ausgeblendet.');
+  await expect(page.getByText('Ausgeblendet: steht nicht im Lebenslauf und geht nicht mit.')).toBeVisible();
+  const lebenslauf = page.locator('article[aria-labelledby="mappe-seite-lebenslauf"]');
+  await expect(lebenslauf.locator('h4')).toHaveText(['Schwerpunkte', 'Praxis', 'Schule und Ausbildung']);
+  await expect(lebenslauf).not.toContainText('Kurzprofil zum Ausblenden');
+  await expectNoAxeViolations(page, testInfo);
+  if (isTouch(testInfo)) expect(await findSmallTouchTargets(page, 'main'), 'Trefferfläche < 44 px').toEqual([]);
+  const groesse = page.viewportSize()!;
+  await ohneQuerscroll(page);
+  await page.setViewportSize(groesse);
+
+  const mappe = await mitMappeBewerben(page, testInfo);
+  expect(mappe).not.toHaveProperty('profile');
+  expect(mappe?.sections).toEqual([
+    { id: 'skills' },
+    { id: 'career', title: 'Praxis' },
+    { id: 'education' },
+    { id: 'languages' },
+    { id: 'drivingLicenses' },
+    { id: 'interests' },
+    { id: 'custom' },
+  ]);
+});
+
+test('Schwerpunkte ausblenden (L5): Die Vorlage nennt sie nicht mehr; im eigenen Brief ein Hinweis mit Sprung ins Anschreiben', async ({ page }, testInfo) => {
+  await page.goto(`/bewerbung/mappe?stelle=${MAIN_JOB_SLUG}`);
+  const letter = page.getByRole('textbox', { name: 'Anschreiben' });
+  await waitForHydration(letter);
+  const chip = page.getByRole('group', { name: 'Schwerpunkte' }).getByRole('button').first();
+  const schwerpunkt = (await chip.innerText()).trim();
+  await chip.click();
+  await page.getByRole('button', { name: WORK_STYLE }).click();
+  await expect.poll(() => letter.inputValue()).toContain(schwerpunkt);
+
+  const zeigen = page.getByRole('button', { name: 'Im Lebenslauf zeigen: Schwerpunkte' });
+  await zeigen.click();
+  await expect.poll(() => letter.inputValue()).not.toContain(schwerpunkt);
+  await zeigen.click();
+  await expect.poll(() => letter.inputValue()).toContain(schwerpunkt);
+
+  // Selbst geänderter Brief: Er bleibt, wie er ist; der Hinweis sagt es und springt ins Feld
+  await letter.fill(`${await letter.inputValue()}\nIch freue mich auf ein Gespräch.`);
+  await zeigen.click();
+  await expect(page.getByText('Dein Anschreiben hast du selbst geändert: Steht darin etwas zu deinen Schwerpunkten, bleibt es dort stehen.')).toBeVisible();
+  await page.getByRole('link', { name: 'Zum Anschreiben' }).click();
+  await expect(letter).toBeFocused();
+  expect(await letter.inputValue()).toContain(schwerpunkt);
+  await expectNoAxeViolations(page, testInfo);
+  await ohneQuerscroll(page);
 });
 
 test('Mappe abwählen: Hinweis wechselt, Bewerbung geht ohne Mappe', async ({ page }) => {

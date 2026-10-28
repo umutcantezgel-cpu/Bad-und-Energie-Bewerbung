@@ -690,7 +690,12 @@
   margin-top: var(--blatt-abschnitt-oben);
 }
 
+/* Abstand der Abschnitte als gap wie in der Hauptspalte: Ein leerer, im Druck ausgeblendeter Abschnitt oben lässt keine
+   Lücke (L5: Sprachen, Führerschein und Interessen stehen hier mit den Schwerpunkten) */
 .seitenspalte {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--blatt-abschnitt-oben);
   padding: var(--blatt-seitenspalte-polster);
   border-radius: var(--radius-1);
   background-color: var(--blatt-akzent-toenung, #ECEDF3);
@@ -698,7 +703,7 @@
   print-color-adjust: exact;
 }
 
-.seitenspalte > section:first-child {
+.seitenspalte > section {
   margin-top: 0;
 }
 

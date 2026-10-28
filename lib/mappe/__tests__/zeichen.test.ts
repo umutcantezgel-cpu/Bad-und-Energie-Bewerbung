@@ -2,10 +2,11 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { STANDARD_DESIGN } from '@/lib/mappe/blatt/design';
-import type { MappeDokument } from '@/lib/mappe/blatt/dokument';
+import type { MappeAbschnitt, MappeDokument } from '@/lib/mappe/blatt/dokument';
 import {
   SCHRIFT_BEREICHE,
   TITEL_BEREICHE,
+  abschnittTexte,
   fehlendeZeichen,
   fuerPdf,
   fuerSchrift,
@@ -32,19 +33,33 @@ function bereicheAus(codepoints: number[]): [number, number][] {
   return bereiche;
 }
 
+const beruf = (stationen: Extract<MappeAbschnitt, { art: 'beruf' }>['stationen']): MappeAbschnitt => ({
+  id: 'career',
+  titel: 'Berufserfahrung',
+  art: 'beruf',
+  stationen,
+});
+const schwerpunkte = (punkte: string[]): MappeAbschnitt => ({ id: 'skills', titel: 'Schwerpunkte', art: 'punkte', punkte });
+const BERUF = beruf([{ zeit: '2019–2024', titel: 'Geselle', ort: 'Muster GmbH, Gießen', aufgaben: ['Wärmepumpen\u00adeinbau'] }]);
+const AUSBILDUNG: MappeAbschnitt = {
+  id: 'education',
+  titel: 'Schule und Ausbildung',
+  art: 'ausbildung',
+  stationen: [{ zeit: '2016–2019', titel: 'Ausbildung SHK', ort: 'Berufsschule Wetzlar' }],
+};
+
 const DOKUMENT: MappeDokument = {
   titel: 'Bewerbung Max Müller – Anlagenmechaniker SHK',
   name: 'Max Müller',
   betreff: 'Bewerbung als Anlagenmechaniker SHK (m/w/d)',
   datum: '27. Oktober 2026',
   anschreiben: { empfaenger: ['Bad und Energie GmbH Lahn Dill'], text: 'Sehr geehrter Herr Demir,\n\nich freue mich 🙂' },
-  lebenslauf: {
-    beruf: [{ zeit: '2019–2024', titel: 'Geselle', ort: 'Muster GmbH, Gießen', aufgaben: ['Wärmepumpen\u00adeinbau'] }],
-    ausbildung: [{ zeit: '2016–2019', titel: 'Ausbildung SHK', ort: 'Berufsschule Wetzlar' }],
-    schwerpunkte: ['Löten', 'Ölheizung'],
-  },
+  lebenslauf: { abschnitte: [BERUF, AUSBILDUNG, schwerpunkte(['Löten', 'Ölheizung'])] },
   design: STANDARD_DESIGN,
 };
+
+/** Abschnitt nach id aus einem bereinigten Dokument. */
+const abschnitt = (dokument: MappeDokument | null, id: MappeAbschnitt['id']) => dokument?.lebenslauf?.abschnitte.find((a) => a.id === id);
 
 describe('Zeichen der PDF-Schrift', () => {
   it('die Bereiche sind genau die Zeichentabelle beider Schnitte (400 und 700)', () => {
@@ -95,10 +110,10 @@ describe('Zeichen der PDF-Schrift', () => {
   it('fuerPdf: setzbares Dokument bereinigt, sonst null (kein Kästchen statt eines Buchstabens)', () => {
     const sauber = fuerPdf(DOKUMENT);
     expect(sauber?.anschreiben?.text).toBe('Sehr geehrter Herr Demir,\n\nich freue mich');
-    expect(sauber?.lebenslauf?.beruf[0].aufgaben).toEqual(['Wärmepumpeneinbau']);
+    expect(abschnitt(sauber, 'career')).toMatchObject({ stationen: [{ aufgaben: ['Wärmepumpeneinbau'] }] });
     expect(texte(sauber!).flatMap(fehlendeZeichen)).toEqual([]);
     expect(fuerPdf({ ...DOKUMENT, name: 'Иван Петров' })).toBeNull();
-    expect(fuerPdf({ ...DOKUMENT, lebenslauf: { ...DOKUMENT.lebenslauf!, schwerpunkte: ['日本語'] } })).toBeNull();
+    expect(fuerPdf({ ...DOKUMENT, lebenslauf: { abschnitte: [BERUF, AUSBILDUNG, schwerpunkte(['日本語'])] } })).toBeNull();
     // Ohne Namen (nachgereichte Mappe) geht es auch
     expect(fuerPdf({ ...DOKUMENT, name: null })?.name).toBeNull();
   });
@@ -108,18 +123,57 @@ describe('Zeichen der PDF-Schrift', () => {
       ...DOKUMENT,
       name: '😀😀',
       lebenslauf: {
-        beruf: [{ zeit: '', titel: '👷', ort: '', aufgaben: ['👍'] }, ...DOKUMENT.lebenslauf!.beruf],
-        ausbildung: DOKUMENT.lebenslauf!.ausbildung,
-        schwerpunkte: ['👍', 'Löten'],
+        abschnitte: [
+          beruf([{ zeit: '', titel: '👷', ort: '', aufgaben: ['👍'] }, ...(BERUF.art === 'beruf' ? BERUF.stationen : [])]),
+          AUSBILDUNG,
+          schwerpunkte(['👍', 'Löten']),
+        ],
       },
     })!;
     expect(nurEmoji.name).toBeNull();
     expect(nurEmoji.titel).toBe(DOKUMENT.betreff);
-    expect(nurEmoji.lebenslauf!.schwerpunkte).toEqual(['Löten']);
-    expect(nurEmoji.lebenslauf!.beruf).toHaveLength(1);
-    const leer = fuerPdf({ ...DOKUMENT, anschreiben: { empfaenger: ['x'], text: '🙂' }, lebenslauf: { beruf: [], ausbildung: [], schwerpunkte: ['🙂'] } })!;
+    expect(abschnitt(nurEmoji, 'skills')).toMatchObject({ punkte: ['Löten'] });
+    expect(abschnitt(nurEmoji, 'career')).toMatchObject({ stationen: [{ titel: 'Geselle' }] });
+    const leer = fuerPdf({ ...DOKUMENT, anschreiben: { empfaenger: ['x'], text: '🙂' }, lebenslauf: { abschnitte: [schwerpunkte(['🙂'])] } })!;
     expect(leer.anschreiben).toBeNull();
     expect(leer.lebenslauf).toBeNull();
+  });
+
+  it('fuerPdf (L5): Titel nur aus Emojis wird der Standardtitel, ein Textabschnitt nur aus Emojis fällt weg', () => {
+    const sauber = fuerPdf({
+      ...DOKUMENT,
+      lebenslauf: {
+        abschnitte: [
+          { id: 'profile', titel: 'Über mich 🙂', art: 'text', text: 'Zwei Sätze.\n\n\n\nÜber mich 👷' },
+          { id: 'custom', titel: '🎉', art: 'text', text: 'Ersthelfer seit 2024' },
+          { id: 'interests', titel: 'Interessen', art: 'text', text: '⚽🎸' },
+          { ...BERUF, titel: '🔧' },
+        ],
+      },
+    })!;
+    expect(sauber.lebenslauf!.abschnitte.map((a) => [a.id, a.titel])).toEqual([
+      ['profile', 'Über mich'],
+      ['custom', 'Weiteres'],
+      ['career', 'Berufserfahrung'],
+    ]);
+    expect(abschnitt(sauber, 'profile')).toMatchObject({ text: 'Zwei Sätze.\n\nÜber mich' });
+  });
+
+  it('fuerPdf (L5): Markant wird sachlich, wenn eine Überschrift ein Zeichen hat, das die Titelschrift nicht kennt', () => {
+    const markant = { ...DOKUMENT.design, schrift: 'markant' as const };
+    const mitTitel = (titel: string) =>
+      fuerPdf({ ...DOKUMENT, design: markant, lebenslauf: { abschnitte: [{ id: 'custom', titel, art: 'text', text: 'Text' }] } })!;
+    expect(mitTitel('Weiterbildungen').design.schrift).toBe('markant');
+    expect(mitTitel('Führerschein und Größe').design.schrift).toBe('markant');
+    // Ţ (U+0162) hat die Textschrift, die Titelschrift nicht
+    expect(mitTitel('Ţ').design.schrift).toBe('sachlich');
+  });
+
+  it('abschnittTexte: Überschrift und Inhalt je Art', () => {
+    expect(abschnittTexte(BERUF)).toEqual(['Berufserfahrung', '2019–2024', 'Geselle', 'Muster GmbH, Gießen', 'Wärmepumpen\u00adeinbau']);
+    expect(abschnittTexte(AUSBILDUNG)).toEqual(['Schule und Ausbildung', '2016–2019', 'Ausbildung SHK', 'Berufsschule Wetzlar']);
+    expect(abschnittTexte(schwerpunkte(['Löten']))).toEqual(['Schwerpunkte', 'Löten']);
+    expect(abschnittTexte({ id: 'interests', titel: 'Interessen', art: 'text', text: 'Angeln' })).toEqual(['Interessen', 'Angeln']);
   });
 });
 

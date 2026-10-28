@@ -1,4 +1,5 @@
-import type { MappeDokument } from './dokument';
+import { STANDARD_TITEL } from './aufbau';
+import type { MappeAbschnitt, MappeDokument } from './dokument';
 
 /**
  * Zeichen der PDF-Schrift (Atkinson Hyperlegible Next, statische Schnitte in lib/mappe/schriften): Eine PDF zeichnet nur,
@@ -115,6 +116,11 @@ export function titelschriftDeckt(text: string): boolean {
   return [...text].every((zeichen) => gedeckt(zeichen.codePointAt(0)!, TITEL_BEREICHE));
 }
 
+/** Kann die Titelschrift alle diese Texte zeichnen (Name und Überschriften, L5)? Sonst setzen PDF und Vorschau sachlich. */
+export function titelschriftDecktAlle(texte: readonly string[]): boolean {
+  return texte.every(titelschriftDeckt);
+}
+
 /** Zeichen, die die Schrift nicht zeichnen kann (Zeilenumbruch und Tab zählen nicht), je einmal in Reihenfolge. */
 export function fehlendeZeichen(text: string): string[] {
   const fehlend = new Set<string>();
@@ -185,14 +191,35 @@ export function fuerPdf(dokument: MappeDokument): MappeDokument | null {
   const liste = (werte: readonly string[]) => werte.map(t).filter(Boolean);
   const name = dokument.name === null ? null : t(dokument.name) || null;
   const text = dokument.anschreiben ? fuerSchrift(dokument.anschreiben.text).replace(/\n{3,}/g, '\n\n').trim() : '';
-  const lauf = dokument.lebenslauf;
-  const beruf = (lauf?.beruf ?? [])
-    .map((station) => ({ zeit: t(station.zeit), titel: t(station.titel), ort: t(station.ort), aufgaben: liste(station.aufgaben) }))
-    .filter((station) => station.zeit || station.titel || station.ort || station.aufgaben.length > 0);
-  const ausbildung = (lauf?.ausbildung ?? [])
-    .map((station) => ({ zeit: t(station.zeit), titel: t(station.titel), ort: t(station.ort) }))
-    .filter((station) => station.zeit || station.titel || station.ort);
-  const schwerpunkte = liste(lauf?.schwerpunkte ?? []);
+  // Je Abschnitt wie bisher: Stationen und Punkte bereinigt, Text wie der Brief; was leer wird, fällt weg. Ein Titel nur
+  // aus Emojis wird zum Standardtitel (L5).
+  const abschnitte = (dokument.lebenslauf?.abschnitte ?? [])
+    .map((abschnitt): MappeAbschnitt | null => {
+      const titel = t(abschnitt.titel) || STANDARD_TITEL[abschnitt.id];
+      switch (abschnitt.art) {
+        case 'beruf': {
+          const stationen = abschnitt.stationen
+            .map((station) => ({ zeit: t(station.zeit), titel: t(station.titel), ort: t(station.ort), aufgaben: liste(station.aufgaben) }))
+            .filter((station) => station.zeit || station.titel || station.ort || station.aufgaben.length > 0);
+          return stationen.length > 0 ? { ...abschnitt, titel, stationen } : null;
+        }
+        case 'ausbildung': {
+          const stationen = abschnitt.stationen
+            .map((station) => ({ zeit: t(station.zeit), titel: t(station.titel), ort: t(station.ort) }))
+            .filter((station) => station.zeit || station.titel || station.ort);
+          return stationen.length > 0 ? { ...abschnitt, titel, stationen } : null;
+        }
+        case 'punkte': {
+          const punkte = liste(abschnitt.punkte);
+          return punkte.length > 0 ? { ...abschnitt, titel, punkte } : null;
+        }
+        case 'text': {
+          const text = fuerSchrift(abschnitt.text).replace(/\n{3,}/g, '\n\n').trim();
+          return text ? { ...abschnitt, titel, text } : null;
+        }
+      }
+    })
+    .filter((abschnitt): abschnitt is MappeAbschnitt => abschnitt !== null);
   const sauber: MappeDokument = {
     ...dokument,
     // Wird der Name erst hier leer, nennt der Titel wie bei einer nachgereichten Mappe den Betreff
@@ -201,10 +228,10 @@ export function fuerPdf(dokument: MappeDokument): MappeDokument | null {
     betreff: t(dokument.betreff),
     datum: t(dokument.datum),
     anschreiben: dokument.anschreiben && text ? { empfaenger: liste(dokument.anschreiben.empfaenger), text } : null,
-    lebenslauf: beruf.length + ausbildung.length + schwerpunkte.length > 0 ? { beruf, ausbildung, schwerpunkte } : null,
-    // „Markant“ nur, wenn die Titelschrift den Namen zeichnen kann; sonst sachlich statt eines Kästchens
+    lebenslauf: abschnitte.length > 0 ? { abschnitte } : null,
+    // „Markant“ nur, wenn die Titelschrift den Namen und jede Überschrift zeichnen kann; sonst sachlich statt eines Kästchens
     design:
-      dokument.design.schrift === 'markant' && name !== null && !titelschriftDeckt(name)
+      dokument.design.schrift === 'markant' && !titelschriftDecktAlle([...(name !== null ? [name] : []), ...abschnitte.map((a) => a.titel)])
         ? { ...dokument.design, schrift: 'sachlich' }
         : dokument.design,
   };
@@ -220,12 +247,20 @@ export function texte(dokument: MappeDokument): string[] {
     dokument.betreff,
     dokument.datum,
     ...(anschreiben ? [...anschreiben.empfaenger, anschreiben.text] : []),
-    ...(lebenslauf
-      ? [
-          ...lebenslauf.beruf.flatMap((station) => [station.zeit, station.titel, station.ort, ...station.aufgaben]),
-          ...lebenslauf.ausbildung.flatMap((station) => [station.zeit, station.titel, station.ort]),
-          ...lebenslauf.schwerpunkte,
-        ]
-      : []),
+    ...(lebenslauf ? lebenslauf.abschnitte.flatMap(abschnittTexte) : []),
   ];
+}
+
+/** Überschrift und Inhalt eines Abschnitts (L5), wie sie auf dem Blatt stehen. */
+export function abschnittTexte(abschnitt: MappeAbschnitt): string[] {
+  switch (abschnitt.art) {
+    case 'beruf':
+      return [abschnitt.titel, ...abschnitt.stationen.flatMap((station) => [station.zeit, station.titel, station.ort, ...station.aufgaben])];
+    case 'ausbildung':
+      return [abschnitt.titel, ...abschnitt.stationen.flatMap((station) => [station.zeit, station.titel, station.ort])];
+    case 'punkte':
+      return [abschnitt.titel, ...abschnitt.punkte];
+    case 'text':
+      return [abschnitt.titel, abschnitt.text];
+  }
 }

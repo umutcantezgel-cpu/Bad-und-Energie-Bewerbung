@@ -146,6 +146,38 @@ export const maximal: ReferencedApplication = {
   },
 };
 
+const SPRACHEN = ['Deutsch', 'Türkisch', 'Englisch', 'Polnisch', 'Russisch', 'Arabisch'];
+
+/**
+ * Wie `maximal`, dazu alles aus „Mehr im Lebenslauf“ an den Grenzen und ein eigener Aufbau mit langen Titeln (L5 Teil B).
+ * `maximal` selbst bleibt unverändert: Seine PDF-Prüfsummen stehen in lib/mappe/__tests__/pdf-basis.test.ts.
+ */
+export const maximalFrei: ReferencedApplication = {
+  ...maximal,
+  mappe: {
+    ...maximal.mappe!,
+    subject: bis('Bewerbung als Anlagenmechaniker SHK für Wärmepumpen & Heizungstechnik (m/w/d), Schwerpunkt Hydraulik', LIMITS.subject),
+    profile: bis(`Kurzprofil: ${SATZ}`, LIMITS.profile),
+    languages: SPRACHEN.slice(0, LIMITS.languages).map((sprache) => ({
+      language: bis(`${sprache} in Wort und Schrift`, LIMITS.language),
+      level: bis('Muttersprache, verhandlungssicher auf der Baustelle', LIMITS.languageLevel),
+    })),
+    drivingLicenses: ['AM', 'A1', 'B', 'BE', 'C1', 'C1E', 'C', 'CE'].slice(0, LIMITS.drivingLicenses),
+    interests: bis(`Interessen: ${SATZ}`, LIMITS.interests),
+    customText: bis(`Weiterbildungen und Zertifikate: ${SATZ}`, LIMITS.customText),
+    sections: [
+      { id: 'profile' },
+      { id: 'skills' },
+      { id: 'languages', title: bis('Sprachen und Verständigung mit Kunden auf der Baustelle', LIMITS.sectionTitle) },
+      { id: 'career', title: 'Praxis' },
+      { id: 'education' },
+      { id: 'drivingLicenses' },
+      { id: 'interests' },
+      { id: 'custom', title: 'Weiterbildungen und Zertifikate' },
+    ],
+  },
+};
+
 export const ergaenzung: NormalizedFollowUp = {
   reference: 'BE-26-K7M4QX',
   idempotencyKey: 'h',
@@ -186,6 +218,8 @@ export const MAIL_VARIANTEN: readonly MailVariante[] = [
   // Mit Mappe liegt sie als PDF im Anhang (lib/mappe/pdf/anhang.ts); die Mail nennt Dateiname und Seiten.
   { name: 'team-mappe', to: TEAM, replyTo: full.email, render: () => renderApplicationTeamEmail(full, PDF_FULL) },
   { name: 'team-maximal', to: TEAM, replyTo: maximal.email, render: () => renderApplicationTeamEmail(maximal, PDF_MAXIMAL) },
+  // Mappe frei umgeschrieben (L5): eigener Aufbau, alle neuen Abschnitte an den Grenzen
+  { name: 'team-mappe-frei', to: TEAM, replyTo: maximal.email, render: () => renderApplicationTeamEmail(maximalFrei, PDF_MAXIMAL) },
   { name: 'bestaetigung', to: full.email ?? '', replyTo: TEAM, render: () => renderApplicationConfirmationEmail(full) },
   { name: 'ergaenzung', to: TEAM, replyTo: TEAM, render: () => renderApplicationFollowUpEmail(ergaenzung) },
   {

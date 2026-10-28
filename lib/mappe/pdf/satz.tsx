@@ -1,7 +1,8 @@
 import type { ComponentProps, ReactNode } from 'react';
 import { Document, Font, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { AKZENT_FARBEN, type Fotoform, type MappeDesign } from '@/lib/mappe/blatt/design';
-import type { MappeBerufsstation, MappeDokument, MappeStation } from '@/lib/mappe/blatt/dokument';
+import { SEITENSPALTE } from '@/lib/mappe/blatt/aufbau';
+import type { MappeAbschnitt, MappeBerufsstation, MappeDokument, MappeStation } from '@/lib/mappe/blatt/dokument';
 import { SCHLICHT, fotoMasse } from '@/lib/mappe/blatt/schlicht';
 
 /**
@@ -341,56 +342,45 @@ function Station({ station, einspaltig = false }: { station: MappeStation | Mapp
   );
 }
 
-function Lebenslaufteile({ lebenslauf, t }: { lebenslauf: NonNullable<MappeDokument['lebenslauf']>; t: Thema }) {
-  // Zwei Spalten nur mit Schwerpunkten und mindestens einer Station (wie die Vorschau); sonst genau wie Schlicht
-  const spalten =
-    t.design.vorlage === 'zweispaltig' &&
-    lebenslauf.schwerpunkte.length > 0 &&
-    lebenslauf.beruf.length + lebenslauf.ausbildung.length > 0;
-  const beruf =
-    lebenslauf.beruf.length > 0 ? (
-      <Abschnitt titel="Berufserfahrung" t={t} erster={spalten}>
-        {lebenslauf.beruf.map((station, i) => (
-          <Station key={i} station={station} einspaltig={spalten} />
-        ))}
-      </Abschnitt>
-    ) : null;
-  const ausbildung =
-    lebenslauf.ausbildung.length > 0 ? (
-      <Abschnitt titel="Schule und Ausbildung" t={t} erster={spalten && lebenslauf.beruf.length === 0}>
-        {lebenslauf.ausbildung.map((station, i) => (
-          <Station key={i} station={station} einspaltig={spalten} />
-        ))}
-      </Abschnitt>
-    ) : null;
-  const schwerpunkte =
-    lebenslauf.schwerpunkte.length > 0 ? (
-      <Abschnitt titel="Schwerpunkte" t={t} erster={spalten}>
+/** Inhalt eines Abschnitts (L5): Stationen, Punkte oder Text. `einspaltig`: Hauptspalte von „Zweispaltig“. */
+function AbschnittInhalt({ abschnitt, einspaltig }: { abschnitt: MappeAbschnitt; einspaltig: boolean }) {
+  switch (abschnitt.art) {
+    case 'beruf':
+    case 'ausbildung':
+      return abschnitt.stationen.map((station, i) => <Station key={i} station={station} einspaltig={einspaltig} />);
+    case 'punkte':
+      return (
         <View style={stil.aufgaben}>
-          <Punkte eintraege={lebenslauf.schwerpunkte} />
+          <Punkte eintraege={abschnitt.punkte} />
         </View>
-      </Abschnitt>
-    ) : null;
+      );
+    case 'text':
+      return <Satz style={stil.aufgaben}>{abschnitt.text}</Satz>;
+  }
+}
 
-  // Zweispaltig: Seitenspalte (getönt) mit den Schwerpunkten links, Stationen rechts
+function Lebenslaufteile({ lebenslauf, t }: { lebenslauf: NonNullable<MappeDokument['lebenslauf']>; t: Thema }) {
+  // Zweispaltig: kurze Abschnitte (Schwerpunkte, Sprachen, Führerschein, Interessen) in der getönten Seitenspalte, die
+  // übrigen daneben. Zwei Spalten nur, wenn beide etwas haben (wie die Vorschau); sonst genau wie Schlicht
+  const seite = lebenslauf.abschnitte.filter((abschnitt) => SEITENSPALTE.has(abschnitt.id));
+  const haupt = lebenslauf.abschnitte.filter((abschnitt) => !SEITENSPALTE.has(abschnitt.id));
+  const spalten = t.design.vorlage === 'zweispaltig' && seite.length > 0 && haupt.length > 0;
+  const setze = (liste: readonly MappeAbschnitt[], einspaltig: boolean) =>
+    liste.map((abschnitt, i) => (
+      <Abschnitt key={abschnitt.id} titel={abschnitt.titel} t={t} erster={spalten && i === 0}>
+        <AbschnittInhalt abschnitt={abschnitt} einspaltig={einspaltig} />
+      </Abschnitt>
+    ));
+
   if (spalten) {
     return (
       <View style={stil.spalten}>
-        <View style={[stil.seitenspalte, { backgroundColor: t.toenung }]}>{schwerpunkte}</View>
-        <View style={stil.hauptspalte}>
-          {beruf}
-          {ausbildung}
-        </View>
+        <View style={[stil.seitenspalte, { backgroundColor: t.toenung }]}>{setze(seite, false)}</View>
+        <View style={stil.hauptspalte}>{setze(haupt, true)}</View>
       </View>
     );
   }
-  return (
-    <>
-      {beruf}
-      {ausbildung}
-      {schwerpunkte}
-    </>
-  );
+  return <>{setze(lebenslauf.abschnitte, false)}</>;
 }
 
 export function MappePdf({

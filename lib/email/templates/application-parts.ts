@@ -1,6 +1,8 @@
+import { hatZusatzinhalt } from '@/lib/applications/mappe-data';
 import type { ApplicationAnswers, Mappe } from '@/lib/applications/schema';
 import type { NormalizedPhone } from '@/lib/applications/types';
 import { getQuestion, getQuestions, isAnswerKey, type AnswerKey, type QuestionSetId } from '@/lib/apply/questions';
+import { lebenslaufAbschnitte, type MappeAbschnitt } from '@/lib/mappe/blatt/dokument';
 import type { EmailBlockInput, EmailLink, EmailRow } from './layout';
 
 /** Bausteine, die Team-Mail und Ergänzungs-Mail teilen. Labels kommen aus lib/apply/questions.ts. */
@@ -60,7 +62,8 @@ export function nurPraxiserfahrung(mappe: Mappe | undefined): string[] | null {
     Boolean(mappe.coverLetter.trim()) ||
     Boolean(mappe.workStyle?.trim()) ||
     mappe.careerStations.length > 0 ||
-    mappe.educationStations.length > 0;
+    mappe.educationStations.length > 0 ||
+    hatZusatzinhalt(mappe);
   return skills.length > 0 && !sonstEtwas ? skills : null;
 }
 
@@ -75,23 +78,35 @@ export function mappePdfZeile(pdf: MappePdfHinweis): string {
   return `Als PDF im Anhang: ${pdf.dateiname} (${pdf.seiten} ${pdf.seiten === 1 ? 'Seite' : 'Seiten'})`;
 }
 
+/** Inhalt eines Lebenslauf-Abschnitts (L5) als Mail-Block: Stationen und Punkte als Liste, Text als Absatz. */
+function abschnittBlock(abschnitt: MappeAbschnitt): EmailBlockInput {
+  switch (abschnitt.art) {
+    case 'beruf':
+      return {
+        type: 'list',
+        items: abschnitt.stationen.map((station) =>
+          [joinParts([station.zeit, station.titel, station.ort], ' · '), ...station.aufgaben.map((aufgabe) => `– ${aufgabe}`)]
+            .filter(Boolean)
+            .join('\n'),
+        ),
+      };
+    case 'ausbildung':
+      return { type: 'list', items: abschnitt.stationen.map((station) => joinParts([station.zeit, station.titel, station.ort], ' · ')) };
+    case 'punkte':
+      return { type: 'list', items: [...abschnitt.punkte] };
+    case 'text':
+      return { type: 'paragraph', text: abschnitt.text };
+  }
+}
+
 /**
- * Bewerbungsmappe als Blöcke: Betreff (nur wenn mitgeschickt, L5), Anschreiben, Arbeitsstil, Fähigkeiten, Stationen.
- * Liegt die Mappe auch als PDF bei, sagt das die erste Zeile; der Text darunter bleibt (Vorschau im Postfach, Rückfall
- * ohne PDF).
+ * Bewerbungsmappe als Blöcke: Betreff (nur wenn mitgeschickt, L5), Anschreiben, Arbeitsstil, dann der Lebenslauf wie
+ * auf dem Blatt (lebenslaufAbschnitte: Reihenfolge und Überschriften der Mappe, Kurzprofil, Stationen, Schwerpunkte,
+ * Sprachen, Führerschein, Interessen, eigener Abschnitt). Liegt die Mappe auch als PDF bei, sagt das die erste Zeile; der
+ * Text darunter bleibt (Vorschau im Postfach, Rückfall ohne PDF).
  */
 export function mappeBlocks(mappe: Mappe | undefined, pdf?: MappePdfHinweis | null): EmailBlockInput[] {
   if (!mappe) return [];
-
-  const career = mappe.careerStations.map((station) => {
-    const head = joinParts([station.period, station.role, joinParts([station.company, station.location], ', ')], ' · ');
-    const tasks = station.tasks.filter((task) => task.trim()).map((task) => `– ${task}`);
-    return [head, ...tasks].filter(Boolean).join('\n');
-  });
-  const education = mappe.educationStations.map((station) =>
-    joinParts([station.period, station.degree, joinParts([station.institution, station.location], ', ')], ' · '),
-  );
-  const skills = mappe.skills.filter((skill) => skill.trim());
   const subject = mappe.subject?.trim();
 
   return [
@@ -100,16 +115,10 @@ export function mappeBlocks(mappe: Mappe | undefined, pdf?: MappePdfHinweis | nu
     subject ? { type: 'rows', rows: [{ label: 'Betreff', value: subject }] } : null,
     mappe.coverLetter.trim() ? { type: 'paragraph', text: 'Anschreiben', muted: true } : null,
     mappe.coverLetter.trim() ? { type: 'quote', text: mappe.coverLetter.trim() } : null,
-    {
-      type: 'rows',
-      rows: [
-        { label: 'Arbeitsstil', value: mappe.workStyle },
-        { label: 'Fähigkeiten', value: skills.join(', ') },
-      ],
-    },
-    career.length > 0 ? { type: 'paragraph', text: 'Berufliche Stationen', muted: true } : null,
-    career.length > 0 ? { type: 'list', items: career } : null,
-    education.length > 0 ? { type: 'paragraph', text: 'Schule und Ausbildung', muted: true } : null,
-    education.length > 0 ? { type: 'list', items: education } : null,
+    { type: 'rows', rows: [{ label: 'Arbeitsstil', value: mappe.workStyle }] },
+    ...lebenslaufAbschnitte(mappe).flatMap((abschnitt): EmailBlockInput[] => [
+      { type: 'paragraph', text: abschnitt.titel, muted: true },
+      abschnittBlock(abschnitt),
+    ]),
   ];
 }

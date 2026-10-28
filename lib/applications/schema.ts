@@ -14,6 +14,8 @@ import {
   PRIVACY_NOTICE_VERSIONS,
   type ApiErrorCode,
 } from './constants';
+// mappe-data importiert aus ./schema nur Typen: kein Zyklus zur Laufzeit
+import { mappeAufbauAus } from './mappe-data';
 
 /**
  * Shared contract between the application flow (client), the Bewerbungsmappe
@@ -100,6 +102,12 @@ const mappeDesignSchema = z.object({
   schrift: z.enum(MAPPE_DESIGN.schriften),
 });
 
+/** Sprache im Lebenslauf (L5): Sprache Pflicht, Niveau frei („Muttersprache“, „gut“, „B2“). */
+const mappeLanguageSchema = z.object({
+  language: trimmed(MAPPE.language),
+  level: trimmed(MAPPE.languageLevel).optional(),
+});
+
 /**
  * Structured Bewerbungsmappe (no photo: photos never leave the browser in Phase 1).
  * Browser code checks the same rules without zod: lib/applications/mappe-data.ts.
@@ -116,6 +124,14 @@ export const mappeSchema = z.object({
    * Default: Ohne ihn bleibt die Mappe dieselbe wie vor L5, und der Server rechnet den Betreff wie bisher aus der Stelle.
    */
   subject: trimmed(MAPPE.subject).optional(),
+  /** Mehr im Lebenslauf (L5 Teil B): alle optional und ohne Default, wie `subject`. */
+  profile: trimmed(MAPPE.profile).optional(),
+  languages: z.array(mappeLanguageSchema).max(MAPPE.languages).optional(),
+  drivingLicenses: z.array(trimmed(MAPPE.drivingLicense)).max(MAPPE.drivingLicenses).optional(),
+  interests: trimmed(MAPPE.interests).optional(),
+  customText: trimmed(MAPPE.customText).optional(),
+  /** Aufbau des Lebenslaufs: nie ein Ablehnungsgrund (wie `design`); dieselbe Funktion wie im Browser. */
+  sections: z.unknown().transform(mappeAufbauAus).optional(),
 });
 export type Mappe = z.infer<typeof mappeSchema>;
 

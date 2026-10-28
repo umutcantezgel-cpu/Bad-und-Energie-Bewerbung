@@ -13,7 +13,8 @@ import {
   renderEmail,
   type RenderedEmail,
 } from '@/lib/email/templates';
-import { PDF_ERGAENZUNG, PDF_FULL, XSS, base, full, hostile } from './fixtures';
+import { nurPraxiserfahrung } from '@/lib/email/templates/application-parts';
+import { PDF_ERGAENZUNG, PDF_FULL, PDF_MAXIMAL, XSS, base, full, hostile, maximalFrei } from './fixtures';
 
 function expectClean(text: string) {
   expect(text).not.toMatch(/\bundefined\b/);
@@ -84,6 +85,46 @@ describe('team notification', () => {
     expect(renderApplicationFollowUpEmail({ reference: 'BE-26-K7M4QX', idempotencyKey: 'h', receivedAt: new Date(), mappe: full.mappe }, PDF_ERGAENZUNG).text).toContain(
       `Als PDF im Anhang: ${PDF_ERGAENZUNG.dateiname}`,
     );
+  });
+
+  it('Lebenslauf wie auf dem Blatt (L5): Abschnitte in Reihenfolge mit ihren Titeln, Sprachen als Liste, Führerschein als Satz', () => {
+    const mappe = {
+      ...full.mappe!,
+      profile: 'Ruhig und genau, seit 2019 im Kundendienst.',
+      languages: [{ language: 'Deutsch', level: 'Muttersprache' }, { language: 'Englisch' }],
+      drivingLicenses: ['B', 'BE'],
+      customText: 'Ersthelfer seit 2024',
+      sections: [{ id: 'profile' as const }, { id: 'custom' as const, title: 'Weiterbildungen' }, { id: 'career' as const, title: 'Praxis' }],
+    };
+    const mail = renderApplicationTeamEmail({ ...full, mappe }, PDF_FULL);
+    const stelle = (text: string) => mail.text.indexOf(text);
+    for (const text of ['Kurzprofil', 'Ruhig und genau, seit 2019', 'Weiterbildungen', 'Ersthelfer seit 2024', 'Praxis', '2019–2024 · Geselle · Muster GmbH, Gießen']) {
+      expect(stelle(text), text).toBeGreaterThan(-1);
+    }
+    expect(stelle('Kurzprofil')).toBeLessThan(stelle('Weiterbildungen'));
+    expect(stelle('Weiterbildungen')).toBeLessThan(stelle('Praxis'));
+    expect(stelle('Praxis')).toBeLessThan(stelle('2019–2024 · Geselle'));
+    expect(mail.text).toContain('- Deutsch (Muttersprache)\n- Englisch');
+    expect(mail.text).toContain('Klassen B und BE');
+    // Die alten Etiketten weichen den Überschriften des Lebenslaufs
+    expect(mail.text).not.toContain('Fähigkeiten');
+    expect(mail.text).not.toContain('Berufliche Stationen');
+    expect(mail.text).toContain('Schwerpunkte');
+  });
+
+  it('Schwerpunkte und Sprachen zusammen sind keine „Praxiserfahrung“, sondern eine Mappe (L5)', () => {
+    const mappe = { coverLetter: '', skills: ['Wärmepumpen'], careerStations: [], educationStations: [], languages: [{ language: 'Deutsch' }] };
+    expect(nurPraxiserfahrung(mappe)).toBeNull();
+    expect(nurPraxiserfahrung({ ...mappe, languages: undefined })).toEqual(['Wärmepumpen']);
+    const mail = renderApplicationFollowUpEmail({ reference: 'BE-26-K7M4QX', idempotencyKey: 'h', receivedAt: new Date(), mappe });
+    expect(mail.text).toContain('Bewerbungsmappe');
+    expect(mail.text).toContain('Deutsch');
+  });
+
+  it('die frei umgeschriebene Mappe an allen Grenzen passt in eine Anfrage (64 KB) und in die Mail', () => {
+    const anfrage = JSON.stringify({ name: maximalFrei.name, phone: maximalFrei.phone.raw, email: maximalFrei.email, mappe: maximalFrei.mappe });
+    expect(Buffer.byteLength(anfrage, 'utf8')).toBeLessThan(64 * 1024);
+    expect(renderApplicationTeamEmail(maximalFrei, PDF_MAXIMAL).text).toContain('Weiterbildungen und Zertifikate');
   });
 
   it('names the subject of the Mappe (L5) between the PDF line and the letter; without one no such row', () => {

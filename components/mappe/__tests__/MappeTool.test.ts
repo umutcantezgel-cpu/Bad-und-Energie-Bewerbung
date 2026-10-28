@@ -37,9 +37,16 @@ describe('MappeTool (server render)', () => {
       'Schwerpunkte',
       'Arbeitsstil und Anschreiben',
       'Berufserfahrung und Ausbildung',
+      'Mehr im Lebenslauf',
+      'Aufbau des Lebenslaufs',
       'Design',
       'Vorschau',
     ]);
+    // Mehr im Lebenslauf (L5): der Satz zu sensiblen Angaben neutral, acht Führerschein-Chips mit Namen „Klasse …“
+    expect(html).toContain('Angaben zu Religion, Gesundheit, Partei oder Gewerkschaft brauchen wir für deine Bewerbung nicht.');
+    for (const klasse of ['AM', 'A1', 'B', 'BE', 'C1', 'C1E', 'C', 'CE']) {
+      expect(html).toContain(`<span class="sr-only">Klasse </span>${klasse}</button>`);
+    }
     expect(html).toContain('Mit dieser Mappe bewerben');
     // Zweitwege (L4): PDF herunterladen (im Browser gesetzt), Drucken, WhatsApp
     expect(html).toContain('PDF herunterladen');
@@ -93,9 +100,17 @@ describe('MappeTool (server render)', () => {
     expect(html).not.toContain('data-mappe-zeichen');
   });
 
-  it('labels the reorder controls only once entries exist', () => {
-    expect(html).not.toContain('nach oben verschieben');
+  it('labels the reorder controls of entries only once entries exist; the Aufbau names each section', () => {
+    expect(html).not.toContain('Eintrag 1 nach oben verschieben');
     expect(html).toContain('Berufserfahrung hinzufügen');
+    expect(html).toContain('Sprache hinzufügen');
+    // Aufbau (L5): acht Zeilen, je ein Paar Pfeile mit dem Namen des Abschnitts; oben und unten gesperrt
+    for (const name of ['Kurzprofil', 'Berufserfahrung', 'Schule und Ausbildung', 'Schwerpunkte', 'Sprachen', 'Führerschein', 'Interessen', 'Eigener Abschnitt']) {
+      expect(html).toContain(`aria-label="${name} nach oben verschieben"`);
+      expect(html).toContain(`aria-label="${name} nach unten verschieben"`);
+    }
+    expect(html).toMatch(/<button[^>]*aria-label="Kurzprofil nach oben verschieben"[^>]*disabled=""/);
+    expect(html).toMatch(/<button[^>]*aria-label="Eigener Abschnitt nach unten verschieben"[^>]*disabled=""/);
   });
 
   it('uses the own icon family only (no lucide)', () => {

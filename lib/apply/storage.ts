@@ -5,7 +5,7 @@ import {
   type ApplicationJobId,
   type ContactChannel,
 } from '@/lib/applications/constants';
-import { parseMappeData } from '@/lib/applications/mappe-data';
+import { hatZusatzinhalt, parseMappeData } from '@/lib/applications/mappe-data';
 import type { Mappe } from '@/lib/applications/schema';
 
 /**
@@ -132,7 +132,8 @@ export function hasMappeContent(mappe: Mappe): boolean {
     mappe.skills.length > 0 ||
     Boolean(mappe.workStyle?.trim()) ||
     mappe.careerStations.length > 0 ||
-    mappe.educationStations.length > 0
+    mappe.educationStations.length > 0 ||
+    hatZusatzinhalt(mappe)
   );
 }
 
