@@ -1,13 +1,17 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { MAPPE_SCHEMA_LIMITS } from '@/lib/applications/constants';
 import { STORAGE_KEYS, applicationFollowUpSchema, mappeSchema } from '@/lib/applications/schema';
 import { readSubmitted, removeLegacyDossier } from '@/lib/apply/storage';
+import { ALL_JOBS } from '@/lib/jobs/registry';
 import { getMappeJobOptions, getMappeRecipient } from '../context';
 import {
   createEmptyEditorState,
   fromMappe,
   isMappeEmpty,
+  letterSubject,
   resolveCoverLetter,
+  resolveSubject,
   serializeMappe,
   toMappe,
   type MappeEditorState,
@@ -15,6 +19,7 @@ import {
 import { sendMappeFollowUp } from '../follow-up';
 import { MAPPE_LIMITS, SKILL_OPTIONS, WORK_STYLES } from '../options';
 import { emptyCareerStation, emptyEducationStation } from '../stations';
+import { buildSubject } from '../template';
 import {
   MAPPE_DRAFT_KEY,
   MAPPE_DRAFT_TTL_MS,
@@ -115,6 +120,59 @@ describe('toMappe / serializeMappe', () => {
     expect(isMappeEmpty(createEmptyEditorState('anlagenmechaniker-shk'))).toBe(true);
     expect(isMappeEmpty({ ...createEmptyEditorState(), careerStations: [emptyCareerStation('x')] })).toBe(true);
     expect(isMappeEmpty(filledState())).toBe(false);
+    // Ein eigener Betreff allein ist keine Mappe (L5)
+    expect(isMappeEmpty({ ...createEmptyEditorState('anlagenmechaniker-shk'), customSubject: 'Mein Betreff' })).toBe(true);
+  });
+});
+
+describe('Betreff (L5, mappe.subject)', () => {
+  const job = context.jobs.find((option) => option.id === 'anlagenmechaniker-shk')!;
+  const vorschlag = buildSubject({ title: job.title, category: job.category });
+
+  it('with a job: the suggestion goes along until the applicant writes an own text (trimmed); an empty own text sends the suggestion', () => {
+    expect(letterSubject(filledState(), context.jobs)).toBe(vorschlag);
+    expect(toMappe(filledState(), context).subject).toBe(vorschlag);
+    expect(toMappe({ ...filledState(), customSubject: '  Mein eigener Betreff  ' }, context).subject).toBe('Mein eigener Betreff');
+    expect(toMappe({ ...filledState(), customSubject: '   ' }, context).subject).toBe(vorschlag);
+    expect(toMappe({ ...filledState(), jobId: 'initiativ' }, context).subject).toBe('Initiativbewerbung');
+  });
+
+  it('without a job and without an own text no subject: the server takes the job of the application as before', () => {
+    const ohneStelle = { ...filledState(), jobId: '' as const };
+    expect(resolveSubject(ohneStelle, context.jobs)).toBe('Bewerbung');
+    expect(toMappe(ohneStelle, context)).not.toHaveProperty('subject');
+    expect(toMappe({ ...ohneStelle, customSubject: ' ' }, context)).not.toHaveProperty('subject');
+    expect(toMappe({ ...ohneStelle, customSubject: 'Mein eigener Betreff' }, context).subject).toBe('Mein eigener Betreff');
+  });
+
+  it('round-trips an own subject through the handover and the draft', () => {
+    const state = { ...filledState(), customSubject: 'Mein eigener Betreff' };
+    const mappe = toMappe(state, context);
+    expect(fromMappe(mappe, 'anlagenmechaniker-shk').customSubject).toBe('Mein eigener Betreff');
+    expect(toMappe(fromMappe(mappe, 'anlagenmechaniker-shk'), context)).toEqual(mappe);
+    const storage = memoryStorage();
+    expect(writeDraft(storage, state, 1_000)).toBe(true);
+    expect(readDraft(storage, 2_000)?.customSubject).toBe('Mein eigener Betreff');
+  });
+
+  it('repairs a broken or missing customSubject in the draft to the suggestion (null)', () => {
+    for (const customSubject of [42, 'x'.repeat(MAPPE_LIMITS.subject + 1), null, undefined]) {
+      const storage = memoryStorage({
+        [MAPPE_DRAFT_KEY]: JSON.stringify({ v: 1, savedAt: 5, state: { ...filledState(), customSubject } }),
+      });
+      expect(readDraft(storage, 10)?.customSubject, String(customSubject)).toBeNull();
+    }
+  });
+
+  it('keeps every subject suggestion within the limit (every job, initiative, none), so no title blocks sending', () => {
+    const vorschlaege = [
+      ...ALL_JOBS.map((eintrag) => buildSubject({ title: eintrag.title, category: eintrag.category })),
+      ...context.jobs.map((option) => buildSubject({ title: option.title, category: option.category })),
+      buildSubject(null, true),
+      buildSubject(null),
+    ];
+    for (const betreff of vorschlaege) expect(betreff.length, betreff).toBeLessThanOrEqual(MAPPE_SCHEMA_LIMITS.subject);
+    expect(MAPPE_LIMITS.subject).toBe(MAPPE_SCHEMA_LIMITS.subject);
   });
 });
 
@@ -138,6 +196,7 @@ describe('MAPPE_LIMITS mirror mappeSchema', () => {
     ['location', (n: number) => ({ careerStations: [career({ location: 'x'.repeat(n) })] }), MAPPE_LIMITS.location],
     ['degree', (n: number) => ({ educationStations: [education({ degree: 'x'.repeat(n) })] }), MAPPE_LIMITS.degree],
     ['institution', (n: number) => ({ educationStations: [education({ institution: 'x'.repeat(n) })] }), MAPPE_LIMITS.institution],
+    ['subject', (n: number) => ({ subject: 'x'.repeat(n) }), MAPPE_LIMITS.subject],
   ])('%s', (_name, build, limit) => {
     expect(ok(build(limit))).toBe(true);
     expect(ok(build(limit + 1))).toBe(false);

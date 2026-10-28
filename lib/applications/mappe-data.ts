@@ -80,17 +80,17 @@ export function parseMappeData(value: unknown): MappeParseResult {
     const mappe = record(value, []);
     const workStyle = optionalText(mappe.workStyle, LIMITS.workStyle, ['workStyle']);
     const gestaltung = design(mappe.design);
-    return {
-      ok: true,
-      mappe: {
-        coverLetter: mappe.coverLetter === undefined ? '' : text(mappe.coverLetter, LIMITS.coverLetter, ['coverLetter']),
-        skills: list(mappe.skills, LIMITS.skills, ['skills'], (skill, path) => text(skill, LIMITS.skill, path)),
-        ...(workStyle !== undefined ? { workStyle } : {}),
-        careerStations: list(mappe.careerStations, LIMITS.careerStations, ['careerStations'], careerStation),
-        educationStations: list(mappe.educationStations, LIMITS.educationStations, ['educationStations'], educationStation),
-        ...(gestaltung ? { design: gestaltung } : {}),
-      },
+    const inhalt: Mappe = {
+      coverLetter: mappe.coverLetter === undefined ? '' : text(mappe.coverLetter, LIMITS.coverLetter, ['coverLetter']),
+      skills: list(mappe.skills, LIMITS.skills, ['skills'], (skill, path) => text(skill, LIMITS.skill, path)),
+      ...(workStyle !== undefined ? { workStyle } : {}),
+      careerStations: list(mappe.careerStations, LIMITS.careerStations, ['careerStations'], careerStation),
+      educationStations: list(mappe.educationStations, LIMITS.educationStations, ['educationStations'], educationStation),
+      ...(gestaltung ? { design: gestaltung } : {}),
     };
+    // Betreff (L5) nach den übrigen Feldern geprüft, wie im Schema: gleicher erster Fehlerpfad
+    const subject = optionalText(mappe.subject, LIMITS.subject, ['subject']);
+    return { ok: true, mappe: { ...inhalt, ...(subject !== undefined ? { subject } : {}) } };
   } catch (error) {
     if (error instanceof MappeIssue) return { ok: false, path: error.path };
     throw error;

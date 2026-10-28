@@ -55,8 +55,13 @@ const ERSATZ: Record<string, string> = {
   '\u2033': '"', // Sekundenzeichen
   '\u2027': '\u00b7', // Silbentrennpunkt → Mittelpunkt
 };
-/** Tabulator (aus Word kopiert) und Leerzeichen anderer Breite (ohne das schmale U+2009, das die Schrift hat) → Leerzeichen. */
-const LEERZEICHEN = /[\t\u2000-\u2008\u200a\u202f\u205f\u3000]/g;
+/**
+ * Tabulator (aus Word kopiert) und Leerzeichen anderer Breite (ohne das schmale U+2009, das die Schrift hat, dazu das
+ * Ogham-Leerzeichen U+1680) → Leerzeichen.
+ */
+const LEERZEICHEN = /[\t\u1680\u2000-\u2008\u200a\u202f\u205f\u3000]/g;
+/** Zeilen- und Absatztrenner (U+2028, U+2029, etwa aus kopierten Texten) → Zeilenumbruch. */
+const ZEILENTRENNER = /[\u2028\u2029]/g;
 /** Unsichtbare Zeichen (Breite null, Wortverbinder, BOM). */
 const UNSICHTBAR = /[\u200b-\u200d\u2060\ufeff]/g;
 /**
@@ -78,6 +83,7 @@ export function fuerSchrift(text: string): string {
   const ersetzt = text
     .normalize('NFC')
     .replace(/\r\n?/g, '\n')
+    .replace(ZEILENTRENNER, '\n')
     .replace(EMOJI, (zeichen) => (gedeckt(zeichen.codePointAt(0)!) ? zeichen : ''))
     .replace(UNSICHTBAR, '')
     .replace(LEERZEICHEN, ' ');
@@ -104,6 +110,53 @@ export function fehlendeZeichen(text: string): string[] {
     if (!gedeckt(zeichen.codePointAt(0)!)) fehlend.add(zeichen);
   }
   return [...fehlend];
+}
+
+/** Ein Ort im Editor mit seinem Text, etwa `{ ort: 'Anschreiben', text }`; weitere Angaben reisen mit in den Fund. */
+export interface ZeichenOrt {
+  ort: string;
+  text: string;
+}
+
+/** Zeichen eines Orts, die im PDF fehlen (je Zeichen einmal, in Reihenfolge; ein Zeichen ist ein Graphem). */
+export type ZeichenFund<O extends ZeichenOrt = ZeichenOrt> = Omit<O, 'text'> & {
+  /** Emojis, Flaggen und Bildzeichen: fallen weg, das PDF entsteht ohne sie. */
+  fallenWeg: string[];
+  /** Zeichen, die die Schrift nicht hat (etwa kyrillisch): Damit entsteht kein PDF. */
+  fehlen: string[];
+};
+
+const BILDZEICHEN = /[\p{Extended_Pictographic}\p{Regional_Indicator}]/u;
+
+let segmentierer: Intl.Segmenter | null | undefined;
+
+/** Text in Zeichen, wie man sie sieht (👍🏽 und 🇩🇪 je eines); ohne Intl.Segmenter (altes Firefox ESR) in Codepunkte. */
+function grapheme(text: string): string[] {
+  segmentierer ??= typeof Intl !== 'undefined' && 'Segmenter' in Intl ? new Intl.Segmenter('de', { granularity: 'grapheme' }) : null;
+  return segmentierer ? Array.from(segmentierer.segment(text), (teil) => teil.segment) : [...text];
+}
+
+/**
+ * Was das PDF aus den Texten des Editors macht, vorher sichtbar (L5): Graphem für Graphem wie fuerSchrift und
+ * fehlendeZeichen. Bleibt nach fuerSchrift etwas, das die Schrift nicht kennt, entsteht kein PDF („fehlen“); wird ein
+ * Emoji oder Bildzeichen leer, fällt es weg. Leerraum, weiche Trennzeichen und Unsichtbares sind kein Fund. Nur Orte
+ * mit Funden, in ihrer Reihenfolge. Ein Text ohne Bildzeichen, dem nach fuerSchrift nichts fehlt, hat keinen Fund und
+ * wird nicht zerlegt (lange Anschreiben beim Tippen).
+ */
+export function zeichenFunde<O extends ZeichenOrt>(orte: readonly O[]): ZeichenFund<O>[] {
+  const funde: ZeichenFund<O>[] = [];
+  for (const { text, ...ort } of orte) {
+    if (!BILDZEICHEN.test(text) && fehlendeZeichen(fuerSchrift(text)).length === 0) continue;
+    const fallenWeg = new Set<string>();
+    const fehlen = new Set<string>();
+    for (const zeichen of grapheme(text)) {
+      const sauber = fuerSchrift(zeichen);
+      if (fehlendeZeichen(sauber).length > 0) fehlen.add(zeichen);
+      else if (!sauber && BILDZEICHEN.test(zeichen)) fallenWeg.add(zeichen);
+    }
+    if (fallenWeg.size > 0 || fehlen.size > 0) funde.push({ ...ort, fallenWeg: [...fallenWeg], fehlen: [...fehlen] });
+  }
+  return funde;
 }
 
 /**

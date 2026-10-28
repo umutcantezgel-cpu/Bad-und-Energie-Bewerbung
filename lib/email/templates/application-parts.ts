@@ -76,8 +76,9 @@ export function mappePdfZeile(pdf: MappePdfHinweis): string {
 }
 
 /**
- * Bewerbungsmappe als Blöcke: Anschreiben, Arbeitsstil, Fähigkeiten, Stationen. Liegt die Mappe auch als PDF bei, sagt
- * das die erste Zeile; der Text darunter bleibt (Vorschau im Postfach, Rückfall ohne PDF).
+ * Bewerbungsmappe als Blöcke: Betreff (nur wenn mitgeschickt, L5), Anschreiben, Arbeitsstil, Fähigkeiten, Stationen.
+ * Liegt die Mappe auch als PDF bei, sagt das die erste Zeile; der Text darunter bleibt (Vorschau im Postfach, Rückfall
+ * ohne PDF).
  */
 export function mappeBlocks(mappe: Mappe | undefined, pdf?: MappePdfHinweis | null): EmailBlockInput[] {
   if (!mappe) return [];
@@ -91,10 +92,12 @@ export function mappeBlocks(mappe: Mappe | undefined, pdf?: MappePdfHinweis | nu
     joinParts([station.period, station.degree, joinParts([station.institution, station.location], ', ')], ' · '),
   );
   const skills = mappe.skills.filter((skill) => skill.trim());
+  const subject = mappe.subject?.trim();
 
   return [
     { type: 'heading', text: 'Bewerbungsmappe' },
     pdf ? { type: 'paragraph', text: mappePdfZeile(pdf) } : null,
+    subject ? { type: 'rows', rows: [{ label: 'Betreff', value: subject }] } : null,
     mappe.coverLetter.trim() ? { type: 'paragraph', text: 'Anschreiben', muted: true } : null,
     mappe.coverLetter.trim() ? { type: 'quote', text: mappe.coverLetter.trim() } : null,
     {

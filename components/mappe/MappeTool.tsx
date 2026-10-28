@@ -1,21 +1,27 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useDeferredValue, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react';
 import { useToast } from '@/components/ui';
 import { Leitungstrenner } from '@/components/zeichnung/Leitungstrenner';
 import { INITIATIVE_JOB_ID } from '@/lib/applications/constants';
 import { jobIdFromParam, paramForJob } from '@/lib/apply/params';
 import { buildMappeShareMessage } from '@/lib/apply/whatsapp-message';
 import { readSubmitted, removeLegacyDossier, type SubmittedApplication } from '@/lib/apply/storage';
+import { zeichenFunde } from '@/lib/mappe/blatt/zeichen';
 import {
+  betreffAlsVorschlag,
   createEmptyEditorState,
   fromMappe,
+  isInitiative,
   isMappeEmpty,
   letterSubject,
   mappeEditorReducer,
   mitStelle,
   resolveCoverLetter,
+  resolveSubject,
+  selectedJob,
   serializeMappe,
+  zeichenOrte,
   type MappeContext,
   type MappeEditorState,
 } from '@/lib/mappe/editor';
@@ -46,6 +52,7 @@ import { PersonalSection } from './PersonalSection';
 import { SkillsSection } from './SkillsSection';
 import { StationsSection } from './StationsSection';
 import { mappeStand, standText, type MappeStandWerte } from './stand';
+import { ZEICHEN_TEXT, ZeichenHinweis } from './ZeichenHinweis';
 
 export interface MappeToolProps {
   /** Built on the server from the job registry (lib/mappe/context.ts). */
@@ -57,6 +64,8 @@ export interface MappeToolProps {
 }
 
 const SAVE_DELAY_MS = 300;
+/** Ansage des Zeichen-Hinweises erst nach einer Pause beim Tippen (WCAG 4.1.3, nicht je Tastendruck). */
+const ZEICHEN_ANSAGE_MS = 1000;
 /** The flow (components/mappe/text.ts names it for the header; kept here so COMPANY stays out of the client bundle). */
 const APPLY_PATH = '/bewerbung';
 
@@ -117,12 +126,21 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
   const photoFileRef = useRef<File | null>(null);
   /** The state as restored on mount; nothing is written until it changes. */
   const restoredRef = useRef<MappeEditorState | null>(null);
+  /** Zeichen-Hinweis beim letzten ruhigen Stand: mit Funden oder ohne; null bis nach dem Wiederherstellen. */
+  const zeichenRef = useRef<boolean | null>(null);
+  /** Der Hinweis ist erschienen und noch nicht angesagt (die Ansage wartet auf eine Pause beim Tippen). */
+  const zeichenAnsageRef = useRef(false);
 
   const context: MappeContext = useMemo(() => ({ jobs, recipient }), [jobs, recipient]);
   const letter = resolveCoverLetter(state, context);
   // Stellenart der gewählten Stelle: Büro mit eigenen Schwerpunkten und Arbeitsstilen (E-031)
   const kategorie = jobs.find((option) => option.id === state.jobId)?.category ?? null;
-  const subject = letterSubject(state, jobs);
+  // Betreff (L5): eigener Text oder Vorschlag der Stelle, derselbe in Vorschau, Druck und PDF
+  const subject = resolveSubject(state, jobs);
+  // Zeichen, die im PDF fehlen (L5): aus dem ruhigen Stand gerechnet, das Tippen bleibt flüssig
+  const ruhig = useDeferredValue(state);
+  const zeichen = useMemo(() => zeichenFunde(zeichenOrte(ruhig, context)), [ruhig, context]);
+  const hatZeichen = zeichen.length > 0;
   // Stand only from real entries (E-BEW-006/007); before hydration the empty editor shows „0 von 5“.
   const stand = useMemo(() => mappeStand(state), [state]);
   const standRef = useRef<MappeStandWerte | null>(null);
@@ -131,7 +149,8 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
   useEffect(() => {
     removeLegacyDossier();
     const sent = readSubmitted(getSessionStorage());
-    const restored = restoreState(jobs, sent);
+    // Ein Betreff aus der Übergabe, der wörtlich dem Vorschlag gleicht, folgt wieder der Stelle (L5)
+    const restored = betreffAlsVorschlag(restoreState(jobs, sent), jobs);
     restoredRef.current = restored;
     dispatch({ type: 'hydrate', state: restored });
     /* eslint-disable react-hooks/set-state-in-effect -- one-time sync from browser storage after hydration */
@@ -179,6 +198,23 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
     if (text) announce(text);
   }, [stand, hydrated, announce]);
 
+  // Zeichen-Hinweis (L5, WCAG 4.1.3): höfliche Ansage nur beim Wechsel „keine Funde → Funde“ und erst nach einer Pause
+  // beim Tippen, nicht je Tastendruck. Der wiederhergestellte Stand gilt still als Ausgang (wie beim Stand oben).
+  useEffect(() => {
+    // Erst, wenn der ruhige Stand den Editor eingeholt hat (useDeferredValue rechnet ihn nach)
+    if (!hydrated || ruhig !== state) return;
+    const vorher = zeichenRef.current;
+    zeichenRef.current = hatZeichen;
+    if (!hatZeichen) zeichenAnsageRef.current = false;
+    else if (vorher === false) zeichenAnsageRef.current = true;
+    if (!zeichenAnsageRef.current) return;
+    const timer = window.setTimeout(() => {
+      zeichenAnsageRef.current = false;
+      announce(ZEICHEN_TEXT.ansage);
+    }, ZEICHEN_ANSAGE_MS);
+    return () => window.clearTimeout(timer);
+  }, [hydrated, ruhig, state, hatZeichen, announce]);
+
   function handlePhoto(file: File | null) {
     if (photoUrlRef.current) URL.revokeObjectURL(photoUrlRef.current);
     const url = file ? URL.createObjectURL(file) : null;
@@ -210,6 +246,12 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
         foto: photoFileRef.current ? { datei: photoFileRef.current, form: state.fotoform } : null,
       },
     };
+  }
+
+  /** „Vorschlag nehmen“: Der Betreff folgt wieder der Stelle; den Fokus setzt LetterSection ins Feld. */
+  function handleResetSubject() {
+    dispatch({ type: 'resetSubject' });
+    announce('Vorschlag übernommen.');
   }
 
   function handleResetLetter() {
@@ -303,6 +345,11 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
           workStyleId={state.workStyleId}
           workStyles={workStylesFuer(kategorie)}
           onWorkStyleChange={(id) => dispatch({ type: 'workStyle', id })}
+          subjectSuggestion={letterSubject(state, jobs)}
+          hasJob={selectedJob(state, jobs) !== undefined || isInitiative(state)}
+          customSubject={state.customSubject}
+          onSubjectChange={(text) => dispatch({ type: 'subject', text })}
+          onResetSubject={handleResetSubject}
           letter={letter}
           edited={state.customLetter !== null}
           onLetterChange={(text) => dispatch({ type: 'letter', text })}
@@ -339,6 +386,7 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
           pdfWeg={
             <PdfHerunterladen vorbereiten={pdfVorbereiten} entwurf={state} foto={photoUrl} modus={submitted ? 'followUp' : 'apply'} />
           }
+          zeichenHinweis={<ZeichenHinweis funde={zeichen} />}
           stand={stand}
           whatsappHref={shareHref(state, jobs, submitted)}
           feedback={feedback}

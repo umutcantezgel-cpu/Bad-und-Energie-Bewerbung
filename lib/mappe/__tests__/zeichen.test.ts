@@ -3,7 +3,16 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { STANDARD_DESIGN } from '@/lib/mappe/blatt/design';
 import type { MappeDokument } from '@/lib/mappe/blatt/dokument';
-import { SCHRIFT_BEREICHE, TITEL_BEREICHE, fehlendeZeichen, fuerPdf, fuerSchrift, texte, titelschriftDeckt } from '@/lib/mappe/blatt/zeichen';
+import {
+  SCHRIFT_BEREICHE,
+  TITEL_BEREICHE,
+  fehlendeZeichen,
+  fuerPdf,
+  fuerSchrift,
+  texte,
+  titelschriftDeckt,
+  zeichenFunde,
+} from '@/lib/mappe/blatt/zeichen';
 
 /** fontkit kommt mit @react-pdf/renderer (über @react-pdf/font); hier nur, um die Bereiche gegen die Dateien zu prüfen. */
 const fontkit = createRequire(import.meta.url)('fontkit') as {
@@ -110,5 +119,46 @@ describe('Zeichen der PDF-Schrift', () => {
     const leer = fuerPdf({ ...DOKUMENT, anschreiben: { empfaenger: ['x'], text: '🙂' }, lebenslauf: { beruf: [], ausbildung: [], schwerpunkte: ['🙂'] } })!;
     expect(leer.anschreiben).toBeNull();
     expect(leer.lebenslauf).toBeNull();
+  });
+});
+
+describe('zeichenFunde (L5): was das PDF mit den Texten des Editors macht, vorher sichtbar', () => {
+  it('Emojis fallen weg (ein Graphem je Zeichen), Kyrillisch und → (U+2192) verhindern das PDF', () => {
+    expect(
+      zeichenFunde([
+        { ort: 'Name', text: 'Ян Müller' },
+        { ort: 'Betreff', text: 'Bewerbung → Wärmepumpen' },
+        { ort: 'Anschreiben', text: 'Danke 😊 und 👍🏽 aus 🇩🇪, nochmal 😊 und Привет' },
+      ]),
+    ).toEqual([
+      { ort: 'Name', fallenWeg: [], fehlen: ['Я', 'н'] },
+      { ort: 'Betreff', fallenWeg: [], fehlen: ['→'] },
+      { ort: 'Anschreiben', fallenWeg: ['😊', '👍🏽', '🇩🇪'], fehlen: ['П', 'р', 'и', 'в', 'е', 'т'] },
+    ]);
+  });
+
+  it('kein Fund für das, was die Schrift hat oder fuerSchrift ersetzt: ©, ™, weiches Trennzeichen, Leerraum, Trenner', () => {
+    const text = 'Vitodens™ © 2026 Wärme­pumpe​, 10 kW,\tTab\r\nZeile Zeile Absatz Ogham, ©️, Müller';
+    expect(zeichenFunde([{ ort: 'Anschreiben', text }])).toEqual([]);
+    expect(zeichenFunde([])).toEqual([]);
+  });
+
+  it('nur Orte mit Funden, in ihrer Reihenfolge; weitere Angaben des Orts reisen mit', () => {
+    const funde = zeichenFunde([
+      { ort: 'Telefon', text: '0171 2345678', nurDownload: true },
+      { ort: 'Wohnort', text: 'Київ', nurDownload: true },
+      { ort: 'Schwerpunkte', text: 'Löten\n🔧 Rohrbau', nurDownload: false },
+    ]);
+    expect(funde).toEqual([
+      { ort: 'Wohnort', nurDownload: true, fallenWeg: [], fehlen: ['К', 'и', 'ї', 'в'] },
+      { ort: 'Schwerpunkte', nurDownload: false, fallenWeg: ['🔧'], fehlen: [] },
+    ]);
+  });
+
+  it('fuerSchrift: Zeilen- und Absatztrenner (U+2028, U+2029) werden Umbrüche, das Ogham-Leerzeichen (U+1680) ein Leerzeichen', () => {
+    expect(fuerSchrift('Zeile 1 Zeile 2 Zeile 3')).toBe('Zeile 1\nZeile 2\nZeile 3');
+    expect(fuerSchrift('Wärme pumpe')).toBe('Wärme pumpe');
+    expect(fehlendeZeichen(fuerSchrift('a b c d'))).toEqual([]);
+    expect(fuerPdf({ ...DOKUMENT, anschreiben: { empfaenger: ['x'], text: 'Hallo Welt' } })?.anschreiben?.text).toBe('Hallo\nWelt');
   });
 });

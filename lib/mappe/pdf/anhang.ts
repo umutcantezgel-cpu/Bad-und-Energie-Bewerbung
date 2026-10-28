@@ -13,8 +13,10 @@ import { mappeDateiname } from './dateiname';
 
 /**
  * Mappe als PDF im Anhang der Team-Mail (Schritt 4a/4b): bei der Bewerbung mit Name, Stelle und Betreff wie im
- * Editor, beim Nachreichen nur mit der Bewerbungsnummer (mehr kennt der Server dort nicht). Datum in Europe/Berlin aus
- * dem Eingang; der Eingang ist auch die Erstellungszeit in der Datei (gleiche Bewerbung, gleiche Bytes).
+ * Editor, beim Nachreichen ohne Namen (mehr als die Bewerbungsnummer kennt der Server dort nicht). Den Betreff sendet der
+ * Editor seit L5 mit der Mappe (`mappe.subject`); fehlt er (ältere Tabs, im Editor keine Stelle gewählt), rechnet der
+ * Server ihn wie vorher. Gleicher Betreff, gleiche Bytes. Datum in Europe/Berlin aus dem Eingang; der Eingang ist auch
+ * die Erstellungszeit in der Datei (gleiche Bewerbung, gleiche Bytes).
  *
  * Die PDF ist eine Zugabe: Ohne Mappe, nur mit angetippter Praxiserfahrung, mit MAPPE_PDF=aus, mit Zeichen, die die
  * Schrift nicht hat, bei einem Fehler oder nach dem Zeitlimit gibt es keine – die Mail geht dann wie bisher mit der
@@ -99,8 +101,8 @@ async function erstellen(
 }
 
 /**
- * PDF zur Bewerbung: Name, Betreff und Stelle wie in der Mappe des Bewerbers. Bei Spamverdacht keine PDF (die Mail markiert
- * ihn; kein Satz für Bot-Anfragen).
+ * PDF zur Bewerbung: Name, Betreff und Stelle wie in der Mappe des Bewerbers; der Betreff aus der Mappe, sonst aus der
+ * Stelle der Bewerbung. Bei Spamverdacht keine PDF (die Mail markiert ihn; kein Satz für Bot-Anfragen).
  */
 export async function mappeAnhangFuerBewerbung(app: ReferencedApplication): Promise<MappeAnhang | null> {
   if (app.suspectedSpam) {
@@ -109,12 +111,15 @@ export async function mappeAnhangFuerBewerbung(app: ReferencedApplication): Prom
   }
   const job = getJobById(app.job.id);
   const initiative = !job;
-  const betreff = buildSubject(job ? { title: job.title, category: job.category } : null, initiative);
+  const betreff = app.mappe?.subject?.trim() || buildSubject(job ? { title: job.title, category: job.category } : null, initiative);
   return erstellen(app.reference, app.mappe, { name: app.name, betreff, stelle: app.job.shortTitle }, app.submittedAt);
 }
 
-/** PDF zur nachgereichten Mappe: „Bewerbungsmappe“ im Kopf, die Nummer im Betreff. */
+/**
+ * PDF zur nachgereichten Mappe: „Bewerbungsmappe“ im Kopf, der Betreff aus der Mappe, sonst die Nummer im Betreff. Die
+ * Nummer steht immer im Dateinamen und im Betreff der Mail.
+ */
 export function mappeAnhangFuerErgaenzung(followUp: NormalizedFollowUp): Promise<MappeAnhang | null> {
-  const betreff = `Bewerbungsmappe zur Bewerbung ${followUp.reference}`;
+  const betreff = followUp.mappe?.subject?.trim() || `Bewerbungsmappe zur Bewerbung ${followUp.reference}`;
   return erstellen(followUp.reference, followUp.mappe, { betreff }, followUp.receivedAt);
 }

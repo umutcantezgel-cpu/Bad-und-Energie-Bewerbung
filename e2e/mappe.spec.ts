@@ -128,6 +128,84 @@ test('Design wählen: Vorschau folgt, axe ohne Verstöße, das Design geht mit d
   await expectThankYou(page);
 });
 
+test('Betreff der Mappe (L5): eigener Text in Vorschau und Bewerbung, „Vorschlag nehmen“ folgt wieder der Stelle', async ({ page }, testInfo) => {
+  await page.goto(`/bewerbung/mappe?stelle=${MAIN_JOB_SLUG}`);
+  const betreff = page.getByRole('textbox', { name: 'Betreff', exact: true });
+  await waitForHydration(betreff);
+  const vorschlag = `Bewerbung als ${MAIN_JOB.title}`;
+  const eigener = 'Bewerbung als Anlagenmechaniker SHK – Schwerpunkt Wärmepumpen';
+  const ansage = page.locator('[data-mappe-werkbank] > p[aria-live="polite"]');
+
+  // Vorschlag aus der Stelle; ein eigener Text steht auf beiden Blättern der Vorschau
+  await expect(betreff).toHaveValue(vorschlag);
+  await expect(page.getByText('Vorschlag aus der Stelle. Er passt sich an, bis du ihn selbst änderst.')).toBeVisible();
+  await betreff.fill(eigener);
+  const vorschau = page.locator('section[aria-labelledby="mappe-vorschau-title"]');
+  await expect(vorschau.getByText(eigener, { exact: true })).toHaveCount(2);
+  await expect(page.getByText('Dein eigener Betreff. Ein Wechsel der Stelle ändert ihn nicht mehr.')).toBeVisible();
+  await expectNoAxeViolations(page, testInfo);
+  if (isTouch(testInfo)) expect(await findSmallTouchTargets(page, 'main'), 'Trefferfläche < 44 px').toEqual([]);
+
+  // Stellenwechsel: Der eigene Betreff bleibt; „Vorschlag nehmen“ nimmt den der neuen Stelle, Fokus im Feld
+  const stelle = page.getByLabel('Worauf bewirbst du dich?');
+  await stelle.selectOption({ value: 'initiativ' });
+  await expect(betreff).toHaveValue(eigener);
+  await page.getByRole('button', { name: 'Vorschlag nehmen' }).click();
+  await expect(betreff).toHaveValue('Initiativbewerbung');
+  await expect(betreff).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Vorschlag nehmen' })).toHaveCount(0);
+  await expect(ansage).toHaveText('Vorschlag übernommen.');
+  await stelle.selectOption({ label: MAIN_JOB.title });
+  await expect(betreff).toHaveValue(vorschlag);
+
+  // Mit eigenem Betreff bewerben: Er geht mit der Mappe mit
+  await betreff.fill(eigener);
+  await page.getByRole('button', { name: WORK_STYLE }).click();
+  await page.getByRole('button', { name: 'Mit dieser Mappe bewerben' }).click();
+  await expect(page).toHaveURL(new RegExp(`/bewerbung\\?stelle=${MAIN_JOB_SLUG}`));
+  const flow = flowRoot(page, 'page');
+  await waitForHydration(flow);
+  const taps = new TapCounter(testInfo);
+  await answerQuestions(flow, taps);
+  await fillContact(flow);
+  const requestPromise = page.waitForRequest((request) => new URL(request.url()).pathname === '/api/bewerbung');
+  await taps.tap(submitButton(flow));
+  const payload = (await requestPromise).postDataJSON() as { mappe?: { subject?: string } };
+  expect(payload.mappe?.subject).toBe(eigener);
+  await expectThankYou(page);
+});
+
+test('Zeichen-Hinweis der Mappe (L5): kyrillisches Wort und Emoji im Anschreiben, höflich angesagt, axe ohne Verstöße', async ({ page }, testInfo) => {
+  await page.goto(`/bewerbung/mappe?stelle=${MAIN_JOB_SLUG}`);
+  const letter = page.getByRole('textbox', { name: 'Anschreiben' });
+  await waitForHydration(letter);
+  await page.getByLabel('Vor- und Nachname').fill('Max Müller');
+  await page.getByRole('button', { name: WORK_STYLE }).click();
+  await expect(letter).toHaveValue(/Max Müller/);
+  const hinweis = page.locator('[data-mappe-zeichen]');
+  await expect(hinweis).toHaveCount(0);
+
+  await letter.fill(`${await letter.inputValue()}\n\nДякую! 😊`);
+  const notiz = page.getByRole('note', { name: 'Diese Zeichen fehlen im PDF' });
+  await expect(notiz).toBeVisible();
+  await expect(notiz.getByRole('list', { name: 'Damit entsteht kein PDF:', exact: true })).toHaveText('Anschreiben: Д я к у ю');
+  await expect(notiz.getByRole('list', { name: 'Fallen weg, der übrige Text bleibt:', exact: true })).toHaveText('Anschreiben: 😊');
+  await expect(notiz).toContainText('Ersetze diese Zeichen oder nimm „Drucken“. Das Team bekommt deine Mappe auch ohne PDF, als Text in der E-Mail.');
+  // Höfliche Ansage über die Live-Region der Mappe, erst nach einer Pause beim Tippen
+  await expect(page.locator('[data-mappe-werkbank] > p[aria-live="polite"]')).toHaveText(
+    'Hinweis: Einige Zeichen fehlen im PDF. Welche, steht unter „Per WhatsApp schicken“.',
+  );
+  await expectNoAxeViolations(page, testInfo);
+  if (isTouch(testInfo)) expect(await findSmallTouchTargets(page, 'main'), 'Trefferfläche < 44 px').toEqual([]);
+  await page.setViewportSize({ width: 320, height: 720 });
+  const querscroll = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(querscroll, 'Querscroll bei 320 px').toBeLessThanOrEqual(0);
+
+  // Zeichen ersetzt: Der Hinweis verschwindet
+  await letter.fill((await letter.inputValue()).replace('Дякую! 😊', 'Danke!'));
+  await expect(hinweis).toHaveCount(0);
+});
+
 test('Mappe abwählen: Hinweis wechselt, Bewerbung geht ohne Mappe', async ({ page }) => {
   await page.goto(`/bewerbung/mappe?stelle=${MAIN_JOB_SLUG}`);
   const workStyle = page.getByRole('button', { name: WORK_STYLE });

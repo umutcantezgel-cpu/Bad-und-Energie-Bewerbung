@@ -25,6 +25,8 @@ export interface MappeActionsProps {
   onPrint: () => void;
   /** „PDF herunterladen“ (L4, PdfHerunterladen): der erste Zweitweg, über die ganze Breite. */
   pdfWeg?: ReactNode;
+  /** Zeichen-Hinweis (L5, ZeichenHinweis): direkt unter den Zweitwegen, nur mit Funden. */
+  zeichenHinweis?: ReactNode;
   /** Stand der Mappe (E-BEW-006/007): Ring und „Als Nächstes“. */
   stand: MappeStandWerte;
   /** WhatsApp link with the prefilled share text (E-BEW-020, lib/apply/whatsapp-message.ts). */
@@ -56,6 +58,7 @@ export function MappeActions({
   onPrimary,
   onPrint,
   pdfWeg,
+  zeichenHinweis,
   stand,
   whatsappHref,
   feedback,
@@ -136,6 +139,8 @@ export function MappeActions({
           </p>
         </div>
       </div>
+
+      {zeichenHinweis}
 
       <div role="status" aria-live="polite">
         {feedback.kind === 'sent' && (

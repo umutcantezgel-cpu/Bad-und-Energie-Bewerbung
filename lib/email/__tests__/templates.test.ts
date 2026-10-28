@@ -86,6 +86,27 @@ describe('team notification', () => {
     );
   });
 
+  it('names the subject of the Mappe (L5) between the PDF line and the letter; without one no such row', () => {
+    const mappe = { ...full.mappe!, subject: 'Bewerbung als Testfall' };
+    const mail = renderApplicationTeamEmail({ ...full, mappe }, PDF_FULL);
+    const zeile = 'Betreff: Bewerbung als Testfall';
+    expect(mail.text).toContain(zeile);
+    expect(mail.html).toContain('Bewerbung als Testfall');
+    expect(mail.text.indexOf(zeile)).toBeGreaterThan(mail.text.indexOf('Als PDF im Anhang'));
+    expect(mail.text.indexOf(zeile)).toBeLessThan(mail.text.indexOf('Anschreiben'));
+    // Die übrige Mappe bleibt, wie sie war
+    expect(mail.text).toContain('Ruhig und genau');
+    expect(mail.text).toContain('2019–2024 · Geselle · Muster GmbH, Gießen');
+    expect(renderApplicationTeamEmail(full, PDF_FULL).text).not.toContain('Betreff:');
+    // Nachgereicht ebenso
+    const ergaenzt = renderApplicationFollowUpEmail({ reference: 'BE-26-K7M4QX', idempotencyKey: 'h', receivedAt: new Date(), mappe });
+    expect(ergaenzt.text).toContain(zeile);
+    // Eingaben bleiben Text
+    const feindlich = renderApplicationTeamEmail({ ...hostile, mappe: { ...hostile.mappe!, subject: XSS } });
+    expect(feindlich.html).not.toContain('<script');
+    expect(feindlich.text).toContain(`Betreff: ${XSS}`);
+  });
+
   it('describes an initiative application without a job reference', () => {
     const mail = renderApplicationTeamEmail({
       ...base,

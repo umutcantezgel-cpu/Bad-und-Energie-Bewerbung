@@ -55,6 +55,20 @@ const samples: unknown[] = [
   { coverLetter: 'Hallo', design: { vorlage: 'farbband', akzent: ['petrol'], schrift: 'markant' } },
   { coverLetter: 'Hallo', design: { vorlage: 'farbband', akzent: 'petrol', schrift: 'markant', fotoform: 'rund' } },
   { coverLetter: x(L.coverLetter + 1), design: { vorlage: 'farbband', akzent: 'petrol', schrift: 'markant' } },
+  // Betreff (L5): optional ohne Default, getrimmt, höchstens 160 Zeichen; sonst Fehler am Pfad `subject`
+  { coverLetter: 'Hallo', subject: '  Bewerbung als X  ' },
+  { coverLetter: 'Hallo', subject: x(L.subject) },
+  { coverLetter: 'Hallo', subject: ` ${x(L.subject)} ` },
+  { coverLetter: 'Hallo', subject: x(L.subject + 1) },
+  { coverLetter: 'Hallo', subject: '' },
+  { coverLetter: 'Hallo', subject: null },
+  { coverLetter: 'Hallo', subject: 3 },
+  { coverLetter: 'Hallo', subject: ['Bewerbung'] },
+  { coverLetter: 'Hallo', design: { vorlage: 'farbband', akzent: 'petrol', schrift: 'markant' }, subject: 'Bewerbung als X' },
+  // Erster Fehlerpfad: der Betreff steht im Schema hinten
+  { coverLetter: x(L.coverLetter + 1), subject: x(L.subject + 1) },
+  { workStyle: x(L.workStyle + 1), subject: 3 },
+  { careerStations: [career({ role: x(L.role + 1) })], subject: null },
 ];
 
 describe('parseMappeData mirrors mappeSchema', () => {
@@ -64,5 +78,15 @@ describe('parseMappeData mirrors mappeSchema', () => {
     expect(plain.ok).toBe(schema.success);
     if (plain.ok && schema.success) expect(plain.mappe).toEqual(schema.data);
     if (!plain.ok && !schema.success) expect(plain.path[0]).toBe(schema.error.issues[0]?.path[0]);
+  });
+
+  it('subject (L5): ohne Betreff kein Schlüssel `subject` (dieselbe Mappe wie vor L5), mit ihm hinten in Schema-Reihenfolge', () => {
+    const ohne = parseMappeData({ coverLetter: 'Hallo', design: { vorlage: 'farbband', akzent: 'petrol', schrift: 'markant' } });
+    expect(ohne.ok && Object.keys(ohne.mappe)).toEqual(['coverLetter', 'skills', 'careerStations', 'educationStations', 'design']);
+    const mit = parseMappeData({ subject: ' Bewerbung als X ', coverLetter: 'Hallo', design: { vorlage: 'farbband', akzent: 'petrol', schrift: 'markant' } });
+    expect(mit.ok && Object.keys(mit.mappe)).toEqual(['coverLetter', 'skills', 'careerStations', 'educationStations', 'design', 'subject']);
+    expect(mit.ok && mit.mappe.subject).toBe('Bewerbung als X');
+    const schema = mappeSchema.parse({ subject: ' Bewerbung als X ', coverLetter: 'Hallo' });
+    expect(Object.keys(schema)).toEqual(['coverLetter', 'skills', 'careerStations', 'educationStations', 'subject']);
   });
 });

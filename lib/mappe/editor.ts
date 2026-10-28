@@ -3,6 +3,7 @@ import { parseMappeData } from '@/lib/applications/mappe-data';
 import type { Mappe } from '@/lib/applications/schema';
 import type { JobCategory } from '@/lib/jobs/schema';
 import { STANDARD_DESIGN, STANDARD_FOTOFORM, designAus, fotoformAus, istStandard, type Fotoform, type MappeDesign } from './blatt/design';
+import type { ZeichenOrt } from './blatt/zeichen';
 import { MAPPE_LIMITS, WORK_STYLE_IDS, getWorkStyle, skillsFuerStelle, workStyleIdFromValue, type WorkStyleId } from './options';
 import {
   createStationId,
@@ -32,6 +33,8 @@ export interface MappeEditorState {
   workStyleId: WorkStyleId | null;
   /** `null`: Das Anschreiben folgt der Vorlage. Text: vom Bewerber bearbeitet. */
   customLetter: string | null;
+  /** `null`: Der Betreff folgt dem Vorschlag der Stelle (letterSubject). Text: von der Person geändert (L5). */
+  customSubject: string | null;
   careerStations: CareerStationDraft[];
   educationStations: EducationStationDraft[];
   /** Design, Farbe und Schrift (L3); reisen mit der Mappe, wenn sie vom Standard abweichen. */
@@ -49,6 +52,8 @@ export type MappeEditorAction =
   | { type: 'workStyle'; id: WorkStyleId }
   | { type: 'letter'; text: string }
   | { type: 'resetLetter' }
+  | { type: 'subject'; text: string }
+  | { type: 'resetSubject' }
   | { type: 'career'; action: ListAction<CareerStationDraft> }
   | { type: 'education'; action: ListAction<EducationStationDraft> }
   | { type: 'design'; patch: Partial<MappeDesign> }
@@ -64,6 +69,7 @@ export function createEmptyEditorState(jobId: ApplicationJobId | '' = ''): Mappe
     skills: [],
     workStyleId: null,
     customLetter: null,
+    customSubject: null,
     careerStations: [],
     educationStations: [],
     design: { ...STANDARD_DESIGN },
@@ -114,6 +120,10 @@ export function mappeEditorReducer(state: MappeEditorState, action: MappeEditorA
       return { ...state, customLetter: action.text };
     case 'resetLetter':
       return { ...state, customLetter: null };
+    case 'subject':
+      return { ...state, customSubject: action.text };
+    case 'resetSubject':
+      return { ...state, customSubject: null };
     case 'career':
       return { ...state, careerStations: listReducer(state.careerStations, action.action) };
     case 'education':
@@ -162,8 +172,32 @@ export function resolveCoverLetter(state: MappeEditorState, context: MappeContex
   return state.customLetter ?? templateLetter(state, context);
 }
 
+/** Vorschlag für den Betreff aus der gewählten Stelle (buildSubject); ohne Stelle „Bewerbung“. */
 export function letterSubject(state: MappeEditorState, jobs: readonly MappeJobOption[]): string {
   return buildSubject(letterJob(state, jobs), isInitiative(state));
+}
+
+/** Der Betreff, wie er in Vorschau, Druck und PDF steht: der eigene, sonst der Vorschlag (L5). */
+export function resolveSubject(state: MappeEditorState, jobs: readonly MappeJobOption[]): string {
+  return state.customSubject?.trim() || letterSubject(state, jobs);
+}
+
+/**
+ * Betreff, der mit der Mappe geht: der eigene oder der Vorschlag einer gewählten Stelle (auch „Initiativbewerbung“).
+ * Ohne beides keiner: Dann rechnet der Server ihn wie vor L5 aus der Stelle der Bewerbung (statt „Bewerbung“ zu senden).
+ */
+export function sentSubject(state: MappeEditorState, jobs: readonly MappeJobOption[]): string | undefined {
+  const eigener = state.customSubject?.trim();
+  if (eigener) return eigener;
+  return selectedJob(state, jobs) || isInitiative(state) ? letterSubject(state, jobs) : undefined;
+}
+
+/**
+ * Nach dem Wiederherstellen (MappeTool): Ein „eigener“ Betreff, der wörtlich dem Vorschlag gleicht, folgt wieder der
+ * Stelle. Die Übergabe an den Flow trägt den Vorschlag als `subject`; fromMappe machte ihn sonst zu einem eigenen Text.
+ */
+export function betreffAlsVorschlag(state: MappeEditorState, jobs: readonly MappeJobOption[]): MappeEditorState {
+  return state.customSubject !== null && state.customSubject.trim() === letterSubject(state, jobs) ? { ...state, customSubject: null } : state;
 }
 
 /** Nichts eingetragen, was über die reine Vorlage hinausgeht. */
@@ -179,8 +213,12 @@ export function isMappeEmpty(state: MappeEditorState): boolean {
 
 const optionalText = (value: string): string | undefined => value.trim() || undefined;
 
-/** Editor-Stand → Mappe laut Vertrag (ohne persönliche Angaben, Foto und Fotoform; das Design nur, wenn gewählt). */
+/**
+ * Editor-Stand → Mappe laut Vertrag (ohne persönliche Angaben, Foto und Fotoform; das Design nur, wenn gewählt; der
+ * Betreff nur mit Stelle oder eigenem Text, sentSubject).
+ */
 export function toMappe(state: MappeEditorState, context: MappeContext): Mappe {
+  const subject = sentSubject(state, context.jobs);
   return {
     ...(istStandard(state.design) ? {} : { design: { ...state.design } }),
     coverLetter: resolveCoverLetter(state, context).trim(),
@@ -203,7 +241,42 @@ export function toMappe(state: MappeEditorState, context: MappeContext): Mappe {
         institution: station.institution.trim(),
         location: optionalText(station.location),
       })),
+    ...(subject ? { subject } : {}),
   };
+}
+
+/** Ort für den Zeichen-Hinweis (L5); `nurDownload`: steht nur im PDF zum Herunterladen, nie im PDF fürs Team. */
+export interface MappeZeichenOrt extends ZeichenOrt {
+  nurDownload: boolean;
+}
+
+/**
+ * Texte, die in den PDFs stehen, je Ort in der Reihenfolge des Editors (für zeichenFunde). Name, Telefon, E-Mail und
+ * Wohnort (Kopf und Kontaktzeile) trägt nur das PDF zum Herunterladen: Das PDF fürs Team nimmt den Namen aus dem
+ * Bewerbungsformular und hat keine Kontaktzeile. Betreff, Anschreiben und Lebenslauf stehen in beiden.
+ */
+export function zeichenOrte(state: MappeEditorState, context: MappeContext): MappeZeichenOrt[] {
+  const mappe = toMappe(state, context);
+  const { person } = state;
+  const nurDownload = (ort: string, text: string): MappeZeichenOrt => ({ ort, text, nurDownload: true });
+  const inBeiden = (ort: string, text: string): MappeZeichenOrt => ({ ort, text, nurDownload: false });
+  return [
+    nurDownload('Name', person.name),
+    nurDownload('Telefon', person.phone),
+    nurDownload('E-Mail', person.email),
+    nurDownload('Wohnort', person.location),
+    inBeiden('Schwerpunkte', mappe.skills.join('\n')),
+    inBeiden('Betreff', resolveSubject(state, context.jobs)),
+    inBeiden('Anschreiben', mappe.coverLetter),
+    inBeiden(
+      'Berufserfahrung',
+      mappe.careerStations.flatMap((station) => [station.period, station.role, station.company, station.location ?? '', ...station.tasks]).join('\n'),
+    ),
+    inBeiden(
+      'Schule und Ausbildung',
+      mappe.educationStations.flatMap((station) => [station.period, station.degree, station.institution, station.location ?? '']).join('\n'),
+    ),
+  ];
 }
 
 export type SerializeResult = { ok: true; mappe: Mappe } | { ok: false; message: string };
@@ -217,15 +290,16 @@ export function serializeMappe(state: MappeEditorState, context: MappeContext): 
 
 const SECTION_LABELS: Record<string, string> = {
   coverLetter: 'Das Anschreiben',
-  skills: 'Die Schwerpunkte',
+  skills: 'Die Liste der Schwerpunkte',
   workStyle: 'Der Arbeitsstil',
   careerStations: 'Eine Station in der Berufserfahrung',
   educationStations: 'Eine Station in Schule und Ausbildung',
+  subject: 'Der Betreff',
 };
 
-function describeIssue(path: readonly PropertyKey[]): string {
+export function describeIssue(path: readonly PropertyKey[]): string {
   const section = typeof path[0] === 'string' ? SECTION_LABELS[path[0]] : undefined;
-  return `${section ?? 'Ein Eintrag'} ist zu lang oder enthält zu viele Einträge. Bitte kürze ihn.`;
+  return `${section ?? 'Ein Eintrag'} ist zu lang oder hat zu viele Einträge. Bitte kürze die Angabe.`;
 }
 
 /** Gespeicherte Mappe (z. B. aus dem Flow zurück) → Editor-Stand. */
@@ -236,6 +310,8 @@ export function fromMappe(mappe: Mappe, jobId: ApplicationJobId | '' = ''): Mapp
     skills: mappe.skills.slice(0, MAPPE_LIMITS.skills),
     workStyleId: workStyleIdFromValue(mappe.workStyle),
     customLetter: mappe.coverLetter.trim() ? mappe.coverLetter : null,
+    // Danach betreffAlsVorschlag (MappeTool): Ein Vorschlag aus der Übergabe folgt so wieder der Stelle
+    customSubject: mappe.subject?.trim() ? mappe.subject : null,
     careerStations: mappe.careerStations.map((station) => ({
       id: createStationId(),
       period: station.period,
@@ -321,6 +397,9 @@ export function parseEditorState(value: unknown): MappeEditorState | null {
   const workStyleId = (WORK_STYLE_IDS as readonly unknown[]).includes(value.workStyleId) ? (value.workStyleId as WorkStyleId) : null;
   const customLetter =
     typeof value.customLetter === 'string' && value.customLetter.length <= MAPPE_LIMITS.coverLetter ? value.customLetter : null;
+  // Entwürfe von vor L5 haben keinen Betreff: Vorschlag
+  const customSubject =
+    typeof value.customSubject === 'string' && value.customSubject.length <= MAPPE_LIMITS.subject ? value.customSubject : null;
 
   return {
     person,
@@ -330,6 +409,7 @@ export function parseEditorState(value: unknown): MappeEditorState | null {
     ),
     workStyleId,
     customLetter,
+    customSubject,
     careerStations: strictList(value.careerStations, MAPPE_LIMITS.careerStations, careerDraft),
     educationStations: strictList(value.educationStations, MAPPE_LIMITS.educationStations, educationDraft),
     // Entwürfe von vor L3 haben kein Design: Standard

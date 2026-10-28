@@ -158,6 +158,7 @@ export const MAPPE_LIMITS = Object.freeze({
   degree: SCHEMA_LIMITS.degree,
   institution: SCHEMA_LIMITS.institution,
   location: SCHEMA_LIMITS.location,
+  subject: SCHEMA_LIMITS.subject,
   // nur lokal (Vorschau und Druck)
   name: CONTACT_LIMITS.name,
   phone: CONTACT_LIMITS.phone,

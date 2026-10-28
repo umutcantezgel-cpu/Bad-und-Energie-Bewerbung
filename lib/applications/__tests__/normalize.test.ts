@@ -157,6 +157,16 @@ describe('compactMappe', () => {
       educationStations: [],
     });
   });
+
+  it('mappe.subject (L5): getrimmt und hinter dem Design; leer fällt er weg, allein ist er keine Mappe', () => {
+    const design = { vorlage: 'farbband', akzent: 'petrol', schrift: 'markant' } as const;
+    const mappe = { coverLetter: 'Hallo', skills: [], careerStations: [], educationStations: [], design, subject: '  Bewerbung als X  ' };
+    const kompakt = compactMappe(mappe);
+    expect(Object.keys(kompakt!)).toEqual(['coverLetter', 'skills', 'careerStations', 'educationStations', 'design', 'subject']);
+    expect(kompakt!.subject).toBe('Bewerbung als X');
+    expect(compactMappe({ ...mappe, subject: '   ' })).not.toHaveProperty('subject');
+    expect(compactMappe({ coverLetter: ' ', skills: [], careerStations: [], educationStations: [], subject: 'Bewerbung als X' })).toBeUndefined();
+  });
 });
 
 describe('normalizeFollowUp', () => {
@@ -197,6 +207,35 @@ describe('normalizeFollowUp', () => {
     );
     expect(kaputt.mappe && 'design' in kaputt.mappe).toBe(false);
     expect(applicationContentHash(kaputt)).toBe(applicationContentHash(ohne));
+  });
+
+  it('mappe.subject (L5): ohne oder leer bleibt der Ergänzungs-Schlüssel wie vor L5, ein Betreff ändert ihn', () => {
+    const mappe = { coverLetter: 'Hallo', skills: ['Löten'], workStyle: 'ruhig', careerStations: [], educationStations: [] };
+    const schluessel = (m: object) =>
+      normalizeFollowUp(applicationFollowUpSchema.parse({ reference: 'x', token: 't', mappe: m }), 'BE-26-K7M4QX', NOW)?.idempotencyKey;
+    // Rechnung von vor L5 (sha256 über Nummer und Inhalt): offene Tabs und Wiederholungen behalten ihren Schlüssel
+    const vorL5 = createHash('sha256')
+      .update(JSON.stringify({ reference: 'BE-26-K7M4QX', startDate: undefined, postalCode: undefined, message: undefined, mappe }))
+      .digest('hex')
+      .slice(0, 32);
+    expect(schluessel(mappe)).toBe(vorL5);
+    expect(schluessel({ ...mappe, subject: '   ' })).toBe(vorL5);
+    expect(schluessel({ ...mappe, subject: 'Bewerbung als X' })).not.toBe(vorL5);
+  });
+
+  it('mappe.subject (L5): eine Bewerbung ohne Betreff hat dieselben Schlüssel und denselben Inhalts-Hash wie vor L5', () => {
+    const mappe = { coverLetter: 'Hallo', skills: ['Löten'], careerStations: [], educationStations: [] };
+    const ohne = normalizeApplication(input({ mappe }), { now: NOW });
+    expect(Object.keys(ohne.mappe!)).toEqual(['coverLetter', 'skills', 'careerStations', 'educationStations']);
+    // Die Mappe in der Form von vor L5 (Objekt-Literal) ergibt denselben Hash: Resend- und Idempotenz-Schlüssel bleiben
+    expect(applicationContentHash({ ...ohne, mappe: { coverLetter: 'Hallo', skills: ['Löten'], careerStations: [], educationStations: [] } })).toBe(
+      applicationContentHash(ohne),
+    );
+    const leer = normalizeApplication(input({ mappe: { ...mappe, subject: '  ' } }), { now: NOW });
+    expect(applicationContentHash(leer)).toBe(applicationContentHash(ohne));
+    const mit = normalizeApplication(input({ mappe: { ...mappe, subject: 'Bewerbung als X' } }), { now: NOW });
+    expect(mit.mappe?.subject).toBe('Bewerbung als X');
+    expect(applicationContentHash(mit)).not.toBe(applicationContentHash(ohne));
   });
 });
 

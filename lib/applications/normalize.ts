@@ -84,12 +84,22 @@ export function compactMappe(mappe: Mappe | null | undefined): Mappe | undefined
   const educationStations = mappe.educationStations.filter(
     (station) => station.period || station.degree || station.institution || station.location,
   );
+  const subject = mappe.subject?.trim() || undefined;
 
   if (!coverLetter && !workStyle && skills.length === 0 && careerStations.length === 0 && educationStations.length === 0) {
     return undefined;
   }
-  // Das Design allein ist keine Mappe; mit Inhalt reist es mit (L3: die PDF fürs Team folgt ihm)
-  return { coverLetter, skills, ...(workStyle ? { workStyle } : {}), careerStations, educationStations, ...(mappe.design ? { design: mappe.design } : {}) };
+  // Design und Betreff allein sind keine Mappe; mit Inhalt reisen sie mit (L3: die PDF fürs Team folgt dem Design, L5:
+  // dem Betreff). Neue Schlüssel nur hinten und nur mit Inhalt: Ohne sie bleiben Inhalts-Hash und Schlüssel wie vorher.
+  return {
+    coverLetter,
+    skills,
+    ...(workStyle ? { workStyle } : {}),
+    careerStations,
+    educationStations,
+    ...(mappe.design ? { design: mappe.design } : {}),
+    ...(subject ? { subject } : {}),
+  };
 }
 
 export interface NormalizeOptions {

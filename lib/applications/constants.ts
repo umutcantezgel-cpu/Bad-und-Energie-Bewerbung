@@ -113,4 +113,10 @@ export const MAPPE_SCHEMA_LIMITS = Object.freeze({
   task: 200,
   degree: 160,
   institution: 160,
+  /**
+   * Betreff des Anschreibens (L5, Vertrag `mappe.subject`, additiv; Absprache mit Phase 2 laut E-012 in
+   * _relaunch/MENSCHEN.md M-043). Der längste Vorschlag aus einer Stelle hat 77 Zeichen (Test in
+   * lib/mappe/__tests__/serialize.test.ts).
+   */
+  subject: 160,
 });

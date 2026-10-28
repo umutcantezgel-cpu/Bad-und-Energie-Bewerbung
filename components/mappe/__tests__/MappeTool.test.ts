@@ -9,6 +9,7 @@ import { getMappeJobOptions, getMappeRecipient } from '@/lib/mappe/context';
 import { MappeTool } from '../MappeTool';
 import styles from '../mappe.module.css';
 import { MAPPE_ABSCHNITTE } from '../stand';
+import { ZEICHEN_TEXT, ZeichenHinweis } from '../ZeichenHinweis';
 
 function render(): string {
   return renderToStaticMarkup(
@@ -76,6 +77,18 @@ describe('MappeTool (server render)', () => {
     expect(html.indexOf('id="mappe-vorschau-title"')).toBeLessThan(match?.index ?? -1);
   });
 
+  it('Betreff (L5): eigenes Feld vor dem Anschreiben, mit dem Vorschlag und ohne „Vorschlag nehmen“; kein Zeichen-Hinweis', () => {
+    const feld = /<input[^>]*name="betreff"[^>]*>/.exec(html)?.[0] ?? '';
+    expect(feld).toContain('value="Bewerbung"');
+    expect(feld).toMatch(/maxlength="160"/i);
+    expect(feld).toMatch(/autocomplete="off"/i);
+    expect(html.indexOf('name="betreff"')).toBeLessThan(html.indexOf('name="anschreiben"'));
+    expect(plain(html)).toContain('Aus der Stelle entsteht der Betreff, aus Stelle, Schwerpunkten und Arbeitsstil das Anschreiben.');
+    expect(plain(html)).toContain('Bestimmt den Vorschlag für den Betreff und die Einleitung des Anschreibens.');
+    expect(html).not.toContain('Vorschlag nehmen');
+    expect(html).not.toContain('data-mappe-zeichen');
+  });
+
   it('labels the reorder controls only once entries exist', () => {
     expect(html).not.toContain('nach oben verschieben');
     expect(html).toContain('Berufserfahrung hinzufügen');
@@ -123,6 +136,47 @@ describe('Mappe-Stand (E-BEW-006/007) on an empty mappe', () => {
     const knopf = /<button[^>]*>(?:(?!<\/button>)[\s\S])*Mit dieser Mappe bewerben/.exec(html)?.[0] ?? '';
     expect(knopf).toContain('after:border-l-vorlauf');
     expect(knopf).toContain('bg-accent');
+  });
+});
+
+describe('Zeichen-Hinweis (L5)', () => {
+  type Fund = Parameters<typeof ZeichenHinweis>[0]['funde'][number];
+  const zeige = (funde: Fund[]) => renderToStaticMarkup(createElement(ZeichenHinweis, { funde }));
+
+  it('erscheint nur mit Funden, als Notiz mit Titel', () => {
+    expect(zeige([])).toBe('');
+    const html = zeige([{ ort: 'Anschreiben', nurDownload: false, fehlen: [], fallenWeg: ['😊'] }]);
+    expect(html).toMatch(/^<div role="note" aria-labelledby="mappe-zeichen-titel"/);
+    expect(html).toContain('data-mappe-zeichen=""');
+    expect(html).not.toContain('aria-live');
+    expect(plain(html)).toBe(`${ZEICHEN_TEXT.titel} ${ZEICHEN_TEXT.fallenWeg} Anschreiben: 😊`);
+  });
+
+  it('Inhalte ohne Glyphe: kein PDF, mit dem Satz übers Team; Name und Kontakt nur für das PDF zum Herunterladen', () => {
+    const text = plain(
+      zeige([
+        { ort: 'Name', nurDownload: true, fehlen: ['Я', 'н'], fallenWeg: [] },
+        { ort: 'Telefon', nurDownload: true, fehlen: [], fallenWeg: ['📞'] },
+        { ort: 'Anschreiben', nurDownload: false, fehlen: ['Ж'], fallenWeg: ['😊'] },
+      ]),
+    );
+    expect(text).toBe(
+      [
+        'Diese Zeichen fehlen im PDF',
+        'Damit entsteht kein PDF: Anschreiben: Ж',
+        'Damit entsteht dein PDF zum Herunterladen nicht: Name: Я н',
+        'Fallen weg, der übrige Text bleibt: Anschreiben: 😊',
+        'Fehlen in deinem PDF zum Herunterladen, der übrige Text bleibt: Telefon: 📞',
+        'Ersetze diese Zeichen oder nimm „Drucken“. Das Team bekommt deine Mappe auch ohne PDF, als Text in der E-Mail.',
+      ].join(' '),
+    );
+  });
+
+  it('nur Name oder Kontakt ohne Glyphe: kein Satz übers Team; höchstens 8 Zeichen je Ort', () => {
+    const text = plain(zeige([{ ort: 'Name', nurDownload: true, fehlen: [...'Олександра'], fallenWeg: [] }]));
+    expect(text).toContain('Name: О л е к с а н д …');
+    expect(text).toContain(ZEICHEN_TEXT.ersetzen);
+    expect(text).not.toContain('Das Team bekommt');
   });
 });
 

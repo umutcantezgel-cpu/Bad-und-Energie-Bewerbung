@@ -35,7 +35,7 @@ export interface JobSectionProps {
 
 export function JobSection({ step, done, jobs, value, onChange }: JobSectionProps) {
   return (
-    <EditorSection id="mappe-stelle" step={step} done={done} title="Stelle" description="Bestimmt Betreff und Einleitung des Anschreibens.">
+    <EditorSection id="mappe-stelle" step={step} done={done} title="Stelle" description="Bestimmt den Vorschlag für den Betreff und die Einleitung des Anschreibens.">
       <Field label="Worauf bewirbst du dich?">
         <Select
           name="stelle"

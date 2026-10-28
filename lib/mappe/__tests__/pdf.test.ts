@@ -1,11 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ergaenzung, full, maximal } from '@/lib/email/__tests__/fixtures';
+import { getJobById } from '@/lib/jobs/registry';
 import { SCHRIFTSTILE, VORLAGEN } from '@/lib/mappe/blatt/design';
 import { mappeDokument } from '@/lib/mappe/blatt/dokument';
 import { fuerPdf } from '@/lib/mappe/blatt/zeichen';
 import { getMappeRecipient } from '@/lib/mappe/context';
 import { ZEILEN_HOECHSTENS, geschaetzterUmfang, mappeAnhangFuerBewerbung, mappeAnhangFuerErgaenzung } from '@/lib/mappe/pdf/anhang';
 import { mappePdf } from '@/lib/mappe/pdf/blatt';
+import { buildSubject } from '@/lib/mappe/template';
 
 /**
  * Rauchtest der Mappe-PDF (Schritt 4a/4b): echte PDF mit react-pdf, ohne Mocks. Inhalt und Seitenumbruch prüft der
@@ -53,6 +55,32 @@ describe('PDF der Mappe im Anhang der Team-Mail', () => {
     expect(zwei!.inhalt).toBe(eins!.inhalt);
     const spaeter = await mappeAnhangFuerBewerbung({ ...full, submittedAt: new Date('2026-10-09T07:00:00Z') });
     expect(spaeter!.inhalt).not.toBe(eins!.inhalt);
+  });
+
+  it('Betreff aus der Mappe (L5): ein eigener steht in der Datei; ohne oder gleich dem Vorschlag dieselben Bytes wie vor L5', async () => {
+    const job = getJobById(full.job.id)!;
+    const vorschlag = buildSubject({ title: job.title, category: job.category });
+    const ohne = await mappeAnhangFuerBewerbung(full);
+    const gleich = await mappeAnhangFuerBewerbung({ ...full, mappe: { ...full.mappe!, subject: vorschlag } });
+    expect(gleich!.inhalt).toBe(ohne!.inhalt);
+    const eigen = await mappeAnhangFuerBewerbung({ ...full, mappe: { ...full.mappe!, subject: 'Bewerbung als Testfall' } });
+    expect(eigen!.inhalt).not.toBe(ohne!.inhalt);
+    expect(roh(eigen!.inhalt)).toContain('(Bewerbung als Testfall)');
+    expect(roh(ohne!.inhalt)).not.toContain('Bewerbung als Testfall');
+    // Ein Betreff nur aus Leerzeichen zählt nicht
+    expect((await mappeAnhangFuerBewerbung({ ...full, mappe: { ...full.mappe!, subject: '  ' } }))!.inhalt).toBe(ohne!.inhalt);
+  });
+
+  it('nachgereichte Mappe mit Betreff (L5): sein Betreff im PDF, die Nummer im Dateinamen; ohne wie bisher die Nummer', async () => {
+    const ohne = await mappeAnhangFuerErgaenzung({ ...ergaenzung, mappe: full.mappe });
+    const nummer = await mappeAnhangFuerErgaenzung({
+      ...ergaenzung,
+      mappe: { ...full.mappe!, subject: `Bewerbungsmappe zur Bewerbung ${ergaenzung.reference}` },
+    });
+    expect(nummer!.inhalt).toBe(ohne!.inhalt);
+    const eigen = await mappeAnhangFuerErgaenzung({ ...ergaenzung, mappe: { ...full.mappe!, subject: 'Bewerbung als Testfall' } });
+    expect(eigen!.dateiname).toBe('Bewerbungsmappe_BE-26-K7M4QX.pdf');
+    expect(roh(eigen!.inhalt)).toContain('(Bewerbung als Testfall)');
   });
 
   it('nachgereichte Mappe: Datei nur mit Nummer', async () => {

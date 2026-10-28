@@ -111,6 +111,11 @@ export const mappeSchema = z.object({
   careerStations: z.array(careerStationSchema).max(MAPPE.careerStations).default([]),
   educationStations: z.array(educationStationSchema).max(MAPPE.educationStations).default([]),
   design: mappeDesignSchema.optional().catch(undefined),
+  /**
+   * Betreff, wie die Person ihn in der Mappe sieht (L5): eigener Text oder der Vorschlag ihrer Stelle. Optional und ohne
+   * Default: Ohne ihn bleibt die Mappe dieselbe wie vor L5, und der Server rechnet den Betreff wie bisher aus der Stelle.
+   */
+  subject: trimmed(MAPPE.subject).optional(),
 });
 export type Mappe = z.infer<typeof mappeSchema>;
 

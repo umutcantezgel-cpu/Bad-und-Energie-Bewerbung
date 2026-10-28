@@ -1,7 +1,8 @@
 'use client';
 
+import { useRef } from 'react';
 import { Icon } from '@/components/icons';
-import { Button, ChoiceCard, ChoiceGroup, Field, Textarea } from '@/components/ui';
+import { Button, ChoiceCard, ChoiceGroup, Field, Input, Textarea } from '@/components/ui';
 import { MAPPE_LIMITS, WORK_STYLES, type WorkStyle, type WorkStyleId } from '@/lib/mappe/options';
 import { EditorSection } from './EditorSection';
 
@@ -13,6 +14,15 @@ export interface LetterSectionProps {
   /** Arbeitsstile zur Auswahl (workStylesFuer je Stellenart: Büro mit eigenem Wortlaut); Standard die der Baustelle. */
   workStyles?: readonly WorkStyle[];
   onWorkStyleChange: (id: WorkStyleId) => void;
+  /** Vorschlag für den Betreff aus der Stelle (L5, letterSubject); ohne Stelle „Bewerbung“. */
+  subjectSuggestion: string;
+  /** Eine Stelle (oder „Initiativbewerbung“) ist gewählt: Der Vorschlag nennt sie. */
+  hasJob: boolean;
+  /** `null`: Der Betreff folgt dem Vorschlag. Text: eigener Betreff (auch leer). */
+  customSubject: string | null;
+  onSubjectChange: (text: string) => void;
+  /** „Vorschlag nehmen“: zurück zum Vorschlag; danach steht der Fokus im Feld „Betreff“. */
+  onResetSubject: () => void;
   /** The letter as shown in the preview (template or edited text). */
   letter: string;
   /** True once the applicant has edited the text. */
@@ -27,18 +37,33 @@ export function LetterSection({
   workStyleId,
   workStyles = WORK_STYLES,
   onWorkStyleChange,
+  subjectSuggestion,
+  hasJob,
+  customSubject,
+  onSubjectChange,
+  onResetSubject,
   letter,
   edited,
   onLetterChange,
   onResetLetter,
 }: LetterSectionProps) {
+  const subjectRef = useRef<HTMLInputElement>(null);
+  const subjectHint =
+    customSubject === null
+      ? hasJob
+        ? 'Vorschlag aus der Stelle. Er passt sich an, bis du ihn selbst änderst.'
+        : 'Ohne Stelle steht hier nur „Bewerbung“. Wähl oben eine Stelle oder schreib deinen eigenen Betreff.'
+      : customSubject.trim()
+        ? 'Dein eigener Betreff. Ein Wechsel der Stelle ändert ihn nicht mehr.'
+        : `Ohne eigenen Text steht der Vorschlag in der Mappe: ${subjectSuggestion}`;
+
   return (
     <EditorSection
       id="mappe-anschreiben"
       step={step}
       done={done}
       title="Arbeitsstil und Anschreiben"
-      description="Aus Stelle, Schwerpunkten und Arbeitsstil entsteht dein Anschreiben. Danach kannst du es frei ändern."
+      description="Aus der Stelle entsteht der Betreff, aus Stelle, Schwerpunkten und Arbeitsstil das Anschreiben. Beides kannst du frei ändern."
     >
       <div className="flex flex-col gap-4">
         <h3 id="mappe-arbeitsstil-title" className="text-body font-bold text-ink">
@@ -55,6 +80,33 @@ export function LetterSection({
             />
           ))}
         </ChoiceGroup>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <Field label="Betreff" hint={subjectHint}>
+          <Input
+            ref={subjectRef}
+            name="betreff"
+            autoComplete="off"
+            maxLength={MAPPE_LIMITS.subject}
+            value={customSubject ?? subjectSuggestion}
+            onChange={(event) => onSubjectChange(event.target.value)}
+          />
+        </Field>
+        {customSubject !== null && (
+          <Button
+            variant="ghost"
+            wrap
+            onClick={() => {
+              onResetSubject();
+              subjectRef.current?.focus();
+            }}
+            className="max-w-full self-start"
+          >
+            <Icon name="rotate-ccw" size="md" />
+            Vorschlag nehmen
+          </Button>
+        )}
       </div>
 
       <div className="flex flex-col gap-3">
