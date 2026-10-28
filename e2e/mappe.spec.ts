@@ -242,7 +242,7 @@ async function ohneQuerscroll(page: Page) {
 
 test('Mehr im Lebenslauf (L5): Kurzprofil, Sprache, Führerschein, Interessen und eigener Abschnitt in Vorschau und Bewerbung', async ({ page }, testInfo) => {
   await page.goto(`/bewerbung/mappe?stelle=${MAIN_JOB_SLUG}`);
-  const profil = page.getByRole('textbox', { name: 'Kurzprofil' });
+  const profil = page.getByRole('textbox', { name: 'Kurzprofil', exact: true });
   await waitForHydration(profil);
   await expect(page.getByText('Angaben zu Religion, Gesundheit, Partei oder Gewerkschaft brauchen wir für deine Bewerbung nicht.')).toBeVisible();
 
@@ -255,7 +255,7 @@ test('Mehr im Lebenslauf (L5): Kurzprofil, Sprache, Führerschein, Interessen un
   await page.getByRole('button', { name: 'Klasse BE', exact: true }).click();
   await page.getByRole('button', { name: 'Klasse B', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Klasse B', exact: true })).toHaveAttribute('aria-pressed', 'true');
-  await page.getByRole('textbox', { name: 'Interessen' }).fill('Angeln');
+  await page.getByRole('textbox', { name: 'Interessen', exact: true }).fill('Angeln');
   await page.getByRole('textbox', { name: 'Überschrift des eigenen Abschnitts' }).fill('Weiterbildungen');
   await page.getByRole('textbox', { name: 'Text des eigenen Abschnitts' }).fill('Ersthelfer seit 2024');
 
@@ -303,7 +303,7 @@ test('Mehr im Lebenslauf (L5): Kurzprofil, Sprache, Führerschein, Interessen un
 
 test('Aufbau des Lebenslaufs (L5): verschieben, umbenennen und ausblenden; Vorschau und Bewerbung folgen, der Fokus bleibt', async ({ page }, testInfo) => {
   await page.goto(`/bewerbung/mappe?stelle=${MAIN_JOB_SLUG}`);
-  const profil = page.getByRole('textbox', { name: 'Kurzprofil' });
+  const profil = page.getByRole('textbox', { name: 'Kurzprofil', exact: true });
   await waitForHydration(profil);
   await page.getByRole('group', { name: 'Schwerpunkte' }).getByRole('button').first().click();
   await profil.fill('Kurzprofil zum Ausblenden');

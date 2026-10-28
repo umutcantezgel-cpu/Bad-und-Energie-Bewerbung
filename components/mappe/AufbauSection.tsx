@@ -133,9 +133,14 @@ export function AufbauSection({ aufbau, hatInhalt, zweispaltig, briefHinweis, on
                 </div>
               </div>
 
-              <Chip pressed={eintrag.sichtbar} onClick={() => umschalten(eintrag)} className="max-w-full self-start">
+              {/* Name mit dem Abschnitt (acht gleiche Knöpfe), beginnend mit dem sichtbaren Text (WCAG 2.5.3) */}
+              <Chip
+                pressed={eintrag.sichtbar}
+                aria-label={`${AUFBAU_TEXT.zeigen}: ${name}`}
+                onClick={() => umschalten(eintrag)}
+                className="max-w-full self-start"
+              >
                 {AUFBAU_TEXT.zeigen}
-                <span className="sr-only">: {name}</span>
               </Chip>
               {!eintrag.sichtbar ? (
                 <p className="text-callout text-ink-2">{AUFBAU_TEXT.ausgeblendet}</p>
@@ -162,10 +167,15 @@ export function AufbauSection({ aufbau, hatInhalt, zweispaltig, briefHinweis, on
                     />
                   </Field>
                   {eintrag.titel !== null && (
-                    <Button variant="ghost" wrap onClick={() => standardtitel(eintrag.id)} className="max-w-full self-start">
+                    <Button
+                      variant="ghost"
+                      wrap
+                      aria-label={`${AUFBAU_TEXT.standardtitel} für „${name}“`}
+                      onClick={() => standardtitel(eintrag.id)}
+                      className="max-w-full self-start"
+                    >
                       <Icon name="rotate-ccw" size="md" />
                       {AUFBAU_TEXT.standardtitel}
-                      <span className="sr-only"> für „{name}“</span>
                     </Button>
                   )}
                 </div>
