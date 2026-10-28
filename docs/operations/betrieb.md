@@ -12,6 +12,7 @@ Diese Anleitung richtet sich an alle, die die Website live schalten und Bewerbun
 4. [Bewerbungs-E-Mails lesen](#4-bewerbungs-e-mails-lesen)
 5. [Ergänzungen und Unterlagen zuordnen](#5-ergänzungen-und-unterlagen-zuordnen)
 6. [Löschfristen in Postfach und Datenbank](#6-löschfristen-in-postfach-und-datenbank)
+7. [Liste für später und offene Inhaber-Aufgaben](#7-liste-für-später-und-offene-inhaber-aufgaben)
 
 ---
 
@@ -92,6 +93,7 @@ Wichtig:
 - `IP_HASH_SALT` lässt sich jederzeit wechseln; nur die Zähler des Rate-Limits beginnen neu.
 - `APPLICATION_SINK=email` ist der Notschalter für die Datenbank: Bewerbungen gehen dann wieder nur per E-Mail.
 - `MAPPE_PDF=aus` ist der Not-Schalter für die Mappe als PDF (`lib/mappe/pdf`): Die Team-Mail kommt dann wie vor dem 27.10.2026 ohne Anhang, die Mappe steht weiter als Text darin. Ein ungültiger Wert lässt die PDF an (der Start-Check meldet ihn). Bei Problemen mit der PDF diesen Schalter setzen und neu deployen, **kein Instant Rollback** auf einen Stand vor dem 27.10.2026: Der ältere Server kennt die Datenschutzfassung `2026-10-27` nicht und lehnt Bewerbungen aus offenen Tabs ab, bis sie neu geladen werden (außer Skew Protection ist im Vercel-Projekt an).
+- Datenschutzfassung `2026-10-28` (L5, Mappe frei umschreiben): wie oben **kein Instant Rollback** auf einen Stand vor dem 28.10.2026, denn der ältere Server kennt die Fassung nicht und lehnt Bewerbungen aus offenen Tabs ab, bis sie neu geladen werden. Rückweg nur per Revert-Commit, der `2026-10-28` in `PRIVACY_NOTICE_VERSIONS` und den Text der Datenschutzerklärung stehen lässt. Ältere Server würfen die neuen Mappe-Felder ohnehin still weg (kein Fehler).
 - Änderungen wirken erst nach einem neuen Deploy. Danach `/api/status` prüfen (2.6).
 
 ### 2.3 IndexNow
@@ -308,7 +310,7 @@ Die **Bewerbungsnummer** `BE-26-XXXXXX` (Jahr und sechs Zeichen) ist der Schlüs
 - **Kontakt:** Name, Telefon mit Link „WhatsApp-Chat öffnen“, E-Mail (falls angegeben), „Am liebsten per“. Steht hinter der Nummer „nicht automatisch erkannt, bitte prüfen“, konnte die Nummer nicht eindeutig gelesen werden; dann fehlt auch der WhatsApp-Link.
 - **Stelle:** Titel und Referenz der Stelle (z. B. `SHK-WP-2026-01`); Initiativbewerbungen haben keine Referenz. Ein Hinweis erscheint, wenn die Stelle inzwischen als besetzt markiert ist (z. B. Bewerbung über einen alten Link).
 - **Angaben:** die Antworten aus dem Flow, etwa Erfahrung und möglicher Start.
-- **Bewerbungsmappe:** nur wenn mitgeschickt: Betreff, Anschreiben, Arbeitsstil, Fähigkeiten, berufliche Stationen, Schule und Ausbildung. Seit 27.10.2026 liegt sie zusätzlich als **PDF im Anhang** (`Bewerbungsmappe_BE-26-…_Nachname.pdf`, A4, Anschreiben und Lebenslauf im Design der Mappe; die erste Zeile unter „Bewerbungsmappe“ nennt Datei und Seitenzahl). Eine nachgereichte Mappe kommt mit der Ergänzungs-Mail, die PDF dort nur mit Nummer (`Bewerbungsmappe_BE-26-….pdf`, „Bewerbungsmappe“ statt Name im Kopf). Fehlt die Zeile, kam keine PDF mit (Grund im Log, 3.1); der Text ist vollständig. Seit 28.10.2026 (L5) kommt der Betreff in PDF und Mail aus der Mappe: der eigene Betreff der Person oder der Vorschlag der Stelle, die sie in der Mappe gewählt hat. Ohne beides (keine Stelle in der Mappe, Mappen aus älteren Tabs) gilt wie bisher die Stelle der Bewerbung, bei nachgereichten Mappen „Bewerbungsmappe zur Bewerbung …“. Sonst steht auch bei nachgereichten Mappen der Betreff der Person im PDF; die Nummer steht im Dateinamen und im Betreff der Mail. Wechselt jemand nach der Mappe im Formular die Stelle, nennen Betreff und Brieftext die Stelle aus der Mappe. Telefon, E-Mail, Wohnort und Foto aus der Mappe sind nie darin (sie bleiben beim Bewerber).
+- **Bewerbungsmappe:** nur wenn mitgeschickt: Betreff, Anschreiben, Arbeitsstil, dann der Lebenslauf in der Reihenfolge und mit den Überschriften, die die Person gewählt hat (Standard: Kurzprofil, Berufserfahrung, Schule und Ausbildung, Schwerpunkte, Sprachen, Führerschein, Interessen, eigener Abschnitt; nur Ausgefülltes, ausgeblendete Abschnitte kommen nicht mit). Seit 28.10.2026 stehen dort die Überschriften des Lebenslaufs statt der früheren Etiketten „Fähigkeiten“ und „Berufliche Stationen“. Seit 27.10.2026 liegt sie zusätzlich als **PDF im Anhang** (`Bewerbungsmappe_BE-26-…_Nachname.pdf`, A4, Anschreiben und Lebenslauf im Design der Mappe; die erste Zeile unter „Bewerbungsmappe“ nennt Datei und Seitenzahl). Eine nachgereichte Mappe kommt mit der Ergänzungs-Mail, die PDF dort nur mit Nummer (`Bewerbungsmappe_BE-26-….pdf`, „Bewerbungsmappe“ statt Name im Kopf). Fehlt die Zeile, kam keine PDF mit (Grund im Log, 3.1); der Text ist vollständig. Seit 28.10.2026 (L5) kommt der Betreff in PDF und Mail aus der Mappe: der eigene Betreff der Person oder der Vorschlag der Stelle, die sie in der Mappe gewählt hat. Ohne beides (keine Stelle in der Mappe, Mappen aus älteren Tabs) gilt wie bisher die Stelle der Bewerbung, bei nachgereichten Mappen „Bewerbungsmappe zur Bewerbung …“. Sonst steht auch bei nachgereichten Mappen der Betreff der Person im PDF; die Nummer steht im Dateinamen und im Betreff der Mail. Wechselt jemand nach der Mappe im Formular die Stelle, nennen Betreff und Brieftext die Stelle aus der Mappe. Telefon, E-Mail, Wohnort und Foto aus der Mappe sind nie darin (sie bleiben beim Bewerber).
 - **Quelle:** Kanal (z. B. Google for Jobs, Indeed, Bundesagentur für Arbeit, Empfehlung, Direkt), UTM-Werte, Empfehlungscode, verweisende Seite und Einstiegsseite. Bis zum Cockpit (Phase 2d) ist das die Grundlage für „Bewerbungen pro Kanal“.
 - **Eingang:** Bewerbungsnummer, Zeitpunkt (deutsche Zeit), Ausfülldauer und die Version des Datenschutzhinweises, den die Person gesehen hat.
 
@@ -355,3 +357,37 @@ Im Postfach muss das Team das selbst einhalten, zum Beispiel so:
 In der Datenbank ist die automatische Löschung (Phase 2c) noch nicht gebaut. Bis dahin löscht die Administration abgelaufene Bewerbungen per SQL. **Offener Owner-Punkt:** Das muss vor der ersten Frist geregelt sein, also frühestens etwa 6 Monate nach der ersten Absage einer Bewerbung, die in der Datenbank steht. Testbewerbungen (2.6) gehören ebenfalls gelöscht.
 
 Auch Resend speichert versendete Mails eine begrenzte Zeit; die Aufbewahrung im Resend-Konto prüfen und mit der Datenschutzerklärung abgleichen. Ab Phase 2c übernimmt `pg_cron` die Löschung in der Datenbank (ROADMAP §8.1).
+
+## 7. Liste für später und offene Inhaber-Aufgaben
+
+Stand 28.10.2026, Abschluss des Ausbaus (Mails, Bewerbungsseite, Mappe mit PDF, Designs, Download, frei umschreiben). Nichts davon blockiert den Betrieb; die Punkte stammen aus den Prüfrunden und sind bewusst nicht gebaut.
+
+**Bewerbungsmappe (`/bewerbung/mappe`)**
+
+- Nachgereichte Team-PDF: Mit dem Betreff aus der Mappe steht die Bewerbungsnummer nur noch im Dateinamen und im Betreff der Mail, nicht mehr auf dem Blatt. Inhaber-Entscheidung, ob die Nummer zusätzlich in den Kopf soll.
+- „Vorschlag nehmen“ beim Betreff ohne „Rückgängig“ (das Anschreiben hat es).
+- Zeichen-Hinweis: Funde aus der Vorlage (etwa ein kyrillischer Name im Anschreiben) ohne Erklärung, woher sie kommen; die Prüfung läuft bei sehr langen Texten am Handy spürbar.
+- Doppelte Angabe zum Führerschein möglich (Schwerpunkt-Chip „Führerschein Klasse B PKW“, Frage im Formular, neuer Abschnitt).
+- Desktop: Beim Wechsel des Designs springt die Vorschau nicht zum Lebenslauf; „Vorlage“ als Radiogruppe statt Karten; bei niedrigen Fenstern (unter 56em Höhe) läuft die Spalte mit der Seite.
+- Druck in Safari und Firefox nicht geprüft (Chrome und Edge geprüft); Safari kennt benannte Druckseiten nicht.
+- Sehr lange Mappen: PDF im Browser ohne Web Worker (die Seite ist während des Setzens kurz träge); der Knopf nennt im Ladezustand keinen eigenen Namen.
+- Schema und Browser zählen Zeichen außerhalb der Grundebene (Emojis) unterschiedlich lang; der Browser ist der strengere.
+- Einmalig am Deploy möglich: eine zweite Team-Mail zu derselben Mappe, wenn eine Antwort in genau diesem Moment verloren ging.
+
+**Seiten und Technik**
+
+- `revalidate = 300` statt 3600 nur für die Bewerbungsseiten; abgelaufene Stellen bleiben bis zu 1 Stunde in Auswahl und Wegweisern sichtbar.
+- CSS-Preload-Warnung „preloaded but not used“ bei Aufrufen von `/bewerbung`; Verdacht auf einen `__NA`-Eintrag in der Browser-History; Hinweis-Parameter geht beim 308 der internen Adresse verloren.
+- Ergänzung A → B → A: Wer dieselbe Ergänzung nach einer anderen erneut schickt, bekommt keine dritte Mail.
+
+**Offene Inhaber-Aufgaben (ohne Code)**
+
+1. **Datenschutz:** Fassungen `2026-10-27` und `2026-10-28` von der oder dem DSB prüfen lassen (`docs/operations/datenschutz-aenderungen.md`, Checkliste in Abschnitt 6); bei Resend die Aufbewahrungsdauer gesendeter Mails samt Anhängen klären; prüfen, ob `datenschutz@bad-energie.de` ankommt und gelesen wird (die Erklärung nennt die Adresse); Frage O2 (benannter Datenschutzbeauftragter) beantworten.
+2. **Gerätetest:** am iPhone (Safari und Chrome) und unter Android „PDF herunterladen“ bzw. „PDF teilen“, dazu im Instagram-Browser den Hinweis und „Link kopieren“; eine Probe-Bewerbung mit Mappe schicken und PDF und Mail in Outlook ansehen.
+3. **GitHub-Secrets** `INDEXNOW_SUBMIT_TOKEN` und `GOOGLE_INDEXING_SA_KEY` im Environment „indexierung“ setzen (sonst überspringt der tägliche Lauf beide Ziele).
+4. **Search Console:** für `/einsatzgebiet` und die Kreis-Hubs „Indexierung beantragen“; Datum der Sitemap-Einreichung in `docs/operations/orte-monitoring.md` nachtragen.
+5. **Hauptdomain:** Ticket an den Dienstleister abschicken (`docs/inhaber/ticket-hauptdomain.md`).
+6. **Vercel:** Node-Version des Projekts nennen; **Outlook:** Version/Build nennen und ob ein Testversand an eure Adressen erlaubt ist.
+7. **Ende November:** Fahrplandaten der Ortsseiten neu rechnen lassen (Issue kommt automatisch; sonst ab 13.12. noindex).
+8. **Bosch:** Urkunde und Wortlaut für „Premium Partner“ (M-020) und die schriftliche Erlaubnis für Logo und Markenfassung (M-021) nachreichen; bis dahin bleibt beides gesperrt.
+

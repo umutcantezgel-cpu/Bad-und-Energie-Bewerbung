@@ -66,8 +66,10 @@ describe('createReference', () => {
   });
 
   it('is random enough to avoid collisions without a database', () => {
+    // Zufall: Bei 2000 Nummern ist eine einzelne Dopplung möglich (rund 0,3 %); der Test soll daran nicht scheitern.
+    // Drei oder mehr hießen, dass der Zufall nicht reicht (Wahrscheinlichkeit sonst rund 1 zu 10 Millionen).
     const references = new Set(Array.from({ length: 2000 }, () => createReference(NOW)));
-    expect(references.size).toBe(2000);
+    expect(references.size).toBeGreaterThanOrEqual(1998);
   });
 
   it('normalizes and validates references', () => {

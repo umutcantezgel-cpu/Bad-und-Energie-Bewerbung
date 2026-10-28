@@ -312,6 +312,13 @@ Ersetzt HeroExpressFunnel, QuizView, VaultView, FormView und BewerberCheckliste.
 - A4-Vorschau, Druck/PDF über `window.print()` mit neu gestaltetem Print-CSS.
 - **Keine Demo- oder Fallback-Daten.**
 - „Mit Bewerbung senden“ hängt die strukturierten Mappendaten an. Ab Phase 2 rendert das Cockpit dieselbe Mappe aus der DB, ganz ohne PDF-Bibliothek.
+- **Stand 28.10.2026 (Abschluss, Schritte L2–L6):**
+  - Die Team-Mail bekommt die Mappe zusätzlich als A4-PDF im Anhang (Serverfunktion, `lib/mappe/pdf`, Not-Schalter `MAPPE_PDF=aus`).
+  - Drei Designs (Schlicht, Farbband, Zweispaltig) mit sechs Akzentfarben, Schriftstil und Fotoform.
+  - „PDF herunterladen“ erzeugt im Browser dasselbe PDF mit Kontaktzeile und Foto; am Handy über das Teilen-Menü, in App-Browsern mit Hinweis und „Link kopieren“.
+  - Frei umschreiben: eigener Betreff, Zeichen-Hinweis, Kurzprofil, Sprachen, Führerschein, Interessen, eigener Abschnitt; Aufbau mit Reihenfolge, Ausblenden und eigenen Überschriften (Vertrag M-043, Datenschutzfassung `2026-10-28`).
+  - Bewusst nicht gebaut (Inhaber 27.10.): Kontaktdaten und Foto in der Team-PDF; Seitenvorschau mit echten Seitenumbrüchen (die Vorschau bleibt fortlaufend, die Seitenzahl kommt aus der PDF).
+  - Liste für später: `docs/operations/betrieb.md` §7.
 
 ---
 
