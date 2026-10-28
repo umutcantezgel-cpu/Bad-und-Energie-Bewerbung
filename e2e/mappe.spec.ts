@@ -198,8 +198,10 @@ test('Zeichen-Hinweis der Mappe (L5): kyrillisches Wort und Emoji im Anschreiben
   await expectNoAxeViolations(page, testInfo);
   if (isTouch(testInfo)) expect(await findSmallTouchTargets(page, 'main'), 'Trefferfläche < 44 px').toEqual([]);
   await page.setViewportSize({ width: 320, height: 720 });
-  const querscroll = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-  expect(querscroll, 'Querscroll bei 320 px').toBeLessThanOrEqual(0);
+  // Nach dem Verkleinern setzt der ResizeObserver den Maßstab der Vorschau einen Frame später: messen, wenn das Layout steht
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth), { message: 'Querscroll bei 320 px' })
+    .toBeLessThanOrEqual(0);
 
   // Zeichen ersetzt: Der Hinweis verschwindet
   await letter.fill((await letter.inputValue()).replace('Дякую! 😊', 'Danke!'));

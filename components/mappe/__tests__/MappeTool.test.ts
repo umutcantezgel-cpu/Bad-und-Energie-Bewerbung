@@ -78,8 +78,11 @@ describe('MappeTool (server render)', () => {
   });
 
   it('Betreff (L5): eigenes Feld vor dem Anschreiben, mit dem Vorschlag und ohne „Vorschlag nehmen“; kein Zeichen-Hinweis', () => {
-    const feld = /<input[^>]*name="betreff"[^>]*>/.exec(html)?.[0] ?? '';
-    expect(feld).toContain('value="Bewerbung"');
+    // Zweizeilig (ganzer Vorschlag sichtbar), Inhalt als Text der textarea
+    const treffer = /<textarea([^>]*name="betreff"[^>]*)>([^<]*)<\/textarea>/.exec(html);
+    const feld = treffer?.[1] ?? '';
+    expect(treffer?.[2]).toBe('Bewerbung');
+    expect(feld).toMatch(/rows="2"/);
     expect(feld).toMatch(/maxlength="160"/i);
     expect(feld).toMatch(/autocomplete="off"/i);
     expect(html.indexOf('name="betreff"')).toBeLessThan(html.indexOf('name="anschreiben"'));

@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import { Icon } from '@/components/icons';
-import { Button, ChoiceCard, ChoiceGroup, Field, Input, Textarea } from '@/components/ui';
+import { Button, ChoiceCard, ChoiceGroup, Field, Textarea } from '@/components/ui';
 import { MAPPE_LIMITS, WORK_STYLES, type WorkStyle, type WorkStyleId } from '@/lib/mappe/options';
 import { EditorSection } from './EditorSection';
 
@@ -47,7 +47,7 @@ export function LetterSection({
   onLetterChange,
   onResetLetter,
 }: LetterSectionProps) {
-  const subjectRef = useRef<HTMLInputElement>(null);
+  const subjectRef = useRef<HTMLTextAreaElement>(null);
   const subjectHint =
     customSubject === null
       ? hasJob
@@ -84,13 +84,20 @@ export function LetterSection({
 
       <div className="flex flex-col gap-3">
         <Field label="Betreff" hint={subjectHint}>
-          <Input
+          {/* Zwei Zeilen statt einer: Schon der Vorschlag (bis 77 Zeichen) passt am Handy nicht in eine Zeile.
+              Einzeilig bleibt er trotzdem: Enter und Zeilenumbrüche werden zu Leerzeichen */}
+          <Textarea
             ref={subjectRef}
             name="betreff"
             autoComplete="off"
+            rows={2}
             maxLength={MAPPE_LIMITS.subject}
             value={customSubject ?? subjectSuggestion}
-            onChange={(event) => onSubjectChange(event.target.value)}
+            onChange={(event) => onSubjectChange(event.target.value.replace(/\s*[\r\n]+\s*/g, ' '))}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') event.preventDefault();
+            }}
+            className="min-h-0 resize-none"
           />
         </Field>
         {customSubject !== null && (
