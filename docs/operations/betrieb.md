@@ -378,12 +378,23 @@ Stand 28.10.2026, Abschluss des Ausbaus (Mails, Bewerbungsseite, Mappe mit PDF, 
 - Aufbau am Computer: Verschieben und Ausblenden sieht man in der Vorschau erst nach Scrollen im Vorschaufenster (bei niedrigen Fenstern liegt die Vorschau weit oben).
 - Übergabe an das Formular folgt Änderungen nach 0,3 s; wer in diesem Moment über einen normalen Link (nicht den Hauptknopf) ins Formular wechselt, nimmt den Stand davor mit.
 - Sehr lange Mappen mit vielen Umlauten an allen Grenzen überschreiten 64 KB je Anfrage (schon vor L5); die Seite sagt dann, dass die Angaben zu lang sind.
+- Aus dem Release-Gate vor dem Livegang von L5 (28.10.):
+  - Liegt aller Inhalt in ausgeblendeten Abschnitten, sagt die Meldung „Deine Mappe ist noch leer. Wähl zum Beispiel deine Schwerpunkte …“, obwohl Schwerpunkte gewählt (aber ausgeblendet) sind.
+  - Aufbau: „Noch leer: erscheint, sobald du etwas einträgst.“ stimmt für Druck und PDF; die Vorschau zeigt bei Berufserfahrung, Schule und Schwerpunkten schon einen Platzhalter. Am Rand springt der Fokus auf den Gegenpfeil, weiteres Enter schiebt zurück (wie bei den Stationen).
+  - Ein eigener Betreff nur aus Emojis: Der Hinweis nennt ihn „deinen eigenen Betreff“, Vorschau und Mappe nehmen aber den Vorschlag.
+  - Felder, die nur unsichtbare Zeichen enthalten (etwa U+200B in Kurzprofil, Interessen, eigenem Abschnitt oder Sprache), erscheinen in der Team-Mail als Abschnitt ohne sichtbaren Text.
+  - Führerschein: Der Server nimmt per Hand gebaute Anfragen mit beliebigen Kürzeln bis 10 Zeichen an („Klassen B, XYZ und b“); die Seite selbst bietet nur die acht Klassen.
+  - Nachgereichte Mappe nur mit Schwerpunkten und Betreff (Anschreiben geleert) läuft als „Praxiserfahrung“: keine PDF, der Betreff fehlt in der Ergänzungs-Mail.
+  - Zweispaltig, Hauptspalte: Wörter bis 40 Zeichen bekommen keine Trennstelle (alte Regel, gilt jetzt auch für Kurzprofil und eigenen Abschnitt). Die Seitenspalte trennt nach gemessener Breite über `Font.getFont(...).data` (Interna von react-pdf); nach einem Update von react-pdf prüfen, ob sie noch misst (Browser- und Server-PDF stimmten am 28.10. Wort für Wort überein).
+  - Sprachen: Jeder Eintrag hat dieselben Feldnamen „Sprache“ und „Niveau“; den Unterschied nennt nur die Zwischenüberschrift „Sprache n“ (wie bei den Stationen). Der Kopf nennt „5 Abschnitte“ und zählt die freiwilligen nicht mit.
+  - Datenschutz, Satz zu besonderen Daten: nennt nur Religion, Gesundheit, Partei und Gewerkschaft, nicht alle Kategorien aus Art. 9 DSGVO. Gehört zur Frage an die oder den DSB (Abschnitt 6 in `datenschutz-aenderungen.md`).
 
 **Seiten und Technik**
 
 - `revalidate = 300` statt 3600 nur für die Bewerbungsseiten; abgelaufene Stellen bleiben bis zu 1 Stunde in Auswahl und Wegweisern sichtbar.
 - CSS-Preload-Warnung „preloaded but not used“ bei Aufrufen von `/bewerbung`; Verdacht auf einen `__NA`-Eintrag in der Browser-History; Hinweis-Parameter geht beim 308 der internen Adresse verloren.
 - Ergänzung A → B → A: Wer dieselbe Ergänzung nach einer anderen erneut schickt, bekommt keine dritte Mail.
+- Einmalig am Deploy von L5: Ein Formular-Tab, der vor dem Deploy geladen wurde, liest eine danach übergebene Mappe mit dem alten Code; Betreff, Kurzprofil, Sprachen und die übrigen neuen Angaben fallen dann still weg.
 
 **Offene Inhaber-Aufgaben (ohne Code)**
 

@@ -384,6 +384,39 @@ test('Schwerpunkte ausblenden (L5): Die Vorlage nennt sie nicht mehr; im eigenen
   await ohneQuerscroll(page);
 });
 
+test('„Vorwärts“ zurück in den Flow (L5): Er liest die Mappe neu, ein danach ausgeblendeter Abschnitt geht nicht mit', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-light', 'Ein Projekt genügt: Es geht nur um die Übergabe.');
+  await page.goto(`/bewerbung/mappe?stelle=${MAIN_JOB_SLUG}`);
+  const interessen = page.getByRole('textbox', { name: 'Interessen', exact: true });
+  await waitForHydration(interessen);
+  await page.getByRole('group', { name: 'Schwerpunkte' }).getByRole('button').first().click();
+  await interessen.fill('Angeln im Verein');
+  await page.getByRole('button', { name: 'Mit dieser Mappe bewerben' }).click();
+  await expect(page).toHaveURL(new RegExp(`/bewerbung\\?stelle=${MAIN_JOB_SLUG}`));
+  const flow = flowRoot(page, 'page');
+  await waitForHydration(flow);
+
+  // Zurück, Interessen ausblenden, Vorwärts: Die Mappe-Seite schreibt die Übergabe neu, ein Flow aus dem
+  // Back-Forward-Cache hätte noch den alten Stand im Speicher. Headless-Chromium lädt neu statt aus dem Cache, darum
+  // nachgestellt: neue Übergabe ohne Interessen, dann pageshow mit persisted.
+  await page.evaluate(() => {
+    const mappe = JSON.parse(sessionStorage.getItem('be:mappe:v1') ?? '{}') as Record<string, unknown>;
+    delete mappe.interests;
+    sessionStorage.setItem('be:mappe:v1', JSON.stringify(mappe));
+    window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true }));
+  });
+
+  const taps = new TapCounter(testInfo);
+  await answerQuestions(flow, taps);
+  await fillContact(flow);
+  const requestPromise = page.waitForRequest((request) => new URL(request.url()).pathname === '/api/bewerbung');
+  await taps.tap(submitButton(flow));
+  const payload = (await requestPromise).postDataJSON() as { mappe?: Record<string, unknown> };
+  await expectThankYou(page);
+  expect(payload.mappe?.skills).toHaveLength(1);
+  expect(payload.mappe).not.toHaveProperty('interests');
+});
+
 test('Mappe abwählen: Hinweis wechselt, Bewerbung geht ohne Mappe', async ({ page }) => {
   await page.goto(`/bewerbung/mappe?stelle=${MAIN_JOB_SLUG}`);
   const workStyle = page.getByRole('button', { name: WORK_STYLE });

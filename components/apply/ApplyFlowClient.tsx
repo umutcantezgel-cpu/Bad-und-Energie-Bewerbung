@@ -283,6 +283,16 @@ export function ApplyFlowClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Aus dem Back-Forward-Cache zurück (etwa „Vorwärts“ nach Änderungen in der Mappe): Übergabe neu lesen. Sonst ginge
+  // der Stand von vorher mit, auch ein inzwischen ausgeblendeter Abschnitt (Datenschutzerklärung, #entwurf).
+  useEffect(() => {
+    const neuLesen = (event: PageTransitionEvent) => {
+      if (event.persisted) patchSession({ mappe: readMappe() });
+    };
+    window.addEventListener('pageshow', neuLesen);
+    return () => window.removeEventListener('pageshow', neuLesen);
+  }, []);
+
   // Antworten oder Stelle geändert → Entwurf speichern.
   useEffect(() => {
     if (state.dirty) scheduleDraft();
