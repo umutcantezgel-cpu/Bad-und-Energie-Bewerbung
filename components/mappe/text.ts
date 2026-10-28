@@ -28,6 +28,7 @@ export const MAPPE_KOPF: Readonly<MappeKopfText> = Object.freeze({
   zweitweg: Object.freeze({ href: APPLY_PATH, label: 'Ohne Mappe bewerben' }),
   masse: Object.freeze([
     Object.freeze({ wert: String(MAPPE_ABSCHNITTE.length), name: 'Abschnitte' }),
-    Object.freeze({ wert: '2', name: 'Seiten A4' }),
+    // Keine feste Seitenzahl (K-012): Mit Kurzprofil, Sprachen & Co. hat der Lebenslauf oft mehr als eine Seite
+    Object.freeze({ wert: 'A4', name: 'Anschreiben und Lebenslauf' }),
   ]),
 });

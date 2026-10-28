@@ -34,6 +34,8 @@ export interface StationsEditorProps<T extends { id: string }> {
   onAction: (action: ListAction<T>) => void;
   /** Polite screen reader message (shared live region). */
   announce: (message: string) => void;
+  /** Name of one entry in labels and messages („Sprache 1 entfernen“); default „Eintrag“. */
+  itemLabel?: string;
 }
 
 type FocusTarget = { id: string; target: 'first' | 'up' | 'down' } | 'add';
@@ -60,6 +62,7 @@ export function StationsEditor<T extends { id: string }>({
   emptyText,
   onAction,
   announce,
+  itemLabel = 'Eintrag',
 }: StationsEditorProps<T>) {
   const { toast } = useToast();
   const cardRefs = useRef(new Map<string, CardRefs>());
@@ -96,13 +99,13 @@ export function StationsEditor<T extends { id: string }>({
     const item = createItem();
     onAction({ type: 'add', item, max });
     pendingFocus.current = { id: item.id, target: 'first' };
-    announce(`Eintrag ${items.length + 1} hinzugefügt.`);
+    announce(`${itemLabel} ${items.length + 1} hinzugefügt.`);
   }
 
   function move(item: T, index: number, direction: -1 | 1) {
     onAction({ type: 'move', id: item.id, direction });
     pendingFocus.current = { id: item.id, target: direction < 0 ? 'up' : 'down' };
-    announce(`Eintrag ${index + 1} ist jetzt Eintrag ${index + 1 + direction}.`);
+    announce(`${itemLabel} ${index + 1} ist jetzt ${itemLabel} ${index + 1 + direction}.`);
   }
 
   function remove(item: T, index: number) {
@@ -110,11 +113,11 @@ export function StationsEditor<T extends { id: string }>({
     cardRefs.current.delete(item.id);
     pendingFocus.current = 'add';
     if (isEmpty(item)) {
-      announce(`Eintrag ${index + 1} entfernt.`);
+      announce(`${itemLabel} ${index + 1} entfernt.`);
       return;
     }
     toast({
-      title: `Eintrag ${index + 1} entfernt`,
+      title: `${itemLabel} ${index + 1} entfernt`,
       action: { label: 'Rückgängig', onClick: () => onAction({ type: 'add', item, max, index }) },
     });
   }
@@ -135,13 +138,13 @@ export function StationsEditor<T extends { id: string }>({
               <li key={item.id} className="flex flex-col gap-5 rounded-2 bg-surface-2 p-5">
                 <div className="flex items-center justify-between gap-3">
                   <h4 className="text-etikett text-ink-2">
-                    Eintrag <span className="font-mass">{n}</span>
+                    {itemLabel} <span className="font-mass">{n}</span>
                   </h4>
                   {/* Bedienleiste: Der Sprung aus der Checkliste landet im ersten Feld, nicht hier (SPRUNG_NEIN in stand.ts). */}
                   <div className="-mr-2 flex shrink-0 items-center" data-sprung-nein="">
                     <IconButton
                       ref={(node) => setCardRef(item.id, 'up', node)}
-                      aria-label={`Eintrag ${n} nach oben verschieben`}
+                      aria-label={`${itemLabel} ${n} nach oben verschieben`}
                       disabled={index === 0}
                       onClick={() => move(item, index, -1)}
                     >
@@ -149,13 +152,13 @@ export function StationsEditor<T extends { id: string }>({
                     </IconButton>
                     <IconButton
                       ref={(node) => setCardRef(item.id, 'down', node)}
-                      aria-label={`Eintrag ${n} nach unten verschieben`}
+                      aria-label={`${itemLabel} ${n} nach unten verschieben`}
                       disabled={index === items.length - 1}
                       onClick={() => move(item, index, 1)}
                     >
                       <Icon name="arrow-down" size="md" />
                     </IconButton>
-                    <IconButton aria-label={`Eintrag ${n} entfernen`} onClick={() => remove(item, index)}>
+                    <IconButton aria-label={`${itemLabel} ${n} entfernen`} onClick={() => remove(item, index)}>
                       <Icon name="trash" size="md" />
                     </IconButton>
                   </div>

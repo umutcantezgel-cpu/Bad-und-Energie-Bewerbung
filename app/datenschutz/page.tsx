@@ -424,8 +424,8 @@ function Datenschutzerklaerung() {
             Briefkopf. Ein Foto bleibt nur im Arbeitsspeicher der geöffneten Seite. Telefon, E-Mail, Wohnort und Foto
             aus der Mappe werden nicht mitgesendet. Druck und dein eigenes PDF erstellt dein Browser selbst; das PDF für
             unser Team setzt unsere Serverfunktion aus der gesendeten Mappe (siehe „Wer deine Bewerbung erhält“).
-            Abschnitte, die du im Lebenslauf ausblendest, bleiben ebenfalls nur in deinem Browser und werden nicht
-            mitgesendet.
+            Abschnitte, die du vor dem Senden im Lebenslauf ausblendest, bleiben ebenfalls nur in deinem Browser und
+            werden nicht mitgesendet.
           </li>
           <li>
             Nach dem Absenden merkt sich der Browser im selben Tab Bewerbungsnummer, Vorname, Stelle und einen

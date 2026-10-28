@@ -7,6 +7,7 @@ import { fuerPdf } from '@/lib/mappe/blatt/zeichen';
 import { getMappeRecipient } from '@/lib/mappe/context';
 import { ZEILEN_HOECHSTENS, geschaetzterUmfang, mappeAnhangFuerBewerbung, mappeAnhangFuerErgaenzung } from '@/lib/mappe/pdf/anhang';
 import { mappePdf } from '@/lib/mappe/pdf/blatt';
+import { trenneSchmal } from '@/lib/mappe/pdf/satz';
 import { buildSubject } from '@/lib/mappe/template';
 
 /**
@@ -185,6 +186,18 @@ describe('PDF der Mappe im Anhang der Team-Mail', () => {
       expect(seiten, vorlage).toBeGreaterThan(10);
     }
   }, 90_000);
+
+  it('trenneSchmal (Seitenspalte): kurze Wörter ganz, lange mit Trennstellen nur außerhalb der ersten und letzten drei Zeichen', () => {
+    expect(trenneSchmal('Wärmepumpen')).toEqual(['Wärmepumpen']);
+    expect(trenneSchmal('x'.repeat(16))).toEqual(['x'.repeat(16)]);
+    const teile = trenneSchmal('Wärmepumpeninbetriebnahme');
+    expect(teile.join('')).toBe('Wärmepumpeninbetriebnahme');
+    expect(teile[0]).toBe('Wär');
+    expect(teile.at(-1)).toBe('hme');
+    expect(teile).toHaveLength(25 - 6 + 2);
+    // Zeichen außerhalb der Grundebene bleiben ganz (kein halbes Ersatzzeichen)
+    expect(trenneSchmal('Ł'.repeat(10) + '𝔄'.repeat(10)).every((teil) => !/[\ud800-\udbff]$/.test(teil))).toBe(true);
+  });
 
   it('Spamverdacht: keine PDF (kein Satz für Bot-Anfragen), Grund im Log', async () => {
     expect(await mappeAnhangFuerBewerbung({ ...full, suspectedSpam: true, spamSignals: ['honeypot'] })).toBeNull();

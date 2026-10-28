@@ -250,6 +250,8 @@ test('Mehr im Lebenslauf (L5): Kurzprofil, Sprache, Führerschein, Interessen un
   await page.getByRole('button', { name: 'Sprache hinzufügen' }).click();
   const sprache = page.getByRole('list', { name: 'Sprachen' }).getByRole('listitem').first();
   await expect(sprache.getByRole('textbox', { name: 'Sprache', exact: true })).toBeFocused();
+  // Die Knöpfe nennen die Sprache, nicht nur „Eintrag“ (Berufserfahrung und Schule heißen weiter so)
+  await expect(sprache.getByRole('button', { name: 'Sprache 1 entfernen' })).toBeVisible();
   await sprache.getByRole('textbox', { name: 'Sprache', exact: true }).fill('Deutsch');
   await sprache.getByRole('textbox', { name: /^Niveau/ }).fill('Muttersprache');
   await page.getByRole('button', { name: 'Klasse BE', exact: true }).click();

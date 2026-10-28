@@ -163,6 +163,21 @@ describe('Zeichen-Hinweis (L5): Orte im Editor', () => {
     ]);
   });
 
+  it('eine eigene Überschrift ist ein eigener Ort: „Überschrift von …“ bzw. „Überschrift des eigenen Abschnitts“', () => {
+    const state = {
+      ...createEmptyEditorState('anlagenmechaniker-shk'),
+      careerStations: [{ id: 'c1', period: '2020', role: 'Monteur', company: 'Betrieb', location: '', tasks: '' }],
+      eigenerText: 'Ehrenamt',
+      aufbau: createEmptyEditorState().aufbau.map((eintrag) =>
+        eintrag.id === 'career' ? { ...eintrag, titel: 'Опыт работы' } : eintrag.id === 'custom' ? { ...eintrag, titel: 'Курсы' } : eintrag,
+      ),
+    };
+    expect(zeichenFunde(zeichenOrte(state, context))).toEqual([
+      { ort: 'Überschrift von Berufserfahrung', nurDownload: false, fallenWeg: [], fehlen: ['О', 'п', 'ы', 'т', 'р', 'а', 'б', 'о'] },
+      { ort: 'Überschrift des eigenen Abschnitts', nurDownload: false, fallenWeg: [], fehlen: ['К', 'у', 'р', 'с', 'ы'] },
+    ]);
+  });
+
   it('neue Abschnitte (L5): Funde je Abschnitt, auch in der eigenen Überschrift; ausgeblendete zählen nicht', () => {
     const state = {
       ...createEmptyEditorState('anlagenmechaniker-shk'),

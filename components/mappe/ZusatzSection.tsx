@@ -86,6 +86,7 @@ export function ZusatzSection({
         isEmpty={(eintrag) => !eintrag.sprache.trim() && !eintrag.niveau.trim()}
         addLabel="Sprache hinzufügen"
         emptyText="Noch keine Sprache eingetragen."
+        itemLabel="Sprache"
         onAction={onSprachen}
         announce={announce}
       />

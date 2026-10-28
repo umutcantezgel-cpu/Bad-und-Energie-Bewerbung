@@ -33,15 +33,15 @@ describe('Seite /bewerbung/mappe (R5-MAPPE-01, E-023)', () => {
     expect(html.match(/bg-accent /g)).toHaveLength(1);
   });
 
-  it('nennt im Kopf nur Belegtes: freiwillig (noCvNeeded), zwei Blätter A4, fünf Abschnitte, Weg ohne Mappe', async () => {
+  it('nennt im Kopf nur Belegtes: freiwillig (noCvNeeded), A4 ohne feste Seitenzahl, fünf Abschnitte, Weg ohne Mappe', async () => {
     const { html } = await seite();
     const text = plain(html);
     expect(text).toContain(FACTS.noCvNeeded.long);
     expect(text).toContain('Anschreiben und Lebenslauf auf A4.');
     expect(text).toContain('5 Abschnitte');
-    expect(text).toContain('2 Seiten A4');
+    expect(text).not.toMatch(/\d+ Seiten A4/);
     expect(html).toMatch(/<a[^>]*href="\/bewerbung"[^>]*>Ohne Mappe /);
-    expect(MAPPE_KOPF.masse.map((mass) => mass.wert)).toEqual(['5', '2']);
+    expect(MAPPE_KOPF.masse.map((mass) => mass.wert)).toEqual(['5', 'A4']);
   });
 
   it('bleibt außerhalb des Index (Metadaten unverändert)', async () => {

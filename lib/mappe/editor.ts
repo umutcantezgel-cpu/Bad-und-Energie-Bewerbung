@@ -434,27 +434,33 @@ export function zeichenOrte(state: MappeEditorState, context: MappeContext): Map
   const { person } = state;
   const nurDownload = (ort: string, text: string): MappeZeichenOrt => ({ ort, text, nurDownload: true });
   const inBeiden = (ort: string, text: string): MappeZeichenOrt => ({ ort, text, nurDownload: false });
-  // Lebenslauf je Abschnitt mit seiner Überschrift (auch eine eigene steht im PDF), benannt wie im Editor
+  // Lebenslauf je Abschnitt, benannt wie im Editor; eine eigene Überschrift als eigener Ort (man ändert sie im Aufbau
+  // bzw. beim eigenen Abschnitt, nicht bei den Einträgen)
   const abschnitte = new Map(lebenslaufAbschnitte(mappe).map((abschnitt) => [abschnitt.id, abschnitt]));
-  const lebenslauf = (id: MappeSectionId) => {
+  const lebenslauf = (id: MappeSectionId): MappeZeichenOrt[] => {
     const abschnitt = abschnitte.get(id);
-    return inBeiden(ABSCHNITT_NAME[id], abschnitt ? abschnittTexte(abschnitt).join('\n') : '');
+    const [titel = '', ...inhalt] = abschnitt ? abschnittTexte(abschnitt) : [];
+    const orte = [inBeiden(ABSCHNITT_NAME[id], inhalt.join('\n'))];
+    if (titel && titel !== STANDARD_TITEL[id]) {
+      orte.push(inBeiden(id === 'custom' ? 'Überschrift des eigenen Abschnitts' : `Überschrift von ${ABSCHNITT_NAME[id]}`, titel));
+    }
+    return orte;
   };
   return [
     nurDownload('Name', person.name),
     nurDownload('Telefon', person.phone),
     nurDownload('E-Mail', person.email),
     nurDownload('Wohnort', person.location),
-    lebenslauf('skills'),
+    ...lebenslauf('skills'),
     inBeiden('Betreff', resolveSubject(state, context.jobs)),
     inBeiden('Anschreiben', mappe.coverLetter),
-    lebenslauf('career'),
-    lebenslauf('education'),
-    lebenslauf('profile'),
-    lebenslauf('languages'),
-    lebenslauf('drivingLicenses'),
-    lebenslauf('interests'),
-    lebenslauf('custom'),
+    ...lebenslauf('career'),
+    ...lebenslauf('education'),
+    ...lebenslauf('profile'),
+    ...lebenslauf('languages'),
+    ...lebenslauf('drivingLicenses'),
+    ...lebenslauf('interests'),
+    ...lebenslauf('custom'),
   ];
 }
 

@@ -75,7 +75,7 @@ describe('Datenschutz content', () => {
       'auf Wunsch die Inhalte deiner Bewerbungsmappe: Betreff und Anschreiben, Kenntnisse, Arbeitsstil, Berufs- und Ausbildungsstationen und, wenn du sie ausfüllst, Kurzprofil, Sprachen, Führerscheinklassen, Interessen und einen eigenen Abschnitt; dazu Reihenfolge und Überschriften deines Lebenslaufs und das gewählte Design (Vorlage, Farbe, Schrift)',
     );
     expect(text).toContain('Angaben zu Religion, Gesundheit, Partei oder Gewerkschaft brauchen wir für deine Bewerbung nicht.');
-    expect(text).toContain('Abschnitte, die du im Lebenslauf ausblendest, bleiben ebenfalls nur in deinem Browser und werden nicht mitgesendet.');
+    expect(text).toContain('Abschnitte, die du vor dem Senden im Lebenslauf ausblendest, bleiben ebenfalls nur in deinem Browser und werden nicht mitgesendet.');
   });
 
   it('covers the processing of the new platform', () => {

@@ -19,11 +19,19 @@ export const ANSCHREIBEN_FELD_ID = 'mappe-anschreiben-text';
 export const AUFBAU_TEXT = Object.freeze({
   titel: 'Aufbau des Lebenslaufs',
   beschreibung: 'Reihenfolge, Überschriften und was im Lebenslauf steht. Ausgeblendete Abschnitte bleiben hier im Editor und gehen nicht mit.',
-  zweispaltig: 'Im Design „Zweispaltig“ stehen Schwerpunkte, Sprachen, Führerschein und Interessen in der Seitenspalte. Die Reihenfolge gilt je Spalte.',
+  zweispaltig:
+    'Im Design „Zweispaltig“ stehen Schwerpunkte, Sprachen, Führerschein und Interessen in der Seitenspalte, wenn daneben noch etwas steht. Die Reihenfolge gilt je Spalte.',
   liste: 'Abschnitte im Lebenslauf',
   zeigen: 'Im Lebenslauf zeigen',
   ausgeblendet: 'Ausgeblendet: steht nicht im Lebenslauf und geht nicht mit.',
   leer: 'Noch leer: erscheint, sobald du etwas einträgst.',
+  /** Genauer, wo „etwas eintragen“ nicht passt (antippen, nur Text zählt). */
+  leerJe: Object.freeze({
+    skills: 'Noch leer: erscheint, sobald du einen Schwerpunkt wählst.',
+    languages: 'Noch leer: erscheint, sobald du eine Sprache einträgst.',
+    drivingLicenses: 'Noch leer: erscheint, sobald du eine Klasse antippst.',
+    custom: 'Noch leer: erscheint, sobald du einen Text einträgst.',
+  } as Partial<Record<MappeSectionId, string>>),
   standardtitel: 'Standardtitel nehmen',
   standardtitelAnsage: 'Standardtitel übernommen.',
   brief: 'Dein Anschreiben hast du selbst geändert: Steht darin etwas zu deinen Schwerpunkten, bleibt es dort stehen.',
@@ -145,7 +153,7 @@ export function AufbauSection({ aufbau, hatInhalt, zweispaltig, briefHinweis, on
               {!eintrag.sichtbar ? (
                 <p className="text-callout text-ink-2">{AUFBAU_TEXT.ausgeblendet}</p>
               ) : !hatInhalt(eintrag.id) ? (
-                <p className="text-callout text-ink-2">{AUFBAU_TEXT.leer}</p>
+                <p className="text-callout text-ink-2">{AUFBAU_TEXT.leerJe[eintrag.id] ?? AUFBAU_TEXT.leer}</p>
               ) : null}
 
               {eintrag.sichtbar && (

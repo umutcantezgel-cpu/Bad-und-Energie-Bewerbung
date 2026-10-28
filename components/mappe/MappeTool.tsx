@@ -436,7 +436,8 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
               Vorschau
             </h2>
             <p className="text-etikett text-ink-2">
-              <span className="font-mass">2</span> Seiten A4
+              {/* Ohne Seitenzahl (K-012): Sie hängt vom Inhalt ab; das PDF nennt sie beim Herunterladen */}
+              <span className="font-mass">A4</span>
             </p>
           </div>
           {/*

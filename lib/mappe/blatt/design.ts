@@ -40,7 +40,7 @@ export const VORLAGE_TEXTE: Readonly<Record<Vorlage, { name: string; beschreibun
   farbband: { name: 'Farbband', beschreibung: 'Dein Name auf einem Band in deiner Farbe.' },
   zweispaltig: {
     name: 'Zweispaltig',
-    beschreibung: 'Lebenslauf mit Seitenspalte, sobald du Schwerpunkte, Sprachen, Führerschein oder Interessen eingetragen hast.',
+    beschreibung: 'Lebenslauf mit Seitenspalte für Schwerpunkte, Sprachen, Führerschein und Interessen, wenn daneben noch etwas steht.',
   },
 });
 

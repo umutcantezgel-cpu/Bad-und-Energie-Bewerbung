@@ -872,6 +872,16 @@
     break-after: auto;
   }
 
+  /* Wie die PDF: eine Überschrift nicht allein am Seitenende, Ort/Datum und Unterschrift nicht allein auf einem Blatt
+     (Prüfrunde L5: mit den neuen Abschnitten öfter) */
+  .page section > .heading {
+    break-after: avoid;
+  }
+
+  .page > footer {
+    break-before: avoid;
+  }
+
   .placeholder {
     visibility: hidden;
   }

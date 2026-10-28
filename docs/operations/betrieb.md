@@ -373,6 +373,11 @@ Stand 28.10.2026, Abschluss des Ausbaus (Mails, Bewerbungsseite, Mappe mit PDF, 
 - Sehr lange Mappen: PDF im Browser ohne Web Worker (die Seite ist während des Setzens kurz träge); der Knopf nennt im Ladezustand keinen eigenen Namen.
 - Schema und Browser zählen Zeichen außerhalb der Grundebene (Emojis) unterschiedlich lang; der Browser ist der strengere.
 - Einmalig am Deploy möglich: eine zweite Team-Mail zu derselben Mappe, wenn eine Antwort in genau diesem Moment verloren ging.
+- PDF: Eine Überschrift kann allein unten auf einer Seite stehen (react-pdf 4.9 wendet `minPresenceAhead` auf das erste Kind eines Abschnitts nicht an; Lösung wäre, Überschrift und ersten Eintrag zusammenzuhalten). Im Druck aus dem Browser ist das seit L5 behoben.
+- Text-Teil der Team-Mail: Bei Kurzprofil, Führerschein, Interessen und eigenem Abschnitt sehen Überschrift und Inhalt gleich aus (im HTML-Teil nicht).
+- Aufbau am Computer: Verschieben und Ausblenden sieht man in der Vorschau erst nach Scrollen im Vorschaufenster (bei niedrigen Fenstern liegt die Vorschau weit oben).
+- Übergabe an das Formular folgt Änderungen nach 0,3 s; wer in diesem Moment über einen normalen Link (nicht den Hauptknopf) ins Formular wechselt, nimmt den Stand davor mit.
+- Sehr lange Mappen mit vielen Umlauten an allen Grenzen überschreiten 64 KB je Anfrage (schon vor L5); die Seite sagt dann, dass die Angaben zu lang sind.
 
 **Seiten und Technik**
 

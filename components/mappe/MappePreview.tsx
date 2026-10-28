@@ -58,7 +58,7 @@ export function MappePreview({ className, design, fotoform, ...props }: MappePre
   const farben = { '--blatt-akzent': akzent.farbe, '--blatt-akzent-toenung': akzent.toenung } as CSSProperties;
   // Wie die PDF (fuerPdf): Markant nur, wenn die Titelschrift jedes Zeichen des Namens und der Überschriften hat, sonst
   // Sachlich statt Mischschrift
-  const titel = [props.person.name, ...props.abschnitte.map((eintrag) => eintrag.titel)].map(fuerSchrift);
+  const titel = [props.person.name, ...props.abschnitte.filter((eintrag) => eintrag.abschnitt).map((eintrag) => eintrag.titel)].map(fuerSchrift);
   const schrift = design.schrift === 'markant' && !titelschriftDecktAlle(titel) ? 'sachlich' : design.schrift;
   return (
     <div
