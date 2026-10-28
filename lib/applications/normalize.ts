@@ -84,7 +84,8 @@ export function compactMappe(mappe: Mappe | null | undefined): Mappe | undefined
   const educationStations = mappe.educationStations.filter(
     (station) => station.period || station.degree || station.institution || station.location,
   );
-  const subject = mappe.subject?.trim() || undefined;
+  // Einzeilig wie der Name (auch ohne Editor, etwa mit U+2028): Der Betreff steht als eine Zeile in Mail und PDF
+  const subject = (mappe.subject && collapse(mappe.subject)) || undefined;
 
   if (!coverLetter && !workStyle && skills.length === 0 && careerStations.length === 0 && educationStations.length === 0) {
     return undefined;

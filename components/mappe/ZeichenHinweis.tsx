@@ -21,7 +21,7 @@ export const ZEICHEN_TEXT = Object.freeze({
   ersetzen: 'Ersetze diese Zeichen oder nimm „Drucken“.',
   ohnePdf: 'Das Team bekommt deine Mappe auch ohne PDF, als Text in der E-Mail.',
   /** Höfliche Ansage, wenn der Hinweis erscheint (MappeTool, nach einer Pause beim Tippen). */
-  ansage: 'Hinweis: Einige Zeichen fehlen im PDF. Welche, steht unter „Per WhatsApp schicken“.',
+  ansage: 'Hinweis: Einige Zeichen fehlen im PDF. Welche das sind, steht unter „Per WhatsApp schicken“.',
 });
 
 interface Gruppe {

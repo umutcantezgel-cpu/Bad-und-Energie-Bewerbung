@@ -165,6 +165,8 @@ describe('compactMappe', () => {
     expect(Object.keys(kompakt!)).toEqual(['coverLetter', 'skills', 'careerStations', 'educationStations', 'design', 'subject']);
     expect(kompakt!.subject).toBe('Bewerbung als X');
     expect(compactMappe({ ...mappe, subject: '   ' })).not.toHaveProperty('subject');
+    // Einzeilig wie der Name: Umbrüche, U+2028 und Steuerzeichen werden ein Leerzeichen
+    expect(compactMappe({ ...mappe, subject: ' Bewerbung\nals\u2028 X\u0007 ' })!.subject).toBe('Bewerbung als X');
     expect(compactMappe({ coverLetter: ' ', skills: [], careerStations: [], educationStations: [], subject: 'Bewerbung als X' })).toBeUndefined();
   });
 });

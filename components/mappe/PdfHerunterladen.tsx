@@ -18,6 +18,8 @@ export interface PdfHerunterladenProps {
   foto: string | null;
   /** Wie der Hauptknopf heißt: „Mit dieser Mappe bewerben“ oder nach dem Absenden „Mappe nachreichen“. */
   modus: 'apply' | 'followUp';
+  /** Der Zeichen-Hinweis im Pult nennt schon Zeichen, mit denen kein PDF entsteht: dann nur darauf verweisen. */
+  zeichenImHinweis?: boolean;
   className?: string;
 }
 
@@ -51,10 +53,14 @@ const seitenText = (seiten: number) => `${seiten} ${seiten === 1 ? 'Seite' : 'Se
 /** Grobe Zeigereingabe (Finger): Handy und Tablet. */
 const beruehrung = () => typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
 
-/** Fehlende Zeichen lesbar aufzählen (höchstens zehn). */
-export function zeichenText(zeichen: readonly string[]): string {
-  const liste = zeichen.slice(0, 10).join(' ') + (zeichen.length > 10 ? ' …' : '');
-  return `Deine Mappe enthält Zeichen, die unsere Schrift nicht hat: ${liste}. Nimm „Drucken“ (dort auch als PDF speichern) oder ersetze sie.`;
+/**
+ * Fehlende Zeichen lesbar aufzählen (höchstens zehn). Steht der Zeichen-Hinweis schon im Pult, nur auf ihn verweisen
+ * (Prüfrunde L5: sonst dieselben Zeichen zweimal).
+ */
+export function zeichenText(zeichen: readonly string[], imHinweis = false): string {
+  if (imHinweis) return 'Mit einigen Zeichen deiner Mappe entsteht kein PDF. Welche das sind, steht im Hinweis unter „Per WhatsApp schicken“.';
+  const liste = zeichen.slice(0, 10).join(' ') + (zeichen.length > 10 ? ' …' : '.');
+  return `Deine Mappe enthält Zeichen, die unsere Schrift nicht hat: ${liste} Nimm „Drucken“ (dort auch als PDF speichern) oder ersetze sie.`;
 }
 
 /** Hinweis im App-Browser; nennt den Hauptknopf so, wie er gerade heißt. */
@@ -90,7 +96,7 @@ function mitUmbruch(dateiname: string): ReactNode {
  * Tippen (navigator.share braucht ein frisches). In den In-App-Browsern von Instagram, Facebook und TikTok ein Hinweis
  * mit „Link kopieren“; der Download bleibt.
  */
-export function PdfHerunterladen({ vorbereiten, entwurf, foto, modus, className }: PdfHerunterladenProps) {
+export function PdfHerunterladen({ vorbereiten, entwurf, foto, modus, zeichenImHinweis = false, className }: PdfHerunterladenProps) {
   const [stand, setStand] = useState<Stand>({ art: 'bereit' });
   const [gesehen, setGesehen] = useState({ entwurf, foto });
   const [inApp, setInApp] = useState<InAppBrowser | null>(null);
@@ -147,7 +153,7 @@ export function PdfHerunterladen({ vorbereiten, entwurf, foto, modus, className 
       const { bewerberPdf } = await laden();
       const ergebnis = await bewerberPdf(vorbereitet.eingaben, new Date());
       if (!ergebnis.ok) {
-        const text = ergebnis.grund === 'zeichen' ? zeichenText(ergebnis.zeichen) : ergebnis.grund === 'foto' ? PDF_TEXT.foto : PDF_TEXT.leer;
+        const text = ergebnis.grund === 'zeichen' ? zeichenText(ergebnis.zeichen, zeichenImHinweis) : ergebnis.grund === 'foto' ? PDF_TEXT.foto : PDF_TEXT.leer;
         setStand({ art: 'fehler', text });
         return;
       }

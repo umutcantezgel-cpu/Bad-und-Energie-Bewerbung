@@ -62,13 +62,17 @@ const ERSATZ: Record<string, string> = {
 const LEERZEICHEN = /[\t\u1680\u2000-\u2008\u200a\u202f\u205f\u3000]/g;
 /** Zeilen- und Absatztrenner (U+2028, U+2029, etwa aus kopierten Texten) → Zeilenumbruch. */
 const ZEILENTRENNER = /[\u2028\u2029]/g;
-/** Unsichtbare Zeichen (Breite null, Wortverbinder, BOM). */
-const UNSICHTBAR = /[\u200b-\u200d\u2060\ufeff]/g;
 /**
- * Emojis samt Hautton, Flaggenbuchstaben, Varianten-Wählern und Tastenkappe: ein Brief ohne sie bleibt derselbe. Was die
- * Schrift selbst hat (©, ®, ™, ♪ gehören auch zu Extended_Pictographic), bleibt stehen.
+ * Unsichtbare Zeichen (Breite null, Wortverbinder, BOM) und Richtungszeichen (LRM/RLM, Einbettungen und Isolierungen,
+ * arabische Buchstabenmarke): Sie kommen etwa mit einer aus den Kontakten kopierten Telefonnummer mit.
  */
-const EMOJI = /[\p{Extended_Pictographic}\p{Emoji_Modifier}\p{Regional_Indicator}\ufe0e\ufe0f\u20e3]/gu;
+const UNSICHTBAR = /[\u061c\u200b-\u200f\u202a-\u202e\u2060\u2066-\u2069\ufeff]/g;
+/**
+ * Emojis samt Hautton, Flaggenbuchstaben, Tag-Zeichen (Flaggen von England, Schottland, Wales), Varianten-Wählern und
+ * Tastenkappe: ein Brief ohne sie bleibt derselbe. Was die Schrift selbst hat (©, ®, ™, ♪ gehören auch zu
+ * Extended_Pictographic), bleibt stehen.
+ */
+const EMOJI = /[\p{Extended_Pictographic}\p{Emoji_Modifier}\p{Regional_Indicator}\u{e0020}-\u{e007f}\ufe0e\ufe0f\u20e3]/gu;
 
 /** Steuerzeichen außer dem Zeilenumbruch (Tabs und Windows-Zeilenenden sind vorher ersetzt). */
 function ohneSteuerzeichen(text: string): string {
@@ -91,6 +95,15 @@ export function fuerSchrift(text: string): string {
     .replace(/./gu, (zeichen) => ERSATZ[zeichen] ?? zeichen)
     .replace(/ {2,}/g, ' ')
     .replace(/^ +| +$/gm, '');
+}
+
+/**
+ * Der getrimmte Text, wenn nach fuerSchrift etwas bleibt; sonst undefined. Ein Betreff nur aus Emojis ergäbe im PDF eine
+ * leere Zeile: Dann gilt der Vorschlag (Editor) bzw. der Betreff des Servers (anhang.ts).
+ */
+export function mitInhaltFuerSchrift(text: string | null | undefined): string | undefined {
+  const getrimmt = text?.trim();
+  return getrimmt && fuerSchrift(getrimmt).trim() ? getrimmt : undefined;
 }
 
 function gedeckt(codepoint: number, bereiche: readonly (readonly [number, number])[] = SCHRIFT_BEREICHE): boolean {

@@ -96,6 +96,14 @@ describe('Betreff (L5): eigener Text oder Vorschlag der Stelle', () => {
     expect(resolveSubject(zurueck, jobs)).toBe(vorschlag(shk));
   });
 
+  it('ein eigener Betreff nur aus Emojis zählt nicht: Vorschau und Mappe nehmen den Vorschlag (im PDF bliebe die Zeile leer)', () => {
+    const emojis = { ...createEmptyEditorState(shk.id), customSubject: '🔥🔥' };
+    expect(resolveSubject(emojis, jobs)).toBe(vorschlag(shk));
+    expect(toMappe(emojis, context)?.subject).toBe(vorschlag(shk));
+    const mitText = { ...emojis, customSubject: 'Bewerbung 🔥' };
+    expect(resolveSubject(mitText, jobs)).toBe('Bewerbung 🔥');
+  });
+
   it('Stellenwechsel: ein eigener Betreff bleibt stehen, der Vorschlag folgt der Stelle', () => {
     const wechsel = { type: 'job', jobId: buero.id, category: buero.category } as const;
     const ohne = mappeEditorReducer(createEmptyEditorState(shk.id), wechsel);

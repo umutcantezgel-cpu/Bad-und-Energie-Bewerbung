@@ -3,7 +3,7 @@ import { parseMappeData } from '@/lib/applications/mappe-data';
 import type { Mappe } from '@/lib/applications/schema';
 import type { JobCategory } from '@/lib/jobs/schema';
 import { STANDARD_DESIGN, STANDARD_FOTOFORM, designAus, fotoformAus, istStandard, type Fotoform, type MappeDesign } from './blatt/design';
-import type { ZeichenOrt } from './blatt/zeichen';
+import { mitInhaltFuerSchrift, type ZeichenOrt } from './blatt/zeichen';
 import { MAPPE_LIMITS, WORK_STYLE_IDS, getWorkStyle, skillsFuerStelle, workStyleIdFromValue, type WorkStyleId } from './options';
 import {
   createStationId,
@@ -177,9 +177,12 @@ export function letterSubject(state: MappeEditorState, jobs: readonly MappeJobOp
   return buildSubject(letterJob(state, jobs), isInitiative(state));
 }
 
-/** Der Betreff, wie er in Vorschau, Druck und PDF steht: der eigene, sonst der Vorschlag (L5). */
+/**
+ * Der Betreff, wie er in Vorschau, Druck und PDF steht: der eigene, sonst der Vorschlag (L5). Ein eigener nur aus Emojis
+ * zählt nicht (im PDF bliebe die Zeile leer).
+ */
 export function resolveSubject(state: MappeEditorState, jobs: readonly MappeJobOption[]): string {
-  return state.customSubject?.trim() || letterSubject(state, jobs);
+  return mitInhaltFuerSchrift(state.customSubject) ?? letterSubject(state, jobs);
 }
 
 /**
@@ -187,7 +190,7 @@ export function resolveSubject(state: MappeEditorState, jobs: readonly MappeJobO
  * Ohne beides keiner: Dann rechnet der Server ihn wie vor L5 aus der Stelle der Bewerbung (statt „Bewerbung“ zu senden).
  */
 export function sentSubject(state: MappeEditorState, jobs: readonly MappeJobOption[]): string | undefined {
-  const eigener = state.customSubject?.trim();
+  const eigener = mitInhaltFuerSchrift(state.customSubject);
   if (eigener) return eigener;
   return selectedJob(state, jobs) || isInitiative(state) ? letterSubject(state, jobs) : undefined;
 }

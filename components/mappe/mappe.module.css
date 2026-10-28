@@ -115,6 +115,24 @@
     overflow-y: auto;
     overscroll-behavior: contain;
   }
+
+  /* Mit Zeichen-Hinweis (L5) ist das Pult zu hoch: Die Vorschau bliebe nur ein Streifen unter dem Fensterrand. Dann
+     scrollt die ganze Spalte in sich (Pult, Hinweis, Blätter in voller Höhe) und bleibt neben dem Editor stehen; ein
+     Rand aus zwei Strichen hält den Fokusring der Vorschau innerhalb der Spalte. */
+  .seite:has([data-mappe-zeichen]) {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    margin-inline: calc(-2 * var(--m-strich));
+    padding: 0 calc(2 * var(--m-strich)) calc(2 * var(--m-strich));
+  }
+
+  .seite:has([data-mappe-zeichen]) .vorschau {
+    flex: none;
+  }
+
+  .seite:has([data-mappe-zeichen]) .vorschauRahmen {
+    overflow-y: visible;
+  }
 }
 
 /* ═══ Checkliste (E-BEW-006): Stand und Sprungmarken ═══ */

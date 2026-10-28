@@ -384,7 +384,13 @@ export function MappeTool({ jobs, recipient, contact, className }: MappeToolProp
           onPrimary={handlePrimary}
           onPrint={() => window.print()}
           pdfWeg={
-            <PdfHerunterladen vorbereiten={pdfVorbereiten} entwurf={state} foto={photoUrl} modus={submitted ? 'followUp' : 'apply'} />
+            <PdfHerunterladen
+              vorbereiten={pdfVorbereiten}
+              entwurf={state}
+              foto={photoUrl}
+              modus={submitted ? 'followUp' : 'apply'}
+              zeichenImHinweis={zeichen.some((fund) => fund.fehlen.length > 0)}
+            />
           }
           zeichenHinweis={<ZeichenHinweis funde={zeichen} />}
           stand={stand}

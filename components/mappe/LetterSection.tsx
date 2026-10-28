@@ -93,7 +93,7 @@ export function LetterSection({
             rows={3}
             maxLength={MAPPE_LIMITS.subject}
             value={customSubject ?? subjectSuggestion}
-            onChange={(event) => onSubjectChange(event.target.value.replace(/\s*[\r\n]+\s*/g, ' '))}
+            onChange={(event) => onSubjectChange(event.target.value.replace(/\s*[\r\n\u2028\u2029]+\s*/g, ' '))}
             onKeyDown={(event) => {
               if (event.key === 'Enter') event.preventDefault();
             }}

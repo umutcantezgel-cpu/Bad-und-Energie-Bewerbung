@@ -10,6 +10,7 @@ import { MappeTool } from '../MappeTool';
 import styles from '../mappe.module.css';
 import { MAPPE_ABSCHNITTE } from '../stand';
 import { ZEICHEN_TEXT, ZeichenHinweis } from '../ZeichenHinweis';
+import { zeichenText } from '../PdfHerunterladen';
 
 function render(): string {
   return renderToStaticMarkup(
@@ -202,5 +203,18 @@ describe('Mappe per WhatsApp (E-BEW-020)', () => {
     expect(plain(html)).toContain('Das PDF hängst du danach im Chat an.');
     expect(plain(html)).toContain('Vorausgefüllter Text an 0160 8834290');
     expect(plain(html)).not.toContain('Text an 06441 42956');
+  });
+});
+
+describe('zeichenText (PDF herunterladen, L5)', () => {
+  it('verweist auf den Zeichen-Hinweis, statt die Zeichen ein zweites Mal zu nennen; ohne Hinweis zählt er sie auf', () => {
+    expect(zeichenText(['Д'], true)).toBe(
+      'Mit einigen Zeichen deiner Mappe entsteht kein PDF. Welche das sind, steht im Hinweis unter „Per WhatsApp schicken“.',
+    );
+    expect(zeichenText(['Д', 'я'])).toBe(
+      'Deine Mappe enthält Zeichen, die unsere Schrift nicht hat: Д я. Nimm „Drucken“ (dort auch als PDF speichern) oder ersetze sie.',
+    );
+    // Mehr als zehn: „…“ ohne Punkt dahinter
+    expect(zeichenText([...'ДякуюПривіт'])).toContain(': Д я к у ю П р и в і … Nimm „Drucken“');
   });
 });

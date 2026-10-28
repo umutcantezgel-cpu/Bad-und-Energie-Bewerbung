@@ -9,6 +9,7 @@ import {
   fehlendeZeichen,
   fuerPdf,
   fuerSchrift,
+  mitInhaltFuerSchrift,
   texte,
   titelschriftDeckt,
   zeichenFunde,
@@ -160,5 +161,33 @@ describe('zeichenFunde (L5): was das PDF mit den Texten des Editors macht, vorhe
     expect(fuerSchrift('Wärme pumpe')).toBe('Wärme pumpe');
     expect(fehlendeZeichen(fuerSchrift('a b c d'))).toEqual([]);
     expect(fuerPdf({ ...DOKUMENT, anschreiben: { empfaenger: ['x'], text: 'Hallo Welt' } })?.anschreiben?.text).toBe('Hallo\nWelt');
+  });
+
+  it('Richtungszeichen (etwa aus kopierten Kontakten) fallen still weg: kein leerer Fund, das PDF entsteht', () => {
+    const telefon = '\u202d+49 171 2345678\u202c';
+    expect(fuerSchrift(telefon)).toBe('+49 171 2345678');
+    expect(fuerSchrift('Anlage\u200e. \u2066Wetzlar\u2069 \u202aa\u202b\u202e\u061c\u200f')).toBe('Anlage. Wetzlar a');
+    expect(
+      zeichenFunde([
+        { ort: 'Telefon', text: telefon },
+        { ort: 'Anschreiben', text: 'Mit freundlichen Grüßen\u200e' },
+      ]),
+    ).toEqual([]);
+  });
+
+  it('Flaggen mit Tag-Zeichen (England, Schottland, Wales) fallen weg wie alle Emojis', () => {
+    const england = '\u{1f3f4}\u{e0067}\u{e0062}\u{e0065}\u{e006e}\u{e0067}\u{e007f}';
+    expect(fuerSchrift(`Fan ${england}!`)).toBe('Fan !');
+    expect(zeichenFunde([{ ort: 'Interessen', text: `Fußball ${england}` }])).toEqual([{ ort: 'Interessen', fallenWeg: [england], fehlen: [] }]);
+  });
+
+  it('mitInhaltFuerSchrift: ein Betreff nur aus Emojis oder Unsichtbarem zählt nicht, sonst getrimmt', () => {
+    expect(mitInhaltFuerSchrift('  Bewerbung als Monteur  ')).toBe('Bewerbung als Monteur');
+    expect(mitInhaltFuerSchrift('Bewerbung 🔥')).toBe('Bewerbung 🔥');
+    expect(mitInhaltFuerSchrift('🔥🔥')).toBeUndefined();
+    expect(mitInhaltFuerSchrift('\u200e \ufe0f')).toBeUndefined();
+    expect(mitInhaltFuerSchrift('')).toBeUndefined();
+    expect(mitInhaltFuerSchrift(null)).toBeUndefined();
+    expect(mitInhaltFuerSchrift(undefined)).toBeUndefined();
   });
 });

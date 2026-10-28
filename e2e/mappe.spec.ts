@@ -193,9 +193,17 @@ test('Zeichen-Hinweis der Mappe (L5): kyrillisches Wort und Emoji im Anschreiben
   await expect(notiz).toContainText('Ersetze diese Zeichen oder nimm „Drucken“. Das Team bekommt deine Mappe auch ohne PDF, als Text in der E-Mail.');
   // Höfliche Ansage über die Live-Region der Mappe, erst nach einer Pause beim Tippen
   await expect(page.locator('[data-mappe-werkbank] > p[aria-live="polite"]')).toHaveText(
-    'Hinweis: Einige Zeichen fehlen im PDF. Welche, steht unter „Per WhatsApp schicken“.',
+    'Hinweis: Einige Zeichen fehlen im PDF. Welche das sind, steht unter „Per WhatsApp schicken“.',
   );
   await expectNoAxeViolations(page, testInfo);
+  if (!isTouch(testInfo)) {
+    // Am Computer bleibt die Vorschau mit dem höheren Pult sichtbar (Prüfrunde L5: vorher 32 px unter dem Fensterrand)
+    const rahmen = page.locator('section[aria-labelledby="mappe-vorschau-title"]');
+    await rahmen.focus();
+    const box = await rahmen.boundingBox();
+    expect(box?.height ?? 0, 'Höhe der Vorschau').toBeGreaterThanOrEqual(200);
+    expect(box?.y ?? Infinity, 'Vorschau nach dem Fokus im Fenster').toBeLessThan(page.viewportSize()!.height);
+  }
   if (isTouch(testInfo)) expect(await findSmallTouchTargets(page, 'main'), 'Trefferfläche < 44 px').toEqual([]);
   await page.setViewportSize({ width: 320, height: 720 });
   // Nach dem Verkleinern setzt der ResizeObserver den Maßstab der Vorschau einen Frame später: messen, wenn das Layout steht

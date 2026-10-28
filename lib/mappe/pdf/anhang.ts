@@ -5,7 +5,7 @@ import { nurPraxiserfahrung } from '@/lib/email/templates/application-parts';
 import { mappePdfEnabled } from '@/lib/env';
 import { getJobById } from '@/lib/jobs/registry';
 import { mappeDokument, type MappeDokument, type MappeDokumentEingaben } from '@/lib/mappe/blatt/dokument';
-import { fuerPdf, texte } from '@/lib/mappe/blatt/zeichen';
+import { fuerPdf, mitInhaltFuerSchrift, texte } from '@/lib/mappe/blatt/zeichen';
 import { getMappeRecipient } from '@/lib/mappe/context';
 import { buildSubject } from '@/lib/mappe/template';
 import { mappePdf } from './blatt';
@@ -111,7 +111,7 @@ export async function mappeAnhangFuerBewerbung(app: ReferencedApplication): Prom
   }
   const job = getJobById(app.job.id);
   const initiative = !job;
-  const betreff = app.mappe?.subject?.trim() || buildSubject(job ? { title: job.title, category: job.category } : null, initiative);
+  const betreff = mitInhaltFuerSchrift(app.mappe?.subject) ?? buildSubject(job ? { title: job.title, category: job.category } : null, initiative);
   return erstellen(app.reference, app.mappe, { name: app.name, betreff, stelle: app.job.shortTitle }, app.submittedAt);
 }
 
@@ -120,6 +120,6 @@ export async function mappeAnhangFuerBewerbung(app: ReferencedApplication): Prom
  * Nummer steht immer im Dateinamen und im Betreff der Mail.
  */
 export function mappeAnhangFuerErgaenzung(followUp: NormalizedFollowUp): Promise<MappeAnhang | null> {
-  const betreff = followUp.mappe?.subject?.trim() || `Bewerbungsmappe zur Bewerbung ${followUp.reference}`;
+  const betreff = mitInhaltFuerSchrift(followUp.mappe?.subject) ?? `Bewerbungsmappe zur Bewerbung ${followUp.reference}`;
   return erstellen(followUp.reference, followUp.mappe, { betreff }, followUp.receivedAt);
 }
