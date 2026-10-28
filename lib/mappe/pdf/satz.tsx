@@ -22,7 +22,7 @@ import { SCHLICHT, fotoMasse } from '@/lib/mappe/blatt/schlicht';
  * Seitenumbruch: kurze Stationen bleiben ganz, lange brechen zwischen den Aufgaben um (Kopf der Station mit der ersten
  * Aufgabe zusammen), Überschriften nie allein am Seitenende, Ort/Datum und Unterschrift direkt unter dem letzten
  * Abschnitt; Seitenzahlen nur auf Folgeseiten. Keine Silbentrennung; nur Wörter über 40 Zeichen (Adressen, Links)
- * dürfen umbrechen, in der schmalen Seitenspalte von „Zweispaltig“ schon Wörter über 16 Zeichen (trenneSchmal). Gleicher Inhalt und gleiches Datum ergeben dieselben Bytes (feste Erstellungszeit). Ohne Namen
+ * dürfen umbrechen, in der Seitenspalte von „Zweispaltig“ jedes Wort, das gemessen nicht hineinpasst (seitenTrenner). Gleicher Inhalt und gleiches Datum ergeben dieselben Bytes (feste Erstellungszeit). Ohne Namen
  * (nachgereichte Mappe) steht „Bewerbungsmappe“ im Kopf, und die Unterschriftslinie entfällt.
  *
  * Eigenheiten von react-pdf 4.9, die der Satz umgeht (geprüft mit pdftotext -bbox):
@@ -74,28 +74,56 @@ export function schriftenZuruecksetzen() {
 /** Kosten einer Trennstelle (Knuth-Plass, unendlich = 10000): nur, wenn ein Wort sonst nicht in die Zeile passt. */
 const STRAFE_TRENNUNG = 5000;
 
-/** Längere Wörter dürfen in der Seitenspalte umbrechen (52 mm: rund 20 Zeichen Text, 16 in fetten Überschriften). */
-const SCHMAL_WORT_GANZ = 16;
-
 /** Mindestens so viele Zeichen bleiben an jedem Ende eines getrennten Worts zusammen. */
-const SCHMAL_REST = 3;
+const TRENN_REST = 3;
 
-/**
- * Trennstellen in der Seitenspalte (Prüfrunde L5): „Wärmepumpeninbetriebnahme“ oder ein langer eigener Titel liefen
- * sonst über die getönte Fläche in die Hauptspalte. Langes Wort: Trennstelle zwischen je zwei Zeichen (wie
- * overflow-wrap im Browser), außer in den ersten und letzten drei; wegen STRAFE_TRENNUNG trennt der Satz nur, wenn das
- * Wort nicht in die Zeile passt, und dann so spät wie möglich. Kürzere Wörter bleiben ganz.
- */
-export function trenneSchmal(wort: string): string[] {
+/** Trennstellen zwischen je zwei Zeichen (wie overflow-wrap im Browser), außer in den ersten und letzten drei. */
+export function trennstellen(wort: string): string[] {
   const zeichen = [...wort];
-  if (zeichen.length <= SCHMAL_WORT_GANZ) return [wort];
-  const anfang = zeichen.slice(0, SCHMAL_REST).join('');
-  const ende = zeichen.slice(-SCHMAL_REST).join('');
-  return [anfang, ...zeichen.slice(SCHMAL_REST, -SCHMAL_REST), ende];
+  if (zeichen.length <= 2 * TRENN_REST) return [wort];
+  return [zeichen.slice(0, TRENN_REST).join(''), ...zeichen.slice(TRENN_REST, -TRENN_REST), zeichen.slice(-TRENN_REST).join('')];
 }
 
-/** Text der Seitenspalte bekommt die schmalen Trennstellen, sonst bleibt alles wie bisher (gleiche Bytes). */
-const schmal = (inSeitenspalte: boolean) => (inSeitenspalte ? { hyphenationCallback: trenneSchmal } : {});
+type Trenner = (wort: string) => string[];
+
+/** Was der Trenner von der geladenen fontkit-Schrift braucht. */
+interface MessbareSchrift {
+  layout(text: string): { advanceWidth: number };
+  unitsPerEm: number;
+}
+
+/** Millimeter in Punkt. */
+const pt = (millimeter: number) => (millimeter * 72) / 25.4;
+
+/**
+ * Trenner für die Seitenspalte (Prüfrunde L5): Ein Wort, das gemessen nicht in die Spalte passt
+ * („Wärmepumpeninbetriebnahme“, ein langer eigener Titel), bekommt Trennstellen; es liefe sonst über die getönte
+ * Fläche in die Hauptspalte. Was passt, bleibt ganz: Mit Trennstellen trennte der Satz (Knuth-Plass) sonst auch Wörter,
+ * die in die nächste Zeile passen. Gemessen wird mit der Schrift, die react-pdf vor dem Setzen geladen hat; fehlt sie,
+ * gilt eine Faustregel (16 Zeichen).
+ */
+function seitenTrenner(familie: string, gewicht: 400 | 700, groesse: number, breite: number): Trenner {
+  return (wort) => {
+    let passt = wort.length <= 16;
+    try {
+      const schrift = Font.getFont({ fontFamily: familie, fontWeight: gewicht })?.data as MessbareSchrift | null | undefined;
+      if (schrift?.layout) passt = (schrift.layout(wort).advanceWidth / schrift.unitsPerEm) * groesse <= breite;
+    } catch {
+      // Faustregel oben
+    }
+    return passt ? [wort] : trennstellen(wort);
+  };
+}
+
+/** Trenner je Textart der Seitenspalte (Überschrift, Text, Punkt mit Einzug). */
+interface SeitenTrenner {
+  titel: Trenner;
+  text: Trenner;
+  punkt: Trenner;
+}
+
+/** Nur Text der Seitenspalte bekommt einen eigenen Trenner, alles andere bleibt wie bisher (gleiche Bytes). */
+const mitTrenner = (trenner?: Trenner) => (trenner ? { hyphenationCallback: trenner } : {});
 
 const mm = (wert: number) => `${wert}mm`;
 /** Zeilenhöhe in pt aus Schriftgröße und Faktor des Blatts. */
@@ -104,8 +132,9 @@ const { rand, schrift, zeile, farbe, abstand, strich } = SCHLICHT;
 
 /** Farbband: Abstand zum Papierrand (mm) – Drucker ohne Randlosdruck schneiden so nichts ab. */
 const BAND_RAND = SCHLICHT.bandRand;
-/** Zweispaltig: Breite der Seitenspalte (mm). */
+/** Zweispaltig: Breite der Seitenspalte (mm) und ihr Polster je Seite (mm). */
 const SPALTE_SEITE = SCHLICHT.seitenspalte;
+const SEITE_POLSTER = 4;
 /** Schrift auf dem Band: Papierweiß (≥ 6,2 : 1 auf jedem Akzent, scripts/qa/check-contrast.mjs). */
 const WEISS = farbe.papier;
 
@@ -187,7 +216,7 @@ const stil = StyleSheet.create({
   seitenspalte: {
     width: mm(SPALTE_SEITE),
     marginRight: mm(SCHLICHT.spalteAbstand),
-    padding: mm(4),
+    padding: mm(SEITE_POLSTER),
     borderRadius: mm(1),
     alignSelf: 'flex-start',
   },
@@ -282,19 +311,19 @@ function Kopf({ name, ueberschrift, t, kontakt, foto }: { name: string; uebersch
   );
 }
 
-function Punkt({ eintrag, seitenspalte = false }: { eintrag: string; seitenspalte?: boolean }) {
+function Punkt({ eintrag, trenner }: { eintrag: string; trenner?: Trenner }) {
   return (
     <View style={stil.punkt} wrap={false}>
       <Text style={stil.punktZeichen}>•</Text>
-      <Satz style={stil.punktText} {...schmal(seitenspalte)}>
+      <Satz style={stil.punktText} {...mitTrenner(trenner)}>
         {eintrag}
       </Satz>
     </View>
   );
 }
 
-function Punkte({ eintraege, seitenspalte = false }: { eintraege: readonly string[]; seitenspalte?: boolean }) {
-  return eintraege.map((eintrag, i) => <Punkt key={i} eintrag={eintrag} seitenspalte={seitenspalte} />);
+function Punkte({ eintraege, trenner }: { eintraege: readonly string[]; trenner?: Trenner }) {
+  return eintraege.map((eintrag, i) => <Punkt key={i} eintrag={eintrag} trenner={trenner} />);
 }
 
 /**
@@ -319,19 +348,19 @@ function Abschnitt({
   titel,
   t,
   erster = false,
-  seitenspalte = false,
+  trenner,
   children,
 }: {
   titel: string;
   t: Thema;
   erster?: boolean;
-  seitenspalte?: boolean;
+  trenner?: Trenner;
   children: ReactNode;
 }) {
   return (
     <View style={erster ? {} : stil.abschnitt}>
       {/* Überschrift nicht allein am Seitenende: mindestens eine Zeile Inhalt muss mit auf die Seite */}
-      <Satz style={[stil.ueberschrift, { color: t.akzent, fontFamily: t.titel }]} minPresenceAhead={40} {...schmal(seitenspalte)}>
+      <Satz style={[stil.ueberschrift, { color: t.akzent, fontFamily: t.titel }]} minPresenceAhead={40} {...mitTrenner(trenner)}>
         {titel}
       </Satz>
       {children}
@@ -380,10 +409,10 @@ function Station({ station, einspaltig = false }: { station: MappeStation | Mapp
 }
 
 /**
- * Inhalt eines Abschnitts (L5): Stationen, Punkte oder Text. `einspaltig`: Hauptspalte von „Zweispaltig“;
- * `seitenspalte`: die schmale getönte Spalte daneben (Stationen stehen dort nie).
+ * Inhalt eines Abschnitts (L5): Stationen, Punkte oder Text. `einspaltig`: Hauptspalte von „Zweispaltig“; `seite`:
+ * Trenner der schmalen getönten Spalte daneben (Stationen stehen dort nie).
  */
-function AbschnittInhalt({ abschnitt, einspaltig, seitenspalte }: { abschnitt: MappeAbschnitt; einspaltig: boolean; seitenspalte: boolean }) {
+function AbschnittInhalt({ abschnitt, einspaltig, seite }: { abschnitt: MappeAbschnitt; einspaltig: boolean; seite?: SeitenTrenner }) {
   switch (abschnitt.art) {
     case 'beruf':
     case 'ausbildung':
@@ -391,12 +420,12 @@ function AbschnittInhalt({ abschnitt, einspaltig, seitenspalte }: { abschnitt: M
     case 'punkte':
       return (
         <View style={stil.aufgaben}>
-          <Punkte eintraege={abschnitt.punkte} seitenspalte={seitenspalte} />
+          <Punkte eintraege={abschnitt.punkte} trenner={seite?.punkt} />
         </View>
       );
     case 'text':
       return (
-        <Satz style={stil.aufgaben} {...schmal(seitenspalte)}>
+        <Satz style={stil.aufgaben} {...mitTrenner(seite?.text)}>
           {abschnitt.text}
         </Satz>
       );
@@ -409,17 +438,25 @@ function Lebenslaufteile({ lebenslauf, t }: { lebenslauf: NonNullable<MappeDokum
   const seite = lebenslauf.abschnitte.filter((abschnitt) => SEITENSPALTE.has(abschnitt.id));
   const haupt = lebenslauf.abschnitte.filter((abschnitt) => !SEITENSPALTE.has(abschnitt.id));
   const spalten = t.design.vorlage === 'zweispaltig' && seite.length > 0 && haupt.length > 0;
-  const setze = (liste: readonly MappeAbschnitt[], einspaltig: boolean, seitenspalte = false) =>
+  const setze = (liste: readonly MappeAbschnitt[], einspaltig: boolean, trenner?: SeitenTrenner) =>
     liste.map((abschnitt, i) => (
-      <Abschnitt key={abschnitt.id} titel={abschnitt.titel} t={t} erster={spalten && i === 0} seitenspalte={seitenspalte}>
-        <AbschnittInhalt abschnitt={abschnitt} einspaltig={einspaltig} seitenspalte={seitenspalte} />
+      <Abschnitt key={abschnitt.id} titel={abschnitt.titel} t={t} erster={spalten && i === 0} trenner={trenner?.titel}>
+        <AbschnittInhalt abschnitt={abschnitt} einspaltig={einspaltig} seite={trenner} />
       </Abschnitt>
     ));
 
   if (spalten) {
+    // Wie weit Text in der Seitenspalte reichen darf: bis 1 mm vor den Rand der Tönung (ins rechte Polster, wie bisher
+    // „Heizungsmodernisierung“), nie darüber hinaus in die Hauptspalte; Punkte ohne den Einzug
+    const innen = pt(SPALTE_SEITE - SEITE_POLSTER - 1);
+    const trenner: SeitenTrenner = {
+      titel: seitenTrenner(t.titel, 700, schrift.kopf, innen),
+      text: seitenTrenner(SCHRIFT, 400, schrift.text, innen),
+      punkt: seitenTrenner(SCHRIFT, 400, schrift.text, innen - pt(abstand.einzug)),
+    };
     return (
       <View style={stil.spalten}>
-        <View style={[stil.seitenspalte, { backgroundColor: t.toenung }]}>{setze(seite, false, true)}</View>
+        <View style={[stil.seitenspalte, { backgroundColor: t.toenung }]}>{setze(seite, false, trenner)}</View>
         <View style={stil.hauptspalte}>{setze(haupt, true)}</View>
       </View>
     );
