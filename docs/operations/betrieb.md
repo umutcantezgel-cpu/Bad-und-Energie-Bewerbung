@@ -395,6 +395,7 @@ Stand 28.10.2026, Abschluss des Ausbaus (Mails, Bewerbungsseite, Mappe mit PDF, 
 - CSS-Preload-Warnung „preloaded but not used“ bei Aufrufen von `/bewerbung`; Verdacht auf einen `__NA`-Eintrag in der Browser-History; Hinweis-Parameter geht beim 308 der internen Adresse verloren.
 - Ergänzung A → B → A: Wer dieselbe Ergänzung nach einer anderen erneut schickt, bekommt keine dritte Mail.
 - Einmalig am Deploy von L5: Ein Formular-Tab, der vor dem Deploy geladen wurde, liest eine danach übergebene Mappe mit dem alten Code; Betreff, Kurzprofil, Sprachen und die übrigen neuen Angaben fallen dann still weg.
+- Wackeliger e2e-Test „Abdecken“ (Wärmefront beim Seitenwechsel, `e2e/interaktion.spec.ts`, Zeile 723): Die CI brauchte am 28.10. einen zweiten Anlauf (Lauf 40660463243). Auf langsameren Maschinen reißt er knapp seine Zeit- und Farbgrenzen (etwa 856 statt höchstens 840 ms), auch auf dem Stand vor L5. Scheitert er zweimal hintereinander, ist die CI rot. Ursache in der Messung oder im Ablauf suchen; die Grenzen nicht lockern (G7).
 
 **Offene Inhaber-Aufgaben (ohne Code)**
 
