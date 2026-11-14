@@ -13,6 +13,7 @@ Diese Anleitung richtet sich an alle, die die Website live schalten und Bewerbun
 5. [Ergänzungen und Unterlagen zuordnen](#5-ergänzungen-und-unterlagen-zuordnen)
 6. [Löschfristen in Postfach und Datenbank](#6-löschfristen-in-postfach-und-datenbank)
 7. [Liste für später und offene Inhaber-Aufgaben](#7-liste-für-später-und-offene-inhaber-aufgaben)
+8. [Wartungsmodus](#8-wartungsmodus)
 
 ---
 
@@ -408,3 +409,19 @@ Stand 28.10.2026, Abschluss des Ausbaus (Mails, Bewerbungsseite, Mappe mit PDF, 
 7. **Ende November:** Fahrplandaten der Ortsseiten neu rechnen lassen (Issue kommt automatisch; sonst ab 13.12. noindex).
 8. **Bosch:** Urkunde und Wortlaut für „Premium Partner“ (M-020) und die schriftliche Erlaubnis für Logo und Markenfassung (M-021) nachreichen; bis dahin bleibt beides gesperrt.
 
+
+## 8. Wartungsmodus
+
+Seit 14.11.2026 (Inhaber: „in den Wartungsmodus nehmen“). Code und Begründung: `lib/wartung.ts`, Weiche in `proxy.ts`.
+
+**Was Besucher sehen:** Jede Seite zeigt nur „Kurze Pause.“ mit Logo, dem Hinweis für alle, die sich schon beworben haben, einem Knopf zu bad-energie.de sowie Impressum und Datenschutz. Antwort mit HTTP 503 und `Retry-After: 3600`, nie gecacht: Suchmaschinen behalten die Seiten im Index, nach dem Abschalten ist alles sofort zurück. Dauert die Pause länger als etwa eine Woche, fängt Google an, Seiten aus dem Index zu nehmen; dann lieber nur die Bewerbung pausieren statt die ganze Seite.
+
+**Was weiterläuft:** Impressum und Datenschutz, Ergänzungen zu schon abgeschickten Bewerbungen, `/api/status`, Feeds (Indeed und Widget listen die Stellen weiter, die Links führen auf die Wartungsseite), Sitemap, robots.txt. Neue Bewerbungen aus noch offenen Tabs lehnt die API mit 503 ab; der Flow zeigt „Die Karriereseite ist gerade im Wartungsmodus …“. Stellenanzeigen bei der Bundesagentur, der HWK und anderen Börsen laufen unabhängig davon weiter.
+
+**Ein- und ausschalten:**
+
+- Im Code: `WARTUNGSMODUS` in `lib/wartung.ts` auf `true` oder `false`, nach `main` mergen. Der Schalter wirkt nur auf Vercel Production; lokal, in der CI und auf Previews läuft die Seite normal.
+- Ohne Code-Änderung: in Vercel die Variable `WARTUNGSMODUS` setzen (`aus` schaltet ab, `an` schaltet ein), dann **Redeploy**. Die Variable geht dem Code vor; nach dem Ende der Pause wieder löschen.
+- Lokal ansehen: `WARTUNGSMODUS=an bun run start` nach `bun run build`.
+
+**Prüfen:** `curl -sI https://karriere.bad-energie.de/` zeigt im Wartungsmodus `HTTP/2 503`, sonst `200`. `/impressum` antwortet immer mit 200.

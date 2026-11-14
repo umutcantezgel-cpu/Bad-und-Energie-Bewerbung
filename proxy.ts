@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { BEWERBUNG_PFAD, VARIANTE_PFAD } from '@/lib/apply/params';
 import { bewerbungZiel } from '@/lib/apply/vorauswahl';
 import { isTrustedSiteRequest } from '@/lib/security/origin';
+import { WARTUNG_BEWERBUNG_TEXT, WARTUNG_HTML, WARTUNG_RETRY_AFTER_SEC, wartungAktiv, wartungFuer } from '@/lib/wartung';
 
 // Nur benannte SEO-Scraper aus der Sperrliste in app/robots.ts. Bewusst offen: Bytespider (dort nur
 // per Disallow gebeten, hier nicht geblockt: TikTok-Anzeigenprüfung), generische HTTP-Clients
@@ -34,6 +35,11 @@ export function proxy(request: NextRequest) {
     });
   }
 
+  if (wartungAktiv()) {
+    const antwort = wartung(request.nextUrl.pathname);
+    if (antwort) return antwort;
+  }
+
   // Maps-Konfiguration nur für Aufrufe von der eigenen Seite (Route-Handler prüft zusätzlich).
   if (
     request.nextUrl.pathname.startsWith('/api/maps/config') &&
@@ -63,6 +69,26 @@ function bewerbung(request: NextRequest): NextResponse {
   if (ziel?.art === 'weiterleiten') return NextResponse.redirect(new URL(ziel.url, request.url), 308);
   if (ziel?.art === 'umschreiben') return NextResponse.rewrite(new URL(ziel.pfad, request.url));
   return NextResponse.next();
+}
+
+/**
+ * Wartungsmodus (lib/wartung.ts): Seiten zeigen die Wartungsseite, neue Bewerbungen bekommen 503 im Vertrag C8 (der
+ * Flow eines offenen Tabs zeigt den Text). Beides mit Retry-After und ohne Cache; null lässt den Pfad durch.
+ */
+function wartung(pathname: string): NextResponse | null {
+  const art = wartungFuer(pathname);
+  if (!art) return null;
+  const headers = { 'Cache-Control': 'no-store', 'Retry-After': String(WARTUNG_RETRY_AFTER_SEC) };
+  if (art === 'bewerbung') {
+    return NextResponse.json(
+      { ok: false, code: 'SERVICE_UNAVAILABLE', message: WARTUNG_BEWERBUNG_TEXT },
+      { status: 503, headers }
+    );
+  }
+  return new NextResponse(WARTUNG_HTML, {
+    status: 503,
+    headers: { ...headers, 'Content-Type': 'text/html; charset=utf-8' },
+  });
 }
 
 export const config = {
