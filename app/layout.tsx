@@ -6,6 +6,7 @@ import { fontVariables } from './fonts';
 import { AttributionCapture } from '@/components/analytics/AttributionCapture';
 import { EreignisSchalter } from '@/components/analytics/EreignisSchalter';
 import { SiteFooter, SiteHeader, StickyApplyBar } from '@/components/site';
+import { Helfer } from '@/components/site/helfer/Helfer';
 import { Waermefront } from '@/components/site/waermefront/Waermefront';
 import { SkipLink } from '@/components/ui/SkipLink';
 import { ToastProvider } from '@/components/ui/Toast';
@@ -96,6 +97,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* Klick-Wärme und Wärmefront (E-031): zwei Überlagerungen in der obersten Ebene, still bis zum Klick; ihr CSS
             steht im globalen Chunk (check-css-chunks). Der eigene Zeiger ist reines CSS in globals.css. */}
         <Waermefront />
+        {/* Helfer (Inhaberwunsch 25.11.2026): Figur zum Greifen und Werfen samt WhatsApp-Ball. Die Insel ist leer, bis
+            der Browser im Leerlauf ist; nicht im Bewerbungsweg, nicht auf den Rechtsseiten, nicht ohne Bewegung. */}
+        <Helfer />
         {/* Reads UTM/ref from the URL; the boundary keeps static pages static. */}
         <Suspense fallback={null}>
           <AttributionCapture />
