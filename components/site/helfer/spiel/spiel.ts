@@ -296,10 +296,25 @@ export class Spiel {
   }
   /** Fenster oder feste Leisten haben sich geändert: Wände und Boden neu setzen. */
   vermesse(): void {
+    const w = this.welt;
+    const alt = { links: w.links, rechts: w.rechts, boden: w.boden };
     this.masse();
-    if (this.zustand === 'steht' && !this.ziel) this.stell(begrenze(this.kf.x, this.welt.links + 40, this.heimFigur()));
-    this.welt.wecke(this.kb);
-    for (const t of this.teile) this.welt.wecke(t.k);
+    // Nichts hat sich geändert: nichts anfassen. Die Seite ruft das bei jedem Seitenwechsel und jedem Ein- und
+    // Ausblenden der Bewerbenleiste, auch mitten in ihren eigenen Bewegungen.
+    if (alt.links === w.links && alt.rechts === w.rechts && alt.boden === w.boden) return;
+    if (this.zustand === 'steht' && !this.ziel) this.stell(begrenze(this.kf.x, w.links + 40, this.heimFigur()));
+    const b = this.kb;
+    const ruht =
+      !this.bildNr && b.aktiv && b.schlaeft && this.teile.length === 0 && (this.zustand === 'steht' || this.zustand === 'weg') && Math.abs(b.y - (alt.boden - this.rBall)) < 2;
+    if (ruht) {
+      // Alles ruht: Der Ball kommt ohne Rechnung auf den neuen Boden. Einmal zeichnen, keine Bildschleife.
+      b.x = begrenze(b.x, w.links + this.rBall, w.rechts - this.rBall);
+      b.y = w.boden - this.rBall;
+      this.zeichne();
+      return;
+    }
+    w.wecke(b);
+    for (const t of this.teile) w.wecke(t.k);
     this.laeufe();
     this.zeichne();
   }
