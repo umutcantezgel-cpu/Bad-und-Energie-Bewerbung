@@ -3,7 +3,8 @@ import { SITE_CONFIG } from '@/lib/seo/site-config';
 import { TOKENS } from '@/lib/tokens';
 
 /**
- * Wartungsmodus (Inhaber, 14.11.2026: Seite in den Wartungsmodus nehmen).
+ * Wartungsmodus (Inhaber, 14.11.2026: Seite in den Wartungsmodus nehmen; 25.11.2026: wieder heraus, der Schalter
+ * steht seitdem auf false).
  *
  * An heißt (proxy.ts):
  * - Jede Seite außer Impressum und Datenschutz zeigt nur die Wartungsseite unten, mit HTTP 503, Retry-After und ohne
@@ -19,7 +20,7 @@ import { TOKENS } from '@/lib/tokens';
  * „an“ zeigt die Wartungsseite überall (etwa lokal zum Ansehen), „aus“ schaltet sie in Vercel ohne Code-Änderung ab
  * (wirkt nach einem Redeploy). Ablauf: docs/operations/betrieb.md, Abschnitt 8.
  */
-export const WARTUNGSMODUS = true;
+export const WARTUNGSMODUS = false;
 
 /** Retry-After der Wartungsseite in Sekunden: Suchmaschinen fragen nach einer Stunde wieder nach. */
 export const WARTUNG_RETRY_AFTER_SEC = 3600;

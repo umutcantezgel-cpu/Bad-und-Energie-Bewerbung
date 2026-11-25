@@ -412,7 +412,7 @@ Stand 28.10.2026, Abschluss des Ausbaus (Mails, Bewerbungsseite, Mappe mit PDF, 
 
 ## 8. Wartungsmodus
 
-Seit 14.11.2026 (Inhaber: „in den Wartungsmodus nehmen“). Code und Begründung: `lib/wartung.ts`, Weiche in `proxy.ts`.
+**Stand: aus.** An vom 14.11.2026 (Inhaber: „in den Wartungsmodus nehmen“) bis 25.11.2026 (Inhaber: „aus dem Wartungsmodus raus“). Code und Begründung: `lib/wartung.ts`, Weiche in `proxy.ts`. Was unten steht, beschreibt den eingeschalteten Zustand.
 
 **Was Besucher sehen:** Jede Seite zeigt nur „Kurze Pause.“ mit Logo, dem Hinweis für alle, die sich schon beworben haben, einem Knopf zu bad-energie.de sowie Impressum und Datenschutz. Antwort mit HTTP 503 und `Retry-After: 3600`, nie gecacht: Suchmaschinen behalten die Seiten im Index, nach dem Abschalten ist alles sofort zurück. Dauert die Pause länger als etwa eine Woche, fängt Google an, Seiten aus dem Index zu nehmen; dann lieber nur die Bewerbung pausieren statt die ganze Seite.
 
