@@ -263,7 +263,7 @@ test.describe('Helfer mit Bewegung', () => {
     test.skip(test.info().project.name !== 'desktop-light', 'Ein Lauf genügt.');
     const fehler = fehlerSammeln(page);
     await mitHelfer(page);
-    await page.locator('header').getByRole('link', { name: 'Stellen', exact: true }).first().click();
+    await page.locator('a[href="/jobs"]:visible').first().click();
     await page.waitForURL('**/jobs');
     await expect(feld(page)).toHaveAttribute('data-zustand', 'steht');
     await page.goto('/bewerbung');
