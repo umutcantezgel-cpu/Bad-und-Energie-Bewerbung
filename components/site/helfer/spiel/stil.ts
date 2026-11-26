@@ -4,7 +4,8 @@
  * ohne eigene Regeln. Keine Dauerschleifen: Jede Bewegung hier läuft einmal, ausgelöst durch eine Berührung.
  *
  * SCHATTEN_STIL gilt in der Schattenwurzel (Figur, Sprechblase, Staub, Tor und Korb),
- * LICHT_STIL im Dokument (Hülle und WhatsApp-Ball).
+ * LICHT_STIL im Dokument (Hülle und WhatsApp-Ball). Der Ball trägt als einziges Teil eine Fremdmarke: WhatsApp-Grün
+ * (--whatsapp) mit dem weißen WhatsApp-Zeichen, wie der Knopf der Schlüsselschmiede (Inhaber, 26.11.2026).
  */
 export const SCHATTEN_STIL = `
 .hf-feld{position:absolute;inset:0;pointer-events:none;overflow:hidden;font:inherit}
@@ -58,7 +59,7 @@ export const LICHT_STIL = `
 [data-helfer]{position:fixed;inset:0;z-index:40;pointer-events:none}
 .hf-ball-halter{position:fixed;left:0;top:0;z-index:41;will-change:transform}
 .hf-ball-halter.hf-zieht{pointer-events:none}
-.hf-ball{display:grid;place-items:center;width:100%;height:100%;border-radius:var(--radius-voll);background:var(--brand);color:var(--surface);box-shadow:var(--shadow-lg);cursor:grab;touch-action:none;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-drag:none}
+.hf-ball{display:grid;place-items:center;width:100%;height:100%;border-radius:var(--radius-voll);background:var(--whatsapp);color:var(--on-accent);box-shadow:var(--shadow-lg);cursor:grab;touch-action:none;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-drag:none}
 .hf-ball:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 .hf-ball svg{display:block;pointer-events:none}
 @media print{[data-helfer],.hf-ball-halter{display:none}}

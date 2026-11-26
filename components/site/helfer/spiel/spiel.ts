@@ -86,6 +86,12 @@ const TEILE: { name: EbenenName; warte: number }[] = [
   { name: 'arm-nah-unten', warte: 0.44 },
 ];
 
+/** WhatsApp-Zeichen als Pfad im Feld 24 × 24 (wie im Knopf der Schlüsselschmiede). */
+const WHATSAPP_ZEICHEN =
+  'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z';
+/** Aufprall des Balls, ab dem er sichtbar staucht und das Handy kurz vibriert (wie bei der Schlüsselschmiede). */
+const SPUERBAR = 380;
+
 // Schwellen: Tempo, mit dem zwei Dinge aufeinandertreffen, in Bildpunkten je Sekunde
 const KIPP_BALL = 1100;
 const SPLITTER_BALL = 1900;
@@ -153,6 +159,10 @@ export class Spiel {
   private blaseOffen = false;
   private menueOffen = false;
   private ballHeimUhr = 0;
+  private ballHeim: { von: number; winkelVon: number; winkelZiel: number; t: number; dauer: number } | null = null;
+  private quetsch = 0;
+  private quetschAchse: 'x' | 'y' = 'y';
+  private vibriert = 0;
   private figurHeimUhr = 0;
   private torDrin = false;
   private ballVorY = 0;
@@ -188,8 +198,8 @@ export class Spiel {
     // darum löst Loslassen keinen Klick auf dem Link aus. Die Lage setzt eine Stilregel, kein style-Attribut.
     this.ballEl = el('div', `hf-ball-halter ${a.klasse ?? ''}`.trim());
     this.ballLink = el('a', 'hf-ball', { href: a.whatsapp, target: '_blank', rel: 'noopener noreferrer', 'aria-label': this.T.ball, draggable: 'false' });
-    this.ballLink.innerHTML =
-      '<svg viewBox="0 0 24 24" width="56%" height="56%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 1-4.6 16.7L3 21l1.3-4.4A9 9 0 0 1 12 3Z"/></svg>';
+    // WhatsApp-Zeichen (Fremdmarke, unverändert), rein dekorativ: Der Name steht im aria-label.
+    this.ballLink.innerHTML = `<svg viewBox="0 0 24 24" width="50%" height="50%" fill="currentColor" aria-hidden="true" focusable="false"><path d="${WHATSAPP_ZEICHEN}"/></svg>`;
     this.ballEl.append(this.ballLink);
     let regel: CSSStyleDeclaration | null = null;
     try {
@@ -497,8 +507,12 @@ export class Spiel {
     try {
       if (this.welt.wach) this.welt.schritt(dt);
       const weiter = this.steuere(dt);
+      if (this.quetsch > 0) {
+        this.quetsch *= Math.exp(-18 * dt);
+        if (this.quetsch < 0.004) this.quetsch = 0;
+      }
       this.zeichne();
-      if (weiter || this.welt.wach) this.laeufe();
+      if (weiter || this.welt.wach || this.quetsch > 0) this.laeufe();
     } catch {
       // Ein Fehler im Spielzeug darf die Seite nie stören: still abbauen.
       this.zerstoere();
@@ -721,6 +735,7 @@ export class Spiel {
     const b = this.kb;
     const figur = s.a === f || s.b === f;
     const ball = s.a === b || s.b === b;
+    if (ball && s.tempo > SPUERBAR) this.stauche(s);
     if (figur && ball) {
       if (this.zustand === 'steht') {
         if (s.tempo > SPLITTER_BALL) {
@@ -758,6 +773,20 @@ export class Spiel {
       return;
     }
     if (ball && !s.b && s.tempo > 900) this.staub(s.x, s.y, 3);
+  }
+
+  /** Spürbarer Aufprall des Balls: Er staucht kurz in Stoßrichtung, und das Handy vibriert einen Augenblick. */
+  private stauche(s: Stoss): void {
+    this.quetsch = Math.min(0.22, s.tempo / 5000);
+    this.quetschAchse = Math.abs(s.nx) > Math.abs(s.ny) ? 'x' : 'y';
+    const jetzt = performance.now();
+    if (jetzt - this.vibriert < 120) return;
+    this.vibriert = jetzt;
+    try {
+      if (typeof navigator.vibrate === 'function') navigator.vibrate(Math.min(18, Math.round(s.tempo / 200)));
+    } catch {
+      /* ohne Vibration */
+    }
   }
 
   /* -------------------------------------------------- Zerspringen und Zusammenbau */
@@ -1171,18 +1200,42 @@ export class Spiel {
     if (this.sport || this.a.ruhig) return false;
     const b = this.kb;
     let weiter = false;
-    if (b.aktiv && b.schlaeft && Math.abs(b.x - this.heimBall()) > 6) {
-      this.ballHeimUhr += dt;
+    // Der Ball rastet wieder an seinem Platz ein, sobald er liegt (wie der Knopf der Schlüsselschmiede): kurz warten,
+    // dann in 280 bis 880 ms hinrollen, am Ende steht das Zeichen wieder aufrecht.
+    const heim = this.heimBall();
+    const schief = Math.abs(Math.sin(b.winkel / 2)) > 0.01;
+    if (b.aktiv && b.schlaeft && !b.griff && (Math.abs(b.x - heim) > 2 || schief || this.ballHeim)) {
       weiter = true;
-      if (this.ballHeimUhr > 7) {
-        const dx = this.heimBall() - b.x;
-        const schritt = Math.sign(dx) * Math.min(Math.abs(dx), 260 * dt);
-        b.x += schritt;
+      if (!this.ballHeim) {
+        this.ballHeimUhr += dt;
+        if (this.ballHeimUhr > 0.35) {
+          const rollt = b.winkel + (heim - b.x) / this.rBall;
+          this.ballHeim = {
+            von: b.x,
+            winkelVon: b.winkel,
+            winkelZiel: Math.round(rollt / (2 * Math.PI)) * 2 * Math.PI,
+            t: 0,
+            dauer: Math.min(0.88, 0.28 + Math.abs(heim - b.x) * 0.0004),
+          };
+        }
+      } else {
+        const h = this.ballHeim;
+        h.t += dt;
+        const u = Math.min(1, h.t / h.dauer);
+        const e = 1 - Math.pow(1 - u, 4);
+        b.x = h.von + (heim - h.von) * e;
         b.y = this.welt.boden - this.rBall;
-        b.winkel += schritt / this.rBall;
+        b.winkel = h.winkelVon + (h.winkelZiel - h.winkelVon) * e;
+        if (u >= 1) {
+          b.x = heim;
+          b.winkel = 0;
+          this.ballHeim = null;
+          this.ballHeimUhr = 0;
+        }
       }
     } else {
       this.ballHeimUhr = 0;
+      this.ballHeim = null;
     }
     if (this.zustand === 'steht' && !this.ziel && !this.taetig && !this.blaseOffen && Math.abs(this.kf.x - this.heimFigur()) > 6) {
       this.figurHeimUhr += dt;
@@ -1328,7 +1381,10 @@ export class Spiel {
     // Zustand zum Ablesen (Tests, Fehlersuche). Er steht in der Schattenwurzel: Beobachter der Seite sehen ihn nicht.
     if (this.feld.dataset.zustand !== this.zustand) this.feld.dataset.zustand = this.zustand;
     this.fig.el.style.transform = `translate3d(${f.x.toFixed(2)}px, ${f.y.toFixed(2)}px, 0) rotate(${f.winkel.toFixed(4)}rad)`;
-    this.ballRegel.transform = `translate3d(${b.x.toFixed(2)}px, ${b.y.toFixed(2)}px, 0) rotate(${b.winkel.toFixed(4)}rad)`;
+    // Stauchen in Fensterachsen (erst drehen, dann stauchen), nur solange der Aufprall nachwirkt
+    const q = this.quetsch;
+    const stauch = q > 0 ? ` scale(${(this.quetschAchse === 'x' ? 1 - q : 1 + q).toFixed(3)}, ${(this.quetschAchse === 'x' ? 1 + q : 1 - q).toFixed(3)})` : '';
+    this.ballRegel.transform = `translate3d(${b.x.toFixed(2)}px, ${b.y.toFixed(2)}px, 0)${stauch} rotate(${b.winkel.toFixed(4)}rad)`;
     for (const t of this.teile) t.el.style.transform = `translate3d(${t.k.x.toFixed(2)}px, ${t.k.y.toFixed(2)}px, 0) rotate(${t.k.winkel.toFixed(4)}rad)`;
     // Schatten am Boden: je höher, desto kleiner und blasser
     const schatten = (e: HTMLElement, x: number, tief: number, breit: number, sichtbar: boolean) => {

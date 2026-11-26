@@ -21,3 +21,13 @@ export const WHATSAPP = Object.freeze({
 });
 
 export const WHATSAPP_NUMBER = WHATSAPP.e164;
+
+/**
+ * Nummer hinter dem schwebenden WhatsApp-Knopf (der Ball des Helfers), Anweisung des Inhabers vom 26.11.2026: seine
+ * eigene Mobilnummer statt der des Chefs. Alle übrigen WhatsApp-Links (Kopf, Leiste, Fuß, Bewerbungsweg, vCard)
+ * bleiben bei WHATSAPP. Anzeige nach DIN 5008.
+ */
+export const WHATSAPP_KNOPF = Object.freeze({
+  display: '0176 41195301',
+  e164: '+4917641195301',
+});

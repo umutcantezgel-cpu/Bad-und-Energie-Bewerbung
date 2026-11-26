@@ -1,4 +1,5 @@
-import { buildWhatsAppUrl, whatsAppMessageFor } from '@/lib/utils/whatsapp-utils';
+import { WHATSAPP_KNOPF } from '@/lib/data/contact';
+import { buildWhatsAppUrl, KNOPF_WHATSAPP_MESSAGE } from '@/lib/utils/whatsapp-utils';
 import { HelferInsel } from './HelferInsel';
 
 /**
@@ -6,6 +7,7 @@ import { HelferInsel } from './HelferInsel';
  * als Zeichenkette weiter, damit der Browser-Teil frei von Kontaktdaten, zod und SITE_CONFIG bleibt.
  */
 export function Helfer() {
-  // Im Bewerbungsweg tritt der Helfer nicht auf (seiten.ts), der allgemeine Text passt also immer.
-  return <HelferInsel whatsappHref={buildWhatsAppUrl(whatsAppMessageFor('/'))} />;
+  // Der schwebende Knopf schreibt an die Nummer des Inhabers (lib/data/contact.ts, WHATSAPP_KNOPF), mit eigenem Text
+  // ohne „Herr Demir“. Im Bewerbungsweg tritt der Helfer nicht auf (seiten.ts), ein Text genügt also.
+  return <HelferInsel whatsappHref={buildWhatsAppUrl(KNOPF_WHATSAPP_MESSAGE, WHATSAPP_KNOPF.e164)} />;
 }

@@ -233,6 +233,8 @@
     --p-gruen-flaeche: #E3F0E6;
     --p-fehler: #B42318;
     --p-fehler-flaeche: #FBE6E1;
+    /* Fremdmarke, unverändert: WhatsApp-Grün, nur als Fläche des schwebenden WhatsApp-Knopfs (Inhaber, 26.11.2026) */
+    --p-whatsapp: #128C7E;
     /* dunkel (aus derselben Familie; Glut = Wärme auf Nacht) */
     --p-nacht: #0A1033;
     --p-nacht-2: #131B4A;
@@ -362,6 +364,8 @@
     --success-subtle: var(--p-gruen-flaeche);
     --danger: var(--p-fehler);
     --danger-subtle: var(--p-fehler-flaeche);
+    /* Fläche des schwebenden WhatsApp-Knopfs, in jedem Modus gleich (Fremdmarke); das Zeichen darauf in --on-accent */
+    --whatsapp: var(--p-whatsapp);
     /* Wärmerampe (E-031): nur Temperatur – die Bänder des Wärmefelds, Klick-Wärme und Wärmefront (Guard waerme-rollen) */
     --waerme-0: var(--p-waerme-0);
     --waerme-1: var(--p-waerme-1);

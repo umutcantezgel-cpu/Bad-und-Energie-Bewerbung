@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { Attribution } from '@/lib/applications/schema';
 import { bearbeiteHref, beobachteLinks, linkArt, type BeobachterDokument } from '@/lib/attribution/klick';
+import { WHATSAPP_KNOPF } from '@/lib/data/contact';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
 
 const ORIGIN = 'https://karriere.bad-energie.de';
@@ -47,6 +48,16 @@ describe('bearbeiteHref: was der Browser öffnet', () => {
     expect(linkArt('tel:+49644142956')).toBe('telefon');
     expect(linkArt(WA)).toBe('whatsapp');
     expect(linkArt(buildWhatsAppUrl('Hallo', '+49 151 2345678'))).toBe('sonst');
+    // Der schwebende Knopf schreibt an die Nummer des Inhabers (WHATSAPP_KNOPF): Sie zählt wie die Nummer der Seite.
+    expect(linkArt(buildWhatsAppUrl('Hallo', WHATSAPP_KNOPF.e164))).toBe('whatsapp');
+  });
+
+  it('der Link des schwebenden Knopfs bekommt den Code und behält seine Nummer', () => {
+    const knopf = buildWhatsAppUrl('Hallo, ich habe eine Frage.', WHATSAPP_KNOPF.e164);
+    const neu = bearbeiteHref(knopf, INDEED, ORIGIN);
+    expect(neu).toMatch(/^https:\/\/api\.whatsapp\.com\/send\?phone=4917641195301&text=/);
+    expect(textVon(neu).startsWith('Hallo, ich habe eine Frage.')).toBe(true);
+    expect(textVon(neu)).toMatch(/\n– W-IND$/);
     expect(linkArt('/bewerbung')).toBe('sonst');
   });
 });

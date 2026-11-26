@@ -1,6 +1,8 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { WHATSAPP, WHATSAPP_KNOPF } from '@/lib/data/contact';
+import { buildWhatsAppUrl, DEFAULT_WHATSAPP_MESSAGE, KNOPF_WHATSAPP_MESSAGE } from '@/lib/utils/whatsapp-utils';
 import { HELFER_BILDER, OHNE_HELFER, helferSichtbar } from '../seiten';
 import { DATEN } from '../spiel/daten';
 import { TEXTE } from '../spiel/spiel';
@@ -56,7 +58,19 @@ describe('Helfer: Einbau in den Rahmen', () => {
   it('der WhatsApp-Link kommt fertig vom Server, mit dem allgemeinen Text', () => {
     const huelle = lies('components/site/helfer/Helfer.tsx');
     expect(huelle).not.toContain("'use client'");
-    expect(huelle).toContain("buildWhatsAppUrl(whatsAppMessageFor('/'))");
+    expect(huelle).toContain('buildWhatsAppUrl(KNOPF_WHATSAPP_MESSAGE, WHATSAPP_KNOPF.e164)');
+  });
+
+  it('der schwebende Knopf schreibt an die Nummer des Inhabers, alle anderen WhatsApp-Links an die der Seite', () => {
+    expect(WHATSAPP_KNOPF.e164).toBe('+4917641195301');
+    expect(WHATSAPP_KNOPF.display).toBe('0176 41195301');
+    expect(WHATSAPP_KNOPF.e164).not.toBe(WHATSAPP.e164);
+    expect(buildWhatsAppUrl(KNOPF_WHATSAPP_MESSAGE, WHATSAPP_KNOPF.e164)).toMatch(/^https:\/\/api\.whatsapp\.com\/send\?phone=4917641195301&text=/);
+    // Der Text geht nicht an Herrn Demir: keine Anrede mit Namen, sonst wie der Standardtext der Seite.
+    expect(KNOPF_WHATSAPP_MESSAGE).not.toMatch(/Demir/);
+    expect(KNOPF_WHATSAPP_MESSAGE).toBe(DEFAULT_WHATSAPP_MESSAGE.replace('Guten Tag Herr Demir,', 'Guten Tag,'));
+    // Die Nummer steht nur in den Kontaktdaten und wird nur vom Helfer benutzt.
+    expect(lies('lib/data/contact.ts').match(/4917641195301/g)).toHaveLength(1);
   });
 });
 
@@ -119,6 +133,17 @@ describe('Helfer: Texte und Stil', () => {
       for (const schatten of stil.match(/box-shadow:[^;}]+/g) ?? []) expect(schatten).toBe('box-shadow:var(--shadow-lg)');
       for (const radius of stil.match(/border-radius:[^;}]+/g) ?? []) expect(radius).toMatch(/^border-radius:(var\(--radius-(1|2|3|voll)\)|0|inherit)$/);
     }
+  });
+
+  it('der Ball ist der WhatsApp-Knopf: Grün der Fremdmarke als Rolle, weißes Zeichen, als einziges Teil', () => {
+    expect(LICHT_STIL).toMatch(/\.hf-ball\{[^}]*background:var\(--whatsapp\);color:var\(--on-accent\)/);
+    expect(SCHATTEN_STIL).not.toContain('--whatsapp');
+    const thema = lies('app/styles/theme.css');
+    expect(thema).toMatch(/--p-whatsapp: #128C7E;/);
+    expect(thema.match(/--whatsapp: var\(--p-whatsapp\);/g)).toHaveLength(1);
+    const spiel = lies('components/site/helfer/spiel/spiel.ts');
+    expect(spiel).toContain('fill="currentColor"');
+    expect(spiel).toContain('WHATSAPP_ZEICHEN');
   });
 
   it('keine Dauerschleife und kein Skalieren in den Abläufen, jede Bewegung endet', () => {

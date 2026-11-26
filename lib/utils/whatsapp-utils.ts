@@ -9,6 +9,12 @@ export const DEFAULT_WHATSAPP_MESSAGE = 'Guten Tag Herr Demir, ich interessiere 
  */
 export const BEWERBUNG_WHATSAPP_MESSAGE = 'Guten Tag Herr Demir, ich möchte mich bei Bad und Energie bewerben.';
 
+/**
+ * Text des schwebenden WhatsApp-Knopfs (Helfer-Ball). Er schreibt an die Nummer des Inhabers (WHATSAPP_KNOPF in
+ * lib/data/contact.ts), nicht an Herrn Demir: deshalb ohne Namen in der Anrede.
+ */
+export const KNOPF_WHATSAPP_MESSAGE = 'Guten Tag, ich interessiere mich für eine Stelle bei Bad und Energie.';
+
 export function buildWhatsAppUrl(message: string = DEFAULT_WHATSAPP_MESSAGE, phone: string = WHATSAPP_NUMBER): string {
   const cleanPhone = phone.replace(/[^0-9]/g, '');
   return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;

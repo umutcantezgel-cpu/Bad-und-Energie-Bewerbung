@@ -69,7 +69,8 @@ test.describe('Helfer mit Bewegung', () => {
 
     const link = ball(page);
     await expect(link).toBeVisible();
-    await expect(link).toHaveAttribute('href', /^https:\/\/api\.whatsapp\.com\/send\?/);
+    // Der schwebende Knopf schreibt an die Nummer des Inhabers, mit eigenem Text ohne Namen in der Anrede.
+    await expect(link).toHaveAttribute('href', /^https:\/\/api\.whatsapp\.com\/send\?phone=4917641195301&text=Guten%20Tag%2C%20ich/);
     await expect(link).toHaveAttribute('target', '_blank');
     await expect(link).toHaveAttribute('rel', /noopener/);
 
@@ -158,12 +159,13 @@ test.describe('Helfer mit Bewegung', () => {
     await expect.poll(async () => Math.abs(((await link.boundingBox())?.x ?? start.x) - start.x), { timeout: 3000 }).toBeGreaterThan(40);
     expect(await klicks()).toEqual([]);
 
-    // Er kommt zur Ruhe, dann zählt ein Antippen als Klick auf den Link.
+    // Er kommt zur Ruhe und rastet wieder an seinem Platz ein, dann zählt ein Antippen als Klick auf den Link.
     await expect
       .poll(
         async () => {
           const a = await link.boundingBox();
-          await page.waitForTimeout(250);
+          // länger als die Pause, nach der er an seinen Platz zurückrollt
+          await page.waitForTimeout(600);
           const b = await link.boundingBox();
           return a && b ? Math.hypot(a.x - b.x, a.y - b.y) : 99;
         },
@@ -171,6 +173,8 @@ test.describe('Helfer mit Bewegung', () => {
       )
       .toBeLessThan(0.5);
     const ruht = (await link.boundingBox())!;
+    expect(Math.abs(ruht.x - start.x), 'wieder am Platz').toBeLessThan(2);
+    expect(Math.abs(ruht.y - start.y), 'wieder am Platz').toBeLessThan(2);
     await page.mouse.click(ruht.x + ruht.width / 2, ruht.y + ruht.height / 2);
     const gezaehlt = await klicks();
     expect(gezaehlt).toHaveLength(1);
