@@ -11,7 +11,7 @@ import { alltagWoche } from '@/components/jobs/liste/inhalt-text';
 import { listenUnterzeile, listenZeichnung } from '@/components/jobs/liste/liste-text';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS, FACT_IDS } from '@/lib/content/facts';
-import { FAQ_ITEMS, STELLEN_FAQ_ITEMS } from '@/lib/content/faq';
+import { FAQ_ITEMS, START_FAQ_ITEMS, STELLEN_FAQ_ITEMS } from '@/lib/content/faq';
 import { REGION } from '@/lib/content/region';
 import { TEAM_QUOTES } from '@/lib/content/team';
 import { companyData } from '@/lib/data/company';
@@ -53,7 +53,7 @@ describe('Keine festen Arbeitszeiten in Fakten, Stellen und Texten (B28)', () =>
       expect(claims(JSON.stringify(job)).map((c) => c.claim), job.id).toEqual([]);
       expect(claims(toPlainDescription(job)).map((c) => c.claim), job.id).toEqual([]);
     }
-    for (const item of [...FAQ_ITEMS, ...STELLEN_FAQ_ITEMS]) expect(claims(`${item.question} ${item.answer}`), item.id).toEqual([]);
+    for (const item of [...FAQ_ITEMS, ...STELLEN_FAQ_ITEMS, ...START_FAQ_ITEMS]) expect(claims(`${item.question} ${item.answer}`), item.id).toEqual([]);
     expect(claims(companyData.benefits.join(' '))).toEqual([]);
     // Die Prüfung greift: ein Betrag würde gemeldet
     expect(claims('Gehalt 3.600–4.600 € im Monat').map((c) => c.claim)).toEqual(['3.600–4.600 €']);
@@ -72,7 +72,7 @@ describe('Keine festen Arbeitszeiten in Fakten, Stellen und Texten (B28)', () =>
   });
 
   it('FAQ, Einsatzgebiet, freigegebene Teamzitate, Mappe und Rohdaten ohne feste Arbeitszeit', () => {
-    for (const item of [...FAQ_ITEMS, ...STELLEN_FAQ_ITEMS]) expect(claims(`${item.question} ${item.answer}`), item.id).toEqual([]);
+    for (const item of [...FAQ_ITEMS, ...STELLEN_FAQ_ITEMS, ...START_FAQ_ITEMS]) expect(claims(`${item.question} ${item.answer}`), item.id).toEqual([]);
     expect(claims(`${REGION.headline} ${REGION.summary} ${REGION.milestone.text}`)).toEqual([]);
     for (const quote of Object.values(TEAM_QUOTES)) expect(claims(quote.quote), quote.id).toEqual([]);
     for (const style of WORK_STYLES) expect(claims(style.value), style.id).toEqual([]);

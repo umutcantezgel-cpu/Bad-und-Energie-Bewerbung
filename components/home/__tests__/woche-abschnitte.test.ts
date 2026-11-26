@@ -4,7 +4,7 @@ import { prerender } from 'react-dom/static';
 import { describe, expect, it } from 'vitest';
 import { COMPANY } from '@/lib/content/company';
 import { JobProcess } from '@/components/jobs/JobProcess';
-import { getFaqItems } from '@/lib/content/faq';
+import { FAQ_IDS } from '@/lib/content/faq';
 import { PAY_ON_REQUEST, jobPath } from '@/lib/jobs/format';
 import { getActiveJobs, isJobLive } from '@/lib/jobs/registry';
 import {
@@ -18,7 +18,7 @@ import {
 import { buildFaqPageJsonLd } from '../content';
 import { AboutSection } from '../AboutSection';
 import { BenefitGrid } from '../BenefitGrid';
-import { FaqSection } from '../FaqSection';
+import { FaqSection, startseitenFaq } from '../FaqSection';
 import { ProcessTimeline } from '../ProcessTimeline';
 import { JobList, stellenEtikett } from '../JobList';
 import { RegionSection } from '../RegionSection';
@@ -144,8 +144,10 @@ describe('ProcessTimeline (#ablauf, E-START-027)', () => {
 });
 
 describe('FaqSection (#faq, E-START-050)', () => {
-  const html = renderToStaticMarkup(createElement(FaqSection));
-  const items = getFaqItems();
+  // Fester Stichtag: alle sieben Stellenarten live (Helfer und Ausbildung eingeschlossen)
+  const NOW = new Date('2026-10-14T12:00:00Z');
+  const html = renderToStaticMarkup(createElement(FaqSection, { now: NOW }));
+  const items = startseitenFaq(NOW);
 
   it('Überschrift bleibt „Häufige Fragen“, die Einleitung des Altstands kehrt zurück', () => {
     // Einzeilige Überschrift: ohne Rohrklammer (die Klammer fasst zwei Zeilen, wie im Einstieg)
@@ -159,13 +161,21 @@ describe('FaqSection (#faq, E-START-050)', () => {
     expect(html).not.toContain('data-zeichnung="leitungstrenner"');
   });
 
-  it('fünf Fragen als exklusives Akkordeon (Disclosure, name="faq")', () => {
-    expect(items).toHaveLength(5);
-    expect(count(html, /<details name="faq"/g)).toBe(5);
+  it('neun Fragen als exklusives Akkordeon (Disclosure, name="faq"): die fünf, Bezahlung, Antwortzeit, Quereinstieg, Ausbildung (ki4)', () => {
+    expect(items.map((item) => item.id)).toEqual([...FAQ_IDS, 'lohn-alle', 'antwortzeit', 'quereinstieg', 'bildet-ihr-aus']);
+    expect(items).toHaveLength(9);
+    expect(count(html, /<details name="faq"/g)).toBe(9);
     expect(html).not.toMatch(/<details[^>]* open=""/);
   });
 
-  // V6-B: Die FAQPage steht im einen Graphen der Startseite (app/page.tsx, buildFaqPageJsonLd(getFaqItems()),
+  it('ohne Übergabe dieselbe Liste wie startseitenFaq (die FAQPage in app/page.tsx liest sie auch)', () => {
+    const jetzt = new Date();
+    expect(renderToStaticMarkup(createElement(FaqSection, { now: jetzt }))).toBe(
+      renderToStaticMarkup(createElement(FaqSection, { items: startseitenFaq(jetzt) })),
+    );
+  });
+
+  // V6-B: Die FAQPage steht im einen Graphen der Startseite (app/page.tsx, buildFaqPageJsonLd(startseitenFaq(…)),
   // geprüft in lib/seo/__tests__/graph.test.ts), nicht mehr als eigener Block im Abschnitt; der Wortlaut bleibt.
   it('das JSON-LD trägt genau den sichtbaren Wortlaut (unverändert)', () => {
     expect(html).not.toContain('application/ld+json');

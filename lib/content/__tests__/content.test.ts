@@ -8,9 +8,11 @@ import {
   DISCRETION_PROMISE,
   FACTS,
   FACT_IDS,
+  FAQ_IDS,
   FAQ_ITEMS,
   JOB_FAQ_IDS,
   PROCESS_STEPS,
+  START_FAQ_ITEMS,
   STELLEN_FAQ_ITEMS,
   REGION,
   TEAM_QUOTES,
@@ -21,6 +23,7 @@ import {
   getReleasedQuote,
   getDiscretionPromise,
   getFaqItems,
+  getStartseitenFaq,
   getProcessIntro,
   getProcessSteps,
   getJobProcessSteps,
@@ -230,6 +233,36 @@ describe('FAQ', () => {
       'Nein. Unsere Baustellen liegen alle im Umkreis von 35 km um Wetzlar. Du bist jeden Abend zu Hause, und am Wochenende hast du frei.',
     );
     expect(fernmontage.factIds).toEqual(['radius35', 'noFarAssembly', 'noWeekendOnCall']);
+  });
+
+  // Prüfung Sichtbarkeit (ki4): Die Startseite beantwortet dazu Fragen aus dem Bestand, eine Frage zu einer Art von
+  // Stelle nur, solange so eine Stelle live ist; die Bezahlung auf der Sammelfläche „je nach Stelle“ (aboveTariff).
+  it('Fragen der Startseite: die fünf, Bezahlung, Antwortzeit; Quereinstieg und Ausbildung nur mit live Stelle', () => {
+    const live = ALL_JOBS.filter((job) => job.status === 'published');
+    const ids = (stellen: typeof live) => getStartseitenFaq(stellen).map((f) => f.id);
+    expect(ids(live)).toEqual([...FAQ_IDS, 'lohn-alle', 'antwortzeit', 'quereinstieg', 'bildet-ihr-aus']);
+    expect(ids(live.filter((job) => !['helfer', 'ausbildung'].includes(job.category)))).toEqual([...FAQ_IDS, 'lohn-alle', 'antwortzeit']);
+    // Zahlt jede gezeigte Stelle über Tarif, die Antwort der Stellenseiten ohne Zusatz
+    const ueberTarif = live.filter((job) => job.benefitFactIds.includes('aboveTariff'));
+    expect(ueberTarif.length).toBeGreaterThan(0);
+    expect(ids(ueberTarif)).toEqual([...FAQ_IDS, 'lohn', 'antwortzeit']);
+    // Ohne Stelle mit Lohn (nur das Schülerpraktikum) keine Frage zur Bezahlung
+    expect(ids(live.filter((job) => job.category === 'praktikum'))).toEqual([...FAQ_IDS, 'antwortzeit']);
+    expect(ids([])).toEqual([...FAQ_IDS, 'antwortzeit']);
+    const antwort = (id: string) => [...STELLEN_FAQ_ITEMS, ...START_FAQ_ITEMS].find((f) => f.id === id)!.answer;
+    expect(antwort('lohn-alle')).toBe(
+      'Den Lohn nennen wir dir auf Anfrage. Je nach Stelle: Vergütung deutlich über dem regionalen Handwerkstarif, dazu Urlaubs- und Weihnachtsgeld.',
+    );
+    expect(antwort('bildet-ihr-aus')).toBe(antwort('praktikum-ausbildung'));
+    expect(getStartseitenFaq(live).find((f) => f.id === 'quereinstieg')).toEqual(STELLEN_FAQ_ITEMS.find((f) => f.id === 'quereinstieg'));
+    expect(new Set([...FAQ_ITEMS, ...STELLEN_FAQ_ITEMS, ...START_FAQ_ITEMS].map((f) => f.id)).size).toBe(
+      FAQ_ITEMS.length + STELLEN_FAQ_ITEMS.length + START_FAQ_ITEMS.length,
+    );
+    for (const item of START_FAQ_ITEMS) {
+      expect(`${item.question} ${item.answer}`, item.id).not.toMatch(/\d\s*(?:€|Euro)|€/);
+      expect(item.answer, item.id).not.toMatch(OLD_ADDRESS);
+      for (const factId of item.factIds) expect(FACTS[factId].pending, `${item.id}: ${factId}`).toBeUndefined();
+    }
   });
 });
 

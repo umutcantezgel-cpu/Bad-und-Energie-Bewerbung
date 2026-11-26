@@ -11,11 +11,12 @@ export const ABLAUF_KOPF = Object.freeze({
 
 /**
  * E-START-050: Die Überschrift „Häufige Fragen“ bleibt; die Einleitung des Altstands kehrt zurück
- * (Freiraum des Passes: „die Einleitung ‚Offene Antworten …‘ darf zurückkehren“).
+ * (Freiraum des Passes: „die Einleitung ‚Offene Antworten …‘ darf zurückkehren“). Seit die Startseite auch Fragen zu
+ * Bezahlung, Quereinstieg und Ausbildung beantwortet (ki4), spricht sie alle an, nicht nur Monteure und Gesellen.
  */
 export const FAQ_KOPF = Object.freeze({
   /** Etikett wie der Menüpunkt (Planbeschriftung, E-023 SectionHeader-Muster). */
   etikett: 'FAQ',
   titel: 'Häufige Fragen',
-  einleitung: 'Offene Antworten auf Fragen, die Monteuren und Gesellen wichtig sind.',
+  einleitung: 'Offene Antworten auf Fragen, die dir vor deiner Bewerbung wichtig sind.',
 });

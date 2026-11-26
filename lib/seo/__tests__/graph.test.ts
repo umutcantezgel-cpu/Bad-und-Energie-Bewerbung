@@ -16,7 +16,7 @@ import NotFound, { metadata as notFoundMetadata } from '@/app/not-found';
 import { buildFaqPageJsonLd } from '@/components/home/content';
 import { JsonLd, serializeJsonLdScript } from '@/components/seo/JsonLd';
 import { GESCHAEFTSFUEHRER_ID, LOCAL_BUSINESS_ID, ORGANIZATION_ID, WEBSITE_ID } from '@/components/site/site-jsonld';
-import { getFaqItems } from '@/lib/content/faq';
+import { startseitenFaq } from '@/components/home/FaqSection';
 import { jobPath, jobUrl } from '@/lib/jobs/format';
 import { buildBreadcrumbJsonLd, buildJobPostingJsonLd, buildJobsBreadcrumbJsonLd } from '@/lib/jobs/jsonld';
 import { getActiveJobs, getJobById, isJobLive, type Job } from '@/lib/jobs/registry';
@@ -172,7 +172,7 @@ describe('buildPageGraph', () => {
       metadata: generatePageMetadata({ title: 'Besetzt', description: 'Besetzt', path: jobPath(job), noindex: true }),
       jobPosting: buildJobPostingJsonLd(job),
       breadcrumb: buildBreadcrumbJsonLd(job),
-      faq: buildFaqPageJsonLd(getFaqItems()),
+      faq: buildFaqPageJsonLd(startseitenFaq(new Date())),
     });
     expectSoundGraph(graph);
     for (const type of RICH) expect(ofType(graph, type)).toHaveLength(0);
@@ -262,7 +262,7 @@ describe('Graph je Seite (V6-B)', () => {
     expect(page['@id']).toBe(`${getCleanCanonicalUrl('/')}/#webpage`);
     expect(page.breadcrumb).toBeUndefined();
     const [faq] = ofType(graph, 'FAQPage');
-    const { '@context': _context, ...expected } = buildFaqPageJsonLd(getFaqItems());
+    const { '@context': _context, ...expected } = buildFaqPageJsonLd(startseitenFaq(new Date()));
     expect(faq).toEqual({ ...expected, isPartOf: { '@id': page['@id'] } });
     expect(faq['@id']).toBe(fragmentId(getCleanCanonicalUrl('/'), 'faq'));
     expect(ofType(graph, 'FAQPage')).toHaveLength(1);

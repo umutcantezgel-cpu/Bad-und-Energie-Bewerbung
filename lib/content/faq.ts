@@ -1,11 +1,11 @@
 import type { JobCategory } from '@/lib/jobs/schema';
 import { COMPANY } from './company';
-import { FACTS, type FactId } from './facts';
+import { FACTS, JE_NACH_STELLE, fuehrendeStellen, type FactId, type FaktTraeger } from './facts';
 
 /**
- * Die fünf bestehenden FAQ (app/page.tsx und FAQPage in app/layout.tsx),
- * in Du-Form und leicht gekürzt. Abweichungen: docs/operations/fakten-abgleich.md.
- * Dazu die Fragen nur für Stellenseiten (STELLEN_FAQ_ITEMS, Plan §C5), ohne FAQPage-Markup.
+ * Die fünf bestehenden FAQ (Startseite #faq und ihre FAQPage, app/page.tsx), in Du-Form und leicht gekürzt.
+ * Abweichungen: docs/operations/fakten-abgleich.md. Dazu die Fragen nur für Stellenseiten (STELLEN_FAQ_ITEMS,
+ * Plan §C5), ohne FAQPage-Markup, und die Zusatzfragen der Startseite (START_FAQ_ITEMS, getStartseitenFaq).
  */
 
 export interface FaqItem {
@@ -33,7 +33,13 @@ export const STELLEN_FAQ_IDS = [
   'praktikum-bewerbung',
   'antwortzeit',
 ] as const;
-export type FaqId = (typeof FAQ_IDS)[number] | (typeof STELLEN_FAQ_IDS)[number];
+/** Fragen nur für die Startseite, zu den fünf dazu (getStartseitenFaq). */
+export const START_FAQ_IDS = ['lohn-alle', 'bildet-ihr-aus'] as const;
+export type FaqId = (typeof FAQ_IDS)[number] | (typeof STELLEN_FAQ_IDS)[number] | (typeof START_FAQ_IDS)[number];
+
+/** Ausbildung ohne Zusage eines Platzes (Schülerpraktikum und Startseite): Welche Plätze offen sind, steht bei den Stellen. */
+const AUSBILDUNG_ANTWORT =
+  'Wir bilden Anlagenmechaniker SHK aus: 3,5 Jahre im Betrieb und in der Berufsschule, bis zur Gesellenprüfung. Welche Ausbildungsplätze gerade offen sind, siehst du bei unseren Stellen.';
 
 export const FAQ_ITEMS: readonly FaqItem[] = Object.freeze([
   {
@@ -156,8 +162,7 @@ export const STELLEN_FAQ_ITEMS: readonly FaqItem[] = Object.freeze([
     question: 'Kann ich nach dem Praktikum bei euch eine Ausbildung machen?',
     // Dauer und Ablauf aus den Ausbildungsstellen (42 Monate, Betrieb und Berufsschule, Gesellenprüfung); ohne Zusage
     // eines Platzes: Welche Plätze offen sind, steht bei den Stellen.
-    answer:
-      'Wir bilden Anlagenmechaniker SHK aus: 3,5 Jahre im Betrieb und in der Berufsschule, bis zur Gesellenprüfung. Welche Ausbildungsplätze gerade offen sind, siehst du bei unseren Stellen.',
+    answer: AUSBILDUNG_ANTWORT,
     factIds: [],
   },
   {
@@ -201,7 +206,28 @@ export const JOB_FAQ_IDS: Readonly<Record<JobCategory, readonly FaqId[]>> = Obje
   ],
 });
 
-const ALL_FAQ_ITEMS: readonly FaqItem[] = [...FAQ_ITEMS, ...STELLEN_FAQ_ITEMS];
+/**
+ * Zusatzfragen der Startseite (Prüfung Sichtbarkeit, ki4), nur aus vorhandenen Wortlauten. Die Startseite spricht über
+ * alle Stellen (Sammelfläche, lib/content/facts.ts): aboveTariff ist fürs Büro offen und steht nicht bei jeder Stelle,
+ * darum „Je nach Stelle: …“ wie auf der Themenseite „Bezahlung und Extras“ (Prüfrunde 5 D5-2).
+ */
+export const START_FAQ_ITEMS: readonly FaqItem[] = Object.freeze([
+  {
+    id: 'lohn-alle',
+    question: 'Was verdiene ich bei euch?',
+    answer: `${FACTS.payOnRequest.long} ${JE_NACH_STELLE.charAt(0).toUpperCase()}${JE_NACH_STELLE.slice(1)}: ${FACTS.aboveTariff.long}`,
+    factIds: ['payOnRequest', 'aboveTariff'],
+  },
+  {
+    id: 'bildet-ihr-aus',
+    question: 'Bildet ihr aus?',
+    // Antwort der Frage „praktikum-ausbildung“ (Dauer und Ablauf aus den Ausbildungsstellen)
+    answer: AUSBILDUNG_ANTWORT,
+    factIds: [],
+  },
+] satisfies FaqItem[]);
+
+const ALL_FAQ_ITEMS: readonly FaqItem[] = [...FAQ_ITEMS, ...STELLEN_FAQ_ITEMS, ...START_FAQ_ITEMS];
 
 export function getFaqItem(id: FaqId): FaqItem {
   const item = ALL_FAQ_ITEMS.find((f) => f.id === id);
@@ -211,4 +237,28 @@ export function getFaqItem(id: FaqId): FaqItem {
 
 export function getFaqItems(ids: readonly FaqId[] = FAQ_IDS): FaqItem[] {
   return ids.map(getFaqItem);
+}
+
+/** Bezahlung auf der Startseite: ohne Zusatz nur, wenn jede gezeigte Stelle über Tarif zahlt; ohne Stelle mit Lohn keine. */
+function lohnFrage(stellen: readonly FaktTraeger[]): FaqId[] {
+  if (!stellen.some((stelle) => stelle.pay === 'auf-anfrage')) return [];
+  const ueberTarif = fuehrendeStellen('aboveTariff', stellen).length;
+  if (ueberTarif === 0) return [];
+  return [ueberTarif === stellen.length ? 'lohn' : 'lohn-alle'];
+}
+
+/**
+ * Fragen der Startseite (#faq und die einzige FAQPage der Website, app/page.tsx; beide lesen diese Liste, darum
+ * wortgleich): die fünf FAQ_ITEMS, dazu Bezahlung und Antwortzeit (Fakt quickResponse), und nur solange eine Stelle
+ * der Art live ist der Quereinstieg (Helfer) und die Ausbildung (Prüfung Sichtbarkeit, ki4).
+ */
+export function getStartseitenFaq(stellen: readonly FaktTraeger[]): FaqItem[] {
+  const live = (kategorie: JobCategory) => stellen.some((stelle) => stelle.category === kategorie);
+  return getFaqItems([
+    ...FAQ_IDS,
+    ...lohnFrage(stellen),
+    'antwortzeit',
+    ...(live('helfer') ? (['quereinstieg'] as const) : []),
+    ...(live('ausbildung') ? (['bildet-ihr-aus'] as const) : []),
+  ]);
 }
