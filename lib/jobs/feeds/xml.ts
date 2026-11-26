@@ -24,7 +24,7 @@ export function element(name: string, value: string | number, mode: 'cdata' | 't
   return `<${name}>${mode === 'cdata' ? cdata(text) : escapeXml(text)}</${name}>`;
 }
 
-/** RFC-822-Datum, wie Indeed es erwartet: 'Sun, 01 Mar 2026 00:00:00 GMT'. */
+/** RFC-822-Datum für <lastBuildDate> im Indeed-Kopf: 'Thu, 08 Oct 2026 06:00:00 GMT' (<date> je Stelle steht im ISO-Format). */
 export function toRfc822(date: Date): string {
   return date.toUTCString();
 }

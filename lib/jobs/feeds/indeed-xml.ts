@@ -15,6 +15,8 @@ export interface IndeedFeedOptions {
 /**
  * Indeed-XML (<source>/<job>) mit allen veröffentlichten Stellen, die `channels.indeedFeed` gesetzt haben. Ohne
  * <salary> (E-030: Lohn auf Anfrage; das Feld ist bei Indeed optional, leer heißt: keine Angabe).
+ * Nach dem Indeed-„Job Sync XML feed guide“: <date> im ISO-8601-Format (derselbe Tag wie datePosted im JobPosting),
+ * <requisitionid> = Referenz der Stelle. <email> (Adresse des Indeed-Arbeitgeberkontos) fehlt, bis der Inhaber sie nennt.
  */
 export function buildIndeedXml(jobs: readonly Job[], options: IndeedFeedOptions = {}): string {
   const {
@@ -26,8 +28,9 @@ export function buildIndeedXml(jobs: readonly Job[], options: IndeedFeedOptions 
   const items = getChannelJobs(jobs, 'indeedFeed', lastBuildDate).map((job) => {
     const fields = [
       element('title', job.title),
-      element('date', toRfc822(new Date(`${job.datePosted}T00:00:00Z`))),
+      element('date', job.datePosted),
       element('referencenumber', job.referenceCode),
+      element('requisitionid', job.referenceCode),
       element('url', withUtm(jobUrl(job), { source: 'indeed', campaign: job.id })),
       element('company', EMPLOYER.legalName),
       element('city', job.location.city),

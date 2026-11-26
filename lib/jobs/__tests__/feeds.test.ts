@@ -62,6 +62,7 @@ describe('Indeed-XML', () => {
       'title',
       'date',
       'referencenumber',
+      'requisitionid',
       'url',
       'company',
       'city',
@@ -74,7 +75,15 @@ describe('Indeed-XML', () => {
     ]) {
       expect(job[key], key).toBeTruthy();
     }
-    expect(job.date).toBe('Sun, 01 Mar 2026 00:00:00 GMT');
+    // Indeed Job Sync: <date> im ISO-8601-Format, derselbe Tag wie datePosted; <requisitionid> = Referenz
+    expect(job.date).toBe('2026-03-01');
+    expect(job.date).toBe(am.datePosted);
+    expect(job.requisitionid).toBe(job.referencenumber);
+    expect(job.requisitionid).toBe(am.referenceCode);
+    for (const eintrag of doc.source.job as Record<string, string>[]) {
+      expect(eintrag.date, eintrag.referencenumber).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(eintrag.requisitionid, eintrag.referencenumber).toBe(eintrag.referencenumber);
+    }
     expect(job.jobtype).toBe('fulltime');
     expect(job.expirationdate).toBe('2027-01-12');
     const url = new URL(job.url);
