@@ -39,6 +39,17 @@ describe('Helfer: Einbau in den Rahmen', () => {
     expect(layout.indexOf('<Helfer />')).toBeGreaterThan(layout.indexOf('</ToastProvider>'));
   });
 
+  it('die Figur gibt es nur am PC: breites Fenster mit Maus, sonst nur der WhatsApp-Knopf ohne Bilder der Figur', () => {
+    const insel = lies('components/site/helfer/HelferInsel.tsx');
+    expect(insel).toContain("export const MIT_FIGUR = '(min-width: 64em) and (hover: hover) and (pointer: fine)';");
+    expect(insel).toMatch(/starte\(el, \{[^}]*figur \}\)/);
+    const figur = lies('components/site/helfer/spiel/figur.ts');
+    expect(figur).toContain('if (this.laden && (this.geladen || SOFORT.includes(name))) b.src = adresse;');
+    expect(figur).toContain('if (this.geladen || !this.laden) return;');
+    const spiel = lies('components/site/helfer/spiel/spiel.ts');
+    expect(spiel).toContain('if (this.mitFigur) mb.src');
+  });
+
   it('die Insel beginnt mit use client und lädt das Spiel erst nach', () => {
     const insel = lies('components/site/helfer/HelferInsel.tsx');
     expect(insel.startsWith("'use client';")).toBe(true);

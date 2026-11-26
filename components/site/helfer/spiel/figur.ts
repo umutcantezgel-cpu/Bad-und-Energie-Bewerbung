@@ -50,6 +50,8 @@ export class Figur {
     private readonly quelle: string,
     readonly k: number,
     readonly sp: { x: number; y: number },
+    /** false: keine Bilder laden (am Handy ohne Figur) */
+    private readonly laden = true,
   ) {
     const G = DATEN.gelenke;
     this.el = el('div', 'hf-figur');
@@ -110,7 +112,7 @@ export class Figur {
     b.draggable = false;
     b.decoding = 'async';
     const adresse = `${this.quelle}${name}.webp`;
-    if (this.geladen || SOFORT.includes(name)) b.src = adresse;
+    if (this.laden && (this.geladen || SOFORT.includes(name))) b.src = adresse;
     else this.spaeter.push([b, adresse]);
     b.style.left = `${e.x}px`;
     b.style.top = `${e.y}px`;
@@ -168,7 +170,7 @@ export class Figur {
 
   /** Lädt alle übrigen Ebenen (Gesichter, Armhaltungen, Lauf-Bilder, Einzelteile). */
   ladeRest(): void {
-    if (this.geladen) return;
+    if (this.geladen || !this.laden) return;
     this.geladen = true;
     for (const [bild, adresse] of this.spaeter) bild.src = adresse;
     this.spaeter.length = 0;
@@ -183,8 +185,10 @@ export class Figur {
     this.aktuell = name;
     for (const n of Object.keys(this.koepfe) as Mimik[]) this.koepfe[n].hidden = n !== name;
     this.augenForm(name === 'staunen');
-    this.augen[0].gruppe.style.visibility = name === 'jubel' ? 'hidden' : 'visible';
-    this.augen[1].gruppe.style.visibility = name === 'jubel' || name === 'zwinkern' ? 'hidden' : 'visible';
+    // Bei Jubel und Schmunzeln sind beide Augen zu (gemalt), beim Zwinkern das linke im Bild (augen[1])
+    const zu = name === 'jubel' || name === 'schmunzeln';
+    this.augen[0].gruppe.style.visibility = zu ? 'hidden' : 'visible';
+    this.augen[1].gruppe.style.visibility = zu || name === 'zwinkern' ? 'hidden' : 'visible';
   }
 
   arm(seite: 'nah', variante: ArmNah): void;
@@ -196,7 +200,7 @@ export class Figur {
 
   /** Lider kurz schließen */
   blinzle(zu: boolean): void {
-    if (this.aktuell === 'jubel' || this.aktuell === 'staunen') return;
+    if (this.aktuell === 'jubel' || this.aktuell === 'staunen' || this.aktuell === 'schmunzeln') return;
     this.lider.hidden = !zu;
     if (zu) for (const a of this.augen) a.gruppe.style.visibility = 'hidden';
     else this.mimik(this.aktuell);

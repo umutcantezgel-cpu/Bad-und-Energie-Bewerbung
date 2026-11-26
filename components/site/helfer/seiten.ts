@@ -11,7 +11,7 @@ import { isFocusMode } from '../nav';
 export const OHNE_HELFER: readonly string[] = ['/impressum', '/datenschutz'];
 
 /** Ordner der Bildebenen. Die Versionsnummer wechselt mit jeder neuen Zeichnung (Bilder bleiben ein Jahr im Cache). */
-export const HELFER_BILDER = '/helfer/v1/';
+export const HELFER_BILDER = '/helfer/v2/';
 
 export function helferSichtbar(pfad: string | null | undefined): boolean {
   if (isFocusMode(pfad)) return false;

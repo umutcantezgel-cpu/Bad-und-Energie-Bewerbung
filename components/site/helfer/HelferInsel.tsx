@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { OHNE_UEBERLAGERUNG } from '@/lib/motion/prefers';
 import { HELFER_BILDER, helferSichtbar } from './seiten';
 
@@ -9,6 +9,12 @@ interface HelferInselProps {
   /** Fertiger WhatsApp-Link vom Server (buildWhatsAppUrl), damit die Insel keine Kontaktdaten importiert. */
   whatsappHref: string;
 }
+
+/**
+ * Die Figur gibt es nur am PC (Inhaber, 26.11.2026: „nur auf dem PC, auf dem Handy schonen und weglassen“): breites
+ * Fenster und eine Maus oder ein Touchpad als Zeiger. Am Handy und am Tablet bleibt nur der WhatsApp-Knopf.
+ */
+export const MIT_FIGUR = '(min-width: 64em) and (hover: hover) and (pointer: fine)';
 
 /** Höhe der Bewerbenleiste am unteren Rand (unter 64em), solange sie zu sehen ist: Sie ist der Boden für Helfer und Ball. */
 function leistenHoehe(): number {
@@ -31,10 +37,22 @@ export function HelferInsel({ whatsappHref }: HelferInselProps) {
   const sichtbar = helferSichtbar(pfad);
   const halter = useRef<HTMLDivElement>(null);
   const lauf = useRef<{ zerstoere: () => void; vermesse: () => void } | null>(null);
+  // null: noch nicht gemessen (Server und erstes Bild), dann PC (Figur) oder Handy (nur der Knopf)
+  const [figur, setFigur] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (!sichtbar || typeof window.matchMedia !== 'function') return;
+    const abfrage = window.matchMedia(MIT_FIGUR);
+    const messen = () => setFigur(abfrage.matches);
+    messen();
+    // Wird das Fenster schmal (oder breit), baut sich der Helfer passend neu auf.
+    abfrage.addEventListener('change', messen);
+    return () => abfrage.removeEventListener('change', messen);
+  }, [sichtbar]);
 
   useEffect(() => {
     const el = halter.current;
-    if (!sichtbar || !el) return;
+    if (!sichtbar || !el || figur === null) return;
     if (typeof window.matchMedia !== 'function' || window.matchMedia(OHNE_UEBERLAGERUNG).matches) return;
 
     let abgebaut = false;
@@ -42,7 +60,7 @@ export function HelferInsel({ whatsappHref }: HelferInselProps) {
       import('./spiel/start')
         .then(({ starte }) => {
           if (abgebaut) return;
-          lauf.current = starte(el, { quelle: HELFER_BILDER, whatsapp: whatsappHref, ruhig: false, klasse: 'print-hidden', bodenAbstand: leistenHoehe });
+          lauf.current = starte(el, { quelle: HELFER_BILDER, whatsapp: whatsappHref, ruhig: false, klasse: 'print-hidden', bodenAbstand: leistenHoehe, figur });
         })
         .catch(() => undefined);
     };
@@ -56,7 +74,7 @@ export function HelferInsel({ whatsappHref }: HelferInselProps) {
       lauf.current?.zerstoere();
       lauf.current = null;
     };
-  }, [sichtbar, whatsappHref]);
+  }, [sichtbar, whatsappHref, figur]);
 
   // Der Boden: Jede Seite hat ihre eigene Bewerbenleiste (oder keine), und sie blendet sich ein und aus.
   // Der Helfer bleibt beim Seitenwechsel bestehen und misst nur neu.

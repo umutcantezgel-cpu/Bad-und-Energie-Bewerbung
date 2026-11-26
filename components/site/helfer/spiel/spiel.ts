@@ -23,6 +23,11 @@ export interface SpielAngaben {
   bodenAbstand?: () => number;
   /** Klassen für die Hülle des Balls im Dokument (zum Beispiel „print-hidden“) */
   klasse?: string;
+  /**
+   * Mit Figur (Standard) oder nur der WhatsApp-Ball. Ohne Figur (am Handy, Inhaber 26.11.2026: „nur auf dem PC“)
+   * lädt kein Bild der Figur, und der Ball liegt allein unten rechts.
+   */
+  figur?: boolean;
 }
 
 export const TEXTE = {
@@ -68,15 +73,15 @@ interface Teil {
 
 /** Kollisionsform der Figur in Kastenkoordinaten: Kopf, Rumpf, zwei Füße. Der Kopf ist leichter als er aussieht. */
 const FIGUR_KREISE: Kreis[] = [
-  { x: 322, y: 190, r: 116, d: 0.5 },
-  { x: 320, y: 420, r: 70, d: 1.4 },
-  { x: 266, y: 596, r: 24, d: 1.8 },
-  { x: 374, y: 596, r: 24, d: 1.8 },
+  { x: 322, y: 190, r: 112, d: 0.5 },
+  { x: 311, y: 380, r: 78, d: 1.4 },
+  { x: 262, y: 596, r: 24, d: 1.8 },
+  { x: 372, y: 596, r: 24, d: 1.8 },
 ];
 const FUSS_UNTEN = 620;
 const SP = schwerpunkt(FIGUR_KREISE);
 /** Hand des fernen Arms in der Haltung „winken“: dort hält er den Ball */
-const HAND = { x: 486, y: 322 };
+const HAND = { x: 451, y: 315 };
 const TEILE: { name: EbenenName; warte: number }[] = [
   { name: 'arm-fern-unten', warte: 0.36 },
   { name: 'bein-fern', warte: 0 },
@@ -111,6 +116,8 @@ function el<K extends keyof HTMLElementTagNameMap>(name: K, klasse: string, attr
 
 export class Spiel {
   private readonly T: typeof TEXTE;
+  /** Figur da (PC) oder nur der Ball (Handy) */
+  private readonly mitFigur: boolean;
   private readonly welt = new Welt();
   private readonly feld: HTMLElement;
   private readonly fig: Figur;
@@ -227,13 +234,15 @@ export class Spiel {
     this.ballRegel = regel;
 
     // Figur
-    this.fig = new Figur(a.quelle, k, SP);
+    this.mitFigur = a.figur !== false;
+    this.fig = new Figur(a.quelle, k, SP, this.mitFigur);
     this.fig.el.classList.add('hf-koerper', 'hf-ruht');
     this.knopf = el('button', 'hf-knopf', { type: 'button', 'aria-label': this.T.figur, 'aria-expanded': 'false' });
-    this.knopf.style.left = `${(196 - SP.x) * k}px`;
-    this.knopf.style.top = `${(48 - SP.y) * k}px`;
-    this.knopf.style.width = `${254 * k}px`;
-    this.knopf.style.height = `${578 * k}px`;
+    // Trefferfläche: der Rahmen der stehenden Figur (x 211–433, y 45–620), etwas großzügiger
+    this.knopf.style.left = `${(206 - SP.x) * k}px`;
+    this.knopf.style.top = `${(40 - SP.y) * k}px`;
+    this.knopf.style.width = `${232 * k}px`;
+    this.knopf.style.height = `${584 * k}px`;
     this.fig.el.append(this.knopf);
 
     // Sprechblase
@@ -256,7 +265,7 @@ export class Spiel {
     mb.alt = '';
     mb.width = mb.height = 56;
     mb.loading = 'lazy';
-    mb.src = `${a.quelle}mini.webp`;
+    if (this.mitFigur) mb.src = `${a.quelle}mini.webp`;
     this.mini.append(mb);
     this.mini.addEventListener('click', () => this.holeZurueck());
 
@@ -275,6 +284,12 @@ export class Spiel {
     this.kb.x = this.heimBall();
     this.kb.y = this.welt.boden - this.rBall;
     this.kb.schlaeft = true;
+    if (!this.mitFigur) {
+      // Nur der Ball: Die Figur nimmt nicht teil, ist nicht zu sehen und lädt nichts.
+      this.zustand = 'weg';
+      this.kf.aktiv = false;
+      this.fig.el.hidden = true;
+    }
 
     this.verdrahte();
     this.zeichne();
@@ -296,7 +311,7 @@ export class Spiel {
   private weckeAuf(): void {
     const schlief = performance.now() > this.wachBis;
     this.wachBis = performance.now() + 30000;
-    if (!schlief || this.a.ruhig) return;
+    if (!schlief || this.a.ruhig || !this.mitFigur) return;
     this.fig.ladeRest();
     this.nach(1800, () => this.blinzeln());
     this.laeufe();
@@ -308,6 +323,7 @@ export class Spiel {
   vermesse(): void {
     const w = this.welt;
     const alt = { links: w.links, rechts: w.rechts, boden: w.boden };
+    const balldaheim = Math.abs(this.kb.x - this.heimBall()) < 2;
     this.masse();
     // Nichts hat sich geändert: nichts anfassen. Die Seite ruft das bei jedem Seitenwechsel und jedem Ein- und
     // Ausblenden der Bewerbenleiste, auch mitten in ihren eigenen Bewegungen.
@@ -318,7 +334,7 @@ export class Spiel {
       !this.bildNr && b.aktiv && b.schlaeft && this.teile.length === 0 && (this.zustand === 'steht' || this.zustand === 'weg') && Math.abs(b.y - (alt.boden - this.rBall)) < 2;
     if (ruht) {
       // Alles ruht: Der Ball kommt ohne Rechnung auf den neuen Boden. Einmal zeichnen, keine Bildschleife.
-      b.x = begrenze(b.x, w.links + this.rBall, w.rechts - this.rBall);
+      b.x = balldaheim ? this.heimBall() : begrenze(b.x, w.links + this.rBall, w.rechts - this.rBall);
       b.y = w.boden - this.rBall;
       this.zeichne();
       return;
@@ -342,6 +358,8 @@ export class Spiel {
     return this.welt.rechts - 232 * this.k - 6;
   }
   private heimBall(): number {
+    // Ohne Figur liegt der Ball unten rechts, wie der Knopf der Schlüsselschmiede
+    if (!this.mitFigur) return this.welt.rechts - this.rBall - 12;
     return this.heimFigur() - 150 * this.k - this.rBall - 14;
   }
   /** Figur aufrecht an eine Stelle stellen */
@@ -927,7 +945,7 @@ export class Spiel {
       for (let i = 0; i < 4; i++) {
         this.nach(120 + i * 220, () => {
           const f = this.kf;
-          this.staub(f.x + (304 - SP.x) * this.k, f.y + (392 - SP.y) * this.k, 2);
+          this.staub(f.x + (318 - SP.x) * this.k, f.y + (372 - SP.y) * this.k, 2);
         });
       }
     });

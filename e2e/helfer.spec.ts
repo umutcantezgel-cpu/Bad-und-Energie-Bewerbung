@@ -26,12 +26,25 @@ function fehlerSammeln(page: Page): string[] {
   return fehler;
 }
 
-/** Lädt die Seite und wartet, bis der Helfer im Leerlauf nachgeladen ist und steht. */
+/** Handy-Projekte: Dort gibt es keine Figur, nur den WhatsApp-Knopf (Inhaber, 26.11.2026: „nur auf dem PC“). */
+const amHandy = (): boolean => test.info().project.name.startsWith('mobile');
+
+/** Lädt die Seite und wartet, bis der Helfer im Leerlauf nachgeladen ist: am PC steht die Figur, am Handy liegt der Knopf. */
 async function mitHelfer(page: Page, pfad = '/'): Promise<void> {
   await page.goto(pfad);
+  if (amHandy()) {
+    await expect(feld(page)).toHaveAttribute('data-zustand', 'weg', { timeout: 15_000 });
+    await expect(ball(page)).toBeVisible();
+    await expect(figur(page)).toBeHidden();
+    return;
+  }
   await expect(feld(page)).toHaveAttribute('data-zustand', 'steht', { timeout: 15_000 });
   await expect(figur(page)).toBeVisible();
 }
+
+/** Wie viele Bilder der Figur hat die Seite geladen? */
+const figurenBilder = (page: Page): Promise<number> =>
+  page.evaluate(() => performance.getEntriesByType('resource').filter((e) => /\/helfer\/v\d+\//.test(e.name)).length);
 
 /** Wartet über den Leerlauf hinaus, in dem der Helfer geladen würde. */
 async function leerlaufAbwarten(page: Page): Promise<void> {
@@ -76,14 +89,22 @@ test.describe('Helfer mit Bewegung', () => {
 
     // unten rechts, ganz im Bild
     const sicht = page.viewportSize()!;
-    const kasten = (await figur(page).boundingBox())!;
-    expect(kasten.x + kasten.width).toBeLessThanOrEqual(sicht.width);
-    expect(kasten.x).toBeGreaterThan(sicht.width / 2);
-    expect(kasten.y + kasten.height).toBeLessThanOrEqual(sicht.height);
     const rund = (await link.boundingBox())!;
     expect(rund.width).toBeGreaterThanOrEqual(44);
     expect(rund.height).toBeGreaterThanOrEqual(44);
-    expect(rund.x + rund.width).toBeLessThan(kasten.x + 8);
+    expect(rund.y + rund.height).toBeLessThanOrEqual(sicht.height);
+    if (amHandy()) {
+      // Am Handy nur der Knopf, ganz rechts unten, und kein einziges Bild der Figur geladen
+      expect(rund.x + rund.width).toBeGreaterThan(sicht.width - 24);
+      expect(rund.x + rund.width).toBeLessThanOrEqual(sicht.width);
+      expect(await figurenBilder(page)).toBe(0);
+    } else {
+      const kasten = (await figur(page).boundingBox())!;
+      expect(kasten.x + kasten.width).toBeLessThanOrEqual(sicht.width);
+      expect(kasten.x).toBeGreaterThan(sicht.width / 2);
+      expect(kasten.y + kasten.height).toBeLessThanOrEqual(sicht.height);
+      expect(rund.x + rund.width).toBeLessThan(kasten.x + 8);
+    }
 
     // In Ruhe bewegt sich nichts: keine laufende Animation im Helfer, und Figur wie Ball bleiben, wo sie sind.
     const lage = () =>
@@ -108,6 +129,7 @@ test.describe('Helfer mit Bewegung', () => {
   });
 
   test('Tastatur: Enter öffnet die Auswahl, Escape schließt sie und gibt den Fokus zurück', async ({ page }, testInfo) => {
+    test.skip(amHandy(), 'Die Figur und ihre Auswahl gibt es nur am PC.');
     const fehler = fehlerSammeln(page);
     await mitHelfer(page);
     await figur(page).focus();
@@ -183,7 +205,7 @@ test.describe('Helfer mit Bewegung', () => {
   });
 
   test('„Mit dem Ball bewerfen“: Er zerspringt in sechs Teile, baut sich zusammen und steht wieder', async ({ page }) => {
-    test.skip(!['mobile-light', 'desktop-light'].includes(test.info().project.name), 'Die Spielabläufe laufen je einmal mobil und am Desktop.');
+    test.skip(test.info().project.name !== 'desktop-light', 'Die Figur gibt es nur am PC.');
     test.slow();
     const fehler = fehlerSammeln(page);
     await mitHelfer(page);
@@ -203,7 +225,7 @@ test.describe('Helfer mit Bewegung', () => {
   });
 
   test('„Hochwerfen“: Er fliegt, landet, steht wieder auf', async ({ page }) => {
-    test.skip(!['mobile-light', 'desktop-light'].includes(test.info().project.name), 'Die Spielabläufe laufen je einmal mobil und am Desktop.');
+    test.skip(test.info().project.name !== 'desktop-light', 'Die Figur gibt es nur am PC.');
     test.slow();
     const fehler = fehlerSammeln(page);
     await mitHelfer(page);
@@ -220,7 +242,7 @@ test.describe('Helfer mit Bewegung', () => {
   });
 
   test('„Wegschicken“ und zurückholen', async ({ page }, testInfo) => {
-    test.skip(!['mobile-light', 'desktop-light'].includes(test.info().project.name), 'Die Spielabläufe laufen je einmal mobil und am Desktop.');
+    test.skip(test.info().project.name !== 'desktop-light', 'Die Figur gibt es nur am PC.');
     const fehler = fehlerSammeln(page);
     await mitHelfer(page);
     await figur(page).focus();
@@ -244,7 +266,7 @@ test.describe('Helfer mit Bewegung', () => {
     expect(fehler).toEqual([]);
   });
 
-  test('Handy: Die Bewerbenleiste ist der Boden, Helfer und Ball stehen darauf', async ({ page }) => {
+  test('Handy: Die Bewerbenleiste ist der Boden, der Knopf liegt darauf, eine Figur gibt es nicht', async ({ page }) => {
     test.skip(test.info().project.name !== 'mobile-light', 'Die Leiste gibt es nur unter 64em.');
     await mitHelfer(page, `/jobs/${MAIN_JOB_SLUG}`);
     const leiste = page.locator('[data-sticky-apply-bar]');
@@ -258,9 +280,8 @@ test.describe('Helfer mit Bewegung', () => {
         return Math.abs(oben - (b.y + b.height));
       })
       .toBeLessThan(14);
-    const oben = (await leiste.boundingBox())!.y;
-    const f = (await figur(page).boundingBox())!;
-    expect(f.y + f.height).toBeLessThanOrEqual(oben + 1);
+    await expect(figur(page)).toBeHidden();
+    expect(await figurenBilder(page)).toBe(0);
   });
 
   test('bleibt beim Wechsel zwischen Seiten bestehen und verschwindet im Bewerbungsweg', async ({ page }) => {

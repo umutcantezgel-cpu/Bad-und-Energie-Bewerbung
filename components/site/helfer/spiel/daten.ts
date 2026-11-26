@@ -1,8 +1,10 @@
 /**
- * Lage aller Bildebenen des Helfers im Kasten 620 × 660.
- * Erzeugt vom Zeichenwerkzeug im Repository der Hauptseite (bad-energie, _werkstatt/maskottchen/werkzeug/avatar-bauen.mjs),
- * zusammen mit den Bildern unter public/helfer/v1. Nicht von Hand ändern: Ändert sich die Zeichnung, kommen Bilder und
- * diese Datei gemeinsam neu, die Bilder in einen neuen Ordner (v2 …), weil Bilddateien ein Jahr im Cache bleiben.
+ * Lage aller Bildebenen des Helfers im Kasten 620 × 660. Version 2: gemalte Figur.
+ * Erzeugt von bauen.py aus dem Teileblatt (Körper, Kopf A und B, vier Arme), dem Mimikblatt (Zwinkern, Staunen,
+ * Jubel) und dem runden Profilbild, zusammen mit den Bildern unter public/helfer/v2. Nicht von Hand ändern:
+ * Ändert sich die Zeichnung, kommen Bilder und diese Datei gemeinsam neu, die Bilder in einen neuen Ordner (v3 …),
+ * weil Bilddateien ein Jahr im Cache bleiben.
+ * augen[0] ist das rechte Auge im Bild (bleibt beim Zwinkern offen), augen[1] das linke (beim Zwinkern zu).
  */
 export const DATEN = {
   kasten: [
@@ -10,163 +12,163 @@ export const DATEN = {
     660
   ],
   kopf: {
-    x: 330,
-    y: 205,
-    rot: -2
+    x: 322,
+    y: 190,
+    rot: 0
   },
   augen: [
     {
-      cx: 8,
-      cy: -17,
-      rx: 15,
-      ry: 12.5
+      cx: 78.2,
+      cy: -4.4,
+      rx: 14.4,
+      ry: 6.3
     },
     {
-      cx: 72,
-      cy: -19,
-      rx: 12,
-      ry: 11.5
+      cx: 4.8,
+      cy: 1.4,
+      rx: 17.4,
+      ry: 7.1
     }
   ],
   pupille: {
-    dx: 4,
-    dy: 0.5,
-    r: 7.4,
-    rGross: 6.5
+    dx: -1,
+    dy: -0.5,
+    r: 10.8,
+    rGross: 9.4
   },
   gelenke: {
     hals: [
-      334,
-      292
+      303.6,
+      326.2
     ],
     schulterNah: [
-      276,
-      372
+      253.6,
+      358.6
     ],
     schulterFern: [
-      372,
-      372
+      369.1,
+      350.9
     ],
     ellbogenFern: [
-      444,
-      388
+      391,
+      360.2
     ],
     fuesse: [
       320,
-      618
+      620
     ]
   },
   farben: {
-    auge: "#2B1A10"
+    auge: "#341C10"
   },
   ebenen: {
     koerper: {
-      x: 191.2,
-      y: 249.6,
-      w: 255.2,
-      h: 375.2
+      x: 218,
+      y: 298,
+      w: 204,
+      h: 325
     },
     "arm-nah-unten": {
-      x: 224,
-      y: 345.6,
-      w: 76,
-      h: 213.6
+      x: 220,
+      y: 339,
+      w: 58,
+      h: 173
     },
     "arm-nah-zeigen": {
-      x: 68.8,
-      y: 303.2,
-      w: 232.8,
-      h: 118.4
+      x: 94,
+      y: 337,
+      w: 178,
+      h: 47
     },
     "arm-nah-polieren": {
-      x: 212.8,
-      y: 346.4,
-      w: 148,
-      h: 115.2
+      x: 230,
+      y: 337,
+      w: 107,
+      h: 90
     },
     "arm-fern-unten": {
-      x: 345.6,
-      y: 346.4,
-      w: 83.2,
-      h: 212
+      x: 344,
+      y: 331,
+      w: 59,
+      h: 173
     },
     "arm-fern-winken": {
-      x: 345.6,
-      y: 244.8,
-      w: 196.8,
-      h: 168.8
+      x: 321,
+      y: 281,
+      w: 165,
+      h: 102
     },
     "arm-fern-daumen": {
-      x: 348,
-      y: 291.2,
-      w: 187.2,
-      h: 146.4
+      x: 350,
+      y: 328,
+      w: 116,
+      h: 86
     },
     "kopf-lachen": {
-      x: 204.8,
-      y: 45.6,
-      w: 236.8,
-      h: 288.8
+      x: 208,
+      y: 41,
+      w: 227,
+      h: 301
     },
     "kopf-schmunzeln": {
-      x: 204.8,
-      y: 45.6,
-      w: 236.8,
-      h: 288.8
+      x: 208,
+      y: 41,
+      w: 227,
+      h: 301
     },
     "kopf-staunen": {
-      x: 204.8,
-      y: 45.6,
-      w: 236.8,
-      h: 288.8
+      x: 208,
+      y: 41,
+      w: 227,
+      h: 301
     },
     "kopf-zwinkern": {
-      x: 204.8,
-      y: 45.6,
-      w: 236.8,
-      h: 288.8
+      x: 208,
+      y: 41,
+      w: 227,
+      h: 301
     },
     "kopf-jubel": {
-      x: 204.8,
-      y: 45.6,
-      w: 236.8,
-      h: 288.8
+      x: 208,
+      y: 41,
+      w: 227,
+      h: 301
     },
     lider: {
-      x: 316,
-      y: 166.4,
-      w: 103.2,
-      h: 38.4
+      x: 288,
+      y: 155,
+      w: 139,
+      h: 62
     },
     rumpf: {
-      x: 248.8,
-      y: 287.2,
-      w: 141.6,
-      h: 220.8
+      x: 234,
+      y: 298,
+      w: 134,
+      h: 157
     },
     "bein-nah": {
-      x: 191.2,
-      y: 455.2,
-      w: 136,
-      h: 168.8
+      x: 218,
+      y: 436,
+      w: 102,
+      h: 187
     },
     "bein-fern": {
-      x: 313.6,
-      y: 455.2,
-      w: 132.8,
-      h: 169.6
+      x: 312,
+      y: 435,
+      w: 110,
+      h: 180
     },
     "lauf-a": {
-      x: 92,
-      y: 59.2,
-      w: 436,
-      h: 564.8
+      x: 191,
+      y: 36,
+      w: 257,
+      h: 587
     },
     "lauf-b": {
-      x: 117.6,
-      y: 58.4,
-      w: 344.8,
-      h: 565.6
+      x: 191,
+      y: 53,
+      w: 257,
+      h: 570
     }
   }
 } as const;
