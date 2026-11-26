@@ -56,7 +56,7 @@ describe('bearbeiteHref: was der Browser öffnet', () => {
     const knopf = buildWhatsAppUrl('Hallo, ich habe eine Frage.', WHATSAPP_KNOPF.e164);
     const neu = bearbeiteHref(knopf, INDEED, ORIGIN);
     expect(neu).toMatch(/^https:\/\/api\.whatsapp\.com\/send\?phone=4917641195301&text=/);
-    expect(textVon(neu).startsWith('Hallo, ich habe eine Frage.')).toBe(true);
+    expect(textVon(neu)).toMatch(/^Hallo, ich habe eine Frage\./);
     expect(textVon(neu)).toMatch(/\n– W-IND$/);
     expect(linkArt('/bewerbung')).toBe('sonst');
   });
