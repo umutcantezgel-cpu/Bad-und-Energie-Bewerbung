@@ -214,7 +214,8 @@ describe('llms.txt', () => {
     expect(res.headers.get('content-type')).toBe('text/plain; charset=utf-8');
     const text = await res.text();
     for (const job of liveJobs) {
-      const zeile = text.split('\n').find((line) => line.startsWith(`- [${job.title}](${jobUrl(job)})`));
+      // Linktext mit Kurznamen, damit die zwei gleich betitelten Ausbildungen unterscheidbar sind (Sichtbarkeit ki6)
+      const zeile = text.split('\n').find((line) => line.startsWith(`- [${job.title} – ${job.shortTitle}](${jobUrl(job)})`));
       expect(zeile, job.id).toBeDefined();
       // Das Schülerpraktikum sagt nichts zu Geld (fakten-abgleich S4)
       if (job.pay === 'auf-anfrage') expect(zeile, job.id).toContain(PAY_ON_REQUEST);
@@ -245,7 +246,7 @@ describe('llms.txt', () => {
   it('llms-full.txt contains each job description', async () => {
     const text = await llmsFull().text();
     for (const job of liveJobs) {
-      expect(text).toContain(`### ${job.title}`);
+      expect(text).toContain(`### ${job.title} – ${job.shortTitle}\n`);
       expect(text).toContain(job.intro);
       expect(text).toContain(job.referenceCode);
     }

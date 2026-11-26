@@ -16,6 +16,7 @@ import {
   jobLink,
   jobMetaLine,
   liveJobs,
+  stellenStandLines,
 } from './content';
 
 // Static, regenerated hourly so a closed or expired job disappears without a deploy.
@@ -40,6 +41,7 @@ export function GET(): Response {
     FACTS.radius35.long,
     '',
     '## Offene Stellen',
+    ...stellenStandLines([...jobs, ...extra]),
     ...(jobs.length > 0
       ? jobs.map((job) => `- ${jobLink(job)}: ${jobMetaLine(job)}. ${job.summary} ${alsoKnownAsLine(job)}`.trimEnd())
       : ['- Zurzeit ist keine Stelle ausgeschrieben. Initiativbewerbungen sind möglich.']),

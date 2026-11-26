@@ -5,7 +5,7 @@ import { istOrtIndexierbar } from '@/lib/places/indexierung';
 import { OEPNV_QUELLE } from '@/lib/places/oepnv';
 import { OSM_LINK, OSM_NAMENSNENNUNG } from '@/lib/places/osm';
 import { getHubKreise, getKreise, getKreisPlaces, getPublishedPlaces, kreisUrl, placeUrl, type Place } from '@/lib/places/registry';
-import { ANKUNFT_BETRIEB, MEASUREMENT_NOTE, formatUhr, formatUhrzeit } from '@/lib/places/text';
+import { ANKUNFT_BETRIEB, MEASUREMENT_NOTE, formatMeasuredOn, formatUhr, formatUhrzeit } from '@/lib/places/text';
 import { einsatzgebietPages, themenPages } from '@/lib/seo/indexable-pages';
 import { getThemen } from '@/lib/themen/registry';
 import { themaKarte } from '@/lib/themen/text';
@@ -96,8 +96,28 @@ export function jobMetaLine(job: Job): string {
     .replace(/ /g, ' ');
 }
 
+/**
+ * Überschrift (/llms-full.txt) und Linktext (/llms.txt) einer Stelle: Titel und Kurzname. Die zwei Ausbildungen tragen
+ * denselben Titel; erst der Kurzname („Ausbildung Anlagenmechaniker 2026“) trennt sie, und es ist derselbe Name wie in
+ * „Gilt für:“ und „genannt bei:“ (Sichtbarkeit ki6).
+ */
+export function jobHeading(job: Pick<Job, 'title' | 'shortTitle'>): string {
+  return `${job.title} – ${job.shortTitle}`;
+}
+
 export function jobLink(job: Job): string {
-  return `[${job.title}](${jobUrl(job)})`;
+  return `[${jobHeading(job)}](${jobUrl(job)})`;
+}
+
+/**
+ * „Stellen zuletzt geändert am 27. Oktober 2026.“: das jüngste `updatedAt` der genannten Stellen, aus den Stellendaten.
+ * Ausdrücklich der Stand der Stellen, nicht der ganzen Datei (Messung und Fahrplan nennen ihr eigenes Datum). Ohne
+ * Stelle keine Zeile (Sichtbarkeit ki6).
+ */
+export function stellenStandLines(stellen: readonly Pick<Job, 'updatedAt'>[]): string[] {
+  if (stellen.length === 0) return [];
+  const juengstes = stellen.map((job) => job.updatedAt).reduce((a, b) => (b > a ? b : a));
+  return [`Stellen zuletzt geändert am ${formatMeasuredOn(juengstes)}.`];
 }
 
 /** „Auch gesucht als: Heizungsbauer, Installateur …“ (Plan §C5), wie auf der Stellenseite; leer ohne Synonyme. */

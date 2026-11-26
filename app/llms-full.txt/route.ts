@@ -23,13 +23,16 @@ import {
   baseUrl,
   chamberLine,
   citationHint,
+  companyClaim,
   contactLines,
   einsatzgebietBlocks,
   employerFacts,
   funnelOnlyJobs,
   funnelOnlyLine,
+  jobHeading,
   jobMetaLine,
   liveJobs,
+  stellenStandLines,
   themenBlocks,
 } from '../llms.txt/content';
 
@@ -74,8 +77,11 @@ export function GET(): Response {
   const jobs = liveJobs(now);
   const extra = funnelOnlyJobs();
 
+  // Überschrift mit Kurznamen, darunter die Kurzbeschreibung: Die zwei Ausbildungen tragen denselben Titel (Sichtbarkeit ki6)
   const jobBlocks = jobs.flatMap((job) => [
-    `### ${job.title}`,
+    `### ${jobHeading(job)}`,
+    '',
+    job.summary,
     '',
     `- Stellenseite: ${jobUrl(job)}`,
     `- Referenz: ${job.referenceCode}`,
@@ -90,7 +96,8 @@ export function GET(): Response {
   const lines = [
     `# ${COMPANY.legalName}: Karriere (ausführlich)`,
     '',
-    `> Karriereportal der ${COMPANY.legalName}, ${FACTS.founded1926.short} in ${COMPANY.address.city}. ${FACTS.apply60s.long} ${FACTS.noCvNeeded.long}`,
+    // Wie /llms.txt: bis Ende 2026 „100 Jahre Meisterbetrieb (1926–2026)“, danach „Meisterbetrieb seit 1926“
+    `> Karriereportal der ${COMPANY.legalName}, ${companyClaim(now)} in ${COMPANY.address.city}. ${FACTS.apply60s.long} ${FACTS.noCvNeeded.long}`,
     '',
     '## 1. Arbeitgeber',
     `- Firma: ${COMPANY.legalName}`,
@@ -107,6 +114,7 @@ export function GET(): Response {
     '',
     '## 2. Offene Stellen',
     '',
+    ...stellenStandLines([...jobs, ...extra]).flatMap((line) => [line, '']),
     ...(jobs.length > 0 ? jobBlocks : ['Zurzeit ist keine Stelle ausgeschrieben. Initiativbewerbungen sind möglich.', '']),
     ...(extra.length > 0 ? ['### Weitere Einstiegsmöglichkeit', '', ...extra.map((job) => `- ${funnelOnlyLine(job)}`), ''] : []),
     '## 3. Bewerbung und Ablauf',

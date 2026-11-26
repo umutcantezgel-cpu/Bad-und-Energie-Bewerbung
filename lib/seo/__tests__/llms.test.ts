@@ -165,6 +165,67 @@ describe('llms.txt (E-SEO-014)', () => {
     expect(after).toContain(FACTS.founded1926.short);
   });
 
+  // Sichtbarkeit ki6: dieselbe Einleitung wie /llms.txt (vorher immer „Meisterbetrieb seit 1926“)
+  it('llms-full.txt: names the anniversary in the lead sentence until 31.12.2026, not after', async () => {
+    const kopf = (text: string) => text.split('\n').find((line) => line.startsWith('> ')) ?? '';
+    const before = kopf(await textAt(llmsFull, '2026-12-31T12:00:00Z'));
+    expect(before).toContain(`Karriereportal der ${COMPANY.legalName}, 100 Jahre Meisterbetrieb (1926–2026) in ${COMPANY.address.city}.`);
+
+    const after = await textAt(llmsFull, '2027-01-01T12:00:00Z');
+    expect(after).not.toContain('100 Jahre');
+    expect(kopf(after)).toContain(`Karriereportal der ${COMPANY.legalName}, ${FACTS.founded1926.short} in ${COMPANY.address.city}.`);
+  });
+
+  // Sichtbarkeit ki6: Die zwei Ausbildungen tragen denselben Titel; erst der Kurzname trennt sie.
+  it('llms-full.txt: one unique heading per job with its short name, the summary below; every name in „Gilt für:“ is a heading', async () => {
+    const iso = '2026-10-20T12:00:00Z';
+    const text = await textAt(llmsFull, iso);
+    const jobs = liveJobs(new Date(iso));
+    expect(jobs.length).toBeGreaterThan(1);
+    const abschnitt = text.split('## 2. Offene Stellen')[1]?.split('\n## ')[0] ?? '';
+    const ueberschriften = abschnitt
+      .split('\n')
+      .filter((line) => line.startsWith('### '))
+      .map((line) => line.slice(4));
+    expect(new Set(ueberschriften).size).toBe(ueberschriften.length);
+    for (const job of jobs) {
+      expect(ueberschriften, job.id).toContain(`${job.title} – ${job.shortTitle}`);
+      expect(abschnitt, job.id).toContain(`### ${job.title} – ${job.shortTitle}\n\n${job.summary}\n\n- Stellenseite: `);
+    }
+    expect(ueberschriften).toEqual(expect.arrayContaining(['Ausbildung zum Anlagenmechaniker SHK (m/w/d) – Ausbildung Anlagenmechaniker 2026']));
+    expect(ueberschriften).toEqual(expect.arrayContaining(['Ausbildung zum Anlagenmechaniker SHK (m/w/d) – Ausbildung Anlagenmechaniker 2027']));
+
+    // Jeder Name aus „Gilt für:“ ist der Kurzname einer Überschrift (eine Stelle ohne eigene Seite: ihre Zeile unter
+    // „Weitere Einstiegsmöglichkeit“)
+    const namen = [...text.matchAll(/^Gilt für: (.+)\.$/gm)].flatMap((treffer) => treffer[1].split(', '));
+    expect(namen.length).toBeGreaterThan(0);
+    const ohneSeite = new Map(funnelOnlyJobs().map((job) => [job.shortTitle, job.title]));
+    for (const name of new Set(namen)) {
+      const titel = ohneSeite.get(name);
+      if (titel) expect(abschnitt, name).toContain(`\n- ${titel}: `);
+      else expect(ueberschriften.some((ueberschrift) => ueberschrift.endsWith(` – ${name}`)), name).toBe(true);
+    }
+  });
+
+  // Sichtbarkeit ki6: Stand der Stellen aus den Stellendaten, ausdrücklich nicht „Stand“ der ganzen Datei
+  it('both files name the latest updatedAt of the jobs as „Stellen zuletzt geändert am …“', async () => {
+    const iso = '2026-10-20T12:00:00Z';
+    const stellen = [...liveJobs(new Date(iso)), ...funnelOnlyJobs()];
+    const juengstes = stellen.map((job) => job.updatedAt).sort().at(-1)!;
+    const [jahr, monat, tag] = juengstes.split('-').map(Number);
+    const datum = `${tag}. ${new Intl.DateTimeFormat('de-DE', { month: 'long', timeZone: 'UTC' }).format(new Date(Date.UTC(jahr, monat - 1, tag)))} ${jahr}`;
+    expect(datum).toMatch(/^\d{1,2}\. [A-ZÄÖÜ][a-zä]+ \d{4}$/);
+    for (const [route, kopf] of [
+      [llms, '## Offene Stellen\n'],
+      [llmsFull, '## 2. Offene Stellen\n\n'],
+    ] as const) {
+      const text = await textAt(route, iso);
+      expect(text.match(/zuletzt geändert/g)).toHaveLength(1);
+      expect(text).toContain(`${kopf}Stellen zuletzt geändert am ${datum}.\n`);
+      expect(text).not.toMatch(/^Stand:/m);
+    }
+  });
+
   it('keeps unbacked claims out of both files', async () => {
     for (const route of [llms, llmsFull]) {
       const text = await textAt(route, '2026-10-10T12:00:00Z');
