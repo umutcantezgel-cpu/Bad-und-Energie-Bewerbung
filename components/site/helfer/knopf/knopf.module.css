@@ -1,0 +1,80 @@
+/*
+ * WhatsApp-Knopf am Handy und Tablet (WhatsAppKnopf.tsx). In Ruhe hält ihn allein dieses CSS unten rechts: kein
+ * Skript misst Fenster oder Leisten, darum springt nichts, wenn die Adressleiste oder die Bewerbenleiste ein- und
+ * ausfährt. Beim Wurf setzt das Skript nur transform.
+ *
+ * Fremdmarke: WhatsApp-Grün (--whatsapp) mit weißem Zeichen (--on-accent), wie bei der Schlüsselschmiede.
+ */
+.knopf {
+  position: fixed;
+  right: max(var(--a-4), env(safe-area-inset-right));
+  bottom: max(var(--a-4), env(safe-area-inset-bottom));
+  z-index: 31;
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: var(--radius-voll);
+  background-color: var(--whatsapp);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-lg);
+  /* Senkrechtes Wischen scrollt die Seite, seitliches Ziehen wirft den Knopf */
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    opacity var(--d-2) var(--k-aus),
+    visibility var(--d-2) var(--k-aus);
+}
+
+.knopf:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.knopf svg {
+  display: block;
+  width: 50%;
+  height: 50%;
+  pointer-events: none;
+}
+
+/* Beim Ziehen nimmt der Knopf keine Zeiger an: Das Loslassen wird nie ein Klick auf den Link. */
+.knopf[data-zieht] {
+  pointer-events: none;
+}
+
+/*
+ * Solange die Bewerbenleiste zu sehen ist, trägt sie den WhatsApp-Weg: Der Knopf blendet sich in Ruhe aus, nie zwei
+ * WhatsApp-Knöpfe übereinander. Fliegt er gerade, bleibt er sichtbar.
+ */
+:root:has([data-sticky-apply-bar]:not([data-hidden])) .knopf[data-wurf='ruht'] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--d-1) var(--k-ein),
+    visibility var(--d-1) var(--k-ein);
+}
+
+/* Am PC mit Maus ist der Ball Teil des Spiels mit der Figur (MIT_FIGUR in HelferInsel.tsx). */
+@media (min-width: 64em) and (hover: hover) and (pointer: fine) {
+  .knopf {
+    display: none;
+  }
+}
+
+/* Ohne Bewegung und in erzwungenen Farben kein Spielzeug (wie Helfer, Klick-Wärme und Wärmefront). */
+@media (prefers-reduced-motion: reduce), (forced-colors: active) {
+  .knopf {
+    display: none;
+  }
+}
+
+@media print {
+  .knopf {
+    display: none;
+  }
+}

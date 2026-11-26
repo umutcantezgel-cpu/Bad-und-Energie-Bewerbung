@@ -11,10 +11,14 @@ import { expectNoAxeViolations, MAIN_JOB_SLUG, waitForSettled } from './support/
  */
 const FIGUR = 'Helfer: Auswahl öffnen';
 const BALL = 'WhatsApp-Ball: Nachricht schreiben (öffnet in neuem Tab)';
+/** Am Handy und Tablet: der schlanke WhatsApp-Knopf (components/site/helfer/knopf), ohne Spiel. */
+const KNOPF = 'WhatsApp-Knopf: Nachricht schreiben (öffnet in neuem Tab)';
 
 const feld = (page: Page): Locator => page.locator('[data-helfer] .hf-feld');
 const figur = (page: Page): Locator => page.getByRole('button', { name: FIGUR });
-const ball = (page: Page): Locator => page.getByRole('link', { name: BALL });
+const knopf = (page: Page): Locator => page.getByRole('link', { name: KNOPF, includeHidden: true });
+/** Der WhatsApp-Wurf: am PC der Ball des Spiels, am Handy der Knopf. */
+const ball = (page: Page): Locator => (amHandy() ? knopf(page) : page.getByRole('link', { name: BALL }));
 
 /** Sammelt console.error und nicht gefangene Fehler. */
 function fehlerSammeln(page: Page): string[] {
@@ -33,11 +37,14 @@ const amHandy = (): boolean => test.info().project.name.startsWith('mobile');
 async function mitHelfer(page: Page, pfad = '/'): Promise<void> {
   await page.goto(pfad);
   if (amHandy()) {
-    await expect(feld(page)).toHaveAttribute('data-zustand', 'weg', { timeout: 15_000 });
-    await expect(ball(page)).toBeVisible();
-    await expect(figur(page)).toBeHidden();
+    // Der Knopf kommt schon vom Server; das Spiel lädt am Handy gar nicht.
+    await expect(knopf(page)).toBeVisible();
+    await leerlaufAbwarten(page);
+    await expect(feld(page)).toHaveCount(0);
+    await expect(figur(page)).toHaveCount(0);
     return;
   }
+  await expect(knopf(page)).toBeHidden();
   await expect(feld(page)).toHaveAttribute('data-zustand', 'steht', { timeout: 15_000 });
   await expect(figur(page)).toBeVisible();
 }
@@ -110,6 +117,12 @@ test.describe('Helfer mit Bewegung', () => {
     const lage = () =>
       page.evaluate(() => {
         const halter = document.querySelector('[data-helfer]')!;
+        const k = document.querySelector<HTMLElement>('a[data-wurf]')!;
+        if (!halter.shadowRoot) {
+          // Handy: nur der Knopf, in Ruhe ohne transform, ohne laufende Animation
+          const r = k.getBoundingClientRect();
+          return { figur: k.style.transform, ball: `${r.x.toFixed(2)}/${r.y.toFixed(2)}`, laeuft: k.getAnimations().filter((a) => a.playState === 'running').length };
+        }
         const koerper = halter.shadowRoot!.querySelector<HTMLElement>('.hf-koerper')!;
         const b = document.querySelector('.hf-ball-halter')!.getBoundingClientRect();
         return {
@@ -266,22 +279,59 @@ test.describe('Helfer mit Bewegung', () => {
     expect(fehler).toEqual([]);
   });
 
-  test('Handy: Die Bewerbenleiste ist der Boden, der Knopf liegt darauf, eine Figur gibt es nicht', async ({ page }) => {
+  test('Handy: nie zwei WhatsApp-Knöpfe; zeigt sich die Bewerbenleiste, ruht der Knopf unsichtbar, sonst fest unten rechts', async ({ page }) => {
     test.skip(test.info().project.name !== 'mobile-light', 'Die Leiste gibt es nur unter 64em.');
     await mitHelfer(page, `/jobs/${MAIN_JOB_SLUG}`);
     const leiste = page.locator('[data-sticky-apply-bar]');
+    const sicht = page.viewportSize()!;
+    const unten = async () => {
+      const b = (await knopf(page).boundingBox())!;
+      return { rechts: Math.round(sicht.width - (b.x + b.width)), unten: Math.round(sicht.height - (b.y + b.height)) };
+    };
+    const ohneLeiste = await unten();
+    expect(ohneLeiste.rechts).toBeGreaterThanOrEqual(8);
+    expect(ohneLeiste.rechts).toBeLessThanOrEqual(24);
+    expect(ohneLeiste.unten).toBeGreaterThanOrEqual(8);
+    expect(ohneLeiste.unten).toBeLessThanOrEqual(24);
+    // Leiste zu sehen: Sie trägt ihren eigenen WhatsApp-Knopf, der schwebende ruht unsichtbar und springt nicht
     await page.evaluate(() => window.scrollTo(0, Math.round(document.documentElement.scrollHeight * 0.4)));
     await expect(leiste).not.toHaveAttribute('data-hidden', /.*/);
-    await waitForSettled(page);
-    await expect
-      .poll(async () => {
-        const oben = (await leiste.boundingBox())!.y;
-        const b = (await ball(page).boundingBox())!;
-        return Math.abs(oben - (b.y + b.height));
-      })
-      .toBeLessThan(14);
-    await expect(figur(page)).toBeHidden();
+    await expect(knopf(page)).toBeHidden();
+    // Zurück nach oben: Leiste weg, Knopf wieder da, an genau derselben Stelle
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(leiste).toHaveAttribute('data-hidden', /.*/);
+    await expect(knopf(page)).toBeVisible();
+    expect(await unten()).toEqual(ohneLeiste);
+    await expect(figur(page)).toHaveCount(0);
     expect(await figurenBilder(page)).toBe(0);
+  });
+
+  test('Handy: Wischen nach oben über dem Knopf scrollt die Seite, statt ihn zu werfen', async ({ page, context }) => {
+    test.skip(test.info().project.name !== 'mobile-light', 'Touch nur am Handy.');
+    await mitHelfer(page);
+    const klicks = await linkKlicksMitschreiben(page);
+    const b = (await knopf(page).boundingBox())!;
+    const cdp = await context.newCDPSession(page);
+    const x = b.x + b.width / 2;
+    const y = b.y + b.height / 2;
+    const vorher = await page.evaluate(() => scrollY);
+    // leicht schräg, wie ein Daumen wischt
+    let modi = new Set<string>();
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
+    for (let i = 1; i <= 12; i++) {
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x - i * 3, y: y - i * 30 }] });
+      modi.add((await knopf(page).getAttribute('data-wurf')) ?? '');
+      await page.waitForTimeout(16);
+    }
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(vorher + 100);
+    // Der Knopf wurde dabei nie gezogen oder geworfen und liegt noch an seinem Platz
+    modi = new Set([...modi].filter((m) => m !== 'ruht' && m !== 'bereit'));
+    expect([...modi]).toEqual([]);
+    await expect(knopf(page)).toHaveAttribute('data-wurf', 'ruht');
+    const danach = (await knopf(page).boundingBox())!;
+    expect(Math.abs(danach.x - b.x)).toBeLessThan(1);
+    expect(await klicks()).toEqual([]);
   });
 
   test('bleibt beim Wechsel zwischen Seiten bestehen und verschwindet im Bewerbungsweg', async ({ page }) => {
@@ -305,6 +355,7 @@ test.describe('Helfer mit Bewegung', () => {
       await leerlaufAbwarten(page);
       await expect(feld(page)).toHaveCount(0);
       await expect(page.locator('.hf-ball-halter')).toHaveCount(0);
+      await expect(knopf(page)).toHaveCount(0);
       expect(await page.evaluate(() => performance.getEntriesByType('resource').filter((e) => e.name.includes('/helfer/')).length)).toBe(0);
     });
   }
@@ -318,6 +369,7 @@ test.describe('Helfer ohne Bewegung', () => {
     await leerlaufAbwarten(page);
     await expect(feld(page)).toHaveCount(0);
     await expect(page.locator('.hf-ball-halter')).toHaveCount(0);
+    await expect(knopf(page)).toBeHidden();
     expect(await page.evaluate(() => performance.getEntriesByType('resource').filter((e) => e.name.includes('/helfer/')).length)).toBe(0);
     // WhatsApp bleibt über die gewohnten Wege erreichbar.
     expect(await page.locator('a[href^="https://api.whatsapp.com/send"]').count()).toBeGreaterThan(0);

@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { OHNE_UEBERLAGERUNG } from '@/lib/motion/prefers';
+import { WhatsAppKnopf } from './knopf/WhatsAppKnopf';
 import { HELFER_BILDER, helferSichtbar } from './seiten';
 
 interface HelferInselProps {
@@ -12,7 +13,8 @@ interface HelferInselProps {
 
 /**
  * Die Figur gibt es nur am PC (Inhaber, 26.11.2026: „nur auf dem PC, auf dem Handy schonen und weglassen“): breites
- * Fenster und eine Maus oder ein Touchpad als Zeiger. Am Handy und am Tablet bleibt nur der WhatsApp-Knopf.
+ * Fenster und eine Maus oder ein Touchpad als Zeiger. Am Handy und am Tablet bleibt nur der WhatsApp-Knopf
+ * (knopf/WhatsAppKnopf.tsx), und das Spiel wird dort gar nicht geladen.
  */
 export const MIT_FIGUR = '(min-width: 64em) and (hover: hover) and (pointer: fine)';
 
@@ -52,7 +54,8 @@ export function HelferInsel({ whatsappHref }: HelferInselProps) {
 
   useEffect(() => {
     const el = halter.current;
-    if (!sichtbar || !el || figur === null) return;
+    // Das Spiel nur am PC: Am Handy lädt es nichts nach, dort reicht der schlanke Knopf.
+    if (!sichtbar || !el || figur !== true) return;
     if (typeof window.matchMedia !== 'function' || window.matchMedia(OHNE_UEBERLAGERUNG).matches) return;
 
     let abgebaut = false;
@@ -60,7 +63,7 @@ export function HelferInsel({ whatsappHref }: HelferInselProps) {
       import('./spiel/start')
         .then(({ starte }) => {
           if (abgebaut) return;
-          lauf.current = starte(el, { quelle: HELFER_BILDER, whatsapp: whatsappHref, ruhig: false, klasse: 'print-hidden', bodenAbstand: leistenHoehe, figur });
+          lauf.current = starte(el, { quelle: HELFER_BILDER, whatsapp: whatsappHref, ruhig: false, klasse: 'print-hidden', bodenAbstand: leistenHoehe, figur: true });
         })
         .catch(() => undefined);
     };
@@ -89,5 +92,11 @@ export function HelferInsel({ whatsappHref }: HelferInselProps) {
   }, [pfad, sichtbar]);
 
   // Leere Hülle, auf dem Server und im Browser gleich. Figur und Zubehör entstehen erst im Browser in ihrer Schattenwurzel.
-  return <div ref={halter} data-helfer="" className="print-hidden" />;
+  // Der WhatsApp-Knopf für Handy und Tablet kommt schon vom Server; am PC blendet ihn das CSS aus.
+  return (
+    <>
+      {sichtbar && <WhatsAppKnopf href={whatsappHref} pfad={pfad} />}
+      <div ref={halter} data-helfer="" className="print-hidden" />
+    </>
+  );
 }

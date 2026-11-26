@@ -42,7 +42,7 @@ describe('Helfer: Einbau in den Rahmen', () => {
   it('die Figur gibt es nur am PC: breites Fenster mit Maus, sonst nur der WhatsApp-Knopf ohne Bilder der Figur', () => {
     const insel = lies('components/site/helfer/HelferInsel.tsx');
     expect(insel).toContain("export const MIT_FIGUR = '(min-width: 64em) and (hover: hover) and (pointer: fine)';");
-    expect(insel).toMatch(/starte\(el, \{[^}]*figur \}\)/);
+    expect(insel).toMatch(/starte\(el, \{[^}]*figur: true \}\)/);
     const figur = lies('components/site/helfer/spiel/figur.ts');
     expect(figur).toContain('if (this.laden && (this.geladen || SOFORT.includes(name))) b.src = adresse;');
     expect(figur).toContain('if (this.geladen || !this.laden) return;');
