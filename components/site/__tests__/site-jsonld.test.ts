@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { FOUNDER_ID, LOCAL_BUSINESS_TYPES, ORGANIZATION_ID, WEBSITE_ID, buildSiteNodes } from '../site-jsonld';
+import { GESCHAEFTSFUEHRER_ID, LOCAL_BUSINESS_TYPES, ORGANIZATION_ID, WEBSITE_ID, buildSiteNodes } from '../site-jsonld';
 import { COMPANY, REGION } from '@/lib/content';
 import { PROFILE } from '@/lib/content/profile';
 import { SAME_AS } from '@/lib/jobs/employer';
@@ -15,7 +15,7 @@ describe('buildSiteNodes', () => {
   const graph: readonly Node[] = buildSiteNodes();
   const types = graph.map((node) => node['@type']);
 
-  it('contains only Organization, Person (founder), WebSite and LocalBusiness, without @context', () => {
+  it('contains only Organization, Person (managing director), WebSite and LocalBusiness, without @context', () => {
     expect(types).toEqual(['Organization', 'Person', 'WebSite', ['LocalBusiness', 'HVACBusiness', 'Plumber']]);
     for (const node of graph) expect(node['@context']).toBeUndefined();
   });
@@ -73,15 +73,25 @@ describe('buildSiteNodes', () => {
   });
 
   // V6-B (ersetzt E-SEO-006 „eingebettet, ohne @id“): eigener Personenknoten, die Organisation verweist darauf.
-  it('describes the founder as a Person node with its own @id, referenced by Organization.founder', () => {
-    expect(FOUNDER_ID).toBe('https://bad-energie.de/#founder');
+  // Sichtbarkeit ki5: als Mitarbeiter (Geschäftsführer), nicht als Gründer. Gegründet hat 1926 Karl Schmidt, Sabri Demir
+  // hat 2021 übernommen (bad-energie.de, Unternehmen); ein Gründer-Fakt fehlt (K-012).
+  it('describes the managing director as a Person node with its own @id, referenced by Organization.employee', () => {
+    expect(GESCHAEFTSFUEHRER_ID).toBe('https://bad-energie.de/#geschaeftsfuehrer');
     expect(node('Person')).toEqual({
       '@type': 'Person',
-      '@id': FOUNDER_ID,
+      '@id': GESCHAEFTSFUEHRER_ID,
       name: COMPANY.managingDirector.name,
       jobTitle: COMPANY.managingDirector.title,
     });
-    expect(node('Organization').founder).toEqual({ '@id': FOUNDER_ID });
+    expect(node('Organization').employee).toEqual({ '@id': GESCHAEFTSFUEHRER_ID });
+    expect(node('Organization')).not.toHaveProperty('founder');
+    expect(JSON.stringify(graph)).not.toMatch(/founder/i);
+    expect(node('Organization').foundingDate).toBe('1926');
+  });
+
+  it('lists the spelling of the customer website among the alternate names', () => {
+    expect(node('LocalBusiness').alternateName).toEqual([...SITE_CONFIG.alternateNames]);
+    expect(node('LocalBusiness').alternateName).toContain('Bad & Energie GmbH Lahn-Dill');
   });
 
   it('marks the career site as part of the customer website', () => {

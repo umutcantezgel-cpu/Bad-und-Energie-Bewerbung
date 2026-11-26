@@ -87,7 +87,7 @@ describe('check-graph: graphProblems (V6-B)', () => {
     const { graph, html } = fixture('/jobs', { breadcrumb: buildJobsBreadcrumbJsonLd() });
     const ohnePerson = clone(graph);
     ohnePerson['@graph'] = ohnePerson['@graph'].filter((n) => n['@type'] !== 'Person');
-    expect(problems(ohnePerson, html).join('\n')).toMatch(/unresolved @id reference ".*#founder"/);
+    expect(problems(ohnePerson, html).join('\n')).toMatch(/unresolved @id reference ".*#geschaeftsfuehrer"/);
 
     const doppelt = clone(graph);
     doppelt['@graph'].push({ ...node(doppelt, 'LocalBusiness') });
@@ -128,16 +128,21 @@ describe('check-graph: graphProblems (V6-B)', () => {
     expect(problems(ohneListe, html).join('\n')).toMatch(/unresolved @id reference ".*#breadcrumb"/);
   });
 
-  it('meldet ein eigenes @context im Knoten, eine FAQPage ohne isPartOf und einen falschen Gründer-Verweis', () => {
+  it('meldet ein eigenes @context im Knoten, eine FAQPage ohne isPartOf, einen falschen Personen-Verweis und einen Gründer', () => {
     const { graph, html } = fixture('/', { faq: buildFaqPageJsonLd(getFaqItems()) });
     const kaputt = clone(graph);
     node(kaputt, 'FAQPage')['@context'] = 'https://schema.org';
     delete node(kaputt, 'FAQPage').isPartOf;
-    node(kaputt, 'Organization').founder = { '@id': node(kaputt, 'WebSite')['@id'] };
+    node(kaputt, 'Organization').employee = { '@id': node(kaputt, 'WebSite')['@id'] };
     const text = problems(kaputt, html).join('\n');
     expect(text).toMatch(/carries its own @context/);
     expect(text).toMatch(/FAQPage must point to the WebPage via isPartOf/);
-    expect(text).toMatch(/Organization.founder must reference the Person node/);
+    expect(text).toMatch(/Organization.employee must reference the Person node/);
+
+    // Sichtbarkeit ki5: ohne Gründer-Fakt kein founder, auch nicht neben dem richtigen Verweis
+    const gruender = clone(graph);
+    node(gruender, 'Organization').founder = { '@id': node(gruender, 'Person')['@id'] };
+    expect(problems(gruender, html)).toEqual(['Organization must not carry founder (no founder fact, K-012)']);
   });
 
   it('globale @ids müssen in allen Dokumenten gleich sein', () => {
@@ -146,10 +151,10 @@ describe('check-graph: graphProblems (V6-B)', () => {
     expect(graphProblems(a.graph, a.html, ids).problems).toEqual([]);
     const b = clone(fixture('/bewerbung').graph);
     const person = node(b, 'Person');
-    person['@id'] = 'https://example.org/#founder';
-    node(b, 'Organization').founder = { '@id': person['@id'] };
+    person['@id'] = 'https://example.org/#geschaeftsfuehrer';
+    node(b, 'Organization').employee = { '@id': person['@id'] };
     expect(graphProblems(b, head('/bewerbung', 'Stellen & mehr | Bad & Energie Karriere', 'Beschreibung "mit" Zeichen'), ids).problems.join('\n')).toMatch(
-      /Person @id "https:\/\/example.org\/#founder" differs/,
+      /Person @id "https:\/\/example.org\/#geschaeftsfuehrer" differs/,
     );
   });
 

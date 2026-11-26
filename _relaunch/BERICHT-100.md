@@ -75,7 +75,7 @@ Seobility selbst braucht ein Konto. Ich habe die Prüfpunkte deshalb offline umg
 | @type | @id | wo |
 |---|---|---|
 | Organization | `https://bad-energie.de/#organization` | jede Seite |
-| Person | `https://bad-energie.de/#founder` | jede Seite (Organization.founder → Referenz) |
+| Person | `https://bad-energie.de/#geschaeftsfuehrer` | jede Seite (Organization.employee → Referenz; seit 26.11.2026 kein `founder` mehr: gegründet hat 1926 Karl Schmidt, Sabri Demir hat 2021 übernommen) |
 | WebSite | `https://karriere.bad-energie.de/#website` | jede Seite |
 | LocalBusiness | `https://bad-energie.de/#localbusiness` | jede Seite (parentOrganization → Organization) |
 | WebPage | `<Canonical>#webpage` | jede Seite mit Canonical (10), nicht auf der 404 |

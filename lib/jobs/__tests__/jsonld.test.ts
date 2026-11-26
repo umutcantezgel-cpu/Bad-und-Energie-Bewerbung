@@ -1,6 +1,9 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { FACTS } from '@/lib/content/facts';
 import { ISCO, KLDB } from '../berufe';
+import { EMPLOYER } from '../employer';
 import { jobUrl } from '../format';
 import { INDUSTRY, buildBreadcrumbJsonLd, buildJobPostingJsonLd, employerOverview } from '../jsonld';
 import { ALL_JOBS, getActiveJobs, getJobById } from '../registry';
@@ -138,6 +141,22 @@ describe('buildJobPostingJsonLd', () => {
       .map((ld) => ld['@id']);
     expect(ids).toHaveLength(getActiveJobs().length);
     expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  // Sichtbarkeit jobs4: Google nimmt im JobPosting nur ein Logo mit Seitenverhältnis 0,75 bis 2,5 und mindestens
+  // 112 Pixeln je Seite; das Wortbild (5,47) bleibt bei Organization und LocalBusiness.
+  it('Logo im JobPosting: PNG aus public/, Seitenverhältnis 0,75 bis 2,5, je Seite mindestens 112 Pixel', () => {
+    const logos = new Set(getActiveJobs().map((job) => buildJobPostingJsonLd(job)?.hiringOrganization.logo));
+    expect([...logos]).toEqual([EMPLOYER.jobLogoUrl]);
+    const datei = readFileSync(path.join(path.resolve(__dirname, '../../..'), 'public', new URL(EMPLOYER.jobLogoUrl).pathname));
+    // PNG-Kopf: Signatur, dann der IHDR-Block mit Breite und Höhe (je 4 Byte, Big Endian)
+    expect(datei.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))).toBe(true);
+    expect(datei.toString('ascii', 12, 16)).toBe('IHDR');
+    const breite = datei.readUInt32BE(16);
+    const hoehe = datei.readUInt32BE(20);
+    expect(Math.min(breite, hoehe)).toBeGreaterThanOrEqual(112);
+    expect(breite / hoehe).toBeGreaterThanOrEqual(0.75);
+    expect(breite / hoehe).toBeLessThanOrEqual(2.5);
   });
 });
 

@@ -5,14 +5,14 @@ import { EMPLOYER, SAME_AS } from '@/lib/jobs/employer';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 
 /**
- * Global JSON-LD nodes (every page): Organization, Person (founder), WebSite and LocalBusiness only.
+ * Global JSON-LD nodes (every page): Organization, Person (managing director), WebSite and LocalBusiness only.
  * Each page puts them into its single @graph together with its own nodes (lib/seo/graph.ts):
  * WebPage everywhere, JobPosting on /jobs/[slug], FAQPage on /. `ORGANIZATION_ID` is the node that
  * JobPosting.hiringOrganization references.
  */
 export const ORGANIZATION_ID = EMPLOYER.orgId;
 export const LOCAL_BUSINESS_ID = `${SITE_CONFIG.consumerUrl}/#localbusiness`;
-export const FOUNDER_ID = `${SITE_CONFIG.consumerUrl}/#founder`;
+export const GESCHAEFTSFUEHRER_ID = `${SITE_CONFIG.consumerUrl}/#geschaeftsfuehrer`;
 
 const careerBase = SITE_CONFIG.baseUrl.replace(/\/+$/, '');
 export const WEBSITE_ID = `${careerBase}/#website`;
@@ -76,8 +76,10 @@ export function buildSiteNodes() {
       // Website für Kunden und jedes geprüfte Profil (lib/content/profile.ts), dieselbe Liste wie im JobPosting
       sameAs: [...SAME_AS],
       foundingDate: String(COMPANY.foundingYear),
-      // V6-B (statt E-SEO-006): der Gründer als eigener Personenknoten, hier nur die Referenz.
-      founder: { '@id': FOUNDER_ID },
+      // Kein `founder`: Gegründet hat 1926 Karl Schmidt, Sabri Demir hat 2021 übernommen (bad-energie.de, Unternehmen);
+      // ein Gründer-Fakt fehlt in lib/content/facts.ts (K-012). Der Geschäftsführer steht als Mitarbeiter darin, wie im
+      // Impressum; der Personenknoten trägt die Angaben, hier nur die Referenz (V6-B).
+      employee: { '@id': GESCHAEFTSFUEHRER_ID },
       address: postalAddress,
       contactPoint: {
         '@type': 'ContactPoint',
@@ -91,7 +93,7 @@ export function buildSiteNodes() {
     {
       // Titel nach lib/data/team.ts (A5 offen); dieselben Angaben wie bisher eingebettet, jetzt mit @id.
       '@type': 'Person',
-      '@id': FOUNDER_ID,
+      '@id': GESCHAEFTSFUEHRER_ID,
       name: COMPANY.managingDirector.name,
       jobTitle: COMPANY.managingDirector.title,
     },

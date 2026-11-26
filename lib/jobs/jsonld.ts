@@ -94,7 +94,7 @@ export function toJobPostingNode(job: Job): JobPostingJsonLd | null {
       '@id': EMPLOYER.orgId,
       name: EMPLOYER.legalName,
       sameAs: EMPLOYER.sameAs,
-      logo: EMPLOYER.logoUrl,
+      logo: EMPLOYER.jobLogoUrl,
     },
     jobLocation: {
       '@type': 'Place',

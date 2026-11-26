@@ -16,7 +16,8 @@ export const SITE_CONFIG = {
   // Core Brand & Company Data
   companyName: 'Bad und Energie GmbH Lahn Dill',
   legalName: 'Bad und Energie GmbH Lahn Dill',
-  alternateNames: ['Bad und Energie', 'Bad und Energie Wetzlar', 'Bad und Energie GmbH'],
+  // „Bad & Energie GmbH Lahn-Dill“: so heißt der Betrieb auf der Website für Kunden (Titel und JSON-LD name)
+  alternateNames: ['Bad und Energie', 'Bad und Energie Wetzlar', 'Bad und Energie GmbH', 'Bad & Energie GmbH Lahn-Dill'],
   slogan: {
     de: '100 Jahre Meisterbetrieb (1926–2026) für SHK, Wärmepumpen und moderne Badarchitektur in Wetzlar',
   },

@@ -11,9 +11,10 @@ import { fileURLToPath } from 'url';
  *    every nested object carrying an @id (a `{ "@id" }` reference or an embedded node such as
  *    hiringOrganization) resolves to a node of the same graph.
  * 2. Global nodes: exactly one Organization, Person, WebSite and LocalBusiness, with the same @ids in every
- *    document; Organization.founder → Person, WebSite.publisher and LocalBusiness.parentOrganization →
- *    Organization. Types may be arrays (Plan §C4): the LocalBusiness node is typed exactly
- *    ['LocalBusiness', 'HVACBusiness', 'Plumber']. Organization.sameAs is a non-empty array of https URLs.
+ *    document; Organization.employee → Person (the managing director; no `founder`: no founder fact, K-012),
+ *    WebSite.publisher and LocalBusiness.parentOrganization → Organization. Types may be arrays (Plan §C4): the
+ *    LocalBusiness node is typed exactly ['LocalBusiness', 'HVACBusiness', 'Plumber']. Organization.sameAs is a
+ *    non-empty array of https URLs.
  * 3. Page node: with a <link rel="canonical"> exactly one WebPage node (WebPage or a subtype) carrying a
  *    `url`; url = canonical, @id = canonical#webpage (URL normal form), name = <title>, description = meta
  *    description, isPartOf → WebSite, about → Organization. Further WebPage subtypes (the FAQPage on "/")
@@ -334,7 +335,9 @@ export function graphProblems(root, html, globalIds = {}) {
   if (single.LocalBusiness && JSON.stringify(businessTypes) !== JSON.stringify(LOCAL_BUSINESS_TYPES)) {
     problems.push(`LocalBusiness @type must be ${JSON.stringify(LOCAL_BUSINESS_TYPES)}, found ${JSON.stringify(businessTypes)}`);
   }
-  if (refTo(single.Organization?.founder) !== single.Person?.['@id']) problems.push('Organization.founder must reference the Person node');
+  if (refTo(single.Organization?.employee) !== single.Person?.['@id']) problems.push('Organization.employee must reference the Person node');
+  // Gegründet hat 1926 Karl Schmidt, Sabri Demir hat 2021 übernommen; ohne Gründer-Fakt kein `founder` (K-012)
+  if (single.Organization && 'founder' in single.Organization) problems.push('Organization must not carry founder (no founder fact, K-012)');
   if (refTo(single.WebSite?.publisher) !== orgId) problems.push('WebSite.publisher must reference the Organization');
   if (refTo(single.LocalBusiness?.parentOrganization) !== orgId) {
     problems.push('LocalBusiness.parentOrganization must reference the Organization');

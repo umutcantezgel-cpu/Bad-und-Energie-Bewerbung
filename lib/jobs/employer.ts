@@ -17,7 +17,13 @@ export const EMPLOYER = Object.freeze({
   legalName: COMPANY.legalName,
   sameAs: SAME_AS,
   orgId: `${SITE_CONFIG.consumerUrl}/#organization`,
+  /** Wortbild (662 × 121) für Organization und LocalBusiness (fakten-abgleich B19: wie im Layout). */
   logoUrl: `${baseUrl}/images/bad-energie-lahn-dill-logo.webp`,
+  /**
+   * Logo im JobPosting: Google verlangt dort ein Seitenverhältnis zwischen 0,75 und 2,5, das Wortbild hat 5,47. Das
+   * quadratische Haus-Zeichen aus dem Logo (192 × 192 Pixel) passt und liegt über der Mindestgröße von 112 Pixeln.
+   */
+  jobLogoUrl: `${baseUrl}/icon-192.png`,
   careerBaseUrl: baseUrl,
   phone: COMPANY.phone,
   email: COMPANY.email,

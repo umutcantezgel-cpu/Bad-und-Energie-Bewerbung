@@ -15,7 +15,7 @@ import ImpressumPage, { metadata as impressumMetadata } from '@/app/impressum/pa
 import NotFound, { metadata as notFoundMetadata } from '@/app/not-found';
 import { buildFaqPageJsonLd } from '@/components/home/content';
 import { JsonLd, serializeJsonLdScript } from '@/components/seo/JsonLd';
-import { FOUNDER_ID, LOCAL_BUSINESS_ID, ORGANIZATION_ID, WEBSITE_ID } from '@/components/site/site-jsonld';
+import { GESCHAEFTSFUEHRER_ID, LOCAL_BUSINESS_ID, ORGANIZATION_ID, WEBSITE_ID } from '@/components/site/site-jsonld';
 import { getFaqItems } from '@/lib/content/faq';
 import { jobPath, jobUrl } from '@/lib/jobs/format';
 import { buildBreadcrumbJsonLd, buildJobPostingJsonLd, buildJobsBreadcrumbJsonLd } from '@/lib/jobs/jsonld';
@@ -80,11 +80,12 @@ function expectSoundGraph(graph: PageGraph) {
     for (const ref of nestedIds(node, true)) expect(ids).toContain(ref);
   }
   expect(ofType(graph, 'Organization').map((n) => n['@id'])).toEqual([ORGANIZATION_ID]);
-  expect(ofType(graph, 'Person').map((n) => n['@id'])).toEqual([FOUNDER_ID]);
+  expect(ofType(graph, 'Person').map((n) => n['@id'])).toEqual([GESCHAEFTSFUEHRER_ID]);
   expect(ofType(graph, 'WebSite').map((n) => n['@id'])).toEqual([WEBSITE_ID]);
   expect(ofType(graph, 'LocalBusiness').map((n) => n['@id'])).toEqual([LOCAL_BUSINESS_ID]);
   expect(ofType(graph, 'LocalBusiness')[0]['@type']).toEqual(['LocalBusiness', 'HVACBusiness', 'Plumber']);
-  expect(ofType(graph, 'Organization')[0].founder).toEqual({ '@id': FOUNDER_ID });
+  expect(ofType(graph, 'Organization')[0].employee).toEqual({ '@id': GESCHAEFTSFUEHRER_ID });
+  expect(ofType(graph, 'Organization')[0]).not.toHaveProperty('founder');
 }
 
 /** WebPage: url = Canonical, name = Title-Tag, description = Meta-Beschreibung, alles aus den Metadaten der Seite. */
