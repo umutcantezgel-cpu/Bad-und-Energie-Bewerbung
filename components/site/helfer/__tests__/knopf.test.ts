@@ -5,6 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { MIT_FIGUR } from '../HelferInsel';
 import { KNOPF_NAME, WhatsAppKnopf } from '../knopf/WhatsAppKnopf';
+import { LEERE_BILANZ, SPRUCH_AUFRUF, wurfSpruch } from '../knopf/spruch';
 import { WURF, imRahmen, ruht, schritt, wurfTempo, type WurfKoerper, type WurfRahmen } from '../knopf/wurf';
 
 const lies = (datei: string) => readFileSync(path.join(process.cwd(), datei), 'utf8');
@@ -110,5 +111,40 @@ describe('WhatsApp-Knopf am Handy: Link und Stil', () => {
     const insel = lies('components/site/helfer/HelferInsel.tsx');
     expect(insel).toContain('if (!sichtbar || !el || figur !== true) return;');
     expect(insel).toContain('{sichtbar && <WhatsAppKnopf href={whatsappHref} pfad={pfad} />}');
+  });
+});
+
+describe('WhatsApp-Knopf am Handy: das kleine Spiel', () => {
+  const b = (teil: Partial<typeof LEERE_BILANZ>) => ({ ...LEERE_BILANZ, ...teil });
+
+  it('Spruch nach Banden, Decke, Weite und Fang', () => {
+    expect(wurfSpruch(b({}), 0).titel).toBe('Guter Wurf!');
+    expect(wurfSpruch(b({ flugMs: 2000 }), 0).titel).toBe('Weitwurf!');
+    expect(wurfSpruch(b({ decke: true }), 0).titel).toBe('Bis unter die Decke!');
+    expect(wurfSpruch(b({ banden: 1 }), 0).titel).toBe('Bande!');
+    expect(wurfSpruch(b({ banden: 1, decke: true }), 0).titel).toBe('Bande und Decke!');
+    expect(wurfSpruch(b({ banden: 2 }), 5).titel).toBe('Doppelbande!');
+    expect(wurfSpruch(b({ banden: 4 }), 9).titel).toBe('4× Bande!');
+    expect(wurfSpruch(b({ gefangen: true, banden: 3 }), 9).titel).toBe('Gefangen!');
+  });
+
+  it('Rekord erst ab zwei Banden und nur, wenn es mehr sind als je zuvor auf der Seite', () => {
+    expect(wurfSpruch(b({ banden: 1 }), 0).rekord).toBe(false);
+    expect(wurfSpruch(b({ banden: 2 }), 0)).toEqual({ titel: 'Doppelbande! Rekord!', rekord: true });
+    expect(wurfSpruch(b({ banden: 2 }), 2).rekord).toBe(false);
+    expect(wurfSpruch(b({ banden: 3 }), 2)).toEqual({ titel: '3× Bande! Rekord!', rekord: true });
+  });
+
+  it('der Spruch ist Dekoration: für Screenreader verborgen, ohne Zeiger, mit Aufforderung; Druck-Rückmeldung am Knopf', () => {
+    const html = renderToStaticMarkup(createElement(WhatsAppKnopf, { href: 'https://api.whatsapp.com/send?phone=1', pfad: '/' }));
+    expect(html).toMatch(/<span[^>]*aria-hidden="true"[^>]*data-knopf-blase=""/);
+    expect(html).toContain(SPRUCH_AUFRUF);
+    expect(html).toContain('data-motion="druck"');
+    const css = lies('components/site/helfer/knopf/knopf.module.css');
+    expect(css).toMatch(/\.blase \{[^}]*pointer-events: none;/);
+    expect(css).toMatch(/\.blase \{[^}]*visibility: hidden;/);
+    expect(css).toContain('.blase[data-offen] {');
+    // keine Dauerschleife, kein Skalieren
+    expect(css).not.toMatch(/infinite|@keyframes|scale\(/);
   });
 });

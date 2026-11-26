@@ -78,3 +78,71 @@
     display: none;
   }
 }
+
+/*
+ * Spruch nach dem Wurf („Doppelbande! Rekord!“ und darunter die Aufforderung zu schreiben): über dem Knopf, nur
+ * Dekoration (aria-hidden), keine Zeiger. Erscheint nach dem Einrasten und blendet sich nach gut zwei Sekunden aus.
+ */
+.blase {
+  position: fixed;
+  right: max(var(--a-4), env(safe-area-inset-right));
+  bottom: calc(max(var(--a-4), env(safe-area-inset-bottom)) + 4.25rem);
+  z-index: 31;
+  display: flex;
+  flex-direction: column;
+  gap: var(--a-1);
+  max-width: min(16rem, calc(100vw - 2 * var(--a-4)));
+  padding: var(--a-2) var(--a-3);
+  border: 2px solid var(--whatsapp);
+  border-radius: var(--radius-2);
+  background-color: var(--surface-raised);
+  color: var(--ink);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--text-callout);
+  line-height: var(--text-callout--line-height);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(var(--a-2));
+  transition:
+    opacity var(--d-1) var(--k-ein),
+    visibility var(--d-1) var(--k-ein),
+    transform var(--d-1) var(--k-ein);
+}
+
+.blase[data-offen] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity var(--d-2) var(--k-aus),
+    visibility var(--d-2) var(--k-aus),
+    transform var(--d-2) var(--k-aus);
+}
+
+.titel {
+  font-weight: 700;
+}
+
+.aufruf {
+  color: var(--ink-2);
+}
+
+/* Wie der Knopf: am PC, ohne Bewegung, in erzwungenen Farben und im Druck nicht da */
+@media (min-width: 64em) and (hover: hover) and (pointer: fine) {
+  .blase {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce), (forced-colors: active) {
+  .blase {
+    display: none;
+  }
+}
+
+@media print {
+  .blase {
+    display: none;
+  }
+}

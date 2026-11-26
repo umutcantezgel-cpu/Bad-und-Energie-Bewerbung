@@ -208,6 +208,12 @@ test.describe('Helfer mit Bewegung', () => {
       )
       .toBeLessThan(0.5);
     const ruht = (await link.boundingBox())!;
+    if (amHandy()) {
+      // Das kleine Spiel: nach dem Einrasten ein Spruch über dem Knopf (an die linke Wand geworfen: Bande)
+      const blase = page.locator('[data-knopf-blase]');
+      await expect(blase).toHaveAttribute('data-offen', '');
+      await expect(blase).toContainText('Jetzt antippen und schreiben.');
+    }
     expect(Math.abs(ruht.x - start.x), 'wieder am Platz').toBeLessThan(2);
     expect(Math.abs(ruht.y - start.y), 'wieder am Platz').toBeLessThan(2);
     await page.mouse.click(ruht.x + ruht.width / 2, ruht.y + ruht.height / 2);

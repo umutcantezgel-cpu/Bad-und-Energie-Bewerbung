@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { WHATSAPP_ZEICHEN } from '../zeichen';
 import styles from './knopf.module.css';
+import { LEERE_BILANZ, SPRUCH_AUFRUF, wurfSpruch, type WurfBilanz } from './spruch';
 import { imRahmen, ruht, schritt, wurfTempo, type Probe, type WurfKoerper, type WurfRahmen } from './wurf';
 
 /** Name für Screenreader und Linkprüfung: eigener Ankertext, damit er keinem anderen WhatsApp-Link gleicht. */
@@ -19,6 +20,10 @@ const EINRASTEN_KURZ_MS = 280;
 const EINRASTEN_LANG_MS = 880;
 /** Abstand zu den Fensterrändern beim Fliegen (px). */
 const RAND = 8;
+/** So lange steht der Spruch nach einem Wurf (ms). */
+const SPRUCH_MS = 2600;
+/** Ab diesem Aufpralltempo zählt eine Wand als Bande (px/s). */
+const BANDE_AB = 250;
 
 interface Lage {
   dx: number;
@@ -42,10 +47,13 @@ const RUHELAGE: Lage = { dx: 0, dy: 0, winkel: 0, quetsch: 0, achse: 'x' };
  *   vibriert kurz, er fällt auf den Boden und rastet wieder ein. Pro Bild nur transform, kein Rendern.
  * - Senkrechtes Wischen über dem Knopf scrollt die Seite (touch-action: pan-y); geworfen wird, wer seitlich zieht.
  * - Ein Wurf endet nie mit einem Klick auf den Link (Sperre im Capture vor allen anderen Klick-Beobachtern).
+ * - Kleines Spiel: Banden, Decke, Weitwurf und Fang im Flug ergeben nach dem Einrasten einen kurzen Spruch über dem
+ *   Knopf („Doppelbande! Rekord!“) mit der Aufforderung zu schreiben; ein Rekord lässt das Handy zweimal kurz summen.
  * - Am PC mit Maus zeigt das CSS ihn nicht: Dort ist der Ball Teil des Spiels mit der Figur.
  */
 export function WhatsAppKnopf({ href, pfad }: { href: string; pfad: string | null }) {
   const knopf = useRef<HTMLAnchorElement>(null);
+  const blase = useRef<HTMLSpanElement>(null);
   const z = useRef({
     modus: 'ruht' as Modus,
     anker: { x: 0, y: 0 },
@@ -61,6 +69,11 @@ export function WhatsAppKnopf({ href, pfad }: { href: string; pfad: string | nul
     vibriert: 0,
     sperre: false,
     loesen: null as (() => void) | null,
+    /** Spielstand des laufenden Wurfs (null: kein Wurf) und bester Wurf auf dieser Seite */
+    bilanz: null as WurfBilanz | null,
+    losgelassen: 0,
+    rekord: 0,
+    blaseUhr: 0,
   });
 
   const zeichnen = useCallback(() => {
@@ -76,6 +89,40 @@ export function WhatsAppKnopf({ href, pfad }: { href: string; pfad: string | nul
     z.current.modus = modus;
     if (knopf.current) knopf.current.dataset.wurf = modus;
   }, []);
+
+  /** Spruch über dem Knopf ein- oder ausblenden (nur dekorativ, für Screenreader verborgen). */
+  const spruch = useCallback((text: string | null) => {
+    const s = z.current;
+    window.clearTimeout(s.blaseUhr);
+    const el = blase.current;
+    if (!el) return;
+    if (!text) {
+      delete el.dataset.offen;
+      return;
+    }
+    el.firstChild!.textContent = text;
+    el.dataset.offen = '';
+    s.blaseUhr = window.setTimeout(() => delete el.dataset.offen, SPRUCH_MS);
+  }, []);
+
+  /** Wurf zu Ende: Spruch zeigen, Rekord merken, bei Rekord zweimal kurz summen. */
+  const wurfEnde = useCallback(() => {
+    const s = z.current;
+    const b = s.bilanz;
+    s.bilanz = null;
+    if (!b) return;
+    b.flugMs = performance.now() - s.losgelassen;
+    const { titel, rekord } = wurfSpruch(b, s.rekord);
+    if (rekord) {
+      s.rekord = b.banden;
+      try {
+        if (typeof navigator.vibrate === 'function') navigator.vibrate([10, 40, 10]);
+      } catch {
+        /* ohne Vibration */
+      }
+    }
+    spruch(titel);
+  }, [spruch]);
 
   /** Sofort an den Ruheplatz (Seitenwechsel, verborgenes Fenster, Abbau). */
   const zurueck = useCallback(() => {
@@ -123,10 +170,13 @@ export function WhatsAppKnopf({ href, pfad }: { href: string; pfad: string | nul
       s.lage = { dx: von.dx * (1 - e), dy: von.dy * (1 - e), winkel: von.winkel * (1 - e), quetsch: von.quetsch * (1 - e), achse: von.achse };
       zeichnen();
       if (p < 1) s.takt = requestAnimationFrame(bild);
-      else zurueck();
+      else {
+        zurueck();
+        wurfEnde();
+      }
     };
     s.takt = requestAnimationFrame(bild);
-  }, [setzeModus, zeichnen, zurueck]);
+  }, [setzeModus, wurfEnde, zeichnen, zurueck]);
 
   /** Flug: Rechnung je Bild, Stauchen und Vibrieren beim spürbaren Aufprall, Rollen nach dem Tempo. */
   const fliegen = useCallback(() => {
@@ -143,6 +193,10 @@ export function WhatsAppKnopf({ href, pfad }: { href: string; pfad: string | nul
       s.lage.dy = k.y - s.anker.y;
       s.lage.winkel = (s.lage.winkel + ((k.vx * dt) / radius) * (180 / Math.PI)) % 360;
       s.lage.quetsch *= Math.exp(-18 * dt);
+      if (aufprall && s.bilanz && aufprall.tempo > BANDE_AB) {
+        if (aufprall.wand === 'links' || aufprall.wand === 'rechts') s.bilanz.banden += 1;
+        else if (aufprall.wand === 'oben') s.bilanz.decke = true;
+      }
       if (aufprall && aufprall.tempo > SPUERBAR) {
         s.lage.quetsch = Math.min(0.22, aufprall.tempo / 5000);
         s.lage.achse = aufprall.wand === 'links' || aufprall.wand === 'rechts' ? 'x' : 'y';
@@ -162,10 +216,12 @@ export function WhatsAppKnopf({ href, pfad }: { href: string; pfad: string | nul
     s.takt = requestAnimationFrame(bild);
   }, [einrasten, setzeModus, zeichnen]);
 
-  // Seitenwechsel: an den Ruheplatz
+  // Seitenwechsel: an den Ruheplatz, ohne Spruch
   useEffect(() => {
+    z.current.bilanz = null;
     zurueck();
-  }, [pfad, zurueck]);
+    spruch(null);
+  }, [pfad, spruch, zurueck]);
 
   useEffect(() => {
     const s0 = z.current;
@@ -217,6 +273,9 @@ export function WhatsAppKnopf({ href, pfad }: { href: string; pfad: string | nul
     s.zeiger = e.pointerId;
     s.proben = [{ x: e.clientX, y: e.clientY, t: e.timeStamp }];
     s.sperre = s.modus !== 'ruht';
+    // Im Flug gefangen: zählt für den Spruch; ein neuer Griff blendet den alten Spruch aus
+    if (s.modus === 'fliegt' && s.bilanz) s.bilanz.gefangen = true;
+    spruch(null);
     setzeModus('bereit');
 
     const bewegt = (m: PointerEvent) => {
@@ -262,6 +321,9 @@ export function WhatsAppKnopf({ href, pfad }: { href: string; pfad: string | nul
         return;
       }
       s.proben.push({ x: u.clientX, y: u.clientY, t: u.timeStamp });
+      // Neuer Wurf: Spielstand von vorn, außer er wurde im Flug gefangen und gleich weitergeworfen
+      if (!s.bilanz) s.bilanz = { ...LEERE_BILANZ };
+      s.losgelassen = performance.now();
       const v = wurfTempo(s.proben);
       s.koerper = { ...s.koerper, vx: v.vx, vy: v.vy };
       fliegen();
@@ -281,21 +343,29 @@ export function WhatsAppKnopf({ href, pfad }: { href: string; pfad: string | nul
   };
 
   return (
-    <a
-      ref={knopf}
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={KNOPF_NAME}
-      className={`${styles.knopf} print-hidden`}
-      data-wurf="ruht"
-      draggable={false}
-      onDragStart={(e) => e.preventDefault()}
-      onPointerDown={unten}
-    >
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
-        <path d={WHATSAPP_ZEICHEN} />
-      </svg>
-    </a>
+    <>
+      <a
+        ref={knopf}
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={KNOPF_NAME}
+        className={`${styles.knopf} print-hidden`}
+        data-wurf="ruht"
+        data-motion="druck"
+        draggable={false}
+        onDragStart={(e) => e.preventDefault()}
+        onPointerDown={unten}
+      >
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+          <path d={WHATSAPP_ZEICHEN} />
+        </svg>
+      </a>
+      {/* Spruch nach dem Wurf: nur Dekoration, der Link selbst trägt Name und Ziel */}
+      <span ref={blase} className={`${styles.blase} print-hidden`} aria-hidden="true" data-knopf-blase="">
+        <span className={styles.titel}>Guter Wurf!</span>
+        <span className={styles.aufruf}>{SPRUCH_AUFRUF}</span>
+      </span>
+    </>
   );
 }
