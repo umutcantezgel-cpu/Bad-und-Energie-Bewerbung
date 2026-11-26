@@ -3,7 +3,7 @@ import { FACTS, JE_NACH_STELLE, offenBei, type FactId } from '@/lib/content/fact
 import type { FaqItem } from '@/lib/content/faq';
 import { jobCategoryLabels } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/schema';
-import { fitDescription, perks } from '@/lib/seo/descriptions';
+import { APPLY_OHNE_LEBENSLAUF, fitDescription, perks } from '@/lib/seo/descriptions';
 import { SITE_CONFIG } from '@/lib/seo/site-config';
 
 /**
@@ -29,31 +29,30 @@ function joinLabels(labels: readonly string[]): string {
 
 /**
  * Meta description (110–155 characters, Seobility-Prüfpunkt in e2e/seo.spec.ts) from the jobs that are live right now
- * and the facts vacation30, flexibleHours, noFarAssembly, apply60s, radius35, noCvNeeded. Holidays and working time
- * come from the same rule as /jobs (lib/seo/descriptions.ts perks): „je nach Stelle“ while one of the live jobs leaves
- * them open (office S5, internship S4; Prüfung E-029, Runde 3). Longer candidates drop „keine Fernmontage“, then
- * shorten the job list to the first three types „& mehr“, then drop it, so a new job type can never push it past the
- * limit.
+ * and the facts noCvNeeded, apply60s, vacation30, flexibleHours, noFarAssembly, radius35. The promise „Ohne Lebenslauf
+ * in 60 Sek. bewerben.“ comes right after the job types, before the perks, so it shows before Google cuts the snippet
+ * on a phone (lib/seo/descriptions.ts APPLY_OHNE_LEBENSLAUF). Holidays and working time come from the same rule as /jobs
+ * (perks): „je nach Stelle“ while one of the live jobs leaves them open (office S5, internship S4; Prüfung E-029,
+ * Runde 3). Longer candidates drop „keine Fernmontage“, then shorten the job list to the first three, then two types
+ * „& mehr“, then drop it, so a new job type can never push it past the limit.
  */
 export function homeDescription(liveJobs: GezeigteStellen): string {
   const city = COMPANY.address.city;
   const { satz, mitFernmontage } = perks(liveJobs);
-  const apply = `In ${FACTS.apply60s.value} Sek. bewerben`;
   const allLabels = jobCategoryLabels(liveJobs);
-  const labels = joinLabels(allLabels);
   const radius = FACTS.radius35.value ? ` und ${FACTS.radius35.value.replace(' ', NBSP)} Umkreis` : '';
-  const general = `SHK-Jobs in ${city}${radius}. ${mitFernmontage}. ${apply}, ${lowerFirst(FACTS.noCvNeeded.short)}.`;
-  if (!labels) return fitDescription(general);
-  const candidates: [string, ...string[]] = [
-    `SHK-Jobs in ${city}: ${labels}. ${mitFernmontage}. ${apply}.`,
-    `SHK-Jobs in ${city}: ${labels}. ${satz}. ${apply}.`,
+  const general = `SHK-Jobs in ${city}${radius}. ${APPLY_OHNE_LEBENSLAUF} ${upperFirst(mitFernmontage)}.`;
+  if (allLabels.length === 0) return fitDescription(general);
+  const mit = (labels: string) => [
+    `SHK-Jobs in ${city}: ${labels}. ${APPLY_OHNE_LEBENSLAUF} ${upperFirst(mitFernmontage)}.`,
+    `SHK-Jobs in ${city}: ${labels}. ${APPLY_OHNE_LEBENSLAUF} ${satz}.`,
   ];
-  if (allLabels.length > 3) {
-    const top = `${allLabels.slice(0, 3).join(', ')} & mehr`;
-    candidates.push(`SHK-Jobs in ${city}: ${top}. ${mitFernmontage}. ${apply}.`, `SHK-Jobs in ${city}: ${top}. ${satz}. ${apply}.`);
+  const candidates = mit(joinLabels(allLabels));
+  for (const anzahl of [3, 2]) {
+    if (allLabels.length > anzahl) candidates.push(...mit(`${allLabels.slice(0, anzahl).join(', ')} & mehr`));
   }
-  candidates.push(general);
-  return fitDescription(...candidates);
+  const [erste, ...weitere] = [...candidates, general];
+  return fitDescription(erste, ...weitere);
 }
 
 /**

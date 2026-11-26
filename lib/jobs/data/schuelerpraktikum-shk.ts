@@ -16,7 +16,7 @@ export const schuelerpraktikumShk = defineJob({
   seo: {
     metaTitle: 'Schülerpraktikum SHK in Wetzlar (m/w/d): Heizung und Bad',
     metaDescription:
-      'Schülerpraktikum im SHK-Handwerk in Wetzlar: Wärmepumpen, Heizungen und Bäder kennenlernen, Dauer nach Absprache mit deiner Schule.',
+      'Schülerpraktikum in Wetzlar: Wärmepumpen, Heizungen und Bäder kennenlernen. Ohne Lebenslauf in 60 Sek. bewerben. Dauer nach Absprache mit deiner Schule.',
     h1: 'Schülerpraktikum im SHK-Handwerk (m/w/d) in Wetzlar',
     primaryKeyword: 'Schülerpraktikum Wetzlar',
     secondaryKeywords: ['Praktikum Anlagenmechaniker Wetzlar', 'Schülerpraktikum Handwerk Wetzlar', 'Praktikum SHK Gießen'],

@@ -20,7 +20,7 @@ export const ausbildungAnlagenmechanikerShk = defineJob({
   seo: {
     metaTitle: 'Ausbildung Anlagenmechaniker SHK Wetzlar (m/w/d) 2026',
     metaDescription:
-      'Ausbildung Anlagenmechaniker SHK in Wetzlar – Einstieg 2026 noch möglich: eigenes Hilti-Werkzeugset, Vergütung über Tarif, Fahrtkostenzuschuss.',
+      'Ausbildung Anlagenmechaniker SHK in Wetzlar – Einstieg 2026 noch möglich. Ohne Lebenslauf in 60 Sek. bewerben. Hilti-Werkzeugset, Vergütung über Tarif.',
     h1: 'Ausbildung Anlagenmechaniker SHK – Einstieg 2026 noch möglich',
     primaryKeyword: 'Ausbildung Anlagenmechaniker SHK Wetzlar',
     secondaryKeywords: [

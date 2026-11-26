@@ -17,7 +17,7 @@ export const ausbildungAnlagenmechanikerShk2027 = defineJob({
   seo: {
     metaTitle: 'Ausbildung Anlagenmechaniker SHK Wetzlar (m/w/d) 2027',
     metaDescription:
-      'Ausbildung Anlagenmechaniker SHK in Wetzlar, Start 2027 nach Absprache: eigenes Hilti-Werkzeugset, Vergütung über Tarif plus Prämien.',
+      'Ausbildung Anlagenmechaniker SHK in Wetzlar, Start 2027. Ohne Lebenslauf in 60 Sek. bewerben. Eigenes Hilti-Werkzeugset, Vergütung über Tarif plus Prämien.',
     h1: 'Ausbildung Anlagenmechaniker SHK – Start 2027 nach Absprache',
     primaryKeyword: 'Ausbildung Anlagenmechaniker SHK Wetzlar 2027',
     secondaryKeywords: [
@@ -27,8 +27,11 @@ export const ausbildungAnlagenmechanikerShk2027 = defineJob({
       'Azubi Anlagenmechaniker Lahn-Dill',
     ],
   },
-  alsoKnownAs: ['Ausbildung Heizungsbauer', 'Ausbildung Installateur', 'Ausbildung Sanitärinstallateur'],
-  summary: 'Ausbildung 2027: Start nach Absprache. In 3,5 Jahren wirst du Anlagenmechaniker SHK, mit eigenem Hilti-Werkzeugset ab Tag 1.',
+  // „Lehrstelle“ und „Ausbildungsplatz“: andere Wörter für dasselbe Angebot, sichtbar unter „Auch gesucht als“ und in der
+  // Kurzbeschreibung (Prüfung Sichtbarkeit, seite5; so heißt auch die Lehrstellenbörse der HWK).
+  alsoKnownAs: ['Ausbildung Heizungsbauer', 'Ausbildung Installateur', 'Ausbildung Sanitärinstallateur', 'Lehrstelle Anlagenmechaniker SHK'],
+  summary:
+    'Ausbildungsplatz 2027 in Wetzlar: Start nach Absprache. In 3,5 Jahren wirst du Anlagenmechaniker SHK, mit eigenem Hilti-Werkzeugset ab Tag 1.',
   intro:
     'In 3,5 Jahren wirst du bei uns Anlagenmechaniker für Sanitär-, Heizungs- und Klimatechnik, an Wärmepumpen und modernen Bädern.',
   tasks: [

@@ -22,10 +22,20 @@ export function fitDescription(...candidates: [string, ...string[]]): string {
 }
 
 const lowerFirst = (text: string) => text.charAt(0).toLowerCase() + text.slice(1);
+const upperFirst = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+
+/**
+ * Stärkste Zusage im Suchtreffer: Fakten noCvNeeded und apply60s, im Wortlaut des Titels von /bewerbung („Bewerben in
+ * 60 Sekunden – ohne Lebenslauf“). Beide gelten für jede Stelle (kein offenFuer; Kopf und JobPosting jeder Stellenseite
+ * sagen es schon). Sie steht in Startseite, /jobs und jeder Stelle vor den Vorteilen (Prüfung Sichtbarkeit, bewerbung6).
+ */
+export const APPLY_OHNE_LEBENSLAUF = `Ohne Lebenslauf in ${FACTS.apply60s.value} Sek. bewerben.`;
+/** Bis zu diesem Zeichen endet die Zusage in jeder Meta-Beschreibung: Am Handy kürzt Google nach rund 120 Zeichen. */
+export const APPLY_ENDE_SPAETESTENS = 120;
 
 const AREA = `${COMPANY.address.city} & Gießen`;
 const PERKS = `${FACTS.vacation30.short}, ${lowerFirst(FACTS.flexibleHours.short)}`;
-const APPLY = `In ${FACTS.apply60s.value} Sek. bewerben.`;
+const APPLY = APPLY_OHNE_LEBENSLAUF;
 
 /**
  * Urlaub und Arbeitszeit für die gezeigten Stellen: ohne Zusatz, wenn beide für jede gelten; sonst „Je nach Stelle …“
@@ -43,14 +53,18 @@ export function perks(liveJobs: readonly Pick<Job, 'category'>[]): { satz: strin
 }
 
 /**
- * Meta description of /jobs, built from the live jobs and the fact registry: names the open job
- * types while they fit into 155 characters, otherwise the same text without the list.
+ * Meta description of /jobs, built from the live jobs and the fact registry: the promise „ohne Lebenslauf in 60 Sek.“
+ * before the perks, names the open job types while they fit into 155 characters, otherwise the same text without the
+ * list.
  */
 export function jobsHubDescription(liveJobs: readonly Pick<Job, 'category'>[]): string {
   const labels = jobCategoryLabels(liveJobs);
   if (labels.length === 0) {
-    return fitDescription(`SHK-Jobs in ${AREA}: Initiativbewerbung jederzeit möglich. ${PERKS}. ${APPLY}`);
+    return fitDescription(`SHK-Jobs in ${AREA}: Initiativbewerbung jederzeit möglich. ${APPLY} ${PERKS}.`);
   }
   const { satz, mitFernmontage } = perks(liveJobs);
-  return fitDescription(`Offene SHK-Jobs in ${AREA}: ${labels.join(', ')}. ${satz}. ${APPLY}`, `Offene SHK-Jobs in ${AREA}. ${mitFernmontage}. ${APPLY}`);
+  return fitDescription(
+    `Offene SHK-Jobs in ${AREA}: ${labels.join(', ')}. ${APPLY} ${satz}.`,
+    `Offene SHK-Jobs in ${AREA}. ${APPLY} ${upperFirst(mitFernmontage)}.`,
+  );
 }

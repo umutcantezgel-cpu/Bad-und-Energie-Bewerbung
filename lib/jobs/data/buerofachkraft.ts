@@ -18,7 +18,7 @@ export const buerofachkraft = defineJob({
   seo: {
     metaTitle: 'Bürofachkraft (m/w/d) Wetzlar – Voll- oder Teilzeit',
     metaDescription:
-      'Bürofachkraft im SHK-Meisterbetrieb in Wetzlar, Voll- oder Teilzeit: Telefon und Termine, Angebote und Rechnungen, Material und Verwaltung.',
+      'Bürofachkraft im SHK-Meisterbetrieb in Wetzlar, Voll- oder Teilzeit. Ohne Lebenslauf in 60 Sek. bewerben. Telefon und Termine, Angebote und Rechnungen.',
     h1: 'Bürofachkraft (m/w/d) in Wetzlar',
     primaryKeyword: 'Bürofachkraft Wetzlar',
     secondaryKeywords: ['Bürokraft Wetzlar', 'Bürojob Teilzeit Wetzlar', 'Büro Handwerksbetrieb Wetzlar'],

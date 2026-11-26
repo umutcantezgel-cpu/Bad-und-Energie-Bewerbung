@@ -15,7 +15,7 @@ export const anlagenmechanikerShk = defineJob({
   seo: {
     metaTitle: 'Anlagenmechaniker SHK (m/w/d) Job Wetzlar – Wärmepumpe',
     metaDescription:
-      'Anlagenmechaniker SHK in Wetzlar: Wärmepumpen & Bäder im 35-km-Umkreis, über Tarif, 30 Tage Urlaub, flexible Arbeitszeiten. In 60 Sek. bewerben.',
+      'Anlagenmechaniker SHK in Wetzlar: Wärmepumpen & Bäder im 35-km-Umkreis. Ohne Lebenslauf in 60 Sek. bewerben. Über Tarif, 30 Tage Urlaub.',
     h1: 'Anlagenmechaniker SHK (m/w/d) in Wetzlar',
     primaryKeyword: 'Anlagenmechaniker SHK Wetzlar',
     secondaryKeywords: [

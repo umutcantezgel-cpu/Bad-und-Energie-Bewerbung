@@ -21,6 +21,7 @@ import {
   type Job,
 } from '../registry';
 import { EURO_AMOUNT, JobSchema, MAX_VALID_DAYS, MONEY_WORDS, defineJob, parseJobDate, type JobInput } from '../schema';
+import { APPLY_ENDE_SPAETESTENS, APPLY_OHNE_LEBENSLAUF, META_DESCRIPTION_MIN } from '@/lib/seo/descriptions';
 
 /** Fester Stichtag nur für die Ablauf-Logik selbst; Invarianten laufen gegen die echte Uhr. */
 const TEST_DATE = new Date('2026-10-08T00:00:00Z');
@@ -216,6 +217,17 @@ describe('Job-Registry', () => {
   it.each(ALL_JOBS.map((job) => [job.id, job] as const))('%s: Meta-Title ≤ 60, Description ≤ 155', (_id, job) => {
     expect(job.seo.metaTitle.length).toBeLessThanOrEqual(60);
     expect(job.seo.metaDescription.length).toBeLessThanOrEqual(155);
+  });
+
+  // Prüfung Sichtbarkeit (bewerbung6): Fakten noCvNeeded und apply60s gelten für jede Stelle (kein offenFuer); die
+  // Zusage steht im Suchtreffer vor dem Abbruch am Handy, die Beschreibung hält die Seobility-Untergrenze.
+  it.each(ALL_JOBS.map((job) => [job.id, job] as const))('%s: „Ohne Lebenslauf in 60 Sek. bewerben.“ früh in der Description', (_id, job) => {
+    const text = job.seo.metaDescription;
+    expect(FACTS.noCvNeeded.offenFuer).toBeUndefined();
+    expect(FACTS.apply60s.offenFuer).toBeUndefined();
+    expect(text).toContain(APPLY_OHNE_LEBENSLAUF);
+    expect(text.indexOf(APPLY_OHNE_LEBENSLAUF) + APPLY_OHNE_LEBENSLAUF.length).toBeLessThanOrEqual(APPLY_ENDE_SPAETESTENS);
+    expect(text.length).toBeGreaterThanOrEqual(META_DESCRIPTION_MIN);
   });
 
   // E-030 (Inhaber 2026-10-14): Lohn auf Anfrage bei allen Stellen; die Prüfung ist so streng wie die alte

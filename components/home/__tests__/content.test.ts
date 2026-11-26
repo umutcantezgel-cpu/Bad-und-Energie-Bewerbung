@@ -17,7 +17,7 @@ import { FACTS, offenBei } from '@/lib/content/facts';
 import { FAQ_ITEMS } from '@/lib/content/faq';
 import { jobCategoryLabels } from '@/lib/jobs/format';
 import { getActiveJobs } from '@/lib/jobs/registry';
-import { META_DESCRIPTION_MAX, META_DESCRIPTION_MIN } from '@/lib/seo/descriptions';
+import { APPLY_ENDE_SPAETESTENS, APPLY_OHNE_LEBENSLAUF, META_DESCRIPTION_MAX, META_DESCRIPTION_MIN } from '@/lib/seo/descriptions';
 
 const words = (text: string) => text.trim().split(/\s+/).length;
 
@@ -35,19 +35,19 @@ describe('home copy', () => {
     expect(description).toContain('flexible Arbeitszeiten');
     expect(description).not.toMatch(/13:30|Feierabend|pünktlich|€|Gehalt/i);
     // Seit 2026-10-14 sind es sieben Stellenarten (fakten-abgleich S2–S5): Die volle Liste passt nicht mehr in 155
-    // Zeichen; dann stehen die ersten drei Arten mit „& mehr“ darin. Mit den vier Arten von vorher steht sie wörtlich.
+    // Zeichen; dann stehen die ersten drei, dann die ersten zwei Arten mit „& mehr“ darin. Mit drei Arten steht sie wörtlich.
     expect(jobCategoryLabels(getActiveJobs())).toHaveLength(7);
     // Büro und Schülerpraktikum sind live: Urlaub und Arbeitszeit nur „je nach Stelle“, wie auf /jobs (Runde 3)
     expect(description).toBe(
-      'SHK-Jobs in Wetzlar: Anlagenmechaniker, Kundendienst, Obermonteur & mehr. Je nach Stelle 30 Tage Urlaub und flexible Arbeitszeiten. In 60 Sek. bewerben.',
+      'SHK-Jobs in Wetzlar: Anlagenmechaniker, Kundendienst & mehr. Ohne Lebenslauf in 60 Sek. bewerben. Je nach Stelle 30 Tage Urlaub und flexible Arbeitszeiten.',
     );
     expect(description).not.toContain(`${FACTS.vacation30.short}, flexible Arbeitszeiten`);
-    // Ohne Stelle einer offenen Kategorie ohne Zusatz (fünf Arten: die volle Liste passt ohne „keine Fernmontage“)
+    // Ohne Stelle einer offenen Kategorie ohne Zusatz (fünf Arten: die ersten drei „& mehr“, ohne „keine Fernmontage“)
     expect(homeDescription(getActiveJobs().filter((job) => !['buero', 'praktikum'].includes(job.category)))).toBe(
-      'SHK-Jobs in Wetzlar: Anlagenmechaniker, Kundendienst, Obermonteur, Ausbildung & Quereinstieg. 30 Tage Urlaub, flexible Arbeitszeiten. In 60 Sek. bewerben.',
+      'SHK-Jobs in Wetzlar: Anlagenmechaniker, Kundendienst, Obermonteur & mehr. Ohne Lebenslauf in 60 Sek. bewerben. 30 Tage Urlaub, flexible Arbeitszeiten.',
     );
-    const vier = (['anlagenmechaniker', 'kundendienst', 'projektleitung', 'ausbildung'] as const).map((category) => ({ category }));
-    expect(homeDescription(vier)).toContain('Anlagenmechaniker, Kundendienst, Obermonteur & Ausbildung');
+    const drei = (['anlagenmechaniker', 'kundendienst', 'ausbildung'] as const).map((category) => ({ category }));
+    expect(homeDescription(drei)).toContain('Anlagenmechaniker, Kundendienst & Ausbildung');
   });
 
   it('layout fallback description names no job, so it cannot outlive a validThrough', () => {
@@ -58,16 +58,35 @@ describe('home copy', () => {
   it('description keeps „keine Fernmontage“ while it fits and drops the list before overflowing', () => {
     const fewer = homeDescription([{ category: 'anlagenmechaniker' }, { category: 'ausbildung' }]);
     expect(fewer).toBe(
-      'SHK-Jobs in Wetzlar: Anlagenmechaniker & Ausbildung. 30 Tage Urlaub, flexible Arbeitszeiten, keine Fernmontage. In 60 Sek. bewerben.',
+      'SHK-Jobs in Wetzlar: Anlagenmechaniker & Ausbildung. Ohne Lebenslauf in 60 Sek. bewerben. 30 Tage Urlaub, flexible Arbeitszeiten, keine Fernmontage.',
     );
     expect(homeDescription([])).toBe(
-      'SHK-Jobs in Wetzlar und 35\u00A0km Umkreis. 30 Tage Urlaub, flexible Arbeitszeiten, keine Fernmontage. In 60 Sek. bewerben, kein Lebenslauf nötig.',
+      'SHK-Jobs in Wetzlar und 35\u00A0km Umkreis. Ohne Lebenslauf in 60 Sek. bewerben. 30 Tage Urlaub, flexible Arbeitszeiten, keine Fernmontage.',
     );
     const categories = ['anlagenmechaniker', 'kundendienst', 'projektleitung', 'ausbildung', 'helfer'] as const;
     const many = homeDescription(categories.map((category) => ({ category })));
     expect(many.length).toBeLessThanOrEqual(META_DESCRIPTION_MAX);
     // Jede Stufe hält auch die Untergrenze des Seobility-Prüfpunkts (e2e/seo.spec.ts).
     for (const text of [fewer, many, homeDescription([])]) expect(text.length).toBeGreaterThanOrEqual(META_DESCRIPTION_MIN);
+  });
+
+  it('description: „Ohne Lebenslauf in 60 Sek. bewerben.“ steht in jeder Stufe vor dem Abbruch am Handy (bewerbung6)', () => {
+    const live = getActiveJobs();
+    const stufen = [
+      live,
+      live.filter((job) => !['buero', 'praktikum'].includes(job.category)),
+      live.filter((job) => job.category === 'buero'),
+      [{ category: 'anlagenmechaniker' }, { category: 'ausbildung' }] as const,
+      (['anlagenmechaniker', 'kundendienst', 'projektleitung', 'ausbildung', 'helfer'] as const).map((category) => ({ category })),
+      [],
+    ];
+    for (const stellen of stufen) {
+      const text = homeDescription(stellen);
+      expect(text, text).toContain(APPLY_OHNE_LEBENSLAUF);
+      expect(text.indexOf(APPLY_OHNE_LEBENSLAUF) + APPLY_OHNE_LEBENSLAUF.length, text).toBeLessThanOrEqual(APPLY_ENDE_SPAETESTENS);
+      // vor den Vorteilen
+      expect(text.indexOf(APPLY_OHNE_LEBENSLAUF), text).toBeLessThan(text.indexOf(FACTS.vacation30.short));
+    }
   });
 
   it('hero lead has at most 30 words and leaves the region to the figures below', () => {

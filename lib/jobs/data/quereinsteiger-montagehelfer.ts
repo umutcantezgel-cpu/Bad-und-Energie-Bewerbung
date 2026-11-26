@@ -16,7 +16,7 @@ export const quereinsteigerMontagehelfer = defineJob({
   seo: {
     metaTitle: 'Quereinsteiger & Montagehelfer SHK Wetzlar (m/w/d)',
     metaDescription:
-      'Quereinstieg ins SHK-Handwerk in Wetzlar: als Montagehelfer mit Führerschein Klasse B, intensiver Einarbeitung und Meisterbegleitung. Jetzt bewerben.',
+      'Quereinstieg ins SHK-Handwerk in Wetzlar als Montagehelfer. Ohne Lebenslauf in 60 Sek. bewerben. Mit Führerschein Klasse B und intensiver Einarbeitung.',
     h1: 'Quereinsteiger und Montagehelfer SHK (m/w/d)',
     primaryKeyword: 'Quereinsteiger SHK Wetzlar',
     secondaryKeywords: ['Montagehelfer Wetzlar', 'Helfer Heizung Sanitär Wetzlar'],

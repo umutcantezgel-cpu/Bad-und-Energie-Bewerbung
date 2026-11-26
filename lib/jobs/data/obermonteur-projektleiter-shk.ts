@@ -18,7 +18,7 @@ export const obermonteurProjektleiterShk = defineJob({
   seo: {
     metaTitle: 'Obermonteur / Projektleiter SHK Job Wetzlar (m/w/d)',
     metaDescription:
-      'Obermonteur / Projektleiter SHK (m/w/d) in Wetzlar: Bäder & Heizungsprojekte eigenverantwortlich leiten, über Tarif, 30 Tage Urlaub. Jetzt bewerben.',
+      'Obermonteur / Projektleiter SHK in Wetzlar: Bäder & Heizungsprojekte leiten. Ohne Lebenslauf in 60 Sek. bewerben. Über Tarif, 30 Tage Urlaub.',
     h1: 'Obermonteur / Projektleiter SHK (m/w/d) in Wetzlar',
     primaryKeyword: 'Obermonteur SHK Wetzlar',
     secondaryKeywords: [

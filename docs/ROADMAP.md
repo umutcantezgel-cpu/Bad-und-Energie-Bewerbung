@@ -478,6 +478,7 @@ Zwei Claude-Sessions arbeiten parallel am selben Repo. Mit dem Owner abgestimmt:
 Muster (Title ≤ 60 Zeichen, Description ≤ 155 Zeichen):
 - Keyword vorne, dazu Ort und (m/w/d).
 - Nur Fakten aus `facts.ts` und den Job-Daten.
+- Descriptions: „Ohne Lebenslauf in 60 Sek. bewerben.“ (Fakten noCvNeeded, apply60s) vor den Vorteilen, fertig bis Zeichen 120 (Abbruch am Handy; Test in lib/jobs/__tests__/registry.test.ts).
 - Das Suchvolumen lässt sich hier nicht messen. Nach dem Launch mit dem Keyword-Planer und der Search Console prüfen und nachschärfen.
 
 | Seite | Title | H1 |
@@ -485,13 +486,13 @@ Muster (Title ≤ 60 Zeichen, Description ≤ 155 Zeichen):
 | Startseite | SHK Jobs Wetzlar: Anlagenmechaniker & Heizungsbauer | SHK-Jobs in Wetzlar. Ehrliches Handwerk. Flexible Arbeitszeiten. |
 | /jobs | Stellenangebote SHK Wetzlar & Gießen – alle offenen Jobs | Offene Stellen in Wetzlar und Umgebung |
 | Anlagenmechaniker | Anlagenmechaniker SHK (m/w/d) Job Wetzlar – Wärmepumpe | Anlagenmechaniker SHK (m/w/d) in Wetzlar |
-| Kundendienst | Kundendiensttechniker Heizung & Wärmepumpe – Wetzlar/Gießen | Kundendiensttechniker SHK / Servicemonteur (m/w/d) |
+| Kundendienst | Kundendiensttechniker Wärmepumpe (m/w/d) Job Wetzlar/Gießen | Kundendiensttechniker SHK / Servicemonteur (m/w/d) |
 | Obermonteur | Obermonteur / Projektleiter SHK Job Wetzlar (m/w/d) | Obermonteur / Projektleiter SHK (m/w/d) in Wetzlar |
 | Ausbildung | Ausbildung Anlagenmechaniker SHK Wetzlar (m/w/d) 2026 | Ausbildung Anlagenmechaniker SHK – Einstieg 2026 noch möglich |
 | /bewerbung | Bewerben in 60 Sekunden – ohne Lebenslauf \| Bad & Energie | (sr-only) Bewerbung bei Bad und Energie |
 
 Beispiel-Description für Anlagenmechaniker (seit E-030 ohne Euro-Betrag):
-> Anlagenmechaniker SHK in Wetzlar: Wärmepumpen & Bäder im 35-km-Umkreis, über Tarif, 30 Tage Urlaub, flexible Arbeitszeiten. In 60 Sek. bewerben.
+> Anlagenmechaniker SHK in Wetzlar: Wärmepumpen & Bäder im 35-km-Umkreis. Ohne Lebenslauf in 60 Sek. bewerben. Über Tarif, 30 Tage Urlaub.
 
 **Strukturierte Daten**
 - Organization, WebSite und LocalBusiness bleiben global.

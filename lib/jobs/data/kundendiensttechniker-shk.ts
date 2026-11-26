@@ -13,10 +13,11 @@ export const kundendiensttechnikerShk = defineJob({
   titleShy: 'Kunden\u00ADdienst\u00ADtechniker SHK / Service\u00ADmonteur (m/w/d)',
   shortTitle: 'Kundendiensttechniker',
   seo: {
-    metaTitle: 'Kundendiensttechniker Heizung & Wärmepumpe – Wetzlar/Gießen',
+    metaTitle: 'Kundendiensttechniker Wärmepumpe (m/w/d) Job Wetzlar/Gießen',
     metaDescription:
-      'Kundendiensttechniker SHK (m/w/d) in Wetzlar: Wärmepumpen-Service, über Tarif, eigenes Servicefahrzeug, kein Wochenend-Notdienst. In 60 Sek. bewerben.',
-    // V6-G2: Wörter des metaTitle („Heizung“, „Wärmepumpe“, Ort) in der h1; title (JobPosting) bleibt.
+      'Kundendiensttechniker SHK in Wetzlar für Wärmepumpen. Ohne Lebenslauf in 60 Sek. bewerben. Über Tarif, eigenes Servicefahrzeug, kein Wochenend-Notdienst.',
+    // V6-G2: Wörter des metaTitle („Wärmepumpe“, „(m/w/d)“, Ort) in der h1, „Job“ im Ablauf „In 3 Schritten zu deinem
+    // neuen Job“; title (JobPosting) bleibt. „(m/w/d)“ und „Job“ zeigen im Suchtreffer: Stellenanzeige (ROADMAP §10).
     h1: 'Kundendiensttechniker Heizung & Wärmepumpe (m/w/d) in Wetzlar',
     primaryKeyword: 'Kundendiensttechniker Wetzlar',
     secondaryKeywords: [
