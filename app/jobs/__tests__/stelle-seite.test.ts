@@ -2,7 +2,9 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import JobPage from '@/app/jobs/[slug]/page';
 import { INITIATIVE_APPLY_PATH } from '@/lib/apply/params';
+import { LOHN_WHATSAPP_LINK, lohnWhatsAppNachricht } from '@/components/jobs/stelle/stelle-text';
 import { jobPath } from '@/lib/jobs/format';
+import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
 import { getActiveJobs, getJobById } from '@/lib/jobs/registry';
 
 const azubi = getJobById('ausbildung-anlagenmechaniker-shk')!;
@@ -59,6 +61,26 @@ describe('/jobs/[slug]: SEO im sichtbaren Text (V6-G2)', () => {
     const titel = job.seo.metaTitle.match(/[\p{L}\p{N}]{2,}/gu) ?? [];
     for (const wort of titel.filter((w) => !/^(m|w|d)$/.test(w))) expect(sichtbar.has(klein(wort)), `${job.id}: ${wort}`).toBe(true);
     expect(alle.length, job.id).toBeGreaterThanOrEqual(650);
+  });
+});
+
+describe('/jobs/[slug]: Lohnfrage per WhatsApp (Prüfung Sichtbarkeit, bewerbung5)', () => {
+  const offen = getActiveJobs().filter((job) => job.status === 'published');
+
+  it.each(offen.map((job) => [job.id, job] as const))('%s: im Kopf und unter der Lohn-Frage, ein Ankertext mit genau einem Ziel', async (_id, job) => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-14T12:00:00Z'));
+    const html = await render(job.slug);
+    const ziele = [...html.matchAll(/<a\b[^>]*href="([^"]+)"[^>]*>([^<]*)<span class="sr-only"> \(öffnet in neuem Tab\)<\/span><\/a>/g)]
+      .filter((m) => m[2] === LOHN_WHATSAPP_LINK)
+      .map((m) => m[1].replaceAll('&amp;', '&'));
+    if (job.pay === 'auf-anfrage') {
+      expect(ziele).toHaveLength(2);
+      expect(new Set(ziele)).toEqual(new Set([buildWhatsAppUrl(lohnWhatsAppNachricht(job))]));
+    } else {
+      expect(ziele).toHaveLength(0);
+      expect(html).not.toContain(LOHN_WHATSAPP_LINK);
+    }
   });
 });
 

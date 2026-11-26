@@ -3,6 +3,7 @@ import { RohrAkzent } from '@/components/zeichnung/RohrAkzent';
 import { JOB_FAQ_IDS, getFaqItems } from '@/lib/content';
 import type { Job } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
+import { LohnFrageLink } from './LohnFrageLink';
 
 export interface JobFaqProps {
   job: Job;
@@ -12,7 +13,8 @@ export interface JobFaqProps {
 /**
  * Die Fragen zur Art der Stelle (JOB_FAQ_IDS, Plan §C5: Bezahlung, Berufsschule, Quereinstieg …) als natives <details>,
  * Kopf wie die Abschnitte der Startseite (Etikett, h2 in Bricolage und Marken-Navy); ab lg Kopf links, Fragen rechts.
- * Bewusst ohne FAQPage-Markup: FAQPage steht nur auf der Startseite (ROADMAP §10).
+ * Bewusst ohne FAQPage-Markup: FAQPage steht nur auf der Startseite (ROADMAP §10). Unter der Antwort zur Bezahlung
+ * (die eine „lohn…“-Frage je Art) der Weg zur Frage: „Lohn per WhatsApp erfragen“, dasselbe Ziel wie im Kopf.
  */
 export function JobFaq({ job, className }: JobFaqProps) {
   const items = getFaqItems(JOB_FAQ_IDS[job.category]);
@@ -29,6 +31,11 @@ export function JobFaq({ job, className }: JobFaqProps) {
         {items.map((item) => (
           <Disclosure key={item.id} name={`faq-${job.id}`} summary={item.question}>
             <p className="max-w-prose">{item.answer}</p>
+            {item.id.startsWith('lohn') ? (
+              <p className="mt-2">
+                <LohnFrageLink job={job} />
+              </p>
+            ) : null}
           </Disclosure>
         ))}
       </div>

@@ -3,6 +3,7 @@ import { FACTS } from '@/lib/content/facts';
 import { payLabel } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/registry';
 import { cn } from '@/lib/utils/cn';
+import { LohnFrageLink } from './LohnFrageLink';
 
 export interface SalaryCardProps {
   job: Job;
@@ -24,8 +25,8 @@ export function lohnZusatz(job: Pick<Job, 'pay' | 'benefitFactIds' | 'packageExt
 /**
  * „Lohn auf Anfrage“ im Navy-Panel des Stellenkopfs (E-030, Plan §A: ein ruhiger Block statt des Heizkreises um die
  * Gehaltsspanne): Etikett, „Lohn auf Anfrage“ in Bricolage und darunter, was die Stelle belegt („Über Tarif plus
- * Urlaubs- und Weihnachtsgeld“). Kein Betrag, kein Maß in Martian Mono. Das Schülerpraktikum sagt nichts zu Geld:
- * dann rendert der Block nichts.
+ * Urlaubs- und Weihnachtsgeld“), dann der Weg zur Frage: „Lohn per WhatsApp erfragen“ (LohnFrageLink). Kein Betrag,
+ * kein Maß in Martian Mono. Das Schülerpraktikum sagt nichts zu Geld: dann rendert der Block nichts.
  */
 export function SalaryCard({ job, size = 'gross', className }: SalaryCardProps) {
   const label = payLabel(job);
@@ -40,6 +41,9 @@ export function SalaryCard({ job, size = 'gross', className }: SalaryCardProps) 
       <p className="text-etikett text-ink-2">Bezahlung</p>
       <p className={cn('text-brand', size === 'gross' ? 'text-title-1' : 'text-title-2')}>{label}</p>
       {zusatz ? <p className="text-body text-ink">{zusatz}</p> : null}
+      <p>
+        <LohnFrageLink job={job} />
+      </p>
     </div>
   );
 }

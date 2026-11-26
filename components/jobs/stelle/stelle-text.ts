@@ -5,6 +5,7 @@
  */
 import type { IconName } from '@/components/icons';
 import type { SeitenkopfMass } from '@/components/seitenkopf';
+import { WHATSAPP_GREETING } from '@/lib/apply/whatsapp-message';
 import { COMPANY } from '@/lib/content/company';
 import { FACTS, type FactId } from '@/lib/content/facts';
 import { employmentLabel } from '@/lib/jobs/format';
@@ -104,6 +105,19 @@ export function kopfZeichnung(job: Pick<Job, 'category'>): KopfZeichnung {
 
 /** Ansprechpartner der Stellenseite (Kontaktkarte neben dem Flow). */
 export const ANSPRECHPARTNER = { name: COMPANY.managingDirector.name, role: COMPANY.managingDirector.title } as const;
+
+/** Textlink zur Lohnfrage unter „Lohn auf Anfrage“ im Kopf und unter der Antwort der Lohn-Frage (Prüfung Sichtbarkeit, bewerbung5). */
+export const LOHN_WHATSAPP_LINK = 'Lohn per WhatsApp erfragen';
+
+/**
+ * Vorbereitete WhatsApp-Nachricht zur Lohnfrage, nach dem Muster der Themenseite „Bezahlung und Extras“
+ * (lib/themen/text.ts: „ich habe eine Frage zum Lohn bei Bad und Energie“), mit der Stelle wie in der Kontaktkarte:
+ * „… zum Lohn für die Stelle als Kundendiensttechniker.“, „… für die Ausbildung zum Anlagenmechaniker SHK.“
+ */
+export function lohnWhatsAppNachricht(job: Pick<Job, 'category' | 'title' | 'shortTitle'>): string {
+  const stelle = job.category === 'ausbildung' ? `die ${job.title.replace(/\s*\(m\/w\/d\)\s*$/, '')}` : `die Stelle als ${job.shortTitle}`;
+  return `${WHATSAPP_GREETING} ich habe eine Frage zum Lohn für ${stelle}.`;
+}
 
 /**
  * Icons der Vorteile (components/icons): je Fakt ein passendes Zeichen der eigenen Familie, sonst der Haken.
