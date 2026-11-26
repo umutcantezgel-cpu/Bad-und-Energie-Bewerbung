@@ -200,8 +200,6 @@ const lowerFirst = (text: string) => text.charAt(0).toLowerCase() + text.slice(1
 /** Straße des Firmensitzes für Fließtext: „Siegmund-Hiepe-Straße“ (aus der Fakten-Adresse, ohne Hausnummer). */
 const STREET = SITE_CONFIG.headquarters.streetAddress.replace(/\s*\d+\w*$/, '').replace(/Str\.$/, 'Straße');
 const HQ_CITY = SITE_CONFIG.headquarters.addressLocality;
-/** Ansprechpartner für WhatsApp (SITE_CONFIG.founder). */
-const CONTACT_NAME = `${SITE_CONFIG.founder.givenName} ${SITE_CONFIG.founder.familyName}`;
 const NEIGHBOR_COUNT = 4;
 const NEIGHBOR_WORD = 'vier';
 /** Ab so wenig Kilometern unter 35 km Straße gehört ein Ort zu den entferntesten mit eigener Seite. */
@@ -251,7 +249,7 @@ function kandidaten(anfaenge: readonly string[], jobs: readonly Job[]): [string,
 }
 
 /** Satzanfang der WhatsApp-Nachricht, wie DEFAULT_WHATSAPP_MESSAGE in lib/utils/whatsapp-utils.ts. */
-export const GREETING_START = `Guten Tag Herr ${SITE_CONFIG.founder.familyName}, `;
+export const GREETING_START = 'Guten Tag, ';
 export const GREETING_END = 'und interessiere mich für eine Stelle bei Bad und Energie.';
 
 /** Vorbereitete WhatsApp-Nachricht der Ortsseite. */
@@ -1431,7 +1429,7 @@ export function kreisWhatsappGreeting(kreis: Pick<Kreis, 'dative'>): string {
 }
 
 /** Kontakt der Kreis-Hubs: wie auf den Ortsseiten, ohne Ortsnamen in der Nachricht. */
-const KREIS_KONTAKT_TEXT = `Lieber erst fragen? Schreib ${CONTACT_NAME} per WhatsApp oder ruf an.`;
+const KREIS_KONTAKT_TEXT = 'Lieber erst fragen? Schreib uns per WhatsApp oder ruf an.';
 
 /** Streckenstufe als Text: „bis 15 km“, „16 bis 25 km“, „26 bis 35 km“ (Straße, siehe roadBandKm). */
 export function roadBandLabel(bandKm: number): string {

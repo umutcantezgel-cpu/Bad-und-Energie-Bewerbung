@@ -92,6 +92,7 @@ export const UNVERBINDLICH = ['Unverbindlich', 'Kein Risiko', 'Keine Verpflichtu
  */
 export const KONTAKT = Object.freeze({
   etikett: 'Persönlicher Austausch',
-  titel: `Sprich direkt mit ${COMPANY.managingDirector.name}`,
-  rolle: COMPANY.managingDirector.title,
+  // Neutral, seit WhatsApp und E-Mail an die Kontaktwege des Inhabers gehen (26.11.2026)
+  titel: 'Sprich direkt mit uns',
+  rolle: 'Anruf, WhatsApp oder E-Mail, wie es dir passt.',
 });

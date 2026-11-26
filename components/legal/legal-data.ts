@@ -16,8 +16,9 @@ export const LEGAL_ENTITY = Object.freeze({
   contentResponsible: COMPANY.managingDirector.name,
   phone: COMPANY.phone,
   fax: COMPANY.fax,
-  email: COMPANY.email,
-  emailHref: COMPANY.emailHref,
+  // Impressum und Datenschutz nennen die E-Mail des Betriebs, nicht die Kontaktadresse (Inhaber 26.11.2026)
+  email: COMPANY.rechtsEmail,
+  emailHref: COMPANY.rechtsEmailHref,
   website: COMPANY.website,
   registerCourt: COMPANY.register.court,
   registerNumber: COMPANY.register.number,

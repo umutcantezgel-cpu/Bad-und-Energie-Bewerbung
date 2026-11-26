@@ -192,8 +192,8 @@ describe('applicant confirmation', () => {
     expect(mail.text).toContain('2. Kennenlernen am Firmensitz');
     // Anrufe über das Büro, WhatsApp über die Mobilnummer (lib/data/contact.ts).
     expect(mail.text).toContain('Telefon: 06441 42956');
-    expect(mail.text).toContain('WhatsApp: 0160 8834290');
-    expect(mail.text).toContain('https://api.whatsapp.com/send?phone=491608834290');
+    expect(mail.text).toContain('WhatsApp: 0176 41195301');
+    expect(mail.text).toContain('https://api.whatsapp.com/send?phone=4917641195301');
     expect(mail.text).not.toMatch(/WhatsApp: 06441 42956|phone=49644142956/);
     expectClean(mail.html);
     expectClean(mail.text);

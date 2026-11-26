@@ -10,7 +10,7 @@ export interface LohnFrageLinkProps {
 
 /**
  * „Lohn per WhatsApp erfragen“ (Prüfung Sichtbarkeit, bewerbung5): Wo „Lohn auf Anfrage“ steht, führt ein Textlink
- * direkt zur Frage, an die Nummer der Seite (Sabri Demir, wie die Kontaktkarte), nicht an die des schwebenden Knopfs.
+ * direkt zur Frage, an die eine WhatsApp-Nummer der Seite (lib/data/contact.ts), wie die Kontaktkarte.
  * Neuer Tab wie die übrigen WhatsApp-Links (target, rel, Zusatz für Screenreader). Kein Betrag, keine neue Aussage;
  * das Schülerpraktikum sagt nichts zu Geld, dann kein Link. Nur Server: die Nummer bleibt aus Client-Inseln heraus.
  * Kopf und FAQ einer Stellenseite bauen dieselbe Adresse, so hat der Ankertext auf der Seite genau ein Ziel.

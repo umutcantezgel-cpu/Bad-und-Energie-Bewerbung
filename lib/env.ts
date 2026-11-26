@@ -6,7 +6,8 @@ import { z } from 'zod';
 // (kein Modul-Cache), damit Vercel-Runtime-Env und Tests zuverlässig greifen.
 
 export const DEFAULT_APP_URL = 'https://karriere.bad-energie.de';
-const DEFAULT_NOTIFICATION_EMAIL = 'info@bad-energie.de';
+/** Empfänger der Bewerbungen, wenn in Vercel nichts gesetzt ist (Inhaber 26.11.2026: „alles an umutcan.tezgel@“). */
+const DEFAULT_NOTIFICATION_EMAIL = 'umutcan.tezgel@bad-energie.de';
 /**
  * Absender, wenn RESEND_FROM_EMAIL fehlt. karriere.bad-energie.de ist die einzige Domain mit
  * Resend-Einträgen im DNS (resend._domainkey und send.karriere.bad-energie.de, Region eu-west-1;
@@ -159,7 +160,7 @@ export interface EmailConfig {
 
 let reportedEmailConfig = false;
 
-/** CONTACT_NOTIFICATION_EMAIL, sonst der alte Name RESEND_TO_EMAIL, sonst info@bad-energie.de. */
+/** CONTACT_NOTIFICATION_EMAIL, sonst der alte Name RESEND_TO_EMAIL, sonst umutcan.tezgel@bad-energie.de. */
 function notificationRecipients(): string[] {
   return readVar('CONTACT_NOTIFICATION_EMAIL').value ?? readVar('RESEND_TO_EMAIL').value ?? [DEFAULT_NOTIFICATION_EMAIL];
 }

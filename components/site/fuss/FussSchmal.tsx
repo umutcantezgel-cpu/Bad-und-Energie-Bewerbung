@@ -7,6 +7,7 @@ import { AgenturNennung } from './AgenturNennung';
 import { OsmNennung } from './OsmNennung';
 import { Ziffern } from './Ziffern';
 import styles from './fuss.module.css';
+import { EmailText } from '../EmailText';
 
 /**
  * Schmaler Fuß im Fokusmodus (/bewerbung, Danke, Mappe): dasselbe Navy-Band mit dem Leitungspaar, aber ohne
@@ -31,7 +32,7 @@ export function FussSchmal({ year }: { year: number }) {
           {fussKontakte({ fokus: true }).map((k) => (
             <li key={k.id}>
               <FussLink href={k.href} icon={k.icon} extern={k.extern} vorsatz={k.vorsatz}>
-                {k.id === 'phone' ? <span className="ziffer">{k.text}</span> : k.text}
+                {k.id === 'phone' ? <span className="ziffer">{k.text}</span> : k.id === 'email' ? <EmailText adresse={k.text} /> : k.text}
               </FussLink>
             </li>
           ))}

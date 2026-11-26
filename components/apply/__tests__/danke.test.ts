@@ -149,7 +149,7 @@ describe('Erfolgszustand (E-START-020, Register kreis-schliessen)', () => {
   it('nennt das Büro für Anrufe und die Mobilnummer für WhatsApp, die Kontaktkarte trägt beide', () => {
     const html = erfolg();
     expect(plain(html)).toContain(
-      'Speichere unsere Nummern, damit du uns erkennst, wenn wir uns melden: 06441 42956 für Anrufe, 0160 8834290 für WhatsApp.',
+      'Speichere unsere Nummern, damit du uns erkennst, wenn wir uns melden: 06441 42956 für Anrufe, 0176 41195301 für WhatsApp.',
     );
     // Echte Datei statt data:-Link (iPhone, Android); Inhalt prüft app/__tests__/vcf.test.ts
     expect(html).toContain('href="/bad-und-energie.vcf"');

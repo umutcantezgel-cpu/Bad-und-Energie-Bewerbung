@@ -2,12 +2,11 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { Attribution } from '@/lib/applications/schema';
 import { bearbeiteHref, beobachteLinks, linkArt, type BeobachterDokument } from '@/lib/attribution/klick';
-import { WHATSAPP_KNOPF } from '@/lib/data/contact';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
 
 const ORIGIN = 'https://karriere.bad-energie.de';
 const INDEED: Attribution = { utmSource: 'indeed', utmMedium: 'jobboard', landingPath: '/jobs/anlagenmechaniker-shk-wetzlar' };
-const WA = buildWhatsAppUrl('Guten Tag Herr Demir, ich möchte mich bei Bad und Energie bewerben.');
+const WA = buildWhatsAppUrl('Guten Tag, ich möchte mich bei Bad und Energie bewerben.');
 const textVon = (href: string) => new URL(href).searchParams.get('text');
 
 describe('bearbeiteHref: was der Browser öffnet', () => {
@@ -22,8 +21,8 @@ describe('bearbeiteHref: was der Browser öffnet', () => {
 
   it('WhatsApp an unsere Nummer bekommt den sichtbaren Code als letzte Zeile, im selben Linkformat', () => {
     const neu = bearbeiteHref(WA, INDEED, ORIGIN);
-    expect(neu).toMatch(/^https:\/\/api\.whatsapp\.com\/send\?phone=491608834290&text=/);
-    expect(textVon(neu)).toBe('Guten Tag Herr Demir, ich möchte mich bei Bad und Energie bewerben.\n– W-IND');
+    expect(neu).toMatch(/^https:\/\/api\.whatsapp\.com\/send\?phone=4917641195301&text=/);
+    expect(textVon(neu)).toBe('Guten Tag, ich möchte mich bei Bad und Energie bewerben.\n– W-IND');
     // Zweites Antippen: derselbe Link, kein zweiter Code
     expect(bearbeiteHref(neu, INDEED, ORIGIN)).toBe(neu);
     // Ohne Signal zählt die Website selbst: W-DIR
@@ -34,8 +33,8 @@ describe('bearbeiteHref: was der Browser öffnet', () => {
   it('fremde Nummern, WhatsApp ohne Text, Telefon, E-Mail und fremde Seiten bleiben unberührt', () => {
     for (const href of [
       buildWhatsAppUrl('Hallo', '+49 151 2345678'),
-      'https://api.whatsapp.com/send?phone=491608834290',
-      'https://wa.me/491608834290?text=Hallo',
+      'https://api.whatsapp.com/send?phone=4917641195301',
+      'https://wa.me/4917641195301?text=Hallo',
       'tel:+49644142956',
       'mailto:info@bad-energie.de?subject=Bewerbungsunterlagen',
       'https://www.bad-energie.de/',
@@ -48,12 +47,12 @@ describe('bearbeiteHref: was der Browser öffnet', () => {
     expect(linkArt('tel:+49644142956')).toBe('telefon');
     expect(linkArt(WA)).toBe('whatsapp');
     expect(linkArt(buildWhatsAppUrl('Hallo', '+49 151 2345678'))).toBe('sonst');
-    // Der schwebende Knopf schreibt an die Nummer des Inhabers (WHATSAPP_KNOPF): Sie zählt wie die Nummer der Seite.
-    expect(linkArt(buildWhatsAppUrl('Hallo', WHATSAPP_KNOPF.e164))).toBe('whatsapp');
+    // Die frühere Nummer der Seite zählt nicht mehr als unsere (seit 26.11.2026 die Nummer des Inhabers).
+    expect(linkArt(buildWhatsAppUrl('Hallo', '+491608834290'))).toBe('sonst');
   });
 
-  it('der Link des schwebenden Knopfs bekommt den Code und behält seine Nummer', () => {
-    const knopf = buildWhatsAppUrl('Hallo, ich habe eine Frage.', WHATSAPP_KNOPF.e164);
+  it('ein WhatsApp-Link mit eigenem Text bekommt den Code und behält seine Nummer', () => {
+    const knopf = buildWhatsAppUrl('Hallo, ich habe eine Frage.');
     const neu = bearbeiteHref(knopf, INDEED, ORIGIN);
     expect(neu).toMatch(/^https:\/\/api\.whatsapp\.com\/send\?phone=4917641195301&text=/);
     expect(textVon(neu)).toMatch(/^Hallo, ich habe eine Frage\./);

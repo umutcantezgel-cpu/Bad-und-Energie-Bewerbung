@@ -126,8 +126,9 @@ export function getResendClient(): {
   toEmails: string[];
   /**
    * Antwortadresse aller Mails, deren „Antworten“ beim Betrieb ankommen soll (Eingangsbestätigung, Ergänzung,
-   * Team-Mail ohne Bewerber-E-Mail): immer info@bad-energie.de (COMPANY.email), unabhängig von Reihenfolge und
-   * Inhalt von CONTACT_NOTIFICATION_EMAIL. Inhaber 27.10.2026 (M-029): „immer nur über info@bad-energie.de“.
+   * Team-Mail ohne Bewerber-E-Mail): immer die Kontaktadresse COMPANY.email, unabhängig von Reihenfolge und Inhalt
+   * von CONTACT_NOTIFICATION_EMAIL. Seit 26.11.2026 umutcan.tezgel@bad-energie.de (Inhaber: „alles an
+   * umutcan.tezgel@bad-energie.de“), vorher info@bad-energie.de (M-029).
    */
   replyToEmail: string;
   isConfigured: boolean;
@@ -297,7 +298,7 @@ function tagValue(value: string): string {
 
 /**
  * Bewerbung: Benachrichtigung ans Team an alle Adressen aus CONTACT_NOTIFICATION_EMAIL (Reply-To = Bewerber-E-Mail,
- * sonst info@bad-energie.de: die Absenderadresse hat kein Postfach), danach die Eingangsbestätigung, aber nur wenn die Team-Mail angenommen wurde, eine E-Mail
+ * sonst umutcan.tezgel@bad-energie.de: die Absenderadresse hat kein Postfach), danach die Eingangsbestätigung, aber nur wenn die Team-Mail angenommen wurde, eine E-Mail
  * angegeben ist und kein Spamverdacht besteht (die Adresse ist ungeprüft). Erfolg = Team-Mail angenommen.
  */
 export async function dispatchApplicationEmails(
@@ -343,7 +344,7 @@ export async function dispatchApplicationEmails(
       settle(() =>
         sendEmail({
           ...confirmationMail,
-          // Antworten der Bewerber gehen immer an info@bad-energie.de, nie an eine weitere Adresse der Liste.
+          // Antworten der Bewerber gehen immer an die Kontaktadresse (umutcan.tezgel@bad-energie.de), nie an eine weitere Adresse der Liste.
           replyTo: config.replyToEmail,
           tags: [{ name: 'category', value: 'application_confirmation' }, ...tags],
           idempotencyKey: stableIdempotencyKey(options, 'user', [confirmationMail.to, fingerprint]),
@@ -367,7 +368,7 @@ export async function dispatchApplicationEmails(
 
 /**
  * Ergänzung zu einer Bewerbung: eine Mail ans Team mit der Bewerbungsnummer im Betreff. „Antworten“ geht an
- * info@bad-energie.de (die Absenderadresse hat kein Postfach). Der Idempotency-Key hängt am Inhalt der Ergänzung
+ * umutcan.tezgel@bad-energie.de (die Absenderadresse hat kein Postfach). Der Idempotency-Key hängt am Inhalt der Ergänzung
  * (options.idempotencyKey = „ergaenzung:<Inhalts-Hash>“, normalizeFollowUp) und an den Empfängern, nicht am HTML.
  */
 export async function dispatchApplicationFollowUpEmail(

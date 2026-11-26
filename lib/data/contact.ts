@@ -11,23 +11,14 @@ export const CONTACT_PHONE = Object.freeze({
 });
 
 /**
- * Einzige WhatsApp-Nummer (Mobil, Angabe des Inhabers vom 2026-10-10). Gilt nur für WhatsApp (Links,
+ * Einzige WhatsApp-Nummer (Mobil). Seit 26.11.2026 die Nummer des Inhabers (Anweisung: „alle WhatsApp-Wege auf meine
+ * Nummer umstellen“); vorher 0160 8834290 (Angabe vom 2026-10-10). Gilt nur für WhatsApp (Links, schwebender Knopf,
  * Mobilzeile der vCard): Anrufe, Impressum, JSON-LD und die Bürozeile der vCard bleiben bei CONTACT_PHONE.
- * Anzeige nach DIN 5008.
+ * Die Texte nennen keinen Namen als Empfänger („schreib uns“), die Anrede lautet „Guten Tag,“. Anzeige nach DIN 5008.
  */
 export const WHATSAPP = Object.freeze({
-  display: '0160 8834290',
-  e164: '+491608834290',
-});
-
-export const WHATSAPP_NUMBER = WHATSAPP.e164;
-
-/**
- * Nummer hinter dem schwebenden WhatsApp-Knopf (der Ball des Helfers), Anweisung des Inhabers vom 26.11.2026: seine
- * eigene Mobilnummer statt der des Chefs. Alle übrigen WhatsApp-Links (Kopf, Leiste, Fuß, Bewerbungsweg, vCard)
- * bleiben bei WHATSAPP. Anzeige nach DIN 5008.
- */
-export const WHATSAPP_KNOPF = Object.freeze({
   display: '0176 41195301',
   e164: '+4917641195301',
 });
+
+export const WHATSAPP_NUMBER = WHATSAPP.e164;

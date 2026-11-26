@@ -3,6 +3,7 @@ import { Rohrklammer } from '@/components/zeichnung';
 import { COMPANY } from '@/lib/content/company';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
 import { cn } from '@/lib/utils/cn';
+import { EmailText } from './EmailText';
 import styles from './fuss/kontakt.module.css';
 import { OpeningHoursText } from './OpeningHoursText';
 
@@ -74,7 +75,7 @@ export function ContactOptions({ variant = 'card', whatsappMessage, person, clas
                 data-motion="druck"
               >
                 <Icon name={icon} size="md" className="text-brand" />
-                <span className={cn(id === 'phone' && 'ziffer')}>{id === 'whatsapp' ? label : value}</span>
+                <span className={cn(id === 'phone' && 'ziffer')}>{id === 'whatsapp' ? label : id === 'email' ? <EmailText adresse={value} /> : value}</span>
                 {id === 'phone' && <span className="sr-only"> anrufen</span>}
                 {external && <span className="sr-only">{NEW_TAB_HINT}</span>}
               </a>
@@ -103,11 +104,13 @@ export function ContactOptions({ variant = 'card', whatsappMessage, person, clas
               <span className="text-etikett text-ink-2">{label}</span>
               <span
                 className={cn(
-                  'truncate text-body font-medium text-ink underline-offset-4 group-hover:underline',
+                  // Die lange Kontaktadresse bricht nach dem „@“ um statt abgeschnitten zu werden (EmailText)
+                  id === 'email' ? 'min-w-0' : 'truncate',
+                  'text-body font-medium text-ink underline-offset-4 group-hover:underline',
                   id === 'phone' && 'ziffer',
                 )}
               >
-                {value}
+                {id === 'email' ? <EmailText adresse={value} /> : value}
               </span>
             </span>
             {external && <span className="sr-only">{NEW_TAB_HINT}</span>}

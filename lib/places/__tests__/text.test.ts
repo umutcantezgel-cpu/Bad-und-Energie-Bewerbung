@@ -247,9 +247,9 @@ describe('Ortsseite: Abschnitte', () => {
 
   it('Kontakt: WhatsApp-Gruß mit Ort, im Wortlaut der Standardnachricht', () => {
     expect(whatsappGreeting({ name: 'Aßlar' })).toBe(
-      'Guten Tag Herr Demir, ich komme aus Aßlar und interessiere mich für eine Stelle bei Bad und Energie.',
+      'Guten Tag, ich komme aus Aßlar und interessiere mich für eine Stelle bei Bad und Energie.',
     );
-    expect(DEFAULT_WHATSAPP_MESSAGE.startsWith('Guten Tag Herr Demir, ')).toBe(true);
+    expect(DEFAULT_WHATSAPP_MESSAGE.startsWith('Guten Tag, ')).toBe(true);
     expect(DEFAULT_WHATSAPP_MESSAGE.endsWith('interessiere mich für eine Stelle bei Bad und Energie.')).toBe(true);
     expect(page('lich').whatsappGreeting).toContain('ich komme aus Lich');
     // Der sichtbare Text zitiert genau das Stück der Nachricht, das den Ort nennt; den Namen trägt der Kontaktblock.

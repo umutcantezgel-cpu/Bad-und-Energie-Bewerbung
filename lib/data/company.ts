@@ -14,6 +14,7 @@ export interface CompanyData {
     link: string;
   };
   email: string;
+  rechtsEmail: string;
   hwk: string;
   innung: string;
   handelsregister: string;
@@ -46,7 +47,10 @@ export const companyData: CompanyData = {
     formatted: '(06441) 42956',
     link: '+49644142956',
   },
-  email: 'info@bad-energie.de',
+  // Kontakt-E-Mail aller Wege für Bewerber (Links, vCard, Mails, llms.txt): Inhaber 26.11.2026
+  email: 'umutcan.tezgel@bad-energie.de',
+  // E-Mail des Betriebs für Impressum, Datenschutz und die Firmenangaben im Schema (bleibt, Inhaber 26.11.2026)
+  rechtsEmail: 'info@bad-energie.de',
   hwk: 'Handwerkskammer Wiesbaden',
   innung: 'Innung Sanitär-, Heizungs- und Klimatechnik Lahn-Dill',
   handelsregister: 'HRB 2449 Amtsgericht Wetzlar',

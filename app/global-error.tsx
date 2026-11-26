@@ -10,7 +10,7 @@ import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
  */
 
 const WHATSAPP_HREF = buildWhatsAppUrl(
-  'Guten Tag Herr Demir, auf der Karriereseite ist ein technischer Fehler aufgetreten. Ich melde mich deshalb direkt.',
+  'Guten Tag, auf der Karriereseite ist ein technischer Fehler aufgetreten. Ich melde mich deshalb direkt.',
 );
 
 const styles = {

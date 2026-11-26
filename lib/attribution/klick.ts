@@ -1,5 +1,5 @@
 import type { Attribution } from '@/lib/applications/schema';
-import { WHATSAPP_KNOPF, WHATSAPP_NUMBER } from '@/lib/data/contact';
+import { WHATSAPP_NUMBER } from '@/lib/data/contact';
 import { buildWhatsAppUrl, mitHerkunftscode } from '@/lib/utils/whatsapp-utils';
 import { deriveChannel, HERKUNFT_CODES } from './channel';
 import { sendeEreignis, stelleAusAdresse } from './ereignisse';
@@ -26,15 +26,14 @@ import { ereignisseAktiv } from './schalter';
 
 export type LinkArt = 'whatsapp' | 'telefon' | 'sonst';
 
-/** Unsere Nummern: die der Seite und die des schwebenden Knopfs (lib/data/contact.ts). */
-const WHATSAPP_ZIFFERN: ReadonlySet<string> = new Set([WHATSAPP_NUMBER, WHATSAPP_KNOPF.e164].map((nummer) => nummer.replace(/\D/g, '')));
+const WHATSAPP_ZIFFERN = WHATSAPP_NUMBER.replace(/\D/g, '');
 
-/** WhatsApp-Link an eine unserer Nummern (api.whatsapp.com/send?phone=…); andere Nummern bleiben unberührt. */
+/** WhatsApp-Link an unsere Nummer (api.whatsapp.com/send?phone=…); andere Nummern bleiben unberührt. */
 function whatsappUrl(href: string): URL | null {
   try {
     const url = new URL(href);
     const nummer = url.searchParams.get('phone')?.replace(/\D/g, '');
-    return url.protocol === 'https:' && url.hostname === 'api.whatsapp.com' && url.pathname === '/send' && nummer !== undefined && WHATSAPP_ZIFFERN.has(nummer) ? url : null;
+    return url.protocol === 'https:' && url.hostname === 'api.whatsapp.com' && url.pathname === '/send' && nummer === WHATSAPP_ZIFFERN ? url : null;
   } catch {
     return null;
   }

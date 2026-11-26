@@ -20,7 +20,7 @@ export interface InitiativbandProps {
  * Initiativband der Stellenliste (Navy, wie das Schlussband der Startseite): links „Initiativ bewerben“ mit
  * der roten Hauptaktion dieser Ansicht, in die Vorlauf und Rücklauf münden (seit E-031 beginnen sie rund neben der
  * Überschrift); rechts der persönliche
- * Draht zu Sabri Demir mit Telefon, WhatsApp und E-Mail (feste Reihenfolge, WCAG 3.2.6).
+ * Draht zu uns mit Telefon, WhatsApp und E-Mail (feste Reihenfolge, WCAG 3.2.6).
  * Die Initiativbewerbung (INITIATIVE_APPLY_PATH) bleibt der Weg, wenn keine Stelle passt.
  */
 export function Initiativband({ auchMoeglich }: InitiativbandProps) {

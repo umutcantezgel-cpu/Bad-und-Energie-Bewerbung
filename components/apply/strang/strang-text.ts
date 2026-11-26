@@ -46,9 +46,9 @@ export const WEG_TEXT = Object.freeze({
   whatsapp: {
     titel: 'Direkt per WhatsApp',
     /** Vor der ersten Angabe: Der Text ist nur der Gruß mit „ich möchte mich bewerben“. */
-    leer: 'Öffnet WhatsApp mit einer fertigen Nachricht an Sabri Demir.',
+    leer: 'Öffnet WhatsApp mit einer fertigen Nachricht an uns.',
     /** Mit Stelle oder Antworten: Sie stehen schon im Text (buildShortcutMessage). */
-    mitAngaben: 'Öffnet WhatsApp mit einer fertigen Nachricht an Sabri Demir, deine Angaben stehen schon drin.',
+    mitAngaben: 'Öffnet WhatsApp mit einer fertigen Nachricht an uns, deine Angaben stehen schon drin.',
   },
   mappe: {
     titel: 'Mit Bewerbungsmappe',

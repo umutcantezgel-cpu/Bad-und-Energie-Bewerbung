@@ -254,7 +254,7 @@ Plan und Entscheidungen: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 Bis zur Klärung gilt jeweils der sichere Standard ([ROADMAP §13](docs/ROADMAP.md#13-offene-owner-punkte-blockieren-phase-1-nicht-bis-zur-klärung-gilt-jeweils-der-sichere-standard)).
 
 - **Erledigt (2026-10-08):** Der im Git-Verlauf veröffentlichte Resend-Key ist widerrufen und ersetzt ([`betrieb.md`](docs/operations/betrieb.md#1-resend-key-rotiert-erledigt)).
-- **Erledigt (2026-10-10):** WhatsApp läuft nur über die Mobilnummer 0160 8834290 (`lib/data/contact.ts` `WHATSAPP`); 06441 42956 bleibt die Nummer für Anrufe, Impressum und JSON-LD.
+- **Erledigt (2026-10-10):** WhatsApp läuft nur über die Mobilnummer 0176 41195301 (seit 26.11.2026, vorher 0160 8834290; `lib/data/contact.ts` `WHATSAPP`); 06441 42956 bleibt die Nummer für Anrufe, Impressum und JSON-LD.
 - **Befund vom 2026-10-10:** Production hat jede Bewerbung mit 503 abgelehnt, weil `IP_HASH_SALT` fehlte oder ungültig war. Mit diesem Stand werden fehlende Geheimnisse aus `RESEND_API_KEY` abgeleitet ([`betrieb.md` 3.2](docs/operations/betrieb.md#32-was-die-503-bedeutet)).
 - **Nach Merge und Deploy:** `GET /api/status` prüfen; `ok` muss `true` sein ([`betrieb.md` 2.6](docs/operations/betrieb.md#26-deploy-und-funktionsprobe)).
 - **Eigene Geheimnisse (empfohlen):** `IP_HASH_SALT` und `APPLICATION_TOKEN_SECRET` mit `openssl rand -hex 32` erzeugen und in Vercel setzen. Ohne sie läuft die Seite mit abgeleiteten Werten; dann macht aber jeder neue Resend-Key die offenen Ergänzungs-Links ungültig.

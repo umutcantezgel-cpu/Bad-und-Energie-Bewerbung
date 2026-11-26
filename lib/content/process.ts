@@ -20,7 +20,7 @@ const APPLY_STEP: ProcessStep = {
   number: 1,
   title: 'Bewerben in 60 Sekunden',
   // „Kein Lebenslauf“ steht schon in Hero, FAQ und Flow (Fakt noCvNeeded); hier nicht ein drittes Mal.
-  text: 'Ein paar kurze Fragen beantworten oder Sabri Demir direkt per WhatsApp schreiben.',
+  text: 'Ein paar kurze Fragen beantworten oder uns direkt per WhatsApp schreiben.',
   highlight: 'Ohne Papierkram',
 };
 

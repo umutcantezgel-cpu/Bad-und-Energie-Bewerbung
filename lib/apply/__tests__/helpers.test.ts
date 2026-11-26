@@ -163,8 +163,8 @@ describe('vCard', () => {
     });
     const lines = card.trimEnd().split('\r\n');
     expect(lines).toContain('TEL;TYPE=WORK,VOICE:+49644142956');
-    expect(lines).toContain('item1.TEL;TYPE=CELL:+491608834290');
-    expect(lines[lines.indexOf('item1.TEL;TYPE=CELL:+491608834290') + 1]).toBe('item1.X-ABLabel:WhatsApp');
+    expect(lines).toContain('item1.TEL;TYPE=CELL:+4917641195301');
+    expect(lines[lines.indexOf('item1.TEL;TYPE=CELL:+4917641195301') + 1]).toBe('item1.X-ABLabel:WhatsApp');
     expect(lines.filter((line) => line.includes('TEL;'))).toHaveLength(2);
   });
 

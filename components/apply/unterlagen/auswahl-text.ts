@@ -10,7 +10,7 @@ export const AUSWAHL_TEXT = Object.freeze({
   ablegen: 'oder hierher ziehen',
   formate: `${FORMATE_TEXT} · bis zu ${UNTERLAGEN_GRENZEN.maxDateien} Dateien, je höchstens ${groesseText(UNTERLAGEN_GRENZEN.maxBytes)}`,
   senden: 'Unterlagen senden',
-  gesendet: 'Deine Unterlagen sind angekommen. Sabri Demir sieht sie bei deiner Bewerbung.',
+  gesendet: 'Deine Unterlagen sind angekommen. Wir sehen sie bei deiner Bewerbung.',
   sendenFehler: 'Das Senden hat nicht geklappt. Versuch es noch einmal oder schick die Unterlagen per WhatsApp oder E-Mail.',
   entfernen: 'Entfernen',
   statusLaedt: 'wird übertragen',

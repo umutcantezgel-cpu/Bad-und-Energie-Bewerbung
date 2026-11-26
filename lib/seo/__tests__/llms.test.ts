@@ -237,7 +237,7 @@ describe('llms.txt (E-SEO-014)', () => {
     for (const route of [llms, llmsFull]) {
       const text = await textAt(route, '2026-10-10T12:00:00Z');
       expect(text).toContain('- Telefon: 06441 42956\n');
-      expect(text).toContain('- WhatsApp: 0160 8834290\n');
+      expect(text).toContain('- WhatsApp: 0176 41195301\n');
       expect(text).not.toContain('Telefon und WhatsApp');
     }
   });

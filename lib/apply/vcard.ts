@@ -10,7 +10,7 @@ export interface VCardContact {
   organization: string;
   /** E.164, z. B. „+49644142956“. */
   phone: string;
-  /** WhatsApp-Mobilnummer in E.164, z. B. „+491608834290“; gleicht sie `phone`, entfällt die Zeile. */
+  /** WhatsApp-Mobilnummer in E.164, z. B. „+4917641195301“; gleicht sie `phone`, entfällt die Zeile. */
   whatsapp?: string;
   email?: string;
   street?: string;

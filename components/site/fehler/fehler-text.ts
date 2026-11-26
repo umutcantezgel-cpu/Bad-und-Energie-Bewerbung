@@ -67,13 +67,13 @@ export const DIREKT_EINLEITUNG = `Du kommst über einen alten Link oder eine Anz
 
 /**
  * Vorausgefüllte WhatsApp-Nachricht (Altstand: „Hallo Herr Demir, ich hatte einen Fehler auf der Karriereseite …“,
- * im Ton des Rahmens „Guten Tag Herr Demir, …“; Freiraum des Passes: „… ich habe eine Seite nicht gefunden“).
+ * im Ton des Rahmens „Guten Tag, …“ (seit 26.11.2026 ohne Namen); Freiraum des Passes: „… ich habe eine Seite nicht gefunden“).
  * Ohne Berufsangabe (E-SHELL-005).
  */
-export const FEHLER_WHATSAPP = `Guten Tag Herr Demir, ich habe auf der Karriereseite eine Seite nicht gefunden und melde mich direkt bei Ihnen.`;
+export const FEHLER_WHATSAPP = `Guten Tag, ich habe auf der Karriereseite eine Seite nicht gefunden und melde mich direkt bei Ihnen.`;
 
 /** Ansprechpartner aus COMPANY (Name und Rolle wie auf den Stellenseiten). */
 export const FEHLER_ANSPRECHPARTNER = Object.freeze({
-  name: COMPANY.managingDirector.name,
-  role: COMPANY.managingDirector.title,
+  name: 'Team Bad und Energie',
+  role: 'Anruf, WhatsApp oder E-Mail',
 });

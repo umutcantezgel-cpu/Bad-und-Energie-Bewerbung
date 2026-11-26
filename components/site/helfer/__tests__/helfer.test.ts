@@ -1,8 +1,8 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { WHATSAPP, WHATSAPP_KNOPF } from '@/lib/data/contact';
-import { buildWhatsAppUrl, DEFAULT_WHATSAPP_MESSAGE, KNOPF_WHATSAPP_MESSAGE } from '@/lib/utils/whatsapp-utils';
+import { WHATSAPP } from '@/lib/data/contact';
+import { buildWhatsAppUrl, DEFAULT_WHATSAPP_MESSAGE } from '@/lib/utils/whatsapp-utils';
 import { HELFER_BILDER, OHNE_HELFER, helferSichtbar } from '../seiten';
 import { DATEN } from '../spiel/daten';
 import { TEXTE } from '../spiel/spiel';
@@ -69,19 +69,17 @@ describe('Helfer: Einbau in den Rahmen', () => {
   it('der WhatsApp-Link kommt fertig vom Server, mit dem allgemeinen Text', () => {
     const huelle = lies('components/site/helfer/Helfer.tsx');
     expect(huelle).not.toContain("'use client'");
-    expect(huelle).toContain('buildWhatsAppUrl(KNOPF_WHATSAPP_MESSAGE, WHATSAPP_KNOPF.e164)');
+    expect(huelle).toContain("buildWhatsAppUrl(whatsAppMessageFor('/'))");
   });
 
-  it('der schwebende Knopf schreibt an die Nummer des Inhabers, alle anderen WhatsApp-Links an die der Seite', () => {
-    expect(WHATSAPP_KNOPF.e164).toBe('+4917641195301');
-    expect(WHATSAPP_KNOPF.display).toBe('0176 41195301');
-    expect(WHATSAPP_KNOPF.e164).not.toBe(WHATSAPP.e164);
-    expect(buildWhatsAppUrl(KNOPF_WHATSAPP_MESSAGE, WHATSAPP_KNOPF.e164)).toMatch(/^https:\/\/api\.whatsapp\.com\/send\?phone=4917641195301&text=/);
-    // Der Text geht nicht an Herrn Demir: keine Anrede mit Namen, sonst wie der Standardtext der Seite.
-    expect(KNOPF_WHATSAPP_MESSAGE).not.toMatch(/Demir/);
-    expect(KNOPF_WHATSAPP_MESSAGE).toBe(DEFAULT_WHATSAPP_MESSAGE.replace('Guten Tag Herr Demir,', 'Guten Tag,'));
-    // Die Nummer steht nur in den Kontaktdaten und wird nur vom Helfer benutzt.
+  it('alle WhatsApp-Wege samt schwebendem Knopf gehen an die Nummer des Inhabers, Anrede ohne Namen (26.11.2026)', () => {
+    expect(WHATSAPP.e164).toBe('+4917641195301');
+    expect(WHATSAPP.display).toBe('0176 41195301');
+    expect(buildWhatsAppUrl()).toMatch(/^https:\/\/api\.whatsapp\.com\/send\?phone=4917641195301&text=Guten%20Tag%2C%20ich/);
+    expect(DEFAULT_WHATSAPP_MESSAGE).not.toMatch(/Demir/);
+    // Die Nummer steht nur in den Kontaktdaten, die alte nirgends mehr.
     expect(lies('lib/data/contact.ts').match(/4917641195301/g)).toHaveLength(1);
+    expect(lies('lib/data/contact.ts')).not.toContain("'+491608834290'");
   });
 });
 

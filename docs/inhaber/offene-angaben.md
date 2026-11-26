@@ -35,6 +35,6 @@ Was nur du beantworten oder erledigen kannst, und was deine Antwort auf der Webs
 |---|---|
 | M-025 | 14.10.2026: Ausbildung 2027: Start nach Absprache, Vergütung über Tarif plus Prämien wie 2026 |
 | M-026 | 14.10.2026: Lohn für Quereinsteiger: Lohn auf Anfrage wie bei allen Stellen (E-030) |
-| M-029 | 27.10.2026: Keine zusätzliche Adresse fürs Handy. Bewerbungen und alle Antworten laufen immer nur über info@bad-energie.de |
+| M-029 | 27.10.2026: Keine zusätzliche Adresse fürs Handy. Bewerbungen und alle Antworten liefen über info@bad-energie.de. **Abgelöst 26.11.2026 (M-046):** alles an umutcan.tezgel@bad-energie.de |
 
 Weitere offene Fragen zu einzelnen Formulierungen stehen in `docs/operations/fakten-abgleich.md`.

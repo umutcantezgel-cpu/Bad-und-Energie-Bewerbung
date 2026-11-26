@@ -219,7 +219,7 @@ const RAW_FACTS = {
   },
   quickResponse: {
     short: 'Wir melden uns schnellstmöglich',
-    long: 'Sabri Demir meldet sich schnellstmöglich bei dir.',
+    long: 'Wir melden uns schnellstmöglich bei dir.',
     source: 'docs/ROADMAP.md@393df01',
   },
   mentoring: {

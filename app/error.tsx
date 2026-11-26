@@ -11,7 +11,7 @@ import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
 // (components/icons, no cn) and the small contact module instead of SITE_CONFIG keep this out of the shared
 // client bundle.
 const WHATSAPP_HREF = buildWhatsAppUrl(
-  'Guten Tag Herr Demir, auf der Karriereseite ist ein technischer Fehler aufgetreten. Ich melde mich deshalb direkt.',
+  'Guten Tag, auf der Karriereseite ist ein technischer Fehler aufgetreten. Ich melde mich deshalb direkt.',
 );
 
 const contactLinkClass =

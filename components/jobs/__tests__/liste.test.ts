@@ -209,7 +209,7 @@ describe('/jobs (R5-JOBS-01)', () => {
     const quereinstieg = getJobById('quereinsteiger-montagehelfer')!;
     expect(quereinstieg.status).toBe('published');
     expect(html).toContain(`href="${jobPath(quereinstieg)}"`);
-    expect(plain(html)).toContain('Sprich direkt mit Sabri Demir');
+    expect(plain(html)).toContain('Sprich direkt mit uns');
   });
 
   it('Einsatzgebiet im Bestandswortlaut (mit Bürostelle auf Baustellen und Kundendienst bezogen, Prüfrunde 3 D3-1), mit dem Weg zur Gebietsseite (E-028)', () => {

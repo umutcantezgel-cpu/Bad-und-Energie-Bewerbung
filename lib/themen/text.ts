@@ -293,7 +293,7 @@ function verweis(job: Job): StellenVerweis {
 
 // ─── Kontakt und weitere Themen ─────────────────────────────────────────────
 
-/** Ende der WhatsApp-Nachricht je Seite (nach „Guten Tag Herr Demir,“). */
+/** Ende der WhatsApp-Nachricht je Seite (nach „Guten Tag,“). */
 const WHATSAPP_ANLIEGEN: Readonly<Record<ThemaId | 'hub', string>> = Object.freeze({
   hub: 'ich habe eine Frage zur Arbeit bei Bad und Energie',
   gehalt: 'ich habe eine Frage zum Lohn bei Bad und Energie',
@@ -1164,7 +1164,7 @@ export function getDiskretPageText(options: TextOptions): DiskretPageText {
       // (Kritik 2, P3: fünfmal „60 Sekunden“ auf einer Seite)
       kaesten: [
         faktKasten('noCvNeeded', now),
-        { titel: 'WhatsApp', text: `Oder schreib ${COMPANY.managingDirector.name} direkt: ${COMPANY.whatsapp.display}.`, icon: 'message-circle', quellen: [`ablauf:${bewerben.id}`, 'betrieb:stammdaten'] },
+        { titel: 'WhatsApp', text: `Oder schreib uns direkt per WhatsApp: ${COMPANY.whatsapp.display}.`, icon: 'message-circle', quellen: [`ablauf:${bewerben.id}`, 'betrieb:stammdaten'] },
         faktKasten('quickResponse', now),
       ],
     },

@@ -10,8 +10,8 @@ import { describeAnswers, type QuestionSetId } from './questions';
  * Leere Angaben fallen weg; es steht nie „undefined“ oder „null“ im Text.
  */
 
-/** Anrede wie im bisherigen WhatsApp-Text (lib/utils/whatsapp-utils.ts). */
-export const WHATSAPP_GREETING = 'Guten Tag Herr Demir,';
+/** Anrede wie im WhatsApp-Text der Seite (lib/utils/whatsapp-utils.ts), ohne Namen. */
+export const WHATSAPP_GREETING = 'Guten Tag,';
 
 export const CONTACT_CHANNEL_LABEL: Readonly<Record<ContactChannel, string>> = Object.freeze({
   whatsapp: 'WhatsApp',

@@ -416,13 +416,15 @@ describe('COMPANY', () => {
     expect(COMPANY.phone.display).toBe('06441 42956');
     expect(COMPANY.phone.href).toBe('tel:+49644142956');
     // WhatsApp läuft über die Mobilnummer (Inhaber, 2026-10-10), Anrufe weiter über das Büro.
-    expect(COMPANY.whatsapp.display).toBe('0160 8834290');
-    expect(COMPANY.whatsapp.e164).toBe('+491608834290');
-    expect(COMPANY.whatsapp.href).toBe('https://api.whatsapp.com/send?phone=491608834290');
+    expect(COMPANY.whatsapp.display).toBe('0176 41195301');
+    expect(COMPANY.whatsapp.e164).toBe('+4917641195301');
+    expect(COMPANY.whatsapp.href).toBe('https://api.whatsapp.com/send?phone=4917641195301');
     expect(COMPANY.register).toEqual({ full: 'HRB 2449 Amtsgericht Wetzlar', number: 'HRB 2449', court: 'Amtsgericht Wetzlar' });
     expect(COMPANY.address).toMatchObject({ street: 'Siegmund-Hiepe-Str. 20', postalCode: '35578', city: 'Wetzlar' });
     expect(COMPANY.foundingYear).toBe(1926);
-    expect(COMPANY.email).toBe('info@bad-energie.de');
+    // Kontaktadresse aller Wege seit 26.11.2026; Impressum, Datenschutz und Schema behalten die Adresse des Betriebs.
+    expect(COMPANY.email).toBe('umutcan.tezgel@bad-energie.de');
+    expect(COMPANY.rechtsEmail).toBe('info@bad-energie.de');
     expect(COMPANY.managingDirector.title).toBe('Geschäftsführer und Meister');
     expect(COMPANY.openingHours.spec[1]).toMatchObject({ opens: '07:00', closes: '13:30' });
   });

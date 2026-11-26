@@ -118,10 +118,12 @@ describe('Schlussband (E-START-051, E-START-048)', () => {
     expect(bandText).not.toContain('Lebenslauf');
   });
 
-  it('Kontakt „Sprich direkt mit Sabri Demir“, Kanäle Telefon, WhatsApp, E-Mail in dieser Reihenfolge', () => {
-    expect(KONTAKT.titel).toBe(`Sprich direkt mit ${COMPANY.managingDirector.name}`);
-    expect(bandText).toContain('Sprich direkt mit Sabri Demir');
-    expect(bandText).toContain(COMPANY.managingDirector.title);
+  it('Kontakt „Sprich direkt mit uns“ (neutral, Inhaber 26.11.2026), Kanäle Telefon, WhatsApp, E-Mail in dieser Reihenfolge', () => {
+    expect(KONTAKT.titel).toBe('Sprich direkt mit uns');
+    expect(bandText).toContain('Sprich direkt mit uns');
+    expect(bandText).toContain('Anruf, WhatsApp oder E-Mail, wie es dir passt.');
+    // WhatsApp und E-Mail gehen nicht mehr an Sabri Demir: Der Kontakt nennt ihn nicht als Empfänger.
+    expect(bandText).not.toContain(`Sprich direkt mit ${COMPANY.managingDirector.name}`);
     const hrefs = [...band.matchAll(/href="([^"]+)"/g)].map((m) => m[1]).filter((h) => h !== APPLY_PATH);
     const ziele = hrefs.map((h) => (h.startsWith('tel:') ? 'tel' : h.includes('whatsapp') ? 'whatsapp' : h.startsWith('mailto:') ? 'mail' : h));
     expect(ziele).toEqual(['tel', 'whatsapp', 'mail']);

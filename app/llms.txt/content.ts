@@ -131,7 +131,8 @@ export function funnelOnlyLine(job: Job): string {
 
 export function contactLines(): string[] {
   return [
-    `Ansprechpartner: ${COMPANY.managingDirector.name}, ${COMPANY.managingDirector.title}`,
+    // Empfänger neutral (Inhaber 26.11.2026): WhatsApp und E-Mail gehen nicht mehr an den Geschäftsführer.
+    'Ansprechpartner: Team Bad und Energie',
     `Telefon: ${COMPANY.phone.display}`,
     `WhatsApp: ${COMPANY.whatsapp.display}`,
     `E-Mail: ${COMPANY.email}`,

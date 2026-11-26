@@ -28,7 +28,8 @@ function contactFamilyName(): string {
 
 /** Vorbefüllter WhatsApp-Text für den Fallback, wenn das Nachreichen scheitert. */
 export function getMappeWhatsAppMessage(): string {
-  return `Guten Tag Herr ${contactFamilyName()}, ich möchte meine Bewerbungsmappe zu meiner Bewerbung nachreichen.`;
+  // Anrede ohne Namen wie alle WhatsApp-Texte (seit 26.11.2026 an die Nummer des Inhabers); der Brief bleibt an Herrn Demir.
+  return 'Guten Tag, ich möchte meine Bewerbungsmappe zu meiner Bewerbung nachreichen.';
 }
 
 /** Empfänger laut Stammdaten; die Anrede „Herr Demir“ steht so auf der bisherigen Seite. */

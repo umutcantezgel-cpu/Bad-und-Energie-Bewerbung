@@ -6,7 +6,6 @@
 import type { IconName } from '@/components/icons';
 import type { SeitenkopfMass } from '@/components/seitenkopf';
 import { WHATSAPP_GREETING } from '@/lib/apply/whatsapp-message';
-import { COMPANY } from '@/lib/content/company';
 import { FACTS, type FactId } from '@/lib/content/facts';
 import { employmentLabel } from '@/lib/jobs/format';
 import type { Job } from '@/lib/jobs/registry';
@@ -104,7 +103,8 @@ export function kopfZeichnung(job: Pick<Job, 'category'>): KopfZeichnung {
 }
 
 /** Ansprechpartner der Stellenseite (Kontaktkarte neben dem Flow). */
-export const ANSPRECHPARTNER = { name: COMPANY.managingDirector.name, role: COMPANY.managingDirector.title } as const;
+// Neutral, seit WhatsApp und E-Mail an die Kontaktwege des Inhabers gehen (26.11.2026); Anrufe gehen ans Büro.
+export const ANSPRECHPARTNER = { name: 'Team Bad und Energie', role: 'Anruf, WhatsApp oder E-Mail' } as const;
 
 /** Textlink zur Lohnfrage unter „Lohn auf Anfrage“ im Kopf und unter der Antwort der Lohn-Frage (Prüfung Sichtbarkeit, bewerbung5). */
 export const LOHN_WHATSAPP_LINK = 'Lohn per WhatsApp erfragen';

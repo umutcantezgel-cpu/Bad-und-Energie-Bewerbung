@@ -51,7 +51,7 @@ Commit `9717265` hat einen echten Resend-Key in `.env.example` veröffentlicht. 
 
 Ohne verifizierte Domain lehnt Resend den Versand ab; die Website nimmt dann keine Bewerbung an (503, siehe 3.2).
 
-Die Absenderadresse braucht kein Postfach: Keine Mail lässt „Antworten“ dorthin gehen. Antworten auf die Team-Mail gehen an die Bewerberin bzw. den Bewerber, ohne angegebene E-Mail-Adresse an `info@bad-energie.de`. Antworten auf die Eingangsbestätigung und auf „Ergänzung zu BE-…“ gehen ebenfalls immer an `info@bad-energie.de`, fest im Code (`COMPANY.email`), unabhängig von `CONTACT_NOTIFICATION_EMAIL` (Inhaber 27.10.2026, M-029: „immer nur über info@bad-energie.de“; siehe 4.2). `CONTACT_NOTIFICATION_EMAIL` bleibt deshalb `info@bad-energie.de` oder leer (Standard).
+Die Absenderadresse braucht kein Postfach: Keine Mail lässt „Antworten“ dorthin gehen. Antworten auf die Team-Mail gehen an die Bewerberin bzw. den Bewerber, ohne angegebene E-Mail-Adresse an `umutcan.tezgel@bad-energie.de`. Antworten auf die Eingangsbestätigung und auf „Ergänzung zu BE-…“ gehen ebenfalls immer an `umutcan.tezgel@bad-energie.de`, fest im Code (`COMPANY.email`), unabhängig von `CONTACT_NOTIFICATION_EMAIL` (Inhaber 26.11.2026: „alles an umutcan.tezgel@bad-energie.de“; vorher M-029 mit `info@bad-energie.de`; siehe 4.2). `CONTACT_NOTIFICATION_EMAIL` ist deshalb `umutcan.tezgel@bad-energie.de` oder leer (Standard). **In Vercel prüfen:** Steht dort noch `info@bad-energie.de` (oder der alte Name `RESEND_TO_EMAIL`), gehen die Bewerbungen weiter dorthin, bis die Variable geändert oder gelöscht und neu deployt ist. Impressum, Datenschutz und die Firmenangaben im Schema nennen weiter `info@bad-energie.de` (`COMPANY.rechtsEmail`).
 
 ### 2.2 Geheimnisse erzeugen und Umgebungsvariablen setzen
 
@@ -74,7 +74,7 @@ In Vercel unter **Settings → Environment Variables** eintragen, Geheimnisse al
 | `APP_URL` | `https://karriere.bad-energie.de` | nicht setzen (Standard ist die Produktions-URL) |
 | `RESEND_API_KEY` | neuer Key aus Abschnitt 1 (Pflicht) | nicht setzen |
 | `RESEND_FROM_EMAIL` | nicht setzen (Standardabsender aus 2.1); nur für einen anderen, verifizierten Absender | nicht setzen |
-| `CONTACT_NOTIFICATION_EMAIL` | Postfach, das die Bewerbungen bekommt (Standard `info@bad-energie.de`) | nicht setzen |
+| `CONTACT_NOTIFICATION_EMAIL` | Postfach, das die Bewerbungen bekommt (Standard `umutcan.tezgel@bad-energie.de`, seit 26.11.2026) | nicht setzen oder `umutcan.tezgel@bad-energie.de` |
 | `IP_HASH_SALT` | eigener Wert (empfohlen; ohne Wert abgeleitet) | eigener, anderer Wert |
 | `APPLICATION_TOKEN_SECRET` | eigener Wert (empfohlen; ohne Wert abgeleitet) | eigener, anderer Wert |
 | `SUPABASE_URL` | Projekt-URL `https://<ref>.supabase.co` (Frankfurt); alternativ `NEXT_PUBLIC_SUPABASE_URL` | nicht nötig |
@@ -263,7 +263,7 @@ Antwortet `POST /api/bewerbung` oder `POST /api/bewerbung/ergaenzung` mit **503*
 Folgen:
 
 - Das Team hat keine Mail bekommen. Mit Datenbank kann die Bewerbung trotzdem gespeichert sein (Log `[bewerbung] gespeichert BE-…, Team-Mail nicht zugestellt`); eine Wiederholung bekommt dieselbe Nummer. Die Website bleibt online.
-- Die Bewerberin bzw. der Bewerber sieht „Das Senden klappt gerade nicht“ mit den Wegen Anrufen und WhatsApp; die WhatsApp-Nachricht ist mit den Angaben aus dem Flow vorausgefüllt. Solange der Fehler besteht, kommen Bewerbungen also nur über Telefon (06441 42956) und WhatsApp (0160 8834290) an.
+- Die Bewerberin bzw. der Bewerber sieht „Das Senden klappt gerade nicht“ mit den Wegen Anrufen und WhatsApp; die WhatsApp-Nachricht ist mit den Angaben aus dem Flow vorausgefüllt. Solange der Fehler besteht, kommen Bewerbungen also nur über Telefon (06441 42956) und WhatsApp (0176 41195301) an.
 - Beheben: Log-Zeile lesen (3.1), `/api/status` aufrufen (2.6), Variable setzen, neu deployen, Testbewerbung.
 
 **Befund vom 2026-10-10:** Production hat jede Bewerbung mit 503 abgelehnt, weil `IP_HASH_SALT` fehlte oder ungültig war. Belegt mit einer Probe `POST /api/bewerbung` mit dem Body `{}`: Die 503 kam schon von der Eingangskontrolle, bevor ein Mailversand überhaupt versucht wurde. Mit dem Stand vom 2026-10-10 leitet die Website fehlende oder ungültige Geheimnisse aus `RESEND_API_KEY` ab; die Seite funktioniert also auch ohne eigene Werte. Empfohlen bleiben eigene Werte (2.2). Nach dem Deploy mit `/api/status` prüfen: Unter `secrets` steht `env` oder `derived`, nie `missing`.
@@ -317,7 +317,7 @@ Die **Bewerbungsnummer** `BE-26-XXXXXX` (Jahr und sechs Zeichen) ist der Schlüs
 - **Quelle:** Kanal (z. B. Google for Jobs, Indeed, Bundesagentur für Arbeit, Empfehlung, Direkt), UTM-Werte, Empfehlungscode, verweisende Seite und Einstiegsseite. Bis zum Cockpit (Phase 2d) ist das die Grundlage für „Bewerbungen pro Kanal“.
 - **Eingang:** Bewerbungsnummer, Zeitpunkt (deutsche Zeit), Ausfülldauer und die Version des Datenschutzhinweises, den die Person gesehen hat.
 
-**Antworten:** „Antworten“ im Mailprogramm geht an die E-Mail-Adresse der Bewerberin bzw. des Bewerbers. Hat die Person keine E-Mail angegeben, geht die Antwort an `info@bad-energie.de`, nicht an die Person; dann über den Button, per Telefon oder WhatsApp antworten. Der bevorzugte Kontaktweg steht unter „Am liebsten per“. Die Bestätigung verspricht keine Frist, sondern „Wir melden uns schnellstmöglich“.
+**Antworten:** „Antworten“ im Mailprogramm geht an die E-Mail-Adresse der Bewerberin bzw. des Bewerbers. Hat die Person keine E-Mail angegeben, geht die Antwort an `umutcan.tezgel@bad-energie.de`, nicht an die Person; dann über den Button, per Telefon oder WhatsApp antworten. Der bevorzugte Kontaktweg steht unter „Am liebsten per“. Die Bestätigung verspricht keine Frist, sondern „Wir melden uns schnellstmöglich“.
 
 ### 4.3 Spamverdacht
 
@@ -338,9 +338,9 @@ Ein identischer zweiter Versuch (Doppelklick, Reload, schlechtes Netz) wird nich
 3. Der Ergänzungs-Link gilt 14 Tage. Danach bittet die Website, Angaben per WhatsApp oder E-Mail mit der Bewerbungsnummer zu schicken.
 4. Mit Datenbank nimmt die Website je Bewerbung höchstens 20 Ergänzungen an, davon 5 in 24 Stunden. Darüber bittet sie ebenfalls um WhatsApp oder E-Mail mit der Bewerbungsnummer.
 
-**Unterlagen** (Zeugnisse, Lebenslauf, Fotos) lassen sich noch nicht hochladen. Sie kommen per WhatsApp (Mobiltelefon 0160 8834290) oder als Antwort auf die Eingangsbestätigung, die im Team-Postfach landet. Zuordnen über die Bewerbungsnummer, sonst über Name und Telefonnummer; im Zweifel nach der Nummer fragen. Uploads und das Cockpit kommen in späteren Scheiben von Phase 2.
+**Unterlagen** (Zeugnisse, Lebenslauf, Fotos) lassen sich noch nicht hochladen. Sie kommen per WhatsApp (Mobiltelefon 0176 41195301) oder als Antwort auf die Eingangsbestätigung, die im Team-Postfach landet. Zuordnen über die Bewerbungsnummer, sonst über Name und Telefonnummer; im Zweifel nach der Nummer fragen. Uploads und das Cockpit kommen in späteren Scheiben von Phase 2.
 
-**Auskunft oder Löschung** (Art. 15 und 17 DSGVO): im Postfach nach Nummer, Name und Telefonnummer suchen, Ergänzungen, Antworten und die WhatsApp-Verläufe auf dem Mobiltelefon (0160 8834290) einbeziehen. Mit Datenbank stehen Bewerbung und Ergänzungen auch dort. Bis es Cockpit und automatische Löschung gibt (Phase 2c/2d), erledigt das in der Datenbank die Administration per SQL: Anfrage mit Bewerbungsnummer an sie weitergeben.
+**Auskunft oder Löschung** (Art. 15 und 17 DSGVO): im Postfach nach Nummer, Name und Telefonnummer suchen, Ergänzungen, Antworten und die WhatsApp-Verläufe auf dem Mobiltelefon (0176 41195301) einbeziehen. Mit Datenbank stehen Bewerbung und Ergänzungen auch dort. Bis es Cockpit und automatische Löschung gibt (Phase 2c/2d), erledigt das in der Datenbank die Administration per SQL: Anfrage mit Bewerbungsnummer an sie weitergeben.
 
 ## 6. Löschfristen in Postfach und Datenbank
 
@@ -353,7 +353,7 @@ Die Datenschutzerklärung ([Abschnitt „Bewerbung über diese Website“](https
 Im Postfach muss das Team das selbst einhalten, zum Beispiel so:
 
 1. Ordner nach Stand anlegen, etwa „Bewerbungen offen“ und „Abgesagt JJJJ-MM“ (Monat der Absage).
-2. Einmal im Monat die Absage-Ordner löschen, die älter als 6 Monate sind, samt Ergänzungen, Anhängen, WhatsApp-Verläufen (Mobiltelefon 0160 8834290) und dem Papierkorb.
+2. Einmal im Monat die Absage-Ordner löschen, die älter als 6 Monate sind, samt Ergänzungen, Anhängen, WhatsApp-Verläufen (Mobiltelefon 0176 41195301) und dem Papierkorb.
 3. Talentpool-Einwilligungen mit Datum notieren und nach spätestens 24 Monaten löschen.
 4. Mit Datenbank: die Bewerbungsnummern der gelöschten Absagen an die Administration geben. Die Datenbank kennt das Datum der Absage nicht, solange es kein Cockpit gibt.
 

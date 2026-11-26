@@ -27,8 +27,12 @@ export const COMPANY = Object.freeze({
     href: `tel:${companyData.phone.link}`,
   }),
   fax: SITE_CONFIG.contact.telefax,
+  /** Kontakt-E-Mail für Bewerber (alle Links, vCard, Mails). Seit 26.11.2026 die Adresse des Inhabers. */
   email: companyData.email,
   emailHref: `mailto:${companyData.email}`,
+  /** E-Mail des Betriebs für Impressum, Datenschutz und Organization/LocalBusiness im Schema. */
+  rechtsEmail: companyData.rechtsEmail,
+  rechtsEmailHref: `mailto:${companyData.rechtsEmail}`,
   /** Eigene Mobilnummer nur für WhatsApp; Anrufe laufen über `phone` (lib/data/contact.ts). */
   whatsapp: Object.freeze({
     display: SITE_CONFIG.contact.whatsappDisplay,

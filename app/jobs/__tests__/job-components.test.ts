@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { JobCard } from '@/components/jobs/JobCard';
 import { SalaryCard, lohnZusatz } from '@/components/jobs/SalaryCard';
 import { LOHN_WHATSAPP_LINK, lohnWhatsAppNachricht } from '@/components/jobs/stelle/stelle-text';
-import { WHATSAPP_KNOPF, WHATSAPP_NUMBER } from '@/lib/data/contact';
+import { WHATSAPP_NUMBER } from '@/lib/data/contact';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
 import { getMoreJobs } from '@/components/jobs/MoreJobs';
 import { bindSeparators, lowerFirst, pageTitle, splitLabel, withSoftHyphens } from '@/components/jobs/text';
@@ -133,7 +133,7 @@ describe('SalaryCard (Block „Lohn auf Anfrage“, E-030)', () => {
   });
 
   // Prüfung Sichtbarkeit (bewerbung5): der Weg zur Lohnfrage direkt unter „Lohn auf Anfrage“, wie die übrigen
-  // WhatsApp-Links (neuer Tab, rel, Zusatz für Screenreader), an die Nummer der Seite, nicht die des schwebenden Knopfs.
+  // WhatsApp-Links (neuer Tab, rel, Zusatz für Screenreader), an die eine WhatsApp-Nummer der Seite.
   it('„Lohn per WhatsApp erfragen“ unter dem Block, mit der Stelle in der Nachricht', () => {
     for (const job of ALL_JOBS.filter((j) => j.pay === 'auf-anfrage')) {
       const html = renderToStaticMarkup(createElement(SalaryCard, { job }));
@@ -142,14 +142,14 @@ describe('SalaryCard (Block „Lohn auf Anfrage“, E-030)', () => {
       expect(html, job.id).toMatch(/target="_blank" rel="noopener noreferrer"/);
       expect(html, job.id).toContain(`${LOHN_WHATSAPP_LINK}<span class="sr-only"> (öffnet in neuem Tab)</span></a>`);
       expect(html, job.id).toContain(`phone=${WHATSAPP_NUMBER.replace(/\D/g, '')}&amp;`);
-      expect(html, job.id).not.toContain(`phone=${WHATSAPP_KNOPF.e164.replace(/\D/g, '')}&amp;`);
+      expect(html.match(/phone=\d+/g)?.every((p) => p === `phone=${WHATSAPP_NUMBER.replace(/\D/g, '')}`), job.id).toBe(true);
       expect(html.indexOf(PAY_ON_REQUEST), job.id).toBeLessThan(html.indexOf(LOHN_WHATSAPP_LINK));
       expect(ohneBetrag(decodeURIComponent(html)), job.id).toEqual([]);
     }
     expect(lohnWhatsAppNachricht(getJobById('kundendiensttechniker-shk')!)).toBe(
-      'Guten Tag Herr Demir, ich habe eine Frage zum Lohn für die Stelle als Kundendiensttechniker.',
+      'Guten Tag, ich habe eine Frage zum Lohn für die Stelle als Kundendiensttechniker.',
     );
-    expect(lohnWhatsAppNachricht(azubi)).toBe('Guten Tag Herr Demir, ich habe eine Frage zum Lohn für die Ausbildung zum Anlagenmechaniker SHK.');
+    expect(lohnWhatsAppNachricht(azubi)).toBe('Guten Tag, ich habe eine Frage zum Lohn für die Ausbildung zum Anlagenmechaniker SHK.');
   });
 });
 

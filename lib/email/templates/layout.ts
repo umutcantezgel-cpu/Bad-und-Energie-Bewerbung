@@ -377,7 +377,8 @@ function blockText(block: EmailBlock): string {
 
 /**
  * Pflichtangaben im Fuß jeder Mail (E-BEW-025, Vermutung § 35a GmbHG): Firma, Anschrift,
- * Geschäftsführer und Register, aus denselben Stammdaten wie das Impressum (LEGAL_ENTITY in
+ * Geschäftsführer und Register, aus denselben Stammdaten wie das Impressum (die E-Mail ist seit 26.11.2026 die
+ * Kontaktadresse COMPANY.email, das Impressum nennt COMPANY.rechtsEmail; LEGAL_ENTITY in
  * components/legal/legal-data.ts liest COMPANY), dort „Geschäftsführung“, „Registergericht“ und
  * „Registernummer“.
  */

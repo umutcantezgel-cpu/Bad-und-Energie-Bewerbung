@@ -146,6 +146,7 @@ export const GEBIET_LINK = Object.freeze({ href: '/einsatzgebiet', label: 'Entfe
 /** Persönlicher Draht im Initiativband (wie das Schlussband der Startseite), Name und Rolle aus COMPANY. */
 export const KONTAKT = Object.freeze({
   etikett: 'Persönlicher Austausch',
-  titel: `Sprich direkt mit ${COMPANY.managingDirector.name.replace(/ /g, NBSP)}`,
-  rolle: COMPANY.managingDirector.title,
+  // Neutral, seit WhatsApp und E-Mail an die Kontaktwege des Inhabers gehen (26.11.2026)
+  titel: 'Sprich direkt mit uns',
+  rolle: 'Anruf, WhatsApp oder E-Mail, wie es dir passt.',
 });

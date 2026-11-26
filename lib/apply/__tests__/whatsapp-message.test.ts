@@ -24,7 +24,7 @@ const noGaps = (text: string) => {
 describe('shortcut message', () => {
   it('works without any answers', () => {
     const text = buildShortcutMessage();
-    expect(text).toBe('Guten Tag Herr Demir, ich möchte mich bei Bad und Energie bewerben.');
+    expect(text).toBe('Guten Tag, ich möchte mich bei Bad und Energie bewerben.');
     noGaps(text);
   });
 
@@ -36,7 +36,7 @@ describe('shortcut message', () => {
       name: '  Max   Muster ',
     });
     expect(text.split('\n')).toEqual([
-      'Guten Tag Herr Demir, ich möchte mich bei Bad und Energie bewerben.',
+      'Guten Tag, ich möchte mich bei Bad und Energie bewerben.',
       'Stelle: Anlagenmechaniker SHK',
       'Qualifikation: Geselle, 2–5 Jahre',
       'Name: Max Muster',
@@ -70,7 +70,7 @@ describe('full application message', () => {
       contactChannel: 'phone',
     });
     expect(text.split('\n')).toEqual([
-      'Guten Tag Herr Demir, hier ist meine Bewerbung bei Bad und Energie.',
+      'Guten Tag, hier ist meine Bewerbung bei Bad und Energie.',
       'Stelle: Kundendiensttechniker',
       'Qualifikation: Meister oder Techniker',
       'Start: In 1–3 Monaten (Kündigungsfrist)',
@@ -99,11 +99,11 @@ describe('full application message', () => {
 describe('follow-up message', () => {
   it('names the reference and the extras', () => {
     expect(buildFollowUpMessage({ reference: 'BE-26-0042' })).toBe(
-      'Guten Tag Herr Demir, hier sind meine Unterlagen zur Bewerbung BE-26-0042.',
+      'Guten Tag, hier sind meine Unterlagen zur Bewerbung BE-26-0042.',
     );
     const text = buildFollowUpMessage({ reference: 'BE-26-0042', kind: 'extras', postalCode: '35578', message: 'Hallo' });
     expect(text.split('\n')).toEqual([
-      'Guten Tag Herr Demir, hier sind meine Ergänzungen zur Bewerbung BE-26-0042.',
+      'Guten Tag, hier sind meine Ergänzungen zur Bewerbung BE-26-0042.',
       'PLZ: 35578',
       'Hallo',
     ]);
@@ -120,7 +120,7 @@ describe('mappe share message (E-BEW-020)', () => {
   it('works for an empty mappe without placeholder data', () => {
     const text = buildMappeShareMessage();
     expect(text.split('\n')).toEqual([
-      'Guten Tag Herr Demir, hier ist meine Bewerbungsmappe (Anschreiben und Lebenslauf) für Bad und Energie.',
+      'Guten Tag, hier ist meine Bewerbungsmappe (Anschreiben und Lebenslauf) für Bad und Energie.',
       MAPPE_SHARE_PDF_LINE,
     ]);
     noGaps(text);
@@ -130,7 +130,7 @@ describe('mappe share message (E-BEW-020)', () => {
   it('names the reference, the job and the name when they exist', () => {
     const text = buildMappeShareMessage({ reference: ' BE-26-0042 ', jobLabel: 'Anlagenmechaniker SHK (m/w/d)', name: ' Erika  Muster ' });
     expect(text.split('\n')).toEqual([
-      'Guten Tag Herr Demir, hier ist meine Bewerbungsmappe (Anschreiben und Lebenslauf) zur Bewerbung BE-26-0042.',
+      'Guten Tag, hier ist meine Bewerbungsmappe (Anschreiben und Lebenslauf) zur Bewerbung BE-26-0042.',
       'Stelle: Anlagenmechaniker SHK (m/w/d)',
       'Name: Erika Muster',
       'Die Mappe als PDF hänge ich hier im Chat an.',
@@ -146,24 +146,24 @@ describe('mappe share message (E-BEW-020)', () => {
     noGaps(text);
   });
 
-  it('goes to the company WhatsApp number 0160 8834290 as a WhatsApp link', () => {
+  it('goes to the company WhatsApp number 0176 41195301 as a WhatsApp link', () => {
     const url = buildWhatsAppUrl(buildMappeShareMessage({ name: 'Zoë & Co' }));
-    expect(url).toMatch(/^https:\/\/api\.whatsapp\.com\/send\?phone=491608834290&text=/);
+    expect(url).toMatch(/^https:\/\/api\.whatsapp\.com\/send\?phone=4917641195301&text=/);
     expect(decodeURIComponent(url.split('text=')[1])).toContain('Name: Zoë & Co');
   });
 });
 
 describe('company WhatsApp number', () => {
   it('is the mobile number, not the office line used for calls', () => {
-    expect(WHATSAPP_NUMBER).toBe('+491608834290');
-    expect(WHATSAPP).toEqual({ display: '0160 8834290', e164: '+491608834290' });
+    expect(WHATSAPP_NUMBER).toBe('+4917641195301');
+    expect(WHATSAPP).toEqual({ display: '0176 41195301', e164: '+4917641195301' });
     expect(WHATSAPP_NUMBER).not.toBe(CONTACT_PHONE.e164);
     expect(CONTACT_PHONE.e164).toBe('+49644142956');
   });
 
   it('is the default target of buildWhatsAppUrl', () => {
     const url = buildWhatsAppUrl();
-    expect(url).toContain('phone=491608834290');
+    expect(url).toContain('phone=4917641195301');
     expect(url).not.toContain('49644142956');
     expect(buildWhatsAppUrl('Hallo', '+49 151 2345678')).toContain('phone=491512345678');
   });
@@ -179,7 +179,7 @@ describe('site-wide WhatsApp text', () => {
 
   it('im Bewerbungsflow eine Bewerbung statt einer „kurzen Frage“ (Plan §D), wortgleich mit der Abkürzung im Flow', async () => {
     const { BEWERBUNG_WHATSAPP_MESSAGE, whatsAppMessageFor } = await import('@/lib/utils/whatsapp-utils');
-    expect(whatsAppMessageFor('/bewerbung')).toBe('Guten Tag Herr Demir, ich möchte mich bei Bad und Energie bewerben.');
+    expect(whatsAppMessageFor('/bewerbung')).toBe('Guten Tag, ich möchte mich bei Bad und Energie bewerben.');
     expect(whatsAppMessageFor('/bewerbung?stelle=initiativ')).toBe(BEWERBUNG_WHATSAPP_MESSAGE);
     expect(whatsAppMessageFor('/bewerbung')).not.toMatch(/Frage|Bewerbungsschritten/);
     expect(buildShortcutMessage().split('\n')[0]).toBe(BEWERBUNG_WHATSAPP_MESSAGE);
@@ -210,7 +210,7 @@ describe('Herkunftscode am Ende der Nachricht (Plan §D „WhatsApp-Herkunft“)
     expect(herkunftsZeile('IND')).toBe('–\u00a0W-IND');
     const text = mitHerkunftscode(buildShortcutMessage({ jobLabel: 'Anlagenmechaniker SHK' }), 'IND');
     expect(text.split('\n')).toEqual([
-      'Guten Tag Herr Demir, ich möchte mich bei Bad und Energie bewerben.',
+      'Guten Tag, ich möchte mich bei Bad und Energie bewerben.',
       'Stelle: Anlagenmechaniker SHK',
       '–\u00a0W-IND',
     ]);

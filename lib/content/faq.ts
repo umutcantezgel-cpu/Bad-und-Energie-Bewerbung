@@ -112,7 +112,7 @@ export const STELLEN_FAQ_ITEMS: readonly FaqItem[] = Object.freeze([
     id: 'lohn-buero',
     question: 'Was verdiene ich im Büro?',
     // Ohne Tarifaussage: Für das Büro ist sie nicht belegt (fakten-abgleich S5)
-    answer: `${FACTS.payOnRequest.long} Frag ${COMPANY.managingDirector.name} einfach per Telefon oder WhatsApp.`,
+    answer: `${FACTS.payOnRequest.long} Frag uns einfach per Telefon oder WhatsApp.`,
     factIds: ['payOnRequest'],
   },
   {
@@ -169,7 +169,7 @@ export const STELLEN_FAQ_ITEMS: readonly FaqItem[] = Object.freeze([
     id: 'praktikum-bewerbung',
     question: 'Wie bewerbe ich mich für das Schülerpraktikum?',
     // Wege der Stellenseite (Flow, WhatsApp); Zeitraum und Dauer nach Absprache mit der Schule (fakten-abgleich S4)
-    answer: `Über das kurze Formular auf dieser Seite oder direkt per WhatsApp an ${COMPANY.managingDirector.name}. Den Zeitraum deines Praktikums besprechen wir danach mit dir und deiner Schule.`,
+    answer: `Über das kurze Formular auf dieser Seite oder direkt per WhatsApp an uns. Den Zeitraum deines Praktikums besprechen wir danach mit dir und deiner Schule.`,
     factIds: [],
   },
   {

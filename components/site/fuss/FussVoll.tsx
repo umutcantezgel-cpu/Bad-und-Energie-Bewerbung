@@ -16,6 +16,7 @@ import { AgenturNennung } from './AgenturNennung';
 import { OsmNennung } from './OsmNennung';
 import { Ziffern } from './Ziffern';
 import styles from './fuss.module.css';
+import { EmailText } from '../EmailText';
 
 function Spalte({ id, titel, className, children }: { id: string; titel: string; className?: string; children: ReactNode }) {
   return (
@@ -82,7 +83,7 @@ export function FussVoll({ year, now = new Date() }: FussVollProps) {
               {fussKontakte().map((k) => (
                 <li key={k.id}>
                   <FussLink href={k.href} icon={k.icon} extern={k.extern} vorsatz={k.vorsatz}>
-                    {k.id === 'phone' ? <span className="ziffer">{k.text}</span> : k.text}
+                    {k.id === 'phone' ? <span className="ziffer">{k.text}</span> : k.id === 'email' ? <EmailText adresse={k.text} /> : k.text}
                   </FussLink>
                 </li>
               ))}

@@ -36,7 +36,7 @@ export const SITE_CONFIG = {
 
   // Contact Channels
   contact: {
-    email: 'info@bad-energie.de',
+    email: 'umutcan.tezgel@bad-energie.de',
     telephone: CONTACT_PHONE.display,
     telephoneLink: CONTACT_PHONE.e164,
     telefax: '06441 48781',

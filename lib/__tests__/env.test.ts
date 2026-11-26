@@ -193,7 +193,7 @@ describe('getEmailConfig', () => {
     expect(config.from).toBe(DEFAULT_FROM_EMAIL);
     expect(config.from).toContain('@karriere.bad-energie.de>');
     expect(config.fromSource).toBe('default');
-    expect(config.notificationTo).toEqual(['info@bad-energie.de']);
+    expect(config.notificationTo).toEqual(['umutcan.tezgel@bad-energie.de']);
     expect(config.missing).toEqual([]);
     expect(JSON.stringify(config)).not.toContain('resend.dev');
     expect(console.error).not.toHaveBeenCalled();
@@ -280,9 +280,9 @@ describe('CONTACT_NOTIFICATION_EMAIL als kommagetrennte Liste (P0-4)', () => {
     ['Anzeigename (nur beim Absender erlaubt)', 'Team <info@bad-energie.de>'],
     ['nur Kommas', ' , ,'],
     [`mehr als ${MAX_NOTIFICATION_RECIPIENTS} Adressen`, Array.from({ length: MAX_NOTIFICATION_RECIPIENTS + 1 }, (_, i) => `a${i}@bad-energie.de`).join(',')],
-  ])('%s: ganze Variable ungültig, Ersatz info@bad-energie.de, Start-Check nennt nur den Namen', (_name, value) => {
+  ])('%s: ganze Variable ungültig, Ersatz umutcan.tezgel@bad-energie.de, Start-Check nennt nur den Namen', (_name, value) => {
     setEnv({ VERCEL_ENV: 'production', RESEND_API_KEY: REAL_KEY, CONTACT_NOTIFICATION_EMAIL: value });
-    expect(getEmailConfig().notificationTo).toEqual(['info@bad-energie.de']);
+    expect(getEmailConfig().notificationTo).toEqual(['umutcan.tezgel@bad-energie.de']);
     expect(checkServerEnv()).toEqual({ ok: false, missing: [], invalid: ['CONTACT_NOTIFICATION_EMAIL'] });
     reportServerEnv();
     const logs = [...vi.mocked(console.error).mock.calls, ...vi.mocked(console.info).mock.calls].flat().map(String).join('\n');

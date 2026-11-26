@@ -283,7 +283,7 @@ describe('dispatchApplicationEmails', () => {
     expect(send).toHaveBeenCalledTimes(2);
     const [teamPayload, teamOptions] = send.mock.calls[0];
     expect(teamPayload).toMatchObject({
-      to: ['info@bad-energie.de'],
+      to: ['umutcan.tezgel@bad-energie.de'],
       replyTo: RECIPIENT,
       subject: 'Neue Bewerbung BE-26-K7M4QX: Anlagenmechaniker SHK – Erika',
     });
@@ -291,7 +291,7 @@ describe('dispatchApplicationEmails', () => {
     expect(teamOptions.idempotencyKey).toMatch(/^bewerbung:abc:team:[0-9a-f]{16}$/);
 
     const [userPayload, userOptions] = send.mock.calls[1];
-    expect(userPayload).toMatchObject({ to: [RECIPIENT], replyTo: 'info@bad-energie.de' });
+    expect(userPayload).toMatchObject({ to: [RECIPIENT], replyTo: 'umutcan.tezgel@bad-energie.de' });
     expect(userPayload.subject).toContain('BE-26-K7M4QX');
     expect(userOptions.idempotencyKey).toMatch(/^bewerbung:abc:user:[0-9a-f]{16}$/);
     expect(loggedText()).not.toContain(RECIPIENT);
@@ -330,7 +330,7 @@ describe('dispatchApplicationEmails', () => {
     expect(result.success).toBe(true);
     expect(result.userConfirmation).toEqual({ success: false, error: 'skipped_suspected_spam' });
     expect(send).toHaveBeenCalledTimes(1);
-    expect(send.mock.calls[0][0]).toMatchObject({ to: ['info@bad-energie.de'] });
+    expect(send.mock.calls[0][0]).toMatchObject({ to: ['umutcan.tezgel@bad-energie.de'] });
     expect(send.mock.calls[0][0].subject).toMatch(/^\[Spamverdacht\] /);
   });
 
@@ -344,7 +344,7 @@ describe('dispatchApplicationEmails', () => {
     expect(result.userConfirmation).toEqual({ success: false, error: 'no_recipient' });
     expect(send).toHaveBeenCalledTimes(1);
     // „Antworten“ ginge sonst an die Absenderadresse ohne Postfach.
-    expect(send.mock.calls[0][0]).toMatchObject({ to: ['info@bad-energie.de'], replyTo: 'info@bad-energie.de' });
+    expect(send.mock.calls[0][0]).toMatchObject({ to: ['umutcan.tezgel@bad-energie.de'], replyTo: 'umutcan.tezgel@bad-energie.de' });
   });
 
   it('sends no confirmation while the team mail failed (the applicant would read "angekommen")', async () => {
@@ -412,9 +412,9 @@ describe('dispatchApplicationFollowUpEmail', () => {
 
     expect(result.success).toBe(true);
     expect(send.mock.calls[0][0]).toMatchObject({
-      to: ['info@bad-energie.de'],
+      to: ['umutcan.tezgel@bad-energie.de'],
       subject: 'Ergänzung zu BE-26-K7M4QX',
-      replyTo: 'info@bad-energie.de',
+      replyTo: 'umutcan.tezgel@bad-energie.de',
     });
     expect(send.mock.calls[0][1].idempotencyKey).toMatch(/^ergaenzung:hash:follow-up:[0-9a-f]{16}$/);
   });
@@ -427,7 +427,7 @@ describe('dispatchApplicationFollowUpEmail', () => {
     await dispatchApplicationFollowUpEmail(followUp, { idempotencyKey: 'ergaenzung:hash' });
     await dispatchApplicationFollowUpEmail({ ...followUp, message: 'anderer Text, gleicher Schlüssel' }, { idempotencyKey: 'ergaenzung:hash' });
 
-    const digest = createHash('sha256').update(JSON.stringify([['info@bad-energie.de'], 'hash'])).digest('hex').slice(0, 16);
+    const digest = createHash('sha256').update(JSON.stringify([['umutcan.tezgel@bad-energie.de'], 'hash'])).digest('hex').slice(0, 16);
     expect(send.mock.calls[0][1].idempotencyKey).toBe(`ergaenzung:hash:follow-up:${digest}`);
     // Der Inhalt steckt schon im Schlüssel der Ergänzung (normalizeFollowUp); das HTML zählt nicht mit.
     expect(send.mock.calls[1][1].idempotencyKey).toBe(send.mock.calls[0][1].idempotencyKey);
@@ -505,7 +505,7 @@ describe('Mappe als PDF im Anhang (Schritt 4a/4b)', () => {
 describe('CONTACT_NOTIFICATION_EMAIL als Liste (Sofortmeldung, P0-4)', () => {
   const TEAM = 'info@bad-energie.de, chef@bad-energie.de';
 
-  it('schickt die Team-Mail in einem Versand an alle Adressen, die Eingangsbestätigung antwortet nur an info@', async () => {
+  it('schickt die Team-Mail in einem Versand an alle Adressen, die Eingangsbestätigung antwortet nur an die Kontaktadresse', async () => {
     stubEnv({ NODE_ENV: 'production', RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER, CONTACT_NOTIFICATION_EMAIL: TEAM });
     send.mockResolvedValue({ data: { id: 'email_x' }, error: null, headers: null });
 
@@ -514,7 +514,7 @@ describe('CONTACT_NOTIFICATION_EMAIL als Liste (Sofortmeldung, P0-4)', () => {
     expect(result.success).toBe(true);
     expect(send).toHaveBeenCalledTimes(2);
     expect(send.mock.calls[0][0]).toMatchObject({ to: ['info@bad-energie.de', 'chef@bad-energie.de'], replyTo: RECIPIENT });
-    expect(send.mock.calls[1][0]).toMatchObject({ to: [RECIPIENT], replyTo: 'info@bad-energie.de' });
+    expect(send.mock.calls[1][0]).toMatchObject({ to: [RECIPIENT], replyTo: 'umutcan.tezgel@bad-energie.de' });
     // Logs nennen weder Team-Adressen noch die der Bewerberin.
     expect(loggedText()).not.toMatch(/chef@|info@|bewerberin@/);
   });
@@ -523,10 +523,10 @@ describe('CONTACT_NOTIFICATION_EMAIL als Liste (Sofortmeldung, P0-4)', () => {
     stubEnv({ NODE_ENV: 'production', RESEND_API_KEY: REAL_KEY, RESEND_FROM_EMAIL: SENDER, CONTACT_NOTIFICATION_EMAIL: TEAM });
     send.mockResolvedValue({ data: { id: 'email_f' }, error: null, headers: null });
     await dispatchApplicationFollowUpEmail({ reference: 'BE-26-K7M4QX', idempotencyKey: 'hash', receivedAt: new Date(), postalCode: '35578' });
-    expect(send.mock.calls[0][0]).toMatchObject({ to: ['info@bad-energie.de', 'chef@bad-energie.de'], replyTo: 'info@bad-energie.de' });
+    expect(send.mock.calls[0][0]).toMatchObject({ to: ['info@bad-energie.de', 'chef@bad-energie.de'], replyTo: 'umutcan.tezgel@bad-energie.de' });
   });
 
-  it('eine ungültige Adresse in der Liste: Team-Mail an den Ersatz info@bad-energie.de statt an eine halbe Liste', async () => {
+  it('eine ungültige Adresse in der Liste: Team-Mail an den Ersatz umutcan.tezgel@bad-energie.de statt an eine halbe Liste', async () => {
     stubEnv({
       NODE_ENV: 'production',
       RESEND_API_KEY: REAL_KEY,
@@ -535,14 +535,14 @@ describe('CONTACT_NOTIFICATION_EMAIL als Liste (Sofortmeldung, P0-4)', () => {
     });
     send.mockResolvedValue({ data: { id: 'email_x' }, error: null, headers: null });
     await dispatchApplicationEmails({ ...application, email: undefined });
-    expect(send.mock.calls[0][0]).toMatchObject({ to: ['info@bad-energie.de'] });
+    expect(send.mock.calls[0][0]).toMatchObject({ to: ['umutcan.tezgel@bad-energie.de'] });
   });
 
-  it('getResendClient: Liste ohne Dubletten, nie leer; Antworten immer an info@, egal was vorn steht (M-029)', async () => {
+  it('getResendClient: Liste ohne Dubletten, nie leer; Antworten immer an die Kontaktadresse, egal was vorn steht (M-029, seit 26.11.2026 umutcan.tezgel@)', async () => {
     const { getResendClient } = await import('@/lib/email/resend');
     stubEnv({ CONTACT_NOTIFICATION_EMAIL: 'Chef@Bad-Energie.de, info@bad-energie.de, chef@bad-energie.de' });
-    expect(getResendClient()).toMatchObject({ toEmails: ['Chef@Bad-Energie.de', 'info@bad-energie.de'], replyToEmail: 'info@bad-energie.de' });
+    expect(getResendClient()).toMatchObject({ toEmails: ['Chef@Bad-Energie.de', 'info@bad-energie.de'], replyToEmail: 'umutcan.tezgel@bad-energie.de' });
     stubEnv({ CONTACT_NOTIFICATION_EMAIL: ' , ' });
-    expect(getResendClient()).toMatchObject({ toEmails: ['info@bad-energie.de'], replyToEmail: 'info@bad-energie.de' });
+    expect(getResendClient()).toMatchObject({ toEmails: ['umutcan.tezgel@bad-energie.de'], replyToEmail: 'umutcan.tezgel@bad-energie.de' });
   });
 });

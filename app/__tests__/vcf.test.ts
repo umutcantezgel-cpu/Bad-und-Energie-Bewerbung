@@ -11,7 +11,7 @@ describe('/bad-und-energie.vcf', () => {
     const vcf = await antwort.text();
     expect(vcf.startsWith('BEGIN:VCARD\r\nVERSION:3.0\r\n')).toBe(true);
     expect(vcf).toContain('TEL;TYPE=WORK,VOICE:+49644142956\r\n');
-    expect(vcf).toContain('item1.TEL;TYPE=CELL:+491608834290\r\nitem1.X-ABLabel:WhatsApp\r\n');
+    expect(vcf).toContain('item1.TEL;TYPE=CELL:+4917641195301\r\nitem1.X-ABLabel:WhatsApp\r\n');
     expect(vcf.endsWith('END:VCARD\r\n')).toBe(true);
   });
 });

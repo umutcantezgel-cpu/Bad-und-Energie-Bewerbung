@@ -189,8 +189,8 @@ export const ergaenzung: NormalizedFollowUp = {
 
 /** Absender wie lib/env.ts DEFAULT_FROM_EMAIL (lib/env importiert server-only und bleibt deshalb draußen). */
 export const ABSENDER = 'Bad und Energie Karriere <bewerbung@karriere.bad-energie.de>';
-/** Erste Adresse von CONTACT_NOTIFICATION_EMAIL (Standard). */
-export const TEAM = 'info@bad-energie.de';
+/** Erste Adresse von CONTACT_NOTIFICATION_EMAIL (Standard, seit 26.11.2026). */
+export const TEAM = 'umutcan.tezgel@bad-energie.de';
 
 /** Hinweise auf die PDF im Anhang, wie lib/mappe/pdf/anhang.ts sie für diese Mappen liefert. */
 export const PDF_FULL = { dateiname: 'Bewerbungsmappe_BE-26-K7M4QX_Muster.pdf', seiten: 2 } as const;

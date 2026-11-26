@@ -11,8 +11,8 @@ import { buildWhatsAppUrl } from '@/lib/utils/whatsapp-utils';
 /** Anker der Zeile bzw. des Abschnitts (Zweitweg im Seitenkopf, Erklärteil, alte Links `?tab=vault`). */
 export const UNTERLAGEN_ANKER = 'unterlagen';
 
-/** Vorausgefüllter WhatsApp-Text: wie die übrigen Texte an Sabri Demir, ohne Platzhalterdaten. */
-export const UNTERLAGEN_WHATSAPP_TEXT = 'Guten Tag Herr Demir, ich möchte Ihnen meine Bewerbungsunterlagen schicken.';
+/** Vorausgefüllter WhatsApp-Text: wie die übrigen Texte, Anrede ohne Namen, ohne Platzhalterdaten. */
+export const UNTERLAGEN_WHATSAPP_TEXT = 'Guten Tag, ich möchte Ihnen meine Bewerbungsunterlagen schicken.';
 export const UNTERLAGEN_MAIL_BETREFF = 'Bewerbungsunterlagen';
 
 /** „Für den ersten Schritt …“ → „für den ersten Schritt …“ (Fakt im Satzinneren nach dem Gedankenstrich). */

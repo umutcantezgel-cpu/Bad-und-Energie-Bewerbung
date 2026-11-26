@@ -1,19 +1,16 @@
 import { WHATSAPP_NUMBER } from '@/lib/data/contact';
 
-/** Neutraler Standardtext: passt auf jeder Seite, für Fachkräfte wie für Schülerinnen und Schüler. */
-export const DEFAULT_WHATSAPP_MESSAGE = 'Guten Tag Herr Demir, ich interessiere mich für eine Stelle bei Bad und Energie.';
+/**
+ * Neutraler Standardtext: passt auf jeder Seite, für Fachkräfte wie für Schülerinnen und Schüler. Anrede ohne Namen
+ * (seit 26.11.2026 gehen alle WhatsApp-Wege an die Nummer des Inhabers, lib/data/contact.ts).
+ */
+export const DEFAULT_WHATSAPP_MESSAGE = 'Guten Tag, ich interessiere mich für eine Stelle bei Bad und Energie.';
 
 /**
  * Text im Bewerbungsflow (/bewerbung): eine Bewerbung, keine „kurze Frage“ (Plan §D). Wortgleich mit dem Anfang der
  * Abkürzung „Lieber direkt per WhatsApp?“ auf jedem Schritt (buildShortcutMessage in lib/apply/whatsapp-message.ts).
  */
-export const BEWERBUNG_WHATSAPP_MESSAGE = 'Guten Tag Herr Demir, ich möchte mich bei Bad und Energie bewerben.';
-
-/**
- * Text des schwebenden WhatsApp-Knopfs (Helfer-Ball). Er schreibt an die Nummer des Inhabers (WHATSAPP_KNOPF in
- * lib/data/contact.ts), nicht an Herrn Demir: deshalb ohne Namen in der Anrede.
- */
-export const KNOPF_WHATSAPP_MESSAGE = 'Guten Tag, ich interessiere mich für eine Stelle bei Bad und Energie.';
+export const BEWERBUNG_WHATSAPP_MESSAGE = 'Guten Tag, ich möchte mich bei Bad und Energie bewerben.';
 
 export function buildWhatsAppUrl(message: string = DEFAULT_WHATSAPP_MESSAGE, phone: string = WHATSAPP_NUMBER): string {
   const cleanPhone = phone.replace(/[^0-9]/g, '');

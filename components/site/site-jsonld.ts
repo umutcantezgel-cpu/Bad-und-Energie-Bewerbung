@@ -84,6 +84,7 @@ export function buildSiteNodes() {
       contactPoint: {
         '@type': 'ContactPoint',
         telephone: COMPANY.phone.e164,
+        // Bewerbungsweg: die Kontaktadresse (Inhaber 26.11.2026); Organization und LocalBusiness tragen die des Betriebs
         email: COMPANY.email,
         contactType: 'recruiting',
         areaServed: 'DE',
@@ -124,7 +125,7 @@ export function buildSiteNodes() {
       description: `Innungs-Meisterbetrieb seit ${COMPANY.foundingYear} für Heiztechnik, Wärmepumpen, moderne Bäder und Haustechnik im Lahn-Dill-Kreis.`,
       url: COMPANY.website,
       telephone: COMPANY.phone.e164,
-      email: COMPANY.email,
+      email: COMPANY.rechtsEmail,
       logo: EMPLOYER.logoUrl,
       image: EMPLOYER.logoUrl,
       hasMap: SITE_CONFIG.contact.googleMapsUrl,
