@@ -6,11 +6,13 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 /**
- * Meldet geänderte Seiten automatisch an Suchmaschinen (Plan §C1). Läuft in .github/workflows/indexierung.yml nach
- * jedem Production-Deploy, täglich und von Hand; lokal genauso:
+ * Meldet geänderte Seiten automatisch an Suchmaschinen (Plan §C1). Läuft in .github/workflows/indexierung.yml täglich
+ * und von Hand; nach jedem Production-Deploy stößt der Workflow einen Lauf von Hand auf main an. Lokal genauso:
  *
  *   node scripts/seo/benachrichtigen.mjs              # vergleichen und melden
  *   node scripts/seo/benachrichtigen.mjs --trocken    # nur zählen, nichts melden, Stand nicht schreiben
+ *   node scripts/seo/benachrichtigen.mjs --alles      # alter Stand gilt als leer: alles einmal neu melden
+ *                                                     # (im Workflow: Parameter „alles“, INDEXIERUNG_ALLES=true)
  *
  * Ablauf:
  * 1. Liest /sitemap.xml (auch als Sitemap-Index) und /feeds/jobs.json der Live-Seite. Je URL entsteht ein
@@ -20,12 +22,15 @@ import { fileURLToPath } from 'node:url';
  * 3. Google Indexing API: NUR Stellenseiten /jobs/<slug> (die API ist für JobPosting-Seiten gedacht). Neu und
  *    geändert → URL_UPDATED, entfernt (beendet, noindex oder weg) → URL_DELETED. Anmeldung als Service-Account per
  *    JWT (RS256, node:crypto) aus GOOGLE_INDEXING_SA_KEY, ohne zusätzliche Abhängigkeit.
- * 4. IndexNow: alle neuen, geänderten und entfernten URLs über das vorhandene POST /api/indexnow
- *    (INDEXNOW_SUBMIT_TOKEN), in Paketen zu höchstens 1000.
+ * 4. IndexNow: alle neuen, geänderten und entfernten URLs. Mit INDEXNOW_SUBMIT_TOKEN über das vorhandene
+ *    POST /api/indexnow der Website (Pakete zu höchstens 1000); sonst mit dem öffentlichen Schlüssel INDEXNOW_KEY
+ *    direkt an api.indexnow.org (wie lib/seo/indexnow.ts, Pakete zu höchstens 10 000). Ohne beides übersprungen.
  *
  * Je Ziel zählt ein eigener Stand: Er rückt nur für URLs vor, die dieses Ziel angenommen hat. Fehlt ein Geheimnis,
  * wird das Ziel mit Hinweis übersprungen und sein Stand bleibt, wie er ist; ist es später da, holt der nächste Lauf
- * alles seitdem Geänderte nach. Die Ausgabe nennt nur Zählwerte, nie URLs, Token oder Antworttexte (M-032).
+ * alles seitdem Geänderte nach. In GitHub Actions steht jedes übersprungene Ziel zusätzlich als Warnung
+ * („::warning::“) in der Übersicht des Laufs, damit ein grüner Lauf das nicht versteckt. Die Ausgabe nennt nur
+ * Zählwerte, nie URLs, Token oder Antworttexte (M-032).
  *
  * Schutz vor Fehlalarm: Liefert die Seite keine URLs, bricht der Lauf ab. Sonst gilt die Prüfung je Gruppe wie in den
  * Teil-Sitemaps (Kern, Stellen, Orte, Themen): Verschwinden in einer Gruppe mehr als die Hälfte der bekannten URLs auf
@@ -51,6 +56,12 @@ export const GOOGLE_TOKEN_URI = 'https://oauth2.googleapis.com/token';
 export const GOOGLE_PUBLISH_URL = 'https://indexing.googleapis.com/v3/urlNotifications:publish';
 /** Obergrenze von POST /api/indexnow (app/api/indexnow/route.ts). */
 export const INDEXNOW_PAKET = 1000;
+/** Direkter Weg ohne die Website: Endpunkt wie lib/seo/indexnow.ts. */
+export const INDEXNOW_API = 'https://api.indexnow.org/indexnow';
+/** Obergrenze je Aufruf laut IndexNow-Protokoll. */
+export const INDEXNOW_DIREKT_PAKET = 10000;
+/** Format des öffentlichen Schlüssels wie INDEXNOW_KEY in lib/env.ts (8–128 Zeichen a–z, A–Z, 0–9, „-“). */
+export const INDEXNOW_KEY_MUSTER = /^[A-Za-z0-9-]{8,128}$/;
 /** Mehr als dieser Anteil bekannter URLs verschwindet auf einmal → Abbruch. */
 export const MAX_ANTEIL_ENTFERNT = 0.5;
 /** Sitemap-Index höchstens so tief verfolgen. */
@@ -377,6 +388,33 @@ export async function meldeIndexNow(urls, basis, token, fetchFn = fetch) {
   return { angenommen, fehler };
 }
 
+/**
+ * Direkter Weg, wenn kein INDEXNOW_SUBMIT_TOKEN da ist: POST an api.indexnow.org mit dem öffentlichen Schlüssel und
+ * seiner Prüfdatei <basis>/<key>.txt (Aufbau wie getIndexNowPayload in lib/seo/indexnow.ts). 200 und 202 (Schlüssel
+ * wird noch geprüft) gelten als angenommen, jede andere Antwort als abgelehnt; nur angenommene Pakete rücken vor.
+ * @param {string[]} urls
+ * @param {string} basis
+ * @param {string} key
+ * @param {Abruf} [fetchFn]
+ */
+export async function meldeIndexNowDirekt(urls, basis, key, fetchFn = fetch) {
+  const ursprung = basis.replace(/\/+$/, '');
+  const host = new URL(ursprung).host;
+  const angenommen = [];
+  const fehler = [];
+  for (let i = 0; i < urls.length; i += INDEXNOW_DIREKT_PAKET) {
+    const paket = urls.slice(i, i + INDEXNOW_DIREKT_PAKET);
+    const res = await fetchFn(INDEXNOW_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json; charset=utf-8', 'User-Agent': USER_AGENT },
+      body: JSON.stringify({ host, key, keyLocation: `${ursprung}/${key}.txt`, urlList: paket }),
+    });
+    if (res.status === 200 || res.status === 202) angenommen.push(...paket);
+    else fehler.push(res.status);
+  }
+  return { angenommen, fehler };
+}
+
 // ---------------------------------------------------------------------------
 // Ablauf
 // ---------------------------------------------------------------------------
@@ -427,7 +465,8 @@ const zahlen = (diff) => `${diff.neu.length} neu, ${diff.geaendert.length} geän
 
 /**
  * Ein Lauf. `umgebung` wie process.env, `log` für Zeilen mit Zählwerten. Liefert den Exit-Code: 0 gemeldet oder
- * übersprungen, 1 Fehler (Seite nicht lesbar, unplausibel, ein Ziel hat abgelehnt).
+ * übersprungen, 1 Fehler (Seite nicht lesbar, unplausibel, ein Ziel hat abgelehnt). Schalter in `umgebung`:
+ * INDEXIERUNG_TROCKEN, INDEXIERUNG_ALLES (alter Stand gilt als leer), GITHUB_ACTIONS (Warnzeilen).
  * @param {{ umgebung?: Umgebung, argv?: string[], fetchFn?: Abruf, log?: (zeile: string) => void }} [optionen]
  * @returns {Promise<number>}
  */
@@ -435,6 +474,13 @@ export async function lauf({ umgebung = process.env, argv = process.argv.slice(2
   const basis = (umgebung.SITE_URL || STANDARD_BASIS).replace(/\/+$/, '');
   const datei = umgebung.STAND_DATEI || STANDARD_STAND_DATEI;
   const trocken = argv.includes('--trocken') || umgebung.INDEXIERUNG_TROCKEN === 'true';
+  // Für das Ende einer Pause: Sitemap und Feeds liefen weiter, ohne diesen Schalter käme „0 neu, 0 geändert“ heraus.
+  const alles = argv.includes('--alles') || umgebung.INDEXIERUNG_ALLES === 'true';
+  // Übersprungenes Ziel: normale Zeile, in GitHub Actions zusätzlich als Warnung in der Übersicht des Laufs.
+  const uebersprungen = (text) => {
+    log(text);
+    if (umgebung.GITHUB_ACTIONS === 'true') log(`::warning::${text}`);
+  };
 
   let neu;
   try {
@@ -446,9 +492,10 @@ export async function lauf({ umgebung = process.env, argv = process.argv.slice(2
     return 1;
   }
 
-  const alt = leseStand(datei);
+  const alt = alles ? { google: null, indexnow: null } : leseStand(datei);
   const neuStellen = nurStellen(neu, basis);
   log(`Live-Seite: ${Object.keys(neu).length} URLs, davon ${Object.keys(neuStellen).length} Stellenseiten.`);
+  if (alles) log('Alles neu melden (INDEXIERUNG_ALLES): Der alte Stand beider Ziele gilt als leer.');
 
   // Geprüft wird je Gruppe gegen alles Bekannte. Fehlt in einer Gruppe mehr als die Hälfte auf einmal, entscheidet die
   // Seite selbst: nicht mehr indexierbar (beendete Stellen, Gate der Ortsseiten) = echte Änderung, sonst kaputt.
@@ -486,15 +533,23 @@ export async function lauf({ umgebung = process.env, argv = process.argv.slice(2
 
   const urls = indexNowUrls(diffIndexNow);
   const indexNowToken = (umgebung.INDEXNOW_SUBMIT_TOKEN ?? '').trim();
+  const indexNowKey = (umgebung.INDEXNOW_KEY ?? '').trim();
   if (urls.length === 0) {
     stand.indexnow = neuIndexNow;
     log('IndexNow: nichts zu melden.');
-  } else if (!indexNowToken) {
-    log('IndexNow übersprungen: INDEXNOW_SUBMIT_TOKEN fehlt (Environment-Secret „indexierung“).');
+  } else if (!indexNowToken && !indexNowKey) {
+    uebersprungen('IndexNow übersprungen: INDEXNOW_SUBMIT_TOKEN fehlt (Environment-Secret „indexierung“), INDEXNOW_KEY auch (öffentlicher Schlüssel im Workflow).');
+  } else if (!indexNowToken && !INDEXNOW_KEY_MUSTER.test(indexNowKey)) {
+    uebersprungen('IndexNow übersprungen: INDEXNOW_SUBMIT_TOKEN fehlt, und INDEXNOW_KEY hat nicht das Format des Protokolls (8–128 Zeichen a–z, A–Z, 0–9, „-“).');
   } else {
-    const { angenommen, fehler } = await meldeIndexNow(urls, basis, indexNowToken, fetchFn);
+    // Token zuerst (bisheriger Weg über die Website), sonst direkt mit dem öffentlichen Schlüssel.
+    const { angenommen, fehler } = indexNowToken
+      ? await meldeIndexNow(urls, basis, indexNowToken, fetchFn)
+      : await meldeIndexNowDirekt(urls, basis, indexNowKey, fetchFn);
     stand.indexnow = fortschreiben(alt.indexnow, neuIndexNow, angenommen);
-    log(`IndexNow: ${angenommen.length} von ${urls.length} URLs gemeldet${fehler.length ? `, abgelehnt mit HTTP ${fehler.join(', ')}` : ''}.`);
+    log(
+      `IndexNow: ${angenommen.length} von ${urls.length} URLs gemeldet${indexNowToken ? '' : ' (direkt mit dem öffentlichen Schlüssel)'}${fehler.length ? `, abgelehnt mit HTTP ${fehler.join(', ')}` : ''}.`,
+    );
     if (fehler.length) fehlgeschlagen = true;
   }
 
@@ -504,7 +559,7 @@ export async function lauf({ umgebung = process.env, argv = process.argv.slice(2
     stand.google = neuGoogle;
     log('Google: nichts zu melden.');
   } else if (!sa) {
-    log(
+    uebersprungen(
       umgebung.GOOGLE_INDEXING_SA_KEY?.trim()
         ? 'Google übersprungen: GOOGLE_INDEXING_SA_KEY ist kein Service-Account-Schlüssel (JSON mit client_email und private_key).'
         : 'Google übersprungen: GOOGLE_INDEXING_SA_KEY fehlt (Environment-Secret „indexierung“).',

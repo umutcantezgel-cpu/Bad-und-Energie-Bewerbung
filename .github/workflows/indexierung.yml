@@ -1,17 +1,25 @@
 # Indexierung (Plan §C1): meldet neue, geänderte und entfernte Seiten automatisch an Suchmaschinen.
 #
 # - Google Indexing API: nur Stellenseiten /jobs/<slug> (URL_UPDATED bzw. URL_DELETED).
-# - IndexNow (Bing u. a.): alle geänderten URLs über das vorhandene POST /api/indexnow.
+# - IndexNow (Bing u. a.): alle geänderten URLs, mit INDEXNOW_SUBMIT_TOKEN über das vorhandene POST /api/indexnow,
+#   sonst direkt an api.indexnow.org mit dem öffentlichen Schlüssel INDEXNOW_KEY (Prüfdatei public/<key>.txt).
 # Das Skript scripts/seo/benachrichtigen.mjs vergleicht /sitemap.xml und /feeds/jobs.json der Live-Seite mit dem
 # letzten Stand (actions/cache) und gibt nur Zählwerte aus, nie URLs oder Geheimnisse.
 #
-# Auslöser: erfolgreicher Production-Deploy (Vercel meldet deployment_status), täglich um 05:17 UTC und von Hand
-# (wahlweise als Trockenlauf). Geheimnisse liegen im GitHub-Environment „indexierung“:
+# Auslöser: täglich um 05:17 UTC und von Hand (wahlweise als Trockenlauf oder mit „alles“: alter Stand gilt als leer,
+# alles wird einmal neu gemeldet, etwa am Ende einer Pause). Nach einem erfolgreichen Production-Deploy (Vercel meldet
+# deployment_status) meldet der Workflow nicht selbst: Der Job „anstossen“ startet ihn von Hand auf main. Grund:
+# actions/cache lädt und speichert bei deployment_status nicht (das Ereignis hängt an keinem Branch); ein solcher
+# Lauf kennte seinen Stand nie und meldete nach jedem Deploy alles neu.
+# Geheimnisse liegen im GitHub-Environment „indexierung“:
 #   GOOGLE_INDEXING_SA_KEY  JSON-Schlüssel des Service-Accounts (Inhaber der Search-Console-Property, M-032)
-#   INDEXNOW_SUBMIT_TOKEN   derselbe Wert wie in Vercel (lib/env.ts)
-# Fehlt eines, überspringt das Skript dieses Ziel mit Hinweis; der Lauf bleibt grün.
+#   INDEXNOW_SUBMIT_TOKEN   derselbe Wert wie in Vercel (lib/env.ts); ohne ihn meldet IndexNow den direkten Weg
+# Fehlt einem Ziel alles Nötige, überspringt das Skript es mit Hinweis und Warnung in der Übersicht des Laufs; der
+# Lauf bleibt grün.
 #
-# Bewusst minimale Rechte: Der Workflow liest nur den Code und das Ereignis des Deploys.
+# Bewusst minimale Rechte: Der Workflow liest nur den Code und das Ereignis des Deploys. Einzige Ausnahme ist der
+# Job „anstossen“: Er darf Läufe dieses Repos starten (Schreibrecht für Actions), mehr nicht; er checkt nichts aus
+# und sieht kein Geheimnis.
 
 name: Indexierung
 
@@ -25,8 +33,16 @@ on:
         description: "Trockenlauf: nur zählen, nichts melden, Stand nicht ändern"
         type: boolean
         default: false
+      alles:
+        description: "Alles einmal neu melden: alter Stand gilt als leer (etwa am Ende einer Pause)"
+        type: boolean
+        default: false
 
 # Nie zwei Läufe gleichzeitig: Beide würden denselben Stand lesen und doppelt melden.
+# Vorbehalt: Die Gruppe gilt für den ganzen Workflow, also auch für jeden Lauf aus deployment_status (jedes
+# Deploy-Ereignis erzeugt einen, auch bei Vorschauen). GitHub hält je Gruppe nur einen wartenden Lauf, ein späterer
+# verdrängt ihn. Wartet der angestoßene Lauf noch, wenn das nächste Deploy-Ereignis kommt, fällt er weg; dann holt der
+# tägliche Lauf nach.
 concurrency:
   group: indexierung
   cancel-in-progress: false
@@ -44,13 +60,29 @@ defaults:
     shell: bash
 
 jobs:
+  anstossen:
+    name: Nach dem Deploy auf main anstoßen
+    # Nur nach einem erfolgreichen Deploy in die Vercel-Umgebung „Production“ (bei mehreren Projekten heißt sie
+    # „Production – <Projekt>“); Vorschauen melden nichts. Der angestoßene Lauf (workflow_dispatch, Standardwerte:
+    # kein Trockenlauf, nicht „alles“) hängt an main, dort lädt und speichert actions/cache den Stand.
+    if: >-
+      github.event_name == 'deployment_status' &&
+      (github.event.deployment_status.state == 'success' && startsWith(github.event.deployment.environment, 'Production'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: write
+    steps:
+      - name: Indexierung auf main starten
+        run: gh workflow run indexierung.yml --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+
   melden:
     name: Indexing API und IndexNow
-    # Nur nach einem erfolgreichen Deploy in die Vercel-Umgebung „Production“ (bei mehreren Projekten heißt sie
-    # „Production – <Projekt>“); Vorschauen melden nichts.
-    if: >-
-      github.event_name != 'deployment_status' ||
-      (github.event.deployment_status.state == 'success' && startsWith(github.event.deployment.environment, 'Production'))
+    # Nur täglich und von Hand (auch angestoßen vom Job „anstossen“), nie direkt aus deployment_status.
+    if: github.event_name != 'deployment_status'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment: indexierung
@@ -66,7 +98,8 @@ jobs:
         with:
           node-version: 22
 
-      # Jeder Lauf speichert seinen Stand unter einem neuen Schlüssel; geladen wird der jüngste.
+      # Jeder Lauf speichert seinen Stand unter einem neuen Schlüssel; geladen wird der jüngste. Das klappt nur bei
+      # Läufen, die an einem Branch hängen (schedule, workflow_dispatch); deshalb meldet deployment_status nicht selbst.
       - name: Letzten Stand laden
         uses: actions/cache/restore@v6
         with:
@@ -78,8 +111,11 @@ jobs:
         run: node scripts/seo/benachrichtigen.mjs
         env:
           INDEXIERUNG_TROCKEN: ${{ github.event_name == 'workflow_dispatch' && inputs.trocken && 'true' || 'false' }}
+          INDEXIERUNG_ALLES: ${{ github.event_name == 'workflow_dispatch' && inputs.alles && 'true' || 'false' }}
           GOOGLE_INDEXING_SA_KEY: ${{ secrets.GOOGLE_INDEXING_SA_KEY }}
           INDEXNOW_SUBMIT_TOKEN: ${{ secrets.INDEXNOW_SUBMIT_TOKEN }}
+          # Öffentlich laut IndexNow-Protokoll, kein Geheimnis: gleich dem Inhalt von public/<key>.txt auf der Seite.
+          INDEXNOW_KEY: 298d966b7e4f4a43981cb8e30da6b5b5
 
       # Auch nach einem teilweisen Fehler: Der Stand enthält nur, was angenommen wurde.
       - name: Stand sichern

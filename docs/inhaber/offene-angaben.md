@@ -15,7 +15,7 @@ Was nur du beantworten oder erledigen kannst, und was deine Antwort auf der Webs
 | M-024 | Berufsschule eurer Azubis (Anlagenmechaniker SHK) | Schulweg auf den Ortsseiten als „bestätigt“ |
 | M-027 | Schülerpraktikum: ab welchem Alter bzw. welcher Klasse, wer betreut die Praktikanten | Feinschliff der Praktikumsstelle |
 | M-030 | Adressen eurer Profile (Unternehmensprofil, Kununu, weitere) | `sameAs`: Google und KI-Antworten ordnen die Profile dem Betrieb zu |
-| M-032 | Search Console bestätigen, Service-Account anlegen und Schlüssel in GitHub hinterlegen (`checkliste-offsite.md`, Schritt 1) | Meldung jeder Stelle an Google nach dem Deploy; Daten für die Ortsseiten |
+| M-032 | Search Console bestätigen, Service-Account anlegen und Schlüssel in GitHub hinterlegen (`checkliste-offsite.md`, Schritt 1) | Meldung jeder Stelle an Google nach dem Deploy; Daten für die Ortsseiten. IndexNow (Bing u. a.) braucht dafür nichts von dir, es meldet direkt mit dem öffentlichen Schlüssel |
 | M-034 | Freigabe der cookielosen Ereignisse durch die oder den Datenschutzbeauftragten | Messung, wo Bewerber im Formular abbrechen |
 | M-035 | Einwilligung der Beschäftigten | „Kollegen in der Nähe“ je Kreis, Empfehlungscodes, QR-Codes auf Fahrzeugen |
 | M-036 | Ticket an den Dienstleister von bad-energie.de schicken (`ticket-hauptdomain.md`) | Links und Weiterleitungen zur Karriereseite; Google sieht CSS und Bilder |

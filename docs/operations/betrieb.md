@@ -101,6 +101,8 @@ Wichtig:
 
 IndexNow meldet neue und geänderte Seiten an Bing, Yandex und weitere Suchmaschinen. Der Key ist per Protokoll öffentlich; geheim ist nur `INDEXNOW_SUBMIT_TOKEN`.
 
+Automatisch meldet der Workflow „Indexierung“ (`.github/workflows/indexierung.yml`) täglich und nach jedem Production-Deploy alle geänderten Seiten: mit `INDEXNOW_SUBMIT_TOKEN` im GitHub-Environment „indexierung“ über `/api/indexnow`, sonst direkt an api.indexnow.org mit dem Key `298d966b7e4f4a43981cb8e30da6b5b5`, der im Workflow steht. Die Befehle unten sind nur für Meldungen von Hand.
+
 - **Einfachster Weg:** den bisher genutzten Key weiterverwenden. Seine Prüfdatei liegt schon im Repo (`public/298d966b7e4f4a43981cb8e30da6b5b5.txt`), also `INDEXNOW_KEY=298d966b7e4f4a43981cb8e30da6b5b5` setzen.
 - **Neuer Key:** `openssl rand -hex 16` erzeugen, per Pull Request die Datei `public/<key>.txt` anlegen (Inhalt: nur der Key), dann `INDEXNOW_KEY` setzen.
 - Prüfen: `https://karriere.bad-energie.de/<key>.txt` zeigt den Key.
@@ -402,7 +404,7 @@ Stand 28.10.2026, Abschluss des Ausbaus (Mails, Bewerbungsseite, Mappe mit PDF, 
 
 1. **Datenschutz:** Fassungen `2026-10-27` und `2026-10-28` von der oder dem DSB prüfen lassen (`docs/operations/datenschutz-aenderungen.md`, Checkliste in Abschnitt 6); bei Resend die Aufbewahrungsdauer gesendeter Mails samt Anhängen klären; prüfen, ob `datenschutz@bad-energie.de` ankommt und gelesen wird (die Erklärung nennt die Adresse); Frage O2 (benannter Datenschutzbeauftragter) beantworten.
 2. **Gerätetest:** am iPhone (Safari und Chrome) und unter Android „PDF herunterladen“ bzw. „PDF teilen“, dazu im Instagram-Browser den Hinweis und „Link kopieren“; eine Probe-Bewerbung mit Mappe schicken und PDF und Mail in Outlook ansehen.
-3. **GitHub-Secrets** `INDEXNOW_SUBMIT_TOKEN` und `GOOGLE_INDEXING_SA_KEY` im Environment „indexierung“ setzen (sonst überspringt der tägliche Lauf beide Ziele).
+3. **GitHub-Secret** `GOOGLE_INDEXING_SA_KEY` im Environment „indexierung“ setzen (sonst überspringt der tägliche Lauf Google, mit gelber Warnung in der Übersicht). IndexNow meldet auch ohne `INDEXNOW_SUBMIT_TOKEN`, direkt mit dem öffentlichen Key aus dem Workflow.
 4. **Search Console:** für `/einsatzgebiet` und die Kreis-Hubs „Indexierung beantragen“; Datum der Sitemap-Einreichung in `docs/operations/orte-monitoring.md` nachtragen.
 5. **Hauptdomain:** Ticket an den Dienstleister abschicken (`docs/inhaber/ticket-hauptdomain.md`).
 6. **Vercel:** Node-Version des Projekts nennen; **Outlook:** Version/Build nennen und ob ein Testversand an eure Adressen erlaubt ist.
@@ -414,7 +416,7 @@ Stand 28.10.2026, Abschluss des Ausbaus (Mails, Bewerbungsseite, Mappe mit PDF, 
 
 **Stand: aus.** An vom 14.11.2026 (Inhaber: „in den Wartungsmodus nehmen“) bis 25.11.2026 (Inhaber: „aus dem Wartungsmodus raus“). Code und Begründung: `lib/wartung.ts`, Weiche in `proxy.ts`. Was unten steht, beschreibt den eingeschalteten Zustand.
 
-**Was Besucher sehen:** Jede Seite zeigt nur „Kurze Pause.“ mit Logo, dem Hinweis für alle, die sich schon beworben haben, einem Knopf zu bad-energie.de sowie Impressum und Datenschutz. Antwort mit HTTP 503 und `Retry-After: 3600`, nie gecacht: Suchmaschinen behalten die Seiten im Index, nach dem Abschalten ist alles sofort zurück. Dauert die Pause länger als etwa eine Woche, fängt Google an, Seiten aus dem Index zu nehmen; dann lieber nur die Bewerbung pausieren statt die ganze Seite.
+**Was Besucher sehen:** Jede Seite zeigt nur „Kurze Pause.“ mit Logo, dem Hinweis für alle, die sich schon beworben haben, einem Knopf zu bad-energie.de sowie Impressum und Datenschutz. Antwort mit HTTP 503 und `Retry-After: 3600`, nie gecacht: Bei einer kurzen Pause behalten Suchmaschinen die Seiten im Index, nach dem Abschalten ist die Seite sofort wieder da. Dauert die Pause mehrere Tage, nimmt Google nach und nach Seiten aus dem Index; sie kommen erst zurück, wenn Google sie wieder abruft (Schritte unter „Nach dem Ausschalten“). Für eine längere Pause lieber nur die Bewerbung pausieren statt die ganze Seite.
 
 **Was weiterläuft:** Impressum und Datenschutz, Ergänzungen zu schon abgeschickten Bewerbungen, `/api/status`, Feeds (Indeed und Widget listen die Stellen weiter, die Links führen auf die Wartungsseite), Sitemap, robots.txt. Neue Bewerbungen aus noch offenen Tabs lehnt die API mit 503 ab; der Flow zeigt „Die Karriereseite ist gerade im Wartungsmodus …“. Stellenanzeigen bei der Bundesagentur, der HWK und anderen Börsen laufen unabhängig davon weiter.
 
@@ -425,3 +427,11 @@ Stand 28.10.2026, Abschluss des Ausbaus (Mails, Bewerbungsseite, Mappe mit PDF, 
 - Lokal ansehen: `WARTUNGSMODUS=an bun run start` nach `bun run build`.
 
 **Prüfen:** `curl -sI https://karriere.bad-energie.de/` zeigt im Wartungsmodus `HTTP/2 503`, sonst `200`. `/impressum` antwortet immer mit 200.
+
+**Nach dem Ausschalten:** Suchmaschinen merken von selbst nicht schnell, dass die Seite wieder da ist. Google nimmt bei mehreren Tagen 503 Seiten aus dem Index; deshalb aktiv zurückholen:
+
+1. **Status prüfen:** `curl -sI` für die Startseite, `/jobs` und eine Stellenseite zeigt `200`; `/api/status` antwortet normal.
+2. **Search Console** (Property `bad-energie.de`): unter **Sitemaps** den Index und die vier Teil-Sitemaps neu einreichen (Liste in `docs/inhaber/checkliste-offsite.md`, 1.2). Unter **Seiten** beim Grund „Serverfehler (5xx)“ auf **Fehlerbehebung überprüfen** klicken.
+3. **URL-Prüfung** in der Search Console für die Startseite, `/jobs` und jede Stellenseite, jeweils **Indexierung beantragen**.
+4. **Bing Webmaster Tools** (wenn die Seite dort angemeldet ist, `checkliste-offsite.md` Schritt 2): Sitemap erneut einreichen; einzelne Adressen gehen über **URL Submission**.
+5. **Indexierung von Hand:** GitHub → **Actions → Indexierung → Run workflow**, Haken bei **alles**. Der Lauf meldet dann alle Seiten einmal neu an IndexNow und alle Stellen an Google (Google nur mit `GOOGLE_INDEXING_SA_KEY`). Ohne „alles“ käme „0 neu, 0 geändert“ heraus, weil Sitemap und Feeds in der Pause normal weiterliefen und der Stand sich nicht geändert hat.

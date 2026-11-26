@@ -9,7 +9,9 @@ import { TOKENS } from '@/lib/tokens';
  * An heißt (proxy.ts):
  * - Jede Seite außer Impressum und Datenschutz zeigt nur die Wartungsseite unten, mit HTTP 503, Retry-After und ohne
  *   Cache. 503 heißt für Suchmaschinen „vorübergehend“: Sie behalten die Seiten im Index. Nach dem Abschalten ist die
- *   Seite sofort wieder da.
+ *   Seite sofort wieder da. Vorbehalt: Das gilt nur für eine kurze Pause. Bei mehreren Tagen 503 nimmt Google Seiten
+ *   nach und nach aus dem Index; nach dem Abschalten dann die Schritte in docs/operations/betrieb.md, Abschnitt 8,
+ *   „Nach dem Ausschalten“ (unter anderem die Indexierung von Hand mit „alles“).
  * - Neue Bewerbungen (POST /api/bewerbung, etwa aus einem noch offenen Tab) lehnt die Seite mit 503 und eigenem Text ab.
  * - Weiter erreichbar: Impressum und Datenschutz (Pflichtangaben), Ergänzungen zu schon abgeschickten Bewerbungen,
  *   /api/status und die übrigen APIs, dazu Feeds, Sitemap, robots.txt, Bilder und Icons (der Matcher in proxy.ts lässt

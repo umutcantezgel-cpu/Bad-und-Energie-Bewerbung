@@ -79,7 +79,7 @@ Bing liefert die Suchergebnisse für ChatGPT-Suche und Copilot mit. Der Import �
 2. **Aus der Google Search Console importieren** wählen → mit dem Google-Konto des Betriebs anmelden → Zugriff erlauben.
 3. Die Property `bad-energie.de` auswählen → **Importieren**. Websites und Sitemaps werden übernommen; eine eigene Bestätigung ist nicht nötig.
 4. Unter **Sitemaps** prüfen, ob alle Adressen aus robots.txt da sind.
-5. IndexNow läuft bereits über die Website und meldet Änderungen an Bing; dafür ist hier nichts zu tun.
+5. IndexNow (Bing und andere) läuft nur mit dem öffentlichen Schlüssel der Website. Der steht jetzt im Workflow „Indexierung“ in GitHub: Der tägliche Lauf und der Lauf nach jedem Deploy melden neue und geänderte Seiten damit direkt an IndexNow, auch ohne `INDEXNOW_SUBMIT_TOKEN`. Vorher hat der Lauf ohne diesen Token nie etwas gemeldet. Dafür ist hier nichts zu tun. Prüfen: in GitHub **Actions → Indexierung** den letzten Lauf öffnen. Dort steht „IndexNow: … von … URLs gemeldet“ oder „IndexNow: nichts zu melden.“; eine gelbe Warnung „IndexNow übersprungen“ heißt, es läuft nicht. Google bekommt die Stellen auf diesem Weg erst mit dem Schlüssel aus Schritt 1.3 (`GOOGLE_INDEXING_SA_KEY`); bis dahin steht dort die Warnung „Google übersprungen“.
 6. Optional: In „Bing Places for Business“ das Unternehmensprofil aus Google übernehmen.
 
 ## 3. Bundesagentur für Arbeit: Arbeitgeberkonto und alle Stellen (M-040)

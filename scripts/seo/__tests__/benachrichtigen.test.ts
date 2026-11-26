@@ -7,6 +7,8 @@ import {
   GOOGLE_PUBLISH_URL,
   GOOGLE_TOKEN_URI,
   INDEXING_SCOPE,
+  INDEXNOW_API,
+  INDEXNOW_DIREKT_PAKET,
   INDEXNOW_PAKET,
   aktuellerStand,
   baueJwt,
@@ -19,6 +21,7 @@ import {
   lauf,
   leseServiceAccount,
   meldeIndexNow,
+  meldeIndexNowDirekt,
   nichtMehrIndexierbar,
   nurStellen,
   ohneGesperrte,
@@ -225,6 +228,49 @@ describe('IndexNow über /api/indexnow', () => {
   });
 });
 
+describe('IndexNow direkt (öffentlicher Schlüssel, ohne die Website)', () => {
+  const KEY = 'test-schluessel-0123456789';
+
+  it('POST an api.indexnow.org mit host, key, keyLocation und urlList, Pakete zu höchstens 10 000, kein Token', async () => {
+    expect(INDEXNOW_API).toBe('https://api.indexnow.org/indexnow');
+    expect(INDEXNOW_DIREKT_PAKET).toBe(10000);
+    const urls = Array.from({ length: INDEXNOW_DIREKT_PAKET + 3 }, (_, i) => `${B}/seite-${i}`);
+    const aufrufe: Array<{ url: string; init: RequestInit }> = [];
+    const fetchFn = async (url: string, init: RequestInit = {}) => {
+      aufrufe.push({ url, init });
+      return new Response(null, { status: 200 });
+    };
+    const { angenommen, fehler } = await meldeIndexNowDirekt(urls, `${B}/`, KEY, fetchFn);
+    expect(aufrufe.map((a) => a.url)).toEqual([INDEXNOW_API, INDEXNOW_API]);
+    expect(aufrufe[0].init.method).toBe('POST');
+    const kopf = aufrufe[0].init.headers as Record<string, string>;
+    expect(kopf['Content-Type']).toBe('application/json; charset=utf-8');
+    expect(kopf.Authorization).toBeUndefined();
+    const erstes = JSON.parse(String(aufrufe[0].init.body));
+    expect(Object.keys(erstes).sort()).toEqual(['host', 'key', 'keyLocation', 'urlList']);
+    expect(erstes.host).toBe('karriere.bad-energie.de');
+    expect(erstes.key).toBe(KEY);
+    expect(erstes.keyLocation).toBe(`${B}/${KEY}.txt`);
+    expect(erstes.urlList).toHaveLength(INDEXNOW_DIREKT_PAKET);
+    expect(JSON.parse(String(aufrufe[1].init.body)).urlList).toEqual(urls.slice(INDEXNOW_DIREKT_PAKET));
+    expect(angenommen).toEqual(urls);
+    expect(fehler).toEqual([]);
+  });
+
+  it('200 und 202 gelten als angenommen, jede andere Antwort als abgelehnt', async () => {
+    for (const status of [200, 202]) {
+      const { angenommen, fehler } = await meldeIndexNowDirekt([`${B}/`], B, KEY, async () => new Response(null, { status }));
+      expect(angenommen, String(status)).toEqual([`${B}/`]);
+      expect(fehler).toEqual([]);
+    }
+    for (const status of [204, 400, 403, 422, 429, 500]) {
+      const { angenommen, fehler } = await meldeIndexNowDirekt([`${B}/`], B, KEY, async () => new Response(null, { status }));
+      expect(angenommen, String(status)).toEqual([]);
+      expect(fehler).toEqual([status]);
+    }
+  });
+});
+
 /**
  * Live-Seite und Dienste als Attrappe; protokolliert jeden Aufruf. `html` liefert einzelne Seiten (für die Prüfung
  * verschwundener URLs), alle anderen Adressen antworten mit 404.
@@ -234,12 +280,14 @@ function welt({
   feed,
   google = 200,
   indexnow = 200,
+  direkt = 200,
   html = () => null,
 }: {
   seiten: Array<[string, string?]>;
   feed: unknown[];
   google?: number;
   indexnow?: number;
+  direkt?: number;
   html?: (url: string) => string | null;
 }) {
   const aufrufe: Array<{ url: string; body?: string }> = [];
@@ -250,6 +298,7 @@ function welt({
     if (url === GOOGLE_TOKEN_URI) return Response.json({ access_token: 'zugriff-nur-im-test', expires_in: 3599 });
     if (url === GOOGLE_PUBLISH_URL) return new Response('{}', { status: google });
     if (url === `${B}/api/indexnow`) return new Response('{}', { status: indexnow });
+    if (url === INDEXNOW_API) return new Response(null, { status: direkt });
     const seite = html(url);
     if (seite !== null) return new Response(seite, { status: 200, headers: { 'content-type': 'text/html' } });
     return new Response(null, { status: 404 });
@@ -420,6 +469,144 @@ describe('Ein Lauf (ohne Netz)', () => {
     });
   });
 
+  describe('IndexNow ohne Token: direkter Weg mit dem öffentlichen Schlüssel', () => {
+    const KEY = 'test-schluessel-0123456789';
+    const ohneToken = (datei: string, extra: Record<string, string> = {}) => ({
+      SITE_URL: B,
+      STAND_DATEI: datei,
+      GOOGLE_INDEXING_SA_KEY: JSON.stringify(SA),
+      INDEXNOW_KEY: KEY,
+      ...extra,
+    });
+    const direkteUrls = (aufrufe: Array<{ url: string; body?: string }>) =>
+      aufrufe.filter((a) => a.url === INDEXNOW_API).map((a) => JSON.parse(a.body ?? '{}').urlList);
+
+    it('meldet alles direkt, der Stand rückt vor, der zweite Lauf meldet nichts; Log ohne Adressen und Schlüssel', async () => {
+      const datei = path.join(tmp, 'direkt', 'stand.json');
+      const log: string[] = [];
+      const w = welt({ seiten: SEITEN, feed: FEED });
+      expect(await lauf({ umgebung: ohneToken(datei), argv: [], fetchFn: w.fetchFn, log: (z: string) => log.push(z) })).toBe(0);
+      expect(direkteUrls(w.aufrufe)).toEqual([[`${B}/`, `${B}/jobs`, `${B}/jobs/a`, `${B}/jobs/b`]]);
+      expect(w.aufrufe.filter((a) => a.url === `${B}/api/indexnow`)).toEqual([]);
+      expect(log.join('\n')).toContain('IndexNow: 4 von 4 URLs gemeldet (direkt mit dem öffentlichen Schlüssel).');
+      expect(log.join('\n')).not.toMatch(/https?:\/\/|test-schluessel|zugriff-nur-im-test|BEGIN|PRIVATE/);
+      expect(Object.keys(JSON.parse(fs.readFileSync(datei, 'utf8')).ziele.indexnow)).toHaveLength(4);
+
+      const zweiter = welt({ seiten: SEITEN, feed: FEED });
+      expect(await lauf({ umgebung: ohneToken(datei), argv: [], fetchFn: zweiter.fetchFn, log: () => {} })).toBe(0);
+      expect(zweiter.aufrufe.map((a) => a.url)).toEqual([`${B}/sitemap.xml`, `${B}/feeds/jobs.json`]);
+    });
+
+    it('Token geht vor: mit Token und Schlüssel nur der bisherige Weg über /api/indexnow', async () => {
+      const datei = path.join(tmp, 'token-vor-schluessel', 'stand.json');
+      const log: string[] = [];
+      const w = welt({ seiten: SEITEN, feed: FEED });
+      const beide = ohneToken(datei, { INDEXNOW_SUBMIT_TOKEN: 'geheim-token-fuer-den-test-0123456789' });
+      expect(await lauf({ umgebung: beide, argv: [], fetchFn: w.fetchFn, log: (z: string) => log.push(z) })).toBe(0);
+      expect(w.aufrufe.filter((a) => a.url === `${B}/api/indexnow`)).toHaveLength(1);
+      expect(w.aufrufe.filter((a) => a.url === INDEXNOW_API)).toEqual([]);
+      expect(log.join('\n')).toContain('IndexNow: 4 von 4 URLs gemeldet.');
+    });
+
+    it('Ablehnung: Exit 1, der Stand rückt nicht vor, der nächste Lauf meldet alles noch einmal', async () => {
+      const datei = path.join(tmp, 'direkt-abgelehnt', 'stand.json');
+      const log: string[] = [];
+      const abgelehnt = welt({ seiten: SEITEN, feed: FEED, direkt: 403 });
+      expect(await lauf({ umgebung: ohneToken(datei), argv: [], fetchFn: abgelehnt.fetchFn, log: (z: string) => log.push(z) })).toBe(1);
+      expect(log.join('\n')).toContain('IndexNow: 0 von 4 URLs gemeldet (direkt mit dem öffentlichen Schlüssel), abgelehnt mit HTTP 403.');
+      expect(JSON.parse(fs.readFileSync(datei, 'utf8')).ziele.indexnow).toEqual({});
+      const spaeter = welt({ seiten: SEITEN, feed: FEED, direkt: 202 });
+      expect(await lauf({ umgebung: ohneToken(datei), argv: [], fetchFn: spaeter.fetchFn, log: () => {} })).toBe(0);
+      expect(direkteUrls(spaeter.aufrufe)).toEqual([[`${B}/`, `${B}/jobs`, `${B}/jobs/a`, `${B}/jobs/b`]]);
+      // Google hatte schon angenommen: nichts doppelt
+      expect(spaeter.aufrufe.filter((a) => a.url === GOOGLE_PUBLISH_URL)).toEqual([]);
+    });
+
+    it('Schlüssel mit falschem Format: übersprungen, kein Aufruf', async () => {
+      const datei = path.join(tmp, 'schluessel-kaputt', 'stand.json');
+      const log: string[] = [];
+      const w = welt({ seiten: SEITEN, feed: FEED });
+      expect(await lauf({ umgebung: ohneToken(datei, { INDEXNOW_KEY: 'kurz' }), argv: [], fetchFn: w.fetchFn, log: (z: string) => log.push(z) })).toBe(0);
+      expect(w.aufrufe.filter((a) => a.url === INDEXNOW_API)).toEqual([]);
+      expect(log.join('\n')).toContain('IndexNow übersprungen: INDEXNOW_SUBMIT_TOKEN fehlt, und INDEXNOW_KEY hat nicht das Format');
+    });
+  });
+
+  it('übersprungene Ziele stehen in GitHub Actions zusätzlich als Warnung da, sonst nicht', async () => {
+    const mitWarnung: string[] = [];
+    await lauf({
+      umgebung: { SITE_URL: B, STAND_DATEI: path.join(tmp, 'warnung', 'stand.json'), GITHUB_ACTIONS: 'true' },
+      argv: [],
+      fetchFn: welt({ seiten: SEITEN, feed: FEED }).fetchFn,
+      log: (z: string) => mitWarnung.push(z),
+    });
+    expect(mitWarnung.filter((z) => z.startsWith('::warning::'))).toEqual([
+      expect.stringMatching(/^::warning::IndexNow übersprungen: INDEXNOW_SUBMIT_TOKEN fehlt/),
+      expect.stringMatching(/^::warning::Google übersprungen: GOOGLE_INDEXING_SA_KEY fehlt/),
+    ]);
+    expect(mitWarnung.join('\n')).not.toMatch(/https?:\/\//);
+
+    // Nur Google fehlt: nur eine Warnung
+    const nurGoogle: string[] = [];
+    await lauf({
+      umgebung: { SITE_URL: B, STAND_DATEI: path.join(tmp, 'warnung-google', 'stand.json'), GITHUB_ACTIONS: 'true', INDEXNOW_KEY: 'test-schluessel-0123456789' },
+      argv: [],
+      fetchFn: welt({ seiten: SEITEN, feed: FEED }).fetchFn,
+      log: (z: string) => nurGoogle.push(z),
+    });
+    expect(nurGoogle.filter((z) => z.startsWith('::warning::'))).toEqual([expect.stringMatching(/^::warning::Google übersprungen/)]);
+
+    // Außerhalb von GitHub Actions: keine Warnzeilen
+    const lokal: string[] = [];
+    await lauf({
+      umgebung: { SITE_URL: B, STAND_DATEI: path.join(tmp, 'warnung-lokal', 'stand.json') },
+      argv: [],
+      fetchFn: welt({ seiten: SEITEN, feed: FEED }).fetchFn,
+      log: (z: string) => lokal.push(z),
+    });
+    expect(lokal.join('\n')).toContain('IndexNow übersprungen');
+    expect(lokal.join('\n')).not.toContain('::warning::');
+  });
+
+  it('INDEXIERUNG_ALLES (Ende einer Pause): alter Stand gilt als leer, alles geht einmal neu raus', async () => {
+    const datei = path.join(tmp, 'alles', 'stand.json');
+    await lauf({ umgebung: umgebung(datei), argv: [], fetchFn: welt({ seiten: SEITEN, feed: FEED }).fetchFn, log: () => {} });
+    // Ohne Schalter: nichts geändert, nichts gemeldet
+    const normal = welt({ seiten: SEITEN, feed: FEED });
+    await lauf({ umgebung: umgebung(datei), argv: [], fetchFn: normal.fetchFn, log: () => {} });
+    expect(normal.aufrufe.map((a) => a.url)).toEqual([`${B}/sitemap.xml`, `${B}/feeds/jobs.json`]);
+
+    // Trockenlauf mit Schalter zählt alles als neu und schreibt nichts
+    const vorher = fs.readFileSync(datei, 'utf8');
+    const trockenLog: string[] = [];
+    await lauf({
+      umgebung: umgebung(datei, { INDEXIERUNG_ALLES: 'true', INDEXIERUNG_TROCKEN: 'true' }),
+      argv: [],
+      fetchFn: welt({ seiten: SEITEN, feed: FEED }).fetchFn,
+      log: (z: string) => trockenLog.push(z),
+    });
+    expect(trockenLog.join('\n')).toContain('IndexNow: 4 neu, 0 geändert, 0 entfernt.');
+    expect(trockenLog.join('\n')).toContain('Google (nur /jobs/*): 2 neu, 0 geändert, 0 entfernt.');
+    expect(fs.readFileSync(datei, 'utf8')).toBe(vorher);
+
+    // Mit Schalter: beide Ziele bekommen alles noch einmal
+    const log: string[] = [];
+    const alles = welt({ seiten: SEITEN, feed: FEED });
+    expect(await lauf({ umgebung: umgebung(datei, { INDEXIERUNG_ALLES: 'true' }), argv: [], fetchFn: alles.fetchFn, log: (z: string) => log.push(z) })).toBe(0);
+    expect(log.join('\n')).toContain('Alles neu melden (INDEXIERUNG_ALLES)');
+    expect(alles.aufrufe.filter((a) => a.url === GOOGLE_PUBLISH_URL)).toHaveLength(2);
+    expect(alles.aufrufe.filter((a) => a.url === `${B}/api/indexnow`).map((a) => JSON.parse(a.body ?? '{}').urls)).toEqual([
+      [`${B}/`, `${B}/jobs`, `${B}/jobs/a`, `${B}/jobs/b`],
+    ]);
+    // Danach gilt wieder der normale Vergleich; --alles wirkt wie der Schalter
+    const danach = welt({ seiten: SEITEN, feed: FEED });
+    await lauf({ umgebung: umgebung(datei), argv: [], fetchFn: danach.fetchFn, log: () => {} });
+    expect(danach.aufrufe.map((a) => a.url)).toEqual([`${B}/sitemap.xml`, `${B}/feeds/jobs.json`]);
+    const perArgument = welt({ seiten: SEITEN, feed: FEED });
+    await lauf({ umgebung: umgebung(datei), argv: ['--alles'], fetchFn: perArgument.fetchFn, log: () => {} });
+    expect(perArgument.aufrufe.filter((a) => a.url === GOOGLE_PUBLISH_URL)).toHaveLength(2);
+  });
+
   it('Trockenlauf zählt nur', async () => {
     const datei = path.join(tmp, 'sechs', 'stand.json');
     const log: string[] = [];
@@ -451,5 +638,44 @@ describe('Workflow .github/workflows/indexierung.yml', () => {
     expect(yml).toContain('uses: actions/cache/save@v6');
     expect(yml).toContain('run: node scripts/seo/benachrichtigen.mjs');
     expect(yml).toMatch(/concurrency:\n {2}group: indexierung\n {2}cancel-in-progress: false/);
+  });
+
+  // Jobs als Textblöcke (zwei Leerzeichen Einzug unter `jobs:`), ohne YAML-Bibliothek.
+  const jobs = Object.fromEntries(
+    yml
+      .slice(yml.indexOf('\njobs:\n') + '\njobs:\n'.length)
+      .split(/\n(?= {2}[a-z][\w-]*:\n)/)
+      .map((block) => [block.trim().split(':')[0], block]),
+  );
+
+  it('Deploy-Läufe melden nicht selbst: Job „anstossen“ startet den Workflow auf main, nur er darf das (actions: write)', () => {
+    expect(Object.keys(jobs)).toEqual(['anstossen', 'melden']);
+    expect(yml.match(/actions: write/g)).toHaveLength(1);
+    expect(jobs.anstossen).toMatch(/\n {4}permissions:\n {6}actions: write\n {4}steps:/);
+    expect(jobs.melden).not.toContain('permissions:');
+    expect(jobs.anstossen).toContain("github.event_name == 'deployment_status' &&");
+    expect(jobs.anstossen).toContain("github.event.deployment_status.state == 'success'");
+    expect(jobs.anstossen).toContain("startsWith(github.event.deployment.environment, 'Production')");
+    expect(jobs.anstossen).toContain('run: gh workflow run indexierung.yml --ref main');
+    expect(jobs.anstossen).toContain('GH_TOKEN: ${{ github.token }}');
+    // Kein Checkout, kein Environment, kein Geheimnis im Anstoß-Job
+    expect(jobs.anstossen).not.toMatch(/uses:|environment:|secrets\./);
+    expect(jobs.melden).toMatch(/\n {4}if: github\.event_name != 'deployment_status'\n/);
+    expect(jobs.melden).toContain('environment: indexierung');
+  });
+
+  it('kein Geheimnis und kein Token in einer Befehlszeile; jede run-Zeile ist einzeilig', () => {
+    expect(yml).not.toMatch(/run:\s*[|>]/);
+    const runZeilen = yml.split('\n').filter((z) => /^\s*(- )?run:/.test(z));
+    expect(runZeilen.length).toBeGreaterThanOrEqual(2);
+    for (const zeile of runZeilen) expect(zeile, zeile).not.toMatch(/secrets\.|github\.token|GH_TOKEN/);
+  });
+
+  it('IndexNow-Schlüssel im Workflow = Prüfdatei in public/, „alles“ als zweiter Parameter von Hand', () => {
+    const key = /\n {10}INDEXNOW_KEY: ([A-Za-z0-9-]+)\n/.exec(jobs.melden)?.[1] ?? '';
+    expect(key).toMatch(/^[A-Za-z0-9-]{8,128}$/);
+    expect(fs.readFileSync(path.join(process.cwd(), 'public', `${key}.txt`), 'utf8').trim()).toBe(key);
+    expect(yml).toMatch(/\n {6}alles:\n {8}description: [^\n]+\n {8}type: boolean\n {8}default: false\n/);
+    expect(jobs.melden).toContain("INDEXIERUNG_ALLES: ${{ github.event_name == 'workflow_dispatch' && inputs.alles && 'true' || 'false' }}");
   });
 });
