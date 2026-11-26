@@ -10,7 +10,7 @@ Die Reihenfolge folgt der Wirkung. Schritt 1 und 3 bringen am meisten.
 
 | Nr. | Schritt | Wofür | Erledigt am |
 |---|---|---|---|
-| 1 | Google Search Console: Domain per DNS bestätigen, Sitemaps einreichen, Service-Account | Google findet jede Stelle sofort; Daten für die Ortsseiten | |
+| 1 | Google Search Console: Domain per DNS bestätigen, Sitemaps einreichen, Service-Account | Google findet jede Stelle sofort; Daten für die Ortsseiten | Property karriere.bad-energie.de und 5 Sitemaps: 26.11.2026; Service-Account offen |
 | 2 | Bing Webmaster Tools: Import aus der Search Console | Bing, ChatGPT-Suche, Copilot | |
 | 3 | Bundesagentur für Arbeit: Arbeitgeberkonto, alle Stellen einstellen | größte kostenlose Jobbörse; bisher 0 Treffer | |
 | 4 | HWK-Lehrstellenbörse: Ausbildung 2027 und Praktikum | Schulabgänger und Eltern | |

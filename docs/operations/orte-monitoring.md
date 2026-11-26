@@ -72,8 +72,9 @@ Einmal im Monat in den Bing Webmaster Tools unter „Sitemaps“ und „Seiten�
 
 ## Protokoll
 
-Eine Zeile je Woche. Erstes Einreichen der Orts-Sitemap: ____________
+Eine Zeile je Woche. Erstes Einreichen der Orts-Sitemap: **26.11.2026** (Domain-Property karriere.bad-energie.de; Google las sie am selben Tag, 59 Seiten erkannt)
 
 | Datum | eingereicht | indexiert | gecrawlt, nicht indexiert | Duplikat | nicht indexiert in % | Orte ohne Impressionen | Entscheidung |
 |---|---|---|---|---|---|---|---|
+| 26.11.2026 | 59 | noch offen (Seitenbericht der ganzen Domain vom 23.11.: 63 von 78 indexiert) | 0 | – | – | noch keine Daten | Erste Zeile nach der Wartungspause (14.–25.11.); Prüfung „Serverfehler (5xx)“ am 26.11. gestartet |
 | | | | | | | | |
