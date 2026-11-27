@@ -99,8 +99,28 @@ export function beiAnnaeherung(element: HTMLElement, nah: () => void): () => voi
   return aufraeumen;
 }
 
-/** Lädt den Code der Insel im Leerlauf nach dem Hydrieren vor, ohne sie zu hydrieren. Gibt das Abbrechen zurück. */
-export function imLeerlauf(laden: () => Promise<unknown>): () => void {
+/** Der Teil von navigator, den sparsamesNetz liest (Network Information API, nicht in jedem Browser). */
+interface NetzNavigator {
+  connection?: { saveData?: boolean; effectiveType?: string };
+}
+
+/**
+ * Datensparmodus oder langsames Netz (2G, 3G): Dann lädt keine Insel auf Vorrat, sondern erst in Reichweite (rund
+ * eine Handyhöhe vorher, VORLAUF). Das spart am Handy die rund 50 KB für Formular und Karte, solange niemand
+ * hinscrollt (Inhaber, 27.11.2026: „Ladezeit am Handy maximal schnell“). Ohne die Angabe des Browsers gilt: normal.
+ */
+export function sparsamesNetz(nav: NetzNavigator | undefined = typeof navigator === 'undefined' ? undefined : (navigator as NetzNavigator)): boolean {
+  const netz = nav?.connection;
+  if (!netz) return false;
+  return netz.saveData === true || netz.effectiveType === 'slow-2g' || netz.effectiveType === '2g' || netz.effectiveType === '3g';
+}
+
+/**
+ * Lädt den Code der Insel im Leerlauf nach dem Hydrieren vor, ohne sie zu hydrieren. Gibt das Abbrechen zurück.
+ * Bei Datensparmodus oder langsamem Netz nichts auf Vorrat (sparsamesNetz); dann lädt die Insel in Reichweite.
+ */
+export function imLeerlauf(laden: () => Promise<unknown>, nav?: NetzNavigator): () => void {
+  if (sparsamesNetz(nav)) return () => {};
   const vorladen = () => {
     laden().catch(() => {});
   };

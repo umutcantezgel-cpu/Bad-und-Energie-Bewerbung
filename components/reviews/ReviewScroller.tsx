@@ -5,7 +5,9 @@ import { Icon } from '@/components/icons';
 import { Chip } from '@/components/ui/Chip';
 import { IconButton } from '@/components/ui/IconButton';
 import { Rating } from '@/components/ui/Rating';
-import { cn } from '@/lib/utils/cn';
+// clsx statt cn(): tailwind-merge (rund 9 KB gezippt) bliebe sonst im Start-Bündel jeder Seite mit Stimmen (Startseite).
+// Die Klassen hier widersprechen sich nicht; wer eine Klasse überschreiben muss, nimmt cn() in einer Server-Komponente.
+import { clsx as cn } from 'clsx';
 import { REVIEW_FILTERS, filterReviewItems, replyTitle, type ReviewFilter, type ReviewItem } from './model';
 import { SternVorrat, VolleSterne, istVolleWertung } from './Sterne';
 import {

@@ -1,6 +1,8 @@
 import type { ComponentPropsWithRef } from 'react';
 import { Icon } from '@/components/icons';
-import { cn } from '@/lib/utils/cn';
+// clsx statt cn(): tailwind-merge (rund 9 KB gezippt) bliebe sonst im Start-Bündel jeder Seite mit Stimmen (Startseite).
+// Die Klassen hier widersprechen sich nicht; wer eine Klasse überschreiben muss, nimmt cn() in einer Server-Komponente.
+import { clsx as cn } from 'clsx';
 
 export interface ChipProps extends Omit<ComponentPropsWithRef<'button'>, 'type'> {
   pressed?: boolean;

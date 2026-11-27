@@ -76,11 +76,9 @@ describe('Seitenschale: gemeinsames Client-Bündel ohne tailwind-merge (E-031, L
   });
 
   it('der Wächter findet den Weg über cn(): die Prüfung greift', () => {
-    expect(verbotenerWeg('components/ui/ToastCard.tsx')).toEqual([
-      'components/ui/ToastCard.tsx',
-      'components/ui/IconButton.tsx',
-      'lib/utils/cn.ts',
-      'tailwind-merge',
-    ]);
+    // Seit 27.11.2026 nutzen IconButton, Chip und Rating clsx statt cn() (Ladezeit am Handy); der Weg über ToastCard
+    // ist damit zu. Als Gegenprobe dient das Feld des Bewerbungsflows, das cn() weiter nutzt.
+    expect(verbotenerWeg('components/ui/Field.tsx')).toEqual(['components/ui/Field.tsx', 'lib/utils/cn.ts', 'tailwind-merge']);
+    expect(verbotenerWeg('components/ui/ToastCard.tsx')).toBeNull();
   });
 });

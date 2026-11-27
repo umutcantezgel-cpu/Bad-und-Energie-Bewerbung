@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { VORLAUF, beiAnnaeherung, erstelleTor, hashZeigtAuf, imLeerlauf, linkAufDieseSeite } from '../HydrateNear';
+import { VORLAUF, beiAnnaeherung, erstelleTor, hashZeigtAuf, imLeerlauf, linkAufDieseSeite, sparsamesNetz } from '../HydrateNear';
 
 /**
  * HydrateNear (V6-A2): Die Insel hydriert erst in Reichweite, bei Hash, Sprung, Fokus, Pointer und Klick auf
@@ -219,6 +219,28 @@ describe('imLeerlauf', () => {
     await vi.advanceTimersByTimeAsync(2000);
     expect(laden).toHaveBeenCalledTimes(1);
     vi.useRealTimers();
+  });
+});
+
+describe('sparsamesNetz: Datensparmodus und langsames Netz laden nichts auf Vorrat', () => {
+  it('erkennt Datensparmodus, 2G und 3G; 4G und fehlende Angabe gelten als normal', () => {
+    expect(sparsamesNetz({ connection: { saveData: true, effectiveType: '4g' } })).toBe(true);
+    expect(sparsamesNetz({ connection: { effectiveType: 'slow-2g' } })).toBe(true);
+    expect(sparsamesNetz({ connection: { effectiveType: '2g' } })).toBe(true);
+    expect(sparsamesNetz({ connection: { effectiveType: '3g' } })).toBe(true);
+    expect(sparsamesNetz({ connection: { effectiveType: '4g' } })).toBe(false);
+    expect(sparsamesNetz({})).toBe(false);
+    expect(sparsamesNetz(undefined)).toBe(false);
+  });
+
+  it('imLeerlauf lädt dann nichts vor; die Insel lädt erst in Reichweite', () => {
+    const rueckrufe: (() => void)[] = [];
+    vi.stubGlobal('window', { requestIdleCallback: (rueckruf: () => void) => rueckrufe.push(rueckruf), cancelIdleCallback: () => {} });
+    const laden = vi.fn(() => Promise.resolve());
+    const abbrechen = imLeerlauf(laden, { connection: { saveData: true } });
+    expect(rueckrufe).toEqual([]);
+    expect(laden).not.toHaveBeenCalled();
+    expect(() => abbrechen()).not.toThrow();
   });
 });
 
